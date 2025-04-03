@@ -1,284 +1,237 @@
-Return-Path: <linux-kernel+bounces-586905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 118F8A7A52C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 698B7A7A533
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97311164576
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:28:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8CE5166B45
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF1A24EF88;
-	Thu,  3 Apr 2025 14:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E558424EF62;
+	Thu,  3 Apr 2025 14:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NW1IDQa+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="t+xF7oNC"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011061.outbound.protection.outlook.com [52.101.70.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FDA24EA9D
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 14:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743690518; cv=none; b=TGzndoJDU8s1hzl4SAABVGC8xB0eV9M7qdHyjd4hYY+zJ6hpZc/MuEF5czHQOxxGCM4MSCzbHu7IHdPQ4a4eMWPUNmyh1lkDIu4IFadBha0tk/lo1k0XVoAo4eYFz0++uYBg9WgtiAwitFjev2v3T0rTt12cFTmRQztVpV9jdkk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743690518; c=relaxed/simple;
-	bh=JSdl1NHgYZZU2bfUpnSc5LnVXy/6jHxK40NGSVwnkV8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P8lbm9iWxvUrpjFEk1MqJ5g7LlNEpFvwccibboOL5bOvvA9q+5dp/1sAGWwAzr2659elPIZWUVaGx41naGGzFbz0YcaPVRCp7oWYdRT8Cydqa2WwTNfy/+m6v7qDgyG7emGGBVpciYwwPNmCExJ/rKWiehQgHiXebsoAwF8kcFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NW1IDQa+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743690515;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9J+OJ+p7+R3Pc2Foxa5sUhyKVxUU6ZZSnXnmsmIjetQ=;
-	b=NW1IDQa+THqKxmBwef9NNzARyrY+pHX7ERtjSs09J04lzRsCiWVaoIQ3hZDoR43IffRtFT
-	pd4UorhgdYuEAl18H55u7eek7hpRn5OxX3dwPc7GnvhUch/fVr0tn0pPC5WTg+OW0wqZV3
-	JXRmypvjmkpDq3vYe6PaI23XrdFcvkU=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-102-4jx1NOVVNxSW819SY3rw1A-1; Thu, 03 Apr 2025 10:28:34 -0400
-X-MC-Unique: 4jx1NOVVNxSW819SY3rw1A-1
-X-Mimecast-MFC-AGG-ID: 4jx1NOVVNxSW819SY3rw1A_1743690513
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43d00017e9dso6049985e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 07:28:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743690513; x=1744295313;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9J+OJ+p7+R3Pc2Foxa5sUhyKVxUU6ZZSnXnmsmIjetQ=;
-        b=t2RbDYIsozdX8zmCymTvN8KljuXe/JlCMwavaiX6nb/KgPOFpmS0dAw4CuEGuIWfFF
-         EcqVchLp4oP8HH56VLgKUxl9DHnioiWbOE0OxgOVvPXJvnVScb0bWS5SeRl/eaqo0xYv
-         t4t8XpMUhwRwSOURau2+pCRQjsB+Sq2qoUcszzZzA96lu/0WWIyRHXRlNeG1BdBZIJHZ
-         nhvK/ZU6TY0Xlpw3eMAoRJbbT2BcYqaOAJlEuVa7o/WXX/mTt3uS+MK3b17KJUm6TYOo
-         iPJ+edzUpTeZUidKXE4lW0nY3h0bgLRPTEZqbCiW7bJ4qle4OG1EUAwx41ryy6Xilzz6
-         sPIQ==
-X-Gm-Message-State: AOJu0YwKBXps0xQlS7Z6/gJ7Hnnqrdns26nql1CbIDl7BWRcQrlbHhuP
-	7he/D6wcmn9XpYJZy4pnkUjKta1GefAFlSYbs87mIkLz6Ff6gFVY5ICIuoUhihUtSzBEFIqGDdg
-	6ok8V1qbP1oNekxALdd9P6Vtw5UUv9ld8W2iodIQDyXn/RvW/Gm8rnGJjtRMmsQ==
-X-Gm-Gg: ASbGncuYLpmZnqLgTmGxFjeDfgIpSKpQfrAv11Rv1zr+EToMfLqcchnrkLuyOkFCs5J
-	l3cfeCrMx9fZ7JNiLt1GtqhAJ8CQJ270YuMLfR5xf8r4NY6KtnOACDsyK1mMObyehV4iseMtgQN
-	RakrTuYMHciXPXTCRjpb84iHWkFe4Pl8R8Rz7IhXOVZ2jaAuQ5ZT7oP6lxpDdakyTdT07vPgIwU
-	T9xKiefkcrWBk6kTJvE6f8MQRclUwN+wiX1Op8dzRD32snrCmpjBNmY3kfuARCz4j0N+dAv7HEB
-	qe/AU0QMbLVzzVJRPZhjC81ELGnLL8mqKZuQ+b32Wvsw
-X-Received: by 2002:a05:6000:4205:b0:39c:2690:fe0a with SMTP id ffacd0b85a97d-39c29737d37mr6593008f8f.10.1743690513310;
-        Thu, 03 Apr 2025 07:28:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHAK3ydOSly/Trv07/K/qF4LIZl/e96tY/ernCa8V6ZollUsEDOblyip4uh9Skt+5jzAcrIXw==
-X-Received: by 2002:a05:6000:4205:b0:39c:2690:fe0a with SMTP id ffacd0b85a97d-39c29737d37mr6592974f8f.10.1743690512915;
-        Thu, 03 Apr 2025 07:28:32 -0700 (PDT)
-Received: from [192.168.3.141] (p4ff23029.dip0.t-ipconnect.de. [79.242.48.41])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec34a8d67sm20112745e9.12.2025.04.03.07.28.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Apr 2025 07:28:32 -0700 (PDT)
-Message-ID: <e2936e2f-022c-44ee-bb04-f07045ee2114@redhat.com>
-Date: Thu, 3 Apr 2025 16:28:31 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03258224B0B;
+	Thu,  3 Apr 2025 14:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743690638; cv=fail; b=dwEE38BvYS9TkX2h8yuwU3A7WrugfOmaJWxk2DbNxfzo83kUWINJ4C4vqq06FVKwwlXVg/8FtGkkApcFHtDo8h2zTUtzEisnIeT+LALVUlnpHHIodoPxDbvrUF/8vPUd3aRu2vVQ8osCufF57sjXH/rh8mb9DZWSAil86zbLhSE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743690638; c=relaxed/simple;
+	bh=2kVvDlETJisGILmlqKDRlCnuT+Auvy7LUsEbzQqxYrg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=tB0umqOF4+HNB5yAsLowbp+NlCGCQfLsL3kyuV0XqJ1fLESdBVaGb19yUXG/faFmo1iGYCA0yKMh0TpKWcJRDfaG1s+5DSoGD9OT3vzFbiP2bb23gQ3en2OtZnS0eBHhEyP/cAk9PfDFXk7fSKLLN0aqIFY5sptfbjn+5rEwEi4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=t+xF7oNC; arc=fail smtp.client-ip=52.101.70.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q1FJdmg7P43+x1PFUWvYR5YRZ1Wb8tkQYUMFtb0krlcpZEDgaYMqe7HowLr0MTV8xndgo0WhsMNPv17QtpTz6NSIv18CBoCckmNzwn8GcgDLriFZpFE4GQ3bgVkfbTD7IsezatrW4IUNHDv0fWZADKJSGCIqEuZ9unpdi0A13Q3LLco1A+3GThhKJ+U5ThIO/tQNnxsLtcaBsq+B4HiJOb7qK7G4R8Qow/YIYnY20bhCY7kuOYdvRT49Sey+8I6ley+yhFI5uP0oN9ASwKPzUcJYOudPyYN1RjGfKSrCrB0QG9f9bI5GgyZ4vq+Y66GQqMR1KMHaFebTMfszkhVTQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=v1cfiwCgs++zED9GoJiLnZH1ljulhetpoiYO/eM+pbY=;
+ b=KFu6DU52yMxGlfLFFRaRLEZHubdF65XAxLnOAi4Wi62vh4x0Jay2EW1BaHk6DNiyfGekRzx6ZAl9tLb+sQPFyZOytClPpqInDoA9Jo1jZsSYa82raADaDV7SFZoJdBsox0/sUYgprVhvKutdPgllERdidaIQb8GKlBXrzFgHZv7PHeezoaOAjFMrJUGYQ7xGJgfMkqv7v1kIvvAy9X8GhKh9Mqt26DzI9dcYMnKOALhB+EZmYrqm34CbfVnywfXRq+RINYN315koOsYoHRVrtvjUJPuR7btQDxD7aRx5eAGYQo/gdCZmF0zdImv2zR+rAttlAC0NglKjxmKSONBM4Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=v1cfiwCgs++zED9GoJiLnZH1ljulhetpoiYO/eM+pbY=;
+ b=t+xF7oNCKh4CKasgh2ItmAkP0/oNICnbBWIKdHvjSQ5A5eEXDBH8st51jz+e35s6ZTBWasvrynXoQ1ALe+25NJaUusBfL4FbZ/rtgHFqSFsuaBWlYQ2DU+keRtmUJt8aefdeNbOiqMIJvObKM6S+p1JWC/UP4bkzkApjakmE9znHQkGRUunruG78CLpFESR1kJ2bPjymiedIud1cPea4HEsZQ0R6p84ykJ2LmxekL3oWjTJigVXcLywYx1ZkXhvDONpdkaQNjF2seXWW1OL9aSPXnbKTF/SBkkyKfxEwo1aMQXHXWNO4eOJmoZsXg1sBMfmNFgitDb/wPvO0LvXgow==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
+ by PA4PR04MB7549.eurprd04.prod.outlook.com (2603:10a6:102:e0::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Thu, 3 Apr
+ 2025 14:30:29 +0000
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd%4]) with mapi id 15.20.8534.043; Thu, 3 Apr 2025
+ 14:30:29 +0000
+Message-ID: <4efff19d-b5e6-49b5-9a15-e4af622c6ebf@oss.nxp.com>
+Date: Thu, 3 Apr 2025 17:29:26 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hwmon: (ina2xx) make regulator 'vs' support optional
+To: Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ NXP S32 Linux <s32@nxp.com>, imx@lists.linux.dev,
+ Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
+ Enric Balletbo <eballetb@redhat.com>, Eric Chanudet <echanude@redhat.com>,
+ Florin Buica <florin.buica@nxp.com>
+References: <20250403101516.3047802-1-ciprianmarian.costea@oss.nxp.com>
+ <dab2f459-240f-4e4c-9bf6-8c0285354cfb@roeck-us.net>
+Content-Language: en-US
+From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+In-Reply-To: <dab2f459-240f-4e4c-9bf6-8c0285354cfb@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AS4PR10CA0023.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d8::15) To DU0PR04MB9251.eurprd04.prod.outlook.com
+ (2603:10a6:10:352::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] s390/virtio_ccw: don't allocate/assign airqs for
- non-existing queues
-To: Halil Pasic <pasic@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
- virtualization@lists.linux.dev, kvm@vger.kernel.org,
- Chandra Merla <cmerla@redhat.com>, Stable@vger.kernel.org,
- Cornelia Huck <cohuck@redhat.com>, Thomas Huth <thuth@redhat.com>,
- Eric Farman <farman@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Wei Wang <wei.w.wang@intel.com>
-References: <20250402203621.940090-1-david@redhat.com>
- <20250403161836.7fe9fea5.pasic@linux.ibm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250403161836.7fe9fea5.pasic@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|PA4PR04MB7549:EE_
+X-MS-Office365-Filtering-Correlation-Id: cfcfd59a-f91b-4cc3-1b85-08dd72bc150e
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aEdtVDc4WmhDN3dJM2NGYUJtMkRVbERxa3JxY0xPR2I3SXpWVnQ2NlNncFE5?=
+ =?utf-8?B?eVViUDR3cDZUcXp1dENxL3pYc0N6RDBIVUJKOXozSU9ibU9DSTFWRzJrSE1v?=
+ =?utf-8?B?Kzlhbzk4STEzMFJXUU5rSyt4eEVOZlY2cE1IR3BFWEZUclNKR2NpeU50T245?=
+ =?utf-8?B?V1JwUm1PbWZGaGxZT2RkeFlmdGFBK2hVaStZN0xQTGo4NndPL2lPUitMNW9j?=
+ =?utf-8?B?QXRuNVdHQkxuY0t3cWpDNUtvYTQvNWtmekp1M28vYnI1L0dlQWh2NExSbmhV?=
+ =?utf-8?B?Qkk0Ymc3TDZCTkhUUGd4T3VXRmRTZERsd0xOdHNSTHI3emZlbU42bThNSkxt?=
+ =?utf-8?B?MklUbEI5T216T3dSazB1dCsvcG9ycDJYdnpKU29hYnF2YnZVaEUrTHRhV1BZ?=
+ =?utf-8?B?ZHdwZExCMzdZdlIya2ZEUlRESXNYaFNBbmNCVklNY09hbHN5amhDYndaSXlk?=
+ =?utf-8?B?czlNTk15a2ZOZmc2cEd4MVhEQnprWmJKQjBBdnNLdkUvVDJVaHd0VU1ob1hy?=
+ =?utf-8?B?R1Jzd0R0UHYvT3lRQ2FCd09QTXB4MjJRMlhlWFJTZUFBbHRvKzMwMFkvbFRk?=
+ =?utf-8?B?MEsxYXpHbGc5N0lpUllQZkw2Qi9lcFRwT1dTK3h2aS94bVBCQjNKM3NnZ1lF?=
+ =?utf-8?B?eHFUZjhaWnlWNFFJMndtTm5GTzJwMEtOWDE1NXZLdEpuNmNvV004S2JNbGFr?=
+ =?utf-8?B?dFRvdmJzOWJseEFabHJqZ2hiRFNYaFU4Qlh2SDBTRGIxdmZnSWhzRHJwMGJr?=
+ =?utf-8?B?bzNNUGx2eDd5dTJremM0UWwzdjF6RE1ycXVCNWY4TDhCTXFKaG93V3pjeExh?=
+ =?utf-8?B?MDRWWDNGaDRoR3lnM3hYNDREOUNBNmg0TEtOOU1NdjVVMjl0eVF5aytGR1FW?=
+ =?utf-8?B?MFRhaENjdE1OT3FCaERodjFFdjN2d1dLYWhxSGJqWm5pUzhoMnpZZmt4d21G?=
+ =?utf-8?B?Wm5SNHJkeG1Ic0tZczAxTmI0Y1FNT1Jha3NLRllyMU14T0xUYzBlamtOai9T?=
+ =?utf-8?B?YWhEYXBtV3Q0YnQwM2RNNFNXTmZSOGJxNytUZlAvM1MrL3M0bXBlREU0Mnpr?=
+ =?utf-8?B?L2dSVnE3KysvVDJMdkwzOFYxSWNLeDB3SGt6R0hTalg0aGgweEU0ZytXQmtt?=
+ =?utf-8?B?Zm5LcDk2bGNaQ2RDTFlkd0NCVFpXRUI0WXExc1A3WjBjeWRzUmRUR1hpLy8w?=
+ =?utf-8?B?T00xVjR2Z0tZWXE0WHNCZ0FsZlZHdHNWZzBkTmJCUEViVWdPa25CcjFxQ3pO?=
+ =?utf-8?B?VmozRWc3QlpxVjFzTEVTME0xV2pIREtMNHRBN2hOeGNydnpwb2l4VllVMVZR?=
+ =?utf-8?B?R3BsOCtvdXA3VGhuOGthNlcwSytZeFpJMkx3VUpVYlFJN29DMjhSM2t2d1dK?=
+ =?utf-8?B?OEVBeUUvN3UxR0p3N0tNMFEwbEM3V0VBeGhmaXRVY05IdXZHSERWdG1SbWQx?=
+ =?utf-8?B?eTljNitic2ErckkwOXROVVM4Y1M3Y3hXUWRkUy9YRk5IRmtoY0NzSFJaUTFC?=
+ =?utf-8?B?aW5GNkZSZWFlT1Uvc3Fwd1k0a09BVkppaHQ3K3U1b2VSK2VPcWp0Z25tNVYx?=
+ =?utf-8?B?TDdnZ29pVlEvZzE4K3pZRlYwNCs2MjIyVHNiZVNzL3ovQzNzSnY5YksxWHBE?=
+ =?utf-8?B?RjkyNldTcHF4cmdMMUd5aGRndktjRTBFNjgyb0MwcUwxQmpnUUxJTGM0Q1Nj?=
+ =?utf-8?B?aS9JaFVFaER0dFBmTUZuVWZJYjdlVzZiWDk0TmlBTysyckRuc2dUMnl1K1B6?=
+ =?utf-8?B?Zkx4M1d6YVhMdndvam44NXNWc0pycm9OQ0FxRWF1bEZ6UXlWOStNNlh6bnNH?=
+ =?utf-8?B?am5wUS9yNDJEdG45UjhNdz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Rkd0cnJSSVYwazB5emtpa3hpQjF6OERBTXE5anpzbE1BVDJia3dWMnM4SW0z?=
+ =?utf-8?B?SHJicVgvOWFZaHBNcXUyYzZKUHFuSjFDUXBYZTdhTldTaG5HUU1zTGoxNFdL?=
+ =?utf-8?B?bERDTWJiUWRpQWhyeVBuQ2RZYTJld1BuWmtVTWxMQmdSMWRwWmxzM0E5S3Q4?=
+ =?utf-8?B?d0FqY1ovNHhhZXkyTXNmNVNZa3dNaytINlFVMCt1M2E3VlYwWWhBNHpWaEZH?=
+ =?utf-8?B?VEo1OTRNSWxWdlBRa2U0YVBGMEIramovaHdiVTZCV3grYjlGSGl1aXM0V2dw?=
+ =?utf-8?B?d1R6NG84bmV5cElaWHd3MjIrNlNFYnNmTmdDbXcwaGhPeVQ4VlRZRDRRdG1F?=
+ =?utf-8?B?YjBPNXcwMzlxRG9INVhRVm5ldFBLTW1vSVJmY096a1NSM0E4cFdycXB2emw1?=
+ =?utf-8?B?NHdhZXZySlFZa2ZVdWZWZk1kWFA2eHR6ZmZTTVp1WW5pZDd2VGVMUUZwU0Vk?=
+ =?utf-8?B?TXNxc1hjK0JJQzI5Q0xNZmpqQjBMSDI5UmJqQmt2Y2NTQjBnSXQ2TldlMEdR?=
+ =?utf-8?B?clZwNEN3dk05VndpejE2Vzc2Y0kwenpsVVk3eG4yaDN3NENVL0ZaMG1MQVYv?=
+ =?utf-8?B?T3pxcDQ5S3QyR3gyaGRUWGhjcU1mMzRXV0pjQnptYXdjemJTdkVDRmlZK0ln?=
+ =?utf-8?B?QnhWU3RlWnJuU21BYzg0M0hIUVhkSW9ZK2dpVVdyYWRBcHlNZDN0aytsMUNK?=
+ =?utf-8?B?ZTdVU1JVV3VjUW1od1pmK1dWUy9TeWdpOWJyUmpoNkNtSUoxWE9KNktBVHNH?=
+ =?utf-8?B?QVpKWVl0Vkl1UXgyOEhsMXlqb2R2K1BJMDdpY3JobDl4bk00aGNLLzUxaUZ2?=
+ =?utf-8?B?Y09rU216ZHJjeFkzdzkvQ0FHOFF5Vnl6RExEZ2ZVYkg2UzBkb29Sd2dmYTJk?=
+ =?utf-8?B?VC9zaCtvS0p5MnlaU1ZHTXAzY2NpOUZobW9VT3YvUW5MN3BWcGE3VFUrQkEz?=
+ =?utf-8?B?S1A1NHkvTmtkN2syc1hrRVp5UkJuRElKc1FqejErVkVhMkNUWjhkcGd2NjhL?=
+ =?utf-8?B?VGdtZUdEY3R1d1NHVVB2S2JRWjNxanhFNmRMM3pLS0lyUnM5NTZxWE44a1lE?=
+ =?utf-8?B?OWhpbk9PUVVobVA3ejVTYlJ4cTgreVBaeXJjRmlaSjM0YUc0Q0RhRm9MZ3dC?=
+ =?utf-8?B?MnZlakxBbWc0QXlMdEVpSndSVHBGY2NwN2tlNW0zdDFZcE13S1NReStiNWda?=
+ =?utf-8?B?WnoyT3RZdC9VYzNxZ1NUM1ByNEVGM3cxYVFqVnhLNVhYOW1vdk15WWd1Z2wv?=
+ =?utf-8?B?Rkc2R3NURXY5MHZGNmV5WllFRk5hMjJmQXpaTUdlbmZrNm1HZnRVYW5LbGVy?=
+ =?utf-8?B?WEUvRVN3dHV4ajRyWi9SbC94L1VMTXVuTThwa0JDZzFUZjhkTGNlaDEvQlZV?=
+ =?utf-8?B?WEt4aE5vS2p3VGs4NlBNdEVsaHdGYVBPbmhFNjkvTTVIcXBaZHFXRk5RUGJE?=
+ =?utf-8?B?MkxQQi83S0Vodm1VemxWM2hsWmViRytxOGRSMElIMDlEYnkvZ0x1WmFCTGpH?=
+ =?utf-8?B?ODlJRlZQazl6SGx3MXpYb083bVVhRVpIaE9jUUM0MXI0cE1pcWxyNTVjQU5F?=
+ =?utf-8?B?SFEyR2Rjd1VBZWhEeGRURDFZQjYraHU4MG5WVUQwWGZjdkhNQWEwLy9PaGFN?=
+ =?utf-8?B?V0VoUnY5ZW83c1ZEd3pjNzYrK2p0ZVZqZ04xczRXeDRyWEZncnZKdnRzZ3BH?=
+ =?utf-8?B?YzZVUmZLWGJIM0RBdmdUWUlmUmhyNk5WTy9qREtJaUpJZU42bnZKSExUdklm?=
+ =?utf-8?B?TFZHNTNiZzAxZUIyL0FkWHdsdVl3bU1UZGwwQ0pZV2hkT0hCVkNuKzlUYXZ3?=
+ =?utf-8?B?NWZjZTZGYTR5NnNFTGhKbjJkcWt2bW0zNFNHeWZoQkhJRXRYbDJVZzhMWGFR?=
+ =?utf-8?B?aHRKbjFWMTNQVkJJVWU2bW5uUjlMMVN5a3l3TmF5UHV1cGlyK1NHeW1LV21q?=
+ =?utf-8?B?ZGlSOXZRb002REhmbXlRQm90NnJVWXdZaHMrRW5lNnlKa0xLNXI3TjFDYkty?=
+ =?utf-8?B?QzE0T3RpRHk5ODBZTDFySWtTUWZJQko1UTNwN3J5QWI3eDVKZlB4OE5aVGNX?=
+ =?utf-8?B?Q3dJS1RuZGs1eXZTTHpFUlllR21ab2xwRHF1ZlpnUGlzY2ppSXBHUUw5M3pB?=
+ =?utf-8?B?M3ZPWmNsKzVaNk1GdGZNdFUzbWVQNFVEM1JHQWtHaUwyVlZRUThaaW9saGNQ?=
+ =?utf-8?Q?6jJCA8EjZzLtPGGC5mxQ3hU=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cfcfd59a-f91b-4cc3-1b85-08dd72bc150e
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2025 14:30:29.5027
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1BgZLm+N0kkCLUFTEsSAqXFkbNO7SiyMfCwkON97RaMLRZVCJVOIuvkhvlEgJF4ZDWqGto4uPMapQ48Y0/wLYHAFkJVtFspAIFIpkfxNco0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7549
 
-On 03.04.25 16:18, Halil Pasic wrote:
-> On Wed,  2 Apr 2025 22:36:21 +0200
-> David Hildenbrand <david@redhat.com> wrote:
-> 
->> If we finds a vq without a name in our input array in
->> virtio_ccw_find_vqs(), we treat it as "non-existing" and set the vq pointer
->> to NULL; we will not call virtio_ccw_setup_vq() to allocate/setup a vq.
+On 4/3/2025 3:15 PM, Guenter Roeck wrote:
+> On 4/3/25 03:15, Ciprian Costea wrote:
+>> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
 >>
->> Consequently, we create only a queue if it actually exists (name != NULL)
->> and assign an incremental queue index to each such existing queue.
-> 
-> First and foremost: thank you for addressing this! I have to admit, I'm
-> still plagued by some cognitive dissonance here. Please bear with me.
-> 
-> For starters the commit message of a229989d975e ("virtio: don't
-> allocate vqs when names[i] = NULL") goes like this:
-> """
->      virtio: don't allocate vqs when names[i] = NULL
->      
->      Some vqs may not need to be allocated when their related feature bits
->      are disabled. So callers may pass in such vqs with "names = NULL".
->      Then we skip such vq allocations.
-> """
-> 
-> In my reading it does not talk about "non-existent" queues, but queues
-> that do not need to be allocated. This could make sense for something
-> like virtio-net where controlq 2N is with N being max_virtqueue_pairs.
-> 
-> I guess for the guest it could make sense to not set up some of the
-> queues initially, but those, I guess would be perfectly existent queues
-> spec-wise and we would expect the index of controlq being 2N. And the
-> queues that don't get set up initially can get set up later. At least
-> this is my naive understanding at the moment.
-> 
-> Now apparently there is a different case where queues may or may not
-> exist, but we would, for some reason like to have the non-existent
-> queues in the array, because for an other set of features negotiated
-> those queues would actually exist and occupy and index. Frankly
-> I don't fully comprehend it at the moment, but I will have another look
-> at the code and at the spec.
-> 
-> So lookign at the spec for virtio-ballon I see:
-> 
-> 
-> 
-> 5.5.2 Virtqueues
-> 
-> 0
->      inflateq
-> 1
->      deflateq
-> 2
->      statsq
-> 3
->      free_page_vq
-> 4
->      reporting_vq
-> 
-> statsq only exists if VIRTIO_BALLOON_F_STATS_VQ is set.
-> 
-> free_page_vq only exists if VIRTIO_BALLOON_F_FREE_PAGE_HINT is set.
-> 
-> reporting_vq only exists if VIRTIO_BALLOON_F_PAGE_REPORTING is set.
-> 
-> Which is IMHO weird.  I used to think about the number in front of the
-> name as the virtqueue index. But based on this patch I'm wondering if
-> that is compatible with the approach of this patch.
-> 
-> What does for example mean if we have VIRTIO_BALLOON_F_STATS_VQ not
-> offered, VIRTIO_BALLOON_F_FREE_PAGE_HINT offered but not negotiated
-> and VIRTIO_BALLOON_F_PAGE_REPORTING negotiated.
-> 
-> One reading of the things is that statq is does not exist for sure,
-> free_page_vq is a little tricky because "is set" is not precise enough,
-> and reporting_vq exists for sure. And in your reading of the spec, if
-> I understood you correctly and we assume that free_page_vq does not
-> exist, it has index 2. But I from the top of my head, I don't know why
-> interpreting the spec like it reporting_vq has index 4 and indexes 2
-> and 3 are not mapped to existing-queues would be considered wrong.
-> 
-> And even if we do want reportig_vq to have index 2, the virtio-balloon
-> code could still give us an array where reportig_vq is at index 2. Why
-> not?
-> 
-> Sorry this ended up being a very long rant. the bottom line is that, I
-> lack conceptual clarity on where the problem exactly is and how it needs
-> to be addressed. I would like to understand this properly before moving
-> forward.
-> 
-
-I would suggest you take a look at [1] I added below, and the disconnect 
-between the spec and what Linux + QEMU actually implemented.
-
-In reality (with QEMU), reporting_vq sits either on index 3 or 4, 
-depending on the existence of VIRTIO_BALLOON_F_FREE_PAGE_HINT.
-
-
-> [..]
+>> S32G2/S32G3 based boards which integrate the ina231 sensor do not have a
+>> dedicated voltage regulator.
 >>
->> There was recently a discussion [1] whether the "holes" should be
->> treated differently again, effectively assigning also non-existing
->> queues a queue index: that should also fix the issue, but requires other
->> workarounds to not break existing setups.
+>> Co-developed-by: Florin Buica <florin.buica@nxp.com>
+>> Signed-off-by: Florin Buica <florin.buica@nxp.com>
+>> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+>> ---
+>>   drivers/hwmon/ina2xx.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
 >>
+>> diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
+>> index 345fe7db9de9..ab4972f94a8c 100644
+>> --- a/drivers/hwmon/ina2xx.c
+>> +++ b/drivers/hwmon/ina2xx.c
+>> @@ -959,8 +959,8 @@ static int ina2xx_probe(struct i2c_client *client)
+>>           return PTR_ERR(data->regmap);
+>>       }
+>> -    ret = (dev, "vs");
+>> -    if (ret)
+>> +    ret = devm_regulator_get_enable_optional(dev, "vs");
 > 
-> Sorry I have to have a look at that discussion. Maybe it will answer
-> some my questions.
-
-Yes, I think so.
-
+> devm_regulator_get_enable() should provide a dummy regulator if there is
+> no explicit regulator. Why does this not work ?
 > 
->> Let's fix it without affecting existing setups for now by properly ignoring
->> the non-existing queues, so the indicator bits will match the queue
->> indexes.
+>> +    if (ret < 0 && ret != -ENODEV)
 > 
-> Just one question. My understanding is that the crux is that Linux
-> and QEMU (or the driver and the device) disagree at which index
-> reporting_vq is actually sitting. Is that right?
+> Why this added check ?
+> 
+> I know it used to be necessary if regulator support is disabled,
+> but that is no longer the case.
+> 
+> Guenter
+> 
 
-I thought I made it clear: this is only about the airq indicator bit. 
-That's where both disagree.
+Hello Guenter,
 
-Not the actual queue index (see above).
+I've just tested and devm_regulator_get_enable() does work as you've 
+described, providing a dummy regulator.
 
--- 
-Cheers,
+But, according to the 'ti,ina2xx' binding [1] I see that the `vs-supply` 
+property is not required. Hence wouldn't it be correct for `vs-supply` 
+to be optional ? Using 'devm_regulator_get_enable_optional()'
 
-David / dhildenb
+
+[1] 
+https://elixir.bootlin.com/linux/v6.13.7/source/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml#L78-L80
+
+Regards,
+Ciprian
+
+>>           return dev_err_probe(dev, ret, "failed to enable vs 
+>> regulator\n");
+>>       ret = ina2xx_init(dev, data);
+> 
 
 
