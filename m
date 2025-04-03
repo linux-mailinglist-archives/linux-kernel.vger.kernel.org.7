@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-586914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C5E7A7A54B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:37:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F482A7A558
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B25BB1888B19
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:35:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34FD3AE07F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A8424EF86;
-	Thu,  3 Apr 2025 14:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAFCF24EF9B;
+	Thu,  3 Apr 2025 14:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2bXWMuw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aR2eCKYW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB8C24EF65;
-	Thu,  3 Apr 2025 14:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9360124EF80;
+	Thu,  3 Apr 2025 14:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743690932; cv=none; b=EoQ85kzDfSbyIx568dztf0LFDVIKmOlapkRfq2T1xTe/2kWzn9hEyAo7D2rgrchb8BnorUJcSjPl25DCRPnGvPBIY0ChFEFmJGikJjVAyVeoDVTpYYQMA2MK+PJnqW33u2uQEnDc4DpcKy/6jgM2Jx9kK4mWtfVTNkAiAKC0Nhg=
+	t=1743690933; cv=none; b=eiKaxtZO6rmZz38/HUGRTT/fgcD5ov38zD6AJPsp0HGvyV/3eJ4vGCI5QG43acHk/2JCaCtIE9MUGpAZltniIuhkPK5DbnjyJiyabFhE1GBP1D90LLa0sxMSq8mLyjkXRiyUSl6JUlKSx6nOT92RTJRh3TOrX2TcLgipCUOhSmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743690932; c=relaxed/simple;
-	bh=dMClsw2AJio5KjDc2EyqIP58v8ggQ7YAMbyOKgPWoUY=;
+	s=arc-20240116; t=1743690933; c=relaxed/simple;
+	bh=clMVZUg7aCr+NLtc+S3LZyI+5cu7m6OvVqqIogY95n8=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=RNwiuRyKgPptEQbIp9ZWi8gCZ23rE9AIx27cmBi2zwUWywzEOYa+kd83uhntaXeixVUj/LuvMpe/JmINa9pcQks4Zy+h8gUrqSBXqE9y8OLiB21fWyQNv7Dg9DcB+r9Iv5WcrKkoC98qoTmkl2LnvON1iMuARFVAKzwLl8eOhDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2bXWMuw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6247DC4CEE5;
-	Thu,  3 Apr 2025 14:35:31 +0000 (UTC)
+	 Message-Id:Subject; b=BvpaZTZICfnHY9WcO4ilDeC+6QLLu3hrwyWQfB0ukrWyIcNIz6ZuCSbqOsvwkfAY+Mhb92n2cBZoAmnCt/zW2eobGhm6PXR+zMyw0/WzS0m26HRp/qfWEeFf1pbSYEH6wx9zc+vh/EiNpwxq1G4WIh4SR9knhyUhlSFgwbwb0a0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aR2eCKYW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E180BC4CEE7;
+	Thu,  3 Apr 2025 14:35:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743690931;
-	bh=dMClsw2AJio5KjDc2EyqIP58v8ggQ7YAMbyOKgPWoUY=;
+	s=k20201202; t=1743690933;
+	bh=clMVZUg7aCr+NLtc+S3LZyI+5cu7m6OvVqqIogY95n8=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=F2bXWMuwErTuxjye1QgtQz0W30U6wtezV5ZFdv2VC1h9sxI5Q8BB1bTBDAhRVGaer
-	 /mvsJzBL+Q/H4vyTYVpV1GIHAuBOqS8GyBkoUp5Q3UTgrX9KFqCJotP6ZBAvdCFYYy
-	 GTkim+V7wOIJJVOqRDde/g8O3UYEkUzadAbLrM6++ZrAyokJUJRdLJtGU5HR47IEbo
-	 2VeHOprQ0Siaws3FScLm60DkJ5OU3W0hSi0Se4NeyDR2EMG3GBF3TLjUsyGDdXC5VW
-	 kG4oCVOm/4lhcyIXOCua2wBld47I4s3VEqZ+rCWdi2oJFipV4iOM24JBlxurSg+Gkh
-	 JYI8leV42+d7A==
-Date: Thu, 03 Apr 2025 09:35:30 -0500
+	b=aR2eCKYWqx5ayDSWmvE0vxYepUcrgLBeCnS9cIvGjXbHgppnW4SxtTNIzXiUQan/Q
+	 VTL1hg/RJE9aTF6y5UR/rmznPWGYAc7h0MXPHjaK2yzCU0sxOk5220aGMqE+6VJy0V
+	 ZuM2bSXzWTdE1DRgNymiy9VL5Yf8qB3QA2cmok7vlU88OmoyOKg4VdLE/Qm4jITOAF
+	 odaeVsQMRDt5a7Dk3e6jsE5eGmM/IjSg7/Z/lh2elUV+jJvYA3R07dWz6VsestSlcG
+	 MR4mKg949sC8PniPeFnAc72TiYKyE12tAcL5oPeHQ5AXefSc+ScyD1oIJIhWoKElps
+	 ljIVpTMqORryw==
+Date: Thu, 03 Apr 2025 09:35:31 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,82 +50,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Abel Vesa <abel.vesa@linaro.org>, Maxime Ripard <mripard@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Simona Vetter <simona@ffwll.ch>, 
- Thomas Zimmermann <tzimmermann@suse.de>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Douglas Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, 
- linux-arm-msm@vger.kernel.org, Rui Miguel Silva <rui.silva@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Johan Hovold <johan@kernel.org>, devicetree@vger.kernel.org, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org
-To: Christopher Obbard <christopher.obbard@linaro.org>
-In-Reply-To: <20250402-wip-obbardc-qcom-t14s-oled-panel-v5-0-ff33f4d0020f@linaro.org>
-References: <20250402-wip-obbardc-qcom-t14s-oled-panel-v5-0-ff33f4d0020f@linaro.org>
-Message-Id: <174369066305.2789458.14506142357884994907.robh@kernel.org>
-Subject: Re: [PATCH v5 0/3] Add support for OLED panel used on Snapdragon
- Lenovo T14s Gen6
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ mtk29348 <Bo.Kong@mediatek.com>, linux-kernel@vger.kernel.org, 
+ linux-media@vger.kernel.org, Teddy.Chen@mediatek.com, 
+ Project_Global_Chrome_Upstream_Group@mediatek.com, 
+ zhaoyuan.chen@mediatek.com, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+To: "bo.kong" <bo.kong@mediatek.com>
+In-Reply-To: <20250403074005.21472-1-bo.kong@mediatek.com>
+References: <20250403074005.21472-1-bo.kong@mediatek.com>
+Message-Id: <174369066367.2789561.14328496849433879876.robh@kernel.org>
+Subject: Re: [PATCH v5 0/4] Add AIE driver support for mt8188
 
 
-On Wed, 02 Apr 2025 15:36:31 +0100, Christopher Obbard wrote:
-> The Snapdragon Lenovo T14s Gen6 can be bought with a number of different
-> panels. This patch series adds support for the OLED model which has a
-> Samsung ATNA40YK20 panel.
+On Thu, 03 Apr 2025 15:38:32 +0800, bo.kong wrote:
+> From: Bo Kong <Bo.Kong@mediatek.com>
 > 
-> With this patch series the backlight of the OLED eDP panel does not
-> illuminate since the brightness is incorrectly read from the eDP panel
-> as (to be clear this is not a regression). This is fixed in [0].
+> AIE(AI Engine) is one of the units in mt8188 ISP which provides hardware accelerated face detection function, it can detect different sizes of faces in a raw image.
 > 
-> [0]: https://lore.kernel.org/all/20250330-wip-obbardc-qcom-t14s-oled-panel-brightness-v6-1-84ad1cd1078a@linaro.org/
+> Bo Kong (4):
+>   media: dt-bindings: add MT8188 AIE
+>   arm64: dts: mt8188: add aie node
+>   uapi: linux: add MT8188 AIE
+>   media: mediatek: add MT8188 AIE driver
 > 
-> Signed-off-by: Christopher Obbard <christopher.obbard@linaro.org>
-> ---
-> Changes in v5:
-> - Move edp_hpd_active from T14s DTS into SoC DTSI (Dmitry).
-> - Link to v4: https://lore.kernel.org/r/20250402-wip-obbardc-qcom-t14s-oled-panel-v4-0-41ba3f3739d0@linaro.org
+>  .../bindings/media/mediatek,mt8188-aie.yaml   |   78 +
+>  arch/arm64/boot/dts/mediatek/mt8188.dtsi      |   33 +
+>  drivers/media/platform/mediatek/Kconfig       |    1 +
+>  drivers/media/platform/mediatek/Makefile      |    1 +
+>  drivers/media/platform/mediatek/aie/Kconfig   |   12 +
+>  drivers/media/platform/mediatek/aie/Makefile  |    5 +
+>  drivers/media/platform/mediatek/aie/mtk_aie.h |  870 ++++++
+>  .../media/platform/mediatek/aie/mtk_aie_drv.c | 2398 +++++++++++++++++
+>  .../platform/mediatek/aie/mtk_aie_v4l2.c      | 1295 +++++++++
+>  drivers/media/v4l2-core/v4l2-ioctl.c          |    3 +
+>  include/uapi/linux/mtk_aie_v4l2_controls.h    |  308 +++
+>  include/uapi/linux/videodev2.h                |    6 +
+>  12 files changed, 5010 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/mediatek,mt8188-aie.yaml
+>  create mode 100644 drivers/media/platform/mediatek/aie/Kconfig
+>  create mode 100644 drivers/media/platform/mediatek/aie/Makefile
+>  create mode 100644 drivers/media/platform/mediatek/aie/mtk_aie.h
+>  create mode 100644 drivers/media/platform/mediatek/aie/mtk_aie_drv.c
+>  create mode 100644 drivers/media/platform/mediatek/aie/mtk_aie_v4l2.c
+>  create mode 100644 include/uapi/linux/mtk_aie_v4l2_controls.h
 > 
-> Changes in v4:
-> - Rework HPD GPIO into eDP device rather than panel (Johan).
-> - Drop review tags for HPD GPIO patch.
-> - Link to v3: https://lore.kernel.org/r/20250327-wip-obbardc-qcom-t14s-oled-panel-v3-0-45d5f2747398@linaro.org
-> 
-> Changes in v3:
-> - Added review trailers from v2.
-> - Dropped dt-binding documentation patch (applied by Douglas Anderson into
->   drm-misc-next).
-> - Dropped eDP maximum brightness patch (will be sent in separate
->   series).
-> - Removed duplicate nodes in T14s OLED device tree.
-> - Reworked WIP comments from commit messages.
-> - Link to v2: https://lore.kernel.org/r/20250325-wip-obbardc-qcom-t14s-oled-panel-v2-0-e9bc7c9d30cc@linaro.org
-> 
-> Changes in v2:
-> - Use the existing atna33xc20 driver rather than panel-edp.
-> - Add eDP panel into OLED devicetree.
-> - Add patch to read the correct maximum brightness from the eDP panel.
-> - Link to v1: https://lore.kernel.org/r/20250320-wip-obbardc-qcom-t14s-oled-panel-v1-1-05bc4bdcd82a@linaro.org
-> 
-> ---
-> Christopher Obbard (3):
->       arm64: dts: qcom: x1e80100: add epd hpd pinctrl
->       arm64: dts: qcom: x1e78100-t14s: add hpd gpio to dp controller
->       arm64: dts: qcom: x1e78100-t14s-oled: add edp panel
-> 
->  arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts | 8 ++++++++
->  arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi     | 3 +++
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi                          | 5 +++++
->  3 files changed, 16 insertions(+)
-> ---
-> base-commit: b6ae34803e82511009e2b78dc4fd154330ecdc2d
-> change-id: 20250320-wip-obbardc-qcom-t14s-oled-panel-b74fed21d600
-> 
-> Best regards,
 > --
-> Christopher Obbard <christopher.obbard@linaro.org>
+> 2.45.2
 > 
 > 
 > 
@@ -146,79 +118,176 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: using specified base-commit b6ae34803e82511009e2b78dc4fd154330ecdc2d
+ Base: attempting to guess base-commit...
+ Base: tags/next-20250403 (exact match)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250402-wip-obbardc-qcom-t14s-oled-panel-v5-0-ff33f4d0020f@linaro.org:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/mediatek/' for 20250403074005.21472-1-bo.kong@mediatek.com:
 
-arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dtb: panel: compatible: 'oneOf' conditional failed, one must be fixed:
-	['samsung,atna40yk20', 'samsung,atna33xc20'] is too long
-	'samsung,atna33xc20' was expected
-	'samsung,atna40yk20' is not one of ['samsung,atna45af01', 'samsung,atna45dc02', 'samsung,atna56ac03']
-	from schema $id: http://devicetree.org/schemas/display/panel/samsung,atna33xc20.yaml#
-arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dtb: /soc@0/display-subsystem@ae00000/displayport-controller@aea0000/aux-bus/panel: failed to match any schema with compatible: ['samsung,atna40yk20', 'samsung,atna33xc20']
-arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dtb: pinctrl@f100000: edp-hpd-active-state: 'oneOf' conditional failed, one must be fixed:
-	'function', 'pins' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
-	'edp_hot' is not one of ['aon_cci', 'aoss_cti', 'atest_char', 'atest_char0', 'atest_char1', 'atest_char2', 'atest_char3', 'atest_usb', 'audio_ext', 'audio_ref', 'cam_aon', 'cam_mclk', 'cci_async', 'cci_i2c', 'cci_timer0', 'cci_timer1', 'cci_timer2', 'cci_timer3', 'cci_timer4', 'cmu_rng0', 'cmu_rng1', 'cmu_rng2', 'cmu_rng3', 'cri_trng', 'dbg_out', 'ddr_bist', 'ddr_pxi0', 'ddr_pxi1', 'ddr_pxi2', 'ddr_pxi3', 'ddr_pxi4', 'ddr_pxi5', 'ddr_pxi6', 'ddr_pxi7', 'edp0_hot', 'edp0_lcd', 'edp1_hot', 'edp1_lcd', 'eusb0_ac', 'eusb1_ac', 'eusb2_ac', 'eusb3_ac', 'eusb5_ac', 'eusb6_ac', 'gcc_gp1', 'gcc_gp2', 'gcc_gp3', 'gpio', 'i2s0_data0', 'i2s0_data1', 'i2s0_sck', 'i2s0_ws', 'i2s1_data0', 'i2s1_data1', 'i2s1_sck', 'i2s1_ws', 'ibi_i3c', 'jitter_bist', 'mdp_vsync0', 'mdp_vsync1', 'mdp_vsync2', 'mdp_vsync3', 'mdp_vsync4', 'mdp_vsync5', 'mdp_vsync6', 'mdp_vsync7', 'mdp_vsync8', 'pcie3_clk', 'pcie4_clk', 'pcie5_clk', 'pcie6a_clk', 'pcie6b_clk', 'phase_flag', 'pll_bist', 'pll_clk', 'prng_rosc0', 'prng_r
- osc1', 'prng_rosc2', 'prng_rosc3', 'qdss_cti', 'qdss_gpio', 'qspi00', 'qspi01', 'qspi02', 'qspi03', 'qspi0_clk', 'qspi0_cs0', 'qspi0_cs1', 'qup0_se0', 'qup0_se1', 'qup0_se2', 'qup0_se3', 'qup0_se4', 'qup0_se5', 'qup0_se6', 'qup0_se7', 'qup1_se0', 'qup1_se1', 'qup1_se2', 'qup1_se3', 'qup1_se4', 'qup1_se5', 'qup1_se6', 'qup1_se7', 'qup2_se0', 'qup2_se1', 'qup2_se2', 'qup2_se3', 'qup2_se4', 'qup2_se5', 'qup2_se6', 'qup2_se7', 'sd_write', 'sdc4_clk', 'sdc4_cmd', 'sdc4_data0', 'sdc4_data1', 'sdc4_data2', 'sdc4_data3', 'sys_throttle', 'tb_trig', 'tgu_ch0', 'tgu_ch1', 'tgu_ch2', 'tgu_ch3', 'tgu_ch4', 'tgu_ch5', 'tgu_ch6', 'tgu_ch7', 'tmess_prng0', 'tmess_prng1', 'tmess_prng2', 'tmess_prng3', 'tsense_pwm1', 'tsense_pwm2', 'sense_pwm3', 'tsense_pwm4', 'usb0_dp', 'usb0_phy', 'usb0_sbrx', 'usb0_sbtx', 'usb1_dp', 'usb1_phy', 'usb1_sbrx', 'usb1_sbtx', 'usb2_dp', 'usb2_phy', 'usb2_sbrx', 'usb2_sbtx', 'vsense_trigger']
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,x1e80100-tlmm.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dtb: pinctrl@f100000: edp-hpd-active-state: 'oneOf' conditional failed, one must be fixed:
-	'function', 'pins' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
-	'edp_hot' is not one of ['aon_cci', 'aoss_cti', 'atest_char', 'atest_char0', 'atest_char1', 'atest_char2', 'atest_char3', 'atest_usb', 'audio_ext', 'audio_ref', 'cam_aon', 'cam_mclk', 'cci_async', 'cci_i2c', 'cci_timer0', 'cci_timer1', 'cci_timer2', 'cci_timer3', 'cci_timer4', 'cmu_rng0', 'cmu_rng1', 'cmu_rng2', 'cmu_rng3', 'cri_trng', 'dbg_out', 'ddr_bist', 'ddr_pxi0', 'ddr_pxi1', 'ddr_pxi2', 'ddr_pxi3', 'ddr_pxi4', 'ddr_pxi5', 'ddr_pxi6', 'ddr_pxi7', 'edp0_hot', 'edp0_lcd', 'edp1_hot', 'edp1_lcd', 'eusb0_ac', 'eusb1_ac', 'eusb2_ac', 'eusb3_ac', 'eusb5_ac', 'eusb6_ac', 'gcc_gp1', 'gcc_gp2', 'gcc_gp3', 'gpio', 'i2s0_data0', 'i2s0_data1', 'i2s0_sck', 'i2s0_ws', 'i2s1_data0', 'i2s1_data1', 'i2s1_sck', 'i2s1_ws', 'ibi_i3c', 'jitter_bist', 'mdp_vsync0', 'mdp_vsync1', 'mdp_vsync2', 'mdp_vsync3', 'mdp_vsync4', 'mdp_vsync5', 'mdp_vsync6', 'mdp_vsync7', 'mdp_vsync8', 'pcie3_clk', 'pcie4_clk', 'pcie5_clk', 'pcie6a_clk', 'pcie6b_clk', 'phase_flag', 'pll_bist', 'pll_clk', 'prng_rosc0', 'prng_r
- osc1', 'prng_rosc2', 'prng_rosc3', 'qdss_cti', 'qdss_gpio', 'qspi00', 'qspi01', 'qspi02', 'qspi03', 'qspi0_clk', 'qspi0_cs0', 'qspi0_cs1', 'qup0_se0', 'qup0_se1', 'qup0_se2', 'qup0_se3', 'qup0_se4', 'qup0_se5', 'qup0_se6', 'qup0_se7', 'qup1_se0', 'qup1_se1', 'qup1_se2', 'qup1_se3', 'qup1_se4', 'qup1_se5', 'qup1_se6', 'qup1_se7', 'qup2_se0', 'qup2_se1', 'qup2_se2', 'qup2_se3', 'qup2_se4', 'qup2_se5', 'qup2_se6', 'qup2_se7', 'sd_write', 'sdc4_clk', 'sdc4_cmd', 'sdc4_data0', 'sdc4_data1', 'sdc4_data2', 'sdc4_data3', 'sys_throttle', 'tb_trig', 'tgu_ch0', 'tgu_ch1', 'tgu_ch2', 'tgu_ch3', 'tgu_ch4', 'tgu_ch5', 'tgu_ch6', 'tgu_ch7', 'tmess_prng0', 'tmess_prng1', 'tmess_prng2', 'tmess_prng3', 'tsense_pwm1', 'tsense_pwm2', 'sense_pwm3', 'tsense_pwm4', 'usb0_dp', 'usb0_phy', 'usb0_sbrx', 'usb0_sbtx', 'usb1_dp', 'usb1_phy', 'usb1_sbrx', 'usb1_sbtx', 'usb2_dp', 'usb2_phy', 'usb2_sbrx', 'usb2_sbtx', 'vsense_trigger']
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,x1e80100-tlmm.yaml#
-arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dtb: pinctrl@f100000: edp-hpd-active-state: 'oneOf' conditional failed, one must be fixed:
-	'function', 'pins' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
-	'edp_hot' is not one of ['aon_cci', 'aoss_cti', 'atest_char', 'atest_char0', 'atest_char1', 'atest_char2', 'atest_char3', 'atest_usb', 'audio_ext', 'audio_ref', 'cam_aon', 'cam_mclk', 'cci_async', 'cci_i2c', 'cci_timer0', 'cci_timer1', 'cci_timer2', 'cci_timer3', 'cci_timer4', 'cmu_rng0', 'cmu_rng1', 'cmu_rng2', 'cmu_rng3', 'cri_trng', 'dbg_out', 'ddr_bist', 'ddr_pxi0', 'ddr_pxi1', 'ddr_pxi2', 'ddr_pxi3', 'ddr_pxi4', 'ddr_pxi5', 'ddr_pxi6', 'ddr_pxi7', 'edp0_hot', 'edp0_lcd', 'edp1_hot', 'edp1_lcd', 'eusb0_ac', 'eusb1_ac', 'eusb2_ac', 'eusb3_ac', 'eusb5_ac', 'eusb6_ac', 'gcc_gp1', 'gcc_gp2', 'gcc_gp3', 'gpio', 'i2s0_data0', 'i2s0_data1', 'i2s0_sck', 'i2s0_ws', 'i2s1_data0', 'i2s1_data1', 'i2s1_sck', 'i2s1_ws', 'ibi_i3c', 'jitter_bist', 'mdp_vsync0', 'mdp_vsync1', 'mdp_vsync2', 'mdp_vsync3', 'mdp_vsync4', 'mdp_vsync5', 'mdp_vsync6', 'mdp_vsync7', 'mdp_vsync8', 'pcie3_clk', 'pcie4_clk', 'pcie5_clk', 'pcie6a_clk', 'pcie6b_clk', 'phase_flag', 'pll_bist', 'pll_clk', 'prng_rosc0', 'prng_r
- osc1', 'prng_rosc2', 'prng_rosc3', 'qdss_cti', 'qdss_gpio', 'qspi00', 'qspi01', 'qspi02', 'qspi03', 'qspi0_clk', 'qspi0_cs0', 'qspi0_cs1', 'qup0_se0', 'qup0_se1', 'qup0_se2', 'qup0_se3', 'qup0_se4', 'qup0_se5', 'qup0_se6', 'qup0_se7', 'qup1_se0', 'qup1_se1', 'qup1_se2', 'qup1_se3', 'qup1_se4', 'qup1_se5', 'qup1_se6', 'qup1_se7', 'qup2_se0', 'qup2_se1', 'qup2_se2', 'qup2_se3', 'qup2_se4', 'qup2_se5', 'qup2_se6', 'qup2_se7', 'sd_write', 'sdc4_clk', 'sdc4_cmd', 'sdc4_data0', 'sdc4_data1', 'sdc4_data2', 'sdc4_data3', 'sys_throttle', 'tb_trig', 'tgu_ch0', 'tgu_ch1', 'tgu_ch2', 'tgu_ch3', 'tgu_ch4', 'tgu_ch5', 'tgu_ch6', 'tgu_ch7', 'tmess_prng0', 'tmess_prng1', 'tmess_prng2', 'tmess_prng3', 'tsense_pwm1', 'tsense_pwm2', 'sense_pwm3', 'tsense_pwm4', 'usb0_dp', 'usb0_phy', 'usb0_sbrx', 'usb0_sbtx', 'usb1_dp', 'usb1_phy', 'usb1_sbrx', 'usb1_sbtx', 'usb2_dp', 'usb2_phy', 'usb2_sbrx', 'usb2_sbtx', 'vsense_trigger']
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,x1e80100-tlmm.yaml#
-arch/arm64/boot/dts/qcom/x1p42100-crd.dtb: pinctrl@f100000: edp-hpd-active-state: 'oneOf' conditional failed, one must be fixed:
-	'function', 'pins' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
-	'edp_hot' is not one of ['aon_cci', 'aoss_cti', 'atest_char', 'atest_char0', 'atest_char1', 'atest_char2', 'atest_char3', 'atest_usb', 'audio_ext', 'audio_ref', 'cam_aon', 'cam_mclk', 'cci_async', 'cci_i2c', 'cci_timer0', 'cci_timer1', 'cci_timer2', 'cci_timer3', 'cci_timer4', 'cmu_rng0', 'cmu_rng1', 'cmu_rng2', 'cmu_rng3', 'cri_trng', 'dbg_out', 'ddr_bist', 'ddr_pxi0', 'ddr_pxi1', 'ddr_pxi2', 'ddr_pxi3', 'ddr_pxi4', 'ddr_pxi5', 'ddr_pxi6', 'ddr_pxi7', 'edp0_hot', 'edp0_lcd', 'edp1_hot', 'edp1_lcd', 'eusb0_ac', 'eusb1_ac', 'eusb2_ac', 'eusb3_ac', 'eusb5_ac', 'eusb6_ac', 'gcc_gp1', 'gcc_gp2', 'gcc_gp3', 'gpio', 'i2s0_data0', 'i2s0_data1', 'i2s0_sck', 'i2s0_ws', 'i2s1_data0', 'i2s1_data1', 'i2s1_sck', 'i2s1_ws', 'ibi_i3c', 'jitter_bist', 'mdp_vsync0', 'mdp_vsync1', 'mdp_vsync2', 'mdp_vsync3', 'mdp_vsync4', 'mdp_vsync5', 'mdp_vsync6', 'mdp_vsync7', 'mdp_vsync8', 'pcie3_clk', 'pcie4_clk', 'pcie5_clk', 'pcie6a_clk', 'pcie6b_clk', 'phase_flag', 'pll_bist', 'pll_clk', 'prng_rosc0', 'prng_r
- osc1', 'prng_rosc2', 'prng_rosc3', 'qdss_cti', 'qdss_gpio', 'qspi00', 'qspi01', 'qspi02', 'qspi03', 'qspi0_clk', 'qspi0_cs0', 'qspi0_cs1', 'qup0_se0', 'qup0_se1', 'qup0_se2', 'qup0_se3', 'qup0_se4', 'qup0_se5', 'qup0_se6', 'qup0_se7', 'qup1_se0', 'qup1_se1', 'qup1_se2', 'qup1_se3', 'qup1_se4', 'qup1_se5', 'qup1_se6', 'qup1_se7', 'qup2_se0', 'qup2_se1', 'qup2_se2', 'qup2_se3', 'qup2_se4', 'qup2_se5', 'qup2_se6', 'qup2_se7', 'sd_write', 'sdc4_clk', 'sdc4_cmd', 'sdc4_data0', 'sdc4_data1', 'sdc4_data2', 'sdc4_data3', 'sys_throttle', 'tb_trig', 'tgu_ch0', 'tgu_ch1', 'tgu_ch2', 'tgu_ch3', 'tgu_ch4', 'tgu_ch5', 'tgu_ch6', 'tgu_ch7', 'tmess_prng0', 'tmess_prng1', 'tmess_prng2', 'tmess_prng3', 'tsense_pwm1', 'tsense_pwm2', 'sense_pwm3', 'tsense_pwm4', 'usb0_dp', 'usb0_phy', 'usb0_sbrx', 'usb0_sbtx', 'usb1_dp', 'usb1_phy', 'usb1_sbrx', 'usb1_sbtx', 'usb2_dp', 'usb2_phy', 'usb2_sbrx', 'usb2_sbtx', 'vsense_trigger']
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,x1e80100-tlmm.yaml#
-arch/arm64/boot/dts/qcom/x1e001de-devkit.dtb: pinctrl@f100000: edp-hpd-active-state: 'oneOf' conditional failed, one must be fixed:
-	'function', 'pins' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
-	'edp_hot' is not one of ['aon_cci', 'aoss_cti', 'atest_char', 'atest_char0', 'atest_char1', 'atest_char2', 'atest_char3', 'atest_usb', 'audio_ext', 'audio_ref', 'cam_aon', 'cam_mclk', 'cci_async', 'cci_i2c', 'cci_timer0', 'cci_timer1', 'cci_timer2', 'cci_timer3', 'cci_timer4', 'cmu_rng0', 'cmu_rng1', 'cmu_rng2', 'cmu_rng3', 'cri_trng', 'dbg_out', 'ddr_bist', 'ddr_pxi0', 'ddr_pxi1', 'ddr_pxi2', 'ddr_pxi3', 'ddr_pxi4', 'ddr_pxi5', 'ddr_pxi6', 'ddr_pxi7', 'edp0_hot', 'edp0_lcd', 'edp1_hot', 'edp1_lcd', 'eusb0_ac', 'eusb1_ac', 'eusb2_ac', 'eusb3_ac', 'eusb5_ac', 'eusb6_ac', 'gcc_gp1', 'gcc_gp2', 'gcc_gp3', 'gpio', 'i2s0_data0', 'i2s0_data1', 'i2s0_sck', 'i2s0_ws', 'i2s1_data0', 'i2s1_data1', 'i2s1_sck', 'i2s1_ws', 'ibi_i3c', 'jitter_bist', 'mdp_vsync0', 'mdp_vsync1', 'mdp_vsync2', 'mdp_vsync3', 'mdp_vsync4', 'mdp_vsync5', 'mdp_vsync6', 'mdp_vsync7', 'mdp_vsync8', 'pcie3_clk', 'pcie4_clk', 'pcie5_clk', 'pcie6a_clk', 'pcie6b_clk', 'phase_flag', 'pll_bist', 'pll_clk', 'prng_rosc0', 'prng_r
- osc1', 'prng_rosc2', 'prng_rosc3', 'qdss_cti', 'qdss_gpio', 'qspi00', 'qspi01', 'qspi02', 'qspi03', 'qspi0_clk', 'qspi0_cs0', 'qspi0_cs1', 'qup0_se0', 'qup0_se1', 'qup0_se2', 'qup0_se3', 'qup0_se4', 'qup0_se5', 'qup0_se6', 'qup0_se7', 'qup1_se0', 'qup1_se1', 'qup1_se2', 'qup1_se3', 'qup1_se4', 'qup1_se5', 'qup1_se6', 'qup1_se7', 'qup2_se0', 'qup2_se1', 'qup2_se2', 'qup2_se3', 'qup2_se4', 'qup2_se5', 'qup2_se6', 'qup2_se7', 'sd_write', 'sdc4_clk', 'sdc4_cmd', 'sdc4_data0', 'sdc4_data1', 'sdc4_data2', 'sdc4_data3', 'sys_throttle', 'tb_trig', 'tgu_ch0', 'tgu_ch1', 'tgu_ch2', 'tgu_ch3', 'tgu_ch4', 'tgu_ch5', 'tgu_ch6', 'tgu_ch7', 'tmess_prng0', 'tmess_prng1', 'tmess_prng2', 'tmess_prng3', 'tsense_pwm1', 'tsense_pwm2', 'sense_pwm3', 'tsense_pwm4', 'usb0_dp', 'usb0_phy', 'usb0_sbrx', 'usb0_sbtx', 'usb1_dp', 'usb1_phy', 'usb1_sbrx', 'usb1_sbtx', 'usb2_dp', 'usb2_phy', 'usb2_sbrx', 'usb2_sbtx', 'vsense_trigger']
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,x1e80100-tlmm.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dtb: pinctrl@f100000: edp-hpd-active-state: 'oneOf' conditional failed, one must be fixed:
-	'function', 'pins' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
-	'edp_hot' is not one of ['aon_cci', 'aoss_cti', 'atest_char', 'atest_char0', 'atest_char1', 'atest_char2', 'atest_char3', 'atest_usb', 'audio_ext', 'audio_ref', 'cam_aon', 'cam_mclk', 'cci_async', 'cci_i2c', 'cci_timer0', 'cci_timer1', 'cci_timer2', 'cci_timer3', 'cci_timer4', 'cmu_rng0', 'cmu_rng1', 'cmu_rng2', 'cmu_rng3', 'cri_trng', 'dbg_out', 'ddr_bist', 'ddr_pxi0', 'ddr_pxi1', 'ddr_pxi2', 'ddr_pxi3', 'ddr_pxi4', 'ddr_pxi5', 'ddr_pxi6', 'ddr_pxi7', 'edp0_hot', 'edp0_lcd', 'edp1_hot', 'edp1_lcd', 'eusb0_ac', 'eusb1_ac', 'eusb2_ac', 'eusb3_ac', 'eusb5_ac', 'eusb6_ac', 'gcc_gp1', 'gcc_gp2', 'gcc_gp3', 'gpio', 'i2s0_data0', 'i2s0_data1', 'i2s0_sck', 'i2s0_ws', 'i2s1_data0', 'i2s1_data1', 'i2s1_sck', 'i2s1_ws', 'ibi_i3c', 'jitter_bist', 'mdp_vsync0', 'mdp_vsync1', 'mdp_vsync2', 'mdp_vsync3', 'mdp_vsync4', 'mdp_vsync5', 'mdp_vsync6', 'mdp_vsync7', 'mdp_vsync8', 'pcie3_clk', 'pcie4_clk', 'pcie5_clk', 'pcie6a_clk', 'pcie6b_clk', 'phase_flag', 'pll_bist', 'pll_clk', 'prng_rosc0', 'prng_r
- osc1', 'prng_rosc2', 'prng_rosc3', 'qdss_cti', 'qdss_gpio', 'qspi00', 'qspi01', 'qspi02', 'qspi03', 'qspi0_clk', 'qspi0_cs0', 'qspi0_cs1', 'qup0_se0', 'qup0_se1', 'qup0_se2', 'qup0_se3', 'qup0_se4', 'qup0_se5', 'qup0_se6', 'qup0_se7', 'qup1_se0', 'qup1_se1', 'qup1_se2', 'qup1_se3', 'qup1_se4', 'qup1_se5', 'qup1_se6', 'qup1_se7', 'qup2_se0', 'qup2_se1', 'qup2_se2', 'qup2_se3', 'qup2_se4', 'qup2_se5', 'qup2_se6', 'qup2_se7', 'sd_write', 'sdc4_clk', 'sdc4_cmd', 'sdc4_data0', 'sdc4_data1', 'sdc4_data2', 'sdc4_data3', 'sys_throttle', 'tb_trig', 'tgu_ch0', 'tgu_ch1', 'tgu_ch2', 'tgu_ch3', 'tgu_ch4', 'tgu_ch5', 'tgu_ch6', 'tgu_ch7', 'tmess_prng0', 'tmess_prng1', 'tmess_prng2', 'tmess_prng3', 'tsense_pwm1', 'tsense_pwm2', 'sense_pwm3', 'tsense_pwm4', 'usb0_dp', 'usb0_phy', 'usb0_sbrx', 'usb0_sbtx', 'usb1_dp', 'usb1_phy', 'usb1_sbrx', 'usb1_sbtx', 'usb2_dp', 'usb2_phy', 'usb2_sbrx', 'usb2_sbtx', 'vsense_trigger']
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,x1e80100-tlmm.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dtb: pinctrl@f100000: edp-hpd-active-state: 'oneOf' conditional failed, one must be fixed:
-	'function', 'pins' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
-	'edp_hot' is not one of ['aon_cci', 'aoss_cti', 'atest_char', 'atest_char0', 'atest_char1', 'atest_char2', 'atest_char3', 'atest_usb', 'audio_ext', 'audio_ref', 'cam_aon', 'cam_mclk', 'cci_async', 'cci_i2c', 'cci_timer0', 'cci_timer1', 'cci_timer2', 'cci_timer3', 'cci_timer4', 'cmu_rng0', 'cmu_rng1', 'cmu_rng2', 'cmu_rng3', 'cri_trng', 'dbg_out', 'ddr_bist', 'ddr_pxi0', 'ddr_pxi1', 'ddr_pxi2', 'ddr_pxi3', 'ddr_pxi4', 'ddr_pxi5', 'ddr_pxi6', 'ddr_pxi7', 'edp0_hot', 'edp0_lcd', 'edp1_hot', 'edp1_lcd', 'eusb0_ac', 'eusb1_ac', 'eusb2_ac', 'eusb3_ac', 'eusb5_ac', 'eusb6_ac', 'gcc_gp1', 'gcc_gp2', 'gcc_gp3', 'gpio', 'i2s0_data0', 'i2s0_data1', 'i2s0_sck', 'i2s0_ws', 'i2s1_data0', 'i2s1_data1', 'i2s1_sck', 'i2s1_ws', 'ibi_i3c', 'jitter_bist', 'mdp_vsync0', 'mdp_vsync1', 'mdp_vsync2', 'mdp_vsync3', 'mdp_vsync4', 'mdp_vsync5', 'mdp_vsync6', 'mdp_vsync7', 'mdp_vsync8', 'pcie3_clk', 'pcie4_clk', 'pcie5_clk', 'pcie6a_clk', 'pcie6b_clk', 'phase_flag', 'pll_bist', 'pll_clk', 'prng_rosc0', 'prng_r
- osc1', 'prng_rosc2', 'prng_rosc3', 'qdss_cti', 'qdss_gpio', 'qspi00', 'qspi01', 'qspi02', 'qspi03', 'qspi0_clk', 'qspi0_cs0', 'qspi0_cs1', 'qup0_se0', 'qup0_se1', 'qup0_se2', 'qup0_se3', 'qup0_se4', 'qup0_se5', 'qup0_se6', 'qup0_se7', 'qup1_se0', 'qup1_se1', 'qup1_se2', 'qup1_se3', 'qup1_se4', 'qup1_se5', 'qup1_se6', 'qup1_se7', 'qup2_se0', 'qup2_se1', 'qup2_se2', 'qup2_se3', 'qup2_se4', 'qup2_se5', 'qup2_se6', 'qup2_se7', 'sd_write', 'sdc4_clk', 'sdc4_cmd', 'sdc4_data0', 'sdc4_data1', 'sdc4_data2', 'sdc4_data3', 'sys_throttle', 'tb_trig', 'tgu_ch0', 'tgu_ch1', 'tgu_ch2', 'tgu_ch3', 'tgu_ch4', 'tgu_ch5', 'tgu_ch6', 'tgu_ch7', 'tmess_prng0', 'tmess_prng1', 'tmess_prng2', 'tmess_prng3', 'tsense_pwm1', 'tsense_pwm2', 'sense_pwm3', 'tsense_pwm4', 'usb0_dp', 'usb0_phy', 'usb0_sbrx', 'usb0_sbtx', 'usb1_dp', 'usb1_phy', 'usb1_sbrx', 'usb1_sbtx', 'usb2_dp', 'usb2_phy', 'usb2_sbrx', 'usb2_sbtx', 'vsense_trigger']
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,x1e80100-tlmm.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus15.dtb: pinctrl@f100000: edp-hpd-active-state: 'oneOf' conditional failed, one must be fixed:
-	'function', 'pins' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
-	'edp_hot' is not one of ['aon_cci', 'aoss_cti', 'atest_char', 'atest_char0', 'atest_char1', 'atest_char2', 'atest_char3', 'atest_usb', 'audio_ext', 'audio_ref', 'cam_aon', 'cam_mclk', 'cci_async', 'cci_i2c', 'cci_timer0', 'cci_timer1', 'cci_timer2', 'cci_timer3', 'cci_timer4', 'cmu_rng0', 'cmu_rng1', 'cmu_rng2', 'cmu_rng3', 'cri_trng', 'dbg_out', 'ddr_bist', 'ddr_pxi0', 'ddr_pxi1', 'ddr_pxi2', 'ddr_pxi3', 'ddr_pxi4', 'ddr_pxi5', 'ddr_pxi6', 'ddr_pxi7', 'edp0_hot', 'edp0_lcd', 'edp1_hot', 'edp1_lcd', 'eusb0_ac', 'eusb1_ac', 'eusb2_ac', 'eusb3_ac', 'eusb5_ac', 'eusb6_ac', 'gcc_gp1', 'gcc_gp2', 'gcc_gp3', 'gpio', 'i2s0_data0', 'i2s0_data1', 'i2s0_sck', 'i2s0_ws', 'i2s1_data0', 'i2s1_data1', 'i2s1_sck', 'i2s1_ws', 'ibi_i3c', 'jitter_bist', 'mdp_vsync0', 'mdp_vsync1', 'mdp_vsync2', 'mdp_vsync3', 'mdp_vsync4', 'mdp_vsync5', 'mdp_vsync6', 'mdp_vsync7', 'mdp_vsync8', 'pcie3_clk', 'pcie4_clk', 'pcie5_clk', 'pcie6a_clk', 'pcie6b_clk', 'phase_flag', 'pll_bist', 'pll_clk', 'prng_rosc0', 'prng_r
- osc1', 'prng_rosc2', 'prng_rosc3', 'qdss_cti', 'qdss_gpio', 'qspi00', 'qspi01', 'qspi02', 'qspi03', 'qspi0_clk', 'qspi0_cs0', 'qspi0_cs1', 'qup0_se0', 'qup0_se1', 'qup0_se2', 'qup0_se3', 'qup0_se4', 'qup0_se5', 'qup0_se6', 'qup0_se7', 'qup1_se0', 'qup1_se1', 'qup1_se2', 'qup1_se3', 'qup1_se4', 'qup1_se5', 'qup1_se6', 'qup1_se7', 'qup2_se0', 'qup2_se1', 'qup2_se2', 'qup2_se3', 'qup2_se4', 'qup2_se5', 'qup2_se6', 'qup2_se7', 'sd_write', 'sdc4_clk', 'sdc4_cmd', 'sdc4_data0', 'sdc4_data1', 'sdc4_data2', 'sdc4_data3', 'sys_throttle', 'tb_trig', 'tgu_ch0', 'tgu_ch1', 'tgu_ch2', 'tgu_ch3', 'tgu_ch4', 'tgu_ch5', 'tgu_ch6', 'tgu_ch7', 'tmess_prng0', 'tmess_prng1', 'tmess_prng2', 'tmess_prng3', 'tsense_pwm1', 'tsense_pwm2', 'sense_pwm3', 'tsense_pwm4', 'usb0_dp', 'usb0_phy', 'usb0_sbrx', 'usb0_sbtx', 'usb1_dp', 'usb1_phy', 'usb1_sbrx', 'usb1_sbtx', 'usb2_dp', 'usb2_phy', 'usb2_sbrx', 'usb2_sbtx', 'vsense_trigger']
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,x1e80100-tlmm.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pinctrl@f100000: edp-hpd-active-state: 'oneOf' conditional failed, one must be fixed:
-	'function', 'pins' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
-	'edp_hot' is not one of ['aon_cci', 'aoss_cti', 'atest_char', 'atest_char0', 'atest_char1', 'atest_char2', 'atest_char3', 'atest_usb', 'audio_ext', 'audio_ref', 'cam_aon', 'cam_mclk', 'cci_async', 'cci_i2c', 'cci_timer0', 'cci_timer1', 'cci_timer2', 'cci_timer3', 'cci_timer4', 'cmu_rng0', 'cmu_rng1', 'cmu_rng2', 'cmu_rng3', 'cri_trng', 'dbg_out', 'ddr_bist', 'ddr_pxi0', 'ddr_pxi1', 'ddr_pxi2', 'ddr_pxi3', 'ddr_pxi4', 'ddr_pxi5', 'ddr_pxi6', 'ddr_pxi7', 'edp0_hot', 'edp0_lcd', 'edp1_hot', 'edp1_lcd', 'eusb0_ac', 'eusb1_ac', 'eusb2_ac', 'eusb3_ac', 'eusb5_ac', 'eusb6_ac', 'gcc_gp1', 'gcc_gp2', 'gcc_gp3', 'gpio', 'i2s0_data0', 'i2s0_data1', 'i2s0_sck', 'i2s0_ws', 'i2s1_data0', 'i2s1_data1', 'i2s1_sck', 'i2s1_ws', 'ibi_i3c', 'jitter_bist', 'mdp_vsync0', 'mdp_vsync1', 'mdp_vsync2', 'mdp_vsync3', 'mdp_vsync4', 'mdp_vsync5', 'mdp_vsync6', 'mdp_vsync7', 'mdp_vsync8', 'pcie3_clk', 'pcie4_clk', 'pcie5_clk', 'pcie6a_clk', 'pcie6b_clk', 'phase_flag', 'pll_bist', 'pll_clk', 'prng_rosc0', 'prng_r
- osc1', 'prng_rosc2', 'prng_rosc3', 'qdss_cti', 'qdss_gpio', 'qspi00', 'qspi01', 'qspi02', 'qspi03', 'qspi0_clk', 'qspi0_cs0', 'qspi0_cs1', 'qup0_se0', 'qup0_se1', 'qup0_se2', 'qup0_se3', 'qup0_se4', 'qup0_se5', 'qup0_se6', 'qup0_se7', 'qup1_se0', 'qup1_se1', 'qup1_se2', 'qup1_se3', 'qup1_se4', 'qup1_se5', 'qup1_se6', 'qup1_se7', 'qup2_se0', 'qup2_se1', 'qup2_se2', 'qup2_se3', 'qup2_se4', 'qup2_se5', 'qup2_se6', 'qup2_se7', 'sd_write', 'sdc4_clk', 'sdc4_cmd', 'sdc4_data0', 'sdc4_data1', 'sdc4_data2', 'sdc4_data3', 'sys_throttle', 'tb_trig', 'tgu_ch0', 'tgu_ch1', 'tgu_ch2', 'tgu_ch3', 'tgu_ch4', 'tgu_ch5', 'tgu_ch6', 'tgu_ch7', 'tmess_prng0', 'tmess_prng1', 'tmess_prng2', 'tmess_prng3', 'tsense_pwm1', 'tsense_pwm2', 'sense_pwm3', 'tsense_pwm4', 'usb0_dp', 'usb0_phy', 'usb0_sbrx', 'usb0_sbtx', 'usb1_dp', 'usb1_phy', 'usb1_sbrx', 'usb1_sbtx', 'usb2_dp', 'usb2_phy', 'usb2_sbrx', 'usb2_sbtx', 'vsense_trigger']
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,x1e80100-tlmm.yaml#
-arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtb: pinctrl@f100000: edp-hpd-active-state: 'oneOf' conditional failed, one must be fixed:
-	'function', 'pins' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
-	'edp_hot' is not one of ['aon_cci', 'aoss_cti', 'atest_char', 'atest_char0', 'atest_char1', 'atest_char2', 'atest_char3', 'atest_usb', 'audio_ext', 'audio_ref', 'cam_aon', 'cam_mclk', 'cci_async', 'cci_i2c', 'cci_timer0', 'cci_timer1', 'cci_timer2', 'cci_timer3', 'cci_timer4', 'cmu_rng0', 'cmu_rng1', 'cmu_rng2', 'cmu_rng3', 'cri_trng', 'dbg_out', 'ddr_bist', 'ddr_pxi0', 'ddr_pxi1', 'ddr_pxi2', 'ddr_pxi3', 'ddr_pxi4', 'ddr_pxi5', 'ddr_pxi6', 'ddr_pxi7', 'edp0_hot', 'edp0_lcd', 'edp1_hot', 'edp1_lcd', 'eusb0_ac', 'eusb1_ac', 'eusb2_ac', 'eusb3_ac', 'eusb5_ac', 'eusb6_ac', 'gcc_gp1', 'gcc_gp2', 'gcc_gp3', 'gpio', 'i2s0_data0', 'i2s0_data1', 'i2s0_sck', 'i2s0_ws', 'i2s1_data0', 'i2s1_data1', 'i2s1_sck', 'i2s1_ws', 'ibi_i3c', 'jitter_bist', 'mdp_vsync0', 'mdp_vsync1', 'mdp_vsync2', 'mdp_vsync3', 'mdp_vsync4', 'mdp_vsync5', 'mdp_vsync6', 'mdp_vsync7', 'mdp_vsync8', 'pcie3_clk', 'pcie4_clk', 'pcie5_clk', 'pcie6a_clk', 'pcie6b_clk', 'phase_flag', 'pll_bist', 'pll_clk', 'prng_rosc0', 'prng_r
- osc1', 'prng_rosc2', 'prng_rosc3', 'qdss_cti', 'qdss_gpio', 'qspi00', 'qspi01', 'qspi02', 'qspi03', 'qspi0_clk', 'qspi0_cs0', 'qspi0_cs1', 'qup0_se0', 'qup0_se1', 'qup0_se2', 'qup0_se3', 'qup0_se4', 'qup0_se5', 'qup0_se6', 'qup0_se7', 'qup1_se0', 'qup1_se1', 'qup1_se2', 'qup1_se3', 'qup1_se4', 'qup1_se5', 'qup1_se6', 'qup1_se7', 'qup2_se0', 'qup2_se1', 'qup2_se2', 'qup2_se3', 'qup2_se4', 'qup2_se5', 'qup2_se6', 'qup2_se7', 'sd_write', 'sdc4_clk', 'sdc4_cmd', 'sdc4_data0', 'sdc4_data1', 'sdc4_data2', 'sdc4_data3', 'sys_throttle', 'tb_trig', 'tgu_ch0', 'tgu_ch1', 'tgu_ch2', 'tgu_ch3', 'tgu_ch4', 'tgu_ch5', 'tgu_ch6', 'tgu_ch7', 'tmess_prng0', 'tmess_prng1', 'tmess_prng2', 'tmess_prng3', 'tsense_pwm1', 'tsense_pwm2', 'sense_pwm3', 'tsense_pwm4', 'usb0_dp', 'usb0_phy', 'usb0_sbrx', 'usb0_sbtx', 'usb1_dp', 'usb1_phy', 'usb1_sbrx', 'usb1_sbtx', 'usb2_dp', 'usb2_phy', 'usb2_sbrx', 'usb2_sbtx', 'vsense_trigger']
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,x1e80100-tlmm.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: pinctrl@f100000: edp-hpd-active-state: 'oneOf' conditional failed, one must be fixed:
-	'function', 'pins' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
-	'edp_hot' is not one of ['aon_cci', 'aoss_cti', 'atest_char', 'atest_char0', 'atest_char1', 'atest_char2', 'atest_char3', 'atest_usb', 'audio_ext', 'audio_ref', 'cam_aon', 'cam_mclk', 'cci_async', 'cci_i2c', 'cci_timer0', 'cci_timer1', 'cci_timer2', 'cci_timer3', 'cci_timer4', 'cmu_rng0', 'cmu_rng1', 'cmu_rng2', 'cmu_rng3', 'cri_trng', 'dbg_out', 'ddr_bist', 'ddr_pxi0', 'ddr_pxi1', 'ddr_pxi2', 'ddr_pxi3', 'ddr_pxi4', 'ddr_pxi5', 'ddr_pxi6', 'ddr_pxi7', 'edp0_hot', 'edp0_lcd', 'edp1_hot', 'edp1_lcd', 'eusb0_ac', 'eusb1_ac', 'eusb2_ac', 'eusb3_ac', 'eusb5_ac', 'eusb6_ac', 'gcc_gp1', 'gcc_gp2', 'gcc_gp3', 'gpio', 'i2s0_data0', 'i2s0_data1', 'i2s0_sck', 'i2s0_ws', 'i2s1_data0', 'i2s1_data1', 'i2s1_sck', 'i2s1_ws', 'ibi_i3c', 'jitter_bist', 'mdp_vsync0', 'mdp_vsync1', 'mdp_vsync2', 'mdp_vsync3', 'mdp_vsync4', 'mdp_vsync5', 'mdp_vsync6', 'mdp_vsync7', 'mdp_vsync8', 'pcie3_clk', 'pcie4_clk', 'pcie5_clk', 'pcie6a_clk', 'pcie6b_clk', 'phase_flag', 'pll_bist', 'pll_clk', 'prng_rosc0', 'prng_r
- osc1', 'prng_rosc2', 'prng_rosc3', 'qdss_cti', 'qdss_gpio', 'qspi00', 'qspi01', 'qspi02', 'qspi03', 'qspi0_clk', 'qspi0_cs0', 'qspi0_cs1', 'qup0_se0', 'qup0_se1', 'qup0_se2', 'qup0_se3', 'qup0_se4', 'qup0_se5', 'qup0_se6', 'qup0_se7', 'qup1_se0', 'qup1_se1', 'qup1_se2', 'qup1_se3', 'qup1_se4', 'qup1_se5', 'qup1_se6', 'qup1_se7', 'qup2_se0', 'qup2_se1', 'qup2_se2', 'qup2_se3', 'qup2_se4', 'qup2_se5', 'qup2_se6', 'qup2_se7', 'sd_write', 'sdc4_clk', 'sdc4_cmd', 'sdc4_data0', 'sdc4_data1', 'sdc4_data2', 'sdc4_data3', 'sys_throttle', 'tb_trig', 'tgu_ch0', 'tgu_ch1', 'tgu_ch2', 'tgu_ch3', 'tgu_ch4', 'tgu_ch5', 'tgu_ch6', 'tgu_ch7', 'tmess_prng0', 'tmess_prng1', 'tmess_prng2', 'tmess_prng3', 'tsense_pwm1', 'tsense_pwm2', 'sense_pwm3', 'tsense_pwm4', 'usb0_dp', 'usb0_phy', 'usb0_sbrx', 'usb0_sbtx', 'usb1_dp', 'usb1_phy', 'usb1_sbrx', 'usb1_sbtx', 'usb2_dp', 'usb2_phy', 'usb2_sbrx', 'usb2_sbtx', 'vsense_trigger']
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,x1e80100-tlmm.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus13.dtb: pinctrl@f100000: edp-hpd-active-state: 'oneOf' conditional failed, one must be fixed:
-	'function', 'pins' do not match any of the regexes: '-pins$', 'pinctrl-[0-9]+'
-	'edp_hot' is not one of ['aon_cci', 'aoss_cti', 'atest_char', 'atest_char0', 'atest_char1', 'atest_char2', 'atest_char3', 'atest_usb', 'audio_ext', 'audio_ref', 'cam_aon', 'cam_mclk', 'cci_async', 'cci_i2c', 'cci_timer0', 'cci_timer1', 'cci_timer2', 'cci_timer3', 'cci_timer4', 'cmu_rng0', 'cmu_rng1', 'cmu_rng2', 'cmu_rng3', 'cri_trng', 'dbg_out', 'ddr_bist', 'ddr_pxi0', 'ddr_pxi1', 'ddr_pxi2', 'ddr_pxi3', 'ddr_pxi4', 'ddr_pxi5', 'ddr_pxi6', 'ddr_pxi7', 'edp0_hot', 'edp0_lcd', 'edp1_hot', 'edp1_lcd', 'eusb0_ac', 'eusb1_ac', 'eusb2_ac', 'eusb3_ac', 'eusb5_ac', 'eusb6_ac', 'gcc_gp1', 'gcc_gp2', 'gcc_gp3', 'gpio', 'i2s0_data0', 'i2s0_data1', 'i2s0_sck', 'i2s0_ws', 'i2s1_data0', 'i2s1_data1', 'i2s1_sck', 'i2s1_ws', 'ibi_i3c', 'jitter_bist', 'mdp_vsync0', 'mdp_vsync1', 'mdp_vsync2', 'mdp_vsync3', 'mdp_vsync4', 'mdp_vsync5', 'mdp_vsync6', 'mdp_vsync7', 'mdp_vsync8', 'pcie3_clk', 'pcie4_clk', 'pcie5_clk', 'pcie6a_clk', 'pcie6b_clk', 'phase_flag', 'pll_bist', 'pll_clk', 'prng_rosc0', 'prng_r
- osc1', 'prng_rosc2', 'prng_rosc3', 'qdss_cti', 'qdss_gpio', 'qspi00', 'qspi01', 'qspi02', 'qspi03', 'qspi0_clk', 'qspi0_cs0', 'qspi0_cs1', 'qup0_se0', 'qup0_se1', 'qup0_se2', 'qup0_se3', 'qup0_se4', 'qup0_se5', 'qup0_se6', 'qup0_se7', 'qup1_se0', 'qup1_se1', 'qup1_se2', 'qup1_se3', 'qup1_se4', 'qup1_se5', 'qup1_se6', 'qup1_se7', 'qup2_se0', 'qup2_se1', 'qup2_se2', 'qup2_se3', 'qup2_se4', 'qup2_se5', 'qup2_se6', 'qup2_se7', 'sd_write', 'sdc4_clk', 'sdc4_cmd', 'sdc4_data0', 'sdc4_data1', 'sdc4_data2', 'sdc4_data3', 'sys_throttle', 'tb_trig', 'tgu_ch0', 'tgu_ch1', 'tgu_ch2', 'tgu_ch3', 'tgu_ch4', 'tgu_ch5', 'tgu_ch6', 'tgu_ch7', 'tmess_prng0', 'tmess_prng1', 'tmess_prng2', 'tmess_prng3', 'tsense_pwm1', 'tsense_pwm2', 'sense_pwm3', 'tsense_pwm4', 'usb0_dp', 'usb0_phy', 'usb0_sbrx', 'usb0_sbtx', 'usb1_dp', 'usb1_phy', 'usb1_sbrx', 'usb1_sbtx', 'usb2_dp', 'usb2_phy', 'usb2_sbrx', 'usb2_sbtx', 'vsense_trigger']
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,x1e80100-tlmm.yaml#
+arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku4.dtb] Error 2
+make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
+make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku4.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8188-geralt-ciri-sku4.dtb] Error 2
+arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8370-genio-510-evk.dtb] Error 2
+make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
+make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8370-genio-510-evk.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8370-genio-510-evk.dtb] Error 2
+arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dtb] Error 2
+make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
+make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8390-genio-700-evk.dtb] Error 2
+arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku1.dtb] Error 2
+make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
+make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku1.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8188-geralt-ciri-sku1.dtb] Error 2
+arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku7.dtb] Error 2
+make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
+make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku7.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8188-geralt-ciri-sku7.dtb] Error 2
+arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku3.dtb] Error 2
+make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
+make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku3.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8188-geralt-ciri-sku3.dtb] Error 2
+arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8188-evb.dtb] Error 2
+make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
+make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8188-evb.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8188-evb.dtb] Error 2
+arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku6.dtb] Error 2
+make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
+make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku6.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8188-geralt-ciri-sku6.dtb] Error 2
+arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku0.dtb] Error 2
+make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
+make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku0.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8188-geralt-ciri-sku0.dtb] Error 2
+arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku2.dtb] Error 2
+make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
+make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku2.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8188-geralt-ciri-sku2.dtb] Error 2
+arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku5.dtb] Error 2
+make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
+make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku5.dtb' not remade because of errors.
+make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8188-geralt-ciri-sku5.dtb] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+make: Target 'mediatek/mt8183-pumpkin.dtb' not remade because of errors.
+make: Target 'mediatek/mt6797-evb.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-kodama-sku16.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-jacuzzi-fennel14.dtb' not remade because of errors.
+make: Target 'mediatek/mt8395-genio-1200-evk.dtb' not remade because of errors.
+make: Target 'mediatek/mt7986a-bananapi-bpi-r3.dtb' not remade because of errors.
+make: Target 'mediatek/mt8173-evb.dtb' not remade because of errors.
+make: Target 'mediatek/mt7986b-rfb.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-jacuzzi-willow-sku0.dtb' not remade because of errors.
+make: Target 'mediatek/mt8186-corsola-tentacruel-sku262144.dtb' not remade because of errors.
+make: Target 'mediatek/mt8195-cherry-tomato-r2.dtb' not remade because of errors.
+make: Target 'mediatek/mt7981b-openwrt-one.dtb' not remade because of errors.
+make: Target 'mediatek/mt8173-elm.dtb' not remade because of errors.
+make: Target 'mediatek/mt7622-rfb1.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-jacuzzi-damu.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-jacuzzi-willow-sku1.dtb' not remade because of errors.
+make: Target 'mediatek/mt8186-corsola-tentacool-sku327681.dtb' not remade because of errors.
+make: Target 'mediatek/mt6779-evb.dtb' not remade because of errors.
+make: Target 'mediatek/mt8188-geralt-ciri-sku4.dtb' not remade because of errors.
+make: Target 'mediatek/mt8173-elm-hana-rev7.dtb' not remade because of errors.
+make: Target 'mediatek/mt8186-corsola-starmie-sku1.dtb' not remade because of errors.
+make: Target 'mediatek/mt8370-genio-510-evk.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-jacuzzi-kenzo.dtb' not remade because of errors.
+make: Target 'mediatek/mt2712-evb.dtb' not remade because of errors.
+make: Target 'mediatek/mt8186-corsola-tentacool-sku327683.dtb' not remade because of errors.
+make: Target 'mediatek/mt7981b-cudy-wr3000-v1.dtb' not remade because of errors.
+make: Target 'mediatek/mt8192-asurada-hayato-r1.dtb' not remade because of errors.
+make: Target 'mediatek/mt8390-genio-700-evk.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-jacuzzi-makomo-sku1.dtb' not remade because of errors.
+make: Target 'mediatek/mt8395-kontron-3-5-sbc-i1200.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-jacuzzi-pico6.dtb' not remade because of errors.
+make: Target 'mediatek/mt8188-geralt-ciri-sku1.dtb' not remade because of errors.
+make: Target 'mediatek/mt8195-demo.dtb' not remade because of errors.
+make: Target 'mediatek/mt8173-elm-hana.dtb' not remade because of errors.
+make: Target 'mediatek/mt6755-evb.dtb' not remade because of errors.
+make: Target 'mediatek/mt8186-corsola-chinchou-sku16.dtb' not remade because of errors.
+make: Target 'mediatek/mt8192-asurada-spherion-r0.dtb' not remade because of errors.
+make: Target 'mediatek/mt8186-corsola-chinchou-sku0.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-kodama-sku32.dtb' not remade because of errors.
+make: Target 'mediatek/mt7622-bananapi-bpi-r64.dtb' not remade because of errors.
+make: Target 'mediatek/mt8186-corsola-chinchou-sku1.dtb' not remade because of errors.
+make: Target 'mediatek/mt8186-corsola-voltorb-sku589825.dtb' not remade because of errors.
+make: Target 'mediatek/mt8186-corsola-magneton-sku393218.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-evb.dtb' not remade because of errors.
+make: Target 'mediatek/mt8188-geralt-ciri-sku7.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dtb' not remade because of errors.
+make: Target 'mediatek/mt8186-evb.dtb' not remade because of errors.
+make: Target 'mediatek/mt8186-corsola-magneton-sku393216.dtb' not remade because of errors.
+make: Target 'mediatek/mt8188-geralt-ciri-sku3.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-jacuzzi-fennel14-sku2.dtb' not remade because of errors.
+make: Target 'mediatek/mt6797-x20-dev.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-jacuzzi-cozmo.dtb' not remade because of errors.
+make: Target 'mediatek/mt8188-evb.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-krane-sku0.dtb' not remade because of errors.
+make: Target 'mediatek/mt8365-evk.dtb' not remade because of errors.
+make: Target 'mediatek/mt8195-evb.dtb' not remade because of errors.
+make: Target 'mediatek/mt8395-radxa-nio-12l.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-jacuzzi-makomo-sku0.dtb' not remade because of errors.
+make: Target 'mediatek/mt8186-corsola-steelix-sku131073.dtb' not remade because of errors.
+make: Target 'mediatek/mt8186-corsola-voltorb-sku589824.dtb' not remade because of errors.
+make: Target 'mediatek/mt7988a-bananapi-bpi-r4.dtb' not remade because of errors.
+make: Target 'mediatek/mt8186-corsola-starmie-sku0.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-jacuzzi-burnet.dtb' not remade because of errors.
+make: Target 'mediatek/mt8188-geralt-ciri-sku6.dtb' not remade because of errors.
+make: Target 'mediatek/mt7986a-acelink-ew-7886cax.dtb' not remade because of errors.
+make: Target 'mediatek/mt8516-pumpkin.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-kakadu-sku22.dtb' not remade because of errors.
+make: Target 'mediatek/mt7986a-rfb.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-kodama-sku288.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-krane-sku176.dtb' not remade because of errors.
+make: Target 'mediatek/mt8188-geralt-ciri-sku0.dtb' not remade because of errors.
+make: Target 'mediatek/mt6795-evb.dtb' not remade because of errors.
+make: Target 'mediatek/mt8186-corsola-tentacruel-sku262148.dtb' not remade because of errors.
+make: Target 'mediatek/mt8167-pumpkin.dtb' not remade because of errors.
+make: Target 'mediatek/mt7981b-xiaomi-ax3000t.dtb' not remade because of errors.
+make: Target 'mediatek/mt8188-geralt-ciri-sku2.dtb' not remade because of errors.
+make: Target 'mediatek/mt8186-corsola-steelix-sku131072.dtb' not remade because of errors.
+make: Target 'mediatek/mt8195-cherry-dojo-r1.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-jacuzzi-kappa.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-kakadu.dtb' not remade because of errors.
+make: Target 'mediatek/mt7986a-bananapi-bpi-r3-mini.dtb' not remade because of errors.
+make: Target 'mediatek/mt6795-sony-xperia-m5.dtb' not remade because of errors.
+make: Target 'mediatek/mt8186-corsola-magneton-sku393217.dtb' not remade because of errors.
+make: Target 'mediatek/mt8192-evb.dtb' not remade because of errors.
+make: Target 'mediatek/mt8195-cherry-tomato-r3.dtb' not remade because of errors.
+make: Target 'mediatek/mt8195-cherry-tomato-r1.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-jacuzzi-juniper-sku16.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-katsu-sku32.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-katsu-sku38.dtb' not remade because of errors.
+make: Target 'mediatek/mt8188-geralt-ciri-sku5.dtb' not remade because of errors.
+make: Target 'mediatek/mt8186-corsola-rusty-sku196608.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-jacuzzi-pico.dtb' not remade because of errors.
+make: Target 'mediatek/mt8183-kukui-kodama-sku272.dtb' not remade because of errors.
 
 
 
