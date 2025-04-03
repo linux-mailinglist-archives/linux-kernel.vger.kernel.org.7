@@ -1,126 +1,111 @@
-Return-Path: <linux-kernel+bounces-587367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 493DEA7AC20
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:33:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 388F2A7AB8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE97A164549
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:28:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD98317B238
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DE32690DB;
-	Thu,  3 Apr 2025 19:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B0125F96A;
+	Thu,  3 Apr 2025 19:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EE6KPY94"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Jn7Fb+Ug"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7887268FD7;
-	Thu,  3 Apr 2025 19:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA1325F7A1
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 19:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743707155; cv=none; b=DbxZICA5vGp9kH2hM5gn1gFK/uBlKe2O1HVm1TcC2tZQE6JD154dz/Nu/vjrAIhts8fSTPk+BHu4FG5awvLbZXKFw25HbAOY20LQw22+mW16Ib21yR5vzMRRfDJeGYgJ/k6ahZVLMxcLQMYP8Ah/2zPbE2CQ1K5hrWBB0a7KQFQ=
+	t=1743707059; cv=none; b=XgMRN71M+0hFUDzSsYaKiWEVWRRAWKNqIa1gLDeYteJCiPgOBkqDUF+cx4hLAIErvqHNQ3UkUl1ZQbvI0gTRjbDTpTyruueoq/UY7qc/rhZl99DoJSEZOPsXU4c0OLFmxgiJmsIycbO5EQigs5SZrC90EydXRyYofRuBD6z85g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743707155; c=relaxed/simple;
-	bh=pbn86FTWVBRDEjw1khVpontfVhI57wkmC0bHWaQKsv4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kHX7w9+H1/dEtjPVKoeWMk45RdeYV8tok1vj2UhcE0vZOBL7GsqzVEA8NR93JdH2llhKPZt4V3kZ5iBgQuvhZUfW2qiCWanJwJf7a7dhUINRSBo3o/E4FW09HvvivbDmMMBldilS1juJ6Rcclr3eB+MVKtwhnRKuKdbtoiEEZWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EE6KPY94; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E42E0C4CEE3;
-	Thu,  3 Apr 2025 19:05:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743707154;
-	bh=pbn86FTWVBRDEjw1khVpontfVhI57wkmC0bHWaQKsv4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EE6KPY94/dkiny3KBso8Fo+CZ/Ke3maDYFWrY1y1uhbdm2IAeeegjs2B1j7RHsSug
-	 1PTwrP1Tbu29daxZZw8gl61V/MWStsVoJfl3qvK+4U1fdqRF8zN3JM7GVyvXu+QUyX
-	 TZLE6+FJnCjHbGOapMiACBNRuQMTXM1ku9O1yGJXi5znfsxSPYnim73QoTdz0DsVJR
-	 gIs/glnA30YU74iH1GsOt/OuaULBOhBbvwWdKDzG/Nt6Cms7OEdKm7ufossvGa33lI
-	 WE2/LnWl36D5yzhMdbO6LY1B9qSTXxgIofL5o3agPUssaKH/NayJgiDzenxpaedmEH
-	 P+Gut0oF337Lg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Pedro Nishiyama <nishiyama.pedro@gmail.com>,
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
-	Sasha Levin <sashal@kernel.org>,
-	marcel@holtmann.org,
-	johan.hedberg@gmail.com,
-	luiz.dentz@gmail.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-bluetooth@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.13 49/49] Bluetooth: Add quirk for broken READ_PAGE_SCAN_TYPE
-Date: Thu,  3 Apr 2025 15:04:08 -0400
-Message-Id: <20250403190408.2676344-49-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250403190408.2676344-1-sashal@kernel.org>
-References: <20250403190408.2676344-1-sashal@kernel.org>
+	s=arc-20240116; t=1743707059; c=relaxed/simple;
+	bh=iuOOwB3RhF2+wmWM3TB/6mKD+N4PJ/l0AgT6T28qZdc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Oe3R2YpOz1DEg4cWkaDexm95bpQyw+sl5PG34QxR4t/5HkpGpOFF9NJqgIi2kIcPWARSt/rWw+4FsVQo1Q5qGe5t/FZ6s1/39raOwhD0Rhjp2Kisy2WE7ofTE7geZCmUa7L+SvRqovvdVZ5FHSuukBXnruszlvEF+nMnCnubL9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Jn7Fb+Ug; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0eb36d4f-ab6c-4bb3-aad0-99c09bcd56ec@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1743707053;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OR6tAQCdTqWMdGnoueGRPKReRRRQNdIbvhVIHJWD5vI=;
+	b=Jn7Fb+UgY/OlS/fnuFJSgz2OVlcdAmgKv8H1oVFoc46n/wT4ubopRD4mJlVLWxZMgP1Wnu
+	05Q7iiyh/mwHPQ6Dw+H10z3jRi2jjgr8S6+WImf8VczgxbWlw9h7NRIvnmN38tQ9ge6NVM
+	kpjzXJKKqFnlUwXJb1TnwDaYvPaqCNs=
+Date: Thu, 3 Apr 2025 15:04:08 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.13.9
+Subject: Re: [RFC net-next PATCH 11/13] of: property: Add device link support
+ for PCS
+To: Saravana Kannan <saravanak@google.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
+ Christian Marangi <ansuelsmth@gmail.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>, linux-kernel@vger.kernel.org,
+ upstream@airoha.com, Rob Herring <robh@kernel.org>,
+ devicetree@vger.kernel.org
+References: <20250403181907.1947517-1-sean.anderson@linux.dev>
+ <20250403182758.1948569-1-sean.anderson@linux.dev>
+ <CAGETcx9v610XhvU705R=Mjth=iAbCU04rqNnQPhQua37Jc4TRQ@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <CAGETcx9v610XhvU705R=Mjth=iAbCU04rqNnQPhQua37Jc4TRQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Pedro Nishiyama <nishiyama.pedro@gmail.com>
+On 4/3/25 14:32, Saravana Kannan wrote:
+> On Thu, Apr 3, 2025 at 11:28 AM Sean Anderson <sean.anderson@linux.dev> wrote:
+>>
+>> This adds device link support for PCS devices, providing
+>> better probe ordering.
+>>
+>> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+>> ---
+>>
+>>  drivers/of/property.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/of/property.c b/drivers/of/property.c
+>> index c1feb631e383..f3e0c390ddba 100644
+>> --- a/drivers/of/property.c
+>> +++ b/drivers/of/property.c
+>> @@ -1379,6 +1379,7 @@ DEFINE_SIMPLE_PROP(pses, "pses", "#pse-cells")
+>>  DEFINE_SIMPLE_PROP(power_supplies, "power-supplies", NULL)
+>>  DEFINE_SUFFIX_PROP(regulators, "-supply", NULL)
+>>  DEFINE_SUFFIX_PROP(gpio, "-gpio", "#gpio-cells")
+>> +DEFINE_SIMPLE_PROP(pcs_handle, "pcs-handle", NULL)
+>>
+>>  static struct device_node *parse_gpios(struct device_node *np,
+>>                                        const char *prop_name, int index)
+>> @@ -1535,6 +1536,7 @@ static const struct supplier_bindings of_supplier_bindings[] = {
+>>                 .parse_prop = parse_post_init_providers,
+>>                 .fwlink_flags = FWLINK_FLAG_IGNORE,
+>>         },
+>> +       { .parse_prop = parse_pcs_handle, },
+> 
+> Can you add this in the right order please? All the simple ones come
+> before the SUFFIX ones so that it's less expensive/fewer comparisons
+> before you parse the simple properties.
 
-[ Upstream commit 127881334eaad639e0a19a399ee8c91d6c9dc982 ]
+Ah, I couldn't figure out what the intended order was so I just stuck
+it at the end.
 
-Some fake controllers cannot be initialized because they return a smaller
-report than expected for READ_PAGE_SCAN_TYPE.
-
-Signed-off-by: Pedro Nishiyama <nishiyama.pedro@gmail.com>
-Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- include/net/bluetooth/hci.h | 8 ++++++++
- net/bluetooth/hci_sync.c    | 3 ++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
-index 6f06d20093a7a..8d4c5cb1496c9 100644
---- a/include/net/bluetooth/hci.h
-+++ b/include/net/bluetooth/hci.h
-@@ -362,6 +362,14 @@ enum {
- 	 * This quirk must be set before hci_register_dev is called.
- 	 */
- 	HCI_QUIRK_BROKEN_READ_VOICE_SETTING,
-+
-+	/* When this quirk is set, the HCI_OP_READ_PAGE_SCAN_TYPE command is
-+	 * skipped. This is required for a subset of the CSR controller clones
-+	 * which erroneously claim to support it.
-+	 *
-+	 * This quirk must be set before hci_register_dev is called.
-+	 */
-+	HCI_QUIRK_BROKEN_READ_PAGE_SCAN_TYPE,
- };
- 
- /* HCI device flags */
-diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
-index bb455e96a715a..cb4d47ae129e8 100644
---- a/net/bluetooth/hci_sync.c
-+++ b/net/bluetooth/hci_sync.c
-@@ -4156,7 +4156,8 @@ static int hci_read_page_scan_type_sync(struct hci_dev *hdev)
- 	 * support the Read Page Scan Type command. Check support for
- 	 * this command in the bit mask of supported commands.
- 	 */
--	if (!(hdev->commands[13] & 0x01))
-+	if (!(hdev->commands[13] & 0x01) ||
-+	    test_bit(HCI_QUIRK_BROKEN_READ_PAGE_SCAN_TYPE, &hdev->quirks))
- 		return 0;
- 
- 	return __hci_cmd_sync_status(hdev, HCI_OP_READ_PAGE_SCAN_TYPE,
--- 
-2.39.5
-
+--Sean
 
