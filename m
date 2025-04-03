@@ -1,160 +1,251 @@
-Return-Path: <linux-kernel+bounces-587421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A81A7ACAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:47:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF082A7ACF2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 530C73B9E66
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:41:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC45216FC33
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB4227EC6F;
-	Thu,  3 Apr 2025 19:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F52285403;
+	Thu,  3 Apr 2025 19:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gZu8bJG1"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DlZjqlkV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B820E2586F6;
-	Thu,  3 Apr 2025 19:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECDA2853F4;
+	Thu,  3 Apr 2025 19:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743707278; cv=none; b=HSKvlb8Eo+nrznxhiYoYUyX8M9SAi7xc50KCSNsckgECSlUWBQ88PyG2FQ5OqEtf0Zn0SwcsoUt8DE1BW6hbyXwCH5Z7ekJMuzM7rONGmC4/qfEfr7N3uTw0Cet4+w/r2y5j8qAxHU4KQjrAma7X0ZVrvzCZgyMGWd018j28mJk=
+	t=1743707320; cv=none; b=NuC8eGF2nnFZHVFYYg7Nw8I9jq04xHjWfwVy2xE/hDQf1gElqwT93Gt44hQF8E2xp3Wzld1rIaOh0KdipmQm0FZYYZicpqnPdeIfsYrWcQJnHsrwuB9jtfKSrIeWLobNEXL4YBAS/r6zSeI7ITST/330fFbYkgHZ+4oYwFgVvIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743707278; c=relaxed/simple;
-	bh=VTL6kwicHLjBdwQujCV+DK1vWwhdgxmpdH1NQF6da1E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=W3lgPxMXAxOa+MswNlE5V/uq99tHwjMdlyEak2ZnJI/esTn796JVU/Aqo4btZSLTCBESAQ46GLOmCnSg8GBVTFwxN/dH9OMsOByrxY37BI+QRah+ONl3LliIuoNFePl8zZaWC8varCxNu4J/g1uINM/21BZfTogYfo3k8EIjGkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gZu8bJG1; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1743707273;
-	bh=VTL6kwicHLjBdwQujCV+DK1vWwhdgxmpdH1NQF6da1E=;
-	h=From:Date:Subject:To:Cc:From;
-	b=gZu8bJG15cTU399eLCzOpANebfp7k9ztWQups7U5IhmjYheShf76XMC8sHDE67VPM
-	 TD8HEa4KNldWr9R/wUlifxmA5BiItb73thWPoLs+0ShcugHohou5vKcYnRTTr8RgnE
-	 JCeJVJ0ol+2g7IQjR/ZoTOqUGC6QBtoCUeM+FsY9xuIPdYlrhmn+KEEIum8b3bq2Hz
-	 8puGRaNDKz4J7NuJPUlZyxrZYnkWz1fVgXMpFj/ueYPkjepOM4w9mMohpaVySyW67e
-	 PEVe6HtkLlBu7DekNVpmH71NgREqFw3Y3IFOEQ2NpMbUHD+0L/j2uPAu8/IUNlWnz3
-	 qUuzRgZ4vyTAw==
-Received: from [192.168.13.180] (unknown [IPv6:2606:6d00:11:e976::5ac])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9888417E0865;
-	Thu,  3 Apr 2025 21:07:52 +0200 (CEST)
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Date: Thu, 03 Apr 2025 15:07:41 -0400
-Subject: [PATCH] media: verisilicon: Enable wide 4K in AV1 decoder
+	s=arc-20240116; t=1743707320; c=relaxed/simple;
+	bh=L5vFB5r8aMORdTeQkOD8xuBnB8C5DCukkgoxM5N73H8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=lBxwv9C6jMDKt+UjxUFhV5V01XSR30mtvhL48GPapzPtjuMGofEXqXSucY7hZ4rf5IV/zT0oNxclRP5L91FI4HrWnYjUj6EX+40ufARiLZAxlWGJ4AB3PKpu3l1tkf+4LTCNkcjavkecVOhkH6zD+alINSXmNBPC8I2WVQgfT6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DlZjqlkV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7DEAC4CEE3;
+	Thu,  3 Apr 2025 19:08:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743707320;
+	bh=L5vFB5r8aMORdTeQkOD8xuBnB8C5DCukkgoxM5N73H8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=DlZjqlkVo+Mo++jPzsU3CCDynad4OOPI5i8UpMiw6F2TmsbpTGAsNkCSdDcXbc5uX
+	 6rGqQ/IYVdZ9PDzKGFVvywHlmRnKMqNW/qLFPp2NnR/eh1AGcwQUdJAuZ4j53SVOUg
+	 mNwVEbna8yfEfUzWuVNNhcKkpbeIdbXX+I/GRymAeSACEv5E5+uHxOTn/ObtcUhaPq
+	 eBQvJ9PY45COMrCgIZ27nX9XVi9WC0wXow1+IbfxdB6heun+Ms+VbnPfv4OmCEYtQs
+	 0fw7Ie5I7d1hK7D0wMLGpR8DHlvd9HYwVGZ9wK8FqiGqRLfRynJl4QALS8fNQe3/1Z
+	 0vwMihPpyfl/w==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Stanislav Fomichev <sdf@fomichev.me>,
+	syzbot+b0c03d76056ef6cd12a6@syzkaller.appspotmail.com,
+	Simon Horman <horms@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Sasha Levin <sashal@kernel.org>,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	aleksander.lobakin@intel.com,
+	kory.maincent@bootlin.com,
+	netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 23/26] net: vlan: don't propagate flags on open
+Date: Thu,  3 Apr 2025 15:07:42 -0400
+Message-Id: <20250403190745.2677620-23-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250403190745.2677620-1-sashal@kernel.org>
+References: <20250403190745.2677620-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250403-hantro-av1-wuhd-v1-1-334629cb7f63@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAHzc7mcC/x2MQQqAIBAAvxJ7bsG1vPSV6GC55V40tCyI/p50n
- IGZBzIn4QxD80DiIlliqEBtA4u3YWMUVxm00kb1qsMqjxTRFsLr9A6JWC+rmZlsD7XaE69y/8d
- xet8PtfnTcmEAAAA=
-X-Change-ID: 20250403-hantro-av1-wuhd-11e2cf5be1a4
-To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Heiko Stuebner <heiko@sntech.de>
-Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kernel@collabora.com, Nicolas Dufresne <nicolas.dufresne@collabora.com>
-X-Mailer: b4 0.14.2
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.85
+Content-Transfer-Encoding: 8bit
 
-Tested on RK3588, this decoder is capable of handling WUHD, so bump the
-maximum width and height accordingly.
+From: Stanislav Fomichev <sdf@fomichev.me>
 
-Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+[ Upstream commit 27b918007d96402aba10ed52a6af8015230f1793 ]
+
+With the device instance lock, there is now a possibility of a deadlock:
+
+[    1.211455] ============================================
+[    1.211571] WARNING: possible recursive locking detected
+[    1.211687] 6.14.0-rc5-01215-g032756b4ca7a-dirty #5 Not tainted
+[    1.211823] --------------------------------------------
+[    1.211936] ip/184 is trying to acquire lock:
+[    1.212032] ffff8881024a4c30 (&dev->lock){+.+.}-{4:4}, at: dev_set_allmulti+0x4e/0xb0
+[    1.212207]
+[    1.212207] but task is already holding lock:
+[    1.212332] ffff8881024a4c30 (&dev->lock){+.+.}-{4:4}, at: dev_open+0x50/0xb0
+[    1.212487]
+[    1.212487] other info that might help us debug this:
+[    1.212626]  Possible unsafe locking scenario:
+[    1.212626]
+[    1.212751]        CPU0
+[    1.212815]        ----
+[    1.212871]   lock(&dev->lock);
+[    1.212944]   lock(&dev->lock);
+[    1.213016]
+[    1.213016]  *** DEADLOCK ***
+[    1.213016]
+[    1.213143]  May be due to missing lock nesting notation
+[    1.213143]
+[    1.213294] 3 locks held by ip/184:
+[    1.213371]  #0: ffffffff838b53e0 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock+0x1b/0xa0
+[    1.213543]  #1: ffffffff84e5fc70 (&net->rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock+0x37/0xa0
+[    1.213727]  #2: ffff8881024a4c30 (&dev->lock){+.+.}-{4:4}, at: dev_open+0x50/0xb0
+[    1.213895]
+[    1.213895] stack backtrace:
+[    1.213991] CPU: 0 UID: 0 PID: 184 Comm: ip Not tainted 6.14.0-rc5-01215-g032756b4ca7a-dirty #5
+[    1.213993] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Arch Linux 1.16.3-1-1 04/01/2014
+[    1.213994] Call Trace:
+[    1.213995]  <TASK>
+[    1.213996]  dump_stack_lvl+0x8e/0xd0
+[    1.214000]  print_deadlock_bug+0x28b/0x2a0
+[    1.214020]  lock_acquire+0xea/0x2a0
+[    1.214027]  __mutex_lock+0xbf/0xd40
+[    1.214038]  dev_set_allmulti+0x4e/0xb0 # real_dev->flags & IFF_ALLMULTI
+[    1.214040]  vlan_dev_open+0xa5/0x170 # ndo_open on vlandev
+[    1.214042]  __dev_open+0x145/0x270
+[    1.214046]  __dev_change_flags+0xb0/0x1e0
+[    1.214051]  netif_change_flags+0x22/0x60 # IFF_UP vlandev
+[    1.214053]  dev_change_flags+0x61/0xb0 # for each device in group from dev->vlan_info
+[    1.214055]  vlan_device_event+0x766/0x7c0 # on netdevsim0
+[    1.214058]  notifier_call_chain+0x78/0x120
+[    1.214062]  netif_open+0x6d/0x90
+[    1.214064]  dev_open+0x5b/0xb0 # locks netdevsim0
+[    1.214066]  bond_enslave+0x64c/0x1230
+[    1.214075]  do_set_master+0x175/0x1e0 # on netdevsim0
+[    1.214077]  do_setlink+0x516/0x13b0
+[    1.214094]  rtnl_newlink+0xaba/0xb80
+[    1.214132]  rtnetlink_rcv_msg+0x440/0x490
+[    1.214144]  netlink_rcv_skb+0xeb/0x120
+[    1.214150]  netlink_unicast+0x1f9/0x320
+[    1.214153]  netlink_sendmsg+0x346/0x3f0
+[    1.214157]  __sock_sendmsg+0x86/0xb0
+[    1.214160]  ____sys_sendmsg+0x1c8/0x220
+[    1.214164]  ___sys_sendmsg+0x28f/0x2d0
+[    1.214179]  __x64_sys_sendmsg+0xef/0x140
+[    1.214184]  do_syscall_64+0xec/0x1d0
+[    1.214190]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[    1.214191] RIP: 0033:0x7f2d1b4a7e56
+
+Device setup:
+
+     netdevsim0 (down)
+     ^        ^
+  bond        netdevsim1.100@netdevsim1 allmulticast=on (down)
+
+When we enslave the lower device (netdevsim0) which has a vlan, we
+propagate vlan's allmuti/promisc flags during ndo_open. This causes
+(re)locking on of the real_dev.
+
+Propagate allmulti/promisc on flags change, not on the open. There
+is a slight semantics change that vlans that are down now propagate
+the flags, but this seems unlikely to result in the real issues.
+
+Reproducer:
+
+  echo 0 1 > /sys/bus/netdevsim/new_device
+
+  dev_path=$(ls -d /sys/bus/netdevsim/devices/netdevsim0/net/*)
+  dev=$(echo $dev_path | rev | cut -d/ -f1 | rev)
+
+  ip link set dev $dev name netdevsim0
+  ip link set dev netdevsim0 up
+
+  ip link add link netdevsim0 name netdevsim0.100 type vlan id 100
+  ip link set dev netdevsim0.100 allmulticast on down
+  ip link add name bond1 type bond mode 802.3ad
+  ip link set dev netdevsim0 down
+  ip link set dev netdevsim0 master bond1
+  ip link set dev bond1 up
+  ip link show
+
+Reported-by: syzbot+b0c03d76056ef6cd12a6@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/netdev/Z9CfXjLMKn6VLG5d@mini-arch/T/#m15ba130f53227c883e79fb969687d69d670337a0
+Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+Reviewed-by: Simon Horman <horms@kernel.org>
+Link: https://patch.msgid.link/20250313100657.2287455-1-sdf@fomichev.me
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/verisilicon/rockchip_vpu_hw.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ net/8021q/vlan_dev.c | 31 ++++---------------------------
+ 1 file changed, 4 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/media/platform/verisilicon/rockchip_vpu_hw.c b/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
-index 964122e7c355934cd80eb442219f6ba51bba8b71..b64f0658f7f1e77b3efd960b35cd54dec4edf4ef 100644
---- a/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
-+++ b/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
-@@ -85,10 +85,10 @@ static const struct hantro_fmt rockchip_vpu981_postproc_fmts[] = {
- 		.postprocessed = true,
- 		.frmsize = {
- 			.min_width = ROCKCHIP_VPU981_MIN_SIZE,
--			.max_width = FMT_UHD_WIDTH,
-+			.max_width = FMT_4K_WIDTH,
- 			.step_width = MB_DIM,
- 			.min_height = ROCKCHIP_VPU981_MIN_SIZE,
--			.max_height = FMT_UHD_HEIGHT,
-+			.max_height = FMT_4K_HEIGHT,
- 			.step_height = MB_DIM,
- 		},
- 	},
-@@ -99,10 +99,10 @@ static const struct hantro_fmt rockchip_vpu981_postproc_fmts[] = {
- 		.postprocessed = true,
- 		.frmsize = {
- 			.min_width = ROCKCHIP_VPU981_MIN_SIZE,
--			.max_width = FMT_UHD_WIDTH,
-+			.max_width = FMT_4K_WIDTH,
- 			.step_width = MB_DIM,
- 			.min_height = ROCKCHIP_VPU981_MIN_SIZE,
--			.max_height = FMT_UHD_HEIGHT,
-+			.max_height = FMT_4K_HEIGHT,
- 			.step_height = MB_DIM,
- 		},
- 	},
-@@ -318,10 +318,10 @@ static const struct hantro_fmt rockchip_vpu981_dec_fmts[] = {
- 		.match_depth = true,
- 		.frmsize = {
- 			.min_width = ROCKCHIP_VPU981_MIN_SIZE,
--			.max_width = FMT_UHD_WIDTH,
-+			.max_width = FMT_4K_WIDTH,
- 			.step_width = MB_DIM,
- 			.min_height = ROCKCHIP_VPU981_MIN_SIZE,
--			.max_height = FMT_UHD_HEIGHT,
-+			.max_height = FMT_4K_HEIGHT,
- 			.step_height = MB_DIM,
- 		},
- 	},
-@@ -331,10 +331,10 @@ static const struct hantro_fmt rockchip_vpu981_dec_fmts[] = {
- 		.match_depth = true,
- 		.frmsize = {
- 			.min_width = ROCKCHIP_VPU981_MIN_SIZE,
--			.max_width = FMT_UHD_WIDTH,
-+			.max_width = FMT_4K_WIDTH,
- 			.step_width = MB_DIM,
- 			.min_height = ROCKCHIP_VPU981_MIN_SIZE,
--			.max_height = FMT_UHD_HEIGHT,
-+			.max_height = FMT_4K_HEIGHT,
- 			.step_height = MB_DIM,
- 		},
- 	},
-@@ -344,10 +344,10 @@ static const struct hantro_fmt rockchip_vpu981_dec_fmts[] = {
- 		.max_depth = 2,
- 		.frmsize = {
- 			.min_width = ROCKCHIP_VPU981_MIN_SIZE,
--			.max_width = FMT_UHD_WIDTH,
-+			.max_width = FMT_4K_WIDTH,
- 			.step_width = MB_DIM,
- 			.min_height = ROCKCHIP_VPU981_MIN_SIZE,
--			.max_height = FMT_UHD_HEIGHT,
-+			.max_height = FMT_4K_HEIGHT,
- 			.step_height = MB_DIM,
- 		},
- 	},
-
----
-base-commit: f2151613e040973c868d28c8b00885dfab69eb75
-change-id: 20250403-hantro-av1-wuhd-11e2cf5be1a4
-
-Best regards,
+diff --git a/net/8021q/vlan_dev.c b/net/8021q/vlan_dev.c
+index 2a7f1b15714ab..e9326f322d7a2 100644
+--- a/net/8021q/vlan_dev.c
++++ b/net/8021q/vlan_dev.c
+@@ -273,17 +273,6 @@ static int vlan_dev_open(struct net_device *dev)
+ 			goto out;
+ 	}
+ 
+-	if (dev->flags & IFF_ALLMULTI) {
+-		err = dev_set_allmulti(real_dev, 1);
+-		if (err < 0)
+-			goto del_unicast;
+-	}
+-	if (dev->flags & IFF_PROMISC) {
+-		err = dev_set_promiscuity(real_dev, 1);
+-		if (err < 0)
+-			goto clear_allmulti;
+-	}
+-
+ 	ether_addr_copy(vlan->real_dev_addr, real_dev->dev_addr);
+ 
+ 	if (vlan->flags & VLAN_FLAG_GVRP)
+@@ -297,12 +286,6 @@ static int vlan_dev_open(struct net_device *dev)
+ 		netif_carrier_on(dev);
+ 	return 0;
+ 
+-clear_allmulti:
+-	if (dev->flags & IFF_ALLMULTI)
+-		dev_set_allmulti(real_dev, -1);
+-del_unicast:
+-	if (!ether_addr_equal(dev->dev_addr, real_dev->dev_addr))
+-		dev_uc_del(real_dev, dev->dev_addr);
+ out:
+ 	netif_carrier_off(dev);
+ 	return err;
+@@ -315,10 +298,6 @@ static int vlan_dev_stop(struct net_device *dev)
+ 
+ 	dev_mc_unsync(real_dev, dev);
+ 	dev_uc_unsync(real_dev, dev);
+-	if (dev->flags & IFF_ALLMULTI)
+-		dev_set_allmulti(real_dev, -1);
+-	if (dev->flags & IFF_PROMISC)
+-		dev_set_promiscuity(real_dev, -1);
+ 
+ 	if (!ether_addr_equal(dev->dev_addr, real_dev->dev_addr))
+ 		dev_uc_del(real_dev, dev->dev_addr);
+@@ -490,12 +469,10 @@ static void vlan_dev_change_rx_flags(struct net_device *dev, int change)
+ {
+ 	struct net_device *real_dev = vlan_dev_priv(dev)->real_dev;
+ 
+-	if (dev->flags & IFF_UP) {
+-		if (change & IFF_ALLMULTI)
+-			dev_set_allmulti(real_dev, dev->flags & IFF_ALLMULTI ? 1 : -1);
+-		if (change & IFF_PROMISC)
+-			dev_set_promiscuity(real_dev, dev->flags & IFF_PROMISC ? 1 : -1);
+-	}
++	if (change & IFF_ALLMULTI)
++		dev_set_allmulti(real_dev, dev->flags & IFF_ALLMULTI ? 1 : -1);
++	if (change & IFF_PROMISC)
++		dev_set_promiscuity(real_dev, dev->flags & IFF_PROMISC ? 1 : -1);
+ }
+ 
+ static void vlan_dev_set_rx_mode(struct net_device *vlan_dev)
 -- 
-Nicolas Dufresne <nicolas.dufresne@collabora.com>
+2.39.5
 
 
