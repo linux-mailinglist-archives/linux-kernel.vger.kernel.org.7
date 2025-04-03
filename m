@@ -1,132 +1,115 @@
-Return-Path: <linux-kernel+bounces-586419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 398C9A79F87
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:07:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FBFAA79F8C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACB91176C89
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:05:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EF843B6FA3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312A9253341;
-	Thu,  3 Apr 2025 08:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sKCadj3y"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C43242914
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 08:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C181254848;
+	Thu,  3 Apr 2025 08:59:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34BB245002;
+	Thu,  3 Apr 2025 08:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743670772; cv=none; b=hfEeOmEtR4pYA4iOhaYFTS4zIhebgwzmNw2AUc+EGriaayXx2PeuMsAw1oxDX0ThGQLBGKtBpGz8CYGuppU44+uof2phLDIEwRYoV5Q6BWJio3DXvCCrkAI26Fnptvn79Dg5A7uAQfq+m+OWyfBQstexa4HuaP9dKTcPO7z9V9U=
+	t=1743670784; cv=none; b=Baiz3/3aBn/6wC2W6ES08Uq+gD2PR5vk83UQSNt4ojiQjHabqpFyPsFG49J0oiDdwhMys3GuvyGDlyS+WVnY35/xJGrT6BjhUO4+nHyBCCfe0GpNlQiyDV2eIxuEJ2wwIWfIcs9QS4181ntZYSjD42onw6AJGWcPJWyviKcAids=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743670772; c=relaxed/simple;
-	bh=+fAAJ/+/3MbgFo3bOsjQzn5S6tmp2xnmlCT4juP9rJM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JUJp9y/o/JDyvAzSAOF2S3hLnvYp2RnfH0uCP9PKW3sIIo5BRtUz5gAYTym9lhDVYY4SpF30UKDpH9Z5fOWGESsyqP0LjktvXKCdPu7m+pTc+N8E7iwG3k8KESEgP6v29Ragcz41U5YUDeFKQTDrTVMKLcxx4RGbn+CYDUs14Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sKCadj3y; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5ec9d24acfbso3304841a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 01:59:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743670759; x=1744275559; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IvD3NPE37fI+ZqUrH7EmoQBagetQaG70If7tawsO/t4=;
-        b=sKCadj3yJo3JCJcQbG8ljCh98ao0jmPNWJjFoo/83PbHsIxh1WRJrXCyEFNnjHnnaE
-         dUnPsC5DCafvc49EySVtc6597ytJncgH42PRCo04bQmbkSfbIK8oOz1gxmGqWtISnEP9
-         Y81Do0JzErnbwsdNRiAub5aQmyDszrvT6IHnEJrMu+1HIThiYzIVbUWrNYO/s0sU7+qz
-         K+J2UMlFbL96hqJRIuonbrQU/oO/dJBnij6zsYA7161bz6kXiOSV0cWg/KcDTunezmP2
-         ZrjZDHF2uyeROZ/8ugTOmcsHo+sKLhOhcfPy82/jB/eKIoaIUD0ra9VN+O58Y+igJE2w
-         fdYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743670759; x=1744275559;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IvD3NPE37fI+ZqUrH7EmoQBagetQaG70If7tawsO/t4=;
-        b=eTCl/fN3WqDFrVqhZpHIJum/hgW+Ty9laj+B/kRdPReKvOOC4EBoOTY5HVjcXs5vbn
-         8bOGOpm3kuJ15AFuz3bjd8EY66E0CFQU8VXKIA3IZKz8X+wXhWt1S+SQp05+ISvxQuYC
-         EtNiaG4BzRPbyDIu4wlnqnwcpJSr1Y0R7dXH6F4lAR9185Wwr+PNFmQtylmJh+i8j4mE
-         xrlzTk3lZlTByjrhaZvb1A/vql6sxVdTZSB1giRSxjBY61zyy3kg6pqg72+Iyj/yZ2fy
-         wwipQOmwUACrpy5XIdpYXDzzqPHI1tp/F9zUOdY0I+irxBiV/5LEYshz+w1L8UfkorvA
-         LEKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwacN61hiTqtIEcqXRgmyAStAEk7Lha0wFG8tBnIlge4KEXQxTdPTBH6ma307VHTmZeKpzbXFKtjzjwL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/Eail1bsBdMY2RGaQTJ0rJfTyy/2zaKoK9Ya7N6XMli53E9c9
-	wKALw/+MJtdTl2GVoMs0wGtsFpklrGzxNj0816ePbgy90sYj1PDDXpDbW3DScSo=
-X-Gm-Gg: ASbGnctjXqDPo6fAXBkZ58TCEYMc00Z5dymH/jo/yW9/+uWSWmrWMJ25hy1ijpRNlE7
-	agbciPVZliFM9tNpqaOgm9H0p6Xu22B3mj/NbT6t+Nu3EMEAXjmUh7bxbNzNTtqva+jCmeb6nyh
-	a5A28+qpK8PcZPxQLZNChTLkEoYqJqP+ysEe55Tp7aLkJ6Wjp5ONd2mE0PKVU6rn2jnu4382jZn
-	Moqa/4PefSPebAUt0/XGf8FEg70nTUcrKkvGHhk8+9uiVuLCuWxmzIFfeiDV8UFizL/8SA07HP/
-	pD2KZm42TfKPz4RvzsjMapQlKAPIMm2LW0saAzWVdeXAry16LR6neAQST11nli1PgH34sh5obAo
-	Pntm5MbRfdS3qfanc5g3XVqjXahjqs8iQ6l+lB5s=
-X-Google-Smtp-Source: AGHT+IFW856PFsje+adb2s76FgPUdBl97yj4uiiEZ9rOztAG85/+V2CgHnNshHz2zvEqYifTEoo+Rw==
-X-Received: by 2002:a05:6402:1d55:b0:5ed:5cf6:e168 with SMTP id 4fb4d7f45d1cf-5f084177cb9mr2170046a12.9.1743670759408;
-        Thu, 03 Apr 2025 01:59:19 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f0880a535fsm637614a12.80.2025.04.03.01.59.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 01:59:19 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 03 Apr 2025 09:59:24 +0100
-Subject: [PATCH v3 32/32] MAINTAINERS: add myself as reviewer for Samsung
- S2M MFD
+	s=arc-20240116; t=1743670784; c=relaxed/simple;
+	bh=QPaUiwAtSIjOX5erc2n6DHnB4qcme2fPnAwrOEI2TJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e87+oR/pbPBzquP3OLxmov92Dq2m7d3ThWV/e8baV2er6zX4fPM506Tr1S4LgCCyLNw6CsDb+tTbaPNfVRaAF96MHfM7NlA4E4BcUbytmD/GQE3b4vqIMLxEJj7IdNBk2LqElL7AvQVfMtLnosEhizSAdgRXa+chGphjaeMbNjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8716E106F;
+	Thu,  3 Apr 2025 01:59:44 -0700 (PDT)
+Received: from bogus (unknown [10.57.41.33])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB72B3F63F;
+	Thu,  3 Apr 2025 01:59:40 -0700 (PDT)
+Date: Thu, 3 Apr 2025 09:59:38 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: Matthew Bystrin <dev.mbstr@gmail.com>, arm-scmi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Philipp Zabel <p.zabel@pengutronix.de>, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH] firmware: arm_scmi: add timeout in
+ do_xfer_with_response()
+Message-ID: <20250403-discreet-tangerine-mink-d5faaf@sudeepholla>
+References: <20250402104254.149998-1-dev.mbstr@gmail.com>
+ <20250402-hidden-unyielding-carp-7ee32d@sudeepholla>
+ <Z-1gY8mQLznSg5Na@pluto>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250403-s2mpg10-v3-32-b542b3505e68@linaro.org>
-References: <20250403-s2mpg10-v3-0-b542b3505e68@linaro.org>
-In-Reply-To: <20250403-s2mpg10-v3-0-b542b3505e68@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-1gY8mQLznSg5Na@pluto>
 
-I'm working on a Samsung device which includes this MFD and would like
-to be Cc'ed to further contributions and help on reviewing them. Add me
-as reviewer.
+On Wed, Apr 02, 2025 at 05:05:55PM +0100, Cristian Marussi wrote:
+> On Wed, Apr 02, 2025 at 11:59:47AM +0100, Sudeep Holla wrote:
+> > On Wed, Apr 02, 2025 at 01:42:54PM +0300, Matthew Bystrin wrote:
+> > > Add timeout argument to do_xfer_with_response() with subsequent changes
+> > > in corresponding drivers. To maintain backward compatibility use
+> > > previous hardcoded timeout value.
+> > > 
+> 
+> Hi Matthew, Sudeep,
+> 
+> this is something I had my eyes on since a while and never get back to
+> it....so thanks for looking at this first of all...
+> 
+> > > According to SCMI specification [1] there is no defined timeout for
+> > > delayed messages in the interface. While hardcoded 2 seconds timeout
+> > > might be good enough for existing protocol drivers, moving it to the
+> > > function argument may be useful for vendor-specific protocols with
+> > > different timing needs.
+> > > 
+> > 
+> > Please post this patch along with the vendor specific protocols mentioned
+> > above and with the reasoning as why 2s is not sufficient.
+> 
+> Ack on this, it would be good to understand why a huge 2 secs is not
+> enough...and also...
+> 
+> > 
+> > Also instead of churning up existing users/usage, we can explore to had
+> > one with this timeout as alternative if you present and convince the
+> > validity of your use-case and the associated timing requirement.
+> > 
+> 
+> ...with the proposed patch (and any kind of alternative API proposed
+> by Sudeep) the delayed response timeout becomes a parameter of the method
+> do_xfer_with_response() and so, as a consequence, this timoeut becomes
+> effectively configurable per-transaction, while usually a timeout is
+> commonly configurable per-channel, so valid as a whole for any protocol
+> on that channel across the whole platform, AND optionally describable as
+> different from the default standard value via DT props (like max-rx-timeout).
+> 
+> Is this what we want ? (a per-transaction configurable timeout ?)
+> 
+> If not, it could be an option to make instead this a per-channel optional
+> new DT described property so that you can configure globally a different
+> delayed timeout.
+> 
+> If yes, how this new parameter is meant to be used/configured/chosen ?
+> on a per-protocol/command basis, unrelated to the specific platform we run on ?
+>  
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d4d577b54d798938b7a8ff0c2bdbd0b61f87650f..9f05af52b062d8cab0f8b48b2625432108604c3e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21397,6 +21397,7 @@ F:	drivers/platform/x86/samsung-laptop.c
- 
- SAMSUNG MULTIFUNCTION PMIC DEVICE DRIVERS
- M:	Krzysztof Kozlowski <krzk@kernel.org>
-+R:	André Draszik <andre.draszik@linaro.org>
- L:	linux-kernel@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
- S:	Maintained
++1 on all the points above. I agree this must be per transport. If it is
+per message then you need to think why it needs to sync command. Why can't
+it be changed to async or use notification. I am waiting to see the usage
+in your vendor protocols to understand it in more detail.
 
 -- 
-2.49.0.472.ge94155a9ec-goog
-
+Regards,
+Sudeep
 
