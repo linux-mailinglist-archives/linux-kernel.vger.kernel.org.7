@@ -1,232 +1,112 @@
-Return-Path: <linux-kernel+bounces-586469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3AC0A7A001
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:26:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAD19A7A004
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 264CC7A56EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:25:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E3543B35E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272F324291C;
-	Thu,  3 Apr 2025 09:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BDD24291C;
+	Thu,  3 Apr 2025 09:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Go74T+tU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yo5K1YJs";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Go74T+tU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Yo5K1YJs"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SLtOwqSF"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A2519340B
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 09:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC0018DB10
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 09:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743672406; cv=none; b=V9WCGGp7AwPSFtJnUYkEIFMA3z1J5IHegrSE/mJ+5cYLhHDWw0cFdqpOHfMKSyjSXelt/6Bb3khqTdUYTXzz0o84HvIqFa7KDyYUFNVp5zAgSclr4XwymgOSjv8d5g+265uXvvgry1AoBlAcz4Gl1mBUQ51q1H+rxDTv+y4YTJg=
+	t=1743672438; cv=none; b=RFrkjEKzPUOJnbX8T2aWc3mzWsXB9v+fL6Jgo6Na+fUQPxMwWRC0wOD+fbxcnDn9kBT4ZGApJc/5bZDgTGPbMEO2REA9fhl6so3mim9jJYphYh9eyoBOTLs4K7vVFUK/WimSF3BBxNWYYqFzxGN3jsl/pLx/eZogl/aKLM2xHxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743672406; c=relaxed/simple;
-	bh=3kt8uZWFqgd+7TiQBoV1mBy2E5+2zlC3Ohx8tCaBTJg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rfmy7qOSsh2Ra++uo7dpWCcNDKbNZMxJKaRRac+8jP8eoRxLvjRglyfiKeHE+coZBU/lF3OAbWbiTBSrHU2/GGgeBNjN2H0eNH5bNeZihZD6b3/sF3j1TkNOGuN4FJhipsNw/W8XkjAWiV+or2Yau4j0nHqF6sVKkKOjmuUxQmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Go74T+tU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yo5K1YJs; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Go74T+tU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Yo5K1YJs; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3946C2119C;
-	Thu,  3 Apr 2025 09:26:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743672396; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g5JBiagd/IaphZnNyD5cE9CP+4ou/BNEE11+z/xpLv8=;
-	b=Go74T+tUMTM6OYdgLA37QBOkBLwM+KvGmRKuScprELaI3wS+y+CEE0CAGHNeZpSu42E4HC
-	PS4zr7Qb+kuj+u0fqs7wZGYgJs+8ZJTPubY1mLgqZrdVKHNGouW1eOPXNA83eeDL7OXWaT
-	wz/auDH67aPVt+xsgV9PkVm2z0QNIrQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743672396;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g5JBiagd/IaphZnNyD5cE9CP+4ou/BNEE11+z/xpLv8=;
-	b=Yo5K1YJsEQjD37r4hoFAPojI/47BnHdlm4EGwH/fr7Ve751Vut4k5R/Mwyg8w3kGQRfuid
-	PkQezbA8/O+1sSCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1743672396; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g5JBiagd/IaphZnNyD5cE9CP+4ou/BNEE11+z/xpLv8=;
-	b=Go74T+tUMTM6OYdgLA37QBOkBLwM+KvGmRKuScprELaI3wS+y+CEE0CAGHNeZpSu42E4HC
-	PS4zr7Qb+kuj+u0fqs7wZGYgJs+8ZJTPubY1mLgqZrdVKHNGouW1eOPXNA83eeDL7OXWaT
-	wz/auDH67aPVt+xsgV9PkVm2z0QNIrQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1743672396;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g5JBiagd/IaphZnNyD5cE9CP+4ou/BNEE11+z/xpLv8=;
-	b=Yo5K1YJsEQjD37r4hoFAPojI/47BnHdlm4EGwH/fr7Ve751Vut4k5R/Mwyg8w3kGQRfuid
-	PkQezbA8/O+1sSCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 146AD13A2C;
-	Thu,  3 Apr 2025 09:26:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id JThnBExU7mdkbgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 03 Apr 2025 09:26:36 +0000
-Message-ID: <78c2d3be-aa8e-4bb7-8883-7f144a06f866@suse.cz>
-Date: Thu, 3 Apr 2025 11:26:35 +0200
+	s=arc-20240116; t=1743672438; c=relaxed/simple;
+	bh=8Wim55GQSSQZ3suXOPqnLbIRcIj+P05X/R3WrzXgTv0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sihZmRWwD4m5RU8DRb7gwx6sFHdciW+SApsi9ohI5knb0CmqDLFKtMvGEi/wmaFww2Rgwf3kHFflyAOFM9Ntu4jr5potjHMGbwpS0KJFGFvtwNlMtZhuBkdt6IyViZ2hgjUGX3E77lH/FWdNAd2vnSp6mOwyJ5M3hNN2MpktuAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SLtOwqSF; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e461015fbd4so544060276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 02:27:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743672435; x=1744277235; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8Wim55GQSSQZ3suXOPqnLbIRcIj+P05X/R3WrzXgTv0=;
+        b=SLtOwqSFek8Z4T1fSR9uMN/MebB2w8tp6/uNgUUHU9+wAFc4REvhjw/jYBzMiVxZyd
+         lyFTXjkJGV/moMDQw29Hqw/5JXmkF9y0qsuDkswVOnEfSXOxE/FFUc9EQsAD81TaYRwL
+         YodD36YZ9DN4ef31C6qZIHUIe+bSjYU5gQT8GKr4V5UPUJjYweR8fTaDJXYf3lxtBOMI
+         VmnERUnZvVACqqhMlXNiuqUc69B3WxJ5fyaIZogp4oVcIyUGvarZ0S8faqoZHabHbm5p
+         ELfu3c7S2J/CcXr+1bnQwDe/4kuZQSqSrs860eIof+UkAd6gABB4Htofzx+0celkO1Ot
+         ALpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743672435; x=1744277235;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8Wim55GQSSQZ3suXOPqnLbIRcIj+P05X/R3WrzXgTv0=;
+        b=sf2qBP+JJJjKi4esjh/i7oft8vf06QFeD59cVb3RIiGXV0155s8k9FjnVJk5KMULpL
+         kZslw78o8X35Ysv2cOUmE523W8Imua0CsMjfB9low+/QDPFK7Ig4Dp1NHAzrhfvPg6lh
+         KcrwkcLXIenXdAV4R+G6e+ymoMSQkz6B2JISRVA8vS0dLH1SkNJx9ID1fTRCDpJbweZ2
+         YbftFlFDteG+1UZOaNa0buKW8RNtgmCYoe9maZNdvpuHnqsfqB0I34gjFcBy4+TZHx65
+         bZ+JaNW/wgwaI9iLLUGaS1wcKbgSRns9SmQBG//twWcRecssEwNFKhTwfIPVwF/+RlML
+         XuLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNvBqAzc0YXbWrKKLCx0DXGF89H9DUo4wg7S3MjHRMp3osu5xedPU/V4TIK6r3e3o6gKI59jcykpGW5nE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEJ0tIXvhW4LFaU8+skqia2N4lF5TwmkfXMRHyJCtd77bLBONK
+	9f6b2aRKFtoHF263nSbI/HhFbDII91bHc1h1xj7ZQInCyqbvJGhF92ftGdiWybepbbIRPNG2ehU
+	1rRR/70fDbpwnnWGAEOCpjzkBct8=
+X-Gm-Gg: ASbGncs/W4cLrImo9SIGCYhty/ITTJWet/qdlvvhZahq0Tz7glyKhF4EMLVE2mjzTND
+	2hpXErb82DRrbiKw5MAh/hqDV8RjurgCS8cBofMYa/K2Ux/ImJxHKnetDUHio1wCzjc8UT+TBJP
+	EZhgFtYqV2LTGg96pxPIIIuCeccQ==
+X-Google-Smtp-Source: AGHT+IEb2HiPgljplXFT+AGKyQzvdUoVsPHVwifO2PILVLDJ7XXBDLb37Qwzbi2NclfrbSMIKi7vQhYJNNnzWtMxLBU=
+X-Received: by 2002:a05:6902:2012:b0:e6d:fc1f:3cb1 with SMTP id
+ 3f1490d57ef6-e6e0a233765mr2431715276.45.1743672435076; Thu, 03 Apr 2025
+ 02:27:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] locking/local_lock, mm: Replace localtry_ helpers with
- local_trylock_t type
-Content-Language: en-US
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, bpf
- <bpf@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Sebastian Sewior <bigeasy@linutronix.de>,
- Steven Rostedt <rostedt@goodmis.org>, Michal Hocko <mhocko@suse.com>,
- linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20250401205245.70838-1-alexei.starovoitov@gmail.com>
- <umfukiohyxcxxw5g6ca5g7stq7oonnr3sbvjyjshnbqalzffeq@2nrwqsmwcrug>
- <CAADnVQLHakKsVEbKiENF8eV0fEAtbVbL0b_QbJO2b0dH9r7PSw@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <CAADnVQLHakKsVEbKiENF8eV0fEAtbVbL0b_QbJO2b0dH9r7PSw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,linux.dev];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:mid,linux.dev:email]
-X-Spam-Score: -2.80
-X-Spam-Flag: NO
+References: <20250403070453.214190-1-ubizjak@gmail.com> <20250403082508.GAZ-5F5EMVZq3-6Zoo@fat_crate.local>
+ <CAFULd4a49RRMKrSVh3Q5zpeK4EJVW61tm=fCN4aOWX8=x8rKnw@mail.gmail.com> <20250403092218.GBZ-5TSiyjNRAcBxQo@fat_crate.local>
+In-Reply-To: <20250403092218.GBZ-5TSiyjNRAcBxQo@fat_crate.local>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Thu, 3 Apr 2025 11:27:02 +0200
+X-Gm-Features: AQ5f1JoefwxlbkfyQlTfxdFEjY7L5dPAYmAuI3vBr7qkxaR9EbDEdxcUUI4oT_8
+Message-ID: <CAFULd4axo8ZOVJwRkqhi0nFYAveX6mBpd0Bwte+rYp=umHTP8Q@mail.gmail.com>
+Subject: Re: [PATCH -tip] x86/idle: Work around LLVM assembler bug with
+ MONITOR and MWAIT insn
+To: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/2/25 23:40, Alexei Starovoitov wrote:
-> On Wed, Apr 2, 2025 at 1:56 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
->>
->> On Tue, Apr 01, 2025 at 01:52:45PM -0700, Alexei Starovoitov wrote:
->> > From: Alexei Starovoitov <ast@kernel.org>
->> >
->> > Partially revert commit 0aaddfb06882 ("locking/local_lock: Introduce localtry_lock_t").
->> > Remove localtry_*() helpers, since localtry_lock() name might
->> > be misinterpreted as "try lock".
->> >
->> > Introduce local_trylock[_irqsave]() helpers that only work
->> > with newly introduced local_trylock_t type.
->> > Note that attempt to use local_trylock[_irqsave]() with local_lock_t
->> > will cause compilation failure.
->> >
->> > Usage and behavior in !PREEMPT_RT:
->> >
->> > local_lock_t lock;                     // sizeof(lock) == 0
->> > local_lock(&lock);                     // preempt disable
->> > local_lock_irqsave(&lock, ...);        // irq save
->> > if (local_trylock_irqsave(&lock, ...)) // compilation error
->> >
->> > local_trylock_t lock;                  // sizeof(lock) == 4
->>
->> Is there a reason for this 'acquired' to be int? Can it be uint8_t? No
->> need to change anything here but I plan to change it later to compact as
->> much as possible within one (or two) cachline for memcg stocks.
-> 
-> I don't see any issue. I can make it u8 right away.
+On Thu, Apr 3, 2025 at 11:22=E2=80=AFAM Borislav Petkov <bp@alien8.de> wrot=
+e:
+>
+> On Thu, Apr 03, 2025 at 11:06:02AM +0200, Uros Bizjak wrote:
+> > The least common denominator is an insn with implicit operands. I'll
+> > post V2 that fixes it that way.
+>
+> I guess.
+>
+> You don't need to post a patch ontop - your previous one should be remove=
+d and
+> the whole effort can start all over again.
 
-Are you planning to put the lock near other <64bit sized values in memcg
-stock? Otherwise it will be padded anyway?
+IMO, in this case the fixup also documents the LLVM bug, so perhaps
+the fixup on top is desirable for documentation purposes.
 
-I hope it won't hurt the performance though, AFAIK at least sub-word atomics
-are much slower than using a full word. But we use only read/write once for
-acquired so hopefully it's fine?
+BTW: The test with CC=3Dclang make argument didn't expose this issue.
 
->> > local_lock(&lock);                     // preempt disable, acquired = 1
->> > local_lock_irqsave(&lock, ...);        // irq save, acquired = 1
->> > if (local_trylock(&lock))              // if (!acquired) preempt disable
->> > if (local_trylock_irqsave(&lock, ...)) // if (!acquired) irq save
->>
->> For above two ", acquired = 1" as well.
-> 
-> I felt it would be too verbose and not accurate anyway,
-> since irq save will be done before the check.
-> It's a pseudo code.
-> But sure, I can add.
-> 
->>
->> >
->> > The existing local_lock_*() macros can be used either with
->> > local_lock_t or local_trylock_t.
->> > With local_trylock_t they set acquired = 1 while local_unlock_*() clears it.
->> >
->> > In !PREEMPT_RT local_lock_irqsave(local_lock_t *) disables interrupts
->> > to protect critical section, but it doesn't prevent NMI, so the fully
->> > reentrant code cannot use local_lock_irqsave(local_lock_t *) for
->> > exclusive access.
->> >
->> > The local_lock_irqsave(local_trylock_t *) helper disables interrupts
->> > and sets acquired=1, so local_trylock_irqsave(local_trylock_t *) from
->> > NMI attempting to acquire the same lock will return false.
->> >
->> > In PREEMPT_RT local_lock_irqsave() maps to preemptible spin_lock().
->> > Map local_trylock_irqsave() to preemptible spin_trylock().
->> > When in hard IRQ or NMI return false right away, since
->> > spin_trylock() is not safe due to explicit locking in the underneath
->> > rt_spin_trylock() implementation. Removing this explicit locking and
->> > attempting only "trylock" is undesired due to PI implications.
->> >
->> > The local_trylock() without _irqsave can be used to avoid the cost of
->> > disabling/enabling interrupts by only disabling preemption, so
->> > local_trylock() in an interrupt attempting to acquire the same
->> > lock will return false.
->> >
->> > Note there is no need to use local_inc for acquired variable,
->> > since it's a percpu variable with strict nesting scopes.
->> >
->> > Acked-by: Vlastimil Babka <vbabka@suse.cz>
->> > Signed-off-by: Alexei Starovoitov <ast@kernel.org>
->>
->> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
-> 
-> Thanks!
-
+Uros.
 
