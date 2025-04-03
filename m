@@ -1,137 +1,128 @@
-Return-Path: <linux-kernel+bounces-587076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE207A7A78F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 18:08:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97740A7A793
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 18:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A2F43AA49F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:07:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96E793AA2F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6161250C08;
-	Thu,  3 Apr 2025 16:07:58 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6690B2512DE;
+	Thu,  3 Apr 2025 16:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="osdmGpzD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E107E24EF66
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 16:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF700250C1F;
+	Thu,  3 Apr 2025 16:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743696478; cv=none; b=bq1bsswnaeSOj8+AQRhuKmuUjzQMRvzxul/419d9WrNAk/cKwKXkGUmQQCjdWJFD9EsoEtmC/0nqkClP2RqU7pGJmXJNf2swYb3FUNf92OKkfI1ji+EnxSnOP+W+qqt97XcHS4WCs3gAnrpCNLrkU6DE9tlIbOAehIh5gea6Goo=
+	t=1743696501; cv=none; b=hEEZYP5QIZmvRD1Q79MBgsNwoJ8pAP0epa4Sc+Znz+X0ivllqzcXyYqqg+L5wotdlkb9nioJOXI+LZkivTyIpplylWpsYzKkBc+7XlUsto5W/ze9EQJQtMrk/VDkCnj7zaELYnX6E5FbBHXz1i6aQOIN4SvL47G1qUHaXSJL2gU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743696478; c=relaxed/simple;
-	bh=tf694kECYu/EWPbbQ45vsQ6LcGLLICsZok3e/DD7KDI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JQYvQhiMuMTKolCOFt4EHzvG2OEtZ+WgTReXyxIWWgUfyIk75i2fypICUz0aw/qbFy2hWwDh7+Ub7tXzhXVgmPwdeadg5azr0Ym6R3sMavzxVHJU+ehhifAWDBFXiJcDtEPTvcXdHQhcg/xIXIO99fR4ras18cP0i2t0KKj+7Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [221.222.48.127])
-	by APP-05 (Coremail) with SMTP id zQCowAB3rgZRsu5nyDqHBQ--.49340S2;
-	Fri, 04 Apr 2025 00:07:46 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: kenneth.feng@amd.com,
-	alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>
-Subject: [PATCH] drm/amd/pm/powerplay/smumgr/fiji_smumgr: Fix wrong return value of fiji_populate_smc_boot_level()
-Date: Fri,  4 Apr 2025 00:07:23 +0800
-Message-ID: <20250403160723.2400-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1743696501; c=relaxed/simple;
+	bh=gEGKYAZEoePzKrXwvNWYI1CtU+E9aEhhPR/kyywS4RU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jDvQjQpLJ3Zr35tUE9B7uIcAe5FXXk5ajYo1mbBnJboBRSpfW6HnMfsLomovC8KVo8UcRYooxVHIBiFDh8Bla/RKyL5JMT9VsZBnH9GJyClqVmlZ42gaEbY1oAFqOIUY2tvtkV2+p+uefCIx/ozhOBH0gAbErRZmeJc5ttCLk9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=osdmGpzD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 226F3C4AF0B;
+	Thu,  3 Apr 2025 16:08:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743696501;
+	bh=gEGKYAZEoePzKrXwvNWYI1CtU+E9aEhhPR/kyywS4RU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=osdmGpzDe1g6mqi6TW2PxhV/CgA5CAQdc+2/xgS6y1RM2F1SYaBYALTINCj9i+UrN
+	 143BdFO1f4vck2K8KF0B+L+MJ3i3grUMpOfq+MVPy7r/iN8Hj/0pHiTDioNPvkj3C8
+	 kUTm7S8qNrh0ExziAYZ7DiyKbar2zglm1eFMJ8ZCV3ASENAtmIIfFMaoDaeprwKVrY
+	 ctRSVbxpVeoBoywXyeV+xZp/Y+GSuJyMr2GQ0S3eWO62KKna0+VfbTWdp4saIzAgG1
+	 8LlSBA49eazaMXOZryC4gn+VLxuXJBDyR5RZ1xoD0rUy4EkpLJwkrwMDJuTpbLvE6u
+	 Ug7X29x9YrhRQ==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9eb12so1718273a12.1;
+        Thu, 03 Apr 2025 09:08:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUPTSorcw6rbIguhAMJleZCoYUp/NQhisHZH1mF1aDfj8+k9CQVTjHO22n7Y7FWV/rK25rHKJWPT0OBeZDw@vger.kernel.org, AJvYcCVRVL5nhcX+m3BQkv7x/F0sq2Yh9aCSrII/t34bq7XxscfzKEUKF+7beg7zzlzKOPe+9DjdsAlxNUKF@vger.kernel.org, AJvYcCVtEoLjlK1nW4cCtivclIrdDGqs1YozrSGIiyxN9slDwQJ7st+whX8pD4G61Jlgpl9rTgLFKV1R0XzllQ==@vger.kernel.org, AJvYcCW3tZyTJ84V3sdzDJ01e8J/OcR0wS7Nx5q2/ZvdnYlGonMYUo/IVAIEZ0HpyuhLBZkIcT8NdkWXN/7tZWWrRCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNVZsNAMfem90+XZEV5BJhvPgb8DztIbyIUasITxuiw9mDyTqp
+	EvujWlEkYKrk6bSxkCTVe8kJ8hsIZ2qWXYAk/V8VZ/LyCOL3y+74pCgYQU3sqSj+aZpAqXPy/JU
+	1r0NtUEzZpNYohgUTgd9DZ8nE+w==
+X-Google-Smtp-Source: AGHT+IHmscTaGwO7LnNvWu3XRFwSzOKZ3kzeKT1rfjNXx+XA8krxwiN/UAgxO7RqmNAtS46aSBz26E9rNTAuhvD6UyI=
+X-Received: by 2002:a05:6402:51cb:b0:5e6:23c:a242 with SMTP id
+ 4fb4d7f45d1cf-5f0871e7927mr2878204a12.18.1743696499667; Thu, 03 Apr 2025
+ 09:08:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAB3rgZRsu5nyDqHBQ--.49340S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF43Wr4xZw43CF4kCF47CFg_yoW5GF15pr
-	WDXrZIv39YyanrJrnrtFs2qr4S9FyxJFW8G3y7C34rZw1UtrW8Zr40ya4ayF48GFyIkws3
-	X342gFWUGr4Ika7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
-	6r4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r1j6r
-	4UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
-	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVWUMxAIw28IcxkI7VAKI48JMx
-	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
-	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
-	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
-	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
-	WUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUjtx6UUUUU
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAYBA2fuaKzRGAAAsM
+References: <20250326171411.590681-1-remo@buenzli.dev> <20250326171411.590681-4-remo@buenzli.dev>
+ <Z-UPJyD41LOMM3o2@smile.fi.intel.com> <D8WA3WIHEQRN.3LQS84K8Z46OW@buenzli.dev>
+ <Z-6NG7fSfyKH-vW_@smile.fi.intel.com>
+In-Reply-To: <Z-6NG7fSfyKH-vW_@smile.fi.intel.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 3 Apr 2025 11:08:07 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLPZc1LB09auMOJp90hbhJin75Yaa09h12ziZZgExSsBg@mail.gmail.com>
+X-Gm-Features: ATxdqUHd96TFG2qW7tZ-hBkIo8v6Ux3T1qGlGrFUSrc98Q86mSDii3n0BKpAGgE
+Message-ID: <CAL_JsqLPZc1LB09auMOJp90hbhJin75Yaa09h12ziZZgExSsBg@mail.gmail.com>
+Subject: Re: [PATCH 03/10] device property: Add fwnode_property_read_int_array()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Remo Senekowitsch <remo@buenzli.dev>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Dirk Behme <dirk.behme@de.bosch.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Saravana Kannan <saravanak@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, devicetree@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The return value of fiji_populate_smc_boot_level() is always 0, which
-represent the failure of the function. The result of phm_find_boot_level()
-should be recored and return. An error handling is also needed to
-phm_find_boot_level() to reset the boot level when the function fails.
-A proper implementation can be found in tonga_populate_smc_boot_level().
+On Thu, Apr 3, 2025 at 8:29=E2=80=AFAM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Wed, Apr 02, 2025 at 06:04:13PM +0200, Remo Senekowitsch wrote:
+> > On Thu Mar 27, 2025 at 9:41 AM CET, Andy Shevchenko wrote:
+> > > On Wed, Mar 26, 2025 at 06:13:42PM +0100, Remo Senekowitsch wrote:
+> > >> The rust bindings for reading device properties has a single
+> > >> implementation supporting differing sizes of integers. The fwnode C =
+API
+> > >> already has a similar interface, but it is not exposed with the
+> > >> fwnode_property_ API. Add the fwnode_property_read_int_array() wrapp=
+er.
+>
+> ...
+>
+> > >> +EXPORT_SYMBOL_GPL(fwnode_property_read_int_array);
+> > >
+> > > I'm not sure about this. We have a lot of assumptions in the code tha=
+t the
+> > > arrays beneath are only represented by the selected number of integer=
+ types.
+> > > This opens a Pandora's box, e.g., reading in u24, which is not suppor=
+ted by
+> > > the upper layers..
+> > >
+> > >> +int fwnode_property_read_int_array(const struct fwnode_handle *fwno=
+de, const char *propname,
+> > >> +                             unsigned int elem_size, void *val, siz=
+e_t nval);
+> >
+> > Here's an alternative approach using a macro to map each integer type e=
+xplicitly
+> > to its corresponding read function. There are some additional changes t=
+hat will
+> > be necessary to make the rest work, but this is the gist of it.
+>
+> I don;'t know Rust to tell anything about this, but at least it feels muc=
+h
+> better approach.
 
-Fixes: dcaf3483ae46 ("drm/amd/pm/powerplay/smumgr/fiji_smumgr: Remove unused variable 'result'")
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- .../drm/amd/pm/powerplay/smumgr/fiji_smumgr.c | 23 +++++++++++++------
- 1 file changed, 16 insertions(+), 7 deletions(-)
+I know a little Rust and it is much worse. It is implementing the same
+code 8 times instead of 1 time just to work-around the C API.
 
-diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c b/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
-index 5e43ad2b2956..7d0cb3741b94 100644
---- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
-+++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/fiji_smumgr.c
-@@ -1600,19 +1600,28 @@ static int fiji_populate_smc_uvd_level(struct pp_hwmgr *hwmgr,
- static int fiji_populate_smc_boot_level(struct pp_hwmgr *hwmgr,
- 		struct SMU73_Discrete_DpmTable *table)
- {
-+	int result = 0;
- 	struct smu7_hwmgr *data = (struct smu7_hwmgr *)(hwmgr->backend);
- 
- 	table->GraphicsBootLevel = 0;
- 	table->MemoryBootLevel = 0;
- 
- 	/* find boot level from dpm table */
--	phm_find_boot_level(&(data->dpm_table.sclk_table),
--			    data->vbios_boot_state.sclk_bootup_value,
--			    (uint32_t *)&(table->GraphicsBootLevel));
-+	result = phm_find_boot_level(&(data->dpm_table.sclk_table),
-+				     data->vbios_boot_state.sclk_bootup_value,
-+				     (uint32_t *)&(table->GraphicsBootLevel));
-+	if (result) {
-+		table->GraphicsBootLevel = 0;
-+		return 0;
-+	}
- 
--	phm_find_boot_level(&(data->dpm_table.mclk_table),
--			    data->vbios_boot_state.mclk_bootup_value,
--			    (uint32_t *)&(table->MemoryBootLevel));
-+	result = phm_find_boot_level(&(data->dpm_table.mclk_table),
-+				     data->vbios_boot_state.mclk_bootup_value,
-+				     (uint32_t *)&(table->MemoryBootLevel));
-+	if (result) {
-+		table->MemoryBootLevel = 0;
-+		return 0;
-+	}
- 
- 	table->BootVddc  = data->vbios_boot_state.vddc_bootup_value *
- 			VOLTAGE_SCALE;
-@@ -1625,7 +1634,7 @@ static int fiji_populate_smc_boot_level(struct pp_hwmgr *hwmgr,
- 	CONVERT_FROM_HOST_TO_SMC_US(table->BootVddci);
- 	CONVERT_FROM_HOST_TO_SMC_US(table->BootMVdd);
- 
--	return 0;
-+	return result;
- }
- 
- static int fiji_populate_smc_initailial_state(struct pp_hwmgr *hwmgr)
--- 
-2.42.0.windows.2
-
+Rob
 
