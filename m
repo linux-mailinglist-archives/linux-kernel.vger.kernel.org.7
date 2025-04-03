@@ -1,101 +1,179 @@
-Return-Path: <linux-kernel+bounces-586702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD7AA7A2C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:24:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D3CDA7A2CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D51B1897D4E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:23:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3354616772D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E408624E00E;
-	Thu,  3 Apr 2025 12:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B0724CEE8;
+	Thu,  3 Apr 2025 12:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cJR7zyg6"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D376524BC14;
-	Thu,  3 Apr 2025 12:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Ni8jksu1"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3424624CEE1;
+	Thu,  3 Apr 2025 12:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743683011; cv=none; b=FFJQs54t4dMpU8mP6qTNVmut0ZabV5kMKmDYW+1slosgCh9JdtIn4fkL9didPkVS5cyGQ54hLMQQafw300e0XFjTswDf6DWg6HjAI83EyL9svmQF1csaDG1X9cjgcI/gTMUqi0Eov8lZV0OmxEwpR6Nir+XohU9ZuUyqMCqptnw=
+	t=1743683146; cv=none; b=H5gzFF2/amXhzvyP5OjLBztPaiYemaWVdyL0LL2386/gmWbbfS0Kg/VGRFYPDoGm+bvDOT3LTQlhDiTRNJQnw+G4NNaM+3og6+eqhT67UnKRGafrvSV6ojfJ2bRL2/lMHrdN4StsP5lUG5yvFYg2wHJNUi0jKXSEoDX4Mys7GxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743683011; c=relaxed/simple;
-	bh=NmfEykaHPyLg567HGY8JUEJFgdg5it78uJulPuBnAn8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CeEHh1P5YddmRFEyQwdtWOZsE0oXX/01LN4y56Mknld58YFwIfQjtOImvSKD3gZheOYa7vlV40OD9c1ycnYCj3vQb+rCDA6ffRlmVVqOtpaXoMUn+jt8piQJ/l1XmNLQN1PDaNi8wd5+9sGU62KzC9IvNAFiybb611yL+ANymXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cJR7zyg6; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-af9a6b3da82so556133a12.0;
-        Thu, 03 Apr 2025 05:23:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743683009; x=1744287809; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j8pdFqe5wdSrbRSE+VzD86OQZDuUqgJTjeTU/Xy0AtM=;
-        b=cJR7zyg6auyPVJhnN25RkWNGGMjPzfe/y7S8sEZjDVgL7NneKNbGOurqq312vqIVA2
-         7xz6mj12v7SzTd9R++BnNSPXxXyubGwq9pQYUw1UQMU9BS9So0fOo1ncaoJW+Ee69FlB
-         ukOzwqr3e8XhLcZY7hfSlABRWHJYtA2z3aZJQ5yCPpxTESS1cRpxvGvGSgHdTKo5WOYd
-         RY+64g7daNzeI9W4pifeV68Rrrdn0B96gg8xaECfrIh+bWR9hQRSAKlwJGOS8QJ8PLYM
-         mIlW9NhD/jnDNNhE2TTfTITwiV+dPlLWWLxqg2EacWtzqybg+0IQbBPKF3LxiunliYSD
-         Et2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743683009; x=1744287809;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j8pdFqe5wdSrbRSE+VzD86OQZDuUqgJTjeTU/Xy0AtM=;
-        b=Au3RZ3YbvRP9GwVwOYyLbGqTGkCh6qL8v1oADWUpfcfx5iPQlhMVTYFJQgR+o73dY/
-         fV2a+KdKdadS2CvatocPvNIEgSuD02ohWtaLQi+5HkpUtVYG3OrwjojURj7ZdcoVmJ/v
-         5XFte43ucWKEuEbQXD3hrcXMfCFmQ/UPhUDle4Rn5Yjb8YCFeArMwV8yElNjN+knj65j
-         dtvSwez+OxFs1Po9QKl1Qv8SWUTcz84oisXyl2AUF342/W1rGkpVe77nnnEuSZqdB/p6
-         s4wxKXUDo973x5bnBP1TyGcuH3FN9SVy09OBuvZZ7IC9x0AS/D6vcu0w0SXeOyxxUWEB
-         FOTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVb/qq+WIPD1eZ0rdRTQmtr2lFp0K3h/ps+R67bvej6V/TDpsB6qXcQvs1n3LLmJ7hSvRnX8kfhh8HWVwQg@vger.kernel.org, AJvYcCX5RwFGH+lgMqGCu0+pj27oMvbqLRO9cXsD372mqysLY93owOEfNGamOEdAvPtFUHhN2pDJu9h0g1+cig==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUTSwd19l9sYXXYIeo/WuU0n1Oisvo5BkGn1TNwwTHsTtQM+qk
-	oapYP/OjnqYIA81SCYUsw6r3Mm1/DGtC5AR4qTtQ1IEEvK3EO+LT
-X-Gm-Gg: ASbGnct6i380QwVK/GoE343YO+f/rgOH3DdL2ZeZ2qup5T/sIrtkOiScC81bQWfsRH7
-	yHtkaQcA3DWqMM5nPZXHRMS9IhVDQ3v7ND0hS1XPkmBkBRMcBUS02kOMiRrHzGhF2+pzVnlJ70y
-	bmPvACu3sh9kTA98+gZY/+YPJLwp5EautLFCucDHF6rOaLmGLkQqg3DbOAM0ambKaUDl3MToTJW
-	FHXrU9swpChBfYzXBkk4WwTfQv1SD7jANjrLeNvZWl6u7/GO9xt9P9oiAgRZPTnYtlwqskh0X0h
-	WJtDT4iDSEG2S0z8cu443nTtytDG+VgTd1AqQCgpRa28Ht//OYBtDM96QQ==
-X-Google-Smtp-Source: AGHT+IFWoVNkJ+dWO+H8xv9fdaQxquRaqZ7L7UbIv/NP4irRU4/58KAnlGg4QMTZpPPagLZn6A+MSw==
-X-Received: by 2002:a17:90a:c106:b0:2f5:88bb:118 with SMTP id 98e67ed59e1d1-3056ef07ba0mr7329969a91.22.1743683008951;
-        Thu, 03 Apr 2025 05:23:28 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2297865e45fsm12833045ad.135.2025.04.03.05.23.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 05:23:28 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 3 Apr 2025 05:23:27 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: David Hows <david@hows.id.au>
-Cc: Clemens Ladisch <clemens@ladisch.de>, Jean Delvare <jdelvare@suse.com>,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [v2] hwmon: (k10temp) Add support for Zen5 Ryzen Desktop
-Message-ID: <c5dda37c-52d5-4fc0-913e-4610e30c4eba@roeck-us.net>
-References: <Z-21SQkZpuWiWK06@archibald.hows.id.au>
+	s=arc-20240116; t=1743683146; c=relaxed/simple;
+	bh=aYvnp3rjcHqgeu5q1Bg/myMR5Oa1l+xmSrX96Y1n/rY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r1bbNUJNzhOvESfpJrpF2MGvmh/dm5AEvv4/KiTiHwHy14KJGgOVISRN5DPWaIcf/34Y5usagLhAeCpXehX4aAK/yJsTVXLazV+Laa6x5GR1HWbm2/GqHtUgBISOoBWynKSeutoYXSq3zd0WuTlqSBah0GQq1ClgQFXifNWJN+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Ni8jksu1; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=YOVGxu+Pa9F9S2YKMRxxQPidaydp1+plrOXzivuJhgI=;
+	b=Ni8jksu1UeXcQ5bdgkbl4cNlxi682KXN1OSfRg7bgdinuMZSU3nbasnbFf0Zqw
+	Nsu6dSF5P0KlCyYq86PYsFrVz1yyl3bV7WXPkttOHNUNSFZkGGFd/4vvVT3P1rXx
+	f3c+xIBjCz7TKrbTFPG+srxW6HDzQ8bxb0cMxPulOsyRE=
+Received: from [192.168.60.52] (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wCH3Jb6fe5nIXo0Dw--.40417S2;
+	Thu, 03 Apr 2025 20:24:27 +0800 (CST)
+Message-ID: <f77f60a0-72d2-4a9c-864e-bd8c4ea8a514@163.com>
+Date: Thu, 3 Apr 2025 20:24:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-21SQkZpuWiWK06@archibald.hows.id.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v7 2/5] PCI: Refactor capability search functions to eliminate
+ code duplication
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: lpieralisi@kernel.org, bhelgaas@google.com, kw@linux.com,
+ manivannan.sadhasivam@linaro.org, robh@kernel.org, jingoohan1@gmail.com,
+ thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20250402042020.48681-1-18255117159@163.com>
+ <20250402042020.48681-3-18255117159@163.com>
+ <8b693bfc-73e0-2956-2ba3-1bfd639660b6@linux.intel.com>
+ <c6706073-86b0-445a-b39f-993ac9b054fa@163.com>
+ <bf6f0acb-9c48-05de-6d6d-efb0236e2d30@linux.intel.com>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <bf6f0acb-9c48-05de-6d6d-efb0236e2d30@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCH3Jb6fe5nIXo0Dw--.40417S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXw1fXr18KF1xWw1UCF17Jrb_yoW5tF4kpF
+	WUJF12krW8GF1UtF4qqay09r1aqas7tFyxGr48C3sIvF9FkasYvFy3Kr15Wr1SgrWDWF1x
+	Za1FgF9xCa4FyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Ul0PhUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOh0ko2fufCM1IQAAsi
 
-On Thu, Apr 03, 2025 at 09:08:09AM +1100, David Hows wrote:
-> Add support for retrieving CCD temperatures on Zen5 Desktop CPUs
+
+
+On 2025/4/3 17:15, Ilpo Järvinen wrote:
+>>> I don't like how 1 & 2 patches are split into two. IMO, they mostly belong
+>>> together. However, (IMO) you can introduce the new all-size config space
+>>> accessor in a separate patch before the combined patch.
+>>>
+>>
+>> Ok. I'll change it to the following. The rest I'll combine into a patch.
+>>
+>> diff --git a/drivers/pci/access.c b/drivers/pci/access.c
+>> index b123da16b63b..bb2e26c2eb81 100644
+>> --- a/drivers/pci/access.c
+>> +++ b/drivers/pci/access.c
+>> @@ -85,6 +85,23 @@ EXPORT_SYMBOL(pci_bus_write_config_byte);
+>>   EXPORT_SYMBOL(pci_bus_write_config_word);
+>>   EXPORT_SYMBOL(pci_bus_write_config_dword);
+>>
+>> +
 > 
-> Signed-off-by: David Hows <david@hows.id.au>
+> Extra newline
+> 
 
-Applied.
+Hi Ilpo,
 
-Guenter
+Thanks your for reply. Will delete.
+
+>> +int pci_bus_read_config(void *priv, unsigned int devfn, int where, u32 size,
+>> +			u32 *val)
+>> +{
+>> +	struct pci_bus *bus = priv;
+>> +	int ret;
+>> +
+>> +	if (size == 1)
+>> +		ret = pci_bus_read_config_byte(bus, devfn, where, (u8 *)val);
+>> +	else if (size == 2)
+>> +		ret = pci_bus_read_config_word(bus, devfn, where, (u16 *)val);
+>> +	else
+>> +		ret = pci_bus_read_config_dword(bus, devfn, where, val);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>>   int pci_generic_config_read(struct pci_bus *bus, unsigned int devfn,
+>>   			    int where, int size, u32 *val)
+>>   {
+>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+>> index 2e9cf26a9ee9..6a7c88b9cd35 100644
+>> --- a/drivers/pci/pci.h
+>> +++ b/drivers/pci/pci.h
+>> @@ -88,6 +88,8 @@ extern bool pci_early_dump;
+>>   bool pcie_cap_has_lnkctl(const struct pci_dev *dev);
+>>   bool pcie_cap_has_lnkctl2(const struct pci_dev *dev);
+>>   bool pcie_cap_has_rtctl(const struct pci_dev *dev);
+>> +int pci_bus_read_config(void *priv, unsigned int devfn, int where, u32 size,
+>> +			u32 *val);
+>>
+>>   /* Functions internal to the PCI core code */
+>>
+>>
+>>>>    }
+>>>>    EXPORT_SYMBOL_GPL(pci_find_next_ext_capability);
+>>>>    @@ -648,7 +614,6 @@ EXPORT_SYMBOL_GPL(pci_get_dsn);
+>>>>      static u8 __pci_find_next_ht_cap(struct pci_dev *dev, u8 pos, int
+>>>> ht_cap)
+>>>>    {
+>>>> -	int rc, ttl = PCI_FIND_CAP_TTL;
+>>>>    	u8 cap, mask;
+>>>>      	if (ht_cap == HT_CAPTYPE_SLAVE || ht_cap == HT_CAPTYPE_HOST)
+>>>> @@ -657,7 +622,7 @@ static u8 __pci_find_next_ht_cap(struct pci_dev *dev,
+>>>> u8 pos, int ht_cap)
+>>>>    		mask = HT_5BIT_CAP_MASK;
+>>>>      	pos = __pci_find_next_cap_ttl(dev->bus, dev->devfn, pos,
+>>>> -				      PCI_CAP_ID_HT, &ttl);
+>>>> +				      PCI_CAP_ID_HT);
+>>>>    	while (pos) {
+>>>>    		rc = pci_read_config_byte(dev, pos + 3, &cap);
+>>>>    		if (rc != PCIBIOS_SUCCESSFUL)
+>>>> @@ -668,7 +633,7 @@ static u8 __pci_find_next_ht_cap(struct pci_dev *dev,
+>>>> u8 pos, int ht_cap)
+>>>>      		pos = __pci_find_next_cap_ttl(dev->bus, dev->devfn,
+>>>>    					      pos + PCI_CAP_LIST_NEXT,
+>>>> -					      PCI_CAP_ID_HT, &ttl);
+>>>> +					      PCI_CAP_ID_HT);
+>>>
+>>> This function kind of had the idea to share the ttl but I suppose that was
+>>> just a final safeguard to make sure the loop will always terminate in case
+>>> the config space is corrupted so the unsharing is not a big issue.
+>>>
+>>
+>> __pci_find_next_cap_ttl
+>>    // This macro definition already has ttl loop restrictions inside it.
+>>    PCI_FIND_NEXT_CAP_TTL
+>>
+>> Do I understand that you agree to remove ttl initialization and parameter
+>> passing?
+> 
+> Yes, I agree with it but doing anything like this (although I'd mention
+> the reasoning in the changelog myself).
+> 
+
+Ok, I see. I will give the reasons.
+
+Best regards,
+Hans
+
 
