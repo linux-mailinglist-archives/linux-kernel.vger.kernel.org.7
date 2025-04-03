@@ -1,114 +1,111 @@
-Return-Path: <linux-kernel+bounces-586569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6329A7A123
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:38:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64DC5A7A125
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C30321896230
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:38:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74F153B3BEF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B4A24A070;
-	Thu,  3 Apr 2025 10:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26ADC24A077;
+	Thu,  3 Apr 2025 10:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="ykqJVM+l"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rz5e6qXf"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189002E3385;
-	Thu,  3 Apr 2025 10:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001971F4619;
+	Thu,  3 Apr 2025 10:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743676698; cv=none; b=TblkngtxzdVA68E4TwfhNICg8WKyfCiy8GIQQxqE4A8qSs5jrO+ZmzFX4wWNEhfbTXxIuZppAeE4oeZJE5ZYNkDCOEjxo/A+vLOQqeEX5oqXJ4Q3P9FA8H2d5sb83dKaD69Mh79WV0MovSO39soHqUX7BzuiDfHW9ZZPhb74lK4=
+	t=1743676759; cv=none; b=iL4fSPO+vMf6T0HJGL0VECXpytc+n1gBEFdZb8lp9DIQIc+jyVmNXkuhNm0ve2O0VDwixOo5SNdGkp4M8e4iQ+FgsF2EplTNGgm+zUZGAnRu0POoFzkEgSsoslz8wer3E9RHnNSmTPF1yIJ8bUnsbCWBdmQrxOKtayKhSENj0DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743676698; c=relaxed/simple;
-	bh=Z72AwzHJ4cbpRqtqDVuCMJ1Ie1ku2WoDMt1mydBBtWU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DuVMzfeyEXv5G4sobxIlOkVwWwDyFOwQNoQpXp3pcXNV3vkuHOedBbnS/1lwuM/NoL1bRJtEm0vGVSfawCbjLNAK/h8z0zKE2ufFgCFhkdjLX+qiYFGMBMrzu8dyfjIXZY35x8htlpOVamPmRSUD1csmpATEKSAgjnvbhsILXzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=ykqJVM+l; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4ZSyr42sfXz9t0t;
-	Thu,  3 Apr 2025 12:38:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1743676692;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=l+z1/Zyn5HmKuUJTv24M67f5IzWj0CacYuYhfJZ4e+M=;
-	b=ykqJVM+liavA+BklyaFz/qTCE1INxJagZrxrDAextxtobXTwLKKngkLlGMBAz+T4t/JMWF
-	eY5jTWiUHIz9K6mZD4k79yF7CvFI6N7cW1RZ2Ou1ZMbNnOdonQ3LUjNCela9yEflAA47fx
-	Qe69zUPV35avOcmymgZN/LB42qRdeaoWczKpbcppFmH2ZqA2+eIDcqFx1VBHzZZh0QzeXo
-	LbL8+LJ/IG7HZcIXb44B7CyOe5cE+g5svb7xO5PzsmBFx44QJRpJmZrVUokR3A3A0Oc2OM
-	4WLvFoiOz5Wujag+jlhoAt/8mUKkqoNfJvH9OgZefPFEAppRmnx5FmO7gNaWww==
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org,
-	willy@infradead.org,
-	linux-mm@kvack.org,
-	David Hildenbrand <david@redhat.com>,
-	da.gomez@kernel.org,
-	mcgrof@kernel.org,
-	gost.dev@samsung.com,
-	linux-doc@vger.kernel.org,
-	kernel@pankajraghav.com,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH] docs: update THP admin guide about non-tmpfs filesystem support
-Date: Thu,  3 Apr 2025 12:38:05 +0200
-Message-ID: <20250403103805.173761-1-kernel@pankajraghav.com>
+	s=arc-20240116; t=1743676759; c=relaxed/simple;
+	bh=f2s72k6hZXE1+MxAuCu9EHvm4hPGdXoA6i/NXrk3yh4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DShq9bi7FONStPS7IX6fEWHmeFmUFfogpr4zpfgoB+0znATKTV+nxJpfz51ud+tU29zSRBOkwUieCoNMKK7Vmxsz7MvH5j+hPCrFahSjg3t/3woNQjpZWw7XtM8XhKbzSWT3rIk/pOcsM+zZBmYb0Bf4ssY0GycKEi3Y2BnN56Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rz5e6qXf; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e5bc066283so1220231a12.0;
+        Thu, 03 Apr 2025 03:39:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743676756; x=1744281556; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f2s72k6hZXE1+MxAuCu9EHvm4hPGdXoA6i/NXrk3yh4=;
+        b=Rz5e6qXf1Kt9mj25TRzJ2EWsBhCb6dTweg1WS/PAZWr+L8eABgOMat4qQ9BnGvAxlw
+         UlRyRhXZH3SJ31aTCE8m8zJB1GoQ/grbW/PxWEuCg9BmMGPKrEiDn0e62Uqg+kqi0wpH
+         dtF2wT96KX3riQP8A5i7VyZ4dzg8DM3S8Xjdl4P4iaD7UTR3fHAx1ZSjpRlENodAErGd
+         XIZ2JAe7TfMycZY6QZaEwvKgapMJREnt2qrBlbZnerX476bQb1m6ZLjZ4hw1vTf/bK6c
+         IxSUFQYp9om+vhApg+AuthbBKL3b0dbQeLV+5cGTIrPQaVEow5B/FC/sgmMYMJUrY7zJ
+         VWBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743676756; x=1744281556;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f2s72k6hZXE1+MxAuCu9EHvm4hPGdXoA6i/NXrk3yh4=;
+        b=bs+DeeYROw604nU7Ftz5xgcuFG5jHuon+s5EPHmyOTuO53E7kysd3Ma4EqIdu8B9qo
+         Be822rDV0MJPWFM0ODqKDpORGWAWWVy1nlDNG7eLZSMdgL028Q1ErfAAA1eG73ttUZXz
+         c/Gv/3fCcWQRAk/LpGVVd8KZaUBYxbKQsFZMz9Q61sXb9d4Y1cUtbkdX7Nu2jKLm4wxS
+         3betVrXKzVU63YCEaM07Zg2cXDgsTzg5vBVlv0zfv0muy14E3fAuNdsu2g9ciTRHhJyQ
+         epCfghCRqfTfPvioq66cVau4Jw+hSWF4bBPUSwz/TihVHWuOe7GJmgaTI3VPRoYmR2Vv
+         vJ/w==
+X-Forwarded-Encrypted: i=1; AJvYcCV6Pa4x3rpQSYixwDtaf3qdESZRRapw0RB+IhER0Qekq3QnlrW98uTzZmE3MpdpdZ3Pd9OL2SdmQNvD2+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnRpFEXwQXHv6y7OnfTbHcYfVmlCHnupIQj4JqQyPkLnYCejn1
+	AFhKFAEgWO09yUbEX1KM9MggOMytA+EGAJLdLwXPQ71otQrpO8oz7DLfaSRMQ1WFq/weP6IgdiE
+	BMM5s0WLvNVaPqDHvj6tPR6L8dyYmdg==
+X-Gm-Gg: ASbGnctJs9Z0UdJXR3I0R0yH8QjNRIIMsCnmh2gKkQSMfOyKb0j0yBaC0P9e0RjVmh2
+	kd4xIrafwr4QPkc+sAlfdlBXMacjkzTfUXu6QuAwfI2a5w19/LV6A95mDdiE07gAQhnLTgl/uNP
+	qFU51RFhCX4xOmGfZOD0qF+RZ/
+X-Google-Smtp-Source: AGHT+IHIukhkHjVflcnny2IBC7gWeeYwrnVBl16nslGqunjb8kJjosZ/URQlVF4IQKhdSqnYdsRU46Yv7gVE8StzJak=
+X-Received: by 2002:a05:6402:510a:b0:5e7:97d2:6d10 with SMTP id
+ 4fb4d7f45d1cf-5edfdf190cdmr17128321a12.28.1743676756107; Thu, 03 Apr 2025
+ 03:39:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250401050847.1071675-1-mjguzik@gmail.com> <20250401-erwehren-zornig-bc18d8f139e6@brauner>
+ <CAGudoHF_Nfjq1nLZhMbFr3GJz-z=9Z4goacCgXbifxrQX7yiwA@mail.gmail.com> <20250403-tunnel-lethargisch-810d83030763@brauner>
+In-Reply-To: <20250403-tunnel-lethargisch-810d83030763@brauner>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 3 Apr 2025 12:39:04 +0200
+X-Gm-Features: ATxdqUFvI8tyQVh3jshVUVLys_2xhv_TOu-2NG0ecAf6L454qwG69K9BNf7diuk
+Message-ID: <CAGudoHFWrxxy8eMO1gz782aUA-7JobSTWYpuxuD-iR=UvYofmA@mail.gmail.com>
+Subject: Re: [PATCH] fs: remove stale log entries from fs/namei.c
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Pankaj Raghav <p.raghav@samsung.com>
+On Thu, Apr 3, 2025 at 10:39=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+> I'm thoroughly confused how this would be a meaningful April fools joke?
+>
+> The comments in that file are literally 20+ years old and no one has
+> ever bothered to add new updates there even though Al, Neil, Jeff,
+> myself and a lot of others probably rewrote that file a gazillion number
+> of times together or significantly or at least subtly changed the rules.
+>
 
-THP support for non-tmpfs filesystem has been around for some time now.
-Update the admin guide to reflect it.
+I agree they need to go. The joke part was not the removal, but the
+addition my own log entry stating the removal has happened.
 
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
- Documentation/admin-guide/mm/transhuge.rst | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+A genuine removal might have ran into opposition and I'm happy it did not.
 
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index dff8d5985f0f..01b7ce90d693 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -12,8 +12,8 @@ using huge pages for the backing of virtual memory with huge pages
- that supports the automatic promotion and demotion of page sizes and
- without the shortcomings of hugetlbfs.
- 
--Currently THP only works for anonymous memory mappings and tmpfs/shmem.
--But in the future it can expand to other filesystems.
-+Currently, THP only works for anonymous memory mappings, tmpfs/shmem and
-+filesystems that support large folios.
- 
- .. note::
-    in the examples below we presume that the basic page size is 4K and
-@@ -463,6 +463,10 @@ fields for each mapping. (Note that AnonHugePages only applies to traditional
- PMD-sized THP for historical reasons and should have been called
- AnonHugePmdMapped).
- 
-+The number of PMD-sized transparent huge pages currently used by
-+filesystem data (page cache) is available by reading the FileHugePages field
-+in ``/proc/meminfo``.
-+
- The number of file transparent huge pages mapped to userspace is available
- by reading ShmemPmdMapped and ShmemHugePages fields in ``/proc/meminfo``.
- To identify what applications are mapping file transparent huge pages, it
+That said, my "submission" does not even have a commit message.
 
-base-commit: f0a16f5363325cc8d9382471cdc7b654c53254c9
--- 
-2.44.1
-
+Perhaps it would be most expedient if you committed the removal and
+repurposed part of your response. No need to mention in any capacity
+in such a change.
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
