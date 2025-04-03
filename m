@@ -1,160 +1,175 @@
-Return-Path: <linux-kernel+bounces-585995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B345A79A02
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 04:37:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79D2FA79A11
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 04:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AAA43B2394
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 02:36:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BC487A568E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 02:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C47A14900B;
-	Thu,  3 Apr 2025 02:37:04 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D78511713;
+	Thu,  3 Apr 2025 02:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="1h0uL+DU"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196D3B666
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 02:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0089E2581;
+	Thu,  3 Apr 2025 02:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743647824; cv=none; b=tlUU5atg/Z3cK8c2p2NJbsf589mAja4HHVwc5OAALx9Pbt+1T9TW9peaNDWCLgysKS27zcZvywe0Ugit489M/AmBgCr70WxTEMQtntJ6EWTizI9R2Rqd61gdAjlnLMTYePn6S9lIz4aaSzold/3khNuGXFSDXeSIXXeFK1YHQG8=
+	t=1743648411; cv=none; b=ht1lfkWhAzQUmkle7GeZKY+sSX4/r9coCB43axXOc2iH5yOiJ3oVC6OFFk6gSyMNf9WHDwE0gUIpOx4KC+jIjJlCaVxZ11EMThzilau98zNHpzGjmKrUtiEvT+/t+NLMAWvdOzXJAcQLuBhFm5KC+oIxGBAEmIgFAVRH0zgNz5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743647824; c=relaxed/simple;
-	bh=kV73lSE2Bm8P3pDxd8cxT5COqevlMaeWbeyFigHjDNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=t8lmHWSJ9ueMyU1naZ4M+OUBjYKYLD06mD7vRTlM8BH5YZz7HppaK1ogo72+mtMdzyptV9ntYhdd+OI2eICJtygUGM5iutDHCJG8JwXNB3Chhb8/Weuym5QUOvSfGIS0dicW2u3N7UBZ2LaptQpgP4HwoGDBnL/hhbndHAUrMFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4ZSm842dzTz1d0rb;
-	Thu,  3 Apr 2025 10:36:20 +0800 (CST)
-Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
-	by mail.maildlp.com (Postfix) with ESMTPS id D73ED140383;
-	Thu,  3 Apr 2025 10:36:52 +0800 (CST)
-Received: from [10.174.179.234] (10.174.179.234) by
- kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+	s=arc-20240116; t=1743648411; c=relaxed/simple;
+	bh=j+/1UYNsq4n+kGzrKaYEN/yc62ghFdAAUEo8wG7406s=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=U7QDzUCvO4Gq53JgSxYav7iv74yjNCTJ7Tv246OKAb5uV5VA1xmaouElhaX0rCh4F4T69XgdSlI1ec7OTxvRzzr6Ce2JLZ8Pt5S/7Y8OJOdERv2R0WbmcF5ABl175TcvsujZH453Ba1I5t8zoinrJYKXdkcpJmjPBytdDe+vLSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=1h0uL+DU; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5332TC4B023121;
+	Wed, 2 Apr 2025 22:46:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=jyywwe6Uo26eBN5L68rt8SUtDga
+	jQ+AF7rg1Z4V+2+c=; b=1h0uL+DU5EK46XWmPTYxZ3me2vvvqjtK+GX8Lj8PKPe
+	HANn+KvNnq5+83PMpzs1ESwGqR9XcqhA1Tane+WE9D7LS6JFr7KQj5k2t8g+cKi/
+	5UvqKgnO07jsPU2D6/P/jUfJD1n9Ss6wCzaFjVJaALWFAqL1brVcw5UIPHSP8m1Y
+	Rl90H7wP78SO2nAJ/ae5OMPeKkdU8NRlc4SmlhsAtjy6W7il55HPRjZs2OYM/ONr
+	vEcnrwjsWoIrn1i9l4xk3G+ZO0n3tnSot8sXJT5TpX65FnhZGlepUviK8YjTKb8+
+	KRytnuf8GuZbiNN7NsqIZWaw9ekz11n/DeJDuSQgyMw==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 45shkd0222-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 02 Apr 2025 22:46:39 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 5332kcqB035560
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 2 Apr 2025 22:46:38 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 3 Apr 2025 10:36:50 +0800
-Message-ID: <78f82bf6-ec47-6b10-7c05-2189cc262f13@huawei.com>
-Date: Thu, 3 Apr 2025 10:36:49 +0800
+ 15.2.986.14; Wed, 2 Apr 2025 22:46:38 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Wed, 2 Apr 2025 22:46:38 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Wed, 2 Apr 2025 22:46:38 -0400
+Received: from ATORRENO-L02.ad.analog.com ([10.117.223.13])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 5332kQpf031488;
+	Wed, 2 Apr 2025 22:46:29 -0400
+From: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
+Subject: [PATCH v3 0/2] Add support for ADP5055 triple buck regulator.
+Date: Thu, 3 Apr 2025 10:43:09 +0800
+Message-ID: <20250403-upstream-adp5055-v3-0-8eb170f4f94e@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v13 2/5] arm64: add support for ARCH_HAS_COPY_MC
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-CC: Catalin Marinas <catalin.marinas@arm.com>, Mark Rutland
-	<mark.rutland@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Mauro
- Carvalho Chehab <mchehab+huawei@kernel.org>, Will Deacon <will@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>, James Morse <james.morse@arm.com>,
-	Robin Murphy <robin.murphy@arm.com>, Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino
-	<vincenzo.frascino@arm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
- Piggin <npiggin@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>, Christophe Leroy
-	<christophe.leroy@csgroup.eu>, Aneesh Kumar K.V <aneesh.kumar@kernel.org>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mm@kvack.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-	<kasan-dev@googlegroups.com>, <wangkefeng.wang@huawei.com>, Guohanjun
-	<guohanjun@huawei.com>
-References: <20241209024257.3618492-1-tongtiangen@huawei.com>
- <20241209024257.3618492-3-tongtiangen@huawei.com> <Z6zKfvxKnRlyNzkX@arm.com>
- <df40840d-e860-397d-60bd-02f4b2d0b433@huawei.com>
- <Z+bXE7UNWFLEfhQC@e129823.arm.com>
-From: Tong Tiangen <tongtiangen@huawei.com>
-In-Reply-To: <Z+bXE7UNWFLEfhQC@e129823.arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemk500005.china.huawei.com (7.202.194.90)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL317WcC/33NwQ6CMAyA4VchOzszChvDk+9hPFQosETYsuGiI
+ by7g4sxMZ6av0m/LiyQNxTYKVuYp2iCsVOK4pCxZsCpJ27a1AwESAEg+cOF2ROOHFsnhZRp3ki
+ Bgq7WJUtnzlNnnjt5uaYeTJitf+0fYr5t/2Ax54KjxKrTVKpaqzNOeLf9sbEj27QIH6EA8UOAT
+ cAG2qISUgv4EtZ1fQMf235o8wAAAA==
+X-Change-ID: 20250225-upstream-adp5055-adbe6262f984
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        "Alexis
+ Czezar Torreno" <alexisczezar.torreno@analog.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1743648386; l=2930;
+ i=alexisczezar.torreno@analog.com; s=20250213; h=from:subject:message-id;
+ bh=j+/1UYNsq4n+kGzrKaYEN/yc62ghFdAAUEo8wG7406s=;
+ b=fa6o4VeqXZdcVO7gsgjdAQIPhOPK6F2gA2USsyzcrxqkuOwBCrxkyKx1tlSRDSFixXzQwEoe3
+ YNgb70iKiK1Ctcx2bMyGc3thcAjZHhI3qOHseySUa6TQc+dJNcjGWT7
+X-Developer-Key: i=alexisczezar.torreno@analog.com; a=ed25519;
+ pk=XpXmJnRjnsKdDil6YpOlj9+44S+XYXVFnxvkbmaZ+10=
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Authority-Analysis: v=2.4 cv=N8cpF39B c=1 sm=1 tr=0 ts=67edf68f cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8 a=Kpdrl5fn47ZIlBTKqEQA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: JdF_HRLn-ZsE2z5yk7PdKXtpioACHYtE
+X-Proofpoint-ORIG-GUID: JdF_HRLn-ZsE2z5yk7PdKXtpioACHYtE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-03_01,2025-04-02_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ adultscore=0 impostorscore=0 bulkscore=0 mlxlogscore=999 spamscore=0
+ lowpriorityscore=0 malwarescore=0 priorityscore=1501 phishscore=0
+ mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504030012
 
+Introduce a regulator driver support for ADP5055. The device combines 3
+high performance buck regulators in a 43-termminal land grid array
+package. The device enables direct connection to high input voltages up
+to 18V with no preregulator. Channel 1 and 2 deliver a programmable
+output current of 3.5A or 7.5A or provide a single output with up to 14A
+in parallel operation. Channel 3 has a programmable output current of
+1.5A or 3A.
 
+Signed-off-by: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
+---
+Changes in v3:
+- Improved commit message,
+- adp5055-regulator.c
+    - Regulator node names are now lowercase 
+    - Edited to support changes in bindings
+- adi,adp5055-regulator.yaml
+    - Improved property definitions
+    - Improved text wrapping
+    - Moved device 'adi,hw-en-array-gpios' to 'enable-gpios' per regulator
+    - Changed 'channels' to regulators named buck[0-2]
+    - Added missing ref to regulator schema
+- Link to v2: https://lore.kernel.org/r/20250320-upstream-adp5055-v2-0-aac2d3705802@analog.com
 
-在 2025/3/29 1:06, Yeoreum Yun 写道:
-> Hi,
-> 
->>
->>
->> 在 2025/2/13 0:21, Catalin Marinas 写道:
->>> (catching up with old threads)
->>>
->>> On Mon, Dec 09, 2024 at 10:42:54AM +0800, Tong Tiangen wrote:
->>>> For the arm64 kernel, when it processes hardware memory errors for
->>>> synchronize notifications(do_sea()), if the errors is consumed within the
->>>> kernel, the current processing is panic. However, it is not optimal.
->>>>
->>>> Take copy_from/to_user for example, If ld* triggers a memory error, even in
->>>> kernel mode, only the associated process is affected. Killing the user
->>>> process and isolating the corrupt page is a better choice.
->>>
->>> I agree that killing the user process and isolating the page is a better
->>> choice but I don't see how the latter happens after this patch. Which
->>> page would be isolated?
->>
->> The SEA is triggered when the page with hardware error is read. After
->> that, the page is isolated in memory_failure() (mf). The processing of
->> mf is mentioned in the comments of do_sea().
->>
->> /*
->>   * APEI claimed this as a firmware-first notification.
->>   * Some processing deferred to task_work before ret_to_user().
->>   */
->>
->> Some processing include mf.
->>
->>>
->>>> Add new fixup type EX_TYPE_KACCESS_ERR_ZERO_MEM_ERR to identify insn
->>>> that can recover from memory errors triggered by access to kernel memory,
->>>> and this fixup type is used in __arch_copy_to_user(), This make the regular
->>>> copy_to_user() will handle kernel memory errors.
->>>
->>> Is the assumption that the error on accessing kernel memory is
->>> transient? There's no way to isolate the kernel page and also no point
->>> in isolating the destination page either.
->>
->> Yes, it's transient, the kernel page in mf can't be isolated, the
->> transient access (ld) of this kernel page is currently expected to kill
->> the user-mode process to avoid error spread.
-> 
-> I'm not sure about how this works.
-> IIUC, the memory_failure() wouldn't kill any process if page which
-> raises sea is kernel page (because this wasn't mapped).
+Changes in v2:
+- Kconfig - fixed indention problem, occured due to using spaces rather tabs
+- adp5055-regulator.c
+  - Turned initial comment block into c++ style, using // per line
+  - Merged the similar read/write ranges variable called access_ranges_table
+  - Set max_register value correctly to 0xE0 instead of 0xFF
+  - Fixed issue where ndescs was an error code. replaced with -EINVAL
+  - Enable/disable ops functions, now use helpers like regulator_enable_regmap
+  - Added config.ena_gpiod for the regulator config  
+  - Used of_parse_cb to do per regulator properties, new function added
+  - Migrated some yaml properties to the core regulator function
+-adi,adp5055-regulator.yaml
+  - Moved property power_saving_mode to set/get mode under 'IDLE' mode
+  - Moved property output-discharge-func to core func set_active_discharge
+  - Moved property enable-delay-us to core function set_ramp_delay.
+  - Removed property disable-delay-us, as suggested to not worry about
+  - adjusted sample device tree to match changes due to use of of_parse_cb
+- Link to v1: https://lore.kernel.org/r/20250225-upstream-adp5055-v1-0-a5a7f8e46986@analog.com
 
-right.
+---
+Alexis Czezar Torreno (2):
+      regulator: dt-bindings: adi,adp5055-regulator: Add adp5055 support
+      regulator: adp5055: Add driver for adp5055
 
-> 
-> But, to mark the kernel page as posision, I think it also need to call
-> apei_claim_sea() in !user_mode().
-> What about calling the apei_claim_sea() when fix_exception_me()
-> successed only in !user_mode() case?
+ .../bindings/regulator/adi,adp5055-regulator.yaml  | 157 +++++++
+ MAINTAINERS                                        |   7 +
+ drivers/regulator/Kconfig                          |  11 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/adp5055-regulator.c              | 470 +++++++++++++++++++++
+ 5 files changed, 646 insertions(+)
+---
+base-commit: 7fef39f0e82ff02282797d9ae2589b39b16ab614
+change-id: 20250225-upstream-adp5055-adbe6262f984
 
-This was discussed with Mark in V12:
-https://lore.kernel.org/lkml/20240528085915.1955987-3-tongtiangen@huawei.com/
+Best regards,
+-- 
+Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
 
-Sorry for didn't catch your reply in time:)
-
-Thanks,
-Tong.
-
-> 
-> Thanks.
->>
->> The SEA processes synchronization errors. Only hardware errors on the
->> source page can be detected (Through synchronous ld insn) and processed.
->> The destination page cannot be processed.
->>
->>>
->>
-> .
 
