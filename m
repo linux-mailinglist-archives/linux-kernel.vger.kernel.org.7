@@ -1,111 +1,92 @@
-Return-Path: <linux-kernel+bounces-586965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43EABA7A5EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:04:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA807A7A5F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6795188E2B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:04:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B420B17174D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C0B2505A6;
-	Thu,  3 Apr 2025 15:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D0F2505AB;
+	Thu,  3 Apr 2025 15:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cAWc2c6X";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aMNLw6Bi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PeEFk0Dy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4FA24F5A0;
-	Thu,  3 Apr 2025 15:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DCF2505A4
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 15:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743692631; cv=none; b=H+7x9mz/CdRAQAbNIYOGeLXYkgeX706CAPRUz/ZdaY++53CwzGb2ROKBYoqicx0Ub6axq3qajwliDajlD/u5GOQwd4PcSB+LSnqe0mKWxYmb4nYt1+CWoXd1NhVC793X27C+aN5IGi3GQAz3eb5gP7yXkgU7wSar3o7/CggrbBE=
+	t=1743692721; cv=none; b=aB0qwDZ2DZirmE+7UXHjA63psFa+njR+LhTuJiuh8BBfrkd9H+chqeSMxWWn7Rk6yipGi7RX8mYphq5LViuSHCFTfHNF5BzaS60/U2BOJqY9GKUxAD7C5gXBaKpJBtyv72Qn1VjBfFtF5NDCas3bfPklCe+kxCgrqokru5Yc5Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743692631; c=relaxed/simple;
-	bh=KcyDK4uz+Y/Sokp66zbb4AM3+lCIWhqWPIEAVHmRr54=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dz23GuVuR9PV9NXk5VbufRNbf4ORx0+cKd2eT6JNV6o47IfzxcIlSmUYb6V6ekNjOtafn8ggTk17QKh4Xf7+qQDUqDtC8gPFsIyBQvWxVD9DxlylDW7T6RH4qXfGAjNhiZLOUwrVR0Npy68L5tQON/gewfLvHT6FuwwYiIDbUFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cAWc2c6X; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aMNLw6Bi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1743692627;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EHbCePX24dh6KDJ8X+RFQ5xBFtUQ6++YcFww5RU2/aM=;
-	b=cAWc2c6X5BJpIpgjOXnZKqynoDf4CCrEuzivOkx71QQg/6/melJAeT2Y0DX7p/hlhj9uPf
-	7bUp6mjwtjQlKwFOlixaVLeAx9I7JRykqitt+QPbBUWL9I3StpxaotwDB9q30gHnf7i9NA
-	LDhy/Pk3MgTqW6UUar4Eky5xJDAbbYJmE2ijdsz4KBB/jkHPNjncBzn7JE16phj7GPD6+l
-	WrLvwzbPTBqlF2vplEep3bug91J5/tFuP9szoX1LDmvvJpEK9epMer5BBawdO8X1yOPr54
-	WKujMmMS2NAHXP52D2ZQgKt+ppsKgPL9R9PHxynKL2RTQaFBujamNzGVP/Bifw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1743692627;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EHbCePX24dh6KDJ8X+RFQ5xBFtUQ6++YcFww5RU2/aM=;
-	b=aMNLw6BiyQBB/EaqECgC7EhDDvNwWSgmoZfQeRO5JsW6QuiIu5LwonVANOgI6USyH5VMS8
-	d0alF73jquU26hDA==
-To: Frank Scheiner <frank.scheiner@web.de>, apatel@ventanamicro.com
-Cc: ajones@ventanamicro.com, andrew@lunn.ch, anup@brainfault.org,
- atishp@atishpatra.org, bp@alien8.de, dave.hansen@linux.intel.com,
- gregory.clement@bootlin.com, hpa@zytor.com, imx@lists.linux.dev,
- kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- maz@kernel.org, mingo@redhat.com, palmer@dabbelt.com,
- paul.walmsley@sifive.com, s.hauer@pengutronix.de,
- sebastian.hesselbarth@gmail.com, shawnguo@kernel.org,
- sunilvl@ventanamicro.com, x86@kernel.org, linux-ia64@vger.kernel.org
-Subject: Re: [PATCH v6 04/10] genirq: Introduce common
- irq_force_complete_move() implementation
-In-Reply-To: <667d272f-2b51-49d6-84ea-1156027e00a7@web.de>
-References: <20250217085657.789309-5-apatel@ventanamicro.com>
- <667d272f-2b51-49d6-84ea-1156027e00a7@web.de>
-Date: Thu, 03 Apr 2025 17:03:47 +0200
-Message-ID: <87plhtuw18.ffs@tglx>
+	s=arc-20240116; t=1743692721; c=relaxed/simple;
+	bh=OuJfAjQbrxmPm5MwHxPDQ4Gf5OR+D6lie7AS7lva66k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hQBhKRIky2ywqpShgMqoFrD/K0dP/Uk8m7zFEhtmED1S+yLDvHGcRsiXPhw9iTo4jnlYrXMCFvk3Nn+99XWcG2ADnHRb86Hm/SW1OnWD973dXorQph+DB5t5OH6yy6XwVpd3s3VhNEe2sZmBn+Qst9s2EQ9qWgJ7XxbsL8IJFiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PeEFk0Dy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1251EC4CEE5;
+	Thu,  3 Apr 2025 15:05:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743692717;
+	bh=OuJfAjQbrxmPm5MwHxPDQ4Gf5OR+D6lie7AS7lva66k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PeEFk0DyWB9YXvclgNkkFo9tbHIw4DiAxNNhG6EkWSrFZUv0gDFsEhM3Zu3tJnRsU
+	 seysqDLztf6nT6P1wAP/nTQT/j3p04PDiccRLAkXZ1sJt+VLZfTs/4RLUV3clAz/tK
+	 798Rd8CZnEMIVt1zSKs83o8EV+r+cI8xo7NLZX4km7zxjOhBT4fEKFdqX6Y+211cVE
+	 AQKo5jJyaPOo71RYWF5mig+mTj3AgNXCSRUyrFH98DNMxpfxV7/CvDlxuX9MWYrI4d
+	 /+rcH61wT4ii38TTA7LjYnMfV8UJ2+nUnQ2q7RBbkq91lGPq79Uua1Ta8i/GaKyOhh
+	 ULLAlu/+0xAfA==
+Date: Thu, 3 Apr 2025 17:05:13 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 40/41] x86/alternatives: Rename 'text_poke_sync()' to
+ 'text_poke_sync_each_cpu()'
+Message-ID: <Z-6jqf6QqRkAnTz8@gmail.com>
+References: <20250327205355.378659-1-mingo@kernel.org>
+ <20250327205355.378659-41-mingo@kernel.org>
+ <DA9DB9BF-2179-4C53-86A8-6205346AA76F@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DA9DB9BF-2179-4C53-86A8-6205346AA76F@zytor.com>
 
-On Thu, Apr 03 2025 at 15:13, Frank Scheiner wrote:
-> this change, specfically the introduction of irq_force_complete_move()
-> to `kernel/irq/migration.c`, strangely breaks our builds for the hp-sim
-> platform (i.e. Linux/ia64 for Ski):
 
-arch/itanic has hit the iceberg and sank with the release of v6.7...
+* H. Peter Anvin <hpa@zytor.com> wrote:
 
-> So I guess, either the requirement in `linux/include/linux/irq.h` needs
-> to go, or the use of "d->parent_data" or the whole of
-> irq_force_complete_move() and its use needs to be guarded as well.
+> Is that the only use case we have for syncing all CPUs?
 
-Guessing is not a really good approach to solve a technical problem :)
+So there's:
+
+- kernel/sched/membarrier.c's ipi_sync_core() which does sync_core(), 
+  but it's embedded into a larger array of IPI handlers, called via 
+  smp_call_function_many()/on_each_cpu_mask(), so I don't think 
+  functionality can be shared there.
+
+- there's arch/x86/kernel/cpu/mce/core.c's machine_check_poll() handler 
+  and the kill_me_maybe() function, but these are single thread.
+
+- then there's arch/x86/kernel/static_call.c's 
+  __static_call_update_early(), used indirectly by 
+  arch/x86/xen/enlighten.c and arch/x86/xen/enlighten_pv.c, but these 
+  are single-threaded too due to being early boot code.
+
+So not much I think - at least what I've managed to find.
 
 Thanks,
 
-        tglx
----
---- a/kernel/irq/migration.c
-+++ b/kernel/irq/migration.c
-@@ -37,7 +37,7 @@ bool irq_fixup_move_pending(struct irq_d
- 
- void irq_force_complete_move(struct irq_desc *desc)
- {
--	for (struct irq_data *d = irq_desc_get_irq_data(desc); d; d = d->parent_data) {
-+	for (struct irq_data *d = irq_desc_get_irq_data(desc); d; d = irqd_get_parent_data(d)) {
- 		if (d->chip && d->chip->irq_force_complete_move) {
- 			d->chip->irq_force_complete_move(d);
- 			return;
-
-
-
-
+	Ingo
 
