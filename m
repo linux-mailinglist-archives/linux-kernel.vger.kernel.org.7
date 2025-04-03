@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-585992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 556F5A799F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 04:32:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7719FA79A5B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 05:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FBF418938D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 02:32:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61CEF18946E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 03:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A746033997;
-	Thu,  3 Apr 2025 02:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA7718DF86;
+	Thu,  3 Apr 2025 03:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FdCa/+Yi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h28YYKy9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51CFB8828
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 02:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB883195FEF
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 03:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743647540; cv=none; b=VoxQ8G6Xm5vc8ibnuWThOg5aPvWR2Q6Sce8/Jqj99S2jSrvXMhPhSrOxD+rhNUZCI12G9U4aI+D9A5KyLcMZJam2rX/RwyxtdGOCLX4ruT2skCKmmxNVG44J5KAoSIVb/z/tIJJMNO+uSdSqof8Wr0CLy083EV04cL2vUXyLSb8=
+	t=1743649977; cv=none; b=bBE8pcop26umNYgvsYjFp4y5j0zGl4ZCSYDtkdXMK9E+mTXCCrQ8izC9YhZSsDTX6CuvZddmahJxRHT5yXCIQBNHZhrcio4Z5dRiJtTP/uAE9p288ggntOoMVuFccNZCb77eKivZJNlkwlJA0W21WrI006QO+4qCSFSc5FWc3aU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743647540; c=relaxed/simple;
-	bh=xXnYZQ5jMf6nhqCdS6uW6efKNxrmzpOpJ2V1JKalSDM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KUb4uFqmukFOlEkse4e3ogoxoc3Z4xxTIF3cT2eXP/p/1JJQ0Bmxf9q2ao3isCG66Q0Lg4xknkullv7OVZskCcRBmiV8AnCNMwlpV3t9o5MjKCU8fn+DpEiWgOcZDPprhkrInJAwxl1QRwAQ9sQ3azWpRM9dR8m+4bBrR2k8wEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FdCa/+Yi; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743647539; x=1775183539;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=xXnYZQ5jMf6nhqCdS6uW6efKNxrmzpOpJ2V1JKalSDM=;
-  b=FdCa/+Yi141/bA5KiVOeCfQ8LKpmF15xbmm/YuvOiv43/plVsnFba+cF
-   3eUqvPUS/RCnrqYeb19uuZhBW310tpOd5so95PbFChtp0bwzmUd+/2efB
-   MnEDXOqMyABUpC631ZsQA+br+MuEcHKR3WcZnW7ldNSHiLfhgUElSAiNi
-   AkGEFKc5/jvJ6Bxo8WOIX2nZ++6Ih4mvqz9CVLCJ47IXzQthKsNXyYPLF
-   CwaDMdKo/wD3reUYj+I/dzr1dJhvSPntncPh388FitLKIJgPRA2XqTBgZ
-   x3uK11agpaSB6gld7YARvI+A+B/9+Us3DMbVBTeefPMMJaEBeOOkzWP85
-   w==;
-X-CSE-ConnectionGUID: qldafW34T7iXwHYJHPHlOg==
-X-CSE-MsgGUID: iyc5RDiNSdy7NriTU9lEVw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11392"; a="44746639"
-X-IronPort-AV: E=Sophos;i="6.15,184,1739865600"; 
-   d="scan'208";a="44746639"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Apr 2025 19:32:16 -0700
-X-CSE-ConnectionGUID: uimG9/XdQdWzJwA7doj0vg==
-X-CSE-MsgGUID: MMLPcXoOSV6oYTdKOJdZ9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,184,1739865600"; 
-   d="scan'208";a="127368911"
-Received: from zhiquan-linux-dev.bj.intel.com ([10.238.156.102])
-  by fmviesa010.fm.intel.com with ESMTP; 02 Apr 2025 19:32:13 -0700
-From: Zhiquan Li <zhiquan1.li@intel.com>
-To: bhe@redhat.com,
-	vgoyal@redhat.com,
-	dyoung@redhat.com,
-	kirill.shutemov@linux.intel.com
-Cc: kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	zhiquan1.li@intel.com
-Subject: [PATCH v2 RESEND] crash: Export PAGE_UNACCEPTED_MAPCOUNT_VALUE to vmcoreinfo
-Date: Thu,  3 Apr 2025 11:08:01 +0800
-Message-Id: <20250403030801.758687-1-zhiquan1.li@intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1743649977; c=relaxed/simple;
+	bh=pSQIlSO4V2XllUgBP3J9byvX7GNKqbpUPy7+SqN7W/U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nGRImmv+2JPZkoG7vbHSCJCZ0SdSR3jHuIrXXlch8PQkqyayP2+kkMn4IAbnsGjIw1ws3d4rjDjCo4O3Bo4NLGzjSL3nUxth6dg32MLNtG6Hpd+/fdLg3t8qPe76hETHGF2d4kEC1UMgyD298/G8H7nJZ7kYQx4UB7rEQyauO54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h28YYKy9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743649973;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tHphIEaw5gDaEtW0EdbaEwdklWHfbt6vvd4IdDuXcxU=;
+	b=h28YYKy91wtwhlSd2qOLBcRxu8R+DPWqstnK0Ie+TLKAnk85timM26DWmJhBNwc0W4kZQJ
+	tLBElbnea91fQdq5khzQFwg76m6P2uq6bDPVUQxHZksUW9bW7lReWag8wXHyCGS58CoqMD
+	TbIB6y4MOXcdpQNZroa2t45sPbdGRSY=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-367-FeCn6EObM2q3ZsXIDduRxg-1; Wed,
+ 02 Apr 2025 23:12:50 -0400
+X-MC-Unique: FeCn6EObM2q3ZsXIDduRxg-1
+X-Mimecast-MFC-AGG-ID: FeCn6EObM2q3ZsXIDduRxg_1743649969
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B50FA19560B3;
+	Thu,  3 Apr 2025 03:12:48 +0000 (UTC)
+Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.81.199])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E991E1955BC2;
+	Thu,  3 Apr 2025 03:12:45 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH] memcg: Don't generate low/min events if either low/min or elow/emin is 0
+Date: Wed,  2 Apr 2025 23:12:12 -0400
+Message-ID: <20250403031212.317837-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,87 +75,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Intel TDX guest, unaccepted memory is unusable free memory which is
-not managed by buddy, until it's accepted by guest.  Before that, it
-cannot be accessed by the first kernel as well as the kexec'ed kernel.
-The kexec'ed kernel will skip these pages and fill in zero data for the
-reader of vmcore.
+The test_memcontrol selftest consistently fails its test_memcg_low
+sub-test because of the fact that two of its test child cgroups which
+have a memmory.low of 0 or an effective memory.low of 0 still have low
+events generated for them since mem_cgroup_below_low() use the ">="
+operator when comparing to elow.
 
-The dump tool like makedumpfile creates a page descriptor (size 24
-bytes) for each non-free page, including zero data page, but it will not
-create descriptor for free pages.  If it is not able to distinguish
-these unaccepted pages with zero data pages, a certain amount of space
-will be wasted in proportion (~1/170).  In fact, as a special kind of
-free page the unaccepted pages should be excluded, like the real free
-pages.
+The simple fix of changing the operator to ">", however, changes the
+way memory reclaim works quite drastically leading to other failures.
+So we can't do that without some relatively riskier changes in memory
+reclaim.
 
-Export the page type PAGE_UNACCEPTED_MAPCOUNT_VALUE to vmcoreinfo, so
-that dump tool can identify whether a page is unaccepted.
+Another simpler alternative is to avoid reporting below_low failure
+if either memory.low or its effective equivalent is 0 which is done
+by this patch.
 
-Link: https://lore.kernel.org/all/20240809114854.3745464-5-kirill.shutemov@linux.intel.com/
+With this patch applied, the test_memcg_low sub-test finishes
+successfully without failure in most cases. Though both test_memcg_low
+and test_memcg_min sub-tests may fail occasionally if the memory.current
+values fall outside of the expected ranges.
 
-Signed-off-by: Zhiquan Li <zhiquan1.li@intel.com>
-Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+To be consistent, similar change is appled to mem_cgroup_below_min()
+as well.
 
+Signed-off-by: Waiman Long <longman@redhat.com>
 ---
-Vmcore size statistic of a freshly booted TD VM with different memory
-sizes:
+ include/linux/memcontrol.h | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-  VM.mem | Before  After
-  -------+----------------
-  512G   | ~4.9G   ~2.0G
-  256G   | ~2.0G   ~1.1G
-
-Most of changes are done by makedumpfile, but the prerequisite is kernel
-needs to export an indicator to identify unaccepted pages in vmcoreinfo.
-
-V2 RESEND note:
-- No changes on this, just rebasd to v6.14.
-
-V1: https://lore.kernel.org/all/20250103074941.3651765-1-zhiquan1.li@intel.com/
-
-Changes since V1:
-- Rebase to v6.14-rc5.
-- Added document into admin-guide/kdump/vmcoreinfo.rst per Dave's
-  suggestion.
-- Add Kirill's Reviewed-by tag.
----
- Documentation/admin-guide/kdump/vmcoreinfo.rst | 2 +-
- kernel/vmcore_info.c                           | 4 ++++
- 2 files changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/admin-guide/kdump/vmcoreinfo.rst b/Documentation/admin-guide/kdump/vmcoreinfo.rst
-index 0f714fc945ac..3b47916f1856 100644
---- a/Documentation/admin-guide/kdump/vmcoreinfo.rst
-+++ b/Documentation/admin-guide/kdump/vmcoreinfo.rst
-@@ -331,7 +331,7 @@ PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|PG_hwpoision|PG_head_mask|P
- Page attributes. These flags are used to filter various unnecessary for
- dumping pages.
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 53364526d877..4d4a1f159eaa 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -601,21 +601,31 @@ static inline bool mem_cgroup_unprotected(struct mem_cgroup *target,
+ static inline bool mem_cgroup_below_low(struct mem_cgroup *target,
+ 					struct mem_cgroup *memcg)
+ {
++	unsigned long elow;
++
+ 	if (mem_cgroup_unprotected(target, memcg))
+ 		return false;
  
--PAGE_BUDDY_MAPCOUNT_VALUE(~PG_buddy)|PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)
-+PAGE_BUDDY_MAPCOUNT_VALUE(~PG_buddy)|PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)|PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_unaccepted)
- -----------------------------------------------------------------------------
+-	return READ_ONCE(memcg->memory.elow) >=
+-		page_counter_read(&memcg->memory);
++	elow = READ_ONCE(memcg->memory.elow);
++	if (!elow || !READ_ONCE(memcg->memory.low))
++		return false;
++
++	return page_counter_read(&memcg->memory) <= elow;
+ }
  
- More page attributes. These flags are used to filter various unnecessary for
-diff --git a/kernel/vmcore_info.c b/kernel/vmcore_info.c
-index 1fec61603ef3..e066d31d08f8 100644
---- a/kernel/vmcore_info.c
-+++ b/kernel/vmcore_info.c
-@@ -210,6 +210,10 @@ static int __init crash_save_vmcoreinfo_init(void)
- 	VMCOREINFO_NUMBER(PAGE_HUGETLB_MAPCOUNT_VALUE);
- #define PAGE_OFFLINE_MAPCOUNT_VALUE	(PGTY_offline << 24)
- 	VMCOREINFO_NUMBER(PAGE_OFFLINE_MAPCOUNT_VALUE);
-+#ifdef CONFIG_UNACCEPTED_MEMORY
-+#define PAGE_UNACCEPTED_MAPCOUNT_VALUE	(PGTY_unaccepted << 24)
-+	VMCOREINFO_NUMBER(PAGE_UNACCEPTED_MAPCOUNT_VALUE);
-+#endif
+ static inline bool mem_cgroup_below_min(struct mem_cgroup *target,
+ 					struct mem_cgroup *memcg)
+ {
++	unsigned long emin;
++
+ 	if (mem_cgroup_unprotected(target, memcg))
+ 		return false;
  
- #ifdef CONFIG_KALLSYMS
- 	VMCOREINFO_SYMBOL(kallsyms_names);
-
-base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
+-	return READ_ONCE(memcg->memory.emin) >=
+-		page_counter_read(&memcg->memory);
++	emin = READ_ONCE(memcg->memory.emin);
++	if (!emin || !READ_ONCE(memcg->memory.min))
++		return false;
++
++	return page_counter_read(&memcg->memory) <= emin;
+ }
+ 
+ int __mem_cgroup_charge(struct folio *folio, struct mm_struct *mm, gfp_t gfp);
 -- 
-2.25.1
+2.48.1
 
 
