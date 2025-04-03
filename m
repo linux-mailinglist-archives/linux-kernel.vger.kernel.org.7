@@ -1,101 +1,111 @@
-Return-Path: <linux-kernel+bounces-586339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C3F2A79E11
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:24:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FF23A79E1C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 901C27A6745
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:23:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 240963B7576
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA50241CB6;
-	Thu,  3 Apr 2025 08:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="LeDwQYpg"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8F82417DD;
-	Thu,  3 Apr 2025 08:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B96241CBA;
+	Thu,  3 Apr 2025 08:25:55 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DA4241CB2;
+	Thu,  3 Apr 2025 08:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743668682; cv=none; b=kowZgyIRFjN7Zpv9fKEzlY5lez6jRPB64vxjF4H3CmBhrYHp8t3/u0hJkpRbXyOAT7+iTJR/ua5IjBXNHjUzumy7MOMR5zUrI/fDm/ueonKOebruGXOKfan9w7Mf2i7PV9MCx5G5G9Wm4aDS7fCTgH5jZvBqkHP8KUATGpgj++w=
+	t=1743668755; cv=none; b=f5yTzElpw+fob74AyWPe7dV3Gr4JaNmlv7JWX5jA7vR5MQYMxJPW7ZgMmT/zyEQ1jwg6G72fzAXc7slV9vPNiPi6+VdS3as65Wpo8NpnRykXWVmd5cQtheBl4aMkB4aEwBGutK+saDmAyNBDfKQTjYco6Q6Yc+J4/HIRkexG9N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743668682; c=relaxed/simple;
-	bh=hYAP/5okbsYRgEeJ15yz4elTcVcEkLGM75c2aFm4S5I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tgb5VpIYgWlJ/m2d7pzyddjPh8shyuleYEkuE/kARJFjfXp4EuCBGqMMIHjO+ab3rZLwFgE4TCzn9jl5TPtbzFB6UBqcJ47teUzNHGn9hkILdbmrWHQ045fHLg3s25DTi1tipjSCOaU3He8aH/eXYjiDfkDSf7lqEz5oOwSb41M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=LeDwQYpg; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.95.65.22] (unknown [167.220.238.22])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 82586211251B;
-	Thu,  3 Apr 2025 01:24:38 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 82586211251B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1743668680;
-	bh=rnj8EK/JzdiA1b2uvyspu3Hqf7UsyAdJb+qGDBbwtpI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LeDwQYpgTU9/DJozxCC9HANUKSZJixwyB+yMnSQA6EmAS6HyriejyFkKaXJn7jXat
-	 CQFj8PWp6rKJ2hKbQ5mqDWvfbSJRpPeFlSnqBvWffOsEaAWVAkRS4yUeOuzeOjYoE2
-	 F8f0YPMxQgzvHeb64TgjBWYBSytaUFsJ2LF/MOI4=
-Message-ID: <b7102dfb-86e4-4a85-8444-de18258473f2@linux.microsoft.com>
-Date: Thu, 3 Apr 2025 13:54:37 +0530
+	s=arc-20240116; t=1743668755; c=relaxed/simple;
+	bh=LMGWh7K8oa5KrX+W3kbg21yUcMQUNfXpXVe35Aqq1Mo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nvUHYn1qTtLQCTr4yfsdxeEaJsmNaBDBji3pTzYnFRJG7NoQgDhUGZS4vi6nr5YcnXszKnxL23sIyHCjtExZ/E6lHYONzfdCDIHSD8gOGJH8ewcJ1HS+aFV1vfiq8B1JGJLUOUaCSkUZ2cztEw/galAa9s7Idk9ra/50YlbTq80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-01 (Coremail) with SMTP id qwCowAA32vr1Re5ndMVvBQ--.37834S2;
+	Thu, 03 Apr 2025 16:25:30 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: m.chetan.kumar@intel.com,
+	loic.poulain@linaro.org,
+	ryazanov.s.a@gmail.com,
+	johannes@sipsolutions.net,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: [PATCH] IPC MUX: Add error handling for ipc_mux_dl_acb_send_cmds().
+Date: Thu,  3 Apr 2025 16:24:49 +0800
+Message-ID: <20250403082449.2183-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Drivers: hv: Fix bad pointer dereference in
- hv_get_partition_id
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- wei.liu@kernel.org
-Cc: kys@microsoft.com, haiyangz@microsoft.com, mhklinux@outlook.com,
- decui@microsoft.com
-References: <1743528737-20310-1-git-send-email-nunodasneves@linux.microsoft.com>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <1743528737-20310-1-git-send-email-nunodasneves@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAA32vr1Re5ndMVvBQ--.37834S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cw4DArW3JFyrKrWDKF48Zwb_yoW8Gry7pF
+	WrWw109F98AF4rAa18CrWDZa4YqayDXr97Kw1jv3Z5WFsrCr47trWxX3429rn7JF45W3Zr
+	Ar4jyry3G3WUGF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFV
+	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
+	x4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
+	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
+	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
+	sGvfC2KfnxnUUI43ZEXa7VUb8hL5UUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgwBA2fuKah3xQAAsy
 
+The ipc_mux_dl_acbcmd_decode() calls the ipc_mux_dl_acb_send_cmds(),
+but does not report the error if ipc_mux_dl_acb_send_cmds() fails.
+This makes it difficult to detect command sending failures. A proper
+implementation can be found in ipc_mux_dl_cmd_decode().
 
+Add error reporting to the call, logging an error message using dev_err()
+if the command sending fails.
 
-On 4/1/2025 11:02 PM, Nuno Das Neves wrote:
-> 'output' is already a pointer to the output argument, it should be
-> passed directly to hv_do_hypercall() without the '&' operator.
-> 
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> ---
-> This patch is a fixup for:
-> e96204e5e96e hyperv: Move hv_current_partition_id to arch-generic code
+Fixes: 1f52d7b62285 ("net: wwan: iosm: Enable M.2 7360 WWAN card support")
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/net/wwan/iosm/iosm_ipc_mux_codec.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-You can add Fixes: tag, so that it gets ported to previous kernel, in 
-case, it does not make it to 6.14.
-
-
-Regards,
-Naman
-
-> 
->   drivers/hv/hv_common.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
-> index b3b11be11650..a7d7494feaca 100644
-> --- a/drivers/hv/hv_common.c
-> +++ b/drivers/hv/hv_common.c
-> @@ -307,7 +307,7 @@ void __init hv_get_partition_id(void)
->   
->   	local_irq_save(flags);
->   	output = *this_cpu_ptr(hyperv_pcpu_input_arg);
-> -	status = hv_do_hypercall(HVCALL_GET_PARTITION_ID, NULL, &output);
-> +	status = hv_do_hypercall(HVCALL_GET_PARTITION_ID, NULL, output);
->   	pt_id = output->partition_id;
->   	local_irq_restore(flags);
->   
+diff --git a/drivers/net/wwan/iosm/iosm_ipc_mux_codec.c b/drivers/net/wwan/iosm/iosm_ipc_mux_codec.c
+index bff46f7ca59f..478c9c8b638b 100644
+--- a/drivers/net/wwan/iosm/iosm_ipc_mux_codec.c
++++ b/drivers/net/wwan/iosm/iosm_ipc_mux_codec.c
+@@ -509,8 +509,11 @@ static void ipc_mux_dl_acbcmd_decode(struct iosm_mux *ipc_mux,
+ 			return;
+ 			}
+ 		trans_id = le32_to_cpu(cmdh->transaction_id);
+-		ipc_mux_dl_acb_send_cmds(ipc_mux, cmd, cmdh->if_id,
+-					 trans_id, cmd_p, size, false, true);
++		if (ipc_mux_dl_acb_send_cmds(ipc_mux, cmd, cmdh->if_id,
++					     trans_id, cmd_p, size, false, true))
++			dev_err(ipc_mux->dev,
++				"if_id %d: cmd send failed",
++				cmdh->if_id);
+ 	}
+ }
+ 
+-- 
+2.42.0.windows.2
 
 
