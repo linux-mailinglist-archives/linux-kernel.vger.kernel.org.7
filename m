@@ -1,143 +1,199 @@
-Return-Path: <linux-kernel+bounces-586603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FD2EA7A186
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:01:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A5FA7A189
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:03:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21C213B62BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:01:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E694D175A08
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:03:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC24A23F26A;
-	Thu,  3 Apr 2025 11:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0470524BC04;
+	Thu,  3 Apr 2025 11:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="C6GLhmjD"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvlQjjSc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDF01DF975;
-	Thu,  3 Apr 2025 11:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542E41DF975;
+	Thu,  3 Apr 2025 11:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743678108; cv=none; b=tx5dSryfRFvxYj3nF7kVnw31IcsWQrjFxXq5FnUbSBnF+y5MpJJKO++fCKQta7CBaXrjeVhR/LZ3sVASpJbj+ceIASvy+qlbWbUbk5fTqM/qjV80Clk/Ke8XbgYExb6ubYg5/fa7QxXUk1lMn0PmBjrjj2nFB3DWi7/tpcyXNwc=
+	t=1743678191; cv=none; b=sGSbK3n0oYPCqrrtPjtFWLVUQWpmdDE39IAgG9+AfCn49Ikvb+11vLB0kgE+Jpcps4vzwgiEzjVFxYubf3mOtKBqzG9Ixvs/tSnXJj5nDeXxoW4S7Gd9OgfsX++TpRtFXS5O/byd8+RwpHmzM2BPFAUKBQXKtR/6LgcDM9xZoaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743678108; c=relaxed/simple;
-	bh=PP9g6jzvIPxAlf87q3KdMWuq2oEhYVAfdIMHTSalPLg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CyBKuJiKTiXiqgCnbt2X9gWX7FO2DP/eq4OZDB9X6oIT3OxSTH5rGJjYqqK6rZMjHWvwJrU7yQDiAdYBkRITT5+VJMb/DG/MN+UdpfvJdaZ7RnDd1m0nR6pE9B4VeuNC7BXWCWC/s8iu28n5Upaesn3ewKpRc6UD5SHneYslxc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=C6GLhmjD; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CB1D5105D;
-	Thu,  3 Apr 2025 12:59:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1743677991;
-	bh=PP9g6jzvIPxAlf87q3KdMWuq2oEhYVAfdIMHTSalPLg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=C6GLhmjDTVMRi8kssWq8hv8j7gZfcWhEwJVq7J1mRmum7OID69Ufz2NxPJJW0Z5QY
-	 uNydEn6xKDDgIyWv3uSTtAc8L1mjO5vxb5X0NTXt0PL0iIHyD9qbo6U7EPZEIQjiI3
-	 wxotLItXzLbZKgHDq2yfGFutPnlaz1vc8j4VasfE=
-Message-ID: <2e6599fd-0b79-430b-9e94-f731b60e1705@ideasonboard.com>
-Date: Thu, 3 Apr 2025 14:01:40 +0300
+	s=arc-20240116; t=1743678191; c=relaxed/simple;
+	bh=q5bh5LsgaugfwqRlbvOXVgseZaVVOjyj0lnP151CgVU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B0zia+YlpBIYASwLsJPEBP4quPmOtJdf6UUX/AKRa4uwNzRNb2x/hSNB0uM/pd+b4gHyn9q7PUnYo2i/2rR2i2XQrQh7C9GNZ3JePLpMigXYS70w+XETl1wYdF2LQ1kkhPklrR88s1isIvbudN2+sBAEg4pMMDikDlGl7CEx6z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hvlQjjSc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B261C4CEEB;
+	Thu,  3 Apr 2025 11:03:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743678191;
+	bh=q5bh5LsgaugfwqRlbvOXVgseZaVVOjyj0lnP151CgVU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hvlQjjScYyPIBJiTDhOXnHtTFur9sIjEB854NDKtBy5wPx7ds9sxhK4fHFVy/IIuK
+	 wFh9YYsgzWeOCKI+E48VYeOary+Kcs5XKzBsrsq44VAO+m7hU5/Q/SxZPr68suJJaz
+	 3Kiu7Y1Zk0euqWQHgfzmug9uAh2V9OS6wpT2S6XD25XfI+5iVryuQ59CIisbyQPn+J
+	 ykWW0J4mADgbmfOlTe5wMHxHn7zLWEO7RKKy4PFc6qQhjlMTjmE0r1umBGAGW+Qz7K
+	 UbrW0QGwL4a8F9s/9lEjyjV00IjdHXvhTFBuVtBr8a7q6OgwMmd6L5HhPhsymcakfK
+	 HqcfqqQc7Hhyw==
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-72c7336ed99so273111a34.0;
+        Thu, 03 Apr 2025 04:03:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUPPkNGR11+BUeuUyJrNfmLulMgeuxeK7zamzzPP4TJX3GoOEgj84RaNSSnVueyMAa4/8TgvN/OtrEw0c0=@vger.kernel.org, AJvYcCWHCBVWokaDsPEWrdP/KTHf2hHfwIa4ouiKnA17BLJptyoKtWhAkv3rKpz3hV2tpXa2bbOmI+EicQ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQoaYJYHHq5j+BzF9KPKqvTCfzQU+M9Iwh65JZ7wj5IuB0cbU0
+	tUCMKf/BwYW567mO7v5OpqcRQkbwmuPeoP1mfzJ+JzGk65Hi2VsaVyG2AhOmhLr4CCFohn2joli
+	Z072PEWBoefpamE3bstXvVyE//K4=
+X-Google-Smtp-Source: AGHT+IFbXUnrtx4yvwJPtJEIbcratnIIi9oeUH4guJ6SiB4gXdA/3KHMDXs4HftPjvjLn0rDDiFtu9F0Prqg0tve9Bc=
+X-Received: by 2002:a05:6830:61ca:b0:72b:9d5e:9429 with SMTP id
+ 46e09a7af769-72e2ee750c1mr1545366a34.12.1743678190389; Thu, 03 Apr 2025
+ 04:03:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] media: i2c: ds90ub960: Remove of_node assignment
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Jai Luthra <jai.luthra@ideasonboard.com>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-References: <20250312174123.4111661-1-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20250312174123.4111661-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <22640172.EfDdHjke4D@rjwysocki.net> <6ab0531a-d6d8-46ac-9afc-23cf87f37905@arm.com>
+In-Reply-To: <6ab0531a-d6d8-46ac-9afc-23cf87f37905@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 3 Apr 2025 13:02:59 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jmpwyFx-5dcvbjMp8TiyCFxGEgCR-y72ib1=Nob2mTcA@mail.gmail.com>
+X-Gm-Features: AQ5f1JrOj3acb2-UTwN0ZdksowWce5FdnHR_w9BbXG7wzpHVkqL4WTqxnjhBnQU
+Message-ID: <CAJZ5v0jmpwyFx-5dcvbjMp8TiyCFxGEgCR-y72ib1=Nob2mTcA@mail.gmail.com>
+Subject: Re: [RFC][PATCH v0.3 0/6] cpufreq: intel_pstate: Enable EAS on hybrid
+ platforms without SMT - alternative
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Peter Zijlstra <peterz@infradead.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
+	Pierre Gondois <pierre.gondois@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Thu, Apr 3, 2025 at 12:47=E2=80=AFPM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> On 3/7/25 19:12, Rafael J. Wysocki wrote:
+> > Hi Everyone,
+> >
+> > This is a new take on the "EAS for intel_pstate" work:
+> >
+> > https://lore.kernel.org/linux-pm/5861970.DvuYhMxLoT@rjwysocki.net/
+> >
+> > with refreshed preparatory patches and a revised energy model design.
+> >
+> > The following paragraph from the original cover letter still applies:
+> >
+> > "The underlying observation is that on the platforms targeted by these =
+changes,
+> > Lunar Lake at the time of this writing, the "small" CPUs (E-cores), whe=
+n run at
+> > the same performance level, are always more energy-efficient than the "=
+big" or
+> > "performance" CPUs (P-cores).  This means that, regardless of the scale=
+-
+> > invariant utilization of a task, as long as there is enough spare capac=
+ity on
+> > E-cores, the relative cost of running it there is always lower."
+> >
+> > However, this time perf domains are registered per CPU and in addition =
+to the
+> > primary cost component, which is related to the CPU type, there is a sm=
+all
+> > component proportional to performance whose role is to help balance the=
+ load
+> > between CPUs of the same type.
+> >
+> > This is done to avoid migrating tasks too much between CPUs of the same=
+ type,
+> > especially between E-cores, which has been observed in tests of the pre=
+vious
+> > iteration of this work.
+> >
+> > The expected effect is still that the CPUs of the "low-cost" type will =
+be
+> > preferred so long as there is enough spare capacity on any of them.
+> >
+> > The first two patches in the series rearrange cpufreq checks related to=
+ EAS so
+> > that sched_is_eas_possible() doesn't have to access cpufreq internals d=
+irectly
+> > and patch [3/6] changes those checks to also allow EAS to be used with =
+cpufreq
+> > drivers that implement internal governors (like intel_pstate).
+> >
+> > Patches [4-5/6] deal with the Energy Model code.  Patch [4/6] simply re=
+arranges
+> > it so as to allow the next patch to be simpler and patch [5/6] adds a f=
+unction
+> > that's used in the last patch.
+> >
+> > Patch [6/6] is the actual intel_pstate modification which now is signif=
+icantly
+> > simpler than before because it doesn't need to track the type of each C=
+PU
+> > directly in order to put into the right perf domain.
+> >
+> > Please refer to the individual patch changelogs for details.
+> >
+> > For easier access, the series is available on the experimental/intel_ps=
+tate/eas-take2
+> > branch in linux-pm.git:
+> >
+> > git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+> > experimental/intel_pstate/eas-take2
+> >
+> > or
+> >
+> > https://web.git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git=
+/log/?h=3Dexperimental/intel_pstate/eas-take2
+> >
+> > Thanks!
+> >
+>
+>
+> Hi Rafael,
+> as promised I did the same tests as with v0.2, the results are better wit=
+h v0.3,
+> hard to say though if that is because of the cache-affinity on the P-core=
+s.
+>
+> Interestingly our nosmt Raptor Lake 8+8 should be worse off with its 16 P=
+Ds now.
+> Maybe, if L2 is shared anyway, one PD for e-cores and per-CPU-PD for P-co=
+res
+> could be experimented with too (so 4+1+1+1+1 for lunar lake).
+>
+> Anyway these are the results, again 20 iterations of 5 minutes each:
+>
+> Firefox YouTube 4K video playback:
+> EAS:
+> 376.229 +-9.566835596650195
+> CAS:
+> 661.323 +-18.951739322113248
+> (-43.1% energy used with EAS)
+> (cf -24.2% energy used with EAS v0.2)
+>
+> Firefox Web Aquarium 500 fish.
+> EAS:
+> 331.933 +-10.977847441299437
+> CAS:
+> 515.594 +-16.997636567737562
+> (-35.6% energy used with EAS)
+> (Wasn't tested on v0.2, just to see if above was a lucky workload hit.)
+>
+> Both don't show any performance hit with EAS (FPS are very stable for bot=
+h).
+> v0.2 results:
+> https://lore.kernel.org/lkml/3861524b-b266-4e54-b7ab-fdccbb7b4177@arm.com=
+/
 
-On 12/03/2025 19:41, Andy Shevchenko wrote:
-> Remove of_node assignment which duplicates fwnode in struct i2c_board_info.
-> In general drivers must not set both, it's quite confusing. The I²C core
-> will consider fwnode with a priority and of_node is subject to remove from
-> above mentioned data structure.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->   drivers/media/i2c/ds90ub960.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
-> index 5dde8452739b..5afdbbad9ff4 100644
-> --- a/drivers/media/i2c/ds90ub960.c
-> +++ b/drivers/media/i2c/ds90ub960.c
-> @@ -1682,7 +1682,6 @@ static int ub960_rxport_add_serializer(struct ub960_data *priv, u8 nport)
->   	struct device *dev = &priv->client->dev;
->   	struct ds90ub9xx_platform_data *ser_pdata = &rxport->ser.pdata;
->   	struct i2c_board_info ser_info = {
-> -		.of_node = to_of_node(rxport->ser.fwnode),
->   		.fwnode = rxport->ser.fwnode,
->   		.platform_data = ser_pdata,
->   	};
-
-This sounds logical, but breaks the driver for me. I also couldn't find 
-this documented and didn't immediately find this from the i2c core 
-implementation side.
-
-Or am I missing some patch (running on v6.14)?
-
-  Tomi
-
+Thank you!
 
