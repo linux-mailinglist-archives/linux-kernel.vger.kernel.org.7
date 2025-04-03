@@ -1,96 +1,141 @@
-Return-Path: <linux-kernel+bounces-587778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2567A7B044
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:13:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC032A7B0C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AACD3BA49C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:06:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 264C47A64D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038261DB34E;
-	Thu,  3 Apr 2025 20:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1559E1B4234;
+	Thu,  3 Apr 2025 21:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glurjIlh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HqSEIYPA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569FE1D6DB4;
-	Thu,  3 Apr 2025 20:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A213D19F13B
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 21:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743711600; cv=none; b=oIm+MRUtcfahvoBtMEqlMoqpSNDqLozMdWQqCTPo2lFELq8YU+R4BFy5eBUXrhqipm95uJuD83jGZtjUO4/2NadhmDCboE3LPl992LPZ+w50h/Fy+jZMdnJweovijULe9jgPTHOOd79UsOkizXNCncifjItaTwdUhCFOSz7Rkgo=
+	t=1743715368; cv=none; b=u0My2KpoCqn+J8kAV3+aGPXvPcJ2ZfHrlSB182hKfLeG14U+iXz9PMbmguCgiaGAkoGtRS240SxcQBz507yYW0kSDz02XIloLwbunM3WhwRXUs2f4Kmu3sBPV9SS+Vca0GcZSLAJn7YIjbHImGJlQlq9c8UchBTfAjKDrjy/MnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743711600; c=relaxed/simple;
-	bh=Ep8fp0SBr9TkStJxxgW2ebyfhtZWt3yVe89HY0d+/Fs=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=CoCw5iZ2u7K4rvNy+R+8oJ9deIYL9GFyGkf5OoT5yHQDJd7EKdGaUFTKpS8peD1sEvuxaCPSq5i+MwE2jo8p3rzTk0QydKDoqxu0Ud5NZ3K3l0t2uqp3VMqKZSc20IUoG6Zs6uVrU6TUZahzuyNKo0JYiQoKcU1T+1WHxAOfJJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glurjIlh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8123C4CEE8;
-	Thu,  3 Apr 2025 20:19:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743711599;
-	bh=Ep8fp0SBr9TkStJxxgW2ebyfhtZWt3yVe89HY0d+/Fs=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=glurjIlhgIbdc7HHpZ5kRJg9eYCAbtNEpJ+IJMnsHO1l7Sc3YKSgS0zWqUbfP0nWu
-	 shqlKosx9bjj6MeUJjGat33KkTaQfbhZMPtvQlB6hkjmmS5057Z+/sjaAJZG/6ulot
-	 catQe7RaGEqAShQszK7QugKn4wd4SAmezOiKOFQtDGfm4kTdWVSGrZvc22ts+zsSA6
-	 aQnnrqoISTlwTjvn0W6jvUKwAxZZ4rSP377O8PxKTvQHxcNWSAmN7hEuz6O5IDq5lI
-	 bkJkLf4L2xni+LmqhFcNdMC71Jbi+YpLGn3Je/4bvPr03awW/MN2PiTC6PjkhMUPJ8
-	 wgenG+SSl/Hjw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB304380664C;
-	Thu,  3 Apr 2025 20:20:36 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1743715368; c=relaxed/simple;
+	bh=2IdDHaGzFquCq7N4xhH9WdiUXwDs0/2yQulzBHFJP4k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=JSesmfvI3ZQ0h3WB7cWvG2CGebTUlpB5HdC3qBjbOuN1NobZ/yity5FfoJa2MuEZwYF0R5HSoX1p4tc5iqR7ml8Qa+fvN3mOqhvKK5cYIrbjsD8v1N8TFyL4unyPoA7i/BU6oX1eFd2fFZzhftrQHnwu4whzdTezRBmY8yjaWqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HqSEIYPA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743715365;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8m83oPnzHjoj3TYj8kJawzHmXyw5D9Sy9AIGCgir168=;
+	b=HqSEIYPALSXBaeDSQL6YLijjwPmaUBpz76kwnWqInLq2CPLZkihwnmGSY2/Xyn8iGxvIW1
+	IuxGTDbCPOiYAU0sZlQ/SRpPTBZ+VK73i0Z5ldEKNJsESwDs3Gc0Zs10008tRae07H8HJF
+	GwcAIYilZVupMDG01aYGPUoGF+BAVhQ=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-569-hQIw9tLaOUeY6G3FGCHhWA-1; Thu,
+ 03 Apr 2025 17:22:39 -0400
+X-MC-Unique: hQIw9tLaOUeY6G3FGCHhWA-1
+X-Mimecast-MFC-AGG-ID: hQIw9tLaOUeY6G3FGCHhWA_1743715356
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B6BFA180AB16;
+	Thu,  3 Apr 2025 21:22:35 +0000 (UTC)
+Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.30])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5BBA01828AA8;
+	Thu,  3 Apr 2025 21:22:31 +0000 (UTC)
+From: Anusha Srivatsa <asrivats@redhat.com>
+Date: Thu, 03 Apr 2025 16:20:36 -0400
+Subject: [PATCH 05/46] panel/raydium-rm692e5: Use refcounted allocation in
+ place of devm_kzalloc()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v1 1/2] Bluetooth: btnxpuart: Add msleep() after changing the
- baudrate
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <174371163549.2672071.11589670566595157295.git-patchwork-notify@kernel.org>
-Date: Thu, 03 Apr 2025 20:20:35 +0000
-References: <20250327182523.524534-1-neeraj.sanjaykale@nxp.com>
-In-Reply-To: <20250327182523.524534-1-neeraj.sanjaykale@nxp.com>
-To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- amitkumar.karwar@nxp.com, sherry.sun@nxp.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250403-b4-drm_panel_mass_driver_convert_part3-v1-5-965b15ad5b8e@redhat.com>
+References: <20250403-b4-drm_panel_mass_driver_convert_part3-v1-0-965b15ad5b8e@redhat.com>
+In-Reply-To: <20250403-b4-drm_panel_mass_driver_convert_part3-v1-0-965b15ad5b8e@redhat.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Robert Chiras <robert.chiras@nxp.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Markuss Broks <markuss.broks@gmail.com>, 
+ Artur Weber <aweber.kernel@gmail.com>, 
+ Dzmitry Sankouski <dsankouski@gmail.com>, 
+ Jagan Teki <jagan@amarulasolutions.com>, 
+ =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
+ Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>, 
+ Sasha Finkelstein <fnkl.kernel@gmail.com>, Janne Grunau <j@jannau.net>, 
+ Michael Trimarchi <michael@amarulasolutions.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ asahi@lists.linux.dev, Anusha Srivatsa <asrivats@redhat.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1743711639; l=1399;
+ i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
+ bh=2IdDHaGzFquCq7N4xhH9WdiUXwDs0/2yQulzBHFJP4k=;
+ b=ab7oxJakSbbIdbkvQ3n4QsY7vKPENeEwrQFsYSFETiPEKhvj+QXMXAO/krZOxIpbAhENnTLgI
+ npPffFaPryzAZqaaNvcqARB/Ua6c4KT7EN1im2RGqMefloxwygY9WlW
+X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
+ pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hello:
+Move to using the new API devm_drm_panel_alloc() to allocate the
+panel.
 
-This series was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+---
+ drivers/gpu/drm/panel/panel-raydium-rm692e5.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-On Thu, 27 Mar 2025 23:55:22 +0530 you wrote:
-> This adds a 100 millisec sleep after change baudrate vendor command.
-> 
-> It is observed that when the baudrate change command changes the
-> baudrate from 3000000 to 115200, any immediate HCI command returns an
-> error -22 (Device Busy).
-> 
-> Adding a small delay after the change baudrate command complete event is
-> received helps fix the issue.
-> 
-> [...]
+diff --git a/drivers/gpu/drm/panel/panel-raydium-rm692e5.c b/drivers/gpu/drm/panel/panel-raydium-rm692e5.c
+index ea1b728e85a2ece226d3df48dbd45a763bc6bd5d..8e9484768657b68a300d42594ab921ee37a5d5a3 100644
+--- a/drivers/gpu/drm/panel/panel-raydium-rm692e5.c
++++ b/drivers/gpu/drm/panel/panel-raydium-rm692e5.c
+@@ -281,9 +281,11 @@ static int rm692e5_probe(struct mipi_dsi_device *dsi)
+ 	struct rm692e5_panel *ctx;
+ 	int ret;
+ 
+-	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+-	if (!ctx)
+-		return -ENOMEM;
++	ctx = devm_drm_panel_alloc(dev, struct rm692e5_panel, panel,
++				   &rm692e5_panel_funcs,
++				   DRM_MODE_CONNECTOR_DSI);
++	if (IS_ERR(ctx))
++		return PTR_ERR(ctx);
+ 
+ 	ctx->supplies[0].supply = "vddio";
+ 	ctx->supplies[1].supply = "dvdd";
+@@ -306,8 +308,6 @@ static int rm692e5_probe(struct mipi_dsi_device *dsi)
+ 	dsi->mode_flags = MIPI_DSI_MODE_NO_EOT_PACKET |
+ 			  MIPI_DSI_CLOCK_NON_CONTINUOUS;
+ 
+-	drm_panel_init(&ctx->panel, dev, &rm692e5_panel_funcs,
+-		       DRM_MODE_CONNECTOR_DSI);
+ 	ctx->panel.prepare_prev_first = true;
+ 
+ 	ctx->panel.backlight = rm692e5_create_backlight(dsi);
 
-Here is the summary with links:
-  - [v1,1/2] Bluetooth: btnxpuart: Add msleep() after changing the baudrate
-    (no matching commit)
-  - [v1,2/2] Bluetooth: btnxpuart: Add an error message if FW dump trigger fails
-    https://git.kernel.org/bluetooth/bluetooth-next/c/061e4972c48c
-
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.48.1
 
 
