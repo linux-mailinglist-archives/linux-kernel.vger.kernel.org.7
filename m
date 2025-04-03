@@ -1,48 +1,49 @@
-Return-Path: <linux-kernel+bounces-586794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EBEAA7A3DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:36:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA671A7A3DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:37:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A960D1888B3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:36:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59E713B7343
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFE32517A1;
-	Thu,  3 Apr 2025 13:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45ED7252912;
+	Thu,  3 Apr 2025 13:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W2Jg+8bL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oneAda3h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E397251780
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 13:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAE22528FC
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 13:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743687229; cv=none; b=YfpXyA6C5KDFlNl8GECaWFrBS35x7skiuaFdn8nvCm9323Uk6V2+MzRX7ZNXBAsJ49HWwdaFJfVPTcHk3sNd3lSayrxJq9kmnMXYdtCSzWbQNJlHuDScnC3PMP40DCqrwuHJq6CCUxwzVLqhpoPpkSTcp3+aB1H+x7bnCoIempE=
+	t=1743687231; cv=none; b=IsoaeBhT9SlzYgTV6bP0PAZT3Ix4gnAIuXhThSBVZT83QyHeC1Pcomui6SECvLO7rUkvqZYXBMbzGEMRTW61ve+Hfi8SrcYpXDUhDX/QNizVfj6qQf8j3My9yXp60RSAZQr1LRm/4pf7g90apfQL22roiKcrfqD3FApg2rGoNl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743687229; c=relaxed/simple;
-	bh=bUeXH/Wwdj4sAGXZMnX8uO5zLm5ZlWDOVT0q62t00aY=;
+	s=arc-20240116; t=1743687231; c=relaxed/simple;
+	bh=DcYcHvtr2QSHPcXF1G+Z6ruyDYsfnPIybNswZ8mMbsg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Vp8uIACDb9Uk+3jgKqv+DIVzEfr/Ylr6nRrVLgQrO94xWE7+xexJ11sc/ogUTQ3UKS0T9tKWfVsiVsAZ2koYlDb4rl0DjUKg48pjUw1hreHEr8r+lCxomCeg0Krpb8pWKhFuobF18xyvuUOFzkrIWw5Iya6LmcuSaMuj0rQd4v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W2Jg+8bL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38033C4CEE5;
-	Thu,  3 Apr 2025 13:33:48 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=khf7TueydvuSpL3aQr2zfu0a7rF9rzu3E/AL8XeW9t0J2pq0viY+PDvauZ2YrSmtmnLXsXgUa4YllMMj35JaX+MYhLvfPLjYP7KcnCtrjqLQWal1WVNR+ehhMjiIuHSqXxuLpWxVv61OFwLtNcNzJC3cuVjf7I3d/2hMNfgwNR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oneAda3h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19FC7C4CEE5;
+	Thu,  3 Apr 2025 13:33:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743687228;
-	bh=bUeXH/Wwdj4sAGXZMnX8uO5zLm5ZlWDOVT0q62t00aY=;
+	s=k20201202; t=1743687231;
+	bh=DcYcHvtr2QSHPcXF1G+Z6ruyDYsfnPIybNswZ8mMbsg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=W2Jg+8bLEje7Ib31DEYv5NlcbQ4c29t9zWQ16iXiBvn0k2FbAhJX9SwUBDzxblhz9
-	 qDDtuCshshgxbQK719bD5GVjVROMaBwyGk8u2kJzDY8uGmPFOBFhiNjVSAhJ+xzPXw
-	 45QfQkrg/CamteDliPtJgBXZGfGig/hiAvubojWOEFuadMT+GIh8chI7hHs2ADtuhE
-	 i6YgZXt25gfbWLMgutO/cMHfc6HxcgzOxhTC068nUaXpHwKOoVysTO0p4An3hMBSVT
-	 1dmtvbTGb3OmwmTkrUkU3dWjbHga7JcyL1sk/VIAtjLVakGY64Fbl/u7PEAPriNpim
-	 qQ2gfeBpBgWZw==
+	b=oneAda3hrpHCbR3hQcJoUoLiraCqoA2k1eXrpWSg8z0VpKMOs9mgOiUSN//yC0iJR
+	 nUc7CYJZ5Ml+U458aN41pFYDEP2oych7gIOSBHN7W+bUsg9pF6Y5bqtDqT0MY4AHnG
+	 vxRUMwAuiINwWkm+k6WKCdA21OF5eWIdt8ueyekqAvYQimK8NsuLrIPFP3tnK75Io+
+	 g7r41jb/yNtKAEuhMX9opPC6tignNyhABywJMQxrfL1UmyiY6w55OtkZia7zInZB8L
+	 YyAwvrUDiN+h1wX82o+bUMH3KWLcY1BTk8ikMn7Do7VzQB6c885xQm31yGa6vidfCf
+	 mRrBBpDdaBenw==
 From: Maxime Ripard <mripard@kernel.org>
-Date: Thu, 03 Apr 2025 15:33:31 +0200
-Subject: [PATCH v2 2/4] drm/vc4: tests: Document output handling functions
+Date: Thu, 03 Apr 2025 15:33:32 +0200
+Subject: [PATCH v2 3/4] drm/vc4: tests: Stop allocating the state in test
+ init
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,8 +51,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250403-drm-vc4-kunit-failures-v2-2-e09195cc8840@kernel.org>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250403-drm-vc4-kunit-failures-v2-3-e09195cc8840@kernel.org>
 References: <20250403-drm-vc4-kunit-failures-v2-0-e09195cc8840@kernel.org>
 In-Reply-To: <20250403-drm-vc4-kunit-failures-v2-0-e09195cc8840@kernel.org>
 To: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
@@ -63,77 +64,153 @@ To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
 Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  Maxime Ripard <mripard@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2286; i=mripard@kernel.org;
- h=from:subject:message-id; bh=bUeXH/Wwdj4sAGXZMnX8uO5zLm5ZlWDOVT0q62t00aY=;
- b=owGbwMvMwCX2+D1vfrpE4FHG02pJDOnv+gz/HhUKeDzXV2aDuMFiTWXmuq1HHBILhba7a8kUb
- hdt2GDeUcrCIMbFICumyBIjbL4k7tSs151sfPNg5rAygQxh4OIUgIlEBjL80zftCknMs5BYP9n3
- +N79gZuFd2vxRhnHls+x2RYrnMzXzsjwRZzz5ZHUtalzXk4M3PnUhaM6Jat71seM4Ctrjy760bm
- WHQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4608; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=DcYcHvtr2QSHPcXF1G+Z6ruyDYsfnPIybNswZ8mMbsg=;
+ b=owGbwMvMwCX2+D1vfrpE4FHG02pJDOnv+owCH/LxLOXXZjQy+PTOm/9n63Kz3w+n7N9y9GuCC
+ M8e8W1ZHaUsDGJcDLJiiiwxwuZL4k7Net3JxjcPZg4rE8gQBi5OAZhI2kmGf9adDbtqOB0d5H8c
+ y2zWe1ShcWNP7r7Qwxe1Kj7Mcly06wwjQ9tZltMpJzSYqlbkHHB4s/St9T91ZpNp25ZrnJp9+MQ
+ MZ14A
 X-Developer-Key: i=mripard@kernel.org; a=openpgp;
  fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-vc4_mock_atomic_add_output() and vc4_mock_atomic_del_output() are public
-but aren't documented. Let's provide the documentation.
+The vc4-pv-muxing-combinations and vc5-pv-muxing-combinations test
+suites use a common test init function which, in part, allocates the
+drm atomic state the test will use.
 
-In particular, special care should be taken to deal with EDEADLK.
+That allocation relies on  drm_kunit_helper_atomic_state_alloc(), and
+thus requires a struct drm_modeset_acquire_ctx. This context will then
+be stored in the allocated state->acquire_ctx field.
 
+However, the context is local to the test init function, and is cleared
+as soon as drm_kunit_helper_atomic_state_alloc() is done. We thus end up
+with an dangling pointer to a cleared context in state->acquire_ctx for
+our test to consumes.
+
+We should really allocate the context and the state in the test
+functions, so we can also control when we're done with it.
+
+Fixes: 30188df0c387 ("drm/tests: Drop drm_kunit_helper_acquire_ctx_alloc()")
+Reviewed-by: Maíra Canal <mcanal@igalia.com>
 Signed-off-by: Maxime Ripard <mripard@kernel.org>
 ---
- drivers/gpu/drm/vc4/tests/vc4_mock_output.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ drivers/gpu/drm/vc4/tests/vc4_test_pv_muxing.c | 41 +++++++++++++++++---------
+ 1 file changed, 27 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/vc4/tests/vc4_mock_output.c b/drivers/gpu/drm/vc4/tests/vc4_mock_output.c
-index f0ddc223c1f839e8a14f37fdcbb72e7b2c836aa1..577d9a9563696791632aec614c381a214886bf27 100644
---- a/drivers/gpu/drm/vc4/tests/vc4_mock_output.c
-+++ b/drivers/gpu/drm/vc4/tests/vc4_mock_output.c
-@@ -59,10 +59,23 @@ struct vc4_dummy_output *vc4_dummy_output(struct kunit *test,
+diff --git a/drivers/gpu/drm/vc4/tests/vc4_test_pv_muxing.c b/drivers/gpu/drm/vc4/tests/vc4_test_pv_muxing.c
+index 992e8f5c5c6ea8d92338a8fe739fa1115ff85338..52c04ef33206bf4f9e21e3c8b7cea932824a67fa 100644
+--- a/drivers/gpu/drm/vc4/tests/vc4_test_pv_muxing.c
++++ b/drivers/gpu/drm/vc4/tests/vc4_test_pv_muxing.c
+@@ -18,11 +18,10 @@
  
- static const struct drm_display_mode default_mode = {
- 	DRM_SIMPLE_MODE(640, 480, 64, 48)
+ #include "vc4_mock.h"
+ 
+ struct pv_muxing_priv {
+ 	struct vc4_dev *vc4;
+-	struct drm_atomic_state *state;
  };
  
-+/**
-+ * vc4_mock_atomic_add_output() - Enables an output in a state
-+ * @test: The test context object
-+ * @state: Atomic state to enable the output in.
-+ * @type: Type of the output encoder
-+ *
-+ * Adds an output CRTC and connector to a state, and enables them.
-+ *
-+ * Returns:
-+ * 0 on success, a negative error code on failure. If the error is
-+ * EDEADLK, the entire atomic sequence must be restarted. All other
-+ * errors are fatal.
-+ */
- int vc4_mock_atomic_add_output(struct kunit *test,
- 			       struct drm_atomic_state *state,
- 			       enum vc4_encoder_type type)
+ static bool check_fifo_conflict(struct kunit *test,
+ 				const struct drm_atomic_state *state)
  {
- 	struct drm_device *drm = state->dev;
-@@ -103,10 +116,23 @@ int vc4_mock_atomic_add_output(struct kunit *test,
- 	crtc_state->active = true;
+@@ -675,14 +674,23 @@ KUNIT_ARRAY_PARAM(vc5_test_pv_muxing_invalid,
  
+ static void drm_vc4_test_pv_muxing(struct kunit *test)
+ {
+ 	const struct pv_muxing_param *params = test->param_value;
+ 	const struct pv_muxing_priv *priv = test->priv;
+-	struct drm_atomic_state *state = priv->state;
++	struct drm_modeset_acquire_ctx ctx;
++	struct drm_atomic_state *state;
++	struct drm_device *drm;
++	struct vc4_dev *vc4;
+ 	unsigned int i;
+ 	int ret;
+ 
++	drm_modeset_acquire_init(&ctx, 0);
++
++	vc4 = priv->vc4;
++	drm = &vc4->base;
++	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
+ 	for (i = 0; i < params->nencoders; i++) {
+ 		enum vc4_encoder_type enc_type = params->encoders[i];
+ 
+ 		ret = vc4_mock_atomic_add_output(test, state, enc_type);
+ 		KUNIT_ASSERT_EQ(test, ret, 0);
+@@ -698,56 +706,61 @@ static void drm_vc4_test_pv_muxing(struct kunit *test)
+ 		enum vc4_encoder_type enc_type = params->encoders[i];
+ 
+ 		KUNIT_EXPECT_TRUE(test, check_channel_for_encoder(test, state, enc_type,
+ 								  params->check_fn));
+ 	}
++
++	drm_modeset_drop_locks(&ctx);
++	drm_modeset_acquire_fini(&ctx);
+ }
+ 
+ static void drm_vc4_test_pv_muxing_invalid(struct kunit *test)
+ {
+ 	const struct pv_muxing_param *params = test->param_value;
+ 	const struct pv_muxing_priv *priv = test->priv;
+-	struct drm_atomic_state *state = priv->state;
++	struct drm_modeset_acquire_ctx ctx;
++	struct drm_atomic_state *state;
++	struct drm_device *drm;
++	struct vc4_dev *vc4;
+ 	unsigned int i;
+ 	int ret;
+ 
++	drm_modeset_acquire_init(&ctx, 0);
++
++	vc4 = priv->vc4;
++	drm = &vc4->base;
++	state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, state);
++
+ 	for (i = 0; i < params->nencoders; i++) {
+ 		enum vc4_encoder_type enc_type = params->encoders[i];
+ 
+ 		ret = vc4_mock_atomic_add_output(test, state, enc_type);
+ 		KUNIT_ASSERT_EQ(test, ret, 0);
+ 	}
+ 
+ 	ret = drm_atomic_check_only(state);
+ 	KUNIT_EXPECT_LT(test, ret, 0);
++
++	drm_modeset_drop_locks(&ctx);
++	drm_modeset_acquire_fini(&ctx);
+ }
+ 
+ static int vc4_pv_muxing_test_init(struct kunit *test)
+ {
+ 	const struct pv_muxing_param *params = test->param_value;
+-	struct drm_modeset_acquire_ctx ctx;
+ 	struct pv_muxing_priv *priv;
+-	struct drm_device *drm;
+ 	struct vc4_dev *vc4;
+ 
+ 	priv = kunit_kzalloc(test, sizeof(*priv), GFP_KERNEL);
+ 	KUNIT_ASSERT_NOT_NULL(test, priv);
+ 	test->priv = priv;
+ 
+ 	vc4 = params->mock_fn(test);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, vc4);
+ 	priv->vc4 = vc4;
+ 
+-	drm_modeset_acquire_init(&ctx, 0);
+-
+-	drm = &vc4->base;
+-	priv->state = drm_kunit_helper_atomic_state_alloc(test, drm, &ctx);
+-	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, priv->state);
+-
+-	drm_modeset_drop_locks(&ctx);
+-	drm_modeset_acquire_fini(&ctx);
+-
  	return 0;
  }
  
-+/**
-+ * vc4_mock_atomic_del_output() - Disables an output in a state
-+ * @test: The test context object
-+ * @state: Atomic state to disable the output in.
-+ * @type: Type of the output encoder
-+ *
-+ * Adds an output CRTC and connector to a state, and disables them.
-+ *
-+ * Returns:
-+ * 0 on success, a negative error code on failure. If the error is
-+ * EDEADLK, the entire atomic sequence must be restarted. All other
-+ * errors are fatal.
-+ */
- int vc4_mock_atomic_del_output(struct kunit *test,
- 			       struct drm_atomic_state *state,
- 			       enum vc4_encoder_type type)
- {
- 	struct drm_device *drm = state->dev;
+ static struct kunit_case vc4_pv_muxing_tests[] = {
+ 	KUNIT_CASE_PARAM(drm_vc4_test_pv_muxing,
 
 -- 
 2.49.0
