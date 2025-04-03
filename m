@@ -1,158 +1,138 @@
-Return-Path: <linux-kernel+bounces-586835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D67A7A482
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:02:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F23A1A7A466
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFDF3176F75
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:00:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D003A176309
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 13:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1EE24FC1A;
-	Thu,  3 Apr 2025 13:59:35 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D85424E4B2;
+	Thu,  3 Apr 2025 13:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cQKTeSgb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1540D24E00D;
-	Thu,  3 Apr 2025 13:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BE529408;
+	Thu,  3 Apr 2025 13:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743688775; cv=none; b=I1l2mKe8XZ/a0Osna8ddCG+pKOVtqFlv+MyYxJfFpUH0e1UkFdYAQXKlwkJYcMUH5HE7/pc38/+tauho7m4261EJ87NW57dNxqfjIiUhPkIAJmMRof0s3QkIpbRMwyLsw1IvtGsEVU9goDuofodJKfGuoXqtoc2Z/G7wir6PtZw=
+	t=1743688529; cv=none; b=kO3WhnulGmtBmhH+8WGN93L1XvTU4/R9r48ZFg6mq5vuHYN67kzD+LPehM9AW+J7u+9y3WM2Zt8Y+hyIYHeYnEWdQ17zEV5xNl9f4AzoXwb+JWaZSEheVg3QxXGOVZpDb9J/ug9pAdmyYSBZRY4mi1pvGsApAZZa0/qQVZE9jkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743688775; c=relaxed/simple;
-	bh=ZT64E9vDOl3T0E1t51JkFyLP1D+hI/J8QvK0uSQWAdI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d5Ch6IWygG+/63fxuNcIyQqN6ldVpH8uxbRVCGkQUdY0w0izj1j1eTxSPqsf5gNcLq1WHsc78QluRnKj1jkvqEw7gGK3QWI/3JCW1H8wmADg1DXwk4UAxOYr9nSh8OloDA5byXRP5oXtZxoJMIZLpc07IOfkfe9VX4oDcdnTYzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4ZT3Hj50WFz1d12x;
-	Thu,  3 Apr 2025 21:58:57 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id D417C18010B;
-	Thu,  3 Apr 2025 21:59:29 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 3 Apr 2025 21:59:29 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
-CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <shaojijie@huawei.com>
-Subject: [PATCH net v2 7/7] net: hibmcge: fix multiple phy_stop() issue
-Date: Thu, 3 Apr 2025 21:53:11 +0800
-Message-ID: <20250403135311.545633-8-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20250403135311.545633-1-shaojijie@huawei.com>
-References: <20250403135311.545633-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1743688529; c=relaxed/simple;
+	bh=jMcUJTuyrHqWUvUZgo2jQWpaqg+ikyXlBK4xmCiiM6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OpwsKuv3hXD18Fx/mYT8zzPKSjYAP2GmtHX4XlMZWUOlGj4OQFGFrmK4nj6hqjhc7aXuJLGX3LJOg2RPTBrWuxo83kkiOVHoFMGUZJzxN+otiy3JvUPgDyBNAqEOObdx3GKaMCmdeb0xZCXOLALGaJdhxph3ZzhX5tuk1sKdonE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cQKTeSgb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E61F5C4CEE5;
+	Thu,  3 Apr 2025 13:55:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743688529;
+	bh=jMcUJTuyrHqWUvUZgo2jQWpaqg+ikyXlBK4xmCiiM6Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cQKTeSgbgRY4KNuIF5I2rjU5L/WvPQkY7n0cgDO4/bwmQa/hoE6Evnn8CTudbbHfg
+	 stJuWukj0FZwXyJinzNI7pfWwiNrCos5e9LbpE9Xhw5bG7NZvmCMPX3vTQAwaMi6mh
+	 mPLR65P/cdOl00ewRLIAYmtSRoJlkNk+usLn57T0=
+Date: Thu, 3 Apr 2025 14:54:01 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Samuel Abraham <abrahamadekunle50@gmail.com>
+Cc: Julia Lawall <julia.lawall@inria.fr>, outreachy@lists.linux.dev,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8723bs: modify struct field to use standard
+ bool type
+Message-ID: <2025040304-overdrive-snugness-8b05@gregkh>
+References: <Z+05IEjV3pczMLNQ@HP-650>
+ <4c35ae41-c834-e25a-ccab-5cdd34aa4680@inria.fr>
+ <CADYq+faUTmNcUgk5jB3YHT4UCQZhf=Wsah1WUcPHqky6kp_cUA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+In-Reply-To: <CADYq+faUTmNcUgk5jB3YHT4UCQZhf=Wsah1WUcPHqky6kp_cUA@mail.gmail.com>
 
-After detecting the np_link_fail exception,
-the driver attempts to fix the exception by
-using phy_stop() and phy_start() in the scheduled task.
+On Thu, Apr 03, 2025 at 10:33:49AM +0100, Samuel Abraham wrote:
+> On Thu, Apr 3, 2025 at 6:06 AM Julia Lawall <julia.lawall@inria.fr> wrote:
+> >
+> >
+> >
+> > On Wed, 2 Apr 2025, Abraham Samuel Adekunle wrote:
+> >
+> > > The struct field uses the uint values 0 and 1 to represent false and
+> > > true values respectively.
+> > >
+> > > Convert cases to use the bool type instead to conform to Linux
+> > > coding styles and ensure consistency.
+> >
+> > This is vague.  Ensure consistency with what?  You can point out that true
+> > or false was already being used elsewhere in the code.
+> >
+> > >
+> > > reported by Coccinelle:
+> > >
+> > > Signed-off-by: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
+> > > ---
+> > >  drivers/staging/rtl8723bs/core/rtw_ap.c      | 2 +-
+> > >  drivers/staging/rtl8723bs/include/sta_info.h | 2 +-
+> > >  2 files changed, 2 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/rtl8723bs/core/rtw_ap.c
+> > > index ed6942e289a5..82f54f769ed1 100644
+> > > --- a/drivers/staging/rtl8723bs/core/rtw_ap.c
+> > > +++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
+> > > @@ -389,7 +389,7 @@ void update_bmc_sta(struct adapter *padapter)
+> > >               psta->qos_option = 0;
+> > >               psta->htpriv.ht_option = false;
+> > >
+> > > -             psta->ieee8021x_blocked = 0;
+> > > +             psta->ieee8021x_blocked = false;
+> > >
+> > >               memset((void *)&psta->sta_stats, 0, sizeof(struct stainfo_stats));
+> > >
+> > > diff --git a/drivers/staging/rtl8723bs/include/sta_info.h b/drivers/staging/rtl8723bs/include/sta_info.h
+> > > index b3535fed3de7..63343998266a 100644
+> > > --- a/drivers/staging/rtl8723bs/include/sta_info.h
+> > > +++ b/drivers/staging/rtl8723bs/include/sta_info.h
+> > > @@ -86,7 +86,7 @@ struct sta_info {
+> > >       uint qos_option;
+> > >       u8 hwaddr[ETH_ALEN];
+> > >
+> > > -     uint    ieee8021x_blocked;      /* 0: allowed, 1:blocked */
+> > > +     bool ieee8021x_blocked;
+> 
+> > You should also check whether this is a structure that is read from the
+> > hardware.  In that case, it would be a concern if the bool field does not
+> > have the same size as the uint one.
+> Hello Julia
+> So following the conversation here,
+> https://lore.kernel.org/outreachy/bf8994cc-b812-f628-ff43-5dae8426e266@inria.fr/T/#u
+> I was able to compare the assembly code of the file before and after
+> my patch and this were my findings
+> 
+> Original assembly code for
+> # drivers/staging/rtl8723bs/core/rtw_ap.c:392    psta->ieee8021x_blocked = 0;
+> movl  $0, 436(%r12)    #,  psta->ieee8021x_blocked
+> 
+> Assembly Code After Patch
+> # drivers/staging/rtl8723bs/core/rtw_ap.c:392
+> psta->ieee8021x_blocked = false;
+> movb  $0, 434(%r12)    #,  psta->ieee8021x_blocked
 
-However, hbg_fix_np_link_fail() and .ndo_stop()
-may be concurrently executed. As a result,
-phy_stop() is executed twice, and the following Calltrace occurs:
+So the structure size changed?  That's not good at all, and is what I
+was worried about :(
 
- hibmcge 0000:84:00.2 enp132s0f2: Link is Down
- hibmcge 0000:84:00.2: failed to link between MAC and PHY, try to fix...
- ------------[ cut here ]------------
- called from state HALTED
- WARNING: CPU: 71 PID: 23391 at drivers/net/phy/phy.c:1503 phy_stop...
- ...
- pc : phy_stop+0x138/0x180
- lr : phy_stop+0x138/0x180
- sp : ffff8000c76bbd40
- x29: ffff8000c76bbd40 x28: 0000000000000000 x27: 0000000000000000
- x26: ffff2020047358c0 x25: ffff202004735940 x24: ffff20200000e405
- x23: ffff2020060e5178 x22: ffff2020060e4000 x21: ffff2020060e49c0
- x20: ffff2020060e5170 x19: ffff20202538e000 x18: 0000000000000020
- x17: 0000000000000000 x16: ffffcede02e28f40 x15: ffffffffffffffff
- x14: 0000000000000000 x13: 205d313933333254 x12: 5b5d393430303233
- x11: ffffcede04555958 x10: ffffcede04495918 x9 : ffffcede0274fee0
- x8 : 00000000000bffe8 x7 : c0000000ffff7fff x6 : 0000000000000001
- x5 : 00000000002bffa8 x4 : 0000000000000000 x3 : 0000000000000000
- x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff20202e429480
- Call trace:
-  phy_stop+0x138/0x180
-  hbg_fix_np_link_fail+0x4c/0x90 [hibmcge]
-  hbg_service_task+0xfc/0x148 [hibmcge]
-  process_one_work+0x180/0x398
-  worker_thread+0x210/0x328
-  kthread+0xe0/0xf0
-  ret_from_fork+0x10/0x20
- ---[ end trace 0000000000000000 ]---
+Also, the tool 'pahole' might help out here to verify what exactly
+changed, if you want to dig in further here.
 
-This patch adds the rtnl_lock to hbg_fix_np_link_fail()
-to ensure that other operations are not performed concurrently.
-In addition, np_link_fail exception can be fixed
-only when the PHY is link.
+thanks,
 
-Fixes: e0306637e85d ("net: hibmcge: Add support for mac link exception handling feature")
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
----
- drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c
-index f29a937ad087..42b0083c9193 100644
---- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c
-+++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_mdio.c
-@@ -2,6 +2,7 @@
- // Copyright (c) 2024 Hisilicon Limited.
- 
- #include <linux/phy.h>
-+#include <linux/rtnetlink.h>
- #include "hbg_common.h"
- #include "hbg_hw.h"
- #include "hbg_mdio.h"
-@@ -133,12 +134,17 @@ void hbg_fix_np_link_fail(struct hbg_priv *priv)
- {
- 	struct device *dev = &priv->pdev->dev;
- 
-+	rtnl_lock();
-+
- 	if (priv->stats.np_link_fail_cnt >= HBG_NP_LINK_FAIL_RETRY_TIMES) {
- 		dev_err(dev, "failed to fix the MAC link status\n");
- 		priv->stats.np_link_fail_cnt = 0;
--		return;
-+		goto unlock;
- 	}
- 
-+	if (!priv->mac.phydev->link)
-+		goto unlock;
-+
- 	priv->stats.np_link_fail_cnt++;
- 	dev_err(dev, "failed to link between MAC and PHY, try to fix...\n");
- 
-@@ -147,6 +153,9 @@ void hbg_fix_np_link_fail(struct hbg_priv *priv)
- 	 */
- 	hbg_phy_stop(priv);
- 	hbg_phy_start(priv);
-+
-+unlock:
-+	rtnl_unlock();
- }
- 
- static void hbg_phy_adjust_link(struct net_device *netdev)
--- 
-2.33.0
-
+greg k-h
 
