@@ -1,129 +1,114 @@
-Return-Path: <linux-kernel+bounces-586357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25FB4A79E3F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:33:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A684DA79E3D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD7BC3B00C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:32:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 639AC17492D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB8D1EFFA7;
-	Thu,  3 Apr 2025 08:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D517C24290F;
+	Thu,  3 Apr 2025 08:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vi8pjbUB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="exP+l7ZV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF3C1A0731
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 08:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3819B2F4A;
+	Thu,  3 Apr 2025 08:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743669157; cv=none; b=jtwseFypko7vjk5NcBCvf2qq1f+OrmJNkvIp9kpJ3y9LUDlTj7PzIVV5grhfbE0XjFJOJ3PgqDzURM9H043RLUA4zReK2FVvfJoJ68RmDBtiem3Ny8VCx5OaipdEmKyVuGOG8IZyAG/mvYn7Qxm0G9s4HOI805c/8rywap01KOE=
+	t=1743669200; cv=none; b=LknaEfMltEElSjm6ysEb1zsfRvl41GTTm2gBu+K4gPoaRZm2fbUpttHhfSQ2kvwxcNB4k7lUKFozgxCDk/Ul9H15qFDFwcAHi+6Pr4zGw7q9b8lgimhI4uvTDEDjUE/GE5ainM0DfDxBM/7sC5LFsdZO/z/qjgVMA1XSv8fyDEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743669157; c=relaxed/simple;
-	bh=bP9BTqO6uOeKb9OB+ydFZqLPOoJTDBOLELlzwI0vg6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OyA0Qz2nM8bPzoQ5IGcHoBoN6GsAa8klkbOdMUMUX10aymoGhDgw3o7PeqCbigNsOYeoEdXeg4n0+aObdGDNuLIDOCk1JX+0sBJJh9NAHxBi7rxG4oKnS02GqkaOD9PSWhUIM+peHwmuHlEn1uUTZ6owClztyUsw9fxvcWP9q88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vi8pjbUB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743669155;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/o3+FKdxD4NW/8hxmNNkTDl22sR+l8JS5qoSmV4kVXg=;
-	b=Vi8pjbUBkTXbhaSirnMrFJX+IaDq7TeLmEeFAZfr+lp8v88Mm7lmW3l08MJjqiEjMWhGEk
-	5BfrZ1U9xtH+tNjfSa3y25GXrdQ3UPurqSLXXEi24DH2LsVmGadLB5vilW3+3CUS3uCfiU
-	rn7AFJ6lIQKh6iTDY+kAqCBpBoFf4Jc=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-333-50448r1bNvKzx8pPmhx0yg-1; Thu,
- 03 Apr 2025 04:32:29 -0400
-X-MC-Unique: 50448r1bNvKzx8pPmhx0yg-1
-X-Mimecast-MFC-AGG-ID: 50448r1bNvKzx8pPmhx0yg_1743669147
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6591619560B8;
-	Thu,  3 Apr 2025 08:32:27 +0000 (UTC)
-Received: from localhost (unknown [10.43.135.229])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 525CC19560AD;
-	Thu,  3 Apr 2025 08:32:24 +0000 (UTC)
-Date: Thu, 3 Apr 2025 10:32:21 +0200
-From: Miroslav Lichvar <mlichvar@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <jstultz@google.com>, LKML <linux-kernel@vger.kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-	kernel-team@android.com, Lei Chen <lei.chen@smartx.com>
-Subject: Re: [PATCH v2 1/2] time/timekeeping: Fix possible inconsistencies in
- _COARSE clockids
-Message-ID: <Z-5HlSUEh1xgCi4f@localhost>
-References: <20250320200306.1712599-1-jstultz@google.com>
- <Z-KURRE_Gr72Xv_n@localhost>
- <874izezv3c.ffs@tglx>
- <Z-Vx8kV4M3khPknC@localhost>
- <Z-qsg6iDGlcIJulJ@localhost>
- <87o6xgwftc.ffs@tglx>
- <Z-vL3cVZuQ8XQXhG@localhost>
- <87iknnwxa4.ffs@tglx>
+	s=arc-20240116; t=1743669200; c=relaxed/simple;
+	bh=QgyehMsARveK93ZZL1S0DWD6VKwpD0RfUNcyzEEiVwI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Noj6RysAmS64rxiEtqy9ZNEWeaMa7CWX5EcUwI2Irlo9D/sPJiqQNFVy6zNwPyA1WIhHTrCgPV1v3DEcLcV7Dfp0cpBWDrlKTG3My/c5bkCjNKy+zxf7zjLYn6C3zU8vI+BvpIjjkup28rP54QPgE7INeoAUZBhX90yqtqS0mWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=exP+l7ZV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A1FF9C4CEE3;
+	Thu,  3 Apr 2025 08:33:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743669199;
+	bh=QgyehMsARveK93ZZL1S0DWD6VKwpD0RfUNcyzEEiVwI=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=exP+l7ZVtg7SpZn0pCxaOSXBK2L02RuTVX8UKSOIH4gE4VYAZsDIP0XreMOkfNuYA
+	 /CWDSKtkelw6H1gJwt9kS1LulFiiKt/UrzKfGGt9Rf6ahxq8l5tZJ7jR3dMRPGOlkW
+	 mVUnFoSw7L7FcmqGryPj3r4Vep11kkmpNME9Ssb0W1z2kkpiVAwZ3k0A5heF+pKPF1
+	 5rhwplSSVNQXuMjw3gN9ap5BGQ8nIbzlPvzDNLuPgVnomeTSkWL0YDi3AGBhzfzXYq
+	 Bf27qSghHvroclrpabvZqmGVNw9tqz8k6Vv76IccyAaiVdWh1Ct8j/ncE9e9MXvOv2
+	 WiMVu3I11LE3g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 909ACC3600C;
+	Thu,  3 Apr 2025 08:33:19 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Subject: [PATCH v3 0/2] Pinctrl: add amlogic a5 pinctrl node
+Date: Thu, 03 Apr 2025 16:33:13 +0800
+Message-Id: <20250403-a5-pinctrl-v3-0-a8c067e22295@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87iknnwxa4.ffs@tglx>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMpH7mcC/1XMQQqDMBCF4auUrJuSZGLUrnqP0kWYRh1QI4mEF
+ vHujVJoXb4H/7ew6AK5yK6nhQWXKJIf84DziWFnx9ZxeubNlFCFAFlxW/CJRpxDzxtAg8Za4cq
+ G5WAKrqHXjt0feXcUZx/eu53k9n4ZVf4zSXLBdQ1KgK5RG7jZofct4QX9wDYoqV+shTzEKsdWg
+ kEpigrK+hiv6/oBEbPHo+MAAAA=
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1743669198; l=918;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=QgyehMsARveK93ZZL1S0DWD6VKwpD0RfUNcyzEEiVwI=;
+ b=wC3pYUawqVLxEBq/uVvbyL6+tKn79Zulf2H4XuvfZ3meWIf0mcSkbL8sDDDGC/t/nsGArhLVW
+ COjkuoNlARFCmhaENF1XQ+4ZRl5fa5kaZRVR6OmFAd+EmC1zhfc2qqr
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-On Tue, Apr 01, 2025 at 08:29:23PM +0200, Thomas Gleixner wrote:
-> On Tue, Apr 01 2025 at 13:19, Miroslav Lichvar wrote:
-> > It seems to improve the worst cases, but overall it's still
-> > a regression.
-> >
-> > Mult reduction	Updates/sec	Skew
-> > 16		4		0.012
-> > 16		16		0.014
-> > 16		64	        0.033
-> > 64		4		0.012
-> > 64		16		0.105
-> > 64		64		0.138
-> 
-> That's weird as it only delays the update to the next tick.
+Add A5 pinctrl compatible string and device node.
 
-Ok, so it's not an instability of the clock, but rather an instability
-of the chronyd synchronization loop, which since kernel 4.19 expects
-the frequency to be applied as soon as the adjtimex call is finished.
-To confirm that, I tried a different test with chronyd configured to
-only monitor the clock without making any adjustments (-x option) and
-another process repeatedly setting the same frequency. The one-line
-patch does fix that test.
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+Changes in v3:
+- Remain blank line.
+- Link to v2: https://lore.kernel.org/r/20250401-a5-pinctrl-v2-0-a136c1058379@amlogic.com
 
-> My original
-> approach of maintaining seperate state for the coarse time keeper is
-> preserving the existing NTP behaviour.
-> 
-> Patch applies after reverting 757b000f7b93 ("timekeeping: Fix possible
-> inconsistencies in _COARSE clockids").
+Changes in v2:
+- Modify bindings according to Conor's suggestion.
+- Link to v1: https://lore.kernel.org/r/20250327-a5-pinctrl-v1-0-49320349c463@amlogic.com
 
-I ran multiple longer tests to be able to compare the small values in
-the noise and yes, from the adjtimex point of view this seems to work
-as well as before the first COARSE fix. I didn't run any tests of the
-COARSE clock.
+---
+Xianwei Zhao (2):
+      dt-bindings: pinctl: amlogic,pinctrl-a4: Add compatible string for A5
+      dts: arm64: amlogic: add a5 pinctrl node
 
-Thanks,
+ .../bindings/pinctrl/amlogic,pinctrl-a4.yaml       |  7 +-
+ arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi        | 90 ++++++++++++++++++++++
+ 2 files changed, 96 insertions(+), 1 deletion(-)
+---
+base-commit: 79e0ecfc780aaf8c0b6658607f75a661a5f00736
+change-id: 20250318-a5-pinctrl-f3c6c6aa0e7f
 
+Best regards,
 -- 
-Miroslav Lichvar
+Xianwei Zhao <xianwei.zhao@amlogic.com>
+
 
 
