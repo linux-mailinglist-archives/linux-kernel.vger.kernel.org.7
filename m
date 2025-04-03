@@ -1,133 +1,106 @@
-Return-Path: <linux-kernel+bounces-586730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 875FFA7A31E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:49:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706ECA7A32A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 167B91898271
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:49:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B4897A5EF0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E4424DFE5;
-	Thu,  3 Apr 2025 12:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F8B24CEE2;
+	Thu,  3 Apr 2025 12:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RT/jr3C0"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="eUj8e+7p"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EBF33981;
-	Thu,  3 Apr 2025 12:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A399B1A254E
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 12:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743684565; cv=none; b=X8BZxhbjKxD71NwTGvnPxKyvWdptKtfhCIEU+uGwR/TQ9AbfgqcMLNeHUK2oeCBViUSLYE3b55eM3wP6w430ZcYra6W6TqpjvP4bc8UR1IkDynojgE+UHirGUq2yM+2n8RfPSKYWlupTtONjXdputHYgwTK2LjKXmDN2dKixNTg=
+	t=1743684955; cv=none; b=XC3sx54nSBaRxwAKEtOdTbKm/U0KUdedLkSdhe/a3nCxTK91e9l+Mrqbb7x6c97eAvXVGRnlcNMk5ppudhO3wVW/Yb4o1Zw3jvQv1RuOvoMXgjgZ9ueB58Cynq0FgR3513RL2OJjJXKCmdNdn2lURNwGLZw8EuQ3FDD6L9d6bZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743684565; c=relaxed/simple;
-	bh=RxMLz6M+rqNa78DbwQakLvxhMZ+1yEief3w4mMeOKag=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iGSk7qcBPYOB/a3qIrLUrvKQlTsugxjQYSkUaTk7maWdCW4Mb11UWbhXw5cPL1GW62yk2HARz8GUywnCHHb5YJseHQ/XalZ/pfT6J4luC9yz8GvS0NSEYS3K0QEBK4SgkWpDYekd+Jb5LK0FEXKtfpayfI+EvuIDCbF4Ytzx+Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RT/jr3C0; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ff784dc055so781243a91.1;
-        Thu, 03 Apr 2025 05:49:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743684563; x=1744289363; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=br0qzftHCKz3sbr3SzuiqhOwZoMQzE2LZ4g8CLoOd0Y=;
-        b=RT/jr3C0cNFjxcLOQZRBy2npcuO8nzHhGaHuROWvF2DwG2ZWcfgm5IRQ2/9OaYMkhs
-         MPWhVyHrUwuJp8BkkFQOu2XkRk3VKQH7p0sSyf6cWvvoAIcAPixDqyZpTcBxHKMBAiDd
-         cRsHu73bszNO4nJUjFK+X+xSlLt5EbavTnpuRPN6EhXHBAuJC9AqxSQJbVnE7jzJzk0r
-         edry5LHdg8pOnpounkzQ2s0UKBoOsLx0q0vnEMUeN+ohdU9FgFyQoS2M+LTchIgCdYiX
-         6fT6lsYgYsLy8HmMS1PtO4HrdTgB4MJ4o9ZRT4HXKXalq7cobFEw+/tfhGvigJ0PknOd
-         /HsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743684563; x=1744289363;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=br0qzftHCKz3sbr3SzuiqhOwZoMQzE2LZ4g8CLoOd0Y=;
-        b=Ngs/PHTjL64+trMBS0YYwEtXF03CqJ7gFW0anKf/hIKQFJXvN3AZ+vKrr81Q3hpfPw
-         Fx+d/rQEo1JHdvg1NHiUp4+NseSmGkgalMf0oYZGecw2kgIl3k0ziUCHJCS3pdwkPxMm
-         z+/QyiJV7lVGEw6HBNjn2HbzywQUrBO1i9pGqvZarEgIfmErebh1PLYi6M953M1FeInJ
-         AAcrSFLwQkkhSspfXYTvoWgSuNbt8NV2Qul+VjOk9fmoyam0nMZ7ZtviEAW/MvrParbq
-         KOGovhdGxqDFJvnV/2lGUMihFVJTkQZfOhLE2pKBCJoblJxq3vf6rsa8Jx1nzrGi3qJX
-         IcxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGg2bKNZIaPP8FYi3ikptr7a3EGJyAqmxM3ODtV51PWSDdBLBDQR/Vkd7U/eyxeJefIHdt6ZIL6CGvwiuZ@vger.kernel.org, AJvYcCViRp+CqmCGvuSAEI1qb0WQwBYoZsvLcAWLVDZ10fPWowzE88qyyDYDBefCJgghoMXvE4zP+YvH0WiR@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeXlW7EMLcFX/5kbnNJ3L6ESllt4QYYxkhOr7z1fAm6drwAeS1
-	JEggyPRfj3N8WtNM7P10TI/wrHOBpm8lF5a24Buh3gWCM0CndBekjDBKzG7v40DM7j1DDXnHDBM
-	dHOnKA6bQgkTKKVuKO/IOh4jWHpU=
-X-Gm-Gg: ASbGncs4AUuUDeDqs8ypAgeB+jl6CH30oNT/3EZ2FElfa1Tusv7+wRd1J768hcWY1Dw
-	lcTWHrqjxUMQSQlAwXfQnOuL6FCWMH3awdSoINiFSLcJwRbgGmOeiYfn4HSRACQwZiXgdgA1Abh
-	eEXVhc6yop+wl0hhV1EDG5ME0=
-X-Google-Smtp-Source: AGHT+IFYW9MnslIX+WD/W4yqFkahfmkMt3j4de0kYP5osy79qxqlNhQHimSlJ+WSDyjW98VqmFgbjK1vYEjgozBE86s=
-X-Received: by 2002:a17:90b:2644:b0:2ea:a9ac:eee1 with SMTP id
- 98e67ed59e1d1-3056ee3148fmr8807692a91.10.1743684563426; Thu, 03 Apr 2025
- 05:49:23 -0700 (PDT)
+	s=arc-20240116; t=1743684955; c=relaxed/simple;
+	bh=C10OdcGBn33pJXCZiUpVw+j3nj2oQmdNb4O0hwzPZF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PY9MASdDGUJuySdRT8i4j90G+Kk2lfHf5aHpEnHgvsIU0QVdoEUJFxqi0J8yiYno5fyvVAmcjAJbGfSqQPHl7Qoss/RHVVvJ5zi2vJVRf5OD49uoSt2LMox4WQxnCxoSWmlzvKppl9Ia6Qakndso0mux3u+lNMH+08L8k0q86Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=eUj8e+7p; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5A20940E023B;
+	Thu,  3 Apr 2025 12:55:40 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id j9LdIdIV-FA2; Thu,  3 Apr 2025 12:55:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1743684936; bh=QQeZ9ETgnT0tTFQs8mRusDd1YHuQGZf6nQMVjI+wCew=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eUj8e+7pqDTnV9wmh3ufWkyWy98zGx9yyja/z5DNtCw0gKg8yy6zFGYVdyywhUn+i
+	 OuTdw20hvnCQe1uomndxatgDEqWmUQmWjg353Q8c6Y6RS3o3gCR+ex1E/bui7JkfYX
+	 edV7rTWNCoDwblzP1kGOCuOkh6io51H9afuxNuaKUUbc3Xs4OUq+lFE9TlknWUyXOv
+	 SkBaow2ul1I2cb6fIIXG7xL9+lH8L8tvBygoxq7334P5MRWsh8WeeZOP+ZVSvzJlBS
+	 RkPplk1Ahhi1UZMt22Q7Ld37EJJ4i8Y/4I9mGFpjEV+as+pMwvUs4yvMU/ladt15cY
+	 MXz3oBJ/VvVsNZHfEIvGpM2XtB7xlOSJ2chekrhwpwxgR2SgAnt3qlBRNttWVjQEtX
+	 R0p0LsxPq1ZvfFJi7xgD80yW0+voAB/Jvt0w0IsVXasHhl07uXkqYBVjssyzdsa3F0
+	 KolKDEvHkGzIUYK/xc5eLDLwFu//Px7575kT+mNq1qq7ehRK5XXtnZHJ6jfJo4Q9RH
+	 Y0mBAqYPvtPgBcgv4I8wv7Ezzy8IaimjyPgu7wQip6Znak5r6bMFc6npupd/OCEmgs
+	 VpZs8/C82o5giySU6M6A23heqaEWlxI8YVUyqg3sbQhnQ/QH6md/xRqx7qE8eF7Slo
+	 w522pFVLws8buf3MQy5Zdvh0=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6998E40E0232;
+	Thu,  3 Apr 2025 12:55:29 +0000 (UTC)
+Date: Thu, 3 Apr 2025 14:55:23 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH -tip v3] x86/idle: Use MONITOR and MWAIT mnemonics in
+ <asm/mwait.h>
+Message-ID: <20250403125523.GHZ-6FO2mNZcUta1RG@fat_crate.local>
+References: <20250403125111.429805-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250402-initial_display-v4-0-9f898838a864@gocontroll.com>
- <20250402-initial_display-v4-3-9f898838a864@gocontroll.com> <f75fb67a-91ac-4e3d-8ce7-5e0c6c2bb2cb@kernel.org>
-In-Reply-To: <f75fb67a-91ac-4e3d-8ce7-5e0c6c2bb2cb@kernel.org>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Thu, 3 Apr 2025 15:50:47 +0300
-X-Gm-Features: AQ5f1JpOn26KtD3CJ794gf42_16EcVqDVeshPu-zxnT2qzP-_yIum74GI60JHY4
-Message-ID: <CAEnQRZC9Exfb5FL+gpMuwU6jLP8vO9hjrxm1+OHQBeLy0J1Wsg@mail.gmail.com>
-Subject: Re: [PATCH v4 3/9] MAINTAINERS: add maintainer for the Ka-Ro
- tx8p-ml81 COM module
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: maudspierings@gocontroll.com, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250403125111.429805-1-ubizjak@gmail.com>
 
-On Thu, Apr 3, 2025 at 10:45=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 02/04/2025 09:07, Maud Spierings via B4 Relay wrote:
-> > From: Maud Spierings <maudspierings@gocontroll.com>
-> >
-> > Add GOcontroll as unofficial maintainers of the Ka-Ro tx8p-ml81 COM
-> > module bindings.
-> >
-> > This support is not officially done by Ka-Ro electronics, if they at
-> > some point will supporting mainline, this should be changed to them.
-> >
-> > Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
-> > ---
-> >  MAINTAINERS | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 322ee00547f6e494a96d2495092f72148da22bd0..4b3864a9852f9fca2be4898=
-7d383c0671e668336 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -12752,6 +12752,13 @@ S:   Maintained
-> >  F:   Documentation/hwmon/k8temp.rst
-> >  F:   drivers/hwmon/k8temp.c
-> >
-> > +KA-RO TX8P COM MODULE
-> > +M:   Maud Spierings <maudspierings@gocontroll.com>
-> > +L:   devicetree@vger.kernel.org
->
-> Drop
->
-> > +L:   imx@lists.linux.dev
->
-> I would say this as well, but not my subsystem to worry.
+On Thu, Apr 03, 2025 at 02:50:45PM +0200, Uros Bizjak wrote:
+>  static __always_inline void __monitor(const void *eax, u32 ecx, u32 edx)
+>  {
+> -	/* "monitor %eax, %ecx, %edx;" */
+> -	asm volatile(".byte 0x0f, 0x01, 0xc8;"
+> -		     :: "a" (eax), "c" (ecx), "d"(edx));
+> +	/* Use the instruction mnemonic with implicit operands, as the LLVM
+> +	   assembler fails to assemble the mnemonic with explicit operands. */
 
-We don't actually mind to gather all i.MX based boards development on
-this mailinglist.
+mingo, pls fix up that comment style and in the other spot when applying.
+
+Other than that:
+
+Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
