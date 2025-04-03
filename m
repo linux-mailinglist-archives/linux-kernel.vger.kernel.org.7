@@ -1,126 +1,141 @@
-Return-Path: <linux-kernel+bounces-586973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D0C5A7A603
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:11:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 638B3A7A607
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 074367A5E82
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:10:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D57E172648
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9BA2505C1;
-	Thu,  3 Apr 2025 15:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DB92505C5;
+	Thu,  3 Apr 2025 15:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rg+elceH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G2pLHuLv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88CD2505AE;
-	Thu,  3 Apr 2025 15:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF08A24EF7A
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 15:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743693086; cv=none; b=TmshCc+2mVdPsQ5c5jKoe0T0yr/JfBsh2oX0fSSaJwB4JHA2Lcte4zDaFE5x4sjdkbASbmNGDCDyzKUc6BdacQMIX9bEhzhuJ08ImOq9f9Ecn4PielfDIlDn6yoYL2/AaIg4FTdMNZFaGd0qPh9ip2x+ePBDR8MF2xh/obHCphY=
+	t=1743693147; cv=none; b=RYBDrZ5TiBHdLg15wQj551uM+qOufIU8Tm3wGX0XsUbk30A0D1AXTGMyLXYwO042GlaWlV8z8WY7h9uzW699GHAuO5I7RP+V+cKaB7lXbCZ/OT60MuumvmqtfRtzGMYswmGWgD+q9veHQjhzs4cZfWfbjpDLQYRmlwWfxAVo8+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743693086; c=relaxed/simple;
-	bh=NIvLpPfAXrTuXtMOMB/pagZd8SPTLCI7I/aXMEmuZks=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ht9EBlgBLHeBD0Jy2qXQSAAFLAnOj4tQ5KywXxNOy3b1OfICkFtAviphZ0oqGOou3vkWb2jR0SS7zO0aGyAMIDKldgrL0C105hienGJKNRchi8pfiLCUMlwRxxigemKCnBXjmw7uAPgR0pUicZlHR/AU46BVZ7A4vmzB/7JRQ4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rg+elceH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 447E7C4CEEC;
-	Thu,  3 Apr 2025 15:11:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743693086;
-	bh=NIvLpPfAXrTuXtMOMB/pagZd8SPTLCI7I/aXMEmuZks=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rg+elceHnlADL1mNP5zqvH3MnNX1SQTBq0g1DCEixGhxkvzyh0bOPFJCkL0ALZKyt
-	 +VCgmEkvQMtKdswZTk0K56LU+TDECxM85B1covP7XNz/If7qqhoT5TvDrn7HLoN9pz
-	 Rl9qHuAxeZTqau7PVURw/Zhr6jlYiMbZFHuIQSXA7XwEXkvzOzZN8Bs4mvEwYi1P9h
-	 JCZmfN1+807U9Eh1iCW6I1FgfnputbMkqPL5r4VEmr2pLWoLP5E32HPSY3oWk8JCW7
-	 k/ven923jDB2Khmp8j0mO9NxvC06cxe1YwAFAJ+x7vwn3GtSsLLGjIG3Wr999oHAce
-	 Bzw+vV9ZBS2qg==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5499c5d9691so1191795e87.2;
-        Thu, 03 Apr 2025 08:11:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUbM1lb2geESVF6jeqF5aWwtQJNfEv1lewfzicwOYIXPXydGnyMK3BV10zWefbVvaHZALHdmDVyGHVHmsk=@vger.kernel.org, AJvYcCVBRffez3cfrTeTRPLU84N90/PQe8mKC1wmW6aHydn1Am7eFBdufIvVdWGsJd6t+MWyV77eYIHWqYxXbakV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXs3c399O3E4NZg4Pp8azrR/fCRCC1cozJq1qhGIb0XnmFS5tK
-	I2LUX0k21x7c61WBVKRVBveyYKPq50Cmfvq7qirMXJVauSSO3nGk9vIm2cqJy3GuCZAKj2VkIQf
-	6xscxmbcI1YUGVEqaoOJ+f+KQrsQ=
-X-Google-Smtp-Source: AGHT+IGHaE5sR5WjLPaAAsOgHiAcSbArxim9/nuGpNofJcAx2t/1OKmIKbXzElP29VwvJc0LcNAX9hLMl1nwdhodQks=
-X-Received: by 2002:a05:6512:3b13:b0:549:5b54:2c5b with SMTP id
- 2adb3069b0e04-54c1d8a6e03mr1065423e87.24.1743693084626; Thu, 03 Apr 2025
- 08:11:24 -0700 (PDT)
+	s=arc-20240116; t=1743693147; c=relaxed/simple;
+	bh=3gjydt2TC4vMJfz4qHVICOd8+FIPjb6F+uyQT8/1luw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D9DvW+22Tx8hRLlQ/ThehZZdHRNDYKWtRW85U5HJ4eGQaaR28JIuC6Eh4N4anDhu7K8Cqo5lixQHzANnvXmtqByHv8vPH5etONffCIC7j+3fTMi9jY8Pf/ncFpf/uF/cxTNx1sSpUhv97qhPD6OekNZ7y1+M7kAYn5tO/ESOKrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G2pLHuLv; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743693146; x=1775229146;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3gjydt2TC4vMJfz4qHVICOd8+FIPjb6F+uyQT8/1luw=;
+  b=G2pLHuLvulaxT7MbOayOQXpoW8G2AoLF8xwSr6c7N2uzKKAcW1BN5aLE
+   H4d2bHKhtS240a8Z092FoDSSPaBV93iZYpaswPcFqw2dw09Zf18bXB5+V
+   NeZ38heIeZGZ1NPDWrhzYL9Vz32LlA0zV5yiLr9tvP1FOuQ4DlE7R+Ua0
+   5dEcM1e1/4pCQNKIt06jlSBmwygIqarILlAhIkNqT0Eysj2EaWdiIa8ID
+   PxcF0NZ9TfmruQ9fWAXBkFpb+5MqEvrM4Q+5hIhn+Jiikvybyqz0lbm+Z
+   waEQoPoLv43UsB1L6S9KypZTCX6cjb49HCVjG+1wM5zhTvC6SzBwAezRv
+   w==;
+X-CSE-ConnectionGUID: /NjGjkTiTRKK+yP0QnRjZw==
+X-CSE-MsgGUID: 0t0XpxNoTMOZMpV+kcv5Cw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11393"; a="62511360"
+X-IronPort-AV: E=Sophos;i="6.15,184,1739865600"; 
+   d="scan'208";a="62511360"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 08:12:25 -0700
+X-CSE-ConnectionGUID: O4KOqqr8RlyiyBfrdQnwlw==
+X-CSE-MsgGUID: ZVAHIrC1TxO248fxWBM8wg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,184,1739865600"; 
+   d="scan'208";a="127561670"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 03 Apr 2025 08:12:23 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u0MEs-0000VD-3C;
+	Thu, 03 Apr 2025 15:12:18 +0000
+Date: Thu, 3 Apr 2025 23:11:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Raag Jadav <raag.jadav@intel.com>, gregkh@linuxfoundation.org,
+	david.m.ertman@intel.com, ira.weiny@intel.com, lee@kernel.org,
+	andriy.shevchenko@linux.intel.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Raag Jadav <raag.jadav@intel.com>
+Subject: Re: [PATCH v1] mfd: core: Support auxiliary device
+Message-ID: <202504032243.j5qqE6VB-lkp@intel.com>
+References: <20250403110053.1274521-1-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250403134200.385077-1-alexghiti@rivosinc.com>
-In-Reply-To: <20250403134200.385077-1-alexghiti@rivosinc.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 3 Apr 2025 18:11:13 +0300
-X-Gmail-Original-Message-ID: <CAMj1kXGzrn6i20LvUBnz_mGi946=GCogNHHUL=mNsv513qYv7A@mail.gmail.com>
-X-Gm-Features: AQ5f1JoKfhV3MERR1uNecpsdZk0_Zd-PQo949ieFdRrYe-B6KsP3bxkK_BwZ46w
-Message-ID: <CAMj1kXGzrn6i20LvUBnz_mGi946=GCogNHHUL=mNsv513qYv7A@mail.gmail.com>
-Subject: Re: [PATCH v2] scripts: Do not strip .rela.dyn section
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Charlie Jenkins <charlie@rivosinc.com>, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250403110053.1274521-1-raag.jadav@intel.com>
 
-On Thu, 3 Apr 2025 at 16:42, Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
->
-> riscv uses the .rela.dyn section to relocate the kernel at runtime but
-> that section is stripped from vmlinux. That prevents kexec to
-> successfully load vmlinux since it does not contain the relocations info
-> needed.
->
+Hi Raag,
 
-Maybe explain that .rela.dyn contains runtime relocations, which are
-only emitted if they are actually needed - as opposed to the static
-relocations that are not emitted as SHF_ALLOC sections, and are not
-considered to be part of the runtime image in the first place. It
-would be nice if we could use --remove-relocations= here, which only
-removes static relocations, but unfortunately, llvm-objcopy does not
-support this.
+kernel test robot noticed the following build errors:
 
-Also, I wonder if this should apply to all of .rel.dyn, .rela.dyn and
-.relr.dyn, as they all carry runtime relocations.
+[auto build test ERROR on driver-core/driver-core-testing]
+[also build test ERROR on driver-core/driver-core-next driver-core/driver-core-linus lee-mfd/for-mfd-next lee-leds/for-leds-next linus/master v6.14 next-20250403]
+[cannot apply to lee-mfd/for-mfd-fixes]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Finally, I'd be curious to know why RISC-V relies on --emit-relocs in
-the first place? Is the relocs check really needed? If not, it would
-be a nice opportunity to get rid of Makefile.postlink entirely.
+url:    https://github.com/intel-lab-lkp/linux/commits/Raag-Jadav/mfd-core-Support-auxiliary-device/20250403-190322
+base:   driver-core/driver-core-testing
+patch link:    https://lore.kernel.org/r/20250403110053.1274521-1-raag.jadav%40intel.com
+patch subject: [PATCH v1] mfd: core: Support auxiliary device
+config: csky-randconfig-001-20250403 (https://download.01.org/0day-ci/archive/20250403/202504032243.j5qqE6VB-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250403/202504032243.j5qqE6VB-lkp@intel.com/reproduce)
 
-In any case, for this change, or a variation along the lines of what I
-wrote above,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504032243.j5qqE6VB-lkp@intel.com/
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+All error/warnings (new ones prefixed by >>):
+
+   In file included from drivers/base/auxiliary_sysfs.c:6:
+   include/linux/auxiliary_bus.h: In function 'auxiliary_device_uninit':
+>> include/linux/auxiliary_bus.h:246:17: error: implicit declaration of function 'kfree' [-Wimplicit-function-declaration]
+     246 |                 kfree(auxdev->resource);
+         |                 ^~~~~
+   In file included from drivers/base/auxiliary_sysfs.c:7:
+   include/linux/slab.h: At top level:
+>> include/linux/slab.h:472:6: warning: conflicting types for 'kfree'; have 'void(const void *)'
+     472 | void kfree(const void *objp);
+         |      ^~~~~
+   include/linux/auxiliary_bus.h:246:17: note: previous implicit declaration of 'kfree' with type 'void(const void *)'
+     246 |                 kfree(auxdev->resource);
+         |                 ^~~~~
 
 
-> Fixes: 71d815bf5dfd ("kbuild: Strip runtime const RELA sections correctly")
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> ---
->  scripts/Makefile.lib | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> index cad20f0e66ee..0a1f1e67a0ed 100644
-> --- a/scripts/Makefile.lib
-> +++ b/scripts/Makefile.lib
-> @@ -377,7 +377,7 @@ quiet_cmd_objcopy = OBJCOPY $@
->  cmd_objcopy = $(OBJCOPY) $(OBJCOPYFLAGS) $(OBJCOPYFLAGS_$(@F)) $< $@
->
->  quiet_cmd_strip_relocs = RSTRIP  $@
-> -cmd_strip_relocs = $(OBJCOPY) --remove-section='.rel*' $@
-> +cmd_strip_relocs = $(OBJCOPY) --remove-section='.rel*' --remove-section=!.rela.dyn $@
->
->  # Gzip
->  # ---------------------------------------------------------------------------
-> --
-> 2.39.2
->
+vim +/kfree +246 include/linux/auxiliary_bus.h
+
+   242	
+   243	static inline void auxiliary_device_uninit(struct auxiliary_device *auxdev)
+   244	{
+   245		if (auxdev->resource)
+ > 246			kfree(auxdev->resource);
+   247	
+   248		mutex_destroy(&auxdev->sysfs.lock);
+   249		put_device(&auxdev->dev);
+   250	}
+   251	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
