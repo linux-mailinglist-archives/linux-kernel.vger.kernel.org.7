@@ -1,99 +1,113 @@
-Return-Path: <linux-kernel+bounces-586976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6ACA7A60A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:12:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D570A7A60D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A1291896D2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:12:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5904E162638
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3D52505D6;
-	Thu,  3 Apr 2025 15:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EvTZUoOn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC022505CB;
+	Thu,  3 Apr 2025 15:13:42 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4A82505B9;
-	Thu,  3 Apr 2025 15:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F2724CEE8;
+	Thu,  3 Apr 2025 15:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743693123; cv=none; b=p4s4V+0Oda3g4q0Uyqdl1LKXhm8r4wvjldoe6Qr2fYIlrW8ODIMQcPQHXHBMnwU1IfAprcPuw4NBfj0GawAoWiUtxWP54JiY8/WRxYswDKPq/G5xMfBOYMTFYKvgShwbpGYKFoAy1bQL8tKk0pGJNJyhKOUNVHiIIUAFbcTzJG4=
+	t=1743693222; cv=none; b=Gbm9okJ2vvAaxboSMgcC4+wiOzsGyKa6MM8csoc2S9f5Mc2MVeycxSBBbbu+1g8pReZBYlb7W4ccky7aREcHtlgirn8hS0Y+9Z3kDfmCwzK7+qA92bdIbprhLkYrPgo+d18G6cAFHuqxLSAxrUjXmKHt+huxkgnJGDM9w5aPENI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743693123; c=relaxed/simple;
-	bh=4PjGJTU8qkgoM7vN10UUhIU09ORJAlHt31WGPH0oV68=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A1KW1b/Lbr052IFZwPHDY4UBeO1MxiYyR/O6djYY3aPcqTlnofHbFhPHWuhixYCJi67wJrfEi0Nj9wPzu498/iuv2IRxpu7DUCXZi/q7+3FDAZGa+EKLVn5pqwSWaAI+jwFu8/e15Pawvdiqx7AxEjia5NWI/VmqFQgyD8+BhXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EvTZUoOn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E85B9C4CEE3;
-	Thu,  3 Apr 2025 15:11:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743693123;
-	bh=4PjGJTU8qkgoM7vN10UUhIU09ORJAlHt31WGPH0oV68=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EvTZUoOnE5l1ap0n0DBllaa5z6elEvQV+v3Kt71iWesqsNHn1ns97C27gvbi4p8lp
-	 BgPqxQhun/BAnvSE8lJz88dpmHRFoUYO6bD+/UjD9WkZDw5271MixaFh24xMdroh2T
-	 eTFN4njyP0bCNzBwqQH3ivWhqrg5YQ99dfqmYJEUPnYBbH33WFnop9FBW7FjMHw45H
-	 jXAyid3zUNiLGEnd3u4FSmoWWwkzetEcHDXaJNmAt6w2kk8Rg1jYUUBf1J+7WcNusf
-	 DIOkQ0IaNF22NCMV51pxvnICsk5a/VsOjtSs3q8CjdwlOZAwr4MdOwgvd4UWY9k2Yh
-	 iSK2TutNwcvTQ==
-Date: Thu, 3 Apr 2025 17:11:57 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
-	peterz@infradead.org, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	mhocko@kernel.org, oleg@redhat.com, brauner@kernel.org,
-	glider@google.com, mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org
-Subject: Re: [PATCH v2] exit: move and extend sched_process_exit() tracepoint
-Message-ID: <Z-6lPadt51e7jcXd@gmail.com>
-References: <20250402180925.90914-1-andrii@kernel.org>
- <Z-6TDh1MUT49lvjk@gmail.com>
- <20250403110615.7a51b793@gandalf.local.home>
+	s=arc-20240116; t=1743693222; c=relaxed/simple;
+	bh=un/yP+h+LeYZuQ7Wjp6XFrS+YwIZa0Esq1BEzijhXHY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c1T5cvvLG/kbZrPoe1761GznAKm8gVoJyBdU9PESJJQ2szR9W2ISmqZQo8tfSxfOpLtf9rOfaEknGkLjuDKzWgAbJSWgc9P42wAFyg3WicX4r2YyiJ95KQgijAlHoSBrcRyOlaan35Ft1L7VULiuiPKOMde8bX4BvZJ3Lr5yBMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [221.222.48.127])
+	by APP-03 (Coremail) with SMTP id rQCowAC3Yj+Rpe5nyo6MBQ--.36169S2;
+	Thu, 03 Apr 2025 23:13:23 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: sgoutham@marvell.com,
+	gakula@marvell.com,
+	sbhatta@marvell.com,
+	hkelam@marvell.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: [PATCH] octeontx2-pf:  Add error handling for cn10k_map_unmap_rq_policer().
+Date: Thu,  3 Apr 2025 23:13:03 +0800
+Message-ID: <20250403151303.2280-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250403110615.7a51b793@gandalf.local.home>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAC3Yj+Rpe5nyo6MBQ--.36169S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CFWrXF4DAF4Dur1rWw4DArb_yoW8Xry5pF
+	40k347CwnrXrWrtFs7Ga40gr1Ygay8J3y7Ga4xA3yfZ393twnIvFn0yFy0vrn7GrWkuFy7
+	tF15AFWrCF1DArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgoBA2fuZ+y2MgAAsI
 
+The cn10k_free_matchall_ipolicer() calls the cn10k_map_unmap_rq_policer()
+for each queue in a for loop without checking for any errors. A proper
+implementation can be found in cn10k_set_matchall_ipolicer_rate().
 
-* Steven Rostedt <rostedt@goodmis.org> wrote:
+Check the return value of the cn10k_map_unmap_rq_policer() function during
+each loop. Jump to unlock function and return the error code if the
+funciton fails to unmap policer.
 
-> On Thu, 3 Apr 2025 15:54:22 +0200
-> Ingo Molnar <mingo@kernel.org> wrote:
-> 
-> > This feels really fragile, could you please at least add a comment 
-> > that points out that this is basically an extension of 
-> > sched_process_template, and that it should remain a subset of it, 
-> > or something to that end?
-> 
-> Is there any dependency on this?
-> 
-> I don't know of any other dependency to why this was a template other than
-> to save memory.
+Fixes: 2ca89a2c3752 ("octeontx2-pf: TC_MATCHALL ingress ratelimiting offload")
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Uhm, to state the obvious: to not replicate the same definitions over 
-and over again three times times, for 3 scheduler tracepoints that 
-share the record format?
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c
+index a15cc86635d6..ce58ad61198e 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c
+@@ -353,11 +353,13 @@ int cn10k_free_matchall_ipolicer(struct otx2_nic *pfvf)
+ 
+ 	/* Remove RQ's policer mapping */
+ 	for (qidx = 0; qidx < hw->rx_queues; qidx++)
+-		cn10k_map_unmap_rq_policer(pfvf, qidx,
+-					   hw->matchall_ipolicer, false);
++		rc = cn10k_map_unmap_rq_policer(pfvf, qidx, hw->matchall_ipolicer, false);
++		if (rc)
++			goto out;
+ 
+ 	rc = cn10k_free_leaf_profile(pfvf, hw->matchall_ipolicer);
+ 
++out:
+ 	mutex_unlock(&pfvf->mbox.lock);
+ 	return rc;
+ }
+-- 
+2.42.0.windows.2
 
-Removing just a single sched_process_template use bloats the source and 
-adds in potential fragility:
-
- 2 files changed, 26 insertions(+), 4 deletions(-)
-
-So my request is to please at least add a comment that points the 
-reader to the shared record format between sched_process_exit and the 
-other two tracepoints.
-
-Thanks,
-
-	Ingo
 
