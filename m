@@ -1,191 +1,137 @@
-Return-Path: <linux-kernel+bounces-586528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC1B3A7A0A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:07:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74506A7A09F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A3341893F6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:07:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38BBB172C3C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AE82459DB;
-	Thu,  3 Apr 2025 10:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF942459DB;
+	Thu,  3 Apr 2025 10:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="EZumTnmM"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YmpXCYSv"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8153C0B;
-	Thu,  3 Apr 2025 10:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17903C0B;
+	Thu,  3 Apr 2025 10:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743674837; cv=none; b=T6zMzr9oA9u0kA0j/I8BpPjVoZjGjlQkdh9qQxi5ScRmfVPDg7U+BiiTG9jhgqRhL6SwKyGS/6o2Pe59cjS0ZbdNZa4M1WARwLOJ8kjXOTlvLjl+9hHe4Him9dRozPv49fPklLCNB5Akxr4Lr8+hbxBp37fOyhfBfObMlykMg/s=
+	t=1743674700; cv=none; b=e1+ROevHt6P1MJakutE1sc2EUbO/m7oQXu9kU31RiviFzA4d9PM3J7k16Kejq0K5gL8VEUI0oEs442oXgs2M+ZueLoXRiNrNW7P+ZOdg5orCVvY/UHfUFxl/pbSOVjywFwFfoho6tWLJXXqIL/jNG/144837ssDydc9zrdJup3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743674837; c=relaxed/simple;
-	bh=OS5FKh45U5tp0iIFw7ligx8FGhQpdSr6OwlsPH/aWFM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WbX+eMyi6rWv2+PEeU96y/MgDEeuoNwzC2ZTMf4u27xIr+un1+4TKOnVgl/rlBqiaz4rq4eKwfI4NU2xeB++3TevN81/s1qYtAYNhq3RRAw/kEPJAxsX/Ma+Uond57FAxTIXeLkBVveM/4csQmMbOQB9tmn+HMJNXSBhi9zzdPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=EZumTnmM; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=aH+MeY5wxEAwtijunPYNL+y+DpNd6dDfxP3oQyKVdZI=; b=EZumTnmMfnXjC+fIRGTIzUUpdC
-	xmA4sKsK5GMhS8YKEute0EoJCcEazqvF7+am554iZXBLJ5qRjirO9rlLnKFgZmDv1UQ8J9kiTi0lq
-	RdJgNNi1Djy1QT7PmMZb0aT/DV6ghoVgilR/3/l4NvUdtlqjuni8ugwvCcVO+Q5SIkn1b6H1xlvYu
-	Xi0ca1YIjr3S23xDcgfJwcOYOYxi3Cq4dOiPLluvMr8Xf9RWfhcV13FdtJ41RYYUk/wn/86gUm1Mf
-	RpTxxLLBEOo0tyPHYV8hO1cG3KIhbVs/p3JjiDagwc3N7ViaKg5AS9xNMI/CmVsP8UuyjQV0dEEbF
-	Q298q3TQ==;
-Received: from i53875bf8.versanet.de ([83.135.91.248] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1u0GoE-0003Ky-Fc; Thu, 03 Apr 2025 11:24:26 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: devicetree@vger.kernel.org, Daniele Briguglio <hello@superkali.me>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- alchark@gmail.com, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Daniele Briguglio <daniele.briguglio@icloud.com>,
- Daniele Briguglio <hello@superkali.me>
-Subject:
- Re: [PATCH] rockchip: dts: rk3588: add missing OPP nodes for lower
- frequencies
-Date: Thu, 03 Apr 2025 11:24:25 +0200
-Message-ID: <2652016.Lt9SDvczpP@diego>
-In-Reply-To: <20250403091840.3349637-1-hello@superkali.me>
-References: <20250403091840.3349637-1-hello@superkali.me>
+	s=arc-20240116; t=1743674700; c=relaxed/simple;
+	bh=6TPulnYtAiORK9jNRV3kKjVicMssQCkIc+220wQrMvE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=jcMQ1F4HG/PQ8i58lOrmYPe0DeW7nvSz0o8UaO3gVcBJ+rq2gXpBdrZm7eU9HDNWxWfqVqLfkx1jM3fPu2WuJWqZuGs1QIBhBLmyky9Q/mlarIT75TS8Ym7G8MOtbNE/n9MuqbqMBCdqc9Stwrh/YI9W7huDjRAXy7EOkseMSiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YmpXCYSv; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5339s17g013669;
+	Thu, 3 Apr 2025 10:04:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=vD9hWD4n2aJM0+NpJoWfA+
+	3ijVJmtaSWO2xbxMunyMo=; b=YmpXCYSvXkXdZnUjBWX3P409XXwpA0EGWj/ISy
+	Gh7KnBp+hAZ1iqx9/JhZpiTNXxKWIOMUbgGfJOTQN+9RO7rbl4XhSdxbSoZzvYes
+	6wJMI4VMbFECPNthBz3OHDD+VeZAiJSq9uhanHYXWEY0dsltUQIUEeY+W9arVl+D
+	zWRhyubm8rhQvHuy0zxwe69q/EZ6ooPe/mKWRiBxuPdTpA7zmnh5pA86yiRDVMGr
+	juqiqY/4BIja8Xu1AAsnbeZ/ITEc8BVb58ZC+gRii84/4CqAza83NM4wL9ZIEoyP
+	C/j8A6I6xrZhu1HnGN4PQHJWOzzTa860OyQM6xJ0ziQ3DamQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45spnp0a1r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Apr 2025 10:04:49 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 533A4mdI020500
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 3 Apr 2025 10:04:48 GMT
+Received: from hu-rajkbhag-blr.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 3 Apr 2025 03:04:45 -0700
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+Date: Thu, 3 Apr 2025 15:34:29 +0530
+Subject: [PATCH ath-next] wifi: ath12k: fix cleanup path after mhi init
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250403-ath12k-cleanup-v1-1-ad8f67b0e9cf@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAC1d7mcC/x2MSQqAMAwAvyI5G0jrcvAr4qGkUYNSpVURxL9bP
+ A7MzANJokqCrnggyqVJt5DBlAXw7MIkqD4zWLIN1VShO2ZjF+RVXDh3tNy0TGSc8Qw52qOMev/
+ DHrKLQe4Dhvf9AMGh3JdqAAAA
+X-Change-ID: 20250403-ath12k-cleanup-2c56c001a1dc
+To: Johannes Berg <johannes@sipsolutions.net>,
+        Jeff Johnson
+	<jjohnson@kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        Kang Yang
+	<quic_kangyang@quicinc.com>
+CC: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+        <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: d0EL3m6pxSUE0g61rW8D6xCndBoNlMc-
+X-Authority-Analysis: v=2.4 cv=N/gpF39B c=1 sm=1 tr=0 ts=67ee5d41 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=hDZruuR0RIJL45ME4G0A:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: d0EL3m6pxSUE0g61rW8D6xCndBoNlMc-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-03_04,2025-04-02_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1015 adultscore=0 mlxscore=0 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 spamscore=0 phishscore=0 suspectscore=0 mlxlogscore=999
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504030035
 
-Hi,
+Currently, the 'err_pci_msi_free' label is misplaced, causing the cleanup
+sequence to be incorrect. Fix this by moving the 'err_pci_msi_free' label
+to the correct position after 'err_irq_affinity_cleanup'.
 
-Am Donnerstag, 3. April 2025, 11:18:40 MESZ schrieb Daniele Briguglio:
-> From: Daniele Briguglio <daniele.briguglio@icloud.com>
-> 
-> This Patch adds missing Operating Performance Point (OPP) nodes for lower
-> frequencies to the RK3588 device tree. These additions improve power
-> management by enabling the CPU clusters to scale down to lower
-> frequencies when under light loads, which should improve energy
-> efficiency and reduce power consumption.
-> 
-> The changes add OPP nodes for 408MHz, 600MHz, 816MHz, and 1008MHz
-> (for cluster1 and cluster2 only, as cluster0 already had 1008MHz)
-> with appropriate voltage settings across all three CPU clusters in
-> the RK3588 SoC.
+Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.3.1-00209-QCAHKSWPL_SILICONZ-1
 
-the general consensus is that you don't save energy when you're not
-reducing the voltage together with the frequency.
+Fixes: a3012f206d07 ("wifi: ath12k: set IRQ affinity to CPU0 in case of one MSI vector")
+Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+---
+ drivers/net/wireless/ath/ath12k/pci.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-For example cluster0 @1GHz runs at 675mV already, so reducing just the
-frequency, when you're not allowed to reduce the voltage with it won't
-save energy, just make things slow.
+diff --git a/drivers/net/wireless/ath/ath12k/pci.c b/drivers/net/wireless/ath/ath12k/pci.c
+index 7f1bb150f326b317157f6721d990d61a27f38d6a..fcb9c40b227b7baaf49f6a590c495f47ca8d2f55 100644
+--- a/drivers/net/wireless/ath/ath12k/pci.c
++++ b/drivers/net/wireless/ath/ath12k/pci.c
+@@ -1706,12 +1706,12 @@ static int ath12k_pci_probe(struct pci_dev *pdev,
+ err_mhi_unregister:
+ 	ath12k_mhi_unregister(ab_pci);
+ 
+-err_pci_msi_free:
+-	ath12k_pci_msi_free(ab_pci);
+-
+ err_irq_affinity_cleanup:
+ 	ath12k_pci_set_irq_affinity_hint(ab_pci, NULL);
+ 
++err_pci_msi_free:
++	ath12k_pci_msi_free(ab_pci);
++
+ err_pci_free_region:
+ 	ath12k_pci_free_region(ab_pci);
+ 
 
-
-Heiko
-
-> Signed-off-by: Daniele Briguglio <hello@superkali.me>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3588-opp.dtsi | 58 ++++++++++++++++++++
->  1 file changed, 58 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-opp.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-opp.dtsi
-> index 0f1a77697351..1b018823d5d3 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3588-opp.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588-opp.dtsi
-> @@ -5,6 +5,22 @@ cluster0_opp_table: opp-table-cluster0 {
->  		compatible = "operating-points-v2";
->  		opp-shared;
->  
-> +		opp-408000000 {
-> +			opp-hz = /bits/ 64 <408000000>;
-> +			opp-microvolt = <675000 675000 950000>;
-> +			clock-latency-ns = <40000>;
-> +			opp-suspend;
-> +		};
-> +		opp-600000000 {
-> +			opp-hz = /bits/ 64 <600000000>;
-> +			opp-microvolt = <675000 675000 950000>;
-> +			clock-latency-ns = <40000>;
-> +		};
-> +		opp-816000000 {
-> +			opp-hz = /bits/ 64 <816000000>;
-> +			opp-microvolt = <675000 675000 950000>;
-> +			clock-latency-ns = <40000>;
-> +		};
->  		opp-1008000000 {
->  			opp-hz = /bits/ 64 <1008000000>;
->  			opp-microvolt = <675000 675000 950000>;
-> @@ -37,6 +53,27 @@ cluster1_opp_table: opp-table-cluster1 {
->  		compatible = "operating-points-v2";
->  		opp-shared;
->  
-> +		opp-408000000 {
-> +			opp-hz = /bits/ 64 <408000000>;
-> +			opp-microvolt = <675000 675000 1000000>;
-> +			clock-latency-ns = <40000>;
-> +			opp-suspend;
-> +		};
-> +		opp-600000000 {
-> +			opp-hz = /bits/ 64 <600000000>;
-> +			opp-microvolt = <675000 675000 1000000>;
-> +			clock-latency-ns = <40000>;
-> +		};
-> +		opp-816000000 {
-> +			opp-hz = /bits/ 64 <816000000>;
-> +			opp-microvolt = <675000 675000 1000000>;
-> +			clock-latency-ns = <40000>;
-> +		};
-> +		opp-1008000000 {
-> +			opp-hz = /bits/ 64 <1008000000>;
-> +			opp-microvolt = <675000 675000 1000000>;
-> +			clock-latency-ns = <40000>;
-> +		};
->  		opp-1200000000 {
->  			opp-hz = /bits/ 64 <1200000000>;
->  			opp-microvolt = <675000 675000 1000000>;
-> @@ -78,6 +115,27 @@ cluster2_opp_table: opp-table-cluster2 {
->  		compatible = "operating-points-v2";
->  		opp-shared;
->  
-> +		opp-408000000 {
-> +			opp-hz = /bits/ 64 <408000000>;
-> +			opp-microvolt = <675000 675000 1000000>;
-> +			clock-latency-ns = <40000>;
-> +			opp-suspend;
-> +		};
-> +		opp-600000000 {
-> +			opp-hz = /bits/ 64 <600000000>;
-> +			opp-microvolt = <675000 675000 1000000>;
-> +			clock-latency-ns = <40000>;
-> +		};
-> +		opp-816000000 {
-> +			opp-hz = /bits/ 64 <816000000>;
-> +			opp-microvolt = <675000 675000 1000000>;
-> +			clock-latency-ns = <40000>;
-> +		};
-> +		opp-1008000000 {
-> +			opp-hz = /bits/ 64 <1008000000>;
-> +			opp-microvolt = <675000 675000 1000000>;
-> +			clock-latency-ns = <40000>;
-> +		};
->  		opp-1200000000 {
->  			opp-hz = /bits/ 64 <1200000000>;
->  			opp-microvolt = <675000 675000 1000000>;
-> 
-
-
-
+---
+base-commit: c0d45354abf5763f3de37d0c59fd863d193c7275
+change-id: 20250403-ath12k-cleanup-2c56c001a1dc
 
 
