@@ -1,103 +1,117 @@
-Return-Path: <linux-kernel+bounces-586857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E59FFA7A4C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:12:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EFBFA7A4B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D6403B6D01
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:08:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5973F3AC38B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2071224EA96;
-	Thu,  3 Apr 2025 14:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499CF24E4D2;
+	Thu,  3 Apr 2025 14:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mzP3QOCv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AL5GMl90";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nLFi43uj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E92117BB6;
-	Thu,  3 Apr 2025 14:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D73F2E3386;
+	Thu,  3 Apr 2025 14:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743689301; cv=none; b=XBSS8mJafbEHVr7re8EonOJmgL1WgIMXr/fAnMfNLXPdQf/1WdbM2D8MNjLISvm57eLeOQlTVvLRjbgujqm1yoTeQuci8ewt5fooLbiWGErnc08aS9qFsCOGePzQTilTHunhc68rwwJ5ZYqUhKfoiv4FoCaGAdhWV6upj+g7NoE=
+	t=1743689257; cv=none; b=LJLfwYNdGJi02L4sEnr0ZjQEX+jMl+L1TnJJO0uZXWeaFf/avf090P65S48QkjJilq9e+qor9DQ/2l6vft5+oX8DTPh5Bf0umXpPlLo9RwR86AqKGaLpcaJrTi6D+DMFLbyFstrg9LXuycLadmZFrAdBhORH39hfLyJTjqfLfOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743689301; c=relaxed/simple;
-	bh=7e2q0Qt34YzcyKMPAJZn2I4U9l7JZNhBc1fMhFKod8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Joxk1hu8hrk+iA3bSHNcwgQIvqMQMcTbfibIgoTteAhB/ynACyh0yyp+kdfFgEaH1wtE1T7XBS3/dHoDJo5uUPnikIDil4FtgdBCtxIMb2QOO7QpLJ7zWh3OIqpPd6SoRPt6lNYq8lfMEITTHuDKONlGEgFRNEJMF+yp6/844Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mzP3QOCv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85539C4CEE3;
-	Thu,  3 Apr 2025 14:08:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1743689299;
-	bh=7e2q0Qt34YzcyKMPAJZn2I4U9l7JZNhBc1fMhFKod8o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mzP3QOCvjLBYHXRYCEOUsQaS7j8eD8Y2vVyi0Zwc3wnVqvHcijw4Pn3SsZC4XYpVM
-	 bYnXcR5AMry3Vo29QjB2HOkwnIGJ+xLdhroCzJrtXwGU4pqNTkD2Dyt3rorOwDV/FK
-	 S0NnJkDlVV6iVSIRbADMzuDUd/lE2eQfw1aRVmm0=
-Date: Thu, 3 Apr 2025 15:06:52 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Samuel Abraham <abrahamadekunle50@gmail.com>,
-	Julia Lawall <julia.lawall@inria.fr>, outreachy@lists.linux.dev,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8723bs: modify struct field to use standard
- bool type
-Message-ID: <2025040340-boogeyman-reclining-3cbf@gregkh>
-References: <Z+05IEjV3pczMLNQ@HP-650>
- <4c35ae41-c834-e25a-ccab-5cdd34aa4680@inria.fr>
- <CADYq+faUTmNcUgk5jB3YHT4UCQZhf=Wsah1WUcPHqky6kp_cUA@mail.gmail.com>
- <2025040304-overdrive-snugness-8b05@gregkh>
- <c3ae531d-259c-4bfc-863d-45d08bdd6189@stanley.mountain>
+	s=arc-20240116; t=1743689257; c=relaxed/simple;
+	bh=8s4A2K6DtKTXPaidr/W8po0kcjbCFGNHHLzHHeZ95D0=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=hSmi4y7+4XkmId4s3deo3Nwcwoa/vbmPTIhS9QQtm3yKDZa2bFohJ9kKGDFygH1UpK7wojZeKP/hMZd+zKb0Ze+LzhauW/l7+JpqR8JwxIhbSgVgkCfSanTTfyp4FwgzC+hNPIiuOdcGkw8TC2D2AY7GWCCRb8jOvreGcglg4t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AL5GMl90; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nLFi43uj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 03 Apr 2025 14:07:30 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1743689254;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iUnj0gmpXKjbhVIlMyROvWTiPybkNsz/9J+M2CSKxTA=;
+	b=AL5GMl90zlMJud8x+7fo1EEeULYp6t8sR/dF75S9WTEk89DTmZD1wfDv5q+j33g9y2fUoR
+	R5vayAw7d0DsWpSbTY19WibTEIrG/ePxeEhq3TVJJ2J6ue5+5NVfsY01a7T774Gz+mXJgH
+	GcDUJL7EjaCm7Wuj966n/xUURwGyfNvOQb+9HxK0utUwujXezrhivutZD5JT9DP5AbZxdf
+	ETerB4uv91Zjh2NtaNcTbNziyRmlKHVcWoblg2ja4pfMwR8e28LLbcS3m69zoEWHtwFoi1
+	IfHXmMRcbmkTMHs29PMxOTR9DtCVupO8hWGJAPRfhdQvfEqHdNrXijjRN60vWQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1743689254;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iUnj0gmpXKjbhVIlMyROvWTiPybkNsz/9J+M2CSKxTA=;
+	b=nLFi43ujNnicJsJ9e+g392sP2P4XHB2U56C1CMcw9O3p3DvLfT4oew6r2B+8hhSNLQY0by
+	6fzvbo60UKhwVFDQ==
+From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/mm] x86/idle: Change arguments of mwait_idle_with_hints() to u32
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, Uros Bizjak <ubizjak@gmail.com>,
+ Ingo Molnar <mingo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250403073105.245987-1-ubizjak@gmail.com>
+References: <20250403073105.245987-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c3ae531d-259c-4bfc-863d-45d08bdd6189@stanley.mountain>
+Message-ID: <174368925045.31282.17963073191703372905.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 03, 2025 at 05:02:45PM +0300, Dan Carpenter wrote:
-> On Thu, Apr 03, 2025 at 02:54:01PM +0100, Greg Kroah-Hartman wrote:
-> > > > > diff --git a/drivers/staging/rtl8723bs/include/sta_info.h b/drivers/staging/rtl8723bs/include/sta_info.h
-> > > > > index b3535fed3de7..63343998266a 100644
-> > > > > --- a/drivers/staging/rtl8723bs/include/sta_info.h
-> > > > > +++ b/drivers/staging/rtl8723bs/include/sta_info.h
-> > > > > @@ -86,7 +86,7 @@ struct sta_info {
-> > > > >       uint qos_option;
-> > > > >       u8 hwaddr[ETH_ALEN];
-> > > > >
-> > > > > -     uint    ieee8021x_blocked;      /* 0: allowed, 1:blocked */
-> > > > > +     bool ieee8021x_blocked;
-> > > 
-> > > > You should also check whether this is a structure that is read from the
-> > > > hardware.  In that case, it would be a concern if the bool field does not
-> > > > have the same size as the uint one.
-> > > Hello Julia
-> > > So following the conversation here,
-> > > https://lore.kernel.org/outreachy/bf8994cc-b812-f628-ff43-5dae8426e266@inria.fr/T/#u
-> > > I was able to compare the assembly code of the file before and after
-> > > my patch and this were my findings
-> > > 
-> > > Original assembly code for
-> > > # drivers/staging/rtl8723bs/core/rtw_ap.c:392    psta->ieee8021x_blocked = 0;
-> > > movl  $0, 436(%r12)    #,  psta->ieee8021x_blocked
-> > > 
-> > > Assembly Code After Patch
-> > > # drivers/staging/rtl8723bs/core/rtw_ap.c:392
-> > > psta->ieee8021x_blocked = false;
-> > > movb  $0, 434(%r12)    #,  psta->ieee8021x_blocked
-> > 
-> > So the structure size changed?  That's not good at all, and is what I
-> > was worried about :(
-> > 
-> 
-> You had complained about a different struct.  struct rx_pkt_attrib.  It's
-> fine to modify this one.
+The following commit has been merged into the x86/mm branch of tip:
 
-Argh, sorry, too many different threads right now, my fault...
+Commit-ID:     532aa71ed23b79e74171de7b6b6369a08b55c813
+Gitweb:        https://git.kernel.org/tip/532aa71ed23b79e74171de7b6b6369a08b55c813
+Author:        Uros Bizjak <ubizjak@gmail.com>
+AuthorDate:    Thu, 03 Apr 2025 09:30:49 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 03 Apr 2025 15:40:43 +02:00
+
+x86/idle: Change arguments of mwait_idle_with_hints() to u32
+
+All functions in mwait_idle_with_hints() cast eax and ecx arguments
+to u32. Propagate argument type to the enclosing function.
+
+Suggested-by: Andrew Cooper <andrew.cooper3@citrix.com>
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20250403073105.245987-1-ubizjak@gmail.com
+---
+ arch/x86/include/asm/mwait.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/mwait.h b/arch/x86/include/asm/mwait.h
+index 26b68ee..5122260 100644
+--- a/arch/x86/include/asm/mwait.h
++++ b/arch/x86/include/asm/mwait.h
+@@ -109,7 +109,7 @@ static __always_inline void __sti_mwait(u32 eax, u32 ecx)
+  * New with Core Duo processors, MWAIT can take some hints based on CPU
+  * capability.
+  */
+-static __always_inline void mwait_idle_with_hints(unsigned long eax, unsigned long ecx)
++static __always_inline void mwait_idle_with_hints(u32 eax, u32 ecx)
+ {
+ 	if (static_cpu_has_bug(X86_BUG_MONITOR) || !current_set_polling_and_test()) {
+ 		const void *addr = &current_thread_info()->flags;
 
