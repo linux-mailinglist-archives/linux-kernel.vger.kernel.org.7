@@ -1,134 +1,144 @@
-Return-Path: <linux-kernel+bounces-587750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 014B0A7B00D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:07:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEC96A7AFEE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:04:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60044881D21
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:58:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4B761884F72
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07BD25A33D;
-	Thu,  3 Apr 2025 19:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41394268696;
+	Thu,  3 Apr 2025 19:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IaZE1+04"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WjkUXyhZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F9F224FA;
-	Thu,  3 Apr 2025 19:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA03A25A64C
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 19:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743710153; cv=none; b=bHct7oeaeN5II/gq0sDtvmzjyrL72eVCBL9LPqkUysoV8ssdrq56P2njPyUoMl15Bel8/QMm4ogThmEl+dWcISM5MPJYM7fmjA0qc9WxzBXzHYYJ1d6VzTduEPZi0jnI0JLH4Nh+k+7+7xKspgVC7WDhsUMw9mPt93XcBlFLaD4=
+	t=1743710224; cv=none; b=VqbqHcQN8pdNq1Y7KHndYTGy/bMDjen4Jq4MgmXBFTk/oyKt6X7HtmFliPDXG4c0KfFDKkX8xRyBKotp3b8l8gNM9rNp1oyBn+xlFQUoVRaiUnLAbKZ5q6uc7iEeGiP/Djz3q5t1J/6ATiMBPsa0yGOd+Lxm6t/6/PH8DLcVQGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743710153; c=relaxed/simple;
-	bh=LF7TzE/Bxhpspv9YgQFYoPUl5oZLC86gC94zHFiqbFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TFOR6i5ZLFpU3JvGjF8yZ7ZhsZp8gJWtT9aOk9Mfs0hpVJnlFi4KJ6hzsH7vwRK0oPyWeYc7NAkK3kf0uNcmX9lRaeKcz15ZoK/JVUBHMUzbuPO9G1jvLkhVum802CIvYjlcPKeyYygVCdjZ2x7lMRa232YC9E5M6JFNUwzKpbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IaZE1+04; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 750C1C4CEE3;
-	Thu,  3 Apr 2025 19:55:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743710152;
-	bh=LF7TzE/Bxhpspv9YgQFYoPUl5oZLC86gC94zHFiqbFY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IaZE1+04G9aV5fRRsPoN3pSTnjBGbnbRhZcy8seklH/YwCw9wCdGbFlNQv6lONl7n
-	 1mBPYdm+w9Lh8jFedyvmh5qZfOiXx1+cy9hKQA5Z4oleUGBxNrAYR9iAq/VpXiUoM+
-	 Cw+yr/VaMvSUCoN+yfRI+3O1p+6ztGeJxdzGnu6dFIQW6EY8R829SBJxDHBaKcEWJn
-	 bl27VsZh8PhsPsSHjaKBkcN+IivxIWnz/4W2VfccCig+1YLwkVFMFBnHBAMgICT3Ot
-	 WxMHcKVsl2BUgrFQ5IGNwhF+sEl3sd/WBj6vjn6zkZhkVA8FNBBgw/nwapdQL8qnDu
-	 LdQ3wZpi6IePw==
-Date: Thu, 3 Apr 2025 21:55:48 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Leon Romanovsky <leon@kernel.org>, pr-tracker-bot@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] vfs mount
-Message-ID: <20250403-kaufanreiz-leber-c7c878cc833e@brauner>
-References: <20250322-vfs-mount-b08c842965f4@brauner>
- <174285005920.4171303.15547772549481189907.pr-tracker-bot@kernel.org>
- <20250401170715.GA112019@unreal>
- <20250403-bankintern-unsympathisch-03272ab45229@brauner>
- <20250403-quartal-kaltstart-eb56df61e784@brauner>
- <20250403182455.GI84568@unreal>
- <CAHk-=wj7wDF1FQL4TG1Bf-LrDr1RrXNwu0-cnOd4ZQRjFZB43A@mail.gmail.com>
- <20250403-auferlegen-erzwang-a7ee009ea96d@brauner>
+	s=arc-20240116; t=1743710224; c=relaxed/simple;
+	bh=XP6la/5I4vrerXRk12ckyABr65qx/Q0V+n/zX+V4iGE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Rr+4UrYqjTCDR4zavzXyPhWIYDZ+dCE995lE31/cyka6IiqAKl5H8hoo/9ACoaK1eBjYSG4SYZeTO7E4ZJnOp2Of0QqqGSp3VEQlQO4jJ7jm1KE//EE/vk0lu1AHE6cQNEq7Pq+mLu2tywWH8ZgbL3vmpfcCfx2w6nzWhUoytQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WjkUXyhZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743710221;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1wzSVzgHMpe559xrytJJz1DdoYHYjfgbIpwM8R8lgqw=;
+	b=WjkUXyhZdA0hQbVAV7NrjHz2m45HPKtHMI/DPtV0dDQXtos1SJdTmc/bMfBIpg21xez6B1
+	qOg+Lahn/AIy4Zp0WtXCW8qbwYpPrOycueldP+RHRpo0oDgXWCRF+QZ/Z/mxgdvQqNyX+5
+	LrrtQxSStDrHExWU7zyyiHUVjSxmmt0=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-80-zOpUjt3HMPeMxstCyj_EAA-1; Thu, 03 Apr 2025 15:57:00 -0400
+X-MC-Unique: zOpUjt3HMPeMxstCyj_EAA-1
+X-Mimecast-MFC-AGG-ID: zOpUjt3HMPeMxstCyj_EAA_1743710219
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6e916df0d5dso21852156d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 12:57:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743710219; x=1744315019;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1wzSVzgHMpe559xrytJJz1DdoYHYjfgbIpwM8R8lgqw=;
+        b=gB0x/IqtX4gKXQc29Jo4zATd5yXRjiuDkOqJRdQaBtchQhktDWeCR4x4TwCFVIYoDB
+         N40F/hHN9zy2W8vqGi1qIpBTVwDQgec7inJeK0JAJmDEb/zun3nztejRbXFoS0FUaNz9
+         PNKNub10wFNeWutlYTyrikBDA7Bia6JnOwyrtYUEYAPyuRajeCKLx1WUCcnSmsyGrfaw
+         7SvsElcXDK6bLBF9FYzxq/L8fFJgtKQ0A2DOVCQyQgIKFa0CU5xW5fhEOjSVka57UT2R
+         O+7h1bZNGsE+zXu9pSNdiV3ndq8W6m379a7h+j8xoVAKH4zPXYZ8z5EWoyYEVd46sOvk
+         BD1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWMW0Ap//GNP9f0qaldKbw5vQ+EJplRvHlYEMqiJcEY4xakXX4LyxJ/afIgfz/D7Np6i4CET2CaVogqps4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy18j/TDCNQj6eJ3MyaGVgdXOWsRnXIRdi4Hk03enl2xJtAQ5ZF
+	wvTnB2A9mrLhiux43vWdxnfMLPwrP1ShIhCIAgQ4ndF3bX/YM85llV4vTIujooIsSMKzwFNUksm
+	IF0K7YtHsu49BnywpBLnyfI3yBL7FJ+sJDrLVBtHbMaynigsyMFLpJ2UKdD5mRg==
+X-Gm-Gg: ASbGncvkILlTeEpBwknbNATczaDL7kVPO/RlTlfO18LtvwbMrdstR7TbHCWeFk0BF81
+	e7Q+lp2hjvwZM0MZGLKv4y79vzv4bk44VkFjya5Bdc4PuwIkGrkslmslbI6pwh+AIeXyut+m8yo
+	PLLRQN6AEQdOl6xOV3WfWbp9CCrXiqSMneU+eUbipXk7OSjxnES6hOJmBiAGK0rthUVqhYplnfz
+	OysMwfMqbROefW78G6GsvwNDOCs3MaBTUDw+yfKLdw09XWdZSH2duJ5QscrtBYpv+IksYup1EWs
+	bRVN9k9QLQVNOfo=
+X-Received: by 2002:a05:6214:48e:b0:6e4:2c6e:7cdc with SMTP id 6a1803df08f44-6f00df30191mr10260326d6.25.1743710219679;
+        Thu, 03 Apr 2025 12:56:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHVIXRAK4HfdDj8AW0GRSVQfM3QvF38VAmhcghiRMazHZw/QKTjocVYWwH1sKoV4Gt6kbqVoA==
+X-Received: by 2002:a05:6214:48e:b0:6e4:2c6e:7cdc with SMTP id 6a1803df08f44-6f00df30191mr10259966d6.25.1743710219402;
+        Thu, 03 Apr 2025 12:56:59 -0700 (PDT)
+Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ef0f13791esm11197956d6.77.2025.04.03.12.56.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 12:56:59 -0700 (PDT)
+Message-ID: <91da48828941bd692b3b9372e57d312f938756bd.camel@redhat.com>
+Subject: Re: [RFC PATCH 02/24] KVM: SVM: Use cached local variable in
+ init_vmcb()
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>, Sean Christopherson
+ <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Jim Mattson <jmattson@google.com>, 
+ Vitaly Kuznetsov <vkuznets@redhat.com>, Rik van Riel <riel@surriel.com>,
+ Tom Lendacky <thomas.lendacky@amd.com>,  x86@kernel.org,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 03 Apr 2025 15:56:58 -0400
+In-Reply-To: <20250326193619.3714986-3-yosry.ahmed@linux.dev>
+References: <20250326193619.3714986-1-yosry.ahmed@linux.dev>
+	 <20250326193619.3714986-3-yosry.ahmed@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="pdx2hxwawfdibqzb"
-Content-Disposition: inline
-In-Reply-To: <20250403-auferlegen-erzwang-a7ee009ea96d@brauner>
+Content-Transfer-Encoding: 7bit
 
+On Wed, 2025-03-26 at 19:35 +0000, Yosry Ahmed wrote:
+> svm->vmcb->control is already cached in the 'control' local variable, so
+> use that.
 
---pdx2hxwawfdibqzb
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Microscopic nitpick: I usually mention that 'No functional change intended'.
 
-On Thu, Apr 03, 2025 at 09:45:59PM +0200, Christian Brauner wrote:
-> On Thu, Apr 03, 2025 at 12:18:45PM -0700, Linus Torvalds wrote:
-> > On Thu, 3 Apr 2025 at 11:25, Leon Romanovsky <leon@kernel.org> wrote:
-> > > >
-> > > > -     scoped_guard(rwsem_read, &namespace_sem)
-> > > > +     guard(rwsem_read, &namespace_sem);
-> > >
-> > > I'm looking at Linus's master commit a2cc6ff5ec8f ("Merge tag
-> > > 'firewire-updates-6.15' of git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394")
-> > > and guard is declared as macro which gets only one argument: include/linux/cleanup.h
-> > >   318 #define guard(_name) \
-> > >   319         CLASS(_name, __UNIQUE_ID(guard))
-> > 
-> > Christian didn't test his patch, obviously.
 > 
-> Yes, I just sent this out as "I get why this happens." after my
-> screaming "dammit" moment. Sorry that I didn't make this clear. I had a
-> pretty strong "ffs" 10 minutes after I had waded through the overlayfs
-> code I added without being able to figure out how the fsck this could've
-> happened. In any case, there's the obviously correct version now sitting
-> in the tree and it's seen testing obviously.
+> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> ---
+>  arch/x86/kvm/svm/svm.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index 8abeab91d329d..28a6d2c0f250f 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -1367,12 +1367,12 @@ static void init_vmcb(struct kvm_vcpu *vcpu)
+>  		avic_init_vmcb(svm, vmcb);
+>  
+>  	if (vnmi)
+> -		svm->vmcb->control.int_ctl |= V_NMI_ENABLE_MASK;
+> +		control->int_ctl |= V_NMI_ENABLE_MASK;
+>  
+>  	if (vgif) {
+>  		svm_clr_intercept(svm, INTERCEPT_STGI);
+>  		svm_clr_intercept(svm, INTERCEPT_CLGI);
+> -		svm->vmcb->control.int_ctl |= V_GIF_ENABLE_MASK;
+> +		control->int_ctl |= V_GIF_ENABLE_MASK;
+>  	}
+>  
+>  	if (sev_guest(vcpu->kvm))
 
-I'll also append it here just in case you want to apply it right now.
+Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
 
---pdx2hxwawfdibqzb
-Content-Type: text/x-diff; charset=utf-8
-Content-Disposition: attachment;
-	filename="v2-0001-fs-actually-hold-the-namespace-semaphore.patch"
-
-From f5ff87a84a8803eeb4b344b9a496e7060787b42a Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 3 Apr 2025 16:43:50 +0200
-Subject: [PATCH v2] fs: actually hold the namespace semaphore
-
-Don't use a scoped guard use a regular guard to make sure that the
-namespace semaphore is held across the whole function.
-
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/namespace.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 16292ff760c9..14935a0500a2 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2478,7 +2478,8 @@ struct vfsmount *clone_private_mount(const struct path *path)
- 	struct mount *old_mnt = real_mount(path->mnt);
- 	struct mount *new_mnt;
- 
--	scoped_guard(rwsem_read, &namespace_sem)
-+	guard(rwsem_read)(&namespace_sem);
-+
- 	if (IS_MNT_UNBINDABLE(old_mnt))
- 		return ERR_PTR(-EINVAL);
- 
--- 
-2.47.2
+Best regards,
+	Maxim Levitsky
 
 
---pdx2hxwawfdibqzb--
+
 
