@@ -1,64 +1,59 @@
-Return-Path: <linux-kernel+bounces-587490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D6AAA7AD61
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:04:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF110A7AD4B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AE18179DB0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:59:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67CD97A066D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193742D4B5D;
-	Thu,  3 Apr 2025 19:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D90028BF61;
+	Thu,  3 Apr 2025 19:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sdThhI7y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWOE1B2y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717EC25B671;
-	Thu,  3 Apr 2025 19:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B748A28BF4F;
+	Thu,  3 Apr 2025 19:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743707430; cv=none; b=ZYOZ5II0ECUhHt3jN3qeeJNktLrCW5qscdkJhMA1q5LBxrhDq+hXMn0mKoae3Wj1wD7BkskpigbqnZsj+qU99ubs9LsSdUGaKOlyMyDO3qnAkv2ppZ94lxH/WEiMTATWH5GuUf5996WDSTeXJo7mzuCXQj1H0Y7GnNn3ACKpxIc=
+	t=1743707456; cv=none; b=tYiRsGyVmm68t2hAliv2t1Qkg4bOJoSsE3oXEfNO1OKRWXjkd4hCbJUd7V9/Bw6s3z1hubygIWgpXA3L+5NliODHhUbShCtcb2g7lUW9fmN96vXqdKygg6M5iYzMi5GZe3tlFit28pynup/nCpRDxuy6EduHLlwmnU7F0wBrtj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743707430; c=relaxed/simple;
-	bh=NANuZcB+1Aam2VftjP5x9dhJ7SvyFJhCDE5Np6+DG1g=;
+	s=arc-20240116; t=1743707456; c=relaxed/simple;
+	bh=7c+ZtG8m58hO7ouguvRL/6h31VTskTGgggUlpWydVOU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=t38yX59fqU+LOHMZuM86twTfQrzCT0lEKCbJrZpZ1aYAwxqw9QOIBONV22B85ObRXKcZp7avEq3wJYNmtG3GVD23n7cwFlyVlzs0OlivLG+5ZVr6kqjEjM65zMnDIIm2urgQ4LtTSxHaTKFqT69kPPmjlnEcEYB1zj8jrgct/e4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sdThhI7y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F71DC4CEE8;
-	Thu,  3 Apr 2025 19:10:28 +0000 (UTC)
+	 MIME-Version; b=NE8G9+LEeTU1qZkrPDeY6XCU7rbr/vFuIFdHpwCPa0vQyi4FM4pkvqRRWuo3GkXEETNkuXZnCaQlvgVfT5vgDIqvq3B9mS2HJrRuc/wtKFyKlju9OBCrtDu4NsxHkOGI3aqmkNdUPP3dG8ao7QbKe5xqeHFqnNQSvpN/VtZ5M0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWOE1B2y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 479BBC4CEE8;
+	Thu,  3 Apr 2025 19:10:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743707430;
-	bh=NANuZcB+1Aam2VftjP5x9dhJ7SvyFJhCDE5Np6+DG1g=;
+	s=k20201202; t=1743707454;
+	bh=7c+ZtG8m58hO7ouguvRL/6h31VTskTGgggUlpWydVOU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sdThhI7ySQBkhSrHXaB/Ie7tHBlmTGMnyuEVtRULefQqzZWtCCMcHo+B+g8lRHQiV
-	 TvH0vCuJyYMIHpvEqzDQ+ncbog5X99OXTptHZXJOGk8S2kK33dKZWU1s5mjaw4isN5
-	 sD6kQAOxeVG4V8PZAsUc5HvAJrDxqFYB03cqYlYUVGZx6DGUfOWXXwCP+2flHVao4n
-	 8hDgblPnlDiD5CCGmUbmxcJ8+P436iNJeEIdBS6yrXsJFCAZ09ZWddAf4OHNlvWocW
-	 GL8bK1p+xGsX0+shMl3baEboM9oBDOhQ4LR5I9zVEReBhw6dMxZckeNT9pPYpcj+xA
-	 0de59l6vID5hQ==
+	b=tWOE1B2ySD9SWNrc+0RDNnJnvBYpzgY3+sEzvyoy6B07hZwsXvUH3QstvMgbPyHNr
+	 YOY/SBzTDcMhM2HVQL+bWVIlXcEVt3MQQHWeIEuXNtvmqWEx9dxgGUO6jaiGBkWSfj
+	 YSG81b5Z8R5vsHhQ/kOjuOX1YwDJHkoNcCzthEfK4gjsyx4DN4axeSeNDSwxJ5G+v5
+	 z/rGD59ktUgIMLkqreI525muzB9iIFknxG0jz3zlQPzKQPYUB3kBZLSkWUCxsd7Tcx
+	 f4Zx5vAVLaGf6UN1hOZqj1La7KkUURK/jaIqXuywVyGqbLT4JFq598m8pSXTFiyz5J
+	 cWRernWzQymtQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Icenowy Zheng <uwu@icenowy.me>,
-	Felix Fietkau <nbd@nbd.name>,
+Cc: Niklas Cassel <cassel@kernel.org>,
+	Philip Pemberton <lists@philpem.me.uk>,
+	Damien Le Moal <dlemoal@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	lorenzo@kernel.org,
-	ryder.lee@mediatek.com,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	linux-wireless@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.10 12/15] wifi: mt76: mt76x2u: add TP-Link TL-WDN6200 ID to device table
-Date: Thu,  3 Apr 2025 15:09:59 -0400
-Message-Id: <20250403191002.2678588-12-sashal@kernel.org>
+	linux-ide@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 06/14] ata: libata-eh: Do not use ATAPI DMA for a device limited to PIO mode
+Date: Thu,  3 Apr 2025 15:10:28 -0400
+Message-Id: <20250403191036.2678799-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250403191002.2678588-1-sashal@kernel.org>
-References: <20250403191002.2678588-1-sashal@kernel.org>
+In-Reply-To: <20250403191036.2678799-1-sashal@kernel.org>
+References: <20250403191036.2678799-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,37 +62,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.235
+X-stable-base: Linux 5.4.291
 Content-Transfer-Encoding: 8bit
 
-From: Icenowy Zheng <uwu@icenowy.me>
+From: Niklas Cassel <cassel@kernel.org>
 
-[ Upstream commit 06cccc2ebbe6c8a20f714f3a0ff3ff489d3004bb ]
+[ Upstream commit 91ec84f8eaddbc93d7c62e363d68aeb7b89879c7 ]
 
-The TP-Link TL-WDN6200 "Driverless" version cards use a MT7612U chipset.
+atapi_eh_request_sense() currently uses ATAPI DMA if the SATA controller
+has ATA_FLAG_PIO_DMA (PIO cmds via DMA) set.
 
-Add the USB ID to mt76x2u driver.
+However, ATA_FLAG_PIO_DMA is a flag that can be set by a low-level driver
+on a port at initialization time, before any devices are scanned.
 
-Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-Link: https://patch.msgid.link/20250317102235.1421726-1-uwu@icenowy.me
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
+If a controller detects a connected device that only supports PIO, we set
+the flag ATA_DFLAG_PIO.
+
+Modify atapi_eh_request_sense() to not use ATAPI DMA if the connected
+device only supports PIO.
+
+Reported-by: Philip Pemberton <lists@philpem.me.uk>
+Closes: https://lore.kernel.org/linux-ide/c6722ee8-5e21-4169-af59-cbbae9edc02f@philpem.me.uk/
+Tested-by: Philip Pemberton <lists@philpem.me.uk>
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Link: https://lore.kernel.org/r/20250221015422.20687-2-cassel@kernel.org
+Signed-off-by: Niklas Cassel <cassel@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/mediatek/mt76/mt76x2/usb.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/ata/libata-eh.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c b/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c
-index 4e003c7b62cf6..82a193aac09d7 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c
-@@ -21,6 +21,7 @@ static const struct usb_device_id mt76x2u_device_table[] = {
- 	{ USB_DEVICE(0x0846, 0x9053) },	/* Netgear A6210 */
- 	{ USB_DEVICE(0x045e, 0x02e6) },	/* XBox One Wireless Adapter */
- 	{ USB_DEVICE(0x045e, 0x02fe) },	/* XBox One Wireless Adapter */
-+	{ USB_DEVICE(0x2357, 0x0137) },	/* TP-Link TL-WDN6200 */
- 	{ },
- };
+diff --git a/drivers/ata/libata-eh.c b/drivers/ata/libata-eh.c
+index fa3f08ca5f6ce..4677eaf737141 100644
+--- a/drivers/ata/libata-eh.c
++++ b/drivers/ata/libata-eh.c
+@@ -1603,8 +1603,15 @@ unsigned int atapi_eh_request_sense(struct ata_device *dev,
+ 	tf.flags |= ATA_TFLAG_ISADDR | ATA_TFLAG_DEVICE;
+ 	tf.command = ATA_CMD_PACKET;
  
+-	/* is it pointless to prefer PIO for "safety reasons"? */
+-	if (ap->flags & ATA_FLAG_PIO_DMA) {
++	/*
++	 * Do not use DMA if the connected device only supports PIO, even if the
++	 * port prefers PIO commands via DMA.
++	 *
++	 * Ideally, we should call atapi_check_dma() to check if it is safe for
++	 * the LLD to use DMA for REQUEST_SENSE, but we don't have a qc.
++	 * Since we can't check the command, perhaps we should only use pio?
++	 */
++	if ((ap->flags & ATA_FLAG_PIO_DMA) && !(dev->flags & ATA_DFLAG_PIO)) {
+ 		tf.protocol = ATAPI_PROT_DMA;
+ 		tf.feature |= ATAPI_PKT_DMA;
+ 	} else {
 -- 
 2.39.5
 
