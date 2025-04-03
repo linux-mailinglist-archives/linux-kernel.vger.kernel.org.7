@@ -1,80 +1,63 @@
-Return-Path: <linux-kernel+bounces-586215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F399FA79C96
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:08:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E33EA79CAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94ABD188CD31
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 07:08:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C8733B106E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 07:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AAD523F271;
-	Thu,  3 Apr 2025 07:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B05723F404;
+	Thu,  3 Apr 2025 07:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="M4Ly/vhC"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Dy3xfI6Z"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90369134CF
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 07:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB52623F294
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 07:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743664097; cv=none; b=OroDBLBuZ+nWSEvBVHrv0jWqFPKYgIFR0EnfZtecg29zbRNKdvih2UUp/d2cVhCXKMH+LLOL9izqHMfRGfmEUerJerS52QVfHVOfBtaBBq9bXe/Bc49x8+TigyeSd+wTEsvUKbH3xGH6GXkjqmn7cmUl7e2tgofhLrlpWC+lWPw=
+	t=1743664465; cv=none; b=TTqoyJ9ZdTFfFDU2ziHV6DrzCZS2tVWNGbj2PuKYQL59cHME7kOMNC744h2bheONc3v8HbGfxds8oQdB1QyJP6Rdq4gafqGMXir4RxpxuUpMg3o4FTlwfxgIbd7nC0cOSDTCEpvw0w89mfcNn7oMbNxP6BpAdTgsawrB8P0kxOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743664097; c=relaxed/simple;
-	bh=vtfxJXEjbpW0QTVzgq6hkBS+uZVaaGcyRD6HcJffC40=;
+	s=arc-20240116; t=1743664465; c=relaxed/simple;
+	bh=b0cOd9D0x0Kdaz1sApMlHu4zf5BC3nxYkE9+bZD3BT0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rSKigzWyV1UjH2fs4jyKCmL5LNg1P8BIa6nQrPekVsePDRbUhHDasA/joDCnjHX+iRyvhzQW4bWVbkrw6uMBsBEPsozVupOf8OTGE7WTS/S3z8xJqhGtoy3SoitmNSofkUk4UmWnSJG9izQ8REC8prALmMexjCot4nd+W9WXNKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=M4Ly/vhC; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43d0782d787so3334045e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 00:08:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1743664094; x=1744268894; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=3ygNy7TpE/EybhxZCszoMTx6j9tYNzu3q7HVkiSNenM=;
-        b=M4Ly/vhCVk2Ot8gE2OJEQ2USs99wROIUWVGdALamZg2s7BgcNGtYB7pvQWAzk2mxMe
-         ndlSxX3NIwJQLpiIP4NezGp4OHbIMwYj/NscAVRLqXE91QGI0bEfvxi4781zfdI3bjev
-         re84771U9L4BGG15u95XPhW5kN5Fiy3ujMJYXDop4k2DyGJvO/Oe/uNr/37/gE6mVYDp
-         pVl0R3HXKWytY5F5/33DVOgk7NxymU/nu2Ume1Rv2tv3vYk8BJDQTIHDQqtlZm0f+Jnl
-         +z0nlVFgN7n6nQKXQjGkH5KEFc+s/j8a4h+E0hJXFU2EgtrdSGfxOeqYRsEcAmXNyLyM
-         C2UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743664094; x=1744268894;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3ygNy7TpE/EybhxZCszoMTx6j9tYNzu3q7HVkiSNenM=;
-        b=VgCFLebKFDmoC2M/HBetfQOHRtqwC1qJlmLuGQRICKakl1ou/NJOwLD8lHPVoX6khl
-         X7rRm1pj2eenuwF0Y1zzQVG6/u8yMQLu20boLfMV0cTRPwln1FeKU6FC90/oHNqZOxyS
-         pfzLtyLnojnC8lT6zy+LlY+KnArp0zy2dHO2ykPLS5tCWlnRytfW5JZD3Q4VvU5DDo1T
-         omvIEHocM3EmPANnfRSUKbHFkj/gCDv50VPEsBkutyXgRNtbfkHKxPzO6FO0xIQoF62u
-         ouQo45rBV/s3D3AXlb99IaPVMuAw0BDiWI/cKhmd4FyS343bk8qWfFyEfBFKbl1cwl08
-         BJ0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX9FQSknqv6X3RBpBcaPwF/XCMfqxer5X8CbkS5i+Bjqs4tXgg9hMAcnmJeOx5XQPdYHTD+yo7//ScolhY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoSrbcaa5bf2NqW/RtQjRBvoYzESOWBDyLxtwpsdI/mDwXX92y
-	+5AAqHRvIvMkrvn7rCr72aR0Fr/UMrBcdCKgmrdqsMTe/tu7NxK5njVmaeyznQ==
-X-Gm-Gg: ASbGncu9Vqbv14YA+bxbxp7vNmcCR1SsJlPctheTFUmYHCIGW0r78DeMkJFkUSD5E7e
-	t6FqSPCwO+ZMrpPVYiybfC3l/Xvuou3wikbdJEu1Cb7ArI27ebYlypj3l1Z/jNVyixcNdZ2jU3N
-	WodJUF8am2m867Y50SYBdnLdrE/1veNGXkue0SVv3JcV7EFymQYSWCm+F+abFnkhbtaZ1Gtl9WX
-	fV8K3hsOzklgrNVOfLaDq2ajEudNxO59p6we6cck6qImHwfreMdKBCphBiCw8CBV7OaqyREJ5uy
-	2Nn+3GPQfIZpV6KymzTrl8jUY40PawqK2yYXk07kQWIYDTdXU1b/oNpon8sZj6eYNsKaP40WZ0C
-	dkynhoEF83ONbkcEuD55C1znYJu5IjA==
-X-Google-Smtp-Source: AGHT+IFnX6JduAHPOKQnq8RBXyoZ/4SvgwizUWaaQ03B3v/UpmPZS5BPdEF+QaBlxZT+JsjQRMScoQ==
-X-Received: by 2002:a05:6000:23c7:b0:39c:cd5:4bc0 with SMTP id ffacd0b85a97d-39c1211b77amr10130061f8f.52.1743664093736;
-        Thu, 03 Apr 2025 00:08:13 -0700 (PDT)
-Received: from [10.156.60.236] (ip-037-024-206-209.um08.pools.vodafone-ip.de. [37.24.206.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c3020d92dsm940405f8f.71.2025.04.03.00.08.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Apr 2025 00:08:13 -0700 (PDT)
-Message-ID: <53a596b9-7755-4064-a65c-fb3db1e4550e@suse.com>
-Date: Thu, 3 Apr 2025 09:08:12 +0200
+	 In-Reply-To:Content-Type; b=f7mmnPqMPYI5s1Y6ypHU1dy8klm6c5AzBWq4EHC+fOtRvJtyG4aA8xdekbAADEwtxpNMktAjcJ48pHw3hP4Bt+qOvmMxGdOQ3tMV5M/SgKhhpu+tS/rxSSapWVEotjeXeO+w9qKwiR272txek/gISTN6tirNVKhv7PVgp3RntlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Dy3xfI6Z; arc=none smtp.client-ip=43.163.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1743664122; bh=GgThBuknXaD3lwbCXtPebulyQHktE8jqziVCkvGpKHg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=Dy3xfI6ZXkUloVh53iGY/z/AmxkNZgqQ3G3gmUMTTbaJrnIq8D55iEuWwS0tyVABd
+	 teYESDBWtvtvx1q2Ne+bXoMDhUKulMPKddHfuiZREbNL2kwHI/uVD7Rt9ZOA/b/lc2
+	 TMdHmTx1hpLTGHjDIJmIEZq+5uc8s41uKNribvX0=
+Received: from [10.42.13.21] ([116.128.244.169])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 228A7AA3; Thu, 03 Apr 2025 15:08:40 +0800
+X-QQ-mid: xmsmtpt1743664120tjvpap32a
+Message-ID: <tencent_0B50E848464E942D6467F86F53C9DED88606@qq.com>
+X-QQ-XMAILINFO: OZZSS56D9fAjqmL7MHMzvCf4yMzMA6sLrx+XNuJIq/WDFmj19VAC4kGSYB/7QH
+	 QggSR3AujGjYwbL52QY+TV+B0Ithj54H3+ktR6TgNoX4DFiogfaRtnRhepCugfhfNXZfCK3TjlU0
+	 l+g18J4TBHWTlZUqOUGZ+B42osEFmv8SzZL5P+1umzFlAtEizNuRyux2CFzmQfkFDeA3HFyZuVPK
+	 gejinWdMxHKlZ/wPx2VhWqFdX6vis3LMNF0ixPXt2hZvjRZ9fWHAOu4UZMfXoF7aUaWVAEITkEQt
+	 DoIYwUjJ3PKXMVa1n0GqWhCSR5bp8KBIEyp8pqezKxGCTdppzRwRzv9QrK2qIXEW8Ha0U46ChP7X
+	 YqfqLLoUNtuFlKsWFLWeY77Z6fphU7j/Uq0n/HWI/ap2+d+0uJNCE+xqS9H/IjL7Mxamy6HYd1rU
+	 1JS3nrJl2LbLES3uEts+HoCby1O3OgLZJpf30R5w/DNeGINSH+PFhOe0q6uYbt5tQR3TXlVG8meJ
+	 dJA3mE5YIBU/yPRMFRWyjKprcR1UXMV3KHvZFQslMloY8zJE/CLdXn9f2bGyeTA9vM6YNqAGJzN8
+	 L8JDibWucgHIz+h9ZHMe/at1gq6afzDmVy7WddpvDczM7CsU9+ff5chuAUodROw1muGnM6JgGUJ6
+	 rgEBwh1omB03MCmowjaGXQ05KfWVK+PTfOiymz9jOFzTTmGj0yEjqXuyUw2d4Dd8NXiVmZQ7b5ie
+	 bUL8lG4Ff8ltbVmDY8DcpXRbvR9GEDDKjSIR7iixz/cRqjnY6qGlqOj/XhYkYBDtcdQreTypRN6R
+	 YO2ISJWNUXd9xb5iE0Ic9SRJC5ZTnD7InbDmGPLnvOjGc8lUoOfiCj4lyH1VhrydV1KGEl+UUyks
+	 OxnyevVhX3hOKKIXN7G/2hf9GHZLfhWlUDDqrF5RUjusW4QOMr6j4UKuqBgrTT/v9hcAF6WDOceu
+	 TIf2Z2J6zESpgxl/7TJKHl1q2DS4g1s8FH3JvXnRc=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-OQ-MSGID: <d7b88e2a-7090-40a0-8bdc-9b60678e204d@qq.com>
+Date: Thu, 3 Apr 2025 15:08:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,75 +65,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xen: Change xen-acpi-processor dom0 dependency
-To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Cc: Penny Zheng <penny.zheng@amd.com>, xen-devel@lists.xenproject.org,
- linux-kernel@vger.kernel.org, Jason Andryuk <jason.andryuk@amd.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
-References: <20250331172913.51240-1-jason.andryuk@amd.com>
- <a6977caf-ce0e-4002-8df5-26cb0bdc88d7@suse.com>
+Subject: Re: [PATCH v3 1/3] nvme: Add warning for PST table memory allocation
+ failure in nvme_configure_apst
+To: Christoph Hellwig <hch@lst.de>
+Cc: kbusch@kernel.org, axboe@kernel.dk, sagi@grimberg.me,
+ chaitanyak@nvidia.com, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Yaxiong Tian <tianyaxiong@kylinos.cn>,
+ Chaitanya Kulkarni <kch@nvidia.com>
+References: <tencent_4612952C8C5109058CD8E688D81276A2FD0A@qq.com>
+ <tencent_A06D513AE17E9D4B4AC66E84F447FE730C09@qq.com>
+ <20250403042557.GD22360@lst.de>
 Content-Language: en-US
-From: Jan Beulich <jbeulich@suse.com>
-Autocrypt: addr=jbeulich@suse.com; keydata=
- xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
- hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
- 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
- /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
- O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
- MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
- nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
- 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
- Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJgBBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
- AwECHgECF4AACgkQoDSui/t3IH4J+wCfQ5jHdEjCRHj23O/5ttg9r9OIruwAn3103WUITZee
- e7Sbg12UgcQ5lv7SzsFNBFk3nEQQCACCuTjCjFOUdi5Nm244F+78kLghRcin/awv+IrTcIWF
- hUpSs1Y91iQQ7KItirz5uwCPlwejSJDQJLIS+QtJHaXDXeV6NI0Uef1hP20+y8qydDiVkv6l
- IreXjTb7DvksRgJNvCkWtYnlS3mYvQ9NzS9PhyALWbXnH6sIJd2O9lKS1Mrfq+y0IXCP10eS
- FFGg+Av3IQeFatkJAyju0PPthyTqxSI4lZYuJVPknzgaeuJv/2NccrPvmeDg6Coe7ZIeQ8Yj
- t0ARxu2xytAkkLCel1Lz1WLmwLstV30g80nkgZf/wr+/BXJW/oIvRlonUkxv+IbBM3dX2OV8
- AmRv1ySWPTP7AAMFB/9PQK/VtlNUJvg8GXj9ootzrteGfVZVVT4XBJkfwBcpC/XcPzldjv+3
- HYudvpdNK3lLujXeA5fLOH+Z/G9WBc5pFVSMocI71I8bT8lIAzreg0WvkWg5V2WZsUMlnDL9
- mpwIGFhlbM3gfDMs7MPMu8YQRFVdUvtSpaAs8OFfGQ0ia3LGZcjA6Ik2+xcqscEJzNH+qh8V
- m5jjp28yZgaqTaRbg3M/+MTbMpicpZuqF4rnB0AQD12/3BNWDR6bmh+EkYSMcEIpQmBM51qM
- EKYTQGybRCjpnKHGOxG0rfFY1085mBDZCH5Kx0cl0HVJuQKC+dV2ZY5AqjcKwAxpE75MLFkr
- wkkEGBECAAkFAlk3nEQCGwwACgkQoDSui/t3IH7nnwCfcJWUDUFKdCsBH/E5d+0ZnMQi+G0A
- nAuWpQkjM1ASeQwSHEeAWPgskBQL
-In-Reply-To: <a6977caf-ce0e-4002-8df5-26cb0bdc88d7@suse.com>
-Content-Type: text/plain; charset=UTF-8
+From: Yaxiong Tian <iambestgod@qq.com>
+In-Reply-To: <20250403042557.GD22360@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 02.04.2025 16:24, Jürgen Groß wrote:
-> On 31.03.25 19:29, Jason Andryuk wrote:
->> xen-acpi-processor functions under a PVH dom0 with only a
->> xen_initial_domain() runtime check.  Change the Kconfig dependency from
->> PV dom0 to generic dom0 to reflect that.
->>
->> Suggested-by: Jan Beulich <jbeulich@suse.com>
->> Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
->> ---
->>   drivers/xen/Kconfig | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/xen/Kconfig b/drivers/xen/Kconfig
->> index f7d6f47971fd..24f485827e03 100644
->> --- a/drivers/xen/Kconfig
->> +++ b/drivers/xen/Kconfig
->> @@ -278,7 +278,7 @@ config XEN_PRIVCMD_EVENTFD
->>   
->>   config XEN_ACPI_PROCESSOR
->>   	tristate "Xen ACPI processor"
->> -	depends on XEN && XEN_PV_DOM0 && X86 && ACPI_PROCESSOR && CPU_FREQ
->> +	depends on XEN && XEN_DOM0 && X86 && ACPI_PROCESSOR && CPU_FREQ
->>   	default m
->>   	help
->>   	  This ACPI processor uploads Power Management information to the Xen
+
+
+在 2025/4/3 12:25, Christoph Hellwig 写道:
+> On Tue, Apr 01, 2025 at 05:26:52PM +0800, Yaxiong Tian wrote:
+>> +		dev_warn(ctrl->device, "Failed to allocate pst table; not using APST\n");
 > 
-> Assuming that all needed hypercalls are fine for PVH dom0:
+> Please avoid the overly long line:
+> 
+> 		dev_warn(ctrl->device,
+> 			"Failed to allocate pst table; not using APST\n");
 
-If you want to feel further ascertained, you could also add
-Tested-by: Jan Beulich <jbeulich@suse.com>
-even if that was only in the context of "xen/acpi: upload power and
-performance related data from a PVH dom0", where I noticed this issue.
+Thanks, I Will fix in v4.
 
-Jan
 
