@@ -1,139 +1,164 @@
-Return-Path: <linux-kernel+bounces-586482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D0AA7A01C
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:35:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8CFDA7A01E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:35:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FDFE1895251
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:35:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E400B3B0A73
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9BA24336D;
-	Thu,  3 Apr 2025 09:34:52 +0000 (UTC)
-Received: from hrbeu.edu.cn (mx1.hrbeu.edu.cn [202.118.176.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B8023F41A;
-	Thu,  3 Apr 2025 09:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.118.176.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C15241672;
+	Thu,  3 Apr 2025 09:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N7gF2/wz"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A984478F4A
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 09:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743672892; cv=none; b=F+zWQ+lGsECfPN3gWhwfIXmTy1vZ07iGoHtB2xJc2ihX5+7etfegQKcbXkEPQCzAVN5PuM92JFUzCZQ9mw90RdVpKHwRfoJhbTvqNe3GIbWj+DBYwfTsAdqN2WAM+fyDCLVkNdtuL6Cq582F8gbsQHbKXftW3TnoPXlh8XkzHNg=
+	t=1743672841; cv=none; b=pGtqJZpECPxOFsD9pkQawXN2iYTRaeAdPKbWpR1f0DYn/eLm6sAHqlzMd0jH0tumecFQIkPFSwVQh10+zK+0ULeYDsTmiyOAeyo3b25/URTLiihrMtfTap5ISs7YEPVJkKNLedLPGiFBZ91lRzTT8MECwIM8iezmU4DlQuneLZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743672892; c=relaxed/simple;
-	bh=djhzP5voYnlsNJVKzhVEIzQUNN+KGECvctdBhMLXtes=;
-	h=Date:From:To:Cc:Subject:Content-Type:MIME-Version:Message-ID; b=Xs9QrSblNBz/Zy30thsyjrRhlbAhZL2R3cq639aMF5XnU0oIkCLNMEQJ90Cvz6EJypaplT1NsMRDc+647Lwc8Rn6v8QbOOIJqZ/z2NgQXTmTNUdV2cEspsfXlPnWqIUuOWFPBaS2QOzlB8dniaufv97IVt2P74Tqh1EjUnWzMnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hrbeu.edu.cn; spf=pass smtp.mailfrom=hrbeu.edu.cn; arc=none smtp.client-ip=202.118.176.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hrbeu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hrbeu.edu.cn
-Received: from baishuoran$hrbeu.edu.cn ( [172.83.159.138] ) by
- ajax-webmail-Front (Coremail) ; Thu, 3 Apr 2025 17:33:31 +0800 (GMT+08:00)
-Date: Thu, 3 Apr 2025 17:33:31 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?55m954OB5YaJ?= <baishuoran@hrbeu.edu.cn>
-To: "Alexander Viro" <viro@zeniv.linux.org.uk>,
-	"Christian Brauner" <brauner@kernel.org>
-Cc: "Jan Kara" <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-	"Kun Hu" <huk23@m.fudan.edu.cn>,
-	"Jiaji Qin" <jjtan24@m.fudan.edu.cn>, linux-kernel@vger.kernel.org,
-	syzkaller@googlegroups.com
-Subject: INFO: task hung in chmod_common
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT5 build
- 20241202(ebbd5d74) Copyright (c) 2002-2025 www.mailtech.cn hrbeu.edu.cn
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1743672841; c=relaxed/simple;
+	bh=b3qLvJ7aKUXqqTaHHPmb6zuSn6dJEibuG/A+uCPCHrs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h2Ks4XLA9WplWsV0rf1Cw2WbKwppVTZ4T4jYOZVmTDwuf3i6on/JZbtZqbjGbxzRMZvakUaLm/f3AUKP08XMDYPRQrhl4IYZjwnXPxJcu9AbtHKnaTTPx+VWK5irs3n4Ubq+G6WaSVZZ0yJZX6vm+C+cSoB5buybkrdWnOsWe94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N7gF2/wz; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-52403e39a23so620307e0c.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 02:33:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743672838; x=1744277638; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WyHNwKmWPYx/oZJ6Nfv44olqkcbVDVp9NWhhY5rFfyY=;
+        b=N7gF2/wzH2Z9yHH7JVYMXwFLxYeFlRvkX1pALStiilxfPNdgsclSQJ+p3UuFQZhBpX
+         kXSkVTwDWpukrgBXyuHOuaIeX5WHVe1h+X59bXuliQltwd7DT31EN87fzM4UPO4PxjG9
+         1dXptGHrTIZ8RcHLEi26r4tcFT/zIRXgU8ai4XwtBmK9uMgw8YtYc8Xuxu55aGAbTVFF
+         UJn9RNlCVnIb5ZC6V1S6QI9g8UN2/4Ju8f5mVZiFycIs/G/R9HV9cPfdXWcFPlZEIcO9
+         QqytOG8onxx5cvgCpDxS0fU7+aOZwFEUeWz4JcKlKNfH6QWEXQFuHYHjvRsnIbvX9p9a
+         cQLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743672838; x=1744277638;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WyHNwKmWPYx/oZJ6Nfv44olqkcbVDVp9NWhhY5rFfyY=;
+        b=mfDiEC8AbmgdaUy3EA71grQQw3zgukoxvyJZVlqDAev8y1mI6VORIWroCU/hC+sTFc
+         eJfmRtu094a7WouAPUh24GmEh39bLtYuiejlfd94FsHpaouMFCdD+yb2TiPUW9Tmac10
+         NX3KtrcDT/RiUlkXKw5VQ4ZHCpLuwOoqvrLQRM7Ux+6zsPpWr00DMmvNSECkSkM+9U2n
+         cj5ajzpB1M0ytUsxPZ4qUXePs3c1S9UYA88dU4iJsK5177JNj6HRHvYhJxjGpjCVbMiQ
+         1ASF5RTlg5t6+0I70zXQpatoVu2jjs0kHpSbXFVegwoK9x9lAWaYviX4xB6amtuiv2mI
+         6LLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXXSqv7vPDZiZ+ublsr3+0B2wLTHS/c+bRIeQBDXA4Scz77gvpO++UXqVizWRkrex5eAxuGsBaDpsS45wE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/T2YwSdHryIAmQlvibbzBOIp/F5y9Vb/e9bBEzF2XSFQREZgf
+	hz//15XZBUvC1KbqRWJRAl4ZZg7rLQsjVSDg2HqbxlhRrSGL9SBYxv3XibKV9U+Yy+1dDlu5A3G
+	seThA7/G75DQ9LoxydEeuKxdIetI=
+X-Gm-Gg: ASbGnctaEYyW3v1kb4v8v648jYSTj2x0AbZ0xAFdAnSopDwZXA1ACONAuit5grZMex9
+	AYi350R2rqJwpnp8KYVJGxifTSZNyHkz8H3BLQDGpuUeVqh2yVDQgK6zuW0fDygCC522KB89nDu
+	d19J0kqtPBwcRJWCNWi4c9cD3cHyo=
+X-Google-Smtp-Source: AGHT+IFKeGVeNNklz5bYiUxd3ChgxF5PeXNx9MawJNiYFhmrAEI5lZGGi1tJUaEmG4k7AmalZlCWdvAxD0uTdZluzOk=
+X-Received: by 2002:a05:6122:1820:b0:526:2210:5b68 with SMTP id
+ 71dfb90a1353d-5274ced08b8mr4069039e0c.4.1743672838364; Thu, 03 Apr 2025
+ 02:33:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <79192769.9da0.195faff9e75.Coremail.baishuoran@hrbeu.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:CbB2ygAnZCHrVe5nCjq+AQ--.23366W
-X-CM-SenderInfo: pedl2xpxrut0w6kuuvvxohv3gofq/1tbiAQIBCmfuA9cECAABsY
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+References: <Z+05IEjV3pczMLNQ@HP-650> <4c35ae41-c834-e25a-ccab-5cdd34aa4680@inria.fr>
+In-Reply-To: <4c35ae41-c834-e25a-ccab-5cdd34aa4680@inria.fr>
+From: Samuel Abraham <abrahamadekunle50@gmail.com>
+Date: Thu, 3 Apr 2025 10:33:49 +0100
+X-Gm-Features: AQ5f1JoYltK67UO5VC8QqBH_de_-LKwsb5TX3KxWxyuXzokl4ZiRRavqztgotbk
+Message-ID: <CADYq+faUTmNcUgk5jB3YHT4UCQZhf=Wsah1WUcPHqky6kp_cUA@mail.gmail.com>
+Subject: Re: [PATCH] staging: rtl8723bs: modify struct field to use standard
+ bool type
+To: Julia Lawall <julia.lawall@inria.fr>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, outreachy@lists.linux.dev, 
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-RGVhciBNYWludGFpbmVycywKCldoZW4gdXNpbmcgb3VyIGN1c3RvbWl6ZWQgU3l6a2FsbGVyIHRv
-IGZ1enogdGhlIGxhdGVzdCBMaW51eCBrZXJuZWwsIHRoZSBmb2xsb3dpbmcgY3Jhc2ggKDk1dGgp
-d2FzIHRyaWdnZXJlZC4KCgpIRUFEIGNvbW1pdDogNjUzN2NmYjM5NWYzNTI3ODI5MThkOGVlN2I3
-ZjEwYmEyY2MzY2JmMgpnaXQgdHJlZTogdXBzdHJlYW0KT3V0cHV0Omh0dHBzOi8vZ2l0aHViLmNv
-bS9wZ2hrMTMvS2VybmVsLUJ1Zy90cmVlL21haW4vMDMwNV82LjE0cmM1Lzk1LUlORk9fJTIwcmN1
-JTIwZGV0ZWN0ZWQlMjBzdGFsbCUyMGluJTIwc3lzX2NoZGlyCktlcm5lbCBjb25maWc6aHR0cHM6
-Ly9naXRodWIuY29tL3BnaGsxMy9LZXJuZWwtQnVnL2Jsb2IvbWFpbi8wMzA1XzYuMTRyYzUvY29u
-ZmlnLnR4dApDIHJlcHJvZHVjZXI6aHR0cHM6Ly9naXRodWIuY29tL3BnaGsxMy9LZXJuZWwtQnVn
-L2Jsb2IvbWFpbi8wMzA1XzYuMTRyYzUvOTUtSU5GT18lMjByY3UlMjBkZXRlY3RlZCUyMHN0YWxs
-JTIwaW4lMjBzeXNfY2hkaXIvOTVyZXByby5jClN5emxhbmcgcmVwcm9kdWNlcjogaHR0cHM6Ly9n
-aXRodWIuY29tL3BnaGsxMy9LZXJuZWwtQnVnL2Jsb2IvbWFpbi8wMzA1XzYuMTRyYzUvOTUtSU5G
-T18lMjByY3UlMjBkZXRlY3RlZCUyMHN0YWxsJTIwaW4lMjBzeXNfY2hkaXIvOTVjYWxsX3RyYWNl
-LnR4dAoKCgpPdXIgcmVwcm9kdWNlciB1c2VzIG1vdW50cyBhIGNvbnN0cnVjdGVkIGZpbGVzeXN0
-ZW0gaW1hZ2UuClRoaXMgY291bGQgYmUgYSBmaWxlIHN5c3RlbSBkZWFkbG9jayBpc3N1ZSB0aGF0
-IG9jY3VycyBvbiBsaW5lcyA1NDctNTQ4IG9mIHRoZSBjaG1vZF9jb21tb24gZnVuY3Rpb24uIFdo
-ZW4gdGhpcyBmdW5jdGlvbiBpcyBjYWxsZWQsIHRoZSBjb2RlIGFscmVhZHkgaG9sZHMgdGhlIGlu
-b2RlIGxvY2sgKHZpYSB0aGUgaW5vZGVfbG9jayAoaW5vZGUpKSwgYnV0IHRoZSBub3RpZnlfY2hh
-bmdlIG1heSBuZWVkIHRvIHBlcmZvcm0gUkNVLXByb3RlY3RlZCBvcGVyYXRpb25zIGludGVybmFs
-bHkuIFRoZSBjb3JlIG9mIHRoZSBwcm9ibGVtIGlzIHRoYXQgdGhlIGNobW9kX2NvbW1vbiBmdW5j
-dGlvbiBjYWxscyB0aGUgbm90aWZ5X2NoYW5nZSB3aGlsZSBob2xkaW5nIHRoZSBpbm9kZSBsb2Nr
-LCBhbmQgdGhlIG5vdGlmeV9jaGFuZ2UgaW50ZXJuYWxseSByZWxpZXMgb24gdGhlIFJDVSBwcm90
-ZWN0aW9uIG1lY2hhbmlzbS4gQXQgYSBzcGVjaWZpYyBwYXRoIHRvIHRoZSBTWVNWIGZpbGUgc3lz
-dGVtLCB0aGlzIGNvbWJpbmF0aW9uIHJlc3VsdHMgaW4gYSBkZWFkbG9jay4KV2UgaGF2ZSByZXBy
-b2R1Y2VkIHRoaXMgaXNzdWUgc2V2ZXJhbCB0aW1lcyBvbiA2LjE0LXJjNSBhZ2Fpbi4KCgoKSWYg
-eW91IGZpeCB0aGlzIGlzc3VlLCBwbGVhc2UgYWRkIHRoZSBmb2xsb3dpbmcgdGFnIHRvIHRoZSBj
-b21taXQ6ClJlcG9ydGVkLWJ5OiBLdW4gSHUgPGh1azIzQG0uZnVkYW4uZWR1LmNuPiwgSmlhamkg
-UWluIDxqanRhbjI0QG0uZnVkYW4uZWR1LmNuPiwgU2h1b3JhbiBCYWkgPGJhaXNodW9yYW5AaHJi
-ZXUuZWR1LmNuPgoKCgoKPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09CgpOTUkgYmFja3RyYWNlIGZvciBjcHUgMApDUFU6IDAgVUlEOiAwIFBJRDogNDcgQ29tbTog
-a2h1bmd0YXNrZCBOb3QgdGFpbnRlZCA2LjE0LjAgIzIKSGFyZHdhcmUgbmFtZTogUUVNVSBTdGFu
-ZGFyZCBQQyAoaTQ0MEZYICsgUElJWCwgMTk5NiksIEJJT1MgMS4xMy4wLTF1YnVudHUxLjEgMDQv
-MDEvMjAxNApDYWxsIFRyYWNlOgogPFRBU0s+CiBkdW1wX3N0YWNrX2x2bCsweDExNi8weDFiMAog
-bm1pX2NwdV9iYWNrdHJhY2UrMHgyYTAvMHgzNTAKIG5taV90cmlnZ2VyX2NwdW1hc2tfYmFja3Ry
-YWNlKzB4MjliLzB4MzAwCiB3YXRjaGRvZysweGY0Yy8weDEyMTAKIGt0aHJlYWQrMHg0MmEvMHg4
-ODAKIHJldF9mcm9tX2ZvcmsrMHg0OC8weDgwCiByZXRfZnJvbV9mb3JrX2FzbSsweDFhLzB4MzAK
-IDwvVEFTSz4KU2VuZGluZyBOTUkgZnJvbSBDUFUgMCB0byBDUFVzIDEtMzoKTk1JIGJhY2t0cmFj
-ZSBmb3IgY3B1IDEKQ1BVOiAxIFVJRDogMCBQSUQ6IDE0NjQyIENvbW06IHN5ei42LjIyIE5vdCB0
-YWludGVkIDYuMTQuMCAjMgpIYXJkd2FyZSBuYW1lOiBRRU1VIFN0YW5kYXJkIFBDIChpNDQwRlgg
-KyBQSUlYLCAxOTk2KSwgQklPUyAxLjEzLjAtMXVidW50dTEuMSAwNC8wMS8yMDE0ClJJUDogMDAx
-MDpyY3VfbG9ja2RlcF9jdXJyZW50X2NwdV9vbmxpbmUrMHhjZC8weDE1MApDb2RlOiA0OCA4OSBm
-YSA0OCBjMSBlYSAwMyA4MCAzYyAwMiAwMCA3NSA3NiA0OCA4ZCA3ZCA3MCA0OCA4YiA1YiAyMCA0
-OCBiOCAwMCAwMCAwMCAwMCAwMCBmYyBmZiBkZiA0OCA4OSBmYSA0OCBjMSBlYSAwMyA4MCAzYyAw
-MiAwMCA8NzU+IDVlIDQ4IDhiIDU1IDcwIGI4IDAxIDAwIDAwIDAwIDQ4IDg1IGQzIDc0IDEwIDY1
-IGZmIDBkIGI0IDQ1IDY0ClJTUDogMDAxODpmZmZmYzkwMDEyYzhmMGU4IEVGTEFHUzogMDAwMDAy
-NDYKUkFYOiBkZmZmZmMwMDAwMDAwMDAwIFJCWDogMDAwMDAwMDAwMDAwMDAwMiBSQ1g6IGZmZmZm
-ZmZmOGI1ODAzNGYKUkRYOiAxZmZmZmZmZmYxYzM4ZDZlIFJTSTogMDAwMDAwMDAwMDAwMDAwMSBS
-REk6IGZmZmZmZmZmOGUxYzZiNzAKUkJQOiBmZmZmZmZmZjhlMWM2YjAwIFIwODogMDAwMDAwMDAw
-MDAwMDAwMCBSMDk6IGZmZmZmYmZmZjJkZTc5OTkKUjEwOiBmZmZmZmJmZmYyZGU3OTk4IFIxMTog
-ZmZmZmZmZmY5NmYzY2NjNyBSMTI6IGZmZmY4ODgwNzA5ZjllNDIKUjEzOiBmZmZmYzkwMDEyYzhm
-MjYwIFIxNDogZmZmZjg4ODAxZDljMDg4MCBSMTU6IGZmZmZjOTAwMTJjOGYyNDgKRlM6ICAwMDAw
-N2Y1Y2JkODkwNzAwKDAwMDApIEdTOmZmZmY4ODgwN2VlMDAwMDAoMDAwMCkga25sR1M6MDAwMDAw
-MDAwMDAwMDAwMApDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUw
-MDMzCkNSMjogMDAwMDdmNDBjYmM4ZjAwMCBDUjM6IDAwMDAwMDAwNTMxYWMwMDAgQ1I0OiAwMDAw
-MDAwMDAwNzUwZWYwClBLUlU6IDAwMDAwMDAwCkNhbGwgVHJhY2U6CiA8Tk1JPgogPC9OTUk+CiA8
-VEFTSz4KIHJjdV9yZWFkX2xvY2tfaGVsZF9jb21tb24rMHg0Yy8weGEwCiByY3VfcmVhZF9sb2Nr
-X2hlbGQrMHg1ZS8weGIwCiB4YXNfc3RhcnQrMHgyNDEvMHg3YTAKIHhhc19sb2FkKzB4MmMvMHg1
-NjAKIGZpbGVtYXBfZ2V0X2VudHJ5KzB4MTE4LzB4NzQwCiBfX2ZpbGVtYXBfZ2V0X2ZvbGlvKzB4
-NTcvMHhiMzAKIF9fZmluZF9nZXRfYmxvY2srMHgxNGYvMHhjYzAKIGJkZXZfZ2V0YmxrKzB4MTdj
-LzB4NjQwCiBfX2JyZWFkX2dmcCsweDhmLzB4MzUwCiBnZXRfYnJhbmNoKzB4MmNlLzB4NmEwCiBn
-ZXRfYmxvY2srMHgxOGIvMHgxNTcwCiBibG9ja19yZWFkX2Z1bGxfZm9saW8rMHgzZGEvMHhjYTAK
-IGZpbGVtYXBfcmVhZF9mb2xpbysweGJmLzB4MmIwCiBkb19yZWFkX2NhY2hlX2ZvbGlvKzB4MjRm
-LzB4NTkwCiBkaXJfZ2V0X2ZvbGlvLmlzcmEuMCsweDIxLzB4YTAKIHN5c3ZfZmluZF9lbnRyeSsw
-eDFiYy8weDVmMAogc3lzdl9pbm9kZV9ieV9uYW1lKzB4NzEvMHgyODAKIHN5c3ZfbG9va3VwKzB4
-ODQvMHgxMDAKIF9fbG9va3VwX3Nsb3crMHgyNWIvMHg0OTAKIHdhbGtfY29tcG9uZW50KzB4MzQ1
-LzB4NWIwCiBwYXRoX2xvb2t1cGF0LmlzcmEuMCsweDE4MC8weDU2MAogZmlsZW5hbWVfbG9va3Vw
-KzB4MjExLzB4NDcwCiB1c2VyX3BhdGhfYXQrMHgzZS8weDkwCiBfX3g2NF9zeXNfY2hkaXIrMHhi
-NS8weDI2MAogZG9fc3lzY2FsbF82NCsweGNmLzB4MjUwCiBlbnRyeV9TWVNDQUxMXzY0X2FmdGVy
-X2h3ZnJhbWUrMHg3Ny8weDdmClJJUDogMDAzMzoweDdmNWNiYzlhY2FkZApDb2RlOiAwMiBiOCBm
-ZiBmZiBmZiBmZiBjMyA2NiAwZiAxZiA0NCAwMCAwMCBmMyAwZiAxZSBmYSA0OCA4OSBmOCA0OCA4
-OSBmNyA0OCA4OSBkNiA0OCA4OSBjYSA0ZCA4OSBjMiA0ZCA4OSBjOCA0YyA4YiA0YyAyNCAwOCAw
-ZiAwNSA8NDg+IDNkIDAxIGYwIGZmIGZmIDczIDAxIGMzIDQ4IGM3IGMxIGIwIGZmIGZmIGZmIGY3
-IGQ4IDY0IDg5IDAxIDQ4ClJTUDogMDAyYjowMDAwN2Y1Y2JkODhmYmE4IEVGTEFHUzogMDAwMDAy
-NDYgT1JJR19SQVg6IDAwMDAwMDAwMDAwMDAwNTAKUkFYOiBmZmZmZmZmZmZmZmZmZmRhIFJCWDog
-MDAwMDdmNWNiY2JhNWZhMCBSQ1g6IDAwMDA3ZjVjYmM5YWNhZGQKUkRYOiAwMDAwMDAwMDAwMDAw
-MDAwIFJTSTogMDAwMDAwMDAwMDAwMDAwMCBSREk6IDAwMDAwMDAwMjAwMDAxNDAKUkJQOiAwMDAw
-N2Y1Y2JjYTJhYjhmIFIwODogMDAwMDAwMDAwMDAwMDAwMCBSMDk6IDAwMDAwMDAwMDAwMDAwMDAK
-UjEwOiAwMDAwMDAwMDAwMDAwMDAwIFIxMTogMDAwMDAwMDAwMDAwMDI0NiBSMTI6IDAwMDAwMDAw
-MDAwMDAwMDAKUjEzOiAwMDAwN2Y1Y2JjYmE1ZmFjIFIxNDogMDAwMDdmNWNiY2JhNjAzOCBSMTU6
-IDAwMDA3ZjVjYmQ4OGZkNDAKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KCgoKCgoK
-dGhhbmtzLApLdW4gSHUKCg==
+On Thu, Apr 3, 2025 at 6:06=E2=80=AFAM Julia Lawall <julia.lawall@inria.fr>=
+ wrote:
+>
+>
+>
+> On Wed, 2 Apr 2025, Abraham Samuel Adekunle wrote:
+>
+> > The struct field uses the uint values 0 and 1 to represent false and
+> > true values respectively.
+> >
+> > Convert cases to use the bool type instead to conform to Linux
+> > coding styles and ensure consistency.
+>
+> This is vague.  Ensure consistency with what?  You can point out that tru=
+e
+> or false was already being used elsewhere in the code.
+>
+> >
+> > reported by Coccinelle:
+> >
+> > Signed-off-by: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
+> > ---
+> >  drivers/staging/rtl8723bs/core/rtw_ap.c      | 2 +-
+> >  drivers/staging/rtl8723bs/include/sta_info.h | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/=
+rtl8723bs/core/rtw_ap.c
+> > index ed6942e289a5..82f54f769ed1 100644
+> > --- a/drivers/staging/rtl8723bs/core/rtw_ap.c
+> > +++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
+> > @@ -389,7 +389,7 @@ void update_bmc_sta(struct adapter *padapter)
+> >               psta->qos_option =3D 0;
+> >               psta->htpriv.ht_option =3D false;
+> >
+> > -             psta->ieee8021x_blocked =3D 0;
+> > +             psta->ieee8021x_blocked =3D false;
+> >
+> >               memset((void *)&psta->sta_stats, 0, sizeof(struct stainfo=
+_stats));
+> >
+> > diff --git a/drivers/staging/rtl8723bs/include/sta_info.h b/drivers/sta=
+ging/rtl8723bs/include/sta_info.h
+> > index b3535fed3de7..63343998266a 100644
+> > --- a/drivers/staging/rtl8723bs/include/sta_info.h
+> > +++ b/drivers/staging/rtl8723bs/include/sta_info.h
+> > @@ -86,7 +86,7 @@ struct sta_info {
+> >       uint qos_option;
+> >       u8 hwaddr[ETH_ALEN];
+> >
+> > -     uint    ieee8021x_blocked;      /* 0: allowed, 1:blocked */
+> > +     bool ieee8021x_blocked;
+
+> You should also check whether this is a structure that is read from the
+> hardware.  In that case, it would be a concern if the bool field does not
+> have the same size as the uint one.
+Hello Julia
+So following the conversation here,
+https://lore.kernel.org/outreachy/bf8994cc-b812-f628-ff43-5dae8426e266@inri=
+a.fr/T/#u
+I was able to compare the assembly code of the file before and after
+my patch and this were my findings
+
+Original assembly code for
+# drivers/staging/rtl8723bs/core/rtw_ap.c:392    psta->ieee8021x_blocked =
+=3D 0;
+movl  $0, 436(%r12)    #,  psta->ieee8021x_blocked
+
+Assembly Code After Patch
+# drivers/staging/rtl8723bs/core/rtw_ap.c:392
+psta->ieee8021x_blocked =3D false;
+movb  $0, 434(%r12)    #,  psta->ieee8021x_blocked
+
+Adekunle
 
