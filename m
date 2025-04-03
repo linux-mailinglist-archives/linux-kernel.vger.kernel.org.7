@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-587968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F831A7B268
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 01:32:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0BD5A7B26B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 01:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 414C13B98EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:32:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACA991786DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA22E1C84AB;
-	Thu,  3 Apr 2025 23:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570231A5B8B;
+	Thu,  3 Apr 2025 23:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cm9yUWEZ"
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aU61gBdf"
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0EDF2E62B8
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 23:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374DE1DD9D3
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 23:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743723134; cv=none; b=neF9tczkB3GywFfozuWX/R6N417DY7EnyW2WY+tB9DaXni6PGF88U2vwPEGl5Dn2KwRBZ+kV4KhRxdV2tF2xqMypyqjQ1GoyUcb/KC+5A9AWBP2S5Lm/twUySG48zbihny6KzFiNc6+4y9FuA5WaRGTAIv3O2JFjBGYjv4MqMXI=
+	t=1743723291; cv=none; b=rPXdJoF64XAEz5yNeKLK3m3o/Dh956m/nxNxsF7IurfZEErJ03lpy6R3pvEuKAkf/d/gxuEdFvlQNATo/daWgkLu97SyWLOczGut+0Nbl9gICPHjwllk0bQMS4TtXDzjictAbMd4pqUu1mXTzVQunsoFCaNjxje5Q24ez6/Xj2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743723134; c=relaxed/simple;
-	bh=ConqJ9yxOfg51AtX2KXDQrRifAARBrdGYo8uEJMersE=;
+	s=arc-20240116; t=1743723291; c=relaxed/simple;
+	bh=yPfUoEabLqKntQr8q5pur3n1i93VDPliNk27Nfw4Yc4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YRBEYa0j/vA1BNqRmpuCb/kYQrTWvd2KYsa9IN2eGVB7AQ0TEpC1dqnLE/8Zc/icZcQRFovFE7rN8S1ehvgcyVXjz+bcyc+6AIRQIGdVV9gzoUbpG2U3QOczs72vwhORJlHRKbEsjmShJdEj0DMKyNJ6bQnKJsoSbZBLrCB/43c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cm9yUWEZ; arc=none smtp.client-ip=209.85.221.182
+	 To:Cc:Content-Type; b=DYFpVg+1sM5p9LggbghGtgI+WqT3+GOEFvmsLGsUC5x+w++IXFsoRsSDSLOgudjCRTw1ITR07v7PMpgQ17a8MGL0jRFutpd5w2MCUQPsxSzSjC3AQt2n380a1XgZ8A2+vS2rso/KQxdcE6zbn4Enq41kHnM2UGHA2QrDk9vfim4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aU61gBdf; arc=none smtp.client-ip=209.85.221.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-523edc385caso668326e0c.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 16:32:12 -0700 (PDT)
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5259327a937so642017e0c.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 16:34:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743723131; x=1744327931; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1743723289; x=1744328089; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ConqJ9yxOfg51AtX2KXDQrRifAARBrdGYo8uEJMersE=;
-        b=cm9yUWEZKsHsmv6Yw6EPDU+NyLGkXKcF4Lo0yw/4RdIGvHsPANaXmNqGyZbGvyfqk+
-         xkLgsxr/467QqG8ebzs/nIrk9v07VXwqKlCW1m3BvAtOlbqvixlM8hGGQfMtwzd8vu4y
-         hfmxgu8/80Y9cEnJZralDR6SSGqZ3DQNxMVjiDOUnzZL87sCqggxrbqF2/x/saeNDKnq
-         Baj8gNarCNTfOsrzMLK1L+RWsvtOjMM4mVkjwhJDr8aBFqg0q9wwQw7ZxExf1h9ad7vS
-         XQLDFsuyqWKka4KFbvwbzBktfBHdgRK9Vit/dMN5/WzG3qfxIaqBwcS+oGQoDcswsK/K
-         9Wgw==
+        bh=avbDQjcLHqr7esMYO8nwxUtIxsYjEDsKF3924zpDBE0=;
+        b=aU61gBdfWyUpb3HoM5Mqz2LREy79t4vloMgbqu28wqEd2EzJgx8hUA0w1wmrO8pbgn
+         B3qMNVE/K/eKsEHxMzR39QHYpNENOpzYHlJpDv1l910NQNu1Ko6bQZyg7B4Bq32RB9ii
+         K5LZvzjVdNHFRYfeIeFArp5GGMsx8CfoMeBmAim+174xFE1b8dLTdTKKaNUVv34uAUWI
+         anwdLu8bopgF+WQt4J42h5xj7nGtioelzlATQ0HEDScxFE5jIHp5wLBmHX+ss4yzLw3n
+         PUfp33GKp3z4r9ZB8BoaupiRdkkGslxAjjmIVlVMOG1E2dhPkAGhjxheTCu+fM+V1GK1
+         DmPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743723131; x=1744327931;
+        d=1e100.net; s=20230601; t=1743723289; x=1744328089;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ConqJ9yxOfg51AtX2KXDQrRifAARBrdGYo8uEJMersE=;
-        b=qnpAm1JG/O2T9FAavthpdpGe3n16V5D5zldLygKzwkK8c8cIRaNho14fxYGYkrHauK
-         JKfcZ72fVnnI99swroaAO0VcchwdmhjmUXyyFguWqEUFE6PxXagxE6RdOYMdsM4f5zRO
-         +oCwz7kGA/+u5KqW03DUnlbnWs70gYqcpiYOA7qDV5u0VfbrbMniqMrDGI7d4KYKiD8R
-         x0b1L8H9qyk+DhcUt1T5s6sdd+8M3R76/SKahO09xZKapFsucYeweqr7u4OCRbf7LGPI
-         WiHwEuzW/FHZgLfdJyOWbHxGC/Ua24oMyJrs9CWjY9DHpvVQjujKdaymwuVIAUXURpwb
-         LyaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcw+kMZ2o68RQOH9KX0INnVpQiWB2hghn8SwCs88CJjlVJYuW8N43LGmThBv3OvwKsly3jyJo/nBeve8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxkte4AXj02VQL29+E0kXPqyd4p5kvouq0X203dhWi2fu5Fghjv
-	ZlnwBDIaLN8ixOPxTnQ4FRnoJMOz4rGWwsDsWfLMi2BQKyuaAxsvoc0GKbsjmPWT5cSrczhS+tp
-	13E/V5HTHm8REY8BV+GyUOe2M4vo=
-X-Gm-Gg: ASbGnctLoTs3bbefT9rkVVsybzc6qLQEIa2qoILOOUkllNAkl3mmw4oqs8gj+ApjKb9
-	vZa9iSwugKC31Ej+xfHjjGnyldbGfwv4g8715vOaHF3EnrtYWLvg5Q2S9XJcDHdgXH5EIR9WhKi
-	hdjDHo5fouZvH/pVXs+UdLkFmed04=
-X-Google-Smtp-Source: AGHT+IHG8yvd4/Gvzr9bsPGoHBMSRP7NVpPpyONIrTuFi15RTw1YFf2XgcnaKkTPRoWR1r0MApg+ICHPmv4tFtGyyWI=
-X-Received: by 2002:a05:6122:8c01:b0:523:7316:7f31 with SMTP id
- 71dfb90a1353d-52764494388mr1303595e0c.5.1743723131626; Thu, 03 Apr 2025
- 16:32:11 -0700 (PDT)
+        bh=avbDQjcLHqr7esMYO8nwxUtIxsYjEDsKF3924zpDBE0=;
+        b=upGtZ0Rrfo2IS4uFsWQRTxzBor7bgna/6rBvucjIwosqpcQ+2zjhvFo/iuFSO53na0
+         UGlYz00w72EkNqwii6k8wuSC5ASIGHtHCptFL1B4EbTlA9iT6iUo+lGLDIv7HwCjWPo6
+         cI3WZ/LGx4o+Brmd4KhT7KvhamOmsLuEw6B1SZ+AVQEn2UiXuNfvH4O5j8T9rkolPLCp
+         gcWP2796kT9k7J+IbGRIMubh+faiqSsDlJbqbDkPQiFBudNEHw2RvZQCNLFvYqsXaRr5
+         N2XkSzKX5uYgS2Q5PUmSayf0xFRbYkTQWOEpU0AMYVXO2Wz4alxDfL8VAJwNI40mwiEz
+         ZRuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEnKkyyIm4RWe6jFIzZwkSM9UQZJDGQn7cCO7beeXPCvFGkfwLLmw4dsZDOerciJS7TikyRftELmqe8yU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrMOpcIYtWy3rr0B6mS/8Klmzp2+nSwJlnVmDIGRCql7y9Xvlp
+	X4/988bxLEAt1mCyauBIWY18ueC/bH0td70kJcwHIGhUGhIu1yt0FaETy2ruDsgo0+evOrBIpQV
+	pu8ZPB8DVdA/xencFzCJ13vd2y+Q=
+X-Gm-Gg: ASbGncvLyjeQkqAr+B2m3A+t/Z6H9meJIPbmmDBHShxHNOvuyf35UvzVTpmXX7sdkTg
+	M9JpXAQJeNsIy6VAT+t2TSMuKoRJA420dCZBdfI/umAds+qxQpw737TIjtapyYoJ/K6FoaezgUY
+	pVC9jOoIhqTEFdMUutyAS6Lu8zcJs1fWwf7nRlfw==
+X-Google-Smtp-Source: AGHT+IE0jVTAdZK/1z5sRC69OvaJbihukmG2bfl5C4hSu/+suvfXKUqs00L2PVJ92KBbTrochuTagRBujIH4Xq+OURE=
+X-Received: by 2002:a05:6122:16a6:b0:51f:fc9d:875d with SMTP id
+ 71dfb90a1353d-52764573f29mr1079951e0c.8.1743723289031; Thu, 03 Apr 2025
+ 16:34:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,15 +74,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <cover.1743685415.git.abrahamadekunle50@gmail.com>
- <26990d4a9d4419f9d4155a40595bc213acb671a0.1743685415.git.abrahamadekunle50@gmail.com>
- <Z-6Nwp5RUdgYt55B@smile.fi.intel.com>
-In-Reply-To: <Z-6Nwp5RUdgYt55B@smile.fi.intel.com>
+ <1325d06f5a4eb18eb52eb20d5af89207504c46b6.1743685415.git.abrahamadekunle50@gmail.com>
+ <Z-6PlWGmn09hYYKU@smile.fi.intel.com>
+In-Reply-To: <Z-6PlWGmn09hYYKU@smile.fi.intel.com>
 From: Samuel Abraham <abrahamadekunle50@gmail.com>
-Date: Fri, 4 Apr 2025 00:32:01 +0100
-X-Gm-Features: ATxdqUEbWVQJ00lu3HouPrhS-aMc9BZOWnPJCkk8kpjTlk_IjSIFvDUvpW1tCTw
-Message-ID: <CADYq+fa4FxmiynHg7BJRCusr3V-GqofEEddzP9Zzg1muPXGdqQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] staging: media: Remove duplicate NULL tests on a
- value in pci
+Date: Fri, 4 Apr 2025 00:34:40 +0100
+X-Gm-Features: ATxdqUE2HQCOn8HmmyJdYwJeZCngwFtMlNx29UmcDIb26j6tvHO7ChxpInIanIg
+Message-ID: <CADYq+fY-y1BqnzK7fCvjPhLfvpTgMeiK5_XCoF_BZqiYyX_1bw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] staging: rtl8723bs: Prevent duplicate NULL tests
+ on a value
 To: Andy Shevchenko <andy@kernel.org>
 Cc: outreachy@lists.linux.dev, julia.lawall@inria.fr, 
 	gregkh@linuxfoundation.org, linux-staging@lists.linux.dev, 
@@ -91,10 +91,10 @@ Cc: outreachy@lists.linux.dev, julia.lawall@inria.fr,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 3, 2025 at 2:31=E2=80=AFPM Andy Shevchenko <andy@kernel.org> wr=
+On Thu, Apr 3, 2025 at 2:40=E2=80=AFPM Andy Shevchenko <andy@kernel.org> wr=
 ote:
 >
-> On Thu, Apr 03, 2025 at 02:26:41PM +0100, Abraham Samuel Adekunle wrote:
+> On Thu, Apr 03, 2025 at 02:26:43PM +0100, Abraham Samuel Adekunle wrote:
 > > When a value has been tested for NULL in an expression, a
 > > second NULL test on the same value in another expression
 > > is unnecessary when the value has not been assigned NULL.
@@ -104,22 +104,48 @@ ote:
 > >
 > > Found by Coccinelle
 >
-> Missing period. And Subject should be as simple as
+> Missing period.
+
+Noted.
+...
+> > +                                     psta->BA_starting_seqctrl[pattrib=
+->priority & 0x0f] =3D (tx_seq+1)&0xfff;
 >
-> "media: atomisp: Remove ..."
+> While at it, make this more readable:
 >
-> ...
+>                                         psta->BA_starting_seqctrl[pattrib=
+->priority & 0x0f] =3D
+>                                                 (tx_seq + 1) & 0xfff;
 >
-> Please, send this patch separately from the others.
 >
-> --
-Thank you very much for your review
-Unfortunately I have been told I cannot work on the media driver as an
-outreachy applicant.
-I do appreciate your apparent reviews.
-I will Cc your email when I apply your review to my rtl8723bs driver
-patch of the patchset.
-Thanks
+> > +                                     pattrib->ampdu_en =3D true;/* AGG=
+ EN */
+> > +                             } else {
+>
+> > +                                     psta->BA_starting_seqctrl[pattrib=
+->priority & 0x0f] =3D (pattrib->seqnum+1)&0xfff;
+>
+> Ditto.
+>
+> Also consider to use module operator as it shows the exact amount of the
+> records we support in the circular buffer.
+>
+>                                         psta->BA_starting_seqctrl[pattrib=
+->priority & 0x0f] =3D
+>                                                 (pattrib->seqnum + 1) % 4=
+096;
+>
+> Since it's power-of-two denominator, it will be optimised by the compiler=
+ to
+> the same code as it's now.
+>
+> > +                                     pattrib->ampdu_en =3D true;/* AGG=
+ EN */
+> >                               }
+>
+>
+Thank you very much for the review
+I will send an updated Patchset
 
 Adekunle
 
