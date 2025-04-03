@@ -1,174 +1,191 @@
-Return-Path: <linux-kernel+bounces-586570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10260A7A124
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:38:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC1B3A7A0A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F9E83B34E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:38:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A3341893F6B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A2324A071;
-	Thu,  3 Apr 2025 10:38:41 +0000 (UTC)
-Received: from mail-m3276.qiye.163.com (mail-m3276.qiye.163.com [220.197.32.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AE82459DB;
+	Thu,  3 Apr 2025 10:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="EZumTnmM"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C901F4619
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 10:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8153C0B;
+	Thu,  3 Apr 2025 10:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743676721; cv=none; b=bE8b3/t1q3VDRQT3/htalORXkE9rzeiIByERIbXCfTLjTwAYSV7Gx5gqpiRnZ8sFeR5teYcbzfFTC74t5RHhN/stc9zAln3zgXqOziiKN+5l+RjUXy8u5nLHh6yGQFCdMa+kNRgTiqZMNaUSvx3ZG2qefOte6eI4nTvig6h42mY=
+	t=1743674837; cv=none; b=T6zMzr9oA9u0kA0j/I8BpPjVoZjGjlQkdh9qQxi5ScRmfVPDg7U+BiiTG9jhgqRhL6SwKyGS/6o2Pe59cjS0ZbdNZa4M1WARwLOJ8kjXOTlvLjl+9hHe4Him9dRozPv49fPklLCNB5Akxr4Lr8+hbxBp37fOyhfBfObMlykMg/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743676721; c=relaxed/simple;
-	bh=TZuSjjPVVMh5QjkxWHiyyAQuAU1YntQa8GkY3GzIpsI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=App2+zyDvzxo4gx8LBhVBps2H4IMxbUOGg3YT7oMrw/PAc4b5d0Ibl9YExMTpeSAKPThNxQm6x6cpTbH442jtqkKUz3+XJeczdUZIILTox8+dTFwlbYFvEXp4VBEX7k33Xdi/ryrYjUcFYCoWfLiYM/eFnLCV5dWuNk2klrQDO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com; spf=pass smtp.mailfrom=hj-micro.com; arc=none smtp.client-ip=220.197.32.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hj-micro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hj-micro.com
-Received: from localhost.localdomain (unknown [122.224.147.158])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 109206eca;
-	Thu, 3 Apr 2025 15:09:24 +0800 (GMT+08:00)
-From: Hongbo Yao <andy.xu@hj-micro.com>
-To: will@kernel.org,
-	robin.murphy@arm.com
-Cc: mark.rutland@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	andy.xu@hj-micro.com,
-	allen.wang@hj-micro.com,
-	peter.du@hj-micro.com
-Subject: [PATCH v3] perf: arm-ni: Unregister PMUs on probe failure
-Date: Thu,  3 Apr 2025 15:09:18 +0800
-Message-ID: <20250403070918.4153839-1-andy.xu@hj-micro.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1743674837; c=relaxed/simple;
+	bh=OS5FKh45U5tp0iIFw7ligx8FGhQpdSr6OwlsPH/aWFM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WbX+eMyi6rWv2+PEeU96y/MgDEeuoNwzC2ZTMf4u27xIr+un1+4TKOnVgl/rlBqiaz4rq4eKwfI4NU2xeB++3TevN81/s1qYtAYNhq3RRAw/kEPJAxsX/Ma+Uond57FAxTIXeLkBVveM/4csQmMbOQB9tmn+HMJNXSBhi9zzdPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=EZumTnmM; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=aH+MeY5wxEAwtijunPYNL+y+DpNd6dDfxP3oQyKVdZI=; b=EZumTnmMfnXjC+fIRGTIzUUpdC
+	xmA4sKsK5GMhS8YKEute0EoJCcEazqvF7+am554iZXBLJ5qRjirO9rlLnKFgZmDv1UQ8J9kiTi0lq
+	RdJgNNi1Djy1QT7PmMZb0aT/DV6ghoVgilR/3/l4NvUdtlqjuni8ugwvCcVO+Q5SIkn1b6H1xlvYu
+	Xi0ca1YIjr3S23xDcgfJwcOYOYxi3Cq4dOiPLluvMr8Xf9RWfhcV13FdtJ41RYYUk/wn/86gUm1Mf
+	RpTxxLLBEOo0tyPHYV8hO1cG3KIhbVs/p3JjiDagwc3N7ViaKg5AS9xNMI/CmVsP8UuyjQV0dEEbF
+	Q298q3TQ==;
+Received: from i53875bf8.versanet.de ([83.135.91.248] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1u0GoE-0003Ky-Fc; Thu, 03 Apr 2025 11:24:26 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: devicetree@vger.kernel.org, Daniele Briguglio <hello@superkali.me>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ alchark@gmail.com, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Daniele Briguglio <daniele.briguglio@icloud.com>,
+ Daniele Briguglio <hello@superkali.me>
+Subject:
+ Re: [PATCH] rockchip: dts: rk3588: add missing OPP nodes for lower
+ frequencies
+Date: Thu, 03 Apr 2025 11:24:25 +0200
+Message-ID: <2652016.Lt9SDvczpP@diego>
+In-Reply-To: <20250403091840.3349637-1-hello@superkali.me>
+References: <20250403091840.3349637-1-hello@superkali.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZS0pCVhpLHRpDGE0dS01DGVYVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKSUlVSUlPVUpPTFVKTkNZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0hVSk
-	tLVUpCS0tZBg++
-X-HM-Tid: 0a95fa7baff103afkunm109206eca
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OBw6Mzo5FzJNKQIXFkkaURk5
-	GgMKCz1VSlVKTE9ITU1PSk1OQkxLVTMWGhIXVRoVHwJVAw47ExFWFhIYCRRVGBQWRVlXWRILWUFZ
-	SklJVUlJT1VKT0xVSk5DWVdZCAFZQU9JS003Bg++
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-When a resource allocation fails in one clock domain of an NI device,
-we need to properly roll back all previously registered perf PMUs in
-other clock domains of the same device.
+Hi,
 
-Otherwise, it can lead to kernel panics.
+Am Donnerstag, 3. April 2025, 11:18:40 MESZ schrieb Daniele Briguglio:
+> From: Daniele Briguglio <daniele.briguglio@icloud.com>
+> 
+> This Patch adds missing Operating Performance Point (OPP) nodes for lower
+> frequencies to the RK3588 device tree. These additions improve power
+> management by enabling the CPU clusters to scale down to lower
+> frequencies when under light loads, which should improve energy
+> efficiency and reduce power consumption.
+> 
+> The changes add OPP nodes for 408MHz, 600MHz, 816MHz, and 1008MHz
+> (for cluster1 and cluster2 only, as cluster0 already had 1008MHz)
+> with appropriate voltage settings across all three CPU clusters in
+> the RK3588 SoC.
 
-Calling arm_ni_init+0x0/0xff8 [arm_ni] @ 2374
-arm-ni ARMHCB70:00: Failed to request PMU region 0x1f3c13000
-arm-ni ARMHCB70:00: probe with driver arm-ni failed with error -16
-list_add corruption: next->prev should be prev (fffffd01e9698a18),
-but was 0000000000000000. (next=ffff10001a0decc8).
-pstate: 6340009 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : list_add_valid_or_report+0x7c/0xb8
-lr : list_add_valid_or_report+0x7c/0xb8
-Call trace:
- __list_add_valid_or_report+0x7c/0xb8
- perf_pmu_register+0x22c/0x3a0
- arm_ni_probe+0x554/0x70c [arm_ni]
- platform_probe+0x70/0xe8
- really_probe+0xc6/0x4d8
- driver_probe_device+0x48/0x170
- __driver_attach+0x8e/0x1c0
- bus_for_each_dev+0x64/0xf0
- driver_add+0x138/0x260
- bus_add_driver+0x68/0x138
- __platform_driver_register+0x2c/0x40
- arm_ni_init+0x14/0x2a [arm_ni]
- do_init_module+0x36/0x298
----[ end trace 0000000000000000 ]---
-Kernel panic - not syncing: Oops - BUG: Fatal exception
-SMP: stopping secondary CPUs
+the general consensus is that you don't save energy when you're not
+reducing the voltage together with the frequency.
 
-Fixes: 4d5a7680f2b4 ("perf: Add driver for Arm NI-700 interconnect PMU")
-Signed-off-by: Hongbo Yao <andy.xu@hj-micro.com>
----
-Changes in v3:
- - Simplify the fix with the existing pmu_base logic. 
- - v2: https://lore.kernel.org/linux-arm-kernel/a1cf32e8-c711-476d-a827-e3affedba780@hj-micro.com/T/#ma3347cf5dca2c3cedbfd475f76931ca7b2751019
+For example cluster0 @1GHz runs at 675mV already, so reducing just the
+frequency, when you're not allowed to reduce the voltage with it won't
+save energy, just make things slow.
 
----
- drivers/perf/arm-ni.c | 39 +++++++++++++++++++++------------------
- 1 file changed, 21 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/perf/arm-ni.c b/drivers/perf/arm-ni.c
-index bdb9e6af8732..de7b6cce4d68 100644
---- a/drivers/perf/arm-ni.c
-+++ b/drivers/perf/arm-ni.c
-@@ -575,6 +575,23 @@ static int arm_ni_init_cd(struct arm_ni *ni, struct arm_ni_node *node, u64 res_s
- 	return err;
- }
- 
-+static void arm_ni_remove(struct platform_device *pdev)
-+{
-+	struct arm_ni *ni = platform_get_drvdata(pdev);
-+
-+	for (int i = 0; i < ni->num_cds; i++) {
-+		struct arm_ni_cd *cd = ni->cds + i;
-+
-+		if (!cd->pmu_base)
-+			continue;
-+
-+		writel_relaxed(0, cd->pmu_base + NI_PMCR);
-+		writel_relaxed(U32_MAX, cd->pmu_base + NI_PMINTENCLR);
-+		perf_pmu_unregister(&cd->pmu);
-+		cpuhp_state_remove_instance_nocalls(arm_ni_hp_state, &cd->cpuhp_node);
-+	}
-+}
-+
- static void arm_ni_probe_domain(void __iomem *base, struct arm_ni_node *node)
- {
- 	u32 reg = readl_relaxed(base + NI_NODE_TYPE);
-@@ -657,8 +674,11 @@ static int arm_ni_probe(struct platform_device *pdev)
- 				reg = readl_relaxed(pd.base + NI_CHILD_PTR(c));
- 				arm_ni_probe_domain(base + reg, &cd);
- 				ret = arm_ni_init_cd(ni, &cd, res->start);
--				if (ret)
-+				if (ret) {
-+					ni->cds[cd.id].pmu_base = NULL;
-+					arm_ni_remove(pdev);
- 					return ret;
-+				}
- 			}
- 		}
- 	}
-@@ -666,23 +686,6 @@ static int arm_ni_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static void arm_ni_remove(struct platform_device *pdev)
--{
--	struct arm_ni *ni = platform_get_drvdata(pdev);
--
--	for (int i = 0; i < ni->num_cds; i++) {
--		struct arm_ni_cd *cd = ni->cds + i;
--
--		if (!cd->pmu_base)
--			continue;
--
--		writel_relaxed(0, cd->pmu_base + NI_PMCR);
--		writel_relaxed(U32_MAX, cd->pmu_base + NI_PMINTENCLR);
--		perf_pmu_unregister(&cd->pmu);
--		cpuhp_state_remove_instance_nocalls(arm_ni_hp_state, &cd->cpuhp_node);
--	}
--}
--
- #ifdef CONFIG_OF
- static const struct of_device_id arm_ni_of_match[] = {
- 	{ .compatible = "arm,ni-700" },
--- 
-2.43.0
+Heiko
+
+> Signed-off-by: Daniele Briguglio <hello@superkali.me>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3588-opp.dtsi | 58 ++++++++++++++++++++
+>  1 file changed, 58 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-opp.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-opp.dtsi
+> index 0f1a77697351..1b018823d5d3 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-opp.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-opp.dtsi
+> @@ -5,6 +5,22 @@ cluster0_opp_table: opp-table-cluster0 {
+>  		compatible = "operating-points-v2";
+>  		opp-shared;
+>  
+> +		opp-408000000 {
+> +			opp-hz = /bits/ 64 <408000000>;
+> +			opp-microvolt = <675000 675000 950000>;
+> +			clock-latency-ns = <40000>;
+> +			opp-suspend;
+> +		};
+> +		opp-600000000 {
+> +			opp-hz = /bits/ 64 <600000000>;
+> +			opp-microvolt = <675000 675000 950000>;
+> +			clock-latency-ns = <40000>;
+> +		};
+> +		opp-816000000 {
+> +			opp-hz = /bits/ 64 <816000000>;
+> +			opp-microvolt = <675000 675000 950000>;
+> +			clock-latency-ns = <40000>;
+> +		};
+>  		opp-1008000000 {
+>  			opp-hz = /bits/ 64 <1008000000>;
+>  			opp-microvolt = <675000 675000 950000>;
+> @@ -37,6 +53,27 @@ cluster1_opp_table: opp-table-cluster1 {
+>  		compatible = "operating-points-v2";
+>  		opp-shared;
+>  
+> +		opp-408000000 {
+> +			opp-hz = /bits/ 64 <408000000>;
+> +			opp-microvolt = <675000 675000 1000000>;
+> +			clock-latency-ns = <40000>;
+> +			opp-suspend;
+> +		};
+> +		opp-600000000 {
+> +			opp-hz = /bits/ 64 <600000000>;
+> +			opp-microvolt = <675000 675000 1000000>;
+> +			clock-latency-ns = <40000>;
+> +		};
+> +		opp-816000000 {
+> +			opp-hz = /bits/ 64 <816000000>;
+> +			opp-microvolt = <675000 675000 1000000>;
+> +			clock-latency-ns = <40000>;
+> +		};
+> +		opp-1008000000 {
+> +			opp-hz = /bits/ 64 <1008000000>;
+> +			opp-microvolt = <675000 675000 1000000>;
+> +			clock-latency-ns = <40000>;
+> +		};
+>  		opp-1200000000 {
+>  			opp-hz = /bits/ 64 <1200000000>;
+>  			opp-microvolt = <675000 675000 1000000>;
+> @@ -78,6 +115,27 @@ cluster2_opp_table: opp-table-cluster2 {
+>  		compatible = "operating-points-v2";
+>  		opp-shared;
+>  
+> +		opp-408000000 {
+> +			opp-hz = /bits/ 64 <408000000>;
+> +			opp-microvolt = <675000 675000 1000000>;
+> +			clock-latency-ns = <40000>;
+> +			opp-suspend;
+> +		};
+> +		opp-600000000 {
+> +			opp-hz = /bits/ 64 <600000000>;
+> +			opp-microvolt = <675000 675000 1000000>;
+> +			clock-latency-ns = <40000>;
+> +		};
+> +		opp-816000000 {
+> +			opp-hz = /bits/ 64 <816000000>;
+> +			opp-microvolt = <675000 675000 1000000>;
+> +			clock-latency-ns = <40000>;
+> +		};
+> +		opp-1008000000 {
+> +			opp-hz = /bits/ 64 <1008000000>;
+> +			opp-microvolt = <675000 675000 1000000>;
+> +			clock-latency-ns = <40000>;
+> +		};
+>  		opp-1200000000 {
+>  			opp-hz = /bits/ 64 <1200000000>;
+>  			opp-microvolt = <675000 675000 1000000>;
+> 
+
+
+
 
 
