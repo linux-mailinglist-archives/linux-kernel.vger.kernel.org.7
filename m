@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-586916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 149BDA7A554
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:39:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3730A7A556
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81FCE172DED
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:35:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F128717649B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B4F24FC1E;
-	Thu,  3 Apr 2025 14:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477BF2505A9;
+	Thu,  3 Apr 2025 14:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAn1mFcb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f25Mxn7s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9B924EF75;
-	Thu,  3 Apr 2025 14:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E452500C5;
+	Thu,  3 Apr 2025 14:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743690936; cv=none; b=oUE1fWmaXmZRvgc97mxCy00yBdogsQmTT2X+3T6mYi4IaCBuZ3mhYMogMgudtv/blNxv5wZ8aSTYkyU4MTFNlyqudf/vDIxhtlWTmv9wPOjHxxJuVMAP20lmSFimB7SHqDrRFnkn5hotR99onWKp8oqaBoMAax49A9VyFFX8A6E=
+	t=1743690937; cv=none; b=YAPXG9haAk2YMF4NiR3Upybca/29jKalLKDTvA3VMUrNMoPgh/JjtBV5BI2qV2J8sZNT1K5numLSBA2Z7q+n81t1X/D3wcB/mzFlHB6sWRjt5iJ8Iqm0zM6d8sEXLer70nuysIVzN25ix/bxBDhzlWQv7OIG/++2haz2uaQBg34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743690936; c=relaxed/simple;
-	bh=zumkyYgD4rKRxbVuiS3xNK72xMEL7G46+2AXsQp2PTM=;
+	s=arc-20240116; t=1743690937; c=relaxed/simple;
+	bh=UYZcrSoIukyNWFqG5RqeZgTW5DKkSSPFrREL7EXhL7A=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=AGMnTp6FK2XR1cZPBR2mumdKTVYFjEOFnOS7X93Uxu+jyXZjwFBjG7sFCe6+pE+S75KMep4bp+sg8vET2HwD7srEuBiTasARTgXp062Ba33QoWVYTM+oUxqFoL/x3TI9++c2VQbEfObO5bs0F/J3vIzHaPGBkjtK7CgyMe6ZPyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAn1mFcb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94184C4CEE5;
-	Thu,  3 Apr 2025 14:35:35 +0000 (UTC)
+	 Message-Id:Subject; b=PxR/pDpnShujqOuRyGxolgrSN0SGJxKVs1IoQthKCh1Q7KzMYnev1xVRxzI1LSgTb6Dd0M0uRlK+fMHJqZgcy4mLKXUEw0nrYcjGApoGKcxnRGKp9tUNvTW7AqOw43nMW4wU7LBhIApsRwo/L/F4/I/daAlc5WCFSHz/WVGxE18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f25Mxn7s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D37D8C4CEEB;
+	Thu,  3 Apr 2025 14:35:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743690935;
-	bh=zumkyYgD4rKRxbVuiS3xNK72xMEL7G46+2AXsQp2PTM=;
+	s=k20201202; t=1743690937;
+	bh=UYZcrSoIukyNWFqG5RqeZgTW5DKkSSPFrREL7EXhL7A=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=aAn1mFcb7H6bICJ3q77Y2KkevOwYQkQpfxxEt5dkNtIUmPbo8+rf6rI7/i+ZmrqDF
-	 GQ8qmloqZtKEvPdwmAqegoZY0Zq0HeCZLpt5N1ASKyZuot87W1m1zDrNEJx6Z7goZF
-	 q4av7dDSYKfMX2lxMqsrE0hWkVSSxRqUUJEyJAG9VawD4CqdMSfEKVUme+qptjwA9T
-	 J0fq5D6JhaAqT5vKWz1lT4taJ7njeZe59y/5WxfFYp/2F3kG4w6uzldaX69N1B6H6S
-	 S7l+qc3d+gV6K/a4AhvM+jt5esZlNKngtfnSZPoXZHWLsg70SWvGdq+JwB5uUfstm7
-	 oYJLRDmmHhfbQ==
-Date: Thu, 03 Apr 2025 09:35:34 -0500
+	b=f25Mxn7sTE5uXYsLGJO6y9vJRVcdxdMTTjs995bdwPmwAWxtZUhuWmAtVPyYG4GsD
+	 xdzO74ybVodnmOEuOn91FigvsAw5u8Ohe1C8ldk+ZOvgQTt3qm07mc+u2ASB/fcHiS
+	 Kwb0Ty4JcDtqx6arTnkBZu2kJtTO4s331wYU0O+nJa9XRd0zu6mpHgXHK/9BwxRMKj
+	 RcEDf+XsiRwZKawYl1zyC5CEDuSm89kB750I3vspRA+T319KMGlrHnR/1d/Fzxe0qF
+	 WP1HB05/+4XrPEnwuhoMtyYBI8dKPBRtqRy52tg1EAWBjaoc78RZNlphdnYyqUhvNJ
+	 ci20RAzxULz9Q==
+Date: Thu, 03 Apr 2025 09:35:35 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,42 +50,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, mcoquelin.stm32@gmail.com, 
- alexandre.torgue@foss.st.com, linux-arm-kernel@lists.infradead.org, 
- conor+dt@kernel.org, tglx@linutronix.de, krzk+dt@kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org, 
- maz@kernel.org
-To: Christian Bruel <christian.bruel@foss.st.com>
-In-Reply-To: <20250403122805.1574086-1-christian.bruel@foss.st.com>
-References: <20250403122805.1574086-1-christian.bruel@foss.st.com>
-Message-Id: <174369066487.2789685.6006460527429704975.robh@kernel.org>
-Subject: Re: [PATCH 0/3] Add ST STM32MP2 GICv2 quirk for EOI split mode
+Cc: Conor Dooley <conor+dt@kernel.org>, 
+ Yashwanth Varakala <y.varakala@phytec.de>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Fabio Estevam <festevam@gmail.com>, Jan Remmet <j.remmet@phytec.de>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, upstream@lists.phytec.de, 
+ Sascha Hauer <s.hauer@pengutronix.de>, devicetree@vger.kernel.org, 
+ Shawn Guo <shawnguo@kernel.org>, linux-kernel@vger.kernel.org, 
+ Benjamin Hahn <b.hahn@phytec.de>, imx@lists.linux.dev, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Teresa Remmet <t.remmet@phytec.de>
+To: Yannic Moog <y.moog@phytec.de>
+In-Reply-To: <20250403-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-v2-0-c0d2eff683ac@phytec.de>
+References: <20250403-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-v2-0-c0d2eff683ac@phytec.de>
+Message-Id: <174369066563.2789714.13229546252082031365.robh@kernel.org>
+Subject: Re: [PATCH v2 0/3] Add new imx imx8mp-libra-rdk-fpsc SBC
 
 
-On Thu, 03 Apr 2025 14:28:02 +0200, Christian Bruel wrote:
-> When using GIC EOI split mode, GICC_DIR fails to deactivate the interrupt,
-> leading to a WFI freeze. On ST MP2, GIC cpu interface is limitted to 4K,
-> thus GICC_DIR register is reachable with a 0x10000 remapping
+On Thu, 03 Apr 2025 13:29:26 +0200, Yannic Moog wrote:
+> The Libra i.MX 8M Plus is a SBC that consists of the Libra base board
+> and the phyCORE i.MX 8M Plus FPSC SoM.
+> This series adds its binding and device trees.
+> In addition add an overlay for an LVDS display that may optionally be
+> connected to the Libra board.
 > 
-> When using GIC EOI split mode, the GICC_DIR fails to deactivate the
-> interrupt, causing core freeze on WFI. On the ST MP2, the GIC CPU interface
-> is limited to 4K, so the GICC_DIR register can be accessed remapping the
-> register to a 0x10000 offset.
+> ---
+> Changes in v2:
+> - reorder device tree nodes of SoM and board device trees according to https://github.com/lznuaa/dt-format
+> - fix typo in reg: regulator-12v0 -> regulator-vdd-12v0
+> - add to binding commit description the difference between phycore-som and phycore-fpsc
+> - Link to v1: https://lore.kernel.org/r/20250328-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-v1-0-28324c7f81fa@phytec.de
 > 
-> Christian Bruel (3):
->   dt-bindings: interrupt-controller: arm,gic: Add
->     st,stm32mp2-cortex-a7-gic
->   irqchip/gic: Use 0x10000 offset to access GICC_DIR
->   arm64: dts: st: add st,stm32mp2-cortex-a7-gic in intc node in
->     stm32mp251.dtsi
+> ---
+> Yannic Moog (3):
+>       dt-bindings: add imx8mp-libra-rdk-fpsc
+>       arm64: dts: add imx8mp-libra-rdk-fpsc board
+>       arm64: dts: add imx8mp-libra-rdk-fpsc LVDS panel overlay
 > 
->  .../interrupt-controller/arm,gic.yaml         |  1 +
->  arch/arm64/boot/dts/st/stm32mp251.dtsi        |  2 +-
->  drivers/irqchip/irq-gic.c                     | 47 ++++++++++++++++++-
->  3 files changed, 48 insertions(+), 2 deletions(-)
+>  Documentation/devicetree/bindings/arm/fsl.yaml     |   7 +
+>  arch/arm64/boot/dts/freescale/Makefile             |   3 +
+>  .../imx8mp-libra-rdk-fpsc-lvds-etml1010g3dra.dtso  |  44 ++
+>  .../boot/dts/freescale/imx8mp-libra-rdk-fpsc.dts   | 290 ++++++++
+>  .../boot/dts/freescale/imx8mp-phycore-fpsc.dtsi    | 796 +++++++++++++++++++++
+>  5 files changed, 1140 insertions(+)
+> ---
+> base-commit: 90453dc4dee29b96b9162895f45776bc25526e07
+> change-id: 20241210-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-c273025682f2
 > 
+> Best regards,
 > --
-> 2.34.1
+> Yannic Moog <y.moog@phytec.de>
 > 
 > 
 > 
@@ -106,38 +121,17 @@ make sure dt-schema is up to date:
 
 
 This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250403 (exact match)
+ Base: using specified base-commit 90453dc4dee29b96b9162895f45776bc25526e07
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/st/' for 20250403122805.1574086-1-christian.bruel@foss.st.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/freescale/' for 20250403-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-v2-0-c0d2eff683ac@phytec.de:
 
-arch/arm64/boot/dts/st/stm32mp257f-dk.dtb: interrupt-controller@4ac00000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['st,stm32mp2-cortex-a7-gic', 'arm,cortex-a7-gic'] is too long
-arch/arm64/boot/dts/st/stm32mp257f-dk.dtb: interrupt-controller@4ac00000: compatible: 'oneOf' conditional failed, one must be fixed:
-		['st,stm32mp2-cortex-a7-gic', 'arm,cortex-a7-gic'] is too long
-		'nvidia,tegra210-agic' was expected
-		'st,stm32mp2-cortex-a7-gic' is not one of ['nvidia,tegra186-agic', 'nvidia,tegra194-agic', 'nvidia,tegra234-agic']
-	'arm,gic-400' was expected
-	'arm,arm1176jzf-devchip-gic' was expected
-	'brcm,brahma-b15-gic' was expected
-	'arm,arm11mp-gic' was expected
-	'arm,cortex-a15-gic' was expected
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/arm,gic.yaml#
-arch/arm64/boot/dts/st/stm32mp257f-ev1.dtb: interrupt-controller@4ac00000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['st,stm32mp2-cortex-a7-gic', 'arm,cortex-a7-gic'] is too long
-arch/arm64/boot/dts/st/stm32mp257f-ev1.dtb: interrupt-controller@4ac00000: compatible: 'oneOf' conditional failed, one must be fixed:
-		['st,stm32mp2-cortex-a7-gic', 'arm,cortex-a7-gic'] is too long
-		'nvidia,tegra210-agic' was expected
-		'st,stm32mp2-cortex-a7-gic' is not one of ['nvidia,tegra186-agic', 'nvidia,tegra194-agic', 'nvidia,tegra234-agic']
-	'arm,gic-400' was expected
-	'arm,arm1176jzf-devchip-gic' was expected
-	'brcm,brahma-b15-gic' was expected
-	'arm,arm11mp-gic' was expected
-	'arm,cortex-a15-gic' was expected
-	from schema $id: http://devicetree.org/schemas/interrupt-controller/arm,gic.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-libra-rdk-fpsc.dtb: clock-controller@30e20000: clock-names: ['ahb', 'sai1', 'sai2', 'sai3', 'sai5', 'sai6', 'sai7', 'axi'] is too long
+	from schema $id: http://devicetree.org/schemas/clock/imx8mp-audiomix.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-libra-rdk-fpsc.dtb: clock-controller@30e20000: clocks: [[2, 284], [2, 123], [2, 124], [2, 125], [2, 127], [2, 128], [2, 182], [2, 321]] is too long
+	from schema $id: http://devicetree.org/schemas/clock/imx8mp-audiomix.yaml#
 
 
 
