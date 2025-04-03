@@ -1,106 +1,122 @@
-Return-Path: <linux-kernel+bounces-586135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E20EA79BA0
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 07:58:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABC7AA79BA6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8C6A7A36E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 05:57:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 285211893099
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D19C19C54E;
-	Thu,  3 Apr 2025 05:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E168198E75;
+	Thu,  3 Apr 2025 06:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xayL+XCw"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="gdYF5TZd"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB5D33993
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 05:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547FE194AC7;
+	Thu,  3 Apr 2025 06:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743659912; cv=none; b=tjciA5DK2OaArSoSKD9D60HEaeldpr3jUGV1eiZZw+3Yos9HlGnrlWMuFxm1mcbC2d93TNy+P1czRSR5/l7zdGbvuwNdT9Ryh2tzMZBjxvte5WMovJqr5bHGA6Vtvo6cXEMV6LQ8TDDnvl94+loaAf1FbOrCscndHsTFIioKNiM=
+	t=1743660018; cv=none; b=TLbo4a+GIwNIBooaQ7PEiagHHHwKGvkhML4PnGOP4Myl+1jALlYY9mcktQ33fIOzk8wR8F+ghxAZDFUqI6oVanC/NaaIlg8oJ8ObGGQ44x3m7EvDjtwAgAQlLI7WwJnz7OCdL9DnNddc9oqD1WVq8yQbXHLGue93Ddj5tutR/MQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743659912; c=relaxed/simple;
-	bh=3Kni2oOnbEHyUAU3pgeBQOPNWlUqFyZ9wu5gIlDz/Gc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dVGnYNVChshO/EYSdgLy0aue/UKqJj69NfZ8dGOWmzMeTi1+xkG3WPOP8F4IRpqG9wKXvGfn6Fj8EvzcuHJF8kv/RSTZJhaQ8mk29O9t2Nkx6iKmjZadJ5eWX/ypGy6qaTvlhQoHilfcwjChhUtggfmCx2OLTZWXoKADIX3SNZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xayL+XCw; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <b6cd8306-5049-4e03-ac24-7f8f5bb381e2@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743659906;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z4j7PhN7Wup2fYwx3gBiSsMabuOB6a6FQW9/Vz5nkMk=;
-	b=xayL+XCw9AqSEOzvQvWTAwKzx9GstCLM1h1BXL2Si7vcCmNaWQRJEKCzJc+Q/EATqCRgbD
-	IB1w1EilAXBTs2x0toxWhPVLZXX2c+vUAfHwf8fnwLu4Z9DmiA64soBZkmeHuhUYhoLfVz
-	ZmsGloM3c0IbrAzzfcePV6eOuSQTi8I=
-Date: Thu, 3 Apr 2025 13:58:10 +0800
+	s=arc-20240116; t=1743660018; c=relaxed/simple;
+	bh=GgGLK/JKAFdo0H9wSAMZLdeL31KlQxn4teieuzIC7e4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=KQRf57wG6QAS086LUr/ASYY18toHeX8UZcOV4K9vhuX2FaIU5uDq+HWldBKi3UEIlytLHlLibOzPELOidmj70RCHSybRLHxnigA2gZM5oFEA8gcA14bpSM2PjKtinmUqyKeqdFEFdNqk4r5mYN8F/cBoBTpeigHxSqoV7tdrMhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=gdYF5TZd; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
+	From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=5NwkqZuewG0v34YS2DSouf6H/+kIB+PU0H+C6MMnpBo=; b=gdYF5TZdvGh9Vwsn8O2FKNpeb4
+	UQ9rL8LYkC1s+dWDW0+bG+nYwSBEtkWifq11PtQTeIqvCmHfYpJxJDSH1io13BwcPqWxuWpankDqV
+	tXKofZLYSY1EPbR4v05KKktU6v3q2KLPBSqRosSSQlw+HHBIxa+m+yguVd2X6zqrAosfc0BBcPOTx
+	5//aIrcnM3WkGfnOT7CXJ1zGO+o9JSMciu/zMwEgbipJ6EeoDL/s3oPx6aOpgLD1EiQwXuolAGaER
+	THtitDTc94QXgCbx0U9wxtEroTG9WFv5eCImTRBuv12jshe42t/8SqoDuCrhSk6dxi32GUnxjgZ76
+	orbc10aQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1u0Dc4-00COSZ-0p;
+	Thu, 03 Apr 2025 13:59:41 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 03 Apr 2025 13:59:40 +0800
+Date: Thu, 3 Apr 2025 13:59:40 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, mhiramat@kernel.org,
+	mark.rutland@arm.com, mathieu.desnoyers@efficios.com,
+	akpm@linux-foundation.org, vdonnefort@google.com, vbabka@suse.cz,
+	rppt@kernel.org, kees@kernel.org, tony.luck@intel.com,
+	gpiccoli@igalia.com, linux-hardening@vger.kernel.org,
+	willy@infradead.org, Eric Biggers <ebiggers@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH v2 1/2] tracing: ring-buffer: Have the ring buffer code
+ do the vmap of physical memory
+Message-ID: <Z-4jzImykAbHK2Gz@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4] mm/page_alloc: Consolidate unlikely handling in
- page_expected_state
-To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, Markus.Elfring@web.de,
- Ye Liu <liuye@kylinos.cn>, Sidhartha Kumar <sidhartha.kumar@oracle.com>,
- Anshuman Khandual <anshuman.khandual@arm.com>
-References: <20250328014757.1212737-1-ye.liu@linux.dev>
- <Z-ayTt8o656AkGfz@casper.infradead.org>
- <8720c775-c0fb-4fbf-a1a8-409fef2b67ad@linux.dev>
- <Z-q71LlcCQ5I-2D-@casper.infradead.org>
- <6cd78595-f9d3-4f26-8ca3-d1a0bf4e8dff@linux.dev> <Z-4GuZZ_BjFNm9Gq@fedora>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Ye Liu <ye.liu@linux.dev>
-In-Reply-To: <Z-4GuZZ_BjFNm9Gq@fedora>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wg0wQb+CbUk2GY0CeVuTQvq67-oYR0nL8wGgySia3ce7g@mail.gmail.com>
+X-Newsgroups: apana.lists.os.linux.kernel
 
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>
+> There's a flush_dcache_range() thing too, but I don't see a single use
+> of that function in generic code, so I suspect that one is currently
+> purely for architecture-specific drivers and doesn't work in egneral.
+> 
+> So *this* is the kind of "bad in a different way" I could imagine:
+> things that probably should be cleaned up and be available to generic
+> code, but very few people have cared, and so they are used in ad-hoc
+> places and haven't been sufficiently generalized and cleaned up.
 
-在 2025/4/3 11:55, Vishal Moola (Oracle) 写道:
-> On Wed, Apr 02, 2025 at 10:49:17AM +0800, Ye Liu wrote:
->> 在 2025/3/31 23:59, Matthew Wilcox 写道:
->>> On Mon, Mar 31, 2025 at 08:08:01PM +0800, Ye Liu wrote:
->>>> 在 2025/3/28 22:29, Matthew Wilcox 写道:
->>>>> On Fri, Mar 28, 2025 at 09:47:57AM +0800, Ye Liu wrote:
->>>>>> Consolidate the handling of unlikely conditions in the 
->>>>>> page_expected_state() function to reduce code duplication and improve 
->>>>>> readability.
->>>>> I don't think this is an equivalent transformation.
->>>> Could you explain it in detail?
->>> page_expected_state() is called both at free and alloc.  I think
->>> the correct behaviour on encountering a HWPOISON page should be
->>> different at alloc and free, don't you?
->> In the alloc process, this patch does not modify the code behavior.
->> Regarding the free process, the if (unlikely(PageHWPoison(page)) && !order)
->> code handles the case where order is 0. When order is not 0, it does not
->> matter if __ClearPageBuddy is used to process the last page of the compound
->> page, because page->flags &= ~PAGE_FLAGS_CHECK_AT_PREP; will also clear it.
->> Is that right?                                                             
-> I believe a page's "Buddy" flag is stored in page->type, so maybe this
-> won't do what you expect?
+There is no fallback implementation of flush_dcache_range for the
+architectures that don't need it.
 
+It would be nice to have that, as doing it by hand is pretty silly:
 
-Got it, thanks! I originally thought that page->page_type would also be
-cleared in the free process, meaning the free behavior wouldn't change,
-but that’s not actually the case. I need to look into what impact it
-would have if __ClearPageBuddy is also executed in the free process.   
+static inline void scatterwalk_done_dst(struct scatter_walk *walk,
+					unsigned int nbytes)
+{
+	scatterwalk_unmap(walk);
+	/*
+	 * Explicitly check ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE instead of just
+	 * relying on flush_dcache_page() being a no-op when not implemented,
+	 * since otherwise the BUG_ON in sg_page() does not get optimized out.
+	 * This also avoids having to consider whether the loop would get
+	 * reliably optimized out or not.
+	 */
+	if (ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE) {
+		struct page *base_page;
+		unsigned int offset;
+		int start, end, i;
 
+		base_page = sg_page(walk->sg);
+		offset = walk->offset;
+		start = offset >> PAGE_SHIFT;
+		end = start + (nbytes >> PAGE_SHIFT);
+		end += (offset_in_page(offset) + offset_in_page(nbytes) +
+			PAGE_SIZE - 1) >> PAGE_SHIFT;
+		for (i = start; i < end; i++)
+			flush_dcache_page(nth_page(base_page, i));
+	}
 
-Thanks,
-Ye Liu
-
-
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
