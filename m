@@ -1,123 +1,134 @@
-Return-Path: <linux-kernel+bounces-587747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC8F1A7AFF8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:05:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 014B0A7B00D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5E9717B693
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:58:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60044881D21
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB4C25A2C5;
-	Thu,  3 Apr 2025 19:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07BD25A33D;
+	Thu,  3 Apr 2025 19:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="kdCzqjTv"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IaZE1+04"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9B7259CBD;
-	Thu,  3 Apr 2025 19:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F9F224FA;
+	Thu,  3 Apr 2025 19:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743709992; cv=none; b=praaa90PreZsCuhgqe1NWm0RqiYHyOkrNPNTIOaxNFTJnGqSBmC/pboF6ZFvRq6i90YgeJ4ReKQFaHoK/U6iF8BnpfW22kT3zKKgvLV723gM8gd6JRdSunsoar9pjQQKruZou52eD0AjJRNMwWobTZMEqSiIuz0peMxRa3R5Mxo=
+	t=1743710153; cv=none; b=bHct7oeaeN5II/gq0sDtvmzjyrL72eVCBL9LPqkUysoV8ssdrq56P2njPyUoMl15Bel8/QMm4ogThmEl+dWcISM5MPJYM7fmjA0qc9WxzBXzHYYJ1d6VzTduEPZi0jnI0JLH4Nh+k+7+7xKspgVC7WDhsUMw9mPt93XcBlFLaD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743709992; c=relaxed/simple;
-	bh=EqrX3cvjeRiYPY6y27M2pPrYu3nuvoLp/+5WruydRCY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lyTZRhWNfHpKxS7q9W2f5psBIKBU7uDIdXwk0xCm/wgh+A6kitXlYSlADgBC3ZaTibN6ZgUZLA7zpA8Bs97vgy1rKY7i90ab49aH4Sn/NO28spxgnX9TXHo95rAHs9Bt6k+0tj0xIVBmXt56R1HCuVJBilMsGUcikZSfRIMCdKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=kdCzqjTv; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf58eea0fso6819655e9.0;
-        Thu, 03 Apr 2025 12:53:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1743709988; x=1744314788; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6du6KAtTyYabq94pzb2wgfnhQXGYymn0VC+kdziS+Bk=;
-        b=kdCzqjTv5KPobFdYYrYUzaCDwir6Qj/FuW+cHs2VVxLOfb/HwYUtisL60uyo1H8Z4S
-         a9Fc/J9iwXFyfKTP7VtkMbumgWEVAba0BBrBlFjHYVsNJWxhsxxoLO1cZJchOg9Gk/ST
-         jXCbt5YWJD3rvPM5xW4Y1oLRe2gm7kGQsqagCbNJHPVlN28bAnOQYWoZzijoGl72G4KN
-         TIsFSrqEB9w7j4QluERje1JP96cjr4OcpfJ1uSPEK60Mp0UJW/quRxQ+3Tw1XGA9/MKQ
-         joBRLfG4uO0wedjEKnt3wCTxN4xlif00tIg7e4rsMKqjo84jOXKEcxSnx7GCvf0hzV1M
-         rOZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743709988; x=1744314788;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6du6KAtTyYabq94pzb2wgfnhQXGYymn0VC+kdziS+Bk=;
-        b=aXvZzG4sebPU99Cd2P4qZzTBr28Tv2tNVNnvIhq3Rmnx6rlJPVo6KVXIgD0wN7Qu9S
-         c35NtcV5+WHi2iW90RiRib29453BEnZ8Fn5rNWRMCpYhlWjzFIz6l4N6xSGtpIpZOaKJ
-         U2RDh2oddDCl6o6PMam39Tt8fHE+ZMjh8WxezJNHjYPPBzwFFzNtxwsqICLYdmkQoUB5
-         P26CENRUzSDJTOYZlgKtdpE+inB8T4l8Rs832IDqafsXSPmSyO/8vEJB+UPzSCDpZgV6
-         Y+6AgopbxvUsO7UjriliA9wn0LxMUqs36OELuTR+f+Yc1HMU5EP+dmk9XCpZUgj5c6ky
-         ggNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1AsFCFEG4vYMYrcOsEKPVXLQzqesLrAlPbfIA2d7NqL0Gt8Fvd4cdcLSpNUmtd32hYg79xBfDxUeC86s=@vger.kernel.org, AJvYcCV3WQrMhDn8wUOfyKFbdph1Sp62UTswlopnbUmziZcCsJln4NCp9Csj1lGZv8WkSRGpxEnNdFCN@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhZ2sWymGv7NUpvi4kpYBwXElR0D61CCO/K4G1II96nkm6I0GX
-	hnfCbzOBzdjv7C/Bi0ziLV/Kn9958cQ9ybzz0PQBHoWcCKKt0Ic=
-X-Gm-Gg: ASbGncvhyEvAm2js/01HuZ6sgd2DccDqcC0M7NrboxfaFh4ozKQV+lE3TYwyjrxkyy/
-	P0OoL7lRpdYMAGJ2nrJb8VAZmLl1f8swRRUUAXN7WYvRfyZqPeBiVKNl3aVXMcFDMqSbgycpt8L
-	tFE2GC5pjyNALjLGE/J9/yJgMt7l4+S0WO2LRyQYGbFQkS0kZeekOZYJfJxJKVRv6PYAQPIUxqJ
-	CUAOF85IhWFQGX2zwGa6rx59fCtOWHR9laSSHxApxGsruzDTnHumtXNPWRnI1fWccgt/KKKsfoV
-	13s5M4CxM0tGbrResLzsqdjm+3kjeo4RsN9ZThGKmZAlYtTr3KgRJLcrd8ksF2MKx88iYOZ3zQ6
-	oF5ZxexQlBgt33+E2MvDxOFM=
-X-Google-Smtp-Source: AGHT+IGtsE86kbuUK/yEkO0/b3rX2k2QXtMhucX+uUUKI+GteGJnqYOo/i38OP3DqvE8R3eNi180+g==
-X-Received: by 2002:a05:600c:4ecc:b0:43d:2313:7b49 with SMTP id 5b1f17b1804b1-43ecf85f4d2mr3032015e9.12.1743709988208;
-        Thu, 03 Apr 2025 12:53:08 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2ac393.dip0.t-ipconnect.de. [91.42.195.147])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec169abd7sm30040945e9.18.2025.04.03.12.53.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Apr 2025 12:53:06 -0700 (PDT)
-Message-ID: <22486e30-3b38-4361-a3eb-899103ceaff3@googlemail.com>
-Date: Thu, 3 Apr 2025 21:53:04 +0200
+	s=arc-20240116; t=1743710153; c=relaxed/simple;
+	bh=LF7TzE/Bxhpspv9YgQFYoPUl5oZLC86gC94zHFiqbFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TFOR6i5ZLFpU3JvGjF8yZ7ZhsZp8gJWtT9aOk9Mfs0hpVJnlFi4KJ6hzsH7vwRK0oPyWeYc7NAkK3kf0uNcmX9lRaeKcz15ZoK/JVUBHMUzbuPO9G1jvLkhVum802CIvYjlcPKeyYygVCdjZ2x7lMRa232YC9E5M6JFNUwzKpbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IaZE1+04; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 750C1C4CEE3;
+	Thu,  3 Apr 2025 19:55:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743710152;
+	bh=LF7TzE/Bxhpspv9YgQFYoPUl5oZLC86gC94zHFiqbFY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IaZE1+04G9aV5fRRsPoN3pSTnjBGbnbRhZcy8seklH/YwCw9wCdGbFlNQv6lONl7n
+	 1mBPYdm+w9Lh8jFedyvmh5qZfOiXx1+cy9hKQA5Z4oleUGBxNrAYR9iAq/VpXiUoM+
+	 Cw+yr/VaMvSUCoN+yfRI+3O1p+6ztGeJxdzGnu6dFIQW6EY8R829SBJxDHBaKcEWJn
+	 bl27VsZh8PhsPsSHjaKBkcN+IivxIWnz/4W2VfccCig+1YLwkVFMFBnHBAMgICT3Ot
+	 WxMHcKVsl2BUgrFQ5IGNwhF+sEl3sd/WBj6vjn6zkZhkVA8FNBBgw/nwapdQL8qnDu
+	 LdQ3wZpi6IePw==
+Date: Thu, 3 Apr 2025 21:55:48 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Leon Romanovsky <leon@kernel.org>, pr-tracker-bot@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] vfs mount
+Message-ID: <20250403-kaufanreiz-leber-c7c878cc833e@brauner>
+References: <20250322-vfs-mount-b08c842965f4@brauner>
+ <174285005920.4171303.15547772549481189907.pr-tracker-bot@kernel.org>
+ <20250401170715.GA112019@unreal>
+ <20250403-bankintern-unsympathisch-03272ab45229@brauner>
+ <20250403-quartal-kaltstart-eb56df61e784@brauner>
+ <20250403182455.GI84568@unreal>
+ <CAHk-=wj7wDF1FQL4TG1Bf-LrDr1RrXNwu0-cnOd4ZQRjFZB43A@mail.gmail.com>
+ <20250403-auferlegen-erzwang-a7ee009ea96d@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.14 00/21] 6.14.1-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250403151621.130541515@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250403151621.130541515@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Am 03.04.2025 um 17:20 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.14.1 release.
-> There are 21 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
-
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+Content-Type: multipart/mixed; boundary="pdx2hxwawfdibqzb"
+Content-Disposition: inline
+In-Reply-To: <20250403-auferlegen-erzwang-a7ee009ea96d@brauner>
 
 
-Beste Grüße,
-Peter Schneider
+--pdx2hxwawfdibqzb
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
+On Thu, Apr 03, 2025 at 09:45:59PM +0200, Christian Brauner wrote:
+> On Thu, Apr 03, 2025 at 12:18:45PM -0700, Linus Torvalds wrote:
+> > On Thu, 3 Apr 2025 at 11:25, Leon Romanovsky <leon@kernel.org> wrote:
+> > > >
+> > > > -     scoped_guard(rwsem_read, &namespace_sem)
+> > > > +     guard(rwsem_read, &namespace_sem);
+> > >
+> > > I'm looking at Linus's master commit a2cc6ff5ec8f ("Merge tag
+> > > 'firewire-updates-6.15' of git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394")
+> > > and guard is declared as macro which gets only one argument: include/linux/cleanup.h
+> > >   318 #define guard(_name) \
+> > >   319         CLASS(_name, __UNIQUE_ID(guard))
+> > 
+> > Christian didn't test his patch, obviously.
+> 
+> Yes, I just sent this out as "I get why this happens." after my
+> screaming "dammit" moment. Sorry that I didn't make this clear. I had a
+> pretty strong "ffs" 10 minutes after I had waded through the overlayfs
+> code I added without being able to figure out how the fsck this could've
+> happened. In any case, there's the obviously correct version now sitting
+> in the tree and it's seen testing obviously.
+
+I'll also append it here just in case you want to apply it right now.
+
+--pdx2hxwawfdibqzb
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment;
+	filename="v2-0001-fs-actually-hold-the-namespace-semaphore.patch"
+
+From f5ff87a84a8803eeb4b344b9a496e7060787b42a Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Thu, 3 Apr 2025 16:43:50 +0200
+Subject: [PATCH v2] fs: actually hold the namespace semaphore
+
+Don't use a scoped guard use a regular guard to make sure that the
+namespace semaphore is held across the whole function.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/namespace.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 16292ff760c9..14935a0500a2 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2478,7 +2478,8 @@ struct vfsmount *clone_private_mount(const struct path *path)
+ 	struct mount *old_mnt = real_mount(path->mnt);
+ 	struct mount *new_mnt;
+ 
+-	scoped_guard(rwsem_read, &namespace_sem)
++	guard(rwsem_read)(&namespace_sem);
++
+ 	if (IS_MNT_UNBINDABLE(old_mnt))
+ 		return ERR_PTR(-EINVAL);
+ 
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+2.47.2
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+
+--pdx2hxwawfdibqzb--
 
