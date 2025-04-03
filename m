@@ -1,158 +1,111 @@
-Return-Path: <linux-kernel+bounces-586853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09FFDA7A4B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:10:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E99D7A7A4BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 570423B215B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:07:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11C4A3B53E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B22433D1;
-	Thu,  3 Apr 2025 14:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF68D24EF99;
+	Thu,  3 Apr 2025 14:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t3/K4AEt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZh2tGRX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDD72E3386;
-	Thu,  3 Apr 2025 14:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAE724EA88;
+	Thu,  3 Apr 2025 14:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743689265; cv=none; b=Q9Fy+7IM00cRHYmjYi6s6UdZaMvqyQTjhNtnQzpaROM8PQZutn9b4CpobJV/sYpp9w5zxWLRVK5pFJfRTTVYuE6NdYdezI5Sz/OeMwmhc6PWpm4K11cWQYgl899TLod+fgqgPw40W9FqT4a0rMpguGpftrTP3BLgJvxZJGCD64k=
+	t=1743689276; cv=none; b=qFCQnpuMNhWaTzGBTOtxpDGhU2PP+WK5FHlrQhGwJ/bZgf6rMhMDwZEJ3+ia61gLapI12Uj/lmlRL2sfXMl2GbneuONDYS7pV9w2rX4HbBFpGVj2f9VVCY/vt5IdtOZRJnXeq4n/JK/33pOnC7FErdIK1mKJGAsB2L7RRAZEZ6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743689265; c=relaxed/simple;
-	bh=6LM3n1BfNKrngtTAoV1eAbx7UD9eQNSzYRtdoVv+SiY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MbCjB2CtWgiSAD4LmdKVp1wSogLGy63bEkGoNbxfaB5HgIm2gE60+EF20V/AqYoS7TDjKP5z2IaXkACc2S+gUcRqelpyVFsITaM83S6T2wIW1E4kwEuNOE6pMawK5vhG/dX0Wof0yig3Pz8SUnfYtZNieDLIgYnh+IXT1bgW2BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t3/K4AEt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79069C4CEE7;
-	Thu,  3 Apr 2025 14:07:40 +0000 (UTC)
+	s=arc-20240116; t=1743689276; c=relaxed/simple;
+	bh=39VMYhU+74mMPI9DI3V/VxZjDFcE/1tMwt7m4qa+2nU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RLR6ToEwsW844Alx5zmQo6S85LPpp4bnAx8LCTZ70evTzIZ2PpFBRDXePaWYh9xQ9LMz4t0fDs01u/w8XdQNXf/Kn2F5mTcj+e07jqFYuj9HK4aaGU95MUgyxux/2NP6YVduxqT4Nu6YubUOOfT3EK5cuuO7uyZPkHHc66syZas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZh2tGRX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 78660C4CEE3;
+	Thu,  3 Apr 2025 14:07:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743689265;
-	bh=6LM3n1BfNKrngtTAoV1eAbx7UD9eQNSzYRtdoVv+SiY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=t3/K4AEtMj2o39o9ycRM2jc92+vOnB2jMeHoLJ1BgnfRfngu+Kkvm4V5FhWnC92uz
-	 Zi+K3VpfnzLDYDjr9sxyYALk3Y9b+74/6NFz4+jIav/n0IvVFplMMakBgQJH/5wgMV
-	 NMqcMMq3tRzk6l2PdbxczzhI0ij9DE7xBvCuyNry0P5x4YP9V22yfx+dutt9pQw16C
-	 ljMWbCl4axqzEK5/OEgjiABFMIw1+LYXyvejrv0WeJH2juxnLfv0qmYmxUDeeFOFjH
-	 7LQCtlBMBCrhHQhI43cFY/ApNHQ2+Gs+l7qWmQB8llqWZ6KKxdlHt6O3pr9I/iHms0
-	 nY/7RUNPv0Nfw==
-Message-ID: <4c53be6f-9f5b-4d67-ae10-48fe153c614d@kernel.org>
-Date: Thu, 3 Apr 2025 16:07:37 +0200
+	s=k20201202; t=1743689275;
+	bh=39VMYhU+74mMPI9DI3V/VxZjDFcE/1tMwt7m4qa+2nU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=lZh2tGRXFrMH7vxDqCnyXt8z75iA2JMWeOKYtV+SV8WFAR5Jeof8bCbDWLXAs97OQ
+	 xdFz4nV4UUufzWKLJ7ZS54+e05h51S2x5EbLuSGYixNAddc0053ZQnykPCwk+Pp6vW
+	 pbfxyqwaDs7OoAdjp7maTuqO3CZEXJgDyoPMadyIy/mhKs0psXkgfaq85VjwF2y+iC
+	 5y4I/uqjl9DBC5mUQW8iGgc4owmlDHX02xtIWxwM8Y0w+vmvOor7MrzAWsAEf7/gZY
+	 7GcaIvxmErcA+hS4aRngkTm49MMG0lIyIOWlbbtX7j+27HWA14AGZlkDxT/E/9RCd7
+	 JKIbTHiPleHGA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 648BDC3600C;
+	Thu,  3 Apr 2025 14:07:55 +0000 (UTC)
+From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
+Subject: [PATCH 0/2] Onboard USB device support for RTL8188 2.4GHz USB WiFi
+ module
+Date: Thu, 03 Apr 2025 16:07:47 +0200
+Message-Id: <20250403-rtl-onboard-v1-0-10ca9a6a4ee0@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/9] MAINTAINERS: add maintainer for the Ka-Ro
- tx8p-ml81 COM module
-To: Daniel Baluta <daniel.baluta@gmail.com>
-Cc: maudspierings@gocontroll.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20250402-initial_display-v4-0-9f898838a864@gocontroll.com>
- <20250402-initial_display-v4-3-9f898838a864@gocontroll.com>
- <f75fb67a-91ac-4e3d-8ce7-5e0c6c2bb2cb@kernel.org>
- <CAEnQRZC9Exfb5FL+gpMuwU6jLP8vO9hjrxm1+OHQBeLy0J1Wsg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAEnQRZC9Exfb5FL+gpMuwU6jLP8vO9hjrxm1+OHQBeLy0J1Wsg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIADOW7mcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDEwNj3aKSHN38vKT8xKIU3TRjC2NTkzSDJEOTJCWgjoKi1LTMCrBp0bG
+ 1tQB8OGQZXQAAAA==
+X-Change-ID: 20250403-rtl-onboard-f38354f0b14b
+To: Johannes Berg <johannes@sipsolutions.net>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
+ Matthias Kaehlcke <mka@chromium.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Jes Sorensen <Jes.Sorensen@gmail.com>, linux-wireless@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-usb@vger.kernel.org, 
+ =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1743689273; l=886;
+ i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
+ bh=39VMYhU+74mMPI9DI3V/VxZjDFcE/1tMwt7m4qa+2nU=;
+ b=GBtBg4J3jFJRTewN2BJhs+xjZvDIbF3WaNoVycTobq+8M+1FCplFQjhzYoe7LKvp7cOnCZZQn
+ J1i+FWjzMRFAP9zWIkQuT5OMKg/oKA3Iw3DhlMNPK2EfO2MHeNGPhRr
+X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
+ pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
+X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
+ auth_id=156
+X-Original-From: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+Reply-To: j.ne@posteo.net
 
-On 03/04/2025 14:50, Daniel Baluta wrote:
-> On Thu, Apr 3, 2025 at 10:45 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 02/04/2025 09:07, Maud Spierings via B4 Relay wrote:
->>> From: Maud Spierings <maudspierings@gocontroll.com>
->>>
->>> Add GOcontroll as unofficial maintainers of the Ka-Ro tx8p-ml81 COM
->>> module bindings.
->>>
->>> This support is not officially done by Ka-Ro electronics, if they at
->>> some point will supporting mainline, this should be changed to them.
->>>
->>> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
->>> ---
->>>  MAINTAINERS | 7 +++++++
->>>  1 file changed, 7 insertions(+)
->>>
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index 322ee00547f6e494a96d2495092f72148da22bd0..4b3864a9852f9fca2be48987d383c0671e668336 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -12752,6 +12752,13 @@ S:   Maintained
->>>  F:   Documentation/hwmon/k8temp.rst
->>>  F:   drivers/hwmon/k8temp.c
->>>
->>> +KA-RO TX8P COM MODULE
->>> +M:   Maud Spierings <maudspierings@gocontroll.com>
->>> +L:   devicetree@vger.kernel.org
->>
->> Drop
->>
->>> +L:   imx@lists.linux.dev
->>
->> I would say this as well, but not my subsystem to worry.
-> 
-> We don't actually mind to gather all i.MX based boards development on
-> this mailinglist.
+This patchset adds rtl8188 (usbbda,179) to the onboard_usb_dev driver.
+It is found in a set-top box called "Fernsehfee 3.0".
 
-No one discusses this. They are already gathered there.
+As a side note, this device is currently marked untested in the RTL8XXXU
+driver. In my experience it works (tested with a WPA2 home network).
+
+Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+---
+J. Neuschäfer (2):
+      dt-bindings: net: wireless: Add Realtek RTL8188 USB WiFi
+      usb: misc: onboard_dev: Add Realtek RTL8188 WiFi (0bda:0179)
+
+ .../bindings/net/wireless/realtek,rtl8188.yaml     | 51 ++++++++++++++++++++++
+ drivers/usb/misc/onboard_usb_dev.c                 |  1 +
+ drivers/usb/misc/onboard_usb_dev.h                 |  8 ++++
+ 3 files changed, 60 insertions(+)
+---
+base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
+change-id: 20250403-rtl-onboard-f38354f0b14b
 
 Best regards,
-Krzysztof
+-- 
+J. Neuschäfer <j.ne@posteo.net>
+
+
 
