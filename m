@@ -1,408 +1,191 @@
-Return-Path: <linux-kernel+bounces-587738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF3BA7AFD1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:02:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A4B8A7B004
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 354A11740F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:56:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB63088134A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6D52676EB;
-	Thu,  3 Apr 2025 19:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NyQA+zko"
-Received: from mail-oo1-f74.google.com (mail-oo1-f74.google.com [209.85.161.74])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A90E267B14;
+	Thu,  3 Apr 2025 19:44:31 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB502673AF
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 19:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60D026772D
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 19:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743709443; cv=none; b=ZEdJX8M4uoh0OeEu/Dyw1ZasPp7TJjCJ3MAVN0omxja3wcCjRPpCet/UBYCC1Tm5PlSBXioLafoU+4v9amyvRFcvvIpzYMPctphrokrUWQJo7gI+KZI2TwLZqme8zxuziO7+T8CYmE7LruIP/t2gZBdZLe2L0TO78M8D3H6h1YQ=
+	t=1743709470; cv=none; b=MotRq52yY0mI9vIpAPD+WIc8CDB6HiNfQ9qJs0x7jL6MgG2DiCiIMTUL3ZLnB+0HziOz9tY8ONgiQQrF2MBhZNIMg0FO4RRrl4NZJhfUOCFbHXh2rHjwjOJuwZLEO3wAOZiBHEqyuwdi0BUA8YQjsQ6EfrZJs20INX98/Xw3ERQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743709443; c=relaxed/simple;
-	bh=Hb1LH8MWDKh/SBlCFGDKsTyfayTGu9osHdVeQkub7DA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=pPI+gzKpSqbAm2Oz/ZSZ+f5b+rV3VmOmqx1WvPFXpWZoOjT9HcwPQZDQfEiLGWxhwzubhFf0YqsEhi32zjfUV2G0PzAwNnTVD6J/kusvN8txUVbj4iaxUu0jSHVZGiiriaRk1B2y1oLqg3dF0RyZDMIo7K5MHQtK02lVHk8boSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NyQA+zko; arc=none smtp.client-ip=209.85.161.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-oo1-f74.google.com with SMTP id 006d021491bc7-6022020dd2bso325185eaf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 12:44:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743709440; x=1744314240; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qBxUwTOgMQg7WWu2qDeWBrbygHx0f5AF8t2eYtXUGLw=;
-        b=NyQA+zkoEaw1WjMYk/kx4GPmD5qDoN9sU1dLTudfg+r5A4eGhafUpwxb5RQRxOijmB
-         40DuBpiXWi/AdgN0d7rYruIIL7n39vwsq+TcH0fQvvF2IuD1JISo4w2YXx/T2fNs258Z
-         yx5SWOJE+P+3ThNeLH/UIsXmKz6umcmWiramYj0UwToaNCj/ajaC0rK/Dl58Gx/cbq3V
-         sJbMC37SjicNLhoEXtpzVxf5mHctbAyidZCxRpYbdxsbAHZ6J+wUt11bJyTJpfmRxk+V
-         vbHhyGnfwHDAuEp05SsUEiz9P+mpRShKM+liWsqqX3ZuPlmzZbEw+3oaSb6opgGJVbA5
-         QHjA==
+	s=arc-20240116; t=1743709470; c=relaxed/simple;
+	bh=oAJNq4ixnI6wq3O9QBBBBPyVm3bfW1sftVHmA+S1+94=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LGppbyqi4YbjChr/Jeu0Y0yCKtyuARhZ6sA3zAVDIHcTfQX78DJOBZYOGN3bf0av9ERB2NrpS8ld1K7Tj3oGiukPODhkDRybiFetRXP6DRXZ7bBfZE8kP5gqlp9kjnF9bK/injI31pL1pqTaSVzLltcV7xwEBlIbyHKWOzdFAPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d6e10f8747so6871125ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 12:44:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743709440; x=1744314240;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qBxUwTOgMQg7WWu2qDeWBrbygHx0f5AF8t2eYtXUGLw=;
-        b=gENknlTnZ3XcAeWHruoVnp07ZhEKgaMhlG/mVb3FEP52RxRzQQBwrojcnDE7bYm2jN
-         rvxhzmi/cJ42qtsde9Ccg1ovh13Dt9EOvlasmyo/Q8M9y6GvSD0yC2/oLIk0Jqb7u6Nz
-         WfN7+IZaUyL+9p0IgESrP8znSm4gXT++0RVE2ncYB+3Sg69j/dE2C3xkAKV9LyyGZkDR
-         /DXBSRkRy+vcKx8I47McbmO4GuDE6238LMRH6mLd10pKrZxt/+U9qR3QOlrDFKPb4Igg
-         BMeCjBz+3G5kEDoXOU5Cy5O+naSeUq+e9gtjXfD6QbjGkJa8G/AQlLOd2teOTnzf9ZRZ
-         Pajg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7NMRIVEwPpDuXdj3XgIk2EfuAppxkRjvJPp52sW4sfCykc1i8u3rHxs7KRn/xDztarzKIAapVrN/Zox8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4IFPvUp6C+kZUYqW9hYwiotJRYhjn3UAOwlHSK65beUng6Biq
-	r9IWmsVmRNViu4UgQmkn1A1JLjNl1BVt7G79xJV3FydlbahTEfJwRItzGiSnMT+pNZIz0+5FTlO
-	MvdObFA==
-X-Google-Smtp-Source: AGHT+IGUJjNn+0SbWkVSjzPIxGq3rhm0m6MVrbcZaSE78IEupPzoHmRZEuq9Rf3qB5Am6SeFV807TECIhxOE
-X-Received: from oabpb6.prod.google.com ([2002:a05:6870:1e86:b0:2b8:ed65:d4c7])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6870:4e0c:b0:29e:76d1:db3b
- with SMTP id 586e51a60fabf-2cc9e51de4cmr426200fac.5.1743709440581; Thu, 03
- Apr 2025 12:44:00 -0700 (PDT)
-Date: Thu,  3 Apr 2025 12:43:37 -0700
-In-Reply-To: <20250403194337.40202-1-irogers@google.com>
+        d=1e100.net; s=20230601; t=1743709468; x=1744314268;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=16pq9avE19JYNZbKuDka1XQLssxYzgOUqbHA13DSuk8=;
+        b=b+4whYFqwrQiErXLOKP8bAdWkhXS1PisSwO+icERN2V5YBXD/Z5wz0DcAnQHZ4q3K0
+         hjNbff4X8k/6fDfB6WOa6vGAPnI+/GriGxozFKl6uIcgQ1u1z7ltP70JdTiYgyYPDjem
+         zDPAsCBh6ssSfRtKLVIQPEvp1UpeUswDY6Mxyykc2O7/CmXsjr1XxhG3hOElDrcxsmA1
+         08nUs7IzwjAInIgbvG6pC4Iw0RR95i7LstSbLzOb7TRDSh56lDXGHM8TLCyj7qreuqA0
+         kPxyAaIWdg2OZelJh2PPG5ZkYY0YcPvi1f8egfCVqsFI1BBIL3p28ZRbettv7QL9Rt78
+         C0QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXe74dro6TBPC9PrRp0anY3IsN1jjf/lQx6FGDsjjVYcQ2NdwCfWej2etKWVYKViiaPq8aEnS+t4akZ6Kg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMrA7vWrher2eYDUlfGQR3J7Dgdak1bZ/0/2N9YJxlmpRq5LXA
+	juqVYN+iWoNxAksUgzcXn6in2/ILr0E+rnsz8fuxLNHup1Q9GtI4f5AD6dYyhcUGnsjTh2eO37Y
+	dWT2MREdAEu5Ptirt1MV4JNW6DfFNDy3PXXVq0H2w5kZMml1PWe637RQ=
+X-Google-Smtp-Source: AGHT+IF1RSPdj2P+nDv/VuQMWMo800eh2cURzB2rzGkplkST6j4M/AvHDXMd22mr4Z2aPGeZCWVweGeutsmb6GdpbkAb6fEV+uqD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250403194337.40202-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250403194337.40202-5-irogers@google.com>
-Subject: [PATCH v6 4/4] perf parse-events: Add "cpu" term to set the CPU an
- event is recorded on
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Leo Yan <leo.yan@arm.com>, 
-	James Clark <james.clark@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Yicong Yang <yangyicong@hisilicon.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:4401:20b0:3d3:dcb8:1bf1 with SMTP id
+ e9e14a558f8ab-3d6e52c5290mr599885ab.3.1743709468146; Thu, 03 Apr 2025
+ 12:44:28 -0700 (PDT)
+Date: Thu, 03 Apr 2025 12:44:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67eee51c.050a0220.9040b.0240.GAE@google.com>
+Subject: [syzbot] [isofs?] KASAN: slab-out-of-bounds Read in isofs_fh_to_parent
+From: syzbot <syzbot+4d7cd7dd0ce1aa8d5c65@syzkaller.appspotmail.com>
+To: jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-The -C option allows the CPUs for a list of events to be specified but
-its not possible to set the CPU for a single event. Add a term to
-allow this. The term isn't a general CPU list due to ',' already being
-a special character in event parsing instead multiple cpu= terms may
-be provided and they will be merged/unioned together.
+Hello,
 
-An example of mixing different types of events counted on different CPUs:
-```
-$ perf stat -A -C 0,4-5,8 -e "instructions/cpu=0/,l1d-misses/cpu=4,cpu=5/,inst_retired.any/cpu=8/,cycles" -a sleep 0.1
+syzbot found the following issue on:
 
- Performance counter stats for 'system wide':
+HEAD commit:    a2392f333575 drm/panthor: Clean up FW version information ..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=16de47b0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8cceedf2e27e877d
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d7cd7dd0ce1aa8d5c65
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15a1ec3f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17f623e4580000
 
-CPU0            6,979,225      instructions/cpu=0/              #    0.89  insn per cycle
-CPU4               75,138      cpu/l1d-misses/
-CPU5            1,418,939      cpu/l1d-misses/
-CPU8              797,553      cpu/inst_retired.any,cpu=8/
-CPU0            7,845,302      cycles
-CPU4            6,546,859      cycles
-CPU5          185,915,438      cycles
-CPU8            2,065,668      cycles
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/7df8ceab3279/disk-a2392f33.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/42c5af403371/vmlinux-a2392f33.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/73599b849e20/Image-a2392f33.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/191f689db82e/mount_0.gz
 
-       0.112449242 seconds time elapsed
-```
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4d7cd7dd0ce1aa8d5c65@syzkaller.appspotmail.com
 
-Signed-off-by: Ian Rogers <irogers@google.com>
+loop0: detected capacity change from 0 to 164
+==================================================================
+BUG: KASAN: slab-out-of-bounds in isofs_fh_to_parent+0x1b8/0x210 fs/isofs/export.c:183
+Read of size 4 at addr ffff0000cc030d94 by task syz-executor215/6466
+
+CPU: 1 UID: 0 PID: 6466 Comm: syz-executor215 Not tainted 6.14.0-rc7-syzkaller-ga2392f333575 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call trace:
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0x198/0x550 mm/kasan/report.c:521
+ kasan_report+0xd8/0x138 mm/kasan/report.c:634
+ __asan_report_load4_noabort+0x20/0x2c mm/kasan/report_generic.c:380
+ isofs_fh_to_parent+0x1b8/0x210 fs/isofs/export.c:183
+ exportfs_decode_fh_raw+0x2dc/0x608 fs/exportfs/expfs.c:523
+ do_handle_to_path+0xa0/0x198 fs/fhandle.c:257
+ handle_to_path fs/fhandle.c:385 [inline]
+ do_handle_open+0x8cc/0xb8c fs/fhandle.c:403
+ __do_sys_open_by_handle_at fs/fhandle.c:443 [inline]
+ __se_sys_open_by_handle_at fs/fhandle.c:434 [inline]
+ __arm64_sys_open_by_handle_at+0x80/0x94 fs/fhandle.c:434
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+ el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+
+Allocated by task 6466:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x40/0x78 mm/kasan/common.c:68
+ kasan_save_alloc_info+0x40/0x50 mm/kasan/generic.c:562
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xac/0xc4 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __do_kmalloc_node mm/slub.c:4294 [inline]
+ __kmalloc_noprof+0x32c/0x54c mm/slub.c:4306
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ handle_to_path fs/fhandle.c:357 [inline]
+ do_handle_open+0x5a4/0xb8c fs/fhandle.c:403
+ __do_sys_open_by_handle_at fs/fhandle.c:443 [inline]
+ __se_sys_open_by_handle_at fs/fhandle.c:434 [inline]
+ __arm64_sys_open_by_handle_at+0x80/0x94 fs/fhandle.c:434
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+ el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+
+The buggy address belongs to the object at ffff0000cc030d80
+ which belongs to the cache kmalloc-32 of size 32
+The buggy address is located 0 bytes to the right of
+ allocated 20-byte region [ffff0000cc030d80, ffff0000cc030d94)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x10c030
+anon flags: 0x5ffc00000000000(node=0|zone=2|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 05ffc00000000000 ffff0000c0001780 0000000000000000 dead000000000001
+raw: 0000000000000000 0000000080400040 00000000f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff0000cc030c80: fa fb fb fb fc fc fc fc fa fb fb fb fc fc fc fc
+ ffff0000cc030d00: fa fb fb fb fc fc fc fc fa fb fb fb fc fc fc fc
+>ffff0000cc030d80: 00 00 04 fc fc fc fc fc fa fb fb fb fc fc fc fc
+                         ^
+ ffff0000cc030e00: 00 00 00 fc fc fc fc fc fa fb fb fb fc fc fc fc
+ ffff0000cc030e80: 00 00 00 fc fc fc fc fc 00 00 00 fc fc fc fc fc
+==================================================================
+
+
 ---
- tools/perf/Documentation/perf-list.txt |  9 +++
- tools/perf/util/evsel_config.h         |  1 +
- tools/perf/util/parse-events.c         | 76 +++++++++++++++++++++-----
- tools/perf/util/parse-events.h         |  3 +-
- tools/perf/util/parse-events.l         |  1 +
- tools/perf/util/pmu.c                  |  3 +-
- 6 files changed, 76 insertions(+), 17 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/tools/perf/Documentation/perf-list.txt b/tools/perf/Documentation/perf-list.txt
-index 8914f12d2b85..ce0735021473 100644
---- a/tools/perf/Documentation/perf-list.txt
-+++ b/tools/perf/Documentation/perf-list.txt
-@@ -289,6 +289,15 @@ Sums up the event counts for all hardware threads in a core, e.g.:
- 
-   perf stat -e cpu/event=0,umask=0x3,percore=1/
- 
-+cpu:
-+
-+Specifies the CPU to open the event upon. The value may be repeated to
-+specify opening the event on multiple CPUs:
-+
-+
-+  perf stat -e instructions/cpu=0,cpu=2/,cycles/cpu=1,cpu=2/ -a sleep 1
-+  perf stat -e data_read/cpu=0/,data_write/cpu=1/ -a sleep 1
-+
- 
- EVENT GROUPS
- ------------
-diff --git a/tools/perf/util/evsel_config.h b/tools/perf/util/evsel_config.h
-index af52a1516d0b..94a1e9cf73d6 100644
---- a/tools/perf/util/evsel_config.h
-+++ b/tools/perf/util/evsel_config.h
-@@ -48,6 +48,7 @@ struct evsel_config_term {
- 		u32	      aux_sample_size;
- 		u64	      cfg_chg;
- 		char	      *str;
-+		int	      cpu;
- 	} val;
- 	bool weak;
- };
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 783177c5f140..0a57af03db5e 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -7,6 +7,7 @@
- #include <errno.h>
- #include <sys/ioctl.h>
- #include <sys/param.h>
-+#include "cpumap.h"
- #include "term.h"
- #include "env.h"
- #include "evlist.h"
-@@ -179,6 +180,26 @@ static char *get_config_name(const struct parse_events_terms *head_terms)
- 	return get_config_str(head_terms, PARSE_EVENTS__TERM_TYPE_NAME);
- }
- 
-+static struct perf_cpu_map *get_config_cpu(const struct parse_events_terms *head_terms)
-+{
-+	struct parse_events_term *term;
-+	struct perf_cpu_map *cpus = NULL;
-+
-+	if (!head_terms)
-+		return NULL;
-+
-+	list_for_each_entry(term, &head_terms->terms, list) {
-+		if (term->type_term == PARSE_EVENTS__TERM_TYPE_CPU) {
-+			struct perf_cpu_map *cpu = perf_cpu_map__new_int(term->val.num);
-+
-+			perf_cpu_map__merge(&cpus, cpu);
-+			perf_cpu_map__put(cpu);
-+		}
-+	}
-+
-+	return cpus;
-+}
-+
- /**
-  * fix_raw - For each raw term see if there is an event (aka alias) in pmu that
-  *           matches the raw's string value. If the string value matches an
-@@ -442,11 +463,12 @@ int parse_events_add_cache(struct list_head *list, int *idx, const char *name,
- 	bool found_supported = false;
- 	const char *config_name = get_config_name(parsed_terms);
- 	const char *metric_id = get_config_metric_id(parsed_terms);
-+	struct perf_cpu_map *cpus = get_config_cpu(parsed_terms);
-+	int ret = 0;
- 
- 	while ((pmu = perf_pmus__scan(pmu)) != NULL) {
- 		LIST_HEAD(config_terms);
- 		struct perf_event_attr attr;
--		int ret;
- 
- 		if (parse_events__filter_pmu(parse_state, pmu))
- 			continue;
-@@ -461,7 +483,7 @@ int parse_events_add_cache(struct list_head *list, int *idx, const char *name,
- 						   perf_pmu__auto_merge_stats(pmu),
- 						   /*alternate_hw_config=*/PERF_COUNT_HW_MAX);
- 			if (ret)
--				return ret;
-+				goto out_err;
- 			continue;
- 		}
- 
-@@ -481,21 +503,27 @@ int parse_events_add_cache(struct list_head *list, int *idx, const char *name,
- 
- 		if (parsed_terms) {
- 			if (config_attr(&attr, parsed_terms, parse_state->error,
--					config_term_common))
--				return -EINVAL;
--
--			if (get_config_terms(parsed_terms, &config_terms))
--				return -ENOMEM;
-+					config_term_common)) {
-+				ret = -EINVAL;
-+				goto out_err;
-+			}
-+			if (get_config_terms(parsed_terms, &config_terms)) {
-+				ret = -ENOMEM;
-+				goto out_err;
-+			}
- 		}
- 
- 		if (__add_event(list, idx, &attr, /*init_attr*/true, config_name ?: name,
- 				metric_id, pmu, &config_terms, /*auto_merge_stats=*/false,
--				/*cpu_list=*/NULL,
--				/*alternate_hw_config=*/PERF_COUNT_HW_MAX) == NULL)
--			return -ENOMEM;
-+				cpus, /*alternate_hw_config=*/PERF_COUNT_HW_MAX) == NULL)
-+			ret = -ENOMEM;
- 
- 		free_config_terms(&config_terms);
-+		if (ret)
-+			goto out_err;
- 	}
-+out_err:
-+	perf_cpu_map__put(cpus);
- 	return found_supported ? 0 : -EINVAL;
- }
- 
-@@ -814,6 +842,7 @@ const char *parse_events__term_type_str(enum parse_events__term_type term_type)
- 		[PARSE_EVENTS__TERM_TYPE_RAW]                   = "raw",
- 		[PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE]          = "legacy-cache",
- 		[PARSE_EVENTS__TERM_TYPE_HARDWARE]              = "hardware",
-+		[PARSE_EVENTS__TERM_TYPE_CPU]			= "cpu",
- 	};
- 	if ((unsigned int)term_type >= __PARSE_EVENTS__TERM_TYPE_NR)
- 		return "unknown term";
-@@ -843,6 +872,7 @@ config_term_avail(enum parse_events__term_type term_type, struct parse_events_er
- 	case PARSE_EVENTS__TERM_TYPE_METRIC_ID:
- 	case PARSE_EVENTS__TERM_TYPE_SAMPLE_PERIOD:
- 	case PARSE_EVENTS__TERM_TYPE_PERCORE:
-+	case PARSE_EVENTS__TERM_TYPE_CPU:
- 		return true;
- 	case PARSE_EVENTS__TERM_TYPE_USER:
- 	case PARSE_EVENTS__TERM_TYPE_SAMPLE_FREQ:
-@@ -990,6 +1020,15 @@ do {									   \
- 			return -EINVAL;
- 		}
- 		break;
-+	case PARSE_EVENTS__TERM_TYPE_CPU:
-+		CHECK_TYPE_VAL(NUM);
-+		if (term->val.num >= (u64)cpu__max_present_cpu().cpu) {
-+			parse_events_error__handle(err, term->err_val,
-+						strdup("too big"),
-+						NULL);
-+			return -EINVAL;
-+		}
-+		break;
- 	case PARSE_EVENTS__TERM_TYPE_DRV_CFG:
- 	case PARSE_EVENTS__TERM_TYPE_USER:
- 	case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
-@@ -1117,6 +1156,7 @@ static int config_term_tracepoint(struct perf_event_attr *attr,
- 	case PARSE_EVENTS__TERM_TYPE_RAW:
- 	case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
- 	case PARSE_EVENTS__TERM_TYPE_HARDWARE:
-+	case PARSE_EVENTS__TERM_TYPE_CPU:
- 	default:
- 		if (err) {
- 			parse_events_error__handle(err, term->err_term,
-@@ -1251,6 +1291,7 @@ do {								\
- 		case PARSE_EVENTS__TERM_TYPE_RAW:
- 		case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
- 		case PARSE_EVENTS__TERM_TYPE_HARDWARE:
-+		case PARSE_EVENTS__TERM_TYPE_CPU:
- 		default:
- 			break;
- 		}
-@@ -1305,6 +1346,7 @@ static int get_config_chgs(struct perf_pmu *pmu, struct parse_events_terms *head
- 		case PARSE_EVENTS__TERM_TYPE_RAW:
- 		case PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE:
- 		case PARSE_EVENTS__TERM_TYPE_HARDWARE:
-+		case PARSE_EVENTS__TERM_TYPE_CPU:
- 		default:
- 			break;
- 		}
-@@ -1349,6 +1391,7 @@ static int __parse_events_add_numeric(struct parse_events_state *parse_state,
- 	struct perf_event_attr attr;
- 	LIST_HEAD(config_terms);
- 	const char *name, *metric_id;
-+	struct perf_cpu_map *cpus;
- 	int ret;
- 
- 	memset(&attr, 0, sizeof(attr));
-@@ -1370,10 +1413,11 @@ static int __parse_events_add_numeric(struct parse_events_state *parse_state,
- 
- 	name = get_config_name(head_config);
- 	metric_id = get_config_metric_id(head_config);
-+	cpus = get_config_cpu(head_config);
- 	ret = __add_event(list, &parse_state->idx, &attr, /*init_attr*/true, name,
--			  metric_id, pmu, &config_terms, /*auto_merge_stats=*/false,
--			  /*cpu_list=*/NULL, /*alternate_hw_config=*/PERF_COUNT_HW_MAX
--		) == NULL ? -ENOMEM : 0;
-+			metric_id, pmu, &config_terms, /*auto_merge_stats=*/false,
-+			cpus, /*alternate_hw_config=*/PERF_COUNT_HW_MAX) ? 0 : -ENOMEM;
-+	perf_cpu_map__put(cpus);
- 	free_config_terms(&config_terms);
- 	return ret;
- }
-@@ -1433,6 +1477,7 @@ static int parse_events_add_pmu(struct parse_events_state *parse_state,
- 	LIST_HEAD(config_terms);
- 	struct parse_events_terms parsed_terms;
- 	bool alias_rewrote_terms = false;
-+	struct perf_cpu_map *term_cpu = NULL;
- 
- 	if (verbose > 1) {
- 		struct strbuf sb;
-@@ -1527,11 +1572,12 @@ static int parse_events_add_pmu(struct parse_events_state *parse_state,
- 		return -EINVAL;
- 	}
- 
-+	term_cpu = get_config_cpu(&parsed_terms);
- 	evsel = __add_event(list, &parse_state->idx, &attr, /*init_attr=*/true,
- 			    get_config_name(&parsed_terms),
- 			    get_config_metric_id(&parsed_terms), pmu,
--			    &config_terms, auto_merge_stats, /*cpu_list=*/NULL,
--			    alternate_hw_config);
-+			    &config_terms, auto_merge_stats, term_cpu, alternate_hw_config);
-+	perf_cpu_map__put(term_cpu);
- 	if (!evsel) {
- 		parse_events_terms__exit(&parsed_terms);
- 		return -ENOMEM;
-diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
-index e176a34ab088..ab242f671031 100644
---- a/tools/perf/util/parse-events.h
-+++ b/tools/perf/util/parse-events.h
-@@ -80,7 +80,8 @@ enum parse_events__term_type {
- 	PARSE_EVENTS__TERM_TYPE_RAW,
- 	PARSE_EVENTS__TERM_TYPE_LEGACY_CACHE,
- 	PARSE_EVENTS__TERM_TYPE_HARDWARE,
--#define	__PARSE_EVENTS__TERM_TYPE_NR (PARSE_EVENTS__TERM_TYPE_HARDWARE + 1)
-+	PARSE_EVENTS__TERM_TYPE_CPU,
-+#define	__PARSE_EVENTS__TERM_TYPE_NR (PARSE_EVENTS__TERM_TYPE_CPU + 1)
- };
- 
- struct parse_events_term {
-diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-events.l
-index 7ed86e3e34e3..4af7b9c1f44d 100644
---- a/tools/perf/util/parse-events.l
-+++ b/tools/perf/util/parse-events.l
-@@ -335,6 +335,7 @@ aux-output		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_AUX_OUTPUT); }
- aux-action		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_AUX_ACTION); }
- aux-sample-size		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_AUX_SAMPLE_SIZE); }
- metric-id		{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_METRIC_ID); }
-+cpu			{ return term(yyscanner, PARSE_EVENTS__TERM_TYPE_CPU); }
- cpu-cycles|cycles				{ return hw_term(yyscanner, PERF_COUNT_HW_CPU_CYCLES); }
- stalled-cycles-frontend|idle-cycles-frontend	{ return hw_term(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_FRONTEND); }
- stalled-cycles-backend|idle-cycles-backend	{ return hw_term(yyscanner, PERF_COUNT_HW_STALLED_CYCLES_BACKEND); }
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index b7ebac5ab1d1..721a900b3c1d 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -1429,7 +1429,7 @@ static int pmu_config_term(const struct perf_pmu *pmu,
- 			break;
- 		case PARSE_EVENTS__TERM_TYPE_USER: /* Not hardcoded. */
- 			return -EINVAL;
--		case PARSE_EVENTS__TERM_TYPE_NAME ... PARSE_EVENTS__TERM_TYPE_HARDWARE:
-+		case PARSE_EVENTS__TERM_TYPE_NAME ... PARSE_EVENTS__TERM_TYPE_CPU:
- 			/* Skip non-config terms. */
- 			break;
- 		default:
-@@ -1804,6 +1804,7 @@ int perf_pmu__for_each_format(struct perf_pmu *pmu, void *state, pmu_format_call
- 		"aux-output",
- 		"aux-action=(pause|resume|start-paused)",
- 		"aux-sample-size=number",
-+		"cpu=number",
- 	};
- 	struct perf_pmu_format *format;
- 	int ret;
--- 
-2.49.0.504.g3bcea36a83-goog
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
