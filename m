@@ -1,106 +1,87 @@
-Return-Path: <linux-kernel+bounces-586552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD8BFA7A0EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:23:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B8CA7A0F1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCD1C1892AEA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:23:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC1E8188B6E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7468248883;
-	Thu,  3 Apr 2025 10:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D0C24886C;
+	Thu,  3 Apr 2025 10:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jadAHXUO"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Q1uxrlds"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AD618CC08
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 10:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE41518CC08;
+	Thu,  3 Apr 2025 10:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743675786; cv=none; b=RkJmsWDEZcel4lAVgBG4oIB4y6imABJ1lQ4qLxck+JV0AcEr5QHD5690lBnJpXwCx1k5zIUMrM/k47RCUagMz797tlf9olX/XdyAP9Y4IlAC+GFtz3pYfUSduqAva3nhBanuP53QPT0CNgkIBfIh3M8fA10q6MLzuzKhcEFKDA4=
+	t=1743675909; cv=none; b=D+xh/pWVw5Q1hHDZehyjfHovUyaXeB7rfV69XhzXF6MjAxDM4mQbDePOk99tvhlfFYLm2KFA5NT+XLGiQl1xJQ4YbtguihXL6pU+kJ2W3DLGE7Ok8DA+PWfmSnWNrepdxG/+8erZGI4MOwTbeO2vtNyMLy1Wc5USgZqzoYtyjIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743675786; c=relaxed/simple;
-	bh=jkTC/wMDHWhCK4CIfSQkC51fMhB9HSzsUwcqjd4iOGo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dbiuEsKlTbhl1+h3UsB4T7c3o1n73lukVZJCBaAhUL5BqQkj61aC3HZfEJvhilOZWMAE+oivNrD5zQfuvJczfSZ84Pxv+4SF96hSAdT/ek7/tL90VeuUB2oIYdx38ZQ6hfwnc3Nw/GI6UabKt3nw7A4CMXGiRIGKpFnms9JUYKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jadAHXUO; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1F6FE4327B;
-	Thu,  3 Apr 2025 10:23:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1743675782;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t5/K9HJKSTAwWcOGKvkV7Il6F2anBbyFZIJpq4YyIMM=;
-	b=jadAHXUOk0brAQoHqnG0ixpvW8VoN0Ho9IEDCHiOFKz9Ek2oHttCU+IDtOKG4iUIYN+nxH
-	ydjFmk5yx6QQv/1s29yBKMEqbwR3trwkCfTHTTiRsgrmgsAv7c/64d4PE1SQaXF4LQ7yHq
-	6i67blakCppBUDiiGU03aMz0s2EgPWP7SixsOQuG72q/ZI3mRiZkgGc6qiQ9FppHw7OhP0
-	uwea1nVsVBm1byRyo7CiWF1/tinsEWbHlaeJR6dOMOh+Y9U261BKZkKI87PmV6aDdAdaiv
-	7K2MB3wIIo85ATJrq5M+gddxfkDHiF+83GobeRAA/K33Z2mlzjAPvJGdCrsMig==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  Santhosh Kumar K <s-k6@ti.com>,  Pratyush Yadav
- <pratyush@kernel.org>,  Michael Walle <michael@walle.cc>,  Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>,  Steam Lin <stlin2@winbond.com>,
-  linux-mtd@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 14/19] mtd: spinand: Use more specific naming for the
- (quad) program load op
-In-Reply-To: <e1d8108f-50c1-4924-bb68-53436728e701@linaro.org> (Tudor
-	Ambarus's message of "Thu, 3 Apr 2025 11:00:46 +0100")
-References: <20250403-winbond-6-14-rc1-octal-v2-0-7846bd88fe83@bootlin.com>
-	<20250403-winbond-6-14-rc1-octal-v2-14-7846bd88fe83@bootlin.com>
-	<e1d8108f-50c1-4924-bb68-53436728e701@linaro.org>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Thu, 03 Apr 2025 12:23:00 +0200
-Message-ID: <87h63535ob.fsf@bootlin.com>
+	s=arc-20240116; t=1743675909; c=relaxed/simple;
+	bh=5ZlumXE4eA6n9IKFNUtNELbrczkDxiyZ7QspXaMiG2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jg2FpjUG23u3cx6GLTIPIrzko/Qrj17+K594NJdq/+XnBW1dNkScL6sBvApi8/WXV3Yur4BLmDFKLg6NQzp7e/gDEr3sZJWEqgPXcDoXoIQPHWSNPz5d0CnI8C8dKUtaB235GCBbykDHRlnaMKQlfuJRO57s9cvr2c08cl7VCt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Q1uxrlds; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1743675906;
+	bh=5ZlumXE4eA6n9IKFNUtNELbrczkDxiyZ7QspXaMiG2c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Q1uxrldsJCjCKJPZ9kpcpfnYcwsfTox+YRnygYOGSPmROHyNP8kSWftO68mMg0O1r
+	 HzgkM3WaTrZwSem2eQmHef/Wp1LK70x40UpliHjObtV0jnA7meaJ3BG5rg+luAqGoe
+	 +YSzvlaavhc89XYxQvIJ6TYG6VrQhMTKnN35+5SUZcOLjzmoTgPtEGBSdWplSubNpc
+	 i3HEl9WMLVUPtxMDPL5hvEHcubHl1WNnMEeAvJlZ1Umz3zl30ClojdKAkENT9kd0GU
+	 d3jyFRw0YYKNwkRJ8hBUgNOpjX7CEn2kf4tApGDDbF2wXr+xs3IFpuoBWnL38z/lpB
+	 HNs3TFcZYYvDg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7C7EA17E0B0B;
+	Thu,  3 Apr 2025 12:25:05 +0200 (CEST)
+Message-ID: <d6f5568e-82fe-4e89-9943-0c63df4248db@collabora.com>
+Date: Thu, 3 Apr 2025 12:25:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeekfedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtsehttdertddtredtnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfelkedvveffleeuhfeigfdvvefhgfejgffghfeiteegteeiudegfedtjeehkeefnecukfhppeelvddrudekgedruddutddrudelleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeelvddrudekgedruddutddrudelledphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepthhuughorhdrrghmsggrrhhusheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhitghhrghrugesnhhougdrrghtpdhrtghpthhtohepvhhighhnvghshhhrsehtihdrtghomhdprhgtphhtthhopehsqdhkieesthhirdgtohhmpdhrtghpthhtohepphhrrghthihushhhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihgthhgrvghlseifrghllhgvrdgttgdpr
- hgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehsthhlihhnvdesfihinhgsohhnugdrtghomh
-X-GND-Sasl: miquel.raynal@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: mediatek: mt8390-genio-common: Fix pcie
+ pinctrl dtbs_check error
+To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20250403-mt8390-genio-common-fix-pcie-dtbs-check-error-v1-1-70d11fc1482e@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250403-mt8390-genio-common-fix-pcie-dtbs-check-error-v1-1-70d11fc1482e@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 03/04/2025 at 11:00:46 +01, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
+Il 03/04/25 10:05, Louis-Alexis Eyraud ha scritto:
+> Rename pcie pinctrl definition to fix the following dtbs_check error
+> for mt8370-genio-510-evk and mt8390-genio-700-evk devicetree files:
+> ```
+> pinctrl@10005000: 'pcie-default' does not match any of the regexes:
+>    '-pins$', 'pinctrl-[0-9]+'
+> ```
+> 
+> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 
-> On 4/3/25 10:19 AM, Miquel Raynal wrote:
->> SPI operations have been initially described through macros implicitly
->> implying the use of a single SPI SDR bus. Macros for supporting dual and
->> quad I/O transfers have been added on top, generally inspired by vendor
->> naming, followed by DTR operations. Soon we might see octal
->> and even octal DTR operations as well (including the opcode byte).
->> 
->> Let's clarify what the macro really means by describing the expected bus
->> topology in the (quad) program load macro name.
->> 
->> While at modifying it, better add the missing_ OP suffix to align with
->> all the other macros of the same kind.
->> 
->> Acked-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->> Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->
-> I don't remember giving R-b on this, not seeing it on ml as well, so
-> please drop it when applying.
->
-> I used Acked-by and not R-b because I wanted to signify that I'm OK with
-> the general idea of the patches and that I'm OK with them landing, but I
-> may not have reviewed it as thoroughly as if a Reviewed-by: was
-> provided. Please use only the tags that I sent. And if by mistake I sent
-> both A-b and R-b, use just the latter. Thanks!
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-I use b4 for collecting tags, but yeah that's strange.
 
-I will use your Acked-by here.
 
