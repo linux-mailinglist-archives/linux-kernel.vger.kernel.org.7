@@ -1,86 +1,88 @@
-Return-Path: <linux-kernel+bounces-586185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3921A79C4E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:49:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0219A79C39
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27EEC1892637
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:49:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0E003A7557
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49F219F471;
-	Thu,  3 Apr 2025 06:49:25 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607A71A23A1;
+	Thu,  3 Apr 2025 06:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qgce0Ewg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5340318D65F
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 06:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB36918DB20;
+	Thu,  3 Apr 2025 06:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743662965; cv=none; b=h86/lPre8RBIQueGyej4CugGfynzC/oBSMBjPHSk2zQpihkFhLgdKH19ft4klNet3kz8jr/OF2OWd7s6CVdSQLXmqWEYK70dSZCBwpBzusVUSPWGL96iV0SkE+mIGQRYXu4860dnk6xgqgy07ixr23PwgNi8bJkNtRlTAIgnQXE=
+	t=1743662544; cv=none; b=RplKDjIirfj46H3H6MREe0bwPTgosMAbV5Lz+qIiyvHgDyHywtizpd3TMwWBbuvrfdCVRNpgZUtV1ufwgO2G91DuE6S6XzIKQJGRhSgO61XxrSW061M3h9U1prRgdEF3R0nzqkwKqY8V3USmEeW+c5qpmuu1e0QbmfxycqCvpGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743662965; c=relaxed/simple;
-	bh=mS3Euhg9zY19dCAeMuhQZ68GEfViYG7NSsFNIxWcT6o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uK1BqxQnVd9+NByg1Jj9EURgsg1c2uOgUwJorgKWTpA0cNHzYwSjAzHpiRHII69UxtzQhCfkZfqIceNjPg2WgmWolPXW5vy1gdmJ/EKe11BEDTOBQXnH+Xn0aqVXGJt/TXTscDI5zCjVHFWMdi/yDYkAqQ8K5EvuGi6BHki8A5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZSsgL5kqczvWpF;
-	Thu,  3 Apr 2025 14:45:18 +0800 (CST)
-Received: from kwepemg200013.china.huawei.com (unknown [7.202.181.64])
-	by mail.maildlp.com (Postfix) with ESMTPS id 10B06180087;
-	Thu,  3 Apr 2025 14:49:19 +0800 (CST)
-Received: from huawei.com (10.175.113.32) by kwepemg200013.china.huawei.com
- (7.202.181.64) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 3 Apr
- 2025 14:49:18 +0800
-From: Liu Shixin <liushixin2@huawei.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Muchun Song
-	<muchun.song@linux.dev>, Kefeng Wang <wangkefeng.wang@huawei.com>, David
- Hildenbrand <david@redhat.com>, Nanyong Sun <sunnanyong@huawei.com>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, Liu Shixin
-	<liushixin2@huawei.com>
-Subject: [PATCH] mm/hugetlb: fix nid mismatch in alloc_surplus_hugetlb_folio()
-Date: Thu, 3 Apr 2025 14:41:38 +0800
-Message-ID: <20250403064138.2867929-1-liushixin2@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1743662544; c=relaxed/simple;
+	bh=Mm5UvShqJfS6Bo3gBY57Tk/+isrXqZzI84v5T2TgGyI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gqif3gMve/ZJSg72jUx/lth+RJrIah9o/z4beNGGVYGM4sFUGDAunWHmyW649fdLq6m6jz8Ydctf3mu/7zGZV2hE376I+P3+C/u6OJJHEMYpFeHbby432UmfyL4dtg2gs8tGFBlgm7f1uLD3UVpgI4TksNiGkjFrSa+6+vHiM6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qgce0Ewg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC26CC4CEE3;
+	Thu,  3 Apr 2025 06:42:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743662544;
+	bh=Mm5UvShqJfS6Bo3gBY57Tk/+isrXqZzI84v5T2TgGyI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qgce0Ewgkd+Cumb5f6U4T1HhR7WHTnXMeJrlK6+7f+dxtNnJnHGzn4rG1Mh0jfzKG
+	 GYtkJizV2zO7Q72uwCvGV+9tZ7MjW203gozPMAbCeIkZnsgByXUV8z2r4qJ1sEcryJ
+	 0RX3uL8ze5r0AjY4Ymw5pMLgaJum8G4C9JgeHAZwZMjMg60yGnZf9DZiVvrnA2uncK
+	 TTDMv92scWRTufXVLVNFCgXkbUkZZHANAES+VwsOK7DGMrgpmPDjadzPqVXME1DnVt
+	 96T/3vhXiBiJsHJydOyNmnrUJcYxXPYniJ1sxotmez8xtYriIU6Ck4lRHhZfRByenT
+	 hz65jzoVWTjgg==
+Date: Thu, 3 Apr 2025 08:42:20 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Andy Yan <andyshrk@163.com>
+Cc: dmitry.baryshkov@oss.qualcomm.com, heiko@sntech.de, hjc@rock-chips.com, 
+	mripard@kernel.org, naoki@radxa.com, stephen@radxa.com, 
+	cristian.ciocaltea@collabora.com, neil.armstrong@linaro.org, Laurent.pinchart@ideasonboard.com, 
+	yubing.zhang@rock-chips.com, krzk+dt@kernel.org, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, robh@kernel.org, 
+	sebastian.reichel@collabora.com, Andy Yan <andy.yan@rock-chips.com>
+Subject: Re: [PATCH v3 4/9] dt-bindings: display: simple-bridge: Add ra620
+ compatible
+Message-ID: <20250403-big-hog-from-ganymede-6aa617@krzk-bin>
+References: <20250403033748.245007-1-andyshrk@163.com>
+ <20250403033748.245007-5-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemg200013.china.huawei.com (7.202.181.64)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250403033748.245007-5-andyshrk@163.com>
 
-It's wrong to use nid directly since the nid may be changed in allocation.
-Use folio_nid() to obtain the nid of folio instead.
+On Thu, Apr 03, 2025 at 11:37:32AM +0800, Andy Yan wrote:
+> From: Andy Yan <andy.yan@rock-chips.com>
+> 
+> RA620 is a DP to HDMI bridge converter from RADXA, which first
+> found be used on ROCK 5 ITX.
+> 
+> This chip can be used without involving software.
+> 
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> 
+> ---
+> 
+> Changes in v3:
+> - First introduced in this version.
 
-Fix: 2273dea6b1e1 ("mm/hugetlb: update nr_huge_pages and surplus_huge_pages together")
-Signed-off-by: Liu Shixin <liushixin2@huawei.com>
----
- mm/hugetlb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 6fccfe6d046c6..d538f8aa8203c 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -2271,7 +2271,7 @@ static struct folio *alloc_surplus_hugetlb_folio(struct hstate *h,
- 	 * as surplus_pages, otherwise it might confuse
- 	 * persistent_huge_pages() momentarily.
- 	 */
--	__prep_account_new_huge_page(h, nid);
-+	__prep_account_new_huge_page(h, folio_nid(folio));
- 
- 	/*
- 	 * We could have raced with the pool size change.
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
