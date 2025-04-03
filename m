@@ -1,101 +1,134 @@
-Return-Path: <linux-kernel+bounces-587926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1731AA7B1FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 00:21:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 118D5A7B200
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 00:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEC4E17916E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:20:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D6A317884C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4C01E1DE2;
-	Thu,  3 Apr 2025 22:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghXcijl5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F00B1A9B4A;
+	Thu,  3 Apr 2025 22:21:28 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017ED1DE8A5;
-	Thu,  3 Apr 2025 22:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A102E62AE
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 22:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743718802; cv=none; b=aNLA/2LMoQVwervVVdt1Gsi/Kp6Ywb4lN6zmc74BpBS+hYGB9fgCSnVua07EfsdAtFFekS6oVBbAe0hTCMvbDoh6u1uoJ33WzGqkT89TRiQ0V0f+XtRh0Mm2eKgvZoUDkhkR5P/lP6MoxjCyya5RACO5NP2Ocx5TrFsESUUPtyM=
+	t=1743718888; cv=none; b=jRpYIhF6O0RHUPH+/ZUmpGY2PEbnRMapeDifeN07pPZ0AyqDeSpSpMBI1A2/GVKQplSlJeg2bC9piTdcNYWj4SQyR9zwZGlpCsQIqlnsK4unlppzQrcSqfPcawg0W4IBVpVAwXzQqw6oUh1iVFW5a71rRJoU7YMnkJ6BNz/2x0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743718802; c=relaxed/simple;
-	bh=KCyh8+9JyuYBei8WB62qFtgrhc58EZrZTkUcsFfLPro=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=FApOd3AuMHVhsbjZPnYXhwLaNagu+iZUXscLCLmimc/TZl6jHlGuVFICLuhjzYaMusOy9Yh38YqNFLnQBFIMgX2iKba/DYBxz1h/+drz3VOmRZP2y6LFwe5m8FyiiKRH2TlZ7Euy+Ot/T1mpaB65XGHsTq/dOWfPIdL4JiUkA28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghXcijl5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C39C8C4CEE3;
-	Thu,  3 Apr 2025 22:20:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743718801;
-	bh=KCyh8+9JyuYBei8WB62qFtgrhc58EZrZTkUcsFfLPro=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ghXcijl5DsA64XBakK5GZReIVkouk8DPSuzayMQ+wpewU9xagYbKoS4JehTZ3X51P
-	 1b7jUFE3W0DLBngLqDSPY1ve063PZJpbMItOzNrxUvwtkUKNfchRPkkL7xMbW/DdQe
-	 G6RbMomFoqRMO1pbdTxuEPSAZcdUm2o8uRcWsECfp0BgMfbeliBc7SkWkLbSsGI8q2
-	 UsyIHD+j4j9eU4VCLnnS3VWUZWCEINRs9n4tCeLxS8sxTcvzvWlRMQJgkzkR61eaRH
-	 r4CtTYH2ARnzBs4P1M9NioNqKqIc1f9CApRvurFAKT4b6DHPlL0pPtswT2wkgTg2cB
-	 i8TFe+Yxo8EkA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEB4380664C;
-	Thu,  3 Apr 2025 22:20:39 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1743718888; c=relaxed/simple;
+	bh=xZbKHATwgzlto9VB+6ctPn+t/pyRlRiza9WY5y99mjI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=f2cJLeSKG9fUav51MNTajy8F0jV8VJhIYTJbeX/a5tAxvbpXtxzCiKV4KXbC/EyznCeO+a8P9YcwGvmUJnJ7YakzDBJjRmZuXa8VXUge6p2D9NNto5bK9WetVnok6Rz5SviKmoMGA6pEwdpdTDVihZdmsd+yr/9wBDThh2RKBrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1u0Sw0-0007zP-Nh; Fri, 04 Apr 2025 00:21:16 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1u0Svz-003Ad9-29;
+	Fri, 04 Apr 2025 00:21:15 +0200
+Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
+	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1u0Svz-004X5f-1x;
+	Fri, 04 Apr 2025 00:21:15 +0200
+From: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Date: Fri, 04 Apr 2025 00:21:01 +0200
+Subject: [PATCH] usb: typec: mux: do not return on EOPNOTSUPP in {mux,
+ switch}_set
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net/selftests: Add loopback link local route for
- self-connect
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174371883849.2702664.8391877286405723636.git-patchwork-notify@kernel.org>
-Date: Thu, 03 Apr 2025 22:20:38 +0000
-References: <20250402-tcp-ao-selfconnect-flake-v1-1-8388d629ef3d@gmail.com>
-In-Reply-To: <20250402-tcp-ao-selfconnect-flake-v1-1-8388d629ef3d@gmail.com>
-To: Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, shuah@kernel.org,
- netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250404-ml-topic-typec-mux-v1-1-22c0526381ba@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIAMwJ72cC/x3MQQqAIBBA0avErBvQ0EVdJVqkTjWQJVphRHdPW
+ r7F/w8kikwJuuqBSBcn3rcCWVdgl3GbCdkVQyMaLZRQ6Fc89sAWjzuQRX9m1KY1QqpJOuOghCH
+ SxPmf9sP7fgGoWc1kAAAA
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de, Michael Grzeschik <m.grzeschik@pengutronix.de>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1449;
+ i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
+ bh=xZbKHATwgzlto9VB+6ctPn+t/pyRlRiza9WY5y99mjI=;
+ b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBn7wnbkw5mBibVC8FpLe0vWnFk1fo/DOGTDNl0R
+ iE+yLCPMr2JAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZ+8J2wAKCRC/aVhE+XH0
+ q7PTEACABzO6rbbad/vQgrwL7mlVSJ+EFD1x7mk5h72i2f6fppE8RXgKwABTOChplCbI3VltZvq
+ Jsj8V5dOs0zLaPo3I/SiNnL/P5jH/TjTVEGjVG15wsig4O4Fi2QQZ96x9tdFNL9TXlv5dDbC7lO
+ GtPR6lViZL0sSQX6Uo1jOwUyrrUEKk+Ak2yroBqSdCwEo9zmBx1P20QihxYg2+xeHNMaO+UfjYg
+ KC5RA4HFF2dwFRs864IOvXH6IEOipQpyBSrlzkvrcimkijrQUvDsgYnbrdYMmOPf6iA+0BsLUy1
+ UP+xL7XyEvPV5d7PqQlM6gd/quy8ojm4KBn+V3lxDNItktqmeXHmyQ85yLxpW1VvGNQgw8c3C9R
+ 1M3sACtB3S9oanpflWFN5tG8jirYz8Zct6VReyem1rIXWs8suAEmDQxLUjFN5IuvegCwh4qNwT9
+ 46kinrdJNWQufLJMCtxy6xCTuBNyYSRfqZF3T23BmuIoYHU5HqyOdzPSmqaQ7faAhqpEXaba4PW
+ sB7oUStKBunv/sX2IFQVNgc1xbkw8mOzUrbFH282/rLvRv9pXqtVF2RImyf6EtldCB6aXW1/cN9
+ pS8gMbOVXBXP2H97sg6I9tCeXvcRSCV3NBDq8cNqd/m5ROTMxim9FchHHj1rkhA7EOWJjDZJGTj
+ vO4HhnQlAgQoTIg==
+X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
+ fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hello:
+Since the typec connectors can have many muxes or switches for different
+lanes (sbu, usb2, usb3) going into different modal states (usb2, usb3,
+audio, debug) all of them will be called on typec_switch_set and
+typec_mux_set. But not all of them will be handling the expected mode.
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+If one of the mux or switch will come back with EOPTNOSUPP this is no
+reason to stop running through the next ones. Therefor we skip this
+particular error value and continue calling the next.
 
-On Wed, 02 Apr 2025 01:59:31 +0100 you wrote:
-> From: Dmitry Safonov <0x7f454c46@gmail.com>
-> 
-> self-connect-ipv6 got slightly flaky on netdev:
-> > # timeout set to 120
-> > # selftests: net/tcp_ao: self-connect_ipv6
-> > # 1..5
-> > # # 708[lib/setup.c:250] rand seed 1742872572
-> > # TAP version 13
-> > # # 708[lib/proc.c:213]    Snmp6            Ip6OutNoRoutes: 0 => 1
-> > # not ok 1 # error 708[self-connect.c:70] failed to connect()
-> > # ok 2 No unexpected trace events during the test run
-> > # # Planned tests != run tests (5 != 2)
-> > # # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:1
-> > ok 1 selftests: net/tcp_ao: self-connect_ipv6
-> 
-> [...]
+Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+---
+ drivers/usb/typec/mux.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Here is the summary with links:
-  - [net-next] net/selftests: Add loopback link local route for self-connect
-    https://git.kernel.org/netdev/net/c/e5ddf19dbc3e
+diff --git a/drivers/usb/typec/mux.c b/drivers/usb/typec/mux.c
+index 49926d6e72c71..182c902c42f61 100644
+--- a/drivers/usb/typec/mux.c
++++ b/drivers/usb/typec/mux.c
+@@ -214,7 +214,7 @@ int typec_switch_set(struct typec_switch *sw,
+ 		sw_dev = sw->sw_devs[i];
+ 
+ 		ret = sw_dev->set(sw_dev, orientation);
+-		if (ret)
++		if (ret && ret != -EOPNOTSUPP)
+ 			return ret;
+ 	}
+ 
+@@ -378,7 +378,7 @@ int typec_mux_set(struct typec_mux *mux, struct typec_mux_state *state)
+ 		mux_dev = mux->mux_devs[i];
+ 
+ 		ret = mux_dev->set(mux_dev, state);
+-		if (ret)
++		if (ret && ret != -EOPNOTSUPP)
+ 			return ret;
+ 	}
+ 
 
-You are awesome, thank you!
+---
+base-commit: a1b5bd45d4ee58af4f56e49497b8c3db96d8f8a3
+change-id: 20250404-ml-topic-typec-mux-5b9b014f1dbd
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Michael Grzeschik <m.grzeschik@pengutronix.de>
 
 
