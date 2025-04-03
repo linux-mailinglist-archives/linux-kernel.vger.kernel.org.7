@@ -1,140 +1,307 @@
-Return-Path: <linux-kernel+bounces-586917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3730A7A556
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:39:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87D6EA7A56B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F128717649B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:36:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BFC93B7A5A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477BF2505A9;
-	Thu,  3 Apr 2025 14:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99496250BF6;
+	Thu,  3 Apr 2025 14:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f25Mxn7s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nBsb+/3A"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E452500C5;
-	Thu,  3 Apr 2025 14:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95C72505DA
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 14:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743690937; cv=none; b=YAPXG9haAk2YMF4NiR3Upybca/29jKalLKDTvA3VMUrNMoPgh/JjtBV5BI2qV2J8sZNT1K5numLSBA2Z7q+n81t1X/D3wcB/mzFlHB6sWRjt5iJ8Iqm0zM6d8sEXLer70nuysIVzN25ix/bxBDhzlWQv7OIG/++2haz2uaQBg34=
+	t=1743690943; cv=none; b=sipI/W00DuLq2xWJ6G8KizQ7270QD/xNzuu3BS7hOmVRtdZp06BFijZdELd1Bk4URBHoKZaGINJpizddWl9Kl+2tK1HSlA8d6M8IQrOHj1QRBtuqTm/4T/jD5jWD1uvKvYifGt03eVWqKUF+M4APorCigsJ8Gu3tI4AnoHJYlTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743690937; c=relaxed/simple;
-	bh=UYZcrSoIukyNWFqG5RqeZgTW5DKkSSPFrREL7EXhL7A=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=PxR/pDpnShujqOuRyGxolgrSN0SGJxKVs1IoQthKCh1Q7KzMYnev1xVRxzI1LSgTb6Dd0M0uRlK+fMHJqZgcy4mLKXUEw0nrYcjGApoGKcxnRGKp9tUNvTW7AqOw43nMW4wU7LBhIApsRwo/L/F4/I/daAlc5WCFSHz/WVGxE18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f25Mxn7s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D37D8C4CEEB;
-	Thu,  3 Apr 2025 14:35:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743690937;
-	bh=UYZcrSoIukyNWFqG5RqeZgTW5DKkSSPFrREL7EXhL7A=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=f25Mxn7sTE5uXYsLGJO6y9vJRVcdxdMTTjs995bdwPmwAWxtZUhuWmAtVPyYG4GsD
-	 xdzO74ybVodnmOEuOn91FigvsAw5u8Ohe1C8ldk+ZOvgQTt3qm07mc+u2ASB/fcHiS
-	 Kwb0Ty4JcDtqx6arTnkBZu2kJtTO4s331wYU0O+nJa9XRd0zu6mpHgXHK/9BwxRMKj
-	 RcEDf+XsiRwZKawYl1zyC5CEDuSm89kB750I3vspRA+T319KMGlrHnR/1d/Fzxe0qF
-	 WP1HB05/+4XrPEnwuhoMtyYBI8dKPBRtqRy52tg1EAWBjaoc78RZNlphdnYyqUhvNJ
-	 ci20RAzxULz9Q==
-Date: Thu, 03 Apr 2025 09:35:35 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1743690943; c=relaxed/simple;
+	bh=1m2wGs6FTluWBIvWlKVwLPxk4luQTmy7WAhmXP544B4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JWvmiHbra3eqYYx06iSM3mME+/zc5+JqFE+iz/3V03A4WT8qrtsaD8DfANV8rHjhSAd11tO2SOvOZGXyef6EQt6xAQOVejEb5y1PD+yN5x5W1QWBQc1W50rGSRNfMMx89wmHOzmTIzm8GxrkRdFTzOxAI3zJvNMLmB875WQzlxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nBsb+/3A; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5339s0e4027455
+	for <linux-kernel@vger.kernel.org>; Thu, 3 Apr 2025 14:35:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=FSEa9SjkeYFg5a//J4P8CuYM
+	wRw2YqG0kU/I+1N7Dhc=; b=nBsb+/3AxIlWu+/64RWUL8B+g3pXC8PcHkk/GuHM
+	cccqYDfPaHRkS2KxsWbk+djIDsisgZouQI+k2E4uMoHeY8qtZMPBM2YcEAkjlHhR
+	I/viDr0kpEABjH0DHG5/Jq1bk4A6RAeuUtMB15byZN2iNpnz621Qy3ewJvXxbP3J
+	QuwsbMB1wm6CR3GUqKfMtGhjUs+QrRZfkC/zI4KCQREIg26d/QDk4yQHExXzaqxq
+	EGUztEqeNfa3ztXj/X/2X3LCYdsD1r8EZYuCeZY6DJ36k+cA+UzwlyR/WztM+Crn
+	6fibKvzTNoGdylGaMJFG+Z/vLpxpVL77NyRd/buX0XdWkg==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45rxapvxcq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 14:35:40 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c5c77aff78so270325785a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 07:35:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743690939; x=1744295739;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FSEa9SjkeYFg5a//J4P8CuYMwRw2YqG0kU/I+1N7Dhc=;
+        b=FfBqmleXqNKsA20ZhBmkZHNbw3gpvy9U5pT+BPbcdFunct2fU2wLo6m4c9k4TqlGzA
+         +w4Q4d/IkyyMa9s8yjR3lKZyTOKAqS1Mj+OVGQ0J4m3AUCV3iAn7riGlLwWF+87P/wmn
+         MQwqg5Av9Eh8lrcYcPL8rWnBcsE3kd7TT8OfWcZLt3oEdZ11hj2ZYZh0OWMsU2r1xyXz
+         W4suM0a9WpI10E7G1FQJ69SEL/0b+cqi05w+a1ASjPs5u8e2OR3FPRpUwx6fsc9sMYuK
+         J59bduH2DZ2ssCP9keTaai7QxF5KF49Ac7stYOEfbp6JnEQbbJMSwJ+jHqNYXvslv0On
+         nqlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXP8vxvZ+FprMucKSdP8e3N4XBhgH4b+RcDpaDquaFQ/Ul8BlBUmgw58RAT/a6u6seW+6GUDHQ0R9FAx8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrGZWc3v2mHg/Lp05VY4n3ae8zevCRiQCyNchr2h2mKKiemiVy
+	OHpqCYO4EGyQmzguQiQbyRHeE+MyTJM02aFtMeCDyQPNz2GU4894ietkFXYHa3VeNm3lYSp1SOw
+	BOTlcZAvfZTy4mQjrkG3JYqcKw4/J2e9saassC4fFZ3cPREd4+Yb3HzGlRwLWpUc=
+X-Gm-Gg: ASbGnctBtNPNlhiBz0J1M8YpJBnd/muvF3teOOu+4Efl6hZNr2SxypbqkRsKQHpDdB1
+	cV3YjFSE+pXH+RDmei9DBFM7IodZi+GnkKul6wzzFPtrr2WWm7YWSWTfOzKGiY9RLFHZlAGoao0
+	bv/prvTqTXKx5siAGiPnnv0sy8IcnmprkkIV+L5MtfgS1KUf75mgCVr8NjBrWWNmqP6cfjfR0iQ
+	utPNGAXAweDzO5nbQvK18NUabGVw/Mq9cjkl3iiJVYdN7s//MyjLrJXmYcuFXEOt5abyx+zphT1
+	uRi/EOyrA6ExnsAByDYK10RYgfr5C0BENDffaIAP9m+dOMAJqxVQMs9fUbmLQY4uW8hQ3CpXYa8
+	rXVQ=
+X-Received: by 2002:a05:620a:468b:b0:7c5:5f38:ba59 with SMTP id af79cd13be357-7c76df517e8mr348234485a.3.1743690939489;
+        Thu, 03 Apr 2025 07:35:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGc/cEfWzx2Wfy64eS8G1A7dG8YoCCPzhDGIItveQ5Hmu8uSfR/I3Ew3NmsqMJkdBvpIZR0lw==
+X-Received: by 2002:a05:620a:468b:b0:7c5:5f38:ba59 with SMTP id af79cd13be357-7c76df517e8mr348231385a.3.1743690939090;
+        Thu, 03 Apr 2025 07:35:39 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e5c1a7csm174057e87.70.2025.04.03.07.35.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 07:35:38 -0700 (PDT)
+Date: Thu, 3 Apr 2025 17:35:36 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: srinivas.kandagatla@linaro.org
+Cc: broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        pierre-louis.bossart@linux.dev, linux-sound@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Manikantan R <quic_manrav@quicinc.com>
+Subject: Re: [PATCH v3 2/2] ASoC: codecs:lpass-wsa-macro: Fix logic of
+ enabling vi channels
+Message-ID: <pzyw3swuj4gqynxtp7kxbludyf6qq7fdfjaphw73tezzqocrda@i3f2knhbocme>
+References: <20250403124247.7313-1-srinivas.kandagatla@linaro.org>
+ <20250403124247.7313-3-srinivas.kandagatla@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Yashwanth Varakala <y.varakala@phytec.de>, 
- linux-arm-kernel@lists.infradead.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Fabio Estevam <festevam@gmail.com>, Jan Remmet <j.remmet@phytec.de>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, upstream@lists.phytec.de, 
- Sascha Hauer <s.hauer@pengutronix.de>, devicetree@vger.kernel.org, 
- Shawn Guo <shawnguo@kernel.org>, linux-kernel@vger.kernel.org, 
- Benjamin Hahn <b.hahn@phytec.de>, imx@lists.linux.dev, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Teresa Remmet <t.remmet@phytec.de>
-To: Yannic Moog <y.moog@phytec.de>
-In-Reply-To: <20250403-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-v2-0-c0d2eff683ac@phytec.de>
-References: <20250403-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-v2-0-c0d2eff683ac@phytec.de>
-Message-Id: <174369066563.2789714.13229546252082031365.robh@kernel.org>
-Subject: Re: [PATCH v2 0/3] Add new imx imx8mp-libra-rdk-fpsc SBC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250403124247.7313-3-srinivas.kandagatla@linaro.org>
+X-Authority-Analysis: v=2.4 cv=Vbj3PEp9 c=1 sm=1 tr=0 ts=67ee9cbc cx=c_pps a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=kyQVAf1Qy8rE2pkpK9oA:9 a=CjuIK1q_8ugA:10
+ a=bTQJ7kPSJx9SKPbeHEYW:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: IbQB5SazKojkdmgCsjIEDon-hynifv2r
+X-Proofpoint-GUID: IbQB5SazKojkdmgCsjIEDon-hynifv2r
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-03_06,2025-04-02_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ suspectscore=0 clxscore=1015 mlxscore=0 phishscore=0 bulkscore=0
+ priorityscore=1501 spamscore=0 lowpriorityscore=0 mlxlogscore=999
+ impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504030068
 
-
-On Thu, 03 Apr 2025 13:29:26 +0200, Yannic Moog wrote:
-> The Libra i.MX 8M Plus is a SBC that consists of the Libra base board
-> and the phyCORE i.MX 8M Plus FPSC SoM.
-> This series adds its binding and device trees.
-> In addition add an overlay for an LVDS display that may optionally be
-> connected to the Libra board.
+On Thu, Apr 03, 2025 at 01:42:47PM +0100, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > 
+> Existing code only configures one of WSA_MACRO_TX0 or WSA_MACRO_TX1
+> paths eventhough we enable both of them. Fix this bug by adding proper
+> checks and rearranging some of the common code to able to allow setting
+> both TX0 and TX1 paths
+> 
+> Without this patch only one channel gets enabled in VI path instead of 2
+> channels. End result would be 1 channel recording instead of 2.
+
+Could you please rearrange the code to make the patch more obvious?
+
+> 
+> Fixes: 2c4066e5d428 ("ASoC: codecs: lpass-wsa-macro: add dapm widgets and route")
+> Cc: stable@vger.kernel.org
+> Co-developed-by: Manikantan R <quic_manrav@quicinc.com>
+> Signed-off-by: Manikantan R <quic_manrav@quicinc.com>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > ---
-> Changes in v2:
-> - reorder device tree nodes of SoM and board device trees according to https://github.com/lznuaa/dt-format
-> - fix typo in reg: regulator-12v0 -> regulator-vdd-12v0
-> - add to binding commit description the difference between phycore-som and phycore-fpsc
-> - Link to v1: https://lore.kernel.org/r/20250328-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-v1-0-28324c7f81fa@phytec.de
+>  sound/soc/codecs/lpass-wsa-macro.c | 112 +++++++++++++++++------------
+>  1 file changed, 68 insertions(+), 44 deletions(-)
 > 
-> ---
-> Yannic Moog (3):
->       dt-bindings: add imx8mp-libra-rdk-fpsc
->       arm64: dts: add imx8mp-libra-rdk-fpsc board
->       arm64: dts: add imx8mp-libra-rdk-fpsc LVDS panel overlay
+> diff --git a/sound/soc/codecs/lpass-wsa-macro.c b/sound/soc/codecs/lpass-wsa-macro.c
+> index ac119847bc22..c9e7f185f2bc 100644
+> --- a/sound/soc/codecs/lpass-wsa-macro.c
+> +++ b/sound/soc/codecs/lpass-wsa-macro.c
+> @@ -1469,46 +1469,11 @@ static int wsa_macro_mclk_event(struct snd_soc_dapm_widget *w,
+>  	return 0;
+>  }
+>  
+> -static int wsa_macro_enable_vi_feedback(struct snd_soc_dapm_widget *w,
+> -					struct snd_kcontrol *kcontrol,
+> -					int event)
+> -{
+> -	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
+> -	struct wsa_macro *wsa = snd_soc_component_get_drvdata(component);
+> -	u32 tx_reg0, tx_reg1;
+> -	u32 rate_val;
+>  
+> -	switch (wsa->pcm_rate_vi) {
+> -	case 8000:
+> -		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_8K;
+> -		break;
+> -	case 16000:
+> -		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_16K;
+> -		break;
+> -	case 24000:
+> -		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_24K;
+> -		break;
+> -	case 32000:
+> -		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_32K;
+> -		break;
+> -	case 48000:
+> -		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_48K;
+> -		break;
+> -	default:
+> -		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_8K;
+> -		break;
+> -	}
+
+This can go to the wsa_macro_enable_disable_vi_sense().
+
+> -
+> -	if (test_bit(WSA_MACRO_TX0, &wsa->active_ch_mask[WSA_MACRO_AIF_VI])) {
+> -		tx_reg0 = CDC_WSA_TX0_SPKR_PROT_PATH_CTL;
+> -		tx_reg1 = CDC_WSA_TX1_SPKR_PROT_PATH_CTL;
+> -	} else if (test_bit(WSA_MACRO_TX1, &wsa->active_ch_mask[WSA_MACRO_AIF_VI])) {
+> -		tx_reg0 = CDC_WSA_TX2_SPKR_PROT_PATH_CTL;
+> -		tx_reg1 = CDC_WSA_TX3_SPKR_PROT_PATH_CTL;
+> -	}
+> -
+> -	switch (event) {
+> -	case SND_SOC_DAPM_POST_PMU:
+> +static void wsa_macro_enable_disable_vi_sense(struct snd_soc_component *component, bool enable,
+> +						u32 tx_reg0, u32 tx_reg1, u32 val)
+> +{
+> +	if (enable) {
+>  		/* Enable V&I sensing */
+>  		snd_soc_component_update_bits(component, tx_reg0,
+>  					      CDC_WSA_TX_SPKR_PROT_RESET_MASK,
+> @@ -1518,10 +1483,10 @@ static int wsa_macro_enable_vi_feedback(struct snd_soc_dapm_widget *w,
+>  					      CDC_WSA_TX_SPKR_PROT_RESET);
+>  		snd_soc_component_update_bits(component, tx_reg0,
+>  					      CDC_WSA_TX_SPKR_PROT_PCM_RATE_MASK,
+> -					      rate_val);
+> +					      val);
+
+No need for extra renames, they complicate reviewing.
+
+>  		snd_soc_component_update_bits(component, tx_reg1,
+>  					      CDC_WSA_TX_SPKR_PROT_PCM_RATE_MASK,
+> -					      rate_val);
+> +					      val);
+>  		snd_soc_component_update_bits(component, tx_reg0,
+>  					      CDC_WSA_TX_SPKR_PROT_CLK_EN_MASK,
+>  					      CDC_WSA_TX_SPKR_PROT_CLK_ENABLE);
+> @@ -1534,9 +1499,7 @@ static int wsa_macro_enable_vi_feedback(struct snd_soc_dapm_widget *w,
+>  		snd_soc_component_update_bits(component, tx_reg1,
+>  					      CDC_WSA_TX_SPKR_PROT_RESET_MASK,
+>  					      CDC_WSA_TX_SPKR_PROT_NO_RESET);
+> -		break;
+> -	case SND_SOC_DAPM_POST_PMD:
+> -		/* Disable V&I sensing */
+> +	} else {
+>  		snd_soc_component_update_bits(component, tx_reg0,
+>  					      CDC_WSA_TX_SPKR_PROT_RESET_MASK,
+>  					      CDC_WSA_TX_SPKR_PROT_RESET);
+> @@ -1549,6 +1512,67 @@ static int wsa_macro_enable_vi_feedback(struct snd_soc_dapm_widget *w,
+>  		snd_soc_component_update_bits(component, tx_reg1,
+>  					      CDC_WSA_TX_SPKR_PROT_CLK_EN_MASK,
+>  					      CDC_WSA_TX_SPKR_PROT_CLK_DISABLE);
+> +	}
+> +}
+> +
+> +static void wsa_macro_enable_disable_vi_feedback(struct snd_soc_component *component,
+> +						 bool enable, u32 rate)
+> +{
+> +	struct wsa_macro *wsa = snd_soc_component_get_drvdata(component);
+> +	u32 tx_reg0, tx_reg1;
+> +
+> +	if (test_bit(WSA_MACRO_TX0, &wsa->active_ch_mask[WSA_MACRO_AIF_VI])) {
+> +		tx_reg0 = CDC_WSA_TX0_SPKR_PROT_PATH_CTL;
+> +		tx_reg1 = CDC_WSA_TX1_SPKR_PROT_PATH_CTL;
+> +		wsa_macro_enable_disable_vi_sense(component, enable, tx_reg0, tx_reg1, rate);
+
+As you are refactoring this piece of code, do you need tx_reg0 / tx_reg1
+variables? Can you inline them instead?
+
+> +	}
+> +
+> +	if (test_bit(WSA_MACRO_TX1, &wsa->active_ch_mask[WSA_MACRO_AIF_VI])) {
+> +		tx_reg0 = CDC_WSA_TX2_SPKR_PROT_PATH_CTL;
+> +		tx_reg1 = CDC_WSA_TX3_SPKR_PROT_PATH_CTL;
+> +		wsa_macro_enable_disable_vi_sense(component, enable, tx_reg0, tx_reg1, rate);
+> +
+> +	}
+> +
+
+Extra empty line.
+
+> +}
+> +
+> +static int wsa_macro_enable_vi_feedback(struct snd_soc_dapm_widget *w,
+> +					struct snd_kcontrol *kcontrol,
+> +					int event)
+> +{
+> +	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
+> +	struct wsa_macro *wsa = snd_soc_component_get_drvdata(component);
+> +	u32 rate_val;
+> +
+> +	switch (wsa->pcm_rate_vi) {
+> +	case 8000:
+> +		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_8K;
+> +		break;
+> +	case 16000:
+> +		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_16K;
+> +		break;
+> +	case 24000:
+> +		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_24K;
+> +		break;
+> +	case 32000:
+> +		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_32K;
+> +		break;
+> +	case 48000:
+> +		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_48K;
+> +		break;
+> +	default:
+> +		rate_val = CDC_WSA_TX_SPKR_PROT_PCM_RATE_8K;
+> +		break;
+> +	}
+> +
+> +	switch (event) {
+> +	case SND_SOC_DAPM_POST_PMU:
+> +		/* Enable V&I sensing */
+> +		wsa_macro_enable_disable_vi_feedback(component, true, rate_val);
+> +		break;
+> +	case SND_SOC_DAPM_POST_PMD:
+> +		/* Disable V&I sensing */
+> +		wsa_macro_enable_disable_vi_feedback(component, false, rate_val);
+>  		break;
+>  	}
+>  
+> -- 
+> 2.39.5
 > 
->  Documentation/devicetree/bindings/arm/fsl.yaml     |   7 +
->  arch/arm64/boot/dts/freescale/Makefile             |   3 +
->  .../imx8mp-libra-rdk-fpsc-lvds-etml1010g3dra.dtso  |  44 ++
->  .../boot/dts/freescale/imx8mp-libra-rdk-fpsc.dts   | 290 ++++++++
->  .../boot/dts/freescale/imx8mp-phycore-fpsc.dtsi    | 796 +++++++++++++++++++++
->  5 files changed, 1140 insertions(+)
-> ---
-> base-commit: 90453dc4dee29b96b9162895f45776bc25526e07
-> change-id: 20241210-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-c273025682f2
-> 
-> Best regards,
-> --
-> Yannic Moog <y.moog@phytec.de>
-> 
-> 
-> 
 
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: using specified base-commit 90453dc4dee29b96b9162895f45776bc25526e07
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/freescale/' for 20250403-wip-y-moog-phytec-de-imx8mp-phycore-fpsc-v2-0-c0d2eff683ac@phytec.de:
-
-arch/arm64/boot/dts/freescale/imx8mp-libra-rdk-fpsc.dtb: clock-controller@30e20000: clock-names: ['ahb', 'sai1', 'sai2', 'sai3', 'sai5', 'sai6', 'sai7', 'axi'] is too long
-	from schema $id: http://devicetree.org/schemas/clock/imx8mp-audiomix.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-libra-rdk-fpsc.dtb: clock-controller@30e20000: clocks: [[2, 284], [2, 123], [2, 124], [2, 125], [2, 127], [2, 128], [2, 182], [2, 321]] is too long
-	from schema $id: http://devicetree.org/schemas/clock/imx8mp-audiomix.yaml#
-
-
-
-
-
+-- 
+With best wishes
+Dmitry
 
