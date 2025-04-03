@@ -1,206 +1,533 @@
-Return-Path: <linux-kernel+bounces-587798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D017A7B068
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:16:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D53A7B079
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:18:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ED93189F559
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:12:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 453481751D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5AE41FF7A1;
-	Thu,  3 Apr 2025 20:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B332200B8B;
+	Thu,  3 Apr 2025 20:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eFN1twnp"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BXmOX4GN"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594CC1FF615
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 20:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111A520011B
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 20:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743712720; cv=none; b=dr3jmVCqp4iF0q1+Y6HK8Feb/mA3BLcnKWnNR3D2LLT8SfAong38L2bGbc5w+q3gl18XhVqyT4FvqEZWwpfj/LrdFNFsb+lzN7HhZaELouUvb9ldBRHwdunFxE/7Ty2t3cMGsXWRohHht7tyRv19pzMG4A+DnR/JG+EZSmMQp5U=
+	t=1743712776; cv=none; b=tvmFwEPBvpuJiNGRIlyqLkj3FGY6dSXKwGJ35UjvBiZHJxjmYcRGx0mIlw+/KPkseML+pIXSt81iyW/0jf9TSk+ogi1StYZ35E1stvRKVghwSZzMKqV/3YLc5VWuAF9oEHJcfKwsKTpIW3tVWYuzjBvYQ4m5nE1mQBIzGAYsy+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743712720; c=relaxed/simple;
-	bh=LQNorl+FxeZ9WjYAnsEddepH/Io+6JtiYR/y5xPvq+U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RYB0ABmeTTHAgEfHpQRyPj8IHzTlZBoUbm9O7U5j3GuQqP0Ptx0vwfkBtNgS5yIWtYksnNOqp18/TBIVzRHi4pZtF374G7cuf2otWgBTYrxHu3uCWfCqNJQPwu2mqwKx8y6XTkEhagv2cyDlSLZ7mUeeszMgkICPHUc5R4HHb2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eFN1twnp; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-47662449055so7375831cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 13:38:37 -0700 (PDT)
+	s=arc-20240116; t=1743712776; c=relaxed/simple;
+	bh=EShZpaMpcKMcXMarqyk0Jqf+GJAYVMRBIxLLbquNCms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sWSUsSqrznJ8xUjKVXBalFp0Oyu0oNn+dj7fFdANRf8EJnRBmUFWOt9+9mU/aAZ6CxzJHmL6degJaklLqTtJmjzXulJ+7LOBpW+zrtE1B6Yhy3kg+H5u1D4pHjHVEVrEU4TxMszgVrIsJVvVzbnHciWpeVBvHVVdLtDzdjAwO90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BXmOX4GN; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-47666573242so118221cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 13:39:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743712717; x=1744317517; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CgJaLBC/vvLHRWUfTxP8meiFEnp76vjgOWeU9IZXJJ8=;
-        b=eFN1twnpUkAuAwHQQ1TnyKOtDJAsY71+gOiW4p+LY7OhbK+0BO2uTc40+9gCkP1AX9
-         YVfjYUA1ym3P+xxIzJPA1b6nC6w0ZrQskNcVEPmjFPHwKQZz+AOdUE/1q3IPlLERkVfF
-         +6GpCDTzCAMSjCqynwu/30DRkU6PShBf9v9KtyLHoDY6Mi4Nfo7LLINtHMFV0lveMfpM
-         dpLkjRgSe3TMxrwj/CghdFDqusfxNpGFtRUmDfjf6Pt7Q9xox0b/kv6k513lgmF4F8YN
-         MET7tp9Cz/X51Qqe065k3PEv/qjpsQWZAmqYlJf1yID5Vk8dhy+DqvPcD11dOnv3mxCg
-         Lpag==
+        d=google.com; s=20230601; t=1743712773; x=1744317573; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9gzKoe90ZfM4o/7GbmHUnknhoKPfawda3x0icnfdTpk=;
+        b=BXmOX4GNXGzFlPmDJmbFheub7HoZ8AOjIicnpZP9K+UprE0hFPephudU3B1sl5m+PO
+         f1OfwLE3Rcp0OE/p8SZ04R9GBBvRo83zEZbrR6We2gYRfv6X9jDp6Gd2vNVgCiTf538w
+         T7DFP6O//iuxS7tOY39a0nLNyBTsvez/RLW3+upscCw8u6+qPbfLhYzJX147hohsxcBs
+         QS9oftqT9iSEsLZV8b/XpUvuQuSFO77vP3FW0YAdKEKrw/APu/KN4qNPBbSTJwtA5aWW
+         WKKy+V8DDynM1XBt7WJqRBYAe9g/0j4h+pf93mCftbjb0dUmtBa6iDq91YGeZbRfltEB
+         b/zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743712717; x=1744317517;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CgJaLBC/vvLHRWUfTxP8meiFEnp76vjgOWeU9IZXJJ8=;
-        b=WRv4AtjlBeXdr5b8bnQUBQCZzKk+AV34ouh0fkD/3kEZa4Q2m/jnQe8PVNPCym5EJf
-         UPYh3a/PsHC3fPUEZozzpT0zNEAKRCXDMeA64tD+Tpu/pu2Wl8B4fDG12jJzKcvm5k+n
-         zxufJ1YRhdkJL/DoKNcpyvL0umrLQNKEMTZ7zVz8iRM5detmbf8B4ca9cdiSJfYX9P2M
-         SiGqWD8cpA8xdo0ICbPhbh5bSBmC8JECSWawVvQj3b6msLKP8SilApsLLZ4cbV7aw77e
-         O8DguVtzIM6rZEfoi5OkQVGinIxWMCy8L/1Swwjo84YYzOuc7SY+r2K9MQCY1PlXyvY7
-         eEIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWJrYgWahuNrx2DmlQrU6mcg5qy0Kn2TnrEV03crJbIIxp4lbOcIZn4oznZBzKYjjzDv7V246TXNQywU6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPqNwQfHwSuIhhhoNHP42fzSxqERpJApQukDoi2mPDJ5/sYqtr
-	51SiM2cCp24bVF3ZSft2JKM5yYxRGaQJ6wOHht0mdLS/EDDSpBy4No44V2ADXgUu9QbVc98CXNw
-	ZWHT6C9r0Q0Oz23cEI+NkjiWQlSQ=
-X-Gm-Gg: ASbGncv/Ovz4zv6I5liR4+I34UlRFjk7EWFN7/Z7U578CG+WvpEebBskfcOhrUi31oQ
-	eqqErLVI8eJ4+72Lpi9moAgvgJBsWMLSPysszkdNXCxZBu5WGNAKVh7qgZiyfo2HSjRdPTAV9oA
-	B6bLt+ru+63OSNklgdPpmk3elNBJ09q5kZU5xPbmaQVA==
-X-Google-Smtp-Source: AGHT+IEMSliei2l649c31YPpt/ggB9tdVf1Zi3+20JU2QrQQbAiEI8KNTt9SsCchr9zSmEJqdJm0lS29wCdwTyhsG64=
-X-Received: by 2002:a05:6214:765:b0:6e8:955b:141e with SMTP id
- 6a1803df08f44-6f05852affdmr5326266d6.21.1743712716802; Thu, 03 Apr 2025
- 13:38:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743712773; x=1744317573;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9gzKoe90ZfM4o/7GbmHUnknhoKPfawda3x0icnfdTpk=;
+        b=ii1B0gkSoVmT2rBr9xMf4SVzeU3CF9x8Rhfnp4oxgTvMasKWrvNJc04OzW6iGHFgjn
+         8C3WOPBK0f8BZXPC/ghp/A6/tB4UmWgZ0dRA57AC1Xa4d2wcURkS3MJv754kz64d6unY
+         grifVLBCqlKAttY3WPJvUd04OCVZg8Oxl4S/jhrRM/99LCYFte/BGjVgAEQvCUt4+blj
+         KVT7JBkEqVBck+QCUjrOB7MXrY7niZK2ENKWhTi9vJgIT6NWD/g/czfcWt2DSDepxTFp
+         YDT6j6twCIqLywakZcZSIIHbNCrzMwzSwZt7LN9QIgHvebwnH6MJpzXMVSefOnm4mgOx
+         kAEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMJ1KgZcZR+OeQ5hWIHJX67/GgTp82Q/Mp4z1CrU10yXr8pFJR+GEe8Pc5veo+RT8tsGlcuPAZAC/vybE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9potF+YXF6RM5mnuhvzkrJNPjBv3x6rC+RBnx9ay3FpQn+IkS
+	Xv/ADg9VHBgWHYp3DVERybQNHvaLntI7CIOH+67HCr9DADEjXASNnJjg8LRE6A==
+X-Gm-Gg: ASbGnctLjtd+mqrfjz8nSdayrcNr++h5g0GcSH7QlttUfE3cqF5dj/7zT2XA4Ma9Y2Y
+	c2lMRUDYd0MDgSzSkZ8D4GPDmf6+XZNR6i4WyibyLqB+049JxYoSv/HgBgwqQglFxV51tKj3yvd
+	KXwfqBL6IKkkqrsFdnwaWEMUk4kxgq9Kq8MbknwkB7Lgmf7lw3hx5ndoYvTWmefb7GLren1jRyr
+	cZB3q1mxElu56CEeytmIUzqOvPbDlCCl5o3hmkqjEZoKF50sD7hKfub12qT36WhkweWaBPeB2qM
+	wBn0ecjERcROtmX2wh27dL6oNcIpYpA6/mZ/Q4bduospWtCsAa1XTP7In5h3HzRLkhEz4fDwpFE
+	VdvU=
+X-Google-Smtp-Source: AGHT+IHNyJ7vs36NQlUP+/ypTWRilwDQLm735Q4Rad62mUsm20rDamhxTRr00Zy4tOacBCXmKpd0yA==
+X-Received: by 2002:ac8:59c3:0:b0:476:77be:9102 with SMTP id d75a77b69052e-47926715486mr32371cf.7.1743712772527;
+        Thu, 03 Apr 2025 13:39:32 -0700 (PDT)
+Received: from google.com (154.75.48.34.bc.googleusercontent.com. [34.48.75.154])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4791b071b86sm12031601cf.28.2025.04.03.13.39.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 13:39:32 -0700 (PDT)
+Date: Thu, 3 Apr 2025 20:39:29 +0000
+From: Brian Geffon <bgeffon@google.com>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Richard Chang <richardycc@google.com>,
+	Minchan Kim <minchan@kernel.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, sawlani@google.com
+Subject: Re: [PATCHv2] zram: modernize writeback interface
+Message-ID: <Z-7yAWG3IE7dnOKi@google.com>
+References: <20250327015818.4148660-1-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJD7tka6XRyzYndRNEFZmi0Zj4DD2KnVzt=vMGhfF4iN2B4VKw@mail.gmail.com>
- <20250402200651.1224617-1-joshua.hahnjy@gmail.com>
-In-Reply-To: <20250402200651.1224617-1-joshua.hahnjy@gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Thu, 3 Apr 2025 13:38:26 -0700
-X-Gm-Features: ATxdqUH27xjXKtpV6QHLDb42HuJLxsrQKEFDngpscMUoQkaQAzPemRQ1YdwdJqk
-Message-ID: <CAKEwX=Na6kgGLsnknkfsc75hk-Q690z0J9rh=S=BmK2qjVU3rw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] minimize swapping on zswap store failure
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>, akpm@linux-foundation.org, hannes@cmpxchg.org, 
-	cerasuolodomenico@gmail.com, sjenning@redhat.com, ddstreet@ieee.org, 
-	vitaly.wool@konsulko.com, hughd@google.com, corbet@lwn.net, 
-	konrad.wilk@oracle.com, senozhatsky@chromium.org, rppt@kernel.org, 
-	linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
-	david@ixit.cz, Minchan Kim <minchan@kernel.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Kairui Song <ryncsn@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250327015818.4148660-1-senozhatsky@chromium.org>
 
-On Wed, Apr 2, 2025 at 1:06=E2=80=AFPM Joshua Hahn <joshua.hahnjy@gmail.com=
-> wrote:
->
-> On Mon, 16 Oct 2023 17:57:31 -0700 Yosry Ahmed <yosryahmed@google.com> wr=
-ote:
->
-> > On Mon, Oct 16, 2023 at 5:35=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> w=
-rote:
->
-> > I thought before about having a special list_head that allows us to
-> > use the lower bits of the pointers as markers, similar to the xarray.
-> > The markers can be used to place different objects on the same list.
-> > We can have a list that is a mixture of struct page and struct
-> > zswap_entry. I never pursued this idea, and I am sure someone will
-> > scream at me for suggesting it. Maybe there is a less convoluted way
-> > to keep the LRU ordering intact without allocating memory on the
-> > reclaim path.
->
-> Hi Yosry,
->
-> Apologies for reviving an old thread, but I wasn't sure whether opening a=
-n
-> entirely new thread was a better choice : -)
->
-> So I've implemented your idea, using the lower 2 bits of the list_head's =
-prev
-> pointer (last bit indicates whether the list_head belongs to a page or a
-> zswap_entry, and the second to last bit was repurposed for the second cha=
-nce
-> algorithm).
->
-> For a very high level overview what I did in the patch:
-> - When a page fails to compress, I remove the page mapping and tag both t=
-he
->   xarray entry (tag =3D=3D set lowest bit to 1) and the page's list_head =
-prev ptr,
->   then store the page directly into the zswap LRU.
-> - In zswap_load, we take the entry out of the xarray and check if it's ta=
-gged.
->   - If it is tagged, then instead of decompressing, we just copy the page=
-'s
->     contents to the newly allocated page.
-> - (More details about how to teach vmscan / page_io / list iterators how =
-to
->   handle this, but we can gloss over those details for now)
->
-> I have a working version, but have been holding off because I have only b=
-een
-> seeing regressions. I wasn't really sure where they were coming from, but
-> after going through some perf traces with Nhat, found out that the regres=
-sions
-> come from the associated page faults that come from initially unmapping t=
-he
-> page, and then re-allocating it for every load. This causes (1) more memc=
-g
-> flushing, and (2) extra allocations =3D=3D> more pressure =3D=3D> more re=
-claim, even
-> though we only temporarily keep the extra page.
+On Thu, Mar 27, 2025 at 10:58:09AM +0900, Sergey Senozhatsky wrote:
+> The writeback interface supports a page_index=N parameter which
+> performs writeback of the given page.  Since we rarely need to
+> writeback just one single page, the typical use case involves
+> a number of writeback calls, each performing writeback of one
+> page:
+> 
+>   echo page_index=100 > zram0/writeback
+>   ...
+>   echo page_index=200 > zram0/writeback
+>   echo page_index=500 > zram0/writeback
+>   ...
+>   echo page_index=700 > zram0/writeback
+> 
+> One obvious downside of this is that it increases the number of
+> syscalls.  Less obvious, but a significantly more important downside,
+> is that when given only one page to post-process zram cannot perform
+> an optimal target selection.  This becomes a critical limitation
+> when writeback_limit is enabled, because under writeback_limit we
+> want to guarantee the highest memory savings hence we first need
+> to writeback pages that release the highest amount of zsmalloc pool
+> memory.
+> 
+> This patch adds page_indexes=LOW-HIGH parameter to the writeback
+> interface:
+> 
+>   echo page_indexes=100-200 page_indexes=500-700 > zram0/writeback
+> 
+> This gives zram a chance to apply an optimal target selection
+> strategy on each iteration of the writeback loop.
+> 
+> We also now permit multiple page_index parameters per call (previously
+> zram would recognize only one page_index) and a mix or single pages and
+> page ranges:
+> 
+>   echo page_index=42 page_index=99 page_indexes=100-200 \
+>        page_indexes=500-700 > zram0/writeback
+> 
+> Apart from that the patch also unifies parameters passing and resembles
+> other "modern" zram device attributes (e.g. recompression), while the
+> old interface used a mixed scheme: values-less parameters for mode and
+> a key=value format for page_index.  We still support the "old" value-less
+> format for compatibility reasons.
+> 
+> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 
-Thanks for your effort on this idea :)
+Reviewed-by: Brian Geffon <bgeffon@google.com>
 
->
-> Just wanted to put this here in case you were still thinking about this i=
-dea.
-> What do you think? Ideally, there would be a way to keep the page around =
-in
-> the zswap LRU, but do not have to re-allocate a new page on a fault, but =
-this
-> seems like a bigger task.
+> ---
+>  Documentation/admin-guide/blockdev/zram.rst |  17 ++
+>  drivers/block/zram/zram_drv.c               | 320 +++++++++++++-------
+>  2 files changed, 232 insertions(+), 105 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/blockdev/zram.rst b/Documentation/admin-guide/blockdev/zram.rst
+> index 9bdb30901a93..b8d36134a151 100644
+> --- a/Documentation/admin-guide/blockdev/zram.rst
+> +++ b/Documentation/admin-guide/blockdev/zram.rst
+> @@ -369,6 +369,23 @@ they could write a page index into the interface::
+>  
+>  	echo "page_index=1251" > /sys/block/zramX/writeback
+>  
+> +In Linux 6.16 this interface underwent some rework.  First, the interface
+> +now supports `key=value` format for all of its parameters (`type=huge_idle`,
+> +etc.)  Second, the support for `page_indexes` was introduced, which specify
+> +`LOW-HIGH` range (or ranges) of pages to be written-back.  This reduces the
+> +number of syscalls, but more importantly this enables optimal post-processing
+> +target selection strategy. Usage example::
+> +
+> +	echo "type=idle" > /sys/block/zramX/writeback
+> +	echo "page_indexes=1-100 page_indexes=200-300" > \
+> +		/sys/block/zramX/writeback
+> +
+> +We also now permit multiple page_index params per call and a mix of
+> +single pages and page ranges::
+> +
+> +	echo page_index=42 page_index=99 page_indexes=100-200 \
+> +		page_indexes=500-700 > /sys/block/zramX/writeback
+> +
 
-I wonder if we can return the page in the event of a page fault. We'll
-need to keep it in the swap cache for this to work:
+This new interface will be very useful, thanks for adding it Sergey!
 
-1. On reclaim, do the same thing as your prototype but keep the page
-in swap cache (i.e do not remove_mapping() it).
+>  If there are lots of write IO with flash device, potentially, it has
+>  flash wearout problem so that admin needs to design write limitation
+>  to guarantee storage health for entire product life.
+> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+> index fda7d8624889..9e8ed1bf308b 100644
+> --- a/drivers/block/zram/zram_drv.c
+> +++ b/drivers/block/zram/zram_drv.c
+> @@ -734,114 +734,19 @@ static void read_from_bdev_async(struct zram *zram, struct page *page,
+>  	submit_bio(bio);
+>  }
+>  
+> -#define PAGE_WB_SIG "page_index="
+> -
+> -#define PAGE_WRITEBACK			0
+> -#define HUGE_WRITEBACK			(1<<0)
+> -#define IDLE_WRITEBACK			(1<<1)
+> -#define INCOMPRESSIBLE_WRITEBACK	(1<<2)
+> -
+> -static int scan_slots_for_writeback(struct zram *zram, u32 mode,
+> -				    unsigned long nr_pages,
+> -				    unsigned long index,
+> -				    struct zram_pp_ctl *ctl)
+> +static int zram_writeback_slots(struct zram *zram, struct zram_pp_ctl *ctl)
+>  {
+> -	for (; nr_pages != 0; index++, nr_pages--) {
+> -		bool ok = true;
+> -
+> -		zram_slot_lock(zram, index);
+> -		if (!zram_allocated(zram, index))
+> -			goto next;
+> -
+> -		if (zram_test_flag(zram, index, ZRAM_WB) ||
+> -		    zram_test_flag(zram, index, ZRAM_SAME))
+> -			goto next;
+> -
+> -		if (mode & IDLE_WRITEBACK &&
+> -		    !zram_test_flag(zram, index, ZRAM_IDLE))
+> -			goto next;
+> -		if (mode & HUGE_WRITEBACK &&
+> -		    !zram_test_flag(zram, index, ZRAM_HUGE))
+> -			goto next;
+> -		if (mode & INCOMPRESSIBLE_WRITEBACK &&
+> -		    !zram_test_flag(zram, index, ZRAM_INCOMPRESSIBLE))
+> -			goto next;
+> -
+> -		ok = place_pp_slot(zram, ctl, index);
+> -next:
+> -		zram_slot_unlock(zram, index);
+> -		if (!ok)
+> -			break;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -static ssize_t writeback_store(struct device *dev,
+> -		struct device_attribute *attr, const char *buf, size_t len)
+> -{
+> -	struct zram *zram = dev_to_zram(dev);
+> -	unsigned long nr_pages = zram->disksize >> PAGE_SHIFT;
+> -	struct zram_pp_ctl *ctl = NULL;
+> +	unsigned long blk_idx = 0;
+> +	struct page *page = NULL;
+>  	struct zram_pp_slot *pps;
+> -	unsigned long index = 0;
+> -	struct bio bio;
+>  	struct bio_vec bio_vec;
+> -	struct page *page = NULL;
+> -	ssize_t ret = len;
+> -	int mode, err;
+> -	unsigned long blk_idx = 0;
+> -
+> -	if (sysfs_streq(buf, "idle"))
+> -		mode = IDLE_WRITEBACK;
+> -	else if (sysfs_streq(buf, "huge"))
+> -		mode = HUGE_WRITEBACK;
+> -	else if (sysfs_streq(buf, "huge_idle"))
+> -		mode = IDLE_WRITEBACK | HUGE_WRITEBACK;
+> -	else if (sysfs_streq(buf, "incompressible"))
+> -		mode = INCOMPRESSIBLE_WRITEBACK;
+> -	else {
+> -		if (strncmp(buf, PAGE_WB_SIG, sizeof(PAGE_WB_SIG) - 1))
+> -			return -EINVAL;
+> -
+> -		if (kstrtol(buf + sizeof(PAGE_WB_SIG) - 1, 10, &index) ||
+> -				index >= nr_pages)
+> -			return -EINVAL;
+> -
+> -		nr_pages = 1;
+> -		mode = PAGE_WRITEBACK;
+> -	}
+> -
+> -	down_read(&zram->init_lock);
+> -	if (!init_done(zram)) {
+> -		ret = -EINVAL;
+> -		goto release_init_lock;
+> -	}
+> -
+> -	/* Do not permit concurrent post-processing actions. */
+> -	if (atomic_xchg(&zram->pp_in_progress, 1)) {
+> -		up_read(&zram->init_lock);
+> -		return -EAGAIN;
+> -	}
+> -
+> -	if (!zram->backing_dev) {
+> -		ret = -ENODEV;
+> -		goto release_init_lock;
+> -	}
+> +	struct bio bio;
+> +	int ret, err;
+> +	u32 index;
+>  
+>  	page = alloc_page(GFP_KERNEL);
+> -	if (!page) {
+> -		ret = -ENOMEM;
+> -		goto release_init_lock;
+> -	}
+> -
+> -	ctl = init_pp_ctl();
+> -	if (!ctl) {
+> -		ret = -ENOMEM;
+> -		goto release_init_lock;
+> -	}
+> -
+> -	scan_slots_for_writeback(zram, mode, nr_pages, index, ctl);
+> +	if (!page)
+> +		return -ENOMEM;
+>  
+>  	while ((pps = select_pp_slot(ctl))) {
+>  		spin_lock(&zram->wb_limit_lock);
+> @@ -929,10 +834,215 @@ static ssize_t writeback_store(struct device *dev,
+>  
+>  	if (blk_idx)
+>  		free_block_bdev(zram, blk_idx);
+> -
+> -release_init_lock:
+>  	if (page)
+>  		__free_page(page);
+> +
+> +	return ret;
+> +}
+> +
+> +#define PAGE_WRITEBACK			0
+> +#define HUGE_WRITEBACK			(1 << 0)
+> +#define IDLE_WRITEBACK			(1 << 1)
+> +#define INCOMPRESSIBLE_WRITEBACK	(1 << 2)
+> +
+> +static int parse_page_index(char *val, unsigned long nr_pages,
+> +			    unsigned long *lo, unsigned long *hi)
+> +{
+> +	int ret;
+> +
+> +	ret = kstrtoul(val, 10, lo);
+> +	if (ret)
+> +		return ret;
+> +	*hi = *lo + 1;
+> +	if (*lo >= nr_pages || *hi > nr_pages)
 
-2. On page fault (do_swap_page), before returning check if the page is
-in zswap LRU. If it is, invalidate the zswap LRU linkage, and put it
-back to one of the proper LRUs.
+I think you can do just:
+if (*lo >= nr_pages)
 
-Johannes, do you feel like this is possible?
+The *hi > nr_pages check seems superfluous given the
+assignment directly above this.
 
->
-> Ultimately the goal is to prevent an incompressible page from hoarding th=
-e
-> compression algorithm on multiple reclaim attempts, but if we are spendin=
-g
-> more time by allocating new pages... maybe this isn't the correct approac=
-h :(
-
-Hmmm, IIUC this problem also exists with zram, since zram allocates a
-PAGE_SIZE sized buffer to hold the original page's content. I will
-note though that zram seems to favor these kinds of pages for
-writeback :) Maybe this is why...?
-
-(+ Minchan)
-
->
-> Please let me know if you have any thoughts on this : -)
-
-Well worst case scenario there is still the special incompressible LRU
-idea. We'll need some worker thread to check for write access to these
-pages to promote them though.
-
-(+ Shakeel)
-
-> Have a great day!
-> Joshua
->
-> Sent using hkml (https://github.com/sjp38/hackermail)
->
+> +		return -ERANGE;
+> +	return 0;
+> +}
+> +
+> +static int parse_page_indexes(char *val, unsigned long nr_pages,
+> +			      unsigned long *lo, unsigned long *hi)
+> +{
+> +	char *delim;
+> +	int ret;
+> +
+> +	delim = strchr(val, '-');
+> +	if (!delim)
+> +		return -EINVAL;
+> +
+> +	*delim = 0x00;
+> +	ret = kstrtoul(val, 10, lo);
+> +	if (ret)
+> +		return ret;
+> +	if (*lo >= nr_pages)
+> +		return -ERANGE;
+> +
+> +	ret = kstrtoul(delim + 1, 10, hi);
+> +	if (ret)
+> +		return ret;
+> +	if (*hi >= nr_pages || *lo > *hi)
+> +		return -ERANGE;
+> +	*hi += 1;
+> +	return 0;
+> +}
+> +
+> +static int parse_mode(char *val, u32 *mode)
+> +{
+> +	*mode = 0;
+> +
+> +	if (!strcmp(val, "idle"))
+> +		*mode = IDLE_WRITEBACK;
+> +	if (!strcmp(val, "huge"))
+> +		*mode = HUGE_WRITEBACK;
+> +	if (!strcmp(val, "huge_idle"))
+> +		*mode = IDLE_WRITEBACK | HUGE_WRITEBACK;
+> +	if (!strcmp(val, "incompressible"))
+> +		*mode = INCOMPRESSIBLE_WRITEBACK;
+> +
+> +	if (*mode == 0)
+> +		return -EINVAL;
+> +	return 0;
+> +}
+> +
+> +static int scan_slots_for_writeback(struct zram *zram, u32 mode,
+> +				    unsigned long lo, unsigned long hi,
+> +				    struct zram_pp_ctl *ctl)
+> +{
+> +	u32 index = lo;
+> +
+> +	while (index < hi) {
+> +		bool ok = true;
+> +
+> +		zram_slot_lock(zram, index);
+> +		if (!zram_allocated(zram, index))
+> +			goto next;
+> +
+> +		if (zram_test_flag(zram, index, ZRAM_WB) ||
+> +		    zram_test_flag(zram, index, ZRAM_SAME))
+> +			goto next;
+> +
+> +		if (mode & IDLE_WRITEBACK &&
+> +		    !zram_test_flag(zram, index, ZRAM_IDLE))
+> +			goto next;
+> +		if (mode & HUGE_WRITEBACK &&
+> +		    !zram_test_flag(zram, index, ZRAM_HUGE))
+> +			goto next;
+> +		if (mode & INCOMPRESSIBLE_WRITEBACK &&
+> +		    !zram_test_flag(zram, index, ZRAM_INCOMPRESSIBLE))
+> +			goto next;
+> +
+> +		ok = place_pp_slot(zram, ctl, index);
+> +next:
+> +		zram_slot_unlock(zram, index);
+> +		if (!ok)
+> +			break;
+> +		index++;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static ssize_t writeback_store(struct device *dev,
+> +			       struct device_attribute *attr,
+> +			       const char *buf, size_t len)
+> +{
+> +	struct zram *zram = dev_to_zram(dev);
+> +	u64 nr_pages = zram->disksize >> PAGE_SHIFT;
+> +	unsigned long lo = 0, hi = nr_pages;
+> +	struct zram_pp_ctl *ctl = NULL;
+> +	char *args, *param, *val;
+> +	ssize_t ret = len;
+> +	int err, mode = 0;
+> +
+> +	down_read(&zram->init_lock);
+> +	if (!init_done(zram)) {
+> +		up_read(&zram->init_lock);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Do not permit concurrent post-processing actions. */
+> +	if (atomic_xchg(&zram->pp_in_progress, 1)) {
+> +		up_read(&zram->init_lock);
+> +		return -EAGAIN;
+> +	}
+> +
+> +	if (!zram->backing_dev) {
+> +		ret = -ENODEV;
+> +		goto release_init_lock;
+> +	}
+> +
+> +	ctl = init_pp_ctl();
+> +	if (!ctl) {
+> +		ret = -ENOMEM;
+> +		goto release_init_lock;
+> +	}
+> +
+> +	args = skip_spaces(buf);
+> +	while (*args) {
+> +		args = next_arg(args, &param, &val);
+> +
+> +		/*
+> +		 * Workaround to support the old writeback interface.
+> +		 *
+> +		 * The old writeback interface has a minor inconsistency and
+> +		 * requires key=value only for page_index parameter, while the
+> +		 * writeback mode is a valueless parameter.
+> +		 *
+> +		 * This is not the case anymore and now all parameters are
+> +		 * required to have values, however, we need to support the
+> +		 * legacy writeback interface format so we check if we can
+> +		 * recognize a valueless parameter as the (legacy) writeback
+> +		 * mode.
+> +		 */
+> +		if (!val || !*val) {
+> +			err = parse_mode(param, &mode);
+> +			if (err) {
+> +				ret = err;
+> +				goto release_init_lock;
+> +			}
+> +
+> +			scan_slots_for_writeback(zram, mode, lo, hi, ctl);
+> +			break;
+> +		}
+> +
+> +		if (!strcmp(param, "type")) {
+> +			err = parse_mode(val, &mode);
+> +			if (err) {
+> +				ret = err;
+> +				goto release_init_lock;
+> +			}
+> +
+> +			scan_slots_for_writeback(zram, mode, lo, hi, ctl);
+> +			break;
+> +		}
+> +
+> +		if (!strcmp(param, "page_index")) {
+> +			err = parse_page_index(val, nr_pages, &lo, &hi);
+> +			if (err) {
+> +				ret = err;
+> +				goto release_init_lock;
+> +			}
+> +
+> +			scan_slots_for_writeback(zram, mode, lo, hi, ctl);
+> +			continue;
+> +		}
+> +
+> +		if (!strcmp(param, "page_indexes")) {
+> +			err = parse_page_indexes(val, nr_pages, &lo, &hi);
+> +			if (err) {
+> +				ret = err;
+> +				goto release_init_lock;
+> +			}
+> +
+> +			scan_slots_for_writeback(zram, mode, lo, hi, ctl);
+> +			continue;
+> +		}
+> +	}
+> +
+> +	err = zram_writeback_slots(zram, ctl);
+> +	if (err)
+> +		ret = err;
+> +
+> +release_init_lock:
+>  	release_pp_ctl(zram, ctl);
+>  	atomic_set(&zram->pp_in_progress, 0);
+>  	up_read(&zram->init_lock);
+> -- 
+> 2.49.0.395.g12beb8f557-goog
+> 
 
