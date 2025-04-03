@@ -1,141 +1,81 @@
-Return-Path: <linux-kernel+bounces-587013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A6F0A7A66F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:25:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6C1BA7A4F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26D191760F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:23:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9FFB176D42
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501BE254AE5;
-	Thu,  3 Apr 2025 15:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DC424EA90;
+	Thu,  3 Apr 2025 14:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D8MBM5n+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Ic/2PwvK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC1D2528EF
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 15:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5361EBA0D;
+	Thu,  3 Apr 2025 14:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743693610; cv=none; b=b8mDib3mcWpbbkJv5rfv7b5tso9/Y2nmZNpMufnXP+T3pncVy0d1qT6oeEB8tVYNOBXmbj4h8/mphgV4dSUBzgnnaMAVhB+ScWw5Bn/ROJE2HUaf7GDxACYgUJxEM8Pn2pp0tzPQiRMJg/CaIhbCuiw6LuySjcSOAriHBXb0yvA=
+	t=1743689895; cv=none; b=otHiKaL8wCer7jnHe6MgjS+HcSWhe6QIFAMZHZca3qXjHlTqSRjaCHv34xitv4GE4XDQPRxyfPqNSJpf6HwdQwqQi9+7P+21EEPdOATo5f+Il60xx9aXMtyA+2dF+HgXHmi+t4XMMilgy5/kEkryQEREpLaocqfFXjVVyO0/4z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743693610; c=relaxed/simple;
-	bh=rQWKKqtXG8zHvj+oml4Bh3FDva3eQLH5x8W7YKVvBHo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p17YJ/GA00V7zOI7xPNrvKcn8kFDTcFI5iZsL4FJ/OrPOvJefdSesJWJgeNcvL0aRVwq8JckiyV5rCq+tpXSh9p4asGGJq+A7pAIytl+Wt0diZbgOEWuk67NovZ7p88GsvO1GaRJtpumTohOZXIO8PDzyYKh15Ob39b7n6augSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D8MBM5n+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743693608;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OH0Z+iNqOHbC+oe1dNPpgRH9kQTL2CN47YBp6Nz733s=;
-	b=D8MBM5n+HSogaI4VQrrG5alRc20gRrI/o18EFMRERhgYf4N4WKLTCYH+WA4zBmE1RoGUCc
-	m3n1HCTwpr3Gh2YbxFXBVx9Pg8+RmcIEZHF7i1rGmpvaogCVZwS8JpWrm8kqyyuEESN/Jv
-	fqEf/CmVpUnb18Q0VBKVi0WlA6k36i0=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-335-aaTY7PfpNX6RRUOluaWDEQ-1; Thu,
- 03 Apr 2025 11:20:02 -0400
-X-MC-Unique: aaTY7PfpNX6RRUOluaWDEQ-1
-X-Mimecast-MFC-AGG-ID: aaTY7PfpNX6RRUOluaWDEQ_1743693600
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 13D4E195608D;
-	Thu,  3 Apr 2025 15:20:00 +0000 (UTC)
-Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.30])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2A63E1801A6D;
-	Thu,  3 Apr 2025 15:19:56 +0000 (UTC)
-From: Anusha Srivatsa <asrivats@redhat.com>
-Date: Thu, 03 Apr 2025 10:16:37 -0400
-Subject: [PATCH v2 30/30] panel/orisetech-ota5601a: Use refcounted
- allocation in place of devm_kzalloc()
+	s=arc-20240116; t=1743689895; c=relaxed/simple;
+	bh=Uy8VhtkwGnjgWhisPk852iAoDVSZJ1v9w+B0YXSVHg8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KyAg55GpeEfKkupd0ocFKO7e7QMyA4HkeZQ84a94IJjLEBBQMMdQdy5niE6XFJnWT+H9SqQiJ+4y4yzVmBgLTT9PUyLfbkHJw50TYdSQmx9+6lUf9gXXCiDdfPNFM0AktLWz98nkWvE9bjhIV0V4RgkODbCqKU20cj6ypH2rjkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Ic/2PwvK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0047C4CEE3;
+	Thu,  3 Apr 2025 14:18:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743689895;
+	bh=Uy8VhtkwGnjgWhisPk852iAoDVSZJ1v9w+B0YXSVHg8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ic/2PwvKwZFBLZja5vywSaemxyPGR/b+oYLjuRsfqN39ZyKJefDbR667Nji/IT4jM
+	 j9XP1oaaivoqbkWl3yHJxmzM2xMR4UCMVBaz12MecRunGf1UKNlisFVQOllNV4Lnbz
+	 LGnoWu5JiVQ9QBsdYcrq+rDtsnjJ2y9OopdAe8lw=
+Date: Thu, 3 Apr 2025 15:16:47 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Richard Akintola <princerichard17a@gmail.com>
+Cc: sudipm.mukherjee@gmail.com, teddy.wang@siliconmotion.com,
+	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, julia.lawall@inria.fr
+Subject: Re: [PATCH] staging: sm750fb: modify function name to kernel code
+ style
+Message-ID: <2025040301-tightness-giveaway-a568@gregkh>
+References: <67ea5813.5d0a0220.293276.775e@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250403-b4-drm_panel_mass_convert_part2-v2-30-260c8a44c56b@redhat.com>
-References: <20250403-b4-drm_panel_mass_convert_part2-v2-0-260c8a44c56b@redhat.com>
-In-Reply-To: <20250403-b4-drm_panel_mass_convert_part2-v2-0-260c8a44c56b@redhat.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Icenowy Zheng <icenowy@aosc.io>, Jagan Teki <jagan@amarulasolutions.com>, 
- Ondrej Jirman <megi@xff.cz>, Javier Martinez Canillas <javierm@redhat.com>, 
- Michael Trimarchi <michael@amarulasolutions.com>, 
- Michael Walle <mwalle@kernel.org>, Jagan Teki <jagan@edgeble.ai>, 
- =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
- Purism Kernel Team <kernel@puri.sm>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Jianhua Lu <lujianhua000@gmail.com>, Stefan Mavrodiev <stefan@olimex.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Anusha Srivatsa <asrivats@redhat.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1743689775; l=1337;
- i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
- bh=rQWKKqtXG8zHvj+oml4Bh3FDva3eQLH5x8W7YKVvBHo=;
- b=RLAbcVr52UrHJAL+nlhIW5FtmcxsXnh9otWMcPWGx3XQ+0+c01UkKkzQxDf47X3b6EuJ7F627
- ArDOeLT+f1xAlc6Qj9wtb0sWtR2O7la6BsDrHh6bpt4hdMzRcY2Ikyh
-X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
- pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67ea5813.5d0a0220.293276.775e@mx.google.com>
 
-Move to using the new API devm_drm_panel_alloc() to allocate the
-panel.
+On Mon, Mar 31, 2025 at 09:53:36AM +0100, Richard Akintola wrote:
+> Change camelCase function name sii164ResetChip to sii164_reset_chip
+> as reported by checkpatch.pl
+> 
+> CHECK: Avoid camelCase: <sii164ResetChip>
+> 
+> Signed-off-by: Richard Akintola <princerichard17a@gmail.com>
+> ---
+>  drivers/staging/sm750fb/ddk750_dvi.c    | 2 +-
+>  drivers/staging/sm750fb/ddk750_sii164.c | 4 ++--
+>  drivers/staging/sm750fb/ddk750_sii164.h | 2 +-
+>  3 files changed, 4 insertions(+), 4 deletions(-)
 
-Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
----
-v2: none.
----
- drivers/gpu/drm/panel/panel-orisetech-ota5601a.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+You sent 2 different patches with different subject lines, yet they
+almost did the same thing?  Which one should I take or review?  Please
+send a new one, as a version 3, and properly document what changed
+between this one and the last 2 submissions.
 
-diff --git a/drivers/gpu/drm/panel/panel-orisetech-ota5601a.c b/drivers/gpu/drm/panel/panel-orisetech-ota5601a.c
-index fc87f61d4400d49814953d7f453a7c6e84004f29..3231e84dc66c2bf319f5287fd53bc437e24e0d5b 100644
---- a/drivers/gpu/drm/panel/panel-orisetech-ota5601a.c
-+++ b/drivers/gpu/drm/panel/panel-orisetech-ota5601a.c
-@@ -237,9 +237,11 @@ static int ota5601a_probe(struct spi_device *spi)
- 	struct ota5601a *panel;
- 	int err;
- 
--	panel = devm_kzalloc(dev, sizeof(*panel), GFP_KERNEL);
--	if (!panel)
--		return -ENOMEM;
-+	panel = devm_drm_panel_alloc(dev, struct ota5601a, drm_panel,
-+				     &ota5601a_funcs,
-+				     DRM_MODE_CONNECTOR_DPI);
-+	if (IS_ERR(panel))
-+		return PTR_ERR(panel);
- 
- 	spi_set_drvdata(spi, panel);
- 
-@@ -273,9 +275,6 @@ static int ota5601a_probe(struct spi_device *spi)
- 		return PTR_ERR(panel->map);
- 	}
- 
--	drm_panel_init(&panel->drm_panel, dev, &ota5601a_funcs,
--		       DRM_MODE_CONNECTOR_DPI);
--
- 	err = drm_panel_of_backlight(&panel->drm_panel);
- 	if (err) {
- 		if (err != -EPROBE_DEFER)
+thanks,
 
--- 
-2.48.1
-
+greg k-h
 
