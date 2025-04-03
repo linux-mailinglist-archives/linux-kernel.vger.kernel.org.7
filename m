@@ -1,102 +1,86 @@
-Return-Path: <linux-kernel+bounces-586178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 207CEA79C37
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:40:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3921A79C4E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22B433B1E2D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:40:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27EEC1892637
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DB21A23B8;
-	Thu,  3 Apr 2025 06:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvEAX5al"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49F219F471;
+	Thu,  3 Apr 2025 06:49:25 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB4D18DB20;
-	Thu,  3 Apr 2025 06:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5340318D65F
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 06:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743662433; cv=none; b=k/QRABpCKB97Yi7po3PxmTkxZb5WmlxMzGc9ZzE2uN12WlD6Qu+qeAGhsinNewS6FORX+mVIvK36k7VBfPVtFOhRxDv5ik6EyEFCM1rUnfQYHQibJuCEioYB0zupZ19XGE0mTkDEUArXDBHmJzs+jFuHiLfG+jT7ILWy68qZq1g=
+	t=1743662965; cv=none; b=h86/lPre8RBIQueGyej4CugGfynzC/oBSMBjPHSk2zQpihkFhLgdKH19ft4klNet3kz8jr/OF2OWd7s6CVdSQLXmqWEYK70dSZCBwpBzusVUSPWGL96iV0SkE+mIGQRYXu4860dnk6xgqgy07ixr23PwgNi8bJkNtRlTAIgnQXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743662433; c=relaxed/simple;
-	bh=zq+3fMG2WfTVwYbK2Hp/ChQGKq4YepyOfpKgfVGzbIc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IdllZBw2aJlpI1O2YMPEn7lvaEl/jgZJmoSdIJc1sYUsGiJOz/TYDHlmtBgOHRz+O3be5mkUN1MEZ14ToWkVtWFgNYrIx1JU404BETorPqa1EKjjtgPRYyBOspZDZDaVg3Vb9hsUUHt0MVs9V7yJ0wzTFK7iCbSx0ufMvbRmPkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TvEAX5al; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2726C4CEE3;
-	Thu,  3 Apr 2025 06:40:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743662432;
-	bh=zq+3fMG2WfTVwYbK2Hp/ChQGKq4YepyOfpKgfVGzbIc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TvEAX5alJ0pyklEN+W+WVFvswzDVLyXfkkWN9Uegofk47NUJAr+LkOoSw5+vW94Ta
-	 sxruJitJVTOVhVUtSIwGAQAG4uRth4nFdYVQb0MqTou9+I/KeYQeoVmFM6JKw35WUe
-	 b9pzU27cge0w+Bh5D6sK60Wm3E8iJ+PdrDfzXRvGNXetPn23eESjMA+mhHPgkMq4s0
-	 rUocnnJ1VDA8iwznZQ1qUG4QSv9lsKUQu8YpbtFuTKg/l22AJlhKYnVZKaTEvYDLit
-	 O3gX/bOHnU0vM3snDSS8RUdJbAZHfvKjQnDzFb+FuEWKqNhYjtTC9ATnqrO7k/sdcz
-	 BjqdbsGdf6hYw==
-Date: Thu, 3 Apr 2025 08:40:29 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] regulator: dt-bindings: adi,adp5055-regulator:
- Add adp5055 support
-Message-ID: <20250403-unselfish-thoughtful-wallaby-ccd38e@krzk-bin>
-References: <20250403-upstream-adp5055-v3-0-8eb170f4f94e@analog.com>
- <20250403-upstream-adp5055-v3-1-8eb170f4f94e@analog.com>
+	s=arc-20240116; t=1743662965; c=relaxed/simple;
+	bh=mS3Euhg9zY19dCAeMuhQZ68GEfViYG7NSsFNIxWcT6o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uK1BqxQnVd9+NByg1Jj9EURgsg1c2uOgUwJorgKWTpA0cNHzYwSjAzHpiRHII69UxtzQhCfkZfqIceNjPg2WgmWolPXW5vy1gdmJ/EKe11BEDTOBQXnH+Xn0aqVXGJt/TXTscDI5zCjVHFWMdi/yDYkAqQ8K5EvuGi6BHki8A5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZSsgL5kqczvWpF;
+	Thu,  3 Apr 2025 14:45:18 +0800 (CST)
+Received: from kwepemg200013.china.huawei.com (unknown [7.202.181.64])
+	by mail.maildlp.com (Postfix) with ESMTPS id 10B06180087;
+	Thu,  3 Apr 2025 14:49:19 +0800 (CST)
+Received: from huawei.com (10.175.113.32) by kwepemg200013.china.huawei.com
+ (7.202.181.64) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 3 Apr
+ 2025 14:49:18 +0800
+From: Liu Shixin <liushixin2@huawei.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Muchun Song
+	<muchun.song@linux.dev>, Kefeng Wang <wangkefeng.wang@huawei.com>, David
+ Hildenbrand <david@redhat.com>, Nanyong Sun <sunnanyong@huawei.com>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, Liu Shixin
+	<liushixin2@huawei.com>
+Subject: [PATCH] mm/hugetlb: fix nid mismatch in alloc_surplus_hugetlb_folio()
+Date: Thu, 3 Apr 2025 14:41:38 +0800
+Message-ID: <20250403064138.2867929-1-liushixin2@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250403-upstream-adp5055-v3-1-8eb170f4f94e@analog.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemg200013.china.huawei.com (7.202.181.64)
 
-On Thu, Apr 03, 2025 at 10:43:10AM +0800, Alexis Czezar Torreno wrote:
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +patternProperties:
-> +  "^buck[0-2]$":
+It's wrong to use nid directly since the nid may be changed in allocation.
+Use folio_nid() to obtain the nid of folio instead.
 
-If there is going to be new version, use consistent quotes, either " or '
+Fix: 2273dea6b1e1 ("mm/hugetlb: update nr_huge_pages and surplus_huge_pages together")
+Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+---
+ mm/hugetlb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-...
-
-> +    type: object
-> +    $ref: regulator.yaml#
-> +    unevaluatedProperties: false
-
-> +      adi,fast-transient:
-> +        description:
-> +          Configures the fast transient sensitivity for each regulator.
-> +          "none"    - No fast transient.
-> +          "3G_1.5%" - 1.5% window with 3*350uA/V
-> +          "5G_1.5%" - 1.5% window with 5*350uA/V
-> +          "5G_2.5%" - 2.5% window with 5*350uA/V
-> +        enum: [none, 3G_1.5%, 5G_1.5%, 5G_2.5%]
-> +        default: 5G_2.5
-
-Missing percent:
-5G_2.5%
-
-With this fixed:
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 6fccfe6d046c6..d538f8aa8203c 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -2271,7 +2271,7 @@ static struct folio *alloc_surplus_hugetlb_folio(struct hstate *h,
+ 	 * as surplus_pages, otherwise it might confuse
+ 	 * persistent_huge_pages() momentarily.
+ 	 */
+-	__prep_account_new_huge_page(h, nid);
++	__prep_account_new_huge_page(h, folio_nid(folio));
+ 
+ 	/*
+ 	 * We could have raced with the pool size change.
+-- 
+2.34.1
 
 
