@@ -1,148 +1,203 @@
-Return-Path: <linux-kernel+bounces-586468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06743A7A000
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:26:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4224BA79FB4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C2071895165
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:26:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A4493B8433
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C8724292F;
-	Thu,  3 Apr 2025 09:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b="DG+lbhQB";
-	dkim=permerror (0-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b="HNXU8utf"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A134E2CA6;
-	Thu,  3 Apr 2025 09:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743672358; cv=pass; b=qGgfeS39uCV62hakTjoSqgMw0PfbcGfuyKDr2yjSpjz3zn+ybfFavAoJbYIc04lgawZP9Qd2dlQkQysgJO1+TFpbfiEmIETokulPWmytp5TRld77oJavYT2Mg7CqW7T7KRq+OyuUxHcEL2+QpAZILgSgd27wsqrcrNuwKU3tE7s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743672358; c=relaxed/simple;
-	bh=ZaU3J1fmHydhssquNZyjdSb0tPHJaEyQq/qJztBvzzI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Lz/ioZP7ZRZQlncrxd7IfE5kH91vLx4ppdU1Wzo9vPU72PCyj8IfQsyllAys/Ok/DeGyD7f1T22qibsxuIFlgA4CSnKo+C+0NeBYGawnjMdRAT8Bz8QvFci+XrtKT/cG9A14RExezzd7rzYt/jJoJxcdmVxjRFh6XG0gjyaGKR0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=outer-limits.org; spf=none smtp.mailfrom=outer-limits.org; dkim=pass (2048-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b=DG+lbhQB; dkim=permerror (0-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b=HNXU8utf; arc=pass smtp.client-ip=85.215.255.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=outer-limits.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=outer-limits.org
-ARC-Seal: i=1; a=rsa-sha256; t=1743671270; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=aSU0BnEGRHh1YGEkj1AcjBGVdUqYvhvRj9zM1Z8YE9rblhYlGD/f1357z/5Uad1U/j
-    bPIXBNh+La7kf//NVMs8oEBn0st8PmlNl1cslIUHI/aWekWN6RFeP9CZASzrcg7Ayv6R
-    jJ9bopWzoGKFyLUxPcxRyfYhxbm1PWO8ZDLrlh2oL8ZRDgZBgc3OGxjuIhwJo4puxhWw
-    cGMrakGvvzqTrlv/p/UgJ/kK/eOn4OlpRAyH8JJRXE1IFAiE6tiqQTp2bN75ux4WUocH
-    b0R97GIUU6eXo+SQXGV6dlC9ebi6luzL77v0T8byENZSymiBxid4n2LSXPuaoIj3yqOK
-    E7Gg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1743671270;
-    s=strato-dkim-0002; d=strato.com;
-    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=QK5fQh3feLuhI4LW5vvRHPmtihZ/zFwSfYaWfAjF9UQ=;
-    b=DKmvOOJ5aR905E699cu+3w7CV+DzRrdxqTb0+Jp5GQ1TGnqMjpqHpx2FSEziVx/vJ4
-    xZlYi4QyIOT9jVl+Cdb8fUsbkoIluBDOPluaFvM2rzI0m7tqdwV0RW2FjbK6eLpdy5pl
-    e6w1kNmksUB9k7P681faJbKmPoHHFqW3pR2MmObKp/F1HewivKA0URPTpc/VXagnf6YW
-    qru/fpgAhE2SUiMQfZHD8WgkGMVQyGkRkbK0sIlfg2PqqNwwL7jFh3DzfBJ0VEpHzcQ9
-    0mYJW4+ix9TSBlEZPUD8W8ldVqCpoOLg4qpE0r2tjN4bsbet+wLwI5TzpTE7U8BVxEH/
-    390Q==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1743671270;
-    s=strato-dkim-0002; d=outer-limits.org;
-    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=QK5fQh3feLuhI4LW5vvRHPmtihZ/zFwSfYaWfAjF9UQ=;
-    b=DG+lbhQBjeBZzuVRTuy2Z9sF/fVlfTby5jb9JmHNzvPZn+OgBchpyXAfAcanlg0pxa
-    NASM48wp+33BvP/bwScPNJMSoCm/UEzyujeY2B6bWz4mQuzXWKx14j1tmaszOPk4qHsE
-    bG0ErNZZg5F9w7qsZ+4FdXrL1ZGyfg8PQ1MAVMdkD6kL880gHrcQlceJZqO551iTtye2
-    5btormhFEwKlJXQzcCHfl6/qOusM+1MqHpFblsO7A/061DfcJUG51aGAp1e2IQDZrYsd
-    pZLdbZXFwH5KyWFlMWy5qLIJOfpuQpMIKrvQvVMueJ6d/4w0Yvxyfsvtngrp78i7peLd
-    RAJg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1743671270;
-    s=strato-dkim-0003; d=outer-limits.org;
-    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=QK5fQh3feLuhI4LW5vvRHPmtihZ/zFwSfYaWfAjF9UQ=;
-    b=HNXU8utfTU1nNRhqRN8h2j2qVMY+dd9Cbtl1j8OKhxYyPWoWO7ce6V9yQijOmZSBhY
-    1bADIml/aZMWJj2vWsAg==
-X-RZG-AUTH: ":JnkIfEGmW/AMJS6HttH4FbRVwc4dHlPLCp4e/IoHo8zEMMHAgwTfqBEHcVJSv9P5mRTGd2ImeA=="
-Received: from ws2104.lan.kalrayinc.com
-    by smtp.strato.de (RZmta 51.3.0 AUTH)
-    with ESMTPSA id J2b11013397ndSj
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Thu, 3 Apr 2025 11:07:49 +0200 (CEST)
-From: Julian Vetter <julian@outer-limits.org>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Louis Peens <louis.peens@corigine.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shannon Nelson <shannon.nelson@amd.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Arthur Kiyanovski <akiyano@amazon.com>,
-	Caleb Sander Mateos <csander@purestorage.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: oss-drivers@corigine.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Julian Vetter <julian@outer-limits.org>
-Subject: [PATCH] Remove __get_unaligned_cpu32 from netronome drivers
-Date: Thu,  3 Apr 2025 11:07:43 +0200
-Message-Id: <20250403090743.3878309-1-julian@outer-limits.org>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34DFB23FC5B;
+	Thu,  3 Apr 2025 09:08:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E2254F81;
+	Thu,  3 Apr 2025 09:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743671334; cv=none; b=uBv72roADsnc7s83XtC/aTmdOXhh3h3eME88oE2NmtjNQimNUCjFL0pyP1czCi2U5YIyABbe4inT8ZKa+hA7ifjob/smdFHj4QnQ9Y/fHtr5zAPv0u/2X7P3I9z8QwWfxTDm2/fel8eqKteL4bft/r47Uf6t5jzuNXkM14GleTM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743671334; c=relaxed/simple;
+	bh=YTgrlubY33iEUDlhjjWqFLZbQX3gOvthO8SzT191QUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q0sE7pUSxJLcKDzB01I/JTQBYgjp+R2jZd2zHlsJFaTRKnbb5dWaA5OnokeJ2AO359BiOcEs8XebZBbTwkd/6MCPQUFEB2wFHN9HYbRiCvjPGepOr86fgk0YUc1gyNla9+qhoTzdG6XdMJ9URCyuO+vPNtZyp1wDWIYujtnbWvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC059106F;
+	Thu,  3 Apr 2025 02:08:54 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F7603F63F;
+	Thu,  3 Apr 2025 02:08:49 -0700 (PDT)
+Date: Thu, 3 Apr 2025 10:08:41 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
+	james.quinlan@broadcom.com, f.fainelli@gmail.com,
+	vincent.guittot@linaro.org, peng.fan@oss.nxp.com,
+	michal.simek@amd.com, quic_sibis@quicinc.com,
+	dan.carpenter@linaro.org, maz@kernel.org
+Subject: Re: [RFC PATCH 3/3] [NOT FOR UPSTREAM] firmware: arm_scmi: quirk:
+ Ignore FC bit in attributes
+Message-ID: <Z-5QGXj0wXMvtasf@pluto>
+References: <20250401122545.1941755-1-cristian.marussi@arm.com>
+ <20250401122545.1941755-4-cristian.marussi@arm.com>
+ <Z-5F8eTaZB2gLTNs@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-5F8eTaZB2gLTNs@hovoldconsulting.com>
 
-The __{get,put}_unaligned_cpu{16,32,64} functions are deprecated, and
-only a small number of drivers still use them. So, replace it here with
-the more generic get_unaligned() function and just cast the input
-parameter.
+On Thu, Apr 03, 2025 at 10:25:21AM +0200, Johan Hovold wrote:
+> On Tue, Apr 01, 2025 at 01:25:45PM +0100, Cristian Marussi wrote:
+> > Some platform misreported the support of FastChannel when queried: ignore
+> > that bit on selected platforms.
+> > 
 
-Signed-off-by: Julian Vetter <julian@outer-limits.org>
----
- drivers/net/ethernet/netronome/nfp/nfd3/dp.c | 2 +-
- drivers/net/ethernet/netronome/nfp/nfdk/dp.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Hi Johan,
 
-diff --git a/drivers/net/ethernet/netronome/nfp/nfd3/dp.c b/drivers/net/ethernet/netronome/nfp/nfd3/dp.c
-index f1c6c47564b1..08086eb76996 100644
---- a/drivers/net/ethernet/netronome/nfp/nfd3/dp.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfd3/dp.c
-@@ -779,7 +779,7 @@ nfp_nfd3_parse_meta(struct net_device *netdev, struct nfp_meta_parsed *meta,
- 		case NFP_NET_META_CSUM:
- 			meta->csum_type = CHECKSUM_COMPLETE;
- 			meta->csum =
--				(__force __wsum)__get_unaligned_cpu32(data);
-+				(__force __wsum)get_unaligned((u32 *)data);
- 			data += 4;
- 			break;
- 		case NFP_NET_META_RESYNC_INFO:
-diff --git a/drivers/net/ethernet/netronome/nfp/nfdk/dp.c b/drivers/net/ethernet/netronome/nfp/nfdk/dp.c
-index ebeb6ab4465c..ab3cd06ed63e 100644
---- a/drivers/net/ethernet/netronome/nfp/nfdk/dp.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfdk/dp.c
-@@ -779,7 +779,7 @@ nfp_nfdk_parse_meta(struct net_device *netdev, struct nfp_meta_parsed *meta,
- 		case NFP_NET_META_CSUM:
- 			meta->csum_type = CHECKSUM_COMPLETE;
- 			meta->csum =
--				(__force __wsum)__get_unaligned_cpu32(data);
-+				(__force __wsum)get_unaligned((u32 *)data);
- 			data += 4;
- 			break;
- 		case NFP_NET_META_RESYNC_INFO:
--- 
-2.34.1
+thanks for the review.
+
+> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> > ---
+> > Match features has to be set-up properly before upstreaming this.
+> > Ideally the out-of-spec firmware should be matched with a quirk matching
+> > pattern based on Vendor/SubVendor/ImplVersion....but it is NOT clear if the
+> > platform at hand will ship with future fixed firmwares where the ImplVersion
+> > field is properly handled.
+> > If we cannot be sure about that, we should fallback to a compatible match.
+> > ---
+> >  drivers/firmware/arm_scmi/driver.c | 8 ++++++++
+> >  drivers/firmware/arm_scmi/quirks.c | 3 +++
+> >  drivers/firmware/arm_scmi/quirks.h | 3 +++
+> >  3 files changed, 14 insertions(+)
+> > 
+> > diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+> > index 4266ef852c48..212456305bc9 100644
+> > --- a/drivers/firmware/arm_scmi/driver.c
+> > +++ b/drivers/firmware/arm_scmi/driver.c
+> > @@ -1904,6 +1904,13 @@ struct scmi_msg_resp_desc_fc {
+> >  	__le32 db_preserve_hmask;
+> >  };
+> >  
+> > +#define QUIRK_PERF_FC_FORCE						\
+> > +	({								\
+> > +		if (pi->proto->id == SCMI_PROTOCOL_PERF ||		\
+> > +		    message_id == 0x5 /* PERF_LEVEL_GET */)		\
+> 
+> This should be logical AND and PERF_LEVEL_GET is 0x8 (currently
+> fastchannel is enabled for all PERF messages).
+
+...right...not sure how I botched this condition completely...my bad...
+(even the comment is wrong :P...)
+
+...I experimented with multiple version of this...so I suppose this is why...
+...I will post a fixed V1 once I hacve a bit more feedback on the list...
+
+> 
+> > +			attributes |= BIT(0);				\
+> > +	})
+> > +
+> >  static void
+> >  scmi_common_fastchannel_init(const struct scmi_protocol_handle *ph,
+> >  			     u8 describe_id, u32 message_id, u32 valid_size,
+> > @@ -1924,6 +1931,7 @@ scmi_common_fastchannel_init(const struct scmi_protocol_handle *ph,
+> >  
+> >  	/* Check if the MSG_ID supports fastchannel */
+> >  	ret = scmi_protocol_msg_check(ph, message_id, &attributes);
+> > +	SCMI_QUIRK(perf_level_get_fc_force, QUIRK_PERF_FC_FORCE);
+> 
+> This is cool and I assume can be used to minimise overhead in hot paths.
+> Perhaps you can have concerns about readability and remembering to
+> update the quirk implementation if the code here changes.
+
+My main aim here was to be able to define the quirk code as much as
+possible in the proximity of where it is used...so that is clear what it
+does and dont get lost in some general common table....and the macro was
+a way to uniform the treatment of the static keys...
+
+...but I am still not sure if all of these macros just degrade visibility
+and we could get rid of them...would be really cool to somehow break the
+build if the code "sorrounding" the SCMI_QUIRK changes and you dont update
+(somehow) the quirk too...so as to be sure that the quirk is taking care of
+and maintained...but I doubt that is feasible, because, really, how do you
+even deternine which code changes are in proximity enough to the quirk to
+justify a break...same block ? same functions ? you cannot really know
+semantically where some changes can impact this part of the code...
+..I supppose reviews and testing is the key and the only possible answer
+to this..
+
+> 
+> Does it even get compile tested if SCMI_QUIRKS is disabled?
+
+It evaluates to nothing when CONFIG_ARM_SCMI_QUIRKS is disabled...
+...so maybe I could add a Kconfig dep on COMPILE_TEST ....if this is what
+you mean..
+
+> 
+> >  	if (ret || !MSG_SUPPORTS_FASTCHANNEL(attributes)) {
+> >  		dev_dbg(ph->dev,
+> >  			"Skip FC init for 0x%02X/%d  domain:%d - ret:%d\n",
+> > diff --git a/drivers/firmware/arm_scmi/quirks.c b/drivers/firmware/arm_scmi/quirks.c
+> > index 83798bc3b043..78d51bd0e5b5 100644
+> > --- a/drivers/firmware/arm_scmi/quirks.c
+> > +++ b/drivers/firmware/arm_scmi/quirks.c
+> > @@ -70,6 +70,8 @@ struct scmi_quirk {
+> >  	__DEFINE_SCMI_QUIRK_ENTRY(_qn, _comp, _ven, _sub, _impl)
+> >  
+> >  /* Global Quirks Definitions */
+> > +DEFINE_SCMI_QUIRK(perf_level_get_fc_force,
+> > +		  "your-bad-compatible", NULL, NULL, 0x0);
+> 
+> At first I tried matching on the SoC (fallback) compatible without
+> success until I noticed you need to put the primary machine compatible
+> here. For the SoC at hand, that would mean adding 10 or so entries since
+> all current commercial devices would be affected by this.
+> 
+
+Ah right...I tested on a number of combinations BUT assumed only one
+compatible was to be found...you can potentially add dozens of this
+definitions for a number of platforms associating the same quirk to all
+of them and let the match logic enabling only the proper on...BUT this
+clearly does NOT scale indeed and you will have to endlessly add new
+platform if fw does NOT get fixed ever...
+
+> Matching on vendor and protocol works.
+> 
+
+That is abosutely the preferred way, BUT the match should be on
+Vendor/SubVendor/ImplVersion ... if the platform properly uses
+ImplementationVersion to differentiate between firmware builds...
+
+...if not you will end up applying the quirk on ANY current and future
+FW from this Vendor...maybe not an issue in this case...BUT they should
+seriously thinking about using ImplementationVersion properly in their
+future FW releases...especially if, as of now, no new fixed FW release
+has ever been released...
+
+> >  /*
+> >   * Quirks Pointers Array
+> > @@ -78,6 +80,7 @@ struct scmi_quirk {
+> >   * defined quirks descriptors.
+> >   */
+> >  static struct scmi_quirk *scmi_quirks_table[] = {
+> > +	__DECLARE_SCMI_QUIRK_ENTRY(perf_level_get_fc_force),
+> >  	NULL
+> >  };
+> 
+> Johan
+
+Thanks for having had a look !
+Cristian
 
 
