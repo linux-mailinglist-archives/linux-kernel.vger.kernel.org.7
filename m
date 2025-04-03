@@ -1,100 +1,228 @@
-Return-Path: <linux-kernel+bounces-586847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5515A7A49F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:08:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46B68A7A49B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65356188A941
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:04:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CF46189B9EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEAD24C08D;
-	Thu,  3 Apr 2025 14:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933E124EF71;
+	Thu,  3 Apr 2025 14:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rZC7I7sR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c//xpXpw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C542A433D1
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 14:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B11C24EA90
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 14:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743689055; cv=none; b=hADLQ/zblhaew0M5c5OiNZnhwSMz9hnuQQp1ksz46SlGZ0Egl9GEHbbAm1UteoW7ydYIT4XHV5s2CK4QhkSTOjEpih052muIHUgSx9sQvHhml4bttwJFssJOfKvjRBF7+AB/p94Bx9+lDejojLEOyx0LRXTTkfVINWbO7HiNa6A=
+	t=1743688996; cv=none; b=Omb4nC06cR69Gxl9vzFwnBQtnfLzoEPaE3mhbbELp/3tdH2KtTSON7qoZBa7yghpfBFHjzWIfoTqFRoIam7TCBF/AcEhSwGLk4l1u+j7bM4jaBoeB6ImqhnH1ojOYS/X7OoeEE4vC7XSVFqFpeTc5gZlgdyZRFFgeYle0OPh2ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743689055; c=relaxed/simple;
-	bh=adbAy363Lv6EyIoN7IN7yeVkqckHZYykoPUeX1dSdKI=;
+	s=arc-20240116; t=1743688996; c=relaxed/simple;
+	bh=PLIry9I5MN5+p97bRNx+HoFhgLJY0z5+1qZUMALAcao=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UufoYkYMgfYMzL5wFrotSN/TAtdul3VhslvUgaZnSt+Sfbjjicb1wbBU6JwiaET+b6EgkrLZZI5OwsHV4fJk96oy6dR2Mt0zY6ts+3lI1HZXRNoTKzR+KBoytNl9Iv17zErZ5KB1P4Sk4dvZzCjw/tIY2JaeT5dmxM3pSoFDVQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rZC7I7sR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6DA5C4CEE5;
-	Thu,  3 Apr 2025 14:04:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1743689055;
-	bh=adbAy363Lv6EyIoN7IN7yeVkqckHZYykoPUeX1dSdKI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rZC7I7sRVUI2/g0QfZDumLKx/oQb+hvPOIC3AvFLZR5cisJen9MFtu4MofJWDR2th
-	 U0dAWFzsZZkDZHv/KPi0RdxpTznQoPqUM0vvGiF1z/ZyXlqg6NRkKOUWP7SqoW2ExU
-	 X6zKOwKxIcaMiYxDh6dODnISTX3IzDiMWAufBPLI=
-Date: Thu, 3 Apr 2025 15:02:47 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: david.m.ertman@intel.com, ira.weiny@intel.com, lee@kernel.org,
-	andriy.shevchenko@linux.intel.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] mfd: core: Support auxiliary device
-Message-ID: <2025040336-ethically-regulate-3594@gregkh>
-References: <20250403110053.1274521-1-raag.jadav@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AbBcaL+z4FJNrtn/WOPH1Ys+r8doM4M1efWk3h8hT0E9AC60+rxeoFqUaetzjczUXNMSSpyWNrVc0Gl0f23wxb1ICw7zmwZqFmYQREs8i/eL36Kh1sNwu7CZNjiNBsBmsagsc4XxxuRNp97F6vLJuToN2Yzq1OChsah80V/KGvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c//xpXpw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743688994;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4WBThcQneZqddzRwqfMjSBi+IuLp0YfEk4vsedSbljI=;
+	b=c//xpXpwuA7sSaqP6vvkfMBTzxsd7yz06U9r1DgLUS756U3/x79VmZXHJ0jOwwJiYDHfvE
+	VOnxJqXk97boCHOGvp1702//8LbcMn8CZiL4eW1TqjQDGQXCPMuDZt7ECrp4WO+mDJRCY4
+	SOUUNUpQW56EXtS1rne6fZp2dKtljvM=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-590-7okIe0VCPRyiAm_qCRWdDQ-1; Thu, 03 Apr 2025 10:03:11 -0400
+X-MC-Unique: 7okIe0VCPRyiAm_qCRWdDQ-1
+X-Mimecast-MFC-AGG-ID: 7okIe0VCPRyiAm_qCRWdDQ_1743688990
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43cf172ff63so5695105e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 07:03:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743688990; x=1744293790;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4WBThcQneZqddzRwqfMjSBi+IuLp0YfEk4vsedSbljI=;
+        b=MCemkCYSbieLG9JezfcPFn5gbRmNwUugByDG60f+w8uHCHcTttrQ/vANtOrLY3uE3U
+         F8hr7TR81CA5XCrgftzFEC0Er618gnMrdpAF1VNRPfjOpTBghu5XtSPjXFKx1DEOe3Sw
+         bNbHF5l1GFznVKdgy+GDENKNgWydDtof3x5B1H+hJdmyDzHeoc/JdkmdGvllQvQAyAJB
+         wLvCqSLc2MGea/ixF2kywbwIRlHyydItk/LVKgZXU4J5NK8bu/vzWlXFTqWVwcKegPkI
+         s8UTMAfLW7zIUsDAvlcrwAHD2gBCohhYTcn1vfdYaO0PvdA/h+VkB1ZpuZnRveV0+9GZ
+         yoAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqMucMi7uiqBOrcQ5HDFhT9j9SJnhDXbe7D9NvUnopG9bHY31ZUZh5uqzJmue4hnsEuw3VYjLiIM6t75s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8dhrKPwtHBHyAIgx9zgeSkMRaIhOi9RHDZxGcP+GzvBFRSKZw
+	P6b3grBfi1Da6Ho2P8MRRQWfXEvM1DfS+zmuXosr00a9QGEcrPOlBAnEp+daguLxAy1R0LKgUFH
+	mhmY5B9p/4VfM9r1xt1Q0KTIXuB4IijjdvoqvBKEGmdC07sRuiUI+sLBHiYxRNm5uFlMuig==
+X-Gm-Gg: ASbGncuG3+TDT9+WL3A5Zur89dwvnuNLmVq/vLZoEk7spN9UEu9T9Kmj9/GPEXiSOwC
+	qFPaCnqOaTX+RX2TuyNhxwp3xc90PlcxlBxLb/6ij+5rFN835+z7aaTge0Qsj3ULGSOEpsQuAtb
+	5c4mcNI6cHGeAtuWKvNYq3UP3GSkxaFDK9WKnR+4iaZuKBmeeYYRuWOYSxsSUovbrT7yrtnKGds
+	iqy9oUfZ0ikbi/gTpjZHOEpjO4vCfU0aCCP22w2uddqEdy9VqCcoGVQRjcPd1Szq836HgRSev/M
+	dgD3Ivrz8A==
+X-Received: by 2002:a05:6000:250e:b0:391:39fb:59c8 with SMTP id ffacd0b85a97d-39c30338008mr2275602f8f.25.1743688990048;
+        Thu, 03 Apr 2025 07:03:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHC2+/8ybqHkABA5XplMD4M48h+miairALBzMuE16io0YC/ba6y7OVR2eUT30wn6NDVL3wRjQ==
+X-Received: by 2002:a05:6000:250e:b0:391:39fb:59c8 with SMTP id ffacd0b85a97d-39c30338008mr2275550f8f.25.1743688989617;
+        Thu, 03 Apr 2025 07:03:09 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ea9a88b70sm44441485e9.3.2025.04.03.07.03.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 07:03:09 -0700 (PDT)
+Date: Thu, 3 Apr 2025 10:03:06 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Markus Fohrer <markus.fohrer@webked.de>
+Cc: virtualization@lists.linux-foundation.org, jasowang@redhat.com,
+	davem@davemloft.net, edumazet@google.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [REGRESSION] Massive virtio-net throughput drop in guest VM with
+ Linux 6.8+
+Message-ID: <20250403100206-mutt-send-email-mst@kernel.org>
+References: <1d388413ab9cfd765cd2c5e05b5e69cdb2ec5a10.camel@webked.de>
+ <20250403090001-mutt-send-email-mst@kernel.org>
+ <f8909f5bbc2532ea234cdaa8dbdb46a48249803f.camel@webked.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250403110053.1274521-1-raag.jadav@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f8909f5bbc2532ea234cdaa8dbdb46a48249803f.camel@webked.de>
 
-On Thu, Apr 03, 2025 at 04:30:53PM +0530, Raag Jadav wrote:
-> Extend MFD subsystem to support auxiliary child device. This is useful for
-> MFD usecases where parent device is on a discoverable bus and doesn't fit
-> into the platform device criteria. Current support is limited to just PCI
-> devices, but this can be further extended to support other types like USB
-> in the future.
+On Thu, Apr 03, 2025 at 03:51:01PM +0200, Markus Fohrer wrote:
+> Am Donnerstag, dem 03.04.2025 um 09:04 -0400 schrieb Michael S.
+> Tsirkin:
+> > On Wed, Apr 02, 2025 at 11:12:07PM +0200, Markus Fohrer wrote:
+> > > Hi,
+> > > 
+> > > I'm observing a significant performance regression in KVM guest VMs
+> > > using virtio-net with recent Linux kernels (6.8.1+ and 6.14).
+> > > 
+> > > When running on a host system equipped with a Broadcom NetXtreme-E
+> > > (bnxt_en) NIC and AMD EPYC CPUs, the network throughput in the
+> > > guest drops to 100–200 KB/s. The same guest configuration performs
+> > > normally (~100 MB/s) when using kernel 6.8.0 or when the VM is
+> > > moved to a host with Intel NICs.
+> > > 
+> > > Test environment:
+> > > - Host: QEMU/KVM, Linux 6.8.1 and 6.14.0
+> > > - Guest: Linux with virtio-net interface
+> > > - NIC: Broadcom BCM57416 (bnxt_en driver, no issues at host level)
+> > > - CPU: AMD EPYC
+> > > - Storage: virtio-scsi
+> > > - VM network: virtio-net, virtio-scsi (no CPU or IO bottlenecks)
+> > > - Traffic test: iperf3, scp, wget consistently slow in guest
+> > > 
+> > > This issue is not present:
+> > > - On 6.8.0 
+> > > - On hosts with Intel NICs (same VM config)
+> > > 
+> > > I have bisected the issue to the following upstream commit:
+> > > 
+> > >   49d14b54a527 ("virtio-net: Suppress tx timeout warning for small
+> > > tx")
+> > >   https://git.kernel.org/linus/49d14b54a527
+> > 
+> > Thanks a lot for the info!
+> > 
+> > 
+> > both the link and commit point at:
+> > 
+> > commit 49d14b54a527289d09a9480f214b8c586322310a
+> > Author: Eric Dumazet <edumazet@google.com>
+> > Date:   Thu Sep 26 16:58:36 2024 +0000
+> > 
+> >     net: test for not too small csum_start in virtio_net_hdr_to_skb()
+> >     
+> > 
+> > is this what you mean?
+> > 
+> > I don't know which commit is "virtio-net: Suppress tx timeout warning
+> > for small tx"
+> > 
+> > 
+> > 
+> > > Reverting this commit restores normal network performance in
+> > > affected guest VMs.
+> > > 
+> > > I’m happy to provide more data or assist with testing a potential
+> > > fix.
+> > > 
+> > > Thanks,
+> > > Markus Fohrer
+> > 
+> > 
+> > Thanks! First I think it's worth checking what is the setup, e.g.
+> > which offloads are enabled.
+> > Besides that, I'd start by seeing what's doing on. Assuming I'm right
+> > about
+> > Eric's patch:
+> > 
+> > diff --git a/include/linux/virtio_net.h b/include/linux/virtio_net.h
+> > index 276ca543ef44d8..02a9f4dc594d02 100644
+> > --- a/include/linux/virtio_net.h
+> > +++ b/include/linux/virtio_net.h
+> > @@ -103,8 +103,10 @@ static inline int virtio_net_hdr_to_skb(struct
+> > sk_buff *skb,
+> >  
+> >  		if (!skb_partial_csum_set(skb, start, off))
+> >  			return -EINVAL;
+> > +		if (skb_transport_offset(skb) < nh_min_len)
+> > +			return -EINVAL;
+> >  
+> > -		nh_min_len = max_t(u32, nh_min_len,
+> > skb_transport_offset(skb));
+> > +		nh_min_len = skb_transport_offset(skb);
+> >  		p_off = nh_min_len + thlen;
+> >  		if (!pskb_may_pull(skb, p_off))
+> >  			return -EINVAL;
+> > 
+> > 
+> > sticking a printk before return -EINVAL to show the offset and
+> > nh_min_len
+> > would be a good 1st step. Thanks!
+> > 
 > 
-> Signed-off-by: Raag Jadav <raag.jadav@intel.com>
-> ---
 > 
-> I've been cooking this on my spare time during merge window. I'm not
-> very confident about this but thought I'd share it. It might be
-> controversial since I stole quite a bit from platform infrastructure,
-> so please consider this an RFC and let's discuss how to approach this.
+> Hi Eric,
 > 
-> More discussion at [*].
-> [*] https://lore.kernel.org/r/2025032609-query-limit-491b@gregkh
+> thanks a lot for the quick response — and yes, you're absolutely right.
 > 
-> A few things that are still open,
+> Apologies for the confusion: I mistakenly wrote the wrong commit
+> description in my initial mail.
 > 
-> 1. Since we're doing it for PCI devices (Greg's recommendation), how do
->    we force the existing ones to use their original platform path?
+> The correct commit is indeed:
+> 
+> commit 49d14b54a527289d09a9480f214b8c586322310a
+> Author: Eric Dumazet <edumazet@google.com>
+> Date:   Thu Sep 26 16:58:36 2024 +0000
+> 
+>     net: test for not too small csum_start in virtio_net_hdr_to_skb()
+> 
+> This is the one I bisected and which causes the performance regression
+> in my environment.
+> 
+> Thanks again,
+> Markus
 
-That's up to you all, but I wouldn't recommend forcing everything to
-change for existing drivers.  So make it "opt-in" somehow?  I would love
-to make it change for existing drivers, but I don't know what that might
-break (it _should_ not break anything, but we've already found breakages
-when moving some platform devices over to other busses like faux due to
-bugs in userspace scripts.)
 
-> 2. Should we allow auxiliary drivers to manage their own resources
->    (MEM, IO, IRQ etc)?
+I'm not Eric but good to know.
+Alright, so I would start with the two items: device features and
+printk.
 
-The resources are all shared by the "parent" device, that's what makes
-aux drivers work, they need to handle this as there is no unique way to
-carve up the resources here.
+-- 
+MST
 
-So I don't know how you would do this, sorry.
-
-thanks,
-
-greg k-h
 
