@@ -1,104 +1,160 @@
-Return-Path: <linux-kernel+bounces-587439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE84A7ACD9
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:51:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68A81A7ACAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C768188E287
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:47:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 530C73B9E66
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D140284B5F;
-	Thu,  3 Apr 2025 19:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB4227EC6F;
+	Thu,  3 Apr 2025 19:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IiXniznL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gZu8bJG1"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50980284B26;
-	Thu,  3 Apr 2025 19:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B820E2586F6;
+	Thu,  3 Apr 2025 19:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743707317; cv=none; b=QfYQxNwvHZE8MAr+ylyYL/v4WNr8iPsKtvHz+dVC5SE4kILxViE7oT5xbYl64V5F0jLmJg5oyu60ntPlGyRzzYkVGhNGvNxvk7uWo6j6LR+UwM2rPzXjJ8lZ5veonJRYSJ/22IFXmDkQG2GEHdDclCv3SKfa2gn7jLlGJQ9t86U=
+	t=1743707278; cv=none; b=HSKvlb8Eo+nrznxhiYoYUyX8M9SAi7xc50KCSNsckgECSlUWBQ88PyG2FQ5OqEtf0Zn0SwcsoUt8DE1BW6hbyXwCH5Z7ekJMuzM7rONGmC4/qfEfr7N3uTw0Cet4+w/r2y5j8qAxHU4KQjrAma7X0ZVrvzCZgyMGWd018j28mJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743707317; c=relaxed/simple;
-	bh=GNHJfVzVNAlpwYr3o5Fo+VsNpqk3jsX89c60zyBrKwU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SCcANTP8Zi0n68Mv6VJq4eRfD17ZQvEyBMayrFQPBvcbC3gYzX3e9WXc/da5c/pw8WOJD4f/7iJyhNifxBSgex8T7INAo9SwhLH/Ozfo2FF3YdKSlmgyE4FRt00F0elLzA7ZcDf0ebJvuWiGyA5FinnOaMueVqNSQmYnph5FSI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IiXniznL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E067CC4CEE8;
-	Thu,  3 Apr 2025 19:08:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743707317;
-	bh=GNHJfVzVNAlpwYr3o5Fo+VsNpqk3jsX89c60zyBrKwU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IiXniznLUPnU5s4wS8HfXlaTnJn/xk4hdEdPMlBawrVec4B3Gl5LNchPJpYKajQdE
-	 RKHs/nrt8wrK6+Uajq3oyAmcNUfEXBVj105SHsGppy7nStlXqX7gM9WE5pMVNFFBPV
-	 EdtD+no0KNxw9Hm5fFLaaovmOGrTEwihKk6jhx23wMbkh23r3b/x/DUJv4YQRFIVUo
-	 LZNThAT7h/8q5vtq1beBErJvSukYgYBXeAsz8LpD/a5MxhEM7LqBCoNY9lzIv86L/m
-	 yleXcIDwcq0JMwYmGavbFo/9vksrWhQnhglo1gFpXjTRU+Zt0irciBZgr2/6P+5jZl
-	 Vs/SpjOB8gFCA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Icenowy Zheng <uwu@icenowy.me>,
-	Felix Fietkau <nbd@nbd.name>,
-	Sasha Levin <sashal@kernel.org>,
-	lorenzo@kernel.org,
-	ryder.lee@mediatek.com,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	linux-wireless@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.6 22/26] wifi: mt76: mt76x2u: add TP-Link TL-WDN6200 ID to device table
-Date: Thu,  3 Apr 2025 15:07:41 -0400
-Message-Id: <20250403190745.2677620-22-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250403190745.2677620-1-sashal@kernel.org>
-References: <20250403190745.2677620-1-sashal@kernel.org>
+	s=arc-20240116; t=1743707278; c=relaxed/simple;
+	bh=VTL6kwicHLjBdwQujCV+DK1vWwhdgxmpdH1NQF6da1E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=W3lgPxMXAxOa+MswNlE5V/uq99tHwjMdlyEak2ZnJI/esTn796JVU/Aqo4btZSLTCBESAQ46GLOmCnSg8GBVTFwxN/dH9OMsOByrxY37BI+QRah+ONl3LliIuoNFePl8zZaWC8varCxNu4J/g1uINM/21BZfTogYfo3k8EIjGkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gZu8bJG1; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1743707273;
+	bh=VTL6kwicHLjBdwQujCV+DK1vWwhdgxmpdH1NQF6da1E=;
+	h=From:Date:Subject:To:Cc:From;
+	b=gZu8bJG15cTU399eLCzOpANebfp7k9ztWQups7U5IhmjYheShf76XMC8sHDE67VPM
+	 TD8HEa4KNldWr9R/wUlifxmA5BiItb73thWPoLs+0ShcugHohou5vKcYnRTTr8RgnE
+	 JCeJVJ0ol+2g7IQjR/ZoTOqUGC6QBtoCUeM+FsY9xuIPdYlrhmn+KEEIum8b3bq2Hz
+	 8puGRaNDKz4J7NuJPUlZyxrZYnkWz1fVgXMpFj/ueYPkjepOM4w9mMohpaVySyW67e
+	 PEVe6HtkLlBu7DekNVpmH71NgREqFw3Y3IFOEQ2NpMbUHD+0L/j2uPAu8/IUNlWnz3
+	 qUuzRgZ4vyTAw==
+Received: from [192.168.13.180] (unknown [IPv6:2606:6d00:11:e976::5ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9888417E0865;
+	Thu,  3 Apr 2025 21:07:52 +0200 (CEST)
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Date: Thu, 03 Apr 2025 15:07:41 -0400
+Subject: [PATCH] media: verisilicon: Enable wide 4K in AV1 decoder
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.85
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250403-hantro-av1-wuhd-v1-1-334629cb7f63@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAHzc7mcC/x2MQQqAIBAAvxJ7bsG1vPSV6GC55V40tCyI/p50n
+ IGZBzIn4QxD80DiIlliqEBtA4u3YWMUVxm00kb1qsMqjxTRFsLr9A6JWC+rmZlsD7XaE69y/8d
+ xet8PtfnTcmEAAAA=
+X-Change-ID: 20250403-hantro-av1-wuhd-11e2cf5be1a4
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Heiko Stuebner <heiko@sntech.de>
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ kernel@collabora.com, Nicolas Dufresne <nicolas.dufresne@collabora.com>
+X-Mailer: b4 0.14.2
 
-From: Icenowy Zheng <uwu@icenowy.me>
+Tested on RK3588, this decoder is capable of handling WUHD, so bump the
+maximum width and height accordingly.
 
-[ Upstream commit 06cccc2ebbe6c8a20f714f3a0ff3ff489d3004bb ]
-
-The TP-Link TL-WDN6200 "Driverless" version cards use a MT7612U chipset.
-
-Add the USB ID to mt76x2u driver.
-
-Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-Link: https://patch.msgid.link/20250317102235.1421726-1-uwu@icenowy.me
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
 ---
- drivers/net/wireless/mediatek/mt76/mt76x2/usb.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/verisilicon/rockchip_vpu_hw.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c b/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c
-index 55068f3252ef3..d804309992196 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c
-@@ -21,6 +21,7 @@ static const struct usb_device_id mt76x2u_device_table[] = {
- 	{ USB_DEVICE(0x0846, 0x9053) },	/* Netgear A6210 */
- 	{ USB_DEVICE(0x045e, 0x02e6) },	/* XBox One Wireless Adapter */
- 	{ USB_DEVICE(0x045e, 0x02fe) },	/* XBox One Wireless Adapter */
-+	{ USB_DEVICE(0x2357, 0x0137) },	/* TP-Link TL-WDN6200 */
- 	{ },
- };
- 
+diff --git a/drivers/media/platform/verisilicon/rockchip_vpu_hw.c b/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
+index 964122e7c355934cd80eb442219f6ba51bba8b71..b64f0658f7f1e77b3efd960b35cd54dec4edf4ef 100644
+--- a/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
++++ b/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
+@@ -85,10 +85,10 @@ static const struct hantro_fmt rockchip_vpu981_postproc_fmts[] = {
+ 		.postprocessed = true,
+ 		.frmsize = {
+ 			.min_width = ROCKCHIP_VPU981_MIN_SIZE,
+-			.max_width = FMT_UHD_WIDTH,
++			.max_width = FMT_4K_WIDTH,
+ 			.step_width = MB_DIM,
+ 			.min_height = ROCKCHIP_VPU981_MIN_SIZE,
+-			.max_height = FMT_UHD_HEIGHT,
++			.max_height = FMT_4K_HEIGHT,
+ 			.step_height = MB_DIM,
+ 		},
+ 	},
+@@ -99,10 +99,10 @@ static const struct hantro_fmt rockchip_vpu981_postproc_fmts[] = {
+ 		.postprocessed = true,
+ 		.frmsize = {
+ 			.min_width = ROCKCHIP_VPU981_MIN_SIZE,
+-			.max_width = FMT_UHD_WIDTH,
++			.max_width = FMT_4K_WIDTH,
+ 			.step_width = MB_DIM,
+ 			.min_height = ROCKCHIP_VPU981_MIN_SIZE,
+-			.max_height = FMT_UHD_HEIGHT,
++			.max_height = FMT_4K_HEIGHT,
+ 			.step_height = MB_DIM,
+ 		},
+ 	},
+@@ -318,10 +318,10 @@ static const struct hantro_fmt rockchip_vpu981_dec_fmts[] = {
+ 		.match_depth = true,
+ 		.frmsize = {
+ 			.min_width = ROCKCHIP_VPU981_MIN_SIZE,
+-			.max_width = FMT_UHD_WIDTH,
++			.max_width = FMT_4K_WIDTH,
+ 			.step_width = MB_DIM,
+ 			.min_height = ROCKCHIP_VPU981_MIN_SIZE,
+-			.max_height = FMT_UHD_HEIGHT,
++			.max_height = FMT_4K_HEIGHT,
+ 			.step_height = MB_DIM,
+ 		},
+ 	},
+@@ -331,10 +331,10 @@ static const struct hantro_fmt rockchip_vpu981_dec_fmts[] = {
+ 		.match_depth = true,
+ 		.frmsize = {
+ 			.min_width = ROCKCHIP_VPU981_MIN_SIZE,
+-			.max_width = FMT_UHD_WIDTH,
++			.max_width = FMT_4K_WIDTH,
+ 			.step_width = MB_DIM,
+ 			.min_height = ROCKCHIP_VPU981_MIN_SIZE,
+-			.max_height = FMT_UHD_HEIGHT,
++			.max_height = FMT_4K_HEIGHT,
+ 			.step_height = MB_DIM,
+ 		},
+ 	},
+@@ -344,10 +344,10 @@ static const struct hantro_fmt rockchip_vpu981_dec_fmts[] = {
+ 		.max_depth = 2,
+ 		.frmsize = {
+ 			.min_width = ROCKCHIP_VPU981_MIN_SIZE,
+-			.max_width = FMT_UHD_WIDTH,
++			.max_width = FMT_4K_WIDTH,
+ 			.step_width = MB_DIM,
+ 			.min_height = ROCKCHIP_VPU981_MIN_SIZE,
+-			.max_height = FMT_UHD_HEIGHT,
++			.max_height = FMT_4K_HEIGHT,
+ 			.step_height = MB_DIM,
+ 		},
+ 	},
+
+---
+base-commit: f2151613e040973c868d28c8b00885dfab69eb75
+change-id: 20250403-hantro-av1-wuhd-11e2cf5be1a4
+
+Best regards,
 -- 
-2.39.5
+Nicolas Dufresne <nicolas.dufresne@collabora.com>
 
 
