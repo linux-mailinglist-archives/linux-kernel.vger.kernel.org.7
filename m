@@ -1,296 +1,240 @@
-Return-Path: <linux-kernel+bounces-586915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F482A7A558
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:39:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DAF9A7A567
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34FD3AE07F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:35:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DF0D3B71D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAFCF24EF9B;
-	Thu,  3 Apr 2025 14:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD4924EF92;
+	Thu,  3 Apr 2025 14:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aR2eCKYW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M2tK1qZ/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9360124EF80;
-	Thu,  3 Apr 2025 14:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFD82505D1
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 14:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743690933; cv=none; b=eiKaxtZO6rmZz38/HUGRTT/fgcD5ov38zD6AJPsp0HGvyV/3eJ4vGCI5QG43acHk/2JCaCtIE9MUGpAZltniIuhkPK5DbnjyJiyabFhE1GBP1D90LLa0sxMSq8mLyjkXRiyUSl6JUlKSx6nOT92RTJRh3TOrX2TcLgipCUOhSmg=
+	t=1743690943; cv=none; b=nK5CIe2DHl9adL0g6nYr1wWL7gQvKb0ajNpiOAPmAoPTp8eXi1PpsRToYe8bUfFy3cmJOkuq0qNLKA84AyRQye71Mkx/Gh+at6MvhRI0mZtVI43X8L/fsv+g5S3dT7DAPqzaLv7VFFZV5v4YKnIvku+CqDOiCB6w2+SBlPfl0RQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743690933; c=relaxed/simple;
-	bh=clMVZUg7aCr+NLtc+S3LZyI+5cu7m6OvVqqIogY95n8=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=BvpaZTZICfnHY9WcO4ilDeC+6QLLu3hrwyWQfB0ukrWyIcNIz6ZuCSbqOsvwkfAY+Mhb92n2cBZoAmnCt/zW2eobGhm6PXR+zMyw0/WzS0m26HRp/qfWEeFf1pbSYEH6wx9zc+vh/EiNpwxq1G4WIh4SR9knhyUhlSFgwbwb0a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aR2eCKYW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E180BC4CEE7;
-	Thu,  3 Apr 2025 14:35:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743690933;
-	bh=clMVZUg7aCr+NLtc+S3LZyI+5cu7m6OvVqqIogY95n8=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=aR2eCKYWqx5ayDSWmvE0vxYepUcrgLBeCnS9cIvGjXbHgppnW4SxtTNIzXiUQan/Q
-	 VTL1hg/RJE9aTF6y5UR/rmznPWGYAc7h0MXPHjaK2yzCU0sxOk5220aGMqE+6VJy0V
-	 ZuM2bSXzWTdE1DRgNymiy9VL5Yf8qB3QA2cmok7vlU88OmoyOKg4VdLE/Qm4jITOAF
-	 odaeVsQMRDt5a7Dk3e6jsE5eGmM/IjSg7/Z/lh2elUV+jJvYA3R07dWz6VsestSlcG
-	 MR4mKg949sC8PniPeFnAc72TiYKyE12tAcL5oPeHQ5AXefSc+ScyD1oIJIhWoKElps
-	 ljIVpTMqORryw==
-Date: Thu, 03 Apr 2025 09:35:31 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1743690943; c=relaxed/simple;
+	bh=VVx6R47TuFIQGBjJefnPKH6pjjD0ilkcfGKvlV0Oiyo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s3Q2zba5IcSPypqmaIoK65XmRL6Q2YYVkLyou6lLpy+q+NEQWXLhuJ/TYQrgKIVnEnfpyhCEKjVq2DyTcV4KUOa0wD8OXtwArjrDzGGUMr0m63YpjjbSEexY8vVMhHepGUPtgNaLiNExHPn68GFO19weNyIyuaAJp+MN6C+lA9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M2tK1qZ/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743690939;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=378ZLKAn6VFAF4a5RVvN8NmNgzNa+OCnXLX5wlVPRjk=;
+	b=M2tK1qZ/7M7v0XLYPQ/ldPGZVFo25GRCzMPv3vVJpVtZXQjknZqxH/hEUfgUfu4Oc1/b5x
+	mBogFbwNCn58Tth0eUBTh/OJNVjRBHOTnsQWvScVpyTZGSib53nz4Gxv8h+ungcNqRpqJo
+	fN6jjwCXwOcQQkzREVpNwjrZfhfFCg8=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-265-EpkisxiSO2yr55JNY3H2kA-1; Thu, 03 Apr 2025 10:35:38 -0400
+X-MC-Unique: EpkisxiSO2yr55JNY3H2kA-1
+X-Mimecast-MFC-AGG-ID: EpkisxiSO2yr55JNY3H2kA_1743690938
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-39143311936so516094f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 07:35:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743690937; x=1744295737;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=378ZLKAn6VFAF4a5RVvN8NmNgzNa+OCnXLX5wlVPRjk=;
+        b=FWbFL5kk9zaYvBODeJZKdoEl+MVoK6b1GD7GX4+f+JkFi4SzZb+o07iGzB2YneV+li
+         VCu4u2EfXlzvCTMgVzrgjEFiYFn3yD+G2BcEwB/xiZckVI+Z/3jxk8yPKVRzjya7KKgE
+         Pvj60AEbJWap6GCseHn55DcRlkDeygB7nnxDYQsOW4ZgYG/9S5g4+uUivsNIe1nj98yS
+         oag/a1j0h2kLrsVSkpVZljRomvVmOhkJnt/CBYTV7tzqOneFDnGj6QPgmiX6M+gNOiog
+         tB2lXxjjt7+IhFF1L3Lo+gWk6Sh1hY+eGlwYB2DuvI3WxMgMKgXi+zl1d/xmL2VmhdTu
+         3M9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWE0VL7VQQqD7/E+LBs59XRqyYLSS4u/45Qn5BOqAv5PlJEG/sv8cpkNNdkZdlziyhaD37mk1RMutqENJg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhoUa6TKMMf2W8GoT4S8gVKOI37bEWxnUElv21McU1Ka8ygliL
+	FlLoMnU6g9WU4YEZAxQzXM7ni4hJILpaXFxVC6lDqYORxy8z7Z11ej6s3fDAhBevZO4kWIOsUJV
+	3IrGk7jG0X5Bx+CSmPpBz45tKeS1BBIh163ReSricc41bs63RqNxevTwBX7HEYw==
+X-Gm-Gg: ASbGncsS5hYKke0qg1It15/i1v4sXkD83jwV7aJBZoP0UMffdf9IFMLfGcztjifSJgH
+	Mn7PWTphaBt67wu9tcJTkDnNeCt7VZoErwRBJiwnX4be2WFwYjgDPpGyMHEh81OXbujo6g9FHtz
+	FPMdGUsCfwep5OLTMHKmHQy6S9rh7HRu9Hy0o9o3kFD+7D+/EqUlMUgf/+kbd3ybtj6C58mnq4z
+	hkiyr32glPU6gKOW6q1hQqiKO2AykxAj3Qq5qWlX9KeYnMZyQHcjBAOjJdIBxKtu0gNvjz+G/d+
+	lC7Q5EdU8g==
+X-Received: by 2002:a05:6000:2503:b0:399:737f:4de3 with SMTP id ffacd0b85a97d-39c303389ecmr2163814f8f.29.1743690937503;
+        Thu, 03 Apr 2025 07:35:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEMqd/k72wEUHJmQoR1gc5ioRBplFkIbZAtw9O7H6BmO4sOWQ/nHk2zg4ZobK6Yp864CCo+5w==
+X-Received: by 2002:a05:6000:2503:b0:399:737f:4de3 with SMTP id ffacd0b85a97d-39c303389ecmr2163797f8f.29.1743690937132;
+        Thu, 03 Apr 2025 07:35:37 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c300968c4sm1999368f8f.9.2025.04.03.07.35.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 07:35:36 -0700 (PDT)
+Date: Thu, 3 Apr 2025 10:35:33 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Halil Pasic <pasic@linux.ibm.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, Chandra Merla <cmerla@redhat.com>,
+	Stable@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
+	Thomas Huth <thuth@redhat.com>, Eric Farman <farman@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Wei Wang <wei.w.wang@intel.com>
+Subject: Re: [PATCH v1] s390/virtio_ccw: don't allocate/assign airqs for
+ non-existing queues
+Message-ID: <20250403103127-mutt-send-email-mst@kernel.org>
+References: <20250402203621.940090-1-david@redhat.com>
+ <20250403161836.7fe9fea5.pasic@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- mtk29348 <Bo.Kong@mediatek.com>, linux-kernel@vger.kernel.org, 
- linux-media@vger.kernel.org, Teddy.Chen@mediatek.com, 
- Project_Global_Chrome_Upstream_Group@mediatek.com, 
- zhaoyuan.chen@mediatek.com, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-To: "bo.kong" <bo.kong@mediatek.com>
-In-Reply-To: <20250403074005.21472-1-bo.kong@mediatek.com>
-References: <20250403074005.21472-1-bo.kong@mediatek.com>
-Message-Id: <174369066367.2789561.14328496849433879876.robh@kernel.org>
-Subject: Re: [PATCH v5 0/4] Add AIE driver support for mt8188
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250403161836.7fe9fea5.pasic@linux.ibm.com>
 
-
-On Thu, 03 Apr 2025 15:38:32 +0800, bo.kong wrote:
-> From: Bo Kong <Bo.Kong@mediatek.com>
+On Thu, Apr 03, 2025 at 04:18:36PM +0200, Halil Pasic wrote:
+> On Wed,  2 Apr 2025 22:36:21 +0200
+> David Hildenbrand <david@redhat.com> wrote:
 > 
-> AIE(AI Engine) is one of the units in mt8188 ISP which provides hardware accelerated face detection function, it can detect different sizes of faces in a raw image.
+> > If we finds a vq without a name in our input array in
+> > virtio_ccw_find_vqs(), we treat it as "non-existing" and set the vq pointer
+> > to NULL; we will not call virtio_ccw_setup_vq() to allocate/setup a vq.
+> > 
+> > Consequently, we create only a queue if it actually exists (name != NULL)
+> > and assign an incremental queue index to each such existing queue.
 > 
-> Bo Kong (4):
->   media: dt-bindings: add MT8188 AIE
->   arm64: dts: mt8188: add aie node
->   uapi: linux: add MT8188 AIE
->   media: mediatek: add MT8188 AIE driver
+> First and foremost: thank you for addressing this! I have to admit, I'm
+> still plagued by some cognitive dissonance here. Please bear with me.
 > 
->  .../bindings/media/mediatek,mt8188-aie.yaml   |   78 +
->  arch/arm64/boot/dts/mediatek/mt8188.dtsi      |   33 +
->  drivers/media/platform/mediatek/Kconfig       |    1 +
->  drivers/media/platform/mediatek/Makefile      |    1 +
->  drivers/media/platform/mediatek/aie/Kconfig   |   12 +
->  drivers/media/platform/mediatek/aie/Makefile  |    5 +
->  drivers/media/platform/mediatek/aie/mtk_aie.h |  870 ++++++
->  .../media/platform/mediatek/aie/mtk_aie_drv.c | 2398 +++++++++++++++++
->  .../platform/mediatek/aie/mtk_aie_v4l2.c      | 1295 +++++++++
->  drivers/media/v4l2-core/v4l2-ioctl.c          |    3 +
->  include/uapi/linux/mtk_aie_v4l2_controls.h    |  308 +++
->  include/uapi/linux/videodev2.h                |    6 +
->  12 files changed, 5010 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/mediatek,mt8188-aie.yaml
->  create mode 100644 drivers/media/platform/mediatek/aie/Kconfig
->  create mode 100644 drivers/media/platform/mediatek/aie/Makefile
->  create mode 100644 drivers/media/platform/mediatek/aie/mtk_aie.h
->  create mode 100644 drivers/media/platform/mediatek/aie/mtk_aie_drv.c
->  create mode 100644 drivers/media/platform/mediatek/aie/mtk_aie_v4l2.c
->  create mode 100644 include/uapi/linux/mtk_aie_v4l2_controls.h
+> For starters the commit message of a229989d975e ("virtio: don't
+> allocate vqs when names[i] = NULL") goes like this:
+> """
+>     virtio: don't allocate vqs when names[i] = NULL
+>     
+>     Some vqs may not need to be allocated when their related feature bits
+>     are disabled. So callers may pass in such vqs with "names = NULL".
+>     Then we skip such vq allocations.
+> """
 > 
-> --
-> 2.45.2
+> In my reading it does not talk about "non-existent" queues, but queues
+> that do not need to be allocated. This could make sense for something
+> like virtio-net where controlq 2N is with N being max_virtqueue_pairs.
+> 
+> I guess for the guest it could make sense to not set up some of the
+> queues initially, but those, I guess would be perfectly existent queues
+> spec-wise and we would expect the index of controlq being 2N. And the
+> queues that don't get set up initially can get set up later. At least
+> this is my naive understanding at the moment.
+> 
+> Now apparently there is a different case where queues may or may not
+> exist, but we would, for some reason like to have the non-existent
+> queues in the array, because for an other set of features negotiated
+> those queues would actually exist and occupy and index. Frankly
+> I don't fully comprehend it at the moment, but I will have another look
+> at the code and at the spec.
+> 
+> So lookign at the spec for virtio-ballon I see:
 > 
 > 
 > 
+> 5.5.2 Virtqueues
+> 
+> 0
+>     inflateq 
+> 1
+>     deflateq 
+> 2
+>     statsq 
+> 3
+>     free_page_vq 
+> 4
+>     reporting_vq
+
+Indeed. Unfortunately, no one at all implemented this properly as
+per spec :(.
+
+Balloon is the worst offender here but other devices are broken
+too in some configurations.
 
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250403 (exact match)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/mediatek/' for 20250403074005.21472-1-bo.kong@mediatek.com:
-
-arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku4.dtb] Error 2
-make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
-make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku4.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8188-geralt-ciri-sku4.dtb] Error 2
-arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8370-genio-510-evk.dtb] Error 2
-make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
-make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8370-genio-510-evk.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8370-genio-510-evk.dtb] Error 2
-arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dtb] Error 2
-make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
-make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8390-genio-700-evk.dtb] Error 2
-arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku1.dtb] Error 2
-make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
-make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku1.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8188-geralt-ciri-sku1.dtb] Error 2
-arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku7.dtb] Error 2
-make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
-make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku7.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8188-geralt-ciri-sku7.dtb] Error 2
-arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku3.dtb] Error 2
-make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
-make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku3.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8188-geralt-ciri-sku3.dtb] Error 2
-arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8188-evb.dtb] Error 2
-make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
-make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8188-evb.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8188-evb.dtb] Error 2
-arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku6.dtb] Error 2
-make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
-make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku6.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8188-geralt-ciri-sku6.dtb] Error 2
-arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku0.dtb] Error 2
-make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
-make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku0.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8188-geralt-ciri-sku0.dtb] Error 2
-arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku2.dtb] Error 2
-make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
-make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku2.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8188-geralt-ciri-sku2.dtb] Error 2
-arch/arm64/boot/dts/mediatek/mt8188.dtsi:2359.25-2370.5: ERROR (phandle_references): /soc/larb@15340000: Reference to non-existent node or label "smi_img1"
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku5.dtb] Error 2
-make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/mediatek] Error 2
-make[2]: Target 'arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku5.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1475: mediatek/mt8188-geralt-ciri-sku5.dtb] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
-make: Target 'mediatek/mt8183-pumpkin.dtb' not remade because of errors.
-make: Target 'mediatek/mt6797-evb.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-kodama-sku16.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-jacuzzi-fennel14.dtb' not remade because of errors.
-make: Target 'mediatek/mt8395-genio-1200-evk.dtb' not remade because of errors.
-make: Target 'mediatek/mt7986a-bananapi-bpi-r3.dtb' not remade because of errors.
-make: Target 'mediatek/mt8173-evb.dtb' not remade because of errors.
-make: Target 'mediatek/mt7986b-rfb.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-jacuzzi-willow-sku0.dtb' not remade because of errors.
-make: Target 'mediatek/mt8186-corsola-tentacruel-sku262144.dtb' not remade because of errors.
-make: Target 'mediatek/mt8195-cherry-tomato-r2.dtb' not remade because of errors.
-make: Target 'mediatek/mt7981b-openwrt-one.dtb' not remade because of errors.
-make: Target 'mediatek/mt8173-elm.dtb' not remade because of errors.
-make: Target 'mediatek/mt7622-rfb1.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-jacuzzi-damu.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-jacuzzi-willow-sku1.dtb' not remade because of errors.
-make: Target 'mediatek/mt8186-corsola-tentacool-sku327681.dtb' not remade because of errors.
-make: Target 'mediatek/mt6779-evb.dtb' not remade because of errors.
-make: Target 'mediatek/mt8188-geralt-ciri-sku4.dtb' not remade because of errors.
-make: Target 'mediatek/mt8173-elm-hana-rev7.dtb' not remade because of errors.
-make: Target 'mediatek/mt8186-corsola-starmie-sku1.dtb' not remade because of errors.
-make: Target 'mediatek/mt8370-genio-510-evk.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-jacuzzi-kenzo.dtb' not remade because of errors.
-make: Target 'mediatek/mt2712-evb.dtb' not remade because of errors.
-make: Target 'mediatek/mt8186-corsola-tentacool-sku327683.dtb' not remade because of errors.
-make: Target 'mediatek/mt7981b-cudy-wr3000-v1.dtb' not remade because of errors.
-make: Target 'mediatek/mt8192-asurada-hayato-r1.dtb' not remade because of errors.
-make: Target 'mediatek/mt8390-genio-700-evk.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-jacuzzi-makomo-sku1.dtb' not remade because of errors.
-make: Target 'mediatek/mt8395-kontron-3-5-sbc-i1200.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-jacuzzi-pico6.dtb' not remade because of errors.
-make: Target 'mediatek/mt8188-geralt-ciri-sku1.dtb' not remade because of errors.
-make: Target 'mediatek/mt8195-demo.dtb' not remade because of errors.
-make: Target 'mediatek/mt8173-elm-hana.dtb' not remade because of errors.
-make: Target 'mediatek/mt6755-evb.dtb' not remade because of errors.
-make: Target 'mediatek/mt8186-corsola-chinchou-sku16.dtb' not remade because of errors.
-make: Target 'mediatek/mt8192-asurada-spherion-r0.dtb' not remade because of errors.
-make: Target 'mediatek/mt8186-corsola-chinchou-sku0.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-kodama-sku32.dtb' not remade because of errors.
-make: Target 'mediatek/mt7622-bananapi-bpi-r64.dtb' not remade because of errors.
-make: Target 'mediatek/mt8186-corsola-chinchou-sku1.dtb' not remade because of errors.
-make: Target 'mediatek/mt8186-corsola-voltorb-sku589825.dtb' not remade because of errors.
-make: Target 'mediatek/mt8186-corsola-magneton-sku393218.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-evb.dtb' not remade because of errors.
-make: Target 'mediatek/mt8188-geralt-ciri-sku7.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dtb' not remade because of errors.
-make: Target 'mediatek/mt8186-evb.dtb' not remade because of errors.
-make: Target 'mediatek/mt8186-corsola-magneton-sku393216.dtb' not remade because of errors.
-make: Target 'mediatek/mt8188-geralt-ciri-sku3.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-jacuzzi-fennel14-sku2.dtb' not remade because of errors.
-make: Target 'mediatek/mt6797-x20-dev.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-jacuzzi-cozmo.dtb' not remade because of errors.
-make: Target 'mediatek/mt8188-evb.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-krane-sku0.dtb' not remade because of errors.
-make: Target 'mediatek/mt8365-evk.dtb' not remade because of errors.
-make: Target 'mediatek/mt8195-evb.dtb' not remade because of errors.
-make: Target 'mediatek/mt8395-radxa-nio-12l.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-jacuzzi-makomo-sku0.dtb' not remade because of errors.
-make: Target 'mediatek/mt8186-corsola-steelix-sku131073.dtb' not remade because of errors.
-make: Target 'mediatek/mt8186-corsola-voltorb-sku589824.dtb' not remade because of errors.
-make: Target 'mediatek/mt7988a-bananapi-bpi-r4.dtb' not remade because of errors.
-make: Target 'mediatek/mt8186-corsola-starmie-sku0.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-jacuzzi-burnet.dtb' not remade because of errors.
-make: Target 'mediatek/mt8188-geralt-ciri-sku6.dtb' not remade because of errors.
-make: Target 'mediatek/mt7986a-acelink-ew-7886cax.dtb' not remade because of errors.
-make: Target 'mediatek/mt8516-pumpkin.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-kakadu-sku22.dtb' not remade because of errors.
-make: Target 'mediatek/mt7986a-rfb.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-kodama-sku288.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-krane-sku176.dtb' not remade because of errors.
-make: Target 'mediatek/mt8188-geralt-ciri-sku0.dtb' not remade because of errors.
-make: Target 'mediatek/mt6795-evb.dtb' not remade because of errors.
-make: Target 'mediatek/mt8186-corsola-tentacruel-sku262148.dtb' not remade because of errors.
-make: Target 'mediatek/mt8167-pumpkin.dtb' not remade because of errors.
-make: Target 'mediatek/mt7981b-xiaomi-ax3000t.dtb' not remade because of errors.
-make: Target 'mediatek/mt8188-geralt-ciri-sku2.dtb' not remade because of errors.
-make: Target 'mediatek/mt8186-corsola-steelix-sku131072.dtb' not remade because of errors.
-make: Target 'mediatek/mt8195-cherry-dojo-r1.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-jacuzzi-kappa.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-kakadu.dtb' not remade because of errors.
-make: Target 'mediatek/mt7986a-bananapi-bpi-r3-mini.dtb' not remade because of errors.
-make: Target 'mediatek/mt6795-sony-xperia-m5.dtb' not remade because of errors.
-make: Target 'mediatek/mt8186-corsola-magneton-sku393217.dtb' not remade because of errors.
-make: Target 'mediatek/mt8192-evb.dtb' not remade because of errors.
-make: Target 'mediatek/mt8195-cherry-tomato-r3.dtb' not remade because of errors.
-make: Target 'mediatek/mt8195-cherry-tomato-r1.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-jacuzzi-juniper-sku16.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-katsu-sku32.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-katsu-sku38.dtb' not remade because of errors.
-make: Target 'mediatek/mt8188-geralt-ciri-sku5.dtb' not remade because of errors.
-make: Target 'mediatek/mt8186-corsola-rusty-sku196608.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-jacuzzi-pico.dtb' not remade because of errors.
-make: Target 'mediatek/mt8183-kukui-kodama-sku272.dtb' not remade because of errors.
+Given it has been like this for many years I'm inclined in this
+instance to fix the spec not the implementations.
 
 
 
 
+> statsq only exists if VIRTIO_BALLOON_F_STATS_VQ is set.
+> 
+> free_page_vq only exists if VIRTIO_BALLOON_F_FREE_PAGE_HINT is set.
+> 
+> reporting_vq only exists if VIRTIO_BALLOON_F_PAGE_REPORTING is set. 
+> 
+> Which is IMHO weird.  I used to think about the number in front of the
+> name as the virtqueue index. But based on this patch I'm wondering if
+> that is compatible with the approach of this patch.
+> 
+> What does for example mean if we have VIRTIO_BALLOON_F_STATS_VQ not
+> offered, VIRTIO_BALLOON_F_FREE_PAGE_HINT offered but not negotiated
+> and VIRTIO_BALLOON_F_PAGE_REPORTING negotiated.
+> 
+> One reading of the things is that statq is does not exist for sure,
+> free_page_vq is a little tricky because "is set" is not precise enough,
+> and reporting_vq exists for sure. And in your reading of the spec, if
+> I understood you correctly and we assume that free_page_vq does not
+> exist, it has index 2. But I from the top of my head, I don't know why
+> interpreting the spec like it reporting_vq has index 4 and indexes 2
+> and 3 are not mapped to existing-queues would be considered wrong.
+> 
+> And even if we do want reportig_vq to have index 2, the virtio-balloon
+> code could still give us an array where reportig_vq is at index 2. Why
+> not?
+> 
+> Sorry this ended up being a very long rant. the bottom line is that, I
+> lack conceptual clarity on where the problem exactly is and how it needs
+> to be addressed. I would like to understand this properly before moving
+> forward.
+> 
+> [..]
+> > 
+> > There was recently a discussion [1] whether the "holes" should be
+> > treated differently again, effectively assigning also non-existing
+> > queues a queue index: that should also fix the issue, but requires other
+> > workarounds to not break existing setups.
+
+
+Yep. I tried that, and it is basically a terrible mess :(.
+
+
+> > 
+> 
+> Sorry I have to have a look at that discussion. Maybe it will answer
+> some my questions.
+> 
+> > Let's fix it without affecting existing setups for now by properly ignoring
+> > the non-existing queues, so the indicator bits will match the queue
+> > indexes.
+> 
+> Just one question. My understanding is that the crux is that Linux
+> and QEMU (or the driver and the device) disagree at which index
+> reporting_vq is actually sitting. Is that right?
+> 
+> Regards,
+
+
+> Halil
 
 
