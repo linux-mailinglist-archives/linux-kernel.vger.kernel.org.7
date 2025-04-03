@@ -1,134 +1,111 @@
-Return-Path: <linux-kernel+bounces-586696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35CB0A7A2AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:21:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57109A7A2B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:21:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F12F217300A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:21:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C704173220
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561CE24C67F;
-	Thu,  3 Apr 2025 12:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA18242901;
+	Thu,  3 Apr 2025 12:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="O99Qjc+g"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Q8/TYGYP"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2680242901
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 12:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFC724CEFD;
+	Thu,  3 Apr 2025 12:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743682864; cv=none; b=chMyrf3SU9dBZSc5fPCOSdQXDaBYyTN4MDkCG6PUk6Blo4E+DwXX6vsBTr7or39PJxt9Lh8c1uPRZwD703289ozhOJ4uHiBSaIN3GDmEKvVevFktjQgMv+IrtB5bHFXwwUvdbpK1Rbs+C2rEWyBaGUWStKR+BAMgGdRhF2+mNxA=
+	t=1743682881; cv=none; b=WxR/QFVYxGbT0dXoqOZZu0UuT1Ni6s9PIqf5XtPislWvPorLAl/rKLtWwfg/buOPeTaUoUxmPgA5zXr0jOmulz9awvCqO+YyNsZLyl7/DmpnL7IXbs6UtauJu7Q4ZXENKmXx5A2f8xgCuitzYft2+/8UeC62kgxEVVyBLP7gjGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743682864; c=relaxed/simple;
-	bh=nJPKgA+fqkGF6OwUdH6F0ePVjgCHov0wDAmt/5tT4D0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uxmdJlqxcxm/uvzEuIVr9aVQ83al9C0eMe70ELIBcjbu3zJUdeKhu3R30rgldh+LaXOS63UEYhxxdDOpTdUTf7Ej2aGsCkl1qNWWh8zGcY8G49px/jl/D7Ijn2Il82U3uMvVvIqBnYsmTrCHh91hf0TuK5xu9o0vuOILLjRcJEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=O99Qjc+g; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43d04ea9d9aso3627835e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 05:21:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1743682861; x=1744287661; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JxGGnpHSon1brCmtfpj995Ux6sFy5/VZq0EMOjpmwcQ=;
-        b=O99Qjc+g0exMANvQPDcLs/vSY3g4B3/c13JsGK/rBBf2d9LBRYjeyLTwIZBxd9O5ak
-         fqdrnWAB1rI+OKhzJL5V9RxaR4irauEc/ThEM5ik8e7HihyyWJPb89UZZzLViW8QOcV7
-         w4k0o/krAgIwv29a8YZzQpR9izWJB4941gBbKgh+ETRvZBwImyo/NK/t+3oFz5yt/8pY
-         8R81yig+su4hmE6lc4DmUCrrPfDpe5Z1fG327Rc99tFaI7Nv/vmCQk9yeLbdO9MIU4OM
-         xcVAvIPKZKZC/58aZu7gGAO7MGS8B7VBgUFI/mG06zUuG8Yo0RzkXEKGxjy2ZFwhwIeL
-         2ieA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743682861; x=1744287661;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JxGGnpHSon1brCmtfpj995Ux6sFy5/VZq0EMOjpmwcQ=;
-        b=sRecsu9bL/3/VsiOQrniuQwf30MSKmHDX9QwWc5yNPiAmoE7jdAay6hOVRIr9H775d
-         mwo8i8UEoHFHHBLRnkHyjG1dpCdjDPiNZh2lDW5SAsi/rNBZi1Z/IJ5VEs9Fke4gg/Em
-         u1t9l6PTVeEOF+1xC1vctX5S3EvNBmnCRN2I/P40jU/m7h6oQ8YoNM4oAa1cUDRVVMBL
-         LryXdxVoxiyHsTuvjPOUWS2Ph/0JHRHstLn59NMn0OZUK7XUoiYlpJA7wKGoidkv5rNp
-         n7ciW7zUUBJkaIItB+9QJMCQUUmPw2B/TjLIqUNlbz6Q+iaoA44DwdVfUooY2Q20SR8H
-         uoRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWg01z6wuSw7DkHslbV+ehpC+F5j9PY4mlM63fPl0C1VulJSj0eisQCLLQKwRuaj3hyjyXMNxMeS4edPzY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywzdc431undE8VdtFVhB8e3QNHk4osniS6WD2OnZPAQ9gpN9G71
-	uiTPPrgcU561r2IHUvt5zQRbemBHiklEhmWdNtvQrseqx2xoCDvrLMo1xsoUyE0=
-X-Gm-Gg: ASbGncv1okY+ucgTfjei83NZY5qWvw5uCi3RCy5/TfYwML/tiasnFEERCzczggQswwK
-	TpAOgrWxZes6VQDK9+QyIDfuLumXo9UAN7uSzbNaX3CPcVqdjQUMNKdE6cn0lEJ/dXfAqCCL5kh
-	KhIH+mqgEm8T0RqzFDLtOCyOg4T+c9Y6AIl7phcqQed2Oc20anyHbc30aqOLEVrOplt6BH0IybO
-	ABI4oIM6Ekcinju2YzbqBeApkPbLe2mrphcDJh1SlxUhTMDyh+USx7cfxWu7pY/EJhG91AxolWY
-	pIYeSUPngnXZGNLBEbRVZdXuvEiCcYYpsTrLzWoBw+S5tIdruEQZhVs2OQ==
-X-Google-Smtp-Source: AGHT+IF8Rk8S8kxFyorNaE4NcvfztKCcHIw0MGY3NBfMq6CEJ12nq53xnrOSozVX3u941hPlqCIo8w==
-X-Received: by 2002:a7b:c845:0:b0:43d:9d5:474d with SMTP id 5b1f17b1804b1-43ec3c7ad9fmr18360355e9.0.1743682861156;
-        Thu, 03 Apr 2025 05:21:01 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec17b0a38sm20154215e9.34.2025.04.03.05.21.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 05:21:00 -0700 (PDT)
-Date: Thu, 3 Apr 2025 14:20:59 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Frederic Weisbecker <fweisbecker@suse.com>
-Subject: Re: [PATCH v2 06/10] sched: Bypass bandwitdh checks with runtime
- disabled RT_GROUP_SCHED
-Message-ID: <nt6pfc3lwud2k3eakjr7qutseuhtislao4jr43a5355tjqnbnb@6deb5jxmwadr>
-References: <20250310170442.504716-1-mkoutny@suse.com>
- <20250310170442.504716-7-mkoutny@suse.com>
- <20250402120221.GI25239@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1743682881; c=relaxed/simple;
+	bh=L1M9+DqEkPWzAH4mbo5Bdwgh/m7vQ9ylF1u193HM9eo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ISzEKM+B3b6icQJ//2t2aVfrulmyaHjrh0tZnu/D1XNds0NIE/HSY5wEZVlqaUkgKO5mQ2lJqytC3DFsaYGEbmTVMb8Y9LZUTAg6bYrR6Liq4FN14BFEyK/2ynVoi4Lz4baNglJ3SUOthM4jtSrINVWDRnOY/MyrKFNNHhdGtjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Q8/TYGYP; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 745AF43231;
+	Thu,  3 Apr 2025 12:21:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1743682875;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b5DITWvhtq18VMzVSHOCV2iIg0K0B/BD1nLhgl2nuEI=;
+	b=Q8/TYGYPKz5AUooLVdQNonVxTWZy1BMPqYD2MsAiksQVAHgsa5fwrzPmIds7d0DloXNqld
+	w2LOtGQL/xdB2C1V9TAEV+yyNBYSt6OxzUCqRgRj6cyKyzCtP/y488NwRSFFElQ5YdcEOy
+	DDLbZBFjyJ03/1BJGieXIAoXbRYTQqOnc+alJM5KCfPM5g1KK45SXU1ITh5MtyUNuC2qIw
+	bCT66HELUv3NwVpBl04bBWsKkNUTiTx/b6DTSpGOsVlVH5DHNqZibE3wntoAmuaT7CCLKf
+	aegJO4TlaZLsSJxVQaufMbQpUp4yNV99x9VDUp9gf/gdJ4TeUao7O4BkohfgJQ==
+Date: Thu, 3 Apr 2025 14:21:14 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Luca Ceresoli
+ <luca.ceresoli@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [RFC PATCH 1/3] i2c: core: Follow i2c-parent when retrieving an
+ adapter from node
+Message-ID: <20250403142114.2ca6722a@bootlin.com>
+In-Reply-To: <Z-5u5bAnY8Y1DmFz@shikoro>
+References: <20250205173918.600037-1-herve.codina@bootlin.com>
+	<20250205173918.600037-2-herve.codina@bootlin.com>
+	<Z-5O3-FSsHbn27lW@shikoro>
+	<20250403125050.22db0349@bootlin.com>
+	<Z-5u5bAnY8Y1DmFz@shikoro>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="imnhiqp4gmwjyoyh"
-Content-Disposition: inline
-In-Reply-To: <20250402120221.GI25239@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeekheehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeelpdhrtghpthhtohepfihsrgdorhgvnhgvshgrshesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvr
+ hhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqihdvtgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhm
+X-GND-Sasl: herve.codina@bootlin.com
 
+Hi Wolfram,
 
---imnhiqp4gmwjyoyh
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v2 06/10] sched: Bypass bandwitdh checks with runtime
- disabled RT_GROUP_SCHED
-MIME-Version: 1.0
+On Thu, 3 Apr 2025 13:20:05 +0200
+Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
 
-On Wed, Apr 02, 2025 at 02:02:21PM +0200, Peter Zijlstra <peterz@infradead.org> wrote:
-> Can we make it so that cgroup-v2 is explicitly disallowed for now? As I
-> said earlier, we're looking at a new implemention with a incompatible
-> interface.
+> > The debug message can be interesting when things went wrong and we want
+> > to investigate potential issue with i2c-parent chain from the last device
+> > up to the adapter.  
+> 
+> I thought so but couldn't estimate how often this is useful in reality.
+> I agree that introducing 'dev' is too much hazzle, yet I think the
+> message should have some id to disitnguish potential different adapter
+> chains. Either that, or...
+> 
+> > I don't have a strong opinion about the need of this message and I can
+> > simply remove it.  
+> 
+> ... we just remove it and let people add their debug stuff while
+> developing.
 
-I meant here that
-- rt_group_sched=0 -> cgroup v2 works but there's no RT group scheduling
-- rt_group_sched=1 -> cgroup v2 doesn't work (prohibit RT tasks in
-                      non-root groups)
+I agree.
 
-I.e. there is no new function for cgroup v2 besides that it is possible
-to switch to RT group scheduling (with v1) without recompiling the
-kernel.
+> 
+> > What is your preference ?  
+> 
+> A tad more 'removing'.
+> 
 
-Michal
+Will be removed.
 
---imnhiqp4gmwjyoyh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ+59KQAKCRAt3Wney77B
-SQsGAQDn/qfkAqSvqnRnNexhtvf0Zdy8JbTGe5y8kt1fm+dCaAD/VO2Dhm3VAbtE
-1dJ89MnaNMVsVNoX+XdeXxV8tLgAng0=
-=K6M4
------END PGP SIGNATURE-----
-
---imnhiqp4gmwjyoyh--
+Hervé
 
