@@ -1,53 +1,88 @@
-Return-Path: <linux-kernel+bounces-586893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 849FFA7A51A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:29:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE446A7A4FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:24:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05C063B7F91
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:24:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27F7E7A5FA0
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C365724EF86;
-	Thu,  3 Apr 2025 14:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434AC24EA96;
+	Thu,  3 Apr 2025 14:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GU8llk2h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o7J7/QJP"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300F624EF7E
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 14:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001DB24BC06
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 14:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743690290; cv=none; b=i5LtSETvFlYGJQRtL38AsTAf6QQIQFQOlN9kciWC1+oDfjZN79W6obLpdixnBFrWqRe9uXgLx+lb7BcM81SMPbu6rezqhDp5YHqwC+M8OV7yarm9v/1FRzyvW2aJsczz60mxfM2rbpgU1iiqseR4/KlDoGHRrVGiEoQvCEC95jI=
+	t=1743690263; cv=none; b=RlHGmZBCrWgDU0Jq+H37nq34vkrCEZwAG+OQMioKoeMotKrHGf2ikwO0BPfmYlErmUx/mdHbPupiVIx8GZ2aVmHK2coxo1aWR9VqDk9cT3B7+eRW1Wp4ojopgXEt9IUWN+eRHyCRzMY57vExUFdLgVH05xDgEmLarD6oASWuaEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743690290; c=relaxed/simple;
-	bh=ULh4LiwYDnoWTct7omJfi80raYIjgsafQ/+mOn4NKcQ=;
+	s=arc-20240116; t=1743690263; c=relaxed/simple;
+	bh=EkUq54YbtHaSFlkcgNeh41msuRCSH1wM/iY0EssPtSM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DudAV0YXawpGP0iMNcWYaZMjN4rK+Iu+A72nBL4HrMWq6Ybrz0EYnd9hYrTH6y1o/y8wYyBZi2hMFm/yjCuHvltpov7o6ySOJROZ4O5BZ/vXRDY1l8liSKyIFw+pCD3GT/vSvLuMfh8A1dZtHQGSCUG4QPnAdnJ3di1euyKWOkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GU8llk2h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36F36C4CEE7;
-	Thu,  3 Apr 2025 14:24:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1743690289;
-	bh=ULh4LiwYDnoWTct7omJfi80raYIjgsafQ/+mOn4NKcQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GU8llk2h+13k4nu1+zl+CXUhQiNV9YWOcz87Pe/dPRmmRRnFqHZ5jHh6KiIQboJ8D
-	 iLfaolKJY4mUybcQ3e0NWxAEU1NQ2usHqWtkmYiz4JR86duS3N8nF4sI0Ofzju4qiV
-	 wiaYvT05X7hp4HT1oFzzh7QriKh8tEgHs1KSGGYw=
-Date: Thu, 3 Apr 2025 15:23:22 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Raag Jadav <raag.jadav@intel.com>, david.m.ertman@intel.com,
-	ira.weiny@intel.com, lee@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] mfd: core: Support auxiliary device
-Message-ID: <2025040343-vascular-swung-f124@gregkh>
-References: <20250403110053.1274521-1-raag.jadav@intel.com>
- <2025040336-ethically-regulate-3594@gregkh>
- <Z-6YU24dhxF5PRaw@smile.fi.intel.com>
- <Z-6Y6lbLSbe46-uQ@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KxOm7X7wqeBQlkzJPdrZRS0aWkCQmXF76S+OKxJNvfchLxR9ArRsCURdQGNGe9QPEdSfCJ0VTzwg2neJDstQVRLY70Q5iz9GngmH5BRTZ/bAfi15xM840Zc1ivZCngh7NkVpwCmhnPmJkwM4FLgEB5hK0zJ4jy6YTCUpPS4S36Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o7J7/QJP; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5edc07c777eso1304401a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 07:24:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743690260; x=1744295060; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vDpmek/X0kwpQJH4VvCCmLBAuzVkaDGKXNEK4ox1gYY=;
+        b=o7J7/QJPUEjsItfSayuf5PQMSpoAf2Z/ywHOC7wn1Ot1rERC5EwpKu2nV+a/9TzZzT
+         H0ltBVcVD1HHVaRIyplk7vLDs9Tssc0PgeksUlW0HQxAOE/iMrgnxYRMe+NKjxKiGuoW
+         +CU+hCqx6IWW8IeJlPpjpi6X5Ibw3JPtI9Vo2pp7ReL6rlGlLYQPB9owduBalu5URd97
+         4GLIbZ78PeHSKHh+UDvK11SpjA8nH5Pf+EdLHbHiZW1mQGZMyGWw5qdNxXL2YMgCKIIJ
+         h1FlD9kGgWCCZf5PEhbUBm7gBk5/dnruJA4Yz7k3GVYY4M6FjcgGsLbpt2+bVfx8nxXN
+         g39g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743690260; x=1744295060;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vDpmek/X0kwpQJH4VvCCmLBAuzVkaDGKXNEK4ox1gYY=;
+        b=oibQkdubYLygcTHDsjhApgjF2JM7KzMKWYhKyMMWkqLiNmiFy1H7ECW6k+4ItzV88I
+         C8XT/59s6SixFwReG+RGBfsfYivy946TUV+t6/ZGStHfFR5oHNbVzSJRdVzYoJyDnknS
+         KLhU40dSvZhIyZtUgLc0prq4VU4yc9tn5Gy1Gr4hwWZK/U+zG+Xa6NUyz+ZDVeKSX5w0
+         rFJ36m1Hh5x92rEHmENyqZvKfrH2qjoLx++Sm3/r9bbWy+8bCJ1OkwkUORO4uScj/FWT
+         kZik/KGy1N7macERtftaz/HuqV9e2ogrQJmcgmeLt9XSC1aasGtmwTmFMfRohtIe+Miu
+         JDkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWE4sw7uAiwL3qHJwbNcT5tzysPM45V9QlYdyE0WnmgBWtXysr4TSvmXlOZw9EZuFbwof06vRUdZlvzQgE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjPaV4ci02f/aQCtQ8Sfa5TSloYDTr4Dyy6OE5pkLpLlbHK+Ao
+	5DXb2XgHdlgmE7PdjFKAEAEAwmkgX1MnQIJPrLPJTWyTBgKYlaVhZGuEwR024g==
+X-Gm-Gg: ASbGncvAqJ1y3/XeOymXeKAeuJc0pYwk8jhExmefMHnda2aAyy3+bT/g79JPL2gXKRe
+	2mOITXDNQe5OFzb8eiVmsNS1/4h0GTG+szzsTKWLPbzLeR+G1i5U03oAvPqmajWE5HrtNOeo2Es
+	qo/F8i3p+OpVj65QanT5Y9YrNSp0D1TFg5g2g3pSwSjr+IaiALk9muDHPh2gz7Gvz+wdroBgch3
+	kDGgyAYr0/4ElFHmcoblsqlhiuoklrwqqCU3VuxeWMvbZiqvOfXXaDBRL9urbkG/X8TTUXZ2EfB
+	GcLuoKQak/IidUcueZ5oF+GDWtoIwK6SjVTmEZPey0SytcNpZNRkhLBm1OaUatS3N4we4aOCPKZ
+	yCvDuxcj9o7ZV5VpI
+X-Google-Smtp-Source: AGHT+IGyNvHXBQg4ozO8/+QSZISlP/oFpgDXV5BJWgExW3afo1HCSCPDBCsyR32+joySAgPe8H3f4Q==
+X-Received: by 2002:a05:6402:3204:b0:5f0:82cd:500b with SMTP id 4fb4d7f45d1cf-5f082cd5216mr3828226a12.19.1743690260100;
+        Thu, 03 Apr 2025 07:24:20 -0700 (PDT)
+Received: from google.com (40.162.204.35.bc.googleusercontent.com. [35.204.162.40])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f0880850f2sm1005128a12.59.2025.04.03.07.24.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 07:24:19 -0700 (PDT)
+Date: Thu, 3 Apr 2025 14:24:16 +0000
+From: Quentin Perret <qperret@google.com>
+To: Vincent Donnefort <vdonnefort@google.com>
+Cc: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v2 1/9] KVM: arm64: Handle huge mappings for np-guest CMOs
+Message-ID: <Z-6aEOQlbfh_q2Mz@google.com>
+References: <20250306110038.3733649-1-vdonnefort@google.com>
+ <20250306110038.3733649-2-vdonnefort@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,41 +91,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z-6Y6lbLSbe46-uQ@smile.fi.intel.com>
+In-Reply-To: <20250306110038.3733649-2-vdonnefort@google.com>
 
-On Thu, Apr 03, 2025 at 05:19:22PM +0300, Andy Shevchenko wrote:
-> On Thu, Apr 03, 2025 at 05:16:51PM +0300, Andy Shevchenko wrote:
-> > On Thu, Apr 03, 2025 at 03:02:47PM +0100, Greg KH wrote:
-> > > On Thu, Apr 03, 2025 at 04:30:53PM +0530, Raag Jadav wrote:
+On Thursday 06 Mar 2025 at 11:00:30 (+0000), Vincent Donnefort wrote:
+> clean_dcache_guest_page() and invalidate_icache_guest_page() accept a
+> size as an argument. But they also rely on fixmap, which can only map a
+> single PAGE_SIZE page.
 > 
-> ...
+> With the upcoming stage-2 huge mappings for pKVM np-guests, those
+> callbacks will get size > PAGE_SIZE. Loop the CMOs on PAGE_SIZE basis
+> until the whole range is done.
 > 
-> > > > 2. Should we allow auxiliary drivers to manage their own resources
-> > > >    (MEM, IO, IRQ etc)?
-> > > 
-> > > The resources are all shared by the "parent" device, that's what makes
-> > > aux drivers work, they need to handle this as there is no unique way to
-> > > carve up the resources here.
-> > > 
-> > > So I don't know how you would do this, sorry.
-> > 
-> > I think we should simply enforce the requirement that MFD on AUX bus must use
-> > regmap. This will solve the serialisation and common access to the resources.
+> Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
 > 
-> That said, make an additional API call like
-> 
-> dev_mfd_add_aux_devices() which should enforce new infrastructure and convert
-> drivers one by one. Also with that you may add a warning to the existing (PCI)
-> drivers that are using old API
-> 
-> 	if (dev_is_pci(parent))
-> 		dev_warn(parent, "Uses old API, please switch to ...\n");
+> diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> index 19c3c631708c..63968c7740c3 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> @@ -219,14 +219,30 @@ static void guest_s2_put_page(void *addr)
+>  
+>  static void clean_dcache_guest_page(void *va, size_t size)
+>  {
+> -	__clean_dcache_guest_page(hyp_fixmap_map(__hyp_pa(va)), size);
+> -	hyp_fixmap_unmap();
+> +	if (WARN_ON(!PAGE_ALIGNED(size)))
+> +		return;
 
-Don't add "warnings" like this if you aren't also going to actually
-convert the code.  Just convert it, otherwise you pester users with
-problems that they have no idea how to fix.
+Nit: it doesn't really matter since WARN_ON() is fatal, but that return
+looks a bit weird -- we really shouldn't return without actually do the
+CMOs. So maybe just WARN_ON() and not bailing out would be clearer.
 
-thanks,
+Either way the patch works, so:
 
-greg k-h
+Reviewed-by: Quentin Perret <qperret@google.com>
+
+
+> +
+> +	while (size) {
+> +		__clean_dcache_guest_page(hyp_fixmap_map(__hyp_pa(va)),
+> +					  PAGE_SIZE);
+> +		hyp_fixmap_unmap();
+> +		va += PAGE_SIZE;
+> +		size -= PAGE_SIZE;
+> +	}
+>  }
+>  
+>  static void invalidate_icache_guest_page(void *va, size_t size)
+>  {
+> -	__invalidate_icache_guest_page(hyp_fixmap_map(__hyp_pa(va)), size);
+> -	hyp_fixmap_unmap();
+> +	if (WARN_ON(!PAGE_ALIGNED(size)))
+> +		return;
+> +
+> +	while (size) {
+> +		__invalidate_icache_guest_page(hyp_fixmap_map(__hyp_pa(va)),
+> +					       PAGE_SIZE);
+> +		hyp_fixmap_unmap();
+> +		va += PAGE_SIZE;
+> +		size -= PAGE_SIZE;
+> +	}
+>  }
+>  
+>  int kvm_guest_prepare_stage2(struct pkvm_hyp_vm *vm, void *pgd)
+> -- 
+> 2.48.1.711.g2feabab25a-goog
+> 
 
