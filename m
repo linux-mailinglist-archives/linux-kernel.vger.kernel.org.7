@@ -1,164 +1,220 @@
-Return-Path: <linux-kernel+bounces-585925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-585927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D490A79924
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 01:56:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A6FA7992B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 02:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89FD83B461E
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Apr 2025 23:56:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15F951893E72
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 00:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B2D1F8725;
-	Wed,  2 Apr 2025 23:56:23 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA4A481CD;
+	Thu,  3 Apr 2025 00:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="an8qUAGu"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E89C1F55E0
-	for <linux-kernel@vger.kernel.org>; Wed,  2 Apr 2025 23:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE38F79F5
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 00:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743638183; cv=none; b=X+fWBLd/WWT7QAUpcVRjV7bQEw7zakAxKEZtyfOpgeuyi2RTq6lxYmUwrVx454DgJ2oifIQKwd4+tE2Yd9VaIN92zPY06ERI3PE3LLLQnt2E+Dtd8bSaA8hvCCLSvHyV0tEV1ActRFcdE9aDMuKg0yQPj5YJ5J7HoPpUmn9vxJA=
+	t=1743638447; cv=none; b=Dk7KqMVxKvqq+h3vNUg8bIcrEucscmmXv6xKaNA7bLEHEkmQv2HZ8/twzPlq3nvgwsvL9v27fEoM3mPuhV2teejprKSpbpBU+7hHa+M5fM3zOZJxerqwBVW3bjgEn+789LwYB1vXw9JtSg+TnWQNCbeSDHLzDO4dABFuSeZXe5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743638183; c=relaxed/simple;
-	bh=DZI4WVcPWwh117K1jxc1+XXyZiuYmcpYQU4PuNS7e2o=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=PYSu345rR5PjSQ2q1I4Dy1BNfJN1F8azJV8Za2ZSOaOCsc4p/lMHBNoono8eBjfmC24DfkipeRFMO3AVDVCv8cfzPXn58RctOFNbmn7n8i0vhx7LE+DLQ4Fk933P0jFe/i54D/egta/aWA6ZeRABrmvyuREoC9AQRJvTSGyTxsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d5da4fd946so7826125ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 02 Apr 2025 16:56:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743638180; x=1744242980;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=14lZsOVV1x2OFnnS7998RygganwT5MPN9qdhJWT34r4=;
-        b=qd3TQ17smiPmydEN+w/tgWpe2Ryk6QZWEpH2OpkXcZYcOQ1kRAsUIXuaRAHlnJAnwU
-         r6BdYxRUxq1uE9yyFx2e/2LjujsGbcrzgqlwew9fdF6wxYhh+Zorw5R0VOarL/l7UiAM
-         dBoetoF4c6LlqVGGkJpXDS1IrkXuaA0BwlWyA/rCMhDwbXAog8p9AK716bHpUTTNtULv
-         jreKuAW9xd0I41tnOYmnOc4EryPWu/7akCmDFP3YguTVEP6PlYNN3SvGGawVVWl3ySya
-         FWd53TwF7rmYuqgud8xwzI4iQj6OGRbft3mqwL3LorMnI4pH1Np5UQ/G7/Fm0pb2d5s0
-         89gg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwMFP2oizuicuUnso2azcyMdeG5+5QKWpwPUlMEFTYqBS5IA5lnR8WDJCDcX4udcudx6B21+CyaxzvlzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDH4HA2qRYwlsyqPa3eHprwurfMFI1b+o+mY93+LJpJz7bqmZ0
-	NLWkJnIRlSnReoa14x/jN2cfDMmdSsk/jo3MohoOlWN7Dm2TNdaIGf68a1R9w+OCzihJzn2xcjY
-	oG+U4osX7z0mfft2h0wZHqxGgMqsw3qlRwfM1kHXygwdTlnxf0yAtRe4=
-X-Google-Smtp-Source: AGHT+IFGHm2zgRUwLTKtsMO24K3IDhw/15Kv/1vZgB8hnM73J5ACYieBaXioS2220k60tgw6ouo4VHGdqjQmCqVCokRsARuAUd92
+	s=arc-20240116; t=1743638447; c=relaxed/simple;
+	bh=N+5czGiKNIfXpcO8ryGWeAvIF9qFsbtnJ/AWcAjAtfk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JL1JqlRVDw85Po3tUaUvpabhvfMA2xBjx/bNpqpqK/d7oFjrT9TIuVcrd3xIawOFWlrRtswt1yO7BUkJNeu2ncjR0PC1OiHJ8Z4na1VN1CUfUalGwpRrpaPf5PJpHkVVl0QCPC9bI25uFTBkVuQMlIKSW+8z0NnpBMM6l3S4WL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=an8qUAGu; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 2 Apr 2025 17:00:34 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1743638442;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NBVywoZb0NEn0WwM4pPg/B+f3OtNhSDn+vmBeEDlF7c=;
+	b=an8qUAGuyhMYlilculWrL5DNR/oDu+DDo0lVvJk2VlaXl0uFGifvakKKysQ5FnrJAy+pfv
+	UK13v7/PRjNor8WI6v3guxShOFydlWRmvq3erqHaDgQUNmRSWzRXicp0N1m4oSepfeLdGr
+	ohH+Nt2KE7OKUM0ih0pVYdvqTHDKgoo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Christoph Lameter <cl@linux.com>, Martin Liu <liumartin@google.com>, 
+	David Rientjes <rientjes@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Sweet Tea Dorminy <sweettea@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Christian Brauner <brauner@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, 
+	David Hildenbrand <david@redhat.com>, Miaohe Lin <linmiaohe@huawei.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [RFC PATCH v2] mm: use per-numa-node atomics instead of
+ percpu_counters
+Message-ID: <2m3wwqpha2jlo4zjn6xbucahfufej75gbaxxgh4j4h67pgrw7b@diodkog7ygk3>
+References: <20250331223516.7810-2-sweettea-kernel@dorminy.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1607:b0:3d4:6dcf:d8f5 with SMTP id
- e9e14a558f8ab-3d6d547d087mr46330905ab.1.1743638180710; Wed, 02 Apr 2025
- 16:56:20 -0700 (PDT)
-Date: Wed, 02 Apr 2025 16:56:20 -0700
-In-Reply-To: <67b0cc5b.050a0220.6f0b7.0014.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67edcea4.050a0220.297a31.0022.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] general protection fault in bcsp_recv
-From: syzbot <syzbot+4ed6852d4da4606c93da@syzkaller.appspotmail.com>
-To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	luiz.dentz@gmail.com, marcel@holtmann.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250331223516.7810-2-sweettea-kernel@dorminy.me>
+X-Migadu-Flow: FLOW_OUT
 
-syzbot has found a reproducer for the following issue on:
+On Mon, Mar 31, 2025 at 06:35:14PM -0400, Sweet Tea Dorminy wrote:
+> [Resend as requested as RFC and minus prereq-patch-id junk]
+> 
+> Recently, several internal services had an RSS usage regression as part of a
+> kernel upgrade. Previously, they were on a pre-6.2 kernel and were able to
+> read RSS statistics in a backup watchdog process to monitor and decide if
+> they'd overrun their memory budget.
 
-HEAD commit:    acc4d5ff0b61 Merge tag 'net-6.15-rc0' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=135a6178580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=410c49aba9aeb859
-dashboard link: https://syzkaller.appspot.com/bug?extid=4ed6852d4da4606c93da
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=134ec7cf980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13315274580000
+Any reason these applications are not using memcg stats/usage instead of
+RSS? RSS is not the only memory comsumption for these applications.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-acc4d5ff.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/aad60517b1c2/vmlinux-acc4d5ff.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/27bf64833684/bzImage-acc4d5ff.xz
+> Now, however, a representative service
+> with five threads, expected to use about a hundred MB of memory, on a 250-cpu
+> machine had memory usage tens of megabytes different from the expected amount
+> -- this constituted a significant percentage of inaccuracy, causing the
+> watchdog to act.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4ed6852d4da4606c93da@syzkaller.appspotmail.com
+Are these 5 threads jump all over the 250 cpus?
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000021: 0000 [#1] SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000108-0x000000000000010f]
-CPU: 1 UID: 0 PID: 5945 Comm: syz-executor103 Not tainted 6.14.0-syzkaller-12456-gacc4d5ff0b61 #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:bcsp_recv+0x10a/0x17f0 drivers/bluetooth/hci_bcsp.c:590
-Code: 18 48 c1 e8 03 48 01 e8 48 89 04 24 48 8d 83 78 01 00 00 48 89 44 24 28 48 c1 e8 03 48 89 44 24 08 e8 aa ca 5c f9 48 8b 04 24 <80> 38 00 0f 85 d1 12 00 00 4c 8b ab 08 01 00 00 31 ff 4c 89 ee e8
-RSP: 0018:ffffc90003467bf0 EFLAGS: 00010293
-RAX: dffffc0000000021 RBX: 0000000000000000 RCX: ffffffff885e756a
-RDX: ffff888024910000 RSI: ffffffff885e75b6 RDI: 0000000000000005
-RBP: dffffc0000000000 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000001 R12: ffffc90003467d88
-R13: ffffc90003467d88 R14: 0000000000000001 R15: ffff88810735a800
-FS:  00007ffb5ce256c0(0000) GS:ffff8880d6abb000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffc59fa2f98 CR3: 0000000024ec0000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- hci_uart_tty_receive+0x251/0x7e0 drivers/bluetooth/hci_ldisc.c:627
- tiocsti drivers/tty/tty_io.c:2299 [inline]
- tty_ioctl+0x57b/0x15f0 drivers/tty/tty_io.c:2716
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl fs/ioctl.c:892 [inline]
- __x64_sys_ioctl+0x190/0x200 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x260 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ffb5ce97899
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 1f 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffb5ce25168 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007ffb5cf1b418 RCX: 00007ffb5ce97899
-RDX: 0000200000000140 RSI: 0000000000005412 RDI: 0000000000000004
-RBP: 00007ffb5cf1b410 R08: 00007ffcd6d4fb07 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffb5cf1b41c
-R13: 0000000000000010 R14: 00007ffcd6d4fa20 R15: 00007ffcd6d4fb08
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bcsp_recv+0x10a/0x17f0 drivers/bluetooth/hci_bcsp.c:590
-Code: 18 48 c1 e8 03 48 01 e8 48 89 04 24 48 8d 83 78 01 00 00 48 89 44 24 28 48 c1 e8 03 48 89 44 24 08 e8 aa ca 5c f9 48 8b 04 24 <80> 38 00 0f 85 d1 12 00 00 4c 8b ab 08 01 00 00 31 ff 4c 89 ee e8
-RSP: 0018:ffffc90003467bf0 EFLAGS: 00010293
-RAX: dffffc0000000021 RBX: 0000000000000000 RCX: ffffffff885e756a
-RDX: ffff888024910000 RSI: ffffffff885e75b6 RDI: 0000000000000005
-RBP: dffffc0000000000 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000001 R12: ffffc90003467d88
-R13: ffffc90003467d88 R14: 0000000000000001 R15: ffff88810735a800
-FS:  00007ffb5ce256c0(0000) GS:ffff8880d6abb000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffc59fa2f98 CR3: 0000000024ec0000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	18 48 c1             	sbb    %cl,-0x3f(%rax)
-   3:	e8 03 48 01 e8       	call   0xe801480b
-   8:	48 89 04 24          	mov    %rax,(%rsp)
-   c:	48 8d 83 78 01 00 00 	lea    0x178(%rbx),%rax
-  13:	48 89 44 24 28       	mov    %rax,0x28(%rsp)
-  18:	48 c1 e8 03          	shr    $0x3,%rax
-  1c:	48 89 44 24 08       	mov    %rax,0x8(%rsp)
-  21:	e8 aa ca 5c f9       	call   0xf95ccad0
-  26:	48 8b 04 24          	mov    (%rsp),%rax
-* 2a:	80 38 00             	cmpb   $0x0,(%rax) <-- trapping instruction
-  2d:	0f 85 d1 12 00 00    	jne    0x1304
-  33:	4c 8b ab 08 01 00 00 	mov    0x108(%rbx),%r13
-  3a:	31 ff                	xor    %edi,%edi
-  3c:	4c 89 ee             	mov    %r13,%rsi
-  3f:	e8                   	.byte 0xe8
+> 
+> This was a result of f1a7941243c1 ("mm: convert mm's rss stats into
+> percpu_counter") [1].  Previously, the memory error was bounded by
+> 64*nr_threads pages, a very livable megabyte. Now, however, as a result of
+> scheduler decisions moving the threads around the CPUs, the memory error could
+> be as large as a gigabyte.
 
+Applications with 10s of thousands of threads is very normal at Google.
+So, inaccuracy should be comparable for such applications.
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> This is a really tremendous inaccuracy for any few-threaded program on a
+> large machine and impedes monitoring significantly. These stat counters are
+> also used to make OOM killing decisions, so this additional inaccuracy could
+> make a big difference in OOM situations -- either resulting in the wrong
+> process being killed, or in less memory being returned from an OOM-kill than
+> expected.
+> 
+> Finally, while the change to percpu_counter does significantly improve the
+> accuracy over the previous per-thread error for many-threaded services, it does
+> also have performance implications - up to 12% slower for short-lived processes
+> and 9% increased system time in make test workloads [2].
+> 
+> A previous attempt to address this regression by Peng Zhang [3] used a hybrid
+> approach with delayed allocation of percpu memory for rss_stats, showing
+> promising improvements of 2-4% for process operations and 6.7% for page
+> faults.
+> 
+> This RFC takes a different direction by replacing percpu_counters with a
+> more efficient set of per-NUMA-node atomics. The approach:
+> 
+> - Uses one atomic per node up to a bound to reduce cross-node updates.
+> - Keeps a similar batching mechanism, with a smaller batch size.
+> - Eliminates the use of a spin lock during batch updates, bounding stat
+>   update latency.
+> - Reduces percpu memory usage and thus thread startup time.
+
+That one atomic per node will easily become a bottleneck for
+applications with a lot of threads particularly on the system where
+there are a lot of cpus per numa node.
+
+> 
+> Most importantly, this bounds the total error to 32 times the number of NUMA
+> nodes, significantly smaller than previous error bounds.
+> 
+> On a 112-core machine, lmbench showed comparable results before and after this
+> patch.  However, on a 224 core machine, performance improvements were
+
+How many cpus per node for each of these machines?
+
+> significant over percpu_counter:
+> - Pagefault latency improved by 8.91%
+
+The following fork ones are understandable as percpu counter allocation
+is involved but the above page fault latency needs some explanation.
+
+> - Process fork latency improved by 6.27%
+> - Process fork/execve latency improved by 6.06%
+> - Process fork/exit latency improved by 6.58%
+> 
+> will-it-scale also showed significant improvements on these machines.
+
+Are these process ones or the threads ones?
+
+> 
+> [1] https://lore.kernel.org/all/20221024052841.3291983-1-shakeelb@google.com/
+> [2] https://lore.kernel.org/all/20230608111408.s2minsenlcjow7q3@quack3/
+> [3] https://lore.kernel.org/all/20240418142008.2775308-1-zhangpeng362@huawei.com/
+> 
+> Signed-off-by: Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
+> Cc: Yu Zhao <yuzhao@google.com>
+> Cc: Roman Gushchin <roman.gushchin@linux.dev>
+> Cc: Shakeel Butt <shakeel.butt@linux.dev>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Mateusz Guzik <mjguzik@gmail.com>
+> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> 
+> ---
+> 
+> This is mostly a resend of an earlier patch, where I made an utter hash
+> of specifying a base commit (and forgot to update my commit text to not
+> call it an RFC, and forgot to update my email to the one I use for
+> upstream work...). This is based on akpm/mm-unstable as of today.
+> 
+> v1 can be found at
+> https://lore.kernel.org/lkml/20250325221550.396212-1-sweettea-kernel@dorminy.me/
+> 
+> Some interesting ideas came out of that discussion: Mathieu Desnoyers
+> has a design doc for a improved percpu counter, multi-level, with
+> constant drift, at 
+> https://lore.kernel.org/lkml/a89cb4d9-088e-4ed6-afde-f1b097de8db9@efficios.com/
+> and would like performance comparisons against just reducing the batch
+> size in the existing code;
+
+You can do the experiments with different batch sizes in the existing
+code without waiting for Mathieu's multi-level percpu counter.
+
+> and Mateusz Guzik would also like a more general solution and is also
+> working to fix the performance issues by caching mm state. Finally,
+> Lorenzo Stoakes nacks, as it's too speculative and needs more
+> discussion.
+> 
+> I think the important part is that this improves accuracy; the current
+> scheme is difficult to use on many-cored machines. It improves
+> performance, but there are tradeoffs; but it tightly bounds the
+> inaccuracy so that decisions can actually be reasonably made with the
+> resulting numbers.
+> 
+> This patch assumes that intra-NUMA node atomic updates are very cheap
+
+The above statement/assumption needs experimental data.
+
+> and that
+> assigning CPUs to an atomic counter by numa_node_id() % 16 is suitably
+> balanced. However, if each atomic were shared by only, say, eight CPUs from the
+> same NUMA node, this would further reduce atomic contention at the cost of more
+> memory and more complicated assignment of CPU to atomic index. I don't think
+> that additional complication is worth it given that this scheme seems to get
+> good performance, but it might be. I do need to actually test the impact
+> on a many-cores-one-NUMA-node machine, and I look forward to testing out
+> Mathieu's heirarchical percpu counter with bounded error.
+> 
+
+I am still not buying the 'good performance' point. To me we might need
+to go with reduced batch size of existing approach or multi level
+approach from Mathieu (I still have to see Mateusz and Kairui's
+proposals).
 
