@@ -1,214 +1,94 @@
-Return-Path: <linux-kernel+bounces-587927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F255A7B1FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 00:21:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31ADFA7B1F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 00:20:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5CF81788C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:21:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A45FB178628
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 667881AF4C1;
-	Thu,  3 Apr 2025 22:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F43A1991B2;
+	Thu,  3 Apr 2025 22:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="baWrpWBu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="al58z1ab"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A8F1AC44D
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 22:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E2F2E62AE;
+	Thu,  3 Apr 2025 22:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743718807; cv=none; b=eGl0VlZyqKEF0uZdKyA4YmFqGk8XEDmokk/jezwiHYfJxRcercAQBexJgySWXlCb8lQqcupazA6ntByI7XN63kTND1tjNWjmpyItChk8RuE+Ep4pRl1cz92FyJXIzWbDVH7Lh33UcSbhyl+KY/A54YDtyj5u2F6dsCEsSOzEQYU=
+	t=1743718795; cv=none; b=YsBRnKWv3PRs5WtrdNqmbYEZQRUFYqqq0tsd0O2aKj4Y5/A0Gn4cDkomEftQpc/mopdinEGWfmaymAXFvBxzU9fMa0AWSLNNDGRyHX21h/TtobCXKTOrZRP2eO7WQskxEuZ6BrybhmbkGl9VQmufH6xctVKzXXPLWcTFC7yRoHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743718807; c=relaxed/simple;
-	bh=LoDzcayjYOUVn7+roeHQFd9L6nfgHgMTRhDioiPdDi0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=XzuJe+iWEMjy4S0GTk/9JZZDpn0Icp5HAUPZNSNsRyeyBlN2B2RE3J3wmQ1o1wTO4p5qe+xoKHmblzNIJglnWsrvQY8UIm3s9dLwRw2sEzXEHaEn4SE6cHCTBc91wIH71WPURN0xRcmRIn1GShg22UUC8rOsAa18pEwWt76ExUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=baWrpWBu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79369C4CEE3;
-	Thu,  3 Apr 2025 22:20:05 +0000 (UTC)
+	s=arc-20240116; t=1743718795; c=relaxed/simple;
+	bh=vthDQTx4BLw79ba0rZiFNIsVzWvtArB7nkNXXqEOkBs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=o87/1BYJok4d8hk3pRtHWtOfqKCxuvVdIkNTvh0xYFDbvuiXuTfslanEN2XYeK9ywQKZqBg+CPbLtguteTKNbwjqRvw36Lyz/+CzFimnPHmld6FkmHkfGqHs87ZhfcBVf00PQe8Oi112QKs+yLyPFQkgsw2jxyrUJYubCI7p59o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=al58z1ab; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EC64C4CEE3;
+	Thu,  3 Apr 2025 22:19:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743718807;
-	bh=LoDzcayjYOUVn7+roeHQFd9L6nfgHgMTRhDioiPdDi0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=baWrpWBu64sEwVU/dNy9X1V8386+nKuCLIPkmrFoStqrITBEtkupXipnoAlhUE5cT
-	 rLiNzYRHsy6ZRELzj8FiodYNVhqGa00Tgga+LIakxUJ5kokc80JTYVDyHEkYUR1vIm
-	 5v9cKNW78YyzMa2sRyYrxdavj/Zft1HyfYzRzmWzIHMllLuqwgjszNN2RHEQr0UXxJ
-	 OMeK3sHF2dwlx2og8rkuGRPaPGcMCyv8sf7fN4qIOek7tUygHRlRnaSDpXPA/0rGHY
-	 02M+8wJ+592JPUkY31gBI45YB7+LbDhJbDhaE/EVhy2ODk58BqR9roRrQySpM3dg/5
-	 zhrGFKA0nR6ig==
-Date: Fri, 4 Apr 2025 07:20:02 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- linux-kernel@vger.kernel.org, "Masami Hiramatsu (Google)"
- <mhiramat@kernel.org>, Dirk Behme <dirk.behme@de.bosch.com>
-Subject: Re: [PATCH v3 3/3] driver core: fix potential NULL pointer
- dereference in dev_uevent()
-Message-Id: <20250404072002.f67036ea3f57e6c3f48cb103@kernel.org>
-In-Reply-To: <20250311052417.1846985-3-dmitry.torokhov@gmail.com>
-References: <20250311052417.1846985-1-dmitry.torokhov@gmail.com>
-	<20250311052417.1846985-3-dmitry.torokhov@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1743718795;
+	bh=vthDQTx4BLw79ba0rZiFNIsVzWvtArB7nkNXXqEOkBs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=al58z1abrMhAJgYdF32Lcujgh7VnS3EB5rFi7ERL+BAj1odHEZLAt6UKxW5OxBYM0
+	 aiCceNAbnF/K7WkFe2s/NqbUiaG8ncd0gohUg1NolE24BA6ehdfrwGo/uEotcIhDPG
+	 lKMSCSFc2KFZ43AWNW5YZrmUPOFRSfk9f7skTKFb69gMEB3blcQ7SNNUyXXzIUKD3i
+	 AIwgB7VFk+TDBk/KkwXqXJwoAKJb845Ul+OkGGYZO31MevUaHI0he+AL6TuwsX+9l7
+	 LqhaCqcTokV+I8ZMEGGfK7iEyHv6FGWM76xVO/pzML6VNF7NS+rd3K6LlNfj2BC+on
+	 DBgr9Mh2+RKIQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7104C380664C;
+	Thu,  3 Apr 2025 22:20:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] gve: handle overflow when reporting TX consumed
+ descriptors
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174371883225.2702664.17429369489204510984.git-patchwork-notify@kernel.org>
+Date: Thu, 03 Apr 2025 22:20:32 +0000
+References: <20250402001037.2717315-1-hramamurthy@google.com>
+In-Reply-To: <20250402001037.2717315-1-hramamurthy@google.com>
+To: Harshitha Ramamurthy <hramamurthy@google.com>
+Cc: netdev@vger.kernel.org, jeroendb@google.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ pkaligineedi@google.com, willemb@google.com, joshwash@google.com,
+ horms@kernel.org, shailend@google.com, jrkim@google.com,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
 
-On Mon, 10 Mar 2025 22:24:16 -0700
-Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+Hello:
 
-> If userspace reads "uevent" device attribute at the same time as another
-> threads unbinds the device from its driver, change to dev->driver from a
-> valid pointer to NULL may result in crash. Fix this by using READ_ONCE()
-> when fetching the pointer, and take bus' drivers klist lock to make sure
-> driver instance will not disappear while we access it.
-> 
-> Use WRITE_ONCE() when setting the driver pointer to ensure there is no
-> tearing.
-> 
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-This looks good to me.
+On Wed,  2 Apr 2025 00:10:37 +0000 you wrote:
+> From: Joshua Washington <joshwash@google.com>
+> 
+> When the tx tail is less than the head (in cases of wraparound), the TX
+> consumed descriptor statistic in DQ will be reported as
+> UINT32_MAX - head + tail, which is incorrect. Mask the difference of
+> head and tail according to the ring size when reporting the statistic.
+> 
+> [...]
 
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Here is the summary with links:
+  - [net] gve: handle overflow when reporting TX consumed descriptors
+    https://git.kernel.org/netdev/net/c/15970e1b23f5
 
-BTW, since other drivers still assigns dev->driver directly instead
-of using device_set_driver(). Would we need another patch to replace
-those?
-
-Thank you,
-
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
-> 
-> v3: addressed Rafael's feedback and split device_set_driver() helper
-> into a separate patch.
->  
-> v2: addressed Rafael's feedback by introducing device_set_driver()
-> helper that does WRITE_ONCE() to prevent tearing. 
-> 
-> I added Cc: stable however I do not think we need to worry too much
-> about backporting it to [very] old kernels: the race window is very
-> small, and in real life we do not unbind devices that often.
-> 
-> I believe there are more questionable places where we read dev->driver
-> pointer, those need to be adjusted separately.
-> 
-> 
->  drivers/base/base.h | 13 ++++++++++++-
->  drivers/base/bus.c  |  2 +-
->  drivers/base/core.c | 33 +++++++++++++++++++++++++++++++--
->  3 files changed, 44 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/base/base.h b/drivers/base/base.h
-> index eb203cf8370b..123031a757d9 100644
-> --- a/drivers/base/base.h
-> +++ b/drivers/base/base.h
-> @@ -73,6 +73,7 @@ static inline void subsys_put(struct subsys_private *sp)
->  		kset_put(&sp->subsys);
->  }
->  
-> +struct subsys_private *bus_to_subsys(const struct bus_type *bus);
->  struct subsys_private *class_to_subsys(const struct class *class);
->  
->  struct driver_private {
-> @@ -182,8 +183,18 @@ void device_driver_detach(struct device *dev);
->  
->  static inline void device_set_driver(struct device *dev, const struct device_driver *drv)
->  {
-> +	/*
-> +	 * Majority (all?) read accesses to dev->driver happens either
-> +	 * while holding device lock or in bus/driver code that is only
-> +	 * invoked when the device is bound to a driver and there is no
-> +	 * concern of the pointer being changed while it is being read.
-> +	 * However when reading device's uevent file we read driver pointer
-> +	 * without taking device lock (so we do not block there for
-> +	 * arbitrary amount of time). We use WRITE_ONCE() here to prevent
-> +	 * tearing so that READ_ONCE() can safely be used in uevent code.
-> +	 */
->  	// FIXME - this cast should not be needed "soon"
-> -	dev->driver = (struct device_driver *)drv;
-> +	WRITE_ONCE(dev->driver, (struct device_driver *)drv);
->  }
->  
->  int devres_release_all(struct device *dev);
-> diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-> index 5ea3b03af9ba..5e75e1bce551 100644
-> --- a/drivers/base/bus.c
-> +++ b/drivers/base/bus.c
-> @@ -57,7 +57,7 @@ static int __must_check bus_rescan_devices_helper(struct device *dev,
->   * NULL.  A call to subsys_put() must be done when finished with the pointer in
->   * order for it to be properly freed.
->   */
-> -static struct subsys_private *bus_to_subsys(const struct bus_type *bus)
-> +struct subsys_private *bus_to_subsys(const struct bus_type *bus)
->  {
->  	struct subsys_private *sp = NULL;
->  	struct kobject *kobj;
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index b000ee61c149..cbc0099d8ef2 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -2624,6 +2624,35 @@ static const char *dev_uevent_name(const struct kobject *kobj)
->  	return NULL;
->  }
->  
-> +/*
-> + * Try filling "DRIVER=<name>" uevent variable for a device. Because this
-> + * function may race with binding and unbinding the device from a driver,
-> + * we need to be careful. Binding is generally safe, at worst we miss the
-> + * fact that the device is already bound to a driver (but the driver
-> + * information that is delivered through uevents is best-effort, it may
-> + * become obsolete as soon as it is generated anyways). Unbinding is more
-> + * risky as driver pointer is transitioning to NULL, so READ_ONCE() should
-> + * be used to make sure we are dealing with the same pointer, and to
-> + * ensure that driver structure is not going to disappear from under us
-> + * we take bus' drivers klist lock. The assumption that only registered
-> + * driver can be bound to a device, and to unregister a driver bus code
-> + * will take the same lock.
-> + */
-> +static void dev_driver_uevent(const struct device *dev, struct kobj_uevent_env *env)
-> +{
-> +	struct subsys_private *sp = bus_to_subsys(dev->bus);
-> +
-> +	if (sp) {
-> +		scoped_guard(spinlock, &sp->klist_drivers.k_lock) {
-> +			struct device_driver *drv = READ_ONCE(dev->driver);
-> +			if (drv)
-> +				add_uevent_var(env, "DRIVER=%s", drv->name);
-> +		}
-> +
-> +		subsys_put(sp);
-> +	}
-> +}
-> +
->  static int dev_uevent(const struct kobject *kobj, struct kobj_uevent_env *env)
->  {
->  	const struct device *dev = kobj_to_dev(kobj);
-> @@ -2655,8 +2684,8 @@ static int dev_uevent(const struct kobject *kobj, struct kobj_uevent_env *env)
->  	if (dev->type && dev->type->name)
->  		add_uevent_var(env, "DEVTYPE=%s", dev->type->name);
->  
-> -	if (dev->driver)
-> -		add_uevent_var(env, "DRIVER=%s", dev->driver->name);
-> +	/* Add "DRIVER=%s" variable if the device is bound to a driver */
-> +	dev_driver_uevent(dev, env);
->  
->  	/* Add common DT information about the device */
->  	of_device_uevent(dev, env);
-> -- 
-> 2.49.0.rc0.332.g42c0ae87b1-goog
-> 
-
-
+You are awesome, thank you!
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
