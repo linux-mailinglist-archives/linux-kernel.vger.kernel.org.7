@@ -1,132 +1,183 @@
-Return-Path: <linux-kernel+bounces-587446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C15ABA7AD06
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:55:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A8CA7AD13
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39C0A17B349
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:48:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4D7116180A
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E9428FFC6;
-	Thu,  3 Apr 2025 19:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555BC290BA6;
+	Thu,  3 Apr 2025 19:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JmDe/8X4"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKM+vJew"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F89253F0E
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 19:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC0C2900B8;
+	Thu,  3 Apr 2025 19:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743707331; cv=none; b=XaABVa15Bt4sKmEhL9aPxyMtKHydsFROgHCEx+x9Tei78l8x/5u8s8AVyzgSb6oPnTqcyq3lSYLBOrPLptybY/8H/mKCazylnE0SxZQt3Ww+fFnxI8RbO57XPYUsf9KS0aiq6PKTQCsXnV54bNB1M+I9lsmv26Q+zvlGiX1jc4g=
+	t=1743707342; cv=none; b=VDwCkkEUDg5n6DFcDbwMOv3AkdXl0TJk/4EVrG+Z0jRDxRjT/xJLlVQUZJHxjw5rHkJl1TCWxdtxrb1c03XrZS1qb5ikbVVR02N6Fz9827362iUJCKxticARbKie0V+tA3d1zBjxhTukEtoiQwb0rrn/AJViGbGFsnMyq4vkHCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743707331; c=relaxed/simple;
-	bh=eQsh8m6hMOt+s3jstiFbzZuYBXHxmqe0tzYTkubXJCs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IEN/DrRrt5pDOrs3ooVBM6b4zAa20de8zUDNXmkkSlO6Fe8g4RVICf37VS8Cd8xKMj8ACIKO9AYrdzeu2C0koYMXecu+ZXRmh8ZMdGnKNgOHdjJ5h+0fqyLixiSZwd1NQI18s3VldZa0GQY1avQBJg5zv2Ttbeu5KkdlCldEwwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JmDe/8X4; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <a3d33b5c-e0e3-4980-9556-beb36b985e84@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743707317;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y59/c//cpQ59oY9i14cYGQHeNS5BEqmX5s/uupb1vtg=;
-	b=JmDe/8X4luR40/rIhQqNsKJaEO70WjYqBzT4rVg2cEIUDHlUHZrRMvFjsy7kIx62ID12ZY
-	indm9pPHWR0L1DgMjYhjTqvZdEp9xj9a+AK3Ps2OVn+PQJWBe1j7y4oTrbUgo490arOdZQ
-	Cnm8UXop0zZtr3viPbPQAYMI+dE77os=
-Date: Thu, 3 Apr 2025 15:08:31 -0400
+	s=arc-20240116; t=1743707342; c=relaxed/simple;
+	bh=afB4jn4Gr2F2yDWPtKTx/4f2itcQDc+MrHNXMyT6G0I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bqo7sjwYv9EwsbbNdNBiPFjfl4xUmDrf+rad0+UvN6x443GI2B3y6qeVFC1as8S8oLhFYm7wr5oS3zfKHyAnjJFEyxUd6BkOfE6om3UXZu9ach/M3SMtEioTCQ4nYk/SEp2pNe8kBX9JZDMh6JDcLkdtDi/fQctm4MEPmU+P470=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKM+vJew; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EB3FC4CEEB;
+	Thu,  3 Apr 2025 19:09:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743707342;
+	bh=afB4jn4Gr2F2yDWPtKTx/4f2itcQDc+MrHNXMyT6G0I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=DKM+vJewULJyXuvZroZzbvtDDZrLkZSvaumFjYshwuBN5KKlPucKnFNk7kWLlsePG
+	 1CMV1tSK+uufA8ihguwsrveiIR4kq9mL9oW3UzVsTplxAsB45U2JyiQlYazuOrGL5q
+	 Zb4+bOf3Izo3z3OKsBWe3Pt0zkMNaosz2/sGlJoqLl7x4Q6RUE6SJ37PorQ2WLtdbH
+	 vQhS7tQF/SKVVM+suqAH3EMe1OsXV78+xPXlCcGtDcSLbUc9vJENxXfwOMngcqvFHf
+	 F22St1l7AH+79iHgoGEL4ZdWN6CueSYsN92CdE+y6Ia6kxRRuQDPaN3C/nFNkhaUOT
+	 GpP0jDW7IIcSQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Edward Adam Davis <eadavis@qq.com>,
+	syzbot+355da3b3a74881008e8f@syzkaller.appspotmail.com,
+	Dave Kleikamp <dave.kleikamp@oracle.com>,
+	Sasha Levin <sashal@kernel.org>,
+	shaggy@kernel.org,
+	aha310510@gmail.com,
+	quic_zhonhan@quicinc.com,
+	dmantipov@yandex.ru,
+	jfs-discussion@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 6.1 06/18] jfs: Prevent copying of nlink with value 0 from disk inode
+Date: Thu,  3 Apr 2025 15:08:32 -0400
+Message-Id: <20250403190845.2678025-6-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250403190845.2678025-1-sashal@kernel.org>
+References: <20250403190845.2678025-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC net-next PATCH 06/13] net: phy: Export some functions
-To: Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Russell King <linux@armlinux.org.uk>
-Cc: linux-kernel@vger.kernel.org, Christian Marangi <ansuelsmth@gmail.com>,
- upstream@airoha.com, Heiner Kallweit <hkallweit1@gmail.com>
-References: <20250403181907.1947517-1-sean.anderson@linux.dev>
- <20250403181907.1947517-7-sean.anderson@linux.dev>
- <0e2a50d9-ee7c-4c15-8c31-a42fff1522e6@gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <0e2a50d9-ee7c-4c15-8c31-a42fff1522e6@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.1.132
+Content-Transfer-Encoding: 8bit
 
-On 4/3/25 14:37, Florian Fainelli wrote:
-> On 4/3/25 11:19, Sean Anderson wrote:
->> Export a few functions so they can be used outside the phy subsystem:
->>
->> get_phy_c22_id is useful when probing MDIO devices which present a
->> phy-like interface despite not using the Linux ethernet phy subsystem.
->>
->> mdio_device_bus_match is useful when creating MDIO devices manually
->> (e.g. on non-devicetree platforms).
->>
->> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
->> ---
->>
->>   drivers/net/phy/mdio_device.c | 1 +
->>   drivers/net/phy/phy_device.c  | 3 ++-
->>   include/linux/phy.h           | 1 +
->>   3 files changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/phy/mdio_device.c b/drivers/net/phy/mdio_device.c
->> index e747ee63c665..cce3f405d1a4 100644
->> --- a/drivers/net/phy/mdio_device.c
->> +++ b/drivers/net/phy/mdio_device.c
->> @@ -45,6 +45,7 @@ int mdio_device_bus_match(struct device *dev, const struct device_driver *drv)
->>         return strcmp(mdiodev->modalias, drv->name) == 0;
->>   }
->> +EXPORT_SYMBOL_GPL(mdio_device_bus_match);
->>     struct mdio_device *mdio_device_create(struct mii_bus *bus, int addr)
->>   {
->> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
->> index 675fbd225378..45d8bc13eb64 100644
->> --- a/drivers/net/phy/phy_device.c
->> +++ b/drivers/net/phy/phy_device.c
->> @@ -859,7 +859,7 @@ static int get_phy_c45_ids(struct mii_bus *bus, int addr,
->>    * valid, %-EIO on bus access error, or %-ENODEV if no device responds
->>    * or invalid ID.
->>    */
->> -static int get_phy_c22_id(struct mii_bus *bus, int addr, u32 *phy_id)
->> +int get_phy_c22_id(struct mii_bus *bus, int addr, u32 *phy_id)
->>   {
->>       int phy_reg;
->>   @@ -887,6 +887,7 @@ static int get_phy_c22_id(struct mii_bus *bus, int addr, u32 *phy_id)
->>         return 0;
->>   }
->> +EXPORT_SYMBOL_GPL(get_phy_c22_id);
->>     /* Extract the phy ID from the compatible string of the form
->>    * ethernet-phy-idAAAA.BBBB.
->> diff --git a/include/linux/phy.h b/include/linux/phy.h
->> index a2bfae80c449..c648f1699c5c 100644
->> --- a/include/linux/phy.h
->> +++ b/include/linux/phy.h
->> @@ -1754,6 +1754,7 @@ struct phy_device *phy_device_create(struct mii_bus *bus, int addr, u32 phy_id,
->>                        bool is_c45,
->>                        struct phy_c45_device_ids *c45_ids);
->>   #if IS_ENABLED(CONFIG_PHYLIB)
->> +int get_phy_c22_id(struct mii_bus *bus, int addr, u32 *phy_id);
-> 
-> Seems like you will need to provide an empty inline stub for when CONFIG_PHYLIB=n?
+From: Edward Adam Davis <eadavis@qq.com>
 
-The only user (CONFIG_PCS_XILINX) selects CONFIG_PHYLINK which selects
-CONFIG_PHYLIB. So I don't think this can occur yet.
+[ Upstream commit b61e69bb1c049cf507e3c654fa3dc1568231bd07 ]
 
---Sean
+syzbot report a deadlock in diFree. [1]
+
+When calling "ioctl$LOOP_SET_STATUS64", the offset value passed in is 4,
+which does not match the mounted loop device, causing the mapping of the
+mounted loop device to be invalidated.
+
+When creating the directory and creating the inode of iag in diReadSpecial(),
+read the page of fixed disk inode (AIT) in raw mode in read_metapage(), the
+metapage data it returns is corrupted, which causes the nlink value of 0 to be
+assigned to the iag inode when executing copy_from_dinode(), which ultimately
+causes a deadlock when entering diFree().
+
+To avoid this, first check the nlink value of dinode before setting iag inode.
+
+[1]
+WARNING: possible recursive locking detected
+6.12.0-rc7-syzkaller-00212-g4a5df3796467 #0 Not tainted
+--------------------------------------------
+syz-executor301/5309 is trying to acquire lock:
+ffff888044548920 (&(imap->im_aglock[index])){+.+.}-{3:3}, at: diFree+0x37c/0x2fb0 fs/jfs/jfs_imap.c:889
+
+but task is already holding lock:
+ffff888044548920 (&(imap->im_aglock[index])){+.+.}-{3:3}, at: diAlloc+0x1b6/0x1630
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&(imap->im_aglock[index]));
+  lock(&(imap->im_aglock[index]));
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+5 locks held by syz-executor301/5309:
+ #0: ffff8880422a4420 (sb_writers#9){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:515
+ #1: ffff88804755b390 (&type->i_mutex_dir_key#6/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:850 [inline]
+ #1: ffff88804755b390 (&type->i_mutex_dir_key#6/1){+.+.}-{3:3}, at: filename_create+0x260/0x540 fs/namei.c:4026
+ #2: ffff888044548920 (&(imap->im_aglock[index])){+.+.}-{3:3}, at: diAlloc+0x1b6/0x1630
+ #3: ffff888044548890 (&imap->im_freelock){+.+.}-{3:3}, at: diNewIAG fs/jfs/jfs_imap.c:2460 [inline]
+ #3: ffff888044548890 (&imap->im_freelock){+.+.}-{3:3}, at: diAllocExt fs/jfs/jfs_imap.c:1905 [inline]
+ #3: ffff888044548890 (&imap->im_freelock){+.+.}-{3:3}, at: diAllocAG+0x4b7/0x1e50 fs/jfs/jfs_imap.c:1669
+ #4: ffff88804755a618 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diNewIAG fs/jfs/jfs_imap.c:2477 [inline]
+ #4: ffff88804755a618 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diAllocExt fs/jfs/jfs_imap.c:1905 [inline]
+ #4: ffff88804755a618 (&jfs_ip->rdwrlock/1){++++}-{3:3}, at: diAllocAG+0x869/0x1e50 fs/jfs/jfs_imap.c:1669
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5309 Comm: syz-executor301 Not tainted 6.12.0-rc7-syzkaller-00212-g4a5df3796467 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_deadlock_bug+0x483/0x620 kernel/locking/lockdep.c:3037
+ check_deadlock kernel/locking/lockdep.c:3089 [inline]
+ validate_chain+0x15e2/0x5920 kernel/locking/lockdep.c:3891
+ __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+ diFree+0x37c/0x2fb0 fs/jfs/jfs_imap.c:889
+ jfs_evict_inode+0x32d/0x440 fs/jfs/inode.c:156
+ evict+0x4e8/0x9b0 fs/inode.c:725
+ diFreeSpecial fs/jfs/jfs_imap.c:552 [inline]
+ duplicateIXtree+0x3c6/0x550 fs/jfs/jfs_imap.c:3022
+ diNewIAG fs/jfs/jfs_imap.c:2597 [inline]
+ diAllocExt fs/jfs/jfs_imap.c:1905 [inline]
+ diAllocAG+0x17dc/0x1e50 fs/jfs/jfs_imap.c:1669
+ diAlloc+0x1d2/0x1630 fs/jfs/jfs_imap.c:1590
+ ialloc+0x8f/0x900 fs/jfs/jfs_inode.c:56
+ jfs_mkdir+0x1c5/0xba0 fs/jfs/namei.c:225
+ vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
+ do_mkdirat+0x264/0x3a0 fs/namei.c:4280
+ __do_sys_mkdirat fs/namei.c:4295 [inline]
+ __se_sys_mkdirat fs/namei.c:4293 [inline]
+ __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4293
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Reported-by: syzbot+355da3b3a74881008e8f@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=355da3b3a74881008e8f
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/jfs/jfs_imap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/jfs/jfs_imap.c b/fs/jfs/jfs_imap.c
+index 309b5f6e977d7..155f66812934a 100644
+--- a/fs/jfs/jfs_imap.c
++++ b/fs/jfs/jfs_imap.c
+@@ -456,7 +456,7 @@ struct inode *diReadSpecial(struct super_block *sb, ino_t inum, int secondary)
+ 	dp += inum % 8;		/* 8 inodes per 4K page */
+ 
+ 	/* copy on-disk inode to in-memory inode */
+-	if ((copy_from_dinode(dp, ip)) != 0) {
++	if ((copy_from_dinode(dp, ip) != 0) || (ip->i_nlink == 0)) {
+ 		/* handle bad return by returning NULL for ip */
+ 		set_nlink(ip, 1);	/* Don't want iput() deleting it */
+ 		iput(ip);
+-- 
+2.39.5
+
 
