@@ -1,495 +1,174 @@
-Return-Path: <linux-kernel+bounces-586284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF495A79D48
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:45:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C6ADA79D31
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:41:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9990B1739CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 07:45:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 232B2174392
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 07:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B12166F29;
-	Thu,  3 Apr 2025 07:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256B6241698;
+	Thu,  3 Apr 2025 07:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="M99GTCGP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OmhPEWnG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F166A1411EB;
-	Thu,  3 Apr 2025 07:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA0524168C
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 07:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743666326; cv=none; b=khK6XHnTnUeHUs7lsxPuLvaQfuYQiRKDL4fwZHcenuL2wJsGuBJC9mCRglS/9fWVIzw+BWja4vjnrCXSrN7ZQEJoJ1d33L3ZbIRGrxdaw0YEen7T4yIl7fvy/BAld1McuAaemZGe7RDbPy6OpF7qxnHneJd0iCcn169fDwogn9k=
+	t=1743666077; cv=none; b=f3U0Bm+1l4MxUcuX7qNaLI2AjWiFM1XSVylh6G0dftw2kb2YcUou26MOsOxiLrciZRQLTVQ4X9KXs17S91XAf+ZurLzBPGJj2RLUB198bu7ZH8B7i4yXS0I1po5idNdVdoq08SetOjI13VeVStZc74TT40cOmETQ9w1tX7vY1Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743666326; c=relaxed/simple;
-	bh=vI/mR6CC+JkMpbEpdgRsE92l0yRMDTsdqbMcx8hVWNg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=f6fRTEcc54IEz73zURYKNkMtJ4FDy1Z7fmjRdQYq2jQmbXJPXCq6/L0xcjVTxCMS+klG1EqVDZjDSGrx37akcxWorea1NCTSgsDMKbIvd2n/rLdDB+Vt6ubEi+jX4oRuZsBMtsYqVsEVDXmalS7Up0Z52m3zLeqEU4mbOrhakwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=M99GTCGP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5336360m019559;
-	Thu, 3 Apr 2025 07:41:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NE0/t+qCyJdEw9Si/KUDRcxq3R2DxI0h9edXD63bkSw=; b=M99GTCGP13KS7WTZ
-	7cJF+XOk8rO/aTJ1WX7Et/5po253LpGSrR0dzT5LPuCyN3ZC4nFmJj6TIAaOrICh
-	qutPXPJSN5M10SpfXns5QuPVrjnfnmyTA7N2U+sAzi2x+jSgruxgLqoUnXNyFisX
-	PIRkdbVdZhYe3dl0v9qOELZC58PyV3xUUFVtX5IuhGqemWKNzSPDdjyS7uvyVWRf
-	ZhlAFzUfk70UqKx4Idd+3w78FG/gEaKleL0dre9VOuM8zsK49CMwT0EW2nuSscd7
-	+eIWZYvcGO2QjIUL2KtT41kPtVP615+XKmgfT1t1P+AVJOHnqmqPSjI9Cuz+69iY
-	/2zW7A==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45sbxy1a4v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Apr 2025 07:41:09 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5337f8Ct015697
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 3 Apr 2025 07:41:08 GMT
-Received: from [10.239.133.114] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 3 Apr 2025
- 00:41:01 -0700
-Message-ID: <46643089-b88d-49dc-be05-7bf0bb21f847@quicinc.com>
-Date: Thu, 3 Apr 2025 15:40:59 +0800
+	s=arc-20240116; t=1743666077; c=relaxed/simple;
+	bh=25T0zLiPjjmRccxznZ6hVtl9tNY8Y/7QpUJr9j/iJDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GeRdV+J3hByuo5y9ypaouwZSrqDe6JWmbJ1BvQmVzRXl26ADIrX53anklZWVrmEItw80lSPecqY6SRmuc2vZB34WcssYblCZgSn9EMh9QTeva6H7XlVhtim8gqhgmemRoAAm4AlOOqFYlPqaK6nX0jUnWFi6wpInZNDMy/FGzGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OmhPEWnG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743666074;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YsHQHBiG6tulNIHiAAXN4nykT9AuDVNrTCzO2FAQEVQ=;
+	b=OmhPEWnGyI/fFLk6xqLf5kxH/s6JkMYpYqJ6C52tgU1hm1YxSh0k0Qf4I2WREAP+61mXVm
+	cfGaPNBpJnywW09tLGmxX4dhdOIBO/523C5Bo1cKK3icFAc+ZktoL7gOKeqF2pVX+uHHKQ
+	kbU2bMJOq+Xj7jk6wkSMbrFrcD54vvw=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-464-_YxB-Rk-OLmvLpE0eNc6fA-1; Thu, 03 Apr 2025 03:41:13 -0400
+X-MC-Unique: _YxB-Rk-OLmvLpE0eNc6fA-1
+X-Mimecast-MFC-AGG-ID: _YxB-Rk-OLmvLpE0eNc6fA_1743666072
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43d0830c3f7so4117305e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 00:41:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743666072; x=1744270872;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YsHQHBiG6tulNIHiAAXN4nykT9AuDVNrTCzO2FAQEVQ=;
+        b=GMTNyY2MHMW82Ytu50P2o9I5LRZ+ul50JWvqrH/cQh64eQE8ApEyF4/nZvq1z1Mmvi
+         45E+lwAp+E2w0mYtI3AOHG+kty3O78mlTSC2hFMJ4xQRpEZlnv8kVcOtB4hlnBKBYsks
+         lA3+lSzRwfrjY7w+pE/NnnTBkigD1F21qWKsolQkfVrr8OAxG8zEcyYEnLLCVeHCBl3d
+         2O4Z1DFRwrruB39WLq5UswFQTqDjDUMZXgMKpvVc1BcX1XZniQpru7BCIIpYzyeXv/bm
+         HXXZNkNWHrbqr3uj/L48YxvYwPxaRNofDk9zFPibT973mdnffHHY6rNIh2G9ctz4vMaf
+         v6rA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXVpiqB+AkJGknCYbMhSUXtizKrFAE+omcXzTzF5My0qglUlwYVmkr004vyqaI0q02dydZHiYaT1Zrzg4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSKrupTI0zqnUAJv4I+tJszPu5pBJWmGSClJQWOvLlp2E4N3XR
+	tG8LUN/j1lyVkMXJKGan5E4/dhuljn+rgQVcBmWMrjgOtCuXFw70+FdDf1/1ZbqfeIGWoHLxTFo
+	96dIXCBK65marg0HgjiKX1smx4LKhwRig6ViuOzG1r2xfdW3UoWITNnPXcTEHMg==
+X-Gm-Gg: ASbGncvseqKtGIcnHXYncaQGQiSO/5T8W2mCkdlVjp+h94LUTgyURjV2j/5wmcd3RIJ
+	CUY9H++zqMr7zCBE5bp3CSGAI6giyYuPCJZPp4BQwVnvpXSVfHawhm7qQowHTbJ8+a8rUe6WUNF
+	rkvMWQB4bzA5k1yrxksRbikKRFQmo8+0Hfdd/0vA8bLxXXmHycRzEmqCoJkoKvm3CWGbbAWa5wr
+	fYUWJLph54s+l0xKqBGOvbPVzr2HQZGZI2K34meHfBywH8BWmCPQuZXA09JkWOIxX+1Vu5d+iG3
+	0zYH6Yq8cA==
+X-Received: by 2002:a05:6000:40cf:b0:399:728f:4673 with SMTP id ffacd0b85a97d-39c120e16eemr15115152f8f.33.1743666072063;
+        Thu, 03 Apr 2025 00:41:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGnvafJAH+8TfArDwP/Nvb4SzZ5wvrw3ycX4BDCMIdLZDuq8uvGMqikpgn6W8ST3vCvAhmEdw==
+X-Received: by 2002:a05:6000:40cf:b0:399:728f:4673 with SMTP id ffacd0b85a97d-39c120e16eemr15115127f8f.33.1743666071664;
+        Thu, 03 Apr 2025 00:41:11 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c3020d66csm1039872f8f.63.2025.04.03.00.41.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 00:41:11 -0700 (PDT)
+Date: Thu, 3 Apr 2025 03:41:08 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Christoph Hellwig <hch@infradead.org>, virtio-comment@lists.linux.dev,
+	Claire Chang <tientzu@chromium.org>,
+	linux-devicetree <devicetree@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	=?iso-8859-1?Q?J=F6rg?= Roedel <joro@8bytes.org>,
+	iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+	graf@amazon.de
+Subject: Re: [RFC PATCH 1/3] content: Add VIRTIO_F_SWIOTLB to negotiate use
+ of SWIOTLB bounce buffers
+Message-ID: <20250403033819-mutt-send-email-mst@kernel.org>
+References: <20250402105137-mutt-send-email-mst@kernel.org>
+ <19ba662feeb93157bc8a03fb0b11cb5f2eca5e40.camel@infradead.org>
+ <20250402111901-mutt-send-email-mst@kernel.org>
+ <6b3b047f1650d91abe5e523dd7f862c6f7ee6611.camel@infradead.org>
+ <20250402114757-mutt-send-email-mst@kernel.org>
+ <965ccf2f972c5d5f1f4edacb227f03171f20e887.camel@infradead.org>
+ <20250402124131-mutt-send-email-mst@kernel.org>
+ <eaef09ab218900a53347987a62fee1787283d9ed.camel@infradead.org>
+ <Z-44wXdyia4RC6Cr@infradead.org>
+ <06465bcf4422d088df2a0ce9cdb09767dac83118.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] coresight: add coresight Trace NOC driver
-From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-To: Leo Yan <leo.yan@arm.com>
-CC: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>,
-        "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, <kernel@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@oss.qualcomm.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20250226-trace-noc-driver-v2-0-8afc6584afc5@quicinc.com>
- <20250226-trace-noc-driver-v2-2-8afc6584afc5@quicinc.com>
- <20250227113910.GA2157064@e132581.arm.com>
- <c0848f24-26c4-4282-9813-1842c2a50c1e@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <c0848f24-26c4-4282-9813-1842c2a50c1e@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: FYmiXiSor4AW2zKYIXO5_MxBHZsKQouQ
-X-Proofpoint-ORIG-GUID: FYmiXiSor4AW2zKYIXO5_MxBHZsKQouQ
-X-Authority-Analysis: v=2.4 cv=PNAP+eqC c=1 sm=1 tr=0 ts=67ee3b95 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=BquH0x90UY-3pSrJzUEA:9
- a=QEXdDO2ut3YA:10 a=RVmHIydaz68A:10 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-03_03,2025-04-02_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- malwarescore=0 adultscore=0 phishscore=0 clxscore=1015 mlxscore=0
- lowpriorityscore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504030033
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <06465bcf4422d088df2a0ce9cdb09767dac83118.camel@infradead.org>
+
+On Thu, Apr 03, 2025 at 08:37:20AM +0100, David Woodhouse wrote:
+> On Thu, 2025-04-03 at 00:29 -0700, Christoph Hellwig wrote:
+> > On Wed, Apr 02, 2025 at 06:10:53PM +0100, David Woodhouse wrote:
+> > > > I know a bit more about PCI, and for PCI I prefer just not saying
+> > > > anything. The platform already defines whether it is behind an iommu
+> > > > or not, and duplication is not good.
+> > > 
+> > > Not a hill for me to die on I suppose, but I would personally prefer to
+> > > spell it out in words of one syllable or fewer, to make *sure* that
+> > > device and driver authors get it right even though it's "obvious".
+> > > 
+> > > After all, if we could trust them to do their thinking, we would never
+> > > have had the awful situation that led to VIRTIO_F_ACCESS_PLATFORM
+> > > existing in the first place; the legacy behaviour we get when that bit
+> > > *isn't* set would never have happened.
+> > 
+> > You'll need to define the semanics for VIRTIO_F_ACCESS_PLATFORM only
+> > then.  
+> > 
+> 
+> You mean the semantics for VIRTIO_F_ACCESS_PLATFORM only, without
+> VIRTIO_F_SWIOTLB? Are those not defined already?
+> 
+> > An the only sane answer there is: don't allow non-translated
+> > regions at all an in a broader sense stop people to use
+> > VIRTIO_F_ACCESS_PLATFORM at all or at least for anything that requires
+> > a new feature bit.
+> > 
+> > > > For mmio it is my understanding that the "restricted" does the same
+> > > > already? or is it required in the spec for some reason?
+> > > 
+> > > No, it's exactly the same. But I still don't trust driver authors to
+> > > realise the obvious, or VMM implementations either for that matter.
+> > > 
+> > > I'm not sure I see the *harm* in spelling out explicitly for the hard-
+> > > of-thinking.
+> > 
+> > Write a whitepaper than and explain how it maps to the existing perfectly
+> > working features.  Note that VIRTIO_F_ACCESS_PLATFORM just like
+> > everything in virtio would actually benefit from being turned into
+> > proper spec language, but anecdotes about random use cases are not
+> > helpful.
+> 
+> Hm. I was just trying to point out what seemed obvious, that when a PCI
+> device does 'DMA' to an address region which is actually within one of
+> its *own* BARs, it isn't going to reach the PCI bus and get translated
+> by an IOMMU. If it's causing this much contention, I'll just drop it.
+> It didn't *change* anything anyway, except hopefully avoiding bugs in
+> implementations.
+> 
 
 
 
-On 3/6/2025 4:22 PM, Yuanfang Zhang wrote:
-> 
-> 
-> On 2/27/2025 7:39 PM, Leo Yan wrote:
->> Hi Yuanfang,
->>
->> On Wed, Feb 26, 2025 at 07:05:51PM +0800, Yuanfang Zhang wrote:
->>>
->>> Add driver to support Coresight device Trace NOC(Network On Chip).
->>> Trace NOC is an integration hierarchy which is a replacement of
->>> Dragonlink configuration. It brings together debug components like
->>> TPDA, funnel and interconnect Trace Noc.
->>>
->>> It sits in the different subsystem of SOC and aggregates the trace
->>> and transports to QDSS trace bus.
->>>
->>> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
->>> ---
->>>  drivers/hwtracing/coresight/Kconfig          |  13 ++
->>>  drivers/hwtracing/coresight/Makefile         |   1 +
->>>  drivers/hwtracing/coresight/coresight-tnoc.c | 190 +++++++++++++++++++++++++++
->>>  drivers/hwtracing/coresight/coresight-tnoc.h |  53 ++++++++
->>>  4 files changed, 257 insertions(+)
->>>
->>> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
->>> index 06f0a7594169c5f03ca5f893b7debd294587de78..6cfd160f09d383ab5f5aa276fa57496a52c8f961 100644
->>> --- a/drivers/hwtracing/coresight/Kconfig
->>> +++ b/drivers/hwtracing/coresight/Kconfig
->>> @@ -247,4 +247,17 @@ config CORESIGHT_DUMMY
->>>
->>>           To compile this driver as a module, choose M here: the module will be
->>>           called coresight-dummy.
->>> +
->>> +config CORESIGHT_TNOC
->>> +       tristate "Coresight Trace Noc driver"
->>> +       help
->>> +         This driver provides support for Trace NoC component.
->>> +         Trace NoC is a interconnect that is used to collect trace from
->>> +         various subsystems and transport it QDSS trace sink.It sits in
->>
->> Trace NoC is an interconnect used to collect traces from various
->> subsystems and transport to a QDSS trace sink.
-> sure, will update in next version.
->>
->>> +         the different tiles of SOC and aggregates the trace local to the
->>> +         tile and transports it another tile or to QDSS trace sink eventually.
->>> +
->>> +         To compile this driver as a module, choose M here: the module will be
->>> +         called coresight-tnoc.
->>> +
->>>  endif
->>> diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
->>> index 4ba478211b318ea5305f9f98dda40a041759f09f..60b729979f19c8f8848c77c290605132dba1a991 100644
->>> --- a/drivers/hwtracing/coresight/Makefile
->>> +++ b/drivers/hwtracing/coresight/Makefile
->>> @@ -34,6 +34,7 @@ obj-$(CONFIG_CORESIGHT_SINK_TPIU) += coresight-tpiu.o
->>>  obj-$(CONFIG_CORESIGHT_SINK_ETBV10) += coresight-etb10.o
->>>  obj-$(CONFIG_CORESIGHT_LINKS_AND_SINKS) += coresight-funnel.o \
->>>                                            coresight-replicator.o
->>> +obj-$(CONFIG_CORESIGHT_TNOC) += coresight-tnoc.o
->>>  obj-$(CONFIG_CORESIGHT_SOURCE_ETM3X) += coresight-etm3x.o
->>>  coresight-etm3x-y := coresight-etm3x-core.o coresight-etm-cp14.o \
->>>                      coresight-etm3x-sysfs.o
->>> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.c b/drivers/hwtracing/coresight/coresight-tnoc.c
->>> new file mode 100644
->>> index 0000000000000000000000000000000000000000..fad8e61f05ef25989aba1be342c547f835e8953a
->>> --- /dev/null
->>> +++ b/drivers/hwtracing/coresight/coresight-tnoc.c
->>> @@ -0,0 +1,190 @@
->>> +// SPDX-License-Identifier: GPL-2.0-only
->>> +/*
->>> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
->>> + */
->>> +
->>> +#include <linux/kernel.h>
->>> +#include <linux/module.h>
->>> +#include <linux/device.h>
->>> +#include <linux/platform_device.h>
->>> +#include <linux/amba/bus.h>
->>> +#include <linux/io.h>
->>> +#include <linux/coresight.h>
->>> +#include <linux/of.h>
->>
->> Please include headers in alphabetical ordering.
-> sure, will update in next version.
->>
->>> +#include "coresight-priv.h"
->>> +#include "coresight-tnoc.h"
->>> +#include "coresight-trace-id.h"
->>> +
->>> +static void trace_noc_enable_hw(struct trace_noc_drvdata *drvdata)
->>> +{
->>> +       u32 val;
->>> +
->>> +       /* Set ATID */
->>> +       writel_relaxed(drvdata->atid, drvdata->base + TRACE_NOC_XLD);
->>> +
->>> +       /* Config sync CR */
->>> +       writel_relaxed(0xffff, drvdata->base + TRACE_NOC_SYNCR);
->>> +
->>> +       /* Set frequency value */
->>> +       writel_relaxed(drvdata->freq_req_val, drvdata->base + TRACE_NOC_FREQVAL);
->>> +
->>> +       /* Set Ctrl register */
->>> +       val = readl_relaxed(drvdata->base + TRACE_NOC_CTRL);
->>> +
->>> +       if (drvdata->flag_type == FLAG_TS)
->>> +               val = val | TRACE_NOC_CTRL_FLAGTYPE;
->>> +       else
->>> +               val = val & ~TRACE_NOC_CTRL_FLAGTYPE;
->>> +
->>> +       if (drvdata->freq_type == FREQ_TS)
->>> +               val = val | TRACE_NOC_CTRL_FREQTYPE;
->>> +       else
->>> +               val = val & ~TRACE_NOC_CTRL_FREQTYPE;
->>> +
->>> +       val = val | TRACE_NOC_CTRL_PORTEN;
->>> +       writel_relaxed(val, drvdata->base + TRACE_NOC_CTRL);
->>
->> It is fine for using writel_relaxed() for continuous writing into the
->> same component.  However, the last writing into TRACE_NOC_CTRL enales
->> the NOC but without any barrier guard, it might cause the out-of-order
->> issue with Arm CoreSight modules (or any other relevant endpoints).
-> sure, will update in next version.
->>
->> I'd like suggest to use writel() for writing TRACE_NOC_CTRL.
->>
->>> +       dev_dbg(drvdata->dev, "Trace NOC is enabled\n");
->>> +}
->>> +
->>> +static int trace_noc_enable(struct coresight_device *csdev, struct coresight_connection *inport,
->>> +                           struct coresight_connection *outport)
->>> +{
->>> +       struct trace_noc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
->>> +
->>> +       spin_lock(&drvdata->spinlock);
->>> +       if (csdev->refcnt == 0)
->>
->> AFAICT csdev->refcnt is only used in sink drivers.  This driver is for
->> funnel, it should use `inport->dest_refcnt` as the counter.
-> sure, will update in next version.
-
-TNOC is slightly different from other links in that it does not require port based enablement.
-Only need to enable once, all ports will be activated. So i will still use csdev->refcnt as a counter
->>
->>> +               trace_noc_enable_hw(drvdata);
->>> +
->>> +       csdev->refcnt++;
->>> +       spin_unlock(&drvdata->spinlock);
->>> +
->>> +       return 0;
->>> +}
->>> +
->>> +static void trace_noc_disable_hw(struct trace_noc_drvdata *drvdata)
->>> +{
->>> +       writel_relaxed(0x0, drvdata->base + TRACE_NOC_CTRL);
->>
->> Same with the comment above for using writel() to replace
->> writel_relaxed().
-> sure.
->>
->>> +       dev_dbg(drvdata->dev, "Trace NOC is disabled\n");
->>> +}
->>> +
->>> +static void trace_noc_disable(struct coresight_device *csdev, struct coresight_connection *inport,
->>> +                             struct coresight_connection *outport)
->>> +{
->>> +       struct trace_noc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
->>> +
->>> +       spin_lock(&drvdata->spinlock);
->>> +       if (--csdev->refcnt == 0)
->>> +               trace_noc_disable_hw(drvdata);
->>> +
->>> +       spin_unlock(&drvdata->spinlock);
->>> +       dev_info(drvdata->dev, "Trace NOC is disabled\n");
->>> +}
->>> +
->>> +static const struct coresight_ops_link trace_noc_link_ops = {
->>> +       .enable         = trace_noc_enable,
->>> +       .disable        = trace_noc_disable,
->>> +};
->>> +
->>> +static const struct coresight_ops trace_noc_cs_ops = {
->>> +       .link_ops       = &trace_noc_link_ops,
->>> +};
->>> +
->>> +static int trace_noc_init_default_data(struct trace_noc_drvdata *drvdata)
->>> +{
->>> +       int atid;
->>> +
->>> +       atid = coresight_trace_id_get_system_id();
->>> +       if (atid < 0)
->>> +               return atid;
->>> +
->>> +       drvdata->atid = atid;
->>> +
->>> +       drvdata->freq_type = FREQ_TS;
->>
->> I don't see anywhere uses FREQ.  Please remove the unused definitions
->> and related code.
-> it is used in trace_noc_enable_hw().
->>
->>> +       drvdata->flag_type = FLAG;
->>
->> FLAG_TS is not used in the driver as well.  Remove it.
-> it is used in trace_noc_enable_hw().
->>
->>> +       drvdata->freq_req_val = 0;
->>> +
->>> +       return 0;
->>> +}
->>> +
->>> +static int trace_noc_probe(struct amba_device *adev, const struct amba_id *id)
->>> +{
->>> +       struct device *dev = &adev->dev;
->>> +       struct coresight_platform_data *pdata;
->>> +       struct trace_noc_drvdata *drvdata;
->>> +       struct coresight_desc desc = { 0 };
->>> +       int ret;
->>> +
->>> +       desc.name = coresight_alloc_device_name(&trace_noc_devs, dev);
->>> +       if (!desc.name)
->>> +               return -ENOMEM;
->>> +       pdata = coresight_get_platform_data(dev);
->>> +       if (IS_ERR(pdata))
->>> +               return PTR_ERR(pdata);
->>> +       adev->dev.platform_data = pdata;
->>> +
->>> +       drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
->>> +       if (!drvdata)
->>> +               return -ENOMEM;
->>> +
->>> +       drvdata->dev = &adev->dev;
->>> +       dev_set_drvdata(dev, drvdata);
->>> +
->>> +       drvdata->base = devm_ioremap_resource(dev, &adev->res);
->>> +       if (!drvdata->base)
->>> +               return -ENOMEM;
->>> +
->>> +       spin_lock_init(&drvdata->spinlock);
->>> +
->>> +       ret = trace_noc_init_default_data(drvdata);
->>> +       if (ret)
->>> +               return ret;
->>> +
->>> +       desc.ops = &trace_noc_cs_ops;
->>> +       desc.type = CORESIGHT_DEV_TYPE_LINK;
->>> +       desc.subtype.link_subtype = CORESIGHT_DEV_SUBTYPE_LINK_MERG;
->>> +       desc.pdata = adev->dev.platform_data;
->>> +       desc.dev = &adev->dev;
->>> +       desc.access = CSDEV_ACCESS_IOMEM(drvdata->base);
->>> +       drvdata->csdev = coresight_register(&desc);
->>> +       if (IS_ERR(drvdata->csdev))
->>> +               return PTR_ERR(drvdata->csdev);
->>> +
->>> +       pm_runtime_put(&adev->dev);
->>> +
->>> +       return 0;
->>> +}
->>> +
->>> +static void trace_noc_remove(struct amba_device *adev)
->>> +{
->>> +       struct trace_noc_drvdata *drvdata = dev_get_drvdata(&adev->dev);
->>> +
->>> +       coresight_trace_id_put_system_id(drvdata->atid);
->>> +       coresight_unregister(drvdata->csdev);
->>> +}
->>> +
->>> +static struct amba_id trace_noc_ids[] = {
->>> +       {
->>> +               .id     = 0x000f0c00,
->>> +               .mask   = 0x000fff00,
->>
->> Unlike Arm CoreSight drivers (the mask value is 0x000fffff in most
->> cases), could you remind me why here the mask is 0x000fff00?
-> Because bit 0-7 has different values, records the number of trace initiator NIUs implemented in the NoC. 
->>
->>> +       },
->>> +       {},
->>> +};
->>> +MODULE_DEVICE_TABLE(amba, trace_noc_ids);
->>> +
->>> +static struct amba_driver trace_noc_driver = {
->>> +       .drv = {
->>> +               .name   = "coresight-trace-noc",
->>> +               .owner  = THIS_MODULE,
->>
->> I don't think you need to explicitly set `THIS_MODULE`, as this will
->> be set default by amba_driver_register().
-> will remove in next version.
->>
->>> +               .suppress_bind_attrs = true,
->>> +       },
->>> +       .probe          = trace_noc_probe,
->>> +       .remove         = trace_noc_remove,
->>> +       .id_table       = trace_noc_ids,
->>> +};
->>> +
->>> +module_amba_driver(trace_noc_driver);
->>> +
->>> +MODULE_LICENSE("GPL");
->>> +MODULE_DESCRIPTION("Trace NOC driver");
->>> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.h b/drivers/hwtracing/coresight/coresight-tnoc.h
->>> new file mode 100644
->>> index 0000000000000000000000000000000000000000..b6bd1ef659897d8e0994c5e8514e8cbdd16eebd8
->>> --- /dev/null
->>> +++ b/drivers/hwtracing/coresight/coresight-tnoc.h
->>> @@ -0,0 +1,53 @@
->>> +/* SPDX-License-Identifier: GPL-2.0-only */
->>> +/*
->>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->>> + */
->>> +
->>> +#define TRACE_NOC_CTRL 0x008
->>> +#define TRACE_NOC_XLD  0x010
->>> +#define TRACE_NOC_FREQVAL      0x018
->>> +#define TRACE_NOC_SYNCR        0x020
->>> +
->>> +/* Enable generation of output ATB traffic.*/
->>> +#define TRACE_NOC_CTRL_PORTEN  BIT(0)
->>> +/* Writing 1 to issue a FREQ or FREQ_TS packet*/
->>> +#define TRACE_NOC_CTRL_FREQTSREQ       BIT(5)
->>
->> This is not used.  Remove it.
-> it is used in trace_noc_enable_hw().
->>
->>> +/* Sets the type of issued ATB FLAG packets. 0: 'FLAG' packets; 1: 'FLAG_TS' packets.*/
->>> +#define TRACE_NOC_CTRL_FLAGTYPE                BIT(7)
->>
->>> +/* sets the type of issued ATB FREQ packets. 0: 'FREQ' packets; 1: 'FREQ_TS' packets.*/
->>> +#define TRACE_NOC_CTRL_FREQTYPE                BIT(8)
->>> +DEFINE_CORESIGHT_DEVLIST(trace_noc_devs, "traceNoc");
->>
->> It is good to move the definition into C file.
-> will update in next version.
->>
->> Thanks,
->> Leo
->>
->>> +
->>> +/**
->>> + * struct trace_noc_drvdata - specifics associated to a trace noc component
->>> + * @base:      memory mapped base address for this component.
->>> + * @dev:       device node for trace_noc_drvdata.
->>> + * @csdev:     component vitals needed by the framework.
->>> + * @spinlock:  only one at a time pls.
->>> + * @atid:      id for the trace packet.
->>> + * @freqtype:  0: 'FREQ' packets; 1: 'FREQ_TS' packets.
->>> + * @flagtype:  0: 'FLAG' packets; 1: 'FLAG_TS' packets.
->>> + * @freq_req_val:       set frequency values carried by 'FREQ' and 'FREQ_TS' packets.
->>> + */
->>> +struct trace_noc_drvdata {
->>> +       void __iomem            *base;
->>> +       struct device           *dev;
->>> +       struct coresight_device *csdev;
->>> +       spinlock_t              spinlock; /* lock for the drvdata. */
->>> +       u32                     atid;
->>> +       u32                     freq_type;
->>> +       u32                     flag_type;
->>> +       u32                     freq_req_val;
->>> +};
->>> +
->>> +/* freq type */
->>> +enum freq_type {
->>> +       FREQ,
->>> +       FREQ_TS,
->>> +};
->>> +
->>> +/* flag type */
->>> +enum flag_type {
->>> +       FLAG,
->>> +       FLAG_TS,
->>> +};
->>>
->>> --
->>> 2.34.1
->>>
->>> _______________________________________________
->>> CoreSight mailing list -- coresight@lists.linaro.org
->>> To unsubscribe send an email to coresight-leave@lists.linaro.org
-> 
-> 
+If you want, I would just spell this in the transport text then.
+"Note that on most existing platforms,
+ and since the BAR is part of the device itself,
+ access controls generally to do not apply to device accesses there,
+ and this is true even when VIRTIO_F_ACCESS_PLATFORM has been negotiated".
 
 
