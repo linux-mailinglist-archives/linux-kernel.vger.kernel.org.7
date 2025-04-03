@@ -1,125 +1,114 @@
-Return-Path: <linux-kernel+bounces-586267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E37A79D1F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:38:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FF8FA79D26
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B8A016C8EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 07:38:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C188718976EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 07:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9882A241670;
-	Thu,  3 Apr 2025 07:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE0024166D;
+	Thu,  3 Apr 2025 07:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="jSOnHL0P"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="R/3FZngU"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408AD24061B
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 07:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A946C249E5;
+	Thu,  3 Apr 2025 07:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743665919; cv=none; b=Bx4NPoSC3ovAYsSKu7KXKtfMd8r+c5uhzm4bLGp7Amdhy6mGMVXhuTz3eeDNbrgwb0K1CGH16nrRjXajBVma4DVFZDTMqEsdu7J8moukWWXkX4VjhGn6YYAutg7AXTwosCkCA/QkeJOzO0IkoZjHs7PWIJR5rjf1LnBy7KbyEPo=
+	t=1743666017; cv=none; b=aSFn8N0M3Tlw2E7wSg/E+4bKXqmu+WXphqs8QwgMSYDi7FXX4pbTyH8FKwXPn5s39hYMYMM83Esf3O3Wing02/M2FIhUkQfnYHuzDNa7hbKWoW5cg4eT0wibC2ItaFp0Mr0UshMiI37N/F4cs2uVCFZYUDjueB+hDFU91NiiASI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743665919; c=relaxed/simple;
-	bh=r1+85w+l8mYkuW5ZQ70d0+EsyEP9qhZP9Q1yJFSdZLA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nlIha3aj7hO0fLpaUjmyoTkY/LL9AAUlKnqDmVSOM5zXDHmG4ncgyKm35TbKEpsRL0NgbHSNcnvB3VcV6VJPGukWDI2lXv0dcLyMY6/1DzBnU8nkUjAeRopeeXlDHrvYMaj5NUnS3M1T1ZhveSIrYCYE+GXnlFUT/DGrgYoBVPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=jSOnHL0P; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30c0517142bso4956931fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 00:38:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1743665915; x=1744270715; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r1+85w+l8mYkuW5ZQ70d0+EsyEP9qhZP9Q1yJFSdZLA=;
-        b=jSOnHL0P6rxBH3daRFVWc0mGrRQ1uwVoxMTC4Wlvzx9cz1tQPKc6ojaSDg8NQNsDtI
-         i8+8MJv0fSOU98YTGMdQFEzT7Aab/Qe0UJYhMQwiU2ubt4jPXw1FtVcg/SNmOUl3H94V
-         rFgzks4TE9PgWsc1M/Rkv8KbwHNQpCFXRvCZT2O2mJCm7Epud5O6pE/hcW9TdWw9tYON
-         Yln7qTkOm8FUeHmzS5LUIJ1xgfs0tNw0gWiuqymy+1P0hatXAazO9NFNXgHTmZrFu6uA
-         GmHRbei4iGTJS9UrawVq51hxKrmeZC64Y3XKvuyr435LLeNte1cLEuIwZpMu7AFGkH0t
-         BKAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743665915; x=1744270715;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r1+85w+l8mYkuW5ZQ70d0+EsyEP9qhZP9Q1yJFSdZLA=;
-        b=wOXYHqM5ustzQsAn77qGop7hDzTsvyK5XgBkn/WDoTHDVZe/6eoP/vDZWPEGEQQEDo
-         1EbN3okHUZ66vlFk91Gdk/SYXPfhz9oDsqv1huUm4QFp7ynVQq3VPJEzeM0aKsftN5PE
-         cPlYcbk4XM4nqnDQlVgNcJrRne+3m5zXal5whFzJVbucwnNIQnSAOHcOSVfmoIRUQQt6
-         +bBVHiS9ELgPa5ZN72PjFgtv22dF7WF7dBReDvkplWwYEFeil6VFxKYf53NivbXx42em
-         5xE5QLsHp13jmUJhGVaaisg7TVCe1jUqd6th47WayPWSz/i0wE+bDe0YHR94MHOQZsfG
-         zkog==
-X-Forwarded-Encrypted: i=1; AJvYcCW5//37Pxx3uLd0xguIO2itS9Mt3YFvyF6Q4/vt78EpBl9dzjwJz89RP7LHtQ7HpDninbvBxckPZUip/Ac=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4VKm3YnDaUVzxsmwx1pzyBfk1McWI30/mbsifms5SF21yslhn
-	BzgelEzZ57Yge8fZfJDhHGKAZJLLOIyWXPY2HDMnP2rOveXSbPO5HqPcnojoyCY6f4QgxVnqZum
-	2/WgWCAaOcigLx8ob/Yc1UD9iVcPp6xYrsrdYSQ==
-X-Gm-Gg: ASbGncsyLKx/ExvVTriFZ05WU9ltL7GRFAc5RXb/Mc5IaRex1ci0ODfq4pp4dOAyUKK
-	UvgRz+4oTGP/buAUC2jC929OK1mehfUgCabEhlnuX0EUJoNxUmmXpC3ONNqkDerNWsBvgfn+9+n
-	YXBj2G9hlWvK7+NPAF5fmI3q9qMUSgBresoSPdW6s4eK6IQBfQHBQjPu3M
-X-Google-Smtp-Source: AGHT+IE+efI2xX/8yZlFAe4Vm/Cxzz+Nax11lqQy3zdclZUZJJhpwXV7c7fhUqN3JwjPrbPY+ZyZGS0ljljrKBqXCe4=
-X-Received: by 2002:a2e:be14:0:b0:30b:8f60:cdb7 with SMTP id
- 38308e7fff4ca-30f02b985a2mr4363601fa.24.1743665915290; Thu, 03 Apr 2025
- 00:38:35 -0700 (PDT)
+	s=arc-20240116; t=1743666017; c=relaxed/simple;
+	bh=sAohYqDa44TUpoObt6M+7CegBq3d1Hs2006Ma7LYGL0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eVepv89Gz6CA0TP72mBPlgOjc+wX5cDAFoatWc0Wncanscd4UAV5SW/2vP50ji2W50Gw5XUTl3xYpgv5bKjqGuqOkCZxJoqGb0PpXDCEPgqLt8zWxvxKz/T7mBjX3tpzbXGPeN3Lv4h5KuEdeW985RZJ9qj1kpjKBfDNk6YmKF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=R/3FZngU; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: de88a308105e11f08eb9c36241bbb6fb-20250403
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=UR6N4JLWRXdfl/3tMoPzIXLOxGEekvwVW3c3YQImOkQ=;
+	b=R/3FZngUtZ+Zw3jVY/QFWwYgEHvILLfepYDQ8wGLcZm6zJVfL6zDT9b0B8JtVRybA9eBlCN/CfB0Cljdljy+ARlcR/akZrmeqz2YhhlrqKrl2a9+pd71Ju39ePOwYzVf7/+27m0gImJlm3mPuVJj7ZVwcO4M4r6lloOzAXad+DU=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:a35b4290-cccb-4c8c-b319-6ded469cf89b,IP:0,UR
+	L:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-30
+X-CID-META: VersionHash:0ef645f,CLOUDID:17b6a5a5-c619-47e3-a41b-90eedbf5b947,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:2,IP:nil
+	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
+	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: de88a308105e11f08eb9c36241bbb6fb-20250403
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
+	(envelope-from <bo.kong@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 819808472; Thu, 03 Apr 2025 15:40:09 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Thu, 3 Apr 2025 15:40:08 +0800
+Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Thu, 3 Apr 2025 15:40:07 +0800
+From: bo.kong <bo.kong@mediatek.com>
+To: Rob Herring <robh@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>, mtk29348 <Bo.Kong@mediatek.com>,
+	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+CC: <zhaoyuan.chen@mediatek.com>, <Teddy.Chen@mediatek.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v5 0/4] Add AIE driver support for mt8188
+Date: Thu, 3 Apr 2025 15:38:32 +0800
+Message-ID: <20250403074005.21472-1-bo.kong@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250402132634.18065-1-johan+linaro@kernel.org>
- <CAMRc=Mfpm8=q1mkfNfjPtogbh1S9PKU+w_2yMP+oE_Gj7-qemQ@mail.gmail.com> <Z-42nVkEZeWHdwAm@hovoldconsulting.com>
-In-Reply-To: <Z-42nVkEZeWHdwAm@hovoldconsulting.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 3 Apr 2025 09:38:24 +0200
-X-Gm-Features: AQ5f1JoaECCB4Ig-OQoVaRV_IJbeuDbZtSRj286KtUBGCZkrM4_HeX7c4fhC4-E
-Message-ID: <CAMRc=Mf3on3TpiPDhtPnp1-3b0ika2GHy6h-NJqcgvYpWMHpoQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] PCI/arm64/ath11k/ath12k: Rename pwrctrl Kconfig symbols
-To: Johan Hovold <johan@kernel.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Jeff Johnson <jjohnson@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Jonas Gorski <jonas.gorski@gmail.com>, 
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	ath11k@lists.infradead.org, ath12k@lists.infradead.org, 
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Thu, Apr 3, 2025 at 9:19=E2=80=AFAM Johan Hovold <johan@kernel.org> wrot=
-e:
->
-> On Thu, Apr 03, 2025 at 09:11:07AM +0200, Bartosz Golaszewski wrote:
-> > On Wed, Apr 2, 2025 at 3:27=E2=80=AFPM Johan Hovold <johan+linaro@kerne=
-l.org> wrote:
-> > >
-> > > The PCI pwrctrl framework was renamed after being merged, but the
-> > > Kconfig symbols still reflect the old name ("pwrctl" without an "r").
-> > >
-> > > This leads to people not knowing how to refer to the framework in
-> > > writing, inconsistencies in module naming, etc.
-> > >
-> > > Let's rename also the Kconfig symbols before this gets any worse.
-> > >
-> >
-> > Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > I'm re-adding the tag here as otherwise b4 will only pick it up for
-> > patch 4/4 on v2 of the series.
->
-> I had already added it to the first three patches so it was only
-> missing on the last one.
->
-> Johan
+From: Bo Kong <Bo.Kong@mediatek.com>
 
-Indeed, sorry for the noise, I saw b4 only applying it for the last
-one and didn't check git log.
+AIE(AI Engine) is one of the units in mt8188 ISP which provides hardware accelerated face detection function, it can detect different sizes of faces in a raw image.
 
-Bartosz
+Bo Kong (4):
+  media: dt-bindings: add MT8188 AIE
+  arm64: dts: mt8188: add aie node
+  uapi: linux: add MT8188 AIE
+  media: mediatek: add MT8188 AIE driver
+
+ .../bindings/media/mediatek,mt8188-aie.yaml   |   78 +
+ arch/arm64/boot/dts/mediatek/mt8188.dtsi      |   33 +
+ drivers/media/platform/mediatek/Kconfig       |    1 +
+ drivers/media/platform/mediatek/Makefile      |    1 +
+ drivers/media/platform/mediatek/aie/Kconfig   |   12 +
+ drivers/media/platform/mediatek/aie/Makefile  |    5 +
+ drivers/media/platform/mediatek/aie/mtk_aie.h |  870 ++++++
+ .../media/platform/mediatek/aie/mtk_aie_drv.c | 2398 +++++++++++++++++
+ .../platform/mediatek/aie/mtk_aie_v4l2.c      | 1295 +++++++++
+ drivers/media/v4l2-core/v4l2-ioctl.c          |    3 +
+ include/uapi/linux/mtk_aie_v4l2_controls.h    |  308 +++
+ include/uapi/linux/videodev2.h                |    6 +
+ 12 files changed, 5010 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/mediatek,mt8188-aie.yaml
+ create mode 100644 drivers/media/platform/mediatek/aie/Kconfig
+ create mode 100644 drivers/media/platform/mediatek/aie/Makefile
+ create mode 100644 drivers/media/platform/mediatek/aie/mtk_aie.h
+ create mode 100644 drivers/media/platform/mediatek/aie/mtk_aie_drv.c
+ create mode 100644 drivers/media/platform/mediatek/aie/mtk_aie_v4l2.c
+ create mode 100644 include/uapi/linux/mtk_aie_v4l2_controls.h
+
+-- 
+2.45.2
+
 
