@@ -1,371 +1,180 @@
-Return-Path: <linux-kernel+bounces-587833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78133A7B0FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:26:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCA9CA7B0C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:23:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FCD5168B35
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:21:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A33037A5FA7
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D350F2E62D9;
-	Thu,  3 Apr 2025 21:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE2F1A08A6;
+	Thu,  3 Apr 2025 21:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="tF9at3UA"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="fGOkUUv3"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11020139.outbound.protection.outlook.com [52.101.61.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3DF219E4
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 21:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743715110; cv=none; b=G5UDCGyhKinXdxtREEDvhN3UVL404TM9N+K5fppADoO8hNWUkAI0WUvIZlqHRD206q0iTsVNvGCUc0pMG6z0VClsjQlFX1GryJucLlhbORNSLJja1/KROfWvv7R4uks+qV8EQfG72fLjv2eGi+pwvn0tobk5/5NZE8WqkrvT8ws=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743715110; c=relaxed/simple;
-	bh=EtaNgAi96I+gZn4ebubJzhEEvvSAr2ROdW5pT8HUvqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uQ/5RPq6GBaDNmMQnq4X5TC2TX5TfbAbZdPXP6sG90y6zzXhB2gSf4xBj9ltWzhjVwZEH/7q66aGdliU/qC3cFmIWoFKF+3/Kqg+zbT5+ldFIxYisRpoyrknUAfgetoTN8F8vKV+InUZJJT5Y3JurT/ZRvGEf/NVnNG3GQMbTw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=tF9at3UA; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4772f48f516so24034231cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 14:18:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1743715105; x=1744319905; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0kOc9IVgq4Yk9moCNK2lpDYwr+QzgoTOSJskjayuc4I=;
-        b=tF9at3UAXuCFrCfvoj/mj6JZy5xX0/F3CCjOkghu1jwF8TTsoyEPCjiRH487/kRzdQ
-         vFDwPIzXRDG3bXoHrQ3MWzcY0bCvsOXOZHRktZEMI9JFUSyLyR1nEPeKmIEV0+wJ2Ic4
-         N7/O6CDszPifG4VQy0eW1RgZ930ZHTVn6zwqqKlJDO86Fmcgx6zkiNpw7kbQmqTi3v6M
-         pZ1jdqfdYr1yBOA7wt1bZGF/NqfdpYSpoQ/Rru06MnvVYSWUHa/N5EGSoI6tJ3bSHkDR
-         X9Y2l/FkNBRvIdWItuNce0lP0zgJ97LeQ8e08eYVNj/KVC7cq9VaqP/+CCtqH1HSBH2e
-         nH9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743715105; x=1744319905;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0kOc9IVgq4Yk9moCNK2lpDYwr+QzgoTOSJskjayuc4I=;
-        b=TBUi8O/3vpgR9XGBbEcyrdDfv5c1mUd6zsuj/N6aB6aqMSQyKIjKygyVjScTpPmugt
-         qClvfcTItqh0tKrg5VIszMFETin56Wv/Eht+x9kqkESZGrN+KpLUtacljWEjeKRYjL7Q
-         868Ey1P61NIpxKC7+kuKg6g4Sa8niUOk7Z6wFGkHZ5W35AOIjEYtN/bvtTENdDh8UL9f
-         BRX3wW/AVlJo82LlIZtdEr+/8u6b3UnRxP+PIwOnIPrOqGESjhXaH+LEOpLkuOplIKXm
-         +qHqunjbAiTBk7wRCeR0uNWM8QlwAkk+VUzIANEtj3Asupdn765+keCSfYo0YI+g5iZe
-         YQpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeazFriZGjmTQ2H68cDe1ZAq6Jw0U2mU4cnWfOED81FXwtdUoLPhdhutgfrawHZI39wP+a7tZQisVrGE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4l5b/AXaX7rS6DDYaD3gYPypI++Z+8k68qE0LhD18C97gLIHa
-	IOFHWlw0d0u8MYJy/BZdFxuohqrWuw+DmA0mSO4TgB0PgkN3UoXo4jT+e1AC6+g=
-X-Gm-Gg: ASbGncs6qWrkAC1AoBWCssNgDL+Sai9IIHFb3zV+WPcwdo145qdDTDVFSYJO+TdF3Ix
-	VfaN4Ly/mFBqeZvcD8AyAsEh/CXhKTTD9ZzKWx0Mntv0C6mS/3kWh6SDLRJbHdUkLIgpL3uwlqz
-	eo8eMEnF7Vpff7/VV6N9eOlwS8cFMR3cHvpq//F5e7LtDza563HK1Z/DvGi5Nzi1rWHlRYI9g7l
-	rtH9tWXgUrr/R121V957lvlJ7MSWbip/wJSxGrvB3J7ZQOh7HqGqQSeEbXzg8EWrLD298XDeSAJ
-	iBKa1dUqtyItnVwt+TI5DPW86MG+sGgNco2fRiM7lq4=
-X-Google-Smtp-Source: AGHT+IG8qbRrdJJRNYAPb5HBuHq1caolO9hi310F9UTL31muqwVvUZfvWxa+/+p3NN97BPjnjl9qYg==
-X-Received: by 2002:a05:622a:1350:b0:474:f9f2:ecb with SMTP id d75a77b69052e-47924da2174mr13754871cf.18.1743715105567;
-        Thu, 03 Apr 2025 14:18:25 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4791b07141csm12331961cf.18.2025.04.03.14.18.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 14:18:24 -0700 (PDT)
-Date: Thu, 3 Apr 2025 17:18:20 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Carlos Song <carlos.song@nxp.com>
-Cc: "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
-	"ying.huang@intel.com" <ying.huang@intel.com>,
-	"vbabka@suse.cz" <vbabka@suse.cz>,
-	"david@redhat.com" <david@redhat.com>,
-	"mgorman@techsingularity.net" <mgorman@techsingularity.net>,
-	"ziy@nvidia.com" <ziy@nvidia.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Brendan Jackman <jackmanb@google.com>
-Subject: Re: Ask help about this patch c0cd6f557b90 "mm: page_alloc: fix
- freelist movement during block conversion"
-Message-ID: <20250403211820.GA447372@cmpxchg.org>
-References: <VI2PR04MB11147E11724F867F4FCB6677DE8AF2@VI2PR04MB11147.eurprd04.prod.outlook.com>
- <20250402194425.GB198651@cmpxchg.org>
- <VI2PR04MB11147FA8008C118F375650623E8AE2@VI2PR04MB11147.eurprd04.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CD62E62D3;
+	Thu,  3 Apr 2025 21:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.139
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743715367; cv=fail; b=C6No7LdP7D1InUcq5pYlLGNpSAYpIjE9l94aaXtgIw6VO87w07WxY7ko6+jEfroWy0sswrA3fWww2enkxb6wSyleso1t5ZXHWh7rsGIJVWlSIT82o0N2nt412u9QSSEfjdj1Awr74rV+N7O3kOuwg2jv4Vrc0AYHaTuwpF7mR0E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743715367; c=relaxed/simple;
+	bh=BhkTX+3cRZpvD99hP2rtJlEjl8liXo1lWZfrxJxX7Sk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=p9x9HoCs5E7sM7YydRe8keY1Z9nYB4uqGyES/vShX2eKKphX+w8VvRaMI1Jhzkk8kWmlfgHQXRuJbqtDIz1ZZJSwa30P2UK4MbpAvzwPyt57ncclaLG9ihpltP7Y0MzMjyXyYPevI2cN/F+UcdJjR4MyHuEX1sTUjK1wDNrdGEQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=fGOkUUv3; arc=fail smtp.client-ip=52.101.61.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xX07/7i81dgi3K4jtszF/GBsBiGLwjdYY33m10P+822eyjn7CDdeViCKLTbpmY1o/fr1WTt4yfuhtJYWrj5mPp9wO48ViuP/unSqIDXMDOswO7IAmeTbuJ2RrcgIY/C9/8haqvXWBdmHDNvE/qBSwzyc5LDvkUMZFPd8laLeLiISSmvtMfj3Kbf8g/jL7T+SIM6OM0hSA2GbLXJh+3x4TfAu1oUiYnRau45R90aNLTboKPQiglaz+SGLRplGLhGQWfEtdNBo3cH/7f4DdlxqOZSDN9Ecpsb7sMBBfW4ehBVnTzn4Ih/2RBlek44VueX7FdgsoYmckl4rVupLlyOBSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JmkYm4l46pUzG6luT2oJ0BZq3IhiZzkdvKYv/hjx7nI=;
+ b=tDMzogqFgvnqiYA9+/b3hjL3+04I+FaYIHCK684/3S0DAKDyUZ0+TCeOD2/wsfJ6mfHia49TM7GTvy/19bqUc0E9/dNz5DplB9JD/XZOGigNC2cc/5m6oOvjErdsSGDmvcl184KoVfG6pfiixiQh+WbelTuV9F6jbY4AaBm4IT9mW9mWIvT52+jmf4x/9LFKDfJQrgywTXPfjYQDpoOl0uzrP1OQxIWs/CWAjSoDHt+TQm0GdChjFiKzSgvrX/CM5mmO4N82ihPhlAPxQ9Od89yNtlDjYv3bgyxRFoChZCFs6KGQ8ywoPMOY0xluQrEX1UVf+nO1CRe9crmUJGLUBg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JmkYm4l46pUzG6luT2oJ0BZq3IhiZzkdvKYv/hjx7nI=;
+ b=fGOkUUv38zcnJisTPm3gFKxuoz5IoQ2MHFUyYZ8LGY6BoP2D38pnuukBCCgnQKnsk1bgfB3iT13TwRdkn8ZjADPHSFPe4UQYz53wb73l1Ci2+zVZArKXhXFF2/VnNWI63/vjzFZH/0+UhEar8bqYLDdIgcWyDzuXGyLLa2XP2ok=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+Received: from DM6PR21MB1451.namprd21.prod.outlook.com (2603:10b6:5:25c::16)
+ by DM4PR21MB3154.namprd21.prod.outlook.com (2603:10b6:8:66::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8632.9; Thu, 3 Apr 2025 21:22:43 +0000
+Received: from DM6PR21MB1451.namprd21.prod.outlook.com
+ ([fe80::7a3a:a395:66:b992]) by DM6PR21MB1451.namprd21.prod.outlook.com
+ ([fe80::7a3a:a395:66:b992%4]) with mapi id 15.20.8606.022; Thu, 3 Apr 2025
+ 21:22:42 +0000
+From: Haiyang Zhang <haiyangz@microsoft.com>
+To: linux-hyperv@vger.kernel.org,
+	akpm@linux-foundation.org,
+	corbet@lwn.net,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org
+Cc: haiyangz@microsoft.com,
+	decui@microsoft.com,
+	kys@microsoft.com,
+	paulros@microsoft.com,
+	olaf@aepfle.de,
+	vkuznets@redhat.com,
+	davem@davemloft.net,
+	wei.liu@kernel.org,
+	longli@microsoft.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] mm: Explicitly check & doc fragsz limit
+Date: Thu,  3 Apr 2025 14:21:47 -0700
+Message-Id: <1743715309-318-1-git-send-email-haiyangz@microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain
+X-ClientProxiedBy: MW4PR03CA0048.namprd03.prod.outlook.com
+ (2603:10b6:303:8e::23) To DM6PR21MB1451.namprd21.prod.outlook.com
+ (2603:10b6:5:25c::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <VI2PR04MB11147FA8008C118F375650623E8AE2@VI2PR04MB11147.eurprd04.prod.outlook.com>
+Sender: LKML haiyangz <lkmlhyz@microsoft.com>
+X-MS-Exchange-MessageSentRepresentingType: 2
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR21MB1451:EE_|DM4PR21MB3154:EE_
+X-MS-Office365-Filtering-Correlation-Id: 49751c17-34a7-41e5-af64-08dd72f5ab54
+X-LD-Processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?b4CMOhtPJXnxbVQZ2HsViD2tyWj8+0cdCr0imIRdSYq9lX3onfYjQkn9239X?=
+ =?us-ascii?Q?PpREkmDdI/wwVjnvZBgc360946eLLhnagnN8rE/iCa00ZjWlZ7H9hiQ8dQkc?=
+ =?us-ascii?Q?1R2vMggqABzaYazyH3USpz0hcIgBbioS0K6wa5sDRB5+FuocJEYqg57Yj5Nl?=
+ =?us-ascii?Q?ujMNurfgl7LYs6WH54kWepnujDxeNzCN48WatR9IScVZ9/gVZWpVBHMwp0/K?=
+ =?us-ascii?Q?G1/OuCu6ev/BlUf0laAsux7LHMAIJYw24TTBJGZj7pNApB32idQA+oLHGth1?=
+ =?us-ascii?Q?5VAu3qLEvTWwLM62qJ5pZP7Ol5m/EA07IXXfFUbTZ5y0Y1GuGXwfacId2tHv?=
+ =?us-ascii?Q?NuESsAw0+7B1Fnj/lVcatWhurSD76gi+x6mU4lD/AMzrFjiwOkrksFAyg/fX?=
+ =?us-ascii?Q?8mYUe6oYMbPKdDlxf4FmpZ2JowP5G7o+P4R8U7xMw1KaIFxGwZ+jxvxeaEfQ?=
+ =?us-ascii?Q?sct0e/PVI+VoIRJ3oxKOL1zuKI6cTJzdIebd4zJ9YjX+SMOzCXBx4FGundiN?=
+ =?us-ascii?Q?tA/KlnK82LYCo+fWjI3HFRbqf/cfbriKM9Zr+x2eDTWvMMmviIXPuxOT/xec?=
+ =?us-ascii?Q?VvrAy4e6ORsO84gXuxHQswelIilVJgnBTxyXUTy0bIi6Kuh5znTpbs99xhMv?=
+ =?us-ascii?Q?g++9yq43v87Pm3UBIMgZmFQxj9N9N+BohLOQu5sMXUtNZyPNrlrsNJa93WZ6?=
+ =?us-ascii?Q?dWl2me2GWWvw5nNuZx6dRCYBg6KPNsf4EZ97ydwm5TQBd1xCZY1eugtVqRTh?=
+ =?us-ascii?Q?C6w9MUowwKXGfVnMj2nmif4p/61HTzOJm9luGZfd2D1QDbzUwdYE4aBQiijt?=
+ =?us-ascii?Q?ZBGBJlYuQ1j6AwoML8oAbLYFdBtL4mscAcXhL8GZJs/sNV2OJSshL6GS+yYr?=
+ =?us-ascii?Q?RlqrmE04wH88pgkWHILehnpLET2g8DOlXIGjr1gpGzxDdQzC8FYWTfNOliwX?=
+ =?us-ascii?Q?AODesCyByLaF8dGHpsFv1mumLTmDx4ucw2/hFnuWCsXCRtvlGpBh4C6Zwo3/?=
+ =?us-ascii?Q?cW5y6KZIO/ATUG0LsawfoVc3cEsR+fwoHrPZX0yfQOFAfIuR3n9tJbgKNH/X?=
+ =?us-ascii?Q?VNBqs8Gp0JInUh2jDgvJzsBqT8Qs5YWYmcUjuZImAiA1fW7aorW7Fy+EDHHO?=
+ =?us-ascii?Q?1vvSeljJ0STzSrZDcXhj0WE9qp9J7kQcei2TRqngn29TZPPwHHLcjEjO42zD?=
+ =?us-ascii?Q?0VTjsBuUmVFjb9nScq2wfLMh2agx2n81ipm1Eiv5RCpEIcAZRGiiqb+GggXX?=
+ =?us-ascii?Q?bJUuvfpgMxQ4ZaENfWqwYuq8hIWw3p6m2jeuYxa5N2gcagt4pfqmCxLqvwaF?=
+ =?us-ascii?Q?01sFuGZ91epzByz1y5DwSl/epPy3yCOWFnxCVdfqFmPJRQ5xtPHJQQE23vnw?=
+ =?us-ascii?Q?aoZBMUGKs/6nCW0ZoZbC8JdugR3MNnMLVZIdilbVVmLiNmQdEhf4AWs5PaGY?=
+ =?us-ascii?Q?Yyfu8qh0EmVP9TNzTk91RySLf1wxvxF7IakUowvgcs5oYsf7UdvhiQ=3D=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR21MB1451.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?jUu6VpDtq2Hj+8/3pa6HNym8HWYiBXV061PEDyPEYgzMB6jXsRq92k83A1cv?=
+ =?us-ascii?Q?FlDBjl+t90h4waNcL0rV70kUHIEj/tgh6ZQX0RFKGD4/6EHC0EoUea9SIWC6?=
+ =?us-ascii?Q?nJceE0SwuBkydlCZ1O1DdfaWvBtieeEDXimFsj2reAul23ZZqWo+C5XzYgYO?=
+ =?us-ascii?Q?5vD2FUuUNByutw5zVBiQ/tX1nAn6S3bjvs+WF4JpjMR7EHSzEQh5JlOdC690?=
+ =?us-ascii?Q?oaWWtbOwZD1v1IxcTUdfJbf0cpsQhnt4yR9OfaQiXqMouR6U1Jca6jePZGtK?=
+ =?us-ascii?Q?+Mb3coGp6Ownp5nKp2EIDpNLlQs0Jd7mg00PRLNFkrTVKkkRNhjrbeK1mlcJ?=
+ =?us-ascii?Q?XiQTaPAWxNN1xzKBmh5fbPrX2L0PXJcB+BYHySsLi4h4bYQL+ds0YQgKd5Ha?=
+ =?us-ascii?Q?7r2sDslv0vl/pGme+yHQSCTvrvhiIH70RZjBeoi+N6NsshAgHxM+Vu/qRRQq?=
+ =?us-ascii?Q?NkUWM9GvoK52o6f6Tp+K9pFAJLzby5haVPPKfoLsXoHNa3xJki4fOtdEsGfg?=
+ =?us-ascii?Q?rE1AdkI0sn8dW04CuJj9nKefC5AXaedzWwDXyfs2Lh2s8GnM+/QVwPo1un5E?=
+ =?us-ascii?Q?hiq0q8QEnCbmEMwEMzbjqH3qDye6B5i681+Qz3tKjFgdO83cMQf6uunPweIa?=
+ =?us-ascii?Q?UfEIF2vCyD5CJVjbDfW89g6FI0Pabl48YnpGaTMD66MbZxRFw3sP8wvokjq/?=
+ =?us-ascii?Q?Y96OEEBu/xok7Yk1ao3eXd6+bMplT8+/++zQ2a6Z78OzAVrByQc8aO7P1ODt?=
+ =?us-ascii?Q?c5+GqXJNNfcrWQQUZWI1Rxf1xfxVJ/w8LGl6/+OJidHVqCyDA6r65a19XSyb?=
+ =?us-ascii?Q?V64Y4mjrbAjKiB/xVBCjkOAuWtiknTCjtfp1q3AS743A68p4HeSp+xSY/ug8?=
+ =?us-ascii?Q?Yxa8ue4t1LdN8auo+nCVJ5nVEHn9HzdrA4ftgE+ZVvSjk6Mx14r4gUSh06Wr?=
+ =?us-ascii?Q?I2G0vw6QtgVWZ5WORHdQM4NktqHD/K7JP/VgyOa2buARLlb97uU5Aea6f6Cm?=
+ =?us-ascii?Q?iq95I4zf97D50bW7ftVuRBYJEVDTS6xOWMHnwLpVpJXIF4HJT7ynxey7x+M8?=
+ =?us-ascii?Q?dxMZMOn7HZeXbdwxM0eQ9lnwDZPOGJR8pt1HxHhH1W2J2IFkC2i7hH5vHyaE?=
+ =?us-ascii?Q?yzy3jcQJcWTVX1utf7qFsJqLVwqn7g/emipQeqiCOqOUM5m12LMP86yROblM?=
+ =?us-ascii?Q?ARde1xIxTSaQxBLnJ05lFwQ+jL2aIc4BUt/jUY6Jo6bVe40HXmU5JKaw5abw?=
+ =?us-ascii?Q?Q5r4AykvVqflQtMJ8ifOGHicbovbJYRjnR4IVSaL1fIyOo1GuIvlf9R2xGAW?=
+ =?us-ascii?Q?Os0MtFlfXM76fyTBrPVT6+wS/8fkj9gAm9vEzd7M3fjrCusIAJeux2sRzbuA?=
+ =?us-ascii?Q?AZbQbMjL0/L5kAbcidXoEkJK1ptChc+0PTnsLeEuM1ukMSXm0Mh0pQoCvbjj?=
+ =?us-ascii?Q?ssDtZ7b5oP+gAWqeCDEx9p/Gd5rsTg9gEAaGG6kNvjk1BFIR7BTeitPwvmh2?=
+ =?us-ascii?Q?GEsGUbqyAd+j/giOwCPI2Nm3+qAqWMaNXcTtw4BvOe84YQQRffNwyTO8gkCi?=
+ =?us-ascii?Q?WC4UQwPfFkK2wtSpTgxLuOGpF+KxF1erOCViYpgF?=
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 49751c17-34a7-41e5-af64-08dd72f5ab54
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR21MB1451.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2025 21:22:42.8605
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2Z9omdfilolqcVbNUMwDOK9xcF8tbBE2/2cB3i4rkab5gxfkrYTTdHupQRgiGj0+0hx7DtA1d2s3wq0oodtN2g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR21MB3154
 
-Hi Carlos,
+The page frag allocator is not designed for fragsz > PAGE_SIZE.
+Explicitly check it in the function & document the fragsz limit.
 
-On Thu, Apr 03, 2025 at 09:23:55AM +0000, Carlos Song wrote:
-> Thank you for your quick ack and help! After applied this patch, it improved well.
-> I apply this patch at this HEAD:
-> f0a16f536332 (tag: next-20250403, origin/master, origin/HEAD) Add linux-next specific files for 20250403
-> 
-> and do 10 times same test like what I have done before in IMX7D:
-> The IRQ off tracer shows the irq_off time 7~10ms. Is this what you expected?
+Haiyang Zhang (2):
+  mm: page_frag: Check fragsz at the beginning of __page_frag_alloc_align()
+  docs/mm: Specify page frag size is not bigger than PAGE_SIZE
 
-This is great, thank you for testing it!
+ Documentation/mm/page_frags.rst |  2 +-
+ mm/page_frag_cache.c            | 22 +++++++++-------------
+ 2 files changed, 10 insertions(+), 14 deletions(-)
 
-> # irqsoff latency trace v1.1.5 on 6.14.0-next-20250403-00003-gf9e8473ee91a
-> # --------------------------------------------------------------------
-> # latency: 8111 us, #4323/4323, CPU#0 | (M:NONE VP:0, KP:0, SP:0 HP:0 #P:2)
-> #    -----------------
-> #    | task: dd-820 (uid:0 nice:0 policy:0 rt_prio:0)
-> #    -----------------
-> #  => started at: __rmqueue_pcplist
-> #  => ended at:   _raw_spin_unlock_irqrestore
-> #
-> #
-> #                    _------=> CPU#
-> #                   / _-----=> irqs-off/BH-disabled
-> #                  | / _----=> need-resched
-> #                  || / _---=> hardirq/softirq
-> #                  ||| / _--=> preempt-depth
-> #                  |||| / _-=> migrate-disable
-> #                  ||||| /     delay
-> #  cmd     pid     |||||| time  |   caller
-> #     \   /        ||||||  \    |    /
->       dd-820       0d....    1us : __rmqueue_pcplist
->       dd-820       0d....    3us : _raw_spin_trylock <-__rmqueue_pcplist
->       dd-820       0d....    7us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d....   11us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d....   13us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d....   15us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d....   17us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d....   19us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d....   21us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d....   23us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d....   25us : __mod_zone_page_state <-__rmqueue_pcplist
-> ...
->       dd-820       0d.... 1326us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 1328us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 1330us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 1332us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 1334us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 1336us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 1337us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 1339us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 1341us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 1343us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 1345us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 1347us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 1349us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 1351us : __mod_zone_page_state <-__rmqueue_pcplist
-> ...
->       dd-820       0d.... 1660us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 1662us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 1664us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 1666us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 1668us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 1670us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 1672us+: try_to_claim_block <-__rmqueue_pcplist
->       dd-820       0d.... 1727us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 1729us+: try_to_claim_block <-__rmqueue_pcplist
->       dd-820       0d.... 1806us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 1807us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 1809us+: try_to_claim_block <-__rmqueue_pcplist
->       dd-820       0d.... 1854us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 1856us+: try_to_claim_block <-__rmqueue_pcplist
->       dd-820       0d.... 1893us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 1895us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 1896us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 1898us+: try_to_claim_block <-__rmqueue_pcplist
->       dd-820       0d.... 1954us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 1956us+: try_to_claim_block <-__rmqueue_pcplist
->       dd-820       0d.... 2012us : find_suitable_fallback <-__rmqueue_pcplist
-> ...
->      dd-820       0d.... 8077us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 8079us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 8081us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 8083us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 8084us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 8086us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 8088us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 8089us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 8091us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 8093us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 8095us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 8097us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 8098us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 8100us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 8102us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 8104us : find_suitable_fallback <-__rmqueue_pcplist
->       dd-820       0d.... 8105us : __mod_zone_page_state <-__rmqueue_pcplist
->       dd-820       0d.... 8107us : _raw_spin_unlock_irqrestore <-__rmqueue_pcplist
->       dd-820       0d.... 8110us : _raw_spin_unlock_irqrestore
->       dd-820       0d.... 8113us+: trace_hardirqs_on <-_raw_spin_unlock_irqrestore
->       dd-820       0d.... 8156us : <stack trace>
-
-This pattern looks much better. Once it fails to claim blocks, it goes
-straight to single-page stealing.
-
-Another observation is that find_suitable_callback() is hot. Looking
-closer at that function, I think there are a few optimizations we can
-do. Attaching another patch below, to go on top of the previous one.
-
-Carlos, would you be able to give this a spin?
-
-Thanks!
-
----
-
-From 621b1842b9fbbb26848296a5feb4daf5b038ba33 Mon Sep 17 00:00:00 2001
-From: Johannes Weiner <hannes@cmpxchg.org>
-Date: Thu, 3 Apr 2025 16:44:32 -0400
-Subject: [PATCH] mm: page_alloc: tighten up find_suitable_fallback()
-
-find_suitable_fallback() is not as efficient as it could be:
-
-1. should_try_claim_block() is a loop invariant. There is no point in
-   checking fallback areas if the caller is interested in claimable
-   blocks but the order and the migratetype don't allow for that.
-
-2. __rmqueue_steal() doesn't care about claimability, so it shouldn't
-   have to run those tests.
-
-Different callers want different things from this helper:
-
-1. __compact_finished() scans orders up until it finds a claimable block
-2. __rmqueue_claim() scans orders down as long as blocks are claimable
-3. __rmqueue_steal() doesn't care about claimability at all
-
-Move should_try_claim_block() out of the loop. Only test it for the
-two callers who care in the first place. Distinguish "no blocks" from
-"order + mt are not claimable" in the return value; __rmqueue_claim()
-can stop once order becomes unclaimable, __compact_finished() can keep
-advancing until order becomes claimable.
-
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
----
- mm/compaction.c |  4 +---
- mm/internal.h   |  2 +-
- mm/page_alloc.c | 31 +++++++++++++------------------
- 3 files changed, 15 insertions(+), 22 deletions(-)
-
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 139f00c0308a..7462a02802a5 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -2348,7 +2348,6 @@ static enum compact_result __compact_finished(struct compact_control *cc)
- 	ret = COMPACT_NO_SUITABLE_PAGE;
- 	for (order = cc->order; order < NR_PAGE_ORDERS; order++) {
- 		struct free_area *area = &cc->zone->free_area[order];
--		bool claim_block;
- 
- 		/* Job done if page is free of the right migratetype */
- 		if (!free_area_empty(area, migratetype))
-@@ -2364,8 +2363,7 @@ static enum compact_result __compact_finished(struct compact_control *cc)
- 		 * Job done if allocation would steal freepages from
- 		 * other migratetype buddy lists.
- 		 */
--		if (find_suitable_fallback(area, order, migratetype,
--						true, &claim_block) != -1)
-+		if (find_suitable_fallback(area, order, migratetype, true) >= 0)
- 			/*
- 			 * Movable pages are OK in any pageblock. If we are
- 			 * stealing for a non-movable allocation, make sure
-diff --git a/mm/internal.h b/mm/internal.h
-index 50c2f590b2d0..55384b9971c3 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -915,7 +915,7 @@ static inline void init_cma_pageblock(struct page *page)
- 
- 
- int find_suitable_fallback(struct free_area *area, unsigned int order,
--			int migratetype, bool claim_only, bool *claim_block);
-+			   int migratetype, bool claimable);
- 
- static inline bool free_area_empty(struct free_area *area, int migratetype)
- {
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 03b0d45ed45a..1522e3a29b16 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -2077,31 +2077,25 @@ static bool should_try_claim_block(unsigned int order, int start_mt)
- 
- /*
-  * Check whether there is a suitable fallback freepage with requested order.
-- * Sets *claim_block to instruct the caller whether it should convert a whole
-- * pageblock to the returned migratetype.
-- * If only_claim is true, this function returns fallback_mt only if
-+ * If claimable is true, this function returns fallback_mt only if
-  * we would do this whole-block claiming. This would help to reduce
-  * fragmentation due to mixed migratetype pages in one pageblock.
-  */
- int find_suitable_fallback(struct free_area *area, unsigned int order,
--			int migratetype, bool only_claim, bool *claim_block)
-+			   int migratetype, bool claimable)
- {
- 	int i;
--	int fallback_mt;
-+
-+	if (claimable && !should_try_claim_block(order, migratetype))
-+		return -2;
- 
- 	if (area->nr_free == 0)
- 		return -1;
- 
--	*claim_block = false;
- 	for (i = 0; i < MIGRATE_PCPTYPES - 1 ; i++) {
--		fallback_mt = fallbacks[migratetype][i];
--		if (free_area_empty(area, fallback_mt))
--			continue;
-+		int fallback_mt = fallbacks[migratetype][i];
- 
--		if (should_try_claim_block(order, migratetype))
--			*claim_block = true;
--
--		if (*claim_block || !only_claim)
-+		if (!free_area_empty(area, fallback_mt))
- 			return fallback_mt;
- 	}
- 
-@@ -2206,7 +2200,6 @@ __rmqueue_claim(struct zone *zone, int order, int start_migratetype,
- 	int min_order = order;
- 	struct page *page;
- 	int fallback_mt;
--	bool claim_block;
- 
- 	/*
- 	 * Do not steal pages from freelists belonging to other pageblocks
-@@ -2225,11 +2218,14 @@ __rmqueue_claim(struct zone *zone, int order, int start_migratetype,
- 				--current_order) {
- 		area = &(zone->free_area[current_order]);
- 		fallback_mt = find_suitable_fallback(area, current_order,
--				start_migratetype, false, &claim_block);
-+						     start_migratetype, true);
-+
-+		/* No block in that order */
- 		if (fallback_mt == -1)
- 			continue;
- 
--		if (!claim_block)
-+		/* Advanced into orders too low to claim, abort */
-+		if (fallback_mt == -2)
- 			break;
- 
- 		page = get_page_from_free_area(area, fallback_mt);
-@@ -2254,12 +2250,11 @@ __rmqueue_steal(struct zone *zone, int order, int start_migratetype)
- 	int current_order;
- 	struct page *page;
- 	int fallback_mt;
--	bool claim_block;
- 
- 	for (current_order = order; current_order < NR_PAGE_ORDERS; current_order++) {
- 		area = &(zone->free_area[current_order]);
- 		fallback_mt = find_suitable_fallback(area, current_order,
--				start_migratetype, false, &claim_block);
-+						     start_migratetype, false);
- 		if (fallback_mt == -1)
- 			continue;
- 
 -- 
-2.49.0
-
+2.34.1
 
 
