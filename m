@@ -1,64 +1,74 @@
-Return-Path: <linux-kernel+bounces-586183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9383A79C4B
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:49:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1125A79C5D
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE6993B246E
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:48:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E353B332C
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887C919CCEA;
-	Thu,  3 Apr 2025 06:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3442E207A20;
+	Thu,  3 Apr 2025 06:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=etehtsea.me header.i=@etehtsea.me header.b="WNBc/xzq"
-Received: from qs51p00im-qukt01071901.me.com (qs51p00im-qukt01071901.me.com [17.57.155.8])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="WbCGvL+R"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27B9136E37
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 06:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.57.155.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1FF206F03;
+	Thu,  3 Apr 2025 06:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743662935; cv=none; b=XhEUs5DED2O633OnSwQl9e/DOofI8pMjcrP88O9MwgOSD0BX3qklgUKU09Lxqjdu1o2FJSOCEjFlqDNkp23r5kDmK0LcWCmDt13/s3GMSxQijm81D9PpQUGbWISaNnBg0MOuWLBly6ond4ZZePL7Y+g1GY+Wn2yu9CJ1Ah5qYC8=
+	t=1743663050; cv=none; b=ke7rW4qRxSgEAlLIi67t3HBep4Vg7JjqvnkVkpgn7c0hDyagg3uarOdIkZspLFx8DDlLT3EbFmsl/m2V0tq8BvbfLrU77z01fOGigUNCJcTJk6URPfd+1ERyay0dS/uLyXFKXJPKPhsYU0TrmE+1bKFxxkXT3J0VOVHvPzE7gFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743662935; c=relaxed/simple;
-	bh=T6FT3LsKTfwsij3YFljc92NUt4JS1kmzCAfKT0pcqNs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MTbNyjNXcxBd8QFYtdRihSWm0yDhV0/Mo6iSSfjQxWXe7imF+8r/Nf900UG2hcB1MYEFS5yo1vIfI/7mtfbXRu31297Xuxs5TCBPifzfruKpIdlwCfrYWae1FzlCZ1RyWTbsfGqW6dBnuDj2oPWE5uQqZfMxF7jVbDnZvBhj8JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etehtsea.me; spf=pass smtp.mailfrom=etehtsea.me; dkim=pass (2048-bit key) header.d=etehtsea.me header.i=@etehtsea.me header.b=WNBc/xzq; arc=none smtp.client-ip=17.57.155.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etehtsea.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=etehtsea.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=etehtsea.me; s=sig1;
-	bh=vX1nStTTyA2W3EtaX3VYwa1Dfg3sYgIY5n0SdMP1A9E=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:x-icloud-hme;
-	b=WNBc/xzqW6hc1w1xvZmvNkALMThcoORtpqWzc7S6k7HpLwRWJ7z0ZwCosnW2DI84q
-	 WNlBe//viYmPWvRelVykEW34qz7BL8uEXH8iwMXxGT8xWjXc3biR0LqjTI0S7Tr46+
-	 qmsAYrIEQkBImg0HFe2zGG18uVPPPwAMstTBZGP30uABvJC+33/NoP6jAjcAcBeHCZ
-	 cZccEECTodC9jTwSognP9wksu5sSbQFh1KaeEJgof1JDJkSWNGPbJjaoFti9h55x61
-	 GIGpDRkit07NAIRTsNEOZQnjiSoWE+e0ovF+v+6mg4GtnHehGwRyPzDHPs8H19eFk+
-	 JVrHi/7I9YRwg==
-Received: from localhost (qs51p00im-dlb-asmtp-mailmevip.me.com [17.57.155.28])
-	by qs51p00im-qukt01071901.me.com (Postfix) with ESMTPSA id DC75962801F9;
-	Thu,  3 Apr 2025 06:48:50 +0000 (UTC)
-From: Konstantin Shabanov <mail@etehtsea.me>
-To: Sandy Huang <hjc@rock-chips.com>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Konstantin Shabanov <mail@etehtsea.me>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] (drm/rockchip): Consistently use rk3399 registers consts
-Date: Thu,  3 Apr 2025 06:47:39 +0000
-Message-ID: <20250403064740.4016-1-mail@etehtsea.me>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1743663050; c=relaxed/simple;
+	bh=NFq5MdVkeEC3JGmDCriNI4BhC93MRdZYpm7N/k1kvck=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Hu/B1wH/ni6KdY+X8uW/2Y41pXueOE+ckjMKGxhD6OrRN5NCSDuwXcMo85k8JWkjYZ2JKvlWUvF++QMhETH8hgZCInNDoJKCkeTlRo/8N8ult3MHCl6Kpy6GBr7kXh20AfB1O3tQEg2uWfMbIviDMdenaqObQ72XWYKSmAPfdmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=WbCGvL+R; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: f1a2f04e105711f08eb9c36241bbb6fb-20250403
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=QDJ27iW4X63WdVZOkwgFkljRednxU+tqzHABvD19+JY=;
+	b=WbCGvL+RZiolFP4pFPm4S3d977RHOkvCRefveBKOtha+ABg8whoQo8c1SE3dDZ2rqFS2hFcNT8HrdkqAcA6fKTVUpcW+ZvKlebf4uPorD2WC21ldWsTVXx5z2eepk2bl5XVxLO5h3bIEuO4A9wXbHnRotxegT1muiSs2accJamk=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:9ffc742e-f57d-4dfc-982f-ed94c4d5a6ec,IP:0,UR
+	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-25
+X-CID-META: VersionHash:0ef645f,CLOUDID:5a22e94a-a527-43d8-8af6-bc8b32d9f5e9,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: f1a2f04e105711f08eb9c36241bbb6fb-20250403
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
+	(envelope-from <crystal.guo@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 378322673; Thu, 03 Apr 2025 14:50:35 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Thu, 3 Apr 2025 14:50:33 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Thu, 3 Apr 2025 14:50:33 +0800
+From: Crystal Guo <crystal.guo@mediatek.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Crystal Guo
+	<crystal.guo@mediatek.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v4 0/2] Add an interface to get current DDR data rate
+Date: Thu, 3 Apr 2025 14:48:46 +0800
+Message-ID: <20250403065030.22761-1-crystal.guo@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,151 +76,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: F5HyCAe8Rgl6mAQE-0KnVlkmIu4GVdCO
-X-Proofpoint-ORIG-GUID: F5HyCAe8Rgl6mAQE-0KnVlkmIu4GVdCO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-03_02,2025-04-02_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=386
- phishscore=0 bulkscore=0 suspectscore=0 malwarescore=0 mlxscore=0
- adultscore=0 spamscore=0 clxscore=1030 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.22.0-2503100000 definitions=main-2504030033
+Content-Type: text/plain
+X-MTK: N
 
-As rk3399 has its own registers definitions, update related structs to
-use them.
-There are no changes in behaviour as updated constants values are the
- for rk3288/rk3368/rk3399 chips.
+This series is based on linux-next, tag: next-20250402.
 
-Signed-off-by: Konstantin Shabanov <mail@etehtsea.me>
+Vcore DVFS feature need know the current DDR data rate.
+Add MediaTek DRAMC driver to provide an interface that can
+obtain current DDR data rate.
+
 ---
-Apologies for resend. The first email hadn't reached the mailing list for some reason.
+Changes in v4:
+- Rename "mediatek,dramc.yaml" to "mediatek,mt8196-dramc.yaml";
+- Refine Kconfig for MediaTek memory controller by removing the
+  redundant explanation;
+- Move the function 'read_reg_field()' to before mtk_dramc_probe();
+- Rename struct 'mtk_dramc_dev_t' to 'mtk_dramc';
+- Align the comments to kerneldoc;
+- Simplify the function 'mtk_dramc_get_data_rate' by removing the
+  redundant error handling process.
 
- drivers/gpu/drm/rockchip/rockchip_vop_reg.c | 94 ++++++++++-----------
- 1 file changed, 47 insertions(+), 47 deletions(-)
+---
+Changes in v3:
+- Move register offset, register mask and other SoC-dependent variables
+  to the platform data;
+- Correct the spelling error.
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-index 4e2099d86517..d1f788763318 100644
---- a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-@@ -906,21 +906,21 @@ static const struct vop_data rk3366_vop = {
+Link to v3:
+https://patchwork.kernel.org/patch/14029756
 
- static const struct vop_output rk3399_output = {
- 	.dp_dclk_pol = VOP_REG(RK3399_DSP_CTRL1, 0x1, 19),
--	.rgb_dclk_pol = VOP_REG(RK3368_DSP_CTRL1, 0x1, 19),
--	.hdmi_dclk_pol = VOP_REG(RK3368_DSP_CTRL1, 0x1, 23),
--	.edp_dclk_pol = VOP_REG(RK3368_DSP_CTRL1, 0x1, 27),
--	.mipi_dclk_pol = VOP_REG(RK3368_DSP_CTRL1, 0x1, 31),
-+	.rgb_dclk_pol = VOP_REG(RK3399_DSP_CTRL1, 0x1, 19),
-+	.hdmi_dclk_pol = VOP_REG(RK3399_DSP_CTRL1, 0x1, 23),
-+	.edp_dclk_pol = VOP_REG(RK3399_DSP_CTRL1, 0x1, 27),
-+	.mipi_dclk_pol = VOP_REG(RK3399_DSP_CTRL1, 0x1, 31),
- 	.dp_pin_pol = VOP_REG(RK3399_DSP_CTRL1, 0x7, 16),
--	.rgb_pin_pol = VOP_REG(RK3368_DSP_CTRL1, 0x7, 16),
--	.hdmi_pin_pol = VOP_REG(RK3368_DSP_CTRL1, 0x7, 20),
--	.edp_pin_pol = VOP_REG(RK3368_DSP_CTRL1, 0x7, 24),
--	.mipi_pin_pol = VOP_REG(RK3368_DSP_CTRL1, 0x7, 28),
-+	.rgb_pin_pol = VOP_REG(RK3399_DSP_CTRL1, 0x7, 16),
-+	.hdmi_pin_pol = VOP_REG(RK3399_DSP_CTRL1, 0x7, 20),
-+	.edp_pin_pol = VOP_REG(RK3399_DSP_CTRL1, 0x7, 24),
-+	.mipi_pin_pol = VOP_REG(RK3399_DSP_CTRL1, 0x7, 28),
- 	.dp_en = VOP_REG(RK3399_SYS_CTRL, 0x1, 11),
--	.rgb_en = VOP_REG(RK3288_SYS_CTRL, 0x1, 12),
--	.hdmi_en = VOP_REG(RK3288_SYS_CTRL, 0x1, 13),
--	.edp_en = VOP_REG(RK3288_SYS_CTRL, 0x1, 14),
--	.mipi_en = VOP_REG(RK3288_SYS_CTRL, 0x1, 15),
--	.mipi_dual_channel_en = VOP_REG(RK3288_SYS_CTRL, 0x1, 3),
-+	.rgb_en = VOP_REG(RK3399_SYS_CTRL, 0x1, 12),
-+	.hdmi_en = VOP_REG(RK3399_SYS_CTRL, 0x1, 13),
-+	.edp_en = VOP_REG(RK3399_SYS_CTRL, 0x1, 14),
-+	.mipi_en = VOP_REG(RK3399_SYS_CTRL, 0x1, 15),
-+	.mipi_dual_channel_en = VOP_REG(RK3399_SYS_CTRL, 0x1, 3),
- };
+---
+Changes in v2:
+- Remove pr_info and pr_err, use dev_err or dev_err_probe to print
+  error message;
+- Replace module_init by module_platform_driver;
+- Remove unnecessary global variables;
+- Change fmeter-verison to platform data;
+- Remove mtk-dramc.h;
+- Refine compatible to "mediatek,mt8196-dramc";
+- Refine CONFIG name to MEDIATEK_MC;
+- Fix yaml build errors, remove unnecessary properties on yaml file.
 
- static const struct vop_common rk3399_common = {
-@@ -975,23 +975,23 @@ static const struct vop_win_phy rk3399_win0_data = {
- 	.data_formats = formats_win_full_10,
- 	.nformats = ARRAY_SIZE(formats_win_full_10),
- 	.format_modifiers = format_modifiers_win_full_afbc,
--	.enable = VOP_REG(RK3288_WIN0_CTRL0, 0x1, 0),
--	.format = VOP_REG(RK3288_WIN0_CTRL0, 0x7, 1),
--	.fmt_10 = VOP_REG(RK3288_WIN0_CTRL0, 0x1, 4),
--	.rb_swap = VOP_REG(RK3288_WIN0_CTRL0, 0x1, 12),
--	.uv_swap = VOP_REG(RK3288_WIN0_CTRL0, 0x1, 15),
--	.x_mir_en = VOP_REG(RK3288_WIN0_CTRL0, 0x1, 21),
--	.y_mir_en = VOP_REG(RK3288_WIN0_CTRL0, 0x1, 22),
--	.act_info = VOP_REG(RK3288_WIN0_ACT_INFO, 0x1fff1fff, 0),
--	.dsp_info = VOP_REG(RK3288_WIN0_DSP_INFO, 0x0fff0fff, 0),
--	.dsp_st = VOP_REG(RK3288_WIN0_DSP_ST, 0x1fff1fff, 0),
--	.yrgb_mst = VOP_REG(RK3288_WIN0_YRGB_MST, 0xffffffff, 0),
--	.uv_mst = VOP_REG(RK3288_WIN0_CBR_MST, 0xffffffff, 0),
--	.yrgb_vir = VOP_REG(RK3288_WIN0_VIR, 0x3fff, 0),
--	.uv_vir = VOP_REG(RK3288_WIN0_VIR, 0x3fff, 16),
--	.src_alpha_ctl = VOP_REG(RK3288_WIN0_SRC_ALPHA_CTRL, 0xff, 0),
--	.dst_alpha_ctl = VOP_REG(RK3288_WIN0_DST_ALPHA_CTRL, 0xff, 0),
--	.channel = VOP_REG(RK3288_WIN0_CTRL2, 0xff, 0),
-+	.enable = VOP_REG(RK3399_WIN0_CTRL0, 0x1, 0),
-+	.format = VOP_REG(RK3399_WIN0_CTRL0, 0x7, 1),
-+	.fmt_10 = VOP_REG(RK3399_WIN0_CTRL0, 0x1, 4),
-+	.rb_swap = VOP_REG(RK3399_WIN0_CTRL0, 0x1, 12),
-+	.uv_swap = VOP_REG(RK3399_WIN0_CTRL0, 0x1, 15),
-+	.x_mir_en = VOP_REG(RK3399_WIN0_CTRL0, 0x1, 21),
-+	.y_mir_en = VOP_REG(RK3399_WIN0_CTRL0, 0x1, 22),
-+	.act_info = VOP_REG(RK3399_WIN0_ACT_INFO, 0x1fff1fff, 0),
-+	.dsp_info = VOP_REG(RK3399_WIN0_DSP_INFO, 0x0fff0fff, 0),
-+	.dsp_st = VOP_REG(RK3399_WIN0_DSP_ST, 0x1fff1fff, 0),
-+	.yrgb_mst = VOP_REG(RK3399_WIN0_YRGB_MST, 0xffffffff, 0),
-+	.uv_mst = VOP_REG(RK3399_WIN0_CBR_MST, 0xffffffff, 0),
-+	.yrgb_vir = VOP_REG(RK3399_WIN0_VIR, 0x3fff, 0),
-+	.uv_vir = VOP_REG(RK3399_WIN0_VIR, 0x3fff, 16),
-+	.src_alpha_ctl = VOP_REG(RK3399_WIN0_SRC_ALPHA_CTRL, 0xff, 0),
-+	.dst_alpha_ctl = VOP_REG(RK3399_WIN0_DST_ALPHA_CTRL, 0xff, 0),
-+	.channel = VOP_REG(RK3399_WIN0_CTRL2, 0xff, 0),
- };
+Link to v2:
+https://patchwork.kernel.org/patch/13964208
 
- static const struct vop_win_phy rk3399_win1_data = {
-@@ -999,23 +999,23 @@ static const struct vop_win_phy rk3399_win1_data = {
- 	.data_formats = formats_win_full_10,
- 	.nformats = ARRAY_SIZE(formats_win_full_10),
- 	.format_modifiers = format_modifiers_win_full,
--	.enable = VOP_REG(RK3288_WIN0_CTRL0, 0x1, 0),
--	.format = VOP_REG(RK3288_WIN0_CTRL0, 0x7, 1),
--	.fmt_10 = VOP_REG(RK3288_WIN0_CTRL0, 0x1, 4),
--	.rb_swap = VOP_REG(RK3288_WIN0_CTRL0, 0x1, 12),
--	.uv_swap = VOP_REG(RK3288_WIN0_CTRL0, 0x1, 15),
--	.x_mir_en = VOP_REG(RK3288_WIN0_CTRL0, 0x1, 21),
--	.y_mir_en = VOP_REG(RK3288_WIN0_CTRL0, 0x1, 22),
--	.act_info = VOP_REG(RK3288_WIN0_ACT_INFO, 0x1fff1fff, 0),
--	.dsp_info = VOP_REG(RK3288_WIN0_DSP_INFO, 0x0fff0fff, 0),
--	.dsp_st = VOP_REG(RK3288_WIN0_DSP_ST, 0x1fff1fff, 0),
--	.yrgb_mst = VOP_REG(RK3288_WIN0_YRGB_MST, 0xffffffff, 0),
--	.uv_mst = VOP_REG(RK3288_WIN0_CBR_MST, 0xffffffff, 0),
--	.yrgb_vir = VOP_REG(RK3288_WIN0_VIR, 0x3fff, 0),
--	.uv_vir = VOP_REG(RK3288_WIN0_VIR, 0x3fff, 16),
--	.src_alpha_ctl = VOP_REG(RK3288_WIN0_SRC_ALPHA_CTRL, 0xff, 0),
--	.dst_alpha_ctl = VOP_REG(RK3288_WIN0_DST_ALPHA_CTRL, 0xff, 0),
--	.channel = VOP_REG(RK3288_WIN0_CTRL2, 0xff, 0),
-+	.enable = VOP_REG(RK3399_WIN0_CTRL0, 0x1, 0),
-+	.format = VOP_REG(RK3399_WIN0_CTRL0, 0x7, 1),
-+	.fmt_10 = VOP_REG(RK3399_WIN0_CTRL0, 0x1, 4),
-+	.rb_swap = VOP_REG(RK3399_WIN0_CTRL0, 0x1, 12),
-+	.uv_swap = VOP_REG(RK3399_WIN0_CTRL0, 0x1, 15),
-+	.x_mir_en = VOP_REG(RK3399_WIN0_CTRL0, 0x1, 21),
-+	.y_mir_en = VOP_REG(RK3399_WIN0_CTRL0, 0x1, 22),
-+	.act_info = VOP_REG(RK3399_WIN0_ACT_INFO, 0x1fff1fff, 0),
-+	.dsp_info = VOP_REG(RK3399_WIN0_DSP_INFO, 0x0fff0fff, 0),
-+	.dsp_st = VOP_REG(RK3399_WIN0_DSP_ST, 0x1fff1fff, 0),
-+	.yrgb_mst = VOP_REG(RK3399_WIN0_YRGB_MST, 0xffffffff, 0),
-+	.uv_mst = VOP_REG(RK3399_WIN0_CBR_MST, 0xffffffff, 0),
-+	.yrgb_vir = VOP_REG(RK3399_WIN0_VIR, 0x3fff, 0),
-+	.uv_vir = VOP_REG(RK3399_WIN0_VIR, 0x3fff, 16),
-+	.src_alpha_ctl = VOP_REG(RK3399_WIN0_SRC_ALPHA_CTRL, 0xff, 0),
-+	.dst_alpha_ctl = VOP_REG(RK3399_WIN0_DST_ALPHA_CTRL, 0xff, 0),
-+	.channel = VOP_REG(RK3399_WIN0_CTRL2, 0xff, 0),
- };
+Crystal Guo (2):
+  dt-bindings: memory-controllers: Add MediaTek DRAM controller
+    interface
+  memory/mediatek: Add an interface to get current DDR data rate
 
- /*
+ .../mediatek,mt8196-dramc.yaml                |  44 ++++
+ drivers/memory/Kconfig                        |   1 +
+ drivers/memory/Makefile                       |   1 +
+ drivers/memory/mediatek/Kconfig               |  20 ++
+ drivers/memory/mediatek/Makefile              |   2 +
+ drivers/memory/mediatek/mtk-dramc.c           | 223 ++++++++++++++++++
+ 6 files changed, 291 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/mediatek,mt8196-dramc.yaml
+ create mode 100644 drivers/memory/mediatek/Kconfig
+ create mode 100644 drivers/memory/mediatek/Makefile
+ create mode 100644 drivers/memory/mediatek/mtk-dramc.c
 
-base-commit: 6b60c282330c46954be9ae1d33cd5c7e5acb315c
---
-2.48.1
+-- 
+2.18.0
+
 
