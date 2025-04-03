@@ -1,76 +1,192 @@
-Return-Path: <linux-kernel+bounces-586146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F39A79BC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:09:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79226A79BC3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 08:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68E471894900
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:08:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43BA91705DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 06:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC041A01B0;
-	Thu,  3 Apr 2025 06:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4F519F42C;
+	Thu,  3 Apr 2025 06:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="M0r3FzWF"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0039198E75;
-	Thu,  3 Apr 2025 06:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EwjBgjq4"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1457C746E;
+	Thu,  3 Apr 2025 06:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743660498; cv=none; b=mp9SOkFkj19lUJDulKGa16QmDVF3S2dHDsMfcoTzbLqKqE3BdutMFf0kwdXOGtwvMX6IA3Ze25rSiBZQcr967gVu2A9OhzfoIJZzFl/cLzT6FVjyFrnN0lo4J83jjSYIA67hgZkWmPyRJ0U+OFLDwEyjiBuMez9a3j4VNBRG3+M=
+	t=1743660459; cv=none; b=NeKSEXk4nci6GTNNePgWqTrKRQiQSsCkgVfr+MinS9ORVf/aDqgWaq+1Hkj8kiER0diHELBA3O6w1QVcJwezPFHxxfkGoS1Zi/a/z4oppgwU7vOgdB7VqZaw7ykwJZCLGmFPMnFxYApMRmg21GS74KKxiBXe2UFWCBXnJU+XPMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743660498; c=relaxed/simple;
-	bh=UaqEPq4Aw3Lr8n55jWdD3t2K1Z0dsA4uvBw6+UzEU9g=;
-	h=Date:From:To:Subject:Content-Type:MIME-Version:Message-ID; b=Bv2NeMrleTIP9IxKFehbaSUR618HUx/leGRL6pOH2HquHefSwj0L6D5DvBHO8dzyV77QBXdkAPUp6SokkX1k3QwnorMm8viLBZH5WrM9AVP5i9NPLOpqkJqmAlRW/Ra+gMa0fIdfa8Poqlq733+G+fr5XABcIKptNVI7xzC5RVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=M0r3FzWF reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=gbdsYUJbiI9vEsybs1dgYv3forlB8g3++Js4ds4lRk4=; b=M
-	0r3FzWFUQo4rgrymweg1UecwAmExT6AWt6zzTZQetxRdWjh5+MhAYFVpliN/GDFE
-	sXVe+L8kkD/Ny8MAPt1fRhh1npCZnd9xMZN4p5vvuceq78z1eL1aPBv2v9Wd7t38
-	RryNhDMxYvRoDOWTle3d/I70tRnY4sgRB8Z1AtvHk4=
-Received: from slark_xiao$163.com (
- [2409:895b:3801:134c:d2c5:2a5d:def4:f1d1] ) by ajax-webmail-wmsvr-40-105
- (Coremail) ; Thu, 3 Apr 2025 14:06:52 +0800 (CST)
-Date: Thu, 3 Apr 2025 14:06:52 +0800 (CST)
-From: "Slark Xiao" <slark_xiao@163.com>
-To: "Sergey Ryazanov" <ryazanov.s.a@gmail.com>,
-	"Muhammad Nuzaihan" <zaihan@unrealasia.net>,
-	"Loic Poulain" <loic.poulain@linaro.org>,
-	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"Qiang Yu" <quic_qianyu@quicinc.com>,
-	"johan@kernel.org" <johan@kernel.org>,
-	"mhi@lists.linux.dev" <mhi@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: GNSS support for Qualcomm PCIe modem device
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-X-NTES-SC: AL_Qu2fAfqdv0wq5CWYYOkfmkkXg+c4XsW5vfwu1IVRPJp+jC/p9BgjT1lTPlXpzfCDIjyinQiHawJ14OtEf7tpfrg7zP6z4J9E+S77c4+YI9ZByA==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1743660459; c=relaxed/simple;
+	bh=XZfW8Qfq7tJ+JELoDYv5ETSuD7d87c5jDCiqNfZKaQc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aoLb/pUcPxXBy1pFIwFZ0z1U7d8DIUEZVpZR9uHQh821V2rH+L8mTOnTU9AvQliyDLeLHB9LPS15fW3Hd4g4BswdmRcsxKYCK5c0+XOE015AQV7Rbbi98a57hyetY9AfSeDWoXrrlolDh/6ZDDhFyiWV1EsMdbbVxnTe1FR3vro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EwjBgjq4; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac25d2b2354so85997566b.1;
+        Wed, 02 Apr 2025 23:07:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743660456; x=1744265256; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0y1chSLTgq4by+/iKzl7cqrc4OIVMXRZ18Ndod/oVA4=;
+        b=EwjBgjq4WnT7bRLdrAq34LMP6NOa+mM9xuFpW1UUtwZq+cptRrc7fTLcKQwLcMNmK1
+         pr7L8OSzIfSgNn1yYkeS23CGsYgiWxtiD9AFhr6GWm69/7k7IvjMhLkGWu29S0ouDLJb
+         //RfBTTIgoTO8YjyZnqZQaaE/ChKJzlUHNmVK3HsLN87CYZuLN0ib1xgDcmI4tnh/egg
+         NfJNK0m6dznUNSeLUSBlDMfjG5gO7zQx3njt6jcziKP3oGPW9IdewEEc6rhAaEgWGa/D
+         XHCX416Tfxz6tHyIN27zXbgEmAJh+h/MvJM38sdEItU1IAw7aOwaofeDSCGLT792rpwp
+         DDGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743660456; x=1744265256;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0y1chSLTgq4by+/iKzl7cqrc4OIVMXRZ18Ndod/oVA4=;
+        b=NeR8CL6IIMeiYDA+xMacLSOBbk9upweqlZ8C73abQHzm7OotErwk+A0RnNDKPPYOJn
+         ouD61zBueBDKyMGx5sRrvdW+FQum95laklfsgmfXmCXq/X71MKVqVNfOMMw5I8L44AtL
+         Oqr3YJh+2KM1qXsiBP9GA38b4AVpaxo2cKypgirxQ8Yve8+3eXD/7o9F3LtCW6XeKrX9
+         FlmuwOQVxOe6ZjO+wqY/V1VDxYDCc91tenspTsHBKldbeKwoRNl9oJQj6VXbbdztcpLs
+         DD3uWvrI3E/WeBfodzlqh0wlJzxikhxLOUS871K9HmZeh2EQnso0VgTqKOqAy9Yy/6sv
+         SNRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUL1Nutt0G8G2ROoNb3fhW1b3Mo27rBxzbT/A3fJ5+UfGom6Q83N5SoKU8GC5eH6wygZf2KKUwTGyjdnUM=@vger.kernel.org, AJvYcCXWbQUcDDL2jONNlQKkoP8uWNHW6qJfaT2YaYPVDhiWKcfxeIuApnHz0D5ML+gBjoq5exQH0KQW6XapiBg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6Viq9DcppeoknBShucuBfonP3FTrnI0sMYaRRCUQjM6hEUsWN
+	e6jKgYH2ZkLySuxzaV2C099n+NmS3yLzamK0zaCIplh5LZEIfIGVewm8I5UrIaUSnHpop3+ge1j
+	2ro+Bgs2ED0HpAGwQE693muMDRRM=
+X-Gm-Gg: ASbGncss5OxpNVzHbWOHjSOUyBasYJyDDBKTIUeqJQ4BldT/GAguvOoMAwrqvpMEDFZ
+	f1OFxlT+YSaTqB20MeJDCFJrGlAKRBQpHqm6nIRnxkfZrPBs9jPXZUpAGGA7MPTrbRmnrvthtsv
+	DOM9UZqeRR4LmNSTRTgaAc3ghvr8u1cDAyki8=
+X-Google-Smtp-Source: AGHT+IEf6my0Oevy7HxSEvSBLIVZB6UUtRLQAMtnvT9ULs0ZmHL4HufuJOz3Xwan6rPv7/6qdLH2tQeyB4bomKzEbiI=
+X-Received: by 2002:a17:906:7955:b0:ac1:e00c:a566 with SMTP id
+ a640c23a62f3a-ac738bbe6e9mr1868178566b.45.1743660456051; Wed, 02 Apr 2025
+ 23:07:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <2703842b.58be.195fa426e5e.Coremail.slark_xiao@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:aSgvCgD3uZB9Je5nBZiNAA--.11464W
-X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbibhAkZGfuIWgcRgANsp
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+References: <20250310-dmem-cgroups-v1-0-2984c1bc9312@kernel.org>
+ <f5fdc666-dd72-4a4f-9270-b539a3179382@amd.com> <20250310-eccentric-wonderful-puffin-ddbb26@houat>
+ <CAPM=9tzkLXOz=-3eujUbbjMHunR+_5JZ4oQaqNmbrWWF9WZJ0w@mail.gmail.com> <e08f10da-b0cd-444b-8e0b-11009b05b161@amd.com>
+In-Reply-To: <e08f10da-b0cd-444b-8e0b-11009b05b161@amd.com>
+From: Dave Airlie <airlied@gmail.com>
+Date: Thu, 3 Apr 2025 16:07:24 +1000
+X-Gm-Features: AQ5f1JqIs6baj7zESBDpkv7pR6DzQLKEPOII2QRNAbnnHufJyGkPQs5rKDbOWPQ
+Message-ID: <CAPM=9twgFt43OKqUY0TNopTmibnR_d891xmV=wFM91n604NUCw@mail.gmail.com>
+Subject: Re: [PATCH RFC 00/12] dma: Enable dmem cgroup tracking
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: Maxime Ripard <mripard@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Simona Vetter <simona@ffwll.ch>, Tomasz Figa <tfiga@chromium.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Ben Woodard <woodard@redhat.com>, 
+	Hans Verkuil <hverkuil@xs4all.nl>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-CkhpIFNlcmdleSwgTXVoYW1tYWQsClRoaXMgaXMgU2xhcmsuIFdlIGhhdmUgYSBkaXNjdXNzaW9u
-IGFib3V0IHRoZSBmZWF0dXJlIG9mIEdOU1MvTk1FQSBvdmVyIFFDIFBDSWUgbW9kZW3CoApkZXZp
-Y2Ugc2luY2UgMjAyNC8xMi5NYXkgSSBrbm93IGlmIHdlIGhhdmUgYW55IHByb2dyZXNzIG9uIHRo
-aXMgZmVhdHVyZT8gCgpJdCdzIHJlYWxseSBhIGNvbW1vbiByZXF1aXJlbWVudCBmb3IgbW9kZW0g
-ZGV2aWNlIHNpbmNlIHdlIGhhdmUgcmVjZWl2ZWQgc29tZSBjb21wbGFpbnQKZnJvbSBvdXIgY3Vz
-dG9tZXIuIFBsZWFzZSBoZWxwIHByb3ZpZGUgeW91ciBhZHZpY2UuCgoKVGhhbmsgeW91IGluIGFk
-dmFuY2UhCgo=
+On Tue, 1 Apr 2025 at 21:03, Christian K=C3=B6nig <christian.koenig@amd.com=
+> wrote:
+>
+> Am 31.03.25 um 22:43 schrieb Dave Airlie:
+> > On Tue, 11 Mar 2025 at 00:26, Maxime Ripard <mripard@kernel.org> wrote:
+> >> Hi,
+> >>
+> >> On Mon, Mar 10, 2025 at 03:16:53PM +0100, Christian K=C3=B6nig wrote:
+> >>> [Adding Ben since we are currently in the middle of a discussion
+> >>> regarding exactly that problem]
+> >>>
+> >>> Just for my understanding before I deep dive into the code: This uses
+> >>> a separate dmem cgroup and does not account against memcg, don't it?
+> >> Yes. The main rationale being that it doesn't always make sense to
+> >> register against memcg: a lot of devices are going to allocate from
+> >> dedicated chunks of memory that are either carved out from the main
+> >> memory allocator, or not under Linux supervision at all.
+> >>
+> >> And if there's no way to make it consistent across drivers, it's not t=
+he
+> >> right tool.
+> >>
+> > While I agree on that, if a user can cause a device driver to allocate
+> > memory that is also memory that memcg accounts, then we have to
+> > interface with memcg to account that memory.
+>
+> This assumes that memcg should be in control of device driver allocated m=
+emory. Which in some cases is intentionally not done.
+>
+> E.g. a server application which allocates buffers on behalves of clients =
+gets a nice deny of service problem if we suddenly start to account those b=
+uffers.
+
+Yes we definitely need the ability to transfer an allocation between
+cgroups for this case.
+
+>
+> That was one of the reasons why my OOM killer improvement patches never l=
+anded (e.g. you could trivially kill X/Wayland or systemd with that).
+>
+> > The pathological case would be a single application wanting to use 90%
+> > of RAM for device allocations, freeing it all, then using 90% of RAM
+> > for normal usage. How to create a policy that would allow that with
+> > dmem and memcg is difficult, since if you say you can do 90% on both
+> > then the user can easily OOM the system.
+>
+> Yeah, completely agree.
+>
+> That's why the GTT size limit we already have per device and the global 5=
+0% TTM limit doesn't work as expected. People also didn't liked those limit=
+s and because of that we even have flags to circumvent them, see AMDGPU_GEM=
+_CREATE_PREEMPTIBLE and  TTM_TT_FLAG_EXTERNAL.
+>
+> Another problem is when and to which process we account things when evict=
+ion happens? For example process A wants to use VRAM that process B current=
+ly occupies. In this case we would give both processes a mix of VRAM and sy=
+stem memory, but how do we account that?
+>
+> If we account to process B then it can be that process A fails because of=
+ process Bs memcg limit. This creates a situation which is absolutely not t=
+raceable for a system administrator.
+>
+> But process A never asked for system memory in the first place, so we can=
+'t account the memory to it either or otherwise we make the process respons=
+ible for things it didn't do.
+>
+> There are good argument for all solutions and there are a couple of block=
+s which rule out one solution or another for a certain use case. To summari=
+ze I think the whole situation is a complete mess.
+>
+> Maybe there is not this one solution and we need to make it somehow confi=
+gurable?
+
+My feeling is that we can't solve the VRAM eviction problem super
+effectively, but it's also probably not going to be a major common
+case, I don't think we should double account memcg/dmem just in case
+we have to evict all of a users dmem at some point, maybe if there was
+some kind of soft memcg limit we could add as an accounting but not
+enforced overhead it might be useful to track evictions, but yes we
+can't have A allocating memory causing B to fall over because we evict
+memory into it's memcg space and it fails to allocate the next time it
+tries, or having A fail in that case.
+
+For the UMA GPU case where there is no device memory or eviction
+problem, perhaps a configurable option to just say account memory in
+memcg for all allocations done by this process, and state yes you can
+work around it with allocation servers or whatever but the behaviour
+for well behaved things is at least somewhat defined.
+
+Dave.
 
