@@ -1,226 +1,178 @@
-Return-Path: <linux-kernel+bounces-587772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3084A7B031
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:11:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD45FA7B03F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:12:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EFB31673F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:05:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0093A3B04BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1131C25E444;
-	Thu,  3 Apr 2025 20:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A1625E809;
+	Thu,  3 Apr 2025 20:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gTyCeh0P"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=valla.it header.i=@valla.it header.b="tv9UTXcR"
+Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF84255222
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 20:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743711049; cv=none; b=X+5FGjXSMuk72qdLkSQm0OhjchrcUSBaVSmF8T7R6PtDGJP/iTryMutQ+YSTAO5k6/tx6ODDOVGgAfekFDYQaMqPuzLnPZSXJH+HSOPSBjZc6kvvpSNVcuDTiezjFwW64BKky6HHEgkuhIXInQUtUNvVarMSLIjKll5KQPU0ILk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743711049; c=relaxed/simple;
-	bh=SPOVjcAHbQRY7+bX10sPikw86DsNl3RI9h6UGXg4HhY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=P4qNoRTvlVMdznXMqfuD3pJwmKhaHwktReivFDME/bqbgcN/EjKFfQ/bGhZwg3xqr6sSOiPykus7wZmhEVRfr7styPMtG1imZs3xQm5YMlhCT+BHwHqkEvGW2ZEAXowgpurHh+Qkx8CDmYlvSCURJTj7mIuYZmhC/aL+03e+UVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gTyCeh0P; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743711046;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TnbZk/hwm7isyZAJpssZA00cxnMk4ANrtEE+YOpk+K8=;
-	b=gTyCeh0PB4ygrpF3sFMmK2an/GIytwzFAezJL0hO+PMciYWDN+TAv1hEmD1Sx/msofFgBk
-	QOTK6ZiyNt8ARCe2f89XPE4aoUYhvQIc5uivzGvcsSxYNoTBHw5WLsqgA1O6FJdTT4Hq1e
-	Ao0L/+ix6lc+IrREjnvihJ8cHTwuxL0=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-412-gT-Wux3NMduEyShgEgKhpQ-1; Thu, 03 Apr 2025 16:10:44 -0400
-X-MC-Unique: gT-Wux3NMduEyShgEgKhpQ-1
-X-Mimecast-MFC-AGG-ID: gT-Wux3NMduEyShgEgKhpQ_1743711044
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6eada773c0eso38015396d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 13:10:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743711044; x=1744315844;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TnbZk/hwm7isyZAJpssZA00cxnMk4ANrtEE+YOpk+K8=;
-        b=r25Ua9jNnr+7M9NheCBcDC99CjgfD0vo3rYIHOKAaIouFWVcX5E8SpstudduLO/51L
-         dwcc3tyUSY61hRHjcQ+7zfaNqD/e9Dxr/+zCitr8AI5Pp1PaTQIlQrj0s//wv4NYz3Vw
-         e+lqmevJAkxis1bnByWMCzjXnib1zShDDAhTBTC4QgggKfhybVDefmQaGipPonLukcNx
-         HKmxXIaji4sxTpnvrc3K40SUM+Ckvej6KnaAqDz/gYYKCK8QjksqEBQp+pjULWGf5dA4
-         mbTXzch6iU2dqOubCiqAD5vuJybLr64wci7oPegm915rwBLRX70pihLyc1jL0659tqz0
-         tGlA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6FcKPQE/0FdTi5jIR0HvTI/wobPWpxvnrIvgqH6T5+UxDTep/c3sSl/OquJoilQQtmja7CEwyGJ5rePg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYqcBewqOEA28GTl9e2UG3kOYI92LTgnOgxdOGkZ+6uljzDUZP
-	Pvf691xWi95xOa2fSYYofqes/PVtLq7C4hG43e9FSYIVc/dLw9kecOSKR+HpFhEjG0ym07ubVO5
-	Df2MS4ut9OIwCWkkYOTDjUXYQ4Kyw+VyhzBLNrRa4of3iI3tN36bDPBKaTr0RvV0j34XP4g==
-X-Gm-Gg: ASbGncu9gi6B5jwQc9P4oIvaloNO9jKHNfnv2HrS5LRONbu4Hz7pPG0130jKdj9Bl4m
-	XKkPmucauEcRLLrJSQkWhjPfDtpkFsHibb9/XAYjWRETBt4bQUlEij5kPj1Z1BRZl3BXDc/CnbL
-	GurOhSBwLnXM/pD0dtF0EpMQQ8b4YnqRlbIGftNVQSgsZp7iUYD5clHVho+huf7Rg+M4to9Z8BB
-	+kMhmuGK4+M8FTNNbG7/fjd06/epzX+DLiJZajcgrnZAt/m2GhlCiCPm15N0mD234BraR5Vq+kF
-	0R6sdbeTB1kRg+4=
-X-Received: by 2002:ad4:5d6e:0:b0:6e8:9843:ec99 with SMTP id 6a1803df08f44-6f01e7996demr6927126d6.41.1743711044216;
-        Thu, 03 Apr 2025 13:10:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGtaBwUHaPxcz/8ny8zyVnFtQigAZv8hfc7CoSew6QwclpaejB/MMnyRGVUtuqyEM6uqdb/g==
-X-Received: by 2002:ad4:5d6e:0:b0:6e8:9843:ec99 with SMTP id 6a1803df08f44-6f01e7996demr6926876d6.41.1743711043893;
-        Thu, 03 Apr 2025 13:10:43 -0700 (PDT)
-Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ef0f14e93fsm11280446d6.110.2025.04.03.13.10.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 13:10:43 -0700 (PDT)
-Message-ID: <11a2ece0061308f7e340529c4c42a9d81bab0045.camel@redhat.com>
-Subject: Re: [RFC PATCH 22/24] KVM: nSVM: Handle INVLPGA interception
- correctly
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>, Sean Christopherson
- <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Jim Mattson <jmattson@google.com>, 
- Vitaly Kuznetsov <vkuznets@redhat.com>, Rik van Riel <riel@surriel.com>,
- Tom Lendacky <thomas.lendacky@amd.com>,  x86@kernel.org,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 03 Apr 2025 16:10:42 -0400
-In-Reply-To: <20250326194423.3717668-3-yosry.ahmed@linux.dev>
-References: <20250326193619.3714986-1-yosry.ahmed@linux.dev>
-	 <20250326194423.3717668-1-yosry.ahmed@linux.dev>
-	 <20250326194423.3717668-3-yosry.ahmed@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E5F25D54A;
+	Thu,  3 Apr 2025 20:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743711112; cv=pass; b=BaNh2ojYC03RGyI0pyn1Mc3TYJsb3MgDR+uns+WKN85twOxQfZENW6aUceWWzzRmMlNeOB/xhoW8+UI60ySiCRmgsOlbU0DTiUBHK2MIC8dCH0Xif+LAe1JEW+Lc34LrbR9p5bHnXxWExoY8TxO10tITB5tUIkQNZw/NbkBvWNo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743711112; c=relaxed/simple;
+	bh=jQoz+tQZkLPybdKrkSzG3w6yMYfT7OB1XZQDVSSKoIc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MkWp2PhVyQez2uV/w84y9caaD5/CiAQEd/C+ZB+hJtdTmZ28AaFEo8Df0ZZxCjQlSpmlPOb4PjfWb7zLHHHIUuqBiWf9LD5/PFa3sqFvvgZmA0Qwf9xLntKgUxabHW8XJRlNj7bxNb2SJuZbHbnLYmU7VbwFK/pdDNiU1R37URk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=tv9UTXcR; arc=pass smtp.client-ip=185.56.87.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=instance-europe-west4-lzvc.prod.antispam.mailspamprotection.com; s=arckey; t=1743711109;
+	 b=Ojrwbx+yesMwQUEr3W2IYWDjrizDXaU3WGivJeNLAxZqxa9/iFFtHqDPjVavdwIoRs7DpPPmne
+	  EgPCTwXIAPa9/8HvdJykwLNylzPkqik8Mjm1GIWMlkSIlQ5PTtwoygJGHn9cESd1ouTJm/b+LP
+	  dl0GUITaCG1etjMzExRl6EUPARrwZ0YRWKpS7Y6wwKgQsUbEUK1suWfrCBwUHXogB4kZPUSqNe
+	  HKl2cNQpdWHgXEDms0yOuNrsRwgHtpnkMxW86++TSm+kHZxA8GKLwS23Q8psM04s6O6BWlpvbd
+	  m6Es2/TXqGAdrcvyDdIBEdLp0f43j3MHSp/OR7izx0YgKA==;
+ARC-Authentication-Results: i=1; instance-europe-west4-lzvc.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=instance-europe-west4-lzvc.prod.antispam.mailspamprotection.com; s=arckey; t=1743711109;
+	bh=jQoz+tQZkLPybdKrkSzG3w6yMYfT7OB1XZQDVSSKoIc=;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	  Message-ID:Date:Subject:Cc:To:From:DKIM-Signature;
+	b=Fo6iNg8iC8nU3VSNgYFxqx7lDq5nl411oGOdubWPmrdi8FWfzdYmuhoV/sJM0IsbOda6U+eGuB
+	  5cOjK7d1R8D8jvNWmKqVMx6SSGtnkipxWY+6jowClPgJmTSB9Q7VzoEVm+qJ8OqDhw9aEUBYiy
+	  KCCua/2VOvJQrcRklx9GNm5K6s33h/vf5FWw8WYIuZhsAcDc1jt4TGa3UUM3JwUPxn8WVz2mG0
+	  koMUwPB45DjsfRF0E7+VVDOG61ZRVZ0F3K7m3MSQNHOMwuoROU+Vqrm6bv4Or0zK/X27GCgIiY
+	  vxm8z69mvCcuayTu6hUYFpiSflf7na3ih4SlcVvWo0ip+w==;
+Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
+	by instance-europe-west4-lzvc.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1u0Qug-000000058mt-04P3;
+	Thu, 03 Apr 2025 20:11:48 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
+	s=default; h=Date:Subject:Cc:To:From:list-help:list-unsubscribe:
+	list-subscribe:list-post:list-owner:list-archive;
+	bh=YP+cQPeZQHOdjJeiOSr8kkC4ZJizjCvN4YH/EUF7J6g=; b=tv9UTXcRSsWeJ879+jW6SBSLIt
+	v9YU/IYKUdyMyoBfH0Efy+WW+Fww2AVcW025Ofrc3s3NV+EloFkfq+kWP2jw3LWo8QBBbaox3Ycvb
+	lOs6JCCccQEahfATxNbAR8ZqE4vf4MqL99q4I8tkau0V7fSNVJXHupYimkco7xeVtfac=;
+Received: from [95.233.219.167] (port=60871 helo=fedora.fritz.box)
+	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1u0QuW-00000000Jio-1AZU;
+	Thu, 03 Apr 2025 20:11:36 +0000
+From: Francesco Valla <francesco@valla.it>
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-kernel@vger.kernel.org, linux-embedded@vger.kernel.org,
+ Steven Rostedt <rostedt@goodmis.org>, Tim Bird <Tim.Bird@sony.com>
+Subject:
+ Re: [PATCH] init/main.c: log initcall level when initcall_debug is used
+Date: Thu, 03 Apr 2025 22:11:35 +0200
+Message-ID: <3690359.dWV9SEqChM@fedora.fritz.box>
+In-Reply-To:
+ <CAMuHMdXSLhypYULqfCm55MQxZCwLzxBBc7mnr6OBcPaHFwh2Lw@mail.gmail.com>
+References:
+ <20250316205014.2830071-2-francesco@valla.it>
+ <20250402195544.4897a774456eba75915cded7@linux-foundation.org>
+ <CAMuHMdXSLhypYULqfCm55MQxZCwLzxBBc7mnr6OBcPaHFwh2Lw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - esm19.siteground.biz
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - valla.it
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-SGantispam-id: 4eacd65d3cfd868b8d0e1a1dad7544d6
+AntiSpam-DLS: false
+AntiSpam-DLSP: 
+AntiSpam-DLSRS: 
+AntiSpam-TS: 1.0
+Authentication-Results: instance-europe-west4-lzvc.prod.antispam.mailspamprotection.com;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
 
-On Wed, 2025-03-26 at 19:44 +0000, Yosry Ahmed wrote:
-> Currently, INVPLGA interception handles it like INVLPG, which flushes
-> L1's TLB translations for the address. It was implemented in this way
-> because L1 and L2 shared an ASID. Now, L1 and L2 have separate ASIDs. It
-> is still harmless to flush L1's translations, but it's only correct
-> because all translations are flushed on nested transitions anyway.
+On Thursday, 3 April 2025 at 10:27:14 Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Hi Andrew,
 > 
-> In preparation for stopping unconditional flushes on nested transitions,
-> handle INVPLGA interception properly. If L1 specified zero as the ASID,
-> this is equivalent to INVLPG, so handle it as such. Otherwise, use
-> INVPLGA to flush the translations of the appropriate ASID tracked by
-> KVM, if any. Sync the shadow MMU as well, as L1 invalidated L2's
-> mappings.
+> On Thu, 3 Apr 2025 at 04:56, Andrew Morton <akpm@linux-foundation.org> wrote:
+> > On Sun, 16 Mar 2025 21:50:15 +0100 Francesco Valla <francesco@valla.it> wrote:
+> > > When initcall_debug is specified on the command line, the start and
+> > > return point for each initcall is printed. However, no information on
+> > > the initcall level is reported.
+> > >
+> > > Add to the initcall_debug infrastructure an additional print that
+> > > informs when a new initcall level is entered. This is particularly
+> > > useful when debugging dependency chains and/or working on boot time
+> > > reduction.
+> > >
+> > > ...
+> > >
+> > > --- a/init/main.c
+> > > +++ b/init/main.c
+> > > @@ -1214,6 +1214,12 @@ trace_initcall_finish_cb(void *data, initcall_t fn, int ret)
+> > >                fn, ret, (unsigned long long)ktime_us_delta(rettime, *calltime));
+> > >  }
+> > >
+> > > +static __init_or_module void
+> > > +trace_initcall_level_cb(void *data, const char *level)
+> > > +{
+> > > +     printk(KERN_DEBUG "entering initcall level: %s\n", level);
+> > > +}
+> >
+> > Please review and test this fixlet:
+> >
+> > --- a/init/main.c~init-mainc-log-initcall-level-when-initcall_debug-is-used-fix
+> > +++ a/init/main.c
+> > @@ -1217,7 +1217,7 @@ trace_initcall_finish_cb(void *data, ini
+> >  static __init_or_module void
+> >  trace_initcall_level_cb(void *data, const char *level)
+> >  {
+> > -       printk(KERN_DEBUG "entering initcall level: %s\n", level);
+> > +       pr_debug("entering initcall level: %s\n", level);
+> >  }
+> >
+> >  static ktime_t initcall_calltime;
 > 
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> ---
->  arch/x86/include/asm/kvm_host.h |  2 ++
->  arch/x86/kvm/mmu/mmu.c          |  5 +++--
->  arch/x86/kvm/svm/svm.c          | 36 +++++++++++++++++++++++++++++++--
->  3 files changed, 39 insertions(+), 4 deletions(-)
+> I think the "printk(KERN_DEBUG ...)" construct is intentional.
+> The message should be logged when "initcall_debug" is passed on
+> the kernel command line, while pr_debug() is a no-op unless DEBUG is
+> defined inside the source file.
 > 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index d881e7d276b12..a158d324168a0 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -2237,6 +2237,8 @@ int kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 error_code,
->  		       void *insn, int insn_len);
->  void kvm_mmu_print_sptes(struct kvm_vcpu *vcpu, gpa_t gpa, const char *msg);
->  void kvm_mmu_invlpg(struct kvm_vcpu *vcpu, gva_t gva);
-> +void __kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
-> +			       u64 addr, unsigned long roots, bool gva_flush);
->  void kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
->  			     u64 addr, unsigned long roots);
->  void kvm_mmu_invpcid_gva(struct kvm_vcpu *vcpu, gva_t gva, unsigned long pcid);
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index e2b1994f12753..d3baa12df84e7 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -6355,8 +6355,8 @@ static void kvm_mmu_invalidate_addr_in_root(struct kvm_vcpu *vcpu,
->  	write_unlock(&vcpu->kvm->mmu_lock);
->  }
->  
-> -static void __kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
-> -				      u64 addr, unsigned long roots, bool gva_flush)
-> +void __kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
-> +			       u64 addr, unsigned long roots, bool gva_flush)
->  {
->  	int i;
->  
-> @@ -6382,6 +6382,7 @@ static void __kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu
->  			kvm_mmu_invalidate_addr_in_root(vcpu, mmu, addr, mmu->prev_roots[i].hpa);
->  	}
->  }
-> +EXPORT_SYMBOL_GPL(__kvm_mmu_invalidate_addr);
->  
->  void kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
->  			     u64 addr, unsigned long roots)
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index 3649707c61d3e..4b95fd6b501e6 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -2505,6 +2505,7 @@ static int clgi_interception(struct kvm_vcpu *vcpu)
->  
->  static int invlpga_interception(struct kvm_vcpu *vcpu)
->  {
-> +	struct vcpu_svm *svm = to_svm(vcpu);
->  	gva_t gva = kvm_rax_read(vcpu);
->  	u32 asid = kvm_rcx_read(vcpu);
->  
-> @@ -2514,8 +2515,39 @@ static int invlpga_interception(struct kvm_vcpu *vcpu)
->  
->  	trace_kvm_invlpga(to_svm(vcpu)->vmcb->save.rip, asid, gva);
->  
-> -	/* Let's treat INVLPGA the same as INVLPG (can be optimized!) */
-> -	kvm_mmu_invlpg(vcpu, gva);
-> +	/*
-> +	 * APM is silent about using INVLPGA to flush the host ASID (i.e. 0).
-> +	 * Do the logical thing and handle it like INVLPG.
-> +	 */
-> +	if (asid == 0) {
-> +		kvm_mmu_invlpg(vcpu, gva);
-> +		return kvm_skip_emulated_instruction(vcpu);
-> +	}
-> +
-> +	/*
-> +	 * Check if L1 specified the L2 ASID we are currently tracking. If it
-> +	 * isn't, do nothing as we have to handle the TLB flush when switching
-> +	 * to the new ASID anyway.
-> +	 */
-> +	if (asid == svm->nested.last_asid)
-> +		invlpga(gva, svm_nested_asid(vcpu->kvm));
-> +
-> +	/*
-> +	 * If NPT is disabled, sync the shadow page tables as L1 is invalidating
-> +	 * mappings for L2. Sync all roots as ASIDs are not tracked in the MMU
-> +	 * role.
-> +	 *
-> +	 * As we are not flushing the current context, skip the gva flush from
-> +	 * __kvm_mmu_invalidate_addr(), it would flush the wrong ASID anyway.
-> +	 * The correct TLB flush was done above (if needed).
-> +	 *
-> +	 * This always operates on root_mmu because L1 and L2 share an MMU when
-> +	 * NPT is disabled. This can be optimized by invalidating guest roots
-> +	 * only.
-> +	 */
-> +	if (!npt_enabled)
-> +		__kvm_mmu_invalidate_addr(vcpu, &vcpu->arch.root_mmu, gva,
-> +					  KVM_MMU_ROOTS_ALL, false);
->  
->  	return kvm_skip_emulated_instruction(vcpu);
->  }
+> See also the two existing users in init/main.c near
+> https://elixir.bootlin.com/linux/v6.13.7/source/init/main.c#L1207.
+> 
 
-Looks good.
+Yes, printk(KERN_DEBUG ...) here is intentional, or it would be removed,
+as Geert is correctly saying.
 
-Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+We have another occurrence of this for the "probe" messages also related
+to initcall_debug, with a nice explanatory comment:
 
-Best regards,
-	Maxim Levitsky
+https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/base/dd.c#L741
+
+
+Thank you!
+
+Francesco
 
 
 
