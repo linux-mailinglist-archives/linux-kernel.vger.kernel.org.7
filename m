@@ -1,213 +1,174 @@
-Return-Path: <linux-kernel+bounces-586867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24AC8A7A4BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:12:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32DBAA7A4DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BA097A32D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:10:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CF3F179475
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3962500C0;
-	Thu,  3 Apr 2025 14:11:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240EC24E4A0;
+	Thu,  3 Apr 2025 14:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WvCsux6R"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zevQqobj";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BTAQsYGh";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zevQqobj";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BTAQsYGh"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9474C24EF7E
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 14:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BD61EBA0D
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 14:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743689462; cv=none; b=RGNoOWLunAP2bnBuXNcTxZ+OIPY2szE8I9M/2zYcTXsOxrm4wT3Fy7Jp9pRDn8pSs8lVqHv0ufl7I0HnzYhkjh/gmbkfsFAqhOns3kLCysSjA9/yCVklH7ppNc7hs5af//MlBa0hsx3txjNIfa4fZiF8sCmNWT+tkmX/t2U3RcU=
+	t=1743689477; cv=none; b=sdNzBG3iu105V5uEH6BlbtIMPJY6759du5S3+fZhls1WqTd8Yav/HIraFwImvEVV7KqBaxtpzlj4X5EuHBxJsf6BQw7AJcJwUNNRW4cO7gLqgnfh68rSBX1Y5sTwH2q6xi7Mkem3sviZkjFyt5v/GKDX2mQO6xMaVnZWblkYGqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743689462; c=relaxed/simple;
-	bh=1/FHrGbArHQB4bn9C3gSAyqpKuikoeX7ogwqjyXM3LA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MGnr6qge1TNWcPJLutbBTmZ6aXr4aA0FxGoXsnANaF84aHn6agy3ZoEE48py7e+1T442zWtnTo6/XjBqq9QDZp9lhkC/lz2RRU413kEjzdRRL7yY1yYtguF3IIBq5RhbwHQ5w/jKYiXp18Hy9x7QWwxpd0c+3PsUwxRGt7adY2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WvCsux6R; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5333k0Qh006951;
-	Thu, 3 Apr 2025 14:10:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=z3Ll7BaePbzKlsIQORJqYY/wT4JT
-	vpd+uyOY2GQT5No=; b=WvCsux6RWqZNE8pUXQa6Jh9SPvVxHZ+64qYnxy6Xte0n
-	uxPtxJasofpQrmzADTE5JpGrDNBEkSxo7JvL4aI4KxfVOHonWyN9Kii7TBlev667
-	bAIeB3HQ4pegpvMrCf1B67A6Uv0UFQOGlIIvCd91ucPh+3jruN9JoF4oihlhxJR9
-	ar40vd+B7ZornfVTmLHmk7tUQB7P9f1oTgaRCnNblm/y8eQp54Edo0H+YW6Nfzgr
-	nHNVstJs+xTIt4Qvfh68Dw4UL1lSWDDDOnybMyhy0V2SLZGlETH5pCQLbEvTiwf+
-	S/rIlD1L3fpjYv1lOPlXspg3z1SuHu6XI28BBYo8vg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45sjq9tqyv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Apr 2025 14:10:40 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 533Dgn8P003008;
-	Thu, 3 Apr 2025 14:10:40 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45sjq9tqyp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Apr 2025 14:10:40 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 533D7GJp019413;
-	Thu, 3 Apr 2025 14:10:39 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45pu6tddk3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Apr 2025 14:10:39 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 533EAbGf36962770
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 3 Apr 2025 14:10:37 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7082C20043;
-	Thu,  3 Apr 2025 14:10:37 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8B93B2004F;
-	Thu,  3 Apr 2025 14:10:35 +0000 (GMT)
-Received: from ltczz402-lp1.aus.stglabs.ibm.com (unknown [9.40.194.31])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  3 Apr 2025 14:10:35 +0000 (GMT)
-From: Donet Tom <donettom@linux.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Gregory Price <gourry@gourry.net>,
-        Matthew Wilcox <willy@infradead.org>, Yu Zhao <yuzhao@google.com>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
-        aneesh.kumar@kernel.org, David Hildenbrand <david@redhat.com>,
-        Huang Ying <ying.huang@linux.alibaba.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Donet Tom <donettom@linux.ibm.com>
-Subject: [RFC PATCH v2]  mm/swap.c: Enable promotion of unmapped MGLRU page cache pages
-Date: Thu,  3 Apr 2025 09:10:32 -0500
-Message-ID: <20250403141032.22743-1-donettom@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1743689477; c=relaxed/simple;
+	bh=JtSnJoto7h55fuUb9kOA0kOw4yepVrv8NgRsZFMwEjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ab8mrCXmvx9iBC6naSHlth1IDrkAINbQe7UYGOVB66hqxX8SvMXOd/9fzxPrUyJghO6Ey/tDEgfgiCE/m7ahsuBuJT5W6e5TU05yO7C1Np8RGQLGU0reRsVMOA5qonGAFwtKf6f0aqGjymW4vRL5Ey4uWv530pUttk77crvkxB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zevQqobj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BTAQsYGh; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zevQqobj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BTAQsYGh; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from kitsune.suse.cz (unknown [10.100.12.127])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 03CD21F38A;
+	Thu,  3 Apr 2025 14:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743689474; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/XdPFBNoxJow3BVmJqoDsA4dufgRlFkIIwxZ5CyP4FI=;
+	b=zevQqobj2muTuEDq8B82c638PmRfqguF5Ocgy3Lkyu7JiGzrb5HOCaA8MsI0qvY5JlDgxe
+	dcaKqRjVZzpYyyQPhvuHp7lU4rdfgDCzpPtfRUePjZfLip3wCbidTKcNm0EBcEbt8tfGBo
+	/ogM4KZewG8Oyw3AhbagjdZ5P7lumPY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743689474;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/XdPFBNoxJow3BVmJqoDsA4dufgRlFkIIwxZ5CyP4FI=;
+	b=BTAQsYGhYHZ8W5JabfmC+UeRzPWepcTd2g8UIsg5u54vjHHFOE+G4AMzICp/QhHuWzmgqu
+	GF8ALC/G4brqiADg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743689474; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/XdPFBNoxJow3BVmJqoDsA4dufgRlFkIIwxZ5CyP4FI=;
+	b=zevQqobj2muTuEDq8B82c638PmRfqguF5Ocgy3Lkyu7JiGzrb5HOCaA8MsI0qvY5JlDgxe
+	dcaKqRjVZzpYyyQPhvuHp7lU4rdfgDCzpPtfRUePjZfLip3wCbidTKcNm0EBcEbt8tfGBo
+	/ogM4KZewG8Oyw3AhbagjdZ5P7lumPY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743689474;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/XdPFBNoxJow3BVmJqoDsA4dufgRlFkIIwxZ5CyP4FI=;
+	b=BTAQsYGhYHZ8W5JabfmC+UeRzPWepcTd2g8UIsg5u54vjHHFOE+G4AMzICp/QhHuWzmgqu
+	GF8ALC/G4brqiADg==
+Date: Thu, 3 Apr 2025 16:11:12 +0200
+From: Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To: Jonathan McDowell <noodles@earth.li>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: tis: Increase the default for timeouts B and C
+Message-ID: <Z-6XAKxrRTuBIvRy@kitsune.suse.cz>
+References: <20250402172134.7751-1-msuchanek@suse.de>
+ <Z-13xOebA3LvQQ-8@earth.li>
+ <Z-2ZC2Ew2EtNAW6-@kitsune.suse.cz>
+ <Z-5qVBjeRfEdRAP5@earth.li>
+ <Z-53dR25MT8OUDhW@kitsune.suse.cz>
+ <Z-6Gau3aCB7B3pB9@earth.li>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: oeQiQzqlA6q0-_K7b8-6wh1G8cwGgXGA
-X-Proofpoint-ORIG-GUID: tFHv-EUWfygQXmd0IHosonsCST40ypKP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-03_06,2025-04-02_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 mlxlogscore=999 clxscore=1015 impostorscore=0 mlxscore=0
- suspectscore=0 phishscore=0 spamscore=0 bulkscore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2504030064
+In-Reply-To: <Z-6Gau3aCB7B3pB9@earth.li>
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmx.de];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_CC(0.00)[gmx.de,kernel.org,ziepe.ca,vger.kernel.org];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-This patch is based on patch [1], which introduced support for
-promoting unmapped normal LRU page cache pages. Here, we extend
-the functionality to support promotion of MGLRU page cache pages.
+On Thu, Apr 03, 2025 at 02:00:26PM +0100, Jonathan McDowell wrote:
+> On Thu, Apr 03, 2025 at 01:56:37PM +0200, Michal Suchánek wrote:
+> > On Thu, Apr 03, 2025 at 12:00:36PM +0100, Jonathan McDowell wrote:
+> > > On Wed, Apr 02, 2025 at 10:07:39PM +0200, Michal Suchánek wrote:
+> > > > On Wed, Apr 02, 2025 at 06:45:40PM +0100, Jonathan McDowell wrote:
+> > > > > On Wed, Apr 02, 2025 at 07:21:30PM +0200, Michal Suchanek wrote:
+> > > > > > With some Infineon chips the timeouts in tpm_tis_send_data (both B and
+> > > > > > C) can reach up to about 2250 ms.
+> > > > > >
+> > > > > > Extend the timeout duration to accommodate this.
+> > > > >
+> > > > > The problem here is the bump of timeout_c is going to interact poorly with
+> > > > > the Infineon errata workaround, as now we'll wait 4s instead of 200ms to
+> > > > > detect the stuck status change.
+> > > >
+> > > > Yes, that's problematic. Is it possible to detect the errata by anything
+> > > > other than waiting for the timeout to expire?
+> > > 
+> > > Not that I'm aware of, nor have seen in my experimentation. It's a "stuck"
+> > > status, so the timeout is how it's detected.
+> > > 
+> > > OOI, have you tried back porting the fixes that are in mainline for 6.15 to
+> > > your frankenkernel? I _think_ the errata fix might end up resolving at least
+> > > the timeout for valid for you, as a side effect? We're currently rolling
+> > > them out across our fleet, but I don't have enough runtime yet to be sure
+> > > they've sorted all the timeout instances we see.
+> > 
+> > When was that merged?
+> 
+> It hit Linus' tree last Friday I believe.
+> 
+> > The change I see is that sometimes EAGAIN is returned instead of ETIME
+> > but based on the previous discussion this is unlikely to help.
+> 
+> That sounds like you might have picked up the version with the typo that I
+> posted to the list; it got fixed up before making it to mainline. The two
+> patches I've backported locally are in mainline as:
+> 
+> 7146dffa875cd00e7a7f918e1fce79c7593ac1fa tpm, tpm_tis: Fix timeout handling when waiting for TPM status
+> de9e33df7762abbfc2a1568291f2c3a3154c6a9d tpm, tpm_tis: Workaround failed command reception on Infineon devices
 
-An MGLRU page cache page is eligible for promotion when:
+Indeed, it adds a retry in tpm_send_main as well. That might work, needs
+some testing on the affected hardware. With that changing only the B
+timeout should suffice.
 
-1. Memory Tiering and pagecache_promotion_enabled are enabled
-2. It resides in a lower memory tier.
-3. It is referenced.
-4. It is part of the working set.
-5. folio reference count is maximun (LRU_REFS_MASK).
+Thanks
 
-When a page is accessed through a file descriptor, folio_inc_refs()
-is invoked. The first access will set the folioâ€™s referenced flag,
-and subsequent accesses will increment the reference count in the
-folio flag (reference counter size in folio flags is 2 bits). Once
-the referenced flag is set, and the folioâ€™s reference count reaches
-the maximum value (LRU_REFS_MASK), the working set flag will be set
-as well.
-
-If a folio has both the referenced and working set flags set, and its
-reference count equals LRU_REFS_MASK, it becomes a good candidate for
-promotion. These pages will be added to the promotion list. The
-per-process task task_numa_promotion_work() takes the pages from the
-promotion list and promotes them to a higher memory tier.
-
-In the MGLRU, for folios accessed through a file descriptor, if the
-folioâ€™s referenced and working set flags are set, and the folio's
-reference count is equal to LRU_REFS_MASK, the folio is lazily
-promoted to the second oldest generation in the eviction path. When
-folio_inc_gen() does this, it clears the LRU_REFS_FLAGS so that
-lru_gen_inc_refs() can start over.
-
-Test process:
-We measured the read time in below scenarios for both LRU and MGLRU.
-Scenario 1: Pages are on Lower tier + promotion off
-Scenario 2: Pages are on Lower tier + promotion on
-Scenario 3: Pages are on higher tier
-
-Test Results MGLRU
-----------------------------------------------------------------
-Pages on higher   | Pages Lower tier |  Pages on Lower Tier    |
-   Tier           |  promotion off   |   Promotion On          |
-----------------------------------------------------------------
-  0.48s           |    1.6s          |During Promotion - 3.3s  |
-                  |                  |After Promotion  - 0.48s |
-                  |                  |                         |
-----------------------------------------------------------------
-
-Test Results LRU
-----------------------------------------------------------------
-Pages on higher   | Pages Lower tier |  Pages on Lower Tier    |
-   Tier           |  promotion off   |   Promotion On          |
-----------------------------------------------------------------
-   0.48s          |    1.6s          |During Promotion - 3.3s  |
-                  |                  |After Promotion  - 0.48s |
-                  |                  |                         |
-----------------------------------------------------------------
-
-MGLRU and LRU are showing similar performance benefit.
-
-[1] https://lore.kernel.org/all/20250107000346.1338481-1-gourry@gourry.net/
-
-Signed-off-by: Donet Tom <donettom@linux.ibm.com>
----
-v1->v2
-
-In V1, the folios that were part of the memcg and the active MGLRU list
-were being promoted. However, in MGLRU, file pages accessed through
-file descriptors are moved to the second oldest generation. This second
-oldest generation may not necessarily be part of the active list.
-Furthermore, this movement to the second oldest generation only happens
-in the eviction path, so if the system is not under memory pressure,
-this movement will not occur. As a result, hot pages can be present in
-any generation. If the reference count is at its maximum and the
-referenced and working set flags are set, the page becomes a candidate
-for promotion.
-
-v1 - https://lore.kernel.org/all/20250115120625.3785-1-donettom@linux.ibm.com/
----
- mm/swap.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/mm/swap.c b/mm/swap.c
-index b2341bc18452..f3c19d563556 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -399,8 +399,13 @@ static void lru_gen_inc_refs(struct folio *folio)
- 
- 	do {
- 		if ((old_flags & LRU_REFS_MASK) == LRU_REFS_MASK) {
--			if (!folio_test_workingset(folio))
-+			if (!folio_test_workingset(folio)) {
- 				folio_set_workingset(folio);
-+			} else if (!folio_test_isolated(folio) &&
-+				  (sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) &&
-+				   numa_pagecache_promotion_enabled) {
-+				promotion_candidate(folio);
-+			}
- 			return;
- 		}
- 
--- 
-2.43.5
-
+Michal
 
