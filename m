@@ -1,153 +1,182 @@
-Return-Path: <linux-kernel+bounces-587108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0DC5A7A7F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 18:27:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DAB0A7A7FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 18:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 803E71888D71
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:26:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E12E11745E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2621E2512CB;
-	Thu,  3 Apr 2025 16:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C702B2512CF;
+	Thu,  3 Apr 2025 16:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="tgsxo7Lc"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BF62505BB
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 16:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Mo+e7mq/"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8DB27706;
+	Thu,  3 Apr 2025 16:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743697583; cv=none; b=HfUWt3F/a7eSSCod43p12brDlMv7JkfmIGPe0MWelRpW+NlUzQMfWNGYcW+iC2nYEKZS5loMrDNhc9HeE6lSUZuKosdzlGg02jyLpzbE7wgB1S9Wd1LHoe8vlcyDEborIKTDBotpoXamdCHDchz3jQIPETaWE0VeF/oVBkSsit0=
+	t=1743697790; cv=none; b=kJQU/hohBuQYf2mryYtltepvtPeVeu6RFz1dJtf3OxrcevgaFvU1fO2ggWEhs/Nw5ADEtZfqereP9Nj15vD2G640Hi+O+J7sr7dtSVLvhq1PXOUgpnnnZd8CLb9FX3bjglUnqIrdIeeRRYMfMfO98E21/wTQdexBTNKuzFu1MQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743697583; c=relaxed/simple;
-	bh=+s8s3iJwvgJFaiQIGmpy8fRqd2r8FfQyKC/ROUIwOkk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jS5mVlTnQeaHB0OPb22/oj7gIlf1EwzxiKfRCj0hcKQhMzEjQgN7bgTO7+6sH0mMASYUqD1JPXEfv9qfXe9oBWrx0qEc0/1qZwcMC3/NzFZwtC2MVT2izLdXxfPyc8dv43a+0pinYc9JaR3bIlD2AIzDJuR6toj+PUo7mxynTCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=tgsxo7Lc; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6f6ca9a3425so13620777b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 09:26:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1743697580; x=1744302380; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gm8Etobzk8cCk6jshrfzA7BBUoXgq8Cf4UsElyUuFB0=;
-        b=tgsxo7LcZTdvY+zIoAEc6qjvQDNyrDG+Y1WwmkZIxQ8yzNNgnbZxdl8nP7w4GddLc2
-         vCv2YeH4OAGSc7VlvzX8Y36KKdQQhlBeNMM76yw/Lkfd6uiLc6YNog8IoXwxi005mrVm
-         6buLxH2oNBplZYHYfiAaKF1dK5L6S64Spzb8tT2X5L+vNaaA9Hk8jXMH7HRvCBsDRLhq
-         MNnSqk5qWD+uiLHE7qUFdn6fcfpo15f8sMdQoI6VFUR+WEGAECeSTs8cl9YjSJj0OnwF
-         b+gxqZF1MJDMjxo9jJLPXdp/17vbd8YBV1KWORzO5lngPWhfkPckdR1wmW0n7lBMlB/K
-         lEbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743697580; x=1744302380;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Gm8Etobzk8cCk6jshrfzA7BBUoXgq8Cf4UsElyUuFB0=;
-        b=TLaa+GeRfmnJXJDQIQr9A1Oul+ZrD3yNsP9x9hZIMj7EdJdqASc65P9gD4V9Z9C/0V
-         L9Lr0kLGX33o4p3uG/baM3WoebT5Rk5wpol9cc+TfVXDjHKz5LEXET/bVpKVOJjXY0Fy
-         JbVNuznvFYalM0cMxMof3CftyH2MvwDClQpgSqv4dzVvFYs3zpVggXpn4tDmom01pX+I
-         wUXwl1O3C3Frp7eXcUPGsKb9dTFbFHaKuqmWi17SSdTjj96OVXfXWs4R83Hd8MwgNLTq
-         aTviVRoymIjghXIk6o4jhu5B/5M+AyC4SNrRCHrOgTqNk5UZKN2YhaktAfltUA7gRrVG
-         1Teg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4sq6TcDWFr0v9hT1/+q1HJl5nTtRq0s4v6NOd5/1YD+/mLbOASN2fLMsojgmJJ2oVgmQ/zLUoECN4x3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFz2WHLcw1DZKFAdmkWomDPvKgcZbFkWewPEBvAqEoVNY1jPq2
-	O9auv7sYgKVNxjtLd5szgvPAsYtxv52/aV2M7N3aS5l4adsEDN1j1qfnOEmFOB9q8yzCchG94MY
-	rUC8dmzFL753NMFrUeG3+XDMsdUTSOlUbxoxniQ==
-X-Gm-Gg: ASbGncvXQ9LmMCwh+Rw58aF3usy/Orpbiqz8QrRJ5VYmlXiZRr+/K6tivtYV1U5c8vB
-	4pSwJf/TCwQQ4qxevNG9tU4bsJ6bJg8I8SrC5FRqz6pG91Rp8tjLvT0Q6vNt1Fzkaan3zzjLzDx
-	J2+7KW+bfPcwYTMfmw3w7ao3YUTsnpDR9Ma+28oq4islTRIrjVIM1vzpmD+lD9gXEG83sm
-X-Google-Smtp-Source: AGHT+IGs/lOpJlBNxZfkClJkSSGiTQDpBO7ne5t+K8sFSvFVEpfHXiFzI6JjuxfYULF42IuuaAUSHa6+5r5ZRFQKL/0=
-X-Received: by 2002:a05:690c:a8b:b0:6fd:4849:62da with SMTP id
- 00721157ae682-703e1581140mr850257b3.22.1743697580267; Thu, 03 Apr 2025
- 09:26:20 -0700 (PDT)
+	s=arc-20240116; t=1743697790; c=relaxed/simple;
+	bh=IHWl79kvzLC9W7BTsH1VqCgxs+FXeKSarMtyo1iNJoM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=uZubH5zKLDB1HniLGS7W1efsik/vG0WGOis4TA5UD+RdcXFnj66MltSvzO+AUyi675JR9me0uNTbHQXXMFMxy+TdYXtsUwWfeSeD8kAqtewoc9RmXR9DocWdR2La/MPZAQrcdjRxvOacp6Aui1wbJ1CTggb1e/CoPWkJkO7sg7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Mo+e7mq/; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=WzrZiOGSl6iaEuSiDefAlje4knT4teo708pQl63CXy4=;
+	b=Mo+e7mq/0SDhDkx9cGVPl3suCgfNGE9wKb95gXZzQE14rbdvuGU6w0DYZHal8J
+	s6hZi3Le0ecY7TxOGrNFGqa/OlvWtGdxuAVdp6itEc4SCvWS2oTDw9zDCtc0/Gvd
+	CtBLpB//sQyczu8eo2u9e2q6D7HvREnsgak4kK0rZ10S0=
+Received: from [192.168.71.89] (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wCHTQBNt+5njhfcDw--.45272S2;
+	Fri, 04 Apr 2025 00:29:02 +0800 (CST)
+Message-ID: <d92d433b-89eb-434a-ae5d-0cc2e1ce3606@163.com>
+Date: Fri, 4 Apr 2025 00:29:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ee4989e2-f55e-4d09-8a0d-306b78b9c9d0@stanley.mountain>
-In-Reply-To: <ee4989e2-f55e-4d09-8a0d-306b78b9c9d0@stanley.mountain>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Thu, 3 Apr 2025 16:25:55 +0000
-X-Gm-Features: AQ5f1JpvJpXj_gh69LgHu7W2pAa3-WCUx4V9ie5tB7F6PHPJUleIgDiNR0yj7Fo
-Message-ID: <CAPY8ntCCvXObQ_7GNwjqNMB-=1ucy9WsipvptgvPxk3p2R3Ryg@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/vc4: release firmware on error paths in vc4_hvs_bind()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Maxime Ripard <mripard@kernel.org>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v7 2/5] PCI: Refactor capability search functions to eliminate
+ code duplication
+From: Hans Zhang <18255117159@163.com>
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: lpieralisi@kernel.org, bhelgaas@google.com, kw@linux.com,
+ manivannan.sadhasivam@linaro.org, robh@kernel.org, jingoohan1@gmail.com,
+ thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20250402042020.48681-1-18255117159@163.com>
+ <20250402042020.48681-3-18255117159@163.com>
+ <8b693bfc-73e0-2956-2ba3-1bfd639660b6@linux.intel.com>
+ <c6706073-86b0-445a-b39f-993ac9b054fa@163.com>
+ <bf6f0acb-9c48-05de-6d6d-efb0236e2d30@linux.intel.com>
+ <f77f60a0-72d2-4a9c-864e-bd8c4ea8a514@163.com>
+Content-Language: en-US
+In-Reply-To: <f77f60a0-72d2-4a9c-864e-bd8c4ea8a514@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCHTQBNt+5njhfcDw--.45272S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXr47Jr4DAF48Cry5Xw4Dtwb_yoW5ur4fpF
+	W5AF13Cr48JF15XF4vqay8GFy5Ka97tFy7GrWIk3sIvFnFkayjyF9Ig343uryagrWDZr1x
+	Z395WFy7G3Z5AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U3wIgUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDxUko2fulgLOSAABsH
 
-On Thu, 3 Apr 2025 at 13:14, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> There was a bug where we should have called rpi_firmware_put(firmware)
-> if devm_clk_get() failed.  Really, it's better and more readable to
-> move all the firmware code together so that we can release it one
-> time.
->
-> Fixes: 2fa4ef5fb943 ("drm/vc4: hvs: Create hw_init function")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Thanks for the respin
 
-Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+On 2025/4/3 20:24, Hans Zhang wrote:
+> 
+> 
+> On 2025/4/3 17:15, Ilpo Järvinen wrote:
+>>>> I don't like how 1 & 2 patches are split into two. IMO, they mostly 
+>>>> belong
+>>>> together. However, (IMO) you can introduce the new all-size config 
+>>>> space
+>>>> accessor in a separate patch before the combined patch.
+>>>>
+>>>
+>>> Ok. I'll change it to the following. The rest I'll combine into a patch.
+>>>
+>>> diff --git a/drivers/pci/access.c b/drivers/pci/access.c
+>>> index b123da16b63b..bb2e26c2eb81 100644
+>>> --- a/drivers/pci/access.c
+>>> +++ b/drivers/pci/access.c
+>>> @@ -85,6 +85,23 @@ EXPORT_SYMBOL(pci_bus_write_config_byte);
+>>>   EXPORT_SYMBOL(pci_bus_write_config_word);
+>>>   EXPORT_SYMBOL(pci_bus_write_config_dword);
+>>>
+>>> +
+>>
+>> Extra newline
+>>
+> 
+> Hi Ilpo,
+> 
+> Thanks your for reply. Will delete.
+> 
 
-> ---
-> v2: Use a cleaner solution
->
->  drivers/gpu/drm/vc4/vc4_hvs.c | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
-> index 4811d794001f..06aedd906d74 100644
-> --- a/drivers/gpu/drm/vc4/vc4_hvs.c
-> +++ b/drivers/gpu/drm/vc4/vc4_hvs.c
-> @@ -1675,6 +1675,17 @@ static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
->                 if (!firmware)
->                         return -EPROBE_DEFER;
->
-> +               max_rate = rpi_firmware_clk_get_max_rate(firmware,
-> +                                                        RPI_FIRMWARE_CORE_CLK_ID);
-> +               rpi_firmware_put(firmware);
-> +               if (max_rate >= 550000000)
-> +                       hvs->vc5_hdmi_enable_hdmi_20 = true;
-> +
-> +               if (max_rate >= 600000000)
-> +                       hvs->vc5_hdmi_enable_4096by2160 = true;
-> +
-> +               hvs->max_core_rate = max_rate;
-> +
->                 hvs->core_clk = devm_clk_get(&pdev->dev,
->                                              (vc4->gen >= VC4_GEN_6_C) ? "core" : NULL);
->                 if (IS_ERR(hvs->core_clk)) {
-> @@ -1689,17 +1700,6 @@ static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
->                         return PTR_ERR(hvs->disp_clk);
->                 }
->
-> -               max_rate = rpi_firmware_clk_get_max_rate(firmware,
-> -                                                        RPI_FIRMWARE_CORE_CLK_ID);
-> -               rpi_firmware_put(firmware);
-> -               if (max_rate >= 550000000)
-> -                       hvs->vc5_hdmi_enable_hdmi_20 = true;
-> -
-> -               if (max_rate >= 600000000)
-> -                       hvs->vc5_hdmi_enable_4096by2160 = true;
-> -
-> -               hvs->max_core_rate = max_rate;
-> -
->                 ret = clk_prepare_enable(hvs->core_clk);
->                 if (ret) {
->                         dev_err(&pdev->dev, "Couldn't enable the core clock\n");
-> --
-> 2.47.2
->
+Hi Ilpo,
+
+The [v9 1/6]patch I plan to submit is as follows, please review it.
+
+ From c099691ff1e980ff4633c55e94abcd888000e2cc Mon Sep 17 00:00:00 2001
+From: Hans Zhang <18255117159@163.com>
+Date: Fri, 4 Apr 2025 00:19:32 +0800
+Subject: [v9 1/6] PCI: Introduce generic bus config read helper function
+
+The primary PCI config space accessors are tied to the size of the read
+(byte/word/dword). Upcoming refactoring of PCI capability discovery logic
+requires passing a config accessor function that must be able to perform
+read with different sizes.
+
+Add any size config space read accessor pci_bus_read_config() to allow
+giving it as the config space accessor to the upcoming PCI capability
+discovery macro.
+
+Reconstructs the PCI function discovery logic to prepare for unified
+configuration of access modes.  No function changes are intended.
+
+Signed-off-by: Hans Zhang <18255117159@163.com>
+---
+  drivers/pci/access.c | 17 +++++++++++++++++
+  drivers/pci/pci.h    |  2 ++
+  2 files changed, 19 insertions(+)
+
+diff --git a/drivers/pci/access.c b/drivers/pci/access.c
+index b123da16b63b..603332658ab3 100644
+--- a/drivers/pci/access.c
++++ b/drivers/pci/access.c
+@@ -85,6 +85,23 @@ EXPORT_SYMBOL(pci_bus_write_config_byte);
+  EXPORT_SYMBOL(pci_bus_write_config_word);
+  EXPORT_SYMBOL(pci_bus_write_config_dword);
+
++int pci_bus_read_config(void *priv, unsigned int devfn, int where, u32 
+size,
++			u32 *val)
++{
++	struct pci_bus *bus = priv;
++	int ret;
++
++	if (size == 1)
++		ret = pci_bus_read_config_byte(bus, devfn, where, (u8 *)val);
++	else if (size == 2)
++		ret = pci_bus_read_config_word(bus, devfn, where, (u16 *)val);
++	else
++		ret = pci_bus_read_config_dword(bus, devfn, where, val);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(pci_bus_read_config);
++
+  int pci_generic_config_read(struct pci_bus *bus, unsigned int devfn,
+  			    int where, int size, u32 *val)
+  {
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index 2e9cf26a9ee9..6a7c88b9cd35 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -88,6 +88,8 @@ extern bool pci_early_dump;
+  bool pcie_cap_has_lnkctl(const struct pci_dev *dev);
+  bool pcie_cap_has_lnkctl2(const struct pci_dev *dev);
+  bool pcie_cap_has_rtctl(const struct pci_dev *dev);
++int pci_bus_read_config(void *priv, unsigned int devfn, int where, u32 
+size,
++			u32 *val);
+
+  /* Functions internal to the PCI core code */
+
+
+
+Best regards,
+Hans
+
 
