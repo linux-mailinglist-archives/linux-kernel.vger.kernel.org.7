@@ -1,98 +1,94 @@
-Return-Path: <linux-kernel+bounces-586863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFE44A7A4D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:16:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59145A7A4DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 16:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0BC13BAD6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:10:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8899617927F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 14:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50B32505DC;
-	Thu,  3 Apr 2025 14:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931FB2505AD;
+	Thu,  3 Apr 2025 14:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="frt0k7Yg"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ck5Bic97"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FE7250BFA;
-	Thu,  3 Apr 2025 14:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB602500DE;
+	Thu,  3 Apr 2025 14:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743689376; cv=none; b=qFhg9otyEsbZlVenVuLNRlBpcS2wx8fVLoBN5gRTIj1Z10XyFlSIuKeblP/qvSrXHn3HSpOdvywsgRiaepLgs1WzesDYftbGQdy/kzITsmU0NzsqRnbQcGrUViBh5+m9rzbHPZo9e4+oU3zKerlVLHcE2vEHymY8/T9QMD6KUbM=
+	t=1743689465; cv=none; b=EKxXlg7VdircQDwmMsSpI5PnTYYc8INte/XRtrA9zeP7iqALL5brCuqBUobYn8FDpP0JHkhrV5gtCbulVoEG0xius+pDdPr4IHymjZOkI0Yd9Fqd3+FvfhXb3anbL+tKbxAWgTKS0sLdfsI0YhjVIT2Qm4X9Fdqfadf6lrCGoR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743689376; c=relaxed/simple;
-	bh=53J++gz+TCTYRmafMVzYi//xpml2Oz7uWzyQxKxRxJA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=W4L0Un7gzYbUDyL5jXd4U7hHFnR8nckHIwFArL829LxJJpHgNiR1D8ZhRTRCCXtTG3yOWZ5iZEJG6/yJGZiv3+TkbdSUpdsAy8l55kwBLIiMQxlJYyaP1y15pnjoGt/aUKVT4uQchOwvLIHjL4xmhbSJ4CEG8GxkUpYQpTsiM2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=frt0k7Yg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA545C4CEE7;
-	Thu,  3 Apr 2025 14:09:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743689375;
-	bh=53J++gz+TCTYRmafMVzYi//xpml2Oz7uWzyQxKxRxJA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=frt0k7YgIGe91bFv8s4Me3sKaKdIRZayJRHNcQINy6q6p/Oxz5TZYAbXEoUCMM5Fn
-	 spsFfP9zETgVY6VYSC4eOCeZ2x5FjuFNMrYADtYvLMBV6Xl1ZFU69/ZEL7SzqkACY0
-	 bzQ37gZ93AfTrz1wP9Oo3g2DZGRCrmb7afPCEYbfCjXneFHXUxDu5sstIk56CBRSF2
-	 +FKrKEOiOGjujcXYh+pxeKLaeJIUCOdv33TAGtejluCTpcuM3SR0/Jyrv50nEKUlWT
-	 a1v/E1G7A2QVeND4c9nz/GzNaq8XVaj31b7tv0J17xWGazacvSmkr+VTfQJSIn/byA
-	 R6mqAO43zDYYA==
-From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 03 Apr 2025 16:09:04 +0200
-Subject: [PATCH RFC 4/4] selftest/pidfd: add test for thread-group leader
- pidfd open for thread
+	s=arc-20240116; t=1743689465; c=relaxed/simple;
+	bh=nQl3cTdTbatl1g2M9BKMpP0FL0R93Xmbz3gVBMTA+1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uF9LhBYVW1lh7STPBUgiXTl8KG6E/gDxm4uf/1IxE32BIy4t/eTZSn8e9lAN2x7Q8UeEgsB/QPQWwkF0ekKvwpqWtZlZWqyaGJw69TR4iEiTjSWql9I+cRV1RdsAsI5fTIlNt47Z2S/2f9oXhP0VIZh73qoEuNuiG0sKitYp09Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ck5Bic97; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D1CBC4CEE5;
+	Thu,  3 Apr 2025 14:11:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743689464;
+	bh=nQl3cTdTbatl1g2M9BKMpP0FL0R93Xmbz3gVBMTA+1c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ck5Bic97/mCQ3d+8QIehgZa4Qtq0CZK+lTbYWcWyWXKO+FV2tDN+OrRepgE3YK04W
+	 zP4OuYcXZy6GrJKNjuI+oepwK1TQc2jzh6NxfflkN6Chdv9LEhtulY1pOCcKw+IsFF
+	 qlRQTopj4nzPa3rTNBUvHfCXS3mOWhAl0Cqaom1A=
+Date: Thu, 3 Apr 2025 15:09:36 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: nancyenos <nicymimz@gmail.com>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	outreachy@lists.linux.dev
+Subject: Re: [PATCH] staging: octeon: Fix unused macro Argument 'x'
+Message-ID: <2025040315-squid-gloating-e0df@gregkh>
+References: <20250325100952.2956-1-nicymimz@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250403-work-pidfd-fixes-v1-4-a123b6ed6716@kernel.org>
-References: <20250403-work-pidfd-fixes-v1-0-a123b6ed6716@kernel.org>
-In-Reply-To: <20250403-work-pidfd-fixes-v1-0-a123b6ed6716@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
- Lennart Poettering <lennart@poettering.net>, 
- Daan De Meyer <daan.j.demeyer@gmail.com>, Mike Yuan <me@yhndnzj.com>, 
- linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=921; i=brauner@kernel.org;
- h=from:subject:message-id; bh=53J++gz+TCTYRmafMVzYi//xpml2Oz7uWzyQxKxRxJA=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS/mzYl8ti8+3dP9BZ6LSq99O/ttW2dF1M/8v+YXjxVw
- 4ArxeP45o5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJSDcwMhw9KDxZ5ZDNi3nT
- rJx00sPOu6osMIzLe9A/mXPWTLOAw9cZ/inc28N3Z/f5/9en3kixfPJ4ITdLoJy+s87licVn2v+
- ULWMCAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250325100952.2956-1-nicymimz@gmail.com>
 
-Verify that we report ENOENT when userspace tries to create a
-thread-group leader pidfd for a thread pidfd that isn't a thread-group
-leader.
+On Tue, Mar 25, 2025 at 03:09:52AM -0700, nancyenos wrote:
+> warning found by checkpath.pl
+> 
+> Signed-off-by: nancyenos <nicymimz@gmail.com>
+> ---
+>  drivers/staging/octeon/octeon-stubs.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/octeon/octeon-stubs.h b/drivers/staging/octeon/octeon-stubs.h
+> index 44cced319c11..0155f3c41657 100644
+> --- a/drivers/staging/octeon/octeon-stubs.h
+> +++ b/drivers/staging/octeon/octeon-stubs.h
+> @@ -8,8 +8,8 @@
+>  #define OCTEON_IRQ_WORKQ0 0
+>  #define OCTEON_IRQ_RML 0
+>  #define OCTEON_IRQ_TIMER1 0
+> -#define OCTEON_IS_MODEL(x) 0
+> -#define octeon_has_feature(x)	0
+> +#define OCTEON_IS_MODEL(x) ((void)(x), 0)
+> +#define octeon_has_feature(x) ((void)(x), 0)
+>  #define octeon_get_clock_rate()	0
+>  
+>  #define CVMX_SYNCIOBDMA		do { } while (0)
+> -- 
+> 2.25.1
+> 
+> 
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- tools/testing/selftests/pidfd/pidfd_info_test.c | 1 +
- 1 file changed, 1 insertion(+)
+You sent this twice?
 
-diff --git a/tools/testing/selftests/pidfd/pidfd_info_test.c b/tools/testing/selftests/pidfd/pidfd_info_test.c
-index accfd6bdc539..a0eb6e81eaa2 100644
---- a/tools/testing/selftests/pidfd/pidfd_info_test.c
-+++ b/tools/testing/selftests/pidfd/pidfd_info_test.c
-@@ -299,6 +299,7 @@ TEST_F(pidfd_info, thread_group)
- 	/* Opening a thread as a thread-group leader must fail. */
- 	pidfd_thread = sys_pidfd_open(pid_thread, 0);
- 	ASSERT_LT(pidfd_thread, 0);
-+	ASSERT_EQ(errno, ENOENT);
- 
- 	/* Opening a thread as a PIDFD_THREAD must succeed. */
- 	pidfd_thread = sys_pidfd_open(pid_thread, PIDFD_THREAD);
+And always test-build your patches before submitting them.  This
+obviously will not build :(
 
--- 
-2.47.2
+thanks,
 
+greg k-h
 
