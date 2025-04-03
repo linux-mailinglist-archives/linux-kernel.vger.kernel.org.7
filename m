@@ -1,111 +1,170 @@
-Return-Path: <linux-kernel+bounces-587320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 388F2A7AB8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:21:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9F7A7AC1F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD98317B238
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:16:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C228A3B867F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B0125F96A;
-	Thu,  3 Apr 2025 19:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE442571AF;
+	Thu,  3 Apr 2025 19:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Jn7Fb+Ug"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UH9FRWjG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA1325F7A1
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 19:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199552571A6;
+	Thu,  3 Apr 2025 19:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743707059; cv=none; b=XgMRN71M+0hFUDzSsYaKiWEVWRRAWKNqIa1gLDeYteJCiPgOBkqDUF+cx4hLAIErvqHNQ3UkUl1ZQbvI0gTRjbDTpTyruueoq/UY7qc/rhZl99DoJSEZOPsXU4c0OLFmxgiJmsIycbO5EQigs5SZrC90EydXRyYofRuBD6z85g0=
+	t=1743707162; cv=none; b=fgDCmNRPVZ2ub6m2GbHadw2eoTPuhqEmE5yDULLC4meDSin2s9nd+BM+FCxklv/yfLMnMquXL+ikKibF9tdhKaf5bZmDhLG5oU0boZ+Xi8T0jXMj+pmiv87wZdolzytfIsWW4+tyv93HYRmlbeOgTKqpiI8w8eJQofj1ZFwWr+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743707059; c=relaxed/simple;
-	bh=iuOOwB3RhF2+wmWM3TB/6mKD+N4PJ/l0AgT6T28qZdc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oe3R2YpOz1DEg4cWkaDexm95bpQyw+sl5PG34QxR4t/5HkpGpOFF9NJqgIi2kIcPWARSt/rWw+4FsVQo1Q5qGe5t/FZ6s1/39raOwhD0Rhjp2Kisy2WE7ofTE7geZCmUa7L+SvRqovvdVZ5FHSuukBXnruszlvEF+nMnCnubL9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Jn7Fb+Ug; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <0eb36d4f-ab6c-4bb3-aad0-99c09bcd56ec@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743707053;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OR6tAQCdTqWMdGnoueGRPKReRRRQNdIbvhVIHJWD5vI=;
-	b=Jn7Fb+UgY/OlS/fnuFJSgz2OVlcdAmgKv8H1oVFoc46n/wT4ubopRD4mJlVLWxZMgP1Wnu
-	05Q7iiyh/mwHPQ6Dw+H10z3jRi2jjgr8S6+WImf8VczgxbWlw9h7NRIvnmN38tQ9ge6NVM
-	kpjzXJKKqFnlUwXJb1TnwDaYvPaqCNs=
-Date: Thu, 3 Apr 2025 15:04:08 -0400
+	s=arc-20240116; t=1743707162; c=relaxed/simple;
+	bh=/t8vcH3qynDQfOLkw7QMZ8Gv/WuYDCcCpzwNN7E5DRU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qpQuV+K5iVDyd7cSNxoeJqueddo26wPz5aRNyX6xwowfoQLtB8ig2RaPgh4xdD24hLPEkBoX1k7/msXevz/WcuDegtv+cFg7vMsKVXOU4bV0y7bVzgUdrdc5LmImuGyCk7YltxR+QSa5wNsntvPOxyrCQ1qd/7bwtdQBJS46naE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UH9FRWjG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9538FC4CEE3;
+	Thu,  3 Apr 2025 19:06:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743707161;
+	bh=/t8vcH3qynDQfOLkw7QMZ8Gv/WuYDCcCpzwNN7E5DRU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UH9FRWjGu5ZwFHUb17PreHUrToRiNIhpdM3T8rDUoG/Ma/mnIL2Xq/SEmsA4GzYPL
+	 2SFpe1H+2b9+ar734pC0bWtVPl+uriDxJNV4J/uq/hhCpK5eKXIQr0h3vFYRssJe0g
+	 3lMw5rfum8T9pV5+YonSLUGqTCDtB9ulgwenHnuGJDrxwVgTUquLlqMm8VvBT3qECh
+	 rPiNqUnHN2KCoJkqvCwurYQ2GQ5zlMB40sD/oAKl3xDQGUNUEgNWRdXD7rYs+/wxi7
+	 w/Sl5YiP1FZLeQuJQCBgdpa2rxhKAC/i8ofGyv7FHV8ALPzdn4cp6Df/0NSDlyG/R1
+	 VP9XIYX2HXgmg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: P Praneesh <quic_ppranees@quicinc.com>,
+	Tim Harvey <tharvey@gateworks.com>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	Sasha Levin <sashal@kernel.org>,
+	jjohnson@kernel.org,
+	ath11k@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.12 01/47] wifi: ath11k: Fix DMA buffer allocation to resolve SWIOTLB issues
+Date: Thu,  3 Apr 2025 15:05:09 -0400
+Message-Id: <20250403190555.2677001-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC net-next PATCH 11/13] of: property: Add device link support
- for PCS
-To: Saravana Kannan <saravanak@google.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- Christian Marangi <ansuelsmth@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>, linux-kernel@vger.kernel.org,
- upstream@airoha.com, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org
-References: <20250403181907.1947517-1-sean.anderson@linux.dev>
- <20250403182758.1948569-1-sean.anderson@linux.dev>
- <CAGETcx9v610XhvU705R=Mjth=iAbCU04rqNnQPhQua37Jc4TRQ@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <CAGETcx9v610XhvU705R=Mjth=iAbCU04rqNnQPhQua37Jc4TRQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.21
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-On 4/3/25 14:32, Saravana Kannan wrote:
-> On Thu, Apr 3, 2025 at 11:28 AM Sean Anderson <sean.anderson@linux.dev> wrote:
->>
->> This adds device link support for PCS devices, providing
->> better probe ordering.
->>
->> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
->> ---
->>
->>  drivers/of/property.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/of/property.c b/drivers/of/property.c
->> index c1feb631e383..f3e0c390ddba 100644
->> --- a/drivers/of/property.c
->> +++ b/drivers/of/property.c
->> @@ -1379,6 +1379,7 @@ DEFINE_SIMPLE_PROP(pses, "pses", "#pse-cells")
->>  DEFINE_SIMPLE_PROP(power_supplies, "power-supplies", NULL)
->>  DEFINE_SUFFIX_PROP(regulators, "-supply", NULL)
->>  DEFINE_SUFFIX_PROP(gpio, "-gpio", "#gpio-cells")
->> +DEFINE_SIMPLE_PROP(pcs_handle, "pcs-handle", NULL)
->>
->>  static struct device_node *parse_gpios(struct device_node *np,
->>                                        const char *prop_name, int index)
->> @@ -1535,6 +1536,7 @@ static const struct supplier_bindings of_supplier_bindings[] = {
->>                 .parse_prop = parse_post_init_providers,
->>                 .fwlink_flags = FWLINK_FLAG_IGNORE,
->>         },
->> +       { .parse_prop = parse_pcs_handle, },
-> 
-> Can you add this in the right order please? All the simple ones come
-> before the SUFFIX ones so that it's less expensive/fewer comparisons
-> before you parse the simple properties.
+From: P Praneesh <quic_ppranees@quicinc.com>
 
-Ah, I couldn't figure out what the intended order was so I just stuck
-it at the end.
+[ Upstream commit 1bcd20981834928ccc5d981aacb806bb523d8b29 ]
 
---Sean
+Currently, the driver allocates cacheable DMA buffers for rings like
+HAL_REO_DST and HAL_WBM2SW_RELEASE. The buffers for HAL_WBM2SW_RELEASE
+are large (1024 KiB), exceeding the SWIOTLB slot size of 256 KiB. This
+leads to "swiotlb buffer is full" error messages on systems without an
+IOMMU that use SWIOTLB, causing driver initialization failures. The driver
+calls dma_map_single() with these large buffers obtained from kzalloc(),
+resulting in ring initialization errors on systems without an IOMMU that
+use SWIOTLB.
+
+To address these issues, replace the flawed buffer allocation mechanism
+with the appropriate DMA API. Specifically, use dma_alloc_noncoherent()
+for cacheable DMA buffers, ensuring proper freeing of buffers with
+dma_free_noncoherent().
+
+Error log:
+[   10.194343] ath11k_pci 0000:04:00.0: swiotlb buffer is full (sz:1048583 bytes), total 32768 (slots), used 2529 (slots)
+[   10.194406] ath11k_pci 0000:04:00.0: failed to set up tcl_comp ring (0) :-12
+[   10.194781] ath11k_pci 0000:04:00.0: failed to init DP: -12
+
+Tested-on: QCN9074 hw1.0 PCI WLAN.HK.2.7.0.1-01744-QCAHKSWPL_SILICONZ-1
+Tested-on: WCN6855 hw2.0 PCI WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3
+
+Reported-by: Tim Harvey <tharvey@gateworks.com>
+Closes: https://lore.kernel.org/all/20241210041133.GA17116@lst.de/
+Signed-off-by: P Praneesh <quic_ppranees@quicinc.com>
+Tested-by: Tim Harvey <tharvey@gateworks.com>
+Link: https://patch.msgid.link/20250119164219.647059-2-quic_ppranees@quicinc.com
+Signed-off-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/wireless/ath/ath11k/dp.c | 35 +++++++++-------------------
+ 1 file changed, 11 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath11k/dp.c b/drivers/net/wireless/ath/ath11k/dp.c
+index fbf666d0ecf1d..f124b7329e1ac 100644
+--- a/drivers/net/wireless/ath/ath11k/dp.c
++++ b/drivers/net/wireless/ath/ath11k/dp.c
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: BSD-3-Clause-Clear
+ /*
+  * Copyright (c) 2018-2019 The Linux Foundation. All rights reserved.
+- * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
++ * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
+  */
+ 
+ #include <crypto/hash.h>
+@@ -104,14 +104,12 @@ void ath11k_dp_srng_cleanup(struct ath11k_base *ab, struct dp_srng *ring)
+ 	if (!ring->vaddr_unaligned)
+ 		return;
+ 
+-	if (ring->cached) {
+-		dma_unmap_single(ab->dev, ring->paddr_unaligned, ring->size,
+-				 DMA_FROM_DEVICE);
+-		kfree(ring->vaddr_unaligned);
+-	} else {
++	if (ring->cached)
++		dma_free_noncoherent(ab->dev, ring->size, ring->vaddr_unaligned,
++				     ring->paddr_unaligned, DMA_FROM_DEVICE);
++	else
+ 		dma_free_coherent(ab->dev, ring->size, ring->vaddr_unaligned,
+ 				  ring->paddr_unaligned);
+-	}
+ 
+ 	ring->vaddr_unaligned = NULL;
+ }
+@@ -249,25 +247,14 @@ int ath11k_dp_srng_setup(struct ath11k_base *ab, struct dp_srng *ring,
+ 		default:
+ 			cached = false;
+ 		}
+-
+-		if (cached) {
+-			ring->vaddr_unaligned = kzalloc(ring->size, GFP_KERNEL);
+-			if (!ring->vaddr_unaligned)
+-				return -ENOMEM;
+-
+-			ring->paddr_unaligned = dma_map_single(ab->dev,
+-							       ring->vaddr_unaligned,
+-							       ring->size,
+-							       DMA_FROM_DEVICE);
+-			if (dma_mapping_error(ab->dev, ring->paddr_unaligned)) {
+-				kfree(ring->vaddr_unaligned);
+-				ring->vaddr_unaligned = NULL;
+-				return -ENOMEM;
+-			}
+-		}
+ 	}
+ 
+-	if (!cached)
++	if (cached)
++		ring->vaddr_unaligned = dma_alloc_noncoherent(ab->dev, ring->size,
++							      &ring->paddr_unaligned,
++							      DMA_FROM_DEVICE,
++							      GFP_KERNEL);
++	else
+ 		ring->vaddr_unaligned = dma_alloc_coherent(ab->dev, ring->size,
+ 							   &ring->paddr_unaligned,
+ 							   GFP_KERNEL);
+-- 
+2.39.5
+
 
