@@ -1,124 +1,132 @@
-Return-Path: <linux-kernel+bounces-587449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5188BA7ACFA
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:54:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C15ABA7AD06
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40136189B937
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:49:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39C0A17B349
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 19:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889BE290097;
-	Thu,  3 Apr 2025 19:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E9428FFC6;
+	Thu,  3 Apr 2025 19:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvoaXDna"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JmDe/8X4"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2B9290088;
-	Thu,  3 Apr 2025 19:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F89253F0E
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 19:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743707340; cv=none; b=VVfzvwPb7MnVDcJhyKTtT6hYJIINL2yZ7U2By+lS/bC3tX21y8VpdZxOAtFYFGZ5QKMsTRX6AOJoTxrwwbY+gFNzKDjRr5GYthwOa918kD4GQ4lv/nJ3vZYWVVY9RvvcXLn+nlpJ5Em3CKfyUg0g+/i17JD33h4kYPMWXeV3qM4=
+	t=1743707331; cv=none; b=XaABVa15Bt4sKmEhL9aPxyMtKHydsFROgHCEx+x9Tei78l8x/5u8s8AVyzgSb6oPnTqcyq3lSYLBOrPLptybY/8H/mKCazylnE0SxZQt3Ww+fFnxI8RbO57XPYUsf9KS0aiq6PKTQCsXnV54bNB1M+I9lsmv26Q+zvlGiX1jc4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743707340; c=relaxed/simple;
-	bh=ttmiWx3+Mwc3SZYHTVvJ7P+mUP0prsrgRiAnl8RsPlo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CWzSrAeu0bmBoKxEKOLxa2qR7ZMMyLAThADwHy+96TkmQ0yyFs4ztWzhJTlcfpP2Z2xJAXZg39MifRRTKEyRZGyWlEOJayMZPks5wxqqii7zTqk3im2nrvti+1/XqGBvwZX4aURkoM7mCw++RIoiVGLeB3P6Xy8poHviUePaf1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dvoaXDna; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 787B0C4CEE8;
-	Thu,  3 Apr 2025 19:08:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743707339;
-	bh=ttmiWx3+Mwc3SZYHTVvJ7P+mUP0prsrgRiAnl8RsPlo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dvoaXDnaRwRisjOh8VKNr+WNoOY6OVxJjx4QorpCol9otrUEO4LlwTVDGqX4eImQD
-	 gupEwlLR6FOnjmSipaP6m1I37X/1f022gSzUmBz7ljq+zWkST9WWiv39QM15Csd87u
-	 xlutJxw+PW8+yBoCGA1UZ60qsorjfWW7alOs/pGd6ulWg9/MsIqUbkM8NlVCW+6URQ
-	 dbmUw4HvPnyAvTItjbo8jr+l0ry7J0mScrUq0AeuJxSeG2Ea2JLhc5+0k4cCrzgrKm
-	 cRufUePurED47lbF/AR1F8/t0acEb5JkoteCL9ZE1deG+TV59qRTjOZ4pFHnJ9ZW2k
-	 laxXIAB7tyDzw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Rand Deeb <rand.sec96@gmail.com>,
-	Dave Kleikamp <dave.kleikamp@oracle.com>,
-	Sasha Levin <sashal@kernel.org>,
-	shaggy@kernel.org,
-	eadavis@qq.com,
-	peili.dev@gmail.com,
-	ghanshyam1898@gmail.com,
-	niharchaithanya@gmail.com,
-	aha310510@gmail.com,
-	jfs-discussion@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 6.1 05/18] fs/jfs: Prevent integer overflow in AG size calculation
-Date: Thu,  3 Apr 2025 15:08:31 -0400
-Message-Id: <20250403190845.2678025-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250403190845.2678025-1-sashal@kernel.org>
-References: <20250403190845.2678025-1-sashal@kernel.org>
+	s=arc-20240116; t=1743707331; c=relaxed/simple;
+	bh=eQsh8m6hMOt+s3jstiFbzZuYBXHxmqe0tzYTkubXJCs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IEN/DrRrt5pDOrs3ooVBM6b4zAa20de8zUDNXmkkSlO6Fe8g4RVICf37VS8Cd8xKMj8ACIKO9AYrdzeu2C0koYMXecu+ZXRmh8ZMdGnKNgOHdjJ5h+0fqyLixiSZwd1NQI18s3VldZa0GQY1avQBJg5zv2Ttbeu5KkdlCldEwwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JmDe/8X4; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a3d33b5c-e0e3-4980-9556-beb36b985e84@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1743707317;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y59/c//cpQ59oY9i14cYGQHeNS5BEqmX5s/uupb1vtg=;
+	b=JmDe/8X4luR40/rIhQqNsKJaEO70WjYqBzT4rVg2cEIUDHlUHZrRMvFjsy7kIx62ID12ZY
+	indm9pPHWR0L1DgMjYhjTqvZdEp9xj9a+AK3Ps2OVn+PQJWBe1j7y4oTrbUgo490arOdZQ
+	Cnm8UXop0zZtr3viPbPQAYMI+dE77os=
+Date: Thu, 3 Apr 2025 15:08:31 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.132
-Content-Transfer-Encoding: 8bit
+Subject: Re: [RFC net-next PATCH 06/13] net: phy: Export some functions
+To: Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Russell King <linux@armlinux.org.uk>
+Cc: linux-kernel@vger.kernel.org, Christian Marangi <ansuelsmth@gmail.com>,
+ upstream@airoha.com, Heiner Kallweit <hkallweit1@gmail.com>
+References: <20250403181907.1947517-1-sean.anderson@linux.dev>
+ <20250403181907.1947517-7-sean.anderson@linux.dev>
+ <0e2a50d9-ee7c-4c15-8c31-a42fff1522e6@gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <0e2a50d9-ee7c-4c15-8c31-a42fff1522e6@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Rand Deeb <rand.sec96@gmail.com>
+On 4/3/25 14:37, Florian Fainelli wrote:
+> On 4/3/25 11:19, Sean Anderson wrote:
+>> Export a few functions so they can be used outside the phy subsystem:
+>>
+>> get_phy_c22_id is useful when probing MDIO devices which present a
+>> phy-like interface despite not using the Linux ethernet phy subsystem.
+>>
+>> mdio_device_bus_match is useful when creating MDIO devices manually
+>> (e.g. on non-devicetree platforms).
+>>
+>> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+>> ---
+>>
+>>   drivers/net/phy/mdio_device.c | 1 +
+>>   drivers/net/phy/phy_device.c  | 3 ++-
+>>   include/linux/phy.h           | 1 +
+>>   3 files changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/phy/mdio_device.c b/drivers/net/phy/mdio_device.c
+>> index e747ee63c665..cce3f405d1a4 100644
+>> --- a/drivers/net/phy/mdio_device.c
+>> +++ b/drivers/net/phy/mdio_device.c
+>> @@ -45,6 +45,7 @@ int mdio_device_bus_match(struct device *dev, const struct device_driver *drv)
+>>         return strcmp(mdiodev->modalias, drv->name) == 0;
+>>   }
+>> +EXPORT_SYMBOL_GPL(mdio_device_bus_match);
+>>     struct mdio_device *mdio_device_create(struct mii_bus *bus, int addr)
+>>   {
+>> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+>> index 675fbd225378..45d8bc13eb64 100644
+>> --- a/drivers/net/phy/phy_device.c
+>> +++ b/drivers/net/phy/phy_device.c
+>> @@ -859,7 +859,7 @@ static int get_phy_c45_ids(struct mii_bus *bus, int addr,
+>>    * valid, %-EIO on bus access error, or %-ENODEV if no device responds
+>>    * or invalid ID.
+>>    */
+>> -static int get_phy_c22_id(struct mii_bus *bus, int addr, u32 *phy_id)
+>> +int get_phy_c22_id(struct mii_bus *bus, int addr, u32 *phy_id)
+>>   {
+>>       int phy_reg;
+>>   @@ -887,6 +887,7 @@ static int get_phy_c22_id(struct mii_bus *bus, int addr, u32 *phy_id)
+>>         return 0;
+>>   }
+>> +EXPORT_SYMBOL_GPL(get_phy_c22_id);
+>>     /* Extract the phy ID from the compatible string of the form
+>>    * ethernet-phy-idAAAA.BBBB.
+>> diff --git a/include/linux/phy.h b/include/linux/phy.h
+>> index a2bfae80c449..c648f1699c5c 100644
+>> --- a/include/linux/phy.h
+>> +++ b/include/linux/phy.h
+>> @@ -1754,6 +1754,7 @@ struct phy_device *phy_device_create(struct mii_bus *bus, int addr, u32 phy_id,
+>>                        bool is_c45,
+>>                        struct phy_c45_device_ids *c45_ids);
+>>   #if IS_ENABLED(CONFIG_PHYLIB)
+>> +int get_phy_c22_id(struct mii_bus *bus, int addr, u32 *phy_id);
+> 
+> Seems like you will need to provide an empty inline stub for when CONFIG_PHYLIB=n?
 
-[ Upstream commit 7fcbf789629cdb9fbf4e2172ce31136cfed11e5e ]
+The only user (CONFIG_PCS_XILINX) selects CONFIG_PHYLINK which selects
+CONFIG_PHYLIB. So I don't think this can occur yet.
 
-The JFS filesystem calculates allocation group (AG) size using 1 <<
-l2agsize in dbExtendFS(). When l2agsize exceeds 31 (possible with >2TB
-aggregates on 32-bit systems), this 32-bit shift operation causes undefined
-behavior and improper AG sizing.
-
-On 32-bit architectures:
-- Left-shifting 1 by 32+ bits results in 0 due to integer overflow
-- This creates invalid AG sizes (0 or garbage values) in
-sbi->bmap->db_agsize
-- Subsequent block allocations would reference invalid AG structures
-- Could lead to:
-  - Filesystem corruption during extend operations
-  - Kernel crashes due to invalid memory accesses
-  - Security vulnerabilities via malformed on-disk structures
-
-Fix by casting to s64 before shifting:
-bmp->db_agsize = (s64)1 << l2agsize;
-
-This ensures 64-bit arithmetic even on 32-bit architectures. The cast
-matches the data type of db_agsize (s64) and follows similar patterns in
-JFS block calculation code.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Signed-off-by: Rand Deeb <rand.sec96@gmail.com>
-Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/jfs/jfs_dmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
-index 3d4c7373a25e0..11b6be462575c 100644
---- a/fs/jfs/jfs_dmap.c
-+++ b/fs/jfs/jfs_dmap.c
-@@ -3403,7 +3403,7 @@ int dbExtendFS(struct inode *ipbmap, s64 blkno,	s64 nblocks)
- 	oldl2agsize = bmp->db_agl2size;
- 
- 	bmp->db_agl2size = l2agsize;
--	bmp->db_agsize = 1 << l2agsize;
-+	bmp->db_agsize = (s64)1 << l2agsize;
- 
- 	/* compute new number of AG */
- 	agno = bmp->db_numag;
--- 
-2.39.5
-
+--Sean
 
