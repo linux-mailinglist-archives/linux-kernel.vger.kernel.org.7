@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-586454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B98A6A79FE2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:21:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FDC9A79FE3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B46863B25F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:21:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 962FA3B2553
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7024B24A062;
-	Thu,  3 Apr 2025 09:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F9224635E;
+	Thu,  3 Apr 2025 09:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KS9iH8ns"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="J5mXtP6Q"
 Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7D5248865
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 09:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8252248890
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 09:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743671980; cv=none; b=imMGL4xYOmV/JFJpBMxu8iR9pDeKMW+DQ9o5nmUpB7WEmYN9iwnDAqyRir7vdPgHswSGAnXvrJ4TFo1kIY0UwILmzGEQnoBXUNshwVl+e0CCF4Lqqe4wH9WZtYK5yw55aYo7SM7digJTUrXQcSPSJafYTqNJBMx1cCIHpvEhFzo=
+	t=1743671981; cv=none; b=Vsqt0RH7EozSYGzWBht1/a5sBBOEa2+f4NpUZUJKJDkVjmU3PZmbPXiD6unOMPAkHJe7UWWF6adRpCFw1znTaqGqNEoMOGK5/zbqwK7ljL+2bjEf0yU5gpAu0DaaOqVFmDV5Ytgp0f/4jGGJ9hfASkOfmcNzGAElcSROJegE6P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743671980; c=relaxed/simple;
-	bh=0i1XKESum1ROtP8zceneecA7qiiuRA91Jl+xFwAQ/Vo=;
+	s=arc-20240116; t=1743671981; c=relaxed/simple;
+	bh=CWvgtEhnjN6RdmTgjEIy1jVeplPknWJ9QtaAevQQGW8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IJNfZx+H26LwLDepsXJiURZO0KudlXy93FBIPft9t2lDZomwT5E3aGsIHVivPRquM/K25ODci3ys79/V9/S1RFbH+PUchXQqGzvMObND34pQJOTMwerDgv77pOBgyeds5w2idZ+5J8zP5QqJXm/1vVjoEZHe013RJZ3KXHfSHTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KS9iH8ns; arc=none smtp.client-ip=217.70.183.200
+	 In-Reply-To:To:Cc; b=tm+JeIzo6PgHLXn1JsnZh0AOSpA7P2I+spr+wZ54Y3zOrhinVtke70zGutDVGh6zuXbi7HZpituS+HxutXk7aOfy9ochbE6Jjn1EUzKA5tn0WMWLV6VHgeAPqVaWA5g4nckV+ycI+E2G1Z00L4gMn5rkmFXnbK2kra2YHqE+s+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=J5mXtP6Q; arc=none smtp.client-ip=217.70.183.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7077F43226;
-	Thu,  3 Apr 2025 09:19:35 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DD72B43231;
+	Thu,  3 Apr 2025 09:19:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1743671976;
+	t=1743671978;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=FgI9WlJoifjjYRZvexFT5MnunSRGLeb0uw8FIjpCUV0=;
-	b=KS9iH8nsXPbtNEckVA9/ZSnBtESgADEkTaAgtjcfsZI7HTKvWg0ovU+4Qo+ySI1POTth5H
-	lmdn7vFkYjfqdNoBGHTMRGq2S/3+fr4RI6KLGek8lp+QF/DlLp0ZX5gxkk4bRGiLkkWx1f
-	Qz8CZz/rcoSxQV0C4mBVnzWzyZ9EaPGfI+Zurw2I2XJIQ9JsQGGT97MRr56MMJRmqpXOKa
-	Ux3eO47RO8af2Y/YuuKnWa4jJbHwmUKPMOdmTF/mJmdPXaMWCJYld8WKvfGGJRd3xHBK5l
-	jGDpmwQE8ie4UmM3L4WPO9t7beV9mg+ECC57J/25BMz3vuqxKRZXBU4tLf472w==
+	bh=aIx0bmmAqRksWx5mJw8we6mCFVWTHAoVOhSll28KhOI=;
+	b=J5mXtP6QL8L5ZSZ6On19I4JQuXoHP86oq5bed5ccFyd98grAh032lh0i5wR75lfIVb3od0
+	xpOGnARQzLIzup6siySWQylc0oUlAexnq+oMPs3z7dwpNwuLtcW/WRXXbG2ocvPI1QuVfP
+	LdltcSp/rsTEfT+pYYiecVGvh8hIXcgtHqAWtb8XXWgIpDg22fJSB8Sc6qLLFnrBFYHgVk
+	a6alpqrhVWb3qvn8tKMfwrwMyFFreWczmXEL3A9FPSXzmD+WVv6wIDSvEdF/f5Dlm5dSGe
+	rf8jlUVkNLgYRgTFM2XiyzG+AaM9tRLUO/5x2R4ufKjXfbhYQWpAHsom0MumTQ==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Thu, 03 Apr 2025 11:19:21 +0200
-Subject: [PATCH v2 11/19] mtd: spinand: Use more specific naming for the
- (quad IO) read from cache ops
+Date: Thu, 03 Apr 2025 11:19:22 +0200
+Subject: [PATCH v2 12/19] mtd: spinand: Use more specific naming for the
+ program execution op
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250403-winbond-6-14-rc1-octal-v2-11-7846bd88fe83@bootlin.com>
+Message-Id: <20250403-winbond-6-14-rc1-octal-v2-12-7846bd88fe83@bootlin.com>
 References: <20250403-winbond-6-14-rc1-octal-v2-0-7846bd88fe83@bootlin.com>
 In-Reply-To: <20250403-winbond-6-14-rc1-octal-v2-0-7846bd88fe83@bootlin.com>
 To: Richard Weinberger <richard@nod.at>, 
@@ -79,180 +79,43 @@ quad I/O transfers have been added on top, generally inspired by vendor
 naming, followed by DTR operations. Soon we might see octal
 and even octal DTR operations as well (including the opcode byte).
 
-Let's clarify what the macro really mean by describing the expected bus
-topology in the (quad IO) read from cache macro names.
+Let's clarify what the macro really means by describing the expected bus
+topology in the program execution macro name.
 
 Acked-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/spi/alliancememory.c | 2 +-
- drivers/mtd/nand/spi/gigadevice.c     | 8 ++++----
- drivers/mtd/nand/spi/micron.c         | 2 +-
- drivers/mtd/nand/spi/paragon.c        | 2 +-
- drivers/mtd/nand/spi/skyhigh.c        | 2 +-
- drivers/mtd/nand/spi/winbond.c        | 6 +++---
- drivers/mtd/nand/spi/xtx.c            | 2 +-
- include/linux/mtd/spinand.h           | 6 +++---
- 8 files changed, 15 insertions(+), 15 deletions(-)
+ drivers/mtd/nand/spi/core.c | 2 +-
+ include/linux/mtd/spinand.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mtd/nand/spi/alliancememory.c b/drivers/mtd/nand/spi/alliancememory.c
-index 66df707c8370bdf7b2583f021076d1d277010de4..0f9522009843bc11750de87be000d209cbf1ca5c 100644
---- a/drivers/mtd/nand/spi/alliancememory.c
-+++ b/drivers/mtd/nand/spi/alliancememory.c
-@@ -17,7 +17,7 @@
- #define AM_STATUS_ECC_MAX_CORRECTED	(3 << 4)
+diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
+index 2ebc802299068ef69068422d1ef6585f63365832..854d56f87de5ba2c61bba52a7573d8e2d465bc20 100644
+--- a/drivers/mtd/nand/spi/core.c
++++ b/drivers/mtd/nand/spi/core.c
+@@ -519,7 +519,7 @@ static int spinand_program_op(struct spinand_device *spinand,
+ {
+ 	struct nand_device *nand = spinand_to_nand(spinand);
+ 	unsigned int row = nanddev_pos_to_row(nand, &req->pos);
+-	struct spi_mem_op op = SPINAND_PROG_EXEC_OP(row);
++	struct spi_mem_op op = SPINAND_PROG_EXEC_1S_1S_0_OP(row);
  
- static SPINAND_OP_VARIANTS(read_cache_variants,
--		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 1, NULL, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_4S_4S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_4S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_2S_2S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_2S_OP(0, 1, NULL, 0),
-diff --git a/drivers/mtd/nand/spi/gigadevice.c b/drivers/mtd/nand/spi/gigadevice.c
-index f808a14d26e6ecb223a4b185b34fb03b876f5576..2e87c89a86d61944c6b18653c3ab3b5b49d29529 100644
---- a/drivers/mtd/nand/spi/gigadevice.c
-+++ b/drivers/mtd/nand/spi/gigadevice.c
-@@ -24,7 +24,7 @@
- #define GD5FXGQ4UXFXXG_STATUS_ECC_UNCOR_ERROR	(7 << 4)
- 
- static SPINAND_OP_VARIANTS(read_cache_variants,
--		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 1, NULL, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_4S_4S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_4S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_2S_2S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_2S_OP(0, 1, NULL, 0),
-@@ -32,7 +32,7 @@ static SPINAND_OP_VARIANTS(read_cache_variants,
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_1S_OP(0, 1, NULL, 0));
- 
- static SPINAND_OP_VARIANTS(read_cache_variants_f,
--		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 1, NULL, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_4S_4S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_3A_1S_1S_4S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_2S_2S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_3A_1S_1S_2S_OP(0, 1, NULL, 0),
-@@ -40,7 +40,7 @@ static SPINAND_OP_VARIANTS(read_cache_variants_f,
- 		SPINAND_PAGE_READ_FROM_CACHE_3A_1S_1S_1S_OP(0, 0, NULL, 0));
- 
- static SPINAND_OP_VARIANTS(read_cache_variants_1gq5,
--		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 2, NULL, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_4S_4S_OP(0, 2, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_4S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_2S_2S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_2S_OP(0, 1, NULL, 0),
-@@ -48,7 +48,7 @@ static SPINAND_OP_VARIANTS(read_cache_variants_1gq5,
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_1S_OP(0, 1, NULL, 0));
- 
- static SPINAND_OP_VARIANTS(read_cache_variants_2gq5,
--		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 4, NULL, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_4S_4S_OP(0, 4, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_4S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_2S_2S_OP(0, 2, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_2S_OP(0, 1, NULL, 0),
-diff --git a/drivers/mtd/nand/spi/micron.c b/drivers/mtd/nand/spi/micron.c
-index 79c5dcba5fa6923c6cf2aacbf8be7ba84cb14bb6..5af50c13bd372a86d8883e2f15dbbb0fc5e0799c 100644
---- a/drivers/mtd/nand/spi/micron.c
-+++ b/drivers/mtd/nand/spi/micron.c
-@@ -29,7 +29,7 @@
- #define MICRON_SELECT_DIE(x)	((x) << 6)
- 
- static SPINAND_OP_VARIANTS(quadio_read_cache_variants,
--		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 2, NULL, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_4S_4S_OP(0, 2, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_4S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_2S_2S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_2S_OP(0, 1, NULL, 0),
-diff --git a/drivers/mtd/nand/spi/paragon.c b/drivers/mtd/nand/spi/paragon.c
-index dc84e70bb132381992859b3379c1afd38f1a161c..b5ea248618036d2b4d5758ec752e29c2088a6750 100644
---- a/drivers/mtd/nand/spi/paragon.c
-+++ b/drivers/mtd/nand/spi/paragon.c
-@@ -22,7 +22,7 @@
- 
- 
- static SPINAND_OP_VARIANTS(read_cache_variants,
--		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 2, NULL, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_4S_4S_OP(0, 2, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_4S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_2S_2S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_2S_OP(0, 1, NULL, 0),
-diff --git a/drivers/mtd/nand/spi/skyhigh.c b/drivers/mtd/nand/spi/skyhigh.c
-index c179a067db809a5f92ec21d69ac6e030bd0dcd1a..ac73f43e9365c7922cb531e8edb95f763480d50e 100644
---- a/drivers/mtd/nand/spi/skyhigh.c
-+++ b/drivers/mtd/nand/spi/skyhigh.c
-@@ -17,7 +17,7 @@
- #define SKYHIGH_CONFIG_PROTECT_EN		BIT(1)
- 
- static SPINAND_OP_VARIANTS(read_cache_variants,
--		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 4, NULL, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_4S_4S_OP(0, 4, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_4S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_2S_2S_OP(0, 2, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_2S_OP(0, 1, NULL, 0),
-diff --git a/drivers/mtd/nand/spi/winbond.c b/drivers/mtd/nand/spi/winbond.c
-index 2b9bba6931887bf549f12d55fe84578edb81dbcf..dd0bc95a723e4f4d67d0247cbb3f869f823b9001 100644
---- a/drivers/mtd/nand/spi/winbond.c
-+++ b/drivers/mtd/nand/spi/winbond.c
-@@ -24,9 +24,9 @@
-  */
- 
- static SPINAND_OP_VARIANTS(read_cache_dtr_variants,
--		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_DTR_OP(0, 8, NULL, 0, 80 * HZ_PER_MHZ),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_4D_4D_OP(0, 8, NULL, 0, 80 * HZ_PER_MHZ),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1D_4D_OP(0, 2, NULL, 0, 80 * HZ_PER_MHZ),
--		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 2, NULL, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_4S_4S_OP(0, 2, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_4S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_2D_2D_OP(0, 4, NULL, 0, 80 * HZ_PER_MHZ),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1D_2D_OP(0, 2, NULL, 0, 80 * HZ_PER_MHZ),
-@@ -37,7 +37,7 @@ static SPINAND_OP_VARIANTS(read_cache_dtr_variants,
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_1S_OP(0, 1, NULL, 0, 54 * HZ_PER_MHZ));
- 
- static SPINAND_OP_VARIANTS(read_cache_variants,
--		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 2, NULL, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_4S_4S_OP(0, 2, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_4S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_2S_2S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_2S_OP(0, 1, NULL, 0),
-diff --git a/drivers/mtd/nand/spi/xtx.c b/drivers/mtd/nand/spi/xtx.c
-index 4e38b2e0ca7323e5d2ffe5292e8f67f6318b7f7b..abbbcd594c2c1fcaf68ca5244ed89508348244a3 100644
---- a/drivers/mtd/nand/spi/xtx.c
-+++ b/drivers/mtd/nand/spi/xtx.c
-@@ -23,7 +23,7 @@
- #define XT26XXXD_STATUS_ECC_UNCOR_ERROR     (2)
- 
- static SPINAND_OP_VARIANTS(read_cache_variants,
--		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 1, NULL, 0),
-+		SPINAND_PAGE_READ_FROM_CACHE_1S_4S_4S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_4S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_2S_2S_OP(0, 1, NULL, 0),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_2S_OP(0, 1, NULL, 0),
+ 	return spi_mem_exec_op(spinand->spimem, &op);
+ }
 diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
-index 4b42cbe7da964a272359851179f6643635789378..d47fb920416db822b9e5e156a577fb61d56db8c5 100644
+index d47fb920416db822b9e5e156a577fb61d56db8c5..1bdb195d3e1f05b46201da39441afbe7ffa8173d 100644
 --- a/include/linux/mtd/spinand.h
 +++ b/include/linux/mtd/spinand.h
-@@ -151,19 +151,19 @@
+@@ -170,7 +170,7 @@
  		   SPI_MEM_DTR_OP_DATA_IN(len, buf, 4),			\
  		   SPI_MEM_OP_MAX_FREQ(freq))
  
--#define SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(addr, ndummy, buf, len)	\
-+#define SPINAND_PAGE_READ_FROM_CACHE_1S_4S_4S_OP(addr, ndummy, buf, len) \
- 	SPI_MEM_OP(SPI_MEM_OP_CMD(0xeb, 1),				\
- 		   SPI_MEM_OP_ADDR(2, addr, 4),				\
- 		   SPI_MEM_OP_DUMMY(ndummy, 4),				\
- 		   SPI_MEM_OP_DATA_IN(len, buf, 4))
- 
--#define SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP_3A(addr, ndummy, buf, len) \
-+#define SPINAND_PAGE_READ_FROM_CACHE_3A_1S_4S_4S_OP(addr, ndummy, buf, len) \
- 	SPI_MEM_OP(SPI_MEM_OP_CMD(0xeb, 1),				\
- 		   SPI_MEM_OP_ADDR(3, addr, 4),				\
- 		   SPI_MEM_OP_DUMMY(ndummy, 4),				\
- 		   SPI_MEM_OP_DATA_IN(len, buf, 4))
- 
--#define SPINAND_PAGE_READ_FROM_CACHE_QUADIO_DTR_OP(addr, ndummy, buf, len, freq) \
-+#define SPINAND_PAGE_READ_FROM_CACHE_1S_4D_4D_OP(addr, ndummy, buf, len, freq) \
- 	SPI_MEM_OP(SPI_MEM_OP_CMD(0xed, 1),				\
- 		   SPI_MEM_DTR_OP_ADDR(2, addr, 4),			\
- 		   SPI_MEM_DTR_OP_DUMMY(ndummy, 4),			\
+-#define SPINAND_PROG_EXEC_OP(addr)					\
++#define SPINAND_PROG_EXEC_1S_1S_0_OP(addr)				\
+ 	SPI_MEM_OP(SPI_MEM_OP_CMD(0x10, 1),				\
+ 		   SPI_MEM_OP_ADDR(3, addr, 1),				\
+ 		   SPI_MEM_OP_NO_DUMMY,					\
 
 -- 
 2.48.1
