@@ -1,230 +1,78 @@
-Return-Path: <linux-kernel+bounces-586968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA01EA7A5F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:06:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89C1DA7A5EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 17:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DE47168D4D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:06:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDD7A168636
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 15:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFB92505AC;
-	Thu,  3 Apr 2025 15:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aoViPt2j"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE332505B3;
+	Thu,  3 Apr 2025 15:05:12 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46A6288A2;
-	Thu,  3 Apr 2025 15:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC75288A2;
+	Thu,  3 Apr 2025 15:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743692772; cv=none; b=UzkxiA3iRqt2cz0pgi603HcOiYTxmq4TMrA2SzyHSz26TOFkhJiRXtp4dnAC5AawkBZ8AhnE4JwRY2R4J6PxyLrxf8+82MyvQe1umMDnwLA88fSwoLSIVXwWIdLSssiUUg+hxUqte1Mi+Z7xPxNHTW7EAQVqtMNjiQqAdisSM5o=
+	t=1743692712; cv=none; b=bJa5Iyihzf4OXmmA8uHVeX4U02ieP0RzKQ6h2drd01naDM/l1dwDZb5+kYITcr+2h9WH3xVtSQmrvefmIbRMcMbDhhcU5dHsorcE8NbEsqTTtKTLKU/6cNXUYR2/36UIQyepVWrzDzgCgp7NVneFpQB5eDK21wKUkY3+6/5cZt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743692772; c=relaxed/simple;
-	bh=+VMMw5rPIUEIFlei8KuJopBbaXcA5NCCzI0NEv4JagU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=geYf7hallnmpOOQDIBVapQo4nQzvsmA4lLXobFEIlm/ThmPRvktmmPByyE2vNQrjj2uf4IfExbUJJEb2qN/wNbPph5gO8E4aNbDGJ08xYhFA9VX+LDdhQX0OiQ+CbjVfW7C9UJQtnLTMRoAcNmXP/tP7xPJhvg8q2nj82ZwVXuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aoViPt2j; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6ecfc7fb2aaso9242356d6.0;
-        Thu, 03 Apr 2025 08:06:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743692770; x=1744297570; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iK8KEJBVYPl6HLxUuQQ2klCL+ZgkeKSI3+E7obEM/WI=;
-        b=aoViPt2j5d3aXeAmKRlTT/JqmjSyu3+G8Fr4hRo4HY7g7jV9e4nb1YYUij1MLj4c9q
-         V4zOpKr00jwXxDllEI6sszzvWSjAfzPnWG/pyBIOsjouJ4sqXDr/pubRoE+cMGyawVRI
-         lfTFWeKS+EfhJzg4aIRd6b1uX/Mc1nlpEDQo8oVYmNvyHJrk3mm1BuKM+ejnjXqW3E0c
-         3DIFaOYLlAZ+HS8ORDWdrE9sfpXSvYOjT0hVJ+rYundeHCL72MMdZcEMWgbsFDBTFngS
-         WvhLtkfQWL3eqyefWpagdpBHR7uDr4c0u4WOwNjxOLhe83uOGN1IjOymwjfqW/iXJVpO
-         8ZWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743692770; x=1744297570;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iK8KEJBVYPl6HLxUuQQ2klCL+ZgkeKSI3+E7obEM/WI=;
-        b=jP0NlHEAkURo8/zHOwVFqJnGTz12Y/4cM6HhhDKLjNYiieHhRtEOUANOPRp4oZFT3s
-         KCC7N+mD4wtqeCNMWCt4czni+HWN9rYuuzGRlizEyKZQGwkbUSesTohmupjtc/XmXoue
-         MoyMtBNOik+jIoBa+4iVGge0kK0ioNDY3tbgF+ZI8fWj5XEV1MLZVD58c3P0JTCR2Do/
-         EyWsckVNw02aRKycENLcWdMwYXQRNlWe2z/QXtOyxYHp6gfJQgKVDGNE9vWqCX5cLs9W
-         DPntSmstw0g2ZnlrawmUdBHaZFXjtdpD+HW8+wb39eF/TnzrOboKaZZdZwr+TIOWp7tP
-         +TDw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5yZqhJVbPudPx0ZqERfvRdtrn7WU8+a3ngO57zxTulb05M4pXgzgZNG4a5Fn6dhyyle46WCK/d0o=@vger.kernel.org, AJvYcCWMtA8hhbrA6w248vfpQwGWskbOVInyAseZ9isqtJ+wxcMLNgz3jMthkQuMMjemBvOZchJ7Q1jcKlNdqhnp@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQ6wA2PA2l5ZI0qsSSuyuosjslfGff3cokKSpyC9HqSfdFsQvm
-	AhkWpWd35+pg2fuLfU2oWoIcRFON0rGvyDt9h+qJhvCi3W/LNySoGrp+sNUW7HlwDVBTWhm8nvY
-	4dbNktJeRKGOfmFTpTB7wphgBImA=
-X-Gm-Gg: ASbGncsNWbuk2yz0m8G0XlRD6uaFuJQ45xNU/3r26/edrgun+ntuyy3zJJ8CG3iiT4v
-	EXmkecleNDOmd7F4XlGtcFgftZYYYwivpd5Z6ydOm2K9KLrttScXDY6wDErVbKQFkf/Xb02SNDp
-	hVcx2igKqU9se9AobdKu0AToIRDo/a3hvfLFj2bKF/XytGT4C+FCHjoo9jAA==
-X-Google-Smtp-Source: AGHT+IHhT/kv3ErEBGGfcWsnYD74kOhA0A8+Rch51ZBJnkmq+tPsrAIdzQtaOiWaOiHnDiOdafpEDaK/ECwlaCjb0Pg=
-X-Received: by 2002:ad4:5f07:0:b0:6e8:eabf:fd55 with SMTP id
- 6a1803df08f44-6eed625b85dmr310628256d6.39.1743692768242; Thu, 03 Apr 2025
- 08:06:08 -0700 (PDT)
+	s=arc-20240116; t=1743692712; c=relaxed/simple;
+	bh=SMpFUIiEym7FAp7G/677xAHZhNHVi5Tv5IwIW4Xsd4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PT9ZPDq3RggG2ticrBmbFM1ezCJVU8c48JZ5ES76O3s0/f3Sgp274JDidkkADU0rrPZuHHNYYc9pb944xnndvEPmciyOK7FA0zhdwAjWLRjPRYAh4GWbuCwq9dOxE7BKlgBBD5zlwddHfEuwDD09kkO5OoTofrPteYsFyAlV9fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16CA2C4CEE3;
+	Thu,  3 Apr 2025 15:05:09 +0000 (UTC)
+Date: Thu, 3 Apr 2025 11:06:15 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
+ peterz@infradead.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-team@meta.com, mhocko@kernel.org, oleg@redhat.com,
+ brauner@kernel.org, glider@google.com, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, akpm@linux-foundation.org
+Subject: Re: [PATCH v2] exit: move and extend sched_process_exit()
+ tracepoint
+Message-ID: <20250403110615.7a51b793@gandalf.local.home>
+In-Reply-To: <Z-6TDh1MUT49lvjk@gmail.com>
+References: <20250402180925.90914-1-andrii@kernel.org>
+	<Z-6TDh1MUT49lvjk@gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250402204416.3435994-1-nphamcs@gmail.com> <mnvexa7kseswglcqbhlot4zg3b3la2ypv2rimdl5mh5glbmhvz@wi6bgqn47hge>
-In-Reply-To: <mnvexa7kseswglcqbhlot4zg3b3la2ypv2rimdl5mh5glbmhvz@wi6bgqn47hge>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Thu, 3 Apr 2025 08:05:57 -0700
-X-Gm-Features: ATxdqUFYf4wIA9R_L2Co5iER6d9yuAcNU5JyorPqrHSFoabj94WPG9kBtVsSVkU
-Message-ID: <CAKEwX=NJi63CPEe2bXD4_+Uur2KUmCV-L1kVtQr_+mgKbMb3eg@mail.gmail.com>
-Subject: Re: [PATCH v2] zsmalloc: prefer the the original page's node for
- compressed data
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, yosry.ahmed@linux.dev, 
-	chengming.zhou@linux.dev, sj@kernel.org, linux-mm@kvack.org, 
-	kernel-team@meta.com, linux-kernel@vger.kernel.org, gourry@gourry.net, 
-	ying.huang@linux.alibaba.com, jonathan.cameron@huawei.com, 
-	dan.j.williams@intel.com, linux-cxl@vger.kernel.org, minchan@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 2, 2025 at 8:55=E2=80=AFPM Sergey Senozhatsky
-<senozhatsky@chromium.org> wrote:
->
-> On (25/04/02 13:44), Nhat Pham wrote:
-> [..]
-> > @@ -1981,10 +1981,15 @@ static int recompress_slot(struct zram *zram, u=
-32 index, struct page *page,
-> >        * We are holding per-CPU stream mutex and entry lock so better
-> >        * avoid direct reclaim.  Allocation error is not fatal since
-> >        * we still have the old object in the mem_pool.
-> > +      *
-> > +      * XXX: technically, the node we really want here is the node tha=
-t holds
-> > +      * the original compressed data. But that would require us to mod=
-ify
-> > +      * zsmalloc API to return this information. For now, we will make=
- do with
-> > +      * the node of the page allocated for recompression.
-> >        */
-> >       handle_new =3D zs_malloc(zram->mem_pool, comp_len_new,
-> >                              GFP_NOIO | __GFP_NOWARN |
-> > -                            __GFP_HIGHMEM | __GFP_MOVABLE);
-> > +                            __GFP_HIGHMEM | __GFP_MOVABLE, page_to_nid=
-(page));
->
-> This works for me.  I saw in other threads (and sorry, I'm on a sick
-> leave now, can't reply fast) that "zram people need to fix it"/etc.
-> I guess I'm one of those zram people and I don't think I run any
-> multi-node NUMA systems, so that problem probably has never occurred
-> to me.  We can add a simple API extension to lookup node-id by
-> zsmalloc handle, if anyone really needs it, but I'm okay with the
-> status quo (and XXX) for the time being.
+On Thu, 3 Apr 2025 15:54:22 +0200
+Ingo Molnar <mingo@kernel.org> wrote:
 
-Yeah tbh this path is not that much different from the status quo
-(page is also allocated via the task's policy here), and all the other
-paths are fixed, so this seems to be an overall improvement still :)
+> This feels really fragile, could you please at least add a comment that 
+> points out that this is basically an extension of 
+> sched_process_template, and that it should remain a subset of it, or 
+> something to that end?
 
-If someone uses recompress + multi node, we can fix it then. It's not
-impossible, just more code :)
+Is there any dependency on this?
 
->
-> [..]
-> > -unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t gfp)
-> > +unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t gfp,
-> > +                             const int nid)
-> >  {
->
-> I'm not the zspool maintainer, but if I may ask, for new zsmalloc code my
-> preference is to follow the kernel styles (yes, the old code doesn't foll=
-ow
-> any at all, whenever I touch the old code I fix it).
->
-> Do you mind if we do something like below? (at least for zsmalloc)
+The reason to use the templates is because it saves memory. Each
+TRACE_EVENT() can add ~5k (which a TRACE_EVENT() is really just a
+DECLARE_EVENT_CLASS() + DEFINE_EVENT() for a single event).
 
-I don't mind at all! Thanks for fixing it, Sergey.
+Each DEFINE_EVENT() just adds around 250 bytes. Hence, if you have multiple
+events that share the same fields and output, it's much more memory
+efficient to use the CLASS and EVENT logic then making each their own
+TRACE_EVENT().
 
-I saw that Andrew already added this as a fixlet. Thanks, Andrew!
+I don't know of any other dependency to why this was a template other than
+to save memory.
 
->
-> With this
-> Acked-by: Sergey Senozhatsky <senozhatsky@chromium.org> #zram and zsmallo=
-c
->
->
-> ---
->
-> diff --git a/include/linux/zpool.h b/include/linux/zpool.h
-> index 697525cb00bd..369ef068fad8 100644
-> --- a/include/linux/zpool.h
-> +++ b/include/linux/zpool.h
-> @@ -22,7 +22,7 @@ const char *zpool_get_type(struct zpool *pool);
->  void zpool_destroy_pool(struct zpool *pool);
->
->  int zpool_malloc(struct zpool *pool, size_t size, gfp_t gfp,
-> -                       unsigned long *handle, const int nid);
-> +                unsigned long *handle, const int nid);
->
->  void zpool_free(struct zpool *pool, unsigned long handle);
->
-> @@ -64,7 +64,7 @@ struct zpool_driver {
->         void (*destroy)(void *pool);
->
->         int (*malloc)(void *pool, size_t size, gfp_t gfp,
-> -                               unsigned long *handle, const int nid);
-> +                     unsigned long *handle, const int nid);
->         void (*free)(void *pool, unsigned long handle);
->
->         void *(*obj_read_begin)(void *pool, unsigned long handle,
-> diff --git a/mm/zpool.c b/mm/zpool.c
-> index b99a7c03e735..0a71d03369f1 100644
-> --- a/mm/zpool.c
-> +++ b/mm/zpool.c
-> @@ -239,7 +239,7 @@ const char *zpool_get_type(struct zpool *zpool)
->   * Returns: 0 on success, negative value on error.
->   */
->  int zpool_malloc(struct zpool *zpool, size_t size, gfp_t gfp,
-> -                       unsigned long *handle, const int nid)
-> +                unsigned long *handle, const int nid)
->  {
->         return zpool->driver->malloc(zpool->pool, size, gfp, handle, nid)=
-;
->  }
-> diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-> index daa16ce4cf07..70406ac94bbd 100644
-> --- a/mm/zsmalloc.c
-> +++ b/mm/zsmalloc.c
-> @@ -452,7 +452,7 @@ static void zs_zpool_destroy(void *pool)
->  }
->
->  static int zs_zpool_malloc(void *pool, size_t size, gfp_t gfp,
-> -                       unsigned long *handle, const int nid)
-> +                          unsigned long *handle, const int nid)
->  {
->         *handle =3D zs_malloc(pool, size, gfp, nid);
->
-> @@ -1033,8 +1033,8 @@ static void create_page_chain(struct size_class *cl=
-ass, struct zspage *zspage,
->   * Allocate a zspage for the given size class
->   */
->  static struct zspage *alloc_zspage(struct zs_pool *pool,
-> -                                       struct size_class *class,
-> -                                       gfp_t gfp, const int nid)
-> +                                  struct size_class *class,
-> +                                  gfp_t gfp, const int nid)
->  {
->         int i;
->         struct zpdesc *zpdescs[ZS_MAX_PAGES_PER_ZSPAGE];
-> @@ -1333,7 +1333,7 @@ static unsigned long obj_malloc(struct zs_pool *poo=
-l,
->   * Allocation requests with size > ZS_MAX_ALLOC_SIZE will fail.
->   */
->  unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t gfp,
-> -                               const int nid)
-> +                       const int nid)
->  {
->         unsigned long handle;
->         struct size_class *class;
+-- Steve
 
