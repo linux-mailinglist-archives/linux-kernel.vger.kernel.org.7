@@ -1,123 +1,110 @@
-Return-Path: <linux-kernel+bounces-587933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D846A7B215
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 00:40:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BCF2A7B21C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 00:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9EC8179658
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:40:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E874189B627
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206071AF4C1;
-	Thu,  3 Apr 2025 22:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="mBbfLtHu"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9741DC998;
+	Thu,  3 Apr 2025 22:43:19 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9DD1A317E;
-	Thu,  3 Apr 2025 22:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF2A1AC44D
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 22:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743720021; cv=none; b=rL+H92BIcDGuXVRteA5SaCUnCcIP3FCWln1ElV37WY0YFrm1+KlJta/wHzp470tCTXbhDA9VsVRqr0HIKT2FcM5MwZYgWos0sWTlpurA6CBN7kK7m+JH1+YwxjeLOXVDk4ZZbEG9cn7s4nglxHjFxuqD+TZdaY7nAjrXj2IOgrs=
+	t=1743720198; cv=none; b=B4X8o6DQMvZk+5eWk2yJ7Eq125qcR45pRLgFny0pPs+MjAGNO5ps/wksL+3OkT7x78GigcfswWbAZHBZAxsnNJGxNDfPTlMtQa4Tk2SEO9WJMY6bLZ7EvMPwj9QJ6gmGcqr7zG61ZSR9vYEwyFKTwS+TiBBtVy+KqYBhPC0xTWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743720021; c=relaxed/simple;
-	bh=C0vdjRDJZakc74qJQQwFBMNl7Rcg1MWJAF0DjtgwOlY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nT25DJakRYhVr1ZYQ4X30pRKKh8hM9eHk9V5g1b9jTEI5mjol6aexaENGfEXU1kaq7MIAF7xuQbB0ccL2Ih+cu88u1xWw2kr3AiGhuYReTD9FH5vIzOAAxBCE/OrzC7xHeiopo+XSnM349AwkOikZnGc75pFUMRe0oyypkvQEKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=mBbfLtHu; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3912fdddf8fso1615474f8f.1;
-        Thu, 03 Apr 2025 15:40:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1743720017; x=1744324817; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1OPzpbeROVt3iebNoDgfJuVub0bw6Mab3GZ6fxFNwb4=;
-        b=mBbfLtHuO2o0hJeh2X+Hq0nvJAuLSXOnRbowBTR78TGwjxAN73BmdrDRRo8c6G3EVw
-         BCsqjGC399ZY7cQc8xB/sUQZAjrbMnqbLeN3phMJj9Tws7kEK3UaXraQZUuNLadRhgcG
-         Ua/RCYaEUx2QYSjX35LVdIrOP7YVU/4W9NW0QPG5YazJgBSiSS86YIENz2Q5JOxcxaxS
-         gB64+awbuBM6eC+lnyl+Lg4DowpluOmBR3HxlgB/PXybHCqCfmXRwf2BmtGoxKBiqw0K
-         3NNURJ4O5dLElMsGI9IG+CPWZmOc/YTzFoGqc1iSJteukytpU75unU42bPyxNH68DkS8
-         EKTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743720017; x=1744324817;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1OPzpbeROVt3iebNoDgfJuVub0bw6Mab3GZ6fxFNwb4=;
-        b=PngOnD2NtafWgx4dVYntPdwrj/WBaJU0fBr+0t7gaNB77+64sTBTA+ur/Fm5Qpw5RQ
-         1lpn+iMi5Q2WWs9KZJ1ysg0k3v7tcyOKor3DL3opbkrfrNU6HdHQOYr84Dt7puexiQmh
-         fTU6v666L9tmjU1GIe3fCXF1Xyj8I7/jMm/Ud5f4vPEANimTNIFf2sm5NFcqGy5pWdTJ
-         QGCbktMrUGpWN9jJ/ITpt7PU0uLHYXdcplcd9r5rFjjMlcxRNiL4vSfB9CW2zQCZ3cOv
-         N0j+H2pbsYy9jsOfvhFQV+F9Lmn16hHPMg9cAvrLJ9nf7OBC187awlMA4w5dtwGdG2kE
-         UFaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOg5sBD51jL4cOMo8gR4tyObf52hTL5HEnnbhY5Xc0u7W7n+UU616jGsgvYZjcIIMs2Rhoq14SPoAihiM=@vger.kernel.org, AJvYcCVOvWX+W+Jw8GegqvgOW4DaP0Qne4kx6Q5fKvMuPk568lmoUxMCAnVen9euERekYYAf4TM1qM/L@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYDA+aTt8r8FMZR+1mdmmAa6ZOZtR3WoZr3LdIf6/98bbwHlw0
-	a3bEBogUui8BRfpZM4hdwTTe9KjMrHcVBdW4Efzfjkr84JCgYrLwra4r
-X-Gm-Gg: ASbGnctUiaN5em95WOPkKypM05hA4dtxnIX1SIc71kGAalQ5XO2042e9tL/kRoIaBIZ
-	iYkWu0Ff6t47DW9uLLc5guySGP2c1jEM5iZZj2tGbeT858xsKWlrIGHpXEGgbYmkv+mDewZBfLP
-	7xq6Z2FTs1o0N7ATO2iPmtZjzCj7Rv67Ph9AJrEnEc2yDCWQGyBjQPddfHkTKwfzeMlAZXMpp0d
-	+0z1wqwvs9WXsiNBz5UxUn45ppJV532nAYmnD5qE1T3+IpaEJ99HFaHZjl0LdWRTrYT/H4Yu/ku
-	6WflDb/fFRI8/+aVdeZQGuICkrGnJDM6J0zKhsjkSMRNjpI09GF+BjXAFMoz4d89eEQtc6YlkX7
-	YfiubWmeEQ11xSIk/O+mEtQY=
-X-Google-Smtp-Source: AGHT+IFOb6izVa62SvLGubqLsioOz8B+D5IB4XXfBBTooXiRS5/iI5bZDjKC0LfOU2ryXUUnVZHr8w==
-X-Received: by 2002:a5d:5848:0:b0:39c:1efb:f7c4 with SMTP id ffacd0b85a97d-39c2e65a54fmr4290054f8f.25.1743720016962;
-        Thu, 03 Apr 2025 15:40:16 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2ac393.dip0.t-ipconnect.de. [91.42.195.147])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec364cb9asm29384235e9.31.2025.04.03.15.40.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Apr 2025 15:40:16 -0700 (PDT)
-Message-ID: <e4761e82-52ab-42a9-ba61-d95f46fd90ef@googlemail.com>
-Date: Fri, 4 Apr 2025 00:40:15 +0200
+	s=arc-20240116; t=1743720198; c=relaxed/simple;
+	bh=MC/KEKdPTOEflqGlUvBmURVglRnQ9QWtHNmEHTvCwqw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XTclTvwrCuCg9RUazxYHk9lUJZeSi8EkB8xEkA7Rrr1YFvjZNKykuP1Il9LoiZ3TJ/G0JmC/8ui5LQndxl1nO9/23jYacGWOomRd+3WGvdc31W+i6DHbDpNV9c5i+ILLP0yarfFvcnaQfvT3Bi/WFINQ0k5Zkgg8RPtcHgvNOH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1u0THG-0000kD-33; Fri, 04 Apr 2025 00:43:14 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1u0THF-003AjU-13;
+	Fri, 04 Apr 2025 00:43:13 +0200
+Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
+	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1u0THF-004aMT-0q;
+	Fri, 04 Apr 2025 00:43:13 +0200
+From: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Subject: [PATCH 0/3] usb: typec: tcpm: sink (ufp) accessory mode support
+Date: Fri, 04 Apr 2025 00:43:03 +0200
+Message-Id: <20250404-ml-topic-tcpm-v1-0-b99f44badce8@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.6 00/26] 6.6.86-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250403151622.415201055@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250403151622.415201055@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPcO72cC/x3MQQqAIBBA0avErBswyU1XiRY2TjWQJhoRiHdPW
+ r7F/wUyJ+EMU1cg8SNZrtAw9B3QYcPOKK4ZtNJGjWpEf+J9RSG8KXq0diUym3bGMLQmJt7k/X/
+ zUusHv1MnhF8AAAA=
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de, Michael Grzeschik <m.grzeschik@pengutronix.de>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=852;
+ i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
+ bh=MC/KEKdPTOEflqGlUvBmURVglRnQ9QWtHNmEHTvCwqw=;
+ b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBn7w7/eRus1d7Dqqh37Jw8+q+uyFlSjogqRvC1n
+ ZIXVTkUu4KJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZ+8O/wAKCRC/aVhE+XH0
+ q/4AEACSkvLzR5VbV5RMNgIJDNoIx/PZxYa07Gp8ODXHaJvWYwctPB2JUbtuM+xIKrlrHO3bx3a
+ 2p+zEIv9eE+E7ydu5jGnKq8Y+7TChojAfTGHCo/yYQCESvQOPb3VTgTkzDtTqGUXE+sRBubd8a2
+ LJzn7M7hbu5PfgiBTIYcwWqVj5rXw+mvqF+F0z8X6T6z3PV+IGtvVy2j6yKHUzh6YBXYr90cmy7
+ DfdTO42GRTsq5ISMObjh6Ps8Hq74i1HoPet0zyZKIw9XjmQrW5MNnt/CHeYd+oj6H0vrS2e2r7J
+ qFtE1qvKdkYfDEM82gjB8CcWmuv5wbuHhCc18PjPYa9uKttSMLor3HtS4/yMnbWy2t1zDmvp10H
+ H9coKSrRT7TsSOMZoQbiqyb/CAxMaTiUX8qVimL3nYcVNE0wCsghyEm2wO/Tfs+UkxjDXd49gdt
+ TCR2EfLhCKfQKu8IwsACsx6V3za/BM+aj/InCiBys4g+Aav+rzZuldNktKuJkZ0ChVEABQycpk1
+ 5wQY+tuwH7XSEAljyqyYgAL3D8VJDH2jlBFfdICFQTbKXKvATcES0cOLX79Y2a8ecy5mth8F8RH
+ 4Tfqqdy1qPvNT+eNPEj72a8JJb78EDyqVmOTBqX5Oje2iaBu95FGNzmZ5byIo2oXcVi/EqsCycn
+ zqaa20o4dCHFruA==
+X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
+ fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Am 03.04.2025 um 17:20 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.6.86 release.
-> There are 26 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+This series is adding support to reach the DEBUG_ACC_ATTACHED state
+when configured as sink. It also extends the tcpm_acc_attach function
+to handle sink and src cases and sets the proper modal state when
+calling tcpm_set_role.
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+---
+Michael Grzeschik (3):
+      usb: typec: tcpm: allow to use sink in accessory mode
+      usb: typec: tcpm: allow sink (ufp) to toggle into accessory mode debug
+      usb: typec: tcpm: allow switching to mode accessory to mux properly
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+ drivers/usb/typec/tcpm/tcpm.c | 68 +++++++++++++++++++++++++++++++++----------
+ 1 file changed, 53 insertions(+), 15 deletions(-)
+---
+base-commit: a1b5bd45d4ee58af4f56e49497b8c3db96d8f8a3
+change-id: 20250404-ml-topic-tcpm-aabcc5f2d55e
 
-
-Beste Grüße,
-Peter Schneider
-
+Best regards,
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+Michael Grzeschik <m.grzeschik@pengutronix.de>
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
