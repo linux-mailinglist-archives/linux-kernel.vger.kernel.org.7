@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-587767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1347A7B018
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:08:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A370A7AFFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E46A73BDEE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:03:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E5827A7383
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 21:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77D925D558;
-	Thu,  3 Apr 2025 20:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B42825E451;
+	Thu,  3 Apr 2025 20:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CohNH8fu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="baTPjAoQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BB825D548
-	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 20:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CA625DD06
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 20:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743710987; cv=none; b=bpYxUw+OrOTSH/HfBMTYprnA4IDTvffnVZd6aYE6wy+y6ceLZB0+jIBniyhi8W6mcC9klTq9T0Zis/4/z+PKP+S+Kq0CNylEFroL2GBHXdekk+LkvUCK9DF/KsID044SXZkwTyy6DUd4d1kzn/c3TcAtckbo9YmFoN8PyNh2rkI=
+	t=1743711049; cv=none; b=s5UfDy9Zf7VUi10cl2C7ofmFoz+NdR0EMlpaGFlbk5e/q9pk+iz0DDG59LzXMjCBaGZReArCZUIqkDvC24flNT765JtDbTxxLZB4rAC35evaWGmzcsateCn9Lua8bndUJ5oPZlgN2zhD+tlcXPyQRXMPliR+8LEzCC9l8zwhPC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743710987; c=relaxed/simple;
-	bh=KuAuPC2Kc5A2gf9Br08oeF8OB+Zc9OXztUj1fYLftnc=;
+	s=arc-20240116; t=1743711049; c=relaxed/simple;
+	bh=IAbb+57bvxBTSqct+jicwJiBlS6fZhLGUsf4hfx/jXM=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=V+vPR4n5gUnpYj/FUcbY7TQ1T2x8D6cCEx3Jz7Pq+AycdVilo+43JkOylXPFJfb9v8HJwY04M5adhiObKdoQIQonzVrdX+oGq+dhM0DwegoLgrkBvnYZFkfrGp8i1YZ9tW6+Eb1zXPkuMOk+dzOvzxJ7MLSdL76tMrUvsQEw5Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CohNH8fu; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:MIME-Version; b=FJK5Ue1XKHsCHtzg6v5CDWoT+/+GtXbaNEt7VEih+ISbI379IpYvNqI/S+KKpHc6sNBzdATiSEABCFoBGsLBtR/kJF3blbmdr85SarBlIfxVzKEg68Fj6lrtFXqhotL2xV5DJGomrChzglxoz1B689zbO7Al/dv37Cg9hLbUL3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=baTPjAoQ; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743710984;
+	s=mimecast20190719; t=1743711047;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=o38mcyc5s3JRsdW3YB6YPHjbQdyEBV4D3I4i1S6k6to=;
-	b=CohNH8fuakVW+EbFrBHvo1DCFS1RFLgyrHYzbK+Oy/45gI1N0bCkwD18gmQgLVxux0XFn+
-	E33eMwLh/kvoYi+BwVU3J1cdSewYLEwApNY4C+3pqAWpd1R18yf+ogbaI/tOhVWIu2+TFx
-	cfFJ1XpnMyJ0m0EtjlTNSb9HGSsm4Yw=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=RGv3I+Uf1BgmOqSQxj8McIcEQIndE7P+WntswOEF8vk=;
+	b=baTPjAoQ4F6Ct5jsZ0BYeWrxIBqc1/lvexl/sWxVPT2ZCQVA30icDY4BNW1GF/L29Vg28a
+	j3o5xHsw148eGSX8b6dyhrk90LuhZ7NpfEOY8RB2GgnuoexbyI+gt+gqevVqBbfC/i9HMm
+	e32mCtWxTop6s6vP1ceX/ymy0nBDb50=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-636-80N5zEqgO6Ok8rT9EmY5fA-1; Thu, 03 Apr 2025 16:09:42 -0400
-X-MC-Unique: 80N5zEqgO6Ok8rT9EmY5fA-1
-X-Mimecast-MFC-AGG-ID: 80N5zEqgO6Ok8rT9EmY5fA_1743710982
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c572339444so198811385a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 13:09:42 -0700 (PDT)
+ us-mta-685-NZisrMuQO120nHRvVzRGGg-1; Thu, 03 Apr 2025 16:10:09 -0400
+X-MC-Unique: NZisrMuQO120nHRvVzRGGg-1
+X-Mimecast-MFC-AGG-ID: NZisrMuQO120nHRvVzRGGg_1743711008
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4769a1db721so33082711cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 13:10:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743710982; x=1744315782;
+        d=1e100.net; s=20230601; t=1743711008; x=1744315808;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=o38mcyc5s3JRsdW3YB6YPHjbQdyEBV4D3I4i1S6k6to=;
-        b=J4Xb66vJ975Fe7DfnGxVo0sXfWlWREHDPGqzUeTGwUARMJvkw7XiZSyw/dyOn9z4do
-         Gb1dR5eRaKmCPvNuGTvCNr3uhZa0y+d7DXR/Rr6cVMpaV41ksDlM2hm03bmrkgRMnZxh
-         zusAZtGjOVg42G1sRaisZNwS5zFY+/kmko6lFSOU/OYDytfB9SwWKTZiCgpGNCgdsCSy
-         3ynKBBL2o/JKfPCJduJa4IrCjt9M43RQw0s9Iy+jb/EUiIUhOryyFkyJ1fqgBNyPAqLd
-         ky1QwK0pJ1wfEJeU/tj+Vo/IcqHlS3ywAqtFeNn9RxEJPd+rJE0njCCpTnSHeqSP2o32
-         nkLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVuoGiju0vny0vBGWnU+ThKkjAnWmBDSyOwdshef/kedOtnRboBngZ6gZylqJgKfLVZMuphSsIahyIoExw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaZof9xII3YzBMOo+QlkaehJdOKLwGJaspPAcchLniLI+m/HHz
-	qovdJilgOKKSABI6rXzHkoJggB1lWbZ4ZRS4PlJXp0nhGQk7QbUUxzTbJbyLu1T3qsmxzSRSsyZ
-	IPbhfqsQVjEXyQeExMPt5NPY+IaeryYnPXrSA2cmqi0UcZ8kqG7cLnYs7LXB87A==
-X-Gm-Gg: ASbGncvBlnWqzkqSk/50K1z/jlM+pjud4Ac//MZDBUrEW9kj4s/iHT9CPj7C0XC0z4j
-	owvPbaGPyrCoF0YxFjccyvKqbKI/6qUMFpRGzKac2XqYeSPwVWx3BVNp1HiKI9ehXzcDFV7PBwK
-	REXchJg23KDsmja0bO+vgJauXdD03d0Gh5Sz14FjCVZuDBaJVhiHLivHZzgaFzMMVCRb5IAKqPd
-	onhENOlbU2JQRY0k5LWFXjdr9rMl8Dnt8LrfEXxuwHwMyb7t86Df2Nev3XkdTD/Yav+c6RA72+h
-	Pq0CB+T3ZqB4/DY=
-X-Received: by 2002:a05:620a:4625:b0:7c5:4eee:53f8 with SMTP id af79cd13be357-7c774dad123mr90918785a.41.1743710981896;
-        Thu, 03 Apr 2025 13:09:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGp7BcesIEd44ayqQbs+gVIFhGnWkPjIAyem/IbMBRBP4H6O6igve2fPOHCQZcgJGBgM1OgHw==
-X-Received: by 2002:a05:620a:4625:b0:7c5:4eee:53f8 with SMTP id af79cd13be357-7c774dad123mr90915085a.41.1743710981558;
-        Thu, 03 Apr 2025 13:09:41 -0700 (PDT)
+        bh=RGv3I+Uf1BgmOqSQxj8McIcEQIndE7P+WntswOEF8vk=;
+        b=KdnyoNr/BjnqK6lKwgBjmtQbbfufBprqWhLR7byQJOg6jXrHNIxdpmxUxivqyj+Ar0
+         LFJdFY0Cdb4jgSmOCHquAsFkW2zFNTldOTRsTJt6XD9twDaaN9uoIIBHELFqv9bXsXo4
+         gkYDd8TsvvMDHDjF1gbyhoR7/4epiI/sR/bhGOBRXjKydmD5moc+ihA34iKivqDfbWyi
+         do6mZRLIAdU8MBwHqMuQEkv/g6n4VnZwmpknHuZZYDSHAtSUytMD+jBncr6KuLvpSCdT
+         kvgEK7A3FFgjCO7YNBK7S3Cv12Es1ryAMakmVr+DUeMoJ36jqThV64F8ggicKLw2R0BH
+         BGFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXl6VHYn7Y8cq8Sz4aZbd1uSkDK6QjnZKuRdF/k/v1oumOX0IXEQ/7+gb8CXA4Yo3Hr4SbHdEolJM94yWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGPmvad0fOYg4emXoXHnuPsPdkAvWAvMFNp6k1b4uYW3rS5r41
+	ShrJp+r8Db9c3eA/KXY1wl0Hy/TPXX0dr1aQ2XJkqzVzIullpkXcOPGPRi2g8CmiMcazXAeTYGg
+	G2J2tptdJWYc6wpgeTCl0j4LTRp+7p6xPTx3xS5uWixsdAhIizX6X1GRmLgh3uQ==
+X-Gm-Gg: ASbGncsfKm2g+bNw9Oh7Pby2DA4lkYT1wNOAlaKc4DEKzINT20C+LQAWl5WiNz9mq7y
+	UCanDt2hQobcra8PHn+COayvBqCQmx44IWAsKNeXMt/i3URr7sKCh9ZbTx7lyN3vBSny/EguEvI
+	MduoQ8vUd3m4jeZ1Pors+JELo7ZBIgbAi2EpDpZN7KxuSP97MXQ1n0QAZFw0q94wRt+DauZ0uSd
+	nOgL/PX2aZxxBTqKpWUqlm2YAyGodEDRqYIoHVwAwE6FT5Vq/zGQkWGdtpEhliaZab4aQgW0eJB
+	WIT45IF0eAYUPp4=
+X-Received: by 2002:a05:622a:1920:b0:477:6f28:8c16 with SMTP id d75a77b69052e-4792490da45mr12914321cf.6.1743711008619;
+        Thu, 03 Apr 2025 13:10:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFxK4rvzFyEl6eiIaIgKnQSl586hDylja1va27HaDiyQgv7ChcS37qrANaiPXgjgwx3huqPGg==
+X-Received: by 2002:a05:622a:1920:b0:477:6f28:8c16 with SMTP id d75a77b69052e-4792490da45mr12913871cf.6.1743711008200;
+        Thu, 03 Apr 2025 13:10:08 -0700 (PDT)
 Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c76e96cf0esm116192785a.53.2025.04.03.13.09.40
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c76e7355f9sm116588585a.24.2025.04.03.13.10.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 13:09:41 -0700 (PDT)
-Message-ID: <e255fa3ee192b136eeef7e9a63e8d1506d5e85a8.camel@redhat.com>
-Subject: Re: [RFC PATCH 12/24] KVM: x86: hyper-v: Pass is_guest_mode to
- kvm_hv_vcpu_purge_flush_tlb()
+        Thu, 03 Apr 2025 13:10:07 -0700 (PDT)
+Message-ID: <a910ebd37e05091ec59ba7e731f10f6f7b9b97bc.camel@redhat.com>
+Subject: Re: [RFC PATCH 13/24] KVM: nSVM: Parameterize svm_flush_tlb_asid()
+ by is_guest_mode
 From: Maxim Levitsky <mlevitsk@redhat.com>
 To: Yosry Ahmed <yosry.ahmed@linux.dev>, Sean Christopherson
  <seanjc@google.com>
@@ -88,10 +88,10 @@ Cc: Paolo Bonzini <pbonzini@redhat.com>, Jim Mattson <jmattson@google.com>,
  Vitaly Kuznetsov <vkuznets@redhat.com>, Rik van Riel <riel@surriel.com>,
  Tom Lendacky <thomas.lendacky@amd.com>,  x86@kernel.org,
  kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 03 Apr 2025 16:09:40 -0400
-In-Reply-To: <20250326193619.3714986-13-yosry.ahmed@linux.dev>
+Date: Thu, 03 Apr 2025 16:10:06 -0400
+In-Reply-To: <20250326193619.3714986-14-yosry.ahmed@linux.dev>
 References: <20250326193619.3714986-1-yosry.ahmed@linux.dev>
-	 <20250326193619.3714986-13-yosry.ahmed@linux.dev>
+	 <20250326193619.3714986-14-yosry.ahmed@linux.dev>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
@@ -103,82 +103,125 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 
 On Wed, 2025-03-26 at 19:36 +0000, Yosry Ahmed wrote:
-> Instead of calling is_guest_mode() inside kvm_hv_vcpu_purge_flush_tlb()
-> pass the value from the caller. Future changes will pass different
-> values than is_guest_mode(vcpu).
+> svm_flush_tlb_asid() currently operates on the current VMCB. In
+> preparation for properly tracking TLB flushes for L1 and L2 ASIDs,
+> refactor it to take is_guest_mode and find the proper VMCB. All existing
+> callers pass is_guest_mode(vcpu) to maintain existing behavior for now.
+> 
+> Move the comment about only flushing the current ASID to
+> svm_flush_tlb_all(), where it probably should have been anyway, because
+> svm_flush_tlb_asid() now flushes a given ASID, not the current ASID.
+> 
+> Create a svm_flush_tlb_guest() wrapper to use as the flush_tlb_guest()
+> callback.
 > 
 > No functional change intended.
 > 
 > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 > ---
->  arch/x86/kvm/hyperv.h  | 8 +++++---
->  arch/x86/kvm/svm/svm.c | 2 +-
->  arch/x86/kvm/x86.c     | 2 +-
->  3 files changed, 7 insertions(+), 5 deletions(-)
+>  arch/x86/kvm/svm/svm.c | 39 +++++++++++++++++++++++++--------------
+>  1 file changed, 25 insertions(+), 14 deletions(-)
 > 
-> diff --git a/arch/x86/kvm/hyperv.h b/arch/x86/kvm/hyperv.h
-> index 913bfc96959cb..be715deaeb003 100644
-> --- a/arch/x86/kvm/hyperv.h
-> +++ b/arch/x86/kvm/hyperv.h
-> @@ -203,14 +203,15 @@ static inline struct kvm_vcpu_hv_tlb_flush_fifo *kvm_hv_get_tlb_flush_fifo(struc
->  	return &hv_vcpu->tlb_flush_fifo[i];
->  }
->  
-> -static inline void kvm_hv_vcpu_purge_flush_tlb(struct kvm_vcpu *vcpu)
-> +static inline void kvm_hv_vcpu_purge_flush_tlb(struct kvm_vcpu *vcpu,
-> +					       bool is_guest_mode)
->  {
->  	struct kvm_vcpu_hv_tlb_flush_fifo *tlb_flush_fifo;
->  
->  	if (!to_hv_vcpu(vcpu) || !kvm_check_request(KVM_REQ_HV_TLB_FLUSH, vcpu))
->  		return;
->  
-> -	tlb_flush_fifo = kvm_hv_get_tlb_flush_fifo(vcpu, is_guest_mode(vcpu));
-> +	tlb_flush_fifo = kvm_hv_get_tlb_flush_fifo(vcpu, is_guest_mode);
->  
->  	kfifo_reset_out(&tlb_flush_fifo->entries);
->  }
-> @@ -285,7 +286,8 @@ static inline int kvm_hv_hypercall(struct kvm_vcpu *vcpu)
->  {
->  	return HV_STATUS_ACCESS_DENIED;
->  }
-> -static inline void kvm_hv_vcpu_purge_flush_tlb(struct kvm_vcpu *vcpu) {}
-> +static inline void kvm_hv_vcpu_purge_flush_tlb(struct kvm_vcpu *vcpu,
-> +					       bool is_guest_mode) {}
->  static inline bool kvm_hv_synic_has_vector(struct kvm_vcpu *vcpu, int vector)
->  {
->  	return false;
 > diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index e664d8428c792..865c5ce4fa473 100644
+> index 865c5ce4fa473..fb6b9f88a1504 100644
 > --- a/arch/x86/kvm/svm/svm.c
 > +++ b/arch/x86/kvm/svm/svm.c
-> @@ -4025,7 +4025,7 @@ static void svm_flush_tlb_asid(struct kvm_vcpu *vcpu)
+> @@ -4016,25 +4016,24 @@ static void svm_enable_nmi_window(struct kvm_vcpu *vcpu)
+>  	svm->vmcb->save.rflags |= (X86_EFLAGS_TF | X86_EFLAGS_RF);
+>  }
+>  
+> -static void svm_flush_tlb_asid(struct kvm_vcpu *vcpu)
+> +static struct vmcb *svm_get_vmcb(struct vcpu_svm *svm, bool is_guest_mode)
+> +{
+> +	return is_guest_mode ? svm->nested.vmcb02.ptr : svm->vmcb01.ptr;
+> +}
+
+Not sure 100% about this helper, it name might be a bit confusing because
+we already have a current vmcb. Maybe add a comment above stating this
+this is to get vmcb which might not be currently active?
+
+> +
+> +static void svm_flush_tlb_asid(struct kvm_vcpu *vcpu, bool is_guest_mode)
+>  {
+>  	struct vcpu_svm *svm = to_svm(vcpu);
+> +	struct vmcb *vmcb = svm_get_vmcb(svm, is_guest_mode);
+>  
+>  	/*
+>  	 * Unlike VMX, SVM doesn't provide a way to flush only NPT TLB entries.
 >  	 * A TLB flush for the current ASID flushes both "host" and "guest" TLB
 >  	 * entries, and thus is a superset of Hyper-V's fine grained flushing.
 >  	 */
-> -	kvm_hv_vcpu_purge_flush_tlb(vcpu);
-> +	kvm_hv_vcpu_purge_flush_tlb(vcpu, is_guest_mode(vcpu));
->  
->  	/*
->  	 * Flush only the current ASID even if the TLB flush was invoked via
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 182f18ebc62f3..469a8e5526902 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -3615,7 +3615,7 @@ static void kvm_vcpu_flush_tlb_guest(struct kvm_vcpu *vcpu)
->  	 * Flushing all "guest" TLB is always a superset of Hyper-V's fine
->  	 * grained flushing.
->  	 */
-> -	kvm_hv_vcpu_purge_flush_tlb(vcpu);
-> +	kvm_hv_vcpu_purge_flush_tlb(vcpu, is_guest_mode(vcpu));
+> -	kvm_hv_vcpu_purge_flush_tlb(vcpu, is_guest_mode(vcpu));
+> -
+> -	/*
+> -	 * Flush only the current ASID even if the TLB flush was invoked via
+> -	 * kvm_flush_remote_tlbs().  Although flushing remote TLBs requires all
+> -	 * ASIDs to be flushed, KVM uses a single ASID for L1 and L2, and
+> -	 * unconditionally does a TLB flush on both nested VM-Enter and nested
+> -	 * VM-Exit (via kvm_mmu_reset_context()).
+> -	 */
+> -	vmcb_set_flush_asid(svm->vmcb);
+> +	kvm_hv_vcpu_purge_flush_tlb(vcpu, is_guest_mode);
+> +	if (vmcb)
+> +		vmcb_set_flush_asid(vmcb);
 >  }
 >  
+>  static void svm_flush_tlb_current(struct kvm_vcpu *vcpu)
+> @@ -4050,7 +4049,7 @@ static void svm_flush_tlb_current(struct kvm_vcpu *vcpu)
+>  	if (svm_hv_is_enlightened_tlb_enabled(vcpu) && VALID_PAGE(root_tdp))
+>  		hyperv_flush_guest_mapping(root_tdp);
 >  
+> -	svm_flush_tlb_asid(vcpu);
+> +	svm_flush_tlb_asid(vcpu, is_guest_mode(vcpu));
+>  }
+>  
+>  static void svm_flush_tlb_all(struct kvm_vcpu *vcpu)
+> @@ -4065,7 +4064,14 @@ static void svm_flush_tlb_all(struct kvm_vcpu *vcpu)
+>  	if (WARN_ON_ONCE(svm_hv_is_enlightened_tlb_enabled(vcpu)))
+>  		hv_flush_remote_tlbs(vcpu->kvm);
+>  
+> -	svm_flush_tlb_asid(vcpu);
+> +	/*
+> +	 * Flush only the current ASID even if the TLB flush was invoked via
+> +	 * kvm_flush_remote_tlbs().  Although flushing remote TLBs requires all
+> +	 * ASIDs to be flushed, KVM uses a single ASID for L1 and L2, and
+> +	 * unconditionally does a TLB flush on both nested VM-Enter and nested
+> +	 * VM-Exit (via kvm_mmu_reset_context()).
+> +	 */
+> +	svm_flush_tlb_asid(vcpu, is_guest_mode(vcpu));
+>  }
+>  
+>  static void svm_flush_tlb_gva(struct kvm_vcpu *vcpu, gva_t gva)
+> @@ -4075,6 +4081,11 @@ static void svm_flush_tlb_gva(struct kvm_vcpu *vcpu, gva_t gva)
+>  	invlpga(gva, svm_get_current_asid(svm));
+>  }
+>  
+> +static void svm_flush_tlb_guest(struct kvm_vcpu *vcpu)
+> +{
+> +	svm_flush_tlb_asid(vcpu, is_guest_mode(vcpu));
+> +}
+> +
+>  static inline void sync_cr8_to_lapic(struct kvm_vcpu *vcpu)
+>  {
+>  	struct vcpu_svm *svm = to_svm(vcpu);
+> @@ -5187,7 +5198,7 @@ static struct kvm_x86_ops svm_x86_ops __initdata = {
+>  	.flush_tlb_all = svm_flush_tlb_all,
+>  	.flush_tlb_current = svm_flush_tlb_current,
+>  	.flush_tlb_gva = svm_flush_tlb_gva,
+> -	.flush_tlb_guest = svm_flush_tlb_asid,
+> +	.flush_tlb_guest = svm_flush_tlb_guest,
+>  
+>  	.vcpu_pre_run = svm_vcpu_pre_run,
+>  	.vcpu_run = svm_vcpu_run,
+
 
 Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
 
+
 Best regards,
 	Maxim Levitsky
+
+
 
 
 
