@@ -1,126 +1,206 @@
-Return-Path: <linux-kernel+bounces-586474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BC82A7A00D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:32:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1DADA7A00F
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 11:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62ACD7A5D91
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:30:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3F493B3A7E
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 09:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0A9241CB5;
-	Thu,  3 Apr 2025 09:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DC0245031;
+	Thu,  3 Apr 2025 09:31:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fTNE1Hy6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fJEdpjzE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uzzHJS49";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fJEdpjzE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uzzHJS49"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15847347A2;
-	Thu,  3 Apr 2025 09:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA4724397B
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 09:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743672710; cv=none; b=JYXdZaqsRR7kj0/eM29cpF+IoMvS0Tr5li0M/D4pT+3uuYG8FDt5UHHHDwwIZH+Tv9wc+Ee7NKw9c1ZG0sFVJL6tlHOF9iRxcIHZVCmaxA8TuJxdk01gjz50xGU7uVlyJ6ESxtRvRJ7PjM2t4JUOzko+w/2Zg0tElRFGiq/0Ftg=
+	t=1743672713; cv=none; b=RShLH0e9MnjAMmSY6eiqFhmo8/0exJJ7hPkIZKpV222NY4d5YaI5tAu+hxEyVqipCYbA1lIHf+/bigx6AQ82UpdjBNL10n/Phrnfn8YnVSW3Mm1AXQws6MaFq9FPA97Z5iAes9z3Jazq2kazJMlUdGHwMm+T2wPFwc5rqoO0ucc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743672710; c=relaxed/simple;
-	bh=sNndO7cE94SxIpOgsMIyRwMp9GIyL84y6xvqMUc0Suc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=fZrkDMC83MPwXpXCRK7pjqpJQb6ovU+ijK6ctF23Wrl4PPqr43dRf6srO/OSgfJMviLJM5yGFxcnX3108h3dclUEZnftHqQ3Ay/exxIEiYzHkYQtSTpexAjEag4ApDbImOFMLIkRQyWl3LFNl2bGSyO+oJJA7lop52UlhIuymcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fTNE1Hy6; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743672708; x=1775208708;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=sNndO7cE94SxIpOgsMIyRwMp9GIyL84y6xvqMUc0Suc=;
-  b=fTNE1Hy6lIje0QI+MaweN/tomb7bXlvLLPimrhkMQuSL4YiRYEdOCDYO
-   vgm4JEaN4eLHVEoBJl3jAxJuic15tkACUUE92lUJzFCYRhA2Rmm73ePGK
-   C+hB7tQ7Oh946Kq0yYfTmJTEizbBAAJHOSSPbtcZWVd/valoBCZiA1zZK
-   /IkMact0i16tvrs9MyIE3g7bn4JZaOJRv8dpzeMF93piPGiBiUAgGngde
-   jdBZX4g72GempMf4eXU+7sluwdyKWZiFv2vp65z4IuK6ml+5JN3SKMCPt
-   nLoKMrOtZmA3ArzrCILggCY3YqrOvqcD01I0lIZdhAsmjiJkUQZeBw+q0
-   w==;
-X-CSE-ConnectionGUID: qEnPp2rFS6CQoadc9l0FTw==
-X-CSE-MsgGUID: cmjmvE3mT/uekzsdgrgaPg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11392"; a="70438999"
-X-IronPort-AV: E=Sophos;i="6.15,184,1739865600"; 
-   d="scan'208";a="70438999"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 02:31:47 -0700
-X-CSE-ConnectionGUID: M9uV9PaHQN63ifnLL6Nc3w==
-X-CSE-MsgGUID: 68G1vPifR0mBTlxQ3yujxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,184,1739865600"; 
-   d="scan'208";a="126757643"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.152])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 02:31:44 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Guenter Roeck <linux@roeck-us.net>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-pci@vger.kernel.org,
+	s=arc-20240116; t=1743672713; c=relaxed/simple;
+	bh=4gL8+YHacCQsGjgfT+A3Dl7bUf0ULT3DlZLgsy3zTWA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pO0uc1s8h3uo8SWYIaX0K4LFxQZf/F6udSFUMTbubgHD8nk/qv1lz5r4GJj+cRC8/MEBW0FBPshhLMdwh37DSZw0DoD/iZQg3ENMIEZ2b/wPyzIgkjaoC3ns0N/MbTXmfG+liWRSi0+Vg6pLRAoUD87fjGXQaWtGjsGoOfCIlMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fJEdpjzE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uzzHJS49; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fJEdpjzE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uzzHJS49; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from kitsune.suse.cz (unknown [10.100.12.127])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0804C1F38A;
+	Thu,  3 Apr 2025 09:31:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743672710; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FrDtBuA5lBFITYNZztuKuaEY2YG6Uy6zNAQMxJHFY1c=;
+	b=fJEdpjzEsx2PP7W05nAGLBzzV2TgpjMkVYp9HiFPs+oj8BanDKoVUH7lWlz/s/nJpJQofX
+	Np74yk27Bk3wBkGdN/XrJik2Ojd0r0wupDrGF6bXlaDn/ZWIpterYPqNF50rfHl27GhfsN
+	Z3d3l36vkB06Vi1sPabdqzk+cfWxXCc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743672710;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FrDtBuA5lBFITYNZztuKuaEY2YG6Uy6zNAQMxJHFY1c=;
+	b=uzzHJS49iX85Ohem6jX6UiCMwI0t/YxRno4nhSgizKGV20u/5qz5s+tckAAWl9w2so6e0F
+	YuLs5QhEsQkpOUAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743672710; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FrDtBuA5lBFITYNZztuKuaEY2YG6Uy6zNAQMxJHFY1c=;
+	b=fJEdpjzEsx2PP7W05nAGLBzzV2TgpjMkVYp9HiFPs+oj8BanDKoVUH7lWlz/s/nJpJQofX
+	Np74yk27Bk3wBkGdN/XrJik2Ojd0r0wupDrGF6bXlaDn/ZWIpterYPqNF50rfHl27GhfsN
+	Z3d3l36vkB06Vi1sPabdqzk+cfWxXCc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743672710;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FrDtBuA5lBFITYNZztuKuaEY2YG6Uy6zNAQMxJHFY1c=;
+	b=uzzHJS49iX85Ohem6jX6UiCMwI0t/YxRno4nhSgizKGV20u/5qz5s+tckAAWl9w2so6e0F
+	YuLs5QhEsQkpOUAw==
+Date: Thu, 3 Apr 2025 11:31:48 +0200
+From: Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To: Jonathan McDowell <noodles@earth.li>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Igor Mammedov <imammedo@redhat.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	=?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>
-Subject: [PATCH 1/1] PCI: Restore assigned resources fully after release
-Date: Thu,  3 Apr 2025 12:31:37 +0300
-Message-Id: <20250403093137.1481-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
+Subject: Re: [PATCH] tpm: tis: Increase the default for timeouts B and C
+Message-ID: <Z-5VhOpQOeduSUM1@kitsune.suse.cz>
+References: <20250402172134.7751-1-msuchanek@suse.de>
+ <Z-13xOebA3LvQQ-8@earth.li>
+ <Z-2ZC2Ew2EtNAW6-@kitsune.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z-2ZC2Ew2EtNAW6-@kitsune.suse.cz>
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmx.de];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmx.de,kernel.org,ziepe.ca,vger.kernel.org];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-PCI resource fitting code in __assign_resources_sorted() runs in
-multiple steps. A resource that was successfully assigned may have to
-be released before the next step attempts assignment again. The
-assign+release cycle is destructive to a start-aligned struct resource
-(bridge window or IOV resource) because the start field is overwritten
-with the real address when the resource got assigned.
+On Wed, Apr 02, 2025 at 10:07:40PM +0200, Michal Suchánek wrote:
+> On Wed, Apr 02, 2025 at 06:45:40PM +0100, Jonathan McDowell wrote:
+> > On Wed, Apr 02, 2025 at 07:21:30PM +0200, Michal Suchanek wrote:
+> > > With some Infineon chips the timeouts in tpm_tis_send_data (both B and
+> > > C) can reach up to about 2250 ms.
+> > > 
+> > > Extend the timeout duration to accommodate this.
+> > 
+> > The problem here is the bump of timeout_c is going to interact poorly with
+> > the Infineon errata workaround, as now we'll wait 4s instead of 200ms to
+> > detect the stuck status change.
+> 
+> Yes, that's problematic. Is it possible to detect the errata by anything
+> other than waiting for the timeout to expire?
+> 
+> > 
+> > (Also shouldn't timeout_c already end up as 750ms, as it's
+> > max(TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_C), and TIS_SHORT_TIMEOUT is 750 vs 200
+> > for TPM2_TIMEOUT_C? That doesn't seem to be borne out by your logs, nor my
+> > results.)
+> 
+> Indeed, it should be 750ms but the logs show 200ms. I do not see
+> where it could get reduced, nor any significan difference between the
+> mainline code and the kernel I am using in this area.
 
-Properly restore the resource after releasing it. The start, end, and
-flags fields must be stored into the related struct pci_dev_resource in
-order to be able to restore the resource to its original state.
+This would come from
 
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Fixes: 96336ec70264 ("PCI: Perform reset_resource() and build fail list in sync")
-Signed-off-by: Ilpo JÃ¤rvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/pci/setup-bus.c | 4 ++++
- 1 file changed, 4 insertions(+)
+drivers/char/tpm/tpm2-cmd.c:    chip->timeout_c = msecs_to_jiffies(TPM2_TIMEOUT_C);
+include/linux/tpm.h:    TPM2_TIMEOUT_C          =    200,
 
-diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-index 54d6f4fa3ce1..e994c546422c 100644
---- a/drivers/pci/setup-bus.c
-+++ b/drivers/pci/setup-bus.c
-@@ -187,6 +187,9 @@ static void pdev_sort_resources(struct pci_dev *dev, struct list_head *head)
- 			panic("%s: kzalloc() failed!\n", __func__);
- 		tmp->res = r;
- 		tmp->dev = dev;
-+		tmp->start = r->start;
-+		tmp->end = r->end;
-+		tmp->flags = r->flags;
- 
- 		/* Fallback is smallest one or list is empty */
- 		n = head;
-@@ -545,6 +548,7 @@ static void __assign_resources_sorted(struct list_head *head,
- 		pci_dbg(dev, "%s %pR: releasing\n", res_name, res);
- 
- 		release_resource(res);
-+		restore_dev_resource(dev_res);
- 	}
- 	/* Restore start/end/flags from saved list */
- 	list_for_each_entry(save_res, &save_head, list)
+So this would need also adjusting.
 
-base-commit: 7d06015d936c861160803e020f68f413b5c3cd9d
--- 
-2.39.5
+Thanks
 
+Michal
+
+> 
+> Thanks
+> 
+> Michal
+> 
+> > 
+> > > Link: https://lore.kernel.org/linux-integrity/Z5pI07m0Muapyu9w@kitsune.suse.cz/
+> > > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> > > ---
+> > > An alternative would be to add an entry to vendor_timeout_overrides but
+> > > I do not know how to determine the chip IDs to put into this table.
+> > > ---
+> > > drivers/char/tpm/tpm_tis_core.h | 4 ++--
+> > > 1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+> > > index 970d02c337c7..1ff565be2175 100644
+> > > --- a/drivers/char/tpm/tpm_tis_core.h
+> > > +++ b/drivers/char/tpm/tpm_tis_core.h
+> > > @@ -54,7 +54,7 @@ enum tis_int_flags {
+> > > enum tis_defaults {
+> > > 	TIS_MEM_LEN = 0x5000,
+> > > 	TIS_SHORT_TIMEOUT = 750,	/* ms */
+> > > -	TIS_LONG_TIMEOUT = 2000,	/* 2 sec */
+> > > +	TIS_LONG_TIMEOUT = 4000,	/* 2 sec */
+> > > 	TIS_TIMEOUT_MIN_ATML = 14700,	/* usecs */
+> > > 	TIS_TIMEOUT_MAX_ATML = 15000,	/* usecs */
+> > > };
+> > > @@ -64,7 +64,7 @@ enum tis_defaults {
+> > >  */
+> > > #define TIS_TIMEOUT_A_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_A)
+> > > #define TIS_TIMEOUT_B_MAX	max_t(int, TIS_LONG_TIMEOUT, TPM2_TIMEOUT_B)
+> > > -#define TIS_TIMEOUT_C_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_C)
+> > > +#define TIS_TIMEOUT_C_MAX	max_t(int, TIS_LONG_TIMEOUT, TPM2_TIMEOUT_C)
+> > > #define TIS_TIMEOUT_D_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_D)
+> > > 
+> > > #define	TPM_ACCESS(l)			(0x0000 | ((l) << 12))
+> > > -- 
+> > > 2.47.1
+> > > 
+> > 
+> > J.
+> > 
+> > -- 
+> > ... "Tom's root boot is the Linux world equivalent of a 'get out of jail
+> >     free' card. The man is a *hero*." -- Simon Brooke, ucol.
 
