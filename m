@@ -1,233 +1,127 @@
-Return-Path: <linux-kernel+bounces-587713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 919D6A7AFA2
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:56:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6DA3A7AED2
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 22:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF0BA16506D
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:50:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EB891752E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 20:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323FA253B77;
-	Thu,  3 Apr 2025 19:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77602224885;
+	Thu,  3 Apr 2025 19:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="XUasF8mO"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6tAQPp5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40DD230985;
-	Thu,  3 Apr 2025 19:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0AD922422C;
+	Thu,  3 Apr 2025 19:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743708299; cv=none; b=WG2nDPWszn3DNlJnuu4jzTqM9XjqeGzdLA4dCRxtUb28GEYfl7qRzVygn80GlktUlZ292b467ecCBdQYLenUa+18eTHVG5MifGdTJzqleCsp2Ft836wzRek3lqYJ9JA6mn0EHTt6DM0FymlHyHNrwFK+Mw5x1eegf1FMRf35fxU=
+	t=1743707877; cv=none; b=fhUJDaSs8XOT03LhR6DTztqfRtAjVC32Y7IqbBKvnfXwQxjHgY0bGzXd4Ft4yaUXXiDdIzy0201HVQKwhoo4daedTtWbeGTiUlncit/Vdojh+BIOoyCpMhlEdLDAcaON0YcOG3KvjXmUJQKeuRIYR3DtagDVK8MLOf4SgDxnCgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743708299; c=relaxed/simple;
-	bh=M0B7DYBkTlQRKyQ+laESOGNy2whZ2BwQqOZRb/DqqjE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O4+XmQlW7AIbJxejZJAzmMiKwQRzMZrxm+Iz9Nu8Cn6qcGILC91b6M6+cOLCY/Co1D28HJB0OB3XR0udwG/IPKOhjv1bi+NuQtlr2aL7xmzYEyZqafQon7N2V8M49w5PAcTvWU/PpDG7IUfnTVDudqzNudU5sfjL2hC4dMVgovs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=XUasF8mO; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.3.1)
- id 07fea8c86a4f491e; Thu, 3 Apr 2025 21:24:54 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 0E9B99014E8;
-	Thu,  3 Apr 2025 21:24:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1743708294;
-	bh=M0B7DYBkTlQRKyQ+laESOGNy2whZ2BwQqOZRb/DqqjE=;
-	h=From:Subject:Date;
-	b=XUasF8mOaPYG+wQJtAcQbKOaZX6/9wTo0gU4Cf/n3azEHJc8ejngA2aWYUKmamOe8
-	 PGCz41VFLrUY6klUoL7+OGckJW37SZRudnEVagSiJVaP7U9ypakfAQAHhlrqiNU+Ou
-	 MJAFnCzxK8HP7GGEYG7pa2K0v9IFjPfN+03XX4zsk5MiN9AEFYCm9jF5wHLcqcmlZP
-	 yuO+CFTtH8wYqwYNxODxvPKsxiFnXCkr5OBOsY3kPi5Camw4QTTPBYZ16j4bs3yU4v
-	 tNSAubaNznEbEks5HPTdznLonOS3/DVQFM2eThkN/Bt6jsSlTd39JY1oMeUpIUNkJ5
-	 yrqfSGVEe73pg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Christian Loehle <christian.loehle@arm.com>,
- Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
- Doug Smythies <dsmythies@telus.net>,
- Aboorva Devarajan <aboorvad@linux.ibm.com>
-Subject:
- [PATCH v1 1/2] cpuidle: teo: Move candidate state lookup to separate function
-Date: Thu, 03 Apr 2025 21:16:47 +0200
-Message-ID: <4991828.GXAFRqVoOG@rjwysocki.net>
-In-Reply-To: <4661520.LvFx2qVVIh@rjwysocki.net>
-References: <4661520.LvFx2qVVIh@rjwysocki.net>
+	s=arc-20240116; t=1743707877; c=relaxed/simple;
+	bh=icKnX0AHeCC4uL6XXIqqr1srD+3rCKvvh8Uu9AT73u8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Hm/IREyS9+W7g0J13V5lNEz6pIHNCvgLYgxPG4yg55da/jYlcwrOt892PwfRnb/73qxDa0ScdCuwf2JIn4FFNY4ydW2K1d8ozspZvJxU18gIEYvLRRaR91uu7QQnGZZ2MS4NnZMLgRJINLLrLbwTVdz7ireaNYkDU7jULbz5nv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6tAQPp5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2073DC4CEE3;
+	Thu,  3 Apr 2025 19:17:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743707877;
+	bh=icKnX0AHeCC4uL6XXIqqr1srD+3rCKvvh8Uu9AT73u8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=d6tAQPp5okI+lyfINItnecRbPDUNIrqWUES0KpgMQ5oSek81sVN+i1j9sdKPUpTAv
+	 FvgiAvy/844UWL4QquFMYKpNrv4kSxXhPmj6KaD+GdoYs2+Gb8lUm9DPFTrfjC0KC5
+	 EPyMSGn8dWncJAs47PyV8jzpj8FjJKTGOvmH6WD4EEmGgMr37JPoKHmpVQUsAIkS47
+	 6pr83Efek9e8iRMGDqrYwriherLklWA2dxnyAmV46TUs37a/xJpb3mI5Qte1bvGtup
+	 zaTDR5tzK1QippZj3Q1h6eXsBw5GOPhZJH/BaXH5w40L6PGuLme1NMmuQO7qMZrazX
+	 yy0cFJEPlYI1w==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Sasha Levin <sashal@kernel.org>,
+	linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 24/33] PCI: Enable Configuration RRS SV early
+Date: Thu,  3 Apr 2025 15:16:47 -0400
+Message-Id: <20250403191656.2680995-24-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250403191656.2680995-1-sashal@kernel.org>
+References: <20250403191656.2680995-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukeelfeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepjedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheptghhrhhishhtihgrnhdrlhhovgh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=14 Fuz1=14 Fuz2=14
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.21
+Content-Transfer-Encoding: 8bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-Move the code looking up a new candidate idle state in teo, after
-deciding that the initial candidate (the deepest enabled idle state) is
-likely too deep, into a separate function in preparation for subsequent
-changes.
+[ Upstream commit 3f8c4959fc18e477801386a625e726c59f52a2c4 ]
 
-No intentional functional impact.
+Following a reset, a Function may respond to Config Requests with Request
+Retry Status (RRS) Completion Status to indicate that it is temporarily
+unable to process the Request, but will be able to process the Request in
+the future (PCIe r6.0, sec 2.3.1).
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+If the Configuration RRS Software Visibility feature is enabled and a Root
+Complex receives RRS for a config read of the Vendor ID, the Root Complex
+completes the Request to the host by returning PCI_VENDOR_ID_PCI_SIG,
+0x0001 (sec 2.3.2).
+
+The Config RRS SV feature applies only to Root Ports and is not directly
+related to pci_scan_bridge_extend().  Move the RRS SV enable to
+set_pcie_port_type() where we handle other PCIe-specific configuration.
+
+Link: https://lore.kernel.org/r/20250303210217.199504-1-helgaas@kernel.org
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpuidle/governors/teo.c |  120 +++++++++++++++++++++-------------------
- 1 file changed, 63 insertions(+), 57 deletions(-)
+ drivers/pci/probe.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/cpuidle/governors/teo.c
-+++ b/drivers/cpuidle/governors/teo.c
-@@ -259,6 +259,67 @@
- 	return state_idx;
- }
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index ebb0c1d5cae25..a4330ad7cdfdf 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1328,8 +1328,6 @@ static int pci_scan_bridge_extend(struct pci_bus *bus, struct pci_dev *dev,
+ 	pci_write_config_word(dev, PCI_BRIDGE_CONTROL,
+ 			      bctl & ~PCI_BRIDGE_CTL_MASTER_ABORT);
  
-+static int teo_get_candidate(struct cpuidle_driver *drv,
-+			     struct cpuidle_device *dev,
-+			     struct teo_cpu *cpu_data,
-+			     int idx, unsigned int idx_intercepts)
-+{
-+	int first_suitable_idx = idx;
-+	unsigned int intercepts = 0;
-+	int i;
+-	pci_enable_rrs_sv(dev);
+-
+ 	if ((secondary || subordinate) && !pcibios_assign_all_busses() &&
+ 	    !is_cardbus && !broken) {
+ 		unsigned int cmax, buses;
+@@ -1570,6 +1568,11 @@ void set_pcie_port_type(struct pci_dev *pdev)
+ 	pdev->pcie_cap = pos;
+ 	pci_read_config_word(pdev, pos + PCI_EXP_FLAGS, &reg16);
+ 	pdev->pcie_flags_reg = reg16;
 +
-+	/*
-+	 * Look for the deepest idle state whose target residency had
-+	 * not exceeded the idle duration in over a half of the relevant
-+	 * cases in the past.
-+	 *
-+	 * Take the possible duration limitation present if the tick
-+	 * has been stopped already into account.
-+	 */
-+	for (i = idx - 1; i >= 0; i--) {
-+		intercepts += cpu_data->state_bins[i].intercepts;
-+		if (2 * intercepts > idx_intercepts) {
-+			/*
-+			 * Use the current state unless it is too
-+			 * shallow or disabled, in which case take the
-+			 * first enabled state that is deep enough.
-+			 */
-+			if (teo_state_ok(i, drv) && !dev->states_usage[i].disable) {
-+				idx = i;
-+				break;
-+			}
++	type = pci_pcie_type(pdev);
++	if (type == PCI_EXP_TYPE_ROOT_PORT)
++		pci_enable_rrs_sv(pdev);
 +
-+			idx = first_suitable_idx;
-+			break;
-+		}
-+
-+		if (dev->states_usage[i].disable)
-+			continue;
-+
-+		if (teo_state_ok(i, drv)) {
-+			/*
-+			 * The current state is deep enough, but still
-+			 * there may be a better one.
-+			 */
-+			first_suitable_idx = i;
-+			continue;
-+		}
-+
-+		/*
-+		 * The current state is too shallow, so if no suitable
-+		 * states other than the initial candidate have been
-+		 * found, give up (the remaining states to check are
-+		 * shallower still), but otherwise the first suitable
-+		 * state other than the initial candidate may turn out
-+		 * to be preferable.
-+		 */
-+		if (first_suitable_idx == idx)
-+			break;
-+	}
-+
-+	return idx;
-+}
-+
- /**
-  * teo_select - Selects the next idle state to enter.
-  * @drv: cpuidle driver containing state data.
-@@ -355,63 +416,8 @@
- 	 * all of the deeper states, a shallower idle state is likely to be a
- 	 * better choice.
+ 	pci_read_config_dword(pdev, pos + PCI_EXP_DEVCAP, &pdev->devcap);
+ 	pdev->pcie_mpss = FIELD_GET(PCI_EXP_DEVCAP_PAYLOAD, pdev->devcap);
+ 
+@@ -1586,7 +1589,6 @@ void set_pcie_port_type(struct pci_dev *pdev)
+ 	 * correctly so detect impossible configurations here and correct
+ 	 * the port type accordingly.
  	 */
--	if (2 * idx_intercept_sum > cpu_data->total - idx_hit_sum) {
--		int first_suitable_idx = idx;
--
--		/*
--		 * Look for the deepest idle state whose target residency had
--		 * not exceeded the idle duration in over a half of the relevant
--		 * cases in the past.
--		 *
--		 * Take the possible duration limitation present if the tick
--		 * has been stopped already into account.
--		 */
--		intercept_sum = 0;
--
--		for (i = idx - 1; i >= 0; i--) {
--			struct teo_bin *bin = &cpu_data->state_bins[i];
--
--			intercept_sum += bin->intercepts;
--
--			if (2 * intercept_sum > idx_intercept_sum) {
--				/*
--				 * Use the current state unless it is too
--				 * shallow or disabled, in which case take the
--				 * first enabled state that is deep enough.
--				 */
--				if (teo_state_ok(i, drv) &&
--				    !dev->states_usage[i].disable) {
--					idx = i;
--					break;
--				}
--				idx = first_suitable_idx;
--				break;
--			}
--
--			if (dev->states_usage[i].disable)
--				continue;
--
--			if (teo_state_ok(i, drv)) {
--				/*
--				 * The current state is deep enough, but still
--				 * there may be a better one.
--				 */
--				first_suitable_idx = i;
--				continue;
--			}
--
--			/*
--			 * The current state is too shallow, so if no suitable
--			 * states other than the initial candidate have been
--			 * found, give up (the remaining states to check are
--			 * shallower still), but otherwise the first suitable
--			 * state other than the initial candidate may turn out
--			 * to be preferable.
--			 */
--			if (first_suitable_idx == idx)
--				break;
--		}
--	}
-+	if (2 * idx_intercept_sum > cpu_data->total - idx_hit_sum)
-+		idx = teo_get_candidate(drv, dev, cpu_data, idx, idx_intercept_sum);
- 
- 	/*
- 	 * If there is a latency constraint, it may be necessary to select an
-
-
+-	type = pci_pcie_type(pdev);
+ 	if (type == PCI_EXP_TYPE_DOWNSTREAM) {
+ 		/*
+ 		 * If pdev claims to be downstream port but the parent
+-- 
+2.39.5
 
 
