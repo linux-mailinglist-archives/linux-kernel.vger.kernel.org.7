@@ -1,128 +1,149 @@
-Return-Path: <linux-kernel+bounces-586546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-586549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 885A1A7A0DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:20:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D20CA7A0E4
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 12:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7F2B1898470
-	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:20:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F5693B5FDC
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 10:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5852324BBFB;
-	Thu,  3 Apr 2025 10:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB0224A055;
+	Thu,  3 Apr 2025 10:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="aXPUFQvb"
-Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IbJMr3mH"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBD424A055;
-	Thu,  3 Apr 2025 10:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53219242928
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 10:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743675602; cv=none; b=n2RToUnKIgfTDWgANE9nYGSYETRN2MPq2d5Kqbo8ZNejhEVc8pJy3BvuBg3hFZNba6Qwwh3C4GJdejIzHqf7K5VGFyxei363ZBdj0zAgXXGYHKdYI1PstXzf4QE80U6Zh7YOx0ETxvvQ7ikcDoe/+oSTf/P4cbLS1unpWupOiYk=
+	t=1743675661; cv=none; b=Syj8tCozyxEwYfjnMHhOaWDCaX1TZxBaSUFWXH4jNmjFYm3XxgFHKH2AEGRMvRObbK8NuVXmNKm3PBApwVqr+mQvda+N6Gcc8qOFp4nv1kBQP/tQz7B2d7a8gnHwg4GLqIXAegAqY6rIP6X8GtGBc9b1T5Sb8t+eazSfEF2a5h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743675602; c=relaxed/simple;
-	bh=RPXyeFu3hLGAwb60oZcpOdtZIfP7WSaxI6mPPTvu0Z8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VL1TSj6MZMsqTumVV6/lQnc7iTL4X8ToUlNfqsKIQ1Xv4d87eVQ4+BpLpsgewlz1NlMl9S5222bjt5zGdiom13JnKn1eD/oyURcUWVFr0qRUAHnVddoi9HZmAVTBbMM6bWg1dM7bPEWZYwMPnIb5EHXnsFShRe+9tmbDrmpZQII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=aXPUFQvb; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id CD814C001E;
-	Thu,  3 Apr 2025 13:19:58 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru CD814C001E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1743675598; bh=N6N25JmQAuicJL+q493OEXAu4U2lX1+1kyO9BOM/ZaM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=aXPUFQvbjl6QYqhi99iXBe5b1I2eLTBn8L1X24bXuzGRGzY2LJUw3PH9dh7dJDPde
-	 +1IWuSxf5N1sfjfITVh7a7i/94GnePJc809+JEVz5LtGqw+/VklOR1mcR3geCJaX2y
-	 gMOOBpRLPT1BPaNGu7YkTcygPpF3UD5Mr/T2tLcCoSFHR57aJDcG/5CinpGU1SVNqC
-	 39lHdftaXOPLrA5wxVvC80z85slXGgybPTOWCknqVl4gAAXHkRxVBHsPMpxXNn4/m+
-	 RPY+LZFFp7eF3GTxYBd5rcrshhycxXw3+93pwZyL6jxrnmej47cNYf38emkqrraSUA
-	 qz+nnqRPDCvog==
-Received: from ksmg01.maxima.ru (mail.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Thu,  3 Apr 2025 13:19:58 +0300 (MSK)
-Received: from db126-1-abramov-14-d-mosos.mti-lab.com (172.25.20.118) by
- mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 3 Apr 2025 13:19:57 +0300
-From: Ivan Abramov <i.abramov@mt-integration.ru>
-To: Alexander Aring <alex.aring@gmail.com>
-CC: Ivan Abramov <i.abramov@mt-integration.ru>, Miquel Raynal
-	<miquel.raynal@bootlin.com>, Stefan Schmidt <stefan@datenfreihafen.org>,
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, <linux-wpan@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH net v3 3/3] ieee802154: Remove WARN_ON() in cfg802154_pernet_exit()
-Date: Thu, 3 Apr 2025 13:19:34 +0300
-Message-ID: <20250403101935.991385-4-i.abramov@mt-integration.ru>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250403101935.991385-1-i.abramov@mt-integration.ru>
-References: <20250403101935.991385-1-i.abramov@mt-integration.ru>
+	s=arc-20240116; t=1743675661; c=relaxed/simple;
+	bh=GezOMWTmbvUlmddSRUJtzgQ2URqpf4G0KrSTl9O1bbM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Loknie9T+nOkoqrl5hWD7Pwbk0wdjLpQ/bMu45MAiLblgd3BPK4oDpPhx6Byqu3/+EYt57NM66ewY9EUTGYcLrT0mYowQfKiwvZNkDG44ak09vzTPWYk2FEk2F+maS2RZk566fjFH0ehkuOD/JBx4hNtCI9J5VJj41HIQQ29pog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IbJMr3mH; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5242f137a1eso350821e0c.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 03:20:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743675657; x=1744280457; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=EFfDTMKsLOvbQi0ro5INzOuYGDYKTLhDyjOF8V3RES8=;
+        b=IbJMr3mHNGHRsZnXKyqK1XzwitXcokMIGsAdpCrCzPMHOr51mYl5bV7SvS/ID0Tgi9
+         AceADMEW+BtFemZOlfDSSdEffhSa4Cs/zBmPISj8IXWnr2xuRNOorOC7z5doLpvcxFnA
+         Kcdl6J/2LxhY424R3nh3V9zpKY32XrDiypTvdevRaBLPF8WInZHcXglRH89iSw88Aiwd
+         18yIEkz7RWR3FskBkFxqACefcDToggQUGo+uHIkFv8PiRkmZNagjWT6aVRS72oIppDrA
+         JkWWpN6OXtJvHr03LbGkoY6sj0HFJXwNrhiHmkFb83By1AJSdG49emkEsOg1dNmy1oxa
+         x1ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743675657; x=1744280457;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EFfDTMKsLOvbQi0ro5INzOuYGDYKTLhDyjOF8V3RES8=;
+        b=hiytJ5kJa6YPeRnp6xAEOokOb8/B+91wCGSo3Z/gI8CCXEfaeLGeOGQqhjoUweCG89
+         Oc3LmOzyyp98q4m7wucS+BERBxJoUMikvfgJL/DVJ0RNWmOUAO5/rGbJgxRUqxAIgxAU
+         DEyyaU1o79jhtaKfRTpYcIOX8W4e3mYREFIdmGapMV52KaXXk43+KgSMw7E5JLJQlnuC
+         G8IUE5RZid9JiwTI8IboWBr8WSQTkvKtKE26p5ET0WK28EXigBg1tBKGq/a89Kc8qnl0
+         vpJQW8KOn7zIpaHo3sRFhOOloPWgdU6S3IFd7VS+HOVmP+4K7fabDq6UpOGawP/mJQBX
+         ibow==
+X-Gm-Message-State: AOJu0YzXjFTIMdXc1uYEGyP+aNYZJ4vJU43prlhDrrZhNlK6afzkWO+W
+	fmRmUuocG3ApQZmsCNUNoorQ+jfiuehmaNSJJVR/cUJAjlTc9NZw//29+cNp8aA9aj0P0u9ACQv
+	LN3HjUC9OlxlGOX+8Ptl0An4+rMunOlzGLtr55AmB5wzP3B7+krc=
+X-Gm-Gg: ASbGncsKArtQWXJqL1612Wd+D5Zv+W94+WZjIHIy+gr11jMaTnZmKtqlR6zpvgS7EYt
+	hlwqAesiLfE8Y+RjP698h3cPpl8TwbXgmpEBo/UdXg4gTIViLTDm71PXEl6J76LNfGqftMfBLau
+	JIQpqsQCbRF8xGhRYrBGPG+QluKLn+FQ28cqiPUdyE96EnPRtkObcJB8u+Tg==
+X-Google-Smtp-Source: AGHT+IHjKBz8LLfkDN1C5xR8N2aNArNqGWfvvXVddkpcmhmRSktPMSHP6GCF1+dehAbnJ6v37EnE6gWHZbLivdA/PoU=
+X-Received: by 2002:a05:6122:1785:b0:520:3987:ce0b with SMTP id
+ 71dfb90a1353d-52758c9eb35mr1160475e0c.2.1743675657436; Thu, 03 Apr 2025
+ 03:20:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mmail-p-exch02.mt.ru (81.200.124.62) To
- mmail-p-exch01.mt.ru (81.200.124.61)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: i.abramov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 54 0.3.54 464169e973265e881193cca5ab7aa5055e5b7016, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, ksmg01.maxima.ru:7.1.1;mt-integration.ru:7.1.1;127.0.0.199:7.1.2;81.200.124.61:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 192331 [Apr 03 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/04/03 07:23:00 #27851719
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 3 Apr 2025 15:50:46 +0530
+X-Gm-Features: ATxdqUFcLm8EJq5bKx8BVwRxzBv71uPhfhvOEYclA0j-Xltycxe1onkZpRNwYYM
+Message-ID: <CA+G9fYtzOxx1YWz2X4UYqvxB2vg7ptz6axmz-5HFLD9ieSjURw@mail.gmail.com>
+Subject: next-20250403: x86_64 mwait.h:30:15: error: invalid operand for instruction
+To: open list <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-There's no need to call WARN_ON() in cfg802154_pernet_exit(), since
-every point of failure in cfg802154_switch_netns() is covered with
-WARN_ON(), so remove it.
+Regressions on x86_64 builds tinyconfig, allnoconfig failed with toolchains
+clang-20 and gcc-13 on the Linux next starting from next-20250403.
 
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+First seen on the next-20250403
+ Good: next-20250402
+ Bad:  next-20250403
 
-Fixes: 66e5c2672cd1 ("ieee802154: add netns support")
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
----
-v3: Add Reviewed-by tag.
-v2: Make sure to commit against latest netdev/net.
+Regressions found on x86_64:
+  - build/gcc-13-tinyconfig
+  - build/gcc-13-allnoconfig
+  - build/clang-20-tinyconfig
+  - build/clang-20-allnoconfig
 
- net/ieee802154/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Regression Analysis:
+ - New regression? Yes
+ - Reproducibility? Yes
 
-diff --git a/net/ieee802154/core.c b/net/ieee802154/core.c
-index 987c633e2c54..c0b8712018a1 100644
---- a/net/ieee802154/core.c
-+++ b/net/ieee802154/core.c
-@@ -358,7 +358,7 @@ static void __net_exit cfg802154_pernet_exit(struct net *net)
- 	rtnl_lock();
- 	list_for_each_entry(rdev, &cfg802154_rdev_list, list) {
- 		if (net_eq(wpan_phy_net(&rdev->wpan_phy), net))
--			WARN_ON(cfg802154_switch_netns(rdev, &init_net));
-+			cfg802154_switch_netns(rdev, &init_net);
- 	}
- 	rtnl_unlock();
- }
--- 
-2.39.5
+Boot regression: x86_64 mwait.h:30:15: error: invalid operand for instruction
 
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build log
+In file included from arch/x86/kernel/process.c:36:
+arch/x86/include/asm/mwait.h:30:15: error: invalid operand for instruction
+   30 |         asm volatile("monitor %0, %1, %2" :: "a" (eax), "c"
+(ecx), "d" (edx));
+      |                      ^
+<inline asm>:1:16: note: instantiated into assembly here
+    1 |         monitor %rax, %ecx, %edx
+      |                       ^~~~~
+In file included from arch/x86/kernel/process.c:36:
+arch/x86/include/asm/mwait.h:95:15: error: instruction requires: Not 64-bit mode
+   95 |         asm volatile("sti; mwait %0, %1" :: "a" (eax), "c" (ecx));
+      |                      ^
+<inline asm>:1:7: note: instantiated into assembly here
+    1 |         sti; mwait %eax, %ecx
+      |              ^
+2 errors generated.
+
+
+## Source
+* Kernel version: 6.14.0
+* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+* Git sha: f0a16f5363325cc8d9382471cdc7b654c53254c9
+* Git describe: next-20250403
+* Project details:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250403/
+* Architectures: x86_64
+* Toolchains: clang-20, gcc-13
+* Kconfigs: tinyconfig, allnoconfig, lkftconfig
+
+## Build
+* Build log: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250403/testrun/27871165/suite/build/test/clang-20-allnoconfig/log
+* Build history:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250403/testrun/27871165/suite/build/test/clang-20-allnoconfig/history/
+* Build details:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250403/testrun/27871165/suite/build/test/clang-20-allnoconfig/
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2vCvvmy6fhzm3aMcptKXHvRi4Bp/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2vCvvmy6fhzm3aMcptKXHvRi4Bp/config
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
