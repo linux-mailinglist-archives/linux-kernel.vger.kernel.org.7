@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-589075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CCA3A7C170
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:21:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E845A7C180
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C9523B8D0A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:20:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8551177E0B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2C720ADEE;
-	Fri,  4 Apr 2025 16:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7BAB20AF9C;
+	Fri,  4 Apr 2025 16:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="IPxQ45rl"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="GPs1mCk6"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F313C38;
-	Fri,  4 Apr 2025 16:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344B31FECAA;
+	Fri,  4 Apr 2025 16:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743783661; cv=none; b=j0Yzecq4IFYDVbxV7zkb1KvOSa626d5N7y/R/elzTgPRYOHIQuw2fvioSRMqLRYsi/sBgHfgTkQZeVRadRNxAFi1KogVZsGB1X9CqV/vgSpvYkbAZ2fj+H+3zra7X6pI8CAT5IJLYLRrgszHTyz3PCN+H4ofoDqM82aWC46gIcY=
+	t=1743783911; cv=none; b=qxh69GzYmSaogkdBsvwegotMUow8aJhUjUhZBJxAEs3tXxteapMzg+sp2DH4GhleQdCdpu5q6REmiWWux5DY2BSxeT2tQblHbG5Tm7b3bbIdYqxMtJPJ4NuNA78fOhdyW/nXlmC5wqH8Bg1tCiR6XqWIDQvryXW8jQVjQiJTl8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743783661; c=relaxed/simple;
-	bh=6+63ujJr+8nttY08AbevyHO47yB6QM9GVzRI584XxxY=;
+	s=arc-20240116; t=1743783911; c=relaxed/simple;
+	bh=0aXeNiQGfQeZqf33321j1RcMjt7OrOKafYaTVNqKS2I=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=nwMrTRVaXU+JxLXGRuo7MY/KdWlL3b3SbU81NP+6kRRxhcsfIN1FC0lBou5tTIC/K4QHCsdDx28pm+g5yIkIxK4dOQY7wlCguuI/5tXle67Av5NgCaPArHfbgL5K4YHVS+D/4SP0YnlBjail4hmySzClH6Tew22hP3eQC4HA8U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=IPxQ45rl; arc=none smtp.client-ip=185.132.182.106
+	 In-Reply-To:Content-Type; b=QYeCCRLTu8hMoEkhnK+fHsprbA1M/AfRD2BrAV7DmNAE7VFOaDtQCy3jJas8PuDOseS4MfMTAoxM2Z0rGgbvIQ1NKaT+puZjfv7uuhAbGXjT83vX2OX3ISPYQdZdj4gX9yAiXjGEbHRtpIs3X20C7Z+PctEp4DLhkHLSBDxiqbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=GPs1mCk6; arc=none smtp.client-ip=91.207.212.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 534C4qNv029984;
-	Fri, 4 Apr 2025 18:20:45 +0200
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 534C4w9E024189;
+	Fri, 4 Apr 2025 18:24:48 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	1NKt9MGk7ZEOtW9yl+h4WTA3wA9CpVLn+mNMcHfKAhU=; b=IPxQ45rlu7+o8yi4
-	P4i53sGBKbLIQeId/7GJJNo4duzK01pjiygyNrVSkEFNErmTGQWnepIKgiu1yFdX
-	ui77G8b6N46xs1K4kkoylKxUISjZKFYqjabB5QqZI5i2LsW86hKRBHUUJiI2Cxst
-	XeIUM+GBJk/4qtMDVtGk+djcIX/lE+2hvO6DWlcYPyh+Zr6JEC5bDuvqMY1E2b7R
-	V0ufWH6OSmpVL7/pS7P2cJXwJUK2evuoeqUmLLCyVnpnqXyFTichVnxWlCmO0+v9
-	/nvW4kWhtrB3ZrNJdhbBB0l8pfo/6WHV4bOxSgXYZ+VmekajmANSP2mR4CzecLm2
-	/XSbLg==
+	b/eiqZHdZQvwyfWZe39Nel4pZGk4oMDE2ktEcKkJ+Bg=; b=GPs1mCk6so4eBW/i
+	lXR2Q8uSv9mTWSYzCTrsYIUpsGVl+b5KkwSPJUAiC+X8RPBpkWci6nFGYbKlJPU0
+	MyourA9U0IenCcBTUMRgeqcVY+RR+/Wan6EWNGFmsruygSbB5xREg+n77mKuz87V
+	hZAUYUfu76BpWVOB3T2Ws6OEytqZ2bQSz1NldoRVDBqIheVCCrxgb9UaFRGd3g4c
+	U2TwBLVAcig1ZN+EdMCoPaMk/RipFouF0wptUuRwaY3E8UKD3fx1ReRULWyIzgOO
+	TU3abhVTmwqEbP6nB2jFDuf3m4CRvQoerDEM6dppKj9+6u5Omms/F92d6PPSVwUe
+	mwNPDA==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45t2ct4368-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45t2cjv2uh-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Apr 2025 18:20:45 +0200 (MEST)
+	Fri, 04 Apr 2025 18:24:48 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 85F5040053;
-	Fri,  4 Apr 2025 18:19:40 +0200 (CEST)
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9A85E4004B;
+	Fri,  4 Apr 2025 18:23:17 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 89DA09645B9;
-	Fri,  4 Apr 2025 18:18:51 +0200 (CEST)
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0BD4C921962;
+	Fri,  4 Apr 2025 18:19:28 +0200 (CEST)
 Received: from [10.130.77.120] (10.130.77.120) by SHFDAG1NODE3.st.com
  (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 4 Apr
- 2025 18:18:50 +0200
-Message-ID: <ddfc03e2-d4a6-460f-aafd-933019751dbf@foss.st.com>
-Date: Fri, 4 Apr 2025 18:18:32 +0200
+ 2025 18:19:24 +0200
+Message-ID: <d2b38bb5-4551-4c8b-90bb-753f2176ff1e@foss.st.com>
+Date: Fri, 4 Apr 2025 18:19:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -153,15 +153,15 @@ greping other platforms there are a bunch 0xf000 offset 8KB mapped:
   arm/juno-base.dtsi
   mediatek/mt8516.dtsi
 
-but, looking at the stm32mp25 memory map (1)
+but, looking at the stm32mp25 memory map (1) page 239:
 
 0x4AC22000 - 0x4AC3FFFF 120 Reserved -
 0x4AC20000 - 0x4AC21FFF 8   GICC
 
-I can know guess that the  Reserved 120kB is for aliasing the 64kB 
-blocks. Thus describing the GICC range at 128kB makes sense
+I can know guess that the "Reserved" 120kB is for aliasing the 64kB 
+blocks. Thus describing the GICC 128KB range size makes sense
 
-similarly 4 kB + 120 Reserved for GICH and 8kB + 120 Reserved for GICV
+similarly 4KB + 120KB Reserved for GICH and 8KB + 120KB Reserved for GICV
 
 (1) 
 https://www.st.com/resource/en/reference_manual/rm0457-stm32mp25xx-advanced-armbased-3264bit-mpus-stmicroelectronics.pdf
@@ -182,8 +182,8 @@ https://www.st.com/resource/en/reference_manual/rm0457-stm32mp25xx-advanced-armb
 > parameter in the integration, dropping bits [15:12] from the PA
 > presented to the CPU interface.
 
-sorry, misunderstanding, I was referring about my dropped quirk that I 
-now dropped, not your options
+there might be a misunderstanding, I was referring to my dropped quirk 
+that I now dropped, not your options
 
 thanks
 
