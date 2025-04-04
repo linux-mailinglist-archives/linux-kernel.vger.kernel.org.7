@@ -1,187 +1,137 @@
-Return-Path: <linux-kernel+bounces-589470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D7A4A7C6AE
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 01:17:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F0CA7C696
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 01:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA8A87A9AEB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 23:16:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEFF51894D3C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 23:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F2D21E091;
-	Fri,  4 Apr 2025 23:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9CA1F3BB2;
+	Fri,  4 Apr 2025 23:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fbna1okn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="ld78S7jW"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127BE221729;
-	Fri,  4 Apr 2025 23:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E25E18B0F
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 23:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743808592; cv=none; b=U/Dbu2G3GT5v7EmiR2Pj71ynURoGYL/wvPSYQZhK+ebzZ80R4Qha85ra/Oh+Uy7SL1YfugU1uM2n/1KPYNCWu/xB61RtnNZSuVUsdE4J3pK2xmj/hiyUfVY7jG5N/iKKWp6fcKdJfLPaFvsWjYz4nVzhQyPXc21B9DF6rtlOa+Q=
+	t=1743808580; cv=none; b=YMkmnOGsWDHQMqkI08tb86hsoJ3212IjvvwHIMNBnSo7Qyh5PYNHFjJSeW1VUlbZktQYuUlCVXv84A6Cb8t+vBba5S9lWYM2N2ipC35LB9WjOcWPZbQ02FNDMT+k1eHcP7bdUoh5dzMsFYa7aqLfL9F8FOr6uQPO9xAPHvImCZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743808592; c=relaxed/simple;
-	bh=pLcNof6JbapOHK594mGu5j5X53Jvg5ctd3e5BUNyfVo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jwzt1YgSLTB1qW3KQDWUKVUlbM8k/a5ts5CnsX39lvxIX8pqhXamuWgzx/ASQUV9bVU0aIre9+JhYNPEg8YJyYzQGuZWZjXk4tZlphyYJd4q1q57aO8UeItywyNuvYyhDE/giw+HKjXky7kYfXUGZDl2dnjA0uX8jofY9+2Zr68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fbna1okn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26F98C4CEF2;
-	Fri,  4 Apr 2025 23:16:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743808591;
-	bh=pLcNof6JbapOHK594mGu5j5X53Jvg5ctd3e5BUNyfVo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fbna1oknD/ZvI3sOJ9ta/LdvxqmsuirwvEnENV50pL1QcyK7da3vftEpZj6/Cxgb4
-	 q1k77iXUU72vUtTLAksT9nyhStbjPVq03hV/lrtcnUoP0WoMKGQBh80iUGQiCR1pvQ
-	 HdzMCvMXYkygICv20K3WhoQcK8WSd+0OGhPZKZNzJn/EnPrWDNRd9W1nCu8raxlSq2
-	 xm3K7T3cb0x+sq6VaKm7tRVu+zOFWZ0HaWjD9HJDyVGh/yLgC7oLEpdNzmJJThGwm/
-	 It7aOt1YqU8wEfxfseXbChNlUT38umNQhrthUzYD9SIuk/LyzsvALf5rS65hGjfgRO
-	 lAlf2IH9X6Lfg==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-scsi@vger.kernel.org
-Cc: linux-block@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fscrypt@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Gaurav Kashyap <quic_gaurkash@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v13 3/3] ufs: qcom: add support for wrapped keys
-Date: Fri,  4 Apr 2025 16:15:32 -0700
-Message-ID: <20250404231533.174419-4-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250404231533.174419-1-ebiggers@kernel.org>
-References: <20250404231533.174419-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1743808580; c=relaxed/simple;
+	bh=yNO7vWgggiE6AdvJSHy8J2QpJuEdjH5HDBasbGJJTPQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LtRK9R7ctwPv5WKTFtr45GODO8GO+N7CwTnWqxEF6iBPCmbwX9dEuRfpmGxoQQZBWS/dEfrEPjlb9s7P1niyThbQ+GYZXLVGT9HHlBzFOH/jKQ2F3Fexrt7r7T1/EzuWSnaQqT9AClHoZkHC2HOIHPxLQOfsLqZyLYPztBYOFFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=ld78S7jW; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-aee79a0f192so1637074a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 16:16:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1743808578; x=1744413378; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xi0GUgnEAFI8Tq5WlnIINEkOrw3m9T6yA0HO5ypDLqM=;
+        b=ld78S7jWfq03eeAQvOvquil/IQn02ZsiGEtkqEOIgJOhAv+ZMPuQzx/NEpqpxZDtbk
+         Ni5D1Zbm/dN8pBNOzOjzEf5ixsVpgBdXVdeI5tsO39f9koTq7QbZQFmSTqk0VZ/HvrlO
+         ru1GO0qRSpC8D1jXQPtsFLlaU/XjjHdzO38TOOnLKKxj1i0VpWz9j+k6gzTMBUnSBcpK
+         mrRupWShO9+HQh0KV+6PtMJZz9e/b6IDhdr1C+WH0z3ojYKb6NdvqQ4fM+XJ0VfcKi46
+         YHcR0eeJqlbrbh7ozWn/2mzeoGJaWEhehARU7SHvg5ER1fmrkpDRVkZ1JXFH9vnPvRDc
+         u+2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743808578; x=1744413378;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xi0GUgnEAFI8Tq5WlnIINEkOrw3m9T6yA0HO5ypDLqM=;
+        b=XnNi+1NMUag6EzSur8Qwu+8l2lzy6GVj60buxwMU49UG6cTpxnmTxhF8pyDrfBrmIM
+         prFzt4GEJoRNKr01zOSKbYEklepapj3a0BqDOIH1RpvQlasGCeQy73qF3VwmKSAcsQNm
+         SsY2TUOtY6UsGRiYbOC/tVBTwpZVXSdbw+5RVzPpRcWh0H1bhZVFUbKMEW/sMGLIqtlv
+         VN0+8Eu7oNm6HI5/xdm0oQFL9x2ox5iI6uVtF4j9oS0Ax+LhdYKjG7Bp4VgqTakpS1o1
+         Q8lKURI6mgif6rGzBGrBM+c1JenGEf4RwumrFEmf0bmicnMjRt1srmza8cL5cdXguG9S
+         k9zA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1KMJrWhzv/QLesTVapoNsW/1jUw+Opb82bkkRSfAz2sm+ahfsOU16CdBsgo1Bw0UaZ/uG9zQR7TS0oPg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA+gGPYtZEOR2NL7Y3l4hyzEmwDkIsadctjS2/QX1Na0knmzqR
+	HIy+8G0lK8NejcFtyl9/eZIBTiFyF0K9VZzP2A2nKjLcVbpN7EERzYDy/ZdY76E=
+X-Gm-Gg: ASbGncsaN3cw/cgmOi6D0CCl7EXEm2wkO8fxDPIBlzsW9VHhlGhQCdShxLPjVRBpH0f
+	KdmeHrkDGTXGvPAR9FTwp/6C4sdNaPCDO4dQPU0fjo0LGcQIv8C8RP9gIxjDq4WdJIFwQZwEgsm
+	/I0XWVMFnChv6j/PEYSorcUSOD+jCpNstXQuyUwhUryoqz31dNKXGzAqp0W9MIyYXwprEB7bAVF
+	eXSTBcSfPUiTBJHICqiP9RkOwXdGB7IZx3uCkqZS0yge2sew2wDnX5CEOxQC6wRTPGE1xSZNcZf
+	8aBrfJ2LmpxG3/5ZNrKJ8LpI
+X-Google-Smtp-Source: AGHT+IHC31M9P+ufU9NLoFJjA+hcOFrxMJv1oldOlZ6NzGrsyiNFFvfRRMA/XiiS+ri4Zo313E4eog==
+X-Received: by 2002:a17:90a:d006:b0:305:2d68:8d39 with SMTP id 98e67ed59e1d1-306af71ce82mr1669762a91.12.1743808578500;
+        Fri, 04 Apr 2025 16:16:18 -0700 (PDT)
+Received: from x1 ([97.115.235.21])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-305841a8ae7sm4115878a91.12.2025.04.04.16.16.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Apr 2025 16:16:18 -0700 (PDT)
+Date: Fri, 4 Apr 2025 16:16:16 -0700
+From: Drew Fustini <drew@pdp7.com>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, guoren@kernel.org,
+	wefu@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, jszhang@kernel.org,
+	p.zabel@pengutronix.de, m.szyprowski@samsung.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v7 3/3] riscv: dts: thead: Add device tree VO clock
+ controller
+Message-ID: <Z/BoQIXKEhL3/q50@x1>
+References: <20250403094425.876981-1-m.wilczynski@samsung.com>
+ <CGME20250403094433eucas1p2da03e00ef674c1f5aa8d41f2a7371319@eucas1p2.samsung.com>
+ <20250403094425.876981-4-m.wilczynski@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250403094425.876981-4-m.wilczynski@samsung.com>
 
-From: Eric Biggers <ebiggers@google.com>
+On Thu, Apr 03, 2025 at 11:44:25AM +0200, Michal Wilczynski wrote:
+> VO clocks reside in a different address space from the AP clocks on the
+> T-HEAD SoC. Add the device tree node of a clock-controller to handle
+> VO address space as well.
+> 
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  arch/riscv/boot/dts/thead/th1520.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+> index 527336417765..d4cba0713cab 100644
+> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
+> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+> @@ -489,6 +489,13 @@ clk: clock-controller@ffef010000 {
+>  			#clock-cells = <1>;
+>  		};
+>  
+> +		clk_vo: clock-controller@ffef528050 {
+> +			compatible = "thead,th1520-clk-vo";
+> +			reg = <0xff 0xef528050 0x0 0xfb0>;
 
-Wire up the wrapped key support for ufs-qcom by implementing the needed
-methods in struct blk_crypto_ll_ops and setting the appropriate flag in
-blk_crypto_profile::key_types_supported.
+Thanks for your patch. It is great to have more of the clocks supported
+upstream.
 
-For more information about this feature and how to use it, refer to
-the sections about hardware-wrapped keys in
-Documentation/block/inline-encryption.rst and
-Documentation/filesystems/fscrypt.rst.
+The TH1520 System User Manual shows 0xFF_EF52_8000 for VO_SUBSYS on page
+205. Is there a reason you decided to use 0xFF_EF52_8050 as the base?
 
-Based on patches by Gaurav Kashyap <quic_gaurkash@quicinc.com>.
-Reworked to use the custom crypto profile support.
+I see on page 213 that the first register for VO_SUBSYS starts with
+VOSYS_CLK_GATE at offset 0x50. I figure you did this to have the
+CCU_GATE macros use offset of 0x0 instead 0x50.
 
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Tested-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org> # sm8650
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- drivers/ufs/host/ufs-qcom.c | 51 ++++++++++++++++++++++++++++++++-----
- 1 file changed, 45 insertions(+), 6 deletions(-)
+I kind of think the reg property using the actual base address
+(0xFF_EF52_8000) makes more sense as that's a closer match to the tables
+in the manual. But I don't have a strong preference if you think think
+using 0xef528050 makes the CCU_GATE macros easier to read.
 
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 85040861ddc6e..46cca52aa6f11 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -154,15 +154,10 @@ static int ufs_qcom_ice_init(struct ufs_qcom_host *host)
- 	}
- 
- 	if (IS_ERR_OR_NULL(ice))
- 		return PTR_ERR_OR_ZERO(ice);
- 
--	if (qcom_ice_get_supported_key_type(ice) != BLK_CRYPTO_KEY_TYPE_RAW) {
--		dev_warn(dev, "Wrapped keys not supported. Disabling inline encryption support.\n");
--		return 0;
--	}
--
- 	host->ice = ice;
- 
- 	/* Initialize the blk_crypto_profile */
- 
- 	caps.reg_val = cpu_to_le32(ufshcd_readl(hba, REG_UFS_CCAP));
-@@ -172,11 +167,11 @@ static int ufs_qcom_ice_init(struct ufs_qcom_host *host)
- 	if (err)
- 		return err;
- 
- 	profile->ll_ops = ufs_qcom_crypto_ops;
- 	profile->max_dun_bytes_supported = 8;
--	profile->key_types_supported = BLK_CRYPTO_KEY_TYPE_RAW;
-+	profile->key_types_supported = qcom_ice_get_supported_key_type(ice);
- 	profile->dev = dev;
- 
- 	/*
- 	 * Currently this driver only supports AES-256-XTS.  All known versions
- 	 * of ICE support it, but to be safe make sure it is really declared in
-@@ -240,13 +235,57 @@ static int ufs_qcom_ice_keyslot_evict(struct blk_crypto_profile *profile,
- 	err = qcom_ice_evict_key(host->ice, slot);
- 	ufshcd_release(hba);
- 	return err;
- }
- 
-+static int ufs_qcom_ice_derive_sw_secret(struct blk_crypto_profile *profile,
-+					 const u8 *eph_key, size_t eph_key_size,
-+					 u8 sw_secret[BLK_CRYPTO_SW_SECRET_SIZE])
-+{
-+	struct ufs_hba *hba = ufs_hba_from_crypto_profile(profile);
-+	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-+
-+	return qcom_ice_derive_sw_secret(host->ice, eph_key, eph_key_size,
-+					 sw_secret);
-+}
-+
-+static int ufs_qcom_ice_import_key(struct blk_crypto_profile *profile,
-+				   const u8 *raw_key, size_t raw_key_size,
-+				   u8 lt_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE])
-+{
-+	struct ufs_hba *hba = ufs_hba_from_crypto_profile(profile);
-+	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-+
-+	return qcom_ice_import_key(host->ice, raw_key, raw_key_size, lt_key);
-+}
-+
-+static int ufs_qcom_ice_generate_key(struct blk_crypto_profile *profile,
-+				     u8 lt_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE])
-+{
-+	struct ufs_hba *hba = ufs_hba_from_crypto_profile(profile);
-+	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-+
-+	return qcom_ice_generate_key(host->ice, lt_key);
-+}
-+
-+static int ufs_qcom_ice_prepare_key(struct blk_crypto_profile *profile,
-+				    const u8 *lt_key, size_t lt_key_size,
-+				    u8 eph_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE])
-+{
-+	struct ufs_hba *hba = ufs_hba_from_crypto_profile(profile);
-+	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-+
-+	return qcom_ice_prepare_key(host->ice, lt_key, lt_key_size, eph_key);
-+}
-+
- static const struct blk_crypto_ll_ops ufs_qcom_crypto_ops = {
- 	.keyslot_program	= ufs_qcom_ice_keyslot_program,
- 	.keyslot_evict		= ufs_qcom_ice_keyslot_evict,
-+	.derive_sw_secret	= ufs_qcom_ice_derive_sw_secret,
-+	.import_key		= ufs_qcom_ice_import_key,
-+	.generate_key		= ufs_qcom_ice_generate_key,
-+	.prepare_key		= ufs_qcom_ice_prepare_key,
- };
- 
- #else
- 
- static inline void ufs_qcom_ice_enable(struct ufs_qcom_host *host)
--- 
-2.49.0
-
+-Drew
 
