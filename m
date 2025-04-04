@@ -1,119 +1,100 @@
-Return-Path: <linux-kernel+bounces-589059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A4C8A7C130
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:02:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CFD4A7C123
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D872F17D198
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:01:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF49217CD2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C972063C5;
-	Fri,  4 Apr 2025 16:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 439501FF1AB;
+	Fri,  4 Apr 2025 15:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hoffmanne.cfd header.i=@hoffmanne.cfd header.b="mBLXeNmE"
-Received: from hoffmanne.cfd (unknown [147.189.135.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAEp/ntu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0849A205E08
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 16:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=147.189.135.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9844ADF5C;
+	Fri,  4 Apr 2025 15:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743782433; cv=none; b=aBOawZwKaFVwPmM+73spBbEnwyJnNhA8BONeklepa395HQTLSEePJwhm4UmhZG8przVHjVa9T8tszaBEi1iQlKuH0AYUkoHI+xt/gKklxvOcjM7BBqnmjETyvVUMfmo/QrU7DXR8hX9M4oR2F0KJ9KRp1F24BDw1fVKUIIH/T6U=
+	t=1743782398; cv=none; b=LdCXQ6kpCkqrgG32rY1NxSmUfWvMoqt6iAjBi9iitokrTP5AGLEn0TCpWIlL5fHc+Asd6wAtSEWEyWQQ0TN6ID8hzfraXf1VPRYr/vbJ5tWyZSOd/YtMYRl9t7q/UUBVy2YISmfMnoc38P1+J9CwIKGbdi4BFDmraJhFjsdxDDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743782433; c=relaxed/simple;
-	bh=IYxbeICQK8e2rRZhAXLSgrOhCXi0BW/Z9s7H62TtSp8=;
-	h=To:Subject:Date:From:Message-ID:MIME-Version:Content-Type; b=oI4mFq0yfDAhIRx5ppEXHcm4j6rZgSTlrhpBYTnFigoItzJi08TkXxgLtZosdj0sG+3WYqwzkoFYlTztsTG24FRTqeQVqVIaquGkqtAf2AVMFpWWNzbLYZJl6k1Yr+QY4ofwQQ0VNavtqCMpYesKRAHLmBZdZhEP70RYlGej+Uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hoffmanne.cfd; spf=pass smtp.mailfrom=hoffmanne.cfd; dkim=pass (1024-bit key) header.d=hoffmanne.cfd header.i=@hoffmanne.cfd header.b=mBLXeNmE; arc=none smtp.client-ip=147.189.135.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hoffmanne.cfd
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hoffmanne.cfd
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=hoffmanne.cfd; s=mail; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-ID:Reply-To:From:Date:Subject:To:Sender:Cc:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=L0iZFvOKRdneMjTr1bK7C14Y6R2q3ZPrgaxVOTVD8QI=; b=mBLXeNmExuUJZqbHEcecXemhLD
-	hUMp4BsK+DwFSYP/ixtfyFfupcn/9eQsf5JnOobf7zZdXjZSNy6IXaCYrpNdmiA1/jH700f2sUgFo
-	sR0m51ZienR2EqIngF0cQSyTECVtc/Bh9zuuXUNMNgd5hGve7PchHygwxb4wRKe33qFU=;
-Received: from admin by hoffmanne.cfd with local (Exim 4.90_1)
-	(envelope-from <support@hoffmanne.cfd>)
-	id 1u0jT5-000ORa-1t
-	for linux-kernel@vger.kernel.org; Fri, 04 Apr 2025 16:00:31 +0000
-To: linux-kernel@vger.kernel.org
-Subject: Re WTS
-Date: Fri, 4 Apr 2025 16:00:31 +0000
-From: Exceptional One PC <support@hoffmanne.cfd>
-Reply-To: sales@exceptionalonepc.com
-Message-ID: <a1dd1f0c24a763f1ca38005a938548f2@hoffmanne.cfd>
+	s=arc-20240116; t=1743782398; c=relaxed/simple;
+	bh=WrZEF9Yxb5ULBShRbFH48qvpHj9RvDQIE9VPe6LC7pI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=bMbweDddAdHxhs/HGa34yoQYq+76gH7aW/YqoIvbjCtxTCRmn1qwhtcbNDcBrJ661hbLNnh8BjxpinneKChvRMPxVEwbcgcjT/syiR+uXt5iAGQgcvKq9e3Du6jevESlh/HFxG8vuz3U8KRwqv9CE/ZjMMVgh92kcJU8zYum3e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LAEp/ntu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C8E5C4CEDD;
+	Fri,  4 Apr 2025 15:59:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743782398;
+	bh=WrZEF9Yxb5ULBShRbFH48qvpHj9RvDQIE9VPe6LC7pI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=LAEp/ntu2bwl+Irpk6BuOuLI2cgXnKNQat2ed18ZIW5NctNUL1ZzhUd0SiXglWQhU
+	 wIgNo+pKH0sDGZc3CfjfhKe1E6uLnrSyFFyYIl3nEmcFKvLiqsr900F+GMsCUafUM2
+	 DSN9Sby7QD1DZoyazHYKnflfzSSO66Ayv/hTocDCBinOtlm/T1P9gOKgzbM39naJXN
+	 L1UOjaY0n+Afa09d9XFzORjYckdqmIc35buJxrJshty8ZLuuq6Vq+JbSVc52McYwxi
+	 37zgbu6RCMIJzQo2jfoX/8U0wTXaJ1N8Vtp20CSSmQEpFEPYwjCQEiSc5BKkPgBSae
+	 0UqgzEXJK8QwQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE4F33822D28;
+	Fri,  4 Apr 2025 16:00:36 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] selftests/bpf: Convert comma to semicolon
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174378243553.3310001.5428425724896312604.git-patchwork-notify@kernel.org>
+Date: Fri, 04 Apr 2025 16:00:35 +0000
+References: <20250401061546.1990156-1-nichen@iscas.ac.cn>
+In-Reply-To: <20250401061546.1990156-1-nichen@iscas.ac.cn>
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
+ daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
+ mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+ peterz@infradead.org, ameryhung@gmail.com, juntong.deng@outlook.com,
+ oleg@redhat.com, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hello ,
-These are available for sale. If you’re interested in purchasing these, please email me
+Hello:
 
+This patch was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
 
-brand new and original
-Brand New ST8000NM017B  $70 EA
-Brand New ST20000NM007D   $100 EACH
-Brand New ST4000NM000A   $30 EA
-Brand New WD80EFPX   $60 EA
- Brand New WD101PURZ    $70 EA
+On Tue,  1 Apr 2025 14:15:46 +0800 you wrote:
+> Replace comma between expressions with semicolons.
+> 
+> Using a ',' in place of a ';' can have unintended side effects.
+> Although that is not the case here, it is seems best to use ';'
+> unless ',' is intended.
+> 
+> Found by inspection.
+> No functional change intended.
+> Compile tested only.
+> 
+> [...]
 
- 8TB 7.2K RPM SATA 6Gbps 512   2500pcs/$70 each
+Here is the summary with links:
+  - selftests/bpf: Convert comma to semicolon
+    https://git.kernel.org/bpf/bpf-next/c/c9661394850d
 
- 
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-SK Hynix 48GB 2RX8 PC5 56008 REO_1010-XT
-PH HMCGY8MG8RB227N AA
-QTY 239 $50 EACH
-
-
-
-Brand New CISCO C9300-48UXM-E
-Available 5
-$21800 EACH
-
- 
-
-Intel Xeon Gold 5418Y Processors
-QTY28 $780 each
-
-
-Brand New C9200L-48T-4X-E  
-$1000 EAC
-QTY4
-
- 
-
-
- Brand New N9K-C93108TC-FX-24 Nexus
-9300-FX w/ 24p 100M/1/10GT & 6p 40/100G
-Available 4
-$3000 each
-
- 
-
-Brand New NVIDIA GeForce RTX 4090 Founders
-Edition 24GB - QTY: 56 - $700 each
-
- Refurbished Grade A
-Dell Latitude 5430 Intel i7 1255U 1.70GHz 
-16GB RAM 256GB SSD 14" Win 11 Pro
-QTY63 $139 EA
-
-
-Refurbished Grade A
-HP EliteBook 840 G7 i7-10610U 16GB RAM 512GB
-SSD Windows 11 Pro TOUCH Screen
-QTY 237 USD 80 each
 
 
