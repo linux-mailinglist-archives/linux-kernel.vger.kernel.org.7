@@ -1,101 +1,88 @@
-Return-Path: <linux-kernel+bounces-588292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 802BDA7B723
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 07:27:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58CE0A7B729
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 07:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E38857A7DC5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 05:26:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23B2A178C55
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 05:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F7F176AC8;
-	Fri,  4 Apr 2025 05:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VNsr+gX2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBE9156C63;
+	Fri,  4 Apr 2025 05:28:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63E315B54C;
-	Fri,  4 Apr 2025 05:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF39376
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 05:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743744408; cv=none; b=l+58h9PsgcmvwBESvJXOF/B4n3Oe5oEd1L3NjMGl3dkg6iwlokzRF5oFJoiM9H/7TpctyFVdDytceQO77USyobuammhIXvLhAenPcR3vwbgz+Ph7gGIt8hLO+ilAKiTiGwbOwqlqafxPygQaYCEMIcKtpfU7qKZ2+WZT5MXZ3ns=
+	t=1743744485; cv=none; b=sGpdQBVBB+f7sb2IX82sZPckkWV3ps3z19h5sR1bC1GykYVAPpVc/TfYwOlVdwSHNqKfVJGvRrE27EuQbnS6AUmhJXLrGapIF1sa6yGK7mQgt6p8z7jFIk0rsmHE/Phq8XSLatPWCb0CXefzxyZkn6M/rXigDiukMepUI3JvsrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743744408; c=relaxed/simple;
-	bh=68FORm/+PAAItJTs4YIhRng8DnrbZQIOdG8zHsV6wKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c8lkL39Yn56u11Pm5dw2sLNhg7VWIN0aaNg3sYsCyvpYxSIUxerYvToPgP0bJhoEp/YQuedwzkcRWD+p9diSUVb79aOY402nEREVaXu+J8gfLlLJNo2Pv9ViGm/XfcdAGKYQEqFgyoxATksVlJ4jUm67fE7lAei6NXh0l/Nske0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VNsr+gX2; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743744407; x=1775280407;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=68FORm/+PAAItJTs4YIhRng8DnrbZQIOdG8zHsV6wKI=;
-  b=VNsr+gX2g/31RqBWheIzvWp5UAtySBKpZtzlAMJfjFNIlL43D/WobhMI
-   rkuQr3KwwHcIyltunDIw5gYEB1QMl+nfbrvDaHZDIXTfZrKB1MngLaMcH
-   aGlRHkM9yOxQTQtpQ6qBep3iOd9bmLb3b0nKrf79E3nIrgItsckaw33Yr
-   wpTuq2lao+YPp+Vw3TnD+P5PrX7ZhtDqtrAUfJ3cDqhMmzYLc8Vw+nkNG
-   3xi4u5FSrXyPextWjBqMH1QbP6u/s2Cx2lRcN5CluG5ZhNThopLviji1l
-   OGOabXqv9+mnG7OjSHeI0tGg73YmS/AQ+z7gHvp4WAUL2Ju+FG9Oh3Oyd
-   A==;
-X-CSE-ConnectionGUID: RY8en1KpSlC30iS+DaF+ww==
-X-CSE-MsgGUID: 5mxGN99ZQx6f00fQqJ7Pfw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11393"; a="62573985"
-X-IronPort-AV: E=Sophos;i="6.15,187,1739865600"; 
-   d="scan'208";a="62573985"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 22:26:47 -0700
-X-CSE-ConnectionGUID: O1D/mr/XQ1enVuDDicwQOQ==
-X-CSE-MsgGUID: 9OYiK1wPTfC5piPRJw+0PA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,187,1739865600"; 
-   d="scan'208";a="128072246"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 22:26:44 -0700
-Date: Fri, 4 Apr 2025 08:26:41 +0300
-From: Raag Jadav <raag.jadav@intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: mahesh@linux.ibm.com, oohall@gmail.com, bhelgaas@google.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ilpo.jarvinen@linux.intel.com, lukas.wunner@intel.com
-Subject: Re: [PATCH v1] PCI/AER: Avoid power state transition during system
- suspend
-Message-ID: <Z-9tkV_iPntpROn-@black.fi.intel.com>
-References: <20250403074425.1181053-1-raag.jadav@intel.com>
- <CAJZ5v0gtUHbYPk-dFRwEZMnPv0gQG8+J+bwf8bahUskcDkw9HA@mail.gmail.com>
+	s=arc-20240116; t=1743744485; c=relaxed/simple;
+	bh=ZSrAJnXELvizS+zkdrMA9ZCJvgmLOWv9EV7ntwljEi4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=sUQqrhSRqavQk6VUqXpqcO5BKyYaQylwBDvSQGbbUGwbYHqjhEo/gAzNQ/OTTTwheE+1JI0dZ7V7AQBMvy0bZiYk1JpdiZdFoPCxelRUoHB69G9Yln01oRUA0jTS/2RGrUEbHMiJrdS/VNAmxXnFAkp2tMcrcJVL4fI2QIKBAi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d43541a706so18747175ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 22:28:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743744482; x=1744349282;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1zMGCewqhmB2S6fbGZ8MeM53MmWKNIbog+Kh6suJRiE=;
+        b=rg6b0D5QgmG7yjkBYfg50VK8HREtH71jOb+Qev876Yagwhlp21xsEvB3qdheUZPY5b
+         I7vdDO8GeCnuJ1GSrGRtwxXGNNtC+fWeKeEG0+/wy5osMrdvFLPZM6tuXYMZ4XOP3UHb
+         CF1XmKx67bDBSzZjjY65rJdVCEJTVYUyWcWTvuohrZ2nnDHWSTlTfMJL/r6RDWSlbxcA
+         QGXnsYvGcCMRsITGFVpsnAUycmLSa72TrcQZo9BRzeZfhFUHjanYXoc2Yywqz928TfEh
+         LNbOZEWWSYc/5MBp4zXnnfdT+bCLf5ttCn7gdP7fKE8QLCP4wnp9zbp0qYovHzs2zScB
+         NHBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWV57eeOevSSembGzWQJu017mWOkHPTFNcH7FfoHYTb7UJtLtibuJRJSm2aUi3MRbBJ7KSIlRpIMWGrVMU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJV/v8/0TwPFZN9/zya28h3GDOuHglwKMJ6cBmpl2ClFAJqoJn
+	8AZwv8CWiK33f42s1Hc32I6+7C9P5BX5CYYv5Db42YybcqQ4iWnirIaOx+bWIvdDwuy/bo2viUZ
+	KgBYZK7T6UCzPvKXZ1TBYGWceuzz66TAg+5T+HchoVwaQOLwyo8/5tbY=
+X-Google-Smtp-Source: AGHT+IHNPIecIsRBeY/e28Dd8iA/9r1ASbB9Pvb/iCs+9U7OC+d1BcGYcVVmtsl2gRAA8XgufoOtFSkC6l09qpclk8AHn5CFPVlN
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0gtUHbYPk-dFRwEZMnPv0gQG8+J+bwf8bahUskcDkw9HA@mail.gmail.com>
+X-Received: by 2002:a05:6e02:18cc:b0:3d5:7f32:8d24 with SMTP id
+ e9e14a558f8ab-3d6e576be71mr15971315ab.15.1743744482651; Thu, 03 Apr 2025
+ 22:28:02 -0700 (PDT)
+Date: Thu, 03 Apr 2025 22:28:02 -0700
+In-Reply-To: <tencent_10224B011B9C25D1BA48BB9033BC9EF71B08@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67ef6de2.050a0220.9040b.032e.GAE@google.com>
+Subject: Re: [syzbot] [isofs?] KASAN: slab-out-of-bounds Read in isofs_fh_to_parent
+From: syzbot <syzbot+4d7cd7dd0ce1aa8d5c65@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Apr 03, 2025 at 08:35:45PM +0200, Rafael J. Wysocki wrote:
-> On Thu, Apr 3, 2025 at 9:45 AM Raag Jadav <raag.jadav@intel.com> wrote:
-> >
-> > If an error is triggered while system suspend is in progress, any bus
-> > level power state transition will result in unpredictable error handling.
-> > Mark skip_bus_pm flag as true to avoid this.
-> 
-> This needs to be synchronized with the skip_bus_pm clearing in pci_pm_suspend().
+Hello,
 
-I'm wondering if we can have something like aer_in_progress flag
-that we can use in PCI PM for this? ...
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> Also, skip_bus_pm is only used in the _noirq phases, so if a driver
-> calls pci_set_power_state() from its ->suspend() callback, this change
-> won't help.
+Reported-by: syzbot+4d7cd7dd0ce1aa8d5c65@syzkaller.appspotmail.com
+Tested-by: syzbot+4d7cd7dd0ce1aa8d5c65@syzkaller.appspotmail.com
 
-... and perhaps skip these if it is set?
+Tested on:
 
-Raag
+commit:         d6b13dbd Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=11d92a74580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=114db1c77c985e53
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d7cd7dd0ce1aa8d5c65
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1479023f980000
+
+Note: testing is done by a robot and is best-effort only.
 
