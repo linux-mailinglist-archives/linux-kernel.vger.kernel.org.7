@@ -1,86 +1,64 @@
-Return-Path: <linux-kernel+bounces-589166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CCAEA7C29C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:39:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21C96A7C29F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FB8B1881F04
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:38:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DD191B60F07
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD1921E098;
-	Fri,  4 Apr 2025 17:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F74214A76;
+	Fri,  4 Apr 2025 17:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hYL47qOn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LoGWg2zc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A079721D5BF
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 17:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D222080D2;
+	Fri,  4 Apr 2025 17:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743788199; cv=none; b=NkbmZwy2J9YKL0HhxR4jNLBWBcBCD3Zmrbgskmr38FCmNc1OINKoO+1mxmJeEhslKI0BQUVAUEND+FF7r1tqJuf1e1KKLz9dVuHpIIu1EdLy6S3EiUVUOjERQmg+/5lJV1G1O+ZmCyxHl2oRpqkerzCGrrVvpjYfJ2n859UOAqc=
+	t=1743788315; cv=none; b=DRyCff0rptZlAKB45+JGCIsz5MLgH867/QoRGLrmCy507WnBx7BFh6a2vd42m51Hpj3P7IoYnHrMCud4VYQPGBle5FOG3sMDmMQ1IidOE9pbFWmKFNhlC0KMKTqasbMiM0nnOELHgrINbBN5/flI2o31IbgZRO8/X29Aq44vb+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743788199; c=relaxed/simple;
-	bh=yunu/rgX6xlai49HhM2W0+0A+BpWAImHxQ/t3MoXx9U=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VoNP4wu6a2vwVLi5icT3PiXvLSxGsuC0u5OA9JFzB5Ky7P/FOTsxkpyCEzycntrjmKWKpy2Fc0ziZRQ/coCeng5diPLR376nSBqvhP25MI2ndAv2zPL1XAeGDE4xSMxOoS5mPK9uo7+3GEBU2/jatT5piXwTCCWXiTY+RDw+NYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hYL47qOn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743788196;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=R4340KJrzxwLVivTpxZjpQyM7QjWjGmIJMe5TfbBu9c=;
-	b=hYL47qOnSgoqP3Eb4g8CwlR7UAasPtPINyQQAOm8cvIhNEfuqrNBKlP6SBtHXP9/7f/4uw
-	FxwnighrVOufAzOpPAMTnZLkzng/ERUtzvJhKXxaQvvL1CxE+mXUVd8giBDqql0hsE2vVo
-	fUH3e1ZKCeqBuLCACXG+H95JmhpuWa0=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-377-SnADK3D7PMagYIBNs2i-Vg-1; Fri, 04 Apr 2025 13:36:33 -0400
-X-MC-Unique: SnADK3D7PMagYIBNs2i-Vg-1
-X-Mimecast-MFC-AGG-ID: SnADK3D7PMagYIBNs2i-Vg_1743788192
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43ea256f039so18945765e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 10:36:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743788192; x=1744392992;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=R4340KJrzxwLVivTpxZjpQyM7QjWjGmIJMe5TfbBu9c=;
-        b=dB59AhQnV7cQHrUdOjzpW2tg+XxYEEhJtUSB4auBFF9fJyehNgrce1XvYi1Hnehn5l
-         t6e8Q9HH5p+i1W6a7uheXCmpoZ1H2zX1g3EwA/roUrz+RIEypYU7OyD5hyLrAjLZ1yh6
-         /RDhnI6iJI/LRUcMgZku764pDg0aHuI02kIlvURomSkpqtp2HMI1WDbgfb2tjwMfM3n3
-         irDzkjIFsZMVW+Ggr88erKurUaPvheU8WE3yD4IrohLsuh9z8HJgg0YhfG/6glDj3HzP
-         zYnQe+eS5p8aC/DpMTM5WFjNN9YoZ5J42WODDviWjBZm6SDYg66zK6KRrQYsLM/4XcV5
-         HUzQ==
-X-Gm-Message-State: AOJu0Yw2wJ6OViCBL7Y+fO73GzXy3uq2g6UgiMdHb5TLYglik4+eJHX0
-	AEzd0PPzQxB5yWqJxR7VSVVMkDDCoBQV8xWnanHH6OntwwCQHqqSZKkk+qQMyfWETzS065OIi9B
-	AtRo5qT0OoAVwQTJ2+SOh1wxLJobg9t6jE/ZMiIL/gXdU9t+qOgMlKKxP4RgchQ==
-X-Gm-Gg: ASbGnctZsWBJJysRSMtkrWZijpJ0TbkdFcho7vl6Sb1DAOcdk25VOic/PujG7Vp0UuR
-	Icje0h19rUdp3vVdqXLdqSwlRaKvsR3mA5BQtRvi8jjFCe0SkXb7QKXaEYBetkBD0SAk7pOIIYt
-	gZbMuYQxQs8Q0dZLNDGQMNW3/9JQahA3Lv2pv6nrDAVH/vbGWbq5CljQRmJWq1ExWrKKEMnygg6
-	taiy9ncL4B+iiv/bDtJSjdkHe1xDJ+yq/MVRFqDnR3/i1/v0JRxKRooky5Ud4EOhoJPc1PRWuky
-	ukYCKetgpyEO+GIBpbHWp9AusGljwt6JpAdS5LeTjha9tb7rTV4A9G+rSkU9gTjGbO7v109TPdV
-	Tl+ACo9o5gzAVGnnucf3ubPDkPwkni9g5CNrf8PivpoE=
-X-Received: by 2002:a05:600c:698c:b0:43c:fa0e:471a with SMTP id 5b1f17b1804b1-43ed6615862mr29577965e9.5.1743788192102;
-        Fri, 04 Apr 2025 10:36:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IETLcrbSlwBwxMnCyQo7ltsVM/FnStajCig+iEbNMtIKS+v6wnVbq4bZ0Gr1gVoSX8E8MsR+w==
-X-Received: by 2002:a05:600c:698c:b0:43c:fa0e:471a with SMTP id 5b1f17b1804b1-43ed6615862mr29577735e9.5.1743788191756;
-        Fri, 04 Apr 2025 10:36:31 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c71b:7900:8752:fae3:f9c9:a07e? (p200300cbc71b79008752fae3f9c9a07e.dip0.t-ipconnect.de. [2003:cb:c71b:7900:8752:fae3:f9c9:a07e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec1795081sm55936625e9.27.2025.04.04.10.36.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Apr 2025 10:36:30 -0700 (PDT)
-Message-ID: <608773a9-535f-4f0c-aa0e-426dccb8ca0c@redhat.com>
-Date: Fri, 4 Apr 2025 19:36:28 +0200
+	s=arc-20240116; t=1743788315; c=relaxed/simple;
+	bh=g+uO3D1xVb3e3yklJX3PTIFd83TRp4sbPtUUCMweR8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K12wAyx80Ek88GvxArTox9v58Ru0UVp2VxfxVwfcrV7mpE9HEyElwGEiF0cIxvnOr3C6h2oQf8rLriEa5tOYL9gIRCFNsJPH/Cs2kJhrA0/tdbcrmo4NJh66JVn5HZpRYSmRrjANU8wD1km3Vxe9rdaMPk9DV1IWtTl/9NEX5wU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LoGWg2zc; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743788313; x=1775324313;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=g+uO3D1xVb3e3yklJX3PTIFd83TRp4sbPtUUCMweR8c=;
+  b=LoGWg2zc85L3MtCW9M0RnRjYeUjfCfc0SbdjTpMnIE4ilWbDbrYdn4SJ
+   f8d7yHR8nIsgdvhl0i6ulaL/+I3ihAi9p9eyzeJ0/o+q843oefIrWKMGa
+   ycv8sGLfCjxiNKRfQtUNRCB58bqRSoxsM/oguUrwOfYjtBxDFx/tGCQCa
+   4eDfXKoIjJLmr7Set3KB8NnuJfrs8HZ2jnzcJ8Usnmq95ky1EQvkfgH8e
+   OWeOmxuGU54NHhP4fgu2sYtW5o9g/mkDdKDJUnrm18j5N8/w1EUmLfPnG
+   4qxesSKnpj/h9eDurB6pil5DZTAdt37Py8ixB8XqIGPuyKAPn+Sd10wKV
+   g==;
+X-CSE-ConnectionGUID: Fxrpikc1Rh+WP1ouzgzrGw==
+X-CSE-MsgGUID: FOd7TFfBRd6acvYzub51Pg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11394"; a="62773792"
+X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
+   d="scan'208";a="62773792"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 10:38:32 -0700
+X-CSE-ConnectionGUID: 3jueK+bYQvGsWn/SgG7b1Q==
+X-CSE-MsgGUID: vVkKM15nSt2oK2nSl/uuYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
+   d="scan'208";a="128215225"
+Received: from daliomra-mobl3.amr.corp.intel.com (HELO [10.124.223.29]) ([10.124.223.29])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 10:37:54 -0700
+Message-ID: <8416848c-700a-4ff0-8a22-aa62579d60cd@intel.com>
+Date: Fri, 4 Apr 2025 10:37:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,160 +66,245 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] s390/virtio_ccw: don't allocate/assign airqs for
- non-existing queues
-From: David Hildenbrand <david@redhat.com>
-To: Halil Pasic <pasic@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
- virtualization@lists.linux.dev, kvm@vger.kernel.org,
- Chandra Merla <cmerla@redhat.com>, Stable@vger.kernel.org,
- Cornelia Huck <cohuck@redhat.com>, Thomas Huth <thuth@redhat.com>,
- Eric Farman <farman@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Wei Wang <wei.w.wang@intel.com>
-References: <20250402203621.940090-1-david@redhat.com>
- <20250403161836.7fe9fea5.pasic@linux.ibm.com>
- <e2936e2f-022c-44ee-bb04-f07045ee2114@redhat.com>
- <20250404063619.0fa60a41.pasic@linux.ibm.com>
- <4a33daa3-7415-411e-a491-07635e3cfdc4@redhat.com>
- <d54fbf56-b462-4eea-a86e-3a0defb6298b@redhat.com>
- <20250404153620.04d2df05.pasic@linux.ibm.com>
- <d6f5f854-1294-4afa-b02a-657713435435@redhat.com>
- <20250404160025.3ab56f60.pasic@linux.ibm.com>
- <6f548b8b-8c6e-4221-a5d5-8e7a9013f9c3@redhat.com>
- <20250404173910.6581706a.pasic@linux.ibm.com>
- <b30a0ff7-e885-462d-92d4-53f15accd1c0@redhat.com>
+Subject: Re: [PATCH v3 10/14] x86: Update the KASAN non-canonical hook
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>, hpa@zytor.com,
+ hch@infradead.org, nick.desaulniers+lkml@gmail.com,
+ kuan-ying.lee@canonical.com, masahiroy@kernel.org,
+ samuel.holland@sifive.com, mingo@redhat.com, corbet@lwn.net,
+ ryabinin.a.a@gmail.com, guoweikang.kernel@gmail.com, jpoimboe@kernel.org,
+ ardb@kernel.org, vincenzo.frascino@arm.com, glider@google.com,
+ kirill.shutemov@linux.intel.com, apopple@nvidia.com,
+ samitolvanen@google.com, kaleshsingh@google.com, jgross@suse.com,
+ andreyknvl@gmail.com, scott@os.amperecomputing.com, tony.luck@intel.com,
+ dvyukov@google.com, pasha.tatashin@soleen.com, ziy@nvidia.com,
+ broonie@kernel.org, gatlin.newhouse@gmail.com, jackmanb@google.com,
+ wangkefeng.wang@huawei.com, thiago.bauermann@linaro.org, tglx@linutronix.de,
+ kees@kernel.org, akpm@linux-foundation.org, jason.andryuk@amd.com,
+ snovitoll@gmail.com, xin@zytor.com, jan.kiszka@siemens.com, bp@alien8.de,
+ rppt@kernel.org, peterz@infradead.org, pankaj.gupta@amd.com,
+ thuth@redhat.com, andriy.shevchenko@linux.intel.com,
+ joel.granados@kernel.org, kbingham@kernel.org, nicolas@fjasle.eu,
+ mark.rutland@arm.com, surenb@google.com, catalin.marinas@arm.com,
+ morbo@google.com, justinstitt@google.com, ubizjak@gmail.com,
+ jhubbard@nvidia.com, urezki@gmail.com, dave.hansen@linux.intel.com,
+ bhe@redhat.com, luto@kernel.org, baohua@kernel.org, nathan@kernel.org,
+ will@kernel.org, brgerst@gmail.com
+Cc: llvm@lists.linux.dev, linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com, x86@kernel.org
+References: <cover.1743772053.git.maciej.wieczor-retman@intel.com>
+ <c37c89e71ed5a8e404b24b31e23457af12f872f2.1743772053.git.maciej.wieczor-retman@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <b30a0ff7-e885-462d-92d4-53f15accd1c0@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <c37c89e71ed5a8e404b24b31e23457af12f872f2.1743772053.git.maciej.wieczor-retman@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04.04.25 18:49, David Hildenbrand wrote:
-> On 04.04.25 17:39, Halil Pasic wrote:
->> On Fri, 4 Apr 2025 16:17:14 +0200
->> David Hildenbrand <david@redhat.com> wrote:
->>
->>>> It is offered. And this is precisely why I'm so keen on having a
->>>> precise wording here.
->>>
->>> Yes, me too. The current phrasing in the spec is not clear.
->>>
->>> Linux similarly checks
->>> virtio_has_feature()->virtio_check_driver_offered_feature().
->>
->> Careful, that is a *driver* offered and not a *device* offered!
+On 4/4/25 06:14, Maciej Wieczor-Retman wrote:
+> The kasan_non_canonical_hook() is useful in pointing out that an address
+> which caused some kind of error could be the result of
+> kasan_mem_to_shadow() mapping. Currently it's called only in the general
+> protection handler code path but can give helpful information also in
+> page fault oops reports.
 > 
-> Right, I was pointing at the usage of the term "offered".
-> virtio_check_driver_offered_feature(). (but was also confused about that
-> function)
+> For example consider a page fault for address 0xffdefc0000000000 on a
+> 5-level paging system. It could have been accessed from KASAN's
+> kasan_mem_to_shadow() called on 0xfef0000000000000 address. Without the
+> kasan_non_canonical_hook() in the page fault case it might be hard to
+> figure out why an error occurred.
 > 
-> virtio_has_feature() is clearer: "helper to determine if this device has
-> this feature."
+> Add kasan_non_canonical_hook() to the beginning of show_fault_oops().
 > 
-> The way it's currently implemented is that it's essentially "device has
-> this feature and we know about it (->feature_table)"
+> Update kasan_non_canonical_hook() to take into account the possible
+> memory to shadow mappings in the software tag-based mode of x86.
 > 
->>
->> We basically mandate that one can only check for a feature F with
->> virtio_has_feature() such that it is either in drv->feature_table or in
->> drv->feature_table_legacy.
->>
->> AFAICT *device_features* obtained via dev->config->get_features(dev)
->> isn't even saved but is only used for binary and-ing it with the
->> driver_features to obtain the negotiated features.
->>
->> That basically means that if I was, for the sake of fun do
->>
->> --- a/drivers/virtio/virtio_balloon.c
->> +++ b/drivers/virtio/virtio_balloon.c
->> @@ -1197,7 +1197,6 @@ static unsigned int features[] = {
->>           VIRTIO_BALLOON_F_MUST_TELL_HOST,
->>           VIRTIO_BALLOON_F_STATS_VQ,
->>           VIRTIO_BALLOON_F_DEFLATE_ON_OOM,
->> -       VIRTIO_BALLOON_F_FREE_PAGE_HINT,
->>           VIRTIO_BALLOON_F_PAGE_POISON,
->>           VIRTIO_BALLOON_F_REPORTING,
->>    };
->>
->> I would end up with virtio_check_driver_offered_feature() calling
->> BUG().
->>
+> Patch was tested with positive results by accessing the following
+> addresses, causing #GPs and #PFs.
 > 
-> Right.
+> Valid mappings (showing kasan_non_canonical_hook() message):
+> 	0xFFFFFFFF8FFFFFFF
+> 	0xFEF0000000000000
+> 	0x7FFFFF4FFFFFFFFF
+> 	0x7EF0000000000000
+> Invalid mappings (not showing kasan_non_canonical_hook() message):
+> 	0xFFFFFFFFF8FFFFFF
+> 	0xFFBFFC0000000000
+> 	0x07EFFC0000000000
+> 	0x000E000000000000
 > 
->> That basically means that Linux mandates implementing all previous
->> features regardless whether does are supposed to be optional ones or
->> not. Namely if you put the feature into drv->feature_table it will
->> get negotiated.
->>
->> Which is not nice IMHO.
+> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+> ---
+> Changelog v3:
+> - Move the report.c part from first patch in the series to this new
+>   patch to have x86 changes in one place.
+> - Add the call in fault oops.
+> - Extend the comment in report.c with a graphical representation of what
+>   addresses are valid and invalid in memory to shadow mapping.
 > 
-> I think the validate() callbacks allows for fixing that up.
+>  arch/x86/mm/fault.c |  2 ++
+>  mm/kasan/report.c   | 36 +++++++++++++++++++++++++++++++++++-
+>  2 files changed, 37 insertions(+), 1 deletion(-)
 > 
-> Like us unconditionally clearing VIRTIO_F_ACCESS_PLATFORM (I know,
-> that's a transport feature and a bit different for this reason).
-> 
-> ... not that I think the current way of achieving that is nice :)
+> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+> index 697432f63c59..16366af60ae5 100644
+> --- a/arch/x86/mm/fault.c
+> +++ b/arch/x86/mm/fault.c
+> @@ -511,6 +511,8 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code, unsigned long ad
+>  	if (!oops_may_print())
+>  		return;
+>  
+> +	kasan_non_canonical_hook(address);
+> +
+>  	if (error_code & X86_PF_INSTR) {
+>  		unsigned int level;
+>  		bool nx, rw;
+> diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+> index f24f11cc644a..135307c93c2c 100644
+> --- a/mm/kasan/report.c
+> +++ b/mm/kasan/report.c
+> @@ -700,7 +700,7 @@ void kasan_non_canonical_hook(unsigned long addr)
+>  	 * operation would overflow only for some memory addresses. However, due
+>  	 * to the chosen KASAN_SHADOW_OFFSET values and the fact the
+>  	 * kasan_mem_to_shadow() only operates on pointers with the tag reset,
+> -	 * the overflow always happens.
+> +	 * the overflow always happens (for both x86 and arm64).
+>  	 *
+>  	 * For arm64, the top byte of the pointer gets reset to 0xFF. Thus, the
+>  	 * possible shadow addresses belong to a region that is the result of
+> @@ -715,6 +715,40 @@ void kasan_non_canonical_hook(unsigned long addr)
+>  			return;
+>  	}
+>  
+> +	 /*
+> +	  * For x86-64, only the pointer bits [62:57] get reset, and bits #63
+> +	  * and #56 can be 0 or 1. Thus, kasan_mem_to_shadow() can be possibly
+> +	  * applied to two regions of memory:
+> +	  * [0x7E00000000000000, 0x7FFFFFFFFFFFFFFF] and
+> +	  * [0xFE00000000000000, 0xFFFFFFFFFFFFFFFF]. As the overflow happens
+> +	  * for both ends of both memory ranges, both possible shadow regions
+> +	  * are contiguous.
+> +	  *
+> +	  * Given the KASAN_SHADOW_OFFSET equal to 0xffeffc0000000000, the
+> +	  * following ranges are valid mem-to-shadow mappings:
+> +	  *
+> +	  * 0xFFFFFFFFFFFFFFFF
+> +	  *         INVALID
+> +	  * 0xFFEFFBFFFFFFFFFF - kasan_mem_to_shadow(~0UL)
+> +	  *         VALID   - kasan shadow mem
+> +	  *         VALID   - non-canonical kernel virtual address
+> +	  * 0xFFCFFC0000000000 - kasan_mem_to_shadow(0xFEUL << 56)
+> +	  *         INVALID
+> +	  * 0x07EFFBFFFFFFFFFF - kasan_mem_to_shadow(~0UL >> 1)
+> +	  *         VALID   - non-canonical user virtual addresses
+> +	  *         VALID   - user addresses
+> +	  * 0x07CFFC0000000000 - kasan_mem_to_shadow(0x7EUL << 56)
+> +	  *         INVALID
+> +	  * 0x0000000000000000
+> +	  */
+> +	if (IS_ENABLED(CONFIG_KASAN_SW_TAGS) && IS_ENABLED(CONFIG_X86_64)) {
 
-Thinking again, that won't work, because it would also make 
-virtio_has_feature() say that the device does not have that feature.
+One overall comment on this series: there's a lot of unnecessary
+complexity. Case in point:
 
-So yeah, virtio_has_feature() is confusing and the documentation does 
-not quite match.
+	config ADDRESS_MASKING
+	        depends on X86_64
 
-Would need a change/cleanup to handle such features that we don't 
-implement but still want to check if they are offered.
+and
 
--- 
-Cheers,
+	select HAVE_ARCH_KASAN_SW_TAGS		if ADDRESS_MASKING
 
-David / dhildenb
+and
 
+	config KASAN_SW_TAGS
+        	depends on HAVE_ARCH_KASAN_SW_TAGS ...
+
+
+So you can't have CONFIG_KASAN_SW_TAGS set without CONFIG_X86_64.
+
+> +		if ((addr < (u64)kasan_mem_to_shadow((void *)(0x7E UL << 56)) ||
+> +		     addr > (u64)kasan_mem_to_shadow((void *)(~0UL >> 1))) &&
+> +		    (addr < (u64)kasan_mem_to_shadow((void *)(0xFE UL << 56)) ||
+> +		     addr > (u64)kasan_mem_to_shadow((void *)(~0UL))))
+> +			return;
+> +	}
+This isn't looking great.
+
+I'd much rather have those kasan_mem_to_shadow() arguments be built up
+programmatically.
+
+I'm also not following the description of where these ranges come from:
+
+	[0x7E00000000000000, 0x7FFFFFFFFFFFFFFF]
+	[0xFE00000000000000, 0xFFFFFFFFFFFFFFFF]
+
+I obviously recognize the top kernel and top userspace addresses, but
+there do 0x7E... and 0xFE... come from? Is that because both of them
+only have 56 actual bits of address space?
+
+Wouldn't we be better off writing that as, say:
+
+#define HIGHEST_KER_ADDR (void *)0xFFFFFFFFFFFFFFFF
+// ^ we probably have some macro for that already
+#define LOWEST_KERN_ADDR (void *)(HIGHEST_KERNEL_ADDRESS - \
+					(1<<56) + 1)
+// ^ or can this be calculated by tag manipulation?
+
+which yields:
+
+   void *_addr = (u64)addr;
+   ...
+
+   in_kern_shadow = (_addr >= kasan_mem_to_shadow(LOWEST_KERN_ADDR) ||
+		    (_addr <= kasan_mem_to_shadow(HIGHEST_KERN_ADDR);
+   in_user_shadow = (_addr >= kasan_mem_to_shadow(LOWEST_USER_ADDR) ||
+		    (_addr <= kasan_mem_to_shadow(HIGHEST_USER_ADDR);
+
+   if (!in_kern_shadow &&
+       !in_user_shadow)
+	return;
+
+I _think_ that's the same logic you have. Isn't it slightly more readable?
 
