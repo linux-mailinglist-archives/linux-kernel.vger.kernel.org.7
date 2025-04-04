@@ -1,86 +1,244 @@
-Return-Path: <linux-kernel+bounces-588474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C00F9A7B947
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:51:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B39E1A7B946
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:51:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D16C3189A0D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:49:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B50B43BCC98
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6931A5B8F;
-	Fri,  4 Apr 2025 08:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705DA1A01BF;
+	Fri,  4 Apr 2025 08:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m7mnnprV"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KnrrVpi7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZR2y1HsE";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KnrrVpi7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZR2y1HsE"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2A61A2860;
-	Fri,  4 Apr 2025 08:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D551019FA92
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 08:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743756435; cv=none; b=In/mTAUVb2bGizcbOeYpWQIO1I5PVtPL3hT+XsSrrQBIUXhCcZoelWsBz5xTNC3Sy4alZSxF7uFxCKJ2Bsas7PKvk/p1kE6YXTsTMQOxqkM68Ec1Y9xWLkTw2UBhmsNiiP0ymoyuEU37S206us6uzpldkbOPsdiua40Iu5xixsY=
+	t=1743756477; cv=none; b=YgH4LN0Rq0VEt/gY/V1Y4cUw/tOMWhpJPDs/q63xKod38R2exn267NcekzEoriLkDYN9sCHlI97DIxcZMbTNZ28Y5fIwE7dwkgMKcXB5KEBNhMdh25Xrczphfj8ovVUjGWVFxc+fU/SAnJI47H3ReglAqH3hpcimvf8hfjcNiQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743756435; c=relaxed/simple;
-	bh=ziIQO7MWdLztkFvmB4xoAMEoz2Kom54ZCtFmMTKbnbc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cCJcaj2QaoshAs63OMgYLbtnQrUZkDHwG0l9Q7NYhVncEJsXpDZ9m8gCnOS3s4Ja9/M5n5esUH8OUg6aSF+RsE8JeGgrL6zrcQ0s9GQ/y9zJgOUJeIzGQz7+nbpNlIkCd47n8xmlCUL+7Y9xcRmKidNYHysySQhnKqAHIiR5/XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m7mnnprV; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=7pMLgG2YqPKl7LGVIhcYLYGPaax5GwvFYOF3tJvraJM=; b=m7mnnprVNawItI3WeoW5CLczjE
-	S9u/8boj1T9eS6Gjszu8woC9FWhyl1dBq6hcQgkwTDcckM4qXk3xbgkY0TFRBqDqlWBPTIafyODDH
-	+I+0wPZ2M1ZXPGAzhl4aj6YWvpI6yfUZH5Zc+KjNHSTtMJsrS2HGfCSAN3A+8VXmb7wgt3KVuJN8Q
-	JD6uft052+sZzAos9oyx/n7hqQn3mBxVf/ov8oOl5PxNwY4fE9YQKmJKtKpq9yKbVaHPgd26sM8YW
-	y3HWmTHeclQwaTHeuFhjJ2vvsq6EDRp4m1bigxw2U9nWdLXbLqY9h4Lv4UwHUUoIwr+FdAyLOguwF
-	nGr8j7+g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u0chk-0000000BBd6-2TY8;
-	Fri, 04 Apr 2025 08:47:12 +0000
-Date: Fri, 4 Apr 2025 01:47:12 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Penglei Jiang <superman.xpt@gmail.com>, viro@zeniv.linux.org.uk,
-	jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com
-Subject: Re: [PATCH 2/2] vfs: Fix anon_inode triggering VFS_BUG_ON_INODE in
- may_open()
-Message-ID: <Z--ckIgXpv_-tE1l@infradead.org>
-References: <20250403015946.5283-1-superman.xpt@gmail.com>
- <Z--Y_pEL9NAXWloL@infradead.org>
- <20250404-kammer-fahrrad-516fe910491e@brauner>
+	s=arc-20240116; t=1743756477; c=relaxed/simple;
+	bh=AZpCTjfkYC7OzwFRhcBaxCfeY9X43qU/3B3yqwCsv6Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jkFEhE6m76HjwriWA6CjEV7Wv/Jeccl0rCSgDvx+dgxVff3ByJiZl/5MtqahwlPzTrWUj25PFowfITFtRq2qfOccOjlXE/hBwd05JZmrolT0tk1MwfSFeZFCs/GI+lRZAuGS7YTEjstBEzM1A9HgXwxPicDa12R5xmx3PeFTzq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KnrrVpi7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZR2y1HsE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KnrrVpi7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZR2y1HsE; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B88C821184;
+	Fri,  4 Apr 2025 08:47:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743756472; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EIE8nJnyuWIo9mF7+tfr0Mdf07sXKWR7IdaYTIIfhRw=;
+	b=KnrrVpi7yhvcOZBUNlBE3GrgW3poaQc1opRACCSfcN1XugNt2gbhRlNqq/a5wUrJp3jTlR
+	W1pNwSZzQzg4dPR0wO4qdj+cWEOzrGhM25+WKsZ/m/TLrZRA30ll4d8ZBocROKD5iBg/3C
+	X8aFPEP4pQ/UlBzkgRTk+OJ1c6i+lE0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743756472;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EIE8nJnyuWIo9mF7+tfr0Mdf07sXKWR7IdaYTIIfhRw=;
+	b=ZR2y1HsEoIoH3jyowMbZWArJeK+EURcoDbKUBd/ci7y/B9kH/rEqvwBK8KyioxXNO1D5Uh
+	b0iWfz8ssWD1tEAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=KnrrVpi7;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ZR2y1HsE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1743756472; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EIE8nJnyuWIo9mF7+tfr0Mdf07sXKWR7IdaYTIIfhRw=;
+	b=KnrrVpi7yhvcOZBUNlBE3GrgW3poaQc1opRACCSfcN1XugNt2gbhRlNqq/a5wUrJp3jTlR
+	W1pNwSZzQzg4dPR0wO4qdj+cWEOzrGhM25+WKsZ/m/TLrZRA30ll4d8ZBocROKD5iBg/3C
+	X8aFPEP4pQ/UlBzkgRTk+OJ1c6i+lE0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1743756472;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EIE8nJnyuWIo9mF7+tfr0Mdf07sXKWR7IdaYTIIfhRw=;
+	b=ZR2y1HsEoIoH3jyowMbZWArJeK+EURcoDbKUBd/ci7y/B9kH/rEqvwBK8KyioxXNO1D5Uh
+	b0iWfz8ssWD1tEAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9928B13691;
+	Fri,  4 Apr 2025 08:47:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YaqbIric72eCfgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 04 Apr 2025 08:47:52 +0000
+Message-ID: <21b36caa-68d8-4ae4-a290-cff2e7e3411f@suse.cz>
+Date: Fri, 4 Apr 2025 10:47:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250404-kammer-fahrrad-516fe910491e@brauner>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Implement numa node notifier
+To: David Hildenbrand <david@redhat.com>, Oscar Salvador <osalvador@suse.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+ mkoutny@suse.com, Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20250401092716.537512-1-osalvador@suse.de>
+ <78c976ba-1eaf-47b7-a310-b8a99a3882e2@suse.cz>
+ <Z-1tzl2NqqRUYyU-@localhost.localdomain>
+ <e1ebfafa-f063-4340-b577-d1b6b2fb5d11@redhat.com>
+ <b9d5a23c-f97c-4d11-b468-5a83ee2e25e2@redhat.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <b9d5a23c-f97c-4d11-b468-5a83ee2e25e2@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: B88C821184
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[linux-foundation.org,kvack.org,vger.kernel.org,gmail.com,suse.com,intel.com,huawei.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri, Apr 04, 2025 at 10:45:43AM +0200, Christian Brauner wrote:
-> On Fri, Apr 04, 2025 at 01:31:58AM -0700, Christoph Hellwig wrote:
-> > Please make sure anon inodes have a valid mode set.  Leaving this
-> > landmine around where we have inodes without a valid mode is just going
-> > to create more problems in the future.
+On 4/3/25 15:08, David Hildenbrand wrote:
+> On 03.04.25 15:02, David Hildenbrand wrote:
+>> On 02.04.25 19:03, Oscar Salvador wrote:
+>>> On Wed, Apr 02, 2025 at 06:06:51PM +0200, Vlastimil Babka wrote:
+>>>> What if we had two chains:
+>>>>
+>>>> register_node_notifier()
+>>>> register_node_normal_notifier()
+>>>>
+>>>> I think they could have shared the state #defines and struct node_notify
+>>>> would have just one nid and be always >= 0.
+>>>>
+>>>> Or would it add too much extra boilerplate and only slab cares?
+>>>
+>>> We could indeed go on that direction to try to decouple
+>>> status_change_nid from status_change_nid_normal.
+>>>
+>>> Although as you said, slub is the only user of status_change_nid_normal
+>>> for the time beign, so I am not sure of adding a second chain for only
+>>> one user.
+>>>
+>>> Might look cleaner though, and the advantatge is that slub would not get
+>>> notified for nodes adquiring only ZONE_MOVABLE.
+>>>
+>>> Let us see what David thinks about it.
+>> 
+>> I'd hope we'd be able to get rid of the _normal stuff completely, it's seems
+>> way to specialized.
+>> 
+>> We added that in
+>> 
+>> commit b9d5ab2562eceeada5e4837a621b6260574dd11d
+>> Author: Lai Jiangshan <laijs@cn.fujitsu.com>
+>> Date:   Tue Dec 11 16:01:05 2012 -0800
+>> 
+>>       slub, hotplug: ignore unrelated node's hot-adding and hot-removing
+>>       
+>>       SLUB only focuses on the nodes which have normal memory and it ignores the
+>>       other node's hot-adding and hot-removing.
+>>       
+>>       Aka: if some memory of a node which has no onlined memory is online, but
+>>       this new memory onlined is not normal memory (for example, highmem), we
+>>       should not allocate kmem_cache_node for SLUB.
+>>       
+>>       And if the last normal memory is offlined, but the node still has memory,
+>>       we should remove kmem_cache_node for that node.  (The current code delays
+>>       it when all of the memory is offlined)
+>>       
+>>       So we only do something when marg->status_change_nid_normal > 0.
+>>       marg->status_change_nid is not suitable here.
+>>       
+>>       The same problem doesn't exist in SLAB, because SLAB allocates kmem_list3
+>>       for every node even the node don't have normal memory, SLAB tolerates
+>>       kmem_list3 on alien nodes.  SLUB only focuses on the nodes which have
+>>       normal memory, it don't tolerate alien kmem_cache_node.  The patch makes
+>>       SLUB become self-compatible and avoids WARNs and BUGs in rare conditions.
+>> 
+>> 
+>> How "bad" would it be if we do the slab_mem_going_online_callback() etc even
+>> for completely-movable nodes? I assume one kmem_cache_alloc() per slab_caches.
+
+Yes.
+
+>> slab_mem_going_offline_callback() only does shrinking, #dontcare
+>> 
+>> Looking at slab_mem_offline_callback(), we never even free the caches either
+>> way when offlining. So the implication would be that we would have movable-only nodes
+>> set in slab_nodes.
+
+Yes.
+
+>> We don't expect many such nodes, so ... do we care?
+
+Right, the memory waste should be negligible in the big picture. So Oscar
+can you change this as part of your series?
+
+> BTW, isn't description of slab_nodes wrong?
 > 
-> We've tried to change it, it immediately leads to userspace tools
-> regressions as they've started to rely on that behavior because it's been
-> like that since the dawn of time. We even had to work around that crap
-> in pidfs because lsof regressed. So now, we can't do this.
+> "Tracks for which NUMA nodes we have kmem_cache_nodes allocated." -- but 
+> as there is no freeing done in slab_mem_offline_callback(), isn't it 
+> always kept allocated?
 
-Just because i_mode has something useful, we don't need to report that
-to userspace.  We can still clear kstat.mode (with a big fat comment
-explaining why).
+Hm yes right now it's "is it in slab_nodes => it's allocated" and not
+equivalent.
+
+I guess we could remove slab_mem_offline_callback() completely and thus stop
+clearing from slab_nodes and the comment will be true again?
+
+That would mean new caches created after node hotremove will allocate for
+that node but that's even more negligible than the waste we're doing already.
+
+> (probably I am missing something)
+> 
 
 
