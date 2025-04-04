@@ -1,238 +1,124 @@
-Return-Path: <linux-kernel+bounces-588533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B153A7BA11
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:39:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA1D0A7BA14
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F150189CEC6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 09:39:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F965189CD32
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 09:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4971B07AE;
-	Fri,  4 Apr 2025 09:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABFD1B3950;
+	Fri,  4 Apr 2025 09:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BeywUxrR"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M6BIRk4X"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B9E1A23AD;
-	Fri,  4 Apr 2025 09:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA1D1A9B49;
+	Fri,  4 Apr 2025 09:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743759564; cv=none; b=g3bVUNZvnVkSpAF7ZBrDTC7fEX54jQm+ZUdG2rJ8K2vLeGQOVgaKoiy7vUCutpERTAx1tbG2dUoP7qc9/bdvbOnigw6A1U8U+jLpktWDuxCUzd2HJRJxqB9TfqWdk42nxzZsOOH5eZhOI2SaXSji2GFOmm8nrh/VQuR+5asKEXU=
+	t=1743759582; cv=none; b=pnJeyPoSUlv4baw4hdVAXy65W+9m1Cog4oAvFciNVYP/ltqxqeKRTsB8URVftXhw2zMVPHiX8dnpzi1bCcgz3PJ+30mBfOo62ESP60foQgAo+EXRmG8XSwVHZ3Rlo+oNX9LHUrBDBR7nuDq51pZBdaus7Mn4FFSad8GH0C4tdmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743759564; c=relaxed/simple;
-	bh=+dpKkoozxnNaU9u7pO5A4IVxMeZurwq+MVc0D/b9zUI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QimfzRWifUmcD6bXP4DZ1O9h+aY+XPkR4H5ZOTtVi4kT84uG8i10/OU7LQzK7N1K8etPX6J4+WvAvj54M69uZNZLakrRX+jhiJzhKT8/cnWyNHKsYeyhcvEkz2E36/O/UUReZVm9PYEX/tY3PHECWHQRXil2UXfNduJbfi3o3UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BeywUxrR; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7376dd56eccso1987240b3a.0;
-        Fri, 04 Apr 2025 02:39:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743759562; x=1744364362; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5i+BIOjdTujePTHxJ/EQhWONPgHHGsVjwziXnIVw+1U=;
-        b=BeywUxrRFBjFPHYa8K2c5YSIhIhmQSBkzfIyxU4Fo0g+BNDt87zRIOWjzti43+lnay
-         18nUfI+fKLI1Y051tHJq43yyGrNRi7ddY4nJp0YTf1LH3QXwTilvyiV2LbzarCwxq6eA
-         w4hU2Im4yaOSlgtKtGBgr8hOYjc5NJ5RAEvnikUFIOsGGzvjjfEo5YAyuxjfSG/5Ryyy
-         gS3zWjOXz64hMz7RmK37Azxic4zhdRk+O3mNJHljl2dSToKK0ccMKZ8Ovh0zIZqs7NRI
-         I205uDfUE9fIiBj0oXPi2eopr+pCJDVkWeb0F1SXDQgiC4HcPb3upfkcE4nWU4oPhbwS
-         nsSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743759562; x=1744364362;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5i+BIOjdTujePTHxJ/EQhWONPgHHGsVjwziXnIVw+1U=;
-        b=DBysWi24hRfo2gMj8Dl/+c4ucKJVGYSSDx6fGqLWq/d9t1aawfOlQqCXi1ySOLlsPr
-         jsxZn9Vmd0S5Mp+U2xbRHHeBlLMJasluF20aOTpsaZek2aaZSjhPxVPQrOYWyAGwBYAa
-         6W7JKhtl5LIEHUayRwvGxfVgu2MTalNsFqK85HErY1PmsV8AVq7dLQMCv/zV8xquYYaZ
-         B5RVrrSB9MNkeqfqsAib13lb6T7wV8Wj2v0lA4qD/xKToQ6JtChHClx+0jYnFkNp8Pt9
-         KTK7b7EWQC5v3hxEnuKv8QDnCE8olbhIJLEDICOK5ES2dvl4sQ8FQ+E/9NssHWIP1/JN
-         hkhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfZLF8dyAa4QFGUW79WJS/0tJ56A41SePpbk/zWn+kbuKAfzORVz38CA4P21ipAj2/HP8=@vger.kernel.org, AJvYcCUo1u7fhw0V3v6Sx/+oMXjYI79vu6TxFiSTIDlYXwuYxfu+ZY9xl+53CSDgl8/axfWiWgMWOt5Y@vger.kernel.org, AJvYcCXPrd68mBj10JZgGmV3d7wpjsi+Al82mCmQUJtZX/axOmwAt6J5Lck5Qxr/k372uQVPeV3OaGUnz0kD/gpB@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLx6eksNSzWMnxLTE1D1O3PJ9/wQse2CmlrWWww7ORt3vokAtO
-	HBZdKPD4ygnNfSM9hzLlAvqFamNgZ/6ErtniIJiiSaOoAs8mZBVj
-X-Gm-Gg: ASbGncuhe5RBbCJcYXlY/dG98NfXBNXMSaAfCdrSmaZx718VedD+xBmusBaOGvvgRcz
-	AUSztxRJWEc9D9HSyR4A5viD8lhPPEbiZwobh5k1pqqdv+NfS+E0W9nnSr8ZR21Sy3BwRZoXsej
-	luG9awNA+LoCComlgFKIkAf+EbYY8rTF2GGjqEYji4WmYCktyMxGFBIeZjyS0G7gGg8t/lSgmry
-	5/Ia/C6b0jCjfEVPRdGoXZBNWiS6ln9D8h64aljAwJzf+YYG64iB4J1VNaSTCuZPQf7E05Z+Njs
-	byAj8kSabR9sfOutoHyfKhDvGhGolhd5ycxbwmnx2lcEvyXmeZ32zH06u8XTX+0Vt80E730=
-X-Google-Smtp-Source: AGHT+IHa/5L+A3L+9sEjmYyA6HOtMUS6wEI/lZdumO9FTs5UcgTfoCysQRymr5lSNhp1scktPuIOOg==
-X-Received: by 2002:a05:6a20:9f8a:b0:1f5:931d:ca6d with SMTP id adf61e73a8af0-20107ea558cmr3208933637.1.1743759561831;
-        Fri, 04 Apr 2025 02:39:21 -0700 (PDT)
-Received: from minh.192.168.1.1 ([2001:ee0:4f4e:bd30:f724:d4da:7a88:b9d5])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-af9bc41a665sm2080619a12.67.2025.04.04.02.39.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 02:39:21 -0700 (PDT)
-From: Bui Quang Minh <minhquangbui99@gmail.com>
-To: virtualization@lists.linux.dev
-Cc: "Michael S . Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Bui Quang Minh <minhquangbui99@gmail.com>
-Subject: [PATCH] virtio-net: disable delayed refill when pausing rx
-Date: Fri,  4 Apr 2025 16:39:03 +0700
-Message-ID: <20250404093903.37416-1-minhquangbui99@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1743759582; c=relaxed/simple;
+	bh=eI0pDZzwTHzHhiPpLrvB9SxVToa1zUT3EqskKkeIA1s=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=F+QRZ/qU8GTIQfD/nj6fGh/vR+2aL4y6vXX6r2UabSxpxLbsldh/hC6GpuJ2tP0XPG9Vu34CwN2E6v+OxOmSkKKh3kYiXf8DSNgPR6TfIULN0jx9H5atW85IRt/b3i6fgObPIQ+51TNqq9fSxynYZP30BoeYUO5Qt7a3zlXvrxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=M6BIRk4X; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=GWI8VEWmOz0N6I3kxJsh/12WWavgWVMZDb3oXygH9Ac=; b=M6BIRk4X1M3h2puaRJ1tEAhVRO
+	t53sXuaN0xS232VVZHz3+wG6hW0qWZivFY/8AC3Gig7CeS0OCjIZ0WJIFSpkxZZ1bU2CIZUhZUUFZ
+	0zW0+LT1Y3JxeAIgC8FZQ5KjjRNGcuU0XSQONtfC3uHKMov2da5B5yavAXOlZfPFyVo8Q5x6iXUx8
+	EPQARInu/oZlkzGRiU3EVFVZfuSdWHLUKPgxvTwlxHc00niu50w1OZDM6KmygMdJlGMoX8BSGvGyV
+	iaeTVi8t/EGOgfzKrDr09l1LFLLA9CDLH0o5lY3VCIYy0sVK0VA6vBkJhUbaloVB4AxPKTNl48+Tp
+	44OdKoSA==;
+Received: from [193.117.214.244] (helo=[127.0.0.1])
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u0dWR-00000007NJR-3eod;
+	Fri, 04 Apr 2025 09:39:36 +0000
+Date: Fri, 04 Apr 2025 10:39:35 +0100
+From: David Woodhouse <dwmw2@infradead.org>
+To: Christoph Hellwig <hch@infradead.org>
+CC: virtio-comment@lists.linux.dev, mst@redhat.com,
+ Claire Chang <tientzu@chromium.org>,
+ linux-devicetree <devicetree@vger.kernel.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ =?ISO-8859-1?Q?J=F6rg_Roedel?= <joro@8bytes.org>,
+ iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+ graf@amazon.de
+Subject: =?US-ASCII?Q?Re=3A_=5BRFC_PATCH_1/3=5D_content=3A_Add_VIRTIO=5FF=5FSWIO?=
+ =?US-ASCII?Q?TLB_to_negotiate_use_of_SWIOTLB_bounce_buffers?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <Z--W_JagTSyhYqzk@infradead.org>
+References: <20250402112410.2086892-1-dwmw2@infradead.org> <20250402112410.2086892-2-dwmw2@infradead.org> <Z-43svGzwoUQaYvg@infradead.org> <148a3c8ee53af585b42ec025c2c7821ad852c66c.camel@infradead.org> <Z-46TDmspmX0BJ2H@infradead.org> <05abb68286dd4bc17b243130d7982a334503095b.camel@infradead.org> <Z-99snVF5ESyJDDs@infradead.org> <fb7ea3ee5bf970fa36b012e16750f533b72903a0.camel@infradead.org> <Z--W_JagTSyhYqzk@infradead.org>
+Message-ID: <3251F79D-4838-4C89-80BF-6EB19076833A@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-When pausing rx (e.g. set up xdp, xsk pool, rx resize), we call
-napi_disable() on the receive queue's napi. In delayed refill_work, it
-also calls napi_disable() on the receive queue's napi. This can leads to
-deadlock when napi_disable() is called on an already disabled napi. This
-scenario can be reproducible by binding a XDP socket to virtio-net
-interface without setting up the fill ring. As a result, try_fill_recv
-will fail until the fill ring is set up and refill_work is scheduled.
+On 4 April 2025 09:23:24 BST, Christoph Hellwig <hch@infradead=2Eorg> wrote=
+:
+>On Fri, Apr 04, 2025 at 08:50:47AM +0100, David Woodhouse wrote:
+>> I do agree, this is fundamentally a system issue=2E In a CoCo model, it=
+'s
+>> non-trivial for the system to allow *virtual* devices to do "DMA"
+>> because that actually means allowing the VMM to access arbitrary guest
+>> memory=2E
+>
+>
+>> So "for the emulated devices, just use a device model that doesn't do
+>> arbitrary DMA to system memory" is a nice simple answer, and keeps the
+>> guest support restricted to its *own* standalone driver=2E
+>
+>It's also one that completely breaks the abstraction=2E=20
 
-This commit adds virtnet_rx_(pause/resume)_all helpers and fixes up the
-virtnet_rx_resume to disable future and cancel all inflights delayed
-refill_work before calling napi_disable() to pause the rx.
+Hm? Having a device that simply doesn't *do* any DMA surely doesn't break =
+any system DMA / IOMMU abstractions because it's no longer even relevant to=
+ them, which is kind of the point=2E
 
-Fixes: 6a4763e26803 ("virtio_net: support rx queue resize")
-Fixes: 4941d472bf95 ("virtio-net: do not reset during XDP set")
-Fixes: 09d2b3182c8e ("virtio_net: xsk: bind/unbind xsk for rx")
-Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
----
- drivers/net/virtio_net.c | 60 ++++++++++++++++++++++++++++++++++------
- 1 file changed, 51 insertions(+), 9 deletions(-)
+Which abstraction did you mean?
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 7e4617216a4b..4361b91ccc64 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -3342,10 +3342,53 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
- 	return NETDEV_TX_OK;
- }
- 
-+static void virtnet_rx_pause_all(struct virtnet_info *vi)
-+{
-+	bool running = netif_running(vi->dev);
-+
-+	/*
-+	 * Make sure refill_work does not run concurrently to
-+	 * avoid napi_disable race which leads to deadlock.
-+	 */
-+	disable_delayed_refill(vi);
-+	cancel_delayed_work_sync(&vi->refill);
-+	if (running) {
-+		int i;
-+
-+		for (i = 0; i < vi->max_queue_pairs; i++) {
-+			virtnet_napi_disable(&vi->rq[i]);
-+			virtnet_cancel_dim(vi, &vi->rq[i].dim);
-+		}
-+	}
-+}
-+
-+static void virtnet_rx_resume_all(struct virtnet_info *vi)
-+{
-+	bool running = netif_running(vi->dev);
-+	int i;
-+
-+	enable_delayed_refill(vi);
-+	for (i = 0; i < vi->max_queue_pairs; i++) {
-+		if (i < vi->curr_queue_pairs) {
-+			if (!try_fill_recv(vi, &vi->rq[i], GFP_KERNEL))
-+				schedule_delayed_work(&vi->refill, 0);
-+		}
-+
-+		if (running)
-+			virtnet_napi_enable(&vi->rq[i]);
-+	}
-+}
-+
- static void virtnet_rx_pause(struct virtnet_info *vi, struct receive_queue *rq)
- {
- 	bool running = netif_running(vi->dev);
- 
-+	/*
-+	 * Make sure refill_work does not run concurrently to
-+	 * avoid napi_disable race which leads to deadlock.
-+	 */
-+	disable_delayed_refill(vi);
-+	cancel_delayed_work_sync(&vi->refill);
- 	if (running) {
- 		virtnet_napi_disable(rq);
- 		virtnet_cancel_dim(vi, &rq->dim);
-@@ -3356,6 +3399,7 @@ static void virtnet_rx_resume(struct virtnet_info *vi, struct receive_queue *rq)
- {
- 	bool running = netif_running(vi->dev);
- 
-+	enable_delayed_refill(vi);
- 	if (!try_fill_recv(vi, rq, GFP_KERNEL))
- 		schedule_delayed_work(&vi->refill, 0);
- 
-@@ -5959,12 +6003,12 @@ static int virtnet_xdp_set(struct net_device *dev, struct bpf_prog *prog,
- 	if (prog)
- 		bpf_prog_add(prog, vi->max_queue_pairs - 1);
- 
-+	virtnet_rx_pause_all(vi);
-+
- 	/* Make sure NAPI is not using any XDP TX queues for RX. */
- 	if (netif_running(dev)) {
--		for (i = 0; i < vi->max_queue_pairs; i++) {
--			virtnet_napi_disable(&vi->rq[i]);
-+		for (i = 0; i < vi->max_queue_pairs; i++)
- 			virtnet_napi_tx_disable(&vi->sq[i]);
--		}
- 	}
- 
- 	if (!prog) {
-@@ -5996,13 +6040,12 @@ static int virtnet_xdp_set(struct net_device *dev, struct bpf_prog *prog,
- 		vi->xdp_enabled = false;
- 	}
- 
-+	virtnet_rx_resume_all(vi);
- 	for (i = 0; i < vi->max_queue_pairs; i++) {
- 		if (old_prog)
- 			bpf_prog_put(old_prog);
--		if (netif_running(dev)) {
--			virtnet_napi_enable(&vi->rq[i]);
-+		if (netif_running(dev))
- 			virtnet_napi_tx_enable(&vi->sq[i]);
--		}
- 	}
- 
- 	return 0;
-@@ -6014,11 +6057,10 @@ static int virtnet_xdp_set(struct net_device *dev, struct bpf_prog *prog,
- 			rcu_assign_pointer(vi->rq[i].xdp_prog, old_prog);
- 	}
- 
-+	virtnet_rx_resume_all(vi);
- 	if (netif_running(dev)) {
--		for (i = 0; i < vi->max_queue_pairs; i++) {
--			virtnet_napi_enable(&vi->rq[i]);
-+		for (i = 0; i < vi->max_queue_pairs; i++)
- 			virtnet_napi_tx_enable(&vi->sq[i]);
--		}
- 	}
- 	if (prog)
- 		bpf_prog_sub(prog, vi->max_queue_pairs - 1);
--- 
-2.43.0
+
+> I still don't
+>understand what the problem is with having the paravirtualized devices
+>on a different part of the virtual PCIe topology so that the stage2
+>IOMMU isn't used for them, but instead just the direct mapping or a
+>stub viommu that blocks all access=2E
+
+It can't have a direct mapping because the VMM can't access guest memory=
+=2E It has to be blocked, which is fine=2E But that's only part of the pict=
+ure =E2=80=94 then how do you actually get data in/out of the device?
+
+By having on-device memory and not attempting DMA to system memory, perhap=
+s=2E=2E=2E? :)
+
+>> What's annoying is that this should work out of the box *already* with
+>> virtio-mmio and a `restricted-dma-pool` =E2=80=94 for systems which are=
+n't
+>> afflicted by UEFI/ACPI/PCI as their discovery mechanisms=2E
+>
+>Yes=2E  And the fix is to get the equivalent to restricted-dma-pool into
+>UEFI/ACPI=2E  That gives you a portable and device-independent way to
+>describe this limitation, which is much better than hacking around it
+>using an odd device model=2E
+
+It still has the problem that existing drivers in all operating systems pr=
+oduced before 2030 will see the device and try to use it as-is, with no com=
+prehension of this new thing=2E
 
 
