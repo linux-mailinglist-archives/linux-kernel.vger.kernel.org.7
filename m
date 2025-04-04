@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-588657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36237A7BBFE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:57:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5FAAA7BC01
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BE3D188AA6F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:57:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 140361887D9E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7808317583;
-	Fri,  4 Apr 2025 11:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED001E2838;
+	Fri,  4 Apr 2025 11:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CLW6ErKW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="PUMQG8so"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3423E1E1E04;
-	Fri,  4 Apr 2025 11:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C751BC9F4
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 11:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743767775; cv=none; b=U/w79xlVE9APCmnEiAwqrPpWivSzwo3aBQNuK+dBsvQy3diNr2KMMIWIGyDwN2+GTrOtwHr67mpcJjQm1MX0XH74eXdKnPfWX1VBuxi7tzm77ORDoZm+MGoayLi+hjYhMqNrVHk6VvfI5UdikS1Scwtq8Dnak37xH3mlkHMM4Lg=
+	t=1743767818; cv=none; b=g2SxJs9eWUNHlI8TF+S5J+dIsG9klnGQ2hYxh1oKlsN6Bs7Bj9K0YlH1vCRp41x2M1hIYZV4s6hUTbe5Ac8f7Ajc5z4ndPEXSObYahh7DcLJh/O9MJmWYbieCvjs9w+v1vhgHf/rtOw1knNEeiQuF19deg0Z07Vb5Rl6EdysAq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743767775; c=relaxed/simple;
-	bh=SdKoJ+wrgbmbqtCuuf5Qj63KLZ54K3vcbb8D6elfkjs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=P6Jg6vWT8q9T1y1KGPx5cA3FquR8UqWTfZZQwr+B2oGnNdOREU1TIJFu15WnsgXovFQTqF98zebL6gqw5pO3fo6S0anetejaVWglf/eygreB2t8xHFv+NTAWOMIqR1rW4YjdYVX5nlVv2LXKRY7zlNaS9GBtBbXJx9A7AmIdVmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CLW6ErKW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53489EmM006604;
-	Fri, 4 Apr 2025 11:55:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=hVCi7gtLhpA
-	XdSAk9dtD/5Maw7VEwUB2kEsjxp7ZhWY=; b=CLW6ErKW9hcuHwyeXE32gOaqf/h
-	k2wsvJU4j/fd+2ujaG/uQIbMDK1Jg2QZIa+2uDT87ZLnCX3mu2Vq69952+D17lLS
-	jJtFZ6WGRub9ph0/mAZuPw/+xxdd/ipz2OuHJyNezzP5KfIDwxaTB02i5II/yxYB
-	hMOw48s1Fkp1/KG7/RZn6OnOGuQ7LW+FQFFqBCxzdXjM/fwWM00t6bslUd7Hs6BL
-	Y16FJjs8j1Dxjw5xoGW54CMIslgjfMKzx5FPKaRm8waaXj1ihho583g+feY0ShA7
-	DWeJFCe7ki2IvoAc87z0LBQNq8E+7lK7Kc2kxgSjwQ65d37lYWdGKcP/62Q==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45tbnkrh04-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Apr 2025 11:55:49 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 534Btju9016523;
-	Fri, 4 Apr 2025 11:55:46 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 45p9xmaejp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Apr 2025 11:55:46 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 534Btkmv016546;
-	Fri, 4 Apr 2025 11:55:46 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-amakhija-hyd.qualcomm.com [10.213.99.91])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 534BtkFp016541
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Apr 2025 11:55:46 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4090850)
-	id 586BD59F; Fri,  4 Apr 2025 17:25:44 +0530 (+0530)
-From: Ayushi Makhija <quic_amakhija@quicinc.com>
-To: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Ayushi Makhija <quic_amakhija@quicinc.com>, robdclark@gmail.com,
-        dmitry.baryshkov@linaro.org, sean@poorly.run,
-        marijn.suijten@somainline.org, andersson@kernel.org, robh@kernel.org,
-        robh+dt@kernel.org, krzk+dt@kernel.org, konradybcio@kernel.org,
-        conor+dt@kernel.org, andrzej.hajda@intel.com,
-        neil.armstrong@linaro.org, rfoss@kernel.org,
-        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-        jernej.skrabec@gmail.com, quic_abhinavk@quicinc.com,
-        quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com,
-        quic_jesszhan@quicinc.com
-Subject: [PATCH v3 10/10] drm/bridge: anx7625: change the gpiod_set_value API
-Date: Fri,  4 Apr 2025 17:25:39 +0530
-Message-Id: <20250404115539.1151201-11-quic_amakhija@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250404115539.1151201-1-quic_amakhija@quicinc.com>
-References: <20250404115539.1151201-1-quic_amakhija@quicinc.com>
+	s=arc-20240116; t=1743767818; c=relaxed/simple;
+	bh=PDZ8wopAz0p6dRYwWVh9TziS/j8jc0WTBI7vNoZgTPg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q76VNc9SFpukqAzrq2xPDTgCmzYTN4xYUn75m/Zc8la0RfafsOoSapNB9skHxd92fpWj18VjFm0+5DH9N+srCT81zKwOO26/oyIBZukudIIQaf8nKpCTDCviIFe217ceIGNCEjlKMA4T7Jfzs1AqGeAxZd/WNYNUyPH0xz+Qe7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=PUMQG8so; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39727fe912cso932674f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 04:56:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1743767813; x=1744372613; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=doiI8VQYK1ufpJ8YlTdC9R6WZr99FG3ISjHW2FSinYk=;
+        b=PUMQG8soi16HrQk0BkopQQjfrFjQdYudXQRisBysJuKFHO4AZDrWZJXBn6JFl2mPJj
+         DXUFM+r7PyGRa7SVK3d0pFWG64RZTuEnKfSHSiVx0AoKZ3QhZFO8L9MGnAaJYj6m4ufn
+         lvDlVcx0E0pdcm/ZRUou3sBQ3gu4Pa04OYcdklwC9YYtBmw7us3xHWRZsSGfNvWxN0J1
+         veoC7XT60MWN93YSYE1q60++TGnTRyze89LPbF8rRYQvAGclr/gUX1z6Mz2xQGbCKCmS
+         qooaTucXYRLSN06jPdHzoi9nTjDJU4QXXOH4l20iAzuDc2yecCzzncrXSkns4VZ/FDd5
+         TebQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743767813; x=1744372613;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=doiI8VQYK1ufpJ8YlTdC9R6WZr99FG3ISjHW2FSinYk=;
+        b=Zl0zFwWODFTOXaxF+lWncHp3N1wBtHSlSzQnPdd2eo/rJHVS/69qxEPo426sOPG2jA
+         NX02XgQK2KzXVJOiwlrx5/jWU/X6Ffytv2KwSunvjpWLyyWBlYsjljESD6Y1Y3PnJPBW
+         +8D/IvgqZ+kkCYsDDfur3laxLhXH7MPOL6omYizqdHlX/T+PE5crAEHsVXq0HvWUEGX5
+         gXvt0M/PlFde3ZG2j5Nq6toUN9d1dC/P78KeJ8dhJa93gAVPzYXvko62d5Vl8x4JSISN
+         WNMTNsGq7lfMZgUp43K6E7b4UoiVQa277lUxvyLgKbhsfgbUOqCv4Gj2TQk7ovx2AsV3
+         ZMmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUp8JF7PXFdNx6r2FT3T0az0NP3UBA90YYbNmSFainoSfhwCQF3lHTIrIrEgmHIneNjOtT4NAWlB/8Btgk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyawTmPWOmq6jKV5Yi9ECcluYDL9N6dER1Yf2nWSmTVQ5AbIyUs
+	vXWYx0HUf9S2YEnQ60PgjMfp97pjgHIzbI7J8FFIchuoajXwHmJGJPWurLhNU+A=
+X-Gm-Gg: ASbGncss+rSznOm31Q4oxm6c5/KA/P1ewxJDc3MG700KroHf9H25zrfzGBLpg86HBJK
+	uteKWhvEWOdL59oijie8GwIshCic6KMqVL5nwfFGL1QS32b6/RaVyKwWNhvnnsFeGWKWfvMGqWn
+	xBRFEsLTHW4xCI6D9/6P7T2bpyfWvMK8CPsOsxYCsl5qf/ztpFqCvWjdN/exXi7/P9+cRxAbXNl
+	E1SHD6cDrQ1B/pIaBRT1D5+cE/v3w5Z/ewZkLv5wr5Qe9OOS7ajaNa0d65r5rk4dF6oDATKTE4U
+	m4EKU7tEYbxgBVJDzNp7oMVvFdidWBoWBzY5g6fT+mtjnfQWtDzpz3ODHlsCLTUS2hLvEqR8Xxw
+	RasfC4zGnzgMD4xEh+tUSb9Q=
+X-Google-Smtp-Source: AGHT+IEeD0LudfIMzIZ39+meQ1M9f+OiYAkIG6t3WyDlnjQ7l93eVXpcifm9jo92oB6MspeMv7DRSA==
+X-Received: by 2002:a05:6000:220f:b0:391:2f2f:818 with SMTP id ffacd0b85a97d-39cb35b24famr2899682f8f.9.1743767813392;
+        Fri, 04 Apr 2025 04:56:53 -0700 (PDT)
+Received: from stroh80.lab.9e.network (ip-078-094-000-050.um19.pools.vodafone-ip.de. [78.94.0.50])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c30226f1fsm4236219f8f.95.2025.04.04.04.56.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Apr 2025 04:56:52 -0700 (PDT)
+From: Your Name <naresh.solanki@9elements.com>
+X-Google-Original-From: Your Name <you@example.com>
+To: Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Naresh Solanki <naresh.solanki@9elements.com>
+Subject: [RESEND PATCH v2] hwmon: (max6639) : Allow setting target RPM
+Date: Fri,  4 Apr 2025 17:26:45 +0530
+Message-ID: <20250404115646.2000563-1-you@example.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,73 +88,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: q8O9dFXJH86HnqBNqL7WQT_r_FhBN4h3
-X-Proofpoint-GUID: q8O9dFXJH86HnqBNqL7WQT_r_FhBN4h3
-X-Authority-Analysis: v=2.4 cv=X9xSKHTe c=1 sm=1 tr=0 ts=67efc8c6 cx=c_pps a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=qu7jSu7UeuI-ykz2460A:9 a=TjNXssC_j7lpFel5tvFf:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-04_05,2025-04-03_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 mlxlogscore=999 impostorscore=0 malwarescore=0 suspectscore=0
- spamscore=0 adultscore=0 bulkscore=0 mlxscore=0 clxscore=1015
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504040082
 
-Use gpiod_set_value_cansleep() instead of gpiod_set_value()
-to fix the below call trace in the boot log:
+From: Naresh Solanki <naresh.solanki@9elements.com>
 
-[    5.690534] Call trace:
-[    5.690536]  gpiod_set_value+0x40/0xa4
-[    5.690540]  anx7625_runtime_pm_resume+0xa0/0x324 [anx7625]
-[    5.690545]  __rpm_callback+0x48/0x1d8
-[    5.690549]  rpm_callback+0x6c/0x78
+Currently, during startup, the fan is set to its maximum RPM by default,
+which may not be suitable for all use cases.
+This patch introduces support for specifying a target RPM via the Device
+Tree property "target-rpm".
 
-Certain GPIO controllers require access via message-based buses
-such as I2C or SPI, which may cause the GPIOs to enter a sleep
-state. Therefore, use the gpiod_set_value_cansleep().
+Changes:
+- Added `target_rpm` field to `max6639_data` structure to store the
+  target RPM for each fan channel.
+- Modified `max6639_probe_child_from_dt()` to read the `"target-rpm"`
+  property from the Device Tree and set `target_rpm` accordingly.
+- Updated `max6639_init_client()` to use `target_rpm` to compute the
+  initial PWM duty cycle instead of defaulting to full speed (120/120).
 
-Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Behavior:
+- If `"target-rpm"` is specified, the fan speed is set accordingly.
+- If `"target-rpm"` is not specified, the previous behavior (full speed
+  at startup) is retained.
+
+This allows better control over fan speed during system initialization.
+
+Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
+
 ---
- drivers/gpu/drm/bridge/analogix/anx7625.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Changes in v2:
+- Pre-init target_rpm[] to 4000 RPM
+- Validate if target_rpm[] is within configured range.
+---
+ drivers/hwmon/max6639.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/bridge/analogix/anx7625.c
-index 365d1c871028..f6f730262511 100644
---- a/drivers/gpu/drm/bridge/analogix/anx7625.c
-+++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
-@@ -1257,10 +1257,10 @@ static void anx7625_power_on(struct anx7625_data *ctx)
- 	usleep_range(11000, 12000);
+diff --git a/drivers/hwmon/max6639.c b/drivers/hwmon/max6639.c
+index 32b4d54b2076..a06346496e1d 100644
+--- a/drivers/hwmon/max6639.c
++++ b/drivers/hwmon/max6639.c
+@@ -80,6 +80,7 @@ struct max6639_data {
+ 	/* Register values initialized only once */
+ 	u8 ppr[MAX6639_NUM_CHANNELS];	/* Pulses per rotation 0..3 for 1..4 ppr */
+ 	u8 rpm_range[MAX6639_NUM_CHANNELS]; /* Index in above rpm_ranges table */
++	u32 target_rpm[MAX6639_NUM_CHANNELS];
  
- 	/* Power on pin enable */
--	gpiod_set_value(ctx->pdata.gpio_p_on, 1);
-+	gpiod_set_value_cansleep(ctx->pdata.gpio_p_on, 1);
- 	usleep_range(10000, 11000);
- 	/* Power reset pin enable */
--	gpiod_set_value(ctx->pdata.gpio_reset, 1);
-+	gpiod_set_value_cansleep(ctx->pdata.gpio_reset, 1);
- 	usleep_range(10000, 11000);
+ 	/* Optional regulator for FAN supply */
+ 	struct regulator *reg;
+@@ -563,6 +564,10 @@ static int max6639_probe_child_from_dt(struct i2c_client *client,
+ 	if (!err)
+ 		data->rpm_range[i] = rpm_range_to_reg(val);
  
- 	DRM_DEV_DEBUG_DRIVER(dev, "power on !\n");
-@@ -1280,9 +1280,9 @@ static void anx7625_power_standby(struct anx7625_data *ctx)
- 		return;
++	err = of_property_read_u32(child, "target-rpm", &val);
++	if (!err)
++		data->target_rpm[i] = val;
++
+ 	return 0;
+ }
+ 
+@@ -573,6 +578,7 @@ static int max6639_init_client(struct i2c_client *client,
+ 	const struct device_node *np = dev->of_node;
+ 	struct device_node *child;
+ 	int i, err;
++	u8 target_duty;
+ 
+ 	/* Reset chip to default values, see below for GCONFIG setup */
+ 	err = regmap_write(data->regmap, MAX6639_REG_GCONFIG, MAX6639_GCONFIG_POR);
+@@ -586,6 +592,8 @@ static int max6639_init_client(struct i2c_client *client,
+ 	/* default: 4000 RPM */
+ 	data->rpm_range[0] = 1;
+ 	data->rpm_range[1] = 1;
++	data->target_rpm[0] = 4000;
++	data->target_rpm[1] = 4000;
+ 
+ 	for_each_child_of_node(np, child) {
+ 		if (strcmp(child->name, "fan"))
+@@ -639,8 +647,12 @@ static int max6639_init_client(struct i2c_client *client,
+ 		if (err)
+ 			return err;
+ 
+-		/* PWM 120/120 (i.e. 100%) */
+-		err = regmap_write(data->regmap, MAX6639_REG_TARGTDUTY(i), 120);
++		/* Set PWM based on target RPM if specified */
++		if (data->target_rpm[i] >  rpm_ranges[data->rpm_range[i]])
++			data->target_rpm[i] = rpm_ranges[data->rpm_range[i]];
++
++		target_duty = 120 * data->target_rpm[i] / rpm_ranges[data->rpm_range[i]];
++		err = regmap_write(data->regmap, MAX6639_REG_TARGTDUTY(i), target_duty);
+ 		if (err)
+ 			return err;
  	}
- 
--	gpiod_set_value(ctx->pdata.gpio_reset, 0);
-+	gpiod_set_value_cansleep(ctx->pdata.gpio_reset, 0);
- 	usleep_range(1000, 1100);
--	gpiod_set_value(ctx->pdata.gpio_p_on, 0);
-+	gpiod_set_value_cansleep(ctx->pdata.gpio_p_on, 0);
- 	usleep_range(1000, 1100);
- 
- 	ret = regulator_bulk_disable(ARRAY_SIZE(ctx->pdata.supplies),
+
+base-commit: 2115cbeec8a3ccc69e3b7ecdf97b4472b0829cfc
 -- 
-2.34.1
+2.42.0
 
 
