@@ -1,81 +1,188 @@
-Return-Path: <linux-kernel+bounces-588457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E1FA7B920
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:43:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F351CA7B922
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 447793B6538
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:42:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ACBB3B577A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC2019D8B7;
-	Fri,  4 Apr 2025 08:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8973B1A00ED;
+	Fri,  4 Apr 2025 08:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dj96f99r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="POTkSHk0";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cn32Yqx+";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ED9O2Vx0";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="69FstQe9"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FD9190462;
-	Fri,  4 Apr 2025 08:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A67A190462
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 08:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743756155; cv=none; b=pd8alwKpxj8ibO5YaUf/y7GNeVbi9/mBOMSp4qWRimhojkFGFrYnCzfb1ZhTzdD0eVWVXr/9YzXB5PX11B93+3b4vr1/43c+lxGov+B5xEksGV9h3yohKshYUCml6iVNCfIBhWFB+jIusW5BDK35LZFVfAfE31ktDOFdagHENHo=
+	t=1743756205; cv=none; b=qZEiptrcEWI6jPNsFm88/nAUtOwjksgO3fZAeFgZI6xJdN4VpbkoEIHHSUcFEdaegHZWjejw6jkax95BVt3NGJ/CFrj//FKNAvz6jsflWAz7aMClTgnhfyunhib4yY87vMtjmz1TVh2Mxe2hMdfn9GFKtrfDMcu8zfaZTTgtVAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743756155; c=relaxed/simple;
-	bh=RgJixkR04iKIsejh5yldwMV/SMTQE2HdrbwYhuj/Atk=;
+	s=arc-20240116; t=1743756205; c=relaxed/simple;
+	bh=xTZjdyz7Hd09YT23p68mLHwQ4x1O7/z84eAdnFI1vPY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ueD76XEMT0tCZWOpe63jR15S3b7Narvfia5dFj8amj2IO9RbeCnRllQ0or9y7S/66NI8OqHaG4SL9fPPNuJZm+0J0e/4DJoIQ3236xdOazrBxfstQCT46/MrtUtKUOUKwkUB6DK5lbMURGgRUMDfYVcR5FoPLgniUAJaodq292U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dj96f99r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 221C9C4CEEA;
-	Fri,  4 Apr 2025 08:42:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743756153;
-	bh=RgJixkR04iKIsejh5yldwMV/SMTQE2HdrbwYhuj/Atk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dj96f99rwas08z2n+1In5u0cV1BW5ido3bSR9VEEdeCWTde7CfhH33Wxl5CeivJF+
-	 CufSRBRy1AMA1otAtCLnnAWBWn25IKdNpPY+GeXWNUTWCsYP1Q3b3CXQ70//wyYDd/
-	 SYisxlDsswDxdRQiQoLAk7AXeSCeAZiA+EGODzqQQDdMHAhRNCsGXcagGgHToWsSyh
-	 yoPWJfzfAWOqfSJZVlM1q2PWQK4E3C4T4jdTrl8NTNFLstVU30bggJzsX1XtJpMQgP
-	 DIe+rfd/CIh5lm9F9eyo6HALpI/mvgokTSWRv9aft+30TJAyeQTPenwLCJ7s8nQYgD
-	 2Aie6oxZZAq0w==
-Date: Fri, 4 Apr 2025 10:42:29 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Breno Leitao <leitao@debian.org>, 
-	Joel Becker <jlbec@evilplan.org>
-Subject: Re: [PATCH] MAINTAINERS: configfs: add Andreas Hindborg as maintainer
-Message-ID: <20250404-komodowaran-erspielen-cc2dcbcda3e3@brauner>
-References: <bHDR61l3TdaMVptxe5z4Q_3_EsRteMfNoygbiFYZ8AzNolk9DPRCG2YDD3_kKYP6kAYel9tPGsq9J8x7gpb-ww==@protonmail.internalid>
- <Z-aDV4ae3p8_C6k7@infradead.org>
- <87frix5dk3.fsf@kernel.org>
- <20250403-sauer-himmel-df90d0e9047c@brauner>
- <Z--Ae5-C8xlUeX8t@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SjGMvHDX5NXN8eQClRexl5qknbvk36AgXyqvLu4Ktyy+SCrUL8SvRGJSFFX/HWgjE7CifC2HpPitSQ6fpePyeLhMeQr/FsqcazyvPq/FqmEKao8amDXa/qM0Rc9wtu+nt5KhOKB2VBHunAoHvqCNiPV2lyvfHYtBUYVjA2vYEyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=POTkSHk0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cn32Yqx+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ED9O2Vx0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=69FstQe9; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id ACF401F385;
+	Fri,  4 Apr 2025 08:43:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743756201; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OrZgIzLm3PyWeKUSNlcKFVAqLYDLMpRNMU+d2NZfOsE=;
+	b=POTkSHk0i8Pb4qfwOG3XpgMZMazbhvYt2nQi00ULHevtqUgSyvJthWeCQg1JsmVNX2nHpt
+	L2q4gstO5+dB57+gZyH+Te7LpuQNzcz7Bv6nCkO8+sFNGVaq6K/IgpDO3rnaoNKAOUH5TT
+	x+XbG4PnT/mEeFftxF8GvYyw/PGYOMU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743756201;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OrZgIzLm3PyWeKUSNlcKFVAqLYDLMpRNMU+d2NZfOsE=;
+	b=cn32Yqx+3rr4MqtGfBzfHXiFyrBsZF9h82Facd3KMo2ojv3Y0cnltjhQXFe86ZolzrtfoI
+	GzY0Fl/TD5HxI4Bw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ED9O2Vx0;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=69FstQe9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743756200; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OrZgIzLm3PyWeKUSNlcKFVAqLYDLMpRNMU+d2NZfOsE=;
+	b=ED9O2Vx0E8yHxc7oS7PQlGnuI6L4rcC+V3IAK0rajq+1rZdW5Br7OcjuUNQY4EINXgRmjM
+	dla+CUwyuy87W/p1XEYXrQi4oDc3uj3L2q3dKXIbuxOaJw5R34G2d5SIVQdxHBLdR0bJSO
+	k9+GPuDJxmbEDMFJR2ELVF9A2zXGFsY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743756200;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OrZgIzLm3PyWeKUSNlcKFVAqLYDLMpRNMU+d2NZfOsE=;
+	b=69FstQe9GZGgTWIuTDFf4ZPVfR9uLJDZLTAAWcyoZcP3ogXeCUSxs2aRlfyplPFUqY0bcF
+	0oaqhW32i3osceCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DDCFA13691;
+	Fri,  4 Apr 2025 08:43:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id gCVpM6eb72fofAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Fri, 04 Apr 2025 08:43:19 +0000
+Date: Fri, 4 Apr 2025 10:43:18 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Rakie Kim <rakie.kim@sk.com>
+Cc: akpm@linux-foundation.org, gourry@gourry.net, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com, dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com, david@redhat.com,
+	Jonathan.Cameron@huawei.com, kernel_team@skhynix.com,
+	honggyu.kim@sk.com, yunjeong.mun@sk.com
+Subject: Re: [PATCH v6 3/3] mm/mempolicy: Support memory hotplug in weighted
+ interleave
+Message-ID: <Z--bppMUIo5k5eOF@localhost.localdomain>
+References: <20250404074623.1179-1-rakie.kim@sk.com>
+ <20250404074623.1179-4-rakie.kim@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z--Ae5-C8xlUeX8t@infradead.org>
+In-Reply-To: <20250404074623.1179-4-rakie.kim@sk.com>
+X-Rspamd-Queue-Id: ACF401F385
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,gourry.net,kvack.org,vger.kernel.org,gmail.com,intel.com,linux.alibaba.com,redhat.com,huawei.com,skhynix.com,sk.com];
+	TAGGED_RCPT(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Thu, Apr 03, 2025 at 11:47:23PM -0700, Christoph Hellwig wrote:
-> On Thu, Apr 03, 2025 at 01:27:27PM +0200, Christian Brauner wrote:
-> > There's no need to get upset. Several people pointed out that Joel
-> > Becker retired and since he hasn't responded this felt like the right
-> > thing to do. Just send a patch to add him back. I see no reason to not
-> > have Andreas step up to maintain it.
+On Fri, Apr 04, 2025 at 04:46:21PM +0900, Rakie Kim wrote:
+> The weighted interleave policy distributes page allocations across multiple
+> NUMA nodes based on their performance weight, thereby improving memory
+> bandwidth utilization. The weight values for each node are configured
+> through sysfs.
 > 
-> Removing someone just because they have retired feels odd, but hey who
-> am I to complain.  I did reach out to him when giving maintainership
-> and he replied although it did indeed take a while.
+> Previously, sysfs entries for configuring weighted interleave were created
+> for all possible nodes (N_POSSIBLE) at initialization, including nodes that
+> might not have memory. However, not all nodes in N_POSSIBLE are usable at
+> runtime, as some may remain memoryless or offline.
+> This led to sysfs entries being created for unusable nodes, causing
+> potential misconfiguration issues.
+> 
+> To address this issue, this patch modifies the sysfs creation logic to:
+> 1) Limit sysfs entries to nodes that are online and have memory, avoiding
+>    the creation of sysfs entries for nodes that cannot be used.
+> 2) Support memory hotplug by dynamically adding and removing sysfs entries
+>    based on whether a node transitions into or out of the N_MEMORY state.
+> 
+> Additionally, the patch ensures that sysfs attributes are properly managed
+> when nodes go offline, preventing stale or redundant entries from persisting
+> in the system.
+> 
+> By making these changes, the weighted interleave policy now manages its
+> sysfs entries more efficiently, ensuring that only relevant nodes are
+> considered for interleaving, and dynamically adapting to memory hotplug
+> events.
+> 
+> Signed-off-by: Rakie Kim <rakie.kim@sk.com>
+> Signed-off-by: Honggyu Kim <honggyu.kim@sk.com>
+> Signed-off-by: Yunjeong Mun <yunjeong.mun@sk.com>
 
-I mean, we can surely put Joel back in. My take would be to remove
-that person from the maintainer entry because people will get confused
-when they don't receive a reply. But I'm totally fine if we should leave
-Joel in.
+For the memory-hotplug bits: Reviewed-by: Oscar Salvador
+<osalvador@suse.de<
+
+Just one thing that caught my eye:
+
+Cannot add_weighted_interleave_group be __init? AFAICS, it only gets
+called at boot time?
+
+
+-- 
+Oscar Salvador
+SUSE Labs
 
