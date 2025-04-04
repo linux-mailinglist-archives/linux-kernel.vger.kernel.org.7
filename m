@@ -1,107 +1,123 @@
-Return-Path: <linux-kernel+bounces-588617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14763A7BB54
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:06:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72706A7BB58
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D541717893E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:06:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EDE717A523
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDF41D8A12;
-	Fri,  4 Apr 2025 11:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97AF1D95B4;
+	Fri,  4 Apr 2025 11:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmIpvFwX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GxWXiP2b"
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FC52E62A0;
-	Fri,  4 Apr 2025 11:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1891D5CE5
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 11:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743764786; cv=none; b=RohMo8OJvvOzxHkPOSes5KhkEquITzOxrhCp3HBXJeAB9xS1g2VBs+HPm1gLkHZcsr7V4Xrm/QnvAhJgxRhVl5N9mJW4wOp88io5R74Xdp9/jcTnC3OcbLJl8aHL34Xra7W2esHvwo/Jz8INo/YuOCf4SrTrecIIECKriaJjkRU=
+	t=1743765086; cv=none; b=q3IIo3MuPHrL0CwrqE2h5AzQgk/V4ArD4lCLho1XxmBp6+oAEA+kWauRC+EMJPcfA6Z+ELjJTj/FMehvl9KtuZ5lIsuK72b7VT5UbT3rblZEj6G0x0EhWszfsFgtH5hzJLnwSe3fyBGQYLoL3Ql7IQMBaxXWwZ/WAKjhE7TxHFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743764786; c=relaxed/simple;
-	bh=Bdnpcma/og4BEa1wboh85cPY+bwsEOJhpHjHNZRnWko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NcUjRHZBTXsQW4Qbb+LfCwLCjPrhlbDahMGcY6bSisJQfVkZFhbItAxtYoD6EkqhgQ1UQYMgdYRazdppbVe2+Xv7uwEmjRzB48FtYdK9TEfHZj+PrLq/iEiRh0Jwc2yITVP6PCV6EVXONkPiI54XfV9kInGvTcVu6hgYLtU8Usw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AmIpvFwX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B5E2C4CEDD;
-	Fri,  4 Apr 2025 11:06:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743764785;
-	bh=Bdnpcma/og4BEa1wboh85cPY+bwsEOJhpHjHNZRnWko=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AmIpvFwXuGySAjO4e24DI2MN2Tl5mICt0Rmh8bJmGmvIpdFbwMf4py0I6FhcsrRwv
-	 ++Q8BLpI+aq454a1e/m/BEpxZr2Vx9yxViKFk1o7uTPaDjn5S7EW22074ujmWVzSlp
-	 AaPFSiou1O9XdbNG4KHtQ8j2ZOMmDM6gqHlTPxGTVn7kXb7XpePvKLL/bqoQOsw0Ne
-	 ZFncgQxrT2pSOrAsD4RaDK6pFblEJ0KRXpSl7UjeBBE7vAuM9aOdkV4qSUngs1nu2I
-	 9pvDMbHj9QvbCT/nP2EJC/LowuVa5sSe7JTuDUvO7d3Myf2uePuNj5n4TI3R3EQoix
-	 5QkWgiLS0iD+Q==
-Date: Fri, 4 Apr 2025 12:06:20 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wentao Liang <vulab@iscas.ac.cn>
-Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
-	hkelam@marvell.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] octeontx2-pf:  Add error handling for
- cn10k_map_unmap_rq_policer().
-Message-ID: <20250404110620.GG214849@horms.kernel.org>
-References: <20250403151303.2280-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1743765086; c=relaxed/simple;
+	bh=UDr/Lb9XWzoHsFBUucxyLR4h9S1sKw8aMUMUdQL/L0Q=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=pbCC3kvsNPsZ2JDkMWT491o5eEPZn/pm26seUrikahRdShqFDzCtW3hdQvKK9E1fFUYItPbDgxwI0SmfXXOtxGuASU+ApDloF25o3srBra/ZBNrjTgJarNSp5FkMH06Of1XSMcJl71aXCD0SJoXknP5XKzSBRlacfcEit3/NVo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mclapinski.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GxWXiP2b; arc=none smtp.client-ip=209.85.218.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mclapinski.bounces.google.com
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-ac3dca41591so176766566b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 04:11:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743765082; x=1744369882; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Zymo7rZ7Uaxj5C85OkxMopyfJntujg//NlAcCsh1y3A=;
+        b=GxWXiP2bmpahQjvngkOoAkfkTeg0OoAetahokNc5u18S7O/74RXBl+KefB1Ju2pc47
+         XDDa6x9xqfzzuzfDTtyBg9x404egEjj10CYRh6v79V4QhoaVNedEZRA6itVPNDj9PIet
+         b2/ud16I7lPeUGoB0cmSsO8M4f9Ls2s8KJil5D6UZNI6cUKwAs0ciXkrYp7XHL2NIHji
+         kjcnILSV1TVuR1znRZDhJQB7wuGuVHyKIpSFjmb4WgOFAO7SOe2fNWjYFOXaz1mC8Ulx
+         Nj7GlEwNai1Dm1TvG0fX6IDr00HcM273YpJvAmzEVfvTB2HcWZq4hzmhN0rHVe4jih4f
+         8mwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743765082; x=1744369882;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Zymo7rZ7Uaxj5C85OkxMopyfJntujg//NlAcCsh1y3A=;
+        b=ugS3wprkTC6K2EfL6TeM+NhoEeLsn9n5+HElhkUeYkI2+BU44Hd9Xy3oMLmAVBbLJ1
+         eIMKB7mFpmOkm5Pp3Y1Bw7ZlVIa1GLrhQuArR+XHXhgip+D+VZaWpNLCcyfOZPMuu8sW
+         DynN/eithiJj5w76NozoCXrSxENT4ycB9+a133yRsotG+Du7SlKiBgD4j8d73wgO7gDY
+         WmK+MP6qMysi1VwrBewlrFs4QzMptCVv6rXOyVAbALAh7nCCUyUX+52u2ieSkttIkHr8
+         IextgPqwlvppCU5MevOB6to/vw2qvK1G3rE5LMAtc1xgxPd0gnTPBx1JH5zcLDK+rm5V
+         fyzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNH/3AKa99OPz6TcHGGPEK8nEtoqT81+M7m7iC4qsRhqT+q6PX2jdKmmzC28Xqtbp5V3Ha6OmKVfqxLpg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZKEgnpIqjCW4EJQbsy22wimqzJFN1NHxLmRfQ8bZ0aStZT48v
+	i3CmxLU7OVMQN6vBqv9zyPyGShJGMGEz0wzdoLPotPQn2VRJxYkkOF52ccLF/0qwtRAF6UJQpj4
+	e9ZmkDDOO78YVoVQ/dw==
+X-Google-Smtp-Source: AGHT+IG+ldNYNdV51lrNuZQ4fk+QDbNPHUWm7+QzGL/G1P+L2ir0BWlN5d364Rwi2NeBoKhLFwUsyQJuulyPuyfz
+X-Received: from ejcfz16.prod.google.com ([2002:a17:907:9590:b0:ac2:50cf:f244])
+ (user=mclapinski job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:907:6d04:b0:ac6:da00:83f4 with SMTP id a640c23a62f3a-ac7d1c69d88mr229541966b.53.1743765082733;
+ Fri, 04 Apr 2025 04:11:22 -0700 (PDT)
+Date: Fri,  4 Apr 2025 13:11:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250403151303.2280-1-vulab@iscas.ac.cn>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
+Message-ID: <20250404111103.1994507-1-mclapinski@google.com>
+Subject: [PATCH v4 0/2] mm/compaction: allow more aggressive proactive compaction
+From: Michal Clapinski <mclapinski@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Pasha Tatashin <tatashin@google.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Michal Clapinski <mclapinski@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Apr 03, 2025 at 11:13:03PM +0800, Wentao Liang wrote:
-> The cn10k_free_matchall_ipolicer() calls the cn10k_map_unmap_rq_policer()
-> for each queue in a for loop without checking for any errors. A proper
-> implementation can be found in cn10k_set_matchall_ipolicer_rate().
-> 
-> Check the return value of the cn10k_map_unmap_rq_policer() function during
-> each loop. Jump to unlock function and return the error code if the
-> funciton fails to unmap policer.
-> 
-> Fixes: 2ca89a2c3752 ("octeontx2-pf: TC_MATCHALL ingress ratelimiting offload")
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
-> ---
->  drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c
-> index a15cc86635d6..ce58ad61198e 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c
-> @@ -353,11 +353,13 @@ int cn10k_free_matchall_ipolicer(struct otx2_nic *pfvf)
->  
->  	/* Remove RQ's policer mapping */
->  	for (qidx = 0; qidx < hw->rx_queues; qidx++)
-> -		cn10k_map_unmap_rq_policer(pfvf, qidx,
-> -					   hw->matchall_ipolicer, false);
-> +		rc = cn10k_map_unmap_rq_policer(pfvf, qidx, hw->matchall_ipolicer, false);
-> +		if (rc)
-> +			goto out;
+Our goal is to keep memory usage of a VM low on the host. For that
+reason, we use free page reporting which by default reports free pages
+of order 9 and larger to the host to be freed. The feature works well
+only if the memory in the guest is not fragmented below pages of order
+9. Proactive compaction can be reused to achieve defragmentation after
+some parameter tweaking.
 
-I'm not sure that bailing out is the right thing to do here.
-Won't it result in leaked resources?
+When the fragmentation score (lower is better) gets larger than the
+high watermark, proactive compaction kicks in. Compaction stops when
+the score goes below the low watermark (or no progress is made and
+backoff kicks in). Let's define the difference between high and low
+watermarks as leeway. Before these changes, the minimum possible value
+for low watermark was 5 and the leeway was hardcoded to 10 (so minimum
+possible value for high watermark was 15).
 
->  
->  	rc = cn10k_free_leaf_profile(pfvf, hw->matchall_ipolicer);
->  
-> +out:
->  	mutex_unlock(&pfvf->mbox.lock);
->  	return rc;
->  }
-> -- 
-> 2.42.0.windows.2
-> 
-> 
+To test this, I created a VM with 19GB of memory and free page
+reporting enabled. The VM was ~idle. I meassured the memory usage from
+inside the guest (/proc/meminfo) and from the host (provided by the
+hypervisor).
+Before:
+https://drive.google.com/file/d/1Xw23lRry_PgEH3f6QRnSGvoHh2u9UHyI/view?usp=sharing
+After:
+https://drive.google.com/file/d/1wMhpIzepx6t44F70yCPA50n1S5V2AT-a/view?usp=sharing
+
+v4:
+- Replace the leeway tunable with an equation based on proactiveness.
+- Add graphs to prove it works.
+v3: Remove gerrit ids from commit msgs.
+v2: Change commit msgs and document the new sysctl.
+
+Michal Clapinski (2):
+  mm/compaction: remove low watermark cap for proactive compaction
+  mm/compaction: reduce the difference between low and high watermarks
+
+ Documentation/admin-guide/sysctl/vm.rst |  6 ++++++
+ mm/compaction.c                         | 12 ++++--------
+ 2 files changed, 10 insertions(+), 8 deletions(-)
+
+-- 
+2.49.0.504.g3bcea36a83-goog
+
 
