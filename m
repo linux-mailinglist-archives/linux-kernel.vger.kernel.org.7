@@ -1,148 +1,103 @@
-Return-Path: <linux-kernel+bounces-588828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BBA5A7BE02
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:37:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94962A7BE08
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:39:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E68313B9EB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:37:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35E6E3BAB0B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF6D1EF09A;
-	Fri,  4 Apr 2025 13:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SbYNXi6K"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543301F0E57;
+	Fri,  4 Apr 2025 13:38:12 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070C31E9B06
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 13:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6ED61EBFE2;
+	Fri,  4 Apr 2025 13:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743773849; cv=none; b=OUqiNZhyqjgenwNens0Fpfk258EubTowYNCGXwVsfC9sD6BP1cSujDjuaYFQmboalr8NGnpbkt6/G8MA2qbg7eBZ0I+NlhiQLJ+IJmj4y5V0IRIXkkQpbROSlEmj7n2LlBdlf7g2qxniUI1lzrPI3BQr8DnszeexCWVpEUWIwTE=
+	t=1743773891; cv=none; b=k3nM2sPTdG17RWJMjpFzuMoTEHEfCCeLed7HJ2kemzjBttpt0x/79k1+dZ9HWbue6y0qEINbGRvLRsBNGO+0D1lOh0d6tAoORK4z6pKkBvAwIUnBLT96l/mNdKGtfZsRQTqhq4VJ63yipzG0zL6EUlROmvz4vR5MzDDMy4Efcuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743773849; c=relaxed/simple;
-	bh=NuVsaJvg0QOtGpDbYv9ickHpkPwNziXJ+FWb6yYn5tw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gbzEDww2bT9ZtS1aBjuv7HvClNgkSrIPf7NfS2LoRn459NIMBuCX33oiU+EtR/9147cjvW9BY4GETrlvYsbPaNo6lnCc9JKmII1IMBL/iXyIjCSbQBke0Ibxd9JULXMUt2+8ySZcKZ6vFs5J+YM5DFjODJitVRL0aWNDiiZcHdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SbYNXi6K; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6f768e9be1aso36529777b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 06:37:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743773845; x=1744378645; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GxbZagmBwC/wl/GfsJMJrzVX6h8neaRQ1Nn+nU+FoIg=;
-        b=SbYNXi6KPN6+k7vr3RBDCCvIlMd76cgxneMmZzLDpwd4U4a8ixj33qhKASV8lhh1C/
-         furNS/rXbI74ptd/ad949W9+Nhs0otVLCfqAIwJF0xeNFD8W9/4iq1lxFvRLlXM9wz87
-         VD2Y8UXdxB07AhSiYcUWQgaUvHaxcv4FwX1j1uBo6Tt4P8p3z+1U2MwjPmXJoDTbjnlK
-         Xl237bovnyveZeI1X4ObsuzTyoK+Zh4x1VupC/0Pmkf+eGzKGKVqizQ8TZAxKnb/LJbm
-         GnvQNxH3nIGxcdSTyAjfJd1Uwjjx6X1mtdmX7sPz0GLJjfVnYAyu38svE1xbXNy5AZhl
-         2mTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743773845; x=1744378645;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GxbZagmBwC/wl/GfsJMJrzVX6h8neaRQ1Nn+nU+FoIg=;
-        b=J3YbmPoNeyUOlOnWGsAxTmcrfl2u0yO+YvZtAUT2ZnBPiomscKAfBIRyKxWoujF5v8
-         3KL7RKk2KbB5vpVHb68w+UfwT28K7V9X7KeOSPkUSI3BCRKHWS26SQ10nUUVAdjpm7Ds
-         EU7JIB8wu9rnngUpp7+LWMMU/yfMW5eAFX2nmL1ldN1+HII0J4mWVq9vV+D3vN0cJu0+
-         w2Pvjc5VUKIv+t0EFrWLor0wHdcmzY4yqo9PynPpyGnhbscOUxlhAdaBGmngHorc2968
-         yiG1AJnElz9sJP4rJlo/adI239zRFCj6Hp0+k6615LM/wC11FUgK/7JAK+zLHtIzdPME
-         DZKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgS9GijcoJsP/V0eVWtezUTZwV2j8UVN55u9NnNmYItE2Grwf8+HI4bvt94V1Ww9ghgY9KzfI2s4KhNM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7BSkISc4/PBJrjgGP1v8GuH4FWeMks1YfkVah2YJX3u6kQmWT
-	zT8Ckg5nFK0ELBhSm/11iI26HV8EF1RJc5Hpw1U1pM6NUOGAS5abxaUe69nnplEs63kiQX0aNXk
-	NEpcOLYU+bfLSjWPkEyZnmC742ZF+VRyXfx/PjfcrjCso7t7kskq4fjw=
-X-Gm-Gg: ASbGncvRMmgVg0kS1X9V8V0eC/Zy2qOD7d7ubVT7SrYg2gud/a8Xr3uyn2b8wvrSwtf
-	ywOJb+JLR9fZGNHaSE095WaZOovg9vwSfpU/372XJrefec4207Y8oq1CJfAnGPxDx1yRtbWBvvl
-	tETquSsEKG/O3mT64jXyiMVBA=
-X-Google-Smtp-Source: AGHT+IE49jluc25XCC6KwW5XyS869R0j51R9CEaS+F33GdMhH1lt50gslQleZPCt8DrKu2m5zayZ2fbtZ4GKxdJ0g1A=
-X-Received: by 2002:a25:d648:0:b0:e64:3f66:90b8 with SMTP id
- 3f1490d57ef6-e6e1ce8a9a0mr4831050276.3.1743773844689; Fri, 04 Apr 2025
- 06:37:24 -0700 (PDT)
+	s=arc-20240116; t=1743773891; c=relaxed/simple;
+	bh=1E2ytAN49mBdglAR3XwbcrZ9OmV6c1AqR4x/hfqhtV0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LQkRZN4Ye7cvoKG3t43qTkIEGFSBqRI7KZkkMQNplobt4tY4P87RIdHXcDwG0Pbugxsa8XXYbF1nmkG3fO/XW9MpFBs0h/N8vsJX/lKPqFjj7Gs4Ux8I5sWbR8Bd1Jip+vuPX6HpQ8HJMBDJHsNosFExcrEKNCZktpdmdPsJ6CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZTfhy6s8fz6K9Br;
+	Fri,  4 Apr 2025 21:34:26 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 977C714062A;
+	Fri,  4 Apr 2025 21:38:07 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 4 Apr
+ 2025 15:38:06 +0200
+Date: Fri, 4 Apr 2025 14:38:04 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>,
+	<dan.j.williams@intel.com>, <willy@infradead.org>, <jack@suse.cz>,
+	<rafael@kernel.org>, <len.brown@intel.com>, <pavel@ucw.cz>,
+	<ming.li@zohomail.com>, <nathan.fontenot@amd.com>,
+	<Smita.KoralahalliChannabasappa@amd.com>, <huang.ying.caritas@gmail.com>,
+	<yaoxt.fnst@fujitsu.com>, <peterz@infradead.org>,
+	<gregkh@linuxfoundation.org>, <quic_jjohnson@quicinc.com>,
+	<ilpo.jarvinen@linux.intel.com>, <bhelgaas@google.com>,
+	<andriy.shevchenko@linux.intel.com>, <mika.westerberg@linux.intel.com>,
+	<akpm@linux-foundation.org>, <gourry@gourry.net>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <rrichter@amd.com>, <benjamin.cheatham@amd.com>,
+	<PradeepVineshReddy.Kodamati@amd.com>, <lizhijian@fujitsu.com>
+Subject: Re: [PATCH v3 4/4] cxl/dax: Delay consumption of SOFT RESERVE
+ resources
+Message-ID: <20250404143804.00005291@huawei.com>
+In-Reply-To: <20250403183315.286710-5-terry.bowman@amd.com>
+References: <20250403183315.286710-1-terry.bowman@amd.com>
+	<20250403183315.286710-5-terry.bowman@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250328142055.313916d1@fangorn> <20250403150055.94a38bc7e6e3f618fbc23ddd@linux-foundation.org>
-In-Reply-To: <20250403150055.94a38bc7e6e3f618fbc23ddd@linux-foundation.org>
-From: Vinay Banakar <vny@google.com>
-Date: Fri, 4 Apr 2025 08:37:13 -0500
-X-Gm-Features: ATxdqUFlRYmMZcSEAkjFOm9V1cNcKDKC2DRLB8Q1RsZAL3bqsppVl5Z_t8nQsAw
-Message-ID: <CALf+9Ye0zKcAQq2eKGkBPCxReaUJxaCar3K8PvvOUGnLOT2sAQ@mail.gmail.com>
-Subject: Re: [PATCH v2] mm/vmscan: batch TLB flush during memory reclaim
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com, liuye <liuye@kylinos.cn>, Hugh Dickins <hughd@google.com>, 
-	Mel Gorman <mgorman@techsingularity.net>, Yu Zhao <yuzhao@google.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, Apr 3, 2025 at 5:00=E2=80=AFPM Andrew Morton <akpm@linux-foundation=
-.org> wrote:
-> Were any runtime benefits observable?
+On Thu, 3 Apr 2025 13:33:15 -0500
+Terry Bowman <terry.bowman@amd.com> wrote:
 
-I had replied as follows on another chain related to this patch:
+> From: Nathan Fontenot <nathan.fontenot@amd.com>
+> 
+> The dax hmem device initialization will consume any iomem
+> SOFT RESERVE resources prior to CXL region creation. To allow
+> for the CXL driver to complete region creation and trim any
+> SOFT RESERVE resources before the dax driver consumes them
+> we need to delay the dax driver's search for SOFT RESERVEs.
+> 
+> To do this the dax driver hmem device initialization code
+> skips the walk of the iomem resource tree if the CXL ACPI
+> driver is enabled. This allows the CXL driver to complete
+> region creation and trim any SOFT RESERVES. Once the CXL
+> driver completes this, the CXL driver then registers any
+> remaining SOFT RESERVE resources with the dax hmem driver.
+> 
+> Signed-off-by: Nathan Fontenot <nathan.fontenot@amd.com>
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+Looks fine to me, but I'm not feeling confident enough of
+this area of the kernel to give a tag.
 
-Yes, the patch reduces IPIs by a factor of 512 by sending one IPI (for TLB
-flush) per PMD rather than per page. Since shrink_folio_list()
-usually operates on one PMD at a time, I believe we can safely batch
-these operations here, but I would appreciate your feedback on this.
-
-Here's a concrete example:
-When swapping out 20 GiB (5.2M pages):
-- Current: Each page triggers an IPI to all cores
-  - With 6 cores: 31.4M total interrupts (6 cores =C3=97 5.2M pages)
-- With patch: One IPI per PMD (512 pages)
-  - Only 10.2K IPIs required (5.2M/512)
-  - With 6 cores: 61.4K total interrupts
-  - Results in ~99% reduction in total interrupts
-
-Application performance impact varies by workload, but here's a
-representative test case:
-- Thread 1: Continuously accesses a 2 GiB private anonymous map (64B
-chunks at random offsets)
-- Thread 2: Pinned to different core, uses MADV_PAGEOUT on 20 GiB
-private anonymous map to swap it out to SSD
-- The threads only access their respective maps.
-Results:
-  - Without patch: Thread 1 sees ~53% throughput reduction during
-swap. If there are multiple worker threads (like thread 1), the
-cumulative throughput degradation will be much higher
-  - With patch: Thread 1 maintains normal throughput
+Jonathan
 
 
-On Thu, Apr 3, 2025 at 5:00=E2=80=AFPM Andrew Morton <akpm@linux-foundation=
-.org> wrote:
->
-> On Fri, 28 Mar 2025 14:20:55 -0400 Rik van Riel <riel@surriel.com> wrote:
->
-> > The current implementation in shrink_folio_list() performs a full TLB
-> > flush for every individual folio reclaimed. This causes unnecessary
-> > overhead during memory reclaim.
-> >
-> > The current code:
-> > 1. Clears PTEs and unmaps each page individually
-> > 2. Performs a full TLB flush on every CPU the mm is running on
-> >
-> > The new code:
-> > 1. Clears PTEs and unmaps each page individually
-> > 2. Adds each unmapped page to pageout_folios
-> > 3. Flushes the TLB once before procesing pageout_folios
-> >
-> > This reduces the number of TLB flushes issued by the memory reclaim
-> > code by 1/N, where N is the number of mapped folios encountered in
-> > the batch processed by shrink_folio_list.
->
-> Were any runtime benefits observable?
 
