@@ -1,259 +1,88 @@
-Return-Path: <linux-kernel+bounces-589393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5344BA7C520
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 22:50:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5300BA7C53D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 23:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AFCB178171
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 20:50:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EA69178CA0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 21:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B9719D8B2;
-	Fri,  4 Apr 2025 20:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7248199385;
+	Fri,  4 Apr 2025 21:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ueTXOYEu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgKuONl7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B25634
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 20:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F30B14831E
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 21:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743799830; cv=none; b=SnuNfjrwVw3wgLKBs6HBix/52wN/7HMHOGCume0AkoYlkVHXML7awRJ31ymDZjfJ9WkiPiskYHuWDEj+TSEd0fgV6iwMA1TqE7VXFoabZ2REAviFLyMT0AOc0RyF9vw2IYi+NkwlHOXvg9aW6Y8VL/IOpaDrdFOFthcAKW0/J18=
+	t=1743800542; cv=none; b=nZ3WV89Ui3jdQHhBz7y62jd5BAyXhUWO6CFQKDDwrwLIAWE9LS09QMGu5rO5RTkietMbmQypte/zPxwrbrMVM+YwP/siSU5lT6YBy2TVCfH2PgpoPUZPRNeij8RCyjq0GU4+0GuLTXcsx8hpvivAvVwvvsh0GQPgY+T+Cykc9ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743799830; c=relaxed/simple;
-	bh=2zh7IF9E6CPypzO2FqueI7RTXNOhA6eMssTy+NNgw4g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q4wARGBi7B+kNa7VlKhzoqGrx9TpLrPE9gITpMj1anb/3dCBBv7hNv28UW9ZmmI9iV57x5fa1VSBFFmhwEvNyAmB9HCSEq9CFPYQykuulbIUH5CUh6dRLyhxQVewT399vaQRP8NjuDWLgVBEdxI/n72eVhblFt6+xhcNi5NYOk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ueTXOYEu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F72AC4CEDD;
-	Fri,  4 Apr 2025 20:50:30 +0000 (UTC)
+	s=arc-20240116; t=1743800542; c=relaxed/simple;
+	bh=dp9Um/rFFCjAtIbn7CPCJ0Hg/NpOtNmhis5wQNdfO00=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=THzXGE1lvxOe0zVMJjiHjqp0KHwj8kUH/7Ck6OF8mGtHi5waNOEgTT2COt5js2MUeGAaaQlhIoyIlOvfe2OXtnqjthTWd3oSwRgxHUQvZSrtnryr50ZttxX8GmyTdpIYLd7xtd+9Td/jYaDbpWymZVkrf/p+YDZvPP0wtlcy+aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WgKuONl7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE25AC4CEDD;
+	Fri,  4 Apr 2025 21:02:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743799830;
-	bh=2zh7IF9E6CPypzO2FqueI7RTXNOhA6eMssTy+NNgw4g=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ueTXOYEutMDb9kGmn9sQddg6HClTJnHE6s0U2N05isQsnndpnBVYb46HTX4ErkF0P
-	 mn0iGe0IEz9nvMA7O+LiCwc16jaXBtj5o0UJ6gkBnsXCttO5bjsIJpxLT/t9OIiJ3g
-	 iNRayDSUsHWvVcu/wUAQOFe6W4UpNoOEOauTYXAel7TLOnMVlV/fDTuZqcDGgE+KRV
-	 P7n34bFPVdaeSkJ0rYp9B84frOeHv8gD8dzlTlk0dwwkBlVFo4e0k/hcWNMCnH34mF
-	 WZ2NAGJLqQIGF1ujBWhRMqHtXxNROYb7tSCeDQvlA/8oG5ssWZ/fhkd2HQ5AhxNfsy
-	 A+KrSh6hcKsxg==
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Juergen Gross <jgross@suse.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>
-Subject: [PATCH v3] objtool: Fix SYSCALL instruction handling and INSN_CONTEXT_SWITCH
-Date: Fri,  4 Apr 2025 13:50:26 -0700
-Message-ID: <9b23e4413873bee38961e628b0c73f6d3a26d494.1743799705.git.jpoimboe@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=k20201202; t=1743800541;
+	bh=dp9Um/rFFCjAtIbn7CPCJ0Hg/NpOtNmhis5wQNdfO00=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WgKuONl7uw8hFePLNbiYr7AyLV+jHzVu50qasOhydeEg3QOPDmezpV+N09jhOpPxl
+	 591hf/srUbVL0VZVWJ7WjJ9rIha6bpA3F1LksxKjvQQx0a94lFkStQ+Eh1wKUvFgU4
+	 ePOf6LdIE8OFnJMJwdDaRPa7Ue5R7t3Y5+T/IwUCsSPwDLIWrklagoRosNYRLtBaxL
+	 WXKG9XbfOze0ToxfUcH04IkBkBLx1ykX2DQV3updWwRKjELk07cdGbBZa+ZnUIj3RX
+	 7jUf8ECITE0ORfksNzCmnSP+yo95yyLFKhWqCWoZGvuJPMa/Z885NQfLhr2DjEWEOD
+	 ZpzYukZLFmfaQ==
+Date: Fri, 4 Apr 2025 14:02:17 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Kees Cook <kees@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] more printk for 6.15
+Message-ID: <20250404210217.GA299251@ax162>
+References: <Z-00cAEKkfvyNto2@pathway.suse.cz>
+ <CAHk-=wgfX9nBGE0Ap9GjhOy7Mn=RSy=rx0MvqfYFFDx31KJXqQ@mail.gmail.com>
+ <Z-2EVf5BvJ-BoYkU@surfacebook.localdomain>
+ <CAHk-=wic_SpqRhtFF+_9wFOiUf-NZcTsNH+jNdi0xLPxexNGXg@mail.gmail.com>
+ <CAHp75Vf=tYmWXDUZDqcMK4i8k6_VBqGttw6-mEgt6VhvRVFwuA@mail.gmail.com>
+ <20250402203422.GA655609@ax162>
+ <Z-557YrwVr8bONq4@smile.fi.intel.com>
+ <Z--V04jtF16r63eO@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z--V04jtF16r63eO@pathway.suse.cz>
 
-The !CONFIG_IA32_EMULATION version of xen_entry_SYSCALL_compat() ends
-with a SYSCALL instruction.  In Xen, SYSCALL is a hypercall.  Usually
-that would return, but in this case it's a hypercall to IRET, which
-doesn't return.
+On Fri, Apr 04, 2025 at 10:19:02AM +0200, Petr Mladek wrote:
+> On Thu 2025-04-03 15:07:09, Andy Shevchenko wrote:
+> > FWIW, I have tested this in my case for both compilers and they are happy with it.
+> > 
+> > Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Great!
+> 
+> Nathan, would mind to send this as a proper patch, please?
 
-Objtool doesn't know that, so it falls through to the next function,
-triggering a false positive:
+Sure thing, I will send it along shortly.
 
-  vmlinux.o: warning: objtool: xen_reschedule_interrupt+0x2a: RET before UNTRAIN
-
-Fix that by adding UD2 after the SYSCALL to avoid the undefined behavior
-and prevent the objtool fallthrough, and teach validate_unret() to stop
-control flow on the UD2 like validate_branch() already does.
-
-Unfortunately that's not the whole story.  While that works for
-validate_unret(), it breaks validate_branch() which terminates control
-flow after the SYSCALL, triggering an unreachable instruction warning on
-the UD2.
-
-The real problem here is that INSN_CONTEXT_SWITCH is ambiguous.  It can
-represent both call semantics (SYSCALL, SYSENTER) and return semantics
-(SYSRET, IRET, RETS, RETU).  Those differ significantly: calls preserve
-control flow whereas returns terminate it.
-
-validate_branch() uses an arbitrary rule for INSN_CONTEXT_SWITCH that
-almost works by accident: if in a function, keep going; otherwise stop.
-It should instead be based on the semantics of the underlying
-instruction.
-
-INSN_CONTEXT_SWITCH's original purpose was to enable the "unsupported
-instruction in callable function" warning.  But that warning really has
-no reason to exist.  It has never found any bugs, and those instructions
-are only in entry code anyway.  So just get rid of it.
-
-That in turn allows objtool to stop caring about SYSCALL or SYSENTER.
-Their call semantic means they usually don't affect control flow in the
-containing function/code, and can just be INSN_OTHER.  The far
-returns/jumps can also be ignored as those aren't used anywhere.
-
-With SYSCALL and SYSENTER removed, INSN_CONTEXT_SWITCH now has a sane
-well-defined return semantic.  Rename it to INSN_EXCEPTION_RETURN to
-better reflect its meaning.
-
-Fixes: a2796dff62d6 ("x86/xen: don't do PV iret hypercall through hypercall page")
-Reported-by: Andrew Cooper <andrew.cooper3@citrix.com>
-Tested-by: Andrew Cooper <andrew.cooper3@citrix.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
-v3:
-- actually set INSN_EXCEPTION_RETURN for IRET
-
-v2:
-- rename INSN_CONTEXT_SWITCH -> INSN_EXCEPTION_RETURN
-- clarify that xen SYSCALL is a hypercall
-- check for SYSEXIT
-
- arch/x86/xen/xen-asm.S               |  6 +-----
- tools/objtool/arch/x86/decode.c      | 21 +++++----------------
- tools/objtool/check.c                | 15 +++++++--------
- tools/objtool/include/objtool/arch.h |  2 +-
- 4 files changed, 14 insertions(+), 30 deletions(-)
-
-diff --git a/arch/x86/xen/xen-asm.S b/arch/x86/xen/xen-asm.S
-index 109af12f7647..5bdae7839c08 100644
---- a/arch/x86/xen/xen-asm.S
-+++ b/arch/x86/xen/xen-asm.S
-@@ -38,9 +38,7 @@ SYM_FUNC_START(xen_hypercall_pv)
- 	ANNOTATE_NOENDBR
- 	push %rcx
- 	push %r11
--	UNWIND_HINT_SAVE
- 	syscall
--	UNWIND_HINT_RESTORE
- 	pop %r11
- 	pop %rcx
- 	RET
-@@ -226,9 +224,7 @@ SYM_CODE_END(xen_early_idt_handler_array)
- 	push %rax
- 	mov  $__HYPERVISOR_iret, %eax
- 	syscall		/* Do the IRET. */
--#ifdef CONFIG_MITIGATION_SLS
--	int3
--#endif
-+	ud2		/* The SYSCALL should never return. */
- .endm
- 
- SYM_CODE_START(xen_iret)
-diff --git a/tools/objtool/arch/x86/decode.c b/tools/objtool/arch/x86/decode.c
-index 33d861c04ebd..83c3180757d6 100644
---- a/tools/objtool/arch/x86/decode.c
-+++ b/tools/objtool/arch/x86/decode.c
-@@ -522,7 +522,7 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
- 			case INAT_PFX_REPNE:
- 				if (modrm == 0xca)
- 					/* eretu/erets */
--					insn->type = INSN_CONTEXT_SWITCH;
-+					insn->type = INSN_EXCEPTION_RETURN;
- 				break;
- 			default:
- 				if (modrm == 0xca)
-@@ -535,11 +535,10 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
- 
- 			insn->type = INSN_JUMP_CONDITIONAL;
- 
--		} else if (op2 == 0x05 || op2 == 0x07 || op2 == 0x34 ||
--			   op2 == 0x35) {
-+		} else if (op2 == 0x07 || op2 == 0x35) {
- 
--			/* sysenter, sysret */
--			insn->type = INSN_CONTEXT_SWITCH;
-+			/* sysret, sysexit */
-+			insn->type = INSN_EXCEPTION_RETURN;
- 
- 		} else if (op2 == 0x0b || op2 == 0xb9) {
- 
-@@ -671,12 +670,7 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
- 			}
- 			break;
- 		}
--
--		fallthrough;
--
--	case 0xca: /* retf */
--	case 0xcb: /* retf */
--		insn->type = INSN_CONTEXT_SWITCH;
-+		insn->type = INSN_EXCEPTION_RETURN;
- 		break;
- 
- 	case 0xe0: /* loopne */
-@@ -718,11 +712,6 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
- 			if (has_notrack_prefix(&ins))
- 				WARN("notrack prefix found at %s:0x%lx", sec->name, offset);
- 
--		} else if (modrm_reg == 5) {
--
--			/* jmpf */
--			insn->type = INSN_CONTEXT_SWITCH;
--
- 		} else if (modrm_reg == 6) {
- 
- 			/* push from mem */
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 4a1f6c3169b3..e04ce065a08b 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -3684,14 +3684,7 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
- 
- 			break;
- 
--		case INSN_CONTEXT_SWITCH:
--			if (func) {
--				if (!next_insn || !next_insn->hint) {
--					WARN_INSN(insn, "unsupported instruction in callable function");
--					return 1;
--				}
--				break;
--			}
-+		case INSN_EXCEPTION_RETURN:
- 			return 0;
- 
- 		case INSN_STAC:
-@@ -3886,6 +3879,9 @@ static int validate_unret(struct objtool_file *file, struct instruction *insn)
- 			WARN_INSN(insn, "RET before UNTRAIN");
- 			return 1;
- 
-+		case INSN_EXCEPTION_RETURN:
-+			return 0;
-+
- 		case INSN_NOP:
- 			if (insn->retpoline_safe)
- 				return 0;
-@@ -3895,6 +3891,9 @@ static int validate_unret(struct objtool_file *file, struct instruction *insn)
- 			break;
- 		}
- 
-+		if (insn->dead_end)
-+			return 0;
-+
- 		if (!next) {
- 			WARN_INSN(insn, "teh end!");
- 			return 1;
-diff --git a/tools/objtool/include/objtool/arch.h b/tools/objtool/include/objtool/arch.h
-index 089a1acc48a8..5bba1a894e5c 100644
---- a/tools/objtool/include/objtool/arch.h
-+++ b/tools/objtool/include/objtool/arch.h
-@@ -19,7 +19,7 @@ enum insn_type {
- 	INSN_CALL,
- 	INSN_CALL_DYNAMIC,
- 	INSN_RETURN,
--	INSN_CONTEXT_SWITCH,
-+	INSN_EXCEPTION_RETURN,
- 	INSN_BUG,
- 	INSN_NOP,
- 	INSN_STAC,
--- 
-2.49.0
-
+Cheers,
+Nathan
 
