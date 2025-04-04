@@ -1,55 +1,91 @@
-Return-Path: <linux-kernel+bounces-589219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AC8EA7C350
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 20:54:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8705DA7C353
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 20:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B87373BB4F6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:53:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 212171B603E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37F61E1DE5;
-	Fri,  4 Apr 2025 18:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AEAD21C18C;
+	Fri,  4 Apr 2025 18:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wn2jG5p4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="DOLIei0e"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22BBE3D984
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 18:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1009D1B4242
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 18:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743792829; cv=none; b=ndH+SOVYLy2ewzDKCbi/PTY+DfHC9NV4vfq9PX2yBBNDZG0Xk6eDE0aBNHYeLbFCKmiwlE4AKddfhEIH8xLwsMd8w+3/jVoyD9jgFk5EaS8HB/2mXUvVT5VSV4RI/sn79J5HaL5qthIuCNjAgNfb43IPugSKKGyL65+hB+zisT4=
+	t=1743792924; cv=none; b=ReMrXq6CwwjS5Ia2ohnAeIB0MY2rRVON4wNduzuto2NneM59+ht9+0sU/F5ZRHPQiqeKG42yWuOVzVFKAwyeMdt3oCGWsKRUIs3ta+diGaf7jonUghmmyg0nXkh8miZbkwrrLWX75kzlOd56uZr71UjnWA+OU5L+RCb6yHvgqNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743792829; c=relaxed/simple;
-	bh=4roYM9MGxVbQ3FCF7i4OX5frWmKimjizq1bm5jax3qk=;
+	s=arc-20240116; t=1743792924; c=relaxed/simple;
+	bh=VfeedzAG7UGtPpSXuBMYVnF8aSHrgVbQjdxnN8frKgc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tkac3A9HrY6niImWFF2z+yeRvUKrC7X5C+7WNfjY7gPXzG+JxvOzZ9rapcUcXJ4TDNOKNPSFIVldBgo9DsGO44HA3h8ikRECZB26eYPGHfa/XY0WJ8XtiqQgW2/9QzKMm2g6RatDYrjYW+AU7hW5e9fpki62VHabYFc3Q3u79jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wn2jG5p4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A46CC4CEDD;
-	Fri,  4 Apr 2025 18:53:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743792828;
-	bh=4roYM9MGxVbQ3FCF7i4OX5frWmKimjizq1bm5jax3qk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wn2jG5p4zr/e/ie3oaKfWHVpdKvF7cAnitUJNTo31d1Qi6KfuBdNBUC/U7iDaeIF+
-	 oADYRukeXYTfN9yW3Yof8mezl4BNqKmEN+QW9ZRyOEdCmue7pRbdiZn+PL/Jjs11l6
-	 AMx3iPi9x3ZZtKhK4u4ugnKFA1S6/cflJmRdHeT3s93q8JlcW+RU/ZDZSOgMUfiMT6
-	 kXed6laqyRIwXGjv5dv01tuoDJuuNPuTHUvYWA9aIIWsRcQvjn7Uf/nV9M8gd7G6wV
-	 SDyDAtrnkltWM5kqsX+sZgfk0kTqZjsrApebCZvjjY5/hRwaazX+SVJieBVaFrlL/b
-	 Ehixha2DFFxLg==
-Date: Fri, 4 Apr 2025 08:53:47 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: void@manifault.com, multics69@gmail.com, linux-kernel@vger.kernel.org,
-	sched-ext@meta.com
-Subject: Re: [PATCHSET sched_ext/for-6.16] sched_ext: Cleanup "ops" usage in
- symbols
-Message-ID: <Z_Aqu8cKVHa4SnMR@slm.duckdns.org>
-References: <20250403225026.838987-1-tj@kernel.org>
- <Z--NLGOGQe_9xULR@gpd3>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ccLNW717LYkZ77Owqo2JsCY2oWLWQCSOrdCaKNQMAHZgxps2YxTzc8uVqhuV6V9EEyMB/BmIIcFvBWQQ1jvrodBSut3blGw9lqm8dPBDrvLSHsISXx2NsUQII93a9Cwnrb/d4yNbgEiCi0Saja09ez2gm8NYB1dPd+SJp4XpdoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=DOLIei0e; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-227aaa82fafso22502845ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 11:55:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1743792921; x=1744397721; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=32troSjWvB/PDlVrpO70BnGFukXnYd/0VAcsVL2VxIE=;
+        b=DOLIei0ecBYGFmicWeKfI87N/P67NqV9YEsJR1Nc7HvTZqxxIhVEpIo1lsB0YKg5qa
+         L/BxUwXOuJvF0/LV5vxUjG30mMi5XHqiGguC8u3bg0d+HOF6ADEbYnPaOqf/HRrnLxCj
+         hy/9t4Of0LEas01mlWuodDDJnqlZIIO2/y56CPaiob5Fh8d4n/GbIAYC/p1WMfKuvsZy
+         wqk4VaAbqlD0luES9CaXDhDNG/56ytgbPBUENTxl/585/D7g1OfoHu52dH9YCSBCwSy4
+         2Zcm/8hWDjlUMpQ8ms/Zl3BtPFrgChehC7iirN3Ej0iZ8EqQS4QPpPOE7aoNHvNrIys/
+         IM8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743792921; x=1744397721;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=32troSjWvB/PDlVrpO70BnGFukXnYd/0VAcsVL2VxIE=;
+        b=qbj8wPQ/PlAIpZ6LWX35ELag2k0Xt/8B9Vs584BeRUa1GGL9Gl2Kxpin8B4ryQ41JN
+         faDhL1pCZLOq3Ci0LweYptQvoYsJxvNnbv1zUO0g6SHmm5bM2v+Mh7d3Bwfp8t+Nmc5I
+         Q3M6i3beYxkDK43IqHRt+HZdXu969faRoEP1ODRIrbuNUxyw6EcDmt8X+nmYEvklZtEi
+         xNnxTKK+u7QcCx6B7R6ldVYOtVs0s/C9huHljQOs6P21KQYG/DYtpvTsJ4frKhwHY8kL
+         l89sdcgXaZYq0xooVZ4rI4dYVdUGNtNK8XrQ6vskADh18iJ8srzIqhic0IVgQsrYfY0E
+         Tx4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUFxlnkkyQPW+iXcyCL/p4RMKy0eJ3S5Gjesve5+zN24WSnu/z/Yeg6A/0I/ml5qw5KQ+NAAzpcanYXRgU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfVJt2krEf/kRf2sAzO4LCSZk8/A1tPMTFGqHNfmjQU1Vh8q3B
+	Ac/O24+ZbALu2IEJqvR01M7bC66Xp41Zo92etMej9TInioEfKanczFZL3st0IYk=
+X-Gm-Gg: ASbGncv8ddIH0o0ZeXw/gyPfFYwQFbsBU54QiZMXHknh1JMXlxWVA+N4cV2L4OkJdmt
+	mUzNayCBsvuP7OIVRYjvVlXIcAmiBpPdDjsLB9JZsWyIc9IqdBZztHdOUeIsY/LR3uwQFKOS1q2
+	o/vf0u+TK5NMy6MMBYr2yADmhqcHxf1gi5hG9Z1FxPFtawG0uo3Mjld7RP1BWJ8oxKqfE1CUXg4
+	hzUWdl2o6gEsLIC8QOUNswdKAQ0uuy88ig3KCfW5gdLfI5oG82vV9igzAFIc5HjB2z5cp9KKnH8
+	J8bkExvDCJ4mdDlYjtwQNkvp+acK0fA5ldM=
+X-Google-Smtp-Source: AGHT+IECmYP3SjonjrfaeQPGWit3y+M9U7cHmSeJkMMAtjCbnPOJUL/PaAkD08+LqlcqZzBhgLpMMw==
+X-Received: by 2002:a17:902:ef10:b0:216:53fa:634f with SMTP id d9443c01a7336-22a8a1d4617mr66236245ad.48.1743792921190;
+        Fri, 04 Apr 2025 11:55:21 -0700 (PDT)
+Received: from x1 ([97.115.235.21])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2297866e4c2sm35763515ad.199.2025.04.04.11.55.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Apr 2025 11:55:20 -0700 (PDT)
+Date: Fri, 4 Apr 2025 11:55:17 -0700
+From: Drew Fustini <drew@pdp7.com>
+To: Michal Wilczynski <m.wilczynski@samsung.com>,
+	Conor Dooley <conor@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	guoren@kernel.org, wefu@redhat.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	jszhang@kernel.org, ulf.hansson@linaro.org,
+	m.szyprowski@samsung.com, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v8 5/5] riscv: Enable PM_GENERIC_DOMAINS for T-Head SoCs
+Message-ID: <Z/ArFVx6l5Urh9KV@x1>
+References: <20250311171900.1549916-1-m.wilczynski@samsung.com>
+ <CGME20250311172035eucas1p104dcbae706bec735194a1dc4a30db969@eucas1p1.samsung.com>
+ <20250311171900.1549916-6-m.wilczynski@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,33 +94,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z--NLGOGQe_9xULR@gpd3>
+In-Reply-To: <20250311171900.1549916-6-m.wilczynski@samsung.com>
 
-On Fri, Apr 04, 2025 at 09:41:32AM +0200, Andrea Righi wrote:
-> Hi Tejun,
+On Tue, Mar 11, 2025 at 06:19:00PM +0100, Michal Wilczynski wrote:
+> T-Head SoCs feature separate power domains (power islands) for major
+> components like the GPU, Audio, and NPU. To manage the power states of
+> these components effectively, the kernel requires generic power domain
+> support.
 > 
-> On Thu, Apr 03, 2025 at 12:49:42PM -1000, Tejun Heo wrote:
-> > The tag "ops" is used for two different purposes. First, to indicate that
-> > the entity is directly related to the operations such as flags carried in
-> > sched_ext_ops. Second, to indicate that the entity applies to something
-> > global such as enable or bypass states. The second usage is historical and
-> > causes confusion rather than clarifying anything. For example,
-> > scx_ops_enable_state enums are named SCX_OPS_* and thus conflict with
-> > scx_ops_flags.
+> This commit enables `CONFIG_PM_GENERIC_DOMAINS` for T-Head SoCs,
+> allowing the power domain driver for these components to be compiled and
+> integrated. This ensures proper power management and energy efficiency
+> on T-Head platforms.
 > 
-> We should probably rename also SCX_OPS_TASK_ITER_BATCH, which is not
-> related to sched_ext_ops as well.
+> By selecting `PM_GENERIC_DOMAINS`, we provide the necessary framework
+> for the power domain drivers to function correctly on RISC-V
+> architecture with T-Head SoCs.
 > 
-> Apart than that and the other comment about scx_error(), this looks like a
-> good cleanup.
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  arch/riscv/Kconfig.socs | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Acked-by: Andrea Righi <arighi@nvidia.com>
+> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+> index 1916cf7ba450..83833ded8908 100644
+> --- a/arch/riscv/Kconfig.socs
+> +++ b/arch/riscv/Kconfig.socs
+> @@ -53,6 +53,7 @@ config ARCH_THEAD
+>  	bool "T-HEAD RISC-V SoCs"
+>  	depends on MMU && !XIP_KERNEL
+>  	select ERRATA_THEAD
+> +	select PM_GENERIC_DOMAINS if PM
+>  	help
+>  	  This enables support for the RISC-V based T-HEAD SoCs.
+>  
+> -- 
+> 2.34.1
+> 
 
-Applied 1-5 to sched_ext/for-6.16. Will address the suggestions in separate
-patches.
+Reviewed-by: Drew Fustini <drew@pdp7.com>
 
-Thanks.
+Conor - would you be able to take this Kconfig.socs patch?
 
--- 
-tejun
+Thanks,
+Drew
 
