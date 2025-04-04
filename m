@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-588583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43FDDA7BAD4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 12:31:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41DFCA7BAE1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 12:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C05A7AA17D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:30:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3B511B609BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993611E0083;
-	Fri,  4 Apr 2025 10:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8D433997;
+	Fri,  4 Apr 2025 10:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="qPPXEGtH"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="W/TyADkh"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DBB1C5F07
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 10:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087821A76AE
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 10:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743762581; cv=none; b=LqNorxjapFEQaXQ1USmSwOP6KuXaFXIreFZF++wE17RQVZSLXIr87nrgG8poQS5x+RhlKS1XzlMUBI3p1iHbo9XnFkP1rsZwFchcB0ch2J82hzCG2hmA3VADfOiJfW8PS84N/ZYK+H35kehUDJxT63h+Xc5gSU4i7XaSppiWhhw=
+	t=1743762616; cv=none; b=TS2iJ1PaqN63ke/VFn/BnTHfzcoH1St1q9hl2+43ZdaK1OCJupc+1i9LobZeSfwuWV2ZGROpS1yP4NaYh2UfhALIJ4jge1JbP+92YWCTq2QFrOw4/14OqgX/w7SfDAwIhFXCK1Y/PxovDNvnLAq3xbuIKhZtfh3IU5m7hNcK7GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743762581; c=relaxed/simple;
-	bh=mLcDru8eInjU0uOo91bIFQt4AIpvVW2OtKNAkdmIfV8=;
+	s=arc-20240116; t=1743762616; c=relaxed/simple;
+	bh=Jnm3SNeDPY10Q0mQMbLx+uVmDQAAO8BKaaZ3pKCNKOI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tQPGxt5AGC516UTNtlwzWfyhG4Z6DlBewlkttwWe0KpuCxd2ywrw7APkDvL7wumfxtlXHUq2rT/3rb47q78Q7xeXrp4tYq0cfrm5VeFjIW4xEbah0qylknuHacOMWHhrb5GdEgpbIUafIwxk9ffj3bhOwqHl3jGrYVhaBd3O82o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=qPPXEGtH; arc=none smtp.client-ip=209.85.128.42
+	 In-Reply-To:Content-Type; b=QCVEtZj4Cr2XOVEE4acCv8iJaL6BXq8i9xfTwWLllRTlP1rbURSji7F0Z1B0hUEafNhAXi5d7h+Isv9yW+DtqG4Sqc/TMp6sdMYP/hJ+vlPGG516Ye7mEa7lKsQc4VimspodRJ+wRXIRIYaXbCo4RHCXPaxNenj5LQ4FPZI/bks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=W/TyADkh; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43ce70f9afbso19548625e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 03:29:38 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cfe574976so12803525e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 03:30:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1743762577; x=1744367377; darn=vger.kernel.org;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1743762612; x=1744367412; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=4D5zlP7j1AtzmdD+fdYHZGrIA+c23RJYKMOt2bRJjqs=;
-        b=qPPXEGtHxrTS76JuycV1G2jNK4SiFQ+ocBJbfgVpdOGp3gAiIEb5mvVJQ6IPyBTuTt
-         hXZHMB2NXCXqeKmH6k20SVcXLyGDE3KdosWpnbAj8TWbudnesnLKK2qWZZ0Cn29zIO43
-         uYQ1nAp4IVKXyDK2x5KWZJrxW1xLF5jmto3ETasN0bGbliTLjZ4dxxFvMCNP4cZBYeK8
-         TGxEMhPlVn93W2hKHsdorKITagDbIQYFQUjCTmUjfw25TVplvju+YMtbXOC/ycr+c9YS
-         R/OogwrDyb9fbbFnbCd9blqXGeXCWS+ZCwrkngYavXBmTncuWCdYdmpbypqfmFZpFCxX
-         c3Dw==
+        bh=CMK7AiVAmQ13rPWb5TPToJIdxeUpbsGyWlsCzKZ+U4M=;
+        b=W/TyADkh1PKTEAZP/tORYyjZRsaLnf6RJMpnmlefDK7DxkFfHVOR9IwHCxtV4ZOIjO
+         0e79qfkZIZxP5AaGu1+OFZIQbSFDNVtjpEE3WlnuMxZGn+rSlzDqxwSMhlXB3dIrL8M2
+         D95uDpG4bZkCRDHcHnSLzYhsj1mRXZGMHvon9h6dpG3oAEll2iOvy5DjPdUvs2bfGjTP
+         KSdlSXqT4T6Oe2eVM76hT4U/PjtNgti+1RuqRj+zpw8deGpIwOq0sgynS7bVoZqqlvTZ
+         s4JoOS39nt+9PHFDMCHyVyNoD/OCD1zF5QqKG/Ff2izwdmqbi6VQDurlUMVim/TCH5y8
+         DHRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743762577; x=1744367377;
+        d=1e100.net; s=20230601; t=1743762612; x=1744367412;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4D5zlP7j1AtzmdD+fdYHZGrIA+c23RJYKMOt2bRJjqs=;
-        b=Y5bHUbX5uoNKKkLWs32bIcn4veLMAiCgD4LZA7Tg8mo+no8walRUkLYeSipcKAWDDr
-         WRDqIZ7YFdjH4vhUcqJh+XxzE0vVAbZQHMBhVAb1Hmc04RIXxQEbedvEkA4IlN1d3s/x
-         Z9SV0gTEiEeB1cW9511A43qbInyS167cI9l0YZoQQcuZPQwVzF+CSE4N2HIj+TKi2T2h
-         hmIgaSLbRDX1WQwe0rw5cvP3DFHqH8C3y5K1thTdlcNXC0XpQpXlcZXcd48urXSiHJm+
-         EI6slJ9i4q+wJeGxgfve3EIo29OM5jMKi9a+4/tsjblS24K+7fTRS9iu0j0OuaiIzTEj
-         O3bg==
-X-Forwarded-Encrypted: i=1; AJvYcCXL9v74b03pwETxUhUqWaR1gjBLmHFqZHsZCA84b06WbAWzVVkp/tACA++3jkh/omxUEvnYdVVC5MfE9pU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8i9rxDxsI0VmGr1QOacY11FHCAWkXxDzkD8MYSOE2fA2YHpqA
-	CvwxYt/jv2jfIH4r9tPwxSxZHcIbRjqWqq7lRmubyhPOimMSslqlSCRVnYFQ0Tg=
-X-Gm-Gg: ASbGncsQiDtd27SXOC1O40o5AJlxMYggvqcGNcE0RwUHruYpInan9HeXLRNn3wNhi1Q
-	chEIjXLKkCE5XclZfebUER8oVCFCAibkTpMWArK7yrrWH74gjZZ+iYkkqVZzUy4Nw1QxM4zdW82
-	fKkMi2AAxiD1ZMmZHXk4GFDx5t8qnCLMoD1cbdPHpeUNu46dICm9wjSgGG1LVvAgUjjLL9BVTr+
-	VBLF9kUQHjzyYEMnKxuG4XAgDktJncMH/0W7kEdxq0aFvjwWs5DEzvEFaTwkASh3qR8+++ckFo3
-	e9GRP+fDpShdVgs4oIGLynA1n7HjpR4/+dQlU3nJi9NBwoMmGtFHcC9m97YjPHlBEI8LcOYk25l
-	1
-X-Google-Smtp-Source: AGHT+IEZYWLp5+FLqhn6UpFvGJp4isiBgQ145JbwTaagvs7RNoWX3qphA42f4gPmOqeyRlDNvtcuXQ==
-X-Received: by 2002:a05:600c:1994:b0:43c:ebc4:36a5 with SMTP id 5b1f17b1804b1-43ed0b4816dmr14529555e9.7.1743762576664;
-        Fri, 04 Apr 2025 03:29:36 -0700 (PDT)
+        bh=CMK7AiVAmQ13rPWb5TPToJIdxeUpbsGyWlsCzKZ+U4M=;
+        b=D3KiE4ymn1rnmVaqhz4UAZXh5YHZ5oWu8lWK3h6fzWjX0nf826KeESHiCu6ZK7KC1f
+         BwPTFjruBa3+aSO1ULFHjeQIi+EC3Ye9bvwJGp8kIW8+0+2YMRV5aaK716GS/2tBEnou
+         wNi3ZvBcAMh79UaFqj3qNE1gwGaaJmOPKgpH16daIzGbBIPhC6LSlY8HZA2pMolk2ZVM
+         0oQeo0UmB5j0MlEz+4VgrzfoQe4FoDaeGnKFdFjpBupbIQcrTH9Y0CnRLOi1mzPk+3xq
+         OGOyRgVu0MRdxa8ed4J7+EhdF/Xw1RplA/h/qUC+rcv+ASNSQS9jBIKnvXFvjqf3rQm0
+         +Skw==
+X-Forwarded-Encrypted: i=1; AJvYcCWcWgq/7xryGuuTIUNnHTXcPtPafptiUPE+PrRTx8Z9LlLfoOuXRmmCFzEOFmAfzH7f4XZt0FiLvT0gY3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9POUAmGVpgGCAHlaPWVygH7YFHT7ZwFp+uOfs7ZJ71MQhtI8c
+	CDxvSx3rlCRJBk4RhJeUaDLg20O0GoPjwXNZXk245gOWfYdnbmOiD9g6M1FhZjo=
+X-Gm-Gg: ASbGnctXFOou1eGBI2RMIp+AbPwZPXJ+SIT07ophSwY8q4NLF392zet6NDQmnxdJ4AU
+	dyjlJR5eztE6L+FHrE1LHUcYvb3hX0CgbIagE59uRd07YWD9Jc4ISBYUa4QP5wn8A7exWKMGNbJ
+	r1YvKSWpUpW5P2WqLvQm5iV89NQdLl2O8jFyTPE1T+FWLT8IbQbe0Fiv+l+N3Q6JqS10lop7gEU
+	BuI8hSxTai3DKWFOLCE7P4SaF6Dil3ycyBod5StfVz5EVUOluAydS6QUf60YXmHTNqLdU6I+SgF
+	pIRMgdf4SWEoPbZdUpwgoHF113QK3yfZbu3sY90Zz2f1ApZfZGp9X+UAkkAmrulZjQaqgXew9Nl
+	0
+X-Google-Smtp-Source: AGHT+IHDcuoBi0zXRLBGMhr23rvc5D92TbkiRjVw3vqzvuPIUT8bKi7xRmZ7MxsqaFITZlX/YgKMJA==
+X-Received: by 2002:a05:600c:1384:b0:43c:e9f7:d6a3 with SMTP id 5b1f17b1804b1-43ecf85f526mr22847775e9.13.1743762612015;
+        Fri, 04 Apr 2025 03:30:12 -0700 (PDT)
 Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec34a895fsm42197425e9.13.2025.04.04.03.29.35
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c301a727bsm3984418f8f.27.2025.04.04.03.30.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Apr 2025 03:29:36 -0700 (PDT)
-Message-ID: <36c7286d-b410-4695-b069-f79605feade4@blackwall.org>
-Date: Fri, 4 Apr 2025 13:29:35 +0300
+        Fri, 04 Apr 2025 03:30:11 -0700 (PDT)
+Message-ID: <d5d28034-66be-4ec5-8e79-a5b61bd24a6d@blackwall.org>
+Date: Fri, 4 Apr 2025 13:30:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,8 +81,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 net-next 3/3] net: bridge: mcast: Notify on mdb offload
- failure
+Subject: Re: [Patch v2 net-next 1/3] net: bridge: mcast: Add offload failed
+ mdb flag
 To: Joseph Huang <Joseph.Huang@garmin.com>, netdev@vger.kernel.org
 Cc: Joseph Huang <joseph.huang.2024@gmail.com>,
  Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
@@ -91,130 +91,25 @@ Cc: Joseph Huang <joseph.huang.2024@gmail.com>,
  Roopa Prabhu <roopa@nvidia.com>, Simon Horman <horms@kernel.org>,
  linux-kernel@vger.kernel.org, bridge@lists.linux.dev
 References: <20250403234412.1531714-1-Joseph.Huang@garmin.com>
- <20250403234412.1531714-4-Joseph.Huang@garmin.com>
+ <20250403234412.1531714-2-Joseph.Huang@garmin.com>
 Content-Language: en-US
 From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20250403234412.1531714-4-Joseph.Huang@garmin.com>
+In-Reply-To: <20250403234412.1531714-2-Joseph.Huang@garmin.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 4/4/25 02:44, Joseph Huang wrote:
-> Notify user space on mdb offload failure if mdb_offload_fail_notification
-> is set.
+> Add MDB_FLAGS_OFFLOAD_FAILED and MDB_PG_FLAGS_OFFLOAD_FAILED to indicate
+> that an attempt to offload the MDB entry to switchdev has failed.
 > 
 > Signed-off-by: Joseph Huang <Joseph.Huang@garmin.com>
 > ---
->  net/bridge/br_mdb.c       | 26 +++++++++++++++++++++-----
->  net/bridge/br_private.h   |  9 +++++++++
->  net/bridge/br_switchdev.c |  4 ++++
->  3 files changed, 34 insertions(+), 5 deletions(-)
+>  include/uapi/linux/if_bridge.h |  9 +++++----
+>  net/bridge/br_mdb.c            |  2 ++
+>  net/bridge/br_private.h        | 20 +++++++++++++++-----
+>  net/bridge/br_switchdev.c      |  7 ++-----
+>  4 files changed, 24 insertions(+), 14 deletions(-)
 > 
 
-The patch looks good, but one question - it seems we'll mark mdb entries with
-"offload failed" when we get -EOPNOTSUPP as an error as well. Is that intended?
-
-That is, if the option is enabled and we have mixed bridge ports, we'll mark mdbs
-to the non-switch ports as offload failed, but it is not due to a switch offload
-error.
-
-> diff --git a/net/bridge/br_mdb.c b/net/bridge/br_mdb.c
-> index 0639691cd19b..5f53f387d251 100644
-> --- a/net/bridge/br_mdb.c
-> +++ b/net/bridge/br_mdb.c
-> @@ -519,16 +519,17 @@ static size_t rtnl_mdb_nlmsg_size(const struct net_bridge_port_group *pg)
->  	       rtnl_mdb_nlmsg_pg_size(pg);
->  }
->  
-> -void br_mdb_notify(struct net_device *dev,
-> -		   struct net_bridge_mdb_entry *mp,
-> -		   struct net_bridge_port_group *pg,
-> -		   int type)
-> +static void __br_mdb_notify(struct net_device *dev,
-> +			    struct net_bridge_mdb_entry *mp,
-> +			    struct net_bridge_port_group *pg,
-> +			    int type, bool notify_switchdev)
->  {
->  	struct net *net = dev_net(dev);
->  	struct sk_buff *skb;
->  	int err = -ENOBUFS;
->  
-> -	br_switchdev_mdb_notify(dev, mp, pg, type);
-> +	if (notify_switchdev)
-> +		br_switchdev_mdb_notify(dev, mp, pg, type);
->  
->  	skb = nlmsg_new(rtnl_mdb_nlmsg_size(pg), GFP_ATOMIC);
->  	if (!skb)
-> @@ -546,6 +547,21 @@ void br_mdb_notify(struct net_device *dev,
->  	rtnl_set_sk_err(net, RTNLGRP_MDB, err);
->  }
->  
-> +void br_mdb_notify(struct net_device *dev,
-> +		   struct net_bridge_mdb_entry *mp,
-> +		   struct net_bridge_port_group *pg,
-> +		   int type)
-> +{
-> +	__br_mdb_notify(dev, mp, pg, type, true);
-> +}
-> +
-> +void br_mdb_flag_change_notify(struct net_device *dev,
-> +			       struct net_bridge_mdb_entry *mp,
-> +			       struct net_bridge_port_group *pg)
-> +{
-> +	__br_mdb_notify(dev, mp, pg, RTM_NEWMDB, false);
-> +}
-> +
->  static int nlmsg_populate_rtr_fill(struct sk_buff *skb,
->  				   struct net_device *dev,
->  				   int ifindex, u16 vid, u32 pid,
-> diff --git a/net/bridge/br_private.h b/net/bridge/br_private.h
-> index 02188b7ff8e6..fc43ccc06ccb 100644
-> --- a/net/bridge/br_private.h
-> +++ b/net/bridge/br_private.h
-> @@ -1005,6 +1005,8 @@ int br_mdb_hash_init(struct net_bridge *br);
->  void br_mdb_hash_fini(struct net_bridge *br);
->  void br_mdb_notify(struct net_device *dev, struct net_bridge_mdb_entry *mp,
->  		   struct net_bridge_port_group *pg, int type);
-> +void br_mdb_flag_change_notify(struct net_device *dev, struct net_bridge_mdb_entry *mp,
-> +			       struct net_bridge_port_group *pg);
->  void br_rtr_notify(struct net_device *dev, struct net_bridge_mcast_port *pmctx,
->  		   int type);
->  void br_multicast_del_pg(struct net_bridge_mdb_entry *mp,
-> @@ -1354,6 +1356,13 @@ br_multicast_set_pg_offload_flags(struct net_bridge_port_group *p,
->  	p->flags |= (offloaded ? MDB_PG_FLAGS_OFFLOAD :
->  		MDB_PG_FLAGS_OFFLOAD_FAILED);
->  }
-> +
-> +static inline bool
-> +br_mdb_should_notify(const struct net_bridge *br, u8 changed_flags)
-> +{
-> +	return br_opt_get(br, BROPT_MDB_OFFLOAD_FAIL_NOTIFICATION) &&
-> +		(changed_flags & MDB_PG_FLAGS_OFFLOAD_FAILED);
-> +}
->  #else
->  static inline int br_multicast_rcv(struct net_bridge_mcast **brmctx,
->  				   struct net_bridge_mcast_port **pmctx,
-> diff --git a/net/bridge/br_switchdev.c b/net/bridge/br_switchdev.c
-> index 40f0b16e4df8..9b5005d0742a 100644
-> --- a/net/bridge/br_switchdev.c
-> +++ b/net/bridge/br_switchdev.c
-> @@ -504,6 +504,7 @@ static void br_switchdev_mdb_complete(struct net_device *dev, int err, void *pri
->  	struct net_bridge_mdb_entry *mp;
->  	struct net_bridge_port *port = data->port;
->  	struct net_bridge *br = port->br;
-> +	u8 old_flags;
->  
->  	spin_lock_bh(&br->multicast_lock);
->  	mp = br_mdb_ip_get(br, &data->ip);
-> @@ -514,7 +515,10 @@ static void br_switchdev_mdb_complete(struct net_device *dev, int err, void *pri
->  		if (p->key.port != port)
->  			continue;
->  
-> +		old_flags = p->flags;
->  		br_multicast_set_pg_offload_flags(p, !err);
-> +		if (br_mdb_should_notify(br, old_flags ^ p->flags))
-> +			br_mdb_flag_change_notify(br->dev, mp, p);
->  	}
->  out:
->  	spin_unlock_bh(&br->multicast_lock);
-
+Acked-by: Nikolay Aleksandrov <razor@blackwall.org>
 
