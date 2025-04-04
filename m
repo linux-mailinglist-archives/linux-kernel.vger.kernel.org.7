@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-589061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD4F1A7C131
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:03:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0594A7C129
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24D9C1B60CCE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:02:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 067573BC5F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06ED220299F;
-	Fri,  4 Apr 2025 16:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D2E202993;
+	Fri,  4 Apr 2025 16:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DXHzSB3s"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HX3tq7HI"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD8A1FF1D3
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 16:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C1C200BA9
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 16:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743782514; cv=none; b=MjGXZLqnz5sUKvguURKwS2ZJftNVDinZcB900uzv4XX2pw3u0jmyzUe2ySElvN1WIKQxy6KwjmGvbQQZoNg3YzJVNkeQ10C2zeg83XtpMViCoV1NPIHs6lShhcKjS2FyGKEuPxZ21mPCFFcR80UnxkQcejdsmngt2lOikVJO7O8=
+	t=1743782413; cv=none; b=EKgf8zLHX1Z9Gcd0kTVqMClo2DoZzgjmmHYzNhkMQ0jfSORmHY8kfVHtosrItTofSTSL1GMDJWhz51SReTxS5F7nX1Xw7to/SeTO8+YH5oh52CAYkakFyzKIQU9rA+vhfFp27axZ8tjCfPIQg4aYSvDv0GPfj9lQ/UB+NmeOG/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743782514; c=relaxed/simple;
-	bh=/cSuZ2ry+Hjly/otfqO/xvLUJU3iF2v3OiKaziTIISI=;
+	s=arc-20240116; t=1743782413; c=relaxed/simple;
+	bh=D66HpPzIsh9s7WpdgSaM0v5NH51UIUN1kQRqUAsn+kI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ON8twSAFCFXt/VNErPz2zjcdex10iFcw7GIBLlXrWJjDyAKy0pvakGoLXGOYMl8FE5pRmyt527TavFeg4YX8kXAQjnAje+byj24NKaMngW9Ax6Xe+12ZAqTC8W5VUC5NtIAQg+k5TA08PgHU53sY8VdLlScb6SB0xFGcGDbh9F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DXHzSB3s; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=CqTANVTypJDrXyj7ZFUrduyMaOczas919+sxIsJ3vBp/HNy3QIEXB1HIyweQmn9niS2wX1E37TojCiMaDekVebMkOxjXeam2kGJLqetvitrn6QuNngSD4SXj81Xo/LJBJK1LsQCZiiz5EWSSplE4U8XdB2Fkfz3Zrry9NINXO1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HX3tq7HI; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Sender:Content-Transfer-Encoding:
+	d=infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=O+396y0rDBKXn/tGzn/xwAn8Ku375WZ2ZAT9PS+Ub5w=; b=DXHzSB3si2aN61sd7dOw7Dkduk
-	TfChbYRNdb3ACgbes0kuBN7Ps4Sy5/UipeFG8/Xla7pFYuFAZjAv8ghlbw60pID0KBmbGy7KhdoZX
-	xFeg4W6Khe91Ifz1tB9jPFsxfe3bqKisa6rPuuYszWXM+JzP0nj3JG8rUww67uY/Mv9WHKvRsSeQX
-	Ok99/gqCaltwnaMSZvz4drLWaLh2mGbx5jBswPyNZtO7LBeN9BcJh4IWoGNNd4OiLAnX2VY16JZlL
-	QP6zoE/Go4gQZXoAjZGtme0XAK6mXGvw/o5DoYFynT49usw3UBp1GA3ggRsbCxmI+nr/eYZ4vp6BK
-	LUawAvyw==;
+	bh=EggTF7jgXyqw27ORwtXsCRX4H5aiRA/a+Rh2J8KLoHU=; b=HX3tq7HIzG2pG87fAq0XTCafH8
+	DkspEeMBkCy2NMH7zp0U9SyOEyHmpaU3H7Ofz669hMx9zaObkueGN/ZaHJDQQkbbsq/szbqDptC6j
+	MEvAedrkC8t9fR5K0oL5RA2eStCojpgVZNK5eHYm29/U4EMZDp1rdB7mREiazKOw2ClJGF36A7NMb
+	QIxbjBiyvvLDG2KkQFeEfwESWlQlq4Cqp751opuozo+zc7k9llxAs9HYO9i3oHJ5803HtEgylCLlr
+	E2HjVkjQaue4zB/utadXeYQG1ct50Itrnag4GetbD68mpWhqmuyE9X0df0jP2ZmVnM5XfX1TrmFxG
+	1Owpd5BA==;
 Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
-	by casper.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u0jSa-0000000GFHy-3ANo;
-	Fri, 04 Apr 2025 16:01:01 +0000
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u0jSc-00000007QP1-0YK4;
+	Fri, 04 Apr 2025 16:00:02 +0000
 Received: from dwoodhou by i7.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u0jSZ-0000000ERSK-3V46;
+	id 1u0jSZ-0000000ERSN-3n5A;
 	Fri, 04 Apr 2025 16:59:59 +0100
 From: David Woodhouse <dwmw2@infradead.org>
 To: Mike Rapoport <rppt@kernel.org>
@@ -63,9 +63,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [RFC PATCH v2 4/7] mm: Optimise SPARSEMEM implementation of for_each_valid_pfn()
-Date: Fri,  4 Apr 2025 16:59:56 +0100
-Message-ID: <20250404155959.3442111-4-dwmw2@infradead.org>
+Subject: [RFC PATCH v2 5/7] mm, PM: Use for_each_valid_pfn() in kernel/power/snapshot.c
+Date: Fri,  4 Apr 2025 16:59:57 +0100
+Message-ID: <20250404155959.3442111-5-dwmw2@infradead.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250404155959.3442111-1-dwmw2@infradead.org>
 References: <20250404155959.3442111-1-dwmw2@infradead.org>
@@ -77,88 +77,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: David Woodhouse <dwmw2@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
 From: David Woodhouse <dwmw@amazon.co.uk>
 
-There's no point in checking the section and subsection bitmap for *every*
-PFN in the same section; they're either all valid or they aren't.
-
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 ---
- include/linux/mmzone.h | 39 +++++++++++++++++++++++++++++----------
- 1 file changed, 29 insertions(+), 10 deletions(-)
+ kernel/power/snapshot.c | 42 ++++++++++++++++++++---------------------
+ 1 file changed, 20 insertions(+), 22 deletions(-)
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 67cdf675a4b9..0da1b0ba5d9f 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -2154,21 +2154,20 @@ static inline int pfn_valid(unsigned long pfn)
- 	return ret;
- }
+diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
+index 4e6e24e8b854..f151c7a45584 100644
+--- a/kernel/power/snapshot.c
++++ b/kernel/power/snapshot.c
+@@ -1094,16 +1094,15 @@ static void mark_nosave_pages(struct memory_bitmap *bm)
+ 			 ((unsigned long long) region->end_pfn << PAGE_SHIFT)
+ 				- 1);
  
--static inline bool first_valid_pfn(unsigned long *p_pfn)
-+/* Returns -1 (an invalid PFN) if no valid PFN remaining */
-+static inline unsigned long first_valid_pfn(unsigned long pfn, unsigned long end_pfn)
- {
--	unsigned long pfn = *p_pfn;
- 	unsigned long nr = pfn_to_section_nr(pfn);
- 
- 	rcu_read_lock_sched();
- 
--	while (nr <= __highest_present_section_nr) {
-+	while (nr <= __highest_present_section_nr && pfn < end_pfn) {
- 		struct mem_section *ms = __pfn_to_section(pfn);
- 
- 		if (valid_section(ms) &&
- 		    (early_section(ms) || pfn_section_first_valid(ms, &pfn))) {
--			*p_pfn = pfn;
- 			rcu_read_unlock_sched();
--			return true;
-+			return pfn;
- 		}
- 
- 		/* Nothing left in this section? Skip to next section */
-@@ -2177,14 +2176,34 @@ static inline bool first_valid_pfn(unsigned long *p_pfn)
+-		for (pfn = region->start_pfn; pfn < region->end_pfn; pfn++)
+-			if (pfn_valid(pfn)) {
+-				/*
+-				 * It is safe to ignore the result of
+-				 * mem_bm_set_bit_check() here, since we won't
+-				 * touch the PFNs for which the error is
+-				 * returned anyway.
+-				 */
+-				mem_bm_set_bit_check(bm, pfn);
+-			}
++		for_each_valid_pfn (pfn, region->start_pfn, region->end_pfn) {
++			/*
++			 * It is safe to ignore the result of
++			 * mem_bm_set_bit_check() here, since we won't
++			 * touch the PFNs for which the error is
++			 * returned anyway.
++			 */
++			mem_bm_set_bit_check(bm, pfn);
++		}
  	}
- 
- 	rcu_read_unlock_sched();
-+	return (unsigned long)-1;
-+}
- 
--	return false;
-+static inline unsigned long next_valid_pfn(unsigned long pfn, unsigned long end_pfn)
-+{
-+	pfn++;
-+
-+	if (pfn >= end_pfn)
-+		return (unsigned long)-1;
-+
-+	/*
-+	 * Either every PFN within the section (or subsection for VMEMMAP) is
-+	 * valid, or none of them are. So there's no point repeating the check
-+	 * for every PFN; only call first_valid_pfn() the first time, and when
-+	 * crossing a (sub)section boundary (i.e. !(pfn & ~PFN_VALID_MASK)).
-+	 */
-+	if (pfn & (IS_ENABLED(CONFIG_SPARSEMEM_VMEMMAP) ?
-+		   PAGE_SUBSECTION_MASK : PAGE_SECTION_MASK))
-+		return pfn;
-+
-+	return first_valid_pfn(pfn, end_pfn);
  }
  
--#define for_each_valid_pfn(_pfn, _start_pfn, _end_pfn)	       \
--	for ((_pfn) = (_start_pfn);			       \
--	     first_valid_pfn(&(_pfn)) && (_pfn) < (_end_pfn);  \
--	     (_pfn)++)
-+
-+#define for_each_valid_pfn(_pfn, _start_pfn, _end_pfn)			\
-+	for ((_pfn) = first_valid_pfn((_start_pfn), (_end_pfn));	\
-+	     (_pfn) != (unsigned long)-1;				\
-+	     (_pfn) = next_valid_pfn((_pfn), (_end_pfn)))
+@@ -1255,21 +1254,20 @@ static void mark_free_pages(struct zone *zone)
+ 	spin_lock_irqsave(&zone->lock, flags);
  
- #endif
+ 	max_zone_pfn = zone_end_pfn(zone);
+-	for (pfn = zone->zone_start_pfn; pfn < max_zone_pfn; pfn++)
+-		if (pfn_valid(pfn)) {
+-			page = pfn_to_page(pfn);
++	for_each_valid_pfn(pfn, zone->zone_start_pfn, max_zone_pfn) {
++		page = pfn_to_page(pfn);
  
+-			if (!--page_count) {
+-				touch_nmi_watchdog();
+-				page_count = WD_PAGE_COUNT;
+-			}
++		if (!--page_count) {
++			touch_nmi_watchdog();
++			page_count = WD_PAGE_COUNT;
++		}
+ 
+-			if (page_zone(page) != zone)
+-				continue;
++		if (page_zone(page) != zone)
++			continue;
+ 
+-			if (!swsusp_page_is_forbidden(page))
+-				swsusp_unset_page_free(page);
+-		}
++		if (!swsusp_page_is_forbidden(page))
++			swsusp_unset_page_free(page);
++	}
+ 
+ 	for_each_migratetype_order(order, t) {
+ 		list_for_each_entry(page,
 -- 
 2.49.0
 
