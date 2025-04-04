@@ -1,320 +1,188 @@
-Return-Path: <linux-kernel+bounces-588912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E49DDA7BF2C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:27:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 609C0A7BF0D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A32B817AF2D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:27:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8B531796A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2E41F4295;
-	Fri,  4 Apr 2025 14:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246BD1F3BB2;
+	Fri,  4 Apr 2025 14:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="avsnR5wY";
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="j1N3QS7M"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C170D1F3D55;
-	Fri,  4 Apr 2025 14:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JjSrOLJM"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBCD847B;
+	Fri,  4 Apr 2025 14:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743776832; cv=none; b=LsAq84SKBPJgnZIM/7uuf8f7r10DabpAMWkXsHTFPG49KK3gPjjmMtW1O6tEOaiCHc08ZUrH9BsadxkexfDHy6P3Lj1APLhkzu6c9oCfptXrN5ums10Rk7FGscVI/+BL+TlMAFoUo/4ts1v9HyzUUPEv9oSX1Ep15WQbGv2V1/w=
+	t=1743776572; cv=none; b=cl/RXQKqtjiRPZCXBULvQcy2bSqKyd7ae/C9JKxkQFddfmRaAYnlvAz3C1SEYZ7oe3rEog7HyhPUhxN4LaZ2IuWlljJWkvheLKvt6eJZw6C6t4eSokW8NE2lF3yVpJLIFgr5wcxLUViCTyKZU8zPfkshgJ2mVuLKcydarrLNQGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743776832; c=relaxed/simple;
-	bh=kSn1yg38EPPKwat9rHZ24T+aY3mOmcN2L6M6PC+VPLo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Aq3yvD8HzFXDgzXv5aOINW9H+KhVUexzUjDYxYHdcNKBOQB1nerPtx6Lc7zItZcUkrO3TFdhQEQb5VapGtHjpWgHBt083W21rfwGTuk4kz2xMLuxqUrI6/9+dNsrsrIE3SDMkBK5ywJRxU/jVqYKLv4jmpFlXu7YOjuYeitjuo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=avsnR5wY; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=j1N3QS7M; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1743776827;
-	bh=aglb5OHsTbp+0R4YChzcPhprli8y1VdJHrs6yV4O4qE=; l=7046;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=avsnR5wYkS+0EmVQaMV4KEpDiNzAYIqJjoX9eGH9SC4n7XGxoWPk3/sL2GAKaDTQw
-	 iRX/DNEiwODEWqwE0+lNo9g65jsQjO33o0tUz3MlHapDUL8vZlpl3coFGM66GSI3PE
-	 ON/Y6LXlEwroO4QP0uyiVu7014ZR0ufVmgUgSFaT9mZtwlDJgTWUn5MxZl1RM5uW91
-	 xv2r9ROMl5NQ1sck8ylrg9zxgDZTcGWYwrGOWHP+cwOtJNNrtE+i7qMza0947SREYc
-	 C263W1epku/XGhmUjRx5dUN9XObQX+u8Lz64L9dUlxBaBFnCzTHKTuHc2DoeMFktji
-	 0IfksKa0ABXPA==
-Received: from 192.168.8.21
-	by mg.richtek.com with MailGates ESMTP Server V3.0(1128084:0:AUTH_RELAY)
-	(envelope-from <prvs=11846F16CF=cy_huang@richtek.com>); Fri, 04 Apr 2025 22:26:58 +0800 (CST)
-X-MailGates: (compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1743776818;
-	bh=aglb5OHsTbp+0R4YChzcPhprli8y1VdJHrs6yV4O4qE=; l=7046;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=j1N3QS7MDtJhNvO7Nm3251WoekJ3eTQNHHM1Za2zGx39vn8kNZEtdOyWsoeVZbAKl
-	 VgMauaH/iTkq2fLDqpMfq8pxdypXocrFGsVw55LudHoSJIjqr5yjuGPj8zKR6RuYiI
-	 WJk29/wjoVOh1qgwU595clxMQqh2c09plOd90sPhARGkwNzs1Iu+Vfr8s/NQndT3vK
-	 mTYX1AUfQsR1nbznzVQIRBOntLVuWOjh/Qo9t4qsFfUH/FM/IUXEj94g+YSDRjGdd4
-	 pTo8KCQho4+Rdz+2j98h/Sqik5KRJWtvAwZrsDsozkkPj8pNtaOoaVaZhRI7OH28EZ
-	 kYdgKkysrsqWQ==
-Received: from 192.168.10.46
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(1629328:0:AUTH_RELAY)
-	(envelope-from <cy_huang@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Fri, 04 Apr 2025 22:21:09 +0800 (CST)
-Received: from ex4.rt.l (192.168.10.47) by ex3.rt.l (192.168.10.46) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 4 Apr
- 2025 22:21:09 +0800
-Received: from git-send.richtek.com (192.168.10.154) by ex4.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
- Transport; Fri, 4 Apr 2025 22:21:09 +0800
-From: <cy_huang@richtek.com>
-To: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-CC: Rob Herring <robh@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, ChiYuan
- Huang <cy_huang@richtek.com>, Otto lin <otto_lin@richtek.com>, Allen Lin
-	<allen_lin@richtek.com>, <devicetree@vger.kernel.org>,
-	<linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 4/4] ASoC: codecs: Add support for Richtek rt9123p
-Date: Fri, 4 Apr 2025 22:22:14 +0800
-Message-ID: <27583d8f9bb07351e5c9ea78ed286ca6daa74a8d.1743774849.git.cy_huang@richtek.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <cover.1743774849.git.cy_huang@richtek.com>
-References: <cover.1743774849.git.cy_huang@richtek.com>
+	s=arc-20240116; t=1743776572; c=relaxed/simple;
+	bh=mFBXTwEhQKFDjcZ3xXqeDdUzR3kLcAmTHhPWdwLV2j0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ftV3VtHwbngu10u3Nl9yiOXggXx9bnB0w2yoWBeeMmSN+Oq1YkeApeGQYVbiwRpk8Gkdd1VY2ouCmkUIJ1MoHGlRecdHDudtBldXPh8NPGl/HxflDRy4x3rqXIomy7XQmqXuK8wB57QZKw6Zx9IwRr848at1t5tVg7pxi8J9pMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JjSrOLJM; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d589ed2b47so7087515ab.2;
+        Fri, 04 Apr 2025 07:22:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743776570; x=1744381370; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uF8Eg/CK7XzuoF+shmNXDLBMaetMNlz/WflJhGpXfFc=;
+        b=JjSrOLJMpt3Qy3SLjC0TDd934nEY1JVljGtSRzVQ+UilCIn3mChPSy0C0a99V5zwoM
+         MMLh21rYi+JYzyTceWjNKk22AXshqt3vrnkOQH4Lxw9cqvSKCue523V70/TfpdHbjwcw
+         jajH5Z9YZJTbVbr7VVHAZfhMnLTab5IUuDmGC6T/4NgWlLfsXmfZ3OBX8jF/J6aXsUdq
+         KaRSIGeO1b9d+vfX4y8teTjFvhMBvi/JJ7pzA3ZzNFEBpubebX7JgmHAZBen+2zq/rDm
+         zh4sZcWM6UV4Ig1xWtciLcr66x7s/q+/B2u0V/jzDbF9t/GGYQZKIfQLnKS7IzKBoXQ2
+         sLZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743776570; x=1744381370;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uF8Eg/CK7XzuoF+shmNXDLBMaetMNlz/WflJhGpXfFc=;
+        b=bMzJcNn7joZzP5E8VPKzge+sWxRcIGLOzjWbkazsp7h5thGzd/+cOUMrr0UuBt369m
+         kuioUya/KZygW+slC/GxWQ9A5RDo1YfegzOD81gBWOXBkou57EAoF7UfKgKBaamAjEHL
+         KveZUVlkAc3OP2Z/Yl8uq1d+NPdxLhZhr/E+Zu3p3g1YgRM+Xv5LBXa0gtdAnrcVj9KD
+         509m2nigMTvcW7bgNNPXFrJiVtYR+jtkOsvMuRUWwBJs7BY3k9U26rfnSGyvSmDQYyaD
+         /bhiEt0w03nBEBCNoaPg/Obbih+OabqSd/tWyBCVBxiKoQ6UpK+pz6NI7F6siFwAzb5d
+         nn8A==
+X-Forwarded-Encrypted: i=1; AJvYcCV3jc/MU/Y30AEM2jaH4KNEAJNJGv70s0lmgkivbuH6AnxUEUIWiKslejhSIpRReQVVdJ7pOCwvR77H9bo=@vger.kernel.org, AJvYcCW/CjTVQabZXCvp+Y6kLcBq59NAGjkbF172WRXCsC+H8GeMUJNvXVPKz3MXp096pgBYh/p7bMJV@vger.kernel.org, AJvYcCWx/G+J4aA2zv9pe8oY2NRhCuIwr2P6M83xRGAv+DiCavUDKTA3EHqYHLpbPSWhY8nFf0qagfYD@vger.kernel.org, AJvYcCX1uAVaPz63tT9sFAMQS0jcW+3Z9mvEGMSuZQy9fxxjiJRfmWuT1k3UOOdqntym94gnMyrEnHmq6R64FQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu/3cQnxHYMKzzaGod9zN0fiW5VJp8fnMbt2Xjpms6SnEPaVbD
+	XVBr+3EzXdNlUUiFt/Rn6hFbEYBNezlyZCXJSZ5eczxyY4+KpQGENZynNA3tiFRdxfzhgZNwWfL
+	AQKsdieOgNDwNUuyE8pwMPM4T9+8=
+X-Gm-Gg: ASbGnctH4r1CYiSHTpT0f6R/ynyZppuxXloze2/h31gYVrZ2RO+oefqOPDWMYRph5iS
+	7QcBBmK2tJM+t1pJMC9ZC/jSIKOHpF0Gn6Ky54IEKye04tKRdZRzr+92TgJxkvqlIYVQHiw2pA0
+	sS6+I8s1k2hLAcWHmkPiY5SKNjGguh
+X-Google-Smtp-Source: AGHT+IGqE3jq7vSaeNlWZlaY6Rmf5YCoZyFZnfH4P/4GbXj+4pcuknK8aVGw3rlDDBSWZaMH1HIrWw3SGnuf2u0S7Lc=
+X-Received: by 2002:a05:6e02:16cb:b0:3d0:4b3d:75ba with SMTP id
+ e9e14a558f8ab-3d6e3ee1632mr36224115ab.4.1743776569662; Fri, 04 Apr 2025
+ 07:22:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20250402-kasan_slab-use-after-free_read_in_sctp_outq_select_transport-v1-1-da6f5f00f286@igalia.com>
+ <CADvbK_dTX3c9wgMa8bDW-Hg-5gGJ7sJzN5s8xtGwwYW9FE=rcg@mail.gmail.com>
+ <87tt75efdj.fsf@igalia.com> <CADvbK_c69AoVyFDX2YduebF9DG8YyZM7aP7aMrMyqJi7vMmiSA@mail.gmail.com>
+ <CADvbK_d+vr-t7D1GZJ86gG6oS+Nzy7MDVh_+7Je6hqCdez4Axw@mail.gmail.com> <87r028dyye.fsf@igalia.com>
+In-Reply-To: <87r028dyye.fsf@igalia.com>
+From: Xin Long <lucien.xin@gmail.com>
+Date: Fri, 4 Apr 2025 10:22:38 -0400
+X-Gm-Features: ATxdqUFqJZzOz7__HX2olSvI6YOoUaTBczjRn0Vq4YkQ2y534PCmeDUmyD3BkGU
+Message-ID: <CADvbK_evR93rj1ZT_bzLKFqNQLPQ2BM0mzKnriGGsO5t07GAHQ@mail.gmail.com>
+Subject: Re: [PATCH] sctp: check transport existence before processing a send primitive
+To: =?UTF-8?Q?Ricardo_Ca=C3=B1uelo_Navarro?= <rcn@igalia.com>
+Cc: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, kernel-dev@igalia.com, linux-sctp@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: ChiYuan Huang <cy_huang@richtek.com>
+On Fri, Apr 4, 2025 at 6:05=E2=80=AFAM Ricardo Ca=C3=B1uelo Navarro <rcn@ig=
+alia.com> wrote:
+>
+> Thanks for the suggestion!
+>
+> On Thu, Apr 03 2025 at 14:44:18, Xin Long <lucien.xin@gmail.com> wrote:
+>
+> > @@ -9234,7 +9236,7 @@ static int sctp_wait_for_sndbuf(struct
+> > sctp_association *asoc, long *timeo_p,
+> >                                           TASK_INTERRUPTIBLE);
+> >                 if (asoc->base.dead)
+> >                         goto do_dead;
+> > -               if (!*timeo_p)
+> > +               if (!*timeo_p || (t && t->dead))
+> >                         goto do_nonblock;
+> >                 if (sk->sk_err || asoc->state >=3D SCTP_STATE_SHUTDOWN_=
+PENDING)
+> >                         goto do_error;
+>
+> I suppose checking t->dead should be done after locking the socket
+> again, where sctp_assoc_rm_peer() may have had a chance to run, rather
+> than here?
+>
+It shouldn't matter, as long as it's protected by the socket lock.
+The logic would be similar to checking asoc->base.dead.
 
-Add codec driver for Richtek rt9123p.
+> Something like this:
+>
+> @@ -9225,7 +9227,9 @@ static int sctp_wait_for_sndbuf(struct sctp_associa=
+tion *asoc, long *timeo_p,
+>         pr_debug("%s: asoc:%p, timeo:%ld, msg_len:%zu\n", __func__, asoc,
+>                  *timeo_p, msg_len);
+>
+> -       /* Increment the association's refcnt.  */
+> +       /* Increment the transport and association's refcnt. */
+> +       if (transport)
+> +               sctp_transport_hold(transport);
+>         sctp_association_hold(asoc);
+>
+>         /* Wait on the association specific sndbuf space. */
+> @@ -9252,6 +9256,8 @@ static int sctp_wait_for_sndbuf(struct sctp_associa=
+tion *asoc, long *timeo_p,
+>                 lock_sock(sk);
+>                 if (sk !=3D asoc->base.sk)
+>                         goto do_error;
+> +               if (transport && transport->dead)
+> +                       goto do_nonblock;
+>
+>                 *timeo_p =3D current_timeo;
+>         }
+> @@ -9259,7 +9265,9 @@ static int sctp_wait_for_sndbuf(struct sctp_associa=
+tion *asoc, long *timeo_p,
+>  out:
+>         finish_wait(&asoc->wait, &wait);
+>
+> -       /* Release the association's refcnt.  */
+> +       /* Release the transport and association's refcnt. */
+> +       if (transport)
+> +               sctp_transport_put(transport);
+>         sctp_association_put(asoc);
+>
+>         return err;
+>
+>
+> So by the time the sending thread re-claims the socket lock it can tell
+> whether someone else removed the transport by checking transport->dead
+> (set in sctp_transport_free()) and there's a guarantee that the
+> transport hasn't been freed yet because we hold a reference to it.
+>
+> If the whole receive path through sctp_assoc_rm_peer() is protected by
+> the same socket lock, as you said, this should be safe. The tests I ran
+> seem to work fine. If you're ok with it I'll send another patch to
+> supersede this one.
+>
+LGTM.
 
-Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
----
- sound/soc/codecs/Kconfig   |   6 ++
- sound/soc/codecs/Makefile  |   2 +
- sound/soc/codecs/rt9123p.c | 171 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 179 insertions(+)
- create mode 100644 sound/soc/codecs/rt9123p.c
+>
+> > You will need to reintroduce the dead bit in struct sctp_transport and
+> > set it in sctp_transport_free(). Note this field was previously removed=
+ in:
+> >
+> > commit 47faa1e4c50ec26e6e75dcd1ce53f064bd45f729
+> > Author: Xin Long <lucien.xin@gmail.com>
+> > Date:   Fri Jan 22 01:49:09 2016 +0800
+> >
+> >     sctp: remove the dead field of sctp_transport
+>
+> I understand that none of the transport->dead checks from that commit
+> are necessary anymore, since they were replaced by refcnt checks, and
+> that we'll only bring the bit back for this particular check we're doing
+> now, correct?
+Correct, only the 'dead' bit and set it in sctp_transport_free().
 
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index c61b2d3cf284..b0fa935846c0 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -1832,6 +1832,12 @@ config SND_SOC_RT9123
- 	  Enable support for the I2C control mode of Richtek RT9123 3.2W mono
- 	  Class-D audio amplifier.
- 
-+config SND_SOC_RT9123P
-+	tristate "Richtek RT9123P Mono Class-D Amplifier"
-+	help
-+	  Enable support for the HW control mode of Richtek RT9123P 3.2W mono
-+	  Class-D audio amplifier.
-+
- config SND_SOC_RTQ9128
- 	tristate "Richtek RTQ9128 45W Digital Input Amplifier"
- 	depends on I2C
-diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
-index d8d0bc367af8..fba699701804 100644
---- a/sound/soc/codecs/Makefile
-+++ b/sound/soc/codecs/Makefile
-@@ -271,6 +271,7 @@ snd-soc-rt721-sdca-y := rt721-sdca.o rt721-sdca-sdw.o
- snd-soc-rt722-sdca-y := rt722-sdca.o rt722-sdca-sdw.o
- snd-soc-rt9120-y := rt9120.o
- snd-soc-rt9123-y := rt9123.o
-+snd-soc-rt9123p-y := rt9123p.o
- snd-soc-rtq9128-y := rtq9128.o
- snd-soc-sdw-mockup-y := sdw-mockup.o
- snd-soc-sgtl5000-y := sgtl5000.o
-@@ -686,6 +687,7 @@ obj-$(CONFIG_SND_SOC_RT721_SDCA_SDW)     += snd-soc-rt721-sdca.o
- obj-$(CONFIG_SND_SOC_RT722_SDCA_SDW)     += snd-soc-rt722-sdca.o
- obj-$(CONFIG_SND_SOC_RT9120)	+= snd-soc-rt9120.o
- obj-$(CONFIG_SND_SOC_RT9123)	+= snd-soc-rt9123.o
-+obj-$(CONFIG_SND_SOC_RT9123P)	+= snd-soc-rt9123p.o
- obj-$(CONFIG_SND_SOC_RTQ9128)	+= snd-soc-rtq9128.o
- obj-$(CONFIG_SND_SOC_SDW_MOCKUP)     += snd-soc-sdw-mockup.o
- obj-$(CONFIG_SND_SOC_SGTL5000)  += snd-soc-sgtl5000.o
-diff --git a/sound/soc/codecs/rt9123p.c b/sound/soc/codecs/rt9123p.c
-new file mode 100644
-index 000000000000..b0ff5f856e4c
---- /dev/null
-+++ b/sound/soc/codecs/rt9123p.c
-@@ -0,0 +1,171 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+//
-+// rt9123p.c -- RT9123 (HW Mode) ALSA SoC Codec driver
-+//
-+// Author: ChiYuan Huang <cy_huang@richtek.com>
-+
-+#include <linux/acpi.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/kernel.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/property.h>
-+#include <sound/pcm.h>
-+#include <sound/soc.h>
-+#include <sound/soc-dai.h>
-+#include <sound/soc-dapm.h>
-+
-+struct rt9123p_priv {
-+	struct gpio_desc *enable;
-+	unsigned int enable_delay;
-+	int enable_switch;
-+};
-+
-+static int rt9123p_daiops_trigger(struct snd_pcm_substream *substream, int cmd,
-+				  struct snd_soc_dai *dai)
-+{
-+	struct snd_soc_component *comp = dai->component;
-+	struct rt9123p_priv *rt9123p = snd_soc_component_get_drvdata(comp);
-+
-+	if (!rt9123p->enable)
-+		return 0;
-+
-+	switch (cmd) {
-+	case SNDRV_PCM_TRIGGER_START:
-+	case SNDRV_PCM_TRIGGER_RESUME:
-+	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
-+		mdelay(rt9123p->enable_delay);
-+		if (rt9123p->enable_switch) {
-+			gpiod_set_value(rt9123p->enable, 1);
-+			dev_dbg(comp->dev, "set enable to 1");
-+		}
-+		break;
-+	case SNDRV_PCM_TRIGGER_STOP:
-+	case SNDRV_PCM_TRIGGER_SUSPEND:
-+	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
-+		gpiod_set_value(rt9123p->enable, 0);
-+		dev_dbg(comp->dev, "set enable to 0");
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static int rt9123p_enable_event(struct snd_soc_dapm_widget *w, struct snd_kcontrol *kcontrol,
-+				int event)
-+{
-+	struct snd_soc_component *comp = snd_soc_dapm_to_component(w->dapm);
-+	struct rt9123p_priv *rt9123p = snd_soc_component_get_drvdata(comp);
-+
-+	if (event & SND_SOC_DAPM_POST_PMU)
-+		rt9123p->enable_switch = 1;
-+	else if (event & SND_SOC_DAPM_POST_PMD)
-+		rt9123p->enable_switch = 0;
-+
-+	return 0;
-+}
-+
-+static const struct snd_soc_dapm_widget rt9123p_dapm_widgets[] = {
-+	SND_SOC_DAPM_OUTPUT("SPK"),
-+	SND_SOC_DAPM_OUT_DRV_E("Amp Drv", SND_SOC_NOPM, 0, 0, NULL, 0, rt9123p_enable_event,
-+			       SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_POST_PMD),
-+};
-+
-+static const struct snd_soc_dapm_route rt9123p_dapm_routes[] = {
-+	{"Amp Drv", NULL, "HiFi Playback"},
-+	{"SPK", NULL, "Amp Drv"},
-+};
-+
-+static const struct snd_soc_component_driver rt9123p_comp_driver = {
-+	.dapm_widgets		= rt9123p_dapm_widgets,
-+	.num_dapm_widgets	= ARRAY_SIZE(rt9123p_dapm_widgets),
-+	.dapm_routes		= rt9123p_dapm_routes,
-+	.num_dapm_routes	= ARRAY_SIZE(rt9123p_dapm_routes),
-+	.idle_bias_on		= 1,
-+	.use_pmdown_time	= 1,
-+	.endianness		= 1,
-+};
-+
-+static const struct snd_soc_dai_ops rt9123p_dai_ops = {
-+	.trigger        = rt9123p_daiops_trigger,
-+};
-+
-+static struct snd_soc_dai_driver rt9123p_dai_driver = {
-+	.name = "HiFi",
-+	.playback = {
-+		.stream_name	= "HiFi Playback",
-+		.formats	= SNDRV_PCM_FMTBIT_S16 | SNDRV_PCM_FMTBIT_S24 |
-+				  SNDRV_PCM_FMTBIT_S32,
-+		.rates		= SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000 |
-+				  SNDRV_PCM_RATE_22050 | SNDRV_PCM_RATE_24000 |
-+				  SNDRV_PCM_RATE_32000 | SNDRV_PCM_RATE_44100 |
-+				  SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_88200 |
-+				  SNDRV_PCM_RATE_96000,
-+		.rate_min	= 8000,
-+		.rate_max	= 96000,
-+		.channels_min	= 1,
-+		.channels_max	= 2,
-+	},
-+	.ops    = &rt9123p_dai_ops,
-+};
-+
-+static int rt9123p_platform_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rt9123p_priv *rt9123p;
-+	int ret;
-+
-+	rt9123p = devm_kzalloc(dev, sizeof(*rt9123p), GFP_KERNEL);
-+	if (!rt9123p)
-+		return -ENOMEM;
-+
-+	rt9123p->enable = devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_LOW);
-+	if (IS_ERR(rt9123p->enable))
-+		return PTR_ERR(rt9123p->enable);
-+
-+	ret = device_property_read_u32(dev, "enable-delay", &rt9123p->enable_delay);
-+	if (ret) {
-+		rt9123p->enable_delay = 0;
-+		dev_dbg(dev, "no optional property 'enable-delay' found, default: no delay\n");
-+	}
-+
-+	platform_set_drvdata(pdev, rt9123p);
-+
-+	return devm_snd_soc_register_component(dev, &rt9123p_comp_driver, &rt9123p_dai_driver, 1);
-+}
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id rt9123p_device_id[] = {
-+	{ .compatible = "richtek,rt9123p" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, rt9123p_device_id);
-+#endif
-+
-+#ifdef CONFIG_ACPI
-+static const struct acpi_device_id rt9123p_acpi_match[] = {
-+	{ "RT9123P", 0 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(acpi, rt9123p_acpi_match);
-+#endif
-+
-+static struct platform_driver rt9123p_platform_driver = {
-+	.driver = {
-+		.name = "rt9123p",
-+		.of_match_table = of_match_ptr(rt9123p_device_id),
-+		.acpi_match_table = ACPI_PTR(rt9123p_acpi_match),
-+	},
-+	.probe	= rt9123p_platform_probe,
-+};
-+module_platform_driver(rt9123p_platform_driver);
-+
-+MODULE_AUTHOR("ChiYuan Huang <cy_huang@richtek.com>");
-+MODULE_DESCRIPTION("ASoC rt9123p Driver");
-+MODULE_LICENSE("GPL");
--- 
-2.34.1
-
+Thanks.
 
