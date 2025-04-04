@@ -1,230 +1,256 @@
-Return-Path: <linux-kernel+bounces-587982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47960A7B2C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 02:02:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB286A7B29E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 01:58:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 046F0179924
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 00:02:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8564F17978B
+	for <lists+linux-kernel@lfdr.de>; Thu,  3 Apr 2025 23:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD2D27702;
-	Fri,  4 Apr 2025 00:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148851DF994;
+	Thu,  3 Apr 2025 23:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MBKZfU8D"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IDip/NAv"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE666ADD;
-	Fri,  4 Apr 2025 00:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743724938; cv=fail; b=DNzecuoaJgqLpjvUbMAJsvSZeSYm/0sr76sFJqMOt3yWdE+3SObNiMAq1hED/H1NDstqUNkX63PiP+3ZtABV12GQFZvAAgJAxkBVjp+WzyGKoHBrFH9xmHeeeOz4fik2EZ6I20mdF/B1Sk+4ASS/M8uJyNbjKSbgdoct+3qe6nU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743724938; c=relaxed/simple;
-	bh=G28ZNO5u+JipqXJbJvjmmCSiftccPNUyefw1ou+NCdw=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Yl0ffOnVT2Y4SGGBVL9GAWuXTruvq1vwg6E1q85oH+4OAbZs2vEg8C+FIG1KPOnnUan1OjOJfiDOLoyNxcjuFSJQRbs+4durpnuJE8venTzjo7Gatc1IGzCqA9/NYxYgJb2qJan2i1ClTmB+YdZm8Bt7uSKQhpo75cT6tifx1P4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MBKZfU8D; arc=fail smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743724935; x=1775260935;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=G28ZNO5u+JipqXJbJvjmmCSiftccPNUyefw1ou+NCdw=;
-  b=MBKZfU8DSHt9gIGHkRcpTs9ae2sS0FeAQqfDnS2L1C8bIhtIPWH7fxkI
-   ay1hfD3eMnjsC54JFgkPtjwbdqrCqtUZzH1QDW9EBpCPrjB2vXFs9u2Vc
-   Id5XPDd0/+hoX0TOgjo4Ix4VMEzfGoWg70eNEakutqYjfJltUomzF8DbE
-   Nt80m880fCtZU2JeJJq9nEGSg4lcJzxJlpwAiL+5XXr69siOcW1YbHrzf
-   tMB2/k1zdM/g4kpH7F8FY32OctKFxWzJVi+u3Joei/xXJwP0kA6NuGG7/
-   VRUDdDC4fryiu11lGxqUT9GYl3vcd4UzCMuHUsX3IjawWMFge9vSKt5Tw
-   w==;
-X-CSE-ConnectionGUID: /wMztk/WQMOUlVpwJl3erw==
-X-CSE-MsgGUID: Q3ZCS+vaTlW0gkr4W3/fKg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11393"; a="45042170"
-X-IronPort-AV: E=Sophos;i="6.15,186,1739865600"; 
-   d="scan'208";a="45042170"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 17:02:13 -0700
-X-CSE-ConnectionGUID: 1hSASYluT7itrAL0128OBQ==
-X-CSE-MsgGUID: DfiYDfPrTnqd9aAYgEFADg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,186,1739865600"; 
-   d="scan'208";a="131289836"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 17:02:12 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 3 Apr 2025 17:02:12 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Thu, 3 Apr 2025 17:02:12 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.174)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Thu, 3 Apr 2025 17:02:11 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Uz0C4TtRhFX57FhFB0DSQhSgJ+QliaCKiBgKuKOU9G2KdmXFwJJ9xfsD+FmSl5d4zB/RXJTlFWnXpFzv+C/5SDKBhzeh/aAoJqh2pTvi+Tyx8l9IwO9/D1gCVVo1X2J8aPeK5JAibw+jYGUlKXvfsZ0mmMRQx2fzAe796zTL1q/PPACF8ov6DanAxnLuTpQXGMhFXMKb7Sdgt9+0GmHb/oJucr5UYcg8ydwzjlPbEYFws4ypTESHa7wqQtvR4qXPe3H7AD7UTCrgaHDN3HiPqhzTe4Qrbyo1Ar8L9stmsxRBYFvE2jpi8KquKZdFBJj2laCuQI84tEib105aQFCx1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8Tm/cMFVMC/vdD1f0Jn1vC0u2+ynb6tFINR5o6bEUjE=;
- b=q/X1530dVn1TKBxbmpfjdj+JtaYBJYlJuQ82rhBh/gfEA/13lPNQK4gV65piPUoL/IKhA72FpB9zafljcV4MOH1b+KhrwtgmsB9eJVxjlkwBHsuZNuag0iW3CPypJTrF7bho/tgaX3ujNoY1+Uhs3DzaUVcdILuSUFwx+Luil/hGqAjHnf33NarlVwJiZo7VXf1EeD6hRH5PZjnTYGmgmni3nLmpa7wnw5HlYnjnoVO1zO2L9O1yQG7NipHW2nJLmdPgYzoLQcvT/6IqLdZiRBCW/ou5Q6N3zJVcwf7LN444qIGC2zUquokcyBKlkX9zyIyJhr+QKg+DMomME132dg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7925.namprd11.prod.outlook.com (2603:10b6:8:f8::18) by
- SA1PR11MB7698.namprd11.prod.outlook.com (2603:10b6:806:332::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.52; Fri, 4 Apr
- 2025 00:02:09 +0000
-Received: from DS0PR11MB7925.namprd11.prod.outlook.com
- ([fe80::b1ef:c95b:554d:19c9]) by DS0PR11MB7925.namprd11.prod.outlook.com
- ([fe80::b1ef:c95b:554d:19c9%6]) with mapi id 15.20.8583.041; Fri, 4 Apr 2025
- 00:02:09 +0000
-Message-ID: <fe730028-1861-4fc3-8ddb-6b218d5aa234@intel.com>
-Date: Thu, 3 Apr 2025 17:02:05 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 8/8] x86/fpu/xstate: Warn if guest-only supervisor
- states are detected in normal fpstate
-To: Chao Gao <chao.gao@intel.com>
-CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
-	<tglx@linutronix.de>, <dave.hansen@intel.com>, <seanjc@google.com>,
-	<pbonzini@redhat.com>, <peterz@infradead.org>, <rick.p.edgecombe@intel.com>,
-	<weijiang.yang@intel.com>, <john.allen@amd.com>, <bp@alien8.de>,
-	<xin3.li@intel.com>, Ingo Molnar <mingo@redhat.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, "Aruna
- Ramakrishna" <aruna.ramakrishna@oracle.com>, Mitchell Levy
-	<levymitchell0@gmail.com>, Adamos Ttofari <attofari@amazon.de>, Uros Bizjak
-	<ubizjak@gmail.com>
-References: <20250318153316.1970147-1-chao.gao@intel.com>
- <20250318153316.1970147-9-chao.gao@intel.com>
- <ec953e80-a39e-4d42-b75e-6f995289a669@intel.com> <Z+1KBN+s3CWdTN60@intel.com>
-Content-Language: en-US
-From: "Chang S. Bae" <chang.seok.bae@intel.com>
-In-Reply-To: <Z+1KBN+s3CWdTN60@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR05CA0161.namprd05.prod.outlook.com
- (2603:10b6:a03:339::16) To DS0PR11MB7925.namprd11.prod.outlook.com
- (2603:10b6:8:f8::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FF21C6FEC
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 23:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743724679; cv=none; b=iNCHmMMSZdGZcYNV+sNT13yudCnk5CDHlL/fht/2M6UE/ypwa3iU99oZMUvB8pwmbgB7isVU+/mMzIgCSGa+C6KXR1/21FnnQbK5AMdtnT2E6xFDixOaJog56CxRqffoHmU1yneAHkIXj+pkXk5oXHFx/tsoV69o47w/VNOdLRs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743724679; c=relaxed/simple;
+	bh=VAo1Q0VjwHRINwbD/L8jkkSA9OYDy+EZ6j4dxgMrPWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=dhS4qnzajfdZ/B4wIBHGNsoyH67cbVCgiYsotPVOzQdOoPNo2/UfGJDHwW944vN2UToFRS6egKBQ4N2RtZPnXWudiJsvNfU6k0N8bL0iH89YmnmP0mmXplD//RJRh7RsiwOa9D0N/8PsVb0u42uDdpC8pPYOnuSv39ouEqf1Yp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IDip/NAv; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250403235754epoutp040a770fb807210d73b94e7d3eb5bd7620~y9FpPcsvI1822318223epoutp04V
+	for <linux-kernel@vger.kernel.org>; Thu,  3 Apr 2025 23:57:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250403235754epoutp040a770fb807210d73b94e7d3eb5bd7620~y9FpPcsvI1822318223epoutp04V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1743724674;
+	bh=7gGMAAexLf4FhhxeDyncinVybc8k4q0bbDjQN23hj8g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IDip/NAv/kn7aYl5cgIQSYE0mgtYXspR0oT0mJMr2KX9+njFNF5LxPxpRS5qesxHS
+	 pQ3gAAL99zWf1beqkCnbPpxJuTlhJ+FSgcjzmshAznPBGPnB7FcI2NPUTyIeyvE9Ld
+	 MNMhsqScvu549cZy8B7YvPkh+voXC1kjpUKdwD7U=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250403235753epcas2p40e2e55932f5996808e0dafe103862034~y9FooSEpf2429624296epcas2p4e;
+	Thu,  3 Apr 2025 23:57:53 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.36.100]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZTJZn132jz3hhTF; Thu,  3 Apr
+	2025 23:57:53 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+	EF.67.09871.1802FE76; Fri,  4 Apr 2025 08:57:53 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250403235752epcas2p192712bf4c5cbf0fda2c9b1dc71d3ac61~y9FnqbwGN0444504445epcas2p1b;
+	Thu,  3 Apr 2025 23:57:52 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250403235752epsmtrp2db0e0a6ea15e87b7ebe110bbf9363375~y9FnpaqKb0549905499epsmtrp2W;
+	Thu,  3 Apr 2025 23:57:52 +0000 (GMT)
+X-AuditID: b6c32a48-b7fff7000000268f-e8-67ef2081e7e3
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A7.C6.08805.0802FE76; Fri,  4 Apr 2025 08:57:52 +0900 (KST)
+Received: from perf (unknown [10.229.95.91]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250403235752epsmtip1465881f309eff79f043b5d2e8e0b2852~y9FnXfgci2285222852epsmtip1D;
+	Thu,  3 Apr 2025 23:57:52 +0000 (GMT)
+Date: Fri, 4 Apr 2025 09:02:08 +0900
+From: Youngmin Nam <youngmin.nam@samsung.com>
+To: William McVicker <willmcvicker@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+	<will@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>, Tudor Ambarus
+	<tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
+	Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim
+	Akhtar <alim.akhtar@samsung.com>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Saravana
+	Kannan <saravanak@google.com>, kernel-team@android.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Will Deacon
+	<willdeacon@google.com>, Youngmin Nam <youngmin.nam@samsung.com>
+Subject: Re: [PATCH v1 4/6] arm64: dts: exynos: gs101: Add
+ 'local-timer-stop' to cpuidle nodes
+Message-ID: <Z+8hgK5YJ1ZhAl0C@perf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7925:EE_|SA1PR11MB7698:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2602785e-321e-4141-d539-08dd730bf185
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?eUp6MFNuSW04MmNYNjJSeGR0dkJ6U0lmT29reWwxRTR3M2xxUGFBUjYvQW5N?=
- =?utf-8?B?K0YrbWE1VzBtVFNqdDI5Rzl1djBkaUhpRjZhc0tlV25MT2VtcHFoSWJscVJC?=
- =?utf-8?B?MHJabFZTdmNRQ3NZTzhCL0pONGZDVFVlWTFGUmZrTkpPQ1o5ZmlyQXgzRitW?=
- =?utf-8?B?ZlYxc3E2MXhnZXBXZXhDMVRpblo1S05IMWxZeDhlYUU3eExJSkhCaU5UZGx6?=
- =?utf-8?B?L0w5dy90VzNNZjB0NERWTXgvVFFDOGxSMXR5czBOWFFoaGhQVXJDekQ5UUZB?=
- =?utf-8?B?cHF1eDBabTQvWkI4djk2alhkRitBbUJhUmNhU3haOTMzVitEUFgxdzVaeVU2?=
- =?utf-8?B?SHVrZklBNWdOV1pCRFkyMlJtKzZDNWJKU3RneTNqSXRobkc3WGk3M2dnd29j?=
- =?utf-8?B?c1paelRZeUFPNEN3dzM4Smtjemc4U3lKWHo0RjBxa0pCWW0xdDJheHFpbHBP?=
- =?utf-8?B?QjdtdFNNZlRxRC92cTR4aGNBcjA1Q1BzbVh5UEhvelplQVhDaEFnNVBQRWpq?=
- =?utf-8?B?TlNEbW52aFMyWkxQN29DaVZzdTVjVFpiQjVyVGx5MXpPajBlSk0zdG1BTmVP?=
- =?utf-8?B?TEJJU2ZJNGp0SEllVWxzU09TbTJQajlJNE5aY2NCLzVEaUJtTFY4Y2RGd3NB?=
- =?utf-8?B?ZkJWMWxFSGVQdUFyNWNyMXhRVklpNGptTVZOb1NGNENjZ1JabUFRVTZNTjlP?=
- =?utf-8?B?bTRQcmdydXVyZ2drK1A1K2JTZWI4K3VwWk9tWG9QVWdtM3RxTW1TM1A4aWFG?=
- =?utf-8?B?K2d6Y2RXajdvOURVNnc1dzNPYUVNWGZScHRlbVpwdER5WFpXeW1ycVpaaE1X?=
- =?utf-8?B?UmV5NzRYRk04Sk9RVGo1M1haMVVDUmpJdktkM0ZXN2lRWkNRMmRGSTJZOTRt?=
- =?utf-8?B?RzlwblNuaEpxVm14d3hIQWxIN04rU2FuOElDc0wvampnQ1NNNWFlQkdMWUhB?=
- =?utf-8?B?Y0dMM3MvdmJ6SWFMay9paEtjQjRra2w5ZXBkQkFIUWdnTWZvaEd4am11ZTJ0?=
- =?utf-8?B?MW5qMThWMXdrZmkrUDd1TTZHY0dyeFhZR05RSUhnY25kVTJyL1pabEdvMFo5?=
- =?utf-8?B?eGFNaDR6MWtselFRU3daSVNHbTAyNnJnSFZyUTBBMG0rWS9DN09sdzVwNmpQ?=
- =?utf-8?B?bk11d0lVTTR3Qy95aFVFRkJ6R2ZLZ1Y1THJyb0gzZ1ZsNGQ4eXZYeDA4WXNx?=
- =?utf-8?B?Z1djbmw1emNQOGJ1UXNpRnNWMzdIWkN4QW9EcitiZlJkZDR6MElBa2Q1T1RE?=
- =?utf-8?B?U2RRQk9JdDEvWFN4ZUw4TFNGWll5OHhaZmJvalRlRHIrWlRNdmZhaEQ2NDR6?=
- =?utf-8?B?TG9kSmY4THA1TkVXd1pmV1ppZnpGQ3lYN0dUOGxKN0RuNlJVbjcvY1FBRi9I?=
- =?utf-8?B?NFBDM1JqWGNmTk9OcGo1bHdsc1Frc1V0UkhkdUROb1ZuMFhsMjZXVXJadEJi?=
- =?utf-8?B?M0tHQWVkU1NDczE0Rkdjb2s1SFZPV2RsQ0NkS0tKbFFNMnNhanY4alF4TkRV?=
- =?utf-8?B?dUtFZWY3MFBkWU5UUXVySjVHSjI5YlM2eWQvemxNaUdTM3NrM1RXclBzNE5B?=
- =?utf-8?B?VklwVGFsWVF3M0l2TVN5RkVtOS9hQ1dVS3NHcmtiVlAvVE5ybUdtZ3NQU3ho?=
- =?utf-8?B?Nm1nVUZMRFJYRzVVdGpDSVlQUHdZamlsK3hvV05nQUxLbC8yeW5aek9MeGc5?=
- =?utf-8?B?UERaamo3eUlPaHRrdE9Nc0oyQUZ6OUU0U0JIZk5rT1FEWUNod1Q2UnI3T1A4?=
- =?utf-8?B?a0hHbXgwNFFGOG1kOTdsdXduNW8zMXlGRG9TMy9tUW54QkhCdTJtb1pIUkY4?=
- =?utf-8?B?ck50YTlYTGpIRmErdUp1N2xsdHg5MUhmTEZtenpMcHcrTDY2TDk5eTE3RWFa?=
- =?utf-8?B?Smh6QkgvTmNFVXM4WTFsSk8wTGVXZzVuSVlsWGdwcURJbEEreVZHMEpneVd4?=
- =?utf-8?Q?lhAaDIOd15k=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7925.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aWMvU2FLcDl3TXIzUmZibUVwYlBkU3Nxb2kvVGFMd3ROYUM0TlhyUHVBZ1Fq?=
- =?utf-8?B?dEV5Wmxic2hSVzlmdTQ5QU4xQ2llSEhTRmlCeXQ0cmh1bEh3anFraUIzSFAv?=
- =?utf-8?B?WTNEREYzOTJvUFN3SFkxVHM1UVZtMk5FZ0VGYVFPNFFaNStMczJZZ2FaMmx2?=
- =?utf-8?B?dk1YM2F0RnIyc2JXbXVoT0s2S0tjK0pBNXh6Q1FmODd6LzdyR2RSWjZuL3V1?=
- =?utf-8?B?SFphS3ZpL3hsOGplWktnS2FyUVM0OCtkNjBRcHpDZzM2dXZ5TTBJR3JVQ1lm?=
- =?utf-8?B?c0Y2NURRUVF4K3kvd1Y1TGw4OVk0aHZUNHV3VkxtSlluY0dESE9DaVcybmhy?=
- =?utf-8?B?NzU3YzlqcndQRkMvNzdvNkd2OE5BOTBqcVhPeCtweTJpNDVDeTRKY0U5QWFq?=
- =?utf-8?B?K3dqakt3TldUa0ZoeEJrR2xlZEJXVEp1SFJMMlo1dHVVcmJTZVB5WW53U2pl?=
- =?utf-8?B?ZDF6U1oyeFJGNmtpZEtsQ2dRTnlLWkFRL2NLaUl0SkJnbWdFbHdUVDJZSnBt?=
- =?utf-8?B?SElUcnRkQ09Sam5aeklvMWJJTnByRXZZUXUzMUhxVG11TjFXTjNiRU41TFE0?=
- =?utf-8?B?ZFE0bHRwci9TbDlnU21jNDBJYjVIcDF0MldTWUk4SDhGUHU1MWcrY1V6SDg3?=
- =?utf-8?B?aitvcWV5MmZtRXdtREpEUk9HcUNXQzl3Y0NjRzZZV0UwcG0zUFlmQzJyN0sy?=
- =?utf-8?B?Rjk1RmRET2lHVU8rdjNkOHJHbFJadVNnKzMvc0Z0Y050b2M1QXZIbUJEeVdR?=
- =?utf-8?B?M0lDNjRxZjRRdlRYcXJsRmtORjFXa0VoMzZXNGg1bS93YkFWVmNHTlVvTnVZ?=
- =?utf-8?B?bmpXYkhVeVdNNm5NWVVETnprbmtyUkRtMmMyMEZSRzVLVDFOZThBZ0RyR1lH?=
- =?utf-8?B?emlUa2JoWnlIVzc4RjlvYWFIZU5ld0dTRWp0RE9zREUwZmZ5QlArc1FaRnhU?=
- =?utf-8?B?ZXJiVm1DcHc2ZXdZQTA2M0FGVXZOeXdaU3B5RTNaTEIraUc1dVpDSjRCZkN0?=
- =?utf-8?B?RHdhTVo0SG02cytGZDNGY1Y2M01EWXRmOUxNSVI5TWN1TnNZTEpxd2E3T0RK?=
- =?utf-8?B?anpWWTRrUVUvMUs5UWx2VzVoem1yQnhqZFZvYTJZMDBVajFOZWluaEtMK2ZL?=
- =?utf-8?B?YURRdHlkMjJKcXArb05QakdOcXJta3A1WVpmakIxbndOZkcySVU0T0tTV3VO?=
- =?utf-8?B?cTNxeE55NHZUR01MckhqZlFOalNXN0V3bVl4Q1JXc0QyTWs1MzNiRnY3SFF6?=
- =?utf-8?B?elFpdmxLUVlBQ1dzSVBMZXh1ZmdZSGwrN3hMQ0dMeGE2a1p6SUo0ZGt3QVQ3?=
- =?utf-8?B?Z0JCY1JvSUVNVGYxRXRRVTZpUVlFRU03QWEyL1VsT0N5YitLQ2RvSSttZjFF?=
- =?utf-8?B?dHBuZTV2NDhGNHpKNGdwcklwL0xFRFRrSVdGVk5sZy9lMndUOTFlVDVzUnp5?=
- =?utf-8?B?dVduV2thbnZaTUU1WkRYaytHc2dIeVJkSDVDeUpETnhyUXA4eWtLT3JMejFI?=
- =?utf-8?B?WXhLajRHVk9iS1BkVXZuN3FPczBCbEpUN2RLZ0xnd0tBSlVyRzN0SkhmMmRX?=
- =?utf-8?B?REU3cUttbVNJVGZ1WktGL1M5RVpjUStSMHh5aithT2drZDR5RFd4RVdNZGlt?=
- =?utf-8?B?dkJSTFp2YzlGNVdFUjRlQUVIQksvd1hZRkdRTGRGT3BGYjNoeEt6MkZ4VzNq?=
- =?utf-8?B?Tk5RVlcrVGptYldQWmsyRE5zOGRCYzN2ZHNLRXZGQUhpUkZ5TW1QOTNka1Uv?=
- =?utf-8?B?dXlNRTVoOGdHd1RxTDVLd0Z5VmVpUUFtZDk0SkRzWkNhMWpXS0RCUlp2emdC?=
- =?utf-8?B?THAyTWhUSHBxYXR0RG4yeFFXclYyRnJpaEU0NG9aU0N3cS9ZS0FadlplMnpX?=
- =?utf-8?B?bVV2d2EzdC9SWmNrN2pJbHlSNnhDaUFxekxYNFlYYk1JTkg5NmdPY1UrTncr?=
- =?utf-8?B?RmVUS3BXVGd5aU1JdzVlMWZnbW5UclMxMTNrL04vaXJpeGtUV3N3MElMRHJr?=
- =?utf-8?B?aHFCMm1Galc1Y2xPUDdDQnNoNGRGOW00WFpBVFdxOFJRN1gyTnFnYUFoV0R2?=
- =?utf-8?B?Ry9SR3MybW9FbTNmWUJCOS9IOXZ0RGp3TU14c1ZsL0NQclBBbytwTnJZT0Fn?=
- =?utf-8?B?ZGlWTzdIRG9SM1BsZTVSZjFoWlI1WHN3QlB0SzdzaXVINTdqTmdndUFDQ1gx?=
- =?utf-8?B?WFE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2602785e-321e-4141-d539-08dd730bf185
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7925.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Apr 2025 00:02:09.2450
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WOOSvpVdxOC9UfPMKkHbxfhDygZM12Hs+wx+c/0pcmc9gsvOyVM1kzmfMR/32q5jAJe7AwEftf3mJBWOVxa85e+b/GrTHijYSgJNoEs8PUo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB7698
-X-OriginatorOrg: intel.com
+In-Reply-To: <Z-7V27GKU85vba0B@google.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TfUxTVxTn9r0+Xp0sj8rYlVWC3TCDDGihhQsKM0HnS7ZlJGQZTDN4oW8t
+	o7RNX2tA3cQJAzo14uTDrsOqREwDgRXokC9dIfFjBBATTDo2ZuYIH1NmkW7igLU8XPzvd879
+	/c75nXvuJTGxh4ggC3Um1qhjtFJiE+4ajFHGHYtaUMssKzj6rdFFoM65DhwtXD4BUEv/iAA1
+	Lm5D54dGhKj7hzA0a/2VQM7fJ4Tobo+NQA2jAwLU3rCKo7W+7mBkca8QqMNZiyGv5xNUPqlE
+	lU/nceTwrgF06bo3eHcY7ep1CemWxhZA251m2umoJujJiT6CfjQyEkx3NB2lT3U6AL3ojMwS
+	fVy0S8MyKtYYxeoK9KpCnTpd+m52XmaeMlkmj5OnohRplI4pZtOle97LinunUOufShp1kNGa
+	/akshuOkCRm7jHqziY3S6DlTupQ1qLSGFEM8xxRzZp06Xsea0uQyWaLST8wv0lwe/8jwzY6S
+	pnPNeBl4ss0CRCSkFPD4nUncAjaRYqobwLrb9RgfeAGcH7cLAiwx5QPw6592Plf8Yh3cUPQD
+	6FtaAnxwH8Bnvht4gIVTb8BKr20dE1QcdN1c9ZNIMoyKh/9WlAT4GDUrhKdcMyDA2ULlwzsD
+	c8IADqFeh2dnr2I8DoW3zj1YryOiYuH9oZl1e5B6QMJ2uzuYt7QH/l37s5DHW+Dcjc6NfARc
+	fNRP8JiDZVOeDXE5gLfvzWD8QRK0Tleuu8AoDey9O4wFnEK/iyEPzqdfhlWDK8F8OgRWfSXm
+	lTvg8tl2wGMJ7L10ZaMiDbvWXAR/KV0CaG8bxk+DSOsL81hf6Mbjt6C910tY/S0w6jXYvEry
+	MAa29STYgdABwlkDV6xmuUSD4v8FF+iLnWD9kcfS3eDbh3/Fu4GABG4ASUwaFjIjWVCLQ1RM
+	6SHWqM8zmrUs5wZK/3JqsIhXCvT+X6Iz5ckVqTJFcrI8JVEpS5G+GuJ+/IdaTKkZE1vEsgbW
+	+FwnIEURZYJ9vhqD7LMcT+Y+RZYlyaep2MncXH76eMKe3bT1grx0rLLnIqkSJsYcQs0OZ9tg
+	ZOqbrVz3Ulrm7qDPWyckDxOmrOXVQZuL+tIMs2u12fPP4kyd8zUnfeGHo7Gq+u8cw5vPf7B6
+	RrUV/Hi6rjqHnvknuitXlhZbG5oznn/RrM3cb/PsNQ4e8eaGwmvCubCMAsN1b6Pkz9z9S4bt
+	OccGxhbfLrXIM4IqRO6+J/prdSeu1Fw4MtV6RpW4nD3deXU5iVq0yfq7Glrst4AkTyhaUI+B
+	VAs4ePwLUZVbrvkw7Uvv+/cOY9G04OT2iPLeo6OTnyoqSg6Mfn9AYntptn7aGS7FOQ0jj8WM
+	HPMfDGQsKW0EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02RW0xScRzH9+dcPLDRjkj5T5EampUmpeX6t6x1mx7rIX1os5Yp5YksQYJM
+	rQetLIwua5pLmWIX0yKXhoqIwgy1VUtzubDZRV21BbZM2UqXUaFr9fb5fW8vPwoT3MCDqEzl
+	MVatlGVJSB5u7pKIowoXj8tXjdjC0IjBTKJmdxOOxmsvAlRv6+MggycEVXf3EcjSKkQu/TsS
+	md47CTRgrSRR+XM7BzWWe3H0q8Pih3SOnyRqMpVhaHJoHyp6E4u002M4Mk7+AuhW56TfJiFj
+	bjcTTL2hHjDXTTmMyXieZN44O0jmS1+fH9NUU8BcbjYCxmMSJ3H38OIy2KzM46x65cZ03qHe
+	wVukaiA075zeShaC3mAd4FKQXgPf6rtwHeBRArodwObbvsNniODruwPEHAfA4aJuYi40DGDr
+	S9dsCKfDoHaycpZJOgqaH3uBDlCUkJbCmbN5vjxGewjYUtyD+TIBdDp8Ufya42M+HQqvutqw
+	udE2Duy/8BifM/zhk4oPs4zREfCV18XxjWJ0MKzzUj6Z+0ce7f6EXQG0/r+G/r+G/l/jOsCM
+	YCGr0ijkCk20KkbJ5ko1MoUmRymXHshWmMDsFyMiLKDD+FXqABwKOACkMImQ/0k0LhfwM2T5
+	J1h1dpo6J4vVOEAwhUsC+d/GLmUIaLnsGHuEZVWs+q/LobhBhZy92VfonftPHm66506oWrco
+	ZFRCZm31cD3XJuLskWE9Bul2/xF7dSrhjoWrc+PW1mrFG6pr1ht+PBLFMzHbVihipkpCdfOS
+	G9vzRxb0prlqH6V8kRYnFczbalM3bICtpTsuhXz2ipJGR9ecThhf6zjYWFHTVRHbEn1mIMXj
+	ke+KsU5XLq9W2XgPT2lEz84tis3jz8dJt1s0mGpK2EeF+2uJZEsvf0kar2TB/curyxLtM4na
+	oc6b4siLaPMdfb8FdKm/C5wN/bLCox+r0scmHNS3LTny5VtShyfsIDyzvq7xaYs8UEJM7XEK
+	a4vi85Y1c1udH/EHp0t3WxuCsKUSXHNIFh2BqTWy32UE4mc0AwAA
+X-CMS-MailID: 20250403235752epcas2p192712bf4c5cbf0fda2c9b1dc71d3ac61
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----rHPRFtJkdx5CiZJP2v5Cn8OZ9YZY2B0tfPkXi2gvBl6TiQFm=_8b7dd_"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250331230151epcas2p486a7c6d7153737f4168cfef74249742f
+References: <20250331230034.806124-1-willmcvicker@google.com>
+	<CGME20250331230151epcas2p486a7c6d7153737f4168cfef74249742f@epcas2p4.samsung.com>
+	<20250331230034.806124-5-willmcvicker@google.com> <Z+y4zxfifkQqLxKF@perf>
+	<Z-2zQ-PcvxFTBc6M@google.com> <Z+4Hve9pQoLeh9sZ@perf>
+	<Z-7V27GKU85vba0B@google.com>
 
-On 4/2/2025 7:30 AM, Chao Gao wrote:
+------rHPRFtJkdx5CiZJP2v5Cn8OZ9YZY2B0tfPkXi2gvBl6TiQFm=_8b7dd_
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+
+On Thu, Apr 03, 2025 at 11:39:23AM -0700, William McVicker wrote:
+> On 04/03/2025, Youngmin Nam wrote:
+> > On Wed, Apr 02, 2025 at 02:59:31PM -0700, William McVicker wrote:
+> > > Hi Youngmin,
+> > > 
+> > > On 04/02/2025, Youngmin Nam wrote:
+> > > > On Mon, Mar 31, 2025 at 04:00:26PM -0700, Will McVicker wrote:
+> > > > > From: Will Deacon <willdeacon@google.com>
+> > > > > 
+> > > > > In preparation for switching to the architected timer as the primary
+> > > > > clockevents device, mark the cpuidle nodes with the 'local-timer-stop'
+> > > > > property to indicate that an alternative clockevents device must be
+> > > > > used for waking up from the "c2" idle state.
+> > > > > 
+> > > > > Signed-off-by: Will Deacon <willdeacon@google.com>
+> > > > > [Original commit from https://android.googlesource.com/kernel/gs/+/a896fd98638047989513d05556faebd28a62b27c]
+> > > > > Signed-off-by: Will McVicker <willmcvicker@google.com>
+> > > > > ---
+> > > > >  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 3 +++
+> > > > >  1 file changed, 3 insertions(+)
+> > > > > 
+> > > > > diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> > > > > index 3de3a758f113..fd0badf24e6f 100644
+> > > > > --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> > > > > +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> > > > > @@ -155,6 +155,7 @@ ananke_cpu_sleep: cpu-ananke-sleep {
+> > > > >  				idle-state-name = "c2";
+> > > > >  				compatible = "arm,idle-state";
+> > > > >  				arm,psci-suspend-param = <0x0010000>;
+> > > > > +				local-timer-stop;
+> > > > >  				entry-latency-us = <70>;
+> > > > >  				exit-latency-us = <160>;
+> > > > >  				min-residency-us = <2000>;
+> > > > > @@ -164,6 +165,7 @@ enyo_cpu_sleep: cpu-enyo-sleep {
+> > > > >  				idle-state-name = "c2";
+> > > > >  				compatible = "arm,idle-state";
+> > > > >  				arm,psci-suspend-param = <0x0010000>;
+> > > > > +				local-timer-stop;
+> > > > >  				entry-latency-us = <150>;
+> > > > >  				exit-latency-us = <190>;
+> > > > >  				min-residency-us = <2500>;
+> > > > > @@ -173,6 +175,7 @@ hera_cpu_sleep: cpu-hera-sleep {
+> > > > >  				idle-state-name = "c2";
+> > > > >  				compatible = "arm,idle-state";
+> > > > >  				arm,psci-suspend-param = <0x0010000>;
+> > > > > +				local-timer-stop;
+> > > > >  				entry-latency-us = <235>;
+> > > > >  				exit-latency-us = <220>;
+> > > > >  				min-residency-us = <3500>;
+> > > > > -- 
+> > > > > 2.49.0.472.ge94155a9ec-goog
+> > > > > 
+> > > > Hi Will.
+> > > > 
+> > > > Are you using this property in production?
+> > > > If so, have you noticed any performance improvements?
+> > > 
+> > > On Pixel 6, I have only recently switched to using the arch_timer as the
+> > > default clocksource. I haven't noticed any major perf improvements to the main
+> > > benchmarks, but also haven't seen any regressions. Based on the ChromeOS perf
+> > > analysis in [1,2], there was a significant perf difference found.
+> > > 
+> > > [1] https://lore.kernel.org/linux-samsung-soc/CAJFHJrrgWGc4XGQB0ysLufAg3Wouz-aYXu97Sy2Kp=HzK+akVQ@mail.gmail.com/
+> > > [2] https://lore.kernel.org/linux-samsung-soc/CAASgrz2Nr69tpfC8ka9gbs2OvjLEGsvgAj4vBCFxhsamuFum7w@mail.gmail.com/
+> > > 
+> > > If it helps, I found that Pixel 8 and 9 devices (didn't check Pixel 7)
+> > > are already using the arch_timer with this 'local-timer-stop' as the default
+> > > clocksource in the production kernel.
+> > > 
+> > > Thanks,
+> > > Will
+> > > 
+> > > [...]
+> > > 
+> > 
+> > Hi Will,
+> > 
+> > Thanks for sharing the status of Pixel devices.
+> > 
+> > I agree that using the arch_timer as a clock source device brings significant benefits.
+> > The links you shared are definitely related to that.
+> > 
+> > However, I would also like to know whether arch_timer is used as a clock event device in Pixel production.
 > 
-> The goal is to ensure that guest-only _supervisor_ features are not enabled in
-> non-guest FPUs.
+> For Pixel 8 and 9, the arch_timer is used as both the clocksource and
+> clockevent device which is what my series is proposing for Pixel 6 upstream.
+> The MCT device is solely being used as the alternative clockevents device for
+> waking up from the "c2" state. The reason for using the arch_timer as the
+> clockevents device is because we were seeing hrtimer stability issues where
+> a 10ms interval timer would delay about 300ms-1s before starting the callback.
+> This resulted in several media-related latency issues.
+> 
+> Thanks,
+> Will
+> 
+> [...]
+> 
 
-I think the common XSAVE path matters here. The other XSAVE paths — 
-signal delivery and saving the LBR state — already handle supervisor 
-states properly. Signal delivery excludes all of supervisor states from 
-the RFBM, while LBR state saving triggers a warning if any non-LBR state 
-is set in the RFBM. Given this, the guard seems good enough unless 
-missing something.
+Thank you for sharing your valuable experience. That will be helpful to us.
 
 Thanks,
-Chang
+Youngmin
+
+------rHPRFtJkdx5CiZJP2v5Cn8OZ9YZY2B0tfPkXi2gvBl6TiQFm=_8b7dd_
+Content-Type: text/plain; charset="utf-8"
+
+
+------rHPRFtJkdx5CiZJP2v5Cn8OZ9YZY2B0tfPkXi2gvBl6TiQFm=_8b7dd_--
 
