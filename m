@@ -1,131 +1,128 @@
-Return-Path: <linux-kernel+bounces-588399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ED24A7B880
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:01:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C03D4A7B885
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:03:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B5D7189B0AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:01:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8E20189C38B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6A41917D0;
-	Fri,  4 Apr 2025 08:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D84191F91;
+	Fri,  4 Apr 2025 08:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fZTAsPvO"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QUkAX3Ut"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9FA1F94C
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 08:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D43F1F94C;
+	Fri,  4 Apr 2025 08:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743753661; cv=none; b=awaOFivs8pODCWHsP6i/ecOazcp+ohCUniIJMNOMMEkJxSSw+pXhIQWrXGmiq4rhfiKleWu1VuA7c5q89ZVPKlF9NE4pkBjClrbtngHoeXvJCMRAa6c8ZfSpNwOxCOZol9uI9cd1lzohWOTe/1XdkNaxawTOQ+2PrgZYSJOiCmQ=
+	t=1743753746; cv=none; b=i+bQt3Xq0e4y1KbJ++WtoFgYOiQv3a3Qukok6WqEaD61j7+fQdgNKhHbEHoV/60V9riX8k0zOJsaMoKiW7RkUoy2eSf6R6pZtfENejiKTgAG+hSmDCrNaULVjg3PfDNcRcwVBxpFsucSd+agsfeJZrSqz/+QjMBYjD20UM9XJ0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743753661; c=relaxed/simple;
-	bh=pr0/25F8iIEDARQYcJhcKSuVvjTXR5ohp+UJj7cy7aI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d1PQqyXrtMcO0kK2XS3FrljJorWja+TA90Ppq9goeUL3SVY2LOHzhQ6bNfbJus3QSut0C+pdnjlY+sW/lI13PwWNBMiuumeUr5+PooHaYIGPRW4vIwc8/QJWBDDwfLXTp/W8exLxmXqPAwzDfDp/ek29LVsbDekT0uJohf0Ylz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fZTAsPvO; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38f2f391864so942059f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 01:00:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1743753655; x=1744358455; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yx20aOl6hxNq71ohoplbiMtIwtQJkykeNvp+f1I4+W0=;
-        b=fZTAsPvO4hdg1K/x5vi86Yyu82MnOJceQ3onai+bDz46omGtA+OCKLKnvYrhlu9OBH
-         xrkeQ0q1xgIZD+gfX71/gl+wo9eUn6N1KdiAyf4VFDQhoGIN7IV+6ELH3yibzKrmcd9o
-         NHjYQCo2Mno8VFIKdPswc/1INaCx8+02HKfE98kxMZeH0Qby5azeXuuJTXnVgTfK4VoQ
-         mKZifOTnHzQIM3tk478xfaB32CgI23WtAl3Q9kZ4DxTSUCdty+WXTphypFweNcL/9934
-         mFQj0NlqWOLUKD6lXfUd+G8U6AjqEn3DQ4aoNhCDDDllc5XzW9tQsxa2kRmR2/Qkl26s
-         u5ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743753655; x=1744358455;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yx20aOl6hxNq71ohoplbiMtIwtQJkykeNvp+f1I4+W0=;
-        b=LnuIAUMBP5m/danj1BcMmEPvDve0/SLgg8uHITU5dhkRxhRIjIt31qJkisjpYwbiBZ
-         shaHRc66T1DluhXV4XxzYJpmZP0RRCCAgvwIgVfolWmO3ykBSGF/NVeCfMRn6bAsad7g
-         Pfo6qF5FnarHuwS8TjUeVmNSQB9jHg7SQ6F7xxg5n2l0punegPg+hCrk7jzDot6U9IiV
-         gfahDKuasvLJ8nklCrI4b4hLBCHd7KJaUHtdMlKCMzf0RBlG9TVbdm6017IcfUND7r+/
-         Favtu2pbqbkUcyKNeA5wAw1GwOn4j5W1avbHlISeoXuumqwXkrnFqxiwceM3m9Sova9+
-         28Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgPgR0/EF1kvT/qCreNmXtKcaDhpeWBCbtF2RB6db6XfljbCgeOOwjeYK8VuZUSPqzFs6oUdPta5DCJEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCgJQi6uhbjxqGkUqsswaPaL9EtjAeJAuyVuTBJQePq/mY3wmQ
-	D+8OW7SEEfwqafHsDjAmIlZwdm9RPIDfcwrR0vjMg7JCEhFyViJTOUa7RGqhSPw=
-X-Gm-Gg: ASbGncu77RxjBc/feox4kYteQVWeYSgAHH8HUPsXIgSQ9rz9J+8bKmidG1rHY+2UauQ
-	WZurH+qSexGq1Vqxe6mNSV/TmREYT7HX7j43sKORSVlvXilc7Kae2N+fndMvMHCVA30+Sh6jJSz
-	4T1K/WXoJo0Cvwj943mmwGf4wfn6KKKnv/+w1bNY0tJ3fOqljtq+Sc0KxTE5ReAN9y3kiLmnhww
-	AKZ0RWqmJYcbgFD32TT24jweN0GXK6mddTmFHI4K//4khwpu5J2VSlgty3lGbbIIuHrTcwnyHAF
-	Psg6p9uCNghH1gx/EDeb2otyf1OseLiqxBWpmtd9DycWGjTlWdpuH2ghLO141uMojFhgMC294g+
-	a9cgn3uG4byQ=
-X-Google-Smtp-Source: AGHT+IH92EJqbZhbFVGJDEY6lA8Jg2sdloS5bO5Q4lOiIY+vLsPpGyrboeSaBmRz18vx/ZTSttV78A==
-X-Received: by 2002:a5d:64cd:0:b0:390:eebc:6f32 with SMTP id ffacd0b85a97d-39d1466220fmr1243506f8f.48.1743753655066;
-        Fri, 04 Apr 2025 01:00:55 -0700 (PDT)
-Received: from localhost (p200300f65f14610400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f14:6104::1b9])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43ea8d2bc7fsm50496335e9.0.2025.04.04.01.00.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 01:00:54 -0700 (PDT)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
+	s=arc-20240116; t=1743753746; c=relaxed/simple;
+	bh=E8C0LD9acvN2S2Nm7WLqkEC4F/RvxUV/p8KPGrrhyJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kXs+UPeE3FmLOEQApKTfs1lA48dYR5CSs/j+GRlvTjBnYQVMkAbVF2hxrHxYiFsJE4y609p7AUhcTUaIulHDu9NVaQ12BvBdioFdH278E3qKu01AwWHrj7LgfMxxyjUUeu2p0OFPNua1PMU/H9appd+4CXdhEWb1gd8CLZ9U59g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QUkAX3Ut; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAD19C4CEE5;
+	Fri,  4 Apr 2025 08:02:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743753746;
+	bh=E8C0LD9acvN2S2Nm7WLqkEC4F/RvxUV/p8KPGrrhyJc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QUkAX3UtWsiiz73bMdKQwda5ZIvsR4KA3USkPWQSYoFy4OAozSoSMATbBR23qoopi
+	 mWqCcjUjSKfgFNmoW7V9YsQ5znAQkBk9Cvj58c5/n9GvEBZ+GySlfRY2FRYjarYuoX
+	 5cIAvJ+oTcQTiUyHfbx01qxQnO2nT33bl3/R26GE=
+Date: Fri, 4 Apr 2025 09:00:57 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Erick Karanja <karanja99erick@gmail.com>
+Cc: Julia Lawall <julia.lawall@inria.fr>, outreachy@lists.linux.dev,
+	philipp.g.hortmann@gmail.com, linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: Generalize ARM/RISC-V/RENESAS ARCHITECTURE
-Date: Fri,  4 Apr 2025 10:00:43 +0200
-Message-ID: <20250404080045.367845-2-u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.47.2
+Subject: Re: [PATCH v2 1/3] staging: rtl8723bs: Modify struct rx_pkt_attrib
+ attribute bdecrypted
+Message-ID: <2025040440-provolone-uncertain-77a0@gregkh>
+References: <cover.1743613025.git.karanja99erick@gmail.com>
+ <00287fa9f40c643b8451a0d2df8e2fb97235ee46.1743613025.git.karanja99erick@gmail.com>
+ <2025040215-confusing-sibling-f99f@gregkh>
+ <3c235d91-efd6-ddf8-7c9-d8d35c7585@inria.fr>
+ <2025040246-series-tusk-bec1@gregkh>
+ <cebaec5995fd21c429160b30795e03c2caa29cef.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1057; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=pr0/25F8iIEDARQYcJhcKSuVvjTXR5ohp+UJj7cy7aI=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBn75GtwXL7vChmr7X6CN1PdBtkkIelvq/R+QaBy PKUstjArYaJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZ++RrQAKCRCPgPtYfRL+ TiZOCAC7TV74Eg4xchbUyT6fdfyvJy2FDymVP9icFTyJ0jdpcJeSeJiIeLIDmV0rG67gfwtS4jl k75rfRgnth5JJ8AQb/OIibPdiAOY85um9QdLl169kEc6ZJidQQmIyHFa7xeqLm/MwsjWhfG2EiC y/ejXE/CGin2/ph+Y/VbGldTKy8XsCEfFJ3EQYN97dX8oU0rPlLO94BDt+lgTG40bMwGStsO/j2 XhCDSbp6LmgZswLYwXx6bShCkWZPEQAW6CofoDOukTsIjz5NmG46Oe0bR1yQ+WJbT9mcfyN5Cs8 dunLewUFiXcnCJW4AiIaH+IMAJnuSbvmxhSGFTyt00rsnpFd
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <cebaec5995fd21c429160b30795e03c2caa29cef.camel@gmail.com>
 
-Triggered by noticing that the pwm-rcar driver isn't covered by the
-Renesas maintainer entry, add this driver to it. Instead of adding it
-explicitly, just add a file regex for "rcar" (and drop the one entry
-that gets redundant by that).
+On Fri, Apr 04, 2025 at 09:58:23AM +0300, Erick Karanja wrote:
+> On Wed, 2025-04-02 at 21:41 +0100, Greg KH wrote:
+> > On Wed, Apr 02, 2025 at 10:34:22PM +0200, Julia Lawall wrote:
+> > > 
+> > > 
+> > > On Wed, 2 Apr 2025, Greg KH wrote:
+> > > 
+> > > > On Wed, Apr 02, 2025 at 08:16:42PM +0300, Erick Karanja wrote:
+> > > > > Standardize boolean representation by ensuring consistency,
+> > > > > replace instances of 1/0 with true/false where boolean logic is
+> > > > > implied,
+> > > > > as some definitions already use true/false.
+> > > > > This improves code clarity and aligns with the kernel’s bool
+> > > > > type usage.
+> > > > > 
+> > > > > Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
+> > > > > ---
+> > > > >  drivers/staging/rtl8723bs/core/rtw_recv.c | 2 +-
+> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/drivers/staging/rtl8723bs/core/rtw_recv.c
+> > > > > b/drivers/staging/rtl8723bs/core/rtw_recv.c
+> > > > > index a389ba5ecc6f..fd04dbacb50f 100644
+> > > > > --- a/drivers/staging/rtl8723bs/core/rtw_recv.c
+> > > > > +++ b/drivers/staging/rtl8723bs/core/rtw_recv.c
+> > > > > @@ -1358,7 +1358,7 @@ static signed int
+> > > > > validate_80211w_mgmt(struct adapter *adapter, union recv_frame
+> > > > >  			u8 *mgmt_DATA;
+> > > > >  			u32 data_len = 0;
+> > > > > 
+> > > > > -			pattrib->bdecrypted = 0;
+> > > > > +			pattrib->bdecrypted = false;
+> > > > 
+> > > > but bdecrypted is a u8, not a boolean type.  So setting it to
+> > > > "false"
+> > > > does not seem correct here, right?
+> > > 
+> > > Is false different than 0?
+> > 
+> > Does C guarantee that?  I can never remember.  I don't think it
+> > guarantees that a 'bool' will only be 8 bits, or am I mistaken there
+> > too?
+> > 
+> > > Elsewhere there is an assignment to true.
+> > 
+> > Was that in the original driver?
+> > 
+> > If this doesn't come from the hardware, then it's fine to make the
+> > change.  If it does, it needs to be verified that the layout and bit
+> > values are identical.
+> > 
+> > thanks,
+> I have compared the generated assembly code
+> before and after and I have observed the only
+> change is the comment below.
+> -# drivers/staging/rtl8723bs/core/rtw_recv.c:1361:
+>  			pattrib->bdecrypted = 0;
+> +# drivers/staging/rtl8723bs/core/rtw_recv.c:1361:
+>  			pattrib->bdecrypted = false;
+> There is no change in the assembly instructions.
 
-Looking at the output of
-
-	$ git ls-files | grep rcar
-
-only shows files related to that architecture, so no X: line is
-currently needed.
-
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4cc3cfd35665..77155718a9e9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3061,10 +3061,10 @@ F:	arch/arm/include/debug/renesas-scif.S
- F:	arch/arm/mach-shmobile/
- F:	arch/arm64/boot/dts/renesas/
- F:	arch/riscv/boot/dts/renesas/
--F:	drivers/nvmem/rcar-efuse.c
- F:	drivers/pmdomain/renesas/
- F:	drivers/soc/renesas/
- F:	include/linux/soc/renesas/
-+N:	rcar
- K:	\brenesas,
- 
- ARM/RISCPC ARCHITECTURE
-
-base-commit: a2cc6ff5ec8f91bc463fd3b0c26b61166a07eb11
--- 
-2.47.2
-
+Showing the assembly is key, not just a comment :)
 
