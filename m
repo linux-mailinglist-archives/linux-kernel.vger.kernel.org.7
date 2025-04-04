@@ -1,187 +1,133 @@
-Return-Path: <linux-kernel+bounces-589343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 251E4A7C42B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 21:51:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3857A7C431
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 21:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D7C73A5BB4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:51:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8E20167583
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF0A256C7A;
-	Fri,  4 Apr 2025 19:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322A425E808;
+	Fri,  4 Apr 2025 19:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MEXeT+q2"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dyrh9fQW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0933256C6D;
-	Fri,  4 Apr 2025 19:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BBF25E47A;
+	Fri,  4 Apr 2025 19:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743795785; cv=none; b=g5xgEPhiDZHprkfiGBWLnCsIGcvcwF0IRjUCBFzI7oJTZ+HxQ+s/5dKu+Cr4957qJPiHE8eD4obnqdXINqNZ79M99BxZkrslAhAnJR6lC48FqEtC+AOOobmBbWl1DQbelZduZVFyTuOKiqC9dOp0uj+44/qQmTdlZkJ0OIGfg1c=
+	t=1743796133; cv=none; b=CNWvbxCXB2Ah/z5bir8x4NI/lkWZgeNTqzHNaETKdnzfRf4Xg1FGwRskjUdRxwsVUlk4tv2fj6+jQQIGtVr2f3Wp4vht3UGu4r3huxHA0657/ANnrk6A0P6BVCcPDkAFDLdcm1GSAJ46IwzVFqwRLkPTBkYg8JMC4eQjcmA8KW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743795785; c=relaxed/simple;
-	bh=xjRClgk0ru5HG2bIkVaucZvG6Qpe+4PE/utI54oaEgk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UPr9mWA56x6AufNLQOju/Lr6MaLks7YaDMb6LzE2pbRsD+OuzyDYgZROfWDHEpW15ObBCY5Bqr4qzKwuDrc0x/o8K7XAJOT5VbXzXkz8HvMz8n5KpsCx+fIeqv2LRKLr0MBpAYIdASLYpYKJ5LmF7F0MV70g2HyFV28qtA74wYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MEXeT+q2; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22403cbb47fso26170385ad.0;
-        Fri, 04 Apr 2025 12:43:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743795783; x=1744400583; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aCdihjYQTCflyJxm6dwPDa7f9mrC1RNKPnkAQB9Cuvo=;
-        b=MEXeT+q2YrSdSAErSjL6AimNp3RbMgaQJHOul0TGkTAyqsbrjkQHS9vC6LvvveZrAv
-         c1jIyQRlYzkFEx8Or2HSRTPEOwXEZsQMUisvaBPX3EpfV655N0idvCGrvtqxGnPZ3tNY
-         SO7KdNJSsCFryUlE+xE2T1GbibyHnVTew/OEMHspkTLLpYfONZ4xz5lVDnBG1/Cz4sHW
-         j9g87Z25KjH1ie5/IW5s0GcvAIQIMNP/FaUTWMpypWOrC5TBK6qjzipEVhlvljb4fchx
-         5lHrq36teg6qjgfUJbA1OTPs1JRHWZpi4/gK1NR4R9OgSMBtOUurtd96WWP66lDA7fPH
-         HoSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743795783; x=1744400583;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aCdihjYQTCflyJxm6dwPDa7f9mrC1RNKPnkAQB9Cuvo=;
-        b=ANkTr8PlaM+Bh9lKdcvLcRZQ2UYo6+RDl/thi+0p+soK6Z1lPfJnb6z8UmozmNS0JY
-         0fflDJ96wClAqTPMUuWosqdXReIvb0ceEJeZ6XrXxyjoXiZXi3xo1b7l7kD6aI1C9OJW
-         j+T0F5jXQ6j/G8tHRPdme7L1E7GY/awuNUNTai4iXsqNQb9YIRcNUuCHI69YzTv7HxYR
-         4ZHMwNWnKW3biBB7GkcZIQYkQjDYdJk3Rn/WVG7gt19sJGtlHC5Th8weSr2KTTp0WoIE
-         dIAdUsweYxf2JKsg6EJp/c30jMXjhEfrlt9nfqEGp7cRLase3U449JRBQvJxp1hbFSEL
-         ypIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYDYYhSRWsW5V1XtDhuNWlToYWALBSONMz7CKdGEzx6DrjRDKFQD4AX9EJFVN2ZiHrapzu0SMs9AHE@vger.kernel.org, AJvYcCWtgc5UExuTgjww+U8h70MIu6JakOdl4CAgZj+yaGVsjyGzkeYamDwyYjmbBM7y2WiT+VA5vl/CKLKo5NTL@vger.kernel.org, AJvYcCXExxJcIySipaN0U1R13/B1wj/L+G5TzDDLWgJE5GLQos+D8cXWcZ6DIbB00RnDTQpMcGJUdvmydBhs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7Uvi3r7Jg5P+lVmf8WXZqPrhyOkp9/TJw1rxwzbCovIJkmoQ0
-	jok5MHhdC46svATV1eMUpt7vYhWo1s4mmf0c581j+AB/OsYgW7oOSmX2qrrn
-X-Gm-Gg: ASbGnctAhAL6ikhozniO2w/7yMyfy2TF8vwq8ltrLqA+xaP36XE0pu7FB6HyFYcwtSX
-	NhO/GZ5pcCgHGOQYgf8Ya+FiDJ6ebJF422+t2YMJTHrjF0nyhNRdVWTXZXokjgvoRU+h0XR4Bf0
-	IhtCzkOY0TrG644UrJA43r0fBokguVgIsDzFZZRRVDLcA70OdyddStV1/cbcqn3rSMv1yNgOdQn
-	V5L2xXMewONxfIrVzk5gAuU3RIH6hywo/PeuIZvYCV0aZ7AvsldrKG6dwEeatltk6bEP9o2iVsN
-	071V78roDgWe3xDk9W7vtWN3LROuEFKe/jgST6C8wmZPWaXBnsl8as+kB2VqkR81+V5G4exjqrH
-	4PJmbL43/VNfw5NXw9mCesBlI
-X-Google-Smtp-Source: AGHT+IGmSZQUmzN4kMPir1/3DwusZurNYkOuuU+RMXFG9BLfGYFc6j2Dj8c8UT3R/eHzPGq0z3D8Xw==
-X-Received: by 2002:a17:903:3baf:b0:215:b9a6:5cb9 with SMTP id d9443c01a7336-22a8a85a244mr65443215ad.5.1743795782746;
-        Fri, 04 Apr 2025 12:43:02 -0700 (PDT)
-Received: from ?IPV6:2409:4080:1197:5c59:9640:d38a:951e:d202? ([2409:4080:1197:5c59:9640:d38a:951e:d202])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2297866e1b4sm36482985ad.181.2025.04.04.12.42.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Apr 2025 12:43:02 -0700 (PDT)
-Message-ID: <299e033b-05d6-4d85-8d01-2d7d0167432f@gmail.com>
-Date: Sat, 5 Apr 2025 01:12:56 +0530
+	s=arc-20240116; t=1743796133; c=relaxed/simple;
+	bh=w/HltpRhBBVQFwjgzs/dYbYhW/3xO9NUtumk3pY68d0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cVAZdd1qZM25N4jbGW2AjIi2xnRUw502w7sB/ledjocv6y5viQ4yWFUgI96XEUIYPNMxJ09+F7BKFXsm5wwuh1v9uZ0WKVxuVjxz36Sd2qyIs9fZUSsZ8gVe1XJUsKCbpleklttOyb+1Vu+QqWvrhyH7kwSmb4TYQNagdS4pQVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dyrh9fQW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5AF9C4CEDD;
+	Fri,  4 Apr 2025 19:48:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743796132;
+	bh=w/HltpRhBBVQFwjgzs/dYbYhW/3xO9NUtumk3pY68d0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dyrh9fQWxEcLRlBytymZ+hhNHJ+zSpk02rNCp7ayQUMwBSp3xvusjtnqr2EZ4r+20
+	 eZT9dUWtMhKhmjsTztcjF3DUzs2kCaa6Tf8/3zGjnWZ1nonK9IqF+9rbR+5ASFdPol
+	 YyFBssEdXrP48kh5BtyKoP9vh8vDANujBpzwwotZH3TMn0KYKFg2uAD+l/JZmfbMuT
+	 UCKha2PsnS7RHxXq5cDOglMi8zr4TGS0lLAmIruXzt+BIjr5mDvh1mh/VUwtFPtHUc
+	 6W9bORxc5bXA9vGIRKDSVdYzjes5T2toynAmFk6Fc6MFawSKu4QqYYkWjumHH99/GG
+	 6I1yKg/2ZLflw==
+From: Andrii Nakryiko <andrii@kernel.org>
+To: linux-trace-kernel@vger.kernel.org,
+	peterz@infradead.org,
+	mingo@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	oleg@redhat.com,
+	mhiramat@kernel.org,
+	bigeasy@linutronix.de,
+	ast@kernel.org,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: [PATCH v2 tip/perf] uprobes: avoid false lockdep splat in uprobe timer callback
+Date: Fri,  4 Apr 2025 12:48:48 -0700
+Message-ID: <20250404194848.2109539-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: pwm: Convert lpc32xx-pwm.txt to YAML
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, vz@mleia.com,
- piotr.wojtaszczyk@timesys.com, linux-pwm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250312122750.6391-1-purvayeshi550@gmail.com>
- <76ovkshf4dr6egh72uiigsugdqsin6zwy3skksldhhh2goer6x@gsp3qkhqdtev>
-Content-Language: en-US
-From: Purva Yeshi <purvayeshi550@gmail.com>
-In-Reply-To: <76ovkshf4dr6egh72uiigsugdqsin6zwy3skksldhhh2goer6x@gsp3qkhqdtev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 03/04/25 16:11, Uwe Kleine-König wrote:
-> Hello,
-> 
-> On Wed, Mar 12, 2025 at 05:57:50PM +0530, Purva Yeshi wrote:
->> Convert the existing `lpc32xx-pwm.txt` bindings documentation into a
->> YAML schema (`nxp,lpc3220-pwm.yaml`).
->>
->> Set `"#pwm-cells"` to `const: 3` for expected PWM cell properties.
->>
->> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
-> 
-> I suggest the following commit log:
-> 
->      dt-bindings: pwm: Convert lpc32xx-pwm.txt to yaml format
-> 
->      Convert the existing plain text binding documentation for
->      nxp,lpc3220-pwm devices to a YAML schema.
-> 
->      The value #pwm-cells wasn't specified before, set it to 3 to match the
->      usual value for PWMs.
-> 
+Avoid a false-positive lockdep warning in PREEMPT_RT configuration when
+using write_seqcount_begin() in uprobe timer callback by using
+raw_write_* APIs. Uprobe's use of timer callback is guaranteed to not
+race with itself for a given uprobe_task, and as such seqcount's
+insistence on having preemption disabled on the writer side is
+irrelevant. So switch to raw_ variants of seqcount API instead of
+disabling preemption unnecessarily.
 
-Hello,
+Also, point out in the comments more explicitly why we use seqcount
+despite our reader side being rather simple and never retrying. We favor
+well-maintained kernel primitive in favor of open-coding our own memory
+barriers.
 
-Thank you for the suggestion. I'll update the commit log accordingly in 
-the next revision.
+Link: https://lore.kernel.org/bpf/CAADnVQLLOHZmPO4X_dQ+cTaSDvzdWHzA0qUqQDhLFYL3D6xPxg@mail.gmail.com/
+Reported-by: Alexei Starovoitov <ast@kernel.org>
+Suggested-by: Sebastian Siewior <bigeasy@linutronix.de>
+Fixes: 8622e45b5da1 ("uprobes: Reuse return_instances between multiple uretprobes within task")
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+---
+v1->v2:
+  - fix comment style and s/hardirqs/preemption/ (Sebastian);
+  - improved added comment based on Sebastian's suggestions.
 
->> diff --git a/Documentation/devicetree/bindings/pwm/nxp,lpc3220-pwm.yaml b/Documentation/devicetree/bindings/pwm/nxp,lpc3220-pwm.yaml
->> new file mode 100644
->> index 000000000..432a5e9d4
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pwm/nxp,lpc3220-pwm.yaml
->> @@ -0,0 +1,38 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/pwm/nxp,lpc3220-pwm.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: LPC32XX PWM controller
->> +
->> +maintainers:
->> +  - Vladimir Zapolskiy <vz@mleia.com>
->> +  - Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
->> +
->> +allOf:
->> +  - $ref: pwm.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    const: nxp,lpc3220-pwm
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  "#pwm-cells":
->> +    const: 3
-> 
-> The PWMs defined in arch/arm/boot/dts/nxp/lpc/lpc32xx.dtsi also have a
-> clocks property and in the driver it's not optional. Can you please add
-> it (here, in the list of required properties and the commit log)?
+ kernel/events/uprobes.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-Thank you for the review. I’ll add the clocks property, update the list 
-of required properties, and adjust the commit log accordingly in the 
-next revision.
-
-> 
->> +required:
->> +  - compatible
->> +  - reg
->> +
->> +unevaluatedProperties: false
->> +
->> +examples:
->> +  - |
->> +    pwm@4005c000 {
->> +        compatible = "nxp,lpc3220-pwm";
->> +        reg = <0x4005c000 0x4>;
->> +        #pwm-cells = <3>;
->> +    };
-> 
-> Best regards
-> Uwe
-
-Best regards,
-Purva Yeshi
-
-
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 70c84b9d7be3..0f05bae49827 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -1944,6 +1944,9 @@ static void free_ret_instance(struct uprobe_task *utask,
+ 	 * to-be-reused return instances for future uretprobes. If ri_timer()
+ 	 * happens to be running right now, though, we fallback to safety and
+ 	 * just perform RCU-delated freeing of ri.
++	 * Admittedly, this is a rather simple use of seqcount, but it nicely
++	 * abstracts away all the necessary memory barriers, so we use
++	 * a well-supported kernel primitive here.
+ 	 */
+ 	if (raw_seqcount_try_begin(&utask->ri_seqcount, seq)) {
+ 		/* immediate reuse of ri without RCU GP is OK */
+@@ -2004,12 +2007,20 @@ static void ri_timer(struct timer_list *timer)
+ 	/* RCU protects return_instance from freeing. */
+ 	guard(rcu)();
+ 
+-	write_seqcount_begin(&utask->ri_seqcount);
++	/*
++	 * See free_ret_instance() for notes on seqcount use.
++	 * We also employ raw API variants to avoid lockdep false-positive
++	 * warning complaining about enabled preemption. The timer can only be
++	 * invoked once for a uprobe_task. Therefore there can only be one
++	 * writer. The reader does not require an even sequence count to make
++	 * progress, so it is OK to remain preemptible on PREEMPT_RT.
++	 */
++	raw_write_seqcount_begin(&utask->ri_seqcount);
+ 
+ 	for_each_ret_instance_rcu(ri, utask->return_instances)
+ 		hprobe_expire(&ri->hprobe, false);
+ 
+-	write_seqcount_end(&utask->ri_seqcount);
++	raw_write_seqcount_end(&utask->ri_seqcount);
+ }
+ 
+ static struct uprobe_task *alloc_utask(void)
+-- 
+2.47.1
 
 
