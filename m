@@ -1,298 +1,132 @@
-Return-Path: <linux-kernel+bounces-589010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 026FAA7C084
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:26:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C27CA7C091
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FCA918866C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:26:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C75003BB959
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661F11F5413;
-	Fri,  4 Apr 2025 15:26:14 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9991F582E;
+	Fri,  4 Apr 2025 15:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gB809ruG"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D847F1F4CBB;
-	Fri,  4 Apr 2025 15:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB193D6F;
+	Fri,  4 Apr 2025 15:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743780373; cv=none; b=KqG2d3NmVw0fRopWMXTFUuI7G5G/wkyPDTbclClEwZpTvwgvbDPzX/1qb1tdxACQGdcYftGpMgVKuXW0uqBsZij9pmpfG+2qgt7ClH+0dHaxZGnYVIEmI0BLCfpkV2wgwuvab7nodhTWDs2dMD0abCFyIb98+s6wpq2t3GGfTQY=
+	t=1743780561; cv=none; b=tWuQB2dwAywjKCRpioUkqFhX7n1xtf0PSyct2Bu+bWWuWwUL2de34hR5kvvmQuSKVssAD0Mq94O/PybciKC9lCF+l7XJsnGPbyXx6xO0OnkG8GZYOdHAv6lnTVt3zGqFYjOJdQMMIhIs79Bsp0jw5OFvbH5fyJZKYZC0d0Xa3gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743780373; c=relaxed/simple;
-	bh=XgN5COqm+Lup9ZFi9hle7PrnGjT/jyI+4m+KaLYn0bM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=TpbQAn5/Lek7XP3JqUpZXM5pZOh0F490MxLC7YvCG2OfrztI0/IS541KM4ZvSOId93jZNLDvkr1PsScpHwr/iB7L1Tr7IPRXl9GlsJwhw7Hi+xt0IbI0BNcktxxnD/WUW2zwi4EIXD1moomtd+9GUozBU52wuEnR5px9QZjkNn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A78D6C4CEDD;
-	Fri,  4 Apr 2025 15:26:12 +0000 (UTC)
-Date: Fri, 4 Apr 2025 11:27:20 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Tom Zanussi <zanussi@kernel.org>
-Subject: [PATCH v2] tracing: Move histogram trigger variables from stack to
- per CPU structure
-Message-ID: <20250404112720.34802192@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743780561; c=relaxed/simple;
+	bh=uM40pu9Z6r9Jxlm4n/4Au8nRalfUeAyiv3GTqd3/fOI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BSPKTZVFXRtZk7oq65U4T5eKdFsV0gzvcrgmTHcYQwB7THFOA8EOHgMjhui3+NQiqr+ATrypnzrU9KexMfOrCXLIRhkoiaEWyqNF25lh0AVa7MzzcZN5rSf9v8BmuXKQ8e6rqNd59MwkUTBqAo2ECptEHm2lAUEBkr0SzFgxurc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gB809ruG; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-523f670ca99so998151e0c.1;
+        Fri, 04 Apr 2025 08:29:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743780559; x=1744385359; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k02HlloNIozkkFN+/8qEPF7E5OVMmHSryhg37d8ULUg=;
+        b=gB809ruGJyitx08ks1QuyuNAJpQ9HQ//4fOJtorM/rKJJjhKVdDewr2Lf5oR21QQ6y
+         ujOR8IFGGLHVTjYiaWqWtfLTjiJw20Oud1RL1pH7OxP5sTThN2F8pAdV1OrE3lxFfYnd
+         UpZdk+xqm6szd3+ikI3RQ0EOM9Rx0LFeGddOtNNmzUrRjNB63jtKiD0CpbppIiD6le9T
+         zLf7PHrZO5zQRUeMaF461IW2hYUN/DHniHbbIM1PCddACvoKM2vbuJQpfxHndYLJlIl5
+         poJ1Io1xCOxs8cTA06yTNfUjYMy5UPUFUd+MfjP9xGGwr0IFpIAeHUfNKyE7hkN7ponp
+         Dr4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743780559; x=1744385359;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k02HlloNIozkkFN+/8qEPF7E5OVMmHSryhg37d8ULUg=;
+        b=EDs/Q0yt5dwdXRlyZ+lJicj6JmiK9HmZnG7nLIJeGHoLjJgcSdzTD8njki8oad+siV
+         T0BCPBN5O9KLcVKmfNvi74KhhoflvkeiVJ1WblUUl1eNHVTOM1rUqcwkI4/BnklmHCbn
+         RTRmnQdkc/JTsxURcKqIEUTG63a4ruxmE/XU7jmeeG3fySqrIAreNDVIBFTgPbrWznFk
+         IHShgp1cjN55zyMGdNs5G+e0zulXssMOkAfxsPnPYg6IKkm2zafnMPbOl7aw0955xBfR
+         Yb5xblanprUmptZaovKuDRIo3z2WcZej9/ma4C/Jidz4yHWcRyrAAcAA7hW4V3gnxMzH
+         3o1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUBM0dV3ww+HPi/xQZAUFUKc3ZXsbCTbXUPb1k8BsPA43aN8cbAKVkJFeLoNsiO1GJ9N5mfSssCRdw2X4R2@vger.kernel.org, AJvYcCWMfE67997lZXvBhpJWaCNuFTqqojhSsWYLXnXGV5A5SePPKlnduhsenIg/wKGRDnd6jLTU2zTYVP0IqTcr6itYeho=@vger.kernel.org, AJvYcCX8pGm0XUirq4/xCDU1RpcvEj5O44qov1JX/7tlolJ4J+mJqDPjewbOfok3gv+h7kXy3Vr9ZuhpCtdK@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJwyCRDtQYOvTVBvZjGWYwVEDZFUdMpZt3dPRMNTMnfJoS5dXN
+	DHQ4E1ZN1GMoYPRd5Z8OSTuxI8aja4bci31CjX7skGWDy/QccHmVB0T2/eYcVawRpTO0hVBAFUX
+	JERVCmj5XgqB2CjbNCMdId9hv1OA=
+X-Gm-Gg: ASbGncs/OLmaV/RtF06Fe3J11HS2foKubL9YuEiWLHuMU31NgB52gjxqfagS6ncmJAI
+	FFPTW+GDp+tnXI+VNU35KA8MuuJWSEUGf+gznZKt3KYnJwYSckA9ThwJvbx11gwy+KAQoql+853
+	p+GB75xc31C9vTN7RJxq0KpftSw8Emiy39tXK786s4aEnV5xVQGtcUKMaX+Q==
+X-Google-Smtp-Source: AGHT+IHGVVs8EyWlZYsKs9eWMXJxof9zZ51Qwfke9s2QlG6Zpc9JizzFAA318HQ7P7E5ruSFZneG7kVoVCI04RBljys=
+X-Received: by 2002:a05:6122:6585:b0:520:51a4:b84f with SMTP id
+ 71dfb90a1353d-5276444fe9cmr3378844e0c.4.1743780558933; Fri, 04 Apr 2025
+ 08:29:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250401171432.101504-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250401171432.101504-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250402-beneficial-dark-mosquito-6c3641@krzk-bin> <4fa7112b-ade4-4396-b085-16b1c5a7b84b@kernel.org>
+In-Reply-To: <4fa7112b-ade4-4396-b085-16b1c5a7b84b@kernel.org>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 4 Apr 2025 16:28:52 +0100
+X-Gm-Features: ATxdqUFocy1kzNDdrRv4ErZQ6hx4mOj8G5uoaZwdki_6HbA2bHSD7rGX8QnvL-U
+Message-ID: <CA+V-a8sWrZ4gH0_JhPFOR32z5EapkoXPxt0GyiQ4bAgbKkquHw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: reset: Document RZ/V2H(P) USB2PHY
+ reset driver
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Hi Krzysztof,
 
-The histogram trigger has three somewhat large arrays on the kernel stack:
+Thank you for the review.
 
-	unsigned long entries[HIST_STACKTRACE_DEPTH];
-	u64 var_ref_vals[TRACING_MAP_VARS_MAX];
-	char compound_key[HIST_KEY_SIZE_MAX];
+On Wed, Apr 2, 2025 at 7:59=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On 02/04/2025 08:57, Krzysztof Kozlowski wrote:
+> > On Tue, Apr 01, 2025 at 06:14:30PM +0100, Prabhakar wrote:
+> >> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >>
+> >> Add a device tree binding document for the Renesas RZ/V2H(P) USB2PHY r=
+eset
+> >> driver. This driver controls the reset and power-down of the USB2.0 PH=
+Y,
+> >> which is used for both host and function modes.
+> >>
+> >> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >> ---
+> >>  .../reset/renesas,rzv2h-usb2phy-reset.yaml    | 56 ++++++++++++++++++=
++
+> >>  1 file changed, 56 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/reset/renesas,rz=
+v2h-usb2phy-reset.yaml
+> >
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> Actually one more thing:
+> Drop "driver" from the subject and commit msg and instead describe the
+> hardware.
+>
+I will do that in the next version.
 
-Checking the function event_hist_trigger() stack frame size, it currently
-uses 816 bytes for its stack frame due to these variables!
-
-Instead, allocate a per CPU structure that holds these arrays for each
-context level (normal, softirq, irq and NMI). That is, each CPU will have
-4 of these structures. This will be allocated when the first histogram
-trigger is enabled and freed when the last is disabled. When the
-histogram callback triggers, it will request this structure. The request
-will disable preemption, get the per CPU structure at the index of the
-per CPU variable, and increment that variable.
-
-The callback will use the arrays in this structure to perform its work and
-then release the structure. That in turn will simply decrement the per CPU
-index and enable preemption.
-
-Moving the variables from the kernel stack to the per CPU structure brings
-the stack frame of event_hist_trigger() down to just 112 bytes.
-
-Fixes: 067fe038e70f6 ("tracing: Add variable reference handling to hist triggers")
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
-Changes since v1: https://lore.kernel.org/20250403204251.0164a4cf@gandalf.local.home
-
-- Test hist_pads for NULL and not per_cpu_ptr(hist_pads, cpu) in get_hist_pad()
-  If hist_pads is not NULL, the per_cpu_ptr will be allocated.
-  Also no need to test with preemption disabled, making the function simpler.
-  If hist_pads is NULL then triggers should not be enabled. Add WARN_ON_ONCE()
-  around that test.
-
- kernel/trace/trace_events_hist.c | 126 ++++++++++++++++++++++++++-----
- 1 file changed, 107 insertions(+), 19 deletions(-)
-
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index b0472c860b26..62c89158261a 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -5244,17 +5244,94 @@ hist_trigger_actions(struct hist_trigger_data *hist_data,
- 	}
- }
- 
-+/*
-+ * The hist_pad structure is used to save information to create
-+ * a histogram from the histogram trigger. It's too big to store
-+ * on the stack, so when the histogram trigger is initialized
-+ * a percpu array of 4 hist_pad structures is allocated.
-+ * This will cover every context from normal, softirq, irq and NMI
-+ * in the very unlikely event that a tigger happens at each of
-+ * these contexts and interrupts a currently active trigger.
-+ */
-+struct hist_pad {
-+	unsigned long		entries[HIST_STACKTRACE_DEPTH];
-+	u64			var_ref_vals[TRACING_MAP_VARS_MAX];
-+	char			compound_key[HIST_KEY_SIZE_MAX];
-+};
-+
-+static struct hist_pad __percpu *hist_pads;
-+static DEFINE_PER_CPU(int, hist_pad_cnt);
-+static refcount_t hist_pad_ref;
-+
-+/* One hist_pad for every context (normal, softirq, irq, NMI) */
-+#define MAX_HIST_CNT 4
-+
-+static int alloc_hist_pad(void)
-+{
-+	lockdep_assert_held(&event_mutex);
-+
-+	if (refcount_read(&hist_pad_ref)) {
-+		refcount_inc(&hist_pad_ref);
-+		return 0;
-+	}
-+
-+	hist_pads = __alloc_percpu(sizeof(struct hist_pad) * MAX_HIST_CNT,
-+				   __alignof__(struct hist_pad));
-+	if (!hist_pads)
-+		return -ENOMEM;
-+
-+	refcount_set(&hist_pad_ref, 1);
-+	return 0;
-+}
-+
-+static void free_hist_pad(void)
-+{
-+	lockdep_assert_held(&event_mutex);
-+
-+	if (!refcount_dec_and_test(&hist_pad_ref))
-+		return;
-+
-+	free_percpu(hist_pads);
-+	hist_pads = NULL;
-+}
-+
-+static struct hist_pad *get_hist_pad(void)
-+{
-+	struct hist_pad *hist_pad;
-+	int cnt;
-+
-+	if (WARN_ON_ONCE(!hist_pads))
-+		return NULL;
-+
-+	preempt_disable();
-+
-+	hist_pad = per_cpu_ptr(hist_pads, smp_processor_id());
-+
-+	if (this_cpu_read(hist_pad_cnt) == MAX_HIST_CNT) {
-+		preempt_enable();
-+		return NULL;
-+	}
-+
-+	cnt = this_cpu_inc_return(hist_pad_cnt) - 1;
-+
-+	return &hist_pad[cnt];
-+}
-+
-+static void put_hist_pad(void)
-+{
-+	this_cpu_dec(hist_pad_cnt);
-+	preempt_enable();
-+}
-+
- static void event_hist_trigger(struct event_trigger_data *data,
- 			       struct trace_buffer *buffer, void *rec,
- 			       struct ring_buffer_event *rbe)
- {
- 	struct hist_trigger_data *hist_data = data->private_data;
- 	bool use_compound_key = (hist_data->n_keys > 1);
--	unsigned long entries[HIST_STACKTRACE_DEPTH];
--	u64 var_ref_vals[TRACING_MAP_VARS_MAX];
--	char compound_key[HIST_KEY_SIZE_MAX];
- 	struct tracing_map_elt *elt = NULL;
- 	struct hist_field *key_field;
-+	struct hist_pad *hist_pad;
- 	u64 field_contents;
- 	void *key = NULL;
- 	unsigned int i;
-@@ -5262,25 +5339,29 @@ static void event_hist_trigger(struct event_trigger_data *data,
- 	if (unlikely(!rbe))
- 		return;
- 
--	memset(compound_key, 0, hist_data->key_size);
-+	hist_pad = get_hist_pad();
-+	if (!hist_pad)
-+		return;
-+
-+	memset(hist_pad->compound_key, 0, hist_data->key_size);
- 
- 	for_each_hist_key_field(i, hist_data) {
- 		key_field = hist_data->fields[i];
- 
- 		if (key_field->flags & HIST_FIELD_FL_STACKTRACE) {
--			memset(entries, 0, HIST_STACKTRACE_SIZE);
-+			memset(hist_pad->entries, 0, HIST_STACKTRACE_SIZE);
- 			if (key_field->field) {
- 				unsigned long *stack, n_entries;
- 
- 				field_contents = hist_fn_call(key_field, elt, buffer, rbe, rec);
- 				stack = (unsigned long *)(long)field_contents;
- 				n_entries = *stack;
--				memcpy(entries, ++stack, n_entries * sizeof(unsigned long));
-+				memcpy(hist_pad->entries, ++stack, n_entries * sizeof(unsigned long));
- 			} else {
--				stack_trace_save(entries, HIST_STACKTRACE_DEPTH,
-+				stack_trace_save(hist_pads->entries, HIST_STACKTRACE_DEPTH,
- 						 HIST_STACKTRACE_SKIP);
- 			}
--			key = entries;
-+			key = hist_pad->entries;
- 		} else {
- 			field_contents = hist_fn_call(key_field, elt, buffer, rbe, rec);
- 			if (key_field->flags & HIST_FIELD_FL_STRING) {
-@@ -5291,26 +5372,31 @@ static void event_hist_trigger(struct event_trigger_data *data,
- 		}
- 
- 		if (use_compound_key)
--			add_to_key(compound_key, key, key_field, rec);
-+			add_to_key(hist_pad->compound_key, key, key_field, rec);
- 	}
- 
- 	if (use_compound_key)
--		key = compound_key;
-+		key = hist_pad->compound_key;
- 
- 	if (hist_data->n_var_refs &&
--	    !resolve_var_refs(hist_data, key, var_ref_vals, false))
--		return;
-+	    !resolve_var_refs(hist_data, key, hist_pad->var_ref_vals, false))
-+		goto out;
- 
- 	elt = tracing_map_insert(hist_data->map, key);
- 	if (!elt)
--		return;
-+		goto out;
- 
--	hist_trigger_elt_update(hist_data, elt, buffer, rec, rbe, var_ref_vals);
-+	hist_trigger_elt_update(hist_data, elt, buffer, rec, rbe, hist_pad->var_ref_vals);
- 
--	if (resolve_var_refs(hist_data, key, var_ref_vals, true))
--		hist_trigger_actions(hist_data, elt, buffer, rec, rbe, key, var_ref_vals);
-+	if (resolve_var_refs(hist_data, key, hist_pad->var_ref_vals, true)) {
-+		hist_trigger_actions(hist_data, elt, buffer, rec, rbe,
-+				     key, hist_pad->var_ref_vals);
-+	}
- 
- 	hist_poll_wakeup();
-+
-+ out:
-+	put_hist_pad();
- }
- 
- static void hist_trigger_stacktrace_print(struct seq_file *m,
-@@ -6143,6 +6229,9 @@ static int event_hist_trigger_init(struct event_trigger_data *data)
- {
- 	struct hist_trigger_data *hist_data = data->private_data;
- 
-+	if (alloc_hist_pad() < 0)
-+		return -ENOMEM;
-+
- 	if (!data->ref && hist_data->attrs->name)
- 		save_named_trigger(hist_data->attrs->name, data);
- 
-@@ -6187,6 +6276,7 @@ static void event_hist_trigger_free(struct event_trigger_data *data)
- 
- 		destroy_hist_data(hist_data);
- 	}
-+	free_hist_pad();
- }
- 
- static struct event_trigger_ops event_hist_trigger_ops = {
-@@ -6202,9 +6292,7 @@ static int event_hist_trigger_named_init(struct event_trigger_data *data)
- 
- 	save_named_trigger(data->named_data->name, data);
- 
--	event_hist_trigger_init(data->named_data);
--
--	return 0;
-+	return event_hist_trigger_init(data->named_data);
- }
- 
- static void event_hist_trigger_named_free(struct event_trigger_data *data)
--- 
-2.47.2
-
+Cheers,
+Prabhakar
 
