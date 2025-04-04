@@ -1,147 +1,144 @@
-Return-Path: <linux-kernel+bounces-589164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4C3DA7C295
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:38:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 037D7A7C28C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5D5E17C525
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:37:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6BA27A9408
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726AE21D3ED;
-	Fri,  4 Apr 2025 17:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BCA219A95;
+	Fri,  4 Apr 2025 17:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zpdiks8W"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="Hl5AQsdv"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FA921C171;
-	Fri,  4 Apr 2025 17:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7F5218ABA
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 17:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743788158; cv=none; b=fZwAIfKF9pYOMUA98OBmMozBEK0rtW3tRLzpWJ8D/XO+oH4hNP5IXjgiix1wE3Cwg7E8zSnsH9ThtOA6oW8ETNWxRH57yeSOVkB3s6UTioltDsq5w+Wf5Ht70s4zSpLzoGh+xjSCbv/nhBvqkVZtnznRrAb/sQLk/gSrODB6RvI=
+	t=1743788120; cv=none; b=n2U82RyOVVEBPmm7yhS9zl9x9wReOmx+Y+cWb478d6r19tFKrbcxQuXxkYnJpIYIYwIYnBhAV+q1fH3+cHuy83b5cB04WTzHJSvT9HBitKYoYeopVmN4ysD2fl8xFYVqr1aTZRUOT8Qs5iLE/bOd3sDeWx0OFQwiJC7fa3IXHSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743788158; c=relaxed/simple;
-	bh=Tj/HfVjqdh8faGcHAlLbM5/fJtNdbkBrRoiq+2QW0Ps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RmuUJprg5kzyiA+H9xXY048cxWVrT0Mv66dHkIbFXPcbYsXGhD6b3SKQ3GJTT4Us+iMHKVH8eRxfGUqFl/CLoaol43eCSXyvNebekMJvxeq6uBllv8cXxn4x2JBV1THqK4R4Qb3YeyjjegxWGzlTWglxWnVD6mK6jiqHfcDDDyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zpdiks8W; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743788150; x=1775324150;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Tj/HfVjqdh8faGcHAlLbM5/fJtNdbkBrRoiq+2QW0Ps=;
-  b=Zpdiks8W7+R+O8leVL3uxHvNZg5Y4tEiSdXZlBBBJVRgElym0R0UlCQR
-   YVnwp5YwkHrPsjVG5RZg1shmpwOW4F03WUbTTWfmUGNBa/H6HITNKPrcA
-   p3da/MJIODHwhkeWqM1Ec6TU4cPWxTblZqWmhvB/zFE9bXFhnb5r9T/ty
-   Dr0ekfKUPT6xR2dH6JDUXbOflnaQTbQf8/5UKDdr2JLm8QLpRxbrE2yWF
-   eOJdBjfi1AEgDkA6CtmHFYSNmYYmMevmENkzOMhZMisTj12pM0mpNaPfn
-   dSLTLIX452c1Do4/2OhynNSLfxtEMO6BQA/0L4rDDT+SN4j8fZj6QqRKE
-   w==;
-X-CSE-ConnectionGUID: c+1si+5uQ1OQbCgxdpUcpg==
-X-CSE-MsgGUID: jx0lihhIS7GJ+BrAip9gYg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11394"; a="45140695"
-X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="45140695"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 10:35:49 -0700
-X-CSE-ConnectionGUID: 53fwTgKvTvmRLYdCdRTTTA==
-X-CSE-MsgGUID: DAaf8C44RgyeCvVKTvQkdw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="127855345"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 04 Apr 2025 10:35:46 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u0kxE-0001QV-0a;
-	Fri, 04 Apr 2025 17:35:44 +0000
-Date: Sat, 5 Apr 2025 01:35:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wentao Liang <vulab@iscas.ac.cn>, sgoutham@marvell.com,
-	gakula@marvell.com, sbhatta@marvell.com, hkelam@marvell.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Wentao Liang <vulab@iscas.ac.cn>
-Subject: Re: [PATCH] octeontx2-pf:  Add error handling for
- cn10k_map_unmap_rq_policer().
-Message-ID: <202504050157.qdVzTVMM-lkp@intel.com>
-References: <20250403151303.2280-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1743788120; c=relaxed/simple;
+	bh=4qZMCacvIW/TYVtR6WWATCEGDTnUzOK2HOxQ7ZgRspo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uGvZG3WrVwQKU2/Ad8IttTLC2cXb3HmwMJC7ANv1y0bXxqIMlbapURipsLGYaMwNRO2r8XwuCkQ0dUhr7fefoz/apFj+mcBq0ACAvfNKKRsQ/qcGb+HDAppbbSP+HKlGuHsGorbgbPZQxFgJYpj25lls67XCh2kvk8PymFFTrcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=Hl5AQsdv; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
+Message-ID: <b3f8e641-9690-4792-974c-c895d2e4531a@iencinas.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
+	s=key1; t=1743788106;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N2/fZZA4UL9XJIEHQ+/bBTVFu2hgzKlDY3S+eN0cDvg=;
+	b=Hl5AQsdv2ftxLfGgWfsSkVOMa+4AgcivN/fnTLwoWKanl5iGKyiragWuaSPdPfjF2x0FGX
+	zseE+ZwxVKLbsoZn+le3RmgYE5pbbj9YdfFnsF9fi1glUuSZL7ESp/Jj2oD12892ktWqCv
+	7q+ttQIaUabPjTD7bOfoTHuqFbLqNp3+wBi1uMKoNw6Yldd0Pm+XzzM8rvipfZiyKAe2cW
+	0zSRTFJ8CN1xo3GnysgVRKLiRiSEs/Gu8EF2P33sv6Xxi0we/InQTI8PC30T8e50Dt/5pC
+	WdxOGZ+Q0tTMDcEw/hvNvZnLVYZSbFAdBf/uxfZ+BN547fsyn1I2soTwOFQRUg==
+Date: Fri, 4 Apr 2025 19:35:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250403151303.2280-1-vulab@iscas.ac.cn>
-
-Hi Wentao,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.14 next-20250404]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Wentao-Liang/octeontx2-pf-Add-error-handling-for-cn10k_map_unmap_rq_policer/20250403-231435
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250403151303.2280-1-vulab%40iscas.ac.cn
-patch subject: [PATCH] octeontx2-pf:  Add error handling for cn10k_map_unmap_rq_policer().
-config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20250405/202504050157.qdVzTVMM-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250405/202504050157.qdVzTVMM-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504050157.qdVzTVMM-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c: In function 'cn10k_free_matchall_ipolicer':
->> drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c:360:9: warning: this 'for' clause does not guard... [-Wmisleading-indentation]
-     360 |         for (qidx = 0; qidx < hw->rx_queues; qidx++)
-         |         ^~~
-   drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c:362:17: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'for'
-     362 |                 if (rc)
-         |                 ^~
+Subject: Re: [PATCH v3 2/2] riscv: introduce asm/swab.h
+To: Arnd Bergmann <arnd@arndb.de>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>
+Cc: Eric Biggers <ebiggers@kernel.org>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
+ Shuah Khan <skhan@linuxfoundation.org>,
+ Zhihang Shao <zhihang.shao.iscas@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>
+References: <20250403-riscv-swab-v3-0-3bf705d80e33@iencinas.com>
+ <20250403-riscv-swab-v3-2-3bf705d80e33@iencinas.com>
+ <c6efcdca-5739-42b6-8cb4-f4d8cc85b6af@app.fastmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ignacio Encinas <ignacio@iencinas.com>
+In-Reply-To: <c6efcdca-5739-42b6-8cb4-f4d8cc85b6af@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
 
-vim +/for +360 drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c
 
-2ca89a2c375272 Sunil Goutham 2021-06-15  351  
-2ca89a2c375272 Sunil Goutham 2021-06-15  352  int cn10k_free_matchall_ipolicer(struct otx2_nic *pfvf)
-2ca89a2c375272 Sunil Goutham 2021-06-15  353  {
-2ca89a2c375272 Sunil Goutham 2021-06-15  354  	struct otx2_hw *hw = &pfvf->hw;
-2ca89a2c375272 Sunil Goutham 2021-06-15  355  	int qidx, rc;
-2ca89a2c375272 Sunil Goutham 2021-06-15  356  
-2ca89a2c375272 Sunil Goutham 2021-06-15  357  	mutex_lock(&pfvf->mbox.lock);
-2ca89a2c375272 Sunil Goutham 2021-06-15  358  
-2ca89a2c375272 Sunil Goutham 2021-06-15  359  	/* Remove RQ's policer mapping */
-2ca89a2c375272 Sunil Goutham 2021-06-15 @360  	for (qidx = 0; qidx < hw->rx_queues; qidx++)
-d85bdae93e8dbe Wentao Liang  2025-04-03  361  		rc = cn10k_map_unmap_rq_policer(pfvf, qidx, hw->matchall_ipolicer, false);
-d85bdae93e8dbe Wentao Liang  2025-04-03  362  		if (rc)
-d85bdae93e8dbe Wentao Liang  2025-04-03  363  			goto out;
-2ca89a2c375272 Sunil Goutham 2021-06-15  364  
-2ca89a2c375272 Sunil Goutham 2021-06-15  365  	rc = cn10k_free_leaf_profile(pfvf, hw->matchall_ipolicer);
-2ca89a2c375272 Sunil Goutham 2021-06-15  366  
-d85bdae93e8dbe Wentao Liang  2025-04-03  367  out:
-2ca89a2c375272 Sunil Goutham 2021-06-15  368  	mutex_unlock(&pfvf->mbox.lock);
-2ca89a2c375272 Sunil Goutham 2021-06-15  369  	return rc;
-2ca89a2c375272 Sunil Goutham 2021-06-15  370  }
-2ca89a2c375272 Sunil Goutham 2021-06-15  371  
+On 4/4/25 7:58, Arnd Bergmann wrote:
+> On Thu, Apr 3, 2025, at 22:34, Ignacio Encinas wrote:
+>> +#define ARCH_SWAB(size) \
+>> +static __always_inline unsigned long __arch_swab##size(__u##size value) \
+>> +{									\
+>> +	unsigned long x = value;					\
+>> +									\
+>> +	if (riscv_has_extension_likely(RISCV_ISA_EXT_ZBB)) {            \
+>> +		asm volatile (".option push\n"				\
+>> +			      ".option arch,+zbb\n"			\
+>> +			      "rev8 %0, %1\n"				\
+>> +			      ".option pop\n"				\
+>> +			      : "=r" (x) : "r" (x));			\
+>> +		return x >> (BITS_PER_LONG - size);			\
+>> +	}                                                               \
+>> +	return  ___constant_swab##size(value);				\
+>> +}
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Hello Arnd!
+
+> I think the fallback should really just use the __builtin_bswap
+> helpers instead of the ___constant_swab variants. The output
+> would be the same, but you can skip patch 1/2.
+
+I tried, but that change causes build errors:
+
+```
+undefined reference to `__bswapsi2'
+
+[...]
+
+undefined reference to `__bswapdi2
+```
+
+I tried working around those, but couldn't find a good solution. I'm a 
+bit out of my depth here, but I "summarized" everything here [1]. Let me
+know if I'm missing something.
+
+[1] https://lore.kernel.org/linux-riscv/b3b59747-0484-4042-bdc4-c067688e3bfe@iencinas.com/
+
+> I would also suggest dumbing down the macro a bit so you can
+> still find the definition with 'git grep __arch_swab64'. Ideally
+> just put the function body into a macro but leave the three
+> separate inline function definitions.
+
+Good point, thanks for bringing it up. Just to be sure, is this what you
+had in mind? (Give or take formatting + naming of variables)
+
+#define arch_swab(size, value) 						\
+({                      						\
+	unsigned long x = value;					\
+									\
+	if (riscv_has_extension_likely(RISCV_ISA_EXT_ZBB)) {            \
+		asm volatile (".option push\n"				\
+			      ".option arch,+zbb\n"			\
+			      "rev8 %0, %1\n"				\
+			      ".option pop\n"				\
+			      : "=r" (x) : "r" (x));			\
+		x = x >> (BITS_PER_LONG - size);			\
+	} else {                                                        \
+		x = ___constant_swab##size(value);                      \
+	}								\
+	x;								\
+})
+
+static __always_inline unsigned long __arch_swab64(__u64 value) {
+	return arch_swab(64, value);
+}
+
+Thanks!
 
