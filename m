@@ -1,305 +1,160 @@
-Return-Path: <linux-kernel+bounces-588790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE4FA7BD99
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:19:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 521E9A7BD57
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C4F8167083
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:18:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A319217B3CE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705871F0E5A;
-	Fri,  4 Apr 2025 13:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112741EF0AB;
+	Fri,  4 Apr 2025 13:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EVIbzUbd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyaqClao"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C07F1EDA26;
-	Fri,  4 Apr 2025 13:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702551EEA5F
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 13:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743772700; cv=none; b=phHHsfqJE3UcHHZvS/x7f6gsv5nD8C0ZfAA1QM20r08CKdL1p+EtQAeKVB1YSsnF4VsSHOZBLkd3595Pprobcj6UbdHK34iAJaX/j4YTNHGGU2gQZ662vg8I/79Fz4k8FsUcr0rLnnpZZh3jH/RRQzd461DQB5Uouja+e7eBPrs=
+	t=1743772494; cv=none; b=rA31QGh2VC8FjCokKsf4c1fen7OuCxB5dIRmtP0tpv58H1Aejt1WX640HLUBuY2v0xysheN+0UbHaM9tR+JBZKxOdcHthoj3a9dWiNHYX9m1Q4WG0CMO6GHGiZu+DjIuEKnJEl8gGVIpaW++QXMxG9hiiCzomax8cPN9ge0XjrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743772700; c=relaxed/simple;
-	bh=LXNzuXLeRTm8jG3p+pKkuZRDyf0+LkHmCSi04lxWu3Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BKGJMgUGnbMxqiLqIoFYIgqh0KgbkyHdhV2RLumnyNA/hqS3pk8vWYaDO4vX1wUb7cpaxT/NzFhZmRn8Xo3DMVUkdyEn9ueAjZ6QvsGPhbVUKWRu7p04ccoTeRoyB4zhQM92ArM+ZrI2QMtkwi8MdXejCAo9gHz/1AYYevqUFEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EVIbzUbd; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743772699; x=1775308699;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=LXNzuXLeRTm8jG3p+pKkuZRDyf0+LkHmCSi04lxWu3Q=;
-  b=EVIbzUbdY/UndfgA3hoqoL5CuhyK0GtkajI5PqUKyFIOp8iFa9hOJgw9
-   WYo+3p9P2fG0ZdgHW6jzI4zR9UNxVQuUf6n5PCBeLI0WiV6svrVGyFGZh
-   6z4xWb6mOwavQYSVaw1+GxdIujhszSn4hf8D6Efe7IvN8EWilt+TgN9cZ
-   M+3bsAyqdIBRiSToPpcnAm/TaSJGy7FKotwV6tBztmXIFjgNhMHcuslsH
-   mykNIyqHb15y2d5V5Ksb292LfFUcfdMLbcFsCM0Xi1MyVVCX0ZovKmdrw
-   6UDB2c+vlSKnGzUGSWrqzUsasZR8xggXeD6Fen/XqqAPC9P7jtSndF29t
-   A==;
-X-CSE-ConnectionGUID: jxdeeysERjiAfNa0jbyyiw==
-X-CSE-MsgGUID: Lg72mG22Qg+u2+GClhmQ+A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11394"; a="55402097"
-X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="55402097"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 06:18:18 -0700
-X-CSE-ConnectionGUID: JIG12BvgSLmwXeiVgXuG4w==
-X-CSE-MsgGUID: 6Y3E6zPDSmCFZvSwlS/caA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="128157431"
-Received: from opintica-mobl1 (HELO wieczorr-mobl1.intel.com) ([10.245.245.50])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 06:18:03 -0700
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: hpa@zytor.com,
-	hch@infradead.org,
-	nick.desaulniers+lkml@gmail.com,
-	kuan-ying.lee@canonical.com,
-	masahiroy@kernel.org,
-	samuel.holland@sifive.com,
-	mingo@redhat.com,
-	corbet@lwn.net,
-	ryabinin.a.a@gmail.com,
-	guoweikang.kernel@gmail.com,
-	jpoimboe@kernel.org,
-	ardb@kernel.org,
-	vincenzo.frascino@arm.com,
-	glider@google.com,
-	kirill.shutemov@linux.intel.com,
-	apopple@nvidia.com,
-	samitolvanen@google.com,
-	maciej.wieczor-retman@intel.com,
-	kaleshsingh@google.com,
-	jgross@suse.com,
-	andreyknvl@gmail.com,
-	scott@os.amperecomputing.com,
-	tony.luck@intel.com,
-	dvyukov@google.com,
-	pasha.tatashin@soleen.com,
-	ziy@nvidia.com,
-	broonie@kernel.org,
-	gatlin.newhouse@gmail.com,
-	jackmanb@google.com,
-	wangkefeng.wang@huawei.com,
-	thiago.bauermann@linaro.org,
-	tglx@linutronix.de,
-	kees@kernel.org,
-	akpm@linux-foundation.org,
-	jason.andryuk@amd.com,
-	snovitoll@gmail.com,
-	xin@zytor.com,
-	jan.kiszka@siemens.com,
-	bp@alien8.de,
-	rppt@kernel.org,
-	peterz@infradead.org,
-	pankaj.gupta@amd.com,
-	thuth@redhat.com,
-	andriy.shevchenko@linux.intel.com,
-	joel.granados@kernel.org,
-	kbingham@kernel.org,
-	nicolas@fjasle.eu,
-	mark.rutland@arm.com,
-	surenb@google.com,
-	catalin.marinas@arm.com,
-	morbo@google.com,
-	justinstitt@google.com,
-	ubizjak@gmail.com,
-	jhubbard@nvidia.com,
-	urezki@gmail.com,
-	dave.hansen@linux.intel.com,
-	bhe@redhat.com,
-	luto@kernel.org,
-	baohua@kernel.org,
-	nathan@kernel.org,
-	will@kernel.org,
-	brgerst@gmail.com
-Cc: llvm@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com,
-	x86@kernel.org
-Subject: [PATCH v3 14/14] x86: Make software tag-based kasan available
-Date: Fri,  4 Apr 2025 15:14:18 +0200
-Message-ID: <3ed2c4baaf9b182c9d9716db95387ee14d98c99c.1743772053.git.maciej.wieczor-retman@intel.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1743772053.git.maciej.wieczor-retman@intel.com>
-References: <cover.1743772053.git.maciej.wieczor-retman@intel.com>
+	s=arc-20240116; t=1743772494; c=relaxed/simple;
+	bh=HeMqPvb1y2aCZxnFmTUvOeSLlGPoM2Uq7DhtRctHdPM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jCElwYX+fQWR38amGafZZeA47DKOAF52adoXh9ioo4qZDS4Q5NPsQW7LAgXadu+KofQbAtQCPcHzG8fyCOcvXo66TxJfRQFsT+NPkKQRkv6nN5Cbck5ZH8Q3VjnZDdNrNzKaAHLE4wCQ9zUWQ/5lUv4FeNHZa4ZHZXYr1Gn2mb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hyaqClao; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB3BC4CEE9;
+	Fri,  4 Apr 2025 13:14:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743772493;
+	bh=HeMqPvb1y2aCZxnFmTUvOeSLlGPoM2Uq7DhtRctHdPM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hyaqClaoAvgGLSBSFqkKUIeAXoZNtabo4QFIr7icoqOcDhSx0srMht0EMknxzI7Tj
+	 YGivCGyRgpZDdjxPldT806SUIxKS4O4ZN/QCWpYCNiK9KjCyIi/RIbug/Vqj4Sh2/7
+	 /OdvwUyX3aJOdlUq3SuOTUbEWRo6bOAiGQgqVhHc71nH12YL3BEZb9H+e5Z78QanoT
+	 WWj8Tbimd/EZZIMV/zXD4gbcAbjZTuXSlrNkHOgDekDT7w7vR9VG7Jf4UI3NUOoYdN
+	 mg1gNq9cIC6SLrPdOwuAtZthPJtZ3XcDkaGzvN4lG+C8Eh4jQdivxse6ZGz8TWm9Eb
+	 l7u1trDkt6vBQ==
+Date: Fri, 4 Apr 2025 15:14:50 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Oleg Nesterov <oleg@redhat.com>, linux-mm@kvack.org
+Subject: Re: [PATCH 6/6 v2] mm: Drain LRUs upon resume to userspace on
+ nohz_full CPUs
+Message-ID: <Z-_bSlit_cqAhz7f@localhost.localdomain>
+References: <20250209223005.11519-1-frederic@kernel.org>
+ <20250209223005.11519-7-frederic@kernel.org>
+ <Z6s3u6Uu8I7r2Jox@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z6s3u6Uu8I7r2Jox@tiehlicka>
 
-Make CONFIG_KASAN_SW_TAGS available for x86 machines if they have
-ADDRESS_MASKING enabled (LAM) as that works similarly to Top-Byte Ignore
-(TBI) that allows the software tag-based mode on arm64 platform.
+Le Tue, Feb 11, 2025 at 12:42:51PM +0100, Michal Hocko a écrit :
+> On Sun 09-02-25 23:30:04, Frederic Weisbecker wrote:
+> > LRUs can be drained through several ways. One of them may add disturbances
+> > to isolated workloads while queuing a work at any time to any target,
+> > whether running in nohz_full mode or not.
+> > 
+> > Prevent from that on isolated tasks with defering LRUs drains upon
+> > resuming to userspace using the isolated task work framework.
+> 
+> I have to say this is rather cryptic description of the udnerlying
+> problem. What do you think about the following:
+> 
+> LRU batching can be source of disturbances for isolated workloads
+> running in the userspace because it requires kernel worker to handle
+> that and that would preempt the said task. The primary source for such
+> disruption would be __lru_add_drain_all which could be triggered from
+> non-isolated CPUs.
+> 
+> Why would an isolated CPU have anything on the pcp cache? Many syscalls
+> allocate pages that might end there. A typical and unavoidable one would
+> be fork/exec leaving pages on the cache behind just waiting for somebody
+> to drain.
+> 
+> This patch addresses the problem by noting a patch has been added to the
+> cache and schedule draining to the return path to the userspace so the
+> work is done while the syscall is still executing and there are no
+> suprises while the task runs in the userspace where it doesn't want to
+> be preempted.
 
-Set scale macro based on KASAN mode: in software tag-based mode 16 bytes
-of memory map to one shadow byte and 8 in generic mode.
+Much better indeed :-)
 
-Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
----
-Changelog v3:
-- Remove runtime_const from previous patch and merge the rest here.
-- Move scale shift definition back to header file.
-- Add new kasan offset for software tag based mode.
-- Fix patch message typo 32 -> 16, and 16 -> 8.
-- Update lib/Kconfig.kasan with x86 now having software tag-based
-  support.
+> > @@ -376,6 +377,8 @@ static void __lru_cache_activate_folio(struct folio *folio)
+> >  	}
+> >  
+> >  	local_unlock(&cpu_fbatches.lock);
+> > +
+> > +	isolated_task_work_queue();
+> >  }
+> 
+> This placement doens't make much sense to me. I would put
+> isolated_task_work_queue when we queue something up. That would be
+> folio_batch_add if folio_batch_space(fbatch) > 0.
 
-Changelog v2:
-- Remove KASAN dense code.
+Ok I moved it there but why doesn't it make sense also when
+folio_batch_space(fbatch) == 0, doesn't it mean that folio_batch_add()
+still added the entry but there is just no further room left?
 
- Documentation/arch/x86/x86_64/mm.rst | 6 ++++--
- arch/x86/Kconfig                     | 5 +++--
- arch/x86/boot/compressed/misc.h      | 1 +
- arch/x86/include/asm/kasan.h         | 9 +++++++++
- arch/x86/kernel/setup.c              | 2 ++
- arch/x86/mm/kasan_init_64.c          | 2 +-
- lib/Kconfig.kasan                    | 3 ++-
- 7 files changed, 22 insertions(+), 6 deletions(-)
+> 
+> >  
+> >  #ifdef CONFIG_LRU_GEN
+> > @@ -738,7 +741,7 @@ void lru_add_drain(void)
+> >   * the same cpu. It shouldn't be a problem in !SMP case since
+> >   * the core is only one and the locks will disable preemption.
+> >   */
+> > -static void lru_add_and_bh_lrus_drain(void)
+> > +void lru_add_and_bh_lrus_drain(void)
+> >  {
+> >  	local_lock(&cpu_fbatches.lock);
+> >  	lru_add_drain_cpu(smp_processor_id());
+> > @@ -769,6 +772,9 @@ static bool cpu_needs_drain(unsigned int cpu)
+> >  {
+> >  	struct cpu_fbatches *fbatches = &per_cpu(cpu_fbatches, cpu);
+> >  
+> > +	if (!housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE))
+> > +		return false;
+> > +
+> 
+> Would it make more sense to use cpu_is_isolated() and use it explicitly
+> in __lru_add_drain_all so that it is clearly visible - with a comment
+> that isolated workloads are dealing with cache on their return to
+> userspace.
 
-diff --git a/Documentation/arch/x86/x86_64/mm.rst b/Documentation/arch/x86/x86_64/mm.rst
-index f2db178b353f..1e2d6b3ae231 100644
---- a/Documentation/arch/x86/x86_64/mm.rst
-+++ b/Documentation/arch/x86/x86_64/mm.rst
-@@ -60,7 +60,8 @@ Complete virtual memory map with 4-level page tables
-    ffffe90000000000 |  -23    TB | ffffe9ffffffffff |    1 TB | ... unused hole
-    ffffea0000000000 |  -22    TB | ffffeaffffffffff |    1 TB | virtual memory map (vmemmap_base)
-    ffffeb0000000000 |  -21    TB | ffffebffffffffff |    1 TB | ... unused hole
--   ffffec0000000000 |  -20    TB | fffffbffffffffff |   16 TB | KASAN shadow memory
-+   ffffec0000000000 |  -20    TB | fffffbffffffffff |   16 TB | KASAN shadow memory (generic mode)
-+   fffff40000000000 |   -8    TB | fffffc0000000000 |    8 TB | KASAN shadow memory (software tag-based mode)
-   __________________|____________|__________________|_________|____________________________________________________________
-                                                               |
-                                                               | Identical layout to the 56-bit one from here on:
-@@ -130,7 +131,8 @@ Complete virtual memory map with 5-level page tables
-    ffd2000000000000 |  -11.5  PB | ffd3ffffffffffff |  0.5 PB | ... unused hole
-    ffd4000000000000 |  -11    PB | ffd5ffffffffffff |  0.5 PB | virtual memory map (vmemmap_base)
-    ffd6000000000000 |  -10.5  PB | ffdeffffffffffff | 2.25 PB | ... unused hole
--   ffdf000000000000 |   -8.25 PB | fffffbffffffffff |   ~8 PB | KASAN shadow memory
-+   ffdf000000000000 |   -8.25 PB | fffffbffffffffff |   ~8 PB | KASAN shadow memory (generic mode)
-+   ffdffc0000000000 |   -6    PB | ffeffc0000000000 |    4 PB | KASAN shadow memory (software tag-based mode)
-   __________________|____________|__________________|_________|____________________________________________________________
-                                                               |
-                                                               | Identical layout to the 47-bit one from here on:
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 15f346f02af0..cfe1cb15950e 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -197,6 +197,7 @@ config X86
- 	select HAVE_ARCH_JUMP_LABEL_RELATIVE
- 	select HAVE_ARCH_KASAN			if X86_64
- 	select HAVE_ARCH_KASAN_VMALLOC		if X86_64
-+	select HAVE_ARCH_KASAN_SW_TAGS		if ADDRESS_MASKING
- 	select HAVE_ARCH_KFENCE
- 	select HAVE_ARCH_KMSAN			if X86_64
- 	select HAVE_ARCH_KGDB
-@@ -402,8 +403,8 @@ config AUDIT_ARCH
- 
- config KASAN_SHADOW_OFFSET
- 	hex
--	depends on KASAN
--	default 0xdffffc0000000000
-+	default 0xdffffc0000000000 if KASAN_GENERIC
-+	default 0xffeffc0000000000 if KASAN_SW_TAGS
- 
- config HAVE_INTEL_TXT
- 	def_bool y
-diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
-index dd8d1a85f671..f6a87e9ad200 100644
---- a/arch/x86/boot/compressed/misc.h
-+++ b/arch/x86/boot/compressed/misc.h
-@@ -13,6 +13,7 @@
- #undef CONFIG_PARAVIRT_SPINLOCKS
- #undef CONFIG_KASAN
- #undef CONFIG_KASAN_GENERIC
-+#undef CONFIG_KASAN_SW_TAGS
- 
- #define __NO_FORTIFY
- 
-diff --git a/arch/x86/include/asm/kasan.h b/arch/x86/include/asm/kasan.h
-index 212218622963..d2eedaa092d5 100644
---- a/arch/x86/include/asm/kasan.h
-+++ b/arch/x86/include/asm/kasan.h
-@@ -6,8 +6,16 @@
- #include <linux/kasan-tags.h>
- #include <linux/types.h>
- #define KASAN_SHADOW_OFFSET _AC(CONFIG_KASAN_SHADOW_OFFSET, UL)
-+#ifdef CONFIG_KASAN_SW_TAGS
-+#define KASAN_SHADOW_SCALE_SHIFT 4
-+#else
- #define KASAN_SHADOW_SCALE_SHIFT 3
-+#endif
- 
-+#ifdef CONFIG_KASAN_SW_TAGS
-+#define KASAN_SHADOW_END	KASAN_SHADOW_OFFSET
-+#define KASAN_SHADOW_START	(KASAN_SHADOW_END - ((UL(1)) << (__VIRTUAL_MASK_SHIFT - KASAN_SHADOW_SCALE_SHIFT)))
-+#else
- /*
-  * Compiler uses shadow offset assuming that addresses start
-  * from 0. Kernel addresses don't start from 0, so shadow
-@@ -24,6 +32,7 @@
- #define KASAN_SHADOW_END        (KASAN_SHADOW_START + \
- 					(1ULL << (__VIRTUAL_MASK_SHIFT - \
- 						  KASAN_SHADOW_SCALE_SHIFT)))
-+#endif
- 
- #ifndef __ASSEMBLER__
- #include <linux/bitops.h>
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index c7164a8de983..a40d66da69f4 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1182,6 +1182,8 @@ void __init setup_arch(char **cmdline_p)
- 
- 	kasan_init();
- 
-+	kasan_init_sw_tags();
-+
- 	/*
- 	 * Sync back kernel address range.
- 	 *
-diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
-index e8a451cafc8c..b5cf3dca6954 100644
---- a/arch/x86/mm/kasan_init_64.c
-+++ b/arch/x86/mm/kasan_init_64.c
-@@ -371,7 +371,7 @@ void __init kasan_init(void)
- 	 * bunch of things like kernel code, modules, EFI mapping, etc.
- 	 * We need to take extra steps to not overwrite them.
- 	 */
--	if (pgtable_l5_enabled()) {
-+	if (pgtable_l5_enabled() && !IS_ENABLED(CONFIG_KASAN_SW_TAGS)) {
- 		void *ptr;
- 
- 		ptr = (void *)pgd_page_vaddr(*pgd_offset_k(KASAN_SHADOW_END));
-diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
-index f82889a830fa..9ddbc6aeb5d5 100644
---- a/lib/Kconfig.kasan
-+++ b/lib/Kconfig.kasan
-@@ -100,7 +100,8 @@ config KASAN_SW_TAGS
- 
- 	  Requires GCC 11+ or Clang.
- 
--	  Supported only on arm64 CPUs and relies on Top Byte Ignore.
-+	  Supported on arm64 CPUs that support Top Byte Ignore and on x86 CPUs
-+	  that support Linear Address Masking.
- 
- 	  Consumes about 1/16th of available memory at kernel start and
- 	  add an overhead of ~20% for dynamic allocations.
--- 
-2.49.0
+No because cpu_is_isolated() is also true when the CPU is on NULL domain
+(isolated cpusset partition, or isolcpus=domain). And not all workloads
+want the possible overhead of scattered batching after every syscalls.
 
+Thanks.
+
+> 
+> >  	/* Check these in order of likelihood that they're not zero */
+> >  	return folio_batch_count(&fbatches->lru_add) ||
+> >  		folio_batch_count(&fbatches->lru_move_tail) ||
+> > -- 
+> > 2.46.0
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
 
