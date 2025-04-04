@@ -1,215 +1,122 @@
-Return-Path: <linux-kernel+bounces-588951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F04C4A7BFCF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:46:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D882A7BFD8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F8D63B8B82
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:46:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69D6F17D11C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2061F4261;
-	Fri,  4 Apr 2025 14:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5DF1F76B3;
+	Fri,  4 Apr 2025 14:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="dk0KpHrR"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD791F37D4;
-	Fri,  4 Apr 2025 14:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="H4ieiCyq"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C723B1F4186
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 14:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743777964; cv=none; b=sPUH3WIKnH7QoGFx50amWDlUhR4La/sLvtotrmgV903RQZd5AprLjcxGGM2TzyV6L3lx9C6mO9RudZNeNmSzR59j91H7nbqkddfe8XxFXNyRQt9cqs0fn/gGPxFB8QrnYXB/ctGTVL5ek5BrQh7pqi20Q3EqDkjgFF+CsdkFet4=
+	t=1743777969; cv=none; b=Dbegwn1CDx0im2rKBpfc/TXqmRS3PaRhXXS0n42r6ugd0H9v+yy3dEWxxugExMHbtQfQDWiZ1j9pXLZneFOmfjmMVu/v1Tv79zATjVhO1fEAOetyErylUGTQgMFP2TLR2zhOTKw9oD1I90LlWTzY1HmgRysABXS65saZHgrBg+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743777964; c=relaxed/simple;
-	bh=//qEM11VkDcC4uZBan6dMlPoLKZnDJ2babKh5NvqDQw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=m3QONc+35GYXkHbP7Ri7suUJPJzZgY37KCgVvM3LvTnA6vX9i2p949P8gF8FiuqgQlmzzfu3a8oFvTyVObW3marVBJneo4GekBxke/JlQLMm/narFmVXlkFzSKhuoOuwo8J6JjpAQLFYqgwhAzTO+wRyVFyt6Al699EuN83s7RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=dk0KpHrR; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1186)
-	id 0760E2027E11; Fri,  4 Apr 2025 07:45:55 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0760E2027E11
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1743777956;
-	bh=uVbwph+7O+ouZrW3G3mHhw6G2CAiHZ16DZIxMmSqEbY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dk0KpHrRle2wTQhrCauoQK/X4mC8Qpx+ZFOQQGL1V0ftBGlWcuoBngrlVnmSe9q0K
-	 lv89bQu95HCgh7dQXZqA4dKcRw+lDiYjApA+5X7PL6wvnazQnlu23izDGDyoFCT4ZU
-	 woCgd4ql/oOVRy7MHA+X04JVSYsM01FKTGNUmFSY=
-From: Konstantin Taranov <kotaranov@linux.microsoft.com>
-To: kotaranov@microsoft.com,
-	pabeni@redhat.com,
-	haiyangz@microsoft.com,
-	kys@microsoft.com,
-	edumazet@google.com,
-	kuba@kernel.org,
-	davem@davemloft.net,
-	decui@microsoft.com,
-	wei.liu@kernel.org,
-	longli@microsoft.com,
-	jgg@ziepe.ca,
-	leon@kernel.org
-Cc: linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH rdma-next 3/3] RDMA/mana_ib: Add support of 4M, 1G, and 2G pages
-Date: Fri,  4 Apr 2025 07:45:55 -0700
-Message-Id: <1743777955-2316-4-git-send-email-kotaranov@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1743777955-2316-1-git-send-email-kotaranov@linux.microsoft.com>
-References: <1743777955-2316-1-git-send-email-kotaranov@linux.microsoft.com>
+	s=arc-20240116; t=1743777969; c=relaxed/simple;
+	bh=e8o8BmTI9LJ5Xp7bpW29EBBSU6s6C6evw9WYpy625cA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cdjfooVqA09yLgK45vCAVBgwg13OoZT+t4XX5GkxJ2GFDU6e2THeFb7+zWQLiy9eF4EWGs7WgRYXoVtj/TEWBuUtxBW0ofyTPGbcZ7OiXkhdQfliFaizv4P/FN3mcFO59NFgMmBHk4OUSLdqXfiX+9BBd59l+PCLqaFuQJyw4hQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=H4ieiCyq; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3d6d6d82633so6219885ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 07:46:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1743777966; x=1744382766; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=If8+GB0jSdfPLP3IvZq/oz7j7TFWAF4rJnIO0c2k6PM=;
+        b=H4ieiCyqWVQ3c+6aLbh84R/mwfmums4yeWOyi2XS10XJBYHbA7vTEJcydor8Lkua6y
+         32dapT2jo5psjK9W5jhgnHWKLWK8Dv/+M0SIuAjMApZ9YDiXYIivo5suYnXnk+oIS2uc
+         wFgShCuN/HB6OSxNKZp2LQ299pkwvipGhZL94=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743777966; x=1744382766;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=If8+GB0jSdfPLP3IvZq/oz7j7TFWAF4rJnIO0c2k6PM=;
+        b=R5NhnYzWaN4YlOzH3Iwp6JO5mbqLC3ASpjub+ezDVWWbmhGQtITIgSr8GFRPmfwPCJ
+         gDXRIKVHJTn+m0/Xc01tsi0tx/L/JYkhPY4w0A6KSUTBd+5IIhsTKBrh+9xq6fopZXaM
+         Rq9NGuj+2ZVefmgnQE9xK4fVgZ89IHWNkbKjppIFQeEujMofVtga0dLOc7o1+2DxBZZ3
+         8597kJIkpXejqNEl4nu9ihJz0HTfAwMriMaUqXgfwuNyie2dzlVXEGWMFQhVzYX+wW9N
+         TISftIyb3tO78KQfazWmsepY53Jpfh3wO1ala4Uxrsbpz03ZKWLP83jEIr2+MYyHyXlK
+         KMsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCViG3RAq9JSfem7KVF1U87PPp1JDOgyDtAei8uOgrRM6qx61u4F5zMLZHCfU9Agka8eOyw0X+ivbC6KjR0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuFzg/EKX4sFryk3AcRU8hTPbc2ygYdtQw/oIUZC6CR9fvlpVb
+	bbGTMHd5LmhJZgNkXk6R8BZZ1vFlD5MakhdPCQJgYgQ/hX3+nzcRkcK9s5NBuFo=
+X-Gm-Gg: ASbGncuh5pubm0HUGqaogtaXsL1pglK93YvTBUY39pqzJx1XTeniFbT/oMS4121SV4+
+	0kGEcKvt+iQTl+3JHTQ5Z66qUe2SMjp+MmwypM85KT4KgRNik+XgsfF4AWKtvt1f/gK3p+LtZxV
+	hUG/dgdUFFp/Oq9WgfhvOPj4Tthp0lyJ1h2oU+Hp4IGKvX/M0mHAHZJ+KxJhCx5hNEu2nc+4Yxj
+	jG4DZ/Ovl6udvUN7mcws0ThaybBhw0NQMpSf617UoJZOzk7XHjwmEfIeLoNwk4fFeVjVXo1P0Lj
+	1AXXW/NbRb8juxfXPNyIdYa2umc0zpfUmkYcilus/hruqL5RFP53G5c=
+X-Google-Smtp-Source: AGHT+IHC49zN3kIaY1D2eId/TedJ/qgZbOEFiirHmdO66xfiFOnnnkBBWZEK4pO0xJtY1CuuGzjsKA==
+X-Received: by 2002:a05:6e02:260e:b0:3d4:28c0:1692 with SMTP id e9e14a558f8ab-3d6e3ee198amr42916255ab.5.1743777965689;
+        Fri, 04 Apr 2025 07:46:05 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f4b5d243f5sm836895173.91.2025.04.04.07.46.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Apr 2025 07:46:05 -0700 (PDT)
+Message-ID: <c0c9ac27-efc6-4eac-a386-daa89130eec2@linuxfoundation.org>
+Date: Fri, 4 Apr 2025 08:46:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.13 00/23] 6.13.10-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250403151622.273788569@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250403151622.273788569@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Konstantin Taranov <kotaranov@microsoft.com>
+On 4/3/25 09:20, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.13.10 release.
+> There are 23 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 05 Apr 2025 15:16:11 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.10-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Check PF capability flag whether the 4M, 1G, and 2G pages are
-supported. Add these pages sizes to mana_ib, if supported.
+Compiled and booted on my test system. No dmesg regressions.
 
-Define possible page sizes in enum gdma_page_type and
-remove unused enum atb_page_size.
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
----
- drivers/infiniband/hw/mana/main.c             | 10 +++++--
- drivers/infiniband/hw/mana/mana_ib.h          |  1 +
- .../net/ethernet/microsoft/mana/gdma_main.c   |  1 +
- include/net/mana/gdma.h                       | 30 ++++++++++---------
- 4 files changed, 25 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/infiniband/hw/mana/main.c b/drivers/infiniband/hw/mana/main.c
-index 730f958..a28b712 100644
---- a/drivers/infiniband/hw/mana/main.c
-+++ b/drivers/infiniband/hw/mana/main.c
-@@ -479,7 +479,7 @@ int mana_ib_create_dma_region(struct mana_ib_dev *dev, struct ib_umem *umem,
- {
- 	unsigned long page_sz;
- 
--	page_sz = ib_umem_find_best_pgsz(umem, PAGE_SZ_BM, virt);
-+	page_sz = ib_umem_find_best_pgsz(umem, dev->adapter_caps.page_size_cap, virt);
- 	if (!page_sz) {
- 		ibdev_dbg(&dev->ib_dev, "Failed to find page size.\n");
- 		return -EINVAL;
-@@ -494,7 +494,7 @@ int mana_ib_create_zero_offset_dma_region(struct mana_ib_dev *dev, struct ib_ume
- 	unsigned long page_sz;
- 
- 	/* Hardware requires dma region to align to chosen page size */
--	page_sz = ib_umem_find_best_pgoff(umem, PAGE_SZ_BM, 0);
-+	page_sz = ib_umem_find_best_pgoff(umem, dev->adapter_caps.page_size_cap, 0);
- 	if (!page_sz) {
- 		ibdev_dbg(&dev->ib_dev, "Failed to find page size.\n");
- 		return -EINVAL;
-@@ -577,7 +577,7 @@ int mana_ib_query_device(struct ib_device *ibdev, struct ib_device_attr *props,
- 
- 	memset(props, 0, sizeof(*props));
- 	props->max_mr_size = MANA_IB_MAX_MR_SIZE;
--	props->page_size_cap = PAGE_SZ_BM;
-+	props->page_size_cap = dev->adapter_caps.page_size_cap;
- 	props->max_qp = dev->adapter_caps.max_qp_count;
- 	props->max_qp_wr = dev->adapter_caps.max_qp_wr;
- 	props->device_cap_flags = IB_DEVICE_RC_RNR_NAK_GEN;
-@@ -696,6 +696,10 @@ int mana_ib_gd_query_adapter_caps(struct mana_ib_dev *dev)
- 	caps->max_recv_sge_count = resp.max_recv_sge_count;
- 	caps->feature_flags = resp.feature_flags;
- 
-+	caps->page_size_cap = PAGE_SZ_BM;
-+	if (mdev_to_gc(dev)->pf_cap_flags1 & GDMA_DRV_CAP_FLAG_1_GDMA_PAGES_4MB_1GB_2GB)
-+		caps->page_size_cap |= (SZ_4M | SZ_1G | SZ_2G);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/infiniband/hw/mana/mana_ib.h b/drivers/infiniband/hw/mana/mana_ib.h
-index 6903946..f0dbd90 100644
---- a/drivers/infiniband/hw/mana/mana_ib.h
-+++ b/drivers/infiniband/hw/mana/mana_ib.h
-@@ -60,6 +60,7 @@ struct mana_ib_adapter_caps {
- 	u32 max_recv_sge_count;
- 	u32 max_inline_data_size;
- 	u64 feature_flags;
-+	u64 page_size_cap;
- };
- 
- struct mana_ib_queue {
-diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-index 4a2b17f..b5156d4 100644
---- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
-+++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-@@ -937,6 +937,7 @@ int mana_gd_verify_vf_version(struct pci_dev *pdev)
- 			err, resp.hdr.status);
- 		return err ? err : -EPROTO;
- 	}
-+	gc->pf_cap_flags1 = resp.pf_cap_flags1;
- 	if (resp.pf_cap_flags1 & GDMA_DRV_CAP_FLAG_1_HWC_TIMEOUT_RECONFIG) {
- 		err = mana_gd_query_hwc_timeout(pdev, &hwc->hwc_timeout);
- 		if (err) {
-diff --git a/include/net/mana/gdma.h b/include/net/mana/gdma.h
-index 3db506d..fd37507 100644
---- a/include/net/mana/gdma.h
-+++ b/include/net/mana/gdma.h
-@@ -194,6 +194,19 @@ struct gdma_wqe_request {
- 
- enum gdma_page_type {
- 	GDMA_PAGE_TYPE_4K,
-+	GDMA_PAGE_SIZE_8K,
-+	GDMA_PAGE_SIZE_16K,
-+	GDMA_PAGE_SIZE_32K,
-+	GDMA_PAGE_SIZE_64K,
-+	GDMA_PAGE_SIZE_128K,
-+	GDMA_PAGE_SIZE_256K,
-+	GDMA_PAGE_SIZE_512K,
-+	GDMA_PAGE_SIZE_1M,
-+	GDMA_PAGE_SIZE_2M,
-+	/* Only when GDMA_DRV_CAP_FLAG_1_GDMA_PAGES_4MB_1GB_2GB is set */
-+	GDMA_PAGE_SIZE_4M,
-+	GDMA_PAGE_SIZE_1G = 18,
-+	GDMA_PAGE_SIZE_2G
- };
- 
- #define GDMA_INVALID_DMA_REGION 0
-@@ -407,6 +420,8 @@ struct gdma_context {
- 
- 	/* Azure RDMA adapter */
- 	struct gdma_dev		mana_ib;
-+
-+	u64 pf_cap_flags1;
- };
- 
- #define MAX_NUM_GDMA_DEVICES	4
-@@ -556,6 +571,7 @@ enum {
- #define GDMA_DRV_CAP_FLAG_1_NAPI_WKDONE_FIX BIT(2)
- #define GDMA_DRV_CAP_FLAG_1_HWC_TIMEOUT_RECONFIG BIT(3)
- #define GDMA_DRV_CAP_FLAG_1_VARIABLE_INDIRECTION_TABLE_SUPPORT BIT(5)
-+#define GDMA_DRV_CAP_FLAG_1_GDMA_PAGES_4MB_1GB_2GB BIT(4)
- 
- #define GDMA_DRV_CAP_FLAGS1 \
- 	(GDMA_DRV_CAP_FLAG_1_EQ_SHARING_MULTI_VPORT | \
-@@ -704,20 +720,6 @@ struct gdma_query_hwc_timeout_resp {
- 	u32 reserved;
- };
- 
--enum atb_page_size {
--	ATB_PAGE_SIZE_4K,
--	ATB_PAGE_SIZE_8K,
--	ATB_PAGE_SIZE_16K,
--	ATB_PAGE_SIZE_32K,
--	ATB_PAGE_SIZE_64K,
--	ATB_PAGE_SIZE_128K,
--	ATB_PAGE_SIZE_256K,
--	ATB_PAGE_SIZE_512K,
--	ATB_PAGE_SIZE_1M,
--	ATB_PAGE_SIZE_2M,
--	ATB_PAGE_SIZE_MAX,
--};
--
- enum gdma_mr_access_flags {
- 	GDMA_ACCESS_FLAG_LOCAL_READ = BIT_ULL(0),
- 	GDMA_ACCESS_FLAG_LOCAL_WRITE = BIT_ULL(1),
--- 
-2.43.0
-
+thanks,
+-- Shuah
 
