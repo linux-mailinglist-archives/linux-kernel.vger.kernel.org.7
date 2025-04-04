@@ -1,126 +1,235 @@
-Return-Path: <linux-kernel+bounces-588798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65FA0A7BDBC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:28:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BECEDA7BDD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD7491898EC5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:26:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E52987A336D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8BD71EDA34;
-	Fri,  4 Apr 2025 13:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC70A1F2360;
+	Fri,  4 Apr 2025 13:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f32fnwEf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BtXAdIaX"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9757D18D656;
-	Fri,  4 Apr 2025 13:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621911EF096;
+	Fri,  4 Apr 2025 13:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743773196; cv=none; b=Cj0LvcVU0YPDZ4yo4BvyXMNCMTtEEEJbRclMXzq/Nh6Y87//j7NepQkjcinuCp8Rnccujvjq49eH2AqlI/pL48aRk3h22oILWBw6bnIILCrdGKDvFsRtngI7Ss4pBZ06CT91eVQevdfxkYYBAv2LdzbkroApCcIT8DyLA2rM2Fo=
+	t=1743773311; cv=none; b=d0uXDn+fNeB729XQOlnVil/mm71lVd+pclYN8rkE5vn0jm8fB2Cbov4aTq8MhkOqlQi8uJg0hAa8ZlU7wCAR3ORn4X27bkmv+9qlhEdpg1qpn0xeb9u3Qbw1mLqZuai3KY4M2s9lR6ygGTdSHSdq+4fY03oTPwm5veKG47h/8Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743773196; c=relaxed/simple;
-	bh=GlYv4RJx/qddduKvUDY+jA46vAIVO1n4cjmqtnn2Vok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uzH507yvqwcodvuw2/G76twz/4qfA328jbZliurU/m4eDGTtf5z8dgXwj6BOp/KYnblzmeP4MLJxkZ2G9fSSyTlJECVG4+hSX6txQy8e+jddPpie0GfiRVW/fNpOmp5rYUUCFMmKblbMtP7CAb9GvNnecH1PPLo3ITJetX9F0l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f32fnwEf; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743773194; x=1775309194;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GlYv4RJx/qddduKvUDY+jA46vAIVO1n4cjmqtnn2Vok=;
-  b=f32fnwEfXuYR1dIFAFzwLOTiZcY+jpO81h4l8dhK68JsRXUcjkf8CTRZ
-   mzL40gd1ez4rGJHvX3nTuCBWjfhaukfU2k5W9+EvY8HKsGalmNtUMAfAi
-   8FP2cigR+6Hl0aLvD3/U53r+zLvERMsEw2YQox5X55IFyjZ8xnLv0p+84
-   5t6fEYpOjQtcshglzewA7LMK/nNyesxLIUmFfBuQEK0eOe+TpaGUDaxOi
-   SiiQn2lhH67p5sNjX0XU659HDl2LyFgwv1gp/+2GSdykznq++SFmKDvNJ
-   NlNVzNXZwr30czffqSNVz0hCEUpDFqz38r+YaMj2dsggmNmWJ55bOIbZP
-   w==;
-X-CSE-ConnectionGUID: UQgfiA8xRzOuixszqRt9Sw==
-X-CSE-MsgGUID: TP0yiXFnQMuGAz7xERjgOw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11394"; a="49006313"
-X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="49006313"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 06:26:34 -0700
-X-CSE-ConnectionGUID: LNYqZ3tQTYylWxtp7lrjlA==
-X-CSE-MsgGUID: iC9M8m7UTuyq7KAcEoOL+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="127124237"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 06:26:31 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1u0h40-0000000990o-0CJv;
-	Fri, 04 Apr 2025 16:26:28 +0300
-Date: Fri, 4 Apr 2025 16:26:27 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu,
-	GaryWang@aaeon.com.tw
-Subject: Re: [PATCH 4/5] pinctrl: Add pin controller driver for AAEON UP
- boards
-Message-ID: <Z-_eA-gUPJt57DRK@smile.fi.intel.com>
-References: <Z4Tg-uTVcOiYK2Dr@smile.fi.intel.com>
- <b50444f7-4dd1-4440-af36-783b1b4f8625@bootlin.com>
- <Z4jNZPcDd89-HfAd@smile.fi.intel.com>
- <e273428e-3ebd-4116-b317-9aae0c8c603b@bootlin.com>
- <Z4j8NmKMEL7PALmw@smile.fi.intel.com>
- <8b9dd766-ae7e-4817-a093-536ae9646cd3@bootlin.com>
- <Z4kUWxR9VWkzQ9aW@smile.fi.intel.com>
- <5e5f7635-86ed-4814-b26f-b1c45fa4f29a@bootlin.com>
- <Z6NOfUG3QZyYW0rw@smile.fi.intel.com>
- <cb07335e-8dc0-4cf1-8524-40770d5419cc@bootlin.com>
+	s=arc-20240116; t=1743773311; c=relaxed/simple;
+	bh=8am3I0YCErYUO2PgNgYpMqXVi36aEv+QHl9QuGEDE0g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fYU9xxP4GFbH3j1/bPZK5YEVrCu4N6cZ7xUn7SE3yLwXhCYKQHbmmhno3wmPNDEy3HlDYcWJYA1pSQdAAWhFtW31+hRY9uRW0m204O+nSKvHuaFzBdBoEccawIkKKWLE7ULdxOLbsxgK83RNYCd61kRCDP5uSHb+jYXvnPQVyac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BtXAdIaX; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ff6e91cff5so1931305a91.2;
+        Fri, 04 Apr 2025 06:28:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743773308; x=1744378108; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=L1EvrIpOY5/BQY+g5/bXbxzle3Uu4BHi9J4gn0QSKck=;
+        b=BtXAdIaXd9obJnvwBcE3BCtQwyqHt+JqfD315MptHeqe8jqweYo6iv9Imx8IQMytIO
+         Csj2doRnas0fhftgQvxAYTVPBPil6RXB+j6DyqkN+lj+JGgtiv0ERqRMuyGsMKFhzyE2
+         APV3FPCE3CMlHwj8eA9VTD0+wJvxs6nrKgn9BFl5vN2x4ixpO3b3DP/rAR+18wbt2Ulv
+         jGcYpVW5mxpRypPiB84MWeLl4m1fB0EgE3Y5gvDZxt2QHk2mmAWVb43PUggtvqcUBOlb
+         KXXyCqJKTiNTaKKlxsWj2pMKwcP3jOFXb3hDQLQY9eVzV/tA/62JgRIfJwnjf05corUR
+         83Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743773308; x=1744378108;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L1EvrIpOY5/BQY+g5/bXbxzle3Uu4BHi9J4gn0QSKck=;
+        b=oEFC4KdlioH745ySxkEHt0mYV5B2/rzWmeJoJs9hmPSF/dunLR8ru/QDarMG+bNxev
+         I2ShDKr+7aoZLj8PzIlF0LSFBPIU0DVqppAmKEiOjTDA246L7mI9wlsV9JU60hQjaAoG
+         glu1F5TYVxKBYQB8umoc7euFw6MCPhXRnuu2NBNJqXGXwMZoY3MR0ygXJVvMshmM/wa3
+         mIGDEj7RnhuGv5W+Z5zZt63+Nc7qIA3S/2JGO/XEbcojbb4DLyDxZklKqPknDv/lAPXV
+         oYTmjC2NlLhXJpkMfiXc2ldRavQOfuwOYw7G8NzFUYjqO8O71CIae9uR3vXNMfY/jm00
+         34/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVw617jhxX9maWuvpe788Sv+2ULjqCowRrZnCr9zI9C/GPmK4hfuk9rP2mNyftDWj9JM5teFZex1mWAZWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrJnEw60rnggP10D/9CvR2c1pnRhY1xS4aP3T4WCcIjVgY4+Mt
+	fOXCSxU6J3ZKRmPJYLH47sCVoRhq8mUiwosIzLDkMWK8tM0JsctZD/bO4zGwqFgx9Zy6ijN9OQy
+	5AxrEnAXkwfZzZEnzNWPWaEPD+OQ=
+X-Gm-Gg: ASbGnctE83I1QlEgUZvoq6J6mVfhgmZCOUUCjLUiH/DkVeW2lDujqs1XSvjzjh0gbOQ
+	vAUStZdEGdLA9Z2ofKdL0l0y+/BSDoviY0dxpsG/bw9qrUpF7SmhukFd8DOIauy0dp13f6f9n/j
+	hXlTrXFp/VrGh+kdqXl/5vDwZW8ep9pi9InKI9DtCO
+X-Google-Smtp-Source: AGHT+IEH3oSAaHUxdWxzytgERI3jEbHxHJwBXGrj94vlYzIgv60oEEOga0t/vF9UsR7u5ZJVVEVDpQRL1UPkN/SYW60=
+X-Received: by 2002:a17:90a:d883:b0:2fe:a0ac:5fcc with SMTP id
+ 98e67ed59e1d1-306a6245becmr3055286a91.34.1743773308463; Fri, 04 Apr 2025
+ 06:28:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cb07335e-8dc0-4cf1-8524-40770d5419cc@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250403151621.130541515@linuxfoundation.org> <CADo9pHjHSDjbGHrx1bY0JAxPRNWW63772wGt0e4wQ_kDq50JhA@mail.gmail.com>
+In-Reply-To: <CADo9pHjHSDjbGHrx1bY0JAxPRNWW63772wGt0e4wQ_kDq50JhA@mail.gmail.com>
+From: Luna Jernberg <droidbittin@gmail.com>
+Date: Fri, 4 Apr 2025 15:28:15 +0200
+X-Gm-Features: ATxdqUGgEPhFd7pK9_-fqa9Wl-BBCEXuGiINgFnjtn_Peku-eWbJr_Dz5WTiQlg
+Message-ID: <CADo9pHhFbPMfURmsAdxaUX0R9pp0aaPxD3KW3PEh2B5iT_YATg@mail.gmail.com>
+Subject: Re: [PATCH 6.14 00/21] 6.14.1-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Apr 04, 2025 at 03:11:00PM +0200, Thomas Richard wrote:
-> On 2/5/25 12:41, Andy Shevchenko wrote:
-> > On Wed, Feb 05, 2025 at 12:17:29PM +0100, Thomas Richard wrote:
-> >> On 1/16/25 15:14, Andy Shevchenko wrote:
+Works good on my laptop too with the same OS
 
-...
+Dell Latitude 7390 Intel(R) Core(TM) i5-8350U (8) @ 3.60 GHz
 
-> >> So I'm not really convinced by all this complexity for only one driver.
-> > 
-> > I am not sure if I asked you to show the excerpt from DSDT for this device.
-> > Is there any link I can browse the ASL code (for that particular device,
-> > most likely I wouldn't need the full DSDT)?
-> > 
-> 
-> I'm currently working on the V3, and I just remembered that you asked me
-> DSDT file. So for the UP Squared board, please find the full DSDT, and
-> also SSDT1 (which contains the FPGA declaration).
-> 
-> DSDT: https://gist.github.com/thom24/4d24c2a2f58d93f799e512c2485efd45
-> SSDT1: https://gist.github.com/thom24/2da44ef86eacfa5d2d492ce43fa41aa4
-
-Thank you!
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Den fre 4 apr. 2025 kl 12:18 skrev Luna Jernberg <droidbittin@gmail.com>:
+>
+> Tested-by: Luna Jernberg <droidbittin@gmail.com>
+>
+> AMD Ryzen 5 5600 6-Core Processor:
+> https://www.inet.se/produkt/5304697/amd-ryzen-5-5600-3-5-ghz-35mb on a
+> https://www.gigabyte.com/Motherboard/B550-AORUS-ELITE-V2-rev-12
+> https://www.inet.se/produkt/1903406/gigabyte-b550-aorus-elite-v2
+> motherboard :)
+>
+> running Arch Linux with the testing repos enabled:
+> https://archlinux.org/ https://archboot.com/
+> https://wiki.archlinux.org/title/Arch_Testing_Team
+>
+> (still building on my Dell Latitude laptop)
+>
+> Den tors 3 apr. 2025 kl 17:25 skrev Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org>:
+> >
+> > This is the start of the stable review cycle for the 6.14.1 release.
+> > There are 21 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Sat, 05 Apr 2025 15:16:11 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.14.1-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.14.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> >
+> > -------------
+> > Pseudo-Shortlog of commits:
+> >
+> > Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >     Linux 6.14.1-rc1
+> >
+> > John Keeping <jkeeping@inmusicbrands.com>
+> >     serial: 8250_dma: terminate correct DMA in tx_dma_flush()
+> >
+> > Cheick Traore <cheick.traore@foss.st.com>
+> >     serial: stm32: do not deassert RS485 RTS GPIO prematurely
+> >
+> > Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >     perf tools: Fix up some comments and code to properly use the event_source bus
+> >
+> > Luo Qiu <luoqiu@kylinsec.com.cn>
+> >     memstick: rtsx_usb_ms: Fix slab-use-after-free in rtsx_usb_ms_drv_remove
+> >
+> > Michal Pecio <michal.pecio@gmail.com>
+> >     usb: xhci: Apply the link chain quirk on NEC isoc endpoints
+> >
+> > Michal Pecio <michal.pecio@gmail.com>
+> >     usb: xhci: Don't skip on Stopped - Length Invalid
+> >
+> > Dominique Martinet <dominique.martinet@atmark-techno.com>
+> >     net: usb: usbnet: restore usb%d name exception for local mac addresses
+> >
+> > Fabio Porcedda <fabio.porcedda@gmail.com>
+> >     net: usb: qmi_wwan: add Telit Cinterion FE990B composition
+> >
+> > Fabio Porcedda <fabio.porcedda@gmail.com>
+> >     net: usb: qmi_wwan: add Telit Cinterion FN990B composition
+> >
+> > Sherry Sun <sherry.sun@nxp.com>
+> >     tty: serial: fsl_lpuart: disable transmitter before changing RS485 related registers
+> >
+> > Cameron Williams <cang1@live.co.uk>
+> >     tty: serial: 8250: Add Brainboxes XC devices
+> >
+> > Cameron Williams <cang1@live.co.uk>
+> >     tty: serial: 8250: Add some more device IDs
+> >
+> > William Breathitt Gray <wbg@kernel.org>
+> >     counter: microchip-tcb-capture: Fix undefined counter channel state on probe
+> >
+> > Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+> >     counter: stm32-lptimer-cnt: fix error handling when enabling
+> >
+> > Andres Traumann <andres.traumann.01@gmail.com>
+> >     ALSA: hda/realtek: Bass speaker fixup for ASUS UM5606KA
+> >
+> > Dhruv Deshpande <dhrv.d@proton.me>
+> >     ALSA: hda/realtek: Support mute LED on HP Laptop 15s-du3xxx
+> >
+> > Maxim Mikityanskiy <maxtram95@gmail.com>
+> >     netfilter: socket: Lookup orig tuple for IPv6 SNAT
+> >
+> > Abel Wu <wuyun.abel@bytedance.com>
+> >     cgroup/rstat: Fix forceidle time in cpu.stat
+> >
+> > Minjoong Kim <pwn9uin@gmail.com>
+> >     atm: Fix NULL pointer dereference
+> >
+> > Terry Junge <linuxhid@cosmicgizmosystems.com>
+> >     HID: hid-plantronics: Add mic mute mapping and generalize quirks
+> >
+> > Terry Junge <linuxhid@cosmicgizmosystems.com>
+> >     ALSA: usb-audio: Add quirk for Plantronics headsets to fix control names
+> >
+> >
+> > -------------
+> >
+> > Diffstat:
+> >
+> >  Makefile                                  |   4 +-
+> >  drivers/counter/microchip-tcb-capture.c   |  19 ++++
+> >  drivers/counter/stm32-lptimer-cnt.c       |  24 +++--
+> >  drivers/hid/hid-plantronics.c             | 144 ++++++++++++++----------------
+> >  drivers/memstick/host/rtsx_usb_ms.c       |   1 +
+> >  drivers/net/usb/qmi_wwan.c                |   2 +
+> >  drivers/net/usb/usbnet.c                  |  21 +++--
+> >  drivers/tty/serial/8250/8250_dma.c        |   2 +-
+> >  drivers/tty/serial/8250/8250_pci.c        |  46 ++++++++++
+> >  drivers/tty/serial/fsl_lpuart.c           |  17 ++++
+> >  drivers/tty/serial/stm32-usart.c          |   4 +-
+> >  drivers/usb/host/xhci-ring.c              |   4 +
+> >  drivers/usb/host/xhci.h                   |  13 ++-
+> >  kernel/cgroup/rstat.c                     |  29 +++---
+> >  net/atm/mpc.c                             |   2 +
+> >  net/ipv6/netfilter/nf_socket_ipv6.c       |  23 +++++
+> >  sound/pci/hda/patch_realtek.c             |   2 +
+> >  sound/usb/mixer_quirks.c                  |  51 +++++++++++
+> >  tools/perf/Documentation/intel-hybrid.txt |  12 +--
+> >  tools/perf/Documentation/perf-list.txt    |   2 +-
+> >  tools/perf/arch/x86/util/iostat.c         |   2 +-
+> >  tools/perf/builtin-stat.c                 |   2 +-
+> >  tools/perf/util/mem-events.c              |   2 +-
+> >  tools/perf/util/pmu.c                     |   4 +-
+> >  24 files changed, 304 insertions(+), 128 deletions(-)
+> >
+> >
+> >
 
