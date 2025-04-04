@@ -1,144 +1,120 @@
-Return-Path: <linux-kernel+bounces-588973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEC20A7C006
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:56:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4075A7C010
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF2DB189A5A8
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95E343BDB99
 	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CE91F417E;
-	Fri,  4 Apr 2025 14:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A831F4297;
+	Fri,  4 Apr 2025 14:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GH/6UK5v"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rzZ8msxb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039151624C9
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 14:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D771624C9;
+	Fri,  4 Apr 2025 14:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743778535; cv=none; b=ELyGiIrjquYRMrSJ+dnhG8fWK8lYW5tKOPvegS1E0WkfoIY/9tE0QePMt/rZedfLnMbSZxY/vczC5jjHXPQZaBds2TlrJIjtYDJhSpXT5UdlseYMJxvvbU07VtmMDjEbF2rNhISATeaqko4N1FUYdEuYsRMyrxwlHAVEih8jQlU=
+	t=1743778564; cv=none; b=ikXIQBN7igLQTOxjkTAe23K84yMI/wpEje9cf18nMEa/XNtKeaahu2aWu8A/RqyB3+3ga/vom9ELldZyHF6RLgTTHXovJ2DHrCNh4N7eXn5jS2W6mnd4cjXItxdGpEpYyliePendZj3211jKy/EiLc6JxEwvr6woiYgTPyLg0dE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743778535; c=relaxed/simple;
-	bh=kCbDRkzwXLPqCKn7fieAQveP+M1zJWgz95gFgBMpcNw=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=OAhkURIaWD1FU59oZbaZzQq2+rrOl7hUxTZsUCUVW7kB1WNNPzri35vZhAexiNr19LZgZxN2+f+mRipq22Uskd6xeIIt+QtL+0p6cYmG45W8mXL1Wqgf681cdqtCEWn743jmVAueqWz6mZAnnoruZZc7mg9z0QWK3t4Ww9F7T5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GH/6UK5v; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743778534; x=1775314534;
-  h=date:from:to:cc:subject:message-id;
-  bh=kCbDRkzwXLPqCKn7fieAQveP+M1zJWgz95gFgBMpcNw=;
-  b=GH/6UK5vRWTzIWvIAD5fobZn+8bcuT6jh/zTmde26M3KeV0u/SKhb/Q+
-   qPDIdim8Gp0RciqinLIVPRyBZSKcrvNpgj38MIvSculVSt1FHQAwztqAB
-   pM7pLYB6NSOxY4+9P17F/v45gSejyFTYkuCzBLeHHpL4Q7xzx4AQJaKdU
-   kRwom047JiLHJE0i3uYTOGSx28LUhTISHV54p7sOp+whbBimHD1D2ZwMe
-   GDoYAlFci/d2DTVRd/jy4z1eIJeokNyN3n/vhYT/qwyXIEE+0vSNnKAPq
-   7teI2Q7QFgHVyUloFcFCfcrbYQ+2UWs1Hbwm6rxaHNd/RJ2X1m7wNq7mK
-   Q==;
-X-CSE-ConnectionGUID: IPe0MEgzSQWPP6YuwcLKeA==
-X-CSE-MsgGUID: 8tIgfDI/RI+UzxL8kdQIAg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11394"; a="49078677"
-X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="49078677"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 07:55:33 -0700
-X-CSE-ConnectionGUID: ufMFWt+4SFmpy/+fiiAqag==
-X-CSE-MsgGUID: LGHqpTEPQcaeSLBaW02lvg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="127087265"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 04 Apr 2025 07:55:32 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u0iS9-0001JV-1g;
-	Fri, 04 Apr 2025 14:55:29 +0000
-Date: Fri, 04 Apr 2025 22:55:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/mm] BUILD SUCCESS
- fc1cd60042b3df1d162278461c7a87f0362502b8
-Message-ID: <202504042207.tUief2ZJ-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1743778564; c=relaxed/simple;
+	bh=bsmW9y+0W+KUxx34ofruUlBo0xOvw2rXR++TeDi3AKA=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=WPDd3Sh0lhpx4BEgHmL0chy8vKpymZgBwn9WpmADN+T3Buf+QgJZw8mE5OQy+wWc7Bd6cpxr564SmTtRNmRBr1lmz3mGr7qYol5BtZ/kWbnRDgKvBdvX66ScAyYMENTXxPKni7F+qG096Hgz8FcWNxs+2amRZ5Et9szFJTSh9Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rzZ8msxb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E06CC4CEDD;
+	Fri,  4 Apr 2025 14:56:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743778563;
+	bh=bsmW9y+0W+KUxx34ofruUlBo0xOvw2rXR++TeDi3AKA=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=rzZ8msxb+/87y0OctRs5tOxOR6tE9h/KjZci7JmdyMbsLYl923ZVvR8wlqmckWIcm
+	 AG1QlHYsthO0au0/hChQLhy8gOzM9fw3c1F0qusmYKdvqb9U8zQpvj8bBIkFENqWbl
+	 8lBZRlX6JKPwiWazZloNOU53X50y4s00DY2MROrSpE/TF8T/hQrafuwTxpc8WWxvku
+	 YowoHFp9YHOAKDFCaqrWFTK9b9pGXoVobpR/TN/xgmNWuXFZKLalvSK7Bm6rzig2xF
+	 nd8CoY+0BnWvoEIhPgy8jUUE5Q6Ftadlo4feiT5exPfQpsVoFVkoZbZvyHED3yasvs
+	 dEHi3HN5tGQAQ==
+Date: Fri, 04 Apr 2025 09:56:01 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Andreas Kemnade <andreas@kemnade.info>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org, 
+ Tero Kristo <kristo@kernel.org>, linux-kernel@vger.kernel.org
+To: Sukrut Bellary <sbellary@baylibre.com>
+In-Reply-To: <20250404014500.2789830-3-sbellary@baylibre.com>
+References: <20250404014500.2789830-1-sbellary@baylibre.com>
+ <20250404014500.2789830-3-sbellary@baylibre.com>
+Message-Id: <174377855887.1313159.8477749895324191477.robh@kernel.org>
+Subject: Re: [PATCH 2/4] dt-bindings: clock: ti: Convert to yaml
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/mm
-branch HEAD: fc1cd60042b3df1d162278461c7a87f0362502b8  x86/idle: Use MONITOR and MWAIT mnemonics in <asm/mwait.h>
 
-elapsed time: 1444m
+On Thu, 03 Apr 2025 18:44:58 -0700, Sukrut Bellary wrote:
+> This binding doesn't define a new clock binding type,
+> it is used to group the existing clock nodes under the hardware hierarchy.
+> 
+> As this is not a provider clock, remove #clock-cells and
+> clock-output-names properties.
+> Though few clockdomain nodes in the dts use these properties,
+> we are not fixing dts here.
+> Clean up the example to meet the current standards.
+> 
+> Add the creator of the original binding as a maintainer.
+> 
+> Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
+> ---
+>  .../bindings/clock/ti/clockdomain.txt         | 25 ------------
+>  .../bindings/clock/ti/ti,clockdomain.yaml     | 38 +++++++++++++++++++
+>  2 files changed, 38 insertions(+), 25 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/ti/clockdomain.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,clockdomain.yaml
+> 
 
-configs tested: 52
-configs skipped: 127
+My bot found errors running 'make dt_binding_check' on your patch:
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+yamllint warnings/errors:
 
-tested configs:
-i386                         allmodconfig    gcc-12
-i386                          allnoconfig    gcc-12
-i386                         allyesconfig    gcc-12
-i386    buildonly-randconfig-001-20250404    gcc-12
-i386    buildonly-randconfig-002-20250404    gcc-12
-i386    buildonly-randconfig-003-20250404    gcc-12
-i386    buildonly-randconfig-004-20250404    gcc-12
-i386    buildonly-randconfig-005-20250404    gcc-12
-i386    buildonly-randconfig-006-20250404    gcc-12
-i386                            defconfig    clang-20
-i386              randconfig-001-20250404    gcc-12
-i386              randconfig-002-20250404    gcc-12
-i386              randconfig-003-20250404    gcc-12
-i386              randconfig-004-20250404    gcc-12
-i386              randconfig-005-20250404    gcc-12
-i386              randconfig-006-20250404    gcc-12
-i386              randconfig-007-20250404    gcc-12
-i386              randconfig-011-20250404    clang-20
-i386              randconfig-012-20250404    clang-20
-i386              randconfig-013-20250404    clang-20
-i386              randconfig-014-20250404    clang-20
-i386              randconfig-015-20250404    clang-20
-i386              randconfig-016-20250404    clang-20
-i386              randconfig-017-20250404    clang-20
-x86_64                        allnoconfig    clang-20
-x86_64                       allyesconfig    clang-20
-x86_64  buildonly-randconfig-001-20250404    clang-20
-x86_64  buildonly-randconfig-002-20250404    clang-20
-x86_64  buildonly-randconfig-003-20250404    clang-20
-x86_64  buildonly-randconfig-004-20250404    gcc-12
-x86_64  buildonly-randconfig-005-20250404    gcc-12
-x86_64  buildonly-randconfig-006-20250404    gcc-12
-x86_64                          defconfig    gcc-11
-x86_64                              kexec    clang-20
-x86_64            randconfig-001-20250404    clang-20
-x86_64            randconfig-002-20250404    clang-20
-x86_64            randconfig-003-20250404    clang-20
-x86_64            randconfig-004-20250404    clang-20
-x86_64            randconfig-005-20250404    clang-20
-x86_64            randconfig-006-20250404    clang-20
-x86_64            randconfig-007-20250404    clang-20
-x86_64            randconfig-008-20250404    clang-20
-x86_64            randconfig-071-20250404    gcc-12
-x86_64            randconfig-072-20250404    gcc-12
-x86_64            randconfig-073-20250404    gcc-12
-x86_64            randconfig-074-20250404    gcc-12
-x86_64            randconfig-075-20250404    gcc-12
-x86_64            randconfig-076-20250404    gcc-12
-x86_64            randconfig-077-20250404    gcc-12
-x86_64            randconfig-078-20250404    gcc-12
-x86_64                           rhel-9.4    clang-20
-x86_64                           rhel-9.4    gcc-12
+dtschema/dtc warnings/errors:
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+doc reference errors (make refcheckdocs):
+Warning: Documentation/devicetree/bindings/clock/ti/fixed-factor-clock.txt references a file that doesn't exist: Documentation/devicetree/bindings/clock/ti/autoidle.txt
+Warning: Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml references a file that doesn't exist: Documentation/devicetree/bindings/clock/ti/autoidle.txt
+Warning: Documentation/devicetree/bindings/clock/ti/ti,gate-clock.yaml references a file that doesn't exist: Documentation/devicetree/bindings/clock/ti/clockdomain.txt
+Warning: Documentation/translations/ja_JP/process/submit-checklist.rst references a file that doesn't exist: Documentation/translations/ja_JP/SubmitChecklist
+Documentation/devicetree/bindings/clock/ti/fixed-factor-clock.txt: Documentation/devicetree/bindings/clock/ti/autoidle.txt
+Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml: Documentation/devicetree/bindings/clock/ti/autoidle.txt
+Documentation/devicetree/bindings/clock/ti/ti,gate-clock.yaml: Documentation/devicetree/bindings/clock/ti/clockdomain.txt
+Documentation/translations/ja_JP/process/submit-checklist.rst: Documentation/translations/ja_JP/SubmitChecklist
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250404014500.2789830-3-sbellary@baylibre.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
