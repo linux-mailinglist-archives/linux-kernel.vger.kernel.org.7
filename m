@@ -1,71 +1,80 @@
-Return-Path: <linux-kernel+bounces-588642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E96E2A7BBAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:37:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30C77A7BBB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F510179863
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:36:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F0677A7E05
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA501DF274;
-	Fri,  4 Apr 2025 11:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC5C1DF274;
+	Fri,  4 Apr 2025 11:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lLv7bI+s"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O8sWvlmo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8E91DE2CC
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 11:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBA0146588;
+	Fri,  4 Apr 2025 11:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743766609; cv=none; b=ETw80MTwOuhYASjic1HbzNlbnqvGmUKnJOGYRbO25fHnVnO/YcSrGo1ewYE/M6pyKgbI26LzHboGsyFefeWlU5B2cYTLcSzBeyyO6YQoCF966ZB0upAlaGxVxU2Zisn502ZO7d+Q3yuVFiYqN/8SNW8K7IHYdjRHwnjpjhq+vhE=
+	t=1743766822; cv=none; b=sEGXQA4ZArJBC4YSPAX63fvgTyyX2hmFAjo59C7BWFn7wg6QQlHl6G0Mjyja+7XgrkgZMHFytOIRjTxJ5q5b8QLxOayE0y57xUwQu0+ovHJjPmX8hRfkwr7wDhTQO0FhRsGMG4MPeojvb4SuU0a8ysdVRPYAJ2mrq1MWrld2Wq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743766609; c=relaxed/simple;
-	bh=2R0SU56fHG2qv4/IOZgvDNrfJALxaJEYBx69YFjuIU0=;
+	s=arc-20240116; t=1743766822; c=relaxed/simple;
+	bh=9b45S75utZYYfge2O1DXivXuvb2z6jJYNv6lm027wpM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=habpsE0/7XeJCm8j0lJeUDoWv3WmF3bo0bRo42YMwZ0yyLz+AY6+U2/nju/gJTCihXZIBYg9mhwz/lPhBoQXOPpOQjpYYJDjx7lE4jSGFLPEYdYWuZ5WmoHjrrC6/+nkt/mAgIA8HBvH7RFp4la6G1MoASA7zmclpNFGdM8pjI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lLv7bI+s; arc=none smtp.client-ip=198.175.65.17
+	 Content-Type:Content-Disposition:In-Reply-To; b=qv7NOQogsYIZkuhlcOxZW6C/cTa56jm6OlJOOiZF6fpeh1DdMf+xwee348mYS5kO4dnmc1O/eogC832C4rE99NPdXxMoOSEXCELbC4MKHz6iCSkA0ii0Q4ayv0PvRrD34Z/1WgqrtyEhe1kRrFG0pHmh0QV961FeUG3/7Y68nvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O8sWvlmo; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743766608; x=1775302608;
+  t=1743766820; x=1775302820;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=2R0SU56fHG2qv4/IOZgvDNrfJALxaJEYBx69YFjuIU0=;
-  b=lLv7bI+sj2skoCXxE98qyXV6DURrFnrfsy/H0fp//EEUcoxvud4byE6+
-   YUIzDsGPQaU2Q357/8R+pghzXVCbhv3LIY8TqVm2xiOosB6p5vm6PExyp
-   NQqQ9OYPSs010wMjlxFhivIN2/glijxvTld3MjtB9iMsc7eN6FH8gwjsx
-   U+cof5jr/lYKCTyExsWCKwnGEMtQ+H+Sdl4zvELnRdQpfbwXFsk86qP0K
-   09BEonlg8xEEf3iZIltJSw+7yTgSFe5LOVRIxjWNO38PDeNRS0uTrnaxD
-   yRHdhp0C6LN32dk2K8SQj2b5FkT/RNcOX1B5w7uKKf59lMvFmfYomdl8A
-   g==;
-X-CSE-ConnectionGUID: UGmPHOR1SMiy9nk+UigZpQ==
-X-CSE-MsgGUID: C+UPRLzUTD2ZVTSLpfQGFA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11393"; a="45220885"
+  bh=9b45S75utZYYfge2O1DXivXuvb2z6jJYNv6lm027wpM=;
+  b=O8sWvlmod9x2mFSW2C1eXFUtIv0+ovKqZQjaI2m8NhcPkJC+zzzrBmYe
+   LNipD9bwG6P0j569Z2eZJli0tc7BGRFF7G4fELnyiwTPRBRQc21tZREQf
+   g2GETdnBtIP1ks1+Fr85QMUq1Iw4dtVcoIDnJyMeFcFBieFn7rQwLLtu6
+   Rf6Umpz8rEuinjeyntuP1VvFaKqXztILDVmvd05mVoiFuK99YFugQZDLY
+   o99e2LjKQEkBFWFnSdXnohSE2E+8mYNV9F/mRXvrqd0l3s39YCpspSr20
+   04sM1u6tiYXsadIOGWVpuEeXelVs6p0OLED8MZ1Kl8hWfoit86vJ9ADDK
+   Q==;
+X-CSE-ConnectionGUID: 7OLiZnOcTouz5HzNZOEUNA==
+X-CSE-MsgGUID: XKbOjzzdT/iZj1uFCiFyfQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11393"; a="56190944"
 X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="45220885"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 04:36:46 -0700
-X-CSE-ConnectionGUID: czSbiM0sTqmFr2LKnLEIUg==
-X-CSE-MsgGUID: dDnMGDd3RNSMcxKazZrKTg==
+   d="scan'208";a="56190944"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 04:40:19 -0700
+X-CSE-ConnectionGUID: SOL4dQJCTMi8nBpfVI+NLw==
+X-CSE-MsgGUID: 9zq669XaQguh4n9RfXZa6Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="127815705"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 04:36:44 -0700
-Date: Fri, 4 Apr 2025 14:36:41 +0300
-From: Raag Jadav <raag.jadav@intel.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: david.m.ertman@intel.com, ira.weiny@intel.com, lee@kernel.org,
-	andriy.shevchenko@linux.intel.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] mfd: core: Support auxiliary device
-Message-ID: <Z-_ESekESYYvMHeR@black.fi.intel.com>
-References: <20250403110053.1274521-1-raag.jadav@intel.com>
- <2025040336-ethically-regulate-3594@gregkh>
+   d="scan'208";a="127586898"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 04 Apr 2025 04:40:16 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u0fPC-0001Cd-25;
+	Fri, 04 Apr 2025 11:40:14 +0000
+Date: Fri, 4 Apr 2025 19:39:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Matthias Fend <matthias.fend@emfend.at>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Matthias Fend <matthias.fend@emfend.at>,
+	bsp-development.geo@leica-geosystems.com
+Subject: Re: [PATCH 2/2] media: i2c: add Himax HM1246 image sensor driver
+Message-ID: <202504041952.OcJvDWaM-lkp@intel.com>
+References: <20250403-hm1246-v1-2-30990d71bc42@emfend.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,32 +83,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025040336-ethically-regulate-3594@gregkh>
+In-Reply-To: <20250403-hm1246-v1-2-30990d71bc42@emfend.at>
 
-On Thu, Apr 03, 2025 at 03:02:47PM +0100, Greg KH wrote:
-> On Thu, Apr 03, 2025 at 04:30:53PM +0530, Raag Jadav wrote:
-> > Extend MFD subsystem to support auxiliary child device. This is useful for
-> > MFD usecases where parent device is on a discoverable bus and doesn't fit
-> > into the platform device criteria. Current support is limited to just PCI
-> > devices, but this can be further extended to support other types like USB
-> > in the future.
+Hi Matthias,
 
-...
+kernel test robot noticed the following build errors:
 
-> > 2. Should we allow auxiliary drivers to manage their own resources
-> >    (MEM, IO, IRQ etc)?
-> 
-> The resources are all shared by the "parent" device, that's what makes
-> aux drivers work, they need to handle this as there is no unique way to
-> carve up the resources here.
-> 
-> So I don't know how you would do this, sorry.
+[auto build test ERROR on a2cc6ff5ec8f91bc463fd3b0c26b61166a07eb11]
 
-Perhaps we can carve it up in mfd_add_devices() using start and end members
-and error out if they overlap.
+url:    https://github.com/intel-lab-lkp/linux/commits/Matthias-Fend/media-dt-bindings-i2c-add-Himax-HM1246-image-sensor/20250403-165139
+base:   a2cc6ff5ec8f91bc463fd3b0c26b61166a07eb11
+patch link:    https://lore.kernel.org/r/20250403-hm1246-v1-2-30990d71bc42%40emfend.at
+patch subject: [PATCH 2/2] media: i2c: add Himax HM1246 image sensor driver
+config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20250404/202504041952.OcJvDWaM-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250404/202504041952.OcJvDWaM-lkp@intel.com/reproduce)
 
-Can't we still have a struct resource that is unique to that specific
-auxiliary device?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504041952.OcJvDWaM-lkp@intel.com/
 
-Raag
+All errors (new ones prefixed by >>):
+
+   m68k-linux-ld: drivers/media/i2c/hm1246.o: in function `hm1246_calc_pll.constprop.0':
+>> hm1246.c:(.text+0x956): undefined reference to `__udivdi3'
+   m68k-linux-ld: drivers/media/i2c/hm1246.o: in function `hm1246_update_controls.isra.0':
+>> hm1246.c:(.text+0xd1e): undefined reference to `__divdi3'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
