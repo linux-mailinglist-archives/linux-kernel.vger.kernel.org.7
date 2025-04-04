@@ -1,160 +1,262 @@
-Return-Path: <linux-kernel+bounces-589355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 322A6A7C4C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 22:14:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F669A7C4BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 22:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CCD7882939
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 20:07:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B81CB1B6331E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 20:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7FD4222572;
-	Fri,  4 Apr 2025 20:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FE021B9D8;
+	Fri,  4 Apr 2025 20:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="nhBbnOcr"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hZsxJU/i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40ACF219A70
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 20:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DFF18B494;
+	Fri,  4 Apr 2025 20:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743797050; cv=none; b=m2+eHBsUvoSPYOV1hV2pejoDnXK98YrwSLabJHKpC4GItEX20Un2w/lHxhJP8s2yQVZKMwc3uirKQPsQCdE4xSawyqcaANWHDvY7A6ve1ayLNPAoXWv9SPTq8aPgdLJeIvR/SA3m8Vo+EJIPmPMyefGgxoR7Z8kG0032h3idS5s=
+	t=1743797121; cv=none; b=BpLekwJo/F/CENbaNoiQjuviK7BYTx4SrjBQyf4Jz2KsaSTPp8gZVhwRzK9bcqGnV09Bzjv3rmRMXmJHg+zsQFHiRNFZOmuoZfkLao2GGeUZc3ZnCiUNR5nx62lE+wheSeMQFPNhb69o0lJDlNyAfiNftG6juHLt68ZISFQ874U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743797050; c=relaxed/simple;
-	bh=ouROHuQWcAD3W9eytP+HmLUDp18dNL1U5cg3yioIUq8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B2/TLBtFhdzzDMzq84TYA+WfX9nADcGiV97Nz1mZ/0QztO61XPwnSxeC+heqtAzqMr0eQU1U9rVKJNB951HWYBbQzpgCC2vlS92lj/ZMD22Yn6rFexgLTmc2mOKoJFYiRV3BeTpqSQwSyjy+QRhRUuytlSk67mBITKb/u5J41jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=nhBbnOcr; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cebe06e9eso15873015e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 13:04:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1743797046; x=1744401846; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zP03ijhZ2aqQsthTQz8RL6yLJtMw3d+tIA07mCuHO+w=;
-        b=nhBbnOcrIqWB0T05XzOHUD5eFlb2gue27HNrW1UqvfEZBoCkYT2t/5KauD91hH4nXJ
-         EfPUNNdjmz3THQX/2ajgm7w8d4KjwjIjMBt2bHFxuLRCYJsFetoscTqATbHSUGHqct5K
-         iBXrCV/0ZOCFOPeISfSRuq3fnj8dBh8ghvOYiUEkFwoWMPu+KNAB+HPiJxNpLCShIa7y
-         eiJzogjm534RWzjdEoyEcvBjpFrqel2iA0DtlSvlaHQiQVjBu2BagA1b6W+1fjfKQRln
-         tERNUy780Oy2nzMCp+7LRCbxF+dwd39ikCE/QgzMKDr5/TtkRjDV1ESZ8rWAO7zudujf
-         J2HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743797046; x=1744401846;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zP03ijhZ2aqQsthTQz8RL6yLJtMw3d+tIA07mCuHO+w=;
-        b=dHDYJlCRucmCYNjiRk0FWAehyUcHAyo0qfK1e6tAM/ysklnZHYJNlEbm2tM/6emkei
-         F0WLFhy8r6j2F2uzA3Y1LP1H7IdSU+ocDl8I/u1uEwB63v5VnsE7JbzZH8+bWH+8rkXi
-         vORjNniNpHAar0n6aiPMtPKSkaS5DRWhOotA37pF8zjoSs0qTtswZsdL5SaN1BApnNZS
-         kx7l0q5kh5SBWhAyRMHeND9Q9U8p4OVqG8dNRKjYlRB2w3AGKGqLYB1T/FCQtP7EwsT2
-         IgG4VTwsu2S8sspSvtPaW6k4JZMmFTB3DiAFJlu/14d7VQW/bod3IU6RreJmpzmYBF6L
-         qiWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWddmyL23AV5dfvOylYxVLMYPSOcBykVOJUfVEpL02HPynwQ0A5gDJ1Dswh10X28zcFSgqdVoXbk93BzRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7VoU8cHOs3qmayrwlik96MlbsU/ThTTPRc/kqDgv959E/+3v9
-	SyVwYp9uGDf9hZ8EXW3uj0zjvIJLf3doKA4goWJwYYFU19c/8x/D8X4v/SJ7LNc=
-X-Gm-Gg: ASbGncu+kjlOjV3UfUIt2pU1WxJqSV5nRI4gLnBQ2JCwZ5UIYJkj6ZeXMmb6d5KViJ7
-	aAlOo++5AMkHP1z/NldxuiKwL6nJ5TbikS4X3pq7RSEuycUX6ASIKSGTh+J/r/ik57y2g77Im61
-	vjgRUv5XCr4+rEOdnHnR9ITg/TWzFFv3kkvUOvEludnWny6OdYMBUALYYZjfYI9hci1A6m5IHFS
-	DPdBNdWB+Za5sRgEU1TSPEIpIQyQ6Ma/RrVHVN0LJ5Xn16PXbNbZM+ZtJACbkuTPAxr0O5iDB01
-	axjgPoe/J+rdwc82eB6gN/+b0WxZbAv9iKBX/MQQdGGdUB61QcLtZTabNYAtT9xsbLwjCWN0eXz
-	+
-X-Google-Smtp-Source: AGHT+IEjIxLY0tbFxlyNpcjKXrg78y2ZQb0LH2OPyUVnkkSD5YRsGWUpiwLCyDgfBVWGGqcG57xffQ==
-X-Received: by 2002:a05:600c:4513:b0:43c:ea1a:720a with SMTP id 5b1f17b1804b1-43ecf823163mr37804015e9.1.1743797046189;
-        Fri, 04 Apr 2025 13:04:06 -0700 (PDT)
-Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec34af0e6sm55209205e9.16.2025.04.04.13.04.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Apr 2025 13:04:05 -0700 (PDT)
-Message-ID: <abb9e2c1-c4b5-4ffa-b2e3-8b204da5efca@blackwall.org>
-Date: Fri, 4 Apr 2025 23:04:04 +0300
+	s=arc-20240116; t=1743797121; c=relaxed/simple;
+	bh=GMCfGIgOJjz961NHnxEEdClQb5C3/47hhGB/CNUCJTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WbfTCdYa+tnlKT3v1E+ffLbPVLCjL8yFhbJUxkLLzSCkNWgeA7Men+bppRnpaf6Q05/Mx1rWVZtsilQsA43qLHILDc7NZ0YA1pGiP+dCWxaXouQ7G/klbjSFfkNgeYK7Vkap5PBtJNYdke8KHs4TP1OanOesUlkXEfOF3/MifIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hZsxJU/i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DD0DC4CEDD;
+	Fri,  4 Apr 2025 20:05:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743797120;
+	bh=GMCfGIgOJjz961NHnxEEdClQb5C3/47hhGB/CNUCJTo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hZsxJU/ibkUpFtrAwJ3jYKNR1R6qfnuuyI2rfGYCVlL4kq7SCowZvHnlpga98ja8W
+	 mPbTGk22CHvTtppR4GuF34C5AH58V6r/NjtvEV3b0J4HoC9cpipRhEM7/XxmQDnw2A
+	 p035DU8YqscCUvo2oVYWXPFsPOMRnACVlc+NR1jsnq5YD8vEYu19HXPpuSc1w+Djkb
+	 Ym0WU2XVD4aJhij2vNplXJhXq7C698CcTGZF7dfXjpjdXHkWJp40uyau5UYKKBiyw5
+	 dGXMN/JRBUPG7GrC/BC/KOKh4AnwMSD5LEuPxZ9uDPgMle2bH/iy9kDGh3Qzfm+OHO
+	 oJ/5uxNypPf0w==
+Date: Fri, 4 Apr 2025 15:05:19 -0500
+From: Rob Herring <robh@kernel.org>
+To: cy_huang@richtek.com
+Cc: Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Otto lin <otto_lin@richtek.com>, Allen Lin <allen_lin@richtek.com>,
+	devicetree@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] ASoC: codecs: Add support for Richtek rt9123p
+Message-ID: <20250404200519.GA198531-robh@kernel.org>
+References: <cover.1743774849.git.cy_huang@richtek.com>
+ <27583d8f9bb07351e5c9ea78ed286ca6daa74a8d.1743774849.git.cy_huang@richtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 net-next 3/3] net: bridge: mcast: Notify on mdb offload
- failure
-To: Joseph Huang <joseph.huang.2024@gmail.com>,
- Joseph Huang <Joseph.Huang@garmin.com>, netdev@vger.kernel.org
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Roopa Prabhu <roopa@nvidia.com>, Simon Horman <horms@kernel.org>,
- linux-kernel@vger.kernel.org, bridge@lists.linux.dev
-References: <20250403234412.1531714-1-Joseph.Huang@garmin.com>
- <20250403234412.1531714-4-Joseph.Huang@garmin.com>
- <36c7286d-b410-4695-b069-f79605feade4@blackwall.org>
- <917d4124-c389-4623-836d-357150b45240@gmail.com>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <917d4124-c389-4623-836d-357150b45240@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <27583d8f9bb07351e5c9ea78ed286ca6daa74a8d.1743774849.git.cy_huang@richtek.com>
 
-On 4/4/25 18:25, Joseph Huang wrote:
-> On 4/4/2025 6:29 AM, Nikolay Aleksandrov wrote:
->> On 4/4/25 02:44, Joseph Huang wrote:
->>> Notify user space on mdb offload failure if mdb_offload_fail_notification
->>> is set.
->>>
->>> Signed-off-by: Joseph Huang <Joseph.Huang@garmin.com>
->>> ---
->>>   net/bridge/br_mdb.c       | 26 +++++++++++++++++++++-----
->>>   net/bridge/br_private.h   |  9 +++++++++
->>>   net/bridge/br_switchdev.c |  4 ++++
->>>   3 files changed, 34 insertions(+), 5 deletions(-)
->>>
->>
->> The patch looks good, but one question - it seems we'll mark mdb entries with
->> "offload failed" when we get -EOPNOTSUPP as an error as well. Is that intended?
->>
->> That is, if the option is enabled and we have mixed bridge ports, we'll mark mdbs
->> to the non-switch ports as offload failed, but it is not due to a switch offload
->> error.
+On Fri, Apr 04, 2025 at 10:22:14PM +0800, cy_huang@richtek.com wrote:
+> From: ChiYuan Huang <cy_huang@richtek.com>
 > 
-> Good catch. No, that was not intended.
+> Add codec driver for Richtek rt9123p.
 > 
-> What if we short-circuit and just return like you'd suggested initially if err == -EOPNOTSUPP?
+> Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
+> ---
+>  sound/soc/codecs/Kconfig   |   6 ++
+>  sound/soc/codecs/Makefile  |   2 +
+>  sound/soc/codecs/rt9123p.c | 171 +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 179 insertions(+)
+>  create mode 100644 sound/soc/codecs/rt9123p.c
 > 
->>> diff --git a/net/bridge/br_switchdev.c b/net/bridge/br_switchdev.c
->>> index 40f0b16e4df8..9b5005d0742a 100644
->>> --- a/net/bridge/br_switchdev.c
->>> +++ b/net/bridge/br_switchdev.c
->>> @@ -504,6 +504,7 @@ static void br_switchdev_mdb_complete(struct net_device *dev, int err, void *pri
->>>       struct net_bridge_mdb_entry *mp;
->>>       struct net_bridge_port *port = data->port;
->>>       struct net_bridge *br = port->br;
->>> +    u8 old_flags;
->>>   
-> 
-> +    if (err == -EOPNOTSUPP)
-> +        goto notsupp;
-> 
->>>       spin_lock_bh(&br->multicast_lock);
->>>       mp = br_mdb_ip_get(br, &data->ip);
->>> @@ -514,7 +515,10 @@ static void br_switchdev_mdb_complete(struct net_device *dev, int err, void *pri
->>>           if (p->key.port != port)
->>>               continue;
->>>   +        old_flags = p->flags;
->>>           br_multicast_set_pg_offload_flags(p, !err);
->>> +        if (br_mdb_should_notify(br, old_flags ^ p->flags))
->>> +            br_mdb_flag_change_notify(br->dev, mp, p);
->>>       }
->>>   out:
->>>       spin_unlock_bh(&br->multicast_lock);
->>
-> 
-> + notsupp:
->     kfree(priv);
+> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+> index c61b2d3cf284..b0fa935846c0 100644
+> --- a/sound/soc/codecs/Kconfig
+> +++ b/sound/soc/codecs/Kconfig
+> @@ -1832,6 +1832,12 @@ config SND_SOC_RT9123
+>  	  Enable support for the I2C control mode of Richtek RT9123 3.2W mono
+>  	  Class-D audio amplifier.
+>  
+> +config SND_SOC_RT9123P
+> +	tristate "Richtek RT9123P Mono Class-D Amplifier"
+> +	help
+> +	  Enable support for the HW control mode of Richtek RT9123P 3.2W mono
+> +	  Class-D audio amplifier.
+> +
+>  config SND_SOC_RTQ9128
+>  	tristate "Richtek RTQ9128 45W Digital Input Amplifier"
+>  	depends on I2C
+> diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
+> index d8d0bc367af8..fba699701804 100644
+> --- a/sound/soc/codecs/Makefile
+> +++ b/sound/soc/codecs/Makefile
+> @@ -271,6 +271,7 @@ snd-soc-rt721-sdca-y := rt721-sdca.o rt721-sdca-sdw.o
+>  snd-soc-rt722-sdca-y := rt722-sdca.o rt722-sdca-sdw.o
+>  snd-soc-rt9120-y := rt9120.o
+>  snd-soc-rt9123-y := rt9123.o
+> +snd-soc-rt9123p-y := rt9123p.o
+>  snd-soc-rtq9128-y := rtq9128.o
+>  snd-soc-sdw-mockup-y := sdw-mockup.o
+>  snd-soc-sgtl5000-y := sgtl5000.o
+> @@ -686,6 +687,7 @@ obj-$(CONFIG_SND_SOC_RT721_SDCA_SDW)     += snd-soc-rt721-sdca.o
+>  obj-$(CONFIG_SND_SOC_RT722_SDCA_SDW)     += snd-soc-rt722-sdca.o
+>  obj-$(CONFIG_SND_SOC_RT9120)	+= snd-soc-rt9120.o
+>  obj-$(CONFIG_SND_SOC_RT9123)	+= snd-soc-rt9123.o
+> +obj-$(CONFIG_SND_SOC_RT9123P)	+= snd-soc-rt9123p.o
+>  obj-$(CONFIG_SND_SOC_RTQ9128)	+= snd-soc-rtq9128.o
+>  obj-$(CONFIG_SND_SOC_SDW_MOCKUP)     += snd-soc-sdw-mockup.o
+>  obj-$(CONFIG_SND_SOC_SGTL5000)  += snd-soc-sgtl5000.o
+> diff --git a/sound/soc/codecs/rt9123p.c b/sound/soc/codecs/rt9123p.c
+> new file mode 100644
+> index 000000000000..b0ff5f856e4c
+> --- /dev/null
+> +++ b/sound/soc/codecs/rt9123p.c
+> @@ -0,0 +1,171 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +//
+> +// rt9123p.c -- RT9123 (HW Mode) ALSA SoC Codec driver
+> +//
+> +// Author: ChiYuan Huang <cy_huang@richtek.com>
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/property.h>
+> +#include <sound/pcm.h>
+> +#include <sound/soc.h>
+> +#include <sound/soc-dai.h>
+> +#include <sound/soc-dapm.h>
+> +
+> +struct rt9123p_priv {
+> +	struct gpio_desc *enable;
+> +	unsigned int enable_delay;
+> +	int enable_switch;
+> +};
+> +
+> +static int rt9123p_daiops_trigger(struct snd_pcm_substream *substream, int cmd,
+> +				  struct snd_soc_dai *dai)
+> +{
+> +	struct snd_soc_component *comp = dai->component;
+> +	struct rt9123p_priv *rt9123p = snd_soc_component_get_drvdata(comp);
+> +
+> +	if (!rt9123p->enable)
+> +		return 0;
+> +
+> +	switch (cmd) {
+> +	case SNDRV_PCM_TRIGGER_START:
+> +	case SNDRV_PCM_TRIGGER_RESUME:
+> +	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
+> +		mdelay(rt9123p->enable_delay);
+> +		if (rt9123p->enable_switch) {
+> +			gpiod_set_value(rt9123p->enable, 1);
+> +			dev_dbg(comp->dev, "set enable to 1");
+> +		}
+> +		break;
+> +	case SNDRV_PCM_TRIGGER_STOP:
+> +	case SNDRV_PCM_TRIGGER_SUSPEND:
+> +	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
+> +		gpiod_set_value(rt9123p->enable, 0);
+> +		dev_dbg(comp->dev, "set enable to 0");
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int rt9123p_enable_event(struct snd_soc_dapm_widget *w, struct snd_kcontrol *kcontrol,
+> +				int event)
+> +{
+> +	struct snd_soc_component *comp = snd_soc_dapm_to_component(w->dapm);
+> +	struct rt9123p_priv *rt9123p = snd_soc_component_get_drvdata(comp);
+> +
+> +	if (event & SND_SOC_DAPM_POST_PMU)
+> +		rt9123p->enable_switch = 1;
+> +	else if (event & SND_SOC_DAPM_POST_PMD)
+> +		rt9123p->enable_switch = 0;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct snd_soc_dapm_widget rt9123p_dapm_widgets[] = {
+> +	SND_SOC_DAPM_OUTPUT("SPK"),
+> +	SND_SOC_DAPM_OUT_DRV_E("Amp Drv", SND_SOC_NOPM, 0, 0, NULL, 0, rt9123p_enable_event,
+> +			       SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_POST_PMD),
+> +};
+> +
+> +static const struct snd_soc_dapm_route rt9123p_dapm_routes[] = {
+> +	{"Amp Drv", NULL, "HiFi Playback"},
+> +	{"SPK", NULL, "Amp Drv"},
+> +};
+> +
+> +static const struct snd_soc_component_driver rt9123p_comp_driver = {
+> +	.dapm_widgets		= rt9123p_dapm_widgets,
+> +	.num_dapm_widgets	= ARRAY_SIZE(rt9123p_dapm_widgets),
+> +	.dapm_routes		= rt9123p_dapm_routes,
+> +	.num_dapm_routes	= ARRAY_SIZE(rt9123p_dapm_routes),
+> +	.idle_bias_on		= 1,
+> +	.use_pmdown_time	= 1,
+> +	.endianness		= 1,
+> +};
+> +
+> +static const struct snd_soc_dai_ops rt9123p_dai_ops = {
+> +	.trigger        = rt9123p_daiops_trigger,
+> +};
+> +
+> +static struct snd_soc_dai_driver rt9123p_dai_driver = {
+> +	.name = "HiFi",
+> +	.playback = {
+> +		.stream_name	= "HiFi Playback",
+> +		.formats	= SNDRV_PCM_FMTBIT_S16 | SNDRV_PCM_FMTBIT_S24 |
+> +				  SNDRV_PCM_FMTBIT_S32,
+> +		.rates		= SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000 |
+> +				  SNDRV_PCM_RATE_22050 | SNDRV_PCM_RATE_24000 |
+> +				  SNDRV_PCM_RATE_32000 | SNDRV_PCM_RATE_44100 |
+> +				  SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_88200 |
+> +				  SNDRV_PCM_RATE_96000,
+> +		.rate_min	= 8000,
+> +		.rate_max	= 96000,
+> +		.channels_min	= 1,
+> +		.channels_max	= 2,
+> +	},
+> +	.ops    = &rt9123p_dai_ops,
+> +};
+> +
+> +static int rt9123p_platform_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct rt9123p_priv *rt9123p;
+> +	int ret;
+> +
+> +	rt9123p = devm_kzalloc(dev, sizeof(*rt9123p), GFP_KERNEL);
+> +	if (!rt9123p)
+> +		return -ENOMEM;
+> +
+> +	rt9123p->enable = devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_LOW);
+> +	if (IS_ERR(rt9123p->enable))
+> +		return PTR_ERR(rt9123p->enable);
+> +
+> +	ret = device_property_read_u32(dev, "enable-delay", &rt9123p->enable_delay);
 
-Looks good to me. Thanks!
+Not documented. You have a single GPIO for any sort of control. What is 
+this delay relative to? Why does it need to be tuned per board? 
+Properties with units have unit suffix.
+
+Rob
 
