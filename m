@@ -1,139 +1,118 @@
-Return-Path: <linux-kernel+bounces-588451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB54A7B909
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:38:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63085A7B8DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D145C17A3E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:38:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B57B3B46D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452F91A255C;
-	Fri,  4 Apr 2025 08:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE70199396;
+	Fri,  4 Apr 2025 08:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="nnhfEQeH"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I73KhTWG"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBFA19F462;
-	Fri,  4 Apr 2025 08:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C184199E94
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 08:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743755871; cv=none; b=e3f/PbhZPb4WCPi0FWFoVK3PJKsFqgRjvwwVGFdXH6HlyDh8MRwxvEVPA+EzRac/iO2TeaT73IQsRRwr/WZZhoRCLXUWJEiM48+GId74kkf4s+k/OxcgttCQ88HKBWexOkfKPL3Aysp6TST4vHtFx6YJ0Pk+mMUptb+L4tDcoHU=
+	t=1743755373; cv=none; b=lbieselUIejwF3lM0YIJFidijgJNIslVQNNOIBYfOFfV56efP6X0u1ljlYpNYwHoi36YGTsBMaBNu4rk72ivKZlPpBcJlLElsSIbVpMnTG6YL7e9kxWbrBQr/u/+grYxEr1l6CCm4ZYBZhr0ZO9f2MjixGsDug5uewmqEA9KXeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743755871; c=relaxed/simple;
-	bh=pLibqvIcw1SHorZ/STK72m6aN/tlhopq9FXsc2/2oGI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q5C19f6lKPmgs6Ag6fqZp1aMJHB54cTVfEpqpnKl1U5zegDams87TtYb9EUzM6nXsogwPFZBZrRx1ccwudcjtWttiSceeoeMrkLzf0QzwiBr54h/b6xoFNjD0I0kIVt3Khl9eGaN5ougK7JODt6rl8x3dMqQHFa4IX3UiIx1UQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=nnhfEQeH; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost.localdomain (unknown [5.181.23.154])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 319674487843;
-	Fri,  4 Apr 2025 08:30:48 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 319674487843
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1743755448;
-	bh=ny7HwWXxKnGKVGDtPWStKsa49RNI8QK9Rh+xecVN+hU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=nnhfEQeH+4iUZRxuAfxl4Ojn7z68V9h6+xvsGZJ2f8kq84KcpEOfgUpT686fwaBen
-	 dhKonu5Drm4xz+26lYxDB5C55fSI2ly1NHcbLY3+CHwz8iWyTcoN2vJimR4SuCkHLM
-	 Z6Ns/18LDvQnKQORNb7ZVtfDZWy+fQqBoke9Jtuc=
-From: Artem Sadovnikov <a.sadovnikov@ispras.ru>
-To: linux-ext4@vger.kernel.org
-Cc: Artem Sadovnikov <a.sadovnikov@ispras.ru>,
-	"Theodore Ts'o" <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Eric Sandeen <sandeen@redhat.com>,
-	Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: [PATCH] ext4: fix off-by-one error in do_split
-Date: Fri,  4 Apr 2025 08:28:05 +0000
-Message-ID: <20250404082804.2567-3-a.sadovnikov@ispras.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1743755373; c=relaxed/simple;
+	bh=DFmNe5JvFiTNGZaZsBYdcCBsxvzaOJI5Rug9sW5SFEQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Sfu6/jmbWFf7fRETBKULDJH8f6+waoBg5YxAx8sRlAb+s2t0sOSxfCIYzGNt4ZFmrzw2y495ijo9xTV2zn481g2Y8y69ecPQ55j1sdPFd1iwjFMdbem2Dl4IKjlBAMRvB8j7EH8CPGwd8FZOXJ4a499PC/aiXTy3vpGQZa6ZXho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I73KhTWG; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43ced8c2eb7so13740395e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 01:29:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743755369; x=1744360169; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pYIyNXM0vwLPLV1EeWTDyUP3htQY9SK1l3EQuLAqMvA=;
+        b=I73KhTWGmU/oLTytcnRywu0Bd/Xodp9gE1TtzdC84+P5lHrfaxk87w9y0HlPEPDiIX
+         nvjlyYfQYoQ5nyfhridzyOmIYm0Mk0TNT5GPlRELQwssUnDT1TXVYuWTu0orx5nzY373
+         xR+MACTKucN+47Jeo0LqAa//uSgVDKza8zMhG+OIg6lfCHBrklgX42RPPnZ0Y0ETRA0F
+         Llo7ZGE7Sg5Io3yrM5xQr9ICEMxci+P19cVpU393O1UeW4W9wxo9lgsE62e05fV418KH
+         /uJ0NWr4OsQUl12NIVnZgsZ8hXjYLSzcfA1MaPAitV7f6xTaJ890cLaYLElnUFS78EB/
+         0X4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743755369; x=1744360169;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pYIyNXM0vwLPLV1EeWTDyUP3htQY9SK1l3EQuLAqMvA=;
+        b=SiBCWgE23QITcC+Faqq3Jz+SPFNMm0P8fSEs3k0kCVh1k1hUczEnjza7qdGoDfeaqC
+         5wV43BjQfoZV8xIOGL9Q/C0troI/Tz1UfBYoWKydk3jrENebTrscjWDGINnAxohMxaOc
+         5Rz2Y64CTdwQjuDkPa7n3oeu22B+xQiVlILjVpYJ6IJcrn31HZls3/BoQoGxwV4iq6PN
+         b+dhk23vYNNOvmreCtCFgOGutKZTj+Lyaeb2L8ZqZ09KAw0c/GqtF5LGxJVkZqHgWEl/
+         GfA8jIEZRJYFNbcIEIK2dBn0j9sKiryi65qzmVFELggoM2o95t8iFu9NgBfbNg6iVLYz
+         AVNg==
+X-Gm-Message-State: AOJu0YwQf0J3+hAQlUT1SC4fwbYDAuLoxOvLWBY52v/ewsIeDGqaGVGu
+	r9mJbLJNhNNGuj9on8nhuJ+uaYDBIvSEzOFYIC6/oqVx7WnOhqMxOyvJH9l1lJMqWs9Ucw==
+X-Google-Smtp-Source: AGHT+IGt1kx4p3tVXJXXQiU86uQVsuAjXKvnwGVk8rK+pbD8J+Ww+M5Jb8vb3MmrGdY1Db5pwBw8mkmg
+X-Received: from wmsp32.prod.google.com ([2002:a05:600c:1da0:b0:43c:f6b3:fa10])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:1e13:b0:43c:fbbf:7bf1
+ with SMTP id 5b1f17b1804b1-43ed0da49e6mr21629155e9.30.1743755369616; Fri, 04
+ Apr 2025 01:29:29 -0700 (PDT)
+Date: Fri,  4 Apr 2025 10:29:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1278; i=ardb@kernel.org;
+ h=from:subject; bh=jvhLG3F6XWiSeBek2IzB7QFy6uo7jHqZMkjSa5K85uU=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIf39jKT55voNy7NZk3KjlhZ92cEie8X93fz5vNenCs5il
+ vz+r1G6o5SFQYyDQVZMkUVg9t93O09PlKp1niULM4eVCWQIAxenAEzk+m5GhotCKwNKtH5H31mq
+ 0vlj9qS6xSfs2x5sW7hxdv+P7RJHZH0Z/mn8fvHm9f/XMkELf2mWmfTlLdfuDjU3X/J+4ZHDpVO ivnMBAA==
+X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
+Message-ID: <20250404082921.2767593-5-ardb+git@google.com>
+Subject: [PATCH v2 0/3] efistub/x86: Fix early SEV-SNP memory acceptance
+From: Ard Biesheuvel <ardb+git@google.com>
+To: linux-efi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Ard Biesheuvel <ardb@kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Borislav Petkov <bp@alien8.de>, 
+	Dionna Amalie Glaze <dionnaglaze@google.com>, Kevin Loughlin <kevinloughlin@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Syzkaller detected a use-after-free issue in ext4_insert_dentry that was
-caused by out-of-bounds access due to incorrect splitting in do_split.
+From: Ard Biesheuvel <ardb@kernel.org>
 
-BUG: KASAN: use-after-free in ext4_insert_dentry+0x36a/0x6d0 fs/ext4/namei.c:2109
-Write of size 251 at addr ffff888074572f14 by task syz-executor335/5847
+This is a follow-up to [0]. Instead of avoiding memory acceptance from
+the EFI stub altogether, switch to a separate API that can be
+implemented by SEV-SNP without relying on the shared GHCB page, which
+cannot be created yet when still executing in the firmware context with
+the firmware's page tables.
 
-CPU: 0 UID: 0 PID: 5847 Comm: syz-executor335 Not tainted 6.12.0-rc6-syzkaller-00318-ga9cda7c0ffed #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
- __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
- ext4_insert_dentry+0x36a/0x6d0 fs/ext4/namei.c:2109
- add_dirent_to_buf+0x3d9/0x750 fs/ext4/namei.c:2154
- make_indexed_dir+0xf98/0x1600 fs/ext4/namei.c:2351
- ext4_add_entry+0x222a/0x25d0 fs/ext4/namei.c:2455
- ext4_add_nondir+0x8d/0x290 fs/ext4/namei.c:2796
- ext4_symlink+0x920/0xb50 fs/ext4/namei.c:3431
- vfs_symlink+0x137/0x2e0 fs/namei.c:4615
- do_symlinkat+0x222/0x3a0 fs/namei.c:4641
- __do_sys_symlink fs/namei.c:4662 [inline]
- __se_sys_symlink fs/namei.c:4660 [inline]
- __x64_sys_symlink+0x7a/0x90 fs/namei.c:4660
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
- </TASK>
+[0] https://lore.kernel.org/all/20250325091614.1203411-2-ardb+git@google.com/T/#u
 
-The following loop is located right above 'if' statement.
+Cc: Tom Lendacky <thomas.lendacky@amd.com>,
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>,
+Cc: Dionna Amalie Glaze <dionnaglaze@google.com>,
+Cc: Kevin Loughlin <kevinloughlin@google.com>
 
-for (i = count-1; i >= 0; i--) {
-	/* is more than half of this entry in 2nd half of the block? */
-	if (size + map[i].size/2 > blocksize/2)
-		break;
-	size += map[i].size;
-	move++;
-}
+Ard Biesheuvel (3):
+  x86/boot: Move accept_memory() into decompressor
+  x86/boot: Use separate API for memory acceptance in the EFI stub
+  x86/boot: Implement early memory acceptance for SEV-SNP
 
-'i' in this case could go down to -1, in which case sum of active entries
-wouldn't exceed half the block size, but previous behaviour would also do
-split in half if sum would exceed at the very last block, which in case of
-having too many long name files in a single block could lead to
-out-of-bounds access and following use-after-free.
+ arch/x86/boot/compressed/mem.c                   | 47 +++++++++++++++-
+ arch/x86/boot/compressed/sev.c                   | 34 ++++++++++--
+ drivers/firmware/efi/libstub/efistub.h           |  3 +-
+ drivers/firmware/efi/libstub/unaccepted_memory.c | 57 +++-----------------
+ drivers/firmware/efi/libstub/x86-stub.c          | 41 ++++++++++++++
+ 5 files changed, 124 insertions(+), 58 deletions(-)
 
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-
-Cc: stable@vger.kernel.org
-Fixes: 5872331b3d91 ("ext4: fix potential negative array index in do_split()")
-Signed-off-by: Artem Sadovnikov <a.sadovnikov@ispras.ru>
----
- fs/ext4/namei.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index cb5cb33b1d91..e9712e64ec8f 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1971,7 +1971,7 @@ static struct ext4_dir_entry_2 *do_split(handle_t *handle, struct inode *dir,
- 	 * split it in half by count; each resulting block will have at least
- 	 * half the space free.
- 	 */
--	if (i > 0)
-+	if (i >= 0)
- 		split = count - move;
- 	else
- 		split = count/2;
 -- 
-2.43.0
+2.49.0.504.g3bcea36a83-goog
 
 
