@@ -1,91 +1,97 @@
-Return-Path: <linux-kernel+bounces-588684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 647C8A7BC32
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:04:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C3CA7BC2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D041B7A5BE8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 12:03:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26C037A8F63
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 12:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D251E1DEE;
-	Fri,  4 Apr 2025 12:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529B51F0E51;
+	Fri,  4 Apr 2025 12:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ikH13drN"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tY1K6Jyd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23C61F12E7;
-	Fri,  4 Apr 2025 12:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D481B87F2;
+	Fri,  4 Apr 2025 12:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743768156; cv=none; b=s54s/v5enkyxpIHtlm0x8FC1w8qu11c9xEAYyc7I8c+K1Cc3IXpc4H1XsiZLpPCZxYtuuujEJt0PZ8CgKQtYv9JSs62hU7QPVESpoETCJ3ASH5mPjBI0Ss+Lcfh70JXYOs3SFXNtKdc0BubEzcMtIpIMBySc2jb8g0bISmrkNc8=
+	t=1743768152; cv=none; b=DZMKXSMEo9hEtWfynjLgm/vECh5zMx26l6aNxhmRFFY0tuJUI/0funyxudD7bKmb8YJ1lnQn0pIs273nLwRpvNdmeIhgQRl5Z7nTDfR3kQnoE2UQ1JjTeSPRbG8CAJYDVj1Stpb5rZxPsaaBeeV8cnkyQxrhUAYW6CiJhXnIuZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743768156; c=relaxed/simple;
-	bh=uSowLlD33f0Ns4kT3FjfvxpSLud2PBaZhfUCcZeFwP8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AbzAbLN2Cdg+IAlgmMQ5F8jkvbYbVFSPUGRLXcWO6STdUAFEPKfKqELIk1Pn9FVDxw/793+aBnUga14ZIn56svWfEHcaKRxWhxFBFOUs98iZhPvAfCxU0F2UgapctCN3g2zjnAk+hN1mDMhpJRoukzAPozW437XTZNn0ADUjIlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ikH13drN; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1743768144; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=SxvMUKx0UtmHnSPEXCBgkqeFgDKfDwGQVwbLp687BM0=;
-	b=ikH13drNsa6iNSqOBf3vIqBUIXpdDaGuN8aD+oO45dSKe4UReJMkmUEZ/P2drRtUiWKXNyGSIqyFh2hqI5hf3GSe+MhfZv9Jp9CqiZJ9w+a56NzvhSzPS426JJx+CGY5+s7NpAnBC898ZD7MC9bgyMsp0MDNZK/m858iKWdkjA4=
-Received: from localhost.localdomain(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WUyld6F_1743768143 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 04 Apr 2025 20:02:23 +0800
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-To: vinicius.gomes@intel.com,
-	dave.jiang@intel.com,
-	fenghuay@nvidia.com,
-	vkoul@kernel.org
-Cc: xueshuai@linux.alibaba.com,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 8/9] dmaengine: idxd: Add missing idxd cleanup to fix memory leak in remove call
-Date: Fri,  4 Apr 2025 20:02:16 +0800
-Message-ID: <20250404120217.48772-9-xueshuai@linux.alibaba.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20250404120217.48772-1-xueshuai@linux.alibaba.com>
-References: <20250404120217.48772-1-xueshuai@linux.alibaba.com>
+	s=arc-20240116; t=1743768152; c=relaxed/simple;
+	bh=Eq3EL8qAfF3ubJ3G58msjokJj0yf2Iu8YXIYO1ZjxMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n31TORY8vq+vB2Mtxr6t37EoH1GSNURkQ9tDljqZxyo89mfw/mp3mFZfRPNBSggjrXmCH4aDhUuQy3q9b102B9G1hYKauZd1fO4fKhoABcUXBwN8ks21cuY4ix5lNrijcP8BNS8empIa8/QGrHnELfmocs1UT7qVmDoJqMz1QKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tY1K6Jyd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6592C4CEEB;
+	Fri,  4 Apr 2025 12:02:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743768152;
+	bh=Eq3EL8qAfF3ubJ3G58msjokJj0yf2Iu8YXIYO1ZjxMc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tY1K6JydiyfhSflxJ/F4XEFB3NFTpdNpMhmxpX4p12EPUHra3SlintjeP0XRbGVaX
+	 Q7VKwxGrsBAh68B35WwJQfpaQPrnxChjMYMcMQXqksHFnNwmZu+5XZPBSioNPkF6Ql
+	 +o6s6FGUT84L6uWD9yYKVtDSC1X0wKgnQK4Tp82xqCR1zfsoxn1sryHdRvE7WDUSJJ
+	 uwAIP6EV4/G3SIOP5Ahy+gLCra2fzjrNzL9Iejt0076PRfedcTp+9/XvJl3tZN/an3
+	 99FnZwt125nzld6iPTkmnJ1AU7gzfaLc2JNoFR0MfQLqgF/mb/FvM2NKWgqqGyE1dx
+	 qZkL5UeUMjZpA==
+Date: Fri, 4 Apr 2025 13:02:26 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.13 00/23] 6.13.10-rc1 review
+Message-ID: <f5e5841f-2ef9-4451-88f4-b19fbec3207b@sirena.org.uk>
+References: <20250403151622.273788569@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dZ6BUzTtkXkVXXCT"
+Content-Disposition: inline
+In-Reply-To: <20250403151622.273788569@linuxfoundation.org>
+X-Cookie: You will soon forget this.
 
-The remove call stack is missing idxd cleanup to free bitmap, ida and
-the idxd_device. Call idxd_free() helper routines to make sure we exit
-gracefully.
 
-Fixes: bfe1d56091c1 ("dmaengine: idxd: Init and probe for Intel data accelerators")
-Cc: stable@vger.kernel.org
-Suggested-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
----
- drivers/dma/idxd/init.c | 1 +
- 1 file changed, 1 insertion(+)
+--dZ6BUzTtkXkVXXCT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-index f2b5b17538c0..974b926bd930 100644
---- a/drivers/dma/idxd/init.c
-+++ b/drivers/dma/idxd/init.c
-@@ -1335,6 +1335,7 @@ static void idxd_remove(struct pci_dev *pdev)
- 	destroy_workqueue(idxd->wq);
- 	perfmon_pmu_remove(idxd);
- 	put_device(idxd_confdev(idxd));
-+	idxd_free(idxd);
- }
- 
- static struct pci_driver idxd_pci_driver = {
--- 
-2.43.5
+On Thu, Apr 03, 2025 at 04:20:17PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.13.10 release.
+> There are 23 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
+Tested-by: Mark Brown <broonie@kernel.org>
+
+--dZ6BUzTtkXkVXXCT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfvylEACgkQJNaLcl1U
+h9CZdgf/TpsphPRJA3T1m+oApTfpHrl11zAIYDkxeGXIjOn2W+Ea8GxXivpkz0sC
+IHf4nClqeXMqbcr96Ftse6LS30rel98WeIGEOD8WA9WRIo4uEPeQoKU72MwJtr+Y
+Pf+dJIfjZ7B2O8B9oOaxTN+qJyN49o7ZwiBeIeeAYC7iwdVBj3Oa0z30rEFAMVOc
+8IkFyQKQ9pXxoD4aD/foxTj3eVpUA9wLWNLhuvn3cACPupwnCUPX+KmbIzIrGyc1
+Vd13OqIFHn2hASk5eW4dSo8py9Kb/Vu7Ih2COEN7Du3BFk3bC4P+EWHhzwASJNGh
+Md98hWDndtNR1zf+piC+ZMpkdBJebA==
+=lQlg
+-----END PGP SIGNATURE-----
+
+--dZ6BUzTtkXkVXXCT--
 
