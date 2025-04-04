@@ -1,97 +1,155 @@
-Return-Path: <linux-kernel+bounces-588822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F072A7BDF8
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DADFA7BDF7
 	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5829617B039
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:35:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E84613B9C74
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD6D1EDA0F;
-	Fri,  4 Apr 2025 13:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82551EF0AD;
+	Fri,  4 Apr 2025 13:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F7W53F98"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DhepgBww"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921641E51D;
-	Fri,  4 Apr 2025 13:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF671B07AE;
+	Fri,  4 Apr 2025 13:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743773720; cv=none; b=EFsZh6/xv+9oCnK6E/+OvdukTjhYKzIx9oMdvUezMZOS2M70p7vDUgAK2OHidfAz2+eKV8inHDSsL/YFLcD9bMv8K/MY8Z0WbrabarWNdzFCX0YnaSmIotqAXEAZwwzU3VYtjPMV1SMxQ8TNy1XR7odOryz85G58FsNPL2G7W2Y=
+	t=1743773773; cv=none; b=VY2R4XnvfrbRJgy7McYuHRndMq+jJ1Qyczh4tmPcGixZ9YrmD4oZslp/wQwUfxsAozpVMLVHz63Tls6VqFM9vDWlsb85U1DZdkcHtO6Gd5K6bN8+QApp1SJ6Ng/lDaT7KNNw91n2EP/hMULoWVXaCLdXW5WCxNc/LCvdRfnRS58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743773720; c=relaxed/simple;
-	bh=McFXFBO/fjaDyv2VgvFFP7wpZIRQBKaa3MLg4Pg8mzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m1ywo6GKbun+ZYED334t7rew+JSeeOdv1w8XNAFI1SM2ahjRI+j1RDuGHgX/Eb/I+mfmE2aP3iYeDtzzASnDF6S+W5z29INBuRaCX4xyJ3eSBlosvTMy9tDdsSrri7KSM9Y5+V1fl3ZDhtj7dZyToIMsd5VP6cJjcVCAcfzbBz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F7W53F98; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A158C4CEE8;
-	Fri,  4 Apr 2025 13:35:14 +0000 (UTC)
+	s=arc-20240116; t=1743773773; c=relaxed/simple;
+	bh=nB8hhdyLpxbnHmC76tdnlII8bmXVnl4tnHoovM2c5PY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZSDT4yCZNVNGmoDD7AUD5rCOFPdfdjLSnKt2XtgqlEIBGpZGS4nuyuBR8Nd8RcydpH0Q0jjaqX/zy/TrJ6cMsOQ5ZywPCb31vEfv5thCX7T8mBl+0oLYPXnsTHdMAA5erwbMhzBw8HgFXzsEqf3TQMExlegO+Wvqml0nzDu1BFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DhepgBww; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8456CC4CEE8;
+	Fri,  4 Apr 2025 13:36:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743773718;
-	bh=McFXFBO/fjaDyv2VgvFFP7wpZIRQBKaa3MLg4Pg8mzM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F7W53F98kKrEVxHnhCkdKGehtL0NxVufY2IG9hVFvxCT9qULiJAJcY1Ld46WZ8FpP
-	 k5Rq0IOJaWlnxxLZYST6ycQqs7KdtUiHtDiCIoJhbgObcWyiRJVbu8yJh2r6Yhu5KO
-	 TWr+7tbbuJWq9Uy6SuqvgibF7ld1h/RzkpbCMjoEX4C9q//HEddBrh+kK3dr/jUrmY
-	 fQb7PAdpNGyoquGPh9PV5x9o2DIGTOIYt9da2WS69SJDfD8QthKM6RwvodNitO5PYN
-	 VDledQwYF61oAEt/ZXXmzp9rQruUyE1O9hfe9hXMulNkIkQa3ZlnNAs8hDmKrCvbQm
-	 kW4uW15CEaTWA==
-Date: Fri, 4 Apr 2025 14:35:11 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com
-Subject: Re: [PATCH 6.6 00/26] 6.6.86-rc1 review
-Message-ID: <cedb1d73-2cb7-487d-839d-709c345565cb@sirena.org.uk>
-References: <20250403151622.415201055@linuxfoundation.org>
+	s=k20201202; t=1743773772;
+	bh=nB8hhdyLpxbnHmC76tdnlII8bmXVnl4tnHoovM2c5PY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DhepgBwwFIvXZHbUMKM6Z7vGdvaQmPijJDmhV19O+I1M0ZdFEu2fueSyoE8kTsVlq
+	 QB7na3fopG9hU3MLcBAsuBQ1yb5RDdQ6K2w0u2PTq+UWKGVwofVOaT+4OTS2Se0GwN
+	 K1SYCPhlHXaKToLzvai9weta93C65b4IOdxe+sd3xL/PpqgfTKvXttTFDX17BEqBjL
+	 WbiR/01P9QCvdCu6d1Sqgm8xbzqM6SFUAWzbLfm7pMvehEOMQlGTb/FCYuhiAfjrkS
+	 3EbxVGnguxBB447dXDYSUflq0TIyRJ97nJ8y7ura9MScmqtCFS6YZ0n/x4IVNcE9C4
+	 mi7/60ib4Jwtg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1u0hDO-002MP1-Hr;
+	Fri, 04 Apr 2025 14:36:10 +0100
+Date: Fri, 04 Apr 2025 14:36:12 +0100
+Message-ID: <87y0wgxd4j.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Christian Bruel <christian.bruel@foss.st.com>
+Cc: <tglx@linutronix.de>,
+	<robh@kernel.org>,
+	<krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>,
+	<mcoquelin.stm32@gmail.com>,
+	<alexandre.torgue@foss.st.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>
+Subject: Re: [PATCH 2/3] irqchip/gic: Use 0x10000 offset to access GICC_DIR on STM32MP2
+In-Reply-To: <1213dbfb-821a-4534-947b-acc4eac9da81@foss.st.com>
+References: <20250403122805.1574086-1-christian.bruel@foss.st.com>
+	<20250403122805.1574086-3-christian.bruel@foss.st.com>
+	<8734epyw17.wl-maz@kernel.org>
+	<1213dbfb-821a-4534-947b-acc4eac9da81@foss.st.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NFQBCl0Oo0ogATBK"
-Content-Disposition: inline
-In-Reply-To: <20250403151622.415201055@linuxfoundation.org>
-X-Cookie: You will soon forget this.
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: christian.bruel@foss.st.com, tglx@linutronix.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+On Fri, 04 Apr 2025 13:15:05 +0100,
+Christian Bruel <christian.bruel@foss.st.com> wrote:
+> 
+> 
+> 
+> On 4/3/25 19:50, Marc Zyngier wrote:
+> > On Thu, 03 Apr 2025 13:28:04 +0100,
+> > Christian Bruel <christian.bruel@foss.st.com> wrote:
+> >> 
+> >> When GIC_4KNOT64K bit in the GIC configuration register is
+> >> 0 (64KB), address block is modified in such a way than only the
+> >> first 4KB of the GIC cpu interface are accessible with default
+> >> offsets.
+> >> With this bit mapping GICC_DIR register is accessible at
+> >> offset 0x10000 instead of 0x1000, thus remap accordingly
+> > 
+> > And I'm pretty sure the whole of the GICC range is correctly
+> > accessible at offset 0xF000, giving you the full 8kB you need. That's
+> > because each page of the GIC is aliased over two 64kB blocks, as per
+> > the integration guidelines so that MMU isolation can be provided on a
+> > 64kB boundary.
+> 
+> Thanks a lot for this explanation, indeed this works like a charm.
+> 
+> > 
+> > Funnily enough, all it takes is to adjust GICC region. You can either:
+> > 
+> > - make it 128kB wide, and the driver will take care of it (details in
+> >    gic_check_eoimode()). On one of my boxes that is similarly
+> >    configured, I get:
+> > 
+> >    [    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+> >    [    0.000000] GIC: Adjusting CPU interface base to 0x00000000780af000
+> >    [    0.000000] Root IRQ handler: gic_handle_irq
+> >    [    0.000000] GIC: Using split EOI/Deactivate mode
+> > 
+> >    See below for what I expect to be the correct fix.
+> >    - make it 8kB wide from offset 0xF000.
+> 
+> I checked both and they work. I will go for the former to show real
+> 8kB size to be exposed in the DT. And there are a few other
+> platforms that use this alias
 
---NFQBCl0Oo0ogATBK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I think 8kB the wrong option. The GIC *is* supposed to be integrated
+over 128kB on arm64 platforms (there was some documentation about that
+back in the days, but it has become impossible to search anything on
+ARM's stupidly broken website.  My recollection is that it was bundled
+with the GICv2m "specification" (only half a page!).
 
-On Thu, Apr 03, 2025 at 04:20:21PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.86 release.
-> There are 26 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Furthermore, you are supposed to describe the HW. Not your
+interpretation of it. Correctly written SW targeting arm64 know about
+this anyway.
 
-Tested-by: Mark Brown <broonie@kernel.org>
+> > Unless the ST HW folks have been even more creative, none of this
+> > overly complicated stuff should be necessary. Just describe the HW
+> > correctly.
+> 
+> I was unable to find this information in the GIC-400 trm
+> (https://developer.arm.com/documentation/ddi0471/b/programmers-model/gic-400-register-map). Now
+> I also prefer to use GICC alias at
+> offset 0xf000 as suggested rather than the quirk solution
 
---NFQBCl0Oo0ogATBK
-Content-Type: application/pgp-signature; name="signature.asc"
+Again, this isn't a quirk. It's the one true way for 64bit platforms
+that can use pages bigger than 4kB. That's the purpose of the 4Kn64K
+parameter in the integration, dropping bits [15:12] from the PA
+presented to the CPU interface.
 
------BEGIN PGP SIGNATURE-----
+	M.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfv4A4ACgkQJNaLcl1U
-h9AemAf/STabfAFB6Q522b04PetWgK3vAtWQVb2xGUJmg/B3BLsWqkpTCC/ipkZL
-W5uwYlzMQBhW7LQj8A3NB6WmHnkjwy5EIYzU0B9wyIMCU+vaVaRR7sO4W4DC7lNA
-3fftj5kRtzWRdw7zhoCU61Fw7ELuLBKk+Vnr8liyyr5LbS63L/iwAx6+mDMXJoks
-zVJFqlp+xQO5hjxFq4uuMR+PRFhPueCxFyzoEcJugbv9gMMogwV2GN6nFEOcO98i
-XVVpXBlvNMkU3mEDS9CrtG4LgavMbcdr0Nt4CJpfKmoeV+M1AR3ixTtjS+gY5Cfi
-mLKmECn5cn5c6v2GN7Aj1UW+m/xfAQ==
-=iybp
------END PGP SIGNATURE-----
-
---NFQBCl0Oo0ogATBK--
+-- 
+Jazz isn't dead. It just smells funny.
 
