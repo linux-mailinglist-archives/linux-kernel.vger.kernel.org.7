@@ -1,246 +1,247 @@
-Return-Path: <linux-kernel+bounces-588287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECEFCA7B712
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 07:14:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41629A7B726
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 07:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7742B3B8375
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 05:14:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3670178C16
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 05:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E4915990C;
-	Fri,  4 Apr 2025 05:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7028D17A31D;
+	Fri,  4 Apr 2025 05:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YLdGWt69"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="W0pI6xZo"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80CC2E62B2;
-	Fri,  4 Apr 2025 05:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743743663; cv=none; b=g3U7Zii97RZGg5ui3SJGTjsrPQmQptcC7VnDCW2Ra2PBa+h/Hh5BRv8tk7xki4zfE5IAKD6rVLy7l7EvhdLC8+Q0kZ54rUSB/7vz5b+EXN3d+XhHt8oe3ultfAu+pvS3UbXr18w71lQlFtgztuWhGaU4Q+QGRb+Zg9hMTTwgPzQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743743663; c=relaxed/simple;
-	bh=ghZW4/xzBLPOmeaSqKF9FEmsw1FKrBfT42BFRILX8bc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HJ/i1ZyPjTKE3C8v4AAP2y9MD7nYJt3nr6Egspe/jsCJ7E5lMeg0THLbp2xBt9ezraM6cmovwUG2t66ENbR9GDI2Y+GGjU+hikcm1hmtmoO6K2evw94MnzoyTB1GaL0ySjEpTKptqlrJXNEJsAtc8Ho09jaeFywxEoCOtTCU9L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YLdGWt69; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e5deb6482cso4977244a12.1;
-        Thu, 03 Apr 2025 22:14:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743743659; x=1744348459; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VH5VvbuT5ANGi2NKdXE1cVfO+Z2M+F1fr9TYCsTFmp4=;
-        b=YLdGWt69M+J0VK+P+b26Cbf7/nQbzjqjr2aPALoSKqCNgT8LbngJ/cNe1127++HTFb
-         an/yABVVjj+1aCEVHoN7h3xDJRM4QND+U3IEZXGIgO4MeYst6/rlM8tOf4UASTuyG0mJ
-         1W32Cxn2pE3r83vyVB97u8Zb3VEu+Yx0TqebgK8zZvTDkgO82lBJgaU6QbGXQRGdfaXR
-         hma5TF/wz0v2w28PE0q3rDN33nNaOLC5h2JqEUlqclSbgFmXTepiKw1hOHGm1YTdJLvp
-         /EN1ByYgppedr/xeD8odbOeUqGZhZ4o8vXFROCat9b6QRXVRZPwdK+ak/Gf8dbrLCUBG
-         2t9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743743659; x=1744348459;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VH5VvbuT5ANGi2NKdXE1cVfO+Z2M+F1fr9TYCsTFmp4=;
-        b=DtXBztNydB8SZuPywk80sklclYO+B6yQ0QykBouSnYBtu+FrVdrxTJ68+Te21aMDoF
-         28W40d9z3XqYCPi7h3t97svEZGIric6lxJ9yCae4Ky49MMusGK1WzsaV66QexlRe3nuN
-         KeBTjJgupY07ZjgMKevPQqDcDg9emAFh1zKX7VCaKloZUCU+03ThGLmCtYJ8Q3DimS8K
-         4t3IuMzd7PUJYkZsqG9C/0PRrgyHERPiJaDB26a5mqSl1hrmgf7vdukGK3QbJpp0g9ZH
-         iZZZgKdXRkpM7aLCD0lXcBJe1RMKmqdutgNScsRPjiOkFJ0gqwMDAoX9L5zclEK+6wWT
-         1BZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCkJzoLu/nqATEdDRMnkHkPsmeZ8jdgkdKUMSnTN5D9cJ6mmFYF6eRvy1eLcJfAUjNwFg/uXGSNOLYfvBl@vger.kernel.org, AJvYcCURi7EpEb1AYnX4gIQfHpwXWiRwTT1/dDhW7V+uVz3MkDCBJ4rIOdGVFOOOqnoRCTUFv1XW44ZevIrkdR0z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi3IDHz+rBF/ha9P8UhHSQMYP28gS/hWSkJMgdiQ2NO7PGWwPS
-	qbYLIU/XKKJtj+vHD0AKYA4vMTITMsuhhCFZuTqH0HORcLjcJ2JBGKmajK9DFQ687zxaV3afVH4
-	RBSjVyjA4HzUYRXagw9+t6kDUPZE=
-X-Gm-Gg: ASbGncueZYOx/0BOk7RjnHjYje7EC1oABQiHoQuiXE882FHMT3msqE21OmKoE2anFcg
-	mIFm3pvKcNFxLys+ehHO5iZkAa3QWFUlvGCxS1O3JTsgQOp0mqUapy0pnPX2YFcnpCSiOZ+GhYy
-	uGGjKOSLfdrpl8cXW4pPxqbhuY
-X-Google-Smtp-Source: AGHT+IFo01rbFUEC5L75f3YJ7CKD87p2zcskAu4TJ1zTtI294NzJf2Gvon5nWcoHmnNLofVH7HPvk6e3PQ+yxJlBGow=
-X-Received: by 2002:a05:6402:358c:b0:5e0:6e6c:e2b5 with SMTP id
- 4fb4d7f45d1cf-5f08416d6a3mr4575343a12.9.1743743658824; Thu, 03 Apr 2025
- 22:14:18 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F8A15990C;
+	Fri,  4 Apr 2025 05:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.156.173
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743744421; cv=fail; b=jk+6Uh6r0/D5xw/T4mdzYgHjUAkHDr6wO0fK7o9Xu404wLAyjxqfMFflREA5nm7fvKG85oJ2aiQZBG4ojoPboGr1Lj693CsVEPV9/JopSaNKFxrX33KbiHzrLQOwglvV6kjFtfz58LrNYC+KdHVxnYvyLhN/yDaMVaDOnHY+gqM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743744421; c=relaxed/simple;
+	bh=g0x3kfJI+mNn+MRRd4LSl41QrSmzfmdN5xWbE1o/HC8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=q/un+K4jBpHRacPrhPYWSX/xR7CIgJn5xmWiN1NTsPr6KyAEGoCY5iGkp4lBpCGz085FjvVKkXYTVSs7UsfIbjsPLFh6NHdG8l6CeJtiPfCbWCXNc/kOTk+LHMgIXwfwsC5dQSYs/mIwum+4JhWYyHNzDL6sKQY4z+uyebnrFXI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=W0pI6xZo; arc=fail smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5345FZT0030869;
+	Thu, 3 Apr 2025 22:22:19 -0700
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2046.outbound.protection.outlook.com [104.47.70.46])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 45t94b008m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Apr 2025 22:22:19 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aqZOstez8yfpCL4tHVnzssYMuHLGCTc23obLrI0/u+KRF39fHs21YfFtE8mbFAwywv9g956vBBo52nDFTxBtv6QpHmI5DpBS4fv8KRYcFWVe3qJDz1gGVQa0fu8CLVn1G0aE7PtlGEhQ/d4SPxmq2d9MaB9MdV8iUkTEyVCfC75TwaduoNXthVO3l+1pbcVm6s6ohkw6f/yIibcTp3ECIGqPlUTdOB6hswIvHXplI/OKK+bATYv90BY61j/X7X6HVEuju4r+9XP19dnZhWVioz81RZ9EZgSqY2/EOFrFmWpiGxJYpbjBLCh7xdqKyo+UDD+bFCwCw17jI6QjvKeuig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DLPgVA7hl8aZVxM/ul7Yd+FBBgmF8GcWUsaXRARiYzs=;
+ b=mnT6/pxeI8K1F2JtrfiADCwaDPgnbp/CcTAWnHd0GKkhSe0r1EKJ419px0KZpRCGnfo/gRk02UWyTiDsXNy0pH784iqgNOLIXz3Zuh1Be4H8UeCkum4QA03rU5Ot9ORzf7ePmDf672NbOslIXDPn/7bR2KYMoxMEH1McyCsLaxUlzGFEDZUvqdmF/j2ZqvsiU50/+CpmzWqYPtZvP32S4EnGlNngxAae+Y+v7tDI148ifdws7sLUGx5RWPad5zJiyZLb9Ky7HVM4XKDHbRQJLmrcLAa/DZ2wT/YKc4701VN1hzB5XX80wKzxGGcDukaPWritT21Sah4xBets/IkiwA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DLPgVA7hl8aZVxM/ul7Yd+FBBgmF8GcWUsaXRARiYzs=;
+ b=W0pI6xZoKAKMc+L3TBbdXP6R6qnGVH4rqgNp0k59gkwo8zB0gwYW0sFhNRqbHnmONwjenuynfx7+Cj8z1Fr9ZlaNpkWjrV/7JvmIRpnzj98zXHHZO/uLHIFtkXvHiU5MnzGXvGPG911XwVPj57/ivclLElim5O6y9NZrzt8C1Hw=
+Received: from CO1PR18MB4666.namprd18.prod.outlook.com (2603:10b6:303:e5::24)
+ by SN7PR18MB3901.namprd18.prod.outlook.com (2603:10b6:806:10f::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.50; Fri, 4 Apr
+ 2025 05:22:16 +0000
+Received: from CO1PR18MB4666.namprd18.prod.outlook.com
+ ([fe80::b3e1:2252:a09b:a64e]) by CO1PR18MB4666.namprd18.prod.outlook.com
+ ([fe80::b3e1:2252:a09b:a64e%7]) with mapi id 15.20.8583.043; Fri, 4 Apr 2025
+ 05:22:16 +0000
+From: Subbaraya Sundeep Bhatta <sbhatta@marvell.com>
+To: Wentao Liang <vulab@iscas.ac.cn>,
+        Sunil Kovvuri Goutham
+	<sgoutham@marvell.com>,
+        Geethasowjanya Akula <gakula@marvell.com>,
+        Hariprasad
+ Kelam <hkelam@marvell.com>,
+        "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com"
+	<edumazet@google.com>,
+        "kuba@kernel.org" <kuba@kernel.org>,
+        "pabeni@redhat.com" <pabeni@redhat.com>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] octeontx2-pf:  Add error handling for
+ cn10k_map_unmap_rq_policer().
+Thread-Topic: [PATCH] octeontx2-pf:  Add error handling for
+ cn10k_map_unmap_rq_policer().
+Thread-Index: AQHbpSGH0QCd+ErTRUiwi0AjsSnhjw==
+Date: Fri, 4 Apr 2025 05:22:16 +0000
+Message-ID:
+ <CO1PR18MB4666D076ED0162018D4256B2A1A92@CO1PR18MB4666.namprd18.prod.outlook.com>
+References: <20250403151303.2280-1-vulab@iscas.ac.cn>
+In-Reply-To: <20250403151303.2280-1-vulab@iscas.ac.cn>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CO1PR18MB4666:EE_|SN7PR18MB3901:EE_
+x-ms-office365-filtering-correlation-id: 995ca811-ae7c-4591-05f5-08dd7338a9df
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?3iBL+Wy0swqEG181Qq8IftXF3ag4NhtyGq16+3lCnlcb33ppzd4me8OMRgph?=
+ =?us-ascii?Q?TFsccOBY9/RC2uYeIniCgy+m+wcbNUMPnldsSFzBaYAL7APE9BVL3LZt9ED1?=
+ =?us-ascii?Q?fHPUe2Vu2g8AB55SzYz7ZUpjzoeR8uOYtI0o4AhjSnLfGShTvRjfnRr2iHtR?=
+ =?us-ascii?Q?+UzAyKtVjV8SIxCeh5lcKE5cYyV8+rNS8i/IJd+6Z+4NQHUTlUsh6Wfcv7cm?=
+ =?us-ascii?Q?gMl2cytIDNO9qwUw1+hEBBZYDUC+QOXfEI6I7ZeavEFCyYAUnGfZn8ZhfzdH?=
+ =?us-ascii?Q?H4U0GB86FcAzFM7QbBM2n1vKMNrbJBLWCYAawgsZKp1M86mhlpakxL1JGWH2?=
+ =?us-ascii?Q?vwWf/GsR9nzhCc4pxMQjj51kpHs3Tlt+3VO5ldAMmROgbQb6Pxhi5JOYHxYB?=
+ =?us-ascii?Q?MBFKqFch4RF9fXvzXjvYUXsecdm8QFeLrnNZRT5Hfvc1EYS35DDzJTq6lXv0?=
+ =?us-ascii?Q?1g9ZKpuyML2nAAcpKdkD38OXxiw1fefRZcKmng7Vf4qkLdUWGuLTi8pZvI42?=
+ =?us-ascii?Q?Llro53kbLiNPYdlA9okB+lojp6gZp8V3uJie0DbhSWjeS6Knz81IqIIHgRTJ?=
+ =?us-ascii?Q?qgxT3ccMt46D5AEEF/2cM/VMnSjSSHjMZ6N1e3iBRnICnohHQC51wci8QuN4?=
+ =?us-ascii?Q?Qw6D7kvJnbaS3u2FZgNdPMSBpQcKnoQ1gHVUasHSHpPyJJWAIX/sMynP5uK5?=
+ =?us-ascii?Q?cOCNbn9d2JAUDvOAfG6FDyiUUzns4E8F0zHraW1zzm31Lqg2WeqN8lxtguNR?=
+ =?us-ascii?Q?QonH0dCIGluPQwNSXI7F+Jt36Vi3K+n8ds978avG9Tmf6glrJmXjvjd4mBgW?=
+ =?us-ascii?Q?EMeFG1AWQ8fiEhomg0BTRGm/DqhWGox5S6ihiQfYQUzEvU/LbTTFwW/lolYn?=
+ =?us-ascii?Q?moqZIKEzNsXcxSrWhz0l3Mzum/egg9lcEHFp7DOgbw2ksNr2ykBvNN83zcRz?=
+ =?us-ascii?Q?VVc0c9GN7uwHtCGF7cQN5AzS1NXILUJiGO5MI9MYlhKTrd9BQVSM2YXVmnVa?=
+ =?us-ascii?Q?8/9arwqDqEl4maO1eQUIreqhKqMmon1YIiudxYNulCZ/u0rl/7KnDXER8vZd?=
+ =?us-ascii?Q?hviw73cpePTwlf76GnDrPJoHwt5HqncUL8a79eZjxBheURzalm2GnEGrzOae?=
+ =?us-ascii?Q?uhl6YP9pS7MFw96b6gMEJKzTk5QgFV8xYtSYJYwgmmyC5R27qt6FP5clUUNR?=
+ =?us-ascii?Q?2055/gVKge1Vn+XMzZuSWyrgCSyYfuCMDKSARLoIkBP0umBa9ruO15PFy06s?=
+ =?us-ascii?Q?ZvDCYBdoEQPjPpb9KaelmlOhczVmwD2uZY7C0vcWaBrIpukq30U9E1kcfPpy?=
+ =?us-ascii?Q?ALjZug7lM/TsJgIMaxEivLjvdi1UO28OcR/4Q5THfmY591PCdqXdUcCWSV6G?=
+ =?us-ascii?Q?J85fwXXCN5UBe+C3F20GnlOkrvcUN84/zBJS3NB9K/4o6PPlyVpje2ROk/RB?=
+ =?us-ascii?Q?9ERRbmI9P5ca5v4QhFv2WSLYUKzAdJn7?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR18MB4666.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?pYSjEqN3k3JpN23QyGrejNSRkbbee31vsLLa4s/LSZiN/03SGFQeeJb427sE?=
+ =?us-ascii?Q?8cJrNfhMOgAe9OY5BkTjmo4wKQhgHsaq3D2dGpgVCtJi1DWbgKCu+8xHo4k/?=
+ =?us-ascii?Q?AoHN4iWx8RCCxabuiZZtmtQh9ntZfBrh8fXSmMi/u2dpW3t/85lJoGer6LyU?=
+ =?us-ascii?Q?+d8AXPTOQNDERIx88scANzDI5IdYisyGA6/0ymbNBB5g/tterdi0dgMqvmHt?=
+ =?us-ascii?Q?2zmGEGPRjgFenbsrn7/tIYqi8Vr8QewOD8tr64shFjZiytEO1qOKZI4pNvrf?=
+ =?us-ascii?Q?8grTcUtBom/JKXnD5qfMHQg9yVgJVTHoBXR6pHcdtsLqyHUqqxd4+0ON/fPM?=
+ =?us-ascii?Q?hTSyEl2xJFsQoe8wPch9Y/zz3tWacwdnnAlPI2aiPLU0iIJS+mXj/PLui5By?=
+ =?us-ascii?Q?7UG30emxh8SfzpZvecJ6UDmxBhzS/2vhxNPG2Miq3+QGb8OLPWOxZ6wZmuig?=
+ =?us-ascii?Q?arxd3Y0uVihK4ocPl83VgDDLDDS0Q6IFoRW2q8gHBg6+B7h0eLQPon0oxedh?=
+ =?us-ascii?Q?l/cJHqgLzItQI9Cq8Ir28Awit/bo2Sg/kkx4V+FF997qamGvvFCu8iv4K+fl?=
+ =?us-ascii?Q?uyyvZI4CIhzn8siikbVet9VF5mf2LdIJF/KIzQihDWOXW9S2AySfCPVP834E?=
+ =?us-ascii?Q?Zijxf9ZVz0ZPETrGGoJlDjNEd4r6Ajn3oJ43pA7UPvI06Z/PRGYlLToRVDBW?=
+ =?us-ascii?Q?oB81LXWmZgWrDqvHLmu/tvo8HYuJYDTGgxbiun7AK7hnxmGhGhkrbV8P9QNc?=
+ =?us-ascii?Q?x11y1dEeP4TfdbHg0D6j7SvUkH7tHp2E0LmaOg2jy0Dxy9/XSDF3Bm3/xe6q?=
+ =?us-ascii?Q?PEyEYkr7NzwTKthaWH7qhiSPLtdlc62x96Oj3tJS2TbNaN770HzTesR1rlQH?=
+ =?us-ascii?Q?APydtnZDZilFJfFlSDJbmLj666o7YisItIVlN57PUJc4H0xKdinb6IJWYbZy?=
+ =?us-ascii?Q?L8RFfjKRrkm2V7mhfRhnhPm0js5O1eKHr4YOTH7uscfR4bER9vnQkmbcdiJK?=
+ =?us-ascii?Q?JrYzYIn9mVVlt2bkd5DfdT2XPvzs/Gn990beeYsErAX6yOwxstkJ5m1cjjE0?=
+ =?us-ascii?Q?WTK+yPMSfysSxgk6OmI5q+N9t8DMbzItZN41+ezakOzXDYUbAJ1vStgbMs5b?=
+ =?us-ascii?Q?cclzpEZhPE5+Gt3TVB7L9k5KJVPP/XB2OPjfD1OJGQ+PfT4r0tM4Qe35K4fr?=
+ =?us-ascii?Q?aRH89rIhsP6ilotbZxPSDlqx7GeABHluQ+fhnOSarqV9u11dPtKfTjf/twIt?=
+ =?us-ascii?Q?qaWgPH0Rt4uH4LdQcZPbfhrgX+KqJh855ol8FjEgkLZh0lYoRCeo8EcOaf8Q?=
+ =?us-ascii?Q?1syTGJTIGi6oqBNjIAY2lTAGKB6uhhVrumsUwd9InULl+RMNYfakiY+PFpEy?=
+ =?us-ascii?Q?VMuu/EWhxoEvw3AaSkxrc7CSo85rfD0EDWSQ3IibezdxrqEPm1d3qrSGKZoe?=
+ =?us-ascii?Q?kV2qk/79XU9o2phGeOp9GKAemZuAcM2B9JonCxFZsQbmpDEcOBoBqXqe8ksa?=
+ =?us-ascii?Q?mTfYRlOajCMu3i9hpMp6dAXx+FhJBfqrDbLOA0v/ygAT5BXF4uOeSTWs0mYR?=
+ =?us-ascii?Q?fn2DIHHD9IqLCUw9CpXwgSNfsli6cRupsRTqNgsT?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <iufbqsvdp52sgpsjkyulfqgfpvksev3guds5hd556q7zxestgq@ixog46pumnry> <20250404032938.76632-1-superman.xpt@gmail.com>
-In-Reply-To: <20250404032938.76632-1-superman.xpt@gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Fri, 4 Apr 2025 07:14:05 +0200
-X-Gm-Features: ATxdqUF-LDnRlZ_0uAku0KYRdzTwn8eDIPo6CqbUhdzPXEDhWRP7YVf7-pAr4pY
-Message-ID: <CAGudoHGPzqdwVc8fvY0E00avYerFZ2b4g0GMHu6d=cCkSiizzw@mail.gmail.com>
-Subject: Re: [PATCH v2] vfs: Fix anon_inode triggering VFS_BUG_ON_INODE in may_open()
-To: Penglei Jiang <superman.xpt@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR18MB4666.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 995ca811-ae7c-4591-05f5-08dd7338a9df
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Apr 2025 05:22:16.1367
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: rm9VXfMnfkMLvpSI9D3Fk0v/CE92TsVjVSdgZF8o3NxCF9xe864Tr3bSod1+vOSaSIZRSyvT43wDG3FkMoXwIQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR18MB3901
+X-Proofpoint-GUID: HvSCv489tYzWINwYD2FEHJZn8ymAHtYX
+X-Proofpoint-ORIG-GUID: HvSCv489tYzWINwYD2FEHJZn8ymAHtYX
+X-Authority-Analysis: v=2.4 cv=CO4qXQrD c=1 sm=1 tr=0 ts=67ef6c8b cx=c_pps a=IwUfk5KXFkOzJxXNjnChew==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=XR8D0OoHHMoA:10 a=-AAbraWEqlQA:10 a=M5GUcnROAAAA:8 a=J1Y8HTJGAAAA:8 a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=zB_nYMf46UciNYmz8joA:9 a=CjuIK1q_8ugA:10 a=OBjm3rFKGHvpk9ecZwUJ:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-04_01,2025-04-03_03,2024-11-22_01
 
-On Fri, Apr 4, 2025 at 5:30=E2=80=AFAM Penglei Jiang <superman.xpt@gmail.co=
-m> wrote:
->
-> Some anon_inodes do not set the S_IFLNK, S_IFDIR, S_IFBLK, S_IFCHR,
-> S_IFIFO, S_IFSOCK, or S_IFREG flags after initialization. As a result,
-> opening these files triggers VFS_BUG_ON_INODE in the may_open() function.
->
-> Here is the relevant code snippet:
->
->     static int may_open(struct mnt_idmap *idmap, const struct path *path,
->                 int acc_mode, int flag)
->     {
->             ...
->             switch (inode->i_mode & S_IFMT) {
->             case S_IFLNK:
->             case S_IFDIR:
->             case S_IFBLK:
->             case S_IFCHR:
->             case S_IFIFO:
->             case S_IFSOCK:
->             case S_IFREG:
->             default:
->                     VFS_BUG_ON_INODE(1, inode);
->                     ~~~~~~~~~~~~~~~~~~~~~~~~~~
->             }
->             ...
->     }
->
-> To address this, we modify the code so that only non-anon_inodes trigger
-> VFS_BUG_ON_INODE, and we also check MAY_EXEC.
->
-> To determine if an inode is an anon_inode, we consider two cases:
->
->   1. If the inode is the same as anon_inode_inode, it is the default
->      anon_inode.
->   2. Anonymous inodes created with alloc_anon_inode() set the S_PRIVATE
->      flag. If S_PRIVATE is set, we consider it an anonymous inode.
->
-> The bug can be reproduced with the following code:
->
->     #include <stdio.h>
->     #include <unistd.h>
->     #include <fcntl.h>
->     #include <sys/timerfd.h>
->     int main(int argc, char **argv) {
->             int fd =3D timerfd_create(CLOCK_MONOTONIC, 0);
->             if (fd !=3D -1) {
->                     char path[256];
->                     sprintf(path, "/proc/self/fd/%d", fd);
->                     open(path, O_RDONLY);
->             }
->             return 0;
->     }
->
-> Finally, after testing, anon_inodes no longer trigger VFS_BUG_ON_INODE.
->
-> Fixes: af153bb63a336 ("vfs: catch invalid modes in may_open()")
-> Reported-by: syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/67ed3fb3.050a0220.14623d.0009.GAE@goo=
-gle.com"
-> Signed-off-by: Penglei Jiang <superman.xpt@gmail.com>
-> ---
-> V1 -> V2: added MAY_EXEC check, added some comments
->
->  fs/anon_inodes.c            | 12 ++++++++++++
->  fs/namei.c                  |  8 +++++++-
->  include/linux/anon_inodes.h |  1 +
->  3 files changed, 20 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-> index 583ac81669c2..bf124d53973e 100644
-> --- a/fs/anon_inodes.c
-> +++ b/fs/anon_inodes.c
-> @@ -303,6 +303,18 @@ int anon_inode_create_getfd(const char *name, const =
-struct file_operations *fops
->         return __anon_inode_getfd(name, fops, priv, flags, context_inode,=
- true);
->  }
->
-> +/**
-> + * is_default_anon_inode - Checks if the given inode is the default
-> + * anonymous inode (anon_inode_inode)
-> + *
-> + * @inode: [in] the inode to be checked
-> + *
-> + * Returns true if the given inode is anon_inode_inode, otherwise return=
-s false.
-> + */
-> +inline bool is_default_anon_inode(const struct inode *inode)
-> +{
-> +       return anon_inode_inode =3D=3D inode;
-> +}
->
+Hi,
 
-I would drop the inline.
+From: Wentao Liang <vulab@iscas.ac.cn>=20
+Sent: Thursday, April 3, 2025 8:43 PM
+To: Sunil Kovvuri Goutham <sgoutham@marvell.com>; Geethasowjanya Akula <gak=
+ula@marvell.com>; Subbaraya Sundeep Bhatta <sbhatta@marvell.com>; Hariprasa=
+d Kelam <hkelam@marvell.com>; andrew+netdev@lunn.ch; davem@davemloft.net; e=
+dumazet@google.com; kuba@kernel.org; pabeni@redhat.com
+Cc: netdev@vger.kernel.org; linux-kernel@vger.kernel.org; Wentao Liang <vul=
+ab@iscas.ac.cn>
+Subject: [PATCH] octeontx2-pf: Add error handling for cn10k_map_unmap_rq_po=
+licer().
 
->  static int __init anon_inode_init(void)
->  {
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 360a86ca1f02..e8cc00a7c31a 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -40,6 +40,7 @@
->  #include <linux/bitops.h>
->  #include <linux/init_task.h>
->  #include <linux/uaccess.h>
-> +#include <linux/anon_inodes.h>
->
->  #include "internal.h"
->  #include "mount.h"
-> @@ -3429,7 +3430,12 @@ static int may_open(struct mnt_idmap *idmap, const=
- struct path *path,
->                         return -EACCES;
->                 break;
->         default:
-> -               VFS_BUG_ON_INODE(1, inode);
-> +               if (!is_default_anon_inode(inode)
-> +                       && !(inode->i_flags & S_PRIVATE))
-> +                       VFS_BUG_ON_INODE(1, inode);
-> +               if (acc_mode & MAY_EXEC)
-> +                       return -EACCES;
-> +               break;
->         }
+The cn10k_free_matchall_ipolicer() calls the cn10k_map_unmap_rq_policer()
+for each queue in a for loop without checking for any errors. A proper
+implementation can be found in cn10k_set_matchall_ipolicer_rate().
 
-Semantically this looks ok to me.
+Check the return value of the cn10k_map_unmap_rq_policer() function during
+each loop. Jump to unlock function and return the error code if the
+funciton fails to unmap policer.
 
-It may be this happens to still be too restrictive, but then we are
-erroring on the side of some test suite blowing up, as opposed to
-something in production, so I think it's fine.
+Fixes: 2ca89a2c3752 ("octeontx2-pf: TC_MATCHALL ingress ratelimiting offloa=
+d")
+Signed-off-by: Wentao Liang <mailto:vulab@iscas.ac.cn>
+---
+ drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-I would fold these conditions into the debug macro though, as in:
-VFS_BUG_ON_INODE(!is_default_anon_inode(inode) && !(inode->i_flags &
-S_PRIVATE)), inode);
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c b/drivers/n=
+et/ethernet/marvell/octeontx2/nic/cn10k.c
+index a15cc86635d6..ce58ad61198e 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c
+@@ -353,11 +353,13 @@ int cn10k_free_matchall_ipolicer(struct otx2_nic *pfv=
+f)
+=20
+ 	/* Remove RQ's policer mapping */
+ 	for (qidx =3D 0; qidx < hw->rx_queues; qidx++)
+-		cn10k_map_unmap_rq_policer(pfvf, qidx,
+-					   hw->matchall_ipolicer, false);
++		rc =3D cn10k_map_unmap_rq_policer(pfvf, qidx, hw->matchall_ipolicer, fal=
+se);
++		if (rc)
++			goto out;
+=20
+Intentionally we do not bail out when unmapping one of the queues is failed=
+. The reason is during teardown if one of the queues is failed then
+we end up not tearing down rest of the queues and those queues cannot be us=
+ed later which is bad. So leave whatever queues have failed and proceed
+with tearing down the rest. Hence all we can do is print an error for the f=
+ailed queue and continue.
 
->
->         error =3D inode_permission(idmap, inode, MAY_OPEN | acc_mode);
-> diff --git a/include/linux/anon_inodes.h b/include/linux/anon_inodes.h
-> index edef565c2a1a..eca4a3913ba7 100644
-> --- a/include/linux/anon_inodes.h
-> +++ b/include/linux/anon_inodes.h
-> @@ -30,6 +30,7 @@ int anon_inode_create_getfd(const char *name,
->                             const struct file_operations *fops,
->                             void *priv, int flags,
->                             const struct inode *context_inode);
-> +bool is_default_anon_inode(const struct inode *inode);
->
->  #endif /* _LINUX_ANON_INODES_H */
->
-> --
-> 2.17.1
->
+Thanks,
+Sundeep
 
-
+ 	rc =3D cn10k_free_leaf_profile(pfvf, hw->matchall_ipolicer);
+=20
++out:
+ 	mutex_unlock(&pfvf->mbox.lock);
+ 	return rc;
+ }
 --=20
-Mateusz Guzik <mjguzik gmail.com>
+2.42.0.windows.2
+
 
