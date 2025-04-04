@@ -1,49 +1,39 @@
-Return-Path: <linux-kernel+bounces-588239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71434A7B640
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 05:02:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87554A7B682
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 05:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24A4D3B9B6D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 03:01:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A67A3B9F73
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 03:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184821A2557;
-	Fri,  4 Apr 2025 02:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="icb1fn/E"
-Received: from pv50p00im-zteg10021401.me.com (pv50p00im-zteg10021401.me.com [17.58.6.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A8119DF66
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 02:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C8515B54C;
+	Fri,  4 Apr 2025 03:03:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0331459F7
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 03:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743735594; cv=none; b=uZhO0abKWjrGSBmtlnYM/eYHWly03I1uUYZIQwfyDnCDxNipUPHYuxCPMHiwwFsSVo5zGXrjB7kjl07/5T73P8pCy99RUMvcGDfyxSv/FiP5IBsr3FdUa+E3tEYtcy+zGcus95qB8kWAxYzXFJPMQlgYYxdJXh7ny3eyb5Ls/DE=
+	t=1743735797; cv=none; b=QPelSDBPyjhtS7RzpRzvLOhZH8+NSw0Ts12SUTl1hyQQLVhMEnuaWLOaouCK410tg0CO7C4DmxIgczkIvEUGng3RTkEZDtDC77/gumAfcf9g6pcDuhCvQEDoZG3TJkYHrMG+oDNN68Fbo4SyQkxpt4Ox/I72UtKmMCvDSLiqBc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743735594; c=relaxed/simple;
-	bh=a59/dCArZpjmdu1CA2ns6K7frhrEdPJ4+b5B41x0SKk=;
+	s=arc-20240116; t=1743735797; c=relaxed/simple;
+	bh=Ome5pwAP7+ufG+UWVHGaF4hd266qd5Z2Y3euD3sq/28=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bnfz6I/nnc7ewZqVqo+IJSy6cdDu+QMYKnWcDMl7LnW/47oAJ4eiWZVLc2IZFSc1wSvOq2oaBlAlWUs3/fSci5UvXNZEe6OUfCBm7xCWPD61mtOxeVtYTgpY2YkRTRVL8m9RS9hYWA6WjdVFgh0iTMiusFxUFhVSI9f0JoZXhuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=icb1fn/E; arc=none smtp.client-ip=17.58.6.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=fG3CGqe+hvK5S3evRDdon69vZKGIehTLbtFqN3Fym2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
-	b=icb1fn/E/NlnyCRVqy/8M6PrlMWO6CDU4dX2glMzFngDDg711ZTkm8yHSclRy4MLI
-	 L1ik1qVKxj2mCQwCACsTWjShOr3e0RyxuAel4INOws1+b5ATIj98vfmN3TWcDkIpws
-	 lcUY+C1ZNkFfaOgszw8/yPvGM0XP9zcs3R2rlrDIn93WzW8Jrep/Jnbk102H1kq83d
-	 MEBTReNAwVjSY3n91Nh9HG9VQP6j8VJiBBvle1Y+4tU3xkB2cTC3QUxPda51piDn1u
-	 cCbhJbCFDp3bhYdlXsKS9SErKeVbO9o3lxNdUtnA2+QbYAdqA/OujAHKuxsHKG1EUC
-	 iHa+kBrOv+caQ==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-zteg10021401.me.com (Postfix) with ESMTPSA id D3BB88E0091;
-	Fri,  4 Apr 2025 02:59:45 +0000 (UTC)
-Message-ID: <f6dd3667-8528-4597-963f-75e78d7be733@icloud.com>
-Date: Fri, 4 Apr 2025 10:59:41 +0800
+	 In-Reply-To:Content-Type; b=bA/LQgRs/pudv7fNb/B9mfir6HDtvZtQkuPCiOek7WyYTDwnn9KWP/VJjN6PsI+WQKYP/+jQH216JoF6NYuocunr5DTxGHKvjRmIX/Qzkq5GAFkGEZIKOFH86vw7s7ivqW/9mT+RJ7KjPU3q3gLLcj7nRr4MNqzJJyOGMPDqQSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0E4741516;
+	Thu,  3 Apr 2025 20:03:15 -0700 (PDT)
+Received: from [10.162.40.17] (a077893.blr.arm.com [10.162.40.17])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 84AB23F694;
+	Thu,  3 Apr 2025 20:03:07 -0700 (PDT)
+Message-ID: <1d7c0c14-6758-4842-965c-2978c4a7f345@arm.com>
+Date: Fri, 4 Apr 2025 08:33:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,78 +41,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] device property: Add a note to the fwnode.h
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Zijun Hu <quic_zijuhu@quicinc.com>, linux-acpi@vger.kernel.org,
+Subject: Re: [PATCH v3 01/11] arm64: hugetlb: Cleanup huge_pte size discovery
+ mechanisms
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ David Hildenbrand <david@redhat.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>, Alexandre Ghiti
+ <alexghiti@rivosinc.com>, Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
  linux-kernel@vger.kernel.org
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20250331163540.280606-1-andriy.shevchenko@linux.intel.com>
+References: <20250304150444.3788920-1-ryan.roberts@arm.com>
+ <20250304150444.3788920-2-ryan.roberts@arm.com>
 Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <20250331163540.280606-1-andriy.shevchenko@linux.intel.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250304150444.3788920-2-ryan.roberts@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 1U1YPAE7jr6a27fniVEr3Z9tVBQ1j0QS
-X-Proofpoint-ORIG-GUID: 1U1YPAE7jr6a27fniVEr3Z9tVBQ1j0QS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-04_01,2025-04-03_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0
- mlxlogscore=999 malwarescore=0 bulkscore=0 mlxscore=0 clxscore=1011
- suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2308100000 definitions=main-2504040020
 
-On 2025/4/1 00:35, Andy Shevchenko wrote:
-> Add a note to the fwnode.h that the header should not be used
-> directly in the leaf drivers, they all should use the higher
-> level APIs and the respective headers.
+
+
+On 3/4/25 20:34, Ryan Roberts wrote:
+> Not all huge_pte helper APIs explicitly provide the size of the
+> huge_pte. So the helpers have to depend on various methods to determine
+> the size of the huge_pte. Some of these methods are dubious.
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Let's clean up the code to use preferred methods and retire the dubious
+> ones. The options in order of preference:
+> 
+>  - If size is provided as parameter, use it together with
+>    num_contig_ptes(). This is explicit and works for both present and
+>    non-present ptes.
+> 
+>  - If vma is provided as a parameter, retrieve size via
+>    huge_page_size(hstate_vma(vma)) and use it together with
+>    num_contig_ptes(). This is explicit and works for both present and
+>    non-present ptes.
+> 
+>  - If the pte is present and contiguous, use find_num_contig() to walk
+>    the pgtable to find the level and infer the number of ptes from
+>    level. Only works for *present* ptes.
+> 
+>  - If the pte is present and not contiguous and you can infer from this
+>    that only 1 pte needs to be operated on. This is ok if you don't care
+>    about the absolute size, and just want to know the number of ptes.
+> 
+>  - NEVER rely on resolving the PFN of a present pte to a folio and
+>    getting the folio's size. This is fragile at best, because there is
+>    nothing to stop the core-mm from allocating a folio twice as big as
+>    the huge_pte then mapping it across 2 consecutive huge_ptes. Or just
+>    partially mapping it.
+> 
+> Where we require that the pte is present, add warnings if not-present.
+> 
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 > ---
+>  arch/arm64/mm/hugetlbpage.c | 20 +++++++++++++++-----
+>  1 file changed, 15 insertions(+), 5 deletions(-)
 > 
-> v2: added "...into the driver" piece at the end to remove ambiguity
-> 
->  include/linux/fwnode.h | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/include/linux/fwnode.h b/include/linux/fwnode.h
-> index 6fa0a268d538..4c4d3f93534c 100644
-> --- a/include/linux/fwnode.h
-> +++ b/include/linux/fwnode.h
-> @@ -2,6 +2,12 @@
->  /*
->   * fwnode.h - Firmware device node object handle type definition.
->   *
-> + * Note, this header is not meant to be used by the leaf drivers.
-> + * It provides the low level data types and definitions for the firmware
+> diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+> index b3a7fafe8892..6a2af9fb2566 100644
+> --- a/arch/arm64/mm/hugetlbpage.c
+> +++ b/arch/arm64/mm/hugetlbpage.c
+> @@ -129,7 +129,7 @@ pte_t huge_ptep_get(struct mm_struct *mm, unsigned long addr, pte_t *ptep)
+>  	if (!pte_present(orig_pte) || !pte_cont(orig_pte))
+>  		return orig_pte;
+>  
+> -	ncontig = num_contig_ptes(page_size(pte_page(orig_pte)), &pgsize);
+> +	ncontig = find_num_contig(mm, addr, ptep, &pgsize);
+>  	for (i = 0; i < ncontig; i++, ptep++) {
+>  		pte_t pte = __ptep_get(ptep);
+>  
+> @@ -438,16 +438,19 @@ int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+>  	pgprot_t hugeprot;
+>  	pte_t orig_pte;
+>  
+> +	VM_WARN_ON(!pte_present(pte));
+> +
+>  	if (!pte_cont(pte))
+>  		return __ptep_set_access_flags(vma, addr, ptep, pte, dirty);
+>  
+> -	ncontig = find_num_contig(mm, addr, ptep, &pgsize);
+> +	ncontig = num_contig_ptes(huge_page_size(hstate_vma(vma)), &pgsize);
+>  	dpfn = pgsize >> PAGE_SHIFT;
+>  
+>  	if (!__cont_access_flags_changed(ptep, pte, ncontig))
+>  		return 0;
+>  
+>  	orig_pte = get_clear_contig_flush(mm, addr, ptep, pgsize, ncontig);
+> +	VM_WARN_ON(!pte_present(orig_pte));
+>  
+>  	/* Make sure we don't lose the dirty or young state */
+>  	if (pte_dirty(orig_pte))
+> @@ -472,7 +475,10 @@ void huge_ptep_set_wrprotect(struct mm_struct *mm,
+>  	size_t pgsize;
+>  	pte_t pte;
+>  
+> -	if (!pte_cont(__ptep_get(ptep))) {
+> +	pte = __ptep_get(ptep);
+> +	VM_WARN_ON(!pte_present(pte));
+> +
+> +	if (!pte_cont(pte)) {
+>  		__ptep_set_wrprotect(mm, addr, ptep);
+>  		return;
+>  	}
+> @@ -496,11 +502,15 @@ pte_t huge_ptep_clear_flush(struct vm_area_struct *vma,
+>  	struct mm_struct *mm = vma->vm_mm;
+>  	size_t pgsize;
+>  	int ncontig;
+> +	pte_t pte;
+> +
+> +	pte = __ptep_get(ptep);
+> +	VM_WARN_ON(!pte_present(pte));
+>  
+> -	if (!pte_cont(__ptep_get(ptep)))
+> +	if (!pte_cont(pte))
+>  		return ptep_clear_flush(vma, addr, ptep);
+>  
+> -	ncontig = find_num_contig(mm, addr, ptep, &pgsize);
+> +	ncontig = num_contig_ptes(huge_page_size(hstate_vma(vma)), &pgsize);
+>  	return get_clear_contig_flush(mm, addr, ptep, pgsize, ncontig);
+>  }
+>  
 
-Ack
+Should a comment be added before all the VM_WARN_ON() explaining the rationale
+about why the page table entries need to be present, before checking for their
+contiguous attribute before subsequently calling into find_num_contig() ?
 
-> + * and device property providers. The respective API headers should
-> + * guarantee all the required data types and definitions without including
-> + * this header directly into the driver.
+Regardless, LGTM.
 
-device property(include/linux/property.h)
-	       ^
-	       |
-firmware node(include/linux/fwnode.h)
-   ^           ^         ^        ^
-   |           |         |        |
-   DT         ACPI     SWNODE    ...
-
-
-For various firmware implementations(DT|ACPI|SWNODE...), i feel we may
-allow them include fwnode.h by their header or source files.
-
-> + *
->   * Copyright (C) 2015, Intel Corporation
->   * Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->   */
-
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
