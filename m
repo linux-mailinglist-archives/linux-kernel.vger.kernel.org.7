@@ -1,127 +1,88 @@
-Return-Path: <linux-kernel+bounces-588832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19DB0A7BE11
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:40:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 218CEA7BE4D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 115AD189DC1F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:39:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B330A1896201
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E501EF0B4;
-	Fri,  4 Apr 2025 13:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57021F12F9;
+	Fri,  4 Apr 2025 13:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NX6A9ijJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2938412D1F1
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 13:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	dkim=pass (2048-bit key) header.d=dh-electronics.com header.i=@dh-electronics.com header.b="P3LwILsi"
+Received: from mx2.securetransport.de (mx2.securetransport.de [188.68.39.254])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF1B45BE3;
+	Fri,  4 Apr 2025 13:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.68.39.254
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743773965; cv=none; b=Hp/Jsybu30VfVDMmuOl7h9GT0mKJFA/ooHfXEbkzEEjX/fFpYCvtOCkV9XkvAEfptFdqBk1qZnC3OcnCUpa5WFtLK8FqdIrlthv4AMKenVOpLBC490NiHn01yHq5hHxpDTY2176lcvl4OmvrJemXu3fWSRWrAP8PCdiAG+YKEOw=
+	t=1743774660; cv=none; b=jxfX89GIBwdM1iDoXOR3ovoKS3SvrGc265vU6t+K93eX/T4E5rOOj54PcSu6gKYXG8bgRicv0sMxCY0bTUqRFvi+AdMaWdsox088bD6qbIkZY7DhKwxu+ziFDn2YzOkG6s/1abnpq6EMsbeAshElJuO2NBCNrqeWtCe3YCoDOmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743773965; c=relaxed/simple;
-	bh=Gi8wr+GBzFfZ88My7G2EpRboGbN7NTb7ctyDaIu9ano=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MVfyhzmZTSpFs5kiU6RNA1ty7P9pncsGL7mLiVYpM66VK6M7MDr8HFSk0UrkJOP56kB2F9WD1VPhwWgmAmLzPGzlOyWulodq6KrYwTj7qXTfCmZbjk1KjkXzzcaEuWc2i7/rELPmYGJsCNPOyhc4ws7L5LHA2NifG43Z0Pdz27c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NX6A9ijJ; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743773963; x=1775309963;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Gi8wr+GBzFfZ88My7G2EpRboGbN7NTb7ctyDaIu9ano=;
-  b=NX6A9ijJRe0bzibf5MMY5OItnB37y6dhfMCYRxgTXgjZ2AZ9DbllARyO
-   NRQGcM3IGrazafDmYgKg+X30wSwgzMO1h6PAOMXXOEOiceTiownGLJA7z
-   Xq7eagqsB/Gw68pY6SPdUcL0s8kmld6avg+2xLuOjUkIoYiuFJgF1IYhw
-   aVG50T1d7OuJDXPgmAZRL/rBtFtvUuUqp9+MR7w6o44wk4eOOLFOoJ0T8
-   0/RriSp61UsQweHpJaxR7P+cJKzxCBumoh/vBA7oUq7k1eJXw3HhexKZA
-   I12s1Auz3Rj93fdtXUEiaNO+e7oo5hq15+yrXVpFs+CqXh/ahI8YyHdMg
-   g==;
-X-CSE-ConnectionGUID: OugQJ+wRTZCwizPbKc/sNA==
-X-CSE-MsgGUID: zxnKe23VQeqhnuYS7BNXNg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11394"; a="56199040"
-X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="56199040"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 06:39:23 -0700
-X-CSE-ConnectionGUID: t3Myw3EVS82qNUGWwgXDBg==
-X-CSE-MsgGUID: z9UQMbVfTZ6mAwnWqMAUzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="127073543"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 06:39:20 -0700
-Date: Fri, 4 Apr 2025 16:39:17 +0300
-From: Raag Jadav <raag.jadav@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, david.m.ertman@intel.com,
-	ira.weiny@intel.com, lee@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] mfd: core: Support auxiliary device
-Message-ID: <Z-_hBbqke1qPP_Gi@black.fi.intel.com>
-References: <20250403110053.1274521-1-raag.jadav@intel.com>
- <2025040336-ethically-regulate-3594@gregkh>
- <Z-_ESekESYYvMHeR@black.fi.intel.com>
- <Z-_QwB1cExN1emMF@smile.fi.intel.com>
- <Z-_SIbfBdMXXkkWG@black.fi.intel.com>
- <Z-_X2j0yzyLCS3r2@smile.fi.intel.com>
+	s=arc-20240116; t=1743774660; c=relaxed/simple;
+	bh=hVT2gV81WiynqyAvgJ80N/NPNcWm4WWWhENk0ztWwec=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mJMfDlhgweJT7GIMxGNx6P4LyN992Aggv9P8Z8QwiRkxmwbY6nG/54+qDigpYPGkvE244DWuB39cUBUPbdSwYNq0YGkHyf9pyjJJz8697q5RhAX1C2pBnhVET25GL07HJ9aPuES5dtYO82W8/iWPyxBud+pRwdAelYHHvp+HSf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dh-electronics.com; spf=pass smtp.mailfrom=dh-electronics.com; dkim=pass (2048-bit key) header.d=dh-electronics.com header.i=@dh-electronics.com header.b=P3LwILsi; arc=none smtp.client-ip=188.68.39.254
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dh-electronics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dh-electronics.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dh-electronics.com;
+	s=dhelectronicscom; t=1743774094;
+	bh=usivlFTDzVIZfDa9MfqJrFI4XYUeFJ4i6p8YAeHPhkk=;
+	h=From:To:CC:Subject:Date:From;
+	b=P3LwILsiZqNvMupxtz5Mz9q72WqqosIkuHeEcv/x417tnXy5wQh1SiIjqMaXVZYmW
+	 tEUwCl94gPPfWaXdHwjcuABHY/GnvekOQOePrxuMkG1JDOzPJdgAy8hq9HE2pHids2
+	 OPMOAYBDMeybjyM6GryWVX4ZG+EXcwA4iFHXJlzOWg5q1PkyG4UeKtLgQu789XK3Q8
+	 +tO6jf4+xcpfa6pUHQHFP6HOWsgpEztYaYMVy5mvg8v2VGObMIijmufevsXliuyB0z
+	 9eFyjICb/kkdRXbwMs3Xmpi81RKzj0l/wuaZSk2YJ55FJyEpe6Wlkp/kz2tJ4IFgI4
+	 Ccws/xAz5mjxA==
+From: Johann Neuhauser <jneuhauser@dh-electronics.com>
+To: <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>
+CC: Johann Neuhauser <jneuhauser@dh-electronics.com>, Jonathan Corbet
+	<corbet@lwn.net>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+	<broonie@kernel.org>
+Subject: [PATCH 0/3] regulator: userspace-consumer: Add regulator event uevents
+Date: Fri, 4 Apr 2025 15:40:06 +0200
+Message-ID: <20250404134009.2610460-1-jneuhauser@dh-electronics.com>
+X-klartext: yes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-_X2j0yzyLCS3r2@smile.fi.intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Fri, Apr 04, 2025 at 04:00:10PM +0300, Andy Shevchenko wrote:
-> On Fri, Apr 04, 2025 at 03:35:45PM +0300, Raag Jadav wrote:
-> > On Fri, Apr 04, 2025 at 03:29:52PM +0300, Andy Shevchenko wrote:
-> > > On Fri, Apr 04, 2025 at 02:36:41PM +0300, Raag Jadav wrote:
-> > > > On Thu, Apr 03, 2025 at 03:02:47PM +0100, Greg KH wrote:
-> > > > > On Thu, Apr 03, 2025 at 04:30:53PM +0530, Raag Jadav wrote:
-> 
-> ...
-> 
-> > > > > > 2. Should we allow auxiliary drivers to manage their own resources
-> > > > > >    (MEM, IO, IRQ etc)?
-> > > > > 
-> > > > > The resources are all shared by the "parent" device, that's what makes
-> > > > > aux drivers work, they need to handle this as there is no unique way to
-> > > > > carve up the resources here.
-> > > > > 
-> > > > > So I don't know how you would do this, sorry.
-> > > > 
-> > > > Perhaps we can carve it up in mfd_add_devices() using start and end members
-> > > > and error out if they overlap.
-> > > 
-> > > I don't think we want a flag day. If anything, it should be a new call.
-> > 
-> > Yes, I mean in mfd_add_auxiliary_device() (as in this patch).
-> > 
-> > > > Can't we still have a struct resource that is unique to that specific
-> > > > auxiliary device?
-> > > 
-> > > Oh, believe me, you won't do that. Save yourself from _a lot_ of troubles with
-> > > different cases when the shared resources are required.
-> > 
-> > I think we already have ignore_resource_conflicts flag as part of mfd_cell,
-> > no?
-> 
-> It's not so easy, and it's not the only thing that's needed. You can dive into
-> it and see how the request of the resource work. Also note the hardware that
-> has common registers. Again, using regmap solves most of these issues if not all.
+This series adds support for regulator event reporting via uevents to the
+userspace-consumer regulator driver. The goal is to provide userspace with
+a straightforward mechanism to monitor and respond to important regulator
+events such as overcurrent conditions, voltage changes, and enable/disable
+transitions.
 
-What if there are multiple types of resources including multiple ones
-of same type?
+Signed-off-by: Johann Neuhauser <jneuhauser@dh-electronics.com>
+---
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>
+---
+Johann Neuhauser (3):
+  regulator: userspace-consumer: Add uevent reporting for regulator
+    events
+  ABI: sysfs-platform: Document uevent ABI for reg-userspace-consumer
+  docs: regulator: userspace-consumer: Add uevent-based regulator event
+    reporting
 
-I know it's not common but we have such cases already in place.
+ ...ysfs-platform-regulator-userspace-consumer | 23 +++++
+ .../regulator/userspace-consumer.rst          | 92 +++++++++++++++++++
+ drivers/regulator/userspace-consumer.c        | 74 ++++++++++++++-
+ 3 files changed, 188 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-platform-regulator-userspace-consumer
+ create mode 100644 Documentation/driver-api/regulator/userspace-consumer.rst
 
-Raag
+-- 
+2.39.5
 
