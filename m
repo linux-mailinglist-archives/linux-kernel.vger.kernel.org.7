@@ -1,283 +1,191 @@
-Return-Path: <linux-kernel+bounces-588423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A89A7B8C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:23:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93832A7B8C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:24:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF236189E3AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:23:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAA5E17512A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA71819E992;
-	Fri,  4 Apr 2025 08:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB20A18BBB0;
+	Fri,  4 Apr 2025 08:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9ShQ6FP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="myv/AeG5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wHykj7eH";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="myv/AeG5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wHykj7eH"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFBB194C86;
-	Fri,  4 Apr 2025 08:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F06F1990D8
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 08:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743754950; cv=none; b=Kv87iJ6mc0vpJkdY8MUmP5OAWzfQreTBe9eaYt+TzSb1Hgh9PgEtaOk7dkQk0NaKWCCavXpnVOnTEFG+DuqEQFwTWJtcInvwVDntZXUepdIkrlZfpPmVR8QgtnOWMVEwYzjfjE140LHQBa7ddb8Ec5I4+4/x2flID5jrf5xP1AY=
+	t=1743755025; cv=none; b=Wlp2IvcTPsYDHi0pW9P6bc62x0D8XS+RHlUobZSySg6aB6hY/zy3W32CCPVvWq58I8EGKodHZdmI5fWYtH/gqEFXvUp2hEgiI1c31P98T5vE8hFholqZ7YcqIDQEiK5F7TTXZEYLOzoPmm9+lNGRs8o+dvWwk2K+09QsSof41JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743754950; c=relaxed/simple;
-	bh=ffTrhsY9FJRcfVww9i0y0yxQfrwIq4gqaddUeXhlv5A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DU1SpfmG/06pgEITeOhkXHRV99GKV1Ga32zhYCHjWgIHn/blvunfDc1OCp9qzHGiuADmg51h6LXEsXyULAUWon20zxU8N0GilF9tdO7349iz+IswMQDNM2kq2TEyd8FG2dUH9I7lar7h1/HGZZIwH/uXH8K2N6qaqamjxX7/XtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D9ShQ6FP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4899FC4CEF0;
-	Fri,  4 Apr 2025 08:22:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743754950;
-	bh=ffTrhsY9FJRcfVww9i0y0yxQfrwIq4gqaddUeXhlv5A=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=D9ShQ6FPlAhquV1oMV5an//O1orxi1OZg9wU398rNbW2M3N9VvAJgEOKL2J3utjoH
-	 LtND4CqPvQ3uY4FNuCwLUJo7wJlvomk/Dy8ruh00M5PEqIFeIx/tGcJe9KqQRf8XDB
-	 lwms0QcAXMnVI+t+i5NDq/jIvN03Iyy96ISpJPwU6qQGOe5pXbcZF/Xhbf9U7b7OJS
-	 ZKjfd/HgTk2XtpRw6cDnYYnjwyeNRFHxG9niMvhL2UZbuX1oA3bgnHd1wM3gwXUVPy
-	 NFPk2jVH9uJEfNEPyNmWYlDJNvrLUiG3l4NA0Nz7VnjG6eaPb29poVgL8z+U+vJVja
-	 XjS6YeDuMn3dA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39BA7C3601E;
-	Fri,  4 Apr 2025 08:22:30 +0000 (UTC)
-From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
-Date: Fri, 04 Apr 2025 13:52:24 +0530
-Subject: [PATCH 4/4] PCI: qcom: Add support for resetting the slot due to
- link down event
+	s=arc-20240116; t=1743755025; c=relaxed/simple;
+	bh=8XquGULLcICQYyf9HOU+q24y7v025GgX6yuYaoaYW7E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=aUlfbb2BPp4XL/69/88N1grcoCAF2e47dbrIDe6Fe/Da/4Ml3g15rC9Wiqfb8kMQbZ1smy9didio8Ci0jAnWQIurb3Ln2UiwW/P32Ona2vm7muPZxyJFF4WrimYgFY5ePadjCcHiiPMe2f+pNT5lDkl+w24N1JSWOcGa5Geu3UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=myv/AeG5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wHykj7eH; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=myv/AeG5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wHykj7eH; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from kitsune.suse.cz (unknown [10.100.12.127])
+	by smtp-out1.suse.de (Postfix) with ESMTP id 13AF9211A7;
+	Fri,  4 Apr 2025 08:23:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743755021; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KYKspqlH24peNBIR8ojFJzzAyckzzD8GPL06yF65W9A=;
+	b=myv/AeG5WNfkl+8HLcYELu2AaXMepeWOkq94TSRBj+oxYjVECmOuXknLwJeTpMQMFjIDZb
+	KNW+dOfmbGl+j3M7Trx0hLpZKwuVgLou/aZ8Pi2WRdrO53fvVmiV2LqeHfTX0KXpvVEiD6
+	PyorYN5KUrjC+OKvHF+D40uNTEfcdls=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743755021;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KYKspqlH24peNBIR8ojFJzzAyckzzD8GPL06yF65W9A=;
+	b=wHykj7eHbmBvJZxqFTp7cDJDYjqo+GyeZhziypm+498Ere3o7EXwnrcWbK8QQnnmPZzROS
+	03Kuh0b89JnJEEAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1743755021; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KYKspqlH24peNBIR8ojFJzzAyckzzD8GPL06yF65W9A=;
+	b=myv/AeG5WNfkl+8HLcYELu2AaXMepeWOkq94TSRBj+oxYjVECmOuXknLwJeTpMQMFjIDZb
+	KNW+dOfmbGl+j3M7Trx0hLpZKwuVgLou/aZ8Pi2WRdrO53fvVmiV2LqeHfTX0KXpvVEiD6
+	PyorYN5KUrjC+OKvHF+D40uNTEfcdls=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1743755021;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KYKspqlH24peNBIR8ojFJzzAyckzzD8GPL06yF65W9A=;
+	b=wHykj7eHbmBvJZxqFTp7cDJDYjqo+GyeZhziypm+498Ere3o7EXwnrcWbK8QQnnmPZzROS
+	03Kuh0b89JnJEEAw==
+From: Michal Suchanek <msuchanek@suse.de>
+To: 
+Cc: Michal Suchanek <msuchanek@suse.de>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jonathan McDowell <noodles@earth.li>,
+	Paul Menzel <pmenzel@molgen.mpg.de>
+Subject: [PATCH v3] tpm: tis: Double the timeout B to 4s
+Date: Fri,  4 Apr 2025 10:23:14 +0200
+Message-ID: <20250404082325.13876-1-msuchanek@suse.de>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <4e4640bd-0313-4594-9667-82340ed9368a@molgen.mpg.de>
+References: <4e4640bd-0313-4594-9667-82340ed9368a@molgen.mpg.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250404-pcie-reset-slot-v1-4-98952918bf90@linaro.org>
-References: <20250404-pcie-reset-slot-v1-0-98952918bf90@linaro.org>
-In-Reply-To: <20250404-pcie-reset-slot-v1-0-98952918bf90@linaro.org>
-To: Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
- Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Rob Herring <robh@kernel.org>
-Cc: dingwei@marvell.com, cassel@kernel.org, 
- Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
- linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6144;
- i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
- bh=HLmverztHMHdlf6iHpfj2weCoSC+ZBfRtve4NgX9dNk=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBn75bD4IKYNbv//nyxjS6fn8rRAv9TJ+ustu03A
- 5oBDvZ7iXWJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZ++WwwAKCRBVnxHm/pHO
- 9QvcCACSocfRLEqKZDYj0W0aZt8ZpVhJGCB/hNr+d8Ytjf5Ygef2P6wt+710HTaKJwNdwjtJemr
- sZhT4x/YDMcUM0TpJvi5dksSBcntnglOMlNNMKN0HSfyXiDbFWK1TgO/nuvZFpvL9KeJiy4JAlm
- 1Ys94fK8eXXd7o/qsuIWTKIUSZT5fPgWCz11VNDSjieNKw2cZRxYiD41XxKpCwijWv+HZ95zd5X
- zFpKu6rnQibq6H+JASDtpXk8xg51Wd46Lb2O+7cDy7PGv8l7wBnTfyM9WTLTFA5VTmFo/kGIMID
- gzXXMn5zeJScJVqWdvgORCdygUDJhliN4Qi1EUQozbWJPIZu
-X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
- fpr=C668AEC3C3188E4C611465E7488550E901166008
-X-Endpoint-Received: by B4 Relay for
- manivannan.sadhasivam@linaro.org/default with auth_id=185
-X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reply-To: manivannan.sadhasivam@linaro.org
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.de,gmx.de,kernel.org,ziepe.ca,vger.kernel.org,earth.li,molgen.mpg.de];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kitsune.suse.cz:helo,suse.de:mid,suse.de:email];
+	FREEMAIL_ENVRCPT(0.00)[gmx.de]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+With some Infineon chips the timeouts in tpm_tis_send_data (both B and
+C) can reach up to about 2250 ms.
 
-The PCIe link can go down under circumstances such as the device firmware
-crash, link instability, etc... When that happens, the PCIe slot needs to
-be reset to make it operational again. Currently, the driver is not
-handling the link down event, due to which the users have to restart the
-machine to make PCIe link operational again. So fix it by detecting the
-link down event and adding support to resetting the slot.
+Timeout C is retried since
+commit de9e33df7762 ("tpm, tpm_tis: Workaround failed command reception on Infineon devices")
 
-Since the Qcom PCIe controllers report the link down event through the
-'global' IRQ, enable the link down event by setting PARF_INT_ALL_LINK_DOWN
-bit in PARF_INT_ALL_MASK register.
+Timeout B still needs to be extended.
 
-Then in the case of the event, call pci_host_handle_link_down() API
-in the handler to let the PCI core handle the link down condition.
+The problem is most commonly encountered with context related operation
+such as load context/save context. These are issued directly by the
+kernel, and there is no retry logic for them.
 
-The API will internally call, 'pci_host_bridge::reset_slot()' callback to
-reset the slot in a platform specific way. So implement the callback to
-reset the slot by first resetting the PCIe core, followed by reinitializing
-the resources and then finally starting the link again.
+When a filesystem is set up to use the TPM for unlocking the boot fails,
+and restarting the userspace service is ineffective. This is likely
+because ignoring a load context/save context result puts the real TPM
+state and the TPM state expected by the kernel out of sync.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Chips known to be affected:
+tpm_tis IFX1522:00: 2.0 TPM (device-id 0x1D, rev-id 54)
+Description: SLB9672
+Firmware Revision: 15.22
+
+tpm_tis MSFT0101:00: 2.0 TPM (device-id 0x1B, rev-id 22)
+Firmware Revision: 7.83
+
+tpm_tis MSFT0101:00: 2.0 TPM (device-id 0x1A, rev-id 16)
+Firmware Revision: 5.63
+
+Link: https://lore.kernel.org/linux-integrity/Z5pI07m0Muapyu9w@kitsune.suse.cz/
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 ---
- drivers/pci/controller/dwc/pcie-qcom.c | 89 +++++++++++++++++++++++++++++++++-
- 1 file changed, 87 insertions(+), 2 deletions(-)
+v2: Only extend timeout B
+v3: Update commit message
+---
+ drivers/char/tpm/tpm_tis_core.h | 2 +-
+ include/linux/tpm.h             | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index dc98ae63362db0422384b1879a2b9a7dc564d091..b0df108fb4f3c6a8b8290062ecb3e1c5c34ddd4c 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -55,6 +55,7 @@
- #define PARF_INT_ALL_STATUS			0x224
- #define PARF_INT_ALL_CLEAR			0x228
- #define PARF_INT_ALL_MASK			0x22c
-+#define PARF_STATUS				0x230
- #define PARF_SID_OFFSET				0x234
- #define PARF_BDF_TRANSLATE_CFG			0x24c
- #define PARF_DBI_BASE_ADDR_V2			0x350
-@@ -130,8 +131,11 @@
- 
- /* PARF_LTSSM register fields */
- #define LTSSM_EN				BIT(8)
-+#define SW_CLEAR_FLUSH_MODE			BIT(10)
-+#define FLUSH_MODE				BIT(11)
- 
- /* PARF_INT_ALL_{STATUS/CLEAR/MASK} register fields */
-+#define PARF_INT_ALL_LINK_DOWN			BIT(1)
- #define PARF_INT_ALL_LINK_UP			BIT(13)
- #define PARF_INT_MSI_DEV_0_7			GENMASK(30, 23)
- 
-@@ -145,6 +149,9 @@
- /* PARF_BDF_TO_SID_CFG fields */
- #define BDF_TO_SID_BYPASS			BIT(0)
- 
-+/* PARF_STATUS fields */
-+#define FLUSH_COMPLETED				BIT(8)
-+
- /* ELBI_SYS_CTRL register fields */
- #define ELBI_SYS_CTRL_LT_ENABLE			BIT(0)
- 
-@@ -169,6 +176,7 @@
- 						PCIE_CAP_SLOT_POWER_LIMIT_SCALE)
- 
- #define PERST_DELAY_US				1000
-+#define FLUSH_TIMEOUT_US			100
- 
- #define QCOM_PCIE_CRC8_POLYNOMIAL		(BIT(2) | BIT(1) | BIT(0))
- 
-@@ -274,11 +282,14 @@ struct qcom_pcie {
- 	struct icc_path *icc_cpu;
- 	const struct qcom_pcie_cfg *cfg;
- 	struct dentry *debugfs;
-+	int global_irq;
- 	bool suspended;
- 	bool use_pm_opp;
+diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+index 970d02c337c7..6c3aa480396b 100644
+--- a/drivers/char/tpm/tpm_tis_core.h
++++ b/drivers/char/tpm/tpm_tis_core.h
+@@ -54,7 +54,7 @@ enum tis_int_flags {
+ enum tis_defaults {
+ 	TIS_MEM_LEN = 0x5000,
+ 	TIS_SHORT_TIMEOUT = 750,	/* ms */
+-	TIS_LONG_TIMEOUT = 2000,	/* 2 sec */
++	TIS_LONG_TIMEOUT = 4000,	/* 4 secs */
+ 	TIS_TIMEOUT_MIN_ATML = 14700,	/* usecs */
+ 	TIS_TIMEOUT_MAX_ATML = 15000,	/* usecs */
  };
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 6c3125300c00..3db0b6a87d45 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -224,7 +224,7 @@ enum tpm2_const {
  
- #define to_qcom_pcie(x)		dev_get_drvdata((x)->dev)
-+static int qcom_pcie_reset_slot(struct pci_host_bridge *bridge,
-+				  struct pci_dev *pdev);
- 
- static void qcom_ep_reset_assert(struct qcom_pcie *pcie)
- {
-@@ -1263,6 +1274,8 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
- 			goto err_assert_reset;
- 	}
- 
-+	pp->bridge->reset_slot = qcom_pcie_reset_slot;
-+
- 	return 0;
- 
- err_assert_reset:
-@@ -1300,6 +1313,73 @@ static const struct dw_pcie_host_ops qcom_pcie_dw_ops = {
- 	.post_init	= qcom_pcie_host_post_init,
- };
- 
-+static int qcom_pcie_reset_slot(struct pci_host_bridge *bridge,
-+				  struct pci_dev *pdev)
-+{
-+	struct pci_bus *bus = bridge->bus;
-+	struct dw_pcie_rp *pp = bus->sysdata;
-+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	struct qcom_pcie *pcie = to_qcom_pcie(pci);
-+	struct device *dev = pcie->pci->dev;
-+	u32 val;
-+	int ret;
-+
-+	/* Wait for the pending transactions to be completed */
-+	ret = readl_relaxed_poll_timeout(pcie->parf + PARF_STATUS, val,
-+					 val & FLUSH_COMPLETED, 10,
-+					 FLUSH_TIMEOUT_US);
-+	if (ret) {
-+		dev_err(dev, "Flush completion failed: %d\n", ret);
-+		goto err_host_deinit;
-+	}
-+
-+	/* Clear the FLUSH_MODE to allow the core to be reset */
-+	val = readl(pcie->parf + PARF_LTSSM);
-+	val |= SW_CLEAR_FLUSH_MODE;
-+	writel(val, pcie->parf + PARF_LTSSM);
-+
-+	/* Wait for the FLUSH_MODE to clear */
-+	ret = readl_relaxed_poll_timeout(pcie->parf + PARF_LTSSM, val,
-+					 !(val & FLUSH_MODE), 10,
-+					 FLUSH_TIMEOUT_US);
-+	if (ret) {
-+		dev_err(dev, "Flush mode clear failed: %d\n", ret);
-+		goto err_host_deinit;
-+	}
-+
-+	qcom_pcie_host_deinit(pp);
-+
-+	ret = qcom_pcie_host_init(pp);
-+	if (ret) {
-+		dev_err(dev, "Host init failed\n");
-+		return ret;
-+	}
-+
-+	ret = dw_pcie_setup_rc(pp);
-+	if (ret)
-+		goto err_host_deinit;
-+
-+	/*
-+	 * Re-enable global IRQ events as the PARF_INT_ALL_MASK register is
-+	 * non-sticky.
-+	 */
-+	if (pcie->global_irq)
-+		writel_relaxed(PARF_INT_ALL_LINK_UP | PARF_INT_ALL_LINK_DOWN |
-+			       PARF_INT_MSI_DEV_0_7, pcie->parf + PARF_INT_ALL_MASK);
-+
-+	qcom_pcie_start_link(pci);
-+	dw_pcie_wait_for_link(pci);
-+
-+	dev_dbg(dev, "Slot reset completed\n");
-+
-+	return 0;
-+
-+err_host_deinit:
-+	qcom_pcie_host_deinit(pp);
-+
-+	return ret;
-+}
-+
- /* Qcom IP rev.: 2.1.0	Synopsys IP rev.: 4.01a */
- static const struct qcom_pcie_ops ops_2_1_0 = {
- 	.get_resources = qcom_pcie_get_resources_2_1_0,
-@@ -1571,6 +1651,9 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
- 		pci_unlock_rescan_remove();
- 
- 		qcom_pcie_icc_opp_update(pcie);
-+	} else if (FIELD_GET(PARF_INT_ALL_LINK_DOWN, status)) {
-+		dev_dbg(dev, "Received Link down event\n");
-+		pci_host_handle_link_down(pp->bridge);
- 	} else {
- 		dev_WARN_ONCE(dev, 1, "Received unknown event. INT_STATUS: 0x%08x\n",
- 			      status);
-@@ -1732,8 +1815,10 @@ static int qcom_pcie_probe(struct platform_device *pdev)
- 			goto err_host_deinit;
- 		}
- 
--		writel_relaxed(PARF_INT_ALL_LINK_UP | PARF_INT_MSI_DEV_0_7,
--			       pcie->parf + PARF_INT_ALL_MASK);
-+		writel_relaxed(PARF_INT_ALL_LINK_UP | PARF_INT_ALL_LINK_DOWN |
-+			       PARF_INT_MSI_DEV_0_7, pcie->parf + PARF_INT_ALL_MASK);
-+
-+		pcie->global_irq = irq;
- 	}
- 
- 	qcom_pcie_icc_opp_update(pcie);
-
+ enum tpm2_timeouts {
+ 	TPM2_TIMEOUT_A          =    750,
+-	TPM2_TIMEOUT_B          =   2000,
++	TPM2_TIMEOUT_B          =   4000,
+ 	TPM2_TIMEOUT_C          =    200,
+ 	TPM2_TIMEOUT_D          =     30,
+ 	TPM2_DURATION_SHORT     =     20,
 -- 
-2.43.0
-
+2.47.1
 
 
