@@ -1,105 +1,109 @@
-Return-Path: <linux-kernel+bounces-588424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09161A7B8C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:24:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A41A7B8C7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:25:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A6BA189ECD3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:23:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81FDC189D812
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CAD1991B6;
-	Fri,  4 Apr 2025 08:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3171991D2;
+	Fri,  4 Apr 2025 08:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="z1jZ0J1z"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ElIdxmOn"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E2018BBB0;
-	Fri,  4 Apr 2025 08:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40E61624E9;
+	Fri,  4 Apr 2025 08:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743755009; cv=none; b=sTB8vVW474Hhm28JA7excoR778riZLgmwRv0ZIami8QCjuUVW/0YH6qD6gDfKinWtdF6a7ngorC/st+PrBnPoPba4iLMLZBk4VBeWIANKdTTge/PBl4TCAjNsy3oIzJqKMPEZwg797OsIJ8qk0cUXCU1VoZ2oXnIZy6Us0lvbmo=
+	t=1743755078; cv=none; b=hCfya8fmC1PLVyJQ0TYrJuqQBSyi5xgn705JVz3kWatpshONZ6GxobPCq2HfGg74Oi8c20QM5gslWQQlrfpV5enTit+HEIQkr2hz19hqFY8e6SSfdfDxo8hC3twvs9MGDxmgPNZRrQDsWnlFms7L7sIBNVfSf82UOKpYvp6fyBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743755009; c=relaxed/simple;
-	bh=exXncdCnC5w1jj9sp8tR3J47I5LVIscXdi7WvgXh54A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W77IEbUYhVQ+xh9ObkrijAzJWu/uuLXMZh5SBFAaQmcOedWmLr/tQL26LZp+ITHOmGQImR9cFhqfq/uFK/gr29sWkHobBJqdge7XgLjln6ruE/lgLivPYX3OljiOzL1iOUYWRP13oQ6wl9iW0HGEl8GcezWLkgIDnIjtLzAANTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=z1jZ0J1z; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=aQkPpwhCuI74t8MvuOuCVkLaOjb2i8DMN08lsw+64Yk=; b=z1jZ0J1zwZHjfaKPGV0j2opMuJ
-	1UxXGv3TWNtATD3MXhjaBzoKspO2fkpnX28XVvY1gxrDDPVrZPyUNore5FQJzuFwgqWQ3h6fd7Xlm
-	4WVCv+H4aJ1TXYjUxrg307a3DQ9xSf2IQb5W+M69EmiJ3zI+EJrMgbuPgb2G7qkUgEZQXZ1twp2L/
-	23Lbrgd5lJdOeapzQPloEJ+xNNkp8SbGdxhTMOa2+zaqajeVZ0pGfh1dmgIsjMbIre5hc//EDcVBs
-	1FkbtB/bzQkS7Hd8TsCVM0n6uTFVDeEpAIuOnzbj3H3vwV+jYSsqvaQQW88pzU9SMikJGmgRcRX4L
-	Dyz6l5Uw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u0cKi-0000000B7qt-0v53;
-	Fri, 04 Apr 2025 08:23:24 +0000
-Date: Fri, 4 Apr 2025 01:23:24 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Christoph Hellwig <hch@infradead.org>, virtio-comment@lists.linux.dev,
-	mst@redhat.com, Claire Chang <tientzu@chromium.org>,
-	linux-devicetree <devicetree@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	=?iso-8859-1?Q?J=F6rg?= Roedel <joro@8bytes.org>,
-	iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-	graf@amazon.de
-Subject: Re: [RFC PATCH 1/3] content: Add VIRTIO_F_SWIOTLB to negotiate use
- of SWIOTLB bounce buffers
-Message-ID: <Z--W_JagTSyhYqzk@infradead.org>
-References: <20250402112410.2086892-1-dwmw2@infradead.org>
- <20250402112410.2086892-2-dwmw2@infradead.org>
- <Z-43svGzwoUQaYvg@infradead.org>
- <148a3c8ee53af585b42ec025c2c7821ad852c66c.camel@infradead.org>
- <Z-46TDmspmX0BJ2H@infradead.org>
- <05abb68286dd4bc17b243130d7982a334503095b.camel@infradead.org>
- <Z-99snVF5ESyJDDs@infradead.org>
- <fb7ea3ee5bf970fa36b012e16750f533b72903a0.camel@infradead.org>
+	s=arc-20240116; t=1743755078; c=relaxed/simple;
+	bh=O+GAE5Vzbp65UqRHmQTuY00tUUYdLuUU21KF3CXm+jA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=A/LNc6gavQ3t8d7rlBFUE8mX+/3cGoBD9LBWqOuzKOF6bF+JKKUO4bakwQy/I1TrswURs6tFvcMBg/cajTs5qw85whYmgQl3gp1z9ajzBLK1WtvX+51FFagDcf2mSb7Txd0KNwXZypuiNjawSx2OiDc+lFCJRRN/aKw0/7R+PDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ElIdxmOn; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac29fd22163so300734566b.3;
+        Fri, 04 Apr 2025 01:24:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743755075; x=1744359875; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=c8Q4hgwLYaVKLcAdMEHefEZY3heGKBcISCd2gGVlBqQ=;
+        b=ElIdxmOnW8/ELDGqc6LFszm6gQERJoWCNdsZzorjCs5b3r0RxktNSylsY7w9uHhd6L
+         odFDQPCj91Q+tBEE9QDGTRbYOr8PRV38r8BpJp5aBBcQw/uaQStYCsSFBdO+KMJ2UcXB
+         ftUGVnPDBLiuLvFF0MlrLlBk8uCCa1bPxTTJHFn+t94Zx5k8y5XDBJN+j9zr9hW4k3d8
+         bqUxv7hpr/vCi9cj6uByzZDHNjxeH8B81Pq9XIiBGamjSikB1LJ1waZgZAhF/+yGME1S
+         XMhG1+/+0nZOgoAqcErUrFAg1vWdjMSQMJHC6PPelF50wTH00IwXk5FFsGgvIh6MomPe
+         1fVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743755075; x=1744359875;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=c8Q4hgwLYaVKLcAdMEHefEZY3heGKBcISCd2gGVlBqQ=;
+        b=Agv3oqyG0ilJQqg10Nz25LG2Xn5zVdB+al9e5Zb5zNPyPAcJG4blwJ6c9t6y19exLX
+         iIsZemKP5NiuGkjFbRjTLsEReH/eiRIe5/OT8ODelirWp3JpS48OnT8AlK6caDFZ72F/
+         /FDaK12IO08Cona3NdaoTrH2fjtI2Z98pRdWAxXecbDLSvXgthjme6Bskl9LdpHtGH7j
+         Ox42yh0ryVgR9kTDA1CtbRA/mQnGvqK00LuOT9KwdVhBmPrHZD4FTa9r7fX8vyg06Rvk
+         +zjYkKdlsFEyy/6V6SexO8fiK3T6MDNnmVGV1FCmm3QVPwPCbF4SxWta5ZQRQcUUbmg1
+         j7+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUjIXj6kNxKL0yCiQpq2mbsWAxIZIA+0JilSkZ171g7M7pk8lSVQaom2mOUnjwlsigzyzWXMh4O9E+LFioY@vger.kernel.org, AJvYcCWtFaSY7VyCEBd35PKqndi+LB/iAsEu3ek3lhNgDfUy3raiHPYAlIIPHblY4t+qnLoqz3XYNdIHjQE6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yye7QdqdxPrR3xflgVSNeX/SShS5KEng9vafdlb5sTgL0tDGcFX
+	J2AuJRicj1SKplZ/KfEWsH7+nhyki77xvd10N2sKfXtD0d5g5J28fTGeyGVR/QY=
+X-Gm-Gg: ASbGncvchyrQ3+896qHz/ZhMmMUNRR4pQ+JG38hXMHisW3YUupjNbiRcbERSLQaQypO
+	bVkdPwAzq8zYqQZem+7C/dDWOh9A5lNzOg0hMjstsp6pjmy19Y8+dMkRR3RU+TEIZSXOMMzEOFY
+	fjiDJoA2t9td0NYnM/9Ej8q5fcFzaBbPpRqeqas/VnTMt2Qd760ZPAf6A82OWCkPdqXJtmSrvTI
+	hHiyzuy4VUlGjIpWBXAcsBtMrckEP5cur3iPTch7ARP8oJtgPnrUZmgOrkYd81/OtyAVLs+Ka6O
+	yOhqrjuh/QZc1ZXQTFL1zrm+uTL/EpKiTYqHnm1RSqGk
+X-Google-Smtp-Source: AGHT+IEr8VZKlZ7IIYPgxyNWlJEzXndX2BwR3FYtz6od+rPLp6bFG9RsHZn/yoO5kSnu/NpReCNkfg==
+X-Received: by 2002:a17:907:3e1b:b0:ac7:7d43:4535 with SMTP id a640c23a62f3a-ac7d6927509mr133733566b.0.1743755074851;
+        Fri, 04 Apr 2025 01:24:34 -0700 (PDT)
+Received: from localhost ([95.85.21.12])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ac7c0186250sm209973366b.155.2025.04.04.01.24.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Apr 2025 01:24:33 -0700 (PDT)
+Date: Fri, 4 Apr 2025 10:24:26 +0200
+From: Ahmed Salem <x0rw3ll@gmail.com>
+To: robert.moore@intel.com, rafael.j.wysocki@intel.com, lenb@kernel.org
+Cc: skhan@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linuxfoundation.org, linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] ACPI: apply ACPI_NONSTRING annotations
+Message-ID: <cover.1743754416.git.x0rw3ll@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fb7ea3ee5bf970fa36b012e16750f533b72903a0.camel@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Apr 04, 2025 at 08:50:47AM +0100, David Woodhouse wrote:
-> I do agree, this is fundamentally a system issue. In a CoCo model, it's
-> non-trivial for the system to allow *virtual* devices to do "DMA"
-> because that actually means allowing the VMM to access arbitrary guest
-> memory.
+Mark ACPI_COPY_NAMESEG() destination char arrays with the
+ACPI_NONSTRING attribute.
+
+This series depends on an upstream ACPICA commit[1].
+
+[1] https://github.com/acpica/acpica/commit/de1d500509d37
+
+Ahmed Salem (2):
+  ACPI: PRM: apply ACPI_NONSTRING annotation
+  ACPI: sysfs: apply ACPI_NONSTRING annotation
+
+ drivers/acpi/prmt.c  | 2 +-
+ drivers/acpi/sysfs.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 
-> So "for the emulated devices, just use a device model that doesn't do
-> arbitrary DMA to system memory" is a nice simple answer, and keeps the
-> guest support restricted to its *own* standalone driver.
-
-It's also one that completely breaks the abstraction.  I still don't
-understand what the problem is with having the paravirtualized devices
-on a different part of the virtual PCIe topology so that the stage2
-IOMMU isn't used for them, but instead just the direct mapping or a
-stub viommu that blocks all access.
-
-> What's annoying is that this should work out of the box *already* with
-> virtio-mmio and a `restricted-dma-pool` — for systems which aren't
-> afflicted by UEFI/ACPI/PCI as their discovery mechanisms.
-
-Yes.  And the fix is to get the equivalent to restricted-dma-pool into
-UEFI/ACPI.  That gives you a portable and device-independent way to
-describe this limitation, which is much better than hacking around it
-using an odd device model.
+base-commit: b3c623b9a94f7f798715c87e7a75ceeecf15292f
+-- 
+2.47.2
 
 
