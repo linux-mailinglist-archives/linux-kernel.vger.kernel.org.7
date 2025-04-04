@@ -1,163 +1,200 @@
-Return-Path: <linux-kernel+bounces-589256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A085BA7C3C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 21:28:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03481A7C3CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 21:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43B93189E5D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:28:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73B551B610D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D369421CC61;
-	Fri,  4 Apr 2025 19:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A4E21D3D0;
+	Fri,  4 Apr 2025 19:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mIZiimYd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jwze3SOz"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2062.outbound.protection.outlook.com [40.107.93.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354AD145B25;
-	Fri,  4 Apr 2025 19:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743794920; cv=none; b=TvB+tvCAQs/a+csDiIVzRGaxptJl8HuFxE0Z24ejWQXd0+4f5F9lHtX4jy7pABq9wJEDS/hNNmkq04/bqAjjCiAnCUzLC/D5qXmIAk68TOUlyIohxaxfHapU2eT9eyNYTCinVVNwIduKyNYx8wHZEiginbMGPBgk4J2jVZHWs+c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743794920; c=relaxed/simple;
-	bh=8ON196eganUBVW2Uw3mgBt0Ay+BgxYwGYYvK3t0u8LM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TAIca3mWIxGeFaCZ4Op2ZMmKSakcxHDiXSrJ9JIlv/xCyMEPvm5kBDSlAossdP3U443o4MpCSKXGme2xwfbRn4zm5KAlmrqfTyioP2nNvGDyvyeLNx32eINioGURylcGsiRxcJCZA6dYU7yCZH+pCXQ+4bTnwbMk0mOMUWS1q/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mIZiimYd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3764BC4CEDD;
-	Fri,  4 Apr 2025 19:28:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743794919;
-	bh=8ON196eganUBVW2Uw3mgBt0Ay+BgxYwGYYvK3t0u8LM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mIZiimYduGQlYd2eRXB0bT5WZbNtqoQs2X2vWnGNkb2RfYrSSYo+3b6Ksd92L9QkU
-	 3jTvER9D2qhCfD9RD9u/HIRwBDb2e0HR7zlu61b9pTLeOexX0PTE7wJ3bxWUgk4Jcy
-	 zkMeQ3h7tMs9VzyZ+QHUKlI5yRqZuBQeMHQ/zFynTEaUp1PEMNUH+UCgw6lXpws8m7
-	 2cCkadlCNXtEL3GiPvoFWON3JPIq2P1cviH3f4bkUyEGRAxW29fZhUZ3xN+mvx3Ons
-	 /zRuTDVoMUKMBP7EsS5b/ybQq7GLbbEKO80kjE9FspuudRcr3yy4rA0jgqHMvbbCRR
-	 jPcbU/YWFP0+g==
-Date: Fri, 4 Apr 2025 12:28:32 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Ignacio Encinas <ignacio@iencinas.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, Arnd Bergmann <arnd@arndb.de>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org,
-	Zhihang Shao <zhihang.shao.iscas@gmail.com>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
-	linux-arch@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] riscv: introduce asm/swab.h
-Message-ID: <20250404192832.GC1622@sol.localdomain>
-References: <20250403-riscv-swab-v3-0-3bf705d80e33@iencinas.com>
- <20250403-riscv-swab-v3-2-3bf705d80e33@iencinas.com>
- <aa29e983-78b9-430b-b8a6-e64de5f4ca12@codethink.co.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC2721A945;
+	Fri,  4 Apr 2025 19:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743795019; cv=fail; b=tD+KEzwX43vL6uD04Xd82A1BkzOTIrBIwFv0NXpvEtyJeV2yYwoTPoyYl6dgIfb/QmTaBWmfkBZ3v3X4ArUalWBiSpwW3v/yNeVLFhnlFn85M8jBCbb7q1sfR2SlBiu/aOX4m7OkDdRt9u7MD2pEaZzM46PrDpPgeIG+OLj9vYg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743795019; c=relaxed/simple;
+	bh=vQ3tY09rg+Pi02Nv2bV73UiU2GCQCFu8Pim0HqBNyW8=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=GVdZwXmOLwtswGME/cQHySMaMhmrkg/kWt7Vy8tVEtO7cbY1CpA1aEBGg3o4jpiZlEjqODTO2RWVoeVhaZkpzldWueqjodki58vyX98hUuFxDua/qsyjBm+e9ohR71lYX2d32zfL4nkBU2aqK8XHGXq353k/WZZSsmIsrTFGxno=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jwze3SOz; arc=fail smtp.client-ip=40.107.93.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mFNrQHvYlS2f4uxqSUgoLB5vUXBcDofQC/5qqWwcyZ4i/1FAIip5gqeoYojfNAEQHRDD2qrB+sgwHsATweuem/uF9frKt6vXEeL5ZAT/fQVBChDnUQBbqvN4Y8BrCy1FVN97HxXboefacRCbb1bOwkWdw5LMAB5UmaYkgRH6pY3B1HWbppZYGs80P1ZcsLGNbkn18zGsm3fid3KYC8lzJ7iRLwBnuqRDg5Skf0lo9wLr2vSF6xBTH7H0Xu+R/KHnSndAhrL94+z9C+r/LCFh7aIBN5rtAX3ybafTFYgwMfPWMdIJijrJTaZj2B63w5Ntp8KBaRvwrCG2gtcv7vVdnQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UEzEBBci8YYRHBsW4svYHVeJ2LK0S3KGVsCwdI0+ZD8=;
+ b=hjQhhWq4sxE6ZA5vZUQ1LCspAQT62NvYCmg+wuDJs/cKvT5Qwof56jVjWwfpzA4Ik+MwuaU51F5DR8Bwfos27K1AQuRz7PYkSkPL7nT+LQXRg7Ms4GxRFj5QyM/7HjzO14EQSNARfka5xNRKUE85Ro1/SEx44HfRWXxIgejKW0L6+Ze+rI6vc3jCgbVH2jyrIGpwzs7zQ1NoTxjCB1m1N4JR+phXkpbOrgLuH49S77QorzLdRDxY93wVy7sD/gSkbZ0F0s9YP6J6vX8ABMBMhltd2JwDUKF+L3R6ad3IA3mEC6iAka9hCQqOZATWcE7OzFKknTDkgEU8n2dMIPitYA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UEzEBBci8YYRHBsW4svYHVeJ2LK0S3KGVsCwdI0+ZD8=;
+ b=jwze3SOzCmq62WIQJ2Xfd626wYr3goFDgMG/gMQAIE9ACzDIWdWYNY+IopSutasIoNTYo9Zr5lXIinn/uht8/BJXaPLrhAHQR5Xl1oJlW8/rU1A6vcZqlNgQnenbSTWFq6mtLzu+yuukGQnHY2P0edtzGOclRIns37FXlBxspZyywrMAh+HX7cnsEZhu/kpJrxpUKGpEWo7zp59gPMS+exzxtUuI/OpsKvxqkrBAfJgdOmV0C82mad/RtLHK89wT5zphaTLtvCwa0aDVk0mdKP5uO4i2YX23/Fk2gbDr6fKgj9Mc6X+67/uTIF4k9FmnxDx0Lms5+MlB/VMYG3Tkkg==
+Received: from PH7PR17CA0027.namprd17.prod.outlook.com (2603:10b6:510:323::13)
+ by MW4PR12MB6755.namprd12.prod.outlook.com (2603:10b6:303:1ea::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.53; Fri, 4 Apr
+ 2025 19:30:13 +0000
+Received: from SA2PEPF000015C8.namprd03.prod.outlook.com
+ (2603:10b6:510:323:cafe::cd) by PH7PR17CA0027.outlook.office365.com
+ (2603:10b6:510:323::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.27 via Frontend Transport; Fri,
+ 4 Apr 2025 19:30:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SA2PEPF000015C8.mail.protection.outlook.com (10.167.241.198) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8606.22 via Frontend Transport; Fri, 4 Apr 2025 19:30:12 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 4 Apr 2025
+ 12:29:57 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 4 Apr
+ 2025 12:29:56 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Fri, 4 Apr 2025 12:29:56 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.1 00/22] 6.1.133-rc1 review
+In-Reply-To: <20250403151620.960551909@linuxfoundation.org>
+References: <20250403151620.960551909@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aa29e983-78b9-430b-b8a6-e64de5f4ca12@codethink.co.uk>
+Message-ID: <0eaf3ae5-c371-4780-8c1e-5cd05087223b@rnnvmail204.nvidia.com>
+Date: Fri, 4 Apr 2025 12:29:56 -0700
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF000015C8:EE_|MW4PR12MB6755:EE_
+X-MS-Office365-Filtering-Correlation-Id: b28409ba-bb9d-48a8-96e0-08dd73af1ebe
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|7416014|376014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NVE5Nm0rd3hxcFgzYlM2Yk5VbkpCSE1UMlNCSFZRQ1NRVHpNZm9DZllMQ2do?=
+ =?utf-8?B?bURYbzhGS3BSWFFNbUtkWk1XVkQ1TzhVKzcrWjNndHIzZ3RFVjlDSjBwOENF?=
+ =?utf-8?B?ODd3T3pLRUxjYlBxTDNCRHZ2MS9zOUJYcEVhU20yaTJ4TWdjQzFXVjBISU13?=
+ =?utf-8?B?OGM2cU5iYjJWTjk4WDNDTGYrMXk3TExHRzFIeFBTY1A4TFVDaXU0NHdPc3V3?=
+ =?utf-8?B?OXdpUDl6VkNRM29uaEM2NkRxZnQ5SXRrMjZoRU9ob0VqeVZPWSs0bGNlZ2VH?=
+ =?utf-8?B?YUl4aXgxR0dEN3gwalorT0xrUnJobEI2M2xxMDB6TWN2dERWQnNLUzVub3lx?=
+ =?utf-8?B?NzI5NDFXNUxWTGxNM3YydWoxWWZVWXkycTdTQlNLY0xFVE1FQkpXWGcvSmk3?=
+ =?utf-8?B?dTJTRHVVQmtTQituSXMwVlFGcEY5U2tSQmsxaklmRjY3Z1h1MEZTWEUyWUNI?=
+ =?utf-8?B?Wkp6TlRHVEV1U1pMZTNYUHJCYXlOcm1qWFkvWDF5UjNmWWlGZElBejBBaDhS?=
+ =?utf-8?B?K2pPZnRHSmtmUVFUSVFnMDhQc0QrOWwwQlRRRzFRSlVKTTJwT21Kdk5RYkhZ?=
+ =?utf-8?B?Qmw1bENXdEJmMm9JaXVYZnV0SW9lUEs1L0YvWlFrVEo1TGVZK0x1d05ERjda?=
+ =?utf-8?B?bjF6T0hVOWQ1WnlMelYxWUR5ZTM4OUhRTjNCWXFnU3liQkpjeEdRbE9XQ0tU?=
+ =?utf-8?B?M3d0OHlNWkJXYkdyWjF3R2pZT1JVcVFhMHROZkc3UWd3ZjVXU3NIYWQwYURr?=
+ =?utf-8?B?RkFNajNnY3ZyVUtWMFFGNXUvTWFOeXNlMUpTUjk5L1BUdEZ6TUNRU3RzV3Yz?=
+ =?utf-8?B?RG9UMGIxMGV4em55TGlSTlhyMXQrYmpLWlNzTmJJYlBETEt5aVZpMm1BRHRs?=
+ =?utf-8?B?Qy9oV1IzT2tpN3lMYWNUUTR4eTJteUNyRjhXTjhwWitPcTU4NkpkVnN5MFNI?=
+ =?utf-8?B?K2VkbUV2Smt1TG5vc1NSUUdxaUhyOUQvTHlpK3NHZG1tbTBCRlk3SmxTMFNU?=
+ =?utf-8?B?V0tQcXBSM08ydmtqeVFVNjROWGsyeXB2Z3Y5U2o2OXFPK1hTK21pV0dLaURi?=
+ =?utf-8?B?UzUrVkdCM1JvWXVNWmNMamx6ait5c1kxL1NCK0ZuZnFRbGdMSXFoZkhRZzVE?=
+ =?utf-8?B?WC94ZWtMSW9TS0NnQUVXSWFhcjFWemkxV2RlU2d0L0tEQTR6cEJXUEJzZWJ3?=
+ =?utf-8?B?RDljUTdXNlhNdDBEUTExM0diTE5kUWdOSnZ2QmxOOThIQ2tOU2lnVE5MeElo?=
+ =?utf-8?B?bGFDWUgzSlV0aTloaFFVcWxTeHorM2FMU1ljblJLNHNqOTBXS0didkJhZTVn?=
+ =?utf-8?B?S1RoWEJrY0FHYnVvSE4zY0hGdURMMzZxK1VrRlFUVWtuVTVoNDlkQzZTbFlW?=
+ =?utf-8?B?aHkrS2daZndiRFB1d3RqMVZtMyt5WjdmZldEMlhlRkdCSEhTVkkzM0ZVOUlM?=
+ =?utf-8?B?VzlnMDRPWDZtSW92UXM0VWMzNTk5dHp0VVM1bDZWWG5sU1MyRlhyeVl4SkRv?=
+ =?utf-8?B?eXkrQmZoUEd0dTFCcEJRNFJEUDFQblplNDNyQmV2WW12a3doS2dud3JzclVh?=
+ =?utf-8?B?YUNQQ1F0K2JiN3lRWDZVSml1TGFDL2NseEhyN1ZTOTBqSlMvSjRJbU9JM3di?=
+ =?utf-8?B?ZFF2b3VaZFlrbnVRa25idi9BVnVnRmVwaGFwNldaM25XM2pqbXZWQ2lrMEs0?=
+ =?utf-8?B?SW03MmpCU1VEVFJaY28xalZuYjNKWWZndHFGem1hOWVudDFBUHo1NmV1SjBj?=
+ =?utf-8?B?bU5qNUN2RzZrekVtSVZtZXkzRDdWZUhqWkhHS3RuRzQ1QnVzTy9JY2x6ZXdU?=
+ =?utf-8?B?Zy9pNTBlT045RXFDYVYxNTdvWVlPU3RNRXB3NTFRV0phRHgvYzQzWUo0NGcr?=
+ =?utf-8?B?bzlocWxsY215N3JaYmJVNU9waEg5QlRQamJJVDFQcVdNSm5WZW1ieTlLSXY3?=
+ =?utf-8?B?ZWxoTWZ2M1dRYkRUdUZObm1OaVBFSUZnOG1IdmtyU2F2R2h2dDZTQWdNcERn?=
+ =?utf-8?B?VjBJdmIwZUlQRElrRjlNVktmd3JKS3NyV2NzTTBJL1dNVldwQUdQZmdINWF3?=
+ =?utf-8?B?NWYzdm1XM2hCQ3FVK0lNcG9BUlowdjE2cys2Zz09?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Apr 2025 19:30:12.6412
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b28409ba-bb9d-48a8-96e0-08dd73af1ebe
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF000015C8.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6755
 
-On Fri, Apr 04, 2025 at 04:47:52PM +0100, Ben Dooks wrote:
-> On 03/04/2025 21:34, Ignacio Encinas wrote:
-> > Implement endianness swap macros for RISC-V.
-> > 
-> > Use the rev8 instruction when Zbb is available. Otherwise, rely on the
-> > default mask-and-shift implementation.
-> > 
-> > Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
-> > ---
-> >   arch/riscv/include/asm/swab.h | 43 +++++++++++++++++++++++++++++++++++++++++++
-> >   1 file changed, 43 insertions(+)
-> > 
-> > diff --git a/arch/riscv/include/asm/swab.h b/arch/riscv/include/asm/swab.h
-> > new file mode 100644
-> > index 000000000000..7352e8405a99
-> > --- /dev/null
-> > +++ b/arch/riscv/include/asm/swab.h
-> > @@ -0,0 +1,43 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +#ifndef _ASM_RISCV_SWAB_H
-> > +#define _ASM_RISCV_SWAB_H
-> > +
-> > +#include <linux/types.h>
-> > +#include <linux/compiler.h>
-> > +#include <asm/cpufeature-macros.h>
-> > +#include <asm/hwcap.h>
-> > +#include <asm-generic/swab.h>
-> > +
-> > +#if defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE)
-> > +
-> > +#define ARCH_SWAB(size) \
-> > +static __always_inline unsigned long __arch_swab##size(__u##size value) \
-> > +{									\
-> > +	unsigned long x = value;					\
-> > +									\
-> > +	if (riscv_has_extension_likely(RISCV_ISA_EXT_ZBB)) {            \
-> > +		asm volatile (".option push\n"				\
-> > +			      ".option arch,+zbb\n"			\
-> > +			      "rev8 %0, %1\n"				\
-> > +			      ".option pop\n"				\
-> > +			      : "=r" (x) : "r" (x));			\
-> > +		return x >> (BITS_PER_LONG - size);			\
-> > +	}                                                               \
-> > +	return  ___constant_swab##size(value);				\
-> > +}
-> > +
-> > +#ifdef CONFIG_64BIT
-> > +ARCH_SWAB(64)
-> > +#define __arch_swab64 __arch_swab64
-> > +#endif
-> > +
-> > +ARCH_SWAB(32)
-> > +#define __arch_swab32 __arch_swab32
-> > +
-> > +ARCH_SWAB(16)
-> > +#define __arch_swab16 __arch_swab16
-> > +
-> > +#undef ARCH_SWAB
-> > +
-> > +#endif /* defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE) */
-> > +#endif /* _ASM_RISCV_SWAB_H */
-> > 
+On Thu, 03 Apr 2025 16:19:55 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.133 release.
+> There are 22 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> I was having a look at this as well, using the alternatives macros.
+> Responses should be made by Sat, 05 Apr 2025 15:16:11 +0000.
+> Anything received after that time might be too late.
 > 
-> It would be nice to have a __zbb_swab defined so that you could do some
-> time checks with this, because it would be interesting to see the
-> benchmark of how much these improve byteswapping.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.133-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-FYI if you missed the previous discussion
-(https://lore.kernel.org/linux-riscv/20250302220426.GC2079@quark.localdomain/),
-currently the overhead caused by the slow generic byte-swapping on RISC-V is
-easily visible in the CRC benchmark.  For example compare:
+All tests passing for Tegra ...
 
-    crc32_le_benchmark: len=16384: 2440 MB/s
+Test results for stable-v6.1:
+    10 builds:	10 pass, 0 fail
+    28 boots:	28 pass, 0 fail
+    115 tests:	115 pass, 0 fail
 
-to
-    
-    crc32_be_benchmark: len=16384: 674 MB/s
+Linux version:	6.1.133-rc1-g819efe388d47
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
-But the main loops of crc32_le and crc32_be are basically the same, except
-crc32_le does le64_to_cpu() (or le32_to_cpu()) on the data whereas crc32_be does
-be64_to_cpu() (or be32_to_cpu()).  The above numbers came from a little-endian
-CPU, where le*_to_cpu() is a no-op and be*_to_cpu() is a byte-swap.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-To reproduce this, build a kernel from the latest upstream with
-CONFIG_CRC_KUNIT_TEST=y and CONFIG_CRC_BENCHMARK=y, boot it on a CPU that has
-the Zbc extension, and check dmesg for the benchmark results.
-
-This patch should mostly close the difference, though I don't currently have
-hardware to confirm that myself.
-
-- Eric
+Jon
 
