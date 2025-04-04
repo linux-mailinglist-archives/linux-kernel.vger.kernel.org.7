@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-589099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21BCBA7C1CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:53:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09D61A7C1D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88415189EFDA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:52:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 328A117260C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7285120E70F;
-	Fri,  4 Apr 2025 16:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5433219A70;
+	Fri,  4 Apr 2025 16:53:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fdhQG14n"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eRSYugLM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0F91DA53
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 16:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1B520FAA9
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 16:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743785537; cv=none; b=iFSPZmMDGbbuWtvQh5NMBuAxnl/MyMh19vv3+bwGSE5v0Ji93LnFQZqyfCMnw8ekEHIsZ6gXpxxOBbNOvertzGUUl3P3yzVoj/4/P3ivMBCIr2byL+5dLsBSQrzo+o6dc/CbltuJ2ATrj+0vCeRpCOjdkmUbI0KUr8tHiAw1EL0=
+	t=1743785590; cv=none; b=PHCTxY5uiFoU8fmRBh1m1lW2FBMBWvQNvPI8m/0dyoA1D3mKgwG0YXCA4PcFLorm1qkyuzHMuDpARx5ArwNT3FUAgopMF6gSqnnelvozwP3jxF+O1LjpKxDlY+Ufky5JTWvd9gpxA24wgcTlUrawT/8X8M1EO3YzCvV3djd+WSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743785537; c=relaxed/simple;
-	bh=5lDdvReyzVEX97KMbGRyvWLuicLyJkWPizdN9Pf2q0c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YD22xgkoHrkDGWDQG/KThD0rpyWag53W/3tMvU006hlGLYFCTIy3o+xqHQUR5mc1e2GvkOLtjtFZE0JORocy1gqo5g06wLFVAQn0N01S5iFZ/0Pz/qbH4TC38T46d8gp6GI7XSUmbBDOPa+cppoAPEl5VV8ahWFBotOel6h5GKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fdhQG14n; arc=none smtp.client-ip=192.198.163.18
+	s=arc-20240116; t=1743785590; c=relaxed/simple;
+	bh=LTu/dk2XgY+nZqQ0ZfQvDk3ddRKJwu9jgNwQj8AKF4o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lps/GonUy3PtcQ4JYniNp5LWzuCU0YLplpeZP9KWgrNn451jT6CfTh18qK701dESBvpoH9YDDWoPbkrdJUQ6qrcHLYpFEfehfGGwaltGGKi7yRSvtSFAIDsUcqc8woIK68Mg8JgOmfp5E5Rn6xATGmhsD6ZYDt6LIpDTmyNpoIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eRSYugLM; arc=none smtp.client-ip=192.198.163.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743785536; x=1775321536;
+  t=1743785589; x=1775321589;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=5lDdvReyzVEX97KMbGRyvWLuicLyJkWPizdN9Pf2q0c=;
-  b=fdhQG14nnnA+aDzsq1VkttX/sIgKO3MQQ8KGNezd0YA4mIF9wjMrV3iQ
-   Uk2jkTwNl2bMlClifsdPb6aepPtQ3wJeXjCxlwBgLgJeiBmyesf0AAsci
-   xcfzFDMwt1RILoCR5x5cHeOqUg13HvU/WLfiCDtyUVq83bcZ29ODKC0at
-   itmbOYYXx2XwBIlRaDazcLVNoox80EF0mprMhU+RmiTWrjlaggx1qIunM
-   4uTmqvtQ5gVujQJLRq0Bt5hH0tMTeLhXeQ+gjuve3A+cyrnXfzxGqy9w+
-   LRivmcmRehnrFGAVVODEmTXpwyIIIzLUJTt19CEJPhI8dKLD5y0lBUqsh
-   Q==;
-X-CSE-ConnectionGUID: wq+1zVbsRkCKJ/WcYPxnAA==
-X-CSE-MsgGUID: IEpqIv/ASGabn9ykibndkw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11394"; a="44479208"
+  bh=LTu/dk2XgY+nZqQ0ZfQvDk3ddRKJwu9jgNwQj8AKF4o=;
+  b=eRSYugLMQHG546uMoorfGuhSzTTe3AYN9jwEkj8E/KFUrH6yBV5ECjzU
+   mJbfLVjf8UC3q9Xh9ucEf8EJY+uAGzPEr+UNw2GQUeVjU9Hay/fSBf+x2
+   1M+OeqLRizYt57bh+ykqhzU7/jeE72O0GfyqodG5fnk4iYVY4BOvoJdr/
+   SxoWoZ3cjWlog+uOAVCxsPdOz8fJmkIfBTXjWcHJg0Xco8Pf+WsV1nc2x
+   FkOndDUf1zBIiAEdaFxKxe/ISD3PwrodypMbWT6f7V5X3aNTm+EdAKrUo
+   FlvIOatLVIU1NyocsCJP9Jrjz+acWBLKGCPK8vhihGSP775kNgAs5l1PY
+   g==;
+X-CSE-ConnectionGUID: NOLPvs5uTU6H1TDL2VTECA==
+X-CSE-MsgGUID: DU6zD7NTTleP1m2rtL2qdA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11394"; a="62770181"
 X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="44479208"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 09:52:15 -0700
-X-CSE-ConnectionGUID: tH1TQQLhSZiNhAS25wu9GQ==
-X-CSE-MsgGUID: h+qRiDY5RaK8jbPnI/Uw4A==
+   d="scan'208";a="62770181"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 09:53:08 -0700
+X-CSE-ConnectionGUID: M3LD+9ckRDK8daMgkUjlIA==
+X-CSE-MsgGUID: ZUEvqCMmT5eY3b/Uv3TvLA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="128205053"
+   d="scan'208";a="132216185"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP; 04 Apr 2025 09:52:13 -0700
+  by orviesa003.jf.intel.com with ESMTP; 04 Apr 2025 09:53:06 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 87D9F129; Fri, 04 Apr 2025 19:52:11 +0300 (EEST)
+	id A11EE129; Fri, 04 Apr 2025 19:53:04 +0300 (EEST)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>,
+To: linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Waiman Long <longman@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v1 1/1] sched/fair: Mark some static const with __maybe_unused
-Date: Fri,  4 Apr 2025 19:52:04 +0300
-Message-ID: <20250404165204.3657093-1-andriy.shevchenko@linux.intel.com>
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] x86/boot: Use __ALIGN_KERNEL_MASK() instead of open coded analogue
+Date: Fri,  4 Apr 2025 19:53:03 +0300
+Message-ID: <20250404165303.3657139-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -77,66 +77,35 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-GCC considers that some static const defined in the lockdep_internals.h
-are unused, which prevents `make W=1` and CONFIG_WERROR=y builds:
-
-kernel/locking/lockdep_internals.h:69:28: error: ‘LOCKF_USED_IN_IRQ_READ’ defined but not used [-Werror=unused-const-variable=]
-   69 | static const unsigned long LOCKF_USED_IN_IRQ_READ =
-      |                            ^~~~~~~~~~~~~~~~~~~~~~
-kernel/locking/lockdep_internals.h:63:28: error: ‘LOCKF_ENABLED_IRQ_READ’ defined but not used [-Werror=unused-const-variable=]
-   63 | static const unsigned long LOCKF_ENABLED_IRQ_READ =
-      |                            ^~~~~~~~~~~~~~~~~~~~~~
-kernel/locking/lockdep_internals.h:57:28: error: ‘LOCKF_USED_IN_IRQ’ defined but not used [-Werror=unused-const-variable=]
-   57 | static const unsigned long LOCKF_USED_IN_IRQ =
-      |                            ^~~~~~~~~~~~~~~~~
-kernel/locking/lockdep_internals.h:51:28: error: ‘LOCKF_ENABLED_IRQ’ defined but not used [-Werror=unused-const-variable=]
-   51 | static const unsigned long LOCKF_ENABLED_IRQ =
-      |                            ^~~~~~~~~~~~~~~~~
-
-Fix this by marking them with __maybe_unused.
+LOAD_PHYSICAL_ADDR is calculated as an aligned (up) CONFIG_PHYSICAL_START
+with the respective alignment value CONFIG_PHYSICAL_ALIGN. However,
+the code is written openly while we have __ALIGN_KERNEL_MASK() macro
+that does the same. This macro has nothing special, that's why
+it may be used in assembler code or linker scripts (on the contrary
+__ALIGN_KERNEL() may not). Do it so.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- kernel/locking/lockdep_internals.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/page_types.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
-index 20f9ef58d3d0..82e71335f367 100644
---- a/kernel/locking/lockdep_internals.h
-+++ b/kernel/locking/lockdep_internals.h
-@@ -48,25 +48,25 @@ enum {
- };
+diff --git a/arch/x86/include/asm/page_types.h b/arch/x86/include/asm/page_types.h
+index 974688973cf6..1f749eb5c3cb 100644
+--- a/arch/x86/include/asm/page_types.h
++++ b/arch/x86/include/asm/page_types.h
+@@ -29,9 +29,7 @@
+ #define VM_DATA_DEFAULT_FLAGS	VM_DATA_FLAGS_TSK_EXEC
  
- #define LOCKDEP_STATE(__STATE)	LOCKF_ENABLED_##__STATE |
--static const unsigned long LOCKF_ENABLED_IRQ =
-+static __maybe_unused const unsigned long LOCKF_ENABLED_IRQ =
- #include "lockdep_states.h"
- 	0;
- #undef LOCKDEP_STATE
+ /* Physical address where kernel should be loaded. */
+-#define LOAD_PHYSICAL_ADDR ((CONFIG_PHYSICAL_START \
+-				+ (CONFIG_PHYSICAL_ALIGN - 1)) \
+-				& ~(CONFIG_PHYSICAL_ALIGN - 1))
++#define LOAD_PHYSICAL_ADDR	__ALIGN_KERNEL_MASK(CONFIG_PHYSICAL_START, CONFIG_PHYSICAL_ALIGN - 1)
  
- #define LOCKDEP_STATE(__STATE)	LOCKF_USED_IN_##__STATE |
--static const unsigned long LOCKF_USED_IN_IRQ =
-+static __maybe_unused const unsigned long LOCKF_USED_IN_IRQ =
- #include "lockdep_states.h"
- 	0;
- #undef LOCKDEP_STATE
+ #define __START_KERNEL		(__START_KERNEL_map + LOAD_PHYSICAL_ADDR)
  
- #define LOCKDEP_STATE(__STATE)	LOCKF_ENABLED_##__STATE##_READ |
--static const unsigned long LOCKF_ENABLED_IRQ_READ =
-+static __maybe_unused const unsigned long LOCKF_ENABLED_IRQ_READ =
- #include "lockdep_states.h"
- 	0;
- #undef LOCKDEP_STATE
- 
- #define LOCKDEP_STATE(__STATE)	LOCKF_USED_IN_##__STATE##_READ |
--static const unsigned long LOCKF_USED_IN_IRQ_READ =
-+static __maybe_unused const unsigned long LOCKF_USED_IN_IRQ_READ =
- #include "lockdep_states.h"
- 	0;
- #undef LOCKDEP_STATE
 -- 
 2.47.2
 
