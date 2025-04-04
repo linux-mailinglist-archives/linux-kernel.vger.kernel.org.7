@@ -1,182 +1,117 @@
-Return-Path: <linux-kernel+bounces-588837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4045A7BE2A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:43:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A28A7BE15
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:40:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0146C3B851F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:42:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 709E51886BE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4491F03CD;
-	Fri,  4 Apr 2025 13:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dh-electronics.com header.i=@dh-electronics.com header.b="i4RrI9dK"
-Received: from mx2.securetransport.de (mx2.securetransport.de [188.68.39.254])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F8512D1F1;
-	Fri,  4 Apr 2025 13:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.68.39.254
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7C11EFF95;
+	Fri,  4 Apr 2025 13:40:43 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B101E12DD95;
+	Fri,  4 Apr 2025 13:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743774167; cv=none; b=XmoJR+/LGO7Qk8fXJ32rIR7voqae2EglZ77P9UVphQQeMc/a2PMBAwmy9jV9t5P1zx5/ul4f3gWZVx2u7HtP4L7XEvEEfjeC7PF/PJgo3M3pNzXx+wMYmQnCxvLt6wIbqHt16YdWngflDYt+t+OWgzmkYKjuFo/lPTZxTUDk+vU=
+	t=1743774042; cv=none; b=ekoCz+qdHR3ZVR/EAwp2e4XtPRqJOBpTVGYPJ+B+KCQA3CYUgcqCzw7ocFB7CkdRPY8T2+musHL/MDWFfXRg2Or2ikLhDRV5yJ+zxhqFZsAL2FQK49XUzopP4x+afxpNAicr9HhPAYIFmP3I84PfCiJrOdm25/iVUoFnJ0bQlpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743774167; c=relaxed/simple;
-	bh=u0SPVnMW7m9xp1q5Fto8u0ZT8lP0XSxKjLxGAkfDFcM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WfMw4nOkq4cG2o/iNikmGxyI/LxlZHpcw7CT93CdRGeRreSsYbgD7kV/LcSYgvswGVNV6es1GVT/tkmFIvvbucS3lNdX9Xi9hqbyAZLYc5irziAeoszufNGKbsT5TSR3ztoR5pQ8vVF/yPC3zMiBsd9qdy8r1g64s4QwGTvyr2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dh-electronics.com; spf=pass smtp.mailfrom=dh-electronics.com; dkim=pass (2048-bit key) header.d=dh-electronics.com header.i=@dh-electronics.com header.b=i4RrI9dK; arc=none smtp.client-ip=188.68.39.254
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dh-electronics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dh-electronics.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dh-electronics.com;
-	s=dhelectronicscom; t=1743774124;
-	bh=mEWTFQi0x5I0T2Dvamc/ses98XmOTmvVCWZ+pb/lH5c=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-	b=i4RrI9dK1RsghyjTi4uJ/ikCIThxUd2xmZNgFuyrDqOCsETVlNS2SdKEVP3QWoGK/
-	 PoKjj04RKs25xqe2xXxwoy+r2W6Uj9H5rheKaX+YdPlv45XCtgpt2Nm320jIZ1J05Q
-	 7uEbySnWIm61SVx1LqnENQLUbddf/u14dyhBSjRZg4DogquJ8UylvYUWoCcgkMrl/Z
-	 gOM1soon6JyJeV9dwVhxwS9lBFdBczAn7fRkDPQfl5hx9iz57Q6W8NC1eZvS+kuevn
-	 SXJweNY/go1Wx3Hg9aoiLUAKiznMA+hyF92AIDMaPZf6PmMSeVO4jN0qJMo0j0MVx1
-	 aoEsFUBXvKr9Q==
-From: Johann Neuhauser <jneuhauser@dh-electronics.com>
-To: <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>
-CC: Johann Neuhauser <jneuhauser@dh-electronics.com>, Jonathan Corbet
-	<corbet@lwn.net>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>
-Subject: [PATCH 3/3] docs: regulator: userspace-consumer: Add uevent-based regulator event reporting
-Date: Fri, 4 Apr 2025 15:40:09 +0200
-Message-ID: <20250404134009.2610460-4-jneuhauser@dh-electronics.com>
-X-klartext: yes
-In-Reply-To: <20250404134009.2610460-1-jneuhauser@dh-electronics.com>
-References: <20250404134009.2610460-1-jneuhauser@dh-electronics.com>
+	s=arc-20240116; t=1743774042; c=relaxed/simple;
+	bh=08nROLE83sH/QfN+ScKwvqbF/rDt1zpxINveXRGVxQQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eD+PYcIztE7hxA3xDWhu2BBYeuKNoW+UQZE9izYaLHPIWzx2BRh2SDwYp9UUWgjb58yJmCERbhf+Xk2NwTmEnRuyUh+o7dp23vXPQn5KLv7Kt6aFYDidMcgxZxO33umd8NC4rSM3O00hqoAwUCGmF3bFLcN0MtLNKwWAerBsVlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZTflt0wvpz6K9DN;
+	Fri,  4 Apr 2025 21:36:58 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id B59A11404F9;
+	Fri,  4 Apr 2025 21:40:38 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 4 Apr
+ 2025 15:40:38 +0200
+Date: Fri, 4 Apr 2025 14:40:36 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Gregory Price <gourry@gourry.net>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<kernel-team@meta.com>, <dan.j.williams@intel.com>,
+	<vishal.l.verma@intel.com>, <dave.jiang@intel.com>, <dave@stgolabs.net>,
+	<alison.schofield@intel.com>, <ira.weiny@intel.com>
+Subject: Re: [PATCH v2] cxl: core/region - ignore interleave granularity
+ when ways=1
+Message-ID: <20250404144036.000021c1@huawei.com>
+In-Reply-To: <20250402232552.999634-1-gourry@gourry.net>
+References: <20250402232552.999634-1-gourry@gourry.net>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Add detailed documentation for the new uevent-based event reporting
-introduced in the regulator userspace-consumer driver.
+On Wed,  2 Apr 2025 19:25:52 -0400
+Gregory Price <gourry@gourry.net> wrote:
 
-This documentation explains:
-- The new supported regulator events exposed via uevents.
-- Methods to monitor these events from userspace using `udevadm`.
-- Practical examples for creating udev rules and scripts.
+> When validating decoder IW/IG when setting up regions, the granularity
+> is irrelevant when iw=1 - all accesses will always route to the only
+> target anyway - so all ig values are "correct". Loosen the requirement
+> that `ig = (parent_iw * parent_ig)` when iw=1.
+> 
+> On some Zen5 platforms, the platform BIOS specifies a 256-byte
+> interleave granularity window for host bridges when there is only
+> one target downstream.  This leads to Linux rejecting the configuration
+> of a region with a x2 root with two x1 hostbridges.
+> 
+> Decoder Programming:
+>    root - iw:2 ig:256
+>    hb1  - iw:1 ig:256  (Linux expects 512)
+>    hb2  - iw:1 ig:256  (Linux expects 512)
+>    ep1  - iw:2 ig:256
+>    ep2  - iw:2 ig:256
+> 
+> This change allows all decoders downstream of a passthrough decoder to
+> also be configured as passthrough (iw:1 ig:X), but still disallows
+> downstream decoders from applying subsequent interleaves.
+> 
+> e.g. in the above example if there was another decoder south of hb1
+> attempting to interleave 2 endpoints - Linux would enforce hb1.ig=512
+> because the southern decoder would have iw:2 and require ig=pig*piw.
+> 
+> Signed-off-by: Gregory Price <gourry@gourry.net>
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+Reasonable work around and good explanation.
 
-Signed-off-by: Johann Neuhauser <jneuhauser@dh-electronics.com>
----
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>
----
- .../regulator/userspace-consumer.rst          | 92 +++++++++++++++++++
- 1 file changed, 92 insertions(+)
- create mode 100644 Documentation/driver-api/regulator/userspace-consumer.rst
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-diff --git a/Documentation/driver-api/regulator/userspace-consumer.rst b/Documentation/driver-api/regulator/userspace-consumer.rst
-new file mode 100644
-index 000000000000..308873fd20cb
---- /dev/null
-+++ b/Documentation/driver-api/regulator/userspace-consumer.rst
-@@ -0,0 +1,92 @@
-+============================
-+Regulator Userspace Consumer
-+============================
-+
-+This document describes the Userspace Consumer Regulator Driver
-+(`drivers/regulator/userspace-consumer.c`) and its userspace interface.
-+
-+Introduction
-+------------
-+
-+The Userspace Consumer Regulator provides userspace with direct control
-+and monitoring of regulator outputs. It now supports reporting regulator
-+events directly via uevents, enabling userspace to handle events such as
-+overcurrent, voltage changes, enabling/disabling regulators, and more.
-+
-+Supported Events
-+----------------
-+
-+The driver emits uevents corresponding to the regulator events defined in
-+``include/uapi/regulator/regulator.h``.
-+
-+Currently supported regulator event uevents are:
-+
-+- ``EVENT=ABORT_DISABLE``
-+- ``EVENT=ABORT_VOLTAGE_CHANGE``
-+- ``EVENT=DISABLE``
-+- ``EVENT=ENABLE``
-+- ``EVENT=FAIL``
-+- ``EVENT=FORCE_DISABLE``
-+- ``EVENT=OVER_CURRENT``
-+- ``EVENT=OVER_TEMP``
-+- ``EVENT=PRE_DISABLE``
-+- ``EVENT=PRE_VOLTAGE_CHANGE``
-+- ``EVENT=REGULATION_OUT``
-+- ``EVENT=UNDER_VOLTAGE``
-+- ``EVENT=VOLTAGE_CHANGE``
-+
-+Monitoring Events from Userspace
-+--------------------------------
-+
-+Userspace applications can monitor these regulator uevents using ``udevadm``:
-+
-+.. code-block:: bash
-+
-+   udevadm monitor -pku
-+
-+Example output:
-+
-+.. code-block::
-+
-+    KERNEL[152.717414] change   /devices/platform/output-usb3 (platform)
-+    ACTION=change
-+    DEVPATH=/devices/platform/output-usb3
-+    SUBSYSTEM=platform
-+    NAME=event
-+    EVENT=OVER_CURRENT
-+    DRIVER=reg-userspace-consumer
-+
-+Handling Events with Udev Rules
-+-------------------------------
-+
-+Userspace can react to these events by creating udev rules. For example,
-+to trigger a script on an OVER_CURRENT event:
-+
-+.. code-block:: udev
-+
-+    # /etc/udev/rules.d/99-regulator-events.rules
-+    ACTION=="change", SUBSYSTEM=="platform", DRIVER="reg-userspace-consumer", ENV{EVENT}=="OVER_CURRENT", RUN+="/usr/local/bin/handle-regulator-event.sh"
-+
-+A sample handler script:
-+
-+.. code-block:: bash
-+
-+    #!/bin/sh
-+    logger "Handle regulator ${EVENT} on ${DEVPATH}"
-+    # Add additional handling logic here
-+    case "${EVENT}" in
-+    OVER_CURRENT)
-+      echo disabled > /sys"${DEVPATH}"/state
-+    esac
-+
-+API Stability
-+-------------
-+
-+This interface is considered stable. New regulator events may be added
-+in the future, with corresponding documentation updates.
-+
-+References
-+----------
-+
-+- Kernel Header File: ``include/uapi/regulator/regulator.h``
-+- Driver Source: ``drivers/regulator/userspace-consumer.c``
--- 
-2.39.5
+> ---
+>  drivers/cxl/core/region.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 04bc6cad092c..dec262eadf9a 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -1553,7 +1553,7 @@ static int cxl_port_setup_targets(struct cxl_port *port,
+>  
+>  	if (test_bit(CXL_REGION_F_AUTO, &cxlr->flags)) {
+>  		if (cxld->interleave_ways != iw ||
+> -		    cxld->interleave_granularity != ig ||
+> +		    (iw > 1 && cxld->interleave_granularity != ig) ||
+>  		    cxled->spa_range.start != p->res->start ||
+>  		    cxled->spa_range.end != p->res->end ||
+>  		    ((cxld->flags & CXL_DECODER_F_ENABLE) == 0)) {
 
 
