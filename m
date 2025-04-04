@@ -1,128 +1,107 @@
-Return-Path: <linux-kernel+bounces-588900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7BD2A7BEEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:19:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1449A7BEFC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37F30189DC90
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:20:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E47683BB74A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135F51F37CE;
-	Fri,  4 Apr 2025 14:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CDAF1F3B94;
+	Fri,  4 Apr 2025 14:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PO7D72Zq"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vT+D0GGQ"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3CD1DB154
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 14:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0E61F37C3;
+	Fri,  4 Apr 2025 14:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743776389; cv=none; b=Up3DGXVkGGSlpchOVl2TlNsbUrj5M/wPCYzoeFqMy7/SnH2OTmaVSlf8RtVmvBln4UMe2LDjWPX1yZ0wx+KRRiLIwFr8g3ZN5xVyKvrbjpdeS+9+1rXf60BUBf+VFKc5ntLAiU+hfkixrIhjWEEyRT8u4qtlKbRKymYNN3WwCR8=
+	t=1743776429; cv=none; b=KoFcFZIe6kWRScvrZ3AY6j9hrr26N0JKrMl7D+Wl36QjAQgKc7D9M7bsFGa/uWt0GkQqXeIPEUCSjNfuC2d6rBN5hGiRtzJ7GmPzD+xCh8vlphwBgflZWwvZKduVFjeX/d8QxoqKjCs9Qosq4YEhEOqWBzqv9YtpWJ0hVeAbmVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743776389; c=relaxed/simple;
-	bh=F1/0cHmvruih221kH6aWSlZC5sD6BkHLnUQW5KdapX8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mxhwgk5SN0PFo3r79t3qps3wLqBCnsDPeb8l7goASN5Wlua0AldHvT3oBZdf6t6iXqmKWdDZ8PdSjg4hhKBb0ihetsU59KK/Sxqe95CvYe+663AwiPuWPj8XCQuz3wz5wjitlofgLe6OzNVpOPLE23iT5vjIq+Q0GqHOs/D+8vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PO7D72Zq; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5edc07c777eso2690101a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 07:19:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1743776385; x=1744381185; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4feMGy3p1zUobV244140u9UEga2t532jHyyL+FMDHoE=;
-        b=PO7D72ZqgrilzdVK1s5aSP71ZTxIFTTFgpUBVNGSbAKi/nKT6ehXqAnW0xnMKbkwTr
-         YQ0yA4Lj37rFHRpq3qvQFTY8OXsCOoROlHQl5r1TlltSOYonrvmNtHK9azgd/VNkezwm
-         AxCl7Dn2FtKwKpn2a432RhXASGPWfKYZ5bW1s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743776385; x=1744381185;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4feMGy3p1zUobV244140u9UEga2t532jHyyL+FMDHoE=;
-        b=vYgmKxE1qhxLDSJfECkZ4vgaD5dNCZHZkIASzRsfuPNg2jhN5Ntwu58K1svJBbT4o6
-         XSZrRrU3/aDoYdH8J8IYwwofOYNvHTbhpiEQ2Ezk6o+dqFrk0L7JxwEJDW4UdFyU0Ntn
-         UYT9suWga2KGSNhBSTP+Y58gTCPGQnRpk6dyHYSiCkc2EpyenX2bG97HR5FrZwiRYYEr
-         q0rk0a0Si7EzI7pidaUM1z9D9rVm7XPWxV1q6lVBwI5DKpSBvNH8O2BYELzyp7xThjS1
-         cIeDVa/WOdXbhD72MDZtLmy2xOXZdpXwctRPzEiNDtLJ/CuZ41p6mCccgBVloiFa01XS
-         mTeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7smVRflQO0CoR3STAk0obinjY1FVNoIMGOOHN/l2xfGO1UNXdkWRrBsEtS8ODYeL85xYFEGczaVDz5ZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyygh/LJgIIRYWIzrx05ZJHeM96OFzbVGD2ifhfvI9Q4zTLqs9Y
-	YuYARwJ3gxuAQ5LyjT9KKmZuYVlTSXqEKDfucz7GIIG9p0JtpmOkVZRA7jmv/uYfK66MQT7hKE4
-	zbRE=
-X-Gm-Gg: ASbGncuMXoZJPdtzrZssiui/h8JT5+bKxrO12MIcOHgkYfwmslzGR4yj0479K9qmvA2
-	5m2XLe/BLyGgLdZPUXvXHFTBFbUMj2MKB5Q1dzBNiJLZwhWI92O2RLKOzllJhLZg/aK7jsTPmph
-	DBwlFkyRUH5g+2HnbOvcwED0nkl+YE/l68NvbBlNXCGy4oA9nG0o6/iPMte6xew3C9coucVhBSH
-	OikHroRTp/h4ZBHMmCFRGKQ9DdkYx/ex7/24w6FF+xjAssVVK2+cXRAnhrt/woH6Hqs5wux2DQe
-	rfRJpihcsJZ4f9IxeGZBbdJDyjk/gtP7kpznEdJtM0on09qNUVBvshhKEW++Ers//XP0r5FckJv
-	N3mT9oKsROgPFFSaJQIE=
-X-Google-Smtp-Source: AGHT+IGSkp3Hnj5HRFd16NSPRtSmfZ8WmAAVGo1tHaQRROO1ghXDtXfEDe+Xg+MfHCnkwrOtj7LocA==
-X-Received: by 2002:a17:907:988:b0:ac3:3e40:e183 with SMTP id a640c23a62f3a-ac7d166a5camr375870566b.3.1743776385483;
-        Fri, 04 Apr 2025 07:19:45 -0700 (PDT)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7bfe99b30sm264616166b.58.2025.04.04.07.19.44
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Apr 2025 07:19:44 -0700 (PDT)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e5b6f3025dso3267139a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 07:19:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUj4+iYlXGYVNvV6n0SwbwFxxhGJB6qtjmi4FON5xywZnTRwTB2Cj0pE6rTs+COUSYadSY2WLdqAwDCg6M=@vger.kernel.org
-X-Received: by 2002:a17:906:478d:b0:ac7:982f:c299 with SMTP id
- a640c23a62f3a-ac7d190fe23mr315600266b.38.1743776383893; Fri, 04 Apr 2025
- 07:19:43 -0700 (PDT)
+	s=arc-20240116; t=1743776429; c=relaxed/simple;
+	bh=dVpKr/sYMzgqeXhXFJ/oZY/Tfs3XC3VCCz70DzidYf0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=X+afsTARtoDwYmdfYMUwXsu+ycnRTPfLo6uMKKowYz0B9R1ovcBMC52kRusEjuLnk4lejv5VH5UnLd4r802/zMPmfT5gyJBxGNV/D9IQVIuRSkH45skB59h7G7hYQw/PfwwMdoOujNsuW81FRSf/Scw0RPtlhQoGOHcPO8o80Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vT+D0GGQ; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1743776419; x=1744381219; i=markus.elfring@web.de;
+	bh=dVpKr/sYMzgqeXhXFJ/oZY/Tfs3XC3VCCz70DzidYf0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=vT+D0GGQuvufa88f8kp8v062bZpYRfG5rNn/CdUc6Ok5dyX5pXUTjt73Nkbt4gaI
+	 PgeaCwNJwvgzArkw2YltKmDd5W7WuGISJR90hGq5WSibb8MNApPlmRAJUVgAkZbVn
+	 k/8xBlOSG0trz6Nc9xxHXB+jvcQ1DmBpzroKwA4aADKMsAwFC+WMRzVSI9QjgUQNq
+	 76RuRj3NHeFslEJ4vgzVt16gw/sErr1rOR01Oa5hE83xExTzJlR+KC7ChZ7Jif0eZ
+	 mln6LybRGIui4fMGk5PPCiZxZk1Qt3hxF/Tp0ZJl+zAPl5Qzg+FnrozwGCKvFAp+B
+	 4sysicG1e2aERP+GSA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.27]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M4sbr-1tymlI28vf-00EGpL; Fri, 04
+ Apr 2025 16:20:19 +0200
+Message-ID: <667bcd67-aac4-425c-b100-d25dc86eb6a9@web.de>
+Date: Fri, 4 Apr 2025 16:20:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250322-vfs-mount-b08c842965f4@brauner> <174285005920.4171303.15547772549481189907.pr-tracker-bot@kernel.org>
- <20250401170715.GA112019@unreal> <20250403-bankintern-unsympathisch-03272ab45229@brauner>
- <20250403-quartal-kaltstart-eb56df61e784@brauner> <196c53c26e8f3862567d72ed610da6323e3dba83.camel@HansenPartnership.com>
- <6pfbsqikuizxezhevr2ltp6lk6vqbbmgomwbgqfz256osjwky5@irmbenbudp2s>
- <CAHk-=wjksLMWq8At_atu6uqHEY9MnPRu2EuRpQtAC8ANGg82zw@mail.gmail.com> <Z--YEKTkaojFNUQN@infradead.org>
-In-Reply-To: <Z--YEKTkaojFNUQN@infradead.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 4 Apr 2025 07:19:27 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjjGb0Uik101G-B76pp+Xvq5-xa1azJF0EwRxb_kisi2Q@mail.gmail.com>
-X-Gm-Features: ATxdqUH1fche2EeY8R3txz2bZ0obPWI0l3w2GZ5-Xx7oiLcX7YVSPm2_dMlQOXA
-Message-ID: <CAHk-=wjjGb0Uik101G-B76pp+Xvq5-xa1azJF0EwRxb_kisi2Q@mail.gmail.com>
-Subject: Re: [GIT PULL] vfs mount
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Christian Brauner <brauner@kernel.org>, Leon Romanovsky <leon@kernel.org>, pr-tracker-bot@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+ linux-bcachefs@vger.kernel.org, vulab@iscas.ac.cn
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <xjtejtaya3znotupznz4eywstkjvucxwyo2gf4b6phcwq6a2i5@pqicczp3ty5g>
+Subject: Re: [PATCH] bcachefs: Add error handling for zlib_deflateInit2()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <xjtejtaya3znotupznz4eywstkjvucxwyo2gf4b6phcwq6a2i5@pqicczp3ty5g>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:m9dyMti2xaz8zIWG+21CGOyDk02i+2gzChDbCE1fHNANLYIuzOP
+ u/jgZIhvsfBWcTOnJRbXcy906ATPuII7wXgXcHXcVpmXrqkDgGgHnKT6QgM3piWzFVWX0dH
+ gPSi+1eZeJ5K2i0tQ1kzTyrCllXYo7RqgFpEKPpknl+kb48J46gysHz31FqkeGfOfbWWFd8
+ lAARsG30s9aCY/PuxcriA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:UAK3iNBi4KA=;+VCTiQDIa2IGjGyuE7S3R1YngIZ
+ Kgbg7/4YxYlgHQ6HsymLPtsLEOZVPrfH6qANK878G8IHOVINgsP9m9X5nIxTn8C9GtiL+FGNw
+ 8FUiU2FzbbUKt0OZ07Rs4q3LP4RQi8VAGj0ikq1Huzvrbc48xZl+bNOOsAAB5CthRzbqBNYEj
+ W1YQjR7VQjuDc0Uk6Ebg3372DS3hp61mYtDtKJWni/o9UtRGTeERa5xZu9xYwLCpBcOfhWiwd
+ bycrZbgFrBGD67Na8lKtSJ1Do0JcT3GWhKiF9Luv/hVskFGj/9mfSATL98kNCSXj7jt57+ori
+ 0Z5AjafMs6q/8tj3cYZo6HRkD5Hhuy+N3nySptZCtVIvkiuu5mJ82PYBof+u6IMV58R7JG+WP
+ nolmA5Gr6qae8mQjAgHwXqFd+m3rNhaaa77Vv+w9rAu6S+d3u4YpVrgmS5mCPasyzscrrKq5l
+ UkkTkU1sgKWz1ddJWWzZArDVFl1g2ZIzdRS9jQto3VdQ724ItYXUoeqwnSzOyt/F8bmO/eK7H
+ Z4tbtK+yc9B6iokrweD+9ycROP0QWNRtLycP86iJ7pLFBPXoCrwblGn7I0aWFpO894i8Hgd5O
+ IJn0PPu0Rt3Hu4YnvbU2A38kp+gMxJ2vQgr+bZfDfOpsDCl7oblXB4Rcg6LLW9Xe0KM/IiWHV
+ PwCP9Ghll3j0SnakfZSgCY4EN7yGiZBzgCdSeq8S2KNARn2MbiI0hOTzWw66jSdxK7uXRs40w
+ UP4myRbXCO4Or8R67iYcYXDreI2iFX667RObnTt+uxdIm6PnZQXW5xkJEjuc7vlgi+uTG3HqN
+ b/5JokO6A+o28cJE04avh/y4GUQD5/aLCeNY70Yf0BDk/XtLx2hpxwR7tVbSseZwMft5qjPqN
+ icd5V5rhcq5j66mRuZQetS6NmxFyiad40GkAghysH6uIljqyPALRTS/rxIGkraL6Rb3BOiXSM
+ i9k0VwzzAPaINpSOnZKSpfieWMNhrLDxCF925zgilbD7iG4lt6IgEZ+E+HvwHMI8zlGl7vbw9
+ qM2cGmbvwuCtHBKmyrqUvQqyPg4WzOI4OQ9OM4i2xAs5RhxF1SM4QLt5F7Uo7/wqKfN6c6KBS
+ 7pk+G6/2ozz1zyCM75Q7Q8qoPmVrWHKAzpuyYwV3kzvdcaUvB4Ool3TZDTsyeK4ygtn0gwkwu
+ pgkUfWcJrRp00g9I6fk3vXRHb1JQ3FAIcrxG3Su6QT37B3nT4UXJmEP7r1RJe/32mIzjvHXs9
+ GyOfTgQcKkiXapguIW9LYuGKrTsqJbjSzWZYQjLSkJJaTNf3mkivUNs5YN1hJmCLDiZlSonh8
+ PuIbdKdI6kNEv4b2wWX/Y2d0Hxi/rTrEluWKhGfuUofxf14nhP13OElXEoSilrAsDqSgUVxbj
+ Cc2/UqDRKYXnYO6V5v1H1ey8pLHfF92EN3in37HZvF903fi6cVBZRbIuJ/8f43oDE3NWo7o9m
+ mH9o4/uZlGgmkTVV+TY4foctj3hpQxuF9y2xfqE9Z+WYfQwN/Z8HC3aiMRtc35LDR5qa/TA==
 
-On Fri, 4 Apr 2025 at 01:28, Christoph Hellwig <hch@infradead.org> wrote:
+=E2=80=A6
+> > Add an error check and return 0 immediately if the initialzation fails=
+.
 >
-> Or just kill the non-scoped guard because it simply is an insane API.
+> Applied
 
-The scoped guard may be odd, but it's actually rather a common
-situation. And when used with the proper indentation, it also ends up
-being pretty visually clear about what part of a function is under the
-lock.
+Did you try to avoid a typo in such a change description?
 
-But yeah, if you don't end up using it right, it ends up very very wrong.
-
-Not that that is any different from "if ()" or any other similar
-construct, but obviously people are much more *used* to 'if ()' and
-friends.
-
-An 'if ()" without the nested statement looks very wrong - although
-it's certainly not unheard of - while a 'scoped_guard()' without the
-nested statement might visually pass just because it doesn't trigger
-the same visceral "that's not right" reaction.
-
-So I don't think it's an insane API, I think it's mostly that it's a
-_newish_ API.
-
-               Linus
+Regards,
+Markus
 
