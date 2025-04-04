@@ -1,85 +1,73 @@
-Return-Path: <linux-kernel+bounces-589354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B5BA7C4B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 22:12:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E39F2A7C4AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 22:11:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C5741B62D6C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 20:07:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6CF9168F2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 20:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A1D221553;
-	Fri,  4 Apr 2025 20:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074D6221F16;
+	Fri,  4 Apr 2025 20:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="U5cw8A75"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cj39JenA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8255421D5B5
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 20:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F82C221F0D
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 20:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743797010; cv=none; b=on0tj5ejSFqfVO3cpnngzctQAAg3u40KZAwExqqY2m8mUk3/qKbpKDYP8pzUjrMbc9mtS5eJYQU3Up+EMZBlOGLgYc+aOj2/mt55jpaHcq8PwIsz7pTFWbWy2C/It9yv/YpQKDo8dzV699PFlQgBe8PM82g4H5Y9B6iAtu+nHLk=
+	t=1743797084; cv=none; b=VvEMno2dnYq/uJdditI6laEJwD1yisVk4RvQv0EDCQRPr0uRUATKvbPGFtBq1xDLDXTkkO3LRXFC6ZJD3zRGB1tvzJgg2n4MKHcAlspVrM9SqHvy8x42HXO4Q2TTf3sKXVq2SJTThW4o9BF/LiozXQw6XrLNmWlUuPT1CFCmlCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743797010; c=relaxed/simple;
-	bh=DyJalFc9IvIlPQ0hAHs/kVVK3YCaVNKPLXqqkh+SLnw=;
+	s=arc-20240116; t=1743797084; c=relaxed/simple;
+	bh=IvhhTUIiW/q5zcRrtTNnMYdCLxAmDvUAWeXeyHuVrZk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DHs/BGmcR+Hn6U2jvN51URyvqrFP+Hn/LDQEp99eiEUHja9nzBtLB6X3hV6Gs3zXencRYAjEfYiKW2XtZrLygnEo/yKN8Kn1BdCjb36szzuETI2OilShBFiWKAAwthSgalGKjviVLIhhCmUZLUoL5tPAZ4d1GIMOOFuoNttWI38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=U5cw8A75; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6e904f53151so20513746d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 13:03:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1743797006; x=1744401806; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cclz9oqGLWTaYFCssVoMtVZnVxrzRlRpqGeMDEZ9cgE=;
-        b=U5cw8A752k1KTcz8tAkITi8uV/P1ru8+Yne+q1cAH9GUGVWQ687/ZZevYJLEISox0r
-         67wtPCQKm+gjCg+R4W73C/Lk1Cu9hJzIF2GWQxONHFyFy+kE1xj3BzRCo4sPsbrNFmT2
-         Xb2yliuzUMuRyiUY6WEeYQtA57HDe4cOSqvuZXOgoDMLmPHV3MTHa0netLByXmfktqxq
-         SLK++APYvty7k0kIie8H4NRrWhdfclajkbaw2Jw0nWADzhfz/4PR4KJeocTbiulcAzV+
-         +52rALiW2moX94BxDWDsxKniiESxlWe1/uAJ9b19mO6MwwBhJM/kILSitDBxwxIqAe7U
-         kNIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743797006; x=1744401806;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cclz9oqGLWTaYFCssVoMtVZnVxrzRlRpqGeMDEZ9cgE=;
-        b=X3mHdJvy6YobMqciYhvvKiBOLXrUE4ElaciHrHTHev0fxtnjeDQKK4o/JYpYqJMw0G
-         0B83EV9d0hKlVs4Ob7h02XMKww2aGjxKNqbFqtPo4uJvkRXr9euLz48AP+VWuN9rSmJE
-         QHvGgkbMnGMhsLjtPPcVmdJrRLH82wdPa6aHBDuIhbPCsTTpvqDervZ8j3zBE0XKQjSm
-         SHtUlmKElBFVVVIea+oxlXQIU47IvlfGGUPWXxDUXyFDhboou2/OsrnkFZJlQNv1WBYB
-         drB1+8GsoPSHGmu18x7qC2TT6zA4etaRTPvMgbRxfZRvGj3bc9Ap5GYOSfGV17cE1DY8
-         dM0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUpgEnPt8aF2SHOm89DSg/4t60dAwZF6MWMIJGv9qVtOmZ/xe+cZXVmx3+mTLBj2L0skQksm9KKLH8DezI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5/qXsa1bYAWf9TsCDVmJO2sZQ867g5TkfFXWCG/4Gq4ULsH44
-	lZF6Eua/SfH+POtter25IOpYxvqjdXMlPtjW6wZRO4+F8JyXpzVAYXIfpPaPbNs=
-X-Gm-Gg: ASbGncvWR+VpGbqtbDWevOaZuoO+ioiRs08rxXLz808DDY23h0RGfZ5OfE4hbFvLFJ/
-	/xf/PiLPk12KM2rwWcGqJhMbKIYPfCnWnzwFicB7UlgDNeVcXG2smMqZHB0kIqHvA2LQUbOycq2
-	wm/q457puz/eXjqvun6AsPeY08EqMTFDoG9lUekvoWu6SIiss3OsKO4eimT+2v+rdj/vkKZIeSi
-	FfTTGBeDtLpLVpwrIoxP/O9laYwb8YarW5namEp08vHLVSTdG+Ge1T1+XQ2nOnZH61k2WNDVGcW
-	2O1mQ2x5atOCBslnjdo44Lj11+7Mmpf0lrsiaTcWKY0=
-X-Google-Smtp-Source: AGHT+IHEX1GGSr8Rz2mK8ZEWPKRs+r7Q4v4MEWtu7WIbX+t6qTFo6V56NTaAgz0a+ENJKN1hWNqbUQ==
-X-Received: by 2002:a05:6214:19cd:b0:6e6:61a5:aa57 with SMTP id 6a1803df08f44-6f05843ff4fmr65127836d6.14.1743797006271;
-        Fri, 04 Apr 2025 13:03:26 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6ef0f0483a3sm25545376d6.63.2025.04.04.13.03.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 13:03:25 -0700 (PDT)
-Date: Fri, 4 Apr 2025 16:03:21 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Vitaly Wool <vitaly.wool@konsulko.se>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, Nhat Pham <nphamcs@gmail.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Igor Belousov <igor.b@beldev.am>
-Subject: Re: [PATCH v2] mm: add zblock allocator
-Message-ID: <20250404200321.GB373778@cmpxchg.org>
-References: <20250404192813.925835-1-vitaly.wool@konsulko.se>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iuuJsW9vZWsXCi3P8UrIRiJUrBkvfB6okTkwX3Qs1wsvSHwSxB0xfuAaZgg0ajQWFcvauTK5NAGQ7Ae4LyG/aw3tcipl4e1z8F00MHfl68qg4aZp0GzbWMaSmi7uUUvZIYGsDXQ8QFbl89nPX5taeXQhfx/irnNnf6GK28eU6w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cj39JenA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743797081;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IvhhTUIiW/q5zcRrtTNnMYdCLxAmDvUAWeXeyHuVrZk=;
+	b=cj39JenAg4I1wJc7BdWfy9y4Z9BPMKeEFo4NHfrV64OWMRSOBTqxse5gKLQDSQTG4CEhu2
+	WGuOYkAUuPUPSqpF4WeZSlLJuTBqOM5Szb9lfmuEwGF0+UF6GIUJnyXYD7XjfhmaqQjGDS
+	LtUJdsr1OjzQZZoFfvMPnwWSOhUNh80=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-591-_AB5LUwCNciRrLpL4MbUMw-1; Fri,
+ 04 Apr 2025 16:04:34 -0400
+X-MC-Unique: _AB5LUwCNciRrLpL4MbUMw-1
+X-Mimecast-MFC-AGG-ID: _AB5LUwCNciRrLpL4MbUMw_1743797072
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 504C819560B8;
+	Fri,  4 Apr 2025 20:04:32 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.144])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 1B9D71809B74;
+	Fri,  4 Apr 2025 20:04:27 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri,  4 Apr 2025 22:03:57 +0200 (CEST)
+Date: Fri, 4 Apr 2025 22:03:52 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
+	mingo@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, rostedt@goodmis.org, mhiramat@kernel.org,
+	bigeasy@linutronix.de, ast@kernel.org
+Subject: Re: [PATCH v2 tip/perf] uprobes: avoid false lockdep splat in uprobe
+ timer callback
+Message-ID: <20250404200351.GI3720@redhat.com>
+References: <20250404194848.2109539-1-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,72 +76,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250404192813.925835-1-vitaly.wool@konsulko.se>
+In-Reply-To: <20250404194848.2109539-1-andrii@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Hello Vitaly,
+On 04/04, Andrii Nakryiko wrote:
+>
+> Also, point out in the comments more explicitly why we use seqcount
+> despite our reader side being rather simple and never retrying. We favor
+> well-maintained kernel primitive in favor of open-coding our own memory
+> barriers.
+>
+> Link: https://lore.kernel.org/bpf/CAADnVQLLOHZmPO4X_dQ+cTaSDvzdWHzA0qUqQDhLFYL3D6xPxg@mail.gmail.com/
+> Reported-by: Alexei Starovoitov <ast@kernel.org>
+> Suggested-by: Sebastian Siewior <bigeasy@linutronix.de>
+> Fixes: 8622e45b5da1 ("uprobes: Reuse return_instances between multiple uretprobes within task")
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 
-On Fri, Apr 04, 2025 at 09:28:13PM +0200, Vitaly Wool wrote:
-> zblock is a special purpose allocator for storing compressed pages.
-> It stores integer number of compressed objects per its block. These
-> blocks consist of several physical pages (2**n, i. e. 1/2/4/8).
-> 
-> With zblock, it is possible to densely arrange objects of various sizes
-> resulting in low internal fragmentation. Also this allocator tries to
-> fill incomplete blocks instead of adding new ones,  in many cases
-> providing a compression ratio substantially higher than z3fold and zbud
-> (though lower than zmalloc's).
+LGTM. FWIW,
 
-Do you have zswap/zswapped meminfo metrics from these tests?
+Acked-by: Oleg Nesterov <oleg@redhat.com>
 
-> 1.1 zblock
-> 
-> real    25m53.040s
-> user    96m43.424s
-> sys     4m56.652s
-> 
-> real    25m20.748s
-> user    94m24.324s
-> sys     4m58.005s
-> 
-> real    25m37.486s
-> user    95m35.913s
-> sys     4m55.892s
-> 
-> 1.2 zsmalloc
-> 
-> real    26m17.934s
-> user    97m13.342s
-> sys     5m2.415s
-> 
-> real    25m50.694s
-> user    95m22.065s
-> sys     5m1.305s
-> 
-> real    25m57.714s
-> user    96m14.675s
-> sys     4m59.081s
-> 
-> Since zswap is used starting from minute 21, this gives 9% in average in
-> advantage for zblock.
-
-This might be the linker step swapping out source files that are no
-longer needed. Do you have metrics for zswpout and zswpin as well?
-
-My concern with this allocator, and the other alternatives to zsmalloc
-before, is the following:
-
-You might be faster at allocating objects. But if storage density is
-worse, it means you have to zswap more pages to meet the same incoming
-allocation demand. That means more object allocations and more
-compression, and often a higher rate of refaults and decompressions.
-
-I would assume you're at least zswapping out more to make room for
-whatever happens at 21 minutes. This doesn't seem to hurt the time,
-which is promising and highlights how much faster zblock is.
-
-But for the full picture, it would be good to see the reuse/zswpin
-rates, especially in the context of overall swap activity.
-
-And if there is no notable swapin rate, maybe test without tmpfs and
-tune the memory allowance to force at least some degree of reuse.
 
