@@ -1,200 +1,124 @@
-Return-Path: <linux-kernel+bounces-588480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65C2DA7B951
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:52:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEEA4A7B969
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E79A3BB65E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:51:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B385F3B681C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E034D1A08B8;
-	Fri,  4 Apr 2025 08:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5481B1A23A5;
+	Fri,  4 Apr 2025 08:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uyt+1d5Q"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b="lb20VlKf"
+Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9B01990D8
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 08:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596E719D081;
+	Fri,  4 Apr 2025 08:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.129.21.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743756694; cv=none; b=FfuVXx692tW7GDl6/gyz0LIPJwAIdnVzGTKRc6JiJqIbFGnH4GWKlONImAqfSsKXFd98P2Tc7/tjM30bJKevxwMXDceuGJ5xF6RO5hsaBBqdGmnCRe6eDwtOkR6pKnfkcS+09/BU5NymYdp85NAY1OHkImPEyyeb48E3cdTGCOQ=
+	t=1743757071; cv=none; b=jW+yyNWOsMhFFA4VHdgK/Bom4FR0CzXtamNO1p6w3BQxjbvR4uqQ5jVUIRQJJg+JgRX/MX3ZQ1djy1TsD98FPhZSiFqgld4wHdf2w82Gv+FOH3vDvlcu9gNd0z3hp3rJLfyKUZqfYFItptu1zU4awtIvTNhJOIermpYIHm1oHJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743756694; c=relaxed/simple;
-	bh=zEAYc6CUru9160TwzSAfQDtqLP2BDdJuSBYJBKA88TY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HYPwjrBSgWeg3PwJFR1KUqQ1mUBLO0PnkPwGvQsat/5LhwmN6aymEK5wyBgr4MrooOURoQTdPYbTNN71PRZ/HTD5WkfSNAeL8ayadhqGQnefQ2taa2w6A/9bgg1guv0agENbHVVP/2leAEpXfSOmcvaMGocmKxYmC4iDTT0REjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uyt+1d5Q; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e6167d0536so3204908a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 01:51:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743756691; x=1744361491; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ez4cJVuEZuHb/3XDGnXvrUc45BD7UNtT/aBP82N7MgE=;
-        b=Uyt+1d5QE+RHniUqrnZujLoWvsfmjCcaD1emYeRkZDTJnmqTShxN9PZxK5pJHsi/dS
-         VldcCPAqW2mTw2tYM/b28Psi2Dp6Aco4uBJkAz+7M3qkPz4+h4FlMXFXrhTIXjk+stK+
-         +WBreKdJZ6pgezuTpvBt0hB8kbHcD0HTMrLINALZx3Y+Gs0EPLHaM2NT9SX8N+UEY+T2
-         nC6yEbDaksChTo7/QSWsuTVdyyMr8A5v+nI/SUIR1yHJWoac/1NWbuRnOZVbI0kOAMVm
-         /Qg91mq6jIfx9qOPoGwbVMTIXJnT49zIe6oKY1O7WdHnFYbkLdg9AxC/5/TCLraMdjM1
-         8byQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743756691; x=1744361491;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ez4cJVuEZuHb/3XDGnXvrUc45BD7UNtT/aBP82N7MgE=;
-        b=CY+45vUVnB9qOPLBoS03zP9qSgxiXMGjkslK0PAo0WXIAk4vGncFc67zFShPg2WHvW
-         zTLh0NfMo253nkXG7g5tu6aVySCfZP+V7jT4CcMcwFCXDLM4sU6Qu9y/Dq7bT+qfpTTB
-         ZDYpV6uvjjgqi2Z8k6BWCJhe4sVArhFQelUvWuv4arATNy8mnTd+fpWDM+VtWQEZJr8v
-         NRXzi2UbbFiqiceVMxzRrLECiglDppCHduihe91lPQuH/4TZ1r3XYPDYdwjbuUWRAFyF
-         WOXgtW+uaATl7DlbZybGNYKwiWa1ukmiGYQVg+AF5h24QL2xW9ubW/iII1mrEe97Zn6e
-         qEIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxa5mj4M5t2Eg7sILVmTdivduYYdkuGJZBFz4pHKzQ6G1mv4Lnmk2ztG9swfchafKQaERBQPg7ke+a9lE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzalwzl2qumhjnWd2bSPNpNqtxwaY3KSRZgUsY3ScxBmDOi6oLw
-	4IjbjJDSQX0ejnx2BsAZKyexFggFUCazZs34TbU4gewpdZ8VMWms
-X-Gm-Gg: ASbGncvVlagRYTCC9aUn+xQWv0FG42/VjLEStU1Ne693kSt6F77zMBDLet97Axm4945
-	77SnC/CHPjJ6/dRxLHTS4/NfYLe2qxc5ExY7yFwt8qjEcg/NqXBfG/8xT3Gzx1SEL2SUu8vvF2m
-	3f2Ez70vsINcHF6gh7OL/Na2RmMFzAeadSuLQ/s18awFUUU/ul6buAXThWNsiylXoSlHzrXNgcD
-	f4c4gs+CSoqLCJ2tjQZ2bgbn6DZWh3hq8B60ZD5O0bwRoos6+J16f1FDXncEwXL87ShuZUEXA4V
-	9r9pGaK/OC/+PhfftloUknVJIgYzLsflPYqnaRTFUaCsFQnU
-X-Google-Smtp-Source: AGHT+IGUtrs7aTeX3HSO70dnd3bxe+iIXgEVPYaAB49NmSVLfuqhqySvhJDzCvnXs4FV15RvyNLNzg==
-X-Received: by 2002:a05:6402:2811:b0:5e5:e836:71f3 with SMTP id 4fb4d7f45d1cf-5f0b4702134mr1805964a12.29.1743756690391;
-        Fri, 04 Apr 2025 01:51:30 -0700 (PDT)
-Received: from HP-650 ([105.112.123.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f088084eecsm1954680a12.57.2025.04.04.01.51.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 01:51:30 -0700 (PDT)
-From: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
-To: outreachy@lists.linux.dev,
-	julia.lawall@inria.fr
-Cc: gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	andy@kernel.org,
-	Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
-Subject: [PATCH v4 1/1] staging: rtl8723bs: Prevent duplicate NULL tests on a value
-Date: Fri,  4 Apr 2025 09:50:21 +0100
-Message-Id: <6852a0c603010345d646a9d1bba06631ee5c5cbd.1743755621.git.abrahamadekunle50@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1743755621.git.abrahamadekunle50@gmail.com>
-References: <cover.1743755621.git.abrahamadekunle50@gmail.com>
+	s=arc-20240116; t=1743757071; c=relaxed/simple;
+	bh=qGpiBlKk4gUz7SGt4N7XSRFqC2Dp6ovYU5+SiSPQizM=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=oSRHVbAWEB4F7MrU7nN8kjBM2Z3OAH1vOv/0Q5zy7EjHUbWOt7wT0/gkBnQGjQv6tf0LJHyHyUpbyDzi4DdKMxdPcESE9I+taXUrlVM14RC7YWj9u9FBmXfJ5x5+yRhOtWfqyOR+tr/J18TXcvcRhCBZqsugQHc/+hKSuglo0K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr; spf=pass smtp.mailfrom=3xo.fr; dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b=lb20VlKf; arc=none smtp.client-ip=212.129.21.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xo.fr
+Received: from localhost (mail.3xo.fr [212.129.21.66])
+	by mail.3xo.fr (Postfix) with ESMTP id 98EECCD;
+	Fri,  4 Apr 2025 10:50:29 +0200 (CEST)
+X-Virus-Scanned: Debian amavis at nxo2.3xo.fr
+Received: from mail.3xo.fr ([212.129.21.66])
+ by localhost (mail.3xo.fr [212.129.21.66]) (amavis, port 10024) with ESMTP
+ id 8mSLMhAe8CKe; Fri,  4 Apr 2025 10:50:27 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.3xo.fr 83FED8D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xo.fr; s=3xo;
+	t=1743756627; bh=CRAJN8+XEA5p31GSsFqFuEJaey0yqN9dDs07tGG1jQA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lb20VlKfcjY8a7J/mtS3DUFvklSqJjYHbNOpvr5mvDuUiTcUAZTrS4jvwIYi8pDbd
+	 jngz7iyj2q4qcYbEo0GDpo08Z9QRGAjpQdVAP4VFFDrkW8nKXq1Eo/bYXKZQyW/m7B
+	 XtHudX59MBoF8M+9EXMuM/86MpKMuPEiXhr+YP1CU432PwUleI3pWhJKH/mAgcVGfr
+	 mdDYTpedNVvrT51XQzQsffn4Jv0RJ4oEF+cxyX+4fVC8705kTxtdIRIKH8XCDQCNsY
+	 a6gvuy2X4ZE69DNF8SCmUBX3heBPxYDV9qklLKzRt+nmF+63iq/i6DC6LOg1J4dW24
+	 aayyaaredgRCQ==
+Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3xo.fr (Postfix) with ESMTPSA id 83FED8D;
+	Fri,  4 Apr 2025 10:50:27 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Fri, 04 Apr 2025 10:50:27 +0200
+From: Nicolas Baranger <nicolas.baranger@3xo.fr>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: hch@lst.de, David Howells <dhowells@redhat.com>, netfs@lists.linux.dev,
+ linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Steve French <smfrench@gmail.com>, Jeff Layton
+ <jlayton@kernel.org>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [netfs/cifs - Linux 6.14] loop on file cat + file copy when files
+ are on CIFS share
+In-Reply-To: <Z-Z95ePf3KQZ2MnB@infradead.org>
+References: <10bec2430ed4df68bde10ed95295d093@3xo.fr>
+ <35940e6c0ed86fd94468e175061faeac@3xo.fr> <Z-Z95ePf3KQZ2MnB@infradead.org>
+Message-ID: <48685a06c2608b182df3b7a767520c1d@3xo.fr>
+X-Sender: nicolas.baranger@3xo.fr
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
 
-When a value has been tested for NULL in an expression, a
-second NULL test on the same value in another expression
-is unnecessary when the value has not been assigned NULL.
+Hi Christoph
 
-Remove unnecessary duplicate NULL tests on the same value that
-has previously been NULL tested.
+Thanks for answer and help
+Did someone reproduced the issue (very easy) ?
 
-While at it, convert '& 0xfff' cases to use modulo operator and
-decimal number to make the upper limit visible and clear what the
-semantic of it is.
 
-Found by Coccinelle.
+CIFS SHARE is mounted as /mnt/fbx/FBX-24T
+echo toto >/mnt/fbx/FBX-24T/toto
 
-Signed-off-by: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_mlme_ext.c |  2 +-
- drivers/staging/rtl8723bs/core/rtw_xmit.c     | 58 +++++++++----------
- 2 files changed, 30 insertions(+), 30 deletions(-)
+ls -l /mnt/fbx/FBX-24T/toto
+-rw-rw-rw- 1 root root 5 20 mars  09:20 /mnt/fbx/FBX-24T/toto
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-index 90966b7034ab..675226535cd1 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
-@@ -1323,7 +1323,7 @@ unsigned int OnAssocReq(struct adapter *padapter, union recv_frame *precv_frame)
- 	spin_unlock_bh(&pstapriv->asoc_list_lock);
- 
- 	/*  now the station is qualified to join our BSS... */
--	if (pstat && (pstat->state & WIFI_FW_ASSOC_SUCCESS) && (status == WLAN_STATUS_SUCCESS)) {
-+	if ((pstat->state & WIFI_FW_ASSOC_SUCCESS) && (status == WLAN_STATUS_SUCCESS)) {
- 		/* 1 bss_cap_update & sta_info_update */
- 		bss_cap_update_on_sta_join(padapter, pstat);
- 		sta_info_update(padapter, pstat);
-diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-index 026061b464f7..bb806f00f931 100644
---- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-@@ -941,35 +941,35 @@ s32 rtw_make_wlanhdr(struct adapter *padapter, u8 *hdr, struct pkt_attrib *pattr
- 			if (!(psta->state & _FW_LINKED))
- 				return _FAIL;
- 
--			if (psta) {
--				psta->sta_xmitpriv.txseq_tid[pattrib->priority]++;
--				psta->sta_xmitpriv.txseq_tid[pattrib->priority] &= 0xFFF;
--				pattrib->seqnum = psta->sta_xmitpriv.txseq_tid[pattrib->priority];
--
--				SetSeqNum(hdr, pattrib->seqnum);
--
--				/* check if enable ampdu */
--				if (pattrib->ht_en && psta->htpriv.ampdu_enable)
--					if (psta->htpriv.agg_enable_bitmap & BIT(pattrib->priority))
--						pattrib->ampdu_en = true;
--
--				/* re-check if enable ampdu by BA_starting_seqctrl */
--				if (pattrib->ampdu_en == true) {
--					u16 tx_seq;
--
--					tx_seq = psta->BA_starting_seqctrl[pattrib->priority & 0x0f];
--
--					/* check BA_starting_seqctrl */
--					if (SN_LESS(pattrib->seqnum, tx_seq)) {
--						pattrib->ampdu_en = false;/* AGG BK */
--					} else if (SN_EQUAL(pattrib->seqnum, tx_seq)) {
--						psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (tx_seq+1)&0xfff;
--
--						pattrib->ampdu_en = true;/* AGG EN */
--					} else {
--						psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (pattrib->seqnum+1)&0xfff;
--						pattrib->ampdu_en = true;/* AGG EN */
--					}
-+			psta->sta_xmitpriv.txseq_tid[pattrib->priority]++;
-+			psta->sta_xmitpriv.txseq_tid[pattrib->priority] &= 0xFFF;
-+			pattrib->seqnum = psta->sta_xmitpriv.txseq_tid[pattrib->priority];
-+
-+			SetSeqNum(hdr, pattrib->seqnum);
-+
-+			/* check if enable ampdu */
-+			if (pattrib->ht_en && psta->htpriv.ampdu_enable)
-+				if (psta->htpriv.agg_enable_bitmap & BIT(pattrib->priority))
-+					pattrib->ampdu_en = true;
-+
-+			/* re-check if enable ampdu by BA_starting_seqctrl */
-+			if (pattrib->ampdu_en == true) {
-+				u16 tx_seq;
-+
-+				tx_seq = psta->BA_starting_seqctrl[pattrib->priority & 0x0f];
-+
-+				/* check BA_starting_seqctrl */
-+				if (SN_LESS(pattrib->seqnum, tx_seq)) {
-+					pattrib->ampdu_en = false;/* AGG BK */
-+				} else if (SN_EQUAL(pattrib->seqnum, tx_seq)) {
-+					psta->BA_starting_seqctrl[pattrib->priority & 0x0f] =
-+						(tx_seq + 1) % 4096;
-+
-+					pattrib->ampdu_en = true;/* AGG EN */
-+				} else {
-+					psta->BA_starting_seqctrl[pattrib->priority & 0x0f] =
-+						(pattrib->seqnum + 1) % 4096;
-+					pattrib->ampdu_en = true;/* AGG EN */
- 				}
- 			}
- 		}
--- 
-2.34.1
+cat /mnt/fbx/FBX-24T/toto
+toto
+toto
+toto
+toto
+toto
+toto
+toto
+^C
 
+
+CIFS mount options:
+grep cifs /proc/mounts
+//10.0.10.100/FBX24T /mnt/fbx/FBX-24T cifs 
+rw,nosuid,nodev,noexec,relatime,vers=3.1.1,cache=none,upcall_target=app,username=fbx,domain=HOMELAN,uid=0,noforceuid,gid=0,noforcegid,addr=10.0.10.100,file_mode=0666,dir_mode=0755,iocharset=utf8,soft,nounix,serverino,mapposix,mfsymlinks,reparse=nfs,nativesocket,symlink=mfsymlinks,rsize=65536,wsize=65536,bsize=16777216,retrans=1,echo_interval=60,actimeo=1,closetimeo=1 
+0 0
+
+KERNEL: uname -a
+Linux 14RV-SERVER.14rv.lan 6.14.0-rc2-amd64 #0 SMP PREEMPT_DYNAMIC Wed 
+Feb 12 18:23:00 CET 2025 x86_64 GNU/Linux
+
+
+Kind regards
+Nicolas Baranger
+
+
+Le 2025-03-28 11:45, Christoph Hellwig a écrit :
+
+> Hi Nicolas,
+> 
+> please wait a bit, many file system developers where at a conference
+> this week.
 
