@@ -1,117 +1,181 @@
-Return-Path: <linux-kernel+bounces-588722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C09D4A7BCC7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:40:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77124A7BCD3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA6747A5962
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 12:38:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 448B6176D79
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 12:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D8B1DF993;
-	Fri,  4 Apr 2025 12:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vqH252cl"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C69026AFB
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 12:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00AEA1EA7CD;
+	Fri,  4 Apr 2025 12:41:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBCA1DB363;
+	Fri,  4 Apr 2025 12:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743770396; cv=none; b=SaL5DJX1vBnpvs/mkg6ga4gC4KBpnIojrRkrdPdLZ4/W2fKDU0lMxh+5ncU49WwULHzCiAkKqHpAyxrQEz57npyniAdkLqvFNJZbiwaoeofvaTuEpqr/lA6KMDUiNd47tqKgX733N8qIgc4vZ765smBgzMGbEGrTG7q2twMmEeY=
+	t=1743770469; cv=none; b=po1iB3a4WTKm1jZJkxuzara899KRRNduo/D6MGAzjWeq614NUK6+oD3OiezraDHoyCxQiwdh6bhmxFP7fcozPUL6UFbH7jz5nB8lHu26fLr2OiwM+tMFMf5seMmgjeb79bwM2DFphN9oyT5USqyjYNZe/qYCw5XfRfmdOpN4h1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743770396; c=relaxed/simple;
-	bh=nBLz1kTJ8NH5i/Yn/ykHHxiMfT5KmmPCMp7p2LIR8Sg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kwHEelK3n1fdJ5VYGJeIgoomY4nsEYkUTyifcEXPZvANtyiu2Ae+vTMS1/+iQFy72RNCBeXed1y3IpeX/WyQnLfueEVnXbXeFOW8E62ObG7EVhrV2NxmUogvJ3qoUAdB243mYNOTMGUa1HNaoh72CdKnY9seQQ3sPqDeUlOvUBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vqH252cl; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43935d1321aso2167355e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 05:39:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743770393; x=1744375193; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZTU9ncN4gaPvvWv2/kPgQ7Y0Lxm8sALtBZAAIO+VFQ8=;
-        b=vqH252cltloAlxsvD26YYL2wfh0VRR8ytCvKX0opOaOxewYKgo/IwDLUjdY8sW1fmk
-         A5Z4poZrEGG6uwOsH8yp44cjI6mgm9tJ/TNwAKYCaOfk6pwdAInMZ8MlpNSQx6pbOfy4
-         Y0nJPksq8Sd9cDWie9/Em56ufAtMK46M5cpw1GwpwAV2m6seZVz5afZkWWiZia71+vYm
-         uAfY5/qtAGGs9Kk0cKbl/QcSuYDtBzWt4wuRuCqwEizJL1eLIvYRDC4KgyrY7IrCg6HZ
-         Rq7Xh2pDfGb/2LQ+bCyiE/ItFNlg0Ivl4JVGfgj5Ckg8bHG8UAsWMkyos8LjxbbKXYmc
-         E0WQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743770393; x=1744375193;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZTU9ncN4gaPvvWv2/kPgQ7Y0Lxm8sALtBZAAIO+VFQ8=;
-        b=EIXAszeMfhB8bzphgNEot2RotmBi68I27OoGWZdKwbIfschuh8zFx9/tgah+K0BHTu
-         l2bGUfIT1q1+gu915169XpNpxxz4u9e68YSOOrapKA+nKCCJrG74Z+ATkbbTZI3JFjG9
-         uH/Hlz7gQ1o0gq8Zsf7NUVS0kev++d1XAUHM6rZl5SHZyUp03R8XTqbbPVCxlwITrqzE
-         Gj4XMPqnmMaIT4B0MSa5sI8/4GwN1ywYwPUl1TG83TCZGr9LjMJdOpBOUUttk9C8Z4+v
-         84OumSUCj/ZGX0EAeBAknQPgQeH/1Cnx6j4YeUfq9CRgCcxVMcvjPVcGfw/oi5Bqe5Wp
-         dr3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVnlEcvSI3ibYGaS+7RpPq2mElYU8nKv/lMFRM/35GHOHolm3z5+O7ZB1xGGswgtN9ye9ybN6iQ3mxaIMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnfH5R8KzVpm10TpGg3Fzm7UgWxt7mtptjyL+9ZhizhZK9t/Ll
-	iFRWO6YdB1jZ3G4VJUDZT5xmT0V0I9mZUtHnA4l60PNnT6h1ksmZS5JYf1VUJQY=
-X-Gm-Gg: ASbGncuSN7m4YauUmw0B7DSBjotmkG55hpJZEKOFyBj1PN+d5kn60EYiJFX0Do0oQV+
-	X5/wt6nCqVmKHR8m2oC9Zdt8a8Wgh8gTd68HkXqaXCwnOkxPpumA0SPkOoms9td18CpP3ubDzvv
-	QwWkYlwWfMNHNM9f6joid4DCiZBkPVcdQ2gBSmVRTDvbkuIHIpOeKJE41PUnKnnlh5nXUXPptk+
-	ZWIr2hzggdvtBDWEpadT6iM9QgbbFpy7XHWDhRwtab8jEyeFyKfHZayoHPEQk70Am4eCCUZFG/n
-	2gIWH8LhN0IzPulOXSrm0pn9A6jqbNan5Mq23WeZzvBdKnLhNQyjnw==
-X-Google-Smtp-Source: AGHT+IFE/BNeQcKRRWZIPVRmYBmQ1t5nK5Wr5F4lJXYDnVHNSidWI2olRFDyeW5mBZo+ZjR5fCLwxA==
-X-Received: by 2002:a5d:5f44:0:b0:386:3a50:8c52 with SMTP id ffacd0b85a97d-39cb35a76e9mr962968f8f.7.1743770393235;
-        Fri, 04 Apr 2025 05:39:53 -0700 (PDT)
-Received: from shite.. ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c3020d98bsm4261898f8f.76.2025.04.04.05.39.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 05:39:52 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] firmware: meson: Do not enable MESON_SM by default during compile testing
-Date: Fri,  4 Apr 2025 14:39:49 +0200
-Message-ID: <20250404123949.362652-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1743770469; c=relaxed/simple;
+	bh=iY1p6+npB+bD9BrO1Sg5lKvxjiUurx93mXmSO4ERzEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t9c45BdoxF1MPfDuk6ktwePTMHImdOzEL8fVrVErXLJ2Z9O+3FMVkOU+J9QcNawKvTVcIPuY8/rKFxmK25MuRS972okxWrJRIHFhzBzWfU0/ELlGFr948mefJ+jHXbTcYn1yuB/EqC0+jk/xQFmcp19EWhTWNP8YQIS0pBMQEIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 39AA31515;
+	Fri,  4 Apr 2025 05:41:02 -0700 (PDT)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF7A53F59E;
+	Fri,  4 Apr 2025 05:40:53 -0700 (PDT)
+Date: Fri, 4 Apr 2025 13:39:58 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, "Rafael
+ J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Vincenzo Frascino
+ <vincenzo.frascino@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep
+ Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio
+ <konradybcio@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd
+ <sboyd@kernel.org>, zhouyanjie@wanyeetech.com, Conor Dooley
+ <conor@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, Claudiu
+ Beznea <claudiu.beznea@tuxon.dev>, Steen Hegelund
+ <Steen.Hegelund@microchip.com>, Daniel Machon
+ <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Heiko Stuebner <heiko@sntech.de>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, Jerome
+ Brunet <jbrunet@baylibre.com>, Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>, Geert Uytterhoeven
+ <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, linux-mips@vger.kernel.org,
+ imx@lists.linux.dev, linux-rockchip@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 01/19] arm64: dts: allwinner: h5/h6: Drop spurious
+ 'clock-latency-ns' properties
+Message-ID: <20250404133958.5361be95@donnerap.manchester.arm.com>
+In-Reply-To: <20250403-dt-cpu-schema-v1-1-076be7171a85@kernel.org>
+References: <20250403-dt-cpu-schema-v1-0-076be7171a85@kernel.org>
+	<20250403-dt-cpu-schema-v1-1-076be7171a85@kernel.org>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Enabling the compile test should not cause automatic enabling of all
-drivers.
+On Thu, 03 Apr 2025 21:59:22 -0500
+"Rob Herring (Arm)" <robh@kernel.org> wrote:
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/firmware/meson/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi,
 
-diff --git a/drivers/firmware/meson/Kconfig b/drivers/firmware/meson/Kconfig
-index f2fdd3756648..179f5d46d8dd 100644
---- a/drivers/firmware/meson/Kconfig
-+++ b/drivers/firmware/meson/Kconfig
-@@ -5,7 +5,7 @@
- config MESON_SM
- 	tristate "Amlogic Secure Monitor driver"
- 	depends on ARCH_MESON || COMPILE_TEST
--	default y
-+	default ARCH_MESON
- 	depends on ARM64_4K_PAGES
- 	help
- 	  Say y here to enable the Amlogic secure monitor driver
--- 
-2.45.2
+> 'clock-latency-ns' is not a valid property for CPU nodes. It belongs in
+> OPP table (which has it). Drop them from the CPU nodes.
+
+Looks alright, only affects H5 and H6, and they indeed have it in their
+-cpu-opp.dtsi:
+
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+
+Cheers,
+Andre
+
+> ---
+>  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi | 4 ----
+>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 4 ----
+>  2 files changed, 8 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+> index d3caf27b6a55..48802bf02f3b 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+> @@ -16,7 +16,6 @@ cpu0: cpu@0 {
+>  			reg = <0>;
+>  			enable-method = "psci";
+>  			clocks = <&ccu CLK_CPUX>;
+> -			clock-latency-ns = <244144>; /* 8 32k periods */
+>  			#cooling-cells = <2>;
+>  		};
+>  
+> @@ -26,7 +25,6 @@ cpu1: cpu@1 {
+>  			reg = <1>;
+>  			enable-method = "psci";
+>  			clocks = <&ccu CLK_CPUX>;
+> -			clock-latency-ns = <244144>; /* 8 32k periods */
+>  			#cooling-cells = <2>;
+>  		};
+>  
+> @@ -36,7 +34,6 @@ cpu2: cpu@2 {
+>  			reg = <2>;
+>  			enable-method = "psci";
+>  			clocks = <&ccu CLK_CPUX>;
+> -			clock-latency-ns = <244144>; /* 8 32k periods */
+>  			#cooling-cells = <2>;
+>  		};
+>  
+> @@ -46,7 +43,6 @@ cpu3: cpu@3 {
+>  			reg = <3>;
+>  			enable-method = "psci";
+>  			clocks = <&ccu CLK_CPUX>;
+> -			clock-latency-ns = <244144>; /* 8 32k periods */
+>  			#cooling-cells = <2>;
+>  		};
+>  	};
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> index 2301c59b41b1..73e8604315c5 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> @@ -27,7 +27,6 @@ cpu0: cpu@0 {
+>  			reg = <0>;
+>  			enable-method = "psci";
+>  			clocks = <&ccu CLK_CPUX>;
+> -			clock-latency-ns = <244144>; /* 8 32k periods */
+>  			#cooling-cells = <2>;
+>  			i-cache-size = <0x8000>;
+>  			i-cache-line-size = <64>;
+> @@ -44,7 +43,6 @@ cpu1: cpu@1 {
+>  			reg = <1>;
+>  			enable-method = "psci";
+>  			clocks = <&ccu CLK_CPUX>;
+> -			clock-latency-ns = <244144>; /* 8 32k periods */
+>  			#cooling-cells = <2>;
+>  			i-cache-size = <0x8000>;
+>  			i-cache-line-size = <64>;
+> @@ -61,7 +59,6 @@ cpu2: cpu@2 {
+>  			reg = <2>;
+>  			enable-method = "psci";
+>  			clocks = <&ccu CLK_CPUX>;
+> -			clock-latency-ns = <244144>; /* 8 32k periods */
+>  			#cooling-cells = <2>;
+>  			i-cache-size = <0x8000>;
+>  			i-cache-line-size = <64>;
+> @@ -78,7 +75,6 @@ cpu3: cpu@3 {
+>  			reg = <3>;
+>  			enable-method = "psci";
+>  			clocks = <&ccu CLK_CPUX>;
+> -			clock-latency-ns = <244144>; /* 8 32k periods */
+>  			#cooling-cells = <2>;
+>  			i-cache-size = <0x8000>;
+>  			i-cache-line-size = <64>;
+> 
 
 
