@@ -1,145 +1,167 @@
-Return-Path: <linux-kernel+bounces-588309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29616A7B784
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 07:59:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78D86A7B789
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD7A8189D648
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 05:59:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0BAC189BDCD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 06:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69DA817A2EF;
-	Fri,  4 Apr 2025 05:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B6517A31D;
+	Fri,  4 Apr 2025 06:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="kyfj2nX9";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UlXaRuZ7"
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QjLrGbxa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460F633FD;
-	Fri,  4 Apr 2025 05:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02F9101F2;
+	Fri,  4 Apr 2025 06:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743746349; cv=none; b=OgsGYetC5Z6afjxe2HT8aOJ/lySKvkbzkabPomQwvDzuP9wBftSLeZdUsjIedf+sLQUmbUgJfuH2oLoAi1SOMW99clrpLPiXSJmLROSFxh8qlbyv1qr06nKhWvWAokG5XQFw3AyPtx45as/jIGtG/NvSC+SFwypJJwUSeNrrnso=
+	t=1743746572; cv=none; b=eHSKISnkSbuxNjtSvHbESvmAuushNCmkXkObQWJIVZKH8lyPcC2yQLBX8weJC7w0/cjhh9g8EWzD1nU8MJ9CEYADDfZmm0UKQZBSL5A1Sj6DWXuIL6l308b3KZsERF22fzS/yXMisRyrujaq5c7y89slFwG9SclSoU9yCvkNxx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743746349; c=relaxed/simple;
-	bh=4fByqCcS2OpCFx6aaXLTI8NGU7zrTmm182MAT0SBLTA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=AOvdwR9i+NWj5SBj9DFOvoCHbyhZJ3BC6/FaQPLc7GQwEu9TbHsuMekuMX9fcxLN8NFIuLVn30CG5dlFip16NkKTGqmXKYnXTfcpCeknpA6nvJPcNE2AeTgKCldWWtkiH5wvOCjmmpikOqnF7lHP6QfqCrUnA2BNtHiCFPPUtJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=kyfj2nX9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UlXaRuZ7; arc=none smtp.client-ip=202.12.124.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 26A43254021A;
-	Fri,  4 Apr 2025 01:59:07 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-12.internal (MEProxy); Fri, 04 Apr 2025 01:59:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1743746347;
-	 x=1743832747; bh=WtWETSKQn6E8bswj3SLwct6dL1bxKxqY0tLnxPdz92w=; b=
-	kyfj2nX9ywt+kVVqKE1zT4yIyvL/zGCsiqO6jTMQsjvGPl/kiPADp7TbnoMZCX/+
-	QFXcz/uvl9vN8VceDDBP2648jebgklkeEOSTSLzreuLOQ66tbyj1ik2g3RGuwpoL
-	UHMfUYvkNRTbRQxAaPry9K9zDXpBx2fzk0BIL/qaFlJEhNIwbWArvn19EjQozfsj
-	K1dZKi3x+x/YhUHYDfzSzl3m8Dg1rBI8dhuVS8wFXlPhveAwoPjZxdkSSNpyuQXz
-	s1ZsNxjjB+Vt/q1eB5UnBi3CKuftqnsjcYivr0PDrUXPg+bHEks+t0O+KerRhSsa
-	IQ+mazqhzkkCr+tYTirCOA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743746347; x=
-	1743832747; bh=WtWETSKQn6E8bswj3SLwct6dL1bxKxqY0tLnxPdz92w=; b=U
-	lXaRuZ7WZImyYo29349y1E1+PLVJ0jXDAetbG1N9eyw+lYEC+kMR3wqtrzLbAxAK
-	5giOOqAaZNhi8FRpn3MTMc4IxAxD7pb700AWeI6+xYK5GYSlObTX1hXqSM93KQhZ
-	28Fz7hGF6R5qFu5uDqMTN7KG58OOgscxreZyiSP71gFnGHKRqWLsKceOZ7OatKwJ
-	IyAz/gPUNOcSKeUlmCjGuN1h9nQqGTO4gQsW0iTArh61X1WDe+EWrhSuhg6V6Juq
-	E8EI4of3KJRnKdyNPlZHhSsq2l5n3WHqeHEElu4x0f3dSihhIqHbcxPssBC45/4U
-	JUyXvAN7mnhOv1RT4rsXg==
-X-ME-Sender: <xms:KnXvZycppOk42usNnGIZ-1ad9UmDjWojB-S12dWSvr4zNG24vbrrTw>
-    <xme:KnXvZ8OryAGUYA6VsbLaJDzt9EEOnbekFpg2e6fmAyAQRpgA9DUwHG17U0-pcVoKq
-    6gr1ob-e6TRw7IabRE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduledtieeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    uddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehprghlmhgvrhesuggrsggsvg
-    hlthdrtghomhdprhgtphhtthhopegrlhgvgiesghhhihhtihdrfhhrpdhrtghpthhtohep
-    iihhihhhrghnghdrshhhrghordhishgtrghssehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    epihhgnhgrtghiohesihgvnhgtihhnrghsrdgtohhmpdhrtghpthhtohepsghjohhrnhes
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepvggsihhgghgvrhhssehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehskhhhrghnsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhg
-    pdhrtghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrug
-    drohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhdqmhgvnhhtvggvsheslhhi
-    shhtshdrlhhinhhugidruggvvh
-X-ME-Proxy: <xmx:KnXvZzis5nVlP2N_1orhQVV-sh5Gv_mpr8KN165f-qtU3w6qAptW8A>
-    <xmx:KnXvZ_8PdQo94lXe-_5Ne7XFtI_xMvdMKpEw3gptZnk2RKEaz9wLQg>
-    <xmx:KnXvZ-utjr21MYl3URUU1tX-WmnkR98v79aXEKuzmq75_3iqtUZ3IA>
-    <xmx:KnXvZ2HLi4WUyOTg1wGHDxc5bhdzD9G4VaRB-WrK6BS-zirO9J2vNw>
-    <xmx:KnXvZxswNfWyawCUSZPdgwJw-w89RVRs8F9GgKVBNOcQZV_fTIc4pKdC>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 362E42220073; Fri,  4 Apr 2025 01:59:06 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1743746572; c=relaxed/simple;
+	bh=IRMiqdgFfuR7YhdJiN5QWoj4YDPH4E1FMu5HHkdtHiE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WMYeUKM475WiJioDAUMpozxNMWEd25uVQ/JmOcurHHsNsb9QB27QKmUHwze763eZLuh/RIYfTMtlnANgs3UjYfJrCuquaioHm2SXfiZEBFsmzfnf+m1sc9gm7Xl6wfHbmSttqLdKuK9ytNQbOGskcqklQVaX1aqQSJkwxPQgRKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QjLrGbxa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 884B6C4CEDD;
+	Fri,  4 Apr 2025 06:02:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743746571;
+	bh=IRMiqdgFfuR7YhdJiN5QWoj4YDPH4E1FMu5HHkdtHiE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QjLrGbxacrlxnEDINOoGe5zW/1gRvzVUB0eEu2DckGZX07yoz1LdqMxMHV0LvgY5N
+	 XFu3hkroT0jzKNwM6yxxysCUOJ8+tzfd4am01efTd3+15QnbAvpNsZdGLev2eqyJk1
+	 vD+BXsbgqgP47020tukOf1SJbQEa60oQGOjcDGGa5YQ6TpOlPDxB6GXlqtV+mba5vX
+	 Zy0fFGrVfmC3viPWmKFNr4WUPKCaz1cM5y6PjUsgFpWEOjvvccgG8rRhxa3lGzDGkd
+	 k5cY//rzcrWtCHV4vZbaPke68UAgDhCvftw3hYRpt1tSAggbx34smVGx7KjY6wEGDU
+	 7Rm+oUrTk7bfA==
+Message-ID: <ef25c226-6801-48b4-8347-3362415d9de3@kernel.org>
+Date: Fri, 4 Apr 2025 08:02:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Tdae3ef9051e7a30c
-Date: Fri, 04 Apr 2025 07:58:43 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Ignacio Encinas" <ignacio@iencinas.com>,
- "Paul Walmsley" <paul.walmsley@sifive.com>,
- "Palmer Dabbelt" <palmer@dabbelt.com>, "Alexandre Ghiti" <alex@ghiti.fr>
-Cc: "Eric Biggers" <ebiggers@kernel.org>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
- "Shuah Khan" <skhan@linuxfoundation.org>,
- "Zhihang Shao" <zhihang.shao.iscas@gmail.com>,
- =?UTF-8?Q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>,
- Linux-Arch <linux-arch@vger.kernel.org>
-Message-Id: <c6efcdca-5739-42b6-8cb4-f4d8cc85b6af@app.fastmail.com>
-In-Reply-To: <20250403-riscv-swab-v3-2-3bf705d80e33@iencinas.com>
-References: <20250403-riscv-swab-v3-0-3bf705d80e33@iencinas.com>
- <20250403-riscv-swab-v3-2-3bf705d80e33@iencinas.com>
-Subject: Re: [PATCH v3 2/2] riscv: introduce asm/swab.h
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] Add module support for Arm64 Exynos MCT driver
+To: Youngmin Nam <youngmin.nam@samsung.com>,
+ Will McVicker <willmcvicker@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Saravana Kannan
+ <saravanak@google.com>, Donghoon Yu <hoony.yu@samsung.com>,
+ kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, semen.protsenko@linaro.org
+References: <CGME20250402233425epcas2p479285add99d27dc18aabd2295bfcbdc8@epcas2p4.samsung.com>
+ <20250402233407.2452429-1-willmcvicker@google.com> <Z+8xrLbya9/oFg7y@perf>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Z+8xrLbya9/oFg7y@perf>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 3, 2025, at 22:34, Ignacio Encinas wrote:
-> +#define ARCH_SWAB(size) \
-> +static __always_inline unsigned long __arch_swab##size(__u##size value) \
-> +{									\
-> +	unsigned long x = value;					\
-> +									\
-> +	if (riscv_has_extension_likely(RISCV_ISA_EXT_ZBB)) {            \
-> +		asm volatile (".option push\n"				\
-> +			      ".option arch,+zbb\n"			\
-> +			      "rev8 %0, %1\n"				\
-> +			      ".option pop\n"				\
-> +			      : "=r" (x) : "r" (x));			\
-> +		return x >> (BITS_PER_LONG - size);			\
-> +	}                                                               \
-> +	return  ___constant_swab##size(value);				\
-> +}
+On 04/04/2025 03:11, Youngmin Nam wrote:
+>>
+>> -- 
+>> 2.49.0.472.ge94155a9ec-goog
+>>
+>>
+> 
+> Hi Will.
+> 
+> I tested this series on a E850-96(Exynos3830 based) board and it's working as a moudle.
 
-I think the fallback should really just use the __builtin_bswap
-helpers instead of the ___constant_swab variants. The output
-would be the same, but you can skip patch 1/2.
+Hi,
 
-I would also suggest dumbing down the macro a bit so you can
-still find the definition with 'git grep __arch_swab64'. Ideally
-just put the function body into a macro but leave the three
-separate inline function definitions.
+On which kernel did you apply these patches for testing?
 
-     Arnd
+> 
+> # dmesg | grep mct
+> [7.376224] clocksource: mct-frc: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 73510017198 ns
+> 
+> # lsmod | grep exynos_mct
+> exynos_mct             12288  0
+> 
+> # cat /sys/devices/system/clocksource/clocksource0/current_clocksource
+> arch_sys_counter
+> # cat /sys/devices/system/clockevents/clockevent0/current_device
+> arch_sys_timer
+> 
+> # cat /proc/interrupts 
+>         CPU0    CPU1    CPU2    CPU3    CPU4    CPU5    CPU6    CPU7
+>  12:    2566    2752    2467    4026    3372    2822    2115    3227 GIC-0  27 Level     arch_timer
+> ...
+>  77:       0       0       0       0       0       0       0       0 GIC-0 235 Level     mct_comp_irq
+>  78:       0       0       0       0       0       0       0       0 GIC-0 239 Level     mct_tick0
+>  79:       0       0       0       0       0       0       0       0 GIC-0 240 Level     mct_tick1
+>  80:       0       0       0       0       0       0       0       0 GIC-0 241 Level     mct_tick2
+>  81:       0       0       0       0       0       0       0       0 GIC-0 242 Level     mct_tick3
+>  82:       0       0       0       0       0       0       0       0 GIC-0 243 Level     mct_tick4
+>  83:       0       0       0       0       0       0       0       0 GIC-0 244 Level     mct_tick5
+>  84:       0       0       0       0       0       0       0       0 GIC-0 245 Level     mct_tick6
+>  85:       0       0       0       0       0       0       0       0 GIC-0 246 Level     mct_tick7
+> 
+> Reviewed-by: Youngmin Nam <youngmin.nam@samsung.com>
+
+This means you reviewed *every* patch.
+
+> Tested-by: Youngmin Nam <youngmin.nam@samsung.com>
+
+Best regards,
+Krzysztof
 
