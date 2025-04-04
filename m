@@ -1,192 +1,492 @@
-Return-Path: <linux-kernel+bounces-589177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 342ABA7C2C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:47:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C73C7A7C2D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E7DC189B4BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:47:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1333177C50
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D8C21D3E2;
-	Fri,  4 Apr 2025 17:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DD2219315;
+	Fri,  4 Apr 2025 17:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ZP/p8dXw"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="hs2AZ0EN"
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085562192F5
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 17:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63E01FF5F3
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 17:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743788799; cv=none; b=skUpavUv0hUJByvbReaJk4kT7MOwdLNEFcOnjcYKrWwarRpl/Y6mbJ3md4ncjcOvt9iqd8T01s6+6IZ67NbBsvf66hIxlFsgvUM8MC77Jt29b/UT8/Bc9CiVhKcRndc2JTibtY+VoXiNFui/zzF8KfBbW1ibIRpjzBUMhzqJdF8=
+	t=1743788918; cv=none; b=pjqTME7p2J8WX/AX11nMe5r5bnOESU6Bq8UZbqm+4QaEG9CJdUzuMJB4eRCbtt2SycoWlNZF9pQe2PpP8NoN9yUDYasPrQ9TwPgy157I4UjUvo1GrZL/dfP68ZtpCHtoC6USdpZ+eX+KyURfNIuRGYeBMIYaUlHc3jg9EJsQlcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743788799; c=relaxed/simple;
-	bh=VMQRvj8CO60hVIlMMgdkTE1dtBACF+fNeO1bhBVnQsU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WbcH1FS+Z+lX3r4pFoFfxKk0xj9vwhLXZOp1VEfBg+dtu1mTgdC8FUqqSVKagPlrtH1vBs1G5RHQzzqE2paj1L+jkOEIhRvOYIsl58dcSi9dK8zSlO946sAzlXOYKMnkUj7K8ks+F1BLqMoqESvKu1Z2m6Cn1MRktH0UbdyuyZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ZP/p8dXw; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1743788918; c=relaxed/simple;
+	bh=a7gWH2nkFeOsDGvRh7sMqCcn7di8a5/TuweiIDdEAJM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OKqCko+Kd7rOiLalR3jB+849K0QsHHBflQPf/VnXx9ygH0Zu++jq+v98xawBzI/o5GSw+DcdhzGSdqbH10TfM2ORhiXs6Xd29Ic5LWtPGKGXmW61T3ftWZpltP+qNnd9PQx4sxEwkmvha05Ue+qGh2KHvt4ca9JXZPQx6FZOdr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=hs2AZ0EN; arc=none smtp.client-ip=209.85.167.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39c0dfba946so1509223f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 10:46:36 -0700 (PDT)
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3fe83c8cbdbso721943b6e.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 10:48:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1743788795; x=1744393595; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pxPRinaB0R9MRMHkqtzs6Jksu6ZEexxFz8Cu5WJ1Zw0=;
-        b=ZP/p8dXw58qJXYdRhzm8N6Jb+79SD6nldnsyJ5wM4600xOtsQPalyW6vUM4J/OEaBc
-         THc74vAgMrPMznB0emXJID/aQSQJqHFVS1bKXRYVoYYW8sMrTa+mDB/2yEYstgrbgCpi
-         R6dWtiWZbQvJzECr7GTFO+OqEX5914DzXg4tQdqQJGTLWrJYd8XzRHFZBegfDE972i9w
-         ZIS0yYRyArZXneXT3UtjKK5UQFrCsSw0chmzSE8NLg6oa3ALBEgqjlEQO/K5nmANdZcZ
-         V4yalWGyw4TtbcSdV/9+EcsrAFwjMSdI57xOw8c7lD3i3rNLplS9NQhWDfueL2XKZVvl
-         EgWw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1743788915; x=1744393715; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AvY/WWNlUB6k/evBE4GY6Felovk+eaQUcXiraaY6y74=;
+        b=hs2AZ0ENN8R6LMo7idEt9/okS+usW6gqmZ/KjwBIiPQtTDCIZtXVPOblAXo1rO+Ey5
+         P+di0LWGRc0NL/q4nMb+X6su/YS/NavZ9E+afnTxFZKFfvQURYhQEEUg2aQ5oc2FumFw
+         ggC+0klEcjCkonyTCzcL9BQ/S0wTzGwW8pQpmRy1+rWq7fbHnajWQgNQYXqvqhcT7f4j
+         fRuTOXNWf7xYJzGtKb52E1ArGeOeC4ZJFzUrhjyhiJIg2ug0Uv5/OXFkE4t0Ae3bKIl5
+         Fl1ws/Ku0cS0PyRkmFDnTUOzCg2BR45FXF0ymOl5dmHXvhMQAN3pL5tle4QhPCaXWZG6
+         xwpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743788795; x=1744393595;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pxPRinaB0R9MRMHkqtzs6Jksu6ZEexxFz8Cu5WJ1Zw0=;
-        b=Jpeg0AhCTxUdmEJTfjtvF2fLT4EIdq8+2JjzXlP85bXPonTaHYHCQAHSY4L7/sel8G
-         5exObBZxLCntmskAY0XA9RKnSxzC1MkwbDyakoUl/2P5SpH0qhTY9i6o0jSebS787UMa
-         GVm8p+7Wsa+xsiNXl4sGAixez1n/GfbcxQwVpOa0IILpEKPUV6GW6ogKouykQFDPgDuG
-         9B1IgDFZyS71CSWFycsveaKcGm1jemQSzEJMSRByeumLyagZwm/oyhT5Ugo3EdT6lrPC
-         hqOtzyQWLyaFxNE02s+4VnywYtqHlTsmKF94Y8WXy4OO6iSYuNqKr1iLwmZwmXcWCLOC
-         uAqw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4FXwUjzOZfGETKz2oczNcwq88biaJbqhtMyXT+/Mwt0+423/T4T4fSEmdShSOPDjYF2p+6K+wojSGlWY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywvcz4tFwZb+UTzF0t5qlOUl3yB0CuAKEecR8cRjXJDACa2wdHL
-	rkKELKpoOyFmLbanH+tMkkZ5h3+jmgX30vt/3yfuZk32pxLrk88bHYS+7Vi0B7Q=
-X-Gm-Gg: ASbGncu7JzSsrsfoG/gZe3xLz6et+3oZyJGjHv/jP4NqOM62xEXNhTGp6LUH18a2I6n
-	KlMsbBJG5rc9eUZlRoMjf+k6VoMYKhZxqbSz/Hz9Nw14eIMfKQTTPHALblaXPyQhR3bj63LNyUp
-	LVbeXQ1MYchaH/vgC09OHwLSYokInOBMtodrE4NXPDGXch/3pqPtwEICJiM2Yk4j88IeFiMiYp+
-	gtAh3nvLRF9PthmrzMd9QdSKhjEcoyZZMbfOn9y0YG4TndmXA65WpEKSSpTHHbC4kS4DCU7Kljo
-	ApB/+MSNmvQ6mZfL4phPHjarrtOvJ8YeLZx6QuLX1P0ROzFjIdsP1vG92csBHY4QlBsL
-X-Google-Smtp-Source: AGHT+IGJK67GjTDKDpj5bH038uXsv6Y5SZCtrTzwfFsjB58QOdWQqxfjOKhYa5MkwP/MU+TWVGqe2w==
-X-Received: by 2002:a05:6000:270e:b0:39c:1257:c96c with SMTP id ffacd0b85a97d-39cba93f966mr3020079f8f.56.1743788795236;
-        Fri, 04 Apr 2025 10:46:35 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:331:144d:74c3:a7a4])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-39c30226dfesm4939535f8f.97.2025.04.04.10.46.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 10:46:34 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Fri, 04 Apr 2025 19:46:22 +0200
-Subject: [PATCH v2 3/3] PCI: endpoint: pci-epf-vntb: simplify ctrl/spad
- space allocation
+        d=1e100.net; s=20230601; t=1743788915; x=1744393715;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AvY/WWNlUB6k/evBE4GY6Felovk+eaQUcXiraaY6y74=;
+        b=YJ1KNSjDNkA8p/2q5nC9RHjRImBlrFX1FyfH2o72Mrr4d8RUyHV413p5ZoZm9ERFhw
+         eini5axG2d3qQ7PjXH9WBIR8uocgAVUHKTBuWvzdqec4qVORFcWAueSyDSdqX/1BDBZ1
+         J+H/PEuj3oL0g7uJjpW/cjHR++3MDSWah9wUi/TwEQHf8aA7/hMNjUtU27H5PT+G8Rvo
+         4lyz3xY2oj+VuLMD+nUF9S9Ot4Z2HZ8l21qCVhDGKlIUCrFqTjsP6sLuQidhRuLtHaMg
+         7CTtA2C3PXbIszcN/jn/46LKNZK84ABXw1xklcKP4GLAiEEuHB/mP0aY9eDsNCBUbK8G
+         jsCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjkuucYqQ37w+7hc+4/yMzkzUBnmmlrYoTF2s3IR783PEcPN2Yrfow+OfkBkpUPSq8Gup/956tlDeevtU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc9z9GVL4bHc9HGL3WFMF10QS58Im4XCfG9ytfm0CkTrULfEpG
+	gZA8993bTTwMgtbpyHUgUpp/bRYkKxv7MWQaMZFht8XABk8wEddrQ5O6XDAYYFA=
+X-Gm-Gg: ASbGncs/Ax4uKD8xjq3cy0Ejmc9XWY6aPNZ2vF0QQcMidpQAUNQlJ/buXwCEIqo3iqO
+	MFSwTV/wzUBiY4yOkIF5cwZjrE5IWOB221Dw8TjZ1yBf1YxkLatUZ466c/4JpVGIxM4CDoj2blp
+	qaZ1II09goAs24iZiuafMbOdkIA/4GsL1HKK+Lh44D9JbivlRbmcOFlm9sbZCMtrhW8CEmcRI8Z
+	/hnqYceg33JPohUYSskBYbEgaanGfqPIL/dFq9VS2f654f8NP53DC23ASoXnd/BEqVy3+qcvjuM
+	znraeMMLc6BpmsCANqvVA7W6CB7XyxMo2JeeIbR/52dSgzNWwMdC/m/pbOuVs+xKN6FLbJLW74k
+	z2wzSkw==
+X-Google-Smtp-Source: AGHT+IHqN/zEntunmQti7QvdnI+zzlxqeFja7+5qeHzwZxJcenPeVZY1WnD3J92Ab5TIEbOJlcUA3g==
+X-Received: by 2002:a05:6808:199c:b0:3fa:51c5:d9a7 with SMTP id 5614622812f47-400455970b9mr1550054b6e.10.1743788915363;
+        Fri, 04 Apr 2025 10:48:35 -0700 (PDT)
+Received: from [192.168.0.113] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-4003ff99759sm686880b6e.21.2025.04.04.10.48.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Apr 2025 10:48:33 -0700 (PDT)
+Message-ID: <fd2116bd-b0e2-4db4-97ff-1a1e88545413@baylibre.com>
+Date: Fri, 4 Apr 2025 12:48:32 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250404-pci-ep-size-alignment-v2-3-c3a0db4cfc57@baylibre.com>
-References: <20250404-pci-ep-size-alignment-v2-0-c3a0db4cfc57@baylibre.com>
-In-Reply-To: <20250404-pci-ep-size-alignment-v2-0-c3a0db4cfc57@baylibre.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Jon Mason <jdmason@kudzu.us>, 
- Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>, 
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
- Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>, linux-pci@vger.kernel.org, 
- linux-kernel@vger.kernel.org, ntb@lists.linux.dev, 
- Jerome Brunet <jbrunet@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2649; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=VMQRvj8CO60hVIlMMgdkTE1dtBACF+fNeO1bhBVnQsU=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBn8Br21+RpEyu7VflBJ+7DQPDTHDsNR/iu152/c
- AfIb7ODPZ2JAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ/Aa9gAKCRDm/A8cN/La
- haVOD/94gKh4Rwrb9XZS7wgvtm4xpuUyG+eCwYuUMEyNfOou0meG7+SOlSJhtvZ1NsV6kD7V4HB
- ngGvBJwsU0P8WC5cRU9CLVrc8i3A61jPsLvNnhVrJ77uvSg2C0HRqgHw15xyRsvIZArIb8CU040
- A5JupzLwaZDYkREjQjLEBNqAuUVCwD1MT3sm61cZFKdXJoxqRr67QoUoZ10GzQTv/X28JQL5WeD
- 1IAy6A3fkHtphYdtl1vFCY5PDeijD0KzoIycqy3dDl0gFiMFKYCVBCIsOXI8ms25+GlwwlR7jmr
- KmXHh8zMIoCtoVTRXR5zeCq1lqvi/V4m7MFSpW7uC9iaTFfFYEmPDFxK2xDemp8L4++PHROmJ5u
- 7CPXSakNhZVd9WGCVQEZkifF5j1ciFeaeBmWbCoBFtVHjzioGu0Ss+9cTluMndT1YxZwhHJF9cr
- oHScr42ldiZkUIDW1DkshspaPEpv3+Y1TSIsPrvN+hztJzk+OcKTp9RlR3Y4X6f2JlAk7gBPUml
- wkrZh30XKCKDfZAQ8DYmIRGV34JTkX7GOPSSsQrfp5SOLZJ7XvcIEqTbdf+kX/GD6lHLtTfiTzN
- ZmBFc5ZcRokYQuO2ciUIO9fsoRZpg+CGU25E0E+08pGb9b45MlAvo8mc3JWcE6ql2TykQ9kl+PZ
- G6+yE31B/oorRXg==
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] iio: dac: ad3530r: Add driver for AD3530R and
+ AD3531R
+To: Kim Seer Paller <kimseer.paller@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250403-togreg-v3-0-d4b06a4af5a9@analog.com>
+ <20250403-togreg-v3-3-d4b06a4af5a9@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250403-togreg-v3-3-d4b06a4af5a9@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-When allocating the shared ctrl/spad space, epf_ntb_config_spad_bar_alloc()
-should not try to handle the size quirks for underlying BAR, whether it is
-fixed size or alignment. This is already handled by pci_epf_alloc_space().
+On 4/3/25 12:33 AM, Kim Seer Paller wrote:
+> The AD3530/AD3530R (8-channel) and AD3531/AD3531R (4-channel) are
+> low-power, 16-bit, buffered voltage output DACs with software-
+> programmable gain controls, providing full-scale output spans of 2.5V or
+> 5V for reference voltages of 2.5V. These devices operate from a single
+> 2.7V to 5.5V supply and are guaranteed monotonic by design. The "R"
+> variants include a 2.5V, 5ppm/°C internal reference, which is disabled
+> by default.
+> 
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+> ---
 
-Also, when handling the alignment, this allocate more space than necessary.
-For example, with a spad size of 1024B and a ctrl size of 308B, the space
-necessary is 1332B. If the alignment is 1MB,
-epf_ntb_config_spad_bar_alloc() tries to allocate 2MB where 1MB would have
-been more than enough.
+...
 
-Drop the handling of the BAR size quirks and let
-pci_epf_alloc_space() handle that. Just make sure the 32bits SPAD register
-are aligned on 32bits.
+> +#define AD3530R_INTERFACE_CONFIG_A		0x00
+> +#define AD3530R_OUTPUT_OPERATING_MODE_0		0x20
+> +#define AD3530R_OUTPUT_OPERATING_MODE_1		0x21
+> +#define AD3530R_OUTPUT_CONTROL_0		0x2A
+> +#define AD3530R_REFERENCE_CONTROL_0		0x3C
+> +#define AD3530R_SW_LDAC_TRIG_A			0xE5
+> +#define AD3530R_INPUT_CH(c)			(2 * (c) + 0xEB)
+> +
+> +#define AD3531R_SW_LDAC_TRIG_A			0xDD
+> +#define AD3531R_INPUT_CH(c)			(2 * (c) + 0xE3)
+> +
+> +#define AD3530R_SW_LDAC_TRIG_MASK		BIT(7)
+> +#define AD3530R_OUTPUT_CONTROL_MASK		BIT(2)
+> +#define AD3530R_REFERENCE_CONTROL_MASK		BIT(0)
+> +#define AD3530R_REG_VAL_MASK			GENMASK(15, 0)
+> +
+> +#define AD3530R_SW_RESET			(BIT(7) | BIT(0))
+> +#define AD3530R_MAX_CHANNELS			8
+> +#define AD3531R_MAX_CHANNELS			4
+> +#define AD3530R_CH(c)				(c)
+> +#define AD3530R_32KOHM_POWERDOWN_MODE		3
+> +#define AD3530R_INTERNAL_VREF_MV		2500
+> +#define AD3530R_LDAC_PULSE_US			100
+> +
+> +struct ad3530r_chan {
+> +	unsigned int powerdown_mode;
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/pci/endpoint/functions/pci-epf-vntb.c | 26 +++-----------------------
- 1 file changed, 3 insertions(+), 23 deletions(-)
+IMHO, code would be easier to understand if this was an enum.
 
-diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-index 8f59a5b9b7adec2c05eebae71c6a246bc5a8e88c..bc4a9c7c4338db6cc89fa47de89dc704d0a03806 100644
---- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-@@ -413,11 +413,9 @@ static void epf_ntb_config_spad_bar_free(struct epf_ntb *ntb)
-  */
- static int epf_ntb_config_spad_bar_alloc(struct epf_ntb *ntb)
- {
--	size_t align;
- 	enum pci_barno barno;
- 	struct epf_ntb_ctrl *ctrl;
- 	u32 spad_size, ctrl_size;
--	u64 size;
- 	struct pci_epf *epf = ntb->epf;
- 	struct device *dev = &epf->dev;
- 	u32 spad_count;
-@@ -427,31 +425,13 @@ static int epf_ntb_config_spad_bar_alloc(struct epf_ntb *ntb)
- 								epf->func_no,
- 								epf->vfunc_no);
- 	barno = ntb->epf_ntb_bar[BAR_CONFIG];
--	size = epc_features->bar[barno].fixed_size;
--	align = epc_features->align;
--
--	if ((!IS_ALIGNED(size, align)))
--		return -EINVAL;
--
- 	spad_count = ntb->spad_count;
- 
--	ctrl_size = sizeof(struct epf_ntb_ctrl);
-+	ctrl_size = ALIGN(sizeof(struct epf_ntb_ctrl), sizeof(u32));
- 	spad_size = 2 * spad_count * sizeof(u32);
- 
--	if (!align) {
--		ctrl_size = roundup_pow_of_two(ctrl_size);
--		spad_size = roundup_pow_of_two(spad_size);
--	} else {
--		ctrl_size = ALIGN(ctrl_size, align);
--		spad_size = ALIGN(spad_size, align);
--	}
--
--	if (!size)
--		size = ctrl_size + spad_size;
--	else if (size < ctrl_size + spad_size)
--		return -EINVAL;
--
--	base = pci_epf_alloc_space(epf, size, barno, epc_features, 0);
-+	base = pci_epf_alloc_space(epf, ctrl_size + spad_size,
-+				   barno, epc_features, 0);
- 	if (!base) {
- 		dev_err(dev, "Config/Status/SPAD alloc region fail\n");
- 		return -ENOMEM;
+> +	bool powerdown;
+> +};
+> +
+> +struct ad3530r_chip_info {
+> +	const char *name;
+> +	const struct iio_chan_spec *channels;
+> +	int (*input_ch_reg)(unsigned int c);
+> +	const int iio_chan;
+> +	unsigned int num_channels;
+> +	unsigned int sw_ldac_trig_reg;
+> +	bool internal_ref_support;
+> +};
+> +
+> +struct ad3530r_state {
+> +	struct regmap *regmap;
+> +	/* lock to protect against multiple access to the device and shared data */
+> +	struct mutex lock;
+> +	struct ad3530r_chan chan[AD3530R_MAX_CHANNELS];
+> +	const struct ad3530r_chip_info *chip_info;
+> +	struct gpio_desc *ldac_gpio;
+> +	int vref_mv;
+> +	u8 ldac;
+> +	bool range_multiplier;
 
--- 
-2.47.2
+nit: call this has_range_multiplier or change to u8 and save the actual multipler value here.
 
+> +};
+> +
+
+...
+
+> +static ssize_t ad3530r_set_dac_powerdown(struct iio_dev *indio_dev,
+> +					 uintptr_t private,
+> +					 const struct iio_chan_spec *chan,
+> +					 const char *buf, size_t len)
+> +{
+> +	struct ad3530r_state *st = iio_priv(indio_dev);
+> +	int ret;
+> +	unsigned int mask, val;
+> +	bool powerdown;
+> +
+> +	ret = kstrtobool(buf, &powerdown);
+> +	if (ret)
+> +		return ret;
+> +
+> +	guard(mutex)(&st->lock);
+> +	switch (chan->channel) {
+> +	case AD3530R_CH(0) ... AD3530R_CH(AD3531R_MAX_CHANNELS - 1):
+
+Switch seems hard to read and not needed since there aren't any gaps.
+
+	if (chan->channel < AD3531R_MAX_CHANNELS)
+
+shoud work, no?
+
+
+> +		mask = GENMASK(chan->channel * 2 + 1, chan->channel * 2);
+
+Could use the chan->address field to hide the calucation a bit.
+
+> +		val = (powerdown ? st->chan[chan->channel].powerdown_mode : 0)
+> +		      << (chan->channel * 2);
+
+I saw a series that proposed a non-const field_prep function recently. Not sure
+that made it through the bikeshedding though. Could be nice to hide some of this
+in a macro for readability if that isn't available.
+
+> +
+> +		ret = regmap_update_bits(st->regmap,
+> +					 AD3530R_OUTPUT_OPERATING_MODE_0,
+> +					 mask, val);
+> +		if (ret)
+> +			return ret;
+> +
+> +		st->chan[chan->channel].powerdown = powerdown;
+> +		return len;
+> +	case AD3530R_CH(AD3531R_MAX_CHANNELS) ...
+> +	     AD3530R_CH(AD3530R_MAX_CHANNELS - 1):
+> +		mask = GENMASK((chan->channel - 4) * 2 + 1,
+> +			       (chan->channel - 4) * 2);
+> +		val = (powerdown ? st->chan[chan->channel].powerdown_mode : 0)
+> +		      << ((chan->channel - 4) * 2);
+> +
+> +		ret = regmap_update_bits(st->regmap,
+> +					 AD3530R_OUTPUT_OPERATING_MODE_1,
+> +					 mask, val);
+> +		if (ret)
+> +			return ret;
+> +
+> +		st->chan[chan->channel].powerdown = powerdown;
+> +		return len;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int ad3530r_trigger_hw_ldac(struct gpio_desc *ldac_gpio)
+> +{
+> +	gpiod_set_value_cansleep(ldac_gpio, 1);
+> +	fsleep(AD3530R_LDAC_PULSE_US);
+> +	gpiod_set_value_cansleep(ldac_gpio, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ad3530r_dac_write(struct ad3530r_state *st, unsigned int chan,
+> +			     unsigned int val)
+> +{
+> +	int ret;
+> +	__be16 reg_val;
+> +
+> +	guard(mutex)(&st->lock);
+> +	reg_val = cpu_to_be16(val);
+> +
+> +	ret = regmap_bulk_write(st->regmap, st->chip_info->input_ch_reg(chan),
+> +				&reg_val, sizeof(reg_val));
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (st->ldac_gpio)
+> +		return ad3530r_trigger_hw_ldac(st->ldac_gpio);
+> +
+> +	return regmap_update_bits(st->regmap, st->chip_info->sw_ldac_trig_reg,
+> +				  AD3530R_SW_LDAC_TRIG_MASK,
+> +				  FIELD_PREP(AD3530R_SW_LDAC_TRIG_MASK, 1));
+
+Can be simplifed with regmap_set_bits().
+
+
+> +}
+> +
+> +static int ad3530r_read_raw(struct iio_dev *indio_dev,
+> +			    struct iio_chan_spec const *chan,
+> +			    int *val, int *val2, long info)
+> +{
+> +	struct ad3530r_state *st = iio_priv(indio_dev);
+> +	int ret;
+> +	__be16 reg_val;
+> +
+> +	switch (info) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		ret = regmap_bulk_read(st->regmap,
+> +				       st->chip_info->input_ch_reg(chan->channel),
+> +				       &reg_val, sizeof(reg_val));
+> +		if (ret)
+> +			return ret;
+> +
+> +		*val = FIELD_GET(AD3530R_REG_VAL_MASK, be16_to_cpu(reg_val));
+> +
+> +		return IIO_VAL_INT;
+> +	case IIO_CHAN_INFO_SCALE:
+> +		*val = st->vref_mv;
+> +		*val2 = 16;
+
+This needs to take into account the range multipler.
+
+> +
+> +		return IIO_VAL_FRACTIONAL_LOG2;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+
+...
+
+> +static const struct iio_chan_spec_ext_info ad3530r_ext_info[] = {
+> +	AD3530R_CHAN_EXT_INFO("powerdown", 0, IIO_SEPARATE,
+> +			      ad3530r_get_dac_powerdown,
+> +			      ad3530r_set_dac_powerdown),
+> +	IIO_ENUM("powerdown_mode", IIO_SEPARATE, &ad3530r_powerdown_mode_enum),
+> +	IIO_ENUM_AVAILABLE("powerdown_mode", IIO_SHARED_BY_TYPE,
+> +			   &ad3530r_powerdown_mode_enum),
+> +	{ },
+
+iio style is no trailing comma on sentinil  
+
+	{ }
+
+> +};
+> +
+
+...
+
+> +static int ad3530r_setup(struct ad3530r_state *st)
+> +{
+> +	const struct ad3530r_chip_info *chip_info = st->chip_info;
+> +	struct device *dev = regmap_get_device(st->regmap);
+> +	struct gpio_desc *reset_gpio;
+> +	int i, ret;
+> +
+> +	reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(reset_gpio))
+> +		return dev_err_probe(dev, PTR_ERR(reset_gpio),
+> +				     "Failed to get reset GPIO\n");
+> +
+> +	if (reset_gpio) {
+> +		/* Perform hardware reset */
+> +		fsleep(1000);
+> +		gpiod_set_value_cansleep(reset_gpio, 0);
+> +	} else {
+> +		/* Perform software reset */
+> +		ret = regmap_update_bits(st->regmap, AD3530R_INTERFACE_CONFIG_A,
+> +					 AD3530R_SW_RESET, AD3530R_SW_RESET);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	fsleep(10000);
+> +
+> +	/* Set operating mode to normal operation. */
+> +	ret = regmap_write(st->regmap, AD3530R_OUTPUT_OPERATING_MODE_0, 0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (chip_info->num_channels > AD3531R_MAX_CHANNELS) {
+> +		ret = regmap_write(st->regmap, AD3530R_OUTPUT_OPERATING_MODE_1, 0);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	for (i = 0; i < chip_info->num_channels; i++)
+> +		st->chan[i].powerdown_mode = AD3530R_32KOHM_POWERDOWN_MODE;
+> +
+> +	st->ldac_gpio = devm_gpiod_get_optional(dev, "ldac", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(st->ldac_gpio))
+> +		return dev_err_probe(dev, PTR_ERR(st->ldac_gpio),
+> +				     "Failed to get ldac GPIO\n");
+> +
+> +	if (device_property_present(dev, "adi,double-output-range")) {
+
+This is not documented in the DT bindings.
+
+This could instead be implemented by making the out_voltage_scale attribute
+writeable.
+
+If we really do need it in the devicetree because we want to protect against
+someone accidentally setting it too high, then the property should be the
+actual multipler value with an enum specifier of 1, 2 and a default of 1
+rather than a flag (e.g. adi,output-multipler).
+
+> +		st->range_multiplier = true;
+> +
+> +		return regmap_update_bits(st->regmap, AD3530R_OUTPUT_CONTROL_0,
+> +					  AD3530R_OUTPUT_CONTROL_MASK,
+> +					  FIELD_PREP(AD3530R_OUTPUT_CONTROL_MASK, 1));
+
+nit: can be simplified with regmap_set_bits().
+
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct regmap_config ad3530r_regmap_config = {
+> +	.reg_bits = 16,
+> +	.val_bits = 8,
+
+Should have at least a .max_register.
+
+.reg_read and .reg_write tables can make debuging easier too.
+
+> +};
+> +
+> +static const struct iio_info ad3530r_info = {
+> +	.read_raw = ad3530r_read_raw,
+> +	.write_raw = ad3530r_write_raw,
+> +	.debugfs_reg_access = &ad3530r_reg_access,
+
+nit: style is not consistent - can omit &.
+
+> +};
+> +
+> +static int ad3530r_probe(struct spi_device *spi)
+> +{
+> +	static const char * const regulators[] = { "vdd", "iovdd" };
+> +	const struct ad3530r_chip_info *chip_info;
+> +	struct device *dev = &spi->dev;
+> +	struct iio_dev *indio_dev;
+> +	struct ad3530r_state *st;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	st = iio_priv(indio_dev);
+> +
+> +	st->regmap = devm_regmap_init_spi(spi, &ad3530r_regmap_config);
+> +	if (IS_ERR(st->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(st->regmap),
+> +				     "Failed to init regmap");
+> +
+> +	ret = devm_mutex_init(dev, &st->lock);
+> +	if (ret)
+> +		return ret;
+> +
+> +	chip_info = spi_get_device_match_data(spi);
+> +	if (!chip_info)
+> +		return -ENODEV;
+> +
+> +	st->chip_info = chip_info;
+
+nit: local variable isn't that useful since st->chip_info is short enough.
+
+> +
+> +	ret = ad3530r_setup(st);
+> +	if (ret)
+> +		return ret;
+
+Setting up the chip before turning on power would not work well if the
+regulators are actually controlled. :-)
+
+> +
+> +	ret = devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(regulators),
+> +					     regulators);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to enable regulators\n");
+> +
+> +	ret = devm_regulator_get_enable_read_voltage(dev, "ref");
+> +	if (ret < 0 && ret != -ENODEV)
+> +		return ret;
+> +
+> +	if (chip_info->internal_ref_support && ret == -ENODEV) {
+> +		/* Internal reference. */
+> +		ret = regmap_update_bits(st->regmap, AD3530R_REFERENCE_CONTROL_0,
+> +					 AD3530R_REFERENCE_CONTROL_MASK,
+> +					 FIELD_PREP(AD3530R_REFERENCE_CONTROL_MASK, 1));
+> +		if (ret)
+> +			return ret;
+> +
+> +		st->vref_mv = st->range_multiplier ?
+> +			      2 * AD3530R_INTERNAL_VREF_MV :
+> +			      AD3530R_INTERNAL_VREF_MV;
+> +	} else {
+> +		st->vref_mv = st->range_multiplier ? 2 * ret / 1000 : ret / 1000;
+
+ret can be -ENODEV here if !chip_info->internal_ref_support
+
+> +	}> +
+> +	indio_dev->name = chip_info->name;
+> +	indio_dev->info = &ad3530r_info;
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->channels = chip_info->channels;
+> +	indio_dev->num_channels = chip_info->num_channels;
+> +
+> +	return devm_iio_device_register(&spi->dev, indio_dev);
+> +}
+> +
 
