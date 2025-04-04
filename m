@@ -1,92 +1,241 @@
-Return-Path: <linux-kernel+bounces-588222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A938A7B5E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 04:35:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEBA0A7B5E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 04:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8CFC3B7CA2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 02:35:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81D421700DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 02:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80AC738F91;
-	Fri,  4 Apr 2025 02:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5732233987;
+	Fri,  4 Apr 2025 02:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="dQ2BQW87"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="VD2B2AyH"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155F34A24
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 02:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E154A32
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 02:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743734113; cv=none; b=DgeNtlD9Bawmft3e1mnw0MomWOibFUyEyCsKfBDABidBhPTTlWUP1vJSoMBkt2VqaaZIp9JGywMKQxPcoJE9iVdh4rsO3G/Fw7hXFto6hCxGTKolFwDkzCiJLYfecYWN9MsTjLD4cRozqMhpif+x7a1kkGzzdrVCjgUkMLUI3rw=
+	t=1743733899; cv=none; b=uYb7xhSUBL+rSxDGh6Ve4ke/PY5e4Xh/Fx7bAORIUjW302gUd6blhrQOMZi2WZtRl8+Xu/8d1eEgiZZFRx1089C2d8MiexET50Uboyd7qwTEQZgrtqWczUQEEyHleoijz2Yc2VlQcJ+SJovly0tAqUKyDHTy73RpIyhlT0xwMCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743734113; c=relaxed/simple;
-	bh=cUb9lJFcVRBHoi99PcvkJ/HAUKbOOKbCQmYTxbDBKH8=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=hKomIKSXJ4NrA6nPSGyM8GPv3fkDotmESGl9b55x1gwQbPgIuGRSug5jzc+kUX/QGTbqYnioq5Hipu60LY4mPLNVcwGwN2GSmdAA/ZSl+GIskVbwwu+nDJBVUjdz+c+pDMinWJSZGU1IjwlGx2HerT+lWbeuDoUDmJUfC5SQHDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=dQ2BQW87; arc=none smtp.client-ip=162.62.58.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1743734101; bh=hvd3XHUWKFzqNznWsNlLs79g79N4JWAw6rLpdToGI10=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=dQ2BQW870t55b9tQAK8IEf+jW+N2zB0eXmPQq18rpIhekuk3aVfUd1O9lVrQ/EesT
-	 o/0EAmKpI9sw0RrEcFFAZaubHuaG5KS/LnFiABEEnt4qUnLasaDjJn8WIicEBiREKz
-	 sOAQSfJWMjakI31WlFqqQbpnweq3Yx67X/x7N9t0=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszgpua8-1.qq.com (NewEsmtp) with SMTP
-	id 7308005F; Fri, 04 Apr 2025 10:28:48 +0800
-X-QQ-mid: xmsmtpt1743733728t1asgeuls
-Message-ID: <tencent_0AEAEC8ECFCC7A2E6CC02DC16FBC9410E80A@qq.com>
-X-QQ-XMAILINFO: MHb/xMQb24GSP9fjNKMhr9leg6KoFRerK0odAJ6pZJFJplHLG+DwLO0wfl4O6d
-	 mUf6qc24wtSH/vqNe6OZtDbXqdl/YeQvgk1dKXS8vW0X3E1qi+aeVLby8QOCONjm4MzT9SqYCiF/
-	 3CbJuroUOnvIAq0bxltJb6dup5JsYorYT/OGUcwS1wkFbD94i5W32nO5WcZnNi2K50GnA6US5VDX
-	 2lI1V8jzGWgEJMYYra1hJYaOAwVwYNW4AlwePvDOqSAiFHya3jk1g8XwJKuLgq0+/RnQASJs8M3T
-	 wYqbXdpd4ELbihFdZNqtTRZoSaKWD7mD0uLCG7Xy5Ly5xuZLrmVy0wzb491pVobbc4l5LZOK3fDs
-	 AyVqIzn65JMGync4w5V0kXceetjT1D97KviYOHO/lQrqI7FESf8xLPwzRfoTfFEkpFQzytkVk8Np
-	 6Ur+FuUdQQdGLouHM7pRiHVaCG25IimJuncvDNc+BdiCwn3SHjkmRDHmTjPdUxWZBEd15d2iNxIG
-	 6zV2+CN0s2eGNoaqNHnnOeaHkHLy59vAOHRusHmt7ICH7Q7ENSN3KRSxMGW8g8ZCNIvsexnmJuxq
-	 tmfS04TbWy2hyXLscOyebFMteVWBf6daYWcJZ/+H/2JAHbaAo8C85PPzRmq9djCCStfEvDC+oz/h
-	 +yQdvQA3jo8n7mO+bV9TW/yO9jubfPdi27i7BEYS6dJtWMuHq3/HmRaP7wDEo+O4Emjh0nBKfrJd
-	 Be30zke8VYwSI1FujPTS8k0zEE/MOCANpCCfiAWO3IJ6H0RxNB16XlabCCrVr00KWw9BaS9E5LdU
-	 8Af9U8WhcUpUPxJ4eaI6ndcC9k2RQEuZIIonAq1TcOg/REbaGD9HMicYWyUWOVoytCbIXVdra3kc
-	 p1BRdYgvpUeYB27cVPMkgfGBJ8HjoLug==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+4d7cd7dd0ce1aa8d5c65@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [isofs?] KASAN: slab-out-of-bounds Read in isofs_fh_to_parent
-Date: Fri,  4 Apr 2025 10:28:49 +0800
-X-OQ-MSGID: <20250404022848.2669935-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <67eee51c.050a0220.9040b.0240.GAE@google.com>
-References: <67eee51c.050a0220.9040b.0240.GAE@google.com>
+	s=arc-20240116; t=1743733899; c=relaxed/simple;
+	bh=yHnZZpVl1yzU+3RWun8o5eoI7/TawRiNwZfiH6mye8k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sPhOLIEOE1GrmnOSiOaZDh3zOBYI8n2mluWogqOJQmlUGFhXeqtc5hXuQu+VcG3nXRledrd4Q8iIZt3HVp5GmV8qC0tJ7K7pKJb5amp4MVYhjXSeZ+d69Q5klIOhieFBzY7jPYiSSYfE5OptnMoVXQNP2kNR9H5H1NKdZRlOgSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=VD2B2AyH; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-603ff8e90acso412942eaf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 19:31:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1743733897; x=1744338697; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q2whIQD8KdpXADYPhBRKVcLNwmLnu/yZ5sYtE7xk5RY=;
+        b=VD2B2AyH5K3prI08Y98N6edl03rwk7kEGj0okk6eRw1SE3bRkC43z5NzbsUR6gIaHN
+         KcYorkJsl2A2u6PpvaiI7III3456VgCdgz90ZDobgR7zTRmFYHz6JdyMhZpxhhdKJQnz
+         ZFcoq+yF26yKf3t80KKay3OfKfadK2a+V+QEjs2NdDY/0xeG1X3SNG+nw7n/l1o0OAFU
+         HqJv6HQHDpvbkRJF0SQZRa3eiIPCtj4Pf9NuAUntzc2++SzQbQQRbiGPfII7rS8y7OtR
+         d3VuX+rIzxtcAv9SqkcxZLqbffc6uxgpjWkpY9yQ5piUcigEq+KYfB308aznHvj7Ufg0
+         hl7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743733897; x=1744338697;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q2whIQD8KdpXADYPhBRKVcLNwmLnu/yZ5sYtE7xk5RY=;
+        b=NnmvsK/brYWGxs9nvrzB+hqQ050jh/dT3y+CzUHNgLxy9bYyVRntUGo5Lt5NofzJ+b
+         M5xkR9Wz2XiuPECT/oIY6khAUt4jR/eX7pq5/61osNXILRl70WYnqjrTxQBgFGJRhTew
+         VddJK7ATU+5ScRq9PjZwZF9TiF+xAWE/Ebxb1YLwm6vMtgP36Ark0mY1BH3kxXAz8xX5
+         gxPIMGBs3AZ6EDcW0OBQANUcK3GfZLQJjrI2sQ3FaNfkDaFZZ3pOVxfnf/uMvZ306NUT
+         a1bjDwpJDAFU8+puOe0I+AShGvQCVp7OJi6gDuZFESS1n7zH0y8IoNZ7xphiTxSF59Oh
+         NMPw==
+X-Forwarded-Encrypted: i=1; AJvYcCU33Leafyxmgv3gM9roI3PlR4zUGoZkfp8Bn0RZEZvaRFlFR/fjA7K7EVya+YBflE/Pz7y/9SnvheoNG2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjZ4S6itjLwq3QiQefWT8OWy12CQsA5Zy93ndxzWrkTVNbAy4b
+	tUWF8r1lmeS6BhZVlWxtO0B3q9Zz65gGIIHg0iSiyzWPRG6icNaUVNFvydEiZOSawxjS5KKe7RL
+	vfGiXM32RIvjPKctObzvCVIyINT3OWGft8v6peA==
+X-Gm-Gg: ASbGncu/ioEMD9cUpYFh29eOFRGT0Sb5XUb7e40FiRWZTZCKOJlsPYB7qZF1FHlEiJA
+	uEFke0sMsrv64bRKZB0mkjIzUed/52RWE4IV1T28Ueln5EsAEUZQwVifCBvRWq+n/7dGUlZAsVg
+	gr511rC+M4vJQxqkF0OSJDgY832eYE
+X-Google-Smtp-Source: AGHT+IH9gl4q75ltH2ZFe+KffjOAddtz44brumjLnokrgaEk7wAc7CLc6OwNvkK4AiXGIFpHGB8pVkw0ICZfkYYHRh0=
+X-Received: by 2002:a05:6820:2220:b0:603:f973:1b1 with SMTP id
+ 006d021491bc7-604154d63fdmr798732eaf.0.1743733896559; Thu, 03 Apr 2025
+ 19:31:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250403090336.16643-1-cuiyunhui@bytedance.com>
+ <Z-5yr2mFaDt8kxC-@smile.fi.intel.com> <Z-51629pjyiZUIVy@smile.fi.intel.com>
+In-Reply-To: <Z-51629pjyiZUIVy@smile.fi.intel.com>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Fri, 4 Apr 2025 10:31:25 +0800
+X-Gm-Features: AQ5f1JploVvIX48e4bc9-Zvy4Mr-665fzaSUUegXQUAC-gU9ajtwKPkYszaiBXk
+Message-ID: <CAEEQ3w=xVNuSN-4tHx6ir-i+huN8m1JXgJz672=WHAVBqcP+TA@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] serial: 8250: fix panic due to PSLVERR
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	john.ogness@linutronix.de, pmladek@suse.com, arnd@arndb.de, 
+	namcao@linutronix.de, benjamin.larsson@genexis.eu, schnelle@linux.ibm.com, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-#syz test
+Hi Andy,
 
-diff --git a/fs/fhandle.c b/fs/fhandle.c
-index 3e092ae6d142..a31c0291a473 100644
---- a/fs/fhandle.c
-+++ b/fs/fhandle.c
-@@ -344,7 +344,7 @@ static int handle_to_path(int mountdirfd, struct file_handle __user *ufh,
- 		goto out_path;
- 	}
- 	if ((f_handle.handle_bytes > MAX_HANDLE_SZ) ||
--	    (f_handle.handle_bytes == 0)) {
-+	    (f_handle.handle_bytes < 16)) {
- 		retval = -EINVAL;
- 		goto out_path;
- 	}
+On Thu, Apr 3, 2025 at 7:50=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Thu, Apr 03, 2025 at 02:36:16PM +0300, Andy Shevchenko wrote:
+> > On Thu, Apr 03, 2025 at 05:03:36PM +0800, Yunhui Cui wrote:
+>
+> A couple of more questions here:
+> 1) what is the DW IP version and where did you get the PSLVERR_RESP_EN
+> parameter from?
+> 2) what is the setting of the UART_16550_COMPATIBLE parameter?
 
+1): Refer to: https://www.synopsys.com/dw/ipdir.php?c=3DDW_apb_uart
+
+2): data->uart_16550_compatible =3D=3D 0
+
+>
+> > > When the PSLVERR_RESP_EN parameter is set to 1, the device generates
+> > > an error response if an attempt is made to read an empty RBR (Receive
+> > > Buffer Register) while the FIFO is enabled.
+> > >
+> > > In serial8250_do_startup, calling serial_port_out(port, UART_LCR,
+> >
+> > serial8250_do_startup()
+> >
+> > > UART_LCR_WLEN8) triggers dw8250_check_lcr(), which invokes
+> > > dw8250_force_idle() and serial8250_clear_and_reinit_fifos(). The latt=
+er
+> > > function enables the FIFO via serial_out(p, UART_FCR, p->fcr).
+> > > Execution proceeds to the dont_test_tx_en label:
+> > > ...
+> > > serial_port_in(port, UART_RX);
+> > > This satisfies the PSLVERR trigger condition.
+> > >
+> > > Because another CPU(e.g., using printk) is accessing the UART (UART
+> >
+> > printk()
+> >
+> > > is busy), the current CPU fails the check (value & ~UART_LCR_SPAR) =
+=3D=3D
+> > > (lcr & ~UART_LCR_SPAR), causing it to enter dw8250_force_idle().
+> > >
+> > > To resolve this issue, relevant serial_port_out operations should be
+> >
+> > serial_port_out()
+> >
+> > > placed in a critical section, and UART_RX data should only be read
+> > > when the UART_LSR DR bit is set.
+> >
+> > The last one is made in the common code, are you sure that all supporte=
+d UARTs
+> > will be okay with such a change?
+> >
+> > > Panic message:
+> >
+> > Please, read this
+> > https://www.kernel.org/doc/html/latest/process/submitting-patches.html#=
+backtraces-in-commit-messages
+> > and act accordingly.
+> >
+> > > [    0.442336] Oops - unknown exception [#1]
+> > > [    0.442337] Modules linked in:
+> > > [    0.442339] CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Tainted: G       =
+ W          6.12.13-00102-gf1f43e345877 #1
+> >
+> > Is it still reproducible on v6.14 (and soon v6.15-rc1)?
+> >
+> > > [    0.442342] Tainted: [W]=3DWARN
+> > > [    0.442343] epc : dw8250_serial_in32+0x1e/0x4a
+> > > [    0.442351]  ra : serial8250_do_startup+0x2c8/0x88e
+> > > [    0.442354] epc : ffffffff8064efca ra : ffffffff8064af28 sp : ffff=
+8f8000103990
+> > > [    0.442355]  gp : ffffffff815bad28 tp : ffffaf807e36d400 t0 : ffff=
+af80804cf080
+> > > [    0.442356]  t1 : 0000000000000001 t2 : 0000000000000000 s0 : ffff=
+8f80001039a0
+> > > [    0.442358]  s1 : ffffffff81626fc0 a0 : ffffffff81626fc0 a1 : 0000=
+000000000000
+> > > [    0.442359]  a2 : 0000000000000000 a3 : 0000000000000000 a4 : ffff=
+ffff81626fc0
+> > > [    0.442360]  a5 : ffff8f800012d900 a6 : 000000000000000f a7 : 0000=
+00000fc648c1
+> > > [    0.442361]  s2 : 0000000000000000 s3 : 0000000200000022 s4 : 0000=
+000000000000
+> > > [    0.442362]  s5 : ffffffff81626fc0 s6 : ffffaf8085227000 s7 : ffff=
+ffff81073c58
+> > > [    0.442363]  s8 : 0000000000500000 s9 : ffffaf80851a5a60 s10: ffff=
+af80851a5a60
+> > > [    0.442365]  s11: ffffffff80e85980 t3 : ffffaf807e324600 t4 : 0000=
+000000000002
+> > > [    0.442365]  t5 : 0000000000000003 t6 : ffffaf80804cf072
+> > > [    0.442366] status: 0000000200000120 badaddr: 0000000000000000 cau=
+se: 0000000000000013
+> > > [    0.442368] [<ffffffff8064efca>] dw8250_serial_in32+0x1e/0x4a
+> > > [    0.442371] [<ffffffff8064af28>] serial8250_do_startup+0x2c8/0x88e
+> > > [    0.442373] [<ffffffff8064b514>] serial8250_startup+0x26/0x2e
+> > > [    0.442375] [<ffffffff806428a2>] uart_startup+0x13a/0x308
+> > > [    0.442377] [<ffffffff80642aa4>] uart_port_activate+0x34/0x50
+> > > [    0.442378] [<ffffffff8062ab6a>] tty_port_open+0xb4/0x110
+> > > [    0.442383] [<ffffffff8063f548>] uart_open+0x22/0x36
+> > > [    0.442389] [<ffffffff806234b4>] tty_open+0x1be/0x5e6
+> > > [    0.442396] [<ffffffff802f2d52>] chrdev_open+0x10a/0x2a8
+> > > [    0.442400] [<ffffffff802e7ab6>] do_dentry_open+0xf6/0x34e
+> > > [    0.442405] [<ffffffff802e9456>] vfs_open+0x2a/0xb4
+> > > [    0.442408] [<ffffffff80300124>] path_openat+0x676/0xf36
+> > > [    0.442410] [<ffffffff80300a58>] do_filp_open+0x74/0xfa
+> > > [    0.442412] [<ffffffff802e9900>] file_open_name+0x84/0x144
+> > > [    0.442414] [<ffffffff802e99f6>] filp_open+0x36/0x54
+> > > [    0.442416] [<ffffffff80a01232>] console_on_rootfs+0x26/0x70
+> > > [    0.442420] [<ffffffff80a0154e>] kernel_init_freeable+0x2d2/0x30e
+> > > [    0.442422] [<ffffffff8099c730>] kernel_init+0x2a/0x15e
+> > > [    0.442427] [<ffffffff809a7666>] ret_from_fork+0xe/0x1c
+> > > [    0.442430] Code: e022 e406 0800 4683 0c15 691c 872a 96bb 00d5 97b=
+6 (439c) 851b
+> > > [    0.442432] ---[ end trace 0000000000000000 ]---
+> > > [    0.442434] Kernel panic - not syncing: Fatal exception in interru=
+pt
+> > > [    0.442435] SMP: stopping secondary CPUs
+> > > [    0.451111] ---[ end Kernel panic - not syncing: Fatal exception i=
+n interrupt ]---
+> >
+> > Fixes tag?
+> > Cc to stable@?
+> >
+> > ...
+> >
+> > >     /*
+> > >      * Now, initialize the UART
+> > >      */
+> >
+> > + Blank line.
+> >
+> > > +   uart_port_lock_irqsave(port, &flags);
+> > >     serial_port_out(port, UART_LCR, UART_LCR_WLEN8);
+> > >
+> > > -   uart_port_lock_irqsave(port, &flags);
+> > >     if (up->port.flags & UPF_FOURPORT) {
+> > >             if (!up->port.irq)
+> > >                     up->port.mctrl |=3D TIOCM_OUT1;
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
+
+Thanks,
+Yunhui
 
