@@ -1,99 +1,138 @@
-Return-Path: <linux-kernel+bounces-589208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD899A7C31C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 20:14:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D264EA7C330
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 20:20:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C22D3BAF8C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:13:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A249189D9BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06BC21859F;
-	Fri,  4 Apr 2025 18:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4322F20E33E;
+	Fri,  4 Apr 2025 18:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="X7/KzN87"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TxcCbUTx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CA721507F
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 18:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D551494A6
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 18:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743790419; cv=none; b=QVaeTVbg6SUqiOFcYv2N+gMk/pL8RedV3lfF7iG07B+5bVs7ggfMBYkzgW2QlVyCTunWO3YDejlbBI05ONmWpxU6z+V8peBBMZ1s/TQ32iSWMeJO62JUEpcN+tZ7bjxBMl6904kaqHwybHu94f8h1obR+R+oa3g7Bgf82lpnW/c=
+	t=1743790815; cv=none; b=ZY2GzkgaoBE6RaCtCIOIdVTC6pdNkDYU4FqZ5SZB/97XJwsZvmlRIrFzHUxixhg1m9YyuJlBBjq/6LdvdS1wqA+1cjIaq3AWAn32G9oApQTnz0BNhsDObMn3K5gQWiMbs/0/pM4hoov35l1Yov/qwfDQlUki1m83E5tlXoY1KEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743790419; c=relaxed/simple;
-	bh=18hN5x2RADFXLM5oIMb+dmlprtIX5ukfJpyHhTr93nE=;
+	s=arc-20240116; t=1743790815; c=relaxed/simple;
+	bh=ELgTjsF9sNCsFhLEjCNGV9IJbqb8XICQISChbZPO81U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qxMpv2SocMtHi1jAV0zElRn0ynFMJOYMz7TOZINFos4Lg7KhHfEPPVG71RDYNdy0OJof3W3alnDbqxFTRjQ4gD+Z0JnHBt9zihXKykSP1GHCZgUAoaK2cFtWONfEiirzofrKYoWbCHXvr0WxICJtwF6W+9OuWAQK4D1suK+vwns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=X7/KzN87; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
-Message-ID: <d03cb69d-d9a3-46fb-a283-d429a9389606@iencinas.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
-	s=key1; t=1743790405;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uVNe9DB4JVS7mxluiBxcFesLyFlFXgqdxhl/MDOzqcY=;
-	b=X7/KzN87/UO8MjCyQhAFLFpd4xU4Rssl/ezCIa3HYBH0BOtlU/YCJSSqcZERqRM4yKYu8A
-	yMgGqdW/7vIuBTYE67LVQN6hxapbTAuWawGihHgrN8uS4frbqmiAK6cErBHgI2KNfm4r7m
-	yiDIp6BGrDZj93AUpKiTQZJJWivU7jFr/DZTs3njv1dAgahFs4hmePYI8CumIlaU4G5gCZ
-	NMENgUzoNCwqr612hNffJ/t8O42gPP1I/0yHjzl2xBQQArcDxfbBxEkL1+CiQ0GGzkhiP4
-	FCZypS8QGicnAUx90Gj93LPTSr4iGs/DsdNl4j0zDU7RtLVftfXntQv1lL4Hug==
-Date: Fri, 4 Apr 2025 20:13:17 +0200
+	 In-Reply-To:Content-Type; b=NUzhp48269iKPtXHul/EnJ6G1FJBcYLcPIA5aXERsDfnI9+pByVtGng12SXtrY1r+OcGj+CZsKs7OXnhtK6jwPwfjx9ythhxPy9lC1ZUJeVkmz9f8CJbVqlNURhla768tL7cYXDcPQQkNNK5JvvJsqCwRmkxANNWl446Ay5SikM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TxcCbUTx; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743790813; x=1775326813;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ELgTjsF9sNCsFhLEjCNGV9IJbqb8XICQISChbZPO81U=;
+  b=TxcCbUTxzryritMh2nTP0a912lTm5u2RvqmFle/+dIC+f1p56LTNqNmA
+   dl7MCh4s/uwp8nmeQwbCcpocRdEuflwSMubYacNL+5y4DVN5mBdmvka0i
+   RxSxyY21hMWh1xIPRHQh3iiW2Ln1c7IS+W+AQlc7mIaSwge4hOGoiA//z
+   ZVUB9C9UbWn84X/PLVBUTxW4XH3+kYyXMe8E9Eauaf2IqgA2i24yiI3BQ
+   3m/oQlanJ9Xjsuxcsd0B+CTOkgWX4iTjKkMlWGiAiQTG/WyNGuxKGarNt
+   TmJ/wxJyVhQM7YSPfpMZZtimeJRuttnJAbLo0ozNbFB8ZQHkGVOlUCOdi
+   A==;
+X-CSE-ConnectionGUID: m8gfIjWcTK+Ewr5bwTYzUg==
+X-CSE-MsgGUID: u2pLnS1PR0+uHRqgqQQNgg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11394"; a="55873256"
+X-IronPort-AV: E=Sophos;i="6.15,189,1739865600"; 
+   d="scan'208";a="55873256"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 11:20:13 -0700
+X-CSE-ConnectionGUID: YLPXpNZIRC6W91HXhVzEwA==
+X-CSE-MsgGUID: 0kJYb0jhS2uusKSQfSWmwQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,189,1739865600"; 
+   d="scan'208";a="127863717"
+Received: from daliomra-mobl3.amr.corp.intel.com (HELO [10.124.223.29]) ([10.124.223.29])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 11:20:11 -0700
+Message-ID: <b0bb167b-fc48-4434-99a1-9b0d2f3e7d38@intel.com>
+Date: Fri, 4 Apr 2025 11:20:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 2/2] riscv: introduce asm/swab.h
-To: Ben Dooks <ben.dooks@codethink.co.uk>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>,
- Arnd Bergmann <arnd@arndb.de>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
- skhan@linuxfoundation.org, Zhihang Shao <zhihang.shao.iscas@gmail.com>,
- =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- linux-arch@vger.kernel.org
-References: <20250403-riscv-swab-v3-0-3bf705d80e33@iencinas.com>
- <20250403-riscv-swab-v3-2-3bf705d80e33@iencinas.com>
- <99b7b45a-4b18-4f0d-a197-4dccbb6c2352@codethink.co.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] x86/xen: fix balloon target initialization for PVH
+ dom0
+To: Roger Pau Monne <roger.pau@citrix.com>, Juergen Gross <jgross@suse.com>,
+ xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+References: <20250404133459.16125-1-roger.pau@citrix.com>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Ignacio Encinas <ignacio@iencinas.com>
-In-Reply-To: <99b7b45a-4b18-4f0d-a197-4dccbb6c2352@codethink.co.uk>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250404133459.16125-1-roger.pau@citrix.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-
-
-On 4/4/25 17:55, Ben Dooks wrote:
-> On 03/04/2025 21:34, Ignacio Encinas wrote:
->> +#ifdef CONFIG_64BIT
->> +ARCH_SWAB(64)
->> +#define __arch_swab64 __arch_swab64
->> +#endif
+On 4/4/25 06:34, Roger Pau Monne wrote:
+> Much like a6aa4eb994ee, the code in this changeset should have been part of
+> 38620fc4e893.
 > 
-> I suppose if we're 64bit we can't just rely on values being in one
-> register so this'd need special casing here?
+> Fixes: a6aa4eb994ee ('xen/x86: add extra pages to unpopulated-alloc if available')
+> Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
 
-Oops... I somehow decided that __arch_swab64 wasn't worth having for
-CONFIG_32BIT. I can't tell how useful it is to have it, but it is
-doable and already present in the codebase (include/uapi/linux/swab.h):
-
-	__u32 h = val >> 32;
-	__u32 l = val & ((1ULL << 32) - 1);
-	return (((__u64)__fswab32(l)) << 32) | ((__u64)(__fswab32(h)));
-
-I'll excuse myself on this one because I'm not sure I have ever used a
-32 bit CPU (other than the very occasional and quick school project)
-
-Thanks for catching this one! I'll make sure to add __arch_swab64 for
-the 32BIT version mimicking the snippet from above.
+I don't see a cc:stable@ on there. Was there a reason for that or did
+you just leave it off by accident?
 
