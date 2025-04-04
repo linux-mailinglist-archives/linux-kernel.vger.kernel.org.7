@@ -1,117 +1,116 @@
-Return-Path: <linux-kernel+bounces-588710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0161A7BC9F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:28:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04E29A7BCAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:30:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADE063AE93B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 12:28:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0BB4178347
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 12:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA181E1DE7;
-	Fri,  4 Apr 2025 12:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06861E7640;
+	Fri,  4 Apr 2025 12:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AiptpWd2"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MhByPnpd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BDD1DB363;
-	Fri,  4 Apr 2025 12:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AEE1E1E04
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 12:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743769715; cv=none; b=ovpO8gzXv6T6xGzLmgzGy6Xfm4cpB5L5qAWTb/KhoVdUqZwHLVHBiXP2qutTdMbpUCTMJAVjFmHKCyMwlrYMFH6xZfvYpoAVlwp67RuXut9Z4qnjHxKNEnor+9C0BpF6UpHlVQIjHa5xk/42AEXfCC3gQZWR5U6ItnU/8SGLWfQ=
+	t=1743769801; cv=none; b=C/zpm07BCKUevXTbjpFJcEi6mT9BQvZrZoyWB/qiAPW5dTC0//He1Sok00bd+DtjJmRb0L7WS4rju9ziNsGW+pU0HnCETTQihg7ECeQ49GeS1HPt+zlY76RdSqsfMnqRNXQZTBXvjTMvEV8tuZ6QMKXXdto3NgwSedpGom0Un7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743769715; c=relaxed/simple;
-	bh=KZjsLs60eKQTbMKVSo/1zmWRNPndmLnFZEn4+d8V3g4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qCYsbONZYwilsZb43Cr+flA8nH82u4Al+lhHEJ5cibo4zSCpagByvwcsWTkeGskpUIHP7EFkQnd4KA2tWSmJMVRRQQ8Q67F+pdEI4eRlXbeYJLcNEySs8oTAgoPcAyiQFbsBqXlNie/VwbX7zZ6zFSsnkRIkB5ic4VaXuK8XU7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AiptpWd2; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6ecf0e07954so25927736d6.1;
-        Fri, 04 Apr 2025 05:28:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743769712; x=1744374512; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=o+hauuYwPuT1296IGAMtUlOboJ7YBvYP4aT7j1Si95I=;
-        b=AiptpWd282JPs3p9szpJBLA4v7GSy3+u1x57y7wGCQQ70sBwaXV0dP0Gyg3s90kyJ6
-         XTdan3KHoKiVBN2Co42bx6b25INFx6lgZw+xq22aSLKqp7nlltel+cOMoueRKYqUd7P6
-         ernG33qHYAFOdPA7dTqlCCgVe9+9kDQbxJoEzQNB0JMqjyzTO13SHZkhERzpx+LHIvCm
-         Q+srOWCiEMlUmshkfRWxeKhLaJ4FEDpz2lacjICL/86Ee4+3LdoYnh4jbBRYbHxQCgwi
-         i6H6/+vQX/y3J22YO91ju6l0/wNB21yQIliH90+Lo+7CfZxmwBswD1CFG9mqRH9veVec
-         voUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743769712; x=1744374512;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o+hauuYwPuT1296IGAMtUlOboJ7YBvYP4aT7j1Si95I=;
-        b=et1JxG6+h0t0RttFagcKDhLe+rnxPEC0AmWbe3kvZCmlVY0c21CL8ew0Ey0s1Yr9WT
-         0RvcVjdZm6NWZoDLqVtWMZuZJ0yNkfhXJzHJ+g4/SBKAqQQuD+rCQrvbnMvhyJLqSM3Y
-         pt/2Cg17sS3+9RdCEE0FOnEmIHS5rfzFdG2VR1SUSZmGAElEoB6kVItKyD481cpo8z3J
-         /HCDobsPeqLcYT1xjD99g3bhH/OdE/J7EPY12Mphp2oReGxTbfvNRMW66c4M/fliV8hI
-         VSNbAv0I9W6GKbTeguKo3YEm8UaakFduZIFPTL+NxsPxvMpt3N1Tdbbw2rqfrSV8cV1l
-         4Kaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVT3vAwFIy/3VbkyH5lSM3AdvIaeLt6wDAg0QrRhthsz7QuGxwkTT1uz50zA6gFvvngFylBikwqU9KozkMZ5Sh/82Pr@vger.kernel.org, AJvYcCWPMWLNa0i2l93ERaO8O8Dn13NmSe//7yMtrn1pghT5hnOgABnKaX69lHCTKv0P8B9Q0UeymQrr2a0/ngk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrE5AlAPBF5sao2I9DjM3TdS2a/gmyVtIneOxMwqzDBsqEFYFd
-	ihO5L/FTzN3LEwjqkPzW/gL41YeZdOzjE2yKAPWZV9o62Sby8MEveR3AmYdFUuuF0Gbaz0N9GHE
-	sLvpCeYf/yeDOlRsHisLvwBnwRMQ=
-X-Gm-Gg: ASbGnctyN2BWf7obNG+reQVpT69WuEG41W/p9mj1xUXlgILACY9ScyN0FsIHVHC4RON
-	byVEVb+1chxB3lPR+m5pDSlQliiQEbEPi3dSxsYE1S/Pxs6c8qC5JD6z+23cW9mqY1VFmc73jS6
-	FCd7+ixZ/bOycy5Vyz5V3wPbodlWO0gwr3Y6AkofbJCVk=
-X-Google-Smtp-Source: AGHT+IFPhzwGNtl0IhDD9nLnNfC4N91dZF5GdO3ERI/7YjNI4cm1KUvZsmYpodKH8TzNAWcVFDPCaBzI1mj7/9tdI4c=
-X-Received: by 2002:a05:6214:226f:b0:6e8:fb7e:d33a with SMTP id
- 6a1803df08f44-6f00def1d0emr38205426d6.22.1743769712357; Fri, 04 Apr 2025
- 05:28:32 -0700 (PDT)
+	s=arc-20240116; t=1743769801; c=relaxed/simple;
+	bh=/4agX8fw0y/K8HkBbAiNToSBeHnF4hBirnxr3iPlU4o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LhtAyHWMAUJfD+uXiDg8AYTpoC5jvfu6DgoK7dlm4k7pH1L4RPc4jf7ENJk1ZNZfGG8+Xd0xbXL4FHsEdWCf3xRH0zQvb6HYdJ1v34lwK3W1SuAoVxOT83tpHFChtBvVeZ6GAFjVdtPWlhVN69RZJ6H2qZY/+w8laPnPiZxke7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MhByPnpd; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743769799; x=1775305799;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/4agX8fw0y/K8HkBbAiNToSBeHnF4hBirnxr3iPlU4o=;
+  b=MhByPnpdi0h9rehOGsPQqqKUEHAUqZrFd9QfwNHOJejIe6CXYPs58ohO
+   xFe1bhl3m5bpALZ0yo1/ES32/6+eoeLNRlowtIasC39i/Cg3JjpxQ6L3r
+   nmoicqlVuzGpMrdeRH8OUPnysOgeyIL34AyudwFjFoBKvyldT3LX8BQBU
+   /FTorpk5LYhaH/saewNpl1QnOuKpW3UzYrEb/9xrNBzXka0ukdEUdYwOO
+   ywaIYqmwLSMw1uGhR041EoSWAchCJqSvRzG5vwLtTEaU/zwxs35DhmM7k
+   RI2yGrwkCj+uVBLKNMccYqUxZLyt1IhcszpudehGa8XzhtUMvZjbTMAvl
+   w==;
+X-CSE-ConnectionGUID: kUg/3hqTTkW02YGVk1wKyA==
+X-CSE-MsgGUID: 6i3iT0ZHTUiCk8eHXKGu9A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11393"; a="62747775"
+X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
+   d="scan'208";a="62747775"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 05:29:57 -0700
+X-CSE-ConnectionGUID: kESmZ1oTSfuV7WuMPLKczw==
+X-CSE-MsgGUID: arDn9nj7TKSqifMZ7TvCUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
+   d="scan'208";a="127242139"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 05:29:56 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u0gBF-0000000982G-1GL2;
+	Fri, 04 Apr 2025 15:29:53 +0300
+Date: Fri, 4 Apr 2025 15:29:52 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, david.m.ertman@intel.com,
+	ira.weiny@intel.com, lee@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] mfd: core: Support auxiliary device
+Message-ID: <Z-_QwB1cExN1emMF@smile.fi.intel.com>
+References: <20250403110053.1274521-1-raag.jadav@intel.com>
+ <2025040336-ethically-regulate-3594@gregkh>
+ <Z-_ESekESYYvMHeR@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250403191342.1244863-1-devaanshk840@gmail.com> <20250403153651.1188135b@gandalf.local.home>
-In-Reply-To: <20250403153651.1188135b@gandalf.local.home>
-From: Devaansh Kumar <devaanshk840@gmail.com>
-Date: Fri, 4 Apr 2025 17:58:21 +0530
-X-Gm-Features: ATxdqUFByqjByFu259uDrwKu8qipavRypzCfuFFHLm4m4OlPj-M7vk1XNsA5pfQ
-Message-ID: <CA+RTe_gHo3U-tWM9MA4CMgxM13=biqkqnAbuS5Yuidrono1bvw@mail.gmail.com>
-Subject: Re: [PATCH] tracing: Replace deprecated strncpy() with memcpy() for stack_trace_filter_buf
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-_ESekESYYvMHeR@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, 4 Apr 2025 at 01:05, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Fri,  4 Apr 2025 00:43:40 +0530
-> Devaansh Kumar <devaanshk840@gmail.com> wrote:
->
-> > @@ -537,14 +538,16 @@ stack_trace_sysctl(struct ctl_table *table, int write, void *buffer,
-> >       return ret;
-> >  }
-> >
-> > -static char stack_trace_filter_buf[COMMAND_LINE_SIZE+1] __initdata;
-> > +static char stack_trace_filter_buf[COMMAND_LINE_SIZE+1] __initdata __nonstring;
-> >
-> >  static __init int enable_stacktrace(char *str)
-> >  {
-> >       int len;
-> >
-> > -     if ((len = str_has_prefix(str, "_filter=")))
-> > -             strncpy(stack_trace_filter_buf, str + len, COMMAND_LINE_SIZE);
-> > +     len = str_has_prefix(str, "_filter=");
-> > +
-> > +     if (len)
-> > +             memcpy(stack_trace_filter_buf, str + len, sizeof(stack_trace_filter_buf));
->
-> Hmm, this location looks like it can just use strscpy().
+On Fri, Apr 04, 2025 at 02:36:41PM +0300, Raag Jadav wrote:
+> On Thu, Apr 03, 2025 at 03:02:47PM +0100, Greg KH wrote:
+> > On Thu, Apr 03, 2025 at 04:30:53PM +0530, Raag Jadav wrote:
 
-Yes strscpy() also works. But since stack_trace_filter_buf is length
-bounded, shouldn't memcpy be the right choice?
+...
 
--- Devaansh Kumar
+> > > 2. Should we allow auxiliary drivers to manage their own resources
+> > >    (MEM, IO, IRQ etc)?
+> > 
+> > The resources are all shared by the "parent" device, that's what makes
+> > aux drivers work, they need to handle this as there is no unique way to
+> > carve up the resources here.
+> > 
+> > So I don't know how you would do this, sorry.
+> 
+> Perhaps we can carve it up in mfd_add_devices() using start and end members
+> and error out if they overlap.
+
+I don't think we want a flag day. If anything, it should be a new call.
+
+> Can't we still have a struct resource that is unique to that specific
+> auxiliary device?
+
+Oh, believe me, you won't do that. Save yourself from _a lot_ of troubles with
+different cases when the shared resources are required.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
