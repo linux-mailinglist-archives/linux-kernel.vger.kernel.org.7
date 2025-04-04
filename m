@@ -1,123 +1,240 @@
-Return-Path: <linux-kernel+bounces-588128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95ADFA7B475
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 02:39:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F92CA7B48B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 02:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8F243B86CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 00:37:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5DA2188B13D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 00:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BF41F17E8;
-	Fri,  4 Apr 2025 00:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A517485;
+	Fri,  4 Apr 2025 00:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="A38pVdVg"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="o0pYuFHS"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B576C19067C;
-	Fri,  4 Apr 2025 00:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D571A634
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 00:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743726482; cv=none; b=ni+r1DXrmD4CPAMMfe+GAaTlcSWTrKkkN2qGkVsFVY5M8jyn5JjPHLJBxrbcmtl7FsWOKBrQlwWO5b59uKj/UChktjKHTkm+n/CFz3OmJNKhCMnxQ8SmGYeX2mNssleZ2Gr2kxN3IX0VL8C6Yk2nzyWdj+yLxAWKkedSFH5xWjc=
+	t=1743726472; cv=none; b=CXEs1zGV1LcwEiAC9dQKsfkxoyrpNgdPTHtwGTF72o6XS+UY+LN6BI4/MgWWvNOaz7RxwJSTFC6V9g/BPzDdSbpFyzeDKkdudvwZyaY+Q8zJL2MvDTwKy4nIvq7lU+z5Ewxb9Wz5L34W8ccKY4eNZN6+/Io0alvWKR6sYIyOf9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743726482; c=relaxed/simple;
-	bh=iCtHLk33YvZVAWXt7i5RyMq9fMhcsg+qWem2feATC5g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F6v6dUwWG7cQhDMke8y9osHotB6E4BdTywwPHz1+ahg1/thWNT2a3i2sMwaQSNfeUcqdx6zc6nbFrMtH/qZnVMKsJU9yIslX8v/tlTyOh6zhszQG9oEnRB5+1CL8dXJ0KL5mGnWfpr7GbsbHRm2FOZEL9kErcQ5jFiR4O+u4EUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=A38pVdVg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 533NXC7n031140;
-	Fri, 4 Apr 2025 00:27:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	coBhNxrqtvBjPYHNF8KL0UPazsmtH2wkILUKTEDK9Ns=; b=A38pVdVgdXAj4qSK
-	KtW+DF5r5mHuPP5b+9nen8vdnAVI9aGCAq2NFe5bqiKteFbBgL6q4DLn51QbKdgA
-	Es4vTrze20hohpuWfXz1JWLboDBdkCdbh9Bym+ch6VxqDl7jKff0S4uMToI5DQG/
-	PkGuO1nXSqfiHO1WeHPiJwhvJj0/bv6o1QVE9d49U+I3sa88cEJghAUst3xppGZA
-	wwoEWwRhHrhom/jv8Jh6CoWw73MpoFAd9LjA4/dlWHgb/Arr732tSs/7KRdwfJrB
-	Lv+BsN7YcFG+lncO0alltCAG/CopPO3BdSmZuNlIVMUAOEtJ/zfeKhM+lGX+lBkT
-	BbGgkA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45t2d908qt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Apr 2025 00:27:48 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5340Rlcc006331
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 4 Apr 2025 00:27:47 GMT
-Received: from hu-wcheng-lv.qualcomm.com (10.49.16.6) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 3 Apr 2025 17:27:47 -0700
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <krzk+dt@kernel.org>, <pierre-louis.bossart@linux.intel.com>,
-        <Thinh.Nguyen@synopsys.com>, <tiwai@suse.com>, <robh@kernel.org>,
-        <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>
-Subject: [PATCH v37 31/31] ALSA: usb-audio: qcom: Notify USB audio devices on USB offload probing
-Date: Thu, 3 Apr 2025 17:27:28 -0700
-Message-ID: <20250404002728.3590501-32-quic_wcheng@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250404002728.3590501-1-quic_wcheng@quicinc.com>
-References: <20250404002728.3590501-1-quic_wcheng@quicinc.com>
+	s=arc-20240116; t=1743726472; c=relaxed/simple;
+	bh=sZCuFd4nf1NVtLGFqso9PSbFQ53jt5gd2JBpo8x0AYk=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=Z0qrp82J2fxaoG6ba8ArzeNWHKraUMAauQns8ZdKaWlJS+RHNA8NXuQHdRlHpVwwgnt05yEbqZWo/HReSXGVrH+FlWYDn9Dv1MAguu8InnmfAfzmDRdUI8SKRen/maNayAATVhVHPJsefhQnLJb57KP6o39j21wBKNOdztjE+Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=o0pYuFHS; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ZtO5fC3K0emqKFc71Utpnz7SErcrFtgy
-X-Proofpoint-GUID: ZtO5fC3K0emqKFc71Utpnz7SErcrFtgy
-X-Authority-Analysis: v=2.4 cv=CPUqXQrD c=1 sm=1 tr=0 ts=67ef2784 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=3H110R4YSZwA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=0R9NKns1a96QCZ5VGfgA:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-03_11,2025-04-03_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 clxscore=1015 malwarescore=0 suspectscore=0 spamscore=0
- phishscore=0 adultscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504040001
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1743726466;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xBkmuETqkFanCorV9XII3T38OpLgK/5FcDlEGxS6XPw=;
+	b=o0pYuFHS4a16tKKp9qPixsi8OkmZfIh/VoQNM467L8R0c/GR+tYyqm5x2K/ZHU2ZArSZ0M
+	EpIEZ+nb7humYj32cSPTWpEq8Uat13ol/fFWrg0y8UVvTfBPWLDD713oUl/Hf3NPpULtDL
+	aYvRGeZ7p9Pt3qbOd8TXVpYiVsAUulQ=
+Date: Fri, 04 Apr 2025 00:27:42 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Jiayuan Chen" <jiayuan.chen@linux.dev>
+Message-ID: <ce4a0aacecb2db7d232e94a324150dc5936c803a@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH bpf v2 1/2] bpf, xdp: clean head/meta when expanding it
+To: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>
+Cc: "bpf" <bpf@vger.kernel.org>, "Jiayuan Chen" <mrpre@163.com>,
+ syzbot+0e6ddb1ef80986bdfe64@syzkaller.appspotmail.com, "Alexei
+ Starovoitov" <ast@kernel.org>, "Daniel Borkmann" <daniel@iogearbox.net>,
+ "Andrii Nakryiko" <andrii@kernel.org>, "Martin KaFai Lau"
+ <martin.lau@linux.dev>, "Eduard Zingerman" <eddyz87@gmail.com>, "Song
+ Liu" <song@kernel.org>, "Yonghong Song" <yonghong.song@linux.dev>, "John
+ Fastabend" <john.fastabend@gmail.com>, "KP Singh" <kpsingh@kernel.org>,
+ "Stanislav Fomichev" <sdf@fomichev.me>, "Hao Luo" <haoluo@google.com>,
+ "Jiri Olsa" <jolsa@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>, "Simon Horman" <horms@kernel.org>,
+ "Jesper Dangaard Brouer" <hawk@kernel.org>, "Mykola Lysenko"
+ <mykolal@fb.com>, "Shuah Khan" <shuah@kernel.org>, "Willem de Bruijn"
+ <willemb@google.com>, "Jason Xing" <kerneljasonxing@gmail.com>, "Anton
+ Protopopov" <aspsk@isovalent.com>, "Abhishek Chauhan"
+ <quic_abchauha@quicinc.com>, "Jordan Rome" <linux@jordanrome.com>,
+ "Martin Kelly" <martin.kelly@crowdstrike.com>, "David Lechner"
+ <dlechner@baylibre.com>, "LKML" <linux-kernel@vger.kernel.org>, "Network
+ Development" <netdev@vger.kernel.org>, "open list:KERNEL SELFTEST
+ FRAMEWORK" <linux-kselftest@vger.kernel.org>
+In-Reply-To: <CAADnVQJ6NPGuY=c8kbpX_nLYq4oOxOBAxbDPFLuw+yr4WrQQOQ@mail.gmail.com>
+References: <20250331032354.75808-1-jiayuan.chen@linux.dev>
+ <20250331032354.75808-2-jiayuan.chen@linux.dev>
+ <CAADnVQJ6NPGuY=c8kbpX_nLYq4oOxOBAxbDPFLuw+yr4WrQQOQ@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-If the vendor USB offload class driver is not ready/initialized before USB
-SND discovers attached devices, utilize snd_usb_rediscover_devices() to
-find all currently attached devices, so that the ASoC entities are notified
-on available USB audio devices.
+April 3, 2025 at 22:24, "Alexei Starovoitov" <alexei.starovoitov@gmail.co=
+m> wrote:
 
-Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
----
- sound/usb/qcom/qc_audio_offload.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/sound/usb/qcom/qc_audio_offload.c b/sound/usb/qcom/qc_audio_offload.c
-index 378249a264a3..5874eb5ba827 100644
---- a/sound/usb/qcom/qc_audio_offload.c
-+++ b/sound/usb/qcom/qc_audio_offload.c
-@@ -1952,6 +1952,8 @@ static int qc_usb_audio_probe(struct auxiliary_device *auxdev,
- 	if (ret < 0)
- 		goto release_qmi;
- 
-+	snd_usb_rediscover_devices();
-+
- 	return 0;
- 
- release_qmi:
+
+>=20
+>=20On Sun, Mar 30, 2025 at 8:27 PM Jiayuan Chen <jiayuan.chen@linux.dev>=
+ wrote:
+>=20
+>=20>=20
+>=20> The device allocates an skb, it additionally allocates a prepad siz=
+e
+> >=20
+>=20>  (usually equal to NET_SKB_PAD or XDP_PACKET_HEADROOM) but leaves i=
+t
+> >=20
+>=20>  uninitialized.
+> >=20
+>=20>  The bpf_xdp_adjust_head function moves skb->data forward, which al=
+lows
+> >=20
+>=20>  users to access data belonging to other programs, posing a securit=
+y risk.
+> >=20
+>=20>  Reported-by: syzbot+0e6ddb1ef80986bdfe64@syzkaller.appspotmail.com
+> >=20
+>=20>  Closes: https://lore.kernel.org/all/00000000000067f65105edbd295d@g=
+oogle.com/T/
+> >=20
+>=20>  Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+> >=20
+>=20>  ---
+> >=20
+>=20>  include/uapi/linux/bpf.h | 8 +++++---
+> >=20
+>=20>  net/core/filter.c | 5 ++++-
+> >=20
+>=20>  tools/include/uapi/linux/bpf.h | 6 ++++--
+> >=20
+>=20>  3 files changed, 13 insertions(+), 6 deletions(-)
+> >=20
+>=20>  diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> >=20
+>=20>  index defa5bb881f4..be01a848cbbf 100644
+> >=20
+>=20>  --- a/include/uapi/linux/bpf.h
+> >=20
+>=20>  +++ b/include/uapi/linux/bpf.h
+> >=20
+>=20>  @@ -2760,8 +2760,9 @@ union bpf_attr {
+> >=20
+>=20>  *
+> >=20
+>=20>  * long bpf_xdp_adjust_head(struct xdp_buff *xdp_md, int delta)
+> >=20
+>=20>  * Description
+> >=20
+>=20>  - * Adjust (move) *xdp_md*\ **->data** by *delta* bytes. Note that
+> >=20
+>=20>  - * it is possible to use a negative value for *delta*. This helpe=
+r
+> >=20
+>=20>  + * Adjust (move) *xdp_md*\ **->data** by *delta* bytes. Note that
+> >=20
+>=20>  + * it is possible to use a negative value for *delta*. If *delta*
+> >=20
+>=20>  + * is negative, the new header will be memset to zero. This helpe=
+r
+> >=20
+>=20>  * can be used to prepare the packet for pushing or popping
+> >=20
+>=20>  * headers.
+> >=20
+>=20>  *
+> >=20
+>=20>  @@ -2989,7 +2990,8 @@ union bpf_attr {
+> >=20
+>=20>  * long bpf_xdp_adjust_meta(struct xdp_buff *xdp_md, int delta)
+> >=20
+>=20>  * Description
+> >=20
+>=20>  * Adjust the address pointed by *xdp_md*\ **->data_meta** by
+> >=20
+>=20>  - * *delta* (which can be positive or negative). Note that this
+> >=20
+>=20>  + * *delta* (which can be positive or negative). If *delta* is
+> >=20
+>=20>  + * negative, the new meta will be memset to zero. Note that this
+> >=20
+>=20>  * operation modifies the address stored in *xdp_md*\ **->data**,
+> >=20
+>=20>  * so the latter must be loaded only after the helper has been
+> >=20
+>=20>  * called.
+> >=20
+>=20>  diff --git a/net/core/filter.c b/net/core/filter.c
+> >=20
+>=20>  index 46ae8eb7a03c..5f01d373b719 100644
+> >=20
+>=20>  --- a/net/core/filter.c
+> >=20
+>=20>  +++ b/net/core/filter.c
+> >=20
+>=20>  @@ -3947,6 +3947,8 @@ BPF_CALL_2(bpf_xdp_adjust_head, struct xdp_b=
+uff *, xdp, int, offset)
+> >=20
+>=20>  if (metalen)
+> >=20
+>=20>  memmove(xdp->data_meta + offset,
+> >=20
+>=20>  xdp->data_meta, metalen);
+> >=20
+>=20>  + if (offset < 0)
+> >=20
+>=20>  + memset(data, 0, -offset);
+> >=20
+>=20>  xdp->data_meta +=3D offset;
+> >=20
+>=20>  xdp->data =3D data;
+> >=20
+>=20>  @@ -4239,7 +4241,8 @@ BPF_CALL_2(bpf_xdp_adjust_meta, struct xdp_b=
+uff *, xdp, int, offset)
+> >=20
+>=20>  return -EINVAL;
+> >=20
+>=20>  if (unlikely(xdp_metalen_invalid(metalen)))
+> >=20
+>=20>  return -EACCES;
+> >=20
+>=20>  -
+> >=20
+>=20>  + if (offset < 0)
+> >=20
+>=20>  + memset(meta, 0, -offset);
+> >=20
+>=20
+> Let's make everyone pay a performance penalty to silence
+> KMSAN warning?
+> I don't think it's a good trade off.
+> Soft nack.
+>
+
+It's not just about simply suppressing KMSAN warnings, but for security
+considerations.
+
+So I'd like to confirm: currently, loading an XDP program only requires
+CAP_NET_ADMIN and CAP_BPF permissions. If we consider this as a super
+privilege, then even if uninitialized memory is exposed, I think it's oka=
+y,
+as it's the developer's responsibility, for example, like the CVE in meta
+https://vuldb.com/?id.246309.
+
+Or I'm thinking, can we rely on the verifier to force the initialization
+of the newly added packet boundary behavior, specifically for this specia=
+l
+case (although it won't be easy to implement).
 
