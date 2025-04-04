@@ -1,92 +1,112 @@
-Return-Path: <linux-kernel+bounces-588540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD137A7BA28
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:44:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B12A7BA36
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49BAD7A7C7E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 09:43:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C4DB3B48AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 09:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5551CAA96;
-	Fri,  4 Apr 2025 09:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5dFvF6r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8891C7015;
-	Fri,  4 Apr 2025 09:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F93113AA2E;
+	Fri,  4 Apr 2025 09:46:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 518BC2E62BC
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 09:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743759841; cv=none; b=oLLl2ZOAUj/2CgmY4labN4xUXms4fZ/3zwyIDqONxZWvLzo36vly1oPWoasXITiFclBUFk2qkqGe4IvEopgmHCnQd4q7piGu2Taz8DuqhAp1cP5UDyrrOoSqSUlKQW6Ptt3vZh5wyJsQyqkbMRr6m+xhsCPEOF920wEGoJvW/y8=
+	t=1743760009; cv=none; b=dfhDi6OFU6yYLz7u+7zHDsNjgEAZW5dv6i5fRxG0rg2SjAzZ6wVwcZfKaw9oJ1VE+ieIv0GPWdw2ouywnLEVwRNZ8paj+7kjJH6Ora9ZNm/TuWLl77CXPmTJXzMcysJsh2DYGvxqXQuIb+r0NyJ2uh5D7TDnvbFtj8sqvNHYMFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743759841; c=relaxed/simple;
-	bh=Ouj5fvu1/IuVsQLww+KunF2lTe4LwrsEfuVusZqS/4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QAIhq+VDsdWFORQyEAEsIWtCFN0lYYmQ0ODylLHx5cENlxfeVjcDJIWbByRyET///rN8r/jQDOZbH0wr85EOI00HPakgI+TRbBQiFLcvZ9oeToJ+WbdD1pJDVSVNBCstnodkPo5RStDiiizMCqtXFm/UzXEj3cRmnTut4dVMs+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5dFvF6r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4043C4CEE9;
-	Fri,  4 Apr 2025 09:43:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743759841;
-	bh=Ouj5fvu1/IuVsQLww+KunF2lTe4LwrsEfuVusZqS/4Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A5dFvF6r/s1AJ6hFL+aw4Ex7sENHxJ6k6kIgb5sBiOYL3xA3jhGC3NJ8OxIuXZZnW
-	 RpSXUw/Rk4nETU45AgDdijUtX3eUTyhT38iZw4UUEKtrkCvqWyXKXlYRQELppibbSW
-	 aqmNSAemtrf7dv1zs+eP2liT8CfBLR7vXWnifih4wg8ZcQlGzHinDVRk2mNEcD7Kwe
-	 Wv/SI4ut5tpL676jhsaE56Iohz6o9FivcpRb1zvjSeYUidJSzVP3bxgIpFqGkSK84H
-	 gL8vCdkNvSiDyhY0cjRVM+u4OyedpKnf3SQ762ijYBWJjK5inDs9NkvzM4sFwTHMt5
-	 daFzb90pEmd4g==
-Date: Fri, 4 Apr 2025 10:43:54 +0100
-From: Lee Jones <lee@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v3 00/32] Samsung S2MPG10 PMIC MFD-based drivers
-Message-ID: <20250404094354.GG43241@google.com>
-References: <20250403-s2mpg10-v3-0-b542b3505e68@linaro.org>
+	s=arc-20240116; t=1743760009; c=relaxed/simple;
+	bh=4vcuXbWePBB/fL1w+vdZnSlLMmRJFzfc5SznNyXcUbY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=SZvpNr8TGuKhtPXbwhkClJYXDRo1MKgRs9TnUtZsA4nqSJarZzfVFvRidK5lkGRBK9iZ9Gafe+0rblrzWaGAd7Pitm784ZP6K4AKFmcLyq1zbWPtaKkUNbIzC7Y0MU+5Txgm4sU1qch4FsUe6CkZ/hylFg06eQeOuozI73nnwzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9072A1515;
+	Fri,  4 Apr 2025 02:46:49 -0700 (PDT)
+Received: from [10.1.29.21] (unknown [10.1.29.21])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 06A633F59E;
+	Fri,  4 Apr 2025 02:46:45 -0700 (PDT)
+Message-ID: <69f3429a-57ba-4c02-b1a7-bbf95b2b19db@arm.com>
+Date: Fri, 4 Apr 2025 10:46:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: Re: [PATCH v2 1/3] coresight: catu: Introduce refcount and spinlock
+ for enabling/disabling
+To: Yabin Cui <yabinc@google.com>, Leo Yan <leo.yan@arm.com>
+Cc: Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250402011832.2970072-1-yabinc@google.com>
+ <20250402011832.2970072-2-yabinc@google.com>
+ <CALJ9ZPNBGBd9OTBgedoQStXh3d2oGDGi6fUF7PXbU5qTEBRHew@mail.gmail.com>
+ <20250402130145.GI115840@e132581.arm.com>
+ <CALJ9ZPMx7vqjgkn8OApLBAPwF35v=enHc07A==LXG0C+922rag@mail.gmail.com>
+Content-Language: en-GB
+In-Reply-To: <CALJ9ZPMx7vqjgkn8OApLBAPwF35v=enHc07A==LXG0C+922rag@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250403-s2mpg10-v3-0-b542b3505e68@linaro.org>
 
-On Thu, 03 Apr 2025, André Draszik wrote:
+On 03/04/2025 18:53, Yabin Cui wrote:
+> On Wed, Apr 2, 2025 at 6:01 AM Leo Yan <leo.yan@arm.com> wrote:
+>>
+>> Hi Yabin,
+>>
+>> On Tue, Apr 01, 2025 at 06:21:59PM -0700, Yabin Cui wrote:
+>>
+>> [...]
+>>
+>>>> @@ -486,12 +491,17 @@ static int catu_disable_hw(struct catu_drvdata *drvdata)
+>>>>
+>>>>   static int catu_disable(struct coresight_device *csdev, void *__unused)
+>>>>   {
+>>>> -       int rc;
+>>>> +       int rc = 0;
+>>>>          struct catu_drvdata *catu_drvdata = csdev_to_catu_drvdata(csdev);
+>>>> +       guard(raw_spinlock_irqsave)(&catu_drvdata->spinlock);
+>>>>
+>>>> -       CS_UNLOCK(catu_drvdata->base);
+>>>> -       rc = catu_disable_hw(catu_drvdata);
+>>>> -       CS_LOCK(catu_drvdata->base);
+>>>> +       if (--csdev->refcnt == 0) {
+>>>> +               CS_UNLOCK(catu_drvdata->base);
+>>>> +               rc = catu_disable_hw(catu_drvdata);
+>>>> +               CS_LOCK(catu_drvdata->base);
+>>>> +       } else {
+>>>> +               rc = -EBUSY;
+>>
+>> This is not an error if the decremented reference counter is not zero.
+>> It should return 0.  Otherwise, the change looks good to me.
+> 
+> In coresight_disable_helpers(), the return value of catu_disable()
+> isn't checked.
+> The -EBUSY return was used for consistency with other refcounted
+> disable functions
+> like tmc_disable_etf_sink() and tmc_disable_etr_sink(). I'm happy to
+> change it back
+> to 0 if you believe that would be the more accurate return value here.
 
-> This series adds initial support for the Samsung S2MPG10 PMIC using the
-> MFD framework. This is a PMIC for mobile applications and is used on
-> the Google Pixel 6 and 6 Pro (oriole / raven).
+Please stick to 0 here. This indicates there was no errors w.r.t the 
+current session. This is similar to what we do for TMC ETR for e.g.
 
-Okay, review complete.
+Suzuki
 
-If I didn't comment on a patch, it means I didn't see any issues with it.
 
-However, saying that, it doesn't mean I won't spot something next time.  :)
+> 
+>>
+>> Thanks,
+>> Leo
 
--- 
-Lee Jones [李琼斯]
 
