@@ -1,161 +1,141 @@
-Return-Path: <linux-kernel+bounces-589029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7514A7C0C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:40:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBCBBA7C0CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06B6D7A8262
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:39:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ED16189F316
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CF31F5616;
-	Fri,  4 Apr 2025 15:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AF01F63FE;
+	Fri,  4 Apr 2025 15:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ofyxz18E"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="En4mpUCo"
+Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FA71F540C
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 15:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78AE1F5853;
+	Fri,  4 Apr 2025 15:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743781210; cv=none; b=G6flbVG4yzeIbY6hM+3wpb+bQOCSQP9aOm0qbnLmDkgo9Z/2kirbDXcQQp2j67NShnQ7kEdtu0RJ3MDK/HPlACLPV122hCWPouGUQOUfb1dNMkPHlC+5d7i18k2YjMXb804mXKN+tUUdyjBlT1SskC48Q2Iq5YNHvdQiRvuWvnY=
+	t=1743781448; cv=none; b=F8NrDqEd4lbEMLjtLEvIIx2BqrH96WSs5i0mgRk1nCsrHo5LWtnTZOjqv99p8dWXzzrgNQ4PgA+Dp3kTb2YWzxR1yjEYIw+9KVHLLvmtOEPuIbQ3cTf2DU7yzL+IogUUATiKmwwrxHDVVFQuTwDzeHZfysPo9m7tOypVr7RsT40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743781210; c=relaxed/simple;
-	bh=3xvLTkD3hm7Mes8rmrh96QPUOI2AKFnbOp9Cb5w4J28=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QpWN8Paqm8PmoJ1bZVJ6ETngezbMwtTqxxKE671+hky+FlVy/llJWRfPHql9MkF9JwkLCCbQzE4NpTyoP/88YOR1RDRXx5ZEe4ezJYdbyFMHM7jXsXWjDFcFhETfAirCyOVn1kwG/7hMkXlbZYcT/LR32mv9E2+SNy3kKURowhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ofyxz18E; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6df83fd01cbso12914416d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 08:40:08 -0700 (PDT)
+	s=arc-20240116; t=1743781448; c=relaxed/simple;
+	bh=Kt79fJGRwJnXAG2klKk7/s3O5ZBmyTaKqz+56dyv8yg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n3J+GmM2X3pKdGYHMkxn8q6RsdVKh6MaQ37r9GgUZXIrJ/RKEPzMhQIVO8Uuheam6RzHRhY1taViXiwipu2SRr1Dp4QmZ+oxBvIBmaOsVBUdoePZ5T6rKy8cmXfTnsvaGBARz2jKO9GqR8k+AZYwl+tItEBgeD0vA+ghECwoQgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=En4mpUCo; arc=none smtp.client-ip=52.95.49.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743781208; x=1744386008; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=prSOzXEBgQyZuAaooh+ak3Qps7M4suPmZuJKuUU05D0=;
-        b=Ofyxz18EmV24UhmT7Vw7D1BY4KvtaZL/N2irYFNfbqi8vF+6Ym7dzrfg+i5MLdFSfv
-         F55JP0EwKM8dqhgZ2ekwnEw/DthG5aAvPeAOl8FFxi6S/esD0hduBVXOkqMZuq+sOtSI
-         LpwQ2HZsyKq5Sbfk7TAFLhok3XAL+Dg0VAJ/ygMlriUpOQhxdK/VexsNRGWiKSVq3tYz
-         GjNWOhbUXs576FzQ/IgNt6WPuqzwc5b4O67FNtHKEnvsbNFVKu/alq0HNtO6RfXSe7KN
-         /0mAOiSCyj8KSQDO2UE2yv7E4iB2gOVNXlYYRwv6y3vvXueBwQAR3OVXQv0LeNoH+lzw
-         VklA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743781208; x=1744386008;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=prSOzXEBgQyZuAaooh+ak3Qps7M4suPmZuJKuUU05D0=;
-        b=wqC51neNRL3xiKjeJet7GIZur/OIvcmW6GNWW13JEnHn8tg66nU4D3qezXh1TLB96L
-         JzFH4Cwza3wuckHBc9HzZsVrM4E2VkviV0w+kaQICUtxTu3xXBJnqSPBsckHOI6hH1H0
-         Vqkr2GKJrOHftQ8Wx9a5EpTlqZnRoiet6iLHYkZhFALje1llorPqcp3kBv8vRXlLzrYC
-         Pr90ckGaXndHeXaZSy3JFCwqBSHJt7y+/OYASsOxGMOX/GPiTe3xCU6CeXdg8zvqxeIR
-         AqZqS7TbeKkUD5DGHt2cNJCyicKXh39+4iTEOkg9opW1nx1dy3AX5CDHRY+r3WORo6TY
-         +0Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsvuPJZVLVBuCk1bx8i4scmIIT1ueBT+ErthA1Fr2bU69fVrxj7M9sy7+z8jeTX9y1jNE41ZI9zKX8AHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5CbluS1Rv4Yb6v/2f7tvMCpGZN4cuvYYzfcRXL3L6q53vCDjJ
-	ryuyEi+LpuilvcVXgFYSn6ZIYt8DmirjQZevaeA6tvLy5zkGCx93YN93N7s3rAbtIAPibtE1na9
-	xOEJu3JvJCyuI4ilNFHvPOn5om9I=
-X-Gm-Gg: ASbGncudcNsETzmsWFExrx6kobI2vpDWxPPYSgawWXNaeY2GsGemfOSubAkSYKlIYM+
-	FYrMtps3nZLPF5NhTufhjLQaO2TKqd/M0OZtzNqVZ4z1pkwuNYPA7d0XChNXw3dYBi3wBQ5W5Db
-	iERJ9MOKUKoZnIMqNRT/y4JL1BAATsCIiB8xdXICYT2S0LCXnmtm2w/HwxZQ==
-X-Google-Smtp-Source: AGHT+IGphN4CEA4eEoFwh71aXAYCnqU9mdhQWmkjAzeXN+3WP11z05/y/aYKGJ83KGCJ/crfOLXPPFiGH9PDq9UUkHg=
-X-Received: by 2002:a05:6214:2266:b0:6e6:6c7f:111a with SMTP id
- 6a1803df08f44-6f064b5396bmr42543716d6.40.1743781207637; Fri, 04 Apr 2025
- 08:40:07 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1743781446; x=1775317446;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=wclIRAQFfE2pzVzzCPlSKXfar9IWu+zIoU0sBLVtp38=;
+  b=En4mpUCo0sRNCVTx32Eq803PDdF9kKWPFWB8cBS6/4qHaWcILAROed7I
+   vKAdgimouFxghEHK6oMJO4gCGEqSieurVwJ4TMUBRmhJVU6F9Islci43s
+   mR4kF0BjLgwINZ8bzRzLQok/LPUPTGJ/BTjW/dGWM1j0RNLN9yi/qlyA3
+   M=;
+X-IronPort-AV: E=Sophos;i="6.15,188,1739836800"; 
+   d="scan'208";a="486684103"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 15:44:01 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:38790]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.25.120:2525] with esmtp (Farcaster)
+ id 19e4150d-3051-47dc-b5ab-c8164781f6fc; Fri, 4 Apr 2025 15:44:00 +0000 (UTC)
+X-Farcaster-Flow-ID: 19e4150d-3051-47dc-b5ab-c8164781f6fc
+Received: from EX19D003UWB001.ant.amazon.com (10.13.138.92) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 4 Apr 2025 15:43:55 +0000
+Received: from EX19MTAUWC001.ant.amazon.com (10.250.64.145) by
+ EX19D003UWB001.ant.amazon.com (10.13.138.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 4 Apr 2025 15:43:55 +0000
+Received: from email-imr-corp-prod-iad-1box-1a-6851662a.us-east-1.amazon.com
+ (10.25.36.210) by mail-relay.amazon.com (10.250.64.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1544.14 via Frontend Transport; Fri, 4 Apr 2025 15:43:55 +0000
+Received: from dev-dsk-kalyazin-1a-a12e27e2.eu-west-1.amazon.com (dev-dsk-kalyazin-1a-a12e27e2.eu-west-1.amazon.com [172.19.103.116])
+	by email-imr-corp-prod-iad-1box-1a-6851662a.us-east-1.amazon.com (Postfix) with ESMTPS id DE9684032D;
+	Fri,  4 Apr 2025 15:43:52 +0000 (UTC)
+From: Nikita Kalyazin <kalyazin@amazon.com>
+To: <akpm@linux-foundation.org>, <pbonzini@redhat.com>, <shuah@kernel.org>,
+	<viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <muchun.song@linux.dev>,
+	<hughd@google.com>
+CC: <kvm@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-fsdevel@vger.kernel.org>, <jack@suse.cz>,
+	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@Oracle.com>, <jannh@google.com>,
+	<ryan.roberts@arm.com>, <david@redhat.com>, <jthoughton@google.com>,
+	<peterx@redhat.com>, <graf@amazon.de>, <jgowans@amazon.com>,
+	<roypat@amazon.co.uk>, <derekmn@amazon.com>, <nsaenz@amazon.es>,
+	<xmarcalx@amazon.com>, <kalyazin@amazon.com>
+Subject: [PATCH v3 0/6] KVM: guest_memfd: support for uffd minor
+Date: Fri, 4 Apr 2025 15:43:46 +0000
+Message-ID: <20250404154352.23078-1-kalyazin@amazon.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJD7tka6XRyzYndRNEFZmi0Zj4DD2KnVzt=vMGhfF4iN2B4VKw@mail.gmail.com>
- <20250402200651.1224617-1-joshua.hahnjy@gmail.com>
-In-Reply-To: <20250402200651.1224617-1-joshua.hahnjy@gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Fri, 4 Apr 2025 08:39:56 -0700
-X-Gm-Features: ATxdqUGBOhkzKPkEXEn1pt-WAA6a1ele1vAnQhsbPBx1oaH3xhTk3P8grNzaNWk
-Message-ID: <CAKEwX=N25ooy3YX6ZbFcCszWBAcPmXf0zc99LTGrv8WnrxV3hw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] minimize swapping on zswap store failure
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>, akpm@linux-foundation.org, hannes@cmpxchg.org, 
-	cerasuolodomenico@gmail.com, sjenning@redhat.com, ddstreet@ieee.org, 
-	vitaly.wool@konsulko.com, hughd@google.com, corbet@lwn.net, 
-	konrad.wilk@oracle.com, senozhatsky@chromium.org, rppt@kernel.org, 
-	linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
-	david@ixit.cz
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Wed, Apr 2, 2025 at 1:06=E2=80=AFPM Joshua Hahn <joshua.hahnjy@gmail.com> w=
-rote:
->
-> On Mon, 16 Oct 2023 17:57:31 -0700 Yosry Ahmed <yosryahmed@google.com> wr=
-ote:
->
-> > On Mon, Oct 16, 2023 at 5:35=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> w=
-rote:
->
-> > I thought before about having a special list_head that allows us to
-> > use the lower bits of the pointers as markers, similar to the xarray.
-> > The markers can be used to place different objects on the same list.
-> > We can have a list that is a mixture of struct page and struct
-> > zswap_entry. I never pursued this idea, and I am sure someone will
-> > scream at me for suggesting it. Maybe there is a less convoluted way
-> > to keep the LRU ordering intact without allocating memory on the
-> > reclaim path.
->
-> Hi Yosry,
->
-> Apologies for reviving an old thread, but I wasn't sure whether opening a=
-n
-> entirely new thread was a better choice : -)
->
-> So I've implemented your idea, using the lower 2 bits of the list_head's =
-prev
-> pointer (last bit indicates whether the list_head belongs to a page or a
-> zswap_entry, and the second to last bit was repurposed for the second cha=
-nce
-> algorithm).
->
-> For a very high level overview what I did in the patch:
-> - When a page fails to compress, I remove the page mapping and tag both t=
-he
->   xarray entry (tag =3D=3D set lowest bit to 1) and the page's list_head =
-prev ptr,
->   then store the page directly into the zswap LRU.
-> - In zswap_load, we take the entry out of the xarray and check if it's ta=
-gged.
->   - If it is tagged, then instead of decompressing, we just copy the page=
-'s
->     contents to the newly allocated page.
-> - (More details about how to teach vmscan / page_io / list iterators how =
-to
->   handle this, but we can gloss over those details for now)
->
-> I have a working version, but have been holding off because I have only b=
-een
-> seeing regressions. I wasn't really sure where they were coming from, but
-> after going through some perf traces with Nhat, found out that the regres=
-sions
-> come from the associated page faults that come from initially unmapping t=
-he
-> page, and then re-allocating it for every load. This causes (1) more memc=
-g
-> flushing, and (2) extra allocations =3D=3D> more pressure =3D=3D> more re=
-claim, even
-> though we only temporarily keep the extra page.
+This series is built on top of the Fuad's v7 "mapping guest_memfd backed
+memory at the host" [1].
 
-Also, double check your benchmark :) If you only cycle through the
-pages only in the LRU, or if you will need the pages soon, by
-definition you cannot do better than the status quo.
+With James's KVM userfault [2], it is possible to handle stage-2 faults
+in guest_memfd in userspace.  However, KVM itself also triggers faults
+in guest_memfd in some cases, for example: PV interfaces like kvmclock,
+PV EOI and page table walking code when fetching the MMIO instruction on
+x86.  It was agreed in the guest_memfd upstream call on 23 Jan 2025 [3]
+that KVM would be accessing those pages via userspace page tables.  In
+order for such faults to be handled in userspace, guest_memfd needs to
+support userfaultfd.
 
-The gains will only materialize when you have longer workload, which
-can (and often will) cycle the incompressible pages through the LRU
-multiple times, recompressing (and failing) them multiple times with
-zswap, etc.
+Changes since v2 [4]:
+ - James: Fix sgp type when calling shmem_get_folio_gfp
+ - James: Improved vm_ops->fault() error handling
+ - James: Add and make use of the can_userfault() VMA operation
+ - James: Add UFFD_FEATURE_MINOR_GUEST_MEMFD feature flag
+ - James: Fix typos and add more checks in the test
+
+Nikita
+
+[1] https://lore.kernel.org/kvm/20250318161823.4005529-1-tabba@google.com/T/
+[2] https://lore.kernel.org/kvm/20250109204929.1106563-1-jthoughton@google.com/T/
+[3] https://docs.google.com/document/d/1M6766BzdY1Lhk7LiR5IqVR8B8mG3cr-cxTxOrAosPOk/edit?tab=t.0#heading=h.w1126rgli5e3
+[4] https://lore.kernel.org/kvm/20250402160721.97596-1-kalyazin@amazon.com/T/
+
+Nikita Kalyazin (6):
+  mm: userfaultfd: generic continue for non hugetlbfs
+  mm: provide can_userfault vma operation
+  mm: userfaultfd: use can_userfault vma operation
+  KVM: guest_memfd: add support for userfaultfd minor
+  mm: userfaultfd: add UFFD_FEATURE_MINOR_GUEST_MEMFD
+  KVM: selftests: test userfaultfd minor for guest_memfd
+
+ fs/userfaultfd.c                              |  3 +-
+ include/linux/mm.h                            |  5 +
+ include/linux/mm_types.h                      |  4 +
+ include/linux/userfaultfd_k.h                 | 10 +-
+ include/uapi/linux/userfaultfd.h              |  8 +-
+ mm/hugetlb.c                                  |  9 +-
+ mm/shmem.c                                    | 17 +++-
+ mm/userfaultfd.c                              | 47 ++++++---
+ .../testing/selftests/kvm/guest_memfd_test.c  | 99 +++++++++++++++++++
+ virt/kvm/guest_memfd.c                        | 10 ++
+ 10 files changed, 188 insertions(+), 24 deletions(-)
+
+
+base-commit: 3cc51efc17a2c41a480eed36b31c1773936717e0
+-- 
+2.47.1
+
 
