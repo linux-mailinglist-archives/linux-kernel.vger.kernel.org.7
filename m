@@ -1,165 +1,259 @@
-Return-Path: <linux-kernel+bounces-589221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A323A7C351
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 20:55:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60284A7C355
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 20:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F00333BB58A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:55:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C85B81B604B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2855021C193;
-	Fri,  4 Apr 2025 18:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A9621C184;
+	Fri,  4 Apr 2025 18:55:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdZUHwDt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hgOtWSKm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79364214A66;
-	Fri,  4 Apr 2025 18:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA4619CCF5
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 18:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743792922; cv=none; b=gT9jVsIxKNYDTCWjZqoYb15Lgu5tQmce4jbK3Erm7RLbOl2YpvgbRfzXXQJ+HMxsTW7sm9Y8E61NBRknUA5aurScRTbXGSBkP/loGCW0RU8vY/bYPUXk3xBKgBSyLUG85BxRj6uE+PmxlsQq2RMJhIy2rft0B/P1nDpDBsQ20yU=
+	t=1743792942; cv=none; b=kDfSiPQKhkXmA+TzOdnRFWRXaIXx+kntubP7QNWoqSJqy6VstBDW7WJ63HWiZ1HPcwQfd07dO+TQ+GV6+ZCA2Bv7e931METMJt3Py5rwTJY2e1dFuft60NKKlj8nVbLYBCZpXh92n6bftVb30R30oLvpkcdOnofA36qm/KCyYMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743792922; c=relaxed/simple;
-	bh=uGvJX+mVnoGeSQaFeYRrOHhVGthxAFm4BVArWwobaPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jhVmYMsO0Lx1z3jacPd/XKFl29YWfGnGR8krFSp+qQwoVipe/oHDUbDmR9wt4CRFOj7+lgWvQUOJggtHp2xKcxqsWsUhc3drycr3GSBC1K6gp7AmZyqgjwgmD2Ngca+3v9Y5QeAq+Dn1tO42+UGcH6Ir0dLvBJKHYqQWY2O3/Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdZUHwDt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9687BC4CEDD;
-	Fri,  4 Apr 2025 18:55:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743792921;
-	bh=uGvJX+mVnoGeSQaFeYRrOHhVGthxAFm4BVArWwobaPM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=fdZUHwDt5V7O6Ws1ZS+XAZR8SGCtDi531ewHlkgaUueJ1e2HlcM4QnznvPaO2iluD
-	 XYSlmxeye4HdbpSy9FC9bIIg6E4BZ3z/Ggl4YvNY0oTHxxI+T4sEOfFPegNUHdVNOS
-	 nVUmSAwttE/EXdUl3+vTeztukRNqRHoyGaoMAGLxcKP2eatQqXr3Jr95zusIcfJXMT
-	 T0YYW+h/41hWedDd94F8GOzTIj7++oOu4n57nZndrKSvByNE/Umy4xovN/8iijGafF
-	 4GmRcVyt5y05PlljXIzuktxMWopoiOWwia7vZ2JOGDRwMQtRBya2WJF+0TyFEeykXO
-	 Z7Gz7pZq1QhoA==
-Date: Fri, 4 Apr 2025 15:55:18 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-	Dmitry Vyukov <dvyukov@google.com>, Ian Rogers <irogers@google.com>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 1/1] tools build: Don't set libunwind as available if
- test-all.c build succeeds
-Message-ID: <Z_ArFrHU7hMNUOv3@x1>
+	s=arc-20240116; t=1743792942; c=relaxed/simple;
+	bh=XnDhVT1x83AsNY8OZJgr6vEU6u45rQkuQM30F7imBpU=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UtR089yTzVLgCvp9gLlCDk6nWDhKNwQ5aBrcSYNGHiv8gSxl+ik8zmOTL7QHG+dsPbRc1BV9mz8APxCJkc1E8yfznxT3uV7ugV3dEscnOVZW/5TRjzuk7z9UhSpwF9s8nWpe5xb/P5B3+qJuDVXgWfk9KoZ50xHAOnBFhgaqHYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hgOtWSKm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743792939;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RJ+WDACAsHxbVWot9DqTlvwAc/91z/vLEjznERJRGEA=;
+	b=hgOtWSKm3RoQwBo5KMLmnYYzz4kx5MiI2MqSlCOSBix4MJ6/DZmxDz0qtGCQT4FKInV90O
+	KJEOD1kO9TRYc4BX0wWJue29FM66dqwrAG4edqToEjtXNa9jmFHMKxT0ADyykZB6ShJePm
+	3IeWi6hqkqV3mQ3RmgcFll7btFZ2iJ4=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-629-ycE4IAYuMU-Gp0OCTxMyvQ-1; Fri, 04 Apr 2025 14:55:37 -0400
+X-MC-Unique: ycE4IAYuMU-Gp0OCTxMyvQ-1
+X-Mimecast-MFC-AGG-ID: ycE4IAYuMU-Gp0OCTxMyvQ_1743792937
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c54e7922a1so483762585a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 11:55:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743792937; x=1744397737;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RJ+WDACAsHxbVWot9DqTlvwAc/91z/vLEjznERJRGEA=;
+        b=YbEjAtP3bxhEUyoh/nJp4xY3QD1mpMCe41CieA+FjiO2OVb/cNfJEKATQ0WjkTMbvY
+         j68FsmVu9iGvGAg/f6jXG88v4OghlkVSPhXiZD4jGufEx5SvvCNfqHaYA30F5t3lz0jY
+         8r2e9Ur0R4wH4BidTlalqanW0oHLkEZBcxNpuuNsi9VOjN5pMga2/keUSIjuZg1r46Aj
+         r6FHs7CHyXqLFNY2vG57aSgn6h2CSaJGxrdwOyM/L4e2gUdC7O1EzH9UDImCTJ2q6vMx
+         Id5k8pIB7tJHEMM8X2pUasP/GIqbvvqe7PIVBje+NJ3qNOBrzIvJDkztNnG/f1deNtgC
+         byTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDy4wKiyLwYbWvkTCify2giM2nLLkur5oJWZEj1Uz7DAZcQBCVwMTPJS0tAu/jfOh+LA57zQlMpcbS2WU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyizMySSDjoBycJU6mqpbeEbbBQKfHuD4n+Mi47YBgRTobmr6uT
+	usrkiGdTB/cQmG+VGkNRg4pLQHIyxxAiMtx9oNiFGXbbpCP+lqtiQKysMtuk0R3UU8rswEv5tK+
+	iScSknoMQXcvY7OCmVyKs0XuFE22M6XYVNo5E3kMSz3cKTM30g4BCb//7QjBrLQ==
+X-Gm-Gg: ASbGncsbaYm2kyORriJ893laBv9csiObicqEz4K4R15zi2xX0jX+8mq3XD5TBQ6hPB+
+	xbRnpEeWuN8FTyExSntvXGjTPOES68dIjEPXIfIvUacOXT2Z0UR4UGaU6erk3+avCHB+i7OL8eC
+	NB8EKNJH2Q9Gx3XkzhxHpQmXuUTPig0iRcAfIeZlus3YRUzWGXz2hSsqG8/QixzjiZ9LJypvvFg
+	+T6NqfF3Fu4ykHlpucSdz7WPBL8S1o91zpzRqSiVEPqNgVO92/jG/NmioBV2HpZiFFzlCSZFWte
+	5RwcNPNMA5IB+/9qodtYtSkI8ffPFf+Y6G34j+JLEz1PmOCmRXSonxI4dRGeyQ==
+X-Received: by 2002:a05:620a:d93:b0:7c5:6dc7:7e7c with SMTP id af79cd13be357-7c774d6fcd5mr576731285a.26.1743792937393;
+        Fri, 04 Apr 2025 11:55:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG1GWz7ZoZU1D4Cwc3QUuGir5Wj6Kdn7kWMfIbYb7f8OvFkQTHaKFBY0OhVoifakryu8wvgkg==
+X-Received: by 2002:a05:620a:d93:b0:7c5:6dc7:7e7c with SMTP id af79cd13be357-7c774d6fcd5mr576727485a.26.1743792936962;
+        Fri, 04 Apr 2025 11:55:36 -0700 (PDT)
+Received: from ?IPV6:2601:188:c100:5710:315f:57b3:b997:5fca? ([2601:188:c100:5710:315f:57b3:b997:5fca])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ef0f1393fdsm24772476d6.89.2025.04.04.11.55.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Apr 2025 11:55:36 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <c4294852-cc94-401e-8335-02741005e5d7@redhat.com>
+Date: Fri, 4 Apr 2025 14:55:35 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] memcg: Don't generate low/min events if either
+ low/min or elow/emin is 0
+To: Johannes Weiner <hannes@cmpxchg.org>, Waiman Long <llong@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, Shuah Khan <shuah@kernel.org>,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org
+References: <20250404012435.656045-1-longman@redhat.com>
+ <Z_ATAq-cwtv-9Atx@slm.duckdns.org>
+ <1ac51e8e-8dc0-4cd8-9414-f28125061bb3@redhat.com>
+ <20250404181308.GA300138@cmpxchg.org>
+Content-Language: en-US
+In-Reply-To: <20250404181308.GA300138@cmpxchg.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The tools/build/feature/test-all.c file tries to detect the expected,
-most common set of libraries/features we expect to have available to
-build perf with.
+On 4/4/25 2:13 PM, Johannes Weiner wrote:
+> On Fri, Apr 04, 2025 at 01:25:33PM -0400, Waiman Long wrote:
+>> On 4/4/25 1:12 PM, Tejun Heo wrote:
+>>> Hello,
+>>>
+>>> On Thu, Apr 03, 2025 at 09:24:34PM -0400, Waiman Long wrote:
+>>> ...
+>>>> The simple and naive fix of changing the operator to ">", however,
+>>>> changes the memory reclaim behavior which can lead to other failures
+>>>> as low events are needed to facilitate memory reclaim.  So we can't do
+>>>> that without some relatively riskier changes in memory reclaim.
+>>> I'm doubtful using ">" would change reclaim behavior in a meaningful way and
+>>> that'd be more straightforward. What do mm people think?
+> The knob documentation uses "within low" and "above low" to
+> distinguish whether you are protected or not, so at least from a code
+> clarity pov, >= makes more sense to me: if your protection is N and
+> you use exactly N, you're considered protected.
+>
+> That also means that by definition an empty cgroup is protected. It's
+> not in excess of its protection. The test result isn't wrong.
+>
+> The real weirdness is issuing a "low reclaim" event when no reclaim is
+> going to happen*.
+>
+> The patch effectively special cases "empty means in excess" to avoid
+> the event and fall through to reclaim, which then does nothing as a
+> result of its own scan target calculations. That seems convoluted.
+>
+> Why not skip empty cgroups before running inapplicable checks?
+>
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index b620d74b0f66..260ab238ec22 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -5963,6 +5963,9 @@ static void shrink_node_memcgs(pg_data_t *pgdat, struct scan_control *sc)
+>   
+>   		mem_cgroup_calculate_protection(target_memcg, memcg);
+>   
+> +		if (!mem_cgroup_usage(memcg, false))
+> +			continue;
+> +
+>   		if (mem_cgroup_below_min(target_memcg, memcg)) {
+>   			/*
+>   			 * Hard protection.
+Yes, that should take care of the memcg with no task case.
+>
+>> I haven't looked deeply into why that is the case, but
+>> test_memcg_low/min tests had other failures when I made this change.
+> It surprises me as well that it makes any practical difference.
 
-At some point libunwind was deemed not to be part of that set of
-libraries, but the patches making it to be opt-in ended up forgetting
-some details, fix one more.
+I looked at it again and failure is the same expected memory.current 
+check in test_memcontrol. If I remove the equal sign, I got errors like:
 
-Testing it:
+values_close: child 0 = 8339456, 29MB = 30408704
+failed with err = 21
+not ok 1 test_memcg_min
 
-  $ rm -rf /tmp/build/$(basename $PWD)/ ; mkdir -p /tmp/build/$(basename $PWD)/
-  $ rpm -q libunwind-devel
-  libunwind-devel-1.8.0-3.fc40.x86_64
-  $ make -k LIBUNWIND=1 CORESIGHT=1 O=/tmp/build/$(basename $PWD)/ -C tools/perf install-bin |& grep unwind && ldd ~/bin/perf | grep unwind
-  ...                               libunwind: [ on  ]
-    CC      /tmp/build/perf-tools-next/arch/x86/tests/dwarf-unwind.o
-    CC      /tmp/build/perf-tools-next/arch/x86/util/unwind-libunwind.o
-    CC      /tmp/build/perf-tools-next/util/arm64-frame-pointer-unwind-support.o
-    CC      /tmp/build/perf-tools-next/tests/dwarf-unwind.o
-    CC      /tmp/build/perf-tools-next/util/unwind-libunwind-local.o
-    CC      /tmp/build/perf-tools-next/util/unwind-libunwind.o
-	  libunwind-x86_64.so.8 => /lib64/libunwind-x86_64.so.8 (0x00007f615a549000)
-	  libunwind.so.8 => /lib64/libunwind.so.8 (0x00007f615a52f000)
-  $ sudo rpm -e libunwind-devel
-  $ rm -rf /tmp/build/$(basename $PWD)/ ; mkdir -p /tmp/build/$(basename $PWD)/
-  $ make -k LIBUNWIND=1 CORESIGHT=1 O=/tmp/build/$(basename $PWD)/ -C tools/perf install-bin |& grep unwind && ldd ~/bin/perf | grep unwind
-  Makefile.config:653: No libunwind found. Please install libunwind-dev[el] >= 1.1 and/or set LIBUNWIND_DIR
-  ...                               libunwind: [ OFF ]
-    CC      /tmp/build/perf-tools-next/arch/x86/tests/dwarf-unwind.o
-    CC      /tmp/build/perf-tools-next/arch/x86/util/unwind-libdw.o
-    CC      /tmp/build/perf-tools-next/util/arm64-frame-pointer-unwind-support.o
-    CC      /tmp/build/perf-tools-next/tests/dwarf-unwind.o
-    CC      /tmp/build/perf-tools-next/util/unwind-libdw.o
-  $
+So the test is expecting memory.current to have around 29MB, but it got 
+a lot less (~8MB) in this case. Before removing the equality sign, I 
+usually got about 25 MB and above for child 0. That is a pretty big 
+change in behavior, so I didn't make it.
 
-Should be in a separate patch, but tired now, so also adding a message
-about the need to use LIBUNWIND=1 in the output when its not available,
-so done here as well.
+>
+> * Waiman points out that the weirdness is seeing low events without
+>    having a low configured. Eh, this isn't really true with recursive
+>    propagation; you may or may not have an elow depending on parental
+>    configuration and sibling behavior.
+>
+Do you mind if we just don't update the low event count if low isn't 
+set, but leave the rest the same like
 
-So, now when the devel files are not available we get:
-
-  $ make -k LIBUNWIND=1 CORESIGHT=1 O=/tmp/build/$(basename $PWD)/ -C tools/perf install-bin |& grep unwind && ldd ~/bin/perf | grep unwind
-  Makefile.config:653: No libunwind found. Please install libunwind-dev[el] >= 1.1 and/or set LIBUNWIND_DIR and set LIBUNWIND=1 in the make command line as it is opt-in now
-  ...                               libunwind: [ OFF ]
-  $
-
-Fixes: 13e17c9ff49119aa ("perf build: Make libunwind opt-in rather than opt-out")
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: James Clark <james.clark@linaro.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/lkml/Z_AnsW9oJzFbhIFC@x1
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/build/Makefile.feature | 1 -
- tools/perf/Makefile.config   | 4 +++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
-index 1931b6321314684c..54c8adfb94662c03 100644
---- a/tools/build/Makefile.feature
-+++ b/tools/build/Makefile.feature
-@@ -87,7 +87,6 @@ FEATURE_TESTS_BASIC :=                  \
-         libtracefs                      \
-         libcpupower                     \
-         libcrypto                       \
--        libunwind                       \
-         pthread-attr-setaffinity-np     \
-         pthread-barrier     		\
-         reallocarray                    \
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index eea95c6c0c71f76e..8ff1d8ade73fc061 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -624,6 +624,8 @@ endif
- ifndef NO_LIBUNWIND
-   have_libunwind :=
- 
-+  $(call feature_check,libunwind)
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 91721c8862c3..48a8bfa7d337 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -659,21 +659,25 @@ static inline bool mem_cgroup_unprotected(struct 
+mem_cgro>
+  static inline bool mem_cgroup_below_low(struct mem_cgroup *target,
+                                         struct mem_cgroup *memcg)
+  {
++       unsigned long elow;
 +
-   $(call feature_check,libunwind-x86)
-   ifeq ($(feature-libunwind-x86), 1)
-     $(call detected,CONFIG_LIBUNWIND_X86)
-@@ -648,7 +650,7 @@ ifndef NO_LIBUNWIND
-   endif
- 
-   ifneq ($(feature-libunwind), 1)
--    $(warning No libunwind found. Please install libunwind-dev[el] >= 1.1 and/or set LIBUNWIND_DIR)
-+    $(warning No libunwind found. Please install libunwind-dev[el] >= 1.1 and/or set LIBUNWIND_DIR and set LIBUNWIND=1 in the make command line as it is opt-in now)
-     NO_LOCAL_LIBUNWIND := 1
-   else
-     have_libunwind := 1
--- 
-2.48.1
+         if (mem_cgroup_unprotected(target, memcg))
+                 return false;
+
+-       return READ_ONCE(memcg->memory.elow) >=
+-               page_counter_read(&memcg->memory);
++       elow = READ_ONCE(memcg->memory.elow);
++       return elow && (page_counter_read(&memcg->memory) <= elow);
+  }
+
+  static inline bool mem_cgroup_below_min(struct mem_cgroup *target,
+                                         struct mem_cgroup *memcg)
+  {
++       unsigned long emin;
++
+         if (mem_cgroup_unprotected(target, memcg))
+                 return false;
+
+-       return READ_ONCE(memcg->memory.emin) >=
+-               page_counter_read(&memcg->memory);
++       emin = READ_ONCE(memcg->memory.emin);
++       return emin && (page_counter_read(&memcg->memory) <= emin);
+  }
+
+  void mem_cgroup_commit_charge(struct folio *folio, struct mem_cgroup 
+*memcg);
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 77d015d5db0c..e8c1838c7962 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -4827,7 +4827,8 @@ static int shrink_one(struct lruvec *lruvec, 
+struct scan_>
+                 if (READ_ONCE(lruvec->lrugen.seg) != MEMCG_LRU_TAIL)
+                         return MEMCG_LRU_TAIL;
+
+-               memcg_memory_event(memcg, MEMCG_LOW);
++               if (memcg->memory.low)
++                       memcg_memory_event(memcg, MEMCG_LOW);
+         }
+
+         success = try_to_shrink_lruvec(lruvec, sc);
+@@ -5902,6 +5903,9 @@ static void shrink_node_memcgs(pg_data_t *pgdat, 
+struct s>
+
+                 mem_cgroup_calculate_protection(target_memcg, memcg);
+
++               if (!mem_cgroup_usage(memcg, false))
++                       continue;
++
+                 if (mem_cgroup_below_min(target_memcg, memcg)) {
+                         /*
+                          * Hard protection.
+@@ -5919,7 +5923,8 @@ static void shrink_node_memcgs(pg_data_t *pgdat, 
+struct s>
+                                 sc->memcg_low_skipped = 1;
+                                 continue;
+                         }
+-                       memcg_memory_event(memcg, MEMCG_LOW);
++                       if (memcg->memory.low)
++                               memcg_memory_event(memcg, MEMCG_LOW);
+                 }
+
+                 reclaimed = sc->nr_reclaimed;
+
+Cheers,
+Longman
 
 
