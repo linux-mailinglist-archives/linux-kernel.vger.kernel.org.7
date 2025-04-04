@@ -1,148 +1,163 @@
-Return-Path: <linux-kernel+bounces-589181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F11D0A7C2D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:50:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21BE1A7C2BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:46:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0B953BB795
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:48:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 728E77A5AEB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC26B21C9E3;
-	Fri,  4 Apr 2025 17:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6D921C16A;
+	Fri,  4 Apr 2025 17:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SNb5Ao3m"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gedPMeAg"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307D821C168;
-	Fri,  4 Apr 2025 17:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942E718FC92
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 17:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743788825; cv=none; b=kDqzMOMDx6X2+v7NCeiEc+okgTRCygINoYZx+qklSqof4cQRZjv+MBaAwod0s6i3Q0UP5b6+6fTeQRnWO2y/adupdjPbpvBrmBmWY8LLf4+Y09yO3o2HKFjRwzAaQLk3pL9WJmiWsFkm6c5kUZ/Vf3hXwM+TV5/p2JuOr5cO6n4=
+	t=1743788798; cv=none; b=CEiM7K/uqwDuEMY/C8dr7wr5jIToiXgf9641WxmYhiRt2hdQ7TYFHXAeHmyipbfuof8k9fkKvPZbRDJalwHWkrmMidUMyLJcvyhRNaihndv9MLraXDXU+H/mllqRmRIp7s0SEhWK3WeIPPrRnF44KfodofZCDyiz8VY5/wlZkTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743788825; c=relaxed/simple;
-	bh=DqN5pxAfN0evYrsHyPi6fbUjjlY9CZ+NWI+PLEjkqtw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b0FEG/1Tv/7JUorm31nl9CFpQP05dRlF1jYptlK1Ap0TBdVmIlK5Gzov+7b88CCOQzlXexOq5AVxx+kE/FbUGxUcxMQCvDL4nDLm1opJgkjpBiIhA6cNlhcHM5Q85swZkcQflqMD8PNOPCPN0H0m7fE+AwfnmEkw/pltDmKrkRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SNb5Ao3m; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743788822; x=1775324822;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DqN5pxAfN0evYrsHyPi6fbUjjlY9CZ+NWI+PLEjkqtw=;
-  b=SNb5Ao3m/5Cv1HrCZkTvycl6vigejnOFqzly0SsqP+4WcCTmJnoPI1k+
-   ZUDgSJmcV/193ikllRQ/6z06Kb7u4YnEAGN7wE7vORW1Ie/Gmb3Cow1rX
-   Wk3/YQ+K3mB/4POOYRO6hEY1JidIbK0AaQL2qw3d6nDhKNCZKVWNDzRw0
-   XnexKJWmClLJz7eDSRZydtpXxxckNNab420zaPUQZm9+/34SoNpr42j32
-   GqE58URaNsxX42Y4jd+X3sMLRxHhT6+0GSlzfO8Dhi78iLVghYnW9hRDb
-   Vud+qQ7nIb7vNVzZua6su6qedf8xhg0CpJvUlwnyM24UtSdD9vRJWw8PB
-   g==;
-X-CSE-ConnectionGUID: cAuL8keoT8+BSJQpNkngNw==
-X-CSE-MsgGUID: wvZIh/roT6W2Xr6zygHLOA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11394"; a="49094800"
-X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="49094800"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 10:46:50 -0700
-X-CSE-ConnectionGUID: mYSbDg/qT2irREuKI9oL2w==
-X-CSE-MsgGUID: H+Qol/ZkRHOhB/+PniIPHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="132088790"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 04 Apr 2025 10:46:47 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u0l7s-0001Qp-2u;
-	Fri, 04 Apr 2025 17:46:44 +0000
-Date: Sat, 5 Apr 2025 01:46:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wentao Liang <vulab@iscas.ac.cn>, sgoutham@marvell.com,
-	gakula@marvell.com, sbhatta@marvell.com, hkelam@marvell.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>
-Subject: Re: [PATCH] octeontx2-pf:  Add error handling for
- cn10k_map_unmap_rq_policer().
-Message-ID: <202504050116.6a4iOEA7-lkp@intel.com>
-References: <20250403151303.2280-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1743788798; c=relaxed/simple;
+	bh=HnIKeuPS9ScxVqrmLvwEy/zskUnDiOArxioE4fgpNKo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RoLKiUFP7Tf1dIMX5GoHkn6FVqUPYyRHTxDSSVG/tFPe1nnvp/6LJYZ9Vh71Znzj0Os20f/zG0YhsytP2YJ47kDuWhf+1SUanA85AIAbh0TxTxDpbW/1Vz1HCI8dJfVcJPH0imX5zr9gSeI9MpXy8+bEQOR6PyFwtSkOj5RB9dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gedPMeAg; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38f2f391864so1302365f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 10:46:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1743788793; x=1744393593; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X9P/EfEIlZAESjSXhp9OseFFolhRdBBkLN0jHHdJSb0=;
+        b=gedPMeAgzPCWkbh4Jdtfzo6StXD3PwDypEuMjE22jHifxtoSWJbDAQvNFAziZG15kp
+         LJziDhJoG520ChaWY9+8YTHSx9CgupivOEordaXH+CvZc1e4li5nKL/wWLMDTPh9YUm8
+         Orley/VH/pp599KHv7WNt4qLJYoGy9ZOwNcQtypzKrBHl1enxPJazJCmzmNRK9uCspG8
+         Eb7SIpQQ9qugIBqoz24SRqLjxUn2JeJufUtEuhrroHlRz7cgirutrddRslYotb2TWoli
+         8M3aXf9ERSHCEHF6sMGUTqS889Prab4dxEIjG/wgZ7CAMFA5wAULOcCPIbZHV342RQbP
+         3BMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743788793; x=1744393593;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X9P/EfEIlZAESjSXhp9OseFFolhRdBBkLN0jHHdJSb0=;
+        b=AI3X2cV8f4xNiSRAuqJQVnmRBlnhBGgWVSNWMTwEdSaH6e8vKljqQ/JQTc9STx/xTm
+         D2/6HkwYutRSFxGDD6V8lMzInXQbyMMPxX71scRO+qD9qe4EUQgHmFbH+7cqJ1lXs8IP
+         Hyo2mkM6+RA+SvSTWi9Z4hupXMZx5ZYnvWl+EOXMHq3VW+dyJqSba7JxAyK6FnmnXn7s
+         J4PxvcLVpkfO+WGzf/+kCqw3x7vOb74GPiEvxqFNdvb00dTledTmhHry6MlRzHcEKBNd
+         yTY3AJj6epofJNUiYReE5Kd3RwJ7SPz4PewSVtiKNgva8i40W/WRvCY93sBmqCaPpzvv
+         dH4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXuNVok8T9NCU7YTqA2Mnbj9MxoZYteJO5z9YWfShc8VKrXyeQuT6ssphJ1MyLh/GgkNWNXLd0T4M/MKJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc9HzKvH3n6tpKA8b08cwbCdaDZhVScukv0lOMmDwMDfjAD10l
+	fE0o9+6L2PTihEqCTaFsqOz2tPxEAUnTKXv02cwQQWUOAELXTGkJ9YidNM85oxg=
+X-Gm-Gg: ASbGncuNt87/0wPiUmE8egBhH/Mvt4lapGoRWzQZ64fOn1HxyU5PF98FvUc/Z+bX49s
+	ffVof4zaY9HS7Z0hfuc97DgxjHEorHWEja2d6SQDD5vEyU3dsBC1yGxA5PEf9MGEyn3lxeynciG
+	v3HTkmhiKqJ8dFG0bIXXPS3z8C+bFLWyGgP2GoWLs7nARuwkieFr0PuuO57QcH7AW5muXr9tV/f
+	6ZtyY/1ge/UFuwE+lXyl84vBWu7N8YiQqy0cnAcSrwROTUFtluDk1qF3dRVIY8qALe/9L0r6Utc
+	KWuyhUQFVgzWjV4lJj3nDLycr7XFNC/JVPgcOH0eai/MCnzk9+HQ/1TIVQ==
+X-Google-Smtp-Source: AGHT+IGswdimuWy71mElHnsix4QxjHQgPPPL6pnV5SEEI7VP4vSW+eIfVbl+qVp3zMV1Qro4ys96Qg==
+X-Received: by 2002:a05:6000:4304:b0:39c:12ce:1052 with SMTP id ffacd0b85a97d-39d07bcd00dmr3359518f8f.7.1743788792654;
+        Fri, 04 Apr 2025 10:46:32 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:331:144d:74c3:a7a4])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-39c30226dfesm4939535f8f.97.2025.04.04.10.46.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Apr 2025 10:46:32 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH v2 0/3] PCI: endpoint: space allocation fixups
+Date: Fri, 04 Apr 2025 19:46:19 +0200
+Message-Id: <20250404-pci-ep-size-alignment-v2-0-c3a0db4cfc57@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250403151303.2280-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOsa8GcC/4WNQQqDMBBFryKz7pSYEhq76j3ERaJTHdAkJBJqx
+ bs39QJdvgf//R0SRaYEj2qHSJkTe1dAXiroJ+NGQh4KgxRSiZvUGHpGCpj4Q2hmHt1CbsVm0Mp
+ KbbVQAso2RHrx++y2XeGJ0+rjdt7k+mf/FXONAomUvWtbK9OYpzXbzDbStfcLdMdxfAEsqBEIv
+ QAAAA==
+X-Change-ID: 20250328-pci-ep-size-alignment-9d85b28b8050
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Jon Mason <jdmason@kudzu.us>, 
+ Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>, 
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+ Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>, linux-pci@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, ntb@lists.linux.dev, 
+ Jerome Brunet <jbrunet@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1811; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=HnIKeuPS9ScxVqrmLvwEy/zskUnDiOArxioE4fgpNKo=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBn8Br0GcS36RFMmRwE/Qtn26ZHmwW0s83GBeg7y
+ 773n9yVaTGJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ/Aa9AAKCRDm/A8cN/La
+ hfvAEACA0VtF3NMnYIFrqEUkjvSb46Wkq2f7q2zeUzwCnDEAkjmm5h6qGhYVIehmnD1/clPJrU3
+ 5ijoeFmk2YGiozkRlrVfP9CIHbnbt2J0XDnpImDVPRsXmM0+lE8BLGYx4F/zR3ClRfMykKjThy5
+ MpwKJP1Pql+X4z1okaSp5kxHPiWz0EYdSEwaG7hXvlY1fUeUD2H0WmR7E8q/zHygnBVBAV2VnUs
+ c/NL+8wGvxfMmYI9CbK+Y8sTBvoZP73yt7ZyygSAS+Xef6pm4kEXCd5rh36aZKcKauJoK9uRNe/
+ blZiSOqCYREwN9a8w4lImfVuvMwZWeW3bYeABAjrLHjgJPRykGlEAoh3MxNW33SrITwPbjd5BiY
+ 6r8ieK3B5GnXTCWljHKymVLFYis89YjSOYf7HIvLO3L0HQIiXbMgh8tpHh7EIDavIvuCb/lQ4nf
+ AmGKNIeNmvkk67kIXxodz5CVYBoMIi+SXuZfHbnHvltLoxFVybDM6y940lUzp/tegXVQpm21uBn
+ +T4Nl1XsOW8+84QljYj6HUatBhxoZ11FX9pninfWRWDKmDU3XMr1OxWUH3d85boNMcipoKtb8fA
+ qMe+9GF5j5FLgjbr0jwZleVpuQkpNRoQs46Bdu4MloDosRGiWIFfXe82VzfcgvGkInT88Zsbb3X
+ crvrJtyRCZ0TwyA==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Hi Wentao,
+This patchset fixes problems while trying to allocate space for PCI
+endpoint function.
 
-kernel test robot noticed the following build warnings:
+The problems, and related fixups, have been found while trying to link two
+renesas rcar-gen4 r8a779f0-spider devices with the vNTB endpoint
+function. This platform has 2 configurable BAR0 and BAR2, with an alignment
+of 1MB, and fairly small fixed BAR4 of 256B.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.14 next-20250404]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This was tested with
+ * BAR0 (1MB):  CTRL+SPAD
+ * BAR2 (1MB):  MW0
+ * BAR4 (256B): Doorbell
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Wentao-Liang/octeontx2-pf-Add-error-handling-for-cn10k_map_unmap_rq_policer/20250403-231435
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250403151303.2280-1-vulab%40iscas.ac.cn
-patch subject: [PATCH] octeontx2-pf:  Add error handling for cn10k_map_unmap_rq_policer().
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20250405/202504050116.6a4iOEA7-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250405/202504050116.6a4iOEA7-lkp@intel.com/reproduce)
+This setup is currently not supported by the vNTB EP driver and requires a
+small hack. I'm working on that too.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504050116.6a4iOEA7-lkp@intel.com/
+Changes in v2:
+- Allocate space that match the iATU alignment requirement, as previously
+  done.
+- Chose not to add a new member in struct pci_epf_bar, as initially
+  discussed. After reworking the code, that did not seem necessary.
+- Make sure SPAD registers are 4 bytes aligned in the vNTB endpoint function
+- Link to v1: https://lore.kernel.org/r/20250328-pci-ep-size-alignment-v1-0-ee5b78b15a9a@baylibre.com
 
-All warnings (new ones prefixed by >>):
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+Jerome Brunet (3):
+      PCI: endpoint: add epc_feature argument for pci_epf_free_space()
+      PCI: endpoint: improve fixed_size bar handling when allocating space
+      PCI: endpoint: pci-epf-vntb: simplify ctrl/spad space allocation
 
->> drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c:362:3: warning: misleading indentation; statement is not part of the previous 'for' [-Wmisleading-indentation]
-     362 |                 if (rc)
-         |                 ^
-   drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c:360:2: note: previous statement is here
-     360 |         for (qidx = 0; qidx < hw->rx_queues; qidx++)
-         |         ^
-   1 warning generated.
+ drivers/pci/endpoint/functions/pci-epf-ntb.c  |  3 +-
+ drivers/pci/endpoint/functions/pci-epf-test.c |  2 ++
+ drivers/pci/endpoint/functions/pci-epf-vntb.c | 42 ++++++++++-----------------
+ drivers/pci/endpoint/pci-epf-core.c           | 27 ++++++++++++-----
+ include/linux/pci-epf.h                       |  1 +
+ 5 files changed, 40 insertions(+), 35 deletions(-)
+---
+base-commit: dea140198b846f7432d78566b7b0b83979c72c2b
+change-id: 20250328-pci-ep-size-alignment-9d85b28b8050
 
-
-vim +/for +362 drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c
-
-   351	
-   352	int cn10k_free_matchall_ipolicer(struct otx2_nic *pfvf)
-   353	{
-   354		struct otx2_hw *hw = &pfvf->hw;
-   355		int qidx, rc;
-   356	
-   357		mutex_lock(&pfvf->mbox.lock);
-   358	
-   359		/* Remove RQ's policer mapping */
-   360		for (qidx = 0; qidx < hw->rx_queues; qidx++)
-   361			rc = cn10k_map_unmap_rq_policer(pfvf, qidx, hw->matchall_ipolicer, false);
- > 362			if (rc)
-   363				goto out;
-   364	
-   365		rc = cn10k_free_leaf_profile(pfvf, hw->matchall_ipolicer);
-   366	
-   367	out:
-   368		mutex_unlock(&pfvf->mbox.lock);
-   369		return rc;
-   370	}
-   371	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jerome
+
 
