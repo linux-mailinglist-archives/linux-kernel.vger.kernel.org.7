@@ -1,154 +1,168 @@
-Return-Path: <linux-kernel+bounces-589124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31FE0A7C213
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:05:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76998A7C20D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEB0D17B9C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:05:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B06733B4C27
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F40215075;
-	Fri,  4 Apr 2025 17:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TdiSxZA/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D536F21147A;
+	Fri,  4 Apr 2025 17:04:35 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF5320D4E4
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 17:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424F9155A4D;
+	Fri,  4 Apr 2025 17:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743786290; cv=none; b=Zm9PJvm9UaG3YWDEPNOn1eu8I/RvaUl85sFnwf5jU/g1sQHubfx4XZEuilORPobcOJxHFD8lJxQQYAk8zqCqoBmF8vj38XN8LUGthIK0ErZnh82S05KH1+Gt4VgmC1jVLV1dyNIaQn97ilSeh2JDMDW/aahPa/VLHrR81DOP9mY=
+	t=1743786275; cv=none; b=WPlpQWc8F04B01FPJO16ibxoAzzF/tZQ4YZaC0+6L6HZtwjsP2eLyLBEmYTrB3S9J+cZAJDqCIU1yJrG0e3sP6KHG5eQDLgIW4gNZzL/qOdYH8IIeXpsoZwqaVOxHhZROIbdNBZ6TyYFHcyy34iEpEEeHpIH/xaUjFP3QRjGRaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743786290; c=relaxed/simple;
-	bh=Vz6/3lSvbp8sxTTg+vPwHJqhlJw2sSLK8z7UCA7Htqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rCHVYxkIAGAyje+LLdzmmFfDPR9yMqNpF0wN6TnKRAnE8o6As24tKWiCAhPqskPDWf+IVf5YUyPwYqsTkLnW+jZdDqtMl8SLpg8MIw8mTtyZmAHwwcozHJIB/6uezYILek3jbROHZuAXh1awZTEojXWLgUjEKWICsiC07BxyZWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TdiSxZA/; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743786289; x=1775322289;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Vz6/3lSvbp8sxTTg+vPwHJqhlJw2sSLK8z7UCA7Htqs=;
-  b=TdiSxZA/D4d1xdsAMmfWwD1BMKfhv+ac245xAz6lhLpT45b2wkUG1qL7
-   1OEke6qDgGb34wNMYoKu5ZEQjWflK63XzYpfdgfEMb5tQLp/A3qC9FTcq
-   XUS6WlQ25ViTETkZmvCT+0p+SMsj93l+5mMEeTSlpWMC2eFG+qn3IlHaU
-   kriocvCdTV8Dr3l4xBAiIue5VRRTG5htIu/Y1a4wKm03NnaGaqCuikeXd
-   ghUEUAj/tk3bRtp51Ob6qlylJ4aQsYx1CQK/HQrfwyVi99UyA64/86MJN
-   8wv8gNtkEXTgjj9EaMRN2scP5GJQHIpM4E8PdePRXnGhTXiFYQ7BOsBz9
-   Q==;
-X-CSE-ConnectionGUID: qi8fe3FlTv25MHn7IL28pA==
-X-CSE-MsgGUID: 1wQTuyf7RpmriLPi7bfmJQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11394"; a="49027884"
-X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="49027884"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 10:04:46 -0700
-X-CSE-ConnectionGUID: ODEgiN94RuedLBvJYcrMKw==
-X-CSE-MsgGUID: 4jvxsrPjR9yzT+CNn+bf4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="132564001"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 04 Apr 2025 10:04:43 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u0kTB-0001PT-1Z;
-	Fri, 04 Apr 2025 17:04:41 +0000
-Date: Sat, 5 Apr 2025 01:04:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: [tip:timers/cleanups 2/10]
- drivers/pps/generators/pps_gen_tio.c:230:9: error: implicit declaration of
- function 'hrtimer_init'; did you mean 'hrtimers_init'?
-Message-ID: <202504050126.K62Di5RY-lkp@intel.com>
+	s=arc-20240116; t=1743786275; c=relaxed/simple;
+	bh=S+F5mAwfTpIVQu7lxOV72ou/n1b8WaVKlkaR3zTALV0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PDn3D12u18EuYiPfPu9aWF/PP/cM3h5x3y8CgFOgXyhzXpgWzXblXuHHX5KkDcVfX5u6+xWu1784IDILIYGo+aY9RD4P7Xwdp8ekRWp3bJ1YCMVek0HANuatZEEPVsvVIcUvFTtXWFGxHb64srIQIutYCarngybb4t3Lc/Husj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZTlH43krVz6K9HT;
+	Sat,  5 Apr 2025 01:00:48 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9095E1402C7;
+	Sat,  5 Apr 2025 01:04:29 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 4 Apr
+ 2025 19:04:28 +0200
+Date: Fri, 4 Apr 2025 18:04:27 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <nifan.cxl@gmail.com>, <dave@stgolabs.net>,
+	<dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
+	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <ira.weiny@intel.com>,
+	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
+	<nathan.fontenot@amd.com>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<lukas@wunner.de>, <ming.li@zohomail.com>,
+	<PradeepVineshReddy.Kodamati@amd.com>
+Subject: Re: [PATCH v8 16/16] CXL/PCI: Disable CXL protocol errors during
+ CXL Port cleanup
+Message-ID: <20250404180427.00007602@huawei.com>
+In-Reply-To: <20250327014717.2988633-17-terry.bowman@amd.com>
+References: <20250327014717.2988633-1-terry.bowman@amd.com>
+	<20250327014717.2988633-17-terry.bowman@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/cleanups
-head:   5c4da3a96bf484f965057c281f1ef48ac46987bc
-commit: 58b3f2cce01bb48b6f6e0c1cdca5e5a2fc0c56ad [2/10] hrtimers: Delete hrtimer_init()
-config: i386-buildonly-randconfig-002-20250404 (https://download.01.org/0day-ci/archive/20250405/202504050126.K62Di5RY-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250405/202504050126.K62Di5RY-lkp@intel.com/reproduce)
+On Wed, 26 Mar 2025 20:47:17 -0500
+Terry Bowman <terry.bowman@amd.com> wrote:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504050126.K62Di5RY-lkp@intel.com/
+> During CXL device cleanup the CXL PCIe Port device interrupts may remain
+> enabled. This can potentialy allow unnecessary interrupt processing on
+> behalf of the CXL errors while the device is destroyed.
+> 
+> Disable CXL protocol errors by setting the CXL devices' AER mask register.
+> 
+> Introduce pci_aer_mask_internal_errors() similar to pci_aer_unmask_internal_errors().
+> 
+> Next, introduce cxl_disable_prot_errors() to call pci_aer_mask_internal_errors().
+> Register cxl_disable_prot_errors() to run at CXL device cleanup.
+> Register for CXL Root Ports, CXL Downstream Ports, CXL Upstream Ports, and
+> CXL Endpoints.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
 
-All errors (new ones prefixed by >>):
+A few small comments in here.  I haven't looked through all the rest of the series
+as out of time today but this one caught my eye.
+>  
+> @@ -223,7 +238,7 @@ static void cxl_endpoint_port_init_ras(struct cxl_port *port)
+>  	struct device *cxlmd_dev __free(put_device) = &cxlmd->dev;
+>  	struct cxl_dev_state *cxlds = cxlmd->cxlds;
+>  
+> -	if (!dport || !dev_is_pci(dport->dport_dev)) {
+> +	if (!dport || !dev_is_pci(dport->dport_dev) || !dev_is_pci(cxlds->dev)) {
+>  		dev_err(&port->dev, "CXL port topology not found\n");
+>  		return;
+>  	}
+> @@ -232,6 +247,7 @@ static void cxl_endpoint_port_init_ras(struct cxl_port *port)
+>  
+>  	cxl_assign_error_handlers(cxlmd_dev, &cxl_ep_error_handlers);
+>  	cxl_enable_prot_errors(cxlds->dev);
+> +	devm_add_action_or_reset(cxlds->dev, cxl_disable_prot_errors, cxlds->dev);
 
-   drivers/pps/generators/pps_gen_tio.c: In function 'pps_gen_tio_probe':
->> drivers/pps/generators/pps_gen_tio.c:230:9: error: implicit declaration of function 'hrtimer_init'; did you mean 'hrtimers_init'? [-Werror=implicit-function-declaration]
-     230 |         hrtimer_init(&tio->timer, CLOCK_REALTIME, HRTIMER_MODE_ABS);
-         |         ^~~~~~~~~~~~
-         |         hrtimers_init
-   cc1: some warnings being treated as errors
+This can fail (at least in theory).  Should at least scream that oddly we've
+disabled error handling interrupts if it is hard to return anything cleanly.
 
+Same for all the other cases.
+>  }
+>  
+>  #else
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index d3068f5cc767..d1ef0c676ff8 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -977,6 +977,31 @@ void pci_aer_unmask_internal_errors(struct pci_dev *dev)
+>  }
+>  EXPORT_SYMBOL_NS_GPL(pci_aer_unmask_internal_errors, "CXL");
+>  
+> +/**
+> + * pci_aer_mask_internal_errors - mask internal errors
+> + * @dev: pointer to the pcie_dev data structure
+> + *
+> + * Masks internal errors in the Uncorrectable and Correctable Error
+> + * Mask registers.
+> + *
+> + * Note: AER must be enabled and supported by the device which must be
+> + * checked in advance, e.g. with pcie_aer_is_native().
+> + */
+> +void pci_aer_mask_internal_errors(struct pci_dev *dev)
+> +{
+> +	int aer = dev->aer_cap;
+> +	u32 mask;
+> +
+> +	pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_MASK, &mask);
+> +	mask |= PCI_ERR_UNC_INTN;
+> +	pci_write_config_dword(dev, aer + PCI_ERR_UNCOR_MASK, mask);
+> +
+It does an extra clear we don't need, but....
+	pci_clear_and_set_config_dword(dev, aer + PCI_ERR_UNCOR_MASK,
+				       0, PCI_ERR_UNC_INTN);
 
-vim +230 drivers/pps/generators/pps_gen_tio.c
+	is at very least shorter than the above 3 lines.
 
-c89755d1111fa17 Subramanian Mohan 2025-02-19  199  
-c89755d1111fa17 Subramanian Mohan 2025-02-19  200  static int pps_gen_tio_probe(struct platform_device *pdev)
-c89755d1111fa17 Subramanian Mohan 2025-02-19  201  {
-c89755d1111fa17 Subramanian Mohan 2025-02-19  202  	struct device *dev = &pdev->dev;
-c89755d1111fa17 Subramanian Mohan 2025-02-19  203  	struct pps_tio *tio;
-c89755d1111fa17 Subramanian Mohan 2025-02-19  204  
-c89755d1111fa17 Subramanian Mohan 2025-02-19  205  	if (!(cpu_feature_enabled(X86_FEATURE_TSC_KNOWN_FREQ) &&
-c89755d1111fa17 Subramanian Mohan 2025-02-19  206  	      cpu_feature_enabled(X86_FEATURE_ART))) {
-c89755d1111fa17 Subramanian Mohan 2025-02-19  207  		dev_warn(dev, "TSC/ART is not enabled");
-c89755d1111fa17 Subramanian Mohan 2025-02-19  208  		return -ENODEV;
-c89755d1111fa17 Subramanian Mohan 2025-02-19  209  	}
-c89755d1111fa17 Subramanian Mohan 2025-02-19  210  
-c89755d1111fa17 Subramanian Mohan 2025-02-19  211  	tio = devm_kzalloc(dev, sizeof(*tio), GFP_KERNEL);
-c89755d1111fa17 Subramanian Mohan 2025-02-19  212  	if (!tio)
-c89755d1111fa17 Subramanian Mohan 2025-02-19  213  		return -ENOMEM;
-c89755d1111fa17 Subramanian Mohan 2025-02-19  214  
-c89755d1111fa17 Subramanian Mohan 2025-02-19  215  	tio->gen_info.use_system_clock = true;
-c89755d1111fa17 Subramanian Mohan 2025-02-19  216  	tio->gen_info.enable = pps_tio_gen_enable;
-c89755d1111fa17 Subramanian Mohan 2025-02-19  217  	tio->gen_info.get_time = pps_tio_get_time;
-c89755d1111fa17 Subramanian Mohan 2025-02-19  218  	tio->gen_info.owner = THIS_MODULE;
-c89755d1111fa17 Subramanian Mohan 2025-02-19  219  
-c89755d1111fa17 Subramanian Mohan 2025-02-19  220  	tio->pps_gen = pps_gen_register_source(&tio->gen_info);
-c89755d1111fa17 Subramanian Mohan 2025-02-19  221  	if (IS_ERR(tio->pps_gen))
-c89755d1111fa17 Subramanian Mohan 2025-02-19  222  		return PTR_ERR(tio->pps_gen);
-c89755d1111fa17 Subramanian Mohan 2025-02-19  223  
-c89755d1111fa17 Subramanian Mohan 2025-02-19  224  	tio->dev = dev;
-c89755d1111fa17 Subramanian Mohan 2025-02-19  225  	tio->base = devm_platform_ioremap_resource(pdev, 0);
-c89755d1111fa17 Subramanian Mohan 2025-02-19  226  	if (IS_ERR(tio->base))
-c89755d1111fa17 Subramanian Mohan 2025-02-19  227  		return PTR_ERR(tio->base);
-c89755d1111fa17 Subramanian Mohan 2025-02-19  228  
-c89755d1111fa17 Subramanian Mohan 2025-02-19  229  	pps_tio_disable(tio);
-c89755d1111fa17 Subramanian Mohan 2025-02-19 @230  	hrtimer_init(&tio->timer, CLOCK_REALTIME, HRTIMER_MODE_ABS);
-c89755d1111fa17 Subramanian Mohan 2025-02-19  231  	tio->timer.function = hrtimer_callback;
-c89755d1111fa17 Subramanian Mohan 2025-02-19  232  	spin_lock_init(&tio->lock);
-c89755d1111fa17 Subramanian Mohan 2025-02-19  233  	platform_set_drvdata(pdev, &tio);
-c89755d1111fa17 Subramanian Mohan 2025-02-19  234  
-c89755d1111fa17 Subramanian Mohan 2025-02-19  235  	return 0;
-c89755d1111fa17 Subramanian Mohan 2025-02-19  236  }
-c89755d1111fa17 Subramanian Mohan 2025-02-19  237  
+> +	pci_read_config_dword(dev, aer + PCI_ERR_COR_MASK, &mask);
+> +	mask |= PCI_ERR_COR_INTERNAL;
+> +	pci_write_config_dword(dev, aer + PCI_ERR_COR_MASK, mask);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(pci_aer_mask_internal_errors, "CXL");
+> +
+>  static bool is_cxl_mem_dev(struct pci_dev *dev)
+>  {
+>  	/*
+> diff --git a/include/linux/aer.h b/include/linux/aer.h
+> index a65fe324fad2..f0c84db466e5 100644
+> --- a/include/linux/aer.h
+> +++ b/include/linux/aer.h
+> @@ -101,5 +101,6 @@ int cper_severity_to_aer(int cper_severity);
+>  void aer_recover_queue(int domain, unsigned int bus, unsigned int devfn,
+>  		       int severity, struct aer_capability_regs *aer_regs);
+>  void pci_aer_unmask_internal_errors(struct pci_dev *dev);
+> +void pci_aer_mask_internal_errors(struct pci_dev *dev);
+>  #endif //_AER_H_
+>  
 
-:::::: The code at line 230 was first introduced by commit
-:::::: c89755d1111fa17ecfb69b50c336778a2d37dae4 pps: generators: Add PPS Generator TIO Driver
-
-:::::: TO: Subramanian Mohan <subramanian.mohan@intel.com>
-:::::: CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
