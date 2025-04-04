@@ -1,88 +1,60 @@
-Return-Path: <linux-kernel+bounces-589286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B39CA7C46C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 22:02:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D40A7C469
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 22:01:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E1A33BA636
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:59:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AE0E3B1BF4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD122206A7;
-	Fri,  4 Apr 2025 19:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DB722F167;
+	Fri,  4 Apr 2025 19:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IS0MMpuL"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aXGaQw9e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC74B220687;
-	Fri,  4 Apr 2025 19:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDCC22DFAF;
+	Fri,  4 Apr 2025 19:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743795612; cv=none; b=MQ3iOstVofRTaUZLoM3Ij3U4h99u1l82dv+KGI2KDA+egg7qqVa2B05iT/8hD4GuLhkrLpPM9dD67qaddUyS4Dv2OrpnUppNtWGHaqWzhM+yUhUccWJdUg4Gk4xewdNpbFvH5+N8UKiPnI4t5dXiouwYDpzWv/qhySROkws0i/Y=
+	t=1743795648; cv=none; b=Vcw5KuzjRIpqRIA9qYwSxPWcoznJlrGmqNGo8FenMcs8wYyfg5SEH/TMW1oJvASDGjKEqhH2s3q44dz0UqfvIGeXBXaHKHV3WUB13uQOWmnFS0AATtl+ma5R8cLbr3mHqOomMS4rEYpxq4OzAAfNOPEhbwU3GggUaoUHvOUOdCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743795612; c=relaxed/simple;
-	bh=K4+2653B+P3t09TRW4oWkeep7WQa3JA/0qhTEvnp/Kc=;
+	s=arc-20240116; t=1743795648; c=relaxed/simple;
+	bh=X60ncpChgW8F3t+APBZl1n9z8FKQTuNx+IytCXpYTTg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mXmnyTKpi+9FU6DA20YNqMzpOFMxBhL2d1cRgIqTPNaG+OQ9oOosAxWyIZEP7bi+bC8b4ubcfiAqQvA5CVQstIVqgC5SBEy97UZDsoWay9JcViD6cnFwnoIiAwsPI/DQGKSK3UV/T43pxXStdZvGaPhSoyC6n36Bi1w3DJpd5G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IS0MMpuL; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6FABA4316C;
-	Fri,  4 Apr 2025 19:39:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1743795600;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Iwl7UY6fxvS7ChMd2ABQVnw01XXrMbl4YZYI1uC6zG4=;
-	b=IS0MMpuLmnRjctOh14jil2pndAXYyuWW7AYD1g/MC83EJSJrGFZ3U0P2RcG5SClgCRvrIu
-	Qs/QM3OQxmhoSM/mvKgYdbluOgc4LxijlG0UmZ34qC9yKXkYsiu8ceMrrcFKarBZfXxLXU
-	5vlQ9wYF4XCUQH/1dD67RpDp5StT6WiwaPmjuxBxJxNJp35ZQks/xkDGWF3yW14GhKuWeR
-	Ght0w1KW/j928cQ5SPrQtbbUzn33S2v56cPOugqbhlA4l6dhgGT7biPtd/B9DSi7XCe5sM
-	Zm8jL9QHYZ+LQfa0maBaKrGEmFBgooRoJ8AAGKPqbEKnxWnIexvKn60ntQ1yeA==
-Date: Fri, 4 Apr 2025 21:39:53 +0200
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-To: Lyude Paul <lyude@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
-	Danilo Krummrich <dakr@kernel.org>, mcanal@igalia.com,
-	Alice Ryhl <aliceryhl@google.com>,
-	Maxime Ripard <mripard@kernel.org>, Simona Vetter <sima@ffwll.ch>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Asahi Lina <lina@asahilina.net>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC v3 02/33] rust: drm: Add traits for registering KMS devices
-Message-ID: <Z_A1gSIoMgpWXGor@2a02-8440-d108-69bb-05bc-5b53-7bd4-5db0.rev.sfr.net>
-Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
-	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
-	Danilo Krummrich <dakr@kernel.org>, mcanal@igalia.com,
-	Alice Ryhl <aliceryhl@google.com>,
-	Maxime Ripard <mripard@kernel.org>, Simona Vetter <sima@ffwll.ch>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Asahi Lina <lina@asahilina.net>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20250305230406.567126-1-lyude@redhat.com>
- <20250305230406.567126-3-lyude@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u964A6hcYFXmfL5vHrv5ZjIr2DbaRVF2+/8MpNZy6FVCRinJvyxSG9o3XUh0PL8zyAtvxRPsRJwxHn4ltn3ZL6gPySgpyzgnmkmB333u6Ol5V/o5VXLvzIgE61FZqcVndrQA/sN3QXEkI2rwvQshD7FzkeDeQkSEA0ysDvFmGc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aXGaQw9e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDA12C4CEDD;
+	Fri,  4 Apr 2025 19:40:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743795648;
+	bh=X60ncpChgW8F3t+APBZl1n9z8FKQTuNx+IytCXpYTTg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aXGaQw9eGa9ezTPA5PgsIXdzB7oQMT71L0vuBTzpaaFdX5XE8QNRrqsYDdxgGDXT+
+	 MJ+W9gUNQW0Dr2XYPE26I3Dqgij1Niueiqj/iUMSsk8mv2q3cpuMI3zIFi0Qm90VFc
+	 QTWYgql2GrWle78Vu09/5d42P633QX9NQozLs0jmjVY+ASJwyRFEumzha4GdeegUgi
+	 8iCSq9XSZnX4hXVf70v+juQwthGzv2fCxfJ5BTlVgtKkJYlBFvbCOGwwUDwYfntP9K
+	 RqP6Ka/YYYRh/z+KEjcx9Nde7qv4F32TqbwNm5tJxMrSO3OD0NffBEqXbVSMu4i9bx
+	 FMw9l2Fr/TiSw==
+Date: Fri, 4 Apr 2025 14:40:46 -0500
+From: Rob Herring <robh@kernel.org>
+To: Sukrut Bellary <sbellary@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Tero Kristo <kristo@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Andreas Kemnade <andreas@kemnade.info>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] dt-bindings: clock: ti: Convert fixed-factor-clock
+ to yaml
+Message-ID: <20250404194046.GA167370-robh@kernel.org>
+References: <20250404014500.2789830-1-sbellary@baylibre.com>
+ <20250404014500.2789830-4-sbellary@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,469 +63,180 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250305230406.567126-3-lyude@redhat.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduledvfeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeekkeevvefhteejtefhheeluddttdduuddvieegleegheekffffudefvdfftdetnecuffhomhgrihhnpegurhhmrdgurghtrgdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeekgeegtdemugdutdekmeeilegssgemhegstgemhegsheefmeejsggugeemhegusgdtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeekgeegtdemugdutdekmeeilegssgemhegstgemhegsheefmeejsggugeemhegusgdtpdhhvghlohepvdgrtddvqdekgeegtddqugdutdekqdeilegssgdqtdehsggtqdehsgehfedqjegsugegqdehuggstddrrhgvvhdrshhfrhdrnhgvthdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvuddprhgtphhtthhopehlhihuuggvsehrvgguhhgrthdrtghomhdprhgtphhtt
- hhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmtggrnhgrlhesihhgrghlihgrrdgtohhmpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhimhgrsehffhiflhhlrdgthh
-X-GND-Sasl: louis.chauvet@bootlin.com
+In-Reply-To: <20250404014500.2789830-4-sbellary@baylibre.com>
 
-On 05/03/25 - 17:59, Lyude Paul wrote:
-> This commit adds some traits for registering DRM devices with KMS support,
-> implemented through the kernel::drm::kms::KmsDriver trait. Devices which
-> don't have KMS support can simply use PhantomData<Self>.
+On Thu, Apr 03, 2025 at 06:44:59PM -0700, Sukrut Bellary wrote:
+> Convert TI fixed-factor-clock binding to yaml.
 > 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> This uses the ti,autoidle.yaml for clock autoidle support.
+> Clean up the example to meet the current standards.
 > 
+> Add the creator of the original binding as a maintainer.
+> 
+> Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
 > ---
+>  .../bindings/clock/ti/fixed-factor-clock.txt  | 42 ----------
+>  .../clock/ti/ti,fixed-factor-clock.yaml       | 77 +++++++++++++++++++
+>  2 files changed, 77 insertions(+), 42 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/ti/fixed-factor-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,fixed-factor-clock.yaml
 > 
-> V3:
-> * Get rid of Kms, long live KmsDriver
->   After Daniel pointed out that we should just make KmsDriver a supertrait
->   of Driver, it immediately occurred to me that there's no actual need for
->   Kms to be a separate trait at all. So, drop Kms entirely and move its
->   requirements over to KmsDriver.
-> * Drop fbdev module entirely and move fbdev related setup into AllocImpl
->   (Daniel)
-> * Rebase to use drm_client_setup()
-> 
-> TODO:
-> * Generate feature flags automatically, these shouldn't need to be
->   specified by the user
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  rust/bindings/bindings_helper.h |   6 ++
->  rust/kernel/drm/device.rs       |  10 +-
->  rust/kernel/drm/drv.rs          |  56 ++++++++--
->  rust/kernel/drm/gem/mod.rs      |   4 +
->  rust/kernel/drm/gem/shmem.rs    |   4 +
->  rust/kernel/drm/kms.rs          | 186 ++++++++++++++++++++++++++++++++
->  rust/kernel/drm/mod.rs          |   1 +
->  7 files changed, 258 insertions(+), 9 deletions(-)
->  create mode 100644 rust/kernel/drm/kms.rs
-> 
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-> index ca857fb00b1a5..e1ed4f40c8e89 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -6,10 +6,16 @@
->   * Sorted alphabetically.
->   */
->  
-> +#include <drm/drm_atomic.h>
-> +#include <drm/drm_atomic_helper.h>
-> +#include <drm/clients/drm_client_setup.h>
->  #include <drm/drm_device.h>
->  #include <drm/drm_drv.h>
->  #include <drm/drm_file.h>
-> +#include <drm/drm_fbdev_dma.h>
-> +#include <drm/drm_fbdev_shmem.h>
->  #include <drm/drm_gem.h>
-> +#include <drm/drm_gem_framebuffer_helper.h>
->  #include <drm/drm_gem_shmem_helper.h>
->  #include <drm/drm_ioctl.h>
->  #include <kunit/test.h>
-> diff --git a/rust/kernel/drm/device.rs b/rust/kernel/drm/device.rs
-> index 5b4db2dfe87f5..cf063de387329 100644
-> --- a/rust/kernel/drm/device.rs
-> +++ b/rust/kernel/drm/device.rs
-> @@ -5,8 +5,8 @@
->  //! C header: [`include/linux/drm/drm_device.h`](srctree/include/linux/drm/drm_device.h)
->  
->  use crate::{
-> -    bindings, device, drm,
-> -    drm::drv::AllocImpl,
-> +    bindings, device,
-> +    drm::{self, drv::AllocImpl, kms::private::KmsImpl as KmsImplPrivate},
->      error::code::*,
->      error::from_err_ptr,
->      error::Result,
-> @@ -73,7 +73,7 @@ impl<T: drm::drv::Driver> Device<T> {
->          dumb_create: T::Object::ALLOC_OPS.dumb_create,
->          dumb_map_offset: T::Object::ALLOC_OPS.dumb_map_offset,
->          show_fdinfo: None,
-> -        fbdev_probe: None,
-> +        fbdev_probe: T::Object::ALLOC_OPS.fbdev_probe,
->  
->          major: T::INFO.major,
->          minor: T::INFO.minor,
-> @@ -153,6 +153,10 @@ pub fn data(&self) -> <T::Data as ForeignOwnable>::Borrowed<'_> {
->          // SAFETY: `Self::data` is always converted and set on device creation.
->          unsafe { <T::Data as ForeignOwnable>::from_foreign(drm.raw_data()) };
->      }
-> +
-> +    pub(crate) const fn has_kms() -> bool {
-> +        <T::Kms as KmsImplPrivate>::MODE_CONFIG_OPS.is_some()
-> +    }
->  }
->  
->  // SAFETY: DRM device objects are always reference counted and the get/put functions
-> diff --git a/rust/kernel/drm/drv.rs b/rust/kernel/drm/drv.rs
-> index e42e266bdd0da..3e09e130730f6 100644
-> --- a/rust/kernel/drm/drv.rs
-> +++ b/rust/kernel/drm/drv.rs
-> @@ -6,14 +6,15 @@
->  
->  use crate::{
->      alloc::flags::*,
-> -    bindings,
-> +    bindings, device,
->      devres::Devres,
-> -    drm,
-> +    drm::{self, kms::private::KmsImpl as KmsImplPrivate},
->      error::{Error, Result},
->      private::Sealed,
->      str::CStr,
->      types::{ARef, ForeignOwnable},
->  };
-> +use core::ptr::null;
->  use macros::vtable;
->  
->  /// Driver use the GEM memory manager. This should be set for all modern drivers.
-> @@ -115,6 +116,12 @@ pub struct AllocOps {
->              offset: *mut u64,
->          ) -> core::ffi::c_int,
->      >,
-> +    pub(crate) fbdev_probe: Option<
-> +        unsafe extern "C" fn(
-> +            fbdev_helper: *mut bindings::drm_fb_helper,
-> +            sizes: *mut bindings::drm_fb_helper_surface_size,
-> +        ) -> core::ffi::c_int,
-> +    >,
->  }
->  
->  /// Trait for memory manager implementations. Implemented internally.
-> @@ -142,6 +149,14 @@ pub trait Driver {
->      /// The type used to represent a DRM File (client)
->      type File: drm::file::DriverFile;
->  
-> +    /// The KMS implementation for this driver.
-> +    ///
-> +    /// Drivers that wish to support KMS should pass their implementation of `drm::kms::KmsDriver`
-> +    /// here. Drivers which do not have KMS support can simply pass `drm::kms::NoKms` here.
-> +    type Kms: drm::kms::KmsImpl<Driver = Self>
-> +    where
-> +        Self: Sized;
-> +
->      /// Driver metadata
->      const INFO: DriverInfo;
->  
-> @@ -159,21 +174,44 @@ pub trait Driver {
->  
->  impl<T: Driver> Registration<T> {
->      /// Creates a new [`Registration`] and registers it.
-> -    pub fn new(drm: ARef<drm::device::Device<T>>, flags: usize) -> Result<Self> {
-> +    pub fn new(dev: &device::Device, data: T::Data, flags: usize) -> Result<Self> {
-> +        let drm = drm::device::Device::<T>::new(dev, data)?;
-> +        let has_kms = drm::device::Device::<T>::has_kms();
-> +
-> +        let mode_config_info = if has_kms {
-> +            // SAFETY: We have yet to register this device
-> +            Some(unsafe { T::Kms::setup_kms(&drm)? })
-> +        } else {
-> +            None
-> +        };
-> +
->          // SAFETY: Safe by the invariants of `drm::device::Device`.
->          let ret = unsafe { bindings::drm_dev_register(drm.as_raw(), flags) };
->          if ret < 0 {
->              return Err(Error::from_errno(ret));
->          }
->  
-> +        #[cfg(CONFIG_DRM_CLIENT = "y")]
-> +        if has_kms {
-> +            if let Some(ref info) = mode_config_info {
-> +                if let Some(fourcc) = info.preferred_fourcc {
-> +                    // SAFETY: We just registered `drm` above, fulfilling the C API requirements
-> +                    unsafe { bindings::drm_client_setup_with_fourcc(drm.as_raw(), fourcc) }
-> +                } else {
-> +                    // SAFETY: We just registered `drm` above, fulfilling the C API requirements
-> +                    unsafe { bindings::drm_client_setup(drm.as_raw(), null()) }
-> +                }
-> +            }
-> +        }
-> +
->          Ok(Self(drm))
->      }
->  
->      /// Same as [`Registration::new`}, but transfers ownership of the [`Registration`] to `Devres`.
-> -    pub fn new_foreign_owned(drm: ARef<drm::device::Device<T>>, flags: usize) -> Result {
-> -        let reg = Registration::<T>::new(drm.clone(), flags)?;
-> +    pub fn new_foreign_owned(dev: &device::Device, data: T::Data, flags: usize) -> Result {
-
-Maybe a dumb question, is the change from ARef to & related to this patch? 
-It look likes it can be splitted in a separate patch to simplify the 
-review.
-
-> +        let reg = Registration::<T>::new(dev, data, flags)?;
->  
-> -        Devres::new_foreign_owned(drm.as_ref(), reg, GFP_KERNEL)
-> +        Devres::new_foreign_owned(dev, reg, GFP_KERNEL)
->      }
->  
->      /// Returns a reference to the `Device` instance for this registration.
-> @@ -195,5 +233,11 @@ fn drop(&mut self) {
->          // SAFETY: Safe by the invariant of `ARef<drm::device::Device<T>>`. The existance of this
->          // `Registration` also guarantees the this `drm::device::Device` is actually registered.
->          unsafe { bindings::drm_dev_unregister(self.0.as_raw()) };
-> +
-> +        if drm::device::Device::<T>::has_kms() {
-> +            // SAFETY: We just checked above that KMS was setup for this device, so this is safe to
-> +            // call
-> +            unsafe { bindings::drm_atomic_helper_shutdown(self.0.as_raw()) }
-> +        }
->      }
->  }
-> diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-> index 3fcab497cc2a5..605b0a22ac08b 100644
-> --- a/rust/kernel/drm/gem/mod.rs
-> +++ b/rust/kernel/drm/gem/mod.rs
-> @@ -300,6 +300,10 @@ impl<T: DriverObject> drv::AllocImpl for Object<T> {
->          gem_prime_import_sg_table: None,
->          dumb_create: None,
->          dumb_map_offset: None,
-> +        #[cfg(CONFIG_DRM_FBDEV_EMULATION = "y")]
-> +        fbdev_probe: Some(bindings::drm_fbdev_dma_driver_fbdev_probe),
-> +        #[cfg(CONFIG_DRM_FBDEV_EMULATION = "n")]
-> +        fbdev_probe: None,
->      };
->  }
->  
-> diff --git a/rust/kernel/drm/gem/shmem.rs b/rust/kernel/drm/gem/shmem.rs
-> index 92da0d7d59912..9c0162b268aa8 100644
-> --- a/rust/kernel/drm/gem/shmem.rs
-> +++ b/rust/kernel/drm/gem/shmem.rs
-> @@ -279,6 +279,10 @@ impl<T: DriverObject> drv::AllocImpl for Object<T> {
->          gem_prime_import_sg_table: Some(bindings::drm_gem_shmem_prime_import_sg_table),
->          dumb_create: Some(bindings::drm_gem_shmem_dumb_create),
->          dumb_map_offset: None,
-> +        #[cfg(CONFIG_DRM_FBDEV_EMULATION = "y")]
-> +        fbdev_probe: Some(bindings::drm_fbdev_shmem_driver_fbdev_probe),
-> +        #[cfg(CONFIG_DRM_FBDEV_EMULATION = "n")]
-> +        fbdev_probe: None,
->      };
->  }
->  
-> diff --git a/rust/kernel/drm/kms.rs b/rust/kernel/drm/kms.rs
+> diff --git a/Documentation/devicetree/bindings/clock/ti/fixed-factor-clock.txt b/Documentation/devicetree/bindings/clock/ti/fixed-factor-clock.txt
+> deleted file mode 100644
+> index dc69477b6e98..000000000000
+> --- a/Documentation/devicetree/bindings/clock/ti/fixed-factor-clock.txt
+> +++ /dev/null
+> @@ -1,42 +0,0 @@
+> -Binding for TI fixed factor rate clock sources.
+> -
+> -This binding uses the common clock binding[1], and also uses the autoidle
+> -support from TI autoidle clock [2].
+> -
+> -[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> -[2] Documentation/devicetree/bindings/clock/ti/autoidle.txt
+> -
+> -Required properties:
+> -- compatible : shall be "ti,fixed-factor-clock".
+> -- #clock-cells : from common clock binding; shall be set to 0.
+> -- ti,clock-div: fixed divider.
+> -- ti,clock-mult: fixed multiplier.
+> -- clocks: parent clock.
+> -
+> -Optional properties:
+> -- clock-output-names : from common clock binding.
+> -- ti,autoidle-shift: bit shift of the autoidle enable bit for the clock,
+> -  see [2]
+> -- reg: offset for the autoidle register of this clock, see [2]
+> -- ti,invert-autoidle-bit: autoidle is enabled by setting the bit to 0, see [2]
+> -- ti,set-rate-parent: clk_set_rate is propagated to parent
+> -
+> -Example:
+> -	clock {
+> -		compatible = "ti,fixed-factor-clock";
+> -		clocks = <&parentclk>;
+> -		#clock-cells = <0>;
+> -		ti,clock-div = <2>;
+> -		ti,clock-mult = <1>;
+> -	};
+> -
+> -	dpll_usb_clkdcoldo_ck: dpll_usb_clkdcoldo_ck {
+> -		#clock-cells = <0>;
+> -		compatible = "ti,fixed-factor-clock";
+> -		clocks = <&dpll_usb_ck>;
+> -		ti,clock-div = <1>;
+> -		ti,autoidle-shift = <8>;
+> -		reg = <0x01b4>;
+> -		ti,clock-mult = <1>;
+> -		ti,invert-autoidle-bit;
+> -	};
+> diff --git a/Documentation/devicetree/bindings/clock/ti/ti,fixed-factor-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,fixed-factor-clock.yaml
 > new file mode 100644
-> index 0000000000000..78970c69f4cda
+> index 000000000000..f597aedbad05
 > --- /dev/null
-> +++ b/rust/kernel/drm/kms.rs
-> @@ -0,0 +1,186 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> +++ b/Documentation/devicetree/bindings/clock/ti/ti,fixed-factor-clock.yaml
+> @@ -0,0 +1,77 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/ti/ti,fixed-factor-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +//! KMS driver abstractions for rust.
+> +title: TI fixed factor rate clock sources
 > +
-> +use crate::{
-> +    device,
-> +    drm::{device::Device, drv::Driver},
-> +    error::to_result,
-> +    prelude::*,
-> +    types::*,
-> +};
-> +use bindings;
-> +use core::{marker::PhantomData, ops::Deref};
+> +maintainers:
+> +  - Tero Kristo <kristo@kernel.org>
+> +  - Sukrut Bellary <sbellary@baylibre.com>
 > +
-> +/// The C vtable for a [`Device`].
-> +///
-> +/// This is created internally by DRM.
-> +pub struct ModeConfigOps {
-> +    pub(crate) kms_vtable: bindings::drm_mode_config_funcs,
-> +    pub(crate) kms_helper_vtable: bindings::drm_mode_config_helper_funcs,
-> +}
-> +
-> +/// A trait representing a type that can be used for setting up KMS, or a stub.
-> +///
-> +/// For drivers which don't have KMS support, the methods provided by this trait may be stubs. It is
-> +/// implemented internally by DRM.
-> +pub trait KmsImpl: private::KmsImpl {}
-> +
-> +pub(crate) mod private {
-> +    use super::*;
-> +
-> +    /// Private callback implemented internally by DRM for setting up KMS on a device, or stubbing
-> +    /// the KMS setup for devices which don't have KMS support.
-> +    #[allow(unreachable_pub)]
-> +    pub trait KmsImpl {
-> +        /// The parent driver for this KMS implementation
-> +        type Driver: Driver;
-> +
-> +        /// The optional KMS callback operations for this driver.
-> +        const MODE_CONFIG_OPS: Option<ModeConfigOps>;
-> +
-> +        /// The callback for setting up KMS on a device
-> +        ///
-> +        /// # Safety
-> +        ///
-> +        /// `drm` must be unregistered.
-> +        unsafe fn setup_kms(_drm: &Device<Self::Driver>) -> Result<ModeConfigInfo> {
-> +            build_error::build_error("This should never be reachable")
-> +        }
+> +description: |
 
-It is probably a dumb question, but why do you need to add a body 
-with a build failure here? 
-The compiler already fails if there is no default implementation if the 
-setup_kms is not implemented by the trait implementations.
+Don't need '|'.
 
-> +    }
-> +}
+> +  This consists of a divider and a multiplier used to generate
+> +  a fixed rate clock. This also uses the autoidle support from
+> +  TI autoidle clock.
 > +
-> +/// A [`Device`] with KMS initialized that has not been registered with userspace.
-> +///
-> +/// This type is identical to [`Device`], except that it is able to create new static KMS resources.
-> +/// It represents a KMS device that is not yet visible to userspace, and also contains miscellaneous
-> +/// state required during the initialization process of a [`Device`].
-> +pub struct UnregisteredKmsDevice<'a, T: Driver> {
-> +    drm: &'a Device<T>,
-> +}
-> +
-> +impl<'a, T: Driver> Deref for UnregisteredKmsDevice<'a, T> {
-> +    type Target = Device<T>;
-> +
-> +    fn deref(&self) -> &Self::Target {
-> +        self.drm
-> +    }
-> +}
-> +
-> +impl<'a, T: Driver> UnregisteredKmsDevice<'a, T> {
-> +    /// Construct a new [`UnregisteredKmsDevice`].
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The caller promises that `drm` is an unregistered [`Device`].
-> +    pub(crate) unsafe fn new(drm: &'a Device<T>) -> Self {
-> +        Self { drm }
-> +    }
-> +}
-> +
-> +/// A trait which must be implemented by drivers that wish to support KMS
-> +///
-> +/// It should be implemented for the same type that implements [`Driver`]. Drivers which don't
-> +/// support KMS should use [`PhantomData<Self>`].
-> +///
-> +/// [`PhantomData<Self>`]: PhantomData
-> +#[vtable]
-> +pub trait KmsDriver: Driver {
-> +    /// Return a [`ModeConfigInfo`] structure for this [`device::Device`].
-> +    fn mode_config_info(
-> +        dev: &device::Device,
-> +        drm_data: <Self::Data as ForeignOwnable>::Borrowed<'_>,
-> +    ) -> Result<ModeConfigInfo>;
-> +
-> +    /// Create mode objects like [`crtc::Crtc`], [`plane::Plane`], etc. for this device
-> +    fn create_objects(drm: &UnregisteredKmsDevice<'_, Self>) -> Result
-> +    where
-> +        Self: Sized;
-> +}
-> +
-> +impl<T: KmsDriver> private::KmsImpl for T {
-> +    type Driver = Self;
-> +
-> +    const MODE_CONFIG_OPS: Option<ModeConfigOps> = Some(ModeConfigOps {
-> +        kms_vtable: bindings::drm_mode_config_funcs {
-> +            atomic_check: Some(bindings::drm_atomic_helper_check),
-> +            fb_create: Some(bindings::drm_gem_fb_create),
-> +            mode_valid: None,
-> +            atomic_commit: Some(bindings::drm_atomic_helper_commit),
-> +            get_format_info: None,
-> +            atomic_state_free: None,
-> +            atomic_state_alloc: None,
-> +            atomic_state_clear: None,
-> +        },
-> +
-> +        kms_helper_vtable: bindings::drm_mode_config_helper_funcs {
-> +            atomic_commit_setup: None,
-> +            atomic_commit_tail: None,
-> +        },
-> +    });
-> +
-> +    unsafe fn setup_kms(drm: &Device<Self::Driver>) -> Result<ModeConfigInfo> {
-> +        let mode_config_info = T::mode_config_info(drm.as_ref(), drm.data())?;
-> +
-> +        // SAFETY: `MODE_CONFIG_OPS` is always Some() in this implementation
-> +        let ops = unsafe { T::MODE_CONFIG_OPS.as_ref().unwrap_unchecked() };
-> +
-> +        // SAFETY:
-> +        // - This function can only be called before registration via our safety contract.
-> +        // - Before registration, we are the only ones with access to this device.
-> +        unsafe {
-> +            (*drm.as_raw()).mode_config = bindings::drm_mode_config {
-> +                funcs: &ops.kms_vtable,
-> +                helper_private: &ops.kms_helper_vtable,
-> +                min_width: mode_config_info.min_resolution.0,
-> +                min_height: mode_config_info.min_resolution.1,
-> +                max_width: mode_config_info.max_resolution.0,
-> +                max_height: mode_config_info.max_resolution.1,
-> +                cursor_width: mode_config_info.max_cursor.0,
-> +                cursor_height: mode_config_info.max_cursor.1,
-> +                preferred_depth: mode_config_info.preferred_depth,
-> +                ..Default::default()
-> +            };
-> +        }
-> +
-> +        // SAFETY: We just setup all of the required info this function needs in `drm_device`
-> +        to_result(unsafe { bindings::drmm_mode_config_init(drm.as_raw()) })?;
-> +
-> +        // SAFETY: `drm` is guaranteed to be unregistered via our safety contract.
-> +        let drm = unsafe { UnregisteredKmsDevice::new(drm) };
-> +
-> +        T::create_objects(&drm)?;
-> +
-> +        // TODO: Eventually add a hook to customize how state readback happens, for now just reset
-> +        // SAFETY: Since all static modesetting objects were created in `T::create_objects()`, and
-> +        // that is the only place they can be created, this fulfills the C API requirements.
+> +allOf:
+> +  - $ref: /schemas/clock/ti/ti,autoidle.yaml#
 
-Why do you explain such strong requirements? From the c documentation of 
-drm_mode_config_reset, the only requirement is that drm_device is valid 
-and initialized.
+You can drop '/schemas/clock/ti/'
 
-> +        unsafe { bindings::drm_mode_config_reset(drm.as_raw()) };
 > +
-> +        Ok(mode_config_info)
-> +    }
-> +}
+> +properties:
+> +  compatible:
+> +    const: ti,fixed-factor-clock
 > +
-> +impl<T: KmsDriver> KmsImpl for T {}
+> +  "#clock-cells":
+> +    const: 0
 > +
-> +impl<T: Driver> private::KmsImpl for PhantomData<T> {
-> +    type Driver = T;
+> +  reg:
+> +    maxItems: 1
 > +
-> +    const MODE_CONFIG_OPS: Option<ModeConfigOps> = None;
-> +}
+> +  ti,clock-div:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Fixed divider
+
+Constraints?
+
 > +
-> +impl<T: Driver> KmsImpl for PhantomData<T> {}
+> +  ti,clock-mult:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Fixed multiplier
+
+Constraints?
+
 > +
-> +/// Various device-wide information for a [`Device`] that is provided during initialization.
-> +#[derive(Copy, Clone)]
-> +pub struct ModeConfigInfo {
-> +    /// The minimum (w, h) resolution this driver can support
-> +    pub min_resolution: (i32, i32),
-> +    /// The maximum (w, h) resolution this driver can support
-> +    pub max_resolution: (i32, i32),
-> +    /// The maximum (w, h) cursor size this driver can support
-> +    pub max_cursor: (u32, u32),
-> +    /// The preferred depth for dumb ioctls
-> +    pub preferred_depth: u32,
-> +    /// An optional default fourcc format code to be preferred for clients.
-> +    pub preferred_fourcc: Option<u32>,
-> +}
-> diff --git a/rust/kernel/drm/mod.rs b/rust/kernel/drm/mod.rs
-> index 2c12dbd181997..049ae675cb9b1 100644
-> --- a/rust/kernel/drm/mod.rs
-> +++ b/rust/kernel/drm/mod.rs
-> @@ -8,3 +8,4 @@
->  pub mod fourcc;
->  pub mod gem;
->  pub mod ioctl;
-> +pub mod kms;
+> +  clocks:
+
+       maxItems: 1
+
+> +    description:
+> +      Link to phandle of parent clock.
+
+Drop the description
+
+> +
+> +  clock-output-names:
+
+       maxItems: 1
+
+> +    description:
+> +      From common clock binding
+
+Drop
+
+> +
+> +  ti,set-rate-parent:
+> +    description:
+> +      Propagate to parent clock
+> +    type: boolean
+> +
+> +required:
+> +  - compatible
+> +  - clocks
+> +  - "#clock-cells"
+> +  - ti,clock-mult
+> +  - ti,clock-div
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    bus{
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        clock@1b4 {
+> +            compatible = "ti,fixed-factor-clock";
+> +            reg = <0x1b4>;
+> +            clocks = <&dpll_usb_ck>;
+> +            #clock-cells = <0>;
+> +            ti,clock-mult = <1>;
+> +            ti,clock-div = <1>;
+> +            ti,autoidle-shift = <8>;
+> +            ti,invert-autoidle-bit;
+> +        };
+> +    };
 > -- 
-> 2.48.1
+> 2.34.1
 > 
-> 
-
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
