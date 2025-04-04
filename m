@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-589104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADD02A7C1DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:55:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92BD3A7C1E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:56:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A9AE17B45A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:54:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBF6B3BCB40
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C1C214230;
-	Fri,  4 Apr 2025 16:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9BB20E33E;
+	Fri,  4 Apr 2025 16:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JL2CX66K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ULRTN/uZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FCA20AF9C;
-	Fri,  4 Apr 2025 16:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831891F181F;
+	Fri,  4 Apr 2025 16:55:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743785638; cv=none; b=dDTS0wwmXN3QJN+k6kVVLeuRleLHGVWEiZzMuA+5hgDYQni8cWMrdXM/AFTzvgU9So4FszOXtHx+3XDqrdOCDzmVhoe45fHxLwVjgntqd2ILqUzVr/4xscWtwYE1AsEJGmajg1UwHclACLTdm1wgu/Kyce9OHAHgmyMhkt2+92U=
+	t=1743785743; cv=none; b=tPlBbiLmXeNsOyxGXzmRFpZT1CnYVgRzaVQMPgHBYJvQt0G/LuBQnonlR56WhejIihdKQ3qEqCpZIUsfNy35PpdK7xTm4OYFvoYCcY22MLZDuDPIsx3YszST/Ijgsqo/XtO1q23euf+1DlA1i1TstMzpC2TvyjpvOzbh44ykMWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743785638; c=relaxed/simple;
-	bh=tTTvTfvZYeCa8vtMMVHza4IkDNDnyr8Ok6EJRSK4jhg=;
+	s=arc-20240116; t=1743785743; c=relaxed/simple;
+	bh=ThNXk6gQmRSG91uTwe+RSVnkgKn9o9HMxBFyge/Vpio=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ep8jRhgy9YHy8QuOm6xe9WOgMkU817RmidyIsFkGfVA6hvku0zmsgQL0fS9xO5QB0NmmNqoRvgHnJkkBA3B5KpqI92+Z72y5pRCNebjxIkSvR5oF+1rQtqEZOAfs8TrJZTeD6W746WAcKBQFFwPboGy8VWVHiQbEFfHRvjTxc20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JL2CX66K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10A5FC4CEDD;
-	Fri,  4 Apr 2025 16:53:55 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=EkpwfTe1MkUu9GJW9W57rALUFRW7/GHsT8JXMBhN8ZQCKoE8PAuQkC8E3ROh5Pi6TEizHsHbfWut5/bLY6MT1yzKpimuVlIEWgwTzCQsBxuN6chdj4g+LyypjwmLzR5Cwi5jBUZlN+55XrtbPqU2MXsERy/FgNsh3IfZkLg4NIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ULRTN/uZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AC06C4CEDD;
+	Fri,  4 Apr 2025 16:55:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743785637;
-	bh=tTTvTfvZYeCa8vtMMVHza4IkDNDnyr8Ok6EJRSK4jhg=;
+	s=k20201202; t=1743785743;
+	bh=ThNXk6gQmRSG91uTwe+RSVnkgKn9o9HMxBFyge/Vpio=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JL2CX66K8LMZgCsacM7xnXGrkVEUEC7zuQ1aRwO6qOnmLE0U9BLrt/WeWDeDdTJ2u
-	 EUqeNVGXGVv2O3+r2TtfpGsJ733L1sto6XhSwQPddCRLrg9FUnMkGvdFMilOB6o9WG
-	 34RobeGFuuTxOS1dVN1FbKN/LlXZgW1stE2WvY9zyFf3ekaCB7obk3Je3ze0g3XofL
-	 0kzaCHKYLt2ZAj/VPAf2gtWG0LwlPBs0xSBp5LQNbCyfuWde6bTq+AxA8rFJj7a8kk
-	 6ymNs3DPqsWQz/FmasbjGuUK2BFr3Z4y5thDFhi0EW+Qk9dJ50f15pB/WsXiIbnpLb
-	 OtGoLaaDfijYA==
-Date: Fri, 4 Apr 2025 17:53:53 +0100
+	b=ULRTN/uZrtDIdGK0Npe+J/IFBIzHTvgqz6iAT15uYWKsSOXxe13+WDcf32RPw2DGz
+	 2qupFztV7yAlvr4Twq9o+Ibw9PxelQdMhITs714Z0FAhvJDiyYS59oyZZPhFGwSNP6
+	 ia8BVA+4hqmPN2rnjJVqPMaloPNr7M02l7BQA2hH0HS7B3UBrX7z4hDy/GY+ez4btn
+	 kj10SJ71bWqSkB0k6nlLEhQl/TZeh47PhlqnC1pjCH2anFUwYE1sLDqK6DpD3tztEQ
+	 M1cvsZDT9UELKrX5lqDmR3kddMeunMWD0xZDQf3Qz+s7J5qafA0lkHmlGSuRq4A5lk
+	 YVJ2IOSiA/tHw==
+Date: Fri, 4 Apr 2025 17:55:38 +0100
 From: Conor Dooley <conor@kernel.org>
-To: jean-baptiste.maneyrol@tdk.com
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: iio: imu: icm42600: add interrupt
- naming support
-Message-ID: <20250404-entering-rebel-fee1d02020b3@spud>
-References: <20250404-iio-imu-inv-icm42600-rework-interrupt-using-names-v1-0-72ed5100da14@tdk.com>
- <20250404-iio-imu-inv-icm42600-rework-interrupt-using-names-v1-1-72ed5100da14@tdk.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: display: Add Sitronix ST7571 panel
+Message-ID: <20250404-railway-croon-288f2943928d@spud>
+References: <20250404-st7571-v2-0-4c78aab9cd5a@gmail.com>
+ <20250404-st7571-v2-1-4c78aab9cd5a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,85 +62,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="5s5RhPSZ/hmY01Nl"
+	protocol="application/pgp-signature"; boundary="qzsnKKKTsOCiJ2gz"
 Content-Disposition: inline
-In-Reply-To: <20250404-iio-imu-inv-icm42600-rework-interrupt-using-names-v1-1-72ed5100da14@tdk.com>
+In-Reply-To: <20250404-st7571-v2-1-4c78aab9cd5a@gmail.com>
 
 
---5s5RhPSZ/hmY01Nl
+--qzsnKKKTsOCiJ2gz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 04, 2025 at 05:52:02PM +0200, Jean-Baptiste Maneyrol via B4 Rel=
-ay wrote:
-> From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+On Fri, Apr 04, 2025 at 03:50:32PM +0200, Marcus Folkesson wrote:
+> Sitronix ST7571 is a 4bit gray scale dot matrix LCD controller.
 >=20
-> Add interrupt-names field for specifying interrupt used.
-> Only INT1 is supported by the driver currently.
+> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 > ---
->  .../devicetree/bindings/iio/imu/invensense,icm42600.yaml          | 8 ++=
+>  .../bindings/display/sitronix,st7571.yaml          | 73 ++++++++++++++++=
 ++++++
->  1 file changed, 8 insertions(+)
+>  1 file changed, 73 insertions(+)
 >=20
-> diff --git a/Documentation/devicetree/bindings/iio/imu/invensense,icm4260=
-0.yaml b/Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml
-> index 7e4492bbd0278a336587dc5ac04da7153453da29..f19cdfd7450e04e7c984dc987=
-f3c23f5ad89a248 100644
-> --- a/Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml
-> +++ b/Documentation/devicetree/bindings/iio/imu/invensense,icm42600.yaml
-> @@ -41,6 +41,12 @@ properties:
->    interrupts:
->      maxItems: 1
-> =20
-> +  interrupt-names:
-> +    enum:
-> +      - INT1
-
-An enum with one entry is just a const.
-
-> +    description: |
-> +      set to "INT1" the only supported interrupts pin
-
-The commit message suggests there are others, you should list them all
-here (if there are) even if the driver doesn't use them.
-
+> diff --git a/Documentation/devicetree/bindings/display/sitronix,st7571.ya=
+ml b/Documentation/devicetree/bindings/display/sitronix,st7571.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..11575b820c59c5ada427fbb6b=
+015c331215c8db6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/sitronix,st7571.yaml
+> @@ -0,0 +1,73 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/sitronix,st7571.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->    drive-open-drain:
->      type: boolean
-> =20
-> @@ -76,6 +82,7 @@ examples:
->              reg =3D <0x68>;
->              interrupt-parent =3D <&gpio2>;
->              interrupts =3D <7 IRQ_TYPE_EDGE_FALLING>;
-> +            interrupt-names =3D "INT1";
->              vdd-supply =3D <&vdd>;
->              vddio-supply =3D <&vddio>;
->          };
-> @@ -95,6 +102,7 @@ examples:
->              spi-cpol;
->              interrupt-parent =3D <&gpio1>;
->              interrupts =3D <2 IRQ_TYPE_EDGE_FALLING>;
-> +            interrupt-names =3D "INT1";
->              vdd-supply =3D <&vdd>;
->              vddio-supply =3D <&vddio>;
->          };
->=20
-> --=20
-> 2.49.0
->=20
->=20
+> +title: Sitronix ST7571 Display Panels
+> +
+> +maintainers:
+> +  - Marcus Folkesson <marcus.folkesson@gmail.com>
+> +
+> +description:
+> +  This binding is for display panels using a Sitronix ST7571 controller =
+in I2C
+> +  mode.
+> +
+> +allOf:
+> +  - $ref: panel/panel-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: sitronix,st7571
+> +
+> +  reg: true
 
---5s5RhPSZ/hmY01Nl
+You need to constrain this, so maxItems: 1.
+Otherwise, seems okay.
+
+--qzsnKKKTsOCiJ2gz
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ/AOoQAKCRB4tDGHoIJi
-0gQ7APsFIFIPMkwe13hKI27blN9dVqyfZP4YLgWYUI48hScZ/wD/X6MUhBSk4+R/
-xmMXNurhCnFEx36O6F1unJ+Xsd+YVAE=
-=y9nB
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ/APCgAKCRB4tDGHoIJi
+0jFaAP94txS1od9FB9n4WU+erJN/I8jN9X+7sbHfsWd5TswTLAD/b05lLr3/b6yz
++nYXOZDzWEmbmlxEz43LbhhqbWDX2gA=
+=QZbK
 -----END PGP SIGNATURE-----
 
---5s5RhPSZ/hmY01Nl--
+--qzsnKKKTsOCiJ2gz--
 
