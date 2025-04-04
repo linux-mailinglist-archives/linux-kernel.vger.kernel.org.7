@@ -1,118 +1,163 @@
-Return-Path: <linux-kernel+bounces-588692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92586A7BC68
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:13:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA571A7BDB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:25:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93C1F3B2814
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 12:13:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D44C1898FD1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C421E1E04;
-	Fri,  4 Apr 2025 12:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4AD31EBFF0;
+	Fri,  4 Apr 2025 13:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f7WgKeX9"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="gR9gGnxN"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06B11AD41F
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 12:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E298635C;
+	Fri,  4 Apr 2025 13:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743768813; cv=none; b=BY35gtWAMA+4xASnf4wiUwmdwCLYEN/8nAFcp9QTWUwHjXBooKRnVvgswIrsZkoj1f5Ylq6YGt/KkNi3FrFBQG7KEOZvcyiEI/zfJRI8NC8iekfRt1EGhC/0GGBE2AptWw/PfixA2qJF0BhZSUR+Lw6xPluPYNu7iEecZP2+nwQ=
+	t=1743773133; cv=none; b=tzxJn3Hd+pT7GDgYgP8T12ggSiSWTyWv6tr/IOlV+01jJX0EqTgvAA93fThIZl3zvTyHP2UCDTUhsvs/DiEEznI/3uVKQM/rT05vbEF4MVsLfMl2o7qv3c9PhfpckfhdY4RlFmhSblCpESAqnkzGj92p+pjyMO0mJQVADG3HVRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743768813; c=relaxed/simple;
-	bh=uqEb5kgd4VK3+LRVcuvh/ah2jvKTz9S7t7NclckKBhE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Yz9duPn6jwZdOLyFSXsf9IKbdVSu19PlwR29i9sb7XxeKScWOncdYQG2ellkK7FlKz9MXzhzB4ebtNTLFMgyecqQY9bnEWQifi3wOdWrdZROBfhtR0cTpYo7w88Y9f1y/L5QdIkpy+80dkJo3tA+5zlLXBzguZR7RZIyxaIx4g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f7WgKeX9; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4394944f161so2196105e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 05:13:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743768810; x=1744373610; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WkU6xWzc6lSGa4wrkLknImB41P1wMaOoruxvVliww/E=;
-        b=f7WgKeX9i88bgloAkriXhlqdyiFI7uIcw0eYoosAP72V/r3jrkvOX4bKKX4hYq1Wsn
-         V81Hoc9tXYdA/al3CSlwtjERQkZFmUPTUNHIdVjgIcTEocA6Zamc3DEzUVq4gd32JhFi
-         bGqrXtZOMlCKn06Q8d2NdrOVN4oRmfcxTxOn6sP5QQ9nBcdW3fwa7iIvhGA1o7WaVMpg
-         lAe+ZRJrI1rj+2gJ7zSgHiKmH/dZSbysf7R/2T9983oB8t8TlsyEev52Af1Zed7vjYTm
-         ly3NYHpllFFh7wgwyoPjrYRQMXQ3wjpnGIpWIfBmGvDH2Epb7SsiUefyBhbVtdKb52JD
-         BGbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743768810; x=1744373610;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WkU6xWzc6lSGa4wrkLknImB41P1wMaOoruxvVliww/E=;
-        b=mwxssDKw7Y7K3ndTgTqOJomgNeHZLn8/QWOL7HmmpX6/Heqsh64wiO/vAMp26hGOUf
-         FSa39k48GLEJudcGcq3BY8CpGZ4VdGzlSDPLnx7QDUD4faRTBZlZz7r/YhJ3PrK4mgD8
-         HE4QOvDXB6IVh2drkk6XemSoOY9Hwa/xW47nU+kNob+JYzzE2neY04baN+0ud1hWiBNB
-         iHdojBhqPfVK6Wl2N6Ncg1rfrpFRW3qzx67HRJ3EyEH2VPVJT8HaAE3jeXZncCtAep28
-         o2Ii2jwCa4F/Qe/rQH4sPKaRGz2Mgf6M+j0rY6yXM/lsGl0Khet1DRM4pWT7iCKeSb1T
-         kmPA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6vdvznbb7JMvPu6pF6zjcwPS+UK+lYA3RnGLH7pgimG0YA78mu178kmyGTOOioZS/VxxVd72mhLMbOPA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXtusyt58pILyMbCoprNE8/QvZFOMhkVBA7SmRJYIfv/Bc741F
-	Rkk8I0VrUnm3IZL/duanXh1yDBMixIhGT/zaScks2Rz8G1E7yoseQ34/j2apILI=
-X-Gm-Gg: ASbGncvxfIK1x9+X92+BzAJ14zcxJE4TweNdCIG9c2KKcMOtHJ0UbirgBThO/P2uSLS
-	p/O51uZIky23f6cA64miIg69lLO0xo4u+5Brc8iWFmG/IeIsj+oRyO/V5TeX51do5YOQ3Whnq0B
-	IthHf4rXfyAmj1IXn+obRXOgVrQo83Z4WBp6OW0CD934hJ6EHhBPcbSzVCzb8FRDuIGzIlNCszF
-	DsAFVm1jJAW3+Iltmu/55zh2ypqN+g2Jh1TeLPnBGu8JS1pxTV5Sex+u6yDgOJxr33Dsrv2Tsby
-	2I31rZiTFuNMvvUj2Nr+Q4yg4+RcaLfQWzY8K3WujjntMj60QLv919OeiZhA4cwY
-X-Google-Smtp-Source: AGHT+IHA0ZQjK8KraYmZvJELL/Kq9mNLied6TLIbpJo4CZlH3o0zAE5EQTuZmcNVi+hZHBAjCeQKog==
-X-Received: by 2002:a5d:64ce:0:b0:385:de67:229e with SMTP id ffacd0b85a97d-39cba934dcbmr862924f8f.11.1743768809991;
-        Fri, 04 Apr 2025 05:13:29 -0700 (PDT)
-Received: from shite.. ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c30226be7sm4140344f8f.89.2025.04.04.05.13.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 05:13:29 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/2] phy: samsung: Do not enable PHY_EXYNOS5_USBDRD by default during compile testing
-Date: Fri,  4 Apr 2025 14:13:26 +0200
-Message-ID: <20250404121326.318936-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250404121326.318936-1-krzysztof.kozlowski@linaro.org>
-References: <20250404121326.318936-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1743773133; c=relaxed/simple;
+	bh=H/rBl+wBSRT7C37DV7ZZAKk/Z0OyryU/DqsXLcvi/0I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=npWS3dIlG7K6QZFZR20AhcgyxyxFaUu9p5PDdYQCoTATQ7U2Wcc+rPz25V7wYHCRZulANl2FOacvpBdnFTLZcweyANyxuGfyJd7vlOiKB4XgX63FbOR4nC1esTHQYZIrTjTcPBq+iMzPI9Ulfo5HLwv39Z5bIGMTWs79ybsmUXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=gR9gGnxN; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 534C4vUb020207;
+	Fri, 4 Apr 2025 14:39:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	xplZ6xEcU+DkYF8wzl/Jp0Ro9pXnhMJndHcBpcssC24=; b=gR9gGnxNRswbHnZe
+	PZvH+BDoBIr3K3Z0Z2KVBA042OjzZXci0P9mnvtGmWIXPBnWJOrFO0i1L71rt0YI
+	894O8dhomZvPu3RlSEj2UUWh1fTS69lAuJUZg22vwKuXyG2HGM30qYPpt6/prvdY
+	qzmCntc4tXTaBwDefBq/QUakp8wDpxGn4PMLciP6NMDe2wA/U/J1Gvx+oFdbFmFy
+	FJrjvsIz/oomgO9kaYUtspulfaegLXeo5ZryI0nWSWWEhMijzCN608WZQuigg9BP
+	pj8zJF1lNrTbgxxQdPrlX6kb2HRxE+5Zn9H3ZNcuc2Dmfo5jMIDYE0/cmBtT37ix
+	Ee5amw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45t2ck34bd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Apr 2025 14:39:24 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9690C40082;
+	Fri,  4 Apr 2025 14:37:51 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E7D778F1FF3;
+	Fri,  4 Apr 2025 14:34:24 +0200 (CEST)
+Received: from [10.130.77.120] (10.130.77.120) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 4 Apr
+ 2025 14:34:24 +0200
+Message-ID: <1213dbfb-821a-4534-947b-acc4eac9da81@foss.st.com>
+Date: Fri, 4 Apr 2025 14:15:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] irqchip/gic: Use 0x10000 offset to access GICC_DIR on
+ STM32MP2
+To: Marc Zyngier <maz@kernel.org>
+CC: <tglx@linutronix.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@foss.st.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20250403122805.1574086-1-christian.bruel@foss.st.com>
+ <20250403122805.1574086-3-christian.bruel@foss.st.com>
+ <8734epyw17.wl-maz@kernel.org>
+From: Christian Bruel <christian.bruel@foss.st.com>
+Content-Language: en-US
+In-Reply-To: <8734epyw17.wl-maz@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-04_05,2025-04-03_03,2024-11-22_01
 
-Enabling the compile test should not cause automatic enabling of all
-drivers.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/phy/samsung/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
-index 6566100441d6..b7ab402909a8 100644
---- a/drivers/phy/samsung/Kconfig
-+++ b/drivers/phy/samsung/Kconfig
-@@ -85,7 +85,7 @@ config PHY_EXYNOS5_USBDRD
- 	depends on USB_DWC3_EXYNOS
- 	select GENERIC_PHY
- 	select MFD_SYSCON
--	default y
-+	default ARCH_EXYNOS
- 	help
- 	  Enable USB DRD PHY support for Exynos 5 SoC series.
- 	  This driver provides PHY interface for USB 3.0 DRD controller
--- 
-2.45.2
+On 4/3/25 19:50, Marc Zyngier wrote:
+> On Thu, 03 Apr 2025 13:28:04 +0100,
+> Christian Bruel <christian.bruel@foss.st.com> wrote:
+>>
+>> When GIC_4KNOT64K bit in the GIC configuration register is
+>> 0 (64KB), address block is modified in such a way than only the
+>> first 4KB of the GIC cpu interface are accessible with default
+>> offsets.
+>> With this bit mapping GICC_DIR register is accessible at
+>> offset 0x10000 instead of 0x1000, thus remap accordingly
+> 
+> And I'm pretty sure the whole of the GICC range is correctly
+> accessible at offset 0xF000, giving you the full 8kB you need. That's
+> because each page of the GIC is aliased over two 64kB blocks, as per
+> the integration guidelines so that MMU isolation can be provided on a
+> 64kB boundary.
 
+Thanks a lot for this explanation, indeed this works like a charm.
+
+> 
+> Funnily enough, all it takes is to adjust GICC region. You can either:
+> 
+> - make it 128kB wide, and the driver will take care of it (details in
+>    gic_check_eoimode()). On one of my boxes that is similarly
+>    configured, I get:
+> 
+>    [    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+>    [    0.000000] GIC: Adjusting CPU interface base to 0x00000000780af000
+>    [    0.000000] Root IRQ handler: gic_handle_irq
+>    [    0.000000] GIC: Using split EOI/Deactivate mode
+> 
+>    See below for what I expect to be the correct fix.
+>    
+> - make it 8kB wide from offset 0xF000.
+
+I checked both and they work. I will go for the former to show real 8kB 
+size to be exposed in the DT. And there are a few other platforms that
+use this alias
+
+> 
+> Unless the ST HW folks have been even more creative, none of this
+> overly complicated stuff should be necessary. Just describe the HW
+> correctly.
+
+I was unable to find this information in the GIC-400 trm 
+(https://developer.arm.com/documentation/ddi0471/b/programmers-model/gic-400-register-map). 
+Now I also prefer to use GICC alias at
+offset 0xf000 as suggested rather than the quirk solution
+
+thank you very much
+
+Christian
+
+> 
+> 	M.
+> 
+> diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> index f3c6cdfd7008..97b7a7106a02 100644
+> --- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> +++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> @@ -120,7 +120,7 @@ intc: interrupt-controller@4ac00000 {
+>   		#address-cells = <1>;
+>   		interrupt-controller;
+>   		reg = <0x0 0x4ac10000 0x0 0x1000>,
+> -		      <0x0 0x4ac20000 0x0 0x2000>,
+> +		      <0x0 0x4ac20000 0x0 0x20000>,
+>   		      <0x0 0x4ac40000 0x0 0x2000>,
+>   		      <0x0 0x4ac60000 0x0 0x2000>;
+>   	};
+> 
 
