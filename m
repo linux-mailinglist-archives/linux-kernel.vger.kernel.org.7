@@ -1,280 +1,290 @@
-Return-Path: <linux-kernel+bounces-589225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F479A7C35B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 20:59:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40B5EA7C35D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 21:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75C5C7A8F5D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:58:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D47533BC8DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74364219A76;
-	Fri,  4 Apr 2025 18:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39E421C193;
+	Fri,  4 Apr 2025 18:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BbP6iZKW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pG8w3F7s"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723E51B4242;
-	Fri,  4 Apr 2025 18:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E656C1F0E5C
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 18:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743793138; cv=none; b=WtJifV2HZVw5iE/WsRW0FQq3qa1BYnUmMxJ1PZ7GLr+Sa7o1v0RhTh7+Oyu+FqSXDm6HhwtnGy1zSQ0/UcD6wD7nookZ7sSCMA0hNGJY1JHthev/vG33fedyT/J8Syrt0Vi7WTCrEWGVt58f7MDW4YvGfV2+nrHDSr9CJPAG/yo=
+	t=1743793150; cv=none; b=AzST8a+C/3T9SPN+BqkJKimCPA/ALT9VHytS/hgXkveXZAIruCzJ6FM8uZ1nzwvunAQb4dqMi1bhM6HyYBzjetHA55t7Uk4w3T34xINIHGCdmJ/dQD9H2oQlhgN4EINTLeqpBjsruVWsC5/VM2VYyMFk+Xlw61JoINM5Yvd31tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743793138; c=relaxed/simple;
-	bh=AWwijYRw7YUcMRIIsF8D4h/R9ylAWro6iDUPnZ9Rl0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mGR64Y58fGKbNXqNdNPG8mJZgfEPouCNTHSjOOuQwJwjxDf4qoSAhGfed3uRLTiWphJP0lg1LQ3fLQ1xzOFgWNbeKWZmCTcfOKFRWP4hHusjAVvRzaVkpjH3nEVxvSjv5KAIECRXcX0/rVhsFembwDkIlwVfuzWHfKpng478ISQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BbP6iZKW; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743793136; x=1775329136;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AWwijYRw7YUcMRIIsF8D4h/R9ylAWro6iDUPnZ9Rl0Q=;
-  b=BbP6iZKW1JNXlSpXeexcs3PNPUezPFbXQXJe3HVCx5JsnWCIoTla300y
-   ILXg0KZoYnc0TR6BQg0WhhA4PtAhAxWM71GiX+CRsdStGy9mNE62dlRvT
-   ZFiUeGOUfi49tVtd71udTSUWy/bvkhcC0T45tlvkz7keKabCF9bYb6jsb
-   0GAWI7mBcQkCeB+YrK33uoW8Dh6FXbmkDMwQAV8WKzuCm4p3UKeeNJH0F
-   7uEemGiu7jAAtRBzKj02IE2KyIZHq6mwgoKbxuxcRkQ/NXW8HfjqI3DRk
-   pQ2DFpP4P3Fle7/KL6GeE2qdA/TY+p7uKvqPs1sX+f21TBZfHWHhuoeF3
-   A==;
-X-CSE-ConnectionGUID: ExGzGMI1SReRvKf8pg33/w==
-X-CSE-MsgGUID: stE8JEm1RneyKnAnNt7/YA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11394"; a="62643091"
-X-IronPort-AV: E=Sophos;i="6.15,189,1739865600"; 
-   d="scan'208";a="62643091"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 11:58:55 -0700
-X-CSE-ConnectionGUID: Rwwtf8PoRr6sWzn9mNse1w==
-X-CSE-MsgGUID: OIRq1tC0SdinwHg2zpCu/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,189,1739865600"; 
-   d="scan'208";a="150602652"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 04 Apr 2025 11:58:53 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u0mFf-0001TD-1U;
-	Fri, 04 Apr 2025 18:58:51 +0000
-Date: Sat, 5 Apr 2025 02:58:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>
-Subject: Re: [PATCH v1 1/1] leds: pca955x: Avoid potential overflow when
- filling default_label
-Message-ID: <202504050256.SYq06TxB-lkp@intel.com>
-References: <20250404162849.3650361-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1743793150; c=relaxed/simple;
+	bh=Akp8TP4w548YBYZdc4wbMePm744tCLFwdjDQVOlgw6k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jQYkdiAdehsR82B+ePGO8L3NIN75kdHD9bWahWlN1DyW+SJIp5/cxjjSZmkWUdqU0q77wcFfPyaEeHIOiQoEL2E1fPPXk9A63f6Tk3Rwp9PWDQrxTJ2wrGepJk4QZ2Wqy+DMfzcc2chrMsDkeGuKLyBuOQtCoD9w49vLOAqGunY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pG8w3F7s; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac2bdea5a38so378909566b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 11:59:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1743793147; x=1744397947; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fd2VmCaaJDc5tXmdk0MdBa4CIzTq2IXZ7VVk4lrC7Pg=;
+        b=pG8w3F7spPNLaZf1zNcYVymfWxaffYFU378Qc4bR0XDHdDYKqy9D8h2Crk26+h9zMB
+         fIV2AyUnOMrmpSUbCOO1ZajXRLJhIYNzuOZfet4Ci3gJRyqPm5VCOj7pRu+6xVS0461B
+         EbSg9+5ssiO+O4sQHWCjcJBUXlGGCY2iC0PJGC+LyyBZsVIsII+24r1cKlJ1U55b+cup
+         txvWtb1DadzTJk5v3T0dEizp1xY7r7QsC5KivPMaTmvqOCfady4ShfTVb5eyd8XFTzUy
+         fD7jGLQMpmLN6a9LV3Wwu2fXtQNttZrzi0kYsRXJsodStZmToXimwLixiNX5QzRPeSLx
+         Um1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743793147; x=1744397947;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Fd2VmCaaJDc5tXmdk0MdBa4CIzTq2IXZ7VVk4lrC7Pg=;
+        b=VscwmFZxk5c5cC4/dg3/8Rp05Rp4LvjcZUu96bFpN7w2ziAGSaQZanFxZ/Ip1g7mVh
+         Jdi2FodajRl/HOb7WYzxg6ME6P0nZ6XkuJUuPcRJYo9jJAWsGBvjc8za6IVzU1x/jtYy
+         eihYjdmmHcytWMbQLkt4JH2Tux7nEivStBM/LCD3kfCkkFgT629XTnZDggVmE9cApUH1
+         NVNh5JSKmrTsVE5vKgbadJ/ZbPeoeVw3/TAjnUgLnurLHGq4OOdvmHj+b0tFP6gM9VMu
+         8YllYaMcKxVE9uTtsjF2aqfJrWs8nGKYDOWCVJ0iIq6OIEnp3Y2nSGJ8aLiROLgbkWs8
+         WEMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXHZC2zHCEyPpKeOYHRcPTx5/EIePpyRlfCxFvjGO2mTI4TIMEPReDoVbzoEbIH8CGKGfLi9j+4YuXCwo4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3Xmlh77hPXHyuE+FarLCL9xITCUjkVf5zkkV5St0qppAgcxel
+	O1m96yOVo9gN1T8xAoa4XhlYIJQV4LY8aIFIRcBS+2L+PagJjyx2N9leJZgm9V5OK9swb2DFOnm
+	V9+3K9U+V/uD+WmtTT8xzC2DXlUffVL38boZP
+X-Gm-Gg: ASbGnctsiZBPYhqsWZ4dE0zpoyL5T9cl1IStEMq3yG40TWPyM0V+OvItdJum+uZ5toi
+	KpUgKB3t2sdFxCDiJkOAq2RAWJH43wYVMovamvCZUK2Gu7eK9wHGpfVBMc7+isIcM+4ziv7iYPS
+	p3/V5i93VLJpDc8kKlhXO1zJiEjg==
+X-Google-Smtp-Source: AGHT+IHqCOEoVg/cVEabRgMbyepnPj+9o+omnNnoFUpz0K2+9E+TojQ8uIMehRo28tc0RIsdXVGT4xli6xdYcJ/v1sE=
+X-Received: by 2002:a17:907:968d:b0:ac7:9817:60aa with SMTP id
+ a640c23a62f3a-ac7d6c9fefamr255269966b.2.1743793146895; Fri, 04 Apr 2025
+ 11:59:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250404162849.3650361-1-andriy.shevchenko@linux.intel.com>
+References: <20250403100943.120738-1-sgarzare@redhat.com> <20250403100943.120738-4-sgarzare@redhat.com>
+ <CAAH4kHYcRm1TpcgbtryJAtc6sjeh3hXzW7ApXY4WhcfZ3HEpVw@mail.gmail.com> <CAGxU2F4Zf7Khfqy5UjjPJ096kHHPjhFMN+oxvRTfG1knKca9gA@mail.gmail.com>
+In-Reply-To: <CAGxU2F4Zf7Khfqy5UjjPJ096kHHPjhFMN+oxvRTfG1knKca9gA@mail.gmail.com>
+From: Dionna Amalie Glaze <dionnaglaze@google.com>
+Date: Fri, 4 Apr 2025 11:58:54 -0700
+X-Gm-Features: ATxdqUGgbFUW9C8F8OO_2JG0wrtdd1BxQD8N08wZ94rnrpOaYv3GcerIOUR9g-k
+Message-ID: <CAAH4kHZhsUoxNdJ0F3GeRPhC_JpB4suUA1z44bQ=RpGoR2oHkA@mail.gmail.com>
+Subject: Re: [PATCH v6 3/4] tpm: add SNP SVSM vTPM driver
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, "H. Peter Anvin" <hpa@zytor.com>, 
+	linux-coco@lists.linux.dev, linux-integrity@vger.kernel.org, 
+	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, x86@kernel.org, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Joerg Roedel <jroedel@suse.de>, 
+	Claudio Carvalho <cclaudio@linux.ibm.com>, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, linux-kernel@vger.kernel.org, 
+	Dov Murik <dovmurik@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andy,
+On Fri, Apr 4, 2025 at 11:37=E2=80=AFAM Stefano Garzarella <sgarzare@redhat=
+.com> wrote:
+>
+> On Fri, 4 Apr 2025 at 19:32, Dionna Amalie Glaze <dionnaglaze@google.com>=
+ wrote:
+> >
+> > On Thu, Apr 3, 2025 at 3:10=E2=80=AFAM Stefano Garzarella <sgarzare@red=
+hat.com> wrote:
+> > >
+> > > From: Stefano Garzarella <sgarzare@redhat.com>
+> > >
+> > > Add driver for the vTPM defined by the AMD SVSM spec [1].
+> > >
+> > > The specification defines a protocol that a SEV-SNP guest OS can use =
+to
+> > > discover and talk to a vTPM emulated by the Secure VM Service Module =
+(SVSM)
+> > > in the guest context, but at a more privileged level (VMPL0).
+> > >
+> > > The new tpm-svsm platform driver uses two functions exposed by x86/se=
+v
+> > > to verify that the device is actually emulated by the platform and to
+> > > send commands and receive responses.
+> > >
+> > > The device cannot be hot-plugged/unplugged as it is emulated by the
+> > > platform, so we can use module_platform_driver_probe(). The probe
+> > > function will only check whether in the current runtime configuration=
+,
+> > > SVSM is present and provides a vTPM.
+> > >
+> > > This device does not support interrupts and sends responses to comman=
+ds
+> > > synchronously. In order to have .recv() called just after .send() in
+> > > tpm_try_transmit(), the .status() callback returns 0, and both
+> > > .req_complete_mask and .req_complete_val are set to 0.
+> > >
+> > > [1] "Secure VM Service Module for SEV-SNP Guests"
+> > >     Publication # 58019 Revision: 1.00
+> > >
+> > > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> > > ---
+> > > v6:
+> > > - removed the `locality` field (set to 0) and the FIXME comment [Jark=
+ko]
+> > > v5:
+> > > - removed cancel/status/req_* ops after rebase on master that cotains
+> > >   commit 980a573621ea ("tpm: Make chip->{status,cancel,req_canceled} =
+opt")
+> > > v4:
+> > > - moved "asm" includes after the "linux" includes [Tom]
+> > > - allocated buffer separately [Tom/Jarkko/Jason]
+> > > v3:
+> > > - removed send_recv() ops and followed the ftpm driver implementing .=
+status,
+> > >   .req_complete_mask, .req_complete_val, etc. [Jarkko]
+> > > - removed link to the spec because those URLs are unstable [Borislav]
+> > > ---
+> > >  drivers/char/tpm/tpm_svsm.c | 128 ++++++++++++++++++++++++++++++++++=
+++
+> > >  drivers/char/tpm/Kconfig    |  10 +++
+> > >  drivers/char/tpm/Makefile   |   1 +
+> > >  3 files changed, 139 insertions(+)
+> > >  create mode 100644 drivers/char/tpm/tpm_svsm.c
+> > >
+> > > diff --git a/drivers/char/tpm/tpm_svsm.c b/drivers/char/tpm/tpm_svsm.=
+c
+> > > new file mode 100644
+> > > index 000000000000..b9242c9eab87
+> > > --- /dev/null
+> > > +++ b/drivers/char/tpm/tpm_svsm.c
+> > > @@ -0,0 +1,128 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +/*
+> > > + * Copyright (C) 2025 Red Hat, Inc. All Rights Reserved.
+> > > + *
+> > > + * Driver for the vTPM defined by the AMD SVSM spec [1].
+> > > + *
+> > > + * The specification defines a protocol that a SEV-SNP guest OS can =
+use to
+> > > + * discover and talk to a vTPM emulated by the Secure VM Service Mod=
+ule (SVSM)
+> > > + * in the guest context, but at a more privileged level (usually VMP=
+L0).
+> > > + *
+> > > + * [1] "Secure VM Service Module for SEV-SNP Guests"
+> > > + *     Publication # 58019 Revision: 1.00
+> > > + */
+> > > +
+> > > +#include <linux/module.h>
+> > > +#include <linux/kernel.h>
+> > > +#include <linux/platform_device.h>
+> > > +#include <linux/tpm_svsm.h>
+> > > +
+> > > +#include <asm/sev.h>
+> > > +
+> > > +#include "tpm.h"
+> > > +
+> > > +struct tpm_svsm_priv {
+> > > +       void *buffer;
+> > > +};
+> > > +
+> > > +static int tpm_svsm_send(struct tpm_chip *chip, u8 *buf, size_t len)
+> > > +{
+> > > +       struct tpm_svsm_priv *priv =3D dev_get_drvdata(&chip->dev);
+> > > +       int ret;
+> > > +
+> > > +       ret =3D svsm_vtpm_cmd_request_fill(priv->buffer, 0, buf, len)=
+;
+> > > +       if (ret)
+> > > +               return ret;
+> > > +
+> > > +       /*
+> > > +        * The SVSM call uses the same buffer for the command and for=
+ the
+> > > +        * response, so after this call, the buffer will contain the =
+response
+> > > +        * that can be used by .recv() op.
+> > > +        */
+> > > +       return snp_svsm_vtpm_send_command(priv->buffer);
+> > > +}
+> > > +
+> > > +static int tpm_svsm_recv(struct tpm_chip *chip, u8 *buf, size_t len)
+> > > +{
+> > > +       struct tpm_svsm_priv *priv =3D dev_get_drvdata(&chip->dev);
+> > > +
+> > > +       /*
+> > > +        * The internal buffer contains the response after we send th=
+e command
+> > > +        * to SVSM.
+> > > +        */
+> > > +       return svsm_vtpm_cmd_response_parse(priv->buffer, buf, len);
+> > > +}
+> > > +
+> > > +static struct tpm_class_ops tpm_chip_ops =3D {
+> > > +       .flags =3D TPM_OPS_AUTO_STARTUP,
+> > > +       .recv =3D tpm_svsm_recv,
+> > > +       .send =3D tpm_svsm_send,
+> > > +};
+> > > +
+> > > +static int __init tpm_svsm_probe(struct platform_device *pdev)
+> > > +{
+> > > +       struct device *dev =3D &pdev->dev;
+> > > +       struct tpm_svsm_priv *priv;
+> > > +       struct tpm_chip *chip;
+> > > +       int err;
+> > > +
+> > > +       if (!snp_svsm_vtpm_probe())
+> > > +               return -ENODEV;
+> > > +
+> > > +       priv =3D devm_kmalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > > +       if (!priv)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       /*
+> > > +        * The maximum buffer supported is one page (see SVSM_VTPM_MA=
+X_BUFFER
+> > > +        * in tpm_svsm.h).
+> > > +        */
+> > > +       priv->buffer =3D (void *)devm_get_free_pages(dev, GFP_KERNEL,=
+ 0);
+> > > +       if (!priv->buffer)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       chip =3D tpmm_chip_alloc(dev, &tpm_chip_ops);
+> > > +       if (IS_ERR(chip))
+> > > +               return PTR_ERR(chip);
+> > > +
+> > > +       dev_set_drvdata(&chip->dev, priv);
+> > > +
+> > > +       err =3D tpm2_probe(chip);
+> >
+> > Our testing is showing that tpm2_probe is hitting a null pointer deref
+> > in tpm_transmit.
+>
+> Next time, please share a backtrace.
 
-kernel test robot noticed the following build warnings:
+Right, my bad.
+>
+> BTW I suspect you're not using Linus' tree, so be sure to backport
+> also commit 980a573621ea ("tpm: Make
+> chip->{status,cancel,req_canceled} opt").
+>
+> Without that, you will have a null ptr dereference since .status() is
+> NULL from v5 of this series (as specified in the changelog).
 
-[auto build test WARNING on v6.14]
-[cannot apply to lee-leds/for-leds-next linus/master next-20250404]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks, I missed that detail. Will report back.
+>
+> Stefano
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/leds-pca955x-Avoid-potential-overflow-when-filling-default_label/20250405-003054
-base:   v6.14
-patch link:    https://lore.kernel.org/r/20250404162849.3650361-1-andriy.shevchenko%40linux.intel.com
-patch subject: [PATCH v1 1/1] leds: pca955x: Avoid potential overflow when filling default_label
-config: powerpc-randconfig-003-20250405 (https://download.01.org/0day-ci/archive/20250405/202504050256.SYq06TxB-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250405/202504050256.SYq06TxB-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504050256.SYq06TxB-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/leds/leds-pca955x.c: In function 'pca955x_probe':
->> drivers/leds/leds-pca955x.c:554:53: warning: '%u' directive output may be truncated writing between 1 and 10 bytes into a region of size 8 [-Wformat-truncation=]
-        snprintf(default_label, sizeof(default_label), "%u", i);
-                                                        ^~
-   drivers/leds/leds-pca955x.c:554:52: note: directive argument in the range [0, 4294967294]
-        snprintf(default_label, sizeof(default_label), "%u", i);
-                                                       ^~~~
-   drivers/leds/leds-pca955x.c:554:5: note: 'snprintf' output between 2 and 11 bytes into a destination of size 8
-        snprintf(default_label, sizeof(default_label), "%u", i);
-        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>
 
 
-vim +554 drivers/leds/leds-pca955x.c
-
-   449	
-   450	static int pca955x_probe(struct i2c_client *client)
-   451	{
-   452		struct pca955x *pca955x;
-   453		struct pca955x_led *pca955x_led;
-   454		const struct pca955x_chipdef *chip;
-   455		struct led_classdev *led;
-   456		struct led_init_data init_data;
-   457		struct i2c_adapter *adapter;
-   458		struct pca955x_platform_data *pdata;
-   459		bool set_default_label = false;
-   460		bool keep_pwm = false;
-   461		char default_label[8];
-   462		unsigned int i;
-   463		int err;
-   464	
-   465		chip = i2c_get_match_data(client);
-   466		if (!chip)
-   467			return dev_err_probe(&client->dev, -ENODEV, "unknown chip\n");
-   468	
-   469		adapter = client->adapter;
-   470		pdata = dev_get_platdata(&client->dev);
-   471		if (!pdata) {
-   472			pdata =	pca955x_get_pdata(client, chip);
-   473			if (IS_ERR(pdata))
-   474				return PTR_ERR(pdata);
-   475		}
-   476	
-   477		/* Make sure the slave address / chip type combo given is possible */
-   478		if ((client->addr & ~((1 << chip->slv_addr_shift) - 1)) !=
-   479		    chip->slv_addr) {
-   480			dev_err(&client->dev, "invalid slave address %02x\n",
-   481				client->addr);
-   482			return -ENODEV;
-   483		}
-   484	
-   485		dev_info(&client->dev, "Using %s %u-bit LED driver at slave address 0x%02x\n",
-   486			 client->name, chip->bits, client->addr);
-   487	
-   488		if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA))
-   489			return -EIO;
-   490	
-   491		if (pdata->num_leds != chip->bits) {
-   492			dev_err(&client->dev,
-   493				"board info claims %d LEDs on a %u-bit chip\n",
-   494				pdata->num_leds, chip->bits);
-   495			return -ENODEV;
-   496		}
-   497	
-   498		pca955x = devm_kzalloc(&client->dev, sizeof(*pca955x), GFP_KERNEL);
-   499		if (!pca955x)
-   500			return -ENOMEM;
-   501	
-   502		pca955x->leds = devm_kcalloc(&client->dev, chip->bits,
-   503					     sizeof(*pca955x_led), GFP_KERNEL);
-   504		if (!pca955x->leds)
-   505			return -ENOMEM;
-   506	
-   507		i2c_set_clientdata(client, pca955x);
-   508	
-   509		mutex_init(&pca955x->lock);
-   510		pca955x->client = client;
-   511		pca955x->chipdef = chip;
-   512	
-   513		init_data.devname_mandatory = false;
-   514		init_data.devicename = "pca955x";
-   515	
-   516		for (i = 0; i < chip->bits; i++) {
-   517			pca955x_led = &pca955x->leds[i];
-   518			pca955x_led->led_num = i;
-   519			pca955x_led->pca955x = pca955x;
-   520			pca955x_led->type = pdata->leds[i].type;
-   521	
-   522			switch (pca955x_led->type) {
-   523			case PCA955X_TYPE_NONE:
-   524			case PCA955X_TYPE_GPIO:
-   525				break;
-   526			case PCA955X_TYPE_LED:
-   527				led = &pca955x_led->led_cdev;
-   528				led->brightness_set_blocking = pca955x_led_set;
-   529				led->brightness_get = pca955x_led_get;
-   530	
-   531				if (pdata->leds[i].default_state == LEDS_DEFSTATE_OFF) {
-   532					err = pca955x_led_set(led, LED_OFF);
-   533					if (err)
-   534						return err;
-   535				} else if (pdata->leds[i].default_state == LEDS_DEFSTATE_ON) {
-   536					err = pca955x_led_set(led, LED_FULL);
-   537					if (err)
-   538						return err;
-   539				}
-   540	
-   541				init_data.fwnode = pdata->leds[i].fwnode;
-   542	
-   543				if (is_of_node(init_data.fwnode)) {
-   544					if (to_of_node(init_data.fwnode)->name[0] ==
-   545					    '\0')
-   546						set_default_label = true;
-   547					else
-   548						set_default_label = false;
-   549				} else {
-   550					set_default_label = true;
-   551				}
-   552	
-   553				if (set_default_label) {
- > 554					snprintf(default_label, sizeof(default_label), "%u", i);
-   555					init_data.default_label = default_label;
-   556				} else {
-   557					init_data.default_label = NULL;
-   558				}
-   559	
-   560				err = devm_led_classdev_register_ext(&client->dev, led,
-   561								     &init_data);
-   562				if (err)
-   563					return err;
-   564	
-   565				set_bit(i, &pca955x->active_pins);
-   566	
-   567				/*
-   568				 * For default-state == "keep", let the core update the
-   569				 * brightness from the hardware, then check the
-   570				 * brightness to see if it's using PWM1. If so, PWM1
-   571				 * should not be written below.
-   572				 */
-   573				if (pdata->leds[i].default_state == LEDS_DEFSTATE_KEEP) {
-   574					if (led->brightness != LED_FULL &&
-   575					    led->brightness != LED_OFF &&
-   576					    led->brightness != LED_HALF)
-   577						keep_pwm = true;
-   578				}
-   579			}
-   580		}
-   581	
-   582		/* PWM0 is used for half brightness or 50% duty cycle */
-   583		err = pca955x_write_pwm(client, 0, 255 - LED_HALF);
-   584		if (err)
-   585			return err;
-   586	
-   587		if (!keep_pwm) {
-   588			/* PWM1 is used for variable brightness, default to OFF */
-   589			err = pca955x_write_pwm(client, 1, 0);
-   590			if (err)
-   591				return err;
-   592		}
-   593	
-   594		/* Set to fast frequency so we do not see flashing */
-   595		err = pca955x_write_psc(client, 0, 0);
-   596		if (err)
-   597			return err;
-   598		err = pca955x_write_psc(client, 1, 0);
-   599		if (err)
-   600			return err;
-   601	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--
+-Dionna Glaze, PhD, CISSP, CCSP (she/her)
 
