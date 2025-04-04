@@ -1,116 +1,146 @@
-Return-Path: <linux-kernel+bounces-588338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B9B9A7B7D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:35:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A1DFA7B7DC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:38:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8249F3B68D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 06:35:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E71C03B7144
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 06:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CEA6190696;
-	Fri,  4 Apr 2025 06:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270E018C91F;
+	Fri,  4 Apr 2025 06:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="yMLAmrTe"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lua6EUnN"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C48F17F4F6;
-	Fri,  4 Apr 2025 06:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C8B14A619
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 06:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743748533; cv=none; b=Tvckfn8K1rNnrOq2EIZJOADrG/wjoHtttbhZn9tyYiqNHviLkh62km/a9HnyAV4vOZhrxmvGIaNoJN4LznLf0Qmudfu2laMHaWUAFjyrgdUUcvCwmDeV8PZfKD09Yvkmh+mN8FnruArgXUsnOnCcmcH3seaO0K4HtqBc6xPY4AQ=
+	t=1743748662; cv=none; b=apN7HBozNkKVZW2B5Gogcu1/lcgATQOmrzvwYK3UfXhlERsE9dwIrV3lt+jWifCMX4IcxPi/Si5lfIQJsrRASxZVMfmjSmlkL3dR79GYPPVaUkSfhWaP2AMBV645LvqnJx2fTMq6sGM+SfdwFv2dZtgs0rw45IDB03KT3lLKZDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743748533; c=relaxed/simple;
-	bh=f5UIYiHZr8F8zpMCKNp8y/OGEA3xHGIo+nLug8tZ04o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BzW3aFjjI5w0/ihkIRj5T6lUxpqHAXR9GDPMbknTlmT2ZKPCyi+LSt/aAUjkzLl1PYLaz6Rq2uCG5ZddExhDjYCsMnFreVo4OQqwK5PDYQAN1egL7L/xEnCwA2hIs5l90ZrFMMuhrBY+HLwIH9m8Yx/DTBd6XsJpi7KVYj0o0Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=yMLAmrTe; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=oRL0tdJAjPV+G5hvzUicbBcc4clC5hezIULcGYZrejk=; b=yMLAmrTerlCYoA+aZjVyTxFk7c
-	/ODMdcEzGnEXoNZfxHBGocpOAS6S5WWdpfJJ/VeXkrszrn/2k7BclSgztw1iRnkALPnx632SU7Wfl
-	01XHHIZbz1cJeyP5Cxyuosnyf38KscTeVlmBTaUPwRJTdE49XYIz3jn8XVuY128BjrxhNx+Cn09lX
-	Xfgs4/mE0vq+8HD7VOLB1H3qdhTmZy3/vQonUGAOiLNKV0d/JU/PSZb/FCiqoMSpdV5SZrLoEHJF6
-	BodJBDnDcgfOf8VB9R0OgXQYFYrupaGYA3/qIiMSg/Lfh9UWcePY5aGGY2noFwUuwvbQdw+MExcfi
-	EdEc7xXg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u0aeI-0000000AtBZ-2zlI;
-	Fri, 04 Apr 2025 06:35:30 +0000
-Date: Thu, 3 Apr 2025 23:35:30 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Christoph Hellwig <hch@infradead.org>, virtio-comment@lists.linux.dev,
-	mst@redhat.com, Claire Chang <tientzu@chromium.org>,
-	linux-devicetree <devicetree@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	=?iso-8859-1?Q?J=F6rg?= Roedel <joro@8bytes.org>,
-	iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-	graf@amazon.de
-Subject: Re: [RFC PATCH 1/3] content: Add VIRTIO_F_SWIOTLB to negotiate use
- of SWIOTLB bounce buffers
-Message-ID: <Z-99snVF5ESyJDDs@infradead.org>
-References: <20250402112410.2086892-1-dwmw2@infradead.org>
- <20250402112410.2086892-2-dwmw2@infradead.org>
- <Z-43svGzwoUQaYvg@infradead.org>
- <148a3c8ee53af585b42ec025c2c7821ad852c66c.camel@infradead.org>
- <Z-46TDmspmX0BJ2H@infradead.org>
- <05abb68286dd4bc17b243130d7982a334503095b.camel@infradead.org>
+	s=arc-20240116; t=1743748662; c=relaxed/simple;
+	bh=dRcNcXMhQCLQSc8KolpqK0jy3kQMHaeA6z8Dx0eFyNc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ad2MkpIBq5eFwCECmGr4YhYd+XRaxeKOyZubmrxnQ6xpk9wyTvBk9iY9KL7bYLPF06S9D+OIh8aPb0ODGyud2t64c3ewnhCSSriQu/y4bxu4yq72CezF7xwM7plsO4YvHVxEFQkZkVRaF1bpTAHDmI238NFL24p06ctmw7g9K98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lua6EUnN; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-548409cd2a8so1925119e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 23:37:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1743748657; x=1744353457; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=E2/0MoQri2+kgKRxHCnO5QrE0iduVLuICWxx2heDZSo=;
+        b=lua6EUnNIp42CF4fHgE1cVjU7MIZye6Jqk9SgwfvRSHd4/DpUUABYRo+j9phh788v0
+         crENzkRXA0AeCUyjbE9SBRLtki94/2taQXJG3UNceu8wuz6DC3hOgvR1vHMJLGtBgCLM
+         y/TR28oQLUb9OP4W9/op2++IotqXEhIMrGCy4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743748657; x=1744353457;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E2/0MoQri2+kgKRxHCnO5QrE0iduVLuICWxx2heDZSo=;
+        b=Rl3J0g/r7hTB3qNTQSfHObKzEc21nYzgLdUz9Hi3CWBoHkWQpFGsJPRkFe6Oi/falM
+         AdfKZDeaTMn04bOOJ3+bmmlDoEHCwv9vcx+epXfxKIZHeUPGOrmWSlW1fSksuFKfynuL
+         65iqyuH4saBNv9UTrsVj88fRbtuNjiCCJ/OBF+oNkfqj0aOaGyUI9KSFpppEufQy7FEP
+         /Kk4CQETQu2iqSUT7VHBfMiYlYwC56Q7jBpuGVAkDVcrPxFLsQ8j+UKcZFdSJHT3cQYY
+         PNhWLzwGpElxwkvXlHKTI/Zy61WioKW04Jq6ykj3255YHPMh5riFjeAdh4hE8dq/+jfw
+         6wOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ1GXFdhKFvVSEcqpdOad41IZen4XluMeVwYz2WQ+D/PJKOn9Fj3lkYUNpb9vN8MLbDhLY6FCCMk0Gi48=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMiA0wWV4BxIodyDM52V4tVQx/mDpdHzNJTm1kQF71MOA87ta3
+	KM3mIqXJdHWjlGu8c2EK7Oxcd1qamh3AsUUyFrXhK4+Hp9wDCRSqArWhHEsUXg==
+X-Gm-Gg: ASbGncuYuZTksSvoce4ParAiTt49ljErr7FNK68WbbnOMLhkMVJacwfMA1Ucpk870p4
+	SaDvsImtMaBHrZKQVnvlpST5fltuto8e46aNduXrViL9z6GI148wzNJ2xtdno7XUb0/Ig9wkx8s
+	/Pb6a0mmT84EThxVIY1X2HTG8GXQEdb6bxqdndH7fy9Wbx6adxKNezsBM/SCzz1XzkHeH0N6LLs
+	YBwHkWB0ywxMdAikt3wRuZrBfk6ebfNgHFT/mGS+YbsYh0x4+ylqyXxjjhSzGwue9b9uaZcFoNM
+	zrOfpihHz4knBML0LJYygIlVzdEeDJLuj+/4Ae01Ir92NH+sFaLX366JX7qpFpm/4eivIAuVTrZ
+	6WVQJevhhZXOINptamXHJTbVuu+gboAhdy24=
+X-Google-Smtp-Source: AGHT+IEOmx3SeghSSudCtmkKz07r0+wsw6tchEuaUxXFBzVyqDR4IR4qqRks8m0vtjYZGMsLKvWevQ==
+X-Received: by 2002:a05:6512:15a6:b0:542:28b4:23ad with SMTP id 2adb3069b0e04-54c22776e3amr581480e87.16.1743748657175;
+        Thu, 03 Apr 2025 23:37:37 -0700 (PDT)
+Received: from ribalda.c.googlers.com (216.148.88.34.bc.googleusercontent.com. [34.88.148.216])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e672444sm338275e87.251.2025.04.03.23.37.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 23:37:36 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v5 0/4] media: uvcvideo: Introduce
+ V4L2_META_FMT_UVC_MSXU_1_5 + other meta fixes
+Date: Fri, 04 Apr 2025 06:37:33 +0000
+Message-Id: <20250404-uvc-meta-v5-0-f79974fc2d20@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <05abb68286dd4bc17b243130d7982a334503095b.camel@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC1+72cC/23MQQ7CIBCF4as0sxaDlCnalfcwXRA6llm0GGiJp
+ uHuYtcu/5eXb4dEkSlB3+wQKXPisNTAUwPO22UiwWNtUFKh1LIVW3ZiptUKQuyMaceLsgT1/or
+ 05PdBPYbantMa4ueQs/6tf5CshRRXY6zttMGbwbvzMcy8zecQJxhKKV+xnqynowAAAA==
+X-Change-ID: 20250403-uvc-meta-e556773d12ae
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>, stable@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-On Thu, Apr 03, 2025 at 09:06:37AM +0100, David Woodhouse wrote:
-> You are right, in theory, that (2b) is the job of ACPI or DT to
-> communicate. But virtio is presented as just another PCI device,
-> indistinguishable by the guest from other PCI devices which *are*
-> actually able to do DMA through the hardware's two-stage IOMMU.
+This series introduces a new metadata format for UVC cameras and adds a
+couple of improvements to the UVC metadata handling.
 
-Then the virtual device should be behind a different IOMMU (or no IOMMU
-at all) to clearly differciate them for the assigned hardware devices.
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Changes in v5:
+- Fix codestyle and kerneldoc warnings reported by media-ci
+- Link to v4: https://lore.kernel.org/r/20250403-uvc-meta-v4-0-877aa6475975@chromium.org
 
-> To my knowledge there isn't a clean way, across platforms, to tell an
-> operating system that a certain device just *can't* do DMA at all. 
+Changes in v4:
+- Rename format to V4L2_META_FMT_UVC_MSXU_1_5 (Thanks Mauro)
+- Flag the new format with a quirk.
+- Autodetect MSXU devices.
+- Link to v3: https://lore.kernel.org/linux-media/20250313-uvc-metadata-v3-0-c467af869c60@chromium.org/
 
-Well, it's part of the device specific if it can do DMA or not.  We
-had a bunch of early PCI (and a lot of ISA) device that could not
-do P2P.  Even on PCIe there might be weirdo device that just expose
-a bar or have some bitbanged i2c or similar.
+Changes in v3:
+- Fix doc syntax errors.
+- Link to v2: https://lore.kernel.org/r/20250306-uvc-metadata-v2-0-7e939857cad5@chromium.org
 
-Now if you mean virtio devices - yes there's no way currently as virtio
-is a quite fundamentally DMA based model.
+Changes in v2:
+- Add metadata invalid fix
+- Move doc note to a separate patch
+- Introuce V4L2_META_FMT_UVC_CUSTOM (thanks HdG!).
+- Link to v1: https://lore.kernel.org/r/20250226-uvc-metadata-v1-1-6cd6fe5ec2cb@chromium.org
 
-> And
-> even if there was, why offer a device model that could *theoretically*
-> do DMA, just to tell the guest through some other channel that it
-> can't?
+---
+Ricardo Ribalda (4):
+      media: uvcvideo: Do not mark valid metadata as invalid
+      media: Documentation: Add note about UVCH length field
+      media: uvcvideo: Introduce V4L2_META_FMT_UVC_MSXU_1_5
+      media: uvcvideo: Auto-set UVC_QUIRK_MSXU_META
 
-That would be the normal way.  Because virtio devices fundamentally can
-do DMA.  It's just your guest specification doesn't want them to.
+ .../userspace-api/media/v4l/meta-formats.rst       |  1 +
+ .../media/v4l/metafmt-uvc-msxu-1-5.rst             | 23 +++++
+ .../userspace-api/media/v4l/metafmt-uvc.rst        |  4 +-
+ MAINTAINERS                                        |  1 +
+ drivers/media/usb/uvc/uvc_metadata.c               | 97 ++++++++++++++++++++--
+ drivers/media/usb/uvc/uvc_video.c                  | 12 +--
+ drivers/media/usb/uvc/uvcvideo.h                   |  1 +
+ drivers/media/v4l2-core/v4l2-ioctl.c               |  1 +
+ include/linux/usb/uvc.h                            |  3 +
+ include/uapi/linux/videodev2.h                     |  1 +
+ 10 files changed, 131 insertions(+), 13 deletions(-)
+---
+base-commit: 4e82c87058f45e79eeaa4d5bcc3b38dd3dce7209
+change-id: 20250403-uvc-meta-e556773d12ae
 
-> What's wrong with a simple option to indicate, in the device model that
-> the system designer chooses to build for the guest, that it can't do
-> DMA?
-
-As stated above I suspect you still are asking the wrong question and
-have the wrong mental model.  Virtio fundamentally can do DMA, you just
-don't want it to.  And based on the other subthread I also suspect you'd
-actually be much better off with your bounce buffer in the virtual host
-memory instead of coming up with this particularly odd case, but even
-if not it's the system description that matters here, not the device
-model.
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
 
 
