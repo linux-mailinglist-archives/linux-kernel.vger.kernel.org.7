@@ -1,172 +1,116 @@
-Return-Path: <linux-kernel+bounces-588990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 499F5A7C046
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:10:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C85A8A7C0C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B775189AA0E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:10:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C79C3BA314
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1D41F460F;
-	Fri,  4 Apr 2025 15:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349641F561C;
+	Fri,  4 Apr 2025 15:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="BFcPvZNM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RY3UsWRb"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cmnYwXGB"
+Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106891A3172
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 15:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8025D517;
+	Fri,  4 Apr 2025 15:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743779400; cv=none; b=tV+LnuvK+UU0EW9k2odoDn61bSwZ7SoO0CHthqBoJWMRXDtbVrrFi8dDHFdHzc9BT69x6FTzZNVseT5gGU89g/9ldVhG/p1JD6RCLLTX9Y6w+7S6O/ySVeqM3z9f0Abusc/8mUOBn6MUkbwiP5plZ5tTv6hNum6CdVLUWRDOQ7Y=
+	t=1743781427; cv=none; b=BZkVLDHY0sPRx4TEczKhlairaW6j63eCSEdglstJVPGMxXuxX7TXxj5eDiuab0rEClU4I+3YUr7lbcNnWmVTUNE7FJCbsJiG1RYjfIqLP19y0T7gFWlpNi6+AgyQ3aHuo42Y18kzcU65i99mExdteEC8QM1nRMaGL6qOql8jdSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743779400; c=relaxed/simple;
-	bh=oKLbeOTFd8BHwF7Nezk8vluZK3LVk21rmvApN9Aeu7c=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:Subject:Content-Type; b=gJyzkG4rKH3x+MePZ7zeNemF0Vt1ku5zQUQp4cHoExY2WEcYy6UMCrk2hRnGLtrZr8Vf0EqVUwo+i1H0JbTdnrHggYurjQrfsbeFUoG6y6Gji0gNNPSZBWygWQbmquxgw/2zazrUh/Q1QYEVbLm1QyvmCn/b5baYyPTEpf2l3zQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=BFcPvZNM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RY3UsWRb; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfout.stl.internal (Postfix) with ESMTP id 0780B1140160;
-	Fri,  4 Apr 2025 11:09:57 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-12.internal (MEProxy); Fri, 04 Apr 2025 11:09:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm1; t=1743779396; x=1743865796; bh=0U
-	N1zEQHh+3iAICbKR3Qfw/BEbHddaeGqLeTAPFJgLU=; b=BFcPvZNMxp2G07QEFC
-	FtfCRHKf+y7LDSSgX+wqoiMVxUXkaLaRkdFb47Ukfi8p7xvPeKPy58b2e+NNiTe+
-	Ag/exsVsBFEqP4MjS8AH6KqTlprvCJzecQtlMH8FGak7IpjI4xEezbdiKdOUOLe/
-	rijhD7a12hlTpSY6Cx6L6FPRae+eJ2SLhBW0yC0Pvdb+Wb7pEL7YIwhBcP48D/CY
-	3v2tnT46KknvqnCcjig+ofeZEdnWtSWkRTeGNJPb8hqaiJQu2unKeT5Lu+lg7JsF
-	k5THmSjWw3vpB+iOKojLG38HX0mOe2MwWDfF2H/pJjX2uxM4pkILkZEJD6m3QoxS
-	hQJA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1743779396; x=1743865796; bh=0UN1zEQHh+3iAICbKR3Qfw/BEbHd
-	daeGqLeTAPFJgLU=; b=RY3UsWRb+2UHgffX4xV8KUskbOLVlIBBE6Zi/G0i5h4L
-	CPdOkfqzBnhAcLlTK+EDb5yNJ9R/8vpdORrElVWVHjILQqq16p18Hba4wyWbz2EW
-	7MrTseMQb5i2RH/60amsC6x5oGF4/wwBzeSZRnVugIQBo4MhM/H7XNrLK+AnJHbI
-	qHS0RJ/tZlpQNQPBwgiRoSTrdgVm8777HUaSVycpkAkJUq7coUAI5onPwNcDIP9W
-	tNM4UbGVzRhMDi6HvC3m+emo+mGdrcGg1NaE/zp9Slh2O9twOpVJLgyVQ7eUSGLD
-	QJD7JiSSOtFigQaYCfceTDj6yxiFNRZgotF99/+W2w==
-X-ME-Sender: <xms:RPbvZ2MvkEFU3wDt8I_5tJMnPUqqbN3E1xNgw6sUKnYRrPC1lLaqVA>
-    <xme:RPbvZ087MUYdSuFHlB4jcRNttrnvZ3JQW5xiTRzVqT8svOMhBs85gf63mMMJyMEOK
-    8-UdNrJo-20ShyE3jA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduledujeeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkffutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhepudfgfeeuheelheehfeeigeeigeeiveevheelteel
-    leeijeeikeekvddthfejieffnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpghhith
-    hhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhf
-    rhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepiedpmhhouggvpe
-    hsmhhtphhouhhtpdhrtghpthhtohepkhgrsggvlheskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprh
-    gtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrggu
-    vggrugdrohhrghdprhgtphhtthhopehsohgtsehlihhsthhsrdhlihhnuhigrdguvghvpd
-    hrtghpthhtohepihhorghnrgdrtghiohhrnhgvihesnhigphdrtghomhdprhgtphhtthho
-    pehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:RPbvZ9SSc0SvdTZwEYcJ1NaoSvJmt7rBZrYYbUcXv91eAFCFIMH96w>
-    <xmx:RPbvZ2toc3OhQomFrsi6iWeeCwJNulPM-FUSyjVk37CluQhcQ81p-g>
-    <xmx:RPbvZ-db2yB5F3Z44XPWC_YRW7PJ9kfrarFTNENa4A_8PmXfttoNnQ>
-    <xmx:RPbvZ61H0p1E6P8uzNRolZOp8tDb-W4E7e4UFNZSlB_QU1OwfuG_PQ>
-    <xmx:RPbvZ8utDE_4OumfRF9zjijdevK9Kgw_cCjKo0eSPjxRanvNK5GXru2E>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 60F592220074; Fri,  4 Apr 2025 11:09:56 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1743781427; c=relaxed/simple;
+	bh=y5kdJZvxZbSx1NwGH41iuXoXmVDiZX60eBPJUgWXggk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E+Z4+OEGuoC8hIjPoRITcvxM0XKlvK2VdMX6Nks+Re3mHldtRQIMXUXLq1Sm4Ffck9kccnExUpGKiMobP3F8rrERpqVO6588nqx/n4c56HjznESkdIeVHL1Iz7V5jl0sxAFobJErZ7B45qGS2ofp4lisTJVlCpLO4YkodNSPUt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cmnYwXGB; arc=none smtp.client-ip=217.70.178.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	by mslow3.mail.gandi.net (Postfix) with ESMTP id 83CF9583F40;
+	Fri,  4 Apr 2025 15:09:58 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7002620488;
+	Fri,  4 Apr 2025 15:09:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1743779391;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F1k4aXHMVDjBaGF4+/DFJ9DVIauTuz/+r1G0nZFFj/E=;
+	b=cmnYwXGBAFAIsLG0kU4d0QuGEkupgz8zbN+69t+bZ6gR/Y5tuGoaOAqwmsLUL36gP3WiTX
+	xDbALV6vL2pCQ71niWLgSf8ts/CfWM4jbh/7FV8yGG4OinFuyYdkD7UXEKWS6+7s8bk3MG
+	ybYkcX2609Z+0jm7fU7FTurKKOrtbUZdzr5pkjA8zepoC/Dx3GlpPxMM9oZwnjDb3Cet4a
+	XnuddFcG02gkH044wI7GjJvKFzTDW2pEIL7goWQCdaamAqoYcYZ20uFfKaoFy47KX7kBTh
+	4Fz8L2Cfigm/21a/qCT/WxjkIe39bc0dl9/HhLZDkHAccKPlJD5kyYK6Qn+FIg==
+Date: Fri, 4 Apr 2025 17:09:49 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Simon Horman <horms@kernel.org>, Michal
+ Kubecek <mkubecek@suse.cz>, Florian Fainelli <f.fainelli@gmail.com>, Kory
+ Maincent <kory.maincent@bootlin.com>
+Subject: Re: [PATCH net] net: ethtool: Don't call .cleanup_data when
+ prepare_data fails
+Message-ID: <20250404170949.64e46b89@fedora.home>
+In-Reply-To: <20250404074744.6689fa8b@kernel.org>
+References: <20250403132448.405266-1-maxime.chevallier@bootlin.com>
+	<20250404074744.6689fa8b@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 04 Apr 2025 17:09:35 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: "Ioana Ciornei" <ioana.ciornei@nxp.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, soc@lists.linux.dev,
- =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>
-Message-Id: <cfc8fd0d-9d32-432b-a5ba-1477265670e0@app.fastmail.com>
-Subject: [GIT PULL] soc: drivers for 6.15, part 2
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduledujeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddvpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepvgguu
+ hhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhm
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-The following changes since commit 0ad2507d5d93f39619fc42372c347d6006b64319:
+Hi Jakub,
 
-  Linux 6.14-rc3 (2025-02-16 14:02:44 -0800)
+On Fri, 4 Apr 2025 07:47:44 -0700
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-are available in the Git repository at:
+> On Thu,  3 Apr 2025 15:24:46 +0200 Maxime Chevallier wrote:
+> > There's a consistent pattern where the .cleanup_data() callback is
+> > called when .prepare_data() fails, when it should really be called to
+> > clean after a successfull .prepare_data() as per the documentation.
+> > 
+> > Rewrite the error-handling paths to make sure we don't cleanup
+> > un-prepared data.  
+> 
+> Code looks good. I have a question about the oldest instance of 
+> the problem tho. The callbacks Michal added seem to be "idempotent".
+> As you say the code doesn't implement the documented model, but
+> I think until eeprom (?) was added the prepare callbacks could
+> have only failed on memory allocation, and all the cleanup did
+> was kfree(). So since kfree(NULL) is fine - nothing would have
+> crashed..
+> 
+> Could you repost with the Fixes tag and an explanation of where
+> the first instance of this causing a potential real crash was added?
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-drivers-6.15-2
+TBH I didn't even see a crash, I just stumbled upon that when working
+on the phy-dump stuff. I was actually surprised that I could trace it
+back so far, surely things would've blown-up somewhere in the past 6
+years...
 
-for you to fetch changes up to af34290cdc60a289e43f38a87621a3e9dd63c67b:
+I'll look at the chronology and see what was the first point in time
+where a crash could've realistically gone wrong then.
 
-  Merge tag 'omap-for-v6.14/drivers-signed' of https://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-omap into soc/drivers-2 (2025-04-04 14:37:41 +0200)
+Thanks
 
-----------------------------------------------------------------
-soc: drivers for 6.15, part 2
-
-This is the promised follow-up to the soc drivers branch, adding minor
-updates to omap and freescale drivers.
-
-Most notably, Ioana Ciornei takes over maintenance of the DPAA bus
-driver used in some NXP (originally Freescale) chips.
-
-----------------------------------------------------------------
-
-I had a hard time deciding whether to include the platforms/cznic
-driver changes in the pull request or not: The driver changes had
-caused some build time regressions and I actually made fixes for
-all of them but wasn't quite happy with them either.
-
-In the end I decided to send out everything else but skip the
-cznic driver since my fixes (finally sent today) hadn't been
-part of linux-next or properly reviewed so far, and the merge
-window is basically over. Sorry Marek, I should have been
-more active in making sure they branch was in shape. Let's
-make sure we get a new version into linux-next after the merge
-window. I have uploaded the current version to
-https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git/log/?h=cznic/platform
-and I think we should just rebase that and squash my three
-fixups into the original commits.
-
-Andreas Kemnade (1):
-      Input: tsc2007 - accept standard properties
-
-Arnd Bergmann (2):
-      Merge tag 'soc_fsl-6.15-1' of https://github.com/chleroy/linux into soc/drivers-2
-      Merge tag 'omap-for-v6.14/drivers-signed' of https://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-omap into soc/drivers-2
-
-Dr. David Alan Gilbert (1):
-      bus: fsl-mc: Remove deadcode
-
-Ioana Ciornei (3):
-      MAINTAINERS: add myself as maintainer for the fsl-mc bus
-      MAINTAINERS: fix nonexistent dtbinding file name
-      MAINTAINERS: add the linuppc-dev list to the fsl-mc bus entry
-
-Jiri Slaby (SUSE) (1):
-      irqdomain: soc: Switch to irq_find_mapping()
-
- MAINTAINERS                              |  6 +++---
- drivers/bus/fsl-mc/dpmcp.c               | 22 ----------------------
- drivers/bus/fsl-mc/fsl-mc-allocator.c    |  5 -----
- drivers/bus/fsl-mc/fsl-mc-private.h      |  6 ------
- drivers/bus/fsl-mc/mc-io.c               | 20 --------------------
- drivers/input/touchscreen/tsc2007.h      |  2 ++
- drivers/input/touchscreen/tsc2007_core.c |  5 ++---
- drivers/soc/fsl/qe/qe_ic.c               |  4 ++--
- include/linux/fsl/mc.h                   |  2 --
- 9 files changed, 9 insertions(+), 63 deletions(-)
+Maxime
 
