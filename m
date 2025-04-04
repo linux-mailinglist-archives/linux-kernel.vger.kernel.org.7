@@ -1,95 +1,63 @@
-Return-Path: <linux-kernel+bounces-588402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A80A7B882
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:02:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB69A7B88A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:05:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E173178ACC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:02:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 882A83B3C2A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2AA191F95;
-	Fri,  4 Apr 2025 08:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92371991B6;
+	Fri,  4 Apr 2025 08:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xI0IuMHU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SANosif4";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xI0IuMHU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SANosif4"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Tp3yRMd4"
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AEC1F94C
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 08:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB7915C15F;
+	Fri,  4 Apr 2025 08:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743753715; cv=none; b=FXS/jJ0LpQ2M6di5t4/qUAzfMJpYejtv38iR95gby0HKtTDLf33e6jSlVYg6TFTdY79mHiyk7Uflo+yLqSJmP2UixwEBxodf34RU4ZhYHI0Ee+Qo+DDc4KwNcZVs2TY7ZwBRsPOt+bPjnij9tTSv32/UbpZDPRXXrzVyobHCQh0=
+	t=1743753893; cv=none; b=UTz3stWyhCEFNb+RFC1s/zixTa/pMazLRo5i0Y9cdvTA+VtCt1MgUOJND/+YyMrEMe2sOOW300Ndeu/abrsT6ItEEx72jWqTHX7mn4/Mr2P4tYy2SPwOn/WOOS9oNkHUjBi4vMjyOSLoZSwNvz9BlKH8C7HD8s8Qy2e2s5RASQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743753715; c=relaxed/simple;
-	bh=/YnNs2now4C6MKOxzs0QLz8igUm9eU8a3f7xDqrWIOA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B30xgQm5OVnYQUX+wu5SyEzihZbaud8UssViTFA1R/mLEX9hItID3ZdjcwsFcnK7dmZPUgNWOLgWtRqPTMNuiiXpTcC6KH/LQU0eq3GWxOP/zuOqJRAQKYhwCZdgc8TfI/CdwW6HDmySh/Hw20BV7dHIoDF3CJJUC7ocT65vk+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xI0IuMHU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SANosif4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xI0IuMHU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SANosif4; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 384EB1F38F;
-	Fri,  4 Apr 2025 08:01:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743753711; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xbqz+Ba023NIU2D0jAx+CBA8aEjI5ZNQltMYLKjptN8=;
-	b=xI0IuMHUqMEwA/b3asMlzA/jVa3UNOBj7wFCbIDcCLJgkpEipOBxVIK7zo3es1TxGNGR0x
-	wp0gGRKl51cotj4/iFU3vfBsNPgC9tORt45Dpnje6xDyhZsaesvX3E0lzrEdZkIvYp3iSS
-	SuCPfkEto1MKcIUc4VIVWGKWnrtI+bI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743753711;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xbqz+Ba023NIU2D0jAx+CBA8aEjI5ZNQltMYLKjptN8=;
-	b=SANosif4ZXmcMqDnVTiPHBm6qrUkEJCAnfs2Z9+zL96UoYYS15e8duryPYKEvmNOaAZNjp
-	9zk+ipZmn1/cqWAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=xI0IuMHU;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=SANosif4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743753711; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xbqz+Ba023NIU2D0jAx+CBA8aEjI5ZNQltMYLKjptN8=;
-	b=xI0IuMHUqMEwA/b3asMlzA/jVa3UNOBj7wFCbIDcCLJgkpEipOBxVIK7zo3es1TxGNGR0x
-	wp0gGRKl51cotj4/iFU3vfBsNPgC9tORt45Dpnje6xDyhZsaesvX3E0lzrEdZkIvYp3iSS
-	SuCPfkEto1MKcIUc4VIVWGKWnrtI+bI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743753711;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xbqz+Ba023NIU2D0jAx+CBA8aEjI5ZNQltMYLKjptN8=;
-	b=SANosif4ZXmcMqDnVTiPHBm6qrUkEJCAnfs2Z9+zL96UoYYS15e8duryPYKEvmNOaAZNjp
-	9zk+ipZmn1/cqWAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C435B1364F;
-	Fri,  4 Apr 2025 08:01:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bjqULu6R72c+cAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Fri, 04 Apr 2025 08:01:50 +0000
-Message-ID: <29cfb98b-fe27-4243-abe4-ce66aa504573@suse.de>
-Date: Fri, 4 Apr 2025 10:01:50 +0200
+	s=arc-20240116; t=1743753893; c=relaxed/simple;
+	bh=zgxljn3pdO7HKVjvDZCDLSoX0wHxgeY4k9s/aZAWLyY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nMV1yJY+UsAkW1j2ZUnpcKcNoc6MXCI7veb6I252QeLnErgd1udkybr0VzBGFw19dyfIHN+bE13Zu4JJB1N4KGbRS9swyG3c5vcEtLj09CMMjhadw3hnU7681wj+HqnnaoniE3XP3mHf4F6Me9wKmqMDkrIiPX5fJLOdzALDwPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Tp3yRMd4; arc=none smtp.client-ip=52.119.213.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1743753889; x=1775289889;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=b1JqVe+LlcQEqQ5UTMrgb294HSTh8vlr/zAQ/LotKnA=;
+  b=Tp3yRMd4dnMVrZxk4fsVuxx5rfcQKqHFQyOkWRqNDuzv8WufWnwM8xJw
+   7xSYG83fs3eK3QCltSktJJa9pBnLNNuRMEPPNpbQ2ypoY6o7HQ20nLN8j
+   XGnzHlEhyssb0MiDd0kCiRJQeNhZGgs07oL5uYJlUJUDzXWL2qNx1y3+E
+   Q=;
+X-IronPort-AV: E=Sophos;i="6.15,187,1739836800"; 
+   d="scan'208";a="711049091"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 08:04:45 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.21.151:9580]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.47.226:2525] with esmtp (Farcaster)
+ id 0ebe5713-faf2-4492-b600-33b458c6eb8b; Fri, 4 Apr 2025 08:04:44 +0000 (UTC)
+X-Farcaster-Flow-ID: 0ebe5713-faf2-4492-b600-33b458c6eb8b
+Received: from EX19D020UWC004.ant.amazon.com (10.13.138.149) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 4 Apr 2025 08:04:44 +0000
+Received: from [0.0.0.0] (10.253.83.51) by EX19D020UWC004.ant.amazon.com
+ (10.13.138.149) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14; Fri, 4 Apr 2025
+ 08:04:40 +0000
+Message-ID: <32ca5221-5b25-4bfd-acd7-9eebae8c3635@amazon.com>
+Date: Fri, 4 Apr 2025 10:04:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,220 +65,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 09/10] drm/shmem-helper: Switch
- drm_gem_shmem_vmap/vunmap to use pin/unpin
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Dmitry Osipenko <dmitry.osipenko@collabora.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Gerd Hoffmann <kraxel@redhat.com>, Qiang Yu <yuq825@gmail.com>,
- Steven Price <steven.price@arm.com>, Frank Binns <frank.binns@imgtec.com>,
- Matt Coster <matt.coster@imgtec.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, kernel@collabora.com
-References: <20250322212608.40511-1-dmitry.osipenko@collabora.com>
- <20250322212608.40511-10-dmitry.osipenko@collabora.com>
- <ea4f4059-7748-4bfd-9205-8e95222144da@suse.de>
- <710cdbd4-2c6e-48b7-b12b-972ab6d12abf@collabora.com>
- <20250402152102.01d9cfee@collabora.com>
- <a8ed4b8b-5116-4ac2-bfce-21b2751f7377@suse.de>
- <20250403105053.788b0f6e@collabora.com>
+Subject: Re: [PATCH v2] vsock/virtio: Remove queued_replies pushback logic
+To: "Michael S. Tsirkin" <mst@redhat.com>, Stefan Hajnoczi
+	<stefanha@redhat.com>
+CC: <netdev@vger.kernel.org>, Stefano Garzarella <sgarzare@redhat.com>,
+	<linux-kernel@vger.kernel.org>, <virtualization@lists.linux.dev>,
+	<kvm@vger.kernel.org>, Asias He <asias@redhat.com>, Paolo Abeni
+	<pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
+	<edumazet@google.com>, "David S . Miller" <davem@davemloft.net>,
+	<nh-open-source@amazon.com>
+References: <20250401201349.23867-1-graf@amazon.com>
+ <20250402161424.GA305204@fedora>
+ <20250403073111-mutt-send-email-mst@kernel.org>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250403105053.788b0f6e@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 384EB1F38F
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[collabora.com,gmail.com,ffwll.ch,linux.intel.com,kernel.org,amd.com,redhat.com,arm.com,imgtec.com,lists.freedesktop.org,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim,suse.de:mid];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+From: Alexander Graf <graf@amazon.com>
+In-Reply-To: <20250403073111-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D037UWC001.ant.amazon.com (10.13.139.197) To
+ EX19D020UWC004.ant.amazon.com (10.13.138.149)
 
-Hi
 
-Am 03.04.25 um 10:50 schrieb Boris Brezillon:
-> On Thu, 3 Apr 2025 09:20:00 +0200
-> Thomas Zimmermann <tzimmermann@suse.de> wrote:
->
->> Hi
+On 03.04.25 14:21, Michael S. Tsirkin wrote:
+> On Wed, Apr 02, 2025 at 12:14:24PM -0400, Stefan Hajnoczi wrote:
+>> On Tue, Apr 01, 2025 at 08:13:49PM +0000, Alexander Graf wrote:
+>>> Ever since the introduction of the virtio vsock driver, it included
+>>> pushback logic that blocks it from taking any new RX packets until the
+>>> TX queue backlog becomes shallower than the virtqueue size.
+>>>
+>>> This logic works fine when you connect a user space application on the
+>>> hypervisor with a virtio-vsock target, because the guest will stop
+>>> receiving data until the host pulled all outstanding data from the VM.
+>>>
+>>> With Nitro Enclaves however, we connect 2 VMs directly via vsock:
+>>>
+>>>    Parent      Enclave
+>>>
+>>>      RX -------- TX
+>>>      TX -------- RX
+>>>
+>>> This means we now have 2 virtio-vsock backends that both have the pushback
+>>> logic. If the parent's TX queue runs full at the same time as the
+>>> Enclave's, both virtio-vsock drivers fall into the pushback path and
+>>> no longer accept RX traffic. However, that RX traffic is TX traffic on
+>>> the other side which blocks that driver from making any forward
+>>> progress. We're now in a deadlock.
+>>>
+>>> To resolve this, let's remove that pushback logic altogether and rely on
+>>> higher levels (like credits) to ensure we do not consume unbounded
+>>> memory.
+>> The reason for queued_replies is that rx packet processing may emit tx
+>> packets. Therefore tx virtqueue space is required in order to process
+>> the rx virtqueue.
 >>
->> Am 02.04.25 um 15:21 schrieb Boris Brezillon:
->>> On Wed, 2 Apr 2025 15:58:55 +0300
->>> Dmitry Osipenko <dmitry.osipenko@collabora.com> wrote:
->>>   
->>>> On 4/2/25 15:47, Thomas Zimmermann wrote:
->>>>> Hi
->>>>>
->>>>> Am 22.03.25 um 22:26 schrieb Dmitry Osipenko:
->>>>>> The vmapped pages shall be pinned in memory and previously get/
->>>>>> put_pages()
->>>>>> were implicitly hard-pinning/unpinning the pages. This will no longer be
->>>>>> the case with addition of memory shrinker because pages_use_count > 0
->>>>>> won't
->>>>>> determine anymore whether pages are hard-pinned (they will be soft-
->>>>>> pinned),
->>>>>> while the new pages_pin_count will do the hard-pinning. Switch the
->>>>>> vmap/vunmap() to use pin/unpin() functions in a preparation of addition
->>>>>> of the memory shrinker support to drm-shmem.
->>>>> I've meanwhile rediscovered this patch and I'm sure this is not correct.
->>>>> Vmap should not pin AFAIK. It is possible to vmap if the buffer has been
->>>>> pinned, but that's not automatic.  For other vmaps it is necessary to
->>>>> hold the reservation lock to prevent the buffer from moving.
->>> Hm, is this problematic though? If you want to vmap() inside a section
->>> that's protected by the resv lock, you can
->>>
->>> - drm_gem_shmem_vmap_locked()
->>> - do whatever you need to do with the vaddr,
->>> - drm_gem_shmem_vunmap_locked()
->>>
->>> and the {pin,page_use}_count will be back to their original values.
->>> Those are just ref counters, and I doubt the overhead of
->>> incrementing/decrementing them makes a difference compared to the heavy
->>> page-allocation/vmap operations...
->> I once tried to add pin as part of vmap, so that pages stay in place.
->> Christian was very clear about not doing this. I found this made a lot
->> of sense: vmap means "make the memory available to the CPU". The memory
->> location doesn't matter much here. Pin means something like "make the
->> memory available to the GPU". But which GPU depends on the caller: calls
->> via GEM refer to the local GPU, calls via dma-buf usually refer to the
->> importer's GPU. That GPU uncertainty makes pin problematic already.
-> Okay, so it looks more like a naming issue then. The intent here is to
-
-It's certainly possible to see this as a problem naming.
-
-> make sure the page array doesn't disappear while we have a kernel
-> mapping active (address returned by vmap()). The reason we went from
-> pages_count to pages_use_count+pin_count is because we have two kind of
-> references in drm_gem_shmem:
+>> queued_replies puts a bound on the amount of tx packets that can be
+>> queued in memory so the other side cannot consume unlimited memory. Once
+>> that bound has been reached, rx processing stops until the other side
+>> frees up tx virtqueue space.
+>>
+>> It's been a while since I looked at this problem, so I don't have a
+>> solution ready. In fact, last time I thought about it I wondered if the
+>> design of virtio-vsock fundamentally suffers from deadlocks.
+>>
+>> I don't think removing queued_replies is possible without a replacement
+>> for the bounded memory and virtqueue exhaustion issue though. Credits
+>> are not a solution - they are about socket buffer space, not about
+>> virtqueue space, which includes control packets that are not accounted
+>> by socket buffer space.
 >
-> - weak references (tracked with pages_use_count). Those are
->    usually held by GPU VMs, and they are weak in the sense they
->    shouldn't prevent the shrinker to reclaim them if the GPU VM is idle.
->    The other user of weak references is userspace mappings of GEM
->    objects (mmap()), because then we can repopulate those with our fault
->    handler.
-> - hard references (tracked with pin_count) which are used to prevent
->    the shrinker from even considering the GEM as reclaimable. And clearly
->    kernel mappings fall in that case, because otherwise we could reclaim
->    pages that might be dereferenced by the CPU later on. It's also used
->    to implement drm_gem_pin because it's the same mechanism really,
->    hence the name
-
-Yeah, this should be rename IMHO. Pin is a TTM operation that fixes 
-buffers in certain locations. Drivers do this internally. It has nothing 
-to do with gem-shmem.
-
-There's also a pin operation in GEM BOs' drm_gem_object_funcs, but it is 
-only called for PRIME-exported buffers and not for general use. For 
-gem-shmem, the callback would be implemented on top of the hard references.
-
-And there's also a pin in dma_buf_ops. The term 'pin' is somewhat 
-overloaded already.
-
+> Hmm.
+> Actually, let's think which packets require a response.
 >
->> In your case, vmap an pin both intent to hold the shmem pages in memory.
->> They might be build on top of the same implementation, but one should
->> not be implemented with the other because of their different meanings.
-> But that's not what we do, is it? Sure, in drm_gem_shmem_vmap_locked(),
-> we call drm_gem_shmem_pin_locked(), but that's an internal function to
-> make sure the pages are allocated and stay around until
-> drm_gem_shmem_vunmap_locked() is called.
+> VIRTIO_VSOCK_OP_REQUEST
+> VIRTIO_VSOCK_OP_SHUTDOWN
+> VIRTIO_VSOCK_OP_CREDIT_REQUEST
 >
-> I guess we could rename pin_count into hard_refcount or
-> page_residency_count or xxx_count, and change the pin/unpin_locked()
-> function names accordingly, but that's just a naming detail, it doesn't
-> force you to call drm_gem_pin() to vmap() your GEM, it's something we
-> do internally.
-
-Such a rename would be much appreciated. page_residency_count seems 
-appropriate.
-
 >
->> More generally speaking, I've meanwhile come to the conclusion that pin
->> should not even exist in the GEM interface. It's an internal operation
->> of TTM and reveals too much about what happens within the
->> implementation. Instead GEM should be free to move buffers around.
-> Well, yes and no. There are situations where you simply can't move
-> things around if there are active users, and vmap() is one of those
-> AFAICT.
-
-Sure. What I mean here is that pin/unpin is something of an 
-implementation detail. IMHO the pin/unpin callbacks in 
-drm_gem_object_funcs should get different names, such as pin_exported. 
-They are not for general use.
-
->   
->> Dma-buf importers should only tell exporters to make buffers available
->> to them, but not how to do this. AFAIK that's what dma-buf's
->> attach/detach is for.
-> And that's what they do, no? attach() tells the exporter to give the
-> importer a way to access those buffers, and given the exporter has no
-> clue about when/how the exporter will access those, there's no other way
-> but to pin the pages. Am I missing something here?
-
-Yeah, that's what they do.
-
-Best regards
-Thomas
+> the response to these always reports a state of an existing socket.
+> and, only one type of response is relevant for each socket.
+>
+> So here's my suggestion:
+> stop queueing replies on the vsock device, instead,
+> simply store the response on the socket, and create a list of sockets
+> that have replies to be transmitted
+>
+>
+> WDYT?
 
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Wouldn't that create the same problem again? The socket will eventually 
+push back any new data that it can take because its FIFO is full. At 
+that point, the "other side" could still have a queue full of requests 
+on exactly that socket that need to get processed. We can now not pull 
+those packets off the virtio queue, because we can not enqueue responses.
+
+But that means now the one queue is blocked from making forward 
+progress, because we are applying back pressure. And that means 
+everything can grind to a halt and we have the same deadlock this patch 
+is trying to fix.
+
+I don't see how we can possibly guarantee a lossless data channel over a 
+tiny wire (single, fixed size, in order virtio ring) while also 
+guaranteeing bounded memory usage. One of the constraints need to go: 
+Either we are no longer lossless or we effectively allow unbounded 
+memory usage.
+
+
+Alex
 
 
