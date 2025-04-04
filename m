@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-589060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2AC8A7C12F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:02:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0CC0A7C12A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3DBE3BC9FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:01:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 622F23BC92C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771D520102A;
-	Fri,  4 Apr 2025 16:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1331EE7B3;
+	Fri,  4 Apr 2025 16:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rcQ/TZXn"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fxBVXwG6"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9A41F3D59
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 16:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120AE20100C;
+	Fri,  4 Apr 2025 16:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743782513; cv=none; b=V1C0fLojIzBFLiaR+goRkdt80PA+pfQwQlztJRDp8wwqjox94eEWjqdDoce99DIFCzcblqWzTdyoyApwbqGM0Dt44JWMOFnk9LMOpAFVtTYRb9M6uJZKsL2W+kuKTIN7rvaLp3XPDTS2Q0UEFsVJf606Mb45S3ss8HzFd1ss16o=
+	t=1743782412; cv=none; b=UHRoaSrY85JQqmMtGnDtC1AYUAQnIEwLCI7bhcWMDhJaGoM9m31LFARYPTjaY9ZuRmR/IOji62uzz5Ep1dRC164H62+bJeZaxXe/hy3o7ujDKUWBf5Sgu2soe57PvYd6miXqkdVXSBGUX647l0q2REmPo1lCZp4t70z9XjZEXP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743782513; c=relaxed/simple;
-	bh=DAthZNw+5o9GgAEXHRLIN9HoWnIvnt3Jx7BcQo+HyKQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bESg3GJmygA2Xc1ThFCtnGWQeYH9cJTmxnvKkaoi2y4n/uBkFCEJvah3O0cbRlqsPpMSs9nx9mnDDEG+r0Q696MCu+uBRuD/6UZEtzzMPDPvMY5M7wdsntB+GYNPUvYKkesZ8hrkCSumV/CxvNfbPCdCNNsj9QpAEBqXTfUs8co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rcQ/TZXn; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=zwrAwVynWffEuxKPl0OEyEEBjA9QOQig2FF2bzdhEpA=; b=rcQ/TZXnLakdQxL4crd49SXX3c
-	edNsEOVe5KuObd9N9FvHOyENAzG1hCUGVegfPjAUI+DESeHQ2QnvFHahouiLIKJXGm/9RbMSGbECY
-	3H7F9hOPYEdMTiEfgcGsbG7aWDxhy3ZY9WqpRK44a5vaJHV37Lx6OginK6lDUrp+urL++BV2mtbH5
-	p+ZFyzIAKAcSjEt2BvR0qBo1O4L3+1RqPBeKcN2MGAKLhzlFZ2wIbiVn+ohK9/LZ1v86JEJ+uw17N
-	4zNZ8gbxTQmZ4FYx30Cw1FcflV3mnJKiulvzObmjLOk24f6Y0o78MuVRM7S5DrvoDrcue1z65zfMb
-	chjOXhaA==;
-Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
-	by casper.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u0jSa-0000000GFHw-3A3Z;
-	Fri, 04 Apr 2025 16:01:01 +0000
-Received: from dwoodhou by i7.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u0jSZ-0000000ERST-48Ac;
-	Fri, 04 Apr 2025 16:59:59 +0100
-From: David Woodhouse <dwmw2@infradead.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Sauerwein, David" <dssauerw@amazon.de>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mike Rapoport <rppt@linux.ibm.com>,
-	Will Deacon <will@kernel.org>,
-	kvmarm@lists.cs.columbia.edu,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [RFC PATCH v2 7/7] mm: use for_each_valid_pfn() in memory_hotplug
-Date: Fri,  4 Apr 2025 16:59:59 +0100
-Message-ID: <20250404155959.3442111-7-dwmw2@infradead.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250404155959.3442111-1-dwmw2@infradead.org>
-References: <20250404155959.3442111-1-dwmw2@infradead.org>
+	s=arc-20240116; t=1743782412; c=relaxed/simple;
+	bh=edp4JCqbnIYmscJUGaDUJqLWoBZ/eC547lsA4ylG5qQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Yc4beDwPMy65IdzRSr5EYwkcd10OV/YRJQ0A5p1Zxrqh8CPdlv2wQCwPAThqAuQlEmHYAAb9ClqKBj/i2t9p03JCHQcvvqdGMo//Up6D8BchGJ8WvRKj8n+ebGKDUPe8oOn0ThTcdbAKPBLE0QlCZTG4A/MBA/9NkGE6p1eTFQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fxBVXwG6; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1743782407;
+	bh=edp4JCqbnIYmscJUGaDUJqLWoBZ/eC547lsA4ylG5qQ=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=fxBVXwG6HkZg9j2swGn7G7bSKtwVyyDdH8+y1/H4tx7HV34nVEsgwIakTnUkgcbIF
+	 Ty0muSzmrusFQrQFPbnvLC5ZzrL29BzyWMtrdTJFZDwHFkBe8CjPlmNxf9SxugDUPy
+	 4Rqtnoby0ZPsxGNUyT7SQUn/8h2glrm2HMsN7i/8bFlQjhCdpFJu+WnpE7RFYe+P9M
+	 o4gQMjab+HwtCa1n2y7FUBmRKNG2GmZp/OXVRYociTqr9f5v5GnmCd658oQmyV1yBO
+	 U019AN1QpX8DtJn4YSwsCGt7EkfRHvDVWHPIAvGKCWTgvSfo9iP4gTixbBv23e11T+
+	 bqGJYw+P+Q0rg==
+Received: from [192.168.42.160] (mtl.collabora.ca [66.171.169.34])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5FB9317E00AC;
+	Fri,  4 Apr 2025 18:00:04 +0200 (CEST)
+Message-ID: <137d2b73a0c5aab6bf1b1bef6925f84356dbfd98.camel@collabora.com>
+Subject: Re: [RESEND PATCH v0 1/3] media: chips-media: wave5: Improve
+ performance of decoder
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: "jackson.lee" <jackson.lee@chipsnmedia.com>, "mchehab@kernel.org"	
+ <mchehab@kernel.org>, "hverkuil-cisco@xs4all.nl"
+ <hverkuil-cisco@xs4all.nl>,  "sebastian.fricke@collabora.com"	
+ <sebastian.fricke@collabora.com>, "bob.beckett@collabora.com"	
+ <bob.beckett@collabora.com>, "dafna.hirschfeld@collabora.com"	
+ <dafna.hirschfeld@collabora.com>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+ "linux-kernel@vger.kernel.org"	 <linux-kernel@vger.kernel.org>,
+ "lafley.kim" <lafley.kim@chipsnmedia.com>,  "b-brnich@ti.com"	
+ <b-brnich@ti.com>, "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>, Nas Chung	
+ <nas.chung@chipsnmedia.com>
+Date: Fri, 04 Apr 2025 12:00:01 -0400
+In-Reply-To: <SE1P216MB1303E72CA4B13142761E9035EDA92@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+References: <20250319035034.111-1-jackson.lee@chipsnmedia.com>
+		 <20250319035034.111-2-jackson.lee@chipsnmedia.com>
+	 <25a338e0be5395d2cf2170cc432b5a72efb5d089.camel@collabora.com>
+	 <SE1P216MB1303E72CA4B13142761E9035EDA92@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+Organization: Collabora Canada
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.56.0 (3.56.0-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,48 +78,1078 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: David Woodhouse <dwmw2@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+Hi,
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
- mm/memory_hotplug.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Le vendredi 04 avril 2025 à 04:16 +0000, jackson.lee a écrit :
+> Hi Nicolas
+> 
+> Thanks for your review.
+> Can you check my comment for your review?
+> 
+> 
+> > -----Original Message-----
+> > From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+> > Sent: Thursday, April 3, 2025 3:03 AM
+> > To: jackson.lee <jackson.lee@chipsnmedia.com>; mchehab@kernel.org;
+> > hverkuil-cisco@xs4all.nl; sebastian.fricke@collabora.com;
+> > bob.beckett@collabora.com; dafna.hirschfeld@collabora.com
+> > Cc: linux-media@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > lafley.kim
+> > <lafley.kim@chipsnmedia.com>; b-brnich@ti.com; hverkuil@xs4all.nl;
+> > Nas
+> > Chung <nas.chung@chipsnmedia.com>
+> > Subject: Re: [RESEND PATCH v0 1/3] media: chips-media: wave5:
+> > Improve
+> > performance of decoder
+> > 
+> > Le mercredi 19 mars 2025 à 12:50 +0900, Jackson.lee a écrit :
+> > > From: Jackson Lee <jackson.lee@chipsnmedia.com>
+> > > 
+> > > The existing way for decoding frames was to wait until each frame
+> > > was
+> > 
+> > Suggestion:
+> >   The current decoding method was to...
+> > 
+> > > decoded after feeding a bitstream. As a result, performance was
+> > > low
+> > > and Wave5 could not achieve max pixel processing rate.
+> > > 
+> > > Update driver to use an asynchronous approach for decoding and
+> > > feeding
+> > > a
+> >   Update the driver ..
+> > 
+> > > bitstream in order to achieve full capabilities of the device.
+> > 
+> > This second part lacks the technical design choices needed for your
+> > reviewer ;-P I did read the patch once, and am under the impression
+> > that
+> > your approach is to not finish the job anymore.
+> > 
+> > > 
+> > > Signed-off-by: Jackson Lee <jackson.lee@chipsnmedia.com>
+> > > Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
+> > > ---
+> > >  .../chips-media/wave5/wave5-vpu-dec.c         | 344
+> > > ++++++++++--------
+> > >  .../chips-media/wave5/wave5-vpu-enc.c         |   3 -
+> > >  .../platform/chips-media/wave5/wave5-vpuapi.c |  25 +-
+> > >  .../platform/chips-media/wave5/wave5-vpuapi.h |   5 +-
+> > >  4 files changed, 211 insertions(+), 166 deletions(-)
+> > > 
+> > > diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-
+> > > dec.c
+> > > b/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
+> > > index fd71f0c43ac3..cc47da509703 100644
+> > > --- a/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
+> > > +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-dec.c
+> > > @@ -230,12 +230,147 @@ static int start_decode(struct
+> > > vpu_instance *inst,
+> > u32 *fail_res)
+> > >  		switch_state(inst, VPU_INST_STATE_STOP);
+> > > 
+> > >  		dev_dbg(inst->dev->dev, "%s: pic run failed /
+> > > finish job",
+> > __func__);
+> > > -		v4l2_m2m_job_finish(inst->v4l2_m2m_dev,
+> > > m2m_ctx);
+> > >  	}
+> > > 
+> > >  	return ret;
+> > >  }
+> > > 
+> > > +static int write_to_ringbuffer(struct vpu_instance *inst, void
+> > > *buffer,
+> > size_t buffer_size,
+> > > +			       struct vpu_buf *ring_buffer,
+> > > dma_addr_t wr_ptr)
+> > {
+> > 
+> > It seems that from now on this needs to be called with the
+> > feed_lock, so
+> > add:
+> > 
+> > 	 lockdep_assert_held(&inst->feed_lock);
+> > 
+> 
+> 
+> The "feed_lock" mutex is for protecting "inst->avail_src_bufs" this
+> list, so the feed_lock should be used when "static int
+> fill_ringbuffer(struct vpu_instance *inst)" is called, not the
+> write_to_ringbuffer.
+> So I think the feed_lock should not be added in the
+> write_to_ringbuffer function.
 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 75401866fb76..20c39ae45016 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1756,12 +1756,10 @@ static int scan_movable_pages(unsigned long start, unsigned long end,
- {
- 	unsigned long pfn;
- 
--	for (pfn = start; pfn < end; pfn++) {
-+	for_each_valid_pfn (pfn, start, end) {
- 		struct page *page;
- 		struct folio *folio;
- 
--		if (!pfn_valid(pfn))
--			continue;
- 		page = pfn_to_page(pfn);
- 		if (PageLRU(page))
- 			goto found;
-@@ -1805,11 +1803,9 @@ static void do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
- 	static DEFINE_RATELIMIT_STATE(migrate_rs, DEFAULT_RATELIMIT_INTERVAL,
- 				      DEFAULT_RATELIMIT_BURST);
- 
--	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
-+	for_each_valid_pfn (pfn, start_pfn, end_pfn) {
- 		struct page *page;
- 
--		if (!pfn_valid(pfn))
--			continue;
- 		page = pfn_to_page(pfn);
- 		folio = page_folio(page);
- 
+This is called from "fill_ringbuffer()" and both calls to that seems to
+take that lock, my comment was just to make it explicit with lockdep. 
+This is called from CMD_STOP and from device_run() which can be
+concurrent. I think the code effectively protecting the ring buffer
+state with.
+
+
++	mutex_lock(&inst->feed_lock);
++	ret = fill_ringbuffer(inst);
++	mutex_unlock(&inst->feed_lock);
+
+note that there is bunch of random locking too in the abstraction, this
+driver will need some cleanup in the long run imho.
+
+> 
+> 
+> > > +	size_t size;
+> > > +	size_t offset = wr_ptr - ring_buffer->daddr;
+> > > +	int ret;
+> > > +
+> > > +	if (wr_ptr + buffer_size > ring_buffer->daddr +
+> > > ring_buffer->size)
+> > {
+> > > +		size = ring_buffer->daddr + ring_buffer->size -
+> > > wr_ptr;
+> > > +		ret = wave5_vdi_write_memory(inst->dev,
+> > > ring_buffer, offset,
+> > (u8 *)buffer, size);
+> > > +		if (ret < 0)
+> > > +			return ret;
+> > > +
+> > > +		ret = wave5_vdi_write_memory(inst->dev,
+> > > ring_buffer, 0, (u8
+> > *)buffer + size,
+> > > +					     buffer_size -
+> > > size);
+> > > +		if (ret < 0)
+> > > +			return ret;
+> > > +	} else {
+> > > +		ret = wave5_vdi_write_memory(inst->dev,
+> > > ring_buffer, offset,
+> > (u8 *)buffer,
+> > > +					     buffer_size);
+> > > +		if (ret < 0)
+> > > +			return ret;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > 
+> > I have a pretty strong preference in seeing code being moved around
+> > in
+> > seperate patch documented as "non functional changes". This way I
+> > know I
+> > don't have to review again that code.
+> 
+> I will do it.
+> 
+> 
+> > 
+> > > +
+> > > +static int fill_ringbuffer(struct vpu_instance *inst) {
+> > 
+> > Same, I don't want to have to do back and fourth to check if you
+> > changed
+> > anything. Also, after the refactoring, the lockdeup assert can be
+> > added in
+> > the new patch, which makes the introduction of the new lock very
+> > obvious.
+> > 
+> > > +	struct v4l2_m2m_ctx *m2m_ctx = inst->v4l2_fh.m2m_ctx;
+> > > +	struct vpu_src_buffer *vpu_buf;
+> > > +	int ret = 0;
+> > > +
+> > > +	if (m2m_ctx->last_src_buf)  {
+> > > +		struct vpu_src_buffer *vpu_buf =
+> > > +wave5_to_vpu_src_buf(m2m_ctx->last_src_buf);
+> > > +
+> > > +		if (vpu_buf->consumed) {
+> > > +			dev_dbg(inst->dev->dev, "last src buffer
+> > > already
+> > written\n");
+> > > +			return 0;
+> > > +		}
+> > > +	}
+> > > +
+> > > +	list_for_each_entry(vpu_buf, &inst->avail_src_bufs,
+> > > list) {
+> > > +		struct vb2_v4l2_buffer *vbuf = &vpu_buf-
+> > > >v4l2_m2m_buf.vb;
+> > > +		struct vpu_buf *ring_buffer = &inst-
+> > > >bitstream_vbuf;
+> > > +		size_t src_size = vb2_get_plane_payload(&vbuf-
+> > > >vb2_buf, 0);
+> > > +		void *src_buf = vb2_plane_vaddr(&vbuf->vb2_buf,
+> > > 0);
+> > > +		dma_addr_t rd_ptr = 0;
+> > > +		dma_addr_t wr_ptr = 0;
+> > > +		size_t remain_size = 0;
+> > > +
+> > > +		if (vpu_buf->consumed) {
+> > > +			dev_dbg(inst->dev->dev, "already copied
+> > > src buf (%u)
+> > to the ring buffer\n",
+> > > +				vbuf->vb2_buf.index);
+> > > +			continue;
+> > > +		}
+> > > +
+> > > +		if (!src_buf) {
+> > > +			dev_dbg(inst->dev->dev,
+> > > +				"%s: Acquiring kernel pointer to
+> > > src buf (%u),
+> > fail\n",
+> > > +				__func__, vbuf->vb2_buf.index);
+> > > +			break;
+> > > +		}
+> > > +
+> > > +		ret = wave5_vpu_dec_get_bitstream_buffer(inst,
+> > > &rd_ptr,
+> > &wr_ptr, &remain_size);
+> > > +		if (ret) {
+> > > +			/* Unable to acquire the mutex */
+> > 
+> > Might want to fix that comment in a separate patch, perhaps even
+> > remove
+> > that ?
+> > 
+> 
+> Do you want to remove the comment in a separate patch ?
+
+Yes please.
+
+> 
+> 
+> 
+> > > +			dev_err(inst->dev->dev, "Getting the
+> > > bitstream buffer,
+> > fail: %d\n",
+> > > +				ret);
+> > > +			return ret;
+> > > +		}
+> > > +
+> > > +		dev_dbg(inst->dev->dev, "%s: rd_ptr %pad wr_ptr
+> > > %pad",
+> > __func__,
+> > > +&rd_ptr, &wr_ptr);
+> > > +
+> > > +		if (remain_size < src_size) {
+> > > +			dev_dbg(inst->dev->dev,
+> > > +				"%s: remaining size: %zu <
+> > > source size: %zu for
+> > src buf (%u)\n",
+> > > +				__func__, remain_size, src_size,
+> > > vbuf-
+> > > vb2_buf.index);
+> > > +			break;
+> > > +		}
+> > > +
+> > > +		ret = write_to_ringbuffer(inst, src_buf,
+> > > src_size,
+> > ring_buffer, wr_ptr);
+> > > +		if (ret) {
+> > > +			dev_err(inst->dev->dev, "Write src buf
+> > > (%u) to ring
+> > buffer, fail: %d\n",
+> > > +				vbuf->vb2_buf.index, ret);
+> > > +			return ret;
+> > > +		}
+> > > +
+> > > +		ret =
+> > > wave5_vpu_dec_update_bitstream_buffer(inst, src_size);
+> > > +		if (ret) {
+> > > +			dev_dbg(inst->dev->dev,
+> > > +				"update_bitstream_buffer fail:
+> > > %d for src buf
+> > (%u)\n",
+> > > +				ret, vbuf->vb2_buf.index);
+> > > +			break;
+> > > +		}
+> > > +
+> > > +		vpu_buf->consumed = true;
+> > > +
+> > > +		/* Don't write buffers passed the last one while
+> > > draining.
+> > */
+> > > +		if (v4l2_m2m_is_last_draining_src_buf(m2m_ctx,
+> > > vbuf)) {
+> > > +			dev_dbg(inst->dev->dev, "last src buffer
+> > > written to
+> > the ring buffer\n");
+> > > +			break;
+> > > +		}
+> > > +
+> > > +		inst->queuing_num++;
+> > > +		list_del_init(&vpu_buf->list);
+> > > +		break;
+> > > +	}
+> > > +
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +static void wave5_vpu_dec_feed_remaining(struct vpu_instance
+> > > *inst) {
+> > > +	int ret = 0;
+> > > +	struct v4l2_m2m_ctx *m2m_ctx = inst->v4l2_fh.m2m_ctx;
+> > > +	u32 fail_res = 0;
+> > > +
+> > > +	mutex_lock(&inst->feed_lock);
+> > > +	ret = fill_ringbuffer(inst);
+> > > +	mutex_unlock(&inst->feed_lock);
+> > > +	if (ret) {
+> > > +		dev_warn(inst->dev->dev, "Filling ring buffer
+> > > failed\n");
+> > > +		return;
+> > 
+> > I don't think the error handling is correct. What will happen with
+> > the
+> > job ?
+> > 
+> > > +	}
+> > > +
+> > > +	ret = start_decode(inst, &fail_res);
+> > 
+> > I'm a little worried seeing this called outside of device_run()
+> > context.
+> > 
+> > > +	if (ret) {
+> > > +		dev_err(inst->dev->dev,
+> > > +			"Frame decoding on m2m context (%p),
+> > > fail: %d
+> > (result: %d)\n",
+> > > +			m2m_ctx, ret, fail_res);
+> > > +	}
+> > > +
+> > > +	v4l2_m2m_job_finish(inst->v4l2_m2m_dev, m2m_ctx);
+> > 
+> > 
+> > 
+> > > +}
+> > > +
+> > >  static void flag_last_buffer_done(struct vpu_instance *inst)
+> > >  {
+> > >  	struct v4l2_m2m_ctx *m2m_ctx = inst->v4l2_fh.m2m_ctx; @@
+> > > -347,7
+> > > +482,6 @@ static void wave5_vpu_dec_finish_decode(struct
+> > > vpu_instance
+> > *inst)
+> > >  	struct vb2_v4l2_buffer *dec_buf = NULL;
+> > >  	struct vb2_v4l2_buffer *disp_buf = NULL;
+> > >  	struct vb2_queue *dst_vq = v4l2_m2m_get_dst_vq(m2m_ctx);
+> > > -	struct queue_status_info q_status;
+> > > 
+> > >  	dev_dbg(inst->dev->dev, "%s: Fetch output info from
+> > > firmware.",
+> > > __func__);
+> > > 
+> > > @@ -441,20 +575,6 @@ static void
+> > > wave5_vpu_dec_finish_decode(struct
+> > vpu_instance *inst)
+> > >  		}
+> > >  		spin_unlock_irqrestore(&inst->state_spinlock,
+> > > flags);
+> > >  	}
+> > > -
+> > > -	/*
+> > > -	 * During a resolution change and while draining, the
+> > > firmware may
+> > flush
+> > > -	 * the reorder queue regardless of having a matching
+> > > decoding
+> > operation
+> > > -	 * pending. Only terminate the job if there are no more
+> > > IRQ coming.
+> > > -	 */
+> > > -	wave5_vpu_dec_give_command(inst, DEC_GET_QUEUE_STATUS,
+> > > &q_status);
+> > > -	if (q_status.report_queue_count == 0 &&
+> > > -	    (q_status.instance_queue_count == 0 ||
+> > dec_info.sequence_changed)) {
+> > > -		dev_dbg(inst->dev->dev, "%s: finishing job.\n",
+> > > __func__);
+> > > -		pm_runtime_mark_last_busy(inst->dev->dev);
+> > > -		pm_runtime_put_autosuspend(inst->dev->dev);
+> > > -		v4l2_m2m_job_finish(inst->v4l2_m2m_dev,
+> > > m2m_ctx);
+> > > -	}
+> > 
+> > This removal is why I believe some seek stress testing are needed.
+> > I'll
+> > try and find some tests file I crafted last year.
+> > 
+> > >  }
+> > > 
+> > >  static int wave5_vpu_dec_querycap(struct file *file, void *fh,
+> > > struct
+> > > v4l2_capability *cap) @@ -794,11 +914,21 @@ static int
+> > wave5_vpu_dec_stop(struct vpu_instance *inst)
+> > >  	}
+> > > 
+> > >  	if (inst->state != VPU_INST_STATE_NONE) {
+> > > +		struct vb2_v4l2_buffer *vbuf;
+> > > +		struct vpu_src_buffer *vpu_buf;
+> > > +
+> > >  		/*
+> > >  		 * Temporarily release the state_spinlock so
+> > > that subsequent
+> > >  		 * calls do not block on a mutex while inside
+> > > this spinlock.
+> > >  		 */
+> > >  		spin_unlock_irqrestore(&inst->state_spinlock,
+> > > flags);
+> > > +		vbuf = v4l2_m2m_last_src_buf(m2m_ctx);
+> > > +		if (vbuf) {
+> > > +			vpu_buf = wave5_to_vpu_src_buf(vbuf);
+> > > +			if (!vpu_buf->consumed)
+> > > +				wave5_vpu_dec_feed_remaining(ins
+> > > t);
+> > > +		}
+> > > +
+> > 
+> > Do you really need to add all these checks ? Shouldn't you just
+> > "feed_remaining()" and move on ? I also don't think its a good idea
+> > to
+> > call v4l2_m2m_job_finish() in code that can run concurrently with
+> > the
+> > device_run() function. This should only happen if you are certain
+> > the VPU
+> > instance is stopped already.
+> > 
+> 
+> While testing fluster,  stop command is sometimes called  before the
+> last bitstream queued  is handled.
+> The stop command sets EOS before handling the last bitstream, so
+> sometimes mismatch happens.
+> I think the code should be add in the wave5_vpu_dec_stop.
+
+This would be a regression, we took good care of handling before and
+after case correctly.
+> 
+> 
+> > 
+> > >  		ret = wave5_vpu_dec_set_eos_on_firmware(inst);
+> > >  		if (ret)
+> > >  			return ret;
+> > > @@ -1116,115 +1246,6 @@ static int wave5_prepare_fb(struct
+> > > vpu_instance
+> > *inst)
+> > >  	return 0;
+> > >  }
+> > > 
+> > > -static int write_to_ringbuffer(struct vpu_instance *inst, void
+> > > *buffer,
+> > size_t buffer_size,
+> > > -			       struct vpu_buf *ring_buffer,
+> > > dma_addr_t wr_ptr)
+> > > -{
+> > > -	size_t size;
+> > > -	size_t offset = wr_ptr - ring_buffer->daddr;
+> > > -	int ret;
+> > > -
+> > > -	if (wr_ptr + buffer_size > ring_buffer->daddr +
+> > > ring_buffer->size)
+> > {
+> > > -		size = ring_buffer->daddr + ring_buffer->size -
+> > > wr_ptr;
+> > > -		ret = wave5_vdi_write_memory(inst->dev,
+> > > ring_buffer, offset,
+> > (u8 *)buffer, size);
+> > > -		if (ret < 0)
+> > > -			return ret;
+> > > -
+> > > -		ret = wave5_vdi_write_memory(inst->dev,
+> > > ring_buffer, 0, (u8
+> > *)buffer + size,
+> > > -					     buffer_size -
+> > > size);
+> > > -		if (ret < 0)
+> > > -			return ret;
+> > > -	} else {
+> > > -		ret = wave5_vdi_write_memory(inst->dev,
+> > > ring_buffer, offset,
+> > (u8 *)buffer,
+> > > -					     buffer_size);
+> > > -		if (ret < 0)
+> > > -			return ret;
+> > > -	}
+> > > -
+> > > -	return 0;
+> > > -}
+> > > -
+> > > -static int fill_ringbuffer(struct vpu_instance *inst) -{
+> > > -	struct v4l2_m2m_ctx *m2m_ctx = inst->v4l2_fh.m2m_ctx;
+> > > -	struct v4l2_m2m_buffer *buf, *n;
+> > > -	int ret;
+> > > -
+> > > -	if (m2m_ctx->last_src_buf)  {
+> > > -		struct vpu_src_buffer *vpu_buf =
+> > wave5_to_vpu_src_buf(m2m_ctx->last_src_buf);
+> > > -
+> > > -		if (vpu_buf->consumed) {
+> > > -			dev_dbg(inst->dev->dev, "last src buffer
+> > > already
+> > written\n");
+> > > -			return 0;
+> > > -		}
+> > > -	}
+> > > -
+> > > -	v4l2_m2m_for_each_src_buf_safe(m2m_ctx, buf, n) {
+> > > -		struct vb2_v4l2_buffer *vbuf = &buf->vb;
+> > > -		struct vpu_src_buffer *vpu_buf =
+> > > wave5_to_vpu_src_buf(vbuf);
+> > > -		struct vpu_buf *ring_buffer = &inst-
+> > > >bitstream_vbuf;
+> > > -		size_t src_size = vb2_get_plane_payload(&vbuf-
+> > > >vb2_buf, 0);
+> > > -		void *src_buf = vb2_plane_vaddr(&vbuf->vb2_buf,
+> > > 0);
+> > > -		dma_addr_t rd_ptr = 0;
+> > > -		dma_addr_t wr_ptr = 0;
+> > > -		size_t remain_size = 0;
+> > > -
+> > > -		if (vpu_buf->consumed) {
+> > > -			dev_dbg(inst->dev->dev, "already copied
+> > > src buf (%u)
+> > to the ring buffer\n",
+> > > -				vbuf->vb2_buf.index);
+> > > -			continue;
+> > > -		}
+> > > -
+> > > -		if (!src_buf) {
+> > > -			dev_dbg(inst->dev->dev,
+> > > -				"%s: Acquiring kernel pointer to
+> > > src buf (%u),
+> > fail\n",
+> > > -				__func__, vbuf->vb2_buf.index);
+> > > -			break;
+> > > -		}
+> > > -
+> > > -		ret = wave5_vpu_dec_get_bitstream_buffer(inst,
+> > > &rd_ptr,
+> > &wr_ptr, &remain_size);
+> > > -		if (ret) {
+> > > -			/* Unable to acquire the mutex */
+> > > -			dev_err(inst->dev->dev, "Getting the
+> > > bitstream buffer,
+> > fail: %d\n",
+> > > -				ret);
+> > > -			return ret;
+> > > -		}
+> > > -
+> > > -		dev_dbg(inst->dev->dev, "%s: rd_ptr %pad wr_ptr
+> > > %pad",
+> > __func__, &rd_ptr, &wr_ptr);
+> > > -
+> > > -		if (remain_size < src_size) {
+> > > -			dev_dbg(inst->dev->dev,
+> > > -				"%s: remaining size: %zu <
+> > > source size: %zu for
+> > src buf (%u)\n",
+> > > -				__func__, remain_size, src_size,
+> > > vbuf-
+> > > vb2_buf.index);
+> > > -			break;
+> > > -		}
+> > > -
+> > > -		ret = write_to_ringbuffer(inst, src_buf,
+> > > src_size,
+> > ring_buffer, wr_ptr);
+> > > -		if (ret) {
+> > > -			dev_err(inst->dev->dev, "Write src buf
+> > > (%u) to ring
+> > buffer, fail: %d\n",
+> > > -				vbuf->vb2_buf.index, ret);
+> > > -			return ret;
+> > > -		}
+> > > -
+> > > -		ret =
+> > > wave5_vpu_dec_update_bitstream_buffer(inst, src_size);
+> > > -		if (ret) {
+> > > -			dev_dbg(inst->dev->dev,
+> > > -				"update_bitstream_buffer fail:
+> > > %d for src buf
+> > (%u)\n",
+> > > -				ret, vbuf->vb2_buf.index);
+> > > -			break;
+> > > -		}
+> > > -
+> > > -		vpu_buf->consumed = true;
+> > > -
+> > > -		/* Don't write buffers passed the last one while
+> > > draining.
+> > */
+> > > -		if (v4l2_m2m_is_last_draining_src_buf(m2m_ctx,
+> > > vbuf)) {
+> > > -			dev_dbg(inst->dev->dev, "last src buffer
+> > > written to
+> > the ring buffer\n");
+> > > -			break;
+> > > -		}
+> > > -	}
+> > > -
+> > > -	return 0;
+> > > -}
+> > > -
+> > >  static void wave5_vpu_dec_buf_queue_src(struct vb2_buffer *vb)
+> > >  {
+> > >  	struct vpu_instance *inst = vb2_get_drv_priv(vb-
+> > > >vb2_queue); @@
+> > > -1236,6 +1257,11 @@ static void
+> > > wave5_vpu_dec_buf_queue_src(struct
+> > vb2_buffer *vb)
+> > >  	vbuf->sequence = inst->queued_src_buf_num++;
+> > > 
+> > >  	v4l2_m2m_buf_queue(m2m_ctx, vbuf);
+> > > +
+> > > +	INIT_LIST_HEAD(&vpu_buf->list);
+> > > +	mutex_lock(&inst->feed_lock);
+> > > +	list_add_tail(&vpu_buf->list, &inst->avail_src_bufs);
+> > > +	mutex_unlock(&inst->feed_lock);
+> > 
+> > This lack documentation, you didn't even mention the introduction
+> > of a new
+> > src buf list in the commit message.
+> > 
+> > >  }
+> > > 
+> > >  static void wave5_vpu_dec_buf_queue_dst(struct vb2_buffer *vb)
+> > > @@
+> > > -1362,7 +1388,6 @@ static int
+> > > wave5_vpu_dec_start_streaming(struct
+> > vb2_queue *q, unsigned int count
+> > >  				goto return_buffers;
+> > >  			}
+> > >  		}
+> > > -
+> > >  	}
+> > >  	pm_runtime_mark_last_busy(inst->dev->dev);
+> > >  	pm_runtime_put_autosuspend(inst->dev->dev);
+> > > @@ -1385,6 +1410,13 @@ static int streamoff_output(struct
+> > > vb2_queue *q)
+> > >  	dma_addr_t new_rd_ptr;
+> > >  	struct dec_output_info dec_info;
+> > >  	unsigned int i;
+> > > +	struct vpu_src_buffer *vpu_buf, *tmp;
+> > > +
+> > > +	inst->retry = false;
+> > > +	inst->queuing_num = 0;
+> > > +
+> > > +	list_for_each_entry_safe(vpu_buf, tmp, &inst-
+> > > >avail_src_bufs, list)
+> > > +		list_del_init(&vpu_buf->list);
+> > > 
+> > >  	for (i = 0; i < v4l2_m2m_num_dst_bufs_ready(m2m_ctx);
+> > > i++) {
+> > >  		ret = wave5_vpu_dec_set_disp_flag(inst, i); @@ -
+> > > 1481,10
+> > +1513,8 @@
+> > > static void wave5_vpu_dec_stop_streaming(struct vb2_queue *q)
+> > > 
+> > >  		wave5_vpu_dec_give_command(inst,
+> > > DEC_GET_QUEUE_STATUS,
+> > &q_status);
+> > > 
+> > > -		if (q_status.report_queue_count == 0)
+> > > -			break;
+> > > -
+> > > -		if (wave5_vpu_wait_interrupt(inst,
+> > > VPU_DEC_TIMEOUT) < 0)
+> > > +		if ((inst->state == VPU_INST_STATE_STOP ||
+> > > +q_status.instance_queue_count == 0) &&
+> > 
+> > State should be read with appropriate locking.
+> > 
+> > > +		    q_status.report_queue_count == 0)
+> > >  			break;
+> > 
+> > This loop have nothing to wait on anymore. It just actively pool on
+> > the HW.
+> > I noticed your third patch, but if this is what you address there,
+> > squash
+> > it somehow, this would break bisects.
+> > 
+> > The goal of that code was to ensure that this code will never run
+> > concurrently to finish_decode() once out of that while loop. I
+> > don't think
+> > you break that, but that will cause possibly high CPU load.
+> > 
+> 
+> 
+> The code is not related with the third patch, there was sometimes HW
+> interrupt misses since changing to asynchronous, so an infinite wait
+> happened when closed
+> So I removed it, but I think there is no high CPU load because it
+> runs very short time.
+
+If the firmware get stuck, Linux can spin, this cannot be done that way
+I'm sorry. That its most of the time spinning only few times does not
+seems like valid justification. We need a limit, we need some
+preemption, etc.
+
+> 
+> > > 
+> > >  		if (wave5_vpu_dec_get_output_info(inst,
+> > > &dec_output_info))
+> > @@
+> > > -1577,13 +1607,23 @@ static void wave5_vpu_dec_device_run(void
+> > > *priv)
+> > >  	struct queue_status_info q_status;
+> > >  	u32 fail_res = 0;
+> > >  	int ret = 0;
+> > > +	unsigned long flags;
+> > > 
+> > >  	dev_dbg(inst->dev->dev, "%s: Fill the ring buffer with
+> > > new
+> > bitstream data", __func__);
+> > >  	pm_runtime_resume_and_get(inst->dev->dev);
+> > > -	ret = fill_ringbuffer(inst);
+> > > -	if (ret) {
+> > > -		dev_warn(inst->dev->dev, "Filling ring buffer
+> > > failed\n");
+> > > -		goto finish_job_and_return;
+> > > +	if (!inst->retry) {
+> > > +		mutex_lock(&inst->feed_lock);
+> > > +		ret = fill_ringbuffer(inst);
+> > > +		mutex_unlock(&inst->feed_lock);
+> > > +		if (ret < 0) {
+> > > +			dev_warn(inst->dev->dev, "Filling ring
+> > > buffer
+> > failed\n");
+> > > +			goto finish_job_and_return;
+> > > +		} else if (!inst->eos &&
+> > > +			   inst->queuing_num == 0 &&
+> > > +			   inst->state ==
+> > > VPU_INST_STATE_PIC_RUN) {
+> > > +			dev_dbg(inst->dev->dev, "%s: no
+> > > bitstream for feeding,
+> > so skip ", __func__);
+> > > +			goto finish_job_and_return;
+> > > +		}
+> > 
+> > There is quite some overlap between that local src buffer queue and
+> > all
+> > the code that depends on v4l2_m2m_num_src_bufs_ready(). Are you
+> > sure you
+> > aren't re-implementing something ? Also, this code belong to the
+> > PIC_RUN
+> > case in the below switch.
+> > 
+> 
+> 
+> After src buffer was queued, v4l2_m2m_num_src_bufs_ready() always
+> returns true until src buffer was removed in the finish_decode since
+> get_result.
+> So checking if there is buffer or not in the src bufs list was needed
+> in the device_run.
+
+Ack.
+
+> 
+> 
+> 
+> > >  	}
+> > > 
+> > >  	switch (inst->state) {
+> > > @@ -1619,7 +1659,9 @@ static void wave5_vpu_dec_device_run(void
+> > > *priv)
+> > >  		 * we had a chance to switch, which leads to an
+> > > invalid state
+> > >  		 * change.
+> > >  		 */
+> > > +		spin_lock_irqsave(&inst->state_spinlock, flags);
+> > >  		switch_state(inst, VPU_INST_STATE_PIC_RUN);
+> > > +		spin_unlock_irqrestore(&inst->state_spinlock,
+> > > flags);
+> > 
+> > Should be its own patch, and fixed everywhere. Add missing lockdep
+> > assert
+> > (if there is a spinlock version of it).
+> > 
+> > > 
+> > >  		/*
+> > >  		 * During DRC, the picture decoding remains
+> > > pending, so just
+> > leave
+> > > the job @@ -1634,12 +1676,14 @@ static void
+> > wave5_vpu_dec_device_run(void *priv)
+> > >  		ret = wave5_prepare_fb(inst);
+> > >  		if (ret) {
+> > >  			dev_warn(inst->dev->dev, "Framebuffer
+> > > preparation,
+> > fail: %d\n",
+> > > ret);
+> > > +			spin_lock_irqsave(&inst->state_spinlock,
+> > > flags);
+> > >  			switch_state(inst, VPU_INST_STATE_STOP);
+> > > +			spin_unlock_irqrestore(&inst-
+> > > >state_spinlock, flags);
+> > 
+> > Same, this is separate fix.
+> > 
+> > >  			break;
+> > >  		}
+> > > 
+> > >  		if (q_status.instance_queue_count) {
+> > > -			dev_dbg(inst->dev->dev, "%s: leave with
+> > > active job",
+> > __func__);
+> > > +			v4l2_m2m_job_finish(inst->v4l2_m2m_dev,
+> > > m2m_ctx);
+> > >  			return;
+> > >  		}
+> > > 
+> > > @@ -1650,14 +1694,22 @@ static void wave5_vpu_dec_device_run(void
+> > > *priv)
+> > >  			dev_err(inst->dev->dev,
+> > >  				"Frame decoding on m2m context
+> > > (%p), fail: %d
+> > (result: %d)\n",
+> > >  				m2m_ctx, ret, fail_res);
+> > > -			break;
+> > > +			goto finish_job_and_return;
+> > > +		}
+> > > +
+> > > +		if (fail_res == WAVE5_SYSERR_QUEUEING_FAIL) {
+> > > +			inst->retry = true;
+> > > +		} else {
+> > > +			inst->retry = false;
+> > > +			if (!inst->eos)
+> > > +				inst->queuing_num--;
+> > >  		}
+> > > -		/* Return so that we leave this job active */
+> > > -		dev_dbg(inst->dev->dev, "%s: leave with active
+> > > job",
+> > __func__);
+> > > -		return;
+> > > -	default:
+> > > -		WARN(1, "Execution of a job in state %s
+> > > illegal.\n",
+> > state_to_str(inst->state));
+> > >  		break;
+> > > +	default:
+> > > +		if (!v4l2_m2m_has_stopped(m2m_ctx))
+> > > +			WARN(1, "Execution of a job in state %s
+> > > illegal.\n",
+> > > +			     state_to_str(inst->state));
+> > > +		return;
+> > >  	}
+> > > 
+> > >  finish_job_and_return:
+> > > @@ -1676,10 +1728,7 @@ static void wave5_vpu_dec_job_abort(void
+> > > *priv)
+> > >  	if (ret)
+> > >  		return;
+> > > 
+> > > -	ret = wave5_vpu_dec_set_eos_on_firmware(inst);
+> > > -	if (ret)
+> > > -		dev_warn(inst->dev->dev,
+> > > -			 "Setting EOS for the bitstream, fail:
+> > > %d\n", ret);
+> > > +	v4l2_m2m_job_finish(inst->v4l2_m2m_dev, inst-
+> > > >v4l2_fh.m2m_ctx);
+> > >  }
+> > > 
+> > >  static int wave5_vpu_dec_job_ready(void *priv) @@ -1755,6
+> > > +1804,8 @@
+> > > static int wave5_vpu_open_dec(struct file *filp)
+> > >  	inst->ops = &wave5_vpu_dec_inst_ops;
+> > > 
+> > >  	spin_lock_init(&inst->state_spinlock);
+> > > +	mutex_init(&inst->feed_lock);
+> > > +	INIT_LIST_HEAD(&inst->avail_src_bufs);
+> > > 
+> > >  	inst->codec_info = kzalloc(sizeof(*inst->codec_info),
+> > > GFP_KERNEL);
+> > >  	if (!inst->codec_info)
+> > > @@ -1830,9 +1881,6 @@ static int wave5_vpu_open_dec(struct file
+> > > *filp)
+> > >  	if (ret)
+> > >  		goto cleanup_inst;
+> > > 
+> > > -	if (list_empty(&dev->instances))
+> > > -		pm_runtime_use_autosuspend(inst->dev->dev);
+> > > -
+> > >  	list_add_tail(&inst->list, &dev->instances);
+> > > 
+> > >  	mutex_unlock(&dev->dev_lock);
+> > > diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-
+> > > enc.c
+> > > b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> > > index 1e5fc5f8b856..cf20f774ed1b 100644
+> > > --- a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> > > +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> > > @@ -1774,9 +1774,6 @@ static int wave5_vpu_open_enc(struct file
+> > > *filp)
+> > >  	if (ret)
+> > >  		goto cleanup_inst;
+> > > 
+> > > -	if (list_empty(&dev->instances))
+> > > -		pm_runtime_use_autosuspend(inst->dev->dev);
+> > > -
+> > >  	list_add_tail(&inst->list, &dev->instances);
+> > > 
+> > >  	mutex_unlock(&dev->dev_lock);
+> > > diff --git a/drivers/media/platform/chips-media/wave5/wave5-
+> > > vpuapi.c
+> > > b/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c
+> > > index e5e879a13e8b..c1737fac6edd 100644
+> > > --- a/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c
+> > > +++ b/drivers/media/platform/chips-media/wave5/wave5-vpuapi.c
+> > > @@ -207,8 +207,6 @@ int wave5_vpu_dec_close(struct vpu_instance
+> > > *inst,
+> > u32 *fail_res)
+> > >  	int retry = 0;
+> > >  	struct vpu_device *vpu_dev = inst->dev;
+> > >  	int i;
+> > > -	int inst_count = 0;
+> > > -	struct vpu_instance *inst_elm;
+> > > 
+> > >  	*fail_res = 0;
+> > >  	if (!inst->codec_info)
+> > > @@ -233,6 +231,16 @@ int wave5_vpu_dec_close(struct vpu_instance
+> > > *inst,
+> > u32 *fail_res)
+> > >  		    retry++ >= MAX_FIRMWARE_CALL_RETRY) {
+> > >  			ret = -ETIMEDOUT;
+> > >  			goto unlock_and_return;
+> > > +		} else if (*fail_res ==
+> > > WAVE5_SYSERR_VPU_STILL_RUNNING) {
+> > > +			struct dec_output_info dec_info;
+> > > +
+> > > +			mutex_unlock(&vpu_dev->hw_lock);
+> > > +			wave5_vpu_dec_get_output_info(inst,
+> > > &dec_info);
+> > > +			ret = mutex_lock_interruptible(&vpu_dev-
+> > > >hw_lock);
+> > > +			if (ret) {
+> > > +				pm_runtime_put_sync(inst->dev-
+> > > >dev);
+> > > +				return ret;
+> > > +			}
+> > 
+> > Please try and simplify all the branches. Something like:
+> > 
+> > 			if (ret == 0)
+> > 				break;
+> > 
+> > 			if (*fail_res !=
+> > WAVE5_SYSERR_VPU_STILL_RUNNING) {
+> > 					dev_warn(inst->dev->dev,
+> > "dec_finish_seq
+> > timed out\n");
+> > 					goto unlock_and_return;
+> > 			}
+> > 
+> > 			if (retry++ >= MAX_FIRMWARE_CALL_RETRY) {
+> > 					ret = -ETIMEDOUT;
+> > 					goto unlock_and_return;
+> > 			}
+> > 
+> > 			mutex_unlock(&vpu_dev->hw_lock);
+> > 			wave5_vpu_dec_get_output_info(inst,
+> > &dec_info);
+> > 			ret = mutex_lock_interruptible(&vpu_dev-
+> > >hw_lock);
+> > 			if (ret) {
+> > 				pm_runtime_put_sync(inst->dev-
+> > >dev);
+> > 				return ret;
+> > 			}
+> > 
+> > My impression on that change is that it is independent and could be
+> > introduced separately.
+> > 
+> > >  		}
+> > >  	} while (ret != 0);
+> > > 
+> > > @@ -249,11 +257,7 @@ int wave5_vpu_dec_close(struct vpu_instance
+> > > *inst,
+> > u32 *fail_res)
+> > >  	}
+> > > 
+> > >  	wave5_vdi_free_dma_memory(vpu_dev, &p_dec_info-
+> > > >vb_task);
+> > > -
+> > > -	list_for_each_entry(inst_elm, &vpu_dev->instances, list)
+> > > -		inst_count++;
+> > > -	if (inst_count == 1)
+> > > -		pm_runtime_dont_use_autosuspend(vpu_dev->dev);
+> > 
+> > This seems like some other fix, that should be in its own commit.
+> > 
+> > > +	mutex_destroy(&inst->feed_lock);
+> > > 
+> > >  unlock_and_return:
+> > >  	mutex_unlock(&vpu_dev->hw_lock);
+> > > @@ -720,8 +724,6 @@ int wave5_vpu_enc_close(struct vpu_instance
+> > > *inst,
+> > u32 *fail_res)
+> > >  	int ret;
+> > >  	int retry = 0;
+> > >  	struct vpu_device *vpu_dev = inst->dev;
+> > > -	int inst_count = 0;
+> > > -	struct vpu_instance *inst_elm;
+> > > 
+> > >  	*fail_res = 0;
+> > >  	if (!inst->codec_info)
+> > > @@ -765,11 +767,6 @@ int wave5_vpu_enc_close(struct vpu_instance
+> > > *inst, u32 *fail_res)
+> > > 
+> > >  	wave5_vdi_free_dma_memory(vpu_dev, &p_enc_info-
+> > > >vb_task);
+> > > 
+> > > -	list_for_each_entry(inst_elm, &vpu_dev->instances, list)
+> > > -		inst_count++;
+> > > -	if (inst_count == 1)
+> > > -		pm_runtime_dont_use_autosuspend(vpu_dev->dev);
+> > > -
+> > 
+> > Same.
+> > 
+> > >  	mutex_unlock(&vpu_dev->hw_lock);
+> > >  	pm_runtime_put_sync(inst->dev->dev);
+> > > 
+> > > diff --git a/drivers/media/platform/chips-media/wave5/wave5-
+> > > vpuapi.h
+> > > b/drivers/media/platform/chips-media/wave5/wave5-vpuapi.h
+> > > index 45615c15beca..6ca1ddc67c64 100644
+> > > --- a/drivers/media/platform/chips-media/wave5/wave5-vpuapi.h
+> > > +++ b/drivers/media/platform/chips-media/wave5/wave5-vpuapi.h
+> > > @@ -163,7 +163,7 @@ enum set_param_option {
+> > > 
+> > >  #define BUFFER_MARGIN				4096
+> > > 
+> > > -#define MAX_FIRMWARE_CALL_RETRY			10
+> > > +#define MAX_FIRMWARE_CALL_RETRY			30
+> > 
+> > I thought 10s was already very long, am I right this means it can
+> > get
+> > stuck for 30s now ?
+> > 
+> > > 
+> > >  #define VDI_LITTLE_ENDIAN	0x0
+> > > 
+> > > @@ -812,6 +812,9 @@ struct vpu_instance {
+> > >  	bool cbcr_interleave;
+> > >  	bool nv21;
+> > >  	bool eos;
+> > > +	bool retry;
+> > > +	int queuing_num;
+> > 
+> > Some comment would be helpful. What does "retry" stand for, and how
+> > is
+> > queing_num different from v4l2_m2m_num_src_bufs_ready() ?
+> > 
+> > > +	struct mutex feed_lock; /* lock for feeding bitstream
+> > > buffers */
+> > >  	struct vpu_buf bitstream_vbuf;
+> > >  	dma_addr_t last_rd_ptr;
+> > >  	size_t remaining_consumed_bytes;
+> > 
+> > --
+> > Nicolas Dufresne
+> > Principal Engineer at Collabora
+> 
+> Thanks
+> Jackson
+
 -- 
-2.49.0
-
+Nicolas Dufresne
+Principal Engineer at Collabora
 
