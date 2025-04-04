@@ -1,113 +1,234 @@
-Return-Path: <linux-kernel+bounces-589026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481C8A7C0B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:39:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6C4A7C0C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD1133B848A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:38:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 273513BB37B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072D31F540C;
-	Fri,  4 Apr 2025 15:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94441F63DD;
+	Fri,  4 Apr 2025 15:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQF0rQbA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="INalXyZp"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F8E282EE;
-	Fri,  4 Apr 2025 15:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AC31F582E;
+	Fri,  4 Apr 2025 15:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743781140; cv=none; b=a04NdQj2YQGoBUMSL6GE7iRRH48HtalDECfGXyM3roMkgIrkI10+PPktJRJM4BN8PyWgEyk+aNFmep/WDdLsG3sySTBUQBirCnsBSHCGCTfAHuqNlL+og9KzyKv48TVixgM4znjAqiwylDpPGRqsqmrPJeFlYITMG+q+mFBASPE=
+	t=1743781171; cv=none; b=WSSHpnAC1YWT7aGR1gLmg9dnABS0j2dT1Vx41fty6tBHdqi/RTHqKx0F8/tXo+nrzSeEghqSzBafF+SFFAo7e2r+H3SmDZZdPtUF7B6ga8djdnCXHYU0G4yKmrb/aiVXAdQBZQIGi3MfhG8bqm5QeHbBKWNfJWPP9wkwdpI+TeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743781140; c=relaxed/simple;
-	bh=MJ8gi+tG+9w7E6JAgGJyxRT9HR+3XqjoIb/hCQhDaLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tLkKU1Rgig2u+4YnBeJYCofU8bhm4NFmsjrq7y/i3lZPkkWOXDhiy9/UOg7gsdiVOG2nnXaDx3AyJLDJdUtouf+rs+OOm7BOtuiu0g9j5buQLsJQ9StVpUPWWhX/OLovGUWM6iV1q5qnUtxTe+gxRwPT70Ugd/1nYSAcbHI2nWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQF0rQbA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CF36C4CEDD;
-	Fri,  4 Apr 2025 15:38:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743781139;
-	bh=MJ8gi+tG+9w7E6JAgGJyxRT9HR+3XqjoIb/hCQhDaLM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nQF0rQbAUwPvf4cMDeHtzMToEc+cqoBfo5M3qEt60EAZXk+SyMO2ZMd8NAzBI5oEL
-	 TxSVB3eWgpxQ2SJFeB4n/azx7GII9N+1wQLX2KZXzOVhp8iYH6fSAO/kxXiJV+Hhyd
-	 lE8djtO4fLcrq35dmDwKckBwo9Sso5VvJdyGcTrMVVndHO5GWoCLdTkSIWvVjojzNQ
-	 8wVvxbPe1CSxU+BeQtKEbvDV3tLNvPDUqwBZNjIDlOBAV8QipZz7BY99I/y+UBZRTw
-	 yMr8Nu/mVaUEdzmSJeqcc1+VIBsCWVanv49MdyjFNTFS2Jt/X3MVEfwpt1NhwdmkWD
-	 m/W2YY+HwaPVA==
-Date: Fri, 4 Apr 2025 16:38:54 +0100
-From: Lee Jones <lee@kernel.org>
-To: Artur Weber <aweber.kernel@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Stanislav Jakubek <stano.jakubek@gmail.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v7 05/10] mfd: bcm590xx: Add support for multiple device
- types + BCM59054 compatible
-Message-ID: <20250404153854.GG372032@google.com>
-References: <20250316-bcm59054-v7-0-4281126be1b8@gmail.com>
- <20250316-bcm59054-v7-5-4281126be1b8@gmail.com>
+	s=arc-20240116; t=1743781171; c=relaxed/simple;
+	bh=HEjQ44ECl6BWQeGt6MRJD0EJeyM16OwfpE3eK/mCCz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bSTggeXN7+mw4V6Uacw6SecRG1BFXdD6B2Jov3vvzhW7YK8fHlZCmaVxVgX03dgbP9vkMSAQz5ofnwbPCZsZ5RICv+3SKeNcBPstY0hfAd1hCrZ9gCC0A6zeyVxRBPeHqlrX/4twikD1FZ+7CM2oil6+eXaf7kBzGa1WtlLBkhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=INalXyZp; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 534BQYJ6011494;
+	Fri, 4 Apr 2025 15:39:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=9vFnFX
+	GmFN4YVJC6HHTNW4/vjVozGULmM9qZqtND68A=; b=INalXyZpdW/tTGAKjLVGeC
+	AraD0yfauhb111SuqaGxlL+Mo/Imn/wlgTSRIuiBE9wKgf0EM2cUSFYNluToQJSC
+	q+j7ogv/3m9daxvxA7Ugm+tB8+YsBGhJOunmyl4+vvMdFveZcH0bTB3s9zdVAQKS
+	3qTrcjHwvfxr2NHw6OVWlBEugNv6QbPPhs8XuYtkkv74qHDrGZOiSkEaLcwgLNRW
+	FEBnGZNwnpcFYSXHADfUB5mlwwWKKWZ5cPgoK/CCd56Bk3c1gFNEgTCHV/ps/cCC
+	E0FndjQuYTFhgh4giHBFjB2HmfgV0gmUcULFWbCyQAHaQEEhqdEErhddwl61EH2A
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45t2qbv6c7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Apr 2025 15:39:22 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 534F57RT021283;
+	Fri, 4 Apr 2025 15:39:22 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45t2e7bk97-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Apr 2025 15:39:22 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 534FdIwv22020418
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 4 Apr 2025 15:39:18 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2D4A520043;
+	Fri,  4 Apr 2025 15:39:18 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A203820040;
+	Fri,  4 Apr 2025 15:39:17 +0000 (GMT)
+Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.152.224.212])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  4 Apr 2025 15:39:17 +0000 (GMT)
+Date: Fri, 4 Apr 2025 17:39:10 +0200
+From: Halil Pasic <pasic@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        virtualization@lists.linux.dev, kvm@vger.kernel.org,
+        Chandra Merla
+ <cmerla@redhat.com>, Stable@vger.kernel.org,
+        Cornelia Huck
+ <cohuck@redhat.com>, Thomas Huth <thuth@redhat.com>,
+        Eric Farman
+ <farman@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
+ <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian
+ Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle
+ <svens@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Wei Wang
+ <wei.w.wang@intel.com>, Halil Pasic <pasic@linux.ibm.com>
+Subject: Re: [PATCH v1] s390/virtio_ccw: don't allocate/assign airqs for
+ non-existing queues
+Message-ID: <20250404173910.6581706a.pasic@linux.ibm.com>
+In-Reply-To: <6f548b8b-8c6e-4221-a5d5-8e7a9013f9c3@redhat.com>
+References: <20250402203621.940090-1-david@redhat.com>
+	<20250403161836.7fe9fea5.pasic@linux.ibm.com>
+	<e2936e2f-022c-44ee-bb04-f07045ee2114@redhat.com>
+	<20250404063619.0fa60a41.pasic@linux.ibm.com>
+	<4a33daa3-7415-411e-a491-07635e3cfdc4@redhat.com>
+	<d54fbf56-b462-4eea-a86e-3a0defb6298b@redhat.com>
+	<20250404153620.04d2df05.pasic@linux.ibm.com>
+	<d6f5f854-1294-4afa-b02a-657713435435@redhat.com>
+	<20250404160025.3ab56f60.pasic@linux.ibm.com>
+	<6f548b8b-8c6e-4221-a5d5-8e7a9013f9c3@redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250316-bcm59054-v7-5-4281126be1b8@gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: WiU9dmC01eA-xDfoYKI1bTZ-BrqP5WXq
+X-Proofpoint-GUID: WiU9dmC01eA-xDfoYKI1bTZ-BrqP5WXq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-04_06,2025-04-03_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 malwarescore=0 suspectscore=0 spamscore=0 phishscore=0
+ mlxscore=0 adultscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504040107
 
-On Sun, 16 Mar 2025, Artur Weber wrote:
+On Fri, 4 Apr 2025 16:17:14 +0200
+David Hildenbrand <david@redhat.com> wrote:
 
-> The BCM59054 is another chip from the BCM590xx line of PMUs, commonly
-> used on devices with the BCM21664/BCM23550 chipsets.
+> > It is offered. And this is precisely why I'm so keen on having a
+> > precise wording here.  
 > 
-> Prepare the BCM590xx driver for supporting other devices by adding the
-> PMUID register values for supported chip types and store them in the
-> MFD data struct as "pmu_id". (These will be checked against the actual
-> PMUID register values in a later commit.)
+> Yes, me too. The current phrasing in the spec is not clear.
 > 
-> Then, add a DT compatible for the BCM59054, and provide the PMU ID as
-> OF match data.
-> 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
-> Changes in v6:
-> - Move PMUID value to MFD header
-> - Use PMUID value as OF data/device type value
-> - Add bcm59054 to I2C ID table
-> 
-> Changes in v4:
-> - Rewrite commit message description
-> - Rename "device_type" member to "dev_type"
-> - Drop awkward line break to fit function call
-> - Add PMU ID/revision parsing function
-> 
-> Changes in v3:
-> - Fix compilation warning about device_type pointer cast type
-> - Name the device types enum and use it as the type in the MFD struct
-> ---
->  drivers/mfd/bcm590xx.c       | 12 +++++++++++-
->  include/linux/mfd/bcm590xx.h |  7 +++++++
->  2 files changed, 18 insertions(+), 1 deletion(-)
+> Linux similarly checks 
+> virtio_has_feature()->virtio_check_driver_offered_feature().
 
-Looks like the Regulator changes depend on this.
+Careful, that is a *driver* offered and not a *device* offered! 
 
-Let me know when they're ready to go.
+We basically mandate that one can only check for a feature F with
+virtio_has_feature() such that it is either in drv->feature_table or in
+drv->feature_table_legacy.
 
--- 
-Lee Jones [李琼斯]
+AFAICT *device_features* obtained via dev->config->get_features(dev)
+isn't even saved but is only used for binary and-ing it with the
+driver_features to obtain the negotiated features.
+
+That basically means that if I was, for the sake of fun do
+
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -1197,7 +1197,6 @@ static unsigned int features[] = {
+        VIRTIO_BALLOON_F_MUST_TELL_HOST,
+        VIRTIO_BALLOON_F_STATS_VQ,
+        VIRTIO_BALLOON_F_DEFLATE_ON_OOM,
+-       VIRTIO_BALLOON_F_FREE_PAGE_HINT,
+        VIRTIO_BALLOON_F_PAGE_POISON,
+        VIRTIO_BALLOON_F_REPORTING,
+ };
+
+I would end up with virtio_check_driver_offered_feature() calling
+BUG().
+
+That basically means that Linux mandates implementing all previous
+features regardless whether does are supposed to be optional ones or
+not. Namely if you put the feature into drv->feature_table it will
+get negotiated. 
+
+Which is not nice IMHO.
+
+> 
+> > 
+> > Usually for compatibility one needs negotiated. Because the feature
+> > negotiation is mostly about compatibility. I.e. the driver should be
+> > able to say, hey I don't know about that feature, and get compatible
+> > behavior. If for example VIRTIO_BALLOON_F_FREE_PAGE_HINT and
+> > VIRTIO_BALLOON_F_PAGE_REPORTING are both offered but only
+> > VIRTIO_BALLOON_F_PAGE_REPORTING is negotiated. That would make
+> > reporting_vq jump to +1 compared to the case where
+> > VIRTIO_BALLOON_F_FREE_PAGE_HINT is not offered. Which is IMHO no
+> > good, because for the features that the driver is going to reject in
+> > most of the cases it should not matter if it was offered or not.  
+> 
+> Yes. The key part is that we may only add new features to the tail of 
+> our feature list; maybe we should document that as well.
+> 
+> I agree that a driver that implements VIRTIO_BALLOON_F_PAGE_REPORTING 
+> *must* be aware that VIRTIO_BALLOON_F_FREE_PAGE_HINT exists. So queue 
+> existence is not about feature negotiation but about features being 
+> offered from the device.
+> 
+> ... which is a bit the same behavior as with fixed-assigned numbers a 
+> bit. VIRTIO_BALLOON_F_PAGE_REPORTING was documented as "4" because 
+> VIRTIO_BALLOON_F_FREE_PAGE_HINT was documented to be "3" -- IOW, it 
+> already existed in the spec.
+
+I don't agree with the comparison.  One obviously needs to avoid fatal
+collisions when extending the spec, and has to consider prior art.
+
+But ideally not implemented  or fenced optional features A should have no
+impact to implemented optional or not optional features B -- unless the
+features are actually interdependent, but then the spec would prohibit
+the combo of having B but not A. And IMHO exactly this would have been
+the advantage of fixed-assigned numbers: you may not care if the other
+queueues exist or not. 
+
+Also like cloud-hypervisor has decided that they are going only to
+support VIRTIO_BALLOON_F_REPORTING some weird OS could in theory
+decide that they only care about VIRTIO_BALLOON_F_REPORTING. In that
+setting having to look at VIRTIO_BALLOON_F_STATS_VQ and 
+VIRTIO_BALLOON_F_FREE_PAGE_HINT are offered is weird. But that is all water
+under the bridge. We have to respect what is out there in the field.
+
+> 
+> Not perfect, but AFAIKS, not horrible.
+
+It is like it is. QEMU does queue exist if the corresponding feature
+is offered by the device, and that is what we have to live with.
+
+Yes, I agree we should make the spec reflect reality!
+
+> 
+> (as Linux supports all these features, it's easy. A driver that only 
+> supports some features has to calculate the queue index manually based 
+> on the offered features)
+
+As I've tried to explain above, not implementing/accepting optional
+features and then implementing/accepting a newer feature is problematic
+with the current code. Supporting some features would work only as
+supporting all features up to X.
+
+Regards,
+Halil
 
