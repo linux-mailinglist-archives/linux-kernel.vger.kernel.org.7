@@ -1,138 +1,97 @@
-Return-Path: <linux-kernel+bounces-588632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A042EA7BB7E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:25:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C632AA7BBB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EE51177EEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:25:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 678223B6161
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B899C1DC185;
-	Fri,  4 Apr 2025 11:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961AC1DE4D6;
+	Fri,  4 Apr 2025 11:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IRwgl0jF"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aklubG7C"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3411A315C;
-	Fri,  4 Apr 2025 11:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F95146588
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 11:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743765948; cv=none; b=HPDkhhXP12vZiCRIlNyOIkoYRCXP73YOVWQkxyKVjueGxXG5fpe1GrItMTEY3XiD8muAZJDw7+liPIGBhAAue/+M08IC+u6euEVYNoPKOUb5QjkgZZ8k6N7psdXoNWbzwTUMAREO39PmdQGbczDGOua6TURPMpeyCesxJdt6INY=
+	t=1743766752; cv=none; b=hxc5g6sQslN8p4cp6EdRJfgQhuRkadXtCc0M4btL8so2KYgim4GQJ8JERoXTJxYqREK0whfAshcKvdK9VEFUO6rFXRlvn+Qi/MpnlgrlqzBYUe8eR8A7DK6NM/r05eJqHi3ofvdf6X7OyHlWRBn74H+T15tKIn7+D6wFw1j//9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743765948; c=relaxed/simple;
-	bh=0tQ/t1mzdr6retFmDkrkFsBJ3Zo6UBCaL1vFCtbj47w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ErHXJL1yykwi0hCyqGS8C7zFfLAzl3vk3RmmcK/ATRYRObIQrXj2P99ezXoS2c2Tdjp7cIUYPuJgJJEusfvD4U/4afd9e1MF0+ogyXcUEY/cnuaMjzXvWvuqfbr1kSZS3SAaRX4+y78xI2+NHbyiytCPdCRZCpG7ZMjFmyIDefk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IRwgl0jF; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-30332dfc821so1430689a91.3;
-        Fri, 04 Apr 2025 04:25:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743765946; x=1744370746; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2H82D3ceyz7r5Ot6awJCahu6BBXmvQb/jfXpvl9UcwY=;
-        b=IRwgl0jFR5dGjZEHfeCXxhL4LlAMro0cUVm6WMebNxBEfbNN65ZyT3wZ4VmbEWfNtl
-         /r9HVYXDbevo7Ec9utKWUj6gWJwnran+XCkcgbsb3WlY+5T1aVEIKTZiegoRuL2x3URa
-         UuCe71EgMD58a9J2Hzke4HnuSk9iqwoR+CNIfG9Ec7IjmB1dhsL/mUFt321ydfZRgof9
-         +UaqoSwqFX86EjIh3fH50qZuMjs5HNg947CWuJ5zIGn2D9pvBfGhL4HFt8XSKJmZX9kI
-         WDOzjrmJEU+nwsp96u/PDLsLG6DmFRwvz65+n+oWbo7F7Ui1CF+tuiWdepuD04GcBvPg
-         mAjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743765946; x=1744370746;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2H82D3ceyz7r5Ot6awJCahu6BBXmvQb/jfXpvl9UcwY=;
-        b=wrFMlptRApT7cjJFWluSz2gAztkcSZm8pUDBynJZnYYcggL8TW+NeYMM6FU8ksRfI8
-         TmUVUDv6u4Msh6ZdSrYkaGY5xd9c8yDn7Kj0pRSERSqnN6wAJ4MZfBivHUu8phNkIHxZ
-         PFCIxkMNn7KSiMEMUYCpwrh8mYPupz3psMNatk+YWIxuQI9GMeDCXnp4AH0cwUizc9CO
-         uaWDN5hnBCX9wb5qBAb6ppaPCifZeZe8PikXhig221J7RWkHqlZKnXDzrLNH5xEKWxdT
-         hXf9P7+ziyEOC6EiVzZfNrrAG1qrZWJ8aOh8apVApjasjzPSAWctUMQTzHcAHaSLx5qI
-         JevQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUm60JdVzsfnIQ5eugdG0IAilJscznIn1rPtWYDQGmN6fH2cvIqxWsWSHhxKAtqOMvDy0OUCmz4/Wx5TFra@vger.kernel.org, AJvYcCVE7LRsw8bXx2e+pM85WtTeGnMVtw/EpJ3ZGKGy4329sMkfJqRKHVoZ0MPA6kLasm4VTTtC6z2EctBz@vger.kernel.org
-X-Gm-Message-State: AOJu0YznbyAfhZ40ezKDuSzCXIbydhcnxxzqpvQwcCl/5bRq3xEHaxb2
-	wyBIuQZO74Jm+JufdwPpPMVAvro6ZJ/kttY5bU3Dan0UKMz0dMYzgdkx1FDpDy3FDxs3zIa8W18
-	lyrSEZ0MGSYhhxh+FHMLG9Fcq/8I=
-X-Gm-Gg: ASbGnctSMVLV1t/3QPvgfMSAou9IjrUWVOvtaiF+0iJ2MBtsMgmAfF2j/XRRLO36ewQ
-	cauD7wEOX7SmFOUI1at5J9G91KFlWcNS+yDSmJwQeggor18iB8kZgzjDBm+WTw+RJAwCuJ9IPY1
-	0dW+UNaZsby0unYtDoM+LWmtE=
-X-Google-Smtp-Source: AGHT+IHzfIJRZpdeONCKC1hscbpEHgL+eOok3ABpVp7t0jI5xsF+h571shGT73MMq7pH/ucoJCkY3wGkF1YG+WPKcMw=
-X-Received: by 2002:a17:90b:5443:b0:2ff:796b:4d05 with SMTP id
- 98e67ed59e1d1-306a485edb0mr4690761a91.11.1743765945929; Fri, 04 Apr 2025
- 04:25:45 -0700 (PDT)
+	s=arc-20240116; t=1743766752; c=relaxed/simple;
+	bh=OaVOtSqyswMnScAeHQjW6coYcRHBe1m1bBclYABbBIY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=FzxQZLBmhmwEK2slhCjcsS3JrltWXuJHQodJ2x/afbN+nHJmCTaQdf2yBmtBI3iIw/NpLXcBU9Y3IJNfSV0Z8XGFfqbm6oPT2D/P87WGBJOx5nAdY4eRFlJOMJhbxX+2cdk5SGut5yDTvn2MkjJP+aowoSZbInglRj9RVtvfi1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aklubG7C; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1743766160;
+	bh=OaVOtSqyswMnScAeHQjW6coYcRHBe1m1bBclYABbBIY=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=aklubG7CZTZ4oD+B+o7ONUyn7kOhXbLT+OLgD0232dAFXRmAWl0xxXUw9UaMAYP3v
+	 h2Bbx0o5hWUp81wI02AbBgifEtyUu9yVlk9ZR2P0mQOKIQrKZGys9Rhk3wxQgW1y+C
+	 toUou7tP3zhdGxiQObKB1KqwS8W42Nri+FFPHbTIngBnAB46XLLidiT6v1dsYlHvlh
+	 W8HXAG6CYJglmXVM4RAwwz4MevjjOp2ea/eTSaddIXeR+zsw7P9QL4S1U3yM7AzFgV
+	 TVOv8DzH2xIFAwdXthRPAig4G9vUtqWC4rntz9ahaNFEiaebeaK+8BK1blD+CnJ2Hf
+	 xYktL8Tz9tY5Q==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4F61E17E0215;
+	Fri,  4 Apr 2025 13:29:20 +0200 (CEST)
+Message-ID: <3e10ed93-dadb-4d0b-b419-28ea492a1603@collabora.com>
+Date: Fri, 4 Apr 2025 13:29:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250404105359.18632-1-ivitro@gmail.com> <20250404105359.18632-2-ivitro@gmail.com>
-In-Reply-To: <20250404105359.18632-2-ivitro@gmail.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Fri, 4 Apr 2025 14:27:31 +0300
-X-Gm-Features: AQ5f1Jo_vwVCsJBIV6IqomEQgPPhk2OrizKxFzdzrwjdmKaE32nMnNYDWv9ZEsk
-Message-ID: <CAEnQRZAkPJJRit7qrxHc4KtaR8Xej9qBZYgYTukWtKM6fwTSnw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] arm64: dts: freescale: add Toradex SMARC iMX8MP
-To: Vitor Soares <ivitro@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vitor Soares <vitor.soares@toradex.com>, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hiago De Franco <hiago.franco@toradex.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: mediatek: Do not enable MTK_SOCINFO by default
+ during compile testing
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20250404112359.255053-1-krzysztof.kozlowski@linaro.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250404112359.255053-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Apr 4, 2025 at 1:56=E2=80=AFPM Vitor Soares <ivitro@gmail.com> wrot=
-e:
->
-> From: Vitor Soares <vitor.soares@toradex.com>
->
-> Add DT support for Toradex SMARC iMX8MP SoM and Toradex SMARC Development
-> carrier board.
->
-> Link: https://www.toradex.com/computer-on-modules/smarc-arm-family/nxp-im=
-x-8m-plus
-> Link: https://www.toradex.com/products/carrier-board/smarc-development-bo=
-ard-kit
-> Co-developed-by: Hiago De Franco <hiago.franco@toradex.com>
-> Signed-off-by: Hiago De Franco <hiago.franco@toradex.com>
-> Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
+Il 04/04/25 13:23, Krzysztof Kozlowski ha scritto:
+> Enabling the compile test should not cause automatic enabling of such
+> drivers.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
 > ---
->  arch/arm64/boot/dts/freescale/Makefile        |    1 +
->  .../freescale/imx8mp-toradex-smarc-dev.dts    |  297 ++++
->  .../dts/freescale/imx8mp-toradex-smarc.dtsi   | 1288 +++++++++++++++++
->  3 files changed, 1586 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-toradex-smarc-de=
-v.dts
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-toradex-smarc.dt=
-si
->
-> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts=
-/freescale/Makefile
-> index b6d3fe26d621..8106dbeffd3e 100644
-> --- a/arch/arm64/boot/dts/freescale/Makefile
-> +++ b/arch/arm64/boot/dts/freescale/Makefile
-> @@ -221,6 +221,7 @@ dtb-$(CONFIG_ARCH_MXC) +=3D imx8mp-venice-gw73xx-2x.d=
-tb
->  dtb-$(CONFIG_ARCH_MXC) +=3D imx8mp-venice-gw74xx.dtb
->  dtb-$(CONFIG_ARCH_MXC) +=3D imx8mp-venice-gw75xx-2x.dtb
->  dtb-$(CONFIG_ARCH_MXC) +=3D imx8mp-venice-gw82xx-2x.dtb
-> +dtb-$(CONFIG_ARCH_MXC) +=3D imx8mp-toradex-smarc-dev.dtb
+>   drivers/soc/mediatek/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
+> index d7293977f06e..006214f8e5ee 100644
+> --- a/drivers/soc/mediatek/Kconfig
+> +++ b/drivers/soc/mediatek/Kconfig
+> @@ -81,7 +81,7 @@ config MTK_SVS
+>   
+>   config MTK_SOCINFO
+>   	tristate "MediaTek SoC Information"
+> -	default y
+> +	default ARCH_MEDIATEK
+>   	depends on NVMEM_MTK_EFUSE
+>   	select SOC_BUS
+>   	help
 
-I think here we should go in alphabetical order. So move this in the
-proper place.
-
->  dtb-$(CONFIG_ARCH_MXC) +=3D imx8mp-verdin-nonwifi-dahlia.dtb
->  dtb-$(CONFIG_ARCH_MXC) +=3D imx8mp-verdin-nonwifi-dev.dtb
->  dtb-$(CONFIG_ARCH_MXC) +=3D imx8mp-verdin-nonwifi-ivy.dtb
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-toradex-smarc-dev.dts b=
-/arch/arm64/boot/dts/freescale/imx8mp-toradex-smarc-dev.dts
 
