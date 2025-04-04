@@ -1,250 +1,502 @@
-Return-Path: <linux-kernel+bounces-588221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4608A7B5E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 04:34:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCEEEA7B5EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 04:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDBCD174374
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 02:33:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A759E175599
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 02:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6F4137750;
-	Fri,  4 Apr 2025 02:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4431C5674E;
+	Fri,  4 Apr 2025 02:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="p7GnNVdM"
-Received: from mx0b-00128a01.pphosted.com (mx0b-00128a01.pphosted.com [148.163.139.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="PDGGr5Ao"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35A3481B1;
-	Fri,  4 Apr 2025 02:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.139.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743734018; cv=fail; b=psUBl36/CE7G13WRGZx7WwU6Y8dZBQWHIH49Uqy1GWUlTKwQe19zpN2a9zr/JkBul3Ux4UJcyBNaCFSz90PoVTs3zx3SmXAqhEf5bHslgMD16IlrfzsPQTcknUOK1pvOjh4ea0uUp/WqMtDaenYBt3vRfsUXaCP4+geyMWyUpHA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743734018; c=relaxed/simple;
-	bh=OXy96lt2f4FsfFXlYyeSRCTVy/I6oDtwsGyUfllVfCQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=cWUILAE/aCJ8zzq5OTew6Q4Z+g2xXP6ioXVV0OUAvdO5Rk1NyKY2/dc67WOywGigEs08/2/l+afbJgfpcZti6AMvzzYRd9pWgOSeIcFiWo5lrIvFyo7cwoqaXJ1BeCj78Cv084LCkL3uRJ3aqbUonOBh+k775fuPiIh9WQLs4kg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=p7GnNVdM; arc=fail smtp.client-ip=148.163.139.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375854.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5341NHlN008748;
-	Thu, 3 Apr 2025 22:33:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=sLPmo
-	Vz8FxFpYzh7jFc4vJR3NcNrOCJoH3EE2FTOxrU=; b=p7GnNVdM9OuUeyEXcNPyL
-	/uYt2MCfBsNC79Q+SOO/FO/TbSBej/v09ajLD83tnFO1WMgMGKwRMf/WhJOPagd6
-	z0RV6i+r8v5HFGSvi4YRYH+ItWBiizTzOtdblpIw6lNUh+uHjZxxET8B3Va3vING
-	93XHwh67iVaolstH8Up8+Fr6AumRvi1BpnfcgC4WB5/DMEgXX7S/DRG9qUuz7Xki
-	yDhn1XrKwZNImL1AUp9rUyYcSt8V60DiKuqtOruwG/hlX+cVzfB6ttRqm84/KVQ0
-	GgWvpUZNAty2m/BBV9JKZjz1abtRYFN/CCrj1fx1/LIVnGMTLyhP5ncuNe+g1YDH
-	Q==
-Received: from byapr05cu005.outbound.protection.outlook.com (mail-westusazlp17010002.outbound.protection.outlook.com [40.93.1.2])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 45t5qeg7r8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 03 Apr 2025 22:33:32 -0400 (EDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W2yITlQcqyUJYIKF/Vn0XFUbb6k2GYm8ihfczPCO8eZb38XUUWbne/4+kMtva00l6T+E6Rl5RhGi+MlHvj9wONUNkOTb4DQvEh6fLj8QUVJwDkXlNz3Ot6MG+wMADdsWLf3s+JEyeI6dM4EAHUR2arBepb3Kl0Q2z6DH+Oz9pgtas6s1HbY21w1iA9yxQWtsZ16n5xN8fP5C8vkwAjv5INuoItkGWClnPcPt0aGdJ0cSP7X6wi2duJcfzBEwd4b9sGa06l9v5iNxJ9CFZ2VwXE0JedqZUs2EPntCMleMFjkHEmmsWFxmjMvzzMwJaszM0MFPKTtt6K8OC51O/E+2Dw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sLPmoVz8FxFpYzh7jFc4vJR3NcNrOCJoH3EE2FTOxrU=;
- b=RAtx5egSJjbJnoSVotiV4N4MdEdKIEF8RIQCCNC6BY+BpWp1vIa3ClXtvjwjQ4uAEJeZ64xhJII+dZoISwiFkWd3ao4H3TvmCt4O5o/BnUSlhcqLzpekSEaHtTO6rSa2IURY0R6GGxcJNe7cPSDP8ultP22TOwt3ORxQiqM0xd8MRKalaTER+z6M9TMG2VvcGgpTZ44YuAmUuAU0JcVnzO+VWPyKkH8hbOf72m4u1tcbBUbP+Q4sHjGvjz+Y7h1n3c2ffqiF9XP4Q0o5/Smt30x/EPQypJNQeDcPbHskTKnBTRycvK6aMZ+mqpuBAQs3LfDQ1r/l6+V2HjlizLwwlg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
- dkim=pass header.d=analog.com; arc=none
-Received: from PH0PR03MB6351.namprd03.prod.outlook.com (2603:10b6:510:ab::18)
- by SJ0PR03MB5488.namprd03.prod.outlook.com (2603:10b6:a03:287::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Fri, 4 Apr
- 2025 02:33:30 +0000
-Received: from PH0PR03MB6351.namprd03.prod.outlook.com
- ([fe80::71f7:8e63:e91:a354]) by PH0PR03MB6351.namprd03.prod.outlook.com
- ([fe80::71f7:8e63:e91:a354%5]) with mapi id 15.20.8583.043; Fri, 4 Apr 2025
- 02:33:30 +0000
-From: "Torreno, Alexis Czezar" <AlexisCzezar.Torreno@analog.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-Subject: RE: [PATCH v3 1/2] regulator: dt-bindings: adi,adp5055-regulator: Add
- adp5055 support
-Thread-Topic: [PATCH v3 1/2] regulator: dt-bindings: adi,adp5055-regulator:
- Add adp5055 support
-Thread-Index: AQHbpEKj5B65eni/nEaUULWKiEDdAbORfg6AgAFCHyA=
-Date: Fri, 4 Apr 2025 02:33:30 +0000
-Message-ID:
- <PH0PR03MB635194B6CC9F95E418CE5638F1A92@PH0PR03MB6351.namprd03.prod.outlook.com>
-References: <20250403-upstream-adp5055-v3-0-8eb170f4f94e@analog.com>
- <20250403-upstream-adp5055-v3-1-8eb170f4f94e@analog.com>
- <20250403-unselfish-thoughtful-wallaby-ccd38e@krzk-bin>
-In-Reply-To: <20250403-unselfish-thoughtful-wallaby-ccd38e@krzk-bin>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR03MB6351:EE_|SJ0PR03MB5488:EE_
-x-ms-office365-filtering-correlation-id: 47727ad8-10ee-4aa6-c7c3-08dd7321166a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?A4qAGdO4Ps679NKc2QFKxUavaXdZBtLzgnvIQHNd9H/StAT67+ZwRQ3W13K9?=
- =?us-ascii?Q?O3KxR1+zo2g8bduYz0YTuUrGslv7gBlq0eRmhOeiR1C6PK2gMtPq5+wEhUtM?=
- =?us-ascii?Q?vg0livARC4wK39CrdprnMwsw5h8dIA3UoxmEFvap+edfq9qIn/uCfTPthfvi?=
- =?us-ascii?Q?6ibAgM+HwnTJtWj9KPsvkR7OE4d777Bh5EeiSaH3cA/bOEFUfk2sMtSd3m9A?=
- =?us-ascii?Q?Hx/e8F7ATQ7ZXFmCY5+5JMBgLDyzrK1JHrZpTLm9W5Yl16e/1sRm6M0a1Mjc?=
- =?us-ascii?Q?peoRxG813GTGXiMwK90kKCEnofY/DnC7lDFdpZx/jnqVsqXVpoObGNACWJdR?=
- =?us-ascii?Q?Fy+Jja0Mnm132bcT3zpRlO+ioi05NEmEWpW8U+JA4tXUOG9xz1oWfZvYcWZT?=
- =?us-ascii?Q?movdyzOXoye4FZHDNqgrOqJHxZMnsev50XUMZYtrmgc9Ta5rjFj6dHf/9vnu?=
- =?us-ascii?Q?Z+UrhOsiCPAraxdkB2UNCVZv8xhF+4Ez8k7M6qgg/foXfMVztjofxnV5djAu?=
- =?us-ascii?Q?Ju9viPa9HFTmArou6R4y9xWSbBamFA+HF3KwU35xRx0Gp76LT+TUJx7iEed9?=
- =?us-ascii?Q?fJ01+RvgmrMKyUE+ZpQR0Tn4wjIE0lBT4mWlasvlaszlgtyzHCI16c1RWVC3?=
- =?us-ascii?Q?gwRJQWs/WLzQKRvOA5hBrEa4JM0i5vxm/dLZA/m9uuP1YkxzObIvNQNKBwDC?=
- =?us-ascii?Q?xHwlMz3Zon70N7eB9YpD1la5q5EJ7k6LmwN3JBEFiEaOadVhtnw8P1YF0NxY?=
- =?us-ascii?Q?wc2vseZ3YsQ5Obj+4m8H1mHWJxqDsdaIOabN9ojl6nolyBXI5lT2HE55e6vc?=
- =?us-ascii?Q?EBIPUd6JXGe6OSfqDW05NjATbI7H6Htz4tmmSN1vnUJ+hqS39frBdlX1anaG?=
- =?us-ascii?Q?W+tsHFsHsuJUTcz44HrcDtN/z0ZZtQ1lSGosIbhjgvMzw6+DEqewY0ogb4fj?=
- =?us-ascii?Q?Rc/d4pMjofplkyhvl4YuUxVdt6RsJVWoO/gXbeE6o5iWaera8ywBjsdApsZd?=
- =?us-ascii?Q?pj2FwhIYxM2PSxfWQd9f52hDOnC4b36O6190LLqNu5sAcyF8U/kZkadLhnCL?=
- =?us-ascii?Q?dIH+dDI7+v+qvaw0gwGAlDn/sxJcGWwzv0QieHeNeAE5MJ1o6ZLWmAqJ55W/?=
- =?us-ascii?Q?wf3VeihJxLXhGTUJB4U5HuPLsfSeZp0wFo0YhgajXJXltuEx0XA6aTVIrA5n?=
- =?us-ascii?Q?fRv+VAQMf33HH+0kqCV05Mq54HLn5KsMiVYFU9cFHtopVjFJ9JxT3WbX4Xwv?=
- =?us-ascii?Q?Wnf/qqlMCTpMbtVAQG4ZUGPF5ETrFJzLyLttrsEebRs4QDCDOFafkjpzKFFl?=
- =?us-ascii?Q?R8dk0V4P4oRSEpai5jrXvAcbOm/iDJK1D3JM4wncEH7R4KzprbZsa+kNqSlA?=
- =?us-ascii?Q?XvQY28VSZEZmwrkxsCXlCtSMtTqfV3i93TFiDKNb7T2Uol5vLgArMCnrD7yl?=
- =?us-ascii?Q?78CVDHG3Reo=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR03MB6351.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?gnE90tf3swIff+5uXZBhwVuK6vseEF6NszgwpxrmZTMz+4WXP7u/9fJrdl96?=
- =?us-ascii?Q?c/MIysi1892JQoGazW0QPBwsI1NvQUbpjsTPJZHGShv1lxa4GV8Y0v66ZoJM?=
- =?us-ascii?Q?SpqjUUY/yHgfPwosamubwldBZmSDwWgbrGlVASKI50ZpLUlHrBrNoxaYpIBF?=
- =?us-ascii?Q?/kgVC6x9Nq+vJ0R2hkd1vw5r5jI0FohY4OXcMGDclBeUBy8tvTi3jHa8wCN3?=
- =?us-ascii?Q?vci4E2Y9O5W9n9Z7i5XmoXGkmAAB3+7crmZ8WQblDO3EpCOYMXvqsbvGkEEb?=
- =?us-ascii?Q?8d5V3EnPF9JnvQi+tgbIun06FMX0WxVpe7jP+Y2JrCFmLviNIQVpzN5BLtyS?=
- =?us-ascii?Q?wF1Ri6NQfXbyPlgB4/OURYVcZQ4nEdgdLkfbSCiyIASzseX9xkpuvWeWm2WJ?=
- =?us-ascii?Q?UL8MThglXegzCBj27gA3kZn8/U4D9byyT6mL9KqM/mh9985Kvddjm+HlER0d?=
- =?us-ascii?Q?m+Do1Z/VIgskHKhRnSFUI7xdOPF+/xQ0nXgPsx1W2SbqTum/xpZv3fMMU3+k?=
- =?us-ascii?Q?1BzYiCsXh6uVmCb32LzRVNjl0/Lbtr4oXH/9O1IbjYezpk8LGaB9GYOvQFIZ?=
- =?us-ascii?Q?TRVOtBJTahn+A0Sp1moklGE4FVYxjzJ/v+vVQC/ryzQC5t7s0LG/9ZryfC9N?=
- =?us-ascii?Q?aqq8ZwYjCudCXHA8nxsKIaPQmn9Ey+gLV/sbXEx32m8nmdHicLq4CvGXsN7t?=
- =?us-ascii?Q?+vmZfhPySTi0xl/WTMDcKFgZUbYW17OwO7T1xVlhUbCmz7LO7pX+GAMr4Ehx?=
- =?us-ascii?Q?Kr7qpfO9Y7X3Xqq8IJRJew8hgCdXq31sbblHVIkqIO01msSzPiZ2HNys5LzN?=
- =?us-ascii?Q?pVe99SMH+r2XjtKDpx0OumhKCLNWJSYl8kDlq6XSZfzVwn5/c8NLJ4ATAN5V?=
- =?us-ascii?Q?Y5IbpO7Z29FFpLqJw4UGh73ITLOTSZvVgaYbTf4w0GjfZMNlphDSWrXQ/+he?=
- =?us-ascii?Q?qUc1iOjm1amYVuLme9ST7hyX29iL0eFTS02pxF21CYyLsEJZPBhkO21z3Fsk?=
- =?us-ascii?Q?XfWrKpN9NB9ezTcUwabRbsr1Gie4MruQLTmXdJHWomJ0pDvvusFaQXIgWStF?=
- =?us-ascii?Q?zYpxvm+iNpPcggpURDudtgSGAzXWXACRvQoEe612ApK0uCmrm0Ro1ZmEfs0+?=
- =?us-ascii?Q?nRrD08GbBHvVfi3m03sf0le6jJ4FT4EPWfJXH5Gx5JVx29ik7sJKvpuOux16?=
- =?us-ascii?Q?YF0UZ3UBw4VJ9R/cAlgrZ1x8yrgCQU+aSaR8j+nU4YG27wys9Npj06LU4/RT?=
- =?us-ascii?Q?yqy5HKzU1BohC1hRyVAup+/+Q6YIkXilpSeu5In8xdMlU/gDCWs1PMm81Qkd?=
- =?us-ascii?Q?uJvdr+pCsmG5hyhA6J9CKro1lCNp9yKRI2yIoB7m4CN+p/SJG2ajH9EA8Lnm?=
- =?us-ascii?Q?C9FYWUIHkQ7gVIMd5XV8ZyexaZ25cK7PX5hBqlXNa64OD0ppeLOJ2MJkC7kX?=
- =?us-ascii?Q?Gj39+JDME3AJPQT6cNVhtqDnB33Z+JCN5bag10louLmxUgDQRrYyFT7AfJ+h?=
- =?us-ascii?Q?ZbZnWHZfGvh/UP5zWdeLACyqJSPHYSL1eSAJaEVKK5rYCdObC/oHhWu7iZXy?=
- =?us-ascii?Q?oKRxW8eXXx9GeHHdflwc2E54IEDNY0zKhpmCRVonuq3yx2gyfWts/uvpAU8h?=
- =?us-ascii?Q?yg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963692E62B4
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 02:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743734379; cv=none; b=EtlUx6zFB+XpZJ7M9jxd6LN7jzhhuRb7bv/eMT6SIOFcd0CE7y1O31cdvZyOSjpyJblS6KPSLHbYqXT55dEb9rmHamR12eCl65BHXQgGH8ihbDRwcY5ltcHsxzzZantcACFN90IadAJSbKyfdff65MMxyJReo6OS/dwkurr6vJI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743734379; c=relaxed/simple;
+	bh=0G6rqP5mSwe8XwGq32ciWsfmoN1SBfyghJ10tXmCyac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UjeHGuX22d+fBGGl/0GRYC+j+HASj+rpSna2jjUa9oRI8qWNYID61D60XyYN5jM43OITIEnYq+Hnndl2QBfcEkAugA2lPo/RLw3zMZEg/l76gK0iuwW+/kKCnyj+Dxt+Uzj2PiAWSBwRwV+r+7gSBTb4rcZ5a+0YRKt5y1INef0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=PDGGr5Ao; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4394a823036so14407185e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 19:39:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1743734375; x=1744339175; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=lFaUqdZI1ex+oj33UsFQHXEBb21N+ETuCDGOxwRj0Xc=;
+        b=PDGGr5AoCBLgjeSRu+qcdkC7zqjgYha3z3/Ns4r+/FD83oHNBXUkIpT3vXQg2Klu5Y
+         1GVVT72DMAtKvyLqK19yj2TP3w6wIi59rIEA8xC7wLWw1KNtWAG9Twv+11/eOcq7Fvlm
+         uempgmC3rWRIiyh0eBEisJUvFS4GTf8nnLL1g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743734375; x=1744339175;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lFaUqdZI1ex+oj33UsFQHXEBb21N+ETuCDGOxwRj0Xc=;
+        b=SSu4+raPKyiZ66UxfuvI/1ucRi3It8Rng6uaEQ5hR69kUlm/tgVgYnZ8u5k9dFKaXp
+         34iK2fz5FOgCbG5mFCVhEr+OaNJZ3Hd5iMsVnbstCDnUl7aYXZAN2+XneSljV4xaGboh
+         mzgYekb+HpKMU1qMTI1Da5XJNEaX6SmbwsX4tHBdCdE2AXMY9KGfjoLKvVJEvxCLQd1i
+         h+8UgMYtHvKsag0n8q6D3I3SGP505ngWvUegWG2UI5Ckv8aLkRJDCfNJMlgKnocCda92
+         WLejsy/RmI+ZdDhMRmnTFNtn8JxKlBl3yXgJUBtCwBkep9+tfoNnD+DsZohQR/e3tm4A
+         crfA==
+X-Gm-Message-State: AOJu0YweX97l4YjRGgyj2JGcUVIyKcVGMHJ63wzMoMTS+4MLi6rkUS6V
+	Jz0ywWLcF6Q2iA14gCgHEG8yCKie+JHseTw3L1EUsAOMOWOnUuwblMSyneqL2CA=
+X-Gm-Gg: ASbGncvxdVVvC9kGBGJ5KwTh+FLchdQdmWeFpsSY8gRyhDwKWK0q3hAuO9CEd1L/FMT
+	xgmhUcb+BHE3hydlmNSUeILQcLN8qW2sxEh18wZjOtxrvYN0A7IlKPRt7zRu6r18/RYjKeTsi8w
+	ll36Q0uCkmnBadqCig4vOayrHwu7whziLKlwnIuBORR0FW/EjDeoKb4IAhYC6Qo6OxRANbLrBo6
+	fQoUGBAIzBQ2prDJxi7Kl12Vwlw42C7eOEdU7Zt9nrl6LQsQYII3+Fu+coqq12lHWUKNbn8jUFX
+	JghNH5LlkRu/wGo+x4leLo+9TOsnkuaN41MrFPWB7Y7EF0lSBopeL031cJXDArssi99ePV684sD
+	OXho6LgnvpA==
+X-Google-Smtp-Source: AGHT+IGVswomjphYIoMeIWyYWiahO403HK25HEqheOKFFyEAFDKE5K2JSDbvnOI185exqTxnK+uESA==
+X-Received: by 2002:a05:600c:4594:b0:43c:ec28:d310 with SMTP id 5b1f17b1804b1-43ecf8837d8mr11835415e9.10.1743734374727;
+        Thu, 03 Apr 2025 19:39:34 -0700 (PDT)
+Received: from [192.168.1.183] (host-92-26-98-202.as13285.net. [92.26.98.202])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c301a9bcfsm3252492f8f.33.2025.04.03.19.39.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Apr 2025 19:39:34 -0700 (PDT)
+Message-ID: <2b32a422-575a-403c-b373-1c6beac47c83@citrix.com>
+Date: Fri, 4 Apr 2025 03:39:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR03MB6351.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 47727ad8-10ee-4aa6-c7c3-08dd7321166a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Apr 2025 02:33:30.3153
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nD9sjXgKa/Qz4bjjwNf19DjoZz69dWKkWWUC+4Wkcj6cVFIdzLwi72chcPo+eNO9nmLPrW/NFwbMprkODtVV2ZB4+6QZLYWVNlqMbyJTVcA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR03MB5488
-X-Proofpoint-GUID: A1hcxm6qTQAizetBrUxBi_ko3jEhM4kv
-X-Authority-Analysis: v=2.4 cv=GbMXnRXL c=1 sm=1 tr=0 ts=67ef44fc cx=c_pps a=Ku5Q1SXtyGRHaGBacwLxwg==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8 a=pGLkceISAAAA:8 a=KKAkSRfTAAAA:8 a=IAD2S347gZsQV-wPC48A:9 a=CjuIK1q_8ugA:10 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: A1hcxm6qTQAizetBrUxBi_ko3jEhM4kv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-04_01,2025-04-03_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- suspectscore=0 spamscore=0 clxscore=1015 impostorscore=0
- lowpriorityscore=0 bulkscore=0 adultscore=0 mlxscore=0 mlxlogscore=999
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504040015
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 6/6] x86/bugs: Add RSB mitigation document
+To: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, amit@kernel.org, kvm@vger.kernel.org,
+ amit.shah@amd.com, thomas.lendacky@amd.com, bp@alien8.de,
+ tglx@linutronix.de, peterz@infradead.org, pawan.kumar.gupta@linux.intel.com,
+ corbet@lwn.net, mingo@redhat.com, dave.hansen@linux.intel.com,
+ hpa@zytor.com, seanjc@google.com, pbonzini@redhat.com,
+ daniel.sneddon@linux.intel.com, kai.huang@intel.com, sandipan.das@amd.com,
+ boris.ostrovsky@oracle.com, Babu.Moger@amd.com, david.kaplan@amd.com,
+ dwmw@amazon.co.uk
+References: <cover.1743617897.git.jpoimboe@kernel.org>
+ <d6c07c8ae337525cbb5d926d692e8969c2cf698d.1743617897.git.jpoimboe@kernel.org>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ xsFNBFLhNn8BEADVhE+Hb8i0GV6mihnnr/uiQQdPF8kUoFzCOPXkf7jQ5sLYeJa0cQi6Penp
+ VtiFYznTairnVsN5J+ujSTIb+OlMSJUWV4opS7WVNnxHbFTPYZVQ3erv7NKc2iVizCRZ2Kxn
+ srM1oPXWRic8BIAdYOKOloF2300SL/bIpeD+x7h3w9B/qez7nOin5NzkxgFoaUeIal12pXSR
+ Q354FKFoy6Vh96gc4VRqte3jw8mPuJQpfws+Pb+swvSf/i1q1+1I4jsRQQh2m6OTADHIqg2E
+ ofTYAEh7R5HfPx0EXoEDMdRjOeKn8+vvkAwhviWXTHlG3R1QkbE5M/oywnZ83udJmi+lxjJ5
+ YhQ5IzomvJ16H0Bq+TLyVLO/VRksp1VR9HxCzItLNCS8PdpYYz5TC204ViycobYU65WMpzWe
+ LFAGn8jSS25XIpqv0Y9k87dLbctKKA14Ifw2kq5OIVu2FuX+3i446JOa2vpCI9GcjCzi3oHV
+ e00bzYiHMIl0FICrNJU0Kjho8pdo0m2uxkn6SYEpogAy9pnatUlO+erL4LqFUO7GXSdBRbw5
+ gNt25XTLdSFuZtMxkY3tq8MFss5QnjhehCVPEpE6y9ZjI4XB8ad1G4oBHVGK5LMsvg22PfMJ
+ ISWFSHoF/B5+lHkCKWkFxZ0gZn33ju5n6/FOdEx4B8cMJt+cWwARAQABzSlBbmRyZXcgQ29v
+ cGVyIDxhbmRyZXcuY29vcGVyM0BjaXRyaXguY29tPsLBegQTAQgAJAIbAwULCQgHAwUVCgkI
+ CwUWAgMBAAIeAQIXgAUCWKD95wIZAQAKCRBlw/kGpdefoHbdD/9AIoR3k6fKl+RFiFpyAhvO
+ 59ttDFI7nIAnlYngev2XUR3acFElJATHSDO0ju+hqWqAb8kVijXLops0gOfqt3VPZq9cuHlh
+ IMDquatGLzAadfFx2eQYIYT+FYuMoPZy/aTUazmJIDVxP7L383grjIkn+7tAv+qeDfE+txL4
+ SAm1UHNvmdfgL2/lcmL3xRh7sub3nJilM93RWX1Pe5LBSDXO45uzCGEdst6uSlzYR/MEr+5Z
+ JQQ32JV64zwvf/aKaagSQSQMYNX9JFgfZ3TKWC1KJQbX5ssoX/5hNLqxMcZV3TN7kU8I3kjK
+ mPec9+1nECOjjJSO/h4P0sBZyIUGfguwzhEeGf4sMCuSEM4xjCnwiBwftR17sr0spYcOpqET
+ ZGcAmyYcNjy6CYadNCnfR40vhhWuCfNCBzWnUW0lFoo12wb0YnzoOLjvfD6OL3JjIUJNOmJy
+ RCsJ5IA/Iz33RhSVRmROu+TztwuThClw63g7+hoyewv7BemKyuU6FTVhjjW+XUWmS/FzknSi
+ dAG+insr0746cTPpSkGl3KAXeWDGJzve7/SBBfyznWCMGaf8E2P1oOdIZRxHgWj0zNr1+ooF
+ /PzgLPiCI4OMUttTlEKChgbUTQ+5o0P080JojqfXwbPAyumbaYcQNiH1/xYbJdOFSiBv9rpt
+ TQTBLzDKXok86M7BTQRS4TZ/ARAAkgqudHsp+hd82UVkvgnlqZjzz2vyrYfz7bkPtXaGb9H4
+ Rfo7mQsEQavEBdWWjbga6eMnDqtu+FC+qeTGYebToxEyp2lKDSoAsvt8w82tIlP/EbmRbDVn
+ 7bhjBlfRcFjVYw8uVDPptT0TV47vpoCVkTwcyb6OltJrvg/QzV9f07DJswuda1JH3/qvYu0p
+ vjPnYvCq4NsqY2XSdAJ02HrdYPFtNyPEntu1n1KK+gJrstjtw7KsZ4ygXYrsm/oCBiVW/OgU
+ g/XIlGErkrxe4vQvJyVwg6YH653YTX5hLLUEL1NS4TCo47RP+wi6y+TnuAL36UtK/uFyEuPy
+ wwrDVcC4cIFhYSfsO0BumEI65yu7a8aHbGfq2lW251UcoU48Z27ZUUZd2Dr6O/n8poQHbaTd
+ 6bJJSjzGGHZVbRP9UQ3lkmkmc0+XCHmj5WhwNNYjgbbmML7y0fsJT5RgvefAIFfHBg7fTY/i
+ kBEimoUsTEQz+N4hbKwo1hULfVxDJStE4sbPhjbsPCrlXf6W9CxSyQ0qmZ2bXsLQYRj2xqd1
+ bpA+1o1j2N4/au1R/uSiUFjewJdT/LX1EklKDcQwpk06Af/N7VZtSfEJeRV04unbsKVXWZAk
+ uAJyDDKN99ziC0Wz5kcPyVD1HNf8bgaqGDzrv3TfYjwqayRFcMf7xJaL9xXedMcAEQEAAcLB
+ XwQYAQgACQUCUuE2fwIbDAAKCRBlw/kGpdefoG4XEACD1Qf/er8EA7g23HMxYWd3FXHThrVQ
+ HgiGdk5Yh632vjOm9L4sd/GCEACVQKjsu98e8o3ysitFlznEns5EAAXEbITrgKWXDDUWGYxd
+ pnjj2u+GkVdsOAGk0kxczX6s+VRBhpbBI2PWnOsRJgU2n10PZ3mZD4Xu9kU2IXYmuW+e5KCA
+ vTArRUdCrAtIa1k01sPipPPw6dfxx2e5asy21YOytzxuWFfJTGnVxZZSCyLUO83sh6OZhJkk
+ b9rxL9wPmpN/t2IPaEKoAc0FTQZS36wAMOXkBh24PQ9gaLJvfPKpNzGD8XWR5HHF0NLIJhgg
+ 4ZlEXQ2fVp3XrtocHqhu4UZR4koCijgB8sB7Tb0GCpwK+C4UePdFLfhKyRdSXuvY3AHJd4CP
+ 4JzW0Bzq/WXY3XMOzUTYApGQpnUpdOmuQSfpV9MQO+/jo7r6yPbxT7CwRS5dcQPzUiuHLK9i
+ nvjREdh84qycnx0/6dDroYhp0DFv4udxuAvt1h4wGwTPRQZerSm4xaYegEFusyhbZrI0U9tJ
+ B8WrhBLXDiYlyJT6zOV2yZFuW47VrLsjYnHwn27hmxTC/7tvG3euCklmkn9Sl9IAKFu29RSo
+ d5bD8kMSCYsTqtTfT6W4A3qHGvIDta3ptLYpIAOD2sY3GYq2nf3Bbzx81wZK14JdDDHUX2Rs
+ 6+ahAA==
+In-Reply-To: <d6c07c8ae337525cbb5d926d692e8969c2cf698d.1743617897.git.jpoimboe@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On 02/04/2025 7:19 pm, Josh Poimboeuf wrote:
+> Create a document to summarize hard-earned knowledge about RSB-related
+> mitigations, with references, and replace the overly verbose yet
+> incomplete comments with a reference to the document.
+>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+
+Excellent.  I've been trying to do something like this for a while, and
+not managing to get this far.
+
+> diff --git a/Documentation/admin-guide/hw-vuln/rsb.rst b/Documentation/admin-guide/hw-vuln/rsb.rst
+> new file mode 100644
+> index 000000000000..97bf75993d5d
+> --- /dev/null
+> +++ b/Documentation/admin-guide/hw-vuln/rsb.rst
+> @@ -0,0 +1,241 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +=======================
+> +RSB-related mitigations
+> +=======================
+> +
+> +.. warning::
+> +   Please keep this document up-to-date, otherwise you will be
+> +   volunteered to update it and convert it to a very long comment in
+> +   bugs.c!
+> +
+> +Since 2018 there have been many Spectre CVEs related to the Return Stack
+> +Buffer (RSB).
+
+2017.  I, and many others, spent the whole second half of 2017 tied up
+in all of this.
+
+I'd drop the Spectre, or swap it for Speculation-related.  Simply
+"Spectre" CVEs tend to focus on the conditional and indirect predictors.
+
+>   Information about these CVEs and how to mitigate them is
+> +scattered amongst a myriad of microarchitecture-specific documents.
+
+You should note that the AMD terms RAS and RAP are the same thing,
+considering that you link to the documents.
+
+> +
+> +This document attempts to consolidate all the relevant information in
+> +once place and clarify the reasoning behind the current RSB-related
+> +mitigations.
+> +
+> +At a high level, there are two classes of RSB attacks: RSB poisoning
+> +(Intel and AMD) and RSB underflow (Intel only).  They must each be
+> +considered individually for each attack vector (and microarchitecture
+> +where applicable).
+> +
+
+One question before getting further.  This seems to be focused on
+(mis)prediction of RETs ?
+
+That's fine, but it wants spelling out, because it is distinct from the
+other class of issues when RET instructions execute in bad ways.
+
+When lecturing, my go-to example is Spectre-v1.1 / BCBS (store which
+clobbers or aliases the return address), because an astounding number of
+things can go wrong in different ways from there.
 
 
+Next, before diving into the specifics, it's incredibly relevant to have
+a section briefly describing how the RSB typically works.  It's key to
+understanding the rest of the documents, and there will definitely be
+people reading the document who don't know it.
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: Thursday, April 3, 2025 2:40 PM
-> To: Torreno, Alexis Czezar <AlexisCzezar.Torreno@analog.com>
-> Cc: Liam Girdwood <lgirdwood@gmail.com>; Mark Brown
-> <broonie@kernel.org>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
-> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; linux-
-> kernel@vger.kernel.org; devicetree@vger.kernel.org
-> Subject: Re: [PATCH v3 1/2] regulator: dt-bindings: adi,adp5055-regulator=
-: Add
-> adp5055 support
->=20
-> [External]
->=20
-> On Thu, Apr 03, 2025 at 10:43:10AM +0800, Alexis Czezar Torreno wrote:
-> > +  '#address-cells':
-> > +    const: 1
-> > +
-> > +  '#size-cells':
-> > +    const: 0
-> > +
-> > +patternProperties:
-> > +  "^buck[0-2]$":
->=20
-> If there is going to be new version, use consistent quotes, either " or '
->=20
-> ...
->=20
-> > +    type: object
-> > +    $ref: regulator.yaml#
-> > +    unevaluatedProperties: false
->=20
-> > +      adi,fast-transient:
-> > +        description:
-> > +          Configures the fast transient sensitivity for each regulator=
-.
-> > +          "none"    - No fast transient.
-> > +          "3G_1.5%" - 1.5% window with 3*350uA/V
-> > +          "5G_1.5%" - 1.5% window with 5*350uA/V
-> > +          "5G_2.5%" - 2.5% window with 5*350uA/V
-> > +        enum: [none, 3G_1.5%, 5G_1.5%, 5G_2.5%]
-> > +        default: 5G_2.5
->=20
-> Missing percent:
-> 5G_2.5%
->=20
-> With this fixed:
->=20
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The salient points are (on CPUs since ~Nehalem era.  Confirm with Intel
+and AMD.  You can spot it in the optimisation guides, because it's where
+the phrase such as "only taken branches consume prediction resource"
+began appearing):
 
-Will fix the small edits.
-Thanks!
+* Branch prediction is **prior** to instruction decode, and guesses at
+the location, type, and target of all near branches.
+* The RSB is a prediction structure used by branches predicted as CALLs
+or RETs.
+* When a CALL is predicted, the predicted return-address is pushed on
+the RSB
+* When a RET is predicted, the RSB is popped
+* Later, decode will cross-check the prediction with the instruction
+stream.  It can issue corrections to the predictor state, and restart
+prediction/fetch from the point that things appeared to go wrong.  This
+can include editing transient state in the RSB.
+
+For the observant reader, yes, the RSB is filled using predicted
+targets.  This is why the SRSO vuln is so evil.
+
+So, with the behaviour summarised, next some properties (disclaimer:
+varies by vendor)
+* It is logically a stack, but has finite capacity.  Executing more RET
+instructions than CALLs will underflow it.
+** AMD reuses the -1'th entry and doesn't move the pointer
+** Intel may fall back to a prediction from a different predictor
+* It is a structure shared across all security domains in Core/Thread. 
+Guest & Host is most relevant to the doc, but SMM/ACM/SEAM/XuCode are
+all included.
+** Some AMD CPUs dynamically re-partition the RSB(RAS) when a sibling
+thread goes idle
+** Some Intel CPUs only have a 32-bit wide RSB, and reuse the upper bits
+of the location for the predicted target
+** Some Intel CPUs hardwire bit 47(?) which causes the kernel to follow
+userspace predictions.
+
+> +----
+> +
+> +RSB poisoning (Intel and AMD)
+> +=============================
+> +
+> +SpectreRSB
+> +~~~~~~~~~~
+> +
+> +RSB poisoning is a technique used by Spectre-RSB [#spectre-rsb]_ where
+> +an attacker poisons an RSB entry to cause a victim's return instruction
+> +to speculate to an attacker-controlled address.  This can happen when
+> +there are unbalanced CALLs/RETs after a context switch or VMEXIT.
+> +
+> +* All attack vectors can potentially be mitigated by flushing out any
+> +  poisoned RSB entries using an RSB filling sequence
+> +  [#intel-rsb-filling]_ [#amd-rsb-filling]_ when transitioning between
+> +  untrusted and trusted domains.  But this has a performance impact and
+> +  should be avoided whenever possible.
+
+More importantly, 32-entry RSB stuffing loops are only applicable to
+pre-eIBRS and pre-ERAPS hardware.
+
+They are known unsafe to use on newer microarchitectures, inc Gracemont
+(128 entries) and Zen5 (64 entries).
+
+> +
+> +* On context switch, the user->user mitigation requires ensuring the
+> +  RSB gets filled or cleared whenever IBPB gets written [#cond-ibpb]_
+> +  during a context switch:
+> +
+> +  * AMD:
+> +	IBPB (or SBPB [#amd-sbpb]_ if used) automatically clears the RSB
+> +	if IBPB_RET is set in CPUID [#amd-ibpb-rsb]_.  Otherwise the RSB
+> +	filling sequence [#amd-rsb-filling]_ must be always be done in
+> +	addition to IBPB.
+
+Honestly, I dislike this way of characterising it.   IBPB was very
+clearly spec'd to flush all indirect prediction structures, and some AMD
+CPUs have an errata where this isn't true and has to be filled in by the OS.
+
+> +
+> +  * Intel:
+> +	IBPB automatically clears the RSB:
+> +
+> +	"Software that executed before the IBPB command cannot control
+> +	the predicted targets of indirect branches executed after the
+> +	command on the same logical processor. The term indirect branch
+> +	in this context includes near return instructions, so these
+> +	predicted targets may come from the RSB." [#intel-ibpb-rsb]_
+> +
+> +* On context switch, user->kernel attacks are mitigated by SMEP, as user
+> +  space can only insert its own return addresses into the RSB:
+
+It's more subtle than this (see the 32-bit wide prediction).
+
+A user/supervisor split address space limits the ranges of addresses
+that userspace can insert into the predictor.
+
+There is a corner case at the canonical boundary.  Userspace can insert
+the first non-canonincal address, and on some CPUs, this is interpreted
+as the first high canonical address.  Guard pages on both sides of the
+canonical boundary mitigate this.
+
+In the unbalanced case for user->kernel, a bad prediction really is made
+(coming out of the RSB), and it's only the SMEP #PF at instruction fetch
+which prevents you speculatively executing in userspace.
+
+In the 32-bit width case, the kernel predicts to {high_kern:low_user}
+target.
 
 
+> +
+> +  * AMD:
+> +	"Finally, branches that are predicted as 'ret' instructions get
+> +	their predicted targets from the Return Address Predictor (RAP).
+> +	AMD recommends software use a RAP stuffing sequence (mitigation
+> +	V2-3 in [2]) and/or Supervisor Mode Execution Protection (SMEP)
+> +	to ensure that the addresses in the RAP are safe for
+> +	speculation. Collectively, we refer to these mitigations as "RAP
+> +	Protection"." [#amd-smep-rsb]_
+> +
+> +  * Intel:
+> +	"On processors with enhanced IBRS, an RSB overwrite sequence may
+> +	not suffice to prevent the predicted target of a near return
+> +	from using an RSB entry created in a less privileged predictor
+> +	mode.  Software can prevent this by enabling SMEP (for
+> +	transitions from user mode to supervisor mode) and by having
+> +	IA32_SPEC_CTRL.IBRS set during VM exits." [#intel-smep-rsb]_
+> +
+> +* On VMEXIT, guest->host attacks are mitigated by eIBRS (and PBRSB
+> +  mitigation if needed):
+> +
+> +  * AMD:
+> +	"When Automatic IBRS is enabled, the internal return address
+> +	stack used for return address predictions is cleared on VMEXIT."
+> +	[#amd-eibrs-vmexit]_
+> +
+> +  * Intel:
+> +	"On processors with enhanced IBRS, an RSB overwrite sequence may
+> +	not suffice to prevent the predicted target of a near return
+> +	from using an RSB entry created in a less privileged predictor
+> +	mode.  Software can prevent this by enabling SMEP (for
+> +	transitions from user mode to supervisor mode) and by having
+> +	IA32_SPEC_CTRL.IBRS set during VM exits. Processors with
+> +	enhanced IBRS still support the usage model where IBRS is set
+> +	only in the OS/VMM for OSes that enable SMEP. To do this, such
+> +	processors will ensure that guest behavior cannot control the
+> +	RSB after a VM exit once IBRS is set, even if IBRS was not set
+> +	at the time of the VM exit." [#intel-eibrs-vmexit]_
+> +
+> +    Note that some Intel CPUs are susceptible to Post-barrier Return
+> +    Stack Buffer Predictions (PBRSB)[#intel-pbrsb]_, where the last CALL
+> +    from the guest can be used to predict the first unbalanced RET.  In
+> +    this case the PBRSB mitigation is needed in addition to eIBRS.
+> +
+> +AMD Retbleed / SRSO / Branch Type Confusion
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +On AMD, poisoned RSB entries can also be created by the AMD Retbleed
+> +variant [#retbleed-paper]_ and/or Speculative Return Stack Overflow
+> +[#amd-srso]_ (Inception [#inception-paper]_).  These attacks are made
+> +possible by Branch Type Confusion [#amd-btc]_.  The kernel protects
+> +itself by replacing every RET in the kernel with a branch to a single
+> +safe RET.
+
+BTC and SRSO are unrelated things.
+
+"predicted branch types" is an inherent property of the predictor.  BTC
+is specifically the case where decode doesn't halt, and still issues the
+wrong uops into the pipeline to execute.
+
+SRSO goes entirely wrong at the BP/IF stages (BP racing ahead while IF
+is stalled unable to fetch anything), so the damage is done by the time
+Decode sees the instruction stream.
+
+
+You also need to cover the AMD going-idle issue where the other thread's
+RSB entries magically appear in my RSB, and my head/tail pointer is
+reset to a random position.
+
+> +
+> +----
+> +
+> +RSB underflow (Intel only)
+> +==========================
+
+Well, not really.  AMD can underflow too.  It just picks a fixed entry
+and keeps on reusing that.  (Great for the alarming number of
+programming languages which consider recursion a virtue.)
+
+> +
+> +Intel Retbleed
+> +~~~~~~~~~~~~~~
+> +
+> +Some Intel Skylake-generation CPUs are susceptible to the Intel variant
+> +of Retbleed [#retbleed-paper]_ (Return Stack Buffer Underflow
+> +[#intel-rsbu]_).  If a RET is executed when the RSB buffer is empty due
+> +to mismatched CALLs/RETs or returning from a deep call stack, the branch
+> +predictor can fall back to using the Branch Target Buffer (BTB).  If a
+> +user forces a BTB collision then the RET can speculatively branch to a
+> +user-controlled address.
+> +
+> +* Note that RSB filling doesn't fully mitigate this issue.  If there
+> +  are enough unbalanced RETs, the RSB may still underflow and fall back
+> +  to using a poisoned BTB entry.
+> +
+> +* On context switch, user->user underflow attacks are mitigated by the
+> +  conditional IBPB [#cond-ibpb]_ on context switch which clears the BTB:
+> +
+> +  * "The indirect branch predictor barrier (IBPB) is an indirect branch
+> +    control mechanism that establishes a barrier, preventing software
+> +    that executed before the barrier from controlling the predicted
+> +    targets of indirect branches executed after the barrier on the same
+> +    logical processor." [#intel-ibpb-btb]_
+> +
+> +    .. note::
+> +       I wasn't able to find any offical documentation from Intel
+> +       explicitly stating that IBPB clears the BTB.  However, it's
+> +       broadly known to be true and relied upon in several mitigations.
+
+Part of this is because when the vendors say the BTB, they're
+translating their internal names into what academia calls them.
+
+"Flush the BTB" isn't a helpful statement anyway.  See AMD's IBPB vs
+SBPB which controls whether the branch types predictions remain intact.
+
+Given how many rounds of Intel microcode there have been making IBPB
+scrub more, it clearly wasn't scrubbing everything in the first place.
+
+> +
+> +* On context switch and VMEXIT, user->kernel and guest->host underflows
+> +  are mitigated by IBRS or eIBRS:
+> +
+> +  * "Enabling IBRS (including enhanced IBRS) will mitigate the "RSBU"
+> +    attack demonstrated by the researchers.
+
+Yeah, except it doesn't.  Intra-mode BTI is a thing, and that will leak
+your secrets too.
+
+>  As previously documented,
+> +    Intel recommends the use of enhanced IBRS, where supported. This
+> +    includes any processor that enumerates RRSBA but not RRSBA_DIS_S."
+> +    [#intel-rsbu]_
+> +
+> +  As an alternative to classic IBRS, call depth tracking can be used to
+
+legacy IBRS.  Please don't invent yet another term for it :), and
+"classic" further implies there might be a time when anyone looks back
+fondly on it.
+
+> +  track kernel returns and fill the RSB when it gets close to being
+> +  empty.
+> +
+> +Restricted RSB Alternate (RRSBA)
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This needs to discuss RSBA and RRSBA.  They're distinct.  To a first
+approximation, RRSBA == RSBA + eIBRS.  The "restricted" nature is
+"mode-tagged predictions".
+
+Except there's a narrow range of CPUs around Icelake which have eIBRS
+and do not suffer (R)RSBA.
+
+> +
+> +Some newer Intel CPUs have Restricted RSB Alternate (RRSBA) behavior,
+> +which, similar to the Intel variant of Retbleed described above, also
+> +falls back to using the BTB on RSB underflow.  The only difference is
+> +that the predicted targets are restricted to the current domain.
+> +
+> +* "Restricted RSB Alternate (RRSBA) behavior allows alternate branch
+> +  predictors to be used by near RET instructions when the RSB is
+> +  empty.  When eIBRS is enabled, the predicted targets of these
+> +  alternate predictors are restricted to those belonging to the
+> +  indirect branch predictor entries of the current prediction domain.
+> +  [#intel-eibrs-rrsba]_
+> +
+> +When a CPU with RRSBA is vulnerable to Branch History Injection
+> +[#bhi-paper]_ [#intel-bhi]_, an RSB underflow could be used for an
+> +intra-mode BTI attack.  This is mitigated by clearing the BHB on
+> +kernel entry.
+> +
+> +However if the kernel uses retpolines instead of eIBRS, it needs to
+> +disable RRSBA:
+> +
+> +* "Where software is using retpoline as a mitigation for BHI or
+> +  intra-mode BTI, and the processor both enumerates RRSBA and
+> +  enumerates RRSBA_DIS controls, it should disable this behavior. "
+> +  [#intel-retpoline-rrsba]_
+
+IIRC, not all CPUs which suffer RRSBA have the RRSBA_DIS_* controls.
+
+But, I think that's enough nitpicking for now.  I really think some
+Intel and AMD architects ought to weigh in too.
+
+~Andrew
 
