@@ -1,240 +1,208 @@
-Return-Path: <linux-kernel+bounces-588336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9480EA7B7CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:35:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F31ADA7B7D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE3F47A809D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 06:34:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E384179890
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 06:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23CE17A31B;
-	Fri,  4 Apr 2025 06:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81ED018CC1C;
+	Fri,  4 Apr 2025 06:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="lbCAyCRd"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011048.outbound.protection.outlook.com [52.101.70.48])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="VLtktzyg"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27B2847B;
-	Fri,  4 Apr 2025 06:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743748522; cv=fail; b=aJYtF7ebMszXwIdca60rKjhNugV3C/4uS5GxjctMCTrsScJcU3oGBpqia53YAzAT3G5bgTJmotnoYLkgSfYuj9qastoCQgx/ubSRw5/TeSlUrxyq2zxJvhN2eWsPNumsxs8hN1MnHpMwY0ZVJRRXdIaedNukoghRPnsqFKRFddM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743748522; c=relaxed/simple;
-	bh=OU1pFpftHM3ValzmYeKmcyWbn1dYAAJtox4D1XCFiSU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=GodIfzCOmgrDH3K5R6znM9pQRYXzYJwmEE/eOebWmbT6BAREtD5WuvoCT3wzWSdXCDLgFlBNpMmBXPEsB7jtUJh0OF+w2SchFcwMt57HMu5ClOnUbqYS19Kh0Kd2kfPgpoLOiiJ/lYNNPk0n2S9EBxbec76c+VW11YGd/epJqlk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=lbCAyCRd; arc=fail smtp.client-ip=52.101.70.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kS2aYrQYPv7CqmYSTbcxlrpK/J2QJHoIKUyb6JigymCQIFMa7U9/XDlypgDhS6GxlTJXaZ1am2YPfPb+OWFJUcFgM+Nq+95Ndmju+a3nAE65LnjqkgMz25OBnyfzXdwPFF0AkA7LT0AiGVL4BMRfKbc5aMMOtMkGRanxwbX9WAQ+TOuqrZheuie6mqI9F/H5xjQ+ZS+up7N0BeoRUNxo4wY1meGoafiaspdIO4k+RoLQAyavIMD3D8xAQN2+F7MrLaZwraoxYfu+4UwCiygz2j9/lsUJjjq1X8xp5InnkNEKQYq91/jQHJnp945IEvqPf7070HJ00VECVBTakKwpVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rG8PwrogGYO4sp+OJS37+SAUnnvUXO9NQtgwnJnDnvs=;
- b=gojYidsGsdkH3w4r0qbwliWmD8slvW7HfgxcgfR5SOcLyC/x21cSIL0qyOAe4FX+xk1bMj4Z7rwnw6jK0C5K2dB6iVpaVmzSG4ie3ynoarlL+kD5TPRXurESOMfvxJkSqEcQEcrjgTq9vtHRrJTyomynx4gtRoFCAf8YGfLi3HnXeL5aG4qAo489qWjsxAmc9B2pV+jl15dxN4M2BIemkHj1YPYc8VILuy/7Nu3ea+rFu8OxWnMbAx4UZ5Q3xXRbrGvi4fJUoJqhVzKf7s8EXFgkkkxYXWeQCZ6q+oX/k3j/ugytvhlosWS9L/Fj2ptc23Fn+lfXAdlb7DtHXbP3iw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rG8PwrogGYO4sp+OJS37+SAUnnvUXO9NQtgwnJnDnvs=;
- b=lbCAyCRdITBYgis6vn/pBI0Uf9fkQlO9e9lAejtOfwy1JGW9ijjC8gSqxP7pxon0JxaQKvrANgElivumZpvdZFvO3HNwMXvBNS3Q2mqxQ10xuU0KRO/DCvveMn5jZ9tf9NzFHeGXrziTdkOoJfuGhHMSV7YU4lZm+2qgQyhzRjFXIZr/WZgNXqyec2BwDOdAtVFQ+0Ss1Z3r/9jdt5Hj9CWY+7Ar758PjTLuh/SC8m/LJwhNGO8PeMNiKF8YPEVGRZ0f/Yq7JHqo6FsFMuSHq8fEMT9Vc9vRdKFA9nLqaMYh+/Vq3wlig0Wa59AQ7gXZA5VmU8M5q6xKSbkcp5RbSA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU2PR04MB8582.eurprd04.prod.outlook.com (2603:10a6:10:2d9::24)
- by AS8PR04MB8676.eurprd04.prod.outlook.com (2603:10a6:20b:42b::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8583.41; Fri, 4 Apr
- 2025 06:35:17 +0000
-Received: from DU2PR04MB8582.eurprd04.prod.outlook.com
- ([fe80::c96e:12f1:67b7:ed74]) by DU2PR04MB8582.eurprd04.prod.outlook.com
- ([fe80::c96e:12f1:67b7:ed74%2]) with mapi id 15.20.8583.045; Fri, 4 Apr 2025
- 06:35:16 +0000
-Message-ID: <93d83df2-d3bc-e32d-70a6-158571504275@oss.nxp.com>
-Date: Fri, 4 Apr 2025 09:35:10 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v2 1/2] dt-bindings: watchdog: Add NXP Software Watchdog
- Timer
-Content-Language: en-US
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, wim@linux-watchdog.org
-Cc: linux@roeck-us.net, linux-watchdog@vger.kernel.org,
- linux-kernel@vger.kernel.org, S32@nxp.com, ghennadi.procopciuc@nxp.com,
- thomas.fossati@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org,
- Vincent Guittot <vincent.guittot@linaro.org>
-References: <20250402154942.3645283-1-daniel.lezcano@linaro.org>
- <20250402154942.3645283-2-daniel.lezcano@linaro.org>
- <64b6d599-fe67-586a-e4b0-73d9b73499de@oss.nxp.com>
- <c570c99d-53f5-4f77-a730-42e5a2016dc5@linaro.org>
-From: Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>
-In-Reply-To: <c570c99d-53f5-4f77-a730-42e5a2016dc5@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AM0PR07CA0028.eurprd07.prod.outlook.com
- (2603:10a6:208:ac::41) To DU2PR04MB8582.eurprd04.prod.outlook.com
- (2603:10a6:10:2d9::24)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5F9847B;
+	Fri,  4 Apr 2025 06:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743748549; cv=none; b=IzSJel+XuOqdbmmkaKkVzQN0wuur9nlZlGUAYEaX44wQjTMzhWSoR0wMPnYynniIrvOGrrr2c/LeoscFU1n8hSuae+3uNXWxexIUSH5e2n7ARKzvhSf9dDJpS8CjWAyw7IcvRFKTrX215Rpi8LQd5OBvl1uE8IErmtH8FJ9kPXg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743748549; c=relaxed/simple;
+	bh=hD8174uOH2T+lsYS2evpeGfkcl1Wpip1zHGbv8j2Ef8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rqBtrXnrax2vdCgMJb8G/Y62IDbhlsXSgMjbKpdPsWcAcScbVaja0Gnec65rD8+NszaMbInTo60q9mPOKk12wx69ID4rvMkdFU+U7CFKKHnjy8NFTIDpAaaLfWUHjkgKKWlQy00tE3I0ZU+qG1munhVxk0uEP394kgjIJVmqIec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=VLtktzyg; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=0rog/nxboMHnwuFuI69UvOFfP3CGYosW55e+1Io3x50=; b=VLtktzygHenGP22YTGx9UMPXIs
+	obpPCT9aIas2r7evBpL2D0bb1js6q0i/B4uC2opnWfDUipcfONy+0g0IbelLJS8aWQuyS2PsuDIdm
+	7w0cjzbWLsM7LHRK3mT51Cc3k9Ln/ZQIsH1KX/wq6HZzUcbB72ZYToUAJurnXWcFJEdpGZUbdw3BA
+	eh4hfAftwtmwzZFx1nZQs65zJEKslflvY7h601Fs48wxfKauy8fCWwVUIJ5I1FVouXn1lFW/1ES93
+	UOhDoOM9fSM2eyYscL3Uhqe7g8Qpi9xnwtjK0geFQUNqmvLdom5iBDTzulTdeQFl3ou1zbJmbqssb
+	K7OyNpGw==;
+Received: from [223.233.74.223] (helo=[192.168.1.12])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1u0aeJ-00BDab-Pv; Fri, 04 Apr 2025 08:35:32 +0200
+Message-ID: <6beead5a-8c21-af57-0304-1bf825588481@igalia.com>
+Date: Fri, 4 Apr 2025 12:05:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8582:EE_|AS8PR04MB8676:EE_
-X-MS-Office365-Filtering-Correlation-Id: 87295f07-801a-417b-f5c3-08dd7342db7a
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TTluT1ZTQ0prUVNYaWp3dll5dktyNkhQbWxmcGlXNTZFNmZZQnh2VWs5NVE5?=
- =?utf-8?B?UlBoeHpSN2RLd1pzUXhlc3RrVnpnYzk1VTdIanNQc0JpejZ1bzZNYlFZOVI1?=
- =?utf-8?B?ZkpQOVJ5NnZ6S2tzTmxBeE9BaGdUT3NKQ2wxOXI2SE1aYlJIYmx0RHhJWnZw?=
- =?utf-8?B?OXBrQThlekpGNWtnZE5UelVnSmZKNkttelA2VFhQVkNldXdjTzNtdzdqeVpi?=
- =?utf-8?B?RExBNEU0eXE4Zk5BUENGYmZuR2xWYnhFck0wUjRxbzdrUGp3WlBQOHpjaE1m?=
- =?utf-8?B?b2NXTlBFQnhKdzVDYThuOXFOQkc0NW5wUDNoWngrQkQ5dXAzYkNQSzJ1aW9v?=
- =?utf-8?B?a3hkRkNXUXpGRVZvL0NzSlhielc1TWJVQ3QwNnQ2Z2xTQ2VKdzF2OFUzaHph?=
- =?utf-8?B?V3QwRkhjdTRZcUtFNDM4b1VFc1h3KzlBY0lXL0JudUdrOXQ5VnFKZjUwamMx?=
- =?utf-8?B?aGQvbmgvNkV2L2JKWlV4RWlwYjU4ZEtqK0lxZk5qM1ViV2YzaU5KRUY0VnNY?=
- =?utf-8?B?eUNURmdnUnQ0RzZvbzFqQ29YZ216VXpvLzRYbVVLUzVJVGVXNHR5b1dDd0hp?=
- =?utf-8?B?YkZSREtJeElIR3BmditadDUzWHJJano0YlVIenhhK0JuVlJWSjA4dHRKY05j?=
- =?utf-8?B?OElueG9pQ29OOHY3RFRnZG9TN0JKNVZzMDgxY2xFeG85bExrZmxoazNnSlhD?=
- =?utf-8?B?YmRKeUpLZ2pJT2o0U0ErK2F1bEtvTGRmcklvZnBNbEZlQzJQWVA2Rm9MSzV5?=
- =?utf-8?B?L2lZRmJKKzltZWJOZWZ6eTNVWVJsUjJwQlZNUDZwVkdOSjdzVEg4QkNwMm1n?=
- =?utf-8?B?aTFwYmlOcXNQb1BkTWRscHdDMmxlM00xMFhoSll1MHJjWjVZdDVTQ2d0U2Ny?=
- =?utf-8?B?di8rOTFPZWZZQkR1Y0VUdUh4N3NMZS9wWUpSSHZpTWxLNmlHUko2VW9BNVNQ?=
- =?utf-8?B?dWR2ZTlmMU5ySjhEYWszWlRyRkE3QjhqMFdMRTdYQ05HczY5am1xcXdoSnBH?=
- =?utf-8?B?T1ErSDNGTUdEbUdaZUl0Vy9tVzJTTE1XRTVIVXZ4SHpqc3dTOEpqQUZNUnJH?=
- =?utf-8?B?NmVJblpRNmgxSi8ybktkL0loVnNBTmtjRExoZUVxbnM1bFJONmg1YS9Kc0l4?=
- =?utf-8?B?Y2g4QWt2b0ZPRkxKY0hKUExJUFdqMGdyZUg4V3U4T3E4bmNOcCtXZlpyem40?=
- =?utf-8?B?dW5hN2JiZ2syVHBpajJHOC94N2c3N2NSNXZ5eU96QVRDVlc3bzlUckxpSE5C?=
- =?utf-8?B?dWNIem5BMW5UcUR2OFBETTlYQXF2aFNUYURmWmI0ek82ZklKUHdvQWVFZThS?=
- =?utf-8?B?d0x0SDc3NUZzaFEyc28yRDE3dktYTFRBcmN2T05pcW16a1BETlNGQXRPTTdo?=
- =?utf-8?B?dDQxdWtqNWNnbWVaK3RVVDBpTyt6Z3drQWZKN2J5L2MvNGFWMFNJZ0pmZWp4?=
- =?utf-8?B?Y0duSGhOYXVXVkpXS3NSTzE5eXFGeHphQ0NjK0RrZmQrMjdKRkNrQ09YeVZX?=
- =?utf-8?B?UUFBVnhTTUovZ3FRb3E4TnlCZFpLbFRjU2FjVXpjQVlEVUJLYzZmQWJSamp0?=
- =?utf-8?B?dDNlWm10cEd2cTVRUHNBZGpYZHJWSGR6Mzlwb3A1eHM5bitqRDdkSUNGRGta?=
- =?utf-8?B?ZTdUekdUUDhYVHpocVFlb3IxM29PcHlHNFBTNmxwQzRhSHZ5UGJTN08yUU94?=
- =?utf-8?B?TEZ4ZjE5WnAzVm9ESVp0RVpqdTY3U0FkcHBDZ0tNSjRNaTI5WXJSRUJVZ3JG?=
- =?utf-8?B?UmdYWUk1cEhjOC9LanJVV24wb0VuYTZPSjFmSEovU2lLUFNDbkkyMlpBcTk3?=
- =?utf-8?B?dFRmWUpTRzJQOXVFVlZDbTFDZERLSmRmV3puUlZkNkh2a3FQTFRYVUphWity?=
- =?utf-8?Q?YUVW3OOPkAySk?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8582.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aC9ZYUVBM2lsNXVDejVTMkkvOHZQalFQVGRWbnNRYjhxSitBYmNvZ2hGZFRX?=
- =?utf-8?B?djhwSjVhNE1TYkZ6U3NXWkUrWWlYUmdzdVh6WkI4M3NNY2lhMjV3L0xuR0xI?=
- =?utf-8?B?bzFsSm9yTmpJOXhKRGxnR2ttSHBoL08vYmdWYVByRjdLbUlKWW5odzUvNUtv?=
- =?utf-8?B?eTJ2UG9SbW1BMVVxUnZZalRjdHVad0NUZHZVWDdqSENHUTN4bGFpbGhRWXZh?=
- =?utf-8?B?L3haTVZHajE5c3BDNXkyWFNTU0RoaHQydGkrUkNuUDBoZ3kzUTZ6SEh6eTdQ?=
- =?utf-8?B?aU02QVl4YUUvTHdsUm1jUVZkZTI4MDZjVWFuOU8vdnJNRGQ4U0JEaExneCs5?=
- =?utf-8?B?NUlaWWZRMzh3L1Q1a1Ezc2dsS21BMnJjeFhIYU52YVpOeWdXTnZkZ1lJeUJ4?=
- =?utf-8?B?dFJnZk5VZWpXM1NSS1RvbkViOFBLbVBvRkJSWXJLeDh0WXJGaGgyNDJlWURF?=
- =?utf-8?B?bUt1QUNrT0dER0g0d3Q5SGpVbUJTNUJnT3dkb3hRM0JZeFJlcmM4U3dkK0Q3?=
- =?utf-8?B?ZWl6cVVzWDJIUmlVMDhXNGlnMXA1R2FxSFVMbWVKWWdMZmEwY3lCOUZxa2FK?=
- =?utf-8?B?cDNuaFdYOEJUaXBQSDJsSk5vQ0VYMG5ZbEYxeUVUaWhZWWhIWTZ2MElvbjQw?=
- =?utf-8?B?UEtqNzNlMGRvYkZLWmc5MTkyRGluUXFKRUU0dGpkQU5Yam9GVVBnMklJYldX?=
- =?utf-8?B?S1Q4VkdYNW03aTBReGlpNmtGK1RFSHZSUUFBbnNrZGRWenhXK092OXlHTkt3?=
- =?utf-8?B?dTI3bFB2VmRrb1d6RGxRSUZrb2dkeUptSVNjajlBV2hqdWZOQlltWHcyQkxE?=
- =?utf-8?B?YU1VOXFpcWZ1RXJuYnNCYm1KZU1icUlLaEVQY1NHQ2RBaW9yMWlXbzRNQkRk?=
- =?utf-8?B?WXpUNU9CaytIWjA0UnFsMkJwbVh3RjczM1pqWEFjWG00VlhnSU1RQTY0U0ky?=
- =?utf-8?B?TU4wZzV0L21JRTZFa2dKUDdXcTJ3ZDNrSjdGL2paZDBmeFNvTmZQQnErM1pX?=
- =?utf-8?B?MmpIbk1JWG1GcUF4NlAvYVlwVXYvcHBCZ2Z4NVNkbjhxVVVKYmJTbXgxSURC?=
- =?utf-8?B?dHdHcUlhZ1drTlhjc24yM2Fja3RwSU5BQWhnNklqZmZSOHRKR1ZwdWg3SThK?=
- =?utf-8?B?cjF2ZmRpR1UrMno0U21lNWluSGVsMnB3OXpPMUIxdDMwQXJIeXV3ZFVackJa?=
- =?utf-8?B?QWFGcWZXR2QyZXpQWUNXbnhEZS9nN2VOcU9vVDVQTjQrekFRSEpEZWR0STBY?=
- =?utf-8?B?bEhnbmdPRnlYMnZwK1dTTW53WlV1cDlKZFJCSjVnSUNGMWIyUFRxM1Rtdjg2?=
- =?utf-8?B?ZDh1QWpId0hJVVcreTNIMUNqS0ZJODFob3BtNWpUenZuQ3JJV0g4dFF0MmJV?=
- =?utf-8?B?aTA0NXRvNzJWUVhSTmJuRHU3NDF2REZ0R0NTQXBhSVlqZ1dpQURhTkxlKzhE?=
- =?utf-8?B?dUtYN1YxbUY3Zm9TUHo4S2h6dlpZSzFmM0pJSVcvYW82aW4xR0h2T1pJMmhz?=
- =?utf-8?B?NW13RGZscHpBSTBVUHpGUk1UTnluWWgybUFHWDBic3ZqTDVwaDRhLzR4ZzVM?=
- =?utf-8?B?QlBCa3RxaEJqdnVVMWlyejZtUUVLWUtQUGQ5ZklzZFVlYm5tRUI1MUpyWXlm?=
- =?utf-8?B?SDJJUnNLcm1PbE9YNE1SbTd4U01FWUhMUG54b0FLQlIwK2d3eWoyalpwdU9K?=
- =?utf-8?B?alpLNGNSUWxIb1dKYmxIYUdCZGROQ1JvQm43dG85dlhaZ3h4UlJ1d1puOVNw?=
- =?utf-8?B?WU5Dc2NXMWZXd282aGVxMm5UV0dHNlhINEFMWmVoL3ZkOURKU3NGNVY5aXli?=
- =?utf-8?B?NWpYTWhIUkFqZTZsekZGVDU0Ymt5QVJJZE95SVZPcUZ4Mmk2YWRVNmU1Nk1Q?=
- =?utf-8?B?d1YybmhHd1RHWkJ1WEhxQ2xrY2lKdlNlUXFGU2F4aHAwaUhzNDdOODE2ay9N?=
- =?utf-8?B?dkZMTlRuNGE0OHpDVlFOSGYydy91SE9GaGwwbWZUQ3I2QjRReFdlclNZOGlv?=
- =?utf-8?B?bzRuMjJiRXVBbFQ2MjJkTk9nRFhYa1cya1BXbFFDNmlQdVRsQmVmWGdlbEN6?=
- =?utf-8?B?K2VMS3hiN0pqMmpIRDQzQ1JtcEE0Mi8rTm1LMmsyN3RrUG02VTNrNFhoSmVP?=
- =?utf-8?B?a2p4aDlpUWQ5eXptWGZvVDhZMDBXZ25RRzRBZXVvQmpVSDVJOGxMcS9CVURS?=
- =?utf-8?Q?5WQf4xoQyBlyq21IXyqYDT8=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87295f07-801a-417b-f5c3-08dd7342db7a
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8582.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Apr 2025 06:35:16.6998
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: c4/ghfL3KEdnmkifGI+aYkDLWl6fXDowtFK6/SzHDGgB7NBwHWS0FxbM4qYyzN53YQt5lMc8lo+TeNuKCClT8nZ7svFDKUlkj5Na6zpuqik=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8676
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v2 1/3] exec: Dynamically allocate memory to store task's
+ full name
+Content-Language: en-US
+To: Yafang Shao <laoar.shao@gmail.com>, Bhupesh <bhupesh@igalia.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com, pmladek@suse.com,
+ rostedt@goodmis.org, mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+ alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
+ mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
+ david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org,
+ ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz, mingo@redhat.com,
+ juri.lelli@redhat.com, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com
+References: <20250331121820.455916-1-bhupesh@igalia.com>
+ <20250331121820.455916-2-bhupesh@igalia.com>
+ <CALOAHbB51b-reG6+ypr43sBJ-QpQhF39r5WPjuEp5rgabgRmoA@mail.gmail.com>
+From: Bhupesh Sharma <bhsharma@igalia.com>
+In-Reply-To: <CALOAHbB51b-reG6+ypr43sBJ-QpQhF39r5WPjuEp5rgabgRmoA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 4/3/2025 6:10 PM, Daniel Lezcano wrote:
-> On 03/04/2025 08:19, Ghennadi Procopciuc wrote:
->> On 4/2/2025 6:49 PM, Daniel Lezcano wrote:
->> [ ... ]
->>> +examples:
->>> +  - |
->>> +    watchdog@0x40100000 {
->>> +        compatible = "nxp,s32g2-swt";
->>> +        reg = <0x40100000 0x1000>;
->>> +        clocks = <&clks 0x3a>;
->>> +        timeout-sec = <10>;
->>> +    };
+
+On 4/1/25 7:37 AM, Yafang Shao wrote:
+> On Mon, Mar 31, 2025 at 8:18 PM Bhupesh <bhupesh@igalia.com> wrote:
+>> Provide a parallel implementation for get_task_comm() called
+>> get_task_full_name() which allows the dynamically allocated
+>> and filled-in task's full name to be passed to interested
+>> users such as 'gdb'.
 >>
->> The S32G reference manual specifies two clocks for the SWT module: one
->> for the registers and another for the counter itself. Shouldn't both
->> clocks be represented in the bindings?
-> 
-> AFAICS, there are two clocks as described in the documentation for the
-> s32g2 page 846, section 23.7.3.3 SWT clocking.
+>> Currently while running 'gdb', the 'task->comm' value of a long
+>> task name is truncated due to the limitation of TASK_COMM_LEN.
+>>
+>> For example using gdb to debug a simple app currently which generate
+>> threads with long task names:
+>>    # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
+>>    # cat log
+>>
+>>    NameThatIsTooLo
+>>
+>> This patch does not touch 'TASK_COMM_LEN' at all, i.e.
+>> 'TASK_COMM_LEN' and the 16-byte design remains untouched. Which means
+>> that all the legacy / existing ABI, continue to work as before using
+>> '/proc/$pid/task/$tid/comm'.
+>>
+>> This patch only adds a parallel, dynamically-allocated
+>> 'task->full_name' which can be used by interested users
+>> via '/proc/$pid/task/$tid/full_name'.
+>>
+>> After this change, gdb is able to show full name of the task:
+>>    # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
+>>    # cat log
+>>
+>>    NameThatIsTooLongForComm[4662]
+>>
+>> Signed-off-by: Bhupesh <bhupesh@igalia.com>
+>> ---
+>>   fs/exec.c             | 21 ++++++++++++++++++---
+>>   include/linux/sched.h |  9 +++++++++
+>>   2 files changed, 27 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/exec.c b/fs/exec.c
+>> index f45859ad13ac..4219d77a519c 100644
+>> --- a/fs/exec.c
+>> +++ b/fs/exec.c
+>> @@ -1208,6 +1208,9 @@ int begin_new_exec(struct linux_binprm * bprm)
+>>   {
+>>          struct task_struct *me = current;
+>>          int retval;
+>> +       va_list args;
+>> +       char *name;
+>> +       const char *fmt;
+>>
+>>          /* Once we are committed compute the creds */
+>>          retval = bprm_creds_from_file(bprm);
+>> @@ -1348,11 +1351,22 @@ int begin_new_exec(struct linux_binprm * bprm)
+>>                   * detecting a concurrent rename and just want a terminated name.
+>>                   */
+>>                  rcu_read_lock();
+>> -               __set_task_comm(me, smp_load_acquire(&bprm->file->f_path.dentry->d_name.name),
+>> -                               true);
+>> +               fmt = smp_load_acquire(&bprm->file->f_path.dentry->d_name.name);
+>> +               name = kvasprintf(GFP_KERNEL, fmt, args);
+>> +               if (!name)
+>> +                       return -ENOMEM;
+>> +
+>> +               me->full_name = name;
+>> +               __set_task_comm(me, fmt, true);
+>>                  rcu_read_unlock();
+>>          } else {
+>> -               __set_task_comm(me, kbasename(bprm->filename), true);
+>> +               fmt = kbasename(bprm->filename);
+>> +               name = kvasprintf(GFP_KERNEL, fmt, args);
+>> +               if (!name)
+>> +                       return -ENOMEM;
+>> +
+>> +               me->full_name = name;
+>> +               __set_task_comm(me, fmt, true);
+>>          }
+>>
+>>          /* An exec changes our domain. We are no longer part of the thread
+>> @@ -1399,6 +1413,7 @@ int begin_new_exec(struct linux_binprm * bprm)
+>>          return 0;
+>>
+>>   out_unlock:
+>> +       kfree(me->full_name);
+>>          up_write(&me->signal->exec_update_lock);
+>>          if (!bprm->cred)
+>>                  mutex_unlock(&me->signal->cred_guard_mutex);
+>> diff --git a/include/linux/sched.h b/include/linux/sched.h
+>> index 56ddeb37b5cd..053b52606652 100644
+>> --- a/include/linux/sched.h
+>> +++ b/include/linux/sched.h
+>> @@ -1166,6 +1166,9 @@ struct task_struct {
+>>           */
+>>          char                            comm[TASK_COMM_LEN];
+>>
+>> +       /* To store the full name if task comm is truncated. */
+>> +       char                            *full_name;
+>> +
+> Adding another field to store the task name isn’t ideal. What about
+> combining them into a single field, as Linus suggested [0]?
+>
+> [0]. https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/
+>
 
-This diagram illustrates the module clocks and their connections to the
-S32GS system clocks. From the module's perspective, there are three
-clocks: MODULE_CLOCK, REG_INTF, and COUNTER_CLOCK. Specifically, on
-S32G2 SoCs, the first two are connected to XBAR_DIV3_CLK, while the
-counter clock is linked to FIRC_CLK. Based on my understanding of the
-device tree, this configuration should be listed as follows:
+Thanks for sharing Linus's suggestion. I went through the suggested 
+changes in the related threads and came up with the following set of points:
 
-clocks = <&clks XBAR_DIV3_CLK>, <&clks XBAR_DIV3_CLK>, <&clks FIRC_CLK>;
-clock-names = "module", "reg", "counter";
+1. struct task_struct would contain both 'comm' and 'full_name',
+2. Remove the task_lock() inside __get_task_comm(),
+3. Users of task->comm will be affected in the following ways:
+     (a). Printing with '%s' and tsk->comm would just continue to 
+work,but will get a longer max string.
+     (b). For users of memcpy.*->comm\>', we should change 'memcpy()' to 
+'copy_comm()' which would look like:
 
-Configuring it this way allows flexibility to reuse the same clocking
-scheme for other SoCs where the integration is performed differently. It
-is possible that the 'module' and 'reg' clocks could be linked to two
-distinct system clocks.
+         memcpy(dst, src, TASK_COMM_LEN);
+         dst[TASK_COMM_LEN-1] = 0;
 
-> 
-> The module and the register clock are fed by the XBAR_DIV3_CLK which is
-> an system clock always-on.
+    (c). Users which use "sizeof(->comm)" will continue to get the old value because of the hacky union.
 
-XBAR_DIV3_CLK is not an always-on clock, meaning it is not available
-during suspend, if that is what you mean by always-on. The SIRC can be
-considered the only always-on clock on this device.
+Am I missing something here. Please let me know your views.
 
-> 
-> The counter is fed by the FIRC_CLK which described as "FIRC_CLK is the
-> default clock for the entire system at power-up."
-> 
-> From my understanding, we should not describe the XBAR_DIV3_CLK as it is
-> a system clock.
-> 
-> And the FIRC_CLK is only there to get the clock rate in the driver.
-> 
-
--- 
-Regards,
-Ghennadi
+Thanks,
+Bhupesh
 
 
