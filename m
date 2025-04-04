@@ -1,210 +1,379 @@
-Return-Path: <linux-kernel+bounces-588870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD4AA7BE88
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:59:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80B0DA7BE7D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01B46189DF88
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:57:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B807F3BB20B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC9C1F3D3E;
-	Fri,  4 Apr 2025 13:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E09E1F4190;
+	Fri,  4 Apr 2025 13:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Td5aqW2g"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=smile.fr header.i=@smile.fr header.b="J22En9fR"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2A71F3B92;
-	Fri,  4 Apr 2025 13:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4C91F416F
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 13:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743774966; cv=none; b=mSGlj2rBmDfCJyLgaAnFp0PGi11qHaM1ydCzs8WcliDwpK6talLmRAbCGzToJeywLDii40QjBV8CthgWkvOYX1QTjzFxlg/awY/6od3WJ802K+fBt8I8o+Zf4MZGSvKX21TezJ8WIXmo4FIHXcgvkKnD86PaF3bhb5ieSCjqyGU=
+	t=1743774886; cv=none; b=dymQ/mw1hlE2nkGR+QHNfG5DlZqDCFsZxzQM1O/P40RiUA63+4fh0s+wPkCVICdhsNzd1wT+KkJBriiq8r+ZXrjS5s127LbtHpa8BX2by6hcW/qwXV5hlSl2spRqAjjHTEY9YNvinm4x1LLyuZT4Dqq0qdHTbEnMjInxDFAgWOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743774966; c=relaxed/simple;
-	bh=0IzK1GaqJSOEk7/gJbwTksW3Z40WfQCCpHt0WvWAOjA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IiI5wUp0cuHvbsVYMo8iR5CvT433r5I+mzcflrmi96ARjikHDT4pezfmt1bmUILs1mjob9QLFJGDiPCZLpL/ShI/lDrkjadS9Sn84PlrSOOpuINdrHzmeSOgS1BTFJpRzhetBd0exbhWIPDWDVzw+QTIhKqV3yB+JgQBhcqRaa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Td5aqW2g; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53434A1D024032;
-	Fri, 4 Apr 2025 13:56:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=eDjJTamfxfsyMrd9Ovbt+ZI9usmPrYbuC0F
-	aitGEEM4=; b=Td5aqW2gF3bC2aS6O75lIAd0HRNK8kg4b2Cayj21kEPcuFENpnH
-	CC90MIOS56JBelvdaLfNqN4bBIUHWTQs5WdBsXrMR15AJOhVcdH+vN0lQLyU0Vqy
-	oGA9//k+mnmr2CySJ/Jo5iHIFCfCUin4vSBAzL6SQ1zqFg+zmblbKU1bNaJ5toiv
-	d3w9+mDWmcJq/ZUbBamTY8sJW8Hu++EBu9xL6kQT2ltXPkXPuztXa9qh6Pp2Wxm7
-	D9AUX/X3kKxenhocbFlHh1NN9Bh0PDhtdHk2PB5J6uxxJw4EaHgUtalcZyzGNVeo
-	Lj6E/huBjYdUsEX4/wHjMB4v6942MCiiKRg==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45t2d89xa3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Apr 2025 13:56:01 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 534DtvGT023904;
-	Fri, 4 Apr 2025 13:55:57 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 45p9xn8j03-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Apr 2025 13:55:57 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 534Dtvhm023898;
-	Fri, 4 Apr 2025 13:55:57 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-msavaliy-hyd.qualcomm.com [10.213.110.207])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 534DtvAV023894
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Apr 2025 13:55:57 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 429934)
-	id 96B5323168; Fri,  4 Apr 2025 19:25:56 +0530 (+0530)
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-To: broonie@kernel.org, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: quic_tdas@quicinc.com, andersson@kernel.org, konradybcio@kernel.org,
-        Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Subject: [PATCH v2] spi: Add support for Double Transfer Rate (DTR) mode
-Date: Fri,  4 Apr 2025 19:24:27 +0530
-Message-Id: <20250404135427.313825-1-quic_msavaliy@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1743774886; c=relaxed/simple;
+	bh=TzzAGUPZSfr3pJxORrzSYxXe5rbwSPVDubUqtayWsr8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HhjTF2zJKkKfomevAqKRTVkpMhSMI18EQ85hzS/P1i7BZUIMx3V+BFoPSdSq8+aCaYC0nitmzT3gCYxf5mdRICzkWUyjF1nsJgM7CCS8kcNVQPsE5FXpxZx3mvNj0OECpFOg+L4Gugnx2nbkpIxN9Fi8Et5TUKghANUdkoFwB8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=smile.fr; spf=pass smtp.mailfrom=smile.fr; dkim=pass (1024-bit key) header.d=smile.fr header.i=@smile.fr header.b=J22En9fR; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=smile.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smile.fr
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5ed43460d6bso3398890a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 06:54:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smile.fr; s=google; t=1743774879; x=1744379679; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mq7JkICkqN6XgL6+CNdZ3+38WtNFoa8H0helDu0w6yI=;
+        b=J22En9fR1rqkKUj6eiJjtwVMhtno4mhgUWZZO9yYkXGxty5G9FLYlEdO3BYWy4s9QU
+         Nc7yI6SUgXADSVP23OqlWE0NcZdhWvKaQLKtDdcEtg9ZpfFJNPgAjAnuw1ZQ+Y3Xhvnh
+         7uiL1iSVpk3p3/5EhAzi9+y3YdHKnVBTumoVE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743774879; x=1744379679;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mq7JkICkqN6XgL6+CNdZ3+38WtNFoa8H0helDu0w6yI=;
+        b=UUC2LOTxfARIqfzoFW5PourbpOCjOB0KDNUnODhk1T7+mBkmQXOlv/IgiaASbNTnrP
+         FWr7r8n2tC7vO3pjxzTGZRVWlImIwECVH6rnZ0go9WU5ksbeODj3rpp48/V/DmMvDr4s
+         NznTq7Nxz3zG/zMkiKj6OCKxsV2SGi8oLtWE+gKw31gUi1l+Zp/ihqRYKbD8UHeipXP3
+         GK4qxsN75124jQOlKnMNSyE4cVjVHUXtrmPMd7EWPZn16Rst2Y+ePq/AysqPBqnlLJeX
+         9FZbqS9mHFXvkM7+yXk+z8vuQWVsRfEIobL1StIHOWIFO55r9HExS2l4+eGyp53Ss13g
+         Atlg==
+X-Forwarded-Encrypted: i=1; AJvYcCWekXM8i6+Boj/G9ifDLyVl55zTc2hLuvXtVhUW33/A+Il0oMHKNU7KP1KeXyJy7/6GK74cDU/e8QeGG4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfVgCMeBaUNML/w2+1ABQ+L2JXp7+V1JncXMWCKrIXjJ/YOSRz
+	5KftVXqjnrIY/1so/U+PyV/5w9qsuql6UfVzcgSoleyAY8QhoEjKfzW9qDikf0ICHQpSK9Tac1x
+	OO3WwU2mZ8K8iSIg5crOGTC33SKuQF4/ZU72I6g==
+X-Gm-Gg: ASbGncvW/xgo/ISrCSPVqJ/UIbHMbfqFbj+C+Ss6VoiVlK6uJtaU3Gj1XzzBaIBQlpp
+	IBB74heRIl5YkRtgDdiRqtJQAL/H2NEO2ntnFxs5NDD/OKk8iRp7sOqXb36Y+nJ55PWLsODaXV2
+	tyzLTsjE35h16g1SAt4hdJjTAdRQ==
+X-Google-Smtp-Source: AGHT+IFXBMBQh84SPFA1ke6dDoxsNULs353AB4Sq132g1VTzqy7EZo9T/igMb43O4/eEIf9DuJ4q6ij914J5nItOfms=
+X-Received: by 2002:a05:6402:51c7:b0:5e8:bf8b:4396 with SMTP id
+ 4fb4d7f45d1cf-5f0b658917cmr2341509a12.13.1743774879374; Fri, 04 Apr 2025
+ 06:54:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=PqmTbxM3 c=1 sm=1 tr=0 ts=67efe4f1 cx=c_pps a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=L_hmj3AzAEoXzwg3iu4A:9 a=cvBusfyB2V15izCimMoJ:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: k76jc2HcK3aVLTtZGtR6Zd-carmfG-90
-X-Proofpoint-GUID: k76jc2HcK3aVLTtZGtR6Zd-carmfG-90
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-04_06,2025-04-03_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 impostorscore=0 mlxlogscore=999 mlxscore=0
- clxscore=1015 suspectscore=0 adultscore=0 lowpriorityscore=0 phishscore=0
- malwarescore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504040097
+References: <20250326153535.158137-1-corentin.guillevic@smile.fr> <3be3ca59-157d-4ceb-81bd-4a1acdbccb9c@wanadoo.fr>
+In-Reply-To: <3be3ca59-157d-4ceb-81bd-4a1acdbccb9c@wanadoo.fr>
+From: Corentin GUILLEVIC <corentin.guillevic@smile.fr>
+Date: Fri, 4 Apr 2025 15:54:28 +0200
+X-Gm-Features: ATxdqUHIMMxfhYog5N5EbMGu-cdJbJG577zcyhIzeQ6REUNq6nXWSs3jt6g3j5o
+Message-ID: <CAMFqQmpJB4WeOM7GF1dEuJDb27rf=CBC4UuROWA+AH2+ZbJE8w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] leds: tlc5928: Driver for the TI 16 Channel spi LED driver
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Introduce support for protocol drivers to specify whether a transfer
-should use single or dual transfer mode. Currently, the SPI controller
-cannot determine this information from the user, leading to potential
-limitations in transfer capabilities.
+Hi,
 
-Add a new field `dtr_mode` in the `spi_transfer` structure. The `dtr_mode`
-field allows protocol drivers to indicate if Double Transfer Rate (DTR)
-mode is supported for a given transfer. When `dtr_mode` is set to true,
-the SPI controller will use DTR mode; otherwise, it will default to single
-transfer mode.
+Thank you for your review! I've fixed everything (new patch is
+coming), but I have issue for some of them: I can't use the suggested
+functions (guard(), for_each_available_child_of_node_scoped() and
+devm_mutex_init()) because the kernel version used on my device is too
+old (v5.15). No way to test with a newer version...
 
-Introduce another field `dtr_caps` to indicate if the QSPI controller is
-capable of supporting DTR mode (SDR and DDR). By default, both `dtr_caps`
-and `dtr_mode` will be false. These flags manage the QSPI controller's DTR
-mode capabilities within the SPI framework.
+Should I let the "old" functions because of my kernel version?
 
-The QSPI controller driver uses these flags to configure single or double
-transfer rates using the controller register.
+>
+> Le 26/03/2025 =C3=A0 16:35, Corentin Guillevic a =C3=A9crit :
+> > The TLC59928 is an SPI-connected bus controlled 16-channel LED driver.
+> > A single 16-bit register handles the whole LEDs. Following a write, a
+> > latch GPIO applies the new LED configuration. An "enable" GPIO (blank
+> > in the TLC59928 datasheet) turns off the whole LEDs when active/high.
+> >
+> > This driver is able to handle a daisy-chain case, so when several
+> > TLC59928 controllers are connected in serie.
+> >
+> > Signed-off-by: Corentin Guillevic <corentin.guillevic@smile.fr>
+> > ---
+>
+> ...
+>
+> > +static int
+> > +tlc5928_set_ledout(struct tlc5928_led *led, bool val)
+> > +{
+> > +     struct tlc5928_chip *chip;
+> > +     struct tlc5928_chip *chip_owner =3D led->chip;
+> > +     struct tlc5928_priv *priv =3D chip_owner->priv;
+> > +     int ret;
+> > +
+> > +     mutex_lock(&priv->lock);
+> > +
+> > +     if (val)
+> > +             chip_owner->leds_state |=3D (1 << led->led_no);
+> > +     else
+> > +             chip_owner->leds_state &=3D ~(1 << led->led_no);
+> > +
+> > +     list_for_each_entry_reverse(chip, &priv->chips_list, list) {
+> > +             u16 leds_state =3D cpu_to_be16(chip->leds_state);
+> > +
+> > +             ret =3D spi_write(priv->spi, &(leds_state), sizeof(leds_s=
+tate));
+> > +
+> > +             if (ret)
+>
+> Missing unlock.
+> Or use guard()?
+>
 
-The existing spi-mem driver helps configure the DTR mode but is limited to
-memory devices. There is no support available to set DTR mode for non-memory
-devices, e.g., touch or any generic SPI sensor. This change is backward
-compatible and doesn't break existing SPI or QSPI drivers.
+Fixed! But guard() is unavailable on my kernel.
 
-Changes include:
-- Addition of `dtr_mode` and `dtr_caps` fields in the `spi_transfer`
-  structure.
-- Documentation updates to reflect the new `dtr_mode` and `dtr_caps` fields.
+> > +                     return ret;
+> > +     }
+> > +
+> > +     gpiod_set_value(priv->latch_gpio, 0);
+> > +     udelay(1);
+> > +     gpiod_set_value(priv->latch_gpio, 1);
+> > +
+> > +     mutex_unlock(&priv->lock);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int
+> > +tlc5928_brightness_set(struct led_classdev *led_cdev,
+> > +                     enum led_brightness brightness)
+> > +{
+> > +     struct tlc5928_led *led =3D ldev_to_led(led_cdev);
+> > +
+> > +     /* TLC5928 only allows on/off, no brightness */
+> > +     return tlc5928_set_ledout(led, !!brightness);
+> > +}
+> > +
+> > +static const struct of_device_id of_tlc5928_leds_match[] __maybe_unuse=
+d =3D {
+> > +     { .compatible =3D "ti,tlc5928" },
+> > +     {},
+>
+> Unneeded trailing ,
+>
+> > +};
+> > +MODULE_DEVICE_TABLE(of, of_tlc5928_leds_match);
+> > +
+> > +static int tlc5928_probe_chip_dt(struct device *dev, struct device_nod=
+e *node,
+> > +             struct tlc5928_chip *chip)
+> > +{
+> > +     struct device_node *child;
+> > +     int count, err, reg;
+> > +
+> > +     count =3D of_get_available_child_count(node);
+> > +     if (!count)
+> > +             return -EINVAL;
+> > +
+> > +     chip->leds_state =3D 0;
+> > +
+> > +     for_each_available_child_of_node(node, child) {
+>
+> for_each_available_child_of_node_scoped()?
+>
 
-Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
----
-Link to v1: https://lore.kernel.org/all/fbad733f-d034-4d63-ab82-ed867f0ed5d4@linaro.org/T/
+Same, not defined because my kernel is too old.
 
-Changes in V2:
- - Added dtr_caps flag to expose controllers capability and validate the
-   dtr_mode against it.
----
----
- drivers/spi/spi.c       |  7 +++++++
- include/linux/spi/spi.h | 10 ++++++++++
- 2 files changed, 17 insertions(+)
+> > +             struct tlc5928_led *led;
+> > +             struct led_init_data init_data =3D {};
+> > +
+> > +             init_data.fwnode =3D of_fwnode_handle(child);
+> > +
+> > +             err =3D of_property_read_u32(child, "reg", &reg);
+> > +             if (err) {
+> > +                     dev_err(dev, "%pOF: failed to read reg\n", child)=
+;
+> > +                     of_node_put(child);
+> > +                     return err;
+> > +             }
+> > +
+> > +             if (reg < 0 || reg >=3D TLC5928_MAX_LEDS ||
+> > +                             chip->leds[reg].active) {
+> > +                     of_node_put(child);
+> > +                     return -EINVAL;
+> > +             }
+> > +
+> > +             led =3D &chip->leds[reg];
+> > +
+> > +             led->active =3D true;
+> > +             led->chip =3D chip;
+> > +             led->led_no =3D reg;
+> > +             led->ldev.brightness_set_blocking =3D tlc5928_brightness_=
+set;
+> > +             err =3D devm_led_classdev_register_ext(dev, &led->ldev,
+> > +                                                      &init_data);
+> > +             if (err < 0) {
+> > +                     of_node_put(child);
+> > +                     dev_err(dev, "Failed to register LED for node %pf=
+w\n",
+> > +                             init_data.fwnode);
+> > +                     return err;
+> > +             }
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int tlc5928_probe(struct spi_device *spi)
+> > +{
+> > +     struct device_node *node, *child;
+> > +     struct device *dev =3D &spi->dev;
+> > +     struct list_head *pos;
+> > +     struct tlc5928_chip *chip;
+> > +     struct tlc5928_priv *priv;
+> > +     int count, err, i;
+> > +
+> > +     node =3D dev_of_node(dev);
+> > +     if (!node)
+> > +             return -ENODEV;
+> > +
+> > +     count =3D of_get_available_child_count(node);
+> > +     if (!count)
+> > +             return -EINVAL;
+> > +
+> > +     priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > +     if (!priv)
+> > +             return -ENOMEM;
+> > +
+> > +     priv->spi =3D spi;
+> > +     priv->latch_gpio =3D devm_gpiod_get(dev, "latch", GPIOD_OUT_HIGH)=
+;
+> > +     if (IS_ERR(priv->latch_gpio))
+> > +             return dev_err_probe(dev, PTR_ERR(priv->latch_gpio),
+> > +                                  "Failed to get latch GPIO\n");
+> > +
+> > +     mutex_init(&priv->lock);
+>
+> Maybe:
+> err =3D devm_mutex_init(...);
+> if (err)
+>         return err;
+>
+> ?
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 27fc30fa39d6..d9ef785cb266 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -4092,6 +4092,13 @@ static int __spi_validate(struct spi_device *spi, struct spi_message *message)
- 		if (__spi_validate_bits_per_word(ctlr, xfer->bits_per_word))
- 			return -EINVAL;
- 
-+		/* DDR mode is supported only if controller has dtr_caps=true.
-+		 * default considered as SDR mode for SPI and QSPI controller.
-+		 * Note: This is applicable only to QSPI controller.
-+		 */
-+		if (xfer->dtr_mode && !ctlr->dtr_caps)
-+			return -EINVAL;
-+
- 		/*
- 		 * SPI transfer length should be multiple of SPI word size
- 		 * where SPI word size should be power-of-two multiple.
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index 0ba5e49bace4..c454abbda910 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -503,6 +503,8 @@ extern struct spi_device *spi_new_ancillary_device(struct spi_device *spi, u8 ch
-  *	found.
-  * @put_offload: release the offload instance acquired by @get_offload.
-  * @mem_caps: controller capabilities for the handling of memory operations.
-+ * @dtr_caps: true if controller has dtr(single/dual transfer rate) capability.
-+ *	QSPI based controller should fill this based on controller's capability.
-  * @unprepare_message: undo any work done by prepare_message().
-  * @target_abort: abort the ongoing transfer request on an SPI target controller
-  * @cs_gpiods: Array of GPIO descriptors to use as chip select lines; one per CS
-@@ -746,6 +748,9 @@ struct spi_controller {
- 	const struct spi_controller_mem_ops *mem_ops;
- 	const struct spi_controller_mem_caps *mem_caps;
- 
-+	/* SPI or QSPI controller can set to true if supports SDR/DDR transfer rate */
-+	bool			dtr_caps;
-+
- 	struct spi_offload *(*get_offload)(struct spi_device *spi,
- 					   const struct spi_offload_config *config);
- 	void (*put_offload)(struct spi_offload *offload);
-@@ -998,6 +1003,7 @@ struct spi_res {
-  *	processed the word, i.e. the "pre" timestamp should be taken before
-  *	transmitting the "pre" word, and the "post" timestamp after receiving
-  *	transmit confirmation from the controller for the "post" word.
-+ * @dtr_mode: true if supports double transfer rate.
-  * @timestamped: true if the transfer has been timestamped
-  * @error: Error status logged by SPI controller driver.
-  *
-@@ -1049,6 +1055,9 @@ struct spi_res {
-  * two should both be set. User can set transfer mode with SPI_NBITS_SINGLE(1x)
-  * SPI_NBITS_DUAL(2x) and SPI_NBITS_QUAD(4x) to support these three transfer.
-  *
-+ * User may also set dtr_mode to true to use dual transfer mode if desired. if
-+ * not, default considered as single transfer mode.
-+ *
-  * The code that submits an spi_message (and its spi_transfers)
-  * to the lower layers is responsible for managing its memory.
-  * Zero-initialize every field you don't set up explicitly, to
-@@ -1083,6 +1092,7 @@ struct spi_transfer {
- 	unsigned	tx_nbits:4;
- 	unsigned	rx_nbits:4;
- 	unsigned	timestamped:1;
-+	bool		dtr_mode;
- #define	SPI_NBITS_SINGLE	0x01 /* 1-bit transfer */
- #define	SPI_NBITS_DUAL		0x02 /* 2-bit transfer */
- #define	SPI_NBITS_QUAD		0x04 /* 4-bit transfer */
--- 
-2.25.1
+Same.
 
+>
+> > +     INIT_LIST_HEAD(&priv->chips_list);
+> > +
+> > +     i =3D 0;
+> > +     for_each_available_child_of_node(node, child) {
+> > +             chip =3D devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
+> > +             if (!chip)
+> > +                     return -ENOMEM;
+> > +
+> > +             list_add_tail(&chip->list, &priv->chips_list);
+> > +             chip->priv =3D priv;
+> > +             chip->enable_gpio =3D devm_gpiod_get_index_optional(dev, =
+"enable", i,
+> > +                             GPIOD_OUT_HIGH);
+> > +             if (IS_ERR(chip->enable_gpio)) {
+> > +                     dev_err(dev, "Error getting enable GPIO %i proper=
+ty: %ld\n", i,
+> > +                                     PTR_ERR(chip->enable_gpio));
+> > +                     return PTR_ERR(chip->enable_gpio);
+> > +             }
+> > +
+> > +             err =3D tlc5928_probe_chip_dt(dev, child, chip);
+> > +             if (err)
+> > +                     return err;
+> > +
+> > +             i++;
+> > +     }
+> > +
+> > +     list_for_each(pos, &priv->chips_list) {
+>
+> list_for_each_entry()?
+>
+> > +             chip =3D container_of(pos, struct tlc5928_chip, list);
+> > +             if (chip->enable_gpio)
+> > +                     gpiod_set_value(chip->enable_gpio, 0);
+> > +     }
+> > +
+> > +     spi_set_drvdata(spi, priv);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int tlc5928_remove(struct spi_device *spi)
+> > +{
+> > +     struct list_head *pos;
+> > +     struct tlc5928_priv *priv =3D spi_get_drvdata(spi);
+> > +     int i;
+> > +
+> > +     list_for_each(pos, &priv->chips_list) {
+>
+> list_for_each_entry()?
+>
+
+Fixed!
+
+> > +             struct tlc5928_chip *chip =3D container_of(pos, struct tl=
+c5928_chip,
+> > +                             list);
+> > +
+> > +             for (i =3D 0; i < TLC5928_MAX_LEDS; i++) {
+> > +                     if (chip->leds[i].active)
+> > +                             devm_led_classdev_unregister(&spi->dev,
+> > +                                          &chip->leds[i].ldev);
+>
+> Why is it needed?
+> devm_led_classdev_register_ext() was used.
+>
+
+Yes, because the latch GPIO is set each time a LED is set. But during
+the module removing process, devm releases before the GPIO and then
+each LED (turning them off). So the kernel gets a NULL pointer after
+deference.
+
+An explicit unregister allows to free the LEDs before the GPIO.
+
+> > +             }
+> > +
+> > +             if (chip->enable_gpio) {
+> > +                     gpiod_set_value(chip->enable_gpio, 1);
+> > +                     gpiod_put(chip->enable_gpio);
+>
+> Why is it needed?
+> devm_gpiod_get_index_optional() was used.
+>
+
+Fixed!
+
+> > +             }
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static const struct spi_device_id tlc5928_id[] =3D {
+> > +     { "tlc5928" },
+> > +     {},
+>
+> Unneeded trailing ,
+>
+> > +};
+> > +MODULE_DEVICE_TABLE(spi, tlc5928_id);
+>
+> ...
+>
+> CJ
+>
+
+Corentin Guillevic
 
