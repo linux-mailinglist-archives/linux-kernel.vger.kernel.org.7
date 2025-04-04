@@ -1,137 +1,95 @@
-Return-Path: <linux-kernel+bounces-588856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E87FEA7BE6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:54:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B66D3A7BE6D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:54:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05BCB17A1A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:54:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E11203B9B05
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6821F37B8;
-	Fri,  4 Apr 2025 13:53:38 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9469A1F3D52;
+	Fri,  4 Apr 2025 13:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pjCiYuVa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5561F2C56;
-	Fri,  4 Apr 2025 13:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25991F181F;
+	Fri,  4 Apr 2025 13:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743774818; cv=none; b=jN/OggD3QKW6WkRv2q/Wb+Xbmfieu0rdhQMphjCrUyHzyp/He5Aw62rKBgoviU3hCKjokX0mrRrPi5/jm8WQCA9ixed52yT73zX45Cn9cPuIp0qgpBW1kpqDxKRvxHWp8clB0RDR8gtzuq1UKRuP/JWmBICJKY3bfKQw4hC+/Og=
+	t=1743774838; cv=none; b=ts3ayOa7H68Atbm7rWjKcaz1ODfMn2iyrUzkIbPnDc+DX3u3MycYjUbDUnnQCfsN4jsMald8weGNv/bzZa+EOexXzrpviIxHV197g9Sv+rRpSHIkvkoKBjJS6nEokX12nkwpaklUc8Z8/lIe8BqZGWYWRYixIbt6riuIefMdDvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743774818; c=relaxed/simple;
-	bh=10U8NdtmwB1T4+mE7hjOFF0m9/uG3tbjwAiz9Gypt7Y=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o5XKynj09ORCLqYkr3jemhcotkn8chSnuK+1rmNY7N/C0ZJq0TKiVm1liRUXzPljfflo4DMEV8WBFCCg03lF6MRiPH7nOkpdKYNpD3nWCDpWsa2SnKXw6mt8OdmR9YCNIPBmp+e3IG9043NtawtWDclxhRA3g0kovfn5LI2KwAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZTg2l66Zpz6M4WH;
-	Fri,  4 Apr 2025 21:49:51 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id B1E71140595;
-	Fri,  4 Apr 2025 21:53:33 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 4 Apr
- 2025 15:53:33 +0200
-Date: Fri, 4 Apr 2025 14:53:31 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>
-CC: Dan Williams <dan.j.williams@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>, Dave Jiang
-	<dave.jiang@intel.com>, "Alison Schofield" <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] cxl/acpi: Verify CHBS length for CXL2.0
-Message-ID: <20250404145331.00001559@huawei.com>
-In-Reply-To: <7bbf602d-6900-4179-9737-efeb40e1566f@fujitsu.com>
-References: <20250326074450.937819-1-lizhijian@fujitsu.com>
-	<67e4c9aaedd08_138d3294ca@iweiny-mobl.notmuch>
-	<1ed912df-42c7-4319-8765-3167963df7b3@fujitsu.com>
-	<67e5544237027_13cb29432@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-	<7bbf602d-6900-4179-9737-efeb40e1566f@fujitsu.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1743774838; c=relaxed/simple;
+	bh=ZHcXVryXGa3l58EH+QP5ntOTTbVTbrHGqD+0D7zNWuM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XGB/DDvC8LZYdlVy1MJ1+Li0X076wr2MKEviRe+3YEtF1FbWQd47pBUzInMueBVyWJFLwq68tJqk9/KoJGLT1tUMykQHUF5r3sCXmy0UF9OKXKoXA4GN8dHW2lxYRiqzZHZO9wgNgNWBlgRYNlZSZbhkIJ3SdDg5bbs7qOxsiYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pjCiYuVa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CA85C4CEE8;
+	Fri,  4 Apr 2025 13:53:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743774837;
+	bh=ZHcXVryXGa3l58EH+QP5ntOTTbVTbrHGqD+0D7zNWuM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pjCiYuVaHH8EFMd0N3DDUaCKZPc45QenB+EcceKHtRel2vP7SuddsdBJsFtZ1+93u
+	 4PfegeXMfJIBCjwbKz3JyhULr6MekUWWuQTu2oLAXkNi9IQBCar7D9KSZobwlfKEU+
+	 wFNggwTScoYSLh9eimjfL8+qZb/G/WPZcurvwfa97pHMbZ2vvrmv4iPj72whhqLpA0
+	 rpDeB8o3YrQE5AJxvLhbLr5oyN+1mtrUGo69H6sZZbaBNRDzfMpJDM9dbBYvQeSouY
+	 Dd7VO4VoYqzJ3qTT4gpF9WuhK5QKA0F3SSofqf959a42QtwO9Gm4nlY39QpjosUOqB
+	 vzuWEfu9FrnRQ==
+From: Philipp Stanner <phasta@kernel.org>
+To: Yong Zhi <yong.zhi@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Dan Scally <djrscally@gmail.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Akihiro Tsukada <tskd08@gmail.com>,
+	Bluecherry Maintainers <maintainers@bluecherrydvr.com>,
+	Andrey Utkin <andrey_utkin@fastmail.com>,
+	Ismael Luceno <ismael@iodev.co.uk>
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Philipp Stanner <phasta@kernel.org>
+Subject: [PATCH 0/5] media: Replace deprecated PCI functions
+Date: Fri,  4 Apr 2025 15:53:40 +0200
+Message-ID: <20250404135344.93241-2-phasta@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
 
-On Fri, 28 Mar 2025 04:15:13 +0000
-"Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com> wrote:
+Replaces pcim_iomap_regions() and pcim_iomap_table(), which have been
+deprecated.
 
-> On 27/03/2025 21:36, Dan Williams wrote:
-> > Zhijian Li (Fujitsu) wrote:  
-> >>
-> >>
-> >> On 27/03/2025 11:44, Ira Weiny wrote:  
-> >>> Li Zhijian wrote:  
-> >>>> Per CXL Spec r3.1 Table 9-21, both CXL1.1 and CXL2.0 have defined their
-> >>>> own length, verify it to avoid an invalid CHBS  
-> >>>
-> >>>
-> >>> I think this looks fine.  But did a platform have issues with this?  
-> >>
-> >> Not really, actually, I discovered it while reviewing the code and
-> >> CXL specification.
-> >>
-> >> Currently, this issue arises only when I inject an incorrect length
-> >> via QEMU environment. Our hardware does not experience this problem.
-> >>
-> >>  
-> >>> Does this need to be backported?  
-> >> I remain neutral :)  
-> > 
-> > What does the kernel do with this invalid CHBS from QEMU? I would be
-> > happy to let whatever bad effect from injecting a corrupted CHBS just
-> > happen because there are plenty of ways for QEMU to confuse the kernel
-> > even if the table lengths are correct.
-> > 
-> > Unless it has real impact I would rather not touch the kernel for every
-> > possible way that QEMU can make a mistake.  
-> 
-> 
-> 
-> Thank you for the feedback.
-> 
-> If your earlier comments were specifically about ***backporting*** this patch,
-> I agree there might not be an urgent need for that.
-> 
-> However, regarding the discussion on whether this patch should be accepted
-> upstream, TBH, I believe it is necessary.
-> 
-> 1. The **CXL Specification (r3.1, Table 9-21)** explicitly defines `length`
-> requirements for CHBS in both CXL 1.1 and CXL 2.0 cases. Failing to
-> validate this field against the spec risks misinterpretation of invalid
-> configurations.
-> 
-> 2. As mentioned in section **2.13.8** of the *CXL Memory Device Software Guide (Rev 1.0)*,
-> It's recommended to verify the CHBS length.
-> 
-> While the immediate impact might be limited to edge cases (e.g., incorrect QEMU configurations),
-> upstreaming this aligns the kernel with spec-mandated checks and improves
-> robustness for future use cases.
-> 
-> [1] https://cdrdv2-public.intel.com/643805/643805_CXL_Memory_Device_SW_Guide_Rev1_1.pdf
+The successor pcim_iomap_region() is already used in many places and
+shouldn't cause trouble.
 
-Just to check - are we talking hacked QEMU or some configuration of QEMU that
-can generate the wrong length?
+I test-built it, but have no hardware for testing.
 
-Jonathan
+P.
 
-> 
-> 
-> > 
-> > I.e. if it was a widespread problem that affected multiple QEMU users by
-> > default then maybe. Just your local test gone awry? Maybe not  
+Philipp Stanner (5):
+  media: ipu3-cio2: Replace deprecated PCI functions
+  media: pt3: Replace deprecated PCI functions
+  media: intel/ipu6: Replace deprecated PCI functions
+  media: solo6x10: Replace deprecated PCI functions
+  media: tw5864: Replace deprecated PCI functions
+
+ drivers/media/pci/intel/ipu3/ipu3-cio2.c   |  5 ++---
+ drivers/media/pci/intel/ipu6/ipu6.c        |  8 ++++----
+ drivers/media/pci/pt3/pt3.c                | 17 +++++++++++------
+ drivers/media/pci/solo6x10/solo6x10-core.c |  4 ++--
+ drivers/media/pci/tw5864/tw5864-core.c     | 13 ++++++++-----
+ 5 files changed, 27 insertions(+), 20 deletions(-)
+
+-- 
+2.48.1
 
 
