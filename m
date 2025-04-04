@@ -1,111 +1,208 @@
-Return-Path: <linux-kernel+bounces-588646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AFD3A7BBBA
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:47:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF1FA7BBC5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EADC13BB479
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:47:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F3C5189F3D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D63C1BC9F4;
-	Fri,  4 Apr 2025 11:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7388C1E1E0B;
+	Fri,  4 Apr 2025 11:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PUXNu3rZ"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="xf8Q6A0D"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16452847B
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 11:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5B051C5A;
+	Fri,  4 Apr 2025 11:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743767241; cv=none; b=ntg1Bkow/oz+PRiLWz9l+Ab8N1Rl5mKQnzlRLc8+8HdeVO1owQLJIN9T42FqepJoSxCSNnJZfSdyb+L5eMhmvqE0ZZ0UlM6l/m9FtPqonFm6IPlrDOiRVcjMYUlMmfr4clkMOMIfDmVQ11TOoayrV2fRtMlIK1NIzQ62nN6aCC0=
+	t=1743767590; cv=none; b=qsIuW+zSs6NWSqJzwdrwO6JSv02ftAcjClQHmxN1QIKcLe0Zg8lmK0x86tNBn81F4jNdlPAwxkbr8h8N7F7ecHWgNkEF82azAgHMMf3dg1epfwAmpewcBlT7sNBChouy71pTO7nqXfmbxBT1VcAYrPzxPNUiWDijN0/NUQOROpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743767241; c=relaxed/simple;
-	bh=wPPcnnB5KcUF6Z/rHkaL7q8cRxlq5b4nBxTxZ96MBdk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZGLo2k4e7l/r2Py6hxnHvAZuOfckn9wkfiEGEjctRaeE+zAWYRpZwFKk8h/Vp174b3ANM8sTEUOZz25f31aUWsPTMkcMF2vOGi3egxYVvpavQksArgYXvOHAU0l98rl80napA8kJBQajRSUczKQeoEtWJ0YbQXzd2PMkFlo94l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PUXNu3rZ; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cebe06e9eso12506515e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 04:47:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743767238; x=1744372038; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=foHY1R4cfF4wZYmB2kM8uswb/b+LSqz8E6rYMWvAhS4=;
-        b=PUXNu3rZCeSM2Qfh9uhWHXShtbzvBFfTuusm4G9d1+VfwKmw6jZVziHlMxFMBcbKNp
-         BlvSjytsIPaW20nPIipJN+WjEFgchWss04fzSCN93mUOLowkX8w4GsHexTzug+8Yanyc
-         oHW9cHbKPlcJc6XNxdYEUatlt/ILzrA6M7uyyDGj8IVSsNNoQF7Iy7G6raP78WvAF3nn
-         K9S004NJKHKbA42NQHrP132DO4fWFDAV5cgErFeUk3DtGRsSpN6y4ncugcjzGK2Ayo95
-         ObC0LnBvIPeLhx3yHTjVBLzF/Ndf6q8s9EBbx9ZuqgFdBKK8C/dJtgQl7nCu7JL5K0Ct
-         BxBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743767238; x=1744372038;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=foHY1R4cfF4wZYmB2kM8uswb/b+LSqz8E6rYMWvAhS4=;
-        b=ippqU1ApempY1MqHyPXCyLuo51tHgL/mKfZfOCkaV8V9Y4Co8r08ktLtJfbv8tT27E
-         L6qoOaEglVzmpCySlB4awpNhVy88rlfUZRNT33RmaRgu8S2juASQ07lb+7VZThF3ZK5Q
-         fECZOsmPlCjlL+ZNQ1PVR1pLdnNkH7iGd3RuxYfR+iiETsPE9W5CMwu61th7ndxZA5Zz
-         r0fcDQW4gDl18U/ohOLi9L/EhO2+r84bXCsrY1CvE7+9b1/Vh8yW39t3mhT8r0zL6j3l
-         ZA2xteBrdB/Zo5zwleqPn8i5Y7afc/GaSoMA6jnriNV4Xqb0M/nvylWuUrZEaGonKe7z
-         Jobg==
-X-Forwarded-Encrypted: i=1; AJvYcCU53leD05qknrGk6vjzH8ePo4c5MyfxHg+kxJfDEGkMUAaxwopcF8+Hz2TLix7quztLVMvfgqPrFwONC5c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0cDpzL1bElex9UXGA+l1duNqbh3KKAVr+CIVuOqygQwRYUVh1
-	36UYsKTYxvOBkrMss3JHr1Ba1W2nW3C4ANT6jKTxeIqUJ9tFr4j9QBRn2UTIvjw=
-X-Gm-Gg: ASbGnctzHSeQ0N0z2/6i4+unoyYIdGQXqv7yQHZCKweb/CZNo3MbmGlr4XfoYU71+dn
-	svl++XZKLPsZPk6/JzsA8AFGgxMAcNgAKm0g+Fvcdd0X8jU8D4o0FPHJwEHwn+rgYsPgpe60UDt
-	WRjvV2E/Rk5HczUtf/4O0b7aWaP0DyduiASKDPe3ojxafdujDsjYkCKHEaNeMhL8JK/BKr2bKS8
-	e41TsTMtyaozQT509dgM1TTnozjDAHpU3HWaXMg+KGYzO3dR9ZX71XK1faxCBwVIZB3Ute9xff2
-	mDu8gAexSoM8U7EyoOR5KbfPOtHDng6Xl7gWyPzEooYrKJKuNQ==
-X-Google-Smtp-Source: AGHT+IEn+z7u+lSPJLWOtn7Q6pSS9JHe2rPVPZmR3y2zmH/SRyuuPhwWUCfFa1TU/icWhcfsVbxRLA==
-X-Received: by 2002:a05:600c:3109:b0:43c:f629:66f4 with SMTP id 5b1f17b1804b1-43ecf57edb7mr31256785e9.0.1743767238380;
-        Fri, 04 Apr 2025 04:47:18 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43ec1660bcesm46939825e9.10.2025.04.04.04.47.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 04:47:17 -0700 (PDT)
-Date: Fri, 4 Apr 2025 14:47:14 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>,
-	outreachy@lists.linux.dev, julia.lawall@inria.fr,
-	gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, andy@kernel.org
-Subject: Re: [v3 1/1] staging: rtl8723bs: Prevent duplicate NULL tests on a
- value
-Message-ID: <2aa7d5da-c53c-4bab-8fbf-2caebddc9b7a@stanley.mountain>
-References: <cover.1743723590.git.abrahamadekunle50@gmail.com>
- <6fe7cb92811d07865830974cb366d99981ab1755.1743723591.git.abrahamadekunle50@gmail.com>
- <CAHp75Vem1E9wmmfXWsbawj2f+F=UkfzML7HyAnhTdsUqvjW91g@mail.gmail.com>
- <33a8d769-33b9-43df-9914-99175605b026@stanley.mountain>
- <CAHp75VfDOaK0EXNc79cM1mNWapm7fhshU550q1mAKQdtRbUNwg@mail.gmail.com>
+	s=arc-20240116; t=1743767590; c=relaxed/simple;
+	bh=enShrMQhzHuV2QFUuVSEFAnA+ItTuEMOfv17cqnkY3U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NJ3iihWcYoEu08nUZ59EY1xTG52rbzcleHja85/19OVKgWcjbxrOBTDauz8/Qgh6pm6Xz2l23BbZZABQ07+oa5/3LgWddmnOHytZJ4L2YvteE8RelQTb1HTAlFvDL8eMTVzwxJxx3t43OvYUSGQgrB/Z6K0tnqu9j1ceKpI2//A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=xf8Q6A0D; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1743767579; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=hDt6lANfWbz9SDk6CjGNO07bg5Gs/3uMX+AENgcIecM=;
+	b=xf8Q6A0D2ny8/rKQXohst8rBbLm9dYfk7v7hsJ5nL2P+RvwPratWvmUh2+SMhSITMf4a3mo3Siv7M+I5VzZXRIZX0PJm/BoyJs1OEH35f67F6yqCB4xxnXN2OFvPgX2dtJw4opBjDCynmGYx29ZapH2j7Btceppj6FZhiFCJa/k=
+Received: from 30.246.161.208(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WUz6I16_1743767259 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 04 Apr 2025 19:47:40 +0800
+Message-ID: <ab0facc9-f7f1-4ba2-b56c-868d2f8e6807@linux.alibaba.com>
+Date: Fri, 4 Apr 2025 19:47:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VfDOaK0EXNc79cM1mNWapm7fhshU550q1mAKQdtRbUNwg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/9] dmaengine: idxd: Add missing cleanup for early
+ error out in idxd_setup_internals
+To: Fenghua Yu <fenghuay@nvidia.com>, vinicius.gomes@intel.com,
+ dave.jiang@intel.com, Markus.Elfring@web.de, vkoul@kernel.org
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250309062058.58910-1-xueshuai@linux.alibaba.com>
+ <20250309062058.58910-5-xueshuai@linux.alibaba.com>
+ <22b63198-2aab-481c-a4cd-74c3349e22f8@nvidia.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <22b63198-2aab-481c-a4cd-74c3349e22f8@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Apr 04, 2025 at 01:53:16PM +0300, Andy Shevchenko wrote:
-> > Also if the change accidentally introduces a bug, I want it to be a
-> > one liner change and not something hidden inside a giant reformat.
+
+
+在 2025/4/3 07:26, Fenghua Yu 写道:
 > 
-> The noisy {] have no point to be left. Now I'm curious, what do you
-> propose here?
+> On 3/8/25 22:20, Shuai Xue wrote:
+>> The idxd_setup_internals() is missing some cleanup when things fail in
+>> the middle.
+>>
+>> Add the appropriate cleanup routines:
+>>
+>> - cleanup groups
+>> - cleanup enginces
+>> - cleanup wqs
+>>
+>> to make sure it exits gracefully.
+>>
+>> Fixes: defe49f96012 ("dmaengine: idxd: fix group conf_dev lifetime")
+>> Cc: stable@vger.kernel.org
+>> Suggested-by: Fenghua Yu <fenghuay@nvidia.com>
+>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>> ---
+>>   drivers/dma/idxd/init.c | 59 ++++++++++++++++++++++++++++++++++++-----
+>>   1 file changed, 52 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
+>> index fe4a14813bba..7334085939dc 100644
+>> --- a/drivers/dma/idxd/init.c
+>> +++ b/drivers/dma/idxd/init.c
+>> @@ -155,6 +155,26 @@ static void idxd_cleanup_interrupts(struct idxd_device *idxd)
+>>       pci_free_irq_vectors(pdev);
+>>   }
+>> +static void idxd_clean_wqs(struct idxd_device *idxd)
+>> +{
+>> +    struct idxd_wq *wq;
+>> +    struct device *conf_dev;
+>> +    int i;
+>> +
+>> +    for (i = 0; i < idxd->max_wqs; i++) {
+>> +        wq = idxd->wqs[i];
+>> +        if (idxd->hw.wq_cap.op_config)
+>> +            bitmap_free(wq->opcap_bmap);
+>> +        kfree(wq->wqcfg);
+>> +        conf_dev = wq_confdev(wq);
+>> +        put_device(conf_dev);
+>> +        kfree(wq);
+>> +
+> Please remove this blank line here, warned by checkpatch.
 
-The patch *must* remove the { and }.  We wouldn't have accepted the v1
-patch.
+I checked with checkpatch, but it does not warn (:
 
-regards,
-dan carpenter
+./scripts/checkpatch.pl idxd-fix-v3/0004-dmaengine-idxd-Add-missing-cleanup-for-early-error-o.patch
+total: 0 errors, 0 warnings, 91 lines checked
+
+idxd-fix-v3/0004-dmaengine-idxd-Add-missing-cleanup-for-early-error-o.patch has no obvious style problems and is ready for submission.
+
+
+Will send a new version to fix it and collect all you reviewed-by tag,
+Thanks.
+
+>> +    }
+>> +    bitmap_free(idxd->wq_enable_map);
+>> +    kfree(idxd->wqs);
+>> +}
+>> +
+>>   static int idxd_setup_wqs(struct idxd_device *idxd)
+>>   {
+>>       struct device *dev = &idxd->pdev->dev;
+>> @@ -245,6 +265,21 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
+>>       return rc;
+>>   }
+>> +static void idxd_clean_engines(struct idxd_device *idxd)
+>> +{
+>> +    struct idxd_engine *engine;
+>> +    struct device *conf_dev;
+>> +    int i;
+>> +
+>> +    for (i = 0; i < idxd->max_engines; i++) {
+>> +        engine = idxd->engines[i];
+>> +        conf_dev = engine_confdev(engine);
+>> +        put_device(conf_dev);
+>> +        kfree(engine);
+>> +    }
+>> +    kfree(idxd->engines);
+>> +}
+>> +
+>>   static int idxd_setup_engines(struct idxd_device *idxd)
+>>   {
+>>       struct idxd_engine *engine;
+>> @@ -296,6 +331,19 @@ static int idxd_setup_engines(struct idxd_device *idxd)
+>>       return rc;
+>>   }
+>> +static void idxd_clean_groups(struct idxd_device *idxd)
+>> +{
+>> +    struct idxd_group *group;
+>> +    int i;
+>> +
+>> +    for (i = 0; i < idxd->max_groups; i++) {
+>> +        group = idxd->groups[i];
+>> +        put_device(group_confdev(group));
+>> +        kfree(group);
+>> +    }
+>> +    kfree(idxd->groups);
+>> +}
+>> +
+>>   static int idxd_setup_groups(struct idxd_device *idxd)
+>>   {
+>>       struct device *dev = &idxd->pdev->dev;
+>> @@ -410,7 +458,7 @@ static int idxd_init_evl(struct idxd_device *idxd)
+>>   static int idxd_setup_internals(struct idxd_device *idxd)
+>>   {
+>>       struct device *dev = &idxd->pdev->dev;
+>> -    int rc, i;
+>> +    int rc;
+>>       init_waitqueue_head(&idxd->cmd_waitq);
+>> @@ -441,14 +489,11 @@ static int idxd_setup_internals(struct idxd_device *idxd)
+>>    err_evl:
+>>       destroy_workqueue(idxd->wq);
+>>    err_wkq_create:
+>> -    for (i = 0; i < idxd->max_groups; i++)
+>> -        put_device(group_confdev(idxd->groups[i]));
+>> +    idxd_clean_groups(idxd);
+>>    err_group:
+>> -    for (i = 0; i < idxd->max_engines; i++)
+>> -        put_device(engine_confdev(idxd->engines[i]));
+>> +    idxd_clean_engines(idxd);
+>>    err_engine:
+>> -    for (i = 0; i < idxd->max_wqs; i++)
+>> -        put_device(wq_confdev(idxd->wqs[i]));
+>> +    idxd_clean_wqs(idxd);
+>>    err_wqs:
+>>       return rc;
+>>   }
+> 
+> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
+> 
+> Thanks.
+> 
+> -Fenghua
+
+
+Thanks.
+
+Cheers,
+Shuai
 
 
