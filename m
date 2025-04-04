@@ -1,88 +1,139 @@
-Return-Path: <linux-kernel+bounces-588431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3798A7B8D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:28:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB54A7B909
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:38:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90F8E16F0EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:28:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D145C17A3E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9668919995D;
-	Fri,  4 Apr 2025 08:28:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452F91A255C;
+	Fri,  4 Apr 2025 08:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xgmIPoCW"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="nnhfEQeH"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BEF18B463;
-	Fri,  4 Apr 2025 08:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBFA19F462;
+	Fri,  4 Apr 2025 08:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743755283; cv=none; b=gT8RtSg2HxPyLzzMZcsTroYTBKsw8RawWfkULHZ9HBU7v8Y1ov01X4N065Ar7Mk8KUvK7WEh7JCLOzrnHu6VAbIB3sp73WkCkbtRmPSMjHb29afwmtFb0BxXt58S+Q87RRDtV0ZLBb1oCgZd3xAl8cTOhGmLYekGI0y4oWpqyiI=
+	t=1743755871; cv=none; b=e3f/PbhZPb4WCPi0FWFoVK3PJKsFqgRjvwwVGFdXH6HlyDh8MRwxvEVPA+EzRac/iO2TeaT73IQsRRwr/WZZhoRCLXUWJEiM48+GId74kkf4s+k/OxcgttCQ88HKBWexOkfKPL3Aysp6TST4vHtFx6YJ0Pk+mMUptb+L4tDcoHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743755283; c=relaxed/simple;
-	bh=eqBR2cQvQ1gZc/EFFNOenK4SPj0Z5ShX6xIJMJ0SHyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HfY3zaF4jYNOUUwRTVadskBPqdJkr50RvARIOdz2GY8nw67/+5w+YgKWIE3sSVtzIaZTfCTBkWRf5a+m098qYQC4YODIMH2eCiUmmuwQWVhDy91IdircjTTpBhmIBOrF3vtHU4hRneb3gEQVry8EnRkdIGDbNUQkMmrNPoqw9yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xgmIPoCW; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=n8M3b+2Qz/s2h1trDKTTJQ/5na50BJMXmD4MAhynqAk=; b=xgmIPoCWkKYPEWj7quZzxhDc0f
-	1zUTY8hrK6UdAODfBkqjJUdYWGQaPqECpoj72PIDpyRAXA3sJYdxR3SFlS6Vj5Z9vMecrGyXYEhlQ
-	swmjuQ45p6MsvnDWhqbX9KiNNLkafsQGMnhdIQCGfByvDM7nbxlgm1/qxpqfYRDsy58iv8iaWy6dw
-	GKJL5k9mGwbfWy7Y0AKw5Ya+HWCfcfBSAvLmrkAZo3t2DwImObAtOx53Klt4hhmV8EBfUjST6ryie
-	frCSRHz6orTIWWJ2BMyO9Vu6tEdoRs0uK5b2YVbkyXGXlMhAx2qS1LL7d7BlyHrI+TOZX0FHPdsgc
-	+QvXRjRg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u0cPA-0000000B8Tj-2EiO;
-	Fri, 04 Apr 2025 08:28:00 +0000
-Date: Fri, 4 Apr 2025 01:28:00 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Leon Romanovsky <leon@kernel.org>, pr-tracker-bot@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] vfs mount
-Message-ID: <Z--YEKTkaojFNUQN@infradead.org>
-References: <20250322-vfs-mount-b08c842965f4@brauner>
- <174285005920.4171303.15547772549481189907.pr-tracker-bot@kernel.org>
- <20250401170715.GA112019@unreal>
- <20250403-bankintern-unsympathisch-03272ab45229@brauner>
- <20250403-quartal-kaltstart-eb56df61e784@brauner>
- <196c53c26e8f3862567d72ed610da6323e3dba83.camel@HansenPartnership.com>
- <6pfbsqikuizxezhevr2ltp6lk6vqbbmgomwbgqfz256osjwky5@irmbenbudp2s>
- <CAHk-=wjksLMWq8At_atu6uqHEY9MnPRu2EuRpQtAC8ANGg82zw@mail.gmail.com>
+	s=arc-20240116; t=1743755871; c=relaxed/simple;
+	bh=pLibqvIcw1SHorZ/STK72m6aN/tlhopq9FXsc2/2oGI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q5C19f6lKPmgs6Ag6fqZp1aMJHB54cTVfEpqpnKl1U5zegDams87TtYb9EUzM6nXsogwPFZBZrRx1ccwudcjtWttiSceeoeMrkLzf0QzwiBr54h/b6xoFNjD0I0kIVt3Khl9eGaN5ougK7JODt6rl8x3dMqQHFa4IX3UiIx1UQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=nnhfEQeH; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from localhost.localdomain (unknown [5.181.23.154])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 319674487843;
+	Fri,  4 Apr 2025 08:30:48 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 319674487843
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1743755448;
+	bh=ny7HwWXxKnGKVGDtPWStKsa49RNI8QK9Rh+xecVN+hU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nnhfEQeH+4iUZRxuAfxl4Ojn7z68V9h6+xvsGZJ2f8kq84KcpEOfgUpT686fwaBen
+	 dhKonu5Drm4xz+26lYxDB5C55fSI2ly1NHcbLY3+CHwz8iWyTcoN2vJimR4SuCkHLM
+	 Z6Ns/18LDvQnKQORNb7ZVtfDZWy+fQqBoke9Jtuc=
+From: Artem Sadovnikov <a.sadovnikov@ispras.ru>
+To: linux-ext4@vger.kernel.org
+Cc: Artem Sadovnikov <a.sadovnikov@ispras.ru>,
+	"Theodore Ts'o" <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Eric Sandeen <sandeen@redhat.com>,
+	Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: [PATCH] ext4: fix off-by-one error in do_split
+Date: Fri,  4 Apr 2025 08:28:05 +0000
+Message-ID: <20250404082804.2567-3-a.sadovnikov@ispras.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjksLMWq8At_atu6uqHEY9MnPRu2EuRpQtAC8ANGg82zw@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 03, 2025 at 11:09:41AM -0700, Linus Torvalds wrote:
-> On Thu, 3 Apr 2025 at 10:21, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> >
-> > I would argue it would be best if a language wizard came up with a way
-> > to *demand* explicit use of { } and fail compilation if not present.
-> 
-> I tried to think of some sane model for it, but there isn't any good syntax.
-> 
-> The only way to enforce it would be to also have a "end" marker, ie do
-> something like
+Syzkaller detected a use-after-free issue in ext4_insert_dentry that was
+caused by out-of-bounds access due to incorrect splitting in do_split.
 
-Or just kill the non-scoped guard because it simply is an insane API.
+BUG: KASAN: use-after-free in ext4_insert_dentry+0x36a/0x6d0 fs/ext4/namei.c:2109
+Write of size 251 at addr ffff888074572f14 by task syz-executor335/5847
+
+CPU: 0 UID: 0 PID: 5847 Comm: syz-executor335 Not tainted 6.12.0-rc6-syzkaller-00318-ga9cda7c0ffed #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
+ ext4_insert_dentry+0x36a/0x6d0 fs/ext4/namei.c:2109
+ add_dirent_to_buf+0x3d9/0x750 fs/ext4/namei.c:2154
+ make_indexed_dir+0xf98/0x1600 fs/ext4/namei.c:2351
+ ext4_add_entry+0x222a/0x25d0 fs/ext4/namei.c:2455
+ ext4_add_nondir+0x8d/0x290 fs/ext4/namei.c:2796
+ ext4_symlink+0x920/0xb50 fs/ext4/namei.c:3431
+ vfs_symlink+0x137/0x2e0 fs/namei.c:4615
+ do_symlinkat+0x222/0x3a0 fs/namei.c:4641
+ __do_sys_symlink fs/namei.c:4662 [inline]
+ __se_sys_symlink fs/namei.c:4660 [inline]
+ __x64_sys_symlink+0x7a/0x90 fs/namei.c:4660
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+ </TASK>
+
+The following loop is located right above 'if' statement.
+
+for (i = count-1; i >= 0; i--) {
+	/* is more than half of this entry in 2nd half of the block? */
+	if (size + map[i].size/2 > blocksize/2)
+		break;
+	size += map[i].size;
+	move++;
+}
+
+'i' in this case could go down to -1, in which case sum of active entries
+wouldn't exceed half the block size, but previous behaviour would also do
+split in half if sum would exceed at the very last block, which in case of
+having too many long name files in a single block could lead to
+out-of-bounds access and following use-after-free.
+
+Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+
+Cc: stable@vger.kernel.org
+Fixes: 5872331b3d91 ("ext4: fix potential negative array index in do_split()")
+Signed-off-by: Artem Sadovnikov <a.sadovnikov@ispras.ru>
+---
+ fs/ext4/namei.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index cb5cb33b1d91..e9712e64ec8f 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1971,7 +1971,7 @@ static struct ext4_dir_entry_2 *do_split(handle_t *handle, struct inode *dir,
+ 	 * split it in half by count; each resulting block will have at least
+ 	 * half the space free.
+ 	 */
+-	if (i > 0)
++	if (i >= 0)
+ 		split = count - move;
+ 	else
+ 		split = count/2;
+-- 
+2.43.0
 
 
