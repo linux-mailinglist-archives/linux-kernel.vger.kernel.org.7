@@ -1,157 +1,169 @@
-Return-Path: <linux-kernel+bounces-589009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31C3AA7C081
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:26:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF4BCA7C08D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:28:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3CBB3BB42F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:25:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD2D13B74FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515151F5423;
-	Fri,  4 Apr 2025 15:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABBC1F5823;
+	Fri,  4 Apr 2025 15:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HO2ug1Xr"
-Received: from mail-yw1-f196.google.com (mail-yw1-f196.google.com [209.85.128.196])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H/y5A/vF"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32AFE3D6F;
-	Fri,  4 Apr 2025 15:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8853D6F;
+	Fri,  4 Apr 2025 15:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743780357; cv=none; b=B3qQFRKIlpxoK+7aalivwm0PS9Xy9wZy2vkUcIixNuT2pNhiH0Crm2oLE49FdYDB9Ce99dpy5sWm/51fwVa2p3HPtTqWslLIVBCx5HHVPL4/+O5H0/PHsaArAiHN7twkYwya4IEj7fE+H5juYvjIe1EGkPZdQq+VaYQF8suU8uM=
+	t=1743780467; cv=none; b=qgYdn7rOV58BV16P8e6mKrxQ8uIOZAGPPTQCHP1EbQfwh0trFE5U9RIkZkDvp1DuCi0DCdF2LVWhp8gh/eDgYCeV0ysYQdDQZTsXQk+nPzZLB+groWS9Hl/BVbUpEYPi3OVdPb6i6hcY+8pHbzSGrOo6ptj5zrw7XGmo5//HXlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743780357; c=relaxed/simple;
-	bh=xJg7HCoe0mVfJeMYzbUm1cWmxH+o1mewNNRakDyEJ2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P1V0s5DrpO4uv6FiM+bB5fhslDKLoFeioNGwI6zMmLtmr+mpJlQPthBkKxuUO2Y5Ntgzo9/MGidPa1GMYsBKFvlLAp+HOLSVWjbl0Z4Y8cT7y5/TchoG/vg6uw5S5DzoKGGBplG7Ixfol/qamsH7q3sunvMFk4MgR0fskio5WLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HO2ug1Xr; arc=none smtp.client-ip=209.85.128.196
+	s=arc-20240116; t=1743780467; c=relaxed/simple;
+	bh=ppAMMplcwEnqZltZtKemeDu3pyGJ/eqR5B0fpfCJImc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mGXfN7N3ubyxf6sOnCLma8LHFFpOonnV8JJtrGrwL1+LTGHUltaNna4sBRayw7seMNyWG0ecPSDZet3R4DUW/iOXP4pacFvaecVzpKOnTZvzKle6NC76SEBjgmynhdmNfhRlJcwjDiflUF4LgRv4f0yu8xIlq5yS9sxGn+F9k5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H/y5A/vF; arc=none smtp.client-ip=209.85.221.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f196.google.com with SMTP id 00721157ae682-6febbd3b75cso21127387b3.0;
-        Fri, 04 Apr 2025 08:25:55 -0700 (PDT)
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-523dc190f95so1099239e0c.1;
+        Fri, 04 Apr 2025 08:27:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743780355; x=1744385155; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vK21i6Cm/oBnMUPYizwWzpUy62AvakVph2bcyRattBA=;
-        b=HO2ug1Xr+0bmVBmbHzK02pgFRli/6i0OYbQVi6kDNvmnxLLPtMks5ZMOxGduN3+jKy
-         2NfT2sL4CaukS6/uT51iSw2Z6ZE/c7wfDggEahCiPdlxj83m7Lx7ozXUrdvvoyVsuKvu
-         k8/n7qEFxfVJCAARtYLsAlPNW28KCOYVzHksZQpFd4tOS3L2gp0pkiXSCD2Zl5RhbjV+
-         0V8CgvBf0O/ocjKLGWnV7CatgQ5Rx/KrtRUQ39dXsWJZ6Ued3ZGdxIoXPZ8fSvoCXBav
-         roHk/qQOdbhHkjFpSYg/cO3PQ6cWDSjtC4FGhQIW112nskTX9bQoKsJy4ILxBVStVL4N
-         ZHaQ==
+        d=gmail.com; s=20230601; t=1743780464; x=1744385264; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tyHcTgEvmYhoTiQmPYplgxNdtkYfEagU+yWLnPX7X2E=;
+        b=H/y5A/vFa1Elt59ac6oZAsaaOljMWPqzqEuXMGy8zYiEhqGteg2QeVKmQYhZAxLrxp
+         hNf28dRy4Fq0fgYWJtSWAUw68Vw1JuLqzeHVOWZJ3aRneNy/9/fakivmVwF0qO5C3BQi
+         4osnxyz97P1OSGiSqHAOZfe5SyTH4PBEcOlhYgkeJerPXP9crrzR7uLll5Yv6prWzlPj
+         wb9018DbksQB0cdxweTPrfF5bu4mGC4HuJBVhuy+3dF1GLV7WkqprQNcJ5ZnQwuuLHBE
+         e2v05amyHHP7YoMv5C5IOI70/aNVQn+AUAKlInNf3YuW/WhdbRZcFUX9DsjvNoQDMe9n
+         X6+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743780355; x=1744385155;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vK21i6Cm/oBnMUPYizwWzpUy62AvakVph2bcyRattBA=;
-        b=ENxOlgk8munFE3UggurQdmo4zbKCDZyp651kUCUOI4dLmZ1BqiHbGtyBdc0vp5btML
-         b0GpbBs9hsVu7Zt4KdpHLoI7vVFGxfW+utpfi/s2TqMpibkslVdwhZOwfxKD5/FZnZ9g
-         qpmeJ7o19h83Qty7KmtDzmtrLlhUPVrU4kexF6I2tadSrBb9TTWMfxoP/VwFdmHipHdU
-         Wu0dGbgKfSlQx7ZXEAXoXqJy33gnUa9zSxnHyPQAmzENCL4nmJUkCiEX0Lpvy493IWGp
-         ZpfGSbC7kTIck7UMoSM8C/uf4Vw3nCCadNMxtz4yCraITZ3F8YSxn+E/NEILdJbVPJYE
-         7SaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBAM/H+ZJOWb6w/EXTrUoqTNMI52ukYh3kMH0OB4HToNAeLF6VtkZzzal3hgCMVG8HyyMwxbzHQr/fxHM=@vger.kernel.org, AJvYcCWQvpVI1AHGy4IoDMairPVgyRl57T8uhpu9RpuvKxjlOpmgNWrdt+4V+MXx0zDT3uYF3m4+Rb2N@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFMDaJp/8l4r/ydhYTGozh7UqnS1n69/kRHHuKyeNfXhvVrPzM
-	GlontyLVdIuULcE5SCkwGBI/WARhgs3aHavNdERtFN87njA/0T0X
-X-Gm-Gg: ASbGncvv1D1ccRBUxZqpEgaPF61AklGzAGpkn85mL/N9inBQPnTn6vegPC/f5STuspH
-	FaT2gyxSQIkMQwvtUTauHyon95k/xyGiuzCPIYb8WodJMBvPeBi9DQGu1VpRJO69FHYmMiduisO
-	+Rk/VqGr6IaDDMt7o0fqSgY191suqv1b1jzvxuv1uXPiPW0cJLAaJfFndGyGJXy5SqP6cs4CzcJ
-	QKfsTV3OhMWsNn5octz8lanwNMQBOkDg4+pdHpbr8N/6DfWdXNLJ1HPDP+2A+fFeWa9n2yZHmz6
-	ma21Z9QbfGgWk7IfFZmDriAd54lhT61uXjmOMqo7v78kXnqqcOH+9x4cwPUKFCz3JH4=
-X-Google-Smtp-Source: AGHT+IG/ho+VI52OyNB7S66WowmtRGN4XNsDzBAzrRZShq7geFV74ZMq2NsftP++30euSownAh+xnQ==
-X-Received: by 2002:a05:690c:c8c:b0:6f9:97af:b594 with SMTP id 00721157ae682-703e151b83dmr63946907b3.10.1743780355016;
-        Fri, 04 Apr 2025 08:25:55 -0700 (PDT)
-Received: from [10.102.6.66] ([208.97.243.82])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-703d1e8ac79sm9284137b3.60.2025.04.04.08.25.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Apr 2025 08:25:54 -0700 (PDT)
-Message-ID: <917d4124-c389-4623-836d-357150b45240@gmail.com>
-Date: Fri, 4 Apr 2025 11:25:54 -0400
+        d=1e100.net; s=20230601; t=1743780464; x=1744385264;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tyHcTgEvmYhoTiQmPYplgxNdtkYfEagU+yWLnPX7X2E=;
+        b=nD95gX+bClAx/Cw+NGcFKsu7JmUqwTHk8dGUiAR2Kxvjifm+8oyxL+WzE1bJspRZ5O
+         GWKCCKjwOltL1cRLh6r9tQfepSt6J7CUDy1Or79lJ+3k+bjggUioc0fFoaQJD90zJjGU
+         HG7fN5eiZU7xNGDa3Xx6ncq9L/xFifxwWTTqdVvCC8DZdKPWm2JKxcBIwEbMIyduLejh
+         njEPHr7MwXfFanmqsfFAkiIEQlHZHg3STGg4beSqn55/hhyqxYUVRveb6eZ54vH5j6Hs
+         MfMqFPG9lhjoTI3cTIFxNfN1ba4PJ76zr8EcCJwbrqfkDIi6RqxyCuaz3zMiykCuJtd5
+         JYWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXWjGCuOQ+9rr+syKXO+fqRPKK+NKUuG5pQiP6jaaZA4xyqRSvxSY24yLzXbkvV3gNbThOTuxsX4pj@vger.kernel.org, AJvYcCVFNJcrNEFadGxgw8unZiNM0nxS/L3p/Z4cYgcb/itVcGKF8gQyWL1HfwFJN8OjtrO5ATCSmqiW+Hl9Yuy6ZAfltPw=@vger.kernel.org, AJvYcCVKtHUldYcL9E+dTwNFDW7eR9vZtrt9z/BGrG2en0DJlrRQNvs8bMHlyi8urrJ7uvScdcyUKgkslNXl@vger.kernel.org, AJvYcCXTT0t4dwT24IEDP68koAARWNNwMTwYxFj2w1EM9EGyZEpFHyp8KE/Q5PlccU+v8buee93Fo278sptDqpw=@vger.kernel.org, AJvYcCXd0kjQNexPOoYuiGJOT49EpHY+b5/qhZrYwHrTx3m7IrtfS4st2Bf/hgew8K+yaNFbIRmGN2Pfwfjfx5kT@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJlOisDwUZrdiN+ObJwz57zFa1wcXScV5gej53l0T/cNfVO8bK
+	gU8z6EgMCDONZ5hN9RMTHXsOWaL/nTEsteMUMO46jxM/6BxBv+9Ku7yPNbyfEcSV93KcxRq+/q8
+	GVNVhkhXOAXqtScXttyPG7xnInsQ=
+X-Gm-Gg: ASbGncv/fzDDm9mwrdxlIWinVdQ3VIsmEfxtUmYTuk6DZy5i6WJZPR5mmMXn0OJSoK5
+	+w6ntXZLtxhIg0DPQFULyX+P+jMHfyDmPJr5L0SAJxhrAKlD0fdZ5pCx/4oKOUfCKYeVTtI8zWA
+	MOQp5u3q8LZ7W1WtO7CMAZ79piESc2At+mDWDtwzshrCYiKgOoP2Qgj/DfwQ==
+X-Google-Smtp-Source: AGHT+IHpqWWi0yrluNQOEGHLp4cKuInHusdtDoz8SY57TW+X7L6P0CcJUrQKzkaOgTZejZMvuGJzRc+ba/iZfntk+2Q=
+X-Received: by 2002:a05:6122:3212:b0:527:67c6:faff with SMTP id
+ 71dfb90a1353d-52767c6fe95mr2008321e0c.4.1743780464136; Fri, 04 Apr 2025
+ 08:27:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 net-next 3/3] net: bridge: mcast: Notify on mdb offload
- failure
-To: Nikolay Aleksandrov <razor@blackwall.org>,
- Joseph Huang <Joseph.Huang@garmin.com>, netdev@vger.kernel.org
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Roopa Prabhu <roopa@nvidia.com>, Simon Horman <horms@kernel.org>,
- linux-kernel@vger.kernel.org, bridge@lists.linux.dev
-References: <20250403234412.1531714-1-Joseph.Huang@garmin.com>
- <20250403234412.1531714-4-Joseph.Huang@garmin.com>
- <36c7286d-b410-4695-b069-f79605feade4@blackwall.org>
-Content-Language: en-US
-From: Joseph Huang <joseph.huang.2024@gmail.com>
-In-Reply-To: <36c7286d-b410-4695-b069-f79605feade4@blackwall.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250330210717.46080-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250330210717.46080-18-prabhakar.mahadev-lad.rj@bp.renesas.com> <TY3PR01MB1134665BB606FE66E50FA372986AF2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB1134665BB606FE66E50FA372986AF2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 4 Apr 2025 16:27:18 +0100
+X-Gm-Features: ATxdqUH3IKmpyUumzvpmcjCBEPPgLqRzYOAqAiEDLuje-X9Xwf8ve80bPV3Fv90
+Message-ID: <CA+V-a8ufhkKEAMTjKhV8HO8Z+hLVvBfRc_q9=+O93FFK55yvFA@mail.gmail.com>
+Subject: Re: [PATCH 17/17] drm: renesas: rz-du: mipi_dsi: Add support for
+ RZ/V2H(P) SoC
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	"laurent.pinchart" <laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/4/2025 6:29 AM, Nikolay Aleksandrov wrote:
-> On 4/4/25 02:44, Joseph Huang wrote:
->> Notify user space on mdb offload failure if mdb_offload_fail_notification
->> is set.
->>
->> Signed-off-by: Joseph Huang <Joseph.Huang@garmin.com>
->> ---
->>   net/bridge/br_mdb.c       | 26 +++++++++++++++++++++-----
->>   net/bridge/br_private.h   |  9 +++++++++
->>   net/bridge/br_switchdev.c |  4 ++++
->>   3 files changed, 34 insertions(+), 5 deletions(-)
->>
-> 
-> The patch looks good, but one question - it seems we'll mark mdb entries with
-> "offload failed" when we get -EOPNOTSUPP as an error as well. Is that intended?
-> 
-> That is, if the option is enabled and we have mixed bridge ports, we'll mark mdbs
-> to the non-switch ports as offload failed, but it is not due to a switch offload
-> error.
+Hi Biju,
 
-Good catch. No, that was not intended.
+Thank you for the review.
 
-What if we short-circuit and just return like you'd suggested initially 
-if err == -EOPNOTSUPP?
+On Wed, Apr 2, 2025 at 7:27=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.com=
+> wrote:
+>
+> Hi Prabhakar,
+>
+> > -----Original Message-----
+> > From: Prabhakar <prabhakar.csengg@gmail.com>
+> > Sent: 30 March 2025 22:07
+> > Subject: [PATCH 17/17] drm: renesas: rz-du: mipi_dsi: Add support for R=
+Z/V2H(P) SoC
+> >
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add DSI support for Renesas RZ/V2H(P) SoC.
+> >
+> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 450 ++++++++++++++++++
+> >  .../drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h   |  40 ++
+> >  2 files changed, 490 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/g=
+pu/drm/renesas/rz-
+> > du/rzg2l_mipi_dsi.c
+> > index 26ec0f5d065a..3a70f479d473 100644
+> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > @@ -5,6 +5,7 @@
+> >   * Copyright (C) 2022 Renesas Electronics Corporation
+> >   */
+> >  #include <linux/clk.h>
+> > +#include <linux/clk/renesas-rzv2h-dsi.h>
+> >  #include <linux/delay.h>
+> >  #include <linux/io.h>
+> >  #include <linux/iopoll.h>
+> > @@ -30,6 +31,9 @@
+<snip>
+> > +
+> > +#define PHYC1R                               0x034
+> > +
+> > +#define PHYC2R                               0x038
+> > +
+> > +#define PHYC3R                               0x03c
+>
+> Looks the above 3 macros unused.
+>
+> Maybe either use #define PHYCR(x)       (0x030 + (x) * 4) where x =3D {0,=
+3}
+>
+> Or
+>
+> Drop the unused macros.
+>
+I'll drop them.
 
->> diff --git a/net/bridge/br_switchdev.c b/net/bridge/br_switchdev.c
->> index 40f0b16e4df8..9b5005d0742a 100644
->> --- a/net/bridge/br_switchdev.c
->> +++ b/net/bridge/br_switchdev.c
->> @@ -504,6 +504,7 @@ static void br_switchdev_mdb_complete(struct net_device *dev, int err, void *pri
->>   	struct net_bridge_mdb_entry *mp;
->>   	struct net_bridge_port *port = data->port;
->>   	struct net_bridge *br = port->br;
->> +	u8 old_flags;
->>   
-
-+	if (err == -EOPNOTSUPP)
-+		goto notsupp;
-
->>   	spin_lock_bh(&br->multicast_lock);
->>   	mp = br_mdb_ip_get(br, &data->ip);
->> @@ -514,7 +515,10 @@ static void br_switchdev_mdb_complete(struct net_device *dev, int err, void *pri
->>   		if (p->key.port != port)
->>   			continue;
->>   
->> +		old_flags = p->flags;
->>   		br_multicast_set_pg_offload_flags(p, !err);
->> +		if (br_mdb_should_notify(br, old_flags ^ p->flags))
->> +			br_mdb_flag_change_notify(br->dev, mp, p);
->>   	}
->>   out:
->>   	spin_unlock_bh(&br->multicast_lock);
-> 
-
-+ notsupp:
-	kfree(priv);
+Cheers,
+Prabhakar
 
