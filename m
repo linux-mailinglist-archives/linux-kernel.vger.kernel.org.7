@@ -1,118 +1,142 @@
-Return-Path: <linux-kernel+bounces-589323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07230A7C49F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 22:09:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7569A7C4B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 22:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F2BE17AF3C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 20:05:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48B0A3AC081
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 20:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555C023C8B2;
-	Fri,  4 Apr 2025 19:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2A0258CC9;
+	Fri,  4 Apr 2025 19:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="emZHNJ4B"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjtTrgfB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18CC23CEF8
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 19:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B26258CC2;
+	Fri,  4 Apr 2025 19:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743795673; cv=none; b=uWHFACiacm5zLu9EjORTQrCxFpKfeO4kqno4ea5FASqHxGF6jaCefKLK3QnNa7oLYUEk/NOCgtnsBO4IrdEgytJOlrB1Oc6Whkq3br5116mvJYKb2pCpDB/zt0BmsfuLYcdl+z9q5FcL+kYO8UfWRCs4wpT6cYh5PnHj161l3dY=
+	t=1743795882; cv=none; b=NBBZRiOLrO5CdQkxXvw6YU5IzYfxVIXUxRoDy65JTquy0TcwT+AbF3dMSNI4+JLIJAzg2Jt+ZmGlNumGNcbj62QlqsKwix8wgg+ZQaqGKimUjRuKjknoQqrejXfeGxbYhsRDZiGUrUbPd6gH0fi3U8Kjl5wSBsEsiFzVazyDYPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743795673; c=relaxed/simple;
-	bh=KYPkJmO2WKGa6Hqkv2jcYDUkv0LZapz25ye+QSx983M=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PZl20tAQJXfAtMWMCUcGK0jzFpq/r2rWKKnvkAdliOv40JyY7CyDDD9zqEFeqPNYgwQlhJakE4/zfR2y91uKE4WKGEk11PgYHjnT0cLK9B0JbZ4Beyebm0JO+ptEHT09inevHvjWGSJ4mAgu0Be2OM7A9gHmyHZsZUbxAx74bNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=emZHNJ4B; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-739071bdf2eso1813844b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 12:41:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743795671; x=1744400471; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=BuUmn/v/nxN4sDhjuaKZdNs4Kj9VqwHUaANP0XC6c7s=;
-        b=emZHNJ4Bgx+OH+ONebVt6qqPMrMZOspA40S2cgRxABBCl5kNVYE+36Xm4TnuhvHrO4
-         NGhQ8eVaZKB4m8b5/MidNdMgq1OQXxfVthYmQhDoN+LJ5mx0yCaWHLof6yaMC4/T/CGr
-         njlCZbdEBVWIV18/1MQKhCclAL2ntNrDNL5c055zPjkEaNqKb915HHYPuJOmMFpIsVfj
-         w+ROL/kzIajjWBWBFrmLnTklHjyUEiZncCp3Nl4sL8PR6w1fOHHLhJbGmXUJQfdTSKDQ
-         WJHAkVualMB/8lwGJ5Kh/xpR0PRMzBAdJw+Ntbq9+z+TVbJyk9DRsE3iRVyew8TI9mVN
-         13ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743795671; x=1744400471;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BuUmn/v/nxN4sDhjuaKZdNs4Kj9VqwHUaANP0XC6c7s=;
-        b=kqclurQI4DYgi65DSKn+dW7mPRsChqHsaXJYu3MlFKg5UWZ7z48g3wJstcYqXtZITc
-         APVAXCUjfVEvxiMGq1idGzeeKUvPo8F/p8OHI85e8fDs7vhZHxHww4T74xBl/DFUGNvk
-         9w0prRs3YVM5x25TR5JHcGK6MlFxsUtHbk4IN54JOMJRwHtGCszaQ3VJr3i+doZt4jx6
-         vYLf/0UxUJkPZwVJ8y38McPz3z8j09H7vud5wDNein+ksTZJC54ce9WxmRhRoT+aER1d
-         2Y5susc7ne5H1nVdkseP/shXDxWy/0PcaRUSiWwZn6VW4a53+dMQXjzZynhJRn2XmzHs
-         Z+5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVGOi+tuRZ4X5q1OndOvSz0WmP4obrWRv/YH0nLhkQub6/q++ktYaMUDuqKFLHxUwKoTQaqwk2J1sns3cQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+XvR3zfo5EorRraj9NhvRVmTSPddYCvuI8X3yPZ22tv7NljKI
-	WXbucgOtK84TRDho/0osyd94IPmj3x0MTgMQMktlbRZ9too8w0DHnRvWUGsbisorBSaAgkv7Emt
-	vcQ==
-X-Google-Smtp-Source: AGHT+IGn6VyFDYgNExRPxop+TDl4ttE1iIR8bH26Vp9Pjy1Orp1wUriDPA6oU50ESKKN1WjXv/GYXHS2yHo=
-X-Received: from pfbjw34.prod.google.com ([2002:a05:6a00:92a2:b0:730:5761:84af])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:4653:b0:736:a540:c9ad
- with SMTP id d2e1a72fcca58-73b6b8f82e9mr711650b3a.20.1743795671518; Fri, 04
- Apr 2025 12:41:11 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  4 Apr 2025 12:39:04 -0700
-In-Reply-To: <20250404193923.1413163-1-seanjc@google.com>
+	s=arc-20240116; t=1743795882; c=relaxed/simple;
+	bh=uFk4xVJsOFMvSdLT5YQiyK9BCbFlv5ZfVSfjcUtKDH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QJQ63yHqCSmbr0xJx6WSOs7juPJ0kSEkaQzwMMMHf2H9uY3ntsGy43yYzhSXE5r39BfwcoJeaOlyPn7oAhk9fBtmkRxsKwshL/6ir2lTYlYd7Y77Rm0ZwPF0dJYr475mIUox2z/ZFeViladRn8E7y3ARSYRRorr8WFcLf1jEjds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KjtTrgfB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BB77C4CEDD;
+	Fri,  4 Apr 2025 19:44:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743795882;
+	bh=uFk4xVJsOFMvSdLT5YQiyK9BCbFlv5ZfVSfjcUtKDH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KjtTrgfBBVjaG36XOjc58PwSurzBar7ba+BW1ikSrfESFXEJFPkhFrS8BDuO3hV0Z
+	 XaKXvR00S1B6rWnoXMoD58JIkrGEpjKVcHYwxnf8MOqPwxTglE0cFU7V2cmH8Dogq+
+	 BjVSnHTZGmCc+GOin86nkGOg7mj4adoEOxSOeyhlzV+bKCZy9n8bbqgD6zcDprb5tq
+	 kriNqX2BfHqBTPdY6lCCNCQh0ZqJBquVadul6PGJG0hXfl34XYrX8aB7TAOvsU5q5k
+	 1kJT1qm+wFsdAMp2zu5bhory8Zg1D8gMGQ2bbqe5mSclfTtXl7fxot8b/VD/W3+RRM
+	 ymUxc2l17Fu6Q==
+Date: Fri, 4 Apr 2025 21:44:39 +0200
+From: Daniel Gomez <da.gomez@kernel.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, 
+	"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org, willy@infradead.org, 
+	linux-mm@kvack.org, Bagas Sanjaya <bagasdotme@gmail.com>, gost.dev@samsung.com, 
+	linux-doc@vger.kernel.org, Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH v3] docs: update THP admin guide about non-tmpfs
+ filesystem support
+Message-ID: <kjmyope67af54eagiatlgph7bo4lgzy6jyut7z6elzartkoogy@eon2qkiwdbab>
+References: <20250404140657.29285-1-kernel@pankajraghav.com>
+ <Z-_7fzU02OU1hVOT@bombadil.infradead.org>
+ <09c13770-4d62-430a-827d-6ad35411d18c@redhat.com>
+ <Z_Ad0MsSAuAGevgm@bombadil.infradead.org>
+ <427f683b-ac68-4820-b264-4016b34df592@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250404193923.1413163-1-seanjc@google.com>
-X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250404193923.1413163-50-seanjc@google.com>
-Subject: [PATCH 49/67] KVM: SVM: Don't check for assigned device(s) when
- activating AVIC
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Joerg Roedel <joro@8bytes.org>, David Woodhouse <dwmw2@infradead.org>, 
-	Lu Baolu <baolu.lu@linux.intel.com>
-Cc: kvm@vger.kernel.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Joao Martins <joao.m.martins@oracle.com>, 
-	David Matlack <dmatlack@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <427f683b-ac68-4820-b264-4016b34df592@redhat.com>
 
-Don't short-circuit IRTE updating when (de)activating AVIC based on the
-VM having assigned devices, as nothing prevents AVIC (de)activation from
-racing with device (de)assignment.  And from a performance perspective,
-bailing early when there is no assigned device doesn't add much, as
-ir_list_lock will never be contended if there's no assigned device.
+On Fri, Apr 04, 2025 at 09:07:23PM +0100, David Hildenbrand wrote:
+> On 04.04.25 19:58, Luis Chamberlain wrote:
+> > On Fri, Apr 04, 2025 at 06:18:12PM +0200, David Hildenbrand wrote:
+> > > On 04.04.25 17:32, Luis Chamberlain wrote:
+> > > > On Fri, Apr 04, 2025 at 04:06:57PM +0200, Pankaj Raghav (Samsung) wrote:
+> > > > > From: Pankaj Raghav <p.raghav@samsung.com>
+> > > > > 
+> > > > > THP support for non-tmpfs filesystem has been around for some time now.
+> > > > > Update the admin guide to reflect it.
+> > > > > 
+> > > > > While we are at it, move FilePmdMapped to previous paragraph for clarity,
+> > > > > and clarify ShmemPmdMapped & ShmemHugePage.
+> > > > > 
+> > > > > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> > > > > Acked-by: David Hildenbrand <david@redhat.com>
+> > > > > ---
+> > > > > 
+> > > > > Changes since v2:
+> > > > > - Address comment from Bagas Sanjaya
+> > > > > - Squash commits and Ack from David
+> > > > > 
+> > > > >    Documentation/admin-guide/mm/transhuge.rst | 22 +++++++++++++++-------
+> > > > >    1 file changed, 15 insertions(+), 7 deletions(-)
+> > > > > 
+> > > > > diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+> > > > > index dff8d5985f0f..f8aae64e38d0 100644
+> > > > > --- a/Documentation/admin-guide/mm/transhuge.rst
+> > > > > +++ b/Documentation/admin-guide/mm/transhuge.rst
+> > > > > @@ -12,8 +12,8 @@ using huge pages for the backing of virtual memory with huge pages
+> > > > >    that supports the automatic promotion and demotion of page sizes and
+> > > > >    without the shortcomings of hugetlbfs.
+> > > > > -Currently THP only works for anonymous memory mappings and tmpfs/shmem.
+> > > > > -But in the future it can expand to other filesystems.
+> > > > > +Currently, THP only works for anonymous memory mappings, tmpfs/shmem and
+> > > > > +filesystems that support large folios.
+> > > > 
+> > > > That seems to allude that THP can be supported on filesystems
+> > > > that suppor large folios. I don't think we want to call that THP
+> > > > and that can confuse folks. Leaving "currently" also seems to
+> > > > indicate that there is more work to be done for THP for filesystems
+> > > > but that's not true as well. So how about something like:
+> > > > 
+> > > > THP only works for anonymous memory mappings, and the tmpfs/shmem is the only
+> > > > filesystem to support it. The alternative to THP for other filesystems is to
+> > > > support large folios and with it you can end up using huge pages
+> > > 
+> > > That makes things more complicated without a good reason.
+> > > 
+> > > See CONFIG_READ_ONLY_THP_FOR_FS as an early usage of the term "THP" for
+> > > stuff we have in the pagecache.
+> > 
+> > OK.
+> > 
+> > > (with large folios we now properly implement
+> > > this concept, and support more than only PMD size)
+> > 
+> > Do we really want to call large folio support on filesystems THP?
+> 
+> Good question.
+> 
+> "folio" is just the metadata we currently use to manage a chunk of memory,
+> and a "large folio" is one that spans more than a single page -- huge page,
+> large page, super page, ... in the past the metadata for that used to be a
+> complicated piece of "compound page". In the future, we might call it
+> differently (struct file_mem ?), who knows.
+> 
+> So "large folio" support in a fs allows for the usage of these larger chunks
+> of memory (huge pages).
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/svm/avic.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
-index fc06bb9cad88..620772e07993 100644
---- a/arch/x86/kvm/svm/avic.c
-+++ b/arch/x86/kvm/svm/avic.c
-@@ -741,9 +741,6 @@ static int avic_set_pi_irte_mode(struct kvm_vcpu *vcpu, bool activate)
- 	struct amd_svm_iommu_ir *ir;
- 	struct vcpu_svm *svm = to_svm(vcpu);
- 
--	if (!kvm_arch_has_assigned_device(vcpu->kvm))
--		return 0;
--
- 	/*
- 	 * Here, we go through the per-vcpu ir_list to update all existing
- 	 * interrupt remapping table entry targeting this vcpu.
--- 
-2.49.0.504.g3bcea36a83-goog
-
+I'm a bit confused here. I thought the term 'huge pages' referred to specific
+page table level like PMD, PUD, or PGD (and not PTE). And "large folio" term can
+span up to anything (currently up to PMD). Could you clarify if I'm
+misunderstanding something?
 
