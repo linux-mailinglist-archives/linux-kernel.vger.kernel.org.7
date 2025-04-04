@@ -1,103 +1,166 @@
-Return-Path: <linux-kernel+bounces-589051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F068EA7C11E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:58:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7086A7C12B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC75D17C4F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:58:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 194FC3BBAB0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402561FF1C4;
-	Fri,  4 Apr 2025 15:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874A3202C27;
+	Fri,  4 Apr 2025 16:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PhqJS6CB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GUYU/YR4"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BB21FF1A3
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 15:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5716E20102A
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 16:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743782302; cv=none; b=m0meR48ryPk30bSYQM08DNZNjBvfIj2e6L3rwCSbCNSxnrSaLWYvktNu6sK1JXroF6cUarvPU0lbcbJKOfE1ZNT/sYEAJIhR/FGfOtCPBaUKtsYgm8/z8uidNbl/zbRs1TFw8dFu1wCGRkoCIrJjPcLEDyly4bxhhqpeq5nnJ0U=
+	t=1743782413; cv=none; b=vGuII8gB8TrkzvLGutV0Xml1Vc5/nJb+iNZVpr81YJ08au2COS+xm36lBvyhpLVyzU9pMDlbYQSO3T/SprSEdYH1+OGJsgo12hhIDY/oWZE1fpfbkEzEAWcA9/yP3w2nawFq2OfHb545LmJWhdWtWfsvBHIcI+4fFgSMlrbWKWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743782302; c=relaxed/simple;
-	bh=tRKOkfd6qLJFQE7R23p8Xc/vjAtr8M2K9QIPcFzV9Ag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p61VXnpVYe4rw6+sD6KYI65KZfPonFzRc0SQRIgZHxgt5mcheQFnfCjYFfWjjWGhSYZF5oRCDu2KPn+DMeOSJbh120RTwiZksaingeEyN5CwHgxCFMiSqRET+wDSd1l7w/OxExsXb+Gvp0ALhiNImElzipZFQDsmzEoAYc4i/Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PhqJS6CB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D617EC4CEDD;
-	Fri,  4 Apr 2025 15:58:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743782302;
-	bh=tRKOkfd6qLJFQE7R23p8Xc/vjAtr8M2K9QIPcFzV9Ag=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PhqJS6CB9ljx49n4bTwoc+W4UoiVPaXAHlrw0XMHrE+ZQfoNuNTgGE6REnb11MSsh
-	 jjJd7dGrHDC1gBnJhb+Gst5w7SXVInNzlrzJoroXgszPdR9qJSDGa1aNXd0FM+Lrc3
-	 B1ZFOhfLwpxMEybw3P/j7znRIJ/Irt+5bLn2a+l6jkjxG5IfZnJw+yhdlk9qPzbsIz
-	 GqM5oOpTK+N0MWzXR51dZ9UGQlaaW0LOKFX17mBiLrbYn8iRKkQl369Tgkx1BgrR/5
-	 iGXTzAxzjOH/hzM17W8FsHfhQeBDYZrBnDDarQvle1HlFySurbhnJ0suvqyhFXYo7P
-	 9SFJ+qsMESBoA==
-Date: Fri, 4 Apr 2025 16:58:14 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, anshuman.khandual@arm.com,
-	joey.gouly@arm.com, maz@kernel.org, oliver.upton@linux.dev,
-	frederic@kernel.org, james.morse@arm.com,
-	hardevsinh.palaniya@siliconsignals.io,
-	shameerali.kolothum.thodi@huawei.com, huangxiaojia2@huawei.com,
-	mark.rutland@arm.com, samuel.holland@sifive.com,
-	palmer@rivosinc.com, charlie@rivosinc.com,
-	thiago.bauermann@linaro.org, bgray@linux.ibm.com,
-	tglx@linutronix.de, puranjay@kernel.org, david@redhat.com,
-	yang@os.amperecomputing.com, mbenes@suse.cz,
-	joel.granados@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, nd@arm.com
-Subject: Re: [PATCH v2 4/4] tools/kselftest: add MTE_STORE_ONLY feature hwcap
- test
-Message-ID: <8cd07b7b-0795-485a-86f1-bc3a68be7820@sirena.org.uk>
-References: <20250403174701.74312-1-yeoreum.yun@arm.com>
- <20250403174701.74312-5-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1743782413; c=relaxed/simple;
+	bh=i6fHHtGYStakIe7Bg90EBteiVZckGCsMnn2RXRw1nM8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jxCYaG21R/w8vNQ2oEDAtbsjdZasxL128jIvTgX/TOzNR0UOXIpYXbtPy09s1Owx1gst8185dN5wAOYS9HXd8CjGfMiB5aIYej5ZWoUjhnTCZwv9cbOl3Ot5UgxVSKnR4nu1AhhxPEY5g2DnqRO5ePudP/SCnzzP978qXNPyC1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GUYU/YR4; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=P5VYLYdEkeWgyeWX/EZa0WnpJ73Q8FAesiLU/ww7Cxs=; b=GUYU/YR47lcF88YQE7EH7TpKB2
+	zN7AKKvvGE+bbZSCVfqr/oyxCsvOKug18HG2HLPn2hzCCyr28tFqyGD9WE8XnLgGAI3tZkFoNGjRO
+	OgjbHNJH1PDByFVu8pm8ZivdCL5MEV/GNaFUfd+wAfiibiI9zWlpJtBcaljmCVRXvO2F5RxGRDFcv
+	n+kIPUAtdP9Y82yL00kM9ObdiypoF5byTbPDzb62xDr08XwYD5r8jUm8sLxrmkORJzVZ3UuKodDTs
+	Em+8VmA6k36CwWivAtW5UVU9ugF9e40TqXDlsMyj8sHumr6FwIMVgjq+YOd/BBlhaaZ+R0N+DDoUj
+	9yqvaGVQ==;
+Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u0jSc-00000007QOy-0YLc;
+	Fri, 04 Apr 2025 16:00:02 +0000
+Received: from dwoodhou by i7.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u0jSZ-0000000ERSB-2cgL;
+	Fri, 04 Apr 2025 16:59:59 +0100
+From: David Woodhouse <dwmw2@infradead.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Sauerwein, David" <dssauerw@amazon.de>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mike Rapoport <rppt@linux.ibm.com>,
+	Will Deacon <will@kernel.org>,
+	kvmarm@lists.cs.columbia.edu,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [RFC PATCH v2 1/7] mm: Introduce for_each_valid_pfn() and use it from reserve_bootmem_region()
+Date: Fri,  4 Apr 2025 16:59:53 +0100
+Message-ID: <20250404155959.3442111-1-dwmw2@infradead.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="PMkyeU5nDe5fyzdI"
-Content-Disposition: inline
-In-Reply-To: <20250403174701.74312-5-yeoreum.yun@arm.com>
-X-Cookie: You will soon forget this.
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: David Woodhouse <dwmw2@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
+From: David Woodhouse <dwmw@amazon.co.uk>
 
---PMkyeU5nDe5fyzdI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Especially since commit 9092d4f7a1f8 ("memblock: update initialization
+of reserved pages"), the reserve_bootmem_region() function can spend a
+significant amount of time iterating over every 4KiB PFN in a range,
+calling pfn_valid() on each one, and ultimately doing absolutely nothing.
 
-On Thu, Apr 03, 2025 at 06:47:01PM +0100, Yeoreum Yun wrote:
-> add MTE_STORE_ONLY feature hwcap test.
+On a platform used for virtualization, with large NOMAP regions that
+eventually get used for guest RAM, this leads to a significant increase
+in steal time experienced during kexec for a live update.
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+Introduce for_each_valid_pfn() and use it from reserve_bootmem_region().
+This implementation is precisely the same naïve loop that the function
+used to have, but subsequent commits will provide optimised versions
+for FLATMEM and SPARSEMEM, and this version will remain for those
+architectures which provide their own pfn_valid() implementation,
+until/unless they also provide a matching for_each_valid_pfn().
 
-Usually the subject would be kselftest/arm64 BTW.
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+---
+ include/linux/mmzone.h | 10 ++++++++++
+ mm/mm_init.c           | 23 ++++++++++-------------
+ 2 files changed, 20 insertions(+), 13 deletions(-)
 
---PMkyeU5nDe5fyzdI
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 25e80b2ca7f4..32ecb5cadbaf 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -2176,6 +2176,16 @@ void sparse_init(void);
+ #define subsection_map_init(_pfn, _nr_pages) do {} while (0)
+ #endif /* CONFIG_SPARSEMEM */
+ 
++/*
++ * Fallback case for when the architecture provides its own pfn_valid() but
++ * not a corresponding for_each_valid_pfn().
++ */
++#ifndef for_each_valid_pfn
++#define for_each_valid_pfn(_pfn, _start_pfn, _end_pfn)			\
++	for ((_pfn) = (_start_pfn); (_pfn) < (_end_pfn); (_pfn)++)	\
++		if (pfn_valid(_pfn))
++#endif
++
+ #endif /* !__GENERATING_BOUNDS.H */
+ #endif /* !__ASSEMBLY__ */
+ #endif /* _LINUX_MMZONE_H */
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index a38a1909b407..7c699bad42ad 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -777,22 +777,19 @@ static inline void init_deferred_page(unsigned long pfn, int nid)
+ void __meminit reserve_bootmem_region(phys_addr_t start,
+ 				      phys_addr_t end, int nid)
+ {
+-	unsigned long start_pfn = PFN_DOWN(start);
+-	unsigned long end_pfn = PFN_UP(end);
++	unsigned long pfn;
+ 
+-	for (; start_pfn < end_pfn; start_pfn++) {
+-		if (pfn_valid(start_pfn)) {
+-			struct page *page = pfn_to_page(start_pfn);
++	for_each_valid_pfn (pfn, PFN_DOWN(start), PFN_UP(end)) {
++		struct page *page = pfn_to_page(pfn);
+ 
+-			init_deferred_page(start_pfn, nid);
++		init_deferred_page(pfn, nid);
+ 
+-			/*
+-			 * no need for atomic set_bit because the struct
+-			 * page is not visible yet so nobody should
+-			 * access it yet.
+-			 */
+-			__SetPageReserved(page);
+-		}
++		/*
++		 * no need for atomic set_bit because the struct
++		 * page is not visible yet so nobody should
++		 * access it yet.
++		 */
++		__SetPageReserved(page);
+ 	}
+ }
+ 
+-- 
+2.49.0
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfwAZUACgkQJNaLcl1U
-h9BWowf/R3vl/2tkx4iIVwMuzIG9MRQHR602mNzSvNgq8KueHzVfm1Oy4T7LMc5a
-sMSfEZ9vr+fBe8oRVtOSZjY53YzxvTjonEIB6bxOn11g5ylY57TFb2GmLBusWrg8
-/BVsagQj8qQR2t+blKH8h9lKz69LRpENjYhOFNeDoUHmBb3R4DtyCXJeN3bvIYWy
-1tOmOLooMSvfyWOzOZFt6jRAvzA1Zk1GcE9sM0m/WZiTVOoPudGmnfsU/gGSqa9E
-1I9yteqyNTciwAFdvvq6D3ADwhIUkKSF2/4a5IBVcd32OXzF2OZmpuPM0xYy6tEK
-QBo1DMuuW4YYtpKVMLHE94JWq7rZvg==
-=WmZg
------END PGP SIGNATURE-----
-
---PMkyeU5nDe5fyzdI--
 
