@@ -1,94 +1,141 @@
-Return-Path: <linux-kernel+bounces-588868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43AB8A7BE85
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:58:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0671A7BE84
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D168E189902C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:56:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D7973BA44E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7E31F3FD9;
-	Fri,  4 Apr 2025 13:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2918A1F462C;
+	Fri,  4 Apr 2025 13:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8X4mXMS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SOVxdayl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03381F099F
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 13:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8211F3FD2
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 13:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743774944; cv=none; b=Cc/KLzDZf8NMKQBGVqY+zNTdf4tVS18eHubc7GcAo1/r7K0PIMMzfVAyiLSgb/lLhjdUbRPNDCpV0G9CU4yxV2VhTBQMzQR9ZojWYuvc5VMn20FmLRRcelWLUVKRJ08hUHib37sSl9vDwcb/6WZ3EgB47K15cuHavO3LSNCWOvQ=
+	t=1743774969; cv=none; b=WK4kawTuIbQp0UnPJe4jFDNTl1ZolauYKFuxjeL8khmzzLvRqD2NLcbBcDD20HsKtnsNdlEdNOIKYlspFiQaUYHQMe13RmbvXJQf+CFoGQ3zeDw9SimxQRjZi0hACJXc2SP1ETBEfz747JOIcewWE7RxlvCPTplchgVYyz/Z1/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743774944; c=relaxed/simple;
-	bh=Kx1OpLDuulU5vHnkD3e+tPyIzf8nbonalB79VzM2jQU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WiKw7TYDI1pjIuBP7MgItXIso7ak6/KORWLPL6TA6dgzoFl6XgbwbafxPpTIKpbpN/UyMGpvENTTFRXJ09TWVVbttYDQJ2nroaUOoYe7J1pHNm0r73HjaiWfQtCEJmp6D2isIk80/uEQBc2/Lj9vsUsNKOKTMMn6dSM18lThaO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8X4mXMS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED2BFC4CEDD;
-	Fri,  4 Apr 2025 13:55:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743774943;
-	bh=Kx1OpLDuulU5vHnkD3e+tPyIzf8nbonalB79VzM2jQU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=R8X4mXMSNc1Dauow/CPDn2TWiHdIKUTPE/PHHXI3QD3ay4q1n4hTFELkp5DmIXNbz
-	 KJzgazu6K3g6eCM1H6/0WascGMXeGjK+ypLY+1H6ZbWXv0fQi/HWKdENiQRPJ7VZyg
-	 +rIJ/x1GxOP8egb1gJK8BCM355TtpJEzQRcjzDokFLWD/lkMvvlqRMIsIGWsqUQDF/
-	 d2MOqThWnxbK/vQRChQbm9YssEBWkddPd5877KZ+vi9lX707fsZpl8u4gFhb+LGPY4
-	 +DqgtxST9Bkg80uIFNOCB6NnWpE+EVR/pTZzJaLaerMlfGWs3gkda+An5JO26VtlnM
-	 upPfJYwTzIQpA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] platform: turris: use ffs() instead of __bf_shf()
-Date: Fri,  4 Apr 2025 15:55:26 +0200
-Message-Id: <20250404135531.2421755-2-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250404135531.2421755-1-arnd@kernel.org>
-References: <20250404135531.2421755-1-arnd@kernel.org>
+	s=arc-20240116; t=1743774969; c=relaxed/simple;
+	bh=9Z5nMV9IYLL5j0FabMWUyd01PGQbHkohEb/0097qIE4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TAcLa90aDu3cSi2q3CJ2JWUeIitPQ4zVc/mMwLkinMM0FrpNgy2cx5fGHvXNtfLiMKa2fPoMcNIGezUjLkQIqrX4eOfESkDnD8EaEg9ocxPXO8RN4GFV034IlXoZ500mZMq2wJ3pHo5RkiYnrAz6REGdW9kTwvBSeICCL3ijWsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SOVxdayl; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743774968; x=1775310968;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9Z5nMV9IYLL5j0FabMWUyd01PGQbHkohEb/0097qIE4=;
+  b=SOVxdayl7qlXJUI9hDbTZroZXOUI90c8N1htMVS8BMFxK/ohMAfDfbRT
+   v2OLl4bs24YNyS7I4e94Mn5O3rgSngwbUTXWkK56CvGNGRC9psSp51ATk
+   HCySTYKs29bObi/+6nP6tbmyTgbYoT3TYU+P9war1wXtM2MDIRzvXJRlF
+   My24NB3UnK5PvMcaL/M5idUf/eDS5t1FrxZOqWl9GvSBvm50gh+8ditG4
+   /qVphPqI6qE4iNn5S9AjcMYzzff0d5a7Zq6K8jcoz7Rsd+sMaPa23cgWt
+   H9Q5n65ar1PrW0aYtRu5oedxBmEprnt83n7MRfq21VwFkND5p7ZfzCfZe
+   Q==;
+X-CSE-ConnectionGUID: NnLEf+BORoug1Q/KFn16bg==
+X-CSE-MsgGUID: 6IWYCvqQRS+HHAzC/dPznA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11394"; a="48867122"
+X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
+   d="scan'208";a="48867122"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 06:56:08 -0700
+X-CSE-ConnectionGUID: eMiMXG92QSKNsdwjK3yeAA==
+X-CSE-MsgGUID: VPV/R1boRsa+oDHZhi8beg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
+   d="scan'208";a="128225276"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 06:56:06 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u0hWd-000000099a9-0CWQ;
+	Fri, 04 Apr 2025 16:56:03 +0300
+Date: Fri, 4 Apr 2025 16:56:02 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, david.m.ertman@intel.com,
+	ira.weiny@intel.com, lee@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] mfd: core: Support auxiliary device
+Message-ID: <Z-_k8sLYNOxlkODo@smile.fi.intel.com>
+References: <20250403110053.1274521-1-raag.jadav@intel.com>
+ <2025040336-ethically-regulate-3594@gregkh>
+ <Z-_ESekESYYvMHeR@black.fi.intel.com>
+ <Z-_QwB1cExN1emMF@smile.fi.intel.com>
+ <Z-_SIbfBdMXXkkWG@black.fi.intel.com>
+ <Z-_X2j0yzyLCS3r2@smile.fi.intel.com>
+ <Z-_hBbqke1qPP_Gi@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-_hBbqke1qPP_Gi@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Fri, Apr 04, 2025 at 04:39:17PM +0300, Raag Jadav wrote:
+> On Fri, Apr 04, 2025 at 04:00:10PM +0300, Andy Shevchenko wrote:
+> > On Fri, Apr 04, 2025 at 03:35:45PM +0300, Raag Jadav wrote:
+> > > On Fri, Apr 04, 2025 at 03:29:52PM +0300, Andy Shevchenko wrote:
+> > > > On Fri, Apr 04, 2025 at 02:36:41PM +0300, Raag Jadav wrote:
+> > > > > On Thu, Apr 03, 2025 at 03:02:47PM +0100, Greg KH wrote:
+> > > > > > On Thu, Apr 03, 2025 at 04:30:53PM +0530, Raag Jadav wrote:
 
-__bf_shf() on a 64-bit variable causes a link failure during
-compile-testing:
+...
 
-drivers-platform-cznic-turris-omnia-mcu-gpio.c:(.text):undefined-reference-to-__ffsdi2
+> > > > > > > 2. Should we allow auxiliary drivers to manage their own resources
+> > > > > > >    (MEM, IO, IRQ etc)?
+> > > > > > 
+> > > > > > The resources are all shared by the "parent" device, that's what makes
+> > > > > > aux drivers work, they need to handle this as there is no unique way to
+> > > > > > carve up the resources here.
+> > > > > > 
+> > > > > > So I don't know how you would do this, sorry.
+> > > > > 
+> > > > > Perhaps we can carve it up in mfd_add_devices() using start and end members
+> > > > > and error out if they overlap.
+> > > > 
+> > > > I don't think we want a flag day. If anything, it should be a new call.
+> > > 
+> > > Yes, I mean in mfd_add_auxiliary_device() (as in this patch).
+> > > 
+> > > > > Can't we still have a struct resource that is unique to that specific
+> > > > > auxiliary device?
+> > > > 
+> > > > Oh, believe me, you won't do that. Save yourself from _a lot_ of troubles with
+> > > > different cases when the shared resources are required.
+> > > 
+> > > I think we already have ignore_resource_conflicts flag as part of mfd_cell,
+> > > no?
+> > 
+> > It's not so easy, and it's not the only thing that's needed. You can dive into
+> > it and see how the request of the resource work. Also note the hardware that
+> > has common registers. Again, using regmap solves most of these issues if not all.
+> 
+> What if there are multiple types of resources including multiple ones
+> of same type?
+> 
+> I know it's not common but we have such cases already in place.
 
-Open-code this using ffs()-1, which has the same result but avoids
-the library call.
+Don't solve the problems that do not exist. Let's make it simple (following
+KISS principle).
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/platform/cznic/turris-omnia-mcu-gpio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/platform/cznic/turris-omnia-mcu-gpio.c b/drivers/platform/cznic/turris-omnia-mcu-gpio.c
-index 932383f7491a..c2df24ea8686 100644
---- a/drivers/platform/cznic/turris-omnia-mcu-gpio.c
-+++ b/drivers/platform/cznic/turris-omnia-mcu-gpio.c
-@@ -1104,7 +1104,7 @@ int omnia_mcu_request_irq(struct omnia_mcu *mcu, u32 spec,
- 	if (!spec)
- 		return -EINVAL;
- 
--	irq_idx = omnia_int_to_gpio_idx[__bf_shf(spec)];
-+	irq_idx = omnia_int_to_gpio_idx[ffs(spec) - 1];
- 	irq = gpiod_to_irq(gpio_device_get_desc(mcu->gc.gpiodev, irq_idx));
- 	if (irq < 0)
- 		return irq;
 -- 
-2.39.5
+With Best Regards,
+Andy Shevchenko
+
 
 
