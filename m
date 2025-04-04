@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-588910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4A1FA7BF28
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:27:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC6ABA7BF30
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:27:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52F5E17AF5A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:27:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D009B7A8BFC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBAB1F0E51;
-	Fri,  4 Apr 2025 14:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519AA1F461A;
+	Fri,  4 Apr 2025 14:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="rfO4hfjY";
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="TF7X/YOc"
+	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="scsCbRvj";
+	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="khIM76ro"
 Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9A81A238C;
-	Fri,  4 Apr 2025 14:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC141F3D30;
+	Fri,  4 Apr 2025 14:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743776826; cv=none; b=ZokEVLISfET2pA8UthtH1+WC5c1UFcJU9nLff2y6ijVzRDN3SsKy8EGDK3fe9hUiD9OLUFWc6TofsKGJ04j/Y7z0VgkzCD2O4iyhxmmBMPS6VDTRy9z43t5H9MSkbBh+iEG8IVAFQkhhgtgalt/dHaEPXY0ijfb4y9gevkePrf4=
+	t=1743776832; cv=none; b=pNhhvqFRhJ25Wy4J1TF5XN0R0qNNis1ZFy3FYpULQD7XphfeVQsUqKHGW759c1HR/ijb9YRC4K/G46HpChFvRWSeAyBm6rnC/E/nGqZm1UVUfzNuv+TErNE6RG4xwAUB2yFcPaauAB2qLc3MXtaQbopbmLEu1DQiAHYp+vrLjNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743776826; c=relaxed/simple;
-	bh=BinFXEu5xJ5P6GQ2tSNl4s/I+Bg9wAd2jeLycIJNcGE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hAP9laUln9+JgZR1o4OmD0RA3w4V+bUDRDgx+mhe7wZiq0nkfL1qcVL+GFXyu3EWr7Hbi3jbAAzosPTwl4DI3MB3KmCIshCC1VAcuyi4e8jUJIRr0YLBB54VLRfccwU6uzh5FPp5FEjHjJFXrQQUZ2gmjzv8SBtiXx/Q65bYJ24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=rfO4hfjY; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=TF7X/YOc; arc=none smtp.client-ip=220.130.44.152
+	s=arc-20240116; t=1743776832; c=relaxed/simple;
+	bh=IZf/xxGcYBAihPyiyMwq84uot911iPHskOgruSFtiJE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qOtJAXd51THSxO+ZmbW1BnbrK/s4yIUFxLwvHpm6MuTI/YSJeKgXJOKxJYGaBnAY8BZpyD7SX/1ZtHQozZWnpcqy79J06uuzvmMoWclEiBiUs/Jjt1XXxzwPJT9tl6E9XUjs3rwVqXFAh93yuJ+ayO+cXS4cWQQ87NsemCYY9so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=scsCbRvj; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=khIM76ro; arc=none smtp.client-ip=220.130.44.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
 X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1743776821;
-	bh=lKHyVuep4L/EA1oyYLoYQ61TnGK9fi+8Aheuj8YJrdY=; l=1004;
+	s=richtek; t=1743776827;
+	bh=BXieB1tP6ySclyMCYJn0N7Bd99EORXPRe8SwVTykICw=; l=1778;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=rfO4hfjYwgQw1JFYd6QWp/MDWJEL+aPGD5iz8pT3rc8TxnjIZEXDDcGSgLNANT4UB
-	 H7nU21AsXU7AX/0CXn8lZqD6JDxlVii0h2bGR/+lB2Y+GTdCeD+INPydl7xKEDF1EE
-	 ib1ERPxlq5wZRnfxVadec86MPlOMuJooQOAYmRcLy5zSGNiHXJkyIcrVKWOFxxWll+
-	 JPe9TGRt0GuG+BG5ijkOMRXHBcNl2mN+FacCTog82qvKkNhGeWyuaDORH375vc1hI8
-	 FdK8JM0hycyLzlSuA21nYhS99XWPEo5kjH8LvQFlTut8yzCHCck7TgqnPw0TvVhSoe
-	 w/BVOFFnfAwJA==
+	b=scsCbRvjh9jzLrhAvKtXhb+b3kElrEhqo6iLxbJlKIeTMjJK/jhAjNFj/o7nhu2vc
+	 ThOdFpfI7CscS1q8HBKTajiCrXahieityiNo+oJiDmmaPKSkkvaE2fgnNAKqXc9eAR
+	 kzf7WdJ8QCHkOirOe6xSoJtL/JLkwKyo+6SZe9I8trHeV3cyEH3hYyBov/TvjNMsDV
+	 V8EL0agI3Wm3W7Z760AWHSqooVJgXy7q1sBJWZJYAMnft075NcbaHaCo4qdQVqrTzj
+	 Z1hA28xGrQ43c8Uz4LSA/WezfFnmM6dHW3ING5ghsdTNGv4FWH5sLnYjzv3hO0NfJn
+	 KQGfCaRTHL04w==
 Received: from 192.168.8.21
-	by mg.richtek.com with MailGates ESMTP Server V3.0(1128086:0:AUTH_RELAY)
+	by mg.richtek.com with MailGates ESMTP Server V3.0(1128078:0:AUTH_RELAY)
 	(envelope-from <prvs=11846F16CF=cy_huang@richtek.com>); Fri, 04 Apr 2025 22:26:58 +0800 (CST)
 X-MailGates: (compute_score:DELIVER,40,3)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
 	s=richtek; t=1743776818;
-	bh=lKHyVuep4L/EA1oyYLoYQ61TnGK9fi+8Aheuj8YJrdY=; l=1004;
+	bh=BXieB1tP6ySclyMCYJn0N7Bd99EORXPRe8SwVTykICw=; l=1778;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=TF7X/YOchb44Ls5Vgdrd7PnEPXBldCfrecLaiopuMxpkuyr0++bnv4z0lNqFd0rkl
-	 nL2ijOjM32OmAMomO4EhbowKIFXiCJv8TuUzbPihJwoTqUYUCaHbacjIAcHnJa2SlR
-	 xxH9faEzalCZYovHLgk69NadlE5m/9HCc1Rl+SCniMKArJ7KNdiKLsa1tM/oQfHXJf
-	 5QQCNjGnFvoEIU14BkDlpuiIvqH3sSuxmaWi+0w5lbt+ngx0rYi9YcvznboXB46QCp
-	 TbsDXYFhQq07sa5zLTIaOml9sgf5fu9VeSmlJJEfLEeIPUQ4A6sRqmQDZsfZBFCtTv
-	 GrSkVhZJX1Y3w==
+	b=khIM76rolzfviPgrJK/AeI6sPI2Jua9XaGSvRAGIt4aEIlHRli736fqSGafkDsnzs
+	 ClM9ecGsVAHINU98QzR+MyCOGXZnUoMtcbUcEOL0kwybvBKESNpsDTL0ylkaLpy+1R
+	 /gmiTVtn/XmAoH2F0hjXyXKl3PTK/NQo4JDMk11UsWoUXEro8XXw4KoaxbbvMPOSEr
+	 0bztuXIXU84VVQ9+eLvtLMbtLVjz5+VUDUr5Qx0bJlmNaqdyjhULbob5moiCSqqFw+
+	 ZjqeJbo/u3HBzDOl/z8BS7nhYPZAp0DJdusc6ZjJhL4muQvLTwdgpTVj1b5zRW/7E2
+	 +cUqOftNTZi9A==
 Received: from 192.168.10.46
 	by mg.richtek.com with MailGates ESMTPS Server V6.0(1629328:0:AUTH_RELAY)
 	(envelope-from <cy_huang@richtek.com>)
@@ -72,10 +73,12 @@ CC: Rob Herring <robh@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
  Huang <cy_huang@richtek.com>, Otto lin <otto_lin@richtek.com>, Allen Lin
 	<allen_lin@richtek.com>, <devicetree@vger.kernel.org>,
 	<linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 0/4] ASoC: Add Richtek rt9123 and rt9123p support
-Date: Fri, 4 Apr 2025 22:22:10 +0800
-Message-ID: <cover.1743774849.git.cy_huang@richtek.com>
+Subject: [PATCH 1/4] ASoC: dt-bindings: Add bindings for Richtek rt9123
+Date: Fri, 4 Apr 2025 22:22:11 +0800
+Message-ID: <5e71cd584b1e96cb34375b00a1be67d108d3a08b.1743774849.git.cy_huang@richtek.com>
 X-Mailer: git-send-email 2.43.5
+In-Reply-To: <cover.1743774849.git.cy_huang@richtek.com>
+References: <cover.1743774849.git.cy_huang@richtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,29 +90,76 @@ Content-Type: text/plain
 
 From: ChiYuan Huang <cy_huang@richtek.com>
 
-This patch series adds Richtek rt9123 and rt9123p support.
-It's a 3.2W mono Class-D audio amplifier.
+Document the ASoC Richtek rt9123.
 
-ChiYuan Huang (4):
-  ASoC: dt-bindings: Add bindings for Richtek rt9123
-  ASoC: codecs: Add support for Richtek rt9123
-  ASoC: dt-bindings: Add bindings for Richtek rt9123p
-  ASoC: codecs: Add support for Richtek rt9123p
-
- .../bindings/sound/richtek,rt9123.yaml        |  56 ++
- .../bindings/sound/richtek,rt9123p.yaml       |  50 ++
- sound/soc/codecs/Kconfig                      |  15 +
- sound/soc/codecs/Makefile                     |   4 +
- sound/soc/codecs/rt9123.c                     | 484 ++++++++++++++++++
- sound/soc/codecs/rt9123p.c                    | 171 +++++++
- 6 files changed, 780 insertions(+)
+Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
+---
+ .../bindings/sound/richtek,rt9123.yaml        | 56 +++++++++++++++++++
+ 1 file changed, 56 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/sound/richtek,rt9123.yaml
- create mode 100644 Documentation/devicetree/bindings/sound/richtek,rt9123p.yaml
- create mode 100644 sound/soc/codecs/rt9123.c
- create mode 100644 sound/soc/codecs/rt9123p.c
 
-
-base-commit: a2cc6ff5ec8f91bc463fd3b0c26b61166a07eb11
+diff --git a/Documentation/devicetree/bindings/sound/richtek,rt9123.yaml b/Documentation/devicetree/bindings/sound/richtek,rt9123.yaml
+new file mode 100644
+index 000000000000..5acb05cdfefd
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/richtek,rt9123.yaml
+@@ -0,0 +1,56 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/richtek,rt9123.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Richtek RT9123 Audio Amplifier
++
++maintainers:
++  - ChiYuan Huang <cy_huang@richtek.com>
++
++description:
++  RT9123 is a 3.2W mono Class-D audio amplifier that features high efficiency
++  and performance with ultra-low quiescent current. The digital audio interface
++  support various formats, including I2S, left-justified, right-justified, and
++  TDM formats.
++
++allOf:
++  - $ref: dai-common.yaml#
++
++properties:
++  compatible:
++    enum:
++      - richtek,rt9123
++
++  reg:
++    maxItems: 1
++
++  '#sound-dai-cells':
++    const: 0
++
++  enable-gpios:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - '#sound-dai-cells'
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        amplifier@5e {
++            compatible = "richtek,rt9123";
++            reg = <0x5e>;
++            enable-gpios = <&gpio 26 GPIO_ACTIVE_HIGH>;
++            #sound-dai-cells = <0>;
++        };
++    };
 -- 
 2.34.1
 
