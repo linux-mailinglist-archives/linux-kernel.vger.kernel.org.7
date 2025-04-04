@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-589154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 977E4A7C27C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:35:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AB0CA7C280
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46B243BB9FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:34:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 811061B60AA9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC31521D5B2;
-	Fri,  4 Apr 2025 17:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EBCD2206BD;
+	Fri,  4 Apr 2025 17:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qDwCTewa";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8iTh2wi6"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fzO0Zh3V";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V1Vv2n4h"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E5E21D3D0;
-	Fri,  4 Apr 2025 17:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E3E21D3EB;
+	Fri,  4 Apr 2025 17:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743788053; cv=none; b=PvQ8+fkvZsbK6MP25YCYWLzeafWzzb2WuLnPtlzfAhPYxDHx540LOVEVD/DVK698C767rg93F/f5p9+OulnMymzd0ZiqPtlcdQy/drqporcunFFQ2o1RIqGdJOHRs4i5eIydjL2/sPu3/bLqh8kvDVJka8Hx9aamJx2AKxl0QWI=
+	t=1743788055; cv=none; b=Jz7AXUM8I/bvHMm9cFi9hjLL+sGJQVzKWlDsjvz304lMdSQaikLMbSRVmJRAJ2SAk2ahlBelTG2XdZbU2CqLBC2MMamaIzalZGXhJQcaNlQK+T9hdI/iVK6WsWtxgIBn3Jj/Ro4j+9f+cprjKjSP43XCAlYz/WZlqWETPGcDjG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743788053; c=relaxed/simple;
-	bh=SA7ZpsqpFB1M/8Qe2G73ueKE2L+aj70QQ/ZrdJXgGc4=;
+	s=arc-20240116; t=1743788055; c=relaxed/simple;
+	bh=EnNmEcwb9RA2fAK4TbiENxsA8nT0uLmnOg3oMDCXc+0=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ON/laL6/0N60BTx6BOmkEQBw9iG0LAWjEtGou5hCctmu2ZzqYDUYR7U44gOTUf/5TETtPQyMS8YTXTwzXFx94WZhfTt4PlGNf2C514wfgKy3CJ1/PD9U8nh6vlQeYP7/7JUXXh284hdAgi+dOUDt5nWlQ8xgTuWUewVjK9udKIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qDwCTewa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8iTh2wi6; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=T7hYPdm+xpbEQvFlAgkgPh1gscMw4R3zLxepNImJwCXaFU7eXRDWTeHU3Ef3DLIjkE+Uy1rC7+cWmvSbGLH16r2gHsbpfWlHOGZ7jdNNCbAKKzyFYCjZuSNdH7LADwGMql6r/tqONHpncPJsSBCMNg14OlbgkoIjIMkI9cAg66Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fzO0Zh3V; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V1Vv2n4h; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 04 Apr 2025 17:34:09 -0000
+Date: Fri, 04 Apr 2025 17:34:10 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1743788050;
+	s=2020; t=1743788051;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2hU9ErGd7k1ZR0WnI0v49ytv0j1jqBU7QSssbTwy3xg=;
-	b=qDwCTewalLaCz3H1XOhuOkcqTiFgF5oGB6mcAYLYyRZD/FO3xJWwLg/lx9euEkc7rlNMAk
-	E7xzT0sa0t3qtwtc+xNOLLdc959RoOSQ+dOi0ldLfiOvBbJc/nekWXS4F1SnKUSKaouGlj
-	Tu4egFIMXuDYz7b82NpqvChDcgSvlVZBJXHvBi82QnwVUES6jARKnjMnXR6V4fhS7/Njvn
-	3Remgz/l4E2NuR4eOCNnw8Ajx9WJOT7KHb04PmffenHHjx/3wUdl74SBFvIVGpkAPUwGtT
-	cB4VJdN6oj6dEIT5REBX0uYocTEa/JIaJC4UEYwMJiui76qtvn9OTEwvMEaP9w==
+	bh=zTabLwBWRDXEPusGLYJQd7FktlpI8X2xXbduKZaYjDM=;
+	b=fzO0Zh3VsRhBHY5DOvg05jId9j1XZ5Q7GjuNDTqeRqEWKLnQbe9ifiwy9LYAzTTywHQEuf
+	ofXrJtb/5alQwKY2VC2aeRexQtNCVjxgP/qkkV/y+06zrG1mI39Ovv1pFRtLSgVDE5+CvC
+	HKvzzY9RTIzdD5F7B9B8ISrBBCP5I5t58NpYNwdiugZYfTMZKC5unYONJsGDnoNanZnNQ/
+	lTX8eo5qBsxqVS1OE0XtjpW8Bi7njKKBfN76QzTRUbTCKVvAZEmr+8VttEDgVF3b8gITC5
+	4RQ0eszq1O7QGii+ES13h5+IYzzoCJ4xue5WNVM0XD+9ZUvNUr9GCJDz0aHeow==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1743788050;
+	s=2020e; t=1743788051;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2hU9ErGd7k1ZR0WnI0v49ytv0j1jqBU7QSssbTwy3xg=;
-	b=8iTh2wi6rl9q/Ht7siaBykyVQ62LC4afW7XChIfgcGv2ZxLKuUyu9aPCjhIu99K688M0fm
-	J4UReDbxgS4dDcDA==
+	bh=zTabLwBWRDXEPusGLYJQd7FktlpI8X2xXbduKZaYjDM=;
+	b=V1Vv2n4hnSn3U6lT3r4U9fvJPxJnHljYvL4I+qyXnSdVzNE7BqQvIFQxhAt/4hXYpBTnno
+	QvTqKAxjZ180UxBA==
 From: "tip-bot2 for Nam Cao" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/cleanups] hrtimers: Rename __hrtimer_init_sleeper() to
- __hrtimer_setup_sleeper()
+Subject:
+ [tip: timers/cleanups] hrtimers: Make callback function pointer private
 Cc: Nam Cao <namcao@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>,
  x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3C807694aedad9353421c4a7347629a30c5c31026f=2E17387?=
+In-Reply-To: =?utf-8?q?=3C7d0e6e0c5c59a64a9bea940051aac05d750bc0c2=2E17387?=
  =?utf-8?q?46927=2Egit=2Enamcao=40linutronix=2Ede=3E?=
-References: =?utf-8?q?=3C807694aedad9353421c4a7347629a30c5c31026f=2E173874?=
+References: =?utf-8?q?=3C7d0e6e0c5c59a64a9bea940051aac05d750bc0c2=2E173874?=
  =?utf-8?q?6927=2Egit=2Enamcao=40linutronix=2Ede=3E?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,7 +73,7 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174378804949.31282.2835684316926029885.tip-bot2@tip-bot2>
+Message-ID: <174378805070.31282.26909465736111586.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,58 +83,110 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the timers/cleanups branch of tip:
 
-Commit-ID:     69d621b6302208d96885e13e8187e7e16418b947
-Gitweb:        https://git.kernel.org/tip/69d621b6302208d96885e13e8187e7e16418b947
+Commit-ID:     96d6ac8afcdede3f80230992d587a17000357c28
+Gitweb:        https://git.kernel.org/tip/96d6ac8afcdede3f80230992d587a17000357c28
 Author:        Nam Cao <namcao@linutronix.de>
-AuthorDate:    Wed, 05 Feb 2025 11:55:18 +01:00
+AuthorDate:    Wed, 05 Feb 2025 11:55:16 +01:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Fri, 04 Apr 2025 19:26:44 +02:00
 
-hrtimers: Rename __hrtimer_init_sleeper() to __hrtimer_setup_sleeper()
+hrtimers: Make callback function pointer private
 
-All the hrtimer_init*() functions have been renamed to hrtimer_setup*().
-Rename __hrtimer_init_sleeper() to __hrtimer_setup_sleeper() as well, to
-keep the names consistent.
+Make the field 'function' of struct hrtimer private, to prevent users from
+changing this field in an unsafe way. hrtimer_update_function() should be
+used if the callback function needs to be changed.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/807694aedad9353421c4a7347629a30c5c31026f.1738746927.git.namcao@linutronix.de
+Link: https://lore.kernel.org/all/7d0e6e0c5c59a64a9bea940051aac05d750bc0c2.1738746927.git.namcao@linutronix.de
 
 ---
- kernel/time/hrtimer.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ include/linux/hrtimer_types.h | 2 +-
+ include/trace/events/timer.h  | 4 ++--
+ kernel/time/hrtimer.c         | 8 ++++----
+ kernel/time/timer_list.c      | 2 +-
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
+diff --git a/include/linux/hrtimer_types.h b/include/linux/hrtimer_types.h
+index 7c5b27d..8fbbb6b 100644
+--- a/include/linux/hrtimer_types.h
++++ b/include/linux/hrtimer_types.h
+@@ -39,7 +39,7 @@ enum hrtimer_restart {
+ struct hrtimer {
+ 	struct timerqueue_node		node;
+ 	ktime_t				_softexpires;
+-	enum hrtimer_restart		(*function)(struct hrtimer *);
++	enum hrtimer_restart		(*__private function)(struct hrtimer *);
+ 	struct hrtimer_clock_base	*base;
+ 	u8				state;
+ 	u8				is_rel;
+diff --git a/include/trace/events/timer.h b/include/trace/events/timer.h
+index 1ef58a0..f8c906b 100644
+--- a/include/trace/events/timer.h
++++ b/include/trace/events/timer.h
+@@ -235,7 +235,7 @@ TRACE_EVENT(hrtimer_start,
+ 
+ 	TP_fast_assign(
+ 		__entry->hrtimer	= hrtimer;
+-		__entry->function	= hrtimer->function;
++		__entry->function	= ACCESS_PRIVATE(hrtimer, function);
+ 		__entry->expires	= hrtimer_get_expires(hrtimer);
+ 		__entry->softexpires	= hrtimer_get_softexpires(hrtimer);
+ 		__entry->mode		= mode;
+@@ -271,7 +271,7 @@ TRACE_EVENT(hrtimer_expire_entry,
+ 	TP_fast_assign(
+ 		__entry->hrtimer	= hrtimer;
+ 		__entry->now		= *now;
+-		__entry->function	= hrtimer->function;
++		__entry->function	= ACCESS_PRIVATE(hrtimer, function);
+ 	),
+ 
+ 	TP_printk("hrtimer=%p function=%ps now=%llu",
 diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index e883f65..8cb2c85 100644
+index 163cde3..88ea4bb 100644
 --- a/kernel/time/hrtimer.c
 +++ b/kernel/time/hrtimer.c
-@@ -2016,7 +2016,7 @@ void hrtimer_sleeper_start_expires(struct hrtimer_sleeper *sl,
- 	 * Make the enqueue delivery mode check work on RT. If the sleeper
- 	 * was initialized for hard interrupt delivery, force the mode bit.
- 	 * This is a special case for hrtimer_sleepers because
--	 * __hrtimer_init_sleeper() determines the delivery mode on RT so the
-+	 * __hrtimer_setup_sleeper() determines the delivery mode on RT so the
- 	 * fiddling with this decision is avoided at the call sites.
- 	 */
- 	if (IS_ENABLED(CONFIG_PREEMPT_RT) && sl->timer.is_hard)
-@@ -2026,8 +2026,8 @@ void hrtimer_sleeper_start_expires(struct hrtimer_sleeper *sl,
- }
- EXPORT_SYMBOL_GPL(hrtimer_sleeper_start_expires);
+@@ -1316,7 +1316,7 @@ void hrtimer_start_range_ns(struct hrtimer *timer, ktime_t tim,
+ 	struct hrtimer_clock_base *base;
+ 	unsigned long flags;
  
--static void __hrtimer_init_sleeper(struct hrtimer_sleeper *sl,
--				   clockid_t clock_id, enum hrtimer_mode mode)
-+static void __hrtimer_setup_sleeper(struct hrtimer_sleeper *sl,
-+				    clockid_t clock_id, enum hrtimer_mode mode)
- {
+-	if (WARN_ON_ONCE(!timer->function))
++	if (WARN_ON_ONCE(!ACCESS_PRIVATE(timer, function)))
+ 		return;
  	/*
- 	 * On PREEMPT_RT enabled kernels hrtimers which are not explicitly
-@@ -2067,7 +2067,7 @@ void hrtimer_setup_sleeper_on_stack(struct hrtimer_sleeper *sl,
- 				    clockid_t clock_id, enum hrtimer_mode mode)
- {
- 	debug_init_on_stack(&sl->timer, clock_id, mode);
--	__hrtimer_init_sleeper(sl, clock_id, mode);
-+	__hrtimer_setup_sleeper(sl, clock_id, mode);
- }
- EXPORT_SYMBOL_GPL(hrtimer_setup_sleeper_on_stack);
+ 	 * Check whether the HRTIMER_MODE_SOFT bit and hrtimer.is_soft
+@@ -1629,9 +1629,9 @@ static void __hrtimer_setup(struct hrtimer *timer,
+ 	timerqueue_init(&timer->node);
  
+ 	if (WARN_ON_ONCE(!function))
+-		timer->function = hrtimer_dummy_timeout;
++		ACCESS_PRIVATE(timer, function) = hrtimer_dummy_timeout;
+ 	else
+-		timer->function = function;
++		ACCESS_PRIVATE(timer, function) = function;
+ }
+ 
+ /**
+@@ -1743,7 +1743,7 @@ static void __run_hrtimer(struct hrtimer_cpu_base *cpu_base,
+ 	raw_write_seqcount_barrier(&base->seq);
+ 
+ 	__remove_hrtimer(timer, base, HRTIMER_STATE_INACTIVE, 0);
+-	fn = timer->function;
++	fn = ACCESS_PRIVATE(timer, function);
+ 
+ 	/*
+ 	 * Clear the 'is relative' flag for the TIME_LOW_RES case. If the
+diff --git a/kernel/time/timer_list.c b/kernel/time/timer_list.c
+index cfbb46c..51fa7ae 100644
+--- a/kernel/time/timer_list.c
++++ b/kernel/time/timer_list.c
+@@ -46,7 +46,7 @@ static void
+ print_timer(struct seq_file *m, struct hrtimer *taddr, struct hrtimer *timer,
+ 	    int idx, u64 now)
+ {
+-	SEQ_printf(m, " #%d: <%p>, %ps", idx, taddr, timer->function);
++	SEQ_printf(m, " #%d: <%p>, %ps", idx, taddr, ACCESS_PRIVATE(timer->function));
+ 	SEQ_printf(m, ", S:%02x", timer->state);
+ 	SEQ_printf(m, "\n");
+ 	SEQ_printf(m, " # expires at %Lu-%Lu nsecs [in %Ld to %Ld nsecs]\n",
 
