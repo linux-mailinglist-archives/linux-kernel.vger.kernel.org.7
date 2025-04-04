@@ -1,102 +1,111 @@
-Return-Path: <linux-kernel+bounces-588498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77DC5A7B990
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:05:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E73AA7B991
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6313A3BBF6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 09:03:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5DA718865CE
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 09:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637F61A8F79;
-	Fri,  4 Apr 2025 09:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CD41A2630;
+	Fri,  4 Apr 2025 09:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RqqiIGmV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZesPuEAf"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18B81A265E;
-	Fri,  4 Apr 2025 09:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF9916132F
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 09:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743757372; cv=none; b=HpOoV40v0BCY7vcPuuJTaaVP5YzxNzehw1vlzPvOZ2ck4FebGFOrxAZF/170M/L1S+KxKEwvUj2yPjcyrCXn6K/NN4pXr4ONu1gypy+KGSt1NA0JxdeJ3mlCqnzGmzEElh2dy9epV3Kwp3NPW0xbDmautkNIRqFi0SyCXqxPNZI=
+	t=1743757555; cv=none; b=fkPLts8VqC7cYfMq/Z9vcBOY1462pNUB2wnr1h7A5zloKdr9pp5q/PXG6UVby1p5rcQGJIgpBjhkZvl8syAQNlZ+el7KYfqfHzOfzH85i2y0IwBVR5rqD0wF5VlmcM/yqLhMAbIKjRzg2+cNC8s0jbHcksc7gU1FcZWXjMBM1ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743757372; c=relaxed/simple;
-	bh=wm44pMRxSMtVrJZ9//WbNLyZvf+/VMaxa9Bl2u1h3DU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gETNNL1zuDMHRkrgn8hWucuQRql3bUsQMPpqZYJZOy8PduWZfvpaML0vyfKxwl/kR+NUIMhgV0UsucSuGeu44vDJFq66isX3PT7USG4wVuLm/fe7EcSozuHldSZtAgDEJORNt/vfIpc3R2Z22dbgZz5nKMJ5L5t3h3eWK8Y6EB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RqqiIGmV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C705C4CEDD;
-	Fri,  4 Apr 2025 09:02:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743757372;
-	bh=wm44pMRxSMtVrJZ9//WbNLyZvf+/VMaxa9Bl2u1h3DU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RqqiIGmVdSKS3ZhKoSM/x0QlgQ23XAWfSOYUsnl1O0R+0B8JuyU2o4hdmFBG+mxUK
-	 /QZmusJroU1fGCg6PjHm6r3xE/Xsl7b4IWFHWrz6AOSisgMB7DuPITh/7g5En3TSw6
-	 yXObcPqrcDXbZ43RKEcSUOWkPIfns6PuMUkYuExLz8kJIwNUQF2Cv4cZW4sW5Oqpm2
-	 b8XgdgJQDgkWuW/IjQGAaXjMgDts9OrxnQhONT99hlIiaU7cvEKchOJ7wRKOJ/aAFf
-	 mqU4ea+FIXpaeG3kQe0OBq/Dj4N7hn7mOn8/FO5FpoveryTtk4OU1ziaE8RULWhZcw
-	 l0/oESDsSHIxg==
-Message-ID: <70891a99-d2ca-4fd3-a88d-2f66a9a78f66@kernel.org>
-Date: Fri, 4 Apr 2025 10:02:47 +0100
+	s=arc-20240116; t=1743757555; c=relaxed/simple;
+	bh=uhKMFNAVbmR4Kr/0n24Wq5pDZu2LhHwS5o/4unQpAXU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U//jvQVx1Dvhkbo5utzyLogw5j9FlkBQs29RSXGxrCNe0TEcpUfPQxGpcEkVZEa5xNT13AEdpKqDAhSOtQiRJmi6KOn6+T12Z4D/LTrBiFZOaSBFlfKfpN316Ln61NdrXomjLgjobOU6J771Ieda5m5KziilS09LV5L4EkHg0V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZesPuEAf; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c554d7dc2aso294889585a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 02:05:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743757552; x=1744362352; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uhKMFNAVbmR4Kr/0n24Wq5pDZu2LhHwS5o/4unQpAXU=;
+        b=ZesPuEAfXGTea6dD51j8Jrh8J00FwlRUNJ384NoDRmwBJOBAfYm3Jg7feT4tqxMglM
+         wP+YoSRzXZoQ/ZLrfZSQEFcrQZmkH6GBL4FV3kpkVd2JGUwB7nFMzfi/z8NFWCvxJ4Dp
+         oEatzBYvcqeV9nQiIajhPsZg5fAAxKGgFgPotZrX9nIO9hYywS977BU00RXhhZ99x+lf
+         EIglP2fwuifxeJ9LIWoC/NbESJ5z6OQOTsUFEaEnP835owQOC0kIlxDoKSBHPaDkXym/
+         OMj1a22hg1r5QBe1Anv8o9ZLrNbF4aBfkRAbKrq43igz5FGXFVVbmh9V14qgYYzpEFe2
+         jHiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743757552; x=1744362352;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uhKMFNAVbmR4Kr/0n24Wq5pDZu2LhHwS5o/4unQpAXU=;
+        b=ghPlQEAjm9pHxRzBKWkZJETaO8xWM/esDYoAr4mg8AtOMJB4Q5pDZmy1cU3+lmLFvN
+         7Wu2HyYUgA7hFZkn2PUfnixjmgbXeHqhYZiAjW+myObWS2qju/XRauVxUmSVeB9xUFhv
+         GbNSrjQxwvAlfWFQkN4DL/wpkfGuAUb+zDeZkxVW57oY1iM3Mcph9G6O/tp/7UeloIYi
+         3OaxURw0n3I1OP+zvn0wZa7KRPSMXT5nZ7rfj5kXUJJ1jJTGqupyEcuEVFQXC0Okc8b/
+         anMwqB8QyPlhmfntEQGbWr3az2V+kLciNpfNgBnuV1PHc9ZpY3mK9cbei/0eEgN3hduj
+         1stg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcpMw1ySj15kG5gMnFiRmb5k5nHpT0wKrWXOlkQnZY0Y6jTQzCzDlv6avvQMd4ZFom13QHuWjHOqq+DAo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYicEIInHrxBEONdM8SEgCnRf0x/sgx/TWuKI63byE/jW03NkY
+	SM/uQEkjlsgU5dpgv1gMYibvAm1Ub9v3sdrBA8fKQpKI5krxIlrVZssic4G0HJS7UnFm6rWlXSJ
+	SnSb59pYvCI1+3p8pCIk4L3gIU4A=
+X-Gm-Gg: ASbGncsgD77L/k63oM7BLE6tBug1sfiejsxyCk7uQMqbwd1azxZc1YEILifOhR/dIlS
+	nkCU5KoY+ta/iQSi5251QIzNgC7ztP1JQ9tJWJofwN7Tb76OWOIESF/vFM3Zj8yH4/HhDqovTQc
+	sLtVO/5+RZiJj5LZScI3QDNSzd91e1OVacB03hamvPLnnf0fOTxlzWHGTD
+X-Google-Smtp-Source: AGHT+IGeB5gy3Bxye7z2MQOfNjxPTBd6g4r626j11K+xJvAUfHLE5a3OVvVAhRJh35DKi5LecvLM+IdQonxpnOsRMcA=
+X-Received: by 2002:a05:620a:1a10:b0:7c5:57cd:f1cb with SMTP id
+ af79cd13be357-7c774dd6ed6mr310719385a.37.1743757551749; Fri, 04 Apr 2025
+ 02:05:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] Reup: SM8350 and SC8280XP venus support
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>
-References: <20250304-b4-linux-media-comitters-sc8280xp-venus-v1-0-279c7ea55493@linaro.org>
- <8cfaeb25-2657-9df4-5cea-018aad62f579@quicinc.com>
- <it3njgklhnedjzojafuxpjy3o5zfulgdclweyobv7kjgtpjmzx@6opje7yms4yg>
- <1dd6e03d-09be-4853-741a-4fb47b7619a0@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bod@kernel.org>
-In-Reply-To: <1dd6e03d-09be-4853-741a-4fb47b7619a0@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250403160807.100057-1-gshahrouzi@gmail.com> <2025040429-avenge-camera-8d88@gregkh>
+In-Reply-To: <2025040429-avenge-camera-8d88@gregkh>
+From: Gabriel <gshahrouzi@gmail.com>
+Date: Fri, 4 Apr 2025 05:05:00 -0400
+X-Gm-Features: AQ5f1Jo01_JEw9ySJEDjCel8vQNe5KvQVh0WsMLpEgdBI48FpmeYR0ubmuhUQR0
+Message-ID: <CAKUZ0zJzNinEqQLVH8o-QKYoZ99VWum-Qtfr+rGNytK44Zzdyw@mail.gmail.com>
+Subject: Re: [PATCH v3] staging: rtl8723bs: Remove trailing whitespace
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-staging@lists.linux.dev, philipp.g.hortmann@gmail.com, 
+	eamanu@riseup.net, linux-kernel@vger.kernel.org, 
+	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04/04/2025 06:24, Vikash Garodia wrote:
->>> How different is this from sm8250 which is already enabled on iris driver ?
->> As far as I remember, SM8250 support in Iris did not reach
->> feature-parity yet. So in my opinion it is fine to add new platforms to
->> the Venus driver, that will later migrate to the Iris driver.
-> I would say, from decoder side all codecs are there now on Iris. H264 merged,
-> while h265 and VP9 dec are posted as RFC, there is one compliance failure which
-> is under debug to post them as regular patches.
-> If we are mainly looking for decode usecases, then we should be on Iris.
-> Preference would be to stay on Iris, otherwise we would have that extra ask to
-> port it later from venus to iris.
+On Fri, Apr 4, 2025 at 2:28=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org>=
+ wrote:
+>
+> On Thu, Apr 03, 2025 at 12:08:07PM -0400, Gabriel Shahrouzi wrote:
+> > Remove trailing whitespace to comply with kernel coding style.
+> >
+> > Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>
+> As far as I can recall, I did not suggest this patch :(
+Whoops. I misunderstood. I initially thought "it" meant the suggestion
+for the new patch revision. But thinking more about it, that would be
+redundant, since that information already exists in the previous
+version's thread and could be spammy with many reviewers.
 
-Right now venus represents 9/20 - 45% of the patches being churned for 
-sc8280xp.
+However, providing information on how that idea first came up is
+useful, since that origin story doesn't already exist on the thread
+(countering the base assumption that you alone came up with it).
 
-https://github.com/jhovold/linux/tree/wip/sc8280xp-6.14-rc7
-
-This is a good debate to have, however my memory of what we collectively 
-agreed both in public and private was to continue to merge new silicon 
-<= HFI6XX into venus unless and until iris hit feature parity for HFI6XX 
-and to continue with venus at that point for < HFI6XX.
-
-So merging sc8280xp - HFI6XX is consistent with our agreement, the right 
-thing to do for our users and a big win in terms of technical debt 
-reduction.
-
-I will post an update to this series ASAP.
-
----
-bod
+Separately, I need to make sure to use the official documentation for
+tags instead of relying on Google searches and third-party
+documentation.
 
