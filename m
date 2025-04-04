@@ -1,125 +1,142 @@
-Return-Path: <linux-kernel+bounces-588725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA23CA7BCCD
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:40:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F206A7BCD9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 537667A5B73
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 12:39:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C81D6189F4C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 12:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 237201E51FB;
-	Fri,  4 Apr 2025 12:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2C11E3DE0;
+	Fri,  4 Apr 2025 12:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Nc9h0mu2"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g8ukBMhc"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC68E1D7E26;
-	Fri,  4 Apr 2025 12:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B218C1F94C;
+	Fri,  4 Apr 2025 12:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743770438; cv=none; b=CT1L+HZZ/snoeubfk5S6v0Yn+XcN3rXrGkjHlGJGuwur0IdKb+br96qOFVgYxdrD+J3PSQL/GP7VVhE7Swz93iAy0+uNBWe3Srwz5NyGxkWsm0gq5gtTrNW4cIni5pSMhgi+klwqXsIFdadobDgHtTZK9kxRNfLAPx8RfuhtHr4=
+	t=1743770658; cv=none; b=mvShFpICSnvcN0ivhvxX7napxzMSVyas5/L80akRY+9kL4qb9WnJDr94zmUy9EIoBDiiAVmMORNLMTjCSyK2cFdwXsc2F8l11g4LTFW/x6f96I0mri/5PufvkH0FD564kFyySOO40wNuq6TvqJvfL+Q+NGYVpEfs86qZcU+F4/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743770438; c=relaxed/simple;
-	bh=89neJgVwi0h8aXKOy7swYdp7ZNkwQFPUD9cASJEE9fQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sSRxgNETZ+SCvoD2LcvE/NCtOC0XPOabJbZIW2Hgr6Rp2ikftN+ILX83z1H5XSAlq8AiRL+GLrTOpaipOB815mjoQXvy8oK5HITaCS6fcFmTkkVQxC8WwK0FZFeP+sQBUwsHYpDkGn7uMbq5V32zW28WrhdveX/uNXwVNM7hSb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Nc9h0mu2; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 534CeRr1276837
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 4 Apr 2025 07:40:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1743770427;
-	bh=kxiQY3N4ykwzgDm8fvtIm0ymVAuD8xrmmIdWe4wXE+E=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Nc9h0mu2005x2eX/OeTXzRgzeHosu9jFNEvs3fl9dJiwV/F+zSFkUG0fzYntTcc2z
-	 zLjKLFaIEN4Y8Y4qtt2jCtLup26UzSQdFE1i0NphZwzq5KNA1P7d5t8m6H2NZ0pIGH
-	 J9Ex0PK8am0lI78+ICJg/xvzlJXmwJAqqCPa2Y9g=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 534CeRJU091168
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 4 Apr 2025 07:40:27 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 4
- Apr 2025 07:40:26 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 4 Apr 2025 07:40:26 -0500
-Received: from [172.24.227.40] (pratham-workstation-pc.dhcp.ti.com [172.24.227.40])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 534CeOMb060065;
-	Fri, 4 Apr 2025 07:40:24 -0500
-Message-ID: <8536cdf7-f4bd-4f9a-9eaf-9e38fba67741@ti.com>
-Date: Fri, 4 Apr 2025 18:10:23 +0530
+	s=arc-20240116; t=1743770658; c=relaxed/simple;
+	bh=WC2rA/Jppc7oOTVyOQArv8xMIayyeeJQC95QBqO167I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N94ElgqgbB0ZVl8UJUIIvuG0omduN+tJSY0wooR4i7BNkMGKsZtRGzWVGCNuQbSJ+1hc3SU6gtuDV+ojMBdqwDNI2/XRn0FYmBUDjstr2X3nOQOshTiwfuGJbiguzmWyD4k7Z+LN0Avoe3Qkhl0yHikTZkF1ibOWTdjUyeLie9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g8ukBMhc; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-227d6b530d8so17674685ad.3;
+        Fri, 04 Apr 2025 05:44:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743770656; x=1744375456; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WC2rA/Jppc7oOTVyOQArv8xMIayyeeJQC95QBqO167I=;
+        b=g8ukBMhcYRDOe9bTN7JALQ+7fn8FIdx1rjTnmqA2aIDTbaqwx/osseu15wg7x4gB+/
+         mFM4F5BO4JMARsITdnczlhtNryL88kex8ay7/wgtfOWIaT0hHU8MW3m4PgNvobGxVzsk
+         UHJvgbwy7R/ZSx6+Uc09Wc947sWK3mK4BImE6vE67XUEHBSz/7TuJKdaYsQ0U1pFekAU
+         32xuF1CIlAngpCXTxeKfwfs9wrylF4n9pe81GUwmFDh2BrZrDgrkwvjZWpyKN1tdbCb/
+         GGMEqSsXaiaZha7lqx0H3okBv7uR4PjC7poPKjNKki+5vOwYLQy4X7k7edMLmArXjave
+         2aoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743770656; x=1744375456;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WC2rA/Jppc7oOTVyOQArv8xMIayyeeJQC95QBqO167I=;
+        b=ColdBAYB9qaaNR9ZKri7Jm6gpgyyswLucGaJIBSepxrMvZ+x1Bl2c+A5jt2JRdy88P
+         IcDLwSyOUfYmxK54uUd54GGz/s+Dz3aW92/C2FnUOxqFhPKk6jsF36Ei7S+AVq1pL4cL
+         FPI8fSzHoEPmsb2/qSk1LYzrrR7CCN8rGFrxQbZFivVVNszvNujRXGh9hIolcaqds7w9
+         a7ZRjAzKhBXJL49EpH7giF5vcwUanxDVawNXR+3xuXIDamXIrUB24INp1Sciw84Zqo6B
+         p82vA8E0EZGEQbmkCT+l0qMmHERKN0fGmxQpJIOZ9mOUMEYSJZuj5nzlJHNUeZmPcyg+
+         7Ucw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRgmgPuOzBMwcj8is26I0iAmw6DR38LyzZG2iKzjwdHVTxvShKBXbvq8Htv8iHl6OPVIANxo2Y12U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRXa1tthT0sC+fzux2JYDu2Ef4ORUxEjwI4+xvpTuwjsyfAiAg
+	xdoB3KoKTzAdq8niNrNn2QV0f2coJyz+TvMqhB2ew7FNKea42gLx
+X-Gm-Gg: ASbGncuaqItaLLXZkM7ZV2bg+f6L/8LHLYGTs5sZ3vMCkcDuadc0KCXycq0sf1piyi9
+	tU4BjBKiFYYES2KCBTZ3G96gL7AaI88leUYuiZwuSFI6W5h9l5+IMMieG3Q7wb+QpPuJ56wCHWW
+	hlPuqErXuSm8KL04n00eZbhLz1x4A0dpoRT1eN2hwC9ovMxOAZNtoMe/wuPMpZyz6PEnGi8LGC0
+	8JN8aFNLGUPuYcgbxB8aWvgRpqTGlwLW71KI2WqHA9CQnSo1mu6vOlFkqX4TTYl5q8IlPzNdE/E
+	nyGKx2g1aSZeXQXo+MV/Xj+VoY4dBwQZnegQOEAUZa0s
+X-Google-Smtp-Source: AGHT+IEvjB1jY24Z13x0dvYi9z2si6Y37G1nkpKhYR0ZDT64yYzGqz/AEZfMgEA3TFI0v72Qx1Z98Q==
+X-Received: by 2002:a17:902:e944:b0:220:c911:3f60 with SMTP id d9443c01a7336-22a8a0b4022mr38854395ad.47.1743770655725;
+        Fri, 04 Apr 2025 05:44:15 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af9bc34e91asm2769802a12.33.2025.04.04.05.44.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Apr 2025 05:44:14 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id AF9E9420A6E2; Fri, 04 Apr 2025 19:44:11 +0700 (WIB)
+Date: Fri, 4 Apr 2025 19:44:11 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org,
+	David Hildenbrand <david@redhat.com>, da.gomez@kernel.org,
+	mcgrof@kernel.org, gost.dev@samsung.com, linux-doc@vger.kernel.org,
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH v2 2/2] docs: clarify THP admin guide about
+ (File|Shmem)PmdMapped and ShmemHugePage
+Message-ID: <Z-_UG_zVLZNjxPD6@archie.me>
+References: <20250404100159.27086-1-kernel@pankajraghav.com>
+ <20250404100159.27086-3-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] crypto: ti: Add support for SHA224/256/384/512 in
- DTHE V2 driver
-To: Herbert Xu <herbert@gondor.apana.org.au>
-CC: "David S. Miller" <davem@davemloft.net>, <linux-crypto@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Praneeth Bajjuri <praneeth@ti.com>,
-        Kamlesh Gurudasani <kamlesh@ti.com>,
-        Manorit Chawdhry <m-chawdhry@ti.com>
-References: <20250218104943.2304730-1-t-pratham@ti.com>
- <20250218104943.2304730-2-t-pratham@ti.com>
- <Z8QSVLoucZxG1xlc@gondor.apana.org.au>
- <f7105c10-7e36-4914-a9e8-e83eb61f0189@ti.com>
- <104cdd15-8763-49fc-9f4b-9b21020bd6a1@ti.com>
- <Z-5IaY0JoTYcx1JW@gondor.apana.org.au>
- <8aa65022-8adc-4c4a-a812-11bfd64e628c@ti.com>
- <Z--zFB8Rm007AMzP@gondor.apana.org.au>
-Content-Language: en-US
-From: T Pratham <t-pratham@ti.com>
-In-Reply-To: <Z--zFB8Rm007AMzP@gondor.apana.org.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="q2Ttcq6upHDrBmCH"
+Content-Disposition: inline
+In-Reply-To: <20250404100159.27086-3-kernel@pankajraghav.com>
 
 
-On 04/04/25 15:53, Herbert Xu wrote:
-> Yes that's a common problem with crypto hash drivers that can't
-> deal with a zero-length final update.  The best solution is to
-> use a fallback for the final update if it turns out to be zero-length
-> rather than retaining an extra block.  Hashing a single block for
-> finalisation is simply not worth the overhead of setting up DMA and
-> what not.
->
-> The other option is to use the fallback to hash the extra block in
-> the export function.
->
-> Cheers,
+--q2Ttcq6upHDrBmCH
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Although yes the hardware cannot process zero length input, the actual
-reason for doing this is to support the linux framework's
-init-update-final flow on the hardware.
+On Fri, Apr 04, 2025 at 12:01:59PM +0200, Pankaj Raghav (Samsung) wrote:
+> -The number of file transparent huge pages mapped to userspace is availab=
+le
+> -by reading ShmemPmdMapped and ShmemHugePages fields in ``/proc/meminfo``.
+> -To identify what applications are mapping file transparent huge pages, it
+> -is necessary to read ``/proc/PID/smaps`` and count the FilePmdMapped fie=
+lds
+> -for each mapping.
+> +The number of PMD-sized transparent huge pages currently used by
+"In similar fashion, the number ..."
+> +tmpfs/shmem is available by reading the ShmemHugePages field
+> +in ``/proc/meminfo``. The number of these huge pages that are mapped to =
+userspace
+> +is available by reading ShmemPmdMapped field in ``proc/meminfo``. To ide=
+ntify
+> +what applications are mapping these huge pages, it is necessary to read
+> +``/proc/PID/smaps`` and count the ShmemPmdMapped fields for each mapping.
+> =20
 
-Our hardware can accept data as multiple packets, each of which can be
-of any length. The only restriction it has is that only the last packet
-can have arbitrary length, rest have to be a multiple of BLOCK_SIZE. The
-hardware needs a bit to be set to indicate that the packet to be
-submitted is the last data packet.
+Thanks.
 
-Now, in the crypto framework, there is no way to know if a particular
-update call is the last update or if another update call will happen
-after that. Therefore I am unable to set that bit in any invocation of
-the update function. So I am retaining one block of data which is sent
-to hardware in the final function, a place where we know for sure that
-there is no more input coming now.
+--=20
+An old man doll... just what I always wanted! - Clara
 
-Regards
-T Pratham <t-pratham@ti.com>
+--q2Ttcq6upHDrBmCH
+Content-Type: application/pgp-signature; name=signature.asc
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ+/UFgAKCRD2uYlJVVFO
+o8iyAP4y2cPlJ9PmjvYd9bQbQj/LpLzDJjMeX0hgGkJTM/RWigEAqWWio4oMoXd6
+sLnP2GA/32m2Yy6fmUBZJDqtcS9Thww=
+=dIDg
+-----END PGP SIGNATURE-----
+
+--q2Ttcq6upHDrBmCH--
 
