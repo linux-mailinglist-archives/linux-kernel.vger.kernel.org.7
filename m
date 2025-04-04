@@ -1,172 +1,176 @@
-Return-Path: <linux-kernel+bounces-589042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA2C6A7C0F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:52:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65689A7C0FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F4AA3BB37B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:52:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E22717BEE3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43ECD1F76BD;
-	Fri,  4 Apr 2025 15:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C581F754E;
+	Fri,  4 Apr 2025 15:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1fjKzc3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QE46X89S"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1FE1F63F0;
-	Fri,  4 Apr 2025 15:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA741F7089
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 15:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743781931; cv=none; b=R9dKRqtgCVjKxXkJ5mbybL/LmL88uhf9TBvCw0PtQqEn6sleA6wMRW5I0uUHOu5jus+f/VjDbzUi/LzU2KTYgPkDvHSC7NpS6vvGW80/AGUVKrV51uFTgpZIWFTFMdeB+iIW00QF66iJLIsZYYBWulFAjXlSFiGtR9EUG2BSH78=
+	t=1743781961; cv=none; b=WCW5NUnDh185QBQZ017s5yX2de1dwi+eMHazWFb4JkovaASzy3hYRO3q2+BMZe0gFKILxatUs8M5PIf2qQvrZlKNi8PPddIOP5SYJHfMQUgGMudAd1IPXJ8qe39r1THfovhO98AxpkmWik5nVdDrYUW3MHRB1NbG8NpT4/cFW0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743781931; c=relaxed/simple;
-	bh=pcYSAYWTjqkxlR36E9MUlFnt4MSwvXEXlSFsCIsJPXc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZhNdBL9wbxDxDN8T3wo1z30I0tsMUwHlZ+/6/+tsoRq/klybk+f3pWdOd8VzO/IB3yMDEGRnJqg/DXgYgfeeS+k9orN5CXeWdFdwxOr3zrOZf02leRF37CARRfTFF19uM0RM1S4/w7HSjHJeun7NNUdhek6yM2VPnL9j/w7tx8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P1fjKzc3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C0C68C4CEE8;
-	Fri,  4 Apr 2025 15:52:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743781929;
-	bh=pcYSAYWTjqkxlR36E9MUlFnt4MSwvXEXlSFsCIsJPXc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=P1fjKzc3eGvhquRsSY3kKtexSoesNyLLuy3gvu/bDKBUPf+pI3WcDWcM/yPCsoBYC
-	 wwnzIc4Go6I6exYpmwYPe9y1tj5Ns4T657M6S/ploo1T+IAlQVE2LXH4a6GfTp5lvf
-	 WLG9kjv36EeO+CTl7ZQhxgMFuv3XXZUmWCcswOAsRWNQNWaaDRR0Wvkt+bbhygOdRd
-	 IOrBm15UXGInQ3STw7jJidFfDKCmr+dlScoLZHEuNxalpRXbT9I1ClHUh20mGVEYAI
-	 ByzVNlcBBev5Shvx/2bMyxFpfaRHBKX/v3/Z47MtvLTi2C+6kbub1RZH9G9X1zDrWk
-	 FCxigDZhzM5Lw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A541CC369A2;
-	Fri,  4 Apr 2025 15:52:09 +0000 (UTC)
-From: Jean-Baptiste Maneyrol via B4 Relay <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org>
-Date: Fri, 04 Apr 2025 17:52:03 +0200
-Subject: [PATCH 2/2] iio: imu: inv_icm42600: switch to use generic name irq
- get
+	s=arc-20240116; t=1743781961; c=relaxed/simple;
+	bh=tLRjeNm3Sp+VIbaFEFA1cn56qdH8vBzWktqZzoueS18=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IbERPCfcdEPJufsB059EbTHUW7QlD+I4oPKxzbihVRAWS9jhM4e/yl8En8WBtjFfaipkxA9KulvNb/z97zDgs0xpk05XIJPTcYEtgAJGeGtgmZR5sFDRS6iMGNtbTf3dIcGhpDfcpCW0UqaUTdimhPhmLLBu6vxvT7xtssCuV2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QE46X89S; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743781960; x=1775317960;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tLRjeNm3Sp+VIbaFEFA1cn56qdH8vBzWktqZzoueS18=;
+  b=QE46X89Sf8KGR+OluQyng+CN/fUgO/ZZZjurkoJ8jOWxzf4HFxUJ+DC8
+   jntYXgVnGBfAnKGIGNPgVrEWKGOFN9oppcILCaf7jRRvONJEKwhhH4gIw
+   qA+EoC2f9vz0cNDfaFytLLjygdQfqEkcKTXR/qKTxuZPqjvQGBte/FgYf
+   x+fimd0twuvL/AYgKR6d4KBrH+5A24PnBMcfKo/2G8emaPPjwPgDXqtGj
+   4ZoCy4iP4mZaHgQ2uM1y16KnQGGr/r9F8iRB26kn+k534c1xrD9pAOfQP
+   PPNEW9II8nouaDRlxH99vuCVFhurNG4Ckd9QkH3kgVf/yNlQw0He70zNZ
+   g==;
+X-CSE-ConnectionGUID: oJSs5ov3RZKupnvGht26EA==
+X-CSE-MsgGUID: euEpAe6zQxGiQuRAgwwawQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11394"; a="67698346"
+X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
+   d="scan'208";a="67698346"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 08:52:39 -0700
+X-CSE-ConnectionGUID: PyTGTkVYRLWjV/GY60lRDw==
+X-CSE-MsgGUID: tRT3smCcTLGfe0LW12bUYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
+   d="scan'208";a="127860931"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 04 Apr 2025 08:52:37 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u0jLO-0001Lv-0v;
+	Fri, 04 Apr 2025 15:52:34 +0000
+Date: Fri, 4 Apr 2025 23:52:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wentao Liang <vulab@iscas.ac.cn>, gregkh@linuxfoundation.org,
+	philipp.g.hortmann@gmail.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: Re: [PATCH] staging: rtl8723bs: Add error handling for sd_read().
+Message-ID: <202504042334.1pXFeKzN-lkp@intel.com>
+References: <20250403093741.2372-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250404-iio-imu-inv-icm42600-rework-interrupt-using-names-v1-2-72ed5100da14@tdk.com>
-References: <20250404-iio-imu-inv-icm42600-rework-interrupt-using-names-v1-0-72ed5100da14@tdk.com>
-In-Reply-To: <20250404-iio-imu-inv-icm42600-rework-interrupt-using-names-v1-0-72ed5100da14@tdk.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1743781928; l=3719;
- i=jean-baptiste.maneyrol@tdk.com; s=20240923; h=from:subject:message-id;
- bh=aK+9d09n/DXh1B0QAO9MWRE0rSAinKtcE5JJVNT3Ho0=;
- b=byMnHzROPs8DLM2mn3cabTWIUFGWHCYa7CvT5NK8dMafO+wt5IyQInBVadqaxAQpFsbvxPSNB
- bWxW0fplXRVBMrLQhTM21wdXrJe3RHHtBmHInes/rgtZX9OxA9+lB4r
-X-Developer-Key: i=jean-baptiste.maneyrol@tdk.com; a=ed25519;
- pk=bRqF1WYk0hR3qrnAithOLXSD0LvSu8DUd+quKLxCicI=
-X-Endpoint-Received: by B4 Relay for
- jean-baptiste.maneyrol@tdk.com/20240923 with auth_id=218
-X-Original-From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-Reply-To: jean-baptiste.maneyrol@tdk.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250403093741.2372-1-vulab@iscas.ac.cn>
 
-From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+Hi Wentao,
 
-Use generic fwnode_irq_get_byname() for getting interrupt pin using
-interrupt name.
-Only INT1 is supported by the driver currently.
----
- drivers/iio/imu/inv_icm42600/inv_icm42600.h      |  2 +-
- drivers/iio/imu/inv_icm42600/inv_icm42600_core.c | 13 +++++++++++--
- drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c  |  2 +-
- drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c  |  2 +-
- 4 files changed, 14 insertions(+), 5 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600.h b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-index 18787a43477b89db12caee597ab040af5c8f52d5..f893dbe6996506a33eb5d3be47e6765a923665c9 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
-@@ -426,7 +426,7 @@ int inv_icm42600_set_temp_conf(struct inv_icm42600_state *st, bool enable,
- int inv_icm42600_debugfs_reg(struct iio_dev *indio_dev, unsigned int reg,
- 			     unsigned int writeval, unsigned int *readval);
- 
--int inv_icm42600_core_probe(struct regmap *regmap, int chip, int irq,
-+int inv_icm42600_core_probe(struct regmap *regmap, int chip,
- 			    inv_icm42600_bus_setup bus_setup);
- 
- struct iio_dev *inv_icm42600_gyro_init(struct inv_icm42600_state *st);
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-index ef9875d3b79db116f9fb4f6d881a7979292c1792..bfdd7cd5fafae87ad7c6204f6dd3bef17935b3f9 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-@@ -683,12 +683,13 @@ static void inv_icm42600_disable_pm(void *_data)
- 	pm_runtime_disable(dev);
- }
- 
--int inv_icm42600_core_probe(struct regmap *regmap, int chip, int irq,
-+int inv_icm42600_core_probe(struct regmap *regmap, int chip,
- 			    inv_icm42600_bus_setup bus_setup)
- {
- 	struct device *dev = regmap_get_device(regmap);
- 	struct inv_icm42600_state *st;
--	int irq_type;
-+	struct fwnode_handle *fwnode;
-+	int irq, irq_type;
- 	bool open_drain;
- 	int ret;
- 
-@@ -697,6 +698,14 @@ int inv_icm42600_core_probe(struct regmap *regmap, int chip, int irq,
- 		return -ENODEV;
- 	}
- 
-+	/* get INT1 only supported interrupt */
-+	fwnode = dev_fwnode(dev);
-+	if (!fwnode)
-+		return -ENODEV;
-+	irq = fwnode_irq_get_byname(fwnode, "INT1");
-+	if (irq < 0)
-+		return dev_err_probe(dev, irq, "error missing INT1 interrupt\n");
-+
- 	irq_type = irq_get_trigger_type(irq);
- 	if (!irq_type)
- 		irq_type = IRQF_TRIGGER_FALLING;
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
-index 04e440fe023aa3869529b0f0be003ea0544bfb8d..38cc0d7834fcb96dabc401f29d613cf9fc75b8f5 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c
-@@ -67,7 +67,7 @@ static int inv_icm42600_probe(struct i2c_client *client)
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
--	return inv_icm42600_core_probe(regmap, chip, client->irq,
-+	return inv_icm42600_core_probe(regmap, chip,
- 				       inv_icm42600_i2c_bus_setup);
- }
- 
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
-index 2bd2c4c8e50c3fe081e882aca6c64736510b474c..f40a09c4cbfc673e76922d13d61a3634785300ec 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
-@@ -64,7 +64,7 @@ static int inv_icm42600_probe(struct spi_device *spi)
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
--	return inv_icm42600_core_probe(regmap, chip, spi->irq,
-+	return inv_icm42600_core_probe(regmap, chip,
- 				       inv_icm42600_spi_bus_setup);
- }
- 
+[auto build test WARNING on staging/staging-testing]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Wentao-Liang/staging-rtl8723bs-Add-error-handling-for-sd_read/20250403-174101
+base:   staging/staging-testing
+patch link:    https://lore.kernel.org/r/20250403093741.2372-1-vulab%40iscas.ac.cn
+patch subject: [PATCH] staging: rtl8723bs: Add error handling for sd_read().
+config: hexagon-allyesconfig (https://download.01.org/0day-ci/archive/20250404/202504042334.1pXFeKzN-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 92c93f5286b9ff33f27ff694d2dc33da1c07afdd)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250404/202504042334.1pXFeKzN-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504042334.1pXFeKzN-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/staging/rtl8723bs/hal/sdio_ops.c:189:7: warning: variable 'val' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     189 |                 if (!err) {
+         |                     ^~~~
+   drivers/staging/rtl8723bs/hal/sdio_ops.c:196:9: note: uninitialized use occurs here
+     196 |         return val;
+         |                ^~~
+   drivers/staging/rtl8723bs/hal/sdio_ops.c:189:3: note: remove the 'if' if its condition is always true
+     189 |                 if (!err) {
+         |                 ^~~~~~~~~
+   drivers/staging/rtl8723bs/hal/sdio_ops.c:159:9: note: initialize the variable 'val' to silence this warning
+     159 |         u32 val;
+         |                ^
+         |                 = 0
+   1 warning generated.
+
+
+vim +189 drivers/staging/rtl8723bs/hal/sdio_ops.c
+
+   150	
+   151	static u32 sdio_read32(struct intf_hdl *intfhdl, u32 addr)
+   152	{
+   153		struct adapter *adapter;
+   154		u8 mac_pwr_ctrl_on;
+   155		u8 device_id;
+   156		u16 offset;
+   157		u32 ftaddr;
+   158		u8 shift;
+   159		u32 val;
+   160		s32 __maybe_unused err;
+   161		__le32 le_tmp;
+   162	
+   163		adapter = intfhdl->padapter;
+   164		ftaddr = _cvrt2ftaddr(addr, &device_id, &offset);
+   165	
+   166		rtw_hal_get_hwreg(adapter, HW_VAR_APFM_ON_MAC, &mac_pwr_ctrl_on);
+   167		if (
+   168			((device_id == WLAN_IOREG_DEVICE_ID) && (offset < 0x100)) ||
+   169			(!mac_pwr_ctrl_on) ||
+   170			(adapter_to_pwrctl(adapter)->fw_current_in_ps_mode)
+   171		) {
+   172			err = sd_cmd52_read(intfhdl, ftaddr, 4, (u8 *)&le_tmp);
+   173			return le32_to_cpu(le_tmp);
+   174		}
+   175	
+   176		/*  4 bytes alignment */
+   177		shift = ftaddr & 0x3;
+   178		if (shift == 0) {
+   179			val = sd_read32(intfhdl, ftaddr, NULL);
+   180		} else {
+   181			u8 *tmpbuf;
+   182	
+   183			tmpbuf = rtw_malloc(8);
+   184			if (!tmpbuf)
+   185				return SDIO_ERR_VAL32;
+   186	
+   187			ftaddr &= ~(u16)0x3;
+   188			err = sd_read(intfhdl, ftaddr, 8, tmpbuf);
+ > 189			if (!err) {
+   190				memcpy(&le_tmp, tmpbuf + shift, 4);
+   191				val = le32_to_cpu(le_tmp);
+   192			}
+   193	
+   194			kfree(tmpbuf);
+   195		}
+   196		return val;
+   197	}
+   198	
 
 -- 
-2.49.0
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
