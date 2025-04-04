@@ -1,147 +1,121 @@
-Return-Path: <linux-kernel+bounces-588532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A17EA7BA0B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:34:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DFCAA7BA13
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:39:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA0BC7A627A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 09:33:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84C12189CF22
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 09:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA571AF0BF;
-	Fri,  4 Apr 2025 09:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AEEE1AF0CE;
+	Fri,  4 Apr 2025 09:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d9MtoQrI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Fmnwubo2"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249CB16132F;
-	Fri,  4 Apr 2025 09:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C791ACED9
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 09:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743759281; cv=none; b=Hj3lwSo+F+OGC4YJjHfw2Vf4HydczP4/aQ3WEFAbx0DKMvEEf0iZgfdZtEeGNzUTBvBYcvnF6gHTSqI/mHbO9xDUjEGXhlf6zGWqZJtmhPTDDg6qnXMH9Vb2ZW6ZrdU/Ns+23hUVvnPyp5wI5ND+yy6ukNujCJflNAgbzygYquI=
+	t=1743759572; cv=none; b=gWcKwtX7+AYjtC+h3rABToRoXBZ7OwB5CLeQCEM3Wgru6haV200mMGiFSl34qwUWxvKj/xOAqBlqxEhLetsLoM2IyDnrOM1W1N16g+m7gR33noqBLSjgjpRS4bkVjQbQt4VDa+jCc4PXBwirk+CcVe0CG9t+aYhoInUwEWKz3JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743759281; c=relaxed/simple;
-	bh=n0DVXYKk8hiZe5RfNnARym5BTewBVaBxsH/5mlip/ik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mAh+Xwk6zJFDMxyfcEwd2M8fYcV682cpZhUhK2il32imHhA1GNV6TjEAjAaF5T1cOPuR9sOpcawFpvogpdsunuRO7cTVFIV31rhq3DG1jvfKe1hGLi2KFJnFuoRSvaNnvXQhx6kpTuKrpJWVkW/b3pXNgoUvCtczOog8+aqqxhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d9MtoQrI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31422C4CEE5;
-	Fri,  4 Apr 2025 09:34:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743759280;
-	bh=n0DVXYKk8hiZe5RfNnARym5BTewBVaBxsH/5mlip/ik=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d9MtoQrIT/Zn9pYbxRaCfVq9RrDir4kWKIFZQM17jaDiUtXizwIwDAb0+SzveV7Oz
-	 uypNUT5s6r8mDEUZEu3bb8QHKrHFF3JJFD2fTe1X/Faudp1NqluPMNjwUon/SPc7hz
-	 mAp91vJyLx+ZceZCCIzr6ukASR27nslWKnfRXax1NJu5K9k+FkfYOAkoIuGQneKO8Z
-	 YmdYgaQBTeqFFiaq0psUl3RF2B02Vnh8ytPVZocWkpckIm2aZ6tYTq5Kar38bnoDmg
-	 XL749/d5k9frjLLDWjhCfAOTKFYMEmLkJQBegWm40iGonmHeyVW4hxSJmxF/3kScem
-	 s9Wh8W2Tg5vBw==
-Date: Fri, 4 Apr 2025 10:34:33 +0100
-From: Lee Jones <lee@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v3 15/32] mfd: sec: s2dos05: doesn't support interrupts
- (it seems)
-Message-ID: <20250404093433.GE43241@google.com>
-References: <20250403-s2mpg10-v3-0-b542b3505e68@linaro.org>
- <20250403-s2mpg10-v3-15-b542b3505e68@linaro.org>
+	s=arc-20240116; t=1743759572; c=relaxed/simple;
+	bh=JsO2DCBi+8esMKHuOLikLhu2OLtnCeJi3aVwUcFStVo=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=PyUoi/TTVbZ9SDcHKMpeZHhOnXzPCnu7entzOf1HlLLymo4sKwmmtA3rVFX6t5SIICTcHsV9hqLyhMyJ1W9j69MUt67ETQeqBXTwwJgliffkQqA2go1N4k9f+HsMK8iMepmdSo9LEG+SjMI9lI7UG00/C1xYWqOWVCrVPwOv8og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Fmnwubo2; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1743759557;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HvCbJgJnFGne+TAMBgY6cQ6iJ4WbAlnhHeP54hSBG3U=;
+	b=Fmnwubo2TjnwNa23ZsXq1DE1aQDCxDMZQTSrFaDHVwxBUA4J7T93QPMm4Mpo25S6FDBWbe
+	hXnzoy6iMBRZc/lE9/ZTBBkQdIyDbrfWZG45bfRlKvTTSNLK55OyHl+b9lko2taHXfZnfn
+	MDBdQ6PxRyGu3r5IhprHpajQ+cgmImM=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250403-s2mpg10-v3-15-b542b3505e68@linaro.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP is broken, was Re: [RFC
+ PATCH 0/6] Deep talk about folio vmap
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <20250404090111.GB11105@lst.de>
+Date: Fri, 4 Apr 2025 17:38:35 +0800
+Cc: Huan Yang <link@vivo.com>,
+ bingbu.cao@linux.intel.com,
+ Matthew Wilcox <willy@infradead.org>,
+ Gerd Hoffmann <kraxel@redhat.com>,
+ Vivek Kasireddy <vivek.kasireddy@intel.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Shuah Khan <shuah@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,
+ linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org,
+ linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org,
+ opensource.kernel@vivo.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9A899641-BDED-4773-B349-56AF1DD58B21@linux.dev>
+References: <20250327092922.536-1-link@vivo.com>
+ <20250404090111.GB11105@lst.de>
+To: Christoph Hellwig <hch@lst.de>
+X-Migadu-Flow: FLOW_OUT
 
-Patch is fine, but the subject line should be more assertive.
 
-Also, there is seldom any need for sub-sentences in ()'s in them.
 
-IOW, drop the "(it seems)" part.
+> On Apr 4, 2025, at 17:01, Christoph Hellwig <hch@lst.de> wrote:
+>=20
+> After the btrfs compressed bio discussion I think the hugetlb changes =
+that
+> skip the tail pages are fundamentally unsafe in the current kernel.
+>=20
+> That is because the bio_vec representation assumes tail pages do =
+exist, so
+> as soon as you are doing direct I/O that generates a bvec starting =
+beyond
+> the present head page things will blow up.  Other users of bio_vecs =
+might
+> do the same, but the way the block bio_vecs are generated are very =
+suspect
+> to that.  So we'll first need to sort that out and a few other things
+> before we can even think of enabling such a feature.
+>=20
 
-> The commit bf231e5febcf ("mfd: sec-core: Add support for the Samsung
-> s2dos05") adding s2dos05 support didn't add anything related to IRQ
-> support, so I assume this works without IRQs.
-> 
-> Rather than printing a warning message in sec_irq_init() due to the
-> missing IRQ number, or returning an error due to a missing irq chip
-> regmap, just return early explicitly.
-> 
-> This will become particularly important once errors from sec_irq_init()
-> aren't ignored anymore in an upcoming patch and helps the reader of
-> this code while reasoning about what the intention might be here.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> ---
->  drivers/mfd/sec-irq.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
-> index 9f0173c48b0c8186a2cdc1d2179db081ef2e09c4..79a3b33441fa5ab48b4b233eb8d89b4c20c142ed 100644
-> --- a/drivers/mfd/sec-irq.c
-> +++ b/drivers/mfd/sec-irq.c
-> @@ -452,16 +452,12 @@ int sec_irq_init(struct sec_pmic_dev *sec_pmic)
->  	int type = sec_pmic->device_type;
->  	const struct regmap_irq_chip *sec_irq_chip;
->  
-> -	if (!sec_pmic->irq) {
-> -		dev_warn(sec_pmic->dev,
-> -			 "No interrupt specified, no interrupts\n");
-> -		return 0;
-> -	}
-> -
->  	switch (type) {
->  	case S5M8767X:
->  		sec_irq_chip = &s5m8767_irq_chip;
->  		break;
-> +	case S2DOS05:
-> +		return 0;
->  	case S2MPA01:
->  		sec_irq_chip = &s2mps14_irq_chip;
->  		break;
-> @@ -492,6 +488,12 @@ int sec_irq_init(struct sec_pmic_dev *sec_pmic)
->  				     sec_pmic->device_type);
->  	}
->  
-> +	if (!sec_pmic->irq) {
-> +		dev_warn(sec_pmic->dev,
-> +			 "No interrupt specified, no interrupts\n");
-> +		return 0;
-> +	}
-> +
->  	ret = devm_regmap_add_irq_chip(sec_pmic->dev, sec_pmic->regmap_pmic,
->  				       sec_pmic->irq, IRQF_ONESHOT,
->  				       0, sec_irq_chip, &sec_pmic->irq_data);
-> 
-> -- 
-> 2.49.0.472.ge94155a9ec-goog
-> 
+I would like to express my gratitude to Christoph for including me in =
+the
+thread. I have carefully read the cover letter in [1], which indicates
+that an issue has arisen due to the improper use of `vmap_pfn()`. I'm
+wondering if we could consider using `vmap()` instead. In the HVO =
+scenario,
+the tail struct pages do **exist**, but they are read-only. I've =
+examined
+the code of `vmap()`, and it appears that it only reads the struct page.
+Therefore, it seems feasible for us to use `vmap()` (I am not a expert =
+in
+udmabuf.). Right?
 
--- 
-Lee Jones [李琼斯]
+[1] =
+https://lore.kernel.org/linux-mm/20250327092922.536-1-link@vivo.com/T/#m05=
+5b34978cf882fd44d2d08d929b50292d8502b4
+
+Thanks,
+Muchun.
+
 
