@@ -1,92 +1,117 @@
-Return-Path: <linux-kernel+bounces-588277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56F1BA7B6F4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 06:40:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8598A7B6FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 06:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 080B03A84D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 04:40:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C54016E4EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 04:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E073113BAE3;
-	Fri,  4 Apr 2025 04:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="neRPTkah"
-Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34AF1494A9;
+	Fri,  4 Apr 2025 04:51:33 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B68718AFC
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 04:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01C4A95E;
+	Fri,  4 Apr 2025 04:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743741648; cv=none; b=Wv+4GUZZhthQ1YwHOWMLHCOVrp+RUAHba0a9RVe5n8GyRp24c+q6RfPO9e5seGki+nsF6FKN+Hpe4cxljQLbhpOBUWDesObyz3MqdnxSvTYHsr5GVuuWZeKNmL5nB+8yMwg4NULa2MHbYbwY8HPpf+A/Fed9rC0pdFnx27rRTnQ=
+	t=1743742293; cv=none; b=M58zwhbUbxyLb84KOsgAdZSbIKa6ZEX/HfOIXJyo+to9IejvKDod01eHtaknr9gLO5+7P8e28VqmujajYkQm6ilBP3uMWlMInxQZbCU0dvA9SUrSpmXrk6PchtwvHednxD29KvQiCYMogdH5sgRMTMAVQVk3c8MbIaFBmAf32S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743741648; c=relaxed/simple;
-	bh=joLNCGs9RdPNcetlhhWzsqwqlccBc9pRXgu1cMQnAB0=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=pk7kMbJum5Vm6gpeMGB0vDREs0tfuKnKZfzRDZL5vvo+OgZg7XkEV8LOhAucggdKX2MsdAGABjdTcuf5CebtEwMNdgFRktZgknwhjYjsxJyldZf5eU88/muedZwihvNul+s1kWdye5Wh2E9GSNZavgLpcDRKnl6tlXnqifHEp84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=neRPTkah; arc=none smtp.client-ip=203.205.221.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1743741635; bh=ss48TjMuMWY2ShPP9Gvt/DjqDAuFy3JERqYNmAMPzfI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=neRPTkahVFIjoyJ/A3f4cy+ngVwZI11wgcCVtmLx+1p6qsSw4pXnjDJf16Ta0MWrq
-	 5ucsD0KgM+14+bjDJdUuVqjywsJ8TvwETCd+SWB2yaiH9a2/ckN/8kLp/yWznxr5aO
-	 u6NsOXuyD6Q3HRLkOZSCdmz4jEV+YA5oP9Wlf9Ow=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id A2192AB4; Fri, 04 Apr 2025 12:40:33 +0800
-X-QQ-mid: xmsmtpt1743741633tveurnlja
-Message-ID: <tencent_10224B011B9C25D1BA48BB9033BC9EF71B08@qq.com>
-X-QQ-XMAILINFO: MprdIpiwXvQIWjbmZJRtfkY8Kvi8bGDJcON+OXsv375ewEaHjTQcYMzUq7swo/
-	 rLAyAzHnX1neDH6OtujhPvwsRR9dUSb6o4iMnWRLUCPFWi2l+IHI7DJTG0T7526OTEOT0FH1K7pi
-	 5x8zvbf9fobAkh3c9GSgBf5Xcr+QEbIGLVEijvt/IFqiFAR6enK3QCOns2V2len33tCk4ibUYBNK
-	 1Oq4omBEArB0O4AeBWCrMOMcDmZu7LhdkgGDaMKj3DQN34FbxO6eBJhzfC9t4JBPuREUxY+bhVGI
-	 N89t4HQDImbdSApDoDnHmHf9/FkcTdtNmHYRlhI4wwTDV36VuY+sCZ22EYscU2PBPZoXec+3hVGX
-	 XDPDfJcQ//NCENQ4exh9Gcx49lLT3CyGKNu216wJ6YkR8t8gE8TelOkqNhiSv63lFmWOiwvdEAnF
-	 4+UtSC5Jg0aDgjUhZ+PT/QO7kVm8fhNx04kLLqqhVAhD+f9sksuBb6E5sKGqbYLp+7Pjxan6s+aO
-	 v+JXOeznsAAVNuAPMmTXhJsv7dqnkPEBEmKxMStcy5DhFSL8ep2W19oNJoPtgOa1biNf8xgs0wDM
-	 xrZY6u8RI9HLlGRAOr3AVYo4+g2zlPEWZOLygApa+xEgLpX5Aq6/Efr5td8RhTxEKt4nzsJ+Gvoj
-	 PCxRY1+FJJbsqIkh95AWQCJlAgrmHJLdW/34NCrzEhgmkQbsorjSO9bPcaB0jx4s4cATAqn2stz3
-	 E3K05i4DNxQl6NmQ8PcELWGLTS15JYmRe8apC6ks7DIoRli/05vbjLQB03sf4RH7ncZoCzmN/9qb
-	 9y/GwTr93sDd+veg0iyqtQA2zGLnzW0Ih7mJjqr/OaA27VbRQns/witSrPU5PynWTlWH+KWe3TSP
-	 9fu5j3DICs4Bqj4NEfEogjdYw5/OPZaDoQvOY3TCAKo5uJCWsL0Wk=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+4d7cd7dd0ce1aa8d5c65@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [isofs?] KASAN: slab-out-of-bounds Read in isofs_fh_to_parent
-Date: Fri,  4 Apr 2025 12:40:34 +0800
-X-OQ-MSGID: <20250404044033.2754461-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <67eee51c.050a0220.9040b.0240.GAE@google.com>
-References: <67eee51c.050a0220.9040b.0240.GAE@google.com>
+	s=arc-20240116; t=1743742293; c=relaxed/simple;
+	bh=JAKicYwYnX+BY+e/z0h+lneUm38kHCWULfOxJEdxa7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qYoY06HtfHlVs+/at03RrIWEaN/RxRojV++LxmVGEc6x0zV+VB0mRcE/kI9s9Fe3icNnqK6fi4JWu2+K6KWHreZnzfLAJF1TND1PulGbZNfGvk6/2kZLkcBbTlKsVH0D7SVNMadaqCRI/7ndxkBaBY19/gSjHB1AHjuLxIGqHQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 84EE52C06E55;
+	Fri,  4 Apr 2025 06:42:29 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id BD8EF1143F; Fri,  4 Apr 2025 06:42:32 +0200 (CEST)
+Date: Fri, 4 Apr 2025 06:42:32 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Shawn Anastasio <sanastasio@raptorengineering.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, tpearson@raptorengineering.com,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: Re: [PATCH 2/3] pci/hotplug/pnv_php: Work around switches with
+ broken presence detection
+Message-ID: <Z-9jOFiPaxYAJwdm@wunner.de>
+References: <20250404041810.245984-1-sanastasio@raptorengineering.com>
+ <20250404041810.245984-3-sanastasio@raptorengineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250404041810.245984-3-sanastasio@raptorengineering.com>
 
-#syz test
+[cc += Krishna]
 
-diff --git a/fs/isofs/export.c b/fs/isofs/export.c
-index 35768a63fb1d..421d247fae52 100644
---- a/fs/isofs/export.c
-+++ b/fs/isofs/export.c
-@@ -180,7 +180,7 @@ static struct dentry *isofs_fh_to_parent(struct super_block *sb,
- 		return NULL;
- 
- 	return isofs_export_iget(sb,
--			fh_len > 2 ? ifid->parent_block : 0,
-+			fh_len > 3 ? ifid->parent_block : 0,
- 			ifid->parent_offset,
- 			fh_len > 4 ? ifid->parent_generation : 0);
- }
+On Thu, Apr 03, 2025 at 11:18:09PM -0500, Shawn Anastasio wrote:
+> The Microsemi Switchtec PM8533 PFX 48xG3 [11f8:8533] PCIe switch system
+> was observed to incorrectly assert the Presence Detect Set bit in its
+> capabilities when tested on a Raptor Computing Systems Blackbird system,
+> resulting in the hot insert path never attempting a rescan of the bus
+> and any downstream devices not being re-detected.
+> 
+> Work around this by additionally checking whether the PCIe data link is
+> active or not when performing presence detection on downstream switches'
+> ports, similar to the pciehp_hpc.c driver.
+[...]
+> --- a/drivers/pci/hotplug/pnv_php.c
+> +++ b/drivers/pci/hotplug/pnv_php.c
+> @@ -390,6 +390,20 @@ static int pnv_php_get_power_state(struct hotplug_slot *slot, u8 *state)
+>  	return 0;
+>  }
+>  
+> +static int pcie_check_link_active(struct pci_dev *pdev)
+> +{
+> +	u16 lnk_status;
+> +	int ret;
+> +
+> +	ret = pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+> +	if (ret == PCIBIOS_DEVICE_NOT_FOUND || PCI_POSSIBLE_ERROR(lnk_status))
+> +		return -ENODEV;
+> +
+> +	ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
+> +
+> +	return ret;
+> +}
+> +
 
+This appears to be a 1:1 copy of pciehp_check_link_active(),
+save for the ctrl_dbg() call.
+
+For the sake of code-reuse, please move the function into the
+PCI library drivers/pci/pci.c so that it can be used everywhere.
+
+Note that there's another patch pending which does exactly that:
+
+https://lore.kernel.org/r/20250225-qps615_v4_1-v4-7-e08633a7bdf8@oss.qualcomm.com/
+
+So either include that patch in your series (addressing the review
+feedback I sent for it and cc'ing the original submitter) or wait
+for it to be respun by the original submitter.
+
+Thanks,
+
+Lukas
 
