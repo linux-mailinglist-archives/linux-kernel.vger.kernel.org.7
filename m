@@ -1,148 +1,127 @@
-Return-Path: <linux-kernel+bounces-588391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2AC2A7B86B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 09:52:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 142F4A7B870
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 09:54:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33ACB189B579
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 07:52:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FEB73B7994
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 07:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ABA9191F95;
-	Fri,  4 Apr 2025 07:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF5919994F;
+	Fri,  4 Apr 2025 07:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jBOlaUkD"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XesQvbb6"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0DC18CC10
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 07:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF53198E60
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 07:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743753144; cv=none; b=sa2BuXzOtvZinpPm7iBs1l9d3mTGb5AilB4RpbOorOckeUJlTEeXJLUhKjCy3JbkBY7IA9vFxNo1gpm8BFZ1psei2bnBcPBwKISZ4yXZhM2Y7iXj0Xt7prb+24U4U4bEjhPXSwS6UYoKd0BVdwgbbIRlZ/BY7vBr6TFTtG1tEhM=
+	t=1743753242; cv=none; b=pDef8Ian+GVdlLZXXIW+RhNKrknQcV2sL7nzRLnbvltjhWkvfHBCOanqPdvfXE/qKawUcvXekuBuCh3Zq1rjF0AS6YxI835BeFMhSgaSdP2DQu9N9GpjiZVTiciyqIL472Pxmm2wex4Mta6egN0zWbnZtu3U+B3H0a9A/o+i3g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743753144; c=relaxed/simple;
-	bh=PUvqvlPxRPSyXrxu0K2XV4no9uI8EXIW+zUgHjQNf14=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=iT0tbxJvHYAckge+4nK2cCsIcrOBxi/gcc/lUz+a5o7f3jYuMaYtwOoM9DFhwcFdcswgLV/avU8BwgmnW9KEeneTfETWIA1TqB+ofDtaLHdDg+YMreGUS/wD3dYyYx6tY7ACEPckZ896iiESSdABREyco4gLY+k2pjS0hgbXozE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jBOlaUkD; arc=none smtp.client-ip=209.85.218.44
+	s=arc-20240116; t=1743753242; c=relaxed/simple;
+	bh=eMOboR1OF7sgHodBKX1sm5CBlNgK4lAffdjRbbeWCqk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mfEM1/BWe/Dpw8BdQwawf9csbu97qzipw8Qkp5Z4Gxucb8XrJkeqlN6AietB7aBsLl+7Asu5SXMXHpeKJ4eqvEezj0/g4Ymo06ZJ3KE7ig9FVqGJwK15lv3nlKGGHnmHnxOKX1/AE59f7raceU61zOuYBS0HVvmayUhSZkO6c84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XesQvbb6; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac297cbe017so532990966b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 00:52:21 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac25d2b2354so304107166b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 00:54:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743753140; x=1744357940; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uYCEbsmpkeS3Q60maCjHVoB56blZ91ijmtQzE0zRKHI=;
-        b=jBOlaUkD4b2xugg2B+4LdfaTkQiXeTqe6u+0qqb58JiG5ZAk1qTJmqqNv52V5gJuZY
-         hMeZo6s7vaoyplnw7fcTHNiQ3T+EIdlxSJ4zMdFohzZnolzi9H0lPlqAgmcjnIlTDTKA
-         PvdKmWrmoEyRRLGROZwgXCBP7V2wrRHSP7z974IFadaWwzjv+ouw6aBkFfoSdBmUpzLw
-         rxToVqWQy8e2MurfcFPyUYVSmpfXhLfktQyfiTg/kgLKNEU4SzrBNptCqFuhN5b7UZwp
-         wIFBREV7N0HsmPZQtPPAqaL+Mfpl5oTzBNG+mp37xyNEDXm1teMkAqRT0b48HofUOy9W
-         m3VA==
+        d=gmail.com; s=20230601; t=1743753239; x=1744358039; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RaGTQLiNqEVn6hoJZLsfuhUQi5LJ3xyfMo/qxpq0bPs=;
+        b=XesQvbb6uoPiMNFvnI0BLKf+rzX1q6cPpJgLQlCLBQ5nq6gBwKVS10UI4GpysdCwy0
+         WTOR7FznWpUltWiGrTpILyMkwYXCuYOuFy5kK2BhUpT2L3reYzY0FA1sB/oZvZl7xhmb
+         uSN2oJhkbyZt5m6a4Ssid6XM0lMDHOwJmFPdkiX1H6+nXqpSMYWIeZ9O2GqNNOlsMeQk
+         a7XYCXNWOow6L4FfbdOiITsrex5BWTLgKMpKeFxxxsIzP7XU5s6LJb1N+C/LKFD0ZFEM
+         C1tqTLoBX14CvesGnaMkRajp4/SCHbEFH1ccP86VkOXdFd6XA/z8MV8wYWag27+ZaInC
+         UCIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743753140; x=1744357940;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uYCEbsmpkeS3Q60maCjHVoB56blZ91ijmtQzE0zRKHI=;
-        b=WtP+XSwFUX+dyWNtt9Q8ba6o213lRG1rFzcn0kU5WNkpSaPpfZTFXsAMuVB9uHnDd9
-         benM/wka4nyOO6wbSDtvcK8iSAWuzPzf/BeiSfSaNRP0rWvZIdVVvI3BdFJdJy7WH1lH
-         0em6BwByPr518m+QC+BMf9seUw9HsSC48TpZr4TdthUbOJ54qr8zLoVDNHTK2FvjwSwx
-         TLdn0qCHNfanHgatqM2CtSNyB3PcfagRDIZZGL7jvvru3g0OmQNbE97UmgVgev5BXJn9
-         lILe/210OQYDk6y8ZjcCDU4M52U2j+Br2UKT74E4mUx4/81ypjgiJN5gWy+Rt6VZcAVr
-         upkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0TAxoDRytI/CA1k8me3/IGeLkXqV1cNKkiDHezxsLMD37PhdTfOXYMIdM2IqmRqDqUvcYEct1S+H/tlQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaMNDbAYGk0wFGNJktrMwi4yBeeY2ns0cU2mEngX6KviuHf7Us
-	qseolgtzIcz3gUeuZsc3TA97i90dUwuhVCHURwPho37jg+HXjmp/
-X-Gm-Gg: ASbGncudS/FvS6rRmrW+rB1SYsIm8NveQLNT1EZZ3DIihGlcSz7kuxzGpFg6mUkRsxk
-	klzwLKZ+MI+HHEBwld38dfjynOfBdvvJihqCPLFanGqtIc3mZ/fQr1nO551n1YIAswvqATOaB+u
-	VFcA9gI48zxOjRiOEMAfOyDeialm6uCpFDFTsD7nK4MMnjQWpBU4MDx7g0wIL9B2U6LNk/nASRS
-	nIsBuEflOQu9f0qRcSf2fFJ8HHwVpvk4w2cRpBM2dXbGpD9W08Bg1bnI6XQCJXp6wN5yZ/hJXLw
-	WvEUj9HrE6ir+eNX1xyYCZB1UDER3ZhOC6V+XPwc0WMw7dZP
-X-Google-Smtp-Source: AGHT+IF7X9qGSvYgcfZKBIkNjGsZ8LP0gsSa+mmiw4Sgg2By0sPj+T5TnGntgva+aPuD0xBUHc57Zg==
-X-Received: by 2002:a17:907:96a7:b0:ac6:f5b5:36e0 with SMTP id a640c23a62f3a-ac7b7128261mr570432966b.19.1743753140054;
-        Fri, 04 Apr 2025 00:52:20 -0700 (PDT)
-Received: from HP-650 ([105.112.123.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7c0186250sm205997666b.155.2025.04.04.00.52.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 00:52:19 -0700 (PDT)
-Date: Fri, 4 Apr 2025 08:51:59 +0100
-From: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
-To: outreachy@lists.linux.dev, julia.lawall@inria.fr,
-	gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org
-Subject: [v4] staging: rtl8723bs: modify struct field to use standard bool
- type
-Message-ID: <Z++PnxFQFe+IexUi@HP-650>
+        d=1e100.net; s=20230601; t=1743753239; x=1744358039;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RaGTQLiNqEVn6hoJZLsfuhUQi5LJ3xyfMo/qxpq0bPs=;
+        b=q7Gz4vnmatgXT8r09Jbz6VBZbSX+C9m12DubmIIfAUjoAPMA9WDpDpaAwnyDyNXXwQ
+         GEYbcuFg+d2sMh6siYu+rO5y4d0/Jq6TkyCHHWPUN3Va4PU5rIPxrtno3S1frQw8pYCD
+         iLsQFT+ZO89xhX+oB0dYBslgsJiprP3J1OAFl98ZDfxM9ArzYu/BpqLFkg8pSZ5jY9Jy
+         ul+d17wUJ2XbKit2bLGEGrbp/rOynqbVgWzMRToInH2dgnKHPjotGnzYefFn7USYQ6rv
+         uCC10YdEem8Uu2Ye63jSvCqZd/OPjP0TAMhEtvxQ1VGyDuRM62+w3RoPVt/bU+Eqved/
+         aenA==
+X-Forwarded-Encrypted: i=1; AJvYcCWff8UHYTv3w9jfao+KvJw0YkPZJCyZtwIcsbE+24Pa0vjESnnMqKxGrrCOFT48p3cV+SIMEA6gJCtk0Wg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDTeZLQmm/CM7dJ4XwOEszNXfmZrcTiuXBlTlKVqOaAx7gti50
+	IeYXcixt7Q84JutCaZKvcc1IlhvMQUv3rIhOnXR54qJRTACkWEIx7xzP9pH/NnmJSYcfifZ+2Hk
+	H21OBN60DRHyLy5eijBBa74716O4=
+X-Gm-Gg: ASbGnctApdjIjro1RqLnXNQ5UJ5LDf6ehGlaYSSB0EyfUMBQfdMCM1HGpk4T8k70F5n
+	0hMbnDmzR2Mh9nEFL785hegyGlpimxtu1ywI9lHQwxlhvuJkfEK4J9AMireEuaze2M7bYBbUGEe
+	vlpPM+SQHeN05qYFLtoVzN2BBPFw==
+X-Google-Smtp-Source: AGHT+IF6civQrpcsNGh3qPt0iFr0ZsF9o9HE36peO/Ap6sGq0saiZ3ABHJ4gFSQo6erdYgpt1gMsmjYQr107nKWDgTQ=
+X-Received: by 2002:a17:907:3686:b0:ac7:31d5:20de with SMTP id
+ a640c23a62f3a-ac7d6e93527mr121032066b.50.1743753239033; Fri, 04 Apr 2025
+ 00:53:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <cover.1743723590.git.abrahamadekunle50@gmail.com> <6fe7cb92811d07865830974cb366d99981ab1755.1743723591.git.abrahamadekunle50@gmail.com>
+In-Reply-To: <6fe7cb92811d07865830974cb366d99981ab1755.1743723591.git.abrahamadekunle50@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 4 Apr 2025 10:53:22 +0300
+X-Gm-Features: AQ5f1JrSo785G3atwbFfwkCZQrH7Nn1tO8h4kPi_a_CCxGgfg4kfie2vKhwpsQw
+Message-ID: <CAHp75Vem1E9wmmfXWsbawj2f+F=UkfzML7HyAnhTdsUqvjW91g@mail.gmail.com>
+Subject: Re: [v3 1/1] staging: rtl8723bs: Prevent duplicate NULL tests on a value
+To: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
+Cc: outreachy@lists.linux.dev, julia.lawall@inria.fr, 
+	gregkh@linuxfoundation.org, linux-staging@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, andy@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The struct sta_info field ieee8021x_blocked uses the uint values
-0 and 1 to represent false and true values respectively.
+On Fri, Apr 4, 2025 at 3:03=E2=80=AFAM Abraham Samuel Adekunle
+<abrahamadekunle50@gmail.com> wrote:
+>
+> When a value has been tested for NULL in an expression, a
+> second NULL test on the same value in another expression
+> is unnecessary when the value has not been assigned NULL.
+>
+> Remove unnecessary duplicate NULL tests on the same value that
+> has previously been NULL tested.
+>
+> Found by Coccinelle.
 
-Convert cases to use the bool type instead to ensure consistency
-with other parts of the containing code where true or false have
-been used.
+...
 
-This change causes the struct field to change size from a 32bit to
-an 8bit. However, the change is safe to make because the sta_info
-struct is not read from the hardware.
+> +                       psta->sta_xmitpriv.txseq_tid[pattrib->priority] &=
+=3D 0xFFF;
 
-reported by Coccinelle:
+> +                                       psta->BA_starting_seqctrl[pattrib=
+->priority & 0x0f] =3D
+> +                                               (tx_seq + 1) & 0xfff;
 
-Signed-off-by: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
----
-Changes in v4:
-	- Added information about changing size of struct field in commit
-	message and why it is safe to do so as suggested by Julia Lawall
-Changes in v3:
-	- Added more patch recipients
-Changes in v2:
-	- Improved commit message based on suggestion from Julia Lawall
-	- Clarity was provided to Greg kroah-Hartman by Dan Carpenter on why
-	it is safe to make the change to the struct field.
+> +                                       psta->BA_starting_seqctrl[pattrib=
+->priority & 0x0f] =3D
+> +                                               (pattrib->seqnum + 1) % 4=
+096;
 
- drivers/staging/rtl8723bs/core/rtw_ap.c      | 2 +-
- drivers/staging/rtl8723bs/include/sta_info.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Logically it's obvious that you need to align all cases to have
+consistent approach.
+Besides that the commit message should mention this change. Something like =
+this
+"While at it, convert '& 0xfff' cases to use modulo operator and
+decimal number to make the upper limit visible and clear what the
+semantic of it is."
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/rtl8723bs/core/rtw_ap.c
-index ed6942e289a5..82f54f769ed1 100644
---- a/drivers/staging/rtl8723bs/core/rtw_ap.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
-@@ -389,7 +389,7 @@ void update_bmc_sta(struct adapter *padapter)
- 		psta->qos_option = 0;
- 		psta->htpriv.ht_option = false;
- 
--		psta->ieee8021x_blocked = 0;
-+		psta->ieee8021x_blocked = false;
- 
- 		memset((void *)&psta->sta_stats, 0, sizeof(struct stainfo_stats));
- 
-diff --git a/drivers/staging/rtl8723bs/include/sta_info.h b/drivers/staging/rtl8723bs/include/sta_info.h
-index b3535fed3de7..63343998266a 100644
---- a/drivers/staging/rtl8723bs/include/sta_info.h
-+++ b/drivers/staging/rtl8723bs/include/sta_info.h
-@@ -86,7 +86,7 @@ struct sta_info {
- 	uint qos_option;
- 	u8 hwaddr[ETH_ALEN];
- 
--	uint	ieee8021x_blocked;	/* 0: allowed, 1:blocked */
-+	bool ieee8021x_blocked;
- 	uint	dot118021XPrivacy; /* aes, tkip... */
- 	union Keytype	dot11tkiptxmickey;
- 	union Keytype	dot11tkiprxmickey;
--- 
-2.34.1
-
+--=20
+With Best Regards,
+Andy Shevchenko
 
