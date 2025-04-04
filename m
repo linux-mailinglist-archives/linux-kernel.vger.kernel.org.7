@@ -1,117 +1,113 @@
-Return-Path: <linux-kernel+bounces-588280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8598A7B6FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 06:51:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A2BA7B6F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 06:43:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C54016E4EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 04:51:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1716C189BC6E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 04:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34AF1494A9;
-	Fri,  4 Apr 2025 04:51:33 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16CA149E17;
+	Fri,  4 Apr 2025 04:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZUwl9Mhd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01C4A95E;
-	Fri,  4 Apr 2025 04:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A471448D5;
+	Fri,  4 Apr 2025 04:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743742293; cv=none; b=M58zwhbUbxyLb84KOsgAdZSbIKa6ZEX/HfOIXJyo+to9IejvKDod01eHtaknr9gLO5+7P8e28VqmujajYkQm6ilBP3uMWlMInxQZbCU0dvA9SUrSpmXrk6PchtwvHednxD29KvQiCYMogdH5sgRMTMAVQVk3c8MbIaFBmAf32S0=
+	t=1743741808; cv=none; b=um9LeikhahAFPFZ/SQAW1j1nayK+4pV0IGLQCdeLej9kkiyopvhA1Zn9KbUrpPqP24NUYZTp5nwIkEeRGvszxxwLdoLqUqrzK1aMtiLmNji2mxL/HFJ9e5UQoZXhMMqtXTiUH6JwYwL00ukHhkt/8Ye1RpHEpsXsOrc8sKlvIqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743742293; c=relaxed/simple;
-	bh=JAKicYwYnX+BY+e/z0h+lneUm38kHCWULfOxJEdxa7E=;
+	s=arc-20240116; t=1743741808; c=relaxed/simple;
+	bh=yOFP6WyBvsmJomlapRb3VVI2bxBHvehWdst6fSGFPYQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qYoY06HtfHlVs+/at03RrIWEaN/RxRojV++LxmVGEc6x0zV+VB0mRcE/kI9s9Fe3icNnqK6fi4JWu2+K6KWHreZnzfLAJF1TND1PulGbZNfGvk6/2kZLkcBbTlKsVH0D7SVNMadaqCRI/7ndxkBaBY19/gSjHB1AHjuLxIGqHQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 84EE52C06E55;
-	Fri,  4 Apr 2025 06:42:29 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id BD8EF1143F; Fri,  4 Apr 2025 06:42:32 +0200 (CEST)
-Date: Fri, 4 Apr 2025 06:42:32 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Shawn Anastasio <sanastasio@raptorengineering.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, tpearson@raptorengineering.com,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Subject: Re: [PATCH 2/3] pci/hotplug/pnv_php: Work around switches with
- broken presence detection
-Message-ID: <Z-9jOFiPaxYAJwdm@wunner.de>
-References: <20250404041810.245984-1-sanastasio@raptorengineering.com>
- <20250404041810.245984-3-sanastasio@raptorengineering.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cvGVFfLl2UuP+aWoCWLemMUbcGUShiBwfkByd9QdExt1cnOVOHPqPlgGjb5nmYsPcSMqidjE6g4AyyZAPb3ZalysLpsmellzjIJwJ+BBN1Ixclph6wUl8xeVGo33YH4BXojuUO/atv+yMacH95VfqkRtvvIJLod73GaR7rqEfG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZUwl9Mhd; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743741807; x=1775277807;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yOFP6WyBvsmJomlapRb3VVI2bxBHvehWdst6fSGFPYQ=;
+  b=ZUwl9MhdaCuNyxH1DyhYtsrNOt4AntXvxBJoUZCTVSwV+YBQAuu4GvBa
+   X/GXnnnDTIy3ydtAv90oRiv9FMU1sOcBbGYHQ2m7hkNmwj5RkpBjMO7wQ
+   Y7rlvMZ85Xj2fmd/H0zLiU29YG2lRZeYfhk4pPcFHLl+IRldRYxC0IPVn
+   9gCm0VtheX4fkMZbMADqxmIlPcdGZI7fnusvRgSqeSDtrHGU9F8jEHoSO
+   6azxuuEoE/YIqk7sPM4wZSUQenE7vW2rHbSo8rzR60STLHgI7eTduclq5
+   mm0RIcvCpaTHu+FKljiyoXzU7NIwsEyUJ57sGifCvSPGClPKQcmS29oni
+   g==;
+X-CSE-ConnectionGUID: aakOP+3BQHuJF453rDv7/w==
+X-CSE-MsgGUID: 1UuHOrvESW29k17M8iEN0A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11393"; a="45348980"
+X-IronPort-AV: E=Sophos;i="6.15,187,1739865600"; 
+   d="scan'208";a="45348980"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 21:43:22 -0700
+X-CSE-ConnectionGUID: o2F2cX8WSia7cBJ2AnsCHg==
+X-CSE-MsgGUID: +1RCCa9DRZuGs3fmv8VukQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,187,1739865600"; 
+   d="scan'208";a="126985059"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa009.jf.intel.com with ESMTP; 03 Apr 2025 21:43:19 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 5A50F141; Fri, 04 Apr 2025 07:43:18 +0300 (EEST)
+Date: Fri, 4 Apr 2025 07:43:18 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Mika Westerberg <westeri@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v2 0/6] gpiolib: acpi: Refactor to shrink the code by ~8%
+Message-ID: <20250404044318.GL3152277@black.fi.intel.com>
+References: <20250403160034.2680485-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250404041810.245984-3-sanastasio@raptorengineering.com>
+In-Reply-To: <20250403160034.2680485-1-andriy.shevchenko@linux.intel.com>
 
-[cc += Krishna]
-
-On Thu, Apr 03, 2025 at 11:18:09PM -0500, Shawn Anastasio wrote:
-> The Microsemi Switchtec PM8533 PFX 48xG3 [11f8:8533] PCIe switch system
-> was observed to incorrectly assert the Presence Detect Set bit in its
-> capabilities when tested on a Raptor Computing Systems Blackbird system,
-> resulting in the hot insert path never attempting a rescan of the bus
-> and any downstream devices not being re-detected.
+On Thu, Apr 03, 2025 at 06:59:11PM +0300, Andy Shevchenko wrote:
+> A simple refactoring of the GPIO ACPI library parts to get an impressive
+> ~8% code shrink on x86_64 and ~2% on x86_32. Also reduces a C code a bit.
 > 
-> Work around this by additionally checking whether the PCIe data link is
-> active or not when performing presence detection on downstream switches'
-> ports, similar to the pciehp_hpc.c driver.
-[...]
-> --- a/drivers/pci/hotplug/pnv_php.c
-> +++ b/drivers/pci/hotplug/pnv_php.c
-> @@ -390,6 +390,20 @@ static int pnv_php_get_power_state(struct hotplug_slot *slot, u8 *state)
->  	return 0;
->  }
->  
-> +static int pcie_check_link_active(struct pci_dev *pdev)
-> +{
-> +	u16 lnk_status;
-> +	int ret;
-> +
-> +	ret = pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
-> +	if (ret == PCIBIOS_DEVICE_NOT_FOUND || PCI_POSSIBLE_ERROR(lnk_status))
-> +		return -ENODEV;
-> +
-> +	ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
-> +
-> +	return ret;
-> +}
-> +
+> add/remove: 0/2 grow/shrink: 0/5 up/down: 0/-1221 (-1221)
+> Function                                     old     new   delta
+> acpi_gpio_property_lookup                    425     414     -11
+> acpi_find_gpio.__UNIQUE_ID_ddebug478          56       -     -56
+> acpi_dev_gpio_irq_wake_get_by.__UNIQUE_ID_ddebug480      56       -     -56
+> acpi_find_gpio                               354     216    -138
+> acpi_get_gpiod_by_index                      462     307    -155
+> __acpi_find_gpio                             877     638    -239
+> acpi_dev_gpio_irq_wake_get_by                695     129    -566
+> Total: Before=15375, After=14154, chg -7.94%
+> 
+> In v2:
+> - renamed par to params (Mika, Bart)
+> 
+> Andy Shevchenko (6):
+>   gpiolib: acpi: Improve struct acpi_gpio_info memory footprint
+>   gpiolib: acpi: Remove index parameter from acpi_gpio_property_lookup()
+>   gpiolib: acpi: Reduce memory footprint for struct acpi_gpio_params
+>   gpiolib: acpi: Rename par to params for better readability
+>   gpiolib: acpi: Reuse struct acpi_gpio_params in struct
+>     acpi_gpio_lookup
+>   gpiolib: acpi: Deduplicate some code in __acpi_find_gpio()
 
-This appears to be a 1:1 copy of pciehp_check_link_active(),
-save for the ctrl_dbg() call.
+Looks good now,
 
-For the sake of code-reuse, please move the function into the
-PCI library drivers/pci/pci.c so that it can be used everywhere.
-
-Note that there's another patch pending which does exactly that:
-
-https://lore.kernel.org/r/20250225-qps615_v4_1-v4-7-e08633a7bdf8@oss.qualcomm.com/
-
-So either include that patch in your series (addressing the review
-feedback I sent for it and cc'ing the original submitter) or wait
-for it to be respun by the original submitter.
-
-Thanks,
-
-Lukas
+Acked-by: Mika Westerberg <westeri@kernel.org>
 
