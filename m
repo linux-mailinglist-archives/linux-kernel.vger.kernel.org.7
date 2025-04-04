@@ -1,69 +1,132 @@
-Return-Path: <linux-kernel+bounces-588450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24185A7B908
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:38:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4912A7B910
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89A6D17A1D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:38:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C12503B9DAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8DA19CC0E;
-	Fri,  4 Apr 2025 08:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F0719CC0E;
+	Fri,  4 Apr 2025 08:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b9ynigyL"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="awDtH6Sm"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6053E1A0728;
-	Fri,  4 Apr 2025 08:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA0E19995D
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 08:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743755870; cv=none; b=SiJPxry0g10TROy9shICM8h6IixPJqtrrrhk3zYSxLcHDZhwHJL0YRk6t0xs0mLe4OUxwyG6B08wLAbcvqceE1xXuzi4t6VC6sEty22HImOmwZJEfa5MOYdxl7KHNnW0kOeh5sNciTnHmW2BEzBXnrUdX3FwT0N27059Ke42QOQ=
+	t=1743755899; cv=none; b=haPA3LkxOkK4PX+49CacpQWB3o6c+GsfQwQoHsKpczHaijehFk9ww5AYe0o0uFnIwgUJMfWUQMTQvCboR8zathctPzIVkJzGfortlRuAEkTozRXv8wcFtmmGuTHUDKTRcbU0xnwt15OtUH6KFy2jBYJGZR1wh5SfKu7dji88aFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743755870; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rxt7vszLNub4Xh1iHMOWNM7OoOLVD75iZSIKUi2xIxzdpzWgHLydiRxDGzfOP1F5ntrx4w3W3uwSUssgPZ8xvCArp+3V/n9WNqGwEvKeDGf5I8HTH5wCCcdtfmUtLOpgHIYPfrJZm8eiCNPrHtQD77nEcTwEP/zu8s9mKOZJtCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=b9ynigyL; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=b9ynigyLSYfpDLOe50Yfd+KG5R
-	HwYyGLa+5zgVe9LgUhBFhhTiC/udOC0SdVLL1GVyFC0PJ8nj1z8A3YhBFBj8lDchr0/s5BVKAr9LB
-	0UyzVK8XWMw2aLVJrbYeN9cTip4xfo8lKPdTKThKG+RZoDPWxMMb3CoSEs0h1Ni8Zys/cYrWUAJHn
-	Asztnl9bb8PbqB8iKJEVVPbkbIdLYeAL6Ab7S2fPf2Zvf50J00Ugqx/wOPaaiz9dR/5/lZhl2Fc8/
-	iWZgPfdbGMvSJ4L+tnpuNRfNPdZzmpGLlwIHTwjRK1bPYgwELAakXS0v7t5SR2CB/drJyCmccwS9P
-	ICNanojA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u0cYe-0000000BAVs-3Skp;
-	Fri, 04 Apr 2025 08:37:48 +0000
-Date: Fri, 4 Apr 2025 01:37:48 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	linux-crypto@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH 0/7] More CRC kconfig option cleanups
-Message-ID: <Z--aXGphZRKyyPa0@infradead.org>
-References: <20250401221600.24878-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1743755899; c=relaxed/simple;
+	bh=OktGT+TBkq3WfpZd1me7J15mRYBZ6g9T1DYDBuhe3d8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fN8vuvOoEMa/msXlfrt+G/Q5JqeI6haluVtjm1rPTJEcRC9/xnLb+j9NlhugkbCC85XdCU6tsldclOdxSI/VjY+UvW816LH3nq0P0Kc9aYRBuc1QUkloKef2/BtjBd7ice2N8GRkmKmdfBm+O2uQ4Wr+VvfS41xKiuY0FeQVrsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=awDtH6Sm; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30eef9ce7feso17463561fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 01:38:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1743755896; x=1744360696; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mjK7W0Om4uq93pjMJtCwW0RKoP5OEp/tohd8eg66f0s=;
+        b=awDtH6Sm4pWEr6KInTiEOOi8NnZyDAmshppMr4eQwj9VhLy2EshRGyZ/WmootQn0oj
+         OoQJLc8jRb9Xmlz/YA2gJyLUJyP+HXn1PAeaToVeOFSD4ladaH7FKdNv/3gu5iKjoCav
+         VOHBvwklezw7I9mkfDBZB2JIjwtglcKweoGjK+Co1oYmycg2ZwgoFgBaBrpRtSsMJTZF
+         Yt8JBAI/qKPyvjVQGwAFaCvBeCQIifzPIbixUKxoTv2wJvBCi1Ks28q9K4iPhzKxzOP5
+         yZT/gHo43HobB1gghIk3cWNKFxJEnOL+BiBLeWq61RABgDaFc1x1vXn6HdlT/+ouJZBp
+         /H5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743755896; x=1744360696;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mjK7W0Om4uq93pjMJtCwW0RKoP5OEp/tohd8eg66f0s=;
+        b=a+i0xL5xPwPeszw5Iny1obEhajltJ7ml8NDX963oCCqbQh4AhORND3NqCw+nyy7rIf
+         adIlNppFrxJF/HTO9VD6hP14FscGfDOqB6Bu70ijXt9aVfjjU3cSy1VLAIitVASaFn+m
+         TRrzPTYlZepdJq6PDr5CjO3gxoyuyeohMQQ54HjYXzY6FmL476DDlca61zFrBzrjmiFL
+         frS2BG3HvNJ9O/olzccGWVnxyBbdZLI/jyE8GBMyenGeV4JymOFyaQJ0MZEogC3mGuKA
+         +h9zIIiscIIHINUCyZYDcGBjFoB1msoh6dnl121910vjT1vkUw7rRabcmEUw1ge616e8
+         yIzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTRKyOPv+1vnXq89hVdq+iNXBX30IcHjtJ8WC2hNM4zvPHBzLqNmWG7eEziUfcb/uDSE/DrGhA92gDJd8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycJzEpMT+P0fgf4g0w0hM35d/AMxYWptoq/2mEEwEGEeD6TWxL
+	cQ7MQBaexzntfIWwS778WiGhfSK2Uyexg4Tnp8MiAI6vZwOdwCGMT2LlkYxw3Jn+CG/AIisGvMv
+	CmZIcWctVqEXPZq16HGSvvi5slH37Z/LysyEJaQ==
+X-Gm-Gg: ASbGncuZ009jb2zWAqkXfvCOvYVSCWaGCQR9HMgUugwKOPhg4bILEEr/DypDKX84V2d
+	UsCQXb00J8jJEDk1dbKnzdQDA6IuzclNX10LGZRMYZMzwCAemACfDeF4eieJep6mJIix6vQ4Rda
+	BIEW2mMvYDyGgBnj5ViTTyY45yi77BRW7bPjKaXs4SlfQGFIGDh4JfbXRkGA==
+X-Google-Smtp-Source: AGHT+IFo1yqcfYeeSlc8DpjiZKDyI9rcLin3wb9oxxwP6e5Vf0xIJMSzOKpz/A/vVvQ7XboHvE1K21R5AhhVXknfqdg=
+X-Received: by 2002:a2e:a588:0:b0:30d:dad4:e06f with SMTP id
+ 38308e7fff4ca-30f0a0f0da0mr7997421fa.2.1743755895678; Fri, 04 Apr 2025
+ 01:38:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250401221600.24878-1-ebiggers@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20250403160034.2680485-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20250403160034.2680485-1-andriy.shevchenko@linux.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 4 Apr 2025 10:38:04 +0200
+X-Gm-Features: AQ5f1JoFgmR-MJjXIiICCtTNAV6gI4tCP6L06BPqgDcRNqu4WYtSJEQRY5AjDtI
+Message-ID: <CAMRc=Mf8AyxAeNbBbiQn1HdkrEdODmTAhTmrtiAp6H3=HUPSWg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] gpiolib: acpi: Refactor to shrink the code by ~8%
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Mika Westerberg <westeri@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Looks good:
+On Thu, Apr 3, 2025 at 6:00=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> A simple refactoring of the GPIO ACPI library parts to get an impressive
+> ~8% code shrink on x86_64 and ~2% on x86_32. Also reduces a C code a bit.
+>
+> add/remove: 0/2 grow/shrink: 0/5 up/down: 0/-1221 (-1221)
+> Function                                     old     new   delta
+> acpi_gpio_property_lookup                    425     414     -11
+> acpi_find_gpio.__UNIQUE_ID_ddebug478          56       -     -56
+> acpi_dev_gpio_irq_wake_get_by.__UNIQUE_ID_ddebug480      56       -     -=
+56
+> acpi_find_gpio                               354     216    -138
+> acpi_get_gpiod_by_index                      462     307    -155
+> __acpi_find_gpio                             877     638    -239
+> acpi_dev_gpio_irq_wake_get_by                695     129    -566
+> Total: Before=3D15375, After=3D14154, chg -7.94%
+>
+> In v2:
+> - renamed par to params (Mika, Bart)
+>
+> Andy Shevchenko (6):
+>   gpiolib: acpi: Improve struct acpi_gpio_info memory footprint
+>   gpiolib: acpi: Remove index parameter from acpi_gpio_property_lookup()
+>   gpiolib: acpi: Reduce memory footprint for struct acpi_gpio_params
+>   gpiolib: acpi: Rename par to params for better readability
+>   gpiolib: acpi: Reuse struct acpi_gpio_params in struct
+>     acpi_gpio_lookup
+>   gpiolib: acpi: Deduplicate some code in __acpi_find_gpio()
+>
+>  drivers/gpio/gpiolib-acpi.c   | 146 +++++++++++++++++-----------------
+>  include/linux/gpio/consumer.h |   2 +-
+>  2 files changed, 72 insertions(+), 76 deletions(-)
+>
+> --
+> 2.47.2
+>
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Will you take it through your tree or do you want me to pick it up next wee=
+k?
 
+Bart
 
