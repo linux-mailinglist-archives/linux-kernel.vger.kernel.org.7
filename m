@@ -1,124 +1,92 @@
-Return-Path: <linux-kernel+bounces-588218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5BB5A7B5DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 04:26:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A938A7B5E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 04:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C44613A3F78
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 02:26:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8CFC3B7CA2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 02:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D522AF0A;
-	Fri,  4 Apr 2025 02:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80AC738F91;
+	Fri,  4 Apr 2025 02:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hFJq0DDq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="dQ2BQW87"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E90C2E62AA
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 02:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155F34A24
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 02:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743733593; cv=none; b=ZrNC166l2XpPeyhrj3aope7TzUcxWOfTl2KADHd9Pq7tgmCjmbYW1sVUFX7IELtth80soonF6nirO0sV2mquxWxJbIh6eJwuzdEJdcKG9wyceCzwTBBOzjHI6l2e/cU17Kjgl8HaZ9NXNBw0cRdcG8Qk/nuBb1vHVYUniTVNhQI=
+	t=1743734113; cv=none; b=DgeNtlD9Bawmft3e1mnw0MomWOibFUyEyCsKfBDABidBhPTTlWUP1vJSoMBkt2VqaaZIp9JGywMKQxPcoJE9iVdh4rsO3G/Fw7hXFto6hCxGTKolFwDkzCiJLYfecYWN9MsTjLD4cRozqMhpif+x7a1kkGzzdrVCjgUkMLUI3rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743733593; c=relaxed/simple;
-	bh=IZa+Ryfe0cRInrTdslRNVibjEZlrl11gOjTc63NDrCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gRCniAe8ZtcHTTCmGGsMAl+TfaHsB12Wvz4lBQYgPKyZzzgywz6gZjW6rbBP1jZycPINpalQdt2fpdfklP/QmtiF4RL/1c/zCCdBfBSp7lV0gEWLyeEaLiXgegSUl52Vgzhh4buSov1c4criDG26nhVbDvodVGewMdkPb+SPZTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hFJq0DDq; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743733590; x=1775269590;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=IZa+Ryfe0cRInrTdslRNVibjEZlrl11gOjTc63NDrCs=;
-  b=hFJq0DDqVnwIa9UVH8lG2XjZhcM00YtJi75E9lmEeKYRvACt7VktUs+/
-   Re1n/MtJeXqbHxfTP9VnjiIz+2ReLSfPppKOF7zS9fIWGoSCvtHrp/R/2
-   QSsOhw8PBtC5vRYTxPue2PHHs2sMiBvRbQkNIpEVkB+MizJ4Yid2xpDIM
-   9quETeyFNQ0qp0SpUfOVVVKEjyrMJlGZq3JZTddD0NJ6IisStrh385Tk5
-   P+BjMOss7bwUGwaI2ckB/TCTvFCaxsdZFZyzvfzgZgJeJyMtpFXGBVg3Z
-   dVcXcGJhbBVVPdZuFHy70zbIfJHk0u4GExiNkMz8l9TtomnW0Re7xSlks
-   g==;
-X-CSE-ConnectionGUID: TlVDd869SQyQkDdKXezZUg==
-X-CSE-MsgGUID: CrXDLE57Rd2e71dQ5U+i4w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11393"; a="45262955"
-X-IronPort-AV: E=Sophos;i="6.15,187,1739865600"; 
-   d="scan'208";a="45262955"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 19:26:29 -0700
-X-CSE-ConnectionGUID: pK7NvGhuTqGfA+dkFJzkfw==
-X-CSE-MsgGUID: LfqZrTYUT2Wnml6eFHkYvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,187,1739865600"; 
-   d="scan'208";a="127713404"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 03 Apr 2025 19:26:27 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u0WlF-0000wV-1P;
-	Fri, 04 Apr 2025 02:26:25 +0000
-Date: Fri, 4 Apr 2025 10:25:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dave Jiang <dave.jiang@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Li Ming <ming.li@zohomail.com>
-Subject: drivers/cxl/core/features.c:441 cxlctl_validate_hw_command() warn:
- always true condition '(scope >= 0) => (0-u32max >= 0)'
-Message-ID: <202504041033.2HBboAZR-lkp@intel.com>
+	s=arc-20240116; t=1743734113; c=relaxed/simple;
+	bh=cUb9lJFcVRBHoi99PcvkJ/HAUKbOOKbCQmYTxbDBKH8=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=hKomIKSXJ4NrA6nPSGyM8GPv3fkDotmESGl9b55x1gwQbPgIuGRSug5jzc+kUX/QGTbqYnioq5Hipu60LY4mPLNVcwGwN2GSmdAA/ZSl+GIskVbwwu+nDJBVUjdz+c+pDMinWJSZGU1IjwlGx2HerT+lWbeuDoUDmJUfC5SQHDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=dQ2BQW87; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1743734101; bh=hvd3XHUWKFzqNznWsNlLs79g79N4JWAw6rLpdToGI10=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=dQ2BQW870t55b9tQAK8IEf+jW+N2zB0eXmPQq18rpIhekuk3aVfUd1O9lVrQ/EesT
+	 o/0EAmKpI9sw0RrEcFFAZaubHuaG5KS/LnFiABEEnt4qUnLasaDjJn8WIicEBiREKz
+	 sOAQSfJWMjakI31WlFqqQbpnweq3Yx67X/x7N9t0=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
+	by newxmesmtplogicsvrszgpua8-1.qq.com (NewEsmtp) with SMTP
+	id 7308005F; Fri, 04 Apr 2025 10:28:48 +0800
+X-QQ-mid: xmsmtpt1743733728t1asgeuls
+Message-ID: <tencent_0AEAEC8ECFCC7A2E6CC02DC16FBC9410E80A@qq.com>
+X-QQ-XMAILINFO: MHb/xMQb24GSP9fjNKMhr9leg6KoFRerK0odAJ6pZJFJplHLG+DwLO0wfl4O6d
+	 mUf6qc24wtSH/vqNe6OZtDbXqdl/YeQvgk1dKXS8vW0X3E1qi+aeVLby8QOCONjm4MzT9SqYCiF/
+	 3CbJuroUOnvIAq0bxltJb6dup5JsYorYT/OGUcwS1wkFbD94i5W32nO5WcZnNi2K50GnA6US5VDX
+	 2lI1V8jzGWgEJMYYra1hJYaOAwVwYNW4AlwePvDOqSAiFHya3jk1g8XwJKuLgq0+/RnQASJs8M3T
+	 wYqbXdpd4ELbihFdZNqtTRZoSaKWD7mD0uLCG7Xy5Ly5xuZLrmVy0wzb491pVobbc4l5LZOK3fDs
+	 AyVqIzn65JMGync4w5V0kXceetjT1D97KviYOHO/lQrqI7FESf8xLPwzRfoTfFEkpFQzytkVk8Np
+	 6Ur+FuUdQQdGLouHM7pRiHVaCG25IimJuncvDNc+BdiCwn3SHjkmRDHmTjPdUxWZBEd15d2iNxIG
+	 6zV2+CN0s2eGNoaqNHnnOeaHkHLy59vAOHRusHmt7ICH7Q7ENSN3KRSxMGW8g8ZCNIvsexnmJuxq
+	 tmfS04TbWy2hyXLscOyebFMteVWBf6daYWcJZ/+H/2JAHbaAo8C85PPzRmq9djCCStfEvDC+oz/h
+	 +yQdvQA3jo8n7mO+bV9TW/yO9jubfPdi27i7BEYS6dJtWMuHq3/HmRaP7wDEo+O4Emjh0nBKfrJd
+	 Be30zke8VYwSI1FujPTS8k0zEE/MOCANpCCfiAWO3IJ6H0RxNB16XlabCCrVr00KWw9BaS9E5LdU
+	 8Af9U8WhcUpUPxJ4eaI6ndcC9k2RQEuZIIonAq1TcOg/REbaGD9HMicYWyUWOVoytCbIXVdra3kc
+	 p1BRdYgvpUeYB27cVPMkgfGBJ8HjoLug==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+4d7cd7dd0ce1aa8d5c65@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [isofs?] KASAN: slab-out-of-bounds Read in isofs_fh_to_parent
+Date: Fri,  4 Apr 2025 10:28:49 +0800
+X-OQ-MSGID: <20250404022848.2669935-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <67eee51c.050a0220.9040b.0240.GAE@google.com>
+References: <67eee51c.050a0220.9040b.0240.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   06a22366d6a11ca8ed03c738171822ac9b714cfd
-commit: 4d1c09cef2c244bd19467c016a3e56ba28ecc59d cxl: Add support for fwctl RPC command to enable CXL feature commands
-date:   2 weeks ago
-config: loongarch-randconfig-r071-20250404 (https://download.01.org/0day-ci/archive/20250404/202504041033.2HBboAZR-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.2.0
+#syz test
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504041033.2HBboAZR-lkp@intel.com/
+diff --git a/fs/fhandle.c b/fs/fhandle.c
+index 3e092ae6d142..a31c0291a473 100644
+--- a/fs/fhandle.c
++++ b/fs/fhandle.c
+@@ -344,7 +344,7 @@ static int handle_to_path(int mountdirfd, struct file_handle __user *ufh,
+ 		goto out_path;
+ 	}
+ 	if ((f_handle.handle_bytes > MAX_HANDLE_SZ) ||
+-	    (f_handle.handle_bytes == 0)) {
++	    (f_handle.handle_bytes < 16)) {
+ 		retval = -EINVAL;
+ 		goto out_path;
+ 	}
 
-smatch warnings:
-drivers/cxl/core/features.c:441 cxlctl_validate_hw_command() warn: always true condition '(scope >= 0) => (0-u32max >= 0)'
-
-vim +441 drivers/cxl/core/features.c
-
-   429	
-   430	static bool cxlctl_validate_hw_command(struct cxl_features_state *cxlfs,
-   431					       const struct fwctl_rpc_cxl *rpc_in,
-   432					       enum fwctl_rpc_scope scope,
-   433					       u16 opcode)
-   434	{
-   435		struct cxl_mailbox *cxl_mbox = &cxlfs->cxlds->cxl_mbox;
-   436	
-   437		switch (opcode) {
-   438		case CXL_MBOX_OP_GET_SUPPORTED_FEATURES:
-   439			if (cxl_mbox->feat_cap < CXL_FEATURES_RO)
-   440				return false;
- > 441			if (scope >= FWCTL_RPC_CONFIGURATION)
-   442				return true;
-   443			return false;
-   444		default:
-   445			return false;
-   446		}
-   447	}
-   448	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
