@@ -1,188 +1,179 @@
-Return-Path: <linux-kernel+bounces-588393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C94FBA7B86F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 09:54:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D64D1A7B873
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 09:54:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBDE93B7D2E
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 07:53:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42571189C478
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 07:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C07191F91;
-	Fri,  4 Apr 2025 07:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FEA2191F91;
+	Fri,  4 Apr 2025 07:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="O4IVcWH5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xdPpIR7h";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="O4IVcWH5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xdPpIR7h"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="od0iCFjf"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952E718CC10
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 07:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA88125776
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 07:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743753239; cv=none; b=jO5ZIMHUWiQExdEvnM6TdEOJv8iEruNz5SB5Vra7d5VzdKu5KiVtDyNLC5ztBHKa2I02M4yeD0G6aD+N7bpgyvfZNaHBay0a4vJQpED002xIgEcfncDapMbI1YCnv+PcQiJk1JC8o/oh/7yj7HDVOu6lvBXrhrnCUExpMO7VvuY=
+	t=1743753284; cv=none; b=kQkL49jjMFG0bDpapeXmDKWJCORl8oSht6qGxtMfb+9NijY0znKfJ/eZz3B3xJq5l5BVhR9uHIFSQK1I6S6NPs8p2UOUnL3v/aDc7S510C2a5wvjAjw4PaLLN974c7rl6nKjow68PQhVZ/3kyVHpjvIo//mKg5obXDcwnd9hhM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743753239; c=relaxed/simple;
-	bh=FDbptvu9aXxROFxleCfyl7mhheo033s/9xoVB4NEL3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=roqinQuWaDeirlUOyjoA0qUVgVMY47c1pN8LzfTqZR58QbaJE1vBZbu6bPBNgtJ/l17PxJj6/MhBar96F9vbWyrsAVbkpIgUJK/HEraO6rys3YKfIo89C+jxyUii8vWcBE7lQOkx7gYjakT9ma/b2cIpIZ/Rlo9CbmiFIyXYyj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=O4IVcWH5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xdPpIR7h; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=O4IVcWH5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xdPpIR7h; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from kitsune.suse.cz (unknown [10.100.12.127])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AD758211A6;
-	Fri,  4 Apr 2025 07:53:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743753235; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zYPhgmSXacOeG1Rqk39JiHp34zxT6b3+aTUNNH70zts=;
-	b=O4IVcWH5RcEXFV9mloOFdl2YHmxl7bJoVTrklWGT0rneCsF7tCvleHEaDkRIy++5ND7M9o
-	EdzJlYc5dCH0+tAcedaOnFsGWiXvbGRqmGsSFzE4HtFOBRTdcUgQDFPU88SlEPw363lCl8
-	HzR5xB8S+z5XpPYh9jvnhPGa2rwpKoA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743753235;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zYPhgmSXacOeG1Rqk39JiHp34zxT6b3+aTUNNH70zts=;
-	b=xdPpIR7hu/R39UsEIUmcsqm9XFkZ1905rSglxIwzfpABCug54BAXdcC4hSgkNRXtdnC7cR
-	xKf6L0Z/0XgQG8DQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1743753235; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zYPhgmSXacOeG1Rqk39JiHp34zxT6b3+aTUNNH70zts=;
-	b=O4IVcWH5RcEXFV9mloOFdl2YHmxl7bJoVTrklWGT0rneCsF7tCvleHEaDkRIy++5ND7M9o
-	EdzJlYc5dCH0+tAcedaOnFsGWiXvbGRqmGsSFzE4HtFOBRTdcUgQDFPU88SlEPw363lCl8
-	HzR5xB8S+z5XpPYh9jvnhPGa2rwpKoA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1743753235;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zYPhgmSXacOeG1Rqk39JiHp34zxT6b3+aTUNNH70zts=;
-	b=xdPpIR7hu/R39UsEIUmcsqm9XFkZ1905rSglxIwzfpABCug54BAXdcC4hSgkNRXtdnC7cR
-	xKf6L0Z/0XgQG8DQ==
-Date: Fri, 4 Apr 2025 09:53:54 +0200
-From: Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jonathan McDowell <noodles@earth.li>
-Subject: Re: [PATCH] tpm: tis: Increase the default for timeout B
-Message-ID: <Z--QEuu65lJjfoP5@kitsune.suse.cz>
-References: <Z-6Gau3aCB7B3pB9@earth.li>
- <20250403182519.8412-1-msuchanek@suse.de>
- <Z-7YHkb_2Dpz7GpV@kernel.org>
+	s=arc-20240116; t=1743753284; c=relaxed/simple;
+	bh=OlVTyvvOtBDRzpaWR1wlPpCpGCbZL+NEpJp5LiS6ghM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F7F5ptcD5E9yoEIXT7loWnJT67zIhMCI79a1LUf7LY1J/NDdTFawNveDSq7odBVSGH4hPSx8RkibcLDRZxsVXS2QDuUkTqa5G2GfdhbDtP6zywPO2x1dQcwrnXT6hzkBPekDCT2unbdGzBSLhv8jLjKDZe3+zjoGVTQtcIEIS10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=od0iCFjf; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-39141ffa9fcso2038885f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 00:54:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743753281; x=1744358081; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nkuZ4fVXpLrSH/Uvc9xUgqho8doERlfYtGRqy5O0mmQ=;
+        b=od0iCFjfTAVn8djDHpo5zIoIuTZI70g9xVrdomwLkGP3Y4y628omvNWX0S949tACks
+         l2xvntDwWO837AF32cmnkGLapRtJRvtmCmn8AXV3IquKWn5/2t6KpgNHuFTWwUbu75LJ
+         Olpa6lVXTbTJkxLPEjoF4d2H1H+Jv4NzEfVNytE5TSKydt0W/bDqVh3BSWOtT9Qh+qf0
+         dXCLz8RchXgVyHDnJNY9UaU0mIUzE+hePAsRAADpvcKfvno2UejzheKrIOkvBKLpSMKP
+         0ORSBFqfMOEsbFfMFPsKnAvC/KwrpOl6P6JbHjupHAmk977kaKIvkiDQuqsztrlV4bKd
+         1XEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743753281; x=1744358081;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nkuZ4fVXpLrSH/Uvc9xUgqho8doERlfYtGRqy5O0mmQ=;
+        b=STtImLnkIyeWNyVm4O0mU8w1QvwsSDOGJ4wACXe2xgwSziIyVobns2O1JpoFIhCylJ
+         FfNuO/u0DiTjJWeTIwKbLBv5d3U9h98q+QEcKOgD+P5MYIlI17YesHl7/AgIHSZAcoWe
+         mhA+XKqy2pbJAWpPOi1Ui+uZeyX34xORk4vubEIVYUUTI484oaGMa1zEIrD6uob/2KWM
+         4mCwaQrb4WQIeVFVsu1iES8cY74M9H4JQAaHcKAqTkNtLmJr+HWskrymhZ7FQ/xRK6tf
+         gfV5ibnmAvvmOZjM96+GjzqrlrSmLhCMBHbLtgC8A8/bO2p5T/kP1xhBuYS7nxOxy/9q
+         oQvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXeFqyhAx7kWcCUaYnoo7/JTu1Y/cXRn41e9lRjMwkXnICwfmIC+96POUbNLQ9AE/X3F9+BZTplxtJtGi8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaLYEbU5iOF5lmruB8K+9yuy7WeMhCGJPZXZzsuqoWmhF3Y4bI
+	HCXbp5lj8+t7Ogph/LRVlg1LGyc5ZyHmPpoiXb+iQSAvOIzcJ1i29U5FndEK+5bjDXzLziOAUU0
+	mPktiRP7VOLvBC+vLlbEYDHGEafHwTg6UUP2n5w==
+X-Gm-Gg: ASbGncuVL6Ickkx3kC+Mind/j26ZAA4DJOMpU7eqAN8qnUaTqvfpTeQ+SEa2oJGvNEB
+	asY5HNHHwaqEC4K6yFneB4980JsdiwZep+l1Ngof2D5R22xytgUQCTSxFJQj2yy/jMjl3Bz+vh4
+	yTAx7M3hqdlJPpJVyqAkz99l4VwyGNPxcDGsLjmLJaTiQQNpkrCTby9Q4oeJOlTHdikHjsKQ==
+X-Google-Smtp-Source: AGHT+IEnvSgFxsnk8Iaa8NC1B0+A9BOHH30S3F6CvKMOM+vZqDuf3lRprSiLDiCiIG1i3TYnqSn8Gunnhk4ZCcvWNLo=
+X-Received: by 2002:a05:6000:1788:b0:39c:d05:3779 with SMTP id
+ ffacd0b85a97d-39cba9418c5mr1489289f8f.49.1743753280900; Fri, 04 Apr 2025
+ 00:54:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-7YHkb_2Dpz7GpV@kernel.org>
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmx.de];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmx.de,ziepe.ca,vger.kernel.org,earth.li];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,kitsune.suse.cz:mid,kitsune.suse.cz:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20250330-wip-obbardc-qcom-t14s-oled-panel-brightness-v6-1-84ad1cd1078a@linaro.org>
+ <Z-pTcB0L33bozxjl@hovoldconsulting.com>
+In-Reply-To: <Z-pTcB0L33bozxjl@hovoldconsulting.com>
+From: Christopher Obbard <christopher.obbard@linaro.org>
+Date: Fri, 4 Apr 2025 08:54:29 +0100
+X-Gm-Features: ATxdqUE7yCYl5XlKqq5UiiO-MEOiByz26VjIsn9-FP2sQVcw5HFwQVWMPTy5k2A
+Message-ID: <CACr-zFAiKRTHyRAF5HkM2drCMD7Q_Z3ZUFAsSnevy38yD8XMwg@mail.gmail.com>
+Subject: Re: [PATCH v6] drm/dp: clamp PWM bit count to advertised MIN and MAX capabilities
+To: Johan Hovold <johan@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Rui Miguel Silva <rui.silva@linaro.org>, Abel Vesa <abel.vesa@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Apr 03, 2025 at 09:49:02PM +0300, Jarkko Sakkinen wrote:
-> On Thu, Apr 03, 2025 at 08:25:05PM +0200, Michal Suchanek wrote:
-> > With some Infineon chips the timeouts in tpm_tis_send_data (both B and
-> > C) can reach up to about 2250 ms.
-> > 
-> > Timeout C is retried since
-> > commit de9e33df7762 ("tpm, tpm_tis: Workaround failed command reception on Infineon devices")
-> > 
-> > Timeout B still needs to be extended.
-> > 
-> > Link: https://lore.kernel.org/linux-integrity/Z5pI07m0Muapyu9w@kitsune.suse.cz/
-> > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-> > ---
-> > V2: Only extend timeout B
-> 
-> git format-patch --v2 ;-)
-> 
-> NP, but use --v3 next time...
-> 
-> > ---
-> >  drivers/char/tpm/tpm_tis_core.h | 2 +-
-> >  include/linux/tpm.h             | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-> > index 970d02c337c7..c272c25eb9d4 100644
-> > --- a/drivers/char/tpm/tpm_tis_core.h
-> > +++ b/drivers/char/tpm/tpm_tis_core.h
-> > @@ -54,7 +54,7 @@ enum tis_int_flags {
-> >  enum tis_defaults {
-> >  	TIS_MEM_LEN = 0x5000,
-> >  	TIS_SHORT_TIMEOUT = 750,	/* ms */
-> > -	TIS_LONG_TIMEOUT = 2000,	/* 2 sec */
-> > +	TIS_LONG_TIMEOUT = 4000,	/* 4 sec */
-> 
-> nit: secs (that said, don't care that much)
-> 
-> >  	TIS_TIMEOUT_MIN_ATML = 14700,	/* usecs */
-> >  	TIS_TIMEOUT_MAX_ATML = 15000,	/* usecs */
-> >  };
-> > diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> > index 6c3125300c00..3db0b6a87d45 100644
-> > --- a/include/linux/tpm.h
-> > +++ b/include/linux/tpm.h
-> > @@ -224,7 +224,7 @@ enum tpm2_const {
-> >  
-> >  enum tpm2_timeouts {
-> >  	TPM2_TIMEOUT_A          =    750,
-> > -	TPM2_TIMEOUT_B          =   2000,
-> > +	TPM2_TIMEOUT_B          =   4000,
-> >  	TPM2_TIMEOUT_C          =    200,
-> >  	TPM2_TIMEOUT_D          =     30,
-> >  	TPM2_DURATION_SHORT     =     20,
-> > -- 
-> > 2.47.1
-> > 
-> 
-> Have you tested with:
-> 
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/commit/?id=de9e33df7762abbfc2a1568291f2c3a3154c6a9d
+Hi Johan,
 
-I haven't. It will take about a week to test if things go well.
+On Mon, 31 Mar 2025 at 09:33, Johan Hovold <johan@kernel.org> wrote:
+>
+> On Sun, Mar 30, 2025 at 08:31:07PM +0100, Christopher Obbard wrote:
+> > According to the eDP specification (VESA Embedded DisplayPort Standard
+> > v1.4b, Section 3.3.10.2), if the value of DP_EDP_PWMGEN_BIT_COUNT is
+> > less than DP_EDP_PWMGEN_BIT_COUNT_CAP_MIN, the sink is required to use
+> > the MIN value as the effective PWM bit count.
+> >
+> > This commit updates the logic to clamp the reported
+> > DP_EDP_PWMGEN_BIT_COUNT to the range defined by _CAP_MIN and _CAP_MAX.
+> >
+> > As part of this change, the behavior is modified such that reading both
+> > _CAP_MIN and _CAP_MAX registers is now required to succeed, otherwise
+> > bl->max value could end up being not set although
+> > drm_edp_backlight_probe_max() returned success.
+> >
+> > This ensures correct handling of eDP panels that report a zero PWM
+> > bit count but still provide valid non-zero MIN and MAX capability
+> > values. Without this clamping, brightness values may be interpreted
+> > incorrectly, leading to a dim or non-functional backlight.
+> >
+> > For example, the Samsung ATNA40YK20 OLED panel used in the Lenovo
+> > ThinkPad T14s Gen6 (Snapdragon) reports a PWM bit count of 0, but
+> > supports AUX backlight control and declares a valid 11-bit range.
+> > Clamping ensures brightness scaling works as intended on such panels.
+> >
+> > Co-developed-by: Rui Miguel Silva <rui.silva@linaro.org>
+> > Signed-off-by: Rui Miguel Silva <rui.silva@linaro.org>
+> > Signed-off-by: Christopher Obbard <christopher.obbard@linaro.org>
+>
+> > @@ -4035,6 +4036,32 @@ drm_edp_backlight_probe_max(struct drm_dp_aux *aux, struct drm_edp_backlight_inf
+> >       }
+> >
+> >       pn &= DP_EDP_PWMGEN_BIT_COUNT_MASK;
+> > +
+> > +     ret = drm_dp_dpcd_read_byte(aux, DP_EDP_PWMGEN_BIT_COUNT_CAP_MIN, &pn_min);
+> > +     if (ret < 0) {
+> > +             drm_dbg_kms(aux->drm_dev, "%s: Failed to read pwmgen bit count cap min: %d\n",
+> > +                         aux->name, ret);
+> > +             return -ENODEV;
+> > +     }
+> > +     pn_min &= DP_EDP_PWMGEN_BIT_COUNT_MASK;
+> > +
+> > +     ret = drm_dp_dpcd_read_byte(aux, DP_EDP_PWMGEN_BIT_COUNT_CAP_MAX, &pn_max);
+> > +     if (ret < 0) {
+> > +             drm_dbg_kms(aux->drm_dev, "%s: Failed to read pwmgen bit count cap max: %d\n",
+> > +                         aux->name, ret);
+> > +             return -ENODEV;
+> > +     }
+> > +     pn_max &= DP_EDP_PWMGEN_BIT_COUNT_MASK;
+> > +
+> > +     /*
+> > +      * Per VESA eDP Spec v1.4b, section 3.3.10.2:
+> > +      * If DP_EDP_PWMGEN_BIT_COUNT is less than DP_EDP_PWMGEN_BIT_COUNT_CAP_MIN,
+> > +      * the sink must use the MIN value as the effective PWM bit count.
+> > +      * Clamp the reported value to the [MIN, MAX] capability range to ensure
+> > +      * correct brightness scaling on compliant eDP panels.
+> > +      */
+> > +     pn = clamp(pn, pn_min, pn_max);
+>
+> You never make sure that pn_min <= pn_max so you could end up with
+> pn < pn_min on broken hardware here. Not sure if it's something you need
+> to worry about at this point.
 
-Nonetheless, it's fairly clear that both timeouts are exceeded, and this
-fix is only for one of them.
+I am honestly not sure. I would hope that devices follow the spec and
+there is no need to be too paranoid, but then again we do live in the
+real world where things are... not so simple ;-).
+I will wait for further feedback from someone who has more experience
+with eDP panels than I have.
 
-Thanks
 
-Michal
+> > +
+> >       bl->max = (1 << pn) - 1;
+> >       if (!driver_pwm_freq_hz)
+> >               return 0;
+>
+> Otherwise this looks correct to me and does not break backlight control
+> on the X1E reference design:
+>
+> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+> Tested-by: Johan Hovold <johan+linaro@kernel.org>
+
+Thanks for testing!
+
+
+Chris
 
