@@ -1,214 +1,349 @@
-Return-Path: <linux-kernel+bounces-588159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FAAEA7B528
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 02:49:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 106B5A7B53A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 02:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BCB63B913B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 00:48:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5194B189A371
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 00:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE0E207DE7;
-	Fri,  4 Apr 2025 00:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB16E17A314;
+	Fri,  4 Apr 2025 00:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QEh9Wm9G"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="CYQIrOgh"
+Received: from mx0b-00128a01.pphosted.com (mx0b-00128a01.pphosted.com [148.163.139.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D232B207A2B;
-	Fri,  4 Apr 2025 00:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743726506; cv=none; b=YSrhefHsyA0PutXj3SNdVFNqk0NcrHEefST0sjhrwpdN1QXipAL7rfpYeQtvRrdxG5CW+mr7pWcG3jVeTHmCbeOOhBm1aQmSH7043ZLTwF3r3MU7GIplJQDvMjqoJk3oKvKfOHS071B7cwSpGdLDS2ECEmnZ4LuFiiY9xuw4/38=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743726506; c=relaxed/simple;
-	bh=uHAFIXvSqhdI1aB49w+rPPMjSqQgJtlh0O+dhLWVhPs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gKxsbw3OKIjn+sGPZsq74S1qv8jWhApxyp3C9Pm6DmVhJWFpuVkeHnLf/7iE5YKkATkq1853g9MYvU6YIPIdHoDwunhUHJRCI/a2p1+KNPbvHcSy8UdgbK2OO1ecW4yGPy/cdLGhnNG9rVKK0eR9desXnz2yKgTQsNamVXAmvq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QEh9Wm9G; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43d0c18e84eso7184705e9.3;
-        Thu, 03 Apr 2025 17:28:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743726503; x=1744331303; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TsJalMCnIbyYUDREZzETsh7CC8zJvSaK1Doibamq2oQ=;
-        b=QEh9Wm9Gr+IivDGinfMU4abquaya6qSQxZ0dOrObpwbQvgbjpfaIgcvBnicHbWQTlq
-         6VfFn9i9St2WXreCliH8jFQGlpy+oq0+F+2kDAsgsfrOwWRlpwZlR90srAPTFxrv3LA4
-         LA1NWoOWRR76nZwAEB/1sGKwF6WyhdNMjJCOU+ETyXv62ht4dAHatXIyBUlh0pcq8jf+
-         UeL1U0oxpACK/gFq9SJxwpP1ajWXSyy3XMEtAOsTcQdZiExrl/VKDsNtNyjHa1evNS54
-         4GY1uTvHzIvspgNFFbIhs0Z+oxtNqLRDY+5yzPRKcI76tZV0CgEbK1/GkrAjS2YZn9IE
-         n96w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743726503; x=1744331303;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TsJalMCnIbyYUDREZzETsh7CC8zJvSaK1Doibamq2oQ=;
-        b=PFEp/VwAGDph2+sG6gRpGWadTTguBzqIaD40r8VO0zywTmXRhMJJ/oVCbFm/zzVusx
-         OEQjSe83Q/T0MILw8K7hkRleMUpOhcuYvgZviIRy5YMEiHOioY5m/hHvXJEb/d2NRcfH
-         v7D+SJYCBPUHUuSl9m6/8J/AWnH9PYkSl3vF6mD23Vh20CYQkla7Xj1ZHm97JEVm3T1Z
-         PU9k+g6pm9WRDf8Wa/M4vQz8UM+DsX/ksqPo1DkWf2AbtOsLH5vowlzrqHP9mtkjDbS+
-         cYA5nPzwW4182wMfTwk2pTlbMI2I/Knhx++hm3LleON0E7uTrRg53G1gxVkXqYBEbqwX
-         rIrA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+l7UNX10WBfoVumIYyPvtj777X2zHWXPma1ob3nNPSyz1YfUf4zSuXQX/eRh7l9XadWIvkBla@vger.kernel.org, AJvYcCX/gPSBUzCCsz4ec8q9alS2BzeWqPiZcDiI+x5bnBBqyrHgGyECTLyKeUAJtCAdkpBc/ann09gvlnc8rSCG@vger.kernel.org, AJvYcCXAg7GLT2X3ZrBkG8frTkMDZWFRLlYohVPWOfREs4nK2YIP3WQ/t8gARe4IgWWNrScPfTE=@vger.kernel.org, AJvYcCXFZG2chuTpHGSESR54W69vIcC2elLOS2X8BRsg6HnUp0f2sKbD3QOp/qJWwLvPpxz91G7TVeeBaTAckWVfZodp@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcrGw9aHEiayIjtCf4gRjf1YaVdyI6Gkqr4aFDcADJRPT11Hz2
-	pS3ajvs6KavzLlMZvyqrfCJ1j+GfDwHxjl5+wA30HsQaRrAsLcm7EmyA4Xy6gVpeF42uOFRABXG
-	8maX7X+Kx1czVa4uB+td8iNy3N3k=
-X-Gm-Gg: ASbGncsQusFezepox3/ReFflnXnQQ9wkXmO31GpPa8BH1LFhZo3JIomiSkXp5NHBi4p
-	vj0MXGAPbPTk0PM/7b4SA9+d1vW0PU2riFEjyZj9yXihkv6o2LAyaXpMwalnbB7iQJnjjUk656x
-	SiOUajNedxAbdVw+DL52ZbYjyP/Pl1rJjLXv169bVfHA==
-X-Google-Smtp-Source: AGHT+IF4jOHMVxLKwpyTVp4jJNRqM1SWPpZtFvlb0mCP/+k22RUzCUAv49nijPp+o+h12sypmv2fV/5Qr071bYNrMQg=
-X-Received: by 2002:a05:600c:3596:b0:43c:f597:d589 with SMTP id
- 5b1f17b1804b1-43ed0db3b83mr4248275e9.27.1743726502822; Thu, 03 Apr 2025
- 17:28:22 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4818481B1;
+	Fri,  4 Apr 2025 00:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.139.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743726550; cv=fail; b=nhW0OpJzP589OVH5CuEt0nvonE1fYtCG77E6YBUPxPOqjgV+qBbCbuwi3iteYgrnp8T3Vh8o9VeaXEfJQrkNYvg6kKOc4Bdg6YmEfFcJRfcsXJrtM5vH8oEtnL/nLcLR9+NrWvsQOxjbXljEO+kJC4zy0nsD82gzgqfyG02igXU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743726550; c=relaxed/simple;
+	bh=JfuZKUwPj6DlnfUU2nK0ouqOHawFrkWOOKUwxXQRzKo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IoakQ4rQw5Mf9jM8pUVo/QUkLTa+VHZZTn0jfOwn+huYaQcr6oACiFRVup+5MQ3TE8Kk1eBqUzTYZBofri2P0JivBeYkyAvUSP6wQCgmidl4aZ0L25+B5zNKtJE4dHO3jABRZaS0vYRz72Cs4UWLzETkqBUaJ3n+ONNHbgiT8Cw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=CYQIrOgh; arc=fail smtp.client-ip=148.163.139.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375854.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 533LeRML022905;
+	Thu, 3 Apr 2025 20:28:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=wk6v6
+	O+ESIXbizv+oClSfVzMXyiNxhHQXFiRWF13Hf4=; b=CYQIrOghBA3qvFRlXhBTa
+	sW9aws7kWYP/qHx1Ny3SrOQYPAeYSKrAXKtZwYnXkscOsZL4WP6YWMlZNuKvS2kz
+	DW41fYGjuezSIEJYPg+Excnp/hgrd8+jO3QRij12t7Pjn+MR3KZAKkyAEvXnFhMz
+	Olh+frh8KgDUIQnyWNNqz/IihE9fhfpimLLSjJ92bRGWZHXCgTkQmibPo4cWkNsJ
+	tFF9aL7Ka3G8Bli3HkzDjMvsNxx8/VPbU1NkOjQhIkZv4TD+3ehhJeWKJcfXCg0P
+	C5nRub4hyjXmzIH+p2eLK3HOALAfyK8Ix/iJTOiq+qDH+bxs82eGZMPdEMj0bMK1
+	Q==
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2177.outbound.protection.outlook.com [104.47.56.177])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 45t2f28ek6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Apr 2025 20:28:52 -0400 (EDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=x7GwQIr0XCIx5b51qIrj1LVGdVXLUq7ve/oLUkmIIXkERiJMa/dKL24Mlpybnw12m4BRQrRT/gni89su6zmkrfEwR2MTdrOV6WF9sZBuX4Ih18xVmQMk3SuGczeUbxGUxGw8Vux6JlovHi215Djvgu7r7n6HOTZ+edpvU2L8Z+vi6EOLsmzAD25G9vA9dGfKaq8BOkTPWOOP5CU55nwExGOKHafQqTrR6xV9U98bjAkGzgpA+0pLKWh6QKFAsNeiZq8p5lmxEVYfwkXxdyKHnlEJOeuoCd6xc5p5eRsPlAKy9DgAYQwET8hHgnSLR7/EttYQ2MeDgQpUSSorvn7O4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wk6v6O+ESIXbizv+oClSfVzMXyiNxhHQXFiRWF13Hf4=;
+ b=M67LwnJRsZyFTvAATapDhuTUlJSp4CRpOdaP7eOu+OOKkyX83exNkEWU04ZobsRuIAkTJZ6qMRAva0JFTOixP1f9SEmx/Ka5yqWhZKHYmOlEd2h4eFbakgy1YxHGLHub+Q7aQNldIDfwls8QQy5USs+zoNxPqBtb3doFcylMwivPXig6CqJ2CnDtZwFynFFNV/f8DO6Pi7K+GBIah5Gi8l0i/ZwGfw4vz/PPfqiBKtuhUqi2jlMMjzHVgfllxvNnyHhJm/tiugM+LL746j7xcCl5zbowDmg/hLeZOV2e8nxMHAYZA216UNb50yrf69t+mWoPAww8yUUGyGWiXIV6jw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
+ dkim=pass header.d=analog.com; arc=none
+Received: from PH0PR03MB6351.namprd03.prod.outlook.com (2603:10b6:510:ab::18)
+ by BL4PR03MB8076.namprd03.prod.outlook.com (2603:10b6:208:58e::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.50; Fri, 4 Apr
+ 2025 00:28:49 +0000
+Received: from PH0PR03MB6351.namprd03.prod.outlook.com
+ ([fe80::71f7:8e63:e91:a354]) by PH0PR03MB6351.namprd03.prod.outlook.com
+ ([fe80::71f7:8e63:e91:a354%5]) with mapi id 15.20.8583.043; Fri, 4 Apr 2025
+ 00:28:49 +0000
+From: "Torreno, Alexis Czezar" <AlexisCzezar.Torreno@analog.com>
+To: Guenter Roeck <linux@roeck-us.net>
+CC: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+        Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+        "linux-hwmon@vger.kernel.org"
+	<linux-hwmon@vger.kernel.org>,
+        "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org"
+	<linux-i2c@vger.kernel.org>
+Subject: RE: [PATCH v2 1/2] hwmon: (pmbus/max34440): Fix support for max34451
+Thread-Topic: [PATCH v2 1/2] hwmon: (pmbus/max34440): Fix support for max34451
+Thread-Index: AQHbpFeb5xuhX/HLf02m4uk+Dq4nObOSI14AgACDvnA=
+Date: Fri, 4 Apr 2025 00:28:48 +0000
+Message-ID:
+ <PH0PR03MB635158DB70EA4D463AE1B4EAF1A92@PH0PR03MB6351.namprd03.prod.outlook.com>
+References: <20250403-dev_adpm12160-v2-0-bbf40faae988@analog.com>
+ <20250403-dev_adpm12160-v2-1-bbf40faae988@analog.com>
+ <2234425e-b676-4564-96c6-57c0a635292c@roeck-us.net>
+In-Reply-To: <2234425e-b676-4564-96c6-57c0a635292c@roeck-us.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH0PR03MB6351:EE_|BL4PR03MB8076:EE_
+x-ms-office365-filtering-correlation-id: 08687fc6-bcfd-45ad-c9c5-08dd730fab32
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?J0FK+GR8H3Pcdrb03xd8JDaWjXTUgvBZTavNAKju1QBt4EITLReEm7zds6+f?=
+ =?us-ascii?Q?1PCQwSFMgABNdP/roTMbQPO/RAV063mbX/9tTV9fSgndrulgA4FeN3MCfrm/?=
+ =?us-ascii?Q?XrVZvUSf/MIdbSC9zf+BRHGdE7/0jmZf5Kj8OE/XHSdxWWlVb7F+nLGXPUUP?=
+ =?us-ascii?Q?oilCuhmyRsiI+4jeVMvk0tmREqAKD8JE32r78HyacX92sm6DRM+Ii4HD7BHj?=
+ =?us-ascii?Q?bq4a6JR4vDQTwqGTSb9Ju1Wy7FeVJS3FpSXBVubZL8hbU4dvBEaZsU/LUIeL?=
+ =?us-ascii?Q?tHJrAyu2bwcYBD610vTyZInPvEW+Nt4ou8AOziF/hl3XjUoZX7Gsob2lswhz?=
+ =?us-ascii?Q?+vH+Nh+kAZH2Q+lrmSx7W6kzbrFgD/MtDZC3tqv4k67AIIv6eQQ117DNclRB?=
+ =?us-ascii?Q?CeA0a4iSd1cho6Ngz4N/hSgWDwFyCt5vnXcAhaRcX493ytW/err31P0T0YUk?=
+ =?us-ascii?Q?7G9KaCDudujDjWymo0rd1K5SihLpz8afF4MZAVf140c17+IlFBIX4mP+ikGa?=
+ =?us-ascii?Q?kuAotjgTJLmEB5qWfpO5Yrdv195JGMIH5womcleSy43m0uPI72y7WtM7sz3S?=
+ =?us-ascii?Q?Q7TiX49crdIa+g5Ca+mKMq0YLdWePzT9ypcM9jNRBULIXD9PDTB/Xe9yJfFN?=
+ =?us-ascii?Q?kn/ANuJMWfsOanfMSR801GaXeIWLnNSPmL23ZarEsz9XnmUIFO5xDAyEeABY?=
+ =?us-ascii?Q?eLvRyheHfZXpoOZLC6E8P3b1D8fOKpsogtQM5B+Y9D+aNHoBzHvPpise9U86?=
+ =?us-ascii?Q?5TmY4eKlh52Q72Qg8WTFLNQx0VTL+W3u1bj/3TWuqj4EFXKsgmpO9K0NAEhY?=
+ =?us-ascii?Q?gN6oLxo/Vv/2YX/xokFWGdMfrsKIyxdMvtQOfdIzAdjCGytz9WvNMKU2+a/u?=
+ =?us-ascii?Q?WxalJ8ew6nwyEBIPWs9C7RVRzTQzLaDXqSaGvQU7x9SF7mg79iJM2iaIdc/L?=
+ =?us-ascii?Q?iIr9KsI2uSVAjkbjrtaPhhMosZQm8n3f7NF3aeJwzJv8HtAihbIey6REHyhL?=
+ =?us-ascii?Q?q9hvNR3oRVRwsAPT0x4RwsOqiPtXsBSLRIkMRil4kki3Pm6LSUS8KDPkOABW?=
+ =?us-ascii?Q?HosD8axcqWKFILV9X2IVU2r4HTujUKJ8dXZ8vgRfuZMGmNPcz8EeAeQdl+vH?=
+ =?us-ascii?Q?pNBXXRKyAMbGKpFY0BBDbx81AMmWtXVXeNaTqStN5t+iEYqhP5c5UrhGT6B7?=
+ =?us-ascii?Q?BNUDTcJWVKEnYR541strrwlLGLMITJGmC+ZhSjlCtdec01UYukoa8E8jb7jI?=
+ =?us-ascii?Q?vdADAr27UEoHk2Kh5AMhYVy2ooLUT2hUjpwKr7AE2IS0Bvl5xoE4PpLC/hLQ?=
+ =?us-ascii?Q?Y+TeYXCNRddeYP5sk4Hul/PdJQ6gzsrxQLrZp8vh8QtZ/w9+K+u/0FDErXOg?=
+ =?us-ascii?Q?Wa5w4Suv3JDXLTmJV0C1wJoHtj3pvi5fM9lX1vq+oT0bLUCQ3GqSQHhCnT7J?=
+ =?us-ascii?Q?0q3+leyL1WL18M9oXl+TLy1zu/ogw3PB?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR03MB6351.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?G9xaV8VaxsjNN2frI2Z/SRhms08L96o2u5gbldUc2qKxuUmdDj3VuWv9+uuh?=
+ =?us-ascii?Q?C4v6OR1qzLbVjxJoVUyH4taG3n366SRVWhVp7kEUyrisLO6s0mfqMftOopYG?=
+ =?us-ascii?Q?ANvmDPZo1tsZnefjxfRC6XT5rBkZloQ1WkG5jQ34arWXZeiMvF9zkka9oJkb?=
+ =?us-ascii?Q?KlbtW6oQLORYg4vRTun/OWDGZi4xk2kcp1/SrCOK5w7WHG+Xi+V6kUghKEHu?=
+ =?us-ascii?Q?3rfyaBkFbMa15773o4SmBjxcvH3/msTZazU3B1Qwzjgc3J9Cn0eqYwWXm/yc?=
+ =?us-ascii?Q?Kb3n3Axr0qYZh7vKNTXhpPrn3kT5qGI3ctYx8njIW4zAQU/Y9YmgrlO/5ywO?=
+ =?us-ascii?Q?5G+AkU0+mcR9iFeFadB3AXxhVICBHFFyhXz48TMi0ijsgMyHbsKa7EpK5YCQ?=
+ =?us-ascii?Q?wfJn3Q3PlhQXMCXMciZWoLKVWwkUFMJrcOcUSWJ+EIkyHNMa5Ujo5SL2MO6r?=
+ =?us-ascii?Q?awRvV9ub0D0sytkleGkMQMSHLQHBRPAPjce17rDi63z39Qr5tSj/k+yVK7s4?=
+ =?us-ascii?Q?bjYNstSkR6eTCZTIvlhpLJYOiD35vfC9KfW6ObCBezl7G7CbTdQNP8x6onb7?=
+ =?us-ascii?Q?FM+6N57D3qPJZGHhW2KVg3J2xuTwaeimSiEKXTLcuj6LHOinrYM4svwhuu37?=
+ =?us-ascii?Q?QpbUI6XMsVLxDG8yPxWUcAI9RfbEWa0VvoyAbFPPEBIOvm0i3PpIfDwsgzVk?=
+ =?us-ascii?Q?dlDzuQaD3Wt20AsHIPkpFmeHaU0nlXEaX3DtCm9HQZfUJRDpwF8bMnDYxA/b?=
+ =?us-ascii?Q?NUujooaFfRDPbcgxi4HEr4yqtQVhIA0bHBqbu3T+bXjFRZmidHsgQ9plPHkA?=
+ =?us-ascii?Q?0Mjeu4pdaYa++QmOMQb9QFcxlCewNud315DdfNMhzQ4ob575K3Cp0qqeOOmY?=
+ =?us-ascii?Q?uFj8+HQo7aGnxADdO+p8d1uD/uBm84nMBYFJk1t3sBkBMd32gRN06RppkSNh?=
+ =?us-ascii?Q?792GM+mqP/1ZoBr8elaMawR27e8/njIWZbToyLF3foE+v5WoitkUxkzLkhXK?=
+ =?us-ascii?Q?epEN56h/L5sbvcg/YpUWy/rkOcUUnd3k8XMiW4hZRqSlHyTwyyYBCF1eFLtg?=
+ =?us-ascii?Q?r+CZi3a+AdAHB7NMeSr3VreJjhCzsrefHkgYz54lsXrit65O65ExzoL5JNUH?=
+ =?us-ascii?Q?ck9i8SXrAxZ+4Oe+1e2qeoNcVfaGlv5IJ9TtKzrAEY9VWtTjczxCdzwXte12?=
+ =?us-ascii?Q?TlH5zqvIPFLUbzYipdzrcG9l54RucR39X3rhJ2rZhYAvZVSGIAlch2RI3mMY?=
+ =?us-ascii?Q?RwSnAO7jkIehpo5X78fjGrCA8fxym4wIVVgJQ65p3b5Tq1Iagv7kcYH7jMDk?=
+ =?us-ascii?Q?YhdFkHCBNePOYWUTA9b1WKagf6MlfKCSqewf5DV8xYDxAvBhG55464m4Wu00?=
+ =?us-ascii?Q?jXrvksh+j5WefoXiVHM1yQtLuRhZqndumEJZShTYRHFde8P46NYvadVa73my?=
+ =?us-ascii?Q?m8HEJqC1pmWFsmqCuab2JAxNb40Mho5kLmQSTj16KgZDZRM20KNVSvVjg039?=
+ =?us-ascii?Q?SGa7PWUH/475Nehtp+LtxBFJDDQqdra+k13ZaOZHYxNc8sK2xZlZCQzUN+yV?=
+ =?us-ascii?Q?3S+/6hCYH6YCOirXvJX9/wa0SYWuaS2MpKPps2HM+urtciecCpDYNhf8wvGu?=
+ =?us-ascii?Q?qg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250331032354.75808-1-jiayuan.chen@linux.dev>
- <20250331032354.75808-2-jiayuan.chen@linux.dev> <CAADnVQJ6NPGuY=c8kbpX_nLYq4oOxOBAxbDPFLuw+yr4WrQQOQ@mail.gmail.com>
- <67ee9be9db59b_138964294b7@willemb.c.googlers.com.notmuch>
-In-Reply-To: <67ee9be9db59b_138964294b7@willemb.c.googlers.com.notmuch>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 3 Apr 2025 17:28:11 -0700
-X-Gm-Features: ATxdqUHpKf8yEtqfLl0IozrpSVSxJWlHaoXuUysIiRdjG68X57Hqbi5k8WYXjAc
-Message-ID: <CAADnVQK_8-3mpQMptGCdgZv71okKT6haZ0Wrw+fUoWV3kif9DA@mail.gmail.com>
-Subject: Re: [PATCH bpf v2 1/2] bpf, xdp: clean head/meta when expanding it
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: Jiayuan Chen <jiayuan.chen@linux.dev>, bpf <bpf@vger.kernel.org>, 
-	Jiayuan Chen <mrpre@163.com>, syzbot+0e6ddb1ef80986bdfe64@syzkaller.appspotmail.com, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
-	Shuah Khan <shuah@kernel.org>, Willem de Bruijn <willemb@google.com>, 
-	Jason Xing <kerneljasonxing@gmail.com>, Anton Protopopov <aspsk@isovalent.com>, 
-	Abhishek Chauhan <quic_abchauha@quicinc.com>, Jordan Rome <linux@jordanrome.com>, 
-	Martin Kelly <martin.kelly@crowdstrike.com>, David Lechner <dlechner@baylibre.com>, 
-	LKML <linux-kernel@vger.kernel.org>, Network Development <netdev@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR03MB6351.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08687fc6-bcfd-45ad-c9c5-08dd730fab32
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Apr 2025 00:28:49.0181
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: gV5nj7BnfctE4wFG9HE+6MPJerxx52AH6hKOun7IjawHJt6URGnv9QE0wQnsvHc1hHsg7bFCF5mzaucpNj0uK4y2nivk6jEZQT47rF9QG/Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR03MB8076
+X-Proofpoint-GUID: HBtOsdkNjwAkR9KTQ087OFqcV0386jEC
+X-Authority-Analysis: v=2.4 cv=A4dsP7WG c=1 sm=1 tr=0 ts=67ef27c4 cx=c_pps a=hHPfuxNGWHHq0fQgDGst2w==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=XR8D0OoHHMoA:10 a=pGLkceISAAAA:8 a=gAnH3GRIAAAA:8 a=iox4zFpeAAAA:8 a=07d9gI8wAAAA:8 a=cPYzWk29AAAA:8 a=VwQbUJbxAAAA:8 a=jg431nGE5sWvl1LrVhMA:9 a=CjuIK1q_8ugA:10 a=WzC6qhA0u3u7Ye7llzcV:22 a=e2CUPOnPG4QKp8I52DXD:22 a=oSR2DF9YFqZEN4IGatwP:22
+X-Proofpoint-ORIG-GUID: HBtOsdkNjwAkR9KTQ087OFqcV0386jEC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-03_11,2025-04-03_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 mlxlogscore=999 lowpriorityscore=0 priorityscore=1501
+ mlxscore=0 clxscore=1015 phishscore=0 bulkscore=0 malwarescore=0
+ adultscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504040001
 
-On Thu, Apr 3, 2025 at 7:32=E2=80=AFAM Willem de Bruijn
-<willemdebruijn.kernel@gmail.com> wrote:
->
-> Alexei Starovoitov wrote:
-> > On Sun, Mar 30, 2025 at 8:27=E2=80=AFPM Jiayuan Chen <jiayuan.chen@linu=
-x.dev> wrote:
-> > >
-> > > The device allocates an skb, it additionally allocates a prepad size
-> > > (usually equal to NET_SKB_PAD or XDP_PACKET_HEADROOM) but leaves it
-> > > uninitialized.
-> > >
-> > > The bpf_xdp_adjust_head function moves skb->data forward, which allow=
-s
-> > > users to access data belonging to other programs, posing a security r=
-isk.
-> > >
-> > > Reported-by: syzbot+0e6ddb1ef80986bdfe64@syzkaller.appspotmail.com
-> > > Closes: https://lore.kernel.org/all/00000000000067f65105edbd295d@goog=
-le.com/T/
-> > > Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
-> > > ---
-> > >  include/uapi/linux/bpf.h       | 8 +++++---
-> > >  net/core/filter.c              | 5 ++++-
-> > >  tools/include/uapi/linux/bpf.h | 6 ++++--
-> > >  3 files changed, 13 insertions(+), 6 deletions(-)
-> > >
-> > > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-> > > index defa5bb881f4..be01a848cbbf 100644
-> > > --- a/include/uapi/linux/bpf.h
-> > > +++ b/include/uapi/linux/bpf.h
-> > > @@ -2760,8 +2760,9 @@ union bpf_attr {
-> > >   *
-> > >   * long bpf_xdp_adjust_head(struct xdp_buff *xdp_md, int delta)
-> > >   *     Description
-> > > - *             Adjust (move) *xdp_md*\ **->data** by *delta* bytes. =
-Note that
-> > > - *             it is possible to use a negative value for *delta*. T=
-his helper
-> > > + *             Adjust (move) *xdp_md*\ **->data** by *delta* bytes. =
-Note that
-> > > + *             it is possible to use a negative value for *delta*. I=
-f *delta*
-> > > + *             is negative, the new header will be memset to zero. T=
-his helper
-> > >   *             can be used to prepare the packet for pushing or popp=
-ing
-> > >   *             headers.
-> > >   *
-> > > @@ -2989,7 +2990,8 @@ union bpf_attr {
-> > >   * long bpf_xdp_adjust_meta(struct xdp_buff *xdp_md, int delta)
-> > >   *     Description
-> > >   *             Adjust the address pointed by *xdp_md*\ **->data_meta=
-** by
-> > > - *             *delta* (which can be positive or negative). Note tha=
-t this
-> > > + *             *delta* (which can be positive or negative). If *delt=
-a* is
-> > > + *             negative, the new meta will be memset to zero. Note t=
-hat this
-> > >   *             operation modifies the address stored in *xdp_md*\ **=
-->data**,
-> > >   *             so the latter must be loaded only after the helper ha=
-s been
-> > >   *             called.
-> > > diff --git a/net/core/filter.c b/net/core/filter.c
-> > > index 46ae8eb7a03c..5f01d373b719 100644
-> > > --- a/net/core/filter.c
-> > > +++ b/net/core/filter.c
-> > > @@ -3947,6 +3947,8 @@ BPF_CALL_2(bpf_xdp_adjust_head, struct xdp_buff=
- *, xdp, int, offset)
-> > >         if (metalen)
-> > >                 memmove(xdp->data_meta + offset,
-> > >                         xdp->data_meta, metalen);
-> > > +       if (offset < 0)
-> > > +               memset(data, 0, -offset);
-> > >         xdp->data_meta +=3D offset;
-> > >         xdp->data =3D data;
-> > >
-> > > @@ -4239,7 +4241,8 @@ BPF_CALL_2(bpf_xdp_adjust_meta, struct xdp_buff=
- *, xdp, int, offset)
-> > >                 return -EINVAL;
-> > >         if (unlikely(xdp_metalen_invalid(metalen)))
-> > >                 return -EACCES;
-> > > -
-> > > +       if (offset < 0)
-> > > +               memset(meta, 0, -offset);
-> >
-> > Let's make everyone pay a performance penalty to silence
-> > KMSAN warning?
-> >
-> > I don't think it's a good trade off.
-> >
-> > Soft nack.
->
-> I also assumed that this was known when the feature was originally
-> introduced and left as is for performance reasons.
->
-> Might be good to have that explicit. And that it is deemed safe by
-> virtue of XDP requiring superuser privileges anyway. Or at least I
-> guess that was the thought process?
 
-Correct. When prog extends the headroom it is suppose to write
-something in there. Extending the packet just to capture
-some garbage bytes from the previous packet is dumb,
-but doesn't compromise the safety of the kernel.
-There were proposals to ask the verifier to track that the headroom
-is actually initialized by the program, but it's pointless.
-Dumb prog can write garbage in there just as well.
-bpf_probe_read_kernel( from_random_addr) and store into the headroom.
+
+> -----Original Message-----
+> From: Guenter Roeck <groeck7@gmail.com> On Behalf Of Guenter Roeck
+> Sent: Friday, April 4, 2025 12:33 AM
+> To: Torreno, Alexis Czezar <AlexisCzezar.Torreno@analog.com>
+> Cc: Jean Delvare <jdelvare@suse.com>; Jonathan Corbet <corbet@lwn.net>;
+> Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>; linux-
+> hwmon@vger.kernel.org; linux-doc@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-i2c@vger.kernel.org
+> Subject: Re: [PATCH v2 1/2] hwmon: (pmbus/max34440): Fix support for
+> max34451
+>=20
+> [External]
+>=20
+> On Thu, Apr 03, 2025 at 01:16:18PM +0800, Alexis Czezar Torreno wrote:
+> > The max344** family has an issue with some PMBUS address being switched=
+.
+> > This includes max34451 however version MAX34451-NA6 and later has this
+> > issue fixed and this commit supports that update.
+> >
+> > Signed-off-by: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
+> > ---
+> >  drivers/hwmon/pmbus/max34440.c | 55
+> > +++++++++++++++++++++++++++++++++++++++---
+> >  1 file changed, 51 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/hwmon/pmbus/max34440.c
+> > b/drivers/hwmon/pmbus/max34440.c index
+> >
+> c9dda33831ff24e7b5e2fd1956a65e6bd2bfcbb9..585746806663409bc970426
+> 47f6c
+> > 0aba4c6f520a 100644
+> > --- a/drivers/hwmon/pmbus/max34440.c
+> > +++ b/drivers/hwmon/pmbus/max34440.c
+> > @@ -34,16 +34,22 @@ enum chips { max34440, max34441, max34446,
+> > max34451, max34460, max34461 };
+> >  /*
+> >   * The whole max344* family have IOUT_OC_WARN_LIMIT and
+> IOUT_OC_FAULT_LIMIT
+> >   * swapped from the standard pmbus spec addresses.
+> > + * For max34451, version MAX34451ETNA6+ and later has this issue fixed=
+.
+> >   */
+> >  #define MAX34440_IOUT_OC_WARN_LIMIT	0x46
+> >  #define MAX34440_IOUT_OC_FAULT_LIMIT	0x4A
+> >
+> > +#define MAX34451ETNA6_MFR_REV		0x0012
+> > +
+> >  #define MAX34451_MFR_CHANNEL_CONFIG	0xe4
+> >  #define MAX34451_MFR_CHANNEL_CONFIG_SEL_MASK	0x3f
+> >
+> >  struct max34440_data {
+> >  	int id;
+> >  	struct pmbus_driver_info info;
+> > +	bool pmbus_addr_fixed;
+>=20
+> Unnecessary. See below.
+>=20
+> > +	u32 iout_oc_warn_limit;
+> > +	u32 iout_oc_fault_limit;
+>=20
+> u8 would be sufficient.
+
+Will change
+
+>=20
+> >  };
+> >
+> >  #define to_max34440_data(x)  container_of(x, struct max34440_data,
+> > info) @@ -60,11 +66,11 @@ static int max34440_read_word_data(struct
+> i2c_client *client, int page,
+> >  	switch (reg) {
+> >  	case PMBUS_IOUT_OC_FAULT_LIMIT:
+> >  		ret =3D pmbus_read_word_data(client, page, phase,
+> > -
+> MAX34440_IOUT_OC_FAULT_LIMIT);
+> > +					   data->iout_oc_fault_limit);
+> >  		break;
+> >  	case PMBUS_IOUT_OC_WARN_LIMIT:
+> >  		ret =3D pmbus_read_word_data(client, page, phase,
+> > -
+> MAX34440_IOUT_OC_WARN_LIMIT);
+> > +					   data->iout_oc_warn_limit);
+> >  		break;
+> >  	case PMBUS_VIRT_READ_VOUT_MIN:
+> >  		ret =3D pmbus_read_word_data(client, page, phase, @@ -133,11
+> +139,11
+> > @@ static int max34440_write_word_data(struct i2c_client *client, int
+> > page,
+> >
+> >  	switch (reg) {
+> >  	case PMBUS_IOUT_OC_FAULT_LIMIT:
+> > -		ret =3D pmbus_write_word_data(client, page,
+> MAX34440_IOUT_OC_FAULT_LIMIT,
+> > +		ret =3D pmbus_write_word_data(client, page,
+> > +data->iout_oc_fault_limit,
+> >  					    word);
+> >  		break;
+> >  	case PMBUS_IOUT_OC_WARN_LIMIT:
+> > -		ret =3D pmbus_write_word_data(client, page,
+> MAX34440_IOUT_OC_WARN_LIMIT,
+> > +		ret =3D pmbus_write_word_data(client, page, data-
+> >iout_oc_warn_limit,
+> >  					    word);
+> >  		break;
+> >  	case PMBUS_VIRT_RESET_POUT_HISTORY:
+> > @@ -235,6 +241,24 @@ static int max34451_set_supported_funcs(struct
+> i2c_client *client,
+> >  	 */
+> >
+> >  	int page, rv;
+> > +	bool max34451_na6 =3D false;
+> > +
+> > +	rv =3D i2c_smbus_read_word_data(client, PMBUS_MFR_REVISION);
+> > +	if (rv < 0)
+> > +		return rv;
+> > +
+> > +	if (rv =3D=3D MAX34451ETNA6_MFR_REV) {
+>=20
+> Sure that this is only one revision ?
+> Would it be better to use ">=3D" instead of "=3D=3D" ?
+
+Currently yes this is the only revision and the latest
+It is nice to future proof this just in case so will change to >=3D
+
+>=20
+> > +		max34451_na6 =3D true;
+> > +		data->pmbus_addr_fixed =3D true;
+> > +		data->info.format[PSC_VOLTAGE_IN] =3D direct;
+> > +		data->info.format[PSC_CURRENT_IN] =3D direct;
+> > +		data->info.m[PSC_VOLTAGE_IN] =3D 1;
+> > +		data->info.b[PSC_VOLTAGE_IN] =3D 0;
+> > +		data->info.R[PSC_VOLTAGE_IN] =3D 3;
+> > +		data->info.m[PSC_CURRENT_IN] =3D 1;
+> > +		data->info.b[PSC_CURRENT_IN] =3D 0;
+> > +		data->info.R[PSC_CURRENT_IN] =3D 2;
+>=20
+> Assign register addresses directly here.
+
+Ah I see, will move.
+
+Thanks!
+
+>=20
+> 		data->iout_oc_fault_limit =3D PMBUS_IOUT_OC_FAULT_LIMIT;
+> 		data->iout_oc_warn_limit =3D PMBUS_IOUT_OC_WARN_LIMIT;
+> 	} else {
+> 		data->iout_oc_fault_limit =3D
+> MAX34440_IOUT_OC_FAULT_LIMIT;
+> 		data->iout_oc_warn_limit =3D
+> MAX34440_IOUT_OC_WARN_LIMIT;
+>=20
+> > +	}
+>=20
+> Thanks,
+> Guenter
 
