@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-588312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 801F8A7B78F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:05:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04679A7B78C
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:05:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6DFF3B6180
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 06:04:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCDA5172F32
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 06:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE86517A300;
-	Fri,  4 Apr 2025 06:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675D317A314;
+	Fri,  4 Apr 2025 06:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTLEuYtt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NS2jyF3I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CD2101F2;
-	Fri,  4 Apr 2025 06:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC1C405F7;
+	Fri,  4 Apr 2025 06:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743746677; cv=none; b=iReDbpHaDWXLRqBQ57A38fYnz3fpMS8zZMTe0Cmcnyv0fqHBbl/viK4ZIimNkRg0mnFCEAlH5rwB19IF8vKribUQKwgfnwdm9CrxM8y1uF6MotJlLaazB7CFMCM3Jf0Y5sa+QKq5avW4yZ+DHmas9g2AGMFLeclyuR5qDoN4cbk=
+	t=1743746694; cv=none; b=QTwjTJeiab5eyzb8FsJKfjGvjTrak+a7UOEdc3x4FdEaXr8Upbd2bXBeUwRcc1I7020oDJsbz5pUCMC2BARzO7mqXSfmEwUwkD+fkK7zuJ/JbBwzaWcLwh0q7teXzyEUj/dLN4GcJNoyoD173oq5EDSkNtKnLdiAlZ8QEYSN8oM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743746677; c=relaxed/simple;
-	bh=KTv51o0IsAxXn/Iidm9NvazURuokfp6rpRDXZkySMfg=;
+	s=arc-20240116; t=1743746694; c=relaxed/simple;
+	bh=PQJ6XOqXBt51EcKN+TLx5KcGeVH/M6mNAkkhBybJbUw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZlsY1ftadQFAxPPMGORjNOdMMZutDucgd0A0OBwfPMhxhpc8r/RacVP7+MwMmgTH0TpqpWZXvkc5u21dWERRGdS1Sze38EKw1WGI1SvSI93vXGJDzDkreKYnhuWZgzTNybJF4eIDIIDXkugFlKZ+Dia2Ix2pDCFTxwm2lNUE8V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTLEuYtt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B916C4CEDD;
-	Fri,  4 Apr 2025 06:04:31 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=pQ/lfL86Hf9NQd0CkwC1bVOyxsan8cex/MAHfP471eTjtHxUvpFfxp3mOjJ2JYMLiZWKOnPv5+0MFMLs4EdIpv38WCtG7wEZptt1jZVFw60zzXa2GMsFMos1HcZr7JwxyLw0PlC3OxG9e7ZfTIwQPlrVnG0dIh7f+SEqaEfPEyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NS2jyF3I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63697C4CEDD;
+	Fri,  4 Apr 2025 06:04:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743746676;
-	bh=KTv51o0IsAxXn/Iidm9NvazURuokfp6rpRDXZkySMfg=;
+	s=k20201202; t=1743746694;
+	bh=PQJ6XOqXBt51EcKN+TLx5KcGeVH/M6mNAkkhBybJbUw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZTLEuYttc8iI9W0JB5pd878j6KkzM/1prfYq9dT+kXg4vuBSj8ciJrP+MFNvVmO+z
-	 KOZmZafruWW8Y+PWDOB3o1uh8dyDXrRml40uZ2YVRQZ5ljILT0tLBtsN3izONP9AXD
-	 eaXwVTtWfrgBydGpE5LHBOQPWsYaKr13lC/UOHGmGMw8LwWp8O7uTXX4Y+h3kXbZPi
-	 PWG7RI23vAxTV/qbt3NIdNgtoO1MZS2NA7TIq0Wc0JNVdnGG+1k+nVRVCkcvEnRh3U
-	 XFlUUbaO2SThkIv9zLXqYWUg4/46D6xqvu/JDpJzPw+yO407EJCgJ/1grUIvuQZ3+6
-	 r/84npa4FnZ4w==
-Message-ID: <0ea5c20f-1c6f-4e18-b4ad-0f8ecebf3026@kernel.org>
-Date: Fri, 4 Apr 2025 08:04:29 +0200
+	b=NS2jyF3Ib17ISe/HhQtiFpnwkAn2c1h9K8zGTl2DiJE2yMqH4UdZnw/7/yxkQyHhx
+	 Tz1aSRSBRsjTQtqunUCkyEcH5JmQ9u14hCJWuqFZSjiDCr//SL0qQOiE6eFADtB6io
+	 rqRkTiRhgBxEVKRK2FgiGXmBjpRDyyf9uHy5k6NcmCcfkf34VLlOMf6p91YW69lpWk
+	 ZN5QWibNqrt9hyHDKtieQogylf+I+CjCmidZnedzRz7hheKmYDuqx/69G7LeTxkXEV
+	 3dXqDP4KFe6gIzJMQf4r4gkVie7F5qXPzFO500NZYJ3Ig0/6Uzn9xZq+e5O+Gopxx1
+	 K/Q2gIPxkc7Jw==
+Message-ID: <62f35ffc-f6ad-492d-8ccc-bf78229b12d9@kernel.org>
+Date: Fri, 4 Apr 2025 08:04:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] media: dt-bindings: add MT8188 AIE
+Subject: Re: [PATCH v5 2/4] arm64: dts: mt8188: add aie node
 To: "bo.kong" <bo.kong@mediatek.com>, Rob Herring <robh@kernel.org>,
  AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
  Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
@@ -58,7 +58,7 @@ To: "bo.kong" <bo.kong@mediatek.com>, Rob Herring <robh@kernel.org>,
 Cc: zhaoyuan.chen@mediatek.com, Teddy.Chen@mediatek.com,
  Project_Global_Chrome_Upstream_Group@mediatek.com
 References: <20250403074005.21472-1-bo.kong@mediatek.com>
- <20250403074005.21472-2-bo.kong@mediatek.com>
+ <20250403074005.21472-3-bo.kong@mediatek.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,22 +104,24 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250403074005.21472-2-bo.kong@mediatek.com>
+In-Reply-To: <20250403074005.21472-3-bo.kong@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 03/04/2025 09:38, bo.kong wrote:
 > From: Bo Kong <Bo.Kong@mediatek.com>
 > 
-> Add YAML device tree bindings for MT8188 AIE.
+> Add aie node and related node
 > 
 > Signed-off-by: Bo Kong <Bo.Kong@mediatek.com>
 > ---
 <form letter>
 Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+and lists to CC (and consider --no-git-fallback argument, so you will
+not CC people just because they made one commit years ago). It might
+happen, that command when run on an older kernel, gives you outdated
+entries. Therefore please be sure you base your patches on recent Linux
+kernel.
 
 Tools like b4 or scripts/get_maintainer.pl provide you proper list of
 people, so fix your workflow. Tools might also fail if you work on some
@@ -127,12 +129,6 @@ ancient tree (don't, instead use mainline) or work on fork of kernel
 (don't, instead use mainline). Just use b4 and everything should be
 fine, although remember about `b4 prep --auto-to-cc` if you added new
 patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
 </form letter>
 
 Best regards,
