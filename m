@@ -1,111 +1,147 @@
-Return-Path: <linux-kernel+bounces-588815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C833A7BDDF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:32:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D31A7BDE0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B9B516C3DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:31:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA91F168E08
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370841E1DE9;
-	Fri,  4 Apr 2025 13:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TRKnKpoG";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FUS7Zx/u"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B211EF0AE;
+	Fri,  4 Apr 2025 13:33:01 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13A01EEA4E
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 13:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2812718D656;
+	Fri,  4 Apr 2025 13:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743773482; cv=none; b=YXU3k+YoGK5Om3HtX6C3zLoa27Vb+H0lod6+iBmaqanhmuJX7wiA4ZIGScCIcTgHG2TJ9F6vCzZIBhCipBH2lwES/tmttHAbZQFlZmphWks1lDQblMENBhJjBsEQuIgCdNMb9Fe1QSgmERzyhdPEUDBXq9XfYduj9TlWHZPVhzs=
+	t=1743773581; cv=none; b=Bve+X/+XfmNIeLKM8mA0VlZQjOAsitxrJ+I2Si7eg0L7Q/aOnoVVBCI6TbnW9N/FiIjaAuh7lV975/NArz2Dl+qOs2hg0vEOGBdSo0CnUr1QwS9aOIN7s1AOu+I3W3YcKPfDkSw1tSdHICR97QOb3jQwBGg/SnzUzHwaeuQ+Pis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743773482; c=relaxed/simple;
-	bh=/wxzFAJWhXTRWiA4rv+u8jEVP0QqGm6mc+Wy5Om3SmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GfX8DOGV8zZ8grVbNbItguM/xL8xz/L11FwjKAgjZvgZZWS9uwEyuammSkk3N/s/pcd5mx50Hq1367sY58qVtbCOHNr9xRPGb5lrDmU+cCkQbtE9ajoOfDhwKjinXla4eTMhOf3XziSsmNP9H81Tp1sYf6EXXA47WRMnRDcCb4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TRKnKpoG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FUS7Zx/u; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 4 Apr 2025 15:31:16 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1743773477;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=V55n4+BdXPiTHEXRvGt5+QG54LfxTfkJtbWgjaVxqUo=;
-	b=TRKnKpoGXvTVj/pD53j4jZegyqPxNxn148nXsQKUGT06EM3NEERkg5U961Fma+ulYQqvLL
-	H8M8P7dOwSEzulyLPa/KXtdPlaupVDTcihUEylrSlx8WbUjPZifaqJ2AMlmsl99l/F8TKH
-	n7w42eSIzO8vPyuGLxkCyBKXvIRKBzxV1FIaje1OdIEyqR5/cxJ54AjbXZRNjlWVvgLiaI
-	6MHDbeLnkuWC8zHxXrcZBXBZoYLpGJEjBz4aB7KArTWAuNAJTFb5QESDtmTx8SlU6bNiT7
-	xIRbDDuKFjN6QFbV+o63fxJJAuv7NttmuHlvm4VvXIsHWhzu2RohPvSQUZYxRw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1743773477;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=V55n4+BdXPiTHEXRvGt5+QG54LfxTfkJtbWgjaVxqUo=;
-	b=FUS7Zx/uir7S9XM6X61xQhqmTy1fVqNDrqxaKl5CrfE25Y3PvXxySSQo95NIEMiXINGlqW
-	v71NIvWBo9EUAdDw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-kernel@vger.kernel.org
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] clocksource/i8253: Acquire the lock disabled interrupts.
-Message-ID: <20250404133116.p-XRWJXf@linutronix.de>
+	s=arc-20240116; t=1743773581; c=relaxed/simple;
+	bh=x7lhNPOeDPftGyhj/PQXzkwnB0cuPTUxuDGk+lZ+BGA=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YJV1dcRPiSMgUJnCywF6bYIGDvI4lg3MKQsv3D6DVzeY/rAYITPerA4Vs7h4x+Y2Hmf06zhjULlzTCUOi+JEW6X5FIX5J9EbSpahF6IAOAIqrHxbFtjd8RvHqLYTYE4VRcZV12qA2kOb7j3uErK440yHwjQOyb7bSybEPnu7eOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZTfZx4bsCz6M4M9;
+	Fri,  4 Apr 2025 21:29:13 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7524B140682;
+	Fri,  4 Apr 2025 21:32:55 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 4 Apr
+ 2025 15:32:53 +0200
+Date: Fri, 4 Apr 2025 14:32:52 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>,
+	<dan.j.williams@intel.com>, <willy@infradead.org>, <jack@suse.cz>,
+	<rafael@kernel.org>, <len.brown@intel.com>, <pavel@ucw.cz>,
+	<ming.li@zohomail.com>, <nathan.fontenot@amd.com>,
+	<Smita.KoralahalliChannabasappa@amd.com>, <huang.ying.caritas@gmail.com>,
+	<yaoxt.fnst@fujitsu.com>, <peterz@infradead.org>,
+	<gregkh@linuxfoundation.org>, <quic_jjohnson@quicinc.com>,
+	<ilpo.jarvinen@linux.intel.com>, <bhelgaas@google.com>,
+	<andriy.shevchenko@linux.intel.com>, <mika.westerberg@linux.intel.com>,
+	<akpm@linux-foundation.org>, <gourry@gourry.net>,
+	<linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <rrichter@amd.com>, <benjamin.cheatham@amd.com>,
+	<PradeepVineshReddy.Kodamati@amd.com>, <lizhijian@fujitsu.com>
+Subject: Re: [PATCH v3 2/4] cxl: Update Soft Reserved resources upon region
+ creation
+Message-ID: <20250404143252.00007d06@huawei.com>
+In-Reply-To: <20250403183315.286710-3-terry.bowman@amd.com>
+References: <20250403183315.286710-1-terry.bowman@amd.com>
+	<20250403183315.286710-3-terry.bowman@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On x86 during boot, clockevent_i8253_disable() can be invoked via
-x86_late_time_init -> hpet_time_init() -> pit_timer_init() which happens
-with enabled interrupts.
-If some of the old i8253 hardware is actually used then lockdep will
-notice that i8253_lock is used in hardirq context. This causes lockdep
-to complain because it observed the lock being acquired with enabled
-interrupts and in hardirq context.
+On Thu, 3 Apr 2025 13:33:13 -0500
+Terry Bowman <terry.bowman@amd.com> wrote:
 
-Make clockevent_i8253_disable() acquire the lock with disabled
-interrupts.
+> From: Nathan Fontenot <nathan.fontenot@amd.com>
+> 
+> Update handling of SOFT RESERVE iomem resources that intersect with
+> CXL region resources to remove intersections from the SOFT RESERVE
+> resources. The current approach of leaving SOFT RESERVE resources as
+> is can cause failures during hotplug replace of CXL devices because
+> the resource is not available for reuse after teardown of the CXL device.
+> 
+> To accomplish this the cxl acpi driver creates a worker thread at the
 
-Fixes: c8c4076723dac ("x86/timer: Skip PIT initialization on modern chipsets")
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- drivers/clocksource/i8253.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Inconsistent in capitalization. I'd just use CXL ACPI here given you used CXL PCI
+below.
 
-diff --git a/drivers/clocksource/i8253.c b/drivers/clocksource/i8253.c
-index 39f7c2d736d16..67dcd9c8f1875 100644
---- a/drivers/clocksource/i8253.c
-+++ b/drivers/clocksource/i8253.c
-@@ -103,8 +103,9 @@ int __init clocksource_i8253_init(void)
- #ifdef CONFIG_CLKEVT_I8253
- void clockevent_i8253_disable(void)
- {
--	raw_spin_lock(&i8253_lock);
-+	unsigned long flags;
- 
-+	raw_spin_lock_irqsave(&i8253_lock, flags);
- 	/*
- 	 * Writing the MODE register should stop the counter, according to
- 	 * the datasheet. This appears to work on real hardware (well, on
-@@ -133,7 +134,7 @@ void clockevent_i8253_disable(void)
- 
- 	outb_p(0x30, PIT_MODE);
- 
--	raw_spin_unlock(&i8253_lock);
-+	raw_spin_unlock_irqrestore(&i8253_lock, flags);
- }
- 
- static int pit_shutdown(struct clock_event_device *evt)
--- 
-2.49.0
+> end of cxl_acpi_probe(). This worker thread first waits for the CXL PCI
+> CXL mem drivers have loaded. The cxl core/suspend.c code is updated to
+> add a pci_loaded variable, in addition to the mem_active variable, that
+> is updated when the pci driver loads. Remove CONFIG_CXL_SUSPEND Kconfig as
+> it is no longer needed. A new cxl_wait_for_pci_mem() routine uses a
+> waitqueue for both these driver to be loaded. The need to add this
+> additional waitqueue is ensure the CXL PCI and CXL mem drivers have loaded
+> before we wait for their probe, without it the cxl acpi probe worker thread
+> calls wait_for_device_probe() before these drivers are loaded.
+> 
+> After the CXL PCI and CXL mem drivers load the cxl acpi worker thread
+CXL ACPI
+
+> uses wait_for_device_probe() to ensure device probe routines have
+> completed.
+
+Does it matter if these drivers go away again?  Everything seems
+to be one way at the moment.
+
+> 
+> Once probe completes and regions have been created, find all cxl
+
+CXL
+
+> regions that have been created and trim any SOFT RESERVE resources
+> that intersect with the region.
+> 
+> Update cxl_acpi_exit() to cancel pending waitqueue work.
+> 
+> Signed-off-by: Nathan Fontenot <nathan.fontenot@amd.com>
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+
+
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index be8a7dc77719..40835ec692c8 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -858,6 +858,7 @@ bool is_cxl_pmem_region(struct device *dev);
+>  struct cxl_pmem_region *to_cxl_pmem_region(struct device *dev);
+>  int cxl_add_to_region(struct cxl_port *root,
+>  		      struct cxl_endpoint_decoder *cxled);
+> +int cxl_region_srmem_update(void);
+
+As before: srmem is a bit obscure. Maybe spell it out more.
+
+>  struct cxl_dax_region *to_cxl_dax_region(struct device *dev);
+>  u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint, u64 spa);
+>  #else
+> @@ -902,6 +903,8 @@ void cxl_coordinates_combine(struct access_coordinate *out,
+>  
+>  bool cxl_endpoint_decoder_reset_detected(struct cxl_port *port);
+>  
+> +void cxl_wait_for_pci_mem(void);
 
 
