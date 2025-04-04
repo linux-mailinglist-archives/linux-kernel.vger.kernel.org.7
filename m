@@ -1,74 +1,86 @@
-Return-Path: <linux-kernel+bounces-588967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB4AA7BFF7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:54:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A782A7C005
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D99117A80F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:53:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EDC33BD0E7
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD5F1F4723;
-	Fri,  4 Apr 2025 14:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF681F4630;
+	Fri,  4 Apr 2025 14:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CwJ0rmQk"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p/hPx0zQ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7BE1B043E
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 14:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D9D1F4299
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 14:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743778451; cv=none; b=FuVvWJWgPci7CL+1M5wpsPUfMKTVpiVj+HW/NVT7soRfaqckyFpntrZMnfWfBJNt42RGifj0fQBaXECrq5KkL0YvIOg6ieUiEPyP3ZsKEgWx8+E7Qselx5Sw6T8Y4jGotwLO1wWJotILcgMKlVEUcnKVChAehqYZRL/xfmGnEkI=
+	t=1743778462; cv=none; b=o5ax1AF6H4+0jmQZuYeUO4k4o+4oZZaJcTiKXQVTpBThWkIMGu4RdJOojID708vxWVpkFljvm0kTy2qUypqFAepsApHwxzWcBA5+pcabj5Q/mAqpWm5RkkHRRgOE620gogQMyZRW6vFZ/UdjCyoDldZ1oIIb6w48pK4Sr5UmrF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743778451; c=relaxed/simple;
-	bh=OrWnd/AIVtyfUtf1QWN2C81czHbvbqvK7PUNeJ9GhF0=;
+	s=arc-20240116; t=1743778462; c=relaxed/simple;
+	bh=svkucUlganAJo/xVbUO7ayZA0edzMW37/xslNvZp+gg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gKYIBj+Naw7cTPnVfrr9YLe+1gCdkMj1lYjGerZnwFnjDkzeLUaJFTAo1Uttn9mhJ5vhxS1U9AeZVJO+3BD/0EtFiwnNsMEthRiIOn3EASDoqhedt2YV2cr579sSBHG3yr4gjFOZhKOPYY3LWNC0RsiKC7JVqZe6ybcqwrKji38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CwJ0rmQk; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 4 Apr 2025 10:53:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1743778436;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OLg5PeIHaOFt5pMV3h7TuWebvpx5Qt/dpEM9TkWrbCE=;
-	b=CwJ0rmQkxjYRT553nTryoJSNAzsdF8H2gJNSaJR/gcpqWQ94BABcs5MT+REOCYDXlygGQS
-	yvcVVNZRGFvbzD8B0H0cihCjYmNC+tJ9GGtr/ucNRm/Gxpzdtrf7H/b+wWOAtACm0sa/wu
-	cpVjy01KufTkkqf+CDOk6BKFmL24H+s=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-bcachefs@vger.kernel.org, vulab@iscas.ac.cn, 
-	stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bcachefs: Add error handling for zlib_deflateInit2()
-Message-ID: <morzv5ulzvkdpkegs33bwdocnn3hftxviqmw4wkvlh2qnsfagd@trk7lpvqj37k>
-References: <xjtejtaya3znotupznz4eywstkjvucxwyo2gf4b6phcwq6a2i5@pqicczp3ty5g>
- <667bcd67-aac4-425c-b100-d25dc86eb6a9@web.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sIgL4kJNnEu2nouQvKEVKZ2Wu9Q6uubG3/YcGhqyryOOYbnCLtD0UpG4s3yNngMfk1InKVxevd/NJFQBS+dBi8F+UeWn7VsvEUMAx2gBQTUR8B+OfzbtUsTvgJMKBhldhNMJHsxEYsvqQivuBPAE3ilyY4Zf5XKUt0h4PV/o5Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=p/hPx0zQ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3f4sjl0SOnBVfAiT/z6/L3JUzr5aj/BpDpETUoVcQ7w=; b=p/hPx0zQ1us4HKITt3gMYkaQ6l
+	KmwoacsdzQzkEtTTkh4xoF04+aBaC3tlXdDC4F98vNs8YWN/qCrmJ298m4CahZN06MLFCrZ6Em/ir
+	hDhXi/F/X4T0QQdr2Yoh4TBLz0QNycztJEY8YfFXtIZRkiXLePQQb7O/vLNu1X7uo2RZWuabNI+Bx
+	enjCV5ZOPDGOzBgD/lYB9l5U/+wrDcoetIcqBog0wvjQ8EBWvxXFN4aOzasSPhKBw6PJJPnY6FrKp
+	cK6a74+0GzxRiciQU00doGzIf6fcILxD7jG25cC8ZHPV308KROsCKkbzbeOx9AI0TLWQiGPOThDY1
+	8qfEjWUw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u0iQv-0000000Fpp5-0myO;
+	Fri, 04 Apr 2025 14:54:13 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id ADFA830049D; Fri,  4 Apr 2025 16:54:12 +0200 (CEST)
+Date: Fri, 4 Apr 2025 16:54:12 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>, Juergen Gross <jgross@suse.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>
+Subject: Re: [PATCH] objtool: Fix SYSCALL instruction handling and
+ INSN_CONTEXT_SWITCH
+Message-ID: <20250404145412.GP25239@noisy.programming.kicks-ass.net>
+References: <41761c1db9acfc34d4f71d44284aa23b3f020f74.1743706046.git.jpoimboe@kernel.org>
+ <20250404104938.GO25239@noisy.programming.kicks-ass.net>
+ <iqalk74mk6onmntltkpodnbtp7zxxgx3u3ycuipmkizcmz7uvm@b7j7kubwzpl6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <667bcd67-aac4-425c-b100-d25dc86eb6a9@web.de>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <iqalk74mk6onmntltkpodnbtp7zxxgx3u3ycuipmkizcmz7uvm@b7j7kubwzpl6>
 
-On Fri, Apr 04, 2025 at 04:20:18PM +0200, Markus Elfring wrote:
-> …
-> > > Add an error check and return 0 immediately if the initialzation fails.
-> >
-> > Applied
+On Fri, Apr 04, 2025 at 07:46:52AM -0700, Josh Poimboeuf wrote:
+> On Fri, Apr 04, 2025 at 12:49:38PM +0200, Peter Zijlstra wrote:
+> > On Thu, Apr 03, 2025 at 11:48:13AM -0700, Josh Poimboeuf wrote:
+> > 
+> > > The real problem here is that INSN_CONTEXT_SWITCH is ambiguous.  It can
+> > > represent both call semantics (SYSCALL, SYSENTER) and return semantics
+> > > (SYSRET, IRET, RETS, RETU).  Those differ significantly: calls preserve
+> > > control flow whereas returns terminate it.
+> > 
+> > Does that not rather suggest we should perhaps have INSN_SYSCALL /
+> > INSN_SYSRET to replace the single ambiguous thing?
 > 
-> Did you try to avoid a typo in such a change description?
+> Is there any reason to have INSN_SYSCALL in the first place?
 
-Typos add character :)
+This xen hyperclal thing?
 
