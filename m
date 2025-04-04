@@ -1,86 +1,93 @@
-Return-Path: <linux-kernel+bounces-588971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A782A7C005
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:56:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D87D7A7C029
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:03:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EDC33BD0E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:54:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E48E7A59C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF681F4630;
-	Fri,  4 Apr 2025 14:54:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6813E1F461F;
+	Fri,  4 Apr 2025 15:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p/hPx0zQ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Ui3IjQva"
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D9D1F4299
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 14:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1DA1DFD96;
+	Fri,  4 Apr 2025 15:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743778462; cv=none; b=o5ax1AF6H4+0jmQZuYeUO4k4o+4oZZaJcTiKXQVTpBThWkIMGu4RdJOojID708vxWVpkFljvm0kTy2qUypqFAepsApHwxzWcBA5+pcabj5Q/mAqpWm5RkkHRRgOE620gogQMyZRW6vFZ/UdjCyoDldZ1oIIb6w48pK4Sr5UmrF4=
+	t=1743779012; cv=none; b=IfmvBooEQC1LRXgE6r3wd0YduCmaMosteehu+4t4Ye+Ogv+OjEN0AOWa6rns9ddB3MVVp64zbea25u2EuSNFRwarPMA2EubqdDvIa2uSwHWUzHglJX7t2SRKyQo2rd/9Ff06eOQXKzWOATjIZEgPHI5KCky2YbqitdvD+YomUWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743778462; c=relaxed/simple;
-	bh=svkucUlganAJo/xVbUO7ayZA0edzMW37/xslNvZp+gg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sIgL4kJNnEu2nouQvKEVKZ2Wu9Q6uubG3/YcGhqyryOOYbnCLtD0UpG4s3yNngMfk1InKVxevd/NJFQBS+dBi8F+UeWn7VsvEUMAx2gBQTUR8B+OfzbtUsTvgJMKBhldhNMJHsxEYsvqQivuBPAE3ilyY4Zf5XKUt0h4PV/o5Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=p/hPx0zQ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3f4sjl0SOnBVfAiT/z6/L3JUzr5aj/BpDpETUoVcQ7w=; b=p/hPx0zQ1us4HKITt3gMYkaQ6l
-	KmwoacsdzQzkEtTTkh4xoF04+aBaC3tlXdDC4F98vNs8YWN/qCrmJ298m4CahZN06MLFCrZ6Em/ir
-	hDhXi/F/X4T0QQdr2Yoh4TBLz0QNycztJEY8YfFXtIZRkiXLePQQb7O/vLNu1X7uo2RZWuabNI+Bx
-	enjCV5ZOPDGOzBgD/lYB9l5U/+wrDcoetIcqBog0wvjQ8EBWvxXFN4aOzasSPhKBw6PJJPnY6FrKp
-	cK6a74+0GzxRiciQU00doGzIf6fcILxD7jG25cC8ZHPV308KROsCKkbzbeOx9AI0TLWQiGPOThDY1
-	8qfEjWUw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u0iQv-0000000Fpp5-0myO;
-	Fri, 04 Apr 2025 14:54:13 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id ADFA830049D; Fri,  4 Apr 2025 16:54:12 +0200 (CEST)
-Date: Fri, 4 Apr 2025 16:54:12 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@kernel.org>, Juergen Gross <jgross@suse.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>
-Subject: Re: [PATCH] objtool: Fix SYSCALL instruction handling and
- INSN_CONTEXT_SWITCH
-Message-ID: <20250404145412.GP25239@noisy.programming.kicks-ass.net>
-References: <41761c1db9acfc34d4f71d44284aa23b3f020f74.1743706046.git.jpoimboe@kernel.org>
- <20250404104938.GO25239@noisy.programming.kicks-ass.net>
- <iqalk74mk6onmntltkpodnbtp7zxxgx3u3ycuipmkizcmz7uvm@b7j7kubwzpl6>
+	s=arc-20240116; t=1743779012; c=relaxed/simple;
+	bh=Vqld1k1EanQqrRXMnKxKlA0j8qbBI1c4ZSiKwVV38Pg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rTq2OOxPZxvSI6FhKg1RWzC+JV5TKzLr8vJSDU4mU4dXMXUSmUbJ5NsNDqM+GWGM/2z0ZbwvrSxdVPpyE4HzMJgEDsYwpNuSzgLdYMkxVCZU/aMUQSgszbazIizFYXQVLUZ5McpKVDQa/UPzaiaT3/XctRgOjQzJgIMXmHw9Fro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Ui3IjQva; arc=none smtp.client-ip=80.12.242.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 0iR3uAdvnEroE0iR6uXbk1; Fri, 04 Apr 2025 16:54:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1743778466;
+	bh=Vxe3vXGex7NwadU5R8+v9L4U75CtPL0nqPRxaiu24j0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Ui3IjQvao55HGypaHwZMvMentJwuTYqqQax5pbxZvDEYFveIQUi5iluKjkjN6Q1lC
+	 TH71h9Jmqo8Mw6ojzKX7zV7LfTQcZENtE8EkjusFw/TIwU4XWPVTeMktdtkGa/yrB1
+	 jo6N4iY/OrjyfMxGDAf+wmstJcdjnn6ybScnwM6DNgHbip7sk5tggZC5WAF1OtemE0
+	 Xq+eUYG3u8xM9k20S7haDi5AOFEXwTaoOZ8DrDl2z48zdxmNQAOfzlZhXfze/SubI+
+	 WEd0goIi2A6E7NkqhuFjHlgMzUTlTquRBkRcb6KdnyqLHriqMUicPiGGZIDnC+Low/
+	 lqG8K6i45/Pfw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 04 Apr 2025 16:54:26 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <ec9810f1-a830-4a9e-b573-4003f94259df@wanadoo.fr>
+Date: Fri, 4 Apr 2025 16:54:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <iqalk74mk6onmntltkpodnbtp7zxxgx3u3ycuipmkizcmz7uvm@b7j7kubwzpl6>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] leds: tlc5928: Driver for the TI 16 Channel spi LED
+ driver
+To: Corentin GUILLEVIC <corentin.guillevic@smile.fr>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+References: <20250326153535.158137-1-corentin.guillevic@smile.fr>
+ <3be3ca59-157d-4ceb-81bd-4a1acdbccb9c@wanadoo.fr>
+ <CAMFqQmpJB4WeOM7GF1dEuJDb27rf=CBC4UuROWA+AH2+ZbJE8w@mail.gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <CAMFqQmpJB4WeOM7GF1dEuJDb27rf=CBC4UuROWA+AH2+ZbJE8w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Apr 04, 2025 at 07:46:52AM -0700, Josh Poimboeuf wrote:
-> On Fri, Apr 04, 2025 at 12:49:38PM +0200, Peter Zijlstra wrote:
-> > On Thu, Apr 03, 2025 at 11:48:13AM -0700, Josh Poimboeuf wrote:
-> > 
-> > > The real problem here is that INSN_CONTEXT_SWITCH is ambiguous.  It can
-> > > represent both call semantics (SYSCALL, SYSENTER) and return semantics
-> > > (SYSRET, IRET, RETS, RETU).  Those differ significantly: calls preserve
-> > > control flow whereas returns terminate it.
-> > 
-> > Does that not rather suggest we should perhaps have INSN_SYSCALL /
-> > INSN_SYSRET to replace the single ambiguous thing?
+Le 04/04/2025 à 15:54, Corentin GUILLEVIC a écrit :
+> Hi,
 > 
-> Is there any reason to have INSN_SYSCALL in the first place?
+> Thank you for your review! I've fixed everything (new patch is
+> coming), but I have issue for some of them: I can't use the suggested
+> functions (guard(), for_each_available_child_of_node_scoped() and
+> devm_mutex_init()) because the kernel version used on my device is too
+> old (v5.15). No way to test with a newer version...
+> 
+> Should I let the "old" functions because of my kernel version?
 
-This xen hyperclal thing?
+No strong opinion on my side on this.
+
+The proposed changes were just to have a slightly less verbose code. I 
+guess that having a tested code worth much more than using some 
+convenience functions to save a few lines of code.
+
+Let see the position of maintainers on it.
+
+CJ
 
