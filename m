@@ -1,127 +1,143 @@
-Return-Path: <linux-kernel+bounces-588708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2901CA7BC97
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:23:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DECFA7BCA3
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01D9A174079
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 12:22:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EC283B3E4D
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 12:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C2D1EB5F3;
-	Fri,  4 Apr 2025 12:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1601E51E5;
+	Fri,  4 Apr 2025 12:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s1bbu8Gr"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="lcrV7mf+"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63BC1DF971
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 12:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5865F1A238C;
+	Fri,  4 Apr 2025 12:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743769282; cv=none; b=PMiG9X164cL0P7vkP+xb4P0g+iotqCt3yDxsq7yPq8dQhPR8YTnsYHyn0uKs0tG5JPZQK35OvwRkV4GFV0YjXACbI0HIaPPVYpcKhUarMs+pBTAwWVnzQrgXUWxZ4Iz0Ktoy5h9Oi00ZJAvgtBpyzB78qa7ytnrXskXdYHOR2Jg=
+	t=1743769773; cv=none; b=PcrMSdAH1NLOFBC6qZ1+okrnN/v5xQDc6CMHCFCLdlpjD5toKoi5pJe4LWnr762dXBLKNy0TbTd2ZbiTBkVD0Celtqhrk1UCupIWBraX19hEnXFPzdTolEFEU53Vlc05IoXgQefDf9G1gbub8zClzV/YBa/w2WdX4lYgl2C/dpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743769282; c=relaxed/simple;
-	bh=lkeUwkkv2l20qMI8/MMYwTQQP/7YT3AVpqsQN2tYwNQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J7P/fiuiEku/trg10dbTVAnnG9wHrNljNy6Kwg/PTmwVaS65/cdUxOefsBgP3PTFujK1Tme0Cu/gTqzyf0H2MkwjF7UVOfi/1lFIWTIIyvea4NKH8EsiRBY7FnvdPXaCeCwcbs5LueAY6044/pRXwRkHyCpcjw3ZEVL/F7n0WlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s1bbu8Gr; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43ce4e47a85so2040035e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 05:21:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743769279; x=1744374079; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/Tb6uHTtWsK1kFyxyPD5qpzEiabvnAv7+kW+ub5TJjs=;
-        b=s1bbu8GrTqMbP6pXVoITX0SE5usnyyZZqM2eFufdpnq07uJ4hYCTgR+90Cugr5Cx9R
-         mzGf6VfNvka39JV6KQYzGdJyvrulq3ZGPrOXS9EGkPuiA7I8v8klnMBbYI2GkjUcNyqI
-         x3wD+08/v0ccKjxyl+MSHN45SA64NJoBy8bYQaMq++pXVl3dK+4ubjeyy8BfqCr7AoID
-         zQmzIsbJmE83RbYQxEN8pWXbUpDWfcmN5KAiMxL+ZOyL5xyczhCJtzaM32ym9V/dpMt1
-         OK+Pom4Huq6eQ7jIVJNO/3LqbRpRXqH29lb5ay9/kNkpU89ftS101ciGCFF2IP8UKvdI
-         BpAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743769279; x=1744374079;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/Tb6uHTtWsK1kFyxyPD5qpzEiabvnAv7+kW+ub5TJjs=;
-        b=KU4URYy6jzElcaITaEKqVx28h5B5fzavu8MF71bbNkGLAJIK3YbOelSg5Aq3GQ/9Kq
-         CgzhoLSq8PQJW60vAjNxshOqDxSDVA86wJmNymhfSe0gY8bj0AekzHUv/WFZ516p8w3k
-         ngaRLMjl1rMt2lQtZ2ZBNh5p53GXsJZBxqVPplF89XT5OIFWT0kCkHrw7wEVuNd99K66
-         GImIiuwfKCwGVC8m59fxN+5GLko7ct5LJeLKILcOt2ZxHCED6ulV5T4PKqP61UMU8tF9
-         JxHSD5ZayQSzwcqKYt38CMW9sDoGVQ2HqsblqN/Djfda9CSBiI8oStjDKTuv2lQXfn0R
-         7hvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXskVuwC3D0m1hnzQuBjEHHoVo8fS0/fcTJS3feegvJ4Mgs9AhVlViGV1iZ1s/NRNZ58Fmrhl80YBfzA6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqLEvuKcA6McliduD8EXeM3fiPVvoMAYA2RDS5hD/NJD1UTt2R
-	Sa2DhFNps+A2JehSJ4PUYGogFlqtO644WkIp+8doSGxijdI3hlfrwVokgrY0Mw8=
-X-Gm-Gg: ASbGncudU7GsW3tjCyJYCw3GrVelsKSnzek6FZcrQpz4o1wjY6wSTehcL9Ern6uxuwB
-	W8GQmsWkdjxwpARKgRZxW/WzRuWAK9h9RPI9qUehEyrpGZB7b/eiwtWYedimEc1yIpKfLtwjuHt
-	jUvv8sF4Nqsx0BbhAnT/3+y55NhRbhl8gW48T5Myez8pdW+OtWiMAlP4XYosbRRkiE/7G7GTa+7
-	4xRTr0OGw3c6YTFfg2dNlUZMBSiAYCDKgYGZii4BieoZEQ2D5rr6tZTA97kYSF04CcNyijyZ5lJ
-	J6uVDpB3HUB2FfnSHPUYsoerRzQByqkEh2N70uBBEqh45LANz0kfDg==
-X-Google-Smtp-Source: AGHT+IGOy3L1QjCpnMqGZsFw79UEPXtqI6aUxy7enKUtc7JINUL+ImbH8sjMP1fP+pTjtUkMn+AvpA==
-X-Received: by 2002:a5d:6da2:0:b0:39c:1258:b36 with SMTP id ffacd0b85a97d-39cba93d1c8mr1014525f8f.14.1743769278978;
-        Fri, 04 Apr 2025 05:21:18 -0700 (PDT)
-Received: from shite.. ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c301a6c89sm4183439f8f.28.2025.04.04.05.21.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 05:21:18 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>,
-	Peter Ujfalusi <peter.ujfalusi@gmail.com>,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/2] dmaengine: ti: Do not enable by default during compile testing
-Date: Fri,  4 Apr 2025 14:21:14 +0200
-Message-ID: <20250404122114.359087-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250404122114.359087-1-krzysztof.kozlowski@linaro.org>
-References: <20250404122114.359087-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1743769773; c=relaxed/simple;
+	bh=Vglg3cinDLeA9fqr89u4b8HJQ4PJ6C0jehJ/9mZQw5M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=um3bXhkt8h3Tpo22QEQrynqNyC0ul6QMnDLtf9TiGtNhgqbiX3rnRHUnESLtk6XWv7Kx23wnx8O+kPjjDOx2lBZflhCJOcJkgv5l8f3vdFWuUSMvmOyUie0Ztu/EJLhv9v0Yuus2BiKuioFiuzDkDD1wGgZmI6lQf0zQOA7iDck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=lcrV7mf+; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 534C4rlN019849;
+	Fri, 4 Apr 2025 14:29:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	PX8HMUoBjUQH8f441S3m5UlI1PDj19al//F5PjyAvQM=; b=lcrV7mf+1aKq4ncl
+	X8GicNvEeYlQ/YXrV0GF6CfEDJZ4e54+tzxPwNPxc9K+vJ0Pi2X5FNqGgk3SF+JR
+	g/zPMpVGG/gzuaV3WyQoxz6s43dC0qmMMxRiNXOpCmFsitUwX879JKy1nO+kVm79
+	7OOoKw+iNatnKMlQXzinmcLXU4B+h4vNSb90nJ0UBGv0JmymYdMn4jxXOhV4XKOZ
+	8Jsakge7t/zKLrhJuD7oukXtTO9POx8Nfaw7WT90zE5lOrfADgneki4xDBespZOg
+	GsEMTjFoLpVk2wB407H2FDitZiapJGyJ+pyiVrfijsdP5PoYDyA81o2f0KTszkmD
+	k4BS2Q==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45t2cqk4sw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Apr 2025 14:29:18 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2C8CD4002D;
+	Fri,  4 Apr 2025 14:28:20 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 976A79234AD;
+	Fri,  4 Apr 2025 14:27:33 +0200 (CEST)
+Received: from [10.130.77.120] (10.130.77.120) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 4 Apr
+ 2025 14:27:33 +0200
+Message-ID: <6e2b1717-6189-4115-ab55-01227a5a1d5a@foss.st.com>
+Date: Fri, 4 Apr 2025 14:25:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] irqchip/gic: Use 0x10000 offset to access GICC_DIR on
+ STM32MP2
+To: Thomas Gleixner <tglx@linutronix.de>, <maz@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20250403122805.1574086-1-christian.bruel@foss.st.com>
+ <20250403122805.1574086-3-christian.bruel@foss.st.com> <87mscxuu6f.ffs@tglx>
+From: Christian Bruel <christian.bruel@foss.st.com>
+Content-Language: en-US
+In-Reply-To: <87mscxuu6f.ffs@tglx>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-04_05,2025-04-03_03,2024-11-22_01
 
-Enabling the compile test should not cause automatic enabling of all
-drivers.
+Hello Thomas,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/dma/ti/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+thanks for your comments.
+After Marc's suggestion we found a better solution. So dropping this 
+patch set.
 
-diff --git a/drivers/dma/ti/Kconfig b/drivers/dma/ti/Kconfig
-index 2adc2cca10e9..dbf168146d35 100644
---- a/drivers/dma/ti/Kconfig
-+++ b/drivers/dma/ti/Kconfig
-@@ -17,7 +17,7 @@ config TI_EDMA
- 	select DMA_ENGINE
- 	select DMA_VIRTUAL_CHANNELS
- 	select TI_DMA_CROSSBAR if (ARCH_OMAP || COMPILE_TEST)
--	default y
-+	default ARCH_DAVINCI || ARCH_OMAP || ARCH_KEYSTONE
- 	help
- 	  Enable support for the TI EDMA (Enhanced DMA) controller. This DMA
- 	  engine is found on TI DaVinci, AM33xx, AM43xx, DRA7xx and Keystone 2
-@@ -29,7 +29,7 @@ config DMA_OMAP
- 	select DMA_ENGINE
- 	select DMA_VIRTUAL_CHANNELS
- 	select TI_DMA_CROSSBAR if (SOC_DRA7XX || COMPILE_TEST)
--	default y
-+	default ARCH_OMAP
- 	help
- 	  Enable support for the TI sDMA (System DMA or DMA4) controller. This
- 	  DMA engine is found on OMAP and DRA7xx parts.
--- 
-2.45.2
+Christian
 
+On 4/3/25 17:43, Thomas Gleixner wrote:
+> On Thu, Apr 03 2025 at 14:28, Christian Bruel wrote:
+> 
+>> When GIC_4KNOT64K bit in the GIC configuration register is
+>> 0 (64KB), address block is modified in such a way than only the
+> 
+> s/than/that/
+> 
+>> first 4KB of the GIC cpu interface are accessible with default
+>> offsets.
+>> With this bit mapping GICC_DIR register is accessible at
+> 
+> What's 'this bit mapping' ? This sentence does not parse.
+> 
+>> offset 0x10000 instead of 0x1000, thus remap accordingly
+> 
+> ...
+> 
+>> +/*
+>> + * 8kB GICC range is not accessible with the default 4kB translation
+>> + * granule. 0x1000 offset is accessible at 64kB translation.
+>> + */
+> 
+> I have a hard time to map this comment to the change log, which suggests
+> to me that this is the other way round.
+> 
+>> +static bool gic_8kbaccess(void *data)
+>> +{
+>> +	struct gic_chip_data *gic = data;
+>> +	void __iomem *alt;
+>> +
+>> +	if (!is_hyp_mode_available())
+>> +		return false;
+>> +
+>> +	alt = ioremap(gic->cpu_phys_base, GIC_STM32MP2_CPU_DEACTIVATE + 4);
+>> +	if (!alt) {
+>> +		pr_err("Unable to remap GICC_DIR register\n");
+>> +		return false;
+> 
+> That's a hack because in case that the remap fails, this leaves the
+> thing enabled, but disfunctional.
+> 
+> Thanks,
+> 
+>          tglx
 
