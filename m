@@ -1,90 +1,208 @@
-Return-Path: <linux-kernel+bounces-589001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 580E1A7C069
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:17:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8705CA7C06E
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 236FF17229D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:17:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A5D33B768B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B406C1F4E57;
-	Fri,  4 Apr 2025 15:17:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867F41F4E54;
+	Fri,  4 Apr 2025 15:19:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OwDgM89D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZpRIytWN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175CB86344;
-	Fri,  4 Apr 2025 15:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D230A3D6F;
+	Fri,  4 Apr 2025 15:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743779827; cv=none; b=jswyfAasZl4uSy45ixwDZwIgjbKzFmnonnynlSEJiEQyGN4vZxuKnT1Eam9Y8GThK7koBJeQOT/ddvkAxZF0rcy7ePhbhu1AJCaJO8zoMg+Ub4ePP4ws1GstZbavdYNaTPDYdck/coxZARBkipYGs6qp8eMkGvh8l3GI5jIPRrg=
+	t=1743779944; cv=none; b=hwbWD8Ri6WMOVm2RzxN3iZIdJVBYFOmEA6hC2Zp25fAWrH73wb2mE5RVcEcerH65EQKtutqzxg+XPQTQKkfH4+a6hEmEs+KU7STtEi94x0DvhbmU+ijqJQQeFHCHr6F+A89cCsklJIAa8DbSZdQnVtwCSbbj06lrw2K8zpnTh2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743779827; c=relaxed/simple;
-	bh=qOs+fLd7zsPUFNymqQgXx9+kWVigfHUsAiGZPOVHthw=;
+	s=arc-20240116; t=1743779944; c=relaxed/simple;
+	bh=EVLGz+q4eHgiZJTmh6liMRUu1PEh0/5UBRB7uM4oz9k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MyiLm7BvinJlrbnnm3KvVyaKsDFMku1grEbAM54yeENDKzsYDb5OC+DQS33GNfqvWZZNKNOVspC31CY4TOUEdtEkgkhN/fNp1dJkpWYZJ5Ph1Qp5utogHxyVGsGVT50NJ1SIHmH788HCXSGyW3WPVlAxB8+4aiNmWIOytGJgVlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OwDgM89D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E948CC4CEDD;
-	Fri,  4 Apr 2025 15:17:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MuUnh+86E9MIoxLtroDOyjbkObKJxq8+TvNzwoGQ/BQWM4ubpreOL3MsHTPBFVZ7ckrvs1CB2+HENRJ5iCS32BJ3zIxV/Zjw/mTi9l0h2Q7Oq5sG+cQCa2DiS8ZyDTkowsIVlspsBt4Y27JAEutddFLfuDZyKTTuAAJU4DYwhIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZpRIytWN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1575C4CEDD;
+	Fri,  4 Apr 2025 15:19:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743779825;
-	bh=qOs+fLd7zsPUFNymqQgXx9+kWVigfHUsAiGZPOVHthw=;
+	s=k20201202; t=1743779944;
+	bh=EVLGz+q4eHgiZJTmh6liMRUu1PEh0/5UBRB7uM4oz9k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OwDgM89DZiXDZzbrrNvPmUczQgRsMvB+q16ARNTJu4aIoltsrxZQ+la+TyIWugZDl
-	 vrElbgXvr1jesmIA7hvaeKMi8WDIjOcetp/0KLAyAx6mDCOXG3FFERVpCrRQm359R5
-	 W68W2mpd3YJzESU9MIJ/r2S5L7eP9Pyxnt7q+Kw92Y4VivMK77G/4t4h4D1HbpYKH/
-	 1jGDI//5MszKcvB+2WXj+Nrto2DPfjvsWYL4I91L2sK0A4mJ+9Cnhgy1xSxppiHGgk
-	 jyoWB+lVebbC08eNG8ABLJ95y2Tli7H1+ELzJzgfhwl8N0VV2bIw3kXyFcp3agYM+i
-	 YIvAxLChixJIA==
-Date: Fri, 4 Apr 2025 08:17:02 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Nikolay Borisov <nik.borisov@suse.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, amit@kernel.org, 
-	kvm@vger.kernel.org, amit.shah@amd.com, thomas.lendacky@amd.com, bp@alien8.de, 
-	tglx@linutronix.de, peterz@infradead.org, pawan.kumar.gupta@linux.intel.com, 
-	corbet@lwn.net, mingo@redhat.com, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	seanjc@google.com, pbonzini@redhat.com, daniel.sneddon@linux.intel.com, 
-	kai.huang@intel.com, sandipan.das@amd.com, boris.ostrovsky@oracle.com, 
-	Babu.Moger@amd.com, david.kaplan@amd.com, dwmw@amazon.co.uk, 
-	andrew.cooper3@citrix.com
-Subject: Re: [PATCH v3 3/6] x86/bugs: Fix RSB clearing in
- indirect_branch_prediction_barrier()
-Message-ID: <ioxjh7izpnmbutljkbhdqorlpwtm5iwosorltmhkp3t7nyoqlo@tiecv24hnbar>
-References: <cover.1743617897.git.jpoimboe@kernel.org>
- <27fe2029a2ef8bc0909e53e7e4c3f5b437242627.1743617897.git.jpoimboe@kernel.org>
- <d5ad36d8-40da-4c13-a6a7-ed8494496577@suse.com>
+	b=ZpRIytWNGh6xPU4sOx6hAWTom1hqbV5uX++DNde2vD6oYf4O57B8N4WQJdyXQUYVh
+	 CMRngFfHBGK/dNj8YlHPQMDFX807gVo2IUlbgZ1nDbGkubQSR8Zwzej/iy9/jJaOam
+	 UkhPdGX7i8TZ0jBElK6byNxoN9oYamwf3kTQWr0Cammv2gBJ4+Kak7/79RWw/7eLGd
+	 dLhJBqs3/8OdQefF+8o1N263dkx10qK03cqlrXExc+6IoRj1RhrjG0vl9gwytDdVu2
+	 0/gqzN6B0olfmSlQBoapfHfQa2JyiR9YGf5HAOlk1bW8NBip67S7fBZiQxKcKJs483
+	 RrSajqF/Tt91g==
+Date: Fri, 4 Apr 2025 10:19:02 -0500
+From: Rob Herring <robh@kernel.org>
+To: Sukrut Bellary <sbellary@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Tero Kristo <kristo@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Andreas Kemnade <andreas@kemnade.info>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: clock: ti: Convert to yaml
+Message-ID: <20250404151902.GA1400262-robh@kernel.org>
+References: <20250404014500.2789830-1-sbellary@baylibre.com>
+ <20250404014500.2789830-2-sbellary@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d5ad36d8-40da-4c13-a6a7-ed8494496577@suse.com>
+In-Reply-To: <20250404014500.2789830-2-sbellary@baylibre.com>
 
-On Fri, Apr 04, 2025 at 05:45:37PM +0300, Nikolay Borisov wrote:
-> 
-> 
-> On 2.04.25 г. 21:19 ч., Josh Poimboeuf wrote:
-> > IBPB is expected to clear the RSB.  However, if X86_BUG_IBPB_NO_RET is
-> > set, that doesn't happen.  Make indirect_branch_prediction_barrier()
-> > take that into account by calling __write_ibpb() which already does the
-> > right thing.
-> 
-> I find this changelog somewhat dubious. So zen < 4 basically have
-> IBPB_NO_RET, your patch 2 in this series makes using SBPB for cores which
-> have SRSO_NO or if the mitigation is disabled. So if you have a core which
-> is zen <4 and doesn't use SBPB then what happens?
+On Thu, Apr 03, 2025 at 06:44:57PM -0700, Sukrut Bellary wrote:
+> Covert TI autoidle clock txt binding to yaml.
 
-I'm afraid I don't understand the question.  In that case write_ibpb()
-uses IBPB and manually clears the RSB.
+Convert
 
--- 
-Josh
+2 patches in the series have the exact same subject. Really, nothing in 
+all of the git history should ever repeat a subject. After all, you 
+can't make the same change twice.
+
+> 
+> AutoIdle clock is not an individual clock; it is always a
+> derivate of some basic clock like a gate, divider, or fixed-factor.
+> This binding will be referred in ti,divider-clock.yaml, and
+> ti,fixed-factor-clock.yaml.
+> 
+> As all clocks don't support the autoidle feature e.g.,
+> in DRA77xx/AM57xx[1], dpll_abe_x2* and dpll_per_x2 don't have
+> autoidle, remove required properties from the binding.
+> Clean up the example to meet the current standards.
+> 
+> Add the creator of the original binding as a maintainer.
+> 
+> [1] https://www.ti.com/lit/ug/spruhz6l/spruhz6l.pdf
+> 
+> Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
+> ---
+>  .../devicetree/bindings/clock/ti/autoidle.txt | 37 --------------
+>  .../bindings/clock/ti/ti,autoidle.yaml        | 49 +++++++++++++++++++
+>  2 files changed, 49 insertions(+), 37 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/ti/autoidle.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,autoidle.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/ti/autoidle.txt b/Documentation/devicetree/bindings/clock/ti/autoidle.txt
+> deleted file mode 100644
+> index 05645a10a9e3..000000000000
+> --- a/Documentation/devicetree/bindings/clock/ti/autoidle.txt
+> +++ /dev/null
+> @@ -1,37 +0,0 @@
+> -Binding for Texas Instruments autoidle clock.
+> -
+> -This binding uses the common clock binding[1]. It assumes a register mapped
+> -clock which can be put to idle automatically by hardware based on the usage
+> -and a configuration bit setting. Autoidle clock is never an individual
+> -clock, it is always a derivative of some basic clock like a gate, divider,
+> -or fixed-factor.
+> -
+> -[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> -
+> -Required properties:
+> -- reg : offset for the register controlling the autoidle
+> -- ti,autoidle-shift : bit shift of the autoidle enable bit
+> -- ti,invert-autoidle-bit : autoidle is enabled by setting the bit to 0
+> -
+> -Examples:
+> -	dpll_core_m4_ck: dpll_core_m4_ck {
+> -		#clock-cells = <0>;
+> -		compatible = "ti,divider-clock";
+> -		clocks = <&dpll_core_x2_ck>;
+> -		ti,max-div = <31>;
+> -		ti,autoidle-shift = <8>;
+> -		reg = <0x2d38>;
+> -		ti,index-starts-at-one;
+> -		ti,invert-autoidle-bit;
+> -	};
+> -
+> -	dpll_usb_clkdcoldo_ck: dpll_usb_clkdcoldo_ck {
+> -		#clock-cells = <0>;
+> -		compatible = "ti,fixed-factor-clock";
+> -		clocks = <&dpll_usb_ck>;
+> -		ti,clock-div = <1>;
+> -		ti,autoidle-shift = <8>;
+> -		reg = <0x01b4>;
+> -		ti,clock-mult = <1>;
+> -		ti,invert-autoidle-bit;
+> -	};
+> diff --git a/Documentation/devicetree/bindings/clock/ti/ti,autoidle.yaml b/Documentation/devicetree/bindings/clock/ti/ti,autoidle.yaml
+> new file mode 100644
+> index 000000000000..c995dae65cd6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ti/ti,autoidle.yaml
+> @@ -0,0 +1,49 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/ti/ti,autoidle.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI autoidle clock
+> +
+> +maintainers:
+> +  - Tero Kristo <kristo@kernel.org>
+> +  - Sukrut Bellary <sbellary@baylibre.com>
+> +
+> +description: |
+
+Don't need '|' if no formatting to preserve.
+
+> +  In TI SoC, some of the clocks support autoidle feature.
+> +  It assumes a register mapped clock which can be put to idle automatically
+> +  by hardware based on the usage and a configuration bit setting.
+> +  Autoidle clock is never an individual clock, it is always a derivative
+> +  of some basic clock like a gate, divider or fixed-factor.
+
+Is this 3 1 sentence paragraphs or 1 paragraph with odd line wrapping? 
+Blank line between paragraphs or re-wrap at 80 char. I prefer the latter 
+as 1 sentence paragraphs doesn't make much sense.
+
+> +
+> +properties:
+> +  reg:
+> +    maxItems: 1
+> +
+> +  ti,autoidle-shift:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      bit shift of the autoidle enable bit for the clock
+> +    maximum: 31
+> +    default: 0
+> +
+> +  ti,invert-autoidle-bit:
+> +    type: boolean
+> +    description:
+> +      autoidle is enabled by setting the bit to 0
+> +
+> +additionalProperties: true
+> +
+> +examples:
+> +  - |
+> +    bus {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      clock@1b4 {
+> +        reg = <0x01b4>;
+> +        ti,autoidle-shift = <8>;
+> +        ti,invert-autoidle-bit;
+> +      };
+> +    };
+> -- 
+> 2.34.1
+> 
 
