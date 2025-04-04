@@ -1,203 +1,155 @@
-Return-Path: <linux-kernel+bounces-589318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08405A7C454
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 21:58:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6AF8A7C3F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 21:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FB083B6916
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:56:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 820E83BC74F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2EE923BCF3;
-	Fri,  4 Apr 2025 19:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6373021D599;
+	Fri,  4 Apr 2025 19:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="knO9S7xd"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hgsx9n2/"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B1E23A98A
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 19:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA511E1DE9;
+	Fri,  4 Apr 2025 19:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743795664; cv=none; b=AnN+//FAePpDLCHAkmrrrM4F1ld3DOQQifZmUYvoIymCTSDlXQdR39Wi+vTa0jwqhdd3YJIMKMExAgIUOI/3Fau5NHcBzD03o1UDwiovQZ1JyEWCXLqGYOgxbgbcZ7gVNFHUcKzjCxBGh+II4DoWWLbquwiJO63/FpK8iYD//No=
+	t=1743795548; cv=none; b=It3sMTa8pME0vkVCQ1jdPlppMka3HCFAvX2hNV/YVQS4WNBl+i/KAnphSEOazUGSMUIe7d1d0ObMNiKqGzz1N5s8h14ooYJu+WT+WpD8Zdr9HwrWc12ifHhyGyRuTuSEg43BaSzTyytFMESGDVONU7PqJUyMGez6Hcc0wRR8tjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743795664; c=relaxed/simple;
-	bh=SdRm1GRIbm33d/nHibJXYjLPmG0T0NZRcamdnee5V5M=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=CVb3wTXZicGUyCzcePUskBEzgPN/nFC8TWtGQ1GsuJkbHgaVmw7Z91pvYCdg2hNT5ry9iI94IMhWuZJEs132MjAjeTrMnYJmki0ETK9YjtGEdDecOGV9QoNr0kT4398FDM/sgmhHnONdLR/sPfZRXXJ44jxzpNbOwsTmT64Hpho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=knO9S7xd; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-af5310c1ac1so1591816a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 12:41:03 -0700 (PDT)
+	s=arc-20240116; t=1743795548; c=relaxed/simple;
+	bh=VpfAjJAGyn2iFrsTDI2qa/oAK+7uNraImYwiQTOK1X4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=feV7EVtlYsQJVxXJZ0T1QfriqfC0cmRUzq7cMjVoUR2Vkgq0Peo7c4nx2OSUamaMZQ0pCao+GrAwIVy5KO9r11P5fWmcpQT3t3HU/dj9anJ5GcXAL9uHzjSIfwV5jV0SkUpk0joFFsWNnhOBdw4DSnfOCJ+qy33eLSkOYGbdxLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hgsx9n2/; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22580c9ee0aso28234295ad.2;
+        Fri, 04 Apr 2025 12:39:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743795663; x=1744400463; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=h0hbazAE8dMJrPUHRRf7zZrCtHTbdiwGcNR7wF/0toU=;
-        b=knO9S7xdlRKDfS59wDf7utU8YQSX72GO44xHN1ooyBKlpXzNGgwrAONSkQuRIT0mMi
-         sqG7axwEAQiuQcDXHKTXsf7Qak6CM5aQLSpa3Y+pb8tPon0vx0dJ7bi7RyBkrrYr9PBv
-         RmjuQKI53yMVhw3ige005ulk4rCw8Zgwf3QgLSRBOC0eTRhztYHHSPQjOZ9Gl6JIfIre
-         euaRAzDRhdAKVaG/GXlV4hmYceoUM+NJtjgt/++FAHWKzwyO26+AwU4lLdigTQ/vtG+3
-         YSnuUJXH2A64i5cvh1IHnvpeh2pbpl/AuAHsTCnXnX74c4+nNSZRYj1vVqm+HhYPL0Pq
-         PB0g==
+        d=gmail.com; s=20230601; t=1743795546; x=1744400346; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NQGNgVHxDhs7mBk3RqbeX6683p63yLHOISx5dQxLR50=;
+        b=Hgsx9n2/C17rlqum5/A4dc6mhszR+2cT+f4YbN93mqI/EhoE9043xB5QedBmxdJFFG
+         jMIqcLhWHk3q0xwti9aC1WRsjX98Ju6LC1gi1gEoxXyaOnVaLa/kEnDHogD/MuB5T532
+         NigoFE7VCAGRN3m1PH8q5yTFUeDF9ovT+ox6S9Ln4x31z9OskoOnKFvvbUu4TljnPiqv
+         ZuxNkd7/Xt7gWoqP72fGQrYfmiMlS38RujDr9dNoujcsrDztFnFQyGS32RVuxLpAMHpO
+         LZk8W8ktJgur1JLxaHYesMNqiW4ZGSu+y+mlPppbLfkxqQXTXoGERIM2SAJ5cJNuRRwF
+         pH2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743795663; x=1744400463;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h0hbazAE8dMJrPUHRRf7zZrCtHTbdiwGcNR7wF/0toU=;
-        b=M5ioo/owRLwDFH6BHlj1UNf9bF8EYO+QihBTrPfHCtSBgA8R6JfWDgv3mCLPKuaXqU
-         e5ZoqA/hGaSnYAHwNWPJ507Q7CUFi0SD9ja3ELLYvwgzXPtXvjB8U1vkyKg5LMUxRaiM
-         YKD3oT8bb91iqSTc4RJ0l8LSVqzQFrdQj1xIivRJxhROw5zxKG9fevpipqRO4Ji/zvRj
-         6IhBnK2Daro1AeULeBsl90SdmSwQ/yxX4tlQt3GqBGzsFP+S8996FajUOFubmOIHrVSH
-         GDdqKMkl0CKMfADfz06FCWN65kvN+PQhHeaB2Pk9hITeR7S28FjOja145DXjzpRy0b9M
-         tImw==
-X-Forwarded-Encrypted: i=1; AJvYcCUL4FgGR0gdYhI+yjfcyYc2jr2qgqGZlHnD6WrqOLs7cSKqn633mN3hHO7olNNXemTp1Al9vKxKQJ+iZiE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvKBWBEtXJRkmby22kib/O5+0raIryyXaP7pM462vaa2l1CVEp
-	zErNKnEE6KY6YsJfA7WGF1vRQII24SufJN47s8aXdoXIYUE+kPUMLS21q49czG/3omRFfBtVdgA
-	u+A==
-X-Google-Smtp-Source: AGHT+IGWtLpM72ibr6u8G3+P4C5G/mdxZQlLn+wbJokB4hzvBLYZDfOpzpP/P7/kdQcTFYiTDJkPje5dvF0=
-X-Received: from pfbdr9.prod.google.com ([2002:a05:6a00:4a89:b0:737:6e43:8e34])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:6002:b0:1f5:7c6f:6c8a
- with SMTP id adf61e73a8af0-20104751ab1mr7764832637.35.1743795662762; Fri, 04
- Apr 2025 12:41:02 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  4 Apr 2025 12:38:59 -0700
-In-Reply-To: <20250404193923.1413163-1-seanjc@google.com>
+        d=1e100.net; s=20230601; t=1743795546; x=1744400346;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NQGNgVHxDhs7mBk3RqbeX6683p63yLHOISx5dQxLR50=;
+        b=ORUNrFChe6OF+PbWktXV69fQiovjNYjIRQ93IzABNR1zofGCkhvFc96CHpMSnpuA4I
+         uDEaTngE5ig16GY2d5jJLyNzAndDJ7QNrRj7SzsN1HqSC7g0WQOMuf4OB0WGb+0Cjk+4
+         eUrvMn0kS9MdQ5Rm1PLS+4NXmFn260oJr7KlECsKXVEZqmxuAPUIw8UgP6tM/lRkzIaQ
+         GyhlNRGtQFufTgwmbIrbcZ8yE9hr00wJOH4rUsN1og/wrejpGhr9r9tUVH9CEQueVL+S
+         IDrtZRk4xpVXCWX2aRtUrDPplsmENCEQ1SwlK2JxkJtWX3MFKP+CiWzkvJl1Yw015WHj
+         tS9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVHRlUbvoPhiQFs4bm0f42lM0w3zoMiE5vWw8/tk6SkjcO0n1u4c3vW9Br5fGKszm8W24hYWcVsbnlJzPKv@vger.kernel.org, AJvYcCXJErSbt4d889Os9T9zs0EQ5zmng1zaHXG/bOrBQNIFLfwNty2ti6MdKl+yqq5xRZAIBf4fnsoy//tR@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQY+CN5C5b6BIr4dVqyxKgHdR277p9ZwKyUgJQeBW1L/awCeLz
+	jLAq3WoQOP121af6UnWFBuJMDIRkWtdkOo+6vCOjirbcX6R/wVZr
+X-Gm-Gg: ASbGncs3Sis8aVhlYqgIqRzkzBwWSD3GCDBJ+2jibC/kmTwSv4qoHPbeFV0fSlNvsvr
+	Zapxle6G1hvEpkZn5ujMgazqxyRllNAFC6YwhdV06wKZwJBLt8BYdvnMiMKhOpoHPVCPnntr6I7
+	/amm+rn97OWVaW2pZJcfEivkFGJIxWgVf9XWTvux8dRGVb7hRMcG+ky4PdOPcZmudEBgn2sOVWt
+	/iJ45/DMdPQez28sFhoXKs56BvkufQBKLDQA8fanSSxOfrC9iLMXmrYKhq/BhzPojgR00yIV+5P
+	gOMET4ObLLtKjNBdsTOhWEklfWkKWxw0eQoddE43OWQ8RN8IyRychvwXaFrXsgSyTpglUOgPyLV
+	DoVIxiXR0wVjHHTs707S5M5hV
+X-Google-Smtp-Source: AGHT+IFe4mjpRg7zowmOKrRZGt9tbXvtfVX38ovvOh6lKYhx4xIePXLNWeuaoRutkTmWr1rWPnCrtw==
+X-Received: by 2002:a17:902:d4c7:b0:220:ec62:7dc8 with SMTP id d9443c01a7336-22a8a85a18dmr57542845ad.2.1743795546267;
+        Fri, 04 Apr 2025 12:39:06 -0700 (PDT)
+Received: from ?IPV6:2409:4080:1197:5c59:9640:d38a:951e:d202? ([2409:4080:1197:5c59:9640:d38a:951e:d202])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2297866e242sm36279755ad.164.2025.04.04.12.39.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Apr 2025 12:39:05 -0700 (PDT)
+Message-ID: <b493166b-5d1b-4228-82a0-ee7efcdd03e6@gmail.com>
+Date: Sat, 5 Apr 2025 01:08:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250404193923.1413163-1-seanjc@google.com>
-X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250404193923.1413163-45-seanjc@google.com>
-Subject: [PATCH 44/67] iommu/amd: KVM: SVM: Infer IsRun from validity of pCPU destination
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Joerg Roedel <joro@8bytes.org>, David Woodhouse <dwmw2@infradead.org>, 
-	Lu Baolu <baolu.lu@linux.intel.com>
-Cc: kvm@vger.kernel.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Joao Martins <joao.m.martins@oracle.com>, 
-	David Matlack <dmatlack@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: pwm: Convert lpc32xx-pwm.txt to YAML
+To: Krzysztof Kozlowski <krzk@kernel.org>, ukleinek@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, vz@mleia.com,
+ piotr.wojtaszczyk@timesys.com
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250312122750.6391-1-purvayeshi550@gmail.com>
+ <b2f6a357-a468-4526-a1b6-69ab2c643b2c@kernel.org>
+ <61b1e302-98ad-4dda-8c03-18315d432512@gmail.com>
+ <023b7e98-58ef-4752-9ef4-6fe699188b2f@kernel.org>
+Content-Language: en-US
+From: Purva Yeshi <purvayeshi550@gmail.com>
+In-Reply-To: <023b7e98-58ef-4752-9ef4-6fe699188b2f@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Infer whether or not a vCPU should be marked running from the validity of
-the pCPU on which it is running.  amd_iommu_update_ga() already skips the
-IRTE update if the pCPU is invalid, i.e. passing %true for is_run with an
-invalid pCPU would be a blatant and egregrious KVM bug.
+On 02/04/25 12:03, Krzysztof Kozlowski wrote:
+> On 01/04/2025 19:32, Purva Yeshi wrote:
+>> On 13/03/25 16:34, Krzysztof Kozlowski wrote:
+>>> On 12/03/2025 13:27, Purva Yeshi wrote:
+>>>> Convert the existing `lpc32xx-pwm.txt` bindings documentation into a
+>>>> YAML schema (`nxp,lpc3220-pwm.yaml`).
+>>>>
+>>>> Set `"#pwm-cells"` to `const: 3` for expected PWM cell properties.
+>>>>
+>>>> Signed-off-by: Purva Yeshi <purvayeshi550@gmail.com>
+>>>> ---
+>>>
+>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>
+>>>
+>>> ---
+>>>
+>>> <form letter>
+>>> This is an automated instruction, just in case, because many review tags
+>>> are being ignored. If you know the process, you can skip it (please do
+>>> not feel offended by me posting it here - no bad intentions intended).
+>>> If you do not know the process, here is a short explanation:
+>>>
+>>> Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+>>> of patchset, under or above your Signed-off-by tag, unless patch changed
+>>> significantly (e.g. new properties added to the DT bindings). Tag is
+>>> "received", when provided in a message replied to you on the mailing
+>>> list. Tools like b4 can help here. However, there's no need to repost
+>>> patches *only* to add the tags. The upstream maintainer will do that for
+>>> tags received on the version they apply.
+>>>
+>>> Full context and explanation:
+>>> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+>>> </form letter>
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>
+>> Hello!
+>>
+>> I wanted to follow up on the patch I submitted. I was wondering if you
+>> had a chance to review it and if there are any comments or feedback.
+> 
+> And what did you quote? What's there? Did you read it before replying?
+> 
+> Please avoid pinging during the merge window.
+> 
+> 
+> Best regards,
+> Krzysztof
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/svm/avic.c   | 11 +++++------
- drivers/iommu/amd/iommu.c |  6 ++++--
- include/linux/amd-iommu.h |  6 ++----
- 3 files changed, 11 insertions(+), 12 deletions(-)
+Hello Krzysztof,
 
-diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
-index 4dbbb5a6cacc..3fcec297e3e3 100644
---- a/arch/x86/kvm/svm/avic.c
-+++ b/arch/x86/kvm/svm/avic.c
-@@ -842,7 +842,7 @@ int avic_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
- 		entry = svm->avic_physical_id_entry;
- 		if (entry & AVIC_PHYSICAL_ID_ENTRY_IS_RUNNING_MASK)
- 			amd_iommu_update_ga(entry & AVIC_PHYSICAL_ID_ENTRY_HOST_PHYSICAL_ID_MASK,
--					    true, pi_data.ir_data);
-+					    pi_data.ir_data);
- 
- 		irqfd->irq_bypass_data = pi_data.ir_data;
- 		list_add(&irqfd->vcpu_list, &svm->ir_list);
-@@ -851,8 +851,7 @@ int avic_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
- 	return irq_set_vcpu_affinity(host_irq, NULL);
- }
- 
--static inline int
--avic_update_iommu_vcpu_affinity(struct kvm_vcpu *vcpu, int cpu, bool r)
-+static inline int avic_update_iommu_vcpu_affinity(struct kvm_vcpu *vcpu, int cpu)
- {
- 	int ret = 0;
- 	struct amd_svm_iommu_ir *ir;
-@@ -871,7 +870,7 @@ avic_update_iommu_vcpu_affinity(struct kvm_vcpu *vcpu, int cpu, bool r)
- 		return 0;
- 
- 	list_for_each_entry(ir, &svm->ir_list, node) {
--		ret = amd_iommu_update_ga(cpu, r, ir->data);
-+		ret = amd_iommu_update_ga(cpu, ir->data);
- 		if (ret)
- 			return ret;
- 	}
-@@ -933,7 +932,7 @@ void avic_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- 
- 	WRITE_ONCE(kvm_svm->avic_physical_id_table[vcpu->vcpu_id], entry);
- 
--	avic_update_iommu_vcpu_affinity(vcpu, h_physical_id, true);
-+	avic_update_iommu_vcpu_affinity(vcpu, h_physical_id);
- 
- 	spin_unlock_irqrestore(&svm->ir_list_lock, flags);
- }
-@@ -973,7 +972,7 @@ void avic_vcpu_put(struct kvm_vcpu *vcpu)
- 	 */
- 	spin_lock_irqsave(&svm->ir_list_lock, flags);
- 
--	avic_update_iommu_vcpu_affinity(vcpu, -1, 0);
-+	avic_update_iommu_vcpu_affinity(vcpu, -1);
- 
- 	entry &= ~AVIC_PHYSICAL_ID_ENTRY_IS_RUNNING_MASK;
- 	svm->avic_physical_id_entry = entry;
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index bc6f7eb2f04b..ba3a1a403cb2 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -3957,7 +3957,7 @@ int amd_iommu_create_irq_domain(struct amd_iommu *iommu)
- 	return 0;
- }
- 
--int amd_iommu_update_ga(int cpu, bool is_run, void *data)
-+int amd_iommu_update_ga(int cpu, void *data)
- {
- 	struct amd_ir_data *ir_data = (struct amd_ir_data *)data;
- 	struct irte_ga *entry = (struct irte_ga *) ir_data->entry;
-@@ -3974,8 +3974,10 @@ int amd_iommu_update_ga(int cpu, bool is_run, void *data)
- 					APICID_TO_IRTE_DEST_LO(cpu);
- 		entry->hi.fields.destination =
- 					APICID_TO_IRTE_DEST_HI(cpu);
-+		entry->lo.fields_vapic.is_run = true;
-+	} else {
-+		entry->lo.fields_vapic.is_run = false;
- 	}
--	entry->lo.fields_vapic.is_run = is_run;
- 
- 	return __modify_irte_ga(ir_data->iommu, ir_data->irq_2_irte.devid,
- 				ir_data->irq_2_irte.index, entry);
-diff --git a/include/linux/amd-iommu.h b/include/linux/amd-iommu.h
-index 99b4fa9a0296..fe0e16ffe0e5 100644
---- a/include/linux/amd-iommu.h
-+++ b/include/linux/amd-iommu.h
-@@ -30,8 +30,7 @@ static inline void amd_iommu_detect(void) { }
- /* IOMMU AVIC Function */
- extern int amd_iommu_register_ga_log_notifier(int (*notifier)(u32));
- 
--extern int
--amd_iommu_update_ga(int cpu, bool is_run, void *data);
-+extern int amd_iommu_update_ga(int cpu, void *data);
- 
- extern int amd_iommu_activate_guest_mode(void *data);
- extern int amd_iommu_deactivate_guest_mode(void *data);
-@@ -44,8 +43,7 @@ amd_iommu_register_ga_log_notifier(int (*notifier)(u32))
- 	return 0;
- }
- 
--static inline int
--amd_iommu_update_ga(int cpu, bool is_run, void *data)
-+static inline int amd_iommu_update_ga(int cpu, void *data)
- {
- 	return 0;
- }
--- 
-2.49.0.504.g3bcea36a83-goog
-
+Apologies for the unnecessary follow-up. I’ll avoid pinging during the 
+merge window.
 
