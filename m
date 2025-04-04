@@ -1,126 +1,130 @@
-Return-Path: <linux-kernel+bounces-588712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A7FA7BCA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:29:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9912A7BC78
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64F5E7A827B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 12:28:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C20A93B3BD9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 12:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27C01E5208;
-	Fri,  4 Apr 2025 12:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A3B1D959B;
+	Fri,  4 Apr 2025 12:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="OxYRj0LJ"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UXcfXYrc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586BA1DB363;
-	Fri,  4 Apr 2025 12:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C3B1DB363;
+	Fri,  4 Apr 2025 12:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743769773; cv=none; b=uQ8cTfojseg4CSe/ia/BTs+1WDq9jfxZr5AL9dsy6BGaYu44imVXoc4QJfuCTxuDcxH8DcHTnTsRnojEHGKxGxH1VNyxEirT7cIg/QBRATFVrJ56RvuU1lS0+5qNZEPirkDeV/c+1iIaVzj3x1NqKfpE4gGr/QN84+w10qK9Lts=
+	t=1743769086; cv=none; b=dhFWON9tZfpMyhRWjscLdyEEtAfEuSuz1S7sexeWnBh88HcHOpFenba8zsr3E8mJK2AoPJECGSyXD+m8C2i0CHw/0ni3EhzdGE19YOjQEjFjJphO80Q8Jrttrphj+vRkqrDMVEwoZYBRqDqNnabeslCTziDE4wAyZ+31Kf07Y3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743769773; c=relaxed/simple;
-	bh=G8ctkJROJsict+qMOKg6qi8hyo4fiy2orZctv+zdWwM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cZHhW6DPOIpcHI8ddK0eQMYSvH3QWZOxzcVUez/MabJU02yQLDRX7pN8+AHRGMupdrN920V/D+NaTyc0+pGTO7ZOURSvaADvqpOnGzWrkRiQ9huXymklm3ukqzIqP54oClADg1YD2LIgZiSm39R45ryc9CwuuUyztkDn9xVIQpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=OxYRj0LJ; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 534C4rlK019849;
-	Fri, 4 Apr 2025 14:29:07 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	Lf1R2wPEeyp7BvissUb4r5z/yKuNxD0GifSjKPShPOI=; b=OxYRj0LJdcDYnhCf
-	LJnjgquJDsFxwwN3stfNTh14sb4P7Bh38hOWYcgI/BFzH0hjlygSB9NJlCVVxstn
-	P7s5uGeDVU3HpFyFouY+coiwePFg8qi4TwpjJ1l7SexelwghQSeP7JMK/qGN/ej7
-	v07csiTrNGllJfVNMv55Sw8kl0V+g9ZfsjQheCTs2TQR0NTd819hZL5GrwL8aXV2
-	Jptt5RanEzR/F5ycRksZsfYOd6mF7fo/bKC1rP4ciMx1TuJzY5lgGkK5aw6LwCHx
-	GjqSBjezxCgScLecSGTMfeyX1jGlBuDbaQ6Gc6761OX/3HECEfz9rXFTf78dGyJb
-	3GR2xQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45t2cqk4s8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 04 Apr 2025 14:29:07 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A2B994005F;
-	Fri,  4 Apr 2025 14:28:07 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E97BE9234AC;
-	Fri,  4 Apr 2025 14:27:32 +0200 (CEST)
-Received: from [10.130.77.120] (10.130.77.120) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 4 Apr
- 2025 14:27:32 +0200
-Message-ID: <1c9a49cb-35a1-4bcc-abd5-b14a49d4d094@foss.st.com>
-Date: Fri, 4 Apr 2025 14:17:08 +0200
+	s=arc-20240116; t=1743769086; c=relaxed/simple;
+	bh=F5t8Um7OOTfhJKq4jZwEY0gafKvvuvc4XRg2bZIcrb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MOvDzOQD5PFUc6j590Kn/X4SYJUKTT9vYFByiuilX318+9tyUfwqrltOzkH5DuljDHSfPtyNTLJIObg2YFmFBLkKkwLGhAake6tiLRs+fWC9J/vniNrwtzQpWgLGNz8VOTFTduXkCeJaYHdgeRLGxsGZGflhCXleh+8JwDYcuzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UXcfXYrc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4773C4CEDD;
+	Fri,  4 Apr 2025 12:18:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743769085;
+	bh=F5t8Um7OOTfhJKq4jZwEY0gafKvvuvc4XRg2bZIcrb8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UXcfXYrc7n0kJFY0EwdXMKHGvcZbkFgOLWr0n5ol/1BRS7ZmQKz8yj4eAtDLW9L/Y
+	 sOvZfVyRKtv6qlLOsSnka8eNKbAr8arxqJqsMrwiqotIv0pOINOvm0wN9vo983YvSZ
+	 B2ez7WYrTWnwW0sisq8vBACoTNUQuR/WqYVnAOJ1yC4/kz93hQazUML6BkSo9K6c9l
+	 EJoPg1vDFYlHdA9kAgHv4MCf6Omd/Gv/zKvBWF/VwFvKVJbDtJCmg3dqK7t1OoyNBM
+	 Ec315i1gfa835jtpervv2ECwzw2Y1M/3obVk3LK2Yzs2UZ+jvdV9QA1TZlxMnIfi+2
+	 G/7EONjGehAaA==
+Date: Fri, 4 Apr 2025 13:18:00 +0100
+From: Will Deacon <will@kernel.org>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, baolin.wang@linux.alibaba.com,
+	tianruidong@linux.alibaba.com, brauner@kernel.org, shuah@kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH] selftests/pidfd: align stack to fix SP alignment
+ exception
+Message-ID: <20250404121759.GA28692@willie-the-truck>
+References: <20250312061557.28532-1-xueshuai@linux.alibaba.com>
+ <0a70f4ab-cd83-434d-8dd2-486d58e5599a@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: st: add st,stm32mp2-cortex-a7-gic in intc
- node in stm32mp251.dtsi
-To: Marc Zyngier <maz@kernel.org>
-CC: <tglx@linutronix.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@foss.st.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20250403122805.1574086-1-christian.bruel@foss.st.com>
- <20250403122805.1574086-4-christian.bruel@foss.st.com>
- <874iz5yx2c.wl-maz@kernel.org>
-From: Christian Bruel <christian.bruel@foss.st.com>
-Content-Language: en-US
-In-Reply-To: <874iz5yx2c.wl-maz@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-04_05,2025-04-03_03,2024-11-22_01
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0a70f4ab-cd83-434d-8dd2-486d58e5599a@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-
-
-On 4/3/25 19:27, Marc Zyngier wrote:
-> On Thu, 03 Apr 2025 13:28:05 +0100,
-> Christian Bruel <christian.bruel@foss.st.com> wrote:
->>
->> Add st,stm32mp2-cortex-a7-gic to enable the GICC_DIR register remap
->>
->> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
->> ---
->>   arch/arm64/boot/dts/st/stm32mp251.dtsi | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
->> index f3c6cdfd7008..030e5da67a7e 100644
->> --- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
->> +++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
->> @@ -115,7 +115,7 @@ scmi_vdda18adc: regulator@7 {
->>   	};
->>   
->>   	intc: interrupt-controller@4ac00000 {
->> -		compatible = "arm,cortex-a7-gic";
->> +		compatible = "st,stm32mp2-cortex-a7-gic", "arm,cortex-a7-gic";
+On Wed, Mar 19, 2025 at 10:59:57AM +0800, Shuai Xue wrote:
+> + ARM maintainers for review.
 > 
-> What nonsense is this? This is an *arm64* machine, with I expect a
-> GIC400. Where is this A7 compat coming from?
+> 在 2025/3/12 14:15, Shuai Xue 写道:
+> > The pidfd_test fails on the ARM64 platform with the following error:
+> > 
+> >      Bail out! pidfd_poll check for premature notification on child thread exec test: Failed
+> > 
+> > When exception-trace is enabled, the kernel logs the details:
+> > 
+> >      #echo 1 > /proc/sys/debug/exception-trace
+> >      #dmesg | tail -n 20
+> >      [48628.713023] pidfd_test[1082142]: unhandled exception: SP Alignment, ESR 0x000000009a000000, SP/PC alignment exception in pidfd_test[400000+4000]
+> >      [48628.713049] CPU: 21 PID: 1082142 Comm: pidfd_test Kdump: loaded Tainted: G        W   E      6.6.71-3_rc1.al8.aarch64 #1
+> >      [48628.713051] Hardware name: AlibabaCloud AliServer-Xuanwu2.0AM-1UC1P-5B/AS1111MG1, BIOS 1.2.M1.AL.P.157.00 07/29/2023
+> >      [48628.713053] pstate: 60001800 (nZCv daif -PAN -UAO -TCO -DIT +SSBS BTYPE=-c)
+> >      [48628.713055] pc : 0000000000402100
+> >      [48628.713056] lr : 0000ffff98288f9c
+> >      [48628.713056] sp : 0000ffffde49daa8
+> >      [48628.713057] x29: 0000000000000000 x28: 0000000000000000 x27: 0000000000000000
+> >      [48628.713060] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+> >      [48628.713062] x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000400e80
+> >      [48628.713065] x20: 0000000000000000 x19: 0000000000402650 x18: 0000000000000000
+> >      [48628.713067] x17: 00000000004200d8 x16: 0000ffff98288f40 x15: 0000ffffde49b92c
+> >      [48628.713070] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+> >      [48628.713072] x11: 0000000000001011 x10: 0000000000402100 x9 : 0000000000000010
+> >      [48628.713074] x8 : 00000000000000dc x7 : 3861616239346564 x6 : 000000000000000a
+> >      [48628.713077] x5 : 0000ffffde49daa8 x4 : 000000000000000a x3 : 0000ffffde49daa8
+> >      [48628.713079] x2 : 0000ffffde49dadc x1 : 0000ffffde49daa8 x0 : 0000000000000000
+> > 
+> > According to ARM ARM D1.3.10.2 SP alignment checking:
+> > 
+> > > When the SP is used as the base address of a calculation, regardless of
+> > > any offset applied by the instruction, if bits [3:0] of the SP are not
+> > > 0b0000, there is a misaligned SP.
+> > 
+> > To fix it, align the stack with 16 bytes.
+> > 
+> > Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> > ---
+> >   tools/testing/selftests/pidfd/pidfd_test.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/testing/selftests/pidfd/pidfd_test.c b/tools/testing/selftests/pidfd/pidfd_test.c
+> > index c081ae91313a..ec161a7c3ff9 100644
+> > --- a/tools/testing/selftests/pidfd/pidfd_test.c
+> > +++ b/tools/testing/selftests/pidfd/pidfd_test.c
+> > @@ -33,7 +33,7 @@ static bool have_pidfd_send_signal;
+> >   static pid_t pidfd_clone(int flags, int *pidfd, int (*fn)(void *))
+> >   {
+> >   	size_t stack_size = 1024;
+> > -	char *stack[1024] = { 0 };
+> > +	char *stack[1024] __attribute__((aligned(16))) = {0};
+> >   #ifdef __ia64__
+> >   	return __clone2(fn, stack, stack_size, flags | SIGCHLD, NULL, pidfd);
 
-Probably historical, as the first port was for aarch32. I will fix this 
-separately. thanks for the head up!
+The arm64 alignment requirement is correct, but I don't really grok what
+this code is trying to do. If it's not using CLONE_VM, why bother passing
+a separate stack? If it _is_ using CLONE_VM, then surely the stack needs
+to be allocated somewhere other than the caller stack?
 
-Christian
-
-> 
-> 	M.
-> 
+Will
 
