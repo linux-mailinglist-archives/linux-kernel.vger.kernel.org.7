@@ -1,149 +1,180 @@
-Return-Path: <linux-kernel+bounces-589076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91717A7C17D
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:24:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA7BA7C184
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3913176772
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:24:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 820431799BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3F920ADE9;
-	Fri,  4 Apr 2025 16:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3A020B7E1;
+	Fri,  4 Apr 2025 16:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="F8n8v1x4"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="GRrTQdV/"
+Received: from smtp-fw-9105.amazon.com (smtp-fw-9105.amazon.com [207.171.188.204])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468F0209F5D;
-	Fri,  4 Apr 2025 16:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D2920ADEE;
+	Fri,  4 Apr 2025 16:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.204
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743783878; cv=none; b=IzKwML0bIVWXoHwVGpp+eJGeFkqbSzzY5Uf8tw/qusvT9ko948czLwv38F7hVkq0VEpnQrs9XXmlPy35Se7J6SxEO2SbMYV6eu08LeEFs14VvjGAP4HIQStrWjSLjPiXP0n63bRRyzbmVsYyA+PUERrilu0lfM7PqrboTV1x7Ts=
+	t=1743783913; cv=none; b=QCkDyPihvWY2CFDhORfvgjqEN1PTmLrEtf6veysO4uOXzirvlOX7lcP+JNORNBYV00eJYZCYqvrQk5CbFVLiM+nTEnnbfQMDxnN4NHpsKor1pxiHDGQKxP7Xn54AGNvC3IavuwF/Q7CLiYpeLSPrghLcykdu+hQWsPbT5FgleTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743783878; c=relaxed/simple;
-	bh=rmAXbeL39KcgujpR7v+ECJwqUp5fyRbRVOREMgRk6Sw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dMvZzVKqJAC4w95H7JzNaIi4zsGk82dW5RZhVeMofJozUp/tJcm2t4vFay0klDU+JqChUGzK6FNO6AYjgDslC3CbrbPPG6e2rz5cZe7PBZzsxPiWW8ZC3Zc4zerTgeXWGcKioouSGKlj0+vDQnDGZR5oSbDBVCg+baofEn4w0rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=F8n8v1x4; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1743783874;
-	bh=rmAXbeL39KcgujpR7v+ECJwqUp5fyRbRVOREMgRk6Sw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F8n8v1x4Erm6xVCeoU3Al3ZneYj/AXdDULwzuyz6bwUgqoPNafFzSf8EFnXUwU3mS
-	 5SE31Gxi6XaLhVzwT8Uligtxyod/AAHQTqtW3890vc/YTdnPZ1c9tHzgphejkNs0jV
-	 h3A0S+Ia8pTsnZNJtbOu/hgQtrjhZdho+6Tk8NZegfHLBrE7soiKGsg+7Eez50YXlm
-	 T/SbTPma+UrzB6e5sxIulQAp74SMC52n+jWKGb1qJZPF0DTZnbuX4MqLAyt45uyGya
-	 7xyuqK9dVhwfeNsM6cleyPgvS8y5RCQoK7UJeVUgN8z5ORC2vqP2CPbFZnOpsFmkzv
-	 dPlKhQ7DCX+XA==
-Received: from notapiano (unknown [70.107.117.78])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6066B17E1017;
-	Fri,  4 Apr 2025 18:24:32 +0200 (CEST)
-Date: Fri, 4 Apr 2025 12:24:27 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>, kernel@collabora.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH RFC 0/2] Add Kconfig pages and cross-references to
- Documentation
-Message-ID: <6b019d76-1a8f-4e8d-8b9b-05094a014689@notapiano>
-References: <20250404-kconfig-docs-v1-0-4c3155d4ba44@collabora.com>
- <8734eogfqw.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1743783913; c=relaxed/simple;
+	bh=eF+HTA08ywMrReINY75pZwsJgSFDqgNGDi1vthS9iHo=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=f82mnlw/DO1wu0QyYwCq1JMT8ZZovA6Bm8oPWqsSjKDW9uwFVZKpOml1PLBZP3oFjF6SqRt7eXrWNgRK14n9A9BtsPDtlefMl1aGBSc04gODWCwATnCprzlpAY1A1QyUifwnmlK3SSlzPaoFMT5iCv3jQYMcCKktkw8fZHV9c1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=GRrTQdV/; arc=none smtp.client-ip=207.171.188.204
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1743783912; x=1775319912;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=8M1kcrllrPJGqNpSTkGjHsOAwcJ4P4JfrDK2o2gPRAw=;
+  b=GRrTQdV/oqMyDHVDf2wgm4Zc24mJeZVF0GWGtisl/D6UJl/3VDLEH5qs
+   BkC6KousddgRX3CetGXbI5sG5NFwKG68CK3UmP19TUp6FRHi1Tkgb2XhS
+   SFagrcb/OegaDa5ILUtBw5PzFSeg0eFfIqxpZUxtBrfUe0Jc8fPTnACls
+   8=;
+X-IronPort-AV: E=Sophos;i="6.15,188,1739836800"; 
+   d="scan'208";a="7655191"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9105.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 16:25:05 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:19358]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.43.57:2525] with esmtp (Farcaster)
+ id 41e9b48e-af72-465f-a631-5054d723289f; Fri, 4 Apr 2025 16:25:04 +0000 (UTC)
+X-Farcaster-Flow-ID: 41e9b48e-af72-465f-a631-5054d723289f
+Received: from EX19D020UWA001.ant.amazon.com (10.13.138.249) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 4 Apr 2025 16:24:56 +0000
+Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
+ EX19D020UWA001.ant.amazon.com (10.13.138.249) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 4 Apr 2025 16:24:55 +0000
+Received: from email-imr-corp-prod-iad-all-1a-059220b4.us-east-1.amazon.com
+ (10.25.36.214) by mail-relay.amazon.com (10.250.64.254) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1544.14 via Frontend Transport; Fri, 4 Apr 2025 16:24:55 +0000
+Received: from dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com [172.19.91.144])
+	by email-imr-corp-prod-iad-all-1a-059220b4.us-east-1.amazon.com (Postfix) with ESMTP id EBBDF42F0D;
+	Fri,  4 Apr 2025 16:24:54 +0000 (UTC)
+Received: by dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (Postfix, from userid 23027615)
+	id A83976148; Fri,  4 Apr 2025 16:24:54 +0000 (UTC)
+From: Pratyush Yadav <ptyadav@amazon.de>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: Mike Rapoport <rppt@kernel.org>, Changyuan Lyu <changyuanl@google.com>,
+	<linux-kernel@vger.kernel.org>, <graf@amazon.com>,
+	<akpm@linux-foundation.org>, <luto@kernel.org>, <anthony.yznaga@oracle.com>,
+	<arnd@arndb.de>, <ashish.kalra@amd.com>, <benh@kernel.crashing.org>,
+	<bp@alien8.de>, <catalin.marinas@arm.com>, <dave.hansen@linux.intel.com>,
+	<dwmw2@infradead.org>, <ebiederm@xmission.com>, <mingo@redhat.com>,
+	<jgowans@amazon.com>, <corbet@lwn.net>, <krzk@kernel.org>,
+	<mark.rutland@arm.com>, <pbonzini@redhat.com>, <pasha.tatashin@soleen.com>,
+	<hpa@zytor.com>, <peterz@infradead.org>, <robh+dt@kernel.org>,
+	<robh@kernel.org>, <saravanak@google.com>,
+	<skinsburskii@linux.microsoft.com>, <rostedt@goodmis.org>,
+	<tglx@linutronix.de>, <thomas.lendacky@amd.com>, <usama.arif@bytedance.com>,
+	<will@kernel.org>, <devicetree@vger.kernel.org>, <kexec@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-doc@vger.kernel.org>,
+	<linux-mm@kvack.org>, <x86@kernel.org>
+Subject: Re: [PATCH v5 09/16] kexec: enable KHO support for memory preservation
+In-Reply-To: <20250404143031.GB1336818@nvidia.com>
+References: <20250320015551.2157511-1-changyuanl@google.com>
+	<20250320015551.2157511-10-changyuanl@google.com>
+	<mafs05xjmqsqc.fsf@amazon.de> <20250403114209.GE342109@nvidia.com>
+	<Z-6UA3C1TPeH_kGL@kernel.org> <20250403142438.GF342109@nvidia.com>
+	<Z--sUYCvP3Q8nT8e@kernel.org> <20250404124729.GH342109@nvidia.com>
+	<Z-_kSXrHWU5Bf3sV@kernel.org> <20250404143031.GB1336818@nvidia.com>
+Date: Fri, 4 Apr 2025 16:24:54 +0000
+Message-ID: <mafs08qofq4h5.fsf@amazon.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8734eogfqw.fsf@trenco.lwn.net>
+Content-Type: text/plain
 
-On Fri, Apr 04, 2025 at 08:31:35AM -0600, Jonathan Corbet wrote:
-> Nícolas F. R. A. Prado <nfraprado@collabora.com> writes:
-> 
-> > This series adds Kconfig pages (patch 1) to the Documentation, and
-> > automarkups CONFIG_* text as cross-references to those pages (patch 2).
-> >
-> > There is a huge change in build time with this series, so we'd either
-> > have to so some optimization and/or put this behind a flag in make so it
-> > is only generated when desired (for instance for the online
-> > documentation):
-> >
-> >   (On an XPS 13 9300)
-> >   
-> >   Before:
-> >   
-> >   real	6m43.576s
-> >   user	23m32.611s
-> >   sys	1m48.220s
-> >   
-> >   After:
-> >   
-> >   real	11m56.845s
-> >   user	47m40.528s
-> >   sys	2m27.382s
-> >
-> > There are also some issues that were solved in ad-hoc ways (eg the
-> > sphinx warnings due to repeated Kconfigs, by embedding the list of
-> > repeated configs in the script). Hence the RFC.
-> 
-> I'm still digging out from LSFMM, so have only glanced at this ... I can
-> see the appeal of doing this, but nearly doubling the docs build time
-> really isn't going to fly.  Have you looked to see what is taking all of
-> that time?  The idea that it takes as long to process KConfig entries as
-> it does to build the entire rest of the docs seems ... a bit wrong.
+On Fri, Apr 04 2025, Jason Gunthorpe wrote:
 
-I have not yet. Thought I'd get some feedback before looking into the
-performance. But I agree with the sentiment.
+> On Fri, Apr 04, 2025 at 04:53:13PM +0300, Mike Rapoport wrote:
+[...]
+>> Most drivers do not use folios
+>
+> Yes they do, either through kmalloc or through alloc_page/etc. "folio"
+> here is just some generic word meaning memory from the buddy allocator.
+>
+> The big question on my mind is if we need a way to preserve slab
+> objects as well..
 
-> 
-> I wonder what it would take to create a Sphinx extension that would
-> simply walk the source tree and slurp up the KConfig entries directly?
-> That would be nicer than adding a separate script in any case.
+Only if the objects in the slab cache are of a format that doesn't
+change, and I am not sure if that is the case anywhere. Maybe a driver
+written with KHO in mind would find it useful, but that's way down the
+line.
 
-That is what is currently done for the ABI, AFAIK, so definitely seems doable.
+>
+>> and for preserving memfd* and hugetlb we'd need to have some dance
+>> around that memory anyway.
+>
+> memfd is all folios - what do you mean?
+>
+> hugetlb is moving toward folios.. eg guestmemfd is supposed to be
+> taking the hugetlb special stuff and turning it into folios.
+>
+>> So I think kho_preserve_folio() would be a part of the fdbox or
+>> whatever that functionality will be called.
+>
+> It is part of KHO. Preserving the folios has to be sequenced with
+> starting the buddy allocator, and that is KHO's entire responsibility.
+>
+> I could see something like preserving slab being in a different layer,
+> built on preserving folios.
 
-The key difference between the ABI approach and this here, is that my goal was
-to reflect the Kconfig file hierarchy in the Documentation. So each Kconfig
-file gets its own documentation page, while the ABI approach collects the
-contents of all ABI files into just a few documentation pages (stable, testing,
-etc). (So there's a non-constant number of .rst files, which means they have to
-be generated and can't be a sphinx plugin in this approach).
+Agree with both points.
 
-I went for this approach because the filesystem hierarchy seemed the most
-logical way to group the Kconfig symbols. Also Kconfig files have directives like
-'menu' that should be present in the documentation in the same order they appear
-in the file to fully describe dependencies of the symbols, and having all of
-that in the same page seems like it would be confusing. But given the potential
-benefits it's worth a try for sure.
+[...]
+>> As for the optimizations of memblock reserve path, currently it what hurts
+>> the most in my and Pratyush experiments. They are not very representative,
+>> but still, preserving lots of pages/folios spread all over would have it's
+>> toll on the mm initialization.
+>
+>> And I don't think invasive changes to how
+>> buddy and memory map initialization are the best way to move forward and
+>> optimize that.
+>
+> I'm pretty sure this is going to be the best performance path, but I
+> have no idea how invasive it would be to the buddy alloactor to make
+> it work.
 
-Now that I think about it, seems quite likely that a lot of the time spent comes
-from creating a subshell and running the script for every Kconfig file. So
-making a single script or sphinx extension that itself handles iterating over
-all the files would likely greatly reduce the run time. I'll test that.
+I don't imagine it would be that invasive TBH. memblock_free_pages()
+already checks for kmsan_memblock_free_pages() or
+early_page_initialised(), it can also check for kho_page() just as
+easily.
 
-Thanks,
-Nícolas
+>
+>> Quite possibly we'd want to be able to minimize amount of *ranges*
+>> that we preserve.
+>
+> I'm not sure, that seems backwards to me, we really don't want to have
+> KHO mem zones! So I think optimizing for, and thinking about ranges
+> doesn't make sense.
+>
+> The big ranges will arise naturally beacuse things like hugetlb
+> reservations should all be contiguous and the resulting folios should
+> all be allocated for the VM and also all be contigous. So vast, vast
+> amounts of memory will be high order and contiguous.
 
-> 
-> I'll try to look closer, but I'll remain a bit distracted for a little
-> while yet.
-> 
-> Thanks,
-> 
-> jon
+Yes, and those can work quite well with table + bitmaps too.
+
+[...]
+
+-- 
+Regards,
+Pratyush Yadav
 
