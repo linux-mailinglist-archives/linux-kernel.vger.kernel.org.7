@@ -1,135 +1,116 @@
-Return-Path: <linux-kernel+bounces-588904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CE94A7BF05
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:22:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4A1FA7BF28
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73F4F3B80B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:21:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52F5E17AF5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 14:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5090D1F3D52;
-	Fri,  4 Apr 2025 14:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBAB1F0E51;
+	Fri,  4 Apr 2025 14:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZI2ZReU1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2231EF088;
-	Fri,  4 Apr 2025 14:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="rfO4hfjY";
+	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="TF7X/YOc"
+Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9A81A238C;
+	Fri,  4 Apr 2025 14:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743776483; cv=none; b=lpO5C2tIHro7jQ03W+WvUTkTcDiMSXxTrrCOW6/p8ZNNTXV0UB7vsPCvTlg80+e+B1asNalx2Pe86PFVpD6Fl543e0OMsRZY2o4ZxWor+qxKH8LM0Zjls6ICGq56qbg+9+S5SCt5qZeVRhGJAepoUK+2/3/zyLsNVHZo/XzzmYc=
+	t=1743776826; cv=none; b=ZokEVLISfET2pA8UthtH1+WC5c1UFcJU9nLff2y6ijVzRDN3SsKy8EGDK3fe9hUiD9OLUFWc6TofsKGJ04j/Y7z0VgkzCD2O4iyhxmmBMPS6VDTRy9z43t5H9MSkbBh+iEG8IVAFQkhhgtgalt/dHaEPXY0ijfb4y9gevkePrf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743776483; c=relaxed/simple;
-	bh=jWDI/Zr0/C5m752YjHWoRmTDwZdbUMKMz0DGgxY/xNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IrTQXu+dsNcUxHMuYna4jRB1v/hJMn2iOaGFtlNl4wMXCzzCZsigIrJkB9ViOzYp71Eh0bPP1n6LxZ83a/+HFd2C1W+JvMtzyixUQZhT0H8MH30PDqQqUBMSoqdqzWTMSw2N/VU+LbKqtBiFRG+vz9UuMlnXTdKspsxMMMCMnfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZI2ZReU1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FE8BC4CEDD;
-	Fri,  4 Apr 2025 14:21:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743776482;
-	bh=jWDI/Zr0/C5m752YjHWoRmTDwZdbUMKMz0DGgxY/xNE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZI2ZReU12jWJWtPcM6Zm1LelBbJ0IuB+ZYdQ7zGoAY01nrTX6icYXg4hfo2ZyPR/+
-	 TFb1QP2U3vi83K2SB7wMXVlsv1EbaDFkYO93Mc5MRJBLjVRpEt6wyuftu1pys508Q1
-	 Gx+P7JYHB1gAJu9Yv6ilupRA2fljBJJ49WLHLNCGYF7+54yAeGb/jDky7C4mmN/q69
-	 Mq2bCatP/Tk8s7PcP4ffGxHflKt1rfBNzO0xml2yN6JtsStcODOsuXkLf1VuzpZqYr
-	 q/yjX+XsM/G5Vkse2Syb9zEvHs9AkAKqmAi/+ehVlpC9sBls8pyb0+4Ujf7OXU3HaU
-	 7bTLp2ns2VbTg==
-Date: Fri, 4 Apr 2025 15:21:15 +0100
-From: Lee Jones <lee@kernel.org>
-To: Ming Yu <a0282524688@gmail.com>
-Cc: tmyu0@nuvoton.com, linus.walleij@linaro.org, brgl@bgdev.pl,
-	andi.shyti@kernel.org, mkl@pengutronix.de,
-	mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net,
-	jdelvare@suse.com, alexandre.belloni@bootlin.com,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH v8 1/7] mfd: Add core driver for Nuvoton NCT6694
-Message-ID: <20250404142115.GC278642@google.com>
-References: <20250225081644.3524915-1-a0282524688@gmail.com>
- <20250225081644.3524915-2-a0282524688@gmail.com>
- <20250307011542.GE8350@google.com>
- <CAOoeyxUgiTqtSksfHopEDhZHwNkUq9+d-ojo8ma3PX2dosuwyQ@mail.gmail.com>
- <20250320145042.GS3890718@google.com>
- <CAOoeyxXZmrzBSNRdRx9vK84m5Z5y8T_A+wY98vVrPUZ7f4w4iw@mail.gmail.com>
+	s=arc-20240116; t=1743776826; c=relaxed/simple;
+	bh=BinFXEu5xJ5P6GQ2tSNl4s/I+Bg9wAd2jeLycIJNcGE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hAP9laUln9+JgZR1o4OmD0RA3w4V+bUDRDgx+mhe7wZiq0nkfL1qcVL+GFXyu3EWr7Hbi3jbAAzosPTwl4DI3MB3KmCIshCC1VAcuyi4e8jUJIRr0YLBB54VLRfccwU6uzh5FPp5FEjHjJFXrQQUZ2gmjzv8SBtiXx/Q65bYJ24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=rfO4hfjY; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=TF7X/YOc; arc=none smtp.client-ip=220.130.44.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
+X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
+	s=richtek; t=1743776821;
+	bh=lKHyVuep4L/EA1oyYLoYQ61TnGK9fi+8Aheuj8YJrdY=; l=1004;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=rfO4hfjYwgQw1JFYd6QWp/MDWJEL+aPGD5iz8pT3rc8TxnjIZEXDDcGSgLNANT4UB
+	 H7nU21AsXU7AX/0CXn8lZqD6JDxlVii0h2bGR/+lB2Y+GTdCeD+INPydl7xKEDF1EE
+	 ib1ERPxlq5wZRnfxVadec86MPlOMuJooQOAYmRcLy5zSGNiHXJkyIcrVKWOFxxWll+
+	 JPe9TGRt0GuG+BG5ijkOMRXHBcNl2mN+FacCTog82qvKkNhGeWyuaDORH375vc1hI8
+	 FdK8JM0hycyLzlSuA21nYhS99XWPEo5kjH8LvQFlTut8yzCHCck7TgqnPw0TvVhSoe
+	 w/BVOFFnfAwJA==
+Received: from 192.168.8.21
+	by mg.richtek.com with MailGates ESMTP Server V3.0(1128086:0:AUTH_RELAY)
+	(envelope-from <prvs=11846F16CF=cy_huang@richtek.com>); Fri, 04 Apr 2025 22:26:58 +0800 (CST)
+X-MailGates: (compute_score:DELIVER,40,3)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
+	s=richtek; t=1743776818;
+	bh=lKHyVuep4L/EA1oyYLoYQ61TnGK9fi+8Aheuj8YJrdY=; l=1004;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=TF7X/YOchb44Ls5Vgdrd7PnEPXBldCfrecLaiopuMxpkuyr0++bnv4z0lNqFd0rkl
+	 nL2ijOjM32OmAMomO4EhbowKIFXiCJv8TuUzbPihJwoTqUYUCaHbacjIAcHnJa2SlR
+	 xxH9faEzalCZYovHLgk69NadlE5m/9HCc1Rl+SCniMKArJ7KNdiKLsa1tM/oQfHXJf
+	 5QQCNjGnFvoEIU14BkDlpuiIvqH3sSuxmaWi+0w5lbt+ngx0rYi9YcvznboXB46QCp
+	 TbsDXYFhQq07sa5zLTIaOml9sgf5fu9VeSmlJJEfLEeIPUQ4A6sRqmQDZsfZBFCtTv
+	 GrSkVhZJX1Y3w==
+Received: from 192.168.10.46
+	by mg.richtek.com with MailGates ESMTPS Server V6.0(1629328:0:AUTH_RELAY)
+	(envelope-from <cy_huang@richtek.com>)
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Fri, 04 Apr 2025 22:21:09 +0800 (CST)
+Received: from ex4.rt.l (192.168.10.47) by ex3.rt.l (192.168.10.46) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 4 Apr
+ 2025 22:21:08 +0800
+Received: from git-send.richtek.com (192.168.10.154) by ex4.rt.l
+ (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
+ Transport; Fri, 4 Apr 2025 22:21:08 +0800
+From: <cy_huang@richtek.com>
+To: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+CC: Rob Herring <robh@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, ChiYuan
+ Huang <cy_huang@richtek.com>, Otto lin <otto_lin@richtek.com>, Allen Lin
+	<allen_lin@richtek.com>, <devicetree@vger.kernel.org>,
+	<linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/4] ASoC: Add Richtek rt9123 and rt9123p support
+Date: Fri, 4 Apr 2025 22:22:10 +0800
+Message-ID: <cover.1743774849.git.cy_huang@richtek.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOoeyxXZmrzBSNRdRx9vK84m5Z5y8T_A+wY98vVrPUZ7f4w4iw@mail.gmail.com>
+Content-Type: text/plain
 
-On Wed, 26 Mar 2025, Ming Yu wrote:
+From: ChiYuan Huang <cy_huang@richtek.com>
 
-> Lee Jones <lee@kernel.org> 於 2025年3月20日 週四 下午10:50寫道：
-> >
-> ...
-> > > > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x1),
-> > > >
-> > > > IDs are usually given in base-10.
-> > > >
-> > >
-> > > Fix it in v9.
-> > >
-> > > > Why are you manually adding the device IDs?
-> > > >
-> > > > PLATFORM_DEVID_AUTO doesn't work for you?
-> > > >
-> > >
-> > > I need to manage these IDs to ensure that child devices can be
-> > > properly utilized within their respective modules.
-> >
-> > How?  Please explain.
-> >
-> > This numbering looks sequential and arbitrary.
-> >
-> > What does PLATFORM_DEVID_AUTO do differently such that it is not useful?
-> >
-> 
-> As far as I know, PLATFORM_DEVID_AUTO assigns dynamic IDs to devices,
-> but I need fixed IDs.
-> For example, the GPIO driver relies on these IDs to determine the
-> group, allowing the firmware to identify which GPIO group to operate
-> on through the API.
+This patch series adds Richtek rt9123 and rt9123p support.
+It's a 3.2W mono Class-D audio amplifier.
 
-PLATFORM_DEVID_AUTO will allocate IDs 0 through 16, the same as you've
-done here.  These lines do not have any differentiating attributes, so
-either way we are not allocating specific IDs to specific pieces of the
-H/W.  I still do not understand why you need to allocate them manually.
+ChiYuan Huang (4):
+  ASoC: dt-bindings: Add bindings for Richtek rt9123
+  ASoC: codecs: Add support for Richtek rt9123
+  ASoC: dt-bindings: Add bindings for Richtek rt9123p
+  ASoC: codecs: Add support for Richtek rt9123p
 
-> > > > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x2),
-> > > > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x3),
-> > > > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x4),
-> > > > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x5),
-> > > > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x6),
-> > > > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x7),
-> > > > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x8),
-> > > > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0x9),
-> > > > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0xA),
-> > > > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0xB),
-> > > > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0xC),
-> > > > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0xD),
-> > > > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0xE),
-> > > > > +     MFD_CELL_BASIC("gpio-nct6694", NULL, NULL, 0, 0xF),
-> 
-> 
-> Thanks,
-> Ming
+ .../bindings/sound/richtek,rt9123.yaml        |  56 ++
+ .../bindings/sound/richtek,rt9123p.yaml       |  50 ++
+ sound/soc/codecs/Kconfig                      |  15 +
+ sound/soc/codecs/Makefile                     |   4 +
+ sound/soc/codecs/rt9123.c                     | 484 ++++++++++++++++++
+ sound/soc/codecs/rt9123p.c                    | 171 +++++++
+ 6 files changed, 780 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/richtek,rt9123.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/richtek,rt9123p.yaml
+ create mode 100644 sound/soc/codecs/rt9123.c
+ create mode 100644 sound/soc/codecs/rt9123p.c
 
+
+base-commit: a2cc6ff5ec8f91bc463fd3b0c26b61166a07eb11
 -- 
-Lee Jones [李琼斯]
+2.34.1
+
 
