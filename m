@@ -1,315 +1,214 @@
-Return-Path: <linux-kernel+bounces-588134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A63A7B4CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 02:42:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FAAEA7B528
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 02:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15E233B3862
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 00:41:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BCB63B913B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 00:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12CDD1FCFF3;
-	Fri,  4 Apr 2025 00:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE0E207DE7;
+	Fri,  4 Apr 2025 00:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F9Yio4Xe"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QEh9Wm9G"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D611993B7;
-	Fri,  4 Apr 2025 00:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D232B207A2B;
+	Fri,  4 Apr 2025 00:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743726484; cv=none; b=nmiAN1pqsiOLipM9pAG4eVVVCY6oFWl8HuXOY1sUJXmYqgp3rIGH/Bp3FP/PQGBcMt4hR1wae7hglVKdcJJxnDskOrfwkyfFDDAkoDlgfZMVnFwq/PmtsXZiNlBc8WMHZkrJplJ7469mGs/Q2WOSHMuUIHpD+pIFSvGgD97zJZw=
+	t=1743726506; cv=none; b=YSrhefHsyA0PutXj3SNdVFNqk0NcrHEefST0sjhrwpdN1QXipAL7rfpYeQtvRrdxG5CW+mr7pWcG3jVeTHmCbeOOhBm1aQmSH7043ZLTwF3r3MU7GIplJQDvMjqoJk3oKvKfOHS071B7cwSpGdLDS2ECEmnZ4LuFiiY9xuw4/38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743726484; c=relaxed/simple;
-	bh=BJik7vJPS2lFwv3TLRuoQUkazn4jaw1FbCRLyyJksNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oc0mpw2Y4DmZHf8z8GbZcPDYrY8LMR6qV6adWkOdbmvra4D0ygeZ4dNargwJt9kdPmbq1YWn0sjYRj6edNIwCEgw+BU0ES2PcZgg8vEyCFFIu+FAhvLGIejh/rabGVWuqL49pjB+/eGtvyjGMaFTE1EGMdJel9V7C61Z1yihJLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F9Yio4Xe; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1743726506; c=relaxed/simple;
+	bh=uHAFIXvSqhdI1aB49w+rPPMjSqQgJtlh0O+dhLWVhPs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gKxsbw3OKIjn+sGPZsq74S1qv8jWhApxyp3C9Pm6DmVhJWFpuVkeHnLf/7iE5YKkATkq1853g9MYvU6YIPIdHoDwunhUHJRCI/a2p1+KNPbvHcSy8UdgbK2OO1ecW4yGPy/cdLGhnNG9rVKK0eR9desXnz2yKgTQsNamVXAmvq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QEh9Wm9G; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22401f4d35aso16288105ad.2;
-        Thu, 03 Apr 2025 17:28:01 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43d0c18e84eso7184705e9.3;
+        Thu, 03 Apr 2025 17:28:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743726481; x=1744331281; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tiLWhcw8UrQp578t/bvkEK8RmfqpeY7OLy0Zrqy/lb4=;
-        b=F9Yio4XeUcHcuJQ5+ucnlYeqiKxBqhPfHjfrgmwz3hMn73TWaTCYw6ulzfd1gBdz4q
-         EOyrl0GxGh0syFOnRcB+hn1uXtoR3MvbAmfOh2mjJa93FWQhrO+nG7CUq7H48RN0NVrY
-         mnZD5hLkLuNvI7fihATMKGs9zwrSNp/jBq279r8aj5I1KBDc7gGWYBq7wO0I7ARwkMs0
-         pReaJiVzG4sG1GiqqEGZvJnODrOHOnhzwNJOU5+BrfdeX/vbLK36kYwpGQpjvGqTCE2x
-         Mh52zaci4tCTQkDW5Cv6zRlewboe6bLdhOoePvLuGfQCCBdvrQ2cC74Ad9Yg0DH2onX/
-         04Fg==
+        d=gmail.com; s=20230601; t=1743726503; x=1744331303; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TsJalMCnIbyYUDREZzETsh7CC8zJvSaK1Doibamq2oQ=;
+        b=QEh9Wm9Gr+IivDGinfMU4abquaya6qSQxZ0dOrObpwbQvgbjpfaIgcvBnicHbWQTlq
+         6VfFn9i9St2WXreCliH8jFQGlpy+oq0+F+2kDAsgsfrOwWRlpwZlR90srAPTFxrv3LA4
+         LA1NWoOWRR76nZwAEB/1sGKwF6WyhdNMjJCOU+ETyXv62ht4dAHatXIyBUlh0pcq8jf+
+         UeL1U0oxpACK/gFq9SJxwpP1ajWXSyy3XMEtAOsTcQdZiExrl/VKDsNtNyjHa1evNS54
+         4GY1uTvHzIvspgNFFbIhs0Z+oxtNqLRDY+5yzPRKcI76tZV0CgEbK1/GkrAjS2YZn9IE
+         n96w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743726481; x=1744331281;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1743726503; x=1744331303;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tiLWhcw8UrQp578t/bvkEK8RmfqpeY7OLy0Zrqy/lb4=;
-        b=eUJQ2Dct5uL43L+T7MAMtf7SPny86akWllkCxLu36PPem7aEJFIt/rS670HX0rWUbh
-         YWpuH31Kq8L//N8nHMvHDfNmZrGks0K4vZasnUMDhY/ahqFR5piLtado+7gXRP431W14
-         G1+IBkWo1H9gjey9wcing9btsYJNqtYjHTrRSjnpjnR0kLiwDjTeJxutP3V2Z0l9N9wn
-         M5evg/h7wEaFG893VBXLcKW5UnQzybU9HMWFn/MqfdNY7feADf+rcLFlgfN803fFuaW2
-         jbcus3UBvxx/T6dpE4evmZkYHeSyTBj66GZeSOL5aP5+SuuaUrJbwQUBYDbABXMn/Ii/
-         PjMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWKMfM2ZKSAahA9BUGl4ms2yZoP+AFOGrKDlR0qtzrxyU9cRndXxTYCAMnCNqbEGLBQV6Oe3QPUXvwDg6gp@vger.kernel.org, AJvYcCWjMF6rVPznSa97DNQeJZiNurpiRMgMpfl63h/gcsigpopOHRK0JsL8Ng05GC3bpNoIUAXkqYnoN3F/5A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaR8Fb7+/jnCf5QV1IHl/FaAaTiei+2og7F2U7iiCHWGOEXHDT
-	dqTieJuDJ8zIZaFGTdtAqdiogWUu14B3xc4NYlRXLLn+Y7qUMggV65yTuA==
-X-Gm-Gg: ASbGncuqd2du4gEad18bC8cZJROPV0IbV2GKkazxUFMngKUTp1ozDlQ2E0bllVU8GFQ
-	BuceDWmMZ2+UDUF86TPrO4z1Gqvko4KACAwPFKqjLG/Ot46wFH+8xaxMqo9arSm6Nv/KwcVOv9J
-	NiBkaLPAAkClPEhfbUa59shFDs3Usq3lR4xafIW8jMzCfmUU90UtsCIIIKvUArmT0+f9xeCv5Rr
-	jmYNFC3WjmychhIRcnmgMii3lexPVAyUukqd+GOZhVsgddwnzsiAN2BuyZorOijtNzGVuX5mQHY
-	dOjg6aiZ4BmWaD+q+C7up1qcMCjWKyH9YQjEoP6011myT3myUVkZ7QGO++yAvnA81axO
-X-Google-Smtp-Source: AGHT+IFl0VJ59GwoYz6sJFiE/82HtFdo3fFicQbo7C0oWzGqmP/WiUhH/hcQCZqs2xdattHx/IpLFw==
-X-Received: by 2002:a17:903:3df1:b0:224:78e:4ebe with SMTP id d9443c01a7336-22a8a09a412mr10904985ad.33.1743726480708;
-        Thu, 03 Apr 2025 17:28:00 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229785ad875sm20880275ad.17.2025.04.03.17.27.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 17:28:00 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 3 Apr 2025 17:27:59 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: "William A. Kennington III" <william@wkennington.com>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] hwmon: (pmbus): Introduce page_change_delay
-Message-ID: <444f9411-851b-4810-8f6e-35306ac9bfdb@roeck-us.net>
-References: <20250402202741.3593606-1-william@wkennington.com>
- <20250403211246.3876138-1-william@wkennington.com>
+        bh=TsJalMCnIbyYUDREZzETsh7CC8zJvSaK1Doibamq2oQ=;
+        b=PFEp/VwAGDph2+sG6gRpGWadTTguBzqIaD40r8VO0zywTmXRhMJJ/oVCbFm/zzVusx
+         OEQjSe83Q/T0MILw8K7hkRleMUpOhcuYvgZviIRy5YMEiHOioY5m/hHvXJEb/d2NRcfH
+         v7D+SJYCBPUHUuSl9m6/8J/AWnH9PYkSl3vF6mD23Vh20CYQkla7Xj1ZHm97JEVm3T1Z
+         PU9k+g6pm9WRDf8Wa/M4vQz8UM+DsX/ksqPo1DkWf2AbtOsLH5vowlzrqHP9mtkjDbS+
+         cYA5nPzwW4182wMfTwk2pTlbMI2I/Knhx++hm3LleON0E7uTrRg53G1gxVkXqYBEbqwX
+         rIrA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+l7UNX10WBfoVumIYyPvtj777X2zHWXPma1ob3nNPSyz1YfUf4zSuXQX/eRh7l9XadWIvkBla@vger.kernel.org, AJvYcCX/gPSBUzCCsz4ec8q9alS2BzeWqPiZcDiI+x5bnBBqyrHgGyECTLyKeUAJtCAdkpBc/ann09gvlnc8rSCG@vger.kernel.org, AJvYcCXAg7GLT2X3ZrBkG8frTkMDZWFRLlYohVPWOfREs4nK2YIP3WQ/t8gARe4IgWWNrScPfTE=@vger.kernel.org, AJvYcCXFZG2chuTpHGSESR54W69vIcC2elLOS2X8BRsg6HnUp0f2sKbD3QOp/qJWwLvPpxz91G7TVeeBaTAckWVfZodp@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcrGw9aHEiayIjtCf4gRjf1YaVdyI6Gkqr4aFDcADJRPT11Hz2
+	pS3ajvs6KavzLlMZvyqrfCJ1j+GfDwHxjl5+wA30HsQaRrAsLcm7EmyA4Xy6gVpeF42uOFRABXG
+	8maX7X+Kx1czVa4uB+td8iNy3N3k=
+X-Gm-Gg: ASbGncsQusFezepox3/ReFflnXnQQ9wkXmO31GpPa8BH1LFhZo3JIomiSkXp5NHBi4p
+	vj0MXGAPbPTk0PM/7b4SA9+d1vW0PU2riFEjyZj9yXihkv6o2LAyaXpMwalnbB7iQJnjjUk656x
+	SiOUajNedxAbdVw+DL52ZbYjyP/Pl1rJjLXv169bVfHA==
+X-Google-Smtp-Source: AGHT+IF4jOHMVxLKwpyTVp4jJNRqM1SWPpZtFvlb0mCP/+k22RUzCUAv49nijPp+o+h12sypmv2fV/5Qr071bYNrMQg=
+X-Received: by 2002:a05:600c:3596:b0:43c:f597:d589 with SMTP id
+ 5b1f17b1804b1-43ed0db3b83mr4248275e9.27.1743726502822; Thu, 03 Apr 2025
+ 17:28:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250403211246.3876138-1-william@wkennington.com>
+References: <20250331032354.75808-1-jiayuan.chen@linux.dev>
+ <20250331032354.75808-2-jiayuan.chen@linux.dev> <CAADnVQJ6NPGuY=c8kbpX_nLYq4oOxOBAxbDPFLuw+yr4WrQQOQ@mail.gmail.com>
+ <67ee9be9db59b_138964294b7@willemb.c.googlers.com.notmuch>
+In-Reply-To: <67ee9be9db59b_138964294b7@willemb.c.googlers.com.notmuch>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 3 Apr 2025 17:28:11 -0700
+X-Gm-Features: ATxdqUHpKf8yEtqfLl0IozrpSVSxJWlHaoXuUysIiRdjG68X57Hqbi5k8WYXjAc
+Message-ID: <CAADnVQK_8-3mpQMptGCdgZv71okKT6haZ0Wrw+fUoWV3kif9DA@mail.gmail.com>
+Subject: Re: [PATCH bpf v2 1/2] bpf, xdp: clean head/meta when expanding it
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>, bpf <bpf@vger.kernel.org>, 
+	Jiayuan Chen <mrpre@163.com>, syzbot+0e6ddb1ef80986bdfe64@syzkaller.appspotmail.com, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+	Shuah Khan <shuah@kernel.org>, Willem de Bruijn <willemb@google.com>, 
+	Jason Xing <kerneljasonxing@gmail.com>, Anton Protopopov <aspsk@isovalent.com>, 
+	Abhishek Chauhan <quic_abchauha@quicinc.com>, Jordan Rome <linux@jordanrome.com>, 
+	Martin Kelly <martin.kelly@crowdstrike.com>, David Lechner <dlechner@baylibre.com>, 
+	LKML <linux-kernel@vger.kernel.org>, Network Development <netdev@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 03, 2025 at 02:12:46PM -0700, William A. Kennington III wrote:
-> We have some buggy pmbus devices that require a delay after performing a
-> page change operation before trying to issue more commands to the
-> device.
-> 
-> This allows for a configurable delay after page changes, but not
-> affecting other read or write operations.
-> 
-> Signed-off-by: William A. Kennington III <william@wkennington.com>
-> ---
-> V1 -> V2: Simplify how the backoff time is stored and computed
-> V2 -> V3: Use the BIT macro
-> 
->  drivers/hwmon/pmbus/pmbus.h      |  1 +
->  drivers/hwmon/pmbus/pmbus_core.c | 67 +++++++++++++++-----------------
->  2 files changed, 33 insertions(+), 35 deletions(-)
-> 
-> diff --git a/drivers/hwmon/pmbus/pmbus.h b/drivers/hwmon/pmbus/pmbus.h
-> index ddb19c9726d6..742dafc44390 100644
-> --- a/drivers/hwmon/pmbus/pmbus.h
-> +++ b/drivers/hwmon/pmbus/pmbus.h
-> @@ -482,6 +482,7 @@ struct pmbus_driver_info {
->  	 */
->  	int access_delay;		/* in microseconds */
->  	int write_delay;		/* in microseconds */
-> +	int page_change_delay;		/* in microseconds */
->  };
->  
->  /* Regulator ops */
-> diff --git a/drivers/hwmon/pmbus/pmbus_core.c b/drivers/hwmon/pmbus/pmbus_core.c
-> index 787683e83db6..3aa5851610b2 100644
-> --- a/drivers/hwmon/pmbus/pmbus_core.c
-> +++ b/drivers/hwmon/pmbus/pmbus_core.c
-> @@ -114,8 +114,8 @@ struct pmbus_data {
->  
->  	int vout_low[PMBUS_PAGES];	/* voltage low margin */
->  	int vout_high[PMBUS_PAGES];	/* voltage high margin */
-> -	ktime_t write_time;		/* Last SMBUS write timestamp */
-> -	ktime_t access_time;		/* Last SMBUS access timestamp */
-> +
-> +	ktime_t next_access_backoff;	/* Wait until at least this time */
->  };
->  
->  struct pmbus_debugfs_entry {
-> @@ -170,33 +170,30 @@ EXPORT_SYMBOL_NS_GPL(pmbus_set_update, "PMBUS");
->  static void pmbus_wait(struct i2c_client *client)
->  {
->  	struct pmbus_data *data = i2c_get_clientdata(client);
-> -	const struct pmbus_driver_info *info = data->info;
-> -	s64 delta;
-> -
-> -	if (info->access_delay) {
-> -		delta = ktime_us_delta(ktime_get(), data->access_time);
-> -
-> -		if (delta < info->access_delay)
-> -			fsleep(info->access_delay - delta);
-> -	} else if (info->write_delay) {
-> -		delta = ktime_us_delta(ktime_get(), data->write_time);
-> +	s64 delay = ktime_us_delta(data->next_access_backoff, ktime_get());
->  
-> -		if (delta < info->write_delay)
-> -			fsleep(info->write_delay - delta);
-> -	}
-> +	if (delay > 0)
-> +		fsleep(delay);
->  }
->  
-> -/* Sets the last accessed timestamp for pmbus_wait */
-> -static void pmbus_update_ts(struct i2c_client *client, bool write_op)
-> +#define PMBUS_OP_READ BIT(0)
-> +#define PMBUS_OP_WRITE BIT(1)
-> +#define PMBUS_OP_PAGE_CHANGE BIT(2)
+On Thu, Apr 3, 2025 at 7:32=E2=80=AFAM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+>
+> Alexei Starovoitov wrote:
+> > On Sun, Mar 30, 2025 at 8:27=E2=80=AFPM Jiayuan Chen <jiayuan.chen@linu=
+x.dev> wrote:
+> > >
+> > > The device allocates an skb, it additionally allocates a prepad size
+> > > (usually equal to NET_SKB_PAD or XDP_PACKET_HEADROOM) but leaves it
+> > > uninitialized.
+> > >
+> > > The bpf_xdp_adjust_head function moves skb->data forward, which allow=
+s
+> > > users to access data belonging to other programs, posing a security r=
+isk.
+> > >
+> > > Reported-by: syzbot+0e6ddb1ef80986bdfe64@syzkaller.appspotmail.com
+> > > Closes: https://lore.kernel.org/all/00000000000067f65105edbd295d@goog=
+le.com/T/
+> > > Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
+> > > ---
+> > >  include/uapi/linux/bpf.h       | 8 +++++---
+> > >  net/core/filter.c              | 5 ++++-
+> > >  tools/include/uapi/linux/bpf.h | 6 ++++--
+> > >  3 files changed, 13 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> > > index defa5bb881f4..be01a848cbbf 100644
+> > > --- a/include/uapi/linux/bpf.h
+> > > +++ b/include/uapi/linux/bpf.h
+> > > @@ -2760,8 +2760,9 @@ union bpf_attr {
+> > >   *
+> > >   * long bpf_xdp_adjust_head(struct xdp_buff *xdp_md, int delta)
+> > >   *     Description
+> > > - *             Adjust (move) *xdp_md*\ **->data** by *delta* bytes. =
+Note that
+> > > - *             it is possible to use a negative value for *delta*. T=
+his helper
+> > > + *             Adjust (move) *xdp_md*\ **->data** by *delta* bytes. =
+Note that
+> > > + *             it is possible to use a negative value for *delta*. I=
+f *delta*
+> > > + *             is negative, the new header will be memset to zero. T=
+his helper
+> > >   *             can be used to prepare the packet for pushing or popp=
+ing
+> > >   *             headers.
+> > >   *
+> > > @@ -2989,7 +2990,8 @@ union bpf_attr {
+> > >   * long bpf_xdp_adjust_meta(struct xdp_buff *xdp_md, int delta)
+> > >   *     Description
+> > >   *             Adjust the address pointed by *xdp_md*\ **->data_meta=
+** by
+> > > - *             *delta* (which can be positive or negative). Note tha=
+t this
+> > > + *             *delta* (which can be positive or negative). If *delt=
+a* is
+> > > + *             negative, the new meta will be memset to zero. Note t=
+hat this
+> > >   *             operation modifies the address stored in *xdp_md*\ **=
+->data**,
+> > >   *             so the latter must be loaded only after the helper ha=
+s been
+> > >   *             called.
+> > > diff --git a/net/core/filter.c b/net/core/filter.c
+> > > index 46ae8eb7a03c..5f01d373b719 100644
+> > > --- a/net/core/filter.c
+> > > +++ b/net/core/filter.c
+> > > @@ -3947,6 +3947,8 @@ BPF_CALL_2(bpf_xdp_adjust_head, struct xdp_buff=
+ *, xdp, int, offset)
+> > >         if (metalen)
+> > >                 memmove(xdp->data_meta + offset,
+> > >                         xdp->data_meta, metalen);
+> > > +       if (offset < 0)
+> > > +               memset(data, 0, -offset);
+> > >         xdp->data_meta +=3D offset;
+> > >         xdp->data =3D data;
+> > >
+> > > @@ -4239,7 +4241,8 @@ BPF_CALL_2(bpf_xdp_adjust_meta, struct xdp_buff=
+ *, xdp, int, offset)
+> > >                 return -EINVAL;
+> > >         if (unlikely(xdp_metalen_invalid(metalen)))
+> > >                 return -EACCES;
+> > > -
+> > > +       if (offset < 0)
+> > > +               memset(meta, 0, -offset);
+> >
+> > Let's make everyone pay a performance penalty to silence
+> > KMSAN warning?
+> >
+> > I don't think it's a good trade off.
+> >
+> > Soft nack.
+>
+> I also assumed that this was known when the feature was originally
+> introduced and left as is for performance reasons.
+>
+> Might be good to have that explicit. And that it is deemed safe by
+> virtue of XDP requiring superuser privileges anyway. Or at least I
+> guess that was the thought process?
 
-I guess you really don't like tabs. Ok, no problem, I can fix that up when
-I apply the patch. Either case, please move the defines ahead of the first
-code block.
-
-> +
-> +/* Sets the last operation timestamp for pmbus_wait */
-> +static void pmbus_update_ts(struct i2c_client *client, int op)
->  {
->  	struct pmbus_data *data = i2c_get_clientdata(client);
->  	const struct pmbus_driver_info *info = data->info;
-> +	int delay = info->access_delay;
-
-Hmm, this is a functional change. It always sets the minimum wait
-time to access_delay, even if the operation is a write. I guess
-it makes sense because otherwise there would be no delay after
-a write if only access_delay is set. However, that means that
-PMBUS_OP_READ is not really needed anymore and can be dropped.
-
-This should be explained in the patch description.
-
->  
-> -	if (info->access_delay) {
-> -		data->access_time = ktime_get();
-> -	} else if (info->write_delay && write_op) {
-> -		data->write_time = ktime_get();
-> -	}
-> +	if (op & (PMBUS_OP_WRITE | PMBUS_OP_PAGE_CHANGE))
-> +		delay = max(delay, info->write_delay);
-> +	if (op & PMBUS_OP_PAGE_CHANGE)
-> +		delay = max(delay, info->page_change_delay);
-> +
-
-I would have set PMBUS_OP_WRITE | PMBUS_OP_PAGE_CHANGE in the calling code,
-but this is ok too. However, please make it
-
-	if (op & (PMBUS_OP_WRITE | PMBUS_OP_PAGE_CHANGE)) {
-		delay = max(delay, info->write_delay);
-		if (op & PMBUS_OP_PAGE_CHANGE)
-			delay = max(delay, info->page_change_delay);
-	}
-
-After dropping PMBUS_OP_READ, that can be simplified further to
-
-	if (op) {
-		...
-	}
-
-> +	if (delay > 0)
-> +		data->next_access_backoff = ktime_add_us(ktime_get(), delay);
->  }
->  
->  int pmbus_set_page(struct i2c_client *client, int page, int phase)
-> @@ -211,13 +208,13 @@ int pmbus_set_page(struct i2c_client *client, int page, int phase)
->  	    data->info->pages > 1 && page != data->currpage) {
->  		pmbus_wait(client);
->  		rv = i2c_smbus_write_byte_data(client, PMBUS_PAGE, page);
-> -		pmbus_update_ts(client, true);
-> +		pmbus_update_ts(client, PMBUS_OP_PAGE_CHANGE);
->  		if (rv < 0)
->  			return rv;
->  
->  		pmbus_wait(client);
->  		rv = i2c_smbus_read_byte_data(client, PMBUS_PAGE);
-> -		pmbus_update_ts(client, false);
-> +		pmbus_update_ts(client, PMBUS_OP_READ);
->  		if (rv < 0)
->  			return rv;
->  
-> @@ -231,7 +228,7 @@ int pmbus_set_page(struct i2c_client *client, int page, int phase)
->  		pmbus_wait(client);
->  		rv = i2c_smbus_write_byte_data(client, PMBUS_PHASE,
->  					       phase);
-> -		pmbus_update_ts(client, true);
-> +		pmbus_update_ts(client, PMBUS_OP_WRITE);
->  		if (rv)
->  			return rv;
->  	}
-> @@ -251,7 +248,7 @@ int pmbus_write_byte(struct i2c_client *client, int page, u8 value)
->  
->  	pmbus_wait(client);
->  	rv = i2c_smbus_write_byte(client, value);
-> -	pmbus_update_ts(client, true);
-> +	pmbus_update_ts(client, PMBUS_OP_WRITE);
->  
->  	return rv;
->  }
-> @@ -286,7 +283,7 @@ int pmbus_write_word_data(struct i2c_client *client, int page, u8 reg,
->  
->  	pmbus_wait(client);
->  	rv = i2c_smbus_write_word_data(client, reg, word);
-> -	pmbus_update_ts(client, true);
-> +	pmbus_update_ts(client, PMBUS_OP_WRITE);
->  
->  	return rv;
->  }
-> @@ -408,7 +405,7 @@ int pmbus_read_word_data(struct i2c_client *client, int page, int phase, u8 reg)
->  
->  	pmbus_wait(client);
->  	rv = i2c_smbus_read_word_data(client, reg);
-> -	pmbus_update_ts(client, false);
-> +	pmbus_update_ts(client, PMBUS_OP_READ);
->  
->  	return rv;
->  }
-> @@ -471,7 +468,7 @@ int pmbus_read_byte_data(struct i2c_client *client, int page, u8 reg)
->  
->  	pmbus_wait(client);
->  	rv = i2c_smbus_read_byte_data(client, reg);
-> -	pmbus_update_ts(client, false);
-> +	pmbus_update_ts(client, PMBUS_OP_READ);
->  
->  	return rv;
->  }
-> @@ -487,7 +484,7 @@ int pmbus_write_byte_data(struct i2c_client *client, int page, u8 reg, u8 value)
->  
->  	pmbus_wait(client);
->  	rv = i2c_smbus_write_byte_data(client, reg, value);
-> -	pmbus_update_ts(client, true);
-> +	pmbus_update_ts(client, PMBUS_OP_WRITE);
->  
->  	return rv;
->  }
-> @@ -523,7 +520,7 @@ static int pmbus_read_block_data(struct i2c_client *client, int page, u8 reg,
->  
->  	pmbus_wait(client);
->  	rv = i2c_smbus_read_block_data(client, reg, data_buf);
-> -	pmbus_update_ts(client, false);
-> +	pmbus_update_ts(client, PMBUS_OP_READ);
->  
->  	return rv;
->  }
-> @@ -2530,7 +2527,7 @@ static int pmbus_read_coefficients(struct i2c_client *client,
->  	rv = i2c_smbus_xfer(client->adapter, client->addr, client->flags,
->  			    I2C_SMBUS_WRITE, PMBUS_COEFFICIENTS,
->  			    I2C_SMBUS_BLOCK_PROC_CALL, &data);
-> -	pmbus_update_ts(client, true);
-> +	pmbus_update_ts(client, PMBUS_OP_READ | PMBUS_OP_WRITE);
-
-I'd argue that this does not warrant a PMBUS_OP_WRITE in the first place.
-From the chip's perspective, the operation is complete after the data
-is returned. This is just as much a write as any other SMBus read operation
-(a write of an address followed by a read). If you think otherwise, please
-explain.
-
-Either case, the change warrants an explanation in the patch description.
-
-Thanks,
-Guenter
+Correct. When prog extends the headroom it is suppose to write
+something in there. Extending the packet just to capture
+some garbage bytes from the previous packet is dumb,
+but doesn't compromise the safety of the kernel.
+There were proposals to ask the verifier to track that the headroom
+is actually initialized by the program, but it's pointless.
+Dumb prog can write garbage in there just as well.
+bpf_probe_read_kernel( from_random_addr) and store into the headroom.
 
