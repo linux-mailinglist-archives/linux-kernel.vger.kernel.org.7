@@ -1,164 +1,180 @@
-Return-Path: <linux-kernel+bounces-588300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82732A7B769
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 07:37:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9DBAA7B761
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 07:33:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE833189D283
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 05:38:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00E5C178C36
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 05:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA3D1662EF;
-	Fri,  4 Apr 2025 05:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6552167DB7;
+	Fri,  4 Apr 2025 05:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="lEjdKZB1"
-Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RWgGmVDV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2939DDDC1;
-	Fri,  4 Apr 2025 05:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0C1847B
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 05:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743745066; cv=none; b=R2FbgTYmo4rvS9lehGKP1ka46f2KtyCUDNVfHBwUtAVmngA370XYRAvH0tbCbDZEIqPOHncP3bGx+1wtIcC0u4V/288EBzNZoI2Any6PBO9vyWLI6XMccdtKfVC/9nhCWjKoLXST6kBm+cSnC0bATH1ZGZVgriu1EVk6rdJsyC0=
+	t=1743744818; cv=none; b=knfXccJLcgszfG/tvmXPoQ8IOgNIDlE98M7odL8ThF6BDqsdn0XVevkICc1sp6vtPNB1tXJHnlTDy2GDvfa2P29v03ZYqCEmpubnnfXyEZ6JtJrr2zvOFBgrLqsWYYu9Ixrvrp2mrIS0Hoe2NsDlyF2jWOivo1iCQ8UVe3oD8C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743745066; c=relaxed/simple;
-	bh=v2K3Ci6Hqa/XaBgTwF7fn5YXxKcOQtRT8RTrXCQP4Cw=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=EwzXoj9dnjyP0Wst/vAntHYGtGeHusAnW8uXdwSN1hoEHbWTQttgOeWsG2pp4xOsfnGka3vt0VoeoPNMTmsZV1KiquKDuwyM3HAgKBn3ocUICrMQBuH2E/lok0kjYyET7wdEHLkqb3Zt8YPtNmy2fqft5oMuG5P/ep0BTcUNdx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=lEjdKZB1; arc=none smtp.client-ip=162.62.57.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1743745056; bh=wrSj9PzWh2wVzoWv3XkhoWrvov00Rs2DfdHlLI0RZ/k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=lEjdKZB11l3Mx7QWXWEFV84QBrUlzgPRk6ngIRu/ZAnVTJquac7Wkfm5D491TaPC4
-	 bMf/5SqLd1BDuqpSjET/W8CCl0gNiUSeLW5z3EtSNxKSqWrcZ3ethUP1F+DnbvI+sH
-	 u5EU9aCuwEoI7toUPi1maCZQT/t5eK8pDhuXAnpE=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id 7DCAA611; Fri, 04 Apr 2025 13:31:28 +0800
-X-QQ-mid: xmsmtpt1743744688tomd71bwx
-Message-ID: <tencent_9C8CB8A7E7C6C512C7065DC98B6EDF6EC606@qq.com>
-X-QQ-XMAILINFO: MiwL2wmyONS9vtXwWrRJ1j3yBQKHJJvDrdoSgeiSARMKVgikB3klDMnagz4rab
-	 9Utwb0i2hGs0PnYpOh9ZFzfaYTj3VtD7g9zoPHIcamlzaHFIEjxD6wRx+NSMVsGsVg9bcHYxDSQv
-	 gfUrXQRo/fncdt5xei+d8uML0vouOHMFLSaLIc35lbwzV9Hjd/66riDveY0t3H4ZhIuyyjXHLkMF
-	 csUVT2Gijz/AY9rdDSfOGBhagWpPKFur8RVz58G/3NszzY3IwjoVS7yq7YdWRXsmd2mS+7DKK35N
-	 QvmyjmZt3hkEedNUKLL9fYgOX+x6mGhjHHVfNCxi0c6NCMtjQCGOBnodHhQ/eWh7YQNW6IwxetZj
-	 ZeCDmEn1PEnbNZZPNswUfYeccI4yS0hlvwuSkeuzPTp7oDEFbrV4H4rax7VY5JBKNVoGcmCEWwu3
-	 msKkRd2dK5xn8UXPhmixWJJ0oVmzz2pDk0sIPdeV4+ECYJj7ja8WdjJsmFaC8/kSYakQ+SRuZx50
-	 bp+mARe0uVOSdvs7fUNiSNvykVRHHu5Mqoi9MnfTsDKi3ANucO1+R5G1bgrg8qBNQIpEKcUBVuS9
-	 CVLYdpUn4pCXga/eUPN7BcM9s4oZ6vnZB4fhNZjTAvyGVmBh2kFLOXa9TsrbFhuYmlYvDXu97N26
-	 zRmEXgYrxqUb+25rilvfaFGW9Nhm7pARKbD4qun8dY8cQyJm3BX7mRgd11kd4zzRA3F7W6TOCa9J
-	 AV6A16ctJd+DGWKNBa3XRjgHFxFMmwneUk4TYfQviThywESBxluedaAj9zI+7Nz+I/EqgszIiJkp
-	 N5owYYKYYqqURgndfLBioxVvA8LuEg1ZeP/qMxl3fL68/8x5BnHL9a9vjNZVruf9XudNQNWOb4hW
-	 BgrLSM3fCY/mA05dodmlt7JIuPTuzOKZfk10/7gyOxEYf+8alYur9kIZNW6GU8IlM1R+bFsc41
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+4d7cd7dd0ce1aa8d5c65@syzkaller.appspotmail.com
-Cc: jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] isofs: Prevent the use of too small fid
-Date: Fri,  4 Apr 2025 13:31:29 +0800
-X-OQ-MSGID: <20250404053128.2801269-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <67eee51c.050a0220.9040b.0240.GAE@google.com>
-References: <67eee51c.050a0220.9040b.0240.GAE@google.com>
+	s=arc-20240116; t=1743744818; c=relaxed/simple;
+	bh=t5YrEvo1Qv7V/OOCE0jzPDPPWuEcHK5DHyugrkXD3oU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=liuJrITCdcCfzozlR3Aho4T2ZxSVQ5YiJCrA2Kh7c2a3jnRnAQoGXiMMVpsDHV/h8RvRC1l0w9CS/gQjQScJ61MjPMZu+wfBvAF3P/+bOv+DLx4JLr4COonoQTW/cSVFdGc9nP/J1JRAzqJOzENZ4JSG7svtADgIRHByU4hbfS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RWgGmVDV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743744815;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W8DadzuBkB0b+TswMeRC57LXNTfY/qY6jGCVQ+lHwe0=;
+	b=RWgGmVDVEz2mbKbGB/sZ/+MSuhg3xTGQWDw5nXp1ATy/WmNtcLDQkdVaWKBnWso3QUMmQe
+	V22vKxkcmsBVGkq4R0nja3WP7cCbQqrFmIr/FOh6/CpV+kqqKQjytir+cbxT1aok1rW0bq
+	nZE4tjtqjfmHpnRfwFF+Zxhcc/ybTlQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-319-YIXJzMzmMUq5WH0h3kbuIA-1; Fri, 04 Apr 2025 01:33:33 -0400
+X-MC-Unique: YIXJzMzmMUq5WH0h3kbuIA-1
+X-Mimecast-MFC-AGG-ID: YIXJzMzmMUq5WH0h3kbuIA_1743744812
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43bc97e6360so9252835e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 22:33:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743744812; x=1744349612;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W8DadzuBkB0b+TswMeRC57LXNTfY/qY6jGCVQ+lHwe0=;
+        b=EGgVGYXADHLSxRRojcP9OyLtcShyhcIMLHHOFC196WiCg280BGrW9aBKmiU1tT9tz7
+         hzJ2rr9syNYQpzms82vUwH8y/hEVjpLg8FjXjecJol5jBqMpliAgB28x4JwA2vAptl7J
+         s+nBfCp1vmiaNSdrTwFxGAf/UW2RC9yr2jQC+SCvVv9HvcRdLv9pTuj/h9Qkv/h6Ltv6
+         YuJ6VzK7p9/2Nlf1NZPz/MQfU3Hn6GRF2BLwOWv9RFSdGnnSWdRlX/t0UUi1NBBVTqeD
+         xM56QVBk2+EmLkVm5VWHUCtwHCzYrx3s8SDDpt/NnRFWhXrXavwWoUPnq79si7ooNBEF
+         m2BA==
+X-Forwarded-Encrypted: i=1; AJvYcCU56vq8JEf38Glea6tKYZsg32NIOSoDmTafvbK3RRqJemCVFgJzRJM2SfSKlFB/gbZOIfTqvl365CUCpC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLzOAgtNOUov+88RT0Br/dAEOi9Iaqpb8ZlTu7OW1sqZiuJA8Z
+	b76W9yQZx1hK7uUHaKgEypp48Nt7d4LM7Z4+7oSQHpuS3w4kFbVjcwk53h2eGkwr5J1teQCACyo
+	LcpQ8p2nau1jV5+mvnz7CzVxKQCkRPXReMFBlI6aQZl0jAAW8kqr4298bbDvh1Q==
+X-Gm-Gg: ASbGncupLuwTIefvKYFcc7VudGxNfBjfzWvIZPZgM362sjW7+COB7DrCV4LcbSGthwT
+	xfUSdNZ2QuEhIfj71SS1t8Q+EG21BvlvJ0eB68yBzr/ksl07y9PeBNcbP2buUPA2NH3sqs7XG17
+	uWaJrxRcA98FKFJX/1Af71KmER3dF6d6Ax+Qrbny0vdX4gRF0o3g2v1lTz5fCvAgOoQT2Me9Tp/
+	H+gSvRGSpYhHuPmG2Rh+9yw7jXn4Xx1Yfe/Ujjx5pY/QB8rsFuAkRV0W1CfquUUglvSe5VbypCL
+	IQRGoDMLlg==
+X-Received: by 2002:a05:600c:6986:b0:43d:a90:9f1 with SMTP id 5b1f17b1804b1-43ecf822cf4mr12380315e9.6.1743744812321;
+        Thu, 03 Apr 2025 22:33:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFOWcVoqDuuU1EzwnYMSgwjMR/a8JCeY7bzgZQlbtecRuO04aJY8fG8iABZRmySxq9rz0/+0A==
+X-Received: by 2002:a05:600c:6986:b0:43d:a90:9f1 with SMTP id 5b1f17b1804b1-43ecf822cf4mr12380055e9.6.1743744811973;
+        Thu, 03 Apr 2025 22:33:31 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec342a3dfsm36561555e9.4.2025.04.03.22.33.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 22:33:31 -0700 (PDT)
+Date: Fri, 4 Apr 2025 01:33:28 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Halil Pasic <pasic@linux.ibm.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, Chandra Merla <cmerla@redhat.com>,
+	Stable@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
+	Thomas Huth <thuth@redhat.com>, Eric Farman <farman@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Wei Wang <wei.w.wang@intel.com>
+Subject: Re: [PATCH v1] s390/virtio_ccw: don't allocate/assign airqs for
+ non-existing queues
+Message-ID: <20250404013208-mutt-send-email-mst@kernel.org>
+References: <20250402203621.940090-1-david@redhat.com>
+ <20250403161836.7fe9fea5.pasic@linux.ibm.com>
+ <20250403103127-mutt-send-email-mst@kernel.org>
+ <20250404060204.04db301d.pasic@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250404060204.04db301d.pasic@linux.ibm.com>
 
-syzbot reported a slab-out-of-bounds Read in isofs_fh_to_parent. [1]
+On Fri, Apr 04, 2025 at 06:02:04AM +0200, Halil Pasic wrote:
+> On Thu, 3 Apr 2025 10:35:33 -0400
+> "Michael S. Tsirkin" <mst@redhat.com> wrote:
+> 
+> > On Thu, Apr 03, 2025 at 04:18:36PM +0200, Halil Pasic wrote:
+> > > On Wed,  2 Apr 2025 22:36:21 +0200
+> [..]
+> > > 
+> > > 5.5.2 Virtqueues
+> > > 
+> > > 0
+> > >     inflateq 
+> > > 1
+> > >     deflateq 
+> > > 2
+> > >     statsq 
+> > > 3
+> > >     free_page_vq 
+> > > 4
+> > >     reporting_vq  
+> > 
+> > Indeed. Unfortunately, no one at all implemented this properly as
+> > per spec :(.
+> > 
+> > Balloon is the worst offender here but other devices are broken
+> > too in some configurations.
+> > 
+> > 
+> > Given it has been like this for many years I'm inclined in this
+> > instance to fix the spec not the implementations.
+> > 
+> 
+> I understand! For me at least knowing if we are going to change the
+> spec or the implementations is pretty important. It would probably
+> make sense to spin a patch for the spec, just for the unlikely case that
+> somebody did end up implementing this by the spec and wants to protest.
+> 
+> I think, a consequence of this design is that all queues need to be
+> created and allocated at initialization time.
 
-The handle_bytes value passed in by the reproducing program is equal to 12.
-In handle_to_path(), only 12 bytes of memory are allocated for the structure
-file_handle->f_handle member, which causes an out-of-bounds access when
-accessing the member parent_block of the structure isofs_fid in isofs,
-because accessing parent_block requires at least 16 bytes of f_handle.
-Here, fh_len is used to indirectly confirm that the value of handle_bytes
-is greater than 3 before accessing parent_block.
+Why? after feature negotiation.
 
-[1]
-BUG: KASAN: slab-out-of-bounds in isofs_fh_to_parent+0x1b8/0x210 fs/isofs/export.c:183
-Read of size 4 at addr ffff0000cc030d94 by task syz-executor215/6466
-CPU: 1 UID: 0 PID: 6466 Comm: syz-executor215 Not tainted 6.14.0-rc7-syzkaller-ga2392f333575 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0x198/0x550 mm/kasan/report.c:521
- kasan_report+0xd8/0x138 mm/kasan/report.c:634
- __asan_report_load4_noabort+0x20/0x2c mm/kasan/report_generic.c:380
- isofs_fh_to_parent+0x1b8/0x210 fs/isofs/export.c:183
- exportfs_decode_fh_raw+0x2dc/0x608 fs/exportfs/expfs.c:523
- do_handle_to_path+0xa0/0x198 fs/fhandle.c:257
- handle_to_path fs/fhandle.c:385 [inline]
- do_handle_open+0x8cc/0xb8c fs/fhandle.c:403
- __do_sys_open_by_handle_at fs/fhandle.c:443 [inline]
- __se_sys_open_by_handle_at fs/fhandle.c:434 [inline]
- __arm64_sys_open_by_handle_at+0x80/0x94 fs/fhandle.c:434
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+> I mean in the spec we have something like 
+> """
+> 5.1.6.5.6.1 Driver Requirements: Automatic receive steering in multiqueue mode
+> The driver MUST configure the virtqueues before enabling them with the VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET command. 
+> """
+> 
+> For example one could want to hotplug 2 more vCPUs and still have a
+> queue-pair per cpu (and a controlq). Those 2 extra queue-pairs could
+> in theory be allocated on-demand instead of having to allocate memory
+> for the rings for all the queues corresponding to the maxed out setup.
+> I've had a look at the Linux virtio-net and it does allocate all the
+> queues up front.
+> 
+> Also with this design, I believe we would effectively prohibit "holes".
 
-Allocated by task 6466:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x40/0x78 mm/kasan/common.c:68
- kasan_save_alloc_info+0x40/0x50 mm/kasan/generic.c:562
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0xac/0xc4 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __do_kmalloc_node mm/slub.c:4294 [inline]
- __kmalloc_noprof+0x32c/0x54c mm/slub.c:4306
- kmalloc_noprof include/linux/slab.h:905 [inline]
- handle_to_path fs/fhandle.c:357 [inline]
- do_handle_open+0x5a4/0xb8c fs/fhandle.c:403
- __do_sys_open_by_handle_at fs/fhandle.c:443 [inline]
- __se_sys_open_by_handle_at fs/fhandle.c:434 [inline]
- __arm64_sys_open_by_handle_at+0x80/0x94 fs/fhandle.c:434
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+For existing devices at least.
 
-Reported-by: syzbot+4d7cd7dd0ce1aa8d5c65@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=4d7cd7dd0ce1aa8d5c65
-Tested-by: syzbot+4d7cd7dd0ce1aa8d5c65@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/isofs/export.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Now if holes are prohibited, IMHO it does not make a whole lot of
+> sense for the virtio_find_vqs() to support holes. Because the holes
+> and a fair amount of complexity. Of course that would make sense as a
+> cleanup on top.
+> 
+> Regards,
+> Halil
 
-diff --git a/fs/isofs/export.c b/fs/isofs/export.c
-index 35768a63fb1d..421d247fae52 100644
---- a/fs/isofs/export.c
-+++ b/fs/isofs/export.c
-@@ -180,7 +180,7 @@ static struct dentry *isofs_fh_to_parent(struct super_block *sb,
- 		return NULL;
- 
- 	return isofs_export_iget(sb,
--			fh_len > 2 ? ifid->parent_block : 0,
-+			fh_len > 3 ? ifid->parent_block : 0,
- 			ifid->parent_offset,
- 			fh_len > 4 ? ifid->parent_generation : 0);
- }
--- 
-2.43.0
+
 
 
