@@ -1,167 +1,104 @@
-Return-Path: <linux-kernel+bounces-588270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B913A7B6D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 06:17:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63954A7B6D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 06:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28835178FD5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 04:17:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 390493B8E59
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 04:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0018015ADB4;
-	Fri,  4 Apr 2025 04:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB0314EC5B;
+	Fri,  4 Apr 2025 04:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XM4PeyfU"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="TtBjpuRy"
+Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA76D14A4C7;
-	Fri,  4 Apr 2025 04:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6637741A8F;
+	Fri,  4 Apr 2025 04:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743740218; cv=none; b=GqIUJ+wPDdb7FEVUbCfZcIgIIURM4yzVeeZkoV3S4S0NBRGYpzNHqe5zCwcQh4ESCIO5ymQhf4N0WTywbqVtctJJAGShe/8rdGO/qalulReqzbthUjyglpK36dfQk0VUoppglj6dv7NwKB6N/B/mwS01QxW0M71PWvoXeP+FD6U=
+	t=1743740799; cv=none; b=BnlWbeJecgHgZ6cseDAR1pWrdqOcPeVQ2GHXKeM5BYssli6/BwhlEutfUac30G4oD7DUkf37iioxz3E+b+OZ9FV852M7QLkmpgjjCp3Ck+R1MhZPQc+SW/IdcsPpnFzy2klFyCXmmVgs4lakFfgsb1K1wE4kaXCeG/gx0omUetU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743740218; c=relaxed/simple;
-	bh=y+pQ0N2FyDmDFD1EqNWG0arm7ZC8meGCYxaKT3eCFWo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FqihtQBHQ6Y2BhIlxACLGvsJRDVpIV6H6lpiod3PZT/OS7D8bqeaLaLGng0K3MgrUfr5lc2ygNGiUz8tc6Uz1bQP1mBSj2RROEzV1jNDHPkib86iyrS4JZ7xiCZxZepZBS6u78xi5zKlPBLln7MEH3irvqWKnTlh8AWoZYWsiHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XM4PeyfU; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7376dd56f8fso1937993b3a.2;
-        Thu, 03 Apr 2025 21:16:56 -0700 (PDT)
+	s=arc-20240116; t=1743740799; c=relaxed/simple;
+	bh=A/cZPvww3Ad+U+8Y4dNgBrnTZwnWcMnzKOcn+dtyrdQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TIWCuP+O2M8ZvU2G5F7e+yB2cuCNZfToc0EPzf2q8BBN08pbYt0VLiU6KWEjyyx8EVvSxb6L50y1z/lv7FaqsrHv84YsR4FfubRQh73YSwp8JPWm0LWGQQMJ55GrOMQbbEpXRJp9VcLIKsi4iP8bF6sU5mz3KAV3grijDImjIrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=TtBjpuRy; arc=none smtp.client-ip=23.155.224.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 5FFC082878A5;
+	Thu,  3 Apr 2025 23:18:14 -0500 (CDT)
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id 3t03eeFtjAEE; Thu,  3 Apr 2025 23:18:13 -0500 (CDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id C13338287D28;
+	Thu,  3 Apr 2025 23:18:13 -0500 (CDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com C13338287D28
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743740216; x=1744345016; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=m5agAZSfSkx9AY9eawF+jGKK/rmtQCgnrXpeJjF2DZY=;
-        b=XM4PeyfUDfXU/BAv+rLpjSZHL4X6HYBLhCqEd5HklNfrWeXXqMcoQP7bq1TewDKtDr
-         oX7RvhDkwzfG0i6xuriwWeB4PiBHEiOph3D/yb451JuEiQzSSC67Ru+KZz+2RzKa1XQX
-         1TA4RBehLKXI/LpjKh0tycWrOei4GCw2LYxmDq59VSBGvZRlqzu3jTCiZqyte47JEmDF
-         m0Y8NI0mhvTGkocLjqzy7M8feDjGF/EKo7/g8cI6Gmcj3YknDuTrvfx9Mk2U6ekv4FQC
-         ZfB3xUJXuSLQaC7SEXSEgfdICAZWZtGZWpbtt94PsfcjMYt6LHI01zS1rIItbnMXCxxI
-         gitQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743740216; x=1744345016;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m5agAZSfSkx9AY9eawF+jGKK/rmtQCgnrXpeJjF2DZY=;
-        b=vfrg8Y0TiSo2hvzHNRQGysHEwoTcIlCoi2kjjuiCO12AwhCGsZqCXuj/ABCrqh2i+0
-         unjPziaB2SA+YnQSlrbZ01mCZ79DSwUyQE4thoW8KKlQ90uhE9OW1bNpzpmOkEB3Y/ky
-         hwHIV1y/lPRLJmskHPfDF/C0RzH/uluGdK8A1+ArVp/YUjdy5ZoMub+ZOjxAf4tc/PoP
-         wcw5iqidxg3l7UHX26sZ/Hopj+MJc9xVrIOIx7KPAjfFoRdU//0QUdMquYz/kGQLglvJ
-         SEAB9ccuiySRAht0QV5VHaQTJFbor89bz0WpALSKRyXNfgpDpjEj/UwGLmAYcTusgYTT
-         NMRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZgtu7D92pOHnT1Ooy39s+HfCnUfZYHhFYAPxiIYCjLjxu43Nmovo+fFHo5z4RT2BNUvc8u6BE1uFOaOc=@vger.kernel.org, AJvYcCXc6f0zaYtQL11IP6HQb6ScZmCgPd1JnB0t+FW3HKY/AkqhUWYGvgvtLxprwoJvacl/ynxVsZ+WLb4rnurYJsDkUw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8qiW3AG1RNsziSqGYro8PJNp41xNuKCG2l8PuFcSyDXCmtf/k
-	H+zsmeaUb8jcxY8whaHPeR7klkTUZ1U4neR/3179iitpXnlFNGf+
-X-Gm-Gg: ASbGncv4sYPt8wVcYiALGRO4CEqmGCsQWL9i3nd1SDSOeIfdIkr3DWyPFL041Nl4q/P
-	HAiwflCQeYvaMgc0Ajg+qxalTjMMeW6hkrVmU2U/fJFa0bwkBfYHanrzkZhNOOroMI31rN708RH
-	XERv8bP5/DbWreVn+bpJB/J51nbwyYBhCNcHq0mGdYOaiKxQrVanoYVOXgpONnAQRLC1v3Lizcl
-	hps7tP9ktaJ85h8DSSCheI6fmvgB2cc2G+QPz6cuGO6+QUukbEQQ1PQ+93N6WX2j+VLEfXzyqh7
-	SmGzfVRDhKhe/PpcLytpWiY7EEIGNHB/9dUudNihIUU5H0aMsLHLOOW2cRvCENU6oVeFUNSbf+p
-	0RQUP
-X-Google-Smtp-Source: AGHT+IEBFglo8zSnDqo8NPVmUw2iSuO6FsxUTQvbgHpZJGKLGRVHiLEibhujjeh38Hlx0NyPFVaEAg==
-X-Received: by 2002:a05:6a00:3ccd:b0:736:55ec:ea94 with SMTP id d2e1a72fcca58-739e4c2ee0fmr2714016b3a.20.1743740215755;
-        Thu, 03 Apr 2025 21:16:55 -0700 (PDT)
-Received: from howard.lan (c-73-202-46-50.hsd1.ca.comcast.net. [73.202.46.50])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739d97d1810sm2357431b3a.24.2025.04.03.21.16.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 21:16:55 -0700 (PDT)
-From: Howard Chu <howardchu95@gmail.com>
-To: acme@kernel.org
-Cc: mingo@redhat.com,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	peterz@infradead.org,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Howard Chu <howardchu95@gmail.com>
-Subject: [PATCH v1] perf trace: Fix inconsistent failures in perf trace's tests
-Date: Thu,  3 Apr 2025 21:16:52 -0700
-Message-ID: <20250404041652.329340-1-howardchu95@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
+	t=1743740293; bh=jRiQbVybKjEcDuhXdoz/6+j4pLASO6re8oUagrPcVLA=;
+	h=From:To:Date:Message-Id:MIME-Version;
+	b=TtBjpuRy2roKw6anjOiVGHi1nFullHiYIjLmrAjleSddBBnNuiJnC9Izy9x2UYtCW
+	 fzmWg4y/y3DXgLiqRaJ5xWiQlL9NdK6hc+eVLjP+K8WHUl5nZ0352ghRHyptB+A5c3
+	 yrGV0vm0xTTj/sMLYB0bDP0orTBSocMGOJalEXEY=
+X-Virus-Scanned: amavisd-new at rptsys.com
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id oB17kzBUJWU5; Thu,  3 Apr 2025 23:18:13 -0500 (CDT)
+Received: from raptor-ewks-026.lan (5.edge.rptsys.com [23.155.224.38])
+	by mail.rptsys.com (Postfix) with ESMTPSA id 18DA58287182;
+	Thu,  3 Apr 2025 23:18:12 -0500 (CDT)
+From: Shawn Anastasio <sanastasio@raptorengineering.com>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	tpearson@raptorengineering.com,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Anastasio <sanastasio@raptorengineering.com>
+Subject: [PATCH 0/3] PowerNV PCIe Hotplug Driver Fixes
+Date: Thu,  3 Apr 2025 23:18:07 -0500
+Message-Id: <20250404041810.245984-1-sanastasio@raptorengineering.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-There are two failures that frequently occur in perf trace's tests. One
-is the failure of 'perf trace BTF general tests'; The other one is the
-failure of 'perf trace record and replay', which, when run independently,
-always succeeds.
+Hello all,
 
-The root cause of the first failure, is that perf trace may give two types
-of output, depending on whether the comm of a process can be parsed, for
-example:
+This series includes two fixes for bugs in the PowerNV PCIe hotplug
+driver that were discovered in testing with a Microsemi Switchtec PM8533
+PFX 48xG3 PCIe switch on a PowerNV system, as well as one workaround for
+PCIe switches that don't correctly implement slot presence detection
+such as the aforementioned one. Without the workaround, the switch works
+and downstream devices can be hot-unplugged, but the devices never come
+back online after being plugged in again until the system is rebooted.
+Other hotplug drivers (like pciehp_hpc) use a similar workaround.
 
-mv/312705 renameat2(CWD, "/tmp/file1_VJOT", CWD, "/tmp/file2_VJOT", NOREPLACE) = 0
-:312774/312774 renameat2(CWD, "/tmp/file1_5YcE", CWD, "/tmp/file2_5YcE", NOREPLACE) = 0
+Thanks,
 
-In the test, however, grep is always looking for the comm 'mv', which
-sometimes may not be present.
+Shawn Anastasio (3):
+  pci/hotplug/pnv_php: Properly clean up allocated IRQs on unplug
+  pci/hotplug/pnv_php: Work around switches with broken presence
+    detection
+  pci/hotplug/pnv_php: Fix refcount underflow on hot unplug
 
-The cause of the second failure is that 'perf trace BTF general tests'
-modifies the perf config, and because tests are run concurrently,
-subsequent tests use the modified perf config before the BTF general
-test can restore the original config. Mark the BTF general tests as
-exclusive will solve the failure.
+ drivers/pci/hotplug/pnv_php.c | 110 +++++++++++++++++++++++++++-------
+ 1 file changed, 88 insertions(+), 22 deletions(-)
 
-Signed-off-by: Howard Chu <howardchu95@gmail.com>
-Fixes: 0255338d6975 ("perf trace: Add tests for BTF general augmentation")
----
- tools/perf/tests/shell/trace_btf_general.sh | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/tests/shell/trace_btf_general.sh b/tools/perf/tests/shell/trace_btf_general.sh
-index a25d8744695e..4833618a116b 100755
---- a/tools/perf/tests/shell/trace_btf_general.sh
-+++ b/tools/perf/tests/shell/trace_btf_general.sh
-@@ -1,5 +1,5 @@
- #!/bin/bash
--# perf trace BTF general tests
-+# perf trace BTF general tests (exclusive)
- # SPDX-License-Identifier: GPL-2.0
- 
- err=0
-@@ -29,7 +29,7 @@ check_vmlinux() {
- trace_test_string() {
-   echo "Testing perf trace's string augmentation"
-   if ! perf trace -e renameat* --max-events=1 -- mv ${file1} ${file2} 2>&1 | \
--    grep -q -E "^mv/[0-9]+ renameat(2)?\(.*, \"${file1}\", .*, \"${file2}\", .*\) += +[0-9]+$"
-+    grep -q -E "^.*/[0-9]+ renameat(2)?\(.*, \"${file1}\", .*, \"${file2}\", .*\) += +[0-9]+$"
-   then
-     echo "String augmentation test failed"
-     err=1
-@@ -40,7 +40,7 @@ trace_test_buffer() {
-   echo "Testing perf trace's buffer augmentation"
-   # echo will insert a newline (\10) at the end of the buffer
-   if ! perf trace -e write --max-events=1 -- echo "${buffer}" 2>&1 | \
--    grep -q -E "^echo/[0-9]+ write\([0-9]+, ${buffer}.*, [0-9]+\) += +[0-9]+$"
-+    grep -q -E "^.*/[0-9]+ write\([0-9]+, ${buffer}.*, [0-9]+\) += +[0-9]+$"
-   then
-     echo "Buffer augmentation test failed"
-     err=1
-@@ -50,7 +50,7 @@ trace_test_buffer() {
- trace_test_struct_btf() {
-   echo "Testing perf trace's struct augmentation"
-   if ! perf trace -e clock_nanosleep --force-btf --max-events=1 -- sleep 1 2>&1 | \
--    grep -q -E "^sleep/[0-9]+ clock_nanosleep\(0, 0, \{1,\}, 0x[0-9a-f]+\) += +[0-9]+$"
-+    grep -q -E "^.*/[0-9]+ clock_nanosleep\(0, 0, \{1,\}, 0x[0-9a-f]+\) += +[0-9]+$"
-   then
-     echo "BTF struct augmentation test failed"
-     err=1
--- 
-2.45.2
+--
+2.30.2
 
 
