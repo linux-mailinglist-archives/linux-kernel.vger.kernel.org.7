@@ -1,145 +1,111 @@
-Return-Path: <linux-kernel+bounces-588850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B153A7BE59
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:51:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E70DBA7BE4F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A985177216
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:51:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E98B2189952F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285261F419D;
-	Fri,  4 Apr 2025 13:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450EF1F1908;
+	Fri,  4 Apr 2025 13:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQqedVBp"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iGrKodK4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54611F3FD9;
-	Fri,  4 Apr 2025 13:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1361F1EE7B1
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 13:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743774665; cv=none; b=SMFp2As9dmMP3WCyiTr+BoisUDM/pkJ0rip9ZrNaY68kNHavO0s6EOD0eL4nbLfzKV7q3QftEDcF5+YOVqLkvO7Z8167iimrYZWevutafsy1RJiT3jE9foPjCzg7uCQUdYfAblAZovIScM1/j1DkZPauTD+r76Rs03+oc13autU=
+	t=1743774660; cv=none; b=jGkURJ1p/FOGR22fibQd87dk5ouPaMHCo/AhezZCJeKkh9W6WmpWng45ernW8quKbE3RjKWgyujQ06LvwOCzvEiHXVNjtigPzqyD+TqVvu0jZqWDKNmzCLfWH8gJUAYs+GmQjeeCfvLDE+GtcEyIJsgRqejbclSOHbzD7YVwvuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743774665; c=relaxed/simple;
-	bh=odqQ1fjz8HbSFH/9v9/SL1blNBS1x7rL6Pk/QnF6N+E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=stuuH8uzS7Z6YwYa+HwqPT2hCS6UgAOTufgIEoEz+8y4Ldb51C3dT8n2o8/RTgksJ2r2PCafypj1l36aqCg3oxyFDCxjig+JLyMPkAIMrz9cNzaN+zJUyhhlWASj1h/bN2mD1LUcQBlucq1jdBKf5JpLs3/CHEZ6wvWInWNXU88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RQqedVBp; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54954fa61c9so2491246e87.1;
-        Fri, 04 Apr 2025 06:51:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743774662; x=1744379462; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7oeYXE1eEK0nqbgFOnEoB4sUF240CvHswwo7c3zgx8c=;
-        b=RQqedVBpSem4jyla5Iqgjv7nYYEwXzjAprlwOsx1qdJrfmrx6hMPtyKpRE5F8wF46E
-         Ov9DNAe0d17/HNpJiur+7TZtdQvaSRkLEE7fmBBp4dv2W+A/bFC1dY4AiUQUbunMD9DS
-         yptp4xdxyf5lcoNcTXKBfSBeFTneXfqRkAk+DXK8IbHkxX0uGG8ewhN+kEK2MlaQlN/E
-         MAlvEOq44KZHXCFw1nYeDyFUgfjVk3hsChGnQvnSfn3K+ZawLRPdLnSVgZutaC327feI
-         ZI8qdO9TjjoOO9MWV6WFMGNMNM7FfShoIjZLARKlGZHUtIggYS2qHD35ufgO8x6yXkye
-         X3Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743774662; x=1744379462;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7oeYXE1eEK0nqbgFOnEoB4sUF240CvHswwo7c3zgx8c=;
-        b=WCg25a65IQJZHiEldukGquso34v6J5GSyYA6RZ7IGcIFC5enhkJ7+JspwzdEjxW3pQ
-         H1UhU3mOM2JT15CBW5kJbw7nON6gi2GXzVtU8iKiIG2jwtcY1vz+e2x61uqYjU8tq8i7
-         9xtO55lYuc9Zto/MAJlO8rPXpCX2oByEYN3X3BypwXex6c/LwvbWJS/YMaoaCaOZsWil
-         sxdses71SlVFLDQuW1W8mZxB4MMJ3AvRo73GuXYKvR2NaVKFrXaHPiyyv/EKPIE8mbaT
-         jOUs6E8p44eD1UnqEI5gL+C+s/VVwT/MZwYARFhpJfM3TP7jLwE5kvzIzXWTCCf1ClOj
-         eDAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNAdhuP+2UM6JWh0zfavKtzOxHU9NE1iu3r+V/aKmwBARqiTLnTxWuDgZDijjKKzxU4/7/nXCexEip68U4@vger.kernel.org, AJvYcCUR0prCrxXomGQtPYXM9ADTwPkpxIafejBKX9ztrXynpl5Ds5iXhRU8cSwODvfHQnH2PetAeLaGxJZN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy15nHnlBtKMBj/fNtrZXkJMEhySyT7cEYUhRgxw6RpOK+p+YDP
-	Q9zSU152yMZL8bfFQSbzJY1+WMmdZBx4V4wF+R4dJi/Cvteojb26Q5CU2wBk4RY=
-X-Gm-Gg: ASbGncuySLDrrcdjXvFQ3DtXgSu42UrRZoLPUaLnxkGjOZmLSDz4XtjOpd8oeRnrVLW
-	8pQVCdShhO4V87jXvWporKyjIO5ZgaXFRSlbC4DjjaaRMh7X7OF341VPWf255qS1cytG9FL5RvB
-	UrEO9YIsTo5LyvxlYDCCZzsQTlvEu1jsZoy121UOUnfDIl280exCwl6dHM+NNp5C54/xSVbHH8M
-	Yc0bOkhHvWi9JMgAhw5XJuRxc71cz+qbMeqR4/gEuEtoju34ivdqaQjCI0tI8K4eTtR1yUZBUlJ
-	0Bc0TUSgOxHdpJ41ij0URqH5XsO1JDtxGnbi7ERnL1diXPH+1UMJIQEge10vfhAVQuXg3s2G8Bt
-	NcBrKw/O5D9dPww==
-X-Google-Smtp-Source: AGHT+IEKYC0A+OIpvVVeNH+HCV3q86I0QOTaSCNFYghvEZatVGd3VxKRiKDc4eoS0KWXVEiU7uTTCA==
-X-Received: by 2002:a05:6512:39c7:b0:545:1d13:c063 with SMTP id 2adb3069b0e04-54c227787famr786251e87.14.1743774661912;
-        Fri, 04 Apr 2025 06:51:01 -0700 (PDT)
-Received: from [192.168.1.199] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e635c7dsm436687e87.144.2025.04.04.06.51.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 06:51:01 -0700 (PDT)
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-Date: Fri, 04 Apr 2025 15:50:34 +0200
-Subject: [PATCH v2 3/3] MAINTAINERS: add antry for Sitronix ST7571 LCD
- controller
+	s=arc-20240116; t=1743774660; c=relaxed/simple;
+	bh=g4HKRVR5iNuUKt6XxJzLJNqwyq84woqy+JBuYDM4a+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NCRFNlctvvqmG7wZP0AfLUbxlOLFjYq6q24fVP5fO8JcLMOc5hpqehx+i2mugxxLrnxiK+wf0z0rI34SEW1e+s2/DSjQayOMyth5WY4TwVvqwJ5tYyibiwqF+mCk7d/lvpfPW0odMk1otdjGJpBnBZXXPmRZFDHsWfVOnaz0A10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iGrKodK4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1743774657;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v10Rq+qm+0lVG+/ZpXOjHbbBOxXi0wHFQ9TLKO+kuNU=;
+	b=iGrKodK4dLuYIPPrsdcwxzV5V+t7lkLKDKWXDlq5CndIpSWAV+o7q1rT1n2V2ObWkXidpa
+	bXlj1JPr6Mzl4kmKb3ONNWuzCjfnKMIj4CvtyfAtlEXPwn6iGDr8LjJNZX/xAs1ygGE2UV
+	twqCkZSylUaFykyRfZJB10FMq1OtLu4=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-351-tjhwzyzOMsmGNMNs1LaaYg-1; Fri,
+ 04 Apr 2025 09:50:56 -0400
+X-MC-Unique: tjhwzyzOMsmGNMNs1LaaYg-1
+X-Mimecast-MFC-AGG-ID: tjhwzyzOMsmGNMNs1LaaYg_1743774655
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4891D19560BC;
+	Fri,  4 Apr 2025 13:50:55 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.26])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 157C419560AD;
+	Fri,  4 Apr 2025 13:50:50 +0000 (UTC)
+Date: Fri, 4 Apr 2025 21:50:44 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: syzbot <syzbot+9dd7dbb1a4b915dee638@syzkaller.appspotmail.com>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [block?] possible deadlock in
+ blk_mq_freeze_queue_nomemsave
+Message-ID: <Z-_jtFYt0t0-6A7z@fedora>
+References: <67ea99e0.050a0220.3c3d88.0042.GAE@google.com>
+ <67ee4810.050a0220.9040b.016e.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250404-st7571-v2-3-4c78aab9cd5a@gmail.com>
-References: <20250404-st7571-v2-0-4c78aab9cd5a@gmail.com>
-In-Reply-To: <20250404-st7571-v2-0-4c78aab9cd5a@gmail.com>
-To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=900;
- i=marcus.folkesson@gmail.com; h=from:subject:message-id;
- bh=odqQ1fjz8HbSFH/9v9/SL1blNBS1x7rL6Pk/QnF6N+E=;
- b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBn7+O7/dA1u7aRKnjw6v3db5mxgQbrWUlUP9vgE
- 4r8qX5FcXmJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCZ+/juwAKCRCIgE5vWV1S
- MpcyD/4q8hgZGdDxFkgpIrAFE6ODVzre4mi3fTpe45o99a6PX2GMAHLSBepOd5lLY3Dc3hY2FLZ
- p3GMptImSkppxlb/YZbH6uRzksUyy/1Iinx/QpxHW8VTa4AJnK04Os4Mp5uOcwMd+6SweW/E6ab
- YFr4H4WH0TRBTHXo7hLnx0iqqqOmZ4THTtxJs7EGhBuF1dn/ioNK2tfYx9xyUMXd/ouzyiMl/ig
- lsq17CTKtqD27zULsC+hJr9jUCpFbCYUKs+vlHh1U6oiEGogux5fzg716px5OhOi1vvIkxWTC1D
- NqSEWMB/kYzSKvx2LhXY3C1S8ZCBof11zTrEtUNXsRKfvRl5lPcx2v/+doH0srAmsTBbT1d+y2c
- 7w/gXse04tJT7lmPdVKgT379wB/f9VHQx3nn7FuB9vz9hx31MVIGsLQfh2F0ZPnkLsiaJC/IHmy
- vCfihSShL2kA/sJJnomTBHz1TLjMEC8Q5UlqxbAH9PuYb2FmLSTPOKDm7Oml9zDtg7QThJNWfCL
- qLfaM35vVyboldv/b1M77a58/bFt+1GvcUtDNcnK5mQkPmOz2UbtDnbDQzf2hJIfDC25BYGOzGM
- SoEFcgUaMa3TOUM0X1vMtbi4PDL1Frt39iBe8GOSwl3AQ7CKMlOKTZE+M+8EbDdS5Cc/nc7f67M
- PyVjW+lrVYuHZjA==
-X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
- fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67ee4810.050a0220.9040b.016e.GAE@google.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Add MAINTAINERS entry for the Sitronix ST7571 dot matrix LCD
-controller.
+On Thu, Apr 03, 2025 at 01:34:24AM -0700, syzbot wrote:
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    a1b5bd45d4ee Merge tag 'usb-6.15-rc1' of git://git.kernel...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1711cfb0580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=adffebefc9feb9d6
+> dashboard link: https://syzkaller.appspot.com/bug?extid=9dd7dbb1a4b915dee638
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12ee494c580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13df5998580000
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-a1b5bd45.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/588b4d489b63/vmlinux-a1b5bd45.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/51ead797f7ae/bzImage-a1b5bd45.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+9dd7dbb1a4b915dee638@syzkaller.appspotmail.com
 
-Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
----
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+...
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 889bd4a59551c9bc125f94944a6e1c7e3ef2de83..eeae24fda846b9f63400ebb08c3fa7f02f3f4b19 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7572,6 +7572,12 @@ T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
- F:	Documentation/devicetree/bindings/display/sitronix,st7586.txt
- F:	drivers/gpu/drm/tiny/st7586.c
- 
-+DRM DRIVER FOR SITRONIX ST7571 PANELS
-+M:	Marcus Folkesson <marcus.folkesson@gmail.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/display/sitronix,st7571.yaml
-+F:	drivers/gpu/drm/tiny/st7571-i2c.c
-+
- DRM DRIVER FOR SITRONIX ST7701 PANELS
- M:	Jagan Teki <jagan@amarulasolutions.com>
- S:	Maintained
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
 
--- 
-2.49.0
+#syz test: https://github.com/ming1/linux.git syzbot-test
+
+
+Thanks,
+Ming
 
 
