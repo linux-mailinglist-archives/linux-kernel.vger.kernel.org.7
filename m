@@ -1,79 +1,147 @@
-Return-Path: <linux-kernel+bounces-588530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 812BFA7BA05
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:33:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A17EA7BA0B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DCC07A9467
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 09:32:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA0BC7A627A
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 09:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD9C1ADC8F;
-	Fri,  4 Apr 2025 09:33:28 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA571AF0BF;
+	Fri,  4 Apr 2025 09:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d9MtoQrI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727B71A8F79;
-	Fri,  4 Apr 2025 09:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249CB16132F;
+	Fri,  4 Apr 2025 09:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743759208; cv=none; b=e2IQdr60EGnZ3Rd6eKD54yEqykgYhbg8hjeVYK3voEAOO54RZkNJLEyXwr67EGkQdqiKNsCf7YBm7GA957ehDsbFbNYfIuSB7QQl9qmK5U1jyyN4P9Mnuay13nfXoMYRnDer4FuWeolS0X05X6l9KAAgr2dBPzLfZajYZ6N3A4I=
+	t=1743759281; cv=none; b=Hj3lwSo+F+OGC4YJjHfw2Vf4HydczP4/aQ3WEFAbx0DKMvEEf0iZgfdZtEeGNzUTBvBYcvnF6gHTSqI/mHbO9xDUjEGXhlf6zGWqZJtmhPTDDg6qnXMH9Vb2ZW6ZrdU/Ns+23hUVvnPyp5wI5ND+yy6ukNujCJflNAgbzygYquI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743759208; c=relaxed/simple;
-	bh=OlwY32Fbx2TlVbmK0WPgwwu2UwN+JSBPC0gU3EjSsdI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=phm+04C2YxXlduBOAtDQQ8c9TZBXdzRiF2KNOCAieo728sWrIM3aqFq79Qyi6WHnZ+7Jqc7AxvqjEuQHl0N0CPD+8jFALyh/6pVXDypEaMcsOc7lE1JJ2CIZkmLvGGkASnoFHj4if/g7K9xroe0mMEtcbpt5zZQ0Rwwysf5n3iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZTYGb06R4z6K61Z;
-	Fri,  4 Apr 2025 17:29:43 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 31004140498;
-	Fri,  4 Apr 2025 17:33:23 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 4 Apr
- 2025 11:33:22 +0200
-Date: Fri, 4 Apr 2025 10:33:21 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Zaid Alali <zaidal@os.amperecomputing.com>
-CC: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
-	<tony.luck@intel.com>, <bp@alien8.de>, <robert.moore@intel.com>,
-	<dan.j.williams@intel.com>, <Benjamin.Cheatham@amd.com>,
-	<Avadhut.Naik@amd.com>, <viro@zeniv.linux.org.uk>, <arnd@arndb.de>,
-	<ira.weiny@intel.com>, <dave.jiang@intel.com>,
-	<sthanneeru.opensrc@micron.com>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <acpica-devel@lists.linux.dev>
-Subject: Re: [PATCH v5 9/9] ACPI: APEI: EINJ: Update the documentation for
- EINJv2 support
-Message-ID: <20250404103321.0000035d@huawei.com>
-In-Reply-To: <20250403231339.23708-10-zaidal@os.amperecomputing.com>
-References: <20250403231339.23708-1-zaidal@os.amperecomputing.com>
-	<20250403231339.23708-10-zaidal@os.amperecomputing.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1743759281; c=relaxed/simple;
+	bh=n0DVXYKk8hiZe5RfNnARym5BTewBVaBxsH/5mlip/ik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mAh+Xwk6zJFDMxyfcEwd2M8fYcV682cpZhUhK2il32imHhA1GNV6TjEAjAaF5T1cOPuR9sOpcawFpvogpdsunuRO7cTVFIV31rhq3DG1jvfKe1hGLi2KFJnFuoRSvaNnvXQhx6kpTuKrpJWVkW/b3pXNgoUvCtczOog8+aqqxhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d9MtoQrI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31422C4CEE5;
+	Fri,  4 Apr 2025 09:34:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743759280;
+	bh=n0DVXYKk8hiZe5RfNnARym5BTewBVaBxsH/5mlip/ik=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d9MtoQrIT/Zn9pYbxRaCfVq9RrDir4kWKIFZQM17jaDiUtXizwIwDAb0+SzveV7Oz
+	 uypNUT5s6r8mDEUZEu3bb8QHKrHFF3JJFD2fTe1X/Faudp1NqluPMNjwUon/SPc7hz
+	 mAp91vJyLx+ZceZCCIzr6ukASR27nslWKnfRXax1NJu5K9k+FkfYOAkoIuGQneKO8Z
+	 YmdYgaQBTeqFFiaq0psUl3RF2B02Vnh8ytPVZocWkpckIm2aZ6tYTq5Kar38bnoDmg
+	 XL749/d5k9frjLLDWjhCfAOTKFYMEmLkJQBegWm40iGonmHeyVW4hxSJmxF/3kScem
+	 s9Wh8W2Tg5vBw==
+Date: Fri, 4 Apr 2025 10:34:33 +0100
+From: Lee Jones <lee@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 15/32] mfd: sec: s2dos05: doesn't support interrupts
+ (it seems)
+Message-ID: <20250404093433.GE43241@google.com>
+References: <20250403-s2mpg10-v3-0-b542b3505e68@linaro.org>
+ <20250403-s2mpg10-v3-15-b542b3505e68@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250403-s2mpg10-v3-15-b542b3505e68@linaro.org>
 
-On Thu,  3 Apr 2025 16:13:39 -0700
-Zaid Alali <zaidal@os.amperecomputing.com> wrote:
+Patch is fine, but the subject line should be more assertive.
 
-> Add documentation for the updated ACPI specs for EINJv2(1)(2)
+Also, there is seldom any need for sub-sentences in ()'s in them.
+
+IOW, drop the "(it seems)" part.
+
+> The commit bf231e5febcf ("mfd: sec-core: Add support for the Samsung
+> s2dos05") adding s2dos05 support didn't add anything related to IRQ
+> support, so I assume this works without IRQs.
 > 
-> (1) https://github.com/tianocore/edk2/issues/9449
-> (2) https://github.com/tianocore/edk2/issues/9017
-I forgot to highlight these should probably be link tags as per
-earlier patch review.  Other than that, looks good.
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Rather than printing a warning message in sec_irq_init() due to the
+> missing IRQ number, or returning an error due to a missing irq chip
+> regmap, just return early explicitly.
+> 
+> This will become particularly important once errors from sec_irq_init()
+> aren't ignored anymore in an upcoming patch and helps the reader of
+> this code while reasoning about what the intention might be here.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+>  drivers/mfd/sec-irq.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
+> index 9f0173c48b0c8186a2cdc1d2179db081ef2e09c4..79a3b33441fa5ab48b4b233eb8d89b4c20c142ed 100644
+> --- a/drivers/mfd/sec-irq.c
+> +++ b/drivers/mfd/sec-irq.c
+> @@ -452,16 +452,12 @@ int sec_irq_init(struct sec_pmic_dev *sec_pmic)
+>  	int type = sec_pmic->device_type;
+>  	const struct regmap_irq_chip *sec_irq_chip;
+>  
+> -	if (!sec_pmic->irq) {
+> -		dev_warn(sec_pmic->dev,
+> -			 "No interrupt specified, no interrupts\n");
+> -		return 0;
+> -	}
+> -
+>  	switch (type) {
+>  	case S5M8767X:
+>  		sec_irq_chip = &s5m8767_irq_chip;
+>  		break;
+> +	case S2DOS05:
+> +		return 0;
+>  	case S2MPA01:
+>  		sec_irq_chip = &s2mps14_irq_chip;
+>  		break;
+> @@ -492,6 +488,12 @@ int sec_irq_init(struct sec_pmic_dev *sec_pmic)
+>  				     sec_pmic->device_type);
+>  	}
+>  
+> +	if (!sec_pmic->irq) {
+> +		dev_warn(sec_pmic->dev,
+> +			 "No interrupt specified, no interrupts\n");
+> +		return 0;
+> +	}
+> +
+>  	ret = devm_regmap_add_irq_chip(sec_pmic->dev, sec_pmic->regmap_pmic,
+>  				       sec_pmic->irq, IRQF_ONESHOT,
+>  				       0, sec_irq_chip, &sec_pmic->irq_data);
+> 
+> -- 
+> 2.49.0.472.ge94155a9ec-goog
+> 
+
+-- 
+Lee Jones [李琼斯]
 
