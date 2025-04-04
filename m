@@ -1,118 +1,146 @@
-Return-Path: <linux-kernel+bounces-589091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F98A7C1B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:44:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08AF7A7C1AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 18:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ED79189CD94
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:44:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 238E27A46DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 16:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A0C20E70F;
-	Fri,  4 Apr 2025 16:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F0B20E33E;
+	Fri,  4 Apr 2025 16:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G+1nuHta"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eh1y12kG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0171EF370;
-	Fri,  4 Apr 2025 16:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9C1208978;
+	Fri,  4 Apr 2025 16:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743785075; cv=none; b=NK3+4sK1z/ZR2c8ov59xZyWy1WMputFytJiRgpDb7ez0iGU11e93da+Sq2cml+RVdZTMyqG2VGh9urNdyHq3N5+JNADBGajUDrfBzoLobW4sqw8jt7atpl2uxQVlhUyAyQBdyyubJ46EB4hln3aGS1ADaV6MMvjwOn9KhrPw5ko=
+	t=1743784978; cv=none; b=EnWubmWZEn1AO6236kiuJhNnf+IV/8N6iWgcIb1neQ/pMIx3ALbBf/Q30kj0nmRwUzGYoTGkKOx7ebmYO377rfH53uXsv7NFmvn4Edva83Dhe2J3RXnY5d5E8NRIJdco7mNHtj/j4TPJP8zMY9q8SfNp+pCnFe9jSso25Zk0UYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743785075; c=relaxed/simple;
-	bh=jd/7IZ1uZPU6UQm0EzVBwWHG9PUeSbDpdEAjlLYE5Xg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RPW4IQnJZ0/VFjkj0NKVp5bWR0bLPMfJFMbPi5CNEfY8N4q42EzeOqy6JR367104O9YP8tLSgcuZ/VEePsm0bohk/kLPHXW2dGBR0BOzP4tICwnh8e8m6oP1eQt0wb07hkzmkwGuvEGRMOrbA0miUlUkW6QB4caeKvBBZXqxGag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G+1nuHta; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-736c1cf75e4so1900186b3a.2;
-        Fri, 04 Apr 2025 09:44:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743785074; x=1744389874; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NuDjKqU/zJ9aMgBXHX6eXeC15pS8mlcSXTl6w1NpC/w=;
-        b=G+1nuHta7YhlpzffZBt1WK165DIWertm2+gUS9cDQq2sSY1F+Gs5kAUcvSoYkmKwiT
-         6RyGq6NKUXBqPBdGBrsrB27DIj0yizYm8WAFQUWAosGOgrN9nt+BH3bJXIEenylVqM4X
-         iZFSb/joTM30SGqyIyo6Lj7i3MlCyU95AJVsfeaktvc18S5iMbkf/XQGLXMVN9NJpzUF
-         eWLA7bBT7UwwLzMrx79CSGRcn7N9JYIkOzV4YY1ulzpgzhEu2ZAIAjmFWV2hp1sxKHKI
-         ReC7zzOyXsqdD95ipt16I0p0gDm+SXX2XtiV5lm/yH4+a0uGaEzSaj9kzkuIVkEUmwYv
-         7W0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743785074; x=1744389874;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NuDjKqU/zJ9aMgBXHX6eXeC15pS8mlcSXTl6w1NpC/w=;
-        b=cBAkKnoU90T3qt8RIz8DzTAVLRPBdb5I/VzviSpt9bQ3g3SpuuJiQfa79Qe1CcttNS
-         tlTONfOOhcvivowRParMfsVMbDgVnXPtLQEI0FqFQ2J75at+N+FZz+QdSB3sJiQa0BjX
-         /+KW0soYBQSYUgzq4X4vaPrrtbwgISBxVLmSo5L8GAajyC/CkDOyyF0/4/ByfeXYidEf
-         nxR9OqW9/iDxVhqNoFqFHLAVD4PXQyHXleQysYhwJfdyNg/A47eLtv3ueS+0GCD4Po9f
-         jx7RtxTD9GABEIMK4LY3zTrpGbAm1XFXurt+fbL15XcdtviGRJ+6UF5xRwB6s/HVoLuM
-         W8EA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsk0WckLg7aHuADQL+wjdoTHuZOtZdoOF6KGZinIRAFP9BQ+KoPa+CEYSDIIu4gaIuNzgOQEf5nrk=@vger.kernel.org, AJvYcCWlLY2bQeeYwQ8Z34J1lW7Pu3ufb5kuE/5EtklTof5Pd3yvIHufaOMrHuCHyop5BIfiF10u9qo+UGyICc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgGuDmSjs3ZnVQThSZNtntEgL1e+2iyaw4M6qVgY/jiFR7J6/m
-	vPC1dG9c1+NFydUZPxfFaB1popOL4Uq09uthenFnp5heVA4dbMwe
-X-Gm-Gg: ASbGncvQTXN+VY/MZIYHaXikNhK0DumxxmYkXghpdPhmjRaXP7umc7l/qWTAUm1EAaa
-	AX/vP14uIU9S1fDyLO+zkU0EUP2dGX+3/E+/5CT/Lao+s0X+UvUirNYVS9Uq7HUFewRrQVTppw7
-	0X2dxWDubnOYqfyX4WbiYSLJdeAxqfS8iUsNqhvl9j43zJJvBE3B9eKeN0xkbKlD1RywtLnhDrf
-	OQDwPo/P/FqBhRkTia1TlgUWXtOB8qDY9crzwad8cVxAQOxz7lVWbjK+/GB4vO07kGQ7RuAbEsM
-	L8gs5aMQcNqkjVdFYGPB1iIX0bhECz80e4D3icEVivQ=
-X-Google-Smtp-Source: AGHT+IGA2+5a3BkHSLQ7fnrH0CvUccQdBM+8f757JwVDB2xJq2KAZWTALrj8BSSj5G/WcAs0lQvHgg==
-X-Received: by 2002:a05:6a00:10d2:b0:739:4723:c4d7 with SMTP id d2e1a72fcca58-739e7142c56mr4155788b3a.22.1743785073708;
-        Fri, 04 Apr 2025 09:44:33 -0700 (PDT)
-Received: from nuvole.. ([144.202.86.13])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739d9ea093asm3710786b3a.102.2025.04.04.09.44.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 09:44:33 -0700 (PDT)
-From: Pengyu Luo <mitltlatltl@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Pengyu Luo <mitltlatltl@gmail.com>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] cpufreq: Add SM8650 to cpufreq-dt-platdev blocklist
-Date: Sat,  5 Apr 2025 00:42:19 +0800
-Message-ID: <20250404164219.166918-1-mitltlatltl@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1743784978; c=relaxed/simple;
+	bh=TNi4PEbptWpWAlp9afnYThvYme8MQTL7nzY/LKJbojI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tMHV1MmasrgVj+Z5/KbYTeRKahhMe2ZbAkgiy+2Yq6JXlywxeKI9kakLgz/g0SagXh4T928dMX4g0gA+uB3fV12L9/i0Jb/wsiG7Rg5mBgNkktv6j+1ZXt1tRjevbYhnLxLYSSFf4dIyT0XEIWMAXuOCogJ8VEis//ewwfFrYXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eh1y12kG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE18AC4CEDD;
+	Fri,  4 Apr 2025 16:42:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743784977;
+	bh=TNi4PEbptWpWAlp9afnYThvYme8MQTL7nzY/LKJbojI=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Eh1y12kGzKjDxw0EkmsgbNYFzE08H2x4rsUZnyy8S71w9uTKa/P+KY4QRolfBjrK7
+	 bcqayUG+NPAWRgE5EhqkVH9so4ME2yldi2gyQodwOKfTPIZF1C96uVuSMrcyIo7q/h
+	 IgCm+Ph3l4MEDTZoPC9FfEOti2DqnyS0/WVOBR/Vh/jferLLYJFM+nRYiUwGklMgud
+	 V52sIpivx3bqzfFDO56QTCeUXmcBHXkpQ1ePsESZD+uo/XwihiAwNDBsKDC3USEyWn
+	 eRueNckknRYgNzNckqGo8fhodTsHIY6dVQT2G2BC3aituW3xEWwu0TlocAS9MXt+px
+	 7U9L1NTKv0nfA==
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 04 Apr 2025 17:42:32 +0100
+Subject: [PATCH] selftests/mm: Generate a temporary mountpoint for cgroup
+ filesystem
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250404-kselftest-mm-cgroup2-detection-v1-1-3dba6d32ba8c@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAPgL8GcC/x2NzQ6CMBAGX4Xs2U3KIhh9FcMB26+4UX7SLcaE8
+ O42HucwMzsZksLoVu2U8FHTZS5Qnyryz2EewRoKkzhp3dk1/DK8Y4Zlnib2Y1q2VTggw+ei8uP
+ S1TFII/EaqETWhKjf/+DeH8cPJ76eMnAAAAA=
+X-Change-ID: 20250403-kselftest-mm-cgroup2-detection-b761fd232f9d
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Shuah Khan <shuah@kernel.org>, Mina Almasry <almasrymina@google.com>, 
+ Waiman Long <longman@redhat.com>
+Cc: Aishwarya TCV <Aishwarya.TCV@arm.com>, linux-mm@kvack.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2925; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=TNi4PEbptWpWAlp9afnYThvYme8MQTL7nzY/LKJbojI=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBn8AwOxx3xtn4/NlyZcqctIQ64Hba9efHA8DBEgtnn
+ T/6cCqyJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ/AMDgAKCRAk1otyXVSH0J5LB/
+ 9A9GmrE3YSF6/3xP/0Z3gw87wadfRJCRggdPL5wF887+qubzuV6aHED/VV4NVO32LZv6DB6QsxNC+/
+ 0t/csSQoNgDoM+IAObBxovJSpAIXBQ0aGGoFtbuMfH2oi49ZiFv+grQg42IPIRm5JkzxbycX4fJqxs
+ KrueY1X8axR9rMR1BplRj2KLrlUGDerPLqCaaiFRWJ/9VsJbtMH8XJK+7ay7PwyQziELA5xVLwKK4i
+ vJ0mep9INEG0252n+hnbJX7G2RxzuZlXYqQcV/35IEF155DvZqHMMc97rQBytHewE3VgYCXo2vx6Z4
+ +lWd1TsINKu0ItLq2wPwf8xp9X4/Nu
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-SM8650 have already been supported by qcom-cpufreq-hw driver, but
-never been added to cpufreq-dt-platdev. This makes noise
+Currently if the filesystem for the cgroups version it wants to use is
+not mounted charge_reserved_hugetlb.sh and hugetlb_reparenting_test.sh
+tests will attempt to mount it on the hard coded path
+/dev/cgroup/memory, deleting that directory when the test finishes. This
+will fail if there is not a preexisting directory at that path, and
+since the directory is deleted subsequent runs of the test will fail.
+Instead of relying on this hard coded directory name use mktemp to
+generate a temporary directory to use as a mountpoint, fixing both the
+assumption and the disruption caused by deleting a preexisting
+directory.
 
-[    0.388525] cpufreq-dt cpufreq-dt: failed register driver: -17
-[    0.388537] cpufreq-dt cpufreq-dt: probe with driver cpufreq-dt failed with error -17
+This means that if the relevant cgroup filesystem is not already mounted
+then we rely on having coreutils (which provides mktemp) installed. I
+suspect that many current users are relying on having things automounted
+by default, and given that the script relies on bash it's probably not
+an unreasonable requirement.
 
-So adding it to the cpufreq-dt-platdev driver's blocklist to fix it.
-
-Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
+Fixes: 209376ed2a84 ("selftests/vm: make charge_reserved_hugetlb.sh work with existing cgroup setting")
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/testing/selftests/mm/charge_reserved_hugetlb.sh  | 4 ++--
+ tools/testing/selftests/mm/hugetlb_reparenting_test.sh | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-index 2aa00769c..a010da0f6 100644
---- a/drivers/cpufreq/cpufreq-dt-platdev.c
-+++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-@@ -175,6 +175,7 @@ static const struct of_device_id blocklist[] __initconst = {
- 	{ .compatible = "qcom,sm8350", },
- 	{ .compatible = "qcom,sm8450", },
- 	{ .compatible = "qcom,sm8550", },
-+	{ .compatible = "qcom,sm8650", },
- 
- 	{ .compatible = "st,stih407", },
- 	{ .compatible = "st,stih410", },
+diff --git a/tools/testing/selftests/mm/charge_reserved_hugetlb.sh b/tools/testing/selftests/mm/charge_reserved_hugetlb.sh
+index 67df7b47087f..e1fe16bcbbe8 100755
+--- a/tools/testing/selftests/mm/charge_reserved_hugetlb.sh
++++ b/tools/testing/selftests/mm/charge_reserved_hugetlb.sh
+@@ -29,7 +29,7 @@ fi
+ if [[ $cgroup2 ]]; then
+   cgroup_path=$(mount -t cgroup2 | head -1 | awk '{print $3}')
+   if [[ -z "$cgroup_path" ]]; then
+-    cgroup_path=/dev/cgroup/memory
++    cgroup_path=$(mktemp -d)
+     mount -t cgroup2 none $cgroup_path
+     do_umount=1
+   fi
+@@ -37,7 +37,7 @@ if [[ $cgroup2 ]]; then
+ else
+   cgroup_path=$(mount -t cgroup | grep ",hugetlb" | awk '{print $3}')
+   if [[ -z "$cgroup_path" ]]; then
+-    cgroup_path=/dev/cgroup/memory
++    cgroup_path=$(mktemp -d)
+     mount -t cgroup memory,hugetlb $cgroup_path
+     do_umount=1
+   fi
+diff --git a/tools/testing/selftests/mm/hugetlb_reparenting_test.sh b/tools/testing/selftests/mm/hugetlb_reparenting_test.sh
+index 11f9bbe7dc22..0b0d4ba1af27 100755
+--- a/tools/testing/selftests/mm/hugetlb_reparenting_test.sh
++++ b/tools/testing/selftests/mm/hugetlb_reparenting_test.sh
+@@ -23,7 +23,7 @@ fi
+ if [[ $cgroup2 ]]; then
+   CGROUP_ROOT=$(mount -t cgroup2 | head -1 | awk '{print $3}')
+   if [[ -z "$CGROUP_ROOT" ]]; then
+-    CGROUP_ROOT=/dev/cgroup/memory
++    CGROUP_ROOT=$(mktemp -d)
+     mount -t cgroup2 none $CGROUP_ROOT
+     do_umount=1
+   fi
+
+---
+base-commit: a4cda136f021ad44b8b52286aafd613030a6db5f
+change-id: 20250403-kselftest-mm-cgroup2-detection-b761fd232f9d
+
+Best regards,
 -- 
-2.49.0
+Mark Brown <broonie@kernel.org>
 
 
