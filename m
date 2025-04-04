@@ -1,128 +1,131 @@
-Return-Path: <linux-kernel+bounces-588319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E053A7B79F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:13:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF08A7B7A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01FE9189D1A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 06:13:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A45F2189D713
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 06:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268EF17A31B;
-	Fri,  4 Apr 2025 06:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E60E17A31D;
+	Fri,  4 Apr 2025 06:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VPkebXSR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XYLKwGkT"
+Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2B6101F2;
-	Fri,  4 Apr 2025 06:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EDB1465AE;
+	Fri,  4 Apr 2025 06:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743747188; cv=none; b=Xm4r9fU2KpmsGU5MGDwSscuJ1TmtTc+wN3nnF5j1dgkxHhJFQKiiAqgOIUsjEzdJ4fleW2J0B4GN7ea8T74QcHUEfbOl3vzMxNgd7pXQogIb1c3CkxRvsRGhOLwSOpS3j8PmCLua8nWXpFL/LAP721wFKU51hJ/ltnSP/yI+8Ng=
+	t=1743747291; cv=none; b=kt6VZXlCqwsNsdCJpRQ1+ZDksL8Ps1l4cJLQORW/rBM4hzrrp1fJDqmqgPL5PUbBQgdv1JJFI+DJytapbY45U6wScBpK+FqVA+vG0mHJmSSHNVKmYJkHIbnQ4Qmb5ICbVqdWAV5/FjHrOjCyvzS5PJf6Vkfl9QRjHAhS3AYuk+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743747188; c=relaxed/simple;
-	bh=nZHzpVI3J8SGHs+5EI0MI3PuiDodDZqU3FJVvBRM2r4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MM2/nBjyRbU4RMDiw1OPcRC/tx/VUw7utAhsJNd0dxcjUlBKdSS1LdEdvej//s4UNYTdqbpdveHrTbYGqVTIXUZwPTdekkANdiAuvVW/knuVC3wMp3YJtS+v5TDM1Kq3Kz+e7YhVQbMOnmWUY87Vs2MvXFVScN1S2+YxqT0iVw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VPkebXSR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 538BDC4CEDD;
-	Fri,  4 Apr 2025 06:13:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743747188;
-	bh=nZHzpVI3J8SGHs+5EI0MI3PuiDodDZqU3FJVvBRM2r4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VPkebXSRFOhFIcAFdDtU3srZ27hd/R4EIXd42uyBWOGaKKCoeurgy1s3+i5Og3yBJ
-	 QxwS+JksvgmYAe+cydA338daUJ6QRs4zsAcF23lFVax0V1L422i1DHiCEU7EM0GKNZ
-	 H5n779s2eyyePAplcHd+UtWKvuIp1FZwo1nomBaEEl5N4J9+dwCZOJyDjMVZM+n0Bq
-	 YpQvnNlDg7qXujPxMXPddJTbd73gCwQ76snkpzl2Vj4epY7XYiteQ7Qiic1LlLP45u
-	 DcIx2r7/Hqqkk8DGtmme0SiE8gEUboQ2pYBKOGzGgHY6SptgWndpV/nJZrz5uphKQA
-	 lcrgtcBbm+S0A==
-Message-ID: <8ae5b493-6906-4adc-8983-d343c7803f06@kernel.org>
-Date: Fri, 4 Apr 2025 08:12:59 +0200
+	s=arc-20240116; t=1743747291; c=relaxed/simple;
+	bh=Q+X2nc6nomcFw4vX18B8NcWcC56hgCUDWerNGnkpS3k=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cyb9FmGpKbq4UzY1A6DNKEfAt+DGHlmFeOJYlIm7vi1eCbuj7IGuGCxYtEoUOy9gHdfmv2yjqFVM+rPDNR8LzVce+Nxbh7AWVwy+lNZ7rwQ9sDW51UbrWoUJ6XJSEcruKtk5A4IBXGPvabfET3UWxTrrZGJio1tMfYvpuLoezRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XYLKwGkT; arc=none smtp.client-ip=209.85.210.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-736c3e7b390so1584302b3a.2;
+        Thu, 03 Apr 2025 23:14:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743747289; x=1744352089; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2wHSEINwNnkoIONDsN3NFU6pUQ/aEiqLdUv7c1cE3AE=;
+        b=XYLKwGkTt8U70e5vwSgwMvO9NdseE3D8b5UpY53la4YtCGl/VOyTuM06o3LkSgVsv2
+         rrFHpet0xBhdZopJHOQWlJELHs3DJ2MzczdFkhTVal1g9APoA3oZkdmHRFSgYjmgbACz
+         c8nzmiK8DsJ6khVaiqtH5T+3j/y9m2evIhdDBU+cRxvpyzejFvnqKODPmthQ5SICazzP
+         bZWcX1bBLs+zE7ju/y+B4ChRd+ckphrVm+/dbmRPPHT1YCtyvQk7Tb0XXPbftFrqON+y
+         oEoPFDtTsgz9AmFKyTBlOpDrZrJ+tRUU8a+Sdaady40X1rxrqXk9k5Gacqj+48UE7YUj
+         bTXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743747289; x=1744352089;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2wHSEINwNnkoIONDsN3NFU6pUQ/aEiqLdUv7c1cE3AE=;
+        b=o4Sk3ywO6HZyxYxViNzQxN5+Cf+Mw0oPYMmEiGIzZ+jJPZfrPwmX3AvlB+wRIc1GpH
+         jZOqYXAWH2P77ZDrSnuY/P56hQO8r+/+WpCifvCHd/0M8u0siZIcw6LziNfABaw8Ih9H
+         zy7Kwfb1pTT/GKhWN+y32oYTKyMn1HY0NmAnIcL/uQGgkXKNtxXCqs9dKdT9RncRoYZe
+         3M3AZ+oe+Qn7aCNc9XONn9cUaKKQ8vVVCpSvczz/K1GXFqfaqG4j9T1uXzt+tLXt5K/0
+         wKsOy8D1QQ0/ebKbpze7DUgxyrc27Ttbmh5d3otUBqHirGBooxiS/78zUlCg+s0P+XqM
+         mU1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVgDGKFUn8BYmnQpfp26S2KPLh0WU67Gws0UFCUwi301BOt5+82QFYO5UqcheC/SxZmClRf50fImILVYS0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWItagoUsUMZiZTRkpa+aKy7Wad+MmTXERiegvURUXX0ErbCzq
+	0KEDNyisgjQKJYWOGxHdpLXk/L0eKn/xqOM8GzEgSU92rAJyJv7X
+X-Gm-Gg: ASbGnctv57DJgSeYRQ0cq5HCMumNi9EjdDQ8WDbA5dSO5Y4FAVJ2ytiNtcDwo35l3Gf
+	L2Sr6jiXVFytd4FOir03KHZYMX9S89WhLMJw7Pgw91uFmm21wfdZvAO5USL+uCxbR1z9AEpOzsE
+	wbQTEu7fCWmIjMNkr4zEE9PzzW31biMwobMO1J5goNDDnTLq7LvB+BMuzfJdT0lkR5zSmv0PXk3
+	dU6Agw6NkjusErmRCxiDvy6Qv7OdyzjJA+nGRVKT50skG+qnHGEtWqmOHvJGad5E7TIpUP94dwQ
+	XSnrx6ngOGSZmH5+zrBi7ZWmbrP5UqzEaYTkK2N9xQ5zpg/mXoV3YaSwVYetnXvRqwLXUw==
+X-Google-Smtp-Source: AGHT+IHK6KAghY4r6JYoithJV2ZGL4jKogLKnmv2gszlamlSnbrI1gSpcnkAdg54t7RMxDURdTLUog==
+X-Received: by 2002:a05:6a00:2e0f:b0:736:3d7c:2368 with SMTP id d2e1a72fcca58-739e6ff1d17mr1953597b3a.7.1743747289156;
+        Thu, 03 Apr 2025 23:14:49 -0700 (PDT)
+Received: from henry.localdomain ([223.72.104.236])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739da0b41dfsm2602210b3a.136.2025.04.03.23.14.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 23:14:48 -0700 (PDT)
+From: Henry Martin <bsdhenrymartin@gmail.com>
+To: dlemoal@kernel.org,
+	cassel@kernel.org
+Cc: linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Henry Martin <bsdhenrymartin@gmail.com>
+Subject: [PATCH v2] ata: pata_pxa: Fix potential NULL pointer dereference in pxa_ata_probe()
+Date: Fri,  4 Apr 2025 14:14:38 +0800
+Message-Id: <20250404061438.67557-1-bsdhenrymartin@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <d16bdd67-5060-4bb1-991b-6c82f3936ace@kernel.org>
+References: <d16bdd67-5060-4bb1-991b-6c82f3936ace@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sound: soc: stm: stm32_sai: Use dev_err_probe()
-To: shao.mingyin@zte.com.cn, olivier.moysan@foss.st.com
-Cc: arnaud.pouliquen@foss.st.com, lgirdwood@gmail.com, broonie@kernel.org,
- perex@perex.cz, tiwai@suse.com, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, linux-sound@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- yang.yang29@zte.com.cn, xu.xin16@zte.com.cn, ye.xingchen@zte.com.cn,
- zhang.enpei@zte.com.cn
-References: <20250403154142936Po-soX8Bifyvw_eWSbddT@zte.com.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250403154142936Po-soX8Bifyvw_eWSbddT@zte.com.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 03/04/2025 09:41, shao.mingyin@zte.com.cn wrote:
-> From: Zhang Enpei <zhang.enpei@zte.com.cn>
-> 
-> Replace the open-code with dev_err_probe() to simplify the code.
-> 
-> Signed-off-by: Zhang Enpei <zhang.enpei@zte.com.cn>
-> Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
-> ---
-The code was correct before 2cfe1ff22555 ("ASoC: stm32: sai: add
-stm32mp25 support") and that commit broke it. Some explanation would be
-useful instead of blindly generating patches.
+devm_ioremap() returns NULL on error. Currently, pxa_ata_probe() does
+not check for this case, which can result in a NULL pointer dereference.
 
-Was it done on purpose like that in that commit? Or ST just sent
-downstream commit to mainline without changing it?
+Add NULL check after devm_ioremap() to prevent this issue.
 
-Best regards,
-Krzysztof
+Fixes: 2dc6c6f15da9 ("[ARM] pata_pxa: DMA-capable PATA driver")
+Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
+---
+V1 -> V2: Correct commit message and keep a blank line after check.
+
+ drivers/ata/pata_pxa.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/ata/pata_pxa.c b/drivers/ata/pata_pxa.c
+index 434f380114af..03dbaf4a13a7 100644
+--- a/drivers/ata/pata_pxa.c
++++ b/drivers/ata/pata_pxa.c
+@@ -223,10 +223,16 @@ static int pxa_ata_probe(struct platform_device *pdev)
+ 
+ 	ap->ioaddr.cmd_addr	= devm_ioremap(&pdev->dev, cmd_res->start,
+ 						resource_size(cmd_res));
++	if (!ap->ioaddr.cmd_addr)
++		return -ENOMEM;
+ 	ap->ioaddr.ctl_addr	= devm_ioremap(&pdev->dev, ctl_res->start,
+ 						resource_size(ctl_res));
++	if (!ap->ioaddr.ctl_addr)
++		return -ENOMEM;
+ 	ap->ioaddr.bmdma_addr	= devm_ioremap(&pdev->dev, dma_res->start,
+ 						resource_size(dma_res));
++	if (!ap->ioaddr.bmdma_addr)
++		return -ENOMEM;
+ 
+ 	/*
+ 	 * Adjust register offsets
+-- 
+2.34.1
+
 
