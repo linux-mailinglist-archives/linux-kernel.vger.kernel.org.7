@@ -1,88 +1,163 @@
-Return-Path: <linux-kernel+bounces-588829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44ED1A7BE0C
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:39:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 379FBA7BE0B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E2AB1B608C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:37:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07812177465
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4618C1F12F2;
-	Fri,  4 Apr 2025 13:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653761EF0B9;
+	Fri,  4 Apr 2025 13:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W5kWHoLk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0861F0E48;
-	Fri,  4 Apr 2025 13:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C112E12DD95;
+	Fri,  4 Apr 2025 13:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743773851; cv=none; b=DMbdlQRMYVVWvUDKMkuCgMW/C5oAnPhwPRiTsWwbhTBH2v4XKS0BuzAQNl4JLIr6pP+9/Xo6RRRIzlz9esDBVIwvizjVAjvjsKeqssXNvdX6gYxRhB1VFk3N98SimmN9UO3hjkUxdX5rs6MaiX0onaFzGA+nFtJihgPTskIMTc8=
+	t=1743773941; cv=none; b=pyXwLSdf+UXrffRyiXHUgSRDc2LbR1qgUhlppR1WJCrRKNMTQ5/Ujnbc3AFRAIXL4005h5+ErxhtoftWZwKcyRrO2Ma9HuVsQdPlshbKQZteUwsd5YvkBuTnUcFNf1biQvp3/ALy6Pz3s2O3U5VCYTcfXf2njUQfoNgJZILSsuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743773851; c=relaxed/simple;
-	bh=0crlg9CVa208L3y+THC+49CvF+wOGo5V0hcKmYV1HSk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UgkS/91C1sGXzVKafxgcMrCvAi8lYMQsTVYudlelFQKg+RFASkZTkYLbYDcfu5L22SKEgXfzGwQ4c9NSd33etzDq8/JIS9w6RDzeBE/UtQspSrkZ8jpSQgRak9OZnrlfBGZZHMnkhi1icFtba/a5vtFVO19V2t/W1XYPeoK77tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8416CC4CEE8;
-	Fri,  4 Apr 2025 13:37:30 +0000 (UTC)
-Date: Fri, 4 Apr 2025 09:38:37 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Devaansh Kumar <devaanshk840@gmail.com>, mhiramat@kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org, linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH] tracing: Replace deprecated strncpy() with memcpy() for
- stack_trace_filter_buf
-Message-ID: <20250404093837.154d1239@gandalf.local.home>
-In-Reply-To: <2e5aae65-316a-48c1-b293-041bfbd1ed80@efficios.com>
-References: <20250403191342.1244863-1-devaanshk840@gmail.com>
-	<20250403153651.1188135b@gandalf.local.home>
-	<CA+RTe_gHo3U-tWM9MA4CMgxM13=biqkqnAbuS5Yuidrono1bvw@mail.gmail.com>
-	<2e5aae65-316a-48c1-b293-041bfbd1ed80@efficios.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743773941; c=relaxed/simple;
+	bh=vfUq5U/Wla4KrjDkPf/VZz2suucaLJQCY5wq0GYGuOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eow9GYeazypvjEkdTZ6EF//ZkqkcIuzGrWotuSn8zwNWWp0a0MPNEL+aracsXFDzb70M++jVAd3FdhZm4Y4ViCEAR7YzZphx/CLHRwxJyxGc9qltLBHwZx1z87l8V3nWiX9B1kNfwoYV/5/TgyCiu+wWCnRwcyduR2E+3brdGCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W5kWHoLk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DA97C4CEDD;
+	Fri,  4 Apr 2025 13:38:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743773941;
+	bh=vfUq5U/Wla4KrjDkPf/VZz2suucaLJQCY5wq0GYGuOw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W5kWHoLkv8Hzchwhgfg7XaHhfqEZaE+y8xF0+F1Qy2rFmRYc6O4sJKbRSWBwkz1r9
+	 quhm1jcQt2MhQUF3cOlItQncHt6ar6873ruxeMxefX92AWcTNYp+e+Yfu01jktiqnN
+	 ZMrVjWCi3vh3bp3UT2WFWzGVor6FPJL2gHfujlMlrAkhJkYkZ8Nn1KHMSmPZe79Fp6
+	 K9LHbgthndN/6hzhBA0KoNO++DF+wAysLzgD6w0FJcGqakRAXk11LtWhfyLOC7w/SS
+	 VNezrdSjrN+JQoQGLzW9YJ8V8T5etwhJZqUs/0aoBCouOcL1oi5Mhz30DdK7hSb2uw
+	 hg2a3rCH1PeWw==
+Date: Fri, 4 Apr 2025 15:38:56 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Lennart Poettering <lennart@poettering.net>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
+	Mike Yuan <me@yhndnzj.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 3/4] pidfd: improve uapi when task isn't found
+Message-ID: <20250404-roben-zoodirektor-13cb8d1acefe@brauner>
+References: <20250403-work-pidfd-fixes-v1-0-a123b6ed6716@kernel.org>
+ <20250403-work-pidfd-fixes-v1-3-a123b6ed6716@kernel.org>
+ <20250404123737.GC3720@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250404123737.GC3720@redhat.com>
 
-On Fri, 4 Apr 2025 08:54:33 -0400
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
-
-> >>> -     if ((len = str_has_prefix(str, "_filter=")))
-> >>> -             strncpy(stack_trace_filter_buf, str + len, COMMAND_LINE_SIZE);
-> >>> +     len = str_has_prefix(str, "_filter=");
-> >>> +
-> >>> +     if (len)
-> >>> +             memcpy(stack_trace_filter_buf, str + len, sizeof(stack_trace_filter_buf));  
-> >>
-> >> Hmm, this location looks like it can just use strscpy().  
-> > 
-> > Yes strscpy() also works. But since stack_trace_filter_buf is length
-> > bounded, shouldn't memcpy be the right choice?  
+On Fri, Apr 04, 2025 at 02:37:38PM +0200, Oleg Nesterov wrote:
+> On 04/03, Christian Brauner wrote:
+> >
+> > We currently report EINVAL whenever a struct pid has no tasked attached
+> > anymore thereby conflating two concepts:
+> >
+> > (1) The task has already been reaped.
+> > (2) The caller requested a pidfd for a thread-group leader but the pid
+> >     actually references a struct pid that isn't used as a thread-group
+> >     leader.
+> >
+> > This is causing issues for non-threaded workloads as in [1].
+> >
+> > This patch tries to allow userspace to distinguish between (1) and (2).
+> > This is racy of course but that shouldn't matter.
+> >
+> > Link: https://github.com/systemd/systemd/pull/36982 [1]
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > 
-> It's not only about the destination, but also about the source length.
+> For this series:
+> 
+> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+> 
+> 
+> But I have a couple of cosmetic nits...
+> 
+> >  int pidfd_prepare(struct pid *pid, unsigned int flags, struct file **ret)
+> >  {
+> > -	bool thread = flags & PIDFD_THREAD;
+> > +	int err = 0;
+> >
+> > -	if (!pid_has_task(pid, thread ? PIDTYPE_PID : PIDTYPE_TGID))
+> > -		return -EINVAL;
+> > +	if (!(flags & PIDFD_THREAD)) {
+> > +		/*
+> > +		 * If this is struct pid isn't used as a thread-group
+> > +		 * leader pid but the caller requested to create a
+> > +		 * thread-group leader pidfd then report ENOENT to the
+> > +		 * caller as a hint.
+> > +		 */
+> > +		if (!pid_has_task(pid, PIDTYPE_TGID))
+> > +			err = -ENOENT;
+> > +	}
+> > +
+> > +	/*
+> > +	 * If this wasn't a thread-group leader struct pid or the task
+> > +	 * got reaped in the meantime report -ESRCH to userspace.
+> > +	 *
+> > +	 * This is racy of course. This could've not been a thread-group
+> > +	 * leader struct pid and we set ENOENT above but in the meantime
+> > +	 * the task got reaped. Or there was a multi-threaded-exec by a
+> > +	 * subthread and we were a thread-group leader but now got
+> > +	 * killed.
+> 
+> The comment about the multi-threaded-exec looks a bit misleading to me.
+> If this pid is a group-leader-pid and we race with de_thread() which does
+> 
+> 		exchange_tids(tsk, leader);
+> 		transfer_pid(leader, tsk, PIDTYPE_TGID);
+> 
+> nothing "bad" can happen, both pid_has_task(PIDTYPE_PID) or
+> pid_has_task(PIDTYPE_TGID) can't return NULL during (or after) this
+> transition.
+> 
+> hlists_swap_heads_rcu() or hlist_replace_rcu() can't make
+> hlist_head->first == NULL during this transition...
 
-Correct.
+Good point.
 
 > 
-> AFAIU, turning a strncpy into a memcpy here will overflow reading the
-> input @str if the input string is smaller than
-> sizeof(stack_trace_filter_buf) + len.
+> Or I misunderstood the comment?
+> 
+> And... the code looks a bit overcomplicated to me, why not simply
+> 
+> 	int pidfd_prepare(struct pid *pid, unsigned int flags, struct file **ret)
+> 	{
+> 		if (!pid_has_task(pid, PIDTYPE_PID))
+> 			return -ESRCH;
+> 
+> 		if (!(flags & PIDFD_THREAD) && !pid_has_task(pid, PIDTYPE_TGID))
+> 			return -ENOENT;
 
-The old code just read str + len and what was after it until it hit a '\0'
-or the COMMAND_LINE_SIZE limit.
+I thought that checking PIDTYPE_PID first could cause misleading results
+where we report ENOENT where we should report ESRCH: If the task was
+released after the successful PIDTYPE_PID check for a pid that was never
+a thread-group leader we report ENOENT. That's what I reversed the
+check. But I can adapt that to you scheme. I mostly wanted a place to
+put the comments.
 
-memcpy() always reads COMMAND_LINE_SIZE (which is sizeof(stack_trace_filter_buf))
-and will read more of the source "str" than may exist. Which as Mathieu
-pointed out, is a bug.
-
--- Steve
-
+> 
+> 		return __pidfd_prepare(pid, flags, ret);
+> 	}
+> 
+> ? Of course, the comments should stay.
+> 
+> But again, this is cosmetic/subjective, please do what you like more.
+> 
+> Oleg.
+> 
 
