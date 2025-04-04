@@ -1,60 +1,61 @@
-Return-Path: <linux-kernel+bounces-587985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CAA1A7B2CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 02:04:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB06A7B2D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 02:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55CC11886287
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1835A3A7CDB
 	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 00:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB48944E;
-	Fri,  4 Apr 2025 00:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F0FE55B;
+	Fri,  4 Apr 2025 00:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OHYUn5Ag"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DIqNDv83"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AC212B94;
-	Fri,  4 Apr 2025 00:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7551F95C;
+	Fri,  4 Apr 2025 00:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743725048; cv=none; b=MDo1yUXpNFzFrVb+gQ69gDzTN/RmWM6IwAO6w01Ke/E7sn2G2vzS5lAMtBewjCB4rSRn9sbTE40dOivQrCe/HGAyo7c4zJafGIjWHdEtUc2uRCLVzpj/gix7dWB7cegamRrx0zmXFlOaVpOScFhcOPqJ1mlhmWfDxw45iY2i6PQ=
+	t=1743725051; cv=none; b=gyQG76ChOslO2RewQZrB8P+IoDg+UNOVnmSaK4Izve7V9SW36/zui74sLe4dGBgYzTAYDzFLJohVuFoNMcqOBxaLy9i78sBzips5JtzCniIH9BMSzutm7/E7imm1suTv9v8ce65aBzAGg4Nv9c92OMANfD6Q94IkjUpWHam3Jgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743725048; c=relaxed/simple;
-	bh=N1rx+buJgba+EBFZDjpuHz7VBrsBZQiPgC9nHkyWe28=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bM3Ap4Q3wUDymVZf6mndcrj2dl6tclOBoLDb+5S4TFTqw8jJ7NWiROB13t6k4wGR05grithWvASJhgUbKHiKfbdqJ+YzzfQ4hXIGgowyTyjk2PANjwcG9jocwyZ6ijN40U1GVYYRjGDbplv0NUxnudIkti53kNNs6JwCgTs8XhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OHYUn5Ag; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A4D1C4CEE3;
-	Fri,  4 Apr 2025 00:04:06 +0000 (UTC)
+	s=arc-20240116; t=1743725051; c=relaxed/simple;
+	bh=fv93mNmTgll8s1lzzmMzuD6QI4oex6qpoMEo2aBam74=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=UjPA0fFvBiPiwnW8P/CRlS8FBbmQbTsQocY1k/2L4nFCWgVBn1/jUIthZQb3stsApq7CBrA3918bm6hFA0D2siI3CF2Bb1uv52a/BNd4cICrGgOtXBREo/vogb1TNDZje4JSKK+yPKvCIR8P0/2dfRpigKq31NgQNy/AUCLT0ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DIqNDv83; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2EC6C4CEE5;
+	Fri,  4 Apr 2025 00:04:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743725047;
-	bh=N1rx+buJgba+EBFZDjpuHz7VBrsBZQiPgC9nHkyWe28=;
-	h=From:To:Cc:Subject:Date:From;
-	b=OHYUn5AgMGdHuRCsuNl+u/8Ksx98wbWw8jgl+4Z3PvHOztRwR/Bp6L/232eV1R+u7
-	 J0VLq++fgUQQBc9RnpVM/zNIwi1x52cdQGsNUkzADBM0s5Z1xxUiq5dOiz96GFe6Z+
-	 Zuas4ry0tM29V7AOR5C841moSuA936/QJZnObCtWkwUdOg/fnuiKVcsQdrzFddSxcv
-	 eh7iNOU2edDymGwtbLPHre8cAbB/4467hrXkw2TnO7zNAvhCbVa3MDMJWsZ8ToAgxL
-	 g64h8LnyrQ4tutEZJNPFuy8L4QGovTD1Lvu+U7cTZcc7rqBHweC/rOTHCEZopBeATk
-	 7BXy19C4g2zSw==
+	s=k20201202; t=1743725050;
+	bh=fv93mNmTgll8s1lzzmMzuD6QI4oex6qpoMEo2aBam74=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=DIqNDv83rGZTbdrN/+DW0nhnoooa1o9MF6tVMUBe6w8A/kvSlV+G5/GGCYH1w1Sxs
+	 LGQBQMxiZK74xvww2ZGKY+I/gBqPNPyj54AmflE3mGEiF8lElyQGuyWb3tuz+fQCEo
+	 rlXyk0nVrdtR1iH3ke23A09HPxYLr8gDz3pZkA5EUOqqAeL0Y26HnnwqO4SguR7dnQ
+	 K/umFnt7RlaHYZJujU8Dr1vb8Mz0BB1IVIIzFCxpDwlmFPkCuMLxhWBcGe1GTyQZ6X
+	 NETWUEwXgzKrzaFoxEnilV1LIe/O0TZKYsEcxSAJG1EZPRyPzSN5kXbh1GQDpZ1yNb
+	 2FY2Tms2kCyig==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Lukas Wunner <lukas@wunner.de>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
+Cc: Chenyuan Yang <chenyuan0y@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
 	Sasha Levin <sashal@kernel.org>,
-	ignat@cloudflare.com,
-	davem@davemloft.net,
-	andy@kernel.org,
-	angelogioacchino.delregno@collabora.com,
-	Jonathan.Cameron@huawei.com,
-	linux-crypto@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 01/23] crypto: ecdsa - Harden against integer overflows in DIV_ROUND_UP()
-Date: Thu,  3 Apr 2025 20:03:38 -0400
-Message-Id: <20250404000402.2688049-1-sashal@kernel.org>
+	linus.walleij@linaro.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.14 03/23] pinctrl: renesas: rza2: Fix potential NULL pointer dereference
+Date: Thu,  3 Apr 2025 20:03:40 -0400
+Message-Id: <20250404000402.2688049-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250404000402.2688049-1-sashal@kernel.org>
+References: <20250404000402.2688049-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,99 +67,37 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.14
 Content-Transfer-Encoding: 8bit
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Chenyuan Yang <chenyuan0y@gmail.com>
 
-[ Upstream commit b16510a530d1e6ab9683f04f8fb34f2e0f538275 ]
+[ Upstream commit f752ee5b5b86b5f88a5687c9eb0ef9b39859b908 ]
 
-Herbert notes that DIV_ROUND_UP() may overflow unnecessarily if an ecdsa
-implementation's ->key_size() callback returns an unusually large value.
-Herbert instead suggests (for a division by 8):
+`chip.label` in rza2_gpio_register() could be NULL.
+Add the missing check.
 
-  X / 8 + !!(X & 7)
-
-Based on this formula, introduce a generic DIV_ROUND_UP_POW2() macro and
-use it in lieu of DIV_ROUND_UP() for ->key_size() return values.
-
-Additionally, use the macro in ecc_digits_from_bytes(), whose "nbytes"
-parameter is a ->key_size() return value in some instances, or a
-user-specified ASN.1 length in the case of ecdsa_get_signature_rs().
-
-Link: https://lore.kernel.org/r/Z3iElsILmoSu6FuC@gondor.apana.org.au/
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+Link: https://lore.kernel.org/20250210232552.1545887-1-chenyuan0y@gmail.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/ecc.c         |  2 +-
- crypto/ecdsa-p1363.c |  2 +-
- crypto/ecdsa-x962.c  |  4 ++--
- include/linux/math.h | 12 ++++++++++++
- 4 files changed, 16 insertions(+), 4 deletions(-)
+ drivers/pinctrl/renesas/pinctrl-rza2.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/crypto/ecc.c b/crypto/ecc.c
-index 50ad2d4ed672c..6cf9a945fc6c2 100644
---- a/crypto/ecc.c
-+++ b/crypto/ecc.c
-@@ -71,7 +71,7 @@ EXPORT_SYMBOL(ecc_get_curve);
- void ecc_digits_from_bytes(const u8 *in, unsigned int nbytes,
- 			   u64 *out, unsigned int ndigits)
- {
--	int diff = ndigits - DIV_ROUND_UP(nbytes, sizeof(u64));
-+	int diff = ndigits - DIV_ROUND_UP_POW2(nbytes, sizeof(u64));
- 	unsigned int o = nbytes & 7;
- 	__be64 msd = 0;
+diff --git a/drivers/pinctrl/renesas/pinctrl-rza2.c b/drivers/pinctrl/renesas/pinctrl-rza2.c
+index dd1f8c29d3e75..a654ede01f705 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rza2.c
++++ b/drivers/pinctrl/renesas/pinctrl-rza2.c
+@@ -246,6 +246,9 @@ static int rza2_gpio_register(struct rza2_pinctrl_priv *priv)
+ 	int ret;
  
-diff --git a/crypto/ecdsa-p1363.c b/crypto/ecdsa-p1363.c
-index eaae7214d69bc..4454f1f8f33f5 100644
---- a/crypto/ecdsa-p1363.c
-+++ b/crypto/ecdsa-p1363.c
-@@ -22,7 +22,7 @@ static int ecdsa_p1363_verify(struct crypto_sig *tfm,
- {
- 	struct ecdsa_p1363_ctx *ctx = crypto_sig_ctx(tfm);
- 	unsigned int keylen = crypto_sig_keysize(ctx->child);
--	unsigned int ndigits = DIV_ROUND_UP(keylen, sizeof(u64));
-+	unsigned int ndigits = DIV_ROUND_UP_POW2(keylen, sizeof(u64));
- 	struct ecdsa_raw_sig sig;
- 
- 	if (slen != 2 * keylen)
-diff --git a/crypto/ecdsa-x962.c b/crypto/ecdsa-x962.c
-index 6a77c13e192b1..90a04f4b9a2f5 100644
---- a/crypto/ecdsa-x962.c
-+++ b/crypto/ecdsa-x962.c
-@@ -81,8 +81,8 @@ static int ecdsa_x962_verify(struct crypto_sig *tfm,
- 	struct ecdsa_x962_signature_ctx sig_ctx;
- 	int err;
- 
--	sig_ctx.ndigits = DIV_ROUND_UP(crypto_sig_keysize(ctx->child),
--				       sizeof(u64));
-+	sig_ctx.ndigits = DIV_ROUND_UP_POW2(crypto_sig_keysize(ctx->child),
-+					    sizeof(u64));
- 
- 	err = asn1_ber_decoder(&ecdsasignature_decoder, &sig_ctx, src, slen);
- 	if (err < 0)
-diff --git a/include/linux/math.h b/include/linux/math.h
-index f5f18dc3616b0..0198c92cbe3ef 100644
---- a/include/linux/math.h
-+++ b/include/linux/math.h
-@@ -34,6 +34,18 @@
-  */
- #define round_down(x, y) ((x) & ~__round_mask(x, y))
- 
-+/**
-+ * DIV_ROUND_UP_POW2 - divide and round up
-+ * @n: numerator
-+ * @d: denominator (must be a power of 2)
-+ *
-+ * Divides @n by @d and rounds up to next multiple of @d (which must be a power
-+ * of 2). Avoids integer overflows that may occur with __KERNEL_DIV_ROUND_UP().
-+ * Performance is roughly equivalent to __KERNEL_DIV_ROUND_UP().
-+ */
-+#define DIV_ROUND_UP_POW2(n, d) \
-+	((n) / (d) + !!((n) & ((d) - 1)))
+ 	chip.label = devm_kasprintf(priv->dev, GFP_KERNEL, "%pOFn", np);
++	if (!chip.label)
++		return -ENOMEM;
 +
- #define DIV_ROUND_UP __KERNEL_DIV_ROUND_UP
+ 	chip.parent = priv->dev;
+ 	chip.ngpio = priv->npins;
  
- #define DIV_ROUND_DOWN_ULL(ll, d) \
 -- 
 2.39.5
 
