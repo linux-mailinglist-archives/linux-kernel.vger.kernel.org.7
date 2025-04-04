@@ -1,96 +1,331 @@
-Return-Path: <linux-kernel+bounces-589120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C351BA7C20B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:03:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 917EFA7C210
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74FA83A2E7F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:02:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D62DF3BA574
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8D2201100;
-	Fri,  4 Apr 2025 17:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC83620E33E;
+	Fri,  4 Apr 2025 17:04:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ctS8h6Ui"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ix2qZJ3g"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9948D1F03CD;
-	Fri,  4 Apr 2025 17:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1098AA937
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 17:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743786177; cv=none; b=fuoM4+ZlJF1zGZdcA+kw1qAcFzXYotrtbYLpe/BlcuWCeP47Vki65Aw6KpSJq3oLX6u2J988cJaA98v0hca9ZnoRJWmxb+z+JX35wIa6QqzKVMozq7TDCiCJzTKjIT3xezbRUGXB0mBtkFptIT9CEclAY0v6FuPdXpDWWj4xxrk=
+	t=1743786287; cv=none; b=B7rdlvWzGpZBUgLywPzuqYo68TRMWnO7I9+blg2Xwb/Hg5eCD/7nOfiCF9NlAxpLvJEgrwZtyn4IZAHnHZAOyuHhtjzdBJrSH1ECA9PYl/naxRCHMaRAsXck1ifOerNggp2qKAbk4Q6ds5ufHr5cnNJvG2olyiTgmINqzJMaybM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743786177; c=relaxed/simple;
-	bh=oPnGwjxtjjs/5C3MfcR4X0HPMe5YHfPGa1R/ZL26eaI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KZbmm76h+AgV0Hytj+oaF/aQIelm6vjP9yAktY1ifPJNlsuOLu0XZZQGnZFuaYWzXCnCYYZyAlMSssSsyh3C/hwqo++5r1OCXgHQ8GmBJ4IhCo7Wc3FZG5wRxWPBS4gz9ZQOC1UfcY+QVnORAzsjPRF56a7cpvEeUfGpqxVlbFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ctS8h6Ui; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E855BC4CEE9;
-	Fri,  4 Apr 2025 17:02:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743786177;
-	bh=oPnGwjxtjjs/5C3MfcR4X0HPMe5YHfPGa1R/ZL26eaI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ctS8h6UiAWFI8jl0bgAEfAX7R4mchKnqjT+n0JWOg646pmH/zOivPZTrGIireM9sB
-	 m/Rs11ArykManspipp/fM28gcraX4jU/hB+smFeTffWTlLhiI3jTmI8yKWAwJ3pu/8
-	 3N6QmrMndLU0Y2z2lpIY+C6EeIGtFfmsm0Kz2rKNJ3bejXt7zNH2puZtdFWWc0lU4J
-	 y3JJ5UC0N51vmOrv4kg8E9sJeNLD09LUSVwyWZ+88kyDcDzTYqo4aSgvu7psu2c3xo
-	 HHmvAfKen39M9UTXY2YBauBV1RsKbAQOM+ISLza7gqZ4VzJlYEKhh1wdLHxNkK1IJj
-	 m/czyoMdQtj8g==
-Date: Fri, 4 Apr 2025 18:02:53 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Johann Neuhauser <jneuhauser@dh-electronics.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Liam Girdwood <lgirdwood@gmail.com>
-Subject: Re: [PATCH 0/3] regulator: userspace-consumer: Add regulator event
- uevents
-Message-ID: <b5fa7d1a-16bf-4031-8990-f559cf589b67@sirena.org.uk>
-References: <20250404134009.2610460-1-jneuhauser@dh-electronics.com>
+	s=arc-20240116; t=1743786287; c=relaxed/simple;
+	bh=DUI7lYj6otj4ok3LWvzagnZKOIHr+y1eZ4Z4l6ZhSmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bPm1WCZAG7ZQUhcSLj2a6VDvBdle34IYyyEw3u8l0MENHfxgUcTA7MOg8ygCGKrcBjxI05GwBl8MWsLSvE5Re8wvIeelPxC4XXxZjexYvC8I3ID5Db4ywyrYBg9sSkcVWo23ZyapacAQsZsvHCe/aJNnNz/n8DRogbyotBJmqfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ix2qZJ3g; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743786287; x=1775322287;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=DUI7lYj6otj4ok3LWvzagnZKOIHr+y1eZ4Z4l6ZhSmA=;
+  b=Ix2qZJ3g1qE3nriFozGgGU/qeXwVD4W8MFGeC1H2cYBOitLUQZP8nFiO
+   egOQ9rbbswEXfwT2FM56aly98VE6sAswUwrKqTjNGZ5SBnA+GZiJR99dc
+   mthQhysQEOkeaTNwbSeO4LElOS675outboeh81kfcjrP/T/HpA46JxXax
+   rY3nyuGsqAp9Rcn4Lzx3h+HjNW473ffBsOAS8xStCejo5lDV8R9+54kGx
+   z91yRQRPeyMrabWKzK4y0dcXBPZ9YuaGpz6tKO4kipgoWVeIJUNjTURo9
+   hvSJ5kUwh8NzshqndO7YqHqycF8pHNNdi4jmvSFbeiI35s0Tpo97YEJH5
+   Q==;
+X-CSE-ConnectionGUID: D9Cjqb/aQBawuScJdii/0Q==
+X-CSE-MsgGUID: NvzI5WjuTMqwhRwzWryNUQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11394"; a="49027880"
+X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
+   d="scan'208";a="49027880"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 10:04:46 -0700
+X-CSE-ConnectionGUID: t0sqFrCgQTCNXxHSvyFcPw==
+X-CSE-MsgGUID: WRjr3bVtRjmcKtfQJXrZaw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
+   d="scan'208";a="132564003"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 04 Apr 2025 10:04:43 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u0kTB-0001PR-1V;
+	Fri, 04 Apr 2025 17:04:41 +0000
+Date: Sat, 5 Apr 2025 01:04:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: [tip:timers/cleanups 1/10] drivers/usb/host/xhci.c:1074:25: error:
+ implicit declaration of function 'timer_delelet_sync'; did you mean
+ 'timer_delete_sync'?
+Message-ID: <202504050021.xNNi1XQ0-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jT5kjD0mLTfL7UhA"
-Content-Disposition: inline
-In-Reply-To: <20250404134009.2610460-1-jneuhauser@dh-electronics.com>
-X-Cookie: You will soon forget this.
-
-
---jT5kjD0mLTfL7UhA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Apr 04, 2025 at 03:40:06PM +0200, Johann Neuhauser wrote:
-> This series adds support for regulator event reporting via uevents to the
-> userspace-consumer regulator driver. The goal is to provide userspace with
-> a straightforward mechanism to monitor and respond to important regulator
-> events such as overcurrent conditions, voltage changes, and enable/disable
-> transitions.
+Hi Thomas,
 
-This sounds like you're trying to use userspace-consumer in production
-rather than as a test bodge...   what's the actual use case here?
+FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
 
---jT5kjD0mLTfL7UhA
-Content-Type: application/pgp-signature; name="signature.asc"
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/cleanups
+head:   5c4da3a96bf484f965057c281f1ef48ac46987bc
+commit: 915bfe3b63168b863b4c14a0c9cffa0ee9acfeeb [1/10] treewide: Switch to timer_delete[_sync]()
+config: i386-buildonly-randconfig-004-20250404 (https://download.01.org/0day-ci/archive/20250405/202504050021.xNNi1XQ0-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250405/202504050021.xNNi1XQ0-lkp@intel.com/reproduce)
 
------BEGIN PGP SIGNATURE-----
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504050021.xNNi1XQ0-lkp@intel.com/
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfwELwACgkQJNaLcl1U
-h9AxAAf8Cu5MhCLb1wWJCLWNM2VRJ6fqAj/TDBYj3J4N0xaB8DgkwDW+tI5Wv8pS
-5qVmiMeZJRiLd1I2ExLLMK1Rs3qeaIORmsk8/C1tCpp30RzW0eYfuK5DtPnsj9K+
-QWOeijYQJ7USFPSxdhkZdixgBTeMJHlAF+XmsVc1gSRx9Ii5w1O2SWRiZ+ZMkaYC
-muL++Vf4+7qpfeljxzv4O46NMQvd8EjFWfQaBuf6+eCOWwjzy16gPCUdX9G4PyLJ
-voDEW9T11bWfJUcTm6noxSRTco/trQ5UZVly4w4szU5qlBvsyb0qKJYW0amoT/kW
-KuCZ/mZj6JdAeznPYndw3de06vb31Q==
-=nnRE
------END PGP SIGNATURE-----
+All errors (new ones prefixed by >>):
 
---jT5kjD0mLTfL7UhA--
+   drivers/usb/host/xhci.c: In function 'xhci_resume':
+>> drivers/usb/host/xhci.c:1074:25: error: implicit declaration of function 'timer_delelet_sync'; did you mean 'timer_delete_sync'? [-Werror=implicit-function-declaration]
+    1074 |                         timer_delelet_sync(&xhci->comp_mode_recovery_timer);
+         |                         ^~~~~~~~~~~~~~~~~~
+         |                         timer_delete_sync
+   cc1: some warnings being treated as errors
+
+
+vim +1074 drivers/usb/host/xhci.c
+
+   990	
+   991	/*
+   992	 * start xHC (not bus-specific)
+   993	 *
+   994	 * This is called when the machine transition from S3/S4 mode.
+   995	 *
+   996	 */
+   997	int xhci_resume(struct xhci_hcd *xhci, bool power_lost, bool is_auto_resume)
+   998	{
+   999		u32			command, temp = 0;
+  1000		struct usb_hcd		*hcd = xhci_to_hcd(xhci);
+  1001		int			retval = 0;
+  1002		bool			comp_timer_running = false;
+  1003		bool			pending_portevent = false;
+  1004		bool			suspended_usb3_devs = false;
+  1005	
+  1006		if (!hcd->state)
+  1007			return 0;
+  1008	
+  1009		/* Wait a bit if either of the roothubs need to settle from the
+  1010		 * transition into bus suspend.
+  1011		 */
+  1012	
+  1013		if (time_before(jiffies, xhci->usb2_rhub.bus_state.next_statechange) ||
+  1014		    time_before(jiffies, xhci->usb3_rhub.bus_state.next_statechange))
+  1015			msleep(100);
+  1016	
+  1017		set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
+  1018		if (xhci->shared_hcd)
+  1019			set_bit(HCD_FLAG_HW_ACCESSIBLE, &xhci->shared_hcd->flags);
+  1020	
+  1021		spin_lock_irq(&xhci->lock);
+  1022	
+  1023		if (xhci->quirks & XHCI_RESET_ON_RESUME || xhci->broken_suspend)
+  1024			power_lost = true;
+  1025	
+  1026		if (!power_lost) {
+  1027			/*
+  1028			 * Some controllers might lose power during suspend, so wait
+  1029			 * for controller not ready bit to clear, just as in xHC init.
+  1030			 */
+  1031			retval = xhci_handshake(&xhci->op_regs->status,
+  1032						STS_CNR, 0, 10 * 1000 * 1000);
+  1033			if (retval) {
+  1034				xhci_warn(xhci, "Controller not ready at resume %d\n",
+  1035					  retval);
+  1036				spin_unlock_irq(&xhci->lock);
+  1037				return retval;
+  1038			}
+  1039			/* step 1: restore register */
+  1040			xhci_restore_registers(xhci);
+  1041			/* step 2: initialize command ring buffer */
+  1042			xhci_set_cmd_ring_deq(xhci);
+  1043			/* step 3: restore state and start state*/
+  1044			/* step 3: set CRS flag */
+  1045			command = readl(&xhci->op_regs->command);
+  1046			command |= CMD_CRS;
+  1047			writel(command, &xhci->op_regs->command);
+  1048			/*
+  1049			 * Some controllers take up to 55+ ms to complete the controller
+  1050			 * restore so setting the timeout to 100ms. Xhci specification
+  1051			 * doesn't mention any timeout value.
+  1052			 */
+  1053			if (xhci_handshake(&xhci->op_regs->status,
+  1054				      STS_RESTORE, 0, 100 * 1000)) {
+  1055				xhci_warn(xhci, "WARN: xHC restore state timeout\n");
+  1056				spin_unlock_irq(&xhci->lock);
+  1057				return -ETIMEDOUT;
+  1058			}
+  1059		}
+  1060	
+  1061		temp = readl(&xhci->op_regs->status);
+  1062	
+  1063		/* re-initialize the HC on Restore Error, or Host Controller Error */
+  1064		if ((temp & (STS_SRE | STS_HCE)) &&
+  1065		    !(xhci->xhc_state & XHCI_STATE_REMOVING)) {
+  1066			if (!power_lost)
+  1067				xhci_warn(xhci, "xHC error in resume, USBSTS 0x%x, Reinit\n", temp);
+  1068			power_lost = true;
+  1069		}
+  1070	
+  1071		if (power_lost) {
+  1072			if ((xhci->quirks & XHCI_COMP_MODE_QUIRK) &&
+  1073					!(xhci_all_ports_seen_u0(xhci))) {
+> 1074				timer_delelet_sync(&xhci->comp_mode_recovery_timer);
+  1075				xhci_dbg_trace(xhci, trace_xhci_dbg_quirks,
+  1076					"Compliance Mode Recovery Timer deleted!");
+  1077			}
+  1078	
+  1079			/* Let the USB core know _both_ roothubs lost power. */
+  1080			usb_root_hub_lost_power(xhci->main_hcd->self.root_hub);
+  1081			if (xhci->shared_hcd)
+  1082				usb_root_hub_lost_power(xhci->shared_hcd->self.root_hub);
+  1083	
+  1084			xhci_dbg(xhci, "Stop HCD\n");
+  1085			xhci_halt(xhci);
+  1086			xhci_zero_64b_regs(xhci);
+  1087			retval = xhci_reset(xhci, XHCI_RESET_LONG_USEC);
+  1088			spin_unlock_irq(&xhci->lock);
+  1089			if (retval)
+  1090				return retval;
+  1091	
+  1092			xhci_dbg(xhci, "// Disabling event ring interrupts\n");
+  1093			temp = readl(&xhci->op_regs->status);
+  1094			writel((temp & ~0x1fff) | STS_EINT, &xhci->op_regs->status);
+  1095			xhci_disable_interrupter(xhci->interrupters[0]);
+  1096	
+  1097			xhci_dbg(xhci, "cleaning up memory\n");
+  1098			xhci_mem_cleanup(xhci);
+  1099			xhci_debugfs_exit(xhci);
+  1100			xhci_dbg(xhci, "xhci_stop completed - status = %x\n",
+  1101				    readl(&xhci->op_regs->status));
+  1102	
+  1103			/* USB core calls the PCI reinit and start functions twice:
+  1104			 * first with the primary HCD, and then with the secondary HCD.
+  1105			 * If we don't do the same, the host will never be started.
+  1106			 */
+  1107			xhci_dbg(xhci, "Initialize the xhci_hcd\n");
+  1108			retval = xhci_init(hcd);
+  1109			if (retval)
+  1110				return retval;
+  1111			comp_timer_running = true;
+  1112	
+  1113			xhci_dbg(xhci, "Start the primary HCD\n");
+  1114			retval = xhci_run(hcd);
+  1115			if (!retval && xhci->shared_hcd) {
+  1116				xhci_dbg(xhci, "Start the secondary HCD\n");
+  1117				retval = xhci_run(xhci->shared_hcd);
+  1118			}
+  1119			if (retval)
+  1120				return retval;
+  1121			/*
+  1122			 * Resume roothubs unconditionally as PORTSC change bits are not
+  1123			 * immediately visible after xHC reset
+  1124			 */
+  1125			hcd->state = HC_STATE_SUSPENDED;
+  1126	
+  1127			if (xhci->shared_hcd) {
+  1128				xhci->shared_hcd->state = HC_STATE_SUSPENDED;
+  1129				usb_hcd_resume_root_hub(xhci->shared_hcd);
+  1130			}
+  1131			usb_hcd_resume_root_hub(hcd);
+  1132	
+  1133			goto done;
+  1134		}
+  1135	
+  1136		/* step 4: set Run/Stop bit */
+  1137		command = readl(&xhci->op_regs->command);
+  1138		command |= CMD_RUN;
+  1139		writel(command, &xhci->op_regs->command);
+  1140		xhci_handshake(&xhci->op_regs->status, STS_HALT,
+  1141			  0, 250 * 1000);
+  1142	
+  1143		/* step 5: walk topology and initialize portsc,
+  1144		 * portpmsc and portli
+  1145		 */
+  1146		/* this is done in bus_resume */
+  1147	
+  1148		/* step 6: restart each of the previously
+  1149		 * Running endpoints by ringing their doorbells
+  1150		 */
+  1151	
+  1152		spin_unlock_irq(&xhci->lock);
+  1153	
+  1154		xhci_dbc_resume(xhci);
+  1155	
+  1156		if (retval == 0) {
+  1157			/*
+  1158			 * Resume roothubs only if there are pending events.
+  1159			 * USB 3 devices resend U3 LFPS wake after a 100ms delay if
+  1160			 * the first wake signalling failed, give it that chance if
+  1161			 * there are suspended USB 3 devices.
+  1162			 */
+  1163			if (xhci->usb3_rhub.bus_state.suspended_ports ||
+  1164			    xhci->usb3_rhub.bus_state.bus_suspended)
+  1165				suspended_usb3_devs = true;
+  1166	
+  1167			pending_portevent = xhci_pending_portevent(xhci);
+  1168	
+  1169			if (suspended_usb3_devs && !pending_portevent && is_auto_resume) {
+  1170				msleep(120);
+  1171				pending_portevent = xhci_pending_portevent(xhci);
+  1172			}
+  1173	
+  1174			if (pending_portevent) {
+  1175				if (xhci->shared_hcd)
+  1176					usb_hcd_resume_root_hub(xhci->shared_hcd);
+  1177				usb_hcd_resume_root_hub(hcd);
+  1178			}
+  1179		}
+  1180	done:
+  1181		/*
+  1182		 * If system is subject to the Quirk, Compliance Mode Timer needs to
+  1183		 * be re-initialized Always after a system resume. Ports are subject
+  1184		 * to suffer the Compliance Mode issue again. It doesn't matter if
+  1185		 * ports have entered previously to U0 before system's suspension.
+  1186		 */
+  1187		if ((xhci->quirks & XHCI_COMP_MODE_QUIRK) && !comp_timer_running)
+  1188			compliance_mode_recovery_timer_init(xhci);
+  1189	
+  1190		if (xhci->quirks & XHCI_ASMEDIA_MODIFY_FLOWCONTROL)
+  1191			usb_asmedia_modifyflowcontrol(to_pci_dev(hcd->self.controller));
+  1192	
+  1193		/* Re-enable port polling. */
+  1194		xhci_dbg(xhci, "%s: starting usb%d port polling.\n",
+  1195			 __func__, hcd->self.busnum);
+  1196		if (xhci->shared_hcd) {
+  1197			set_bit(HCD_FLAG_POLL_RH, &xhci->shared_hcd->flags);
+  1198			usb_hcd_poll_rh_status(xhci->shared_hcd);
+  1199		}
+  1200		set_bit(HCD_FLAG_POLL_RH, &hcd->flags);
+  1201		usb_hcd_poll_rh_status(hcd);
+  1202	
+  1203		return retval;
+  1204	}
+  1205	EXPORT_SYMBOL_GPL(xhci_resume);
+  1206	#endif	/* CONFIG_PM */
+  1207	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
