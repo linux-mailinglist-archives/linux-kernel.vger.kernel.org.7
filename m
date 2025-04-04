@@ -1,157 +1,112 @@
-Return-Path: <linux-kernel+bounces-589043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3291EA7C0FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:52:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5657FA7C102
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1360917BBEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:52:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFF9F1897229
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69341F584A;
-	Fri,  4 Apr 2025 15:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0AB21F5835;
+	Fri,  4 Apr 2025 15:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCnPm6lT"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="ixT9bgve"
+Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45371F5408;
-	Fri,  4 Apr 2025 15:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D7D282EB;
+	Fri,  4 Apr 2025 15:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.40.148.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743781948; cv=none; b=FWlK6Qz1MZwDrk/fmUm6Jnmnp2F2WugVejCaOf1eqpPl0H8VIEx5P5s7sg1APIyOXeNjKGfDxK4O3GvYfg/Uqbcz9laLpIi/3bKKTuTGw6vd5EHJLgvpOcMq3jGdw0MnHYHbb2UQl7/tJs9jV481RyxtsWLZVEdfgcDA46Qzf0g=
+	t=1743782081; cv=none; b=FYeb4GB4/uMvZpLfyZQgEVs6B10nyTE3lBOr/xpvd81088WFSZxZhOkLxwxCPyajUS0nvstEQw7nvQdyN6TloHj2DTUgnjv8kXnectln7bkgSuM11bm8KGQRoLA5ubXcm8MDNEjUnuuDgxDWiQwyyf6U8O54J+3yN66b749TiaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743781948; c=relaxed/simple;
-	bh=m9gKAxEv8+1se/VyAuR+Yuv/+qsz90ObqP12AabUSZI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b6jQ8zonFpjGJ2VW9+vlmuVzrNsD8gCVmWQATTTxerc0Njb5JnD4SZNAOGxKXT691qWLdV5A2/74sUzOSy73ssvKXaedftqLTbW35jJbDAd0TzNUAO4dL5bOJvOlhWsIXmbBEAhZ+EXxxZ3TZV/NVrJJtVn4k29polCZtOy11fU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WCnPm6lT; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-73712952e1cso2122153b3a.1;
-        Fri, 04 Apr 2025 08:52:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743781946; x=1744386746; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4aWTDe+rTzrD+6R9DmIQBtw8FiB3Cn3PFxzKkYh4A0s=;
-        b=WCnPm6lTmO/uCyoLABLaMItvwEXWro5Co+kC19ldt7Uh+Q9qrANFwW/y8pxn1NP9jN
-         UNT/L3wlolMVFGecSyV6XMq66xWz5L5ok2h0BbGG/VJHLr2TCVC7JiEg7BCYLBABHCLL
-         kZJgrGYy6FAq37w3V70i8sx317eP4AWUpGQSxPY/3bEAeBRTJE7skEIV9hLeuEAl1iKv
-         tIh4jguRk10+3zZeNRHt1obHhx+5mSfXRjvgwUcIQAPOoaxJrrjoK+P0o2Jk3hB6X67a
-         j6ET1xjTAedRfpCgZgp2auKdQ4VqGS6g6OgymS7xsE77/vUa0KXgGjkoXn8wg0VUOAL8
-         iFZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743781946; x=1744386746;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4aWTDe+rTzrD+6R9DmIQBtw8FiB3Cn3PFxzKkYh4A0s=;
-        b=RcHacwshefqemq7k7v9cTbedBNRiGEcEc9L5QqUlL5L+8L5eeTktqmA57lXFPhoqDy
-         FFiVb2VfFWfzczBChGjzgmirllDkghyF+2ESvlX1+nWE+RDRc0Rdjb7lL/ouGz82PQ1Y
-         XtJ7ZS2q3LYr8d4VdWJQUT6xGHA9yuwOtnOrcyJ0CR8uhOjmTweMFZIPbIbYeUFFKgxS
-         IXtXAK0YERiJStC8rUdY72NQVovoq44zX7hGHnBRCB7FtNcOn+Ibaj+oCTSBQ3klOZoj
-         6fdBb6xZ5N7yNmIXRNhdxLI6esGqc3AIJDwN9X8VvtkdjFJqJ1Uq0STj6yyeFOl6GzNB
-         UBGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUCifk668A+VLDuAV/FUutZ2ojv2r4UdndHjEvDpsybDm4vvf9lnCjeBrbacsflKYJKSMszAbxEdcbtSPY@vger.kernel.org, AJvYcCVmTCI2U/J9yoW+qe3Qsfe+P3pifpcv0a3Vag90f7TaI2IY8odsZBLYdoAKpAVZUm8ob4GKRW+oudp/pxeoch6c@vger.kernel.org, AJvYcCWft+TcLlV1AbKmGHoqKQ1v76h/UDg3dtv13C/GjKAIvodU3IKUviSc2SqEMc832Xf+L+k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEc0Qqp8Iblrrw/v/lujQ9Cwy//sf638MbPudS7rprjA2+V+Ee
-	nB14z3rIB/VyVjVdzldMtAAru/dYv4iiD35C/KdPLnlIa1iy7GUbhpEv0K+E7ZRZ5/DcLP/O/Xo
-	XMba/CLdB/8IW3KEjqh8lUcNGgKY=
-X-Gm-Gg: ASbGnctAIiWum94cJUGX8lULwKfcsMUIyA61LvPJuJzvte4cEJIAeiY3M4ntskVjCGy
-	xAqkaImEAn51K8VVW3Z1OaY+dr2QBCuoKUaJT742Ui++jdKBtBdtKmgcGp589B4LVPPtOm00a9l
-	EgpwGucrbXTp2cTgAx0YwsTAjMjubocUltMSVCsp0FO3ncxQG4qmY8
-X-Google-Smtp-Source: AGHT+IEvIVeQZa5TCXYa49bWJYhlsbglGPFTWlTmzAYUiGUKqdhgB3iFQEsIbHaggKb+5mNlOlhexiQxMWXg/N6NSUo=
-X-Received: by 2002:a05:6a00:2292:b0:736:57cb:f2b6 with SMTP id
- d2e1a72fcca58-739e4855de2mr5463254b3a.12.1743781945762; Fri, 04 Apr 2025
- 08:52:25 -0700 (PDT)
+	s=arc-20240116; t=1743782081; c=relaxed/simple;
+	bh=8M0uTvGg35cr8T7CGwhcScWOijAyvKAp0NWeGZa5908=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DNB/jqmX5dAPwiFEOnR8mjvRiZ7xHDXFfFuW/4I/bte6BDbhsdelDwlnR3O9As8k3IdO1CTs6guVG4rD3M66TKJxnkM1oSZ50HaPeIRCaKhwTewGgj/CJjkQqjMIIuioxY92CHLWrTK5MT+xKMJhTyPpACjOqMEh/PCVV1IfPF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=ixT9bgve; arc=none smtp.client-ip=78.40.148.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap5-20230908; h=Sender:Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=AbrG0A80aOGQCqeyijoooJcA958xcCPcGbolO2HX8Q8=; b=ixT9bgve0or2vCBIcFZmTJrpQZ
+	eulyVEx2oyHCAwsp9RWPHJ5D5qWMUl1mbrq7NNmTM5dFeSU/rd2YIvc65Iy1u200Z7e9uPKaAmDkZ
+	dRjEDo+jVfnKL3LGmOjh1TtqqX5fY2ZzELtGhBSVr0WJxRPs8b6KrL530K4iujfsZGAEfyfwvwun/
+	jk3hV5FOI+ZP0am+3FT60oAYkcUYmOjR/1tbE/Vn1TgQDxTuRtpClsvYYznXmfZnQluFSq8F46Tdq
+	07UBwfb7SPBZAqVOTChTQtw0vjphYr2UQ8XtsQj8KHubuLbOT8qa7bOeL05fgdO9dNIn2BkXiH1qi
+	ZSx5AW/A==;
+Received: from [167.98.27.226] (helo=[10.35.6.194])
+	by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1u0jN8-00BgIH-8s; Fri, 04 Apr 2025 16:54:23 +0100
+Message-ID: <a7cdade3-8707-4464-8505-356dd5c0c49f@codethink.co.uk>
+Date: Fri, 4 Apr 2025 16:54:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <malayarout91@gmail.com> <20250324064234.853591-1-malayarout91@gmail.com>
-In-Reply-To: <20250324064234.853591-1-malayarout91@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 4 Apr 2025 08:52:13 -0700
-X-Gm-Features: AQ5f1Jr6dpg1vkl2088UME8oWw4P2Av0jpCylRO5ZZVK_oKaO02pvSj060D0bCc
-Message-ID: <CAEf4BzagSxO-fNeeWfFPu2vpnbEUBnS7Y2P=ODGks_zVEg1mkg@mail.gmail.com>
-Subject: Re: [PATCH] selftests/bpf: close the file descriptor to avoid
- resource leaks
-To: Malaya Kumar Rout <malayarout91@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
-	Geliang Tang <geliang@kernel.org>, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] riscv: introduce asm/swab.h
+To: Arnd Bergmann <arnd@arndb.de>, Ignacio Encinas <ignacio@iencinas.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>
+Cc: Eric Biggers <ebiggers@kernel.org>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
+ Shuah Khan <skhan@linuxfoundation.org>,
+ Zhihang Shao <zhihang.shao.iscas@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>
+References: <20250403-riscv-swab-v3-0-3bf705d80e33@iencinas.com>
+ <20250403-riscv-swab-v3-2-3bf705d80e33@iencinas.com>
+ <c6efcdca-5739-42b6-8cb4-f4d8cc85b6af@app.fastmail.com>
+Content-Language: en-GB
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Organization: Codethink Limited.
+In-Reply-To: <c6efcdca-5739-42b6-8cb4-f4d8cc85b6af@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: ben.dooks@codethink.co.uk
 
-On Sun, Mar 23, 2025 at 11:43=E2=80=AFPM Malaya Kumar Rout
-<malayarout91@gmail.com> wrote:
->
-> Static Analyis for bench_htab_mem.c with cppcheck:error
-> tools/testing/selftests/bpf/benchs/bench_htab_mem.c:284:3:
-> error: Resource leak: fd [resourceLeak]
-> tools/testing/selftests/bpf/prog_tests/sk_assign.c:41:3:
-> error: Resource leak: tc [resourceLeak]
->
-> fix the issue  by closing the file descriptor (fd & tc) when
-> read & fgets operation fails.
->
-> Signed-off-by: Malaya Kumar Rout <malayarout91@gmail.com>
-> ---
->  tools/testing/selftests/bpf/benchs/bench_htab_mem.c | 1 +
->  tools/testing/selftests/bpf/prog_tests/sk_assign.c  | 4 +++-
->  2 files changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/testing/selftests/bpf/benchs/bench_htab_mem.c b/tools/=
-testing/selftests/bpf/benchs/bench_htab_mem.c
-> index 926ee822143e..59746fd2c23a 100644
-> --- a/tools/testing/selftests/bpf/benchs/bench_htab_mem.c
-> +++ b/tools/testing/selftests/bpf/benchs/bench_htab_mem.c
-> @@ -281,6 +281,7 @@ static void htab_mem_read_mem_cgrp_file(const char *n=
-ame, unsigned long *value)
->         got =3D read(fd, buf, sizeof(buf) - 1);
+On 04/04/2025 06:58, Arnd Bergmann wrote:
+> On Thu, Apr 3, 2025, at 22:34, Ignacio Encinas wrote:
+>> +#define ARCH_SWAB(size) \
+>> +static __always_inline unsigned long __arch_swab##size(__u##size value) \
+>> +{									\
+>> +	unsigned long x = value;					\
+>> +									\
+>> +	if (riscv_has_extension_likely(RISCV_ISA_EXT_ZBB)) {            \
+>> +		asm volatile (".option push\n"				\
+>> +			      ".option arch,+zbb\n"			\
+>> +			      "rev8 %0, %1\n"				\
+>> +			      ".option pop\n"				\
+>> +			      : "=r" (x) : "r" (x));			\
+>> +		return x >> (BITS_PER_LONG - size);			\
+>> +	}                                                               \
+>> +	return  ___constant_swab##size(value);				\
+>> +}
+> 
+> I think the fallback should really just use the __builtin_bswap
+> helpers instead of the ___constant_swab variants. The output
+> would be the same, but you can skip patch 1/2.
+> 
+> I would also suggest dumbing down the macro a bit so you can
+> still find the definition with 'git grep __arch_swab64'. Ideally
+> just put the function body into a macro but leave the three
+> separate inline function definitions.
 
-It could be a bit cleaner to add close(fd) here and drop the one we
-have at the end of the function.
+I thought we explicitly disabled the builtin from gc... I tried doing
+this and just ended up with undefined calls from these sites.,
 
-pw-bot: cr
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
 
->         if (got <=3D 0) {
->                 *value =3D 0;
-> +               close(fd);
->                 return;
->         }
->         buf[got] =3D 0;
-> diff --git a/tools/testing/selftests/bpf/prog_tests/sk_assign.c b/tools/t=
-esting/selftests/bpf/prog_tests/sk_assign.c
-> index 0b9bd1d6f7cc..10a0ab954b8a 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/sk_assign.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/sk_assign.c
-> @@ -37,8 +37,10 @@ configure_stack(void)
->         tc =3D popen("tc -V", "r");
->         if (CHECK_FAIL(!tc))
->                 return false;
-> -       if (CHECK_FAIL(!fgets(tc_version, sizeof(tc_version), tc)))
-> +       if (CHECK_FAIL(!fgets(tc_version, sizeof(tc_version), tc))) {
-> +               pclose(tc);
-
-this one looks good
-
->                 return false;
-> +       }
->         if (strstr(tc_version, ", libbpf "))
->                 prog =3D "test_sk_assign_libbpf.bpf.o";
->         else
-> --
-> 2.43.0
->
+https://www.codethink.co.uk/privacy.html
 
