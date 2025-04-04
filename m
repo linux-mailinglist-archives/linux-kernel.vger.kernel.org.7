@@ -1,126 +1,138 @@
-Return-Path: <linux-kernel+bounces-589163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 137B0A7C28F
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:37:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E7EA7C294
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E559E3BA225
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:36:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A14B3AA38F
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C516E21C9EA;
-	Fri,  4 Apr 2025 17:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D78421E091;
+	Fri,  4 Apr 2025 17:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kv3UlUL8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lTkvYgE/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AB521C184
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 17:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9962521C171;
+	Fri,  4 Apr 2025 17:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743788150; cv=none; b=KTEontZMDJGo3wtUL5EeAu0NQbicVhxz3qzXC2MroT6PiyLUpOx8NKoljKWVSjisoPxAzn9MNlXmAssd5SZTGpIOfUzrnLc82F/tzKONSQ991Y5UlJA6X4Wqcoudm9jvgklzLQz25q/7NS+pslrVC56eGP6tboza2ChEb+z2+rs=
+	t=1743788177; cv=none; b=SOo/riugv6r8EkPtwpdSFkHJ8I2rRLf1Jg9K11TrucnbXEM9rFTXT4TfHjjqq9YxyuPoDLFXDVtppg3gT9WWTLfGSYymFKnDosoPfvFiiDbhRlQ+zFlU2f9YoS2sFfZjngrb9/TEDbDa5s/v6Y8q4mztJfsQPhbFoqBD+ZoaGz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743788150; c=relaxed/simple;
-	bh=SMTilVN6x/E0WFJK/nmz+VVmcBRCXyfsBBBi5eJrBg0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JV5Voxud9tY/B7Lod7lRkEbK06BcYqKE0uyZbiwYaV5jR73kjC+1LkLv6Rt/pU92Su8G4lLmCixEzwBF255VmLvcYby2JhO/eQcA4aPwwwCFwPuo1vb66rVX738SvtLDLKS1HRuZXri8JI8bEvBsLmPb/MclmThEERLZcCMGeJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kv3UlUL8; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743788149; x=1775324149;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=SMTilVN6x/E0WFJK/nmz+VVmcBRCXyfsBBBi5eJrBg0=;
-  b=Kv3UlUL8B4CA/I56wwKudw2QC/ExrqIHfUVeX4XwJvm0HcpMSJgNrLSx
-   KBkJ/2mXzOVYJKWBrHLv6b5FAtiRdRgNPou4DkceClExqYqYa/2/m3KDe
-   Wh5wev9bkikAOYzTn2FpS26n9CpOtqS+880gOSOqXc3/S9Wwf/8RP1f0P
-   C+StD8sD6Ui4b5n0C3+xTpfrZnAa6bXxmVGNu0Yy5IQaaU4jgQWq4HskQ
-   EIU8CVeF4BJXpcbqEDcvlv4VfVcJnl3eX7ivZIH4zc7/x3s10dUqeQy73
-   s6aeNVb1GEBpSN5aND6EybAiV5DLMKXe9TxUboyoti+gTBBecLE7yha2h
-   A==;
-X-CSE-ConnectionGUID: Fo5abx0iT3SK4jkHHBLaKw==
-X-CSE-MsgGUID: DkFn4dCpSvC/c5yGoZEVzg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11394"; a="67708237"
-X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="67708237"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 10:35:48 -0700
-X-CSE-ConnectionGUID: 5r/4FHUMRv+MLE8ULpeY8g==
-X-CSE-MsgGUID: sabSRLRAQjW5kAO58gXOow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,188,1739865600"; 
-   d="scan'208";a="131508551"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 04 Apr 2025 10:35:46 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u0kxE-0001QX-0e;
-	Fri, 04 Apr 2025 17:35:44 +0000
-Date: Sat, 5 Apr 2025 01:35:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: [tip:timers/cleanups 5/10] kernel/time/timer_list.c:49:77: error:
- macro "ACCESS_PRIVATE" requires 2 arguments, but only 1 given
-Message-ID: <202504050305.zbYN7qiW-lkp@intel.com>
+	s=arc-20240116; t=1743788177; c=relaxed/simple;
+	bh=KbIoPoLGDYM22xBKQMNFkLY0IePa8B1xnn92SVNs6W8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hfZ3BrA4BO46KFDuVMRPtuGPsIWS0/T09Q7Zj1wPZE9V14dQfK4gnrz21+Bcq4a/fXEB3lNFquMmx0Hli2s2V97OXMCoZh0YH5ZLYO2Z54Qe18p/mSeNcr2EeCMzqTBC0YRC+KVL+ANT1sEQf/B7XDVDSjz8A7IoQlhRHl9aG2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lTkvYgE/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C481C4CEDD;
+	Fri,  4 Apr 2025 17:36:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743788177;
+	bh=KbIoPoLGDYM22xBKQMNFkLY0IePa8B1xnn92SVNs6W8=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=lTkvYgE/4KXYpRN1kjTf+z/jGjnm2trbBy5bEUn05zALPUzZRIBDQlXnG9mcZiKvN
+	 LYNo1DHoWAKIy5xBdfu9bx8Ota8k/EkRLs924q9C0Wzg1oeTd4PCkRUI/BJDKtE0Dy
+	 c1JYnrtuo4NPmLqzfH5rA0YrJYTPj4oPZ2zZiGUEOSNq7zopkolMFiKU1JRTaPdzdu
+	 5hm/6YrOTApn+ONjSiAp0DN8/lyG6OlumrWDTwGTL3pNb6yqh2dajrApqQrSDPzNdz
+	 WZ5WLEc/QTi4r1z4In19yj3ptJ479yheLQTLcEz+SjMNd95Jz3PR4zqrSljOvwcvAd
+	 TXPwqQSL4oalA==
+Message-ID: <e1a7c9d6-9c14-48d3-ac2e-c6e0df04bbbf@kernel.org>
+Date: Fri, 4 Apr 2025 19:36:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: display: Add Sitronix ST7571 panel
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Marcus Folkesson <marcus.folkesson@gmail.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250404-st7571-v2-0-4c78aab9cd5a@gmail.com>
+ <20250404-st7571-v2-1-4c78aab9cd5a@gmail.com>
+ <d2ffca88-6773-4e40-b737-65a451ba1d01@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <d2ffca88-6773-4e40-b737-65a451ba1d01@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/cleanups
-head:   5c4da3a96bf484f965057c281f1ef48ac46987bc
-commit: 9453228aa82f20c07670d22c3d54f1be6c4244b4 [5/10] hrtimers: Make callback function pointer private
-config: arm-randconfig-002-20250404 (https://download.01.org/0day-ci/archive/20250405/202504050305.zbYN7qiW-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 7.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250405/202504050305.zbYN7qiW-lkp@intel.com/reproduce)
+On 04/04/2025 19:30, Krzysztof Kozlowski wrote:
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/gpio/gpio.h>
+>> +    
+>> +    i2c {
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +
+>> +        display@3f {
+> 
+> Not much improved. How is this called in every other binding? panel.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504050305.zbYN7qiW-lkp@intel.com/
+Hmmm, unless this is not a panel, but it looks like a panel and
+description partially suggests it. Other sitronix devices are split
+between these two, but OTOH your driver is more complex than just simple
+panel.
 
-All errors (new ones prefixed by >>):
+Your commit msg is one sentence and binding description is basically
+non-existing, so not sure how to help. You need to describe the hardware
+so people understand what this device is.
 
-   kernel/time/timer_list.c: In function 'print_timer':
->> kernel/time/timer_list.c:49:77: error: macro "ACCESS_PRIVATE" requires 2 arguments, but only 1 given
-     SEQ_printf(m, " #%d: <%p>, %ps", idx, taddr, ACCESS_PRIVATE(timer->function));
-                                                                                ^
->> kernel/time/timer_list.c:49:47: error: 'ACCESS_PRIVATE' undeclared (first use in this function); did you mean 'DQF_PRIVATE'?
-     SEQ_printf(m, " #%d: <%p>, %ps", idx, taddr, ACCESS_PRIVATE(timer->function));
-                                                  ^~~~~~~~~~~~~~
-                                                  DQF_PRIVATE
-   kernel/time/timer_list.c:49:47: note: each undeclared identifier is reported only once for each function it appears in
-
-
-vim +/ACCESS_PRIVATE +49 kernel/time/timer_list.c
-
-    44	
-    45	static void
-    46	print_timer(struct seq_file *m, struct hrtimer *taddr, struct hrtimer *timer,
-    47		    int idx, u64 now)
-    48	{
-  > 49		SEQ_printf(m, " #%d: <%p>, %ps", idx, taddr, ACCESS_PRIVATE(timer->function));
-    50		SEQ_printf(m, ", S:%02x", timer->state);
-    51		SEQ_printf(m, "\n");
-    52		SEQ_printf(m, " # expires at %Lu-%Lu nsecs [in %Ld to %Ld nsecs]\n",
-    53			(unsigned long long)ktime_to_ns(hrtimer_get_softexpires(timer)),
-    54			(unsigned long long)ktime_to_ns(hrtimer_get_expires(timer)),
-    55			(long long)(ktime_to_ns(hrtimer_get_softexpires(timer)) - now),
-    56			(long long)(ktime_to_ns(hrtimer_get_expires(timer)) - now));
-    57	}
-    58	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+Krzysztof
 
