@@ -1,157 +1,146 @@
-Return-Path: <linux-kernel+bounces-588279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B810A7B6F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 06:49:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FDA7A7B6FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 06:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE14B16D2BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 04:49:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 927873B5B08
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 04:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E4B13DDAE;
-	Fri,  4 Apr 2025 04:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NG+nf0fF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1224A95E
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 04:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6429513BC35;
+	Fri,  4 Apr 2025 04:54:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D4BA95E
+	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 04:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743742185; cv=none; b=l9EVqNgra8WGLFXt/UDvYilk4TXrtrGe/R7sPG6ctqIJSUyBNhYMf8YyPDZ42VAS945nBZwNBVYoGpv/9L/Jr+GTFl8E32KmZ5P8LNyraeSmTXTy3NKNs/gp9VJqHBjjSjpD0Ck5s0XE5gGCeJF/0Nnm2czHYoXNJHhHpTDaSPQ=
+	t=1743742469; cv=none; b=N8kS/Ijz21rjXUCF6bhR/q6oqCS8znvqFrqghmJJPGNnxoDQPZJ1AxmCfvXDAZN+f6XKWS3d7DsdUpeNayfIEDwEaFctRX7eVd/suTKEQ/MdiPvCq5bZ+I2GY26L6dqzsj8OMNaJwpZLUixdEOQXA6WG/bDI0K6n6E0cpW36nSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743742185; c=relaxed/simple;
-	bh=PQZUj/47GK5Y336buAUmU4OuQ41xqMgU1QNZNAOOm+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Jcc9NjbF3QfVMe8ygKhS1TPmarh7XUj4/juB1EIKlpNRKuwJzYUmSNcSuipj/Nk+qe6OPcqNCAJq6dx1dUsxfso8nP2hyXeCcTRbgtgSgcomu4ZZdhOFz2z/uIyp//rXxH2TnL77XkNeH4fRAoKAwPCqVRkMOe+FHLlaCf9qrBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NG+nf0fF; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743742183; x=1775278183;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=PQZUj/47GK5Y336buAUmU4OuQ41xqMgU1QNZNAOOm+8=;
-  b=NG+nf0fFj7apb0Ll2g7/3ymylT72BCzaYvQ+BFcHkfjQdYJL+It7ljwI
-   b4qWG7uXZBBXd4yK5t+PJG3/jrl0/4E9xTfu0BofAGwkceOnklck4/4LA
-   i/Y0ptU9HWEKGj8JaxY7brHj6a7W7JQwqiqHmJTAYKvGPo7QWhFvKa0IK
-   +vkMpqi6iLyprCdU428nfnpuY8UFly8uyqDIG/QpFQV8G5oLRrCQWov7h
-   deuanwFubr5A5i3ulRk3NB5k1sTXBaS2De2WxiR8yhZL1y8UVQEhnNyRH
-   Wcaah9+YmCZOtLER0OzBJAUzPR7bXX3xa6ohvaCWRn025XWJKSLQllTyD
-   w==;
-X-CSE-ConnectionGUID: k09k7cJ7Rv2FlaNYVq6hlA==
-X-CSE-MsgGUID: ND5KO+eyRiSCY9W0rJQ1KA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11393"; a="45349356"
-X-IronPort-AV: E=Sophos;i="6.15,187,1739865600"; 
-   d="scan'208";a="45349356"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 21:49:42 -0700
-X-CSE-ConnectionGUID: 8Cs5Aw4dR2WPwGnD5qVpWQ==
-X-CSE-MsgGUID: bS1BnLPTS++cLntYKpmXDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,187,1739865600"; 
-   d="scan'208";a="126985800"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 03 Apr 2025 21:49:40 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u0Yzq-0000zn-19;
-	Fri, 04 Apr 2025 04:49:38 +0000
-Date: Fri, 4 Apr 2025 12:49:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20250325 38/39]
- drivers/gpu/drm/nouveau/nvif/fifo.c:64:1: warning: the frame size of 1048
- bytes is larger than 1024 bytes
-Message-ID: <202504041254.6e26LBdj-lkp@intel.com>
+	s=arc-20240116; t=1743742469; c=relaxed/simple;
+	bh=DVsGWBffIxs5oGnbNeh2kPBlbJNcw8YtrJF5Mx0qJaU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YlSQQCvwMml+ZoNLrBX9A+PyHV2WGBuVBZpsP/4mTh0RLJcQI3U3TKRuu28TWW8NdVE0Br2BPGDptjCgUwRBEg2eZQtQw9ABfnIJSg7+hUJ2WN63kpVV2xhwOaXc3Jo1yUD0oolM83ZvXSe3xN6pYIZONnwh9xm5t2XGjoc66DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3AE2A1516;
+	Thu,  3 Apr 2025 21:54:28 -0700 (PDT)
+Received: from [10.162.40.17] (a077893.blr.arm.com [10.162.40.17])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E5A633F59E;
+	Thu,  3 Apr 2025 21:54:20 -0700 (PDT)
+Message-ID: <39d4d1d4-3d22-4d31-bfc6-1d583e9d3f9b@arm.com>
+Date: Fri, 4 Apr 2025 10:24:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 10/11] mm/vmalloc: Enter lazy mmu mode while
+ manipulating vmalloc ptes
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ David Hildenbrand <david@redhat.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>, Alexandre Ghiti
+ <alexghiti@rivosinc.com>, Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250304150444.3788920-1-ryan.roberts@arm.com>
+ <20250304150444.3788920-11-ryan.roberts@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250304150444.3788920-11-ryan.roberts@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20250325
-head:   f9d2e5634b74486b65c885d8ead9b4baf2ada1f7
-commit: 34d3d057918f442cd214c7f2c64830b9ee5a43d6 [38/39] drm/nouveau: fifo: Avoid -Wflex-array-member-not-at-end warning
-config: arc-allyesconfig (https://download.01.org/0day-ci/archive/20250404/202504041254.6e26LBdj-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250404/202504041254.6e26LBdj-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504041254.6e26LBdj-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/gpu/drm/nouveau/nvif/fifo.c: In function 'nvif_fifo_runlists':
->> drivers/gpu/drm/nouveau/nvif/fifo.c:64:1: warning: the frame size of 1048 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-      64 | }
-         | ^
 
 
-vim +64 drivers/gpu/drm/nouveau/nvif/fifo.c
+On 3/4/25 20:34, Ryan Roberts wrote:
+> Wrap vmalloc's pte table manipulation loops with
+> arch_enter_lazy_mmu_mode() / arch_leave_lazy_mmu_mode(). This provides
+> the arch code with the opportunity to optimize the pte manipulations.
+> 
+> Note that vmap_pfn() already uses lazy mmu mode since it delegates to
+> apply_to_page_range() which enters lazy mmu mode for both user and
+> kernel mappings.
+> 
+> These hooks will shortly be used by arm64 to improve vmalloc
+> performance.
+> 
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> ---
+>  mm/vmalloc.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 6111ce900ec4..b63ca0b7dd40 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -104,6 +104,9 @@ static int vmap_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+>  	pte = pte_alloc_kernel_track(pmd, addr, mask);
+>  	if (!pte)
+>  		return -ENOMEM;
+> +
+> +	arch_enter_lazy_mmu_mode();
+> +
+>  	do {
+>  		if (unlikely(!pte_none(ptep_get(pte)))) {
+>  			if (pfn_valid(pfn)) {
+> @@ -127,6 +130,8 @@ static int vmap_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+>  		set_pte_at(&init_mm, addr, pte, pfn_pte(pfn, prot));
+>  		pfn++;
+>  	} while (pte += PFN_DOWN(size), addr += size, addr != end);
+> +
+> +	arch_leave_lazy_mmu_mode();
+>  	*mask |= PGTBL_PTE_MODIFIED;
+>  	return 0;
+>  }
+> @@ -354,6 +359,8 @@ static void vunmap_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+>  	unsigned long size = PAGE_SIZE;
+>  
+>  	pte = pte_offset_kernel(pmd, addr);
+> +	arch_enter_lazy_mmu_mode();
+> +
+>  	do {
+>  #ifdef CONFIG_HUGETLB_PAGE
+>  		size = arch_vmap_pte_range_unmap_size(addr, pte);
+> @@ -370,6 +377,8 @@ static void vunmap_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
+>  			ptent = ptep_get_and_clear(&init_mm, addr, pte);
+>  		WARN_ON(!pte_none(ptent) && !pte_present(ptent));
+>  	} while (pte += (size >> PAGE_SHIFT), addr += size, addr != end);
+> +
+> +	arch_leave_lazy_mmu_mode();
+>  	*mask |= PGTBL_PTE_MODIFIED;
+>  }
+>  
+> @@ -515,6 +524,9 @@ static int vmap_pages_pte_range(pmd_t *pmd, unsigned long addr,
+>  	pte = pte_alloc_kernel_track(pmd, addr, mask);
+>  	if (!pte)
+>  		return -ENOMEM;
+> +
+> +	arch_enter_lazy_mmu_mode();
+> +
+>  	do {
+>  		struct page *page = pages[*nr];
+>  
+> @@ -528,6 +540,8 @@ static int vmap_pages_pte_range(pmd_t *pmd, unsigned long addr,
+>  		set_pte_at(&init_mm, addr, pte, mk_pte(page, prot));
+>  		(*nr)++;
+>  	} while (pte++, addr += PAGE_SIZE, addr != end);
+> +
+> +	arch_leave_lazy_mmu_mode();
+>  	*mask |= PGTBL_PTE_MODIFIED;
+>  	return 0;
+>  }
 
-cc36205085bb6e Ben Skeggs          2018-05-08  23  
-cc36205085bb6e Ben Skeggs          2018-05-08  24  static int
-cc36205085bb6e Ben Skeggs          2018-05-08  25  nvif_fifo_runlists(struct nvif_device *device)
-cc36205085bb6e Ben Skeggs          2018-05-08  26  {
-cc36205085bb6e Ben Skeggs          2018-05-08  27  	struct nvif_object *object = &device->object;
-34d3d057918f44 Gustavo A. R. Silva 2025-04-03  28  	DEFINE_RAW_FLEX(struct nv_device_info_v1, a, data, 65);
-34d3d057918f44 Gustavo A. R. Silva 2025-04-03  29  	struct nv_device_info_v1_data *runlists = &a->data[0];
-34d3d057918f44 Gustavo A. R. Silva 2025-04-03  30  	struct nv_device_info_v1_data *runlist = &a->data[1];
-34d3d057918f44 Gustavo A. R. Silva 2025-04-03  31  	const u8 rl_cnt = (__struct_size(a) - sizeof(*a)) / sizeof(*a->data) - 1;
-cc36205085bb6e Ben Skeggs          2018-05-08  32  	int ret, i;
-cc36205085bb6e Ben Skeggs          2018-05-08  33  
-cc36205085bb6e Ben Skeggs          2018-05-08  34  	if (device->runlist)
-cc36205085bb6e Ben Skeggs          2018-05-08  35  		return 0;
-cc36205085bb6e Ben Skeggs          2018-05-08  36  
-34d3d057918f44 Gustavo A. R. Silva 2025-04-03  37  	a->version = 1;
-34d3d057918f44 Gustavo A. R. Silva 2025-04-03  38  	a->count = (__struct_size(a) - sizeof(*a)) / sizeof(*a->data);
-34d3d057918f44 Gustavo A. R. Silva 2025-04-03  39  	runlists->mthd = NV_DEVICE_HOST_RUNLISTS;
-34d3d057918f44 Gustavo A. R. Silva 2025-04-03  40  	for (i = 0; i < rl_cnt; i++) {
-34d3d057918f44 Gustavo A. R. Silva 2025-04-03  41  		runlist[i].mthd = NV_DEVICE_HOST_RUNLIST_ENGINES;
-34d3d057918f44 Gustavo A. R. Silva 2025-04-03  42  		runlist[i].data = i;
-f8fabd31fabaa3 Ben Skeggs          2021-02-08  43  	}
-cc36205085bb6e Ben Skeggs          2018-05-08  44  
-cc36205085bb6e Ben Skeggs          2018-05-08  45  	ret = nvif_object_mthd(object, NV_DEVICE_V0_INFO, a, sizeof(*a));
-cc36205085bb6e Ben Skeggs          2018-05-08  46  	if (ret)
-cc36205085bb6e Ben Skeggs          2018-05-08  47  		goto done;
-cc36205085bb6e Ben Skeggs          2018-05-08  48  
-34d3d057918f44 Gustavo A. R. Silva 2025-04-03  49  	device->runlists = fls64(runlists->data);
-6396bb221514d2 Kees Cook           2018-06-12  50  	device->runlist = kcalloc(device->runlists, sizeof(*device->runlist),
-6396bb221514d2 Kees Cook           2018-06-12  51  				  GFP_KERNEL);
-cc36205085bb6e Ben Skeggs          2018-05-08  52  	if (!device->runlist) {
-cc36205085bb6e Ben Skeggs          2018-05-08  53  		ret = -ENOMEM;
-cc36205085bb6e Ben Skeggs          2018-05-08  54  		goto done;
-cc36205085bb6e Ben Skeggs          2018-05-08  55  	}
-cc36205085bb6e Ben Skeggs          2018-05-08  56  
-cc36205085bb6e Ben Skeggs          2018-05-08  57  	for (i = 0; i < device->runlists; i++) {
-34d3d057918f44 Gustavo A. R. Silva 2025-04-03  58  		if (runlist[i].mthd != NV_DEVICE_INFO_INVALID)
-34d3d057918f44 Gustavo A. R. Silva 2025-04-03  59  			device->runlist[i].engines = runlist[i].data;
-cc36205085bb6e Ben Skeggs          2018-05-08  60  	}
-cc36205085bb6e Ben Skeggs          2018-05-08  61  
-cc36205085bb6e Ben Skeggs          2018-05-08  62  done:
-cc36205085bb6e Ben Skeggs          2018-05-08  63  	return ret;
-cc36205085bb6e Ben Skeggs          2018-05-08 @64  }
-cc36205085bb6e Ben Skeggs          2018-05-08  65  
-
-:::::: The code at line 64 was first introduced by commit
-:::::: cc36205085bb6e3a4eed1edbe413fd2235cadb27 drm/nouveau/fifo/gk104-: support querying engines available on each runlist
-
-:::::: TO: Ben Skeggs <bskeggs@redhat.com>
-:::::: CC: Ben Skeggs <bskeggs@redhat.com>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
