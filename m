@@ -1,88 +1,205 @@
-Return-Path: <linux-kernel+bounces-588294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58CE0A7B729
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 07:28:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BAFDA7B751
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 07:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23B2A178C55
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 05:28:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9090F18853F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 05:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBE9156C63;
-	Fri,  4 Apr 2025 05:28:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D3316A395;
+	Fri,  4 Apr 2025 05:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Q9kDdsYy"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF39376
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 05:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5A72E62C0;
+	Fri,  4 Apr 2025 05:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743744485; cv=none; b=sGpdQBVBB+f7sb2IX82sZPckkWV3ps3z19h5sR1bC1GykYVAPpVc/TfYwOlVdwSHNqKfVJGvRrE27EuQbnS6AUmhJXLrGapIF1sa6yGK7mQgt6p8z7jFIk0rsmHE/Phq8XSLatPWCb0CXefzxyZkn6M/rXigDiukMepUI3JvsrM=
+	t=1743744702; cv=none; b=ExgHfS1++KRJJiuBOrmfYrTQmRMEatR0nnNOhRFTtCF/Xhqunme6jR6d1vEWm7+skdr1S/AGapyNUqE4z5JSvDUq3z8ssCkQisTbknI+RuaUct8H1jKyoilBjzcXX0r9GdQHZ5cdscI6IeTn2me6hxqQAgsNpDmLiU5FNZ33Trw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743744485; c=relaxed/simple;
-	bh=ZSrAJnXELvizS+zkdrMA9ZCJvgmLOWv9EV7ntwljEi4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=sUQqrhSRqavQk6VUqXpqcO5BKyYaQylwBDvSQGbbUGwbYHqjhEo/gAzNQ/OTTTwheE+1JI0dZ7V7AQBMvy0bZiYk1JpdiZdFoPCxelRUoHB69G9Yln01oRUA0jTS/2RGrUEbHMiJrdS/VNAmxXnFAkp2tMcrcJVL4fI2QIKBAi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d43541a706so18747175ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 03 Apr 2025 22:28:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743744482; x=1744349282;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1zMGCewqhmB2S6fbGZ8MeM53MmWKNIbog+Kh6suJRiE=;
-        b=rg6b0D5QgmG7yjkBYfg50VK8HREtH71jOb+Qev876Yagwhlp21xsEvB3qdheUZPY5b
-         I7vdDO8GeCnuJ1GSrGRtwxXGNNtC+fWeKeEG0+/wy5osMrdvFLPZM6tuXYMZ4XOP3UHb
-         CF1XmKx67bDBSzZjjY65rJdVCEJTVYUyWcWTvuohrZ2nnDHWSTlTfMJL/r6RDWSlbxcA
-         QGXnsYvGcCMRsITGFVpsnAUycmLSa72TrcQZo9BRzeZfhFUHjanYXoc2Yywqz928TfEh
-         LNbOZEWWSYc/5MBp4zXnnfdT+bCLf5ttCn7gdP7fKE8QLCP4wnp9zbp0qYovHzs2zScB
-         NHBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWV57eeOevSSembGzWQJu017mWOkHPTFNcH7FfoHYTb7UJtLtibuJRJSm2aUi3MRbBJ7KSIlRpIMWGrVMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJV/v8/0TwPFZN9/zya28h3GDOuHglwKMJ6cBmpl2ClFAJqoJn
-	8AZwv8CWiK33f42s1Hc32I6+7C9P5BX5CYYv5Db42YybcqQ4iWnirIaOx+bWIvdDwuy/bo2viUZ
-	KgBYZK7T6UCzPvKXZ1TBYGWceuzz66TAg+5T+HchoVwaQOLwyo8/5tbY=
-X-Google-Smtp-Source: AGHT+IHNPIecIsRBeY/e28Dd8iA/9r1ASbB9Pvb/iCs+9U7OC+d1BcGYcVVmtsl2gRAA8XgufoOtFSkC6l09qpclk8AHn5CFPVlN
+	s=arc-20240116; t=1743744702; c=relaxed/simple;
+	bh=BvmulAeaabO85X4ftFXFh02y82mIVRxbrUS0v/w2564=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h+/hF+RAhYcGRaYHxEVhuDf8V+d5MHXQMP97Yj/F8KSG4LRn5PJ299jqWXe0U6AIXQuoWXRsdcsLM8QAU69ucY4prlbMLSnESntDCWdDjOoMDCCW3wEGn3tamcJEfZrBNH0XiOagIfYMaGE25lt8w9eNUZmRqNux0v2arBgde8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Q9kDdsYy; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=m0feoZm9sH9aLLi6evQGqxqekCHH6wsr0FesFAZnxp4=; b=Q9kDdsYyKLrg2ePBI8QxjnP7KP
+	GOYdGm5/f7zZ9ffUbfAV7N69r5XFuMhC0InQJnxVvTa/PfYKsiQRphAmszK5f5NB/1nTNjxKg8I36
+	85ajkImalrnc+KtkGTFiEwriI/+NKUzAvxV9hHZrH8L78oN2JIktMfZKPA3/BaiiF6zarJzhKCJds
+	hV6i9URQjew2dz59SGm+BKyxl68ginscXCoyWXF+X224TiObOnGYGbKpCkewaHMiDuyWbsdKNlGy5
+	ZTx3qWo+X9YOhDJIonXIKRLzeJi6eso0wFUH0Md/m9vj6RJFbFv37WzZTOtfGr+AfVuG+vjd79dAo
+	fXZTxY2A==;
+Received: from [223.233.74.223] (helo=[192.168.1.12])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1u0Ze9-00BBxp-Gj; Fri, 04 Apr 2025 07:31:17 +0200
+Message-ID: <daa87c96-546d-c3c1-ef45-9213959ae629@igalia.com>
+Date: Fri, 4 Apr 2025 11:01:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18cc:b0:3d5:7f32:8d24 with SMTP id
- e9e14a558f8ab-3d6e576be71mr15971315ab.15.1743744482651; Thu, 03 Apr 2025
- 22:28:02 -0700 (PDT)
-Date: Thu, 03 Apr 2025 22:28:02 -0700
-In-Reply-To: <tencent_10224B011B9C25D1BA48BB9033BC9EF71B08@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67ef6de2.050a0220.9040b.032e.GAE@google.com>
-Subject: Re: [syzbot] [isofs?] KASAN: slab-out-of-bounds Read in isofs_fh_to_parent
-From: syzbot <syzbot+4d7cd7dd0ce1aa8d5c65@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v2 1/3] exec: Dynamically allocate memory to store task's
+ full name
+Content-Language: en-US
+To: Harry Yoo <harry.yoo@oracle.com>, Bhupesh <bhupesh@igalia.com>
+Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
+ laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
+ mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+ alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
+ mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
+ david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org,
+ ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz, mingo@redhat.com,
+ juri.lelli@redhat.com, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com
+References: <20250331121820.455916-1-bhupesh@igalia.com>
+ <20250331121820.455916-2-bhupesh@igalia.com> <Z-tlVsM2Dq70gC4r@harry>
+From: Bhupesh Sharma <bhsharma@igalia.com>
+In-Reply-To: <Z-tlVsM2Dq70gC4r@harry>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 4/1/25 9:32 AM, Harry Yoo wrote:
+> On Mon, Mar 31, 2025 at 05:48:18PM +0530, Bhupesh wrote:
+>> Provide a parallel implementation for get_task_comm() called
+>> get_task_full_name() which allows the dynamically allocated
+>> and filled-in task's full name to be passed to interested
+>> users such as 'gdb'.
+>>
+>> Currently while running 'gdb', the 'task->comm' value of a long
+>> task name is truncated due to the limitation of TASK_COMM_LEN.
+>>
+>> For example using gdb to debug a simple app currently which generate
+>> threads with long task names:
+>>    # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
+>>    # cat log
+>>
+>>    NameThatIsTooLo
+>>
+>> This patch does not touch 'TASK_COMM_LEN' at all, i.e.
+>> 'TASK_COMM_LEN' and the 16-byte design remains untouched. Which means
+>> that all the legacy / existing ABI, continue to work as before using
+>> '/proc/$pid/task/$tid/comm'.
+>>
+>> This patch only adds a parallel, dynamically-allocated
+>> 'task->full_name' which can be used by interested users
+>> via '/proc/$pid/task/$tid/full_name'.
+>>
+>> After this change, gdb is able to show full name of the task:
+>>    # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
+>>    # cat log
+>>
+>>    NameThatIsTooLongForComm[4662]
+>>
+>> Signed-off-by: Bhupesh <bhupesh@igalia.com>
+>> ---
+>>   fs/exec.c             | 21 ++++++++++++++++++---
+>>   include/linux/sched.h |  9 +++++++++
+>>   2 files changed, 27 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/exec.c b/fs/exec.c
+>> index f45859ad13ac..4219d77a519c 100644
+>> --- a/fs/exec.c
+>> +++ b/fs/exec.c
+>> @@ -1208,6 +1208,9 @@ int begin_new_exec(struct linux_binprm * bprm)
+>>   {
+>>   	struct task_struct *me = current;
+>>   	int retval;
+>> +	va_list args;
+>> +	char *name;
+>> +	const char *fmt;
+>>   
+>>   	/* Once we are committed compute the creds */
+>>   	retval = bprm_creds_from_file(bprm);
+>> @@ -1348,11 +1351,22 @@ int begin_new_exec(struct linux_binprm * bprm)
+>>   		 * detecting a concurrent rename and just want a terminated name.
+>>   		 */
+>>   		rcu_read_lock();
+>> -		__set_task_comm(me, smp_load_acquire(&bprm->file->f_path.dentry->d_name.name),
+>> -				true);
+>> +		fmt = smp_load_acquire(&bprm->file->f_path.dentry->d_name.name);
+>> +		name = kvasprintf(GFP_KERNEL, fmt, args);
+>> +		if (!name)
+>> +			return -ENOMEM;
+> Is it safe to return error here, instead of jumping to 'out_unlock' label
+> and then releasing locks?
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Ok, let me modify this in v3 to ensure that locks are released properly.
 
-Reported-by: syzbot+4d7cd7dd0ce1aa8d5c65@syzkaller.appspotmail.com
-Tested-by: syzbot+4d7cd7dd0ce1aa8d5c65@syzkaller.appspotmail.com
+>> +		me->full_name = name;
+>> +		__set_task_comm(me, fmt, true);
+>>   		rcu_read_unlock();
+>>   	} else {
+>> -		__set_task_comm(me, kbasename(bprm->filename), true);
+>> +		fmt = kbasename(bprm->filename);
+>> +		name = kvasprintf(GFP_KERNEL, fmt, args);
+>> +		if (!name)
+>> +			return -ENOMEM;
+>> +
+>> +		me->full_name = name;
+>> +		__set_task_comm(me, fmt, true);
+>>   	}
+>>   
+>>   	/* An exec changes our domain. We are no longer part of the thread
+>> @@ -1399,6 +1413,7 @@ int begin_new_exec(struct linux_binprm * bprm)
+>>   	return 0;
+>>   
+>>   out_unlock:
+>> +	kfree(me->full_name);
+>>   	up_write(&me->signal->exec_update_lock);
+>>   	if (!bprm->cred)
+>>   		mutex_unlock(&me->signal->cred_guard_mutex);
+>> diff --git a/include/linux/sched.h b/include/linux/sched.h
+>> index 56ddeb37b5cd..053b52606652 100644
+>> --- a/include/linux/sched.h
+>> +++ b/include/linux/sched.h
+>> @@ -1166,6 +1166,9 @@ struct task_struct {
+>>   	 */
+>>   	char				comm[TASK_COMM_LEN];
+>>   
+>> +	/* To store the full name if task comm is truncated. */
+>> +	char				*full_name;
+>> +
+>>   	struct nameidata		*nameidata;
+>>   
+>>   #ifdef CONFIG_SYSVIPC
+>> @@ -2007,6 +2010,12 @@ extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec
+>>   	buf;						\
+>>   })
+>>   
+>> +#define get_task_full_name(buf, buf_size, tsk) ({	\
+>> +	BUILD_BUG_ON(sizeof(buf) < TASK_COMM_LEN);	\
+>> +	strscpy_pad(buf, (tsk)->full_name, buf_size);	\
+>> +	buf;						\
+>> +})
+>> +
+>>   #ifdef CONFIG_SMP
+>>   static __always_inline void scheduler_ipi(void)
+>>   {
+>> -- 
+>> 2.38.1
+>>
+>>
 
-Tested on:
-
-commit:         d6b13dbd Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=11d92a74580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=114db1c77c985e53
-dashboard link: https://syzkaller.appspot.com/bug?extid=4d7cd7dd0ce1aa8d5c65
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1479023f980000
-
-Note: testing is done by a robot and is best-effort only.
+Thanks.
 
