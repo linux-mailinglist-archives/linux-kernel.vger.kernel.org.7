@@ -1,99 +1,122 @@
-Return-Path: <linux-kernel+bounces-589172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90901A7C2B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:44:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2188CA7C2C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 19:47:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA06416E1AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:44:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA1D117C520
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6024D218ABA;
-	Fri,  4 Apr 2025 17:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6579B220691;
+	Fri,  4 Apr 2025 17:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Xv/AU4ZN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Vrt7GB0+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pWIoFmBF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54854217647
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 17:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A9F1494A6;
+	Fri,  4 Apr 2025 17:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743788653; cv=none; b=JXn1Uv8JnPMnN2X3gaZ7oj4dZdxoBZN1RoJ2q7dUJJ3NDp3obkHQj8Xl1eN+/WPHwwZAOlCXtA/7x8MkpRi5Jhy8FXNYszmj8iYWOSR+9JGGIaadhqEBYf54e/Gl0Mb5HiDbmukZJGk0SeLEOtN511iq8MxTUSrBBFMyWjAP8DY=
+	t=1743788803; cv=none; b=IeViGuWTMcDLi9M2v2qVXVl3q6BZ31UcP7CiVU0+LowyWyIyUC4hQNodNN2am0fwfKE6dKXWvSj8cgIUXdvZyfpyk9sBr1bzOjhmhqFt7jj7UeZvowxCjffEoAbvDvbFViVX2uxpKYytL+0faxsQq0nYjHALK2zqu1iEGB0SHqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743788653; c=relaxed/simple;
-	bh=icX7MV22mrIepn/IXi871HeRt6dn0goevltgwb74F0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fwuDjRs9S2Ib3tyyvGO8b3Wc8SaOQ5Y570KFy+OmC3DukUrMxX0r9812kJ/+ELflzhQ3f0r1f0lR+TQKNaiLaiCrymeV9kqKBNiQwy8hvN1b2cTs5X8EgpmG1CnrevpyPqfFB8g1WU2oPKojFOgNlGcaBicyOKkeljic+8uVbAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Xv/AU4ZN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Vrt7GB0+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 4 Apr 2025 19:44:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1743788650;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iHQ9OX+ZOQUeuIy6BoY0oVTleFUXwctEKDTtRbatX8g=;
-	b=Xv/AU4ZNf+PDMEQzR0YIBb3k3juLflyUzeoxJpz2gEx1sa4RSHpZfLLBw+ZY3AfzIBpXTl
-	T4RZpOcPPSqUzvNbJmFqrAfKrUNiW8nAmX+UVhQAMFaO0Jt1zTov7LLHcJtWvrisoFX9DZ
-	MONdGiLVWz96qR2U6n05vD5Epg6MjD33Kzmh1I/Fhu8d+GrjpyB8zq3SDJGAVoU8bnVEPI
-	UyHx5Hq/7bKMvvDPjYo2R1nRJ1uF3ZQvsJRIt4wmkaCsJV/f6AkeEgztrLukQEE8fomHYQ
-	xnzwbHpkGy/0sNz+/EvzBN1+tKTgpZJs5tcsi3P2U0yxK2Jclf7PUgX/PqNSxQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1743788650;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iHQ9OX+ZOQUeuIy6BoY0oVTleFUXwctEKDTtRbatX8g=;
-	b=Vrt7GB0+Fcy2TWYejPlC30je4YTs0Mu9tyQl5ikkjlMHj8M2wfZ4ZNqLMGTqsMh+tBn3Qk
-	bSMQag1+bEzNgkAw==
-From: Nam Cao <namcao@linutronix.de>
-To: kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [tip:timers/cleanups 2/10]
- drivers/input/keyboard/gpio_keys.c:593:17: error: implicit declaration of
- function 'hrtimer_init'; did you mean 'hrtimers_init'?
-Message-ID: <20250404174409.tkifcSrx@linutronix.de>
-References: <202504050021.ouKQ30CE-lkp@intel.com>
+	s=arc-20240116; t=1743788803; c=relaxed/simple;
+	bh=A1RS/ZLQvyWYXSBeXfOQWDFm91fESjPToqYZ6ozV5wQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oWvrSDhcrd/u5JnXRXSj4LKTI/wyIPzL0jCA7/+XSOCGzFoXn/NFYbnA0hjekZLdit55au96bK/okcqY5Ua/HsV+78jbhvihoc/lnaEKeecjWWkbQPVWDnbFvoF202LRL5BkfcrvOYr8sFTieEMQBYUrSn3tKJE90qkf+1A4kRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pWIoFmBF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 534ErsvH000647;
+	Fri, 4 Apr 2025 17:46:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=vUrzjeI0IFDrH2kZ9T0JJU
+	uyHYMtEg/fuvNTDAM4uOw=; b=pWIoFmBFQtapqtmt179owvNe0/uS2sva1RotBS
+	oGUM8T+g9hr9WOZ3mH42yDgaEw4/hO6SqWYF3Q4m3sgf2GE69mfmIPTbghUdW8Jw
+	Qt4c+d5V22ovuJw3qKdLLcXKyoURWSpcheDNtM6hCuJZvYxMzAzaAcdueujjoGqL
+	MR7hMda9YQT/c0itc9nttBpbNRnbps1ws0Unz77xz08lAgF5AfuMKBKx3tYk3Elv
+	zddtolCPt8Nxv44rby0FKajsIlk5ox1KY1pjwVTZlLHzGPH12XMRut+yFjj9a5qL
+	7yiRoRU7RvWx4WVg9KD81Eq0Jrrrw3Q9/4+zntdr5mRxTElA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45t2d8thjv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Apr 2025 17:46:20 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 534HkJeu029913
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 4 Apr 2025 17:46:19 GMT
+Received: from hu-mapa-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 4 Apr 2025 10:46:15 -0700
+From: Manish Pandey <quic_mapa@quicinc.com>
+To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        "Martin K.
+ Petersen" <martin.petersen@oracle.com>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>
+CC: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_nitirawa@quicinc.com>, <quic_bhaskarv@quicinc.com>,
+        <quic_rampraka@quicinc.com>, <quic_mapa@quicinc.com>,
+        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>
+Subject: [PATCH V2 0/2] scsi: ufs: Implement Quirks for Samsung UFS Devices
+Date: Fri, 4 Apr 2025 23:15:37 +0530
+Message-ID: <20250404174539.28707-1-quic_mapa@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202504050021.ouKQ30CE-lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=KcPSsRYD c=1 sm=1 tr=0 ts=67f01aec cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=zgQ-T9pl9kVSWeUe3YwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: VZlWfoZ4QDkyoVvMaupEz9TIjuobClmF
+X-Proofpoint-ORIG-GUID: VZlWfoZ4QDkyoVvMaupEz9TIjuobClmF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-04_07,2025-04-03_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ malwarescore=0 priorityscore=1501 mlxlogscore=826 mlxscore=0
+ suspectscore=0 clxscore=1011 impostorscore=0 adultscore=0
+ lowpriorityscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2504040122
 
-On Sat, Apr 05, 2025 at 12:53:41AM +0800, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/cleanups
-> head:   5c4da3a96bf484f965057c281f1ef48ac46987bc
-> commit: 58b3f2cce01bb48b6f6e0c1cdca5e5a2fc0c56ad [2/10] hrtimers: Delete hrtimer_init()
-> config: csky-randconfig-001-20250404 (https://download.01.org/0day-ci/archive/20250405/202504050021.ouKQ30CE-lkp@intel.com/config)
-> compiler: csky-linux-gcc (GCC) 13.3.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250405/202504050021.ouKQ30CE-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202504050021.ouKQ30CE-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->    drivers/input/keyboard/gpio_keys.c: In function 'gpio_keys_setup_key':
-> >> drivers/input/keyboard/gpio_keys.c:593:17: error: implicit declaration of function 'hrtimer_init'; did you mean 'hrtimers_init'? [-Werror=implicit-function-declaration]
->      593 |                 hrtimer_init(&bdata->debounce_timer,
->          |                 ^~~~~~~~~~~~
->          |                 hrtimers_init
->    cc1: some warnings being treated as errors
+Introduce quirks for Samsung UFS devices to modify the PA TX HSG1 sync
+length and TX_HS_EQUALIZER settings on the Qualcomm UFS Host controller.
 
-The patch converting this is still in the input tree.
+Additionally, Samsung UFS devices require extra time in hibern8 mode
+before exiting, beyond the standard handshaking phase between the host
+and device. Introduce a quirk to increase the PA_HIBERN8TIME parameter
+by 100 µs to ensure a proper hibernation process.
+---
+Changes in V2
+- Split patches to add PA_HIBERN8TIME quirk in ufshcd.c
 
-Best regards,
-Nam
+---
+Manish Pandey (2):
+  ufs: qcom: Add quirks for Samsung UFS devices
+  scsi: ufs: introduce quirk to extend PA_HIBERN8TIME for UFS devices
+
+ drivers/ufs/core/ufshcd.c   | 31 ++++++++++++++++++++++++++
+ drivers/ufs/host/ufs-qcom.c | 43 +++++++++++++++++++++++++++++++++++++
+ drivers/ufs/host/ufs-qcom.h | 18 ++++++++++++++++
+ include/ufs/ufs_quirks.h    |  6 ++++++
+ 4 files changed, 98 insertions(+)
+
+-- 
+2.17.1
+
 
