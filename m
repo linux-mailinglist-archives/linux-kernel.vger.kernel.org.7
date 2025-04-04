@@ -1,61 +1,60 @@
-Return-Path: <linux-kernel+bounces-587986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-587989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6799AA7B2DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 02:05:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D11DA7B2D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 02:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F99517384A
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 00:04:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DD7B1886399
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 00:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AC32770B;
-	Fri,  4 Apr 2025 00:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152C5EC4;
+	Fri,  4 Apr 2025 00:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZcZ7mmNy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JrQXEvac"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CCD1C68F;
-	Fri,  4 Apr 2025 00:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651FC13BAE3;
+	Fri,  4 Apr 2025 00:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743725051; cv=none; b=GYUXaX4T+6AoP91AlKNPDaAFlHfiq49boaYmHFTvDLKg9Ta332se5nTBTrNilzoaA6RUMERVly/nG4HwHgvK0Vy1jssjrAFMIvf6FfdNNa6M4IW+CuphMBz50y7Oyg9p/Z0xGYxDtfri1PpLIcgxMJDxOpgWq169ID90AzKjHhI=
+	t=1743725056; cv=none; b=nyXljT1BEKXa2P2mUiAONtaHOrnep6crQELN2ndaPIDJuuAv/B4uc8QzkZ3pEOe70vaERGxPIBYBJLMjaK97WDr3wLTfVGEb6h7+xWF7N7E1uVsu6C+v342maEWKfSD4ZWVpQ06OghjmNzdzZ4NG2rJAVJWxdhoxA/AJel6m3rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743725051; c=relaxed/simple;
-	bh=dtZ31VqiZ0O9EDaiThtnCOlAuWfoY2HcCWNL9e7r/bc=;
+	s=arc-20240116; t=1743725056; c=relaxed/simple;
+	bh=r7QFhLqGBIbqEB6bTak6YRf5D6NQBdcSnGBFjIBNgCc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ohk3yqLDHeEdZlbNqP30JQ0h2FIF0xbj7Mb5w+j2IqD1c4LAZHPFq0rXtdtL3Hzc6SvTcJiRv8bIRgRMeApaxkI1GcLMtmn1wcO4o1kvmOLTvM35iFTmxcJdktF7t1HWjMkMByfcGJsXeTo7prEMajv0kTnf9knyUVhq8PwrJD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZcZ7mmNy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 234FDC4CEEB;
-	Fri,  4 Apr 2025 00:04:08 +0000 (UTC)
+	 MIME-Version; b=kBiKZocBM6Ik5bNWpvfNIOyovpvAorNqky/8QgRagC6YHMm38/yJUL0lxjS9/DwWkqpTqFwoILm1NAQKQq73FHkJ6I4UwQlD9A1qnQPbwwAckuoYUYgHeeIXb1ee67ao03qrNrJ4CD8DuCx64hqg4ZMh1/ZdgwebZHO0Ahd872o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JrQXEvac; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95A59C4CEE5;
+	Fri,  4 Apr 2025 00:04:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743725049;
-	bh=dtZ31VqiZ0O9EDaiThtnCOlAuWfoY2HcCWNL9e7r/bc=;
+	s=k20201202; t=1743725055;
+	bh=r7QFhLqGBIbqEB6bTak6YRf5D6NQBdcSnGBFjIBNgCc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZcZ7mmNytVbxG3LsOIbdTVp2bovz8kSnW1QL0gD7KYNr9eiK589yJjJA15HtXlyST
-	 4NG79lysrp0ZwVMxzed5ywP33T46pAYeT+c9iX8khTNEw32+qKmoCSoQf/sHftCs43
-	 FDYymSz7euu3zYAxoKB05gXkyXMAHDxhoOunQXUMY2zuLFgo/k/e36zyofB2EvMF9T
-	 +0BKDWSDkBNx1QfGkbXZ0fQLkGCH0IF/hYShs0T/xny4KaokasUXUt24YSecP14W+t
-	 PL4NxLAzquR4KVZqygLl9HqLjWog5nBtTGlAd8VvXR2fGv8XM5P9NcRjFFO4WEsD/Y
-	 qvE+IoZaYLogw==
+	b=JrQXEvact6EeVgTMnOQ1zSIy7g11kg5EtKNgzCpLb1S6lB7dswGGo/WI8xXUtNen+
+	 XO9z+QKnVupZSqAdsYWqXYd2sUse4Z+IasLQV7L4E62Z7nEfOdbRgIQqqBqA9bByd7
+	 aL3pvScUd/nJevmzzb/Mjo0EiS/SLowoyY0CjZ60qRGvFNRWgIsC+JSa6zyDFuVkxo
+	 It7AvdNdAICS+blJH1L3G9V2AO/1/Kg7ygfPtUyRcJwZtoumF+1PoJceM8aFTl426u
+	 crsW7I4KdGGSe9hz4k+yiuKhD4RwX/STG+A6hz4IA4OQh1ShHLkQMOASPgvZNuPigV
+	 ROCCI2oQn2aGg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Amery Hung <ameryhung@gmail.com>,
-	Martin KaFai Lau <martin.lau@kernel.org>,
+Cc: Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
 	Sasha Levin <sashal@kernel.org>,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	shuah@kernel.org,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 02/23] selftests/bpf: Fix stdout race condition in traffic monitor
-Date: Thu,  3 Apr 2025 20:03:39 -0400
-Message-Id: <20250404000402.2688049-2-sashal@kernel.org>
+	jiaxun.yang@flygoat.com,
+	paulburton@kernel.org,
+	arikalo@gmail.com,
+	cfu@wavecomp.com,
+	dragan.mladjenovic@syrmia.com,
+	linux-mips@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.14 05/23] MIPS: cm: Detect CM quirks from device tree
+Date: Thu,  3 Apr 2025 20:03:42 -0400
+Message-Id: <20250404000402.2688049-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250404000402.2688049-1-sashal@kernel.org>
 References: <20250404000402.2688049-1-sashal@kernel.org>
@@ -70,115 +69,105 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.14
 Content-Transfer-Encoding: 8bit
 
-From: Amery Hung <ameryhung@gmail.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
 
-[ Upstream commit b99f27e90268b1a814c13f8bd72ea1db448ea257 ]
+[ Upstream commit e27fbe16af5cfc40639de4ced67d1a866a1953e9 ]
 
-Fix a race condition between the main test_progs thread and the traffic
-monitoring thread. The traffic monitor thread tries to print a line
-using multiple printf and use flockfile() to prevent the line from being
-torn apart. Meanwhile, the main thread doing io redirection can reassign
-or close stdout when going through tests. A deadlock as shown below can
-happen.
+Some information that should be retrieved at runtime for the Coherence
+Manager can be either absent or wrong. This patch allows checking if
+some of this information is available from the device tree and updates
+the internal variable accordingly.
 
-       main                      traffic_monitor_thread
-       ====                      ======================
-                                 show_transport()
-                                 -> flockfile(stdout)
+For now, only the compatible string associated with the broken HCI is
+being retrieved.
 
-stdio_hijack_init()
--> stdout = open_memstream(log_buf, log_cnt);
-   ...
-   env.subtest_state->stdout_saved = stdout;
-
-                                    ...
-                                    funlockfile(stdout)
-stdio_restore_cleanup()
--> fclose(env.subtest_state->stdout_saved);
-
-After the traffic monitor thread lock stdout, A new memstream can be
-assigned to stdout by the main thread. Therefore, the traffic monitor
-thread later will not be able to unlock the original stdout. As the
-main thread tries to access the old stdout, it will hang indefinitely
-as it is still locked by the traffic monitor thread.
-
-The deadlock can be reproduced by running test_progs repeatedly with
-traffic monitor enabled:
-
-for ((i=1;i<=100;i++)); do
-  ./test_progs -a flow_dissector_skb* -m '*'
-done
-
-Fix this by only calling printf once and remove flockfile()/funlockfile().
-
-Signed-off-by: Amery Hung <ameryhung@gmail.com>
-Signed-off-by: Martin KaFai Lau <martin.lau@kernel.org>
-Link: https://patch.msgid.link/20250213233217.553258-1-ameryhung@gmail.com
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Signed-off-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/network_helpers.c | 33 ++++++++-----------
- 1 file changed, 13 insertions(+), 20 deletions(-)
+ arch/mips/include/asm/mips-cm.h | 22 ++++++++++++++++++++++
+ arch/mips/kernel/mips-cm.c      | 14 ++++++++++++++
+ 2 files changed, 36 insertions(+)
 
-diff --git a/tools/testing/selftests/bpf/network_helpers.c b/tools/testing/selftests/bpf/network_helpers.c
-index 80844a5fb1fee..95e943270f359 100644
---- a/tools/testing/selftests/bpf/network_helpers.c
-+++ b/tools/testing/selftests/bpf/network_helpers.c
-@@ -771,12 +771,13 @@ static const char *pkt_type_str(u16 pkt_type)
- 	return "Unknown";
- }
+diff --git a/arch/mips/include/asm/mips-cm.h b/arch/mips/include/asm/mips-cm.h
+index 23ce951f445bb..754e96dba256c 100644
+--- a/arch/mips/include/asm/mips-cm.h
++++ b/arch/mips/include/asm/mips-cm.h
+@@ -59,6 +59,16 @@ extern phys_addr_t mips_cm_l2sync_phys_base(void);
+  */
+ extern int mips_cm_is64;
  
-+#define MAX_FLAGS_STRLEN 21
- /* Show the information of the transport layer in the packet */
- static void show_transport(const u_char *packet, u16 len, u32 ifindex,
- 			   const char *src_addr, const char *dst_addr,
- 			   u16 proto, bool ipv6, u8 pkt_type)
- {
--	char *ifname, _ifname[IF_NAMESIZE];
-+	char *ifname, _ifname[IF_NAMESIZE], flags[MAX_FLAGS_STRLEN] = "";
- 	const char *transport_str;
- 	u16 src_port, dst_port;
- 	struct udphdr *udp;
-@@ -817,29 +818,21 @@ static void show_transport(const u_char *packet, u16 len, u32 ifindex,
- 
- 	/* TCP or UDP*/
- 
--	flockfile(stdout);
-+	if (proto == IPPROTO_TCP)
-+		snprintf(flags, MAX_FLAGS_STRLEN, "%s%s%s%s",
-+			 tcp->fin ? ", FIN" : "",
-+			 tcp->syn ? ", SYN" : "",
-+			 tcp->rst ? ", RST" : "",
-+			 tcp->ack ? ", ACK" : "");
++/*
++ * mips_cm_is_l2_hci_broken  - determine if HCI is broken
++ *
++ * Some CM reports show that Hardware Cache Initialization is
++ * complete, but in reality it's not the case. They also incorrectly
++ * indicate that Hardware Cache Initialization is supported. This
++ * flags allows warning about this broken feature.
++ */
++extern bool mips_cm_is_l2_hci_broken;
 +
- 	if (ipv6)
--		printf("%-7s %-3s IPv6 %s.%d > %s.%d: %s, length %d",
-+		printf("%-7s %-3s IPv6 %s.%d > %s.%d: %s, length %d%s\n",
- 		       ifname, pkt_type_str(pkt_type), src_addr, src_port,
--		       dst_addr, dst_port, transport_str, len);
-+		       dst_addr, dst_port, transport_str, len, flags);
- 	else
--		printf("%-7s %-3s IPv4 %s:%d > %s:%d: %s, length %d",
-+		printf("%-7s %-3s IPv4 %s:%d > %s:%d: %s, length %d%s\n",
- 		       ifname, pkt_type_str(pkt_type), src_addr, src_port,
--		       dst_addr, dst_port, transport_str, len);
--
--	if (proto == IPPROTO_TCP) {
--		if (tcp->fin)
--			printf(", FIN");
--		if (tcp->syn)
--			printf(", SYN");
--		if (tcp->rst)
--			printf(", RST");
--		if (tcp->ack)
--			printf(", ACK");
--	}
--
--	printf("\n");
--	funlockfile(stdout);
-+		       dst_addr, dst_port, transport_str, len, flags);
+ /**
+  * mips_cm_error_report - Report CM cache errors
+  */
+@@ -97,6 +107,18 @@ static inline bool mips_cm_present(void)
+ #endif
  }
  
- static void show_ipv6_packet(const u_char *packet, u32 ifindex, u8 pkt_type)
++/**
++ * mips_cm_update_property - update property from the device tree
++ *
++ * Retrieve the properties from the device tree if a CM node exist and
++ * update the internal variable based on this.
++ */
++#ifdef CONFIG_MIPS_CM
++extern void mips_cm_update_property(void);
++#else
++static void mips_cm_update_property(void) {}
++#endif
++
+ /**
+  * mips_cm_has_l2sync - determine whether an L2-only sync region is present
+  *
+diff --git a/arch/mips/kernel/mips-cm.c b/arch/mips/kernel/mips-cm.c
+index 3eb2cfb893e19..9cfabaa94d010 100644
+--- a/arch/mips/kernel/mips-cm.c
++++ b/arch/mips/kernel/mips-cm.c
+@@ -5,6 +5,7 @@
+  */
+ 
+ #include <linux/errno.h>
++#include <linux/of.h>
+ #include <linux/percpu.h>
+ #include <linux/spinlock.h>
+ 
+@@ -14,6 +15,7 @@
+ void __iomem *mips_gcr_base;
+ void __iomem *mips_cm_l2sync_base;
+ int mips_cm_is64;
++bool mips_cm_is_l2_hci_broken;
+ 
+ static char *cm2_tr[8] = {
+ 	"mem",	"gcr",	"gic",	"mmio",
+@@ -237,6 +239,18 @@ static void mips_cm_probe_l2sync(void)
+ 	mips_cm_l2sync_base = ioremap(addr, MIPS_CM_L2SYNC_SIZE);
+ }
+ 
++void mips_cm_update_property(void)
++{
++	struct device_node *cm_node;
++
++	cm_node = of_find_compatible_node(of_root, NULL, "mobileye,eyeq6-cm");
++	if (!cm_node)
++		return;
++	pr_info("HCI (Hardware Cache Init for the L2 cache) in GCR_L2_RAM_CONFIG from the CM3 is broken");
++	mips_cm_is_l2_hci_broken = true;
++	of_node_put(cm_node);
++}
++
+ int mips_cm_probe(void)
+ {
+ 	phys_addr_t addr;
 -- 
 2.39.5
 
