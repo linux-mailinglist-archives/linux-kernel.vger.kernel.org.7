@@ -1,225 +1,170 @@
-Return-Path: <linux-kernel+bounces-588497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19EB2A7B985
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:03:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED3BEA7B98B
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B02F61899193
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 09:03:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3008116CEC2
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 09:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B510A1A23BC;
-	Fri,  4 Apr 2025 09:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398351A314F;
+	Fri,  4 Apr 2025 09:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WRpSeJbQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="a1xOuNoT"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E9817A2FD;
-	Fri,  4 Apr 2025 09:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738E819D8BC;
+	Fri,  4 Apr 2025 09:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743757366; cv=none; b=Ek5wfLwZEkBHfiAHaVuwjWAPDYGt4LOFkZyti31JIGGSZLxJ3x7+ZNVJoXMtoEqhPzDsO71oYqqGXh0my/P6qultH5mj0q1iXMdXZPa8VOVsaaH0nY647IfVX9BwUQWshrvrlbST1+Hn4PyyRxrt7KD1e+jCxsTBl52uyPf1+Sw=
+	t=1743757411; cv=none; b=RJNAr7FBt++NgWuOhzGR9bcXCr7y+N+znUsZWwbskgNiYNUtQ1VG4CaGdYz++y0ib9pkZouFZiK2zfDgXAlK5HaQahRhqjiQv4LyPhatz50DumJAIuyCfeZQe49S+3Ldg8gxzrV3R71hKu2SdextX0XDO52X2PZGXY26wNeCn2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743757366; c=relaxed/simple;
-	bh=ybEN/+MVdR+Z2PVAWEdlwJhHO/+OPFI6MPFsScL0VXE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TG5nhyklGWt013IJ8Q5Cod+Atu/Imjr/5WANrNYvcdyjxnUwpPjCDD2HL6LViE0q9KnRffsr0dfk9d1kiYcdMf8WwHI/2FEvY26B9LbSOt0LnEcHzQHnIwsZlYjeIzHtJdheWtTWVrkhy+vMRv2Wnzj6mbH3GOY/oSqGNtA6gbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WRpSeJbQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6413EC4CEDD;
-	Fri,  4 Apr 2025 09:02:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743757365;
-	bh=ybEN/+MVdR+Z2PVAWEdlwJhHO/+OPFI6MPFsScL0VXE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WRpSeJbQKyuUDx2u4/NBlEpMuDV/UdjF5FHUt3By62mCTZoxme/SHhrG6BbERJ0zx
-	 Kof6f0CY1hxQaF/WesKXZtA5v+7A3j3iyDEHX8M0sXd2vqWLopQ4a/bY6Xt2Y4znkp
-	 oJgMFe5EacASyH8B6OzUHtBKQDBonSdW9xKfnP/Wio/YQJRc46+ZnWca6/RZatvaRI
-	 VG0OI4XVlqnP8XswbgdFQ17mO3nBlzS9wk398lkuvjacZseOtXUSZNv49TOwMIKuOU
-	 WR8bBi9ICnN4KXmZqPaG0SgtO4BkI381g3caWZe9OpeTRPihcamc0kDvdAm3FqcvZk
-	 DPeN4GJZhQW2A==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54b0d638e86so2067591e87.1;
-        Fri, 04 Apr 2025 02:02:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVXSNjQ4EZ33y0z8jXWHkTaMujjAILTmA1xJNR3MeOeT6/aczLt8eF72Y0Hps84OMMwmbNR+QZcAEJ+NOg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyrr6FS5dk6ht1tCd5NXeH9VrnKZLA919e/UuVVq9CHgwWxeTpP
-	G5dh1dsDBil+zr+DuPfKCncXHAcl/AbKLPsdqUdUQAoUFt5wB5lWDBsaRsmxC1YjqX+JwWf36Bv
-	cVMmkZvQFfw8XZMnpTt+pkhHBNlc=
-X-Google-Smtp-Source: AGHT+IGRSm4+WIzfAJTm1OSKhZC/IeUbIYyKP9KJP535p52PaGbZjoxnmCrpbPjYHOjts4LtDqBtd/M8IfKquiiVqSE=
-X-Received: by 2002:a05:6512:10d1:b0:54b:117c:8ef6 with SMTP id
- 2adb3069b0e04-54c22801108mr538868e87.57.1743757364003; Fri, 04 Apr 2025
- 02:02:44 -0700 (PDT)
+	s=arc-20240116; t=1743757411; c=relaxed/simple;
+	bh=08remofodMl9NndC97QoQQcun+/9trhhteGAAv+OQ4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JwatXotCNyLrm9Eo9C6uyUAEwVi/fQX2ykRw73W1DbXvku/g8xQKqPrSScUZaK4wSwQ0tfxdlhyA0EQ/O1JGv7uj2Vv0/HxtFivPtDSysdFPriOZ+1hJNnnKyIs60ZOzHt6GdzbecEjWqGp4MBkSzfCV/4M2o1NSNtMIQMi+Lz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=a1xOuNoT; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53492efm3905742
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 4 Apr 2025 04:02:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1743757360;
+	bh=9r3rjhSZYe9kTQKj1A2IGsaMEllubj0HxqoQkvuRJWA=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=a1xOuNoTOoGYlZq8rwTVaFTaCB9vZW/Pr91RqeQ5DLIC7EI/3kJgwJYpt/m3CcAF2
+	 8tNw1JqKIhy9HKS2uItCSiGMsnqUxO23c9kCfumfDatr/a2sBfu91H1vlwu+RKXZFJ
+	 5shN6Sh448Drw63Gu7dCbf87KyHnkZj0lEPv/X3g=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53492enC068812
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 4 Apr 2025 04:02:40 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 4
+ Apr 2025 04:02:39 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 4 Apr 2025 04:02:39 -0500
+Received: from [172.24.23.235] (lt9560gk3.dhcp.ti.com [172.24.23.235])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53492XVJ083733;
+	Fri, 4 Apr 2025 04:02:34 -0500
+Message-ID: <fccd824b-58dc-4ab1-91c0-77c2436914c9@ti.com>
+Date: Fri, 4 Apr 2025 14:32:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250328-fix-merge-config-v1-1-ee78797d1302@samsung.com>
-In-Reply-To: <20250328-fix-merge-config-v1-1-ee78797d1302@samsung.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 4 Apr 2025 18:02:07 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASs5p0+YShD7HBFQmxEObr0px8gZmjLajAJrTLGc1uPkg@mail.gmail.com>
-X-Gm-Features: AQ5f1JrC8YpOlyN2707XKMupNR7R4GAn2J78BuVec6mV6BfLKc6orPOh3gqzuU8
-Message-ID: <CAK7LNASs5p0+YShD7HBFQmxEObr0px8gZmjLajAJrTLGc1uPkg@mail.gmail.com>
-Subject: Re: [PATCH] kconfig: merge_config: use an empty file as initfile
-To: Daniel Gomez <da.gomez@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Daniel Gomez <da.gomez@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v3 3/3] net: ti: icss-iep: Fix possible NULL pointer
+ dereference for perout request
+To: Roger Quadros <rogerq@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        <dan.carpenter@linaro.org>, <kuba@kernel.org>, <edumazet@google.com>,
+        <davem@davemloft.net>, <andrew+netdev@lunn.ch>
+CC: <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <namcao@linutronix.de>, <javier.carrasco.cruz@gmail.com>,
+        <diogo.ivo@siemens.com>, <horms@kernel.org>,
+        <jacob.e.keller@intel.com>, <john.fastabend@gmail.com>,
+        <hawk@kernel.org>, <daniel@iogearbox.net>, <ast@kernel.org>,
+        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        <danishanwar@ti.com>
+References: <20250328102403.2626974-1-m-malladi@ti.com>
+ <20250328102403.2626974-4-m-malladi@ti.com>
+ <0fb67fc2-4915-49af-aa20-8bdc9bed4226@kernel.org>
+ <b0a099a6-33b2-49f9-9af7-580c60b98f55@ti.com>
+ <469fd8d0-c72e-4ca6-87a9-2f42b180276b@redhat.com>
+ <58d26423-04da-4491-9318-d4a7a1f12005@kernel.org>
+Content-Language: en-US
+From: "Malladi, Meghana" <m-malladi@ti.com>
+In-Reply-To: <58d26423-04da-4491-9318-d4a7a1f12005@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Mar 28, 2025 at 11:29=E2=80=AFPM Daniel Gomez <da.gomez@kernel.org>=
- wrote:
->
-> From: Daniel Gomez <da.gomez@samsung.com>
->
-> The scripts/kconfig/merge_config.sh script requires an existing
-> $INITFILE (or the $1 argument) as a base file for merging Kconfig
-> fragments. However, an empty $INITFILE can serve as an initial starting
-> point, later referenced by the KCONFIG_ALLCONFIG Makefile variable
-> if -m is not used. This variable can point to any configuration file
-> containing preset config symbols (the merged output) as stated in
-> Documentation/kbuild/kconfig.rst. When -m is used $INITFILE will
-> contain just the merge output requiring the user to run make (i.e.
-> KCONFIG_ALLCONFIG=3D<$INITFILE> make <allnoconfig/alldefconfig> or make
-> olddefconfig).
->
-> Instead of failing when `$INITFILE` is missing, create an empty file and
-> use it as the starting point for merges.
->
-> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
-> ---
+Hi Roger,
 
+On 4/4/2025 1:17 PM, Roger Quadros wrote:
+> 
+> 
+> On 03/04/2025 14:25, Paolo Abeni wrote:
+>> On 4/2/25 2:37 PM, Malladi, Meghana wrote:
+>>> On 4/2/2025 5:58 PM, Roger Quadros wrote:
+>>>> On 28/03/2025 12:24, Meghana Malladi wrote:
+>>>>> ICSS IEP driver has flags to check if perout or pps has been enabled
+>>>>> at any given point of time. Whenever there is request to enable or
+>>>>> disable the signal, the driver first checks its enabled or disabled
+>>>>> and acts accordingly.
+>>>>>
+>>>>> After bringing the interface down and up, calling PPS/perout enable
+>>>>> doesn't work as the driver believes PPS is already enabled,
+>>>>
+>>>> How? aren't we calling icss_iep_pps_enable(iep, false)?
+>>>> wouldn't this disable the IEP and clear the iep->pps_enabled flag?
+>>>>
+>>>
+>>> The whole purpose of calling icss_iep_pps_enable(iep, false) is to clear
+>>> iep->pps_enabled flag, because if this flag is not cleared it hinders
+>>> generating new pps signal (with the newly loaded firmware) once any of
+>>> the interfaces are up (check icss_iep_perout_enable()), so instead of
+>>> calling icss_iep_pps_enable(iep, false) I am just clearing the
+>>> iep->pps_enabled flag.
+>>
+>> IDK what Roger thinks, but the above is not clear to me. I read it as
+>> you are stating that icss_iep_pps_enable() indeed clears the flag, so i
+>> don't see/follow the reasoning behind this change.
+>>
+>> Skimmir over the code, icss_iep_pps_enable() could indeed avoid clearing
+>> the flag under some circumstances is that the reason?
+>>
+>> Possibly a more describing commit message would help.
+> 
+> I would expect that modifying the xxx_enabled flag should be done only
+> in the icss_iep_xxx_enable() function. Doing it anywhere else will be difficult
+> to track/debug in the long term.
+> 
 
-You still could do 'touch .config' in advance, but
-I do not have a strong option.
+There is no problem with calling icss_iep_pps_enable() for clearing the 
+pps_enable flag. Problem comes with icss_iep_perout_enable(), causing 
+null pointer dereference for the NULL perout request argument we are 
+passing just for clearing the perout_enable flag.
 
-Applied to linux-kbuild. Thanks.
+> I don't see why the flag needs to be set anywhere else. Maye better to
+> improve logic inside icss_iep_pps_enable() like Paolo suggests.
+> 
 
-I quoted $INITFILE in order to fix a shellcheck warning.
+Ok, one thing I can do is create a ptp_perout_request to disable perout 
+instead of passing NULL to icss_iep_perout_enable(). What are your 
+thoughts on this ?
 
+>>
+>>>> And, what if you brought 2 interfaces of the same ICSS instances up
+>>>> but put only 1 interface down and up?
+>>>>
+>>>
+>>> Then the flag need not be disabled if only one interface is brought down
+>>> because the IEP is still alive and all the IEP configuration (including
+>>> pps/perout) is still valid.
+>>
+>> I read the above as stating this fix is not correct in such scenario,
+>> leading to the wrong final state.
+>>
+>> I think it would be better to either give a better reasoning about this
+>> change in the commit message or refactor it to handle even such scenario,
+>>
+>> Thanks,
+>>
+>> Paolo
+>>
+> 
 
-
-diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config=
-.sh
-index ad35a60de350..79c09b378be8 100755
---- a/scripts/kconfig/merge_config.sh
-+++ b/scripts/kconfig/merge_config.sh
-@@ -113,7 +113,7 @@ shift;
-
- if [ ! -r "$INITFILE" ]; then
-        echo "The base file '$INITFILE' does not exist. Creating one..." >&=
-2
--       touch $INITFILE
-+       touch "$INITFILE"
- fi
-
- MERGE_LIST=3D$*
-
-
-
-
-> Commit b9fe99c5b994 ("kbuild: mergeconfig: move an error check
-> to merge_config.sh") moves the check for .config to exist from
-> scripts/kconfig/Makefile to the scripts/kconfig/merge_config.sh.
-> But this is no longer necessary.
->
-> This avoid having to run a make <target> to create a first .config file.
-> Workflow:
->
-> ./scripts/kconfig/merge_config.sh \
-> -m .config \
-> <fragment list>
->
-> make olddefconfig
->
-> Here the logs with upstream scripts/kconfig/merge_config.sh (to show
-> .config is created with tinyconfig).
->
-> make tinyconfig V=3D1
-> {..}
-> make -f ./scripts/Makefile.build obj=3Dscripts/kconfig tinyconfig
-> KCONFIG_ALLCONFIG=3Dkernel/configs/tiny-base.config make -f ./Makefile al=
-lnoconfig
-> make -f ./scripts/Makefile.build obj=3Dscripts/basic
-> make -f ./scripts/Makefile.build obj=3Dscripts/kconfig allnoconfig
-> scripts/kconfig/conf  --allnoconfig Kconfig
->
-> configuration written to .config
->
-> make -f ./Makefile tiny.config
-> make -f ./scripts/Makefile.build obj=3Dscripts/basic
-> make -f ./scripts/Makefile.build obj=3Dscripts/kconfig tiny.config
-> cmd_merge_fragments tiny.config
->   ./scripts/kconfig/merge_config.sh -m .config
-> ./kernel/configs/tiny.config ./arch/x86/configs/tiny.config
-> Using .config as base
-> Merging ./kernel/configs/tiny.config
-> Value of CONFIG_CC_OPTIMIZE_FOR_SIZE is redefined by fragment
-> ./kernel/configs/tiny.config:
-> Previous value: # CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
-> New value: CONFIG_CC_OPTIMIZE_FOR_SIZE=3Dy
->
-> Value of CONFIG_KERNEL_XZ is redefined by fragment
-> ./kernel/configs/tiny.config:
-> Previous value: # CONFIG_KERNEL_XZ is not set
-> New value: CONFIG_KERNEL_XZ=3Dy
->
-> Value of CONFIG_SLUB_TINY is redefined by fragment
-> ./kernel/configs/tiny.config:
-> Previous value: # CONFIG_SLUB_TINY is not set
-> New value: CONFIG_SLUB_TINY=3Dy
->
-> Merging ./arch/x86/configs/tiny.config
-> Value of CONFIG_UNWINDER_GUESS is redefined by fragment
-> ./arch/x86/configs/tiny.config:
-> Previous value: # CONFIG_UNWINDER_GUESS is not set
-> New value: CONFIG_UNWINDER_GUESS=3Dy
->
-> merged configuration written to .config (needs make)
->
-> make -f ./Makefile olddefconfig
-> make -f ./scripts/Makefile.build obj=3Dscripts/basic
-> make -f ./scripts/Makefile.build obj=3Dscripts/kconfig olddefconfig
-> scripts/kconfig/conf  --olddefconfig Kconfig
->
-> configuration written to .config
-> ---
->  scripts/kconfig/merge_config.sh | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_conf=
-ig.sh
-> index 0b7952471c18f6882b8978f839f3170bb41fb01f..ad35a60de350ae1c5b60d39bf=
-752115d27276f52 100755
-> --- a/scripts/kconfig/merge_config.sh
-> +++ b/scripts/kconfig/merge_config.sh
-> @@ -112,8 +112,8 @@ INITFILE=3D$1
->  shift;
->
->  if [ ! -r "$INITFILE" ]; then
-> -       echo "The base file '$INITFILE' does not exist.  Exit." >&2
-> -       exit 1
-> +       echo "The base file '$INITFILE' does not exist. Creating one..." =
->&2
-> +       touch $INITFILE
->  fi
->
->  MERGE_LIST=3D$*
->
-> ---
-> base-commit: e21edb1638e82460f126a6e49bcdd958d452929c
-> change-id: 20250328-fix-merge-config-87fe109017e9
->
-> Best regards,
-> --
-> Daniel Gomez <da.gomez@samsung.com>
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
