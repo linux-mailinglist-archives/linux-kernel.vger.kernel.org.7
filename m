@@ -1,234 +1,162 @@
-Return-Path: <linux-kernel+bounces-589038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B12EA7C0E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:46:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 406D3A7C0CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 17:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C252A17AC8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:46:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 225683B92F9
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 15:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114B11F7561;
-	Fri,  4 Apr 2025 15:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFD01F561B;
+	Fri,  4 Apr 2025 15:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="cn5LQ44B"
-Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="trg3FmI6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1BCB7E110;
-	Fri,  4 Apr 2025 15:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8931F3D52;
+	Fri,  4 Apr 2025 15:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743781527; cv=none; b=mQGWgxWnJm+rNvgPV82L0c8WwBz7/JYeH8Q1duXaKgGpX0vA3b2unRCvnysGs/YuAwnCvqzIPKoHkUuNxp5bJDavEuQJSC7+wAap8UabNxHULXVlWeWGddxfuwUmjj/nAItzbqVczGAQOD2tbiu7nfdIjlyQsrCFB+JTUfFl4Cc=
+	t=1743781440; cv=none; b=XCCIo4l878lo9Ge0DvIu8GKzz2+lAItj4qva6BnmYQs4ernDCsB2EcPSi2sMs2JJnvsvG3+H1B6qqUNC+cOaKxUZRvsRsPKJIx1UBZRlpKyaSawdV/7UDQoimzuv6j7/J1sAlMP1OKliv7d8SlsvOb3XC1SbGkASGIYeC094lqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743781527; c=relaxed/simple;
-	bh=ihDN7/DxACvpk0yyZBzdmxHvkWRzBDnaG9K8bSUk2mQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rgVFBEpwVJee2DQQMIG1iWI1XvuTReHsRKAKIRODSFMVj5GjGw8SWnehkuDcAWv5Wh06uj31z3/xdpFoy7F+aHnSEWJ+NyIg/gb/f9v122c1B7q/nZonfR+ubKw6yJoznOBoNUU/Y3y5HbBJXSLLWdI7D0Y2hpMCgvPUgXCNqio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=cn5LQ44B; arc=none smtp.client-ip=99.78.197.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1743781526; x=1775317526;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=yc6GH0/dKmQ7WSv9wb3vUThoZ6MNVvGsszSJT/iNJmY=;
-  b=cn5LQ44BUJS+sYWWoYKtainZBWpBWaMBtYp4cSPIDLC6Hh6MZWzdLma7
-   0fQ6nn9WdGSwRtarmJHWCBQY1OND6Z6xnl77ulnn1NCxPe+FjmLcvO7qP
-   R9m6nIIglBeVum0m8MrHot7WJRWQs9nydDtjETLeH/fSP+JV13dZ7PKSD
-   Y=;
-X-IronPort-AV: E=Sophos;i="6.15,188,1739836800"; 
-   d="scan'208";a="37863645"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2025 15:45:22 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [10.0.43.254:25779]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.18.64:2525] with esmtp (Farcaster)
- id bc1466b6-dabf-4c34-ba00-853571b00927; Fri, 4 Apr 2025 15:45:20 +0000 (UTC)
-X-Farcaster-Flow-ID: bc1466b6-dabf-4c34-ba00-853571b00927
-Received: from EX19D030EUB002.ant.amazon.com (10.252.61.16) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.79) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 4 Apr 2025 15:45:16 +0000
-Received: from EX19MTAUEA002.ant.amazon.com (10.252.134.9) by
- EX19D030EUB002.ant.amazon.com (10.252.61.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 4 Apr 2025 15:45:16 +0000
-Received: from email-imr-corp-prod-pdx-all-2b-dbd438cc.us-west-2.amazon.com
- (10.43.8.2) by mail-relay.amazon.com (10.252.134.34) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14 via Frontend Transport; Fri, 4 Apr 2025 15:45:15 +0000
-Received: from dev-dsk-kalyazin-1a-a12e27e2.eu-west-1.amazon.com (dev-dsk-kalyazin-1a-a12e27e2.eu-west-1.amazon.com [172.19.103.116])
-	by email-imr-corp-prod-pdx-all-2b-dbd438cc.us-west-2.amazon.com (Postfix) with ESMTPS id CCF7BA047C;
-	Fri,  4 Apr 2025 15:45:11 +0000 (UTC)
-From: Nikita Kalyazin <kalyazin@amazon.com>
-To: <akpm@linux-foundation.org>, <pbonzini@redhat.com>, <shuah@kernel.org>,
-	<viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <muchun.song@linux.dev>,
-	<hughd@google.com>
-CC: <kvm@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-fsdevel@vger.kernel.org>, <jack@suse.cz>,
-	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@Oracle.com>, <jannh@google.com>,
-	<ryan.roberts@arm.com>, <david@redhat.com>, <jthoughton@google.com>,
-	<peterx@redhat.com>, <graf@amazon.de>, <jgowans@amazon.com>,
-	<roypat@amazon.co.uk>, <derekmn@amazon.com>, <nsaenz@amazon.es>,
-	<xmarcalx@amazon.com>, <kalyazin@amazon.com>
-Subject: [PATCH v3 6/6] KVM: selftests: test userfaultfd minor for guest_memfd
-Date: Fri, 4 Apr 2025 15:43:52 +0000
-Message-ID: <20250404154352.23078-7-kalyazin@amazon.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250404154352.23078-1-kalyazin@amazon.com>
-References: <20250404154352.23078-1-kalyazin@amazon.com>
+	s=arc-20240116; t=1743781440; c=relaxed/simple;
+	bh=DW/wqyJx+YCqSUOlSSVG9BIY+e2C7Nv89wJzyiuMFP4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pgWqXP/y2yJitQXgyjlGyESQ01VAH6+VTgB8LMx7NsrNHI9/9V4CyAk1OHJC9tKXYYtFC0ChWae/VUVrLFRRjQKsWX7Eslkc8jNwUAfofshcoY/YOl2d+EIZIlv7UlAfQVxY+b454HBsuvTWwdR2dioD4gWkhWfNPQEJIc8s2bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=trg3FmI6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FDDEC4CEDD;
+	Fri,  4 Apr 2025 15:43:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743781439;
+	bh=DW/wqyJx+YCqSUOlSSVG9BIY+e2C7Nv89wJzyiuMFP4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=trg3FmI6Wtd7AGBLlZJiY+YpmOckUsjSwyLuGpkTgcrTcUlRrIqH9mUdL7RBI4kXA
+	 wGg4FYp4SHCgXtuiFYAz2U407PN0c9OQNL+oTy/3PVdBqym1lQfeimc/809LwsN5pY
+	 54uBZOaqQyUhkt+tCFuwE+JFaeywtH+MayBetTBPjHh0fyDdPZF/njcRQUbZQjvJJg
+	 Wv0SlBsF5tQ4E40ku16kf7gNvizK9MQIGeDXzoPzpLRq6gEt7PqA3B4Kn22FoXXkxq
+	 qq3lpDzU8KnGfpu0Hmj/EXVMpACBGSlYL9/umM9do0lebsPx5Be6NvbHxknxevlOBT
+	 hu56/JLLiiNew==
+Date: Fri, 4 Apr 2025 16:43:55 +0100
+From: Lee Jones <lee@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/14] Support ROHM Scalable PMIC family
+Message-ID: <20250404154355.GH372032@google.com>
+References: <cover.1742802856.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1742802856.git.mazziesaccount@gmail.com>
 
-The test demonstrates that a minor userfaultfd event in guest_memfd can
-be resolved via a memcpy followed by a UFFDIO_CONTINUE ioctl.
+On Mon, 24 Mar 2025, Matti Vaittinen wrote:
 
-Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
----
- .../testing/selftests/kvm/guest_memfd_test.c  | 99 +++++++++++++++++++
- 1 file changed, 99 insertions(+)
+> Support ROHM BD96802, BD96805 and BD96806 PMICs
+> 
+> The ROHM BD96801 [1] and BD96805 [2] are almost identical PMICs what comes
+> to the digital interface. Main difference is voltage tuning range.
+> Supporting BD96805 with BD96801 drivers is mostly just a matter of being
+> able to differentiate the PMICs (done based on the devicetree
+> compatible) and then providing separate voltage tables.
+> 
+> The ROHM BD96802 [3] is a companion PMIC which is intended to be used to
+> provide more capacity on systems where the BD96801 alone is not
+> sufficient. Startup sequence of these PMICs can be synchronized in
+> hardware level, and there seems to be some mechanisms which allow
+> delivering the companion PMIC (BD96802) status to the main PMIC
+> (BD96801/BD96805). This patch series does treat the companion PMIC(s) as
+> individual PMICs and allows using them from software point of view as a
+> stand alone ICs. From the digital point of view, the BD96802 is a subset
+> of BD96801, providing only buck1 and buck2 regulators. Please see the
+> data sheet
+> 
+> The ROHM BD96806 [4] is similar to the BD96802, except that it does also
+> provide different voltage tuning ranges.
+> 
+> This series adds basic voltage monitoring and control as well as a
+> watchdog support for these PMICs using the BD96801 drivers.
+> 
+> Similarly to the BD96801, these PMICs too have a few configurations
+> which can only be done when the PMIC is in STBY state. Similarly to the
+> BD96801, doing these configurations isn't supported by the driver. The
+> original BD96801 RFC [5] driver should be able to cover those
+> configurations, if modified to support these models.
+> 
+> [1]: ROHM BD96801 data sheet:
+> https://fscdn.rohm.com/en/products/databook/datasheet/ic/power/switching_regulator_system/product_brief_bd96801qxx-c-e.pdf
+> [2]: ROHM BD96805 data sheet:
+> https://fscdn.rohm.com/en/products/databook/datasheet/ic/power/switching_regulator_system/product_brief_bd96805qxx-c-e.pdf
+> [3]: ROHM BD96802 data sheet:
+> https://fscdn.rohm.com/en/products/databook/datasheet/ic/power/switching_regulator_system/product_brief_bd96802qxx-c-e.pdf
+> [4]: ROHM BD96806 data sheet:
+> https://fscdn.rohm.com/en/products/databook/datasheet/ic/power/switching_regulator_system/product_brief_bd96806qxx-c-e.pdf
+> [5]: Original BD96801 RFC:
+> https://lore.kernel.org/all/cover.1712058690.git.mazziesaccount@gmail.com/
+> 
+> Revision history:
+> 
+> v1 => v2: MFD driver changes after review by Lee
+>  - Use enum for chip type instead of picking the data directly from the
+>    of_match_data.
+>  - rename "chip data" variable 'cd' to more widely used 'ddata'.
+>  link to v1:
+>   https://lore.kernel.org/all/cover.1741864404.git.mazziesaccount@gmail.com/
+> 
+> ---
+> 
+> Matti Vaittinen (14):
+>   dt-bindings: regulator: Add ROHM BD96802 PMIC
+>   dt-bindings: mfd: Add ROHM BD96802 PMIC
+>   dt-bindings: mfd: bd96801: Add ROHM BD96805
+>   dt-bindings: mfd: bd96802: Add ROHM BD96806
+>   mfd: rohm-bd96801: Add chip info
+>   mfd: bd96801: Drop IC name from the regulator IRQ resources
+>   regulator: bd96801: Drop IC name from the IRQ resources
+>   mfd: rohm-bd96801: Support ROHM BD96802
+>   regulator: bd96801: Support ROHM BD96802
+>   mfd: bd96801: Support ROHM BD96805
+>   regulator: bd96801: Support ROHM BD96805 PMIC
+>   mfd: bd96801: Support ROHM BD96806
+>   regulator: bd96801: Support ROHM BD96806 PMIC
+>   MAINTAINERS: Add BD96802 specific header
 
-diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
-index 38c501e49e0e..9a06c2486218 100644
---- a/tools/testing/selftests/kvm/guest_memfd_test.c
-+++ b/tools/testing/selftests/kvm/guest_memfd_test.c
-@@ -10,12 +10,16 @@
- #include <errno.h>
- #include <stdio.h>
- #include <fcntl.h>
-+#include <pthread.h>
- 
- #include <linux/bitmap.h>
- #include <linux/falloc.h>
-+#include <linux/userfaultfd.h>
- #include <sys/mman.h>
- #include <sys/types.h>
- #include <sys/stat.h>
-+#include <sys/syscall.h>
-+#include <sys/ioctl.h>
- 
- #include "kvm_util.h"
- #include "test_util.h"
-@@ -206,6 +210,98 @@ static void test_create_guest_memfd_multiple(struct kvm_vm *vm)
- 	close(fd1);
- }
- 
-+struct fault_args {
-+	char *addr;
-+	volatile char value;
-+};
-+
-+static void *fault_thread_fn(void *arg)
-+{
-+	struct fault_args *args = arg;
-+
-+	/* Trigger page fault */
-+	args->value = *args->addr;
-+	return NULL;
-+}
-+
-+static void test_uffd_minor(int fd, size_t page_size, size_t total_size)
-+{
-+	struct uffdio_register uffd_reg;
-+	struct uffdio_continue uffd_cont;
-+	struct uffd_msg msg;
-+	struct fault_args args;
-+	pthread_t fault_thread;
-+	void *mem, *mem_nofault, *buf = NULL;
-+	int uffd, ret;
-+	off_t offset = page_size;
-+	void *fault_addr;
-+
-+	ret = posix_memalign(&buf, page_size, total_size);
-+	TEST_ASSERT_EQ(ret, 0);
-+
-+	uffd = syscall(__NR_userfaultfd, O_CLOEXEC);
-+	TEST_ASSERT(uffd != -1, "userfaultfd creation should succeed");
-+
-+	struct uffdio_api uffdio_api = {
-+		.api = UFFD_API,
-+		.features = UFFD_FEATURE_MINOR_GUEST_MEMFD,
-+	};
-+	ret = ioctl(uffd, UFFDIO_API, &uffdio_api);
-+	TEST_ASSERT(ret != -1, "ioctl(UFFDIO_API) should succeed");
-+
-+	mem = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-+	TEST_ASSERT(mem != MAP_FAILED, "mmap should succeed");
-+
-+	mem_nofault = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-+	TEST_ASSERT(mem_nofault != MAP_FAILED, "mmap should succeed");
-+
-+	uffd_reg.range.start = (unsigned long)mem;
-+	uffd_reg.range.len = total_size;
-+	uffd_reg.mode = UFFDIO_REGISTER_MODE_MINOR;
-+	ret = ioctl(uffd, UFFDIO_REGISTER, &uffd_reg);
-+	TEST_ASSERT(ret != -1, "ioctl(UFFDIO_REGISTER) should succeed");
-+
-+	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
-+			offset, page_size);
-+	TEST_ASSERT(!ret, "fallocate(PUNCH_HOLE) should succeed");
-+
-+	fault_addr = mem + offset;
-+	args.addr = fault_addr;
-+
-+	ret = pthread_create(&fault_thread, NULL, fault_thread_fn, &args);
-+	TEST_ASSERT(ret == 0, "pthread_create should succeed");
-+
-+	ret = read(uffd, &msg, sizeof(msg));
-+	TEST_ASSERT(ret != -1, "read from userfaultfd should succeed");
-+	TEST_ASSERT(msg.event == UFFD_EVENT_PAGEFAULT, "event type should be pagefault");
-+	TEST_ASSERT((void *)(msg.arg.pagefault.address & ~(page_size - 1)) == fault_addr,
-+		    "pagefault should occur at expected address");
-+
-+	memcpy(mem_nofault + offset, buf + offset, page_size);
-+
-+	uffd_cont.range.start = (unsigned long)fault_addr;
-+	uffd_cont.range.len = page_size;
-+	uffd_cont.mode = 0;
-+	ret = ioctl(uffd, UFFDIO_CONTINUE, &uffd_cont);
-+	TEST_ASSERT(ret != -1, "ioctl(UFFDIO_CONTINUE) should succeed");
-+
-+	TEST_ASSERT(args.value == *(char *)(mem_nofault + offset),
-+		    "memory should contain the value that was copied");
-+	TEST_ASSERT(args.value == *(char *)(mem + offset),
-+		    "no further fault is expected");
-+
-+	ret = pthread_join(fault_thread, NULL);
-+	TEST_ASSERT(ret == 0, "pthread_join should succeed");
-+
-+	ret = munmap(mem_nofault, total_size);
-+	TEST_ASSERT(!ret, "munmap should succeed");
-+
-+	ret = munmap(mem, total_size);
-+	TEST_ASSERT(!ret, "munmap should succeed");
-+	free(buf);
-+	close(uffd);
-+}
-+
- unsigned long get_shared_type(void)
- {
- #ifdef __x86_64__
-@@ -244,6 +340,9 @@ void test_vm_type(unsigned long type, bool is_shared)
- 	test_fallocate(fd, page_size, total_size);
- 	test_invalid_punch_hole(fd, page_size, total_size);
- 
-+	if (is_shared)
-+		test_uffd_minor(fd, page_size, total_size);
-+
- 	close(fd);
- 	kvm_vm_release(vm);
- }
+Adding support for 3 new devices in one set!
+
+You don't like making things easy for yourself (or us) do you!  =:-)
+
+>  .../bindings/mfd/rohm,bd96801-pmic.yaml       |  10 +-
+>  .../bindings/mfd/rohm,bd96802-pmic.yaml       | 101 ++++
+>  .../regulator/rohm,bd96802-regulator.yaml     |  44 ++
+>  MAINTAINERS                                   |   1 +
+>  drivers/mfd/rohm-bd96801.c                    | 565 ++++++++++++++----
+>  drivers/regulator/bd96801-regulator.c         | 447 ++++++++++++--
+>  include/linux/mfd/rohm-bd96801.h              |   2 +
+>  include/linux/mfd/rohm-bd96802.h              |  74 +++
+>  include/linux/mfd/rohm-generic.h              |   3 +
+>  9 files changed, 1065 insertions(+), 182 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd96802-pmic.yaml
+>  create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd96802-regulator.yaml
+>  create mode 100644 include/linux/mfd/rohm-bd96802.h
+
+The MFD stuff looks okay to me now.
+
+Let me know when everything else is ready to go.
+
 -- 
-2.47.1
-
+Lee Jones [李琼斯]
 
