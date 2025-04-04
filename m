@@ -1,208 +1,108 @@
-Return-Path: <linux-kernel+bounces-588649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FF1FA7BBC5
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:54:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A913CA7BBBD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 13:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F3C5189F3D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:53:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 756BB17ACCA
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 11:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7388C1E1E0B;
-	Fri,  4 Apr 2025 11:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB491DDA0F;
+	Fri,  4 Apr 2025 11:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="xf8Q6A0D"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iljuvQh5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5B051C5A;
-	Fri,  4 Apr 2025 11:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8685D51C5A;
+	Fri,  4 Apr 2025 11:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743767590; cv=none; b=qsIuW+zSs6NWSqJzwdrwO6JSv02ftAcjClQHmxN1QIKcLe0Zg8lmK0x86tNBn81F4jNdlPAwxkbr8h8N7F7ecHWgNkEF82azAgHMMf3dg1epfwAmpewcBlT7sNBChouy71pTO7nqXfmbxBT1VcAYrPzxPNUiWDijN0/NUQOROpA=
+	t=1743767490; cv=none; b=C2zQ2br4jtxJhgNPI14gK39lZZpgqLVBq7FxKwqSMgib30aqY39M9VCQ+mA9jtAUk0iteguc5qoO+6FobQLJzWVI5mwr9x6ErBxBv74ijIs9mZITx0lkUVa0a8Mvtvxd+D//FKiQIY+fy79q2F8FcITI/IubClj880M636KRXsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743767590; c=relaxed/simple;
-	bh=enShrMQhzHuV2QFUuVSEFAnA+ItTuEMOfv17cqnkY3U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NJ3iihWcYoEu08nUZ59EY1xTG52rbzcleHja85/19OVKgWcjbxrOBTDauz8/Qgh6pm6Xz2l23BbZZABQ07+oa5/3LgWddmnOHytZJ4L2YvteE8RelQTb1HTAlFvDL8eMTVzwxJxx3t43OvYUSGQgrB/Z6K0tnqu9j1ceKpI2//A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=xf8Q6A0D; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1743767579; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=hDt6lANfWbz9SDk6CjGNO07bg5Gs/3uMX+AENgcIecM=;
-	b=xf8Q6A0D2ny8/rKQXohst8rBbLm9dYfk7v7hsJ5nL2P+RvwPratWvmUh2+SMhSITMf4a3mo3Siv7M+I5VzZXRIZX0PJm/BoyJs1OEH35f67F6yqCB4xxnXN2OFvPgX2dtJw4opBjDCynmGYx29ZapH2j7Btceppj6FZhiFCJa/k=
-Received: from 30.246.161.208(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WUz6I16_1743767259 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 04 Apr 2025 19:47:40 +0800
-Message-ID: <ab0facc9-f7f1-4ba2-b56c-868d2f8e6807@linux.alibaba.com>
-Date: Fri, 4 Apr 2025 19:47:39 +0800
+	s=arc-20240116; t=1743767490; c=relaxed/simple;
+	bh=mPF9dNqIO0IVwlNHVDTJ/mOCbUxdzAJZwR3p/NziPHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ec0jxIgM96GSOA8q0RzFsDJPcz34QUyP6LKAenWXxqdJhq2G0vc34Z6R3zu7CZYqUsb1Z5dW9QVy9fT8HEj7watrZPaMa+2NpEr6YIW9ECM94YCfiB+ivjC5lf6icfU2ty+4/zDeBMqXpUjZP2c1fRYTrW5sPB0PEhyXDyECUjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iljuvQh5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B522C4CEDD;
+	Fri,  4 Apr 2025 11:51:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743767489;
+	bh=mPF9dNqIO0IVwlNHVDTJ/mOCbUxdzAJZwR3p/NziPHo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iljuvQh5K1ESqANxabdCrgUqmU1PuS2khRE2CNkXIks4yPW5XYrx9C/loJKzMVA/T
+	 qv2Sk1bm9f1sx3nUCKteHI0Gthn9SDJrQht5YzBDFFwBB/3VCGC6oXinTnZ0xO9tK6
+	 Y87+fQ38ZHd+Iko+m8oRIOjHN4NbPj1w+AHio2XQu//gJc337/i7N9NAIrQKs8x1ue
+	 Y2uxXWnRn98RaVVKYMvt+LHoChT5ILbViSSAIVWUd5zpYazXPL2MLRL8mEZecHtn+T
+	 ys3Q51WCk1mSOhSFVqYPUD/TX0clFZJiDRo07dbN02AwA6ODOMmgPfMK3aQX+n+4bz
+	 1FjRdH1VNqYOg==
+Date: Fri, 4 Apr 2025 12:51:25 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "Torreno, Alexis Czezar" <AlexisCzezar.Torreno@analog.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] regulator: adp5055: Add driver for adp5055
+Message-ID: <b01583e1-dc95-49ef-99fe-1eedbe48cadd@sirena.org.uk>
+References: <20250403-upstream-adp5055-v3-0-8eb170f4f94e@analog.com>
+ <20250403-upstream-adp5055-v3-2-8eb170f4f94e@analog.com>
+ <360c60a4-d1ba-47bf-b65d-c6889801703f@sirena.org.uk>
+ <PH0PR03MB63517B73D2E5F9B46FAA6D41F1A92@PH0PR03MB6351.namprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/9] dmaengine: idxd: Add missing cleanup for early
- error out in idxd_setup_internals
-To: Fenghua Yu <fenghuay@nvidia.com>, vinicius.gomes@intel.com,
- dave.jiang@intel.com, Markus.Elfring@web.de, vkoul@kernel.org
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250309062058.58910-1-xueshuai@linux.alibaba.com>
- <20250309062058.58910-5-xueshuai@linux.alibaba.com>
- <22b63198-2aab-481c-a4cd-74c3349e22f8@nvidia.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <22b63198-2aab-481c-a4cd-74c3349e22f8@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="NtdN+vd/FtMOcBIh"
+Content-Disposition: inline
+In-Reply-To: <PH0PR03MB63517B73D2E5F9B46FAA6D41F1A92@PH0PR03MB6351.namprd03.prod.outlook.com>
+X-Cookie: You will soon forget this.
 
 
+--NtdN+vd/FtMOcBIh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-在 2025/4/3 07:26, Fenghua Yu 写道:
-> 
-> On 3/8/25 22:20, Shuai Xue wrote:
->> The idxd_setup_internals() is missing some cleanup when things fail in
->> the middle.
->>
->> Add the appropriate cleanup routines:
->>
->> - cleanup groups
->> - cleanup enginces
->> - cleanup wqs
->>
->> to make sure it exits gracefully.
->>
->> Fixes: defe49f96012 ("dmaengine: idxd: fix group conf_dev lifetime")
->> Cc: stable@vger.kernel.org
->> Suggested-by: Fenghua Yu <fenghuay@nvidia.com>
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->> ---
->>   drivers/dma/idxd/init.c | 59 ++++++++++++++++++++++++++++++++++++-----
->>   1 file changed, 52 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
->> index fe4a14813bba..7334085939dc 100644
->> --- a/drivers/dma/idxd/init.c
->> +++ b/drivers/dma/idxd/init.c
->> @@ -155,6 +155,26 @@ static void idxd_cleanup_interrupts(struct idxd_device *idxd)
->>       pci_free_irq_vectors(pdev);
->>   }
->> +static void idxd_clean_wqs(struct idxd_device *idxd)
->> +{
->> +    struct idxd_wq *wq;
->> +    struct device *conf_dev;
->> +    int i;
->> +
->> +    for (i = 0; i < idxd->max_wqs; i++) {
->> +        wq = idxd->wqs[i];
->> +        if (idxd->hw.wq_cap.op_config)
->> +            bitmap_free(wq->opcap_bmap);
->> +        kfree(wq->wqcfg);
->> +        conf_dev = wq_confdev(wq);
->> +        put_device(conf_dev);
->> +        kfree(wq);
->> +
-> Please remove this blank line here, warned by checkpatch.
+On Fri, Apr 04, 2025 at 02:33:27AM +0000, Torreno, Alexis Czezar wrote:
 
-I checked with checkpatch, but it does not warn (:
+> > This is absolutely standard enable GPIO support, just let the core handle
+> > everything.  Otherwise this looks fine.
 
-./scripts/checkpatch.pl idxd-fix-v3/0004-dmaengine-idxd-Add-missing-cleanup-for-early-error-o.patch
-total: 0 errors, 0 warnings, 91 lines checked
+> May I ask which core function is the suggested to use here?
 
-idxd-fix-v3/0004-dmaengine-idxd-Add-missing-cleanup-for-early-error-o.patch has no obvious style problems and is ready for submission.
+> I assume I need to change the line in ops:
+> -> .is_enabled = adp5055_is_enabled,
 
+> Not sure which function handles both GPIO and registers since as far as I
+> understand 'regulator_is_enabled_regmap()' only handles software/registers and
+> 'regulator_is_enabled()' only checks the gpio?
 
-Will send a new version to fix it and collect all you reviewed-by tag,
-Thanks.
+The core handles GPIOs separately to the enable function, this is a very
+standard feature even things that actually need custom enable functions
+can make use of it.
 
->> +    }
->> +    bitmap_free(idxd->wq_enable_map);
->> +    kfree(idxd->wqs);
->> +}
->> +
->>   static int idxd_setup_wqs(struct idxd_device *idxd)
->>   {
->>       struct device *dev = &idxd->pdev->dev;
->> @@ -245,6 +265,21 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
->>       return rc;
->>   }
->> +static void idxd_clean_engines(struct idxd_device *idxd)
->> +{
->> +    struct idxd_engine *engine;
->> +    struct device *conf_dev;
->> +    int i;
->> +
->> +    for (i = 0; i < idxd->max_engines; i++) {
->> +        engine = idxd->engines[i];
->> +        conf_dev = engine_confdev(engine);
->> +        put_device(conf_dev);
->> +        kfree(engine);
->> +    }
->> +    kfree(idxd->engines);
->> +}
->> +
->>   static int idxd_setup_engines(struct idxd_device *idxd)
->>   {
->>       struct idxd_engine *engine;
->> @@ -296,6 +331,19 @@ static int idxd_setup_engines(struct idxd_device *idxd)
->>       return rc;
->>   }
->> +static void idxd_clean_groups(struct idxd_device *idxd)
->> +{
->> +    struct idxd_group *group;
->> +    int i;
->> +
->> +    for (i = 0; i < idxd->max_groups; i++) {
->> +        group = idxd->groups[i];
->> +        put_device(group_confdev(group));
->> +        kfree(group);
->> +    }
->> +    kfree(idxd->groups);
->> +}
->> +
->>   static int idxd_setup_groups(struct idxd_device *idxd)
->>   {
->>       struct device *dev = &idxd->pdev->dev;
->> @@ -410,7 +458,7 @@ static int idxd_init_evl(struct idxd_device *idxd)
->>   static int idxd_setup_internals(struct idxd_device *idxd)
->>   {
->>       struct device *dev = &idxd->pdev->dev;
->> -    int rc, i;
->> +    int rc;
->>       init_waitqueue_head(&idxd->cmd_waitq);
->> @@ -441,14 +489,11 @@ static int idxd_setup_internals(struct idxd_device *idxd)
->>    err_evl:
->>       destroy_workqueue(idxd->wq);
->>    err_wkq_create:
->> -    for (i = 0; i < idxd->max_groups; i++)
->> -        put_device(group_confdev(idxd->groups[i]));
->> +    idxd_clean_groups(idxd);
->>    err_group:
->> -    for (i = 0; i < idxd->max_engines; i++)
->> -        put_device(engine_confdev(idxd->engines[i]));
->> +    idxd_clean_engines(idxd);
->>    err_engine:
->> -    for (i = 0; i < idxd->max_wqs; i++)
->> -        put_device(wq_confdev(idxd->wqs[i]));
->> +    idxd_clean_wqs(idxd);
->>    err_wqs:
->>       return rc;
->>   }
-> 
-> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
-> 
-> Thanks.
-> 
-> -Fenghua
+--NtdN+vd/FtMOcBIh
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-Thanks.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfvx7wACgkQJNaLcl1U
+h9DSTAf+PSVWwSnav1WgAb+SgTPLt/DLQCSH+e+wzfkq7K+B1PByoh1xres04Yk2
+TwaV/z9/N1SpJHgebQdticw0uKfZtz6lpbUpa8lJpjTJe0aKKkS+cGNTq96RPzsY
+NxzhuEcXwejwjsHTsAIpE5XwlqEf4FeAZ1ea911YatCGGKWs6VIIPo3OSvzwOAp5
+9cy6qbm/XSRlku0U6JnqdU/vp2FBrEV0mNarW9cyIAG4iPQ/EDyxF3aSFkWFyY3e
+CxH/N2iedoGh8T5DEy958mMZPwR1sM/L7ZvXh09B1EYP1I65MuYBIv4RmXRnFHFb
+JLRumw5iO5u7UsVHGnmwlyIsZq6B/w==
+=LPyq
+-----END PGP SIGNATURE-----
 
-Cheers,
-Shuai
-
+--NtdN+vd/FtMOcBIh--
 
