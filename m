@@ -1,175 +1,159 @@
-Return-Path: <linux-kernel+bounces-588418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-588422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C19A7B8B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:21:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D287A7B8BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 10:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2DE03B5F94
-	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:21:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B57816D2D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  4 Apr 2025 08:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B8419539F;
-	Fri,  4 Apr 2025 08:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AAD619D8A8;
+	Fri,  4 Apr 2025 08:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJ7KHNNH"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U4552KzC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85478188CB1
-	for <linux-kernel@vger.kernel.org>; Fri,  4 Apr 2025 08:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BA417FAC2;
+	Fri,  4 Apr 2025 08:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743754881; cv=none; b=D5YcImH92sFzg8GYIA0KAe54j7vq26YVXdvmzNWTusom4LFIla/GA6H1+M8m+Qgg73ySNoq352w05YZbJufdMu82od+k6KH8mSfEPyRCulamqOEb/mGlZvUC8v3bVsqWL0/fTirmsdPPVAJvPHeYUaUwiL5gLIafPCqmKjRAPy0=
+	t=1743754950; cv=none; b=cwdRP6DLz432ijRjWBJTOrciZCw53DlMq98GsSHNJNYKH8Gqs+0vb825XKjkmP+AS4kea5Clb0u/AkTNYUueMZGbybebNzFeUm4oROwk+R8nImQJ7/OGo87aMajb4fnOurTZmy5kdMo2fK7XtVXVBIV3ketMJcPDbJ5itgMK5FQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743754881; c=relaxed/simple;
-	bh=oEBBa0UwT4LpK4NzDfGAM+pvxfyxo+z9Ez6buIMXpIQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Tc7rpwKQxvbJeKj7k/gs1DHX1qnHtLmdRrz8WL6I4kYpErPEe6mzb9icMyFrt5avCuyARphblMWorccZ2FpgJyb84+8bMNp3GcuTqNTqErKMR6lenjJJoLadkz6BePjwAT7xOwLMDfOilCgB6ZzkHnZlg2zoabH0jOK+7ArtdLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KJ7KHNNH; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3996af42857so1927267f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 01:21:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743754877; x=1744359677; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cJnag5N/E8imO6D4V20WNDdVIE9vBf0jkcorR9CB1ZI=;
-        b=KJ7KHNNHju5wT8P5HKROJk1c0+HrjLHZlKO152koN6Bg97Aq1GSGOp2s2rhP3k+sBu
-         8G/xM6lL18ezUDrFdrbSApd/dvA0b8lmitOSBBdW6KnemPMVQ+S2tbRsRPaqphLi5+PU
-         b2XtWQAx5bLV+uvmCZitiLYU8XfOOnVimscwEaSY+UAlu1bjz+f5j9pd1KoHQOVDxvlx
-         iYvgVTuCeF5qVj7UuRvv9ycZAfgQnTZBwFTuKs2REgt2g5ygoESi0NuJo7adl+whl5OM
-         R7H8kVYM/9OnrZqur3dfEt0mStjV8t61DmN3KTYaLdVLpzBxYaKIvUG1mR+e//8/6Cv0
-         ERLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743754877; x=1744359677;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cJnag5N/E8imO6D4V20WNDdVIE9vBf0jkcorR9CB1ZI=;
-        b=n8+q8oYF+ERKhV1i/hMwQ0YB7jC8loOyEyC0khjm6gmv0T0Q1q6AchWo69AqUr5Ld7
-         XJrTY/uO9qSjo5WRvfyGeFfDISHF6xQJKPR5JuWWlwv1kDmgw1XAhatUN8crJc7O6UXF
-         7biz2RY8BP6DyBRQhuWpA3gyED0f8JDfKMM2nXFvb6V+TjL7oFEfsxUV0+el8Zukl0l4
-         PRCiZgS3frwZIXQVwOTOXOprUTCs87HfQFtC2I8A5Ve57nAgj0LifIUQM2fqQYP8WuE1
-         BTupyZu5X5/pRoXYyZQqcZjwDCMR+dKViysTtSQx0FgLNKUFlsN/m3kibSI/IJIc9vlw
-         dutQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVF6/pbAGt8vD3ixy1xNeCWzQyl94/lNGcLyrEcMnoZYAxhbToOx+uPOrIt7aa0NnZLgZ240lV2s1QTVSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfjfV8BNZAtiWe6i+w0zMUq6Go/BXIbQCs8ORM4qJf/7SJbvxf
-	auNBFu75xghoKTwPfCK6LpP/1aot6Lwf0xRblZPnhNK/+QPuXRHY
-X-Gm-Gg: ASbGnctoOWV9e/oCp3AgIrPzkM8b9rDr3V0sov6ItetFuTRVwk5bbTQizLzGAk256Ti
-	WE3T3ZeCSLdv91+DWgRLbBYBI7lf97mpog0ZqOryml9rpZhVJagP/NxhH3KpKpoarDbni+bhON5
-	lGwva8p2LRtNBvNmTpNQaTmpA0zDTN6yD6QgJt3q0UX9ucQ1gSYcV0A8hecfVrqCDVn0ZbdSC+w
-	eKvU8Aye5972DVY7yPKvbw5Bw/eg31lu8FpH3uiV7Fw51zKVApDKw/mcPBXyOloBWRFmq7B2/X6
-	Znss3aD90SrpUXDJbsHjNYLxQQPqU8IaOS8g4fhfGsoAzLGrqYfqRak=
-X-Google-Smtp-Source: AGHT+IHjwKEYxClJ24d2Sr1Kx1XpSNoc5grq1wldrqVQn3q7Oax0SKHigAo7e6h2ExclO/2V4oBmxg==
-X-Received: by 2002:a05:6000:22c5:b0:39c:2c0b:8db4 with SMTP id ffacd0b85a97d-39c2e610ac9mr5747391f8f.10.1743754876537;
-        Fri, 04 Apr 2025 01:21:16 -0700 (PDT)
-Received: from [172.16.8.120] ([197.155.71.138])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec1630f21sm43123945e9.8.2025.04.04.01.21.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 01:21:16 -0700 (PDT)
-Message-ID: <03ecf162e93d23e1224f0b6c07f08cb85547d3d8.camel@gmail.com>
-Subject: Re: [PATCH v2 1/3] staging: rtl8723bs: Modify struct rx_pkt_attrib
- attribute bdecrypted
-From: Erick Karanja <karanja99erick@gmail.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Julia Lawall <julia.lawall@inria.fr>, outreachy@lists.linux.dev, 
-	philipp.g.hortmann@gmail.com, linux-staging@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Date: Fri, 04 Apr 2025 11:21:13 +0300
-In-Reply-To: <2025040440-provolone-uncertain-77a0@gregkh>
-References: <cover.1743613025.git.karanja99erick@gmail.com>
-	 <00287fa9f40c643b8451a0d2df8e2fb97235ee46.1743613025.git.karanja99erick@gmail.com>
-	 <2025040215-confusing-sibling-f99f@gregkh>
-	 <3c235d91-efd6-ddf8-7c9-d8d35c7585@inria.fr>
-	 <2025040246-series-tusk-bec1@gregkh>
-	 <cebaec5995fd21c429160b30795e03c2caa29cef.camel@gmail.com>
-	 <2025040440-provolone-uncertain-77a0@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1743754950; c=relaxed/simple;
+	bh=8TBdxLAGrit6gBbaVtyDDpDQ2oJQC/gOB1crRUimuhM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KBhuUFxkfM/Sdi0VPHOo7lHLytqEeMpJ3644ZNFdOQl5QbtUMm44rK9GnkqSaV9olsEqWUUHRj0xD47+MxoP4BwLcFNaAUGV12o1y1omEmeyYNUxsdaNozQFU9grvUz3lUNh8FcuBIYzfN9T2NG4UGNS6WdKYSOAR3N1Fgk3wMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U4552KzC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 052F6C4CEDD;
+	Fri,  4 Apr 2025 08:22:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743754950;
+	bh=8TBdxLAGrit6gBbaVtyDDpDQ2oJQC/gOB1crRUimuhM=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=U4552KzC41p/RcIhTyIf75PvE+DI2jdVn0GeZYBPn2RJhAPagXtt0gz9b1Ppanuot
+	 CcvIBxPk3OTOEuAMJhpjwwq9sinXSFiNnKZkG1UN9Np0Whgr8x5UphiJYv5nnxuZ3T
+	 4iouRIrofWDDtbPnzpi/XiMLpJFwD0PKlgrk9kCAQCwyCJNPW4ZF9YAKy0jveYA/jx
+	 JINUDdKCy2D5F6+6BXy712S+8fp+ixBA9L0dZ78wNQXi4sFrc2PULEmRrsiEsmX1bv
+	 oC17iyCev1qAKqtxOMteYlN1GpbdgzKuwfFKlBVX2cwtUaULCRLAeoMhLeh913VXT4
+	 pvWSkxyrwWolA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC84C36010;
+	Fri,  4 Apr 2025 08:22:29 +0000 (UTC)
+From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
+Subject: [PATCH 0/4] PCI: Add support for resetting the slots in a platform
+ specific way
+Date: Fri, 04 Apr 2025 13:52:20 +0530
+Message-Id: <20250404-pcie-reset-slot-v1-0-98952918bf90@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL2W72cC/x2M0QpAQBAAf0X7bGudk/Ir8nBYbAndXlKXf7d5n
+ JqZDMpRWKErMkS+ReU8DKqygGkLx8ooszE4cg158nhNwhhZOaHuZ8K2pnEJbRXMAKuuyIs8/7E
+ f3vcD/+QHFmEAAAA=
+X-Change-ID: 20250404-pcie-reset-slot-730bfa71a202
+To: Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+ Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Rob Herring <robh@kernel.org>
+Cc: dingwei@marvell.com, cassel@kernel.org, 
+ Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+ linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3286;
+ i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
+ bh=8TBdxLAGrit6gBbaVtyDDpDQ2oJQC/gOB1crRUimuhM=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBn75bC/QhBJ2Lm7oDnkXSD3gojuMdbnoP6BwqvI
+ wVLoiJ/YduJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZ++WwgAKCRBVnxHm/pHO
+ 9WByCACcRzJZPgK72FjeRiCIUdQhXnSDM57XBK0IaJvyXV9ngfUmFVI62u7EK98Q5sduNhzryce
+ w7WuocXfTiJFpqwtK9sdKJujil1YBy8DRqQBO0xzgMmUrRf5Fw1IqVxJpbyOVStroPAROeQTeE6
+ W0HKbFgBVVnG+u1gOSjzJrdz8gaYImwQSPE3vztXZpHLV0qfWvHqxiQMlFQhhUfIoFKZ0Fr1dq3
+ 3XHgP9oqcRtIsLKdgZ5M2HRi57gDCD7bsDcLRLO/aMoyf7CZfzzDBmqzJEOMGEvLyS8arKig/1Y
+ 0ooTgcXOHgn5PRkopSUzf5lLj0iJMtB7nMyBAl+ghyx+Idpu
+X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
+X-Endpoint-Received: by B4 Relay for
+ manivannan.sadhasivam@linaro.org/default with auth_id=185
+X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reply-To: manivannan.sadhasivam@linaro.org
 
-On Fri, 2025-04-04 at 09:00 +0100, Greg KH wrote:
-> On Fri, Apr 04, 2025 at 09:58:23AM +0300, Erick Karanja wrote:
-> > On Wed, 2025-04-02 at 21:41 +0100, Greg KH wrote:
-> > > On Wed, Apr 02, 2025 at 10:34:22PM +0200, Julia Lawall wrote:
-> > > >=20
-> > > >=20
-> > > > On Wed, 2 Apr 2025, Greg KH wrote:
-> > > >=20
-> > > > > On Wed, Apr 02, 2025 at 08:16:42PM +0300, Erick Karanja
-> > > > > wrote:
-> > > > > > Standardize boolean representation by ensuring consistency,
-> > > > > > replace instances of 1/0 with true/false where boolean
-> > > > > > logic is
-> > > > > > implied,
-> > > > > > as some definitions already use true/false.
-> > > > > > This improves code clarity and aligns with the kernel=E2=80=99s
-> > > > > > bool
-> > > > > > type usage.
-> > > > > >=20
-> > > > > > Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
-> > > > > > ---
-> > > > > > =C2=A0drivers/staging/rtl8723bs/core/rtw_recv.c | 2 +-
-> > > > > > =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > >=20
-> > > > > > diff --git a/drivers/staging/rtl8723bs/core/rtw_recv.c
-> > > > > > b/drivers/staging/rtl8723bs/core/rtw_recv.c
-> > > > > > index a389ba5ecc6f..fd04dbacb50f 100644
-> > > > > > --- a/drivers/staging/rtl8723bs/core/rtw_recv.c
-> > > > > > +++ b/drivers/staging/rtl8723bs/core/rtw_recv.c
-> > > > > > @@ -1358,7 +1358,7 @@ static signed int
-> > > > > > validate_80211w_mgmt(struct adapter *adapter, union
-> > > > > > recv_frame
-> > > > > > =C2=A0			u8 *mgmt_DATA;
-> > > > > > =C2=A0			u32 data_len =3D 0;
-> > > > > >=20
-> > > > > > -			pattrib->bdecrypted =3D 0;
-> > > > > > +			pattrib->bdecrypted =3D false;
-> > > > >=20
-> > > > > but bdecrypted is a u8, not a boolean type.=C2=A0 So setting it t=
-o
-> > > > > "false"
-> > > > > does not seem correct here, right?
-> > > >=20
-> > > > Is false different than 0?
-> > >=20
-> > > Does C guarantee that?=C2=A0 I can never remember.=C2=A0 I don't thin=
-k it
-> > > guarantees that a 'bool' will only be 8 bits, or am I mistaken
-> > > there
-> > > too?
-> > >=20
-> > > > Elsewhere there is an assignment to true.
-> > >=20
-> > > Was that in the original driver?
-> > >=20
-> > > If this doesn't come from the hardware, then it's fine to make
-> > > the
-> > > change.=C2=A0 If it does, it needs to be verified that the layout and
-> > > bit
-> > > values are identical.
-> > >=20
-> > > thanks,
-> > I have compared the generated assembly code
-> > before and after and I have observed the only
-> > change is the comment below.
-> > -# drivers/staging/rtl8723bs/core/rtw_recv.c:1361:
-> > =C2=A0			pattrib->bdecrypted =3D 0;
-> > +# drivers/staging/rtl8723bs/core/rtw_recv.c:1361:
-> > =C2=A0			pattrib->bdecrypted =3D false;
-> > There is no change in the assembly instructions.
->=20
-> Showing the assembly is key, not just a comment :)
-Thank you for the update. I will take this into consideration.
-Erick
+Hi,
+
+Currently, in the event of AER/DPC, PCI core will try to reset the slot and its
+subordinate devices by invoking bridge control reset and FLR. But in some
+cases like AER Fatal error, it might be necessary to reset the slots using the
+PCI host bridge drivers in a platform specific way (as indicated by the TODO in
+the pcie_do_recovery() function in drivers/pci/pcie/err.c). Otherwise, the PCI
+link won't be recovered successfully.
+
+So this series adds a new callback 'pci_host_bridge::reset_slot' for the host
+bridge drivers to reset the slot when a fatal error happens.
+
+Also, this series allows the host bridge drivers to handle PCI link down event
+by resetting the slots and recovering the bus. This is accomplished by the
+help of a new API 'pci_host_handle_link_down()'. Host bridge drivers are
+expected to call this API (preferrably from a threaded IRQ handler) when a link
+down event is detected. The API will reuse the pcie_do_recovery() function to
+recover the link if AER support is enabled, otherwise it will directly call the
+reset_slot() callback of the host bridge driver (if exists).
+
+For reference, I've modified the pcie-qcom driver to call
+pci_host_handle_link_down() after receiving LINK_DOWN global_irq event and
+populated the 'pci_host_bridge::reset_slot()' callback to reset the controller
+(there by slots). Since the Qcom PCIe controllers support only a single root
+port (slot) per controller instance, reset_slot() callback is going to be
+invoked only once. For multi root port controllers, this callback is supposed to
+identify the slots using the supplied 'pci_dev' pointer and reset them.
+
+NOTE
+====
+
+This series is a reworked version of the earlier series [1] that I submitted for
+handling PCI link down event. In this series, I've made use of the AER helpers
+to recover the link as it allows notifying the device drivers and also
+allows saving/restoring the config space.
+
+Testing
+=======
+
+This series is tested on Qcom RB5 and SA8775p Ride boards by triggering the link
+down event manually by writing to LTSSM register. For the error recovery to
+succeed (if AER is enabled), all the drivers in the bridge hierarchy should have
+the 'err_handlers' populated. Otherwise, the link recovery will fail.
+
+[1] https://lore.kernel.org/linux-pci/20250221172309.120009-1-manivannan.sadhasivam@linaro.org
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+Manivannan Sadhasivam (4):
+      PCI/ERR: Remove misleading TODO regarding kernel panic
+      PCI/ERR: Add support for resetting the slot in a platforms specific way
+      PCI: Add link down handling for host bridges
+      PCI: qcom: Add support for resetting the slot due to link down event
+
+ drivers/pci/controller/dwc/pcie-qcom.c | 89 +++++++++++++++++++++++++++++++++-
+ drivers/pci/pci.h                      | 22 +++++++++
+ drivers/pci/pcie/err.c                 | 29 ++++++++---
+ drivers/pci/probe.c                    |  7 +++
+ include/linux/pci.h                    |  2 +
+ 5 files changed, 140 insertions(+), 9 deletions(-)
+---
+base-commit: 08733088b566b58283f0f12fb73f5db6a9a9de30
+change-id: 20250404-pcie-reset-slot-730bfa71a202
+
+Best regards,
+-- 
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+
 
