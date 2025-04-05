@@ -1,154 +1,120 @@
-Return-Path: <linux-kernel+bounces-589799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2C9A7CA57
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 18:48:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78195A7CA5B
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 18:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BECB3173E32
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 16:48:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E790175062
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 16:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53B9187332;
-	Sat,  5 Apr 2025 16:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DDD198E91;
+	Sat,  5 Apr 2025 16:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="l55OxA1w"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004114502A;
-	Sat,  5 Apr 2025 16:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f2HEbgeE"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AFE18DB1C;
+	Sat,  5 Apr 2025 16:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743871679; cv=none; b=OkbzTfbvsapAaTP63i7pP1m19KQZtYiiFDYLc0TFHeKDH6IukmyHhJtWljsxKKjeIR9KQyyG83DcvzoU6fL5D3sg4YTp2japBrGPwfcYmIT6WYFPCrwEL/hBiVYb3eJaIZoxsJggHWrifU7c4By0/752MJ9iJKE8uT8HBsF5tVg=
+	t=1743871970; cv=none; b=CHRWyZ+pMQ3WExfSmJkMQMdY5KT2Ex1jwi6vw8PMtKYprnvpX6tKVTqsizM6PLcMEMfc0Wu+fH2OUfma1yx8lU8CgBXY6Zie624OpCa9iBPrdtZwKeGfqMn4orW26LmuTyuPyj06FHPXU4LRSX6lCmy9BLssU0vEPhkOjb3tkr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743871679; c=relaxed/simple;
-	bh=9BGLYqTQZu2s7kzI0dsjUtxU1pnjhjkWcecnNApDEUM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BieTnR5CPPDiuGNLpr889hvJuHJdH79hM3OtZBNW2L9qElt+dNSHBLis8jBiu0NZUyK40wBv5wt0/vkgfSjF5v7j2TUv938LuhrdfpOnSs/6D9VVd5u8xMea2MYjx3AxkFfPhTBigtEpbNhOxRNGmeckfgrB7xUi2A1vrd2g9io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=l55OxA1w; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=MDq1cM7gEdiK3Cx5k/Cw1x0umVJ9hEJWVQHhrti4x+E=;
-	b=l55OxA1w3Ne6EVRXZr1+QCnc6P2cEIQqyoDUVyyljagj6H3l8gmmXUSJ2lHIum
-	9yIW+UgGwmsdCJynOPksX3pLhPuvsIQ/LQaUfeLv5ckrIumqA1Ib1y1fS4am/Y5H
-	EBbrg6OzyuMjCfadC6NcNI1bJrOrDWRSTURV+sq22BWv0=
-Received: from [192.168.71.89] (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wCHIJWXXvFnNg2yCA--.4226S2;
-	Sun, 06 Apr 2025 00:47:20 +0800 (CST)
-Message-ID: <9dcd70b1-a146-419f-aa5e-bacf52cf81e8@163.com>
-Date: Sun, 6 Apr 2025 00:47:19 +0800
+	s=arc-20240116; t=1743871970; c=relaxed/simple;
+	bh=e3rFDDsdUi6Ihj9N/e7lUFtDjCzLwQ+DugTGrI1QEsA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oarNaVumbdyaI5akcKFph5k0QfhxCefQ64MrsonGZ0q09tCN5dWRXMO30nZZDwFlJufAplaD8nKZIfGDglFkFMOmOQZTL/vzUfaiYrNiXz8xY2iyghw3xwk++kxzzV5bxLSwk2pqnlGTont/bWyMSo1SGFME4am6EbLVb9HfWxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f2HEbgeE; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2279915e06eso29021425ad.1;
+        Sat, 05 Apr 2025 09:52:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743871968; x=1744476768; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cbg1jLZ26gVamd3nqSnVcTJlTpttcX/T5ZM1o3+r+4U=;
+        b=f2HEbgeEejHqe1CgEljJ8r3hwszG+04doLMQYyTANP8PbrFjhP+9qCTUVeJR7bWAax
+         HQgDuo5P4LiIyMWr29cDjHLv4C3NE/Bci+Kx+9IUpzViqQ458MZJeR4FNTnuXyhl9Ie/
+         CuU5vZ3id8ELDqXkgY+o5+ip+Fq4kGXdelJKCFS/nnC84FzhbbxWOE7/dYl/PNya9XxI
+         W8vqT1hmI87GsBD4bmHh4lGBAr/MokH6eQBqZVOkYo+Zyuh6WlGXMNQQ4n/H5EqRXs9w
+         Zw2t8NvvpUkZw9cU2ZXfLVNAUWWjVrkSQWuTdA0e+R/xkPpi2C9TpSiPxIFQ1LW+/lM3
+         69rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743871968; x=1744476768;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cbg1jLZ26gVamd3nqSnVcTJlTpttcX/T5ZM1o3+r+4U=;
+        b=EkaX5LCFmdPUMKkIZAXZSaegqUoNikzr2MhGr3t1yxiTHQUhATYwaDtva+pLzpRwFj
+         6H57I5UGQ/MTy3UHBDrXZCir7pcWvg1GobGNEeciR5yZsUqsviFiGU1r0f+PAfsZgN68
+         ZXOYjE8g6+tapPqmMQMC7lch1WHAQ5RKfviz1Uy1xaDEMvZatusSSsYAIj0EpRqZAfSB
+         rsv859XifPbKT9nZ+J1O2TJ9b7skj0Er9R3xDoOwjFPLoGoANiUksRfHiplF+88ZvMsO
+         12SaISDPTigq/9WaOCl6106MvEg0BeKA2z4Te8VtDakrP3P2rPuwCmlG2SO/SoezMvpq
+         VWWA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7vXlwQMpX+Jibnn9h2K8j9cJhtKSQ6V+aRoDWJV4YlG2j5ADFoYVwuKHJAJSERfKx+vQgRYY0EvxiFHUq@vger.kernel.org, AJvYcCVl90d1GWFNK6mjOD6sLaaFc5gOGGR7lyY7Eo2cI5YiOo5KhjbRfpccXjR+9PIuLMN35qXTq9/415Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZBY6HmWoquhtLL+H1aGIg6N5GP/Wya8iBYvBrqBWEpzISbJI1
+	k1BE+DVzjwE3cpHMPiGMo8x3YeIlEssstrSucvLwVNBS8nQlwD5YOY9WUGEaa7Q=
+X-Gm-Gg: ASbGncutnF/lQ53aIsx1Sa0g+7WKxO8tdmdfVCPEeqriyCHCySR2TfgQxYG0MiUjCYa
+	E5AEV329QdCCsKLSoHluQNHgwdhh3MWgSEcZnL3UqbvLp8BvxWgW9DhNJI7NLjdIRJU8On3E8fs
+	lkz2ucpBDRFHk9ZrGZZgwFzttQSVYepmEu7ndhKD70omjI2QN3M4jQtCks8QIwHeHuqn3oNm313
+	PTZ3r6jEsSfsjpNhE2Xpfuz2nPxVKkBwP5SBkkdGO++VHc607U9qhOhBmUGLWpj60uNWliM8vVH
+	SCd2JsLES7HpEiLkDwo+cuTBZ7dGKxdEDipbV+aWB4g1nkHRRUZOoGgLoRBFLsDGNg==
+X-Google-Smtp-Source: AGHT+IGb17rM+Cs8lNf5wOHRJkud3Mq8n1uj0ktFLQXaBfB4czXmlO30/jL49+BAdwiPB7LnWvd2Ww==
+X-Received: by 2002:a17:903:1251:b0:220:e1e6:4457 with SMTP id d9443c01a7336-22a8a06cdcdmr77200435ad.26.1743871968072;
+        Sat, 05 Apr 2025 09:52:48 -0700 (PDT)
+Received: from localhost.localdomain ([2401:4900:92cf:5d6c:8c12:55d6:5a8f:e497])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229785ad869sm52007115ad.26.2025.04.05.09.52.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Apr 2025 09:52:47 -0700 (PDT)
+From: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
+To: corbet@lwn.net,
+	rdunlap@infradead.org,
+	rbrasga@uci.edu,
+	kevinpaul468@gmail.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: skhan@linuxfoundation.org
+Subject: [PATCH] Added usb_string function to a namespace
+Date: Sat,  5 Apr 2025 22:21:16 +0530
+Message-Id: <20250405165116.147958-1-kevinpaul468@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pci: tegra194: Fix debugfs cleanup for !CONFIG_PCIEASPM
-From: Hans Zhang <18255117159@163.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: bhelgaas@google.com, jonathanh@nvidia.com, kw@linux.com,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-tegra@vger.kernel.org, lpieralisi@kernel.org,
- manivannan.sadhasivam@linaro.org, robh@kernel.org, thierry.reding@gmail.com
-References: <20250405152818.GA107831@bhelgaas>
- <c52ac489-51e9-4803-bf64-2bb6cfbf30bf@163.com>
- <da261a4c-6c27-454f-b21d-af1814b58b91@wanadoo.fr>
- <fa44eac9-8986-46d2-899d-df8811131925@163.com>
-Content-Language: en-US
-In-Reply-To: <fa44eac9-8986-46d2-899d-df8811131925@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCHIJWXXvFnNg2yCA--.4226S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZr4UCw1kZrWrAF1UtFWUArb_yoW5ArW7p3
-	ykGay5KF4DAw1ft3sa9a1kAF1ft395Zr17X345uryIyw4vvr1rXr47KF4Y9Fyfur4kGF18
-	XF4Fv3WfuFn0yF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UyUDAUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDxwmo2fxWi1E5gABsU
 
+with reference to WARNING:
+Duplicate C declaration, also defined at driver-api/usb/gadget:804
+There is a function usb_string in the file message.c,
+there is also a struct usb_string in the kernel api headers.
+The docs is unable to index the function as the index is occupied by struct
+This fix adds messgae.c to the usb_core namespace (in docs) hence providing
+usb_sting a unique index usb_core.usb_string()
 
+Signed-off-by: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
+---
+ Documentation/driver-api/usb/usb.rst | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 2025/4/6 00:35, Hans Zhang wrote:
-> 
-> 
-> On 2025/4/6 00:17, Christophe JAILLET wrote:
->> Le 05/04/2025 à 17:49, Hans Zhang a écrit :
->>>
->>>
->>> On 2025/4/5 23:28, Bjorn Helgaas wrote:
->>>> Follow subject line capitalization convention.
->>>>
->>>> On Sat, Apr 05, 2025 at 10:54:59PM +0800, Hans Zhang wrote:
->>>>> When CONFIG_PCIEASPM is disabled, debugfs entries are not created, but
->>>>> tegra_pcie_dw_remove() and tegra_pcie_dw_shutdown() unconditionally 
->>>>> call
->>>>> debugfs_remove_recursive(), leading to potential NULL pointer 
->>>>> operations.
->>>>>
->>>>> Introduce deinit_debugfs() to wrap debugfs_remove_recursive(), 
->>>>> which is
->>>>> stubbed for !CONFIG_PCIEASPM. Use this function during removal/ 
->>>>> shutdown to
->>>>> ensure debugfs cleanup only occurs when entries were initialized.
->>>>>
->>>>> This prevents kernel warnings and instability when ASPM support is
->>>>> disabled.
->>>>
->>>> This looks like there should be a Fixes: tag to connect this to the
->>>> commit that introduced the problem.
->>>
->>> Hi Bjorn,
->>>
->>> Thanks your for reply. Will add.
->>>
->>> Fixes: bb617cbd8151 (PCI: tegra194: Clean up the exit path for 
->>> Endpoint mode)
->>>
->>>>
->>>> If this is something that broke with the v6.15 merge window, we should
->>>> include this in v6.15 via pci/for-linus.  If this broke earlier, we
->>>> would have to decide whether pci/for-linus is still appropriate or a
->>>> stable tag.
->>>>
->>>
->>> The original code that introduced the unconditional 
->>> `debugfs_remove_recursive()` calls was actually merged in an earlier 
->>> cycle.
->>>
->>>> We did merge some debugfs things for v6.15, but I don't see anything
->>>> specific to pcie-tegra194.c, so I'm confused about why this fix would
->>>> be in pcie-tegra194.c instead of some more generic place.
->>>>
->>>
->>> The Tegra194 driver conditionally initializes pcie->debugfs based on 
->>> CONFIG_PCIEASPM. When ASPM is disabled, pcie->debugfs remains 
->>> uninitialized, but tegra_pcie_dw_remove() and 
->>> tegra_pcie_dw_shutdown() unconditionally call 
->>> debugfs_remove_recursive(), leading to a NULL 
->>
->> debugfs IS initialized, because it is in a structure allocated with 
->> devm_kzalloc().
->>
->> And debugfs functions handle such cases.
->>
-> 
-> Oh, my mind went wrong and I didn't pay attention to devm, and I'm 
-> really sorry about that.
-> 
-> Another problem I noticed here is that currently, no matter what, 
-> pcie->debugfs = debugfs_create_dir(name, NULL) is executed; if #if 
-> defined(CONFIG_PCIEASPM) is valid, then pcie->debugfs = 
-> debugfs_create_dir(name, NULL); Is it superfluous?
-
-Sorry, let me reply again:
-Another problem I noticed here is that currently, no matter what, 
-pcie->debugfs = debugfs_create_dir(name, NULL) is executed; if #if 
-defined(CONFIG_PCIEASPM) is invalid, then pcie->debugfs = 
-debugfs_create_dir(name, NULL); Is it superfluous?
-
-Best regards,
-Hans
+diff --git a/Documentation/driver-api/usb/usb.rst b/Documentation/driver-api/usb/usb.rst
+index 89f9c37bb979..976fb4221062 100644
+--- a/Documentation/driver-api/usb/usb.rst
++++ b/Documentation/driver-api/usb/usb.rst
+@@ -161,6 +161,7 @@ rely on 64bit DMA to eliminate another kind of bounce buffer.
+ .. kernel-doc:: drivers/usb/core/urb.c
+    :export:
+ 
++.. c:namespace:: usb_core
+ .. kernel-doc:: drivers/usb/core/message.c
+    :export:
+ 
+-- 
+2.39.5
 
 
