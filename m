@@ -1,105 +1,121 @@
-Return-Path: <linux-kernel+bounces-589821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56582A7CB0C
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 19:37:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFC23A7CB15
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 19:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28B12188CC6D
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 17:37:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 810C4178513
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 17:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9529B19C569;
-	Sat,  5 Apr 2025 17:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DB519C552;
+	Sat,  5 Apr 2025 17:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JVCIjYsS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c+Sos4TZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F3D1BC2A;
-	Sat,  5 Apr 2025 17:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C99B1991B8
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Apr 2025 17:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743874623; cv=none; b=NXCoQnGMP0Lt1IVVAOYkDeHbsGSjrsCRuFVbO63q2m42bbkNBgz1fxBfV75Nz7nIDDCub3vswotw+oZg2PCNTKa8/p3k27bomYFfshIy6JVe/yV3gAyeds5UyMyXMGEgttH8B3hY91YdtsuJnt2bzxinGqoIwTHJ0LjH6e+vRCk=
+	t=1743874937; cv=none; b=hq74ni2q7Vtu6ZlC8RjdkKLaB8VVWVm3BLW0mdH/LWEXayvkHf6oJMQqAqYlnLQxY390rPjpmY8wVY38Y+E+Ix26ZqiRcpBPWs7KGNWMtVZihZdnhANUWUoU0WRit8yuX6TOKLq1pyDN8Q/u0I+C4Ji0Nt967K2eR26UDZYpGrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743874623; c=relaxed/simple;
-	bh=aKxW/34NvhkrP64K8xfQVQKDk9SoRViYqKXGYjflamI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZMeR2Fua7oOhxUgxeKlI64fdmbA8aW/IKDATgCOgTg9EPGX9fxzn4QNIFTRq+zBsOYnaNItR+VYB6NdOvQwRr/vBtaBN4jMo4k22aLebBnEMBrerEJW+oEUcd9IcH3w9GnhEPVzBJeYIi4GbzQqAw9JXsOZ4m9llUAiJJiiZoZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JVCIjYsS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1510BC4CEE4;
-	Sat,  5 Apr 2025 17:36:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743874622;
-	bh=aKxW/34NvhkrP64K8xfQVQKDk9SoRViYqKXGYjflamI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JVCIjYsSs+4xDpk17pFba12noAXPc3fcONWlomTEI/CYiSXTiK12+BbztQHKLymdS
-	 v9ouaEKuZXny9652HQYcVvKakkKTvfe24fQzbb/KPkUSqQ+4c7oe1fWdZYHj+ZYr4e
-	 rBWfGIoyhtMYD1pAhq7qyft0ACJnDrLL0f2F6SBq6jcrOUpIiSpgcyUpT+/w2QoF8V
-	 TMy7DkMWtKuQoy4CryHC6sB1EbfFNKAtsj7JzlLjm2DR4wj3V5htgv3xDXCTfDwa1G
-	 JEqWP4uYDPqJamHHnxNISnXoSp32wpp9sanav+ZHBrmQZ/aQagWJwjoH7VRq9vJEZa
-	 7mNntDFKnIUpA==
-Date: Sat, 5 Apr 2025 18:36:54 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno Sa
- <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, Javier
- Carrasco <javier.carrasco.cruz@gmail.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] Support ROHM BD79104 ADC
-Message-ID: <20250405183654.6bd4a52d@jic23-huawei>
-In-Reply-To: <6acb2692-8946-4ab2-b433-4f68c080f6b9@gmail.com>
-References: <cover.1743573284.git.mazziesaccount@gmail.com>
-	<6acb2692-8946-4ab2-b433-4f68c080f6b9@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743874937; c=relaxed/simple;
+	bh=DMruvwZj9pN+nRLYEysIuozn5rHzpma6PJ+sm5luUPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uhuouNuf+O4Hg82Nl/9e7eI83LAoF4rfmmBG75Jwrrpjzh52roY5Jhsw/aPyyo1RDhJx63vJyJRAxfBxExtbVSucob4Sig7I+JyXd8JeNNnvdZmZDojs+ckfdvWp0GFaaea8l63XE468Q63pp7YMdNcloCR1MaYtLxdcAS8mqMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c+Sos4TZ; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743874934; x=1775410934;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=DMruvwZj9pN+nRLYEysIuozn5rHzpma6PJ+sm5luUPE=;
+  b=c+Sos4TZVzYYyh46wqEVIy8nwuQMyVb0CnKoxJrO72KW+JgM2iEKfpNH
+   zv41V3MCRAwNAKFe7ETGRtOmEzsbyC2WDH8HiHOGI/59Pv3/BJc6/PLoy
+   q1UVk97D7Ttpw+tW+A97a5d1Ggb8R1WcPNeoLQHeSKZbpbVSn8TspbXJc
+   FRa1OFk4KTVnuSQLVrl4ylT+iGunSRe5zL9wZTO/y4RJIwqkAofj9ciPQ
+   l8r5dOGF8q7FOwJBlEePTaNJ33JvKLzmpAQSWzdnzQD6sbcXuUs/8RpVU
+   QtONJTUOZ7jS9Ukm2lZrzi55LWDPwro0BfGf37I+3J8U2YfArG3Wx4RVb
+   w==;
+X-CSE-ConnectionGUID: e4n7EBEARfCVYGCjlTmiHQ==
+X-CSE-MsgGUID: FJYIYCT3TQ+k/OtIFZhnXg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11395"; a="48010549"
+X-IronPort-AV: E=Sophos;i="6.15,191,1739865600"; 
+   d="scan'208";a="48010549"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2025 10:42:14 -0700
+X-CSE-ConnectionGUID: BF3zq3WHT0eL0ODX/E6tRA==
+X-CSE-MsgGUID: u64enPA/RdGx4pTyuvd0rg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,191,1739865600"; 
+   d="scan'208";a="127556461"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 05 Apr 2025 10:39:42 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u17Ua-0002BF-0X;
+	Sat, 05 Apr 2025 17:39:40 +0000
+Date: Sun, 6 Apr 2025 01:38:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Subject: arch/mips/boot/dts/ralink/rt3052_eval.dtb: syscon@0: compatible:1:
+ 'syscon' was expected
+Message-ID: <202504060140.bDmNDvJV-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, 2 Apr 2025 09:19:19 +0300
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   a8662bcd2ff152bfbc751cab20f33053d74d0963
+commit: acf13fc60cfa0824cafd7ce9ab0784ffc87a5d86 mips: dts: ralink: rt3050: update system controller node and its consumers
+date:   6 weeks ago
+config: mips-randconfig-052-20250406 (https://download.01.org/0day-ci/archive/20250406/202504060140.bDmNDvJV-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 92c93f5286b9ff33f27ff694d2dc33da1c07afdd)
+dtschema version: 2025.3.dev6+gb64c5c3
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250406/202504060140.bDmNDvJV-lkp@intel.com/reproduce)
 
-> On 02/04/2025 09:07, Matti Vaittinen wrote:
-> 
-> > Finally, I didn't find maintainer information for this driver from the
-> > MAINTAINERS file. I would like to add myself as a reviewer for the
-> > driver, so I can stay on track of the changes to it. AFAIR, having
-> > R-entry without M-entry was not appreciated. Any suggestions how to
-> > handle this?  
-> 
-> Jonathan, I suppose this, by default,  falls under the umbrella of your 
-> IIO maintainership. Are you Okay with it if I'll add a maintainer entry 
-> which sets you explicitly as a maintainer for this, and list myself as a 
-> reviewer?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504060140.bDmNDvJV-lkp@intel.com/
 
-Absolutely.  I'm find with you adding yourself as either R or M.
-If you go with M and anyone objects, we can have more maintainers ;)
-If you go with R the catch all is fine. I've never insisted on everyone
-adding entries to maintainers on basis the catch all means I get
-them all anyway.
+dtcheck warnings: (new ones prefixed by >>)
+   arch/mips/boot/dts/ralink/rt3050.dtsi:10.9-12.5: Warning (unit_address_vs_reg): /cpus/cpu@0: node has a unit name, but no reg or ranges property
+   arch/mips/boot/dts/ralink/rt3052_eval.dtb: cpus: cpu@0: 'cache-level' is a required property
+   	from schema $id: http://devicetree.org/schemas/cpus.yaml#
+   arch/mips/boot/dts/ralink/rt3052_eval.dtb: cpus: '#address-cells' is a required property
+   	from schema $id: http://devicetree.org/schemas/cpus.yaml#
+   arch/mips/boot/dts/ralink/rt3052_eval.dtb: cpus: '#size-cells' is a required property
+   	from schema $id: http://devicetree.org/schemas/cpus.yaml#
+   arch/mips/boot/dts/ralink/rt3052_eval.dtb: cpu@0: 'reg' is a required property
+   	from schema $id: http://devicetree.org/schemas/mips/cpus.yaml#
+>> arch/mips/boot/dts/ralink/rt3052_eval.dtb: syscon@0: compatible:1: 'syscon' was expected
+   	from schema $id: http://devicetree.org/schemas/clock/mediatek,mtmips-sysc.yaml#
+>> arch/mips/boot/dts/ralink/rt3052_eval.dtb: syscon@0: compatible: ['ralink,rt3052-sysc', 'ralink,rt3050-sysc', 'syscon'] is too long
+   	from schema $id: http://devicetree.org/schemas/clock/mediatek,mtmips-sysc.yaml#
+   arch/mips/boot/dts/ralink/rt3052_eval.dtb: intc@200: $nodename:0: 'intc@200' does not match '^interrupt-controller(@[0-9a-f,]+)*$'
+   	from schema $id: http://devicetree.org/schemas/interrupt-controller/ralink,rt2880-intc.yaml#
+   arch/mips/boot/dts/ralink/rt3052_eval.dtb: intc@200: compatible:0: 'ralink,rt2880-intc' was expected
+   	from schema $id: http://devicetree.org/schemas/interrupt-controller/ralink,rt2880-intc.yaml#
+   arch/mips/boot/dts/ralink/rt3052_eval.dtb: intc@200: compatible: ['ralink,rt3052-intc', 'ralink,rt2880-intc'] is too long
+   	from schema $id: http://devicetree.org/schemas/interrupt-controller/ralink,rt2880-intc.yaml#
+   arch/mips/boot/dts/ralink/rt3052_eval.dtb: /palmbus@10000000/intc@200: failed to match any schema with compatible: ['ralink,rt3052-intc', 'ralink,rt2880-intc']
+   arch/mips/boot/dts/ralink/rt3052_eval.dtb: /palmbus@10000000/memc@300: failed to match any schema with compatible: ['ralink,rt3052-memc', 'ralink,rt3050-memc']
+   arch/mips/boot/dts/ralink/rt3052_eval.dtb: /palmbus@10000000/memc@300: failed to match any schema with compatible: ['ralink,rt3052-memc', 'ralink,rt3050-memc']
 
-Jonathan
-
-
-> 
-> I suppose I could also add myself as a maintainer for this, but I am 
-> unsure how well it would be received by the TI people ;)
-> 
-> > This series was based on the v6.14, but it should apply cleanly on
-> > iio/testing - please let me know if I should rebase.  
-> 
-> Just realized I forgot to update this. The series is now based on 
-> 543da6252b48 in the iio/testing. Nonetheless, I can still rebase if needed.
-> 
-> Yours,
-> 	-- Matti
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
