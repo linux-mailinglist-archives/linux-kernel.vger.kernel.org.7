@@ -1,171 +1,128 @@
-Return-Path: <linux-kernel+bounces-589863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8C0FA7CB97
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 20:55:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACC9BA7CBA4
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 21:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24C0E188FA40
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 18:55:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27D6E173EAD
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 19:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA491A3168;
-	Sat,  5 Apr 2025 18:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515DD1B0414;
+	Sat,  5 Apr 2025 19:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dgvlJCGT"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="uHDwMULZ"
+Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724B519D07E
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Apr 2025 18:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07DC1AD403
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Apr 2025 19:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743879294; cv=none; b=kMMdDGbuOH3yg3p3RUed8Hq8OxdUoDX+3RaP2evyKhPoM6/EMnOAOAmEuPbAaNKpED8fgnOzC7Qn2STXDzVvAEPHBzwoHDaHZRqTDqS+Etl+j1bjQpoewyzrtY5I1nlWGzWO5fVlJ4xiWDUjuTNSoNssvsoRcUdL4q2aLyu1L5Q=
+	t=1743880206; cv=none; b=GX+x0NsUQJIP9EF4Injyw7B91Tfbmxm3i0MVQeQ9pVMz1qHVun3xz4+DiqEj8lwChmH+s/ShQXCSc4mBNkkn997YwQGH1Jn0iYs91xnhWe2/KMKlNmfCSzsD8BHzF1zBGJn+BJf4yH83FB1Lxp98H2axSzLA8m1Yb3mdaeKiFAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743879294; c=relaxed/simple;
-	bh=6Mb2qj22ju/TDAFHM2TV5BLsDIQBt4HcLZIzG4z141A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JmgUG+/OsMaHaA5v91lRnhBcowaS+pbBOtmTrIC3C5e8fJGPlTlP9Y5qAOYyiykbHqsq3k3RJbuMI3FIhOU/69qJvgMbuNV3M1iWS8ot68/uOeMvu3XmphnRIlgpNtsw6DsYV9lYRWUFFJVFWs0bP/zEdRjTrhbucwesloTzvZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dgvlJCGT; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5ed1ac116e3so5216243a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Apr 2025 11:54:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743879291; x=1744484091; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bzXeIk7ElKBWwVWnXfaB/AJuQSkAU8XCLvd5Y9hQzuE=;
-        b=dgvlJCGT5bdoFJ9fTc73yo04xqvMjCAjsyviOW1C8fIwSxKdQrOLVh2y37JlgoRTfp
-         dbDGhmDSAKrRF9VTBEaOfNWTLfeSsB9icoPZ3L9VppNdBMTZmj0fg+dTj8pml5V7Tsjr
-         Kzd8ev5JTH96zApY6HsDSn11Y92mdBpMnaNpfp3Agl+DIoCjmCY/R5mJ/Kpc/dfEo6KR
-         K3d3eOzITvgHoTC9nidj6iEIPwnROworBdnhupIABKbhH44mVPTppiJx9T6jIbVUlXbO
-         iLygPBsPDx97uVeTLamoefE+gXuovWK2L4zJf3b6h3EEQCelu71nT9Hk4QgF83mxXxOC
-         JzLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743879291; x=1744484091;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bzXeIk7ElKBWwVWnXfaB/AJuQSkAU8XCLvd5Y9hQzuE=;
-        b=MFUutDnokKcHsFlAQWlhe8c58Nd/gKGpI20dk56AVCfAA9vySUQL/5uRBfpJuofjEK
-         IvPz6XXhnjCNACf5nxw0LAznkVUdvhqXJ/cWljiecDo95lNFt0HFUQDnDGAunE0cbI+L
-         GcYKsGJiIIYZP25DHzbCAn9HgXseaOk06cVsSlTSlNCdw1b73KB+2AdU4kVbf7BnzPj4
-         u62GYpypSOp8shjEWfYmkdJsfD0S4xZZd9dy/VApvdHtumJrkDpkm8nqrSDqRjTdnC9m
-         CAVFDHvt0XaGEpIungFdpewW8B1w4aWlqs9LPV1PsIHTfViNhrlxlk9vAZNB7uglPSMe
-         0OLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWk0ncFkLaii0wsVsRWt3uc9Ds5D/I/oDqQrKpQpGhP7hH9InuLi7glKg7Z/MeYQuIz4QKKhfbC4dMtQz8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr9/kx1oZzVgOhcC9U2sSwuE22uPoIBSiqZ/8OtamejpXFsJEO
-	/ZqRa1xcHFNcyuOH3qRYarGQXDPlj+J5vMkdo7pp8xbH5YlOz+i9vc3sxfFrMkTXPStkXe0k4ml
-	tzFgXsKYld1JEpI3P8dPRxN9XldM=
-X-Gm-Gg: ASbGncs/bEbW7mMWP7lnN3aVZXhmDlNjLllNibS7Zc1w1lbpI4qL/R3RlykHAmASo0y
-	lqos3t/Aitgiat4cexR8x9K0FdHIUFTtAMO4BxzJeQJpIiul3Rm9tBjcrtqUTSFtdn9pN/43pzp
-	VxDJ8DnG13dDfbWme32FefCFM28Q==
-X-Google-Smtp-Source: AGHT+IGh4QYB9HG8JaGAgqO45pIjnJVznH2U2vpOA2BZJVPQNImXQrlLswvmVbleUqXYD2XgtS7+iaFAHhu3GbyY0Qk=
-X-Received: by 2002:a17:906:c153:b0:ac7:c73a:be40 with SMTP id
- a640c23a62f3a-ac7d1751be6mr637457766b.14.1743879290514; Sat, 05 Apr 2025
- 11:54:50 -0700 (PDT)
+	s=arc-20240116; t=1743880206; c=relaxed/simple;
+	bh=XBVYnSEdtaqyZtn3CoP3og85kPWuoDdRWzQInijuTwA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LEc+WqZzizmPZZiv03qXLGZHbDz5bXPtIZa0GF/3zaU7ajDzos1Q9bbVosrR2q/OsUloexxHBbdZZfkPUOafj9rA896V6fwYvB8JMWJqz7H0kwn5g3HyFC9TYOvMc4yQdyWt5TEjgVV5lmlHKgYaA/L68rBTROBg1DVrw+xf1Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=uHDwMULZ; arc=none smtp.client-ip=212.77.101.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 45658 invoked from network); 5 Apr 2025 21:09:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1743880196; bh=QYBX4vu5I37sHQVuEXp0KOgYOqzFy606Yl2aFs6b+hw=;
+          h=From:To:Cc:Subject;
+          b=uHDwMULZKu0OvXuxaJ1BM9L2BVb2/xVrnEMOiCESiVcTyps7aONw6Mk5ByHdixBq3
+           lt0Mmg77uZSDR+IAeSIhqE0J/ctrya+VyrzdgDTPiqgplvOE/RoH30ibJtgG7iU+gc
+           5LdLVb62NhS4j+x0iQMbEXmkJh3DDIR7PXnrIGdMTPUWoFkPuxVJD5xoBgshMT5z5y
+           ScWeNpzPOUIcmj6aJavZhKTN0yjGBM+awbvKyAiZ7h9mtJf2bveQAqgRU3eKI1KemP
+           2p9G/p+a8DF8WqOJvVniThfLT2XImgHaaNDngkzzISvpQ8FWqOeiYPLWa1vQDVwXMb
+           IF73REanOODxQ==
+Received: from 83.5.244.88.ipv4.supernova.orange.pl (HELO laptop-olek.home) (olek2@wp.pl@[83.5.244.88])
+          (envelope-sender <olek2@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <lxu@maxlinear.com>; 5 Apr 2025 21:09:56 +0200
+From: Aleksander Jan Bajkowski <olek2@wp.pl>
+To: lxu@maxlinear.com,
+	andrew@lunn.ch,
+	hkallweit1@gmail.com,
+	linux@armlinux.org.uk,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lee@kernel.org,
+	linux-leds@vger.kernel.org
+Cc: Aleksander Jan Bajkowski <olek2@wp.pl>,
+	Daniel Golle <daniel@makrotopia.org>
+Subject: [PATCH net-next,v2 1/2] net: phy: add LED dimming support
+Date: Sat,  5 Apr 2025 21:09:53 +0200
+Message-Id: <20250405190954.703860-1-olek2@wp.pl>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250404-vsprintf-convert-pragmas-to-__diag-v1-0-5d6c5c55b2bd@kernel.org>
- <20250405101126.7a2627a6@pumpkin> <CAHk-=whC15F9=fQqr-5moPA0SXFc-fAx_15=jzbYELg1TCWsqg@mail.gmail.com>
-In-Reply-To: <CAHk-=whC15F9=fQqr-5moPA0SXFc-fAx_15=jzbYELg1TCWsqg@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 5 Apr 2025 21:54:14 +0300
-X-Gm-Features: ATxdqUEo0hrg8ukK2hpNQ5RM0ZzHx5jt9wGQ5J2fW60Ta7UWxTJouhXn4H-Yuhw
-Message-ID: <CAHp75Vd--N0QjGrAW3TJRVCN0-LG31rVeHTGyb0awgO0sc_aXA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] vsprintf: Use __diag macros to disable '-Wsuggest-attribute=format'
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Laight <david.laight.linux@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-WP-MailID: 1f0438803e2afca918208c5071d2c27d
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 000000B [YdO0]                               
 
-On Sat, Apr 5, 2025 at 8:27=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Sat, 5 Apr 2025 at 02:11, David Laight <david.laight.linux@gmail.com> =
-wrote:
-> >
-> > Perhaps the compilers ought to support __attribute__((format(none)))
-> > to disable the warning.
->
-> D'oh, that's a good idea.
->
-> And gcc already supports it, even if we have to hack it up.
->
-> So let's remove this whole horrible garbage entirely, and replace it
-> with __printf(1,0) which should do exactly that.
->
-> The 1 is for the format string argument number, and we're just *lying*
-> about it. But there is not format string argument, and gcc just checks
-> for 'is it a char pointer).
->
-> The real format string argument is va_fmt->fmt, but there's no way to
-> tell gcc that.
->
-> And the 0 is is to tell gcc that there's nothing to verify.
->
-> Then, if you do that, gcc will say "oh, maybe you need to do the same
-> for the 'pointer()' function". That one has a real 'fmt' thing, but
-> again nothing to be checked, so we do the same '__printf(1,0)' there
-> too.
->
-> There it makes more sense, because argument 1 _is_ actually a format
-> string, so we're not lying about it.
->
-> IOW, something like this:
->
->   --- a/lib/vsprintf.c
->   +++ b/lib/vsprintf.c
->   @@ -1700,9 +1700,10 @@ char *escaped_string(...
->    }
->
->   -#pragma GCC diagnostic push
->   -#ifndef __clang__
->   -#pragma GCC diagnostic ignored "-Wsuggest-attribute=3Dformat"
->   -#endif
->   -static char *va_format(char *buf, char *end, struct va_format *va_fmt,
->   +/*
->   + * The '__printf(1,0)' thing is a hack make gcc not ask us to use a
->   + * a format attribute. 'buf' is *not* the format, 'va_fmt->fmt' is.
->   + */
->   +static __printf(1,0)
->   +char *va_format(char *buf, char *end, struct va_format *va_fmt,
->                        struct printf_spec spec)
->    {
->   @@ -1718,5 +1719,4 @@ static char *va_format(...
->         return buf;
->    }
->   -#pragma GCC diagnostic pop
->
->    static noinline_for_stack
->   @@ -2429,5 +2429,5 @@ early_param(...
->     * See rust/kernel/print.rs for details.
->     */
->   -static noinline_for_stack
->   +static noinline_for_stack __printf(1,0)
->    char *pointer(const char *fmt, char *buf, char *end, void *ptr,
->               struct printf_spec spec)
->
-> Does that work for people who see this warning?
+Some PHYs support LED dimming. The use case is a router that dims LEDs
+at night. PHYs from different manufacturers support a different number of
+brightness levels, so it was necessary to extend the API with the
+led_max_brightness() function. If this function is omitted, a default
+value is used, assuming that only two levels are supported.
 
-This is quite similar to my initial approach [1] which Rasmus was
-against (okay, I did the nasty castings on top of the printf() there,
-but still). TL;DR: I assume it will work, but let others comment on
-this.
+Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+Reviewed-by: Daniel Golle <daniel@makrotopia.org>
+---
+ drivers/net/phy/phy_device.c | 7 ++++++-
+ include/linux/phy.h          | 7 +++++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
-[1]: https://lore.kernel.org/lkml/20250320180926.4002817-7-andriy.shevchenk=
-o@linux.intel.com/
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 675fbd225378..4011ececca70 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -3106,7 +3106,12 @@ static int of_phy_led(struct phy_device *phydev,
+ 
+ 	cdev->hw_control_get_device = phy_led_hw_control_get_device;
+ #endif
+-	cdev->max_brightness = 1;
++	if (phydev->drv->led_max_brightness)
++		cdev->max_brightness =
++			phydev->drv->led_max_brightness(phydev, index);
++	else
++		cdev->max_brightness = 1;
++
+ 	init_data.devicename = dev_name(&phydev->mdio.dev);
+ 	init_data.fwnode = of_fwnode_handle(led);
+ 	init_data.devname_mandatory = true;
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index a2bfae80c449..94da2b6607a4 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -1172,6 +1172,13 @@ struct phy_driver {
+ 	int (*led_brightness_set)(struct phy_device *dev,
+ 				  u8 index, enum led_brightness value);
+ 
++	/**
++	 * @led_max_brightness: Maximum number of brightness levels
++	 * supported by hardware. When only two levels are supported
++	 * i.e. LED_ON and LED_OFF the function can be omitted.
++	 */
++	int (*led_max_brightness)(struct phy_device *dev, u8 index);
++
+ 	/**
+ 	 * @led_blink_set: Set a PHY LED blinking.  Index indicates
+ 	 * which of the PHYs led should be configured to blink. Delays
+-- 
+2.39.5
 
---=20
-With Best Regards,
-Andy Shevchenko
 
