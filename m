@@ -1,146 +1,206 @@
-Return-Path: <linux-kernel+bounces-589483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EC1EA7C6D4
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 02:11:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BCAFA7C6D9
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 02:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A40447A8D15
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 00:10:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0532117C85B
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 00:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836BD8F5E;
-	Sat,  5 Apr 2025 00:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B81139B;
+	Sat,  5 Apr 2025 00:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HZJjVgfU"
-Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l9NhBhMj"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4A91C27
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Apr 2025 00:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E51628EB;
+	Sat,  5 Apr 2025 00:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743811848; cv=none; b=dxRQrPrFc0PcFt/LzDw70Q4urVoNJjRZl8aieQ8g73vBDA5iz5VH7yGJsA9HTA/TKa5gXkZKljk8SiLvHCGWIWmBe+yVFkX1YfUEfBFdAbS4/NqQltZf2+Jr1E3ON6wYFIDXswCTLs4IUxSTqwEsuHBO3baaltjTJpJl04qXVjw=
+	t=1743811985; cv=none; b=AC/Gu3Y7UA+K/37OpEGsG/P2teb28xxQPlLMYdXuLY7VTNcCGvaQ8EVOm8sd2j2P7fV7jZ1uq+nfePSwsp8PizYOJVUNXdhoEPAdY6LURhjA2rTpKF9/4BSRE/JTgd3QhbOQJJBBe1MnY/pyTYqxOEYmptCJUCx6YhhRbylfbNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743811848; c=relaxed/simple;
-	bh=eb9ivKenV6eSeMfJ8jsJ4zcf/HhA0ll43TAeZRApRYE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Wv7oBhYZsioPgiEV8llmXUjtWezwjNg7/cKj1Z+PUz7PTe7CWMdHTDiPdKusx9JLJdKKxoIhZq+kMYyBi0oitqTkiZfx8sXcmIELF+Jn0S70neKS73h9gK/s7Re711mTC1zXTnYwkvSvGGB1a+HJfK/RNuT3ibxeQBNM6UouM9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HZJjVgfU; arc=none smtp.client-ip=209.85.166.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com
-Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-85d9a52717aso360125139f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 17:10:47 -0700 (PDT)
+	s=arc-20240116; t=1743811985; c=relaxed/simple;
+	bh=KjmspBpiu6mD534nIbOHzgRUTwHmzEQbjmM6iuUZ4SY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=djcR54nWOyzzxLet+muTHyoprJlscpLCOGzLmm9fZe54eT0SmlfFJqRoeVL/49XVWXdWyH8W+RqIj+Jf4/XCMWOXdKeug4/ASATgKFF2RqzfziJ8t0buZfYzplBtba/HZdus9em59IoYJ1jKEaLDlkagBWY7XcriiX8CG4el2bA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l9NhBhMj; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-301918a4e3bso2402984a91.3;
+        Fri, 04 Apr 2025 17:13:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743811847; x=1744416647; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pe2bIRfllqLhJxxHpJNmnpza0I+tDqutdvnRlHikMBQ=;
-        b=HZJjVgfU7N7pa6L1D0+d8FOwL6YmONikNUdAbK2u4bcAcLaEGxnqbaHFYyFsOcdeMk
-         8iFvDch1eLKL22N3w1bt5hN92AoicwYHpTfgVPYSyZDmeGplVrfLgUXK2ijKYV9IuvK5
-         5L/1r5jnsN33IWmM6wzZcDanwTsK7Z/pCdMlTkHPSkH3os7S7naojAYZYL4MVU9qn948
-         6wiAn4cYYICZNViupPpw4Km6mkoZHTIDPknUAw6pC4hPFqunkCkmLrc1tdPi7j/tsF3L
-         2za3n8TlmZMABPed312qYh3n5FHpodACepxf7zHnzPgPpwxkBlDu04m0/yCeBYWiOjAd
-         27CQ==
+        d=gmail.com; s=20230601; t=1743811982; x=1744416782; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lVB5BztCQcbNtQipgi9Dw0n6uAY2frFJeooMsuQ6oIc=;
+        b=l9NhBhMjlivIW2xPkP7yWrN6hq9LmKJsHcPV83KR+kF/USCJS+HpuZUVPhjPIjOzxm
+         Hh8+U/BQEZsND+J8kHDXbmo6kj7LOmuMKt6glnHt1CuX745ii9TyXyVdRqT8ZquJgHt/
+         eZLuBcn66PACOyo0v8sQ7UhsQIgXdSyq+Mk/bUdOBe1svqIa2TmuamCqjPusHk5+s0z/
+         u42zC+l/3t6t5lNmzJTwE8eDBVdQsWe9um6wbTKhZl37GtiXUjZZnaYBlkfbHFRbfXMh
+         1qloVnxXPpsHojwP8rRK64jh8Gj+iWu6aqrqPJL0969FY03IW8hl/G7hUCNqIE+Zz7QE
+         ZTSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743811847; x=1744416647;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pe2bIRfllqLhJxxHpJNmnpza0I+tDqutdvnRlHikMBQ=;
-        b=bnzWCBVGyPcpfBjMkTYqxWTWfGBT7uzkDBVIWw4nWv0nXBIh7iQKgAij4a3KGivHtc
-         62yVVdkmjsZGPYjjJ6LlqpN2vPB6v0vWoRHhBXcNHP91dsT4wdKytG07JeIjtFNW3u8Y
-         JLoKLVFTuUVjp0smbV1njbwG+XG7HhSR4mlonAUJaGIO1LmlxetEM0Qpm7MYWZbEg+Yn
-         hjFOeAWJFfnU/Q1YUDzVKk7euD5SJcs6mPjHwm8eVj08eVjLLQCudulMBoLWiyDnP2x/
-         Vt7ImF0EJeaR2lvEVUHAF/Ssuv3FDGSnuvWQF6gIauTJfQb3YbnXLEPG4606sROEhRQ5
-         zwXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXG+LinWUjAZe5tCb5JwMZbqUusPJ3dkfOxLR929/VuW6/HF4MuUumbkHtUopZCLfYMS620jJGmJjsTTpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx42zYgQOUo1Q50r+vts/TWGgfJ5m3pRYIyxatjWrDerIEuii+V
-	rmKjJM7gPTy6BojTMskUWZthbGxH2UUYUdLj5doH44t+QE9YzRzrGnbexEiBDEGVkhb+4YFW6gK
-	zLxJ9aQ==
-X-Google-Smtp-Source: AGHT+IF1StR86BOR3Add0XYDFbLf59K7X1ePZtATYMdVN91h6vHs+7fhLEgNJ0U//lXVpSgwej6JAhyyVci0
-X-Received: from iovo14.prod.google.com ([2002:a05:6602:13ce:b0:861:1f46:a1e3])
- (user=rananta job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6602:3a09:b0:85d:b26e:e194
- with SMTP id ca18e2360f4ac-8611c2f92e0mr488329639f.7.1743811846805; Fri, 04
- Apr 2025 17:10:46 -0700 (PDT)
-Date: Sat,  5 Apr 2025 00:10:42 +0000
-In-Reply-To: <20250405001042.1470552-1-rananta@google.com>
+        d=1e100.net; s=20230601; t=1743811982; x=1744416782;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lVB5BztCQcbNtQipgi9Dw0n6uAY2frFJeooMsuQ6oIc=;
+        b=jGRW1tKfu8CwuigWdtvVgMlutVQaeUFVdKEDyUWNgMnUbelQ/r0/FfWAyevOQzA0xi
+         Ncg4+q5WzjZ6AXlpPmIGFGIJGvKOqLN0Hovz7lRgTYx97CuAnVHTEDUowWN992x0bACk
+         cbCx6sjf2gTBLyubjqBpMTWFQDdKgGP8a7GCvFUaTUGJVemsoeqpY3FPDpRgDIEtbgJW
+         htganTpeMj6wWqSUXesaIgzibsTJ6hJvOuMcfgGsPv24xR5yhAF/UslaMtugYurBJ/wg
+         Nw7LKr6Q/VaWUmEODaW/K8Wh+TVAyqOEw55doaqPD5xDUnjJ3u022LJWfKSaULOW+5ZJ
+         v/kg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhx5+VJEM/QwbXO22czO0Nh928TWxhF1pCSxWE/6I7+XkdfkUuxLofCWsjNXvIPB1aKemZUf6ETEW49Os=@vger.kernel.org, AJvYcCUjCW5L9qpESXhpENEBLiE7G3KYxxUF8PmQt42iV7O/hjw6R4IKmsMRH4OfDiklTaPyJnqyxmrxvz9SMdBX@vger.kernel.org, AJvYcCWENM5iz7g1yoXxJAQXqb6CLqotSWbt5x798dF6SF4RQaKZK0kb9qLpIGTdpit9lP3EJcJjohCrr2s4MAM=@vger.kernel.org, AJvYcCWreYvLMYayKK2qQJsAQ7xIGejfrx+8MddK76DvOEx52wRurk/U9v2fw+z6iE+LDl9J5agdqz9UEEVw@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMhx1b/4YNNoZMQrixFFiM10dASbitH1ERg1UtMTRzk61QtY58
+	oaZ2pUrQ8yHHaY9NpxRmcu08QjCLYeMvpyvijKp3IUf9R+iUFAnZxTKqtgDk
+X-Gm-Gg: ASbGncs6XntY+1V+CSjo+gqA9HQRYzuHwCNAgimafBVvnBdNjiBYpUstPgURLgVHRX4
+	IVLpH+bZ9o/kj/6B7kNvBvE5R/59rmpRdeUHPDkDc3vBxz6yHyMkcrx6II9vZwnxKYLao5ZF34+
+	7NTM2Is2XhzbGdb99VVqfAaWuTuOdhT5J8MHwxV1II4rb0e6gPbc8bhfULwxzTQiLfZ69Xa6eP5
+	IFvElxkM5IFMZd0wdElctWNalekehS8CYL2CP9OVhkb9RqX3/QJb4ci+zXJCSoAmYugT3aPO9y2
+	L5eu1hUJ7ozJyLCWv9BJFuHqAwKg2spEBJHW/+ai/eJvEbSXGKlDAYcSxnqDJBRzZo1GmWMLj8H
+	08aMW9qzjayHPtd3sq2MmB4ymWpvBilaX3tNVq0Fcy2nz17bd1Q==
+X-Google-Smtp-Source: AGHT+IGrwu27oF8ex/7piw96e+w8tE/abSdux4k8o9zBQQLxkK/kmB/PCrq8JJx1uFaSmXIk45Yzfg==
+X-Received: by 2002:a17:90b:56cf:b0:2ee:45fd:34f2 with SMTP id 98e67ed59e1d1-306a61208demr5871471a91.6.1743811982462;
+        Fri, 04 Apr 2025 17:13:02 -0700 (PDT)
+Received: from [192.168.2.3] (2403-580a-80ed-0-4835-5a07-49e7-f115.ip6.aussiebb.net. [2403:580a:80ed:0:4835:5a07:49e7:f115])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3057cb5d665sm4327855a91.30.2025.04.04.17.12.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Apr 2025 17:13:02 -0700 (PDT)
+From: James Calligeros <jcalligeros99@gmail.com>
+Subject: [PATCH v4 00/10] ASoC: tas27{64,70}: improve support for Apple
+ codec variants
+Date: Sat, 05 Apr 2025 10:12:37 +1000
+Message-Id: <20250405-apple-codec-changes-v4-0-d007e46ce4a2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250405001042.1470552-1-rananta@google.com>
-X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250405001042.1470552-3-rananta@google.com>
-Subject: [PATCH v2 2/2] KVM: selftests: arm64: Explicitly set the page attrs
- to Inner-Shareable
-From: Raghavendra Rao Ananta <rananta@google.com>
-To: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>
-Cc: Raghavendra Rao Anata <rananta@google.com>, Mingwei Zhang <mizhang@google.com>, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Oliver Upton <oupton@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAHV18GcC/23NwQqDMAyA4VeRntfRpradO+09xg61jVpQK3bIh
+ vjuq46BDI9/SL7MJOLoMZJrNpMRJx996FPkp4zYxvQ1Uu9SE2AgGfCcmmFokdrg0NLvRqQKlVT
+ OcoTckXQ5jFj516beH6kbH59hfG9PJr5Of5489CZOGdUgpCpK4CUvbnVnfHu2oSOrN8HeuBwbk
+ IxCgFaschqZ/jfEzgB9bIhk2LLkgjHBjK32xrIsH4MQNUM+AQAA
+X-Change-ID: 20250214-apple-codec-changes-6e656dc1e24d
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, 
+ Baojun Xu <baojun.xu@ti.com>, Dan Murphy <dmurphy@ti.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shi Fu <shifu0704@thundersoft.com>, 
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ =?utf-8?q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
+ Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ asahi@lists.linux.dev, linux-hwmon@vger.kernel.org, 
+ Neal Gompa <neal@gompa.dev>, James Calligeros <jcalligeros99@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3691;
+ i=jcalligeros99@gmail.com; h=from:subject:message-id;
+ bh=KjmspBpiu6mD534nIbOHzgRUTwHmzEQbjmM6iuUZ4SY=;
+ b=owGbwMvMwCV2xczoYuD3ygTG02pJDOkfSlulp10oyHoUveehUZ7i6UXywj4iKxbKHt/y9/DrT
+ XV+qV3WHaUsDGJcDLJiiiwbmoQ8Zhux3ewXqdwLM4eVCWQIAxenAExkkSIjw7NvpVMMrk1giMuq
+ muSxvknT+L3JsZcOjeXvfHbea6uVW8zIcGDJ0vfOh+a96A2o3hj4kuncWsvgl0uEErepC1yp35K
+ +gBcA
+X-Developer-Key: i=jcalligeros99@gmail.com; a=openpgp;
+ fpr=B08212489B3206D98F1479BDD43632D151F77960
 
-Atomic instructions such as 'ldset' over (global) variables in the guest
-is observed to cause an EL1 data abort with FSC 0x35 (IMPLEMENTATION
-DEFINED fault (Unsupported Exclusive or Atomic access)). The observation
-was particularly apparent on Neoverse-N3.
+Hi all,
 
-According to ARM ARM DDI0487L.a B2.2.6 (Possible implementation
-restrictions on using atomic instructions), atomic instructions are
-architecturally guaranteed for Inner Shareable and Outer Shareable
-attributes. For Non-Shareable attribute, the atomic instructions are
-not atomic and issuing such an instruction can lead to the FSC
-mentioned in this case (among other things).
+This series introduces a number of changes to the drivers for
+the Texas Instruments TAS2764 and TAS2770 amplifiers in order to
+introduce (and improve in the case of TAS2770) support for the
+variants of these amps found in Apple Silicon Macs.
 
-Moreover, according to DDI0487L.a C3.2.6 (Single-copy atomic 64-byte
-load/store), it is implementation defined that a data abort with the
-mentioned FSC is reported for the first stage of translation that
-provides an inappropriate memory type. It's likely that Neoverse-N3
-chose to implement these two and why we see an FSC of 0x35 in EL1 upon
-executing atomic instructions.
+Apple's variant of TAS2764 is known as SN012776, and as always with
+Apple is a subtly incompatible variant with a number of quirks. It
+is not publicly available. The TAS2770 variant is known as TAS5770L,
+and does not require incompatible handling.
 
-ARM64 KVM selftests sets no shareable attributes, which makes them
-Non-Shareable by default. Hence, explicitly set them as Inner-Shareable
-to fix this issue.
+Much as with the Cirrus codec patches, I do not
+expect that we will get any official acknowledgement that these parts
+exist from TI, however I would be delighted to be proven wrong.
 
-Suggested-by: Oliver Upton <oupton@google.com>
-Signed-off-by: Raghavendra Rao Ananta <rananta@google.com>
+This series has been living in the downstream Asahi kernel tree[1]
+for over two years, and has been tested by many thousands of users
+by this point[2].
+
+v4 drops the TDM idle TX slot behaviour patches. I experimented with
+the API discussed in v3, however this did not work on any of the machines
+I tested it with. More tweaking is probably needed.
+
+[1] https://github.com/AsahiLinux/linux/tree/asahi-wip
+[2] https://stats.asahilinux.org/
+
 ---
- tools/testing/selftests/kvm/include/arm64/processor.h | 1 +
- tools/testing/selftests/kvm/lib/arm64/processor.c     | 3 +++
- 2 files changed, 4 insertions(+)
+Changes in v4:
+- Moved remaining changes to the top of the set
+- Dropped already merged commits
+- hwmon now reads temp from regmap
+- Bumped regmap max reg patch above Apple quirks patch
+- Dropped TDM idle slot TX behaviour patches
+- Link to v3: https://lore.kernel.org/r/20250227-apple-codec-changes-v3-0-cbb130030acf@gmail.com
 
-diff --git a/tools/testing/selftests/kvm/include/arm64/processor.h b/tools/testing/selftests/kvm/include/arm64/processor.h
-index 7d88ff22013a..b0fc0f945766 100644
---- a/tools/testing/selftests/kvm/include/arm64/processor.h
-+++ b/tools/testing/selftests/kvm/include/arm64/processor.h
-@@ -113,6 +113,7 @@
- #define PMD_TYPE_TABLE		BIT(1)
- #define PTE_TYPE_PAGE		BIT(1)
- 
-+#define PTE_SHARED		(UL(3) << 8) /* SH[1:0], inner shareable */
- #define PTE_AF			BIT(10)
- 
- #define PTE_ADDR_MASK(page_shift)	GENMASK(47, (page_shift))
-diff --git a/tools/testing/selftests/kvm/lib/arm64/processor.c b/tools/testing/selftests/kvm/lib/arm64/processor.c
-index da5802c8a59c..9d69904cb608 100644
---- a/tools/testing/selftests/kvm/lib/arm64/processor.c
-+++ b/tools/testing/selftests/kvm/lib/arm64/processor.c
-@@ -172,6 +172,9 @@ static void _virt_pg_map(struct kvm_vm *vm, uint64_t vaddr, uint64_t paddr,
- 	}
- 
- 	pg_attr = PTE_AF | PTE_ATTRINDX(attr_idx) | PTE_TYPE_PAGE | PTE_VALID;
-+	if (!use_lpa2_pte_format(vm))
-+		pg_attr |= PTE_SHARED;
-+
- 	*ptep = addr_pte(vm, paddr, pg_attr);
- }
- 
+Changes in v3:
+- Add Rob's Acked-by to Devicetree compatible additions
+- Dropped cherry-picked patches
+- Droped abuse of regulator API
+- Droped bespoke sysfs interface
+- Rationalised temperature reading for hwmon interface
+- Set SN012776 device ID with OF match data
+- Changed probe ops reliant on device ID to case/switch statement
+- Added documentation for new Devicetree properties
+- Improved a number of poor quality commit messages
+- Documented behaviour of die temperature ADC
+- Link to v2: https://lore.kernel.org/r/20250218-apple-codec-changes-v2-0-932760fd7e07@gmail.com
+
+Changes in v2:
+- Changed author field of patch to match Martin's Signed-off-by
+- Added Neal's Reviewed-by to reviewed patches
+- Moved fixes to existing code to the top of the series
+- Removed tas2764's explicit dependency on OF
+- Removed complicated single-use tas2764 quirks macro and replaced with
+  if block
+- Added hwmon interface for codec die temp
+- Fixed a malformed commit message
+- Link to v1: https://lore.kernel.org/r/20250215-apple-codec-changes-v1-0-723569b21b19@gmail.com
+
+---
+Hector Martin (4):
+      ASoC: tas2770: Power cycle amp on ISENSE/VSENSE change
+      ASoC: tas2770: Support setting the PDM TX slot
+      ASoC: tas2770: Set the SDOUT polarity correctly
+      ASoC: tas2764: Enable main IRQs
+
+James Calligeros (2):
+      ASoC: tas2770: expose die temp to hwmon
+      ASoC: tas2764: expose die temp to hwmon
+
+Martin Povišer (4):
+      ASoC: tas2764: Reinit cache on part reset
+      ASoC: tas2764: Crop SDOUT zero-out mask based on BCLK ratio
+      ASoC: tas2764: Raise regmap range maximum
+      ASoC: tas2764: Apply Apple quirks
+
+ sound/soc/codecs/tas2764-quirks.h | 180 +++++++++++++++++++++++++
+ sound/soc/codecs/tas2764.c        | 176 +++++++++++++++++++++++-
+ sound/soc/codecs/tas2764.h        |   3 +
+ sound/soc/codecs/tas2770.c        | 160 +++++++++++++++++++++-
+ sound/soc/codecs/tas2770.h        |   6 +
+ 5 files changed, 519 insertions(+), 6 deletions(-)
+---
+base-commit: 3a0f0a4355df0240485ed62b6bd6afa5b3e689c5
+change-id: 20250214-apple-codec-changes-6e656dc1e24d
+
+Best regards,
 -- 
-2.49.0.504.g3bcea36a83-goog
+James Calligeros <jcalligeros99@gmail.com>
 
 
