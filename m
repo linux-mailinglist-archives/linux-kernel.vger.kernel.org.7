@@ -1,144 +1,146 @@
-Return-Path: <linux-kernel+bounces-589824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC9EA7CB13
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 19:39:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB7B3A7CB0E
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 19:39:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 781573B8FBF
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 17:39:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E4181893247
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 17:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18E319CC3E;
-	Sat,  5 Apr 2025 17:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BEB199FD0;
+	Sat,  5 Apr 2025 17:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZX8xhOLR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="gdgzTirl"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BC7199931;
-	Sat,  5 Apr 2025 17:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856D51BC2A;
+	Sat,  5 Apr 2025 17:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743874789; cv=none; b=i7U8bIf8Wr/aCR57J6jT087TYIE5qqRHWCd9uV2eikx9b5oHu8o8l6zjJgtows6HaACgZVcZUt6YDSWEAmE1zMseQZtlE0ALQk0Cr/8QarFy2iFMqrcyCjqBwYGieONVrx8rQcsudGJSGcavqDAcczayOBIxwWniNTZYDc5otmU=
+	t=1743874743; cv=none; b=Sc5TJPE6T7kWZTSg5/s8pvUsEH/Hcj5IwVYyqC2e9JnFgjelVCbIi4cYmg9fXxEl/tObKvTn7WtiYFRbbqQ+/qw8gNQgpAAXxdalWhckXzLDzDYYF4K378f5lXecw9ucXc5sZ8DOuDN4soYlGOuSXjx0ICJQYgNnWVT/A9fajQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743874789; c=relaxed/simple;
-	bh=cLoWa6W3Dyyrw2RNgGHlXiflRBqEsqjNsnatGYOyAbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VeWsiHY5khw1r5ivVEEuuulhKrQMKncg3ZDwW4xVct1fbpf7cQCn5ENxgGjTVyX4ULNt3xC+7sUEWP626zKPcWIhIHylKP0UWUW3YdrBqg/cJr3NKc0eZ907IB9tYxHKy0GGgKInrA0xzj4Tkz/M4e17N4PZwZ5Qk/A3OGx751k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZX8xhOLR; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743874787; x=1775410787;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cLoWa6W3Dyyrw2RNgGHlXiflRBqEsqjNsnatGYOyAbE=;
-  b=ZX8xhOLRA4NG6+fLu2CMbyQ9wAfYG2TnV4CV9/vx98IfArqRfNaMTvUr
-   t0LLnUSkMWULW1oc+TplOhl7TboyNR6EaKTYlgNrHFHQdw12T3CRfXzLE
-   /PROsoLvC6wzTNRYKpjO5aLdm7oAORczD/8LWwO5LBJhGAlENQQUk3zDN
-   QbEEAqN66V4yQr82UykmEjna1l4Q7Vy+3zg2zOefTkkI0xya9wXNC+Bhu
-   bxxbsZ527UckMpFt1GzlRnyydJsr9E0oqptQqshjB8nROaSL+KJygcI9o
-   jBPg1D98D+MfAPX3NSOLI0A9cXYgSiLARmcS7RPmrq8eskXiWiFMuqhoe
-   w==;
-X-CSE-ConnectionGUID: jZn8pSUWSF2vIV9INehEfQ==
-X-CSE-MsgGUID: tU4Q/p2uSj6GA91wtwqcFw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11395"; a="45184591"
-X-IronPort-AV: E=Sophos;i="6.15,191,1739865600"; 
-   d="scan'208";a="45184591"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2025 10:39:47 -0700
-X-CSE-ConnectionGUID: Q0kGPG/CQpKSUF8fnQaNPw==
-X-CSE-MsgGUID: rSkLGwsQQMe8s9UYBz7AQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,191,1739865600"; 
-   d="scan'208";a="128087199"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 05 Apr 2025 10:39:42 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u17Ua-0002BD-0U;
-	Sat, 05 Apr 2025 17:39:40 +0000
-Date: Sun, 6 Apr 2025 01:38:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jerome Brunet <jbrunet@baylibre.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
-	Allen Hubbe <allenbh@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ntb@lists.linux.dev, Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH v2 1/3] PCI: endpoint: add epc_feature argument for
- pci_epf_free_space()
-Message-ID: <202504060122.RXfUdGx9-lkp@intel.com>
-References: <20250404-pci-ep-size-alignment-v2-1-c3a0db4cfc57@baylibre.com>
+	s=arc-20240116; t=1743874743; c=relaxed/simple;
+	bh=gX0ZLQEjnzU3TBvfxOtgjXwaDdYCJbrEpsKU8RAV1no=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hn04jAVc6F/eflHwsfiIpwCt491qb3Ju9vueiifR2+uTSNBlf1jo+fyasLBbYLJlmsgypbZN9a5uyFV9/Gpj1PxCkWElAkJK1Qn6ApJR1RO/vYnrCn6mL+pzBNI3rp68S9bd1VNyvHs3UEdXnCu50DxxTr0HnBIAKLEPguoFDCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=gdgzTirl; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=WX9E6DgiY2D01qB2SzZpeJfoy+tNUxzhlIlzO5bFJoo=; t=1743874740; x=1744479540; 
+	b=gdgzTirlr0KTpdqDC2l0cw8SQJcaK50iVN76+6fo+0p9Fd70DoSG8zmIoIizdM5/198wzCYBJB1
+	EzgpLiodz/zcNI1XJp5nXiX+/5bp26mcIGx1+BUeIzKY5zFl7lcmrQ8cDd95gTyvYVTbG6pYqxd6F
+	KQILRl2OFOlztXPFTN8wH0BWYiBZOAjh3t2NZAsc6MFn3G8DGcW8ZT9hM2peHwsMqRMMMo1saUOsh
+	JsV8aei0Xqe25bHVESi2GR45qwrXwv04U1ZU302zVzROr4Jq5qNnHYd9ypEcJtp7+JGF97AlFyJzG
+	pvSGuuIvAVCK5C6DGgT7LIbl/Ma/r+iJGcJg==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1u17Tq-000000045Ay-0u8m; Sat, 05 Apr 2025 19:38:54 +0200
+Received: from dynamic-002-242-014-214.2.242.pool.telefonica.de ([2.242.14.214] helo=[192.168.178.50])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1u17Tp-00000000dWk-48nP; Sat, 05 Apr 2025 19:38:54 +0200
+Message-ID: <a3faf6820b43cca25c3384d0248f494be7312598.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 1/2] sh: align .bss section padding to 8-byte boundary
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Artur Rojek <contact@artur-rojek.eu>, Yoshinori Sato	
+ <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, Daniel Lezcano
+	 <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Uros
+ Bizjak	 <ubizjak@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, "D . Jeff Dionne"	
+ <jeff@coresemi.io>, Rob Landley <rob@landley.net>,
+ linux-sh@vger.kernel.org, 	linux-kernel@vger.kernel.org
+Date: Sat, 05 Apr 2025 19:38:53 +0200
+In-Reply-To: <20250216175545.35079-2-contact@artur-rojek.eu>
+References: <20250216175545.35079-1-contact@artur-rojek.eu>
+	 <20250216175545.35079-2-contact@artur-rojek.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250404-pci-ep-size-alignment-v2-1-c3a0db4cfc57@baylibre.com>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-Hi Jerome,
+Hi Artur,
 
-kernel test robot noticed the following build errors:
+On Sun, 2025-02-16 at 18:55 +0100, Artur Rojek wrote:
+> J2 based devices expect to find a devicetree blob at the end of the bss
+> section. As of a77725a9a3c5, libfdt enforces 8-byte alignment for the
+> dtb, causing J2 devices to fail early in sh_fdt_init.
+>=20
+> As J2 loader firmware calculates the dtb location based on the kernel
+> image .bss section size, rather than the __bss_stop symbol offset, the
+> required alignment can't be enforced with BSS_SECTION(0, PAGE_SIZE, 8).
+> Instead, inline modified version of the above macro, which grows .bss
+> by the required size.
+>=20
+> While this change affects all existing SH boards, it should be benign on
+> platforms which don't need this alignment.
+>=20
+> Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
+> ---
+>  arch/sh/kernel/vmlinux.lds.S | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/sh/kernel/vmlinux.lds.S b/arch/sh/kernel/vmlinux.lds.S
+> index 9644fe187a3f..008c30289eaa 100644
+> --- a/arch/sh/kernel/vmlinux.lds.S
+> +++ b/arch/sh/kernel/vmlinux.lds.S
+> @@ -71,7 +71,20 @@ SECTIONS
+> =20
+>  	. =3D ALIGN(PAGE_SIZE);
+>  	__init_end =3D .;
+> -	BSS_SECTION(0, PAGE_SIZE, 4)
+> +	__bss_start =3D .;
+> +	SBSS(0)
+> +	. =3D ALIGN(PAGE_SIZE);
+> +	.bss : AT(ADDR(.bss) - LOAD_OFFSET) {
+> +		BSS_FIRST_SECTIONS
+> +		. =3D ALIGN(PAGE_SIZE);
+> +		*(.bss..page_aligned)
+> +		. =3D ALIGN(PAGE_SIZE);
+> +		*(.dynbss)
+> +		*(BSS_MAIN)
+> +		*(COMMON)
+> +		. =3D ALIGN(8);
+> +	}
+> +	__bss_stop =3D .;
+>  	_end =3D . ;
+> =20
+>  	STABS_DEBUG
 
-[auto build test ERROR on dea140198b846f7432d78566b7b0b83979c72c2b]
+I'll pick this up for now since Uros has confirmed that the compiler
+won't just use SBSS without breaking the ABI, so I think to use this
+fix for now.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jerome-Brunet/PCI-endpoint-add-epc_feature-argument-for-pci_epf_free_space/20250405-014733
-base:   dea140198b846f7432d78566b7b0b83979c72c2b
-patch link:    https://lore.kernel.org/r/20250404-pci-ep-size-alignment-v2-1-c3a0db4cfc57%40baylibre.com
-patch subject: [PATCH v2 1/3] PCI: endpoint: add epc_feature argument for pci_epf_free_space()
-config: loongarch-randconfig-001-20250405 (https://download.01.org/0day-ci/archive/20250406/202504060122.RXfUdGx9-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250406/202504060122.RXfUdGx9-lkp@intel.com/reproduce)
+If it breaks in the future, we can change it again.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504060122.RXfUdGx9-lkp@intel.com/
+Reviewed-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 
-All errors (new ones prefixed by >>):
+Adrian
 
-   drivers/nvme/target/pci-epf.c: In function 'nvmet_pci_epf_free_bar':
->> drivers/nvme/target/pci-epf.c:2165:9: error: too few arguments to function 'pci_epf_free_space'
-    2165 |         pci_epf_free_space(epf, nvme_epf->reg_bar, BAR_0, PRIMARY_INTERFACE);
-         |         ^~~~~~~~~~~~~~~~~~
-   In file included from include/linux/pci-epc.h:12,
-                    from drivers/nvme/target/pci-epf.c:19:
-   include/linux/pci-epf.h:224:6: note: declared here
-     224 | void pci_epf_free_space(struct pci_epf *epf, void *addr, enum pci_barno bar,
-         |      ^~~~~~~~~~~~~~~~~~
-
-
-vim +/pci_epf_free_space +2165 drivers/nvme/target/pci-epf.c
-
-0faa0fe6f90ea5 Damien Le Moal 2025-01-04  2157  
-0faa0fe6f90ea5 Damien Le Moal 2025-01-04  2158  static void nvmet_pci_epf_free_bar(struct nvmet_pci_epf *nvme_epf)
-0faa0fe6f90ea5 Damien Le Moal 2025-01-04  2159  {
-0faa0fe6f90ea5 Damien Le Moal 2025-01-04  2160  	struct pci_epf *epf = nvme_epf->epf;
-0faa0fe6f90ea5 Damien Le Moal 2025-01-04  2161  
-0faa0fe6f90ea5 Damien Le Moal 2025-01-04  2162  	if (!nvme_epf->reg_bar)
-0faa0fe6f90ea5 Damien Le Moal 2025-01-04  2163  		return;
-0faa0fe6f90ea5 Damien Le Moal 2025-01-04  2164  
-0faa0fe6f90ea5 Damien Le Moal 2025-01-04 @2165  	pci_epf_free_space(epf, nvme_epf->reg_bar, BAR_0, PRIMARY_INTERFACE);
-0faa0fe6f90ea5 Damien Le Moal 2025-01-04  2166  	nvme_epf->reg_bar = NULL;
-0faa0fe6f90ea5 Damien Le Moal 2025-01-04  2167  }
-0faa0fe6f90ea5 Damien Le Moal 2025-01-04  2168  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
