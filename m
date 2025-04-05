@@ -1,88 +1,84 @@
-Return-Path: <linux-kernel+bounces-589567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71320A7C7C1
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 07:55:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B09B9A7C7C4
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 07:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAF4A3B2004
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 05:54:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 303523B194C
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 05:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693EA1C3039;
-	Sat,  5 Apr 2025 05:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BAC01BE23F;
+	Sat,  5 Apr 2025 05:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BGNMAs6v"
-Received: from mail-pj1-f67.google.com (mail-pj1-f67.google.com [209.85.216.67])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g5RnI/7a"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C391C5D55;
-	Sat,  5 Apr 2025 05:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8672625569
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Apr 2025 05:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743832499; cv=none; b=cVcCI4dOnjQGAzUIv8s26h26rkk2+Wp6yK0JdNRfTY/CmhmpcIPU7XXNM8AKNNdmlLmE6+YjJNVPgB87knD6DLCkLAHjf8y6d5T2xEYriJBZeDfMBaQepL8Bsa7wW1jeDEZCbY3+/3UQinAvm3Y0WSRTpYVL4HQcL6MgUnXpD50=
+	t=1743832624; cv=none; b=DV1ETi9v0gER7hqH1GUe1StAPJ06qQCa9785KZUEsgkjIQYgl6IstbcFNF799bqlaYDmZ1tS/mWMEuD7QpreHzqavyeK1jpkLqPPLrDCSemyPIrQs9wqwIztgOkgrmmXhlCjA5uoJ1a+HoT1+L3qa2WDl75SZKvIPrtd69PrSY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743832499; c=relaxed/simple;
-	bh=We9oXwORVimFqBPPGA/hvHaf6inkTosUkB3Mur4TS9I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lOoJgxy3H6t9K85dK8MDxx3wkObQDP43hEbZIuavisvTbEZu9llx6igHcx7e3BVngdNFgBIuiABzFHZcP7sVaYTxlNrRrgW5Ja6TA4ymd3NmMfb7aG509UzoogE9g+oJaOggZZo8BduyIqzxEXPyCrHoo4DR4ezAg2G+nx0LqJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BGNMAs6v; arc=none smtp.client-ip=209.85.216.67
+	s=arc-20240116; t=1743832624; c=relaxed/simple;
+	bh=3GbTpxF2qobSJ72OAqmH8chJX9p3IrPLJsuJKlDgEjs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SCzKcgcO/uO9FwtL+2QyUiS9WEHu6z5x8r4sr5EyHItUMi4qekZlrCGUThqBb/ft1X8O/2zCLr1+5rsq9YENGdDN4DQYf/aTmmVDkH5+DvNDfDULUf0njKgGS9SVLUUjsZYITSJwegl+EPhpgTfoZri9Lu+zmdchAt2tow88Ixc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g5RnI/7a; arc=none smtp.client-ip=209.85.160.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f67.google.com with SMTP id 98e67ed59e1d1-303a66af07eso2086951a91.2;
-        Fri, 04 Apr 2025 22:54:58 -0700 (PDT)
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-476a720e806so25404491cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 04 Apr 2025 22:57:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743832498; x=1744437298; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1743832621; x=1744437421; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ELXP8BnMg0kJvaDE3S2jRkd/Etcxd1UmTQ1mFWYQwxU=;
-        b=BGNMAs6v7cK+gb9Vb9D7wPhsHbOZXHQDdAOVAiIJHJkegacNVmY/Mrz8RCQk4Ie06y
-         uh9s37mw2M9TWkfPXPoof8WMxEVdwuqBAkhEEHjLnvWb7TDwaeYnP7FkJVUv/svZJzYd
-         QaCGYhXRilqK4IrBND0dkLfBaGj3rWyOlrC3auLBzfoL2TA8rk39+eVs3VnvgnEA6Mng
-         tUDOBgP8hw8T7x+BL8U2/zWu1E2PiGOrGPLryNrF6f67ZoOJuv7FC9B9xuodod89qcdj
-         +kJTf11Ea5ESAQtkaMoJQfgDNc8J/0QqYfnefHyMDyI0VBjJuasFudiLpJqQPuZ6kPkC
-         hDDA==
+        bh=cXoXu32p+yvTpl/FA9Tehjz+TiUIPbg3Cf0b50lx5gA=;
+        b=g5RnI/7a0CIACoDWqrjNMPUzRMe+V27M0eI3VQTvZjpK4Cu+xBHBbUx2zqVd4Yc1u6
+         77UhKXW7QN0PGvg9yUIiWC9MqAGSr6hv0zWknvDaUDH481zgQ3GDrzrHeQKZ6QdZmpkj
+         wzIPSP30JBeQdBYDgALHeVp+SpszpxGbRhEBsfq9bXX3pKFyz76+3SBAWQC2dZGtmCTA
+         9+CBCwmp5UZNpWHolopcYUEF4HclFNQyyupKNIZktR24eyAWuVc3EGZYkmHQXZ6g1p6t
+         GM9mg0ucGujNmmk5FubA05e49bbn0NnP/NwLe+X3nBZK67/H7MRDfCUIRv7hApKFx7pf
+         6QJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743832498; x=1744437298;
+        d=1e100.net; s=20230601; t=1743832621; x=1744437421;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ELXP8BnMg0kJvaDE3S2jRkd/Etcxd1UmTQ1mFWYQwxU=;
-        b=PDSgIXPDs+BaEfygWJj6lxKJELMEyv6j3Ojk9zTQBHtqe6qq4VW7ZM+2vW1pSlqWWD
-         lRlecJfz2QIKN9sZ/gs0b0G32MJtqkDhnPX7C7hAzCkQ4rc3FLiTY5RGctsJXpbRIXR+
-         a3TlgtzkrjaNKr3XG6A53dl5IlYVxo5LfLkGVzByE+5M2rjvMkqSde+hsoRzFn+brfzj
-         sWVgScFyeFSNiI0F+b/zKO2BST9r01q02f4F4EuGCtd3vFzcYHJ0pxz+mJGpabTDMyK9
-         q6U1QY/IRPjypCX8FwIUaXuxFz8OV/GoXIWiw9Z7gIhiu+q6bPA6sREX6FEQHlOVb2uF
-         979g==
-X-Forwarded-Encrypted: i=1; AJvYcCWZuIZdaM2R7+4jwXOPbGSpqyEGZqyxBpRksRLPkZDAsOrKLbWeMs+YSwc2enzR+3QbZNsmGhBEyUA=@vger.kernel.org, AJvYcCXoOU7SWaGKabrQTah69buwl/H7za/M6ipYgKitaJCS+p6wpQ2gkn4/dGxyvjefAJgRhtJXds5zQI/zd/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzlELDJyB+BPatlFCeYUuJNfHZAGnih1qsttM9lgDnoMdKdL7i
-	1PwYVy4SVQ4+wVFMcl/g/MnRb0Rsx7SmqOUMIEiGQvqDVOhL+/k9
-X-Gm-Gg: ASbGncsWSyVWKl0r2dddxpLcr5hep90Oyv9leggti5lAdWMR07HRiHQy3zjOI09T7A+
-	v5DgvQIcAO3EYuY1+YVYO44HHnou3uuY1SVGzBuNwB2jBNlTFUOkiki0j0gBWLMT/7agG7I4Bff
-	cZgqHw4yoDIGPiLb0a9sHRzSDVxeN7HSQFlkosCPa6BdVPFYl5/6SgIKzcbf3yPhlhFQv05r/rm
-	L+R3oMbZASd0DpkRhTzQkEczI8NTikaAc6glZ37GrUzcGj39orXB1rQcin6j9NzeZaL7JLLRnmK
-	RbrzefBsXO+3y9r9oZIteiiBFyztPK9Js+sxh+XhbXzrak3UvGOr571f3Nifhju1pjUJfw==
-X-Google-Smtp-Source: AGHT+IFYqOzn0CbqAzO6U16/vv3yxNPBs7vBAGPe7v1D1GRNSbbegU+qDr2xpouLjVmiFE9cnTiGcg==
-X-Received: by 2002:a17:90a:fc44:b0:2ee:aed2:c15c with SMTP id 98e67ed59e1d1-306af788c23mr2724148a91.28.1743832497475;
-        Fri, 04 Apr 2025 22:54:57 -0700 (PDT)
-Received: from henry.localdomain ([223.72.104.130])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30561ca5da3sm5555489a91.0.2025.04.04.22.54.53
+        bh=cXoXu32p+yvTpl/FA9Tehjz+TiUIPbg3Cf0b50lx5gA=;
+        b=j5/iKunTYmyno1lEIMAemEkPLrMOG62j0CqaeNWbZrKVLPmXkpuwl6i8LAS6tQ/mHl
+         B933UrmJBd0JmQXZzmV8/HNzuL2XMzeRpRv5YwZ9FvC802WS5Bfhg0E7iIJqX91ZcdJs
+         k1TTf4axxmngFr3dXc3esVhsE9lFqB+yqSAotbhMNGEb0je9vY3l5eXl1Z4L53TZpzy4
+         JRwqPjyhyXDhJHkHOgOZ1/3MRsu86VHEaBQmVhviNjrv0uIEgW7cgOo2Gj8BjQOx47dH
+         c6EsAcbDkQcySqH1JDjWRFraNktIdG0GbgPHEZwOvmsOB1spnBdctlOGPa7ArDZWCTt6
+         KPDA==
+X-Gm-Message-State: AOJu0YwAkAhGMeYRPCUSIiBmh4SuBPjCOA6AATjhp6fHOsjZHjjTeNv1
+	9V7Ca4jApZwXJqqQZd/yBDRDii2/eL5ZMyufEFOCcTIWnLMloE+M
+X-Gm-Gg: ASbGncvftYzHIHCkNkeAa7ee5ZjTHeO3RjO5y1FFBYgcUmPVzZ1+cwjrxLXck5UBIWr
+	+H5+OAUYLJYsK+CPxSKlfnlqZff1ouRSv0256HL/g6Z+V3T40NNW1pJPQ4lajFCOqEe12gQ/sVa
+	lnzxL/aZhjaJxTkmE1sLeP2nNWUB/az2TkqAXQJIM08eiCS1S4ts38lA/rcRiJ9AykhEgdrlE7O
+	IFcCbIr1t+9v9TzvAvQ/KBHFzDWbwJU0jy94bptAJwB3tebJbOcOdhtl46ZDcniPDr5CLu5j82y
+	VpDmFJL1xqSRaTQ1eYh8
+X-Google-Smtp-Source: AGHT+IHAkPXVNuZK8g4LJVmN9ULIIsQVLAhkLP0CEKfRTTKkKgAPfpJtdiPWCmOWoxI+XPLm+vZfnw==
+X-Received: by 2002:a05:622a:1994:b0:476:7b0b:30fb with SMTP id d75a77b69052e-47924953eaemr93760161cf.22.1743832621375;
+        Fri, 04 Apr 2025 22:57:01 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4791b071b42sm31190551cf.27.2025.04.04.22.57.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 22:54:56 -0700 (PDT)
-From: Henry Martin <bsdhenrymartin@gmail.com>
-To: sudeep.holla@arm.com,
-	cristian.marussi@arm.com,
-	rafael@kernel.org,
-	viresh.kumar@linaro.org
-Cc: arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Henry Martin <bsdhenrymartin@gmail.com>
-Subject: [PATCH v1] cpufreq: scmi: Fix null-ptr-deref in scmi_cpufreq_get_rate()
-Date: Sat,  5 Apr 2025 13:54:47 +0800
-Message-Id: <20250405055447.73925-1-bsdhenrymartin@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Fri, 04 Apr 2025 22:57:01 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Chen Wang <unicorn_wang@outlook.com>
+Cc: linux-kernel@vger.kernel.org,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH] irq: sg2042-msi: add missed chip flags
+Date: Sat,  5 Apr 2025 13:56:24 +0800
+Message-ID: <20250405055625.1530180-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,43 +87,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-cpufreq_cpu_get_raw() can return NULL when the target CPU is not present
-in the policy->cpus mask. scmi_cpufreq_get_rate() does not check for
-this case, which results in a NULL pointer dereference.
+sg2042-msi driver used fallback set by msi_lib_init_dev_msi_info()
+As commit 1c000dcaad2b ("irqchip/irq-msi-lib: Optionally set default
+irq_eoi()/irq_ack()") changes the behavior of the default fallback,
+which break the driver and causes NULL pointer dereference.
 
-Add NULL check after cpufreq_cpu_get_raw() to prevent this issue.
+Add necessary chip flags of msi_parent_ops in this driver to fix it.
 
-Fixes: 99d6bdf33877 ("cpufreq: add support for CPU DVFS based on SCMI message protocol")
-Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
+Fixes: c66741549424 ("irqchip: Add the Sophgo SG2042 MSI interrupt controller")
+Link: https://lore.kernel.org/all/20250217085657.789309-3-apatel@ventanamicro.com
+Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
 ---
- drivers/cpufreq/scmi-cpufreq.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/irqchip/irq-sg2042-msi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
-index c310aeebc8f3..c735f39245bf 100644
---- a/drivers/cpufreq/scmi-cpufreq.c
-+++ b/drivers/cpufreq/scmi-cpufreq.c
-@@ -37,11 +37,17 @@ static struct cpufreq_driver scmi_cpufreq_driver;
- 
- static unsigned int scmi_cpufreq_get_rate(unsigned int cpu)
- {
--	struct cpufreq_policy *policy = cpufreq_cpu_get_raw(cpu);
--	struct scmi_data *priv = policy->driver_data;
-+	struct cpufreq_policy *policy;
-+	struct scmi_data *priv;
- 	unsigned long rate;
- 	int ret;
- 
-+	policy = cpufreq_cpu_get_raw(cpu);
-+	if (!policy)
-+		return 0;
-+
-+	priv = policy->driver_data;
-+
- 	ret = perf_ops->freq_get(ph, priv->domain_id, &rate, false);
- 	if (ret)
- 		return 0;
+diff --git a/drivers/irqchip/irq-sg2042-msi.c b/drivers/irqchip/irq-sg2042-msi.c
+index ee682e87eb8b..375b55aa0acd 100644
+--- a/drivers/irqchip/irq-sg2042-msi.c
++++ b/drivers/irqchip/irq-sg2042-msi.c
+@@ -151,6 +151,7 @@ static const struct irq_domain_ops sg2042_msi_middle_domain_ops = {
+ static const struct msi_parent_ops sg2042_msi_parent_ops = {
+ 	.required_flags		= SG2042_MSI_FLAGS_REQUIRED,
+ 	.supported_flags	= SG2042_MSI_FLAGS_SUPPORTED,
++	.chip_flags		= MSI_CHIP_FLAG_SET_ACK,
+ 	.bus_select_mask	= MATCH_PCI_MSI,
+ 	.bus_select_token	= DOMAIN_BUS_NEXUS,
+ 	.prefix			= "SG2042-",
 -- 
-2.34.1
+2.49.0
 
 
