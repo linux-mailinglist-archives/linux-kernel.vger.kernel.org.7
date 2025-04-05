@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-589609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22FB5A7C845
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 10:39:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A35A7C846
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 10:41:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC1143B3755
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 08:39:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9740E188DE62
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 08:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063DC13AD26;
-	Sat,  5 Apr 2025 08:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3191D61B5;
+	Sat,  5 Apr 2025 08:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="bwyeaMVH"
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="PO6+D6El"
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48DE1C84B7
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Apr 2025 08:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BFD2E62C0
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Apr 2025 08:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743842374; cv=none; b=Eo7WxEqCcCHRq2sFhz4hXmj8hb90EekjgGotwlPfrjX2K3GMj6cKPx1lFHLznT6ZjZYofmz+Y6QTbfYk1kyuJsKdXKiuWs9rtVz4UY9FTmD8MIRHqOo7KFXlE+i7EMHdjwMRC/ooAyYLqBuMzCpCuhBvmoEWGHQmwS+wOS/a/YQ=
+	t=1743842504; cv=none; b=F4dael0ugTAbWD/k3RJ4RySaDHyF289Ub+lVSCXFyicFP+hW8Qgb9S1sXgiiY1yiRH7U8wme5F5512D28m2xz3MBQCzvnxBpDGrWKgBBdh1x0hnFL9l3RZbSLp/lb6XwoPeoPDPZuwU+17C9OUh2NuVBPqlB63easOUGbPLgSJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743842374; c=relaxed/simple;
-	bh=c3BIYK43I4We76fB4omK5efuxzC1dYKzB3cx6OP+pdU=;
+	s=arc-20240116; t=1743842504; c=relaxed/simple;
+	bh=qkwdxkQstWHqLZwaQdiUe8yH/69gvSue/S00JLO//ug=;
 	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=tFUomtfkhzcISIurxnU+oXeOjcDmkqYWWZbX/7KvKFCQHkhqecuxIj8hEBFpM1pNqg2AXWSfXGE6CKjmFrqPY5ODgo21uJihgAaECVzWSxy4At1z5jQ4tgCS2R2rzbDu9P4vxlwDn2z+MEogln3G7LRY1kC/+cv6fYwS36eDDYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=bwyeaMVH; arc=none smtp.client-ip=192.134.164.83
+	 MIME-Version:Content-Type; b=RBELRHjKaZ2rcObGJKNh11NYsJEGOYt8OcYHdaa7Ph4+kB5Sdgi94Ux3Z1ZhhLlBBBgqCfGiElKkikWmDCwoIJT/VsxVtmtLTemPYBFd2cXs2/V2a2p07uUBifHWJrQkDkojrGVWDcXk7C8BcOEtMamjf9zOZIyhXWUP0MSppy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=PO6+D6El; arc=none smtp.client-ip=192.134.164.104
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=date:from:to:cc:subject:in-reply-to:message-id:
    references:mime-version;
-  bh=eKmBR1yXRsio+9Qiuhd7k6lFs4sEx1U1qvNooYoxyFM=;
-  b=bwyeaMVHFC8Qv5Hz/z532RZqC/ERf1ftvedWMJtaws6GRhxmDTLvAzDx
-   Mq5L/SS8X0nj05vhomOaxQYyAgWj4L4AlZ5fk0TV6rz8CPOfkk1Onk08Z
-   79mi0PkmRnAIZ44Nc7u41tYiKprZwzaYaeajUbRrcTKgdzCuLQ79VtCFw
-   M=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+  bh=S+qQigJab1XkQ04Xka52HJIvQxQQUX0zSJbuj0PIiI4=;
+  b=PO6+D6Elguz7tmttMO/wUY8R8vKlOe59mNkG3YhefuFqnk44evEiw8jQ
+   DdhFVg3QV93l095pInPOXOEG3tT1KunWanO8appDDmOENgexIxRipzL4g
+   gp/4x453irhC8JnyTz4oYiqQ0HzwyNKUSQtAx5ziY4HBA39lbHRsfoXdy
+   s=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.15,190,1739833200"; 
-   d="scan'208";a="216487729"
+   d="scan'208";a="113522369"
 Received: from unknown (HELO hadrien) ([50.225.219.62])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2025 10:39:22 +0200
-Date: Sat, 5 Apr 2025 04:39:21 -0400 (EDT)
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2025 10:41:39 +0200
+Date: Sat, 5 Apr 2025 04:41:37 -0400 (EDT)
 From: Julia Lawall <julia.lawall@inria.fr>
 To: Greg KH <gregkh@linuxfoundation.org>
 cc: Erick Karanja <karanja99erick@gmail.com>, outreachy@lists.linux.dev, 
     philipp.g.hortmann@gmail.com, linux-staging@lists.linux.dev, 
     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] staging: rtl8723bs: Optimize variable initialization
- in rtl8723b_hal_init.c
-In-Reply-To: <2025040532-only-quickness-21f2@gregkh>
-Message-ID: <8ab69fd-2f65-749a-9c28-1c4e3ba9ab@inria.fr>
-References: <cover.1743820815.git.karanja99erick@gmail.com> <f7b63d834b98aedfe2ce277d8008d7e398ea29ba.1743820815.git.karanja99erick@gmail.com> <2025040532-only-quickness-21f2@gregkh>
+Subject: Re: [PATCH 2/2] staging: rtl8723bs: Initialize local variables at
+ declaration
+In-Reply-To: <2025040507-attest-hyphen-5dae@gregkh>
+Message-ID: <ef088d6-cec1-9758-cc0-55fb66ca952@inria.fr>
+References: <cover.1743820815.git.karanja99erick@gmail.com> <ef29adfe7c8a189009b07c2873aa48782cd594ca.1743820815.git.karanja99erick@gmail.com> <2025040507-attest-hyphen-5dae@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,7 +67,7 @@ Content-Type: text/plain; charset=US-ASCII
 
 On Sat, 5 Apr 2025, Greg KH wrote:
 
-> On Sat, Apr 05, 2025 at 06:14:48AM +0300, Erick Karanja wrote:
+> On Sat, Apr 05, 2025 at 06:14:49AM +0300, Erick Karanja wrote:
 > > Optimize variable initialization by integrating the initialization
 > > directly into the variable declaration in cases where the initialization
 > > is simple and doesn't depend on other variables or complex expressions.
@@ -75,47 +75,54 @@ On Sat, 5 Apr 2025, Greg KH wrote:
 > >
 > > Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
 > > ---
-> >  .../staging/rtl8723bs/hal/rtl8723b_hal_init.c | 155 +++++-------------
-> >  1 file changed, 41 insertions(+), 114 deletions(-)
+> >  .../staging/rtl8723bs/hal/rtl8723bs_xmit.c    | 56 ++++++-------------
+> >  1 file changed, 16 insertions(+), 40 deletions(-)
 > >
-> > diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-> > index e15ec6452fd0..1e980b291e90 100644
-> > --- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-> > +++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-> > @@ -152,13 +152,12 @@ static int _WriteFW(struct adapter *padapter, void *buffer, u32 size)
-> >  void _8051Reset8723(struct adapter *padapter)
+> > diff --git a/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c b/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
+> > index 5dc1c12fe03e..ebe9562a9606 100644
+> > --- a/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
+> > +++ b/drivers/staging/rtl8723bs/hal/rtl8723bs_xmit.c
+> > @@ -120,13 +120,10 @@ static s32 rtl8723_dequeue_writeport(struct adapter *padapter)
+> >   */
+> >  s32 rtl8723bs_xmit_buf_handler(struct adapter *padapter)
 > >  {
-> >  	u8 cpu_rst;
-> > -	u8 io_rst;
-> > +	u8 io_rst = rtw_read8(padapter, REG_RSV_CTRL + 1);
+> > -	struct xmit_priv *pxmitpriv;
+> > +	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
+> >  	u8 queue_empty, queue_pending;
+> >  	s32 ret;
 > >
-> >
-> >  	/*  Reset 8051(WLMCU) IO wrapper */
-> >  	/*  0x1c[8] = 0 */
-> >  	/*  Suggested by Isaac@SD1 and Gimmy@SD1, coding by Lucas@20130624 */
-> > -	io_rst = rtw_read8(padapter, REG_RSV_CTRL+1);
+> > -
+> > -	pxmitpriv = &padapter->xmitpriv;
+> > -
+> >  	if (wait_for_completion_interruptible(&pxmitpriv->xmit_comp)) {
+> >  		netdev_emerg(padapter->pnetdev,
+> >  			     "%s: down SdioXmitBufSema fail!\n", __func__);
+> > @@ -168,10 +165,10 @@ s32 rtl8723bs_xmit_buf_handler(struct adapter *padapter)
+> >   */
+> >  static s32 xmit_xmitframes(struct adapter *padapter, struct xmit_priv *pxmitpriv)
+> >  {
+> > -	s32 err, ret;
+> > +	s32 err = 0, ret;
+> >  	u32 k = 0;
+> > -	struct hw_xmit *hwxmits, *phwxmit;
+> > -	u8 idx, hwentry;
+> > +	struct hw_xmit *hwxmits = pxmitpriv->hwxmits, *phwxmit;
+> > +	u8 idx, hwentry = pxmitpriv->hwxmit_entry;
 >
-> Ick, no, now the comment doesn't make much sense, right?
+> These lines are NOT more understandable and readable at all, sorry.  You
+> are mixing pre-initialized variables with not-initialized ones, making
+> this harder to read and maintain over time.
 >
-> The changes you are making here are odd, why are you wanting to do this
-> type of thing?  What tool suggested that these are a good idea?
+> Which would you want to come back to in 5 years to try to understand
+> what is going on?
+>
+> Keep it simple please.
 
-I made a Coccinelle script that does this, but it's not clever enough to
-detect the comments.  Like for checkpatch, the results of Coccinelle have
-to be reviewed.  Many can be inappropriate.
+This is another deficiency of Coccinelle.  It doesn't really see the case
+where there are multiple declarations on a single line, since it is
+generally more valuable to be able to work on them individually.
 
-The goal is more like to address:
-
-int ret;
-
-ret = 0;
+I guess the first change above would be ok though.
 
 julia
-
->
-> thanks,
->
-> greg k-h
->
->
 
