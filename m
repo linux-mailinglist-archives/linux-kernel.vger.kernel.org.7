@@ -1,179 +1,129 @@
-Return-Path: <linux-kernel+bounces-589810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F3DDA7CA8C
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 19:11:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87977A7CA96
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 19:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAB4218981B6
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 17:11:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6CA57A7570
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 17:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F146198E9B;
-	Sat,  5 Apr 2025 17:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1029219B59C;
+	Sat,  5 Apr 2025 17:12:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="aXrl7SbA"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B720615746F;
-	Sat,  5 Apr 2025 17:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Of4FwQRs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CD01993B2;
+	Sat,  5 Apr 2025 17:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743873062; cv=none; b=CxbZt9f/JEQvNEkVEiCqMX4Xdyc4KVtd8rMVUkf5ajMwQAIabvulD4l7SG222AcCvVlSa2P2epjuD8zIekYjYo44uiojerrtQ2fYhfvQAXsXluWWN7+7Gy8Or1LuDnWGiOHrHCvNHjkGOiDkrn47BLPtzTm3VojIELZhPn5hQtk=
+	t=1743873138; cv=none; b=R7VZArB8BJ/5YLe3CONLlKolBVDBZs0IGp7CMYgi0Gt25zM6BbRraqzisEBloQC6/Bo/bHjfIQNS5BcoWxalLnkyn/ayHYex28JZ+oer2UkNh7SiVvjRh4FnoLlYnuj0m0CSq/7//Sjp1ywgJIiYzZwHByrFRt0EkVVR0oJECKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743873062; c=relaxed/simple;
-	bh=JqX86buw9HHooGIvsI0QsPGGPblozuLApWe0OsA9GRw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RhymAysD8pj9oYmuIQaXXsWbLddWxHRzs1YsBCF5nGQu4TV6n6H6W6kZaAALnNrGJBAGCHdbCm9lrxk3XHT2wBms6Vv2RYd3ZFTqqQXPZNS0+ekuqqfi2dAiiK/ULHXL/QHlicUoXTm4vJu2g1Q1gEsVSQUbVQhvQiOOOdIYKKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=aXrl7SbA; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=A6OD+nPI3zJQy3gtWa6Pq3ez60axHp3q2+HfcZNxkxo=;
-	b=aXrl7SbA8gu2qJU8/UG8FP0vdx8c2FVx8N+Dw2v+4MDUtc9QhVXMQyO0XpzIhT
-	eLjHZ1+j9YneUEr3nCoMQNAL/liaRgquVXb85DXG/4Q0iYc9UONF946Qv3X4rS5j
-	sODPumDfAO6Ky02VzIidiAMn2ObBw554pftwOVMNIEoVI=
-Received: from [192.168.71.89] (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3PlsIZPFnVxK1CA--.4162S2;
-	Sun, 06 Apr 2025 01:10:33 +0800 (CST)
-Message-ID: <ce8bf6d5-9783-4bb5-9aa3-1c697978084f@163.com>
-Date: Sun, 6 Apr 2025 01:10:32 +0800
+	s=arc-20240116; t=1743873138; c=relaxed/simple;
+	bh=Oc4uyqHtOPFNtYHEZPJaclnM3in6j64NjiX3Ew8Xm5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PuE1PR6tPDyLmAd+5obfkwE6Tsw+FOf4+IL1jPkcJNpfjUbao3xYVPMimwwgueNY6oV7MUu0Bhg036adtVkxOqICbv+x/fjnLWOHbN/e6NLFh7GRkyAhSarG0/7m0FN5SHCU6LHKBA7VhWVWm7H8RkFSpsA5og1j7U0H64N6cR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Of4FwQRs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E29FC4CEE4;
+	Sat,  5 Apr 2025 17:12:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743873137;
+	bh=Oc4uyqHtOPFNtYHEZPJaclnM3in6j64NjiX3Ew8Xm5U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Of4FwQRszpMcns+kgRM4Apg1oV7ZC7LZWaz1ZMoxOHHSC5p6DkM8MTkq6Fub7LcL0
+	 99GIGrIvz+6zu1nWA6auKVu2JRpMH78lHYp+ulqZqjrK6OX4bzeDn+CtV5b5mMCWAK
+	 sjvVFjZR8WTBO0vW5voAyw+Pv+wGzWLs3LOLipDReO3oDCQWlH3ls7PwI7ddpis3EG
+	 yHm2GQ1gbTVn3/qb9ieBgC1QRro8xYefAOYPVlKBbvn6LVzR1aSwvOvnr3ZfdnRM6o
+	 g//upi+9V2bYmzyIb2HKkcHXHm+z/OTT+lq1jeDlhA142xhoL3eYDRvT34EK51b/CD
+	 Us25Zmz+Cvxuw==
+Date: Sat, 5 Apr 2025 18:12:10 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
+Cc: david@ixit.cz, Lars-Peter Clausen <lars@metafoo.de>, Svyatoslav Ryhel
+ <clamor95@gmail.com>, Robert Eckelmann <longnoserob@gmail.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/5] iio: light: Modernize al3010 and al3320a
+ codebase
+Message-ID: <20250405181210.5e7a181a@jic23-huawei>
+In-Reply-To: <20250402-al3010-iio-regmap-v4-0-d189bea87261@ixit.cz>
+References: <20250402-al3010-iio-regmap-v4-0-d189bea87261@ixit.cz>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pci: tegra194: Fix debugfs cleanup for !CONFIG_PCIEASPM
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: bhelgaas@google.com, jonathanh@nvidia.com, kw@linux.com,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-tegra@vger.kernel.org, lpieralisi@kernel.org,
- manivannan.sadhasivam@linaro.org, robh@kernel.org, thierry.reding@gmail.com
-References: <20250405152818.GA107831@bhelgaas>
- <c52ac489-51e9-4803-bf64-2bb6cfbf30bf@163.com>
- <da261a4c-6c27-454f-b21d-af1814b58b91@wanadoo.fr>
- <fa44eac9-8986-46d2-899d-df8811131925@163.com>
- <9dcd70b1-a146-419f-aa5e-bacf52cf81e8@163.com>
- <c0c1476c-75a2-4d45-83a2-4751a7487892@wanadoo.fr>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <c0c1476c-75a2-4d45-83a2-4751a7487892@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3PlsIZPFnVxK1CA--.4162S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGryxJF4fAr4DKFy5Ar1DKFg_yoWrJrW3p3
-	ykG3W5Kr4DJw15tr9ava1kAF1ft3ykAr1UX345uryIyr1vqr1rJr4Utr45uF9xur4kJF1U
-	XF4Fq3W3WF15AF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jbo7NUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhAmo2fxWvLLhQAAsf
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed, 02 Apr 2025 21:33:23 +0200
+David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org> wrote:
 
-
-On 2025/4/6 01:04, Christophe JAILLET wrote:
-> Le 05/04/2025 à 18:47, Hans Zhang a écrit :
->>
->>
->> On 2025/4/6 00:35, Hans Zhang wrote:
->>>
->>>
->>> On 2025/4/6 00:17, Christophe JAILLET wrote:
->>>> Le 05/04/2025 à 17:49, Hans Zhang a écrit :
->>>>>
->>>>>
->>>>> On 2025/4/5 23:28, Bjorn Helgaas wrote:
->>>>>> Follow subject line capitalization convention.
->>>>>>
->>>>>> On Sat, Apr 05, 2025 at 10:54:59PM +0800, Hans Zhang wrote:
->>>>>>> When CONFIG_PCIEASPM is disabled, debugfs entries are not 
->>>>>>> created, but
->>>>>>> tegra_pcie_dw_remove() and tegra_pcie_dw_shutdown() 
->>>>>>> unconditionally call
->>>>>>> debugfs_remove_recursive(), leading to potential NULL pointer 
->>>>>>> operations.
->>>>>>>
->>>>>>> Introduce deinit_debugfs() to wrap debugfs_remove_recursive(), 
->>>>>>> which is
->>>>>>> stubbed for !CONFIG_PCIEASPM. Use this function during removal/ 
->>>>>>> shutdown to
->>>>>>> ensure debugfs cleanup only occurs when entries were initialized.
->>>>>>>
->>>>>>> This prevents kernel warnings and instability when ASPM support is
->>>>>>> disabled.
->>>>>>
->>>>>> This looks like there should be a Fixes: tag to connect this to the
->>>>>> commit that introduced the problem.
->>>>>
->>>>> Hi Bjorn,
->>>>>
->>>>> Thanks your for reply. Will add.
->>>>>
->>>>> Fixes: bb617cbd8151 (PCI: tegra194: Clean up the exit path for 
->>>>> Endpoint mode)
->>>>>
->>>>>>
->>>>>> If this is something that broke with the v6.15 merge window, we 
->>>>>> should
->>>>>> include this in v6.15 via pci/for-linus.  If this broke earlier, we
->>>>>> would have to decide whether pci/for-linus is still appropriate or a
->>>>>> stable tag.
->>>>>>
->>>>>
->>>>> The original code that introduced the unconditional 
->>>>> `debugfs_remove_recursive()` calls was actually merged in an 
->>>>> earlier cycle.
->>>>>
->>>>>> We did merge some debugfs things for v6.15, but I don't see anything
->>>>>> specific to pcie-tegra194.c, so I'm confused about why this fix would
->>>>>> be in pcie-tegra194.c instead of some more generic place.
->>>>>>
->>>>>
->>>>> The Tegra194 driver conditionally initializes pcie->debugfs based 
->>>>> on CONFIG_PCIEASPM. When ASPM is disabled, pcie->debugfs remains 
->>>>> uninitialized, but tegra_pcie_dw_remove() and 
->>>>> tegra_pcie_dw_shutdown() unconditionally call 
->>>>> debugfs_remove_recursive(), leading to a NULL 
->>>>
->>>> debugfs IS initialized, because it is in a structure allocated with 
->>>> devm_kzalloc().
->>>>
->>>> And debugfs functions handle such cases.
->>>>
->>>
->>> Oh, my mind went wrong and I didn't pay attention to devm, and I'm 
+> This series aims to improve code readability and modernize it to align
+> with the recently upstreamed AL3000a.
 > 
-> Here, what is relevant in devm_kzalloc() is not devm but the kzalloc 
-> part. the "z" is for zeroing the allocated memory.
+> Apart from slightly improved error reporting, and error handling
+> there should be no functional changes.
 > 
-
-Hi Christophe,
-
-Thanks your for reply. I understand.
-
->>> really sorry about that.
->>>
->>> Another problem I noticed here is that currently, no matter what, 
->>> pcie->debugfs = debugfs_create_dir(name, NULL) is executed; if #if 
->>> defined(CONFIG_PCIEASPM) is valid, then pcie->debugfs = 
->>> debugfs_create_dir(name, NULL); Is it superfluous?
->>
->> Sorry, let me reply again:
->> Another problem I noticed here is that currently, no matter what, 
->> pcie-  >debugfs = debugfs_create_dir(name, NULL) is executed; if #if 
->> defined(CONFIG_PCIEASPM) is invalid, then pcie->debugfs = 
->> debugfs_create_dir(name, NULL); Is it superfluous?
+> Module  before after
+> al3010  72 kB  58 kB
+> al3320a 72 kB  58 kB
 > 
-> AFAICT, it looks useless in this case.
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+Applied, but with tweaks to not add print messages as described in patches 1 and 3.
+That meant a bunch of hand application was needed for 4-5.  Please check the result
+in the testing branch of iio.git.
+
+Thanks,
+
+Jonathan
+
+> Changes in v4:
+> - Fixed mixed-up rebase changes between commits and added
+>   regmap_get_device into _init functions to get the device.
+> - Link to v3: https://lore.kernel.org/r/20250402-al3010-iio-regmap-v3-0-cc3da273b5b2@ixit.cz
 > 
-> I guess that moving debugfs_create_dir() and the
-> name = devm_kasprintf()...
-> above it, into init_debugfs() would do the trick.
-
-That's what I was thinking. I will submit the version again in the future.
-
-Best regards,
-Hans
+> Changes in v3:
+> - Stripped patches merged from second version of patchset.
+> - Dropped iio: light: al3010: Move devm_add_action_or_reset back to _probe
+>   in favor of opposite approach moving devm_add.. to _init for al3xx0a:
+>   - iio: light: al3000a: Fix an error handling path in al3000a_probe()
+>   - iio: light: al3320a: Fix an error handling path in al3320a_probe()
+> - Link to v2: https://lore.kernel.org/r/20250319-al3010-iio-regmap-v2-0-1310729d0543@ixit.cz
+> 
+> Changes in v2:
+> - Dropped Daniel's email update.
+> - Dropped DRV_NAME introduction for al3000a
+> - Added DRV_NAME define removal for al3010 and al3320a.
+> - Splitted unsigned int conversion into separate patches.
+> - Replaced generic value with specific raw and gain variable.
+> - Use dev_err_probe() for error handling.
+> - Separated devm_add_action_or_reset move from _init back to _probe.
+> - Dropped copyright update.
+> - Link to v1: https://lore.kernel.org/r/20250308-al3010-iio-regmap-v1-0-b672535e8213@ixit.cz
+> 
+> ---
+> David Heidelberg (5):
+>       iio: light: al3010: Improve al3010_init error handling with dev_err_probe()
+>       iio: light: al3000a: Fix an error handling path in al3000a_probe()
+>       iio: light: al3320a: Fix an error handling path in al3320a_probe()
+>       iio: light: al3010: Implement regmap support
+>       iio: light: al3320a: Implement regmap support
+> 
+>  drivers/iio/light/al3000a.c |  9 +++--
+>  drivers/iio/light/al3010.c  | 85 +++++++++++++++++++++++--------------------
+>  drivers/iio/light/al3320a.c | 89 +++++++++++++++++++++++++--------------------
+>  3 files changed, 100 insertions(+), 83 deletions(-)
+> ---
+> base-commit: f8ffc92ae9052e6615896052f0c5b808bfc17520
+> change-id: 20250308-al3010-iio-regmap-038cea39f85d
+> 
+> Best regards,
 
 
