@@ -1,109 +1,106 @@
-Return-Path: <linux-kernel+bounces-589811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E94BA7CA92
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 19:12:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFA5DA7CAC9
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 19:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48706177C05
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 17:12:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50CC07A67BD
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 17:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDE818C008;
-	Sat,  5 Apr 2025 17:12:17 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD96199931;
+	Sat,  5 Apr 2025 17:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t55EW1aN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2601BC2A
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Apr 2025 17:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12261474CC;
+	Sat,  5 Apr 2025 17:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743873137; cv=none; b=kxdjggsvqQK2PIUZHEjlkMLs0Skw4Yy9/oD9ZxJgh5w0gzuCDVAunC7Y9B3P+KjSvNSkoot4kg1rK3jOH4RhQ8UI9V42n/Jjfc0C3o5QH5WkEBu3bubcTo2b1dujqTgJ0URn5av7+1Q4bEhX6HsSK5y4tgsJxz7A9VVZgUrLfU8=
+	t=1743873526; cv=none; b=t8QM0/DuPnOlflFbV1lGipTiOix7LTxIvu9L3LFvCpKWAFuC1fY5n6j1740LPi3ZZFT8VwTuolZ/ixMauoolMV9zg9IU7JE/Uq4JfkXUppAti4pfSKXDCQ310PhayT92zu2Z+nugyE7zy5137Ayqb5Zju5A3xiv+N7AJFtc7xOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743873137; c=relaxed/simple;
-	bh=CVOcKUDZBIPDU8lXdK+Y0lVv6c+uU5JjYv7RWMPVzqs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qqI8VwXPy7DBTouIhXM8+bAg8+ENE9lwIr8MlgBvQGwyxy2aQ96UJ1Yn3NvydHfiK/C6HvroxoVFOB0xXRY5IR+3ympC78El5FV5dXqrfCuDJ+y5qym3u9G9ntMMVCmeocLb3+9RRkl6C6P7ttNNe0Pjdz+ttWRfRaxgomkOVKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d5b38276deso53410045ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Apr 2025 10:12:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743873134; x=1744477934;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nT+HSTHiZ9CsHaz5CeBYSjEeXYVheQIiifj11yIZg9s=;
-        b=Fa8DI56XiL9hBPf+mGynBxGtvm+hhEvLKyBZtjz8MVLvSd9Uusv5Z+N3gL+ZiUGUua
-         gnWeu24NnWL8nakmrkKdn8I/bxln54+kO2BZsFmBJyfxLo+SanjAYzX8+aMmOA1eSnPw
-         ILyovLMQ/A2q7g0iV9iIkY9bWmR+K2lujQjgash2ITGOebny6C+pwQ/SkIP8x93low/Z
-         GDmsfOVUftKndNG4hMKH204QGtr1bTufaLrjPF7bl4Ao6mFhn3npK06VRpNoc2Tl0S8j
-         8rxUqLC2gLOD62DyamCM9VHBIKhaYR3OVGQzrUe7a0JPL30m1xrqLk9wzZ78xQ0ejnMs
-         tmkg==
-X-Gm-Message-State: AOJu0YxaIgoIZNHcQf3sWTP1zwexGa4svY5NJkjL2m3mM+Wu82a7kDOr
-	8mQJx8lEIjqa+LBWnS4Z8YHwyXkJmk9lO21eCsFQ1tRrchflNNh8hCoo1lPKcO5ey7R7k5a970M
-	xL52aLCJLW8sS4+uZVi1xow9A1GEi2Pz7sGPJBy5denJKhRVIR2BJmPs=
-X-Google-Smtp-Source: AGHT+IGSYu5a65fgnsqoWEpL4xU+Z+4XO0o5Xuv7h/2MYMzgKYNA+3jIEDgSrziQlRknQyuFDLWzXRWqB+1EUxRpjBu7/Vq78ZQs
+	s=arc-20240116; t=1743873526; c=relaxed/simple;
+	bh=tUDO7KE2LDmxNo+dRhla6N2NEHvM+6/Y3ILAr8KrEKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=irerb2jRsCQkAP9R6xKqlHykKXQpaYSaQIl00evYTlsdLceRxS6Vnhk6B3pu8tTwxc+6MgfTgbRcCrVsoeKZ8zT56YykSLvhPij9yANbBUZ9l4J80Gyc+asY7TOkasnlPITlkGYTnmJKScazq3DhPWEOhRMztEHJXfnGaWdP71I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t55EW1aN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F45EC4CEE4;
+	Sat,  5 Apr 2025 17:18:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743873525;
+	bh=tUDO7KE2LDmxNo+dRhla6N2NEHvM+6/Y3ILAr8KrEKk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=t55EW1aNg3uWps14ROD/NcBui28NjbYS5TsP3rD3knnPCVBWO6vid5qH6hT/WLOf3
+	 zTSoGhYx7rp2k+X5ElKHwN9nSr55N35U2hcKrX22mJnhHS7D/F1eQcp3ldSJ4IHSvb
+	 d6gedEaQJLzlrcCQlDqq1FWPD6Olbno2BJdvskNulag4uCyTrlNc+bOLyph6WhK7Po
+	 BWE1WTotwT4zc3faTx3uMaJjxzoJ6AFzxy2yRTvdrmImhxgTTm3Dor7tsc9w8W0xZB
+	 90CBqYjieOlRmiWvvInaBpk+mIF4kW7Tz51sF4fi95Y8C12mXiwgBQa74QdDF2ydfR
+	 zdNqRC+QHrrnA==
+Date: Sat, 5 Apr 2025 18:18:38 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] Support ROHM BD797xx DACs
+Message-ID: <20250405181838.1498be04@jic23-huawei>
+In-Reply-To: <cover.1743576022.git.mazziesaccount@gmail.com>
+References: <cover.1743576022.git.mazziesaccount@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3089:b0:3d1:7835:1031 with SMTP id
- e9e14a558f8ab-3d6e53181dfmr82745475ab.7.1743873134667; Sat, 05 Apr 2025
- 10:12:14 -0700 (PDT)
-Date: Sat, 05 Apr 2025 10:12:14 -0700
-In-Reply-To: <67ef83fe.050a0220.9040b.0366.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67f1646e.050a0220.0a13.0243.GAE@google.com>
-Subject: Re: [syzbot] #syz test
-From: syzbot <syzbot+ff3aa851d46ab82953a3@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Wed, 2 Apr 2025 09:44:20 +0300
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-***
+> Support ROHM BD797xx DACs
+> 
+> ROHM BD79700, BD79701 and BD79702 are very similar to the already
+> sipported BD79703. Main difference is the reduced number of channels.
+supported.
+> Also, the *00 and *01 variants lack of the separate Vfs pin.
+> 
+> This series adds support for the BD79700, BD79701 and BD79702.
 
-Subject: #syz test
-Author: gshahrouzi@gmail.com
+Series was nearly perfect but I tweaked one thing...
+> 
+> ---
+> 
+> Matti Vaittinen (5):
+>   dt-bindings: Add ROHM BD7970x variants
+>   iio: dac: bd79703 Store device address to 'address'
+>   dac: bd79703: Add chip data
+>   iio: bd79703: Support BD79700 and BD79701
+>   iio: dac: bd79703: Support ROHM BD79702
+Made the last 4 patch titles all start with
+iio: dac: bd79703: 
+rather than this random mixture of prefixes.
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 0bb21659e252..153ba622cfa0 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -14016,6 +14016,9 @@ inherit_event(struct perf_event *parent_event,
-        if (IS_ERR(child_event))
-                return child_event;
+Applied to the testing branch of iio.git which will get rebase
+on rc1 sometime in next few days.
 
-+       get_ctx(child_ctx);
-+       child_event->ctx = child_ctx;
-+
-        pmu_ctx = find_get_pmu_context(child_event->pmu, child_ctx,
-child_event);
-        if (IS_ERR(pmu_ctx)) {
-                free_event(child_event);
-@@ -14037,8 +14040,6 @@ inherit_event(struct perf_event *parent_event,
-                return NULL;
-        }
+Thanks,
 
--       get_ctx(child_ctx);
--
-        /*
-         * Make the child state follow the state of the parent event,
-         * not its attr.disabled bit.  We hold the parent's mutex,
-@@ -14059,7 +14060,6 @@ inherit_event(struct perf_event *parent_event,
-                local64_set(&hwc->period_left, sample_period);
-        }
+Jonathan
 
--       child_event->ctx = child_ctx;
-        child_event->overflow_handler = parent_event->overflow_handler;
-        child_event->overflow_handler_context
-                = parent_event->overflow_handler_context;
--- 
-2.43.0
+> 
+>  .../bindings/iio/dac/rohm,bd79703.yaml        |  33 +++--
+>  drivers/iio/dac/rohm-bd79703.c                | 116 +++++++++++++++---
+>  2 files changed, 126 insertions(+), 23 deletions(-)
+> 
+> 
+> base-commit: 543da6252b48bbfe13e194fb980bdd2b161f6838
+
 
