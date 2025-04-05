@@ -1,206 +1,105 @@
-Return-Path: <linux-kernel+bounces-589887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048B8A7CBD7
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 22:46:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D3EA7CBD8
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 22:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F16401895E0D
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 20:46:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB1A6188E334
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 20:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A101DACA1;
-	Sat,  5 Apr 2025 20:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AAC1B0430;
+	Sat,  5 Apr 2025 20:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jgmlopqI"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QmZ6JGPV"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C85B1C5F3A
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Apr 2025 20:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B502F36
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Apr 2025 20:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743885953; cv=none; b=DMEYyH8HfPNvYuUmo9y/gxuRIra78pX/A31p2V4vu7SMDV1flEACnbyiXFm08I8vIPEGGbCGs7QiGX+ICEvEcioMY2b5gRIlhVwrKZcCz83qumboBOSWEbZ35ItaIatZ/W7xJe1WAXR8//HEFQ6DDC8mJZmmb+zUmHnNagQC7zU=
+	t=1743886241; cv=none; b=Fj9HD6ia2wwJdLkal5eSY7Zsz8ZrXSRiL/3Xf+q0AZuAqjMY9Oph/R7WG/Z9BSd1fPVxwEs9PplVuWR+jkPVaPvG4V7SdoDtSLCTxjH4IFnYwha/xq62qvn8ZjekcqSpxpkQZC40ssyzbvwpJcNy/R5/B9OlEk49ASE4Hg7GzdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743885953; c=relaxed/simple;
-	bh=5Cjg3Lwm6dTUee9haQdH+9yhyA8h1xcOnP97k1DQK5Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VGfMJ/l/DX6QmqyxvltceCi/fe/oOVuNKULqUR6WbXA9emx9ZvpEiEPB8GIcRFcNrSnq4xzy/1lgdIL88GOs6NYPcJhIr/nJp/X06qFcTcA/cBPeLxNzi+sEu0fqHC6JsJxji+tQd1XcCkbDjjDOhu+dEjma4fQZvwlLHLMH1To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jgmlopqI; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so27952475e9.1
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Apr 2025 13:45:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743885950; x=1744490750; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c9+wSAeBp1V8uCgaufiRNioBi2o/cjCh0uaG9JHkLnY=;
-        b=jgmlopqIHzJXa941RXPSMNIRYxPAQZ14/wt/ibWqH0YM9KTpn4+TJ2eZgqecMYOA3Y
-         mX4REJVvxP9FdswVt66r+HRrL87FQpfCGvtG0vXfhtEEg3LeOvjDwn/U59d8/M6hZ54v
-         LRZRiRAWhi+tIBmkI/XnIt1Fp8R73bWOvPvBonBkmo4D6Ps5lhxDhJNarUP3nMOw5B6H
-         80DLBeYDw9G5We4AlkYPUiN/hVfE1iC5tRxn/jiZ8Z6+td//R2PZV5bOkxrvWuPPkL2y
-         sGhWkJJ01kbeq62JNmsKYy/Az65f8OMmpgk9vmCIBy9dTfOtCrt4pyuroWIhPuP20zwy
-         +OXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743885950; x=1744490750;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c9+wSAeBp1V8uCgaufiRNioBi2o/cjCh0uaG9JHkLnY=;
-        b=AF7/kc9+3oZVwXHXuC+h9T9gJdI490T7AgY1fzYFI6uWoodncTvetjNJXsFIKZ383x
-         pBJduja/DpJGmWrGZrBXaUZIddD3azC2r8L2JrePbxdzu1AuCWJ5Sp4zdD/YRe9oyo2x
-         HJ01Db2v/W4/kTnu3zcywM1fRozEeKOMrKCqzvo7xI/GDYhRiqF8WySaKRA41GoQj/ah
-         x5qRZlAVAOR9Bozx/E6IN77INME9zJyBt64yZ/IJ3Y6YOqvWqNMPfUs4DvzcQDCxuTW+
-         jl+9qHx9q7xPv249MeXms0QTHKW7hpI+nFroCxOLfWuo6XRuLZv0u3lRLXvaKMfu7Bby
-         u7pA==
-X-Forwarded-Encrypted: i=1; AJvYcCUinl/Fc2sR7TFEI1PMoKjdD9mdf7hsArWuJcKLQ0CCU66BJfRAu+v/WM0ixRhButWqvYn7Gedo2ifUvK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFr6gDu6jBVHPcbfGqsGXsHs6dY1rql0EKr4BruzJhYVB5/P2g
-	y4zVzL/8GCm9AuJaArA1ZcAZ8KqVZyoru8SCv7yZ7fKGb2awrmFr
-X-Gm-Gg: ASbGncsAZOeoosuBSwCb28lz1G/VIy7K/mJyGT+ma1+UQVVMmQMVKnbR/gVfRDomZxF
-	J4rayFgW8zwYx1WIzTXffdPWMF38g+P39rMvxJgqlkGncU29DlxlJUfQVq86emctd9DgeQySo37
-	VpF4jrsH8V863hDtuE4ro2lChLq4lm2m6M3NqEfYr1lH9YRaYhn41LAcCwoVkSK6LXWjc/uW1SQ
-	26wURDNDULj75QriUxlkRZjos3NcN2Ug9ceMgcO5+Onc8lBWAllyRvut2JdlFQdgwZt4FTVEr2S
-	nx1EvDxrDfsrDYuk4JteFkS4J4/KribzEGUA3boIv4Q4jv71juFw4iuBih8bIUbeB2DHt8kr4w1
-	Spl9XpbueIuPMRZ4BIqJGtlBRuw==
-X-Google-Smtp-Source: AGHT+IFriADpLMmuaYM1fnnc6k406s5RbZxeLEntVbm2JLwMsM03VfZuRa8q/zjPyc79VmSqOBi7aQ==
-X-Received: by 2002:a05:6000:2509:b0:39c:12ce:1112 with SMTP id ffacd0b85a97d-39c2e651984mr11096988f8f.21.1743885949751;
-        Sat, 05 Apr 2025 13:45:49 -0700 (PDT)
-Received: from snowdrop.snailnet.com (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c30096ecasm8027042f8f.18.2025.04.05.13.45.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Apr 2025 13:45:49 -0700 (PDT)
-From: David Laight <david.laight.linux@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org
-Cc: David Laight <david.laight.linux@gmail.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Nicolas Pitre <npitre@baylibre.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 3/3] lib: Update the muldiv64 tests to verify the C on x86-64
-Date: Sat,  5 Apr 2025 21:45:30 +0100
-Message-Id: <20250405204530.186242-4-david.laight.linux@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250405204530.186242-1-david.laight.linux@gmail.com>
-References: <20250405204530.186242-1-david.laight.linux@gmail.com>
+	s=arc-20240116; t=1743886241; c=relaxed/simple;
+	bh=aWB8JDY+vGaVXRU8LlY80umc4/VTsG6GPQzvbz7dbIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cd/GkL63CfYu2c6URp/3fwtf4Qu18dwfL27TqS1MT/je1qoAqt/OKQM8F/RmRC7iIpgV1YlYDMwB+l/3PDm73aMFrdhnr9E9Qhkb2U0w97SLX1Oh5DwEWwP1mVJ3bT+qBewXDgWxQ4RA4Ng6YivsRnA0Na+NZbryjFqoRnkE2/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QmZ6JGPV; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DF25D40E015E;
+	Sat,  5 Apr 2025 20:50:34 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id P4rBmPvBRyOD; Sat,  5 Apr 2025 20:50:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1743886231; bh=THlX9a+QzLl8nnEiV1w0ojpEAXiVFl9VW3HVZGdUYMQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QmZ6JGPVcpmLXb/uJ++sMOjolFFmZ7f2uuDRix+zihz08xzkQfFtJoY5mtCWpCAmF
+	 SuEqclWJpq65Q+mUjmeLds9OE2a462kcAm2mHnPXx1qVj0Xb4/gtg+cjszCviplimd
+	 t4MHQd1h6DovdK7Cw+DBWl1x0wkvXh+eecaymy6CIH98higDjUy8WCqa8YFCmpRR30
+	 mSSN6iF6iwrHPx9IbYm677/Aw6YXU/ILEaBLFa875GhX/vglxFe8/rCpsMRDWCVxta
+	 6wilhB3x5PSqwFFub4uwp03KUogIP650YJHst4uap24t9oFPtC+Es0iUcIeYS67jYi
+	 qZdM7zWlBpEQrjZ5W7PSbnV6eZCMU/PghcIMZ9nAUluXuk0cSaK+UNtXF89T5OSvQa
+	 KgbEfLSS1+Rz/R5EUcpSukXu4cjiqpzp5EPqHvQ+ii8mHVUlrE8HWPkIYi2Be0VJsB
+	 BFW6cQW1iptd6bipPZt6HG63x+3sgEx9vGfpod6RD+xxCRdUbqXQ30lW2n2fzrlLRv
+	 sEa6G01ZPZfpMsNGpwFifCj831XZSQwKN1qy5M91nmeqGkTS50xvKcwkmvmAcGm0xj
+	 eKNWEsGybT9Eaq/9TNwbrXEryQnQPHI/7yqlvhpTYV0p1H1gL/sW3/7Oeb4dHmp7Iu
+	 F6+Vn9z3MK+iGjIAGcL+lLFE=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 331F040E016E;
+	Sat,  5 Apr 2025 20:50:23 +0000 (UTC)
+Date: Sat, 5 Apr 2025 22:50:13 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Kevin Koster <lkml@ombertech.com>, Oerg866 <oerg866@googlemail.com>,
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Subject: Re: [PATCH] x86/microcode: Fix crashes on early 486 CPUs due to
+ usage of 'cpuid'.
+Message-ID: <20250405205013.GCZ_GXhYBEsH73q1MC@fat_crate.local>
+References: <CANpbe9Wm3z8fy9HbgS8cuhoj0TREYEEkBipDuhgkWFvqX0UoVQ@mail.gmail.com>
+ <20250405130306.ca9822c1f27db119cc973603@ombertech.com>
+ <20250405093127.GAZ_D4b6NdyTS-UW1J@fat_crate.local>
+ <DB27EAFA-8793-4B0E-BC33-C9E9E2C41777@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <DB27EAFA-8793-4B0E-BC33-C9E9E2C41777@zytor.com>
 
-div64.c contains a 128 by 64 division algorithm which x86-64 overrides
-it with an asm implementation.
-So running the muldiv64 tests only verifies the asm code.
-Since x86-64 is the most likely test system compile the default
-code into an x86-64 kernel (under a different name) when the tests
-are being built.
-Verify that both the asm and C functions generate the correct results.
+On Sat, Apr 05, 2025 at 01:33:46PM -0700, H. Peter Anvin wrote:
+> How the Hades does c->x86 not get set to 4 (hence < 0x10) on this CPU?
+> 
+> That's the real bug imo...
 
-Signed-off-by: David Laight <david.laight.linux@gmail.com>
----
- lib/math/div64.c                    | 18 ++++++++++++++++--
- lib/math/test_mul_u64_u64_div_u64.c | 26 ++++++++++++++++++++------
- 2 files changed, 36 insertions(+), 8 deletions(-)
+Go to the first mail in the thread.
 
-diff --git a/lib/math/div64.c b/lib/math/div64.c
-index 50e025174495..38ee5c01c288 100644
---- a/lib/math/div64.c
-+++ b/lib/math/div64.c
-@@ -25,6 +25,8 @@
- #include <linux/minmax.h>
- #include <linux/log2.h>
- 
-+#include <generated/autoconf.h>
-+
- /* Not needed on 64bit architectures */
- #if BITS_PER_LONG == 32
- 
-@@ -183,10 +185,22 @@ u32 iter_div_u64_rem(u64 dividend, u32 divisor, u64 *remainder)
- }
- EXPORT_SYMBOL(iter_div_u64_rem);
- 
--#if !defined(mul_u64_add_u64_div_u64)
-+/*
-+ * If the architecture overrides the implementation below and the test module
-+ * is being built then compile the default implementation with a different name
-+ * so that it can be tested.
-+ */
-+#if defined(mul_u64_add_u64_div_u64) && (defined(CONFIG_TEST_MULDIV64) || defined(CONFIG_TEST_MULDIV64_MODULE))
-+#define TEST_MULDIV64
-+#undef mul_u64_add_u64_div_u64
-+#define mul_u64_add_u64_div_u64 mul_u64_add_u64_div_u64_test
-+u64 mul_u64_add_u64_div_u64_test(u64 a, u64 b, u64 c, u64 d);
-+#endif
-+
-+#if !defined( mul_u64_add_u64_div_u64) || defined(TEST_MULDIV64)
- u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
- {
--#if defined(__SIZEOF_INT128__)
-+#if defined(__SIZEOF_INT128__) && !defined(TEST_MULDIV64)
- 
- 	/* native 64x64=128 bits multiplication */
- 	u128 prod = (u128)a * b + c;
-diff --git a/lib/math/test_mul_u64_u64_div_u64.c b/lib/math/test_mul_u64_u64_div_u64.c
-index 9548eb7458c7..e2289b412601 100644
---- a/lib/math/test_mul_u64_u64_div_u64.c
-+++ b/lib/math/test_mul_u64_u64_div_u64.c
-@@ -73,6 +73,10 @@ done
- 
-  */
- 
-+#ifdef mul_u64_add_u64_div_u64
-+u64 mul_u64_add_u64_div_u64_test(u64 a, u64 b, u64 add, u64 c);
-+#endif
-+
- static int __init test_init(void)
- {
- 	int errors = 0;
-@@ -80,21 +84,31 @@ static int __init test_init(void)
- 
- 	pr_info("Starting mul_u64_u64_div_u64() test\n");
- 
--	for (i = 0; i < ARRAY_SIZE(test_values); i++) {
--		u64 a = test_values[i].a;
--		u64 b = test_values[i].b;
--		u64 c = test_values[i].c;
--		u64 expected_result = test_values[i].result;
-+	for (i = 0; i < ARRAY_SIZE(test_values) * 2; i++) {
-+		u64 a = test_values[i / 2].a;
-+		u64 b = test_values[i / 2].b;
-+		u64 c = test_values[i / 2].c;
-+		u64 expected_result = test_values[i / 2].result;
- 		u64 result = mul_u64_u64_div_u64(a, b, c);
- 		u64 result_up = mul_u64_u64_div_u64_roundup(a, b, c);
- 
-+#ifdef mul_u64_add_u64_div_u64
-+		if (i & 1) {
-+			/* Verify the generic C version */
-+			result = mul_u64_add_u64_div_u64_test(a, b, 0, c);
-+			result_up = mul_u64_add_u64_div_u64_test(a, b, c - 1, c);
-+		}
-+#else
-+		i++;
-+#endif
-+
- 		if (result != expected_result) {
- 			pr_err("ERROR: 0x%016llx * 0x%016llx / 0x%016llx\n", a, b, c);
- 			pr_err("ERROR: expected result: %016llx\n", expected_result);
- 			pr_err("ERROR: obtained result: %016llx\n", result);
- 			errors++;
- 		}
--		expected_result += test_values[i].round_up;
-+		expected_result += test_values[i / 2].round_up;
- 		if (result_up != expected_result) {
- 			pr_err("ERROR: 0x%016llx * 0x%016llx +/ 0x%016llx\n", a, b, c);
- 			pr_err("ERROR: expected result: %016llx\n", expected_result);
+4c585af7180c ("x86/boot/32: Temporarily map initrd for microcode loading")
+
+walks straight into  native_cpuid_ecx().
+
+Which reminds me - I should remove that have_cpuid_p() in load_ucode_bsp() now
+too and move the disabled check up.
+
 -- 
-2.39.5
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
