@@ -1,125 +1,88 @@
-Return-Path: <linux-kernel+bounces-589790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F9CBA7CA3D
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 18:26:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF41CA7CA42
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 18:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8ABF3B9676
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 16:25:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5487918930D2
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 16:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A89C14EC62;
-	Sat,  5 Apr 2025 16:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEA6154C17;
+	Sat,  5 Apr 2025 16:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WZfRhWha"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1oBLN4y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB786535D8;
-	Sat,  5 Apr 2025 16:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7EE29B0
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Apr 2025 16:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743870356; cv=none; b=BydO4Yh9m0sxLtw4Dl9aAJWwJ+v81gOCCY7NvGPx0NZ4v4Xl/Ghr0tL2O8p6tBBctOxwgGA8ohSim7ZgpX9ediaM/icK47l1hTxizpcnynebromk+1vW0o9myeQ9DleHiNdhG5oMGJODqdCeXowFh7Aa1BwuO6pzDISm213YBfQ=
+	t=1743870638; cv=none; b=TTc6tt2kUc5e2ahcX0gV4ItY18juazzrxgFPH2xhtTb80Uuog0kyiOd8Q2oGiYpNNZoUK0uWLCqGt6XTK8Q1mFd2Ww6DntYxUHd/EaNntedDRl+Yis5oRrPDkQrmsy5mOi2OmcVmLcWA7tsNC0OhWli4uEAN6fE7CTdP1lN4k4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743870356; c=relaxed/simple;
-	bh=9R51YVvFpedGOOfa/HArTN7EaPaCOdkm9MmZsv4uSLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GgGMkpjA7u5HfN77bjBQodKT6TFKWvrtt83oJy3JYIaaK+ctynqFbKlLrszT+Iu2o+Y/l1uvRhvY7qgnmhRh6+pEDZLtUg9yr/7irOnZ4w9hUBWa9Ybo+HrGo58+/HFfKNyAS67OoFw5kf/tAvrcAmpl7b5utmdNjabeUXnEf84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WZfRhWha; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E11A4C4CEE4;
-	Sat,  5 Apr 2025 16:25:49 +0000 (UTC)
+	s=arc-20240116; t=1743870638; c=relaxed/simple;
+	bh=iWgEZftyGtFM5UmeMg9l/DtOQzjAfp6fIREhwn8F1zs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=djThItHDW+7fklCVtLDc0D7+tuzVU/jwId0fWmUOKOjGXryrdfQuqPgleRm11sMiu4REEmr5G7PNcdqCN8SG5ghsoo5OE0PqYHKa2wdFMWIXE0wz0cos9A1jK8PR5ykek8gdBx+9iBZAC9PGxLRDee7S7vSi/EVvwP0q6S2umVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L1oBLN4y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BDAEC4CEE4;
+	Sat,  5 Apr 2025 16:30:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743870356;
-	bh=9R51YVvFpedGOOfa/HArTN7EaPaCOdkm9MmZsv4uSLE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WZfRhWhaND4CSSKaZzuCrtrVZ1I//D39DgMH/uUXCLkRYnzwLHKlq4xU/mHJkSefI
-	 icGw/QU8XV2ytk/sRzgwMmSR+3l4zEkz7lB+IvCgfIs0HfmHTDYyzG2Mm/yH+wEwJQ
-	 O9nYIet/m965kkqts95bs1S+SPbxpsSV9zbnvG0j4CcPxB4g1e2+TJFwHS5cbcwkRy
-	 MlN5Ru84fnbacK/ItTDcWtrFgU2YFSjNWycb84pDKrezC8NVRyyriz3C9EfRbGzrf7
-	 szTQBb7bz6khdr293fnpASduFQJMRG5cz3BoL9O5RbEkMYpuCrhv9pece5qUjuU+lT
-	 tZqp3C+4oIeLQ==
-Date: Sat, 5 Apr 2025 17:25:41 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Matti Vaittinen
- <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>, Javier
- Carrasco <javier.carrasco.cruz@gmail.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 7/7] iio: ti-adc128s052: Drop variable vref
-Message-ID: <20250405172541.641ddb39@jic23-huawei>
-In-Reply-To: <c42b1dc3-34d9-4419-ae2e-5bacffa070b6@baylibre.com>
-References: <cover.1743573284.git.mazziesaccount@gmail.com>
-	<dda9e0710a9293a9f52e64c092f79afd4b719536.1743573284.git.mazziesaccount@gmail.com>
-	<c42b1dc3-34d9-4419-ae2e-5bacffa070b6@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=k20201202; t=1743870637;
+	bh=iWgEZftyGtFM5UmeMg9l/DtOQzjAfp6fIREhwn8F1zs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=L1oBLN4yRCvE/hf2QdwBCtua+suSwmqshi+rqVmxJ726br5dHinPbS14XoDc0uxH7
+	 NYSF5AzhPWJZguesKJDCP4g5aHhpvwVpefRfBeA58YyPRpt2CSjsGPZRO2VD+5mB4L
+	 Yg4qkYAl5aYmQsEHXaBYU8jHGjWZ8KfUnxV2Lu2pMRQNrUwVC0eixNlUtjZ9RM1J8L
+	 I2GgWcipAdkNoPwhVs2BaaVbBGWcBYkIRCCixAWcQtkZEplsIPkVtVd5NTcIzjwO2g
+	 3KpqKFmTpVLPF1+EqKJfZGcrxdEQ135dbX8vTOXGcPTh55ChDmSDdWrsryrcESKKzb
+	 oY16cMgPQeanw==
+From: SeongJae Park <sj@kernel.org>
+To: 
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Rik van Riel <riel@surriel.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	conduct@kernel.org
+Subject: Re: [PATCH v2 2/4] mm/madvise: batch tlb flushes for MADV_FREE
+Date: Sat,  5 Apr 2025 09:30:35 -0700
+Message-Id: <20250405163035.8906-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250405013136.3863-1-hdanton@sina.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2 Apr 2025 15:49:01 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+Deleting Hillf and adding conduct@ from/to recipients.
 
-> On 4/2/25 1:10 AM, Matti Vaittinen wrote:
-> > According to Jonathan, variable reference voltages are very rare. It is
-> > unlikely it is needed, and supporting it makes the code a bit more
-> > complex.  
-> 
-> There is also around 60 other drivers where we could do something like this
-> in case anyone is bored. :-p
+On Sat, 5 Apr 2025 09:31:35 +0800 Hillf Danton <hdanton@sina.com> wrote:
 
-Hmm. It would be a gamble but also a nice cleanup.
+To my understanding Hillf is banned from the community for now, due to a CoC
+violation.  I'm gonna ignore his reply until his mail can seen on mailing list
+again.  I believe that aligns with meaning of the ban, and help people less
+confused by mails that replying to mails that not visible on the mailing list
+archives.  Please let me know if you have any concern about this.
 
-We 'might' meet a case where someone notices it but seems fairly unlikely...
+And I have a humble suggestion for conduct@.  This time I was luckily aware of
+the fact that Hillf is banned for now.  I think having an official and formal
+way for knowing who are banned for what time period, and a guideline about what
+reaction to this kind of mails from banned people is supposed could be helpful.
 
-J
-> 
-> > 
-> > Simplify the driver and drop the variable vref support.
-> > 
-> > Suggested-by: Jonathan Cameron <jic23@kernel.org>
-> > Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> > ---
-> > Revision History:
-> >  v2:
-> >   - New patch
-> > ---
-> >  drivers/iio/adc/ti-adc128s052.c | 29 ++++++-----------------------
-> >  1 file changed, 6 insertions(+), 23 deletions(-)
-> > 
-> > diff --git a/drivers/iio/adc/ti-adc128s052.c b/drivers/iio/adc/ti-adc128s052.c
-> > index 0f93c6266527..0bfe4e558c69 100644
-> > --- a/drivers/iio/adc/ti-adc128s052.c
-> > +++ b/drivers/iio/adc/ti-adc128s052.c
-> > @@ -29,13 +29,12 @@ struct adc128_configuration {
-> >  struct adc128 {
-> >  	struct spi_device *spi;
-> >  
-> > -	struct regulator *reg;
-> >  	/*
-> >  	 * Serialize the SPI 'write-channel + read data' accesses and protect
-> >  	 * the shared buffer.
-> >  	 */
-> >  	struct mutex lock;
-> > -
-> > +	int vref;  
-> 
-> Units in the name are helpful: vref_uv.
-> 
-> Could also consider doing division in probe and storing vref_mv instead
-> since we never use the microvolts part.
-> 
-> >  	union {
-> >  		__be16 rx_buffer;
-> >  		u8 tx_buffer[2];  
-> 
 
+Thanks,
+SJ
+
+[...]
 
