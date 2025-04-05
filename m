@@ -1,189 +1,172 @@
-Return-Path: <linux-kernel+bounces-589771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6151A7C9DB
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 17:24:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77303A7C9E0
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 17:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38E501892CD5
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 15:24:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 166183BB8C1
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 15:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5064D14AD0D;
-	Sat,  5 Apr 2025 15:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7E714B96E;
+	Sat,  5 Apr 2025 15:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IAM0SdBG"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BUb/gVZn"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2C78BEC;
-	Sat,  5 Apr 2025 15:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D8A71747;
+	Sat,  5 Apr 2025 15:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743866633; cv=none; b=KcjTB5My6aSWK+V2pOvesGY+AQIkEqB4d+MXTUu2NZYcvRCYrx7X4lBIcf2lQmUCU/ae/p+gE1L6qYRsq3sYj/9khSh6/GwFIL7dTIP0BkKPSHME9FtGIiMWUaMzlTUosnBpVfE5mDf0oFxTwmSMcLtzR97w+0H/7dWJjic2p4k=
+	t=1743866754; cv=none; b=Cv34a+TG1UkrlVf50GHHbqNAQi/2JYguRWA6z9b4WInpEJQns2pcts9nF2yCqyEGGFGRdg3P48ukygQbbg3rYuWZTUe2Lhc3Wzmp7KOKPrjVKhVexJfxLstDL2BF59vhUqQJsswyk4CrLXjJQekMCvWST3Gw3F7dWaS1Avu3ZVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743866633; c=relaxed/simple;
-	bh=/T13pWomEDMKWJF7JfI0dfrp1qLsz7eRfBMyetTCEVs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tlC3Qi8k5ZPE8d/j2RMoIFpxOxqP1Hlh9SeNOxaIn7Vjfx6yKfVZeBPKbPNAx7/QsuiAutK+RYktrUiGY2HrtPn7UxJ/KM1L5SbA1Cjgnf0GDc4VEN7QVTZHjqMmK/e7E2q/GBgqhnxxUKudSYXIb4PilAbtkhxWbSXAKcXHBy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IAM0SdBG; arc=none smtp.client-ip=209.85.214.169
+	s=arc-20240116; t=1743866754; c=relaxed/simple;
+	bh=h3GhfBIiVRF/Pd3aAJkjlB+5zHbq5qv4N3L5/N+zLiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BvvafGH5T9JtKAdlqkmpkPUiEJyALvmDp0vepsWwfcDmrfnrll9aCtmeCVhUr9PuH+f63plUxGZqJ/lepQ89sALvCP5NNcqcj2tZlb8INyLG2bRNmJrEmh8KLJ2N2fH/LcXNbFkeUBeBf5dpWxdfJmPHU6Cvtb4wUBrsW/u7eHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BUb/gVZn; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-223fd44daf8so5068735ad.2;
-        Sat, 05 Apr 2025 08:23:51 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43d07ca6a80so15409535e9.1;
+        Sat, 05 Apr 2025 08:25:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743866631; x=1744471431; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1743866750; x=1744471550; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bRltu7iwQQEMx4zzV+XyJNaqulGjEr9JTBPg2eBuL3o=;
-        b=IAM0SdBGGH2KlE/nU1LkxTSeru5IFZ+X8p51ZHtkDP1ekN6FN5RD4IaMe3ld7Qyyla
-         HjS1AQGOuzFAsCdpfVPpL/btWLdPiCCl8rF4icYDwZbFBFG7Q4FZdyeXODjT0seZTdp7
-         tIfbH1FN/qtH1IjdX7pVeH5r7Ap/lSDI9Mn2QEdsHKMZ0YnLUkbshSd+T3giiHEc210g
-         JYdplWFhcISsF7EkQENvhMGmXjP/Tu+N/UfRoXydU5SdSQYblLYwEFqoSJmKD7vb6RL+
-         9t43f3M/XpBmhnpUWn0UuKBaQlYKAVKyVozEK3aiIfCoBEg5ffZ9dIkXM5qNkrEEm05t
-         RJsQ==
+        bh=4rYQcQMBl9xOlGSmouhghPZmgfZgiwJh9mi25o4o0Nw=;
+        b=BUb/gVZnYPLhA5OyXM7YsnAU0KmjS726XXtBnD5UKj25w7yJvptuZV1WG7SX88EpaW
+         EqGY0LTVEn341Atj6+UJycIZFdNTuZFOEWSLMVeQyZHWewsi1QAwNJVOl4WYtsm1nSJ3
+         5ua48qjviu0WMZjbKVnLpfAFJSfWmOVxSHWBhwWCFebkmfbAv/EA1T5fWSzWHDQOMS8T
+         /ieugtAMFoMj1H2gt3d+lHgEjH9irN8CHwPm5N9fRJFk8lvSV1L2V+tgcyyOCdZ/mJqh
+         RDAfd35aIX6GNtqMVHz2qI0kydiH7MByFjcnZljlz8E8Gt/2xZkjWQ/4jsu6nbRXk5sy
+         BfvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743866631; x=1744471431;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1743866750; x=1744471550;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bRltu7iwQQEMx4zzV+XyJNaqulGjEr9JTBPg2eBuL3o=;
-        b=ZMbKjeRkHx1clsvfHq1awCrXXdZCAdCvqsWcM8/f3KDfXIqozzi0z5I3d/1nXKPbGO
-         YrP0xihU/BVJfQ9dZW8nR6hsCgAscZtK8F9WvIvKZO3K7X2lhoJDMHX5Fp1x1wRtpe2l
-         Yf0jaBTy53kBeqTLsmFYf8zcMWhNuFlPFLXFmJAMI62UtIiINubJoHCfhJL9ovdEgTuV
-         Lp+QBEFb954RvtFu0IOT2szud8QG4rA2eoEOOXiIuLxVjo20FIMk99boYPfESA4sEAai
-         oxbGpaeeysz8bvglBESXuX3CJpt1cXRPIxdXBRezzrzeSPYVs2a79zJcbQ/M8j1LwDt8
-         PoYw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6Bgx0Efbzz0+46c69iy3jh6oA9WUwSkBu+5VWKbbpy2rfxUufy3r1oN9QZChZg6LlS7G70o+H8IWG8Sk6itY=@vger.kernel.org, AJvYcCXzGUMw/iivQwONvSc9xFFN6ggMM8E+6alb66Qxj58Agp5OVKE+T3Hah4BDsdlH5qZOpU06IJp8Fj3X1aA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1GIdXORZnt+pkKsrwPvuR4rSyrXvGiZhW9iwxOPfiLNINKYvv
-	64f3mL6G/Kr+XPLjPCjsebE5I4MLof3waKKbQMrTWmDFqmmd05+d42Xgmc171TI5DJ7RcAkZTEC
-	XQm8/4/dpEvZCjerGKzAolngAL+w=
-X-Gm-Gg: ASbGncttbLjaUaypWTeBf8JB/6fYnb+2eDWlrrMAABMp4zTR3e5YlSCbft+kOF6s37x
-	Dt9P6TlHaKVlFSEkq7p+1lqX36ctEpEzYu732HybTmVA6Fc96YTTp4qJmvK2RHv1FbrSR53WeXs
-	ubmBfngduF/oqpPLsC8nZZP5l/og==
-X-Google-Smtp-Source: AGHT+IG02F1EM+jBAh7+YGsjjgJ/ng6qTMmdY+6UCuGCifhdh8H/1SI0yMOAMSol1NtPmovBbTjwNezofBfaUFEGB6c=
-X-Received: by 2002:a17:903:904:b0:224:18fd:6e09 with SMTP id
- d9443c01a7336-22a89ebc4aamr37537595ad.0.1743866631372; Sat, 05 Apr 2025
- 08:23:51 -0700 (PDT)
+        bh=4rYQcQMBl9xOlGSmouhghPZmgfZgiwJh9mi25o4o0Nw=;
+        b=plKUeNma/9Hk5hh7yZe5ikMuzjAKhn5LiDiLWSzMKDy1k5yAYMaL09x40B1Y1aFcys
+         jMu6XQvhyCnVoObsBCBJyvvooOhRqoSsC+BIjkf1S0fiPXc1xN8Ic6yiUyLWmVrjkBrc
+         OtQaju9qr1p71PxXFsQLkmtEl87P+RreM1VPQEaMiWyzCjvmA0oHktF0ZkyCzWm25igE
+         0S+T/PDfdjpOGHmH9+tet9ufBtFty9r1IXvZ9gPvM253B6VLnjYMQRqrFwNWenE1EkCK
+         v4/pHuroohNFF4cFDTMMP+/UgMhl7WiJCNGp7fF0XebrkdhaCa6JqH1Vz7/YhUoONLR7
+         ctBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPBugbQ4+TAlSMitSBRHGFXIJe445+VFaKGb+vxa7Jg6cAIJ/9ToOogsueD0HFfqDSTAiJFThQX8Q84mtc@vger.kernel.org, AJvYcCVfNfdHi4sx1wb40uENI0mDdGK9U9UX4FSgy5cXHhNb1ZilUl+bpNxydkeJx3nJl+LcvEyc7oT+2pDQ3A0=@vger.kernel.org, AJvYcCWT/lckKlSUuX2gFBMEw29Mu+Fe4AY4UDyKIFZpjwwx5H/qXSaLztR0IMz/wR2pWe102NyRH9PCKwfRng==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5wUabVYAJAeLZ3mAGArdFHlt0q3R5nNHDVTqYeVDRPgECZfaF
+	tgaTVng96UPX8HvOWoVQrWWgl2lXLD0dFKtO2d2lrr+/Xcf41AWA
+X-Gm-Gg: ASbGncvcbVUcceRTL/YF8m8IYrXVROmfjKmeCi6bYU2p1uKPOSQfFH67ROtcF+Ch+TB
+	jqSof5i07bp5Hux+SjITIPakrrhsU/fv9A90NkGoeIezM1Mle9mqYKUWk1AmIgCp6dTv3FqG+zj
+	3D6jd2OSpHEtXAFh0yIE9w0Q30CrFpb7g6j7uTal2QH/WeICnq8+QsRDwffdwVi/fYTFvRu1svq
+	R6GRld5kCQxJR7v2Mvk64Ov7SblW0Fpe3ipKsb/n5venD3sSYXmu6iKQIPl5oxctAFxmsiZWfxt
+	eZPkHyPikRomAM/ZmJqzamCltj1iV6IgIradK1s2p78VrS+CHPMqwNfLV9W51J5ab77Fffq6TJS
+	TuXrNanM=
+X-Google-Smtp-Source: AGHT+IHP3tRbXf7i8RI1670OlH08T8lHDdFW9fMLv8Xn/kEmEaNz4d/F/FiflXkACwCWZkgl8ZM6+Q==
+X-Received: by 2002:a05:600c:8719:b0:43c:f85d:1245 with SMTP id 5b1f17b1804b1-43ecf8e7321mr76664845e9.17.1743866750233;
+        Sat, 05 Apr 2025 08:25:50 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec364c959sm75438015e9.25.2025.04.05.08.25.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Apr 2025 08:25:49 -0700 (PDT)
+Date: Sat, 5 Apr 2025 16:25:48 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Baris Can Goral <goralbaris@gmail.com>
+Cc: martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+ target-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH v4] scsi: target: transform strncpy into strscpy
+Message-ID: <20250405162548.310dea37@pumpkin>
+In-Reply-To: <20250405143646.10722-1-goralbaris@gmail.com>
+References: <20250402204554.205560-1-goralbaris@gmail.com>
+	<20250405143646.10722-1-goralbaris@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250405060154.1550858-1-andrewjballance@gmail.com> <20250405060154.1550858-3-andrewjballance@gmail.com>
-In-Reply-To: <20250405060154.1550858-3-andrewjballance@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 5 Apr 2025 17:23:39 +0200
-X-Gm-Features: ATxdqUHgh0DIJx3Sa3HDUPPTedxcX6iWeq7MdDPNHgUdrwBRYxBKgjXPFMNrLBw
-Message-ID: <CANiq72=KqZ6pOj62ofmv0yRfqy3HjZkDHanyvFbDvb+ECcjgTQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] rust: add maple tree abstractions
-To: Andrew Ballance <andrewjballance@gmail.com>
-Cc: Liam.Howlett@oracle.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com, 
-	tmgross@umich.edu, dakr@kernel.org, akpm@linux-foundation.org, 
-	gregkh@linuxfoundation.org, wedsonaf@gmail.com, brauner@kernel.org, 
-	dingxiangfei2009@gmail.com, linux-kernel@vger.kernel.org, 
-	maple-tree@lists.infradead.org, linux-mm@kvack.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Andrew,
+On Sat,  5 Apr 2025 17:36:47 +0300
+Baris Can Goral <goralbaris@gmail.com> wrote:
 
-Some doc-related notes for future submissions... I hope this helps.
+> The strncpy() function is actively dangerous to use since it may not
+> NULL-terminate the destination string,resulting in potential memory
+> content exposures, unbounded reads, or crashes.
+> 
+> Link:https://github.com/KSPP/linux/issues/90
+> Signed-off-by: Baris Can Goral <goralbaris@gmail.com>
+> ---
+> Changes from v4:
+> 	-Description added
+> 	-User name corrected
+> 	-formatting issues.
+> 	-commit name changed
+>  drivers/target/target_core_configfs.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
+> index c40217f44b1b..5c0b74e76be2 100644
+> --- a/drivers/target/target_core_configfs.c
+> +++ b/drivers/target/target_core_configfs.c
+> @@ -143,7 +143,7 @@ static ssize_t target_core_item_dbroot_store(struct config_item *item,
+>  	}
+>  	filp_close(fp, NULL);
+>  
+> -	strncpy(db_root, db_root_stage, read_bytes);
+> +	strscpy(db_root, db_root_stage, read_bytes);
+>  	pr_debug("Target_Core_ConfigFS: db_root set to %s\n", db_root);
 
-On Sat, Apr 5, 2025 at 8:03=E2=80=AFAM Andrew Ballance
-<andrewjballance@gmail.com> wrote:
->
-> +#include <linux/maple_tree.h>
-> +
-> +
+That code is broken, it reads:
+	read_bytes = snprintf(db_root_stage, DB_ROOT_LEN, "%s", page);
+	if (!read_bytes)
+		goto unlock;
 
-Nit: double newline.
+	if (db_root_stage[read_bytes - 1] == '\n')
+		db_root_stage[read_bytes - 1] = '\0';
 
-> +//! # Examples
-> +//! ```
+	/* validate new db root before accepting it */
+	fp = filp_open(db_root_stage, O_RDONLY, 0);
+	if (IS_ERR(fp)) {
+		pr_err("db_root: cannot open: %s\n", db_root_stage);
+		goto unlock;
+	}
+	if (!S_ISDIR(file_inode(fp)->i_mode)) {
+		filp_close(fp, NULL);
+		pr_err("db_root: not a directory: %s\n", db_root_stage);
+		goto unlock;
+	}
+	filp_close(fp, NULL);
 
-There should be an empty doc line between these.
+	strncpy(db_root, db_root_stage, read_bytes);
+	pr_debug("Target_Core_ConfigFS: db_root set to %s\n", db_root);
 
-> +// TODO and missing features
-> +// - the C version suports external locking this only supports the inter=
-nal spinlock
+	r = read_bytes;
 
-(Multiple instances) Typo -- you may want to use e.g. `checkpatch.pl`
-with `--codespell`.
+unlock:
+	mutex_unlock(&target_devices_lock);
+	return r;
 
-> +// SAFETY:
-> +// we cannot derefrence any pointers without holding the spinlock becaus=
-e
-> +// all returned pointers are guaranteed to have been inserted by the use=
-r
-> +// but the pointers are not guaranteed to be still be valid
-> +// another thread may have already removed and dropped the pointers
-> +// so to safely deref the returned pointers the user must
-> +// have exclusive write access to the `MapleTree`
-> +// or rcu_read_lock() is held and updater side uses a synchronize_rcu()
+'Really nasty (tm)' things happen if 'page' is too long.
 
-`SAFETY` comments are intended to go attached to an `unsafe` block or
-implementation, explaining why they satisfy the requirements.
+	David
 
-Clippy should be warning here, but it doesn't likely due to this
-Clippy issue I just filed:
+>  
+>  	r = read_bytes;
+> @@ -3664,7 +3664,7 @@ static void target_init_dbroot(void)
+>  	}
+>  	filp_close(fp, NULL);
+>  
+> -	strncpy(db_root, db_root_stage, DB_ROOT_LEN);
+> +	strscpy(db_root, db_root_stage, DB_ROOT_LEN);
+>  	pr_debug("Target_Core_ConfigFS: db_root set to %s\n", db_root);
+>  }
+>  
 
-    https://github.com/rust-lang/rust-clippy/issues/14554
-
-(plus other three I filed while looking into this one).
-
-> +/// A `MapleTree` is a tree like data structure that is optimized for st=
-oring
-
-(Multiple instances) Please use intra-doc links wherever they work.
-
-> +// # Invariants
-
-(Multiple instances) Please make this section part of the docs. We may
-change how we document private invariants in the future (or we may
-expose private fields so that it is clearer) -- for the moment, please
-add a note if you really want users to never rely on a particular
-invariant.
-
-> +    /// creates a new `MapleTree` with the specified `flags`
-
-(Multiple instances) Please follow the usual style, e.g. Markdown and
-intra-doc links where possible, start with uppercase, period at the
-end of sentences, etc.
-
-> +                // SAFETY:
-> +                // - mt is valid because of ffi_init
-> +                // - maple_tree contains a lock which should be pinned
-
-(Multiple instances) Please format with Markdown in comments.
-
-> +    /// helper for internal use.
-> +    /// returns an iterator through the maple tree
-> +    /// # Safety
-
-(Multiple instances) Newlines are needed here -- `rustdoc` uses the
-first paragraph as the "short description", too.
-
-> +#[derive(Clone, Copy, PartialEq)]
-> +/// flags to be used with [`MapleTree::new`].
-
-We write attributes below the documentation.
-
-> +        if ptr.is_null() {
-> +            return None;
-> +        }
-> +        // SAFETY:
-
-We typically leave a newline after a loop or a branch.
-
-Thanks for the patch!
-
-Cheers,
-Miguel
 
