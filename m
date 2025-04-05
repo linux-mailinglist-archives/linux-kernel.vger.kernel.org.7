@@ -1,117 +1,149 @@
-Return-Path: <linux-kernel+bounces-589743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0DF1A7C995
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 16:22:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80D22A7C999
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 16:23:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 656E31894FDC
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 14:22:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BBAA3BA2A0
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 14:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789FA1EE7B3;
-	Sat,  5 Apr 2025 14:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DD01F03E6;
+	Sat,  5 Apr 2025 14:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="idMlTeDc"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EEB06SwF"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE77EED8
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Apr 2025 14:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467F73A1BA;
+	Sat,  5 Apr 2025 14:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743862920; cv=none; b=U4I9MCQgl0TZ5D/2z2D4wA7z+nVCarGQKXu2eHPOFy4dOV0JIcqv9S1hTcUiedSWIIcipjXrpqmIsh20LT8iiXXIu23TMU/Q0EMtkusAJsk2Dg19bYyjjH2z7VtsFn1TjJCJxh3+ogkbeVlRpjeCPTO0XhIHHRGNTs+sHJLaEeo=
+	t=1743863022; cv=none; b=q4qkUh6hlLHFM0SIz9U6MuvdctQNYwgCyTDN4dZs1tZ33GnUOB4srcB644mZZQJYo0vgwo/dfQb1IoLAD9bgC4+ACgKyvcoKn5u3BYgAc6qAGCjb0H4N+nsRxTQxptWb2p8x0+PYhwwJeWemppXnyP5LWM7jEV3MLf2uL3r05H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743862920; c=relaxed/simple;
-	bh=Kqp+8zjqVnatfeD8Z6voyxBr0VEzpV2CX4mgWJKUYd8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NrDhZ+Hy5euo0xuQCzGPi4zW3wdRd0a3ec42ZJTKmzQklav70eHJJAFUYZbLGt9dP7yUQn0uO7uvEOxZwU78z+tGttyaWmAU6XiQpXx4OTpJWVXU6AChmE3qydtc+AiDRJcf825bk0TCm7RcLexNsN5ww6ezjZhgu1FKe9PoPl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=idMlTeDc; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3914aba1ce4so2390180f8f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Apr 2025 07:21:58 -0700 (PDT)
+	s=arc-20240116; t=1743863022; c=relaxed/simple;
+	bh=Fb6nWConfM+SUWjQ8BRZyfSFDinOwn/Nox294oZsV6o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GUtFt2BAVTPpkXltQanr3jfpXMMRhAgPB/H0I+B+s6LGI9UpolVETP0K9cAYUutbaBPwcg1wnoa4q3K93T+xzoqg4YUqPgc3TgnNkOQvPRPm0C69+K0xZmGGo/5wb09W60usddvEO9F7+qAizBLyU2mzTgWxeyh6ro5QQHYJ/5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EEB06SwF; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-524125f6cadso2872783e0c.2;
+        Sat, 05 Apr 2025 07:23:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743862917; x=1744467717; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=93RytDVxxoOt/6piPIaVVVkdD4eQVw9IESIfWY1biAI=;
-        b=idMlTeDca9j965+CCza7V5g32x5UMdUY5TO3HbWVVN+pU4IXLPpKf/Km+fVatOIKQ/
-         DN24beBCMS4PDWLVabJ1/mRetku0cMMWQOivWjB6PREafKR6sxWcHk5uIfbUUUWZKD+n
-         e4ncv7RG1TQtghN+IXU3M9KtvBHfUOFhbjB5sVPKEcdlnTOIOuHu4DcPeMWoUUduETF3
-         TceXjpqd0ozS7qXAuDrYZspWAZnTLtM4ZmO5NQB/cZSt2G7+E2cqRPnqvjjbWGBaCvIc
-         oHGhQK7Hx6If8qoOCgMwGBfs2qdp6XZNoZ/kozuOhikk4+h5ojOyWp0aKrxBnFjN4Oo8
-         sLeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743862917; x=1744467717;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1743863020; x=1744467820; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=93RytDVxxoOt/6piPIaVVVkdD4eQVw9IESIfWY1biAI=;
-        b=VH8YD6TZYi9ROGImFUHYaebpUZvJ17TAjCWoKlYRe8oBX/tTmFVsmMTFAXOZs4jqA3
-         4j/F9gz+/t9jT6vpCcv9te2eu4Z2ZX8PJoy/nTYbt0D7a705vYCJ91votu3LQRqVEnhQ
-         w8tIlPF+OFAWQnmWH2zzyFDDitc+wgbjzRVjydv5rAtAk7ZZMmNre4QhiXcpu+dZS7XT
-         AuLLc2fDt9ZCf0RfZ4u82wfATZ9UEZ8mEs2nNFpxhAF469Wm2BZImrOFt/lhEpza+kIG
-         c/6C+mk7j1AWKZziguGKLQMSoRyiV6duGE5MkQRTq32fvwmmJYqNuSk4l4ghZIqGvAx4
-         5gkw==
-X-Forwarded-Encrypted: i=1; AJvYcCW0q+6fyRvpVyQYOLgbUxxC6XDTFKkhlxJULAGkVrQZJ1u2vNHUX3T/0EQl5X+5GBA0eGSR/QJ4t7cPVI8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxf9hVmeVZruPZ1uvfPWtf/U2yTJmtNx04caMl9ThPC9IS8xVK/
-	MATRSZsF8p+mXBgG7OuU6QUYwnrbh/PLkQbB1tccuAWQu4PWLHQ5bbKIZWN21VE=
-X-Gm-Gg: ASbGncsiOeL5ONjSGiKr3p9RRAz1ic0YpJ/1DYSUmkI0Zc+n2acD1ENZYuPi4H1n8uA
-	+DxjWcS4jF/Qo2z05tMlzwpLX/7WkVdFMIlf56BehTsY3Hc0GerrZ2DOomAZIsydo440XM3e3ah
-	Nu7Duzp6wd7UIWKIwzb9fcnxVB6xWOsELpw+tYcQgWj3u8JUHS1xCBMvlHSudyW0HCiKI+xR3Ft
-	F408oyrouLzf2gb2VbZ9oObkNMlPsXAq/qUuYg6K2cjivYIhJy1VF0tqEspLpdubx4p9q7whMgB
-	iBcR4hUbITM4DhapCqjBJTzp/OHM5JkBpUH/aC+e+1mQm6sz3g==
-X-Google-Smtp-Source: AGHT+IFocO7znkSY17jMn4AasMtMECTj12lcuX1S1TbaDW9YfQuYql/afhbu7TkfR9L/L2OMBpFrjg==
-X-Received: by 2002:a05:6000:1844:b0:39b:f12c:385e with SMTP id ffacd0b85a97d-39d0de17bcfmr5308898f8f.20.1743862917467;
-        Sat, 05 Apr 2025 07:21:57 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43ea8d16049sm89484755e9.0.2025.04.05.07.21.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Apr 2025 07:21:56 -0700 (PDT)
-Date: Sat, 5 Apr 2025 17:21:53 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Julia Lawall <julia.lawall@inria.fr>
-Cc: Greg KH <gregkh@linuxfoundation.org>,
-	Erick Karanja <karanja99erick@gmail.com>, outreachy@lists.linux.dev,
-	philipp.g.hortmann@gmail.com, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] staging: rtl8723bs: Initialize local variables at
- declaration
-Message-ID: <aec43d5d-8f9f-4951-9ddb-03b66b1ce859@stanley.mountain>
-References: <cover.1743820815.git.karanja99erick@gmail.com>
- <ef29adfe7c8a189009b07c2873aa48782cd594ca.1743820815.git.karanja99erick@gmail.com>
- <2025040507-attest-hyphen-5dae@gregkh>
- <ef088d6-cec1-9758-cc0-55fb66ca952@inria.fr>
+        bh=/p/4bsPFAwsntA6dFF/zQ5mVNq7asuGZ7eLM61oyzaQ=;
+        b=EEB06SwFvC2qZsjfhre88djhOx7u5SKOF5IVP5BhNfcsIYWX/cnfHVlYTC518gp00H
+         e9CQIzGYAX2UNgX1h64ndusD3scEBfQadA1+lqMNmSXefW22mDakOHiKgqZR4I4NfLzx
+         DdLMalSN4srZZDxgQAi4uYzeuSSwzbyGmJClweTgnCo7zeWcxc1pRrM8bbmmuwFi1zSN
+         7GmiGwxtIyxvHZWxRrKIKNQyxGSAkFBRME7n7fNr1EmXvCeMdmHN0TLXkexfvR2DlYBY
+         /0RKPMYq/FABl6oCa4OF+7oYAp9XxruDcYB6Iul+jmO5FPgbUrmFK6g6AVlBRYNkWY6r
+         N/Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743863020; x=1744467820;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/p/4bsPFAwsntA6dFF/zQ5mVNq7asuGZ7eLM61oyzaQ=;
+        b=q7l7aUbRyBu0x+lMoL+944qJiah/TCLOUkAbj44G/A5uus0anKArLcInBv2h5yIrRc
+         39fV7977TocUhktd2FPxAht+QaMr8sp04M0THe70DnxaINv3o9BsYgocPHQdD4F8aNK7
+         8H+7vUlvtJfrXNpg9bMNsJk9m+wvADo/TB82cq5MwWOzh0SdrvcZ3ka7bl8gq6caJ/Fa
+         XGcdP3Hbikw+EV7AKwyM1WWVTXF0+3u3eP3JcJKTNXWWh2SIxgfXcmhFbZr9g113m2t/
+         MONOI2r34DiFdaq+30BNmNq/DPqUao2o1rg4zHE42k6VHRxxnMFMIyhN31xSEnM7V/05
+         DxTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVX9C2fC1SZgE3KZkIfF9JRClff54jYENU76Ot2dUNJYPnihEbHVw0KhmkyzbJPl+tE/o86GIRW/XGLQ==@vger.kernel.org, AJvYcCXbt/lvpzRLR+Ijj9I7CaKRac0t7kJmSIfhIFC/trejeTBCGTbEDg5KCuheUjSBe7hJz8h8OHgNjwpXlxeJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoDDrCqCFws0QiQq5T/sLCqS3xfXbaw0YLDsO97C8xYr6Kftr2
+	FLUzmgZTUZGTTDqntNNQRILSyO1iBTj89/xVAI0uy69L14Waefciiyk+Ho6R1QvEorxtntophk5
+	5YlI/nu2/9qtV6W2kyqvkn9K0t7I=
+X-Gm-Gg: ASbGnctom2VfLYBVHD3lfXowQ44oaq+QlzG/AJTp7Px67RTS4cnyNKiSp49wFg82vC8
+	lN5rf1vN17cIwJruS0tMNCf8yu2AR9j5JuIef8qCIkrf8pqBEOZHYXsV9T/1/MUwukULYKv2GO7
+	014GI3AnQzKvIGZRUjfUDBmOXUyyGl
+X-Google-Smtp-Source: AGHT+IHFtRTL3RqrMIPJ8vf/tHEaDt1ARljHgx7WlPToBdwqJ724tsN+pZxlRaKfRKWlCe/z7fwyCcOgbtVY3pZp2Rk=
+X-Received: by 2002:a05:6122:168f:b0:520:5185:1c71 with SMTP id
+ 71dfb90a1353d-52765d2d188mr4284391e0c.7.1743863020171; Sat, 05 Apr 2025
+ 07:23:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ef088d6-cec1-9758-cc0-55fb66ca952@inria.fr>
+References: <cover.1743857160.git.princerichard17a@gmail.com>
+ <2025040538-breeze-espionage-dc6e@gregkh> <CAMyr_bL4Qo_eeVSHhy-_z9_PwcQAvD6N4jfqBb+rtN-Lj+YdmA@mail.gmail.com>
+ <CADYq+fY-twT=NruAmfb6EpmYJLM971aTu-CUi-We_Fd6JSP47Q@mail.gmail.com>
+In-Reply-To: <CADYq+fY-twT=NruAmfb6EpmYJLM971aTu-CUi-We_Fd6JSP47Q@mail.gmail.com>
+From: Samuel Abraham <abrahamadekunle50@gmail.com>
+Date: Sat, 5 Apr 2025 15:23:30 +0100
+X-Gm-Features: ATxdqUE8ROfu-fqiRiJp-D_rItN8bhudjw6IQvFtkopPWSBx-EbHPIFhi5qw-FY
+Message-ID: <CADYq+faiOqMVsi6KDiR2GkYrU4FCqv7j0fo3fw_R=72=UL2oPQ@mail.gmail.com>
+Subject: Re: [PATCH 0/8] staging: sm750fb: change function naming style
+To: Richard Akintola <princerichard17a@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, outreachy@lists.linux.dev, 
+	sudipm.mukherjee@gmail.com, teddy.wang@siliconmotion.com, 
+	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Apr 05, 2025 at 04:41:37AM -0400, Julia Lawall wrote:
-> 
-> I guess the first change above would be ok though.
+On Sat, Apr 5, 2025 at 3:16=E2=80=AFPM Samuel Abraham
+<abrahamadekunle50@gmail.com> wrote:
+>
+> On Sat, Apr 5, 2025 at 3:07=E2=80=AFPM Richard Akintola
+> <princerichard17a@gmail.com> wrote:
+> >
+> > On Sat, Apr 5, 2025 at 2:37=E2=80=AFPM Greg KH <gregkh@linuxfoundation.=
+org> wrote:
+> >
+> > > - This looks like a new version of a previously submitted patch, but =
+you
+> > >   did not list below the --- line any changes from the previous versi=
+on.
+> >
+> > Please, how do I resolve this issue?
+> >
+> > Richard Akintola
+>
+> Hello Richard
+>
+> THis is the main message from the bot
+>
+> This looks like a new version of a previously submitted patch, but you
+>   did not list below the --- line any changes from the previous version.
+>   Please read the section entitled "The canonical patch format" in the
+>   kernel file, Documentation/process/submitting-patches.rst for what
+>   needs to be done here to properly describe this.
+>
+> It basically means that if you made a change to a patch, you will have
+> a new version.
+> You will have to indicate the patch version and also what changed
+>
+> So lets say you have a first Patch then after review, or you edited
+> the commit message
+> or made a change in the code or something,
+> you will now have a new patch which you will call v2.
+>
+> you will use git format-patch -o /tmp/ --subject-prefix=3D"PATCH v2" <com=
+mit-ID>
+>
+> then when you want to send with mutt, immediately after the signed-off
+> by line there are three dashes (---),
+> You will then write what changes under these three dashes in the format
+>
+> signedoff-by: Richard
+> ---
+> Changes in v1:
+>    - This is what changed in v1.
+>
+> I hope this helps
+>
+Also, you can go to the "Submitting a Patchset" section down the page
+of the firstPatch
+documentation for more information on versioning patchsets.
 
-Here is the first change:
-
--	struct xmit_priv *pxmitpriv;
-+	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
-  	u8 queue_empty, queue_pending;
-  	s32 ret;
-
--
--	pxmitpriv = &padapter->xmitpriv;
--
-
-Yes.  This is a nice change.
-
-regards,
-dan carpenter
-
+Adekunle
 
