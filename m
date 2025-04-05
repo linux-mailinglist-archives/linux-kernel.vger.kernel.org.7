@@ -1,184 +1,147 @@
-Return-Path: <linux-kernel+bounces-589894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46598A7CC1C
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 00:16:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC142A7CC24
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 00:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AA2C1735BA
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 22:16:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D6613B1CEA
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 22:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5FC81C8625;
-	Sat,  5 Apr 2025 22:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6264F1CDA2D;
+	Sat,  5 Apr 2025 22:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lrKCwQhv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KUgbedQS"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549F452F88;
-	Sat,  5 Apr 2025 22:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F129E14830A;
+	Sat,  5 Apr 2025 22:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743891370; cv=none; b=G2wpx4ReEOnE4gL5VcMKTsNdAGI2TdUIAlZXPCOMQNU2vWC98RWMLwWfmsGVUPxsYYzbTd+dFfMYKREBth3j3Aw2qUjQc/9CavKUn10bhodl4qIFq6Sz5mx9CDplqjdp/WiILaCiRqxJOUYZJx0aCx1GMSc6HzDLobarYNcogQQ=
+	t=1743891801; cv=none; b=uVeKFazsdQrVPPY0jvRgiJT1QhrkC/TJZk950UFBsTxBTIHF16VjGBQcd+65kUPq2Nf8bcGcUcADfEHl2OOXaWgAvUSWITUp2A/Ne2eT7J8ScgLk+tKsPXumhP6b18jo6foaYQMgdiiMEg5OnDQbOEImicx3NeaIpK1s3pzPiOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743891370; c=relaxed/simple;
-	bh=xXUS4GgMNiPbO1jwMYGA+GWr2ekyWvBCCBz0RyIJHDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=unT1p3zvZaf+AMjCcisO/+RrIkQd5r46ja8qmUKkkQhV9RLc8R68jcvYk+7XVIcG2DkpB3qlzLAGp8rBuow2R3K2DB4CCT8KM+AKTefIMNLp/eQZ4yjC1NksH96/9XydXWz9Avl9SQx3RFnvFncSuf9sO+vJ60nkecWQVcPRsWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lrKCwQhv; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743891367; x=1775427367;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xXUS4GgMNiPbO1jwMYGA+GWr2ekyWvBCCBz0RyIJHDM=;
-  b=lrKCwQhvpTnMwSii3OI/oBUwnxNR9Swv5WbZ1an/oLFTObx9unTEQcpy
-   93VMz/6JUMeIdUTuacWXuomvzPSpkafR5Ur5rFoD+XW5xmpEM372rDijT
-   nkjogkzqGLVle/Rodbmf6HjWPqwsVTGznc3vquiBkpAsk4ELRMWPGIMo1
-   FECpaPYTBedIBE7t2HADvHG5YS9ks77gv2D8bTRPCpY38dcAondk9wnIF
-   d24tuuXTzehLp8as6qaQMbnpZlKL4N/lbqh2ESnIaMFswsm1/TL+WrPHH
-   TYXMGc9eO+h82+UbeG5pb28JHw0IOAekJuFm5CY35r5QyijsObWRrM9uU
-   A==;
-X-CSE-ConnectionGUID: 8mYkUIeRQT+OWBoiUeYaAQ==
-X-CSE-MsgGUID: ehCe5JSSQFe1ubzyC0l+WA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11395"; a="48018097"
-X-IronPort-AV: E=Sophos;i="6.15,192,1739865600"; 
-   d="scan'208";a="48018097"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2025 15:16:06 -0700
-X-CSE-ConnectionGUID: g4MEpJ50TTiUgcuNLPmOSw==
-X-CSE-MsgGUID: C0wrrevxTpKJWYkd9AmLDg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,192,1739865600"; 
-   d="scan'208";a="128116775"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 05 Apr 2025 15:16:04 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u1Bo2-0002Jz-06;
-	Sat, 05 Apr 2025 22:16:02 +0000
-Date: Sun, 6 Apr 2025 06:15:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	linux-pwm@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] pwm: stm32: Emit debug output also for corner cases
- of the rounding callbacks
-Message-ID: <202504060517.dHXuUANs-lkp@intel.com>
-References: <fe154e79319da5ff4159cdc71201a9d3b395e491.1743844730.git.u.kleine-koenig@baylibre.com>
+	s=arc-20240116; t=1743891801; c=relaxed/simple;
+	bh=oSOxn6FhZZvHYraduFxsagghJPONh/WWivVo7aF/Izk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gP6e9NJAQY/SNFdXzXwoHy4SOG48oeMT9603KRox72qZzVMXE3R2MX9G0XRihEGHue/FEU4p4pFnJd76fHHsQF4JKswyW+MpeFkWsH1lnoXP2AXKXXQ5K67sxS3XNxAkTJ5EhlinZ6J9jqjmsoovB4BH1ThkwRpvCN79i1cs5ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KUgbedQS; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30beedb99c9so29636181fa.3;
+        Sat, 05 Apr 2025 15:23:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743891798; x=1744496598; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ipwWy+VwOq5W2zp861WDwncOrbNpmHHEfeOWsU6uii8=;
+        b=KUgbedQSFaqhA9PEdNe78Q2lYvZ+9rdfUnmOTwEnyWAhA50RWkUTgwWi4coLNqpBti
+         AyOi21YMpCsQTcff6k6Q910iAOpNM8f7pkIDR4EO3qNjC5G4ztaqq3PBEgOnSQtiizDs
+         36iz09VrWdTbzcIe80ZpnOJiMWx5H9s7y67GbM8OyW8nyIEl7x2oD5V+VZxEGz57w39V
+         xsfk+W3ksBtYqPRNd74bKQV8g87gGvFDkSWievpAyRkWcDOmoSqbxDmkkcjTgw4i+kth
+         +wYpCy34QO3RGgM+cNVk+fAZ/ts5Edn89KHxOGb82SESD3KqJjwtFzyecCWbFXolL6dt
+         mmEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743891798; x=1744496598;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ipwWy+VwOq5W2zp861WDwncOrbNpmHHEfeOWsU6uii8=;
+        b=fKBmTtLjEmjy37QEXBw+Ta8N3YRrVHgkGbacWQXRs9+O5Nt3Cneb5+srpj6kZryO4P
+         OfMSVdLbBLDf0YHonR8xKH1M4QG9D4a79EQh63h9EIfwZwbYihIVVOeIdzUI1XOGD82S
+         RMW0fDpD3xItnWvH5eh4EqA+7J/Hwu9VCEVFCmJgj+/0ytIgdnOLAeoecZfzMml/52LX
+         eK8AYoDibPGXY39IXRX33XNy1GmV6Hp7eDoQcJWc8Imt2x0L5MRF3xrenjZoAH/IlNIM
+         pglVROBR2MOrS5B6P0dgI+d9ZRsE63UQrsq+nuGbPVdERFpTU9djIPnUGsz6rmqnqEmz
+         mzWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJeRDGC5RFzHpD6g4QSKrLoWFz96FRRU6ryachHYuIhAgiRGXgElzxatR6WoPyU95/MR9+jNZ2PjRcgcw=@vger.kernel.org, AJvYcCVRptOi/QrLFYFcIIouK7jFWDjmF7ZAeoZVcmju8k/6+r7UuuhuNia5cYFu6UVWDs04bmiOhMCOaABV@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVRcACwyfNjigOGQAkJo6IfiWFA8XeJASI8x2bnCU8dEDd+C8e
+	Rx2R4khTf7NSHGr0mQQUjJ0feSLTM0GXKDk4hXMVZMeibdo9PYPH
+X-Gm-Gg: ASbGncuFL3Jt3Cpf/fykcI1C9W+hyQFyxch1/cl/osUWMFuZtYzHpjAoczwfhZZ2Aae
+	CHOYqMNuEeitXFKJ5D4gvrHivhKPKeKqc4j7OAA52CIcQZuLdz049LgR1ApebZD5zuTIzgTCJA6
+	KyvGnOjPcnS6S7c0E5oMnU6Ziaj5jf8QSC6sFDtt+aqAa6Q8afFfdjgjXXLUNQ+xTnoO3r5ivlf
+	H6/EYEl50x5XBJxoav5Rt3yUKyWIt6/PSXNjBiSqlL6VX+LIvVVK5ULVNwWWZ8aVHHe42UNyKSs
+	X2zExa0i80nSbJjYWexJwx/7xjTvQzZ48n1Br+tWObGVBA7VizTRAIrz7rO2UA==
+X-Google-Smtp-Source: AGHT+IFad0LPAwoSJ2xd14ieDtcaVkm6Sw82CnPHctH4LC9DfuTYjPEFmqrTy7QJo2jkpnnH4m5VQw==
+X-Received: by 2002:a05:651c:1b06:b0:30b:c96a:775 with SMTP id 38308e7fff4ca-30f16517206mr9882131fa.14.1743891797303;
+        Sat, 05 Apr 2025 15:23:17 -0700 (PDT)
+Received: from foxbook (adtt225.neoplus.adsl.tpnet.pl. [79.185.231.225])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30f031bcdd4sm10453821fa.69.2025.04.05.15.23.15
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Sat, 05 Apr 2025 15:23:17 -0700 (PDT)
+Date: Sun, 6 Apr 2025 00:23:11 +0200
+From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, Mathias Nyman
+ <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: xhci: WARN Set TR Deq Ptr cmd failed due to incorrect slot or
+ ep state.
+Message-ID: <20250406002311.2a76fc64@foxbook>
+In-Reply-To: <84b400f8-2943-44e0-8803-f3aac3b670af@molgen.mpg.de>
+References: <c279bd85-3069-4841-b1be-20507ac9f2d7@molgen.mpg.de>
+	<b356f743-44b5-4f48-a289-fae0afe106ff@linux.intel.com>
+	<84b400f8-2943-44e0-8803-f3aac3b670af@molgen.mpg.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fe154e79319da5ff4159cdc71201a9d3b395e491.1743844730.git.u.kleine-koenig@baylibre.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Uwe,
+OK, I think I see it.
 
-kernel test robot noticed the following build errors:
+On Sat, 05 Apr 2025 05:23:12 +0000, Paul Menzel wrote:
+> [  326.543262] xhci_hcd 0000:39:00.0: Resetting device with slot ID 5
+> [  326.543294] xhci_hcd 0000:39:00.0: // Ding dong!
+> [  326.543549] xhci_hcd 0000:39:00.0: Completed reset device command.
+> [  326.543588] xhci_hcd 0000:39:00.0: Successful reset device command.
+> [  326.543730] xhci_hcd 0000:39:00.0: // Ding dong!
+> [  326.543838] xhci_hcd 0000:39:00.0: Successful setup address command
+> [  326.543858] xhci_hcd 0000:39:00.0: Op regs DCBAA ptr = 0x00000133845000
+> [  326.543876] xhci_hcd 0000:39:00.0: Slot ID 5 dcbaa entry @00000000ced6807f = 0x000001339f4000
+> [  326.543897] xhci_hcd 0000:39:00.0: Output Context DMA address = 0x1339f4000
+> [  326.543904] xhci_hcd 0000:39:00.0: Internal device address = 5
+> [  326.543935] usb 4-1.4: reset SuperSpeed USB device number 4 using xhci_hcd
+> [  326.560391] xhci_hcd 0000:39:00.0: Waiting for status stage event
+> [  326.560446] xhci_hcd 0000:39:00.0: xhci_drop_endpoint called for udev 000000008c832e88
+> [  326.560465] xhci_hcd 0000:39:00.0: xhci_drop_endpoint called for udev 000000008c832e88
+> [  326.560483] xhci_hcd 0000:39:00.0: add ep 0x1, slot id 5, new drop flags = 0x0, new add flags = 0x4
+> [  326.560499] xhci_hcd 0000:39:00.0: add ep 0x82, slot id 5, new drop flags = 0x0, new add flags = 0x24
+> [  326.560508] xhci_hcd 0000:39:00.0: xhci_check_bandwidth called for udev 000000008c832e88
+> [  326.560520] xhci_hcd 0000:39:00.0: // Ding dong!
+> [  326.561031] xhci_hcd 0000:39:00.0: Successful Endpoint Configure command
+> [  326.561209] xhci_hcd 0000:39:00.0: endpoint disable with ep_state 0x40
+> [  326.561217] xhci_hcd 0000:39:00.0: endpoint disable with ep_state 0x240
 
-[auto build test ERROR on e48e99b6edf41c69c5528aa7ffb2daf3c59ee105]
+Looks like some URB stalled and usb_storage reset the device without
+usb_clear_halt(). Then the core didn't usb_hcd_reset_endpoint() either.
+And apparently EP_STALLED is still set in xhci_hcd after all that time.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Uwe-Kleine-K-nig/pwm-Let-pwm_set_waveform-succeed-even-if-lowlevel-driver-rounded-up/20250405-173024
-base:   e48e99b6edf41c69c5528aa7ffb2daf3c59ee105
-patch link:    https://lore.kernel.org/r/fe154e79319da5ff4159cdc71201a9d3b395e491.1743844730.git.u.kleine-koenig%40baylibre.com
-patch subject: [PATCH 4/6] pwm: stm32: Emit debug output also for corner cases of the rounding callbacks
-config: arm-randconfig-004-20250406 (https://download.01.org/0day-ci/archive/20250406/202504060517.dHXuUANs-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 10.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250406/202504060517.dHXuUANs-lkp@intel.com/reproduce)
+Then usb_storage submits one URB which never executes because the EP
+is in Running-Idle state and the doorbell is inhibited by EP_STALLED.
+30s later it times out, unlinks the URB and resets again. Set TR Deq
+fails because the endpoint is Running.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504060517.dHXuUANs-lkp@intel.com/
+> [  326.562226] usb 4-1.4: URB 00000000a9556a5f queued before clearing halt
+> [  357.198396] xhci_hcd 0000:39:00.0: Invalidating TDs instantly on slot 5 ep 4 in state 0x240
+> [  357.198405] xhci_hcd 0000:39:00.0: Removing canceled TD starting at 0x1645d5000 (dma) in stream 0 URB 00000000a9556a5f
+> [  357.198422] xhci_hcd 0000:39:00.0: Set TR Deq ptr 0x1645d5010, cycle 1
+> [  357.198429] xhci_hcd 0000:39:00.0: // Ding dong!
+> [  357.198435] xhci_hcd 0000:39:00.0: xhci_giveback_invalidated_tds: Keep cancelled URB 00000000a9556a5f TD as cancel_status is 2
+> [  357.198505] xhci_hcd 0000:39:00.0: WARN Set TR Deq Ptr cmd failed due to incorrect slot or ep state.
+> [  357.198516] xhci_hcd 0000:39:00.0: Slot state = 3, EP state = 1
+> [  357.198525] xhci_hcd 0000:39:00.0: xhci_handle_cmd_set_deq: Giveback cancelled URB 00000000a9556a5f TD
+> [  357.198539] xhci_hcd 0000:39:00.0: xhci_handle_cmd_set_deq: All TDs cleared, ring doorbell
 
-All errors (new ones prefixed by >>):
+Not sure if it's a USB core bug or something that xHCI should take
+care of on its own. For now, reverting those two "stall" patches ought
+to clean up the noise.
 
-   In file included from include/linux/device.h:15,
-                    from include/linux/dmaengine.h:8,
-                    from include/linux/mfd/stm32-timers.h:11,
-                    from drivers/pwm/pwm-stm32.c:12:
-   drivers/pwm/pwm-stm32.c: In function 'stm32_pwm_round_waveform_fromhw':
->> drivers/pwm/pwm-stm32.c:246:60: error: 'rate' undeclared (first use in this function)
-     246 |   pwm->hwpwm, wfhw->ccer, wfhw->psc, wfhw->arr, wfhw->ccr, rate,
-         |                                                            ^~~~
-   include/linux/dev_printk.h:139:35: note: in definition of macro 'dev_no_printk'
-     139 |    _dev_printk(level, dev, fmt, ##__VA_ARGS__); \
-         |                                   ^~~~~~~~~~~
-   drivers/pwm/pwm-stm32.c:245:2: note: in expansion of macro 'dev_dbg'
-     245 |  dev_dbg(&chip->dev, "pwm#%u: CCER: %08x, PSC: %08x, ARR: %08x, CCR: %08x @%lu -> %lld/%lld [+%lld]\n",
-         |  ^~~~~~~
-   drivers/pwm/pwm-stm32.c:246:60: note: each undeclared identifier is reported only once for each function it appears in
-     246 |   pwm->hwpwm, wfhw->ccer, wfhw->psc, wfhw->arr, wfhw->ccr, rate,
-         |                                                            ^~~~
-   include/linux/dev_printk.h:139:35: note: in definition of macro 'dev_no_printk'
-     139 |    _dev_printk(level, dev, fmt, ##__VA_ARGS__); \
-         |                                   ^~~~~~~~~~~
-   drivers/pwm/pwm-stm32.c:245:2: note: in expansion of macro 'dev_dbg'
-     245 |  dev_dbg(&chip->dev, "pwm#%u: CCER: %08x, PSC: %08x, ARR: %08x, CCR: %08x @%lu -> %lld/%lld [+%lld]\n",
-         |  ^~~~~~~
-
-
-vim +/rate +246 drivers/pwm/pwm-stm32.c
-
-   208	
-   209	static int stm32_pwm_round_waveform_fromhw(struct pwm_chip *chip,
-   210						   struct pwm_device *pwm,
-   211						   const void *_wfhw,
-   212						   struct pwm_waveform *wf)
-   213	{
-   214		const struct stm32_pwm_waveform *wfhw = _wfhw;
-   215		struct stm32_pwm *priv = to_stm32_pwm_dev(chip);
-   216		unsigned int ch = pwm->hwpwm;
-   217	
-   218		if (wfhw->ccer & TIM_CCER_CCxE(ch + 1)) {
-   219			unsigned long rate = clk_get_rate(priv->clk);
-   220			u64 ccr_ns;
-   221	
-   222			/* The result doesn't overflow for rate >= 15259 */
-   223			wf->period_length_ns = stm32_pwm_mul_u64_u64_div_u64_roundup(((u64)wfhw->psc + 1) * (wfhw->arr + 1),
-   224										     NSEC_PER_SEC, rate);
-   225	
-   226			ccr_ns = stm32_pwm_mul_u64_u64_div_u64_roundup(((u64)wfhw->psc + 1) * wfhw->ccr,
-   227								       NSEC_PER_SEC, rate);
-   228	
-   229			if (wfhw->ccer & TIM_CCER_CCxP(ch + 1)) {
-   230				wf->duty_length_ns =
-   231					stm32_pwm_mul_u64_u64_div_u64_roundup(((u64)wfhw->psc + 1) * (wfhw->arr + 1 - wfhw->ccr),
-   232									      NSEC_PER_SEC, rate);
-   233	
-   234				wf->duty_offset_ns = ccr_ns;
-   235			} else {
-   236				wf->duty_length_ns = ccr_ns;
-   237				wf->duty_offset_ns = 0;
-   238			}
-   239		} else {
-   240			*wf = (struct pwm_waveform){
-   241				.period_length_ns = 0,
-   242			};
-   243		}
-   244	
-   245		dev_dbg(&chip->dev, "pwm#%u: CCER: %08x, PSC: %08x, ARR: %08x, CCR: %08x @%lu -> %lld/%lld [+%lld]\n",
- > 246			pwm->hwpwm, wfhw->ccer, wfhw->psc, wfhw->arr, wfhw->ccr, rate,
-   247			wf->duty_length_ns, wf->period_length_ns, wf->duty_offset_ns);
-   248	
-   249		return 0;
-   250	}
-   251	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Not 100% sure if this caused the stuck task issue, but 6.15 has this
+CONFIG_DETECT_HUNG_TASK_BLOCKER which might be helpful in such cases.
 
