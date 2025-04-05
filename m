@@ -1,165 +1,213 @@
-Return-Path: <linux-kernel+bounces-589826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6096A7CB18
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 19:44:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5DF6A7CB1D
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 19:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EB5C3B9703
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 17:43:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8764D170F0F
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 17:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A3D19CD0B;
-	Sat,  5 Apr 2025 17:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C61A19D886;
+	Sat,  5 Apr 2025 17:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lls14qjG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iyB91aWB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104028BEC;
-	Sat,  5 Apr 2025 17:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE0070838
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Apr 2025 17:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743875034; cv=none; b=ZM7g/bkaCMPMFEVqbPz3S4rAqagz3ywYwuZ/JCE4ljnfLzBpylBOnAHh3rIdIntmtR7HGmq1N0Yf2uP3lfQnTOIVkqGkJgjtaqqutd0UUxWHkn+mTwGKQ81wybpO7a7wnqC1jJvnoaswBi+kyqBSWuNbx8v2LZ1Ak1MDIjKPyik=
+	t=1743875506; cv=none; b=D5Yo4ptsXQbveieszBUi5TxuOxaGMMW2+WraveYzGpBISZkxC2DIDwun0APnNtOmnR67Q2oj4L97DZOripZ4qecqcx4gjXLXKqIUZM2suTT6Ac/9QF9rFCYTMWhgvEQDhm76OlA5AhWdnQpLicevVgZv80m5xcMXLn7oGrDFBCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743875034; c=relaxed/simple;
-	bh=e2838gU8k00sWId3MP1GDzBEfwrfssO77mfORDdiLFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eKeOru0cawI8FnYRCUROXgQncQge8GaTWwM3fbW5yLe6bzYtW1PSF8X96LyDfwesVAo4yF/Wi5i+CfxC2sik7DNP1YSFOHUBJdx2zJGNiDam3ZbmEWoaEHKlzeejy1XQ0/ijFT5OdFNlktYQbBCLmoVOhI3yqCFh6zZeFcRMuEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lls14qjG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C9BBC4CEE4;
-	Sat,  5 Apr 2025 17:43:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743875033;
-	bh=e2838gU8k00sWId3MP1GDzBEfwrfssO77mfORDdiLFs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Lls14qjGUwCKnRJMGiSl8SMfyX7pTIrkS0/rRm/Ih0WC3UMsU7F3pe40zHVNVATfm
-	 qeoWePe00j+vgPzbq1s5wMCBpTSmERGg1vi3bS2wKRo4/AJICbQsbnebcRGEOBouBK
-	 nuAzs1fyllBiePezIZC+hzQ5TaQZYU14Vc48HLr4epoGI1R/uGCIZpGag9y+Qibdi5
-	 pI18yDAb/Tzs/GwhWNxQY6xl3aTOhrgwA2PqRaGtySCvond2XcO9XvlB7CiX2vB6tj
-	 Eb6yiEkyXPmudDYPAq4hEQD4x/RViMz/28bQWFAGdPQBOFPlufp9AvdUs1LDeMzZb4
-	 oBw2nwbwyuM+A==
-Date: Sat, 5 Apr 2025 18:43:46 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno Sa
- <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, Javier
- Carrasco <javier.carrasco.cruz@gmail.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] iio: adc: ti-adc128s052: Support ROHM BD79104
-Message-ID: <20250405184346.3c4b1234@jic23-huawei>
-In-Reply-To: <a35ab4b1-4d6a-4b95-963a-96b2ab4c05e9@gmail.com>
-References: <cover.1742474322.git.mazziesaccount@gmail.com>
-	<8e10f2d82362ca7c207324a5a97bb1759581acea.1742474322.git.mazziesaccount@gmail.com>
-	<20250331122247.05c6b09d@jic23-huawei>
-	<a35ab4b1-4d6a-4b95-963a-96b2ab4c05e9@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743875506; c=relaxed/simple;
+	bh=mOrCQuammENPolmsvjWIWW9WrnDeWqx/DzuZM5FjbG4=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=u7WD417TJ+8kJ6tzuVWdLxd1qtKdCHNzHEWxmJCt8VVeoJj5sXGad6rfVuQ7esEiEfrh52OyuneBkf7lJYP+q30fmZdNWggWe/SU+eHPDPB/KKdzPod5VOSUKujRKGU7GZtVK7CvXDSe0+fMlaIQD68nW22FwH75IGh6bbnGKJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iyB91aWB; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743875505; x=1775411505;
+  h=date:from:to:cc:subject:message-id;
+  bh=mOrCQuammENPolmsvjWIWW9WrnDeWqx/DzuZM5FjbG4=;
+  b=iyB91aWBObraTWJgB50NqEnTK1dkHyXqDbT6rXVhF/Nj7VCvIb4ar0xb
+   INfwIMBrqGC0qz85KFZGN5JNnB73Th7MZIJMIXrk9I75PAMuarWvCg8fs
+   FR54bHoZJYhnr0XUlFcSTZ0JR2gl74ygNZZ64xb2JzZJukWk96HQmTJj7
+   OTxvmefux5nyf2jgARsxGE/AhaVefK883AZs8GzBnJIuDpnVTtsuQyba1
+   nJ769WnxI91l/Sv6lOVN7nQHVWXqqbemfSS7/UH1M9+8mD4o5Q3ec8xq4
+   4hvH9g9niUvtiOEpOGNauyW96EgpsTovUy9zkz5o/07K0q50c+kr8uV7B
+   A==;
+X-CSE-ConnectionGUID: pZmdNjTkRtuwH76wry2vRA==
+X-CSE-MsgGUID: dF7XXCE5R8O6/R+1aIOCZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11395"; a="45188669"
+X-IronPort-AV: E=Sophos;i="6.15,191,1739865600"; 
+   d="scan'208";a="45188669"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2025 10:51:45 -0700
+X-CSE-ConnectionGUID: L1pXFR8zTcmmaMDEKt8DAA==
+X-CSE-MsgGUID: YYZxmMYARpKwiJEKgJTglg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,191,1739865600"; 
+   d="scan'208";a="127884876"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 05 Apr 2025 10:51:44 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u17gD-0002C1-1w;
+	Sat, 05 Apr 2025 17:51:41 +0000
+Date: Sun, 06 Apr 2025 01:51:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:timers/urgent] BUILD SUCCESS
+ 324a2219ba38b00ab0e53bd535782771ba9614b2
+Message-ID: <202504060128.SBZzzxVE-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Tue, 1 Apr 2025 15:33:15 +0300
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/urgent
+branch HEAD: 324a2219ba38b00ab0e53bd535782771ba9614b2  Revert "timekeeping: Fix possible inconsistencies in _COARSE clockids"
 
-> On 31/03/2025 14:22, Jonathan Cameron wrote:
-> > On Mon, 31 Mar 2025 11:03:58 +0300
-> > Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> >   
-> >> The ROHM BD79104 ADC has identical SPI communication logic as the
-> >> ti-adc128s052. Eg, SPI transfer should be 16 clk cycles, conversion is
-> >> started when the CS is pulled low, and channel selection is done by
-> >> writing the channel ID after two zero bits. Data is contained in
-> >> big-endian format in the last 12 bits.  
-> > 
-> > Nicely found match.  Sometimes these are tricky to spot.
-> >   
-> >>
-> >> The BD79104 has two input voltage pins. Data sheet uses terms "vdd" and
-> >> "iovdd". The "vdd" is used also as an analog reference voltage. Hence
-> >> the driver expects finding these from the device-tree, instead of having
-> >> the "vref" only as TI's driver.
-> >>
-> >> NOTE: The TI's data sheet[1] does show that the TI's IC does actually
-> >> have two voltage inputs as well. Pins are called Va (analog reference)
-> >> and Vd (digital supply pin) - but I keep the existing driver behaviour
-> >> for the TI's IC "as is", because I have no HW to test changes, and
-> >> because I have no real need to touch it.
-> >>
-> >> NOTE II: The BD79104 requires SPI MODE 3.
-> >>
-> >> NOTE III: I used evaluation board "BD79104FV-EVK-001" made by ROHM. With
-> >> this board I had to drop the SPI speed below the 20M which is mentioned
-> >> in the data-sheet [2]. This, however, may be a limitation of the EVK
-> >> board, not the component itself.
-> >>
-> >> [1]: https://www.ti.com/lit/ds/symlink/adc128s052.pdf
-> >>
-> >> [2]:
-> >> https://fscdn.rohm.com/en/products/databook/datasheet/ic/data_converter/dac/bd79104fv-la-e.pdf
-> >>  
-> > Prefer Datasheet tags with # [1]
-> > after them for the cross references.
-> > 
-> > Those belong here in the tag block (no blank lines)  
-> >> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>  
-> > 
-> > One request for an additional cleanup precursor patch given you are
-> > touching the relevant code anyway.   It's a small one that you can
-> > test so hope you don't mind doing that whilst here.
-> > 
-> > I'm relying on the incredibly small chance anyone has a variable
-> > regulator wired up to the reference that they are modifying at runtime.
-> > I have seen that done (once long ago on a crazy dev board for a really
-> > noisy humidity sensor) when the reference was VDD but not on a separate
-> > reference pin.  That means we almost certainly won't break the existing
-> > parts and can't have a regression on your new one so we should be fine
-> > to make the change.  
-> 
-> The change you ask for is indeed small. I have no real objections 
-> against implementing it (and I actually wrote it already) - but I am 
-> still somewhat hesitant. As you say, (it seems like) the idea of the 
-> original code is to allow changing the vref at runtime. It looks to me 
-> this might've been intentional choice. I am not terribly happy about 
-> dropping the working functionality, when the gained simplification isn't 
-> particularly massive.
+elapsed time: 1450m
 
-Hmm. I suspect this was added at my request (or copied from where I requested
-it)  Back when we did this there was no advantage in doing it at probe
-as it was just a question of store a value or store a pointer we had
-to get anyway.  So I tended to advocate what I now think was a bit silly,
-that someone elses board might have it changing...
+configs tested: 121
+configs skipped: 4
 
-User space wise, what code checks for random scaling changes?  So it
-was best effort at best anyway!
- 
-> 
-> Because of this, I am thinking of adding the patch dropping the 
-> functionality as an RFC. Leaving that floating on the list for a while 
-> would at least have my ass partially covered ;)
-> 
-> I'd rather not delayed the support for the BD79104 though. So - would it 
-> be okay if I didn't implement the clean-up as a precursory patch, but 
-> did it as a last patch of the series? That will make it a tad more 
-> complex to review, but it'd allow taking the BD79104 changes in while 
-> leaving the RFC to float on a list. (Also, I'm not sure if you can push 
-> an RFC in next without taking it in for the cycle?)
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-I'll probably just merge it even as an RFC :)  That way it's my
-fault if we break someone and they shout!
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    gcc-14.2.0
+arc                              allmodconfig    gcc-14.2.0
+arc                               allnoconfig    gcc-14.2.0
+arc                              allyesconfig    gcc-14.2.0
+arc                   randconfig-001-20250405    gcc-14.2.0
+arc                   randconfig-002-20250405    gcc-14.2.0
+arm                               allnoconfig    clang-21
+arm                              allyesconfig    gcc-14.2.0
+arm                            hisi_defconfig    gcc-14.2.0
+arm                           imxrt_defconfig    clang-21
+arm                          pxa910_defconfig    gcc-14.2.0
+arm                   randconfig-001-20250405    clang-18
+arm                   randconfig-002-20250405    gcc-7.5.0
+arm                   randconfig-003-20250405    gcc-8.5.0
+arm                   randconfig-004-20250405    clang-21
+arm                        spear3xx_defconfig    clang-17
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-14.2.0
+arm64                 randconfig-001-20250405    clang-19
+arm64                 randconfig-002-20250405    gcc-8.5.0
+arm64                 randconfig-003-20250405    gcc-8.5.0
+arm64                 randconfig-004-20250405    gcc-6.5.0
+csky                              allnoconfig    gcc-14.2.0
+csky                  randconfig-001-20250405    gcc-14.2.0
+csky                  randconfig-002-20250405    gcc-10.5.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-21
+hexagon               randconfig-001-20250405    clang-21
+hexagon               randconfig-002-20250405    clang-21
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250405    gcc-12
+i386        buildonly-randconfig-002-20250405    clang-20
+i386        buildonly-randconfig-003-20250405    clang-20
+i386        buildonly-randconfig-004-20250405    clang-20
+i386        buildonly-randconfig-005-20250405    clang-20
+i386        buildonly-randconfig-006-20250405    gcc-12
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch             randconfig-001-20250405    gcc-14.2.0
+loongarch             randconfig-002-20250405    gcc-14.2.0
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+m68k                        m5272c3_defconfig    gcc-14.2.0
+m68k                        stmark2_defconfig    gcc-14.2.0
+microblaze                       allmodconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+microblaze                       allyesconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+nios2                         10m50_defconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20250405    gcc-12.4.0
+nios2                 randconfig-002-20250405    gcc-6.5.0
+openrisc                          allnoconfig    gcc-14.2.0
+openrisc                         allyesconfig    gcc-14.2.0
+openrisc                            defconfig    gcc-14.2.0
+openrisc                  or1klitex_defconfig    gcc-14.2.0
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                           allyesconfig    gcc-14.2.0
+parisc                randconfig-001-20250405    gcc-11.5.0
+parisc                randconfig-002-20250405    gcc-9.3.0
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc                          allyesconfig    clang-21
+powerpc                 linkstation_defconfig    clang-20
+powerpc                     mpc83xx_defconfig    clang-21
+powerpc                      pcm030_defconfig    clang-15
+powerpc                     ppa8548_defconfig    gcc-14.2.0
+powerpc               randconfig-001-20250405    gcc-8.5.0
+powerpc               randconfig-002-20250405    gcc-8.5.0
+powerpc               randconfig-003-20250405    gcc-8.5.0
+powerpc                     tqm8555_defconfig    gcc-14.2.0
+powerpc64                        alldefconfig    clang-21
+powerpc64             randconfig-001-20250405    clang-21
+powerpc64             randconfig-002-20250405    clang-21
+powerpc64             randconfig-003-20250405    clang-18
+riscv                            allmodconfig    clang-21
+riscv                             allnoconfig    gcc-14.2.0
+riscv                            allyesconfig    clang-16
+riscv                 randconfig-001-20250405    clang-21
+riscv                 randconfig-002-20250405    clang-16
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-15
+s390                             allyesconfig    gcc-14.2.0
+s390                  randconfig-001-20250405    clang-15
+s390                  randconfig-002-20250405    clang-15
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                    randconfig-001-20250405    gcc-14.2.0
+sh                    randconfig-002-20250405    gcc-14.2.0
+sh                           se7705_defconfig    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                 randconfig-001-20250405    gcc-11.5.0
+sparc                 randconfig-002-20250405    gcc-10.3.0
+sparc64               randconfig-001-20250405    gcc-9.3.0
+sparc64               randconfig-002-20250405    gcc-11.5.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-21
+um                               allyesconfig    gcc-12
+um                    randconfig-001-20250405    clang-17
+um                    randconfig-002-20250405    clang-21
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250405    gcc-12
+x86_64      buildonly-randconfig-002-20250405    clang-20
+x86_64      buildonly-randconfig-003-20250405    clang-20
+x86_64      buildonly-randconfig-004-20250405    clang-20
+x86_64      buildonly-randconfig-005-20250405    gcc-12
+x86_64      buildonly-randconfig-006-20250405    clang-20
+x86_64                              defconfig    gcc-11
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20250405    gcc-11.5.0
+xtensa                randconfig-002-20250405    gcc-13.3.0
 
-Jonathan
-
-> 
-> Yours,
-> 	-- Matti
-> 
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
