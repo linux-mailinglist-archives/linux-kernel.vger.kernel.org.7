@@ -1,178 +1,150 @@
-Return-Path: <linux-kernel+bounces-589836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3615DA7CB2E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 20:17:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85C62A7CB43
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 20:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F375C176424
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 18:17:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42D013B7DA9
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 18:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B5B198E9B;
-	Sat,  5 Apr 2025 18:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1851A76BC;
+	Sat,  5 Apr 2025 18:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=atlas.cz header.i=@atlas.cz header.b="m7j3ccAW"
-Received: from gmmr-2.centrum.cz (gmmr-2.centrum.cz [46.255.227.203])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZADTKA2X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73B02E62B0;
-	Sat,  5 Apr 2025 18:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.227.203
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546BCEAE7;
+	Sat,  5 Apr 2025 18:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743877034; cv=none; b=B4LIQvQia4XyBGi0ani4PofWDJLCcoVl3OAYTgrOfHdMZIr68A6wy1Ol8bH6kRv2kNKho2F+7zABFbeNqoqI895BUYuepRWxAKMlPRzlrsrjyZpjNN/4ihHLH4+KuTcWJ8l24+fdcae+FXJzP3XkzKbRjt2S+HTbUbJmDi+/akU=
+	t=1743877853; cv=none; b=IsUJUOhY2wuGqVeahrReauCaLclnmnKtw3TRo2czQgrt0nZt7BMbm+ck6Nx9kOO85zBEw/THK4mgCIYoUhwsYrnpyjL/oibmOS0hv8eXlsFQ+UZ0rjGPLtgmj9rWB2q7wD4Rq+yYG4zOpBDHiWueaXYwYDR6g1lre7r4SnGN6IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743877034; c=relaxed/simple;
-	bh=luOtqYfVD85MbMoLqCyNC5SqOmIlKomafTG8GNHn27I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XiPbJU0Uht20VIRtBW9Eh4bCxnJnfohgZH7HoL11JRoW52/Hn2q9ccZFvo1JbvFcBA2UWsBbqNvP5rrZ2XV1H9CjVsUVfPrI4LvdCwlhAWtx8oaY9u86eyYYWhoOEh8Qdj76g01tJ7WbHH2rmCNRkXlY9D9TN6mFwgVm32drNdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atlas.cz; spf=pass smtp.mailfrom=atlas.cz; dkim=pass (1024-bit key) header.d=atlas.cz header.i=@atlas.cz header.b=m7j3ccAW; arc=none smtp.client-ip=46.255.227.203
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atlas.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atlas.cz
-Received: from gmmr-2.centrum.cz (localhost [127.0.0.1])
-	by gmmr-2.centrum.cz (Postfix) with ESMTP id 9D222202AE47;
-	Sat,  5 Apr 2025 20:17:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=atlas.cz; s=mail;
-	t=1743877026; bh=yXYouCERO6MiAmq3afNjHMwOXCEudhdkAGgF935HzVA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=m7j3ccAWICyhF2V6BIxEhxdLHkMFmmKEDwEdUP17RP7ZKZyrC314v9WFf5a4BgxVj
-	 1hIqsadQTDCegMvkDqU1Azibz3NeqfDotLujTAkg1+sLIWfvwB9gfHSsMkaVg57KNu
-	 mB4pU1uRDBw/tWDS0XhEtPRX0mphO4x0B+6JzfxY=
-Received: from antispam35.centrum.cz (antispam35.cent [10.30.208.35])
-	by gmmr-2.centrum.cz (Postfix) with ESMTP id 9B2B9200B969;
-	Sat,  5 Apr 2025 20:17:06 +0200 (CEST)
-X-CSE-ConnectionGUID: LpEm3r6RQEeORUl2pCsA1Q==
-X-CSE-MsgGUID: V+tuc1VnQXy8xc/kD1A2Hg==
-X-ThreatScanner-Verdict: Negative
-X-IPAS-Result: =?us-ascii?q?A2FFAACUcvFn/03h/y5aGQEBAQEBAQEBAQEBAQEBAQEBA?=
- =?us-ascii?q?RIBAQEBAQEBAQEBAQFACYFKgzSBcYRVkXKLeYYzjVoODwEBAQEBAQEBAQkuF?=
- =?us-ascii?q?gQBAYR9CgKLKic4EwECBAEBAQEDAgMBAQEBAQEBAQENAQEGAQEBAQEBBgYBA?=
- =?us-ascii?q?oEdhTVTgluECAIBAwEiDwFGEBgNAiYCAicvGYMCgjABAzGtdYEyGgJl3HACS?=
- =?us-ascii?q?QVVZIEpgRouAYhPAYR8cIR3QoINgRWCeW+EG3WDDoJpBINIhA+CEB14hSQEE?=
- =?us-ascii?q?ldrhW+CRoogSIEFHANZLAFVEw0KCwcFgWwDNQwLLhUyRTgdgXyDeIU6ghGCB?=
- =?us-ascii?q?IkZhFotT4NzHUADCxgNSBEsNxQbBj0BbgeWaoQXAVgBNExbCsgOhCWETZUEh?=
- =?us-ascii?q?3caM5dSHgOSZJh+pEuEaIF+gX8zIjCDIlIZjjwWFst+djwCBwEKAQEDCYI7j?=
- =?us-ascii?q?S4zgUsBAQ?=
-IronPort-PHdr: A9a23:S/RxYBzQ3qIVxP3XCzJ4zVBlVkEcU1XcAAcZ59Idhq5Udez7ptK+Z
- xaZva0m1Q6UBd6TwskHotSVmpioYXYH75eFvSJKW713fDhBpOMo2icNO4q7M3D9N+PgdCcgH
- c5PBxdP9nC/NlVJSo6lPwWB6nK94iQPFRrhKAF7Ovr6GpLIj8Swyuu+54Dfbx9HiTezf79+N
- gm6oRneusULhYZvKro9xxXUqXZUZupawn9lKl2Ukxvg/Mm74YRt8z5Xu/Iv9s5AVbv1cqElR
- rFGDzooLn446tTzuRfMVQWA6WIQX3sZnBRVGwTK4w30UZn3sivhq+pywzKaMtHsTbA1Qjut8
- aFmQwL1hSgdNj459GbXitFsjK9evRmsqQBzz5LSbYqIMvd1Y6HTcs4ARWdZXshfSTJMDJ6yY
- YUMCOQOP+hYoIbhqFUBtha+GQqhCfnzxjJSmnP736s32PkhHwHc2wwgGsoDvm7Ko9XpLqcZT
- O+6w7POzTDdbPNdxDDw55LSchAiu/6MWKh/cdDKxEY1CwPFik+fqZf/MzyJ1+UAqm6W5PdvW
- uyzkWAosR1xoiSxycc2jInEnp8ZxkzL+Ct53Yo4Id22RVNnbNCkH5VduCKXOop5T84tQ29lu
- zg3xLIFtJO5ciUHyZQqyhHCZ/GEcYWF4w/vWeWXLDxlh3xlYKqyihmz/ES61OHxVsm53ExUo
- iZbktTArHIA2h7L5sSaSPZw/V2t1SiP2g3T8O1IPEE5mKnBJ5Miw7M9kIcYv17ZES/sgkr2i
- bebdkAj+ue19evqeq7mppqAN49sjQH+L7gultS/AesmNggOWHCW+eu51LH65k35RalKjuUrn
- qXFqpzVOdoUpqilAw9Pz4Yj7gyzACun0dgAnHkHKkxKeA6fgoXmOlzCOu70APe/jli2jjtn2
- fDLMqfjD5jPNnTDla3ufbd5605S0gozytVf6opOBbEbI/L8QErxu8bCDhIiKQO03+LnB89m1
- o8ERW2OA7eVMLnOvl+Q+uIvP+6MaZcPtzbnKPgq/fvugmUjmVIGZ6apwZ8XZ2qjHvh8P0qYY
- GLggs0dHmcSogo+UOvqhUWNUDNQZnu/RKE86S8hCIKgE4jDQpqhgLub3Ce0BpFWfHxJCkiQE
- Xf0cIWJQ+sMaC2WIs5uiTEEUbmhS4k81RGyrg/6zLxnLuvb+yECqJ3sysB55/fPmhEq6Tx0E
- 8Od3nmCTm5qmGMEXiI5075hoUNjzleOyqx4g/1DFdxP/PNFSAg7OoDaz+xiEdDyXQDBccmVR
- 1a6WNmmBisxTt0pz98Uf0l9A8mijgzE3yeyB78VlrqLBIE7867F3Hj+Odx9y3DY26kllFQmX
- MRPOnO8hqJl9AjcGZTJk0OHmKaub6gc2zTN9GibwWqUoE5YSBJwUbnCXX0HfUvWsc726VjGT
- 7CwErknLARBxtCYKqdQad3mk09GRPH9N9TaeW6xnH2wBRmQyrOKd4XlY38d0znFCEgYjwAT+
- m6LOAkmCii8oGLeDTluGEr3bU3j/+Zwtm+1Q1MywVLCU0o007uz5w5QhvGGTf4X9qwLtT1nq
- DhuGlu5mdXMBImuvQ1kKZ1Rfcl13l5BdmGR4wVnPZWlJrpKj0Iaeh8xtFG4hEY/MZlJjcV/9
- CBi9wF1M6/NiDt8
-IronPort-Data: A9a23:AGCduqqg9G+79LRaHD6DMrB1sDVeBmItZBIvgKrLsJaIsI4StFCzt
- garIBmAaanZZGWhedoiPNyx/UNQuJeEyIIySAQ4+C03HysTo+PIVI+TRqvS04J+DSFhoGZPt
- Zh2hgzodZhsJpPkjk7wdOWn9D8kiPzgqoPUUIbsIjp2SRJvVBAvgBdin/9RqoNziLBVOSvU0
- T/Ji5OZYQLNNwJcaDpOtvrf8E435pwehRtB1rAATaEW1LPhvyZNZH4vDfnZB2f1RIBSAtm7S
- 47rpJml/nnU9gsaEdislLD2aCUiGtY+6iDT4pb+c/HKbilq/kTe4I5iXBYvQRs/ZwGyojxE4
- I4lWaqYEl51Y/KWyIzxZDEDe812FfUuFLYquhFTu+TLp6HNWyOEL/mDkCjalGDXkwp6KTgmy
- BAWFNwCRjSbquft2uyBc8Rhof4eKJPzF5g240g1mFk1Dd5+KXzCa6rPoMRdwC9p3oZFEPDCf
- dccLzF9BPjCS0ERfA1KVdRkxrru2SaXnz5w8Tp5oYI++WvayQVr+LHxNNPOPNeYLSlQth/B/
- juZoTWpWHn2MvShiiaY+SuSgNb/jHPrU8UROOSRrN5l1Qj7Kms7TUd+uUGAifCjiUe7Ush3I
- lAQ8zFoprpa3Fz7EPH+Uge+rXrCuQQTM/JMHOkqwAWMzLfI+QGfB3hCQjMpQMwrsoo6SCIn0
- neNnsj1Hnp/vbuNU3Wf+7yI6zSoNkA9KW4EeD9BTgYf5dTniJ88gwiJTdt5FqOxyNrvFlnY2
- CyDpiwzr6scgNRN1Kih+13DxTW2qfD0ohUduluRBD/4qFkjOcj6OORE9GTm0BqJF67BJnHpg
- ZTOs5H2ADwmZX1VqBGwfQ==
-IronPort-HdrOrdr: A9a23:8IBfqa2G0WoSlVYuorbpqwqjBL8kLtp133Aq2lEZdPWaSKClfq
- eV7ZMmPH7P+VIssR4b9+xoVJPrfZqYz+8X3WBzB8bGYOCFggqVxehZhOOI/9SjIVydygc378
- hdmsZFZeEYdWIbsfrH
-X-Talos-CUID: 9a23:iuJwBW04JW5cSWvYzDqqX7xfPtgIdybHkk3pDkKfM1ttEqW+UnbJwfYx
-X-Talos-MUID: 9a23:4BZRfQVd+lILu7jq/AGvmCxpbflu2pS/WFAG1pYq4uDeFSMlbg==
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.15,191,1739833200"; 
-   d="scan'208";a="110176982"
-Received: from unknown (HELO gm-smtp10.centrum.cz) ([46.255.225.77])
-  by antispam35.centrum.cz with ESMTP; 05 Apr 2025 20:17:06 +0200
-Received: from localhost.localdomain (nat-86.starnet.cz [178.255.168.86])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by gm-smtp10.centrum.cz (Postfix) with ESMTPSA id 310E3809119F;
-	Sat,  5 Apr 2025 20:17:06 +0200 (CEST)
-From: =?UTF-8?q?Petr=20Van=C4=9Bk?= <arkamar@atlas.cz>
-To: linux-kernel@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
+	s=arc-20240116; t=1743877853; c=relaxed/simple;
+	bh=NUeI4U0WXhSt3zBtNRQTMMK3/MdfX1g2dDF6Z2qmcBk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Nn1cxXV1o53a8jwDsUQbf6Uzz2EVvewGG37Ao9G/kA44sFaXcnF69rmJ+ShJAzDfh3m2z1hpnAUREhsBUBmvJkaV53hnvi/B3dKRbdTylgA5SL3zc0Ts7UbELQBNHyNkJp1TyCdeB7psKhW65i43YvKhfuaHS2qs6vKkrV+zndc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZADTKA2X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 571E2C4CEE4;
+	Sat,  5 Apr 2025 18:30:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743877852;
+	bh=NUeI4U0WXhSt3zBtNRQTMMK3/MdfX1g2dDF6Z2qmcBk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZADTKA2XpWmUoC1UvEdiBW5vfd7VpA7EcazTAeFqV6IYRAcTwJj32Vg1Wq5fCGLgs
+	 7JyOAjRuSsqqgqYWs71EQVJOb9Z2n5pA17nrPeJlhMKCA/eAK9NXkFZR3p91Y8caSt
+	 jinR8neVOTsIM05C1MclF0w8iWixTieJ05Msm7l1WKlKmf9VdzyhgwbvbhsJ497vsg
+	 XywIxp8b7zKgwiB5AvFpxMRMingbmpZEm6NwEgL/uIHCSdA3oOaTUTX2dXfFwk4hjZ
+	 yqf7tRidgJduOJ/eghplQ3/3xFBzLYQ40Eu7Y4R9D9qCW1JAc/ukkE3kpFwTEyuN6k
+	 35/hTz+afw7oA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org,
 	x86@kernel.org,
-	xen-devel@lists.xenproject.org,
-	=?UTF-8?q?Petr=20Van=C4=9Bk?= <arkamar@atlas.cz>,
-	stable@vger.kernel.org
-Subject: [PATCH 1/1] x86/cpu/topology: Don't limit CPUs to 1 for Xen PV guests due to disabled APIC
-Date: Sat,  5 Apr 2025 20:16:50 +0200
-Message-ID: <20250405181650.22827-2-arkamar@atlas.cz>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250405181650.22827-1-arkamar@atlas.cz>
-References: <20250405181650.22827-1-arkamar@atlas.cz>
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld " <Jason@zx2c4.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 0/9] Remove per-architecture ChaCha skcipher glue code
+Date: Sat,  5 Apr 2025 11:26:00 -0700
+Message-ID: <20250405182609.404216-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Xen PV guests in DomU have APIC disabled by design, which causes
-topology_apply_cmdline_limits_early() to limit the number of possible
-CPUs to 1, regardless of the configured number of vCPUs.
+Currently each architecture exposes ChaCha not only through the library
+API, but also through the crypto_skcipher API.  That requires each
+architecture to implement essentially the same skcipher glue code.
 
-This is a regression introduced in version 6.9 in commit 7c0edad3643f
-("x86/cpu/topology: Rework possible CPU management") which added an
-early check that limits CPUs if apic_is_disabled, without accounting for
-the fact that Xen PV guests always disable APIC even when SMP is
-supported.
+Following the example of what's been done for crc32 and crc32c,
+eliminate this redundancy by making crypto/chacha.c register both the
+generic and architecture-optimized skcipher algorithms, implemented on
+top of the appropriate library functions.  This removes almost 800 lines
+of code and disentangles the library code from the skcipher API.
 
-This patch fixes the issue by skipping the apic_is_disabled check for
-Xen PV guests, allowing them to boot with the full set of configured vCPUs.
+From what I remember, the following are the reasons why it wasn't just
+done this way originally.  But none of these really hold water:
 
-Fixes: 7c0edad3643f ("x86/cpu/topology: Rework possible CPU management")
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86@kernel.org
-Cc: xen-devel@lists.xenproject.org
-Cc: stable@vger.kernel.org # 6.9+
-Signed-off-by: Petr Vaněk <arkamar@atlas.cz>
----
- arch/x86/kernel/cpu/topology.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+- The skcipher code was there first, so it may have seemed more natural
+  to add onto it rather than replace it.
 
-diff --git a/arch/x86/kernel/cpu/topology.c b/arch/x86/kernel/cpu/topology.c
-index 01456236a6dd..10aa7f471ec9 100644
---- a/arch/x86/kernel/cpu/topology.c
-+++ b/arch/x86/kernel/cpu/topology.c
-@@ -428,8 +428,13 @@ void __init topology_apply_cmdline_limits_early(void)
- {
- 	unsigned int possible = nr_cpu_ids;
- 
--	/* 'maxcpus=0' 'nosmp' 'nolapic' */
--	if (!setup_max_cpus || apic_is_disabled)
-+	/* 'maxcpus=0' 'nosmp' 'nolapic'
-+	 *
-+	 * The apic_is_disabled check is ignored for Xen PV domains because Xen
-+	 * disables ACPI in unprivileged PV DomU guests, which would otherwise limit
-+	 * CPUs to 1, even if multiple vCPUs were configured.
-+	 */
-+	if (!setup_max_cpus || (!xen_pv_domain() && apic_is_disabled))
- 		possible = 1;
- 
- 	/* 'possible_cpus=N' */
+- Architectures could register multiple skcipher algorithms using
+  different CPU features and have them all be tested in a single boot.
+  This was convenient in theory, but it never really worked properly.
+  It didn't apply to the library code, the x86 ChaCha code wasn't
+  actually doing this (it used static keys instead), and this cannot
+  catch bugs like accidentally using an AVX instruction in SSE code.
+  Instead, a correct solution, which also doesn't require any special
+  kernel support, is to just boot the kernel in QEMU using different
+  -cpu arguments as needed to test all the code.
+
+- There was a concern about changing cra_driver_names potentially
+  breaking users.  But in practice users rely on cra_name, not
+  cra_driver_name.  We already change, add, and remove cra_driver_names
+  occasionally for various reasons.  And even if someone was relying on
+  a specific cra_driver_name, there are some more lightweight
+  compatibility tricks that could be used.
+
+- There was a desire for users to be able to override the kernel's
+  choice of ChaCha implementation by blacklisting the arch-optimized
+  ChaCha module.  But that already became mostly impossible when the
+  library functions were added to the same module.  And in practice
+  users don't do this anyway.  Even if, hypothetically, someone really
+  needed to do this and for some reason the kernel couldn't be fixed to
+  make the right choice in their case automatically, there are other
+  ways this could be implemented such as a module parameter.
+
+Eric Biggers (9):
+  crypto: riscv/chacha - implement library instead of skcipher
+  crypto: chacha - centralize the skcipher wrappers for arch code
+  crypto: arm/chacha - remove the redundant skcipher algorithms
+  crypto: arm64/chacha - remove the skcipher algorithms
+  crypto: mips/chacha - remove the skcipher algorithms
+  crypto: powerpc/chacha - remove the skcipher algorithms
+  crypto: s390/chacha - remove the skcipher algorithms
+  crypto: x86/chacha - remove the skcipher algorithms
+  crypto: chacha - remove <crypto/internal/chacha.h>
+
+ arch/arm/crypto/Kconfig                 |   7 -
+ arch/arm/crypto/chacha-glue.c           | 243 +---------------------
+ arch/arm/crypto/chacha-neon-core.S      |   2 +-
+ arch/arm64/crypto/Kconfig               |   7 -
+ arch/arm64/crypto/chacha-neon-core.S    |   2 +-
+ arch/arm64/crypto/chacha-neon-glue.c    | 146 +------------
+ arch/mips/crypto/Kconfig                |   6 -
+ arch/mips/crypto/chacha-glue.c          | 131 +-----------
+ arch/powerpc/crypto/Kconfig             |   8 -
+ arch/powerpc/crypto/chacha-p10-glue.c   | 147 +-------------
+ arch/riscv/crypto/Kconfig               |  11 +-
+ arch/riscv/crypto/chacha-riscv64-glue.c | 112 ++++------
+ arch/riscv/crypto/chacha-riscv64-zvkb.S |  71 +++----
+ arch/s390/crypto/Kconfig                |   7 -
+ arch/s390/crypto/chacha-glue.c          |  99 ++-------
+ arch/x86/crypto/Kconfig                 |   9 -
+ arch/x86/crypto/chacha_glue.c           | 144 +------------
+ crypto/Makefile                         |   3 +-
+ crypto/chacha.c                         | 260 ++++++++++++++++++++++++
+ crypto/chacha_generic.c                 | 139 -------------
+ include/crypto/chacha.h                 |   9 +
+ include/crypto/internal/chacha.h        |  43 ----
+ 22 files changed, 413 insertions(+), 1193 deletions(-)
+ create mode 100644 crypto/chacha.c
+ delete mode 100644 crypto/chacha_generic.c
+ delete mode 100644 include/crypto/internal/chacha.h
+
+base-commit: 56f944529ec2292cbe63377a76df3759d702dd39
 -- 
-2.48.1
+2.49.0
 
 
