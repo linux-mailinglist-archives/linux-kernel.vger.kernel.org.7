@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-589503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF609A7C709
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 02:16:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE6B4A7C708
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 02:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F91B17C9B1
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 00:16:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD3493BE5DF
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 00:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74AE61547E7;
-	Sat,  5 Apr 2025 00:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDAA2E406;
+	Sat,  5 Apr 2025 00:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s2uTaiZm"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tJuIrTBt"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C2C43151;
-	Sat,  5 Apr 2025 00:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC6B182CD;
+	Sat,  5 Apr 2025 00:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743812137; cv=none; b=aaUmeyogOhjPHeGV81U0upWFJhBYnBlXlyNrluV0iV/8DB7nCaxjmvEUsR0uoHI4Cw5zGFle0m4Yh1uwV7TfN6bRpgdkTarrYsFhZpRfw4mlbTv1scFHtTp4xUso8XR33Z8lVxd3+68unYwbCBVa4m9zZiIs0Aa7VFlKSJmvZIk=
+	t=1743812134; cv=none; b=ZVUUEN9ImoB0WufjpbS2ayjkldwUkvZDNk53bmq4M3UQRGo1z0ObYZ4gMLNoscAjwaueSlufBvbAKthn0mDldh8sRqSixUsdnaDYsgx7DVIRET+MMHDcxuReZsdi2xLUTxtehAvDgdcZjc+c1XKGaNoWlG8dUC4iwaNJlqsnZp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743812137; c=relaxed/simple;
-	bh=gxhvWVX3Zj86stirawTqBVBj3XfzXj9UoNgw5dseHGY=;
+	s=arc-20240116; t=1743812134; c=relaxed/simple;
+	bh=Obx3Rz7MPZT3XSOjbFVuxh5Ov+mPSAKJ0mo+HAykXHU=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GgoGRwYMnLHT/DvURAz75nUZ7qwEqye7rtJNGy5br3v6VlQL2BSL3qm4jdn37RaRADy/d+hgfNi0Fli5oUYvqdZTDOdkCc3zqoGlqAG+5ZFO2KX/VC4gxGwFqlNqMc1uQO46Yquk2LrXGpm6Oy2JlPPVVWHxBkMyjrhVAJ28Jhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=s2uTaiZm; arc=none smtp.client-ip=198.47.23.235
+	 MIME-Version:Content-Type; b=j9Z4qEDlVJQoiSKuUiHGT9BU91Y6Hri73IwqW8Xjw7BnfmW2bCKHU4Cf1oHO0geThJNPhdAmuH+VzmbD1p+lERW6NUk1kQDH8gtj6bd9VgmzUormVkrJ99eBvp0yTTvIIwBVE/lB2HPjyDdeN1cDD1cx9tNwxQejZeY2uUVTKgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tJuIrTBt; arc=none smtp.client-ip=198.47.19.245
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5350FJMo397946
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5350FJ2K3922114
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Fri, 4 Apr 2025 19:15:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1743812119;
-	bh=6hIuj4zkeDKIgdNnFtL2t0Ld2CGaXw/cfH70lhT1NzU=;
+	bh=amp8g+45WV7ep/5Z0lxajz3hoFSuhTyNqtuAsTJs0l8=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=s2uTaiZmX8rQCdJ5VLGhdp49Vi3lv0cM9ZGNwl2QTNN5Q2PMubw25B2EG+PAUUjAq
-	 d0afhGu9+oEU0+YuG/SVeVS+jw5VTDRsv0wSQ9w9NgFCTZNKspv5FFHRunE/VETW7h
-	 ViLuzrO1Ek1y1aGzPb++FWJqIxonKX5L0gzSfcvM=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5350FJGf121736
+	b=tJuIrTBtz/1Sf/EDswCE454B74dwXxRDcFuoxabnHQ90k4fS5Ctzhp4KymQtNH6i6
+	 di5ZMPsOwEcfiMfPtSqiurS73mNxGmTBU2eXSbL2pAOSUVV3M3hgWapVeOi9C72cd7
+	 X8kTUvD0wtCMJTpXmjlF+brNYGkJ7agdAiQgjjbU=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5350FJ8H038169
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Fri, 4 Apr 2025 19:15:19 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 4
  Apr 2025 19:15:18 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
  Frontend Transport; Fri, 4 Apr 2025 19:15:18 -0500
 Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5350FI5h065952;
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5350FI5i065952;
 	Fri, 4 Apr 2025 19:15:18 -0500
 From: Judith Mendez <jm@ti.com>
 To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
@@ -68,9 +68,9 @@ CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
  Padhi <b-padhi@ti.com>, Andrew Davis <afd@ti.com>,
         Markus Schneider-Pargmann
 	<msp@baylibre.com>
-Subject: [PATCH v6 08/11] arm64: dts: ti: k3-am62x-sk-common: Enable IPC with remote processors
-Date: Fri, 4 Apr 2025 19:15:15 -0500
-Message-ID: <20250405001518.1315273-9-jm@ti.com>
+Subject: [PATCH v6 09/11] arm64: dts: ti: k3-am62a7-sk: Reserve main_timer2 for C7x DSP
+Date: Fri, 4 Apr 2025 19:15:16 -0500
+Message-ID: <20250405001518.1315273-10-jm@ti.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250405001518.1315273-1-jm@ti.com>
 References: <20250405001518.1315273-1-jm@ti.com>
@@ -86,89 +86,30 @@ X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 From: Hari Nagalla <hnagalla@ti.com>
 
-For each remote proc, reserve memory for IPC and bind the mailbox
-assignments. Two memory regions are reserved for each remote processor.
-The first region of 1MB of memory is used for Vring shared buffers
-and the second region is used as external memory to the remote processor
-for the resource table and for tracebuffer allocations.
+C7x DSP uses main_timer2, so mark it as reserved in linux DT.
 
-Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
 Signed-off-by: Hari Nagalla <hnagalla@ti.com>
 Signed-off-by: Judith Mendez <jm@ti.com>
 ---
- .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 34 ++++++++++++++++---
- 1 file changed, 29 insertions(+), 5 deletions(-)
+ arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-index d52cb2a5a589a..364b2ba6af958 100644
---- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-@@ -70,6 +70,18 @@ mcu_m4fss_memory_region: m4f-memory@9cc00000 {
- 			no-map;
- 		};
- 
-+		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9da00000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0x9da00000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		wkup_r5fss0_core0_memory_region: r5f-memory@9db00000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0x9db00000 0x00 0xc00000>;
-+			no-map;
-+		};
-+
- 		secure_tfa_ddr: tfa@9e780000 {
- 			reg = <0x00 0x9e780000 0x00 0x80000>;
- 			alignment = <0x1000>;
-@@ -82,11 +94,6 @@ secure_ddr: optee@9e800000 {
- 			no-map;
- 		};
- 
--		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9db00000 {
--			compatible = "shared-dma-pool";
--			reg = <0x00 0x9db00000 0x00 0xc00000>;
--			no-map;
--		};
- 	};
- 
- 	leds {
-@@ -476,10 +483,17 @@ cpsw3g_phy0: ethernet-phy@0 {
+diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+index 7d817b447c1d0..8d7645bb90337 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
++++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+@@ -682,6 +682,11 @@ &main_uart1 {
+ 	status = "reserved";
  };
  
- &mailbox0_cluster0 {
-+	status = "okay";
-+
- 	mbox_m4_0: mbox-m4-0 {
- 		ti,mbox-rx = <0 0 0>;
- 		ti,mbox-tx = <1 0 0>;
- 	};
-+
-+	mbox_r5_0: mbox-r5-0 {
-+		ti,mbox-rx = <2 0 0>;
-+		ti,mbox-tx = <3 0 0>;
-+	};
- };
- 
- &mcu_m4fss {
-@@ -489,6 +503,16 @@ &mcu_m4fss {
- 	status = "okay";
- };
- 
-+&wkup_r5fss0 {
-+	status = "okay";
-+};
-+
-+&wkup_r5fss0_core0 {
-+	mboxes = <&mailbox0_cluster0 &mbox_r5_0>;
-+	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
-+			<&wkup_r5fss0_core0_memory_region>;
++/* main_timer2 is used by C7x DSP */
++&main_timer2 {
++	status = "reserved";
 +};
 +
  &usbss0 {
- 	bootph-all;
  	status = "okay";
+ 	ti,vbus-divider;
 -- 
 2.49.0
 
