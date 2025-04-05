@@ -1,162 +1,117 @@
-Return-Path: <linux-kernel+bounces-589788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36AC7A7CA37
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 18:24:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B49A7CA21
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 18:16:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A38843B8C5E
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 16:23:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C97483B6A3B
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 16:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7638165F16;
-	Sat,  5 Apr 2025 16:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED3E5695;
+	Sat,  5 Apr 2025 16:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Lm+A/M6F"
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u22BHMrn"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE3F156F20;
-	Sat,  5 Apr 2025 16:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A51101FF
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Apr 2025 16:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743870227; cv=none; b=rrOwtKwcs4K36Xsg/tZeQpvwaVG4MfAZfkXTQNESacASb0gjQ4dhaS+guHD/rZZ0yoNB/5VS9zhjDC+/2gOAGvmrkkNKzeGWg7IlNlI3J/6I9wu0L9wcLFS9lwJdqkTeFvqqcAxoAxKETJdM2v51+QqPTydIISce8rA73QWx2cg=
+	t=1743869783; cv=none; b=ONqwKhPR0T6Ycq785HhUB/6VYyAD+NAvnSpX7D9v5KnoK3ImJSKoDDXnQea3I6EewcDZtvATZXBT7SC+s+ThE1uivxCYbwXXj1P6IHiyKii/XgGCvtvWf4GeY7Tl0wC2Tdl3PXMbeA1c/8DLDXnOIkrgcoDyeWbqGdJgWSzlPeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743870227; c=relaxed/simple;
-	bh=U8/92TQg+GZ8k1Y8xxenbWikuxiwCkpnyeA42/KioUM=;
-	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
-	 In-Reply-To:Content-Type; b=DuBgdaYkXQVSy3WdYGyo0j3LA5yD5zVf0VG25rjTFuW31yWy0Hbl97S6ULnk+Hiu4p78SPqlsUSkA/kZFSkbq6hFu370UKxzAqrr6K04Dn0vPzloRJerUmtnIrqq8t/ElCn/jDjRp8w96/fCQwwszqYOnoJdfylhdUjt7WIxSYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Lm+A/M6F; arc=none smtp.client-ip=80.12.242.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 16AQujHB2B4qz16ATueFIa; Sat, 05 Apr 2025 18:14:51 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1743869691;
-	bh=PMs5hy77UDHTud4mAKxiw5m0lSdqrg7l0TCWcb/Kf1c=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To;
-	b=Lm+A/M6FhcWWTUFBQLrfwyGVyYoZrKAUQqERyJYPKQ1yYc5RoHFez35SBba908sFr
-	 2PDnRHRuEqdtQCiWJSyY41hCi32HUmnB9hS2v09l6roFlrx6g1P+ROTOUm8MnwmyvW
-	 p1u7T+gQRYW0alXO75PVlRTajw+ZclgysJi+I0gY+0B/xBihJSIsb+TaEP8pe+aaGb
-	 CU+4CgZ5GTP9LpMDZ9k0tdqQj/XBb1ceJaNtnU+q/D9HLm/iDZoVM+nmN0B85gh1Rp
-	 ZPJ9WoHK2A1yGY9QYXhIC4WRqzt6kJib1mSZkPYKFuNJsR2HD/m+jraHANzqimYfkN
-	 uu5/rUTdzg3PQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sat, 05 Apr 2025 18:14:51 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <727b55b6-ccba-4498-be95-027a9f67dfa9@wanadoo.fr>
-Date: Sat, 5 Apr 2025 18:14:46 +0200
+	s=arc-20240116; t=1743869783; c=relaxed/simple;
+	bh=f9fwwNv03NbODRWqKK9+JE9Q2mHw9mQ/GAhJTTxPSIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DSrRZ0Lr3SWohJQUBiGcCarpUdoNti5Cn28maaZ0N8YdF6rvil1oLA9nZ03qYLwHy3s6izfLKcvq9pQMf2MyrCMT+jwOg1/r9ODfeJpWIplAnUvx0Mp3ZNR8ouYoWE3b2i5StQx4jwOgCAFTjEdrXJCKkp+1Jp83hGN9RRzPYyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u22BHMrn; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso27251325e9.2
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Apr 2025 09:16:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743869780; x=1744474580; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kQA4y1FzPmhivnWC1Pgg4oxOyq8Cr4ueMJktDOHR4oo=;
+        b=u22BHMrnba6WGRrZkRRO89X1aOUWuFyfznNTg8J/QoFW3mK6pTahHpXX1oBsRZqNWh
+         P4+BCR+v40UHS+lPyq+nQjxsYcl/XcDPR8J+4CC1QPwxln1W4T38oZJmljIZhv5Q0cvA
+         iXR66EHP7IbkmvBVIzUki72ahB2/iFzafiRCrDrd5b9rtFuJ6gqQcFmq2gXk00FzpvbK
+         D0WS1vLUSPiDkYkje9gFLDIEOeCbqK7Ovo4U0hKqv+DeGLnPDLiV7u2E2tL0ZoWPEdCo
+         QLYXFERS5lgndpeCRhIvpNsDN9ZmNre1SRd3QrYYaYVfs0hRznxIbrYXWF8j+CmfrMAp
+         k9XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743869780; x=1744474580;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kQA4y1FzPmhivnWC1Pgg4oxOyq8Cr4ueMJktDOHR4oo=;
+        b=m7NJLthUo0bRjhtQ9CQaiX6Ob0gsTk90omipbeG8yI0vZAISQ0Yxda7Uqel8O2CGfJ
+         btf3td2/uJ0x0EvMW0Kbb24HV0DC89iTs9fiPVG7eWXmFd409Ugg7OzE9RzRZnkkA58s
+         EaOKi8fpls5lFiPys66+JbXm5SDtCwahWVS7soFtr9SCOybMjlMd2VI9TDQXa84ieTnc
+         1/qktOsd2ewb3ZND5jwMt2aVuQZLg5DTJ67UHTgwdISIazjXm+FjmHkEfeA367rX7A7v
+         8r0+BMs8QUAMKg7Rp+346wggLDIDFQYpgY4IS0IAhvqoUdf8Yh/6pRNb8UtMNI0oA2mO
+         cmlw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1P5lPzi7Qab6p1NCq197IhVhzBcN0HO6UySEyqrjECX30whHdnMb4Ml/oGja81Rz8vQFbA7sEBFOWnZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt/e/3uNPbVc6vk6UiB4H0DtmnUS9oTnzwM/NgFGPf06kw/uzZ
+	eepZcQKKEFhU/WPFWQwdQIuqwarF2s2iQISv3n+vM1vh1B6Jy41Xqq1HgVUzW9g=
+X-Gm-Gg: ASbGnctkmS9O1Hr+IjDGjbyQsm2Prhke0shESHRE0t6eHSonad4mjSl95LFwyA3kXhx
+	a+FiC3ljqdsp9yQrphnpfiY7JqbYMgIDvMMmEMR3ytCOsFUeJh42TZmv2W9r0LO0rcx1/a1f8px
+	YM7f0IX2fMWgZUfenbHR0Yi+T3W5O3bQVo4b7oIQQXAcPg3cBJPl1UMrvh17LV1JnAaIl/K8Nog
+	oEU1P+YSkmn70+up6Q+6h3VwIFoGjYPl2WwVpAkPBfsstE1OMOaPIdy8B2tq9mW+aMtugaYzarc
+	rPSp3b+Dfr6KjlbdOJ7q8Kyy6L6CU3HFWy+5F7jHPOmSxfJyOQHF5lugEUz1
+X-Google-Smtp-Source: AGHT+IHUbTxn+Ru3ccdmf6QiLK+OvdKs5Vbjv0pWdVZVEKvUSxpiHrDhuhyHXkzdAGYKFCiWEJML5g==
+X-Received: by 2002:a05:6000:4282:b0:39a:c9b3:e1d7 with SMTP id ffacd0b85a97d-39cba93ca51mr6004112f8f.29.1743869780109;
+        Sat, 05 Apr 2025 09:16:20 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39c301a9da1sm7148016f8f.22.2025.04.05.09.16.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Apr 2025 09:16:19 -0700 (PDT)
+Date: Sat, 5 Apr 2025 19:16:16 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: gregkh@linuxfoundation.org, philipp.g.hortmann@gmail.com,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v4] staging: rtl8723bs: Add error handling for sd_read()
+Message-ID: <8fd63a84-0fd1-4596-a9da-913e9c8eb110@stanley.mountain>
+References: <20250405160546.2639-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pci: tegra194: Fix debugfs cleanup for !CONFIG_PCIEASPM
-References: <20250405145459.26800-1-18255117159@163.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: 18255117159@163.com
-Cc: bhelgaas@google.com, jonathanh@nvidia.com, kw@linux.com,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-tegra@vger.kernel.org, lpieralisi@kernel.org,
- manivannan.sadhasivam@linaro.org, robh@kernel.org, thierry.reding@gmail.com
-In-Reply-To: <20250405145459.26800-1-18255117159@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250405160546.2639-1-vulab@iscas.ac.cn>
 
-Le 05/04/2025 à 16:54, Hans Zhang a écrit :
-> When CONFIG_PCIEASPM is disabled, debugfs entries are not created, but
-> tegra_pcie_dw_remove() and tegra_pcie_dw_shutdown() unconditionally call
-> debugfs_remove_recursive(), leading to potential NULL pointer operations.
+On Sun, Apr 06, 2025 at 12:05:46AM +0800, Wentao Liang wrote:
+> The sdio_read32() calls sd_read(), but does not handle the error if
+> sd_read() fails. This could lead to subsequent operations processing
+> invalid data. A proper implementation can be found in sdio_readN().
 > 
-> Introduce deinit_debugfs() to wrap debugfs_remove_recursive(), which is
-> stubbed for !CONFIG_PCIEASPM. Use this function during removal/shutdown to
-> ensure debugfs cleanup only occurs when entries were initialized.
+> Add error handling for the sd_read() to free tmpbuf and return error
+> code if sd_read() fails. This ensure that the memcpy() is only performed
+> when the read operation is successful.
 > 
-> This prevents kernel warnings and instability when ASPM support is
-> disabled.
-> 
-
-Could you elaborate?
-
-
-debugfs_remove_recursive() ends either to:
-
-static inline void debugfs_remove(struct dentry *dentry)
-{ }
-if CONFIG_DEBUG_FS is not set,
-
-or
-to a function which starts with:
-	if (IS_ERR_OR_NULL(dentry))
-		return;
-if it is set.
-
-
-So what does this new deinit_debugfs() add?
-
-
-Which NULL pointer are you seeing?
-Did you actually manage to trigger it?
-
-CJ
-
-
-
-> Signed-off-by: Hans Zhang <18255117159-9Onoh4P/yGk@public.gmane.org>
+> Fixes: 554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
+> Cc: stable@vger.kernel.org # v4.12+
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
 > ---
->   drivers/pci/controller/dwc/pcie-tegra194.c | 13 +++++++++++--
->   1 file changed, 11 insertions(+), 2 deletions(-)
+> v4: Add change log and fix error code
+> v3: Add Cc flag
+> v2: Change code to initialize val
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 5103995cd6c7..d762e733c2d8 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -716,11 +716,20 @@ static void init_debugfs(struct tegra_pcie_dw *pcie)
->   	debugfs_create_devm_seqfile(pcie->dev, "aspm_state_cnt", pcie->debugfs,
->   				    aspm_state_cnt);
->   }
-> +
-> +static void deinit_debugfs(struct tegra_pcie_dw *pcie)
-> +{
-> +	if (!pcie->debugfs)
-> +		return;
-> +
-> +	debugfs_remove_recursive(pcie->debugfs);
-> +}
->   #else
->   static inline void disable_aspm_l12(struct tegra_pcie_dw *pcie) { return; }
->   static inline void disable_aspm_l11(struct tegra_pcie_dw *pcie) { return; }
->   static inline void init_host_aspm(struct tegra_pcie_dw *pcie) { return; }
->   static inline void init_debugfs(struct tegra_pcie_dw *pcie) { return; }
-> +static inline void deinit_debugfs(struct tegra_pcie_dw *pcie) { return; }
->   #endif
->   
->   static void tegra_pcie_enable_system_interrupts(struct dw_pcie_rp *pp)
-> @@ -2289,7 +2298,7 @@ static void tegra_pcie_dw_remove(struct platform_device *pdev)
->   		if (!pcie->link_state)
->   			return;
->   
-> -		debugfs_remove_recursive(pcie->debugfs);
-> +		deinit_debugfs(pcie->debugfs);
->   		tegra_pcie_deinit_controller(pcie);
->   		pm_runtime_put_sync(pcie->dev);
->   	} else {
-> @@ -2408,7 +2417,7 @@ static void tegra_pcie_dw_shutdown(struct platform_device *pdev)
->   		if (!pcie->link_state)
->   			return;
->   
-> -		debugfs_remove_recursive(pcie->debugfs);
-> +		deinit_debugfs(pcie->debugfs);
->   		tegra_pcie_downstream_dev_to_D0(pcie);
->   
->   		disable_irq(pcie->pci.pp.irq);
-> 
-> base-commit: a8662bcd2ff152bfbc751cab20f33053d74d0963
+
+Thanks!
+
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+regards,
+dan carpenter
 
 
