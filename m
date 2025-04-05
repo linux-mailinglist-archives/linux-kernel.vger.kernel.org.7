@@ -1,136 +1,111 @@
-Return-Path: <linux-kernel+bounces-589760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F46A7C9C4
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 16:55:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CB5EA7C9C8
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 16:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E55AA189AE81
-	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 14:55:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72E817A6667
+	for <lists+linux-kernel@lfdr.de>; Sat,  5 Apr 2025 14:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0B41DE2A1;
-	Sat,  5 Apr 2025 14:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10B41DDC1A;
+	Sat,  5 Apr 2025 14:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dawX8ZJM"
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f67+a8D/"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4C819F495
-	for <linux-kernel@vger.kernel.org>; Sat,  5 Apr 2025 14:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B0A1CD1F
+	for <linux-kernel@vger.kernel.org>; Sat,  5 Apr 2025 14:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743864930; cv=none; b=EG+2lNwT+R6nylh1W98owvUCZQ1JFKvcEyiYIyrekR3dRog7tNq8OUxg5JJHiz1VoxVn4TxJZ8sHQe+WVghwYLQkNyU8aoLxlFnmw7d35exOKlLSCXzelrMC0q0vL8KuXW8OrRNdnoLHvKtn59xbtOtlWNtWs31unLVN3GiQ3Q0=
+	t=1743865120; cv=none; b=bqNt0NmIRpIoLfsTaeKiXbOTEvsQ9SFDDo+sl6f33DkgWdIjidAjMxG3GymZpd3YvDi1qi1G7dutX85JENPYEzdyEf3unxnzJAKzCmW8uXWl677KUf0xGroZ5PbulzUdzVIYD0y7rH+yMBMO8BhWlU4Ro52ygdZnyLPXr+ofWeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743864930; c=relaxed/simple;
-	bh=KN+GUQaDkyiC/q46ZCA0E+OC/aTo3sC5uzl2Y4YoofI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BgFi/lEY9Am10q0LWalu1LmApgTsvn0UgDxmZ3yBhf1N8blrnu1uJ/U3+d+8StAlTwOEF7H6yrzoKCJD0gWM0av9AregsxRBIi5PXbGKdpu+vdGJFbLz8Iz7uH0SbCn9DsvbDDz5TRMwsYURqCjdzKeXmRFNA6nYXETevtNUimM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dawX8ZJM; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-523f670ca99so1338732e0c.1
-        for <linux-kernel@vger.kernel.org>; Sat, 05 Apr 2025 07:55:29 -0700 (PDT)
+	s=arc-20240116; t=1743865120; c=relaxed/simple;
+	bh=N9t93yqbj2djYP7dFCDgM1xUqHLYdb9cLQ/mVQ8ZdXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FtmLpVqou7Vxag+0p/LluvhftX/1EXOyqmk7tUrl3BtDTuJBSSG00MrWMcLxy9BeQW318GwJ37uPbF94mcjzbsM8JbVrgx3Gmww3a5X3qbsqsC4rBpJmwHqudHfJ4MSgZ7ds4BbrJ2tNRZhdkmMRO+pJi1aKfooo7Xcun6y/Nco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f67+a8D/; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39c14016868so2578184f8f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Apr 2025 07:58:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743864928; x=1744469728; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k0bylYK4rbcZkE8OQEolRnIpH1EzfwJRH0eir4LBzBk=;
-        b=dawX8ZJMGmvrfrCU+zejubtPw0GAQB8f193VmiONcQOqFjb717X4l7aIw0+tUbPke7
-         8jfpOxNmkorL04rQk/MEx7kDjldMVuJLkXgxzqF15fQ76O5mm0Km9mUWcRJBxUAHJl9j
-         QtMlGq6tl8k/1cgZtxYg5MEWXZaQEDnt2SONgLZfw7RjFLaCReUabXlD8II2SMCH+5Qn
-         rx3qlNC0uAsL1/KPlZKnj3Gpn1ukI69h3LhfNlMkex31dxVXJ8rV1FJxzGTcMbwN2vcX
-         CEDLHXnXCTZL2aCAJ79JCH7eZgxf7x6y6g/6vJdvF2bhWgBiUSne2b4vZaXstao6fvPR
-         phHA==
+        d=linaro.org; s=google; t=1743865116; x=1744469916; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=m/SmM4ytvnKmQeFMenBw45G9NZO2G3CpELElKjb7zxY=;
+        b=f67+a8D/2zKiT8jXQX4G1gj3/TZakI341o6lk3AUEHtk1zA0DNRanFUSe1S87Jwc0A
+         yD5olctTra021ei4YF3vqcwR9VluGfls1RXfrvw6hW4P/ytb+gosVQyPprSmzx3rz8Vm
+         0IMiKtM9MFUQuJmCETB7BysXMyFMYIJQvLIQkyTJ3v76e4HnlqtaF9ayI9SClL3xgMwT
+         IWhGsppCkxkGKN/qMSkLyHGAfpCQJTGg+mLS7hGztrkzVzQjv0O6l2eM+FRhcxa70ay+
+         iHaaLy3EAqB8z0Z1bSmJbak5QS+S5ljRuCRRAloax/Uq+qcap7dKliNzAspJe9wnv4QG
+         4hWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743864928; x=1744469728;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k0bylYK4rbcZkE8OQEolRnIpH1EzfwJRH0eir4LBzBk=;
-        b=cw/L6bEhLSYRvK92/jsbkX8BTgQ9IaQhLh7PtTxvIjX47AJiMZavvIgJOSeIyAc6zF
-         HvNC51HrfWZ34I6pmfACVZ9MuPwjEPv8E0pteX4JZI5h24P46uf5pZGubCaZghegySsA
-         ppDIIHeVu1IRrthDCPNJpROY2axwbuEs/86MlnJvFQBem9M/RLvZraSEyV5ihJiNP/tV
-         HX/blfZzhUam9lAma66eZ83EqOACOe+ri9eMNo3Ibk6kpyjDM4IcX91G00x2Drzuj/4I
-         a9EUCHmdqTS1S+tSBlpFoird+7R2Rd9mrrT1BcdnY/aAOmZPItjpc5zxP0uMxnsG7riU
-         5Irg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhfWnfIimEtOG6dXdzkhVe4jT7O006gZTl6mhzuLHlY6I38VQQWRXYnfhEDwXf/TNLvHOvWJnbItLvc8s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj6Krbyk7AcIqJhTinY3j4ptNl58J8DO87Z/x5P2RU/vGjX5ZH
-	RyjpFAPM6keje3GOV+BllXxQN5VYYqLSCXdWllYcnxxtjnLKTQocR3zGAGVR1/Q+VxKk2GMNQK9
-	NV+htLBVsO10KQd2gftQBG/98c50=
-X-Gm-Gg: ASbGnct4C6rtTHrGEFMao/1vna0F2xvx4MXiihln4ch5AlYR+2pr8Al7RS/K4mlngf5
-	hQDFdIw5OOceTBVhDDe0b8Wbl2DOUI8IETUAzMzkVuY4f/RSrs/x1M9k5MPt9VlXCcVh8kBP6PM
-	6yv2UP72d+VLNPNAM+fgMX/iELIL1a
-X-Google-Smtp-Source: AGHT+IFXdU/YZAvxOJqqLDDhDC6P7HTyP2c16ab3xeaYKa0koLLHuUjJ71njQgO24nXztiAlRXq0RvDB6HV8pHKbYt0=
-X-Received: by 2002:a05:6122:a09:b0:520:42d3:91c1 with SMTP id
- 71dfb90a1353d-527645a5e5dmr5259213e0c.10.1743864928204; Sat, 05 Apr 2025
- 07:55:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743865116; x=1744469916;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m/SmM4ytvnKmQeFMenBw45G9NZO2G3CpELElKjb7zxY=;
+        b=VOwiMSgMRjlUnDf/Y/JSIShc69dGRdWmbrOcHTHkaxe6A+m4hirNXuuuIzpeaLegxL
+         Bm9DpVYnEdLiVipTOhDCXUYhDA9w+6IvQN/qnMZcnKHKdAKvThjk6C5fNktWrhlThrBb
+         eOSToXSVfxJ4vHEpOVu1aV0rVMCb8MPP0N1ckT754ij3GYCChKYucuHquKCpfJHgaZmV
+         H9GnDN/9v3qfYEz8Xe82GShbvDkuYJ+9Tp03THksZWkmcO9E3ibJKAk1BHyRgDxVzgrV
+         mBi5AvPhYWQsxgP1np2CoFAnAV5Ogr4dHVTPkwy5HGuQzOR/qBToNreyu+xszQ90yp3K
+         +/DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGQBmQyriOyhhcI6iQmJQm/1XrFp6fsFNhfV8KUEeYPEDV2W0RtcBytlNGuaUQ+u6ZmO4roD3ZQ/CKE4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJCqPAP/R8QWvV7T05KtVpJwb/UuSPtjeQsP2XoQBV1yHtRxb1
+	Rm/C37peMf1eeX1aaSuf15CcChQsCF3N8f3a131SltpSoCAvztLRRwjZdjgQYio=
+X-Gm-Gg: ASbGncvQ63JtsL87lqNBcMAJuJlk+wKUkeVvzJrqNVLJ7kzXD0XhC5RppSh458J3NFO
+	CfVEEHn2eBkZsxp/4BHU+yprL8OiLolp8XtYD02+aTc/0gMoX42IhswayI4cY/DDyYCH3qUAxM9
+	tGfwZxQh49WuGXPWJWi5Imjx60j3af74k+RzxjA10LxHgj8sOsZbf+2zO50x6XBBe05YpSoLCm0
+	UcGWipA/QdAhfL4tQzFIGqzv84bI3eK6wIeL1/VLMaQiO5ZHUSOr/S24xnM+RBmsALvaIIIucR8
+	uJ7mQpdyl5LkcUKog64anywelpRWmUz4j1qxN3VRV/HPMt1EDQ==
+X-Google-Smtp-Source: AGHT+IGstSgETdMzDdB1cn7SMeAEZaDIH6PcSTPH4LkDpdeT8mO6u1QWbvUSiJCc2vQ+HL8ELQ38HQ==
+X-Received: by 2002:a5d:64cd:0:b0:391:13d6:c9f0 with SMTP id ffacd0b85a97d-39d0de66efbmr5815830f8f.47.1743865116566;
+        Sat, 05 Apr 2025 07:58:36 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43ec34bf258sm74822035e9.23.2025.04.05.07.58.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Apr 2025 07:58:36 -0700 (PDT)
+Date: Sat, 5 Apr 2025 17:58:32 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Julia Lawall <julia.lawall@inria.fr>, outreachy@lists.linux.dev,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] staging: rtl8723bs: Prevent duplicate NULL tests on a
+ value
+Message-ID: <7f19d199-9702-4829-a4a7-b1eada2adeda@stanley.mountain>
+References: <Z/EuZuvGyQ9QBl6z@HP-650>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z/B019elTtKG/PvD@ubuntu> <2025040547-vagrancy-imagines-384b@gregkh>
- <CAHp75Vc0vOB1nDLrV+wmYeshxTsDwYq0xBkmJiOH=d5HONRpNQ@mail.gmail.com> <d3b4e3b4-b5cc-5b5f-26b6-1d726f5e57c@inria.fr>
-In-Reply-To: <d3b4e3b4-b5cc-5b5f-26b6-1d726f5e57c@inria.fr>
-From: Samuel Abraham <abrahamadekunle50@gmail.com>
-Date: Sat, 5 Apr 2025 15:55:18 +0100
-X-Gm-Features: ATxdqUHEUzZewfl8XOUc_Hod2fcZH_lElHfHjiW2nrFT1vgN6wa3S2r6Ya11cKI
-Message-ID: <CADYq+fYMPGFdFvNPyo_XoNdMhh6qu=h10Gb2EDc2Jw=JK9iXig@mail.gmail.com>
-Subject: Re: [PATCH v2] staging: rtl8723bs: Use % 4096 instead of & 0xfff
-To: Julia Lawall <julia.lawall@inria.fr>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, andy@kernel.org, dan.carpenter@linaro.org, 
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	outreachy@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z/EuZuvGyQ9QBl6z@HP-650>
 
-On Sat, Apr 5, 2025 at 1:30=E2=80=AFPM Julia Lawall <julia.lawall@inria.fr>=
- wrote:
->
->
->
-> On Sat, 5 Apr 2025, Andy Shevchenko wrote:
->
-> > On Sat, Apr 5, 2025 at 11:23=E2=80=AFAM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > > On Sat, Apr 05, 2025 at 12:09:59AM +0000, Abraham Samuel Adekunle wro=
-te:
-> > > > Replace the bitwise AND operator `&` with a modulo
-> > > > operator `%` and decimal number to make the upper limit visible
-> > > > and clear what the semantic of it is.
-> > >
-> > > Eeek, no.  We all "know" what & means (it's a bit mask to handle the
-> > > issues involved), and we all do NOT know that % will do the same thin=
-g
-> > > at all.
-> >
-> > And that is exactly the purpose of the change. The % 4096 makes it
-> > clearer on what's going on, i.e. we are doing indexes that are wrapped
-> > around the given number.
->
-> Ah, OK.  Samuel, indeed, the log message was going in that direction.  Bu=
-t
-> probably it should be more clear.  Why is 4096 the upper limit in this
-> case, for example.
+On Sat, Apr 05, 2025 at 02:21:42PM +0100, Abraham Samuel Adekunle wrote:
+> When a value has been tested for NULL in an expression, a
+> second NULL test on the same value in another expression
+> is unnecessary when the value has not been assigned to NULL.
+> 
+> Remove unnecessary duplicate NULL tests on the same value
+> that has previously been tested.
+> 
+> Found by Coccinelle.
+> 
+> Signed-off-by: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
+> ---
 
-Okay thank you Julia.
-So I can add something like this to the commit message?
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-"Replace the bitwise AND operator `&` with a modulo
-operator `%` and decimal number to make the upper limit visible
-and clear that we are doing indexes that are wrapped around the given numbe=
-r"?
+regards,
+dan carpenter
 
-You also said I should add a patch for the white space around binary operat=
-ors.
-I did it together because the changes were on the same line.
-Should I still add a second patch for that change?
-Thanks
-
-Adekunle.
 
