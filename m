@@ -1,216 +1,78 @@
-Return-Path: <linux-kernel+bounces-590106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4E3FA7CEE3
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 18:03:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1F48A7CEDF
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 18:02:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4AB77A3E67
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 16:02:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB0C216D1E7
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 16:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC7822154C;
-	Sun,  6 Apr 2025 16:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFB922154C;
+	Sun,  6 Apr 2025 16:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g5tFn+ZA"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hCueDb35"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D91204F94;
-	Sun,  6 Apr 2025 16:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52D3218AC7
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Apr 2025 16:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743955390; cv=none; b=NYPGb6CTtZ25Z8JK6A+HtBzBmcdDLBKNvQx6LEhUFHuZDnNFT4hzXNQ3t+2+jdq6QbxLN2k19bihn8fIw6xkNdyveHq9MVkZwLYKkCNMrxsUX4Tjtfsh2aTZCbGNMGz2rAa6L8aOGM4lu9AkdtjhXqZ+oIdpz0aAmwCz4nAG9t4=
+	t=1743955319; cv=none; b=OGVApFRgk1jCSAXyvW8D8r26gMrGpz5RArrykws1uPB939nG1GcQ3rLEY28ml/NkpkqJ78i6NPTFl3wlSh0c6QvrasITUfdpJvb+1WvEKco4CmhpUtf0lq4tZUZLIXR6Ajk9MyiruUOqF6nI/00J2yBpmKKE3mlMm8ZDR4JBHlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743955390; c=relaxed/simple;
-	bh=H0WW8RYwcUflIu5fzLmBXcIBidBGU+JERRJbHZy4w1Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cBpeLWYKmCQi/G6QWVr0vKjfFZylIHcyayx3agqp2DcpRWTNHB2j5gNVlZSYr66yXthTGcEu2yvQMBIKfg1PXdrJaiVw+OZzSfLqXtxkHcZIuXSDY9kXj19GX2dDyO7L4jANkZHA+VcrqPo7K1kjbTFfxtk6jL0UtnJqbMYWQjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g5tFn+ZA; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac339f53df9so600660866b.1;
-        Sun, 06 Apr 2025 09:03:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743955386; x=1744560186; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Gg4zdNGw4akh+G3YWEPNIUcWbldggC7anYYxwmPl2A=;
-        b=g5tFn+ZAH2eJeblE/MDuq/66BSoRwC/Yew6Ek2VRuYmTkNHMFzfJq8q02tFFHymSYi
-         HN5L1ZtCCxbEJboESkws+4kl4QC0V8NFH0DTk9d/nV1W5Wia1uB5rBqJSuEKCU16OSEB
-         cTa31A4bqEAzc+1cUgmKULWpDkqogFsE0iIcjMp9kLoHvriuR1CBPZ2BRPkcASlT5yFs
-         j+wKxTeKtvFXev2Ipxil8eh989CBQmETqJArwUT3RzNUfV/uoFWybCNsD7h6KwHNAXBk
-         KxF8Rm/q02ro9I4OjI94lbqMSHnAQyD6NV4Zfs0dSgrygNj5GFtezwe1G5Ec8/dcuwL3
-         buhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743955386; x=1744560186;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2Gg4zdNGw4akh+G3YWEPNIUcWbldggC7anYYxwmPl2A=;
-        b=LyVO/BjtB4TsVbFhY/bwxd2WuvK/hC5ZeY42j4JOFH9NrQ3aF+ERPoih8AQWUs/ujd
-         SBaxfP6pVBCVdW3ZwPA6QIKuQNrR7bwHwn1zJv+tb++rnNuxUBPiqfEWHbfgbHKI8S61
-         BI+c4B9wMUJR7C698jICoyrwpAWwCMuBW9SzOwTEfMvu1mQSskMA66UCIMZHFRLlH8R5
-         fwkcvMbJsxpqJqBYGmyXeYZh+AsJ8i8+3drvrwyuCUbTsYexviDKmkk3JB/UZj2stpG/
-         hZCkzqn7be7wvzKYZAwumm6xrMv+hn7HtEvt+3JWQdNJQjWLFOM4K5QDC6dObkHShU83
-         cU8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUJwwmYWk5xcvEW90ahW7VXKZB/XyQmd2NnkqDu8BUeRLT6GmI3J3+Ca4shDKgVzA8KgIk1fwZjuhaJoN0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygNAH+/16rb+hCKkXa1ntYROSSDFfNxCjGstUCPOCh7ze0sdYl
-	0r+XHKv6jEUkJdFnwPwU/yeINAnOVa2ycL8PtFF1rjLo0Tlf8+LOJqBlXHalAiY=
-X-Gm-Gg: ASbGncuYPbDo8XHz7itQ58QIViYrhjdW0aR8BwkJioNfdkLVYa4Ep1fUhZULEK7kXh0
-	tzcYnB5gxATF6gYAMvO7XNM1RZlW+pylb8PgdTjexiU5WhkAIJeBcxw3sS1lg14UdbPYTbWtoGw
-	LLJZK0IjM2oYkjc3noQErr5AC42tenw8bpN8rk/L0biSXiJeZ6H9UAgLpsZfLsylezoP0bkJ7U5
-	7W2Xey1AF6rb1Z4gAmHydKLgzZFBRslRSgxFJN3WSy/w/NZC7WsHDw4B7szJgAFTVwPE3jL44qt
-	lCTzl42ZBqsUSD+idYRjclhU7e8O2N6oRaqrvDGubMU/boxw6btB6g==
-X-Google-Smtp-Source: AGHT+IEn/yrvpZmrdrTvvbNeg/z624E6vdfCD/lwZ+eQTne5AKLKEg5mLv2yQzmDzgzjQiEcMmFoPQ==
-X-Received: by 2002:a17:907:7206:b0:ac6:b729:9285 with SMTP id a640c23a62f3a-ac7d1b9faebmr1022796766b.55.1743955385521;
-        Sun, 06 Apr 2025 09:03:05 -0700 (PDT)
-Received: from localhost.localdomain ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7c0185118sm594963066b.134.2025.04.06.09.03.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Apr 2025 09:03:05 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-raid@vger.kernel.org,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yu Kuai <yukuai3@huawei.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH REPOST] lib/raid6: Remove always defined CONFIG_AS_AVX512
-Date: Sun,  6 Apr 2025 18:02:01 +0200
-Message-ID: <20250406160247.17750-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.42.0
+	s=arc-20240116; t=1743955319; c=relaxed/simple;
+	bh=epkxkpMMAJLwiKLDABamciX6DYXq4ADL9brMG4mxfZM=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=cuzLvNiIe1dUE7CANd4YIP1CrveBIgqVFLb0HRwBCFwCWTYTgneD/Pi02akt7qpzF8jTOVJeXwhlIlUd2GGGTYTHMSdKTR2ErfLOBw+wozXsPwvyUk1UhwyMJfsrluDkUUzCewPTiKoJwvbdFiNF8By2hL9kf3JfIUxlPdTJBR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hCueDb35; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33DE3C4CEE3;
+	Sun,  6 Apr 2025 16:01:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743955318;
+	bh=epkxkpMMAJLwiKLDABamciX6DYXq4ADL9brMG4mxfZM=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=hCueDb35aIbOpizN6hzQm5kVvRHUUiKVrJMWgpeOWl7WvfinWXWU0N3v0ydDVqjT8
+	 85tVQPEgG941s1KkkIxeJVgGZ3DzSH75BpzuNaCCgU45wr5q8ca9bukR0ICByYr9YF
+	 WW0TWxgwIeHnbnkboUXHpDxe4nCxEpdQgldDZWMskw7fwenTMYU8krLj+YzS7h6Mzx
+	 K8PaZO4b5dCfBCASfkMa1fGNsZ/+jD0wmAPRpAO+xwbyXTN25100irmAPfZioQX33B
+	 0MDCVKEzyZf8wIrcNk1yHWeF4zTOXp2QZrzFagNhF5jkn+UD2CfBhL9rvmJA40Ebat
+	 aGSB/EPrWFI4g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE1FC380AAF5;
+	Sun,  6 Apr 2025 16:02:36 +0000 (UTC)
+Subject: Re: [GIT pull] timers/urgent for 6.15-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <174393522830.2343710.9366104924015273132.tglx@xen13>
+References: <174393522830.2343710.9366104924015273132.tglx@xen13>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <174393522830.2343710.9366104924015273132.tglx@xen13>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-2025-04-06
+X-PR-Tracked-Commit-Id: 324a2219ba38b00ab0e53bd535782771ba9614b2
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a91c49517de3445bc438d29a5bb481338817791e
+Message-Id: <174395535529.3904920.9453298021971361619.pr-tracker-bot@kernel.org>
+Date: Sun, 06 Apr 2025 16:02:35 +0000
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, x86@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Current minimum required version of binutils is 2.25,
-which supports AVX-512 instruction mnemonics.
+The pull request you sent on Sun,  6 Apr 2025 12:27:24 +0200 (CEST):
 
-Remove CONFIG_AS_AVX512 which is always defined.
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-2025-04-06
 
-No functional change intended.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a91c49517de3445bc438d29a5bb481338817791e
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Song Liu <song@kernel.org>
-Cc: Yu Kuai <yukuai3@huawei.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
-Reposted: To include software raid and x86 people.
----
- lib/raid6/algos.c        | 6 ------
- lib/raid6/avx512.c       | 4 ----
- lib/raid6/recov_avx512.c | 6 ------
- lib/raid6/test/Makefile  | 3 ---
- 4 files changed, 19 deletions(-)
+Thank you!
 
-diff --git a/lib/raid6/algos.c b/lib/raid6/algos.c
-index cd2e88ee1f14..dfd3f800ac9b 100644
---- a/lib/raid6/algos.c
-+++ b/lib/raid6/algos.c
-@@ -28,10 +28,8 @@ EXPORT_SYMBOL_GPL(raid6_call);
- 
- const struct raid6_calls * const raid6_algos[] = {
- #if defined(__i386__) && !defined(__arch_um__)
--#ifdef CONFIG_AS_AVX512
- 	&raid6_avx512x2,
- 	&raid6_avx512x1,
--#endif
- 	&raid6_avx2x2,
- 	&raid6_avx2x1,
- 	&raid6_sse2x2,
-@@ -42,11 +40,9 @@ const struct raid6_calls * const raid6_algos[] = {
- 	&raid6_mmxx1,
- #endif
- #if defined(__x86_64__) && !defined(__arch_um__)
--#ifdef CONFIG_AS_AVX512
- 	&raid6_avx512x4,
- 	&raid6_avx512x2,
- 	&raid6_avx512x1,
--#endif
- 	&raid6_avx2x4,
- 	&raid6_avx2x2,
- 	&raid6_avx2x1,
-@@ -96,9 +92,7 @@ EXPORT_SYMBOL_GPL(raid6_datap_recov);
- 
- const struct raid6_recov_calls *const raid6_recov_algos[] = {
- #ifdef CONFIG_X86
--#ifdef CONFIG_AS_AVX512
- 	&raid6_recov_avx512,
--#endif
- 	&raid6_recov_avx2,
- 	&raid6_recov_ssse3,
- #endif
-diff --git a/lib/raid6/avx512.c b/lib/raid6/avx512.c
-index 9c3e822e1adf..009bd0adeebf 100644
---- a/lib/raid6/avx512.c
-+++ b/lib/raid6/avx512.c
-@@ -17,8 +17,6 @@
-  *
-  */
- 
--#ifdef CONFIG_AS_AVX512
--
- #include <linux/raid/pq.h>
- #include "x86.h"
- 
-@@ -560,5 +558,3 @@ const struct raid6_calls raid6_avx512x4 = {
- 	.priority = 2		/* Prefer AVX512 over priority 1 (SSE2 and others) */
- };
- #endif
--
--#endif /* CONFIG_AS_AVX512 */
-diff --git a/lib/raid6/recov_avx512.c b/lib/raid6/recov_avx512.c
-index fd9e15bf3f30..310c715db313 100644
---- a/lib/raid6/recov_avx512.c
-+++ b/lib/raid6/recov_avx512.c
-@@ -6,8 +6,6 @@
-  * Author: Megha Dey <megha.dey@linux.intel.com>
-  */
- 
--#ifdef CONFIG_AS_AVX512
--
- #include <linux/raid/pq.h>
- #include "x86.h"
- 
-@@ -377,7 +375,3 @@ const struct raid6_recov_calls raid6_recov_avx512 = {
- #endif
- 	.priority = 3,
- };
--
--#else
--#warning "your version of binutils lacks AVX512 support"
--#endif
-diff --git a/lib/raid6/test/Makefile b/lib/raid6/test/Makefile
-index 2abe0076a636..8f2dd2210ba8 100644
---- a/lib/raid6/test/Makefile
-+++ b/lib/raid6/test/Makefile
-@@ -54,9 +54,6 @@ endif
- ifeq ($(IS_X86),yes)
-         OBJS   += mmx.o sse1.o sse2.o avx2.o recov_ssse3.o recov_avx2.o avx512.o recov_avx512.o
-         CFLAGS += -DCONFIG_X86
--        CFLAGS += $(shell echo "vpmovm2b %k1, %zmm5" |          \
--                    gcc -c -x assembler - >/dev/null 2>&1 &&    \
--                    rm ./-.o && echo -DCONFIG_AS_AVX512=1)
- else ifeq ($(HAS_NEON),yes)
-         OBJS   += neon.o neon1.o neon2.o neon4.o neon8.o recov_neon.o recov_neon_inner.o
-         CFLAGS += -DCONFIG_KERNEL_MODE_NEON=1
 -- 
-2.42.0
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
