@@ -1,146 +1,174 @@
-Return-Path: <linux-kernel+bounces-590181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18E94A7CFE7
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 21:14:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D56CA7CFC2
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 20:42:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83C9916B3EC
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 19:14:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39DC6167CDE
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 18:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E9F1A315F;
-	Sun,  6 Apr 2025 19:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34870191461;
+	Sun,  6 Apr 2025 18:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="SIgatG//"
-Received: from toucan.tulip.relay.mailchannels.net (toucan.tulip.relay.mailchannels.net [23.83.218.254])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kcp+bOoR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uhtDH5k9"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04C2190692;
-	Sun,  6 Apr 2025 19:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.254
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743966849; cv=pass; b=dAm4kMB9Pu6JfhALQ0VKpalVUC2T6hAUVEOmIZOMUsSOUOru6SS+1DFl0MNtEt6tZn2BuFccMPA5cp1oBHIcmFOaXsi/AyR1ZucJQkkTjPY2rG0CVh45cVIMFjVunDaWHLBu3MAkygnn5gI/HZmwdjEqo0pYMzwcvU08v2NM45o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743966849; c=relaxed/simple;
-	bh=Y2GbXLOwe5a/rqQp/6gOCQwxx+OAJlbXTpNlktEBJHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QTh3phIg1A6hhxiBRkIKlU/eqk8XN1MNxQcI8M3YfqLhkCw//ZUJ8RKs9/+8kj0AtleJodZrRcdrQARBOj04DDmUs+2eyyG+zsZEZQQQOX9SVMyF0bcp6X4C13DBZmyGJrBlNHiWKdDZT1PSDs7zEbpp5zXrr/vjpVpM1bU7zfQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=SIgatG//; arc=pass smtp.client-ip=23.83.218.254
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 0BCC74E4835;
-	Sun,  6 Apr 2025 18:38:09 +0000 (UTC)
-Received: from pdx1-sub0-mail-a217.dreamhost.com (trex-6.trex.outbound.svc.cluster.local [100.102.53.226])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 7AF6A4E2EF0;
-	Sun,  6 Apr 2025 18:38:08 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1743964688; a=rsa-sha256;
-	cv=none;
-	b=Jk1xitNFDhVgluAjw9ZFa7KfE/Q1jedhlCB/K2VXp6lBfqm3dBnMb1kUEkJi6Gdt13OWnm
-	ewMBg9Qd2lWvfu48noEwKacqbyFFaoadIbQhTQvuvmnu/xhcNHN4kHwydEi5luaZ1wem5Q
-	5wscbzxEKkFEao0QPf2XV+HFrL77nrT3msoCgnRb1a0/09b9aJR5LPvrB2VhFoodE5I8KA
-	YocCW77bYJaSL9ndoU+pGhLJPYPz4in/756OpJI1KB0OekimCtmyD8H2XbE2E6v9GmI36q
-	IeK3KrbwsQtWIQw7KAgkluquM245BJZLP17+A/XgBJ3+ZLkeRFqkWo7G5N06XA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1743964688;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=ORCy7vWxAqIbjJeErXKRRHh0IsWN6J/Vj6qq04Os5xo=;
-	b=7U7/2JRciV9iEu8iNHe3oKWAssCkYHKHyt+/mOGQojcZBUxY2KXy/GqYinQGkmh1WmgkKT
-	yL7cQMDAdxbnKixaalcrnW1/zVjeD99fZSPisHQlt25PLGMLwmysyQJS0In0gtwmsj2sVy
-	Vc0nGs+hUriGJoO6eQubby16Ua+L0Wi/JDTmSK2PCoKy2bGJsw3s7ZM8Uvuot/xUL3uXuT
-	DxrNXxh9OgZCQGbLcWbGZbAHv0OYZrsDQ3qBN14pnd8GNWcfb368L7YTmuSGMkglBFu18T
-	3giuQxnZssJYmykoX1J/UoejXLugqIQvFag8xCufZzaTCjn7tw6Yx1Rn9B6SlA==
-ARC-Authentication-Results: i=1;
-	rspamd-7dd6dcd7db-2wrq9;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Desert-Attack: 31d28f8211fe24be_1743964688791_3570648381
-X-MC-Loop-Signature: 1743964688791:2003078220
-X-MC-Ingress-Time: 1743964688791
-Received: from pdx1-sub0-mail-a217.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.102.53.226 (trex/7.0.3);
-	Sun, 06 Apr 2025 18:38:08 +0000
-Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a217.dreamhost.com (Postfix) with ESMTPSA id 4ZW1LR6F9nz8t;
-	Sun,  6 Apr 2025 11:38:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1743964688;
-	bh=ORCy7vWxAqIbjJeErXKRRHh0IsWN6J/Vj6qq04Os5xo=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=SIgatG//bcSoHEk4WuW+ZcZJlyK6jNd18V7y8uNPcmLMpR1qufWDWYHg17YfJHSS+
-	 oUGEDYwAQZK+hvdCcfJy92ewjl+rxaBUKZrY6bjKBYT7vujvhGdRayEOL5NI3sstRK
-	 3FBXORtlh9SqesyHIaZJ9e72jM36N2Qbe/UO66F4RRBe6VlcoAE+730X8IlekdUaKe
-	 v6Mj5LCf6+XWP5KYQKH46GdwLv9keil0aTTQSJZUhvjwkuaijhZiTkQDT0LQoEwc7P
-	 o9zvrT+X7n0T6MdJXS8YIch+twsmWyojOYojR8To4v7EsSAYbyDMe8hbTGbyXHV/yr
-	 qFAghiLHTqj5g==
-Date: Sun, 6 Apr 2025 11:38:04 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Gregory Price <gourry@gourry.net>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com, dan.j.williams@intel.com,
-	vishal.l.verma@intel.com, dave.jiang@intel.com,
-	jonathan.cameron@huawei.com, alison.schofield@intel.com,
-	ira.weiny@intel.com
-Subject: Re: [PATCH v2] cxl: core/region - ignore interleave granularity when
- ways=1
-Message-ID: <20250406183804.wvrnuahoszefhgj5@offworld>
-References: <20250402232552.999634-1-gourry@gourry.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B672E62C;
+	Sun,  6 Apr 2025 18:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743964946; cv=none; b=EZiaFQedTNWqpk4EvDDfInWrHMCW/b73DBlHzJDgyRLIWMZQBDmFJAKlWYfWJSiN3BJoIYfIxJtOEZVLhquai/EAKw84d2eDCBRLLUvvQaBuU3OdTQBztSzvGU8bsacPv5gdxiPDYcii0ZRvnRYloSPf3lmVgU2FF5Xuq72C670=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743964946; c=relaxed/simple;
+	bh=z7IyGIugvU25wFZxIBRUUQmzKyoNvqA3uTExL14tq/Q=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=PVebdhILyKzP0RK6cZFFnnlOYt24gMoFRI5qBk/rM0fGfLuxDTlklaCPyosBJajnmC3W4Pdyg7x/4ZFhegAg0oN+WkSDsX3r1f7MpGLWOmJMWrxWAUNX4OMGNBpF1j1PhLQx6Y2QELXq3SmhpziGJ0rtsi23XjkOh0j8B6k1l5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kcp+bOoR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uhtDH5k9; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 06 Apr 2025 18:42:22 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1743964943;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dmj+zo6C3P/pSg/s1RkYC7RWN47ojlSz5x1oHCbh38s=;
+	b=kcp+bOoRh1/W1Eg1W3Qf/Nv2mI0opUBOrg7J7S3/VjqSnK6kEvxQdzjRz8IaWMe9DhFnnR
+	tyZg3OEiTtoQixTE8gZp2r2uLvHZSrx6jdANDMLt9ZiPjvyZ6vxedTAuD41kruyZ9abMcE
+	GOhDT2oJbtewaeFvH3prZc3B+vPd6zS7u6b+N+9uOketNzj06/peW7D3U5OoBcxsjbf1aj
+	643D7qgR02V+NTHJIhsmTLvgXmQIWMEXsrb3GnwfiZERPqrG+byhVT85nvaraVxEairy50
+	z4orXIckL7ild6mKIHKLQSiP+RmsjmsA3ld1ZTxfyBQnIC1c3lWXojnYhxPZOQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1743964943;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dmj+zo6C3P/pSg/s1RkYC7RWN47ojlSz5x1oHCbh38s=;
+	b=uhtDH5k9RSF+A2+oeAMD0xlNQrUBl94qDXkqNWQdnRvlDLrs8mcYtGOdAzFASsgjDsAUmu
+	eX/LCRyUzFfjxGBw==
+From: "tip-bot2 for Gabriel Shahrouzi" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/urgent] perf/core: Fix WARN_ON(!ctx) in __free_event() for
+ partial init
+Cc: syzbot+ff3aa851d46ab82953a3@syzkaller.appspotmail.com,
+ Gabriel Shahrouzi <gshahrouzi@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ravi Bangoria <ravi.bangoria@amd.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Oleg Nesterov <oleg@redhat.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250405203036.582721-1-gshahrouzi@gmail.com>
+References: <20250405203036.582721-1-gshahrouzi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250402232552.999634-1-gourry@gourry.net>
-User-Agent: NeoMutt/20220429
+Message-ID: <174396494203.31282.1919457781258540750.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, 02 Apr 2025, Gregory Price wrote:
+The following commit has been merged into the perf/urgent branch of tip:
 
->When validating decoder IW/IG when setting up regions, the granularity
->is irrelevant when iw=1 - all accesses will always route to the only
->target anyway - so all ig values are "correct". Loosen the requirement
->that `ig = (parent_iw * parent_ig)` when iw=1.
->
->On some Zen5 platforms, the platform BIOS specifies a 256-byte
->interleave granularity window for host bridges when there is only
->one target downstream.  This leads to Linux rejecting the configuration
->of a region with a x2 root with two x1 hostbridges.
->
->Decoder Programming:
->   root - iw:2 ig:256
->   hb1  - iw:1 ig:256  (Linux expects 512)
->   hb2  - iw:1 ig:256  (Linux expects 512)
->   ep1  - iw:2 ig:256
->   ep2  - iw:2 ig:256
->
->This change allows all decoders downstream of a passthrough decoder to
->also be configured as passthrough (iw:1 ig:X), but still disallows
->downstream decoders from applying subsequent interleaves.
->
->e.g. in the above example if there was another decoder south of hb1
->attempting to interleave 2 endpoints - Linux would enforce hb1.ig=512
->because the southern decoder would have iw:2 and require ig=pig*piw.
->
->Signed-off-by: Gregory Price <gourry@gourry.net>
->Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+Commit-ID:     0ba3a4ab76fd3367b9cb680cad70182c896c795c
+Gitweb:        https://git.kernel.org/tip/0ba3a4ab76fd3367b9cb680cad70182c896c795c
+Author:        Gabriel Shahrouzi <gshahrouzi@gmail.com>
+AuthorDate:    Sat, 05 Apr 2025 16:30:36 -04:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Sun, 06 Apr 2025 20:30:28 +02:00
 
-Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+perf/core: Fix WARN_ON(!ctx) in __free_event() for partial init
+
+Move the get_ctx(child_ctx) call and the child_event->ctx assignment to
+occur immediately after the child event is allocated. Ensure that
+child_event->ctx is non-NULL before any subsequent error path within
+inherit_event calls free_event(), satisfying the assumptions of the
+cleanup code.
+
+Details:
+
+There's no clear Fixes tag, because this bug is a side-effect of
+multiple interacting commits over time (up to 15 years old), not
+a single regression.
+
+The code initially incremented refcount then assigned context
+immediately after the child_event was created. Later, an early
+validity check for child_event was added before the
+refcount/assignment. Even later, a WARN_ON_ONCE() cleanup check was
+added, assuming event->ctx is valid if the pmu_ctx is valid.
+The problem is that the WARN_ON_ONCE() could trigger after the initial
+check passed but before child_event->ctx was assigned, violating its
+precondition. The solution is to assign child_event->ctx right after
+its initial validation. This ensures the context exists for any
+subsequent checks or cleanup routines, resolving the WARN_ON_ONCE().
+
+To resolve it, defer the refcount update and child_event->ctx assignment
+directly after child_event->pmu_ctx is set but before checking if the
+parent event is orphaned. The cleanup routine depends on
+event->pmu_ctx being non-NULL before it verifies event->ctx is
+non-NULL. This also maintains the author's original intent of passing
+in child_ctx to find_get_pmu_context before its refcount/assignment.
+
+[ mingo: Expanded the changelog from another email by Gabriel Shahrouzi. ]
+
+Reported-by: syzbot+ff3aa851d46ab82953a3@syzkaller.appspotmail.com
+Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Link: https://lore.kernel.org/r/20250405203036.582721-1-gshahrouzi@gmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=ff3aa851d46ab82953a3
+---
+ kernel/events/core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 128db74..9af9726 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -14016,6 +14016,9 @@ inherit_event(struct perf_event *parent_event,
+ 	if (IS_ERR(child_event))
+ 		return child_event;
+ 
++	get_ctx(child_ctx);
++	child_event->ctx = child_ctx;
++
+ 	pmu_ctx = find_get_pmu_context(child_event->pmu, child_ctx, child_event);
+ 	if (IS_ERR(pmu_ctx)) {
+ 		free_event(child_event);
+@@ -14037,8 +14040,6 @@ inherit_event(struct perf_event *parent_event,
+ 		return NULL;
+ 	}
+ 
+-	get_ctx(child_ctx);
+-
+ 	/*
+ 	 * Make the child state follow the state of the parent event,
+ 	 * not its attr.disabled bit.  We hold the parent's mutex,
+@@ -14059,7 +14060,6 @@ inherit_event(struct perf_event *parent_event,
+ 		local64_set(&hwc->period_left, sample_period);
+ 	}
+ 
+-	child_event->ctx = child_ctx;
+ 	child_event->overflow_handler = parent_event->overflow_handler;
+ 	child_event->overflow_handler_context
+ 		= parent_event->overflow_handler_context;
 
