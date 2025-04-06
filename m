@@ -1,141 +1,132 @@
-Return-Path: <linux-kernel+bounces-590101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD42A7CED8
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 18:00:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E155A7CEE4
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 18:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 347E67A454D
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 15:59:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EC1916B7E6
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 16:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7096A2206A2;
-	Sun,  6 Apr 2025 16:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A522206A3;
+	Sun,  6 Apr 2025 16:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aFOKNqiB"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KT3JByzV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAAA14A82;
-	Sun,  6 Apr 2025 16:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C41F1A83F4;
+	Sun,  6 Apr 2025 16:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743955242; cv=none; b=g2tIpV1aOJ2g2oO9j3QireDrlijAQtQCRMGIqfuFYb/Z/GS9UedcPYjUcuJifp7SHrxaoEANSmuz/92preqTNQkYTej0ZNGJwtaxBIsFXW6Wncm2T6g8n/wYJVvLtPc+fnLDUmeUapuHQg2gPvFOBLvmcq66ChMKlQTD8LcUcp0=
+	t=1743955594; cv=none; b=g4drXTOugBUBHlYXvrPbqP0k+1ZjehPMDJ6WuMR9U835NGUh48t+3+/rmQOvDOH7OS5thhmGwqrZJW0dGboeLNlApA0+Tbg+I7OhN0g/cQKIPTgFBCik5Brihhqsn9oiiIAFFG/HqU4PV9z9j8bIHU6FZ1Oc8etZlQ1UtS7gbUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743955242; c=relaxed/simple;
-	bh=RO3Fva6C5rubffpqvk0iOcGbSHQiQfjf9ScrJ5YVv1A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ft7b3AHlyc8PugGqrPbIE3Ij21IB3PRGTJWQysu5Cg8UrF0VxuEvAhqf+v+6ATHqfQOzFPsASt61AsDl6t0HGu37Pl3CSxtnqrj1NPNIYs4d8qUCLJ1PUeq+5w0cI8KZcgWsh9/jFn09hyJamP3ly99yaKHcxO7qegnncZXeuck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aFOKNqiB; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30de488cf81so38340871fa.1;
-        Sun, 06 Apr 2025 09:00:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743955239; x=1744560039; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Rg1IZxVIsoxxnX9zNo6u1mHR3g+eGTUaEGGW7uVyRVc=;
-        b=aFOKNqiBBFUMVs5S8O3/uRNXeK+3fxLiKPsNW114obbAOe5BQUD8drZclPGYfFaprV
-         aJTvB+HT54Nwhn6JLxRQK9PpZvTB/AvdaSRudCWBOTcTPqr/k1QJB9zY8bQ+8KwgH2OH
-         K49e9Chls0Zie65pB1eTfL2fVQaUakYdmoohvjznoj3aU99W4Iw1btQcXGky02BWwnc/
-         5AaSr5r9lnfkoLknLl0GS0lJqucpQ48Fo5Tq/uzzyaF6MLkm0LF/7qEw8KBnv2APZ3p7
-         tCOJn6wh8dRReyrznVSMqIwjhKB1f5nnhmVUAJe4VZQqxPdUE0/oC26h5TNE675y4biN
-         m0gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743955239; x=1744560039;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rg1IZxVIsoxxnX9zNo6u1mHR3g+eGTUaEGGW7uVyRVc=;
-        b=rk6roMxGajBM4UDpe1s3VP3gpAdpzDh3fiaO1RPpnQ6nzhisHY9lzvwasIy0yXnj03
-         LK299R4OHyaGzW5DoUZUySmynt8voSqeJy0X4Tpz0GQngKnmZWcqkrYCOHucKjWZxXJr
-         0YndCZ1twtw/uXTcyHJm+ECPlJJBOTvU40avkhJ5WerQE7kqPxVenbK5MZJo6zXfGzS0
-         NqmRlL6WMJA/cnJqDesTukxC82uO8CtBQ/tFC2QxYZzmXxg4OewYs8b5dUpaCKDoAoa2
-         5Cw/7+9lVb1Nr0jMYYmLnH3SC41BtBcr2Nyby+Vz8spHclxgw9ddzyBXuHlqIoRQ/pFi
-         w3pg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9Tvag/cCqPNC48bZTY2XQbBKKu+tOfSRfTNWo88e2Q/AQHDCq95fcwARWmfI+qaXGS+vqOv2/Oh8=@vger.kernel.org, AJvYcCWCMVbmgN2UL3CafTFF0lu1v0QvQOZ8POssuRYpBfoYsln8UdtHLmnikqTJ/rk2qkMRIxCOyD4oro98BVc7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd0TyDyhF30FWUN7PPWO8OSYmRmAPT8TrFKY/aBYbP0IFS526O
-	nRcl/LOafqxxoDYLwsE3NYdCojGVY668LW9/mDliCcpfO+F89MtEMNTNaw==
-X-Gm-Gg: ASbGncuUtJ7lT5Q0VrIF8/WwATTDHE8jjkXDDEXKgWb9GNh4BkcH8U9+Ocz0dLPm90+
-	TID9Ht2/b8o2PL6XGF32oFb4debYheoG/ybmeyCPm/KvqHfyjlkn2SqqMuXoejKf3c+3jwUVzGN
-	6ftuKVJGfajTfZFgmJqHtSC/QYcwNOkZ82wAmT1H2mwPw9WhBWUIAvRQwD9t7/fJDaJ0+dRvcaW
-	XlK555UhZdMuirj0TDfSX7/P/IBtEKvXJhaVloFqz8+qoIJIlfluD4RhopwruSn5pjyygm6glJI
-	UPvYz18fa0QGFRqfzA/FAuCA0pKLXZ9SpqCBYsmAvAdsr0w/J9jXYANlmp5SmLyLOsEdhIa0362
-	af3vZIomyGLnvy0E=
-X-Google-Smtp-Source: AGHT+IHrgPYsO2t8vEWRf3ilswM+YWn+p5xb3JdNzhhTXrZUQ15d1Bb8vbY3ATHDqfRflmvR1P6QTg==
-X-Received: by 2002:a05:651c:1593:b0:30b:d4a9:947c with SMTP id 38308e7fff4ca-30f16527185mr12655981fa.24.1743955238864;
-        Sun, 06 Apr 2025 09:00:38 -0700 (PDT)
-Received: from [10.0.0.42] (host-185-69-73-15.kaisa-laajakaista.fi. [185.69.73.15])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30f0313f3e2sm12956961fa.26.2025.04.06.09.00.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Apr 2025 09:00:38 -0700 (PDT)
-Message-ID: <033fe56b-3f07-4fa7-98a1-84ad53034ace@gmail.com>
-Date: Sun, 6 Apr 2025 19:08:01 +0300
+	s=arc-20240116; t=1743955594; c=relaxed/simple;
+	bh=oQ26qde6ixYxXx347KOehu15WvUe7xl0OBqh03H0CuM=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=QGUu2ltECRTm3ZH2XwZHWCDmzMVQoGFty5AhW2CoZuPs9jj9DhqJlQrdW0sbKtXxo34H3xJrc4szvJGEw6bHcRVs+r2fXIP0wAAMDM97/w3GjDg5X/NxOQrIQBB/3LUePKjxhE3NYEqUiDhjhsiLlik5YuY1jjwWl31xCM6Ly3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KT3JByzV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F08A6C4CEE3;
+	Sun,  6 Apr 2025 16:06:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743955593;
+	bh=oQ26qde6ixYxXx347KOehu15WvUe7xl0OBqh03H0CuM=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=KT3JByzVrfnd/HKtRsbxF3lYmhRFPV0pYx9ew6AbH1AKkj8MzG8ZrBeaknyGo/pRm
+	 vyWxR73xTLb1foI6oAsUO1Gb9x3bZvA7RT9oZQ2MOpn/XihfF8xIZznq709C1X2o+8
+	 sbkggu07HIXEs16DlIcMOpwgVXtJLC7AghIs61aes2RCT09VOkea8VNVgVKaM+PzSN
+	 An/wfSq3jJ4bcLYKYP1AUXPm4vvSEp++i7PTESX1pJL9hd+YBFCIhs0TPgTeqHuE9C
+	 kGTknqI6qpXXinvX7rqzNDGA9aoM8eQAEVAqWidtjd5vLv97hdSjtDVjOLHde4PBy+
+	 JteIXwKXoLPdw==
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfauth.phl.internal (Postfix) with ESMTP id DE6331200043;
+	Sun,  6 Apr 2025 12:06:31 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-12.internal (MEProxy); Sun, 06 Apr 2025 12:06:31 -0400
+X-ME-Sender: <xms:h6byZ_8V_jshdt2YJrhC3CaNk28wlA6o2CKOVO0v_ohRaRe5gw45-g>
+    <xme:h6byZ7uT_IOPFzrl_G2s3vHKxArB0Xh53dxo5iWTUYY5NdnDaZd-CypgciOtG5i0O
+    k_lcoy_-odhxMO5VWw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduleejjeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnh
+    gvlhdrohhrgheqnecuggftrfgrthhtvghrnhepjeejffetteefteekieejudeguedvgfef
+    feeitdduieekgeegfeekhfduhfelhfevnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomheprghrnhguodhmvghsmhhtphgruhhthhhpvghrshhonhgr
+    lhhithihqdduvdekhedujedtvdegqddvkeejtddtvdeigedqrghrnhgupeepkhgvrhhnvg
+    hlrdhorhhgsegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhht
+    phhouhhtpdhrtghpthhtohepnhhitgholhgrshesfhhjrghslhgvrdgvuhdprhgtphhtth
+    hopehmrghsrghhihhrohihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnrghthhgr
+    nheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgvfhhfrdhjohhhnhhsohhnsehosh
+    hsrdhquhgrlhgtohhmmhdrtghomhdprhgtphhtthhopehlihhnuhigsehrohgvtghkqdhu
+    shdrnhgvthdprhgtphhtthhopehlihhnuhigqdhksghuihhlugesvhhgvghrrdhkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghr
+    nhgvlhdrohhrgh
+X-ME-Proxy: <xmx:h6byZ9BACXFPPwHpY9i3LafZbGK_q3ekLSBUym5DUFtYCfw400QeDg>
+    <xmx:h6byZ7fkztXycyhQvUBULJNyPYqY4uV-Faf7XDsajtBSw8JQ-EZ28Q>
+    <xmx:h6byZ0OQi7GU18gD3OlwxazQbL4Hw6c7TIwROBV5y0tbfp3EeOriag>
+    <xmx:h6byZ9k6s5QNzzmnWmaU7Eji4gZldQ1Qc1FCQ6FlfXizQqME7FF0rQ>
+    <xmx:h6byZ-uV2DdUhblSt21oqlYRMvmz0zmAlDBU6CfVXaimSdIrItVblaVL>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id ACDFB2220075; Sun,  6 Apr 2025 12:06:31 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dmaengine: ti: Do not enable by default during
- compile testing
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+X-ThreadId: Ta79fad8bc959031a
+Date: Sun, 06 Apr 2025 18:06:11 +0200
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "Guenter Roeck" <linux@roeck-us.net>,
+ "Jeff Johnson" <jeff.johnson@oss.qualcomm.com>
+Cc: "Masahiro Yamada" <masahiroy@kernel.org>,
+ "Nathan Chancellor" <nathan@kernel.org>,
+ "Nicolas Schier" <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20250404122114.359087-1-krzysztof.kozlowski@linaro.org>
- <20250404122114.359087-2-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
-In-Reply-To: <20250404122114.359087-2-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-Id: <a30bd547-d0e8-44d2-ac2c-22396ecb9270@app.fastmail.com>
+In-Reply-To: <32b8f7fa-3c48-4f5f-b99b-c1a8cd065442@roeck-us.net>
+References: <20250311-moddesc-error-v1-1-79adedf48d0e@oss.qualcomm.com>
+ <32b8f7fa-3c48-4f5f-b99b-c1a8cd065442@roeck-us.net>
+Subject: Re: [PATCH] script: modpost: require a MODULE_DESCRIPTION()
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
+On Sun, Apr 6, 2025, at 17:59, Guenter Roeck wrote:
+> On Tue, Mar 11, 2025 at 12:49:02PM -0700, Jeff Johnson wrote:
+>> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+>> description is missing"), a module without a MODULE_DESCRIPTION() has
+>> resulted in a warning with make W=1. Since that time, all known
+>> instances of this issue have been fixed. Therefore, now make it an
+>> error if a MODULE_DESCRIPTION() is not present.
+>> 
+>> Signed-off-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+>> ---
+>> did my treewide cleanup for v6.11, Arnd had a few more stragglers that
+>> he was going to fix. I hope that by posting, some of the 0-day bots
+>> will pick it up and hopefully provide some feedback.
+>> 
+>> Note: I'm not really sure if *all* of these have been fixed. After I
+>
+> FWIW, I ran
+>
+> for f in $(find . -name '*.c'); do grep -q MODULE_LICENSE $f && (grep 
+> -q MODULE_DESCRIPTION $f || echo $f); done
+>
+> That reports a large number of files (111, to be exact) with MODULE_LICENSE
+> but not MODULE_DESCRIPTION. I cross-checked a few, and found that many can
+> be built as module. The fall-out from this patch might be interesting.
 
+The ones I sent were only the result of what I found from randconfig
+builds on x86, arm32 and arm64, so I likely missed drivers that are
+specific to other architectures, or that are very unlikely to be
+in loadable modules because of random 'select FOO' Kconfig statements
+leading to them being always built-in in practice.
 
-On 4/4/25 3:21 PM, Krzysztof Kozlowski wrote:
-> Enabling the compile test should not cause automatic enabling of all
-> drivers.
-
-The scope of compile test has changed?
-These drivers will likely not going to be compile tested from now on in
-practice on other that the platforms they are used?
-
-It gave a piece of mind to know that the code compiles on ppc/x86/etc
-also or it is no longer important sanity check?
-
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  drivers/dma/ti/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/dma/ti/Kconfig b/drivers/dma/ti/Kconfig
-> index 2adc2cca10e9..dbf168146d35 100644
-> --- a/drivers/dma/ti/Kconfig
-> +++ b/drivers/dma/ti/Kconfig
-> @@ -17,7 +17,7 @@ config TI_EDMA
->  	select DMA_ENGINE
->  	select DMA_VIRTUAL_CHANNELS
->  	select TI_DMA_CROSSBAR if (ARCH_OMAP || COMPILE_TEST)
-> -	default y
-> +	default ARCH_DAVINCI || ARCH_OMAP || ARCH_KEYSTONE
->  	help
->  	  Enable support for the TI EDMA (Enhanced DMA) controller. This DMA
->  	  engine is found on TI DaVinci, AM33xx, AM43xx, DRA7xx and Keystone 2
-> @@ -29,7 +29,7 @@ config DMA_OMAP
->  	select DMA_ENGINE
->  	select DMA_VIRTUAL_CHANNELS
->  	select TI_DMA_CROSSBAR if (SOC_DRA7XX || COMPILE_TEST)
-> -	default y
-> +	default ARCH_OMAP
->  	help
->  	  Enable support for the TI sDMA (System DMA or DMA4) controller. This
->  	  DMA engine is found on OMAP and DRA7xx parts.
-
--- 
-Péter
-
+        Arnd
 
