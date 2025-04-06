@@ -1,94 +1,56 @@
-Return-Path: <linux-kernel+bounces-590130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E43DEA7CF47
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 19:39:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60BF2A7CF4B
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 19:42:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E43617040B
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 17:39:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BD1C7A442C
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 17:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B04E192580;
-	Sun,  6 Apr 2025 17:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC45619C552;
+	Sun,  6 Apr 2025 17:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D/50PNZP"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aqtFoqMB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4461D15A85E;
-	Sun,  6 Apr 2025 17:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F7B198E9B
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Apr 2025 17:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743961170; cv=none; b=EaAYANBF9zIOWU/yborrcxcg50pSeeYv8mV1ZvVbyyaXWQYbHasZDttr9NvbuUY/KoCcfkS6swyOHbr37fUFIjLPLS3HXv9Cnn3+mcuhjW53lBxojzwzmCxrT4Yyc6QhCeFPukThSXjrHuRJD9k6NOT+BV8W5fScWlA9zTh1ef8=
+	t=1743961316; cv=none; b=UOpqQeL10NiIsnjN0qVT/hoK+yKEwYgWxMmTxFp4xZ0sJWBqV2eMOQcV3B+Zqa1mokzL2uK+7cq4TRzDZKHGqVUjFOV8hIRtJR1VL+QnCOMIDkiUZziIupf2uil2exPZdJC9nyw4bzGeBmJaawHPf4jCRXN7skTbEd8GLhoDEz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743961170; c=relaxed/simple;
-	bh=pSisrNlHCEyGABubq1XV9Bh8BsRHi1pjWlMJ3o6Hrbw=;
+	s=arc-20240116; t=1743961316; c=relaxed/simple;
+	bh=GQJQOcyzkHyEyDoT+1KpK14lt8QAJdaIBs+Grx9wHRM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VnBxHX4J01X2C2evxGN/1qCsNYn59g7l2w0BYJI+qGQESMwOJ9Qz2sjSTiPZyB2FBnEWWP7MH2f0Su5CMafvaEd1AKA2bMy5V9SwPgwnsljSI1f6bDwEPBIdzzCsc31JiQsW+tgdUGQOc9OYw50A3m0KFfFc1TtVombu9LEIAQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D/50PNZP; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2255003f4c6so31713015ad.0;
-        Sun, 06 Apr 2025 10:39:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743961168; x=1744565968; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=STtGZLctY6chK7NNX8djDqnb0wgdBzX+Yk6Hrx5EGn0=;
-        b=D/50PNZPJix7lv+Y6Dua7prANCU/+tDj4NuRhKjmjiDHBktljPG+npH6ALn2sXQ/qJ
-         Y+DoQOGqNmb/qyvt63zWv1U96XaBTMUnIr7XL+P+pPUfIcop4LEU4GBGlf47ylWoM69U
-         x8n1TcCUicCR7CNGv2LvjE/O+BG3rDwQwTl4gwctQImhrJOGrSgNkRFzmyKXfUbyWBhK
-         AUs/EmM46sKYrm6dWnbhF46+dESYqcSAFsowbTrnZbrWWCxp7nXyEn7B1mqn6n2JtNFK
-         W8ELo34+zK+Pb6QT8uBDY2xYS/dm3NsxD5n4Em88G2iN1jtsU3K+X4m5YIIvJGsaAKH4
-         3Etw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743961168; x=1744565968;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=STtGZLctY6chK7NNX8djDqnb0wgdBzX+Yk6Hrx5EGn0=;
-        b=ZfT2xSm1y1vslRja46p59v90B8nNtvWuDll80daxyGYJN4Z6wjEzYUPWf3s+qSfqTZ
-         g9d4ettHeIrLbI15d7y772/rSqGd6Qq3xZPRZhd/KCsEOggMOgGilhqe/Xi8ckcPPK0J
-         Btsyu+DlOWoTUvK8s8xBns8VfQzixrqOx9u74qlJnDNhOYi7EFi9eExX2Tuge5UB3ISf
-         VWrrOJkf/pqjFyqvuSHsbhboPscjJs4JRAdGQotFyOA0fAOj+rOf5Z8zxwFWD6xef2T3
-         fKjAl+j5O53gMfH3OJSkyYnnKctyuWgoH7vMmfEWvjZuJ4Tz/CjKhTGJ2lST+k0mWTYw
-         TEJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhW7eebapp7OjpU8x3Dxn5RRnGiXhbmS54sx7cGo+Yn4qed7Ps0XlE9u818g8wnNG4hiKy91eqb8/xmj5p/dAuVTI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt3MSUpcBTVCH83jpKiiHuJA4/1c2048p+v7mMdL7vbTPQGaih
-	iC1+zEhryaa7kfsV2RE/cCgktfRRqtqs5aLYYkPezP3oh8Si0gmv
-X-Gm-Gg: ASbGnctNqVwb3fjKezzAEDLstik8o48AYJIgi4GXEe3RJ589sx5i/+N4/HrmWjV9raG
-	w19AwbyDLR6VjFQ4/IZ43gg6Ak6jdAlSESZZldxNljH1fJU7RcrSY5iag0sbRQYKKpdtbmKt/2p
-	80cDp55uq6Kf0sRRPtOpRMpbpnQv1xnSSfuFXwWfmtPwq0gfVBDjT1pOwESWvNUiqyq/NTk/vnq
-	fBeO36XEJhXGzJM04Q/K/h4TZ+/7Hl82cNfBONkRq9kympEHri72alfKScyc9btLyvu3bqSvM0p
-	lBUDqm5880T8HaUQFY1KfirTne92gjFg9iJsg+ObNK9jSN++aNa2jXo+NA==
-X-Google-Smtp-Source: AGHT+IGpIwT/IkR8C6qOwpAkCnxQThqD5c0QmECnGDsdK1RYPJOBjOD9m/J0gRWXZet/Hv6n9KjDsg==
-X-Received: by 2002:a17:902:f610:b0:220:fce7:d3a6 with SMTP id d9443c01a7336-22a8a06b429mr131647885ad.23.1743961168513;
-        Sun, 06 Apr 2025 10:39:28 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229785c2791sm65946545ad.80.2025.04.06.10.39.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Apr 2025 10:39:28 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sun, 6 Apr 2025 10:39:27 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vincent Donnefort <vdonnefort@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v6 3/4] tracing: Use vmap_page_range() to map memmap ring
- buffer
-Message-ID: <4f8ece8b-8862-4f7c-8ede-febd28f8a9fe@roeck-us.net>
-References: <20250402144903.993276623@goodmis.org>
- <20250402144953.754618481@goodmis.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kgBBlxsyihRi03AcdVsj2LeqZn0c7ns5QHP/ZGViGNQRZekg4uEgHTOjY/I4PmwSN5hJ9eHxfuV07v309QTA9Va+mjE42n9YiXNyTXxzjzfUwA7LTG/QPNfpU96ctRM8U3u6hLp72Z25T+5IRAUNjRsO1A4PfSA1atZCaOHr3G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aqtFoqMB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE45DC4CEE7;
+	Sun,  6 Apr 2025 17:41:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743961314;
+	bh=GQJQOcyzkHyEyDoT+1KpK14lt8QAJdaIBs+Grx9wHRM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aqtFoqMBTy70cj4DBA77pPwLU9WirYaKswJUtkSkbLkBPGqgv3+Sy6JVb2BTNoR7G
+	 eHE4BGM2/OaS/iWpHgDd337MbfIGAi17tehatsd8BQRJAgKR0FbBfDblibIBF+PK34
+	 BEIcS39+H55gKn7qqBQ3xRb50EEirUFRD1LN04nz3vHYpCcibNJ97Fmz/cWBqufPEk
+	 zj68vP1gFa2aUtJxVJoGL9vJawPSP7tC8uDzPWLhXp9aHtzWlV0LVGgIIinaK/kOL9
+	 offKrEhUSWU6fqrBDf4emyEjkHqAOYDmNMiktCk6VOvUaYISpXBbg4FI8i8KVNX/kX
+	 aVGbKHj/tuRjg==
+Date: Sun, 6 Apr 2025 19:41:50 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juergen Gross <jgross@suse.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>
+Subject: Re: [PATCH v3] objtool: Fix SYSCALL instruction handling and
+ INSN_CONTEXT_SWITCH
+Message-ID: <Z_K83hCo-IgEHvM_@gmail.com>
+References: <9b23e4413873bee38961e628b0c73f6d3a26d494.1743799705.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,29 +59,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250402144953.754618481@goodmis.org>
+In-Reply-To: <9b23e4413873bee38961e628b0c73f6d3a26d494.1743799705.git.jpoimboe@kernel.org>
 
-On Wed, Apr 02, 2025 at 10:49:06AM -0400, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
+
+* Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+
+> The !CONFIG_IA32_EMULATION version of xen_entry_SYSCALL_compat() ends
+> with a SYSCALL instruction.  In Xen, SYSCALL is a hypercall.  Usually
+> that would return, but in this case it's a hypercall to IRET, which
+> doesn't return.
 > 
-> The code to map the physical memory retrieved by memmap currently
-> allocates an array of pages to cover the physical memory and then calls
-> vmap() to map it to a virtual address. Instead of using this temporary
-> array of struct page descriptors, simply use vmap_page_range() that can
-> directly map the contiguous physical memory to a virtual address.
+> Objtool doesn't know that, so it falls through to the next function,
+> triggering a false positive:
 > 
-> Link: https://lore.kernel.org/all/CAHk-=whUOfVucfJRt7E0AH+GV41ELmS4wJqxHDnui6Giddfkzw@mail.gmail.com/
+>   vmlinux.o: warning: objtool: xen_reschedule_interrupt+0x2a: RET before UNTRAIN
 > 
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  kernel/trace/trace.c | 33 ++++++++++++++++-----------------
-...
-> +	area = get_vm_area(size, VM_IOREMAP);
+> Fix that by adding UD2 after the SYSCALL to avoid the undefined behavior
+> and prevent the objtool fallthrough, and teach validate_unret() to stop
+> control flow on the UD2 like validate_branch() already does.
+> 
+> Unfortunately that's not the whole story.  While that works for
+> validate_unret(), it breaks validate_branch() which terminates control
+> flow after the SYSCALL, triggering an unreachable instruction warning on
+> the UD2.
+> 
+> The real problem here is that INSN_CONTEXT_SWITCH is ambiguous.  It can
+> represent both call semantics (SYSCALL, SYSENTER) and return semantics
+> (SYSRET, IRET, RETS, RETU).  Those differ significantly: calls preserve
+> control flow whereas returns terminate it.
+> 
+> validate_branch() uses an arbitrary rule for INSN_CONTEXT_SWITCH that
+> almost works by accident: if in a function, keep going; otherwise stop.
+> It should instead be based on the semantics of the underlying
+> instruction.
+> 
+> INSN_CONTEXT_SWITCH's original purpose was to enable the "unsupported
+> instruction in callable function" warning.  But that warning really has
+> no reason to exist.  It has never found any bugs, and those instructions
+> are only in entry code anyway.  So just get rid of it.
+> 
+> That in turn allows objtool to stop caring about SYSCALL or SYSENTER.
+> Their call semantic means they usually don't affect control flow in the
+> containing function/code, and can just be INSN_OTHER.  The far
+> returns/jumps can also be ignored as those aren't used anywhere.
+> 
+> With SYSCALL and SYSENTER removed, INSN_CONTEXT_SWITCH now has a sane
+> well-defined return semantic.  Rename it to INSN_EXCEPTION_RETURN to
+> better reflect its meaning.
 
-non-MMU builds (xtensa:nommu_kc705_defconfig):
+I think this should be split up into a series of ~3 patches. :-/
 
-kernel/trace/trace.o:(.init.literal+0x250): undefined reference to `get_vm_area'
+Thanks,
 
-Guenter
+	Ingo
 
