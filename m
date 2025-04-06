@@ -1,150 +1,185 @@
-Return-Path: <linux-kernel+bounces-590004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C053A7CDA8
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 13:08:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9A4AA7CDAC
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 13:09:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D49C16F270
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 11:08:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 431EC17433D
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 11:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE85A1A23BB;
-	Sun,  6 Apr 2025 11:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939071C5D47;
+	Sun,  6 Apr 2025 11:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bAvsywBG"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qxrpw9x/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B25EACD;
-	Sun,  6 Apr 2025 11:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF5D1C3BE3;
+	Sun,  6 Apr 2025 11:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743937690; cv=none; b=Y7R+OJzmwc9QgMky4ewi/0cfPT5cwH2mnwsvNKhvkPfaNAf2BCC2x4etnKGEjMQrXyHqqGIho96do72FLQaO/FjRACcHM7hd/XaMGCt5+heTZRxMwsAHZ26it3Xjs6jeeMt8FhWvBtM3p1/fNt47ysP6OTWlbBf5N7t0RUMWIbE=
+	t=1743937715; cv=none; b=kxrEIbtKQpkf0NSNLv9UlnIAyLtuZcNoYmwKaYgXfDWkEuKgcyzTCmNErwNg2Q7vxG8AXNxDbEES9/UfIONquQt0tEDf5uIOJYYbgWbixvXTa5/HX/keV18nhy1IN+f2SpGNu2MCWmOiEZSHkH/sg7Iww2O0F6EhhcH4aVLRnWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743937690; c=relaxed/simple;
-	bh=oUhxAnOMCHsqdz8DNQsypzn7+qug73xuCJrLxNoJ6pw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Ms1zxxndSNttxFQr+lf09vXA49sel/C3sA8LoF24TN260fgBC+kopzmLzOwaV3fRNAk6yiH3Q2phfZeDKfXLAPLat0+UyavlpN9sa0tlvyC5jzxDZntFJxPqLwpbIxiUV5mTEg0HvKO70oiysPp5QsSY6Cck6fAgwW46fye1AcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bAvsywBG; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-736b0c68092so2643097b3a.0;
-        Sun, 06 Apr 2025 04:08:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743937688; x=1744542488; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZT8Yrr5vxwZg9guu+30Mw3AXNH1uiqWJ290W7GyHofo=;
-        b=bAvsywBGRSiLhT40kWIJYL42DJbtaVgF8GgJvSoS7jxIA41gCjhPHmK591ATSbxT9N
-         iBF+S4DvXF1dWT30+BQfUKB+V6GlFZmcTwN0ojtkDBknjNJkNzCAXUmE/flEewLBhtaw
-         epLlB6wmZIvCjN+wwTXJX8r6f6GEiA2R8sr9lMVCVaO1WMADQvhWIxlOdt3Lj+xAgHzP
-         vfvm9t9fiuCvZBKa664cCLNWpqAEdteVD/CS2eeh8sJWRDHN4IRbNkAwzl6BqntTv+yJ
-         QKq5pSj4xTukyJIOZT4LFxVnNDBxzicMxwl6AkUUMdLXnn0rqsCMthdMYvxj/WdFKWjE
-         5dJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743937688; x=1744542488;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZT8Yrr5vxwZg9guu+30Mw3AXNH1uiqWJ290W7GyHofo=;
-        b=UU1LtfYB/TljChcTFaqIMNCjHZj4Vx0kRf3FxmHBxuoaqAb8pMVf8azZaZ+N2Qyb+9
-         PdScbFd3zcW6MC42MSBNI5qB8kTTX9OVfIUnVQrfzEfo2f3Rcj3yArLicJWtPWBxPcES
-         MLL4E6szT5zrFvcjnQFm0P2jxjiKIO0Iv7FtTrU19FBX6hTLnG6FM2CBcDN109FfyNAO
-         XVVciPOSaebZzggN/4aJRJi5G3/4IpOPvJHK4HPGTwdLt25z11csISJOB3MNcQsGP0nF
-         YdbwDX8gnN0Vq25FHRb48RP0rldU2X5oOQWFa6Vd1Q/fXg9LMNMRtYAXBHFw8ONYbbdY
-         BjhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrPkTqTp1I0ou1bYLefIajpGJOCtw/7dZ7COkZSBq7vq9E6ox6g6KlIfRK38rdqRgJjUaloYemhFx0Wkre@vger.kernel.org, AJvYcCWugRpPzhsVYMa0qcoHPuJmiyk1jruqOr00PY9TWpSp5e64KDe3zwt9oRycmXdBuRrjH0fuha3LGD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywsIpUEqmu7q3THrpM4ZBlcBlTYxo9zqQNWnBIJuIheHq0oD89
-	sqF4IsBJlIoBQtgHgZKUGi3HUUeWn0zOyf7TcO3Bck5q3RJujC6P
-X-Gm-Gg: ASbGncsxCpYIhAJsbtulHiumcaFtgmg7rYU2ZJKfyTdsVMFHxvu9nJj93etR5ukNwFb
-	zEsREuR12EzPx2whCn4caj77qTcGgzdqrdZp1sxBalLkoOqXSJgBPHWirUt2yWUVk63HP9f2T2+
-	X8d2FhrU7r13+G1h/LvKa9bfmjFWV+XN/BXGWmMPGmS/SokSWiUr6JkY7W1X+bnUAonEgRAC9+K
-	1noCpnhlJ2g5fD9rn6iF6tSNbdObeX2ZDv/mGDr4TqK8TaUQgbLcoBcbD7DYEUqPdL4AZF7evzB
-	2WDGWpQG7bVz8MSjYqdfGAgwqEOpTbwpfxIRB4Ke0V8IvPHlw1BAI7hBh/jKA6fiVyYLjw4bbnV
-	kNZEj8zgXvkGBaiM=
-X-Google-Smtp-Source: AGHT+IEjBAE/rld+9aiCuqigpuY+9zpIRh773iCRiL5ITop6OwxL60YXEg8KAl4CRgm6Ds8OhqjP/A==
-X-Received: by 2002:a05:6a20:72a3:b0:1f3:4427:74ae with SMTP id adf61e73a8af0-2010462b559mr14593665637.25.1743937688009;
-        Sun, 06 Apr 2025 04:08:08 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739d97ee385sm6471991b3a.45.2025.04.06.04.08.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 06 Apr 2025 04:08:07 -0700 (PDT)
-Message-ID: <48bdc474-2dd8-4c51-a32f-04bc7e9f50e7@gmail.com>
-Date: Sun, 6 Apr 2025 20:08:04 +0900
+	s=arc-20240116; t=1743937715; c=relaxed/simple;
+	bh=oBmAzxjhp7mJqD6p6LasQZgVUcBakosqINxBsK7ZtXs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nPkR8FmvPaZz1Gxzfr6iXLc26xgxLtKUFrrRgfuwdisy7g5keYq+g1wkuGVdmTkUleq1niKL526VrEtQwBlpnaAmsoa087FgMd5mH+hGToKA0eus3s0Sowoe6pHfQYIju/uZFeKNXeZgG9EhqRkPy+o2pe4NZEQfGjAzep6y3Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qxrpw9x/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 150E4C4CEEA;
+	Sun,  6 Apr 2025 11:08:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743937714;
+	bh=oBmAzxjhp7mJqD6p6LasQZgVUcBakosqINxBsK7ZtXs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qxrpw9x/zFnW1kQVc8EhU1TdH52+BExKfz5WOlP2aKjGoydpOuPDG0d4q17bZVeG3
+	 1XDbxZqu3pK0ztfe+buvsXyHyWeNq0S+Lu34mg+origft2rJzxnujIOHlBB4eFsKG0
+	 vcdgGSium+SHE4uimHqLuOoU6pdHxzhk0VQl/ZQ2f1QMpyqYbINM9isEk0mZb9AH1M
+	 G8sKM5ry4aOyfJjZEVL6fb9iAZB5aESPrnvePl1Y8C1gfe2YMxARUWH0ZUw/J2QUPa
+	 f0dPoUV2RiQqQoILvap/5Fr3kG/k2Z/u39NIbOPuOZQuWeqTzdIlWK08+48xfNskoX
+	 QCO98XgGNVm3w==
+Date: Sun, 6 Apr 2025 12:08:25 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andreas Klinger <ak@it-klinger.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ lars@metafoo.de, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, javier.carrasco.cruz@gmail.com,
+ mazziesaccount@gmail.com, subhajit.ghosh@tweaklogic.com,
+ muditsharma.info@gmail.com, arthur.becker@sentec.com,
+ ivan.orlov0322@gmail.com, Matti Vaittinen <mazziesaccount@gmail.com>
+Subject: Re: [PATCH 2/3] iio: light: add support for veml6046x00 RGBIR color
+ sensor
+Message-ID: <20250406120825.41b2575c@jic23-huawei>
+In-Reply-To: <Z_I-qwzUrTNz1DZp@mail.your-server.de>
+References: <20250316113131.62884-1-ak@it-klinger.de>
+	<20250316113131.62884-3-ak@it-klinger.de>
+	<20250317115005.72a539a0@jic23-huawei>
+	<Z_I-qwzUrTNz1DZp@mail.your-server.de>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: kevinpaul468@gmail.com
-Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- rbrasga@uci.edu, rdunlap@infradead.org, skhan@linuxfoundation.org,
- Akira Yokosawa <akiyks@gmail.com>
-References: <20250405165116.147958-1-kevinpaul468@gmail.com>
-Subject: Re: [PATCH] Added usb_string function to a namespace
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <20250405165116.147958-1-kevinpaul468@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Sun, 6 Apr 2025 10:43:23 +0200
+Andreas Klinger <ak@it-klinger.de> wrote:
 
-Kevin Paul Reddy Janagari wrote:
-> with reference to WARNING:
-> Duplicate C declaration, also defined at driver-api/usb/gadget:804
-> There is a function usb_string in the file message.c,
-> there is also a struct usb_string in the kernel api headers.
-> The docs is unable to index the function as the index is occupied by struct
-> This fix adds messgae.c to the usb_core namespace (in docs) hence providing
-> usb_sting a unique index usb_core.usb_string()
+> Hi Jonathan,
+>=20
+> I need to pick up the meaning of scale once again for clarification.
+>=20
+> Jonathan Cameron <jic23@kernel.org> schrieb am Mo, 17. M=C3=A4r 11:50:
+> > On Sun, 16 Mar 2025 12:31:30 +0100
+> > Andreas Klinger <ak@it-klinger.de> wrote:
+> >  =20
+> > > +static int veml6046x00_get_scale(struct veml6046x00_data *data,
+> > > +				 int *val, int *val2) =20
+> >=20
+> > How is this related to integration time?  I'd normally expect
+> > to see that read in here somewhere as well as doubling integration
+> > time tends to double scale. =20
+>=20
+> In the documentation file "sysfs-bus-iio" it says:
+> "
+> What:           /sys/.../iio:deviceX/in_illuminanceY_raw
+> [...]
+> Description:
+>                 Illuminance measurement, units after application of scale
+>                                 and offset are lux.
+> "
+>=20
+> This means that the scale should be the real factor and not the gain mult=
+iplied
+> by photodiode size (PDDIV) as i implemented it so far.
+>=20
+> This means also that doubling integration time should halve the scale. The
+> higher raw value should lead to the same lux value.
 
-This is a bug of Sphinx.
-Quote of my message in July 2023 [1]:
+Sounds correct.
 
- > This is a bug of Sphinx >=3.1, first reported by Mauro back in September 2020 at:
- >
- >     https://github.com/sphinx-doc/sphinx/issues/8241
- >
- > It was closed when a local fix was presented.  Unfortunately, it was not
- > merged at the time and a subsequent pull request was opened at:
- >
- >     https://github.com/sphinx-doc/sphinx/pull/8313
- >
- > It is not merged yet and carries a milestone of Sphinx 7.x.
+>=20
+> The documentation of the sensor (veml6046x00.pdf) provides us the calcula=
+tion
+> between raw green values and lux.
+> Wouldn't it be better to give the user the real factor to be able to get =
+lux?
 
-[1]: https://lore.kernel.org/0475d177-4c01-0988-0b34-3099dd703498@gmail.com/
+Absolutely.  That's the expectation if we are providing illuminance_raw and
+illuminance_scale.
 
-The PR carries a milestone of Sphinx 8.x now ...
+>=20
+> The fact that only the green channel can be used for calculation could be
+> documented in the driver.
 
-It might be a high time to make some noise in the PR.
+Ah. One of these devices.  Hmm. Why do people pretend they can get from
+Green to illuminance.  That has to assume 'white light'.
+I get grumpy about this, but if it is the best we can do I guess we have
+to live with it (I might not be consistent on this).
 
-       Thanks, Akira
+>=20
+> Then i found the "in_illuminance_hardwaregain" property. It seems that th=
+is is
+> exactly what the combination of gain and PDDIV is used for.
+>=20
+> So what is the scale at the moment could become the hardwaregain and the =
+scale
+> the factor from raw value to lux.
 
-> 
-> Signed-off-by: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
-> ---
->  Documentation/driver-api/usb/usb.rst | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/driver-api/usb/usb.rst b/Documentation/driver-api/usb/usb.rst
-> index 89f9c37bb979..976fb4221062 100644
-> --- a/Documentation/driver-api/usb/usb.rst
-> +++ b/Documentation/driver-api/usb/usb.rst
-> @@ -161,6 +161,7 @@ rely on 64bit DMA to eliminate another kind of bounce buffer.
->  .. kernel-doc:: drivers/usb/core/urb.c
->     :export:
->  
-> +.. c:namespace:: usb_core
->  .. kernel-doc:: drivers/usb/core/message.c
->     :export:
->  
-> -- 
-> 2.39.5
+If it is useful to export it separately that works, however it's not typica=
+lly
+the control attribute - those tend to be read only because, without access =
+to
+datasheets simple software has no idea how to control them.
+
+The alternative is the GTS helpers that attempt to figure out the best
+way to meet the user requirements in setting the integration time and ampli=
+fier
+gain when a scale is requested.
+
++CC Matti who is the expert on those.
+
+
+>=20
+>=20
+> To sum up the suggested interface under /sys/bus/iio/devices/iio\:deviceX=
+ would
+> be something like:
+>=20
+> in_illuminance_hardwaregain --> set and get gain and PDDIV on the sensor
+
+This is usually the read only one as it reflects things that aren't
+easy for a userspace program / user to tune.  They typically want to control
+integration time because it reflects noise level and scale because they want
+to avoid saturation etc and because we need it to get to the actual value
+in lux.
+
+>=20
+> integration_time            --> set and get integration time on the sensor
+driving these directly is fine.
+>=20
+> integration_time_available  --> show available integration time values
+>=20
+> scale                       --> (only) get real calculation value, taken =
+from
+>                                 sensor documenation, e.g. 1.3440
+This should remain a main control attribute.
+>=20
+> scale_available             --> not existing anymore
+This gets tricky but the GTS helpers will calculate it for you I think.
+
+Jonathan
+
+>=20
+>=20
+> What do you think?
+>=20
+> Andreas
+>=20
 
 
