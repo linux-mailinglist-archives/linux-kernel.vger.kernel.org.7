@@ -1,132 +1,126 @@
-Return-Path: <linux-kernel+bounces-590107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E155A7CEE4
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 18:06:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C1CBA7CEF1
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 18:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EC1916B7E6
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 16:06:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2E623A88DE
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 16:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A522206A3;
-	Sun,  6 Apr 2025 16:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FBA80BEC;
+	Sun,  6 Apr 2025 16:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KT3JByzV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="FU3DYFCE"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C41F1A83F4;
-	Sun,  6 Apr 2025 16:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2524CA930
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Apr 2025 16:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743955594; cv=none; b=g4drXTOugBUBHlYXvrPbqP0k+1ZjehPMDJ6WuMR9U835NGUh48t+3+/rmQOvDOH7OS5thhmGwqrZJW0dGboeLNlApA0+Tbg+I7OhN0g/cQKIPTgFBCik5Brihhqsn9oiiIAFFG/HqU4PV9z9j8bIHU6FZ1Oc8etZlQ1UtS7gbUk=
+	t=1743956266; cv=none; b=il+fwxQHz1ccOUdV6ClximGWljA1oy57w+1ZqYkNCwSCQIQLrjcJKSsmS2Ji00HG9ppmcrgzVkWvliaBwivCz6L79AiMDOpY/KE1xvWfvUCtVFSH7soJowN/n6cC/GkO+yhayKMDFmn8enMMeYjQuj3E+n6cqWCapImU5cCPgBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743955594; c=relaxed/simple;
-	bh=oQ26qde6ixYxXx347KOehu15WvUe7xl0OBqh03H0CuM=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=QGUu2ltECRTm3ZH2XwZHWCDmzMVQoGFty5AhW2CoZuPs9jj9DhqJlQrdW0sbKtXxo34H3xJrc4szvJGEw6bHcRVs+r2fXIP0wAAMDM97/w3GjDg5X/NxOQrIQBB/3LUePKjxhE3NYEqUiDhjhsiLlik5YuY1jjwWl31xCM6Ly3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KT3JByzV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F08A6C4CEE3;
-	Sun,  6 Apr 2025 16:06:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743955593;
-	bh=oQ26qde6ixYxXx347KOehu15WvUe7xl0OBqh03H0CuM=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=KT3JByzVrfnd/HKtRsbxF3lYmhRFPV0pYx9ew6AbH1AKkj8MzG8ZrBeaknyGo/pRm
-	 vyWxR73xTLb1foI6oAsUO1Gb9x3bZvA7RT9oZQ2MOpn/XihfF8xIZznq709C1X2o+8
-	 sbkggu07HIXEs16DlIcMOpwgVXtJLC7AghIs61aes2RCT09VOkea8VNVgVKaM+PzSN
-	 An/wfSq3jJ4bcLYKYP1AUXPm4vvSEp++i7PTESX1pJL9hd+YBFCIhs0TPgTeqHuE9C
-	 kGTknqI6qpXXinvX7rqzNDGA9aoM8eQAEVAqWidtjd5vLv97hdSjtDVjOLHde4PBy+
-	 JteIXwKXoLPdw==
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfauth.phl.internal (Postfix) with ESMTP id DE6331200043;
-	Sun,  6 Apr 2025 12:06:31 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-12.internal (MEProxy); Sun, 06 Apr 2025 12:06:31 -0400
-X-ME-Sender: <xms:h6byZ_8V_jshdt2YJrhC3CaNk28wlA6o2CKOVO0v_ohRaRe5gw45-g>
-    <xme:h6byZ7uT_IOPFzrl_G2s3vHKxArB0Xh53dxo5iWTUYY5NdnDaZd-CypgciOtG5i0O
-    k_lcoy_-odhxMO5VWw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduleejjeduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnh
-    gvlhdrohhrgheqnecuggftrfgrthhtvghrnhepjeejffetteefteekieejudeguedvgfef
-    feeitdduieekgeegfeekhfduhfelhfevnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomheprghrnhguodhmvghsmhhtphgruhhthhhpvghrshhonhgr
-    lhhithihqdduvdekhedujedtvdegqddvkeejtddtvdeigedqrghrnhgupeepkhgvrhhnvg
-    hlrdhorhhgsegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhht
-    phhouhhtpdhrtghpthhtohepnhhitgholhgrshesfhhjrghslhgvrdgvuhdprhgtphhtth
-    hopehmrghsrghhihhrohihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnrghthhgr
-    nheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgvfhhfrdhjohhhnhhsohhnsehosh
-    hsrdhquhgrlhgtohhmmhdrtghomhdprhgtphhtthhopehlihhnuhigsehrohgvtghkqdhu
-    shdrnhgvthdprhgtphhtthhopehlihhnuhigqdhksghuihhlugesvhhgvghrrdhkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghr
-    nhgvlhdrohhrgh
-X-ME-Proxy: <xmx:h6byZ9BACXFPPwHpY9i3LafZbGK_q3ekLSBUym5DUFtYCfw400QeDg>
-    <xmx:h6byZ7fkztXycyhQvUBULJNyPYqY4uV-Faf7XDsajtBSw8JQ-EZ28Q>
-    <xmx:h6byZ0OQi7GU18gD3OlwxazQbL4Hw6c7TIwROBV5y0tbfp3EeOriag>
-    <xmx:h6byZ9k6s5QNzzmnWmaU7Eji4gZldQ1Qc1FCQ6FlfXizQqME7FF0rQ>
-    <xmx:h6byZ-uV2DdUhblSt21oqlYRMvmz0zmAlDBU6CfVXaimSdIrItVblaVL>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id ACDFB2220075; Sun,  6 Apr 2025 12:06:31 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1743956266; c=relaxed/simple;
+	bh=AC7PzIGILp0YDEV2LAbbNdcbiUsEtuVE2ttYdvM9i0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JjeWgHqHOuVyYf5tS15Rr7eRuo5k5FnHoyDwPj7kpDbXqfXeYJr1+o412aNHRORHBeGrFpuORIsf1nUT2MDXboF/EOYCZGkDY0VgJDeQuYpJowFpHkJ/8pucGEAatDEU1K0EJSp0AMkLg6D8Vn9DX3Cid+Co/vnaBfppqWwI7cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=FU3DYFCE; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 58AA93F13F
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Apr 2025 16:08:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1743955680;
+	bh=7fy+hkXWPoA1DLIUgsOkK0YeVO4iJr7EpW+FUaZM2ww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=FU3DYFCElVitSXzTS3/eCzaF+K55hDycPtu6gCV/zWPBzCHycF3ybDqBA0n5At2ax
+	 t7oZD2xbbqdxFgXUrOv1C//BCJBxhFkOoMPgGuAjPQKub6VRCqoipsgKQBaPixYauP
+	 56ed38Srgqg/NhP4Jp6x9sD5tU9so2lUOzztqwm+dsr/RSGB59JURbco/EUJdep2mK
+	 DtYzLt3KOW5J0k8XclLrYYMt0jyM36Nwxk0+IE59Blj9953rQI/n9tGSRHjy0nJc91
+	 epmFqCElR3VR6B4T9uDbnR8bqvPCgNi0ebXdBZ/880ujuzq58zt0YURn5Gr9kND4tq
+	 wRAkazdl4sGWw==
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ab39f65dc10so477966966b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Apr 2025 09:08:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743955680; x=1744560480;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7fy+hkXWPoA1DLIUgsOkK0YeVO4iJr7EpW+FUaZM2ww=;
+        b=JbWKnWSPx47oxBtAtDv25k7qQAeudXv9BPaoDK6W0kBJlhP0P/eC+NfVgV/o1DJ1c9
+         NgcHNYeDy2gvWpym118VRs2P2CDhR/vjVuXOvCk8sdc35ox+C50+zlqvoV/5IzJF9ws5
+         UFe6+QcseOI8X0pOyKLTe8tZF0YgepqURDpbfCiGbzDMrQuwDzGlb1f50jRIZp6RJNJu
+         b1r9lFcCv0zi8AYBDw39kHdfAexlsXV5PHo8+dy6C7vG+ZWWg09VSbGehAR8FFaQiAIR
+         qt1gME9O9dpyStZNxdTGALdPuDo6eaX5yzXbLeWyJuKGvhk00/TyR3/DNJiJDy704wko
+         uo+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ0hJkZa8Wpp+YT1ah9DyIAiG2nrgUVYPaS3I9p50+QG8daVKnFiGWBbWywv0xlw+KBPNZN8pHwY99zHQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOidFSlvjNGI3OmJoKeCoMnSANAdG/sUUK83U9FT860E5ScQGp
+	sbTFZecZHTahQStAED9F1kPoCQLl+JM3L8q8k6BpmtMlX+P33yVbx0ZOEoSt/PDT37SuX48qjVc
+	XaruCh6m2OLSC4/gO+ctgCe3lvxdEd0Ve6JUfofn7Uwq4ruwZqhH2BLiXc+oiC9cl9GlGAmKikZ
+	Hsew==
+X-Gm-Gg: ASbGncujCgPBlTuaq+lXymwmwCFVkWeS1gMSrJkSLrjr9bGn2O9B/3cB9sM9fazLMBb
+	r50kmjzf4ax3zuvtQo0O8ZtjGTIKWMMYRnpuuw3LRrp9W7jqIgExwOcqbRGAW4EkaDq2LaFGVNh
+	g3XyjjVi2aBRR3ZiMblNx2bZtFKWBmPC0IU6UPh8weAhwCiH273u7nHCSMMrQ0uMbsi7T2BzYz5
+	X3rJ6RCv6bhqfoCYmkuU0/DmpU0SwWA2B5Wa+DAfLvIInStYarBzurrnNIFFKm7PIrcZBDNYkv0
+	ULZpwPm5MHe2DPwcF/4=
+X-Received: by 2002:a17:907:960f:b0:ac3:5c8e:d3f5 with SMTP id a640c23a62f3a-ac7d190ff66mr961508766b.27.1743955679899;
+        Sun, 06 Apr 2025 09:07:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IELAlvJNQVE8a+lqGIYpgiQgQFDzS0otl6zZiL4StH9XfrH+ACoOaESD2G+gEILK0qJgchLGA==
+X-Received: by 2002:a17:907:960f:b0:ac3:5c8e:d3f5 with SMTP id a640c23a62f3a-ac7d190ff66mr961506366b.27.1743955679572;
+        Sun, 06 Apr 2025 09:07:59 -0700 (PDT)
+Received: from localhost ([176.88.101.113])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7bfe996f5sm611263866b.64.2025.04.06.09.07.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Apr 2025 09:07:59 -0700 (PDT)
+Date: Sun, 6 Apr 2025 19:07:57 +0300
+From: Cengiz Can <cengiz.can@canonical.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Salvatore Bonaccorso <carnil@debian.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, lvc-patches@linuxtesting.org, 
+	dutyrok@altlinux.org, syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com, 
+	stable@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
+Message-ID: <dzmprnddbx2qaukb7ukr5ngdx6ydwxynaq6ctxakem43yrczqb@y7dg7kzxsorc>
+References: <20241019191303.24048-1-kovalev@altlinux.org>
+ <Z9xsx-w4YCBuYjx5@eldamar.lan>
+ <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
+ <2025032402-jam-immovable-2d57@gregkh>
+ <7qi6est65ekz4kjktvmsbmywpo5n2kla2m3whbvq4dsckdcyst@e646jwjazvqh>
+ <2025032404-important-average-9346@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Ta79fad8bc959031a
-Date: Sun, 06 Apr 2025 18:06:11 +0200
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "Guenter Roeck" <linux@roeck-us.net>,
- "Jeff Johnson" <jeff.johnson@oss.qualcomm.com>
-Cc: "Masahiro Yamada" <masahiroy@kernel.org>,
- "Nathan Chancellor" <nathan@kernel.org>,
- "Nicolas Schier" <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-Id: <a30bd547-d0e8-44d2-ac2c-22396ecb9270@app.fastmail.com>
-In-Reply-To: <32b8f7fa-3c48-4f5f-b99b-c1a8cd065442@roeck-us.net>
-References: <20250311-moddesc-error-v1-1-79adedf48d0e@oss.qualcomm.com>
- <32b8f7fa-3c48-4f5f-b99b-c1a8cd065442@roeck-us.net>
-Subject: Re: [PATCH] script: modpost: require a MODULE_DESCRIPTION()
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2025032404-important-average-9346@gregkh>
+User-Agent: NeoMutt/20231103
 
-On Sun, Apr 6, 2025, at 17:59, Guenter Roeck wrote:
-> On Tue, Mar 11, 2025 at 12:49:02PM -0700, Jeff Johnson wrote:
->> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
->> description is missing"), a module without a MODULE_DESCRIPTION() has
->> resulted in a warning with make W=1. Since that time, all known
->> instances of this issue have been fixed. Therefore, now make it an
->> error if a MODULE_DESCRIPTION() is not present.
->> 
->> Signed-off-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
->> ---
->> did my treewide cleanup for v6.11, Arnd had a few more stragglers that
->> he was going to fix. I hope that by posting, some of the 0-day bots
->> will pick it up and hopefully provide some feedback.
->> 
->> Note: I'm not really sure if *all* of these have been fixed. After I
->
-> FWIW, I ran
->
-> for f in $(find . -name '*.c'); do grep -q MODULE_LICENSE $f && (grep 
-> -q MODULE_DESCRIPTION $f || echo $f); done
->
-> That reports a large number of files (111, to be exact) with MODULE_LICENSE
-> but not MODULE_DESCRIPTION. I cross-checked a few, and found that many can
-> be built as module. The fall-out from this patch might be interesting.
+On 24-03-25 11:53:51, Greg KH wrote:
+> On Mon, Mar 24, 2025 at 09:43:18PM +0300, Cengiz Can wrote:
+> > In the meantime, can we get this fix applied?
+> 
+> Please work with the filesystem maintainers to do so.
 
-The ones I sent were only the result of what I found from randconfig
-builds on x86, arm32 and arm64, so I likely missed drivers that are
-specific to other architectures, or that are very unlikely to be
-in loadable modules because of random 'select FOO' Kconfig statements
-leading to them being always built-in in practice.
+Hello Christian, hello Alexander
 
-        Arnd
+Can you help us with this?
+
+Thanks in advance!
+
+> 
+> thanks,
+> 
+> greg k-h
 
