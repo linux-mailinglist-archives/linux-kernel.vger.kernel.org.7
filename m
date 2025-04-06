@@ -1,149 +1,114 @@
-Return-Path: <linux-kernel+bounces-589962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BCD5A7CCD9
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 07:40:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D5EEA7CCE0
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 08:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 186363A9B43
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 05:40:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3DF3171A84
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 06:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFED415ADB4;
-	Sun,  6 Apr 2025 05:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B4D17BB21;
+	Sun,  6 Apr 2025 06:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ombertech.com header.i=@ombertech.com header.b="dDfbTuCZ"
-Received: from ombertech.com (ombertech.com [74.48.158.51])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="m0WxbH3L"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0074B17F7
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Apr 2025 05:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.48.158.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26AEF9EC
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Apr 2025 06:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743918018; cv=none; b=neuxkeToi9BE5NTlU8Uu26WpChKrZ6g9NZdVdrA0Z508NZMSZRM9tH+zVIIJoH/jGapRB343xSHvQ3Ky0xz1hRSfsIvD2uUjOVoDyBjixmq1/JxFoZo4gB5CEiDTBdmdEGekbetvqZI2ZfrxfYMWFUKlOcAmAiScJ6xxlqX3cro=
+	t=1743920729; cv=none; b=pEZ7sg6CE4/ylsXiSxzXv40k6rnc0fSzEWLL//KMKmWt4fMIdPjQjbnCKuZbbFJ9kxd4Pwtxo3RGM7yNy1KH4tfYHlsJ+q4zTj+i9f5lsPcFpqxwQ64Bh165HmIxkShf8gjXyHBLEz8SVpYAK4wDy+whx9Mp9pF90x4zhBHZUSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743918018; c=relaxed/simple;
-	bh=eGPssONKMwss0s7vqd0jkbyJcrBZkDhYjLj39eimxAY=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=DELEDJUhGQJ8nJlpc+cV23T0pO5yZYfePptrAHzZX/fRBaGmqPsHTGmL00snp/w/odRNnq3coNl9PnqyVrU1wsmfTvCVE0n7BFXeEHsy/r/wtRRxqFwFE0Jg1u1i5VT0LBt9DwFFnRGXTvQViOTRjZ2QAzSnAZqR1cjWcztil1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ombertech.com; spf=pass smtp.mailfrom=ombertech.com; dkim=pass (2048-bit key) header.d=ombertech.com header.i=@ombertech.com header.b=dDfbTuCZ; arc=none smtp.client-ip=74.48.158.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ombertech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ombertech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ombertech.com; s=2022;
-	t=1743917719; bh=eGPssONKMwss0s7vqd0jkbyJcrBZkDhYjLj39eimxAY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dDfbTuCZEafoGGy1GD/g+2379zozMNWQOB/VUGBnPjAwQWJXVNJgRcFKfFgiakDTk
-	 h3VfJG+XLup0EdfWVvoFlFOt3KZUbfG5m+w2jwFq3IXrwhmgLavlyfA2TM1UlHGVNH
-	 uNFgtkJP0uLyLIW2+VcNqV/dwcNiO5qZATAbktWJFHN5uRGCQ3GIyZ6HP+cTs3pSQD
-	 Yu/ubppb5dkBWNDI1a4WtILASI9qgyJZYVJAIkayhNNk07dm16iWtOqqWUwOKHtEJU
-	 sS5vjw/KVZD+/rWMXl5c2gau61C6fT7W7PxGp9TxKYXgGOtxgq138tRfoK8L7JaF1h
-	 /H9+v5MBNAbiA==
-Received: from 192.168.1.100 (unknown [1.145.161.245])
-	by ombertech.com (Postfix) with ESMTPSA id 9A7F766946;
-	Sun,  6 Apr 2025 05:35:17 +0000 (UTC)
-Date: Sun, 6 Apr 2025 16:40:49 +1000
-From: Kevin Koster <lkml@ombertech.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Oerg866 <oerg866@googlemail.com>, linux-kernel@vger.kernel.org, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>
-Subject: Re: [PATCH] x86/microcode: Fix crashes on early 486 CPUs due to
- usage of 'cpuid'.
-Message-Id: <20250406164049.c0666bc18073e3b88c92d1f1@ombertech.com>
-In-Reply-To: <20250405093127.GAZ_D4b6NdyTS-UW1J@fat_crate.local>
-References: <CANpbe9Wm3z8fy9HbgS8cuhoj0TREYEEkBipDuhgkWFvqX0UoVQ@mail.gmail.com>
-	<20250405130306.ca9822c1f27db119cc973603@ombertech.com>
-	<20250405093127.GAZ_D4b6NdyTS-UW1J@fat_crate.local>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-unknown-linux-gnu)
+	s=arc-20240116; t=1743920729; c=relaxed/simple;
+	bh=k5TN1QfbnuKAa7k5GjF7mtqWFNBT+NG7z8QAuY++6mM=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=p/W4FIhHT9Euk9cCp3+7tQtvJXr5AE6HqFe90moRB/zZbd+LBivZq8uhDzETj49OZ5cCgqp+cq4o2ngnq0Wu5KN/d4lEBUbX7LYOB0Qgss3kBc5j/wqSthRaTSLqiyul2wAk9e58dp2d7oStG2yOqfp065PRLDbcHt4/h7DodLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=m0WxbH3L; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1743920413;
+	bh=2qcf4GYZAvRhQYw5kTpGJMsX1msIyfD84M8VRVxJieQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=m0WxbH3LMc8sm3YSySHIFOm08GmCXd4XlqXVnQogNjC04iyFVp0qPt3x25rFLUhqD
+	 05VrUA4AAx1wYc4EEEu5X158iwB17vD7XyzJM8oKNV25gvOhGObeDeZBcOGCsDEx7X
+	 RRq92q+yqvKMWwdTWOViqFPC5ENQWsjIM/GZL2w8=
+Received: from localhost.localdomain ([116.148.99.229])
+	by newxmesmtplogicsvrszc11-0.qq.com (NewEsmtp) with SMTP
+	id 50B15ED2; Sun, 06 Apr 2025 14:20:11 +0800
+X-QQ-mid: xmsmtpt1743920411tiiabvk4c
+Message-ID: <tencent_474AC55ADEE443D037337A9ED09422D8C408@qq.com>
+X-QQ-XMAILINFO: N9ponxXGLTJpktUrAobHCnlgpz7wC8z4PwrlKldDpds2YgJ5qWVld6sLwlKR32
+	 UH+UF6W4W5XB4/a95tAZWeeQCR1PLOk7Dv7/OBfOC6bGpgNn/3L5M8/dViaWoCAFzpEuXdqeOMsi
+	 EjTJBAY6xVI3Gxs/iDDDhxJOsYUobLWZJaIRKbnJUzDhrjQ5kA0/WZXNd6Oj5gVmHLsNTpQK/qZv
+	 zAbdYuQCLvSIMFq/xugZtpu1MDIw2MiyRHbesboQktk5skgcbOQ0FZqAG+9rbPlXgw07mh6AbpwC
+	 Y5vFogBPyWELMTI0xjYqf/2/VQ+rAfql3g70Hx8K3i6AwYMjL1FqffYiJc4u8iK8orMP1btoDmZC
+	 PUrFuQ2OjZtm39HhnVwAd7waNIzZOciL45EZzcuCPQ2ukylgLI5Tt5BbLp3niJzc9Eepph+vOOi2
+	 G4aosBjBzXab63wF6hhsPWNlU0oxsRO/9gdXFsPA2SgoJXYCs2xHzwsd8J9VzAzG72xduOc/Dg0p
+	 qto9lERE8BoI4GxLt1RPugBbbCW09nNXKDmnbQFMrSzOR+ZYHL352n9jGU97utIPJqTkr/84GHFB
+	 Agf/JiARL+srnX+lFWo4LJiVYEo3FzuByU9gg0xOd0OytnedQfZZ1D3mHs/kiAEa2foQ6bywecps
+	 6TwT1FTkAYaq35WlIRLZTuh1a+hzyyAXscmcaRBLvTb6HKean3XUdTB2Hnk4K3z/enjAba7CPpam
+	 D5oQdoW4aGzPxnO7aOMoBHhUWfa1ZPoAiGbf4+94zFWkWsyeUna/1IyOhobnSrK1JYukSK1WvNzY
+	 T1W9Rlyz83f3oETOMn5kz67gxJUgW+k5nPvsDGHtg1g+DlIRCKGxADx98adt9SrVoUQaWJJQohZ/
+	 YcXLaoMjd0olVSX1ScPKZdOYfPOoyO/QCuRr6PJfOpki1PEi5mmqAyRKDrMuiNU9gqxqr3WJnKjN
+	 00/4brab3WeEzLUC0H7FpmqYnPSiDLkAYkfQJsF+PovRosFBROX0XinPR930RQfleCCQSIiqI=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: zhoumin <teczm@foxmail.com>
+To: akpm@linux-foundation.org
+Cc: dakr@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	rafael@kernel.org,
+	teczm@foxmail.com,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] kobject_uevent: add uevent_helper exist check
+Date: Sun,  6 Apr 2025 14:19:15 +0800
+X-OQ-MSGID: <20250406061915.1464984-1-teczm@foxmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250405155207.aac347bcdc56e43cb0cae3cb@linux-foundation.org>
+References: <20250405155207.aac347bcdc56e43cb0cae3cb@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sat, 5 Apr 2025 11:32:26 +0200
-Borislav Petkov <bp@alien8.de> wrote:
-> On Sat, Apr 05, 2025 at 01:03:06PM +1100, Kevin Koster wrote:
-> > On Sat, 19 Oct 2024 08:29:04 +0200
-> > Oerg866 <oerg866@googlemail.com> wrote:
-> > 
-> > > Starting with v6.7-rc1, the kernel was no longer able to boot on
-> > > early i486-class CPUs.
-> > 
-> > Thanks for this patch! It solves my problem with kernel 6.12.11
-> > rebooting at start-up on 486 CPUs, which had me puzzled. (tested on
-> > AM486DX2-66 and CX486DX4-100)
-> > 
-> > Is there a reason why the patch wasn't accepted?
-> 
-> Yes, too many patches, too little time. :-(
-> 
-> Anyway, does the one below - only build-tested - work for both y'all
-> too?
+Hi Andrew,
 
-On my AM486DX2-66 it gets past the immediate reboot problem but gets
-an Oops and kernel panic here:
+Thank you for your feedback.
 
-[snip]
-smpboot: SMP disabled
-Performance Events: no PMU driver, software events only.
-signal: max sigframe size: 928
-Oops: invalid opcode: 0000 [#1] SMP
-CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.14.0 #1
-EIP: 0xc0b5e1d7
-Code: 7d dc 00 74 0b b9 07 00 00 00 89 df b0 01 f3 a5 83 c4 1c 5b 5e 5f 5d c3 55 b8 01 00 00 00 89 e5 57 56 31 f6 53 89 f1 83 ec 30 <0f> a2 b9 04 00 00 00 89 45 c4 8d 7d c8 89 f0 f3 ab e8 a0 fc ff ff
-EAX: 00000001 EBX: c0be6b00 ECX: 00000000 EDX: 00000246
-ESI: 00000000 EDI: 00000000 EBP: c1309f08 ESP: c1309ecc
-DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00010286
-CR0: 80050033 CR2: ffd38000 CR3: 00c16000 CR4: 00000000
-Call Trace:
- ? 0xc01231af
- ? 0xc01231c8
- ? 0xc0123222
- ? 0xc0123245
- ? 0xc01215ef
- ? 0xc01217f7
- ? 0xc0b5e1d7
- ? 0xc0848e09
- ? 0xc012186f
- ? 0xc0b5e1d7
- ? 0xc0848e41
- ? 0xc010105d
- ? 0xc01500d8
- ? 0xc0848e09
- ? 0xc0b5e1d7
- ? 0xc01500d8
- ? 0xc0848e09
- ? 0xc0b5e1d7
- ? 0xc085148a
- ? 0xc0524da8
- ? 0xc0b5e1c5
- 0xc0102100
- ? 0xc08514d5
- ? 0xc085148a
- ? 0xc0171bde
- ? 0xc0175987
- ? 0xc016d672
- 0xc0b4c9e2
- ? 0xc084c9b8
- 0xc084c9ca
- 0xc0127d3a
- ? 0xc084c9b8
- 0xc01027a2
- 0xc0100e3d
-Modules linked in:
----[ end trace 0000000000000000 ]---
-EIP: 0xc0b5e1d7
-Code: 7d dc 00 74 0b b9 07 00 00 00 89 df b0 01 f3 a5 83 c4 1c 5b 5e 5f 5d c3 55 b8 01 00 00 00 89 e5 57 56 31 f6 53 89 f1 83 ec 30 <0f> a2 b9 04 00 00 00 89 45 c4 8d 7d c8 89 f0 f3 ab e8 a0 fc ff ff
-EAX: 00000001 EBX: c0be6b00 ECX: 00000000 EDX: 00000246
-ESI: 00000000 EDI: 00000000 EBP: c1309f08 ESP: c1309ecc
-DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00010286
-CR0: 80050033 CR2: ffd38000 CR3: 00c16000 CR4: 00000000
-Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
-Rebooting in 60 seconds..
+> Is there any measurable reduction in boot time?
+
+This depends on the number of uevent and the performance of the device. 
+In fact, I found this issue during a project to optomize boot time,
+and on my embedded device, it can be optimized by at least 2 seconds.
+
+> Cached in a static variable.  So if a uevent helper later becomes
+> available, we won't know that and a reboot will be needed?
+
+The static variable is used to avoid repeatedly checking for uevent_helper 
+after the rootfs is mounted and uevent_helper is detected.
+
+As for the uevent before the rootfs is mounted, that is another issue.
+Whether I submit this patch or not, system always miss these uevent, because
+queue is not used to handle this currently. In fact, I have also noticed
+this problem, but based on experience, this seems to cause no issue.
+
+> I wonder if this is the official/preferred way of detecting the
+presence of a file.
+
+For only checking file existence, kern_path is a sufficiently simple
+approach, you can find it in many kernel lookup functions.
+
+Let me know if you have further suggestions.
+
+Best regards,  
+zhoumin
+
 
