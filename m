@@ -1,77 +1,60 @@
-Return-Path: <linux-kernel+bounces-590109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB062A7CEEB
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 18:13:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F51A7CEF9
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 18:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0722F1606F7
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 16:13:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA9963ABC72
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 16:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0331822155E;
-	Sun,  6 Apr 2025 16:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E125171092;
+	Sun,  6 Apr 2025 16:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lVL649ja"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="n7wM+chn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55318205E34;
-	Sun,  6 Apr 2025 16:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C21528373;
+	Sun,  6 Apr 2025 16:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743956016; cv=none; b=bsWHcUWP+7+NjiW7jrUjsmICTuDVfEdaW97VMMIhswn2Nap5MpzS4aJIa6oM3969/TSDH9UQEppv3AfVV/+KEkxDjCavHS96S2ArIYdoK1/23zkhmFc7U95ctKNB1xCK/2cuW08iiUQfegM8W5EF9sKZGUnsiTYUgVaxzvkgjKE=
+	t=1743957026; cv=none; b=T6NXivgwunzs3ioXmYYmXL4PcrCxuKhQmJ6oeeKpv0XFOBLpcOdlJjilFe8DNg1Pe08Tapao7E0AOgxuNUyD4ECgm+N1u3tVH0tHxYiJCHTsvWtlbd37H4YoDiuoGkNh+crfCiVHZYRQOUyG3cDHvFN+PNiB0DJqio2noGx3PSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743956016; c=relaxed/simple;
-	bh=W0OMGEKRCIzqIrkZA9af/iDCd9Ojc329+ipStkNg+2Q=;
+	s=arc-20240116; t=1743957026; c=relaxed/simple;
+	bh=vQCFZWMOiaKoc/kXSUfxLHYKkp0Ruejr/UYS1fzznws=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hyNzvODiWg70o8JP7csdln/ATYKndx0FxdS1fEge/VMDuEKBXKKaxYFdpupitPPcHkP+xOKKHlY6d+3PQQ+WbK8Lk+08HkPzRPaEs0FT065SYENpRud2y6wf5VH3sslBeCIJabdDmFOxd+HMgw6ghakq8vYHQsyim1v6TXUdeXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lVL649ja; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D958C4CEE3;
-	Sun,  6 Apr 2025 16:13:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743956015;
-	bh=W0OMGEKRCIzqIrkZA9af/iDCd9Ojc329+ipStkNg+2Q=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=XMTnBqPVzSsJVf5u7XEMxiWMaVae5e16steNRMq47WiMc3MX98VhReIXZ75mhruywh5decm+Pq9PYBklTMoFJqQMU80oG0JsSCTNDvpswBFWgwmWLW5YKBOS1GhQvtAJwDz0ac32wAUqNtzezvEdFxYVlGu3MMg7FWYlRghq5eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=n7wM+chn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5138EC4CEE3;
+	Sun,  6 Apr 2025 16:30:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1743957025;
+	bh=vQCFZWMOiaKoc/kXSUfxLHYKkp0Ruejr/UYS1fzznws=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lVL649jauEKYI4l+zYBSX7ppwy6IT04RV3unP/HxPdVIchTz9J7xinl7ighu53XJc
-	 VInujhiYAW68CGsOaP8QA3dL8s/ECb6HJYdDLnKaEh8XCMv1JCLAVpujC3668IHOXT
-	 jMy1/loS0VOWzECX6bTjCZin36JS3TKm1zBHmWiIee7BwnDJGcozLzX0IAXquRbBuu
-	 engWpzJT15+C+mpkMxWTg3sLPTx5bTToRcsXa/K8RxtmsRJzxyxBDSm2Kg1A5m1Mvx
-	 FAV+YRjrpYEr6Sooj9ZzL6hh7r4S4m+SWRgQ9AXjP+eUXOAWs/Mu8eErqLF6D4bfBn
-	 Ji+To1URvuL+w==
-Date: Sun, 6 Apr 2025 19:13:19 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Pratyush Yadav <ptyadav@amazon.de>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Changyuan Lyu <changyuanl@google.com>,
-	linux-kernel@vger.kernel.org, graf@amazon.com,
-	akpm@linux-foundation.org, luto@kernel.org,
-	anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com,
-	benh@kernel.crashing.org, bp@alien8.de, catalin.marinas@arm.com,
-	dave.hansen@linux.intel.com, dwmw2@infradead.org,
-	ebiederm@xmission.com, mingo@redhat.com, jgowans@amazon.com,
-	corbet@lwn.net, krzk@kernel.org, mark.rutland@arm.com,
-	pbonzini@redhat.com, pasha.tatashin@soleen.com, hpa@zytor.com,
-	peterz@infradead.org, robh+dt@kernel.org, robh@kernel.org,
-	saravanak@google.com, skinsburskii@linux.microsoft.com,
-	rostedt@goodmis.org, tglx@linutronix.de, thomas.lendacky@amd.com,
-	usama.arif@bytedance.com, will@kernel.org,
-	devicetree@vger.kernel.org, kexec@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH v5 09/16] kexec: enable KHO support for memory
- preservation
-Message-ID: <Z_KoHxDLzrzQAjhK@kernel.org>
-References: <20250320015551.2157511-10-changyuanl@google.com>
- <mafs05xjmqsqc.fsf@amazon.de>
- <20250403114209.GE342109@nvidia.com>
- <Z-6UA3C1TPeH_kGL@kernel.org>
- <20250403142438.GF342109@nvidia.com>
- <Z--sUYCvP3Q8nT8e@kernel.org>
- <20250404124729.GH342109@nvidia.com>
- <Z-_kSXrHWU5Bf3sV@kernel.org>
- <20250404143031.GB1336818@nvidia.com>
- <mafs08qofq4h5.fsf@amazon.de>
+	b=n7wM+chnlFOtX/t1OQDO75B4flyS40wd6qRy682KlnFd7JFEQD0dnfuJwaQOTWrHq
+	 aaha44D8l9ggQFL0Co+UKTNzCegp4K83MLUO7b+taNjBk9viW+Sikl0H4IFh0e2RhF
+	 Wl0zqZNR4dtttfTVmp11XdOylX8y77hNOwetl7Uw=
+Date: Sun, 6 Apr 2025 17:28:57 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Cengiz Can <cengiz.can@canonical.com>, security@ubuntu.com
+Cc: Salvatore Bonaccorso <carnil@debian.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lvc-patches@linuxtesting.org,
+	dutyrok@altlinux.org,
+	syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com,
+	stable@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
+Message-ID: <2025040619-enamel-escapable-2bc1@gregkh>
+References: <20241019191303.24048-1-kovalev@altlinux.org>
+ <Z9xsx-w4YCBuYjx5@eldamar.lan>
+ <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
+ <2025032402-jam-immovable-2d57@gregkh>
+ <7qi6est65ekz4kjktvmsbmywpo5n2kla2m3whbvq4dsckdcyst@e646jwjazvqh>
+ <2025032404-important-average-9346@gregkh>
+ <dzmprnddbx2qaukb7ukr5ngdx6ydwxynaq6ctxakem43yrczqb@y7dg7kzxsorc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,28 +63,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <mafs08qofq4h5.fsf@amazon.de>
+In-Reply-To: <dzmprnddbx2qaukb7ukr5ngdx6ydwxynaq6ctxakem43yrczqb@y7dg7kzxsorc>
 
-On Fri, Apr 04, 2025 at 04:24:54PM +0000, Pratyush Yadav wrote:
-> On Fri, Apr 04 2025, Jason Gunthorpe wrote:
-> >
-> > I'm pretty sure this is going to be the best performance path, but I
-> > have no idea how invasive it would be to the buddy alloactor to make
-> > it work.
+On Sun, Apr 06, 2025 at 07:07:57PM +0300, Cengiz Can wrote:
+> On 24-03-25 11:53:51, Greg KH wrote:
+> > On Mon, Mar 24, 2025 at 09:43:18PM +0300, Cengiz Can wrote:
+> > > In the meantime, can we get this fix applied?
+> > 
+> > Please work with the filesystem maintainers to do so.
 > 
-> I don't imagine it would be that invasive TBH. memblock_free_pages()
-> already checks for kmsan_memblock_free_pages() or
-> early_page_initialised(), it can also check for kho_page() just as
-> easily.
-
-And how does it help us? 
-
-> -- 
-> Regards,
-> Pratyush Yadav
+> Hello Christian, hello Alexander
 > 
+> Can you help us with this?
 
--- 
-Sincerely yours,
-Mike.
+What is "this"?  There is no context here at all, you know better!
+
+Please submit "this" properly, like you all well know how to do, in
+order to get this resolved as soon as possible as this is considered
+an un-fixed CVE that you all are completely responsible for.
+
+greg k-h
 
