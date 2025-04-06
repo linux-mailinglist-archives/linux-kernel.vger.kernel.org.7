@@ -1,180 +1,150 @@
-Return-Path: <linux-kernel+bounces-590007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80858A7CDAB
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 13:09:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C053A7CDA8
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 13:08:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F8C3188DE5A
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 11:09:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D49C16F270
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 11:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98081C1AB4;
-	Sun,  6 Apr 2025 11:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE85A1A23BB;
+	Sun,  6 Apr 2025 11:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fb6Q0laT"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bAvsywBG"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F1C1A8F71;
-	Sun,  6 Apr 2025 11:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B25EACD;
+	Sun,  6 Apr 2025 11:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743937712; cv=none; b=D0XOkkOvTYwy6YmfU9SU75spO8uQ9l99lhfjzmDKuWk/XIY5+aCO4Fp16Jq7tpSqoovl3uglse5jTwygzTp26Wt82pAilPNlxo5SeV45irirnrj/70IIOopHHmwrxG4PGWBhDa6GICBKT8Qsb/H07dd/rV9hwsj0rfYPtVN+D2w=
+	t=1743937690; cv=none; b=Y7R+OJzmwc9QgMky4ewi/0cfPT5cwH2mnwsvNKhvkPfaNAf2BCC2x4etnKGEjMQrXyHqqGIho96do72FLQaO/FjRACcHM7hd/XaMGCt5+heTZRxMwsAHZ26it3Xjs6jeeMt8FhWvBtM3p1/fNt47ysP6OTWlbBf5N7t0RUMWIbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743937712; c=relaxed/simple;
-	bh=6a2SqOzeUTikL1/knW0fkq98y/PJNGZ74paZcZmiTdk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l9O4gu6MtbRrnlXsTxj6fCyVXhdcs71FLclHKzv/c7HRk9taCJW6t7zzMfLfj4fhHHh8LheQKgEpkFQKcAwNEdduEQHsrZPk5kOGUS7p58W4Ck5NVaRbZDHfarEJZEP2KPAArJjKGe+oduboES3YSbSkAYSPKDMJ3FNROoBacnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fb6Q0laT; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1743937690; c=relaxed/simple;
+	bh=oUhxAnOMCHsqdz8DNQsypzn7+qug73xuCJrLxNoJ6pw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Ms1zxxndSNttxFQr+lf09vXA49sel/C3sA8LoF24TN260fgBC+kopzmLzOwaV3fRNAk6yiH3Q2phfZeDKfXLAPLat0+UyavlpN9sa0tlvyC5jzxDZntFJxPqLwpbIxiUV5mTEg0HvKO70oiysPp5QsSY6Cck6fAgwW46fye1AcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bAvsywBG; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2295d78b433so31440655ad.2;
-        Sun, 06 Apr 2025 04:08:30 -0700 (PDT)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-736b0c68092so2643097b3a.0;
+        Sun, 06 Apr 2025 04:08:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743937709; x=1744542509; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qAnlAjbRZrY9tqq/RwMiZo/ti1onLK9/fDvfoBU2v7M=;
-        b=fb6Q0laT1Fm7x8wwjgs+cuRb0nr0V6fVxNYLDASHKwC/aABDomaw/mNRdBrjcDgzYY
-         AV+sSqENZwgREeKMIOPQZfvYh3CdfGo09WdM/AzAwoSNEXqlNYXRzSAM/3XwQpVnScs/
-         DrtPaJxVcVDXYahvrstSzcGnjpUmCcx6GlJb4G3qJ00hfiHofpiyAi5boQ87QwynAQb8
-         skPwP7to93jt6M2mhSrrxMUBt2Ei8VlXjSjCKjk/1SS8x3fr5mEEmdmnFP1O2YJ7w7+k
-         jgC6uKXx8mhtHEptM13uMd2xXRHbnE4d1l8wJH79NHuoaAc9q9ejiMdCPgjD7sn4LAUS
-         p6Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743937709; x=1744542509;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=gmail.com; s=20230601; t=1743937688; x=1744542488; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qAnlAjbRZrY9tqq/RwMiZo/ti1onLK9/fDvfoBU2v7M=;
-        b=lkiTL1vXjNb38FjXVA7DDHSLoloANBylyJbPUEojnx3XAQiVGBniIRSQ0miz00uY3o
-         jOZJSDpd3ZkoVerak+TBvySONbCpJ3uEf7k98+qQJ904iYp6A4L+Qubu3pCVEfKKqZJH
-         /oczFWCkP6A5msm6dpM724XNZit4ZR0sKxE2cVZ/JEg2uL9K8OOaRXXQEETFyv8OJRf6
-         tygPb4L3Hh8MCppdSQQIIY55RvksCzEDSoIzRjF30GIYu4AoWf+m+LJbsjzX78ZKUGMk
-         G9iqb5EJMnM1WA9kP3CEYTZLG8ghua92RDtwuUZWg2PCVbjwSLHPa4IkpvTUr14fngaO
-         dkIw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0TpOyw1cnd7a5XrY9x5KrNzd03aL0/ZsQrBE6wrq0cg1ZOwvQzIcDhETvlJRUC3TXJnWMY1/xUCxo2/eGwQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhnX2+InYxxUpOaHiBsTzvAwOPPTNRckpwXr3B1ykmr5EQotTg
-	kTaLNMlqIdWKPQtbJMaOV8kIwzdxkGrfuNmdXEGHdXWFQg8NDViN9xJC21hQ
-X-Gm-Gg: ASbGncsuQY6QWn0GZZ72UsCnQvQGMvDEgmEPwdVonl3emunXde9mUrU0vGywpLkaxhu
-	uICh17c17jyztSKJp+nhQ6xX2Pyp8vfKPt03mZA15U2jaGQi5Es4zFBlUQ9evhXVDMEF3kAAbx0
-	HEpzQZGPuIy6Skct8bRdUkW1vXGq99kNOg+x3E5k121VNmscuI/+dQ3Tj35WKqHquR5qbuFU2p7
-	1FjSAugQsF3gHo04RruxWSbTzCmHmcS2kgtOKvb8cegswuFq4PFlPMwJTIkXP8yuWYwnki5JLKW
-	fB9r10wtBuxf/akDfVw/Ukz1cpYfZg127VWFuQpqeG+6bZdILuqJBQ1LgulXcUdksGx7xl4fGBX
-	0FwtymHsh3BUtnOzaYdIBEw==
-X-Google-Smtp-Source: AGHT+IHGPUwgpSv2QCpVIqKwzkDIjaH35+jacop/mgxP8m+CIoBMk6VKXXKV7KOkPyaR5H1EbOlUAQ==
-X-Received: by 2002:a17:902:e552:b0:21f:3e2d:7d42 with SMTP id d9443c01a7336-22a8a06a041mr121699845ad.23.1743937709469;
-        Sun, 06 Apr 2025 04:08:29 -0700 (PDT)
-Received: from mew.. (p4204131-ipxg22701hodogaya.kanagawa.ocn.ne.jp. [153.160.176.131])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229785adb04sm62080215ad.15.2025.04.06.04.08.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Apr 2025 04:08:29 -0700 (PDT)
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Cc: boqun.feng@gmail.com,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@samsung.com,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	pmladek@suse.com
-Subject: [PATCH v1 2/2] rust: task: add Rust version of might_sleep()
-Date: Sun,  6 Apr 2025 20:07:18 +0900
-Message-ID: <20250406110718.126146-3-fujita.tomonori@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250406110718.126146-1-fujita.tomonori@gmail.com>
-References: <20250406110718.126146-1-fujita.tomonori@gmail.com>
+        bh=ZT8Yrr5vxwZg9guu+30Mw3AXNH1uiqWJ290W7GyHofo=;
+        b=bAvsywBGRSiLhT40kWIJYL42DJbtaVgF8GgJvSoS7jxIA41gCjhPHmK591ATSbxT9N
+         iBF+S4DvXF1dWT30+BQfUKB+V6GlFZmcTwN0ojtkDBknjNJkNzCAXUmE/flEewLBhtaw
+         epLlB6wmZIvCjN+wwTXJX8r6f6GEiA2R8sr9lMVCVaO1WMADQvhWIxlOdt3Lj+xAgHzP
+         vfvm9t9fiuCvZBKa664cCLNWpqAEdteVD/CS2eeh8sJWRDHN4IRbNkAwzl6BqntTv+yJ
+         QKq5pSj4xTukyJIOZT4LFxVnNDBxzicMxwl6AkUUMdLXnn0rqsCMthdMYvxj/WdFKWjE
+         5dJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743937688; x=1744542488;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZT8Yrr5vxwZg9guu+30Mw3AXNH1uiqWJ290W7GyHofo=;
+        b=UU1LtfYB/TljChcTFaqIMNCjHZj4Vx0kRf3FxmHBxuoaqAb8pMVf8azZaZ+N2Qyb+9
+         PdScbFd3zcW6MC42MSBNI5qB8kTTX9OVfIUnVQrfzEfo2f3Rcj3yArLicJWtPWBxPcES
+         MLL4E6szT5zrFvcjnQFm0P2jxjiKIO0Iv7FtTrU19FBX6hTLnG6FM2CBcDN109FfyNAO
+         XVVciPOSaebZzggN/4aJRJi5G3/4IpOPvJHK4HPGTwdLt25z11csISJOB3MNcQsGP0nF
+         YdbwDX8gnN0Vq25FHRb48RP0rldU2X5oOQWFa6Vd1Q/fXg9LMNMRtYAXBHFw8ONYbbdY
+         BjhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrPkTqTp1I0ou1bYLefIajpGJOCtw/7dZ7COkZSBq7vq9E6ox6g6KlIfRK38rdqRgJjUaloYemhFx0Wkre@vger.kernel.org, AJvYcCWugRpPzhsVYMa0qcoHPuJmiyk1jruqOr00PY9TWpSp5e64KDe3zwt9oRycmXdBuRrjH0fuha3LGD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywsIpUEqmu7q3THrpM4ZBlcBlTYxo9zqQNWnBIJuIheHq0oD89
+	sqF4IsBJlIoBQtgHgZKUGi3HUUeWn0zOyf7TcO3Bck5q3RJujC6P
+X-Gm-Gg: ASbGncsxCpYIhAJsbtulHiumcaFtgmg7rYU2ZJKfyTdsVMFHxvu9nJj93etR5ukNwFb
+	zEsREuR12EzPx2whCn4caj77qTcGgzdqrdZp1sxBalLkoOqXSJgBPHWirUt2yWUVk63HP9f2T2+
+	X8d2FhrU7r13+G1h/LvKa9bfmjFWV+XN/BXGWmMPGmS/SokSWiUr6JkY7W1X+bnUAonEgRAC9+K
+	1noCpnhlJ2g5fD9rn6iF6tSNbdObeX2ZDv/mGDr4TqK8TaUQgbLcoBcbD7DYEUqPdL4AZF7evzB
+	2WDGWpQG7bVz8MSjYqdfGAgwqEOpTbwpfxIRB4Ke0V8IvPHlw1BAI7hBh/jKA6fiVyYLjw4bbnV
+	kNZEj8zgXvkGBaiM=
+X-Google-Smtp-Source: AGHT+IEjBAE/rld+9aiCuqigpuY+9zpIRh773iCRiL5ITop6OwxL60YXEg8KAl4CRgm6Ds8OhqjP/A==
+X-Received: by 2002:a05:6a20:72a3:b0:1f3:4427:74ae with SMTP id adf61e73a8af0-2010462b559mr14593665637.25.1743937688009;
+        Sun, 06 Apr 2025 04:08:08 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739d97ee385sm6471991b3a.45.2025.04.06.04.08.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Apr 2025 04:08:07 -0700 (PDT)
+Message-ID: <48bdc474-2dd8-4c51-a32f-04bc7e9f50e7@gmail.com>
+Date: Sun, 6 Apr 2025 20:08:04 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: kevinpaul468@gmail.com
+Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ rbrasga@uci.edu, rdunlap@infradead.org, skhan@linuxfoundation.org,
+ Akira Yokosawa <akiyks@gmail.com>
+References: <20250405165116.147958-1-kevinpaul468@gmail.com>
+Subject: Re: [PATCH] Added usb_string function to a namespace
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <20250405165116.147958-1-kevinpaul468@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Adds a helper function equivalent to the C's might_sleep(), which
-serves as a debugging aid and a potential scheduling point.
+Hi,
 
-Note that this function can only be used in a nonatomic context.
+Kevin Paul Reddy Janagari wrote:
+> with reference to WARNING:
+> Duplicate C declaration, also defined at driver-api/usb/gadget:804
+> There is a function usb_string in the file message.c,
+> there is also a struct usb_string in the kernel api headers.
+> The docs is unable to index the function as the index is occupied by struct
+> This fix adds messgae.c to the usb_core namespace (in docs) hence providing
+> usb_sting a unique index usb_core.usb_string()
 
-This will be used by Rust version of read_poll_timeout().
+This is a bug of Sphinx.
+Quote of my message in July 2023 [1]:
 
-Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
----
- rust/helpers/task.c |  6 ++++++
- rust/kernel/task.rs | 26 ++++++++++++++++++++++++++
- 2 files changed, 32 insertions(+)
+ > This is a bug of Sphinx >=3.1, first reported by Mauro back in September 2020 at:
+ >
+ >     https://github.com/sphinx-doc/sphinx/issues/8241
+ >
+ > It was closed when a local fix was presented.  Unfortunately, it was not
+ > merged at the time and a subsequent pull request was opened at:
+ >
+ >     https://github.com/sphinx-doc/sphinx/pull/8313
+ >
+ > It is not merged yet and carries a milestone of Sphinx 7.x.
 
-diff --git a/rust/helpers/task.c b/rust/helpers/task.c
-index 31c33ea2dce6..2c85bbc2727e 100644
---- a/rust/helpers/task.c
-+++ b/rust/helpers/task.c
-@@ -1,7 +1,13 @@
- // SPDX-License-Identifier: GPL-2.0
- 
-+#include <linux/kernel.h>
- #include <linux/sched/task.h>
- 
-+void rust_helper_might_resched(void)
-+{
-+	might_resched();
-+}
-+
- struct task_struct *rust_helper_get_current(void)
- {
- 	return current;
-diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
-index 9e6f6854948d..1f0156b38ab5 100644
---- a/rust/kernel/task.rs
-+++ b/rust/kernel/task.rs
-@@ -380,3 +380,29 @@ fn eq(&self, other: &Kuid) -> bool {
- }
- 
- impl Eq for Kuid {}
-+
-+/// Annotation for functions that can sleep.
-+///
-+/// Equivalent to the C side [`might_sleep()`], this function serves as
-+/// a debugging aid and a potential scheduling point.
-+///
-+/// This function can only be used in a nonatomic context.
-+#[track_caller]
-+#[inline]
-+pub fn might_sleep() {
-+    #[cfg(CONFIG_DEBUG_ATOMIC_SLEEP)]
-+    {
-+        let loc = core::panic::Location::caller();
-+        // SAFETY: FFI call.
-+        unsafe {
-+            crate::bindings::__might_sleep_precision(
-+                loc.file().as_ptr().cast(),
-+                loc.file().len() as i32,
-+                loc.line() as i32,
-+            )
-+        }
-+    }
-+
-+    // SAFETY: FFI call.
-+    unsafe { crate::bindings::might_resched() }
-+}
--- 
-2.43.0
+[1]: https://lore.kernel.org/0475d177-4c01-0988-0b34-3099dd703498@gmail.com/
+
+The PR carries a milestone of Sphinx 8.x now ...
+
+It might be a high time to make some noise in the PR.
+
+       Thanks, Akira
+
+> 
+> Signed-off-by: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
+> ---
+>  Documentation/driver-api/usb/usb.rst | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/driver-api/usb/usb.rst b/Documentation/driver-api/usb/usb.rst
+> index 89f9c37bb979..976fb4221062 100644
+> --- a/Documentation/driver-api/usb/usb.rst
+> +++ b/Documentation/driver-api/usb/usb.rst
+> @@ -161,6 +161,7 @@ rely on 64bit DMA to eliminate another kind of bounce buffer.
+>  .. kernel-doc:: drivers/usb/core/urb.c
+>     :export:
+>  
+> +.. c:namespace:: usb_core
+>  .. kernel-doc:: drivers/usb/core/message.c
+>     :export:
+>  
+> -- 
+> 2.39.5
 
 
