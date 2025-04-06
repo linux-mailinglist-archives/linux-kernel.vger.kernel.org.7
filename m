@@ -1,118 +1,156 @@
-Return-Path: <linux-kernel+bounces-590237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D49A7D066
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 22:41:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E6A6A7D081
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 22:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EADF3AEA79
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 20:41:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 413B13A64D2
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 20:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A00B1B6556;
-	Sun,  6 Apr 2025 20:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E46195808;
+	Sun,  6 Apr 2025 20:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mi6iQWY8"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PjKVqqDL"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72E91A5B8E
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Apr 2025 20:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5180F7E0E4;
+	Sun,  6 Apr 2025 20:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743972059; cv=none; b=uywXLmwS6MCBljGhPqRCFEvjUyYIo10V+PZLmiPqvbxDB1ug0UNf1FXlxeP3t8Rr7ftN0iF5ESNXZ65WC9z2Hdogi+FvMJSFWuHKADJSFlNiIoSFAXFaBoAXzeJ/n0IUpCn1+/8Y+oJ4FPJvMak0w2IHmVWG8rEVMFp9Q/ZNhkI=
+	t=1743972491; cv=none; b=nxt4+fhNI1Y9eloTIxD7dkrZq9da7t3DLfGaUne8/9LQYsoqWnLVY31Qq4yvTu5hEVl32WVsD8G0ROtFTUKcITnbUbGQeHCtGofJlMZzdmdlc0X4sWSs34C+2XMVeFdZCqUtqGKhOe2SFWcNOtVleFwBVZQ9Gv0Ibu4UIul1Mo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743972059; c=relaxed/simple;
-	bh=lVCMtD03NGUi1+3/wJh+B38jb8GdFNhjnbe4ZG93O9M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kPdIyR8c5rNw+9bMPArm52gnMu46p07yYDTCdYngjA4ErhbPNXmdAdtsU93KwWwhFaygarhpsEFqhWSwiPgKdpSfGcLvCQcmCWkh6nSIu5/sjB2/POXGEmJ+y/sGqT5AatSJSpVq4zs9xxKfFoiDuqOgZUKqlR2mQk1FELFSYVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mi6iQWY8; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3913290f754so449110f8f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Apr 2025 13:40:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743972056; x=1744576856; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/qeCppP+Rln/Mksz9KnQhz7mwwvDX1H3vv1ZRST/ETI=;
-        b=Mi6iQWY8q55B5rRkT1abuFZHlxllVQD1ddO1cqxeMI5PyQX9hfq8sPsEfQm0c02Kb2
-         GwPoS+XG3RKpu+S+C/asg3hSWIF/rZxeQ+UxBtxiu3cxWD+lWZ4A9OAwz+/vS4MiAwgH
-         YmLG5pz2KglwOvPVonPal7GTiKgNzoJi9PvEedlPYyDBrMjiHo/nHdJdTUUIn4rDqa/v
-         5DOhriO0aoLehljlYYfUKS7A+RBjvsNIh7qkoCrJw/C5ueagdF/IfohzbapjE/Zq26cM
-         Ww/LaokW/uQ29ZKpgOp60yUfUpXBQc3/nkkK98bPu4cAOHrdSE72+LcWhrXnXBr7sCQR
-         qmyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743972056; x=1744576856;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/qeCppP+Rln/Mksz9KnQhz7mwwvDX1H3vv1ZRST/ETI=;
-        b=bFW/4CfWBp+InaVnyvW9eGPvJKcXw3Xrc7hyd1nlAB9yp4M7sXO/wXVjLbje/6hlix
-         q8HmwWhLR5s0xXu6hTGwdSJYcdj3sczKqkWBG5zKhmRaAvLO9s/OxbzxIK7QrSKEOv13
-         agbRRDEiMi0ZSdgIs1rAaIXHKwEpgQyALJxMW6FMW7TJoY8C+868P9YNdj0f9roaRDCB
-         Tpr+OkIvK9cab+TeM/3ml1QT5rigtAZJTNCscvvzNvgmMvRINf3dMNsPjXe7t/cUDIto
-         aTVbhfL7qwl2JZzRnDc/2wPzjwhfwkw8570YZqXFfW7jCjOPRW778vHeQdn2kcLj1DK6
-         mtTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfYwTAY5zo388wC49PrCRyC24oBGKUB/zSELEhK02f8woeQIVF0bLTAYB0pReZ8oUFKuDffCnaGUYdNm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk1gu4SxFyhJXTH4Pay0A74Jp2pkzObrKd3vD2CZTP8m64MlJ3
-	YYBKSknwCKtiiM+f8WrHWT2paCBa2WOycZDfBSoqoIuEH9t/lLXA57jTi5ABNmg=
-X-Gm-Gg: ASbGncusRsHgBOVvZL9aRkPnOsU3Txkn4ltoK8uc5i+NcsRpR57jiv5vZC55kxQkquv
-	u8bD3OHY9B+Tf1p2I/zGpi2SAtWmsHLl/gyt14I18+W05GoIRTS7+LWtrBUrqFvzE2tzTrAA39r
-	pC1VR+UJlMvOB11kdqysenkYAIQ1e5hOeb1IDIiM8xMkzqiMdBqDyDQMJwKjY9+zOVPv9Fu769P
-	aSBVR5vKU6+uQLVOFyunwOZhDoLNrxmFBnVmEiJbWBCwKrf58EmVFR7meMvVaZr2WPcD1ve8yxE
-	jHJwwNMjPjqM1/hixJmgWh4OZ8YGDrSCEHLDECxci+Ss4GsXDwzqCw==
-X-Google-Smtp-Source: AGHT+IFALjZG6RCT3tgEKFB/Q+s6vxmhQDm88jfmYRNHOnoIoO4cH/esD9rNMVN3x+CCKt0zFAUyCQ==
-X-Received: by 2002:a05:6000:4009:b0:39c:1258:17d5 with SMTP id ffacd0b85a97d-39cba940fbemr3160203f8f.14.1743972056151;
-        Sun, 06 Apr 2025 13:40:56 -0700 (PDT)
-Received: from shite.. ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec17b0dbesm113167335e9.33.2025.04.06.13.40.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Apr 2025 13:40:55 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/2] usb: typec: tipd: Fix wakeup source leaks on device unbind
-Date: Sun,  6 Apr 2025 22:40:51 +0200
-Message-ID: <20250406204051.63446-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250406204051.63446-1-krzysztof.kozlowski@linaro.org>
-References: <20250406204051.63446-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1743972491; c=relaxed/simple;
+	bh=GdqMTgVunw0G91gOpHFux9zh+YXHkcPVNJEbqwyRp3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MP9YjzHAbq/hIkLMRgonHgAGh6LxoO41aiMWhoiwAUb5Ho3utqWqiP3f7BLZHuXs6FHRbjdnQqtrEg0Gz6mtgajMltrkQam5p+xU5O1hNXf1W9X9YW07lM6t6AMXwtDPXQ2BvlCCVtOKfiJMxclIvzLO4OdJ2FIofbP0WcITOt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PjKVqqDL; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1743972087;
+	bh=a3OoJp9teMIqGbKZWXOaRPl1wcCIcIOyOl73XiC36Tk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PjKVqqDLbSjm4dWQWMqaMjAhDeTuDRo/zv1shSYZ/MYlJG8GV1iWYjRIXQQl17gI2
+	 jeOXI/sXCVCCS8G7nLd+w5rVnCAwRMvFXvZFHUVIxmUVg32lmq4zCRb2zk+6XCKBZX
+	 GvJ1wu9FsTeGgyM8Sh0d6rUhqxw3VPYdTdR/HbyJyeFn9xUw5UThFHnfgoXQZ/Q32i
+	 16t+YPcDetUwn2ASyfInjYL0y3a3yPehARI7XufXq+y3NGc55+Rq+p8FqVz7E/p5hb
+	 Zf++W85Lamj9HnfZTsIG2/i8ywKl/KiXP4y1EpzYLR4ipXiptv8jB9cWJn7jPbtgvu
+	 Tu8+eJ9NlUoSQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZW44l1rdhz4xFb;
+	Mon,  7 Apr 2025 06:41:27 +1000 (AEST)
+Date: Mon, 7 Apr 2025 06:41:09 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Damian Tometzki <damian@riscv-rocks.de>, Masahiro Yamada
+ <masahiroy@kernel.org>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Linux Kbuild mailing list
+ <linux-kbuild@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] Kbuild updates for v6.15-rc1
+Message-ID: <20250407064109.5b441f5e@canb.auug.org.au>
+In-Reply-To: <CAHk-=wh-k04MsoEC0SGKff2Snm6bBF_e+0pHOKwaWv4umZ_SnQ@mail.gmail.com>
+References: <CAK7LNATT_+Z6x0kBy9fkTTucM5NTv0XiG9TYKNDOwL2M9y3WhA@mail.gmail.com>
+	<01070196099fd059-e8463438-7b1b-4ec8-816d-173874be9966-000000@eu-central-1.amazonses.com>
+	<CAHk-=wh-k04MsoEC0SGKff2Snm6bBF_e+0pHOKwaWv4umZ_SnQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/7uBCrq//tkCcj0GB.RJ9tL=";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Device can be unbound, so driver must also release memory for the wakeup
-source.
+--Sig_/7uBCrq//tkCcj0GB.RJ9tL=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/usb/typec/tipd/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Linus,
 
-diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
-index 7ee721a877c1..dcf141ada078 100644
---- a/drivers/usb/typec/tipd/core.c
-+++ b/drivers/usb/typec/tipd/core.c
-@@ -1431,7 +1431,7 @@ static int tps6598x_probe(struct i2c_client *client)
- 
- 	tps->wakeup = device_property_read_bool(tps->dev, "wakeup-source");
- 	if (tps->wakeup && client->irq) {
--		device_init_wakeup(&client->dev, true);
-+		devm_device_init_wakeup(&client->dev);
- 		enable_irq_wake(client->irq);
- 	}
- 
--- 
-2.45.2
+On Sun, 6 Apr 2025 09:50:05 -0700 Linus Torvalds <torvalds@linux-foundation=
+.org> wrote:
+>
+> On Sat, 5 Apr 2025 at 22:43, Damian Tometzki <damian@riscv-rocks.de> wrot=
+e:
+> >
+> > i got the following error after this pull request.
+> >
+> >  MODPOST Module.symvers
+> > ERROR: modpost: missing MODULE_DESCRIPTION() in lib/tests/slub_kunit.o
+> > make[3]: *** [/home/damian/kernel/linux/scripts/Makefile.modpost:147: M=
+odule.symvers] Error 1
+> > make[2]: *** [/home/damian/kernel/linux/Makefile:1956: modpost] Error 2
+> > make[1]: *** [/home/damian/kernel/linux/Makefile:248: __sub-make] Error=
+ 2
+> > make[1]: Leaving directory '/home/damian/kernel/build'
+> > make: *** [Makefile:248: __sub-make] Error 2 =20
+>=20
+> Bah. And the reason it doesn't show up in my normal build tests is
+> that my 'allmodconfig' tests end up picking up SLUB_TINY - which
+> disables a lot of slub cases, including this test.
+>=20
+> And my normal non-allmodconfig tests don't enable SLUB_KUNIT_TEST.
+>=20
+> That said, I'm not sure if making it a hard error was a good idea in
+> the first place. It *used* to be just a warning, and it used to be
+> enabled only with 'extra_warn'.
+>=20
+> So switching it on to always warn was probably a good idea, but then
+> also making it a hard error may have been a bit excessive.
+>=20
+> In related news - I also wonder whether SLUB_TINY should just be
+> turned off for COMPILE_TEST. It's not a very interesting config option
+> to test for, and it disables much more code than it enables [*].
+>=20
+> Testing this without SLUB_TINY, I see that it *also* triggers this one:
+>=20
+>     ERROR: modpost: missing MODULE_DESCRIPTION() in mm/kasan/kasan_test.o
+>=20
+> so the claim in commit 6c6c1fc09de3 ("modpost: require a
+> MODULE_DESCRIPTION()") that "all known instances of this issue have
+> been fixed" is clearly wrong.
+>=20
+> For all we know, there are lots of other cases like this that just
+> never got tested with W=3D1 at all.
+>=20
+> I think I'll downgrade the error() to a warn() again, and make
+> SLUB_TINY depend on !COMPILE_TEST.
+>=20
+> And I'm not even convinced we should require module descriptions for
+> silly test modules, but whatever.
+>=20
+> We'll see if something else pops up, but making the lack of a module
+> description a fatal error was clearly not right as-is.
 
+https://lore.kernel.org/lkml/20250324103048.3d8230f9@canb.auug.org.au/
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/7uBCrq//tkCcj0GB.RJ9tL=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfy5uUACgkQAVBC80lX
+0GwR4Af+Kwyqoil1SkAJPiMIYRqXXSBhUDdC/JULZFmUcLHat7cQLafBFMd37CPJ
+HtC1SUar1I4j4ZXoAOJp/ksJHNyb6G12TPIPj9MJeKQpoiH+xJUrshgiZQl+L37E
+nvQh9MJl3/BpSW2CUL2jgoMkx8+fPQedTF9qE9Uv2/rrDsOr+39j5CjhtPA+w7gN
+UGxVhzRWs4sgUw9kErFvH1caYOTViAXE0BgV32Pc2Oxgli/nU4XY6rCO6qoUip3s
+aeJxsHO97uZMJznzf3FElYh9Nye6prHiZemKrZTx2L7OzQF8ajv/xOsO3IDFNDXe
+I9xeZZiVe/azZDMiJQo44NbyKVAZ8w==
+=8yE/
+-----END PGP SIGNATURE-----
+
+--Sig_/7uBCrq//tkCcj0GB.RJ9tL=--
 
