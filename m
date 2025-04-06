@@ -1,97 +1,170 @@
-Return-Path: <linux-kernel+bounces-589939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B94E3A7CC88
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 04:16:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD77A7CC84
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 04:10:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66E8E3AD66D
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 02:15:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 429783AB9BD
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 02:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1461F34CF5;
-	Sun,  6 Apr 2025 02:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54694174A;
+	Sun,  6 Apr 2025 02:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="OKnvBGcI"
-Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NmuVZBQe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E6B1EA6F
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Apr 2025 02:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350F36FC3;
+	Sun,  6 Apr 2025 02:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743905762; cv=none; b=VOfQFkKix8BCPgNQsUuwWsN1ogAxr8DFkylgDNu88yQtXG0G5n37xNXAh8QOnovuuqzBpeZLPo+rLAh++mrd0VdIUJ5BtfZ/dftMUM9BmJ595PujOyy7MD0gXr8qCuKQf+KtJgC2YmBA/279dIU/e1U+PUn/aZfKRzH0v3pmMCY=
+	t=1743905426; cv=none; b=atiAeHf1O1/2946SpuZXk4NH1sNLyxrgA9WBC9jOcZzncTSt2K35Rny2NE8IgNm3iOOCS7xEYTuiGCEuapQQBz08Oi4boEAgFL47+AnxTyVopqIm/vAHzEoMNmPFCUWEE7+Q6Jc30trh/fnP/VftSvySYs9ZWS7i8iS+4qmGBqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743905762; c=relaxed/simple;
-	bh=VUfxn+TzdAm3gvZaJHA7LKEcGLsUuhAFZs9CM3SEftI=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=sA8i47okIt8FEew6hTh3xN9jhe2tv94axwuA2Ak8ATJkxyTax/HwYnd5YmV4cjeODw9Yql8n2Le+KVDjWtlsacpfelXqOsHF3dmnLraqyNnDNL6PSaA/3G61n7QqPhMR/mv7gms6YtyXBxZfL46kDOOccXe8k2I/NE0sjliNNtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=OKnvBGcI; arc=none smtp.client-ip=203.205.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1743905749; bh=HlYvFglqtg76wzfiXpDpq8n+MZbDVmh5DTNkGzWcQGk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=OKnvBGcI7IIqmTmTzx/KihX2J5SspkWMjh0ec+ECO9hrOm52krRAJKZUFuBdoAz0B
-	 5fCft6KuzYOd7APakaKPYJSFtP7lUEnUZngOaLR3Ju6+WWtTEItjWY8W0yq4J6kKYt
-	 MDMeb+MBrExsPI5Abp9hAx0+kdojbH3+cuEw/8i4=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
-	id 9A816E5; Sun, 06 Apr 2025 10:02:26 +0800
-X-QQ-mid: xmsmtpt1743904946tjhpje6qz
-Message-ID: <tencent_58BA62BBDD331C9E981BDB4B611B6725A508@qq.com>
-X-QQ-XMAILINFO: N3p64rE3gZ/Ysxs90a9kxEyG1zXiOepzmvvt8SAbnG3ik5j/sxxiQ2NqWQ2jgj
-	 8Lc35plIzsIAB+fn6R7/IFshpi3BQEz9D6+iKkX7mPfx1bufLrqFEa7yq2/s93SqtYp3uK5iVE4d
-	 UGGNBglXxFR5hQh3ZvqDQ49EnNxRrOHVazKYm04hjDz/2fu+flTlQ/CfbjKehbHVqbOEndGaI0RV
-	 eeiobbWnn8Ipuc94/l1IG/4vr+KHuMXoqLkssZJumdUwtmr2B3/RUUoPbQXIXoG/51VVSXXQeFCo
-	 T/oHPgtc1qhhoGsRmvAYk7IGkt6QJ8H6Vin5Sk5XvJzKQysgzOV/NC+2qHb4plo1rvvanbE4zRGb
-	 y3izc/Z6C/DFH35mRahsfooFANRn0labBcUvq7aJuXMjrbDng6n2KbhuNXCzhvpx5T3I7KbF4a+b
-	 zL/qLsFZyR7Gb8aTREQRPPL5tvzPL2H/oQbMBfGegcNx347j0hQtxe1o1sE2H5rVmHNDpmb1BWmz
-	 AiA48Mwb5PB3FrZdACHnl5nV7kQqXzdamUvqk6dM+SeKlPSa9nQ/wsBum74s5iJ4m/KkydqDLFpG
-	 4XDeflhTEk21aChDufPD7uabISIsQfsQNekhIQZo1iwSC+hM7tTCf0L6DUoZR9sUn5asR7O9Z9Np
-	 rX3iYJ1vPICAQcWKtC6aX+zDn8aiGfDQBKPzrDuMwC6OHc9EZwDuemb6B82kwQTiYEgAPQPVcJBE
-	 shZENeYH+VtVYZFxGR7ALvaF/1R+A9x1E41Ic8oXELjsqBbjZRcOVrdSngMN/NKgJ9PIi4NhjAVN
-	 BGSqT+yCrUD/ftP3UJmAQeLnTY9KKRkyaeE4xqtm+GBL12F74UOYc7/2tjqYJmWkbotsbDAjULhF
-	 eCrXEW9oxNYM5iL7yQaZ3yQ5+/hFpv3Q==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+5250c4727db03e3436cc@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] general protection fault in mremap
-Date: Sun,  6 Apr 2025 10:02:27 +0800
-X-OQ-MSGID: <20250406020226.4109463-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <67f1c7df.050a0220.0a13.0256.GAE@google.com>
-References: <67f1c7df.050a0220.0a13.0256.GAE@google.com>
+	s=arc-20240116; t=1743905426; c=relaxed/simple;
+	bh=rq+UJuHUiO3etF702qVSpgpAY5zF9H86GYrlKDApfSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7NQMd7SUgpzzMZKklOicNmJurHmxbYSNT+adsygF7DBsXjVrPePjv0GSgjWPJ6zCh9fMvDR30YOsQOPhmxUFNU6c6EhljQtFlhfFTTWFmpNsyARh4sJXlgL9q0iUl04hCEZnBEC9PQG7AudmnGSec5vScO8zn/uljkD/GeZ0/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NmuVZBQe; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743905424; x=1775441424;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rq+UJuHUiO3etF702qVSpgpAY5zF9H86GYrlKDApfSc=;
+  b=NmuVZBQe6U7+VIHQGgNkZsC7FgncDZR5oxDBqeOT7G3/pEYuHD+uifH5
+   u6hBgu9d2fxpDsft8Kn4C37xTk3hWcHh406zPkweDuq+fuk7HdnPlqKnO
+   ck/XH67s4zdFz6d0kwZT/ktG25Oz83scavk0g5Z5L9nGndDdyVhPRLawv
+   pmQ1qJCdoV/OXABgsjiAFXyp9Fl+94fSYh0zHG/veO/LCabREDsN4tFUf
+   s+8iLqVOjrnykXLbZxI+srN3RW9sf17i/snwssz3SkTI6uPfowSpKkjjK
+   wm5g1ECqlKJNIsb5/WSdlwss5ddoYZ8++r6ErfiBZnol99+kR1JabK6t8
+   A==;
+X-CSE-ConnectionGUID: PwM/hcYQQRiwPGsZH5hdYw==
+X-CSE-MsgGUID: lA4eZILZTIulZcxi75Q+8w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11395"; a="45433990"
+X-IronPort-AV: E=Sophos;i="6.15,192,1739865600"; 
+   d="scan'208";a="45433990"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2025 19:10:23 -0700
+X-CSE-ConnectionGUID: X//MYxyTR5SfRgEcP7kAVA==
+X-CSE-MsgGUID: BU1KU/RWShiZAEYwyV93TA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,192,1739865600"; 
+   d="scan'208";a="132763052"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 05 Apr 2025 19:10:21 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u1FSk-0002OX-37;
+	Sun, 06 Apr 2025 02:10:18 +0000
+Date: Sun, 6 Apr 2025 10:10:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wentao Liang <vulab@iscas.ac.cn>, gregkh@linuxfoundation.org,
+	philipp.g.hortmann@gmail.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>, stable@vger.kernel.org
+Subject: Re: [PATCH v4] staging: rtl8723bs: Add error handling for sd_read()
+Message-ID: <202504060905.XvK4ueHM-lkp@intel.com>
+References: <20250405160546.2639-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250405160546.2639-1-vulab@iscas.ac.cn>
 
-#syz test
+Hi Wentao,
 
-diff --git a/mm/mremap.c b/mm/mremap.c
-index 0865387531ed..7db9da609c84 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -1561,11 +1561,12 @@ static unsigned long expand_vma_in_place(struct vma_remap_struct *vrm)
- 	 * adjacent to the expanded vma and otherwise
- 	 * compatible.
- 	 */
--	vma = vrm->vma = vma_merge_extend(&vmi, vma, vrm->delta);
-+	vma = vma_merge_extend(&vmi, vma, vrm->delta);
- 	if (!vma) {
- 		vrm_uncharge(vrm);
- 		return -ENOMEM;
- 	}
-+	vrm->vma = vma;
- 
- 	vrm_stat_account(vrm, vrm->delta);
- 
+kernel test robot noticed the following build errors:
 
+[auto build test ERROR on staging/staging-testing]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Wentao-Liang/staging-rtl8723bs-Add-error-handling-for-sd_read/20250406-001458
+base:   staging/staging-testing
+patch link:    https://lore.kernel.org/r/20250405160546.2639-1-vulab%40iscas.ac.cn
+patch subject: [PATCH v4] staging: rtl8723bs: Add error handling for sd_read()
+config: arm64-randconfig-001-20250406 (https://download.01.org/0day-ci/archive/20250406/202504060905.XvK4ueHM-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 92c93f5286b9ff33f27ff694d2dc33da1c07afdd)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250406/202504060905.XvK4ueHM-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504060905.XvK4ueHM-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/staging/rtl8723bs/hal/sdio_ops.c:190:17: error: expected ';' after expression
+     190 |                         kfree(tmpbuf)
+         |                                      ^
+         |                                      ;
+   1 error generated.
+
+
+vim +190 drivers/staging/rtl8723bs/hal/sdio_ops.c
+
+   150	
+   151	static u32 sdio_read32(struct intf_hdl *intfhdl, u32 addr)
+   152	{
+   153		struct adapter *adapter;
+   154		u8 mac_pwr_ctrl_on;
+   155		u8 device_id;
+   156		u16 offset;
+   157		u32 ftaddr;
+   158		u8 shift;
+   159		u32 val;
+   160		s32 __maybe_unused err;
+   161		__le32 le_tmp;
+   162	
+   163		adapter = intfhdl->padapter;
+   164		ftaddr = _cvrt2ftaddr(addr, &device_id, &offset);
+   165	
+   166		rtw_hal_get_hwreg(adapter, HW_VAR_APFM_ON_MAC, &mac_pwr_ctrl_on);
+   167		if (
+   168			((device_id == WLAN_IOREG_DEVICE_ID) && (offset < 0x100)) ||
+   169			(!mac_pwr_ctrl_on) ||
+   170			(adapter_to_pwrctl(adapter)->fw_current_in_ps_mode)
+   171		) {
+   172			err = sd_cmd52_read(intfhdl, ftaddr, 4, (u8 *)&le_tmp);
+   173			return le32_to_cpu(le_tmp);
+   174		}
+   175	
+   176		/*  4 bytes alignment */
+   177		shift = ftaddr & 0x3;
+   178		if (shift == 0) {
+   179			val = sd_read32(intfhdl, ftaddr, NULL);
+   180		} else {
+   181			u8 *tmpbuf;
+   182	
+   183			tmpbuf = rtw_malloc(8);
+   184			if (!tmpbuf)
+   185				return SDIO_ERR_VAL32;
+   186	
+   187			ftaddr &= ~(u16)0x3;
+   188			err = sd_read(intfhdl, ftaddr, 8, tmpbuf);
+   189			if (err) {
+ > 190				kfree(tmpbuf)
+   191				return SDIO_ERR_VAL32;
+   192			}
+   193	
+   194			memcpy(&le_tmp, tmpbuf + shift, 4);
+   195			val = le32_to_cpu(le_tmp);
+   196	
+   197			kfree(tmpbuf);
+   198		}
+   199		return val;
+   200	}
+   201	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
