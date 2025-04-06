@@ -1,126 +1,264 @@
-Return-Path: <linux-kernel+bounces-590110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C1CBA7CEF1
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 18:17:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2881A7CEEA
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 18:11:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2E623A88DE
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 16:17:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C61FB188CDD3
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 16:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FBA80BEC;
-	Sun,  6 Apr 2025 16:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AB3221556;
+	Sun,  6 Apr 2025 16:11:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="FU3DYFCE"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TGZ7ZIB/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2524CA930
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Apr 2025 16:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C80157A6B;
+	Sun,  6 Apr 2025 16:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743956266; cv=none; b=il+fwxQHz1ccOUdV6ClximGWljA1oy57w+1ZqYkNCwSCQIQLrjcJKSsmS2Ji00HG9ppmcrgzVkWvliaBwivCz6L79AiMDOpY/KE1xvWfvUCtVFSH7soJowN/n6cC/GkO+yhayKMDFmn8enMMeYjQuj3E+n6cqWCapImU5cCPgBU=
+	t=1743955893; cv=none; b=A/FidOsl5TcAWgefqlSxkSo22t6KK1qLjpdgzCHFq13KrVuDc9yUTBqrX5ccgcN1P+u+VXQrDDTq0SuPkqcgIJydV4Zm1kqmK3O2OnNk7wn/1FEhJJAOqqqt5uMoDO/VSHIi0gSZwp9kfRvL+iHQx9L5qk3b0W1eDOQaPKgE7K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743956266; c=relaxed/simple;
-	bh=AC7PzIGILp0YDEV2LAbbNdcbiUsEtuVE2ttYdvM9i0A=;
+	s=arc-20240116; t=1743955893; c=relaxed/simple;
+	bh=Sz4kzjU47HEj+yUM/THf8yMkaaup6Rg7Dx4qH2/70CY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JjeWgHqHOuVyYf5tS15Rr7eRuo5k5FnHoyDwPj7kpDbXqfXeYJr1+o412aNHRORHBeGrFpuORIsf1nUT2MDXboF/EOYCZGkDY0VgJDeQuYpJowFpHkJ/8pucGEAatDEU1K0EJSp0AMkLg6D8Vn9DX3Cid+Co/vnaBfppqWwI7cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=FU3DYFCE; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 58AA93F13F
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Apr 2025 16:08:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1743955680;
-	bh=7fy+hkXWPoA1DLIUgsOkK0YeVO4iJr7EpW+FUaZM2ww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=FU3DYFCElVitSXzTS3/eCzaF+K55hDycPtu6gCV/zWPBzCHycF3ybDqBA0n5At2ax
-	 t7oZD2xbbqdxFgXUrOv1C//BCJBxhFkOoMPgGuAjPQKub6VRCqoipsgKQBaPixYauP
-	 56ed38Srgqg/NhP4Jp6x9sD5tU9so2lUOzztqwm+dsr/RSGB59JURbco/EUJdep2mK
-	 DtYzLt3KOW5J0k8XclLrYYMt0jyM36Nwxk0+IE59Blj9953rQI/n9tGSRHjy0nJc91
-	 epmFqCElR3VR6B4T9uDbnR8bqvPCgNi0ebXdBZ/880ujuzq58zt0YURn5Gr9kND4tq
-	 wRAkazdl4sGWw==
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ab39f65dc10so477966966b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Apr 2025 09:08:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743955680; x=1744560480;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7fy+hkXWPoA1DLIUgsOkK0YeVO4iJr7EpW+FUaZM2ww=;
-        b=JbWKnWSPx47oxBtAtDv25k7qQAeudXv9BPaoDK6W0kBJlhP0P/eC+NfVgV/o1DJ1c9
-         NgcHNYeDy2gvWpym118VRs2P2CDhR/vjVuXOvCk8sdc35ox+C50+zlqvoV/5IzJF9ws5
-         UFe6+QcseOI8X0pOyKLTe8tZF0YgepqURDpbfCiGbzDMrQuwDzGlb1f50jRIZp6RJNJu
-         b1r9lFcCv0zi8AYBDw39kHdfAexlsXV5PHo8+dy6C7vG+ZWWg09VSbGehAR8FFaQiAIR
-         qt1gME9O9dpyStZNxdTGALdPuDo6eaX5yzXbLeWyJuKGvhk00/TyR3/DNJiJDy704wko
-         uo+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWZ0hJkZa8Wpp+YT1ah9DyIAiG2nrgUVYPaS3I9p50+QG8daVKnFiGWBbWywv0xlw+KBPNZN8pHwY99zHQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOidFSlvjNGI3OmJoKeCoMnSANAdG/sUUK83U9FT860E5ScQGp
-	sbTFZecZHTahQStAED9F1kPoCQLl+JM3L8q8k6BpmtMlX+P33yVbx0ZOEoSt/PDT37SuX48qjVc
-	XaruCh6m2OLSC4/gO+ctgCe3lvxdEd0Ve6JUfofn7Uwq4ruwZqhH2BLiXc+oiC9cl9GlGAmKikZ
-	Hsew==
-X-Gm-Gg: ASbGncujCgPBlTuaq+lXymwmwCFVkWeS1gMSrJkSLrjr9bGn2O9B/3cB9sM9fazLMBb
-	r50kmjzf4ax3zuvtQo0O8ZtjGTIKWMMYRnpuuw3LRrp9W7jqIgExwOcqbRGAW4EkaDq2LaFGVNh
-	g3XyjjVi2aBRR3ZiMblNx2bZtFKWBmPC0IU6UPh8weAhwCiH273u7nHCSMMrQ0uMbsi7T2BzYz5
-	X3rJ6RCv6bhqfoCYmkuU0/DmpU0SwWA2B5Wa+DAfLvIInStYarBzurrnNIFFKm7PIrcZBDNYkv0
-	ULZpwPm5MHe2DPwcF/4=
-X-Received: by 2002:a17:907:960f:b0:ac3:5c8e:d3f5 with SMTP id a640c23a62f3a-ac7d190ff66mr961508766b.27.1743955679899;
-        Sun, 06 Apr 2025 09:07:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IELAlvJNQVE8a+lqGIYpgiQgQFDzS0otl6zZiL4StH9XfrH+ACoOaESD2G+gEILK0qJgchLGA==
-X-Received: by 2002:a17:907:960f:b0:ac3:5c8e:d3f5 with SMTP id a640c23a62f3a-ac7d190ff66mr961506366b.27.1743955679572;
-        Sun, 06 Apr 2025 09:07:59 -0700 (PDT)
-Received: from localhost ([176.88.101.113])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7bfe996f5sm611263866b.64.2025.04.06.09.07.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Apr 2025 09:07:59 -0700 (PDT)
-Date: Sun, 6 Apr 2025 19:07:57 +0300
-From: Cengiz Can <cengiz.can@canonical.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Salvatore Bonaccorso <carnil@debian.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, lvc-patches@linuxtesting.org, 
-	dutyrok@altlinux.org, syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com, 
-	stable@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
-Message-ID: <dzmprnddbx2qaukb7ukr5ngdx6ydwxynaq6ctxakem43yrczqb@y7dg7kzxsorc>
-References: <20241019191303.24048-1-kovalev@altlinux.org>
- <Z9xsx-w4YCBuYjx5@eldamar.lan>
- <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
- <2025032402-jam-immovable-2d57@gregkh>
- <7qi6est65ekz4kjktvmsbmywpo5n2kla2m3whbvq4dsckdcyst@e646jwjazvqh>
- <2025032404-important-average-9346@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rl3DWle9QuTOU/sy8X74WfFKxZxI+M18+4JI39IKCc+48fqOC94BvkzVSpg5Nn6QIaQExP41YAAgeT3fkdE/KvTFTq0nK3sABpmAzlhqSiMeCST2lK2HuPVPToNJHzxbAqUmG+Yyqxj4bk4i4QC7xuiuCh/oFvfGwi/eEM65T7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGZ7ZIB/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 001A8C4CEE3;
+	Sun,  6 Apr 2025 16:11:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743955892;
+	bh=Sz4kzjU47HEj+yUM/THf8yMkaaup6Rg7Dx4qH2/70CY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TGZ7ZIB/u5WG5waiYDZ9nIiO+DrHUzhyT9rGMi+NxU4/5VEXHubGIE8QIT+ddpOBL
+	 GOhVn3oQOLm218mBHQbsLAHWcS++8ZJuwmz3m1kU8+IkHS6TDC0GcnlNzi9/4SHmbU
+	 n/q318Sa5wo6I0DzVTV51I3h3a69SN9OmvLC4lzDr4mef97Y8OOvrZRURv5RkQ9gDF
+	 qEs/aqPaBz3hyiHLDBlvO3mwumjpErkxZ3jfT0maQhp7YLf5gF2vjXvihOxf2Nh0mc
+	 sx42TYyj+JrkURKv0e81e9pLvqoWQzIf5XwEystouNJqJ0yHOviPP/fW+j2gB4oiSj
+	 /smAFmSyxIF9w==
+Date: Sun, 6 Apr 2025 19:11:14 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Pratyush Yadav <ptyadav@amazon.de>,
+	Changyuan Lyu <changyuanl@google.com>, linux-kernel@vger.kernel.org,
+	graf@amazon.com, akpm@linux-foundation.org, luto@kernel.org,
+	anthony.yznaga@oracle.com, arnd@arndb.de, ashish.kalra@amd.com,
+	benh@kernel.crashing.org, bp@alien8.de, catalin.marinas@arm.com,
+	dave.hansen@linux.intel.com, dwmw2@infradead.org,
+	ebiederm@xmission.com, mingo@redhat.com, jgowans@amazon.com,
+	corbet@lwn.net, krzk@kernel.org, mark.rutland@arm.com,
+	pbonzini@redhat.com, pasha.tatashin@soleen.com, hpa@zytor.com,
+	peterz@infradead.org, robh+dt@kernel.org, robh@kernel.org,
+	saravanak@google.com, skinsburskii@linux.microsoft.com,
+	rostedt@goodmis.org, tglx@linutronix.de, thomas.lendacky@amd.com,
+	usama.arif@bytedance.com, will@kernel.org,
+	devicetree@vger.kernel.org, kexec@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH v5 09/16] kexec: enable KHO support for memory
+ preservation
+Message-ID: <Z_KnovvW7F2ZyzhX@kernel.org>
+References: <20250320015551.2157511-1-changyuanl@google.com>
+ <20250320015551.2157511-10-changyuanl@google.com>
+ <mafs05xjmqsqc.fsf@amazon.de>
+ <20250403114209.GE342109@nvidia.com>
+ <Z-6UA3C1TPeH_kGL@kernel.org>
+ <20250403142438.GF342109@nvidia.com>
+ <Z--sUYCvP3Q8nT8e@kernel.org>
+ <20250404124729.GH342109@nvidia.com>
+ <Z-_kSXrHWU5Bf3sV@kernel.org>
+ <20250404143031.GB1336818@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025032404-important-average-9346@gregkh>
-User-Agent: NeoMutt/20231103
+In-Reply-To: <20250404143031.GB1336818@nvidia.com>
 
-On 24-03-25 11:53:51, Greg KH wrote:
-> On Mon, Mar 24, 2025 at 09:43:18PM +0300, Cengiz Can wrote:
-> > In the meantime, can we get this fix applied?
+On Fri, Apr 04, 2025 at 11:30:31AM -0300, Jason Gunthorpe wrote:
+> On Fri, Apr 04, 2025 at 04:53:13PM +0300, Mike Rapoport wrote:
+> > > Maybe change the reserved regions code to put the region list in a
+> > > folio and preserve the folio instead of using FDT as a "demo" for the
+> > > functionality.
+> > 
+> > Folios are not available when we restore reserved regions, this just won't
+> > work.
 > 
-> Please work with the filesystem maintainers to do so.
-
-Hello Christian, hello Alexander
-
-Can you help us with this?
-
-Thanks in advance!
-
+> You don't need the folio at that point, you just need the data in the
+> page.
 > 
-> thanks,
+> The folio would be freed after starting up the buddy allocator.
+
+Maybe, but seems a bit far fetched to me.
+ 
+> > > We know what the future use case is for the folio preservation, all
+> > > the drivers and the iommu are going to rely on this.
+> > 
+> > We don't know how much of the preservation will be based on folios.
 > 
-> greg k-h
+> I think almost all of it. Where else does memory come from for drivers?
+
+alloc_pages()? vmalloc()?
+These don't use struct folio unless there's __GFP_COMP in alloc_pages()
+call, and in my mind "folio" is memory described by struct folio.
+ 
+> > Most drivers do not use folios
+> 
+> Yes they do, either through kmalloc or through alloc_page/etc. "folio"
+> here is just some generic word meaning memory from the buddy allocator.
+
+How about we find some less ambiguous term? Using "folio" for memory
+returned from kmalloc is really confusing. And even alloc_pages() does not
+treat all memory it returns as folios.
+
+How about we call them ranges? ;-)
+ 
+> The big question on my mind is if we need a way to preserve slab
+> objects as well..
+> 
+> > and for preserving memfd* and hugetlb we'd need to have some dance
+> > around that memory anyway.
+> 
+> memfd is all folios - what do you mean?
+
+memfd is struct folios indeed, but some of them are hugetlb and even for
+those that are not I'm not sure that kho_preserve_folio(struct *folio)
+kho_restore_folio(some token?) will be enough. I totally might be wrong
+here.
+ 
+> hugetlb is moving toward folios.. eg guestmemfd is supposed to be
+> taking the hugetlb special stuff and turning it into folios.
+
+At some point yes. But I really hope KHO can happen faster than hugetlb and
+guestmemfd convergence.
+ 
+> > So I think kho_preserve_folio() would be a part of the fdbox or
+> > whatever that functionality will be called.
+> 
+> It is part of KHO. Preserving the folios has to be sequenced with
+> starting the buddy allocator, and that is KHO's entire responsibility.
+
+So if you call "folio" any memory range that comes from page allocator, I
+do agree. But since it's not necessarily struct folio, and struct folio is
+mostly used with file descriptors, the kho_preserve_folio(struct folio *)
+API can be a part of fdbox.
+
+Preserving struct folio is one of several case where we'd want to preserve
+ranges. There's simplistic memblock case that does not care about any
+memdesc, there's memory returned from alloc_pages() without __GFP_COMP,
+there's vmalloc() and of course there's memory with struct folio.
+
+But the basic KHO primitive should preserve ranges because they are the
+common denominator of alloc_pages(), folio_alloc(), vmalloc() and memblock.
+ 
+> I could see something like preserving slab being in a different layer,
+> built on preserving folios.
+
+Maybe, on top of ranges. slab is yet another memdesc.
+ 
+> > Are they? 
+> > The purpose of basic KHO is to make sure the memory we want to preserve is
+> > not trampled over. Preserving folios with their orders means we need to
+> > make sure memory range of the folio is preserved and we carry additional
+> > information to actually recreate the folio object, in case it is needed and
+> > in case it is possible. Hughetlb, for instance has its own way initializing
+> > folios and just keeping the order won't be enough for that.
+> 
+> I expect many things will need a side-car datastructure to record that
+> additional meta-data. hugetlb can start with folios, then switch them
+> over to its non-folio stuff based on its metadata.
+> 
+> The point is the basic low level KHO mechanism is simple folios -
+> memory from the buddy allocator with an neutral struct folio that the
+> caller can then customize to its own memory descriptor type on restore.
+
+I can't say I understand what do you mean by "neutral struct folio", but we
+can't really use struct folio for memory that wasn't struct folio at the
+first place. There's a ton of checks for flags etc in mm core that could
+blow up if we use a wrong memdesc.
+
+Hence the use of page->private for order of folios. It's stable (for now)
+and can be used by any page owner.
+ 
+> Eventually restore would allocate a caller specific memdesc and it
+> wouldn't be "folios" at all. We just don't have the right words yet to
+> describe this.
+> 
+> > As for the optimizations of memblock reserve path, currently it what hurts
+> > the most in my and Pratyush experiments. They are not very representative,
+> > but still, preserving lots of pages/folios spread all over would have it's
+> > toll on the mm initialization.
+> 
+> > And I don't think invasive changes to how
+> > buddy and memory map initialization are the best way to move forward and
+> > optimize that.
+> 
+> I'm pretty sure this is going to be the best performance path, but I
+> have no idea how invasive it would be to the buddy alloactor to make
+> it work.
+
+I'm not sure about the best performance, but if we are to completely bypass
+memblock_reserve() we'd need an alternative memory map and free lists
+initialization for KHO. I believe it's too premature to target that at this
+point.
+ 
+> > Quite possibly we'd want to be able to minimize amount of *ranges*
+> > that we preserve.
+> 
+> I'm not sure, that seems backwards to me, we really don't want to have
+> KHO mem zones! So I think optimizing for, and thinking about ranges
+> doesn't make sense.
+
+"folio" as "some generic word meaning memory from the buddy allocator" and
+range are quite the same thing.
+ 
+> The big ranges will arise naturally beacuse things like hugetlb
+> reservations should all be contiguous and the resulting folios should
+> all be allocated for the VM and also all be contigous. So vast, vast
+> amounts of memory will be high order and contiguous.
+
+So there won't be a problem with too many memblock_reserve() then.
+ 
+> > Preserving folio orders with it is really straighforward and until we see
+> > some real data of how the entire KHO machinery is used, I'd prefer simple
+> > over anything else.
+> 
+> mapletree may not even work as it has a very high bound on memory
+> usage if the preservation workload is small and fragmented. This is
+> why I didn't want to use list of ranges in the first place.
+
+But aren't "vast, vast amounts of memory will be high order and
+contiguous."? ;-)
+
+For small and fragmented workload bitmaps become really sparse and we are
+wasting memory for nothing. Maple tree only tracks memory that is actually
+used and coalesces adjacent ranges so although it's unbound in theory, in
+practice it may be not that bad. 
+
+> It also doesn't work so well if you need to preserve the order too :\
+
+It does. In the example I've sent there's an unsigned long to store
+"kho_mem_info_t", which definitely can contain order.
+
+> Until we know the workload(s) and cost how much memory the maple tree
+> version will use I don't think it is a good general starting point.
+ 
+I did and experiment with preserving 8G of memory allocated with randomly
+chosen order. For each order (0 to 10) I've got roughly 1000 "folios". I
+measured time kho_mem_deserialize() takes with xarrays + bitmaps vs maple
+tree based implementation. The maple tree outperformed by factor of 10 and
+it's serialized data used 6 times less memory.
+
+> Jason
+
+-- 
+Sincerely yours,
+Mike.
 
