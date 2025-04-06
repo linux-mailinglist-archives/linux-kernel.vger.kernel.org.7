@@ -1,145 +1,146 @@
-Return-Path: <linux-kernel+bounces-590117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE57CA7CF09
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 18:55:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0E92A7CF0B
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 18:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DAE816C0FA
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 16:55:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55CCD188CB76
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 16:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B403617A2F5;
-	Sun,  6 Apr 2025 16:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAA9187FE4;
+	Sun,  6 Apr 2025 16:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m5rCLUkO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZQA4zdTM"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B411537F8
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Apr 2025 16:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFCC14A0B7;
+	Sun,  6 Apr 2025 16:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743958509; cv=none; b=lgoprYxkio/nFR4Bh6i9sTY8eLnMIfIrQSPXHLTy6AKNgwHcMyR0/qZE1st+oC6jJXMNLzxrOmQI+4Z91/ChvizisNOP8NvWpCzeqGfW5t3SkqgqeLhIv7rrsbpeNyVaXKIkWPKohX9kzjK/t4H6Tadz9fRrV+5eHsdUSvRCUwU=
+	t=1743958757; cv=none; b=afrCiryYCnQGWSGwSOT1sMj/Umde7NbbA1nUb1cg2h8j9MuxVnl1YcPwMmC94sgxZAgcmQQOQkB9ecC3NLEiCTy19iI+T61CIaTvDX8TbJN6HKOFHJ6NNA5xhSqybbJoME2GHH8GlnzqgqzS7Oe1RyjOpwrO5CQtRxLz5tcdTLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743958509; c=relaxed/simple;
-	bh=w3ltC006kGJ6O8BCTCtrkRifQFArQpDm2qj0xHMN+9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PcCCidGg32OXvBx+71EIw6ihvg+hGQy+OVtvAV9iSwhywXKjOwXgrW/a2Dck2Tad6FhsCb/A1MZijSVWUVEzcJdtEsRxM/opowpN1HjGYAPzdxv72POUrLXgqCpEAzISNbsJNdL41wXnxeJnHchCtsSpQp2Jg0qv0xLxVYL43o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m5rCLUkO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DE65C4CEE3;
-	Sun,  6 Apr 2025 16:55:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743958508;
-	bh=w3ltC006kGJ6O8BCTCtrkRifQFArQpDm2qj0xHMN+9M=;
-	h=Date:From:To:Cc:Subject:From;
-	b=m5rCLUkO+2qH0Xc/BQU5fn2NN/T4AKYRKgB4sCOWZxlbGGdO7qQL1SD7yf/IDsFxa
-	 yoDRR+hPFJ+rJx85XX4Aaqegmw4IK/2m9AhkE09uUBD6rs01cT8wp6g75h92BjOUCw
-	 nZNFdDCnK3q2DMw2KwNILDf1IYlBBCDG7N3jQ37S1T40J5yrXKzYChI7JqTXPrLzw7
-	 jn1CqWjKRs+sGI7HPxa6G3TK1D4NXkIwDf3uisd+CA4mkuPBbAiqS3fCocH1uQwopM
-	 +38/7VJYAmrdO22YnsPKD9b+lrlnA2vpbzGKoICRYKNgBNb+FgZ4vYtmhf5lEQ45eB
-	 GdMLatUcnXnNA==
-Date: Sun, 6 Apr 2025 18:55:02 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [GIT PULL] scheduler fixes
-Message-ID: <Z_Kx5hEaGkrLgyLf@gmail.com>
+	s=arc-20240116; t=1743958757; c=relaxed/simple;
+	bh=Z66dMnQi3a5PvQ6TbtZelRlImqy3TB1NuaLrN44CY4w=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=r3DMuxUqQfwfMLvpLsQkYynDkKg1Y7WThdur+PXRwDhMGu/Ga7BnKKk+v/LljrtD1Ni2NY9VLdT+fKvkl2bwvRcZK3cyPMDWieHhhxeZBvbdntm9JIM0YIo90HHUbd1oVMfbwVnSl03vzL8u9Vo7SbXLTLk5mlvq6o0Nk7AKuSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZQA4zdTM; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-30185d00446so2853289a91.0;
+        Sun, 06 Apr 2025 09:59:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743958755; x=1744563555; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=30Vo1WxI24wWL4NWbZE3a+oXaFHqvfDXuinNvvbo2Ks=;
+        b=ZQA4zdTMn7pzQCyMrLoZACkewCvBuX+2qieQ89kW2pUH9R+vFu8ltTCvH5WmwGnFCe
+         fat0ieCH8vez9OWxAx/n+aSVxkONDI1YcaLERQXO87DegeGwPBdinRSnxGJOZgCjFjpK
+         R6PXKVRp0fkFiaVP4SgIlvnDn27wWXockK+DB3XPiWf1aIQUonVYNdAodkA24xvIuoRX
+         Y1kKzHy88lNUTKHX5y1yi6EN37S3zw6Oa8Hfe25/6pj9alfdi8q68eVXNNJioMbqwmrA
+         SkKQ6uBAj86ewVmlNxwDp2ccH3NIyxN8BZLMdZZ0P/Q35dggrvJfrmpCstpG88tnuyC8
+         hX3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743958755; x=1744563555;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=30Vo1WxI24wWL4NWbZE3a+oXaFHqvfDXuinNvvbo2Ks=;
+        b=Nj3fzQ9R7aSddnornelmOtmTL1ImR2PWc96M/yJEayPaHjJ8nFHQy4MAuz/SFh8P/P
+         x/DYCanEzttHTzg1yf9DiIjZHcMTsufbGcAosgDBov3AKyRywYIOKhuDdBRq+IJVCGHx
+         zT8l/+c7D3Da9vj8kqVJsM4UUbR7VaWLHn9woUYYWsnrh6DVAVnVe7eSi4UjqN2i63Hy
+         71x7fKH7KaDnHrUvvxKQQgRN4FSjt/zqhjxjDghD0dzWiARawkAak2bT1OCusTKoo8Yv
+         WCI9YpglPJWE1t2VCjJYofKZXLubVJ0dO+ikZnXa7Z2nFi3LtstgPGYMkgfRdALAWPvR
+         bLBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxplzHahe14Wx9SlqKp1Zf4eT5rOe65FZHCnFwWmafGjRip+GlsIdQRxsK8pRtOqnsDX/5UAEneZ9Msgo=@vger.kernel.org, AJvYcCXSjPtgA6M8Z2fXdctzOyXxM0SGqdBBr9RhgGkvEV1Sum3rDfq8Y9ENkMy3ab/d85WugefWWvEJPNkwHbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGRob+xQiQI1cMExlzPnKGIsTTtd6P1YDK4iQeal7K8qAeQvFk
+	TTXOMZzwZl6Mo7w9rm/ef3nbn8CHrdaPbqGsocYpvEkJxMRLeVdw
+X-Gm-Gg: ASbGncvS73J9UigvhALtTS33nRwBzQGCiZZyMw5sV5aX2baerK5v8PH4+IEa41vPWeG
+	AFbLXrBbay/mSgA7bgOJgXAQJR0gcDSnn+BshWVHi/ru2Qy0VKmkVWZR4wPv8MG8L9bHuDjhild
+	0ZXczXZCaxD7reY8zFTWtjEZzzSbNUNTEWvPz4maBXWadb9fuFrYPdTt5gaaZJtbJY/ILeyznWD
+	7VTBEYfZo1r5uSvu8AQOjqHH9PxsJOJjikpcYjzCNyRgwxVy+1TXvbnnw65FDSbGGqBGz9z3WKs
+	btiCeS3vxUMo9JPhZedbW7kJtBqfajX6hbrPgnD+rLgAJpnWeAG3/mBiZuAJcUuWrORKYPhClZa
+	nAenuwcNh
+X-Google-Smtp-Source: AGHT+IEvrkncT+9f+FxbviphbN7Mwh5q+NsDoN4TkzX1YpjmY/QxkehPDbu+b7BMIKj4+p2xPlKcCQ==
+X-Received: by 2002:a17:90a:d64e:b0:2fa:2268:1af4 with SMTP id 98e67ed59e1d1-3057a5c7bb9mr18921822a91.7.1743958755236;
+        Sun, 06 Apr 2025 09:59:15 -0700 (PDT)
+Received: from localhost.localdomain ([221.214.202.225])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229785c01dasm65817195ad.83.2025.04.06.09.59.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Apr 2025 09:59:14 -0700 (PDT)
+From: Penglei Jiang <superman.xpt@gmail.com>
+To: mchehab@kernel.org
+Cc: standback@126.com,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Penglei Jiang <superman.xpt@gmail.com>
+Subject: [PATCH] media: dmxdev: fix repeated initialization of ringbuffer in dvb_dvr_open()
+Date: Sun,  6 Apr 2025 09:58:02 -0700
+Message-Id: <20250406165802.100305-1-superman.xpt@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Linus,
+The dvb_dvr_open() function has an issue where it repeatedly
+initializes the data and queue fields of the dvb_ringbuffer.
+We should not reinitialize the queue field in the open function,
+and if the data field is not empty, the initialization process
+should be skipped.
 
-Please pull the latest sched/urgent Git tree from:
+Reported-by: syzbot+4e21d5f67b886a692b55@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/67917ed8.050a0220.15cac.02eb.GAE@google.com
+Tested-by: Jianzhou Zhao <xnxc22xnxc22@qq.com>
+Signed-off-by: Penglei Jiang <superman.xpt@gmail.com>
+---
+ drivers/media/dvb-core/dmxdev.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-2025-04-06
-
-   # HEAD: 169eae7711ea4b745e2d33d53e7b88689b10e1a0 rseq: Eliminate useless task_work on execve
-
-Miscellaneous scheduler fixes/updates:
-
- - Fix a nonsensical Kconfig combination
- - Remove an unnecessary rseq-notification
-
- Thanks,
-
-	Ingo
-
------------------->
-Mathieu Desnoyers (1):
-      rseq: Eliminate useless task_work on execve
-
-Oleg Nesterov (1):
-      sched/isolation: Make CONFIG_CPU_ISOLATION depend on CONFIG_SMP
-
-
- fs/exec.c           | 3 ++-
- init/Kconfig        | 2 +-
- kernel/sched/core.c | 1 -
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/exec.c b/fs/exec.c
-index 5d1c0d2dc403..8e4ea5f1e64c 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1864,9 +1864,9 @@ static int bprm_execve(struct linux_binprm *bprm)
- 		goto out;
- 
- 	sched_mm_cid_after_execve(current);
-+	rseq_execve(current);
- 	/* execve succeeded */
- 	current->in_execve = 0;
--	rseq_execve(current);
- 	user_events_execve(current);
- 	acct_update_integrals(current);
- 	task_numa_free(current, false);
-@@ -1883,6 +1883,7 @@ static int bprm_execve(struct linux_binprm *bprm)
- 		force_fatal_sig(SIGSEGV);
- 
- 	sched_mm_cid_after_execve(current);
-+	rseq_set_notify_resume(current);
- 	current->in_execve = 0;
- 
- 	return retval;
-diff --git a/init/Kconfig b/init/Kconfig
-index 681f38ee68db..ab9b0c2c3d52 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -709,7 +709,7 @@ endmenu # "CPU/Task time and stats accounting"
- 
- config CPU_ISOLATION
- 	bool "CPU isolation"
--	depends on SMP || COMPILE_TEST
-+	depends on SMP
- 	default y
- 	help
- 	  Make sure that CPUs running critical tasks are not disturbed by
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index cfaca3040b2f..c81cf642dba0 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -10703,7 +10703,6 @@ void sched_mm_cid_after_execve(struct task_struct *t)
- 		smp_mb();
- 		t->last_mm_cid = t->mm_cid = mm_cid_get(rq, t, mm);
- 	}
--	rseq_set_notify_resume(t);
+diff --git a/drivers/media/dvb-core/dmxdev.c b/drivers/media/dvb-core/dmxdev.c
+index 6063782e937a..82fd060430cd 100644
+--- a/drivers/media/dvb-core/dmxdev.c
++++ b/drivers/media/dvb-core/dmxdev.c
+@@ -113,6 +113,17 @@ static struct dmx_frontend *get_fe(struct dmx_demux *demux, int type)
+ 	return NULL;
  }
  
- void sched_mm_cid_fork(struct task_struct *t)
++static void dvb_ringbuffer_init_noqueue(struct dvb_ringbuffer *ringbuffer,
++		void *data, size_t len)
++{
++	ringbuffer->pread = 0;
++	ringbuffer->pwrite = 0;
++	ringbuffer->data = data;
++	ringbuffer->size = len;
++	ringbuffer->error = 0;
++	spin_lock_init(&(ringbuffer->lock));
++}
++
+ static int dvb_dvr_open(struct inode *inode, struct file *file)
+ {
+ 	struct dvb_device *dvbdev = file->private_data;
+@@ -156,7 +167,7 @@ static int dvb_dvr_open(struct inode *inode, struct file *file)
+ 		}
+ 	}
+ 
+-	if (need_ringbuffer) {
++	if (need_ringbuffer && !dmxdev->dvr_buffer.data) {
+ 		void *mem;
+ 
+ 		if (!dvbdev->readers) {
+@@ -168,7 +179,8 @@ static int dvb_dvr_open(struct inode *inode, struct file *file)
+ 			mutex_unlock(&dmxdev->mutex);
+ 			return -ENOMEM;
+ 		}
+-		dvb_ringbuffer_init(&dmxdev->dvr_buffer, mem, DVR_BUFFER_SIZE);
++		dvb_ringbuffer_init_noqueue(
++			&dmxdev->dvr_buffer, mem, DVR_BUFFER_SIZE);
+ 		if (dmxdev->may_do_mmap)
+ 			dvb_vb2_init(&dmxdev->dvr_vb2_ctx, "dvr",
+ 				     file->f_flags & O_NONBLOCK);
+-- 
+2.17.1
+
 
