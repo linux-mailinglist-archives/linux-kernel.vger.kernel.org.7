@@ -1,158 +1,115 @@
-Return-Path: <linux-kernel+bounces-590022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68ACCA7CDD3
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 14:13:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9875A7CDD8
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 14:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 706FA18867FE
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 12:13:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ABA23B1B34
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 12:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94E721771A;
-	Sun,  6 Apr 2025 12:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3941221772A;
+	Sun,  6 Apr 2025 12:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YaG4Hxsp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IUd7NkOR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE5A20E6FD;
-	Sun,  6 Apr 2025 12:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9520133987
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Apr 2025 12:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743941594; cv=none; b=kcgsdJzq23FSPXSX/HkQZ7iYAMJEsGRiudLIUIdQ0G7RB/g/3jURA4gF5kfsirw6TZUplH1r9eCh04I2aj5R1e8M+qDlxAni82yVqrjUcBejATt1JaN/P990kkVqhi1D9KbRS1YQIgrBYF/jbKZ0fkFeu4CXEdnQaFlgnIiSTBg=
+	t=1743942071; cv=none; b=ICT2wstKW7noNF8c6PA2Ja2P9Vx9fdkP4xs/SRpbp/3Fgdo7KqmH/MWdtmHc+QhVrs2jlo/Ilz+wPKdpmelfHft2SmsIYewC1fIerbbAZvmvk89ZrMdmurH9riSJGcDYeG3fWpDNJyq2ut7sQh0JkrtnsmgpSl57JK9Jf07O1A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743941594; c=relaxed/simple;
-	bh=xZzrqfASVG7xF2GB9rUYr1LIUP1qsSLaKh0AMWmh1Rw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B2y0JKj+36ytcdTd1HZgrgrNUuH7AQ6M8F/fuNO8BirwzA/zwWTTwlHVp5ldC2J5v2sDNOrxLo+lhm3bQtCNN3MYn1QnC0nUNqNmiAq0tSsvmLevXznTPrcylMX9t69em2zt0nOMIXAhMac+mzb5row1PXlqZD8jiX2p9bwAAd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YaG4Hxsp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E6AC4CEE3;
-	Sun,  6 Apr 2025 12:13:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743941593;
-	bh=xZzrqfASVG7xF2GB9rUYr1LIUP1qsSLaKh0AMWmh1Rw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YaG4HxspfHnyCoHLsMiRwfrJcZilrf+WruMMWLzgVRlv23zqUOv+x9or+nGJYrjFl
-	 drWVa5dKuqx+BB6Ms1bL7NtVNrmD5mR7aExmh1VGqaouWw8EzPaReN/FnW+WsN9Owq
-	 +wW1sj6qvnecajg3R5OtnofX3MP3LoYPvU8Jf4VRWB15QpUtReaCk8RNJh6Z6geReE
-	 n8LUmAkVDLecS2IlZUVJfUdry5GojMVYESQvawTUKWGReNuj2ImPWZF/1KlCatMGx8
-	 fqrHYtwBYiFEAaVPqwhyIWaNNTsmr3PY3jUnte8GJGYXOE1I59OtqApRgPPZqjTLfG
-	 uoFQMXMzMv8mg==
-Message-ID: <a162ce6f-bb69-4fa3-a67b-5d38ffb9e2ef@kernel.org>
-Date: Sun, 6 Apr 2025 14:13:08 +0200
+	s=arc-20240116; t=1743942071; c=relaxed/simple;
+	bh=94r3x+l1sntU7hyQZLefUw+fmCmV/lAdFdDZcKB88T0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UlMD60tGeRODLZ16Y+GLRohwrtY1FOOrEh26i6UUvjUftZgUEbJ8zZA/O0cWTgQT7ILuyPnWzZ3vrzpxMtGh7HmA6ZW8rmvp7/HvN0xLaElk+GTxoqz0XEBn9IngkQyklwWicsawYmq6hwt88CW5zMc3cAyhs5VZVbqT7epdWpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IUd7NkOR; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743942069; x=1775478069;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=94r3x+l1sntU7hyQZLefUw+fmCmV/lAdFdDZcKB88T0=;
+  b=IUd7NkOR24+gMHXZqigvuXoo1O6wxElAh248yzyKl8vo0AlsgT+FbIYC
+   usCG6oAZULdOtK0URW9PO40WXPXxqKuKDCFYQpqfUcr0vHtB8xnuHHB0c
+   cTCUX4OeMcERzGV1i3h71m0CEvmAJ+OvaT7EUyyepzpTXB5BtVXBCawsQ
+   gQUg1qO3np0G/YVI8LTkdWudTarv0VczZXg44KV6eIYjrKSp5FDhMSVck
+   2hBz9jySRfg9oVL8Y5rWfsfRn7ZnbxdbxpJ4/ncXzHNI1zDTNW7gvxfQc
+   qChMm/Ykk39b0akOBqo+CiJVkgl0BOEYKfyWFopEUrSpsLwTf+ql6F2uJ
+   w==;
+X-CSE-ConnectionGUID: zrLNguBkT9mNdtHjb/dYxQ==
+X-CSE-MsgGUID: xo1y/JlvRYWDq6a/aKgirg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11395"; a="45239007"
+X-IronPort-AV: E=Sophos;i="6.15,193,1739865600"; 
+   d="scan'208";a="45239007"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2025 05:21:09 -0700
+X-CSE-ConnectionGUID: ZCzvXK5JTZ+NGnu81Y+6rA==
+X-CSE-MsgGUID: QY+N0yGBQOmBvRdn2epQIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,193,1739865600"; 
+   d="scan'208";a="128222214"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 06 Apr 2025 05:21:06 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u1Ozo-0002aN-1j;
+	Sun, 06 Apr 2025 12:21:04 +0000
+Date: Sun, 6 Apr 2025 20:20:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
+	Nicolin Chen <nicolinc@nvidia.com>
+Subject: drivers/iommu/dma-iommu.c:1776:2-3: Unneeded semicolon
+Message-ID: <202504062027.LGAqKFlO-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Add vcp driver
-To: =?UTF-8?B?WGlhbmd6aGkgVGFuZyAo5ZSQ55u45b+XKQ==?=
- <Xiangzhi.Tang@mediatek.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "andersson@kernel.org" <andersson@kernel.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- =?UTF-8?B?SGFpbG9uZyBGYW4gKOiMg+a1t+m+mSk=?= <Hailong.Fan@mediatek.com>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- =?UTF-8?B?SmppYW4gWmhvdSAo5ZGo5bu6KQ==?= <Jjian.Zhou@mediatek.com>
-References: <20250402092134.12293-1-xiangzhi.tang@mediatek.com>
- <ca8d93e1-ea75-42b3-b7a5-a12cb509890c@kernel.org>
- <4981f87ea9d86fb8633278ab31f7341ec0a9ad74.camel@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <4981f87ea9d86fb8633278ab31f7341ec0a9ad74.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 06/04/2025 10:05, Xiangzhi Tang (唐相志) wrote:
-> On Wed, 2025-04-02 at 12:31 +0200, Krzysztof Kozlowski wrote:
->> External email : Please do not click links or open attachments until
->> you have verified the sender or the content.
->>
->>
->> On 02/04/2025 11:19, Xiangzhi Tang wrote:
->>> Add support MediaTek's Video Companion Processor(VCP) host driver
->>> to
->>> control the MediaTek VCP Risc-V coprocessor.
->>> The VCP host driver using rproc mechanism to load vcm firmware
->>> from filesystem, and using SMC services to request ATF to setting
->>> vcp boot sequence, and Host communicated with VCP FW depends on VCP
->>> IPC interfaces
->>>
->>> This series patches dependent on:
->>> [1]
->>>
-> https://lore.kernel.org/all/20250307032942.10447-1-guangjie.song@mediatek.com/
->>
->> They should not depend. It blocks your patch. I suggest decoupling
->> from
->> dependencies.
->> I run test "make dt_binding_check
-> DT_SCHEMA_FILES=Documentation/devicetree/bindings/remoteproc/mediatek,m
-> t8196-vcp.yaml", And, I have to cherry-pick first "
-> 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   f4d2ef48250ad057e4f00087967b5ff366da9f39
+commit: 6aa63a4ec947f350d1a2f9f6aba8591a2455d192 iommu: Sort out domain user data
+date:   12 days ago
+config: arm64-randconfig-r053-20250406 (https://download.01.org/0day-ci/archive/20250406/202504062027.LGAqKFlO-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
 
-How is this related? Did you read my message? You should not depend and
-you answer "I added dependency". Great, so your patch won't get accepted
-and won't get tested. Lack of testing will result in lack of review.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504062027.LGAqKFlO-lkp@intel.com/
 
+cocci warnings: (new ones prefixed by >>)
+>> drivers/iommu/dma-iommu.c:1776:2-3: Unneeded semicolon
+   drivers/iommu/dma-iommu.c:1788:2-3: Unneeded semicolon
 
-Best regards,
-Krzysztof
+vim +1776 drivers/iommu/dma-iommu.c
+
+  1766	
+  1767	static size_t cookie_msi_granule(const struct iommu_domain *domain)
+  1768	{
+  1769		switch (domain->cookie_type) {
+  1770		case IOMMU_COOKIE_DMA_IOVA:
+  1771			return domain->iova_cookie->iovad.granule;
+  1772		case IOMMU_COOKIE_DMA_MSI:
+  1773			return PAGE_SIZE;
+  1774		default:
+  1775			unreachable();
+> 1776		};
+  1777	}
+  1778	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
