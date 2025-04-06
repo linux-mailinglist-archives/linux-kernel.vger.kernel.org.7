@@ -1,151 +1,222 @@
-Return-Path: <linux-kernel+bounces-589938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-589940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79FCDA7CC86
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 04:10:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3E8AA7CC8A
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 04:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E21E23B67BF
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 02:10:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A05E13B02AA
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 02:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419FE13B2A4;
-	Sun,  6 Apr 2025 02:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350143F9C5;
+	Sun,  6 Apr 2025 02:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BuH6QwFQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="sfh2oRYZ"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F10484E1C;
-	Sun,  6 Apr 2025 02:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9D31E50E
+	for <linux-kernel@vger.kernel.org>; Sun,  6 Apr 2025 02:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743905430; cv=none; b=lWBvzWepjAS7ibW/OGX1vQ6PcYYoVT4+HArnwwJQQ7I/+EFLey1Xaofjb4OdKdb0xvjeO5qm1KQs3ONe1XphjVFVIfAhhfDQfYgRGrqQt+nkR/LXlStb1mFgEbHC+OCP7I5HmdCEacakEq9fMS6X2xkUxena7dbuLSLyARXrE2I=
+	t=1743906396; cv=none; b=JVau6cjJH+GPTCqJvTjs6pGJA73JYQzvNmC3Het30MD0wQ3R2MSgOOgSIPC9XVwDGDoasB7U8HiHrJ+RlZyJgVtR24AHFfip/2Mzf/3wddraSZ+rjfiJQfTnlUEhSs2kyFTSQ5KmXad8vtq2xAA9/m1UM6bUkr6n0YGREeNiVvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743905430; c=relaxed/simple;
-	bh=s2ePmLJebTBif3adtwwn4EZ0Sw4QTnrxCeWLYtQTVF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BkNxcC/W6OZdGvkdlNimFMIWN+WEExmorA18jHOGeNjhWMzBYigu12Q1NRfP5cs6AOn3ll2sLJZ6BKty4Wxp/DnAMz9fIHXkCpDRFsI9N6PqBzDV9WoRpGhmOM2u4ucWKkrlYckCAwcKGldlXEPBf0IdEhxM+G++JnkyEGRnwCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BuH6QwFQ; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743905428; x=1775441428;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=s2ePmLJebTBif3adtwwn4EZ0Sw4QTnrxCeWLYtQTVF0=;
-  b=BuH6QwFQkTTIw8Hq7WfaUyd+eBPrE7RGZJVhf118Akef3UsDc8a3fhp8
-   dIHTvHFzJkNt6KM+N2utR+pVc2RN9c7sYXLOeotNJUVW8NngyE78AawGC
-   D5Zt+qOR+mvwhQIifOgOBuWnVtO9SJEGP4bCHSmQUTBIjtCrpTEOreF77
-   26V1OmeUKzYbBZ5RhkEnLcOXWYgQ7C18pLWmbdn4VGxX6qD/kHzhclEI5
-   dJhyS1Tv4RWr8RVVwdwp02iil22WAy/3saU7v05I3loaVaeYL+H3uLrq6
-   FQvPBH5Zwi4RjOJluUjZ8t0R29TNAJbBFw1I+75ZN4X0JiNJVQkiR5uZP
-   A==;
-X-CSE-ConnectionGUID: WBdIZus9TKml6hYnixzsgw==
-X-CSE-MsgGUID: uLq7zobaSlWfXq8ehnItjg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11395"; a="44556416"
-X-IronPort-AV: E=Sophos;i="6.15,192,1739865600"; 
-   d="scan'208";a="44556416"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2025 19:10:24 -0700
-X-CSE-ConnectionGUID: /pKw8fHHRiSxJUvBFH73yg==
-X-CSE-MsgGUID: UqF+u6gbTWOzwmzSK+PRxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,192,1739865600"; 
-   d="scan'208";a="127611308"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 05 Apr 2025 19:10:21 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u1FSk-0002OV-33;
-	Sun, 06 Apr 2025 02:10:18 +0000
-Date: Sun, 6 Apr 2025 10:10:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	manivannan.sadhasivam@linaro.org, thierry.reding@gmail.com,
-	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
-	jonathanh@nvidia.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: Re: [PATCH] pci: tegra194: Fix debugfs cleanup for !CONFIG_PCIEASPM
-Message-ID: <202504060938.xa7VrE6O-lkp@intel.com>
-References: <20250405145459.26800-1-18255117159@163.com>
+	s=arc-20240116; t=1743906396; c=relaxed/simple;
+	bh=S8xIaWNmHVVdPvzYp2CSqwW6L/QzgTyDR5DDkDBcRso=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=J4xEo/ESINmt4h/W2Wspa1JUap+H/qzLhYlCd74UfU0A/OU9wNuO7IW3ApmHIlzza8Nx9308gfdpfIFDbV956EYxAeYu2zA0dk+qog1sy3MY2ZPtM9FyFdaLIscg/SMWV2b2K9Njjsn2ebZh3sbO9kWsCKI7Z0W4XlgOtVegeh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=sfh2oRYZ; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c55500d08cso310275485a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 05 Apr 2025 19:26:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1743906392; x=1744511192; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1IqxqfopP4aCBejumITSRdoprnx2Np5TJebDfmw6Dxk=;
+        b=sfh2oRYZuctdYxW/cNmhvHvgKioKFmAo0J0BEOLm57aKk5KVrybR63M82ZkDIIy8J5
+         PuRlI4itLBbXAxfYk0PrsLuuMRHf/NsQnsB/OEe4lK2JfInYB3zuTQOLCGxvqV92xxPh
+         9CeU44iGLu4K9ZSEI78gTNVtuQIYLkBsjiAhAJ8sZSRdeB7o9KFS49X8poQWHVA24w6c
+         /vgKlDZhYkc7MKELcdKHm2zhPhru4aTZKa9itVRYbJbxTcXcScerm5drNeedanp1XrS0
+         fBWBonacnno9zpj/lkQ3CcfoB4LTPOFWNjmhKUbo1AKc42YpT+ZxG/OIN/aalwUHJUQ2
+         r7og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743906392; x=1744511192;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1IqxqfopP4aCBejumITSRdoprnx2Np5TJebDfmw6Dxk=;
+        b=VWc4QJhmaCiZjP3vDK/VHt10p6+PYKi9HK3Y4zNiID/kPCEgjk2ST33RlSnb7kHLz7
+         IsGnAozuNvbeoqJkxgNsDYT55sHmjGXj1JEbzP3WSzpSHz3H8Yz+Bpu1aXYdiAInvGWF
+         hBLT8QwDVKgr1FsqCh//jC0tvHJtPPzTwvty5hcO7NlNue4KrlQk06o+VgDHC7yJL15U
+         qEFZILM5vb6q1sTj6A9dHjZAn2agzGV0cObzpr8fuFEIQFzVOePbtjwbY6vzC3gXIOma
+         eAm62rf5njF8t2df1FcmhziTocP4pGZQ6+nZDa26rU7WwHKMou08IiBdqtjpHv2I4Two
+         1plQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWrboEa/hzcrTaudJ4+VxsKfx8ym936LeQSdB+UOF5qd+/9aX6ctc8dGCTz+3xf50VzkY8uNI+M+uQpdMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTC+JdrU0BSBxEbT1GbjS9XCOT30WPbGNnmqw+Ep0evkJRmwk3
+	ZIOIyJ3iW4oko0rDwIx+nMOQJG2G5Ba++8tINg5R6Ql5c3Cwf364T0kmTVhhX+k=
+X-Gm-Gg: ASbGncvv8x2xvpo5ZwRHqo72C6G4Hm+Dz9z43kEAMb27tMwkpejOTKBZmyfE5Z43E9P
+	A6wrE/RM4kR6aEkJknoGgi0DmXbKFWOV0UUslofQbls3z5BsRMOLFd0gBMBPYcZ+mnBvebWS8s/
+	tHsrqAJO1l6dtjFWLa1G97kNM1bc5L3Dicq50N79J80gnXjapZs6VZXzlnlY/9c2YOtscbluOHE
+	ZYGCrh1O1QMlMZcTQGfIzrMhPAVe5N2S9CzUniddqyU/WiidWQacI0OxaMY3M7F5iJ1FEEpkMiH
+	uss4UHsV6xKUFwnJ9Mj2FL4/EUFYMqP1/ktEiHXaQPT/t8omuAdJ+/tPGOxh1DzeqRcDHL5n/Rv
+	SvfzUzsI=
+X-Google-Smtp-Source: AGHT+IEKcYuHBokEnfHVN3ItPKhyhlOg2e8P8WeGSvB6sn6m5NkO6lQDUAtvVNKU7WRsLsmADw0CEA==
+X-Received: by 2002:a05:620a:4549:b0:7c5:a575:75da with SMTP id af79cd13be357-7c77dd441aemr677491085a.6.1743906391909;
+        Sat, 05 Apr 2025 19:26:31 -0700 (PDT)
+Received: from xanadu (modemcable179.17-162-184.mc.videotron.ca. [184.162.17.179])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c76e7354bdsm424148685a.20.2025.04.05.19.26.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Apr 2025 19:26:31 -0700 (PDT)
+Date: Sat, 5 Apr 2025 22:26:30 -0400 (EDT)
+From: Nicolas Pitre <npitre@baylibre.com>
+To: David Laight <david.laight.linux@gmail.com>
+cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>, 
+    Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+    Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH 3/3] lib: Update the muldiv64 tests to verify the C on
+ x86-64
+In-Reply-To: <20250405204530.186242-4-david.laight.linux@gmail.com>
+Message-ID: <62qp434q-q2ps-r698-qs2n-43345rn4npn0@onlyvoer.pbz>
+References: <20250405204530.186242-1-david.laight.linux@gmail.com> <20250405204530.186242-4-david.laight.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250405145459.26800-1-18255117159@163.com>
+Content-Type: text/plain; charset=US-ASCII
 
-Hi Hans,
+On Sat, 5 Apr 2025, David Laight wrote:
 
-kernel test robot noticed the following build errors:
+> div64.c contains a 128 by 64 division algorithm which x86-64 overrides
+> it with an asm implementation.
+> So running the muldiv64 tests only verifies the asm code.
+> Since x86-64 is the most likely test system compile the default
+> code into an x86-64 kernel (under a different name) when the tests
+> are being built.
+> Verify that both the asm and C functions generate the correct results.
+> 
+> Signed-off-by: David Laight <david.laight.linux@gmail.com>
+> ---
+>  lib/math/div64.c                    | 18 ++++++++++++++++--
+>  lib/math/test_mul_u64_u64_div_u64.c | 26 ++++++++++++++++++++------
+>  2 files changed, 36 insertions(+), 8 deletions(-)
+> 
+> diff --git a/lib/math/div64.c b/lib/math/div64.c
+> index 50e025174495..38ee5c01c288 100644
+> --- a/lib/math/div64.c
+> +++ b/lib/math/div64.c
+> @@ -25,6 +25,8 @@
+>  #include <linux/minmax.h>
+>  #include <linux/log2.h>
+>  
+> +#include <generated/autoconf.h>
 
-[auto build test ERROR on a8662bcd2ff152bfbc751cab20f33053d74d0963]
+Isn't this automatically included everywhere by the Makefile?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Hans-Zhang/pci-tegra194-Fix-debugfs-cleanup-for-CONFIG_PCIEASPM/20250405-230047
-base:   a8662bcd2ff152bfbc751cab20f33053d74d0963
-patch link:    https://lore.kernel.org/r/20250405145459.26800-1-18255117159%40163.com
-patch subject: [PATCH] pci: tegra194: Fix debugfs cleanup for !CONFIG_PCIEASPM
-config: arm-randconfig-001-20250406 (https://download.01.org/0day-ci/archive/20250406/202504060938.xa7VrE6O-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 92c93f5286b9ff33f27ff694d2dc33da1c07afdd)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250406/202504060938.xa7VrE6O-lkp@intel.com/reproduce)
+> @@ -183,10 +185,22 @@ u32 iter_div_u64_rem(u64 dividend, u32 divisor, u64 *remainder)
+>  }
+>  EXPORT_SYMBOL(iter_div_u64_rem);
+>  
+> -#if !defined(mul_u64_add_u64_div_u64)
+> +/*
+> + * If the architecture overrides the implementation below and the test module
+> + * is being built then compile the default implementation with a different name
+> + * so that it can be tested.
+> + */
+> +#if defined(mul_u64_add_u64_div_u64) && (defined(CONFIG_TEST_MULDIV64) || defined(CONFIG_TEST_MULDIV64_MODULE))
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504060938.xa7VrE6O-lkp@intel.com/
+You could shorten this to:
 
-All errors (new ones prefixed by >>):
+#if defined(mul_u64_add_u64_div_u64) && IS_ENABLED(CONFIG_TEST_MULDIV64)
 
->> drivers/pci/controller/dwc/pcie-tegra194.c:2301:18: error: incompatible pointer types passing 'struct dentry *' to parameter of type 'struct tegra_pcie_dw *' [-Werror,-Wincompatible-pointer-types]
-    2301 |                 deinit_debugfs(pcie->debugfs);
-         |                                ^~~~~~~~~~~~~
-   drivers/pci/controller/dwc/pcie-tegra194.c:732:57: note: passing argument to parameter 'pcie' here
-     732 | static inline void deinit_debugfs(struct tegra_pcie_dw *pcie) { return; }
-         |                                                         ^
-   drivers/pci/controller/dwc/pcie-tegra194.c:2420:18: error: incompatible pointer types passing 'struct dentry *' to parameter of type 'struct tegra_pcie_dw *' [-Werror,-Wincompatible-pointer-types]
-    2420 |                 deinit_debugfs(pcie->debugfs);
-         |                                ^~~~~~~~~~~~~
-   drivers/pci/controller/dwc/pcie-tegra194.c:732:57: note: passing argument to parameter 'pcie' here
-     732 | static inline void deinit_debugfs(struct tegra_pcie_dw *pcie) { return; }
-         |                                                         ^
-   2 errors generated.
+> +#define TEST_MULDIV64
+
+Then I'd use IS_ENABLED(CONFIG_TEST_MULDIV64) in place of TEST_MULDIV64.
+It is more self explanatory.
+
+> +#undef mul_u64_add_u64_div_u64
+> +#define mul_u64_add_u64_div_u64 mul_u64_add_u64_div_u64_test
+> +u64 mul_u64_add_u64_div_u64_test(u64 a, u64 b, u64 c, u64 d);
+> +#endif
+
+Hmmm... I wish there could be a better way to do this, but other than 
+the above suggestion I don't see one.
+
+> +
+> +#if !defined( mul_u64_add_u64_div_u64) || defined(TEST_MULDIV64)
+>  u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
+>  {
+> -#if defined(__SIZEOF_INT128__)
+> +#if defined(__SIZEOF_INT128__) && !defined(TEST_MULDIV64)
+>  
+>  	/* native 64x64=128 bits multiplication */
+>  	u128 prod = (u128)a * b + c;
+> diff --git a/lib/math/test_mul_u64_u64_div_u64.c b/lib/math/test_mul_u64_u64_div_u64.c
+> index 9548eb7458c7..e2289b412601 100644
+> --- a/lib/math/test_mul_u64_u64_div_u64.c
+> +++ b/lib/math/test_mul_u64_u64_div_u64.c
+> @@ -73,6 +73,10 @@ done
+>  
+>   */
+>  
+> +#ifdef mul_u64_add_u64_div_u64
+> +u64 mul_u64_add_u64_div_u64_test(u64 a, u64 b, u64 add, u64 c);
+> +#endif
+> +
+>  static int __init test_init(void)
+>  {
+>  	int errors = 0;
+> @@ -80,21 +84,31 @@ static int __init test_init(void)
+>  
+>  	pr_info("Starting mul_u64_u64_div_u64() test\n");
+>  
+> -	for (i = 0; i < ARRAY_SIZE(test_values); i++) {
+> -		u64 a = test_values[i].a;
+> -		u64 b = test_values[i].b;
+> -		u64 c = test_values[i].c;
+> -		u64 expected_result = test_values[i].result;
+> +	for (i = 0; i < ARRAY_SIZE(test_values) * 2; i++) {
+> +		u64 a = test_values[i / 2].a;
+> +		u64 b = test_values[i / 2].b;
+> +		u64 c = test_values[i / 2].c;
+> +		u64 expected_result = test_values[i / 2].result;
+
+I don't see the point of the loop doubling here.
+If I understand it correctly, you'll test the default version twice and 
+the _test version once for each test entry.
 
 
-vim +2301 drivers/pci/controller/dwc/pcie-tegra194.c
-
-  2292	
-  2293	static void tegra_pcie_dw_remove(struct platform_device *pdev)
-  2294	{
-  2295		struct tegra_pcie_dw *pcie = platform_get_drvdata(pdev);
-  2296	
-  2297		if (pcie->of_data->mode == DW_PCIE_RC_TYPE) {
-  2298			if (!pcie->link_state)
-  2299				return;
-  2300	
-> 2301			deinit_debugfs(pcie->debugfs);
-  2302			tegra_pcie_deinit_controller(pcie);
-  2303			pm_runtime_put_sync(pcie->dev);
-  2304		} else {
-  2305			disable_irq(pcie->pex_rst_irq);
-  2306			pex_ep_event_pex_rst_assert(pcie);
-  2307		}
-  2308	
-  2309		pm_runtime_disable(pcie->dev);
-  2310		tegra_bpmp_put(pcie->bpmp);
-  2311		if (pcie->pex_refclk_sel_gpiod)
-  2312			gpiod_set_value(pcie->pex_refclk_sel_gpiod, 0);
-  2313	}
-  2314	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>  		u64 result = mul_u64_u64_div_u64(a, b, c);
+>  		u64 result_up = mul_u64_u64_div_u64_roundup(a, b, c);
+>  
+> +#ifdef mul_u64_add_u64_div_u64
+> +		if (i & 1) {
+> +			/* Verify the generic C version */
+> +			result = mul_u64_add_u64_div_u64_test(a, b, 0, c);
+> +			result_up = mul_u64_add_u64_div_u64_test(a, b, c - 1, c);
+> +		}
+> +#else
+> +		i++;
+> +#endif
+> +
+>  		if (result != expected_result) {
+>  			pr_err("ERROR: 0x%016llx * 0x%016llx / 0x%016llx\n", a, b, c);
+>  			pr_err("ERROR: expected result: %016llx\n", expected_result);
+>  			pr_err("ERROR: obtained result: %016llx\n", result);
+>  			errors++;
+>  		}
+> -		expected_result += test_values[i].round_up;
+> +		expected_result += test_values[i / 2].round_up;
+>  		if (result_up != expected_result) {
+>  			pr_err("ERROR: 0x%016llx * 0x%016llx +/ 0x%016llx\n", a, b, c);
+>  			pr_err("ERROR: expected result: %016llx\n", expected_result);
+> -- 
+> 2.39.5
+> 
+> 
 
