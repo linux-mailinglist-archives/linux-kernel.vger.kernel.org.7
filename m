@@ -1,409 +1,216 @@
-Return-Path: <linux-kernel+bounces-590102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51657A7CEDD
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 18:01:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4E3FA7CEE3
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 18:03:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4C187A4535
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 16:00:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4AB77A3E67
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 16:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592EF221579;
-	Sun,  6 Apr 2025 16:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC7822154C;
+	Sun,  6 Apr 2025 16:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nu0S56rn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g5tFn+ZA"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED1C14A82;
-	Sun,  6 Apr 2025 16:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D91204F94;
+	Sun,  6 Apr 2025 16:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743955284; cv=none; b=N8zW9IkzSBO5DlBpaiKTuWAvnzhS3rEF3dIrHn0f2uY+wvx5/bBlNMB53pZ10schVzEFP+UAL10wiu0XVwsA8Bd/OiUHYtqMPoVnDdh2w7wISdUik7txlQIwad7DoBG+kb0z+d/X+3icXLtUiwGTGtZQ3ZTFDJhEFuaGy4ZDoQo=
+	t=1743955390; cv=none; b=NYPGb6CTtZ25Z8JK6A+HtBzBmcdDLBKNvQx6LEhUFHuZDnNFT4hzXNQ3t+2+jdq6QbxLN2k19bihn8fIw6xkNdyveHq9MVkZwLYKkCNMrxsUX4Tjtfsh2aTZCbGNMGz2rAa6L8aOGM4lu9AkdtjhXqZ+oIdpz0aAmwCz4nAG9t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743955284; c=relaxed/simple;
-	bh=xiYT3OXSwrXnf48Kqo+AeUKLe4LHpkaxA4SGgwPbfk4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=penBVpV9AmIOq3Q2UE/JTSyla2J9jrzS6Q/zpR/7x69CsiILryKfGNe4OxlyhpctSExEl4Me738ep9gT0YRliV7E3KYXBtnrlJoOaZ3nkMtI+86ovtZNbnKUyGpOgwyPqmCrOkDbROfEIKhV+4qIvweM3pCbm0F1QUq7RDHYPlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nu0S56rn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32215C4CEE3;
-	Sun,  6 Apr 2025 16:01:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743955283;
-	bh=xiYT3OXSwrXnf48Kqo+AeUKLe4LHpkaxA4SGgwPbfk4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nu0S56rnZGLVOf5sZzzAgHErmGBZT2nk1Mm6ebz9+qcFK9VLpELK9y799JB9UvAES
-	 Y46/AcM32/K48BBaEPK/htz4p4rCoX8tvuGt48J+DVSxdzU+yfh9HPT9xCpBEdh4ES
-	 M9mN8uDJ6i16NTFmA5Htwd1EYhJk0wbOHAWHpL4r19clnsyiRDlGnFMEr988ldQolG
-	 y+EQNvgn9sXsY1F3VaU3rX/chASZ9ay9vIe2wIqK+W/ESxDrv6LV4J6J89DhD8AAFU
-	 kYGCMQdDPNMAZ8kyzVd0uCCLtPyTh2OI4wkHGazx8iykI/76pP6K7Ex9cC31AuM7N/
-	 fD7hkehpT/MSg==
-Date: Sun, 6 Apr 2025 17:01:11 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Yassine Oudjana <y.oudjana@protonmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Bjorn Andersson
- <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Manivannan
- Sadhasivam <manivannan.sadhasivam@linaro.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, Nathan
- Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>,
- Alexander Sverdlin <alexander.sverdlin@gmail.com>, Sean Nyekjaer
- <sean@geanix.com>, Javier Carrasco <javier.carrasco.cruz@gmail.com>, Matti
- Vaittinen <mazziesaccount@gmail.com>, Antoniu Miclaus
- <antoniu.miclaus@analog.com>, Ramona Gradinariu
- <ramona.gradinariu@analog.com>, "Yo-Jung (Leo) Lin" <0xff07@gmail.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?=
- <barnabas.czeman@mainlining.org>, Danila Tikhonov <danila@jiaxyga.com>,
- Antoni Pokusinski <apokusinski01@gmail.com>, Vasileios Amoiridis
- <vassilisamir@gmail.com>, Petar Stoykov <pd.pstoykov@gmail.com>, shuaijie
- wang <wangshuaijie@awinic.com>, Yasin Lee <yasin.lee.x@gmail.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, Tony Luck <tony.luck@intel.com>, Pawan Gupta
- <pawan.kumar.gupta@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
- Yassine Oudjana <yassine.oudjana@gmail.com>, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- netdev@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH 1/3] net: qrtr: Turn QRTR into a bus
-Message-ID: <20250406170111.7a11437a@jic23-huawei>
-In-Reply-To: <20250406140706.812425-2-y.oudjana@protonmail.com>
-References: <20250406140706.812425-1-y.oudjana@protonmail.com>
-	<20250406140706.812425-2-y.oudjana@protonmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1743955390; c=relaxed/simple;
+	bh=H0WW8RYwcUflIu5fzLmBXcIBidBGU+JERRJbHZy4w1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cBpeLWYKmCQi/G6QWVr0vKjfFZylIHcyayx3agqp2DcpRWTNHB2j5gNVlZSYr66yXthTGcEu2yvQMBIKfg1PXdrJaiVw+OZzSfLqXtxkHcZIuXSDY9kXj19GX2dDyO7L4jANkZHA+VcrqPo7K1kjbTFfxtk6jL0UtnJqbMYWQjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g5tFn+ZA; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac339f53df9so600660866b.1;
+        Sun, 06 Apr 2025 09:03:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743955386; x=1744560186; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2Gg4zdNGw4akh+G3YWEPNIUcWbldggC7anYYxwmPl2A=;
+        b=g5tFn+ZAH2eJeblE/MDuq/66BSoRwC/Yew6Ek2VRuYmTkNHMFzfJq8q02tFFHymSYi
+         HN5L1ZtCCxbEJboESkws+4kl4QC0V8NFH0DTk9d/nV1W5Wia1uB5rBqJSuEKCU16OSEB
+         cTa31A4bqEAzc+1cUgmKULWpDkqogFsE0iIcjMp9kLoHvriuR1CBPZ2BRPkcASlT5yFs
+         j+wKxTeKtvFXev2Ipxil8eh989CBQmETqJArwUT3RzNUfV/uoFWybCNsD7h6KwHNAXBk
+         KxF8Rm/q02ro9I4OjI94lbqMSHnAQyD6NV4Zfs0dSgrygNj5GFtezwe1G5Ec8/dcuwL3
+         buhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743955386; x=1744560186;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2Gg4zdNGw4akh+G3YWEPNIUcWbldggC7anYYxwmPl2A=;
+        b=LyVO/BjtB4TsVbFhY/bwxd2WuvK/hC5ZeY42j4JOFH9NrQ3aF+ERPoih8AQWUs/ujd
+         SBaxfP6pVBCVdW3ZwPA6QIKuQNrR7bwHwn1zJv+tb++rnNuxUBPiqfEWHbfgbHKI8S61
+         BI+c4B9wMUJR7C698jICoyrwpAWwCMuBW9SzOwTEfMvu1mQSskMA66UCIMZHFRLlH8R5
+         fwkcvMbJsxpqJqBYGmyXeYZh+AsJ8i8+3drvrwyuCUbTsYexviDKmkk3JB/UZj2stpG/
+         hZCkzqn7be7wvzKYZAwumm6xrMv+hn7HtEvt+3JWQdNJQjWLFOM4K5QDC6dObkHShU83
+         cU8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUJwwmYWk5xcvEW90ahW7VXKZB/XyQmd2NnkqDu8BUeRLT6GmI3J3+Ca4shDKgVzA8KgIk1fwZjuhaJoN0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygNAH+/16rb+hCKkXa1ntYROSSDFfNxCjGstUCPOCh7ze0sdYl
+	0r+XHKv6jEUkJdFnwPwU/yeINAnOVa2ycL8PtFF1rjLo0Tlf8+LOJqBlXHalAiY=
+X-Gm-Gg: ASbGncuYPbDo8XHz7itQ58QIViYrhjdW0aR8BwkJioNfdkLVYa4Ep1fUhZULEK7kXh0
+	tzcYnB5gxATF6gYAMvO7XNM1RZlW+pylb8PgdTjexiU5WhkAIJeBcxw3sS1lg14UdbPYTbWtoGw
+	LLJZK0IjM2oYkjc3noQErr5AC42tenw8bpN8rk/L0biSXiJeZ6H9UAgLpsZfLsylezoP0bkJ7U5
+	7W2Xey1AF6rb1Z4gAmHydKLgzZFBRslRSgxFJN3WSy/w/NZC7WsHDw4B7szJgAFTVwPE3jL44qt
+	lCTzl42ZBqsUSD+idYRjclhU7e8O2N6oRaqrvDGubMU/boxw6btB6g==
+X-Google-Smtp-Source: AGHT+IEn/yrvpZmrdrTvvbNeg/z624E6vdfCD/lwZ+eQTne5AKLKEg5mLv2yQzmDzgzjQiEcMmFoPQ==
+X-Received: by 2002:a17:907:7206:b0:ac6:b729:9285 with SMTP id a640c23a62f3a-ac7d1b9faebmr1022796766b.55.1743955385521;
+        Sun, 06 Apr 2025 09:03:05 -0700 (PDT)
+Received: from localhost.localdomain ([46.248.82.114])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7c0185118sm594963066b.134.2025.04.06.09.03.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Apr 2025 09:03:05 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-raid@vger.kernel.org,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yu Kuai <yukuai3@huawei.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH REPOST] lib/raid6: Remove always defined CONFIG_AS_AVX512
+Date: Sun,  6 Apr 2025 18:02:01 +0200
+Message-ID: <20250406160247.17750-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Sun, 06 Apr 2025 14:07:43 +0000
-Yassine Oudjana <y.oudjana@protonmail.com> wrote:
+Current minimum required version of binutils is 2.25,
+which supports AVX-512 instruction mnemonics.
 
-> Implement a QRTR bus to allow for creating drivers for individual QRTR
-> services. With this in place, devices are dynamically registered for QRTR
-> services as they become available, and drivers for these devices are
-> matched using service and instance IDs.
-> 
-> In smd.c, replace all current occurences of qdev with qsdev in order to
-> distinguish between the newly added QRTR device which represents a QRTR
-> service with the existing QRTR SMD device which represents the endpoint
-> through which services are provided.
-> 
-> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
-Hi Yassine
+Remove CONFIG_AS_AVX512 which is always defined.
 
-Just took a quick look through.
+No functional change intended.
 
-It might make more sense to do this with an auxiliary_bus rather
-than defining a new bus.
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Song Liu <song@kernel.org>
+Cc: Yu Kuai <yukuai3@huawei.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+---
+Reposted: To include software raid and x86 people.
+---
+ lib/raid6/algos.c        | 6 ------
+ lib/raid6/avx512.c       | 4 ----
+ lib/raid6/recov_avx512.c | 6 ------
+ lib/raid6/test/Makefile  | 3 ---
+ 4 files changed, 19 deletions(-)
 
-I'd also split out the renames as a precursor patch.
+diff --git a/lib/raid6/algos.c b/lib/raid6/algos.c
+index cd2e88ee1f14..dfd3f800ac9b 100644
+--- a/lib/raid6/algos.c
++++ b/lib/raid6/algos.c
+@@ -28,10 +28,8 @@ EXPORT_SYMBOL_GPL(raid6_call);
+ 
+ const struct raid6_calls * const raid6_algos[] = {
+ #if defined(__i386__) && !defined(__arch_um__)
+-#ifdef CONFIG_AS_AVX512
+ 	&raid6_avx512x2,
+ 	&raid6_avx512x1,
+-#endif
+ 	&raid6_avx2x2,
+ 	&raid6_avx2x1,
+ 	&raid6_sse2x2,
+@@ -42,11 +40,9 @@ const struct raid6_calls * const raid6_algos[] = {
+ 	&raid6_mmxx1,
+ #endif
+ #if defined(__x86_64__) && !defined(__arch_um__)
+-#ifdef CONFIG_AS_AVX512
+ 	&raid6_avx512x4,
+ 	&raid6_avx512x2,
+ 	&raid6_avx512x1,
+-#endif
+ 	&raid6_avx2x4,
+ 	&raid6_avx2x2,
+ 	&raid6_avx2x1,
+@@ -96,9 +92,7 @@ EXPORT_SYMBOL_GPL(raid6_datap_recov);
+ 
+ const struct raid6_recov_calls *const raid6_recov_algos[] = {
+ #ifdef CONFIG_X86
+-#ifdef CONFIG_AS_AVX512
+ 	&raid6_recov_avx512,
+-#endif
+ 	&raid6_recov_avx2,
+ 	&raid6_recov_ssse3,
+ #endif
+diff --git a/lib/raid6/avx512.c b/lib/raid6/avx512.c
+index 9c3e822e1adf..009bd0adeebf 100644
+--- a/lib/raid6/avx512.c
++++ b/lib/raid6/avx512.c
+@@ -17,8 +17,6 @@
+  *
+  */
+ 
+-#ifdef CONFIG_AS_AVX512
+-
+ #include <linux/raid/pq.h>
+ #include "x86.h"
+ 
+@@ -560,5 +558,3 @@ const struct raid6_calls raid6_avx512x4 = {
+ 	.priority = 2		/* Prefer AVX512 over priority 1 (SSE2 and others) */
+ };
+ #endif
+-
+-#endif /* CONFIG_AS_AVX512 */
+diff --git a/lib/raid6/recov_avx512.c b/lib/raid6/recov_avx512.c
+index fd9e15bf3f30..310c715db313 100644
+--- a/lib/raid6/recov_avx512.c
++++ b/lib/raid6/recov_avx512.c
+@@ -6,8 +6,6 @@
+  * Author: Megha Dey <megha.dey@linux.intel.com>
+  */
+ 
+-#ifdef CONFIG_AS_AVX512
+-
+ #include <linux/raid/pq.h>
+ #include "x86.h"
+ 
+@@ -377,7 +375,3 @@ const struct raid6_recov_calls raid6_recov_avx512 = {
+ #endif
+ 	.priority = 3,
+ };
+-
+-#else
+-#warning "your version of binutils lacks AVX512 support"
+-#endif
+diff --git a/lib/raid6/test/Makefile b/lib/raid6/test/Makefile
+index 2abe0076a636..8f2dd2210ba8 100644
+--- a/lib/raid6/test/Makefile
++++ b/lib/raid6/test/Makefile
+@@ -54,9 +54,6 @@ endif
+ ifeq ($(IS_X86),yes)
+         OBJS   += mmx.o sse1.o sse2.o avx2.o recov_ssse3.o recov_avx2.o avx512.o recov_avx512.o
+         CFLAGS += -DCONFIG_X86
+-        CFLAGS += $(shell echo "vpmovm2b %k1, %zmm5" |          \
+-                    gcc -c -x assembler - >/dev/null 2>&1 &&    \
+-                    rm ./-.o && echo -DCONFIG_AS_AVX512=1)
+ else ifeq ($(HAS_NEON),yes)
+         OBJS   += neon.o neon1.o neon2.o neon4.o neon8.o recov_neon.o recov_neon_inner.o
+         CFLAGS += -DCONFIG_KERNEL_MODE_NEON=1
+-- 
+2.42.0
 
-Various other comments inline.
-
-Jonathan
-
-> diff --git a/net/qrtr/af_qrtr.c b/net/qrtr/af_qrtr.c
-> index 00c51cf693f3..e11682fd7960 100644
-> --- a/net/qrtr/af_qrtr.c
-> +++ b/net/qrtr/af_qrtr.c
-> @@ -435,6 +435,7 @@ static void qrtr_node_assign(struct qrtr_node *node, unsigned int nid)
->  int qrtr_endpoint_post(struct qrtr_endpoint *ep, const void *data, size_t len)
->  {
->  	struct qrtr_node *node = ep->node;
-> +	const struct qrtr_ctrl_pkt *pkt;
->  	const struct qrtr_hdr_v1 *v1;
->  	const struct qrtr_hdr_v2 *v2;
->  	struct qrtr_sock *ipc;
-> @@ -443,6 +444,7 @@ int qrtr_endpoint_post(struct qrtr_endpoint *ep, const void *data, size_t len)
->  	size_t size;
->  	unsigned int ver;
->  	size_t hdrlen;
-> +	int ret = 0;
->  
->  	if (len == 0 || len & 3)
->  		return -EINVAL;
-> @@ -516,12 +518,24 @@ int qrtr_endpoint_post(struct qrtr_endpoint *ep, const void *data, size_t len)
->  
->  	qrtr_node_assign(node, cb->src_node);
->  
-> +	pkt = data + hdrlen;
-> +
->  	if (cb->type == QRTR_TYPE_NEW_SERVER) {
->  		/* Remote node endpoint can bridge other distant nodes */
-> -		const struct qrtr_ctrl_pkt *pkt;
-> -
-> -		pkt = data + hdrlen;
->  		qrtr_node_assign(node, le32_to_cpu(pkt->server.node));
-> +
-> +		/* Create a QRTR device */
-> +		ret = ep->add_device(ep, le32_to_cpu(pkt->server.node),
-> +					       le32_to_cpu(pkt->server.port),
-> +					       le32_to_cpu(pkt->server.service),
-> +					       le32_to_cpu(pkt->server.instance));
-> +		if (ret)
-> +			goto err;
-> +	} else if (cb->type == QRTR_TYPE_DEL_SERVER) {
-> +		/* Remove QRTR device corresponding to service */
-> +		ret = ep->del_device(ep, le32_to_cpu(pkt->server.port));
-> +		if (ret)
-> +			goto err;
->  	}
->  
->  	if (cb->type == QRTR_TYPE_RESUME_TX) {
-> @@ -543,8 +557,7 @@ int qrtr_endpoint_post(struct qrtr_endpoint *ep, const void *data, size_t len)
->  
->  err:
->  	kfree_skb(skb);
-> -	return -EINVAL;
-> -
-> +	return ret ? ret : -EINVAL;
-How do we get here with non error value given we couldn't before?
-
-
->  }
->  EXPORT_SYMBOL_GPL(qrtr_endpoint_post);
->  
-
-> diff --git a/net/qrtr/smd.c b/net/qrtr/smd.c
-> index c91bf030fbc7..fd5ad6a8d1c3 100644
-> --- a/net/qrtr/smd.c
-> +++ b/net/qrtr/smd.c
-> @@ -7,6 +7,7 @@
-
-> +
-> +static int qcom_smd_qrtr_uevent(const struct device *dev, struct kobj_uevent_env *env)
-> +{
-> +	const struct qrtr_device *qdev = to_qrtr_device(dev);
-> +
-> +	return add_uevent_var(env, "MODALIAS=%s%x:%x", QRTR_MODULE_PREFIX, qdev->service,
-> +			      qdev->instance);
-> +}
-
-
-> +void qrtr_driver_unregister(struct qrtr_driver *drv)
-> +{
-> +	driver_unregister(&drv->driver);
-> +}
-> +EXPORT_SYMBOL_GPL(qrtr_driver_unregister);
-
-Given this is a 'new thing' maybe namespace it from the start?
-EXPORT_SYMBOL_NS_GPL();
-
-
-> +
-> +static int qcom_smd_qrtr_match_device_by_port(struct device *dev, const void *data)
-> +{
-> +	struct qrtr_device *qdev = to_qrtr_device(dev);
-> +	unsigned int port = *(unsigned int *)data;
-	unsinged int *port = data;
-	
-	return qdev->port == *port;
-
-> +
-> +	return qdev->port == port;
-> +}
-> +
-> +static void qcom_smd_qrtr_add_device_worker(struct work_struct *work)
-> +{
-> +	struct qrtr_new_server *new_server = container_of(work, struct qrtr_new_server, work);
-> +	struct qrtr_smd_dev *qsdev = new_server->parent;
-> +	struct qrtr_device *qdev;
-> +	int ret;
-> +
-> +	qdev = kzalloc(sizeof(*qdev), GFP_KERNEL);
-> +	if (!qdev)
-> +		return;
-> +
-Maybe 
-	*qdev = (struct qrtr_device *) {
-	};
-and free new_server after all of these are filled in.
-	
-> +	qdev->node = new_server->node;
-> +	qdev->port = new_server->port;
-> +	qdev->service = new_server->service;
-> +	qdev->instance = new_server->instance;
-> +
-> +	devm_kfree(qsdev->dev, new_server);
-
-As below.
-
-> +
-> +	dev_set_name(&qdev->dev, "%d-%d", qdev->node, qdev->port);
-> +
-> +	qdev->dev.bus = &qrtr_bus;
-> +	qdev->dev.parent = qsdev->dev;
-> +	qdev->dev.release = qcom_smd_qrtr_dev_release;
-> +	qdev->dev.driver = NULL;
-
-it's kzalloc'd so no need to set this.
-
-> +
-> +	ret = device_register(&qdev->dev);
-> +	if (ret) {
-> +		dev_err(qsdev->dev, "Failed to register QRTR device: %pe\n", ERR_PTR(ret));
-> +		put_device(&qdev->dev);
-> +	}
-> +}
-> +
-> +static void qcom_smd_qrtr_del_device_worker(struct work_struct *work)
-> +{
-> +	struct qrtr_del_server *del_server = container_of(work, struct qrtr_del_server, work);
-> +	struct qrtr_smd_dev *qsdev = del_server->parent;
-> +	struct device *dev = device_find_child(qsdev->dev, &del_server->port,
-> +					       qcom_smd_qrtr_match_device_by_port);
-> +
-> +	devm_kfree(qsdev->dev, del_server);
-If we are always going to free what was alocated in qcom_smd_qrtr_del_device()
-why use devm at all?  
-> +
-> +	if (dev)
-> +		device_unregister(dev);
-If this doesn't match anything I'm guessing it's a bug?   So maybe an error message?
-
-> +}
-> +
-> +static int qcom_smd_qrtr_add_device(struct qrtr_endpoint *parent, unsigned int node,
-> +				    unsigned int port, u16 service, u16 instance)
-> +{
-> +	struct qrtr_smd_dev *qsdev = container_of(parent, struct qrtr_smd_dev, ep);
-> +	struct qrtr_new_server *new_server;
-> +
-> +	new_server = devm_kzalloc(qsdev->dev, sizeof(struct qrtr_new_server), GFP_KERNEL);
-
-As below. sizeof(*new_server)
-
-> +	if (!new_server)
-> +		return -ENOMEM;
-> +
-	*new_server = (struct qtr_new_server) {
-		.parent = qsdev,
-		.ndoe = node,
-...
-	};
-
-perhaps a tiny bit easier to read?
-
-> +	new_server->parent = qsdev;
-> +	new_server->node = node;
-> +	new_server->port = port;
-> +	new_server->service = service;
-> +	new_server->instance = instance;
-> +
-> +	INIT_WORK(&new_server->work, qcom_smd_qrtr_add_device_worker);
-> +	schedule_work(&new_server->work);
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_smd_qrtr_del_device(struct qrtr_endpoint *parent, unsigned int port)
-> +{
-> +	struct qrtr_smd_dev *qsdev = container_of(parent, struct qrtr_smd_dev, ep);
-> +	struct qrtr_del_server *del_server;
-> +
-> +	del_server = devm_kzalloc(qsdev->dev, sizeof(struct qrtr_del_server), GFP_KERNEL);
-
-sizeof(*del_server)
-preferred as then no one has to check types match.
-
-> +	if (!del_server)
-> +		return -ENOMEM;
-> +
-> +	del_server->parent = qsdev;
-> +	del_server->port = port;
-> +
-> +	INIT_WORK(&del_server->work, qcom_smd_qrtr_del_device_worker);
-> +	schedule_work(&del_server->work);
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_smd_qrtr_device_unregister(struct device *dev, void *data)
-> +{
-> +	device_unregister(dev);
-
-One option that may simplify this is to do the device_unregister() handling
-a devm_action_or_reset() handler that is using the parent device as it's dev
-but unregistering the children.  That way the unregister is called in the
-reverse order of setup and you only register a handler for those devices
-registered (rather walking children).  I did this in the CXL pmu driver
-for instance.
-
-> +
-> +	return 0;
-> +}
-> +
-
-> @@ -82,9 +276,11 @@ static int qcom_smd_qrtr_probe(struct rpmsg_device *rpdev)
->  
->  static void qcom_smd_qrtr_remove(struct rpmsg_device *rpdev)
->  {
-> -	struct qrtr_smd_dev *qdev = dev_get_drvdata(&rpdev->dev);
-> +	struct qrtr_smd_dev *qsdev = dev_get_drvdata(&rpdev->dev);
-
-May be worth doing the rename in a precursor patch to simplify a little what is
-in this one.
-
-> +
-> +	device_for_each_child(qsdev->dev, NULL, qcom_smd_qrtr_device_unregister);
->  
-> -	qrtr_endpoint_unregister(&qdev->ep);
-> +	qrtr_endpoint_unregister(&qsdev->ep);
->  
->  	dev_set_drvdata(&rpdev->dev, NULL);
->  }
-> @@ -104,7 +300,27 @@ static struct rpmsg_driver qcom_smd_qrtr_driver = {
->  	},
->  };
->  
-> -module_rpmsg_driver(qcom_smd_qrtr_driver);
-> +static int __init qcom_smd_qrtr_init(void)
-> +{
-> +	int ret;
-> +
-> +	ret = bus_register(&qrtr_bus);
-> +	if (!ret)
-> +		ret = register_rpmsg_driver(&qcom_smd_qrtr_driver);
-This style tends to extend badly. Go with more conventional errors
-out of line style.
-
-	if (ret)
-		return ret;
-
-	ret = register_rpmsg_driver(&qcom_smd_qrtr_driver);
-	if (ret) {
-		bus_unregister(&qtr_bus);
-		return ret;		
-	}
-
-	return 0;
-
-> +	else
-> +		bus_unregister(&qrtr_bus);
-> +
-> +	return ret;
-> +}
-> +
-> +static void __exit qcom_smd_qrtr_exit(void)
-> +{
-> +	bus_unregister(&qrtr_bus);
-
-Order should be the reverse of what happened in probe so swap these round.
-
-> +	unregister_rpmsg_driver(&qcom_smd_qrtr_driver);
-> +}
-> +
-> +subsys_initcall(qcom_smd_qrtr_init);
-> +module_exit(qcom_smd_qrtr_exit);
->  
->  MODULE_ALIAS("rpmsg:IPCRTR");
->  MODULE_DESCRIPTION("Qualcomm IPC-Router SMD interface driver");
->
 
