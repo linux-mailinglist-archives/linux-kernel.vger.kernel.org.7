@@ -1,534 +1,315 @@
-Return-Path: <linux-kernel+bounces-590273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7171A7D106
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 00:18:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D23A7D110
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 00:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E3A616FE39
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 22:18:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C49B16BD34
+	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 22:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFE8224887;
-	Sun,  6 Apr 2025 22:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2049322154D;
+	Sun,  6 Apr 2025 22:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lLr1qmmQ"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MHeaFYL2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6AC224241;
-	Sun,  6 Apr 2025 22:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A08191461;
+	Sun,  6 Apr 2025 22:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743977719; cv=none; b=JvulnpE9/ri4VbxPG0oAgvrRGflulk9cX+GXoafzjMSHdfk/52UsunbiZqaougEfcjI6dehLcDgEYJqNLSDO0H+qI51fWmKidTcNpmBW3tdByNf4L1RgwWnU5hP0E5isJtXupJ3ubwlQ2vOdugRFFwypxSuD5ou1xOG21Xo/8lA=
+	t=1743978913; cv=none; b=i/6q1H/oTKj1v9gyIAWcDIBbOCBhwtZNp74+0VfiPHQDBTCDLhyU2xaaUJVO61OSlYAJDWafZINOHsg0qYs11X8PDubQ66PXLhVV93Jp3uTeIGZz0BH7v8BBdT4nVyupuTmRYo/hmUeg3yXdpuNALgegKIX8rseR09AlVqD/bIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743977719; c=relaxed/simple;
-	bh=YLDJNEZ317PWGFRyJybNQnG7jVTjbeM9QZS5X0qo/Go=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OP4W9ttt0Vp/206p0PQoXCUwMbp93rNKDDePp8/BShi9vzl+As7lnvJhCf7Xvof3KgFpXP8MwzzP4jcAUhib/mNyKwCgC8M8OLBeQrRPEvgm2cY2qxh0vn6vO/Ok8cqvd+W+sUwHoWi8bkV349IMyV12+aJRAnh18OrD2wp6MIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lLr1qmmQ; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43edb40f357so14827185e9.0;
-        Sun, 06 Apr 2025 15:15:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743977716; x=1744582516; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b96fP0PKnSqz6xZp1n4Stntc07MfkBqVjxTOrAFZBU8=;
-        b=lLr1qmmQ001kdVnCknY18OqzGzgzqRkNL99I81YrjHBNKfaiRj89YAecf8QZ9E9mP+
-         FCFEAQ1vjIGRSsxKGQLjVr7DwrbSnSR/0FowCXUIzBARkxVwlYu5Z+eRVO3KRj9e37rO
-         8GE3rmICoC9D8e9C624XYCWD67QcyoDheGr74tlfpq89WuaooVriU+WAWVWBu+ehP6dC
-         lcglJ8CvQpQ1EgihtoHxBxqmdG8i+p1ci6QXvtb4Za4j6swg43H+ALbRhzAbYjSKTLMe
-         YyAYg4mBzGKyDn33fhF5mTRyAIxAorZbAsaqpxQZRPpXF+thX+rSoE0Ey1ml/FhhzyPH
-         V9gA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743977716; x=1744582516;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b96fP0PKnSqz6xZp1n4Stntc07MfkBqVjxTOrAFZBU8=;
-        b=RdxMkeIcQQO/UkxKxA0Ze8v+7NV9UQQJz1zpbMfS4DqnbEmyfqqXwQ8tPvZdOPpsxi
-         2cig4kenGDnCXJ1u9PQNEIbT6Kk62yPnCOpzq8npWMJ+yep436v/9Tzznc/Xy5qFvNQz
-         biSEZOTiSjR4zqD9hKKDgdZVAelyXC3iALXfmb+v+7ZO7Ifx3o14tBytFjW4GvNbykxj
-         qmGIDtUqhRhOuPQb5Au+C7ZoV19SHDu1SuXZWH5Cdi9agEVCj4aqLW9crAJDfgjnb958
-         ZzthG7FSZ5HJCWwKEyfJ0/Sgdxd+LNhdiRiWt1gu/Jdp9jJ7cThJIL3KZ62ABEVgg6kD
-         defA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0fRBMV5Xpv6uRnabm4O/nGII884AoKaQAS9OWz/J5XLuy0cnhRqUbTgmsGwWDi6qzOeSMnNV4AEmCzCCG@vger.kernel.org, AJvYcCUZGbIrVfFc1imcAMW/AULw4LlgcLU3VMSAPA2r6g+Wj25351tIVw7HdHTb1IIy1SNz6kOrxZwW@vger.kernel.org, AJvYcCXMQ4lQ15Hz2meyYe4MFGveFt9R70SWQyoymtflWhA4U5jymumoG8coxtFurWtIF4TPxetS+h5+X4bh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpvqluTwXTQT6swVzegjwG5+bDXOk+chYHptz92hskTJ9kRuEv
-	d9Tfae0F86/Txzy3iNyO2PL4p3R7sL4n/rASedhh9Dl6weuQBF11
-X-Gm-Gg: ASbGncuxiPehXyIKkqC9qW46Fzz2aeEJLyHxdaQApJeuBG33KQ1X2i/Zlk/ZKFDMV18
-	fHGAMBu8o2aeXjJh6jeMM09MfecDJaRsaUZY7JsNRI7JCMfXGxQrkfgVBr0rs8do5SnuRQsirMH
-	hjGCAUPclSE7vGqDsvg5vaq1+Y9s50u9e458WC7Gi7MafZAa9Q6cyb+f5K5TG1g9/T+nC23i8rS
-	DBCwPVbrfer/pLf0URku/CukXIg+YA2L64DIQPtgTiH+ivpH5NVTiP4OGxoekHJXkas3EFY1WnW
-	C+jv1wf5IH1caRslFrz3D7dj7NqfhXP8+I9BWmi33WX57jc7xWyWCrZDW8tzI2MSVHes8h3ERPv
-	5mEJbyg9Lwvb2fBDZD4c4Wcm6
-X-Google-Smtp-Source: AGHT+IF3Ek6iO4PYxtYKLThazbN2LB6KUW0Tmo9V03xxyHAX8IEpXOCaqbayQqhjyu1/kpycZ5YfOQ==
-X-Received: by 2002:a05:600c:3489:b0:43c:f0ae:da7 with SMTP id 5b1f17b1804b1-43ee0617025mr62016505e9.7.1743977715512;
-        Sun, 06 Apr 2025 15:15:15 -0700 (PDT)
-Received: from localhost.localdomain (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43ec366aa29sm111517055e9.39.2025.04.06.15.15.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Apr 2025 15:15:15 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	"Lei Wei (QUIC)" <quic_leiwei@quicinc.com>
-Subject: [RFC PATCH net-next v2 11/11] net: airoha: add phylink support for GDM2/3/4
-Date: Mon,  7 Apr 2025 00:14:04 +0200
-Message-ID: <20250406221423.9723-12-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250406221423.9723-1-ansuelsmth@gmail.com>
-References: <20250406221423.9723-1-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1743978913; c=relaxed/simple;
+	bh=wHB6K7GjES8Ge4y26halYh4iZ5lye8n0dDMhabj4FIk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I3CHmzh3rXPgX/ixsqOYnCH64xFn8X2eZP25Z8mAZ6G8XQTWg0mQ+gpe3wjh9JYoGuxq5BY5dyFwrRAjzyO0RfKsqNsJuT99CYPP7UM4mFCMzO+/7tpZgNh04ZbYgCARDzcnpQ9tX/EKsgjng2MgfZgtuYS7dTGxuuo8l//TeKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MHeaFYL2; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743978910; x=1775514910;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wHB6K7GjES8Ge4y26halYh4iZ5lye8n0dDMhabj4FIk=;
+  b=MHeaFYL24i8dFrt4axlD9yyJY4iXtQ2GpiA/BgOg1nrWMt3M3wKvdhzP
+   GUg45TAZNAMcfAxGo2ZaYwj1zKKyhPgqORQGrDWADurXkDRx/Dx6KajdD
+   rZqohuCZc5c0wVyLBoIvooxDQBKatDnCC6qYcubFkCVwBXJmS+mVIVZwi
+   KgtsJn8o6YGReN9KHu/8m+w8LhEz7vZO3ts1Bmws+zRKpRpKGL6Vd38qP
+   u56GH5EZypdX6k2umPlRsN+3MS31UOK31Ckrnrorj4uI/f4fIgRmvK6m8
+   i5rRMZhr2qSvI2J4QD0yhGGlb0AbyKPru/CeZelgkcOnUIVgYPmBWznh/
+   Q==;
+X-CSE-ConnectionGUID: lr1kuQ8DS76SQN4BJvXAfQ==
+X-CSE-MsgGUID: UBjD4HLzSTWIIuknTuKHZQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11396"; a="67827221"
+X-IronPort-AV: E=Sophos;i="6.15,193,1739865600"; 
+   d="scan'208";a="67827221"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2025 15:35:09 -0700
+X-CSE-ConnectionGUID: KbjzzFMbS86tjnzodMgrwQ==
+X-CSE-MsgGUID: iDnMJQF2R+a3ye1yUly2dQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,193,1739865600"; 
+   d="scan'208";a="127661435"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 06 Apr 2025 15:35:06 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u1Ya0-0002nX-0W;
+	Sun, 06 Apr 2025 22:35:04 +0000
+Date: Mon, 7 Apr 2025 06:35:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nam Tran <trannamatk@gmail.com>, pavel@kernel.org, lee@kernel.org,
+	krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org,
+	corbet@lwn.net
+Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nam Tran <trannamatk@gmail.com>
+Subject: Re: [PATCH v4 2/5] leds: add TI/National Semiconductor LP5812 LED
+ Driver
+Message-ID: <202504070613.iMGdlcfg-lkp@intel.com>
+References: <20250405183246.198568-3-trannamatk@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250405183246.198568-3-trannamatk@gmail.com>
 
-Add phylink support for GDM2/3/4 port that require configuration of the
-PCS to make the external PHY or attached SFP cage work.
+Hi Nam,
 
-These needs to be defined in the GDM port node using the pcs-handle
-property.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/net/ethernet/airoha/airoha_eth.c  | 266 +++++++++++++++++++++-
- drivers/net/ethernet/airoha/airoha_eth.h  |   4 +
- drivers/net/ethernet/airoha/airoha_regs.h |  12 +
- include/linux/pcs/pcs-airoha.h            |  15 ++
- 4 files changed, 296 insertions(+), 1 deletion(-)
+[auto build test WARNING on lee-leds/for-leds-next]
+[also build test WARNING on robh/for-next v6.14]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/ethernet/airoha/airoha_eth.c
-index c0a642568ac1..40d5d7cb1410 100644
---- a/drivers/net/ethernet/airoha/airoha_eth.c
-+++ b/drivers/net/ethernet/airoha/airoha_eth.c
-@@ -5,9 +5,13 @@
-  */
- #include <linux/of.h>
- #include <linux/of_net.h>
-+#include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/tcp.h>
-+#include <linux/pcs/pcs.h>
-+#include <linux/pcs/pcs-airoha.h>
- #include <linux/u64_stats_sync.h>
-+#include <linux/regmap.h>
- #include <net/dst_metadata.h>
- #include <net/page_pool/helpers.h>
- #include <net/pkt_cls.h>
-@@ -76,6 +80,11 @@ static bool airhoa_is_lan_gdm_port(struct airoha_gdm_port *port)
- 	return port->id == 1;
- }
- 
-+static bool airhoa_is_phy_external(struct airoha_gdm_port *port)
-+{
-+	return port->id != 1;
-+}
-+
- static void airoha_set_macaddr(struct airoha_gdm_port *port, const u8 *addr)
- {
- 	struct airoha_eth *eth = port->qdma->eth;
-@@ -1535,6 +1544,17 @@ static int airoha_dev_open(struct net_device *dev)
- 	struct airoha_gdm_port *port = netdev_priv(dev);
- 	struct airoha_qdma *qdma = port->qdma;
- 
-+	if (airhoa_is_phy_external(port)) {
-+		err = phylink_of_phy_connect(port->phylink, dev->dev.of_node, 0);
-+		if (err) {
-+			netdev_err(dev, "%s: could not attach PHY: %d\n", __func__,
-+				   err);
-+			return err;
-+		}
-+
-+		phylink_start(port->phylink);
-+	}
-+
- 	netif_tx_start_all_queues(dev);
- 	err = airoha_set_vip_for_gdm_port(port, true);
- 	if (err)
-@@ -1587,19 +1607,36 @@ static int airoha_dev_stop(struct net_device *dev)
- 		}
- 	}
- 
-+	if (airhoa_is_phy_external(port)) {
-+		phylink_stop(port->phylink);
-+		phylink_disconnect_phy(port->phylink);
-+	}
-+
- 	return 0;
- }
- 
- static int airoha_dev_set_macaddr(struct net_device *dev, void *p)
- {
- 	struct airoha_gdm_port *port = netdev_priv(dev);
-+	const u8 *mac_addr = dev->dev_addr;
- 	int err;
- 
- 	err = eth_mac_addr(dev, p);
- 	if (err)
- 		return err;
- 
--	airoha_set_macaddr(port, dev->dev_addr);
-+	airoha_set_macaddr(port, mac_addr);
-+
-+	/* Update XFI mac address */
-+	if (airhoa_is_phy_external(port)) {
-+		regmap_write(port->xfi_mac, AIROHA_PCS_XFI_MAC_XFI_MACADDRL,
-+			     FIELD_PREP(AIROHA_PCS_XFI_MAC_MACADDRL,
-+					mac_addr[0] << 24 | mac_addr[1] << 16 |
-+					mac_addr[2] << 8 | mac_addr[3]));
-+		regmap_write(port->xfi_mac, AIROHA_PCS_XFI_MAC_XFI_MACADDRH,
-+			     FIELD_PREP(AIROHA_PCS_XFI_MAC_MACADDRH,
-+					mac_addr[4] << 8 | mac_addr[5]));
-+	}
- 
- 	return 0;
- }
-@@ -2454,6 +2491,210 @@ static void airoha_metadata_dst_free(struct airoha_gdm_port *port)
- 	}
- }
- 
-+static void airoha_mac_config(struct phylink_config *config, unsigned int mode,
-+			      const struct phylink_link_state *state)
-+{
-+	struct airoha_gdm_port *port = container_of(config, struct airoha_gdm_port,
-+						    phylink_config);
-+
-+	/* Frag disable */
-+	regmap_update_bits(port->xfi_mac, AIROHA_PCS_XFI_MAC_XFI_GIB_CFG,
-+			   AIROHA_PCS_XFI_RX_FRAG_LEN,
-+			   FIELD_PREP(AIROHA_PCS_XFI_RX_FRAG_LEN, 31));
-+	regmap_update_bits(port->xfi_mac, AIROHA_PCS_XFI_MAC_XFI_GIB_CFG,
-+			   AIROHA_PCS_XFI_TX_FRAG_LEN,
-+			   FIELD_PREP(AIROHA_PCS_XFI_TX_FRAG_LEN, 31));
-+
-+	/* IPG NUM */
-+	regmap_update_bits(port->xfi_mac, AIROHA_PCS_XFI_MAC_XFI_GIB_CFG,
-+			   AIROHA_PCS_XFI_IPG_NUM,
-+			   FIELD_PREP(AIROHA_PCS_XFI_IPG_NUM, 10));
-+
-+	/* Enable TX/RX flow control */
-+	regmap_set_bits(port->xfi_mac, AIROHA_PCS_XFI_MAC_XFI_GIB_CFG,
-+			AIROHA_PCS_XFI_TX_FC_EN);
-+	regmap_set_bits(port->xfi_mac, AIROHA_PCS_XFI_MAC_XFI_GIB_CFG,
-+			AIROHA_PCS_XFI_RX_FC_EN);
-+}
-+
-+static int airoha_mac_prepare(struct phylink_config *config, unsigned int mode,
-+			      phy_interface_t iface)
-+{
-+	struct airoha_gdm_port *port = container_of(config, struct airoha_gdm_port,
-+						    phylink_config);
-+
-+	/* MPI MBI disable */
-+	regmap_set_bits(port->xfi_mac, AIROHA_PCS_XFI_MAC_XFI_GIB_CFG,
-+			AIROHA_PCS_XFI_RXMPI_STOP |
-+			AIROHA_PCS_XFI_RXMBI_STOP |
-+			AIROHA_PCS_XFI_TXMPI_STOP |
-+			AIROHA_PCS_XFI_TXMBI_STOP);
-+
-+	/* Write 1 to trigger reset and clear */
-+	regmap_clear_bits(port->xfi_mac, AIROHA_PCS_XFI_MAC_XFI_LOGIC_RST,
-+			  AIROHA_PCS_XFI_MAC_LOGIC_RST);
-+	regmap_set_bits(port->xfi_mac, AIROHA_PCS_XFI_MAC_XFI_LOGIC_RST,
-+			AIROHA_PCS_XFI_MAC_LOGIC_RST);
-+
-+	usleep_range(1000, 2000);
-+
-+	/* Clear XFI MAC counter */
-+	regmap_set_bits(port->xfi_mac, AIROHA_PCS_XFI_MAC_XFI_CNT_CLR,
-+			AIROHA_PCS_XFI_GLB_CNT_CLR);
-+
-+	return 0;
-+}
-+
-+static void airoha_mac_link_down(struct phylink_config *config, unsigned int mode,
-+				 phy_interface_t interface)
-+{
-+	struct airoha_gdm_port *port = container_of(config, struct airoha_gdm_port,
-+						    phylink_config);
-+
-+	/* MPI MBI disable */
-+	regmap_set_bits(port->xfi_mac, AIROHA_PCS_XFI_MAC_XFI_GIB_CFG,
-+			AIROHA_PCS_XFI_RXMPI_STOP |
-+			AIROHA_PCS_XFI_RXMBI_STOP |
-+			AIROHA_PCS_XFI_TXMPI_STOP |
-+			AIROHA_PCS_XFI_TXMBI_STOP);
-+}
-+
-+static void airoha_mac_link_up(struct phylink_config *config, struct phy_device *phy,
-+			       unsigned int mode, phy_interface_t interface,
-+			       int speed, int duplex, bool tx_pause, bool rx_pause)
-+{
-+	struct airoha_gdm_port *port = container_of(config, struct airoha_gdm_port,
-+						    phylink_config);
-+	struct airoha_qdma *qdma = port->qdma;
-+	struct airoha_eth *eth = qdma->eth;
-+	u32 frag_size_tx, frag_size_rx;
-+
-+	switch (speed) {
-+	case SPEED_10000:
-+	case SPEED_5000:
-+		frag_size_tx = 8;
-+		frag_size_rx = 8;
-+		break;
-+	case SPEED_2500:
-+		frag_size_tx = 2;
-+		frag_size_rx = 1;
-+		break;
-+	default:
-+		frag_size_tx = 1;
-+		frag_size_rx = 0;
-+	}
-+
-+	/* Configure TX/RX frag based on speed */
-+	if (port->id == 4) {
-+		airoha_fe_rmw(eth, REG_GDMA4_TMBI_FRAG, GDMA4_SGMII0_TX_FRAG_SIZE,
-+			      FIELD_PREP(GDMA4_SGMII0_TX_FRAG_SIZE, frag_size_tx));
-+
-+		airoha_fe_rmw(eth, REG_GDMA4_RMBI_FRAG, GDMA4_SGMII0_RX_FRAG_SIZE,
-+			      FIELD_PREP(GDMA4_SGMII0_RX_FRAG_SIZE, frag_size_rx));
-+	}
-+
-+	/* BPI BMI enable */
-+	regmap_clear_bits(port->xfi_mac, AIROHA_PCS_XFI_MAC_XFI_GIB_CFG,
-+			  AIROHA_PCS_XFI_RXMPI_STOP |
-+			  AIROHA_PCS_XFI_RXMBI_STOP |
-+			  AIROHA_PCS_XFI_TXMPI_STOP |
-+			  AIROHA_PCS_XFI_TXMBI_STOP);
-+}
-+
-+static const struct phylink_mac_ops airoha_phylink_ops = {
-+	.mac_config = airoha_mac_config,
-+	.mac_prepare = airoha_mac_prepare,
-+	.mac_link_down = airoha_mac_link_down,
-+	.mac_link_up = airoha_mac_link_up,
-+};
-+
-+static int airoha_setup_phylink(struct net_device *dev)
-+{
-+	struct device_node *pcs_np, *np = dev->dev.of_node;
-+	struct airoha_gdm_port *port = netdev_priv(dev);
-+	struct phylink_pcs **available_pcs;
-+	struct platform_device *pdev;
-+	phy_interface_t phy_mode;
-+	struct phylink *phylink;
-+	unsigned int num_pcs;
-+	int err;
-+
-+	err = of_get_phy_mode(np, &phy_mode);
-+	if (err) {
-+		dev_err(&dev->dev, "incorrect phy-mode\n");
-+		return err;
-+	}
-+
-+	pcs_np = of_parse_phandle(np, "pcs-handle", 0);
-+	if (!pcs_np)
-+		return -ENODEV;
-+
-+	if (!of_device_is_available(pcs_np)) {
-+		of_node_put(pcs_np);
-+		return -ENODEV;
-+	}
-+
-+	pdev = of_find_device_by_node(pcs_np);
-+	of_node_put(pcs_np);
-+	if (!pdev || !platform_get_drvdata(pdev)) {
-+		if (pdev)
-+			put_device(&pdev->dev);
-+		return -EPROBE_DEFER;
-+	}
-+
-+	port->xfi_mac = dev_get_regmap(&pdev->dev, "xfi_mac");
-+	if (IS_ERR(port->xfi_mac))
-+		return PTR_ERR(port->xfi_mac);
-+
-+	port->phylink_config.dev = &dev->dev;
-+	port->phylink_config.type = PHYLINK_NETDEV;
-+	port->phylink_config.mac_capabilities = MAC_ASYM_PAUSE | MAC_SYM_PAUSE |
-+						MAC_10 | MAC_100 | MAC_1000 | MAC_2500FD |
-+						MAC_5000FD | MAC_10000FD;
-+
-+	err = fwnode_phylink_pcs_parse(dev_fwnode(&dev->dev), NULL, &num_pcs);
-+	if (err)
-+		return err;
-+
-+	available_pcs = kcalloc(num_pcs, sizeof(*available_pcs), GFP_KERNEL);
-+	if (!available_pcs)
-+		return -ENOMEM;
-+
-+	err = fwnode_phylink_pcs_parse(dev_fwnode(&dev->dev), available_pcs,
-+				       &num_pcs);
-+	if (err)
-+		goto out;
-+
-+	port->phylink_config.available_pcs = available_pcs;
-+	port->phylink_config.num_available_pcs = num_pcs;
-+
-+	__set_bit(PHY_INTERFACE_MODE_SGMII,
-+		  port->phylink_config.supported_interfaces);
-+	__set_bit(PHY_INTERFACE_MODE_1000BASEX,
-+		  port->phylink_config.supported_interfaces);
-+	__set_bit(PHY_INTERFACE_MODE_2500BASEX,
-+		  port->phylink_config.supported_interfaces);
-+	__set_bit(PHY_INTERFACE_MODE_USXGMII,
-+		  port->phylink_config.supported_interfaces);
-+
-+	phy_interface_copy(port->phylink_config.pcs_interfaces,
-+			   port->phylink_config.supported_interfaces);
-+
-+	phylink = phylink_create(&port->phylink_config,
-+				 of_fwnode_handle(np),
-+				 phy_mode, &airoha_phylink_ops);
-+	if (IS_ERR(phylink)) {
-+		err = PTR_ERR(phylink);
-+		goto out;
-+	}
-+
-+	port->phylink = phylink;
-+out:
-+	kfree(available_pcs);
-+
-+	return err;
-+}
-+
- static int airoha_alloc_gdm_port(struct airoha_eth *eth,
- 				 struct device_node *np, int index)
- {
-@@ -2532,6 +2773,23 @@ static int airoha_alloc_gdm_port(struct airoha_eth *eth,
- 	if (err)
- 		return err;
- 
-+	if (airhoa_is_phy_external(port)) {
-+		const u8 *mac_addr = dev->dev_addr;
-+
-+		err = airoha_setup_phylink(dev);
-+		if (err)
-+			return err;
-+
-+		/* Setup XFI mac address */
-+		regmap_write(port->xfi_mac, AIROHA_PCS_XFI_MAC_XFI_MACADDRL,
-+			     FIELD_PREP(AIROHA_PCS_XFI_MAC_MACADDRL,
-+					mac_addr[0] << 24 | mac_addr[1] << 16 |
-+					mac_addr[2] << 8 | mac_addr[3]));
-+		regmap_write(port->xfi_mac, AIROHA_PCS_XFI_MAC_XFI_MACADDRH,
-+			     FIELD_PREP(AIROHA_PCS_XFI_MAC_MACADDRH,
-+					mac_addr[4] << 8 | mac_addr[5]));
-+	}
-+
- 	return register_netdev(dev);
- }
- 
-@@ -2626,6 +2884,9 @@ static int airoha_probe(struct platform_device *pdev)
- 		struct airoha_gdm_port *port = eth->ports[i];
- 
- 		if (port && port->dev->reg_state == NETREG_REGISTERED) {
-+			if (airhoa_is_phy_external(port))
-+				phylink_destroy(port->phylink);
-+
- 			unregister_netdev(port->dev);
- 			airoha_metadata_dst_free(port);
- 		}
-@@ -2653,6 +2914,9 @@ static void airoha_remove(struct platform_device *pdev)
- 			continue;
- 
- 		airoha_dev_stop(port->dev);
-+		if (airhoa_is_phy_external(port))
-+			phylink_destroy(port->phylink);
-+
- 		unregister_netdev(port->dev);
- 		airoha_metadata_dst_free(port);
- 	}
-diff --git a/drivers/net/ethernet/airoha/airoha_eth.h b/drivers/net/ethernet/airoha/airoha_eth.h
-index 60690b685710..bc0cbeb6bd6d 100644
---- a/drivers/net/ethernet/airoha/airoha_eth.h
-+++ b/drivers/net/ethernet/airoha/airoha_eth.h
-@@ -460,6 +460,10 @@ struct airoha_gdm_port {
- 	struct net_device *dev;
- 	int id;
- 
-+	struct phylink *phylink;
-+	struct phylink_config phylink_config;
-+	struct regmap *xfi_mac;
-+
- 	struct airoha_hw_stats stats;
- 
- 	DECLARE_BITMAP(qos_sq_bmap, AIROHA_NUM_QOS_CHANNELS);
-diff --git a/drivers/net/ethernet/airoha/airoha_regs.h b/drivers/net/ethernet/airoha/airoha_regs.h
-index 8146cde4e8ba..72f7824fcc2e 100644
---- a/drivers/net/ethernet/airoha/airoha_regs.h
-+++ b/drivers/net/ethernet/airoha/airoha_regs.h
-@@ -356,6 +356,18 @@
- #define IP_FRAGMENT_PORT_MASK		GENMASK(8, 5)
- #define IP_FRAGMENT_NBQ_MASK		GENMASK(4, 0)
- 
-+#define REG_GDMA4_TMBI_FRAG		0x2028
-+#define GDMA4_SGMII1_TX_WEIGHT		GENMASK(31, 26)
-+#define GDMA4_SGMII1_TX_FRAG_SIZE	GENMASK(25, 16)
-+#define GDMA4_SGMII0_TX_WEIGHT		GENMASK(15, 10)
-+#define GDMA4_SGMII0_TX_FRAG_SIZE	GENMASK(9, 0)
-+
-+#define REG_GDMA4_RMBI_FRAG		0x202c
-+#define GDMA4_SGMII1_RX_WEIGHT		GENMASK(31, 26)
-+#define GDMA4_SGMII1_RX_FRAG_SIZE	GENMASK(25, 16)
-+#define GDMA4_SGMII0_RX_WEIGHT		GENMASK(15, 10)
-+#define GDMA4_SGMII0_RX_FRAG_SIZE	GENMASK(9, 0)
-+
- #define REG_MC_VLAN_EN			0x2100
- #define MC_VLAN_EN_MASK			BIT(0)
- 
-diff --git a/include/linux/pcs/pcs-airoha.h b/include/linux/pcs/pcs-airoha.h
-index 07797645ff15..947dbcbc5206 100644
---- a/include/linux/pcs/pcs-airoha.h
-+++ b/include/linux/pcs/pcs-airoha.h
-@@ -5,7 +5,22 @@
- 
- /* XFI_MAC */
- #define AIROHA_PCS_XFI_MAC_XFI_GIB_CFG		0x0
-+#define   AIROHA_PCS_XFI_RX_FRAG_LEN		GENMASK(26, 22)
-+#define   AIROHA_PCS_XFI_TX_FRAG_LEN		GENMASK(21, 17)
-+#define   AIROHA_PCS_XFI_IPG_NUM		GENMASK(15, 10)
- #define   AIROHA_PCS_XFI_TX_FC_EN		BIT(5)
- #define   AIROHA_PCS_XFI_RX_FC_EN		BIT(4)
-+#define   AIROHA_PCS_XFI_RXMPI_STOP		BIT(3)
-+#define   AIROHA_PCS_XFI_RXMBI_STOP		BIT(2)
-+#define   AIROHA_PCS_XFI_TXMPI_STOP		BIT(1)
-+#define   AIROHA_PCS_XFI_TXMBI_STOP		BIT(0)
-+#define AIROHA_PCS_XFI_MAC_XFI_LOGIC_RST	0x10
-+#define   AIROHA_PCS_XFI_MAC_LOGIC_RST		BIT(0)
-+#define AIROHA_PCS_XFI_MAC_XFI_MACADDRH		0x60
-+#define   AIROHA_PCS_XFI_MAC_MACADDRH		GENMASK(15, 0)
-+#define AIROHA_PCS_XFI_MAC_XFI_MACADDRL		0x64
-+#define   AIROHA_PCS_XFI_MAC_MACADDRL		GENMASK(31, 0)
-+#define AIROHA_PCS_XFI_MAC_XFI_CNT_CLR		0x100
-+#define   AIROHA_PCS_XFI_GLB_CNT_CLR		BIT(0)
- 
- #endif /* __LINUX_PCS_AIROHA_H */
+url:    https://github.com/intel-lab-lkp/linux/commits/Nam-Tran/dt-bindings-leds-add-TI-National-Semiconductor-LP5812-LED-Driver/20250406-023621
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
+patch link:    https://lore.kernel.org/r/20250405183246.198568-3-trannamatk%40gmail.com
+patch subject: [PATCH v4 2/5] leds: add TI/National Semiconductor LP5812 LED Driver
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20250407/202504070613.iMGdlcfg-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250407/202504070613.iMGdlcfg-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504070613.iMGdlcfg-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/leds/leds-lp5812.c:544:13: warning: 'lp5812_dump_regs' defined but not used [-Wunused-function]
+     544 | static void lp5812_dump_regs(struct lp5812_chip *chip, u16 from_reg, u16 to_reg)
+         |             ^~~~~~~~~~~~~~~~
+>> drivers/leds/leds-lp5812.c:364:12: warning: 'lp5812_update_bit' defined but not used [-Wunused-function]
+     364 | static int lp5812_update_bit(struct lp5812_chip *chip, u16 reg, u8 mask, u8 val)
+         |            ^~~~~~~~~~~~~~~~~
+
+
+vim +/lp5812_dump_regs +544 drivers/leds/leds-lp5812.c
+
+   363	
+ > 364	static int lp5812_update_bit(struct lp5812_chip *chip, u16 reg, u8 mask, u8 val)
+   365	{
+   366		int ret;
+   367		u8 tmp;
+   368	
+   369		ret = lp5812_read(chip, reg, &tmp);
+   370		if (ret)
+   371			return ret;
+   372	
+   373		tmp &= ~mask;
+   374		tmp |= val & mask;
+   375	
+   376		return lp5812_write(chip, reg, tmp);
+   377	}
+   378	
+   379	static int lp5812_read_tsd_config_status(struct lp5812_chip *chip, u8 *reg_val)
+   380	{
+   381		int ret = 0;
+   382	
+   383		if (!reg_val)
+   384			return -1;
+   385	
+   386		ret = lp5812_read(chip, chip->regs->tsd_config_status_reg, reg_val);
+   387	
+   388		return ret;
+   389	}
+   390	
+   391	static int lp5812_update_regs_config(struct lp5812_chip *chip)
+   392	{
+   393		int ret;
+   394		u8 reg_val; /* save register value */
+   395	
+   396		/* Send update command to update config setting */
+   397		ret = lp5812_write(chip, chip->regs->update_cmd_reg, UPDATE_CMD_VAL);
+   398		if (ret)
+   399			return ret;
+   400		/* check if the configuration is proper */
+   401		ret = lp5812_read_tsd_config_status(chip, &reg_val);
+   402		if (ret == 0)
+   403			return (int)(reg_val & 0x01);
+   404	
+   405		return ret;
+   406	}
+   407	
+   408	static int lp5812_read_lod_status(struct lp5812_chip *chip, int led_number, u8 *val)
+   409	{
+   410		int ret = 0;
+   411		u16 reg = 0;
+   412		u8 reg_val = 0;
+   413	
+   414		if (!val)
+   415			return -1;
+   416	
+   417		if (led_number < 0x8)
+   418			reg = LOD_STAT_1_REG;
+   419		else
+   420			reg = LOD_STAT_2_REG;
+   421	
+   422		ret = lp5812_read(chip, reg, &reg_val);
+   423		if (ret)
+   424			return ret;
+   425	
+   426		*val = (reg_val & (1 << (led_number % 8))) ? 1 : 0;
+   427	
+   428		return ret;
+   429	}
+   430	
+   431	static int lp5812_read_lsd_status(struct lp5812_chip *chip, int led_number, u8 *val)
+   432	{
+   433		int ret = 0;
+   434		u16 reg = 0;
+   435		u8 reg_val = 0;
+   436	
+   437		if (!val)
+   438			return -1;
+   439	
+   440		if (led_number < 0x8)
+   441			reg = LSD_STAT_1_REG;
+   442		else
+   443			reg = LSD_STAT_2_REG;
+   444	
+   445		ret = lp5812_read(chip, reg, &reg_val);
+   446		if (ret)
+   447			return ret;
+   448	
+   449		*val = (reg_val & (1 << (led_number % 8))) ? 1 : 0;
+   450	
+   451		return ret;
+   452	}
+   453	
+   454	static int lp5812_read_auto_pwm_value(struct lp5812_chip *chip, int led_number,
+   455			u8 *val)
+   456	{
+   457		int ret = 0;
+   458		u16 reg = 0;
+   459		u8 reg_val = 0;
+   460	
+   461		reg = AUTO_PWM_BASE_ADDR + led_number;
+   462	
+   463		ret = lp5812_read(chip, reg, &reg_val);
+   464		if (ret)
+   465			return ret;
+   466	
+   467		*val = reg_val;
+   468	
+   469		return ret;
+   470	}
+   471	
+   472	static int lp5812_read_aep_status(struct lp5812_chip *chip, int led_number, u8 *val)
+   473	{
+   474		int ret = 0;
+   475		u16 reg;
+   476		u8 reg_val;
+   477	
+   478		switch (led_number / 2) {
+   479		case 0:
+   480			reg = AEP_STATUS_0_REG; // LED_0 and LED_1
+   481			break;
+   482		case 1:
+   483			reg = AEP_STATUS_1_REG; // LED_2 and LED_3
+   484			break;
+   485		case 2:
+   486			reg = AEP_STATUS_2_REG; // LED_A0 and LED_A1
+   487			break;
+   488		case 3:
+   489			reg = AEP_STATUS_3_REG; // LED_A2 and LED_B0
+   490			break;
+   491		case 4:
+   492			reg = AEP_STATUS_4_REG; // LED_B1 and LED_B2
+   493			break;
+   494		case 5:
+   495			reg = AEP_STATUS_5_REG; // LED_C0 and LED_C1
+   496			break;
+   497		case 6:
+   498			reg = AEP_STATUS_6_REG; // LED_C2 and LED_D0
+   499			break;
+   500		case 7:
+   501			reg = AEP_STATUS_7_REG; // LED_D1 and LED_D2
+   502			break;
+   503		default:
+   504			return -EINVAL;
+   505		}
+   506	
+   507		ret = lp5812_read(chip, reg, &reg_val);
+   508		if (ret)
+   509			return ret;
+   510	
+   511		*val = (led_number % 2) ? ((reg_val >> 3) & 0x07) : (reg_val & 0x07);
+   512	
+   513		return ret;
+   514	}
+   515	
+   516	static int lp5812_enable_disable(struct lp5812_chip *chip, int enable)
+   517	{
+   518		return lp5812_write(chip, chip->regs->enable_reg, (u8)enable);
+   519	}
+   520	
+   521	static int lp5812_reset(struct lp5812_chip *chip)
+   522	{
+   523		return lp5812_write(chip, chip->regs->reset_reg, RESET_REG_VAL);
+   524	}
+   525	
+   526	static int lp5812_fault_clear(struct lp5812_chip *chip, u8 value)
+   527	{
+   528		u8 reg_val;
+   529	
+   530		if (value == 0)
+   531			reg_val = LOD_CLEAR_VAL;
+   532		else if (value == 1)
+   533			reg_val = LSD_CLEAR_VAL;
+   534		else if (value == 2)
+   535			reg_val = TSD_CLEAR_VAL;
+   536		else if (value == 3)
+   537			reg_val = FAULT_CLEAR_ALL;
+   538		else
+   539			return -EINVAL;
+   540	
+   541		return lp5812_write(chip, chip->regs->fault_clear_reg, reg_val);
+   542	}
+   543	
+ > 544	static void lp5812_dump_regs(struct lp5812_chip *chip, u16 from_reg, u16 to_reg)
+   545	{
+   546		u16 reg_addr;
+   547		u8 reg_val;
+   548	
+   549		for (reg_addr = from_reg; reg_addr <= to_reg; reg_addr++)
+   550			lp5812_read(chip, reg_addr, &reg_val);
+   551	}
+   552	
+
 -- 
-2.48.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
