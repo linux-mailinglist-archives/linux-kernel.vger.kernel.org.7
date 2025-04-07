@@ -1,171 +1,192 @@
-Return-Path: <linux-kernel+bounces-591286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB05AA7DDC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:36:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A461A7DDCD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B5E03A7C97
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:36:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 173683AB40C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A144B23AE64;
-	Mon,  7 Apr 2025 12:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197982475D0;
+	Mon,  7 Apr 2025 12:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wPhcHSfk"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bFbE6NgE"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E047C227BB5;
-	Mon,  7 Apr 2025 12:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A77248879;
+	Mon,  7 Apr 2025 12:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744029384; cv=none; b=Kac50nt3lkBfszMe+VlT0XPOUGBT0YuB6s6yT/MmO3wMNtn0Elf+hhRErAfoTBq7dX/mYlWUERxCtSrDc3vSux9vj/90NbMSaOVF7iFdRps+5sPDXhacc3U2s68ONIZ/iLXgv4qU5yCS9ATTLC6L/64QYjFZGdE2MIm+zLemhGQ=
+	t=1744029441; cv=none; b=S2NrzNKUPZyqEJ0Ej/3MgtOU5Q5ZACw8drKneIs3Yhlavf+1Zgg3kqTROB3AChXsBvccN0Ix6FKWAVSgxMoudExaVi+EVeDS7wk5PBX101qvdajcpYRqpxX/OpOuQ9fRMBY2xgjLR8gGxHBl/65mF1ujhmHeqsStpeAk1WBERf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744029384; c=relaxed/simple;
-	bh=1su1RVr9WJ58wLxVjeeErnWvxQCpntRQJD3KfQYta8w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qMYKuRq4BiFDb3Fw9I1qTGvZmSyHXskg/ksYyzdnPO7Fsat2DzBJanBRQTkIsmfCOUuxJSiRQI7zi0vuTouVXIg3uhtEZ5/PLKwtWly7grpWsPneST3iM1NYHZjJEbff6UhuyATvFDpGMd7T4UA3AVhWfHKC4rM1uFwnSLbVL1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wPhcHSfk; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 537CZwPw915930
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 7 Apr 2025 07:35:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744029358;
-	bh=ZIqra39FwyGHX2IBVRB5giqoWceascBFIqyv6tet87s=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=wPhcHSfkvXDW05Uv+Wg56S8G1rDINJtfYXmbcnaxa1Oi8f+UyxXNbiJmRvSpAzxAO
-	 7gp7cepdfvoGd1X3Zx71ysgd4sCOv+R40T0ciAhqs99x4CffV6iwmpDMiB5C40khlQ
-	 57Hz4oBrRIWyPOviRdoBA+MiGgf0dyYV0PCVaBX0=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 537CZwqV113614
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 7 Apr 2025 07:35:58 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 7
- Apr 2025 07:35:57 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 7 Apr 2025 07:35:57 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 537CZvmS006892;
-	Mon, 7 Apr 2025 07:35:57 -0500
-Message-ID: <956c0598-9934-4295-87af-ef86f4eabd94@ti.com>
-Date: Mon, 7 Apr 2025 07:35:57 -0500
+	s=arc-20240116; t=1744029441; c=relaxed/simple;
+	bh=HOibTiVBe6urW/I8l/bkB3d+bGhjt3ehDkrMVTY5jTQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GrK7URVDHUWI5e2Te5IQhT7N5Iu4vX+H5/z6zQ10RVmkOS4KPfvTx19CHedWnepnn5bKX2XPHl5FN74ZOBK4JMQSZe7KLug6VcsFz2gnVgUvhc9cRm/oI3rS1pZd/ZqKGFa1HD7+9grXwE+PmMKPyb7JJdjrg9YyaII7pOAxXtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bFbE6NgE; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39ac8e7688aso3202037f8f.2;
+        Mon, 07 Apr 2025 05:37:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744029437; x=1744634237; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lh/I3yXpOsBj/QaJBup8gnrC62Y5DCOS4SYvr7caIAA=;
+        b=bFbE6NgEjJ29ZUze30WNurTKDjAwAAhPunxQGlgRXVzefqVJ5Rh126Kyl9zCsF8pJr
+         udbkcJz3HauzvyRv4RSGxueEN+eAzYKj2XDioD/E2EyCI4cyJKINiLeMc4PNf7LfRZSX
+         /iV6oH7qFzK7NAAtJVE/NEoMxrdwTlQLh/b6+Z6CHYuSYjKcOp71pmPXyCOJxDYNblb4
+         mHbYGd8wjGr3o9DIpjPlsUijqL9zNsk6uaGCLOb+eGeHrSMl0pYxYYRzIT3IwFQa8F24
+         F0zVxYd5U6WmEdJlrTn3ziaMZUOEXm5IxJUsmVW4h41Sub4OpqBcZY8Y888e08MsTmQP
+         EmFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744029437; x=1744634237;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lh/I3yXpOsBj/QaJBup8gnrC62Y5DCOS4SYvr7caIAA=;
+        b=rpblIYqCZOBOj0WPV6OPF3Xc9cYjWHwfqMR5LOQ6pj1jYTsKpl0dO8sTO2v7sglGZv
+         TlOdBqqd4Bi4xvUxHZ1QgLw3djWAfTyNMCh4LWdZSxgGto6QOItWsby8UGpOPM60qq+7
+         KpmjU7n4cu4Kq/KfxHd0QU76wcksZ0jFwXauOw8sPhi8lldCI2UAjzL1/43rkhvVs87a
+         ixS/SO1F32sKMALYWM9lr5b/9SOG3H6gf7w6xg7MrUteaPg9Cw2BWfX9wvJSimbHtPrj
+         BrekyZ69y4vPfDpPkMrpluMPmHRMdqmOcL4dt4fwmbv/qjftf4+1JHe6wudnNJ8pZnSR
+         04UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWaTz+iYjasCC7MPUTmPMMKW/mFTgobh1nQIplUoAfba3phGULVowFX2Jx8Y2V11OE1o3pJvdsQrFtV+ao=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7o41NqeZUPHVz0pWygh6jtr5PqdaYCmKO7xkxS4UUWMXrfo5H
+	NWOTZftSBBxR2/4x0eTdVEHXUsucuTiViwIaRqrew/C3MpZS0DgG6wQ7QQ==
+X-Gm-Gg: ASbGncvEp/kyUOJ5i3qpuP8fzGhwPZhyvwVxHgKHcivJrvC8mh5CATitaefTEwuDbQn
+	dmJW+opExsu9/9tYoCc/xk3+bIsiuAWwL0VhOXaguF68MurUei9IwfzoO3qTRoX+aDlfZ8Bc7db
+	Q8aLV72xo1MGzbmW8wzr0YHZvo/a5fofOpL6VcNqybYJxZiPKESeB0xTpjFtYaMB308mhJ9OqVY
+	ANIVM4eaMvQfeX6I1jcopmEP5xxG7DH6Lm18DKrmYEfH3xOY7muLfCRZQyXIxMxLeFGIlZL836h
+	qS5hMAmBRfJK9xKlKSJ049gsf+y+b+O/DtoZI5IvucZ6tf5DIiTVbb3FLSE0OrMfet1YqXi4
+X-Google-Smtp-Source: AGHT+IGHpxPIDtpchXInrsm1R02zHSRqOeOW0Uyj1nK5Y5FXV8oqwFqAV3X3meNPTj66oB5UmyG3Hg==
+X-Received: by 2002:a05:6000:4212:b0:39c:1efb:ec8e with SMTP id ffacd0b85a97d-39d6fc00a75mr6536810f8f.6.1744029436707;
+        Mon, 07 Apr 2025 05:37:16 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:2f0e:c50a:8800:cf9e:ee0b:4a01:37f6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c301b76f2sm12065198f8f.53.2025.04.07.05.37.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 05:37:16 -0700 (PDT)
+From: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+To: linux-crypto@vger.kernel.org,
+	herbert@gondor.apana.org.au
+Cc: davem@davemloft.net,
+	linux-kernel@vger.kernel.org,
+	Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+Subject: [PATCH 1/4] crypto: img-hash - use API helpers to setup fallback request
+Date: Mon,  7 Apr 2025 15:36:01 +0300
+Message-ID: <20250407123604.2109561-1-ovidiu.panait.oss@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 11/11] arm64: dts: ti: k3-am64: Reserve timers used by
- MCU FW
-To: Judith Mendez <jm@ti.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>
-CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Hari Nagalla <hnagalla@ti.com>,
-        Beleswar
- Padhi <b-padhi@ti.com>,
-        Markus Schneider-Pargmann <msp@baylibre.com>
-References: <20250405001518.1315273-1-jm@ti.com>
- <20250405001518.1315273-12-jm@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250405001518.1315273-12-jm@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
 
-On 4/4/25 7:15 PM, Judith Mendez wrote:
-> From: Hari Nagalla <hnagalla@ti.com>
-> 
-> AM64x device has 4 R5F cores in the main domain. TI MCU firmware uses
-> main domain timers as tick timers in these firmwares. Hence keep them
-> as reserved in the Linux device tree.
-> 
-> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-> Signed-off-by: Judith Mendez <jm@ti.com>
-> ---
->   arch/arm64/boot/dts/ti/k3-am642-evm.dts | 17 +++++++++++++++++
->   arch/arm64/boot/dts/ti/k3-am642-sk.dts  | 17 +++++++++++++++++
->   2 files changed, 34 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm.dts b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-> index f8ec40523254b..68bd6b806f8f0 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-> @@ -796,6 +796,23 @@ &mcu_m4fss {
->   	status = "okay";
->   };
->   
-> +/* main_timers 8-11 are used by TI MCU FW */
+Rather than setting up the fallback request by hand, use
+ahash_request_set_callback() and ahash_request_set_crypt() API helpers
+to properly setup the new request.
 
-Can you make this comment per-core and explain which core
-each timer is reserved for? Makes it easier on me in Zephyr
-to point out why we use the timers that we do, something
-like:
+This also ensures that the completion callback is properly passed down
+to the fallback algorithm, which avoids a crash with async fallbacks.
 
-/* main_timer8 is reserved for mcu_r5fss0_core0 */
+Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+---
+ drivers/crypto/img-hash.c | 41 ++++++++++++++++++++++-----------------
+ 1 file changed, 23 insertions(+), 18 deletions(-)
 
-Andrew
+diff --git a/drivers/crypto/img-hash.c b/drivers/crypto/img-hash.c
+index 1dc2378aa88b..e050f5ff5efb 100644
+--- a/drivers/crypto/img-hash.c
++++ b/drivers/crypto/img-hash.c
+@@ -491,8 +491,9 @@ static int img_hash_init(struct ahash_request *req)
+ 	struct img_hash_ctx *ctx = crypto_ahash_ctx(tfm);
+ 
+ 	ahash_request_set_tfm(&rctx->fallback_req, ctx->fallback);
+-	rctx->fallback_req.base.flags =	req->base.flags
+-		& CRYPTO_TFM_REQ_MAY_SLEEP;
++	ahash_request_set_callback(&rctx->fallback_req,
++				   req->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP,
++				   req->base.complete, req->base.data);
+ 
+ 	return crypto_ahash_init(&rctx->fallback_req);
+ }
+@@ -555,10 +556,10 @@ static int img_hash_update(struct ahash_request *req)
+ 	struct img_hash_ctx *ctx = crypto_ahash_ctx(tfm);
+ 
+ 	ahash_request_set_tfm(&rctx->fallback_req, ctx->fallback);
+-	rctx->fallback_req.base.flags = req->base.flags
+-		& CRYPTO_TFM_REQ_MAY_SLEEP;
+-	rctx->fallback_req.nbytes = req->nbytes;
+-	rctx->fallback_req.src = req->src;
++	ahash_request_set_callback(&rctx->fallback_req,
++				   req->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP,
++				   req->base.complete, req->base.data);
++	ahash_request_set_crypt(&rctx->fallback_req, req->src, NULL, req->nbytes);
+ 
+ 	return crypto_ahash_update(&rctx->fallback_req);
+ }
+@@ -570,9 +571,10 @@ static int img_hash_final(struct ahash_request *req)
+ 	struct img_hash_ctx *ctx = crypto_ahash_ctx(tfm);
+ 
+ 	ahash_request_set_tfm(&rctx->fallback_req, ctx->fallback);
+-	rctx->fallback_req.base.flags = req->base.flags
+-		& CRYPTO_TFM_REQ_MAY_SLEEP;
+-	rctx->fallback_req.result = req->result;
++	ahash_request_set_callback(&rctx->fallback_req,
++				   req->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP,
++				   req->base.complete, req->base.data);
++	ahash_request_set_crypt(&rctx->fallback_req, NULL, req->result, 0);
+ 
+ 	return crypto_ahash_final(&rctx->fallback_req);
+ }
+@@ -584,11 +586,12 @@ static int img_hash_finup(struct ahash_request *req)
+ 	struct img_hash_ctx *ctx = crypto_ahash_ctx(tfm);
+ 
+ 	ahash_request_set_tfm(&rctx->fallback_req, ctx->fallback);
+-	rctx->fallback_req.base.flags = req->base.flags
+-		& CRYPTO_TFM_REQ_MAY_SLEEP;
+-	rctx->fallback_req.nbytes = req->nbytes;
+-	rctx->fallback_req.src = req->src;
+-	rctx->fallback_req.result = req->result;
++	ahash_request_set_callback(&rctx->fallback_req,
++				   req->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP,
++				   req->base.complete, req->base.data);
++	ahash_request_set_crypt(&rctx->fallback_req, req->src, req->result,
++				req->nbytes);
++
+ 
+ 	return crypto_ahash_finup(&rctx->fallback_req);
+ }
+@@ -600,8 +603,9 @@ static int img_hash_import(struct ahash_request *req, const void *in)
+ 	struct img_hash_ctx *ctx = crypto_ahash_ctx(tfm);
+ 
+ 	ahash_request_set_tfm(&rctx->fallback_req, ctx->fallback);
+-	rctx->fallback_req.base.flags = req->base.flags
+-		& CRYPTO_TFM_REQ_MAY_SLEEP;
++	ahash_request_set_callback(&rctx->fallback_req,
++				   req->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP,
++				   req->base.complete, req->base.data);
+ 
+ 	return crypto_ahash_import(&rctx->fallback_req, in);
+ }
+@@ -613,8 +617,9 @@ static int img_hash_export(struct ahash_request *req, void *out)
+ 	struct img_hash_ctx *ctx = crypto_ahash_ctx(tfm);
+ 
+ 	ahash_request_set_tfm(&rctx->fallback_req, ctx->fallback);
+-	rctx->fallback_req.base.flags = req->base.flags
+-		& CRYPTO_TFM_REQ_MAY_SLEEP;
++	ahash_request_set_callback(&rctx->fallback_req,
++				   req->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP,
++				   req->base.complete, req->base.data);
+ 
+ 	return crypto_ahash_export(&rctx->fallback_req, out);
+ }
+-- 
+2.48.1
 
-> +&main_timer8 {
-> +	status = "reserved";
-> +};
-> +
-> +&main_timer9 {
-> +	status = "reserved";
-> +};
-> +
-> +&main_timer10 {
-> +	status = "reserved";
-> +};
-> +
-> +&main_timer11 {
-> +	status = "reserved";
-> +};
-> +
->   &serdes_ln_ctrl {
->   	idle-states = <AM64_SERDES0_LANE0_PCIE0>;
->   };
-> diff --git a/arch/arm64/boot/dts/ti/k3-am642-sk.dts b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-> index 33e421ec18abb..07fbdf2400d23 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-> @@ -710,6 +710,23 @@ &mcu_m4fss {
->   	status = "okay";
->   };
->   
-> +/* main_timers 8-11 are used by TI MCU FW */
-> +&main_timer8 {
-> +	status = "reserved";
-> +};
-> +
-> +&main_timer9 {
-> +	status = "reserved";
-> +};
-> +
-> +&main_timer10 {
-> +	status = "reserved";
-> +};
-> +
-> +&main_timer11 {
-> +	status = "reserved";
-> +};
-> +
->   &ecap0 {
->   	status = "okay";
->   	/* PWM is available on Pin 1 of header J3 */
 
