@@ -1,200 +1,141 @@
-Return-Path: <linux-kernel+bounces-590714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A47BA7D5E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:31:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83822A7D60D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 626387A83AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:30:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F58B179BF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BF82309A3;
-	Mon,  7 Apr 2025 07:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09F8226170;
+	Mon,  7 Apr 2025 07:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="biHz2azs";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="w/lDg+UF";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="biHz2azs";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="w/lDg+UF"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="AOXZ+Vof"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856D4227EBB
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972C222425C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744010663; cv=none; b=qFssfNQ/s1eLHJ6vibWZLQGTQfkg7bFm3XETjNwd/slOvc0ICIriCWgYeQAblSRIsW1DBIj7liSNF3RgnofiM2ubZqdLzFgnMSolbzXEW7/ZC2a+g/I6BKx11H0+klNtfC7fOKv06OuZMQlteu4WKQJhuF6yyuk/c1HZdNyEULs=
+	t=1744010715; cv=none; b=Gmz6/90gYaE07xP90hw6w9VNdhGSaq6x+Ea83zplHEpvbNx9eyAiLMOVL/QVuQmSSe1fTmAaFsQq7nGy1h4Q78mq6p56KckxkTpteVDciL6P7P7SiGkPaXv9XeJMHntaNelrWDe7SeKA8wd+w9hAF/C9xSywIbHhHWKLhlpHc3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744010663; c=relaxed/simple;
-	bh=g2jh8qxFjNVmTT054dLE7NXTT/LDZW8VfnPhvGKcqR0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tYBchEm2AgLVFdziE2pbVEQPPhEkmY+EhjFzb0/P4qA3E+gxOihfD+JMz/8r5BTiQhlQePJPZ/FrJ7C11rMQuqPSQW3dA/f/2c8A0Z0mefjNNMu41NOXUKyH44Amy5y598+iiHVMfZAfA774T7siHB9HoCPzH/X1+OS2Cyxj+qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=biHz2azs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=w/lDg+UF; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=biHz2azs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=w/lDg+UF; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B1D042119D;
-	Mon,  7 Apr 2025 07:24:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744010659; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w7OwujLM1Gf7nXgT2lqd0dMzptfeJ2lG7J3xc5dMYGM=;
-	b=biHz2azsqZ0hQvKLst7BgyWtUUHbAkWAD5h6NSruBvJtfEtq8AEQOeMh4ZWHuYcQL23c6W
-	hvuTebhYywxB7/4ydEQoeQWTUncuXYgFI6j1XW66vqzfbhl1C+Ah4k+DWscpmXGhnk3bwd
-	N5TnKN3/k+/bnk+e/EG5ju0/lnfmaL8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744010659;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w7OwujLM1Gf7nXgT2lqd0dMzptfeJ2lG7J3xc5dMYGM=;
-	b=w/lDg+UFFS5Wb05qV7wCjYsIh/81zGaXhyVymeIf7+CM6MJ5X0wqMaE8/ddtAFsgW8SFbp
-	YaIaoQKn8+eh78AA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=biHz2azs;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="w/lDg+UF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744010659; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w7OwujLM1Gf7nXgT2lqd0dMzptfeJ2lG7J3xc5dMYGM=;
-	b=biHz2azsqZ0hQvKLst7BgyWtUUHbAkWAD5h6NSruBvJtfEtq8AEQOeMh4ZWHuYcQL23c6W
-	hvuTebhYywxB7/4ydEQoeQWTUncuXYgFI6j1XW66vqzfbhl1C+Ah4k+DWscpmXGhnk3bwd
-	N5TnKN3/k+/bnk+e/EG5ju0/lnfmaL8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744010659;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w7OwujLM1Gf7nXgT2lqd0dMzptfeJ2lG7J3xc5dMYGM=;
-	b=w/lDg+UFFS5Wb05qV7wCjYsIh/81zGaXhyVymeIf7+CM6MJ5X0wqMaE8/ddtAFsgW8SFbp
-	YaIaoQKn8+eh78AA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 26FD313A4B;
-	Mon,  7 Apr 2025 07:24:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jkYwCKN982ccFwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 07 Apr 2025 07:24:19 +0000
-Date: Mon, 07 Apr 2025 09:24:18 +0200
-Message-ID: <87ecy41ljx.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: phasta@kernel.org,
-	Philipp Stanner <phasta@mailbox.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Clemens
- Ladisch <clemens@ladisch.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark
- Brown <broonie@kernel.org>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Bard Liao
- <yung-chuan.liao@linux.intel.com>,
-	Peter Ujfalusi
- <peter.ujfalusi@linux.intel.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Maxim Mikityanskiy <maxtram95@gmail.com>,
-	Kuninori Morimoto
- <kuninori.morimoto.gx@renesas.com>,
-	He Lugang <helugang@uniontech.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	Tang Bin <tangbin@cmss.chinamobile.com>,
-	linux-parisc@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/11] sound: Replace deprecated PCI functions
-In-Reply-To: <01627e70902d331f7a9e8c08bd5c78dc6991ea74.camel@mailbox.org>
-References: <20250404121911.85277-2-phasta@kernel.org>
-	<87plhs2g4h.wl-tiwai@suse.de>
-	<01627e70902d331f7a9e8c08bd5c78dc6991ea74.camel@mailbox.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1744010715; c=relaxed/simple;
+	bh=ycFdXlFX2Ifhu/veSKJJ+51L35rshG5hTgbgwoD9cIc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WJm6v9HaXbTil9j0ifyxNkGB0fkchgyIho2XmgxJ6QoFqOwkiJYekDyl+Qp1oFegwEulpWF5esGUFGUi57GlpF5isR9MxiDCx1OEqbrMQaxucg64CvtWXskLak0bsqbu2FfAUMl9kvtorDKh8KZNCePb1ViCoGlgsglrDNmWmz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=AOXZ+Vof; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso25318325e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 00:25:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744010712; x=1744615512; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AY0gaCvzsQoOmdT4FoXtHo5DdK8nDayf2ktX4ZMPAcQ=;
+        b=AOXZ+VofCPOkORh4ett93lLhzaEZf2570DRJiUydW0x1myMECfanPXb5mOM2bX4Gvb
+         zCIToFpAIujJ5vZNWjPqMyvwQI/3v/4ECYYI9z4lVMF+wn+WqqhSDA208tqzJIBGEyRp
+         xHlMMTeCBEnc/UEGq9T5Hc24NpmKzLXhNGlifye+l7AuFoQi2yKu7v5DL9mJ0r26bwrJ
+         E7anDvRiVgEgAhXeVNx6KR6BYcKg4zUER7jvoDN2cJx5h95yGUibr4GgPIp9Dr8j5n8t
+         4moE3pc4Q0guB8LszyUML3R3aZD/xsaTf+N+zLjf+jY8/1CTUnuDoJDvTbL6d1V60wet
+         7ZcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744010712; x=1744615512;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AY0gaCvzsQoOmdT4FoXtHo5DdK8nDayf2ktX4ZMPAcQ=;
+        b=NfpCFeyFdwrnq3WBskayEcVg8P+WC8qOvTRbBxYVD3SNbVF83sGucdyC/+2+CGmZXE
+         ePT3ieG5C25+JfyYuI7Wejdwr37YhdSTfzeOGzFvq9C922PWD3zQAHdaTtKiWi9JYFHO
+         lsJQ3ZHbbJiZ/bJXdeypk0r+6rQwbBhVtOCXPXizNIiVZ+WG+FR5S2GSCdIB7MZ3zCMV
+         1FMn5Hgh3fcNE5iz0wFwmUKDnaO8JncKdEAOejqebkRIWmF4JMl+mU0LqVfmrGnHpJa/
+         XSZjLdnZmyhE1Bk5dQx0VeW1H36gDZ7f33wSFM2A832TmORCphWVmR4hrLtfZDwz48Aw
+         IaKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJyKp3mR/UAmCssjeL1PNMEjHpZtw2N+w4ORwaNe2ugyn7Ycmc0ZPtNOeio8wKQ70QfKxCsSPIiBvUyKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSlStaZMHUO6RYxSwr/SeMtcIFskQPE9NqnEd578PDa+JbkM/G
+	hbfjsXo2QTp1SQiZXvuF3fXdLCRbddnzUm/TH13HK90Yw0jMHvxcHSv6PMr4R4o591jLvWBoEdR
+	BVO8=
+X-Gm-Gg: ASbGncuxJodEvhKpW038TJHI4B+qfr/Rf6prrSWmQ50gCQFOx/Z8bBOYedlH5mQYGhU
+	pcQ8W9IP3Sa7NIjpvO+z/4gF76k02xCSEdLItoHm0k5ieOsFGtNbK7O9invUGKpqnusaM2GNngJ
+	LUhTtqMXUvYywj0ihSmOzxYCfRCmUgPhhL666TnM5UxTXCDCn28EhQuPn/nK9fpM9XgqHP1w7UM
+	KwH+FfqA8C+mYo91tHrGwi64zVXwlXlzS8YfTsBqw1dlFld2vaVCl34zqtTm1kWXmtVfFzGsr0/
+	4BOE5GlZm+Tede/aj1463kPQXTeoZjMIE8jdKg0H9w6mCSv6
+X-Google-Smtp-Source: AGHT+IGpCsUGS6+nJ21np3wH2QqJBep7GFz9qssmAbFQhdYX/s2jilKHiUnsdYGfH6+7gk+Mc2diaA==
+X-Received: by 2002:a05:600c:8719:b0:43c:fe5e:f040 with SMTP id 5b1f17b1804b1-43ecf9c37e5mr85515745e9.23.1744010712064;
+        Mon, 07 Apr 2025 00:25:12 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:8c64:734d:705a:39a7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c301b760bsm11303051f8f.55.2025.04.07.00.25.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 00:25:11 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/4] MIPS: convert board-file GPIO drivers to using new
+ value setters
+Date: Mon, 07 Apr 2025 09:25:06 +0200
+Message-Id: <20250407-gpiochip-set-rv-mips-v1-0-e7f74a4eee2b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: B1D042119D
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[suse.de,perex.cz,suse.com,ladisch.de,gmail.com,kernel.org,linux.dev,linux.intel.com,renesas.com,uniontech.com,baylibre.com,loongson.cn,cmss.chinamobile.com,vger.kernel.org];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANJ982cC/x3MPQqAMAxA4atIZgO19Q+vIg5So2ZQQyNFkN7d4
+ vgN772gFJgUhuKFQJGVrzOjKgvw+3xuhLxkgzW2Mc7WuAlffmdBpRtDxINFsXbedNR2zvYEOZV
+ AKz//dpxS+gCnaP1MZgAAAA==
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1100;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=ycFdXlFX2Ifhu/veSKJJ+51L35rshG5hTgbgwoD9cIc=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn833WXl6CD/CzHFH8MS0o55jkSM+01XZFFLLGu
+ m9jD+pgbYGJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ/N91gAKCRARpy6gFHHX
+ cgWYEAC8TUWM/Nmp6IXHwMPES4Da2ZVr/QhWx4kxVFLdxz7SOli+EvrfpyNl98t9lS1hMUSyabI
+ dhv/ZM6Y+uF2IoHkOzfi4WQoQf3IB0Kv013NFj50PDb+h7PlG4LFLyO7Im2RROhAvZGuyj2i3O4
+ Fn5hX60FRYxw4UhhnALT00AcaxH1rQCSxn5/VGnRtFpeVCweDRSrNebdnD3lSkYr1xctok0ZUr1
+ vEKGuEZkbwKqkQNqB0WBlzWox++2pvbSPJFsKMR2eMHTsWlKm2Nx6/iQhuA/0itoxBcU4aLtsGt
+ j4dZmurh5oGV57awGSTuGys69U2ry2X6gKT4Gy48NkhbqryetG+c+e5CH3KkyLfU0hF2xz/ieWr
+ YJzZkkTqhOleSJW9d+RBAbQAtnPsPoFHCJXuxoA0kijlnucuJ2NyeGFnz98akkYH1e9/DCnKzk6
+ p1uqu20cWJKE0e1o9VbXeQ4+kuQjNrL2lvngcbMhTFaxUgbmYodjjmrnxQAEaTDQwZS6FPTOkWF
+ /0dU0TKwSfKtMfmovBWRiAm62+KI7l0lKTYx+rBTM9ki5QLrwEVNYsaEMhGzensTzRPfdyOsgdO
+ mr6r/KBCgAq47uGrqOIBIPAK9jjG+3grZ/gDGyqm1OgaMQABwFvqta29pmWkWE15BXj3hYMFikH
+ j4+FXZ0xrTgJYtw==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Fri, 04 Apr 2025 15:49:36 +0200,
-Philipp Stanner wrote:
-> 
-> On Fri, 2025-04-04 at 15:47 +0200, Takashi Iwai wrote:
-> > On Fri, 04 Apr 2025 14:19:01 +0200,
-> > Philipp Stanner wrote:
-> > > 
-> > > pcim_iomap_table() and pcim_iomap_regions() have been deprecated by
-> > > the
-> > > PCI subsystem. In sound/, they can easily be replaced with
-> > > pcim_iomap_region().
-> > > 
-> > > This series was around some time in late summer last year as a
-> > > single
-> > > patch. I lost track of it for a while, but Takashi Iwai (AFAIR)
-> > > requested that I split it by component.
-> > > 
-> > > So that's being done here. Feel free to squash the patches as you
-> > > like.
-> > 
-> > Thanks for the patches.  I suppose those are no urgent fixes, and can
-> > be postponed for 6.16?  If so, I'll pick them up after 6.15-rc1 merge
-> > window is closed.
-> 
-> Sure, those are just improvements that aren't urgent.
+struct gpio_chip now has callbacks for setting line values that return
+an integer, allowing to indicate failures. We're in the process of 
+converting all GPIO drivers to using the new API. This series converts 
+all MIPS board-file level controllers.
 
-Now all patches applied to for-next branch.  Thanks.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Bartosz Golaszewski (4):
+      MIPS: rb532: gpio: use new line value setter callbacks
+      MIPS: bcm63xx: gpio: use new line value setter callbacks
+      MIPS: alchemy: gpio: use new line value setter callbacks
+      MIPS: txx9: gpio: use new line value setter callbacks
 
+ arch/mips/alchemy/common/gpiolib.c | 6 ++++--
+ arch/mips/bcm63xx/gpio.c           | 7 ++++---
+ arch/mips/kernel/gpio_txx9.c       | 8 +++++---
+ arch/mips/rb532/gpio.c             | 8 +++++---
+ arch/mips/txx9/generic/setup.c     | 8 +++++---
+ 5 files changed, 23 insertions(+), 14 deletions(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250324-gpiochip-set-rv-mips-43c07e67328e
 
-Takashi
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
 
