@@ -1,161 +1,113 @@
-Return-Path: <linux-kernel+bounces-591008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D947A7D998
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:25:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 424CAA7D99F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75DE118873A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:23:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06E2B169FBB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957F523098D;
-	Mon,  7 Apr 2025 09:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA3E1A5B9F;
+	Mon,  7 Apr 2025 09:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="dAlPsvtA"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD10D230981
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 09:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="d3JbWkbc"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1930542A97
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 09:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744017766; cv=none; b=Uxi2UF3MYKzR22TKZUuh8sbU8Nvgk1gwukbsIWx1FA6O+0v5Eg7sVp8b18Q1JCksHMPKqEcuKqB3+jb96evY2qYEZqzCLuYN9cZ0Klv+L2cLviCKvs8WbyRIougrWOc68rGMgMMbdmqK2zboENrL5X7V3x9wvkcKAPj51Hs6taE=
+	t=1744017850; cv=none; b=pVu7qYcW2MCFAtYe7NiUjzIZr2+EIuuhrrpMjYpa15bUnPhMpm61O5DY6K7Y1NEelk18qAIu5LCjkJMqIEkV3AI9KVRdctl1dcHBkVXmkoI+C5mcBtoIbwRtFDzxMqAy7CwmmGCNc69K6TPeU+241xaDWrn6Rj3JDkcZvrPY65U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744017766; c=relaxed/simple;
-	bh=CxI6EFGNGVX/CqhcIkJT9/kC6JlC8uS4t6ru+ri2+vQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VpyibFBmPhk0raLkoLhL27zjvetDZrulFfUsjJENqFV+zr9FqoRANCBTNe7naBYH7ZNs6QgNIv3zRRceofJZ8W4fTKexfx9Bch9epWtDq+0LXtdozY3hk5fbXV10Lo3WwawkJokKMGaSEWSd93ZPmhKuNNRyfUFNj0IQPmlVKGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=dAlPsvtA; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 730C3606;
-	Mon,  7 Apr 2025 11:20:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1744017640;
-	bh=CxI6EFGNGVX/CqhcIkJT9/kC6JlC8uS4t6ru+ri2+vQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dAlPsvtAeKiEbQAk25PevLrCV26UzhUryGk89TCi+pBk9+4KGh6ol3xr0x4Av31z6
-	 DsRLEd7s2yyrZlpohxonKLhiC1bbQDc53WWeEnbjT9MSDBAFvlKhVDnK7tamXGmGNp
-	 y/OWbCePZeEqGg0EPsDYGLPxMW2zbRb8f7GKh8t4=
-Message-ID: <47436aab-f9e7-40d7-889a-8192d0570064@ideasonboard.com>
-Date: Mon, 7 Apr 2025 12:22:32 +0300
+	s=arc-20240116; t=1744017850; c=relaxed/simple;
+	bh=gq1Xj/M3orWe8oAAO6fD3x0IRJTeENqeec0izr4rszg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bmsGAzuAST+LH6JbBNeplZVOfqJa96HQb5syHFrDMIQzpYmPNj5nTjDfdXZimX7Dar9Xy80ZwKBTY5UnvlxFLRHAoVg1yO6oBOAnCLUWjYgKMG/EEYVMVbNqc1AIt4tbcl0ZUK+th1ZHIVP134KTFDKNsxLBWJPKbYf8sVHnGjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=d3JbWkbc; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=8TN9/
+	6BnKvyU3e8vS2iprMvt0bdbH7kVE3wStXcniB4=; b=d3JbWkbc94Y9e0M1/KoJZ
+	kJCyNIX5hYPPv5KEDfpgU49ogkrXWuQDHG99CC1liP2oR3dx8/IgApfkGGeUbeDF
+	n7xib3tanF2iFbJPf+/cjXtxJqYpwkjKpUT6vn+EejgVSGa8fgxK9zigJF+vNWNF
+	IrkHR5+Jej5uuiiwHABwNg=
+Received: from localhost (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wDn32p6mfNne6pOEw--.1721S2;
+	Mon, 07 Apr 2025 17:23:06 +0800 (CST)
+From: Xavier <xavier_qy@163.com>
+To: catalin.marinas@arm.com,
+	will@kernel.org,
+	akpm@linux-foundation.org,
+	baohua@kernel.org,
+	ryan.roberts@arm.com,
+	ioworker0@gmail.com
+Cc: xavier_qy@163.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] mm/contpte: Optimize loop to reduce redundant operations
+Date: Mon,  7 Apr 2025 17:22:43 +0800
+Message-Id: <20250407092243.2207837-1-xavier_qy@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 4/5] drm/bridge: Update the bridge enable/disable doc
-To: Aradhya Bhatia <aradhya.bhatia@linux.dev>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Devarsh Thakkar <devarsht@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
- Udit Kumar <u-kumar1@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>,
- Alexander Sverdlin <alexander.sverdlin@siemens.com>,
- DRI Development List <dri-devel@lists.freedesktop.org>,
- Linux Kernel List <linux-kernel@vger.kernel.org>
-References: <20250406131642.171240-1-aradhya.bhatia@linux.dev>
- <20250406131642.171240-5-aradhya.bhatia@linux.dev>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- xsFNBE6ms0cBEACyizowecZqXfMZtnBniOieTuFdErHAUyxVgtmr0f5ZfIi9Z4l+uUN4Zdw2
- wCEZjx3o0Z34diXBaMRJ3rAk9yB90UJAnLtb8A97Oq64DskLF81GCYB2P1i0qrG7UjpASgCA
- Ru0lVvxsWyIwSfoYoLrazbT1wkWRs8YBkkXQFfL7Mn3ZMoGPcpfwYH9O7bV1NslbmyJzRCMO
- eYV258gjCcwYlrkyIratlHCek4GrwV8Z9NQcjD5iLzrONjfafrWPwj6yn2RlL0mQEwt1lOvn
- LnI7QRtB3zxA3yB+FLsT1hx0va6xCHpX3QO2gBsyHCyVafFMrg3c/7IIWkDLngJxFgz6DLiA
- G4ld1QK/jsYqfP2GIMH1mFdjY+iagG4DqOsjip479HCWAptpNxSOCL6z3qxCU8MCz8iNOtZk
- DYXQWVscM5qgYSn+fmMM2qN+eoWlnCGVURZZLDjg387S2E1jT/dNTOsM/IqQj+ZROUZuRcF7
- 0RTtuU5q1HnbRNwy+23xeoSGuwmLQ2UsUk7Q5CnrjYfiPo3wHze8avK95JBoSd+WIRmV3uoO
- rXCoYOIRlDhg9XJTrbnQ3Ot5zOa0Y9c4IpyAlut6mDtxtKXr4+8OzjSVFww7tIwadTK3wDQv
- Bus4jxHjS6dz1g2ypT65qnHen6mUUH63lhzewqO9peAHJ0SLrQARAQABzTBUb21pIFZhbGtl
- aW5lbiA8dG9taS52YWxrZWluZW5AaWRlYXNvbmJvYXJkLmNvbT7CwY4EEwEIADgWIQTEOAw+
- ll79gQef86f6PaqMvJYe9QUCX/HruAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRD6
- PaqMvJYe9WmFD/99NGoD5lBJhlFDHMZvO+Op8vCwnIRZdTsyrtGl72rVh9xRfcSgYPZUvBuT
- VDxE53mY9HaZyu1eGMccYRBaTLJSfCXl/g317CrMNdY0k40b9YeIX10feiRYEWoDIPQ3tMmA
- 0nHDygzcnuPiPT68JYZ6tUOvAt7r6OX/litM+m2/E9mtp8xCoWOo/kYO4mOAIoMNvLB8vufi
- uBB4e/AvAjtny4ScuNV5c5q8MkfNIiOyag9QCiQ/JfoAqzXRjVb4VZG72AKaElwipiKCWEcU
- R4+Bu5Qbaxj7Cd36M/bI54OrbWWETJkVVSV1i0tghCd6HHyquTdFl7wYcz6cL1hn/6byVnD+
- sR3BLvSBHYp8WSwv0TCuf6tLiNgHAO1hWiQ1pOoXyMEsxZlgPXT+wb4dbNVunckwqFjGxRbl
- Rz7apFT/ZRwbazEzEzNyrBOfB55xdipG/2+SmFn0oMFqFOBEszXLQVslh64lI0CMJm2OYYe3
- PxHqYaztyeXsx13Bfnq9+bUynAQ4uW1P5DJ3OIRZWKmbQd/Me3Fq6TU57LsvwRgE0Le9PFQs
- dcP2071rMTpqTUteEgODJS4VDf4lXJfY91u32BJkiqM7/62Cqatcz5UWWHq5xeF03MIUTqdE
- qHWk3RJEoWHWQRzQfcx6Fn2fDAUKhAddvoopfcjAHfpAWJ+ENc7BTQROprNHARAAx0aat8GU
- hsusCLc4MIxOQwidecCTRc9Dz/7U2goUwhw2O5j9TPqLtp57VITmHILnvZf6q3QAho2QMQyE
- DDvHubrdtEoqaaSKxKkFie1uhWNNvXPhwkKLYieyL9m2JdU+b88HaDnpzdyTTR4uH7wk0bBa
- KbTSgIFDDe5lXInypewPO30TmYNkFSexnnM3n1PBCqiJXsJahE4ZQ+WnV5FbPUj8T2zXS2xk
- 0LZ0+DwKmZ0ZDovvdEWRWrz3UzJ8DLHb7blPpGhmqj3ANXQXC7mb9qJ6J/VSl61GbxIO2Dwb
- xPNkHk8fwnxlUBCOyBti/uD2uSTgKHNdabhVm2dgFNVuS1y3bBHbI/qjC3J7rWE0WiaHWEqy
- UVPk8rsph4rqITsj2RiY70vEW0SKePrChvET7D8P1UPqmveBNNtSS7In+DdZ5kUqLV7rJnM9
- /4cwy+uZUt8cuCZlcA5u8IsBCNJudxEqBG10GHg1B6h1RZIz9Q9XfiBdaqa5+CjyFs8ua01c
- 9HmyfkuhXG2OLjfQuK+Ygd56mV3lq0aFdwbaX16DG22c6flkkBSjyWXYepFtHz9KsBS0DaZb
- 4IkLmZwEXpZcIOQjQ71fqlpiXkXSIaQ6YMEs8WjBbpP81h7QxWIfWtp+VnwNGc6nq5IQDESH
- mvQcsFS7d3eGVI6eyjCFdcAO8eMAEQEAAcLBXwQYAQIACQUCTqazRwIbDAAKCRD6PaqMvJYe
- 9fA7EACS6exUedsBKmt4pT7nqXBcRsqm6YzT6DeCM8PWMTeaVGHiR4TnNFiT3otD5UpYQI7S
- suYxoTdHrrrBzdlKe5rUWpzoZkVK6p0s9OIvGzLT0lrb0HC9iNDWT3JgpYDnk4Z2mFi6tTbq
- xKMtpVFRA6FjviGDRsfkfoURZI51nf2RSAk/A8BEDDZ7lgJHskYoklSpwyrXhkp9FHGMaYII
- m9EKuUTX9JPDG2FTthCBrdsgWYPdJQvM+zscq09vFMQ9Fykbx5N8z/oFEUy3ACyPqW2oyfvU
- CH5WDpWBG0s5BALp1gBJPytIAd/pY/5ZdNoi0Cx3+Z7jaBFEyYJdWy1hGddpkgnMjyOfLI7B
- CFrdecTZbR5upjNSDvQ7RG85SnpYJTIin+SAUazAeA2nS6gTZzumgtdw8XmVXZwdBfF+ICof
- 92UkbYcYNbzWO/GHgsNT1WnM4sa9lwCSWH8Fw1o/3bX1VVPEsnESOfxkNdu+gAF5S6+I6n3a
- ueeIlwJl5CpT5l8RpoZXEOVtXYn8zzOJ7oGZYINRV9Pf8qKGLf3Dft7zKBP832I3PQjeok7F
- yjt+9S+KgSFSHP3Pa4E7lsSdWhSlHYNdG/czhoUkSCN09C0rEK93wxACx3vtxPLjXu6RptBw
- 3dRq7n+mQChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
-In-Reply-To: <20250406131642.171240-5-aradhya.bhatia@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDn32p6mfNne6pOEw--.1721S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrur43Cr17tw15uF4xZry7KFg_yoWkArb_Zr
+	4xtasxXF1UJFyjgFyUt398Gryjgayj93W3JFn29r1UXryfW3yfXrZ2qF92gF1xWrWagr45
+	trn8Jr13uFnrCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRNE_MDUUUUU==
+X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/1tbiTh8oEGfzkOnw9AABsB
 
-Hi,
+This commit optimizes the contpte_ptep_get function by adding early
+ termination logic. It checks if the dirty and young bits of orig_pte
+ are already set and skips redundant bit-setting operations during
+ the loop. This reduces unnecessary iterations and improves performance.
 
-On 06/04/2025 16:16, Aradhya Bhatia wrote:
-> Now that the bridges get pre-enabled before the CRTC is enabled, and get
-> post-disabled after the CRTC is disabled, update the function
-> descriptions to accurately reflect the updated scenario.
-> 
-> The enable sequence for the display pipeline looks like:
-> 
-> 	bridge[n]_pre_enable
-> 	...
-> 	bridge[1]_pre_enable
-> 
-> 	crtc_enable
-> 	encoder_enable
-> 
-> 	bridge[1]_enable
-> 	...
-> 	bridge[n]_enable
-> 
-> And, the disable sequence for the display pipeline looks like:
-> 
-> 	bridge[n]_disable
-> 	...
-> 	bridge[1]_disable
-> 
-> 	encoder_disable
-> 	crtc_disable
-> 
-> 	bridge[1]_post_disable
-> 	...
-> 	bridge[n]_post_disable
-> 
-> Signed-off-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-> ---
->   include/drm/drm_bridge.h | 249 ++++++++++++++++++++++++++++-----------
->   1 file changed, 183 insertions(+), 66 deletions(-)
+Signed-off-by: Xavier <xavier_qy@163.com>
+---
+ arch/arm64/mm/contpte.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-
-  Tomi
+diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
+index bcac4f55f9c1..ca15d8f52d14 100644
+--- a/arch/arm64/mm/contpte.c
++++ b/arch/arm64/mm/contpte.c
+@@ -163,17 +163,26 @@ pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
+ 
+ 	pte_t pte;
+ 	int i;
++	bool dirty = false;
++	bool young = false;
+ 
+ 	ptep = contpte_align_down(ptep);
+ 
+ 	for (i = 0; i < CONT_PTES; i++, ptep++) {
+ 		pte = __ptep_get(ptep);
+ 
+-		if (pte_dirty(pte))
++		if (!dirty && pte_dirty(pte)) {
++			dirty = true;
+ 			orig_pte = pte_mkdirty(orig_pte);
++		}
+ 
+-		if (pte_young(pte))
++		if (!young && pte_young(pte)) {
++			young = true;
+ 			orig_pte = pte_mkyoung(orig_pte);
++		}
++
++		if (dirty && young)
++			break;
+ 	}
+ 
+ 	return orig_pte;
+-- 
+2.34.1
 
 
