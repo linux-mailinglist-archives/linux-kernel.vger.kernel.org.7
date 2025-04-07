@@ -1,226 +1,292 @@
-Return-Path: <linux-kernel+bounces-591350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B11A7DE9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:13:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 286B5A7DEB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E06D16B19F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:13:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED00D3B2847
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CBC5680;
-	Mon,  7 Apr 2025 13:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223D2254AF1;
+	Mon,  7 Apr 2025 13:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzP11lJ+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iyBox8sg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DA92288D2;
-	Mon,  7 Apr 2025 13:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F32825487D
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 13:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744031581; cv=none; b=VRpwxEPZFFjgCZtJD9NXYjQZu/hilWCYJsz7ikBY7CMN5zIrvH6M14zurLjKSZI2v//BVxWbrfmzewnCAfWSTlBqMIgHKfBUUIldqpJ6MTmtty9N1MKeMm8j1KGRVP0o9MOMSPRzsWPPud3AsD0/t9HnULUJk+1V6G+fdx9fJ3U=
+	t=1744031608; cv=none; b=Qv94H5cfcde54K813ffDh/ga2vNNsHDmPqYbVztm83gN8Jah4M09+jxnaVnV1Q803VxqIakHyTwatUsZTfYhk+NX6xzSEN5hV6SyqwEO29E86mDBD8r89eNN04yNkzFmv0QR+3jzsA7nl3K/ofHNET0XX9nvZbOuONPOAFqP/F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744031581; c=relaxed/simple;
-	bh=9LX9ZPt/GJDIyCQinksGC4kEpielS/uNfiHsifgyKao=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q3i9dRJwJ07VFRFIu4l+ma35Dny8rqzVLkCwSFxuutDoawm1oi2Gvo2XoKqmbS8KDt1jLEDJypP0+/f412tSCVSOFqSoUsNEC2BxviCWzwYlyjOIeM6Gc5uQFWl7LZyOBXSiAmsLi82Y03/UzPRBeLdBFpxZ9qA0UrBGnj52NfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzP11lJ+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D883BC4CEDD;
-	Mon,  7 Apr 2025 13:12:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744031580;
-	bh=9LX9ZPt/GJDIyCQinksGC4kEpielS/uNfiHsifgyKao=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bzP11lJ+quKnQ3UwS1qX2OPEVeB1Vc5E4xZ76YaSTHGEbHrYjePNj1wmDMoR9vYlL
-	 J3NOi7V9EK/R+xpFOSFRLWa3UYh6pJpobQty71M+Y9b1Z4qpgTT8MK0VOLK3mXy1lD
-	 JlGFd4ceEh6MSJn05qtShaAmsnL8+pkbWdQ1T9cqhnkzEUtzfHIkfNG2+nQ5HFGg7Q
-	 Ts4CLFOqhdAIcHbL5qRiR9kvkoaI9yRBKkrXY1vT19FRRx1NGIFCulRsUHihMEDXiz
-	 7UeW1nqxOcu3HXD782lWJBjOpyhzXEzhL/beT9H3l/yMDaheo1pZGLRTiwr/9OsZrg
-	 P9axT9IloFQZg==
-Message-ID: <6a9bd37e-ffec-4365-891a-64259c0cc115@kernel.org>
-Date: Mon, 7 Apr 2025 15:12:55 +0200
+	s=arc-20240116; t=1744031608; c=relaxed/simple;
+	bh=19xZqCbMrxhaSVg4THIIDnGeA1aclB846rauCeJXklE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-type; b=jySlUl1Fi6PA254UZAsk/paJJIkY5L+nZhY1glYv53t3oNivhJ2UYO2OcTTblB9aLhX2vc5RpXjsE5m6TZ7kRNxXjhzfNctxE79OO9jQYrvkfAjV32M/GBMBPUckip/Y1lcF65RAWuZiUxCGqV8YEtO+BrAlEmxi5oLkAYRAG7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iyBox8sg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744031605;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2LwcXXpdL89K8CifyOieLXHCWhlyVVIdRdeG/nxs+w4=;
+	b=iyBox8sgtZ5+t4DKOAW0Lr6GwdF8pbVaPIEyhH1S7d/UGByG26gpvU34mDVAKiUGb3CCT+
+	BiF8jgoZaNhQbDCaCeL1d7+OQLhA0so87IWJ96jQ47lUjLBUSKpgRismenmQ6EBUeXc7/7
+	rMc6amNX1Pyms4FbrC2L/fOLMRYENzM=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-563-WO-caYV-OHeAZQvTg410DQ-1; Mon, 07 Apr 2025 09:13:21 -0400
+X-MC-Unique: WO-caYV-OHeAZQvTg410DQ-1
+X-Mimecast-MFC-AGG-ID: WO-caYV-OHeAZQvTg410DQ_1744031601
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6ed16cc6e39so88712426d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 06:13:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744031601; x=1744636401;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2LwcXXpdL89K8CifyOieLXHCWhlyVVIdRdeG/nxs+w4=;
+        b=Z2taEa26sKAAMb9gtn2BW6VjSvs5z8DIE0cdG8RekV/vRKpJbcr5UQU9Dx7XaTXPOe
+         fqMyeTZCT7bJf5RXWWEvSjnIrWe3Hhkji6GsE6j45IDIH8i6+tdbWmA/TiYDHymH9gWm
+         bAr2pHlY162tCELXSs6XM5pgl9CQ7GtEW+JueWD+Wix0VMV4paPB46t3mGdBAKpr+hYx
+         7bJmmMnAW3Icj0w1TkdM7EC5jzlev+GGCkO4V1DQLwcpyebyvIVecvaK6SELMWbvMz8I
+         j8b66sHq3pqcT+Pc5LSpnXhACPcbFoRGvxeqzIE7VtACiA9ZJjFh+rKZMVIuTOo8RAMY
+         stwg==
+X-Forwarded-Encrypted: i=1; AJvYcCX2SO99O4qkEiP699nImkoaJ803YjSuGoVBqD1sJwQx+c4igjLNOoGsPK98J/xtoT7WPijK4IvPvyzUcUo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkIa8UWeNT/qnH2SKFVoyk8S/aNAf7tP5IoLbmq0eLLbfzu+GU
+	8G6Ve00osWMJGCsZfF09eMeHn2q8mQrUlrFW6l4iVq+d4yXXKlkVyB7/l7YaKkp97qQD95RReFc
+	MsUVStPC624xHgfFQt4mmf4SQqPaQ9nixzrDUCJQVsuDUi3c3NKqeMsiKHT8LiA==
+X-Gm-Gg: ASbGnctMWFm3bscVjj4ZhEesKaPZ2GzKAgyr4pnKxeCoujqS/JoDdugS8hWFDdlggmB
+	ZPyktOUGwr1g1FvgZ6yPiXvH+fXpin+cgcvgW9B5n1ZRfokzbF0Y204aA9sAZLhlOijkLZfRqkj
+	3uO8yj+dvdRFXnhp4HyJv9sAKJzQq7uC3V+sWAF21JsaeZpBBoGLQEpqgVZfphoBNXqyQpczXyx
+	aDpcozW8HdaoPtJIAHaVuaarmmSE/CF02NLQ8nOrg/TRohGseK90QZRV+VK5kZe63obn8HZGujb
+	ZmSLi5jXJsW0LBbw+Nj7mas/zqnY4QJAfmJ/6ErFQg==
+X-Received: by 2002:ad4:5ba1:0:b0:6ee:b77c:7dbe with SMTP id 6a1803df08f44-6f058433cecmr192715526d6.12.1744031600703;
+        Mon, 07 Apr 2025 06:13:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGbIcdTOZ9gWbu8ai03fhRZZ0ayJGUGd9p13kqveI+0V3okeGBC6eJdQ6jZSyZ9kK0gTCIo5w==
+X-Received: by 2002:ad4:5ba1:0:b0:6ee:b77c:7dbe with SMTP id 6a1803df08f44-6f058433cecmr192715266d6.12.1744031600409;
+        Mon, 07 Apr 2025 06:13:20 -0700 (PDT)
+Received: from x1.. (c-98-219-206-88.hsd1.pa.comcast.net. [98.219.206.88])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ef0f138e15sm57662556d6.82.2025.04.07.06.13.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 06:13:18 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+To: sboyd@kernel.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mripard@redhat.com
+Subject: [PATCH 5/8] clk: test: introduce test suite for sibling rate changes on a gate
+Date: Mon,  7 Apr 2025 09:12:55 -0400
+Message-ID: <20250407131258.70638-6-bmasney@redhat.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250407131258.70638-1-bmasney@redhat.com>
+References: <20250407131258.70638-1-bmasney@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/11] ASoC: dt-bindings: mediatek,mt8196-mt6681: add
- mt8196-mt6681 document
-To: "Darren.Ye" <darren.ye@mediatek.com>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org
-References: <20250407120708.26495-1-darren.ye@mediatek.com>
- <20250407120708.26495-12-darren.ye@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250407120708.26495-12-darren.ye@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On 07/04/2025 14:06, Darren.Ye wrote:
-> +
-> +allOf:
-> +  - $ref: sound-card-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
+Introduce a test suite that creates a parent with two children: a
+divider and a gate. Ensure that changing the rate of one child does
+not affect the rate of the gate.
 
-Drop
+Some of the tests are disabled until the relevant issue(s) are fixed in
+the clk core. This is also implemented as a parameterized kunit test
+since additional test variations will be added.
 
-> +      - enum:
-> +          - mediatek,mt8196-mt6681-sound
-> +          - mediatek,mt8196-nau8825-sound
-> +          - mediatek,mt8196-rt5682s-sound
-> +          - mediatek,mt8196-rt5650-sound
-> +
-> +  audio-routing:
-> +    description:
-> +      Valid names could be the input or output widgets of audio components,
-> +      power supplies, MicBias of codec and the software switch.
-> +
-> +  mediatek,platform:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: The phandle of MT8188 ASoC platform.
-> +
-> +  mediatek,adsp:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      The phandle of the MT8188 ADSP platform, which is the optional Audio DSP
-> +      hardware that provides additional audio functionalities if present.
-> +      The AFE will link to ADSP when the phandle is provided.
-> +
-> +patternProperties:
-> +  "^dai-link-[0-9]+$":
-> +    type: object
-> +    description:
-> +      Container for dai-link level properties and CODEC sub-nodes.
-> +
+Signed-off-by: Brian Masney <bmasney@redhat.com>
+---
+ drivers/clk/clk_test.c | 156 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 156 insertions(+)
 
-Everything looks here exactly the same as mt8188-mt6359, except accdet.
-Are you sure, really, really sure these are different and you do not
-have accdet?
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index 14ae88df5389..df5d4b25aa69 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -821,6 +821,161 @@ static struct kunit_suite clk_rate_change_sibling_div_div_test_suite = {
+ 	.test_cases = clk_rate_change_sibling_div_div_cases,
+ };
+ 
++struct clk_test_rate_change_sibling_clk_ctx {
++	struct clk *parent_clk, *child1_clk, *child2_clk;
++};
++
++static void
++clk_test_rate_change_sibling_clk_ctx_put(struct clk_test_rate_change_sibling_clk_ctx *clk_ctx)
++{
++	clk_put(clk_ctx->parent_clk);
++	clk_put(clk_ctx->child1_clk);
++	clk_put(clk_ctx->child2_clk);
++}
++
++struct clk_rate_change_sibling_div_gate_sibling_context {
++	struct clk_dummy_context parent;
++	struct clk_dummy_div child1;
++	struct clk_dummy_gate child2;
++	struct clk_test_rate_change_sibling_clk_ctx clk_ctx;
++};
++
++static struct clk_test_rate_change_sibling_clk_ctx *
++clk_rate_change_sibling_div_gate_test_init(struct kunit *test)
++{
++	struct clk_rate_change_sibling_div_gate_sibling_context *ctx;
++	int ret;
++
++	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
++		return ERR_PTR(-ENOMEM);
++	test->priv = ctx;
++
++	ctx->parent.hw.init = CLK_HW_INIT_NO_PARENT("parent", &clk_dummy_rate_ops, 0);
++	ctx->parent.rate = DUMMY_CLOCK_RATE_24_MHZ;
++	ret = clk_hw_register_kunit(test, NULL, &ctx->parent.hw);
++	if (ret)
++		return ERR_PTR(ret);
++
++	ctx->child1.hw.init = CLK_HW_INIT_HW("child1", &ctx->parent.hw,
++					     &clk_dummy_div_ops,
++					     CLK_SET_RATE_PARENT);
++	ret = clk_hw_register_kunit(test, NULL, &ctx->child1.hw);
++	if (ret)
++		return ERR_PTR(ret);
++
++	ctx->child2.hw.init = CLK_HW_INIT_HW("child2", &ctx->parent.hw,
++					     &clk_dummy_gate_ops,
++					     CLK_SET_RATE_PARENT);
++	ret = clk_hw_register_kunit(test, NULL, &ctx->child2.hw);
++	if (ret)
++		return ERR_PTR(ret);
++
++	ctx->clk_ctx.parent_clk = clk_hw_get_clk(&ctx->parent.hw, NULL);
++	ctx->clk_ctx.child1_clk = clk_hw_get_clk(&ctx->child1.hw, NULL);
++	ctx->clk_ctx.child2_clk = clk_hw_get_clk(&ctx->child2.hw, NULL);
++
++	KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->clk_ctx.parent_clk),
++			DUMMY_CLOCK_RATE_24_MHZ);
++
++	return &ctx->clk_ctx;
++}
++
++struct clk_test_rate_change_sibling_test_case {
++	const char *desc;
++	struct clk_test_rate_change_sibling_clk_ctx *(*init)(struct kunit *test);
++};
++
++static struct clk_test_rate_change_sibling_test_case clk_test_rate_change_sibling_test_cases[] = {
++	{
++		.desc = "div_gate",
++		.init = clk_rate_change_sibling_div_gate_test_init,
++	},
++};
++
++KUNIT_ARRAY_PARAM_DESC(clk_test_rate_change_sibling_test_case,
++		       clk_test_rate_change_sibling_test_cases, desc);
++
++/*
++ * Test that, for a parent with two children and one requests a rate change that
++ * requires a change to the parent rate, the sibling rates are not affected.
++ */
++static void clk_test_rate_change_sibling_1(struct kunit *test)
++{
++	struct clk_test_rate_change_sibling_test_case *testcase =
++		(struct clk_test_rate_change_sibling_test_case *) test->param_value;
++	struct clk_test_rate_change_sibling_clk_ctx *ctx;
++	int ret;
++
++	kunit_skip(test, "This needs to be fixed in the core.");
++
++	ctx = testcase->init(test);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++
++	KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child2_clk), DUMMY_CLOCK_RATE_24_MHZ);
++
++	ret = clk_set_rate(ctx->child1_clk, DUMMY_CLOCK_RATE_48_MHZ);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	KUNIT_EXPECT_GE(test, clk_get_rate(ctx->parent_clk), DUMMY_CLOCK_RATE_48_MHZ);
++	KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child1_clk), DUMMY_CLOCK_RATE_48_MHZ);
++	KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child2_clk), DUMMY_CLOCK_RATE_24_MHZ);
++
++	clk_test_rate_change_sibling_clk_ctx_put(ctx);
++}
++
++/*
++ * Test that, for a parent with two children where one requests an exclusive
++ * rate and the other requests a rate change that requires a change to the
++ * parent rate, the sibling rates are not affected.
++ */
++static void clk_test_rate_change_sibling_2(struct kunit *test)
++{
++	struct clk_test_rate_change_sibling_test_case *testcase =
++		(struct clk_test_rate_change_sibling_test_case *)(test->param_value);
++	struct clk_test_rate_change_sibling_clk_ctx *ctx;
++	int ret;
++
++	ctx = testcase->init(test);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++
++	ret = clk_rate_exclusive_get(ctx->child2_clk);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child2_clk), DUMMY_CLOCK_RATE_24_MHZ);
++
++	ret = clk_set_rate(ctx->child1_clk, DUMMY_CLOCK_RATE_48_MHZ);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	KUNIT_EXPECT_GE(test, clk_get_rate(ctx->parent_clk), DUMMY_CLOCK_RATE_24_MHZ);
++	/* child1 is rounded to the closest supported rate */
++	KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child1_clk), DUMMY_CLOCK_RATE_24_MHZ);
++	KUNIT_EXPECT_EQ(test, clk_get_rate(ctx->child2_clk), DUMMY_CLOCK_RATE_24_MHZ);
++
++	clk_rate_exclusive_put(ctx->child2_clk);
++
++	clk_test_rate_change_sibling_clk_ctx_put(ctx);
++}
++
++
++static struct kunit_case clk_rate_change_sibling_cases[] = {
++	KUNIT_CASE_PARAM(clk_test_rate_change_sibling_1,
++			 clk_test_rate_change_sibling_test_case_gen_params),
++	KUNIT_CASE_PARAM(clk_test_rate_change_sibling_2,
++			 clk_test_rate_change_sibling_test_case_gen_params),
++	{}
++};
++
++/*
++ * Test suite that creates a parent with two children: a gate and a mux.
++ * Ensure that changing the rate of one child does affect the rate of the
++ * other child.
++ */
++static struct kunit_suite clk_rate_change_sibling_test_suite = {
++	.name = "clk-rate-change-sibling",
++	.test_cases = clk_rate_change_sibling_cases,
++};
++
+ static int
+ clk_orphan_transparent_multiple_parent_mux_test_init(struct kunit *test)
+ {
+@@ -3614,6 +3769,7 @@ kunit_test_suites(
+ 	&clk_test_suite,
+ 	&clk_multiple_parents_mux_test_suite,
+ 	&clk_rate_change_sibling_div_div_test_suite,
++	&clk_rate_change_sibling_test_suite,
+ 	&clk_mux_no_reparent_test_suite,
+ 	&clk_mux_notifier_test_suite,
+ 	&clk_orphan_transparent_multiple_parent_mux_test_suite,
+-- 
+2.49.0
 
-> +    properties:
-> +      link-name:
-> +        description:
-> +          This property corresponds to the name of the BE dai-link to which
-> +          we are going to update parameters in this node.
-> +        items:
-> +          enum:
-> +            - TDM_DPTX_BE
-> +            - I2SOUT6_BE
-> +            - I2SIN6_BE
-> +            - I2SOUT4_BE
-> +            - I2SOUT3_BE
-> +
-> +      codec:
-> +        description: Holds subnode which indicates codec dai.
-> +        type: object
-> +        additionalProperties: false
-> +        properties:
-> +          sound-dai:
-> +            minItems: 1
-> +            maxItems: 2
-> +        required:
-> +          - sound-dai
-> +
-> +      dai-format:
-> +        description: audio format.
-> +        items:
-> +          enum:
-> +            - i2s
-> +            - right_j
-> +            - left_j
-> +            - dsp_a
-> +            - dsp_b
-> +
-> +      mediatek,clk-provider:
-> +        $ref: /schemas/types.yaml#/definitions/string
-> +        description: Indicates dai-link clock master.
-> +        items:
-> +          enum:
-> +            - cpu
-> +            - codec
-> +
-> +    additionalProperties: false
-> +
-> +    required:
-> +      - link-name
-> +
-> +unevaluatedProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - mediatek,platform
-> +
-> +examples:
-> +  - |
-> +    sound {
-> +        compatible = "mediatek,mt8196-mt6681-sound";
-> +        model = "mt8196-mt6681";
-> +        mediatek,platform = <&afe>;
-
-Make the example complete.
-
-
-
-Best regards,
-Krzysztof
 
