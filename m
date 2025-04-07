@@ -1,125 +1,114 @@
-Return-Path: <linux-kernel+bounces-591122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18785A7DB7C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:50:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22AC3A7DBF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD91116DBFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:49:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF296188F28A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A909023814A;
-	Mon,  7 Apr 2025 10:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="go80UEkZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A6323A9BF;
+	Mon,  7 Apr 2025 11:13:10 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9F22206AA;
-	Mon,  7 Apr 2025 10:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF51D19B3EE
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 11:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744022939; cv=none; b=cpYlzVvBcxOTYSn4x8zsC0BDzOACGvXAL6O0xI5MQqd2/9Zwd5id219hFhYGw7s6YuCxI3/7n0hQHjIiLi4ivtTwjLO4m7j/HW9uT3WYNcE75cteu+oVwm0CgzcjbpGXQIARyWowIyPhe6QQeFT8MghlrEMM95EA9sbtFM9z018=
+	t=1744024390; cv=none; b=OWEszPOEfjiOaIuEfQgXgKRBeLEk3KCE3Itt1zHObmdl2VyULhT0qBHIsocauuvBdpPuV+qX6iRGTnNZSL4PAKU6lx2qAHE6wDKjGDGaIC0/u8yxYED/bXggzXAa2N5UBTE3fXdYQnyl6Z6WMYZPt97LJ6i7kDQBe42kepKYcHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744022939; c=relaxed/simple;
-	bh=aru6FQIfXm84CVtd9q10ngK8MDAfOPZu7cl1tqiA6YY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WFyN0xxsGkZPrIwEdlr5VfREVq5FIwKDyC/N4m0quDhv4RZONJpBPyIyefMEocW3DKqEWuebCuIUHb8o0ER3tRAefVZnPpJUt8ZwRlrCu0eBskAfhMhPw6aqThtnKmjyITE1SwmwHWRiieAw/N5es/VIx6WIm8BqJtEFRAGkw0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=go80UEkZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CACAAC4CEDD;
-	Mon,  7 Apr 2025 10:48:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744022938;
-	bh=aru6FQIfXm84CVtd9q10ngK8MDAfOPZu7cl1tqiA6YY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=go80UEkZUxP35WWrXzEaA8P0xuDWkNvQigcpC7BiYe774Yij7VwTQYhcAKVDymyjl
-	 v06a4XedfjsENSkkNkh2iEFFfYh1nQoL+jYfng1QkewLjAT46XB/nonU+6S1PAaTEE
-	 CKVnunTZCFYxgFSpg5HytxgaxSVNhErvbDiJNArmC/Vr7JJi4aKFttP0GG/vgqLJk9
-	 ukVK6d8DehRhE9J+0nJ3L38DXSEA3EKYuGjIpgjYePuazbYTcNZBgm4+W0B1oFmxfk
-	 sMazPSgkLfTtwWvBrbXWB6AHnqv1foh/7du2AaZGCxY4om8eYk69ahEsTlSusuDlC5
-	 rDyRedovAYl+g==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1u1k2K-0000000010c-2Qtj;
-	Mon, 07 Apr 2025 12:49:05 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Robert Foss <rfoss@kernel.org>,
-	Todor Tomov <todor.too@gmail.com>,
-	Bryan ODonoghue <bryan.odonoghue@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>,
-	linux-media@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Depeng Shao <quic_depengs@quicinc.com>
-Subject: [PATCH v2] media: qcom: camss: vfe: suppress VFE version log spam
-Date: Mon,  7 Apr 2025 12:48:28 +0200
-Message-ID: <20250407104828.3833-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1744024390; c=relaxed/simple;
+	bh=YURbMdd3VwqoU3lr0ONQ9/JbbFBJboh0LIEz+aXO8b4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JzJdQ0LyqIcReyEAa0nD+Mhlv8GnR9Rvi6Bb76ln4cwrCq4uL6RUR0Fk1WBoJIn3qa7M4ZV/KCECYd+75QZfNYiZQYc4HVJo8miYpBxPF/2B6Ly4HtC4Z0DSHFWBiCSnon+PVvjV+n31+3ebrjGE0CExXbCStIpBRUAZRjTa3Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from Atcsqr.andestech.com (localhost [127.0.0.2] (may be forged))
+	by Atcsqr.andestech.com with ESMTP id 537Anp8T001689
+	for <linux-kernel@vger.kernel.org>; Mon, 7 Apr 2025 18:49:51 +0800 (+08)
+	(envelope-from ben717@andestech.com)
+Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
+	by Atcsqr.andestech.com with ESMTPS id 537AneRr001489
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 7 Apr 2025 18:49:40 +0800 (+08)
+	(envelope-from ben717@andestech.com)
+Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS31.andestech.com
+ (10.0.1.89) with Microsoft SMTP Server id 14.3.498.0; Mon, 7 Apr 2025
+ 18:49:40 +0800
+From: Ben Zong-You Xie <ben717@andestech.com>
+To: <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+        <alex@ghiti.fr>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <tglx@linutronix.de>,
+        <daniel.lezcano@linaro.org>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        <tim609@andestech.com>, "Ben
+ Zong-You Xie" <ben717@andestech.com>
+Subject: [PATCH 0/9] add Voyager board support
+Date: Mon, 7 Apr 2025 18:49:28 +0800
+Message-ID: <20250407104937.315783-1-ben717@andestech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 537Anp8T001689
 
-A recent commit refactored the printing of the VFE hardware version, but
-(without it being mentioned) also changed the log level from debug to
-info.
+The Voyager is a 9.6” x 9.6” Micro ATX form factor development board including
+Andes QiLai SoC. This patch series adds minimal device tree files for the QiLai
+SoC and the Voyager board [1].
 
-This results in several hundred lines of repeated log spam during boot
-and use, for example, on the Lenovo ThinkPad X13s:
+Now only support basic uart drivers to boot up into a basic console. Other
+features will be added later.
 
-	qcom-camss ac5a000.camss: VFE:1 HW Version = 1.2.2
-	qcom-camss ac5a000.camss: VFE:0 HW Version = 1.2.2
-	qcom-camss ac5a000.camss: VFE:2 HW Version = 1.2.2
-	qcom-camss ac5a000.camss: VFE:2 HW Version = 1.2.2
-	qcom-camss ac5a000.camss: VFE:3 HW Version = 1.2.2
-	qcom-camss ac5a000.camss: VFE:5 HW Version = 1.3.0
-	qcom-camss ac5a000.camss: VFE:6 HW Version = 1.3.0
-	qcom-camss ac5a000.camss: VFE:4 HW Version = 1.3.0
-	qcom-camss ac5a000.camss: VFE:5 HW Version = 1.3.0
-	qcom-camss ac5a000.camss: VFE:6 HW Version = 1.3.0
-	qcom-camss ac5a000.camss: VFE:7 HW Version = 1.3.0
-	qcom-camss ac5a000.camss: VFE:7 HW Version = 1.3.0
-	qcom-camss ac5a000.camss: VFE:7 HW Version = 1.3.0
-	...
+[1] https://www.andestech.com/en/products-solutions/andeshape-platforms/qilai-chip/
 
-Suppress the version logging by demoting to debug level again.
+Ben Zong-You Xie (9):
+  riscv: add Andes SoC family Kconfig support
+  dt-bindings: riscv: add Andes QiLai SoC and the Voyager board bindings
+  dt-bindings: interrupt-controller: add Andes QiLai PLIC
+  dt-bindings: interrupt-controller: add Andes machine-level software
+    interrupt controller
+  dt-bindings: timer: add Andes machine timer
+  dt-bindings: cache: ax45mp-cache: allow variable cache-sets for Andes
+    L2 cache
+  riscv: dts: andes: add QiLai SoC device tree
+  riscv: dts: andes: add Voyager board device tree
+  riscv: defconfig: enable Andes SoC
 
-Fixes: 10693fed125d ("media: qcom: camss: vfe: Move common code into vfe core")
-Cc: Depeng Shao <quic_depengs@quicinc.com>
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
+ .../cache/andestech,ax45mp-cache.yaml         |   2 +-
+ .../andestech,plicsw.yaml                     |  48 +++++
+ .../sifive,plic-1.0.0.yaml                    |   1 +
+ .../devicetree/bindings/riscv/andes.yaml      |  25 +++
+ .../bindings/timer/andestech,plmt0.yaml       |  42 ++++
+ MAINTAINERS                                   |   8 +
+ arch/riscv/Kconfig.errata                     |   2 +-
+ arch/riscv/Kconfig.socs                       |   9 +
+ arch/riscv/boot/dts/Makefile                  |   1 +
+ arch/riscv/boot/dts/andes/Makefile            |   2 +
+ arch/riscv/boot/dts/andes/qilai-voyager.dts   |  19 ++
+ arch/riscv/boot/dts/andes/qilai.dtsi          | 194 ++++++++++++++++++
+ arch/riscv/configs/defconfig                  |   1 +
+ 13 files changed, 352 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/andestech,plicsw.yaml
+ create mode 100644 Documentation/devicetree/bindings/riscv/andes.yaml
+ create mode 100644 Documentation/devicetree/bindings/timer/andestech,plmt0.yaml
+ create mode 100644 arch/riscv/boot/dts/andes/Makefile
+ create mode 100644 arch/riscv/boot/dts/andes/qilai-voyager.dts
+ create mode 100644 arch/riscv/boot/dts/andes/qilai.dtsi
 
-Changes in v2:
- - align continuation line to open parenthesis as instructed by the
-   media patchwork hooks
-
-
- drivers/media/platform/qcom/camss/camss-vfe.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
-index cf0e8f5c004a..91bc0cb7781e 100644
---- a/drivers/media/platform/qcom/camss/camss-vfe.c
-+++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-@@ -428,8 +428,8 @@ u32 vfe_hw_version(struct vfe_device *vfe)
- 	u32 rev = (hw_version >> HW_VERSION_REVISION) & 0xFFF;
- 	u32 step = (hw_version >> HW_VERSION_STEPPING) & 0xFFFF;
- 
--	dev_info(vfe->camss->dev, "VFE:%d HW Version = %u.%u.%u\n",
--		 vfe->id, gen, rev, step);
-+	dev_dbg(vfe->camss->dev, "VFE:%d HW Version = %u.%u.%u\n",
-+		vfe->id, gen, rev, step);
- 
- 	return hw_version;
- }
 -- 
-2.49.0
+2.34.1
 
 
