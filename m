@@ -1,184 +1,200 @@
-Return-Path: <linux-kernel+bounces-592685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1857A7F049
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 00:27:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3963A7F04F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 00:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0EF517AAB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:27:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21C233AEC72
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150C3225A40;
-	Mon,  7 Apr 2025 22:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59A422424C;
+	Mon,  7 Apr 2025 22:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NSQ99gxV"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bl0qO2eX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61CA31B87CF;
-	Mon,  7 Apr 2025 22:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B961B87CF;
+	Mon,  7 Apr 2025 22:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744064832; cv=none; b=I57V/G13QxxUjPryTdDgSdYfKs/jt+Dynu1IfztFo11FNd9PVPfd+LxDs/T98T8AP/4RD/JTVL4wGFlUqlhUHtemTNuHki7QC6cE/ShuMY9feWVwBTffZlli8KG2fRD8Yrwtiu0mGxhGlYOE4Qc8LhYvOy5X1ebJMBcWd7TGR80=
+	t=1744064888; cv=none; b=eZz4xuSeM0cKtdenp0wb6naWx/RnWzsknlrca7IfFlMUR0VV8l3ctuZh4Xms1TwtSTmFUG/7o2UimM0PTUPu+gHVgKAYB8k2KPw3rgg4ElVqv7/bhaZ6c9At04Y1M97OXSEoAB7qH5uvo8US0RsWfW3/6rDHbb8IzVrULpTw7Pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744064832; c=relaxed/simple;
-	bh=3J1mh/9jr3Z1l1jEQkPqepNo70bUmp7B+1t9mwsfq88=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GYlE9IKTxFp/v/RHKukmIaoxNv2u/tkFfdX+RhvX/TLb++xKZwvH1WKplcfmFjVAGQ4jpQe3gKMqvCeOWKPQrvjjMKsulyRuIif65k8ztjqFOs/p1jXGKQDFMun0Vb912CYhpo9iPQv/yM0rSYqATbqH9Uin7PRw4am22iKONwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NSQ99gxV; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 537MR2Tr1032955
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 7 Apr 2025 17:27:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744064822;
-	bh=YqPz2JfZvQwqwnoxsKSQiaQzed7EN3WPHYpwbOPCQEE=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=NSQ99gxVU1lCWYR+IbnjitnuPudRqnA5Y2y2UVoEjROqBtnCd/5L6lAtccAZTJqU8
-	 mX9Hpsv5vM76fuPY4a0gHMpuKfd8SahcEmqrEdJkzQmuVw7a7sKchqZi1R+YnUQVOy
-	 eBT0vrexkjEdLWOe98D6Fk+xh+bgxsWdT9/rRiBM=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 537MR2Mh084617
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 7 Apr 2025 17:27:02 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 7
- Apr 2025 17:27:02 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 7 Apr 2025 17:27:02 -0500
-Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 537MR22A073249;
-	Mon, 7 Apr 2025 17:27:02 -0500
-From: Judith Mendez <jm@ti.com>
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Josua Mayer
-	<josua@solid-run.com>, Moteen Shah <m-shah@ti.com>
-Subject: [PATCH 2/2] mmc: sdhci_am654: Add sdhci_am654_start_signal_voltage_switch
-Date: Mon, 7 Apr 2025 17:27:02 -0500
-Message-ID: <20250407222702.2199047-3-jm@ti.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250407222702.2199047-1-jm@ti.com>
-References: <20250407222702.2199047-1-jm@ti.com>
+	s=arc-20240116; t=1744064888; c=relaxed/simple;
+	bh=6idXwPqbUKauYl+/ROVCk0OuBY2aHUha+iuVpPPXTws=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=a9rJHFvsY45nWAqJOmCcOGQnC0D4XGb3dNB99YyuCJcy6jGTIaE131yh8CpZKY3Fwr3biOqr9a39waZfTVzECkuk+wTFVxJD0mqBpLpTT32mK2R+oyOKOZjKq5R+RTeWqu/kopI+2N2gjt3y1SxdnUTO0p5PyQIW2CaJRc86j7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bl0qO2eX; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744064887; x=1775600887;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=6idXwPqbUKauYl+/ROVCk0OuBY2aHUha+iuVpPPXTws=;
+  b=Bl0qO2eXHHXEFtmmNp6CmVrlJLsbTZc3Md4hXK+wWrFxhGvrBZg3i7+0
+   rkEYOvg/tG2kZ34UJweqOxNB915bIGxHjKNtYhFdAA4hW6lG8NkBJL1aS
+   R+gmgi3Ovs+xax/Hzl1zuuHhFfe3MOOhjZ6ieLwrl0W402QJICkSi8L3D
+   wVMBi9xTWPo/nbUwyAxaf9QrXraLCYMRIpaem17WcjNGnu0kMWmNUzK7W
+   +aAEXp71K+ec0xinFr472yqIwZ29/ZULKZPabliqBU3oLdUjApfMbyJR0
+   xenj16oZhUtNDcU2UAWFp7+qBoyh+heWzI6QQvJ94qDH4353Sen2V21IE
+   Q==;
+X-CSE-ConnectionGUID: 14hEI+JpQEq0nEIGAf7lZg==
+X-CSE-MsgGUID: 9CbUmNA2SSuwwzx5oDBlRg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="44724873"
+X-IronPort-AV: E=Sophos;i="6.15,196,1739865600"; 
+   d="scan'208";a="44724873"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 15:28:06 -0700
+X-CSE-ConnectionGUID: rZ+xuASHRsOPb1YYwHijnA==
+X-CSE-MsgGUID: 2ioR69SNQvCzcg5gUgU0qQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,196,1739865600"; 
+   d="scan'208";a="128611698"
+Received: from spandruv-desk1.amr.corp.intel.com ([10.125.111.59])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 15:28:06 -0700
+Message-ID: <2362a42de1403e99a66551575efd910cc92980bc.camel@linux.intel.com>
+Subject: Re: [PATCH v1 10/10] cpufreq: Pass policy pointer to
+ ->update_limits()
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki"
+	 <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>,  Viresh Kumar <viresh.kumar@linaro.org>,
+ Mario Limonciello <mario.limonciello@amd.com>, Sudeep Holla
+ <sudeep.holla@arm.com>
+Date: Mon, 07 Apr 2025 15:27:59 -0700
+In-Reply-To: <CAJZ5v0iMYSTnX9mkZb8aEmtbKxWOgsshNJ_AqnB9Mn27y8jzeQ@mail.gmail.com>
+References: <4651448.LvFx2qVVIh@rjwysocki.net>
+	 <8560367.NyiUUSuA9g@rjwysocki.net>
+	 <CAJZ5v0iMYSTnX9mkZb8aEmtbKxWOgsshNJ_AqnB9Mn27y8jzeQ@mail.gmail.com>
+Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
+ YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
+ y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
+ NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
+ GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
+ TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
+ oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
+ AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
+ b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
+ AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
+ oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
+ UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
+ ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
+ wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
+ NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
+ J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
+ oOfCQxricddC
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The sdhci_start_signal_voltage_switch function sets
-V1P8_SIGNAL_ENA by default after switching to 1v8 signaling.
-V1P8_SIGNAL_ENA determines whether to launch cmd/data on neg
-edge (half cycle timing) or pos edge (full cycle timing) of
-clock.
-
-The sequence is to switch to 1.8 IO voltage, set V1P8_SIGNAL_ENA,
-change bus width, then update HIGH_SPEED_ENA & UHS_MODE_SELECT.
-
-During bus width change is when eMMC failures are seen with
-Kingston eMMC. So, do not set V1P8_SIGNAL_ENA by default.
-V1P8_SIGNAL_ENA is anyways optional for eMMC and only affects
-timing on TI devices. For switching to DDR52, HS200, or HS400,
-we should rely on HIGH_SPEED_ENA, to switch to full cycle
-timing after the bus width is changed.
-
-Signed-off-by: Judith Mendez <jm@ti.com>
----
- drivers/mmc/host/sdhci_am654.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
-
-diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-index 67a64de4972c9..4e1156a2f1b8e 100644
---- a/drivers/mmc/host/sdhci_am654.c
-+++ b/drivers/mmc/host/sdhci_am654.c
-@@ -87,6 +87,7 @@
- #define CLOCK_TOO_SLOW_HZ	50000000
- #define SDHCI_AM654_AUTOSUSPEND_DELAY	-1
- #define RETRY_TUNING_MAX	10
-+#define BUS_WIDTH_8		8
- 
- /* Command Queue Host Controller Interface Base address */
- #define SDHCI_AM654_CQE_BASE_ADDR 0x200
-@@ -155,6 +156,7 @@ struct sdhci_am654_data {
- 	u32 tuning_loop;
- 
- #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
-+#define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
- };
- 
- struct window {
-@@ -356,6 +358,29 @@ static void sdhci_j721e_4bit_set_clock(struct sdhci_host *host,
- 	sdhci_set_clock(host, clock);
- }
- 
-+static int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc, struct mmc_ios *ios)
-+{
-+	struct sdhci_host *host = mmc_priv(mmc);
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
-+	int ret;
-+
-+	if ((sdhci_am654->quirks & SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA) &&
-+	    ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180) {
-+		if (!IS_ERR(mmc->supply.vqmmc)) {
-+			ret = mmc_regulator_set_vqmmc(mmc, ios);
-+			if (ret < 0) {
-+				pr_err("%s: Switching to 1.8V signalling voltage failed,\n",
-+				       mmc_hostname(mmc));
-+				return -EIO;
-+			}
-+		}
-+		return 0;
-+	}
-+
-+	return sdhci_start_signal_voltage_switch(mmc, ios);
-+}
-+
- static u8 sdhci_am654_write_power_on(struct sdhci_host *host, u8 val, int reg)
- {
- 	writeb(val, host->ioaddr + reg);
-@@ -819,6 +844,7 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
- 	struct device *dev = &pdev->dev;
- 	int drv_strength;
- 	int ret;
-+	u32 bus_width;
- 
- 	if (sdhci_am654->flags & DLL_PRESENT) {
- 		ret = device_property_read_u32(dev, "ti,trm-icp",
-@@ -860,6 +886,11 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
- 	if (device_property_read_bool(dev, "ti,fails-without-test-cd"))
- 		sdhci_am654->quirks |= SDHCI_AM654_QUIRK_FORCE_CDTEST;
- 
-+	/* Suppress V1P8_SIGNAL_ENA for eMMC */
-+	device_property_read_u32(dev, "bus-width", &bus_width);
-+	if (bus_width == BUS_WIDTH_8)
-+		sdhci_am654->quirks |= SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA;
-+
- 	sdhci_get_of_property(pdev);
- 
- 	return 0;
-@@ -956,6 +987,7 @@ static int sdhci_am654_probe(struct platform_device *pdev)
- 		goto err_pltfm_free;
- 	}
- 
-+	host->mmc_host_ops.start_signal_voltage_switch = sdhci_am654_start_signal_voltage_switch;
- 	host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
- 
- 	pm_runtime_get_noresume(dev);
--- 
-2.49.0
+T24gTW9uLCAyMDI1LTA0LTA3IGF0IDIwOjQ4ICswMjAwLCBSYWZhZWwgSi4gV3lzb2NraSB3cm90
+ZToKPiBPbiBGcmksIE1hciAyOCwgMjAyNSBhdCA5OjQ54oCvUE0gUmFmYWVsIEouIFd5c29ja2kg
+PHJqd0Byand5c29ja2kubmV0Pgo+IHdyb3RlOgo+ID4gCj4gPiBGcm9tOiBSYWZhZWwgSi4gV3lz
+b2NraSA8cmFmYWVsLmoud3lzb2NraUBpbnRlbC5jb20+Cj4gPiAKPiA+IFNpbmNlIGNwdWZyZXFf
+dXBkYXRlX2xpbWl0cygpIG9idGFpbnMgYSBjcHVmcmVxIHBvbGljeSBwb2ludGVyIGZvcgo+ID4g
+dGhlCj4gPiBnaXZlbiBDUFUgYW5kIHJlZmVyZW5jZSBjb3VudHMgdGhlIGNvcnJlc3BvbmRpbmcg
+cG9saWN5IG9iamVjdCwgaXQKPiA+IG1heQo+ID4gYXMgd2VsbCBwYXNzIHRoZSBwb2xpY3kgcG9p
+bnRlciB0byB0aGUgY3B1ZnJlcSBkcml2ZXIncyAtCj4gPiA+dXBkYXRlX2xpbWl0cygpCj4gPiBj
+YWxsYmFjayB3aGljaCBhbGxvd3MgdGhhdCBjYWxsYmFjayB0byBhdm9pZCBpbnZva2luZwo+ID4g
+Y3B1ZnJlcV9jcHVfZ2V0KCkKPiA+IGZvciB0aGUgc2FtZSBDUFUuCj4gPiAKPiA+IEFjY29yZGlu
+Z2x5LCByZWRlZmluZSAtPnVwZGF0ZV9saW1pdHMoKSB0byB0YWtlIGEgcG9saWN5IHBvaW50ZXIK
+PiA+IGluc3RlYWQKPiA+IG9mIGEgQ1BVIG51bWJlciBhbmQgdXBkYXRlIGJvdGggZHJpdmVycyBp
+bXBsZW1lbnRpbmcgaXQsCj4gPiBpbnRlbF9wc3RhdGUKPiA+IGFuZCBhbWQtcHN0YXRlLCBhcyBu
+ZWVkZWQuCj4gPiAKPiA+IFNpZ25lZC1vZmYtYnk6IFJhZmFlbCBKLiBXeXNvY2tpIDxyYWZhZWwu
+ai53eXNvY2tpQGludGVsLmNvbT4KPiAKSGkgUmFmYWVsLAoKPiBIaSBTcmluaXZhcywKPiAKPiBJ
+ZiB5b3UgaGF2ZSBhbnkgY29uY2VybnMgcmVnYXJkaW5nIHRoaXMgcGF0Y2gsIHBsZWFzZSBsZXQg
+bWUga25vdwo+IChub3RlIHRoYXQgaXQgaXMgYmFzZWQgb24gdGhlIFswNS8xMF0pLgo+IApDaGFu
+Z2VzIGxvb2tzIGZpbmUsIGJ1dCB3YW50cyB0byB0ZXN0IG91dCBzb21lIHVwZGF0ZSBsaW1pdHMg
+ZnJvbQppbnRlcnJ1cHQgcGF0aC4KQ2hlY2tlZCB5b3VyIGJyYW5jaGVzIGF0IGxpbnV4LXBtLCBu
+b3QgYWJsZSB0byBsb2NhdGUgaW4gYW55IGJyYW5jaCB0bwphcHBseS4KUGxlYXNlIHBvaW50IG1l
+IHRvIGEgYnJhbmNoLgoKVGhhbmtzLApTcmluaXZhcwoKPiA+IC0tLQo+ID4gwqBkcml2ZXJzL2Nw
+dWZyZXEvYW1kLXBzdGF0ZS5jwqDCoCB8wqDCoMKgIDcgKystLS0tLQo+ID4gwqBkcml2ZXJzL2Nw
+dWZyZXEvY3B1ZnJlcS5jwqDCoMKgwqDCoCB8wqDCoMKgIDIgKy0KPiA+IMKgZHJpdmVycy9jcHVm
+cmVxL2ludGVsX3BzdGF0ZS5jIHzCoMKgIDI5ICsrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0K
+PiA+IC0KPiA+IMKgaW5jbHVkZS9saW51eC9jcHVmcmVxLmjCoMKgwqDCoMKgwqDCoCB8wqDCoMKg
+IDIgKy0KPiA+IMKgNCBmaWxlcyBjaGFuZ2VkLCAyMiBpbnNlcnRpb25zKCspLCAxOCBkZWxldGlv
+bnMoLSkKPiA+IAo+ID4gLS0tIGEvZHJpdmVycy9jcHVmcmVxL2FtZC1wc3RhdGUuYwo+ID4gKysr
+IGIvZHJpdmVycy9jcHVmcmVxL2FtZC1wc3RhdGUuYwo+ID4gQEAgLTgyMSwxOSArODIxLDE2IEBA
+Cj4gPiDCoMKgwqDCoMKgwqDCoCBzY2hlZHVsZV93b3JrKCZzY2hlZF9wcmVmY29yZV93b3JrKTsK
+PiA+IMKgfQo+ID4gCj4gPiAtc3RhdGljIHZvaWQgYW1kX3BzdGF0ZV91cGRhdGVfbGltaXRzKHVu
+c2lnbmVkIGludCBjcHUpCj4gPiArc3RhdGljIHZvaWQgYW1kX3BzdGF0ZV91cGRhdGVfbGltaXRz
+KHN0cnVjdCBjcHVmcmVxX3BvbGljeQo+ID4gKnBvbGljeSkKPiA+IMKgewo+ID4gLcKgwqDCoMKg
+wqDCoCBzdHJ1Y3QgY3B1ZnJlcV9wb2xpY3kgKnBvbGljeSBfX2ZyZWUocHV0X2NwdWZyZXFfcG9s
+aWN5KSA9Cj4gPiBjcHVmcmVxX2NwdV9nZXQoY3B1KTsKPiA+IMKgwqDCoMKgwqDCoMKgIHN0cnVj
+dCBhbWRfY3B1ZGF0YSAqY3B1ZGF0YTsKPiA+IMKgwqDCoMKgwqDCoMKgIHUzMiBwcmV2X2hpZ2gg
+PSAwLCBjdXJfaGlnaCA9IDA7Cj4gPiDCoMKgwqDCoMKgwqDCoCBib29sIGhpZ2hlc3RfcGVyZl9j
+aGFuZ2VkID0gZmFsc2U7Cj4gPiArwqDCoMKgwqDCoMKgIHVuc2lnbmVkIGludCBjcHUgPSBwb2xp
+Y3ktPmNwdTsKPiA+IAo+ID4gwqDCoMKgwqDCoMKgwqAgaWYgKCFhbWRfcHN0YXRlX3ByZWZjb3Jl
+KQo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybjsKPiA+IAo+ID4gLcKg
+wqDCoMKgwqDCoCBpZiAoIXBvbGljeSkKPiA+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IHJldHVybjsKPiA+IC0KPiA+IMKgwqDCoMKgwqDCoMKgIGlmIChhbWRfZ2V0X2hpZ2hlc3RfcGVy
+ZihjcHUsICZjdXJfaGlnaCkpCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0
+dXJuOwo+ID4gCj4gPiAtLS0gYS9kcml2ZXJzL2NwdWZyZXEvY3B1ZnJlcS5jCj4gPiArKysgYi9k
+cml2ZXJzL2NwdWZyZXEvY3B1ZnJlcS5jCj4gPiBAQCAtMjc0MSw3ICsyNzQxLDcgQEAKPiA+IMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXR1cm47Cj4gPiAKPiA+IMKgwqDCoMKgwqDC
+oMKgIGlmIChjcHVmcmVxX2RyaXZlci0+dXBkYXRlX2xpbWl0cykKPiA+IC3CoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIGNwdWZyZXFfZHJpdmVyLT51cGRhdGVfbGltaXRzKGNwdSk7Cj4gPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjcHVmcmVxX2RyaXZlci0+dXBkYXRlX2xpbWl0
+cyhwb2xpY3kpOwo+ID4gwqDCoMKgwqDCoMKgwqAgZWxzZQo+ID4gwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIGNwdWZyZXFfcG9saWN5X3JlZnJlc2gocG9saWN5KTsKPiA+IMKgfQo+ID4g
+LS0tIGEvZHJpdmVycy9jcHVmcmVxL2ludGVsX3BzdGF0ZS5jCj4gPiArKysgYi9kcml2ZXJzL2Nw
+dWZyZXEvaW50ZWxfcHN0YXRlLmMKPiA+IEBAIC0xMzUzLDE0ICsxMzUzLDkgQEAKPiA+IMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBjcHVmcmVxX3VwZGF0ZV9wb2xpY3koY3B1KTsKPiA+
+IMKgfQo+ID4gCj4gPiAtc3RhdGljIGJvb2wgaW50ZWxfcHN0YXRlX3VwZGF0ZV9tYXhfZnJlcShz
+dHJ1Y3QgY3B1ZGF0YSAqY3B1ZGF0YSkKPiA+ICtzdGF0aWMgdm9pZCBfX2ludGVsX3BzdGF0ZV91
+cGRhdGVfbWF4X2ZyZXEoc3RydWN0IGNwdWZyZXFfcG9saWN5Cj4gPiAqcG9saWN5LAo+ID4gK8Kg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc3RydWN0IGNwdWRhdGEgKmNwdWRhdGEpCj4gPiDCoHsK
+PiA+IC3CoMKgwqDCoMKgwqAgc3RydWN0IGNwdWZyZXFfcG9saWN5ICpwb2xpY3kgX19mcmVlKHB1
+dF9jcHVmcmVxX3BvbGljeSk7Cj4gPiAtCj4gPiAtwqDCoMKgwqDCoMKgIHBvbGljeSA9IGNwdWZy
+ZXFfY3B1X2dldChjcHVkYXRhLT5jcHUpOwo+ID4gLcKgwqDCoMKgwqDCoCBpZiAoIXBvbGljeSkK
+PiA+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiBmYWxzZTsKPiA+IC0KPiA+
+IMKgwqDCoMKgwqDCoMKgIGd1YXJkKGNwdWZyZXFfcG9saWN5X3dyaXRlKShwb2xpY3kpOwo+ID4g
+Cj4gPiDCoMKgwqDCoMKgwqDCoCBpZiAoaHdwX2FjdGl2ZSkKPiA+IEBAIC0xMzcwLDE2ICsxMzY1
+LDI4IEBACj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IGNwdWRhdGEtPnBzdGF0ZS5tYXhfZnJlcSA6IGNwdWRhdGEtCj4gPiA+cHN0YXRlLnR1cmJvX2Zy
+ZXE7Cj4gPiAKPiA+IMKgwqDCoMKgwqDCoMKgIHJlZnJlc2hfZnJlcXVlbmN5X2xpbWl0cyhwb2xp
+Y3kpOwo+ID4gK30KPiA+ICsKPiA+ICtzdGF0aWMgYm9vbCBpbnRlbF9wc3RhdGVfdXBkYXRlX21h
+eF9mcmVxKHN0cnVjdCBjcHVkYXRhICpjcHVkYXRhKQo+ID4gK3sKPiA+ICvCoMKgwqDCoMKgwqAg
+c3RydWN0IGNwdWZyZXFfcG9saWN5ICpwb2xpY3kgX19mcmVlKHB1dF9jcHVmcmVxX3BvbGljeSk7
+Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgIHBvbGljeSA9IGNwdWZyZXFfY3B1X2dldChjcHVkYXRh
+LT5jcHUpOwo+ID4gK8KgwqDCoMKgwqDCoCBpZiAoIXBvbGljeSkKPiA+ICvCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIHJldHVybiBmYWxzZTsKPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqAgX19p
+bnRlbF9wc3RhdGVfdXBkYXRlX21heF9mcmVxKHBvbGljeSwgY3B1ZGF0YSk7Cj4gPiAKPiA+IMKg
+wqDCoMKgwqDCoMKgIHJldHVybiB0cnVlOwo+ID4gwqB9Cj4gPiAKPiA+IC1zdGF0aWMgdm9pZCBp
+bnRlbF9wc3RhdGVfdXBkYXRlX2xpbWl0cyh1bnNpZ25lZCBpbnQgY3B1KQo+ID4gK3N0YXRpYyB2
+b2lkIGludGVsX3BzdGF0ZV91cGRhdGVfbGltaXRzKHN0cnVjdCBjcHVmcmVxX3BvbGljeQo+ID4g
+KnBvbGljeSkKPiA+IMKgewo+ID4gLcKgwqDCoMKgwqDCoCBzdHJ1Y3QgY3B1ZGF0YSAqY3B1ZGF0
+YSA9IGFsbF9jcHVfZGF0YVtjcHVdOwo+ID4gK8KgwqDCoMKgwqDCoCBzdHJ1Y3QgY3B1ZGF0YSAq
+Y3B1ZGF0YSA9IGFsbF9jcHVfZGF0YVtwb2xpY3ktPmNwdV07Cj4gPiArCj4gPiArwqDCoMKgwqDC
+oMKgIF9faW50ZWxfcHN0YXRlX3VwZGF0ZV9tYXhfZnJlcShwb2xpY3ksIGNwdWRhdGEpOwo+ID4g
+Cj4gPiAtwqDCoMKgwqDCoMKgIGlmIChpbnRlbF9wc3RhdGVfdXBkYXRlX21heF9mcmVxKGNwdWRh
+dGEpKQo+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaHlicmlkX3VwZGF0ZV9jYXBh
+Y2l0eShjcHVkYXRhKTsKPiA+ICvCoMKgwqDCoMKgwqAgaHlicmlkX3VwZGF0ZV9jYXBhY2l0eShj
+cHVkYXRhKTsKPiA+IMKgfQo+ID4gCj4gPiDCoHN0YXRpYyB2b2lkIGludGVsX3BzdGF0ZV91cGRh
+dGVfbGltaXRzX2Zvcl9hbGwodm9pZCkKPiA+IC0tLSBhL2luY2x1ZGUvbGludXgvY3B1ZnJlcS5o
+Cj4gPiArKysgYi9pbmNsdWRlL2xpbnV4L2NwdWZyZXEuaAo+ID4gQEAgLTM5OSw3ICszOTksNyBA
+QAo+ID4gwqDCoMKgwqDCoMKgwqAgdW5zaWduZWQgaW50wqDCoMKgICgqZ2V0KSh1bnNpZ25lZCBp
+bnQgY3B1KTsKPiA+IAo+ID4gwqDCoMKgwqDCoMKgwqAgLyogQ2FsbGVkIHRvIHVwZGF0ZSBwb2xp
+Y3kgbGltaXRzIG9uIGZpcm13YXJlCj4gPiBub3RpZmljYXRpb25zLiAqLwo+ID4gLcKgwqDCoMKg
+wqDCoCB2b2lkwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAoKnVwZGF0ZV9saW1pdHMpKHVuc2lnbmVk
+IGludCBjcHUpOwo+ID4gK8KgwqDCoMKgwqDCoCB2b2lkwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAo
+KnVwZGF0ZV9saW1pdHMpKHN0cnVjdCBjcHVmcmVxX3BvbGljeQo+ID4gKnBvbGljeSk7Cj4gPiAK
+PiA+IMKgwqDCoMKgwqDCoMKgIC8qIG9wdGlvbmFsICovCj4gPiDCoMKgwqDCoMKgwqDCoCBpbnTC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKCpiaW9zX2xpbWl0KShpbnQgY3B1LCB1bnNpZ25lZCBp
+bnQKPiA+ICpsaW1pdCk7Cj4gPiAKPiA+IAo+ID4gCj4gPiAKPiAKCg==
 
 
