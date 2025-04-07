@@ -1,151 +1,220 @@
-Return-Path: <linux-kernel+bounces-591914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69866A7E698
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:32:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65901A7E654
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD2F816F089
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:27:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1EF33B4440
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033BE211706;
-	Mon,  7 Apr 2025 16:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559D620370D;
+	Mon,  7 Apr 2025 16:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="g3JHyA5R"
-Received: from mailout1.w2.samsung.com (mailout1.w2.samsung.com [211.189.100.11])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LVub7KMr"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2048.outbound.protection.outlook.com [40.107.93.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F3D20E6E8;
-	Mon,  7 Apr 2025 16:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.189.100.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744043060; cv=none; b=o9qMLH97BUahUg1dpreNYUUHBMK9p07QiMneyCpvcj1/kU/jmPlRUdPXBXV52xPjFW4uhBJB4ZCjmuaLMqNTCDM4FE0oqUpiDFJa8dSKHakrstjJMKGtVxglF6MmOIHr994+rP2B21/p4GKQA99n9x1gefu93sS9z2R7ndq8Eho=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744043060; c=relaxed/simple;
-	bh=BX2OylRjTEWyuqtrqriHr2iC8YNM9oUeFRa/G1yRxD4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
-	 MIME-Version:References; b=OFZhkx+Rr5xEZKsIzIEWD8iDW5/kkOBPRv9xo8tXvrVmQ8bgSNz/OL4NJaKeLDTSaxEDUBpJo8d0umc5u7FEnJEF2sb34YYM2PxvdvZRm0IYGUB7mQLZ0QJm47YOi0SyHpmzK4f5Fe0YwHXud8C7T0n/veSfwS+EmR3P/ThNCIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=g3JHyA5R; arc=none smtp.client-ip=211.189.100.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from uscas1p1.samsung.com (unknown [182.198.245.206])
-	by mailout1.w2.samsung.com (KnoxPortal) with ESMTP id 20250407161445usoutp015fc88e0ee24a742e0fd18536a99fe488~0FWZ9sq4V3037730377usoutp01n;
-	Mon,  7 Apr 2025 16:14:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w2.samsung.com 20250407161445usoutp015fc88e0ee24a742e0fd18536a99fe488~0FWZ9sq4V3037730377usoutp01n
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1744042485;
-	bh=BX2OylRjTEWyuqtrqriHr2iC8YNM9oUeFRa/G1yRxD4=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-	b=g3JHyA5R06HxUMnmT3+2yDysUc+dH2ZStLOaOLPD/Tqfv9Q+fW6RpMZE6TxlT65ei
-	 tUrsNpKBIq2+5F0TV1tjnIcMHP0fb1IAn60DTKbtSJc+xHo6xFeQZjnbhJCimjwkSt
-	 Kxpf0ker3OQ3aJYOevYOf2ayqv9xt+KSwZicYq3M=
-Received: from ussmges3new.samsung.com (u112.gpu85.samsung.co.kr
-	[203.254.195.112]) by uscas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20250407161445uscas1p1c684f440defe1b5e3597e9ca65c9d07b~0FWZ3UGC40076300763uscas1p1w;
-	Mon,  7 Apr 2025 16:14:45 +0000 (GMT)
-Received: from uscas1p2.samsung.com ( [182.198.245.207]) by
-	ussmges3new.samsung.com (USCPEMTA) with SMTP id BD.9B.10853.5F9F3F76; Mon, 
-	7 Apr 2025 12:14:45 -0400 (EDT)
-Received: from ussmgxs2new.samsung.com (u91.gpu85.samsung.co.kr
-	[203.254.195.91]) by uscas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20250407161445uscas1p19322b476cafd59f9d7d6e1877f3148b8~0FWZqaSGt0283302833uscas1p1M;
-	Mon,  7 Apr 2025 16:14:45 +0000 (GMT)
-X-AuditID: cbfec370-527bf70000002a65-36-67f3f9f5023b
-Received: from SSI-EX3.ssi.samsung.com ( [105.128.3.67]) by
-	ussmgxs2new.samsung.com (USCPEXMTA) with SMTP id 58.CC.23118.5F9F3F76; Mon, 
-	7 Apr 2025 12:14:45 -0400 (EDT)
-Received: from SSI-EX3.ssi.samsung.com (105.128.2.228) by
-	SSI-EX3.ssi.samsung.com (105.128.2.228) with Microsoft SMTP Server
-	(version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
-	15.1.2507.44; Mon, 7 Apr 2025 09:14:44 -0700
-Received: from SSI-EX3.ssi.samsung.com ([105.128.8.30]) by
-	SSI-EX3.ssi.samsung.com ([105.128.8.30]) with mapi id 15.01.2507.044; Mon, 7
-	Apr 2025 09:14:44 -0700
-From: Adam Manzanares <a.manzanares@samsung.com>
-To: Gregory Price <gourry@gourry.net>
-CC: "lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-cxl@vger.kernel.org"
-	<linux-cxl@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "mhocko@suse.com" <mhocko@suse.com>
-Subject: Re: [LSFMM] Updated: Linux Management of Volatile CXL Memory
- Devices
-Thread-Topic: [LSFMM] Updated: Linux Management of Volatile CXL Memory
-	Devices
-Thread-Index: AQHbo4sSrr/1aO9zr0GJmcBOzZoej7OY3pYA
-Date: Mon, 7 Apr 2025 16:14:44 +0000
-Message-ID: <Z_P573QpYuWB4Zud@sjvm-adma01.eng.stellus.in>
-In-Reply-To: <Z-zB86WcoMEQ9lKV@gourry-fedora-PF4VCD3F>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <0A32597186D05144A2FC7D8A5AE86327@ssi.samsung.com>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED1E1474A9
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 16:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744042547; cv=fail; b=b+BOsDPWUX38+nqMzRdyUX+BdVINXeQSJMlnDeFIqJUssROnoq6D3OIu6IWLWrOqVIkJApXaJTzkg3AZoy2zUmceGd+aCSqCdZqk4BeFsvwwE2Wz7+TGIWfoLSd7kstszV9yei0ZxP3U4M/ZSeBD8wZZfgXkpTkw3z9Qj/xPlmE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744042547; c=relaxed/simple;
+	bh=1XzkfanFJ4xNve1FESpBuofWNpQvms721X+PixNF328=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=rFY567dbffGEoHywdmDjEpm68sNM2onTn3eFiheXZcd6RQgi0OsrdSwOIaAO4iKoAqVGpfXf8TnT37xoHxnfwxrqS7WdPPPpsRo7Dz8kuOjcXlgaf6qe1TDUTyTWgVuTg3NXgyGpFq7ea/q9ZZOWVcSUnu+DMKH+bFHFWGzOjtE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LVub7KMr; arc=fail smtp.client-ip=40.107.93.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RWt4cLCInHkIiCgxomvdJc2PLgpKiLRc+PBEiX5aIXek3SA/FJn5eHXzJg6h0++uNF83wuCA5G1B7rgkUPXVdKSSxaMsRttawv/ERSQv4x2JuNVTYqtTft5mHBVSBkzGqDLkC5pW7FrILxJ6CzYY40rCkvOf7dOJtQWXlrgsUgdZr3coS7dzQSNmMIELDwAazRUyiiODBpR+nk51MxuD0f4D3IrX5YIglBJFimc2g6n9UsS/FuKZI3FhqRhFpkWX6GsUZzcl0v009HGPmPAWSVl+9j1csjTNkAevgD+XAINHYhvVPGTUAsoEGtpUFq+pI8Rr7/XgCcIuqSupK3vZKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mXGPvK6db58R/LB+Pa3fc3KBfSmxm1Php8wvzz8K0NE=;
+ b=yyvsyN8JpONVtEngjXMsOz8oAsFtzQebZwE7KH9VJNgdMRsxwZvLNNan4k5i6IszBosmt76CVuKvOkaJ0J/dLIWwKi8wX6YSLX6eJrXGG98TtHVnHx0cfCwlKi/u60RQGfIB1WkA826SYBjsz9eBYgA6a7QxLTZIvFLhZBDST1/mvyq5z6Cs1xt4rPEdTfjvfutj6rzlZE0TldctsFgyo7BiVB/lVHCbPvi5Dx9yRvpBD07VXSImqf4n60RKUM+Fbl+UH+ShglEK5+D9ooi7rHC/fqLuxiq4yY95VQXf38+bEc/L85fITN4KZfRGm7EEMJ7ihWWKtTDIs2BfD7v9PA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mXGPvK6db58R/LB+Pa3fc3KBfSmxm1Php8wvzz8K0NE=;
+ b=LVub7KMrp0NyY6faLSHp3uGExQ0hWAFjtZqOdB19Q0hCo32O2fAhCMD3a53kUgcmG6NhnfUXyBiwKgFhoX6yImv24RXcqnyVXb1OR3hipkbuwGMan5RnPdJWN8EDHKMwwPkoWJo+NpFesS6FyYIMzWnFYzYkIfd8JkX7CCoUzaJWDB9KMKIRU2WVCnnw/uinaKs0r76lDgIX6g+LB0jOehHYF/lTsszkHseMVHQuc9NFMbbnRZhPd7tY0O59BaHkJu9/okZDhTFeHfIMMHblnb2ExkhV3t1L/wm5CDdfbpjC7Kw/NP+z8mDEZQN2HZ/ADn5eLrqdArAGEEFQdz8F+A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by LV8PR12MB9206.namprd12.prod.outlook.com (2603:10b6:408:186::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.33; Mon, 7 Apr
+ 2025 16:15:42 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8606.028; Mon, 7 Apr 2025
+ 16:15:42 +0000
+Date: Mon, 7 Apr 2025 13:15:40 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Ankit Agrawal <ankita@nvidia.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	"joey.gouly@arm.com" <joey.gouly@arm.com>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"shahuang@redhat.com" <shahuang@redhat.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"david@redhat.com" <david@redhat.com>,
+	Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>,
+	Kirti Wankhede <kwankhede@nvidia.com>,
+	"Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
+	Vikram Sethi <vsethi@nvidia.com>, Andy Currid <acurrid@nvidia.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>, Dan Williams <danw@nvidia.com>,
+	Zhi Wang <zhiw@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
+	Uday Dhoke <udhoke@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>,
+	Krishnakant Jaju <kjaju@nvidia.com>,
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+	"sebastianene@google.com" <sebastianene@google.com>,
+	"coltonlewis@google.com" <coltonlewis@google.com>,
+	"kevin.tian@intel.com" <kevin.tian@intel.com>,
+	"yi.l.liu@intel.com" <yi.l.liu@intel.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"gshan@redhat.com" <gshan@redhat.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"ddutile@redhat.com" <ddutile@redhat.com>,
+	"tabba@google.com" <tabba@google.com>,
+	"qperret@google.com" <qperret@google.com>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 1/1] KVM: arm64: Allow cacheable stage 2 mapping using
+ VMA flags
+Message-ID: <20250407161540.GG1557073@nvidia.com>
+References: <20250319192246.GQ9311@nvidia.com>
+ <Z9s7r2JocpoM_t-m@arm.com>
+ <SA1PR12MB7199C7BD48EB39F536DD34DBB0A62@SA1PR12MB7199.namprd12.prod.outlook.com>
+ <Z-QU7qJOf8sEA5R8@google.com>
+ <86y0wrlrxt.wl-maz@kernel.org>
+ <Z-QnBcE1TKPChQay@google.com>
+ <86wmcbllg2.wl-maz@kernel.org>
+ <Z-RGYO3QVj5JNjRB@google.com>
+ <20250331145643.GF10839@nvidia.com>
+ <Z_PtKWnMPzwPb4sp@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_PtKWnMPzwPb4sp@google.com>
+X-ClientProxiedBy: BLAPR03CA0156.namprd03.prod.outlook.com
+ (2603:10b6:208:32f::29) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOKsWRmVeSWpSXmKPExsWy7djX87pff35ONzh8U9bi593j7BbnZ51i
-	sbi8aw6bxb01/1kt9r3ey2xxv8/Bgc2ju+0yu8emT5PYPSbfWM7osX7LVRaPz5vkAlijuGxS
-	UnMyy1KL9O0SuDI2bHzAXLCBpWL12c9sDYzXmbsYOTkkBEwkjnz5wt7FyMUhJLCSUWJ5+1YW
-	CKeVSWLd4zXsMFX/z7+CSqxhlNg0YxUThPORUeLPrXZWCGcxo8SeGxfZQFrYBAwkfh/fCLSE
-	g0NEQFWi7Yo7SA2zwEwmiV23e1hBaoQF/CX6N/1hBLFFBAIkbv3azgxhG0m8aLwIVsMioCKx
-	5voesDivgKXE96+/wOZzCphJ3Oq8AmYzCohJfD+1hgnEZhYQl7j1ZD4TxNmCEotm74F6VEzi
-	366HbBC2osT97y/ZIep1JBbs/sQGYdtJNE1qYoWwtSWWLXwNtVdQ4uTMJywQvZISB1fcAAeF
-	hMAVDolpM5ZCw8hFYsm3RlYIW1ri791lUEfkS+xquwJ1RIXE1dfdUEdYSyz8s55pAqPKLCR3
-	z0Jy0ywkN81CctMsJDctYGRdxSheWlycm55abJyXWq5XnJhbXJqXrpecn7uJEZiWTv87XLCD
-	8datj3qHGJk4GA8xSnAwK4nwWp76lC7Em5JYWZValB9fVJqTWnyIUZqDRUmcV+VAa7qQQHpi
-	SWp2ampBahFMlomDU6qByb3G6t92BfH9K0JmO+UYVv833K/FeCc+S+vQzi9CNazO4Ye0N/9K
-	yDF582dnS9EkzT1aSiXTZn0pjWrb9G9pzLHyvs02M55kTOMOTk1/8DL9e9+6GXZ2k0vXv/90
-	3IvPlcejPPn4XNvD1yfKOXPqr5zat5Lr4frfs27dffv63F1paRH/g8CwmKUsfEl7ofu2r9Gy
-	Pm/yWu+nHzx1qZd7NePi1exRE8I9na/eLlokbMyY2Cfzfuu5A5+3GMwzWjeF1/vroRspPI9W
-	Lffn3Gx2Uytr52Uez/yE9GdlD1ieTKsTn/t6+eeX6Z99NPavXd8pYf6zvcDyf3aW8tcw3/df
-	bpgFbjFSfpzi4/3t3aq6DiWW4oxEQy3mouJEAG06wbS6AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKIsWRmVeSWpSXmKPExsWS2cDsrPv15+d0g/WX+Sx+3j3ObnF+1ikW
-	i8u75rBZ3Fvzn9Vi3+u9zBb3+xwc2Dy62y6ze2z6NIndY/KN5Ywe67dcZfH4vEkugDWKyyYl
-	NSezLLVI3y6BK2PDxgfMBRtYKlaf/czWwHiduYuRk0NCwETi//lXLF2MXBxCAqsYJTqen2CC
-	cD4ySuxpf8kO4SxmlHi6ZCtYC5uAgcTv4xuBbA4OEQFVibYr7iA1zAIzmSR23e5hBakRFvCV
-	2DJ5EjuILSLgJ/Fw9QE2CNtI4kXjRbAaFgEViTXX94DN5BWwlPj+9RcbxLJeRokXM3uZQBKc
-	AmYStzqvgDUzCohJfD+1BizOLCAucevJfCaIHwQkluw5D/WPqMTLx/9YIWxFifvfX7JD1OtI
-	LNj9iQ3CtpNomtTECmFrSyxb+BrqCEGJkzOfsED0SkocXHGDZQKjxCwk62YhGTULyahZSEbN
-	QjJqASPrKkbx0uLi3PSKYqO81HK94sTc4tK8dL3k/NxNjMCYPv3vcPQOxtu3PuodYmTiYDzE
-	KMHBrCTCa3nqU7oQb0piZVVqUX58UWlOavEhRmkOFiVx3rsPNFKFBNITS1KzU1MLUotgskwc
-	nFINTFIO2j2lPH/9GnVkmyY0zJv4MTdgrbvWS0Odhk77I0f/6noK7978tqTFxnbSHPHaV/sX
-	5rply084qOdguDmye5foyeOZEnZTUhN32c9IY1j+/ZGRQeFxgcWPdjEeZWstnPnv7vbZmjP6
-	uW30ziV73X9+923Uvm928968EnFYyb7k3Nt3MxSdWmU8y09kJuw8biT0LcX9vdPBZ5f7f2aW
-	+OytuSH+3GyfzoIbJmXRTw3nGptWznCYuXCbdYTfG9+aMx8S1HeqXHAKms5woYPr1BHZy+WX
-	P3+bFtWtzhqwl/0v8+odr59vTjGf80pXpP/j4QPXBLyt05a9eh1r8/qyyKcZj3nvmfD9mtz+
-	aEvx5CYlluKMREMt5qLiRAAYRNGSWAMAAA==
-X-CMS-MailID: 20250407161445uscas1p19322b476cafd59f9d7d6e1877f3148b8
-CMS-TYPE: 301P
-X-CMS-RootMailID: 20250407161445uscas1p19322b476cafd59f9d7d6e1877f3148b8
-References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
-	<Z9mo5qCpdlE-KZ7P@gourry-fedora-PF4VCD3F>
-	<Z-zB86WcoMEQ9lKV@gourry-fedora-PF4VCD3F>
-	<CGME20250407161445uscas1p19322b476cafd59f9d7d6e1877f3148b8@uscas1p1.samsung.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|LV8PR12MB9206:EE_
+X-MS-Office365-Filtering-Correlation-Id: 14f9a0b4-803f-49d2-1def-08dd75ef71cb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?GTwUvmvJvRS9UqAprqjf3cf6UDOKaS0LYCGZAy+yN/ebrYlAbftedBEkX1EK?=
+ =?us-ascii?Q?WDP9u6u2kkcGhkbf674Tgm/wQii25oeqsYCw8cacoEAviKWKIP2ACpy6opd6?=
+ =?us-ascii?Q?I6tud+DwDJCAyyXrWRfSCkqzWhIDAtvXLSEYeEZvknmIfP3MIBO7LVqGavS4?=
+ =?us-ascii?Q?ATn70Y33+Mm1tnP8dicvMAw/4GNZpkzIBPRgvaVrocsKar1h6wXqyaVvbyJJ?=
+ =?us-ascii?Q?smJ/q2E9cg9gnN04b5E+0PzaZbqEnDHC/TxXp4ZsuPdLoyGoe7CCEyNfbyHD?=
+ =?us-ascii?Q?iRGoW4FyOXt6LWvn07KAplPc83LOTUu1/tJlZ2VHFGcIO1yHtuCHupeQA+la?=
+ =?us-ascii?Q?VQOLI4TR9S1idwTDWKoyFDTPHaUs6jevuTR9E92pbW4U1d9bi23gUZuqhrSE?=
+ =?us-ascii?Q?WmheZRWrXMb7xDcvxdYXUEUwtWJiwprrUwD1YoQMpy2UfPB4R3HRgpn81xV1?=
+ =?us-ascii?Q?wxTfAswt03A6fEWZ8HD60q02ax7dKLEGbcgJSXJEP7WlHVKZc6uuq76JVxzW?=
+ =?us-ascii?Q?QGfCW2q5K+nAyEXNjkj7zj08X0PtFP8JSqKtaYVYGCNc4Z0TIXwORI3Q+I6I?=
+ =?us-ascii?Q?O6vmZ51qjepGb1Wf6WrQi3XxjjsCfuz33ztesI4q1gs6myHfnTxc+327Jpmp?=
+ =?us-ascii?Q?Pc3PaUBJ90wnpz2H6aSukoX7ewzLcTvqG75JWtEGtIHTyaZPTv4mvULdjfLw?=
+ =?us-ascii?Q?fSlOX0oI0ikVZHTqpcMnlKT0a1T5k7vipla32em9h8odY40xnU3wNjU59lRh?=
+ =?us-ascii?Q?R8eeFwZw84ne8CCms1vk5Cg4lIj53DF+xqJx0W7dYv2YuBOIZVxyrU5oDvbP?=
+ =?us-ascii?Q?iT2SPSzAfvEtcg0Slzmyxrx4ffyfirAxFloAKfmybuAwjJd/VUN7wJJ6WQeG?=
+ =?us-ascii?Q?VpKFATu7L35aTZdW4Ckv/Gqw720+ca8jT47SQF71khQ5vOLrb6uUUz8fxrvc?=
+ =?us-ascii?Q?9cBKB08xYlKbTF/uFAXCW0LhNkorAonOykGEg7JbdAQU6EZ0MKOhsMMOKnOS?=
+ =?us-ascii?Q?IbWv/QMzLi/Or4/p4pt5oDNd0ysm+jKrdWqTGsP9LGQFbc94fost/hXSUJU7?=
+ =?us-ascii?Q?zbE6NWYSJk9/1te5Of9OgHnTxM2ajBrOX7vfKZuLqo7xtIiS+1mrQk3VKcEv?=
+ =?us-ascii?Q?UudNmej45LpsFlRHatvbQnH1Oo3z46N9r5zY2XYt5kRQIMYFHlD9c++r0OUV?=
+ =?us-ascii?Q?PvYHIVlVXWe+dO10b+9Rdg74GLiTeF2y81fpJdMOlbOocYMEp42TZbThBLXp?=
+ =?us-ascii?Q?NtHOqgea5/NJghK5sWFPcG7nwpyQzIXJpR9dIqSsI5082oSTaT0EiRL22FBF?=
+ =?us-ascii?Q?QMzlMgNrGtZRyLebRNXnBPNkW48yLcqwjLLYvFH8Rauf5lHvA3kRYqi9q8BM?=
+ =?us-ascii?Q?azxGVrMN/vEnVLV0ZkDJLL+OBbhy?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xWSD1+esiR8vng3+gv0OIG18Q2uCYczwU7KzG4a575Wgq0tBRdiAGotJJSBi?=
+ =?us-ascii?Q?h2fTp3uhejVX6lnpw8m3olxzkRqLivr66N6XEn5x/ST6f2Ejh4hzidazFuBZ?=
+ =?us-ascii?Q?8WxKkce6r4otauWif3kCT2pwxC4CkR0neFY8Z0p89YVuo8Y19YjQjEFa+85+?=
+ =?us-ascii?Q?3WGfwnVYGR+tKdAmiL3hicxFYVfRUMZQyeM1u7/sUG3Y51uHkdm0+KO/+9//?=
+ =?us-ascii?Q?Ch4SDQE45pwjOkGFMiuvpAnIVPSAgJwjI6zrZU5RzgIvIp6xY4j9zCfHUCu0?=
+ =?us-ascii?Q?77Ib/NH+NJ23WvfoYdC+xxpWT1/ym5eavWoIkIH/OC+mcPFAabOZw9R96LWf?=
+ =?us-ascii?Q?TuPE5FOlHdlxWzhz2pMvkvpqH6KdD2DtRBvGu9hdMFHDKEKzvSaqfJw5Mueo?=
+ =?us-ascii?Q?0gpUDpJGYc/KxiuF/P1zHmxyXnY9i6XgYHHkgA7LcWWOBG3o+4chxwo57Mmq?=
+ =?us-ascii?Q?CANOPc63g5bkM+taXHLhnL9AQ6Lf9t8dlMVbpJSLlvrRfpEWghbXYPsEHsD1?=
+ =?us-ascii?Q?nFzWH19apvZNaX/GEuEd7ny0Al4XQBG5tcmcSDBPSIrNZd5GdTxWJUejshdE?=
+ =?us-ascii?Q?w5pagy7L3StEkU/QBMtIxUkweAHD4I5vc+v46L78aAtbEqbMmthVn6ZqAmFK?=
+ =?us-ascii?Q?2un3B7yNISP0c761/LCfL8B4y9kY58t/jvQYu3v0RCMu4thPh1betU/WdAqu?=
+ =?us-ascii?Q?2aD3d16B9fHX97ihaDTFAB3CFmLFOyUuBmJibLztweBrqZkoRTeI6IGAVGGQ?=
+ =?us-ascii?Q?ENP4XxCh/GM6GhSJRM2SOaXlG7sjNPe+I6F3xuCCtU8FBnlr9wvcyLSzVfpo?=
+ =?us-ascii?Q?CAikJmMHeGSpCCDyIhfyjhsoKnBTKCwTOpD2nYaBOmLmtj/UFIrL18ooiTpy?=
+ =?us-ascii?Q?7wCLtfp+4HGmMbWJ4dS1rzBAeUWvotOQLbOG6vXEzTbk9kZjd6epl5FEk8JZ?=
+ =?us-ascii?Q?xg88h5ghuNQvE3tbZvRgJ5AHTcbqZ8tukz0yJB6OeFyZ0X9ruvCTwo+IB6k+?=
+ =?us-ascii?Q?Bq++L94EaU9SGLp+oKafP2L8qIxxlGyGEqGRo5sVLAJ5Wph4s3MCbY9fv5y7?=
+ =?us-ascii?Q?1iyKdiFutK/LhgBnYR18DVv9q4BPFsGH2/ljAGddVfnA4dfTzD+bqNfpmz7L?=
+ =?us-ascii?Q?pkHCvU+G9uBFTQU6d+D6vah/GerZZZpidxmRQMdVlp0Xj7GAhLdq2pqAxqSr?=
+ =?us-ascii?Q?p6eEHB6TPQFjE5X4e+WN2fobpRsg757lXeCVgq5HRz9fzZX6YL4uBTXE08kK?=
+ =?us-ascii?Q?FALgTO6m5chvr+WT+IaLoE+VyLsgvZyi1JEngfbTYOAGdKgcwTa91jRZaZmV?=
+ =?us-ascii?Q?wcW1txzQsBYW5sjuMhK49PxZNA+YncadIUcxXkzam3P5omwCtPJUlgEPv32Q?=
+ =?us-ascii?Q?jyyFjd3Bxb7lkGvuNEk4ieC948sqINhTdbd7KqQuYtvFsRQvfGcXAGASHfi7?=
+ =?us-ascii?Q?7Y9VwNejmRiqQbjQP7jixP6z36osvSksh5N1s/Tr4s/D/V/0hZKxZyV/jI+e?=
+ =?us-ascii?Q?GHT0/OwtXpvCHnEyGsxuECnbOcOJO1h53U8G0qTRFZLrGs9BcR35p1+4K5zT?=
+ =?us-ascii?Q?TJcv/M0YYf8TCeOSEj24eR9yWRuRY9pY70spLAYu?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 14f9a0b4-803f-49d2-1def-08dd75ef71cb
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 16:15:42.5458
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LsZJmmhXtOUVyb9tUnboN0NbCKYcMCgJ03ABMbaZrcJGEeED+oRSPhjMLbPFZ9gb
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9206
 
-On Wed, Apr 02, 2025 at 12:49:55AM -0400, Gregory Price wrote:
-> Slides up at:
-> https://github.com/gourryinverse/cxl-boot-to-bash/blob/main/presentations=
-/lsfmm25.pdf
->=20
-> Docs Transitioning to:
-> https://github.com/gourryinverse/cxl-boot-to-bash/tree/main
->=20
-> Browsable Page:
-> https://gourryinverse.github.io/cxl-boot-to-bash/
->=20
-> All help hacking on this is welcome. I imagine we'll convert some
-> portion of this over to kernel docs, but not sure what.
+On Mon, Apr 07, 2025 at 08:20:09AM -0700, Sean Christopherson wrote:
+> On Mon, Mar 31, 2025, Jason Gunthorpe wrote:
+> > On Wed, Mar 26, 2025 at 11:24:32AM -0700, Sean Christopherson wrote:
+> > > > I don't know how you reconcile the lack of host mapping and cache
+> > > > maintenance. The latter cannot take place without the former.
+> > > 
+> > > I assume cache maintenance only requires _a_ mapping to the physical memory.
+> > > With guest_memfd, KVM has the pfn (which happens to always be struct page memory
+> > > today), and so can establish a VA=>PA mapping as needed.
+> > 
+> > This is why we are forcing FWB in this work, because we don't have a
+> > VA mapping and KVM doesn't have the code to create one on demand.
+> 
+> I don't follow.  As it exists today, guest_memfd doesn't touch the direct map,
+> i.e. there's already a kernel mapping, KVM doesn't need to create one.
 
-Thanks for presenting at LSF/MM and posting links
+This is not about guest_memfd..
 
->=20
-> ~Gregory Price=
+When ARM KVM copies a PTE from a VMA's PTE into the S2 it may find
+that the physical address does not have a struct page, in which case
+it assumes the worst that it is not in the kmap and cannot be cache
+flushed.
+
+Jason
 
