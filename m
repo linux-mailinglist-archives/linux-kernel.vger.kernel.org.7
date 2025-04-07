@@ -1,135 +1,223 @@
-Return-Path: <linux-kernel+bounces-590895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E319A7D823
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:37:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FB08A7D861
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B822188EBEA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:37:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF19E3BB604
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9542C226D1E;
-	Mon,  7 Apr 2025 08:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BAC228C9D;
+	Mon,  7 Apr 2025 08:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VfhuKKF0"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917FF22689C
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 08:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MmE4rd7S"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221F9225764;
+	Mon,  7 Apr 2025 08:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744015045; cv=none; b=j8dlVrYbhyzfHRRLd5o9lw4Sg+efSDvmundj2seEuWL5RIHH4GKVo4vYOFyFZ6A7sI+euGX3GvJa/NoKtFyuaQDvWmpwcqMJPHmt+1YBdOHNIbEZyIonQdcZaY/ptGOn30VwLkADNsIhNdtanfb5jacoHleLC6I4oK1pvVighyQ=
+	t=1744015471; cv=none; b=WFXWm8L7n0+2me4TV3HeZLqcJPkM+C15E8E22soSlSMCm9tQp0tuDeKVJC8vPiWNIJf3ALPsGY4JfYEDGv/jFvvwLKR2n3TZ8deh3GOWoVqVcwuTl2KS+Z2o03LPwzcrRAedNKGECfnLRtClgEsaAicx+KeVcsyArRDYiy+BF6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744015045; c=relaxed/simple;
-	bh=r9MKe/SVH5Cpaz/tNBI5uI7KSiWB2m0t/5DQuFADqN8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=smarIw3I3pwqy9I7JuuRM9snFTGbyMLH1Ngl6ThGdCAdPt9KPbNJzwdD21UX6R8+nQKM/ve+aTxeFXarAQldNlwWw2W+EKzSngjNmI3hf01umIHDffBF02Gj5r2RccUToWFpp0kIVpzRAVkuFZmKKeVeoXfvtyi3Yhe/aiTkTLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VfhuKKF0; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2264c9d0295so324955ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 01:37:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744015043; x=1744619843; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PM1xp6gzVd/l23ioaAQhkaBubnLpRRJNpYojAABDe0E=;
-        b=VfhuKKF0VF5NV8pmqp3gn4ZiuVWu7z2Q7x4sv8PtHaQkh30dsCYr5KrAzp/j5oASnh
-         AndhI0IEbBPgO/mrPmhq2aX22wwb91nnKZcC2lKN5YFad/+NVuwYHD4IuYrHetetROsh
-         TvSBGbXKl8GZ1rdTPE3DLQj3MkVR+aeztcHV/mYUu6Hpptf1z7ZHhJmknxqSKJtfWQF4
-         BB0sfZrHLInVRNV06AY59R9tXKJP5jtiYzs/7uIMn4dOJacAZxxwCydA4NYT1wTF8VSD
-         akeVFufUUqNxKRcSwVX4nS8vPcxsR6dVcXa7GpcAesKj2MrkgI9cyBPMEfMLizpRKk+p
-         6Z3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744015043; x=1744619843;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PM1xp6gzVd/l23ioaAQhkaBubnLpRRJNpYojAABDe0E=;
-        b=lucl5YuSVETVf+JjmG1gQJNHoPrMhIBFtCn4aRCmbO9VRFaVuksspdFrjRPQjMFkY/
-         0fz/bULoHpFvqRSicgd3OvNGHEkZCJqQsBziV2hkRfILpkTC5E6lEp5+oHyhPqE4a539
-         oUzQ4uo/EX6eaoZo+17rEZ8kjLmGh1d8XKyz1tf30S+RL3VjOnlaPN1D8uUSn/tEBtox
-         2+hICMXc59hmcjumoHFzmNEkT6BidxdAqNEUvK7YuTXIN0N7P2FEmTOIfAdinJC+zZwk
-         FWQ8HZab4CcItICgbSctfsLZVxk/rWmWYo0QHAs7MXzN8+2VHIHadx4E/c9dWWQhRE0Q
-         bA6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXSg0B4QvWTDapKOz2dyaTxVWGS4n6F4wV6NsZz7oLj0k0h5JpeMtT5prVzPp336iA2N4AC5O3P6+ZGDt0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2prHVdXhxAC1TLD3/IwoyWx/cQUrGB69DaOln1zZ4iZTtn0Uk
-	R0TcPvPTUeoGXpfe8RRlOFUt/c8gWh2Jp9/Kre+jGTXAa1H54f1azhCR6KQVfA==
-X-Gm-Gg: ASbGncsEx1rSf8Dy/K2ACrMNFFoYNPXUE3f4Zp/8JKD8Ybna19WKqsZbecFhb9CHSb7
-	MyAFMs/0AGJA2k2Gp/9OddnS+RKJV17I/N12ssZCvuIRAHQRjYGZwJf7rp/MQ2hZEo7p+1n7X5C
-	DRNrNzNa364u9sIyPyu+DIomEDpFI91ziFNLFiKMqfLzkAD4I7vmnxbjvXRVIDJi34dm7hNIylw
-	PchwgZZZVToDPeGROGJqBwU2cgINoDfip0Ck6jbc7xvLZEodfw8IBUHIfex0XIRoNrCrs6FVSt4
-	eeadd8SbNLO43WpgTuMrQ04PnKguP4CqXHa4O64PMRhB/XwvrJuyHT1gF++oBoi6Goe73Hk4K9E
-	eFLo=
-X-Google-Smtp-Source: AGHT+IFEcecwODNx4wiqbqJKpBlZrrA4mcqLS8OyyMt6tYMj4vc7ksfjibFdVhVKjFGu4nMmJA0OlA==
-X-Received: by 2002:a17:903:2308:b0:215:8232:5596 with SMTP id d9443c01a7336-22a95e638e2mr3367595ad.16.1744015042625;
-        Mon, 07 Apr 2025 01:37:22 -0700 (PDT)
-Received: from google.com (188.152.87.34.bc.googleusercontent.com. [34.87.152.188])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739d97d19c5sm7904646b3a.20.2025.04.07.01.37.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 01:37:22 -0700 (PDT)
-Date: Mon, 7 Apr 2025 08:37:14 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"jgg@nvidia.com" <jgg@nvidia.com>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/4] iommu/arm-smmu-v3: Pass in vmid to
- arm_smmu_make_s2_domain_ste()
-Message-ID: <Z_OOukRG0foehmV6@google.com>
-References: <cover.1741150594.git.nicolinc@nvidia.com>
- <214b10db02f1046efdc70e2c4803111357f60070.1741150594.git.nicolinc@nvidia.com>
- <a95b39a55c324907a7001d3a2cdf076b@huawei.com>
- <Z8iNfnZ9N5Lczxmq@Asurada-Nvidia>
+	s=arc-20240116; t=1744015471; c=relaxed/simple;
+	bh=ffFvuFZFzZHDUMQg9xqNBt6xuLxJliri+ipKxQpx4a0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=SKHg+MAc9fmnJlHZz0QR/X1WedU+UBgnZdRweTl5hqZhGg+LUP976zbUjdswde1Fu4ritcTVHOMFpm/soryciCUeJCqkajx9SapZSBOGHduRcMJqPX0HA9Q/lE5xKHh3wm6UgQL7yZ91jp/ijiO4aQSVvgeV0eHg2P00kFE1zds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MmE4rd7S; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.95.65.22] (unknown [167.220.238.22])
+	by linux.microsoft.com (Postfix) with ESMTPSA id EF2EE2113E70;
+	Mon,  7 Apr 2025 01:37:44 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EF2EE2113E70
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1744015067;
+	bh=IMf6zfyOKzO3PayNMjkkAfLVipscVQ5401VbcJCk+nM=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=MmE4rd7SzdqG38JRF7f8bd5bO27ZbsuHr4a0kweCf9TOL3UWwp0cv2XKTSBw2NBCG
+	 vfKbICbblvJV8q8ddljDCI8SF8tgRcmsI9DcckJ4DGOx5OkEu8jHMQYtgVar/s5xL/
+	 KYewhl6WBFxFU+mbUG7T+1+SOqrucRwFjq07gvq4=
+Message-ID: <fdec53a0-efcc-4047-b809-d201f3a48005@linux.microsoft.com>
+Date: Mon, 7 Apr 2025 14:07:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8iNfnZ9N5Lczxmq@Asurada-Nvidia>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] uio_hv_generic: Fix sysfs creation path for ring
+ buffer
+From: Naman Jain <namjain@linux.microsoft.com>
+To: Michael Kelley <mhklinux@outlook.com>,
+ "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@kernel.org" <stable@kernel.org>,
+ Saurabh Sengar <ssengar@linux.microsoft.com>
+References: <20250328052745.1417-1-namjain@linux.microsoft.com>
+ <20250328052745.1417-2-namjain@linux.microsoft.com>
+ <SN6PR02MB4157C74E0E83E63175278153D4A22@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <32de9597-d609-4e12-8219-ea7205bdc7d8@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <32de9597-d609-4e12-8219-ea7205bdc7d8@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 05, 2025 at 09:44:30AM -0800, Nicolin Chen wrote:
-> On Wed, Mar 05, 2025 at 08:50:17AM +0000, Shameerali Kolothum Thodi wrote:
-> > > diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> > > b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> > > index bd9d7c85576a..e08c4ede4b2d 100644
-> > > --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> > > +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-> > > @@ -887,7 +887,7 @@ struct arm_smmu_entry_writer_ops {
-> > >  void arm_smmu_make_abort_ste(struct arm_smmu_ste *target);
-> > >  void arm_smmu_make_s2_domain_ste(struct arm_smmu_ste *target,
-> > >  				 struct arm_smmu_master *master,
-> > > -				 struct arm_smmu_domain *smmu_domain,
-> > > +				 struct arm_smmu_domain *smmu_domain,
-> > > u16 vmid,
-> > >  				 bool ats_enabled);
-> > 
-> > Now that vmid is an input, do we need some kind of validation here as
-> > at least vmid = 0 is reserved I guess for bypass STEs.
+
+
+On 3/31/2025 11:08 AM, Naman Jain wrote:
 > 
-> Perhaps it should do a WARN_ON_ONCE(!vmid), as it doesn't make
-> sense for a caller to make an S2-bypass STE with this function.
+> 
+> On 3/30/2025 9:05 PM, Michael Kelley wrote:
+>> From: Naman Jain <namjain@linux.microsoft.com> Sent: Thursday, March 
+>> 27, 2025 10:28 PM
+>>>
+>>> On regular bootup, devices get registered to VMBus first, so when
+>>> uio_hv_generic driver for a particular device type is probed,
+>>> the device is already initialized and added, so sysfs creation in
+>>> uio_hv_generic probe works fine. However, when device is removed
+>>> and brought back, the channel rescinds and device again gets
+>>> registered to VMBus. However this time, the uio_hv_generic driver is
+>>> already registered to probe for that device and in this case sysfs
+>>> creation is tried before the device's kobject gets initialized
+>>> completely.
+>>>
+>>> Fix this by moving the core logic of sysfs creation for ring buffer,
+>>> from uio_hv_generic to HyperV's VMBus driver, where rest of the sysfs
+>>> attributes for the channels are defined. While doing that, make use
+>>> of attribute groups and macros, instead of creating sysfs directly,
+>>> to ensure better error handling and code flow.
+>>>
+>>> Problem path:
+>>> vmbus_process_offer (new offer comes for the VMBus device)
+>>>    vmbus_add_channel_work
+>>>      vmbus_device_register
+>>>        |-> device_register
+>>>        |     |...
+>>>        |     |-> hv_uio_probe
+>>>        |           |...
+>>>        |           |-> sysfs_create_bin_file (leads to a warning as
+>>>        |                 primary channel's kobject, which is used to
+>>>        |                 create sysfs is not yet initialized)
+>>>        |-> kset_create_and_add
+>>>        |-> vmbus_add_channel_kobj (initialization of primary channel's
+>>>                                    kobject happens later)
+>>>
+>>> Above code flow is sequential and the warning is always reproducible in
+>>> this path.
+>>>
+>>> Fixes: 9ab877a6ccf8 ("uio_hv_generic: make ring buffer attribute for 
+>>> primary channel")
+>>> Cc: stable@kernel.org
+>>> Suggested-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+>>> Suggested-by: Michael Kelley <mhklinux@outlook.com>
+>>> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+>>> ---
+>>>   drivers/hv/hyperv_vmbus.h    |   6 ++
+>>>   drivers/hv/vmbus_drv.c       | 110 ++++++++++++++++++++++++++++++++++-
+>>>   drivers/uio/uio_hv_generic.c |  33 +++++------
+>>>   include/linux/hyperv.h       |   6 ++
+>>>   4 files changed, 134 insertions(+), 21 deletions(-)
+>>>
+>>
+>> [snip]
+>>
+>>> +/**
+>>> + * hv_create_ring_sysfs() - create "ring" sysfs entry corresponding 
+>>> to ring buffers for a channel.
+>>> + * @channel: Pointer to vmbus_channel structure
+>>> + * @hv_mmap_ring_buffer: function pointer for initializing the 
+>>> function to be called on mmap of
+>>> + *                       channel's "ring" sysfs node, which is for 
+>>> the ring buffer of that channel.
+>>> + *                       Function pointer is of below type:
+>>> + *                       int (*hv_mmap_ring_buffer)(struct 
+>>> vmbus_channel *channel,
+>>> + *                                                  struct 
+>>> vm_area_struct *vma))
+>>> + *                       This has a pointer to the channel and a 
+>>> pointer to vm_area_struct,
+>>> + *                       used for mmap, as arguments.
+>>> + *
+>>> + * Sysfs node for ring buffer of a channel is created along with 
+>>> other fields, however its
+>>> + * visibility is disabled by default. Sysfs creation needs to be 
+>>> controlled when the use-case
+>>> + * is running.
+>>> + * For example, HV_NIC device is used either by uio_hv_generic or 
+>>> hv_netvsc at any given point of
+>>> + * time, and "ring" sysfs is needed only when uio_hv_generic is 
+>>> bound to that device. To avoid
+>>> + * exposing the ring buffer by default, this function is reponsible 
+>>> to enable visibility of
+>>> + * ring for userspace to use.
+>>> + * Note: Race conditions can happen with userspace and it is not 
+>>> encouraged to create new
+>>> + * use-cases for this. This was added to maintain backward 
+>>> compatibility, while solving
+>>> + * one of the race conditions in uio_hv_generic while creating sysfs.
+>>> + *
+>>> + * Returns 0 on success or error code on failure.
+>>> + */
+>>> +int hv_create_ring_sysfs(struct vmbus_channel *channel,
+>>> +             int (*hv_mmap_ring_buffer)(struct vmbus_channel *channel,
+>>> +                            struct vm_area_struct *vma))
+>>> +{
+>>> +    struct kobject *kobj = &channel->kobj;
+>>> +    struct vmbus_channel *primary_channel = channel->primary_channel ?
+>>> +        channel->primary_channel : channel;
+>>> +
+>>> +    channel->mmap_ring_buffer = hv_mmap_ring_buffer;
+>>> +    channel->ring_sysfs_visible = true;
+>>> +
+>>> +    /*
+>>> +     * Skip updating the sysfs group if the primary channel is not 
+>>> yet initialized and sysfs
+>>> +     * group is not yet created. In those cases, the 'ring' will be 
+>>> created later in
+>>> +     * vmbus_device_register() -> vmbus_add_channel_kobj().
+>>> +     */
+>>> +    if  (!primary_channel->device_obj->channels_kset)
+>>> +        return 0;
+>>
+>> This test doesn't accomplish what you want. It tests if the "channels" 
+>> directory
+>> has been created, but not if the numbered subdirectory for this 
+>> channel has been
+>> created. sysfs_update_group() operates on the numbered subdirectory and
+>> could still fail because it hasn't been created yet.
+>>
+>> My recommendation is to not try to do a test, and just let 
+>> sysfs_update_group()
+>> fail in that case (and ignore the error).
+>>
+>> Michael
+>>
+> 
+> Thanks Michael. Will remove it.
+> 
+> Regards,
+> Naman
+
+Just to let you know, I'll wait till the end of merge window and a few 
+more days before sending the next version. Meanwhile if there are any 
+further comments, I'll take them up together.
+
+Regards,
+Naman
+
+> 
+>>> +
+>>> +    return sysfs_update_group(kobj, &vmbus_chan_group);
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(hv_create_ring_sysfs);
 > 
 
-+1, a warning should suffice as the caller isn't expected to call this
-with vmid = 0. For the s2 bypass case, we already set vmid field to 0 in
-make_cdtable_ste for clients who *really* want the vmid = 0.
-
-> Thanks
-> Nicolin
-> 
-
-Thanks
-Praan
 
