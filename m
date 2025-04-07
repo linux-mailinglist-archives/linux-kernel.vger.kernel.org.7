@@ -1,121 +1,120 @@
-Return-Path: <linux-kernel+bounces-592370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D8AAA7EC37
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:12:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC0AA7EC29
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4831C171C2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:05:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18344189D19C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017BD261372;
-	Mon,  7 Apr 2025 18:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E432550D5;
+	Mon,  7 Apr 2025 18:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="arFXIKZA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dDe7pOnG"
+Received: from mail-yb1-f196.google.com (mail-yb1-f196.google.com [209.85.219.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5801225FA38;
-	Mon,  7 Apr 2025 18:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77ED82550D1;
+	Mon,  7 Apr 2025 18:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744051178; cv=none; b=b27A9NGD6S0RLkOdAKD0p+mZ076mkW6XxOt3mX8FREzxm88yfv/Thwqa8YEle8R9DkPwoSGQe2BoLCtQM7YQlVkoP9ipxGP0L85f0aoEtTYyocpBK5ecxhA8R7Yb2YaSotUSqAIoJRiSVCYB2nqjyNaMdVjCXee3GJYs12PMgQw=
+	t=1744051238; cv=none; b=Lup4f+hRuKBCw3nSTIHKHyVO4Km3UrjwKdm6atRqpCQd028Pz3WhNf+SxPevUPbnAMSamba+bO3ZbdqcMxhsWHbrXABPTN6EccbxVCtixFd5PSu+X3Ni2mBS2R50lU25AUQbXi7C3h7BoICAMExg4JlzkvgUQPRr1+y8P/W8yQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744051178; c=relaxed/simple;
-	bh=FqBbfujZorWgG3rPeHe3EJNi1KkKcFDOQUHyCf5TY6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RTQvybjxeS3dt2onYcW9G2e0O2kv0apOsVDhSRUo8VJJ+bJ4PEx8kJHAXm6ByVYtdZPf8gt+xREJrPrxNaRw8rSV0rEZYpOBKNxDQPO3ZKj1wL4eQo7iQxbhi+d8lZveLLGpLgFF2OOZe53ZSNatM/lx0PmamCFW5w2as7v2ULk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=arFXIKZA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C41D1C4CEDD;
-	Mon,  7 Apr 2025 18:39:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744051177;
-	bh=FqBbfujZorWgG3rPeHe3EJNi1KkKcFDOQUHyCf5TY6k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=arFXIKZA9VCS2brkxZJUTn7YyPSvWytivwyTvyMlTXOiZdn1DfXL2T9jkGH6fztBi
-	 hnKcsF0bAr+tBA7v8TPaWzcS+u6xzN/sa8pFk8/UPVwgaaybDk0KQ0l0o0FAU7QsBq
-	 fghq56XwRgZ6rVbW22jGMQgoDSotfSSekHQV2WGuiaz7JQa/UAzdkcfsZPvslMIEB9
-	 bV0rRCi0WuO7t9sLFrSkm8RX9JBF7ohec66F7cgx3I6D3a9JWfgMGkQBnd8CgtQiSB
-	 /cFy7ueImq3lKm/NRlh2J5uu4Brzes+mNmB/eru8AVV/ndag+iMGui8oyuPiUC01IJ
-	 as1yGmblcd4ag==
-Date: Mon, 7 Apr 2025 11:39:34 -0700
-From: Kees Cook <kees@kernel.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Johannes Berg <johannes@sipsolutions.net>,
-	Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] wifi: ath12k: core.h: Avoid
- -Wflex-array-member-not-at-end warnings
-Message-ID: <202504071138.98D5B6E@keescook>
-References: <Z8-Snz86Xfwdlyd7@kspp>
+	s=arc-20240116; t=1744051238; c=relaxed/simple;
+	bh=KVvTyyF0VkafWFfOugua/YDD0iLrXHMzMWGuCOsrYSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RQugTYZ7unLP0YaJTqRdajapxPq4wEvXhffo5AKHvu7vkfS0TS+hQryhSyP1fi6rR0zX4AjZ8z9FLvpNUQEG9TEho4iwBgdgbluNg8hG6bs22k0JGnlpIL+jhpEmEt/yxuImaM6BCngF7BkdiNjYWpaseRr1cfmSckO4sj8I4bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dDe7pOnG; arc=none smtp.client-ip=209.85.219.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f196.google.com with SMTP id 3f1490d57ef6-e6df32ad351so3867835276.2;
+        Mon, 07 Apr 2025 11:40:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744051235; x=1744656035; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/KJ1Yxh0RTA5B17N4EwbA//OrbDLUv7EVB4eL3fHgUo=;
+        b=dDe7pOnGefynPP4DrcE7D5MGivvfnvbWok0qT64HCzgLODhPBiyp0z7Lds5tYJjayf
+         n1U8GnruNI9s+9eKDq15Dvhkn2Zn5E9i8vNRbydtkMDFvwKMiZSEXx35TKOqLTn9qAEz
+         6eq8qrhtG8V8PvvrrOPeB/c0/mb0Ly2rdRjmudYZfFGSYl8xJEeFU/CXOghvU028R2Gb
+         VgZ8OIhMDypQsrBdVwKPbH1i7ZWlWD+QZAg+exz/maz6m2A3OsdhFMqWUiPvWr9hsdRA
+         QKepbqiEl+Bev0fvI2HQOgsY6x3DMrNgbEzoj3DWaFfA5gQwLenZWa6aSU8HJ6t7+7Bo
+         omqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744051235; x=1744656035;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/KJ1Yxh0RTA5B17N4EwbA//OrbDLUv7EVB4eL3fHgUo=;
+        b=S304U+/NT8+nPnsXy8RrIdAaMVgZIxm/tcCMXwDGk5oPWhu2l+fHy6h5uNHPaROAZU
+         Y2JZRcqVugCvcT0MOQl7GTOBdYVVEYP7KvtYD7uorJfRhTu8ow7Ufw1AqwviUuoC2+xf
+         9ULCfPJxjdmtLkxJRnYEcZIKwbHWw8H1k+vVeLoT+gxIxQ0kDTZfiSLzbmuOVNxLIQco
+         ft5u5xyrv3x/stnLh4D11e+qm2s7ycpkQg9M/9bPJPZ9jboSj/TIZRxaMtFPe1UinLeH
+         jFqQfP6r86FsdJPVX6HN0Z1XMOsbgaF/acczgFEBxLrzt7B3q4anzruZyWXk8fe/hkcE
+         TocA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+n60672H/G6yOf6i0/u8rRKhoY/Idmf92nR3gb1r55COnV+XyY8MncDLGy356CXZGQaQGFWxe@vger.kernel.org, AJvYcCWQqVeaiyX9IgoLHSU8c3smjlxuOPdolXb1ShMu43Uhylkm2GlkiWbQJ2C8BXegxT3+JJrnERP0xSfqY2Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTmK9KbRt0P1SBcv+h59qfc1SES93M2lmGgDAv+IyKfzsC4AoC
+	qpkOw10OyRqlsIupXhwe1L0lr/D9TmyigzbGgZxMUG9WiAliSGwMn4LwkZsy
+X-Gm-Gg: ASbGnct14TjN0QdEQ/Bi40N1w8V8PVlTvEI2J3vwcKoPH2NVuoa6cvn1hSXI77KRwoQ
+	x2Uv61qxR3xRNKt7vGvGVbOupfUyhzpl+XTcFR/5WUDImwbmGKv6uG3hVr3xOsLle2c5WCk13U9
+	byONA+utmECFMxBCI/dgtmaoYoiVrlCKEznDnPomm8m1pthW199kGuZe4+30A0lMrHU5dv6WfCw
+	MahqvvBhWo6JTA9ATKr/kWeFdD43d3oaJXGGTbQlIKkwaY5phLXTLH6OYehS+H6V+DnVf9N7bkJ
+	70kW+jO5DUwDUtzP0X0RcG7e+9KgFC2Sk3vsEO74++Nqx9UWNt3W7FMI6TvAX6MmyIg=
+X-Google-Smtp-Source: AGHT+IEA/4VSGPViRd6mU6bh7fnFDXSOD8VnOzbhsOivdiFta/wUWZmqwIG46N9Ui62wNQSHOr70hA==
+X-Received: by 2002:a05:6902:a86:b0:e6d:ddb7:357c with SMTP id 3f1490d57ef6-e6e1c457da3mr23929156276.48.1744051235400;
+        Mon, 07 Apr 2025 11:40:35 -0700 (PDT)
+Received: from [10.102.6.66] ([208.97.243.82])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e6e1c22c23csm2145425276.42.2025.04.07.11.40.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Apr 2025 11:40:35 -0700 (PDT)
+Message-ID: <70d1fca7-5549-4b3f-b376-38443ca3a171@gmail.com>
+Date: Mon, 7 Apr 2025 14:40:34 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8-Snz86Xfwdlyd7@kspp>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v3 net-next 0/3] Add support for mdb offload failure
+ notification
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Joseph Huang <Joseph.Huang@garmin.com>, netdev@vger.kernel.org,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Roopa Prabhu <roopa@nvidia.com>,
+ Nikolay Aleksandrov <razor@blackwall.org>, Simon Horman <horms@kernel.org>,
+ linux-kernel@vger.kernel.org, bridge@lists.linux.dev
+References: <20250404212940.1837879-1-Joseph.Huang@garmin.com>
+ <20250407102941.4331a41e@kernel.org>
+ <af01e665-08bb-4b60-ba0b-1784dd8a5ce3@gmail.com>
+ <20250407113758.2fee3e4a@kernel.org>
+Content-Language: en-US
+From: Joseph Huang <joseph.huang.2024@gmail.com>
+In-Reply-To: <20250407113758.2fee3e4a@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 11, 2025 at 12:02:15PM +1030, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
+On 4/7/2025 2:37 PM, Jakub Kicinski wrote:
+> On Mon, 7 Apr 2025 14:15:31 -0400 Joseph Huang wrote:
+>> - Should the re-post be v3 (no change) or v4 (bump)?
 > 
-> Move the conflicting declaration to the end of the structure. Notice
-> that `struct ieee80211_chanctx_conf` is a flexible structure --a
-> structure that contains a flexible-array member.
+> Doesn't matter much, but probably v4 is less confusing.
 > 
-> Fix 30 of the following warnings:
+>> - Do I re-post after 6.15 is released? Around what time frame (so that I
+>> can set a reminder)?
 > 
-> drivers/net/wireless/ath/ath12k/core.h:298:39: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> No, no, I mean very soon. Like tomorrow. The merge window is when
+> maintainers merge their tress up, rather than when we merge code
+> from contributors. It's a bit confusing. Merge window open ==
+> normal contribution closed, and vice versa.
 
-Hi, just checking in on this patch. Is some adjustment needed for this
-to land?
+Got it. Thanks for the clarification. Will re-post tomorrow.
 
-Thanks!
-
--Kees
-
-> ---
->  drivers/net/wireless/ath/ath12k/core.h | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath12k/core.h b/drivers/net/wireless/ath/ath12k/core.h
-> index 3fac4f00d383..d6b4c4d2c400 100644
-> --- a/drivers/net/wireless/ath/ath12k/core.h
-> +++ b/drivers/net/wireless/ath/ath12k/core.h
-> @@ -295,7 +295,6 @@ struct ath12k_link_vif {
->  	int txpower;
->  	bool rsnie_present;
->  	bool wpaie_present;
-> -	struct ieee80211_chanctx_conf chanctx;
->  	u8 vdev_stats_id;
->  	u32 punct_bitmap;
->  	u8 link_id;
-> @@ -303,6 +302,13 @@ struct ath12k_link_vif {
->  	struct ath12k_rekey_data rekey_data;
->  
->  	u8 current_cntdown_counter;
-> +
-> +	/* Must be last - ends in a flexible-array member.
-> +	 *
-> +	 * FIXME: Driver should not copy struct ieee80211_chanctx_conf,
-> +	 * especially because it has a flexible array. Find a better way.
-> +	 */
-> +	struct ieee80211_chanctx_conf chanctx;
->  };
->  
->  struct ath12k_vif {
-> -- 
-> 2.43.0
-> 
-
--- 
-Kees Cook
+Thanks,
+Joseph
 
