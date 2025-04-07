@@ -1,132 +1,156 @@
-Return-Path: <linux-kernel+bounces-590736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2857A7D64B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:41:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F3E5A7D64D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 126433B4927
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:36:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA6E3421562
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C1822652D;
-	Mon,  7 Apr 2025 07:34:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCBE225A22;
+	Mon,  7 Apr 2025 07:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b4V1R35b"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="qOGA7VQq"
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC1B19CC05;
-	Mon,  7 Apr 2025 07:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DC71448D5;
+	Mon,  7 Apr 2025 07:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744011269; cv=none; b=QSr4Z2hfjqF1mKda7/A4KJlV+/NtuWq/lti1Mr3/XsukEuJgSS255ZKQOfS4cCyBtyY0vVOf79gs8kly8I2ku9G/rsX9U96e/VEbmyiiYuDGYSrlSiwIof1SDiyMrW+/jCCOZwctV3eH20fNxg0d1khXtf2Ps5qRn87Jgvsb9/A=
+	t=1744011462; cv=none; b=R95TCyCGo82nkMzRewt/bV+Fm3APjyb+nkMeTGIQC2+jdLbENkh/OBnpoT2kjYH3WGr89DVckQkPkG4LQ81Ie68MjJrhJX0V67gnfVwqtWTQsFzkL0z+rJhC9Fgtk4Eq/gw6cKqcor6kpqlu5fP5wXZj6xJQTpFZVZcOZj7U14E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744011269; c=relaxed/simple;
-	bh=OvFTZWVxok7Yh7TM8jJco47iNhMsnYLxmLRrKQQw3Bc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VhVRGp9RSrva9cyx58QFgkcsvksZlbe2kep6FZFPlcI2ZmSgLa5M++GJ4O2cNASZUMFnS688rofBVaqRpBadej1wmMz6jja+/u2C8leN1iSXHUhHO07ydrrmttBUl8A84e3AQ+US0vkQm1JrH5DeHxC+H77aqam2KSMYG6M9X+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=b4V1R35b; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=E3wml/8+r4IsbKmjPypYCwVOPWR42TPuEreb9gSDrb8=; b=b4V1R35boRkA2HQoNEBDzhpItv
-	haipoU4Zie4sTAAGE83MMpjUFKpI1KRVgAJLMkLn5rbJS4aZYLo+eyswJM9pO/rcXPtrWH66rxCGu
-	61b8TqV+E7afjGroLw7yOuLuX3kV+EkJK9eO5OXxQIwmBEe2HPHfhwXbjL9s2/fsAdFDx/ypm5vvf
-	d0tOt6egMbf53SnpzXLwX1rFCxiDTx4ygSTb9Jf2bxGXlpN6vrkphSGLIvuWU6MvHXhCydrD9CFYh
-	NHHh6tFEoJibIj4vdpHNWjP/ogZpqYnePdoVM+mb5yJucEHk/3aP0PxqRG1uU8mmglqWe5jt0Sdw3
-	ARAmV9UQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u1gzy-0000000GnWG-3Lu5;
-	Mon, 07 Apr 2025 07:34:26 +0000
-Date: Mon, 7 Apr 2025 00:34:26 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Christoph Hellwig <hch@infradead.org>, virtio-comment@lists.linux.dev,
-	mst@redhat.com, Claire Chang <tientzu@chromium.org>,
-	linux-devicetree <devicetree@vger.kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	=?iso-8859-1?Q?J=F6rg?= Roedel <joro@8bytes.org>,
-	iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-	graf@amazon.de
-Subject: Re: [RFC PATCH 1/3] content: Add VIRTIO_F_SWIOTLB to negotiate use
- of SWIOTLB bounce buffers
-Message-ID: <Z_OAAthpLmmyKsXM@infradead.org>
-References: <20250402112410.2086892-1-dwmw2@infradead.org>
- <20250402112410.2086892-2-dwmw2@infradead.org>
- <Z-43svGzwoUQaYvg@infradead.org>
- <148a3c8ee53af585b42ec025c2c7821ad852c66c.camel@infradead.org>
- <Z-46TDmspmX0BJ2H@infradead.org>
- <05abb68286dd4bc17b243130d7982a334503095b.camel@infradead.org>
- <Z-99snVF5ESyJDDs@infradead.org>
- <fb7ea3ee5bf970fa36b012e16750f533b72903a0.camel@infradead.org>
- <Z--W_JagTSyhYqzk@infradead.org>
- <3251F79D-4838-4C89-80BF-6EB19076833A@infradead.org>
+	s=arc-20240116; t=1744011462; c=relaxed/simple;
+	bh=QwylYaArHciXtrOfCdsCAGn0Ril2BBTKFUXlFhVuIeU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PjR+J9MZnfWM2iDRQo9b/MbsAT7mJxHitV7TMrF3AvAT0g5iha7aDLKJA2TMtIjNRvZaF7VhQpOEJYBCf36ouvXEJ2Y5Ah4XhymiBW7bMdkPJTpo1Sq0IK6MC2Gj+Qja9oR8W0YKZLTuiJbRuMYfMszK+UPIjfP/O0PiLh1/kCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=qOGA7VQq; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1744011441;
+	bh=WlmB1lqRNxFbFMYPeJr4njtQ9mNImQJWs4aHfijngHw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=qOGA7VQqyAMftpEkBpZiIHO/vAKbQPjA4PuHhTseqUp3ikxsycsk+5B05vwGy5wJf
+	 KYji73/OtS49J0u/ujdzxP/DBPBkMdINMD0ITLkP5eLQ4A2qyINvJeoSK2pObpRozZ
+	 PoWA7wQN00W940eeJO7vAOwHzz/eNqhfsxFLmMKw=
+X-QQ-mid: bizesmtpip3t1744011395t5aaab9
+X-QQ-Originating-IP: CFrrbh+XKBuy56Bc+1fT2TuamGrReuar4te8VuaaenA=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 07 Apr 2025 15:36:33 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 5810228923210500629
+EX-QQ-RecipientCnt: 9
+From: WangYuli <wangyuli@uniontech.com>
+To: wangyuli@uniontech.com
+Cc: guanwentao@uniontech.com,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	macro@orcam.me.uk,
+	niecheng1@uniontech.com,
+	tsbogend@alpha.franken.de,
+	zhanjun@uniontech.com,
+	Chen Linxuan <chenlinxuan@uniontech.com>
+Subject: [PATCH 1/6] MIPS: dec: Only check -msym32 when need compiler
+Date: Mon,  7 Apr 2025 15:36:17 +0800
+Message-ID: <EE81D854B8704705+20250407073622.495364-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <11740B01E659CAFF+20250407073158.493183-1-wangyuli@uniontech.com>
+References: <11740B01E659CAFF+20250407073158.493183-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3251F79D-4838-4C89-80BF-6EB19076833A@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MtJoEQFRGvIzVQ3Lf23uvfe1z0b9qlGOJweMha9cFje2jw4lX6tAQ0Zb
+	kuI0O8SieADnFc4LbF3dxdAoueMeZ+10JAYGFMsJi3AvT3xAOdkBW4bOrUGWeC7tBnW4S66
+	LmKjlVi8kyn2rN7a7XJVjVrGwT/wQ05TSnxOSFk/oyPnI3lJKVGYadV4rCnUvAz3zqwl+0x
+	9RhLp36BsN1wBPF16eRrDu9kB9KinLpmDHU7PSi+DF+so37TaseJTH5UPVy8QWMkminV8a/
+	r/vAX8jI12qnHiLF7pMsFaRB+lW6Nd5/HylBPBXS3oVv7hWce+S7o07Jne0/VpfP8TGIqmp
+	CpFVUJtUMVh7AsJVx7fxavHeQFQpiuJYU4Ia9rJttnsVAb/9pXaK7+K5secvpr+UWdcLkoI
+	UjDW3TZdCq4dhAnmRJ7cA0osAEw30ewX8RPwJa2yvfJsfTrnCO17JBKTgd7cBSFf0yrJB9K
+	5FyZRvoKyncfBVj0czEGKTV13Z2qfzQpJX8qvp2+ncBOeN8Ga565yP0yOZlnt5p/VXmgToY
+	4Py9gLel3hnh6zIpLb8i0ebtRz79IoLuY/Zx6jmbBy/m2LmdtmQN6M8dmTPjwDKon/iT/j7
+	5G1TNE9eJlXMDmoc9VnteVcBV7+pzclz6iSdGCvWjuXMh+Ipk4gvcD1lv/ymSUgcMCXfvk2
+	tkVZeH3YubXzu9w+BrwZTMDsIWpx6H6YW+zpjo58wLRY/SxG/NQtSnmNVFTEKLdAb7htJjl
+	NKUvb20M2CinpkmouJR92IEpmh0MKb4JTQGhUN5nzuz3G82j9pUdH+GiDiNvyq3uH9OgkrQ
+	zbQyJKO/08wxgeGoP5oRwqLjAYcgpyGdr3efTBFRyoY0wCk2NYlYYna5+XR+910YO4cRMvf
+	AWBYCk61NctT6X7mA+vH+++EY4psfb+2rTQ57UfHXRmDlxzCjzQOSukrQ4+UQCXsyhMW/fW
+	MZF/p4Ian+5Smb0fkaB1Rkni1iEJtgeV6zhVgN9sPg7qhx4z8xyWtkmh9JgJjYzBWw1fbxp
+	Y2SBam3eYBxX+OAbaT+QECnIytohb6/e/8KU1MHLYACIL00C84
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-On Fri, Apr 04, 2025 at 10:39:35AM +0100, David Woodhouse wrote:
-> >> So "for the emulated devices, just use a device model that doesn't do
-> >> arbitrary DMA to system memory" is a nice simple answer, and keeps the
-> >> guest support restricted to its *own* standalone driver.
-> >
-> >It's also one that completely breaks the abstraction. 
-> 
-> Hm? Having a device that simply doesn't *do* any DMA surely doesn't break
-> any system DMA / IOMMU abstractions because it's no longer even relevant
-> to them, which is kind of the point.
-> 
-> Which abstraction did you mean?
+During 'make modules_install', the need-compiler variable becomes
+null, so Makefile.compiler isn't included.
 
-Implementing a DMA less device is fine.  Implementing a DMA less virtual
-device to work around the lack of CoCo shared bounce buffers in the
-system is.
+This results in call cc-option-yn returning nothing.
 
-> 
-> 
-> > I still don't
-> >understand what the problem is with having the paravirtualized devices
-> >on a different part of the virtual PCIe topology so that the stage2
-> >IOMMU isn't used for them, but instead just the direct mapping or a
-> >stub viommu that blocks all access.
-> 
-> It can't have a direct mapping because the VMM can't access guest
-> memory. It has to be blocked, which is fine.
+For more technical details on why need-compiler is null during
+‘make modules_install’ and why no compiler invocation is actually
+needed at this point, please refer to commit 4fe4a6374c4d ("MIPS:
+Only fiddle with CHECKFLAGS if need-compiler") and commit
+805b2e1d427a ("kbuild: include Makefile.compiler only when compiler
+is needed").
 
-I only mentioned direct mapping in not having an IOMMU.  I fully expect
-it not to work.
+Commit a79a404e6c22 ("MIPS: Fix CONFIG_CPU_DADDI_WORKAROUNDS
+`modules_install' regression") tried to fix the same issue but it
+caused a compile error on clang compiler because it doesn't support
+'-msym32'. Then, commit 18ca63a2e23c ("MIPS: Probe toolchain support
+of -msym32") fixed it but reintroduced the CONFIG_CPU_DADDI_WORKAROUNDS
+`modules_install' regression.
 
-> But that's only part of the picture — then how do you actually get data
-> in/out of the device?
-> 
-> By having on-device memory and not attempting DMA to system memory,
-> perhaps...? :)
+Wrapping this entire code block with #ifdef need-compiler to avoid
+all issues is the best solution for now.
 
-By implementing the discovery of a shared pool in host memory as
-discussed in another branch of this thread?
+To get rid of spurious "CONFIG_CPU_DADDI_WORKAROUNDS unsupported
+without -msym32" error.
 
-> >describe this limitation, which is much better than hacking around it
-> >using an odd device model.
-> 
-> It still has the problem that existing drivers in all operating systems
-> produced before 2030 will see the device and try to use it as-is, with
-> no comprehension of this new thing.
+Link: https://lore.kernel.org/all/alpine.DEB.2.21.2502120612000.65342@angie.orcam.me.uk/
+Link: https://lore.kernel.org/all/alpine.DEB.2.21.2307180025120.62448@angie.orcam.me.uk/
+Fixes: a79a404e6c22 ("MIPS: Fix CONFIG_CPU_DADDI_WORKAROUNDS `modules_install' regression")
+Reported-by: Maciej W. Rozycki <macro@orcam.me.uk>
+Closes: https://lore.kernel.org/all/alpine.DEB.2.21.2501030535080.49841@angie.orcam.me.uk/
+Co-developed-by: Chen Linxuan <chenlinxuan@uniontech.com>
+Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ arch/mips/Makefile | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Given how much enablement the various CoCo schemes need it won't work
-anyway.
+diff --git a/arch/mips/Makefile b/arch/mips/Makefile
+index d9057e29bc62..1fffc6cf8b52 100644
+--- a/arch/mips/Makefile
++++ b/arch/mips/Makefile
+@@ -284,6 +284,7 @@ entry-y				= $(shell $(objtree)/arch/mips/tools/elf-entry vmlinux)
+ cflags-y			+= -I$(srctree)/arch/mips/include/asm/mach-generic
+ drivers-$(CONFIG_PCI)		+= arch/mips/pci/
+ 
++ifdef need-compiler
+ #
+ # Automatically detect the build format. By default we choose
+ # the elf format according to the load address.
+@@ -304,7 +305,8 @@ ifdef CONFIG_64BIT
+       $(error CONFIG_CPU_DADDI_WORKAROUNDS unsupported without -msym32)
+     endif
+   endif
+-endif
++endif # CONFIG_64BIT
++endif # need-compiler
+ 
+ # When linking a 32-bit executable the LLVM linker cannot cope with a
+ # 32-bit load address that has been sign-extended to 64 bits.  Simply
+-- 
+2.49.0
 
-Btw, you mail formatting in the last days went completely crazy.
 
