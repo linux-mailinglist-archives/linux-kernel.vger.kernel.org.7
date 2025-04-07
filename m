@@ -1,251 +1,158 @@
-Return-Path: <linux-kernel+bounces-591245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43A8CA7DD23
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:05:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 970C7A7DD1B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C27816D5A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:05:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90C931890F2A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED402475D0;
-	Mon,  7 Apr 2025 12:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="bbpsbSJo";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="bbpsbSJo"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2052.outbound.protection.outlook.com [40.107.103.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FF723ED5F;
+	Mon,  7 Apr 2025 12:04:42 +0000 (UTC)
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4012724337D;
-	Mon,  7 Apr 2025 12:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.52
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744027526; cv=fail; b=IJsb5ljaK3xU3PBV3Lv5gdapy9sXigYppwqk9qKelHWsrYHK0sLaBgLPRjLqjyE1bNMCc6U8OFQ2fhuMLt9ZLgy+0msbhPQpoPa6sGfLdT59CyiX/0T/bHeK1YuU3iA7WJbMUANRXjwKOxWgL/rSIpBaCCVd3avOTuo5UG5HZUU=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744027526; c=relaxed/simple;
-	bh=PwJWXnISw+IGopzEH3x7oBsXrwZunbY0+wT0T2DJUBY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A2M6sFw8lB0ammNmiHYloeePCDAp9hfeXGIaDqxlj7UIYqWKMbJkfwLG7aVmOI19Ejisx32Sa+gt9s/NCXUcmnQeisT6fRm7haV9jsdI2QsnEVoihJJs894q5SG+QWAVtK4jpi0fKtbq0ZdAt2uTj8fKvMAEiRsHhT+ZAeXDigM=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=bbpsbSJo; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=bbpsbSJo; arc=fail smtp.client-ip=40.107.103.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=DYVNK3FpWRSuSECng2/701IQaruIP4kIKyLuOyPiYVGJvmMEwjW4634uj6nmRMgvW6/tK3UG/WhI3R34V9VGPouPGcvR9xz8zpiy7Q3uJy5QVYoNMUxrf19wPVUMGCZTmiVuK3malx37pT/8nMB4KN8otbMN7TIZJHap6fAQpLegh4xwPnJ4aIdMA5pyh9EwlGVMU4XU8OlAItv9kYlrKAZA5qCUKtd/cZ6AVjshP1E/MQmhH8USlWNl2h2EFyM8ldihZkZfJ+9dIoqZIQ0TpEoWcWbbg+3rceX6o9dDYemAY0gUEeUrHTFOO16ml08hHmS6yQ1ykNX8QERiynO9EA==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lwtIsgm6+5I9RS46jfYuTDKSYr6X7KPDN7RL+HdOPwk=;
- b=Va9yWpnG/qd/PJfqL+HOjOlUza69KLLxcw7amxE72rWQCeVET6IqRHYl3dVhsHEKak9HCUeI+Rb0b9TS3SA2gY2vba8v2pYCyXahI6LNw6/lCVsNhJC06PtY08+b8wc+CtJ6dmzXJPtzAe4pYVZ+MmjhNTKz2avwoWXkZH+k6XiWmFYukt1R7PNGgQ3SrNEI9fpafAJyoUHWgacGCtFy9+TAcwhzYRBwDxh+U9zl+ubDXiSCeVcSF63P4PJwwZ9phDzrNIoCX8ZK6i6P1lIBf4Zop95wSimMOdTnvEW0TYnihGOOzeua0bVDgRAvTaP9b3LGq+WrOxrsdnEvOrwmZA==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=fail (sender ip is
- 4.158.2.129) smtp.rcpttodomain=kernel.org smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=0 ltdi=1)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lwtIsgm6+5I9RS46jfYuTDKSYr6X7KPDN7RL+HdOPwk=;
- b=bbpsbSJoofoHJcBg9Gm5SYhCTfcrvc3vyYJsws9zMq9f8XA69/y783Hu359e665eW9fWiQtIPFyTbUK6lnNW9rMTG1uyJJvWZvmGzn+huciKREs5+4Cso7N37cLFDXH7L04ONyG7XU2ZE+qO+3hQhTMAIqBtimP4RoNClj13XII=
-Received: from DU7P251CA0013.EURP251.PROD.OUTLOOK.COM (2603:10a6:10:551::34)
- by DU0PR08MB8422.eurprd08.prod.outlook.com (2603:10a6:10:406::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.31; Mon, 7 Apr
- 2025 12:05:17 +0000
-Received: from DB1PEPF00050A00.eurprd03.prod.outlook.com
- (2603:10a6:10:551:cafe::2d) by DU7P251CA0013.outlook.office365.com
- (2603:10a6:10:551::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.34 via Frontend Transport; Mon,
- 7 Apr 2025 12:05:17 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Fail (protection.outlook.com: domain of arm.com does not
- designate 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com;
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- DB1PEPF00050A00.mail.protection.outlook.com (10.167.242.42) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.22
- via Frontend Transport; Mon, 7 Apr 2025 12:05:17 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=h9XY1B+V7JiJ0eFHZ4otMDxw58ds3nNXgfIghJktnMbN1wkRlnhB966krXNCZQxLUIUe8ARvO3vU0WkGzUCoyXKQ3gB/dD+9OjOGDHjGyCCDjinH0tNQtQjUmQA+sy8mbWylsDJIF+9YR7+06LxL5+p+ZUXoy7lC0G8QYVEhf7ObuYWssHoKtAtZs0bntMahGbF3p7a0r79sI4UyViooN8u5bU3+bmhYfIEBz5oCdsQ02Hm4dNcpLU7aSDfFFXpuQV5NmpHjyNwz521YDk9A+ZTSeDJDNSlkpoY1IvG1k0FsjDbeVId7cKU+kV64pAdOq/u5fTn4K2HGYhHhp/lexQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lwtIsgm6+5I9RS46jfYuTDKSYr6X7KPDN7RL+HdOPwk=;
- b=yoFob91cegmYVqBf7WLHg1UmeGzmaQT2sR9apGIEUpCz09aZhO+09hmf+MRXLgHDLXvVXYJJAOgazAddMyrnd3pS0jLii7gKFtviW40k41cJ6F9jSllRdfIPXM3owKf5e8f71Folir6Pt4MbEY+QEApdESMGZyOYVZXwyuD1ARQwfsmsxqs3jjHJ+d2dPacZN61YhwNzqG6ZeahWZ4/AmoFKxKMy/lurvhJmhjietfcZNH+AJMmucPA6xv08yY3stun1RY43oRBxX0KNnHWL1++l2dE+bjruN+bLs7IkhOQlnAmvOPE4qaq+kUfYU2uOtkSQjlH7Ds22LkXrp8Gb5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 172.205.89.229) smtp.rcpttodomain=armh.onmicrosoft.com smtp.mailfrom=arm.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lwtIsgm6+5I9RS46jfYuTDKSYr6X7KPDN7RL+HdOPwk=;
- b=bbpsbSJoofoHJcBg9Gm5SYhCTfcrvc3vyYJsws9zMq9f8XA69/y783Hu359e665eW9fWiQtIPFyTbUK6lnNW9rMTG1uyJJvWZvmGzn+huciKREs5+4Cso7N37cLFDXH7L04ONyG7XU2ZE+qO+3hQhTMAIqBtimP4RoNClj13XII=
-Received: from AS4P195CA0012.EURP195.PROD.OUTLOOK.COM (2603:10a6:20b:5e2::18)
- by AS2PR08MB10323.eurprd08.prod.outlook.com (2603:10a6:20b:5fe::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.34; Mon, 7 Apr
- 2025 12:04:43 +0000
-Received: from AM4PEPF00027A6B.eurprd04.prod.outlook.com
- (2603:10a6:20b:5e2:cafe::3f) by AS4P195CA0012.outlook.office365.com
- (2603:10a6:20b:5e2::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.34 via Frontend Transport; Mon,
- 7 Apr 2025 12:04:43 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 172.205.89.229)
- smtp.mailfrom=arm.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=arm.com;
-Received-SPF: Fail (protection.outlook.com: domain of arm.com does not
- designate 172.205.89.229 as permitted sender)
- receiver=protection.outlook.com; client-ip=172.205.89.229;
- helo=nebula.arm.com;
-Received: from nebula.arm.com (172.205.89.229) by
- AM4PEPF00027A6B.mail.protection.outlook.com (10.167.16.89) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8606.22 via Frontend Transport; Mon, 7 Apr 2025 12:04:43 +0000
-Received: from AZ-NEU-EX04.Arm.com (10.251.24.32) by AZ-NEU-EX06.Arm.com
- (10.240.25.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 7 Apr
- 2025 12:04:27 +0000
-Received: from AZ-NEU-EX06.Arm.com (10.240.25.134) by AZ-NEU-EX04.Arm.com
- (10.251.24.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 7 Apr
- 2025 12:04:26 +0000
-Received: from arm.com (10.1.35.30) by mail.arm.com (10.240.25.134) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39 via Frontend
- Transport; Mon, 7 Apr 2025 12:04:25 +0000
-Date: Mon, 7 Apr 2025 13:04:24 +0100
-From: Yury Khrustalev <yury.khrustalev@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <broonie@kernel.org>,
-	<anshuman.khandual@arm.com>, <joey.gouly@arm.com>, <maz@kernel.org>,
-	<oliver.upton@linux.dev>, <frederic@kernel.org>,
-	<shameerali.kolothum.thodi@huawei.com>, <james.morse@arm.com>,
-	<mark.rutland@arm.com>, <huangxiaojia2@huawei.com>,
-	<akpm@linux-foundation.org>, <surenb@google.com>, <robin.murphy@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nd@arm.com>
-Subject: Re: [PATCH v2 1/3] arm64: add FEAT_MTE_TAGGED_FAR feature
-Message-ID: <Z_O_SHiQwr-ZWw52@arm.com>
-References: <20250403172758.67106-1-yeoreum.yun@arm.com>
- <20250403172758.67106-2-yeoreum.yun@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F50822D7BD
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 12:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744027482; cv=none; b=f5Jh8t+qBGuQ0Mjqw3OezBbCvB2IgiKHqIH4Vdv6QshIxJytkgXANTopUkyIb3Nl1uhHVs8PExA7v9JSJOq1nhOvShvygtMrXDyhNV35QvvKhnXOIuMLOVhP9NmF+1NCjA+QCcbMsXsuprOXHL1vvQQQImGDakLRXzNwixPfugk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744027482; c=relaxed/simple;
+	bh=0MxjhAAPB13K4pmVDzXzWu94L//5QbjDS795/16AcBo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=D5jjXNENjjgGEvGRWhVYpHDsIemT9dRe9M2e3UpjrBk7GG+rlrwHULIAzYz4boUg/nK4I7wGX/oNSDA+N7Shbs2e8ycouhgsJQRSwaRQArinB4lS4Cg6OJ2huZ+hu3gct3c5a/QuhxmcGJ4xgJ5Iwm5sGVJSoQyATerWZ0f8I8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E350243163;
+	Mon,  7 Apr 2025 12:04:28 +0000 (UTC)
+Message-ID: <4dd5d187-f977-4f27-9937-8608991797b5@ghiti.fr>
+Date: Mon, 7 Apr 2025 14:04:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250403172758.67106-2-yeoreum.yun@arm.com>
-X-EOPAttributedMessage: 1
-X-MS-TrafficTypeDiagnostic:
-	AM4PEPF00027A6B:EE_|AS2PR08MB10323:EE_|DB1PEPF00050A00:EE_|DU0PR08MB8422:EE_
-X-MS-Office365-Filtering-Correlation-Id: e9a6a776-686e-460a-e848-08dd75cc765c
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?Gc2KgcFImpM6FQd5MWvAl4Q0eHe+ygc9jMDeFMOyy/uNuPVL76DF1NG5eX66?=
- =?us-ascii?Q?nXksgTacgp1FIXvn3P3Z3wx14GBrE9MIBz+SljJEsg8Z7Vqz5p5F0n+AzuN8?=
- =?us-ascii?Q?WNR+IpU0FekhlhmbidLIU3vTGwedNTaw0BwuObmXI03Pl+5BRy1phf5ZFLLQ?=
- =?us-ascii?Q?jg/MTZVQhECKEA5NN2aNezRUMFouT7A9mA7eKs34jvULn7MyLcoDWNc1sB7C?=
- =?us-ascii?Q?LrLXywz/524E7OuCd9HXAWFAsQr6HLxcTDB1POQmwYOxWLEG7N2ErvikIMbE?=
- =?us-ascii?Q?kEP+IdmCQlL4VZTHNXCmgU3bYff30KwDmBSO8By7ORy+hZFgW0POESNPYGuI?=
- =?us-ascii?Q?xHsUY75RJceKXTu+JkOn9G0ZRnUoQ7Kku2PZO0Q/mYXmaj3kZDwzlAByrV8d?=
- =?us-ascii?Q?DkTrTzT5yCPYdvkn4W/l4KEdiwZsd0Tln25Y2wTvI17SqrntBSyd9bzmMsGR?=
- =?us-ascii?Q?8PvYJ1rJvEWISktPxYFI9ZqwSv+bMGPGGGTm2zrZ04Tag22IBNrZHO9L39rl?=
- =?us-ascii?Q?xjJuyQE94rWiINYzrvETbJFFajhiTAn4cBrcRx2p2ioez01MxF9pc237424a?=
- =?us-ascii?Q?AftAoIcxFukMGxrXRzsINRxIzyhm+QCPDSWHOs/j/0vGxIVC5HxtrFbmsH2B?=
- =?us-ascii?Q?eshhV+ucGZ/bs2Z2cLKUVXxb8iqry2L2vAcVeQW6BTEWA9oNXxjZRMLWNpAP?=
- =?us-ascii?Q?24LGQfSEJ/0k0RtHKmldjIyBUrrSjbIsAmkPsyi49edDZG3Szm5MqKFOCUYM?=
- =?us-ascii?Q?rBuWAYESjZIStsf22EjUV+G9ZBqGmQwvZERP+x7QPbu0EU4uhzmzHsk3s194?=
- =?us-ascii?Q?eT3vbolUJtMvg9Y8SWcKhCzUkDLI4TeAJX/IQrD/BiQsKxozbefBmKtw0CZd?=
- =?us-ascii?Q?Ozh0URNJw69PNr4GgVf1Dlow9bpn7tS0L2jo61LAT8MbrLwE4Yyv2EbF8qin?=
- =?us-ascii?Q?KktqjJIWVWlNTCH96mhOG3+mceFAfWMHJ65zpBVn13rrzQ1u424VioB8KFRK?=
- =?us-ascii?Q?dzbHjWA2JCfUAQ1Cy+cSsQcbH8VdwQxjpskRYdyoh4g+sI4p4nJhGEe5zpw7?=
- =?us-ascii?Q?jy6snE6EMKTGFM0L18TcvAaDNceeZ+HeuKPpT3Exd5kPyb5r9qm1kbH27svX?=
- =?us-ascii?Q?6YKTuea++YLu4ke6n1gDbZRNsiNFQ54+nebpB56iiuPk+zOZhPNzzeKNaQY5?=
- =?us-ascii?Q?4PmpyPjLPK7bQpCVtpuOXUpOkeNOkEyxXmVwhvPBQzCcV2SogvfdD9SdIG+x?=
- =?us-ascii?Q?fkr4GKjxMvi3atrFBNCNBb1tky5RpZ1PEFEkG0dT6E/cstOUEbpMC2anwPS6?=
- =?us-ascii?Q?XNTK2O5Wz/icfryRl68jsx0o8WW8tqK+hFLm6u0EiB8ANhXiP5ELQ2eGnoRo?=
- =?us-ascii?Q?nz41jP9GzxwddJqfJsJ3HCrg2ExpjJYZ8jHAO9iFAiwgqgYy5qYAYlvbQRkE?=
- =?us-ascii?Q?yGme/AXJNg8XbENjxxn8Ncxe6GSYyHFZTANPQw/xJ11RVE4HjvDT9rjTXIsJ?=
- =?us-ascii?Q?sXPjRqJ2wHeZTFt+W3/d1Y0h3Y0maBmoFiXK?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:172.205.89.229;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:nebula.arm.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR08MB10323
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DB1PEPF00050A00.eurprd03.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	6f591231-56f5-4599-8b94-08dd75cc61fb
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|14060799003|82310400026|376014|36860700013|7416014|35042699022;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?iD39ztm72as0JECLEfS3Ar86ASqis9kUAna9AWmsihM6BV7LTmClvwy77p9v?=
- =?us-ascii?Q?LF7+IMiGWBGoW0tatrI6u3jQteQAhAJfc1r+B+ltIjhp/T22qnb5frjMTlfp?=
- =?us-ascii?Q?0MycsbbevF1ixNRaWBKybBkc8Mplx2CWeYJR1MJDvRvTm9j1QPLflVS1AFGF?=
- =?us-ascii?Q?GvC7wh3haG3C28/wm+NeziaH2pghuzWTgKuoh3eCtysQ7MFe0XgaPofM2uHP?=
- =?us-ascii?Q?2mMp558pLVpUmM9EuUM5AMGUSjz2CUwfkmE3pBG9DrcEePQsCCNQL50de2IK?=
- =?us-ascii?Q?boh2ADq5Svl7r/e2spQ9HNxEB2QUrQ7ACouFt9jNy2DrneBDD4Mk1zlNvnWF?=
- =?us-ascii?Q?7FKwztw7B5aU76BIvSBtHkChk1iE1uxqcwagicR1zatQsFMZr3a64M6zyHnF?=
- =?us-ascii?Q?oMOGexXgECHBAH8BLY9bmUHZ1zWDdEf3D0OpXJ3dE6mWAk5gFTBkSx0X+AXN?=
- =?us-ascii?Q?m45vyGl4fJT8h2ajY11OlFk7iSdVT2tRmTsCIkMFIncMtIqwd7R13mnIAsmg?=
- =?us-ascii?Q?Z0+yuA8oMlHtmA1VVPQtfeBqtNQw99T8pZ/UeYOf3cSrQkdqrkoA8je23C08?=
- =?us-ascii?Q?ypEZP9pbHrYyel82X6bE3+I5WMmsQE0vIndiFX9g2MUouGiq0jwW5uRmL2PE?=
- =?us-ascii?Q?J4pBkMVwcRsx4aZ+NqgNhCknkBUhyeY3Mh3OZgm/go8NcmmDHU93h78j+o1X?=
- =?us-ascii?Q?G3CEW2UW5pkBMAKOpUI0f06hvywa9gyQCkm/O6cXv62HD37xeXVGYcD9OPLj?=
- =?us-ascii?Q?LSNH904FAzyBz5OVxeKAwRnQEj7DBp9kfrLQle0XJW7eUb8nMffp6eyfS7vu?=
- =?us-ascii?Q?M4E7hnzgAF7zRPKN4FTfoY+mjI/n3GtlaUfoz4/JgzAJ9dNo6FVcfZGwRkQ5?=
- =?us-ascii?Q?/OGvmcMGT0obyJf14njIy5c1xNtlUVzQkRGPqofzSK+FNu6cAb9yKHnqtNrU?=
- =?us-ascii?Q?gPoaWFF64zscPNDJgN2e9mGdFMI7mrc4s5WMG67W8hGygeg+FT9RpL7/8j4H?=
- =?us-ascii?Q?/ZX3mbehYNeU0f5g9lvJcW/mvg/sBYRFLx/neDv6OqMkEduwo1UlEF2IY6Kt?=
- =?us-ascii?Q?JlEagHu4jpTqIABq3/jhWXdIwUaI06guWYkxrkwg+A4MsgWqEzodNpGxqgxD?=
- =?us-ascii?Q?rozYFDaW3s0BlFJpaPB3w43pY4MLDj3kPH4726xoAaFttnoBpibTfZY7GcB4?=
- =?us-ascii?Q?Hxpyg98GkMw5hpZ4G9qsmRoLSqmWEguBxnRqtld7JRMrsqwy8vwAJsqlZhf8?=
- =?us-ascii?Q?GuIr0xWyHYxSlKaAg2NkLZ9JOf99OAB8UXQK6VWxFn88LSo+JB2QYhy7lSdU?=
- =?us-ascii?Q?EIYVrfEThOj4gq8SdSdknwDFJyy5Gdm/TKb3gUheEJ2OcBt7NKtdvQjsbk9R?=
- =?us-ascii?Q?4u5nV4KQvQpgPSpO0/qe5N9RP3K74j3Rs/ELjs6YMjdLSeT7kmtEQry5ZHLi?=
- =?us-ascii?Q?is8bCFjWHqupGeUf1NKvA3CPz9zv+1JuSAopHdJGO7c+MidHhw3L5zds6+dG?=
- =?us-ascii?Q?rqDtIWDGXW41iPEU0R+OW3+tXtSmOFISch7L?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(14060799003)(82310400026)(376014)(36860700013)(7416014)(35042699022);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 12:05:17.4963
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9a6a776-686e-460a-e848-08dd75cc765c
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB1PEPF00050A00.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR08MB8422
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/9] Merge arm64/riscv hugetlbfs contpte support
+Content-Language: en-US
+To: Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Ryan Roberts <ryan.roberts@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-mm@kvack.org
+References: <20250321130635.227011-1-alexghiti@rivosinc.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250321130635.227011-1-alexghiti@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddtudegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfhfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepveetvdfhvdeuheekvdettdegheetgeejiefgjeetvedtfeeuvddvtefhjeffgeevnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmeeisgemvdefgeekmeduvgduheemvdgrgeehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeeisgemvdefgeekmeduvgduheemvdgrgeehpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmeeisgemvdefgeekmeduvgduheemvdgrgeehngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopedufedprhgtphhtthhopegrlhgvgihghhhithhisehrihhvohhsihhntgdrtghomhdprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrghssegrrhhmrdgtohhmpdhrtghpthhtohepfihilhhls
+ ehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrhigrnhdrrhhosggvrhhtshesrghrmhdrtghomhdprhgtphhtthhopehmrghrkhdrrhhuthhlrghnugesrghrmhdrtghomhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhm
+X-GND-Sasl: alex@ghiti.fr
 
-On Thu, Apr 03, 2025 at 06:27:56PM +0100, Yeoreum Yun wrote:
-> Add FEAT_MTE_TAGGED_FAR cpucap which makes FAR_ELx report
-> all non-address bits on a synchronous MTE tag check fault since Armv8.9
-> 
-> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> ---
->  ...
->  arch/arm64/include/asm/hwcap.h               |  1 +
->  ...
-> 
-> diff --git a/arch/arm64/include/uapi/asm/hwcap.h b/arch/arm64/include/uapi/asm/hwcap.h
-> index 705a7afa8e58..7d22527a7975 100644
-> --- a/arch/arm64/include/uapi/asm/hwcap.h
-> +++ b/arch/arm64/include/uapi/asm/hwcap.h
-> @@ -143,5 +143,6 @@
->  /*
->   * HWCAP3 flags - for AT_HWCAP3
->   */
-> +#define HWCAP3_MTE_FAR		(1UL << 0)
+Can someone from arm64 review this? I think it's preferable to share the 
+same implementation between riscv and arm64.
 
-Acked-by: Yury Khrustalev <yury.khrustalev@arm.com>
+The end goal is the support of mTHP using svnapot on riscv, which we 
+want soon, so if that patchset does not gain any traction, I'll just 
+copy/paste the arm64 implementation into riscv.
 
+Thanks,
+
+Alex
+
+On 21/03/2025 14:06, Alexandre Ghiti wrote:
+> This patchset intends to merge the contiguous ptes hugetlbfs implementation
+> of arm64 and riscv.
+>
+> Both arm64 and riscv support the use of contiguous ptes to map pages that
+> are larger than the default page table size, respectively called contpte
+> and svnapot.
+>
+> The riscv implementation differs from the arm64's in that the LSBs of the
+> pfn of a svnapot pte are used to store the size of the mapping, allowing
+> for future sizes to be added (for now only 64KB is supported). That's an
+> issue for the core mm code which expects to find the *real* pfn a pte points
+> to. Patch 1 fixes that by always returning svnapot ptes with the real pfn
+> and restores the size of the mapping when it is written to a page table.
+>
+> The following patches are just merges of the 2 different implementations
+> that currently exist in arm64 and riscv which are very similar. It paves
+> the way to the reuse of the recent contpte THP work by Ryan [1] to avoid
+> reimplementing the same in riscv.
+>
+> This patchset was tested by running the libhugetlbfs testsuite with 64KB
+> and 2MB pages on both architectures (on a 4KB base page size arm64 kernel).
+>
+> [1] https://lore.kernel.org/linux-arm-kernel/20240215103205.2607016-1-ryan.roberts@arm.com/
+>
+> v4: https://lore.kernel.org/linux-riscv/20250127093530.19548-1-alexghiti@rivosinc.com/
+> v3: https://lore.kernel.org/all/20240802151430.99114-1-alexghiti@rivosinc.com/
+> v2: https://lore.kernel.org/linux-riscv/20240508113419.18620-1-alexghiti@rivosinc.com/
+> v1: https://lore.kernel.org/linux-riscv/20240301091455.246686-1-alexghiti@rivosinc.com/
+>
+> Changes in v5:
+>    - Fix "int i" unused variable in patch 2 (as reported by PW)
+>    - Fix !svnapot build
+>    - Fix arch_make_huge_pte() which returned a real napot pte
+>    - Make __ptep_get(), ptep_get_and_clear() and __set_ptes() napot aware to
+>      avoid leaking real napot pfns to core mm
+>    - Fix arch_contpte_get_num_contig() that used to always try to get the
+>      mapping size from the ptep, which does not work if the ptep comes the core mm
+>    - Rebase on top of 6.14-rc7 + fix for
+>      huge_ptep_get_and_clear()/huge_pte_clear()
+>      https://lore.kernel.org/linux-riscv/20250317072551.572169-1-alexghiti@rivosinc.com/
+>
+> Changes in v4:
+>    - Rebase on top of 6.13
+>
+> Changes in v3:
+>    - Split set_ptes and ptep_get into internal and external API (Ryan)
+>    - Rename ARCH_HAS_CONTPTE into ARCH_WANT_GENERAL_HUGETLB_CONTPTE so that
+>      we split hugetlb functions from contpte functions (actually riscv contpte
+>      functions to support THP will come into another series) (Ryan)
+>    - Rebase on top of 6.11-rc1
+>
+> Changes in v2:
+>    - Rebase on top of 6.9-rc3
+>
+> Alexandre Ghiti (9):
+>    riscv: Safely remove huge_pte_offset() when manipulating NAPOT ptes
+>    riscv: Restore the pfn in a NAPOT pte when manipulated by core mm code
+>    mm: Use common huge_ptep_get() function for riscv/arm64
+>    mm: Use common set_huge_pte_at() function for riscv/arm64
+>    mm: Use common huge_pte_clear() function for riscv/arm64
+>    mm: Use common huge_ptep_get_and_clear() function for riscv/arm64
+>    mm: Use common huge_ptep_set_access_flags() function for riscv/arm64
+>    mm: Use common huge_ptep_set_wrprotect() function for riscv/arm64
+>    mm: Use common huge_ptep_clear_flush() function for riscv/arm64
+>
+>   arch/arm64/Kconfig                  |   1 +
+>   arch/arm64/include/asm/hugetlb.h    |  22 +--
+>   arch/arm64/include/asm/pgtable.h    |  68 ++++++-
+>   arch/arm64/mm/hugetlbpage.c         | 294 +---------------------------
+>   arch/riscv/Kconfig                  |   1 +
+>   arch/riscv/include/asm/hugetlb.h    |  36 +---
+>   arch/riscv/include/asm/pgtable-64.h |  11 ++
+>   arch/riscv/include/asm/pgtable.h    | 222 ++++++++++++++++++---
+>   arch/riscv/mm/hugetlbpage.c         | 243 +----------------------
+>   arch/riscv/mm/pgtable.c             |   6 +-
+>   include/linux/hugetlb_contpte.h     |  39 ++++
+>   mm/Kconfig                          |   3 +
+>   mm/Makefile                         |   1 +
+>   mm/hugetlb_contpte.c                | 258 ++++++++++++++++++++++++
+>   14 files changed, 583 insertions(+), 622 deletions(-)
+>   create mode 100644 include/linux/hugetlb_contpte.h
+>   create mode 100644 mm/hugetlb_contpte.c
+>
 
