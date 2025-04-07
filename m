@@ -1,171 +1,128 @@
-Return-Path: <linux-kernel+bounces-591366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE4A6A7DEC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:17:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A94CA7DEC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92D9D1783B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:16:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7166188CC7C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3968825484E;
-	Mon,  7 Apr 2025 13:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC696253F12;
+	Mon,  7 Apr 2025 13:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="0Nlrh5hF"
-Received: from pv50p00im-ztdg10021801.me.com (pv50p00im-ztdg10021801.me.com [17.58.6.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="OREqnu70"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4328B253B53
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 13:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0856253F0C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 13:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744031757; cv=none; b=Vrdo+QLD6yXCEX+FLib+wDx8P3Fc1ghiSRtS55H1lqgmPvvlSoCiOvYFI6kP9iY47CBiaoNHRMNTCW4cDxt6O9icFTU8FTWNXCR8g1bc6+pzpurJ/AqkSirUvdFWY53LIIBPJEVb1hyIS/QLp5REAoyhlyUEFPQStOrw8TLYfZY=
+	t=1744031728; cv=none; b=EWk9jhDNQyjHFFr6zYEN+Ketdx9uKMZXdcWWAWLQDCGnf/4C/OgkQqSF8oHe2FB+lA9GZpzmq+PAofQ+k2XvDjwNqYgU52P2E09pQHx3ssm8Bg3G0LNZ1GbDoBqmZ9ssg/v3aERzJ+j6KbyMgB8QEqI8fv2glWUah3V7XmJg2QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744031757; c=relaxed/simple;
-	bh=XrX/Z+AOhfXmEUSaVhxUD9cmEn5LGPbbovm8Fw8fiFs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gtSLV8mtgFbLPuWn+U7TmC7aT5l9wTOzVPex9kkjsX6rI/eaRLERwSnFWb72D50tDmFSj3FaYzmaD2hTdlb5IqBi5A8/Pbw+eOcRWtGbFLdwhFiL6U3bkgEvy6bu/7KHKIcTyo9bG+B65xpJkax91VGJQgcR1gBbrL2fJDIigDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=0Nlrh5hF; arc=none smtp.client-ip=17.58.6.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=oFXzI48UtHlC5gVTKT4LJShhvIch9BxoEqw0fKpqk/4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme;
-	b=0Nlrh5hF70k5PHoBhb2eYeJt2px45N3je3kaQ5F9mridzEOH8j118rRFE2nc7gwPD
-	 q4AkEcyfwcwsKPFP38IAXj1W2rhT5FI2OiSqKZRgI0X0R7XLpUfHnfBeGW4fjH9P45
-	 BUsw9JfeFwstjvf3YJZOzM/e6YK+DKtFfVVul5HE+kSPAjPqW0NPVbx7+jcy8//YhR
-	 oqunN5O2b/XfOM60659TwJWmjWxqFfDYKI0rPUBf48Ylmd/yleeZsDLrYZm0wBDzx8
-	 aJvxfh0OtA8fg1DohpJ7MfaO3KMDLoN9DZv+HUsd7Dwp7rzRpMpszus7fjODqMdu0d
-	 STFU4pgWYJhYA==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10021801.me.com (Postfix) with ESMTPSA id 69C4420103AB;
-	Mon,  7 Apr 2025 13:15:49 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Mon, 07 Apr 2025 21:15:05 +0800
-Subject: [PATCH 2/2] lib/string: Improve str_has_prefix() performance
+	s=arc-20240116; t=1744031728; c=relaxed/simple;
+	bh=HgYlzcnLJ9b9/mpCUEd5T6pQNP655u5D2bo0QC6XM4w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OGPLdHMY8EFu+O9irQ0BdRq8JIZVkT87t+856bOHeAsoctQ1dKFOiauV6rdWRwaoxz1TFltLJIx8kRty2W9lSwb0InUdcoLq1/IVvjHCWdhOKGRfVKn1HjBz1eHj8CwLduHA1b0uu+ox+9ln42uUqspilG8Qd+4DM4EWGEY8Dgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=OREqnu70; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54b1095625dso5259796e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 06:15:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744031725; x=1744636525; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qjOh7XzZGVY4R8MmVTia4KQX1z2/N3OeHsPkBIQsJrs=;
+        b=OREqnu70ZL8CBgn3ojRabwvpHhTUQoobpg+ra+hOcP6rCtuzOtOgBj+MD66xoVJgrX
+         SB7x2THEIobkS4MmoljEPnZwqjm1t1YQOZnqUAYeWS/AegPLKVxEJzdhtu8XQVz3lhQg
+         k9cfNu6gBAToeutnDR7wfZbC4mdr3SFPMHt7tUQDdnPC48BGQ0qQDZh5XoVDgdhP3kyz
+         2MROhLX4hw9C7aKDIMDh8RshN8P+O78QWkklSNEpe95ocLruzDS/R9GzM65K4G5Cv3Di
+         GT4JxgY5Ft+LORhg1/IeV0jpdGK0ov83HruyNXNrMlBgyLZ9mBnApCFtKySQUhY4Mfwi
+         O7bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744031725; x=1744636525;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qjOh7XzZGVY4R8MmVTia4KQX1z2/N3OeHsPkBIQsJrs=;
+        b=JjXMWIM+OFs2DiadLOWmELlkkW+7dCcl1FA1kzjKZPCisHYC18TkCg5ImjE7R+DuQT
+         NZX5DD1Fin/HjtrSJTIMqUBofXDfO2uCkGTRJcJnvRSMoe2UGWdbmS1OE80RhCEMAAr/
+         2qrV830zd+L/nWjiq1CEzhVdDu3jZB+N/Gzprqd8QEymq6C4zIu38Uv5kapv1vHplkmV
+         q8ais3NR64ydgbj8FTGpJb4qIQHS6GjRhuEM/thi4Id397joiq8lu4+x1TdqY1HzwZzc
+         0Lq7UmjpSzqXcMZSsZ7HpfsoQEYtq29iwHD/TZITTg5XyYZ0qUy38hH0GQ41C5Megb8n
+         jEXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzTuwjN36nO0uGZkgMrdh7r1/L8kaPbROzKsCwzN61UJIT7+vREF0HzXjH3gKBV3nzq1q1ixX4LIl36PY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqF2S5XkImaR4M+nMgMtpwzCm4ojqAEgRHC4Ckl9oLauUSmENL
+	2jW0CyWDe20qdDmAPh0/i/024Wvo7TzTG2oG1n6o33reicw2/xs1RiPUfwuGoSm0n+xyoI5sq7n
+	RWcWjwnZedkefwFkAnKuC/OVTv9eeMCKuATcLRg==
+X-Gm-Gg: ASbGncsETbFpv34Xvvp+R8naljtXyg+lQGk45xGyBbQAtR0WRqgex9tLQjFERb8+Xcx
+	HgqjHVxE286h3dkjF3rhhJGsPRoS+1jibG8g+eCpZrJkxR9+o74N4pXOC6xxEMEQEMSi/GNtVW7
+	YdFZWplghDcF87INlEkSQ1hZmOtXZwLqzm0ctLhG5WE1nZ+sj0xUIa3U9CgQ==
+X-Google-Smtp-Source: AGHT+IHGh/udpIDf412kVmxk8cC6uRbVuJQNw0qJ5UZ+KPEK/XSf1l3aNBgq+8C7/E7v0WR/Tz7A5hPNiTW4JagzLhA=
+X-Received: by 2002:a05:6512:250e:b0:549:8f10:ec25 with SMTP id
+ 2adb3069b0e04-54c227936a6mr4385760e87.31.1744031724736; Mon, 07 Apr 2025
+ 06:15:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250407-imp_str_perf-v1-2-ed95d52964a4@quicinc.com>
-References: <20250407-imp_str_perf-v1-0-ed95d52964a4@quicinc.com>
-In-Reply-To: <20250407-imp_str_perf-v1-0-ed95d52964a4@quicinc.com>
-To: Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-hardening@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>, 
- "Rob Herring (Arm)" <robh@kernel.org>
-X-Mailer: b4 0.14.2
-X-Proofpoint-GUID: 2pNzYH1mkE44dWijZpEUiyG1UerlZF5X
-X-Proofpoint-ORIG-GUID: 2pNzYH1mkE44dWijZpEUiyG1UerlZF5X
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-07_04,2025-04-03_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
- mlxlogscore=843 mlxscore=0 phishscore=0 clxscore=1015 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2504070093
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+References: <20250401-gpio-todo-remove-nonexclusive-v2-0-7c1380797b0d@linaro.org>
+ <c8ca3c8a-3201-4dde-9050-69bc2c9152c4@sirena.org.uk> <CAMRc=Mcq9yag6yBswhW0OJ8MKzGBpscwo+UGpfCo2aha93LzXA@mail.gmail.com>
+ <846010c0-7dc1-421c-8136-9ae2894c9acd@sirena.org.uk> <CAMRc=Mff0TkeiHbM3TAJLJ2HYU_nnPFUpUjbWsdCnW6O4E=+gQ@mail.gmail.com>
+ <c3bb82f9-5a2f-4a14-9726-f3e10bf5d427@sirena.org.uk> <CAMRc=Mc_nXwvj_9w6w8cB3K58AVLHBLCV+MOO1z_6y+uuT86Og@mail.gmail.com>
+ <a484f0b2-c09a-4a6a-a30e-4c8660d755a6@sirena.org.uk>
+In-Reply-To: <a484f0b2-c09a-4a6a-a30e-4c8660d755a6@sirena.org.uk>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 7 Apr 2025 15:15:13 +0200
+X-Gm-Features: ATxdqUGTMDclH5TnKhaYhwXEVKf8DzhgQCWQOa-7tBSTsQlS14Edzh1z_6W0Qgc
+Message-ID: <CAMRc=MeFqvJ3g3GhrZzto+jfgCUhtcRRyWqx51gCkKhYUqtsGg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] gpio: deprecate and track the removal of GPIO
+ workarounds for regulators
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Wed, Apr 2, 2025 at 4:08=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
+e:
+>
+> > I believe pwrseq could actually be used to hide the enable counting
+> > for GPIOs behind a faux GPIO chip and the consumer would never see a
+> > pwrseq handle - they would instead use GPIO consumer interfaces and
+> > we'd have to agree on what logic would we put behind gpiod_set_value()
+> > (should it effectively work as gpiod_enable() meaning: value is 1 as
+> > long as at least one user sets it to 1?) and
+> > gpiod_direction_input()/output() (same thing: highest priority is
+> > gpiod_direction_output(HIGH) and as long as at least one user sets it
+> > as such, we keep it).
+>
+> Like I say that doesn't do the right thing since other users need to be
+> able to see when something changes on the GPIO.  If that just happens on
+> normal gpiolib then that complicates usage for the default case since
+> they now have to worry about things not actually happening when
+> requested which doesn't seem ideal.
 
-str_has_prefix() is frequently invoked to return length of the prefix
-string if a string has another string as prefix, but its performance
-is degraded by the strlen() loop contained.
+If I understand correctly, regulator_ena_gpio_ctrl()[1] changes the
+GPIO value (even if it's shared) and then notifies regulator consumers
+about a DISABLE event. Now if we'd be implicitly sharing the GPIO with
+an enable-counter, we could possibly emit an event that's a
+false-positive?
 
-Improve its performance by eliminating the strlen() loop.
+In any case: I'll allow myself to apply this series, as the
+description does not define a specific approach to take and instead
+just allows us to track the rework.
 
-Link: https://lore.kernel.org/all/20250113234643.GA3631169-robh@kernel.org
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-Cc: Rob Herring (Arm) <robh@kernel.org>
----
- include/linux/string.h | 21 +--------------------
- lib/string.c           | 33 +++++++++++++++++++++++++++++++++
- 2 files changed, 34 insertions(+), 20 deletions(-)
+Bartosz
 
-diff --git a/include/linux/string.h b/include/linux/string.h
-index e5f7defa277572719e1dbfdd264f3de6ef8544f1..394b76666ece0924c50264aaca39784d5630a2fe 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -533,25 +533,6 @@ void memcpy_and_pad(void *dest, size_t dest_len, const void *src, size_t count,
- 	       sizeof(*(obj)) - offsetof(typeof(*(obj)), member));	\
- })
- 
--/**
-- * str_has_prefix - Test if a string has a given prefix
-- * @str: The string to test
-- * @prefix: The string to see if @str starts with
-- *
-- * A common way to test a prefix of a string is to do:
-- *  strncmp(str, prefix, sizeof(prefix) - 1)
-- *
-- * But this can lead to bugs due to typos, or if prefix is a pointer
-- * and not a constant. Instead use str_has_prefix().
-- *
-- * Returns:
-- * * strlen(@prefix) if @str starts with @prefix
-- * * 0 if @str does not start with @prefix
-- */
--static __always_inline size_t str_has_prefix(const char *str, const char *prefix)
--{
--	size_t len = strlen(prefix);
--	return strncmp(str, prefix, len) == 0 ? len : 0;
--}
-+size_t str_has_prefix(const char *str, const char *prefix);
- 
- #endif /* _LINUX_STRING_H_ */
-diff --git a/lib/string.c b/lib/string.c
-index ea52c8509328358e436766b1186a82419d45089d..17f1a070b190debc3eaeff6d1ae45b55bae69b29 100644
---- a/lib/string.c
-+++ b/lib/string.c
-@@ -332,6 +332,39 @@ int strncmp(const char *cs, const char *ct, size_t count)
- EXPORT_SYMBOL(strncmp);
- #endif
- 
-+/**
-+ * str_has_prefix - Test if a string has a given prefix
-+ * @str: The string to test
-+ * @prefix: The string to see if @str starts with
-+ *
-+ * A common way to test a prefix of a string is to do:
-+ *  strncmp(str, prefix, sizeof(prefix) - 1)
-+ *
-+ * But this can lead to bugs due to typos, or if prefix is a pointer
-+ * and not a constant. Instead use str_has_prefix().
-+ *
-+ * Returns:
-+ * * strlen(@prefix) if @str starts with @prefix
-+ * * 0 if @str does not start with @prefix
-+ */
-+size_t str_has_prefix(const char *str, const char *prefix)
-+{
-+	const char *p = prefix;
-+	unsigned char c1, c2;
-+
-+	do {
-+		c1 = *str++;
-+		c2 = *p++;
-+
-+		if (c1 != c2)
-+			return c2 == '\0' ? p - 1 - prefix : 0;
-+
-+	} while (c2 != '\0');
-+
-+	return p - 1 - prefix;
-+}
-+EXPORT_SYMBOL(str_has_prefix);
-+
- #ifndef __HAVE_ARCH_STRCHR
- /**
-  * strchr - Find the first occurrence of a character in a string
-
--- 
-2.34.1
-
+[1] https://elixir.bootlin.com/linux/v6.13/source/drivers/regulator/core.c#=
+L2607
 
