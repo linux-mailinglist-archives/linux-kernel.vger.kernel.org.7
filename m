@@ -1,117 +1,185 @@
-Return-Path: <linux-kernel+bounces-590887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA50BA7D808
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:35:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25FB9A7D80E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:36:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0B2518918BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:34:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 416673B1451
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E742288CC;
-	Mon,  7 Apr 2025 08:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6B322A4DA;
+	Mon,  7 Apr 2025 08:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qmXG5bxb"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QpdX44Lg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F73225388;
-	Mon,  7 Apr 2025 08:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040EB22A1F1
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 08:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744014867; cv=none; b=KkKZRbAY4hRa0dplPO1IFvnvy2aT8XmeJS5mc4xz76oEQmG2hhCgMqdFG/B+dKie1ITjGPuXisMQ+OoqKcygFheGv5bbGnUWm86Kej4cNjnilVuku5lzDbKzdbqZye+qrdRuAMTM42/d1DN4IpY+QKOQwH0Iv0G9LSG5o1pKurI=
+	t=1744014879; cv=none; b=fAcwqhDvm9K8RTH6PLdH6pOk8IkhuWTXFn7duT/+xz0v4341bCR0bnZMbWFC0AW1GqCY4AiWwzL3hQyKanQQjuE1bT68EmPiT6EnDh6pzCnUOVRMKDZUFBuRz5lBnzC3CX+H7TxwtOk9lFUMcWaEn+wj98EKOg3nz2mAuWkI/z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744014867; c=relaxed/simple;
-	bh=Vhw4ZA9Ps2+xZXL2K1IJGg3PZdoZzGEMNfgJtyFl5LU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=MxAcq8xoOlsrUHxHrCEG0wGrKjJVuhC8FBw3rYAWjaynl/6QYgonnE1lhlFb1CXURyUtrzyJ2WUKyxIi2R3VlpuMvTIaoGvWRWYJwMO7yqt0KwtLw2eqFXJtoKwaiiUxDbO/cH5UJmXISZ1maJ6t9Un3Tr24LRKD8TFb31HDL40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qmXG5bxb; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1744014852; x=1744619652; i=markus.elfring@web.de;
-	bh=Dg+LGVaxeCMjrxNASaMRgp1m7d5it9SLyoZVjKU62jc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=qmXG5bxbKO7ypkQJt1m69ZkaibGHfDtDrfBsZkbKAPVRch/M25tf+hcOY37/XaNe
-	 wa+eNmegJZKqeZLKiPvnKHrYgqSdAtwN8VmXxhZN0N2BQovO9ZwY4pgI5W9cz0+US
-	 2uH7V57MvngGrwpQnc3jMZ1nH3F+8p4cTHieJ4J94OAmQQfK+DhXmA7jS5RJlI+5F
-	 gUq2KU4UV9iKr2YZrvkd3uXpfPRpu9pNr5b+MctVKVA4pVKbXIrKdMuy85ZUsbzPz
-	 3xN1kfghklWH174ii4wMRaciboFrCornfBqJgkN7FLKk6GZ/8bTCtH7f+U8fpoiz8
-	 Fi/tKheFUy4FxauFdA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.4]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MQ8ao-1tfnMp3iBE-00V9MC; Mon, 07
- Apr 2025 10:34:11 +0200
-Message-ID: <0d6e4dcc-2646-4694-9961-70049a71e7c1@web.de>
-Date: Mon, 7 Apr 2025 10:34:08 +0200
+	s=arc-20240116; t=1744014879; c=relaxed/simple;
+	bh=sLck2J+6PcjmSINGrDUpZvijf9T2VzrBWCePSK/Qvj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DwxixZVEL89lQFFLcQtp+Ms52CPI4ZjaybpgpewPwyaRFlCT0vjNFn/Ga7vDXJ8To9RmKeb5bDVy2bw1lIeNLyyPNlZ95NVpF3d+nGsFOpN/JWGkHRgQR6GTD/q0sxJ4knELFNm9B2Dn9Tdzwi9fN7gtAt48SEasK6lg30fbMjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QpdX44Lg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744014876;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RyTmsi9BhA0X2tfDIhwHRBuV/xgf5KDyDiyovwov3BE=;
+	b=QpdX44LgbzIPJTqRMIvF5PZ7fFBPXIgzvk6qPV4RxuarKW7iXOq4pvWTSW/Zej43/XdUdF
+	iNixCp2vkg5yQHU6fkczUuFRTPEqUxtcgcUyqhCIsd+iMKFv4NM+bESdAVyCUJ84U+ha/H
+	PspcaSKa/V/UJyKByhlhRLO3/94cYOs=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-622-_5u0o2lKO16vjU9iMFoadA-1; Mon, 07 Apr 2025 04:34:35 -0400
+X-MC-Unique: _5u0o2lKO16vjU9iMFoadA-1
+X-Mimecast-MFC-AGG-ID: _5u0o2lKO16vjU9iMFoadA_1744014874
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43eed325461so6101735e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 01:34:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744014874; x=1744619674;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RyTmsi9BhA0X2tfDIhwHRBuV/xgf5KDyDiyovwov3BE=;
+        b=YN5ZENLmUKiRlW0xxXdW31xVymoOCwbIf8WKPDnFbbKYrMDqGf50iffnAdiqCiXGRQ
+         wICsHSFY+6Q8CIEnOV7lIKRwDT5DI4HVG1iJ+4UddEOqnokUR+H3PBNs0Ki9yz5Cb5rp
+         4Zf489fLcSQfKMtHoDRcXbyM/PewGtDruaN3/7GQfO3mSFCzIoAdyms+KpsTyGVYeznJ
+         cCuW7KMeVJUURTptU+gOSfo9D+TVTsvvGEtrS787V1UvVYCSlrRmE0eoplcNUxmaRrow
+         883A6xRnf2jSS52xh+jBKyTaMNMdyZGJ9/Wg8MkjPp89iCsF1Ea5i5zXjhF5CitGBWP2
+         ZGlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGSunLmNwCTpCYGFHfqqcdPtq9TLMs4ajLk5aU/4hqCMdp7tQo7pZ6lZ5aOlo0WgmklaiJr1QB8GBp+ro=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZojc2yTKJp0WBv+gMmmUVTu5QfyjjVdLrgHSEd+jaCN/NquXd
+	WItE5AdJSX1+tzzaf4CHq8ieghbrLEOv8Ha19ySmXMbLSBbA4pBtV0r2z/ALg7gMMVBT1EFfbKJ
+	mliCMS836BpBi9kead7Wuvwt+EZ81lBrt5PCyz/l8g+BFmw2sUj2vXrSZogxZGg==
+X-Gm-Gg: ASbGncuQHAIIZSrsClVZOUSDAj4kRkfY8Y8H45alobvMnoKvV9A2DIxw7nc4BGAp2Kc
+	oDntuFEyrtrQoxTb3UBfldO/Pj1aLI8CWQXzFh+sT7BKGxZTrWMdkR5uLlDGcewKvMJ47IZsy3V
+	H36hBF/nqh+dgt94dKYN0vNjflQStIcgvi7H9z4T9lUDDvXzlBngXFpoCZC0VTTa7WFlFTBz1gz
+	mhwLsK0vje+9o3zBfJ3S61hwr7CHVs+bUGmqik2aTKN5EUpkqwiyUa+kOIdp4sEXA7eA21mBBIO
+	MG5KHZlJsQ==
+X-Received: by 2002:a05:600c:1e13:b0:43d:abd:ad0e with SMTP id 5b1f17b1804b1-43ecf8e72d6mr114694615e9.18.1744014874155;
+        Mon, 07 Apr 2025 01:34:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH+83STYsHXI3xn6x5xnem+/h77ehJWni3dU6P1EgXI8aWI6y/h2doOJ2sCUgok7+DS4MLeKg==
+X-Received: by 2002:a05:600c:1e13:b0:43d:abd:ad0e with SMTP id 5b1f17b1804b1-43ecf8e72d6mr114694305e9.18.1744014873776;
+        Mon, 07 Apr 2025 01:34:33 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec1630f21sm126976935e9.8.2025.04.07.01.34.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 01:34:33 -0700 (PDT)
+Date: Mon, 7 Apr 2025 04:34:29 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Halil Pasic <pasic@linux.ibm.com>, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, Chandra Merla <cmerla@redhat.com>,
+	Stable@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
+	Thomas Huth <thuth@redhat.com>, Eric Farman <farman@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Wei Wang <wei.w.wang@intel.com>
+Subject: Re: [PATCH v1] s390/virtio_ccw: don't allocate/assign airqs for
+ non-existing queues
+Message-ID: <20250407042058-mutt-send-email-mst@kernel.org>
+References: <20250404063619.0fa60a41.pasic@linux.ibm.com>
+ <4a33daa3-7415-411e-a491-07635e3cfdc4@redhat.com>
+ <d54fbf56-b462-4eea-a86e-3a0defb6298b@redhat.com>
+ <20250404153620.04d2df05.pasic@linux.ibm.com>
+ <d6f5f854-1294-4afa-b02a-657713435435@redhat.com>
+ <20250404160025.3ab56f60.pasic@linux.ibm.com>
+ <6f548b8b-8c6e-4221-a5d5-8e7a9013f9c3@redhat.com>
+ <20250404173910.6581706a.pasic@linux.ibm.com>
+ <20250407034901-mutt-send-email-mst@kernel.org>
+ <2b187710-329d-4d36-b2e7-158709ea60d6@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Henry Martin <bsdhenrymartin@gmail.com>, linux-rdma@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Amir Tzin <amirtz@nvidia.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, Aya Levin <ayal@nvidia.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Leon Romanovsky <leon@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Saeed Mahameed <saeedm@nvidia.com>,
- Simon Horman <horms@kernel.org>, Tariq Toukan <tariqt@nvidia.com>
-References: <20250405100017.77498-1-bsdhenrymartin@gmail.com>
-Subject: Re: [PATCH] net/mlx5: Fix null-ptr-deref in
- mlx5_create_inner_ttc_table()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250405100017.77498-1-bsdhenrymartin@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:vgSH9jAK64S+GlMEqzoxCCM8UxsPHwh7N4T7u/tAoAQtYmLNIpy
- f2ifI6mm5og7E5nuypepEbcvk70nFvzNeyjFVpOftRzBdoTyobTtYPdjAKzZ1eotnTHh/K7
- xkQOBcLWVci1r/x+FtgJvGuM2nzCJsoe6Al+Ug8u8GYgN4hQc0hz8IhuJyqwNCokEM+uvZj
- 8XAeDOEeZr9FLwhxY9deA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:JwUTb7aw1zw=;ebFimREAd4AzF8Qlft3eYkX4n87
- S7IEpwvP0PkAm/7psp69QlWYonf1n5Bilzqxc7IP6TGSHeOZBJHJDnhrZhTbRISlvQIbyaYB7
- S8nqTEb6azesLdGbOY6jmfZeKCt69CYkTl+hGakREm3V33Kg5BcPF8MVwS7k60wngzIJhZOg9
- yO6jJe8/QN7IzVxVzLpD/vxX+4rhIcpriF2tIxHStVZe/Sc1w7vs5pxgzVJQgJrDjMKtWhbkY
- UHUS4zLDBb91dtVSv0zdC779kjwiHs8AIcZYG+DbxuKB6XYCGl88SfytL6hSo2Iv953mWrask
- 5M7tz7no7JvAkOQD2JlGftiYVQpBUSYCHViNuVbJeY1yEDkmwmDj7fe7YYDNOkUiW4X1WBO9K
- S5+bHShmblrAxm74Op8g6He+8WtZYWQdm4khyfJ/hJ8vFkTuiAAKmCYGxqfxMJ8cqdF429BlX
- NR6n/bfCULwrj2Y4EgS1KgZ87hdkqwkI37gdtTOfsds4Pp6d0BtP69NPpcLCDd64yUtOedl31
- NkvvsDuBWWDfjXJTgISXao08G98IzwwvlyihA3eV/rLETCiaixjFwUVM9o5aEYEyM3neDgrBF
- DClNdoYkkh7kJ8AAqfGE7KxhO2ggIo7uaukB5e75bX7zmT+Ul4HsKdnQ89hNIGX7kXmuvZZTj
- EEoKp9rtjbcneyk1JdtJxc8qEqPUwvqUMXJTcxo6Z0Z6Q/y+OUCDdkxkLzF0oVjvCvFv4yQIf
- FIUlUniRMxT66h1wyeX3AGABU6JSVoVllX+V/V4j2wy3M9+E4ALhFM9ZdG6/9rp8uR3H7VP/d
- kwgFWi99iv0Sp/WH2wm/MYTAU4O7BRnNOYWdNug3GcGr0vYd1YQ6iko9e3HZAD7iKNrXl4FGY
- 5MBaany6Wl8UdQ7lB22b22rd4xJCaoS6nlQ13AqLhbYuR1wXBrbVX7qnKHX4XSbgVoVADRhsL
- M3+8g/8KZE24CP/J1VamdpkzlRugpoJb3H8aX7yQMk0OsRcnjdl4Y17yqBkDYwav/DfW5kXgy
- fl3FJAHYzdvcCXXeA7Xmi7PJX+hgL5zp4B5RIQhch9PuYLWNfk26n1EvaSlPnciFJ1QXh2KaZ
- aBG9sO9QAFPIxpYBWgm1GLakGy0UAnPGiJ9qcQ6KlQb0iQfOhbR5AY4aqgUW4OT52SjGAZpKB
- pnZi1k4hnJIkP3ojy7Fqe97nPuCbcz9tAZHKtDlRfYVQx379F5pZwUhgWO5eXYMcpH8CitXzH
- 7fhT9V5X1A8Q+Ry2O3PkwPsKxUTF131U24rpv27jonTfnX2ZapHteUMzo1wVSnQ4MMWo5qdkl
- V5pXH0n0zUbYfVD4y52JjVIO4qj+WzZGyfii4EC5vxmc5YFzYRcDSfaC5QZeqPH+otvpRqP5d
- w91xsC1tnpF16mmWJGGfhtfDneEMvWz81DT1JC/eemBLV9v5LN8kWJtp53l4oM0hJetbzIq/k
- ndz/PIiTe785u/qD1u9NvQxLS8TMRIOtmHcZKWPKN0qWNnng23g3RG3eVBIhGDO9D1YEAiQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2b187710-329d-4d36-b2e7-158709ea60d6@redhat.com>
 
-> Add NULL check for mlx5_get_flow_namespace() returns in
-> mlx5_create_inner_ttc_table() to prevent NULL pointer dereference.
-
-* You would like to adjust the error handling in some function implementations
-  from a common subdirectory.
-  How do you think about to offer such changes in a corresponding patch series?
-
-* Can any other summary phrase variant become more desirable accordingly?
-
-* Would any blank lines become also desirable after added statements?
+On Mon, Apr 07, 2025 at 10:17:10AM +0200, David Hildenbrand wrote:
+> On 07.04.25 09:52, Michael S. Tsirkin wrote:
+> > On Fri, Apr 04, 2025 at 05:39:10PM +0200, Halil Pasic wrote:
+> > > > 
+> > > > Not perfect, but AFAIKS, not horrible.
+> > > 
+> > > It is like it is. QEMU does queue exist if the corresponding feature
+> > > is offered by the device, and that is what we have to live with.
+> > 
+> > I don't think we can live with this properly though.
+> > It means a guest that does not know about some features
+> > does not know where to find things.
+> 
+> Please describe a real scenario, I'm missing the point.
 
 
-Regards,
-Markus
+OK so.
+
+Device has VIRTIO_BALLOON_F_FREE_PAGE_HINT and VIRTIO_BALLOON_F_REPORTING
+Driver only knows about VIRTIO_BALLOON_F_REPORTING so
+it does not know what does VIRTIO_BALLOON_F_FREE_PAGE_HINT do.
+How does it know which vq to use for reporting?
+It will try to use the free page hint one.
+
+
+
+> Whoever adds new feat_X *must be aware* about all previous features,
+> otherwise we'd be reusing feature bits and everything falls to pieces.
+
+
+The knowledge is supposed be limited to which feature bit to use.
+
+
+
+> > 
+> > So now, I am inclined to add linux code to work with current qemu and
+> > with spec compliant one, and add qemu code to work with current linux
+> > and spec compliant one.
+> > 
+> > Document the bug in the spec, maybe, in a non conformance section.
+> 
+> I'm afraid this results in a lot of churn without really making things
+> better.
+
+> IMHO, documenting things how they actually behave, and maybe moving towards
+> fixed queue indexes for new features is the low hanging fruit.
+
+I worry about how to we ensure that?
+If old code is messed up people will just keep propagating that.
+I would like to fix old code so that new code is correct.
+
+> 
+> As raised, it's not just qemu+linux, it's *at least* also cloud-hypervisor.
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+
+There's a slippery slope here in that people will come to us
+with buggy devices and ask to change the spec.
+
+
+
+
+-- 
+MST
+
 
