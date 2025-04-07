@@ -1,170 +1,121 @@
-Return-Path: <linux-kernel+bounces-591488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D8AA7E07B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:07:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E90A0A7E070
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CD0718922AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:01:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CEAD1891F6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6EB1C32EA;
-	Mon,  7 Apr 2025 14:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6278A1B87E9;
+	Mon,  7 Apr 2025 14:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jbdAoQtP"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aygh3qc8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A711B2182
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 14:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8B5250F8;
+	Mon,  7 Apr 2025 14:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744034447; cv=none; b=oXel4FRAJySpZFwvzzj77B4WNIP5fRt41W/cAM6JzuhLXM02qNP1KXJjuSoT8HH5Sd9W0b8Bq6lrR6JmBBFap7xcJO0G1cNcXg1RRERue983BNmfrY/MZlyvWBxZuy0LYSKbrcAFDFeNA9P0s7v0wnQu1LaRg3i3/Amk5BvqvKY=
+	t=1744034419; cv=none; b=WBI6tOIrXoq86GVuGiSYExgaOjCYyqCKXiqkkk0or9s8/oiBH87VBESMSMYfROQ8KwvhqNuDlkSXp9ERAOPqdiQX/zy0xvU/whl2gYFA95At9TZZDUQ+joTrFm/0Qx2tQfNc522u1RS5p0pgGX0gzRuG++8wx/tHVukrJemeb8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744034447; c=relaxed/simple;
-	bh=7LrK4+MSCQBQFEg2PH2/aBeSSmKtqORGYXRBnlS/6GQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qkE9nuzWS48JdjHk7Kc9BZnRd+dOxPdHIpm7pwXYRawAJDrZvEoxJNIzpNVGte2G9kgYXYMEmLNt2uDvaARLFD77DAVZeifBceq4xGbvhY1otjPeFxEEQrliEGDYXHaMi8nllsDzUn2IJSRMWzA7xLFnrmlgo4PQItLrWhRbDbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jbdAoQtP; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744034443;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iSot3nw7CEW5EVdvYwJBj+RWIEBQWOakFzZs+Ew+PEI=;
-	b=jbdAoQtPHSJIxk5w+e979vRQUoYMe/oR63p7XQQ2cNwF753extQrOGARTvodaEe+XG5tZV
-	EMWjaNWeHaDYiE89ZlCul8kVp+tFMjxh+SGQ1JZ25cuUmHBOdzIQHsn1ZRJhdrNbGUVUKe
-	Z0RGrrZi5hphR633A4erHlXCmGjUN7Q=
-From: Jiayuan Chen <jiayuan.chen@linux.dev>
-To: bpf@vger.kernel.org
-Cc: mrpre@163.com,
-	Jiayuan Chen <jiayuan.chen@linux.dev>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Neal Cardwell <ncardwell@google.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	David Ahern <dsahern@kernel.org>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Sabrina Dubroca <sd@queasysnail.net>,
-	Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-	Antony Antony <antony.antony@secunet.com>,
-	Christian Hopps <chopps@labn.net>,
-	netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND net-next v3 2/2] tcp: add LINUX_MIB_PAWS_TW_REJECTED counter
-Date: Mon,  7 Apr 2025 21:59:51 +0800
-Message-ID: <20250407140001.13886-3-jiayuan.chen@linux.dev>
-In-Reply-To: <20250407140001.13886-1-jiayuan.chen@linux.dev>
-References: <20250407140001.13886-1-jiayuan.chen@linux.dev>
+	s=arc-20240116; t=1744034419; c=relaxed/simple;
+	bh=5Cal73TGm2lWIHNlKA2mCZV0gIkjUPC5RFYDmMsmJfs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qXMPwzkB5MQfnB8foh221ocstOrzvOBwRsyGDO1Z31/itNLe6jhUIkEyYO+sQGz+yr058cS/T88lDEpDwdVdbJMDCxGoE4lxF5iTJFzUKMXK8nRRIc4D4rnRY0QQcsu1ydIfiGzPtodeT4Lt5TBfgCRV2RuKLU6LgOBfB+IZKN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aygh3qc8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8DD2C4CEDD;
+	Mon,  7 Apr 2025 14:00:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744034416;
+	bh=5Cal73TGm2lWIHNlKA2mCZV0gIkjUPC5RFYDmMsmJfs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aygh3qc8NZeS9Y6m3Ubad39D8XuI9IH4E+efd5uoNMIDRgvJXxXAu7w0vxY1xwovV
+	 a1jg1BJ3h8hIYFl/rpsra04LUnbZTfkaOayuERL2stUyoZAv1Uszwu1wau4Zj4MePR
+	 VhzCZAeF8Orc6Vov5nF2/SItSsh/b1MfQMHaFq2FK5Ol7/+XKz1RO2P97YkilplU4p
+	 hBR6E4yrWrB+tPTtXcm+xKrhwcBSD9L/jhKo75033UGI7DIRF9U0QkuZf6PuHLYuau
+	 uaiTtqmdpU3yokh3Jix8UgpjPbh+XYjUO0jMrGcNZJHkVUGaqWE82e5ywhPFMnoJ/q
+	 cUaR//orv61lA==
+Date: Mon, 7 Apr 2025 09:00:15 -0500
+From: Rob Herring <robh@kernel.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	ghost <2990955050@qq.com>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Jisheng Zhang <jszhang@kernel.org>, Chao Wei <chao.wei@sophgo.com>,
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-mmc@vger.kernel.org, Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH 6/9] dt-bindings: mmc: sdhci-of-dwcmhsc: Add Sophgo
+ SG2044 support
+Message-ID: <20250407140015.GA2164748-robh@kernel.org>
+References: <20250407010616.749833-1-inochiama@gmail.com>
+ <20250407010616.749833-7-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250407010616.749833-7-inochiama@gmail.com>
 
-When TCP is in TIME_WAIT state, PAWS verification uses
-LINUX_PAWSESTABREJECTED, which is ambiguous and cannot be distinguished
-from other PAWS verification processes.
+On Mon, Apr 07, 2025 at 09:06:11AM +0800, Inochi Amaoto wrote:
+> The sdhci IP of SG2044 is similar to it of SG2042. They
+> share the same clock and controller configuration.
+> 
+> Add compatible string for SG2044.
+> 
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> ---
+>  .../devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml        | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+> index e6e604072d3c..47b5fc1b8e07 100644
+> --- a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+> @@ -19,6 +19,9 @@ properties:
+>                - rockchip,rk3562-dwcmshc
+>                - rockchip,rk3576-dwcmshc
+>            - const: rockchip,rk3588-dwcmshc
+> +      - items:
+> +          - const: sophgo,sg2044-dwcmshc
+> +          - const: sophgo,sg2042-dwcmshc
+>        - enum:
+>            - rockchip,rk3568-dwcmshc
+>            - rockchip,rk3588-dwcmshc
+> @@ -74,7 +77,9 @@ allOf:
+>        properties:
+>          compatible:
+>            contains:
+> -            const: sophgo,sg2042-dwcmshc
+> +            enum:
+> +              - sophgo,sg2042-dwcmshc
+> +              - sophgo,sg2044-dwcmshc
 
-Moreover, when PAWS occurs in TIME_WAIT, we typically need to pay special
-attention to upstream network devices, so we added a new counter, like the
-existing PAWS_OLD_ACK one.
+No need for this hunk because the new one has sophgo,sg2042-dwcmshc 
+already.
 
-Also we update the doc with previously missing PAWS_OLD_ACK.
-
-usage:
-'''
-nstat -az | grep PAWSTimewait
-TcpExtPAWSTimewait              1                  0.0
-'''
-
-Suggested-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
----
- Documentation/networking/net_cachelines/snmp.rst | 2 ++
- include/net/dropreason-core.h                    | 1 +
- include/uapi/linux/snmp.h                        | 1 +
- net/ipv4/proc.c                                  | 1 +
- net/ipv4/tcp_minisocks.c                         | 2 +-
- 5 files changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/networking/net_cachelines/snmp.rst b/Documentation/networking/net_cachelines/snmp.rst
-index bc96efc92cf5..bd44b3eebbef 100644
---- a/Documentation/networking/net_cachelines/snmp.rst
-+++ b/Documentation/networking/net_cachelines/snmp.rst
-@@ -37,6 +37,8 @@ unsigned_long  LINUX_MIB_TIMEWAITKILLED
- unsigned_long  LINUX_MIB_PAWSACTIVEREJECTED
- unsigned_long  LINUX_MIB_PAWSESTABREJECTED
- unsigned_long  LINUX_MIB_TSECR_REJECTED
-+unsigned_long  LINUX_MIB_PAWS_OLD_ACK
-+unsigned_long  LINUX_MIB_PAWS_TW_REJECTED
- unsigned_long  LINUX_MIB_DELAYEDACKLOST
- unsigned_long  LINUX_MIB_LISTENOVERFLOWS
- unsigned_long  LINUX_MIB_LISTENDROPS
-diff --git a/include/net/dropreason-core.h b/include/net/dropreason-core.h
-index 9701d7f936f6..bea77934a235 100644
---- a/include/net/dropreason-core.h
-+++ b/include/net/dropreason-core.h
-@@ -287,6 +287,7 @@ enum skb_drop_reason {
- 	/**
- 	 * @SKB_DROP_REASON_TCP_RFC7323_TW_PAWS: PAWS check, socket is in
- 	 * TIME_WAIT state.
-+	 * Corresponds to LINUX_MIB_PAWS_TW_REJECTED.
- 	 */
- 	SKB_DROP_REASON_TCP_RFC7323_TW_PAWS,
- 	/**
-diff --git a/include/uapi/linux/snmp.h b/include/uapi/linux/snmp.h
-index ec47f9b68a1b..1d234d7e1892 100644
---- a/include/uapi/linux/snmp.h
-+++ b/include/uapi/linux/snmp.h
-@@ -188,6 +188,7 @@ enum
- 	LINUX_MIB_PAWSESTABREJECTED,		/* PAWSEstabRejected */
- 	LINUX_MIB_TSECRREJECTED,		/* TSEcrRejected */
- 	LINUX_MIB_PAWS_OLD_ACK,			/* PAWSOldAck */
-+	LINUX_MIB_PAWS_TW_REJECTED,		/* PAWSTimewait */
- 	LINUX_MIB_DELAYEDACKS,			/* DelayedACKs */
- 	LINUX_MIB_DELAYEDACKLOCKED,		/* DelayedACKLocked */
- 	LINUX_MIB_DELAYEDACKLOST,		/* DelayedACKLost */
-diff --git a/net/ipv4/proc.c b/net/ipv4/proc.c
-index 10cbeb76c274..ea2f01584379 100644
---- a/net/ipv4/proc.c
-+++ b/net/ipv4/proc.c
-@@ -191,6 +191,7 @@ static const struct snmp_mib snmp4_net_list[] = {
- 	SNMP_MIB_ITEM("PAWSEstab", LINUX_MIB_PAWSESTABREJECTED),
- 	SNMP_MIB_ITEM("TSEcrRejected", LINUX_MIB_TSECRREJECTED),
- 	SNMP_MIB_ITEM("PAWSOldAck", LINUX_MIB_PAWS_OLD_ACK),
-+	SNMP_MIB_ITEM("PAWSTimewait", LINUX_MIB_PAWS_TW_REJECTED),
- 	SNMP_MIB_ITEM("DelayedACKs", LINUX_MIB_DELAYEDACKS),
- 	SNMP_MIB_ITEM("DelayedACKLocked", LINUX_MIB_DELAYEDACKLOCKED),
- 	SNMP_MIB_ITEM("DelayedACKLost", LINUX_MIB_DELAYEDACKLOST),
-diff --git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
-index 27511bf58c0f..43d7852ce07e 100644
---- a/net/ipv4/tcp_minisocks.c
-+++ b/net/ipv4/tcp_minisocks.c
-@@ -248,7 +248,7 @@ tcp_timewait_state_process(struct inet_timewait_sock *tw, struct sk_buff *skb,
- 
- 	if (paws_reject) {
- 		*drop_reason = SKB_DROP_REASON_TCP_RFC7323_TW_PAWS;
--		__NET_INC_STATS(twsk_net(tw), LINUX_MIB_PAWSESTABREJECTED);
-+		__NET_INC_STATS(twsk_net(tw), LINUX_MIB_PAWS_TW_REJECTED);
- 	}
- 
- 	if (!th->rst) {
--- 
-2.47.1
-
+Rob
 
