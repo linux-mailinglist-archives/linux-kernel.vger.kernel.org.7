@@ -1,157 +1,98 @@
-Return-Path: <linux-kernel+bounces-590680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A37A7D5B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:27:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0687A7D5B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6783D1897CE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:24:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED202175BA9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0ED230BCC;
-	Mon,  7 Apr 2025 07:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECEA225403;
+	Mon,  7 Apr 2025 07:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1wdPj81I";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RiEDjTto";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1wdPj81I";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RiEDjTto"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uTwd8qGM"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032B922AE48
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EFB7221D9A;
+	Mon,  7 Apr 2025 07:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744010365; cv=none; b=hM6xwjlYoLiys/4Uu24ECq/uuXzEsohzxA8g3k0oyZTAGhSzAiedUnqfm+DeyfCxWvFQjNeQvEFS0G+59AfXokGRG10PRypSsBw0Lzphs7ItFY8IHcUbxhYLmNb12RaDWk39FtnfRPAIRDGSMsjN9ybe9jCRo237GrR0bBks/xU=
+	t=1744010401; cv=none; b=gDl6HxJzR4P3FZ+VN7hhgg+CMpuEHAW3lEHpp1g7ItLc9Um+I+TIxyJY9dxGeN4oQeJUg8azBq1BjMQL6NVhQLBdyZ0oGn+LhNkhrwT6mG7uDs4BmqiXHMz6qZUdUJ7weQGlpZCP5YowK2SIBTZjWZ18VD+gJnzfp5HJlKxj/G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744010365; c=relaxed/simple;
-	bh=DAG0+NZr8Yq9DNdG3q9M9d2SScqSHuVnJUjlQKryvi8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IFLGWeIfqH8i1Zd1ZyGiZHRLgDcZEqyJS4A24Lzorgim5jKlkyOphhnHc8XBR3nSc0ECiaE8kxwt1jfzvoZGWL/Du/MX23pfmPQMdaXZbTEf3qYOZYmEQVsxz9tNct7Q3J60Ty3dDwYW5atUyN+H7A08NulE4GOKp6p6jQyzuXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1wdPj81I; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RiEDjTto; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1wdPj81I; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RiEDjTto; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 03ABC1F45F;
-	Mon,  7 Apr 2025 07:19:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744010362; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EJPQPgPnYz3BTZuNrfG8zerDkfLejSqhADvVT9sjsis=;
-	b=1wdPj81I3+ePY6WnhDS8Nj/IMMe/17S3PAKvfsPXH4/hNlOGdmk2YuDTdNv7eZ/O9+X1AP
-	s2PifKigdvSJFzZkrds7Cm7gWHxZ8xciPSb2jp28tcLFU3Oetf5fa2NrC5SaYXAIrYfb9b
-	bj+6fN48SlBaS6GLJ/0LNIfde50ISsU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744010362;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EJPQPgPnYz3BTZuNrfG8zerDkfLejSqhADvVT9sjsis=;
-	b=RiEDjTtoxW2Y4WT1iGplL/3X2jxOQEAMDOMrjvXIpfECDzPqso6Ng6N5UZvpDLbns8kP8T
-	rTN/eev488fvulBg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=1wdPj81I;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=RiEDjTto
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744010362; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EJPQPgPnYz3BTZuNrfG8zerDkfLejSqhADvVT9sjsis=;
-	b=1wdPj81I3+ePY6WnhDS8Nj/IMMe/17S3PAKvfsPXH4/hNlOGdmk2YuDTdNv7eZ/O9+X1AP
-	s2PifKigdvSJFzZkrds7Cm7gWHxZ8xciPSb2jp28tcLFU3Oetf5fa2NrC5SaYXAIrYfb9b
-	bj+6fN48SlBaS6GLJ/0LNIfde50ISsU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744010362;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EJPQPgPnYz3BTZuNrfG8zerDkfLejSqhADvVT9sjsis=;
-	b=RiEDjTtoxW2Y4WT1iGplL/3X2jxOQEAMDOMrjvXIpfECDzPqso6Ng6N5UZvpDLbns8kP8T
-	rTN/eev488fvulBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AC76F13A4B;
-	Mon,  7 Apr 2025 07:19:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZGC3KHl882d1FQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 07 Apr 2025 07:19:21 +0000
-Date: Mon, 07 Apr 2025 09:19:21 +0200
-Message-ID: <87frik1ls6.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	dan.carpenter@linaro.org,
-	baojun.xu@ti.com,
-	broonie@kernel.org,
-	ckeepax@opensource.cirrus.com,
-	andriy.shevchenko@linux.intel.com,
-	nathan@kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda/tas2781: Remove unnecessary NULL check before release_firmware()
-In-Reply-To: <20250407061939.2771803-1-nichen@iscas.ac.cn>
-References: <20250407061939.2771803-1-nichen@iscas.ac.cn>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1744010401; c=relaxed/simple;
+	bh=lndtBobJoLesrhzrh5xgstIcOeftXPA6n5ZNo0kL1oc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=moKGl21POG62dMaslSzCk/O17AM0haTWor08bK4HCDqxDadX+LqYaeaSKpu+BSDt0rxwmuYMMSdV76WoUgewmexWy0dbF43ZY1j1KEuhX7G7YMk/1sm8tGzeMvlk5MBlDJxYQGtQCmb+uGrSy9hAEF+S0EEP46D3VigJh6NKOfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uTwd8qGM; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5G6EkzTo88uUPXRsiiqM7dcsCQlZ75x+RO778RUeMzk=; b=uTwd8qGM8sI/tZqcX7GEER8IbR
+	DoBYD9mzg3r5VeUXdcY36G3gx7ii5JJ/dKvHaRRhXCjTAlmy7XY4vSU7QGpxBjJItUPHmER5bdOrM
+	GhzmA1WoEJOaT7o6CyNiX3V0FCwNkQ434WNKjCph6GPGrjeRIvVDztBTvqupIgrK99y65suw12uX2
+	zW4kyacCjD0fO7iJtaK+qvOLFUzdHznuOfrKYO5fOj1FdD+sQUXmihRkXtuaG2eQxMonhnA4Q/zA+
+	EPNtPy+EGTPfjcEZIWDfZc8w83hRrFn5MxlXwvmIKNOS3Fv5M+QRdExoAf9Pcg/S8sfCEeA2IKJ+6
+	vKurhswQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u1gly-0000000Girh-0KBx;
+	Mon, 07 Apr 2025 07:19:58 +0000
+Date: Mon, 7 Apr 2025 00:19:58 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	virtio-comment@lists.linux.dev, Claire Chang <tientzu@chromium.org>,
+	linux-devicetree <devicetree@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	=?iso-8859-1?Q?J=F6rg?= Roedel <joro@8bytes.org>,
+	iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+	graf@amazon.de
+Subject: Re: [RFC PATCH 1/3] content: Add VIRTIO_F_SWIOTLB to negotiate use
+ of SWIOTLB bounce buffers
+Message-ID: <Z_N8nk_CpD4v9-VE@infradead.org>
+References: <20250402112410.2086892-1-dwmw2@infradead.org>
+ <20250402112410.2086892-2-dwmw2@infradead.org>
+ <Z-43svGzwoUQaYvg@infradead.org>
+ <148a3c8ee53af585b42ec025c2c7821ad852c66c.camel@infradead.org>
+ <Z-46TDmspmX0BJ2H@infradead.org>
+ <05abb68286dd4bc17b243130d7982a334503095b.camel@infradead.org>
+ <Z-99snVF5ESyJDDs@infradead.org>
+ <fb7ea3ee5bf970fa36b012e16750f533b72903a0.camel@infradead.org>
+ <20250404040838-mutt-send-email-mst@kernel.org>
+ <67bd998bfe385088ef863342b9f8714754585476.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 03ABC1F45F
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
-X-Spam-Flag: NO
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67bd998bfe385088ef863342b9f8714754585476.camel@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, 07 Apr 2025 08:19:39 +0200,
-Chen Ni wrote:
+On Fri, Apr 04, 2025 at 09:16:44AM +0100, David Woodhouse wrote:
+> The sad part is that the system does it all automatically *if* it has
+> CONFIG_DMA_RESTRICTED_POOL (e.g. Linux) and the driver never even
+> notices that the dma_ops it's using are the swiotlb ops using the
+> provided buffer.
 > 
-> release_firmware() checks for NULL pointers internally.
-> Remove unneeded NULL check for fmw here.
+> Which is *kind* of nice... except that when on a guest OS which *isn't*
+> Linux with CONFIG_DMA_RESTRICTED_POOL, the guest will just ignore the
+> `restricted-dma-pool` node and try DMA to system memory anyway, which
+> will fail.
 > 
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> That's why my proposal adds the negotiated VIRTIO_F_SWIOTLB feature, so
+> that the device side can refuse, if the guest *isn't* agreeing to use
+> the bounce buffer in the situations where it must do so.
 
-Applied now.  Thanks.
-
-
-Takashi
+That all assumes the indirect DMA is a device "feature".  It's not.
+It is a limitation placed on the guest system.
 
