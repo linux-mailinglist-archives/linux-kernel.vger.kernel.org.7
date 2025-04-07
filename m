@@ -1,102 +1,116 @@
-Return-Path: <linux-kernel+bounces-592020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A8CA7E821
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:26:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F9EA7E900
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E80C9188BFAE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:26:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D8A07A4701
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028B9217651;
-	Mon,  7 Apr 2025 17:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lPt77zdh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851A4217F5D;
+	Mon,  7 Apr 2025 17:52:25 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5812B2163B6;
-	Mon,  7 Apr 2025 17:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2109A4A02;
+	Mon,  7 Apr 2025 17:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744046779; cv=none; b=TZwtc4bw8UtPcEVm0jI9bCGFnrTnAnBs8uY7pfpia+WL+kEoP5oLic8I8cZG7jjq483JgKpg5ghbLzfW9IoNmq2mYC2w1QypKOTidYt0oJmAJQh2sNnytKbCckV4XL71GvmijQDe//fB6eGGxuv6csipWLstR32nTQux5/C99Hk=
+	t=1744048345; cv=none; b=Z/7l51I3tRm0oxtsXWOuneru3buW/RBjKXf+y6YAHnHTLxpgrVJCHkggTpNO8EGVZqEYeej4mfVWCN8oVkT3A1/F3d7dNR+GkgZZC3Eo415d5Ehm7agvnOrvEm1QcUFMVcxjcb8c7UV4Qf5PqcgcwzbL1yM4wDoUqs5IiyN0hTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744046779; c=relaxed/simple;
-	bh=raL/UzKm/bH/RfBRNJdvfTVJ8Y8kROU3/R6LPqOJIDw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gPq1JHsXpzxSLvgqy/ubBbBrGsdjxoir2zgKK7le/7ONQ1shvjbzPdHvR6fHF9HBFo3GzH6wTE1Ua4HBE/xOl475yZIfXEW3/kmBiIA/eDDh8SAjvaCJqps6r41xv2HzaIgGcGVFo2vRWpl+arTjMe0l93CiQFHMhH0pmwp/GNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lPt77zdh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BC53C4CEDD;
-	Mon,  7 Apr 2025 17:26:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744046778;
-	bh=raL/UzKm/bH/RfBRNJdvfTVJ8Y8kROU3/R6LPqOJIDw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lPt77zdh9NLNlTtH1QEsWEAH06SHbbi4uV4VJ7YBmIAU+UvIzEcRfiSZ1r3J0WMbN
-	 T13ijgF/UvprSSK66VthX1YY3JB7K6E4Stv+dgTL+3Mw/Uo/rUFEY5sIy/6PLnvBU/
-	 MCx+5gYJapd5/CcebC3kb9YyI+a3RI9HcmkmdZDI9LidxMykxtqkgVyoI2hdLxDt6T
-	 iE9PoNI8YaAZVhuzi1z7tjv8+pqhebvr+iIgCUtY2swbLoqdrRfm4Ms32npFCeoVtG
-	 V+uj8ViPqEIdFLxc30A873eqk0XOgtluMoSQbNRhKyEeZd4KXsU/jCf7S1kc/T/7Ox
-	 tLVC2QxRiXTPw==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vasiliy Kovalev <kovalev@altlinux.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	lvc-patches@linuxtesting.org,
-	dutyrok@altlinux.org,
-	gerben@altlinux.org,
-	syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
-Date: Mon,  7 Apr 2025 19:25:03 +0200
-Message-ID: <20250407-chorkonzert-ankam-80ebcdbffd20@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20241019191303.24048-1-kovalev@altlinux.org>
-References: <20241019191303.24048-1-kovalev@altlinux.org>
+	s=arc-20240116; t=1744048345; c=relaxed/simple;
+	bh=qCXjZbYfOUQdvaJOulkLaljFnMlS3JxgtFCl65KJ/WA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vvrl0N4OeKoWQYsOsJl+KnkvyNT4iNdbYc2/LSjiQ3g5teL6iJ9gq+pTNPZ5nUhA7wYBs0r/KiLXUWQeX+wh3cNsujuuscuUxhfIZVDD7jCOc90S5wQGvfhR99XbgATBQXO7kjKwNTWY7idI5IE18ukN5psTx7RJfeaEqZoirms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1u1qEH-000000008Gs-2MWH;
+	Mon, 07 Apr 2025 17:25:49 +0000
+Date: Mon, 7 Apr 2025 18:25:43 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: "Christian Marangi (Ansuel)" <ansuelsmth@gmail.com>
+Cc: Sean Anderson <sean.anderson@linux.dev>,
+	Kory Maincent <kory.maincent@bootlin.com>, netdev@vger.kernel.org,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+	upstream@airoha.com, Heiner Kallweit <hkallweit1@gmail.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	Claudiu Beznea <claudiu.beznea@microchip.com>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ioana Ciornei <ioana.ciornei@nxp.com>,
+	Jonathan Corbet <corbet@lwn.net>, Joyce Ooi <joyce.ooi@intel.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Li Yang <leoyang.li@nxp.com>, Madalin Bucur <madalin.bucur@nxp.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <michal.simek@amd.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	Robert Hancock <robert.hancock@calian.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Shawn Guo <shawnguo@kernel.org>, UNGLinuxDriver@microchip.com,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Wei Fang <wei.fang@nxp.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linuxppc-dev@lists.ozlabs.org
+Subject: Re: [RFC net-next PATCH 00/13] Add PCS core support
+Message-ID: <Z_QKl-4563l05WB3@makrotopia.org>
+References: <20250403181907.1947517-1-sean.anderson@linux.dev>
+ <20250407182738.498d96b0@kmaincent-XPS-13-7390>
+ <720b6db8-49c5-47e7-98da-f044fc38fc1a@linux.dev>
+ <CA+_ehUyAo7fMTe_P0ws_9zrcbLEWVwBXDKbezcKVkvDUUNg0rg@mail.gmail.com>
+ <1aec6dab-ed03-4ca3-8cd1-9cfbb807be10@linux.dev>
+ <CA+_ehUzeMBFrDEb7Abn3UO3S7VVjMiKc+2o=p5RGjPDkfLPVtQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1346; i=brauner@kernel.org; h=from:subject:message-id; bh=raL/UzKm/bH/RfBRNJdvfTVJ8Y8kROU3/R6LPqOJIDw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR/4VqbHsCRUn/y7rwf/9IV1i9MmnNns17Phk+eOzz8L 7mt0tja2VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAnCTXzIyHP3/4vxE39io7xpH O5w796ZtXu/NtLAtgcutZw8nx1WByQz/dJLmWGZJTDn0N/B5hGPhae6DdtfdH1veFrgo43dH5fw xVgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+_ehUzeMBFrDEb7Abn3UO3S7VVjMiKc+2o=p5RGjPDkfLPVtQ@mail.gmail.com>
 
-On Sat, 19 Oct 2024 22:13:03 +0300, Vasiliy Kovalev wrote:
-> Syzbot reported an issue in hfs subsystem:
+On Mon, Apr 07, 2025 at 07:21:38PM +0200, Christian Marangi (Ansuel) wrote:
+> Il giorno lun 7 apr 2025 alle ore 19:00 Sean Anderson
+> > I agree that a "cells" approach would require this, but
+> >
+> > - There are no in-tree examples of where this is necessary
+> > - I think this would be easy to add when necessary
+> >
 > 
-> BUG: KASAN: slab-out-of-bounds in memcpy_from_page include/linux/highmem.h:423 [inline]
-> BUG: KASAN: slab-out-of-bounds in hfs_bnode_read fs/hfs/bnode.c:35 [inline]
-> BUG: KASAN: slab-out-of-bounds in hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
-> Write of size 94 at addr ffff8880123cd100 by task syz-executor237/5102
+> There are no in-tree cause only now we are starting to support
+> complex configuration with multiple PCS placed outside the MAC.
 > 
-> [...]
+> I feel it's better to define a standard API for them now before
+> we permit even more MAC driver to implement custom property
+> and have to address tons of workaround for compatibility.
 
-Stop-gap measure at best. I expect there to be plenty of other ways for
-syzbot to trigger issues in hpfsplus.
+Qualcomm's PCS driver will require offering multiple phylink_pcs by a
+single device/of_node. So while it's true that there is currently no
+in-tree user for that, that very user is already knocking on our doors.
 
----
-
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
-      https://git.kernel.org/vfs/vfs/c/bb5e07cb9277
+See
+https://patchwork.kernel.org/project/netdevbpf/list/?series=931658&state=*
 
