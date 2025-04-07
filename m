@@ -1,47 +1,95 @@
-Return-Path: <linux-kernel+bounces-591981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E973A7E758
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:54:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AE3DA7E771
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE8A77A21E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:53:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98E2A165636
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F261021ADB5;
-	Mon,  7 Apr 2025 16:52:34 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0A42135D8;
+	Mon,  7 Apr 2025 16:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SDaKsgmF"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836702147F4;
-	Mon,  7 Apr 2025 16:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC0F2135A9;
+	Mon,  7 Apr 2025 16:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744044754; cv=none; b=efAYhwK+kAUF3HzJlwBEErfMsv77HWpYtkt70QVcC1+qXwKWeqrLNsIt8FLjYMCIbEHaLFIMIz7KnVHbzv10f5ALAvHLzq109sM+C0Ls7fG+I86Wkz2BIaQnV+Ers4Kt+a2UxtGPHU4rbYrNsLi6Ckioqsz4TM50V5F3PXmHw6g=
+	t=1744044740; cv=none; b=iSDd+KWZzsjykj/ytRsFxylJLPTZWC0JZRXpOHa7kcPQUzP0eWjjtBlSjbDfkKKIPKIusSQ/er9GaNU3v3c4CeSBIZxVqF9HkT6Aq9CMejqG9HbreXInkCPJ6lRjlRhDoAJNWLfhSKVPxLRsZ66+ZxCqF74fUfN3lYZbiFwv4Yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744044754; c=relaxed/simple;
-	bh=wNBPtN0495VM5MuOkw0I6+oQIO5BBxEfhzqYaYz5iQg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Lj+IghyBCMExX+Wtm7D7ZRsnWRMxbvOVvZcYHmceIFphb1cm58bT0nFE7yMPXniwF6PpTp5Kh/wWP0dkW8cclehDlqrhwDh+5EoQ6zsYSlOp9sme9+MVb+YWfMDAOS7c8v85jEOMD6NqOPbVwx9kJuZ2B4xy4X5/ptWy45c1oec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from localhost.localdomain (178.207.21.175) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 7 Apr
- 2025 19:52:12 +0300
-From: Roman Smirnov <r.smirnov@omp.ru>
-To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Roman Smirnov <r.smirnov@omp.ru>, Steve French <sfrench@samba.org>,
-	Shirish Pargaonkar <shirishpargaonkar@gmail.com>, Sachin Prabhu
-	<sprabhu@redhat.com>, <linux-cifs@vger.kernel.org>,
-	<samba-technical@lists.samba.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, Steve French <stfrench@microsoft.com>
-Subject: [PATCH 5.10] cifs: fix integer overflow in match_server()
-Date: Mon, 7 Apr 2025 19:51:48 +0300
-Message-ID: <20250407165150.780252-1-r.smirnov@omp.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1744044740; c=relaxed/simple;
+	bh=41RAK/PzbSJJDlWMcrK4yXqZH/pZPx1BSbQRA1MhZF0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FDG4zN77dQb2QOdWGJHnHdFT10Cr2zbHIqTzcMkGipY5cmFEXT9DVe13tua1iJ9SFM6/2Nud3xkDPNpibKP0NuvIwk1SkaxgfzqnSC+5pCBqUZjbceE9DlxQiZWTr+1BySAkxMhyvVoa5ZinESqwALP2/YijPqO+d/Nn2U/aGds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SDaKsgmF; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43ea40a6e98so40673315e9.1;
+        Mon, 07 Apr 2025 09:52:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744044737; x=1744649537; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JIpSqr2uu8JlBAGebwei967jEMi50JhkF9JCVtklwJI=;
+        b=SDaKsgmFReYniO4eVcGKmYzjoCxFt0d/UELNVy6r6kyCTFgW7VDjbHCPMVsgMCOlYN
+         YnPaFYdxVu/LJ7HddhLReUy2xGZ9bTGS2eCb9OAMB9p7gKW0vbqEYUcbh/TXJ0EF0Zu9
+         obounfC+qmauQLYdOXR0Kn/m/oE0SaTrcAFujlOPoAWWZGOSdOwMxMpdrozvh4BuPexg
+         7ZsyG54tl4WaaU9TOrabNiML0quGIV7YHsISpDJ3Dx1T6ZmdtZdgRYjpdABTvls2nU0E
+         yyC4Y7sV0VtpVrRie6dUac2RWMCVanerD6IdpBNod6fSWfzcxnM32VkC4egltJh6zV9B
+         698w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744044737; x=1744649537;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JIpSqr2uu8JlBAGebwei967jEMi50JhkF9JCVtklwJI=;
+        b=miaJy/AW45iBNXFs79/QWdv2IyqyNC3iHjAgSdzlsTMn3xKsz43eSq7uPGUvvWLkvL
+         fjLwlSmFMCT6vNjrh38LyK6qslDhlz8E/7G73dmjZeDDYuA3Kvh5nc2GlcwcDsoVuSXH
+         poUlTwpnG2skUv36NzvFSQuBnuKgA19kW9p44Go5WyG4A1E2brj0XNeShQsLxR0BZBxT
+         hrIPsctZmwFPhjfgXZQd38c3TJuDSfbP+i+MxbFlvao2aC6nm/QRWBrQafDdHnXMig/o
+         BTD12qHGQkW0TjWKi0txwRMI9H3Q1OErk41VUb4mQNtyqFc2u7NAdS16mBq7HP5IPpim
+         yYwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOFbjvj7ia0l5giRz5oebogCwSklhAnedPvrfimHnLtxYbT/Lk0BPSFfoRGeFigC2wmOuHZIWSH3Ko@vger.kernel.org, AJvYcCWR1WBH0uRo9EVWUBftv3Ss6U1pBzE3CEciU16GdYOghnSOyLe6jSkBoQmPYlYn8tLgF2d3qV0ZvEXXXX0Y@vger.kernel.org, AJvYcCXN8qi59y2jlnUZeSr5mso6wu9R5+wi4Y6fyx9Z6ZpuEKe2i9mx3GwvQCc0AtKLHfyj8L7opQu2pvHh@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsVIQkxlRyOIDPZm8bB4YczyAg8qadX6pizoAA3t6ohD261328
+	NlFhEfJ+PkoRX7wXwzy4JhT5Q8zlNxcZFLVCCbPUwPgfjeeQ/mKk
+X-Gm-Gg: ASbGncuzmgpGu6pgqJ+XVR1iLs8/9wCZLEMiEfjzTa1MvAaLHwU57nhUZKSx9ozwq0j
+	2mLDrhugYAcqgI8DOed1F7C5hwfc4j/in+hE/l3Z+mO2ZoglHotmiI+d+gvKbKnp5SBK1JjwDsj
+	wG50L42IWa7Q5txT5wT6g8lEssc88PAbE7AeAGk/s/d9a6g3QnFnXVqJVCklk+ZN57eqMfx61ZZ
+	ioSBmJSRMqlK0bUXU35Xh5TXRQ+3iZU/NDidawYnh3ToOrFaIVoLQHV4AysyLEMx2uInzT7wJVR
+	W5LZGiUHD8BzXxu9GBv9mK74VrmguXf/lBy85yk1XBeqhUPh6jvHsxCkXSy8NIOFt94kiw==
+X-Google-Smtp-Source: AGHT+IF8WJpz44fOAIgAweLBW1W/MoUv5/v464NZGGVPtrubj96U87xoaQ34hl35kZVEtxeSlX87Fw==
+X-Received: by 2002:a05:600c:4fc6:b0:43c:f8fc:f6a6 with SMTP id 5b1f17b1804b1-43ee064009amr73363125e9.9.1744044736398;
+        Mon, 07 Apr 2025 09:52:16 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:78b9:80c2:5373:1b49])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec16ba978sm139272305e9.23.2025.04.07.09.52.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 09:52:15 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/9] clk: renesas: rzv2h: Add clock and reset entries for USB2 and GBETH
+Date: Mon,  7 Apr 2025 17:51:53 +0100
+Message-ID: <20250407165202.197570-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,86 +97,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 04/07/2025 16:40:10
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 192443 [Apr 07 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: r.smirnov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 54 0.3.54
- 464169e973265e881193cca5ab7aa5055e5b7016
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 178.207.21.175 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;omp.ru:7.1.1;178.207.21.175:7.1.2
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 178.207.21.175
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 04/07/2025 16:44:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 4/7/2025 3:07:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-From: Roman Smirnov <r.smirnov@omp.ru>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-[ Upstream commit 2510859475d7f46ed7940db0853f3342bf1b65ee ]
+Hi All,
 
-The echo_interval is not limited in any way during mounting,
-which makes it possible to write a large number to it. This can
-cause an overflow when multiplying ctx->echo_interval by HZ in
-match_server().
+This patch series introduces enhancements and new features for the
+Renesas RZ/V2H(P) family driver and R9A09G057 SoC specific clock drivers.
+The changes include support for static mux clocks, static dividers,
+support for ignoring monitoring bits for external clocks, and improved clock
+state validation. Additionally, the series includes updates to device tree
+bindings for USB2 PHY and GBETH PTP core clocks, as well as the
+addition of clock and reset entries for USB2 and GBETH peripherals.
 
-Add constraints for echo_interval to smb3_fs_context_parse_param().
+@Geert, Note I've squashed the below patch series [0] and [1] into a single
+patch series to avoid conflicts. Patch [2] will be dropped from Biju's
+patch series as this is now patch 3/9. Patches are based on the v6.15-rc1 +
+renesas-drivers/renesas-clk-for-v6.16 branch.
+[0] https://lore.kernel.org/all/20250328200105.176129-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+[1] https://lore.kernel.org/all/20250228202655.491035-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+[2] https://lore.kernel.org/all/20250303110433.76576-3-biju.das.jz@bp.renesas.com/
 
-Found by Linux Verification Center (linuxtesting.org) with Svace.
+v1->v2
+- Added ack from Krzysztof for the dt-bindings patch.
+- Merged the series into a single patch series
+- Introduced DDIV_PACK_NO_RMW macro to support static dividers
 
-Fixes: adfeb3e00e8e1 ("cifs: Make echo interval tunable")
-Cc: stable@vger.kernel.org
-Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
----
- fs/cifs/connect.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Cheers,
+Prabhakar
 
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index a3c0e6a4e484..322b8be73bb8 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -1915,6 +1915,12 @@ cifs_parse_mount_options(const char *mountdata, const char *devname,
- 					 __func__);
- 				goto cifs_parse_mount_err;
- 			}
-+			if (option < SMB_ECHO_INTERVAL_MIN ||
-+			    option > SMB_ECHO_INTERVAL_MAX) {
-+				cifs_dbg(VFS, "%s: Echo interval is out of bounds\n",
-+					 __func__);
-+				goto cifs_parse_mount_err;
-+			}
- 			vol->echo_interval = option;
- 			break;
- 		case Opt_snapshot:
+Biju Das (1):
+  clk: renesas: rzv2h-cpg: Support static dividers without RMW
+
+Lad Prabhakar (8):
+  clk: renesas: rzv2h-cpg: Add support for static mux clocks
+  clk: renesas: rzv2h-cpg: Add macro for defining static dividers
+  clk: renesas: rzv2h-cpg: Use str_on_off() helper in
+    rzv2h_mod_clock_endisable()
+  clk: renesas: rzv2h-cpg: Use both CLK_ON and CLK_MON bits for clock
+    state validation
+  clk: renesas: rzv2h-cpg: Ignore monitoring CLK_MON bits for external
+    clocks
+  dt-bindings: clock: renesas,r9a09g057-cpg: Add USB2 PHY and GBETH PTP
+    core clocks
+  clk: renesas: r9a09g057: Add clock and reset entries for USB2
+  clk: renesas: r9a09g057: Add clock and reset entries for GBETH0/1
+
+ drivers/clk/renesas/r9a09g057-cpg.c           | 92 +++++++++++++++++-
+ drivers/clk/renesas/rzv2h-cpg.c               | 65 ++++++++++++-
+ drivers/clk/renesas/rzv2h-cpg.h               | 93 ++++++++++++++++++-
+ .../dt-bindings/clock/renesas,r9a09g057-cpg.h |  4 +
+ 4 files changed, 244 insertions(+), 10 deletions(-)
+
 -- 
-2.43.0
+2.49.0
 
 
