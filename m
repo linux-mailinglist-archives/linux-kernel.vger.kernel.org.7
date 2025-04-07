@@ -1,174 +1,126 @@
-Return-Path: <linux-kernel+bounces-591129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E207A7DB8A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:52:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B11A7DB81
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51C5B17818C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:51:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F04BD17719A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00CD623956C;
-	Mon,  7 Apr 2025 10:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E39223814A;
+	Mon,  7 Apr 2025 10:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="llvNHHMo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="evw3nTUd"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF5023815A;
-	Mon,  7 Apr 2025 10:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53687226CF9;
+	Mon,  7 Apr 2025 10:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744023040; cv=none; b=fDLOioB+IiW3PNhSdo6+JamFQcRnMEKrKlWrNQAWzHbvxyy12m1lzeeTH08mK66qL5ZQt75ysUyd7JxeW89DBuS1An9hthsRoP9mCmhFkWkQGaDnLwgJDIF0wHx/bBDXMQ8JGtkkbump4X2cHjL4wm3DnaqSNyzeehzO3GaEceU=
+	t=1744023011; cv=none; b=SobsQxFB07y5SLx/ONxBOwj4aHvTRv95+XHCBR8ZEzUwCFspKRVTzNzNfPUv0X6H0pk78iosKM9Cn7HVrEBmQ87s4KNl4e6tOMSVxP1ivTGgi3OVmVkrr0T68rqqeP2pF084q1e0iu0V1Auxvnd2VVC0WfswF/3FUrIrYZwAYd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744023040; c=relaxed/simple;
-	bh=h09H0mVo+a/xhXkOSI8OnmS+1oWns5vRt4sP272clcs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DSO9jDtUzqvo0ocyk7djW9f4YxsZSidicJ/g6R7EvysHyV9y50+qRSskpAP4aye56hWDIFrozfhH5hha9RFCMu/UpuwTFzL0lxv8p699gUhD1mNudkkiASQOHd2j410pED/OOy0xfuU2+uX7OHRuMdFh0Zu5Q0OyYXUG6zEyHwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=llvNHHMo; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744023039; x=1775559039;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=h09H0mVo+a/xhXkOSI8OnmS+1oWns5vRt4sP272clcs=;
-  b=llvNHHMo84LWJWTBkyHJc33vuakuL8dXX2C6qyit/pu4T6ggq53+w49q
-   Gi9RRtVir/pWViaU0uBCSgnmaP2GPqt8sZMUVPxUfq1fVarOR3FAOL+Jw
-   FheX5t/3lipmpZhTYmzHRDGtjFJsUtKyNnqsoi60B4eioAy6VlVn7Fcbr
-   Qka0tx1eYhGDZOt4wMB0MyActvtxePd/Xx0OE4RFXuNxfaf9Vnz22bdCL
-   g7eu73s6Jg/0W40ibTaYBCYk5xggFbLgD0uYkZxXUp0PhZwekbkr73ROq
-   9ORHPM1RzMEUUOjY2n1o2oJpSid+/cJ6kLZjl2Qlf05LIlSH7OJh3MVyQ
-   w==;
-X-CSE-ConnectionGUID: 06WyhrNrTN2V3lLhgG1KHw==
-X-CSE-MsgGUID: kMbKFKHmRT6JvNOdo0PAag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11396"; a="62947720"
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="62947720"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 03:50:38 -0700
-X-CSE-ConnectionGUID: joj3L2zQSP6xc7/XnLV2Qg==
-X-CSE-MsgGUID: H+IhcpiRRhWwWK0XPvYUyw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="128793016"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP; 07 Apr 2025 03:50:36 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 3AB7C26A; Mon, 07 Apr 2025 13:50:34 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Eddie James <eajames@linux.ibm.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Lee Jones <lee@kernel.org>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Pavel Machek <pavel@kernel.org>
-Subject: [PATCH v2 1/1] leds: pca955x: Avoid potential overflow when filling default_label
-Date: Mon,  7 Apr 2025 13:49:58 +0300
-Message-ID: <20250407105033.324789-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1744023011; c=relaxed/simple;
+	bh=2K+ojj/dTy8iYta+v0Ht3jSmIqVS3EZThaOey/6kQZw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hVxxts932lZW0r/3diegGATuMnZsz7cpQM6Dhcj1FVYB5cWnOrw48mkBXM8EMCzLL7fB6QXHuVyA4rp9/0CUHWq4a2xKz9TURHJUdgBTwn8BoxzavU7LEAkTkIxmS1Le5gqBxGRBP8agNLkTpks/nl+xw7YouH/TWH3FBo6CVJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=evw3nTUd; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43ce70f9afbso45875025e9.0;
+        Mon, 07 Apr 2025 03:50:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744023007; x=1744627807; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nvtwFiVMXU1NVodemtu0TmKLvx/KKZHGp4n6IgRaf24=;
+        b=evw3nTUddhLt2h2MKRVycXG5JuMKgAIl0ESdjF8IFh3r8sRF3avvAa5e3NUTzqrbOB
+         X1ynBea1kJyyqzKJyrDyoVArF+bcR7ZKa/A4qgnKP7nflSUAy6G+PIsD84u9U8J8M0aL
+         lKWFKTQ5TU5unKZ/VvFTArnrJjeLfJGlfW+b+KNi9xRQrMEa6Ev9hvLkov4E7+TcgCmR
+         0p55/feR/L4hiKjQz5npNthLmHQA576eMR8WuU96wUsuKKWa26dp5qpfRvcwpCT9PTwX
+         JA+J1wrRGgHqzvnKecDO6zSzBcPKvrk0IOx5jOWhl5YvWgP0kWo/4siO5XBTW5pZOxAz
+         A3Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744023007; x=1744627807;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nvtwFiVMXU1NVodemtu0TmKLvx/KKZHGp4n6IgRaf24=;
+        b=V0lgz2v7YRMYwRtwAFXTQX1fDNNypf1FablwFKywhoh6JTzdvIkawdONvAHNMCyCgS
+         2yLXxN3JD15KYAuQ+rUxOPIRw4Da7kqnhZtdceaO+cWnFzjg99tYHZUHhbhtUDxe0CCS
+         oLO4xZ3x+WyyNfuyk09HqJnXh4Z06Oi3HOv+/Bui4Dy2VhdE6pcgfsljnx091bJQqyuL
+         o3f/bQ8xl44i7KZZrKitHPY8GydAQatIHCu1pgfsh7k2oWqH6LXnuQf4IGEqBj4qH6IY
+         qMj9A1Grrm0e4iEfoRfMovxvFfWl/3cNuksrewG6O8OhjoTu17FPLMUS/nMDXFWfmUy8
+         PckQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHh7gfKj+RJxEepN7+gw+whgNeTl3dgoe6lo8s4o3YTf7N4ltWBwYWYOzaUYa1vGVufIwskJyS2+h0oYoy3O+bkpk=@vger.kernel.org, AJvYcCXnX6Br7MOhAUuqzIUXaoK8UExMJ1qA1/AO+eTj/Y0DNb8M7CBUgErUpQIMm9DazurUDHe41vNVZZ175cw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7kRJVRYWvtrcF3eklwJccmrnmLJXZCjaYxdU9a8ObnH47t3tn
+	o4hircOlkp1gCKsGByhteX9SyTql1xS9kFlw/CzpVjl0ZIVu+ZIW
+X-Gm-Gg: ASbGncvdc8iVFTd5jBkgx/SKi5Ks1kee0nB1/V/UMZ3oz1Tmd75RRzNwGYDbrawTADN
+	QfG0lppcG2PmVgRIdUFbc94ysCQ7oOj3Ed4Y/nestqO19OyliDh9b01mxRsXk74uCI11fz979KS
+	hYhdfkTULCZBwYHEgWMoGGyS6Cam1mfsXBWC7t7ZGwmArFrex0J8EKq+di+2SkfWLvM2o9ohHxC
+	w2FPc6TxWbKMqry6v+Fa9dfWE+2tNNRWzqgWP6nuZ1ZG+CQa7e15n/yHgMRs61htVTMwQvkx8bo
+	uVkZZ4ae2pqbSR2KO23L8Y9KqTWWtaZEoGR+oBWhw/ukwaLGweQn1dvQ2s1XaEBpp5pCng==
+X-Google-Smtp-Source: AGHT+IG92l9theLmnaelvJH3RrHjt9E8o/s4RKU+auU99dibPzn2htg75+nY9AVXz/Fjbyy/puZtMg==
+X-Received: by 2002:a05:600c:4688:b0:43c:fee3:2bce with SMTP id 5b1f17b1804b1-43ed0d6abc4mr99719445e9.26.1744023007269;
+        Mon, 07 Apr 2025 03:50:07 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:78b9:80c2:5373:1b49])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec3174cf0sm129975765e9.0.2025.04.07.03.50.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 03:50:06 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/3] usb: renesas_usbhs: Reorder clock handling
+Date: Mon,  7 Apr 2025 11:49:59 +0100
+Message-ID: <20250407105002.107181-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-GCC compiler (Debian 14.2.0-17) is not happy about printing
-into a too short buffer (when build with `make W=1`):
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-  drivers/leds/leds-pca955x.c:554:33: note: ‘snprintf’ output between 2 and 12 bytes into a destination of size 8
+Hi All,
 
-Indeed, the buffer size is chosen based on some assumptions,
-while in general the assigned value might not fit (GCC can't
-prove it does).
+This patch series reorders clock handling in probe path and fixes
+trivial typo's.
 
-Fix this by changing the bits field in the struct pca955x_chipdef to u8,
-with a positive side effect of the better memory footprint, and convert
-loop iterator to be unsigned. With that done, update format specifiers
-accordingly. Note, the choice of the format specifier is made deliberately
-like that because some of (old) GCC versions (powerpc-linux-gcc (GCC) 8.5.0)
-are not happy otherwise.
+v1->v2
+- Rebased on v6.15-rc1
+- Updated commit message for patch 1/3 and fixed review comments
+  from Morimoto-san.
+- Included ack from Morimoto-san for patch 2/3.
 
-In one case join back string literal as it improves the grepping over the code
-based on the message and remove duplicating information (the driver name is
-printed as pert of the dev_*() output [1]) as we touch the same line anyway.
+Cheers,
+Prabhakar
 
-Link: https://lore.kernel.org/r/4ac527f2-c59e-70a2-efd4-da52370ea557@dave.eu/ [1]
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
+Lad Prabhakar (3):
+  usb: renesas_usbhs: Correct function references in comment
+  usb: renesas_usbhs: Fix typo in comment
+  usb: renesas_usbhs: Reorder clock handling and power management in
+    probe
 
-v2: updated format specifier once again (LKP)
+ drivers/usb/renesas_usbhs/common.c | 54 ++++++++++++++++++++++--------
+ 1 file changed, 40 insertions(+), 14 deletions(-)
 
- drivers/leds/leds-pca955x.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
-index e9cfde9fe4b1..b71c1580f4bb 100644
---- a/drivers/leds/leds-pca955x.c
-+++ b/drivers/leds/leds-pca955x.c
-@@ -73,7 +73,7 @@ enum pca955x_type {
- };
- 
- struct pca955x_chipdef {
--	int			bits;
-+	u8			bits;
- 	u8			slv_addr;	/* 7-bit slave address mask */
- 	int			slv_addr_shift;	/* Number of bits to ignore */
- 	int			blink_div;	/* PSC divider */
-@@ -581,7 +581,6 @@ static int pca955x_probe(struct i2c_client *client)
- 	struct led_classdev *led;
- 	struct led_init_data init_data;
- 	struct i2c_adapter *adapter;
--	int i, bit, err, nls, reg;
- 	u8 ls1[4];
- 	u8 ls2[4];
- 	struct pca955x_platform_data *pdata;
-@@ -589,6 +588,9 @@ static int pca955x_probe(struct i2c_client *client)
- 	bool keep_psc0 = false;
- 	bool set_default_label = false;
- 	char default_label[8];
-+	int bit, nls, reg;
-+	unsigned int i;
-+	int err;
- 
- 	chip = i2c_get_match_data(client);
- 	if (!chip)
-@@ -610,16 +612,15 @@ static int pca955x_probe(struct i2c_client *client)
- 		return -ENODEV;
- 	}
- 
--	dev_info(&client->dev, "leds-pca955x: Using %s %d-bit LED driver at "
--		 "slave address 0x%02x\n", client->name, chip->bits,
--		 client->addr);
-+	dev_info(&client->dev, "Using %s %u-bit LED driver at slave address 0x%02x\n",
-+		 client->name, chip->bits, client->addr);
- 
- 	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA))
- 		return -EIO;
- 
- 	if (pdata->num_leds != chip->bits) {
- 		dev_err(&client->dev,
--			"board info claims %d LEDs on a %d-bit chip\n",
-+			"board info claims %d LEDs on a %u-bit chip\n",
- 			pdata->num_leds, chip->bits);
- 		return -ENODEV;
- 	}
-@@ -694,8 +695,7 @@ static int pca955x_probe(struct i2c_client *client)
- 			}
- 
- 			if (set_default_label) {
--				snprintf(default_label, sizeof(default_label),
--					 "%d", i);
-+				snprintf(default_label, sizeof(default_label), "%hhu", i);
- 				init_data.default_label = default_label;
- 			} else {
- 				init_data.default_label = NULL;
 -- 
-2.47.2
+2.49.0
 
 
