@@ -1,132 +1,181 @@
-Return-Path: <linux-kernel+bounces-591957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E593AA7E73D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:52:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C7B6A7E72E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:49:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 396E8176127
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:47:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 490AF7A26FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A822116E5;
-	Mon,  7 Apr 2025 16:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3CF211A2C;
+	Mon,  7 Apr 2025 16:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Nuh6OFc3"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YK7Ze1ul"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4474221149C;
-	Mon,  7 Apr 2025 16:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E98C215079;
+	Mon,  7 Apr 2025 16:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744044416; cv=none; b=ExFq455bAEWr3ZiExy6B8C3QkGaIK+iAhN4O9DnvwTjnb5huGKOnIh8V5/3lhegtlfG9km+J6+2t0SjyM3oDxI3e2IoS9K3J1R6gZg9twUCcCK1V7uUQAH7r0CASFlp16m9pG0TionFfadEsVrhPHGZXzvrVZKYSJHxxDpNKEj4=
+	t=1744044436; cv=none; b=uRyVsYhOFUY6e4BkWufRh7grUkklsCH3yERq0cffVPTbuEbrO34gb/gf6P4ZgDh6Xhw6Ul69f5NLIb2ooXePQHkLOFzT1nICaUML1aghfiDbKyEV4H+9MNV56ZK0FNM7TVp61yPgxlynGvreyqAuQ+BxUvZonEvzqKf5ndqA8G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744044416; c=relaxed/simple;
-	bh=c4KBYqPr3jTX/BN6Q4aT5hyNkfv7vvC3t8calp633Ug=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JkroASAhsAByIznWNK5M0UWXm88/kupCKukHAwmm3DwABqPYWwOuBUSRyGesAKjJF8lqxn+TJHnMalCpIskprFcIGGoaoSJCAJR2egz1EaGcUMaHLh2q4ww0sSDXgvfz9w5xpsGn7ro2E9eGO1znV55tQd+LIAh9iuqO2Ts6dxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Nuh6OFc3; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 910F543137;
-	Mon,  7 Apr 2025 16:46:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744044412;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RXJpfmhZ+8yM3mjrwdmbYrVV3J33ZSlFaLXrj0slIbA=;
-	b=Nuh6OFc3/kXzo6DFhHDNjBix1k6eSZDM8GdsMsXmsU0V3T4vccLEgUCC4EgQeWaqxdDd+m
-	6iDycLP0ZRwOMlRdIP55ClDsYY3RRZggJjGc57Tbk0t12a7NIkAiyOyEKWjVYYGcYtB8cY
-	LSF3wv/M4lhju7DTiyJXQ8Vfvi1s2OBuTch5r0lwm/s2X3bqq+j8hq+NI1nantxL2od+tP
-	b5oVECDGuEQqoTNn/1N8Bm58s4JuR7NFVdrwxCIpRF2xGRCvUw2WN9uKmJ98U/NeGEgPJo
-	E8lKL1tTsWOpYcW6n8W0UST7oX+rytoqLVzC9dA4uDFH/LG6/2QHCJ7BxnoDoA==
-Date: Mon, 7 Apr 2025 18:46:47 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Petr Mladek <pmladek@suse.com>, Daniel Lezcano
- <daniel.lezcano@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui
- <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, Scott Branden
- <sbranden@broadcom.com>, Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Steven Rostedt
- <rostedt@goodmis.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Jonathan Corbet <corbet@lwn.net>, Andrew Morton
- <akpm@linux-foundation.org>, Alex Shi <alexs@kernel.org>, Yanteng Si
- <si.yanteng@linux.dev>, Binbin Zhou <zhoubinbin@loongson.cn>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Liu Ying <victor.liu@nxp.com>,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] vsprintf: remove redundant and unused %pCn
- format specifier
-Message-ID: <20250407184647.3b72de47@booty>
-In-Reply-To: <Z9BKW_06nLAOzYfY@pathway.suse.cz>
-References: <20250311-vsprintf-pcn-v2-0-0af40fc7dee4@bootlin.com>
-	<20250311-vsprintf-pcn-v2-2-0af40fc7dee4@bootlin.com>
-	<Z9BKW_06nLAOzYfY@pathway.suse.cz>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1744044436; c=relaxed/simple;
+	bh=d/9rF2v6gxz+aVjjloTd50bAqLAn569sdN/hKyUhniA=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=sAffc7/MaB8h9oVid+spP9sowiKCUiBzIXVPrPiYwAAtP6trHn3vsQNPLWX3XZMHrt2PiTQrfPvebvAHZizyt1h/Vlgd2KDxGBevmvcFsy8axP4pw8eMHGZjop+3Phe+9kBmdW4EUM9TH1/ZYjqDyGalJxThxLJzcIxTVqbx6ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YK7Ze1ul; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744044434; x=1775580434;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=d/9rF2v6gxz+aVjjloTd50bAqLAn569sdN/hKyUhniA=;
+  b=YK7Ze1ulO3IPQJIf1oveqFe8p2IG/YiclFxHNSbFlgcWECdQV31TO0HU
+   5CGp7fVZ8/7oVnpr3HR8tTRuKpgw7/zxf0KISObSVDTK1ronrgWpQnSL7
+   JHM6+ambKdgIDL+XQMkc188fwPg1AW0sHLA7c5xSLLehtVLPS/oaNJXic
+   a3rnZMCJjMyrhFmxBjRJXHz2wjL7jnp0iq1DjAJ3C1kmLILSet70IuFaK
+   Z7RNx3v2+BHV78iKU/w1OB9pM2sxGwEgky0jPk3EZCtfwR9QjupNg+tRB
+   8v1rn+kkelZTCp81bvVCP+No9ZKCApIjFz1w42kqK+w8KpjdTFTASU2vQ
+   A==;
+X-CSE-ConnectionGUID: YKW7OwGrSCChaKFcr57O+w==
+X-CSE-MsgGUID: P6pQb+gtToKAn45TPgM4Ag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45533291"
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="45533291"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 09:47:13 -0700
+X-CSE-ConnectionGUID: dEMeJzZ7RJaZ+YDO48bYaw==
+X-CSE-MsgGUID: yioqSJnkQC+IzOwpsUAeHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="127767783"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.229])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 09:47:02 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 7 Apr 2025 19:46:59 +0300 (EEST)
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+    Maxime Ripard <mripard@kernel.org>, 
+    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+    Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+    Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+    Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+    Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+    Jagan Teki <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, 
+    Sascha Hauer <s.hauer@pengutronix.de>, 
+    Pengutronix Kernel Team <kernel@pengutronix.de>, 
+    Fabio Estevam <festevam@gmail.com>, 
+    Douglas Anderson <dianders@chromium.org>, 
+    Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+    Krzysztof Kozlowski <krzk@kernel.org>, 
+    Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+    Anusha Srivatsa <asrivats@redhat.com>, 
+    Paul Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>, 
+    =?ISO-8859-15?Q?Herv=E9_Codina?= <herve.codina@bootlin.com>, 
+    Hui Pu <Hui.Pu@gehealthcare.com>, 
+    Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+    dri-devel@lists.freedesktop.org, asahi@lists.linux.dev, 
+    LKML <linux-kernel@vger.kernel.org>, chrome-platform@lists.linux.dev, 
+    imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+    linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+    linux-renesas-soc@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+    linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+    freedreno@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com, 
+    Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+    Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH 02/34] platform: arm64: acer-aspire1-ec: convert to
+ devm_drm_bridge_alloc() API
+In-Reply-To: <20250407-drm-bridge-convert-to-alloc-api-v1-2-42113ff8d9c0@bootlin.com>
+Message-ID: <a9000632-a6d1-d369-c317-9ee73aa645dc@linux.intel.com>
+References: <20250407-drm-bridge-convert-to-alloc-api-v1-0-42113ff8d9c0@bootlin.com> <20250407-drm-bridge-convert-to-alloc-api-v1-2-42113ff8d9c0@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddtjeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdelpdhrtghpthhtohepphhmlhgruggvkhesshhushgvrdgtohhmpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrt
- ghpthhtoheprhhuihdriihhrghnghesihhnthgvlhdrtghomhdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepfhhlohhrihgrnhdrfhgrihhnvghllhhisegsrhhorggutghomhdrtghomhdprhgtphhtthhopehrjhhuihessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepshgsrhgrnhguvghnsegsrhhorggutghomhdrtghomh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: multipart/mixed; boundary="8323328-1316811861-1744044419=:936"
 
-Hello Petr, Daniel,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On Tue, 11 Mar 2025 15:36:11 +0100
-Petr Mladek <pmladek@suse.com> wrote:
+--8323328-1316811861-1744044419=:936
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-> On Tue 2025-03-11 10:21:23, Luca Ceresoli wrote:
-> > %pC and %pCn print the same string, and commit 900cca294425 ("lib/vsprintf:
-> > add %pC{,n,r} format specifiers for clocks") introducing them does not
-> > clarify any intended difference. It can be assumed %pC is a default for
-> > %pCn as some other specifiers do, but not all are consistent with this
-> > policy. Moreover there is now no other suffix other than 'n', which makes a
-> > default not really useful.
-> > 
-> > All users in the kernel were using %pC except for one which has been
-> > converted. So now remove %pCn and all the unnecessary extra code and
-> > documentation.
-> > 
-> > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>  
-> 
-> Makes sense. Looks and works well, so:
-> 
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
-> Tested-by: Petr Mladek <pmladek@suse.com>
-> 
-> Daniel, if I get it correctly, you have already taken the 1st patch.
-> Would you mind to take also this patch using the same tree, please?
-> Otherwise, we would need to coordinate pull requests in the upcoming
-> merge window ;-)
+On Mon, 7 Apr 2025, Luca Ceresoli wrote:
 
-I see none of these two patches in linux-next.
+> This is the new API for allocating DRM bridges.
+>=20
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+>=20
+> ---
+>=20
+> Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
+> Cc: "Ilpo J=C3=A4rvinen" <ilpo.jarvinen@linux.intel.com>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> ---
+>  drivers/platform/arm64/acer-aspire1-ec.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/platform/arm64/acer-aspire1-ec.c b/drivers/platform/=
+arm64/acer-aspire1-ec.c
+> index 958fe1bf5f85bb69ac7962f217de9f0b40cde9a1..438532a047e68799ac53a16a4=
+c813fc16be997b9 100644
+> --- a/drivers/platform/arm64/acer-aspire1-ec.c
+> +++ b/drivers/platform/arm64/acer-aspire1-ec.c
+> @@ -452,9 +452,9 @@ static int aspire_ec_probe(struct i2c_client *client)
+>  =09int ret;
+>  =09u8 tmp;
+> =20
+> -=09ec =3D devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
+> -=09if (!ec)
+> -=09=09return -ENOMEM;
+> +=09ec =3D devm_drm_bridge_alloc(dev, struct aspire_ec, bridge, &aspire_e=
+c_bridge_funcs);
+> +=09if (IS_ERR(ec))
+> +=09=09return PTR_ERR(ec);
+> =20
+>  =09ec->client =3D client;
+>  =09i2c_set_clientdata(client, ec);
+> @@ -497,7 +497,6 @@ static int aspire_ec_probe(struct i2c_client *client)
+>  =09fwnode =3D device_get_named_child_node(dev, "connector");
+>  =09if (fwnode) {
+>  =09=09INIT_WORK(&ec->work, aspire_ec_bridge_update_hpd_work);
+> -=09=09ec->bridge.funcs =3D &aspire_ec_bridge_funcs;
+>  =09=09ec->bridge.of_node =3D to_of_node(fwnode);
+>  =09=09ec->bridge.ops =3D DRM_BRIDGE_OP_HPD;
+>  =09=09ec->bridge.type =3D DRM_MODE_CONNECTOR_USB;
 
-Anything I should do? Resend? Or just wait a bit more?
+Hi Luca,
 
-Best regards,
-Luca
+It took a while to locate where the code for the new helper is. I suggest=
+=20
+if you need send another version of the series directly linking to the=20
+commit in the cover letter so that it won't take multiple hoops to find it=
+=20
+if one wants to review the code and is not having all drm trees easily at=
+=20
+hand. Here it is for the benefit of other pdx86 people:
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/0cc6aadd7fc1e629b71=
+5ea3d1ba537ef2da95eec
+
+
+Acked-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+
+I assume you want this to go through the drm tree where the helper already=
+=20
+is?
+
+--=20
+ i.
+
+--8323328-1316811861-1744044419=:936--
 
