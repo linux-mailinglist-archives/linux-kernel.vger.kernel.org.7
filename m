@@ -1,485 +1,201 @@
-Return-Path: <linux-kernel+bounces-591831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 629F7A7E5AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:08:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E75A7E5A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23FC0444F90
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:01:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1B923B055D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED57E20A5CC;
-	Mon,  7 Apr 2025 15:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491482046B4;
+	Mon,  7 Apr 2025 15:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RqjoJ08H";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Z32K1vqi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IQ4Z06Yg"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52CD20550F;
-	Mon,  7 Apr 2025 15:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2502054F5;
+	Mon,  7 Apr 2025 15:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744041481; cv=none; b=jTfR/iz5Sad2SICVNToSEIbXEovWrRaUV5s6MLND3juauJje/Uv/UCponlqomXNJNqdUMaENt1dfHULv5ellKjnk5dAk+ODgtb9jbo6rfqojGYt94rG0K+H/rGT/wTtpfqwUPNmDuVsC5xlMdGXN6t6QrHgSSLzKeCF1lYmunNU=
+	t=1744041469; cv=none; b=MnQTbLQpqkbX188uVk2dFXtBmbAlvyCbChqJv+OdW39EplA5GeD+5/NME5AHXbqnsapF10XA56yMkx7/RjOb8p+MzA9ZboABoHbyBL1MoybWB7U/zyY/mQBiqxFOYYdyNXtA+DHzHoElo2jptJFW4XtH3m3JbhaIvsLulx2sCIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744041481; c=relaxed/simple;
-	bh=Cw87UFmuA8ZmCf8B0CadMFiRTx/KBk+mEZ8BO/KHCAk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ureyiVzVQ7XVrHEjGsgcZEoSjGEnfhMB4v975TckezZnUoXR5ZWL7eF+KRvdg1fX9zVBo38p9tZ1/idMmiZ1VB8vGqTgVrT2lmyM0B5kBXjbHnU4QOslb2c8BSKx7RiAgAr5NlQChNCa27v2kQcrIDyuhQ+wAgvoa7F8uiUhxyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RqjoJ08H; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Z32K1vqi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744041475;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QoZTyxyOl/UusotlNwi01NhNZ9SZTPvd42O5pjsTrkE=;
-	b=RqjoJ08HqXAJvxvRLhF6rJWvVNnYqXfzt2j+jYch9bW2owViw/OE/7Z9Nrz6kWnh6O6B6Y
-	IJc6W9qj9TmbJAEtNhBkuxwFjOQg/k1XPhBUR1zZ+aRJgMZzeAWBCzogtEsamvUFj9SdiK
-	IidbNcIywLG1qrljmAhG1DPEalKE1oLLvzXSI6YKyq52c68PbLWtxPsuhTn6/XS9fiN4OE
-	pZX7p4tGAv/r8HDhDCEOHvjZMG0kNWToPSg9OKdEYX9FO0rQdLn+61YC4/3QvEA1mEm6NV
-	OWLMJ0OYqg8wOCar2sPLJjnhCH9p6K1BuhlYk7PgYBpMV+zFu+FMmV2FhbI3xQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744041475;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QoZTyxyOl/UusotlNwi01NhNZ9SZTPvd42O5pjsTrkE=;
-	b=Z32K1vqiDfF3xv8KRuxTh/eGNMnZTQXA7hrC7CDRa1V++hZP5Y9/zKeobzdUFMBBMIj2Tc
-	DAvp44XVwbwYOyCQ==
-To: linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH v11 19/19] futex: Allow to make the private hash immutable.
-Date: Mon,  7 Apr 2025 17:57:42 +0200
-Message-ID: <20250407155742.968816-20-bigeasy@linutronix.de>
-In-Reply-To: <20250407155742.968816-1-bigeasy@linutronix.de>
-References: <20250407155742.968816-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1744041469; c=relaxed/simple;
+	bh=H+CdtIhmID2/drSfh5+XjpR6UYF4Qy4pqbDGwhcpi1A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W9jz0wLafK1H229neCFx0nVLEirS6d8J4ehl5W/hx+lHLucXdY4kgE0k8t4/AZmNLgc9g4yWoaUkUiDm1WDPSyDnQ4Ih1LOJN78fz36+geekQjVLX0pT29kqwTxaIVhTu3f+CHgtkMmGMB39SnKRLXgk52BgPCCrlZ0VWDzCCb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IQ4Z06Yg; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2295d78b433so42647755ad.2;
+        Mon, 07 Apr 2025 08:57:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744041467; x=1744646267; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=v5r35eAB9xHFrwGXzgL7ZcsIMlZ9GDgOCNF5pC7M0bw=;
+        b=IQ4Z06YgRYFcMsry0WbkmTmUUTG3A2dyY/IA69a1CS9EiYzy7tyGVE8m5kvPRtMxxT
+         LiPGmm2ZlHdEXZsLo2rsLJJWVUOo8dDNe/cUXK7cMq5uN8Fo3lAr3JwAwWsg52ml/ENF
+         do1EzN0Iu4jnEaA3LWM59BPV6Aa/g49N/xf4skn6GFqulJ/DgDNYR10JazbAf3xkSeQ/
+         6y4OLXmXGkkypwc3ydBj+0+JiuH+coEIRXYkJaOyJWXiSdSkZU6WKlABQITP9Iyio/E2
+         G/hoVQaS8T5zrqjPBa6BXWRMY4RlrVl1NZbORq8tn7/lxKvszQoh3dh8c1hE5oKQnjSW
+         cqKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744041467; x=1744646267;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v5r35eAB9xHFrwGXzgL7ZcsIMlZ9GDgOCNF5pC7M0bw=;
+        b=NzUiZdwhvK3zCbZau5CpexIP8dkSEN4z8tmStH40O2n3OWk7FhVaQqGGmgk6Bk19zc
+         Wjt5qjyb6YyzfA3UJ43CTgIlzrLsZsrKDgWwerTuLAgYVJmOm+d7yhKdLULSwRZ+Z55d
+         4D9sAibEIqd76ySoeUy7Ko+agNG7G8qcNkWazSFWltiq85TXLYDU0kaVVpy5elT8Fkx0
+         Ka9X1Lz9KC+zkZBGh96QZcNKYPOj/ZijCRyNkW2qKqM+wKz7DIXQbV2neErEbldLRdIv
+         dSSc/MjwTmCrdSzOgo0QH9HArZDA7/M8an+yni2unabvngnrbCFIAGdfdl0GTJVkxcO7
+         uyww==
+X-Forwarded-Encrypted: i=1; AJvYcCV870F6yqQVUoWFcIOKjzV+3OUF+Fd5OXcgkPR7xpxf+ukTycjAlSqDUJjE+I9dZ0iE8hitY5fGM5QkWCgwceZnbek=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmAr1SHfC9d7Qm79Ivk+8Wg/EvsIVNVBU3xREKa0siv/2NKNXL
+	aDVQCDHXbPfioY3jPMuolri7IQA3yaZiqdyZ9Ll8cIfm7Y5jU5Gu
+X-Gm-Gg: ASbGncv9BqvmzlepeNlzVfm4d3dUY45G6UwLINfAVvykMMeeiLqLyLM6xXMqDDYdpQJ
+	ts59s5WBfSCnuZolOumeMgCtELL7Mca1yy0IZhuq8udgXWOQeEwwXOEu40KtryomlDZQq7Q1KaA
+	pC3gpbB2GbGWVgiO/e4pLfw/TwOGGW68Mg6YJ488I/vP07T9yPFXJ9g4t2w6RMMihZ4lmjm4W7U
+	5YneCtPa5NYCYZRVK/BIKrdxqNXHrkUpUtuEA3G0IjkBrmfE1l8PehkrHZYKurmJ3pPlP/06KAE
+	82blW1M10b2cjNlCH1MsP+y9r/8jbzwCEqJ+keOTwqyoGvuujCNXkgG4k4/zIH7255hiPeA3VRD
+	GMseNlL6/PztUhYZp+WCmQxB9S5Fu
+X-Google-Smtp-Source: AGHT+IFBRwllDf9K+EOnjhqcFFxAPq/2hjZGxCvm4B7YpsWaiJHVT4hb0raWmhns3hpBw+Rx3nS3Sg==
+X-Received: by 2002:a17:903:246:b0:223:faf5:c82 with SMTP id d9443c01a7336-22a8a045fe5mr152539315ad.8.1744041466969;
+        Mon, 07 Apr 2025 08:57:46 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229785c27b3sm83336955ad.97.2025.04.07.08.57.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Apr 2025 08:57:45 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <2c0b957b-3a7c-4607-9a8b-79fcbf7297c8@roeck-us.net>
+Date: Mon, 7 Apr 2025 08:57:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/4] tracing: Use vmap_page_range() to map memmap ring
+ buffer
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Vincent Donnefort <vdonnefort@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Jann Horn <jannh@google.com>
+References: <20250402144903.993276623@goodmis.org>
+ <20250402144953.754618481@goodmis.org>
+ <4f8ece8b-8862-4f7c-8ede-febd28f8a9fe@roeck-us.net>
+ <20250407112352.264e12b0@gandalf.local.home>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20250407112352.264e12b0@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-My initial testing showed that
-	perf bench futex hash
+On 4/7/25 08:23, Steven Rostedt wrote:
+> On Sun, 6 Apr 2025 10:39:27 -0700
+> Guenter Roeck <linux@roeck-us.net> wrote:
+> 
+>> non-MMU builds (xtensa:nommu_kc705_defconfig):
+> 
+> Bah!
+> 
+:-)
 
-reported less operations/sec with private hash. After using the same
-amount of buckets in the private hash as used by the global hash then
-the operations/sec were about the same.
+>>
+>> kernel/trace/trace.o:(.init.literal+0x250): undefined reference to `get_vm_area'
+> 
+> Does this fix it?
+> 
 
-This changed once the private hash became resizable. This feature added
-a RCU section and reference counting via atomic inc+dec operation into
-the hot path.
-The reference counting can be avoided if the private hash is made
-immutable.
-Extend PR_FUTEX_HASH_SET_SLOTS by a fourth argument which denotes if the
-private should be made immutable. Once set (to true) the a further
-resize is not allowed (same if set to global hash).
-Add PR_FUTEX_HASH_GET_IMMUTABLE which returns true if the hash can not
-be changed.
-Update "perf bench" suite.
+Yes, it does.
 
-For comparison, results of "perf bench futex hash -s":
-- Xeon CPU E5-2650, 2 NUMA nodes, total 32 CPUs:
-  - Before the introducing task local hash
-    shared  Averaged 1.487.148 operations/sec (+- 0,53%), total secs =3D 10
-    private Averaged 2.192.405 operations/sec (+- 0,07%), total secs =3D 10
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 
-  - With the series
-    shared  Averaged 1.326.342 operations/sec (+- 0,41%), total secs =3D 10
-    -b128   Averaged   141.394 operations/sec (+- 1,15%), total secs =3D 10
-    -Ib128  Averaged   851.490 operations/sec (+- 0,67%), total secs =3D 10
-    -b8192  Averaged   131.321 operations/sec (+- 2,13%), total secs =3D 10
-    -Ib8192 Averaged 1.923.077 operations/sec (+- 0,61%), total secs =3D 10
-    128 is the default allocation of hash buckets.
-    8192 was the previous amount of allocated hash buckets.
+Thanks,
+Guenter
 
-- Xeon(R) CPU E7-8890 v3, 4 NUMA nodes, total 144 CPUs:
-  - Before the introducing task local hash
-    shared   Averaged 1.810.936 operations/sec (+- 0,26%), total secs =3D 20
-    private  Averaged 2.505.801 operations/sec (+- 0,05%), total secs =3D 20
-
-  - With the series
-    shared   Averaged 1.589.002 operations/sec (+- 0,25%), total secs =3D 20
-    -b1024   Averaged    42.410 operations/sec (+- 0,20%), total secs =3D 20
-    -Ib1024  Averaged   740.638 operations/sec (+- 1,51%), total secs =3D 20
-    -b65536  Averaged    48.811 operations/sec (+- 1,35%), total secs =3D 20
-    -Ib65536 Averaged 1.963.165 operations/sec (+- 0,18%), total secs =3D 20
-    1024 is the default allocation of hash buckets.
-    65536 was the previous amount of allocated hash buckets.
-
-Cc: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-perf-users@vger.kernel.org
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- include/linux/futex.h                  |  2 +-
- include/uapi/linux/prctl.h             |  1 +
- kernel/futex/core.c                    | 42 ++++++++++++++++++++++----
- kernel/sys.c                           |  2 +-
- tools/include/uapi/linux/prctl.h       |  1 +
- tools/perf/bench/futex-hash.c          |  1 +
- tools/perf/bench/futex-lock-pi.c       |  1 +
- tools/perf/bench/futex-requeue.c       |  1 +
- tools/perf/bench/futex-wake-parallel.c |  1 +
- tools/perf/bench/futex-wake.c          |  1 +
- tools/perf/bench/futex.c               |  8 +++--
- tools/perf/bench/futex.h               |  1 +
- 12 files changed, 51 insertions(+), 11 deletions(-)
-
-diff --git a/include/linux/futex.h b/include/linux/futex.h
-index ee48dcfbfe59d..96c7229856d97 100644
---- a/include/linux/futex.h
-+++ b/include/linux/futex.h
-@@ -80,7 +80,7 @@ void futex_exec_release(struct task_struct *tsk);
-=20
- long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
- 	      u32 __user *uaddr2, u32 val2, u32 val3);
--int futex_hash_prctl(unsigned long arg2, unsigned long arg3);
-+int futex_hash_prctl(unsigned long arg2, unsigned long arg3, unsigned long=
- arg4);
-=20
- #ifdef CONFIG_FUTEX_PRIVATE_HASH
- int futex_hash_allocate_default(void);
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index 3b93fb906e3c5..21f30b3ded74b 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -368,5 +368,6 @@ struct prctl_mm_map {
- #define PR_FUTEX_HASH			78
- # define PR_FUTEX_HASH_SET_SLOTS	1
- # define PR_FUTEX_HASH_GET_SLOTS	2
-+# define PR_FUTEX_HASH_GET_IMMUTABLE	3
-=20
- #endif /* _LINUX_PRCTL_H */
-diff --git a/kernel/futex/core.c b/kernel/futex/core.c
-index 5b8609c8729e7..44bb9eeb0a9c1 100644
---- a/kernel/futex/core.c
-+++ b/kernel/futex/core.c
-@@ -70,6 +70,7 @@ struct futex_private_hash {
- 	struct rcu_head	rcu;
- 	void		*mm;
- 	bool		custom;
-+	bool		immutable;
- 	struct futex_hash_bucket queues[];
- };
-=20
-@@ -139,12 +140,16 @@ static inline bool futex_key_is_private(union futex_k=
-ey *key)
-=20
- bool futex_private_hash_get(struct futex_private_hash *fph)
- {
-+	if (fph->immutable)
-+		return true;
- 	return rcuref_get(&fph->users);
- }
-=20
- void futex_private_hash_put(struct futex_private_hash *fph)
- {
- 	/* Ignore return value, last put is verified via rcuref_is_dead() */
-+	if (fph->immutable)
-+		return;
- 	if (rcuref_put(&fph->users))
- 		wake_up_var(fph->mm);
- }
-@@ -284,6 +289,8 @@ struct futex_private_hash *futex_private_hash(void)
- 		if (!fph)
- 			return NULL;
-=20
-+		if (fph->immutable)
-+			return fph;
- 		if (rcuref_get(&fph->users))
- 			return fph;
- 	}
-@@ -1558,7 +1565,7 @@ static bool futex_hash_less(struct futex_private_hash=
- *a,
- 	return false; /* equal */
- }
-=20
--static int futex_hash_allocate(unsigned int hash_slots, bool custom)
-+static int futex_hash_allocate(unsigned int hash_slots, unsigned int immut=
-able, bool custom)
- {
- 	struct mm_struct *mm =3D current->mm;
- 	struct futex_private_hash *fph;
-@@ -1572,7 +1579,7 @@ static int futex_hash_allocate(unsigned int hash_slot=
-s, bool custom)
- 	 */
- 	scoped_guard(rcu) {
- 		fph =3D rcu_dereference(mm->futex_phash);
--		if (fph && !fph->hash_mask) {
-+		if (fph && (!fph->hash_mask || fph->immutable)) {
- 			if (custom)
- 				return -EBUSY;
- 			return 0;
-@@ -1586,6 +1593,7 @@ static int futex_hash_allocate(unsigned int hash_slot=
-s, bool custom)
- 	rcuref_init(&fph->users, 1);
- 	fph->hash_mask =3D hash_slots ? hash_slots - 1 : 0;
- 	fph->custom =3D custom;
-+	fph->immutable =3D !!immutable;
- 	fph->mm =3D mm;
-=20
- 	for (i =3D 0; i < hash_slots; i++)
-@@ -1678,7 +1686,7 @@ int futex_hash_allocate_default(void)
- 	if (current_buckets >=3D buckets)
- 		return 0;
-=20
--	return futex_hash_allocate(buckets, false);
-+	return futex_hash_allocate(buckets, 0, false);
- }
-=20
- static int futex_hash_get_slots(void)
-@@ -1692,9 +1700,22 @@ static int futex_hash_get_slots(void)
- 	return 0;
- }
-=20
-+static int futex_hash_get_immutable(void)
-+{
-+	struct futex_private_hash *fph;
-+
-+	guard(rcu)();
-+	fph =3D rcu_dereference(current->mm->futex_phash);
-+	if (fph && fph->immutable)
-+		return 1;
-+	if (fph && !fph->hash_mask)
-+		return 1;
-+	return 0;
-+}
-+
- #else
-=20
--static int futex_hash_allocate(unsigned int hash_slots, bool custom)
-+static int futex_hash_allocate(unsigned int hash_slots, unsigned int immut=
-able, bool custom)
- {
- 	return -EINVAL;
- }
-@@ -1703,21 +1724,30 @@ static int futex_hash_get_slots(void)
- {
- 	return 0;
- }
-+
-+static int futex_hash_get_immutable(void)
-+{
-+	return 0;
-+}
- #endif
-=20
--int futex_hash_prctl(unsigned long arg2, unsigned long arg3)
-+int futex_hash_prctl(unsigned long arg2, unsigned long arg3, unsigned long=
- arg4)
- {
- 	int ret;
-=20
- 	switch (arg2) {
- 	case PR_FUTEX_HASH_SET_SLOTS:
--		ret =3D futex_hash_allocate(arg3, true);
-+		ret =3D futex_hash_allocate(arg3, arg4, true);
- 		break;
-=20
- 	case PR_FUTEX_HASH_GET_SLOTS:
- 		ret =3D futex_hash_get_slots();
- 		break;
-=20
-+	case PR_FUTEX_HASH_GET_IMMUTABLE:
-+		ret =3D futex_hash_get_immutable();
-+		break;
-+
- 	default:
- 		ret =3D -EINVAL;
- 		break;
-diff --git a/kernel/sys.c b/kernel/sys.c
-index d446d8ecb0b33..adc0de0aa364a 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2822,7 +2822,7 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, ar=
-g2, unsigned long, arg3,
- 		error =3D posixtimer_create_prctl(arg2);
- 		break;
- 	case PR_FUTEX_HASH:
--		error =3D futex_hash_prctl(arg2, arg3);
-+		error =3D futex_hash_prctl(arg2, arg3, arg4);
- 		break;
- 	default:
- 		trace_task_prctl_unknown(option, arg2, arg3, arg4, arg5);
-diff --git a/tools/include/uapi/linux/prctl.h b/tools/include/uapi/linux/pr=
-ctl.h
-index 3b93fb906e3c5..21f30b3ded74b 100644
---- a/tools/include/uapi/linux/prctl.h
-+++ b/tools/include/uapi/linux/prctl.h
-@@ -368,5 +368,6 @@ struct prctl_mm_map {
- #define PR_FUTEX_HASH			78
- # define PR_FUTEX_HASH_SET_SLOTS	1
- # define PR_FUTEX_HASH_GET_SLOTS	2
-+# define PR_FUTEX_HASH_GET_IMMUTABLE	3
-=20
- #endif /* _LINUX_PRCTL_H */
-diff --git a/tools/perf/bench/futex-hash.c b/tools/perf/bench/futex-hash.c
-index c843bd8543c74..fdf133c9520f7 100644
---- a/tools/perf/bench/futex-hash.c
-+++ b/tools/perf/bench/futex-hash.c
-@@ -57,6 +57,7 @@ static struct bench_futex_parameters params =3D {
-=20
- static const struct option options[] =3D {
- 	OPT_INTEGER( 'b', "buckets", &params.nbuckets, "Specify amount of hash bu=
-ckets"),
-+	OPT_BOOLEAN( 'I', "immutable", &params.buckets_immutable, "Make the hash =
-buckets immutable"),
- 	OPT_UINTEGER('t', "threads", &params.nthreads, "Specify amount of threads=
-"),
- 	OPT_UINTEGER('r', "runtime", &params.runtime, "Specify runtime (in second=
-s)"),
- 	OPT_UINTEGER('f', "futexes", &params.nfutexes, "Specify amount of futexes=
- per threads"),
-diff --git a/tools/perf/bench/futex-lock-pi.c b/tools/perf/bench/futex-lock=
--pi.c
-index 40640b6744279..5144a158512cc 100644
---- a/tools/perf/bench/futex-lock-pi.c
-+++ b/tools/perf/bench/futex-lock-pi.c
-@@ -47,6 +47,7 @@ static struct bench_futex_parameters params =3D {
-=20
- static const struct option options[] =3D {
- 	OPT_INTEGER( 'b', "buckets", &params.nbuckets, "Specify amount of hash bu=
-ckets"),
-+	OPT_BOOLEAN( 'I', "immutable", &params.buckets_immutable, "Make the hash =
-buckets immutable"),
- 	OPT_UINTEGER('t', "threads", &params.nthreads, "Specify amount of threads=
-"),
- 	OPT_UINTEGER('r', "runtime", &params.runtime, "Specify runtime (in second=
-s)"),
- 	OPT_BOOLEAN( 'M', "multi",   &params.multi, "Use multiple futexes"),
-diff --git a/tools/perf/bench/futex-requeue.c b/tools/perf/bench/futex-requ=
-eue.c
-index 0748b0fd689e8..a2f91ee1950b3 100644
---- a/tools/perf/bench/futex-requeue.c
-+++ b/tools/perf/bench/futex-requeue.c
-@@ -52,6 +52,7 @@ static struct bench_futex_parameters params =3D {
-=20
- static const struct option options[] =3D {
- 	OPT_INTEGER( 'b', "buckets", &params.nbuckets, "Specify amount of hash bu=
-ckets"),
-+	OPT_BOOLEAN( 'I', "immutable", &params.buckets_immutable, "Make the hash =
-buckets immutable"),
- 	OPT_UINTEGER('t', "threads",  &params.nthreads, "Specify amount of thread=
-s"),
- 	OPT_UINTEGER('q', "nrequeue", &params.nrequeue, "Specify amount of thread=
-s to requeue at once"),
- 	OPT_BOOLEAN( 's', "silent",   &params.silent, "Silent mode: do not displa=
-y data/details"),
-diff --git a/tools/perf/bench/futex-wake-parallel.c b/tools/perf/bench/fute=
-x-wake-parallel.c
-index 6aede7c46b337..ee66482c29fd1 100644
---- a/tools/perf/bench/futex-wake-parallel.c
-+++ b/tools/perf/bench/futex-wake-parallel.c
-@@ -63,6 +63,7 @@ static struct bench_futex_parameters params =3D {
-=20
- static const struct option options[] =3D {
- 	OPT_INTEGER( 'b', "buckets", &params.nbuckets, "Specify amount of hash bu=
-ckets"),
-+	OPT_BOOLEAN( 'I', "immutable", &params.buckets_immutable, "Make the hash =
-buckets immutable"),
- 	OPT_UINTEGER('t', "threads", &params.nthreads, "Specify amount of threads=
-"),
- 	OPT_UINTEGER('w', "nwakers", &params.nwakes, "Specify amount of waking th=
-reads"),
- 	OPT_BOOLEAN( 's', "silent",  &params.silent, "Silent mode: do not display=
- data/details"),
-diff --git a/tools/perf/bench/futex-wake.c b/tools/perf/bench/futex-wake.c
-index a31fc1563862e..8d6107f7cd941 100644
---- a/tools/perf/bench/futex-wake.c
-+++ b/tools/perf/bench/futex-wake.c
-@@ -52,6 +52,7 @@ static struct bench_futex_parameters params =3D {
-=20
- static const struct option options[] =3D {
- 	OPT_INTEGER( 'b', "buckets", &params.nbuckets, "Specify amount of hash bu=
-ckets"),
-+	OPT_BOOLEAN( 'I', "immutable", &params.buckets_immutable, "Make the hash =
-buckets immutable"),
- 	OPT_UINTEGER('t', "threads", &params.nthreads, "Specify amount of threads=
-"),
- 	OPT_UINTEGER('w', "nwakes",  &params.nwakes, "Specify amount of threads t=
-o wake at once"),
- 	OPT_BOOLEAN( 's', "silent",  &params.silent, "Silent mode: do not display=
- data/details"),
-diff --git a/tools/perf/bench/futex.c b/tools/perf/bench/futex.c
-index 8109d6bf3ede2..bed3b6e46d109 100644
---- a/tools/perf/bench/futex.c
-+++ b/tools/perf/bench/futex.c
-@@ -14,7 +14,7 @@ void futex_set_nbuckets_param(struct bench_futex_paramete=
-rs *params)
- 	if (params->nbuckets < 0)
- 		return;
-=20
--	ret =3D prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_SET_SLOTS, params->nbuckets);
-+	ret =3D prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_SET_SLOTS, params->nbuckets, p=
-arams->buckets_immutable);
- 	if (ret) {
- 		printf("Requesting %d hash buckets failed: %d/%m\n",
- 		       params->nbuckets, ret);
-@@ -38,11 +38,13 @@ void futex_print_nbuckets(struct bench_futex_parameters=
- *params)
- 			printf("Requested: %d in usage: %d\n", params->nbuckets, ret);
- 			err(EXIT_FAILURE, "prctl(PR_FUTEX_HASH)");
- 		}
-+		ret =3D prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_GET_IMMUTABLE);
- 		if (params->nbuckets =3D=3D 0)
- 			ret =3D asprintf(&futex_hash_mode, "Futex hashing: global hash");
- 		else
--			ret =3D asprintf(&futex_hash_mode, "Futex hashing: %d hash buckets",
--				       params->nbuckets);
-+			ret =3D asprintf(&futex_hash_mode, "Futex hashing: %d hash buckets %s",
-+				       params->nbuckets,
-+				       ret =3D=3D 1 ? "(immutable)" : "");
- 	} else {
- 		if (ret <=3D 0) {
- 			ret =3D asprintf(&futex_hash_mode, "Futex hashing: global hash");
-diff --git a/tools/perf/bench/futex.h b/tools/perf/bench/futex.h
-index dd295d27044ac..9c9a73f9d865e 100644
---- a/tools/perf/bench/futex.h
-+++ b/tools/perf/bench/futex.h
-@@ -26,6 +26,7 @@ struct bench_futex_parameters {
- 	unsigned int nwakes;
- 	unsigned int nrequeue;
- 	int nbuckets;
-+	bool buckets_immutable;
- };
-=20
- /**
---=20
-2.49.0
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index b581e388a9d9..8ddf6b17215c 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -9806,6 +9806,7 @@ static int instance_mkdir(const char *name)
+>   	return ret;
+>   }
+>   
+> +#ifdef CONFIG_MMU
+>   static u64 map_pages(unsigned long start, unsigned long size)
+>   {
+>   	unsigned long vmap_start, vmap_end;
+> @@ -9828,6 +9829,12 @@ static u64 map_pages(unsigned long start, unsigned long size)
+>   
+>   	return (u64)vmap_start;
+>   }
+> +#else
+> +static inline u64 map_pages(unsigned long start, unsigned long size)
+> +{
+> +	return 0;
+> +}
+> +#endif
+>   
+>   /**
+>    * trace_array_get_by_name - Create/Lookup a trace array, given its name.
+> 
+> 
+> -- Steve
 
 
