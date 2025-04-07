@@ -1,147 +1,292 @@
-Return-Path: <linux-kernel+bounces-591397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF67A7DF44
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:31:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 352A4A7DF4F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39A5A3AA429
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:29:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E7511888A82
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93D1253B6A;
-	Mon,  7 Apr 2025 13:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97024253F2C;
+	Mon,  7 Apr 2025 13:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="qztqCVis"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LO5YXX1G"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B346F17BD3
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 13:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB45253F15;
+	Mon,  7 Apr 2025 13:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744032565; cv=none; b=Q3wpmCBNIyp8Sz1mfKhgdOadYEYyT3tgkdRVJBwDH2hXBZyukO54IqduG/RnfB0ggdPs3lpqo8C0tpE2C8pOdiONb1u7n0osD4i0XdzOqj6bJeV0E0RyLsaKWENxBN1TigJe9Gyrb9ZgDEVlYQF6bVeal3v3xOK1Rka6c+Hc7is=
+	t=1744032604; cv=none; b=u+DseALxcfRCdp9Tfjpc2Hf5j2XMS51TYJL9OPywH00q1YQ3ki/M/4UoxFryKujSupTB+xIy4NFt/yiQbJMZNCULY1FBtFcuMA+jZu+AODbt81p928dHX2eNWWmBRPvv1TR4XAeJ+3maYA84T419JAKq+j7pyEs+p+eqS99ecgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744032565; c=relaxed/simple;
-	bh=9mpTOzXTtZhzgDxpHjaUQndjrrlV6hkModuaRIwNpNc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kizaw22P4hP9vAJk37U2mW7/aVwNxoniL9xL6PUho5DRlK1E7nAFzUN5E1nvdcC6np5moyeaTonYeeELx7p3wFNtuqrM8DdDIKxUjCrzqhuNiZGDWjUWXyLFP5quda6I9Kl1YOLfGaZ3lYtSy4wgB/qvAjQqj7LZeT4FpQyRtu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=qztqCVis; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-306b78ae2d1so1342811a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 06:29:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744032563; x=1744637363; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/ajHSN1cCUijZc9GsoTHrD7erAp1SQSZtWGXja5UGiA=;
-        b=qztqCVisOQhHbCc8xZdLGM27sdlkMsPYf4UVUd0Q+xXIOITqcS7Xpl1uvaIRkUKO+r
-         /34jaCdeGQFALLZRg7TTcGmhSRCzDZiS5oIMAfgLPqRAux4+qDFygCYTCFJ5MYGFUaCO
-         FhlRfmiz9enHnhw1MSSjBUU+xjiydOQ6gKb1lDNa611mLjNNI02MmnoOsG816sZ0TyHo
-         GfjGV8/zRu0MFy5U3Dwy0WnbzFmACYMaaP4vZP+sjD4XeRFVOzOZW1s/7WVujJp5MuiE
-         VGI6yo9kwwHPS7g6h0VCRB1UTE0yd8eH7T8GpQyEFrNMgAoccLhn60+F55RHa52YrFot
-         XVAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744032563; x=1744637363;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/ajHSN1cCUijZc9GsoTHrD7erAp1SQSZtWGXja5UGiA=;
-        b=dcF/tbcyHQ/pSB/rbSS/uwmzhwmBCNb1X0uKb8OEKm/iiZbq+tWG+j8TruTlFa16V4
-         jglpYYqT3aVwMkL9Kgy4gF6pYymfM5vgMTvcQR0CR7OGwxvnllVvP83GOhJ+AfNfBnnO
-         HkKOpR7iUXKS0elwAKwkaEUSnIJwsQp7+WfP6VdRXOsHGFOolnHnkg1x16JusRFX4z5A
-         FYhrt2dmIqVgXzQUS3GcCDPnqlNOUCng6mmXOxRgOF29Giog32PZ0ii+Xe3XUf7F2Zs6
-         nPoiqScabgo3E9I/6OPqOZIJLWW6GBox/1whVVBiPD/ZTBDiSABh0qPuR1/1CGscwv/Q
-         zZ5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVeh+riiiICZKwjK5+LXjGx6VqIFuWkzHNryB6xjR5/XlSDpKzrerFfXJ/8KRr6MvQPEnZ0maW5FtqnpmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN4B9buRBuex+FZffvgRCxPwtFCqeYoLVZl/ULjRyuK5Zuo7gi
-	ktyv61fJM2I6k+n2+UQxIcxnMN3AGwUATe5H9at4gF7EWQYdrv2c+D7qF+QH6SoT1NxDq6L+auh
-	Cd11mQwMZBwWX8Fd6mo5nF9QX6Bd+SEvhtOzq0v3pvtQFRhin
-X-Gm-Gg: ASbGncuNki9m8mgrNPbe640Vx1dwe5XWXT4dytncQ+874biBbxgkjJIJm588s+1N1I7
-	dsunMLsaAXCZdUZf0gfRMP0fsCvucal05aOY4DxgiNoWAAdnefxp/jphxMEh1ukly8q3MlBhAEF
-	kCQvejxpHcpEbSjjF/zqI4elgECi6Vo3t+49ZXrQmrXF9F0jlzmwwpy9R4HnZ76ZPSwoek
-X-Google-Smtp-Source: AGHT+IGKqFC5LHX0jTabWx+okI10tLsLEWz7jJM0RCoVhL8tSdu9r04tB7T2j1t5Drqrr9abQp3S+efjjieviBgTso8=
-X-Received: by 2002:a17:90b:5251:b0:2ee:aa28:79aa with SMTP id
- 98e67ed59e1d1-306a4821d7dmr17576304a91.6.1744032563009; Mon, 07 Apr 2025
- 06:29:23 -0700 (PDT)
+	s=arc-20240116; t=1744032604; c=relaxed/simple;
+	bh=BJu9B2LP9EIalQ3GZPi/3doAGmBH7tWgbeYPUcufNEY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CANlDGEy0urfxf9rNpgBRLf7xDx/B9hgtVh1SaL4eTV+V0gJyNb0roWet3gKBhZspOEC6Q3AVOYW4+2MRYAYepgt7gjx0UCiKZZyZyTyXOO1QZq/aiviULPyTvImLERQPhAjldfGaPKRpMwJhGRYNQe5OcKJGLOpwiuBMt5pzvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LO5YXX1G; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 537DTd3U226109
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 7 Apr 2025 08:29:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1744032579;
+	bh=48iUf6CFVE6YZK5q72DaOTxx/w3TmGHEnB7xMllYYxY=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=LO5YXX1GmJWibOH7EakBC1Fx95PkPYI2KsZSkR5ed91L+cpsmLTi75H4zLt6fH4xW
+	 spU0skoMGfHbzGGyik+NK7IWgi73V6gFPtQqkxhqL8roPeS/I+eeKE0ISi3Lwy8R4t
+	 XDq8KUhB9HTdD2Dmx83XU7izASCWM1eyE6rm/AE8=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 537DTd8S068967
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 7 Apr 2025 08:29:39 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 7
+ Apr 2025 08:29:38 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 7 Apr 2025 08:29:38 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 537DTch6051962;
+	Mon, 7 Apr 2025 08:29:38 -0500
+Message-ID: <4502a296-5380-4339-bfb1-1d741b74cf01@ti.com>
+Date: Mon, 7 Apr 2025 08:29:38 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250401-gpio-todo-remove-nonexclusive-v2-0-7c1380797b0d@linaro.org>
- <c8ca3c8a-3201-4dde-9050-69bc2c9152c4@sirena.org.uk> <CAMRc=Mcq9yag6yBswhW0OJ8MKzGBpscwo+UGpfCo2aha93LzXA@mail.gmail.com>
- <846010c0-7dc1-421c-8136-9ae2894c9acd@sirena.org.uk> <CAMRc=Mff0TkeiHbM3TAJLJ2HYU_nnPFUpUjbWsdCnW6O4E=+gQ@mail.gmail.com>
- <c3bb82f9-5a2f-4a14-9726-f3e10bf5d427@sirena.org.uk> <CAMRc=Mc_nXwvj_9w6w8cB3K58AVLHBLCV+MOO1z_6y+uuT86Og@mail.gmail.com>
- <a484f0b2-c09a-4a6a-a30e-4c8660d755a6@sirena.org.uk> <CAMRc=MeFqvJ3g3GhrZzto+jfgCUhtcRRyWqx51gCkKhYUqtsGg@mail.gmail.com>
- <c16d3116-256d-470d-96dd-7f3dbe3334c3@sirena.org.uk>
-In-Reply-To: <c16d3116-256d-470d-96dd-7f3dbe3334c3@sirena.org.uk>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 7 Apr 2025 15:29:09 +0200
-X-Gm-Features: ATxdqUE1lakRv6EOuCGarXSPzi9CAEc3IM8tN_Opel4nS3X41aAEE-pBaohpZLg
-Message-ID: <CAMRc=MeYcgje7dFq8WDiTB8mTQ1COv3a_6xhAGkTukD_V25Wgw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] gpio: deprecate and track the removal of GPIO
- workarounds for regulators
-To: Mark Brown <broonie@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 01/26] remoteproc: k3-r5: Re-order internal memory
+ initialization function
+To: Beleswar Padhi <b-padhi@ti.com>, <andersson@kernel.org>,
+        <mathieu.poirier@linaro.org>
+CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
+        <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
+        <jkangas@redhat.com>, <eballetbo@redhat.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250317120622.1746415-1-b-padhi@ti.com>
+ <20250317120622.1746415-2-b-padhi@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20250317120622.1746415-2-b-padhi@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Apr 7, 2025 at 3:24=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
-e:
->
-> On Mon, Apr 07, 2025 at 03:15:13PM +0200, Bartosz Golaszewski wrote:
-> > On Wed, Apr 2, 2025 at 4:08=E2=80=AFPM Mark Brown <broonie@kernel.org> =
-wrote:
->
-> > > > I believe pwrseq could actually be used to hide the enable counting
-> > > > for GPIOs behind a faux GPIO chip and the consumer would never see =
-a
-> > > > pwrseq handle - they would instead use GPIO consumer interfaces and
-> > > > we'd have to agree on what logic would we put behind gpiod_set_valu=
-e()
-> > > > (should it effectively work as gpiod_enable() meaning: value is 1 a=
-s
-> > > > long as at least one user sets it to 1?) and
-> > > > gpiod_direction_input()/output() (same thing: highest priority is
-> > > > gpiod_direction_output(HIGH) and as long as at least one user sets =
-it
-> > > > as such, we keep it).
->
-> > > Like I say that doesn't do the right thing since other users need to =
-be
-> > > able to see when something changes on the GPIO.  If that just happens=
- on
-> > > normal gpiolib then that complicates usage for the default case since
-> > > they now have to worry about things not actually happening when
-> > > requested which doesn't seem ideal.
->
-> > If I understand correctly, regulator_ena_gpio_ctrl()[1] changes the
-> > GPIO value (even if it's shared) and then notifies regulator consumers
-> > about a DISABLE event. Now if we'd be implicitly sharing the GPIO with
-> > an enable-counter, we could possibly emit an event that's a
-> > false-positive?
->
-> Yes (or vice versa for enable).  If the device thinks power got pulled
-> when it didn't it might get confused about what the hardware is doing.
+On 3/17/25 7:05 AM, Beleswar Padhi wrote:
+> The core's internal memory data structure will be refactored to be part
+> of the k3_r5_rproc structure in a future commit. As a result, internal
+> memory initialization will need to be performed inside
+> k3_r5_cluster_rproc_init() after rproc_alloc().
+> 
+> Therefore, move the internal memory initialization function,
+> k3_r5_core_of_get_internal_memories() above k3_r5_rproc_init() so that
+> it can be invoked from there.
+> 
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> ---
 
-Sure, that's the example I was going for, maybe my wording isn't clear.
+Just to keep things organized, does it make sense to also move
+the other k3_r5_core_of_get_*_memories() up with this?
 
-Basically: we may set the GPIO to 1 but it was already enabled and we
-tell consumers the regulator was just enabled when it wasn't OR we set
-the GPIO to 0 and tell consumers the regulator was disabled when there
-are still users of this GPIO so it's not true either.
+Also, you move k3_r5_release_tsp() up too but don't mention
+that in the commit message.
 
-AFAICT, it's used in a few places to put the regulator consumer in
-reset if the power was *actually* disabled.
+Andrew
 
-I'll think about how that could be improved.
-
-Bartosz
+>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 158 +++++++++++------------
+>   1 file changed, 79 insertions(+), 79 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index dbc513c5569c..b2738b9a1b2d 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -1199,6 +1199,85 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
+>   	return ret;
+>   }
+>   
+> +static int k3_r5_core_of_get_internal_memories(struct platform_device *pdev,
+> +					       struct k3_r5_core *core)
+> +{
+> +	static const char * const mem_names[] = {"atcm", "btcm"};
+> +	struct device *dev = &pdev->dev;
+> +	struct resource *res;
+> +	int num_mems;
+> +	int i;
+> +
+> +	num_mems = ARRAY_SIZE(mem_names);
+> +	core->mem = devm_kcalloc(dev, num_mems, sizeof(*core->mem), GFP_KERNEL);
+> +	if (!core->mem)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < num_mems; i++) {
+> +		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> +						   mem_names[i]);
+> +		if (!res) {
+> +			dev_err(dev, "found no memory resource for %s\n",
+> +				mem_names[i]);
+> +			return -EINVAL;
+> +		}
+> +		if (!devm_request_mem_region(dev, res->start,
+> +					     resource_size(res),
+> +					     dev_name(dev))) {
+> +			dev_err(dev, "could not request %s region for resource\n",
+> +				mem_names[i]);
+> +			return -EBUSY;
+> +		}
+> +
+> +		/*
+> +		 * TCMs are designed in general to support RAM-like backing
+> +		 * memories. So, map these as Normal Non-Cached memories. This
+> +		 * also avoids/fixes any potential alignment faults due to
+> +		 * unaligned data accesses when using memcpy() or memset()
+> +		 * functions (normally seen with device type memory).
+> +		 */
+> +		core->mem[i].cpu_addr = devm_ioremap_wc(dev, res->start,
+> +							resource_size(res));
+> +		if (!core->mem[i].cpu_addr) {
+> +			dev_err(dev, "failed to map %s memory\n", mem_names[i]);
+> +			return -ENOMEM;
+> +		}
+> +		core->mem[i].bus_addr = res->start;
+> +
+> +		/*
+> +		 * TODO:
+> +		 * The R5F cores can place ATCM & BTCM anywhere in its address
+> +		 * based on the corresponding Region Registers in the System
+> +		 * Control coprocessor. For now, place ATCM and BTCM at
+> +		 * addresses 0 and 0x41010000 (same as the bus address on AM65x
+> +		 * SoCs) based on loczrama setting
+> +		 */
+> +		if (!strcmp(mem_names[i], "atcm")) {
+> +			core->mem[i].dev_addr = core->loczrama ?
+> +							0 : K3_R5_TCM_DEV_ADDR;
+> +		} else {
+> +			core->mem[i].dev_addr = core->loczrama ?
+> +							K3_R5_TCM_DEV_ADDR : 0;
+> +		}
+> +		core->mem[i].size = resource_size(res);
+> +
+> +		dev_dbg(dev, "memory %5s: bus addr %pa size 0x%zx va %pK da 0x%x\n",
+> +			mem_names[i], &core->mem[i].bus_addr,
+> +			core->mem[i].size, core->mem[i].cpu_addr,
+> +			core->mem[i].dev_addr);
+> +	}
+> +	core->num_mems = num_mems;
+> +
+> +	return 0;
+> +}
+> +
+> +static void k3_r5_release_tsp(void *data)
+> +{
+> +	struct ti_sci_proc *tsp = data;
+> +
+> +	ti_sci_proc_release(tsp);
+> +}
+> +
+>   static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+>   {
+>   	struct k3_r5_cluster *cluster = platform_get_drvdata(pdev);
+> @@ -1358,78 +1437,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
+>   	}
+>   }
+>   
+> -static int k3_r5_core_of_get_internal_memories(struct platform_device *pdev,
+> -					       struct k3_r5_core *core)
+> -{
+> -	static const char * const mem_names[] = {"atcm", "btcm"};
+> -	struct device *dev = &pdev->dev;
+> -	struct resource *res;
+> -	int num_mems;
+> -	int i;
+> -
+> -	num_mems = ARRAY_SIZE(mem_names);
+> -	core->mem = devm_kcalloc(dev, num_mems, sizeof(*core->mem), GFP_KERNEL);
+> -	if (!core->mem)
+> -		return -ENOMEM;
+> -
+> -	for (i = 0; i < num_mems; i++) {
+> -		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> -						   mem_names[i]);
+> -		if (!res) {
+> -			dev_err(dev, "found no memory resource for %s\n",
+> -				mem_names[i]);
+> -			return -EINVAL;
+> -		}
+> -		if (!devm_request_mem_region(dev, res->start,
+> -					     resource_size(res),
+> -					     dev_name(dev))) {
+> -			dev_err(dev, "could not request %s region for resource\n",
+> -				mem_names[i]);
+> -			return -EBUSY;
+> -		}
+> -
+> -		/*
+> -		 * TCMs are designed in general to support RAM-like backing
+> -		 * memories. So, map these as Normal Non-Cached memories. This
+> -		 * also avoids/fixes any potential alignment faults due to
+> -		 * unaligned data accesses when using memcpy() or memset()
+> -		 * functions (normally seen with device type memory).
+> -		 */
+> -		core->mem[i].cpu_addr = devm_ioremap_wc(dev, res->start,
+> -							resource_size(res));
+> -		if (!core->mem[i].cpu_addr) {
+> -			dev_err(dev, "failed to map %s memory\n", mem_names[i]);
+> -			return -ENOMEM;
+> -		}
+> -		core->mem[i].bus_addr = res->start;
+> -
+> -		/*
+> -		 * TODO:
+> -		 * The R5F cores can place ATCM & BTCM anywhere in its address
+> -		 * based on the corresponding Region Registers in the System
+> -		 * Control coprocessor. For now, place ATCM and BTCM at
+> -		 * addresses 0 and 0x41010000 (same as the bus address on AM65x
+> -		 * SoCs) based on loczrama setting
+> -		 */
+> -		if (!strcmp(mem_names[i], "atcm")) {
+> -			core->mem[i].dev_addr = core->loczrama ?
+> -							0 : K3_R5_TCM_DEV_ADDR;
+> -		} else {
+> -			core->mem[i].dev_addr = core->loczrama ?
+> -							K3_R5_TCM_DEV_ADDR : 0;
+> -		}
+> -		core->mem[i].size = resource_size(res);
+> -
+> -		dev_dbg(dev, "memory %5s: bus addr %pa size 0x%zx va %pK da 0x%x\n",
+> -			mem_names[i], &core->mem[i].bus_addr,
+> -			core->mem[i].size, core->mem[i].cpu_addr,
+> -			core->mem[i].dev_addr);
+> -	}
+> -	core->num_mems = num_mems;
+> -
+> -	return 0;
+> -}
+> -
+>   static int k3_r5_core_of_get_sram_memories(struct platform_device *pdev,
+>   					   struct k3_r5_core *core)
+>   {
+> @@ -1487,13 +1494,6 @@ static int k3_r5_core_of_get_sram_memories(struct platform_device *pdev,
+>   	return 0;
+>   }
+>   
+> -static void k3_r5_release_tsp(void *data)
+> -{
+> -	struct ti_sci_proc *tsp = data;
+> -
+> -	ti_sci_proc_release(tsp);
+> -}
+> -
+>   static int k3_r5_core_of_init(struct platform_device *pdev)
+>   {
+>   	struct device *dev = &pdev->dev;
 
