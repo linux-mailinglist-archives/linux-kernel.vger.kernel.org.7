@@ -1,123 +1,122 @@
-Return-Path: <linux-kernel+bounces-591978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD8BA7E783
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:58:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E093EA7E7AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B529D3BC5E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:53:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2250717DA81
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC57F218EBA;
-	Mon,  7 Apr 2025 16:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C443B214A68;
+	Mon,  7 Apr 2025 16:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nD90KRHc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1iyN8qSd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t/fxj2Nh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C672144D4
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 16:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243E913C8E8;
+	Mon,  7 Apr 2025 16:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744044749; cv=none; b=oWMfZQIlYtUEUZT29O1rTzuf+5x/Id1z18FTjiVlM8Wif5lWW4TtjtSUjvKGxvyPsPQ2djyfalYbX5QtoyDQlU22rPz1ciTfoHIjMarLlO96QO7at+KDeofpCOBoerACLfhcCMpnCpd6JB2+XXRkDKSoybyWoaDot/9UGa3eluQ=
+	t=1744044795; cv=none; b=Sv0lCF8aF0j7+wTOQ7V4W6VYX5yYdXrmhGnZ05APwlpYvc+3aKluKcIQBfVS+zGT0IvVfMig6ttZcw0A0anBV0naEMhSOX6cHuMazulEwoSav2nTEPmthI6QnaOGnKj4T/ia75o8NDAfB+BQPWknrnlYqiiiykJeKEDUU4kxinw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744044749; c=relaxed/simple;
-	bh=4KR9s7uUKJcKGFJyvUADu4zmdHz9nhZPtGxr/sO1RV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XVNQNPczKLX+vpSXqolyfLuQiuEpHBcHCgvAoH1iuH15/7ZPTXSLD78a11eLgS/PUN4ciWmwv8mg8+luAFohkQXnsMffKc4KRjPsp3cz/c7YcEaC+0rUj/HGSgUAWwvC/7mjCEneZQfaiFTB7kNm84g7+My4xOxiFObksvU/T1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nD90KRHc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1iyN8qSd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 7 Apr 2025 18:52:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744044745;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hzwpijb79sYpq1atqI9RBSGUCbM1HfouufuYWxLTXUE=;
-	b=nD90KRHcFuzeS5e+JuOWcNt3qfcKVda1SimYPETn7r33ANiwyt+OcdR6I1++JupXoFR2hz
-	gBb2aVvdfGgnGf8vQRsRxL1ogdl81rNUGOTUjcGvZGRUCM/LhEEtEPf0BnPl0ja2esZVzM
-	Jfu38BKflGEZZoenbPB0FqAlxpLvgw4sPKq7v9gRrUfpZmqrobQZ1EUCi8fPGBaSfnzdjm
-	mxYqDx9889D5eEDb/JrwTgc7MBqXrOD6gdOjmR9RcnpGLb6RUN5SPkAiVzhHSdE+oKdA3w
-	t1SUAwL8i7RDoI7EnMatIj5al66g600XVT/YQk20BIlBEUAgHVdNOMEgbyLLuw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744044745;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hzwpijb79sYpq1atqI9RBSGUCbM1HfouufuYWxLTXUE=;
-	b=1iyN8qSdOo78iDGWZ6A4AimIgJ6jNmt3A02ZTTCOioU3SD3z9ys9fWd+yR+Iy2ZWoHRfdp
-	rtXj+P1mOEBSBZAA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-kernel@vger.kernel.org
-Cc: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v11 15/19] futex: Implement FUTEX2_NUMA
-Message-ID: <20250407165224.z0FmVaXX@linutronix.de>
-References: <20250407155742.968816-1-bigeasy@linutronix.de>
- <20250407155742.968816-16-bigeasy@linutronix.de>
+	s=arc-20240116; t=1744044795; c=relaxed/simple;
+	bh=/5l4BinDGarHYEuUjkfx0ozu50otXKiCczW5dEwIajA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LTE+bBXmh7fSKZ95VX265jqJ3lidLYeNxPBfYiZeSvsxt1oXuCtMmOYjRj0uYGNXLhybwPnwf2zmFDLaShGEaVi0MBhTPYANbLz0lGyrU+sDC7Xn8aIuigt+Ki86LBKHRobw0SO5Ysq88KLySOHABu05r6FB9IWsBJES8jo1Vs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t/fxj2Nh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2F73C4CEE7;
+	Mon,  7 Apr 2025 16:53:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744044795;
+	bh=/5l4BinDGarHYEuUjkfx0ozu50otXKiCczW5dEwIajA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=t/fxj2NhB3YZ6qljNzqey3La1PfdPfgT/cFyqH/SO2VAa4PElW5NZV2fwE4EuGD3d
+	 S0z38AJkDC1kApa972dpZaVJGzWT3SUbucu5nNX6Q8FoU7sh9gj5xPaZfThJZQV4u5
+	 kJBIqz5m1vG0shjKDr0DAZ9WzVNszYjj2wioR0HZ7JFYkt50V36+V/cYUT8L3XFWrA
+	 2zb5Nk0wf50652r9URCH8QQL02q+2uEZ+BiQFT+tD4v4IYXVctTweNYhzshIZ14ieo
+	 YqMd/w4X111ey4gXoNNrcyYKE8l7TAML1+gfA3FAjjFVjpECKdPCEktXF+dFaUg1z5
+	 IqCboSn1wkxFg==
+Date: Mon, 7 Apr 2025 11:53:13 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] PCI: Add sysfs support for exposing PTM context
+Message-ID: <20250407165313.GA183057@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250407155742.968816-16-bigeasy@linutronix.de>
+In-Reply-To: <lhtklncbcyphq2ljxn6w5p7wk4rdj5wxzskmlly4mrr664b2lj@w5clch5uzvd3>
 
-On 2025-04-07 17:57:38 [+0200], To linux-kernel@vger.kernel.org wrote:
-> --- a/kernel/futex/core.c
-> +++ b/kernel/futex/core.c
-> @@ -332,15 +337,35 @@ __futex_hash(union futex_key *key, struct futex_pri=
-vate_hash *fph)
-=E2=80=A6
-> +	if (node =3D=3D FUTEX_NO_NODE) {
-> +		/*
-> +		 * In case of !FLAGS_NUMA, use some unused hash bits to pick a
-> +		 * node -- this ensures regular futexes are interleaved across
-> +		 * the nodes and avoids having to allocate multiple
-> +		 * hash-tables.
-> +		 *
-> +		 * NOTE: this isn't perfectly uniform, but it is fast and
-> +		 * handles sparse node masks.
-> +		 */
-> +		node =3D (hash >> futex_hashshift) % nr_node_ids;
+On Mon, Apr 07, 2025 at 01:14:56PM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Mar 24, 2025 at 11:28:54AM -0500, Bjorn Helgaas wrote:
+> > On Mon, Mar 24, 2025 at 03:34:35PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > 
+> > > Precision Time Management (PTM) mechanism defined in PCIe spec
+> > > r6.0, sec 6.22 allows precise coordination of timing information
+> > > across multiple components in a PCIe hierarchy with independent
+> > > local time clocks.
+> > > 
+> > > PCI core already supports enabling PTM in the root port and
+> > > endpoint devices through PTM Extended Capability registers. But
+> > > the PTM context supported by the PTM capable components such as
+> > > Root Complex (RC) and Endpoint (EP) controllers were not exposed
+> > > as of now.
+> > > 
+> > > Hence, add the sysfs support to expose the PTM context to
+> > > userspace from both PCIe RC and EP controllers. Controller
+> > > drivers are expected to call pcie_ptm_create_sysfs() to create
+> > > the sysfs attributes for the PTM context and call
+> > > pcie_ptm_destroy_sysfs() to destroy them. The drivers should
+> > > also populate the relevant callbacks in the 'struct
+> > > pcie_ptm_ops' structure based on the controller implementation.
+> > 
+> > Can we include some motivation here, e.g., what is the value of
+> > exposing this information?  Is this for debugging or bringup
+> > purposes?  Can users or administrators use this for something?
+> > Obviously they can read and update some internal PTM state, but it
+> > would be nice to know what that's good for.
+> 
+> This was a request from one of the Qualcomm customers, but they
+> didn't share how they are using these context. They just said that
+> they want to collect the PTM timestamps for comparing with PTP
+> timestamps from a different PCIe switch. That was not a worth of
+> information to be mentioned in the cover letter, so I skipped it
+> intentionally.
 
-forgot to mention earlier: This % nr_node_ids turns into div and it is
-visible in perf top while looking at __futex_hash(). We could round it
-down to a power-of-two (which should be the case in my 1, 2 and 4 based
-NUMA world) and then we could use AND instead.
-ARM does not support NUMA or div so it is not a concern.
+I think it is important to include a reason for merging a change.  The
+mere fact that information exists is not enough reason to expose it
+as a sysfs ABI.
 
-Maybe a fast path for 1/2/4 would make sense since it is the most common
-one. In case you consider it I could run test to see how significant it
-is. It might be that it pops up in "perf bench futex hash" but not be
-significant in general use case. I had some hacks and those did not
-improve the numbers as much as I hoped for.
+> >  Consequently this probably can't be done by generic drivers like
+> >  ACPI, and maybe this is a candidate for debugfs instead of sysfs.
+> 
+> Well, we can still create sysfs ABI for vendor specific features.
+> Problem with debugfs is that the customers cannot use debugfs in a
+> production environment.  Moreover, I cannot strictly classify PTM
+> context as a debugging information.
 
-> +		if (!node_possible(node)) {
-> +			node =3D find_next_bit_wrap(node_possible_map.bits,
-> +						  nr_node_ids, node);
-> +		}
-> +	}
-> +
-> +	return &futex_queues[node][hash & futex_hashmask];
->  }
-> =20
->  /**
+I'm not convinced about making sysfs ABI for vendor-specific features.
+I see that we do have a few existing things like this:
 
-Sebastian
+  Documentation/ABI/testing/sysfs-bus-pci-drivers-janz-cmodio
+  Documentation/ABI/testing/sysfs-bus-pci-devices-cciss
+  Documentation/ABI/testing/sysfs-bus-pci-devices-avs
+
+but I'm a bit hesitant to extend this model.
+
+Bjorn
 
