@@ -1,148 +1,142 @@
-Return-Path: <linux-kernel+bounces-591054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1758EA7DA5D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:55:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D2AA7DA51
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:55:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46D913AFBE7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:54:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A96C188D2A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D483230BCE;
-	Mon,  7 Apr 2025 09:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cZD9/+jl"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC9923496B;
+	Mon,  7 Apr 2025 09:54:09 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE7022FF21;
-	Mon,  7 Apr 2025 09:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8559D230BCD;
+	Mon,  7 Apr 2025 09:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744019660; cv=none; b=chUX3Fp4gDgc+lZzU433LCwdlQ0WKPxfqrY0f4F3QMyuR1Uxmq10wiNhtGSvA7kpEVD3XZ5TF4gEao+CJZa27iDaZi4iQzA+AH1yA+Q+R6LI0MuEl8e3OW03mtTskPuZqbIyDkCeRTR2sjWkdh2RIKgzzYOxXGEAzBOt+I59UsE=
+	t=1744019649; cv=none; b=n9SZP3URSJwPol0BP/ezfAHpQiUh9umb798rsXJmItFMetf0GJviJy/UjcgqeD4KnJ8kXl1Yaii9L32CnHv8tNYB2xpBTSI20itYM2Map5UO/HTu3l+yPWulNMyTfCr8/MPN/qHG/peQIO/peHY6eGbq2qOdZTXYEv3eI4E1mUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744019660; c=relaxed/simple;
-	bh=U16ykuJVW+RZ2Mtnpc0kC6WlrFpzsu8T5Gn3Qu7BLgQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uy8OmQMFFX0HIiPo32xgZ0Ali6XVijbcNpLV4/4LbIuIIfH6E14OlnCa22WyYOO/NN8vsf6XxRp20t+/vHlH35JQHn8HUZ8C6SqlGbLMrwmW1trMSgQlFiK8vZfCxryEYH0hHrzdEHite25wdONR0zQxGVdWw3V03Yf7CtyExLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cZD9/+jl; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2295d78b433so36905685ad.2;
-        Mon, 07 Apr 2025 02:54:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744019658; x=1744624458; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LkqbTBwPGVLrWizLUawPs+MSKpssOAtGiDagVUV4NJ4=;
-        b=cZD9/+jlbP6IlZPtiInB6s64EYv7fbSsqD2Iqxzjc42i/E5k3gh8gyWMAFX00McSVA
-         DKnac0aVy26/zwgaGqR/wRGdxdURbuSbSJXlLmpgRxdOZoapBvrmdtM7hWqoDG8e9O4a
-         +fc6s2YBWtFPSyzm4y9IYWJwUbbBMzb53/ZDyt+K0dvsONe9cU4tSmEKY+FzbsrY9TXN
-         Che+R4QJHx9JlyCqe0RvcFTkWjWqe0iBR2Cjes6OzFoCaemjEVD1/ZNwhIbnRoIOAIIy
-         0IEv+zkv7aKoWJ59AueSGxmf1ObETA1Vfvn9QJo7SD+ozxrYRrPGN/YTR0ZO1B3sJZQz
-         xfjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744019658; x=1744624458;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LkqbTBwPGVLrWizLUawPs+MSKpssOAtGiDagVUV4NJ4=;
-        b=oHxApk9jZrSFwlzg39YzNXeTjHjKnpfXJDpHSxfOGm6QLWXSJ1G6UzagWBJNK5sjLZ
-         XcvNW+l+3Ur9ATupSnZwonxWeuuZuoXaqoVwVrwSpT5R2CXT2KbVtrU70qqPxn2L/SOQ
-         pIeyn0w2v+tIi7d43dgeBfbgY3E/4fD9TG58/5hXUhPPYg/7hBsmm4D4Z02zSn5pPJ4w
-         prXHWu7pM8zBePE/PTwnlmmlxI1iaqwoMr6hxe+MSeKkqBeY3CMeeWgQk7VLLSpAXum+
-         vmcnuFFPlz3Tv/rwat5ZtI1rF3kvIpWNdq47UT2qVFYLlF13+svnUZfV8vTnctXB7JFW
-         REWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWAzVNs8sYAXMZ1UsLj/I6nFtVrqFQ4Fa1tXs8NNIHwntBsszuhmDG1/+ovPfbxyTdjb70fRJA0OEe@vger.kernel.org, AJvYcCVawFQdheiTzNkozB9KzAtSxUMrPi6GNqTU4MCf2+nQ+cpH9NFV9smVvUs+sFzTAg5ftIqKcc5AveaaVeo=@vger.kernel.org, AJvYcCWKR1/elTRLd6bt1eGw1VGYy/3XozAS1BVipeb86FSK05Dtx2psrAoh3/OYUisgAkvJuhJmLS8ouChrXg==@vger.kernel.org, AJvYcCWQ2/l3XcqF08POv1+QiGnEVp5zb8jVSjmrCE4DUuwe/hqP5c7E3tzp4eMRT70ZS27uvHg0vHKt86zHW4FV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9DoXvZ2Gu8GvDw2NgZr04kJQ1914p/DfVZ55g5FN2ez+fdNyl
-	4X5gYh8aRFuPefRN6J6V8df/XhY62WC6n1UjCTlIJ6jyrwWfJ1Qn
-X-Gm-Gg: ASbGnctbd8jVnYuWwyr6wGEoO0o5JdTwXMtS3ObDtYMWNzZwSVuYNvmiaSGSlHdq91J
-	RzgC9GTtOPhrij2saeGvr0jOP8DwfBeWR4IRWy3eOwKwK5PBAgRTi9P8S2o8HR4YEgbYA7wODSX
-	xy+zkvoRnb1aujdh1RCcutUY91xAPEpryQRapZ96gWwQwCTQBkox9mdJrwzai6TAA98Bz34Xu07
-	6P5YbFg23veggtviStrtivkqpJTTuhlnzmqOfEjtsHq9YaT0l9O+w8e3qmb8ylMboY6aLkWCMcm
-	TjV2u62+hw3jdh/NkT1wo09TbgegLqtxhN74yQTACWE=
-X-Google-Smtp-Source: AGHT+IH9E8XsbCxLfsVsslPNMo/cSHYFTOjiDQDxMCuBzObL12vZxjJVRmA/QuSkAieMl45UO5T2kA==
-X-Received: by 2002:a17:903:2ce:b0:215:9bc2:42ec with SMTP id d9443c01a7336-22a8a0b3744mr133132005ad.47.1744019657677;
-        Mon, 07 Apr 2025 02:54:17 -0700 (PDT)
-Received: from nuvole.. ([144.202.86.13])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229785bfddfsm77213805ad.66.2025.04.07.02.54.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 02:54:16 -0700 (PDT)
-From: Pengyu Luo <mitltlatltl@gmail.com>
-To: Jianhua Lu <lujianhua000@gmail.com>,
-	Lee Jones <lee@kernel.org>,
-	Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Helge Deller <deller@gmx.de>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org,
-	Pengyu Luo <mitltlatltl@gmail.com>
-Subject: [PATCH 4/4] backlight: ktz8866: add definitions to make it more readable
-Date: Mon,  7 Apr 2025 17:51:19 +0800
-Message-ID: <20250407095119.588920-5-mitltlatltl@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250407095119.588920-1-mitltlatltl@gmail.com>
-References: <20250407095119.588920-1-mitltlatltl@gmail.com>
+	s=arc-20240116; t=1744019649; c=relaxed/simple;
+	bh=XFvfvv7QetTQVtT65VitPXl9f9r55NGlzqiql5VK65o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c8xbr1nwSSsXLRhD0VM3wS1q8Ag+rXtDbTOpqLQ4bn4wwG/lBZcJ4E0GylSt1a5qbNf02rqYiNLK4hVR2RlzOSKo1EfcUPUO/6ObFqD9bI9aNk7NsPgg/fBxsFJps8Qno36PmM06k26ULfwagcAFkJlBsNGcmFhf0/ZZPOI46sY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4A5DC4CEDD;
+	Mon,  7 Apr 2025 09:54:05 +0000 (UTC)
+Message-ID: <3e5f003a-f689-4f5a-ac75-6bf95379637b@xs4all.nl>
+Date: Mon, 7 Apr 2025 11:54:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] media: v4l: dev-decoder: Add source change
+ V4L2_EVENT_SRC_CH_COLORSPACE
+To: Ming Qian <ming.qian@oss.nxp.com>, mchehab@kernel.org
+Cc: nicolas@ndufresne.ca, shawnguo@kernel.org, robh+dt@kernel.org,
+ s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+ linux-imx@nxp.com, xiahong.bao@nxp.com, eagle.zhou@nxp.com,
+ tao.jiang_2@nxp.com, imx@lists.linux.dev, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20250117061938.3923516-1-ming.qian@oss.nxp.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20250117061938.3923516-1-ming.qian@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-LSB, MSB and their handling are slightly confused, so improve it.
+On 17/01/2025 07:19, Ming Qian wrote:
+> Add a new source change V4L2_EVENT_SRC_CH_COLORSPACE that
+> indicates colorspace change in the stream.
+> The change V4L2_EVENT_SRC_CH_RESOLUTION will always affect
+> the allocation, but V4L2_EVENT_SRC_CH_COLORSPACE won't.
+> 
+> Signed-off-by: Ming Qian <ming.qian@oss.nxp.com>
+> ---
+>  Documentation/userspace-api/media/v4l/vidioc-dqevent.rst | 9 +++++++++
+>  .../userspace-api/media/videodev2.h.rst.exceptions       | 1 +
+>  include/uapi/linux/videodev2.h                           | 1 +
+>  3 files changed, 11 insertions(+)
+> 
+> diff --git a/Documentation/userspace-api/media/v4l/vidioc-dqevent.rst b/Documentation/userspace-api/media/v4l/vidioc-dqevent.rst
+> index 8db103760930..91e6b86c976d 100644
+> --- a/Documentation/userspace-api/media/v4l/vidioc-dqevent.rst
+> +++ b/Documentation/userspace-api/media/v4l/vidioc-dqevent.rst
+> @@ -369,6 +369,15 @@ call.
+>  	loss of signal and so restarting streaming I/O is required in order for
+>  	the hardware to synchronize to the video signal.
+>  
+> +    * - ``V4L2_EVENT_SRC_CH_COLORSPACE``
+> +      - 0x0002
+> +      - This event gets triggered when a colorsapce change is detected at
 
-Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
----
- drivers/video/backlight/ktz8866.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+colorsapce -> colorspace
 
-diff --git a/drivers/video/backlight/ktz8866.c b/drivers/video/backlight/ktz8866.c
-index b67ca136d..5364ecfc0 100644
---- a/drivers/video/backlight/ktz8866.c
-+++ b/drivers/video/backlight/ktz8866.c
-@@ -24,7 +24,9 @@
- #define DEVICE_ID 0x01
- #define BL_CFG1 0x02
- #define BL_CFG2 0x03
-+/* least significant byte */
- #define BL_BRT_LSB 0x04
-+/* most significant byte */
- #define BL_BRT_MSB 0x05
- #define BL_EN 0x08
- #define LCD_BIAS_CFG1 0x09
-@@ -47,6 +49,8 @@
- #define PWM_HYST 0x5
- 
- #define CURRENT_SINKS_MASK GENMASK(5, 0)
-+#define LOWER_BYTE GENMASK(2, 0)
-+#define HIGHER_BYTE GENMASK(10, 3)
- 
- struct ktz8866_slave {
- 	struct i2c_client *client;
-@@ -105,8 +109,8 @@ static int ktz8866_backlight_update_status(struct backlight_device *backlight_de
- 	}
- 
- 	/* Set brightness */
--	ktz8866_write(ktz, BL_BRT_LSB, brightness & 0x7);
--	ktz8866_write(ktz, BL_BRT_MSB, (brightness >> 3) & 0xFF);
-+	ktz8866_write(ktz, BL_BRT_LSB, FIELD_GET(LOWER_BYTE, brightness);
-+	ktz8866_write(ktz, BL_BRT_MSB, FIELD_GET(HIGHER_BYTE, brightness);
- 
- 	return 0;
- }
--- 
-2.49.0
+> +	an input. This can come from a video decoder. Applications will query
+
+It can also come from a video receiver. E.g. an HDMI source changes colorspace
+signaling, but not the resolution.
+
+> +	the new colorspace information (if any, the signal may also have been
+> +	lost)
+
+Missing . at the end. Also, if the signal is lost, then that is a CH_RESOLUTION
+change, not CH_COLORSPACE.
+
+> +
+> +	For stateful decoders follow the guidelines in :ref:`decoder`.
+
+I think this should emphasize that if CH_COLORSPACE is set, but not CH_RESOLUTION,
+then only the colorspace changed and there is no need to reallocate buffers.
+
+I also wonder if the description of CH_RESOLUTION should be enhanced to explain
+that this might also imply a colorspace change. I'm not sure what existing codec
+drivers do if there is a colorspace change but no resolution change.
+
+I'm a bit concerned about backwards compatibility issues: if a userspace application
+doesn't understand this new flag and just honors CH_RESOLUTION, then it would
+never react to just a colorspace change.
+
+Nicolas, does gstreamer look at these flags?
+
+Regards,
+
+	Hans
+
+> +
+>  Return Value
+>  ============
+>  
+> diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exceptions b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+> index 35d3456cc812..ac47c6d9448b 100644
+> --- a/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+> +++ b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+> @@ -526,6 +526,7 @@ replace define V4L2_EVENT_CTRL_CH_RANGE ctrl-changes-flags
+>  replace define V4L2_EVENT_CTRL_CH_DIMENSIONS ctrl-changes-flags
+>  
+>  replace define V4L2_EVENT_SRC_CH_RESOLUTION src-changes-flags
+> +replace define V4L2_EVENT_SRC_CH_COLORSPACE src-changes-flags
+>  
+>  replace define V4L2_EVENT_MD_FL_HAVE_FRAME_SEQ :c:type:`v4l2_event_motion_det`
+>  
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index c8cb2796130f..242242c8e57b 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -2559,6 +2559,7 @@ struct v4l2_event_frame_sync {
+>  };
+>  
+>  #define V4L2_EVENT_SRC_CH_RESOLUTION		(1 << 0)
+> +#define V4L2_EVENT_SRC_CH_COLORSPACE		(1 << 1)
+>  
+>  struct v4l2_event_src_change {
+>  	__u32 changes;
 
 
