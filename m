@@ -1,110 +1,152 @@
-Return-Path: <linux-kernel+bounces-592250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CA3EA7EAA1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:38:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38C62A7EB03
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:44:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33E557A5CD2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:35:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 434E017EEEB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25ED254AF4;
-	Mon,  7 Apr 2025 18:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66392269838;
+	Mon,  7 Apr 2025 18:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NIXonLt1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEnofkjy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0AF267731;
-	Mon,  7 Apr 2025 18:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC5D269883;
+	Mon,  7 Apr 2025 18:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744049690; cv=none; b=Y4sy3KhCXedJt6c8ot5tjKL0UUi+xCgVBdRGzS+/SJ4n5OR1XXXzPoTLJNlxs5c/UrXQ76HLq+zBkAdQZvda/RB9oxfjQssgw6gh5kamW3JxAru6EdQJRNL1DD9YvTEXA/6OeoZWze6MZBryJrE7AG6K9QK6f4xALm++J1029FY=
+	t=1744049714; cv=none; b=qJShggt2Pqr/eBT9Y81QR3F4ojQqViXA7IQRWNOT4biqiX8y0JZ/ZCyBchrirElarZbDWHX5r7vRdmN8w+zYJqCnLBx25LW7rxfHR3d6eEEAM0LvH/58SxxVstl/0KuLFGo5wgO23wnRWFjW4xPUd5OAThOLhE18/KHiTiHG5Io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744049690; c=relaxed/simple;
-	bh=roTV4fCBWYKtx7tR13LEF6bSe/MmWW79N66Dk4jgSkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MwSOhGbvwz28Ue+K0y6wd0lp5svIE2UYFxhp2NZlEuTupFc1Ne7Yhgi781uhXJ/I+hHQmGu82UP+AG36xrd3N69Ns481ptHHG5l9wqbxg7JqKHiPN2ycmpORdaCJZvKVmlJs0ZgiZFEtkq6x/3MGEJk+2CkPLR14dv6u1sfYmcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NIXonLt1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A00C9C4CEE7;
-	Mon,  7 Apr 2025 18:14:49 +0000 (UTC)
+	s=arc-20240116; t=1744049714; c=relaxed/simple;
+	bh=bJtGJP8sax2ChKbqPETEfAg4bV7UJgYiYMxoNViRgWA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TG0rdv4byE69mP4px8c5WEk27JhSPtSkKugy2ss9kIKtE4D0DoWgH73ShVGRxYnyfchrN2PMVk9ls+6uGJ8KESifF+SNYrbalEM0lpncchqJDxvBpqvT+/iOxuspgiPa6CYoEO3qfh8vhCq7uS1KGsvfi8ngqQIU6IOOvVKTCBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEnofkjy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61240C4CEE7;
+	Mon,  7 Apr 2025 18:15:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744049690;
-	bh=roTV4fCBWYKtx7tR13LEF6bSe/MmWW79N66Dk4jgSkI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NIXonLt1oMwV1DOQJSeK3B40+6p6j24z3O8dhm0pzGEEfCBHhzCAYMflHFyIv8qhR
-	 XAA3/6l+dz+cCRkZ0DO96zwxiy4hCcWYBg81BYITFzqVT5tf13kP2mnrEXlaLcstTG
-	 3qg6LAz0AeRL8aoeq3M8OXdyODYcuB8bQPaSQcKR0VJXtGIlagA0Zlbam2kln9Txpb
-	 mWx+aGRN/7HGO3V31ldITu+d29kIImpM/a1Q/6XYVKxs7Bpt/QMTw+xU2qLjWvQUbe
-	 YJypWBrZm3mBlL6BPiXsLd0BBPs2nQzlCHV91stSHpEiq5RSGkpSCqBvNqLUVXf9nY
-	 J6AS1A+iJd/SA==
-Date: Mon, 7 Apr 2025 21:14:46 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Stefano Garzarella <sgarzare@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-coco@lists.linux.dev,
-	linux-integrity@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	x86@kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
-	Joerg Roedel <jroedel@suse.de>,
-	Dionna Glaze <dionnaglaze@google.com>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	linux-kernel@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v6 0/4] Enlightened vTPM support for SVSM on SEV-SNP
-Message-ID: <Z_QWFjJbPWIsBP2s@kernel.org>
-References: <20250403100943.120738-1-sgarzare@redhat.com>
- <20250407134643.GDZ_PXQ0OlzcMjiGgp@fat_crate.local>
+	s=k20201202; t=1744049714;
+	bh=bJtGJP8sax2ChKbqPETEfAg4bV7UJgYiYMxoNViRgWA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=UEnofkjyIIfE/m/gtOIlVEZ2aBVAyRdf7r6pTGTCZ1PKcichWE63WggsnSzlK2DGz
+	 aGpMAjj1TP7cyyQCPW12UCCvl+s+j5PQWiImJdM4EWIDRbFDzs2I203uMtixBWuELO
+	 gSF3ob6kQejbxR30tqXH3D2N5mnAFJifVeVx9z3D15YQNfi3mLRtZf0cpoptwxiKOy
+	 7KVeP9pChX+cvd4dzdl7r9+jW98KW/NpI3DqcXoXqtVYepkoHqMdFbUgHsXD6Uf8sF
+	 YXjqQ2I44QaxmTkWm5nWeG58wAQHeMctFu+2LFJ2RtPPM5n/mG8kQG8Ab8y9fjEVpi
+	 IhVblXwfb0mnA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+	kernel test robot <lkp@intel.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 13/13] objtool, lkdtm: Obfuscate the do_nothing() pointer
+Date: Mon,  7 Apr 2025 14:14:47 -0400
+Message-Id: <20250407181449.3183687-13-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250407181449.3183687-1-sashal@kernel.org>
+References: <20250407181449.3183687-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250407134643.GDZ_PXQ0OlzcMjiGgp@fat_crate.local>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.1.133
+Content-Transfer-Encoding: 8bit
 
-On Mon, Apr 07, 2025 at 03:46:43PM +0200, Borislav Petkov wrote:
-> On Thu, Apr 03, 2025 at 12:09:38PM +0200, Stefano Garzarella wrote:
-> > Stefano Garzarella (4):
-> >   x86/sev: add SVSM vTPM probe/send_command functions
-> >   svsm: add header with SVSM_VTPM_CMD helpers
-> >   tpm: add SNP SVSM vTPM driver
-> >   x86/sev: register tpm-svsm platform device
-> > 
-> >  arch/x86/include/asm/sev.h  |   9 +++
-> >  include/linux/tpm_svsm.h    | 149 ++++++++++++++++++++++++++++++++++++
-> >  arch/x86/coco/sev/core.c    |  67 ++++++++++++++++
-> >  drivers/char/tpm/tpm_svsm.c | 128 +++++++++++++++++++++++++++++++
-> >  drivers/char/tpm/Kconfig    |  10 +++
-> >  drivers/char/tpm/Makefile   |   1 +
-> >  6 files changed, 364 insertions(+)
-> >  create mode 100644 include/linux/tpm_svsm.h
-> >  create mode 100644 drivers/char/tpm/tpm_svsm.c
-> 
-> Jarrko,
-> 
-> should I take the whole bunch through the tip tree?
-> 
-> No point in splitting between two trees...
+From: Josh Poimboeuf <jpoimboe@kernel.org>
 
-It's cleanly separated and does not even touch any shared headers,
-so I don't see any issues on doing that. I.e., I'm with it :-)
+[ Upstream commit 05026ea01e95ffdeb0e5ac8fb7fb1b551e3a8726 ]
 
-> 
-> Thx.
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
-> 
+If execute_location()'s memcpy of do_nothing() gets inlined and unrolled
+by the compiler, it copies one word at a time:
 
-BR, Jarkko
+    mov    0x0(%rip),%rax    R_X86_64_PC32    .text+0x1374
+    mov    %rax,0x38(%rbx)
+    mov    0x0(%rip),%rax    R_X86_64_PC32    .text+0x136c
+    mov    %rax,0x30(%rbx)
+    ...
+
+Those .text references point to the middle of the function, causing
+objtool to complain about their lack of ENDBR.
+
+Prevent that by resolving the function pointer at runtime rather than
+build time.  This fixes the following warning:
+
+  drivers/misc/lkdtm/lkdtm.o: warning: objtool: execute_location+0x23: relocation to !ENDBR: .text+0x1378
+
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Kees Cook <kees@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/30b9abffbddeb43c4f6320b1270fa9b4d74c54ed.1742852847.git.jpoimboe@kernel.org
+Closes: https://lore.kernel.org/oe-kbuild-all/202503191453.uFfxQy5R-lkp@intel.com/
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/misc/lkdtm/perms.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/misc/lkdtm/perms.c b/drivers/misc/lkdtm/perms.c
+index b93404d656509..e82d9543a0c5f 100644
+--- a/drivers/misc/lkdtm/perms.c
++++ b/drivers/misc/lkdtm/perms.c
+@@ -28,6 +28,13 @@ static const unsigned long rodata = 0xAA55AA55;
+ /* This is marked __ro_after_init, so it should ultimately be .rodata. */
+ static unsigned long ro_after_init __ro_after_init = 0x55AA5500;
+ 
++/*
++ * This is a pointer to do_nothing() which is initialized at runtime rather
++ * than build time to avoid objtool IBT validation warnings caused by an
++ * inlined unrolled memcpy() in execute_location().
++ */
++static void __ro_after_init *do_nothing_ptr;
++
+ /*
+  * This just returns to the caller. It is designed to be copied into
+  * non-executable memory regions.
+@@ -65,13 +72,12 @@ static noinline void execute_location(void *dst, bool write)
+ {
+ 	void (*func)(void);
+ 	func_desc_t fdesc;
+-	void *do_nothing_text = dereference_function_descriptor(do_nothing);
+ 
+-	pr_info("attempting ok execution at %px\n", do_nothing_text);
++	pr_info("attempting ok execution at %px\n", do_nothing_ptr);
+ 	do_nothing();
+ 
+ 	if (write == CODE_WRITE) {
+-		memcpy(dst, do_nothing_text, EXEC_SIZE);
++		memcpy(dst, do_nothing_ptr, EXEC_SIZE);
+ 		flush_icache_range((unsigned long)dst,
+ 				   (unsigned long)dst + EXEC_SIZE);
+ 	}
+@@ -267,6 +273,8 @@ static void lkdtm_ACCESS_NULL(void)
+ 
+ void __init lkdtm_perms_init(void)
+ {
++	do_nothing_ptr = dereference_function_descriptor(do_nothing);
++
+ 	/* Make sure we can write to __ro_after_init values during __init */
+ 	ro_after_init |= 0xAA;
+ }
+-- 
+2.39.5
+
 
