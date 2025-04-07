@@ -1,206 +1,106 @@
-Return-Path: <linux-kernel+bounces-590542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 608C8A7D414
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:33:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB0C3A7D43E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01D34188D8BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:34:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C83C188DC5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EBF224AFB;
-	Mon,  7 Apr 2025 06:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="DwvkZ5pd"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EA2225766;
+	Mon,  7 Apr 2025 06:35:26 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F01221DAB
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 06:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB492253E9;
+	Mon,  7 Apr 2025 06:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744007629; cv=none; b=ETyFXwTcblacP/sPPsYTfaaUZlYJVROugcZZ0wV/5Thkfq4WtEYvZBD0Lyesyw5GeqNngqjPtyAzF7CHX5EMJEhDk4zQrjq4DHvhGspl6NcavXB+4i+w/sq9sYmDp5CRcQh2kc9LgkTNnLVpPtaEzq/WWNnKct1ZeiRdlNy1hTo=
+	t=1744007726; cv=none; b=DHOXWedE9YIZFaqh2PJvGYNf7ZtJSUcpcL3CXpFhxKKx4ISgbTw6IDOq8OQm/g2tNuXdCCYejtELfTehjhBtPCVWulT22ErUEaxAC9Yzx0XkfGRwARYWYVKZR+s7qBhZYm9vRAyGn46Z4QA0zQjWBBA4OUKpwYdYbjqZ9YJHhOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744007629; c=relaxed/simple;
-	bh=4LA6bPmEZCqBMKfqP8QmdNeHq01xK3hVs3A90O3N2vM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LRHHh8Cmwbd6Yr95HZkHxlUZMd00c1V9xd3JUMNVvheD/re1P9Kdk02bo/Z/fZ6KlBj7wcup/HIIA615tMjbPlzI86dKBnbw6TXFHO/T4Q7/dt7Ffl9SLDSUatmEDomIaR9RxozER1KdK+jx1TONMzPTv1R9clyE+snf2OVirj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=DwvkZ5pd; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1744007616; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=KcRhuW9PUbZW9/kAH2D13dhIoDb6tqrn1VA1EdFByS8=;
-	b=DwvkZ5pdvM6RQ5IBNGEYhB26bMVo7porqh8jXPko/CI5g+/pWIL4AUkWwBvJrZATcwBQH/0YxsiKM6xn8njpOqWdJ2/Yhf8sJrxJka6SnD+AdaIPTNqkAFAM6ZIEou7kq2m5bF6mvp5DbABK54eYbtv3iXiMv1jaGfIHzjdMKFk=
-Received: from 30.74.144.125(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WVoJvbb_1744007614 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 07 Apr 2025 14:33:35 +0800
-Message-ID: <fbfbfe84-0422-425c-ab0a-77627deb9d16@linux.alibaba.com>
-Date: Mon, 7 Apr 2025 14:33:34 +0800
+	s=arc-20240116; t=1744007726; c=relaxed/simple;
+	bh=/1Tn3fdh1YmHdKYpDHBh99LOXaHvuuJ86z8clOnHlIU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kX4rB9DZrIBBjkJlpd2SWWQfONoqrOAt2Vdk9jex4j1sSLZK+rxcgL8Yrxabx5VI/9PMb6I08bEbsdh0JA486qTzd96gQr53WWsQLxQHTeBRQUEi4N2/whY7vG3CSL5GCt7GXE+Ipg3Uv6Qv1FZM+86h9n2px00wpkT9U1LP90Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowAC37gYdcvNnHnHQBg--.10866S2;
+	Mon, 07 Apr 2025 14:35:10 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	ckeepax@opensource.cirrus.com,
+	rf@opensource.cirrus.com,
+	simont@opensource.cirrus.com,
+	peterz@infradead.org
+Cc: patches@opensource.cirrus.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] ASoC: wm_adsp: Remove unnecessary NULL check before release_firmware()
+Date: Mon,  7 Apr 2025 14:34:03 +0800
+Message-Id: <20250407063403.2772040-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] mm: mincore: use folio_pte_batch() to batch process
- large folios
-To: David Hildenbrand <david@redhat.com>, Ryan Roberts
- <ryan.roberts@arm.com>, akpm@linux-foundation.org, hughd@google.com
-Cc: willy@infradead.org, 21cnbao@gmail.com, ziy@nvidia.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1742960003.git.baolin.wang@linux.alibaba.com>
- <7ad05bc9299de5d954fb21a2da57f46dd6ec59d0.1742960003.git.baolin.wang@linux.alibaba.com>
- <54886038-3707-4ea0-bd84-00a8f4a19a6a@arm.com>
- <f6f4f4ff-0074-4ba7-b2a5-02727661843c@linux.alibaba.com>
- <145ec273-7223-45b8-a7f6-4e593a3cc8ee@arm.com>
- <d17b69a1-2f22-4a8d-8260-ddea38ebc7b0@redhat.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <d17b69a1-2f22-4a8d-8260-ddea38ebc7b0@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAC37gYdcvNnHnHQBg--.10866S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtw18ZF4ktr4xXry8JrW5KFg_yoWfXrg_Aa
+	ykCw18GryxtrW3X347ur1avrW3uay5ur1rJrnFyayUJryDJw4Sqw1UWan5ua18X3yIka4f
+	ZF1DZrWDC398JjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbfxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8AwCF04k20xvY0x0EwI
+	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
+	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k2
+	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUcjjkUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
+release_firmware() checks for NULL pointers internally.
+Remove unneeded NULL check for fmw here.
 
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ sound/soc/codecs/wm_adsp.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-On 2025/4/1 21:04, David Hildenbrand wrote:
-> On 01.04.25 12:45, Ryan Roberts wrote:
->> On 30/03/2025 15:57, Baolin Wang wrote:
->>>
->>>
->>> On 2025/3/27 22:08, Ryan Roberts wrote:
->>>> On 25/03/2025 23:38, Baolin Wang wrote:
->>>>> When I tested the mincore() syscall, I observed that it takes 
->>>>> longer with
->>>>> 64K mTHP enabled on my Arm64 server. The reason is the 
->>>>> mincore_pte_range()
->>>>> still checks each PTE individually, even when the PTEs are contiguous,
->>>>> which is not efficient.
->>>>>
->>>>> Thus we can use folio_pte_batch() to get the batch number of the 
->>>>> present
->>>>> contiguous PTEs, which can improve the performance. I tested the 
->>>>> mincore()
->>>>> syscall with 1G anonymous memory populated with 64K mTHP, and 
->>>>> observed an
->>>>> obvious performance improvement:
->>>>>
->>>>> w/o patch        w/ patch        changes
->>>>> 6022us            1115us            +81%
->>>>>
->>>>> Moreover, I also tested mincore() with disabling mTHP/THP, and did not
->>>>> see any obvious regression.
->>>>>
->>>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>>> ---
->>>>>    mm/mincore.c | 27 ++++++++++++++++++++++-----
->>>>>    1 file changed, 22 insertions(+), 5 deletions(-)
->>>>>
->>>>> diff --git a/mm/mincore.c b/mm/mincore.c
->>>>> index 832f29f46767..88be180b5550 100644
->>>>> --- a/mm/mincore.c
->>>>> +++ b/mm/mincore.c
->>>>> @@ -21,6 +21,7 @@
->>>>>      #include <linux/uaccess.h>
->>>>>    #include "swap.h"
->>>>> +#include "internal.h"
->>>>>      static int mincore_hugetlb(pte_t *pte, unsigned long hmask, 
->>>>> unsigned long
->>>>> addr,
->>>>>                unsigned long end, struct mm_walk *walk)
->>>>> @@ -105,6 +106,7 @@ static int mincore_pte_range(pmd_t *pmd, 
->>>>> unsigned long
->>>>> addr, unsigned long end,
->>>>>        pte_t *ptep;
->>>>>        unsigned char *vec = walk->private;
->>>>>        int nr = (end - addr) >> PAGE_SHIFT;
->>>>> +    int step, i;
->>>>>          ptl = pmd_trans_huge_lock(pmd, vma);
->>>>>        if (ptl) {
->>>>> @@ -118,16 +120,31 @@ static int mincore_pte_range(pmd_t *pmd, 
->>>>> unsigned long
->>>>> addr, unsigned long end,
->>>>>            walk->action = ACTION_AGAIN;
->>>>>            return 0;
->>>>>        }
->>>>> -    for (; addr != end; ptep++, addr += PAGE_SIZE) {
->>>>> +    for (; addr != end; ptep += step, addr += step * PAGE_SIZE) {
->>>>>            pte_t pte = ptep_get(ptep);
->>>>>    +        step = 1;
->>>>>            /* We need to do cache lookup too for pte markers */
->>>>>            if (pte_none_mostly(pte))
->>>>>                __mincore_unmapped_range(addr, addr + PAGE_SIZE,
->>>>>                             vma, vec);
->>>>> -        else if (pte_present(pte))
->>>>> -            *vec = 1;
->>>>> -        else { /* pte is a swap entry */
->>>>> +        else if (pte_present(pte)) {
->>>>> +            if (pte_batch_hint(ptep, pte) > 1) {
->>>>> +                struct folio *folio = vm_normal_folio(vma, addr, 
->>>>> pte);
->>>>> +
->>>>> +                if (folio && folio_test_large(folio)) {
->>>>> +                    const fpb_t fpb_flags = FPB_IGNORE_DIRTY |
->>>>> +                                FPB_IGNORE_SOFT_DIRTY;
->>>>> +                    int max_nr = (end - addr) / PAGE_SIZE;
->>>>> +
->>>>> +                    step = folio_pte_batch(folio, addr, ptep, pte,
->>>>> +                            max_nr, fpb_flags, NULL, NULL, NULL);
->>>>> +                }
->>>>> +            }
->>>>
->>>> You could simplify to the following, I think, to avoid needing to 
->>>> grab the folio
->>>> and call folio_pte_batch():
->>>>
->>>>              else if (pte_present(pte)) {
->>>>                  int max_nr = (end - addr) / PAGE_SIZE;
->>>>                  step = min(pte_batch_hint(ptep, pte), max_nr);
->>>>              } ...
->>>>
->>>> I expect the regression you are seeing here is all due to calling 
->>>> ptep_get() for
->>>> every pte in the contpte batch, which will cause 16 memory reads per 
->>>> pte (to
->>>> gather the access/dirty bits). For small folios its just 1 read per 
->>>> pte.
->>>
->>> Right.
->>>
->>>> pte_batch_hint() will skip forward in blocks of 16 so you now end up 
->>>> with the
->>>> same number as for the small folio case. You don't need all the 
->>>> fancy extras
->>>> that folio_pte_batch() gives you here.
->>>
->>> Sounds reasonable. Your suggestion looks simple, but my method can 
->>> batch the
->>> whole large folio (such as large folios containing more than 16 
->>> contiguous PTEs)
->>> at once.
->>
->> Sure but folio_pte_batch() just implements that with another loop that 
->> calls
->> pte_batch_hint(), so it all amounts to the same thing. In fact there 
->> are some
->> extra checks in folio_pte_batch() that you don't need so it might be a 
->> bit slower.
+diff --git a/sound/soc/codecs/wm_adsp.c b/sound/soc/codecs/wm_adsp.c
+index 91c8697c29c3..ffd826f30e15 100644
+--- a/sound/soc/codecs/wm_adsp.c
++++ b/sound/soc/codecs/wm_adsp.c
+@@ -718,12 +718,10 @@ static void wm_adsp_release_firmware_files(struct wm_adsp *dsp,
+ 					   const struct firmware *coeff_firmware,
+ 					   char *coeff_filename)
+ {
+-	if (wmfw_firmware)
+-		release_firmware(wmfw_firmware);
++	release_firmware(wmfw_firmware);
+ 	kfree(wmfw_filename);
+ 
+-	if (coeff_firmware)
+-		release_firmware(coeff_firmware);
++	release_firmware(coeff_firmware);
+ 	kfree(coeff_filename);
+ }
+ 
+-- 
+2.25.1
 
-Right. I tested your suggestion, yes, much better.
-
-> I don't enjoy open-coding the batching, especially if only cont-pte 
-> users will benefit from it. But I also don't enjoy the open-coded 
-> pte_batch_hint() :)
-> 
-> But we really don't need the folio here, so I assume the short variant 
-> you (Ryan) suggest is alright to just avoid the ptep_get().
-> 
-> As Oscar says, these details might soon be hidden inside a new page 
-> table walker API (even though it will likely end up using 
-> folio_pte_batch() internally, TBD).
-
-OK. I can drop this patch if it will be addressed in the following patches.
 
