@@ -1,122 +1,124 @@
-Return-Path: <linux-kernel+bounces-592546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD6AA7EE54
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:04:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E25EA7EE66
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D33A7A69EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:02:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFFF91897C66
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1437D22333A;
-	Mon,  7 Apr 2025 20:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713ED21ADA2;
+	Mon,  7 Apr 2025 20:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYE8RqzE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jO/s3FtH"
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522C7221573;
-	Mon,  7 Apr 2025 20:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8852139DC;
+	Mon,  7 Apr 2025 20:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744056197; cv=none; b=a5qWMUieWgFFT7mo7I8SJNr5+edJD2afxyoSyfe+aR9wL25GXQwA4H/jqxazTRLgORpPVsUVrC9dedsGCVRrH/l2+S5Pc/EwU9CQr1EIp1vYyeBL7GSwQK2vYqIDSBuhvi+rScchi71v6ONVEHERHXldY9oHZDgXwcl8zan/WIs=
+	t=1744056190; cv=none; b=QZPXI41MdTVvq7Ssb/FHohxF2psBzkwMtvjfPlaW+l5VxVq+fxASigHn4FaCqIEeju9A3hjg8kE33zYAdJCgE11uxKRkB3qpbkvJIff4EzDYQi9zvUXA3xpGTxO9WY5MI90SWIe6zLXP+5Ra5p8zZX8xQrS8tqQw9EXzUSt15NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744056197; c=relaxed/simple;
-	bh=6OMwIuv8o96JS+2SCmLB/cdc8b9zWCLSybt1kkH13F4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eaP6o2k9fjyB5gFp6XBop68nq7ETKRtcDJX/dx4RxkvIGYMesSJxR9ml2FaE9ONplnjEjtheRrazohNHTVukFNy6sqV4An51nIfDsI5/4xa0zaCA3kCCNF1jl/D+1cS+YFcCFnpvRal09jUqWZQZ+ZoO7L01h0OKY51AtTuf5nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qYE8RqzE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 058ADC4CEF6;
-	Mon,  7 Apr 2025 20:03:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744056197;
-	bh=6OMwIuv8o96JS+2SCmLB/cdc8b9zWCLSybt1kkH13F4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=qYE8RqzE3UyjG8/S1/qUyOTfGfxN51ecjsYjDNByXq8xmZqJUIJXXrnOUyWi3GVvE
-	 Dykhv/oc9rUDSRRJzA9wr/v5AA+Fmc49W3HjjiS9z6pCkhEtFBPv3Q4P2A1Q6RNpi9
-	 vQi9Ic73I0hffA7is2MyiN/uvVFJ8VROfabGdyF6ppZNA3HnpXpb3Kn2/SyH8c10Lm
-	 h9bEvTpNEEb2DyPZOyIuILpJVMMcrPmeb2PzD2aJK2s5Rzd/7lHX2PZ8YmG5pQQZ9a
-	 fojIxneAPbaUje0cTIalb7Jx+i3GmE+j5BNSgBWBnknpWs0TnpmoboeAPdn3VJu2lS
-	 rCr8i4NQYPzZg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E853BC36010;
-	Mon,  7 Apr 2025 20:03:16 +0000 (UTC)
-From: =?utf-8?q?Duje_Mihanovi=C4=87_via_B4_Relay?= <devnull+duje.mihanovic.skole.hr@kernel.org>
-Date: Mon, 07 Apr 2025 22:02:15 +0200
-Subject: [PATCH v15 4/4] MAINTAINERS: add myself as Marvell PXA1908
- maintainer
+	s=arc-20240116; t=1744056190; c=relaxed/simple;
+	bh=ducg16hfR8hZueXDsQDQPB98oESAhaelf79Gxs3b3Nc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cz2Zp4B3/fWDnwOOGEcNa89Bxbnf8coZKS5DDAFfiG4QibL5T08yMeUdBtq7AQq6tBSmtz8Tybm10zPn5a9b20YkFH23joAfOP5BZfhEWoMQiF8rg/OT/PYuAznEDiT6+BDZEn6aj4yi1l9HLdg87BF0VDwvjd4IpafTH4MYHJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jO/s3FtH; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2c77a5747e0so2618995fac.2;
+        Mon, 07 Apr 2025 13:03:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744056188; x=1744660988; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g/HVQqx7ACy8Wke2eXLxg0sKouM8xAKI7gwGAUQ/F7s=;
+        b=jO/s3FtH2f1zbvV4T0yDgQ/hRkuUDxJfwe73UVW7FdoBsqieA9niYnO8+MqnrvDqHI
+         Ct5ObN0w9eB0cvZt/FM33WChSp0T8H9Yx8qzkjZGLa99b0t5sUqg7uwR81h7HNmiPSDJ
+         f1N03aBhbKs5T5VjiSHBoXQPDPw0XGxtU8oOPyS+YZkCZD8sWH8v6nLbNoJ04NU/Y7Ue
+         ogVKrLH7G8DhHYMy4cxzwk5PvN9pViUQtdEaFkmShUtlOsKBDTLeMUHzl4PdwJC+eDcr
+         3irFfb1xr/os8ylLd5gmQeZ2uQmHLeZGBGPOjENOxUoMeuZZr9JuAIZ3mx3x8GcKUQ14
+         Qo5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744056188; x=1744660988;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g/HVQqx7ACy8Wke2eXLxg0sKouM8xAKI7gwGAUQ/F7s=;
+        b=FYoC6DdfAenrllJhtMtfI+IUQgM6IkXmEsHs+YiaRCMMTinW7SE7xBPVGSL0KX6Hwf
+         OASrAtAuIvgy09SPEZBrWOAmIME5qCs77rfC3drUS6WJPkkk8aWjEzVZ2uyNipoOI5Le
+         fuhkyCfUt2yVuShDXqLeIrw/fZ0G0EhKSJlKAGAbenifmcv2pGMkA7lcU7gFwOd9b9qV
+         f7c1OvajCu7fOrs/65bqwp5w82qyjU9IZq9dLCAs46U33kA+g/ljq5jNhVF3vpVBCXhR
+         mxBu6lsL/LK5kU/Y6ebvjarhAL0ApX6M0AvXi/WEr1fFXrL5uqnzI/0ZinzZfb5KhOi+
+         JicQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUre+iSZZfAd26M1qO1Lty+InJ/hFByenGQQO0vZI20Xm6NmIHgotcPANxDOrjkcW+ii7fRubLBbUfX0rM=@vger.kernel.org, AJvYcCWLoxdPM0LaOuEIHFIhdHJ2e8vytuYKng0PSPfS6JiP+tauc4BOTgcQpzfNRsuvXmbz2WAiPGjRSxBMahMq6tI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaFHowruG9OjmEG1nBRtUwBOUXGOMUAqWA0RBgryElxL+xhtKI
+	KfnhqhJPdDVpeJO8Gt6pkftmGbE3Zjk8IweCg9/UxXlnFuZuOjxu
+X-Gm-Gg: ASbGncuDIT4OPf3+7klmluN22jXseXZE//9xB/Tl2t7soqPOcsi/wx7ylbQhrfj/WzU
+	jGhtzKTmnji9npJJoq1A6hd13YdNYaNXnL4u6c6lFxmDknEvUyijL3N/uwXi5VfqJ7HOLJqTema
+	QZZMlH9mT2+SbLelobp8J08hnAVJKDUxpJVFf8dB731Ivg1Usg6rG3L6CDu+O3SgxJQ4rrlfBqO
+	+viVeODke1buKibKivvOG0yj0KlsYKKmj9mZBBjA8ygzct2si+2rUhc7C266swKFlxcVO9cjoP0
+	T2iJh3ueC9UiduDC4C2CGdJDgMtY5algpmLIyVzp2kLExsL1F+acACf9KzQvqWmrXhZw6wUaw+t
+	XIXSbIYVxEzYspqbn
+X-Google-Smtp-Source: AGHT+IEEJurb5ksp2fl+uD+idand6jtxtZrvPetDZX8MmlzKvRN2A/ZVHQqQepzpL/TrEfq200nwbg==
+X-Received: by 2002:a05:6870:e38e:b0:29d:c832:7ef6 with SMTP id 586e51a60fabf-2cd331bc71cmr5607523fac.39.1744056186749;
+        Mon, 07 Apr 2025 13:03:06 -0700 (PDT)
+Received: from my-computer.lan (c-73-76-29-249.hsd1.tx.comcast.net. [73.76.29.249])
+        by smtp.googlemail.com with ESMTPSA id 46e09a7af769-72e651a0ee7sm73360a34.38.2025.04.07.13.03.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 13:03:06 -0700 (PDT)
+From: Andrew Ballance <andrewjballance@gmail.com>
+To: liam.howlett@oracle.com
+Cc: a.hindborg@kernel.org,
+	akpm@linux-foundation.org,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	andrewjballance@gmail.com,
+	benno.lossin@proton.me,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	brauner@kernel.org,
+	dakr@kernel.org,
+	dingxiangfei2009@gmail.com,
+	gary@garyguo.net,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	maple-tree@lists.infradead.org,
+	ojeda@kernel.org,
+	rust-for-linux@vger.kernel.org,
+	tmgross@umich.edu,
+	wedsonaf@gmail.com
+Subject: Re: [RFC PATCH 2/2] rust: add maple tree abstractions
+Date: Mon,  7 Apr 2025 15:02:50 -0500
+Message-ID: <20250407200250.1671534-1-andrewjballance@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cons6o6begjlf4eu3wvhplimbrjtns553nugtblki7u23a3u3p@efca7vmgmr6w>
+References: <cons6o6begjlf4eu3wvhplimbrjtns553nugtblki7u23a3u3p@efca7vmgmr6w>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250407-pxa1908-lkml-v15-4-e83ef101f944@skole.hr>
-References: <20250407-pxa1908-lkml-v15-0-e83ef101f944@skole.hr>
-In-Reply-To: <20250407-pxa1908-lkml-v15-0-e83ef101f944@skole.hr>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
- Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc: David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org, 
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- soc@lists.linux.dev, 
- =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=911;
- i=duje.mihanovic@skole.hr; s=20240706; h=from:subject:message-id;
- bh=XeLw/nRd7g6pEyFxTHXgaJRQM07Qgsbah3nkCqFOIBU=;
- b=owGbwMvMwCW21nBykGv/WmbG02pJDOlf9JvUgtYu4L703uyGhLWE20T/3zuP/XexfTYz7+nP6
- rK7cw/FdZSyMIhxMciKKbLk/ne8xvtZZOv27GUGMHNYmUCGMHBxCsBEnr9m+J975FPh49Bq3oPb
- /ykEZX34Ixayf+5lqfa18qbl3xf9Xf2KkeG+gefBtx/vbZR4c1WDj7dE9+AUPzWp57VKSnE2JRG
- RddwA
-X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
- fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
-X-Endpoint-Received: by B4 Relay for duje.mihanovic@skole.hr/20240706 with
- auth_id=191
-X-Original-From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Reply-To: duje.mihanovic@skole.hr
 
-From: Duje Mihanović <duje.mihanovic@skole.hr>
+On Mon, Apr 07, 2025 at 09:59:21AM -0400, Liam R. Howlett wrote:
+> * Andrew Ballance <andrewjballance@gmail.com> [250405 02:03]:
+> > maple trees are sparse array like data structure that maps
+> > non-overlapping ranges to pointers.
+> 
+> Why do you think the maple tree is a spare array like data structure?
+> 
 
-Add myself as the maintainer for Marvell PXA1908 SoC support.
+I called the maple tree "sparse array like" because indexes that have
+no entry map to null and there can be gaps between ranges. I did not
+mean to imply that a maple tree was literally a sparse array. 
 
-Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 96b82704950184bd71623ff41fc4df31e4c7fe87..649b70ac8b96ea0bb91e3c641517c334c85270f3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2717,6 +2717,14 @@ F:	drivers/irqchip/irq-mvebu-*
- F:	drivers/pinctrl/mvebu/
- F:	drivers/rtc/rtc-armada38x.c
- 
-+ARM/Marvell PXA1908 SOC support
-+M:	Duje Mihanović <duje.mihanovic@skole.hr>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+S:	Maintained
-+F:	arch/arm64/boot/dts/marvell/pxa1908*
-+F:	drivers/clk/mmp/clk-pxa1908*.c
-+F:	include/dt-bindings/clock/marvell,pxa1908.h
-+
- ARM/Mediatek RTC DRIVER
- M:	Eddie Huang <eddie.huang@mediatek.com>
- M:	Sean Wang <sean.wang@mediatek.com>
-
--- 
-2.49.0
-
-
+Would you like me to reword this?
 
