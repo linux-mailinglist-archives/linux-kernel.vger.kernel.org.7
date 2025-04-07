@@ -1,70 +1,73 @@
-Return-Path: <linux-kernel+bounces-590349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC4FA7D201
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 04:10:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5932BA7D203
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 04:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 873EC188CAAF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 02:10:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE2403AC47F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 02:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC181212FAA;
-	Mon,  7 Apr 2025 02:09:53 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D222212F94;
+	Mon,  7 Apr 2025 02:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K/jSChcO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA056212D65;
-	Mon,  7 Apr 2025 02:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E246520FAAC
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 02:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743991793; cv=none; b=lFszrrYBsPfa8Y3qEalITh5wZWb31s+ht/uopiRcvegF8oJIWsU5CLUh8thT42DpPA1b3qSPQ/35Ofzr1PyGyggu22J8wR5hpf/kH8WQS+ST9LpXAzONkrCTcIg02keedxGkwI4otEMT4tCwluQYMoIgB7R9oi5Hq4s+DicCw4I=
+	t=1743991830; cv=none; b=D3o2QKrfIPgF6Eq+9bj9Dz9BRFm8aMUCBzrRzNJBXNmikJ5JaTvXVOoVb6HJP3n7/9T4WvTRzfutZkB6vY2fGX1HpmT+b3jf/Fy7shPTqUgAYgct8nBpLAfXt7R10PbhVqGsZ/WS6fOSReo1tZQpLLn7yX0MJiL0ZClW+4MemMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743991793; c=relaxed/simple;
-	bh=I0uSkIs7MwYCiFKpPqFS9fHzKIERPrO5A7jKe4gKoxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hQwz0Urn4BcmiPWpneUaR+BHDPYRM/2xGp6UlWnsxqlGUaSR/4CVQOOmdz+hb1/WiBCpt5pawfpxmfojURR1mX4wcGNhr8h+f/C46N8Fvvp20+p+ULKvXT5Xi2gB3RJSCeHZL5+/507wZ4gs0zN0kT2WwmzWrjo2yF3k1u89BL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.27.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 406253430A7;
-	Mon, 07 Apr 2025 02:09:50 +0000 (UTC)
-Date: Mon, 7 Apr 2025 02:09:45 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	ghost <2990955050@qq.com>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Jisheng Zhang <jszhang@kernel.org>, Chao Wei <chao.wei@sophgo.com>,
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-mmc@vger.kernel.org, Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH 9/9] riscv: dts: sophgo: Add initial device tree of
- Sophgo SRD3-10
-Message-ID: <20250407020945-GYA13182@gentoo>
-References: <20250407010616.749833-1-inochiama@gmail.com>
- <20250407010616.749833-10-inochiama@gmail.com>
+	s=arc-20240116; t=1743991830; c=relaxed/simple;
+	bh=XfcLzj4u9hEabd0szkloLzxLYdzD/t+nSwjBELOsAWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fqf9m2IRIMTBsZmQy+RvOpXNbZI05iGcnbrvzaiy6gJybj8djFaduiRMziVrNGW/7hyJwufpIQ2bZqJ3P8RGyv2SayJhjIhtw27F8sQB1ybP03nkfJNecnYkKp7Z51l1gKvYaXeJnF64hIU9w7MBNk9gHkrDEOMBVHvd7dl85Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K/jSChcO; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743991829; x=1775527829;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=XfcLzj4u9hEabd0szkloLzxLYdzD/t+nSwjBELOsAWM=;
+  b=K/jSChcOIAOFVCbexhzkhPnQbkHQIgFDkps8kcWkR8H2nU/9lfRV3pEx
+   NDevq8dut+YFOn03vtlVakh7T46bXZhpnBbw16X8QyEHb95KFOpAfN1PN
+   C/wLtHQoXg+09I4M2Q6WpzV0Psv5ACWkChO89YQL2CikdozEQKUWY6hwD
+   XfTkMu9ZvGFAWPfsLUzbdmcnQrCfS3hiBipEHE9ZROgtIEJ65d+3PrLlh
+   4B3B3t+3iHQ9EtZTkr+XUgY/cw9eWwyia+ALfn/mWrsUPqEKpzFeVU8CT
+   w9NqEtnuh3BtFkNGY3urSSSX/3TTclbkugte99mDzqLP+xxtnr1hscai0
+   g==;
+X-CSE-ConnectionGUID: WjZ5QxE8S9qU3yphgZjeqA==
+X-CSE-MsgGUID: rBQeSdp6Twyy2ants5elkQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11396"; a="67834845"
+X-IronPort-AV: E=Sophos;i="6.15,193,1739865600"; 
+   d="scan'208";a="67834845"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2025 19:10:28 -0700
+X-CSE-ConnectionGUID: gTwHepnPQy+/87yJ/JnJNg==
+X-CSE-MsgGUID: /vCHT+ryR/ijaSKwWumzNw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,193,1739865600"; 
+   d="scan'208";a="128331273"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 06 Apr 2025 19:10:27 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u1bwO-0002t9-1m;
+	Mon, 07 Apr 2025 02:10:24 +0000
+Date: Mon, 7 Apr 2025 10:10:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>
+Subject: sound/soc/soc-ops-test.c:520:1: warning: the frame size of 1304
+ bytes is larger than 1280 bytes
+Message-ID: <202504071003.NtmGvvqC-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,44 +76,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250407010616.749833-10-inochiama@gmail.com>
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   0af2f6be1b4281385b618cb86ad946eded089ac8
+commit: 7a24b876ad8cdd56457e881d384a038922b508c3 ASoC: ops-test: Add some basic kunit tests for soc-ops
+date:   3 weeks ago
+config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20250407/202504071003.NtmGvvqC-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250407/202504071003.NtmGvvqC-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504071003.NtmGvvqC-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   sound/soc/soc-ops-test.c: In function 'soc_ops_test_access':
+>> sound/soc/soc-ops-test.c:520:1: warning: the frame size of 1304 bytes is larger than 1280 bytes [-Wframe-larger-than=]
+     520 | }
+         | ^
 
 
-On 09:06 Mon 07 Apr     , Inochi Amaoto wrote:
-> Sophgo SG2044 SRD3-10 board bases on Sophgo SG2044 SoC.
-> This board includes 5 uart ports, 5 pcie x8 slots, 1 1G Ethernet port,
-> 1 microSD slot.
-> 
-> Add initial device tree of this board with uart support.
-> 
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> ---
->  arch/riscv/boot/dts/sophgo/Makefile           |    1 +
->  arch/riscv/boot/dts/sophgo/sg2044-cpus.dtsi   | 3002 +++++++++++++++++
->  arch/riscv/boot/dts/sophgo/sg2044-reset.h     |  128 +
->  .../boot/dts/sophgo/sg2044-sophgo-srd3-10.dts |   32 +
->  arch/riscv/boot/dts/sophgo/sg2044.dtsi        |   86 +
->  5 files changed, 3249 insertions(+)
->  create mode 100644 arch/riscv/boot/dts/sophgo/sg2044-cpus.dtsi
->  create mode 100644 arch/riscv/boot/dts/sophgo/sg2044-reset.h
->  create mode 100644 arch/riscv/boot/dts/sophgo/sg2044-sophgo-srd3-10.dts
->  create mode 100644 arch/riscv/boot/dts/sophgo/sg2044.dtsi
-> 
-..
-> diff --git a/arch/riscv/boot/dts/sophgo/sg2044-reset.h b/arch/riscv/boot/dts/sophgo/sg2044-reset.h
-> new file mode 100644
-> index 000000000000..94ed1e3777c3
-> --- /dev/null
-> +++ b/arch/riscv/boot/dts/sophgo/sg2044-reset.h
-> @@ -0,0 +1,128 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-> +/*
-> + * Copyright (C) 2025 Inochi Amaoto <inochiama@outlook.com>
-you might want to use your gmail suffix? IIRC your outlook account
-isn't preferable? besides, it's better cosistent with your signed-off
+vim +520 sound/soc/soc-ops-test.c
+
+   475	
+   476	static void soc_ops_test_access(struct kunit *test)
+   477	{
+   478		struct soc_ops_test_priv *priv = test->priv;
+   479		const struct access_test_param *param = test->param_value;
+   480		struct snd_kcontrol kctl = {
+   481			.private_data = &priv->component,
+   482			.private_value = (unsigned long)&param->mc,
+   483		};
+   484		struct snd_ctl_elem_value result;
+   485		unsigned int val;
+   486		int ret;
+   487	
+   488		ret = regmap_write(priv->component.regmap, 0x0, param->init);
+   489		KUNIT_ASSERT_FALSE(test, ret);
+   490		ret = regmap_write(priv->component.regmap, 0x1, param->init);
+   491		KUNIT_ASSERT_FALSE(test, ret);
+   492	
+   493		result.value.integer.value[0] = param->lctl;
+   494		result.value.integer.value[1] = param->rctl;
+   495	
+   496		ret = param->put(&kctl, &result);
+   497		KUNIT_ASSERT_EQ(test, ret, param->ret);
+   498		if (ret < 0)
+   499			return;
+   500	
+   501		ret = regmap_read(priv->component.regmap, 0x0, &val);
+   502		KUNIT_ASSERT_FALSE(test, ret);
+   503		KUNIT_EXPECT_EQ(test, val, (param->init & ~param->lmask) | param->lreg);
+   504	
+   505		ret = regmap_read(priv->component.regmap, 0x1, &val);
+   506		KUNIT_ASSERT_FALSE(test, ret);
+   507		KUNIT_EXPECT_EQ(test, val, (param->init & ~param->rmask) | param->rreg);
+   508	
+   509		result.value.integer.value[0] = 0;
+   510		result.value.integer.value[1] = 0;
+   511	
+   512		ret = param->get(&kctl, &result);
+   513		KUNIT_ASSERT_GE(test, ret, 0);
+   514	
+   515		KUNIT_EXPECT_EQ(test, result.value.integer.value[0], param->lctl);
+   516		if (param->layout != SOC_OPS_TEST_SINGLE)
+   517			KUNIT_EXPECT_EQ(test, result.value.integer.value[1], param->rctl);
+   518		else
+   519			KUNIT_EXPECT_EQ(test, result.value.integer.value[1], 0);
+ > 520	}
+   521	
 
 -- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
