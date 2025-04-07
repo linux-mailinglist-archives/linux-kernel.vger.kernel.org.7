@@ -1,109 +1,65 @@
-Return-Path: <linux-kernel+bounces-590939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DB0EA7D8BE
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46CC3A7D8BF
 	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 558863B2096
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:55:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E15BA1892644
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E854322B597;
-	Mon,  7 Apr 2025 08:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OI6D7Op7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA67B22B8AF;
+	Mon,  7 Apr 2025 08:55:05 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DA6229B2C
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 08:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3810228CBE;
+	Mon,  7 Apr 2025 08:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744016085; cv=none; b=XQW6TyVW0VxQmfni5BKkJZEqI/Cj7gXAN5/x5dA9rN5SES+gGdNlf0YrBd8chm6IHb0eFFqvMdB1tP1KYrVfyXvkJPVC9RAjCynqn8LZiMOxldCiWkKKwdo78IoFemFsY4FErQ6miDtYuKadJMQEPCM8fSdP8NLX71ebiaR5bSo=
+	t=1744016105; cv=none; b=mIj1HuJqnRM6w6baWWv7YcjA0jmOtoVnpT0ELpCnNpTb0kRB+snC/dMhne3wXt25uZ1zKmNDKvdU56LsuI6YYy4gGyUtKz4WOqbm61ZrL2dYv3xH4N3hgb1z/5mi1fG2l0k0v9sJqAb6VVcvGSlEu69UyW1Dmx4/SMNVk/nzrWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744016085; c=relaxed/simple;
-	bh=R+0sWKhqbThzPkae+5wVut0fKNCyuXS4OYJ/SETg+GQ=;
+	s=arc-20240116; t=1744016105; c=relaxed/simple;
+	bh=f/LcNa6GPRTKbdOQ0J6Rx6Ux/UEHkLRKdixOCrp5Zw4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i1O5Aome/d/9zd/iMvBosqLVCSJYITz5exzRlFljk717AQRX5ANH1M9No+c385iLBmXXnoruZge+OYj98Saq//a0vdSdB2xh9BzylpnyWuoFV+2ByKSadV3JjClAm9zuCWxjPoRiBm5phl7fdIQDx+GFyK0RU4vm47QGQvO/7ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OI6D7Op7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744016082;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MAmqbLHdw+HuKBAeHI83rPkmOKB4Sfbwt9oiDo5180k=;
-	b=OI6D7Op7j81Ld2tGFDWanBI/NtuPw8FNZbFIximhPKwXGVWzDfSaetmGOSkEK8pubNG4be
-	sF/cT3ZJprHYxzZVSdhneM1LaaTMEXmQZDpvZ5N10uEKpMjnDe9++2Kv0bXodtdLn0KQl3
-	BnI0mG3s0onTc7m/4bAtAKsBonOpVz4=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-601-oQ1Im2SDNcWK-NQGGijOew-1; Mon, 07 Apr 2025 04:54:41 -0400
-X-MC-Unique: oQ1Im2SDNcWK-NQGGijOew-1
-X-Mimecast-MFC-AGG-ID: oQ1Im2SDNcWK-NQGGijOew_1744016080
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43d734da1a3so21191085e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 01:54:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744016080; x=1744620880;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MAmqbLHdw+HuKBAeHI83rPkmOKB4Sfbwt9oiDo5180k=;
-        b=GgQ9wlnN+W5pmxRdbKiuOldkUm5IRQtfhDsU61KtRhJ0Mik5qK3VhC1ouxC5e7sdbR
-         PU6Mgw5VSh96HfQBCJjNjtZSN3kNovEaehPZVvywOxbxqc7OQ8QZWMrrmPilIlk/Xn4O
-         A+wZLTJ4yRY+DDVWQ1KxwuaXqu0vMeyBfgQGhUvauwiKQBGj+ckWJB4c/D/PSfWQmTOJ
-         6KTDsDauq0H9riZ/DVInIOMbm9y+dNtomRbd/yfFVOtk1OL3jLOPd8gfxd23utWFBZbQ
-         7A+/Q8J+/CRpEnmovJrxNNqSy84itzgyNTqA3A3vT3U9QhZd2eEek5mPglxMrSWfeBVl
-         Dj8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUpRotGQoApDNIVZmHeEuOVO2796lyKwHDkWhLKSeRKhyJRF9HtQpLcLZujywrqM+ULf8odGCFWU2PmKUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoSekoWMF219M4/ZM64nTENfL0n4WUXNP6epY8b3dYZmYRjw8u
-	fJzP1OiuI4ibNzmOQXTyNPgbipLDOyfyrlgMQZqp86oU22NVo9bLkUy2IRYFmwfneXfT07YlCuG
-	lJlYOLkrBqLB/tHrahg0NNT1bMWscPxXMMgsiQwa6Xh5ZWpTMoNqy3rUS6VIrwg==
-X-Gm-Gg: ASbGncvraYuHGyHxb+TsmrYji4ZPqKGasJXObYDnyoat05606awo79MQTDH9fK85lXd
-	q/8cVFDh1qvw1i19pSQeTwSWSx4eKn/0b3G2z/xn8ELYD8/VOjXSNUJBgUrpYlUiz46U4Fax8XW
-	JTN3QEwD1U1eNeeWSbpXDPGEtOahLMW80RtAyqwMt1zioBKIEiuq/ckb3mdGp1keBWI8+wxqCVd
-	GEPnD8z3KZTZLdw3McpqRctr33qGoxh/uVAOJWhrjNMPPQNHtabebk8pOgm/0pYy8EwUhfu8Mrc
-	OLz1DVdE0g==
-X-Received: by 2002:a05:600c:8411:b0:43d:d06:3798 with SMTP id 5b1f17b1804b1-43ecf9fe1f0mr95894175e9.20.1744016080218;
-        Mon, 07 Apr 2025 01:54:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGH8IW0yqzJPKyGZGPD6qVstVRgqzDFHSOjqPBtRY8GjulSPFiJgnNYxrGMbcuC1XF3d2jQRg==
-X-Received: by 2002:a05:600c:8411:b0:43d:d06:3798 with SMTP id 5b1f17b1804b1-43ecf9fe1f0mr95893945e9.20.1744016079846;
-        Mon, 07 Apr 2025 01:54:39 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec34a75fcsm121633225e9.11.2025.04.07.01.54.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 01:54:39 -0700 (PDT)
-Date: Mon, 7 Apr 2025 04:54:36 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Halil Pasic <pasic@linux.ibm.com>, linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-	kvm@vger.kernel.org, Chandra Merla <cmerla@redhat.com>,
-	Stable@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
-	Thomas Huth <thuth@redhat.com>, Eric Farman <farman@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Wei Wang <wei.w.wang@intel.com>
-Subject: Re: [PATCH v1] s390/virtio_ccw: don't allocate/assign airqs for
- non-existing queues
-Message-ID: <20250407045009-mutt-send-email-mst@kernel.org>
-References: <20250402203621.940090-1-david@redhat.com>
- <20250403161836.7fe9fea5.pasic@linux.ibm.com>
- <e2936e2f-022c-44ee-bb04-f07045ee2114@redhat.com>
- <20250404063619.0fa60a41.pasic@linux.ibm.com>
- <4a33daa3-7415-411e-a491-07635e3cfdc4@redhat.com>
- <d54fbf56-b462-4eea-a86e-3a0defb6298b@redhat.com>
- <20250404153620.04d2df05.pasic@linux.ibm.com>
- <d6f5f854-1294-4afa-b02a-657713435435@redhat.com>
- <20250406144025-mutt-send-email-mst@kernel.org>
- <4450ec71-8a8f-478c-a66e-b53d858beb02@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SgzHU2VdnpKAveM9hdVq/Cd6ujiLq658RVrIGTFp/MCLqITitrYrrHlj0s+0qGb0nM6PG0RYQqgQpVHfhwat8kIHymGuf8WNf9CkHWsyndfE3q8qoLPygsJEJiuVSbLBNmtnj6U2NAXmZZ9FpygSu4ZcJEN0w7Wf0iQFJWHGZBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: o7xd73c8QbevuoL69pUt3g==
+X-CSE-MsgGUID: w0ZHCJaTQTyhq5xX/d2dsw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11396"; a="67864445"
+X-IronPort-AV: E=Sophos;i="6.15,193,1739865600"; 
+   d="scan'208";a="67864445"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 01:55:04 -0700
+X-CSE-ConnectionGUID: MqkqK+M3Rou5JYPj0Gvznw==
+X-CSE-MsgGUID: ITP6GFcDRhyw7vd/CvRTSg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,193,1739865600"; 
+   d="scan'208";a="151079832"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 01:55:01 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andy@kernel.org>)
+	id 1u1iFu-0000000A0dr-1kCv;
+	Mon, 07 Apr 2025 11:54:58 +0300
+Date: Mon, 7 Apr 2025 11:54:58 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Peter Tyser <ptyser@xes-inc.com>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 12/12] gpio: ich: use new line value setter callbacks
+Message-ID: <Z_OS4nx2E12yjL7_@smile.fi.intel.com>
+References: <20250407-gpiochip-set-rv-gpio-part1-v1-0-78399683ca38@linaro.org>
+ <20250407-gpiochip-set-rv-gpio-part1-v1-12-78399683ca38@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -112,39 +68,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4450ec71-8a8f-478c-a66e-b53d858beb02@redhat.com>
+In-Reply-To: <20250407-gpiochip-set-rv-gpio-part1-v1-12-78399683ca38@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Apr 07, 2025 at 09:18:21AM +0200, David Hildenbrand wrote:
-> > Now I am beginning to think we should leave the spec alone
-> > and fix the drivers ... Ugh ....
+On Mon, Apr 07, 2025 at 09:13:21AM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> We could always say that starting with feature X, queue indexes are fixed
-> again. E.g., VIRTIO_BALLOON_F_X would have it's virtqueue fixed at index 5,
-> independent of the other (older) features where the virtqueue indexes are
-> determined like today.
-> 
-> Won't make the implementation easier, though, I'm afraid.
-> 
-> (I also thought about a way to query the virtqueue index for a feature, but
-> that's probably overengineering)
+> struct gpio_chip now has callbacks for setting line values that return
+> an integer, allowing to indicate failures. Convert the driver to using
+> them.
 
-The best contract we have is the spec. Sometimes it is hopelessly broken
-and we have to fix it, but not in this case.
-
-Let's do a theoretical excercise, assuming we want to fix the drivers,
-but we also want to have workarounds in place in qemu and in
-drivers to support existing ones. How would we go about it?
-
-
-
-Maybe we want a feature bit BALLOON_FIXED and ask everyone
-to negotiate it?  But if we go this way, we really need to fix
-the 48 bit limitation too.
-
-
-
+I'll take it via my tree. Thanks!
 
 -- 
-MST
+With Best Regards,
+Andy Shevchenko
+
 
 
