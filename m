@@ -1,154 +1,106 @@
-Return-Path: <linux-kernel+bounces-591412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E059A7DF51
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:32:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDD22A7DF62
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F65A7A2E0F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:31:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 011E23AC18C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39A13FB0E;
-	Mon,  7 Apr 2025 13:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF4922F19;
+	Mon,  7 Apr 2025 13:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SZfwoJl+"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="iN5Z/BmN"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD4E18DB03
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 13:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E633A18C31;
+	Mon,  7 Apr 2025 13:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744032722; cv=none; b=m+YGB4ksPwN0rMgUlkJInVyKfLgnWYyUPKT/5OSkGB12JQ7dM2/Fe/E1FKGppeHv4J6yt1EOMb74kbughE8tb9QKbytYUAWt+PQ7l6GpGNe8NVVilXZLKT30tbAbPilK5EZ1utwqID7kQVlLkGA/gCDwbme/xEhXbjgqa8K5orM=
+	t=1744032711; cv=none; b=Z5s3+ZOpXOIYTwkxUGXjPnNsicrugVmNlJGfmVe3B8IVRsxAhcBb0R+A2PZRPjoQQtVc5Ztu1XhjNsSnxnV/d5BLkpXol+ayFOVQIlLrI5BFUVq/zse8Elnb9rItgXqQ5U/hiUxSepcrn8NBheBVn5OQ7j26zNnHtnRLHDUYG2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744032722; c=relaxed/simple;
-	bh=pshHZokkV0X8NdPqgJdsG3+1aBCKOvBdXCK11R1Yk7k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GOKOD7fEGf96amrIYAQZybAfDvJA7ybdg2LGkhjklvWCZb3DkJA5vqfh882U4pe8kb/BFy/oVn+YtiOTT6wdUt+i1YuNfOoHyTiFIhWbQk/hpDeyNaxz9vLy8S+MTWDsj5cm54erN7a2HkapgCRw7wCmWvOisZ1IF6s7h35d8zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SZfwoJl+; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e614da8615so3035549a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 06:32:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744032719; x=1744637519; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JW7NRP7hVniWiGB6UL0laEFQgAVHaVo7/jjO5z8p93o=;
-        b=SZfwoJl+inkc1PQj2UM1YFTUBiLzYsvYPY60/Duo2aYX6KHPUh+xPXllbAUMD9Ed3y
-         e2w3wJnZUK9KVaq1tzHd1xDpSIfAc3y/te4dZS+JDWbaHLcydXPhRr1MmOcH1SGYLIN3
-         HphOFh7jCZoCbTslXvYkIDR7CR6nCbML0PSYdSA0gLJvxw5LdTEK0wDelHrYy+LExGke
-         ybzL1gcQOKwgqqBwkn1foDIejNDYqLsrV9VHFe38d6+Wh7kO3iOmVMklE1v+HzHlp0Ao
-         HuNd3/n0N0vFe5gcAoEKSxXmNqblOStKVB0x0npzfNknPloPvweLWlv8KI4/tY+CJN3Q
-         Nnmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744032719; x=1744637519;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JW7NRP7hVniWiGB6UL0laEFQgAVHaVo7/jjO5z8p93o=;
-        b=pKrMHG3+mms4c/ds881MlzwgVKOGXdjQOFhmAb7fwhZ8avS5fSY29WeRRooXx2BR2C
-         4VXJFYl27baKLQ3BKi9U8+mtQ5gHa2SO266zUN3rzZbiYv5gVlpsq5NYRaRYybxSJK2d
-         h0KGId/MB7seCouUEFj8RnkAMJvWZ9MbA6xC80TseMZu/bcsdNziq2PYTKDMKq2QQ4NH
-         NS0J286R6ftbm7F/vbCyn0yedT3OjdTOluWgwvy2zF0u1W7MvPc2nEdEB2kRObjbl2h8
-         ztmNk2e4ayqzjB5vewlIo5lznNruxtVlHLq4+35va2bBHleyjLfXHOEnLERInsOyrXGt
-         9Zsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUmNtNk7S0G6ZCRdJiufqgoLraHuX/mPB9Sxslon+LNBCPUgjk5QvIQZZujRqH8q8p8NiUZSFBVfb61BY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx9I4/jDQqe1kdIb8/dPIN5bmcMe36YyrQ3kjCul7mrp85CXcy
-	Ilt+nESn1T704nCcW75SxSCRTLI3OAiU6Rd6bYgSKHMSg5PxT3veaG33gpHDXoYltBdMax7LdNm
-	VVuW9eoZywBo5uJLJUXJ1iRlfvec=
-X-Gm-Gg: ASbGncv6kGnsa+icFK4sqsrIS+XB9HBBcBpUxbNB4wizEy1moWzDxgMTOHZE/YVgq1I
-	DYzHVe7ijlg2AYfEHi5XwNDnOfguat2ORjHI0rmUHH0fgzEEHG/XvpTJWXy73fxlRCNuiM5gjC7
-	qDv1A918pzyxRete6JhUrPLYJbUg==
-X-Google-Smtp-Source: AGHT+IFBlB6Ga15umPa39EQLS5gekFeGZCivZxz5YF+QtcJdtzN/ayMPgiFJeUDLz8ax5kgoj5rU5Ip1Rp8qsQe8kcM=
-X-Received: by 2002:a05:6402:430a:b0:5ed:19b4:98ea with SMTP id
- 4fb4d7f45d1cf-5f0837374bamr13633396a12.0.1744032710021; Mon, 07 Apr 2025
- 06:31:50 -0700 (PDT)
+	s=arc-20240116; t=1744032711; c=relaxed/simple;
+	bh=A1gKyCKZjJQ6OuvSCSPAHjMVs7Hd0WShhqRqV9X2pLA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qd2pr9v3jXEwCoSJd5tNwCU15Y+uttZW9RMATl4H5EM+8vjUWCotTKOnO/VB9IzhOTaeA0gAk5L+PWwF2ff44gZ/ROVAOdPeLxx20g8YM5yLI0Y8wiWUzPiSraYPp3Zttzay1HqmwLWgZbir9RfpqF83V3BgA58a/0e0EAPu/dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=iN5Z/BmN; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: a4a65be013b411f08eb9c36241bbb6fb-20250407
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=95+TfsQFbAqrLKW6vRoc95bSZAIrkYHN/gPsou0GUZU=;
+	b=iN5Z/BmNwcIR5RzvVal91yo1dSx1Q7r71MKGKSAn/hd+7SjyFJU5/5/2fZ2/aNo4qBPLhEUBViscHC1mjU7bGbz/CWB+LUaZ5TIIiww44G6vVOx8TTQEOzR8bUxdfURj2CUjrLdsCn/e6M4UhaikKOGESbKnNppZjVQYTUPUqkc=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:6dc7f4c6-a43f-4976-ad5b-e73aae32a49a,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:0ef645f,CLOUDID:1c720b4b-a527-43d8-8af6-bc8b32d9f5e9,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: a4a65be013b411f08eb9c36241bbb6fb-20250407
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
+	(envelope-from <bincai.liu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1650235856; Mon, 07 Apr 2025 21:31:42 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Mon, 7 Apr 2025 21:31:41 +0800
+Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Mon, 7 Apr 2025 21:31:40 +0800
+From: Bincai Liu <bincai.liu@mediatek.com>
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Chunfeng Yun <chunfeng.yun@mediatek.com>,
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Jitao Shi <jitao.shi@mediatek.com>
+CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-phy@lists.infradead.org>,
+	Bincai Liu <bincai.liu@mediatek.com>
+Subject: [PATCH 0/4] Add dsi support for mt8196
+Date: Mon, 7 Apr 2025 21:31:21 +0800
+Message-ID: <20250407133138.22449-1-bincai.liu@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407092243.2207837-1-xavier_qy@163.com> <20250407112922.17766-1-ioworker0@gmail.com>
- <5e3f976f.bca1.19610528896.Coremail.xavier_qy@163.com>
-In-Reply-To: <5e3f976f.bca1.19610528896.Coremail.xavier_qy@163.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Mon, 7 Apr 2025 21:31:12 +0800
-X-Gm-Features: ATxdqUFxa60yAB7AlomJiSWp637JosPrB4u1vsUKdG1vfTWoIp9hVXH1SuDnoCU
-Message-ID: <CAK1f24=hwXCg6K8a=qoWi2DGEWFGBcenSGRoKXtJEo=iR4DtDw@mail.gmail.com>
-Subject: Re: Re: [PATCH v1] mm/contpte: Optimize loop to reduce redundant operations
-To: Xavier <xavier_qy@163.com>
-Cc: akpm@linux-foundation.org, baohua@kernel.org, catalin.marinas@arm.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	ryan.roberts@arm.com, will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Mon, Apr 7, 2025 at 8:56=E2=80=AFPM Xavier <xavier_qy@163.com> wrote:
->
->
->
-> Hi Lance,
->
-> Thanks for your feedback, my response is as follows.
->
-> --
-> Thanks,
-> Xavier
->
->
->
->
->
-> At 2025-04-07 19:29:22, "Lance Yang" <ioworker0@gmail.com> wrote:
-> >Thanks for the patch. Would the following change be better?
-> >
-> >diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
-> >index 55107d27d3f8..64eb3b2fbf06 100644
-> >--- a/arch/arm64/mm/contpte.c
-> >+++ b/arch/arm64/mm/contpte.c
-> >@@ -174,6 +174,9 @@ pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
-> >
-> >               if (pte_young(pte))
-> >                       orig_pte =3D pte_mkyoung(orig_pte);
-> >+
-> >+              if (pte_young(orig_pte) && pte_dirty(orig_pte))
-> >+                      break;
-> >       }
-> >
-> >       return orig_pte;
-> >--
-> >
-> >We can check the orig_pte flags directly instead of using extra boolean
-> >variables, which gives us an early-exit when both dirty and young flags
-> >are set.
-> Your way of writing the code is indeed more concise. However, I think
->  using boolean variables might be more efficient. Although it introduces
->  additional variables, comparing boolean values is likely to be more
->  efficient than checking bit settings.
->
-> >
-> >Also, is this optimization really needed for the common case?
-> This function is on a high-frequency execution path. During debugging,
->  I found that in most cases, the first few pages are already marked as
->  both dirty and young. But currently, the program still has to complete
->  the entire loop of 16 ptep iterations, which seriously reduces the effic=
-iency.
+Bincai Liu (4):
+  dt-bindings: soc: mediatek: add mipi yaml for MT8196
+  dt-bindings: soc: mediatek: add dsi yaml for MT8196
+  drm/mediatek: Add mipi dsi driver for mt8196
+  drm/mediatek: dsi: Enable runtime PM
 
-Hmm... agreed that this patch helps when early PTEs are dirty/young, but
-for late-ones-only cases, it only introduces overhead with no benefit, IIUC=
-.
+ .../display/mediatek/mediatek,dsi.yaml        |   1 +
+ .../bindings/phy/mediatek,dsi-phy.yaml        |   1 +
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c        |   2 +
+ drivers/gpu/drm/mediatek/mtk_dsi.c            | 253 +++++++++++-------
+ drivers/phy/mediatek/Makefile                 |   1 +
+ .../phy/mediatek/phy-mtk-mipi-dsi-mt8196.c    | 201 ++++++++++++++
+ drivers/phy/mediatek/phy-mtk-mipi-dsi.c       |   1 +
+ drivers/phy/mediatek/phy-mtk-mipi-dsi.h       |   1 +
+ 8 files changed, 363 insertions(+), 98 deletions(-)
+ create mode 100644 drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8196.c
 
-So, let's wait for folks to take a look ;)
+-- 
+2.45.2
 
-Thanks,
-Lance
-
-> >
-> >Thanks,
-> >Lance
 
