@@ -1,104 +1,204 @@
-Return-Path: <linux-kernel+bounces-592513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73A3EA7EDFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:56:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43EA4A7EE3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:02:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDD081888CCB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:55:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 590253B439B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674C6221569;
-	Mon,  7 Apr 2025 19:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="EVH2gCKC"
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D64E222564;
+	Mon,  7 Apr 2025 19:47:59 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43A3219306;
-	Mon,  7 Apr 2025 19:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFADC222560;
+	Mon,  7 Apr 2025 19:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744055426; cv=none; b=GPjh1Pk9VjAOGDId99yHi02ulXFax37zX6DS6sAkMJmDI8w71pm9D2IZROZ9S9Jtl4bkWjnqxwb+yo5rlzkgTz3Xof5gKVINbKAPWIENZT7ilaxVqiU6bJxytnw+xD5MXqdufYCwHzykAJ7JYhPmwfd4Hjf6+Ojn3pJ6FLzTL5E=
+	t=1744055278; cv=none; b=HSr34fGq3oJXQBF/JNowZBchs7HVBlxEV0RO4YYXIIaCFzwso1kc6oeZ+yELbaXwxcqLwel0dWYg5CGfRtME3S3QQBh5uImEKpT7YJM55uCggIY++DBdxjk/wSwunOr6lmUD6byUHU1lPG2oBZsJ7bc6dNmg6V7Fd0gA739r1Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744055426; c=relaxed/simple;
-	bh=9jrbRtN+zrxPHA1QfQVu0OEc14LJJvK82peW+CJpq7E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PRYfWXrvoE6u/+1mTWG2uXVFOKP+nfdjVocECKuuopcUaEctR2g5VNzsrBd+piz3xBisIGzI3X45bKvcc7V6394qZlV//ZrE5N9c9slvgopOan50dzLeytGBtPtoUlBL/OXEMCNy2/Mv4ArVFSTx0Q1Y5QZ0XTxLW0qfb/odg60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=EVH2gCKC; arc=none smtp.client-ip=80.12.242.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 1sT0uwjplbbeQ1sT3uSxf9; Mon, 07 Apr 2025 21:49:14 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1744055354;
-	bh=gxsDMgpqSArQXJDXFZiVdjvJKyf3EBPu3MAt6VIqpVM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=EVH2gCKCPmH+GFNkr0570pMHkFmP+Al6ZVLv/1OqjkDrfWBo+VHKDdauCoVHMiEpM
-	 X+mQ2Ov51Hz3TOLUOGvZzLkGL+ImCV3U0MOqN3ENvzI3afhI4APFH6xyhPvd439UEq
-	 GV3b0gxUQIikV3DwMyeV3tHdGhtVAVlZoDi6mzp+Yyv3/FxAcNmrljSxDuNXPxVyrz
-	 D14SGNTrign0BcB0t3CZ+dwwmtMpPQSskecW9ha1g8MSfp8u6Sxrv3oNd2K5U3JQoS
-	 5JBQAFln3TD901ywT1zFt6R2Agw4nRxh+U+wwcRsy3WpjCbfLdW9G7r9IIoUmcYShs
-	 XgC8BAS9Oxtvg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Mon, 07 Apr 2025 21:49:14 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <e2a4e693-46db-4b1f-87c2-2867a4cb196d@wanadoo.fr>
-Date: Mon, 7 Apr 2025 21:49:08 +0200
+	s=arc-20240116; t=1744055278; c=relaxed/simple;
+	bh=aNmcLdwroFUwotUZ5Ycx/71l8quJaUOSBpHzjQqGqwE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=d/SJ8mpMxsqx+nvWNnRyXYJ+TnuWaGpvccXjmXa6CHx+NHa/e+HULdNJ7hN8zkirM/pPwUVmGscbxzMpu+7FGD3dyTXTCLa1VOxyiIytaGkIfF4vsq5LlcJHp7WohfIRJ/uXc/tcMP8KpR8/8OfeVE6wae7d9vZ0YnLFKwzEb0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8793BC4CEDD;
+	Mon,  7 Apr 2025 19:47:57 +0000 (UTC)
+Date: Mon, 7 Apr 2025 15:49:12 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Tom Zanussi <zanussi@kernel.org>
+Subject: [PATCH] tracing: Add common_comm to histograms
+Message-ID: <20250407154912.3c6c6246@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sparc: pci: Fix memory leak in pci_bus_slot_names()
-To: Salah Triki <salah.triki@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
- sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <Z_Ox0qp7uuKNUo2U@pc>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <Z_Ox0qp7uuKNUo2U@pc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Le 07/04/2025 à 13:06, Salah Triki a écrit :
-> prop is a local pointer in pci_bus_slot_names(). It is initialized
-> by calling of_get_property() so the caller must free prop when done
-> using it.
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Hi,
+If one wants to trace the name of the task that wakes up a process and
+pass that to the synthetic events, there's nothing currently that lets the
+synthetic events do that. Add a "common_comm" to the histogram logic that
+allows histograms save the current->comm as a variable that can be passed
+through and added to a synthetic event:
 
-can you elaborate why?
+ # cd /sys/kernel/tracing
+ # echo 's:wake_lat char[] waker; char[] wakee; u64 delta;' >> dynamic_events
+ # echo 'hist:keys=pid:comm=common_comm:ts=common_timestamp.usecs if !(common_flags & 0x18)' > events/sched/sched_waking/trigger
+ # echo 'hist:keys=next_pid:wake_comm=$comm:delta=common_timestamp.usecs-$ts:onmatch(sched.sched_waking).trace(wake_lat,$wake_comm,next_comm,$delta)' > events/sched/sched_switch/trigger
 
-It does not look needed to me, and the places using of_get_property() 
-that I've checked don't have such a kfree().
+The above will create a synthetic trace event that will save both the name
+of the waker and the wakee but only if the wakeup did not happen in a hard
+or soft interrupt context.
 
-CJ
+The "common_comm" is used to save the task->comm at the time of the
+initial event and is passed via the "comm" variable to the second event,
+and that is saved as the "waker" field in the "wake_lat" synthetic event.
 
-> 
-> Signed-off-by: Salah Triki <salah.triki@gmail.com>
-> ---
->   arch/sparc/kernel/pci.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/sparc/kernel/pci.c b/arch/sparc/kernel/pci.c
-> index ddac216a2aff..fa0da8f45723 100644
-> --- a/arch/sparc/kernel/pci.c
-> +++ b/arch/sparc/kernel/pci.c
-> @@ -971,6 +971,8 @@ static void pci_bus_slot_names(struct device_node *node, struct pci_bus *bus)
->   		mask &= ~this_bit;
->   		i++;
->   	}
-> +
-> +	kfree(prop);
->   }
->   
->   static int __init of_pci_slot_init(void)
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/trace_events_hist.c | 51 ++++++++++++++++++++++++++------
+ 1 file changed, 42 insertions(+), 9 deletions(-)
+
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index e85bc59c0421..58c9535f61df 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -114,6 +114,7 @@ enum hist_field_fn {
+ 	HIST_FIELD_FN_BUCKET,
+ 	HIST_FIELD_FN_TIMESTAMP,
+ 	HIST_FIELD_FN_CPU,
++	HIST_FIELD_FN_COMM,
+ 	HIST_FIELD_FN_STRING,
+ 	HIST_FIELD_FN_DYNSTRING,
+ 	HIST_FIELD_FN_RELDYNSTRING,
+@@ -506,6 +507,7 @@ enum hist_field_flags {
+ 	HIST_FIELD_FL_CONST		= 1 << 18,
+ 	HIST_FIELD_FL_PERCENT		= 1 << 19,
+ 	HIST_FIELD_FL_GRAPH		= 1 << 20,
++	HIST_FIELD_FL_COMM		= 1 << 21,
+ };
+ 
+ struct var_defs {
+@@ -885,6 +887,15 @@ static u64 hist_field_cpu(struct hist_field *hist_field,
+ 	return cpu;
+ }
+ 
++static u64 hist_field_comm(struct hist_field *hist_field,
++			  struct tracing_map_elt *elt,
++			  struct trace_buffer *buffer,
++			  struct ring_buffer_event *rbe,
++			  void *event)
++{
++	return (u64)(unsigned long)current->comm;
++}
++
+ /**
+  * check_field_for_var_ref - Check if a VAR_REF field references a variable
+  * @hist_field: The VAR_REF field to check
+@@ -1338,6 +1349,8 @@ static const char *hist_field_name(struct hist_field *field,
+ 		field_name = hist_field_name(field->operands[0], ++level);
+ 	else if (field->flags & HIST_FIELD_FL_CPU)
+ 		field_name = "common_cpu";
++	else if (field->flags & HIST_FIELD_FL_COMM)
++		field_name = "common_comm";
+ 	else if (field->flags & HIST_FIELD_FL_EXPR ||
+ 		 field->flags & HIST_FIELD_FL_VAR_REF) {
+ 		if (field->system) {
+@@ -2015,6 +2028,13 @@ static struct hist_field *create_hist_field(struct hist_trigger_data *hist_data,
+ 		goto out;
+ 	}
+ 
++	if (flags & HIST_FIELD_FL_COMM) {
++		hist_field->fn_num = HIST_FIELD_FN_COMM;
++		hist_field->size = MAX_FILTER_STR_VAL;
++		hist_field->type = "char[]";
++		goto out;
++	}
++
+ 	if (WARN_ON_ONCE(!field))
+ 		goto out;
+ 
+@@ -2359,9 +2379,11 @@ parse_field(struct hist_trigger_data *hist_data, struct trace_event_file *file,
+ 			hist_data->attrs->ts_in_usecs = true;
+ 	} else if (strcmp(field_name, "common_stacktrace") == 0) {
+ 		*flags |= HIST_FIELD_FL_STACKTRACE;
+-	} else if (strcmp(field_name, "common_cpu") == 0)
++	} else if (strcmp(field_name, "common_cpu") == 0) {
+ 		*flags |= HIST_FIELD_FL_CPU;
+-	else if (strcmp(field_name, "hitcount") == 0)
++	} else if (strcmp(field_name, "common_comm") == 0) {
++		*flags |= HIST_FIELD_FL_COMM | HIST_FIELD_FL_STRING;
++	} else if (strcmp(field_name, "hitcount") == 0)
+ 		*flags |= HIST_FIELD_FL_HITCOUNT;
+ 	else {
+ 		field = trace_find_event_field(file->event_call, field_name);
+@@ -2377,6 +2399,8 @@ parse_field(struct hist_trigger_data *hist_data, struct trace_event_file *file,
+ 				*flags |= HIST_FIELD_FL_CPU;
+ 			} else if (field && field->filter_type == FILTER_STACKTRACE) {
+ 				*flags |= HIST_FIELD_FL_STACKTRACE;
++			} else if (field && field->filter_type == FILTER_COMM) {
++				*flags |= HIST_FIELD_FL_COMM | HIST_FIELD_FL_STRING;
+ 			} else {
+ 				hist_err(tr, HIST_ERR_FIELD_NOT_FOUND,
+ 					 errpos(field_name));
+@@ -4327,6 +4351,8 @@ static u64 hist_fn_call(struct hist_field *hist_field,
+ 		return hist_field_timestamp(hist_field, elt, buffer, rbe, event);
+ 	case HIST_FIELD_FN_CPU:
+ 		return hist_field_cpu(hist_field, elt, buffer, rbe, event);
++	case HIST_FIELD_FN_COMM:
++		return hist_field_comm(hist_field, elt, buffer, rbe, event);
+ 	case HIST_FIELD_FN_STRING:
+ 		return hist_field_string(hist_field, elt, buffer, rbe, event);
+ 	case HIST_FIELD_FN_DYNSTRING:
+@@ -5212,14 +5238,19 @@ static inline void add_to_key(char *compound_key, void *key,
+ 	size_t size = key_field->size;
+ 
+ 	if (key_field->flags & HIST_FIELD_FL_STRING) {
+-		struct ftrace_event_field *field;
+ 
+-		field = key_field->field;
+-		if (field->filter_type == FILTER_DYN_STRING ||
+-		    field->filter_type == FILTER_RDYN_STRING)
+-			size = *(u32 *)(rec + field->offset) >> 16;
+-		else if (field->filter_type == FILTER_STATIC_STRING)
+-			size = field->size;
++		if (key_field->flags & HIST_FIELD_FL_COMM) {
++			size = strlen((char *)key);
++		} else {
++			struct ftrace_event_field *field;
++
++			field = key_field->field;
++			if (field->filter_type == FILTER_DYN_STRING ||
++			    field->filter_type == FILTER_RDYN_STRING)
++				size = *(u32 *)(rec + field->offset) >> 16;
++			else if (field->filter_type == FILTER_STATIC_STRING)
++				size = field->size;
++		}
+ 
+ 		/* ensure NULL-termination */
+ 		if (size > key_field->size - 1)
+@@ -6097,6 +6128,8 @@ static void hist_field_print(struct seq_file *m, struct hist_field *hist_field)
+ 
+ 	if (hist_field->flags & HIST_FIELD_FL_CPU)
+ 		seq_puts(m, "common_cpu");
++	if (hist_field->flags & HIST_FIELD_FL_COMM)
++		seq_puts(m, "common_comm");
+ 	else if (hist_field->flags & HIST_FIELD_FL_CONST)
+ 		seq_printf(m, "%llu", hist_field->constant);
+ 	else if (field_name) {
+-- 
+2.47.2
 
 
