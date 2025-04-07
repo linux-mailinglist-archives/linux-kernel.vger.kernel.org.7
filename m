@@ -1,194 +1,274 @@
-Return-Path: <linux-kernel+bounces-590753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46076A7D694
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:47:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74BEBA7D677
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 801E742195A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:42:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A09291885C10
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBC1225A22;
-	Mon,  7 Apr 2025 07:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Uh1FIZEH"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C48212B14;
+	Mon,  7 Apr 2025 07:42:08 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424B0224259
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB1B221F35;
+	Mon,  7 Apr 2025 07:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744011770; cv=none; b=LqZ9ifJogjat1OuP8/ldKVnXcz4u3IdrK3o6AEwobVIP24/xu64rLmvgE9nyathY71E2j+EiO+THCgwLD69Ik3jA4XZYFjTV0JJ2F6rSlsI3jVzsVdO/h8XK+In5dZbDeT9i+e6+4kLfDozZ7bj3jKtaHovdUc9xsdWNrD0H+5Y=
+	t=1744011728; cv=none; b=BzBwYbSBX6Thu6QxqvQIzeTp7zDVlU+ZLBZbOcBaD4jkP7LSC44zATyPnjU4GrPpDuqokidkHp+jd44av083cE0iPFv6d1dL6kwO7jBXwpg4GDo/gJIONYT9o3tCtTIeiRJu4VvkyNHLqAOtu+NKIMC5sLTean1k+s0+ftgH17A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744011770; c=relaxed/simple;
-	bh=TT2CwatyE3PScxA6aGzLKHWl9XyGLFx6ZMSmhaOgntY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FwVA7ywPiseghKs6IlymTTIKuj6AQiS921AcXZlFQgYbGDyWTgLMtc5RxY+HxM1fT+fZgf9YrPaUoQZo715JeGQAh2f7KZ+iFfZ2B8EX0c1zTL8yHgfki2LZrr1f4Z7+PJslAnllB2lSoa/NTdWoIzAj13HyQP5NmMuEfBriZTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Uh1FIZEH; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so14350355e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 00:42:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744011765; x=1744616565; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+SH50cqVXDjMtrk7e8ugGB2VmAlt5N0M4eNdMhk4w28=;
-        b=Uh1FIZEHmLO0ydh4g3L1wDcEVKdGWwgWXtbRPV/o+Oj0BJqWxxkySgzxioEXA952tN
-         piNPrlYHsPuQrSqhi2xn75UocRDQWCrvy8Ne4q6+V+FIKf8+9zMItUcK5M/ObxggDXmv
-         AOAK3h/yzTGb76Ma/1SmYr17oDYo5CYTDZm8eFip5o7WN1bRgcXERAhKm1In8/Z1T22H
-         HR8bTogDpOw19JMVITLhPd4FOL6fZaPMYnYIyzKSAuqBbXFT2JTus6h20i8Lc7w6Z6Xo
-         VS/VkYtqO01JKldyu82WcqHTaDn5kyOQ9vqYYpfWofh/Xcf2ow609LpulSCLEy9+VYPi
-         19yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744011765; x=1744616565;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+SH50cqVXDjMtrk7e8ugGB2VmAlt5N0M4eNdMhk4w28=;
-        b=U/KtJ7LCrC649uJ/XB5ZgUFU44BN6OROSJtGTDp0OoEmnFmSCO4gaUcU5hDdIysTK4
-         THFSazTX7Pqk8Sw2Z8f93DRD0uOb7UEhXFMi9cYae4Lwn17wjlJXYkZBqKV2cFBl2sHM
-         Woel4KVbrWWVVmdig2O5JvqJse4tEGPzh0aOZpK+3Pf4gwfyzjYSN3gOyoryuD4x7OxJ
-         7E/iw19xWCGeoPKwxnuEz5yQcAr+yCpnbJfUtH3hlGYpr+etDDv/btPNuiwCEtwgB2zO
-         lLVHQwbVEOfWbTJPQhcfT9w2Wxr3rkBW8eUYNEzDJBsrbGuD6IFgHkUexn7Zbw9JfE0w
-         S4Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBW+LpvdcxLUGhHn70cLZfHwCEC3wBOr7uWTEa9YekSW/4T5+JjFB0I8mTj+YJEF2JXKPS1HiaCRbSpII=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/O7ZWZI9RxoD2Y0Ns7j4jF/s7kgw0Zc2aEcxdb4X9bwd/CtKM
-	j+bJFF3A0ao5iie/L4TQTacsCbUQflH/2ub6N2i3wHhC3FprMx0nrw0YhjaSeIE=
-X-Gm-Gg: ASbGncvbzw9xBMjKgsCqLiIwnIXSRIhIHpo20zflB95GVux3HDsNV4koSOSERUhzG3a
-	VdrhSHAhCmXv3npL56DNfIZ/FiGnG63a0UvwBSokWo3zYFyYCYJfBIH+wGkiVconnMkR5gg3IUz
-	MvwS9DZfANNX6Wf1M8ypWl6K/5GXZ1dby0xHD/XaFSiQyd1C16w9WduNEz78LGeSg2mSdiW8Z8J
-	k+B5cOhXfWiL1Ebhm2Ory+no9d+DBni+gWvGZAu7iI6rT5biyiQ1elu//K7ecXbZd5zkTjwMh5u
-	vjtCe1Bn151Xj9Z2WUVazTwMJO7q4Px/TbpypkGvSEGohFruIdY2GPflGpOQqlx6TWt5IcKex/j
-	sPFUFn6WRHNCObvvz
-X-Google-Smtp-Source: AGHT+IGj4oFOpbFlCSYKH70mEMH5XLqpGaZABBghjAnvaw9bAjEggbo9aAX8vuvntuy/p28yBQRuZQ==
-X-Received: by 2002:a05:600c:4f46:b0:43d:db5:7b1a with SMTP id 5b1f17b1804b1-43ecf86a5f9mr108047395e9.12.1744011765391;
-        Mon, 07 Apr 2025 00:42:45 -0700 (PDT)
-Received: from archlinux (host-87-15-70-119.retail.telecomitalia.it. [87.15.70.119])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec1630de9sm124012395e9.1.2025.04.07.00.42.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 00:42:44 -0700 (PDT)
-Date: Mon, 7 Apr 2025 09:41:32 +0200
-From: Angelo Dureghello <adureghello@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 3/3] iio: adc: ad7606: add SPI offload support
-Message-ID: <vjxnpbxvvh2vdjsamdznhrmrwwfwt5tjhugqik3ktueopajv6l@wmehdnowjvjq>
-References: <20250403-wip-bl-spi-offload-ad7606-v1-0-1b00cb638b12@baylibre.com>
- <20250403-wip-bl-spi-offload-ad7606-v1-3-1b00cb638b12@baylibre.com>
- <20250405164041.7d2e586b@jic23-huawei>
+	s=arc-20240116; t=1744011728; c=relaxed/simple;
+	bh=wJwnGhorr/lQGHcTE2BKBCk8td8nfzDg28t8HbRDcDM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mxl5fliqnmwf7sd1lFhyKIgaceKUaCClPEjpbG48UEqV8iwMtsDHmKVKfUZRnVm0rE7peMDKA93j2xRzMP1UpwzDGu0v7nR70kOwfxJuBxJSHwn99Zk/N31g/VPH0LtEyyAcAmXKuSwr2KwFXPmerZea1AlRZnmvEWgesGS1+6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4ZWLhm0tNnz1R7gq;
+	Mon,  7 Apr 2025 15:40:08 +0800 (CST)
+Received: from kwepemo200002.china.huawei.com (unknown [7.202.195.209])
+	by mail.maildlp.com (Postfix) with ESMTPS id AFD5B18005F;
+	Mon,  7 Apr 2025 15:42:00 +0800 (CST)
+Received: from [10.174.179.13] (10.174.179.13) by
+ kwepemo200002.china.huawei.com (7.202.195.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 7 Apr 2025 15:41:59 +0800
+Message-ID: <76609f9c-7c2b-a64a-5999-f359e6acc3ca@huawei.com>
+Date: Mon, 7 Apr 2025 15:41:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250405164041.7d2e586b@jic23-huawei>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH V4] mm/gup: Clear the LRU flag of a page before adding to
+ LRU batch
+To: David Hildenbrand <david@redhat.com>, <yangge1116@126.com>,
+	<akpm@linux-foundation.org>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<stable@vger.kernel.org>, <21cnbao@gmail.com>,
+	<baolin.wang@linux.alibaba.com>, <aneesh.kumar@linux.ibm.com>,
+	<liuzixing@hygon.cn>, Kefeng Wang <wangkefeng.wang@huawei.com>
+References: <1720075944-27201-1-git-send-email-yangge1116@126.com>
+ <4119c1d0-5010-b2e7-3f1c-edd37f16f1f2@huawei.com>
+ <91ac638d-b2d6-4683-ab29-fb647f58af63@redhat.com>
+ <076babae-9fc6-13f5-36a3-95dde0115f77@huawei.com>
+ <26870d6f-8bb9-44de-9d1f-dcb1b5a93eae@redhat.com>
+From: Jinjiang Tu <tujinjiang@huawei.com>
+In-Reply-To: <26870d6f-8bb9-44de-9d1f-dcb1b5a93eae@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemo200002.china.huawei.com (7.202.195.209)
 
-Hi Jonathan,
 
-On 05.04.2025 16:40, Jonathan Cameron wrote:
-> On Thu, 03 Apr 2025 18:19:06 +0200
-> Angelo Dureghello <adureghello@baylibre.com> wrote:
-> 
-> > From: Angelo Dureghello <adureghello@baylibre.com>
-> > 
-> > Add SPI offload support for this family.
-> > 
-> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> Hi Angelo,
-> 
-> Code looks fine, but there is a TODO I'd like to know more about
-> as it sounds 'ominous'. 
-> 
-> Otherwise this needs a dt review for patch 1 before I queue it up.
-> 
-> Jonathan
-> > diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
-> > index b2b975fb7fea4d1af6caef59e75ca495501bc140..b086122497eb22042171580878160334f56baa23 100644
-> > --- a/drivers/iio/adc/ad7606_spi.c
-> > +++ b/drivers/iio/adc/ad7606_spi.c
-> 
-> > +static int ad7606_spi_offload_probe(struct device *dev,
-> > +				    struct iio_dev *indio_dev)
-> > +{
-> > +	struct ad7606_state *st = iio_priv(indio_dev);
-> > +	struct spi_device *spi = to_spi_device(dev);
-> > +	struct spi_bus_data *bus_data;
-> > +	struct dma_chan *rx_dma;
-> > +	struct spi_offload_trigger_info trigger_info = {
-> > +		.fwnode = dev_fwnode(dev),
-> > +		.ops = &ad7606_offload_trigger_ops,
-> > +		.priv = st,
-> > +	};
-> > +	int ret;
-> > +
-> > +	bus_data = devm_kzalloc(dev, sizeof(*bus_data), GFP_KERNEL);
-> > +	if (!bus_data)
-> > +		return -ENOMEM;
-> > +	st->bus_data = bus_data;
-> > +
-> > +	bus_data->offload = devm_spi_offload_get(dev, spi,
-> > +						 &ad7606_spi_offload_config);
-> > +	ret = PTR_ERR_OR_ZERO(bus_data->offload);
-> > +	if (ret && ret != -ENODEV)
-> > +		return dev_err_probe(dev, ret, "failed to get SPI offload\n");
-> > +	/* Allow main ad7606_probe function to continue. */
-> > +	if (ret == -ENODEV)
-> > +		return 0;
-> > +
-> > +	ret = devm_spi_offload_trigger_register(dev, &trigger_info);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret,
-> > +				     "failed to register offload trigger\n");
-> > +
-> > +	bus_data->offload_trigger = devm_spi_offload_trigger_get(dev,
-> > +		bus_data->offload, SPI_OFFLOAD_TRIGGER_DATA_READY);
-> > +	if (IS_ERR(bus_data->offload_trigger))
-> > +		return dev_err_probe(dev, PTR_ERR(bus_data->offload_trigger),
-> > +				     "failed to get offload trigger\n");
-> > +
-> > +	/* TODO: PWM setup should be ok, done for the backend. PWM mutex ? */
-> 
-> I don't understand this todo. Perhaps some more details?
+在 2025/4/1 22:33, David Hildenbrand 写道:
+> On 27.03.25 12:16, Jinjiang Tu wrote:
+>>
+>> 在 2025/3/26 20:46, David Hildenbrand 写道:
+>>> On 26.03.25 13:42, Jinjiang Tu wrote:
+>>>> Hi,
+>>>>
+>>>
+>>> Hi!
+>>>
+>>>> We notiched a 12.3% performance regression for LibMicro pwrite
+>>>> testcase due to
+>>>> commit 33dfe9204f29 ("mm/gup: clear the LRU flag of a page before
+>>>> adding to LRU batch").
+>>>>
+>>>> The testcase is executed as follows, and the file is tmpfs file.
+>>>>       pwrite -E -C 200 -L -S -W -N "pwrite_t1k" -s 1k -I 500 -f $TFILE
+>>>
+>>> Do we know how much that reflects real workloads? (IOW, how much
+>>> should we care)
+>>
+>> No, it's hard to say.
+>>
+>>>
+>>>>
+>>>> this testcase writes 1KB (only one page) to the tmpfs and repeats
+>>>> this step for many times. The Flame
+>>>> graph shows the performance regression comes from
+>>>> folio_mark_accessed() and workingset_activation().
+>>>>
+>>>> folio_mark_accessed() is called for the same page for many times.
+>>>> Before this patch, each call will
+>>>> add the page to cpu_fbatches.activate. When the fbatch is full, the
+>>>> fbatch is drained and the page
+>>>> is promoted to active list. And then, folio_mark_accessed() does
+>>>> nothing in later calls.
+>>>>
+>>>> But after this patch, the folio clear lru flags after it is added to
+>>>> cpu_fbatches.activate. After then,
+>>>> folio_mark_accessed will never call folio_activate() again due to the
+>>>> page is without lru flag, and
+>>>> the fbatch will not be full and the folio will not be marked active,
+>>>> later folio_mark_accessed()
+>>>> calls will always call workingset_activation(), leading to
+>>>> performance regression.
+>>>
+>>> Would there be a good place to drain the LRU to effectively get that
+>>> processed? (we can always try draining if the LRU flag is not set)
+>>
+>> Maybe we could drain the search the cpu_fbatches.activate of the 
+>> local cpu in __lru_cache_activate_folio()? Drain other fbatches is 
+>> meaningless .
 >
-it was just an initial comment i did, when i started the things
-was not clear.
-Let me know if you can remove it, or i can send a v2.
+> So the current behavior is that folio_mark_accessed() will end up 
+> calling folio_activate()
+> once, and then __lru_cache_activate_folio() until the LRU was drained 
+> (which can
+> take a looong time).
+>
+> The old behavior was that folio_mark_accessed() would keep calling 
+> folio_activate() until
+> the LRU was drained simply because it was full of "all the same pages" 
+> ?. Only *after*
+> the LRU was drained, folio_mark_accessed() would actually not do 
+> anything (desired behavior).
+>
+> So the overhead comes primarily from __lru_cache_activate_folio() 
+> searching through
+> the list "more" repeatedly because the LRU does get drained less 
+> frequently; and
+> it would never find it in there in this case.
+>
+> So ... it used to be suboptimal before, now it's more suboptimal I 
+> guess?! :)
+>
+> We'd need a way to better identify "this folio is already queued for 
+> activation". Searching
+> that list as well would be one option, but the hole "search the list" 
+> is nasty.
 
-Thanks a lot.
+Sorry for late reply. I tried to search the activate batch with the following diff, and
+the performance regression disappears.
 
-Regards,
-angelo
- 
-> > +	rx_dma = devm_spi_offload_rx_stream_request_dma_chan(dev,
-> > +							     bus_data->offload);
-> > +	if (IS_ERR(rx_dma))
-> > +		return dev_err_probe(dev, PTR_ERR(rx_dma),
-> > +				     "failed to get offload RX DMA\n");
-> > +
-> > +	ret = devm_iio_dmaengine_buffer_setup_with_handle(dev, indio_dev,
-> > +		rx_dma, IIO_BUFFER_DIRECTION_IN);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, PTR_ERR(rx_dma),
-> > +				     "failed to setup offload RX DMA\n");
-> > +
-> > +	/* Use offload ops. */
-> > +	indio_dev->setup_ops = &ad7606_offload_buffer_setup_ops;
-> > +
-> > +	st->offload_en = true;
-> > +
-> > +	return 0;
-> > +}
-> 
-> 
+diff --git a/mm/swap.c b/mm/swap.c
+index f81c8aa93e67..cfe484ff12e6 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -400,6 +400,21 @@ static void __lru_cache_activate_folio(struct folio 
+*folio)
+                 }
+         }
+
++       fbatch = this_cpu_ptr(&cpu_fbatches.activate);
++       for (i = folio_batch_count(fbatch) - 1; i >= 0; i--) {
++               struct folio *batch_folio = fbatch->folios[i];
++
++               if (batch_folio == folio) {
++                       struct lruvec *lruvec;
++                       unsigned long flags;
++
++                       lruvec = folio_lruvec_lock_irqsave(folio, &flags);
++                       folio_activate_fn(lruvec, folio);
++                       unlock_page_lruvec_irqrestore(lruvec, flags);
++                       break;
++               }
++       }
++
+         local_unlock(&cpu_fbatches.lock);
+  }
+
+>
+> Maybe we can simply set the folio as active when staging it for 
+> activation, after having
+> cleared the LRU flag? We already do that during folio_add.
+>
+> As the LRU flag was cleared, nobody should be messing with that folio 
+> until the cache was
+> drained and the move was successful.
+>
+Yes, anyone who wants to delete the folio from lru list should test LRU flag
+
+I look some folio_test_active() calls, madvise_cold_or_pageout_pte_range() will
+set workingset flag if active flag is set. It seems more reasonable if we set
+active flag after adding to activate batch, since adding to activate batch already
+means active.
+
+>
+> Pretty sure this doesn't work, but just to throw out an idea:
+
+Thanks, I will try it ASAP.
+
+>
+> From c26e1c0ceda6c818826e5b89dc7c7c9279138f80 Mon Sep 17 00:00:00 2001
+> From: David Hildenbrand <david@redhat.com>
+> Date: Tue, 1 Apr 2025 16:31:56 +0200
+> Subject: [PATCH] test
+>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  mm/swap.c | 21 ++++++++++++++++-----
+>  1 file changed, 16 insertions(+), 5 deletions(-)
+>
+> diff --git a/mm/swap.c b/mm/swap.c
+> index fc8281ef42415..bbf9aa76db87f 100644
+> --- a/mm/swap.c
+> +++ b/mm/swap.c
+> @@ -175,6 +175,8 @@ static void folio_batch_move_lru(struct 
+> folio_batch *fbatch, move_fn_t move_fn)
+>      folios_put(fbatch);
+>  }
+>
+> +static void lru_activate(struct lruvec *lruvec, struct folio *folio);
+> +
+>  static void __folio_batch_add_and_move(struct folio_batch __percpu 
+> *fbatch,
+>          struct folio *folio, move_fn_t move_fn,
+>          bool on_lru, bool disable_irq)
+> @@ -191,6 +193,10 @@ static void __folio_batch_add_and_move(struct 
+> folio_batch __percpu *fbatch,
+>      else
+>          local_lock(&cpu_fbatches.lock);
+>
+> +    /* We'll only perform the actual list move deferred. */
+> +    if (move_fn == lru_activate)
+> +        folio_set_active(folio);
+> +
+>      if (!folio_batch_add(this_cpu_ptr(fbatch), folio) || 
+> folio_test_large(folio) ||
+>          lru_cache_disabled())
+>          folio_batch_move_lru(this_cpu_ptr(fbatch), move_fn);
+> @@ -299,12 +305,14 @@ static void lru_activate(struct lruvec *lruvec, 
+> struct folio *folio)
+>  {
+>      long nr_pages = folio_nr_pages(folio);
+>
+> -    if (folio_test_active(folio) || folio_test_unevictable(folio))
+> -        return;
+> -
+> +    /*
+> +     * We set the folio active after clearing the LRU flag, and set the
+> +     * LRU flag only after moving it to the right list.
+> +     */
+> +    VM_WARN_ON_ONCE(!folio_test_active(folio));
+> +    VM_WARN_ON_ONCE(folio_test_unevictable(folio));
+>
+>      lruvec_del_folio(lruvec, folio);
+> -    folio_set_active(folio);
+>      lruvec_add_folio(lruvec, folio);
+>      trace_mm_lru_activate(folio);
+>
+> @@ -342,7 +350,10 @@ void folio_activate(struct folio *folio)
+>          return;
+>
+>      lruvec = folio_lruvec_lock_irq(folio);
+> -    lru_activate(lruvec, folio);
+> +    if (!folio_test_unevictable(folio)) {
+> +        folio_set_active(folio);
+> +        lru_activate(lruvec, folio);
+> +    }
+>      unlock_page_lruvec_irq(lruvec);
+>      folio_set_lru(folio);
+>  }
 
