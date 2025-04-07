@@ -1,79 +1,54 @@
-Return-Path: <linux-kernel+bounces-591009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01C22A7D99C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:26:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB30A7D99D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:26:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F992167DC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:23:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05247188B7BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E398622371F;
-	Mon,  7 Apr 2025 09:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9382519DF40;
+	Mon,  7 Apr 2025 09:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bV6hQi8g"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ALjTthH5"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4621ADC67
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 09:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85ED519F40A;
+	Mon,  7 Apr 2025 09:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744017789; cv=none; b=l67+4zW0lgQm5rm6yrbql06CiVH8DQ1/T5YM94dzOYCdxwM1BC9qauDk0MzOYakBXN9MYUDUqSXfJhL2GZGWTurl+JBXTIMev88fF0YUy02hp+9BwcdoSEnMFj89YLy09cw5vvC/Thpn4HGnvyZWpqahjBTDi0oVDHeusxyIl8A=
+	t=1744017891; cv=none; b=l5to9ASVcqwQLALoPsuySMD/dgUbnvAe2GZOZzN2lAyKs1a+XB1oQnl0yW5F4npcVknPlLhhZ7eKVKAnNiB1syP5JUGgrr4VhO3ZRYGQoKDIC3g1EdvlvuvsPg+R3D8lgAjTMYNi58ynMugTXezCTHbAoyadkXFXhLF7eAz/z5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744017789; c=relaxed/simple;
-	bh=r9RqrhzeutBtIOlYVz3agoheAkTOhawsk2ceW69HgXE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sCUElNEV4yAGcEu0LWdigTXADRt0c0Lacc0kX7t+ka4QT2GNdzkLBb+dfUvmi/K177uQJpFLPL2wiUu78wtQkZsbfVt/qhC87GCpHTl3hxaCGLfTUlSI6Pyv8PPBLOhu9E631L3fhttA3Z2bBTK9i3TGrRSVM+R3G4ozxjG8DZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bV6hQi8g; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39ac8e7688aso3040126f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 02:23:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1744017785; x=1744622585; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8GEB2/7f7npYgGmINlGKb01Ype4hZwo/GgBaLZ4O8ec=;
-        b=bV6hQi8gv1oYpnl4voM20JEKrXRqL0/1yGZfLVjoCkXI+wWagk3OajeMqQARB/dwmL
-         Bh5BltnRj1u3oQb0lqubM8jSGfLyH7EJMcRmDgHC6VjyEiCA/OLo8QKWqZU54CehYTuI
-         +Q2NdhYWwlewk3zGA4e2jleojLGvyrdRhIiP1q9S2AAlPS9v7ZMCQyrtl++TI1E7KVaO
-         HwSS+jGezW53MXTWfUc+kAghRbURXCZnYFfg2o1ZogQnsoR5RmSH7yEbPfsR4e8AmNxl
-         s98htRANFyNEORiRnqLAdbofycF8Psr4EqzwBlXrs7rGeu8yUJq6B+BRV+7ruWiHrhTf
-         oR7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744017785; x=1744622585;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8GEB2/7f7npYgGmINlGKb01Ype4hZwo/GgBaLZ4O8ec=;
-        b=MWusMznzfn17JBqLqJbqL0bT8iQ1lYayU/MIlA7iKRhRG5Co+CwnJZrwDI0HxNjDVn
-         l+yF+4VCYMPzHBmRYgW+RB2scFe0/JpT7VkZ6P9lCPXsTJYvvf53XGv7WCx2xU1IvJsE
-         KvNu7Yiz3M4dYQe0mPyoYGxf3gzB6/bDmRDqaZEV039z6VrO7n8cW3CfqQsgBr2Ip8zX
-         8c9RFL0yUVzgsHctdocvPBlY+v+EH9DZAeg8x+0OjxrkC/ASRxLnReH23mgA2lEYAUL5
-         knsyBbcRvsXMBLimEUw0vrCRqoDyZsZVtmS2ARlXjRasWR6spjeUy0OJ8yHEF7zHVw48
-         I0rA==
-X-Gm-Message-State: AOJu0Yy+TFBI7P1nyIBY00w52TcKN720VPzmHawYvbzr9dZHyEAK1Z73
-	28QzRAt25Oqd27fRkjVzyeAq1uzUtQ7uaKVCX/j/lzOx/FkEWyBdQpJKgqzVKlEbhaMAEzD1deA
-	2
-X-Gm-Gg: ASbGncuepTTWgOjHlEy56DG5SmfPOelIpTRn8hWQjcspyZgFUp5jcgq+1l8U+aC0alj
-	CUBf7cw+kLqtgxyF9HU9EpB7zyFkY0T184cv2B+CpeCo9Z/+7pvqjZk6iY99aGBo+kxZRD3smq3
-	OgEJPXd7ohGYNOYJ1cLJJGmnrVkJsmpWYjW1x71OKdT174TgnFrY25gsMitem7EYtAijA9x+B0Y
-	axIhymsjgJk36lM/XNPQ4VKR6Z0/9fVK+2yMbvk7QEC9/aldFI7le9OKzL73+5vxByrp56Pecdc
-	X6vDffXiziHpWG/uaUQqHSNgaXl1FrZ0SR0rugxxGdtDgoLUC+lO3Zufbg9yFgEStG1gXztgONI
-	R/5e99p+yrNk=
-X-Google-Smtp-Source: AGHT+IH2D4ZOZwcneAudIPcxeXzVvvPrAKJL14lK9bzoixHtxQl9qS6i6XTiQ1W94FT9J/YucBQ34w==
-X-Received: by 2002:a05:6000:40c9:b0:391:43cb:43e6 with SMTP id ffacd0b85a97d-39d6fd022a6mr6415177f8f.51.1744017785228;
-        Mon, 07 Apr 2025 02:23:05 -0700 (PDT)
-Received: from ?IPV6:2001:a61:1302:8001:d2dc:b329:7532:c373? ([2001:a61:1302:8001:d2dc:b329:7532:c373])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ea9a346e3sm110990905e9.1.2025.04.07.02.23.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Apr 2025 02:23:04 -0700 (PDT)
-Message-ID: <9fdb5e30-8570-420f-940b-bea5fa72e12d@suse.com>
-Date: Mon, 7 Apr 2025 11:23:03 +0200
+	s=arc-20240116; t=1744017891; c=relaxed/simple;
+	bh=Y7Wep/Ex4FCqkpNl8itbZHa4HzPYS0ZPyqV7jJZj6mE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ZHH0z1ScamMgfoCOvIOkjDpB83lqW0wr5m2Ln1Ym+lDE/QG9fgopJNOkff0SpE0F6TT+Y2LkpCn4RDqcBH7xWcThn0MQ+Wqfkr8M3lwzI6WTI+lRPI3hOlAGawXeUfxV0iJrc5IvB6vWV6+RQ80J3AkIWbsQ+QjmSnVT2hQO4NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ALjTthH5; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1744017886; x=1744622686; i=markus.elfring@web.de;
+	bh=Y7Wep/Ex4FCqkpNl8itbZHa4HzPYS0ZPyqV7jJZj6mE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ALjTthH5wW0M30q6hXCIj7OJtGa+JU2F6TkjCN/dm7W0ozIiQNLSq8CE6dFBSU7s
+	 L+SLuE0uByBzoQEgd0kJJpVjln7qSMZRl6lbzoEeSQ54iOA9ql5kHIHGTqSpyBhws
+	 LiCHlcNoieFdxtAhlmIv+CsnL0sOo8bTtay6LMl8U+PbMQSXDnY4huTk0MerGQUL0
+	 EFBbG3fjnbHT07FYjBJyNFvqXiXCQeTwDi8PRbtRgOkgOa3TJc3Dwhz9IJy1BAll/
+	 azBhmksdGzkaaQTafyW52nIq8QS1Zhnugb8sHeFTtibgwWy77qb26ujlIwUHb79xw
+	 mx6YSa+Y3EaXmQrhiA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.4]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MnG2Q-1tKiwE1oKC-00am9q; Mon, 07
+ Apr 2025 11:24:46 +0200
+Message-ID: <46d19d22-bd7e-4bfb-8cd0-205d6cd55509@web.de>
+Date: Mon, 7 Apr 2025 11:24:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,44 +56,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: cdc-wdm: avoid setting WDM_READ for ZLP-s
-To: Robert Hodaszi <robert.hodaszi@digi.com>, gregkh@linuxfoundation.org,
- oneukum@suse.com
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- stern@rowland.harvard.edu, viro@zeniv.linux.org.uk
-References: <20250403144004.3889125-1-robert.hodaszi@digi.com>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <20250403144004.3889125-1-robert.hodaszi@digi.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Henry Martin <bsdhenrymartin@gmail.com>, linux-pm@vger.kernel.org,
+ arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Cristian Marussi <cristian.marussi@arm.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Sudeep Holla
+ <sudeep.holla@arm.com>, Viresh Kumar <viresh.kumar@linaro.org>
+References: <20250405055447.73925-1-bsdhenrymartin@gmail.com>
+Subject: Re: [PATCH] cpufreq: scmi: Fix null-ptr-deref in
+ scmi_cpufreq_get_rate()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250405055447.73925-1-bsdhenrymartin@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:zrwSZtb72r6Ymls6zRupndXyWr82t7wtXvEnv4NziLlT2xnmKdS
+ zc2vwYBwvu3Fw9FUbEUysVQGROZq3g8tYELwiRhJpHansNTw7QoX68obh7R1GCnF89Km5K2
+ RsnNTCo+nOui+SC9S5F4XMw7o6WJW4uL0MqqSN0W0XqpKX1UXMFFC8wceJfRYOZm3SsuVrx
+ oYGJtZy/8gSCfqE1Kr0Vw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:80qe5cnW1V8=;NckIWCSnzH9bSPLAp2QcPrOsMmY
+ ipRzMR30Nx1/FOduRWLVuVLas06AEhR21RyMRp6TTM6LBmepA5cepKpyGn6n4aRYilimRAl6J
+ Q9qENjJknwyfeTa19pgtE8B0kljVPY3lI6/KvGgPYhtHhuA7cOSDix6/s09IZvDhArLXPpNyH
+ MQWoQBk6N9ZC0flAbLoL/2FvY6CPxjEOsIXaQ499/YUUhYT+iJQ8gI8956bE7LZ6XPo4Q9Oa8
+ ZkhfD/rfQwPwhosiC6tE8TV/Z6+abm28pC75LUlI+QJe1vJY/a16t3s0iIpckLCkibOuVo2zd
+ FJ2ORgwqj52EmopP1E4d2hHq+kWJQ5x5uWeLGr50n8IVxUdyIdbC4qQNnfdjHUTMfJkV9KLsE
+ LRjDXI7Z6j7Y05viLVzW6edeIhmgjkjBqdyiJu2Ryyo7kXceA6ckb4JZzhq/dYU0dUmGLY+ho
+ ZLQSXMcUZz+5VNE2tu01G8DQKOgh/lZqLwLuwi31X/QIaJ8ct5X7IJx9cW15UNyIqB/g7KOf8
+ ywjtVJPgoeClsUjFa0iMFzbMgEFGOmIfy6p9/4Jw3QkQrGhsyN57Pvf1tYLhxGDXuJmodJsVw
+ OfUUmMt/OaE81eiXwzkj2fA5Gr/crVonBtGjXTaqS6jmAWQOZMrVfL3xL1alN6QR/aR+u3Alg
+ ri35pZPn6YOjaVm700nzB+wac/aJAI6xu4lPPjkagqqgx3PwPPFwYOogacOJz7S13cCSXJwkY
+ bXUZ8iuBQfSNKDoJIhl55E1G05LUpAWQ8Qaj/DqalQDJIemQvwNHfu9JgxKiSb23ibCzrTEec
+ uYCi9jYO4OY5ZYCtYxx2LgjVbaQGMhLCbEy4xxSdc8qBaD2c4/w9x993v6RkO4Z9VoaYS9qYE
+ 6HcISyHh1DdnNS8qqKYzfcSrm9fzPind3wpzVUnPDmNiOWl/hX5s7I+gWE/aTdzhG9aXK2y/v
+ 2tIaXj8h0RkJNME36RVMH9AFjjmDwiH9aEx1bFm+cwn312o/TKNeBheP4EZypef69VJC0E1gY
+ wjbWG1MJNwF/glqsQcJG+jmXzVMcqBVLRLZ15ZEMj48OEgWFFbsspCrADwHyIKYMxEEp2dSae
+ 4Hst70TqNGIweaahd0bGMHa6NyXqOJ/RHYiEVetPWG5gX8BB4SFLVXoHROJ0+elVoGCDhzfMv
+ z0VGR5N3j8NA9HJ7XTZ3L30JYGCMHGKiW+G6P9Ln7V4tfRapuvErg9/c9y8BWacOYBkug2drK
+ N0FX1pKRqHCWruezIMLqMZsj1i1gXjSaLoIIywy/QPvu8n6DlFPycLGyua8BhmaGz31RVk5vK
+ ml4nmSgY0zwSHXdo2X10x8sQ8o+2alUFHJGQmwcPOl7OuI9/E+qO/E2X7eA6Wc7di/WR1FZox
+ T/6mhkVfB3euZYBdeH7KNtACPOi52tROhXYPvLEpoCaT5nGgDzewxxOpO1rIbzKGQVSOqgM5D
+ GvyR6uyl9emyVu17tXU0gKRhCJ3URlBV/QAp1u4Bp5ZYjJ3ym
 
+=E2=80=A6
+> Add NULL check after cpufreq_cpu_get_raw() to prevent this issue.
 
+Can any other summary phrase variant become more desirable accordingly?
 
-On 03.04.25 16:40, Robert Hodaszi wrote:
-> Don't set WDM_READ flag in wdm_in_callback() for ZLP-s, otherwise when
-> userspace tries to poll for available data, it might - incorrectly -
-> believe there is something available, and when it tries to non-blocking
-> read it, it might get stuck in the read loop.
-> 
-> For example this is what glib does for non-blocking read (briefly):
-> 
->    1. poll
->    2. if poll returns with non-zero, starts a read data loop:
->      a. loop on poll() (EINTR disabled)
->      b. if revents was set, reads data
->        I. if read returns with EINTR or EAGAIN, goto 2.a.
->        II. otherwise return with data
-> 
-> So if ZLP sets WDM_READ (#1), we expect data, and try to read it (#2).
-> But as that was a ZLP, and we are doing non-blocking read, wdm_read()
-> returns with EAGAIN (#2.b.I), so loop again, and try to read again
-> (#2.a.).
-> 
-> With glib, we might stuck in this loop forever, as EINTR is disabled
-> (#2.a).
-> 
-> Signed-off-by: Robert Hodaszi <robert.hodaszi@digi.com>
-Acked-by: Oliver Neukum <oneukum@suse.com>
-
+Regards,
+Markus
 
