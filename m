@@ -1,121 +1,146 @@
-Return-Path: <linux-kernel+bounces-590884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EB71A7D7FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:34:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9275BA7D820
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 901093AA179
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:33:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D6EF1889D96
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46602227EBB;
-	Mon,  7 Apr 2025 08:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78334227EB9;
+	Mon,  7 Apr 2025 08:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Mt+vLAzd"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b="syv7AMso";
+	dkim=permerror (0-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b="PWbDy5LH"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.164])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0EA19F40A
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 08:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744014790; cv=none; b=sxFq/DqoZwsCPDREYif9Sny/PiPT0cIERwFZOAZT8O6cPVJ/RW25VmMCWf+BI9DTiaXKGG6fUASIP/2AVXiPl6orMdNquNJg95n2dchkNF4eIp+IUN2x8AiHHCk23vVESUUMvRULNdSYFhNXGnqHoq5N7/4VTjiMx4Bwj4UJiWc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744014790; c=relaxed/simple;
-	bh=0MJ7kNuETLjZlpYnEIkw7jNM8In9lI+eax564Kt2b3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QPWqIAthurij8+MJVv63XOMKDWdRwwF0Lc3PpyrKp7K8w7I1BUd9wATFsXtRbL+W5+P9tE3GyLc1cK3Enkx+CqTc24Nt0nm0Hi01PfLk6I3KNTkgwh5/hjna26tdYli0xX+yDtRB8DGQp9F44jOGeRId22bC3gAXX3Oq+3+P1ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Mt+vLAzd; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2264c9d0295so324255ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 01:33:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744014788; x=1744619588; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jcXjjA+jirbGtlXlcOVxvxixEqyX9/ZtaNYQ+3n7vks=;
-        b=Mt+vLAzdLAVjPBPep3lija0ZbWpVydjPxs/u/UQEa29Uz/dfb51UKWLQIbToTiK17j
-         2V8hfwJ2m8c8+fsCT34NqdeWlXNXfXVKxdEtdX/oFhWfNZ+I4aVWLR/XickqxemgxW6i
-         3alP5R8ToTaiR8PtXUbYkApOPHKI4iCSwTW+XiogMwNQEEudckiiy22T/fPdKKMJEdcZ
-         fyLGwa4zDW71X9ihBAcuIxneto8IEnzGXJ7arhzF3WUoJWtooBXh26D+BfwT9Y73ZNa9
-         yJMjr4TArAS2IABFZN6vwOxfFFXU8EUqJ0kikvhsDX9dR+yX8fUyr9aW7vArKHRvu9cq
-         MaKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744014788; x=1744619588;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jcXjjA+jirbGtlXlcOVxvxixEqyX9/ZtaNYQ+3n7vks=;
-        b=Hf06+Rs//OpnZaEkIkVL9EZJuDpC0Lny2Dd4P8p9WV1FNhr9dcnU6lqvCxbsFl+1jr
-         wvBXlYrjgEAzM1zTYW1GFKqSK5DPFP9Efalcu0ImLRi/RLxaGdCj0M+/NAQc4fqVEFY1
-         1vGFgwKxn6feVsCfCNPzzEs+qQvfl1tqfg4l/TYlvU0BcJfBqjpHSAvCh4yWwb0gt3PG
-         8h5qYLxZHn1oCqPI5GYOH2oqCOFrMy2Lz3x91k1nvX9FMgrTEa6FxsJP9E5+V4NHFjvl
-         fT7SViHe5g87bs8vq6LpOqyOu1h5h7G2lzOCqgvV+jQCaaPMQ/DNSlk0/DqYrAQz6IA5
-         THDw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+zW11P6ePZBLkx4zQDv6pxrT7ndcncXxmCWpthWIXsmQuqB5RTX2ykPVG6nHOhcyF1He5GCEkSa7Q8F0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDarLh4sXdIJXi25J8Ig2Qy2epP1lVK6sNExcSSUcKOk6CNvDZ
-	0U1RtqBwvPI4AXIsPG/jk8i1hI2wWKlACf9mwS9VyAcFCMYq0rsr+huytYEtOg==
-X-Gm-Gg: ASbGnctrrdmUEYqOe3SZl1eYnUJjFS+rulh7zDZc8cjMhssXF5XeQd+chmMuX+523LZ
-	1AQv31CR24re8Cp2IU+UUgxY8PEgjyOsOZf7fCjz6GWWRiJuPemLVjsuLrDn1lMfHULSRNzhpsH
-	MPvibIhwcXd5A6RIvf39N87VuljM9rVETW7bXc/5NBhNH9v8hu6u+UOatz6UCuApiO851ZqLxpZ
-	pEvvkjaDN18p36t/XOVzRTLK0Usi12vj44jZ2QZpMrhaRyb3F1O79LKdJufrUwgl74MX7FN+DU0
-	MdjiblOukoHgDCUFVHUjWq5Uch14FmJapjCiCVGvOrNA8rOAPlmpj4FGgxRbSiMwfijIYKwDsH2
-	9Pr1LGzKZKburjg==
-X-Google-Smtp-Source: AGHT+IGgoaBTlg9BjbIvqCWdACY/aXtozoW3tXEbZzO1wBZolldhDpZWuJ7yv4qhtjzddz/sud5TLQ==
-X-Received: by 2002:a17:903:c4a:b0:215:aca2:dc04 with SMTP id d9443c01a7336-22a95eb8d41mr3228575ad.26.1744014788291;
-        Mon, 07 Apr 2025 01:33:08 -0700 (PDT)
-Received: from google.com (188.152.87.34.bc.googleusercontent.com. [34.87.152.188])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229785c385csm75476405ad.81.2025.04.07.01.33.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 01:33:07 -0700 (PDT)
-Date: Mon, 7 Apr 2025 08:32:59 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: will@kernel.org, robin.murphy@arm.com, jgg@nvidia.com, joro@8bytes.org,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, shameerali.kolothum.thodi@huawei.com
-Subject: Re: [PATCH v1 1/4] iommu/arm-smmu-v3: Pass in vmid to
- arm_smmu_make_s2_domain_ste()
-Message-ID: <Z_ONu4pIDyiWr2DK@google.com>
-References: <cover.1741150594.git.nicolinc@nvidia.com>
- <214b10db02f1046efdc70e2c4803111357f60070.1741150594.git.nicolinc@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD1E225388;
+	Mon,  7 Apr 2025 08:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.164
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744014985; cv=pass; b=AzMyFpr7+0LuPi1mOdah880hb0RaacKnAYZQYO7Mb7RLyosczwxRgp+6onAg6H310r9IdK503HwQApXBSjivDY8q6lr7aibZZTLgKAqeOxnul8uY++9QM0o7CjyidNs23unBeZ+6amfVVZKps6iDHQqzxzXQNhmKJuyBenqDuVc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744014985; c=relaxed/simple;
+	bh=kromgZXIv13kuVYm/VYq9Vqu5/atevF4A48Q60kqXWo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=dCT/7FUECIIleWbyd3JijusIglARKYUvgJdIt6aBlWGi+llia3MiqDl/dS9wZMtE4KAxqpuy2KHCsBuQoCDL1UxzrOG1Zr2RAk1zkTj5o0LaSdi7c+7/cnCWcnjIC9wbR9CW/hHU7B6nDvwJEz98GIwH0EiABXr2OtmBrtID9CY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=outer-limits.org; spf=none smtp.mailfrom=outer-limits.org; dkim=pass (2048-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b=syv7AMso; dkim=permerror (0-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b=PWbDy5LH; arc=pass smtp.client-ip=81.169.146.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=outer-limits.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=outer-limits.org
+ARC-Seal: i=1; a=rsa-sha256; t=1744014802; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=ar/samsZZ9TJLPgT2eaggsLuoFDEY8sucy5XZhtj4ykVNPFL8v3mTq7MtIq6BizGYI
+    mm0HvsKeaGhFbhcOzkSjXbN/h1lT0Ygc4JAt34w39HeJsyThSB7Q/RVQ9QN6C36WiRdK
+    n+ss8sUg3YMIPGIpMUEOscYmucSKadPwMFGwKe9lsgXRrldF+nkooVRzILgyg53c+Gaz
+    5sLbZorSDHRvTlpSdNvQwpj3Q1TNMMXcCkBxA7NI9KZRpv0pW+g/boFUjDW0H7UNywFT
+    VcHRDyymH/jQO8kdC0Mk9Ow1A4Ytqe5cCkUTdF4LRWo8lYXaljstbWu/ASrU8IMSVBxl
+    2oFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1744014802;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=Loa+HXQddwUp8ekjKdhDfBU3F6SSrLNWEPxiN6o32Mk=;
+    b=sxZJ0QnUpW5ROFW3a3Fo+E5vsG8L0Qq4O1JGsRT+LYPQGYnzLtcDTp6pT+9R0IPBxj
+    LEV5uzwibn73Qkd2tkB5Wl90DaP8PrfZ50ykCM97rnWEjJ2/ClgC32ch2x9NhqXwY44r
+    ON7ZRkvWTvIy24WHq3E0Alz4NR5Ynyj69mqRv4TbQ/fHuHczLLD7RgktyZDopkr4l6Ul
+    spFrSHl3zIisCGfj7ug0itrIhDuHsGFcpqy+PLeR+I5Pc9/gw+XG+NXFav/zfgnYW3uk
+    wxdXgGPjhFjSsrkga0DbGA94w/3Sx0pv5ZEuHYR+2Vhn31uvwOEsHyxwGuWq/k78g2HI
+    C/tA==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1744014802;
+    s=strato-dkim-0002; d=outer-limits.org;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=Loa+HXQddwUp8ekjKdhDfBU3F6SSrLNWEPxiN6o32Mk=;
+    b=syv7AMso8I3WJrb2Q7eJX1DJHV+DHZeijOR5kI3keqLzbsEPX4iL5aS+rRRw2SH99l
+    ntZhieKXa7W6T9QZJ+2rLfZPdobdhEOzMuK0+uk8uStQWr+7yDzdwIMhjg0UcrKoY0ik
+    JGpH/JBPdJN3WSZVDy9d0c04ZeNYq/inKZUOldjadqS8kHg764UhIBbC81nDpqtmXbJo
+    1RQwb5UeG9LwYI9NWIpUbMV1JcUc4nKpoPtgPQX+55swIJRn7FC6zEhCMQEJ6dzu1NRv
+    0awzaiOWsfgfnEBlh8CDiW1ht61OpLgP9FeShkJJ/Mcl+HsDOLQAnH+zMzCCa4M8sk5k
+    /t3w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1744014802;
+    s=strato-dkim-0003; d=outer-limits.org;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=Loa+HXQddwUp8ekjKdhDfBU3F6SSrLNWEPxiN6o32Mk=;
+    b=PWbDy5LHEYN0+YxRVU2VwcIj5wnZHhlMeHUu7f/Z8f6piinZTmSjDbEcqzedfxM28S
+    lMrahhtzIY69RlNo7vBA==
+X-RZG-AUTH: ":JnkIfEGmW/AMJS6HttH4FbRVwc4dHlPLCp4e/IoHo8zEMMHAgwTfqBEHcVJSv9P5mRTGd2ImeA=="
+Received: from ws2104.lan.kalrayinc.com
+    by smtp.strato.de (RZmta 51.3.0 AUTH)
+    with ESMTPSA id J2b1101378XLK0t
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Mon, 7 Apr 2025 10:33:21 +0200 (CEST)
+From: Julian Vetter <julian@outer-limits.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Louis Peens <louis.peens@corigine.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Shannon Nelson <shannon.nelson@amd.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Arthur Kiyanovski <akiyano@amazon.com>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: oss-drivers@corigine.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Julian Vetter <julian@outer-limits.org>
+Subject: [PATCH] eth: nfp: remove __get_unaligned_cpu32 from netronome drivers
+Date: Mon,  7 Apr 2025 10:33:06 +0200
+Message-Id: <20250407083306.1553921-1-julian@outer-limits.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <214b10db02f1046efdc70e2c4803111357f60070.1741150594.git.nicolinc@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Mar 04, 2025 at 09:04:00PM -0800, Nicolin Chen wrote:
-> An stage-2 STE requires a vmid that has been so far allocated per domain,
-> so arm_smmu_make_s2_domain_ste() has been extracting the vmid from the S2
-> domain.
-> 
-> To share an S2 parent domain across vSMMUs in the same VM, a vmid will be
-> no longer allocated for nor stored in the S2 domain, but per vSMMU, which
-> means the arm_smmu_make_s2_domain_ste() can get a vmid either from an S2
-> domain (non nesting parent) or a vSMMU.
-> 
-> Allow to pass in vmid explicitly to arm_smmu_make_s2_domain_ste(), giving
-> its callers a chance to pick the vmid between a domain or a vSMMU.
-> 
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+The __get_unaligned_cpu32 function is deprecated. So, replace it with
+the more generic get_unaligned and just cast the input parameter.
 
-Reviewed-by: Pranjal Shrivastava <praan@google.com>
+Signed-off-by: Julian Vetter <julian@outer-limits.org>
+---
+ drivers/net/ethernet/netronome/nfp/nfd3/dp.c | 2 +-
+ drivers/net/ethernet/netronome/nfp/nfdk/dp.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> ---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h         | 2 +-
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c | 6 ++++--
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-test.c    | 3 ++-
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c         | 6 +++---
->  4 files changed, 10 insertions(+), 7 deletions(-)
-> 
+diff --git a/drivers/net/ethernet/netronome/nfp/nfd3/dp.c b/drivers/net/ethernet/netronome/nfp/nfd3/dp.c
+index f1c6c47564b1..08086eb76996 100644
+--- a/drivers/net/ethernet/netronome/nfp/nfd3/dp.c
++++ b/drivers/net/ethernet/netronome/nfp/nfd3/dp.c
+@@ -779,7 +779,7 @@ nfp_nfd3_parse_meta(struct net_device *netdev, struct nfp_meta_parsed *meta,
+ 		case NFP_NET_META_CSUM:
+ 			meta->csum_type = CHECKSUM_COMPLETE;
+ 			meta->csum =
+-				(__force __wsum)__get_unaligned_cpu32(data);
++				(__force __wsum)get_unaligned((u32 *)data);
+ 			data += 4;
+ 			break;
+ 		case NFP_NET_META_RESYNC_INFO:
+diff --git a/drivers/net/ethernet/netronome/nfp/nfdk/dp.c b/drivers/net/ethernet/netronome/nfp/nfdk/dp.c
+index ebeb6ab4465c..ab3cd06ed63e 100644
+--- a/drivers/net/ethernet/netronome/nfp/nfdk/dp.c
++++ b/drivers/net/ethernet/netronome/nfp/nfdk/dp.c
+@@ -779,7 +779,7 @@ nfp_nfdk_parse_meta(struct net_device *netdev, struct nfp_meta_parsed *meta,
+ 		case NFP_NET_META_CSUM:
+ 			meta->csum_type = CHECKSUM_COMPLETE;
+ 			meta->csum =
+-				(__force __wsum)__get_unaligned_cpu32(data);
++				(__force __wsum)get_unaligned((u32 *)data);
+ 			data += 4;
+ 			break;
+ 		case NFP_NET_META_RESYNC_INFO:
+-- 
+2.34.1
 
-Thanks
 
