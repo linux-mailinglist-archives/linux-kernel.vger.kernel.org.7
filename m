@@ -1,137 +1,112 @@
-Return-Path: <linux-kernel+bounces-591202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 910BDA7DC81
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:40:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 907A0A7DC89
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6D541893482
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:39:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D969D3A9E39
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9805323C8CB;
-	Mon,  7 Apr 2025 11:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DD123CF0B;
+	Mon,  7 Apr 2025 11:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XXwebaJ6"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZAhycO7q"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E4D23A9B6;
-	Mon,  7 Apr 2025 11:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C5B22E40A
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 11:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744025921; cv=none; b=YpuGYLd7hW7Mr+dRCogfIY3U5qg2RPNyCGiFhyXkAqOjV78m6E+DSN1A8FFKJc0mOeL12zMZG1gn8LFvaZ2tUn5RNn3H+As+8nyE2uJG72IoE/FefeFFymFoFT/t0wyndz3v2/qhlMz9W18u1SEvyjg6/pdY+0Qaa3r7LAVdfHk=
+	t=1744026026; cv=none; b=PFiL1HosOZcYv/FF5LxL3Yex9PGd6peinZ5VY8J1pIArW7mx98VnryAKSD0NjC/e1j+YwzKXLEuu0ZbpPpEQAJ7/xqCIYjdmzB2qPAJ9wuAHgBVBg4gUFsuEG+KAfSYqmRF1OINwpfOGhHvuxFACGLUbglKUhGFr/Rxr2/Gw/kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744025921; c=relaxed/simple;
-	bh=VOPErnxtLORQUappvnEZwwAIyuoyRROHIYTRcdWB/e0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=i+QFQcLYHmvYa3XJAPu/8u/h9JwZzrmIgf8lrTBtdGKGMh0aK3dHUqe9hs5gZ3JR4FJUP48l74qSoweQ7xtzBL+QtTCM8cnhC3e4OKLa05+AqsMwqztFetHjr3Ng5ce3Bvdm2avYPEM2HBhs24KfAwLFeM8QpLNKgDAsTNaew2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XXwebaJ6; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1744025917; x=1744630717; i=markus.elfring@web.de;
-	bh=7BpszykP3a8TgXiCiFnrLPKvDXMJeEZXi14t+noJhAg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=XXwebaJ6g2otca99erTdOKqgrr8wdPMKcSJGjYO8sFXrDVlp6LvYz8uOtAGgrB7L
-	 6xs7eBLxbiBp3iJfKQHmktD6Ec4bodRdCV+OIIWc1dE1pCTiG2NBJUqvOWALW0xny
-	 ooo7c/QlEtNW3LOvX/x6QIqukBofE3BJZZQjiiC+/ROLyyVlEpG6GXolH8a9VfyM9
-	 +IdofeQb7rkL7wQ4pzx1LVnNWi1RTfoctCpjAWzyXQW5HrWX3B5a9xfsEqrIKXfs9
-	 orKLC/xoAqcjzwC8cmYGjIRgemtvQIw6+gNywm+F5B3P/TARbSEk8D8fEt/n/BrGi
-	 4+CJcXBGskXI2XO4tQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.4]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MumJF-1tA47z47z1-010NWl; Mon, 07
- Apr 2025 13:38:37 +0200
-Message-ID: <5d8d6101-1a4b-4832-b263-e0f56840fdcd@web.de>
-Date: Mon, 7 Apr 2025 13:38:35 +0200
+	s=arc-20240116; t=1744026026; c=relaxed/simple;
+	bh=XndVDOO7lIn8/A94yXyhdJAIhkY5WjCTTAdVJ8dOLA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FHqAVMTsbLtLMo8RoucmKN2akZ8139IZSusIDT2IIpOwSK7k5W2m7XUEIgbkPg+dpScATkh2Rs2uWE+9iDJpLHB6ETBn+hkVJ4s0pObFHEOfWmOJf6LpJQ72MGsP3isZUG/mM9CAPUA/VeNQ1UMgc9hL+rJuIVkNAa8Q/4iNJdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZAhycO7q; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744026023;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fHbPi1JEW/89my5vo0fU+kVo3zInspEejiOOz7JNSc8=;
+	b=ZAhycO7qku7LWgAxYwbupTDVXLUxOk53WwF/izZtH2VP9WGjf9BGw0hel2Lq8wF8GS/z1b
+	KcgMyMFtL6oluKgkWpXro204UptZWwcR9qTHqxstDpRaNffYtiGV8cg9Cc1Eh2tUloo312
+	SW7tFV8tB6EHIXyx+AlUOJTAt4RN6WQ=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-34-tzx01GQ1OQWyu-mSribLXw-1; Mon,
+ 07 Apr 2025 07:40:18 -0400
+X-MC-Unique: tzx01GQ1OQWyu-mSribLXw-1
+X-Mimecast-MFC-AGG-ID: tzx01GQ1OQWyu-mSribLXw_1744026016
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2BEF91956080;
+	Mon,  7 Apr 2025 11:40:16 +0000 (UTC)
+Received: from ws.net.home (unknown [10.45.224.198])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 324F31955BC0;
+	Mon,  7 Apr 2025 11:40:11 +0000 (UTC)
+Date: Mon, 7 Apr 2025 13:40:08 +0200
+From: Karel Zak <kzak@redhat.com>
+To: Sheng Yong <shengyong2021@gmail.com>
+Cc: xiang@kernel.org, hsiangkao@linux.alibaba.com, chao@kernel.org, 
+	zbestahu@gmail.com, jefflexu@linux.alibaba.com, dhavale@google.com, 
+	linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org, Sheng Yong <shengyong1@xiaomi.com>, 
+	Wang Shuai <wangshuai12@xiaomi.com>
+Subject: Re: [PATCH v3 2/2] erofs: add 'offset' mount option for file-backed
+ & bdev-based mounts
+Message-ID: <7nupludayogog6jylmwnxwel4zlvfxeozzcg5qkf5g5a5fpt7g@3bgvpbqfuxxa>
+References: <20250407110551.1538457-1-shengyong1@xiaomi.com>
+ <20250407110551.1538457-2-shengyong1@xiaomi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Qasim Ijaz <qasdev00@gmail.com>, linux-input@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Benjamin Tissoires <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>
-References: <20250406133551.4576-1-qasdev00@gmail.com>
-Subject: Re: [PATCH RESEND] HID: thrustmaster: fix memory leak in
- thrustmaster_interrupts()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250406133551.4576-1-qasdev00@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:7yBflSxGGeWdw7bVzYWFg7LDXkghO2FiIafj3/KBPQ0KK3LFSE6
- rUn4X4ZhrwNVxZ6nBDP2tGow1+98ZomcmoJLr5stRtCAVjXWd3LbI7HnZOuS/MUHou5NSje
- Zdle4XiyzsUdu8sgG8VyHHfeq69uRV8tUwRbaJ1TowZACZgZlBSznwewxMA9xbAX/HcWyem
- HDrFii6zNxo/tqIjm+jEQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:gjRTKgY1ReI=;b6/mK2dG3AeTU/SDylEZwv+v2qR
- Sa8UWWlf9Waf1XPKaaoxzSlHAvt5AT6SZAeXHcaqTF1nCFP1Ep3wDnsOn1gTuS9HlSQIuMgs6
- XAn0aNo93EsOvCAapbXP/yg+m9saqNbikQOhA0lB7R2E/8KJ7B8JSCa/+FnDnWbtylrNPyLgl
- Qa/aBH/GMwg0P3E4quhWHUNuICIbPQX23Vi4yDrEmKQj/vLrAD+MmJ+h0X54yBO9T7gvq+Qhn
- TQPTMLeGWoei4vlv7YvHKpUr+RHDq87Q5gdFg+z0ICmayROM/R8HCfCV/pD3OCNGV7qg/x4d0
- /wY8eC6rKlOzqnwoSHKFn7OJ/EucV3+B60oAU3mIVzkbgdkP8Twno8ILkxOHSyvlLuMO/RFWE
- lUUv2n5vw0LXZl3U0BiNuPMRnrc2u/EsdnVfwQFagNo4ZxQVTKUZTO6/XTZoWnwW9MiCcfisg
- GwVYlhbExyMpaQAGHWyJVpLc+R6vZX5qNMnUtzRoywQYdJGCEt8dsjL/AfJW+oezjdcQqemaE
- AC7OkNYESfHANkzbCRP84mHhRL+KOnt3UgO+UIlybXbBxuurXiatis7Oy0xCv15fDTq1WHb8G
- jNvPBLP9g1g4VHs8NaR0JyVSqrffI/p1n2UePSlZbcvAJFkZhSPAQQohah91D5EHHbqeV873c
- GH58MChwSl5cZ7dKSiWwKdIeAxfR2QsQAm8/zNBHuNAwtGbxFH9IAK8gL+Ti46Iar+6pqApcK
- 4BCYYcXoBHBwvWKsPD5597LNc7KKIKEHvvwRsfIwL68cSWzJ2jriL/bEbbAKRFJtQrsvpSLCi
- HvIEUCjmfjxAZsjzPEBlfXH28ChJptlTRXAs3N88jWN6MPkP2Hl6/+Dciugf8b+ueuZmCoqZB
- 9m7L1UuyA8MR8MPICKhkWF1M+jFjr3MWV2uC0w1YvmOxa+9YV6H+C29WCts05nlapo1xPZiyG
- fYGBp2yTgq8CUnLLiEOdzrMu9WOdH2XzfV9egf0G64Nt/AUgqGvxy6iTiHzhhEEI+I1VSpmHq
- wiUnrBYBIfbTfr8KAD1HhtktrZ0H2nn1lY6hK5CtCJCzQYggcCZwtw3FmzHcFVi5kjVKsvnZp
- RTsN3oB18mSMTp979jawGqA9ttK6bOp3XDtSuTPR+p9EbsOU9xjZ1zbhvV++pc3Wdsz4/OZbz
- KiLKa5PnAuNpjailDaz5VrbijUSbWmW6Pq3TOwD+n66+RvHUpq5dDPuxv0dDljWzSup7XkEeK
- 9VAiJfA8/6OqCEHrWXPKZzil0/2ygL8Lx3BmgnSpg1y8DiMwKkzC5d88IuVkX0WfpdZHCIWP4
- f6d0FLPr7JfgME92AnC6emu5mZ0g6Ohv1SVyLfY/ZDDRRhBN4m4jwVkq5FhBAj35BUuqN6PeR
- XmQL3akHCIGqRZ0y/AeaWzTHbTRPVn6RngKyuA6wputxoMyDLLOlmcOfRcWulu/sEYAf0EK6x
- k5Tfq4FjotKRJOhQ3KyLJiO/H3urRstTPz+x0hI098S9fDihRtu6ZXCXUqTeouHSHA2pBSw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250407110551.1538457-2-shengyong1@xiaomi.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-> In thrustmaster_interrupts(), the allocated send_buf is not
-> freed if the usb_check_int_endpoints() check fails, leading
-> to a memory leak.
+On Mon, Apr 07, 2025 at 07:05:51PM +0800, Sheng Yong wrote:
+> From: Sheng Yong <shengyong1@xiaomi.com>
+> 
+> When attempting to use an archive file, such as APEX on android,
+> as a file-backed mount source, it fails because EROFS image within
+> the archive file does not start at offset 0. As a result, a loop
+> device is still needed to attach the image file at an appropriate
+> offset first. Similarly, if an EROFS image within a block device
+> does not start at offset 0, it cannot be mounted directly either.
 
-Will you get into the mood to make word wrapping occasionally a bit nicer
-for such text lines (which may be longer than 59 characters)?
+Does it work with mount(8)? The mount option offset= has been defined
+for decades as userspace-only and is used for loop devices. If I
+remember correctly, libmount does not send the option to the kernel at
+all. The option also triggers loop device usage by mount(8).
+
+In recent years, we use the "X-" prefix for userspace options.
+Unfortunately, loop=, offset=, and sizelimit= are older than any
+currently used convention (I see the option in mount code from year
+1998).
+
+We can improve it in libmount and add any if-erofs hack there, but my
+suggestion is to select a better name for the mount option. For
+example, erofsoff=, erostart=, fsoffset=, start=, or similar.
+
+    Karel
 
 
-=E2=80=A6
-> +++ b/drivers/hid/hid-thrustmaster.c
-> @@ -174,6 +174,7 @@ static void thrustmaster_interrupts(struct hid_devic=
-e *hdev)
->  	u8 ep_addr[2] =3D {b_ep, 0};
->
->  	if (!usb_check_int_endpoints(usbif, ep_addr)) {
-> +		kfree(send_buf);
->  		hid_err(hdev, "Unexpected non-int endpoint\n");
->  		return;
->  	}
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
 
-* You may avoid such repeated function calls by using another label instea=
-d.
-  https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+=
-goto+chain+when+leaving+a+function+on+error+when+using+and+releasing+resou=
-rces#MEM12C.Considerusingagotochainwhenleavingafunctiononerrorwhenusingand=
-releasingresources-CompliantSolution(copy_process()fromLinuxkernel)
-
-* How do you think about to benefit any more from the application of the a=
-ttribute =E2=80=9C__free=E2=80=9D?
-  https://elixir.bootlin.com/linux/v6.14-rc6/source/include/linux/slab.h#L=
-472
-
-
-Regards,
-Markus
 
