@@ -1,99 +1,153 @@
-Return-Path: <linux-kernel+bounces-590536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEEEBA7D408
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:30:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EADE4A7D40B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9363E188C86F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:31:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A1AD188DC89
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCD0224B1A;
-	Mon,  7 Apr 2025 06:30:49 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730B918E377;
+	Mon,  7 Apr 2025 06:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XT13x3I9"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9338F64;
-	Mon,  7 Apr 2025 06:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2137221F3C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 06:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744007449; cv=none; b=W5eqAJEqhSHQ6K0tl8axcTuWBL3IxXJ2FYlckKnTD5Zqs4xAV8SW5EVSSIEfAwWwkKb3dkc8gAbapKxRk2QpaIylt48Kfq975K5gAP2y+M9/yqz5Y0MSDszKg1A1auzV6j64PCG5R4eKEpQkmQ49pqc7SKKZZWkkKh2Qi2+RYro=
+	t=1744007459; cv=none; b=BsFztV5Ip9kLEpgKK+bB1mQNhY7wl6Hz2yq/0KCdnty9oMqwaMDfd/m0XlNdP+akU6bYFdtK4P/ZaIRIHztRJbiLk+qqWFVHNHgADVOT6BSPUfQUdW/q/MzmrPMB0d28l+0+QYL3gMeW3kXuJ+FlecNrreCsaP8dMqdeA5/UcCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744007449; c=relaxed/simple;
-	bh=trPTe26gv2KGk8/+ZmltKynpxOj49zItfNvgbyiNwT4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MsJiu8vTfcNpehCLUSvUOy05N9Rkf19pIZRxJfeb7kwInQb6OCfouAy9UKRqd6PGgRcA8uhccjlQYhNJaOFFfydSG9As8h0Hiqh08wRNdCB2IrYQFE/6O6BZxO8O1tMQbvRhi7bkOjnqg6oTKVr1y4gbPFGIKbkeq85PSsCqZb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowACHvgYOcfNnAkbQBg--.10915S2;
-	Mon, 07 Apr 2025 14:30:38 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: shenghao-ding@ti.com,
-	kevin-lu@ti.com,
-	baojun.xu@ti.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] ASoC: tas2781-fmwlib: Remove unnecessary NULL check before release_firmware()
-Date: Mon,  7 Apr 2025 14:30:11 +0800
-Message-Id: <20250407063011.2771977-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1744007459; c=relaxed/simple;
+	bh=AmxwkfNWnTqg4Gr3/bu+ich7qIKM/RNuPTFe3HF24B4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HF7fIqUd09HRsuXffQ2x6ylArUv5uvLmsbigr788q8eyAVmbY++fjDjLbIyKO0zY2VvWKS6ccJ02qRGAlmZKyFUSTE7nS09PGjZ/yuEyrkbpORuylyUrK6l1JLkJCGa5zq1borMYbL7fv/tY9CjK8acXlHc85lIahMtL6vOy4eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XT13x3I9; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abec8b750ebso678682366b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Apr 2025 23:30:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744007455; x=1744612255; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6CZ+9nJvtU7EchwepTb4lUMtEiDIUa7OIoD5xm6M59Q=;
+        b=XT13x3I99MyNqpZCujbbA65pPtHEQhPmNsq0RH+tlykhSHNhFi3LpfxSEa6MbRr/u2
+         IOL5FrlWo0cZhA3TxYTmq1S6jhIPlsaUo7+XSFbc7pJ46Br67vMqvNZ/W6xRye6FeuHa
+         01goLB6YT/s3EAtePecGrcGtLLd8CVZ8LhnhU60LvJPbqlk+bLTOUJLfK4UhMHDukOZT
+         1H6wdrG1BluqQgt7zglClkThfih6edk380Qwfk6SK2ICaZ0fmF4wfLtJHx/j0ITxsfHK
+         Pe0qN7Uv7pxkYAjVHL1uwwtKPb6R3nif04a7WZ1eAIRQXmSNCp/l55/jSj7QIRBumgzZ
+         uGIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744007455; x=1744612255;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6CZ+9nJvtU7EchwepTb4lUMtEiDIUa7OIoD5xm6M59Q=;
+        b=bkd07mJSltOKLSkDRM3q2IxvtGyGQ4IBx5EhL3ol89WZDcNSDQHDXxMEDzMlsU/zIw
+         aFYQUo2nNiEe6ZtzzwJczwykcJ/TQJGzeFDT3WuYLNEr40cSuiLoara/xgaZ5SkvWmu/
+         BoexmOBABZP/Gcj9DQaThSAN8axvvfV3JV5BC0TN+Qj9DmGxW47NcSyQIJjCAdV7AVW0
+         3Cg2+AQQpCuiAulC38vXpsRAEUJybdexZhfYWrApkaUJHAOvewsPaZujkbhpesvLfhL6
+         p8HBKPuLQz9MeqpJVZH61ryx3l5iskQ1tQafOqakJhxilVgA3bhuzgSCwpAI/mPo0I6a
+         6Quw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWocvbSlYaoahzWddUpfkHBAiPRqMz114IeKu2ErxbFYHzC3o5h8iwG2ZyK7T1oN83xJXu6oDFewXCRA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwizwizZac0mF5MpYPSC2nexoy4Dq5C4PUZCP/TAc3T1j4FiNJL
+	p73b/WVhTKimNFo7kkS7VOgHcxqv40iPQrDPeTCrwqGQQ+Nd3N7b
+X-Gm-Gg: ASbGncvYjVIbFklrSev4wn5/B0hvo9fFnaYDdZB5sFR2Zd8zj/mATgAzeK1hu7+1Lob
+	eYxsQsTzPXBbniftmTI7bjqIVmCJlyMgbju0ppubCcvdOHNiy7PzwfEQ4wo02KA1wNkAiblM/lp
+	uvoF3ntMog5pZOdmoiuw8qDfOYPH3AkBOAzkNWZpj/HKdvDgTAUUf0isNuCYeV0v0SP8Jrg/9NO
+	0zQJXWJImxtASB8ufH/HEYRO0PLQM6i9RIl+cASGF6MX7h/FjcGegNxjy6oZQxap9zOtyz+ANWG
+	Cz4Ahabs9chpyWDTri93nnclJzxoCwVJHAi6tD6m3bfxC9iN
+X-Google-Smtp-Source: AGHT+IF/44BzJTOSL5Y5td5z/Uyw0Rj7IdwztQAzzywUWn7ts4FkRQirCuBekw6dxMQ5yjBEXdnh8w==
+X-Received: by 2002:a17:907:2d11:b0:ac3:413b:69c7 with SMTP id a640c23a62f3a-ac7e76232e7mr470437466b.39.1744007454655;
+        Sun, 06 Apr 2025 23:30:54 -0700 (PDT)
+Received: from ubuntu ([105.112.123.29])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7bfe9ae46sm705764166b.60.2025.04.06.23.30.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Apr 2025 23:30:54 -0700 (PDT)
+Date: Mon, 7 Apr 2025 06:30:50 +0000
+From: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
+To: gregkh@linuxfoundation.org, julia.lawall@inria.fr,
+	outreachy@lists.linux.dev
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	dan.carpenter@linaro.org, andy@kernel.org,
+	david.laight.linux@gmail.com
+Subject: [PATCH v4] staging: rtl8723bs: Use % 4096u instead of & 0xfff
+Message-ID: <Z/NxGilPLPy7KSQ3@ubuntu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowACHvgYOcfNnAkbQBg--.10915S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtw18ZF4ktr4xXry8JrW5KFg_yoWxZFb_Gr
-	W8Ww4vgry8XrW2gryYka1Y93yfXFWfCFy8Arna9FWUJryUAw4Fg34UAay5ua93X3yvya4r
-	uF1j9F1UAryYqjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
-	8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8AwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU7uciUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-release_firmware() checks for NULL pointers internally.
-Remove unneeded NULL check for fmw here.
+The sequence number is constrained to a range of [0, 4095], which
+is a total of 4096 values. The bitmask operation using `0xfff` is
+used to perform this wrap-around. While this is functionally correct,
+it obscures the intended semantic of a 4096-based wrap.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+Using a modulo operation with `4096u` makes the wrap-around logic
+explicit and easier to understand. It clearly signals that the sequence
+number cycles though a range of 4096 values.
+It also makes the code robust against potential changes of the 4096
+upper limit, especially when it becomes a non power of 2 value while
+the AND(&) works solely for power of 2 values.
+
+The use of `4096u` also guarantees that the modulo operation is performed
+with unsigned arithmetic, preventing potential issues with signed types.
+
+Suggested-by: Andy Shevchenko <andy@kernel.org>
+Signed-off-by: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
 ---
- sound/soc/codecs/tas2781-fmwlib.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Changes in v3:
+	- Added more description to the commit message
+	- Removed blank line in tag block.
+	-  Added more patch recipients.
+Changes in v2:
+	- Changed the commit message to a more descriptive message which
+	makes it clear why the patch does the change.
+	- Changed the subject title to include `4096u` to show that an unsigned
+	module is used.
+Changes in v1:
+	- Added more patch recipients.
 
-diff --git a/sound/soc/codecs/tas2781-fmwlib.c b/sound/soc/codecs/tas2781-fmwlib.c
-index 13a197468193..684d23e5905e 100644
---- a/sound/soc/codecs/tas2781-fmwlib.c
-+++ b/sound/soc/codecs/tas2781-fmwlib.c
-@@ -2074,8 +2074,7 @@ int tas2781_load_calibration(void *context, char *file_name,
- 	}
+ drivers/staging/rtl8723bs/core/rtw_xmit.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
+index 297c93d65315..f534bf2448c3 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
++++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
+@@ -943,7 +943,7 @@ s32 rtw_make_wlanhdr(struct adapter *padapter, u8 *hdr, struct pkt_attrib *pattr
  
- out:
--	if (fw_entry)
--		release_firmware(fw_entry);
-+	release_firmware(fw_entry);
+ 			if (psta) {
+ 				psta->sta_xmitpriv.txseq_tid[pattrib->priority]++;
+-				psta->sta_xmitpriv.txseq_tid[pattrib->priority] &= 0xFFF;
++				psta->sta_xmitpriv.txseq_tid[pattrib->priority] &= 4096u;
+ 				pattrib->seqnum = psta->sta_xmitpriv.txseq_tid[pattrib->priority];
  
- 	return ret;
- }
+ 				SetSeqNum(hdr, pattrib->seqnum);
+@@ -963,11 +963,11 @@ s32 rtw_make_wlanhdr(struct adapter *padapter, u8 *hdr, struct pkt_attrib *pattr
+ 					if (SN_LESS(pattrib->seqnum, tx_seq)) {
+ 						pattrib->ampdu_en = false;/* AGG BK */
+ 					} else if (SN_EQUAL(pattrib->seqnum, tx_seq)) {
+-						psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (tx_seq+1)&0xfff;
++						psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (tx_seq+1)&4096u;
+ 
+ 						pattrib->ampdu_en = true;/* AGG EN */
+ 					} else {
+-						psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (pattrib->seqnum+1)&0xfff;
++						psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (pattrib->seqnum+1)&4096u;
+ 						pattrib->ampdu_en = true;/* AGG EN */
+ 					}
+ 				}
 -- 
-2.25.1
+2.34.1
 
 
