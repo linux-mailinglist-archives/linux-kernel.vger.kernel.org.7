@@ -1,166 +1,130 @@
-Return-Path: <linux-kernel+bounces-590541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE081A7D412
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:33:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C7B2A7D40E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCF0516CA2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:33:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EC1C7A3A80
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A756224AFB;
-	Mon,  7 Apr 2025 06:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826D6224AF2;
+	Mon,  7 Apr 2025 06:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A9VCdnuw"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlhYMmlj"
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD98219E0;
-	Mon,  7 Apr 2025 06:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAAE221DAB
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 06:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744007556; cv=none; b=oZ/EfX4z1tSfJQu3JdmYmoZPH9NbvnxmyTCLM2P5ZNIxPWbnPsjUv+s4VQpP108kJCh4kWJczYpKpG/5tKjvYrRfxn6Z+2gpJpbsk1h6eJvNeImOg+ewQssSllYUKFLQ3c3j+wvWe0/9DSXjQKE0ZuaFzTEiYBt5uAuC3GuWbZ8=
+	t=1744007551; cv=none; b=JbkzK0huLJU0tCdZBO/tcWUPLctAlxRLKrjmXTFU9n3FRd2KZhvCSKOTDJpZ+BWD/t6btrcItaQKg5bJLg/BuqZtVQlseQW/5wyn1UQyUFeqa6Ul7QkjUtTizsWdQ1kd5mIRIEhelmQ5Ky+ysp98ZZQFTnS6xryXBmkIYoXCQiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744007556; c=relaxed/simple;
-	bh=rgWmwjZniGKCkXyoowbdyQSPJAgjIxa6HwiniR6YaQg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hHPrNsuUcpguiLF7hXbYklbQH0iYxCaOp9vIVi756nkzMTt82EniPRuEw28Fuva8AQQcyfNk5eUxcKKthbneamazEPuoDUPKPu/3U8fEsF7bVEtLbwmdY6J1oQP39cwLKMcjjCtv8YsAx9SdGr/OyX3t21Mp8R45xrOfBpaBMm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A9VCdnuw; arc=none smtp.client-ip=209.85.214.171
+	s=arc-20240116; t=1744007551; c=relaxed/simple;
+	bh=oblhWxgwN0vg6hjBPTixU+LjIBwj2tbuN66nuPJZqEU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ohb1u1KijC7NTFKtB+A7GO2SNV1yKNoMai3+2XdTM5sKC24qQkBvAc+nICRQWafpFSM2OQdJ30CLd3wBaQ6+pJrH21Ci+ILUow0tMdNEmNbWlEl2LF1m1kPzfRX3cpvhV6oSb3x9F9koidnUFKw5Se4nVFTzQLEARzkF9u+91w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XlhYMmlj; arc=none smtp.client-ip=209.85.221.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2264aefc45dso49798295ad.0;
-        Sun, 06 Apr 2025 23:32:34 -0700 (PDT)
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5242f137a1eso1638748e0c.1
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Apr 2025 23:32:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744007554; x=1744612354; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=p+FgwxOm7aFKO8+Yjp585HwY/8KQoU+DtbqgD3z9mVQ=;
-        b=A9VCdnuwZW4Q1NG49habGkgwf9CUuw2TiVd+pUvcSbyZ5cQ09Hp3czpHV1jZQJIDKI
-         zrWW59vIvpLIq3hWHJUE8pce7EPPjQ24VzQg4Q863rgAvcbk/cwu3JfPCVp67kg6GV2G
-         wEyqVxvUpdH5kEx9t95KHFm11D2hQQFaMzfSbGjrnLgA19ofq6XeTAGNxIJSnj+ykr26
-         mpykPLJYSd8fydQbCFlugoFlmHt3/a3u5BfQrJHGt0tnU+EvTg7I2uVL37ZXk+Kuv/GY
-         2hhRAL2nitnsVCMXekymusE0xn9s3S1zwMCjAyxkb2dM+yCx5f7lMd9ISx6QX2jFLi/c
-         teWg==
+        d=gmail.com; s=20230601; t=1744007548; x=1744612348; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OAsH6xyP+BlqJ30TbZINVs3gH4R48kHTKbHXFCB8J1w=;
+        b=XlhYMmljmI5VLAYB6kEGhGTeLw+xmRqvLgopmjT/PnSO4h/70cOU22Zzaq/PCDPqAK
+         d98Xy+LjLqKRQ0jZ6ze+uIvQbLihgfurqUOp20TShos886c+P3+9lW4vBMC8ReFUmYB7
+         Ids03CdwBFzm9seiNbQckB16ZcZylkp/RIxZZtLV5+OfKq1ZnTES55K1X+jZyNaMnkj8
+         AAGRc0CyOIkAX8DkqBq8zapetmcAMRAomrZoXYx8fX6LE9o0Zw7MHXY5OQ/IxBtjT4/Y
+         UcvsxiSPjaVaIFu0KzX2zIu7srCCQXtED429kr6o0vxF09JY9JFOnA3Bqv3v1gjN0Wdb
+         ubMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744007554; x=1744612354;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p+FgwxOm7aFKO8+Yjp585HwY/8KQoU+DtbqgD3z9mVQ=;
-        b=RGBKSwe+Q1Go5+3nw7li7Wbyet8F6k8HmvJ//A7N12V9b7LnL0ekgnh8Xo+EEmXhzE
-         wU8xdtYBHBgIFTLsQGOR3Fyz9TrN/QZFbqmuNxWq6p/Qk1nwESn4U8XhydAU7yCFu/ap
-         Q8QwezRxuJBwKR76IOcbMNy2/nj4lD1+OPALwwk/V5E0dkkt6q2alq7OvlSYRY9LW1IU
-         2dg5N0gfyGSZGZWtrzPzCeKKOmDEciAH8A3FEQUIdpXkWuyPyjDiVYP8AWbb/Lruwg7i
-         MGCeOTre+VoQ/aE0lKdqYO4OgGdSExi2XNqbq2X0dKk8v5GHWOb/UQ37DnSLDln2/msV
-         Fscg==
-X-Forwarded-Encrypted: i=1; AJvYcCVViiG+CzSj8IjIj32KewlkEc+zmMDDFIHPBocTFqVkUU5bjAvdKM0TL3gczjM3hnuAlmU530ZJcwYeKps=@vger.kernel.org, AJvYcCWobK6IRSql+6aWIv75uVyqVpMChUbGLQdFaoCYihM1HkeVbdVJ50tOtaOgK4H4jHdTsT9FKzN92qsP40KhT3Hhag==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpUqZvVNo+tlkk9uKzPAgETJQvXQDwmLbcWdW0Q9W2Op7QcrEK
-	+iX9QKv8J+YAp53H7Bp8NCGDAqu9kzpJb6WrzIrWpiYwW19Cdvu/
-X-Gm-Gg: ASbGnctZOBKCrECLcFczCkcQ93S3/mInx8RpsuJjxgbel3frK/aWhgfteUnjWtx+ix2
-	Cjl42vcUmm90NlEQm6uFD2Z+sJUFXo2VztqPhtNS1un/ER0ZWKmW3M4pokSLGKnAhZ1Vtp8JgTv
-	SuBcjNw1w1BmxJCAyZ32N/kXu3zvpba1LHQQUfHT+AqwPrIF8CLKglO7htksMqzVLMpMbBy/Yc7
-	Lme77kar/ok2SqcnXDLXHpi+Ly33pBnvXE/Yvp2c+DQI1ucrbbjRszFc26K7B9vodM5dKO2h8EQ
-	np1gTLKoX/xznBYj824KKsuVQ1gjxHNwi/GFq+PtkA0BBsFLV8ax8lyTXkw=
-X-Google-Smtp-Source: AGHT+IHqfdC2hAwF+iHvluludcTR0crAZTyeQqY1dFdw+RUMqBj5erLa4Mr2mQeYTN3YlEylkAXOrA==
-X-Received: by 2002:a17:902:cec2:b0:223:2aab:4626 with SMTP id d9443c01a7336-22a8a84ea52mr138936315ad.11.1744007554389;
-        Sun, 06 Apr 2025 23:32:34 -0700 (PDT)
-Received: from localhost.localdomain ([103.221.69.50])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739d980598csm7694095b3a.77.2025.04.06.23.32.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Apr 2025 23:32:33 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Jiucheng Xu <jiucheng.xu@amlogic.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-amlogic@lists.infradead.org (open list:AMLOGIC DDR PMU DRIVER),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM PMU PROFILING AND DEBUGGING),
-	linux-perf-users@vger.kernel.org (open list:ARM PMU PROFILING AND DEBUGGING),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v1] perf/amlogic: Replace smp_processor_id() with raw_smp_processor_id() in meson_ddr_pmu_create()
-Date: Mon,  7 Apr 2025 12:02:03 +0530
-Message-ID: <20250407063206.5211-1-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1744007548; x=1744612348;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OAsH6xyP+BlqJ30TbZINVs3gH4R48kHTKbHXFCB8J1w=;
+        b=swtdf3EZUXQ33Zkkib8wwtT4QE84fJnvOdwBfsrRUNYHKGWuMEE3nsQERe5N+RaHgk
+         +0sqC5czrIDplqyGbb+hZF03w8cS0A20VxYIK6OfBTXwa4Xemykb+nsQFK8mlbNdSgWn
+         nL+y0lnY/xaqeewRezlHjkvbB8gvFvPLFs3sWu0l1fpygtqcY3gtzmuu7b8Xb7pzun9g
+         l3LzHQY5LtQ2vSLCa5UCxlqtkXKJn/TOdkOZTKe9X0N3lJiozBPl5oOXXTbANE998I3b
+         JCsA6eK9ECMxGIgNkjzZJMsqaweern1Gpr9xTcRkDzy/+07mZj8Zhzw/Q+enLrICU6Om
+         8BIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHtDUIXEcUWNgi3zK5vL5yErZEmvqYJZW3tcTuGYsKh1wqdMEbSx8HxSfxJwynUiOdzRkszQN6haTpa2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrqXnYifsAiAXq+nQjRTKL/Wbs6Ho/feJr1sjH+/fbjCFrDpCm
+	klxSNd/ltjyT+JAkl1/M8pgIV89Hi838FQHs1qShJfb0uPEDSME29IWwmWr5SmJzY8ShgmPWFuX
+	vvNQijOAsJi25CCU+IciRTplFMcQ=
+X-Gm-Gg: ASbGncvSzreWEHvTtLI3Lmt8+VKBnjqzKFOPR7UdgcCUoZb4Q41MVK3+H/ved86wz2p
+	poMMCG5j3OmJnv29IEQG6dKdIS5CN2hl1pQalsEJe0NEJRtJVDWYi39Ez1Fvl5LIvsIn/hsWgyH
+	Ur53ejjRa0B6f7M3f+jVZckSzs0n5yaPASj2DpWw==
+X-Google-Smtp-Source: AGHT+IHs9ScGvj4OWEx4v3durvZDgeZiAiY8aul09WdPxrtj1Sd4XcK36me3zb0C/0zjPSYv6v57tKmF/FzwQVIxNQU=
+X-Received: by 2002:a05:6122:f09:b0:527:67db:9cb2 with SMTP id
+ 71dfb90a1353d-52767db9cfamr7378492e0c.4.1744007548058; Sun, 06 Apr 2025
+ 23:32:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <Z/McCdceSpyL2A2p@ubuntu> <2025040719-utter-hydrant-b241@gregkh>
+In-Reply-To: <2025040719-utter-hydrant-b241@gregkh>
+From: Samuel Abraham <abrahamadekunle50@gmail.com>
+Date: Mon, 7 Apr 2025 07:32:18 +0100
+X-Gm-Features: ATxdqUHlpQO0oh2sTMnp5Q5lmbaJmnkyhUOvFly-RL_CnRtc-y1iO9UEAGk3jdw
+Message-ID: <CADYq+fZzzJTEvhbO9y=i2DA7fH_99ofcG-PZHP_7LR1pyhympA@mail.gmail.com>
+Subject: Re: [PATCH v3] staging: rtl8723bs: Use % 4096u instead of & 0xfff
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Julia Lawall <julia.lawall@inria.fr>, outreachy@lists.linux.dev, andy@kernel.org, 
+	dan.carpenter@linaro.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Amlogic DDR PMU driver meson_ddr_pmu_create() function incorrectly uses
-smp_processor_id(), which assumes disabled preemption. This leads to kernel
-warnings during module loading because meson_ddr_pmu_create() can be called
-in a preemptible context.
+On Mon, Apr 7, 2025 at 6:10=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Apr 07, 2025 at 12:27:53AM +0000, Abraham Samuel Adekunle wrote:
+> > The sequence number is constrained to a range of [0, 4095], which
+> > is a total of 4096 values. The bitmask operation using `0xfff` is
+> > used to perform this wrap-around. While this is functionally correct,
+> > it obscures the intended semantic of a 4096-based wrap.
+> >
+> > Using a modulo operation with `4096u` makes the wrap-around logic
+> > explicit and easier to understand. It clearly signals that the sequence
+> > number cycles though a range of 4096 values.
+> >
+> > The use of `4096u` also guarantees that the modulo operation is perform=
+ed
+> > with unsigned arithmetic, preventing potential issues with signed types=
+.
+> >
+> > Suggested-by: Andy Shevchenko <andy@kernel.org>
+> > David Laight <david.laight.linux@gmail.com>
+> >
+> > Signed-off-by: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
+> > ---
+> > Changes in v2:
+> >       - Changed the commit message to a more descriptive message which
+> >       makes it clear why the patch does the change.
+> >       - Changed the subject title to include `4096u` to show that an un=
+signed
+> >       module is used.
+> > Changes in v1:
+> >       - Added more patch recipients.
+> >
+> >  drivers/staging/rtl8723bs/core/rtw_xmit.c | 6 +++---
+>
+> Any specific reason you did not include the staging mailing list like
+> scripts/get_maintainers.pl asks you to?
 
-Following kernel warning and stack trace:
-[   31.745138] [   T2289] BUG: using smp_processor_id() in preemptible [00000000] code: (udev-worker)/2289
-[   31.745154] [   T2289] caller is debug_smp_processor_id+0x28/0x38
-[   31.745172] [   T2289] CPU: 4 UID: 0 PID: 2289 Comm: (udev-worker) Tainted: GW 6.14.0-0-MANJARO-ARM #1 59519addcbca6ba8de735e151fd7b9e97aac7ff0
-[   31.745181] [   T2289] Tainted: [W]=WARN
-[   31.745183] [   T2289] Hardware name: Hardkernel ODROID-N2Plus (DT)
-[   31.745188] [   T2289] Call trace:
-[   31.745191] [   T2289]  show_stack+0x28/0x40 (C)
-[   31.745199] [   T2289]  dump_stack_lvl+0x4c/0x198
-[   31.745205] [   T2289]  dump_stack+0x20/0x50
-[   31.745209] [   T2289]  check_preemption_disabled+0xec/0xf0
-[   31.745213] [   T2289]  debug_smp_processor_id+0x28/0x38
-[   31.745216] [   T2289]  meson_ddr_pmu_create+0x200/0x560 [meson_ddr_pmu_g12 8095101c49676ad138d9961e3eddaee10acca7bd]
-[   31.745237] [   T2289]  g12_ddr_pmu_probe+0x20/0x38 [meson_ddr_pmu_g12 8095101c49676ad138d9961e3eddaee10acca7bd]
-[   31.745246] [   T2289]  platform_probe+0x98/0xe0
-[   31.745254] [   T2289]  really_probe+0x144/0x3f8
-[   31.745258] [   T2289]  __driver_probe_device+0xb8/0x180
-[   31.745261] [   T2289]  driver_probe_device+0x54/0x268
-[   31.745264] [   T2289]  __driver_attach+0x11c/0x288
-[   31.745267] [   T2289]  bus_for_each_dev+0xfc/0x160
-[   31.745274] [   T2289]  driver_attach+0x34/0x50
-[   31.745277] [   T2289]  bus_add_driver+0x160/0x2b0
-[   31.745281] [   T2289]  driver_register+0x78/0x120
-[   31.745285] [   T2289]  __platform_driver_register+0x30/0x48
-[   31.745288] [   T2289]  init_module+0x30/0xfe0 [meson_ddr_pmu_g12 8095101c49676ad138d9961e3eddaee10acca7bd]
-[   31.745298] [   T2289]  do_one_initcall+0x11c/0x438
-[   31.745303] [   T2289]  do_init_module+0x68/0x228
-[   31.745311] [   T2289]  load_module+0x118c/0x13a8
-[   31.745315] [   T2289]  __arm64_sys_finit_module+0x274/0x390
-[   31.745320] [   T2289]  invoke_syscall+0x74/0x108
-[   31.745326] [   T2289]  el0_svc_common+0x90/0xf8
-[   31.745330] [   T2289]  do_el0_svc+0x2c/0x48
-[   31.745333] [   T2289]  el0_svc+0x60/0x150
-[   31.745337] [   T2289]  el0t_64_sync_handler+0x80/0x118
-[   31.745341] [   T2289]  el0t_64_sync+0x1b8/0x1c0
+Thank you, Greg.
+I have sent an updated patch.
 
-Changes replaces smp_processor_id() with raw_smp_processor_id() to
-ensure safe CPU ID retrieval in preemptible contexts.
-
-Cc: Jiucheng Xu <jiucheng.xu@amlogic.com>
-Fixes: 2016e2113d35 ("perf/amlogic: Add support for Amlogic meson G12 SoC DDR PMU driver")
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
- drivers/perf/amlogic/meson_ddr_pmu_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/perf/amlogic/meson_ddr_pmu_core.c b/drivers/perf/amlogic/meson_ddr_pmu_core.c
-index 07446d784a1a..c1e755c356a3 100644
---- a/drivers/perf/amlogic/meson_ddr_pmu_core.c
-+++ b/drivers/perf/amlogic/meson_ddr_pmu_core.c
-@@ -511,7 +511,7 @@ int meson_ddr_pmu_create(struct platform_device *pdev)
- 
- 	fmt_attr_fill(pmu->info.hw_info->fmt_attr);
- 
--	pmu->cpu = smp_processor_id();
-+	pmu->cpu = raw_smp_processor_id();
- 
- 	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, DDR_PERF_DEV_NAME);
- 	if (!name)
-
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
--- 
-2.49.0
-
+Adekunle
 
