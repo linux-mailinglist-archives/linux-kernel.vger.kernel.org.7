@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-591453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A68A7E013
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:54:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D547DA7E015
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69EEF18862A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:47:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E3F01899F5E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC04149C51;
-	Mon,  7 Apr 2025 13:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C797155300;
+	Mon,  7 Apr 2025 13:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c8BtJADi"
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8jw5LJZ"
+Received: from mail-pg1-f196.google.com (mail-pg1-f196.google.com [209.85.215.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3E035962
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 13:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3342349641
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 13:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744033625; cv=none; b=V8szjGYWJQ+7XxjRFWwp+ITgdmPJl2k+fl9KkxDwJ6SLGTzgXgRoWM6c8mmJ1gKsqHZjX6il4r8MqkbpcmaNq9O891wogrA1B2bnnvwlf+uhtDo61DCtNikVeC/IqV2GOPaEfBuzxG86RxNp8Nv84Pvr8jmLiKuliSwM0xrJls0=
+	t=1744033644; cv=none; b=rFKyDpM3ZyLkcWquXsPBZ4uzBZ8n6hDhxRmKImwlNmbiMy8u45+fDKlsWl6EK4txkoFajRpQUJs1rZDDZKFJng07twxu7kiVilsZ8ft5z7S2sl2X/ZgfXgcFEMQMKO50TBeYFm08f4GY+LoRS2zoxy43Srw/wuNnmyt+Fdrx+l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744033625; c=relaxed/simple;
-	bh=pAkYNvMqS8fJ5dQrK5i7yQzJYe2HcRLPedTQphpp+oY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gA0PfdM7s2xDnmSrYdnl96Gv8MhVhf4LJl3f0R3aR4Tp4k2mRelS4arKsVOJtp9wUyYxVJ1xTVe7NSXIWkqGn0fRWXYBEpBiouNA0wjAlOqRVl9BsN0qhq5dGmYTrpiAfnCX1fVsEEmwDvAUIWzW9pK6J9EcApKNNXcfus41JA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c8BtJADi; arc=none smtp.client-ip=209.85.210.193
+	s=arc-20240116; t=1744033644; c=relaxed/simple;
+	bh=nBFMMBsghcHJzLgBobziMdH8ahuh+l61GC0hU05u+N4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NusD+VRMChqAu4SfWAVc9NzNH+HfkqpqX7hZ1ws8bZFcI7Dn5JaHArZSuxBWgWf/s1HY9mLVIbgl4NCfJ7n3OpzU9rfEXbezJo+kXffiCNcXKIehTI67vN57POb7l5Tu2dET4hlRAIEgYedhi4JqOawQQRmahQw+eC2WFpu2X/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z8jw5LJZ; arc=none smtp.client-ip=209.85.215.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-72d3b48d2ffso4432243b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 06:47:03 -0700 (PDT)
+Received: by mail-pg1-f196.google.com with SMTP id 41be03b00d2f7-af5085f7861so2697515a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 06:47:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744033623; x=1744638423; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744033642; x=1744638442; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mTDE/yeK1SnACLA/vidAg6kwbYxIqcsn7vpXQLvJLss=;
-        b=c8BtJADiN7N+5+FU9Uj7XHcYq0tMOhPwUJbgE6y7xO+dV8HR27uzk8yZ+ZLL+hRf0j
-         3wV9sbdxmv5do7UvDb6cEO0a1DS4z8CEbRJuyMsTCDqgUNb0Kug9DGwKN4TTQ8eCBDnv
-         L7Eo2ghV0icrUMPH4svWa30FChYsYM4SHLT+mCAW4Ck4vxpRmh3Z50JRi6bPUwU2xtmq
-         uMEGuyZVo1VTDUjslcXZnQV4WsRJa1xAW91FXCjCHodcz5BXYHH4vwGhd/swNs7Iujwi
-         Kn6rmCWMKOPC1wrHBefKNUZyP8NPqMoIqLWJhPDDU26PopVW/VxjMlqvQaOpKxBZtfPw
-         3GvQ==
+        bh=Jqi69oZTtxiQ76XlmXeV3ooNl+Gv9DPSGvNyg2kJkx8=;
+        b=Z8jw5LJZ1P6TpNv+S6EpvcpZi8YlVcj1629F277lq/rBUEE0Gk+RyId1Ui2AHxeJub
+         2v80Na+h4XCAg2kuNeyA+HMJp38pf0bIzibszJuRgwLy8YW4A9nwrQv9C1w0oe/1NKVJ
+         Ks1QwmgZM/IaUGiJlEueZ6V0Jyitms6IkbA+s0Sn/USyqB/spSbxLI6knF7ba4BWCDZW
+         GZTO1txT+Q4psSovcvoDA0ws39AK/CvjZWJThggftJVNJ+HOTF9Vav6uea3G/UIbAjAN
+         yWadTm9FH6R2r9fQTlCpC2pfmyumVTQi2UdolsMAmmG0PF77hEP7NvV4GoOgYW4Xcj/l
+         FH4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744033623; x=1744638423;
+        d=1e100.net; s=20230601; t=1744033642; x=1744638442;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mTDE/yeK1SnACLA/vidAg6kwbYxIqcsn7vpXQLvJLss=;
-        b=OWhFkxEzVTIQltKDshdgEiUXvhptiNxj2NmrAPt94jLQ9Zgt+7dO7PE12Pm+nhxUYW
-         zy7zZV/DYad++XxhvOtIH/xHbWqT7170NffADkVvo06Hy4JuATeWVBeZCdR7nGG4aABh
-         eZX83eBaxJVTlb/utgfQZGzF3Jxm3K4e0P0Jf7Wpe80/y4Hl9CB36jhQJMvIWT7FZ9vz
-         Us3Zxn1bLuqDygRW44PvdQNRc95KUP7gwsYVoiJu5GfvJHbgVpKBHj32GPvaGD5TWt6h
-         uFQoXJPMdCDh9pcSP/B95GXJhnqEsTtm0rd3GqO3vDgZkkbrU5SSHtL/Wm7tRRf7LoMA
-         9zGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWW5s5IoEbKtj9oCh09PaKhi7hsaTkdMo7ZJbRdBXsCMIuGUQuln5x6udNXJmnwk7IvYx61EGlqUy5I9uE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0kcEXf+NijpW/b9yrsq+frD2zUrtJtw/HaBQcRqDVINEvsSEv
-	sjwcClLSSDlYBfud6rJkyiWdAJGF1u/sUxsDvjUplaARsitpiLva
-X-Gm-Gg: ASbGncvvga0TBXKI9HkVDAVR9cC10W9D8yPnS7hkrgUxKyN7JZUpWAwMGA+EB88UODk
-	eWqoHMopotjXr6npTcO5fal2J87Acsx83W6VTfDFKCClcq/OqB/ZLS9MEruN+tIKSI9oCZahOBn
-	Ra2aLaP/tcqETjv3G+lpWVZdUihhp4y5M6pXB1KvqWP+j2Th1jPaUudpb++S4+1pLPWI6UYaaYc
-	Kl5kzErnBgPVvOFpJrMZx3NRZY++h/JXVY+cG19mdA4mM0ZEnU4thoRWqQVtP5r/0R9QTF99e6h
-	8x3lgiu6TOPwG/sSB7SJq49gvK6wKRxsE3VB8DkBfEBP7k8nhgjg/xNk9STaZbGwSukqV28a
-X-Google-Smtp-Source: AGHT+IGGH3bgtSM9CYU8MXHM50HQPZ2vzFujBzw6Wz/WrCQOl8JavRMCL9esAIAU8ZzWHfX43RZeNw==
-X-Received: by 2002:a05:6a20:d50b:b0:1f5:79c4:5da2 with SMTP id adf61e73a8af0-201047368bbmr22762005637.31.1744033623304;
-        Mon, 07 Apr 2025 06:47:03 -0700 (PDT)
+        bh=Jqi69oZTtxiQ76XlmXeV3ooNl+Gv9DPSGvNyg2kJkx8=;
+        b=G2AzdqY6/5517frm8wPNri1fsmxE1j7IUbBXsvjpBprQ+bAih0fsBCmRZrY8kX6WOb
+         zI/4tQ4RAH2EsMbYfh8GYhg4aoN0OJF94xZNxdJ9kWYw5RDRZb2HOduUQD66T9l5k1nr
+         gnpwa4ipe/duOW7ZNiBnIYoZI/kn6UM9te7jjoU+l2YNDh0X5prBQh9Quk8xSUaNlGKa
+         tgARFtJsfuHTpF0bhbVoCS7Wuuq7v9m0bl7HSR2cVYb5CmLQPjKKmXeZhDbDdqEHQMSv
+         /V1oH556Tm0c/4UcLvI+va/418SvT46OOd8YlJ41RVhXGILnlNNKOrKDVmFljz20W6kV
+         SqEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUj2724z6cGMWgZfyHzwfsUwGv6THQxElnhdPz/qZHDEg2Ub1NDuNLCL4FqWFYLAcSk9HhGyrTd7VtN8M0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywoa6I0Uph+53KIEb4osrs7Bjf6GrymQWaJhW4/IRpiQ+E2L5Gp
+	MB0kYcnzZxM2B157acRQLjzi8BOdVhEzFIqoPUMO0s5ffc1DZswU
+X-Gm-Gg: ASbGnctC1HkQC3W/PycVxTn5734mgX5HW1rwAetsw8T/LOI5vL3/a9tyte4hYwO4WRm
+	NMht8YQXK/v8RzBDyBkia54F5Blzf2OuMK2l/HEovQYzq7c+6hXuvNpU5qFO9f37P/zCu+83stf
+	VxtEjPxvPwdKo9kYVxVXTGS1QNiQEtwzVlyi5FJbVPwi4rH+M+FW6sPAyV2q+uNE51Xtkzenq7/
+	f6tFuAzRayVAHLTsfMd/jS+Cdr7v6VJ/V9GTwxlIt+LI9k0j8azH7OIV7VgJxWQH/f7Hl5sFca4
+	BQpQnFkl8oHF/A4EAi7AI9Nohh9PyBivYBwfKz9kxNWZJI87ZA3OCu/EVc1NRj/m/iYed1yt
+X-Google-Smtp-Source: AGHT+IGF3POrrpxSeXgGs9iUraO6GYQoPqRSmV2ULtdstn3j2U3sHLyUjOPqlvtrIAalRZbY4kQvCQ==
+X-Received: by 2002:a17:90b:3a44:b0:301:1d9f:4ba2 with SMTP id 98e67ed59e1d1-306a4900a4dmr17898712a91.28.1744033642476;
+        Mon, 07 Apr 2025 06:47:22 -0700 (PDT)
 Received: from localhost.localdomain ([202.43.239.100])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af9bc35137csm7187016a12.44.2025.04.07.06.46.59
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3057cb5a86asm8988418a91.32.2025.04.07.06.47.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 06:47:02 -0700 (PDT)
+        Mon, 07 Apr 2025 06:47:21 -0700 (PDT)
 From: hupu <hupu.gm@gmail.com>
 To: jstultz@google.com,
 	linux-kernel@vger.kernel.org
@@ -83,9 +83,9 @@ Cc: juri.lelli@redhat.com,
 	mgorman@suse.de,
 	hupu@transsion.com,
 	hupu <hupu.gm@gmail.com>
-Subject: [RFC 1/1] sched: Remove unreliable wake_cpu check in proxy_needs_return
-Date: Mon,  7 Apr 2025 21:46:54 +0800
-Message-ID: <20250407134654.92841-1-hupu.gm@gmail.com>
+Subject: [RFC 1/1] sched: Skip redundant operations for proxy tasks needing return migration
+Date: Mon,  7 Apr 2025 21:47:12 +0800
+Message-ID: <20250407134712.93062-1-hupu.gm@gmail.com>
 X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -95,44 +95,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The (p->wake_cpu != cpu_of(rq)) check in proxy_needs_return() is unsafe
-during early wakeup phase. When called via ttwu_runnable() path:
+Move the proxy_needs_return() check earlier in ttwu_runnable() to avoid
+unnecessary scheduling operations when a proxy task requires return
+migration to its original CPU.
 
-|-- try_to_wake_up
-    |-- ttwu_runnable
-        |-- proxy_needs_return    //we are here
-    |-- select_task_rq
-    |-- set_task_cpu              //set p->wake_cpu here
-    |-- ttwu_queue
+The current implementation performs several operations (rq clock update,
+enqueue, and wakeup preemption checks) before checking for return
+migration needs. This is inefficient because:
 
-The p->wake_cpu at this point reflects the CPU where donor last ran before
-blocking, not the target migration CPU. During blocking period:
-1. CPU affinity may have been changed by other threads
-2. Proxy migrations might have altered the effective wake_cpu
-3. set_task_cpu() hasn't updated wake_cpu yet in this code path
+1. For tasks needing return migration, these operations are redundant
+   since the task will be dequeued from current rq anyway
+2. The task may not even be allowed to run on current CPU due to
+   possible affinity changes during blocking
+3. The proper CPU selection will be handled by select_task_rq() in
+   the subsequent try_to_wake_up() logic
 
-This makes the wake_cpu vs current CPU comparison meaningless and potentially
-dangerous. Rely on find_proxy_task()'s later migration logic to handle CPU
-placement based on up-to-date affinity and scheduler state.
+By moving the proxy_needs_return() check to the beginning, we:
+- Avoid unnecessary rq clock updates
+- Skip redundant enqueue operations
+- Eliminate meaningless wakeup preemption checks
+- Let the normal wakeup path handle proper CPU selection
+
+This optimization is particularly valuable in proxy execution scenarios
+where tasks frequently migrate between CPUs.
 
 Signed-off-by: hupu <hupu.gm@gmail.com>
 ---
- kernel/sched/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 3c4ef4c71cfd..ca4ca739eb85 100644
+index ca4ca739eb85..ebb4bc1800e3 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -4047,7 +4047,7 @@ static inline bool proxy_needs_return(struct rq *rq, struct task_struct *p)
+@@ -4162,6 +4162,10 @@ static int ttwu_runnable(struct task_struct *p, int wake_flags)
  
- 	raw_spin_lock(&p->blocked_lock);
- 	if (__get_task_blocked_on(p) && p->blocked_on_state & BO_NEEDS_RETURN) {
--		if (!task_current(rq, p) && (p->wake_cpu != cpu_of(rq))) {
-+		if (!task_current(rq, p)) {
- 			if (task_current_donor(rq, p)) {
- 				put_prev_task(rq, p);
- 				rq_set_donor(rq, rq->idle);
+ 	rq = __task_rq_lock(p, &rf);
+ 	if (task_on_rq_queued(p)) {
++		if (proxy_needs_return(rq, p)) {
++			_trace_sched_pe_return_migration(p);
++			goto out;
++		}
+ 		update_rq_clock(rq);
+ 		if (p->se.sched_delayed) {
+ 			proxy_remove_from_sleeping_owner(p);
+@@ -4174,10 +4178,6 @@ static int ttwu_runnable(struct task_struct *p, int wake_flags)
+ 			 */
+ 			wakeup_preempt(rq, p, wake_flags);
+ 		}
+-		if (proxy_needs_return(rq, p)) {
+-			_trace_sched_pe_return_migration(p);
+-			goto out;
+-		}
+ 		ttwu_do_wakeup(p);
+ 		ret = 1;
+ 	}
 -- 
 2.47.0
 
