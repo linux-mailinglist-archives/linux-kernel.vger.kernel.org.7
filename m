@@ -1,142 +1,111 @@
-Return-Path: <linux-kernel+bounces-591052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26D2AA7DA51
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:55:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45702A7DA87
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A96C188D2A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:54:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E72947A2AFC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC9923496B;
-	Mon,  7 Apr 2025 09:54:09 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71484233149;
+	Mon,  7 Apr 2025 09:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NEfYZWwT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8559D230BCD;
-	Mon,  7 Apr 2025 09:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93D0188734;
+	Mon,  7 Apr 2025 09:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744019649; cv=none; b=n9SZP3URSJwPol0BP/ezfAHpQiUh9umb798rsXJmItFMetf0GJviJy/UjcgqeD4KnJ8kXl1Yaii9L32CnHv8tNYB2xpBTSI20itYM2Map5UO/HTu3l+yPWulNMyTfCr8/MPN/qHG/peQIO/peHY6eGbq2qOdZTXYEv3eI4E1mUg=
+	t=1744019940; cv=none; b=hyZZk+3foFjjjPPrbHKgVnRfL88dXPDnFDuQLHzaECYv8McjVa48jak46+ndaU8o1yghMbwXtcNdWl9xJGCQ7/zTwaZWQh/oLs+EbYW2kE+UyVWz0Gph5/JBRwHXZWpgG5Zeze7JXgy8bwDugkNdpsiOImdZpUp/B9VaclLUSnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744019649; c=relaxed/simple;
-	bh=XFvfvv7QetTQVtT65VitPXl9f9r55NGlzqiql5VK65o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c8xbr1nwSSsXLRhD0VM3wS1q8Ag+rXtDbTOpqLQ4bn4wwG/lBZcJ4E0GylSt1a5qbNf02rqYiNLK4hVR2RlzOSKo1EfcUPUO/6ObFqD9bI9aNk7NsPgg/fBxsFJps8Qno36PmM06k26ULfwagcAFkJlBsNGcmFhf0/ZZPOI46sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4A5DC4CEDD;
-	Mon,  7 Apr 2025 09:54:05 +0000 (UTC)
-Message-ID: <3e5f003a-f689-4f5a-ac75-6bf95379637b@xs4all.nl>
-Date: Mon, 7 Apr 2025 11:54:04 +0200
+	s=arc-20240116; t=1744019940; c=relaxed/simple;
+	bh=PLjZ2TrIGcRq48drG7P+AITO2PLYM26QcN7ZWtsMzu8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F9Bx3tmsW7PRDNX+IZWVEV6sGKR8Y0nLxigTjja7/Jmz4+kPQhg1mZESVhtyG1I6IW7i02MOhJgdClLYr175ZHG+Nmu35FbGMPQkK5/CSGmokU52sCZbIOHWokKiNxcsQpdS0o+gYBMv1+bEgEU5FdgB5BHL/H9/0AqAgET2QOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NEfYZWwT; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744019938; x=1775555938;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=PLjZ2TrIGcRq48drG7P+AITO2PLYM26QcN7ZWtsMzu8=;
+  b=NEfYZWwTGpThiKtnVEu5uN3LPpSEsy1aHkBqBArAcNObkpxgNeISjRMI
+   KBLhecyN6MGt+xsKbjIMpM7kx+o89jQeoafU8DZ8KmCETVp3gR0+oRPM8
+   eJYUxOY1rcl7V0iKiDp9z4CQgkeBJIVQ+RZX2AWOnDalj2iIGb1Cm7LBI
+   hChw53G5XmaiDv3fLyCXtlzM1PXw7Pz7TN+O9On2a9VI5tT/M/l7ehTVc
+   Wd3oT/gVj1gVsDlip7jrpVllc/Hi4HrCu3hkUTJyEWcIBNZxeoPbLdd1S
+   4t8l2fUmtxseusOStF6+KHyNEEEcRJzlz7TrLj6ZdkpxTDoQ8BHputv14
+   w==;
+X-CSE-ConnectionGUID: E9wYErGTRnKzSIjGyQD9nQ==
+X-CSE-MsgGUID: MkXQkhY9QliHaDHytXpRRA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11396"; a="49188873"
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="49188873"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 02:58:57 -0700
+X-CSE-ConnectionGUID: gePU7LjdQNOudI94bMbmxQ==
+X-CSE-MsgGUID: b+cGYl3FRTSdm+DLdTHl5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="128411722"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa010.fm.intel.com with ESMTP; 07 Apr 2025 02:58:55 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 744C4247; Mon, 07 Apr 2025 12:58:54 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH v2 0/6] i2c: core: Move client towards fwnode
+Date: Mon,  7 Apr 2025 12:55:11 +0300
+Message-ID: <20250407095852.215809-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] media: v4l: dev-decoder: Add source change
- V4L2_EVENT_SRC_CH_COLORSPACE
-To: Ming Qian <ming.qian@oss.nxp.com>, mchehab@kernel.org
-Cc: nicolas@ndufresne.ca, shawnguo@kernel.org, robh+dt@kernel.org,
- s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
- linux-imx@nxp.com, xiahong.bao@nxp.com, eagle.zhou@nxp.com,
- tao.jiang_2@nxp.com, imx@lists.linux.dev, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20250117061938.3923516-1-ming.qian@oss.nxp.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20250117061938.3923516-1-ming.qian@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 17/01/2025 07:19, Ming Qian wrote:
-> Add a new source change V4L2_EVENT_SRC_CH_COLORSPACE that
-> indicates colorspace change in the stream.
-> The change V4L2_EVENT_SRC_CH_RESOLUTION will always affect
-> the allocation, but V4L2_EVENT_SRC_CH_COLORSPACE won't.
-> 
-> Signed-off-by: Ming Qian <ming.qian@oss.nxp.com>
-> ---
->  Documentation/userspace-api/media/v4l/vidioc-dqevent.rst | 9 +++++++++
->  .../userspace-api/media/videodev2.h.rst.exceptions       | 1 +
->  include/uapi/linux/videodev2.h                           | 1 +
->  3 files changed, 11 insertions(+)
-> 
-> diff --git a/Documentation/userspace-api/media/v4l/vidioc-dqevent.rst b/Documentation/userspace-api/media/v4l/vidioc-dqevent.rst
-> index 8db103760930..91e6b86c976d 100644
-> --- a/Documentation/userspace-api/media/v4l/vidioc-dqevent.rst
-> +++ b/Documentation/userspace-api/media/v4l/vidioc-dqevent.rst
-> @@ -369,6 +369,15 @@ call.
->  	loss of signal and so restarting streaming I/O is required in order for
->  	the hardware to synchronize to the video signal.
->  
-> +    * - ``V4L2_EVENT_SRC_CH_COLORSPACE``
-> +      - 0x0002
-> +      - This event gets triggered when a colorsapce change is detected at
+The struct i2c_board_info has of_node and fwnode members. This is
+quite confusing as they are of the same semantics and it's tend
+to have an issue if user assigns both. Luckily there is only a
+single driver that does this and fix was sent today. Nevertheless
+the series moves the client handling code to use fwnode and deprecates
+the of_node member in the respective documentation.
 
-colorsapce -> colorspace
+Tomi, can you test this series + the patch we discussed earlier so it works as
+expected?
 
-> +	an input. This can come from a video decoder. Applications will query
+In v2:
+- covered i2c-core-slave.c where it makes sense
+- covered i2c-core-of.c where it makes sense
+- rebased on top of the latest code base
 
-It can also come from a video receiver. E.g. an HDMI source changes colorspace
-signaling, but not the resolution.
+Andy Shevchenko (6):
+  i2c: core: Drop duplicate check before calling OF APIs
+  i2c: core: Unify the firmware node type check
+  i2c: core: Switch to fwnode APIs to get IRQ
+  i2c: core: Reuse fwnode variable where it makes sense
+  i2c: core: Do not dereference fwnode in struct device
+  i2c: core: Deprecate of_node in struct i2c_board_info
 
-> +	the new colorspace information (if any, the signal may also have been
-> +	lost)
+ drivers/i2c/i2c-core-base.c  | 59 ++++++++++++++++++------------------
+ drivers/i2c/i2c-core-of.c    |  1 -
+ drivers/i2c/i2c-core-slave.c | 11 ++++---
+ include/linux/i2c.h          |  2 +-
+ 4 files changed, 37 insertions(+), 36 deletions(-)
 
-Missing . at the end. Also, if the signal is lost, then that is a CH_RESOLUTION
-change, not CH_COLORSPACE.
-
-> +
-> +	For stateful decoders follow the guidelines in :ref:`decoder`.
-
-I think this should emphasize that if CH_COLORSPACE is set, but not CH_RESOLUTION,
-then only the colorspace changed and there is no need to reallocate buffers.
-
-I also wonder if the description of CH_RESOLUTION should be enhanced to explain
-that this might also imply a colorspace change. I'm not sure what existing codec
-drivers do if there is a colorspace change but no resolution change.
-
-I'm a bit concerned about backwards compatibility issues: if a userspace application
-doesn't understand this new flag and just honors CH_RESOLUTION, then it would
-never react to just a colorspace change.
-
-Nicolas, does gstreamer look at these flags?
-
-Regards,
-
-	Hans
-
-> +
->  Return Value
->  ============
->  
-> diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exceptions b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
-> index 35d3456cc812..ac47c6d9448b 100644
-> --- a/Documentation/userspace-api/media/videodev2.h.rst.exceptions
-> +++ b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
-> @@ -526,6 +526,7 @@ replace define V4L2_EVENT_CTRL_CH_RANGE ctrl-changes-flags
->  replace define V4L2_EVENT_CTRL_CH_DIMENSIONS ctrl-changes-flags
->  
->  replace define V4L2_EVENT_SRC_CH_RESOLUTION src-changes-flags
-> +replace define V4L2_EVENT_SRC_CH_COLORSPACE src-changes-flags
->  
->  replace define V4L2_EVENT_MD_FL_HAVE_FRAME_SEQ :c:type:`v4l2_event_motion_det`
->  
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index c8cb2796130f..242242c8e57b 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -2559,6 +2559,7 @@ struct v4l2_event_frame_sync {
->  };
->  
->  #define V4L2_EVENT_SRC_CH_RESOLUTION		(1 << 0)
-> +#define V4L2_EVENT_SRC_CH_COLORSPACE		(1 << 1)
->  
->  struct v4l2_event_src_change {
->  	__u32 changes;
+-- 
+2.47.2
 
 
