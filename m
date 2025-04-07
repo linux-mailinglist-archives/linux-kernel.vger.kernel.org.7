@@ -1,67 +1,87 @@
-Return-Path: <linux-kernel+bounces-590686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC0D1A7D5EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:31:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 129B5A7D5DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CD703B6792
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:25:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0DF91892ECB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9E122B59D;
-	Mon,  7 Apr 2025 07:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E130322D78D;
+	Mon,  7 Apr 2025 07:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FCq1aAlo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QulxOSFM"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E7022A4F2;
-	Mon,  7 Apr 2025 07:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B9B22D7B2
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744010465; cv=none; b=UE2D7dQiVcxZ5cS0pUg8dTYt7uZDY/4NEU7B83u/NNNgn99P6+HKYhrXokH2OG54u869tZCU4i2176TafUJwFxtMduRv2Mo8wMi8VCKp5EaqjGGvzOcA5CH3rOMmOsTzOcTEg4aKSBGObK/ndLWVX61UbRavW4jSRxu8+nJiBEM=
+	t=1744010506; cv=none; b=orXNglRKrOtEwF79rs/YzQfzWnD/1xm8o1RRcgErJIrAGgw/f4d6mHwdZZX8ZSkUZefWd/lWvibiMMqKJDK34GapXqwbOUfjPwCNCYI78PLk21eghc6+WGG/X31QwdkXvpSZqS1vM2j64BpQQGu9jXUAdJumO1w/4oy8Wtzv+a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744010465; c=relaxed/simple;
-	bh=zTKxNvvZtoxntBZKdgelRQVrZfzC919L3UJ4SOuheOY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qRy3hfGN0SbgpIptvHhs+5pOlsZl4K2sU498as7UMp1qPonqUgjzGmVI5BAcD6pjetTjnhw18p2tVzZSA1lEfvdBw2tihhb7iVLCtNYemEeWQka1kWh4okKd6OW8rUe01WJVNYspAAm3X5JFPeiKZJEK5E92AcHRRkUPtLyfcgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FCq1aAlo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C62AEC4CEDD;
-	Mon,  7 Apr 2025 07:21:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744010464;
-	bh=zTKxNvvZtoxntBZKdgelRQVrZfzC919L3UJ4SOuheOY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FCq1aAlo0vKB5iK30TDh0dwYwkTE9k6HIdVkmRBqOgSMPrrA0vD71QlInKossJaqm
-	 JLpclX2Wi+vFme1QPFfH6776jm9285u2ye0CGmfmxCfjznnoDHyDTLu27pJXdE00wP
-	 kvXIDuGpYun8/Rach9/O02hoGskjYIKB3e5Kg3ZpUf67Kxr3fRfK5g5beGpc7X2/0J
-	 U6r4eMwLf+JBM3vPCIyzj8Zeyw3bePvZA6+bNR7mdpq438kX4Ebbd7mo8Ok6UlfefC
-	 j6Tf0htUtJTOnMSjVxHRkLHfisJvAR4Anz9hrxNl/40y94/0q9x/7XaexjrLPNc0F/
-	 AMWc4VCctJnkA==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: keyrings@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	stable@vger.kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	David Howells <dhowells@redhat.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Ignat Korchagin <ignat@cloudflare.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org
-Subject: [PATCH v3] tpm: Mask TPM RC in tpm2_start_auth_session()
-Date: Mon,  7 Apr 2025 10:20:57 +0300
-Message-Id: <20250407072057.81062-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250407071731.78915-1-jarkko@kernel.org>
-References: <20250407071731.78915-1-jarkko@kernel.org>
+	s=arc-20240116; t=1744010506; c=relaxed/simple;
+	bh=fAniwQ2l4Cj7KEk83CZ8a/6av2wQtDd8XL2PSrRIVME=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ukRmkHysZtWcQxZUZbWHEormPUr1dXdXjLCb+YvDj90Q3s2jwNbiHwfzH9Gbn0x6FCQcJ/tl1ldE9b+tsplgrcDcqVyulRKduRxRkZIvo3u0yDmZtJQSwYgFPdYx6bBL/s7QoWg+WajmswlbuTOqc8Cv3+DcyRnukp2YyQMtASY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QulxOSFM; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e61da95244so6668101a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 00:21:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744010502; x=1744615302; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F54nal2TDjFsjimAMiM7HlxBlU6Yyu5pByAT3w0izG0=;
+        b=QulxOSFMX7qjH2oJ9Fu8WVng/bbz/89d2ntEaQN0RN21aCMkHzwulVtvEpn7vZaYqx
+         bcOK33x949biTPoFwicq+Ti36ryuzFUM9amxkj+0/y2a4irc+fNrWQ1Xvy1TQjMf+UdR
+         Z5BMg3REZEGhOZauSZUrFnrnJeTqPG8sQtvfBqoEzWmSgHcm+9W99rjR1CVwg4h7Lxq4
+         6osMwKTtnpfyKIUQgih9jyLtUYkHFx3E26ncNU03e1upmckUCDTtHf+EybqY3S4S6KNV
+         AnUbQH+SK+o5sMju7da0v89E4icLegrI14vMaZ7HUooG8GhvOEIHtq1mOfAibJBXjPEQ
+         9F0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744010502; x=1744615302;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F54nal2TDjFsjimAMiM7HlxBlU6Yyu5pByAT3w0izG0=;
+        b=soZcp44B1InYwDRxtP/AyHzC10Qg/dpcoZP8/03T3ebpHRadV6emQsZoQQhPrMUw75
+         vTjFVsEKsdASR5W/jfRu5yWWfN1mYco2kdTyMgLmekIyGaEbMZw1IQAKB0ms81xK4p82
+         BRqU9nE3pTBY2BCZlca2NdE/8hrWqVhk32aQ+CK+ohABWev/sqN7kHHWhABR8RmfV9bg
+         3kQJo6oTegj/cMqEGVxIdSrL/b3qTh/t+VkbgGHnyRB6ZIC5cqsvDuqimZxvrNwcAIl5
+         OrFd12LDqYwL0OHmBbiNR4VjqTDGNq98uWMQrfX5PhCWYKNBp8PXtaM3VU+JrH+32VbL
+         aN7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUuj4mOAmZ+PjGiYkeYORWrSzTRJeFQA0rTkRK38Z7DHIPFMw0L52tP3NgYvZbTN/HgrubovKmwPyFxnq0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWd8GePKlqC36TF7lHmUTb0gdyJ3nRffZGIvtji7EQaDb+7grQ
+	6ayF6cHBVHxcXJ2tgs/631T0UcraBaTCnDDtwVRbYjtRAzMT+qYA
+X-Gm-Gg: ASbGnctrcjv4+8189cFMwYAxZULfxBWIEBqNdKbeNLeVaa8qW0EsTqQ2txmLT+xD0xP
+	sYlyFJgNs+E1nzDmtewK4cer9uwkOfiQfYqTKVqtRyU7fJQCCvTzyXeN4Vi9J5/eXhcb0UAbfbR
+	XDZk+vXQL/oi2E96HcLp1fFz6eOi8tClle5JLdN4/gBHDFtD5KPuuKtrrhY12/GAJpA/Wyw4mMS
+	Iej3eNLGWVIYVJs28jkFtJ3QiLDlofCEuEtprKUM0rOHC2yi7Rwf6F88/lhiOBSZloif/xd0lle
+	uZ9iYjkSrwDdGNGnlSbtq+pMF+7Y650/bWr7
+X-Google-Smtp-Source: AGHT+IG6zktGRolRnsUnshN1iGHF/Lubu+TAxgdAa3h3wMA/x8jcfYEbJfLM1j4E+UsIKNmSBWKyBA==
+X-Received: by 2002:a17:907:1c0e:b0:ac3:bdd2:e70c with SMTP id a640c23a62f3a-ac7d195c0e2mr1010089666b.35.1744010502037;
+        Mon, 07 Apr 2025 00:21:42 -0700 (PDT)
+Received: from fedora.. ([193.77.86.199])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7bfee3815sm694954066b.80.2025.04.07.00.21.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 00:21:41 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH RESEND -tip v2] x86/asm: Use asm_inline() instead of asm() in __untagged_addr()
+Date: Mon,  7 Apr 2025 09:21:04 +0200
+Message-ID: <20250407072129.33440-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,106 +90,137 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-tpm2_start_auth_session() does not mask TPM RC correctly from the callers:
+Use asm_inline() to instruct the compiler that the size of asm()
+is the minimum size of one instruction, ignoring how many instructions
+the compiler thinks it is. ALTERNATIVE macro that expands to several
+pseudo directives causes instruction length estimate to count
+more than 20 instructions.
 
-[   28.766528] tpm tpm0: A TPM error (2307) occurred start auth session
+bloat-o-meter reports minimal code size increase
+(x86_64 defconfig with CONFIG_ADDRESS_MASKING, gcc-14.2.1):
 
-Process TPM RCs inside tpm2_start_auth_session(), and map them to POSIX
-error codes.
+  add/remove: 2/2 grow/shrink: 5/1 up/down: 2365/-1995 (370)
 
-Cc: stable@vger.kernel.org # v6.10+
-Fixes: 699e3efd6c64 ("tpm: Add HMAC session start and end functions")
-Reported-by: Herbert Xu <herbert@gondor.apana.org.au>
-Closes: https://lore.kernel.org/linux-integrity/Z_NgdRHuTKP6JK--@gondor.apana.org.au/
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+	Function                          old     new   delta
+	-----------------------------------------------------
+	do_get_mempolicy                    -    1449   +1449
+	copy_nodes_to_user                  -     226    +226
+	__x64_sys_get_mempolicy            35     213    +178
+	syscall_user_dispatch_set_config  157     332    +175
+	__ia32_sys_get_mempolicy           31     206    +175
+	set_syscall_user_dispatch          29     181    +152
+	__do_sys_mremap                  2073    2083     +10
+	sp_insert                         133     117     -16
+	task_set_syscall_user_dispatch    172       -    -172
+	kernel_get_mempolicy             1807       -   -1807
+
+  Total: Before=21423151, After=21423521, chg +0.00%
+
+The code size increase is due to the compiler inlining
+more functions that inline untagged_addr(), e.g:
+
+task_set_syscall_user_dispatch() is now fully inlined in
+set_syscall_user_dispatch():
+
+	000000000010b7e0 <set_syscall_user_dispatch>:
+	  10b7e0:	f3 0f 1e fa          	endbr64
+	  10b7e4:	49 89 c8             	mov    %rcx,%r8
+	  10b7e7:	48 89 d1             	mov    %rdx,%rcx
+	  10b7ea:	48 89 f2             	mov    %rsi,%rdx
+	  10b7ed:	48 89 fe             	mov    %rdi,%rsi
+	  10b7f0:	65 48 8b 3d 00 00 00 	mov    %gs:0x0(%rip),%rdi
+	  10b7f7:	00
+	  10b7f8:	e9 03 fe ff ff       	jmp    10b600 <task_set_syscall_user_dispatch>
+
+that after inlining becomes:
+
+	000000000010b730 <set_syscall_user_dispatch>:
+	  10b730:	f3 0f 1e fa          	endbr64
+	  10b734:	65 48 8b 05 00 00 00 	mov    %gs:0x0(%rip),%rax
+	  10b73b:	00
+	  10b73c:	48 85 ff             	test   %rdi,%rdi
+	  10b73f:	74 54                	je     10b795 <set_syscall_user_dispatch+0x65>
+	  10b741:	48 83 ff 01          	cmp    $0x1,%rdi
+	  10b745:	74 06                	je     10b74d <set_syscall_user_dispatch+0x1d>
+	  10b747:	b8 ea ff ff ff       	mov    $0xffffffea,%eax
+	  10b74c:	c3                   	ret
+	  10b74d:	48 85 f6             	test   %rsi,%rsi
+	  10b750:	75 7b                	jne    10b7cd <set_syscall_user_dispatch+0x9d>
+	  10b752:	48 85 c9             	test   %rcx,%rcx
+	  10b755:	74 1a                	je     10b771 <set_syscall_user_dispatch+0x41>
+	  10b757:	48 89 cf             	mov    %rcx,%rdi
+	  10b75a:	49 b8 ef cd ab 89 67 	movabs $0x123456789abcdef,%r8
+	  10b761:	45 23 01
+	  10b764:	90                   	nop
+	  10b765:	90                   	nop
+	  10b766:	90                   	nop
+	  10b767:	90                   	nop
+	  10b768:	90                   	nop
+	  10b769:	90                   	nop
+	  10b76a:	90                   	nop
+	  10b76b:	90                   	nop
+	  10b76c:	49 39 f8             	cmp    %rdi,%r8
+	  10b76f:	72 6e                	jb     10b7df <set_syscall_user_dispatch+0xaf>
+	  10b771:	48 89 88 48 08 00 00 	mov    %rcx,0x848(%rax)
+	  10b778:	48 89 b0 50 08 00 00 	mov    %rsi,0x850(%rax)
+	  10b77f:	48 89 90 58 08 00 00 	mov    %rdx,0x858(%rax)
+	  10b786:	c6 80 60 08 00 00 00 	movb   $0x0,0x860(%rax)
+	  10b78d:	f0 80 48 08 20       	lock orb $0x20,0x8(%rax)
+	  10b792:	31 c0                	xor    %eax,%eax
+	  10b794:	c3                   	ret
+	  10b795:	48 09 d1             	or     %rdx,%rcx
+	  10b798:	48 09 f1             	or     %rsi,%rcx
+	  10b79b:	75 aa                	jne    10b747 <set_syscall_user_dispatch+0x17>
+	  10b79d:	48 c7 80 48 08 00 00 	movq   $0x0,0x848(%rax)
+	  10b7a4:	00 00 00 00
+	  10b7a8:	48 c7 80 50 08 00 00 	movq   $0x0,0x850(%rax)
+	  10b7af:	00 00 00 00
+	  10b7b3:	48 c7 80 58 08 00 00 	movq   $0x0,0x858(%rax)
+	  10b7ba:	00 00 00 00
+	  10b7be:	c6 80 60 08 00 00 00 	movb   $0x0,0x860(%rax)
+	  10b7c5:	f0 80 60 08 df       	lock andb $0xdf,0x8(%rax)
+	  10b7ca:	31 c0                	xor    %eax,%eax
+	  10b7cc:	c3                   	ret
+	  10b7cd:	48 8d 3c 16          	lea    (%rsi,%rdx,1),%rdi
+	  10b7d1:	48 39 fe             	cmp    %rdi,%rsi
+	  10b7d4:	0f 82 78 ff ff ff    	jb     10b752 <set_syscall_user_dispatch+0x22>
+	  10b7da:	e9 68 ff ff ff       	jmp    10b747 <set_syscall_user_dispatch+0x17>
+	  10b7df:	b8 f2 ff ff ff       	mov    $0xfffffff2,%eax
+	  10b7e4:	c3                   	ret
+
+Please note a series of NOPs that get replaced with an alternative:
+
+	    11f0:	65 48 23 05 00 00 00 	and    %gs:0x0(%rip),%rax
+	    11f7:	00
+
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
 ---
-v3:
-- rc > 0
-v2:
-- Investigate TPM rc only after destroying tpm_buf.
+v2: Include asm dumps of inlining in the commit message.
 ---
- drivers/char/tpm/tpm2-sessions.c | 31 +++++++++++++++++--------------
- include/linux/tpm.h              |  1 +
- 2 files changed, 18 insertions(+), 14 deletions(-)
+ arch/x86/include/asm/uaccess_64.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-index 3f89635ba5e8..abd54fb0a45a 100644
---- a/drivers/char/tpm/tpm2-sessions.c
-+++ b/drivers/char/tpm/tpm2-sessions.c
-@@ -40,11 +40,6 @@
-  *
-  * These are the usage functions:
-  *
-- * tpm2_start_auth_session() which allocates the opaque auth structure
-- *	and gets a session from the TPM.  This must be called before
-- *	any of the following functions.  The session is protected by a
-- *	session_key which is derived from a random salt value
-- *	encrypted to the NULL seed.
-  * tpm2_end_auth_session() kills the session and frees the resources.
-  *	Under normal operation this function is done by
-  *	tpm_buf_check_hmac_response(), so this is only to be used on
-@@ -963,16 +958,13 @@ static int tpm2_load_null(struct tpm_chip *chip, u32 *null_key)
- }
- 
- /**
-- * tpm2_start_auth_session() - create a HMAC authentication session with the TPM
-- * @chip: the TPM chip structure to create the session with
-+ * tpm2_start_auth_session() - Create an a HMAC authentication session
-+ * @chip:	A TPM chip
-  *
-- * This function loads the NULL seed from its saved context and starts
-- * an authentication session on the null seed, fills in the
-- * @chip->auth structure to contain all the session details necessary
-- * for performing the HMAC, encrypt and decrypt operations and
-- * returns.  The NULL seed is flushed before this function returns.
-+ * Loads the ephemeral key (null seed), and starts an HMAC authenticated
-+ * session. The null seed is flushed before the return.
-  *
-- * Return: zero on success or actual error encountered.
-+ * Returns zero on success, or a POSIX error code.
+diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
+index c52f0133425b..3c1bec3a0405 100644
+--- a/arch/x86/include/asm/uaccess_64.h
++++ b/arch/x86/include/asm/uaccess_64.h
+@@ -26,8 +26,8 @@ extern unsigned long USER_PTR_MAX;
   */
- int tpm2_start_auth_session(struct tpm_chip *chip)
+ static inline unsigned long __untagged_addr(unsigned long addr)
  {
-@@ -1024,7 +1016,7 @@ int tpm2_start_auth_session(struct tpm_chip *chip)
- 	/* hash algorithm for session */
- 	tpm_buf_append_u16(&buf, TPM_ALG_SHA256);
+-	asm (ALTERNATIVE("",
+-			 "and " __percpu_arg([mask]) ", %[addr]", X86_FEATURE_LAM)
++	asm_inline (ALTERNATIVE("", "and " __percpu_arg([mask]) ", %[addr]",
++				X86_FEATURE_LAM)
+ 	     : [addr] "+r" (addr)
+ 	     : [mask] "m" (__my_cpu_var(tlbstate_untag_mask)));
  
--	rc = tpm_transmit_cmd(chip, &buf, 0, "start auth session");
-+	rc = tpm_transmit_cmd(chip, &buf, 0, "StartAuthSession");
- 	tpm2_flush_context(chip, null_key);
- 
- 	if (rc == TPM2_RC_SUCCESS)
-@@ -1032,6 +1024,17 @@ int tpm2_start_auth_session(struct tpm_chip *chip)
- 
- 	tpm_buf_destroy(&buf);
- 
-+	if (rc > 0) {
-+		switch (rc) {
-+		case TPM2_RC_SESSION_MEMORY:
-+			rc = -ENOMEM;
-+			goto out;
-+		default:
-+			rc = -EFAULT;
-+			goto out;
-+		}
-+	}
-+
- 	if (rc == TPM2_RC_SUCCESS) {
- 		chip->auth = auth;
- 		return 0;
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 6c3125300c00..c1d3d60b416f 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -257,6 +257,7 @@ enum tpm2_return_codes {
- 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
- 	TPM2_RC_REFERENCE_H0	= 0x0910,
- 	TPM2_RC_RETRY		= 0x0922,
-+	TPM2_RC_SESSION_MEMORY	= 0x0903,
- };
- 
- enum tpm2_command_codes {
 -- 
-2.39.5
+2.49.0
 
 
