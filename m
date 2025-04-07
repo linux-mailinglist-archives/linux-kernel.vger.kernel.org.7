@@ -1,59 +1,61 @@
-Return-Path: <linux-kernel+bounces-591491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B440A7E089
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:09:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF59A7E08D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8F1E18998DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:02:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 880181881C88
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5241B87E9;
-	Mon,  7 Apr 2025 14:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38AB1C32EA;
+	Mon,  7 Apr 2025 14:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hsjVPpQ/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H7iqKZWk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AE91C3BE1
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 14:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F151B424E
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 14:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744034529; cv=none; b=Q0CojdN4mNmfc47FFduudohqG20yZDMIinEqOZLT8yJ65zrDIowTWuXRtjHrfZiWrZaR5R6ptst3Wh/0/gsUQs9a9L1p3CoInuJZidoqhsr92AwjovzwjetkK+Oz5BuNw3ThFw4IFi/1RCaPD3mvtW53yw9K/VB12nBQivGA5pA=
+	t=1744034543; cv=none; b=N+OWajogLVS/shWSB82rN42uzhAUdF9qqoHciZFZNrvcBbRfbgs/oT6IkHP6lmwekIDOADyxL/8Q8vQ2vNtyGAu+R4YVNL/l4STkL4V/tfxI/LgRgHVLlUN1nf5SM6me1OKiDqzEMqm7fYYB7kmrWqqE5GQ5UjphxSo0tqaN5i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744034529; c=relaxed/simple;
-	bh=B2vxhJgkaB1DTF+EfRvc4gjBoqFcl3I2MjR6CXdmHOo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F9gTUQpJSBWcPwde5za1JoE+vH7xWVOLp+K5rrMoq8ga86bScniwAosYQCHnq7CEOVpHnOASFPPEgJhS8f0VIF69BoPosqMxKmWkqQHsua60TKo2QMAVVG9gcqoPK/4ZfnGSzIyFLMf+1A+1A93TFygvBWl5fZ/3eL0FSqXJZH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hsjVPpQ/; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1744034543; c=relaxed/simple;
+	bh=GX9LLC34yNkqkN+BXKeewvPrA+9S9eWb5zVbgyI8Acs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BfsnhUogFdP8HfAriXtPGN4I5OI/ZDilWRIiyGWkQdAKOO8Dek9N+jOPadtH+gIZunV218HjUyURnNetoqmQEa4KN29c1skJoVBNQUSRkIM4exHF3xcIspSJ/kaN2kyMobxiAR3dUf9dQHGks35Butubn+X4E3mc5T0M0+hO3vM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H7iqKZWk; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744034527;
+	s=mimecast20190719; t=1744034540;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=1Q+gQlDrMOfjGrlEjwGCJBXtgRU8uY1eeO/aQN+gl+g=;
-	b=hsjVPpQ/BNJfxk4tZXVqKXtPjJ5AKikkwGpC/Yyi4w58Woh9+/u5WE09ykmN96GcBOoTKF
-	2W93stoq9DGSmhj3DYm8mxUVRIEURk6+GXOvTwXSNkaN0j3ZevsSATwXKUYEXBaJB2IcHr
-	PF8Gua1TCX3h0Qc2b4isf/pjbz/Atc4=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vENbc4ukB5avy4pU0jrZtrgOnkO/88BBJDuqluu8e/I=;
+	b=H7iqKZWkkQYxx6YN8jyu38nFyL0UUrEGHI+i6To7bsR4sEBG3pWCzl6P/eVxhXfuvOzspK
+	W5rXjdmIruxcjb8e6hcN8f/1XLDMqpp/3Vplr17MrKJs6KfgR5HYIPcsH/qAjKqBv/xv8h
+	dlZueX9XQPVqd5G9PiZXPeEtNfFaU/Y=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-326-QPHcBfKnOV-i9Y4rA6L0rg-1; Mon,
- 07 Apr 2025 10:02:02 -0400
-X-MC-Unique: QPHcBfKnOV-i9Y4rA6L0rg-1
-X-Mimecast-MFC-AGG-ID: QPHcBfKnOV-i9Y4rA6L0rg_1744034520
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-303-dnITgcH6OnK00oLE9CQxYA-1; Mon,
+ 07 Apr 2025 10:02:15 -0400
+X-MC-Unique: dnITgcH6OnK00oLE9CQxYA-1
+X-Mimecast-MFC-AGG-ID: dnITgcH6OnK00oLE9CQxYA_1744034526
 Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C17351955E79;
-	Mon,  7 Apr 2025 14:01:59 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F251A1828AD4;
+	Mon,  7 Apr 2025 14:02:05 +0000 (UTC)
 Received: from hydra.redhat.com (unknown [10.45.225.175])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 44192190DB07;
-	Mon,  7 Apr 2025 14:01:52 +0000 (UTC)
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4EDB6192C7C3;
+	Mon,  7 Apr 2025 14:02:00 +0000 (UTC)
 From: Jocelyn Falempe <jfalempe@redhat.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
@@ -70,10 +72,13 @@ To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	linux-mm@kvack.org,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Cc: Jocelyn Falempe <jfalempe@redhat.com>
-Subject: [PATCH v3 0/2] drm/panic: Add support to scanout buffer as array of pages
-Date: Mon,  7 Apr 2025 15:42:24 +0200
-Message-ID: <20250407140138.162383-1-jfalempe@redhat.com>
+Cc: Jocelyn Falempe <jfalempe@redhat.com>,
+	Simona Vetter <simona.vetter@ffwll.ch>
+Subject: [PATCH v3 1/2] mm/kmap: Add kmap_local_page_try_from_panic()
+Date: Mon,  7 Apr 2025 15:42:25 +0200
+Message-ID: <20250407140138.162383-2-jfalempe@redhat.com>
+In-Reply-To: <20250407140138.162383-1-jfalempe@redhat.com>
+References: <20250407140138.162383-1-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,41 +88,52 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Some drivers like virtio-gpu, don't map the scanout buffer in the
-kernel. Calling vmap() in a panic handler is not safe, and writing an
-atomic_vmap() API is more complex than expected [1].
-So instead, pass the array of pages of the scanout buffer to the
-panic handler, and map only one page at a time to draw the pixels.
-This is obviously slow, but acceptable for a panic handler.
-As kmap_local_page() is not safe to call from a panic handler,
-introduce a kmap_local_page_try_from_panic() that will avoid unsafe
-operations.
+kmap_local_page() can be unsafe to call from a panic handler, if
+CONFIG_HIGHMEM is set, and the page is in the highmem zone.
+So add kmap_local_page_try_from_panic() to handle this case.
 
-[1] https://lore.kernel.org/dri-devel/20250305152555.318159-1-ryasuoka@redhat.com/
-
-v2:
- * Add kmap_local_page_try_from_panic() (Simona Vetter)
- * Correctly handle the case if kmap_local_page_try_from_panic()
-   returns NULL
- * Check that the current page is not NULL before trying to map it.
- * Add a comment in struct drm_scanout_buffer, that the array of
-   pages shouldn't be allocated in the get_scanout_buffer() callback.
+Suggested-by: Simona Vetter <simona.vetter@ffwll.ch>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+---
 
 v3:
- * Replace DRM_WARN_ONCE with pr_debug_once (Simona Vetter)
  * Add a comment in kmap_local_page_try_from_panic() (Thomas Gleixner)
+ 
+ include/linux/highmem-internal.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Jocelyn Falempe (2):
-  mm/kmap: Add kmap_local_page_try_from_panic()
-  drm/panic: Add support to scanout buffer as array of pages
-
- drivers/gpu/drm/drm_panic.c      | 142 +++++++++++++++++++++++++++++--
- include/drm/drm_panic.h          |  12 ++-
- include/linux/highmem-internal.h |  13 +++
- 3 files changed, 160 insertions(+), 7 deletions(-)
-
-
-base-commit: fbe43810d563a293e3de301141d33caf1f5d5c5a
+diff --git a/include/linux/highmem-internal.h b/include/linux/highmem-internal.h
+index dd100e849f5e0..9a7683d79a4b1 100644
+--- a/include/linux/highmem-internal.h
++++ b/include/linux/highmem-internal.h
+@@ -73,6 +73,14 @@ static inline void *kmap_local_page(struct page *page)
+ 	return __kmap_local_page_prot(page, kmap_prot);
+ }
+ 
++static inline void *kmap_local_page_try_from_panic(struct page *page)
++{
++	if (!PageHighMem(page))
++		return page_address(page);
++	/* If the page is in HighMem, it's not safe to kmap it.*/
++	return NULL;
++}
++
+ static inline void *kmap_local_folio(struct folio *folio, size_t offset)
+ {
+ 	struct page *page = folio_page(folio, offset / PAGE_SIZE);
+@@ -180,6 +188,11 @@ static inline void *kmap_local_page(struct page *page)
+ 	return page_address(page);
+ }
+ 
++static inline void *kmap_local_page_try_from_panic(struct page *page)
++{
++	return page_address(page);
++}
++
+ static inline void *kmap_local_folio(struct folio *folio, size_t offset)
+ {
+ 	return page_address(&folio->page) + offset;
 -- 
 2.49.0
 
