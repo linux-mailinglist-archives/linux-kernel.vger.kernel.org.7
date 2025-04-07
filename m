@@ -1,148 +1,317 @@
-Return-Path: <linux-kernel+bounces-591622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B13CA7E312
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:05:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B31A7E2C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A2FF4203AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:44:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38B973BD316
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55781F63F9;
-	Mon,  7 Apr 2025 14:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6941F91CD;
+	Mon,  7 Apr 2025 14:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BlBkOwui"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="fN5GjTFb"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B5D1F63F0;
-	Mon,  7 Apr 2025 14:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E051F8ACA
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 14:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744036738; cv=none; b=QxfaSpmB4Au0+oiQv66VEIrTvQMqhgU67MYiIzUKmVbAg+z0GOK9+Il/eY3i2/tvxFmINEoFRmK7n5lXpf17DD1ggj8/N4rd+Y2f31QPM9O0FKzGPvotpxuV69tnJWSaDb8eNM9wOKZS4Q12D76iqtWJSb7UOWTirMdWDZMPdz4=
+	t=1744036770; cv=none; b=YW+vmZ0t8Pa72aJLid/fPwh/z6tlmrmvwAokHGBj3JilUVS5xejldEOjGjrk47oTP5tqFcGcma2e/7lVX/aPeJnbQfh1Z7u6xRigsYDrTgvCO1RalcqzmyBt+5XfPElhXS+/XGXOh8PLFyePUKjKI6HEFVBaqxUhgbWxS43bC4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744036738; c=relaxed/simple;
-	bh=v0CkWDkwF9G6LUp8uQSKwk1DnyOq5vA/pKSgSCmoEmQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZGzC2zgQ49SBRL54ICpnSNUbfBvy56borXh9lbAiiMPR1TPKooRKFWzxnedFfNnc4s+NJeZwaqNL2H/hFQxGyP91bPIcw7vwaXOaOoaQgGWDANnBt74k5JJdbLYovxEDYr6Oi6i0V7TQ6r0wauR37/EzjRNjnGqs82uZFjpY7LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BlBkOwui; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744036737; x=1775572737;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=v0CkWDkwF9G6LUp8uQSKwk1DnyOq5vA/pKSgSCmoEmQ=;
-  b=BlBkOwuicBYvi5J8rKtzpghkrOGuq7P4WsOBsCFj6SP0McE3PsfJGCuc
-   I4PjdpdeM0A21xjSA75+FGvJLnA/TQtsZ7+Ox15vEaJwzpai658JuY73N
-   WKpXtqDAF2Xm0fo9sIV+QzXRRMF1sjO2wVk9GpenaOM7fsaYM0TtiV0CL
-   ncY1wh5hbk0Khy01+b1yn8o/frTXBTLQC4tyqqSGCgDFB1LXgmYbyXmbf
-   2d+bylC0HSS9jYEZ6WkY6Zl1rmPHdyhY5majSXeS/brJpP+JSpweKA/jX
-   f1chs2eszW7QtqX2A+sJvd9rQ2rz7JEH7iDtDHCBwrtn6qTJU8Xt0AkzN
-   A==;
-X-CSE-ConnectionGUID: F+GnsYhKT3G0xNEDA92ksA==
-X-CSE-MsgGUID: axv900V4TGOnp11cnLc20g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45317020"
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="45317020"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 07:38:57 -0700
-X-CSE-ConnectionGUID: Gm/frhL9SNWGIx0q/Dk7nA==
-X-CSE-MsgGUID: iuYdIwZ3SeGfplcDZKcLUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="127727480"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 07:38:56 -0700
-Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id F01AA20B5736;
-	Mon,  7 Apr 2025 07:38:54 -0700 (PDT)
-Message-ID: <f872c998-c076-4e09-8f7d-1ad29a065d4a@linux.intel.com>
-Date: Mon, 7 Apr 2025 10:38:53 -0400
+	s=arc-20240116; t=1744036770; c=relaxed/simple;
+	bh=5kp8PPBaK61r0wChFF68uWqa9pgYUvTDEPd4rfJLJsA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=q5zn7xXVLQOgsDNFPsJn0rSTddHsXMnqb04zmIvIlnd5Iu1CU/b8m/nxVvtvlzbc+qy3X1GHmzF0CeZauR9Incidq5tLUYaYQ4BSAwcMgAJgACc5NBCUKZeq4GrpSSguZsKtrhK6W54YssMqImixL+PmebCBGHutBlsB7YBiBKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=fN5GjTFb; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 537Ed08q2460483
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 7 Apr 2025 07:39:01 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 537Ed08q2460483
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025032001; t=1744036741;
+	bh=/zL7bjgebP0zbMt+g4HvzqGcWFQYJdlAJIVbZykhoUw=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=fN5GjTFbZ66xPfwMZZVR7tTmoxkvWZtQFZg+kdXreFUAiBS2RoQyEG7xeQFtayOVy
+	 Sp76BaR4YI+elTem+4bjZUMjHfKnKXc7MGk1D85jjqvAJ4ERYrGVSFn7Wff0npBCZA
+	 V8JZqWQMX/JZi7fs5djE4MUXt/SR/Zt5/xyozr7eXLv8o+s89QRUYfaE5BzklD++YH
+	 k84CJAeGJ1dNnh2BFQ9e73mbqxDKnv3T1xeyGsQIvmAkHNHd9jwF/vveyhYR9SE5Yq
+	 3AT9pNS8UPTcyv4fmmpog1106vnselY2m+AvPOcU8GAGlVjkj+D5EfkXobs1IxUbyu
+	 fqc5mb39K+5Ow==
+Date: Mon, 07 Apr 2025 07:38:59 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Kevin Koster <lkml@ombertech.com>, Borislav Petkov <bp@alien8.de>
+CC: Thomas Gleixner <tglx@linutronix.de>, Oerg866 <oerg866@googlemail.com>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_x86/microcode=3A_Fix_crashes_o?=
+ =?US-ASCII?Q?n_early_486_CPUs_due_to_usage_of_=27cpuid=27=2E?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250408002150.8955343f4e2f2ac31b4663e8@ombertech.com>
+References: <CANpbe9Wm3z8fy9HbgS8cuhoj0TREYEEkBipDuhgkWFvqX0UoVQ@mail.gmail.com> <20250405130306.ca9822c1f27db119cc973603@ombertech.com> <20250405093127.GAZ_D4b6NdyTS-UW1J@fat_crate.local> <20250406164049.c0666bc18073e3b88c92d1f1@ombertech.com> <20250406174633.2c581923c145687476191753@ombertech.com> <20250406190253.GAZ_LP3RPZInWKcHN7@fat_crate.local> <20250407095848.7933a358c9f450fe03fb8234@ombertech.com> <20250407102927.GAZ_OpBw5hJ2QTFsKz@fat_crate.local> <20250408002150.8955343f4e2f2ac31b4663e8@ombertech.com>
+Message-ID: <A08760B5-0E1A-4D21-8621-73516D1D67F0@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linus:master] [perf/x86] 88ec7eedbb: kvm-unit-tests.pmu_lbr.fail
-To: kernel test robot <oliver.sang@intel.com>,
- Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
- Ingo Molnar <mingo@kernel.org>, Ravi Bangoria <ravi.bangoria@amd.com>,
- Peter Zijlstra <peterz@infradead.org>, linux-perf-users@vger.kernel.org
-References: <202504071232.3c2fa7d5-lkp@intel.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <202504071232.3c2fa7d5-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On April 7, 2025 7:21:50 AM PDT, Kevin Koster <lkml@ombertech=2Ecom> wrote:
+>On Mon, 7 Apr 2025 12:29:27 +0200
+>Borislav Petkov <bp@alien8=2Ede> wrote:
+>
+>> On Mon, Apr 07, 2025 at 09:58:48AM +1000, Kevin Koster wrote:
+>> > But I like to know Linux really works on the hardware it's built
+>> > for,
+>>=20
+>> I don't know what that means=2E
+>
+>To rephrase: I like knowing that "CONFIG_M486=3Dy" works, in the kernel
+>configuration=2E If not, then I know to use other OSs if I want to boot a
+>486=2E
+>
+>> > and I'm not much better, writing this now on a Pentium 1=2E
+>>=20
+>> Lemme guess: this is your main machine you use for daily work?
+>
+>For email/news every morning, then a (newer) laptop afterwards=2E
+>
+>> > > -	if (dis_ucode_ldr || c->x86_vendor !=3D X86_VENDOR_AMD || c->x86 =
+< 0x10)
+>> > > +	if (microcode_loader_disabled() || c->x86_vendor !=3D X86_VENDOR_=
+AMD || c->x86 < 0x10)
+>> > 		return 0;
+>> >=20
+>> > Still fails unless the native_cpuid_eax(1) call is moved under
+>> > here=2E After that change, it boots fine=2E
+>>=20
+>> Please show me with a diff what you're doing because I don't know
+>> what you mean=2E
+>
+>OK, this is the change I made after applying your patch:
+>
+>--- a/arch/x86/kernel/cpu/microcode/amd=2Ec
+>+++ b/arch/x86/kernel/cpu/microcode/amd=2Ec
+>@@ -1093,7 +1093,7 @@
+>=20
+> static int __init save_microcode_in_initrd(void)
+> {
+>-	unsigned int cpuid_1_eax =3D native_cpuid_eax(1);
+>+	unsigned int cpuid_1_eax;
+>	struct cpuinfo_x86 *c =3D &boot_cpu_data;
+>	struct cont_desc desc =3D { 0 };
+>	enum ucode_state ret;
+>@@ -1102,6 +1102,8 @@
+>	if (microcode_loader_disabled() || c->x86_vendor !=3D X86_VENDOR_AMD || =
+c->x86 < 0x10)
+>		return 0;
+>=20
+>+	cpuid_1_eax =3D native_cpuid_eax(1);
+>+
+>	if (!find_blobs_in_containers(&cp))
+>		return -EINVAL;
+>
+>> I did this:
+>>=20
+>> bool have_cpuid_p(void)
+>> {
+>>         return false;
+>> }
+>>=20
+>> in order to simulate no CPUID support but my 32-bit guest boots fine=2E
+>
+>It's detecting no CPUID support on 486 CPUs OK, however
+>save_microcode_in_initrd() uses CPUID before checking if it is
+>supported=2E
+>
+>> Also, send a full dmesg from that machine so that I can try to
+>> reproduce here=2E
+>
+>This is with your latest patch applied, without my above change:
+>
+>No EFI environment detected=2E
+>early console in extract_kernel
+>input_data: 0x007d1094
+>input_len: 0x005aa603
+>output: 0x00100000
+>output_len: 0x00bb42d8
+>kernel_total_size: 0x00c9a000
+>needed_size: 0x00c9a000
+>
+>Decompressing Linux=2E=2E=2E Parsing ELF=2E=2E=2E No relocation needed=2E=
+=2E=2E done=2E
+>Booting the kernel (entry_offset: 0x00751e00)=2E
+>Linux version 6=2E14=2E0 (cnk2@ombertech) (gcc (Debian 12=2E2=2E0-14) 12=
+=2E2=2E0, GNU ld (GNU Binutils for Debian) 2=2E40) #3 SMP Sun Apr  6 21:54:=
+11 UTC 2025
+>BIOS-provided physical RAM map:
+>BIOS-e820: [mem 0x0000000000000000-0x0000000000004c1f] usable
+>BIOS-e820: [mem 0x0000000000004c20-0x000000000000501f] reserved
+>BIOS-e820: [mem 0x0000000000005020-0x000000000009ffff] usable
+>BIOS-e820: [mem 0x00000000000f5a3c-0x00000000000fffff] reserved
+>BIOS-e820: [mem 0x0000000000100000-0x00000000013fffff] usable
+>BIOS-e820: [mem 0x00000000ffff5a3c-0x00000000ffffffff] reserved
+>printk: legacy console [earlyser0] enabled
+>printk: debug: ignoring loglevel setting=2E
+>Notice: NX (Execute Disable) protection missing in CPU!
+>APIC: Static calls initialized
+>DMI not present or invalid=2E
+>e820: update [mem 0x00000000-0x00000fff] usable =3D=3D> reserved
+>e820: remove [mem 0x000a0000-0x000fffff] usable
+>last_pfn =3D 0x1400 max_arch_pfn =3D 0x100000
+>MTRRs disabled (not available)
+>x86/PAT: PAT not supported by the CPU=2E
+>x86/PAT: Configuration [0-7]: WB  WT  UC- UC  WB  WT  UC- UC =20
+>initial memory mapped: [mem 0x00000000-0x00ffffff]
+>0MB HIGHMEM available=2E
+>20MB LOWMEM available=2E
+>  mapped low ram: 0 - 01400000
+>  low ram: 0 - 01400000
+>Zone ranges:
+>  DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+>  Normal   [mem 0x0000000001000000-0x00000000013fffff]
+>  HighMem  empty
+>Movable zone start for each node
+>Early memory node ranges
+>  node   0: [mem 0x0000000000001000-0x0000000000003fff]
+>  node   0: [mem 0x0000000000006000-0x000000000009ffff]
+>  node   0: [mem 0x0000000000100000-0x00000000013fffff]
+>Initmem setup node 0 [mem 0x0000000000001000-0x00000000013fffff]
+>On node 0, zone DMA: 1 pages in unavailable ranges
+>On node 0, zone DMA: 2 pages in unavailable ranges
+>On node 0, zone DMA: 96 pages in unavailable ranges
+>No local APIC present or hardware disabled
+>APIC: disable apic facility
+>APIC: Switched APIC routing to: noop
+>CPU topo: Max=2E logical packages:   1
+>CPU topo: Max=2E logical dies:       1
+>CPU topo: Max=2E dies per package:   1
+>CPU topo: Max=2E threads per core:   1
+>CPU topo: Num=2E cores per package:     1
+>CPU topo: Num=2E threads per package:   1
+>CPU topo: Allowing 1 present CPUs plus 0 hotplug CPUs
+>PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]
+>PM: hibernation: Registered nosave memory: [mem 0x00004000-0x00004fff]
+>PM: hibernation: Registered nosave memory: [mem 0x00005000-0x00005fff]
+>PM: hibernation: Registered nosave memory: [mem 0x000a0000-0x000f5fff]
+>PM: hibernation: Registered nosave memory: [mem 0x000f6000-0x000fffff]
+>[mem 0x01400000-0xffff5a3b] available for PCI devices
+>Booting paravirtualized kernel on bare hardware
+>clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, ma=
+x_idle_ns: 6370452778343963 ns
+>setup_percpu: NR_CPUS:8 nr_cpumask_bits:1 nr_cpu_ids:1 nr_node_ids:1
+>percpu: Embedded 30 pages/cpu s91852 r0 d31028 u122880
+>pcpu-alloc: s91852 r0 d31028 u122880 alloc=3D30*4096
+>pcpu-alloc: [0] 0=20
+>Kernel command line: root=3D/dev/sda3 rw base udev=2Echildren-max=3D1 acp=
+i=3Doff earlyprintk=3DttyS0,115200,keep ignore_loglevel BOOT_IMAGE=3D614-48=
+64
+>Unknown kernel command line parameters "base BOOT_IMAGE=3D614-4864", will=
+ be passed to user space=2E
+>printk: log buffer data + meta data: 131072 + 409600 =3D 540672 bytes
+>Dentry cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+>Inode-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+>Built 1 zonelists, mobility grouping on=2E  Total pages: 5021
+>mem auto-init: stack:off, heap alloc:off, heap free:off
+>Initializing HighMem for node 0 (00000000:00000000)
+>Checking if this processor honours the WP bit even in supervisor mode=2E=
+=2E=2EOk=2E
+>SLUB: HWalign=3D32, Order=3D0-3, MinObjects=3D0, CPUs=3D1, Nodes=3D1
+>rcu: Hierarchical RCU implementation=2E
+>rcu: 	RCU restricting CPUs from NR_CPUS=3D8 to nr_cpu_ids=3D1=2E
+>	Tracing variant of Tasks RCU enabled=2E
+>rcu: RCU calculated value of scheduler-enlistment delay is 30 jiffies=2E
+>rcu: Adjusting geometry for rcu_fanout_leaf=3D16, nr_cpu_ids=3D1
+>RCU Tasks Trace: Setting shift to 0 and lim to 1 rcu_task_cb_adjust=3D1 r=
+cu_task_cpu_ids=3D1=2E
+>NR_IRQS: 2304, nr_irqs: 32, preallocated irqs: 16
+>rcu: srcu_init: Setting srcu_struct sizes based on contention=2E
+>Console: colour VGA+ 80x60
+>printk: legacy console [tty0] enabled
+>APIC: Keep in PIC mode(8259)
+>Calibrating delay loop=2E=2E=2E 30=2E96 BogoMIPS (lpj=3D51136)
+>Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
+>Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+>x86/fpu: Probing for FPU: FSW=3D0x0000 FCW=3D0x037f
+>x86/fpu: x87 FPU will use FSAVE
+>Freeing SMP alternatives memory: 24K
+>pid_max: default: 32768 minimum: 301
+>Mount-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+>Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+>smpboot: SMP disabled
+>Performance Events: no PMU driver, software events only=2E
+>signal: max sigframe size: 928
+>Oops: invalid opcode: 0000 [#1] SMP
+>CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6=2E14=2E0 #3
+>EIP: 0xc0b5e1da
+>Code: 7d dc 00 74 0b b9 07 00 00 00 89 df b0 01 f3 a5 83 c4 1c 5b 5e 5f 5=
+d c3 55 b8 01 00 00 00 89 e5 57 56 31 f6 53 89 f1 83 ec 30 <0f> a2 b9 04 00=
+ 00 00 89 45 c4 8d 7d c8 89 f0 f3 ab e8 3c fb ff ff
+>EAX: 00000001 EBX: c0be6b00 ECX: 00000000 EDX: 00000246
+>ESI: 00000000 EDI: 00000000 EBP: c1309f08 ESP: c1309ecc
+>DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00010286
+>CR0: 80050033 CR2: ffd38000 CR3: 00c16000 CR4: 00000000
+>Call Trace:
+> ? 0xc01231af
+> ? 0xc01231c8
+> ? 0xc0123222
+> ? 0xc0123245
+> ? 0xc01215ef
+> ? 0xc01217f7
+> ? 0xc0b5e1da
+> ? 0xc0848e09
+> ? 0xc012186f
+> ? 0xc0b5e1da
+> ? 0xc0848e41
+> ? 0xc010105d
+> ? 0xc01500d8
+> ? 0xc0848e09
+> ? 0xc0b5e1da
+> ? 0xc01500d8
+> ? 0xc0848e09
+> ? 0xc0b5e1da
+> ? 0xc085148a
+> ? 0xc0524da8
+> ? 0xc0b5e1c8
+> 0xc0102100
+> ? 0xc08514d5
+> ? 0xc085148a
+> ? 0xc0171bde
+> ? 0xc0175987
+> ? 0xc016d672
+> 0xc0b4c9e2
+> ? 0xc084c9b8
+> 0xc084c9ca
+> 0xc0127d3a
+> ? 0xc084c9b8
+> 0xc01027a2
+> 0xc0100e3d
+>Modules linked in:
+>---[ end trace 0000000000000000 ]---
+>EIP: 0xc0b5e1da
+>Code: 7d dc 00 74 0b b9 07 00 00 00 89 df b0 01 f3 a5 83 c4 1c 5b 5e 5f 5=
+d c3 55 b8 01 00 00 00 89 e5 57 56 31 f6 53 89 f1 83 ec 30 <0f> a2 b9 04 00=
+ 00 00 89 45 c4 8d 7d c8 89 f0 f3 ab e8 3c fb ff ff
+>EAX: 00000001 EBX: c0be6b00 ECX: 00000000 EDX: 00000246
+>ESI: 00000000 EDI: 00000000 EBP: c1309f08 ESP: c1309ecc
+>DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00010286
+>CR0: 80050033 CR2: ffd38000 CR3: 00c16000 CR4: 00000000
+>Kernel panic - not syncing: Attempted to kill init! exitcode=3D0x0000000b
+>Rebooting in 60 seconds=2E=2E
 
-
-On 2025-04-07 1:07 a.m., kernel test robot wrote:
-> 
-> 
-> Hello,
-> 
-> kernel test robot noticed "kvm-unit-tests.pmu_lbr.fail" on:
-> 
-> commit: 88ec7eedbbd21cad38707620ad6c48a4e9a87c18 ("perf/x86: Fix low freqency setting issue")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> 
-> [test failed on linus/master      0a87d6bb6fd274cde3bf217a821153714374198f]
-> [test failed on linux-next/master fefb886b1344e222b3218f3c0165b0fd770e8b88]
-> 
-> in testcase: kvm-unit-tests
-> version: kvm-unit-tests-x86_64-69574079-1_20250322
-> with following parameters:
-
-The one line patch only impacts the perf record.
-But the test case is for LBR on KVM. The case directly access the
-IA32_DEBUGCTLMSR to enable/disable LBRs. There is nothing related.
-It is probably a false alarm.
-
-+ Dapeng
-
-Could you please take a look at the qemu test case?
-
-Thanks,
-Kan>
-> 
-> config: x86_64-rhel-9.4-func
-> compiler: gcc-12
-> test machine: 8 threads 1 sockets Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz (Haswell) with 8G memory
-> 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202504071232.3c2fa7d5-lkp@intel.com
-> 
-> 
-> ...
-> [32mPASS[0m pmu (143 tests, 14 skipped)
-> [31mFAIL[0m pmu_lbr (2 tests, 1 unexpected failures)   <---
-> [33mSKIP[0m pmu_pebs (1 tests, 1 skipped)
-> ...
-> 
-> 
-> one log is attached.
-> 
-> 
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20250407/202504071232.3c2fa7d5-lkp@intel.com
-> 
-> 
-> 
-
+Can you please not post stack traces without any symbol information either=
+ internal or external? It is just random hex digits in the absence of a Sys=
+tem=2Emap or vmlinux file=2E
 
