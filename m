@@ -1,209 +1,145 @@
-Return-Path: <linux-kernel+bounces-591918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0526A7E6D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:37:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 908E9A7E6D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:37:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBEFE163DA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:28:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59950443909
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD27F20D4E6;
-	Mon,  7 Apr 2025 16:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEBB20E024;
+	Mon,  7 Apr 2025 16:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="od3xGPtF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FeW7eUP1"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061DD1FE454;
-	Mon,  7 Apr 2025 16:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B222208977
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 16:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744043228; cv=none; b=BdZzA1gq9DilOCKKtgaGVWOAH1Wmv+cAW+icSap08NsKai0fckhUUkx1WkLUHqxXOpjYy61daXy+dAzpIggwmEiQ16uV7N0Kia1T56pgOncHe82aqKfHZkVKm3Ip26+HJHxgcyYh5oE5/ZscvGJBHTC8hYs/v+pdaA3GIiWadk4=
+	t=1744043269; cv=none; b=l0v/QdI0vM1u+FWyiL5elIduDjDh5NZw3MwB2h6z6xZfQ3dQwP7rDFoijiyrMT+KPD4DeUc5RrWc1wCurVwsyTX8+5YFo/jLGtygtof9gxKoY6Mcw6eHI43Gmr6W9Lkv8Y+1j3puTkxQdWAfdXwxkc2UxskPEfsTXfQYAup5EyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744043228; c=relaxed/simple;
-	bh=uGljTwGwHyQfIKUhJ3rgVgi8PhrSqdfBARVYzZ39ZwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WNF1U6Pb4t/yfIyGs9CyohlOGk5ZqQpZqQFToLwQhu9eVYCwvQ/AaNG/BgYXEEO5CfEvJG2zbKX1ZaLNqU0IRt9YmKNNdFjnM4a6yfTGBPFJU4Vt94x1jYa3JdLFlWpbqP+joNqA9ExoAmVdvqbD0sgxdPVV8tGARetsfhX1TEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=od3xGPtF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABEF3C4CEDD;
-	Mon,  7 Apr 2025 16:27:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744043227;
-	bh=uGljTwGwHyQfIKUhJ3rgVgi8PhrSqdfBARVYzZ39ZwM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=od3xGPtFuaBYqVjju/bYhM4cxwm5meyXoVnl0K1d1myknCpTdX0RBwVBU8gNbzzrV
-	 3DwJd/AA+sUJUxsHir5xyOKuhjImUh9fnepAYzhtCpVMb+2urCDm0cC5xBr1hIONl1
-	 ZKayFQnAYLYO4iCplSzd26bY6kaGRNf4Fp/udmdRONNv07/TijciNghMSBZTvfVf0J
-	 zuC++aiO7+rThVIZNYTK7fXc11F39pq0aNOspSSq3g1w6C5rQbEtp/rWTFM4JpXupO
-	 dJSfn5RSgcwhFSObyoVVC7W+jTuUi0sSVXvkpC5CsiI7Z87rpLZyNAGuF8atUEq4XI
-	 L8p/wxI9qtOvQ==
-Date: Mon, 7 Apr 2025 09:27:06 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [GIT PULL] CRC cleanups for 6.15-rc2
-Message-ID: <20250407162706.GA2536@sol.localdomain>
+	s=arc-20240116; t=1744043269; c=relaxed/simple;
+	bh=2E83vRDeGBi2KQKmMy4PdlP5hsTnpBPGTayVZg7p9Bg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e3NgSGzR3BgsG54y8SK/nAT8zK1kLxp7R42BEdpzYPcTxTWkO9WGYwME2Py2J3+ANBGuSAaAFPl9wqkeYbmKHW+1DdrErxkVrxPaaCDp1AeZbhRNTSAmVP7X39ruWO5PL+MhQim9fXVfsr10euYN7+w6Nty0QJt8Py9J+yuUkDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FeW7eUP1; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6f6ca9a3425so53850187b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 09:27:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744043266; x=1744648066; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2E83vRDeGBi2KQKmMy4PdlP5hsTnpBPGTayVZg7p9Bg=;
+        b=FeW7eUP1i/jYIUpdt3/leYbgv4gpUcdvDfUNZK64WiG6COQYdVySysz4YiKEtbIh0/
+         S8aLXCvuTjbS2AY9yE0ZdKx4U/uovegIxr/GIUcNp4RzZT+s6zLezo8rAXK5IqA5z/v/
+         Dsh3qe1CZiy5UCntu0FIGhxcshsgilkgJdQNLZm0aP+qreMirmDbbw4SRUhRTP7am75L
+         ZAtEe5ugzMYw1WPYaWi+m9su1IF9pu72hXB34UEX5SyXi1EoKDus5TFMTB5xNYq8ZhF5
+         DBnMuB9zK2myHZECWdNpALEAqsWaC9pc+EbblWL3TEv27NLSYFk0e/09zBFYVkeg6L+o
+         I2Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744043266; x=1744648066;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2E83vRDeGBi2KQKmMy4PdlP5hsTnpBPGTayVZg7p9Bg=;
+        b=FWRPFgyrouO6tpfHD4GWVMskhvI7Rs9F5Mamvzt6qekFWk/thmA4RRyr4aiRNNbY5C
+         k+dt6o0xM2VI4UN7gb/IuipkcUuIsgv4UAIJ59D/v71VSwkkKy9PQuznEqlAB6ff94FZ
+         yia3r52UBUogcfCtTjt7WZlnVUMnfc0/F5qY/5tRDYnxcrPM1v5+eh6YBqP/hOfEkYqW
+         90tHiAGwzuek7fnW9JKSbHCzcSIOMwg13inXZEOKv+uBGaDYp5M/O0oEv7/eqZ6alndX
+         IrQez3FdQs6Ts6U/RE74RikQoAlCpRZPEN2W5BMhm7ZEAroyPdTWoUNfb6b7rW0WoW9y
+         ZHVw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3vVvmx8vNkOLFumzfcK0qHXGuw16X6aK+kLK2AXlFwvwZcKbcBb8hhm8KknBUp6nncIHO51pais6BDPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4QO9b/x2tSV+s7TJ1G66SVk+dRnPs+2ELFMkHcOmUbB27C2Uc
+	XuYENzQaOfN+2x+k5a+Voij2PPHemvfW/M4H75DpvOy1gdKiJ5m8m8Tv6umWo8E/zN+upxlS+VO
+	t6I3OKITmaBtKt9mgm2mMmwAx46lDZnuog62P8Q==
+X-Gm-Gg: ASbGncs27sLIOaGi0k9VZOcRRVB1bhZgfTFZaJItajCjIdXvk9k7IOuZ4LvnfT/l1Ng
+	sM1vUW6E3If3tZiDJM5o10ypLDWsdY9V0a495YH5vDuO2XjZeL9L+NrYLTenOxjHhKqchwwW8Tj
+	wrd49b5m6uEMrkS3+Kf3i/F1wRA1o=
+X-Google-Smtp-Source: AGHT+IGtNp2BrAkn3PRcCBrP5vhlJ1looux4OpDWyP6ljq92N0vWykgYWHtVBu01P5IBh7MS/lbuITHOgr8FD7w/MVE=
+X-Received: by 2002:a05:690c:a84:b0:6f9:9d40:35cb with SMTP id
+ 00721157ae682-703f41267b0mr168266747b3.6.1744043266227; Mon, 07 Apr 2025
+ 09:27:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250403-dt-cpu-schema-v1-0-076be7171a85@kernel.org>
+ <20250403-dt-cpu-schema-v1-9-076be7171a85@kernel.org> <03011a33-174b-4027-bdd2-043aa685380b@oss.qualcomm.com>
+In-Reply-To: <03011a33-174b-4027-bdd2-043aa685380b@oss.qualcomm.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 7 Apr 2025 18:27:10 +0200
+X-Gm-Features: ATxdqUE6-dDNiPO2iJ2zywPixm7KYg2Lx2vGxVH4s4tPgli0QW4REXdhqc3rxfE
+Message-ID: <CAPDyKFoZ7NfN+pkCPnusvTOEaxbQhr=1FJqzdDGrLcKAzBpGyQ@mail.gmail.com>
+Subject: Re: [PATCH 09/19] arm: dts: qcom: sdx55/sdx65: Fix CPU power-domain-names
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Viresh Kumar <vireshk@kernel.org>, 
+	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, zhouyanjie@wanyeetech.com, 
+	Conor Dooley <conor@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
+	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-mips@vger.kernel.org, 
+	imx@lists.linux.dev, linux-rockchip@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus, please consider this second set of CRC kconfig option cleanups for
-6.15-rc2.  It could wait until 6.16 if you prefer, but I figured this would work
-well for 6.15 since it's a straightforward cleanup that touches a lot of files.
+On Fri, 4 Apr 2025 at 22:41, Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
+>
+> On 4/4/25 4:59 AM, Rob Herring (Arm) wrote:
+> > "rpmhpd" is not documented nor used anywhere. As the enable-method is
+> > "psci" use "psci" for the power-domain name.
+> >
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > ---
+>
+> "psci" is what we want here, but these platforms require some more
+> massaging..
 
-The following changes since commit 91e5bfe317d8f8471fbaa3e70cf66cae1314a516:
+So this isn't for CPU performance scaling?
 
-  Merge tag 'dmaengine-6.15-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine (2025-04-01 12:57:14 -0700)
+>
+> These SoCs don't seem to have any PSCI idle states (deeper than WFI)
+> described, which is no bueno, as they support some..
 
-are available in the Git repository at:
+If PSCI PC mode is the only supported CPU suspend mode, we don't need
+the power-domain topology to be described in DT as it's optional to
+use.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git tags/crc-for-linus
+Is this a PC or OSI based platform?
 
-for you to fetch changes up to b261d2222063a9a8b9ec284244c285f2998ee01e:
+>
+> I'll try to improve this.
+>
+> Konrad
+>
 
-  lib/crc: remove CONFIG_LIBCRC32C (2025-04-04 11:31:42 -0700)
-
-----------------------------------------------------------------
-
-Finish cleaning up the CRC kconfig options by removing the remaining
-unnecessary prompts and an unnecessary 'default y', removing
-CONFIG_LIBCRC32C, and documenting all the CRC library options.
-
-----------------------------------------------------------------
-Eric Biggers (7):
-      lib/crc: remove unnecessary prompt for CONFIG_CRC32 and drop 'default y'
-      lib/crc: remove unnecessary prompt for CONFIG_CRC_CCITT
-      lib/crc: remove unnecessary prompt for CONFIG_CRC16
-      lib/crc: remove unnecessary prompt for CONFIG_CRC_T10DIF
-      lib/crc: remove unnecessary prompt for CONFIG_CRC_ITU_T
-      lib/crc: document all the CRC library kconfig options
-      lib/crc: remove CONFIG_LIBCRC32C
-
- arch/arm/configs/at91_dt_defconfig                |  1 -
- arch/arm/configs/collie_defconfig                 |  1 -
- arch/arm/configs/davinci_all_defconfig            |  1 -
- arch/arm/configs/dove_defconfig                   |  1 -
- arch/arm/configs/exynos_defconfig                 |  1 -
- arch/arm/configs/imx_v6_v7_defconfig              |  2 -
- arch/arm/configs/lpc18xx_defconfig                |  1 -
- arch/arm/configs/lpc32xx_defconfig                |  1 -
- arch/arm/configs/milbeaut_m10v_defconfig          |  2 -
- arch/arm/configs/mmp2_defconfig                   |  1 -
- arch/arm/configs/multi_v4t_defconfig              |  1 -
- arch/arm/configs/multi_v5_defconfig               |  1 -
- arch/arm/configs/mvebu_v5_defconfig               |  1 -
- arch/arm/configs/mxs_defconfig                    |  1 -
- arch/arm/configs/omap2plus_defconfig              |  3 --
- arch/arm/configs/orion5x_defconfig                |  1 -
- arch/arm/configs/pxa168_defconfig                 |  1 -
- arch/arm/configs/pxa910_defconfig                 |  1 -
- arch/arm/configs/pxa_defconfig                    |  2 -
- arch/arm/configs/s5pv210_defconfig                |  1 -
- arch/arm/configs/sama7_defconfig                  |  2 -
- arch/arm/configs/spitz_defconfig                  |  1 -
- arch/arm/configs/stm32_defconfig                  |  1 -
- arch/arm/configs/wpcm450_defconfig                |  2 -
- arch/hexagon/configs/comet_defconfig              |  3 --
- arch/m68k/configs/amcore_defconfig                |  1 -
- arch/mips/configs/ath79_defconfig                 |  1 -
- arch/mips/configs/bigsur_defconfig                |  1 -
- arch/mips/configs/fuloong2e_defconfig             |  1 -
- arch/mips/configs/ip22_defconfig                  |  1 -
- arch/mips/configs/ip27_defconfig                  |  1 -
- arch/mips/configs/ip30_defconfig                  |  1 -
- arch/mips/configs/ip32_defconfig                  |  1 -
- arch/mips/configs/omega2p_defconfig               |  1 -
- arch/mips/configs/rb532_defconfig                 |  1 -
- arch/mips/configs/rt305x_defconfig                |  1 -
- arch/mips/configs/sb1250_swarm_defconfig          |  1 -
- arch/mips/configs/vocore2_defconfig               |  1 -
- arch/mips/configs/xway_defconfig                  |  1 -
- arch/parisc/configs/generic-32bit_defconfig       |  2 -
- arch/parisc/configs/generic-64bit_defconfig       |  1 -
- arch/powerpc/configs/44x/sam440ep_defconfig       |  1 -
- arch/powerpc/configs/44x/warp_defconfig           |  2 -
- arch/powerpc/configs/83xx/mpc832x_rdb_defconfig   |  1 -
- arch/powerpc/configs/83xx/mpc834x_itx_defconfig   |  1 -
- arch/powerpc/configs/83xx/mpc834x_itxgp_defconfig |  1 -
- arch/powerpc/configs/83xx/mpc837x_rdb_defconfig   |  1 -
- arch/powerpc/configs/85xx/ge_imp3a_defconfig      |  2 -
- arch/powerpc/configs/85xx/stx_gp3_defconfig       |  2 -
- arch/powerpc/configs/85xx/xes_mpc85xx_defconfig   |  1 -
- arch/powerpc/configs/86xx-hw.config               |  1 -
- arch/powerpc/configs/amigaone_defconfig           |  1 -
- arch/powerpc/configs/chrp32_defconfig             |  1 -
- arch/powerpc/configs/fsl-emb-nonhw.config         |  1 -
- arch/powerpc/configs/g5_defconfig                 |  1 -
- arch/powerpc/configs/gamecube_defconfig           |  1 -
- arch/powerpc/configs/linkstation_defconfig        |  2 -
- arch/powerpc/configs/mpc83xx_defconfig            |  1 -
- arch/powerpc/configs/mpc866_ads_defconfig         |  1 -
- arch/powerpc/configs/mvme5100_defconfig           |  2 -
- arch/powerpc/configs/pasemi_defconfig             |  1 -
- arch/powerpc/configs/pmac32_defconfig             |  1 -
- arch/powerpc/configs/ppc44x_defconfig             |  1 -
- arch/powerpc/configs/ppc64e_defconfig             |  1 -
- arch/powerpc/configs/ps3_defconfig                |  2 -
- arch/powerpc/configs/skiroot_defconfig            |  2 -
- arch/powerpc/configs/storcenter_defconfig         |  1 -
- arch/powerpc/configs/wii_defconfig                |  1 -
- arch/sh/configs/ap325rxa_defconfig                |  1 -
- arch/sh/configs/ecovec24_defconfig                |  1 -
- arch/sh/configs/edosk7705_defconfig               |  1 -
- arch/sh/configs/espt_defconfig                    |  1 -
- arch/sh/configs/hp6xx_defconfig                   |  2 -
- arch/sh/configs/kfr2r09-romimage_defconfig        |  1 -
- arch/sh/configs/landisk_defconfig                 |  1 -
- arch/sh/configs/lboxre2_defconfig                 |  1 -
- arch/sh/configs/magicpanelr2_defconfig            |  2 -
- arch/sh/configs/migor_defconfig                   |  1 -
- arch/sh/configs/r7780mp_defconfig                 |  1 -
- arch/sh/configs/r7785rp_defconfig                 |  1 -
- arch/sh/configs/rts7751r2d1_defconfig             |  1 -
- arch/sh/configs/rts7751r2dplus_defconfig          |  1 -
- arch/sh/configs/sdk7780_defconfig                 |  1 -
- arch/sh/configs/se7206_defconfig                  |  3 --
- arch/sh/configs/se7712_defconfig                  |  1 -
- arch/sh/configs/se7721_defconfig                  |  1 -
- arch/sh/configs/se7724_defconfig                  |  1 -
- arch/sh/configs/sh03_defconfig                    |  1 -
- arch/sh/configs/sh2007_defconfig                  |  2 -
- arch/sh/configs/sh7724_generic_defconfig          |  1 -
- arch/sh/configs/sh7763rdp_defconfig               |  1 -
- arch/sh/configs/sh7770_generic_defconfig          |  1 -
- arch/sh/configs/titan_defconfig                   |  1 -
- arch/sparc/configs/sparc64_defconfig              |  1 -
- drivers/block/Kconfig                             |  2 +-
- drivers/block/drbd/Kconfig                        |  2 +-
- drivers/md/Kconfig                                |  2 +-
- drivers/md/persistent-data/Kconfig                |  2 +-
- drivers/net/ethernet/broadcom/Kconfig             |  4 +-
- drivers/net/ethernet/cavium/Kconfig               |  2 +-
- fs/bcachefs/Kconfig                               |  2 +-
- fs/btrfs/Kconfig                                  |  2 +-
- fs/ceph/Kconfig                                   |  2 +-
- fs/erofs/Kconfig                                  |  2 +-
- fs/gfs2/Kconfig                                   |  1 -
- fs/xfs/Kconfig                                    |  2 +-
- lib/Kconfig                                       | 57 +++++++++++------------
- net/batman-adv/Kconfig                            |  2 +-
- net/ceph/Kconfig                                  |  2 +-
- net/netfilter/Kconfig                             |  4 +-
- net/netfilter/ipvs/Kconfig                        |  2 +-
- net/openvswitch/Kconfig                           |  2 +-
- net/sched/Kconfig                                 |  2 +-
- net/sctp/Kconfig                                  |  2 +-
- tools/testing/selftests/bpf/config.x86_64         |  1 -
- tools/testing/selftests/hid/config.common         |  1 -
- 116 files changed, 46 insertions(+), 170 deletions(-)
+Kind regards
+Uffe
 
