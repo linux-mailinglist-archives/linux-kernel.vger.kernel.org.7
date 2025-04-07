@@ -1,103 +1,129 @@
-Return-Path: <linux-kernel+bounces-591532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99DF3A7E107
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:23:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B30BA7E170
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54AC2188ECE2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:20:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A27516A6D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08321D8A16;
-	Mon,  7 Apr 2025 14:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC291DD0E1;
+	Mon,  7 Apr 2025 14:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ExVEJrTs"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="byaxT9wZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A3E1D7E5F;
-	Mon,  7 Apr 2025 14:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4025200B0;
+	Mon,  7 Apr 2025 14:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744035598; cv=none; b=qqQVAjdqnliA0mqZz86/jYqSwW4ZV5T/MGW78jEWV3AnHX52QxiTsKdJ8HVDlFFm8vS/3oJO7h7XAoCUqgDP5VXd7Ck3TvufxJIIFn5p9R6KISLqlj+4GfwWrWywgK3I6v19lZzFgMNCOH4VlorLn7HN0wPBfEuELXQMOCF7R2k=
+	t=1744035691; cv=none; b=C9rxTbukEneLJGrakyjX0chzviOcmRGCFkqB01pTXUtrs4GftjE8s10ATEXdTDU0NAQl2L3v9DrHJ4GDOhJqrODMuUk8LVOocXYsZ40ZUtF6Z0lJxUvQBDpocMF0+M5s1WLMZODHfVt6yHvN1zM5tGNNWy1Yv+aAJFyMvutZZkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744035598; c=relaxed/simple;
-	bh=COo4eTIosiBDvpHNDIDibfVEmpvog3VWcP5SJfo6PGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MWJPToFgBtCdjQd9DwI0AyuFKpBq7g1PnhMScJDydcN8uSzQs0w/aCdVfppD31GzA8Ut/ARZNAvgAls8o5DEfcDeiYA0diYc2m8n9mJBeefrasfi3NCxyIB1c/H+IHk+VrXtz6boeF2FUgyyfQGBxMQxEDUWwlYv8WZkIhy839Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ExVEJrTs; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7359aca7ef2so6113517b3a.2;
-        Mon, 07 Apr 2025 07:19:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744035596; x=1744640396; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ykkh3Ohmv9ZUd47pCocMHxGpinGV2tHgF6Qucb+8O7Y=;
-        b=ExVEJrTslu2D5AvyvcYzblaDoWpz7wAMqjGYHCcbfIhyLG1zouE/BDkVVHlrT77rMF
-         tLUmKtUmP4Sii5Cu2pAH2EfCDNMxKbhOMqHctP1tFGLAgmu7Hnx6OxYN/MspYVd87DTL
-         lGBo0kUJmELujpABob81bDmqpd4rqf0/twq+GwofdRN+eS7y8lrN/Dsqk5XtEkOQfFof
-         wihiaBoUtTaFwyE/AjyyxPbFyWQ1tmMwlkyHvqFUMhSqAQtzlPeh4erwrGiZ3kuJQjA3
-         q4IQnEBmbItwF12wMkRlYfPT939VvhCJaY7lProj8uRfqS+55Af2BsO0EEUur/wld8my
-         BJJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744035596; x=1744640396;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ykkh3Ohmv9ZUd47pCocMHxGpinGV2tHgF6Qucb+8O7Y=;
-        b=oEcXWetbDVvpzlwB6/yAsumr4fqiq98dZe4h41WkQ/a6iI+PaVQaC4U29k75V7KZC4
-         GEe++gWeISvd2e66dmqS28ZvUPm5pAxGkMXTi2pS2DZUujHA/GIgY5tCbA7/UmoHMXNz
-         J/P+ANfz0UO8z6nzDWwfcflhWjz69L6p8fALRXCGoM3c8m2pkR8MZZQ9GYioO58rpU6L
-         AFTpljL5BsxQ0U/SN5x+lDKS407rT3aJrRWAEtB75sOGXeML920tjHw98JLwWIrk+uvp
-         Id7lu9edP98w2TiOqu4baq/4ZVXUyTUEni26OW0Dd0tFECDC6AQfPuOpYeEJxSYiKULH
-         1zmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXf6rRIOuth8otkrmwilBJ9ejCAXeZjNXacrOwYvd1ydPJul7E+JDJcvIypunotyuin6jVBVkX/DABvD0=@vger.kernel.org, AJvYcCWjW/BwE9Yc5sUCwadTM/w6Pt5/wfEIVP4Kt+kwQFsawx24u4pq7T+WRof4Kjc9LCjaMCvGljjx@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRsxI8DFsmw8kxYWKhT5rRU4inbcuZWyrcAuKrJ0tYF9a0Jit5
-	oZVScfGl03sisKUhQGYrP8xCIHiskwQX2P3TfrWVUgn7WRIlDWs=
-X-Gm-Gg: ASbGncsP0CAOQ+TvCwl9GXOSB9jqP+xx/ft5gJddvRmsrgn8BcA6mr1RsZ6et/Psvqv
-	83Cu/Lwo5eM0nx8c7a78P24YUgCYdKezdrhTfaK/li5vli4okPak+uLqemV8m0YJpQHR3dJXHAL
-	SKOEEE85pD2DYl6h1Mt5hMkpveYnVE3wZlhmjPDbBEyILv3bUHT7EUvEe86sru/dr7Jonvg5pmW
-	HJgug5R538MHewFaSvHUS4qaiv66NdBs9tivdzrivudXsuWg34BAUAltPy7dskQx0nAN5p6yJgh
-	Y3DfLTk8Smot7ox8lZq/QI5HbCS1GGTVt3jDAQzmRs8c
-X-Google-Smtp-Source: AGHT+IH7qTsg5rAVlTqY22Bx9Y+Mos8itMtbbMRcIw6Seluh6RcUktlYJUma1nx81i4q1ja//ikO/Q==
-X-Received: by 2002:a05:6a00:179b:b0:736:baa0:2acd with SMTP id d2e1a72fcca58-739e7156defmr18489104b3a.20.1744035595875;
-        Mon, 07 Apr 2025 07:19:55 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-739d97ee6b3sm8839062b3a.53.2025.04.07.07.19.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 07:19:54 -0700 (PDT)
-Date: Mon, 7 Apr 2025 07:19:54 -0700
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: syzbot <syzbot+45016fe295243a7882d3@syzkaller.appspotmail.com>
-Cc: andrew@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	horms@kernel.org, kuba@kernel.org, kuniyu@amazon.com,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	pabeni@redhat.com, sdf@fomichev.me, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] WARNING: bad unlock balance in do_setlink
-Message-ID: <Z_PfCosPB7GS4DJl@mini-arch>
-References: <20250407063703.20757-1-kuniyu@amazon.com>
- <67f3890f.050a0220.0a13.0286.GAE@google.com>
+	s=arc-20240116; t=1744035691; c=relaxed/simple;
+	bh=J3Ouex5t/BJuRLsIVAdTtEOT1UXLXYJ0kbwTkxBPXuY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hzG103rL4yQNN6QBGcKHYvpj7lQkG23zqomfvLFPJW2uqqjbrjijNKxpOgcozZybjy1ONepss9/KtMhs3kdPQwXdZaWeHZn7ZxSuqtf8EgrNoRyqvHKHTs1y+iH0GN/9YjyTnzPRNoQsIsQ8flcSkKDG+2t4RAnl/yWJ7yYZR6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=byaxT9wZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5378doGJ009987;
+	Mon, 7 Apr 2025 14:21:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=wQ1d5nGMf8Kmroqoy9X4+2r9PBxPFkf0SoFNOYlqaQo=; b=by
+	axT9wZfcNsqiCAOYLoLFMD3P7h5UjCGKKfx/olD/hutEq3++dQ3uL0m2nxenoZ6s
+	clz8GOnxIDUQyV4K2lA965Y1JbUjYJfLH9uR2Utjut1z/figqlGqQ++Lvz3fMWHw
+	4+HFytBbBPR+R+nYzkCYyPqbovrzZQYNgaQs+aSiglPigGxlOJFQvUrp336zbFqk
+	w7vskK/mhSpS2qGDHHrlCNL+OqRFqPRNac4wk2aSOfPJ235GDeIO1mO7VlyTb3+X
+	NOnSOu4GfSrTGVBpFZC/TFvxhdi7zAgvNjmmNw7Ou/R6S0JyZ1+QUFzzv2GtKGP+
+	wIRWXuYurhsJ4VeC3Dyg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twpm4dy2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Apr 2025 14:21:24 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 537ELOX6009006
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 7 Apr 2025 14:21:24 GMT
+Received: from hu-mapa-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 7 Apr 2025 07:21:20 -0700
+From: Manish Pandey <quic_mapa@quicinc.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "James E.J.
+ Bottomley" <James.Bottomley@HansenPartnership.com>,
+        "Martin K. Petersen"
+	<martin.petersen@oracle.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>,
+        <quic_bhaskarv@quicinc.com>, <quic_rampraka@quicinc.com>,
+        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>
+Subject: [PATCH V6 0/3] scsi: ufs-qcom: Enable Hibern8, MCQ, and Testbus registers Dump
+Date: Mon, 7 Apr 2025 19:51:07 +0530
+Message-ID: <20250407142110.16925-1-quic_mapa@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <67f3890f.050a0220.0a13.0286.GAE@google.com>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: PkFux5rJi8qye3-mRhqAHa5n9zwXHz1V
+X-Proofpoint-ORIG-GUID: PkFux5rJi8qye3-mRhqAHa5n9zwXHz1V
+X-Authority-Analysis: v=2.4 cv=MpRS63ae c=1 sm=1 tr=0 ts=67f3df64 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=pyQEGUW01KN_hzJh80EA:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-07_04,2025-04-03_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=292 clxscore=1015 priorityscore=1501 impostorscore=0
+ spamscore=0 bulkscore=0 suspectscore=0 malwarescore=0 adultscore=0
+ phishscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504070101
 
-On 04/07, syzbot wrote:
-> Hello,
-> 
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> unregister_netdevice: waiting for DEV to become free
-> 
-> unregister_netdevice: waiting for batadv0 to become free. Usage count = 3
+Adding support to enhance the debugging capabilities of the Qualcomm UFS
+Host Controller, including HW and SW Hibern8 counts, MCQ registers, and
+testbus registers dump.
+---
+Changes in v6:
+- Added ufs_qcom_dump_regs() API for MCQ dump due, as SoC vendors explicitly
+  allocate MCQ resource.
+Changes in v5:
+- Addressed Mani's comment and used cond_resched() instead of usleep().
+Changes in v4:
+- Addressed Mani's comment and used kmalloc_array() for testbus mem allocation.
+- Removed usleep_range from ufs_qcom_dump_testbus.
+- Updated commit text.
+Changes in v3:
+- Addressed Bart's comment and Annotated the 'testbus' declaration with __free.
+- Converted the switch-statements into an array lookup.
+- Introduced struct testbus_info{} for handling testbus switch-statements to an array lookup.
+Changes in v2:
+- Rebased patchsets.
+- Link to v1: https://lore.kernel.org/linux-arm-msm/20241025055054.23170-1-quic_mapa@quicinc.com/
 
-So it does fix the lock unbalance issue, but now there is a hang?
+---
+Manish Pandey (3):
+  scsi: ufs-qcom: Add support for dumping HW and SW hibern8 count
+  scsi: ufs-qcom: Add support to dump MCQ registers
+  scsi: ufs-qcom: Add support to dump testbus registers
+
+ drivers/ufs/host/ufs-qcom.c | 142 ++++++++++++++++++++++++++++++++++++
+ drivers/ufs/host/ufs-qcom.h |  11 +++
+ 2 files changed, 153 insertions(+)
+
+-- 
+2.17.1
+
 
