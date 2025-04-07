@@ -1,317 +1,388 @@
-Return-Path: <linux-kernel+bounces-591625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2B31A7E2C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:56:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C245A7E29E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38B973BD316
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:44:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E07863AB169
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6941F91CD;
-	Mon,  7 Apr 2025 14:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F6B1F872F;
+	Mon,  7 Apr 2025 14:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="fN5GjTFb"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d5UmdwYK"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E051F8ACA
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 14:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FDB1F890D
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 14:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744036770; cv=none; b=YW+vmZ0t8Pa72aJLid/fPwh/z6tlmrmvwAokHGBj3JilUVS5xejldEOjGjrk47oTP5tqFcGcma2e/7lVX/aPeJnbQfh1Z7u6xRigsYDrTgvCO1RalcqzmyBt+5XfPElhXS+/XGXOh8PLFyePUKjKI6HEFVBaqxUhgbWxS43bC4o=
+	t=1744036765; cv=none; b=L3jwmFtoo8NTswkVT+iU2ve2IEPgkWf0mxOynP6AFPSi1WSRwLQGH6ezetiSacZDwfTsu6SM46+QQLfQrp85YQE+XefnBj8pOBZJPdPdF7OzqUl8alVsbqEkt1E+mGZ2aEdLb6VQEUNxkcvsX8dYTe9vH3CFDg2rQtFe9kmuT9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744036770; c=relaxed/simple;
-	bh=5kp8PPBaK61r0wChFF68uWqa9pgYUvTDEPd4rfJLJsA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=q5zn7xXVLQOgsDNFPsJn0rSTddHsXMnqb04zmIvIlnd5Iu1CU/b8m/nxVvtvlzbc+qy3X1GHmzF0CeZauR9Incidq5tLUYaYQ4BSAwcMgAJgACc5NBCUKZeq4GrpSSguZsKtrhK6W54YssMqImixL+PmebCBGHutBlsB7YBiBKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=fN5GjTFb; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 537Ed08q2460483
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Mon, 7 Apr 2025 07:39:01 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 537Ed08q2460483
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025032001; t=1744036741;
-	bh=/zL7bjgebP0zbMt+g4HvzqGcWFQYJdlAJIVbZykhoUw=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=fN5GjTFbZ66xPfwMZZVR7tTmoxkvWZtQFZg+kdXreFUAiBS2RoQyEG7xeQFtayOVy
-	 Sp76BaR4YI+elTem+4bjZUMjHfKnKXc7MGk1D85jjqvAJ4ERYrGVSFn7Wff0npBCZA
-	 V8JZqWQMX/JZi7fs5djE4MUXt/SR/Zt5/xyozr7eXLv8o+s89QRUYfaE5BzklD++YH
-	 k84CJAeGJ1dNnh2BFQ9e73mbqxDKnv3T1xeyGsQIvmAkHNHd9jwF/vveyhYR9SE5Yq
-	 3AT9pNS8UPTcyv4fmmpog1106vnselY2m+AvPOcU8GAGlVjkj+D5EfkXobs1IxUbyu
-	 fqc5mb39K+5Ow==
-Date: Mon, 07 Apr 2025 07:38:59 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Kevin Koster <lkml@ombertech.com>, Borislav Petkov <bp@alien8.de>
-CC: Thomas Gleixner <tglx@linutronix.de>, Oerg866 <oerg866@googlemail.com>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_x86/microcode=3A_Fix_crashes_o?=
- =?US-ASCII?Q?n_early_486_CPUs_due_to_usage_of_=27cpuid=27=2E?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250408002150.8955343f4e2f2ac31b4663e8@ombertech.com>
-References: <CANpbe9Wm3z8fy9HbgS8cuhoj0TREYEEkBipDuhgkWFvqX0UoVQ@mail.gmail.com> <20250405130306.ca9822c1f27db119cc973603@ombertech.com> <20250405093127.GAZ_D4b6NdyTS-UW1J@fat_crate.local> <20250406164049.c0666bc18073e3b88c92d1f1@ombertech.com> <20250406174633.2c581923c145687476191753@ombertech.com> <20250406190253.GAZ_LP3RPZInWKcHN7@fat_crate.local> <20250407095848.7933a358c9f450fe03fb8234@ombertech.com> <20250407102927.GAZ_OpBw5hJ2QTFsKz@fat_crate.local> <20250408002150.8955343f4e2f2ac31b4663e8@ombertech.com>
-Message-ID: <A08760B5-0E1A-4D21-8621-73516D1D67F0@zytor.com>
+	s=arc-20240116; t=1744036765; c=relaxed/simple;
+	bh=s1mR55qKvTd85CZbiua6WNEMf1r9kA2MXDKeoxJly3s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HduBrOKb3ITEyEtDbAsI7+lrL9ZrnOKZpcMykomoKp08M6Vkg3HuaEnhMJOy3pSVqggiRyvmHLJvBAh0TRX+mf7+X2uJviHeMyTvCZtTFeOER6PmkGMny47NGfUlfm3oE9dNkj+aBOGrkkGoYiy4LcZq9bo5Uxu4YfgIBBWp6xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=d5UmdwYK; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-549963b5551so5446964e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 07:39:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1744036761; x=1744641561; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=LCXTFyVCDU+EOMPXVbr1RJ8od+W0fhn3rldGWQvGAl4=;
+        b=d5UmdwYKWNdbCTcdevG/NNdnnkV6GMenIBmkqwpnxqLJhHP1XxIyM6PJaTeyct+ftt
+         Bik00izqanQ5Uu8zc6rv3CA1VbJSZysD9qJL8nc6GVXAJxOmEMX33EEK0F8IPUY3iYHT
+         ZlQv2Lc7THmHFOIDSm8nZGNIucM/6mBtyOwmU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744036761; x=1744641561;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LCXTFyVCDU+EOMPXVbr1RJ8od+W0fhn3rldGWQvGAl4=;
+        b=RnImx1KQTRDQBA3T5pVs8duLwd0hCydBbN0ax6qSifSLLXLvH8odDFVT79t6ar9vcD
+         cH5IlrK0bo5mAEzmpnLEPfROuPiNYjKJW9SKbUrGlXodbJriI5cx4wurmHyBBuh9w1n7
+         etcocLaxdcGMRcL1LJVE1kZVlw24hiUUA0pkQvpiyRWgc8wasnSVa0GzGUbxrRT3Me6v
+         vMObnEHaxKb3Q6RYoK/vK3tsyXhkxY5pGQFZpExogOfnyLvgMF/MYv6+GX9TsTyVSFh1
+         l6IB157arVNH1+re9Ti47eRHEhfU7k6V3fIU7YOzRO5Tp2xdfvuPPry/sUS8YTeUn7ou
+         wyIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUATyi4mBLDco3g0ZXPizKXzfefO0z6pKxhBkglbTgvUDiCA1A6sWt8HeI+6OXw+8dF3xSpFxqC6yHDJ+4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz6KW4TVHlWyfnvdSCjm81it1vn0T3emPBzYTOgOUDjiY2Q2PJ
+	haxL4EkHvIm1hL+g8LSau+Ckk0ao+5Nr2nstFMsTeEAcqSsyj2J4fW3GDwgKD2rDqmBb5lJqRuE
+	=
+X-Gm-Gg: ASbGnctggBz8NULd5fMsfOA65onYzzSEAmAJ1e2lY/n8nyEm4GKZLu2/qyVHWFDMYKb
+	nVcOo2wC+XMB4s2p2XVjBBOmuSqYQU7Bhwu3aCtmxQ5I0ie39rCuEcnOAE0gKNbBJK9suVoFLot
+	0ektD21k+LZ04y3kshNkXmY0G0hzvfSiSI041N+XXBO3sSCbgqJHm5Q7tR0BLksLoN304cpIyyV
+	hz/3Hmv8Q3AgTxeE38fsk/aeqKYOXxqxTUP3V5antGEFGZXq9pqpk0CCiVHbIgGaEib24z4YUgF
+	nunApC5inXvguZf1BQoiflAsc4xV+ZNGFrS6DAvUsqf3c4gD0vjhJvdp8tB5R4OAsNGDyJI405n
+	lAsjKj/Y=
+X-Google-Smtp-Source: AGHT+IH8Eg7xX4X8cuorvD96dF10sh1rkVU+eNT55+go3Srv24hMeWGcFySS6VXiSQqDyDHfOrvxDg==
+X-Received: by 2002:a05:6512:1107:b0:545:576:cbca with SMTP id 2adb3069b0e04-54c297b71f1mr2264861e87.8.1744036761152;
+        Mon, 07 Apr 2025 07:39:21 -0700 (PDT)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e6370c6sm1285873e87.134.2025.04.07.07.39.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Apr 2025 07:39:20 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-549963b5551so5446933e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 07:39:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVY5Eq/lLu53yYfqJiUAIy1CJ/hqsQfb9cY6ii6UaFOnNQIp3TevNqqRmOXqqhc47Y/AEaf5sIY0EXHPXE=@vger.kernel.org
+X-Received: by 2002:a05:6512:2354:b0:549:8db6:b2dd with SMTP id
+ 2adb3069b0e04-54c297ebe4dmr2688563e87.31.1744036760303; Mon, 07 Apr 2025
+ 07:39:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20250403-uvc-eaccess-v7-1-033d0c3d6368@chromium.org> <58c84d4f-b750-4817-b2ee-4d749e99c94b@xs4all.nl>
+In-Reply-To: <58c84d4f-b750-4817-b2ee-4d749e99c94b@xs4all.nl>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 7 Apr 2025 16:39:06 +0200
+X-Gmail-Original-Message-ID: <CANiDSCtVs34-OGZaBsa2bixP8pMLKwwujKmQYLy_9cHYvT30dQ@mail.gmail.com>
+X-Gm-Features: ATxdqUF-Tg15gOE9vPq9U3XgqPmK_NSnCj9G7QwTI1qEgT2waD_Ekh_rpfgExkg
+Message-ID: <CANiDSCtVs34-OGZaBsa2bixP8pMLKwwujKmQYLy_9cHYvT30dQ@mail.gmail.com>
+Subject: Re: [PATCH v7] media: uvcvideo: Set V4L2_CTRL_FLAG_DISABLED during
+ queryctrl errors
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans de Goede <hdegoede@redhat.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On April 7, 2025 7:21:50 AM PDT, Kevin Koster <lkml@ombertech=2Ecom> wrote:
->On Mon, 7 Apr 2025 12:29:27 +0200
->Borislav Petkov <bp@alien8=2Ede> wrote:
->
->> On Mon, Apr 07, 2025 at 09:58:48AM +1000, Kevin Koster wrote:
->> > But I like to know Linux really works on the hardware it's built
->> > for,
->>=20
->> I don't know what that means=2E
->
->To rephrase: I like knowing that "CONFIG_M486=3Dy" works, in the kernel
->configuration=2E If not, then I know to use other OSs if I want to boot a
->486=2E
->
->> > and I'm not much better, writing this now on a Pentium 1=2E
->>=20
->> Lemme guess: this is your main machine you use for daily work?
->
->For email/news every morning, then a (newer) laptop afterwards=2E
->
->> > > -	if (dis_ucode_ldr || c->x86_vendor !=3D X86_VENDOR_AMD || c->x86 =
-< 0x10)
->> > > +	if (microcode_loader_disabled() || c->x86_vendor !=3D X86_VENDOR_=
-AMD || c->x86 < 0x10)
->> > 		return 0;
->> >=20
->> > Still fails unless the native_cpuid_eax(1) call is moved under
->> > here=2E After that change, it boots fine=2E
->>=20
->> Please show me with a diff what you're doing because I don't know
->> what you mean=2E
->
->OK, this is the change I made after applying your patch:
->
->--- a/arch/x86/kernel/cpu/microcode/amd=2Ec
->+++ b/arch/x86/kernel/cpu/microcode/amd=2Ec
->@@ -1093,7 +1093,7 @@
->=20
-> static int __init save_microcode_in_initrd(void)
-> {
->-	unsigned int cpuid_1_eax =3D native_cpuid_eax(1);
->+	unsigned int cpuid_1_eax;
->	struct cpuinfo_x86 *c =3D &boot_cpu_data;
->	struct cont_desc desc =3D { 0 };
->	enum ucode_state ret;
->@@ -1102,6 +1102,8 @@
->	if (microcode_loader_disabled() || c->x86_vendor !=3D X86_VENDOR_AMD || =
-c->x86 < 0x10)
->		return 0;
->=20
->+	cpuid_1_eax =3D native_cpuid_eax(1);
->+
->	if (!find_blobs_in_containers(&cp))
->		return -EINVAL;
->
->> I did this:
->>=20
->> bool have_cpuid_p(void)
->> {
->>         return false;
->> }
->>=20
->> in order to simulate no CPUID support but my 32-bit guest boots fine=2E
->
->It's detecting no CPUID support on 486 CPUs OK, however
->save_microcode_in_initrd() uses CPUID before checking if it is
->supported=2E
->
->> Also, send a full dmesg from that machine so that I can try to
->> reproduce here=2E
->
->This is with your latest patch applied, without my above change:
->
->No EFI environment detected=2E
->early console in extract_kernel
->input_data: 0x007d1094
->input_len: 0x005aa603
->output: 0x00100000
->output_len: 0x00bb42d8
->kernel_total_size: 0x00c9a000
->needed_size: 0x00c9a000
->
->Decompressing Linux=2E=2E=2E Parsing ELF=2E=2E=2E No relocation needed=2E=
-=2E=2E done=2E
->Booting the kernel (entry_offset: 0x00751e00)=2E
->Linux version 6=2E14=2E0 (cnk2@ombertech) (gcc (Debian 12=2E2=2E0-14) 12=
-=2E2=2E0, GNU ld (GNU Binutils for Debian) 2=2E40) #3 SMP Sun Apr  6 21:54:=
-11 UTC 2025
->BIOS-provided physical RAM map:
->BIOS-e820: [mem 0x0000000000000000-0x0000000000004c1f] usable
->BIOS-e820: [mem 0x0000000000004c20-0x000000000000501f] reserved
->BIOS-e820: [mem 0x0000000000005020-0x000000000009ffff] usable
->BIOS-e820: [mem 0x00000000000f5a3c-0x00000000000fffff] reserved
->BIOS-e820: [mem 0x0000000000100000-0x00000000013fffff] usable
->BIOS-e820: [mem 0x00000000ffff5a3c-0x00000000ffffffff] reserved
->printk: legacy console [earlyser0] enabled
->printk: debug: ignoring loglevel setting=2E
->Notice: NX (Execute Disable) protection missing in CPU!
->APIC: Static calls initialized
->DMI not present or invalid=2E
->e820: update [mem 0x00000000-0x00000fff] usable =3D=3D> reserved
->e820: remove [mem 0x000a0000-0x000fffff] usable
->last_pfn =3D 0x1400 max_arch_pfn =3D 0x100000
->MTRRs disabled (not available)
->x86/PAT: PAT not supported by the CPU=2E
->x86/PAT: Configuration [0-7]: WB  WT  UC- UC  WB  WT  UC- UC =20
->initial memory mapped: [mem 0x00000000-0x00ffffff]
->0MB HIGHMEM available=2E
->20MB LOWMEM available=2E
->  mapped low ram: 0 - 01400000
->  low ram: 0 - 01400000
->Zone ranges:
->  DMA      [mem 0x0000000000001000-0x0000000000ffffff]
->  Normal   [mem 0x0000000001000000-0x00000000013fffff]
->  HighMem  empty
->Movable zone start for each node
->Early memory node ranges
->  node   0: [mem 0x0000000000001000-0x0000000000003fff]
->  node   0: [mem 0x0000000000006000-0x000000000009ffff]
->  node   0: [mem 0x0000000000100000-0x00000000013fffff]
->Initmem setup node 0 [mem 0x0000000000001000-0x00000000013fffff]
->On node 0, zone DMA: 1 pages in unavailable ranges
->On node 0, zone DMA: 2 pages in unavailable ranges
->On node 0, zone DMA: 96 pages in unavailable ranges
->No local APIC present or hardware disabled
->APIC: disable apic facility
->APIC: Switched APIC routing to: noop
->CPU topo: Max=2E logical packages:   1
->CPU topo: Max=2E logical dies:       1
->CPU topo: Max=2E dies per package:   1
->CPU topo: Max=2E threads per core:   1
->CPU topo: Num=2E cores per package:     1
->CPU topo: Num=2E threads per package:   1
->CPU topo: Allowing 1 present CPUs plus 0 hotplug CPUs
->PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]
->PM: hibernation: Registered nosave memory: [mem 0x00004000-0x00004fff]
->PM: hibernation: Registered nosave memory: [mem 0x00005000-0x00005fff]
->PM: hibernation: Registered nosave memory: [mem 0x000a0000-0x000f5fff]
->PM: hibernation: Registered nosave memory: [mem 0x000f6000-0x000fffff]
->[mem 0x01400000-0xffff5a3b] available for PCI devices
->Booting paravirtualized kernel on bare hardware
->clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, ma=
-x_idle_ns: 6370452778343963 ns
->setup_percpu: NR_CPUS:8 nr_cpumask_bits:1 nr_cpu_ids:1 nr_node_ids:1
->percpu: Embedded 30 pages/cpu s91852 r0 d31028 u122880
->pcpu-alloc: s91852 r0 d31028 u122880 alloc=3D30*4096
->pcpu-alloc: [0] 0=20
->Kernel command line: root=3D/dev/sda3 rw base udev=2Echildren-max=3D1 acp=
-i=3Doff earlyprintk=3DttyS0,115200,keep ignore_loglevel BOOT_IMAGE=3D614-48=
-64
->Unknown kernel command line parameters "base BOOT_IMAGE=3D614-4864", will=
- be passed to user space=2E
->printk: log buffer data + meta data: 131072 + 409600 =3D 540672 bytes
->Dentry cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
->Inode-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
->Built 1 zonelists, mobility grouping on=2E  Total pages: 5021
->mem auto-init: stack:off, heap alloc:off, heap free:off
->Initializing HighMem for node 0 (00000000:00000000)
->Checking if this processor honours the WP bit even in supervisor mode=2E=
-=2E=2EOk=2E
->SLUB: HWalign=3D32, Order=3D0-3, MinObjects=3D0, CPUs=3D1, Nodes=3D1
->rcu: Hierarchical RCU implementation=2E
->rcu: 	RCU restricting CPUs from NR_CPUS=3D8 to nr_cpu_ids=3D1=2E
->	Tracing variant of Tasks RCU enabled=2E
->rcu: RCU calculated value of scheduler-enlistment delay is 30 jiffies=2E
->rcu: Adjusting geometry for rcu_fanout_leaf=3D16, nr_cpu_ids=3D1
->RCU Tasks Trace: Setting shift to 0 and lim to 1 rcu_task_cb_adjust=3D1 r=
-cu_task_cpu_ids=3D1=2E
->NR_IRQS: 2304, nr_irqs: 32, preallocated irqs: 16
->rcu: srcu_init: Setting srcu_struct sizes based on contention=2E
->Console: colour VGA+ 80x60
->printk: legacy console [tty0] enabled
->APIC: Keep in PIC mode(8259)
->Calibrating delay loop=2E=2E=2E 30=2E96 BogoMIPS (lpj=3D51136)
->Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
->Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
->x86/fpu: Probing for FPU: FSW=3D0x0000 FCW=3D0x037f
->x86/fpu: x87 FPU will use FSAVE
->Freeing SMP alternatives memory: 24K
->pid_max: default: 32768 minimum: 301
->Mount-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
->Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
->smpboot: SMP disabled
->Performance Events: no PMU driver, software events only=2E
->signal: max sigframe size: 928
->Oops: invalid opcode: 0000 [#1] SMP
->CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6=2E14=2E0 #3
->EIP: 0xc0b5e1da
->Code: 7d dc 00 74 0b b9 07 00 00 00 89 df b0 01 f3 a5 83 c4 1c 5b 5e 5f 5=
-d c3 55 b8 01 00 00 00 89 e5 57 56 31 f6 53 89 f1 83 ec 30 <0f> a2 b9 04 00=
- 00 00 89 45 c4 8d 7d c8 89 f0 f3 ab e8 3c fb ff ff
->EAX: 00000001 EBX: c0be6b00 ECX: 00000000 EDX: 00000246
->ESI: 00000000 EDI: 00000000 EBP: c1309f08 ESP: c1309ecc
->DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00010286
->CR0: 80050033 CR2: ffd38000 CR3: 00c16000 CR4: 00000000
->Call Trace:
-> ? 0xc01231af
-> ? 0xc01231c8
-> ? 0xc0123222
-> ? 0xc0123245
-> ? 0xc01215ef
-> ? 0xc01217f7
-> ? 0xc0b5e1da
-> ? 0xc0848e09
-> ? 0xc012186f
-> ? 0xc0b5e1da
-> ? 0xc0848e41
-> ? 0xc010105d
-> ? 0xc01500d8
-> ? 0xc0848e09
-> ? 0xc0b5e1da
-> ? 0xc01500d8
-> ? 0xc0848e09
-> ? 0xc0b5e1da
-> ? 0xc085148a
-> ? 0xc0524da8
-> ? 0xc0b5e1c8
-> 0xc0102100
-> ? 0xc08514d5
-> ? 0xc085148a
-> ? 0xc0171bde
-> ? 0xc0175987
-> ? 0xc016d672
-> 0xc0b4c9e2
-> ? 0xc084c9b8
-> 0xc084c9ca
-> 0xc0127d3a
-> ? 0xc084c9b8
-> 0xc01027a2
-> 0xc0100e3d
->Modules linked in:
->---[ end trace 0000000000000000 ]---
->EIP: 0xc0b5e1da
->Code: 7d dc 00 74 0b b9 07 00 00 00 89 df b0 01 f3 a5 83 c4 1c 5b 5e 5f 5=
-d c3 55 b8 01 00 00 00 89 e5 57 56 31 f6 53 89 f1 83 ec 30 <0f> a2 b9 04 00=
- 00 00 89 45 c4 8d 7d c8 89 f0 f3 ab e8 3c fb ff ff
->EAX: 00000001 EBX: c0be6b00 ECX: 00000000 EDX: 00000246
->ESI: 00000000 EDI: 00000000 EBP: c1309f08 ESP: c1309ecc
->DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00010286
->CR0: 80050033 CR2: ffd38000 CR3: 00c16000 CR4: 00000000
->Kernel panic - not syncing: Attempted to kill init! exitcode=3D0x0000000b
->Rebooting in 60 seconds=2E=2E
+Hi Hans
 
-Can you please not post stack traces without any symbol information either=
- internal or external? It is just random hex digits in the absence of a Sys=
-tem=2Emap or vmlinux file=2E
+On Mon, 7 Apr 2025 at 16:02, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>
+> Hi Ricardo,
+>
+> Some more comments:
+>
+> On 03/04/2025 14:59, Ricardo Ribalda wrote:
+> > To implement VIDIOC_QUERYCTRL, we need to know the minimum, maximum,
+> > step and flags of the control. For some of the controls, this involves
+> > querying the actual hardware.
+> >
+> > Some non-compliant cameras produce errors when we query them. These
+> > error can be triggered every time, sometimes, or when other controls do
+> > not have the "right value". Right now, we populate that error to userspace.
+> > When an error happens, the v4l2 framework does not copy the v4l2_queryctrl
+> > struct to userspace. Also, userspace apps are not ready to handle any
+> > other error than -EINVAL.
+> >
+> > One of the main usecases of VIDIOC_QUERYCTRL is enumerating the controls
+> > of a device. This is done using the V4L2_CTRL_FLAG_NEXT_CTRL flag. In
+> > that usecase, a non-compliant control will make it almost impossible to
+> > enumerate all controls of the device.
+> >
+> > A control with an invalid max/min/step/flags is better than non being
+> > able to enumerate the rest of the controls.
+> >
+> > This patch:
+> > - Retries for an extra attempt to read the control, to avoid spurious
+> >   errors. More attempts do not seem to produce better results in the
+> >   tested hardware.
+> > - Makes VIDIOC_QUERYCTRL return 0 in all the error cases different than
+> >   -EINVAL.
+> > - Introduces a warning in dmesg so we can have a trace of what has happened
+> >   and sets the V4L2_CTRL_FLAG_DISABLED.
+> > - Makes sure we keep returning V4L2_CTRL_FLAG_DISABLED for all the next
+> >   attempts to query that control (other operations have the same
+> >   functionality as now).
+> >
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> > Hi 2*Hans and Laurent!
+> >
+> > I came around a device that was listing just a couple of controls when
+> > it should be listing much more.
+> >
+> > Some debugging later I found that the device was returning -EIO when
+> > all the focal controls were read.
+> >
+> > Lots of good arguments in favor/against this patch in the v1. Please
+> > check!
+> >
+> > Without this patch:
+> > $ v4l2-ctl --list-ctrls
+> > User Controls
+> >
+> >                      brightness 0x00980900 (int)    : min=0 max=255 step=1 default=128 value=128
+> >                        contrast 0x00980901 (int)    : min=0 max=100 step=1 default=32 value=32
+> >                      saturation 0x00980902 (int)    : min=0 max=100 step=1 default=64 value=64
+> >                             hue 0x00980903 (int)    : min=-180 max=180 step=1 default=0 value=0
+> >         white_balance_automatic 0x0098090c (bool)   : default=1 value=1
+> >                           gamma 0x00980910 (int)    : min=90 max=150 step=1 default=120 value=120
+> >            power_line_frequency 0x00980918 (menu)   : min=0 max=2 default=2 value=2 (60 Hz)
+> >       white_balance_temperature 0x0098091a (int)    : min=2800 max=6500 step=1 default=4600 value=4600 flags=inactive
+> >
+> > With this patch:
+> > $ v4l2-ctl --list-ctrls
+> >
+> > User Controls
+> >
+> >                      brightness 0x00980900 (int)    : min=0 max=255 step=1 default=128 value=128
+> >                        contrast 0x00980901 (int)    : min=0 max=100 step=1 default=32 value=32
+> >                      saturation 0x00980902 (int)    : min=0 max=100 step=1 default=64 value=64
+> >                             hue 0x00980903 (int)    : min=-180 max=180 step=1 default=0 value=0
+> >         white_balance_automatic 0x0098090c (bool)   : default=1 value=1
+> >                           gamma 0x00980910 (int)    : min=90 max=150 step=1 default=120 value=120
+> >            power_line_frequency 0x00980918 (menu)   : min=0 max=2 default=2 value=2 (60 Hz)
+> >       white_balance_temperature 0x0098091a (int)    : min=2800 max=6500 step=1 default=4600 value=4600 flags=inactive
+> >                       sharpness 0x0098091b (int)    : min=0 max=7 step=1 default=3 value=3
+> >          backlight_compensation 0x0098091c (int)    : min=0 max=2 step=1 default=1 value=1
+> > [   32.777643] usb 3-6: UVC non compliance: permanently disabling control 98091b (Sharpness), due to error -5
+> >
+> > Camera Controls
+> >
+> >                   auto_exposure 0x009a0901 (menu)   : min=0 max=3 default=3 value=3 (Aperture Priority Mode)
+> >          exposure_time_absolute 0x009a0902 (int)    : min=2 max=1250 step=1 default=156 value=156 flags=inactive
+> >      exposure_dynamic_framerate 0x009a0903 (bool)   : default=0 value=0
+> >                         privacy 0x009a0910 (bool)   : default=0 value=0 flags=read-only
+> >    region_of_interest_rectangle 0x009a1901 (unknown): type=107 value=unsupported payload type flags=has-payload
+> >   region_of_interest_auto_ctrls 0x009a1902 (bitmask): max=0x00000001 default=0x00000001 value=1
+>
+> When you post a v8, remember to update the v4l2-ctl --list-ctrls output.
+
+will do. Please note that the output is after --- so it will not be in
+git log. Let me know if I shall promote it.
+
+>
+> >
+> > Emulating error with:
+> > +       if (cs == UVC_PU_SHARPNESS_CONTROL && query == UVC_GET_MAX) {
+> > +               printk(KERN_ERR "%s:%d %s\n", __FILE__, __LINE__, __func__);
+> > +               return -EIO;
+> > +       }
+> > In uvc_query_ctrl()
+> > ---
+> > Changes in v7:
+> > - Only retry on -EIO (Thanks Hans).
+> > - Add comment for retry (Thanks Hans).
+> > - Rebase patch
+> > - Check master_map->disabled before reading the master control.
+> > - Link to v6: https://lore.kernel.org/r/20250310-uvc-eaccess-v6-1-bf4562f7cabd@chromium.org
+> >
+> > Changes in v6:
+> > - Keep returning V4L2_CTRL_FLAG_DISABLED in future control queries.
+> > - Link to v5: https://lore.kernel.org/r/20250224-uvc-eaccess-v5-1-690d73bcef28@chromium.org
+> >
+> > Changes in v5:
+> > - Explain the retry in the commit message (Thanks Laurent).
+> > - Link to v4: https://lore.kernel.org/r/20250111-uvc-eaccess-v4-1-c7759bfd1bd4@chromium.org
+> >
+> > Changes in v4:
+> > - Display control name (Thanks Hans)
+> > - Link to v3: https://lore.kernel.org/r/20250107-uvc-eaccess-v3-1-99f3335d5133@chromium.org
+> >
+> > Changes in v3:
+> > - Add a retry mechanism during error.
+> > - Set V4L2_CTRL_FLAG_DISABLED flag.
+> > - Link to v2: https://lore.kernel.org/r/20241219-uvc-eaccess-v2-1-bf6520c8b86d@chromium.org
+> >
+> > Changes in v2:
+> > - Never return error, even if we are not enumerating the controls
+> > - Improve commit message.
+> > - Link to v1: https://lore.kernel.org/r/20241213-uvc-eaccess-v1-1-62e0b4fcc634@chromium.org
+> > ---
+> >  drivers/media/usb/uvc/uvc_ctrl.c | 53 ++++++++++++++++++++++++++++++++++------
+> >  drivers/media/usb/uvc/uvcvideo.h |  2 ++
+> >  2 files changed, 47 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> > index cbf19aa1d82374a08cf79b6a6787fa348b83523a..b41fed364d54aefd7da72c47197cf9d9e3c1b176 100644
+> > --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> > @@ -1483,14 +1483,28 @@ static u32 uvc_get_ctrl_bitmap(struct uvc_control *ctrl,
+> >       return ~0;
+> >  }
+> >
+> > +/*
+> > + * Maximum retry count to avoid spurious errors with controls. Increase this
+>
+> Increase -> Increasing
+>
+> > + * value does no seem to produce better results in the tested hardware.
+> > + */
+> > +#define MAX_QUERY_RETRIES 2
+> > +
+> >  static int __uvc_queryctrl_boundaries(struct uvc_video_chain *chain,
+> >                                     struct uvc_control *ctrl,
+> >                                     struct uvc_control_mapping *mapping,
+> >                                     struct v4l2_query_ext_ctrl *v4l2_ctrl)
+> >  {
+> >       if (!ctrl->cached) {
+> > -             int ret = uvc_ctrl_populate_cache(chain, ctrl);
+> > -             if (ret < 0)
+> > +             unsigned int retries;
+> > +             int ret;
+> > +
+> > +             for (retries = 0; retries < MAX_QUERY_RETRIES; retries++) {
+> > +                     ret = uvc_ctrl_populate_cache(chain, ctrl);
+> > +                     if (ret != -EIO)
+> > +                             break;
+> > +             }
+> > +
+> > +             if (ret)
+> >                       return ret;
+> >       }
+> >
+> > @@ -1567,6 +1581,7 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+> >  {
+> >       struct uvc_control_mapping *master_map = NULL;
+> >       struct uvc_control *master_ctrl = NULL;
+> > +     int ret;
+> >
+> >       memset(v4l2_ctrl, 0, sizeof(*v4l2_ctrl));
+> >       v4l2_ctrl->id = mapping->id;
+> > @@ -1587,18 +1602,29 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+> >               __uvc_find_control(ctrl->entity, mapping->master_id,
+> >                                  &master_map, &master_ctrl, 0, 0);
+> >       if (master_ctrl && (master_ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR)) {
+> > +             unsigned int retries;
+> >               s32 val;
+> >               int ret;
+> >
+> >               if (WARN_ON(uvc_ctrl_mapping_is_compound(master_map)))
+> >                       return -EIO;
+> >
+> > -             ret = __uvc_ctrl_get(chain, master_ctrl, master_map, &val);
+> > -             if (ret < 0)
+> > -                     return ret;
+> > +             for (retries = 0; retries < MAX_QUERY_RETRIES; retries++) {
+> > +                     ret = __uvc_ctrl_get(chain, master_ctrl, master_map,
+> > +                                          &val);
+>
+> I'd write this:
+>
+>                         if (ret < 0 && ret != -EIO)
+>                                 return ret;
+>
+> Without that you'll see the non compliance warning below, but that's not
+> what you want for non-EIO errors.
+
+I am not sure about this one. If there is an error reading a master
+control you probably want to continue. Semantically it is similar to
+not finding the control or having invalid flags.  And in those two
+cases we move on.
+Also, I think there is some value for the warning. It is counter
+intuitive that query_ctrl for control X fails due to an error in
+control Y.
+
+Let me know what do you think.
+
+>
+> > +                     if (ret != -EIO)
+> > +                             break;
+> > +             }
+> >
+> > -             if (val != mapping->master_manual)
+> > -                     v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
+> > +             if (ret < 0) {
+> > +                     dev_warn_ratelimited(&chain->dev->udev->dev,
+> > +                                          "UVC non compliance: Error %d querying master control %x (%s)\n",
+> > +                                          ret, master_map->id,
+> > +                                          uvc_map_get_name(master_map));
+> > +             } else {
+> > +                     if (val != mapping->master_manual)
+> > +                             v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
+> > +             }
+> >       }
+> >
+> >       v4l2_ctrl->elem_size = uvc_mapping_v4l2_size(mapping);
+> > @@ -1613,7 +1639,18 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+> >               return 0;
+> >       }
+> >
+> > -     return __uvc_queryctrl_boundaries(chain, ctrl, mapping, v4l2_ctrl);
+> > +     ret = __uvc_queryctrl_boundaries(chain, ctrl, mapping, v4l2_ctrl);
+> > +     if (ret && !mapping->disabled) {
+> > +             dev_warn(&chain->dev->udev->dev,
+> > +                      "UVC non compliance: permanently disabling control %x (%s), due to error %d\n",
+> > +                      mapping->id, uvc_map_get_name(mapping), ret);
+> > +             mapping->disabled = true;
+> > +     }
+> > +
+> > +     if (mapping->disabled)
+> > +             v4l2_ctrl->flags |= V4L2_CTRL_FLAG_DISABLED;
+> > +
+> > +     return 0;
+> >  }
+> >
+> >  int uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+> > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> > index b4ee701835fc016474d2cd2a0b67b2aa915c1c60..8e3753896d42baddcc2192057e8c5786ddd79fa8 100644
+> > --- a/drivers/media/usb/uvc/uvcvideo.h
+> > +++ b/drivers/media/usb/uvc/uvcvideo.h
+> > @@ -134,6 +134,8 @@ struct uvc_control_mapping {
+> >       s32 master_manual;
+> >       u32 slave_ids[2];
+> >
+> > +     bool disabled;
+> > +
+> >       const struct uvc_control_mapping *(*filter_mapping)
+> >                               (struct uvc_video_chain *chain,
+> >                               struct uvc_control *ctrl);
+> >
+> > ---
+> > base-commit: 4e82c87058f45e79eeaa4d5bcc3b38dd3dce7209
+> > change-id: 20250403-uvc-eaccess-8f3666151830
+> >
+> > Best regards,
+>
+> Regards,
+>
+>         Hans
+
+
+
+-- 
+Ricardo Ribalda
 
