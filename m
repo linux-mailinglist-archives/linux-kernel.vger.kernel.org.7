@@ -1,144 +1,176 @@
-Return-Path: <linux-kernel+bounces-590841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 768A6A7D794
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:20:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6110A7D7AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 918DE188FF01
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:19:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75ED516CDD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971C8226D19;
-	Mon,  7 Apr 2025 08:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AAE226D19;
+	Mon,  7 Apr 2025 08:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zdd7f6Jr"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Piop0/Qn"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2089.outbound.protection.outlook.com [40.107.92.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05380211A0B
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 08:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744013901; cv=none; b=q88wC5yrWQwk5+uAY6DLUFA7YLj8HK25OhmUjuoRgpEAB+nYFy46QbSjh+pIqOR04uETAspn4sLDc1oi7tMDGj368HlVFSzrgA6CgGIBQBXjIAxGPlMpmV3WBkC2xgghBwbNN6HYavlcHyO2qqCDOJCIBei5XobDJLcDmmQ2OxE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744013901; c=relaxed/simple;
-	bh=YlsQTjXdsv4XA6hqZmO7LwdUAH1dFibkaUp5xfPlBWI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YXjKZL9kmQGWGwS8kYhQrk312DQiwOQ/To2cWBExaAqY2l38vP2I1DUzEiHf0+WO97lyTqceBiADqfoZkyhd1hch6drlJVkKKwYWLpQPUTeUjb2Gy0d4HRsCSYGpXuT5OqpgNgbRyPVFAjdWMhXjRkX0S8zFZBWfsCCHKzRpNAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zdd7f6Jr; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so24902195e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 01:18:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744013897; x=1744618697; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uStfGb/uQDex1jEFM3av6TwQpt81IfPerA2ojrAgjDg=;
-        b=zdd7f6Jr6WXukul+hUCPyWEYSo1Egi/hHf8Tiuc1wyDJeeRt2m+3op+RrNcznfaQ2P
-         mvU3/vAGLnu5RkxXN23DJaRI/Ln3TNCTbfqqryBPwelI1spiDDUyHgFpo2dks/g3BYdw
-         Mt40ve0WjkhpUWwXNxKyjBCW1nPD47Vc3O+Zz+tquyJ6YQzCeHtAeGaU6sPLWWED6phU
-         +ajiGe+3wZqi3+PiLi36zHN86kRoYlS++xRmFQVinDxNGsmHUTLg5Vp1b/8H1B5Cx18B
-         A0+EpaVy5JRdz9mRjewJzdGj747ND1Ak6pbsFcpkIIQF+Rcth6I0So69xkuxcjqmNJTQ
-         Yvqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744013897; x=1744618697;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uStfGb/uQDex1jEFM3av6TwQpt81IfPerA2ojrAgjDg=;
-        b=E/rmweaXhylCvlKvos9n+EvGWPSjZbuwVmzFkMSlgEe/jW6uTUsOogfEHVV8iuWRR8
-         wgSMuTUCL7gu9ROtKOcg5lGDCE7XxbDcr9bpWBlWkyruu/4pWSWOzTvRCSAj2rqGRYHO
-         lI7WBmLvibnDKGHGqUup7ZJqaUwwnzlT5tQ2R/UDTTzJscHMkUQm9D9hjC6hqKzdZ+xt
-         W+u7i8tsQ0VSYxLSuQ0jd8DXpeo6CD4FEyrDyEU8HRwyS/jdiw4Gfzmx+bUW+WHbus1P
-         JeIawNiJ5VC8Imrwy9e4IL1lvSgaaRk/oTSq7N6tbQkU05Pt1mceQF9rKEfaM1Z5B9SX
-         Q1Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCVX4I3P/DKe1Bk5V7Mrr73ITa8QeaDdoWMcMS+g3CM6C7ObNrIYyyzcdWSl7E9t0CZGkb15l3sQwJ17MsM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjIvfUqNyCssck0AN0pw9VoTlHX04nyhN/PGe22am3MeOWofcl
-	tiZeR7TpDaHxQcGe+CnENIRQiEmlYA/4ch+m3mvi6c+9pPH9qbkPwIBydrrABvI=
-X-Gm-Gg: ASbGncsBFTbWiY1ALZZTzcxiCUy007V8ORVJ2mU+4E3ltQoVsA0JSnmYitH1t+riUWo
-	cohZsVy6h0LDC2AAk+FZt+x0n7bRXUVnunXqX47M0usnbhBAwTLZszo6K6HbmVvBDfd734YvKze
-	XXx0awCDiUVcuTEJWiiTXtMjPEsZAQEchWoKFWHUEIwuzX8v4yljS00njh+bWpPKdYMyUjdEVmA
-	Da0lYd8wmi5mphpOe4xtqpNwtXRz9FUwxTjbiT6Q+TzvCS0M8iuGOvRZTUeuIX5xVLVicwWk06r
-	hMRNpk1IswgN5qYdIl0RMSp7aSbTDsNu2Okq+Yoqx5MSmmCZ1CB9327TZXB6u5gg00jhb8+Yssu
-	9p63ngy6GvQ==
-X-Google-Smtp-Source: AGHT+IHn0gupopMsVf9o8TJPudpSJ8Lw/nR3yL67Q7MIerQdSv+lOCEPnPMaXToMPCLviiqVq5lmFQ==
-X-Received: by 2002:a05:600c:19ce:b0:43b:ca8c:fca3 with SMTP id 5b1f17b1804b1-43eceec3b21mr98959055e9.11.1744013897228;
-        Mon, 07 Apr 2025 01:18:17 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec1630ddesm125516325e9.5.2025.04.07.01.18.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Apr 2025 01:18:16 -0700 (PDT)
-Message-ID: <c0c3f814-552a-434a-9893-61d83b5a346b@linaro.org>
-Date: Mon, 7 Apr 2025 09:18:15 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E36224B1C;
+	Mon,  7 Apr 2025 08:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744014138; cv=fail; b=NjobMZP2NiCRwSAYO4Z6B9fx5LX3Fq6GbVcA2eNzvz6+CDhCxuiWoWVSaVURSQqqkRJIBUVumonwwFAJ98lGIQUsh8gZlwVL+++l2mh8zol3bjTA72qUN+tthj0iziq4J6TNNpqM4QrpjqJVYmCBHxZDXOKH3PioC9+aimJo3mU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744014138; c=relaxed/simple;
+	bh=GOAkZOs5o+bJ/hI0CSUhA93aYvcSZ9u73NEYNE7Q8Dg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a8u66JptJxJ7h162q6EYII+lN1QJX5N5FkNnixkKtRpXZ0COuTuy0gRQHs78r5G4AorExTZQxr3cQGsazYk4Gwlid+WjO+jM7gSZj5Hp5NRBvI1nmYRnrezZ6R3w5QUzhjYfphbATZoQ0Q+D6wLB2aVq7jNNoDo02IYmmtAITW8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Piop0/Qn; arc=fail smtp.client-ip=40.107.92.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=P1AnK8eCUj4q62Z3eARsLluwic0EBxzBiKyaPVA/6C+NPwY9/NVLnw8e0xDAgr6q/raFh0zQNMVx9nWPw7eG6gazqf+B8yxxvSsWKIqiFXfM+0lRDIy+WaWWRmmjybRbjD/IaHwIf927RoTX9Ar9tYWzZLHS63n4G+0EINnMz3jUM/p42WEv3qjsE/Tux0UW2AYiMswfeeT7LTnJaKc3Vr6BB3hF0qccfjsw8ec3gJAD82ZQSZo6Ns01lbRmzwNU6S9yG0pQQnEafVGgMN5La+BfGmfHta7xTsB+QVA/W39qx88siVqo5rix/3YRNc/GorJ4yNWgHgiRDI4qugzMGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=akAerm4Z/Wl06iS9CiMszjs/wxUoPUCfVhzqpIB2eWQ=;
+ b=rQcPnOZG8CpHo6JGDLf6TN0sfyfH7QHWJ1dKBIrjMKKZ+1kwmtCG0KA9ZtYhw1CT9EkZe/ncsAVMLTf+dSzqyVKgGKWZcFYp4jPz+cORgyyblxQcz2Rt2or33cWU8jOjnD8tzkmuw0Z6ohL+r1f07QgBtQ0AH/njehpW+5VEuPwrfQUQs/zNVLSBB8lkLnEUM2AczWnVtye4RGF8AZdWabq9DQLewTYyXZa09RyVujgUIKRoZv5UFaAjLjYhIlwi0paSzwoZUCBc1ZNyVPbKhXY8o/bUG1hRKdYnKBp9IS1tF5KzkbcXurRd4d+ADljwqMBfQxFBxJnvSUvHNaMAgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=akAerm4Z/Wl06iS9CiMszjs/wxUoPUCfVhzqpIB2eWQ=;
+ b=Piop0/QnsRUXiOaKj/dnJJWCJq6VrVSQwWL52wJKvcY6svNquYTV7P6uwdvXL75LSWMRMXZ7aQoux+QrOLCfoE+ft5xyESO2jqf+aUXtZoQUF7ATOf6XO+PLOD59BQmc3i5+qabKtRVfu90uJHs8IiU8pp7XU1PXmki9WjDVsUA=
+Received: from CY5PR19CA0124.namprd19.prod.outlook.com (2603:10b6:930:64::21)
+ by MW6PR12MB8950.namprd12.prod.outlook.com (2603:10b6:303:24a::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.29; Mon, 7 Apr
+ 2025 08:22:10 +0000
+Received: from CY4PEPF0000E9CF.namprd03.prod.outlook.com
+ (2603:10b6:930:64:cafe::5a) by CY5PR19CA0124.outlook.office365.com
+ (2603:10b6:930:64::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.34 via Frontend Transport; Mon,
+ 7 Apr 2025 08:22:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000E9CF.mail.protection.outlook.com (10.167.241.134) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8606.22 via Frontend Transport; Mon, 7 Apr 2025 08:22:10 +0000
+Received: from shatadru.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 7 Apr
+ 2025 03:22:05 -0500
+From: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
+To: <gautham.shenoy@amd.com>, <mario.limonciello@amd.com>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Dhananjay
+ Ugwekar" <dhananjay.ugwekar@amd.com>
+Subject: [PATCH] cpufreq/amd-pstate: Fix min_limit perf and freq updation for performance governor
+Date: Mon, 7 Apr 2025 08:19:26 +0000
+Message-ID: <20250407081925.850473-1-dhananjay.ugwekar@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: qcom: camss: vfe: suppress VFE version log spam
-To: Johan Hovold <johan+linaro@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Depeng Shao <quic_depengs@quicinc.com>
-References: <20250407073132.8186-1-johan+linaro@kernel.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20250407073132.8186-1-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9CF:EE_|MW6PR12MB8950:EE_
+X-MS-Office365-Filtering-Correlation-Id: 35c8ef14-b067-47d2-db18-08dd75ad4b17
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dSiQKx/8mg3Ns/f4zr8wfJAMF6xvIPcXaBNr510xqw7zE1aR+DGUHBJNGAGy?=
+ =?us-ascii?Q?hAWm8GAoTLMVBzH/vmWAatiZYvqYE7qZYyejEZYSeYGDCk40xtp4bded53UI?=
+ =?us-ascii?Q?8M9BdtVhTC+L1BVJvoZITJPiiROyE2kXezicpTVyP3ZVgaszG256qZNtCXT/?=
+ =?us-ascii?Q?Z63M0HPEikKQyIQVKBIRsx1q4hl/GpHv8mqRdRaUv4rq9UQgmQ28uQobIBvv?=
+ =?us-ascii?Q?M1cW+cdvn8FqH+3Sv2tEX9My+wsGKIs77D923nHnKWy9pcZlK1x0CLBJdi7P?=
+ =?us-ascii?Q?5lFNOLZoMv4UWRBccA/Tu0snPawAzH/VvUTTEDuKBg4wZrxIL+64+iC/A+gg?=
+ =?us-ascii?Q?J6Ly7k5SE5wXlW+NQDLHI4nbyaBRompv3CyxN8tS67LKddPtxesdUrp9nNvh?=
+ =?us-ascii?Q?/fjME4NNre59M4sMJAFiSDCRkyu251+OtJUmoaZcULIuphIC0rLMCHlzGIrT?=
+ =?us-ascii?Q?SiNboZVjflD1aMXumd6S9XMz0V0PX9dzWRDo6koG+QMQBpphfHYFonhkt47g?=
+ =?us-ascii?Q?5/VCwI3/fxqkVqxJ1f3Tkb2kP+x5sHA7P5auMa5gycOH5pYeIcpvpb7pCX7v?=
+ =?us-ascii?Q?vQR/ha7pWxaO9mxuEEsnuGX2Guyc0w51XtdJnJAmdzae2/OMgzOLiF/mjwu5?=
+ =?us-ascii?Q?FkTRhz10Y2J2kFlKdlIaX2sPrFkv1cc3aQ6/JIiQligEKNuAcHLcJmNgxq5c?=
+ =?us-ascii?Q?SFUA/QcTaC8Qylg5XttUvQuPKGaaYQ85qHdHTB5eUEcueXrlaqv/wi52rBFP?=
+ =?us-ascii?Q?V6lXn32jqo+Mb1CD9BkLYOzui84LUGbqANqoQ19UqBaipQtQgASDH2ad2BKO?=
+ =?us-ascii?Q?lUPu27Xo9PulEkfvf6jDPcXpu+Sw7aBnEwfp1pKkPMIgu2g9rLrpHeNndHGk?=
+ =?us-ascii?Q?C01QOSnYA32FWZNYJH4+LQSlUfwHvOOOBpBv6f5QElDjRu3xcJpUjfSZvuKc?=
+ =?us-ascii?Q?/t0lVGGyBwOUccfggG8FKTMfKceNeQh1hskKxMLIrMC08nSKC5OVNJIhRe18?=
+ =?us-ascii?Q?BV0J3xDDq+6YupH59sdm33LiAWOOljP0hGSFXjC6SBgkcO3ha95UE9WCSmTC?=
+ =?us-ascii?Q?LQbqZw1vI7YxitmsragqfKFJi68+byB3lCytZEX9F9sV8WyqFZGjk/inLRFs?=
+ =?us-ascii?Q?21Prat9NwMfyEQ0+tVcvkdd/Qp1Rl88UBF6hrybxUU4eto3iPzK/qdKGvZaI?=
+ =?us-ascii?Q?BLdmibWOXWBEfY+57A9ROJP9VyMtII5XjWjg+j4gyGyyvJ93ziKaQFbsO1cS?=
+ =?us-ascii?Q?PYIEMSXoL5Zo8CjuRDvmvXT2slBD8cK8sXNppAiSotBBcmDkey7ELTC0i7bX?=
+ =?us-ascii?Q?IK0XSkxmfqbiqRjUM6ed59r4HlWKKtbGNaUiZwPvhKUEf+FT8PFP1GUHNw59?=
+ =?us-ascii?Q?L8uP46HovyPGslVwPW0fxOqnu9v9nSlEUJTDOjqxRtG9wIMjO/nRCIb91l9K?=
+ =?us-ascii?Q?zrA+qhhkmqPJJ6a67KbwFW/mDFJ+2LMTJKXT8SBMncfL7jbtpVvXNUiU6TnD?=
+ =?us-ascii?Q?TYbIGxqv+cRqkNQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 08:22:10.4562
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35c8ef14-b067-47d2-db18-08dd75ad4b17
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9CF.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8950
 
-On 07/04/2025 08:31, Johan Hovold wrote:
-> A recent commit refactored the printing of the VFE hardware version, but
-> (without it being mentioned) also changed the log level from debug to
-> info.
-> 
-> This results in several hundred lines of repeated log spam during boot
-> and use, for example, on the Lenovo ThinkPad X13s:
-> 
-> 	qcom-camss ac5a000.camss: VFE:1 HW Version = 1.2.2
-> 	qcom-camss ac5a000.camss: VFE:0 HW Version = 1.2.2
-> 	qcom-camss ac5a000.camss: VFE:2 HW Version = 1.2.2
-> 	qcom-camss ac5a000.camss: VFE:2 HW Version = 1.2.2
-> 	qcom-camss ac5a000.camss: VFE:3 HW Version = 1.2.2
-> 	qcom-camss ac5a000.camss: VFE:5 HW Version = 1.3.0
-> 	qcom-camss ac5a000.camss: VFE:6 HW Version = 1.3.0
-> 	qcom-camss ac5a000.camss: VFE:4 HW Version = 1.3.0
-> 	qcom-camss ac5a000.camss: VFE:5 HW Version = 1.3.0
-> 	qcom-camss ac5a000.camss: VFE:6 HW Version = 1.3.0
-> 	qcom-camss ac5a000.camss: VFE:7 HW Version = 1.3.0
-> 	qcom-camss ac5a000.camss: VFE:7 HW Version = 1.3.0
-> 	qcom-camss ac5a000.camss: VFE:7 HW Version = 1.3.0
-> 	...
-> 
-> Suppress the version logging by demoting to debug level again.
-> 
-> Cc: Depeng Shao <quic_depengs@quicinc.com>
-> Fixes: 10693fed125d ("media: qcom: camss: vfe: Move common code into vfe core")
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
->   drivers/media/platform/qcom/camss/camss-vfe.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
-> index cf0e8f5c004a..1ed2518c7a6b 100644
-> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
-> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-> @@ -428,7 +428,7 @@ u32 vfe_hw_version(struct vfe_device *vfe)
->   	u32 rev = (hw_version >> HW_VERSION_REVISION) & 0xFFF;
->   	u32 step = (hw_version >> HW_VERSION_STEPPING) & 0xFFFF;
->   
-> -	dev_info(vfe->camss->dev, "VFE:%d HW Version = %u.%u.%u\n",
-> +	dev_dbg(vfe->camss->dev, "VFE:%d HW Version = %u.%u.%u\n",
->   		 vfe->id, gen, rev, step);
->   
->   	return hw_version;
+The min_limit perf and freq values can get disconnected with performance
+governor, as we only modify the perf value in the special case. Fix that
+by modifying the perf and freq values together
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Fixes: 009d1c29a451 ("cpufreq/amd-pstate: Move perf values into a union")
+Signed-off-by: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
+---
+ drivers/cpufreq/amd-pstate.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+index 024d33d5e367..76aa4a3698c3 100644
+--- a/drivers/cpufreq/amd-pstate.c
++++ b/drivers/cpufreq/amd-pstate.c
+@@ -607,13 +607,16 @@ static void amd_pstate_update_min_max_limit(struct cpufreq_policy *policy)
+ 	union perf_cached perf = READ_ONCE(cpudata->perf);
+ 
+ 	perf.max_limit_perf = freq_to_perf(perf, cpudata->nominal_freq, policy->max);
+-	perf.min_limit_perf = freq_to_perf(perf, cpudata->nominal_freq, policy->min);
++	WRITE_ONCE(cpudata->max_limit_freq, policy->max);
+ 
+-	if (cpudata->policy == CPUFREQ_POLICY_PERFORMANCE)
++	if (cpudata->policy == CPUFREQ_POLICY_PERFORMANCE) {
+ 		perf.min_limit_perf = min(perf.nominal_perf, perf.max_limit_perf);
++		WRITE_ONCE(cpudata->min_limit_freq, min(cpudata->nominal_freq, cpudata->max_limit_freq));
++	} else {
++		perf.min_limit_perf = freq_to_perf(perf, cpudata->nominal_freq, policy->min);
++		WRITE_ONCE(cpudata->min_limit_freq, policy->min);
++	}
+ 
+-	WRITE_ONCE(cpudata->max_limit_freq, policy->max);
+-	WRITE_ONCE(cpudata->min_limit_freq, policy->min);
+ 	WRITE_ONCE(cpudata->perf, perf);
+ }
+ 
+-- 
+2.34.1
+
 
