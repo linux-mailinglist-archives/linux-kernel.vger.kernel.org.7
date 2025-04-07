@@ -1,284 +1,104 @@
-Return-Path: <linux-kernel+bounces-592061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12AC4A7E8A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:43:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 993F1A7E88A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:39:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 022543BAAC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:38:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C73073BCA72
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2972E2561BA;
-	Mon,  7 Apr 2025 17:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664E425485F;
+	Mon,  7 Apr 2025 17:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D9f8m09p"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OIv+EPpm"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55C0255E2B
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 17:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77F7253F1E;
+	Mon,  7 Apr 2025 17:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744047244; cv=none; b=rGYWicA/qGk+Za7jGy98OcAbS3/9TFI/GIyzC2Cnv50GUnKrdJMEe2qrGqjeysdXhpYRy+bYtGlzvtAzKgV+dfVy18QfomXst9dvFjKSJmOA26tifX1EQCaznHG65R86NfLQRms0QS4P0J5363aL1lDmutEFVeE5FXRJaSvMQ38=
+	t=1744047208; cv=none; b=aeMLKUPkAXafCeGoSmWNPyZwpkRek3bap3k/l6+TYDMqlqi8810BqlVWkcUnnBDYRo9Jqxfl3jrl8R9dtnTZbhso13FW8GUgVROcLv1qcQjYEYhkhfBe4uQUd0jRwDDUxl997UzFnmzqyEgRHL6OrC2yNUxhDkikZh4TgzESIV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744047244; c=relaxed/simple;
-	bh=0eoyesuUJ7nZXFehU0rjs/Slq1sdsdIs1Ek+4VMektQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=osypggBu+o5vCdp7z2i0p1hnbTOmtTHLDfHdW+xHoFB8qqmaQcViV/WvKlW0biDJ8gJ0++RfL5GJi4W66POPSAgSVU8ZbrX5kTl/irKOvyCyyrlv5dGhkGu9wJog4fWENMS7bab0UVmSifruFgIonRduJebCW2mzSsBLJvCRKYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D9f8m09p; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744047241;
+	s=arc-20240116; t=1744047208; c=relaxed/simple;
+	bh=p7ULcV2AJ6K0xt6KrSTkD5wqiY6jxKYXXVjn1ezf0Ok=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sNA1I1ciUjtT1t1eafcWX/MywK021HfG3cRcTc/wu6vwQEwgNdHZxfJ2u1kE8kEMPeDY9z2OD5b3ayDvEM4bb/4jLIQTM1Xy0pogOpTngyWoOrjnaCq62oRICZEDaRJTavh5B6I3iHsjTsaDY6was0opHj9wgtd/rcAF4zt7JbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OIv+EPpm; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8D66943160;
+	Mon,  7 Apr 2025 17:33:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744047204;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ixTjOYCWUZvSMYGAAMcSYpU49kgLEmCLWZmPx1x/04U=;
-	b=D9f8m09pail2aDFVFMmGy3qar8Vl4sK4Cx/J0b1TKALVOuz6kxZplB5mNoKT4XtfESAfi5
-	F180Cxtrl7YwYo12JFFWJHmYbHAwPw86c/BBbqiZIQmRC7+Fog3TZkGmlAZNXf8yxI8JD+
-	Rlw1f7Dk6VCM9ayX59LFb36Mgsv2qrI=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-591-aWG3WrrmMMebsZvXhkGbgg-1; Mon,
- 07 Apr 2025 13:33:59 -0400
-X-MC-Unique: aWG3WrrmMMebsZvXhkGbgg-1
-X-Mimecast-MFC-AGG-ID: aWG3WrrmMMebsZvXhkGbgg_1744047237
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7388018001F8;
-	Mon,  7 Apr 2025 17:33:57 +0000 (UTC)
-Received: from p16v.luc.cera.cz (unknown [10.44.32.4])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 51F9F180B488;
-	Mon,  7 Apr 2025 17:33:52 +0000 (UTC)
-From: Ivan Vecera <ivecera@redhat.com>
-To: netdev@vger.kernel.org
-Cc: Michal Schmidt <mschmidt@redhat.com>,
-	Prathosh Satish <Prathosh.Satish@microchip.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH 28/28] dpll: zl3073x: Add support to get fractional frequency offset on input pins
-Date: Mon,  7 Apr 2025 19:33:01 +0200
-Message-ID: <20250407173301.1010462-9-ivecera@redhat.com>
-In-Reply-To: <20250407172836.1009461-1-ivecera@redhat.com>
-References: <20250407172836.1009461-1-ivecera@redhat.com>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6i4LGPZpyDsqY46pnOirmnKr4AE5PweFoQ3kS4LwbxU=;
+	b=OIv+EPpmJWKuQpbmSn0tc/OAF20k45ZgKPSzyUs9uJXQATRGX8yUqJfLdtt+LqeWbYjzzw
+	FT+93Orrs6H4JRZNT6U5Z1xL2hG+Mp1Nt4WfxwzYvUKkg8QsVdMmmhnm+tH9egNJ7YeywM
+	pOYDVd1UwUpku2hKMDDJcK2SLmkD/sRnHlquIHRfAe8DdIqDztVU2Zj8V87eFWcpkXA9o0
+	emUv4t+2Fl8GRR5vRrnHmbjPoHzxkEr4rOp6C2P/qBFzA227nVfVM/HzudnzdUu2zlOxMX
+	Hn9fRq32zY0e6HLqphibNfWdRaoKh66xny5RqS7K/Awl7Gbqkz394S6RR4teJw==
+From: Thomas Richard <thomas.richard@bootlin.com>
+Date: Mon, 07 Apr 2025 19:33:14 +0200
+Subject: [PATCH] crypto: caam: Add support for i.MX8QM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250407-imx8qm-caam-support-v1-1-181cf01a14ec@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAFkM9GcC/x3MOQqAMBBA0avI1A7EDZeriEVIRp0ii4lKQLy7w
+ fIV/z8QKTBFmIoHAt0c2dmMqixA7dJuhKyzoRZ1J1rRI5s0HAaVlAbj5b0LJ3ZrU/WkhlFrglz
+ 6QCun/zov7/sBomXtB2UAAAA=
+To: =?utf-8?q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>, 
+ Pankaj Gupta <pankaj.gupta@nxp.com>, Gaurav Jain <gaurav.jain@nxp.com>, 
+ Herbert Xu <herbert@gondor.apana.org.au>, 
+ "David S. Miller" <davem@davemloft.net>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Thomas Richard <thomas.richard@bootlin.com>
+X-Mailer: b4 0.14.1
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddtkedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomhepvfhhohhmrghsucftihgthhgrrhguuceothhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeehtdelgfetjedvvefgfeeiteetgeekfeekleetleejvdehlefhgfetiedvhfdvtdenucffohhmrghinhepmhigjedruggrthgrpdhmgiekmhdruggrthgrpdhmgiekuhhlphdruggrthgrpdhmgiekqhhmrdgurghtrgenucfkphepvdgrtddumegtsgdugeemfhegtdemsghftddtmehftdehgeemtgeltgdvmedvudgtfeemudehieeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemfhegtdemsghftddtmehftdehgeemtgeltgdvmedvudgtfeemudehieeipdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepledprhgtphhtthhopehhohhrihgrrdhgvggrnhhtrgesnhigphdrtghomhdprhgtphhtthhopehlihhnuhigqdgtrhihphhto
+ hesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepphgrnhhkrghjrdhguhhpthgrsehngihprdgtohhmpdhrtghpthhtohepghgruhhrrghvrdhjrghinhesnhigphdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: thomas.richard@bootlin.com
 
-This adds support to get fractional frequency offset for input pins.
-Implement the appropriate callback that performs reference frequency
-measurement and reports the frequency offset between the DPLL and
-the reference.
+On i.MX8QM, caam clocks are turned on automatically and Linux does not have
+access to the caam controller's register page, so skip clocks
+initialization.
 
-Reviewed-by: Michal Schmidt <mschmidt@redhat.com>
-Co-developed-by: Prathosh Satish <Prathosh.Satish@microchip.com>
-Signed-off-by: Prathosh Satish <Prathosh.Satish@microchip.com>
-Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
 ---
- drivers/dpll/dpll_zl3073x.c | 110 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 109 insertions(+), 1 deletion(-)
+ drivers/crypto/caam/ctrl.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/dpll/dpll_zl3073x.c b/drivers/dpll/dpll_zl3073x.c
-index e1d7f6d4c3d57..f5a58c3bab382 100644
---- a/drivers/dpll/dpll_zl3073x.c
-+++ b/drivers/dpll/dpll_zl3073x.c
-@@ -36,12 +36,31 @@ ZL3073X_REG8_IDX_DEF(dpll_refsel_status,	0x130, ZL3073X_NUM_CHANNELS, 1);
- #define DPLL_REFSEL_STATUS_STATE_ACQUIRING	3
- #define DPLL_REFSEL_STATUS_STATE_LOCK		4
- 
-+ZL3073X_REG32_IDX_DEF(ref_freq,			0x144,
-+						ZL3073X_NUM_INPUT_PINS, 4);
-+
- /*
-  * Register Map Page 4, Ref
-  */
- ZL3073X_REG8_DEF(ref_phase_err_read_rqst,	0x20f);
- #define REF_PHASE_ERR_READ_RQST_RD		BIT(0)
- 
-+ZL3073X_REG8_DEF(ref_freq_meas_ctrl,		0x21c);
-+#define REF_FREQ_MEAS_CTRL_LATCH		GENMASK(1, 0)
-+#define REF_FREQ_MEAS_CTRL_LATCH_REF_FREQ	1
-+#define REF_FREQ_MEAS_CTRL_LATCH_REF_FREQ_OFF	2
-+#define REF_FREQ_MEAS_CTRL_LATCH_DPLL_FREQ_OFF	3
-+
-+ZL3073X_REG8_DEF(ref_freq_meas_mask_3_0,	0x21d);
-+#define REF_FREQ_MEAS_MASK_3_0(_ref)		BIT(_ref)
-+
-+ZL3073X_REG8_DEF(ref_freq_meas_mask_4,		0x21e);
-+#define REF_FREQ_MEAS_MASK_4(_ref)		BIT((_ref) - 8)
-+
-+ZL3073X_REG8_DEF(dpll_meas_ref_freq_ctrl,	0x21f);
-+#define DPLL_MEAS_REF_FREQ_CTRL_EN		BIT(0)
-+#define DPLL_MEAS_REF_FREQ_CTRL_IDX		GENMASK(6, 4)
-+
- ZL3073X_REG48_IDX_DEF(ref_phase,		0x220,
- 						ZL3073X_NUM_INPUT_PINS, 6);
- 
-@@ -140,6 +159,7 @@ struct zl3073x_dpll_pin_info {
-  * @esync_control: embedded sync is controllable
-  * @pin_state: last saved pin state
-  * @phase_offset: last saved pin phase offset
-+ * @freq_offset: last saved fractional frequency offset
-  */
- struct zl3073x_dpll_pin {
- 	struct dpll_pin			*dpll_pin;
-@@ -149,6 +169,7 @@ struct zl3073x_dpll_pin {
- 	bool				esync_control;
- 	enum dpll_pin_state		pin_state;
- 	s64				phase_offset;
-+	s64				freq_offset;
- };
- 
- /**
-@@ -498,6 +519,79 @@ zl3073x_dpll_input_pin_esync_set(const struct dpll_pin *dpll_pin,
- 	return rc;
- }
- 
-+static int
-+zl3073x_dpll_input_pin_ffo_get(const struct dpll_pin *dpll_pin, void *pin_priv,
-+			       const struct dpll_device *dpll, void *dpll_priv,
-+			       s64 *ffo, struct netlink_ext_ack *extack)
-+{
-+	struct zl3073x_dpll *zldpll = dpll_priv;
-+	struct zl3073x_dev *zldev = zldpll->mfd;
-+	struct zl3073x_dpll_pin *pin = pin_priv;
-+	u8 dpll_meas_ref_freq_ctrl, ref_id;
-+	u8 ref_freq_meas_ctrl, ref_mask;
-+	s32 freq_offset;
-+	int rc;
-+
-+	/* Take device lock */
-+	guard(zl3073x)(zldev);
-+
-+	/* Get index of the pin */
-+	ref_id = zl3073x_dpll_pin_index_get(pin);
-+
-+	/* Wait for being ready */
-+	rc = zl3073x_wait_clear_bits(zldev, ref_freq_meas_ctrl,
-+				     REF_FREQ_MEAS_CTRL_LATCH);
-+	if (rc)
-+		return rc;
-+
-+	/* Select channel index in the mask and enable freq measurement */
-+	dpll_meas_ref_freq_ctrl =
-+		DPLL_MEAS_REF_FREQ_CTRL_EN |
-+		FIELD_PREP(DPLL_MEAS_REF_FREQ_CTRL_IDX, zldpll->id);
-+
-+	rc = zl3073x_write_dpll_meas_ref_freq_ctrl(zldev,
-+						   dpll_meas_ref_freq_ctrl);
-+	if (rc)
-+		return rc;
-+
-+	/* Set reference mask
-+	 * REF0P,REF0N..REF3P,REF3N are set in ref_freq_meas_mask_3_0 register
-+	 * REF4P and REF4N are set in ref_freq_meas_mask_4 register
-+	 */
-+	if (ref_id < 8) {
-+		ref_mask = REF_FREQ_MEAS_MASK_3_0(ref_id);
-+		rc = zl3073x_write_ref_freq_meas_mask_3_0(zldev, ref_mask);
-+	} else {
-+		ref_mask = REF_FREQ_MEAS_MASK_4(ref_id);
-+		rc = zl3073x_write_ref_freq_meas_mask_4(zldev, ref_mask);
-+	}
-+	if (rc)
-+		return rc;
-+
-+	/* Request a reading of the frequency offset between the DPLL and
-+	 * the reference
-+	 */
-+	ref_freq_meas_ctrl = REF_FREQ_MEAS_CTRL_LATCH_DPLL_FREQ_OFF;
-+	rc = zl3073x_write_ref_freq_meas_ctrl(zldev, ref_freq_meas_ctrl);
-+	if (rc)
-+		return rc;
-+
-+	/* Wait for the command to actually finish */
-+	rc = zl3073x_wait_clear_bits(zldev, ref_freq_meas_ctrl,
-+				     REF_FREQ_MEAS_CTRL_LATCH);
-+	if (rc)
-+		return rc;
-+
-+	/* Read the frequency offset between DPLL and reference */
-+	rc = zl3073x_read_ref_freq(zldev, ref_id, &freq_offset);
-+	if (rc)
-+		return rc;
-+
-+	*ffo = freq_offset;
-+
-+	return rc;
-+}
-+
- static int
- zl3073x_dpll_input_pin_frequency_get(const struct dpll_pin *dpll_pin,
- 				     void *pin_priv,
-@@ -1778,6 +1872,7 @@ static const struct dpll_pin_ops zl3073x_dpll_input_pin_ops = {
- 	.direction_get = zl3073x_dpll_pin_direction_get,
- 	.esync_get = zl3073x_dpll_input_pin_esync_get,
- 	.esync_set = zl3073x_dpll_input_pin_esync_set,
-+	.ffo_get = zl3073x_dpll_input_pin_ffo_get,
- 	.frequency_get = zl3073x_dpll_input_pin_frequency_get,
- 	.frequency_set = zl3073x_dpll_input_pin_frequency_set,
- 	.phase_offset_get = zl3073x_dpll_input_pin_phase_offset_get,
-@@ -2484,9 +2579,9 @@ zl3073x_dpll_periodic_work(struct kthread_work *work)
- 	 * are constant.
- 	 */
- 	for (i = 0; i < ZL3073X_NUM_INPUT_PINS; i++) {
-+		s64 freq_offset, phase_offset;
- 		struct zl3073x_dpll_pin *pin;
- 		enum dpll_pin_state state;
--		s64 phase_offset;
- 		bool pin_changed;
- 
- 		/* Input pins starts are stored after output pins */
-@@ -2513,6 +2608,12 @@ zl3073x_dpll_periodic_work(struct kthread_work *work)
- 		if (rc)
- 			goto out;
- 
-+		rc = zl3073x_dpll_input_pin_ffo_get(pin->dpll_pin, pin,
-+						    zldpll->dpll_dev, zldpll,
-+						    &freq_offset, NULL);
-+		if (rc)
-+			goto out;
-+
- 		if (state != pin->pin_state) {
- 			dev_dbg(zldev->dev,
- 				"INPUT%u state changed to %u\n",
-@@ -2527,6 +2628,13 @@ zl3073x_dpll_periodic_work(struct kthread_work *work)
- 			pin->phase_offset = phase_offset;
- 			pin_changed = true;
- 		}
-+		if (freq_offset != pin->freq_offset) {
-+			dev_dbg(zldev->dev,
-+				"INPUT%u frequency offset changed to %llu\n",
-+				pin->index, freq_offset);
-+			pin->freq_offset = freq_offset;
-+			pin_changed = true;
-+		}
- 
- 		if (pin_changed)
- 			dpll_pin_change_ntf(pin->dpll_pin);
+diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
+index d4b39184dbdb..38ff931059b4 100644
+--- a/drivers/crypto/caam/ctrl.c
++++ b/drivers/crypto/caam/ctrl.c
+@@ -573,6 +573,7 @@ static const struct soc_device_attribute caam_imx_soc_table[] = {
+ 	{ .soc_id = "i.MX7*",  .data = &caam_imx7_data },
+ 	{ .soc_id = "i.MX8M*", .data = &caam_imx7_data },
+ 	{ .soc_id = "i.MX8ULP", .data = &caam_imx8ulp_data },
++	{ .soc_id = "i.MX8QM", .data = &caam_imx8ulp_data },
+ 	{ .soc_id = "VF*",     .data = &caam_vf610_data },
+ 	{ .family = "Freescale i.MX" },
+ 	{ /* sentinel */ }
+
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250407-imx8qm-caam-support-5f317ec89dde
+
+Best regards,
 -- 
-2.48.1
+Thomas Richard <thomas.richard@bootlin.com>
 
 
