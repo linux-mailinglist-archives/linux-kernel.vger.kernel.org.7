@@ -1,113 +1,117 @@
-Return-Path: <linux-kernel+bounces-591796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06E06A7E56B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:59:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA4ECA7E52E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B15617E84E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:52:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 773C83A3C09
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B48B206F35;
-	Mon,  7 Apr 2025 15:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QsmGeP+v"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F7F2045BA;
+	Mon,  7 Apr 2025 15:45:42 +0000 (UTC)
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF312205E1A;
-	Mon,  7 Apr 2025 15:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56564203718;
+	Mon,  7 Apr 2025 15:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744040988; cv=none; b=JQTIfZUxzEEo1ZDG3v6gyAvPixMWGsC8j6H1fFZ9Y51Hf89W9xpPEU4e82uUZfzsbhy8uqzazxImpWBUr+frpOVNvpkmyso1sjjSShsyhOHF3NfEOxu2i6lTTVajvRSTrmYOBhpokWAUmnSzYDgmuRos0M3XJQRnqE9gSybHJeE=
+	t=1744040742; cv=none; b=D/5i+oIiviIvk7gwzZgVsiQSEP5/LsXg6T7glNgR6jEFGs/nk3qra9PMuTjraeWX1TgMZO24PfXFY8xnHC3YsVGWri+kpWZKr0z6396hf9nZrq6oB3TiZrjX0v7105a326OqG9pvSXIHSFWB3+UIr2/gwatDC92aQJyOrcvKpC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744040988; c=relaxed/simple;
-	bh=c7ULQ/YDFwbkluQJyxGwnd4AkGdM/+B4VTGHdwHtUNY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kiJaEBYiSlHu4+sKgJQW8Oa0OFmOVRMPubSa0gtEdk/dUoaQmgozw6f9kZE8XJMrD855SauDrw/EbPtvKKaMEA1HC/+heO+izXC+hjpJiMDE5RjRUZ8AAkzujauvk42TRuCzQ3EEglKxrv0HNfEYgtknz21VPNSXsYrjSuNH8vQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QsmGeP+v; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744040987; x=1775576987;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=c7ULQ/YDFwbkluQJyxGwnd4AkGdM/+B4VTGHdwHtUNY=;
-  b=QsmGeP+vI57V9mP0o5CpTJWZZjDoylWFEmjFRGaza6fdlHCwmAteBrSB
-   ssDCSJmmtvAmxHWA6rVLvnKT53D6TYl64f8IE4AzAde07Kt2HY9e8NqoM
-   9o97DkP44Zf3R1GmxGXfvKv5wEvOrhTXITL2FQ8zDT3EQ7ZoIiwdsu45/
-   BmZ2HjF8ZR8zju3bQvxmqCBEoNih4vxVV9ZKpPBIBe/Fyim5bSVlrvdmG
-   VE1v7LroeQpLPido8j6PDjNrh7kI/McXMW4+vWOd0BGboUdGV4yKPzm+2
-   6/rbrIwdkawpTtRoOwBbWFWOOxW3FXNbLqobGGPbIA7tvMvxIqMxGnnL2
-   Q==;
-X-CSE-ConnectionGUID: Elnf0AuYRmm6uF/3NAjILw==
-X-CSE-MsgGUID: gY3idw2fSoyygrDtZjANPg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45555083"
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="45555083"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 08:49:46 -0700
-X-CSE-ConnectionGUID: +RKB55IkR+WTDUcPTD1dNA==
-X-CSE-MsgGUID: omWa6NFdQ46bzmb7vXtLJw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="158986669"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa002.jf.intel.com with ESMTP; 07 Apr 2025 08:49:43 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id CFDE1338; Mon, 07 Apr 2025 18:49:38 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Jai Luthra <jai.luthra@ideasonboard.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH v3 7/7] media: i2c: ds90ub960: Remove of_node assignment
-Date: Mon,  7 Apr 2025 18:45:03 +0300
-Message-ID: <20250407154937.744466-8-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250407154937.744466-1-andriy.shevchenko@linux.intel.com>
-References: <20250407154937.744466-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1744040742; c=relaxed/simple;
+	bh=zi9iY0G5Dbazg2U9eGztUFd8+hYK+LP/BqQ/QTap2CM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W0XHas/lNDkUl0TJ+Ujt4R0lg8Td+KfsniYY3fv22xq+12GSzNWWBV2grnrZkSXHvB6hmyEq7fZrYJtUdhTMrEw8WnaDJLGGHHuqjTR1CjiJSIqgyRutvyIvmYbXHlE84WLBN2d/b3It2kyrvbeZwxKt9E0HMadgEyJDCWulolE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B8CF241E0D;
+	Mon,  7 Apr 2025 15:45:19 +0000 (UTC)
+Message-ID: <7b6d895a-d19e-4f2c-8e12-6fe933b26189@ghiti.fr>
+Date: Mon, 7 Apr 2025 17:45:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 01/28] mm: VM_SHADOW_STACK definition for riscv
+Content-Language: en-US
+To: Deepak Gupta <debug@rivosinc.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Christian Brauner <brauner@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>,
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+ Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com,
+ andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com,
+ atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
+ alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org,
+ rick.p.edgecombe@intel.com, Zong Li <zong.li@sifive.com>
+References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
+ <20250314-v5_user_cfi_series-v12-1-e51202b53138@rivosinc.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250314-v5_user_cfi_series-v12-1-e51202b53138@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddtheelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpedthfelfeejgeehveegleejleelgfevhfekieffkeeujeetfedvvefhledvgeegieenucfkphepudejiedrudegjedrudeghedrgeegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudejiedrudegjedrudeghedrgeegpdhhvghloheplgduledvrdduieekrddurdduheefngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeegledprhgtphhtthhopeguvggsuhhgsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprhgtphhtthhopegurghvvgdrhhgrnhhsvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhhpr
+ gesiiihthhorhdrtghomhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
+X-GND-Sasl: alex@ghiti.fr
 
-Remove of_node assignment which duplicates fwnode in struct i2c_board_info.
-In general drivers must not set both, it's quite confusing. The I²C core
-will consider fwnode with a priority and of_node is subject to remove from
-above mentioned data structure.
+Hi Deepak,
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/media/i2c/ds90ub960.c | 1 -
- 1 file changed, 1 deletion(-)
+On 14/03/2025 22:39, Deepak Gupta wrote:
+> VM_HIGH_ARCH_5 is used for riscv
+>
+> Reviewed-by: Zong Li <zong.li@sifive.com>
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>   include/linux/mm.h | 7 +++++++
+>   1 file changed, 7 insertions(+)
+>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 7b1068ddcbb7..1ef231cbc8fe 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -378,6 +378,13 @@ extern unsigned int kobjsize(const void *objp);
+>   # define VM_SHADOW_STACK	VM_HIGH_ARCH_6
+>   #endif
+>   
+> +#if defined(CONFIG_RISCV_USER_CFI)
+> +/*
+> + * Following x86 and picking up the same bitpos.
+> + */
+> +# define VM_SHADOW_STACK	VM_HIGH_ARCH_5
+> +#endif
+> +
+>   #ifndef VM_SHADOW_STACK
+>   # define VM_SHADOW_STACK	VM_NONE
+>   #endif
+>
 
-diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
-index 5dde8452739b..5afdbbad9ff4 100644
---- a/drivers/media/i2c/ds90ub960.c
-+++ b/drivers/media/i2c/ds90ub960.c
-@@ -1682,7 +1682,6 @@ static int ub960_rxport_add_serializer(struct ub960_data *priv, u8 nport)
- 	struct device *dev = &priv->client->dev;
- 	struct ds90ub9xx_platform_data *ser_pdata = &rxport->ser.pdata;
- 	struct i2c_board_info ser_info = {
--		.of_node = to_of_node(rxport->ser.fwnode),
- 		.fwnode = rxport->ser.fwnode,
- 		.platform_data = ser_pdata,
- 	};
--- 
-2.47.2
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Thanks,
+
+Alex
 
 
