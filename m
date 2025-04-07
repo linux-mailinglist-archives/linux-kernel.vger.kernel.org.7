@@ -1,148 +1,220 @@
-Return-Path: <linux-kernel+bounces-591244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1C11A7DD1D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:05:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5335A7DD24
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17FD51890A17
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:05:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 794553AE86A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271422459DC;
-	Mon,  7 Apr 2025 12:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3ABE2459D6;
+	Mon,  7 Apr 2025 12:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ewF7B6dS"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwPcwcGi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5568235C11
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 12:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39AA22D7BD
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 12:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744027524; cv=none; b=vBITxJg+anMxYqXPeRZGxRB0j7kqbjEnS27SvhIKb5hacOYUa7k58J5jEWASLXbUUmLgWKTuksdo3zT92MqFR6aqJyjDV3exImGdMM7g+/flbZsh3kImeVy/xv/N7HCss6wevxjP5s03t10z4E8VBj/GpPEHh1Tc9o9WYQdeCu8=
+	t=1744027542; cv=none; b=LV5w2skHt+MMGcfZOTlwSjvaNoPXo7m0Y1myPl/DpsMT3+DjqBhC8r6CLSsiRwsoWFH+WprhKkJAuQTwHqmIVsee7HeaoYWLhHILbJ4lpt8/fn+d5f03NRY2k/Vi/MiFcjc4PzaTapaJczP77LCxHGJBhVp5ki/BfAiFMkmN0ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744027524; c=relaxed/simple;
-	bh=2zAQKYKEskwwU28OH2AkW9XmWSMWx0e+7cB//mUEAUc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UHgFojLHqckYG2rs8nRtCzSfmd473VrbkJpmEv2TkTBWmqO3nfTcrUkmM9K8hPALS0LNxpnQ8OjQHAyhmeeXOB07BWPQFMroDnmj3J1EW3Hx53Lg8xKgI8RkfqU7hVkEAHkiekJzarMeSMiMjMlzpZC8lllGcxhUo6KvZcKVlPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ewF7B6dS; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54af20849bbso1594454e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 05:05:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744027521; x=1744632321; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nyzXLIZQz5jByjQJS2N0CsVIfLCOdR71gsbEiiRIwmo=;
-        b=ewF7B6dSA1CQJsoKrxgoM5hdWnj5v0E7VZzoF4F3WPfNp7FcFEJlFC1JKDYEUnLAUn
-         P7tF/VofrWu4zQI/pUMbcGcdVm+sjc+MMarRCyhiX4dPiUbFuThLyVQBGktWlxmnXC79
-         +Tt2M9cYQiFbXnVJpbm3bZIaT9w3r+pv/aXaA92ZpyS+rCo5yl/UrgyVqM/PlIip/tEj
-         PLZoc7xsEKV7BCWcz9yQ1Qd85p6qIi5E6kRWTRHcWgyVKtPt3ksWcNjJE3QsbOQDF4TE
-         DXOYIOcL0LEyXJtJ60Cs+bgWK0HTCD6zZzPTlBikcNmHrzGcxUWmZk8zToSOtmYsGGPb
-         XdAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744027521; x=1744632321;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nyzXLIZQz5jByjQJS2N0CsVIfLCOdR71gsbEiiRIwmo=;
-        b=WKKxHSqmybS++qAOOoFLlqww3UsoE3N4LbpoDsiE26NiOxSmzP3FP0XWmknqaBaPJS
-         /VWUWmoRoRPeL7jJA7RQ/ZuDVMwv6fgxeIXwHnfnruhczQ042MiVukd8ve4qz7QP7OSQ
-         ZcLUh+FFC9fWmt9EOUnZxFPMM0TjEReu9z4xUqjUlz+LtXjuGMFu2c+262Gmvsj2QU8Y
-         fbQRnc2whnUE8Q3FV4xtDrHSUeytkO4eakJV/0t0P41fFwKtx5Wad6UFZsieebFev0Su
-         vdW/PyzQN4clGGqxozJUKITMQIwiPv5gQRnKCJllgIJhZzqdSwqW9N5xFJP+cSAIfjjN
-         rP7A==
-X-Forwarded-Encrypted: i=1; AJvYcCV2MEoIauM6rmkrsucK8dC+KboQPCDrzHEEOY2u2vhN4xcJzHQhTkWD9IkqvtynyaujOlWzlhzUWojpOJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOyepWptDSpRw0gzQRzsyhcqB17aOAO8vSg/lUifq3u4hsxYsF
-	vTQzAqFOGjhbnwRgvlplASTnaM9yyBbi3iErSmPy0Lg1tcypjPuOegXuJUMKsy05i/Jwkgamrxb
-	G60QXUFE36Ikf/BxpQDdkpvMR7cBQIHvlw4JpYA==
-X-Gm-Gg: ASbGncuCr6hGImRXTEyrS6jTtOhsllns5OaCTE+69Fl8BN+SdMpW8kxTwRlLLEkzRwE
-	tpruTb5cqShJu0c4tTfl6JG4cix1Xa302kmnmKOvKQkPAycIoPKVNFkOOCD9TQkwgxIYxwHYSnh
-	DsE2FAtgvkZmWz9NqsW08MY5gXZDrHPGLBQYl3i/bbpyA1Iu2rUACc8nFPJg==
-X-Google-Smtp-Source: AGHT+IEHw9355ezApneCF4SUVAzLY4ETP4OFd5PKxXyTOOvjdLrpav+qCe3u7bCH6diRQ2nujvbYSwfCNWcbhNX6Dk8=
-X-Received: by 2002:a05:6512:3984:b0:54a:f7fb:ff82 with SMTP id
- 2adb3069b0e04-54c2278b893mr3000965e87.26.1744027520594; Mon, 07 Apr 2025
- 05:05:20 -0700 (PDT)
+	s=arc-20240116; t=1744027542; c=relaxed/simple;
+	bh=cb+VsJWvcgWIsuiUqM0yi0ss2M1KwoTr1pd8J6zkauU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aKW52gS9TnXNFVuh9OGV6UBX5WuLqJcgieRggaUL4ZzIVECgzAEQ1fDMJEpsFJpyISv53BYaRYYqhI0dlZ60m+2IJBB2R72humprmt8DvJj9mRgECBMMOohSSssykcD0PxNp2ydNksvOCzEymV5kE7QpIYOSP5loqoHIDaJBkvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwPcwcGi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDFBBC4CEE7;
+	Mon,  7 Apr 2025 12:05:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744027540;
+	bh=cb+VsJWvcgWIsuiUqM0yi0ss2M1KwoTr1pd8J6zkauU=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=jwPcwcGi4F282qidEoYnpx9GA01uYQ9VDmW8CbYyb0hMJWgIFcnJVTTINr/t3lGg7
+	 NDk/6XtIRTmg7PGoFnCrcLDscDhoeIrnHulZzHwTg7kGN8a1NtQbw7SFwd3sa1Gj2A
+	 kxe4tQCbnl9nA1VpwH8Hnz9hW+W6lXwrhuu76OCT/gUevnINkJVPpXvrDnJWypH1x6
+	 wR+2QmlqWG6SXUJe94gY3JrDalxUvFI08ixHX9iNVPvSUBtO9/GVCcSYFOdNCTBfXe
+	 3TLqY/H0zxbBuhLsytkWbao5D6l7vRhVvHVYqgdysNgbufTCUrMFJagMov/qMgkXcW
+	 zuNA2nFIi0NAA==
+Message-ID: <17f1c39447c3706387d62224018522d4dcbf85bf.camel@kernel.org>
+Subject: Re: [PATCH] errseq: Eliminate special limitation for macro MAX_ERRNO
+From: Jeff Layton <jlayton@kernel.org>
+To: Zijun Hu <zijun_hu@icloud.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+Date: Mon, 07 Apr 2025 08:05:38 -0400
+In-Reply-To: <20250407-improve_errseq-v1-1-7b27cbeb8298@quicinc.com>
+References: <20250407-improve_errseq-v1-1-7b27cbeb8298@quicinc.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250327-kernel-upstreaming-add_gpio_support-v2-0-bbe51f8d66da@blaize.com>
- <20250327-kernel-upstreaming-add_gpio_support-v2-1-bbe51f8d66da@blaize.com> <6b8583c9-3755-4b33-a454-261854e6cf2f@blaize.com>
-In-Reply-To: <6b8583c9-3755-4b33-a454-261854e6cf2f@blaize.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 7 Apr 2025 14:05:08 +0200
-X-Gm-Features: ATxdqUEsVQaphQBZzJswprLa4CXDw66XJ1bSTvKJk9OJJy8QVGv0t5yn3iIm7lM
-Message-ID: <CAMRc=MetyZqOgtdPgtSVQ2BHDCOAqoE3K70eCehkOscL8kmbMw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: Document Blaize BLZP1600 GPIO driver
-To: Neil Jones <neil.jones@blaize.com>
-Cc: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	James Cowgill <james.cowgill@blaize.com>, Matt Redfearn <matthew.redfearn@blaize.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 28, 2025 at 11:02=E2=80=AFAM Neil Jones <neil.jones@blaize.com>=
- wrote:
->
-> On 27/03/2025 11:27, Nikolaos Pasaloukos wrote:
->
-> > This is a custom silicon GPIO driver provided by VeriSilicon
-> > Microelectronics. It has 32 input/output ports which can be
-> > configured as edge or level triggered interrupts. It also provides
-> > a de-bounce feature.
-> > This controller is used on the Blaize BLZP1600 SoC.
-> >
-> > Signed-off-by: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
-> > ---
-> >   .../bindings/gpio/blaize,blzp1600-gpio.yaml        | 77 +++++++++++++=
-+++++++++
-> >   1 file changed, 77 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/gpio/blaize,blzp1600-gpi=
-o.yaml b/Documentation/devicetree/bindings/gpio/blaize,blzp1600-gpio.yaml
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..8b7842331a22b7b9fbfa42b=
-9c711da99227de2e4
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/gpio/blaize,blzp1600-gpio.yaml
-> > @@ -0,0 +1,77 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/gpio/blaize,blzp1600-gpio.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Blaize BLZP1600 GPIO controller
-> > +
-> > +description:
-> > +  Blaize BLZP1600 GPIO controller is a design of VeriSilicon APB GPIO =
-v0.2
-> > +  IP block. It has 32 ports each of which are intended to be represent=
-ed
-> > +  as child noeds with the generic GPIO-controller properties as descri=
-bed
->
-> Typo here I assume, should be nodes ?
->
-> Also maybe better worded as:
->
-> Blaize BLZP1600 GPIO controller is an _implementation_ of the VeriSilicon=
- APB GPIO v0.2 IP block
->
+On Mon, 2025-04-07 at 19:44 +0800, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>=20
+> Current errseq implementation depends on a very special precondition
+> that macro MAX_ERRNO must be (2^n - 1).
+>=20
+> Eliminate the limitation by
+> - redefine macro ERRSEQ_SHIFT.
+> - define a new macro ERRNO_MASK instead of MAX_ERRNO for errno mask.
+>=20
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+>  lib/errseq.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/lib/errseq.c b/lib/errseq.c
+> index 93e9b94358dc63dcc911fd45a01ccf38d2104ecf..13a2581c5a878445f8a089d0d=
+34e901f77a9e074 100644
+> --- a/lib/errseq.c
+> +++ b/lib/errseq.c
+> @@ -34,11 +34,14 @@
+>   */
+> =20
+>  /* The low bits are designated for error code (max of MAX_ERRNO) */
+> -#define ERRSEQ_SHIFT		ilog2(MAX_ERRNO + 1)
+> +#define ERRSEQ_SHIFT		(ilog2(MAX_ERRNO) + 1)
+> =20
+>  /* This bit is used as a flag to indicate whether the value has been see=
+n */
+>  #define ERRSEQ_SEEN		(1 << ERRSEQ_SHIFT)
+> =20
+> +/* Leverage macro ERRSEQ_SEEN to define errno mask macro here */
+> +#define ERRNO_MASK		(ERRSEQ_SEEN - 1)
+> +
+>  /* The lowest bit of the counter */
+>  #define ERRSEQ_CTR_INC		(1 << (ERRSEQ_SHIFT + 1))
+> =20
+> @@ -60,8 +63,6 @@ errseq_t errseq_set(errseq_t *eseq, int err)
+>  {
+>  	errseq_t cur, old;
+> =20
+> -	/* MAX_ERRNO must be able to serve as a mask */
+> -	BUILD_BUG_ON_NOT_POWER_OF_2(MAX_ERRNO + 1);
+> =20
+>  	/*
+>  	 * Ensure the error code actually fits where we want it to go. If it
+> @@ -79,7 +80,7 @@ errseq_t errseq_set(errseq_t *eseq, int err)
+>  		errseq_t new;
+> =20
+>  		/* Clear out error bits and set new error */
+> -		new =3D (old & ~(MAX_ERRNO|ERRSEQ_SEEN)) | -err;
+> +		new =3D (old & ~(ERRNO_MASK | ERRSEQ_SEEN)) | -err;
+> =20
+>  		/* Only increment if someone has looked at it */
+>  		if (old & ERRSEQ_SEEN)
+> @@ -148,7 +149,7 @@ int errseq_check(errseq_t *eseq, errseq_t since)
+> =20
+>  	if (likely(cur =3D=3D since))
+>  		return 0;
+> -	return -(cur & MAX_ERRNO);
+> +	return -(cur & ERRNO_MASK);
+>  }
+>  EXPORT_SYMBOL(errseq_check);
+> =20
+> @@ -200,7 +201,7 @@ int errseq_check_and_advance(errseq_t *eseq, errseq_t=
+ *since)
+>  		if (new !=3D old)
+>  			cmpxchg(eseq, old, new);
+>  		*since =3D new;
+> -		err =3D -(new & MAX_ERRNO);
+> +		err =3D -(new & ERRNO_MASK);
+>  	}
+>  	return err;
+>  }
+>=20
+> ---
+> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+> change-id: 20250407-improve_errseq-8cfa1539f9e9
+>=20
+> Best regards,
 
-I fixed these in tree, thanks.
-
-Bart
+Patch looks like it will do the right thing, but why change this? Is
+there some plan to change the value of MAX_ERRNO that I'm not aware of?
+--=20
+Jeff Layton <jlayton@kernel.org>
 
