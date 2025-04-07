@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-592775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A569AA7F139
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 01:45:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68ECFA7F13D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 01:45:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 355961898C72
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 23:44:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21C473B2D81
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 23:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB1A23816B;
-	Mon,  7 Apr 2025 23:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4379248886;
+	Mon,  7 Apr 2025 23:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TYQs8chl"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DhtxHGZ6"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86702237703
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 23:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24FE23AE83
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 23:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744069262; cv=none; b=mhOvxq0ibnUefLHe+Rq2o+grFUvuBVxjX5WbbXbWKxWwFcsyaWB34wZHKzXSqNmtUof3xEDAE6lMJmsJvK+ofeFZj3z/dKgC4Ivdgk+hG2zGl9e5MA57/sOiAEZxEosWHto95kCKcmv/OsQw0UAlDDrOaSndHxqNBJpWwOd43EE=
+	t=1744069263; cv=none; b=RWPHPaK88Jh5lI4gVAORSBcAfrtLTSZORW3jieu9ut7nh/edWzDocVebySqJTlByvn3jLAIxp7d2k+5yL3CPwxspNMJAJfMyFOfL86GluIa3agnQOJn/NnZl2aiQuyLudp1lTK2QVRtBIYIunhNUPAFURH6pY+IQCGVXJjsRSKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744069262; c=relaxed/simple;
-	bh=k2dKeDvK8ctetzdumGpNReFcjpN/c5jQdWJNXvokbFQ=;
+	s=arc-20240116; t=1744069263; c=relaxed/simple;
+	bh=uPpyvGLmew8c8rVdcBQQM9qRJMHVlmbtLeyTb5Ivg1s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SujJpfilU6IYpVabSNPqIWQ9xqtaHi5bVchACoBAQcYbpwm/MvrlJSnglmZxz6EuMGMNECUm++yQm8yZg70G7orK0RnDKYQCpAZPEQKaTSAOSVwTaOytPtGVvdxvwVGOXsbW/xeECPPEdUg1p1HhlQbqiwN4Zr90fT1RvnCD7Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TYQs8chl; arc=none smtp.client-ip=192.198.163.13
+	 MIME-Version; b=dwQvoUuaDpmoRCMTYJ26EMotP81H8lX85D+fy5Je5mNBi5DbeKNqezE8hzu+7bTcTnbMuCd6oFywMlJNFxX0tzY3z5EjChhwDrJ+mizZN9gxpZuQsS61e6iCXfGGiMD/bRsxpSJhtbxX1b3nxSvUyvblk428fSHB9N2R1y01LgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DhtxHGZ6; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744069261; x=1775605261;
+  t=1744069262; x=1775605262;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=k2dKeDvK8ctetzdumGpNReFcjpN/c5jQdWJNXvokbFQ=;
-  b=TYQs8chl1uTZ1sKEruemMh1ffwo5vLcdIxmvgpwJ+ehdRxVJb+teQF+2
-   R6XBp2ckFMU9ACfIf0mvkGZHFQAD+UZe9K3scd5eqm11Z0XVPcvOce7O3
-   JxOuFDzCz4d1fE7XrlKM/6VIx7aWM8gtsfYUFoDRNTi1MpoE6H3ml+NKJ
-   iXVQ42Qtla7NefkUU6qPCS5xSEx98W7Os56TfgM/Pr3G56S1hNqnI5lLU
-   K/SFmSk5zRFdQI/n+79eukR/ybFVQlF/cfufjpt0UqLpzdA1WlhYXCb65
-   sVHVpIDVD//V/ZgTF+1tpcFs6nci7u/gupOvOuhA+taONx/tZzwm119AN
-   Q==;
-X-CSE-ConnectionGUID: 6OHd7NiDTB2rnFiEfDpMNQ==
-X-CSE-MsgGUID: NoJe/Wv8Ryyqx/nTqrQvoA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="48193263"
+  bh=uPpyvGLmew8c8rVdcBQQM9qRJMHVlmbtLeyTb5Ivg1s=;
+  b=DhtxHGZ6wcXBAi+AplRxZh1LfVZUDMhMb1yOJvRNNx3SVoF1SB0oLVWF
+   TbPjs5GA3mHjjbogRwWD7RuI2d6I7kst9Y6f7STkLBQz+odJFYW82HJRe
+   dxg4Vb3ru52soVEjqPIZScShmaS84pzZBAGyFdRYmuc9d6KBVQOL7QIO3
+   zN6AhDJSTzSlNUnAwxjV/lZn+D9CI8pq1QMjoLu+Tkeqk0msVaT8NsAFP
+   1a9FiS7xfMnIdIWMh9lvXxcd9oQbmOlv4dvc2u+tGV7UrS2Ayu83kA+vv
+   6V9s014xxKsB1CeBfMOA10VLH1MmdUEreKtv+WY/+sY/rFcBHJnwnlgHz
+   w==;
+X-CSE-ConnectionGUID: nzx+q76XSuKculYtOukpfA==
+X-CSE-MsgGUID: 6mfh0DbHSBe6S/cjQmtb7A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="48193270"
 X-IronPort-AV: E=Sophos;i="6.15,196,1739865600"; 
-   d="scan'208";a="48193263"
+   d="scan'208";a="48193270"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 16:40:55 -0700
-X-CSE-ConnectionGUID: oAaIfCk3TLeF8pyli6FFsA==
-X-CSE-MsgGUID: /OcgcXIMQ6OFVvTuxk4MZQ==
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 16:40:56 -0700
+X-CSE-ConnectionGUID: 8FW9qs64RKCH4VUyYl+8YA==
+X-CSE-MsgGUID: MggWdzOBToy4lbOOWVAuBA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,196,1739865600"; 
-   d="scan'208";a="165315512"
+   d="scan'208";a="165315515"
 Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
   by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 16:40:55 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -70,9 +70,9 @@ To: Fenghua Yu <fenghuay@nvidia.com>,
 Cc: linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v3 20/26] x86/resctrl: Add and initialize rdt_resource for package scope core monitor
-Date: Mon,  7 Apr 2025 16:40:22 -0700
-Message-ID: <20250407234032.241215-21-tony.luck@intel.com>
+Subject: [PATCH v3 21/26] fs-x86/resctrl: Handle RDT_RESOURCE_PERF_PKG in domain create/delete
+Date: Mon,  7 Apr 2025 16:40:23 -0700
+Message-ID: <20250407234032.241215-22-tony.luck@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250407234032.241215-1-tony.luck@intel.com>
 References: <20250407234032.241215-1-tony.luck@intel.com>
@@ -84,60 +84,145 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Counts for each Intel telemetry event are periodically sent to one or
-more aggregators on each package where accumulated totals are made
-available in MMIO registers.
+Add a new rdt_perf_pkg_mon_domain structure. This only consists of
+the common rdt_domain_hdr as there is no need for any per-domain
+data structures.
 
-Add a new resource for monitoring these events with code to build
-domains at the package granularity.
+Use as much as possible of the existing domain setup and tear down
+infrastructure. In many cases the RDT_RESOURCE_PERF_PKG uses the
+same functions but just skips over the pieces it does not need.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- include/linux/resctrl.h            |  1 +
- arch/x86/kernel/cpu/resctrl/core.c | 11 +++++++++++
- 2 files changed, 12 insertions(+)
+ include/linux/resctrl.h            |  8 ++++++++
+ arch/x86/kernel/cpu/resctrl/core.c | 32 ++++++++++++++++++++++++++++++
+ fs/resctrl/rdtgroup.c              | 11 ++++++++--
+ 3 files changed, 49 insertions(+), 2 deletions(-)
 
 diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index 25f51a57b0b7..c03e7dc1f009 100644
+index c03e7dc1f009..6f598a64b192 100644
 --- a/include/linux/resctrl.h
 +++ b/include/linux/resctrl.h
-@@ -232,6 +232,7 @@ enum resctrl_scope {
- 	RESCTRL_L2_CACHE = 2,
- 	RESCTRL_L3_CACHE = 3,
- 	RESCTRL_L3_NODE,
-+	RESCTRL_PACKAGE,
+@@ -169,6 +169,14 @@ struct rdt_mon_domain {
+ 	int				cqm_work_cpu;
  };
  
++/**
++ * struct rdt_perf_pkg_mon_domain - CPUs sharing an Intel-PMT-scoped resctrl monitor resource
++ * @hdr:               common header for different domain types
++ */
++struct rdt_perf_pkg_mon_domain {
++	struct rdt_domain_hdr   hdr;
++};
++
  /**
+  * struct resctrl_cache - Cache allocation related data
+  * @cbm_len:		Length of the cache bit mask
 diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index f0f256a5ac66..9578d9c7260c 100644
+index 9578d9c7260c..6f5d52a8219b 100644
 --- a/arch/x86/kernel/cpu/resctrl/core.c
 +++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -99,6 +99,15 @@ struct rdt_hw_resource rdt_resources_all[RDT_NUM_RESOURCES] = {
- 			.schema_fmt		= RESCTRL_SCHEMA_RANGE,
- 		},
- 	},
-+	[RDT_RESOURCE_PERF_PKG] =
-+	{
-+		.r_resctrl = {
-+			.rid			= RDT_RESOURCE_PERF_PKG,
-+			.name			= "PERF_PKG",
-+			.mon_scope		= RESCTRL_PACKAGE,
-+			.mon_domains		= mon_domain_init(RDT_RESOURCE_PERF_PKG),
-+		},
-+	},
- };
- 
- u32 resctrl_arch_system_num_rmid_idx(void)
-@@ -431,6 +440,8 @@ static int get_domain_id_from_scope(int cpu, enum resctrl_scope scope)
- 		return get_cpu_cacheinfo_id(cpu, scope);
- 	case RESCTRL_L3_NODE:
- 		return cpu_to_node(cpu);
-+	case RESCTRL_PACKAGE:
-+		return topology_physical_package_id(cpu);
- 	default:
- 		break;
+@@ -542,6 +542,29 @@ static void setup_l3_mon_domain(int cpu, int id, struct rdt_resource *r, struct
  	}
+ }
+ 
++static void setup_intel_aet_mon_domain(int cpu, int id, struct rdt_resource *r,
++				       struct list_head *add_pos)
++{
++	struct rdt_perf_pkg_mon_domain *d;
++	int err;
++
++	d = kzalloc_node(sizeof(*d), GFP_KERNEL, cpu_to_node(cpu));
++	if (!d)
++		return;
++
++	d->hdr.id = id;
++	d->hdr.type = DOMTYPE(r->rid, DOMTYPE_MON);
++	cpumask_set_cpu(cpu, &d->hdr.cpu_mask);
++	list_add_tail_rcu(&d->hdr.list, add_pos);
++
++	err = resctrl_online_mon_domain(r, &d->hdr);
++	if (err) {
++		list_del_rcu(&d->hdr.list);
++		synchronize_rcu();
++		kfree(d);
++	}
++}
++
+ static void domain_add_cpu_mon(int cpu, struct rdt_resource *r)
+ {
+ 	int id = get_domain_id_from_scope(cpu, r->mon_scope);
+@@ -571,6 +594,9 @@ static void domain_add_cpu_mon(int cpu, struct rdt_resource *r)
+ 	case RDT_RESOURCE_L3:
+ 		setup_l3_mon_domain(cpu, id, r, add_pos);
+ 		break;
++	case RDT_RESOURCE_PERF_PKG:
++		setup_intel_aet_mon_domain(cpu, id, r, add_pos);
++		break;
+ 	default:
+ 		WARN_ON_ONCE(1);
+ 	}
+@@ -668,6 +694,12 @@ static void domain_remove_cpu_mon(int cpu, struct rdt_resource *r)
+ 		synchronize_rcu();
+ 		mon_domain_free(hw_dom);
+ 		break;
++	case RDT_RESOURCE_PERF_PKG:
++		resctrl_offline_mon_domain(r, d);
++		list_del_rcu(&hdr->list);
++		synchronize_rcu();
++		kfree(container_of(hdr, struct rdt_perf_pkg_mon_domain, hdr));
++		break;
+ 	}
+ }
+ 
+diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
+index 5ca6de6a6e5c..34fcd20f8dd7 100644
+--- a/fs/resctrl/rdtgroup.c
++++ b/fs/resctrl/rdtgroup.c
+@@ -4020,6 +4020,9 @@ void resctrl_offline_mon_domain(struct rdt_resource *r, struct rdt_mon_domain *d
+ 	if (resctrl_mounted && resctrl_arch_mon_capable())
+ 		rmdir_mondata_subdir_allrdtgrp(r, &d->hdr);
+ 
++	if (r->rid == RDT_RESOURCE_PERF_PKG)
++		goto done;
++
+ 	if (resctrl_is_mbm_enabled())
+ 		cancel_delayed_work(&d->mbm_over);
+ 	if (resctrl_arch_is_llc_occupancy_enabled() && has_busy_rmid(d)) {
+@@ -4036,7 +4039,7 @@ void resctrl_offline_mon_domain(struct rdt_resource *r, struct rdt_mon_domain *d
+ 	}
+ 
+ 	domain_destroy_mon_state(d);
+-
++done:
+ 	mutex_unlock(&rdtgroup_mutex);
+ }
+ 
+@@ -4104,12 +4107,15 @@ int resctrl_online_ctrl_domain(struct rdt_resource *r, struct rdt_ctrl_domain *d
+ int resctrl_online_mon_domain(struct rdt_resource *r, struct rdt_domain_hdr *hdr)
+ {
+ 	struct rdt_mon_domain *d;
+-	int err;
++	int err = 0;
+ 
+ 	WARN_ON_ONCE(hdr->type != DOMTYPE(r->rid, DOMTYPE_MON));
+ 	d = container_of(hdr, struct rdt_mon_domain, hdr);
+ 	mutex_lock(&rdtgroup_mutex);
+ 
++	if (r->rid == RDT_RESOURCE_PERF_PKG)
++		goto do_mkdir;
++
+ 	err = domain_setup_mon_state(r, d);
+ 	if (err)
+ 		goto out_unlock;
+@@ -4123,6 +4129,7 @@ int resctrl_online_mon_domain(struct rdt_resource *r, struct rdt_domain_hdr *hdr
+ 	if (resctrl_arch_is_llc_occupancy_enabled())
+ 		INIT_DELAYED_WORK(&d->cqm_limbo, cqm_handle_limbo);
+ 
++do_mkdir:
+ 	/*
+ 	 * If the filesystem is not mounted then only the default resource group
+ 	 * exists. Creation of its directories is deferred until mount time
 -- 
 2.48.1
 
