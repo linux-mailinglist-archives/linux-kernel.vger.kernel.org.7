@@ -1,97 +1,93 @@
-Return-Path: <linux-kernel+bounces-591016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8587A7D9AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:29:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1F27A7D9A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D209188AFAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:29:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 874AC3A8158
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330B322A1E5;
-	Mon,  7 Apr 2025 09:29:26 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746A722A4DA;
+	Mon,  7 Apr 2025 09:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WeIi7nvW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F205E42A97
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 09:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF25D3C0B;
+	Mon,  7 Apr 2025 09:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744018165; cv=none; b=UWB5aqXPFPWjoI3ltzU9KhzMWU4GtvZTWhd5+v5J6MO75kdkilNNi8JEukz9YromXT6Dg/V+tK+lx9464P5v3GvJYLNDaaaFvP8HxxNcSY+mtiOctfOJeEh1bDdFJ1bBR4JUTMcbMNBxLvCN9/UVxKWcxmRXWIFOQJEQ6egm+1E=
+	t=1744018029; cv=none; b=LhA4OFD/6ND3cj8GBUCDHDRU45XVBS9cFhyBdaepeH1vewcaVT4RRNV/I9bAVXd/wHJ1cL8yp890GpUkuFCTg/nTxIbLzk+C1m7UkT6vv9RuUHxHRaEPax7Xnr2i4/dqm9Balz46DczaGgviMcMqnrC/Y2msT6f8hY+OdQ56tVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744018165; c=relaxed/simple;
-	bh=z7t6QH+N2XUYtmtRBR++y9Nz0dDyYYhT9cPaHlAhx5w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ireqvwvjAO9UDxfucgVpHQmk3YN5cmKwKqF18l1t9dSzXOpFdQ+uK/ehDjPoIclNpTO4Nl292p3pTt/tBFP0waw7Zu8wlglbaMSnFnq0S07ReuMPrfnvoLyY226pPdF5GFZKeZzUQbbd1dHOAEjdlLXdJCgFRHhaXkqoeUV1XMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowAC39g7kmvNng3XXBg--.11322S2;
-	Mon, 07 Apr 2025 17:29:10 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: dpenkler@gmail.com,
-	gregkh@linuxfoundation.org,
-	matchstick@neverthere.org,
-	arnd@arndb.de,
-	dominik.karol.piatkowski@protonmail.com,
-	nathan@kernel.org,
-	niharchaithanya@gmail.com
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] staging: gpib: fmh_gpib: Remove unnecessary .owner assignment
-Date: Mon,  7 Apr 2025 17:26:32 +0800
-Message-Id: <20250407092632.2952200-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1744018029; c=relaxed/simple;
+	bh=rXEHGEuxHK31ihMMt9r5s/+C3v5fC7FBNn4rj7Av2Ww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HV8qEjC+ixzcZsM8J5MIPzvEpS2uJbG+dgWECAultpvJoY3JR5GsF/QLayh+aFm6gobJJ4o6ifURrPiI2P7LiHPvbEk8Jwa7h8EWiTpfElZZuybLDr0KsahOS5DyK0Jt5NERvIfqtcZr17qKWDSeCy4ZN23vd5rUbARaZAEcZ58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WeIi7nvW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61781C4CEDD;
+	Mon,  7 Apr 2025 09:27:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744018029;
+	bh=rXEHGEuxHK31ihMMt9r5s/+C3v5fC7FBNn4rj7Av2Ww=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WeIi7nvW8psV1Ff1Pimq7/hjQIRRiP9JCtvgpO6UNcAe8xpdrbA5encAj31BhtVtU
+	 KvFsVK7T7YqnBeIuvikU9xUbLuo5hqU9+vL87UyeZAcvoXRyCPhH6YkttnMl5SYXC1
+	 HH2S+qxCBRZVp+dBF1XdNUwasUUrJ5jyHQKy8GnCxjzWBJGoRdeKphrtiRp1T1WJqt
+	 9Vp6NQUhpheR16yDwtcWIlmFHK3TyOk72xXfIIXmjLD6wArx08nXCyktvc8MVS9Bi1
+	 Wai8zpbQAfQsByA2GkJlVQd3dXfW1gvHW/awAmFPlq8/DS3xjw96WLA4EabHV0GhhB
+	 v+R/9AehpaSrw==
+Date: Mon, 7 Apr 2025 11:27:05 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Igor Pylypiv <ipylypiv@google.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ata: libata-scsi: Set INFORMATION sense data field
+ consistently
+Message-ID: <Z_OaafNRHhTiBzFG@ryzen>
+References: <20250403212924.306782-1-ipylypiv@google.com>
+ <Z-_JExGDyO9pVTON@ryzen>
+ <Z_AweMPLRJgBIBF3@google.com>
+ <Z_OG6jdsX0_uar2a@ryzen>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAC39g7kmvNng3XXBg--.11322S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xr1UXw13tw4fCw4Duw43trb_yoW3trc_C3
-	40gF1xJF1xGay2v3WYq3W5ur92kFn8Xr4ftr1jqFZxAw43Xr4UArn5uFyYq3sxJFWUKFyU
-	Cr40qwsxuw13tjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbTAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
-	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8uwCF04k20xvY0x0EwIxGrw
-	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
-	14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
-	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxK
-	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI
-	0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfUe2-eDUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_OG6jdsX0_uar2a@ryzen>
 
-Remove .owner field if calls are used which set it automatically.
-Generated by: scripts/coccinelle/api/platform_no_drv_owner.cocci.
+On Mon, Apr 07, 2025 at 10:03:54AM +0200, Niklas Cassel wrote:
+> 
+> If we look at the ATA Sense Data for Successful NCQ Commands log,
+> it has a bunch of Sense Data descriptors.
+> 
+> ACS-6, 9.29.3 Successful Sense Data descriptor,
+> does have the LBA field and an INFORMATION field.
+> 
+> The definition of the INFORMATION field in the Successful Sense Data
+> descriptor:
+> 
+> """
+> 9.29.3.5 INFORMATION field
+> If definition of the sense data to be returned when a command completes
+> without an error includes an information value, then the INFORMATION field
+> contains the defined value. Otherwise, the INFORMATION field is reserved.
+> """
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/staging/gpib/fmh_gpib/fmh_gpib.c | 1 -
- 1 file changed, 1 deletion(-)
+Side note:
+Considering that this is just two bytes, and the INFORMATION field in SCSI
+is four bytes, I honestly have no idea what this field actually contains.
 
-diff --git a/drivers/staging/gpib/fmh_gpib/fmh_gpib.c b/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
-index 53f4b3fccc3c..12d9e83e3156 100644
---- a/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
-+++ b/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
-@@ -1631,7 +1631,6 @@ MODULE_DEVICE_TABLE(of, fmh_gpib_of_match);
- static struct platform_driver fmh_gpib_platform_driver = {
- 	.driver = {
- 		.name = DRV_NAME,
--		.owner = THIS_MODULE,
- 		.of_match_table = fmh_gpib_of_match,
- 	},
- 	.probe = &fmh_gpib_platform_probe
--- 
-2.25.1
+Anyway, the biggest question is what actual problem this fixes, since the
+sense data is not returned to the user for non-passthrough commands.
 
+
+Kind regards,
+Niklas
 
