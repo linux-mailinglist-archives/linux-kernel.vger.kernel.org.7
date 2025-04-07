@@ -1,356 +1,275 @@
-Return-Path: <linux-kernel+bounces-592109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53945A7E93F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:01:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C91A7E941
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3545A3B4468
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:01:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A7FD3B42CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAD3219EB6;
-	Mon,  7 Apr 2025 18:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A4F21A422;
+	Mon,  7 Apr 2025 18:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DL1kOCSa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="iD2TDNyD"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BF5214A7C;
-	Mon,  7 Apr 2025 18:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B632721146F
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 18:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744048893; cv=none; b=P6V3nddE9DgKoN9yORXIvFEAn8XZ2Pj1wLpjotEY6bhEmOttFi1MdY3FUA9vuZ+Xons7PNrK4aayU0hVqD/a5QYVfRp0TT4CYhr6JKb+YsuyyygquDnv9MpMU6bzlkps7uwnvEx12AJ9SlKqaU6XI21SQsHhp6HcywB5YkbVNM8=
+	t=1744048922; cv=none; b=RpSm2NKUey5Bt9jWy7wD+C0GFP2av2YcCQA2eBaHfUonGFUOgI+5mBLdPrjBYr5GqeS7FNCppgowQcKUN8FP4bcbY6d+XBMzSV2bAARnfVbT3NDmahbd8ZqA/wDcy2hdzkcYKSy2NEyqLhISGBiUFOhZF6fGUev9xKLj2funluQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744048893; c=relaxed/simple;
-	bh=AUXsGZjrzl+9uecU7aWyoMTviryGOEav0GotuZj779s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qhy1Wjj8fJupahN66QcRAltVX41E0RNhRXC2VGSLPdbQqvl9WAXAJtziiBZFd/iAynauCTF3umOPfTPJrCW36klU39aleZZy3AXvr/1gn6/ubPKwoDtceBb0by3R1hvgU/wghxpg69uKEthqdETuh4ka5Mvt0ClBkf2oX1T4eog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DL1kOCSa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3B72C4CEDD;
-	Mon,  7 Apr 2025 18:01:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744048892;
-	bh=AUXsGZjrzl+9uecU7aWyoMTviryGOEav0GotuZj779s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DL1kOCSad7g7MNV8DsE7AIC7tK4dQRwqxjyv4JZHCEr6rKczG77O6kU3eUTM3oBI6
-	 JFkG4r+0MksLamtd+dr1/1qAOE7Eq9FzOIpxp9bQuolXrz/Hw8UiTZtTvoYoDysnMn
-	 32lpDFOGsquZHgsSgsS5m6qe3wKiPrGsZyrgslyVICNYC82i0HC2czmCWzhX2+fbZ1
-	 HPPrvV/lgsEIvKIudDkOso+vGACWt3RPbKkaaoa2uBVKanlACdv61sEdjQqbSQio9T
-	 ucAAZbUWUvEMqCYBpqBP584bo21W4PNuf4cJ2io/+zDQsPNJgbNuMlbxLv0IdKwL0n
-	 BQdr9RoG5iiJg==
-Message-ID: <74172acd-e649-4613-a408-d1f61ceeba8b@kernel.org>
-Date: Mon, 7 Apr 2025 20:01:27 +0200
+	s=arc-20240116; t=1744048922; c=relaxed/simple;
+	bh=atydcBScW3fHfFEUH3PoUA1H7PylnORJLDCt9lUf18A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=eTrQ+eXSH6x+XZwuV9UdTEa76NygLnJ8F5maX6wrOM0HscPcXTvmNkkv4mfMdcYu4d53ncw7PnpJ8eBKXHyBgAVpCfd7k/O32+jPtZrRhisXSUgkjwhht2g+nn+yqB/qmfdFLPlmfqH1j8+tEbuP5hZyvt4YHl/3fFbizrh1kVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=iD2TDNyD; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c559b3eb0bso249589085a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 11:01:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1744048918; x=1744653718; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CQLZCr05VGtGVBv3A2tu1D2mkKumfPoYpq5Esa8pDhY=;
+        b=iD2TDNyDQplUOkWl4xe8IBMKH8vJ6l1aZaeSSLtO5pPFJ3oeklMa4igKq48XH0137F
+         4ZgEsQAKSknPOzcgYvZdf3ady4UV3bmxzaPt+a09HPqioeRtuQ1G2ghUlnurOkpa/lyG
+         0NIrXRA2xo/xDLscahhISMI2MrFA+/5Z1hc4BekumwczBaObR4eqXEC2wnEhf3fOg9Ol
+         ASQZl+Hy6+Qrh7SbHbrktTKBiEyybfzMM18dTP7+pP2eJ6/m6ZrKSI5A4ffFxQ9ndlJS
+         Hlwy8nAtQLfyFN4i+NuLgWDG6yKUFe2mZiRHMu4iHT/ydfnXzq6pecvTcxVRL2Fn5qfy
+         1MBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744048918; x=1744653718;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CQLZCr05VGtGVBv3A2tu1D2mkKumfPoYpq5Esa8pDhY=;
+        b=K62p+OVN7XtYQjLb2hL43UwQPeL6NaWFAH8EgxxMGxGHye30k4W9ck4Rcpa+3fD+EF
+         Ai8XCDaP3zURPIVFempOos1sdL4wqBV84nxR5crOxTrlsIZX33vsty07VHcGkFHnQNRD
+         FNPb9rfPJNGwpquP6wNWrPlrb34eLBK2Wa41Cwmfbp/IJLrXQNBQs6V1XgTqOrzngkkq
+         Kmk13fJcf0G1bPtvLUBoGOQAEjEPb6zV8tk7BTJCiF66f1zQA/+HAu0iuzn8ByvfXdrK
+         k743bsKe9k+d8z7bdS1TcwuNJPSdTH4g9L7vq8nwqLODyrHiivHQIISiH5PdKWs9R3x3
+         7uOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYSEVZAyggiQ2dyGQOlk8kiIfiUQjr+XRmzFnzGrpbhUMtNTBjc3DL6aYPyuY9dhVYrmT60ahRoIGknzk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1PKmgI4qSAz/LABSwZoWz4/Y0IoBdbElG+2oEchfqbekAt7n6
+	hYdhqCDPbK4Oab4REPrM4yh5g8ly6w8wX10ruvFVPB8aktG3shAgzEtyHbQnJEc=
+X-Gm-Gg: ASbGncvoNw9iHcsiAo9d2LedScfBQgs5sGLqFzNLvMUj73BYJIKz82y2WVP56ryf21O
+	dBBR8YAK1IMRnCuBlETPQcjzHXqu9Ozxfr+/Kx/pQMU1fF1DA5M8mVUSLR+thSk35zT++kux+iV
+	prte+ABXkd76L+Va+sZoTiNryJYxJj2igqDpPusqc/gxL2jykHI76nXwtc7VrdjuhNRhfuk2EYq
+	i4SMI6YYR5qrsGnDpmB5JBYwvgQ9TGyVkKVp1ThNLZwm6JCf1dqO5NSEC3c4Hkl7ufFj7moEl0Y
+	FdMP8f7g2ve8Pa0RKyXRIDLC0Gsng0PumC0RkkAyMhA=
+X-Google-Smtp-Source: AGHT+IFP40wX1tqDVmp7PqGhxZhz6Aw85evf0lAoeVchmmMqlQfdBSCHrrixVtc5cp7a9YIfnuha/Q==
+X-Received: by 2002:a05:620a:318b:b0:7c5:4278:d151 with SMTP id af79cd13be357-7c775ac006emr2098904885a.43.1744048918447;
+        Mon, 07 Apr 2025 11:01:58 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:365a:60ff:fe62:ff29])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c76e96cf01sm627509185a.55.2025.04.07.11.01.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 11:01:57 -0700 (PDT)
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Brendan Jackman <jackmanb@google.com>,
+	Mel Gorman <mgorman@techsingularity.net>,
+	Carlos Song <carlos.song@nxp.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] mm: page_alloc: tighten up find_suitable_fallback()
+Date: Mon,  7 Apr 2025 14:01:54 -0400
+Message-ID: <20250407180154.63348-2-hannes@cmpxchg.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250407180154.63348-1-hannes@cmpxchg.org>
+References: <20250407180154.63348-1-hannes@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/28] dt-bindings: dpll: Add device tree bindings for
- DPLL device and pin
-To: Ivan Vecera <ivecera@redhat.com>, netdev@vger.kernel.org
-Cc: Michal Schmidt <mschmidt@redhat.com>,
- Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
- Lee Jones <lee@kernel.org>, Kees Cook <kees@kernel.org>,
- Andy Shevchenko <andy@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20250407172836.1009461-1-ivecera@redhat.com>
- <20250407173149.1010216-6-ivecera@redhat.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250407173149.1010216-6-ivecera@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 07/04/2025 19:31, Ivan Vecera wrote:
-> This adds DT bindings schema for DPLL (device phase-locked loop)
+find_suitable_fallback() is not as efficient as it could be, and
+somewhat difficult to follow.
 
-Please do not use "This commit/patch/change", but imperative mood. See
-longer explanation here:
-https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+1. should_try_claim_block() is a loop invariant. There is no point in
+   checking fallback areas if the caller is interested in claimable
+   blocks but the order and the migratetype don't allow for that.
 
-A nit, subject: drop second/last, redundant "device tree bindings for".
-The "dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+2. __rmqueue_steal() doesn't care about claimability, so it shouldn't
+   have to run those tests.
 
-> device and associated pin. The schema follows existing DPLL core API
+Different callers want different things from this helper:
 
-What is core API in terms of Devicetree?
+1. __compact_finished() scans orders up until it finds a claimable block
+2. __rmqueue_claim() scans orders down as long as blocks are claimable
+3. __rmqueue_steal() doesn't care about claimability at all
 
-> and should be used to expose information that should be provided
-> by platform firmware.
-> 
-> The schema for DPLL device describe a DPLL chip that can contain
-> one or more DPLLs (channels) and platform can specify their types.
-> For now 'pps' and 'eec' types supported and these values are mapped
-> to DPLL core's enums.
+Move should_try_claim_block() out of the loop. Only test it for the
+two callers who care in the first place. Distinguish "no blocks" from
+"order + mt are not claimable" in the return value; __rmqueue_claim()
+can stop once order becomes unclaimable, __compact_finished() can keep
+advancing until order becomes claimable.
 
-Describe entire hardware, not what is supported.
+Before:
 
-> 
-> The DPLL device can have optionally 'input-pins' and 'output-pins'
-> sub-nodes that contain pin sub-nodes.
-> 
-> These pin sub-nodes follows schema for dpll-pin and can contain
-> information about the particular pin.
+ Performance counter stats for './run case-lru-file-mmap-read' (5 runs):
 
-Describe the hardware, not the schema. We can read the contents of
-patch. What we cannot read is the hardware and why you are making all
-these choices.
+	 85,294.85 msec task-clock                       #    5.644 CPUs utilized               ( +-  0.32% )
+	    15,968      context-switches                 #  187.209 /sec                        ( +-  3.81% )
+	       153      cpu-migrations                   #    1.794 /sec                        ( +-  3.29% )
+	   801,808      page-faults                      #    9.400 K/sec                       ( +-  0.10% )
+   733,358,331,786      instructions                     #    1.87  insn per cycle              ( +-  0.20% )  (64.94%)
+   392,622,904,199      cycles                           #    4.603 GHz                         ( +-  0.31% )  (64.84%)
+   148,563,488,531      branches                         #    1.742 G/sec                       ( +-  0.18% )  (63.86%)
+       152,143,228      branch-misses                    #    0.10% of all branches             ( +-  1.19% )  (62.82%)
 
-> 
-> The pin contains the following properties:
-> * reg - pin HW index (physical pin number of given type)
-> * label - string that is used as board label by DPLL core
-> * type - string that indicates pin type (mapped to DPLL core pin type)
-> * esync-control - boolean that indicates whether embeddded sync control
->                   is allowed for this pin
-> * supported-frequencies - list of 64bit values that represents frequencies
->                           that are allowed to be configured for the pin
+	   15.1128 +- 0.0637 seconds time elapsed  ( +-  0.42% )
 
-Drop. Describe the hardware.
+After:
 
+ Performance counter stats for './run case-lru-file-mmap-read' (5 runs):
 
-> 
-> Reviewed-by: Michal Schmidt <mschmidt@redhat.com>
+         84,380.21 msec task-clock                       #    5.664 CPUs utilized               ( +-  0.21% )
+            16,656      context-switches                 #  197.392 /sec                        ( +-  3.27% )
+               151      cpu-migrations                   #    1.790 /sec                        ( +-  3.28% )
+           801,703      page-faults                      #    9.501 K/sec                       ( +-  0.09% )
+   731,914,183,060      instructions                     #    1.88  insn per cycle              ( +-  0.38% )  (64.90%)
+   388,673,535,116      cycles                           #    4.606 GHz                         ( +-  0.24% )  (65.06%)
+   148,251,482,143      branches                         #    1.757 G/sec                       ( +-  0.37% )  (63.92%)
+       149,766,550      branch-misses                    #    0.10% of all branches             ( +-  1.22% )  (62.88%)
 
-Did this really happen?
+           14.8968 +- 0.0486 seconds time elapsed  ( +-  0.33% )
 
-> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
-> ---
->  .../devicetree/bindings/dpll/dpll-device.yaml | 84 +++++++++++++++++++
->  .../devicetree/bindings/dpll/dpll-pin.yaml    | 43 ++++++++++
->  MAINTAINERS                                   |  2 +
->  3 files changed, 129 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/dpll/dpll-device.yaml
->  create mode 100644 Documentation/devicetree/bindings/dpll/dpll-pin.yaml
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+---
+ mm/compaction.c |  4 +---
+ mm/internal.h   |  2 +-
+ mm/page_alloc.c | 31 +++++++++++++------------------
+ 3 files changed, 15 insertions(+), 22 deletions(-)
 
-Filenames matching compatibles... unless this is common schema, but
-commit description did not mention it.
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 139f00c0308a..7462a02802a5 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -2348,7 +2348,6 @@ static enum compact_result __compact_finished(struct compact_control *cc)
+ 	ret = COMPACT_NO_SUITABLE_PAGE;
+ 	for (order = cc->order; order < NR_PAGE_ORDERS; order++) {
+ 		struct free_area *area = &cc->zone->free_area[order];
+-		bool claim_block;
+ 
+ 		/* Job done if page is free of the right migratetype */
+ 		if (!free_area_empty(area, migratetype))
+@@ -2364,8 +2363,7 @@ static enum compact_result __compact_finished(struct compact_control *cc)
+ 		 * Job done if allocation would steal freepages from
+ 		 * other migratetype buddy lists.
+ 		 */
+-		if (find_suitable_fallback(area, order, migratetype,
+-						true, &claim_block) != -1)
++		if (find_suitable_fallback(area, order, migratetype, true) >= 0)
+ 			/*
+ 			 * Movable pages are OK in any pageblock. If we are
+ 			 * stealing for a non-movable allocation, make sure
+diff --git a/mm/internal.h b/mm/internal.h
+index 50c2f590b2d0..55384b9971c3 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -915,7 +915,7 @@ static inline void init_cma_pageblock(struct page *page)
+ 
+ 
+ int find_suitable_fallback(struct free_area *area, unsigned int order,
+-			int migratetype, bool claim_only, bool *claim_block);
++			   int migratetype, bool claimable);
+ 
+ static inline bool free_area_empty(struct free_area *area, int migratetype)
+ {
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 03b0d45ed45a..1522e3a29b16 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2077,31 +2077,25 @@ static bool should_try_claim_block(unsigned int order, int start_mt)
+ 
+ /*
+  * Check whether there is a suitable fallback freepage with requested order.
+- * Sets *claim_block to instruct the caller whether it should convert a whole
+- * pageblock to the returned migratetype.
+- * If only_claim is true, this function returns fallback_mt only if
++ * If claimable is true, this function returns fallback_mt only if
+  * we would do this whole-block claiming. This would help to reduce
+  * fragmentation due to mixed migratetype pages in one pageblock.
+  */
+ int find_suitable_fallback(struct free_area *area, unsigned int order,
+-			int migratetype, bool only_claim, bool *claim_block)
++			   int migratetype, bool claimable)
+ {
+ 	int i;
+-	int fallback_mt;
++
++	if (claimable && !should_try_claim_block(order, migratetype))
++		return -2;
+ 
+ 	if (area->nr_free == 0)
+ 		return -1;
+ 
+-	*claim_block = false;
+ 	for (i = 0; i < MIGRATE_PCPTYPES - 1 ; i++) {
+-		fallback_mt = fallbacks[migratetype][i];
+-		if (free_area_empty(area, fallback_mt))
+-			continue;
++		int fallback_mt = fallbacks[migratetype][i];
+ 
+-		if (should_try_claim_block(order, migratetype))
+-			*claim_block = true;
+-
+-		if (*claim_block || !only_claim)
++		if (!free_area_empty(area, fallback_mt))
+ 			return fallback_mt;
+ 	}
+ 
+@@ -2206,7 +2200,6 @@ __rmqueue_claim(struct zone *zone, int order, int start_migratetype,
+ 	int min_order = order;
+ 	struct page *page;
+ 	int fallback_mt;
+-	bool claim_block;
+ 
+ 	/*
+ 	 * Do not steal pages from freelists belonging to other pageblocks
+@@ -2225,11 +2218,14 @@ __rmqueue_claim(struct zone *zone, int order, int start_migratetype,
+ 				--current_order) {
+ 		area = &(zone->free_area[current_order]);
+ 		fallback_mt = find_suitable_fallback(area, current_order,
+-				start_migratetype, false, &claim_block);
++						     start_migratetype, true);
++
++		/* No block in that order */
+ 		if (fallback_mt == -1)
+ 			continue;
+ 
+-		if (!claim_block)
++		/* Advanced into orders too low to claim, abort */
++		if (fallback_mt == -2)
+ 			break;
+ 
+ 		page = get_page_from_free_area(area, fallback_mt);
+@@ -2254,12 +2250,11 @@ __rmqueue_steal(struct zone *zone, int order, int start_migratetype)
+ 	int current_order;
+ 	struct page *page;
+ 	int fallback_mt;
+-	bool claim_block;
+ 
+ 	for (current_order = order; current_order < NR_PAGE_ORDERS; current_order++) {
+ 		area = &(zone->free_area[current_order]);
+ 		fallback_mt = find_suitable_fallback(area, current_order,
+-				start_migratetype, false, &claim_block);
++						     start_migratetype, false);
+ 		if (fallback_mt == -1)
+ 			continue;
+ 
+-- 
+2.49.0
 
-> 
-> diff --git a/Documentation/devicetree/bindings/dpll/dpll-device.yaml b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
-> new file mode 100644
-> index 0000000000000..e6c309abb857f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
-> @@ -0,0 +1,84 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/dpll/dpll-device.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Digital Phase-Locked Loop (DPLL) Device
-> +
-> +maintainers:
-> +  - Ivan Vecera <ivecera@redhat.com>
-> +
-> +description: |
-
-Do not need '|' unless you need to preserve formatting.
-
-> +  Digital Phase-Locked Loop (DPLL) device are used for precise clock
-> +  synchronization in networking and telecom hardware. The device can
-> +  have one or more channels (DPLLs) and one or more input and output
-> +  pins. Each DPLL channel can either produce pulse-per-clock signal
-> +  or drive ethernet equipment clock. The type of each channel is
-> +  indicated by dpll-types property.
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^dpll(@.*)?$"
-> +
-> +  "#address-cells":
-> +    const: 0
-> +
-> +  "#size-cells":
-> +    const: 0
-
-Why do you need these cells?
-
-> +
-> +  num-dplls:
-> +    description: Number of DPLL channels in this device.
-
-Why this is not deducible from compatible?
-
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 1
-> +
-> +  dpll-types:
-> +    description: List of DPLL types, one per DPLL instance.
-> +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
-> +    items:
-> +      enum: [pps, eec]
-
-Why this is not deducible from compatible?
-
-> +
-> +  input-pins:
-> +    type: object
-> +    description: DPLL input pins
-> +    unevaluatedProperties: false
-
-So this is all for pinctrl? Or something else? Could not figure out from
-commit msg. This does not help me either.
-
-> +
-> +    properties:
-> +      "#address-cells":
-> +        const: 1
-
-Why?
-
-> +      "#size-cells":
-> +        const: 0
-
-Why? I don't see these being used.
-
-> +
-> +    patternProperties:
-> +      "^pin@[0-9]+$":
-> +        $ref: /schemas/dpll/dpll-pin.yaml
-> +        unevaluatedProperties: false
-> +
-> +    required:
-> +      - "#address-cells"
-> +      - "#size-cells"
-> +
-> +  output-pins:
-> +    type: object
-> +    description: DPLL output pins
-> +    unevaluatedProperties: false
-> +
-> +    properties:
-> +      "#address-cells":
-> +        const: 1
-> +      "#size-cells":
-> +        const: 0
-> +
-> +    patternProperties:
-> +      "^pin@[0-9]+$":
-> +        $ref: /schemas/dpll/dpll-pin.yaml
-> +        unevaluatedProperties: false
-> +
-> +    required:
-> +      - "#address-cells"
-> +      - "#size-cells"
-> +
-> +dependentRequired:
-> +  dpll-types: [ num-dplls ]
-> +
-> +additionalProperties: true
-> diff --git a/Documentation/devicetree/bindings/dpll/dpll-pin.yaml b/Documentation/devicetree/bindings/dpll/dpll-pin.yaml
-> new file mode 100644
-> index 0000000000000..9aea8ceabb5af
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/dpll/dpll-pin.yaml
-> @@ -0,0 +1,43 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/dpll/dpll-pin.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: DPLL Pin
-> +
-> +maintainers:
-> +  - Ivan Vecera <ivecera@redhat.com>
-> +
-> +description: |
-> +  Schema for defining input and output pins of a Digital Phase-Locked Loop (DPLL).
-> +  Each pin can have a set of supported frequencies, label, type and may support
-> +  embedded sync.
-> +
-> +properties:
-> +  reg:
-> +    description: Hardware index of the pin.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +  esync-control:
-> +    description: Indicates whether the pin supports embedded sync functionality.
-> +    type: boolean
-> +
-> +  label:
-> +    description: String exposed as the pin board label
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +
-> +  supported-frequencies:
-> +    description: List of supported frequencies for this pin, expressed in Hz.
-> +    $ref: /schemas/types.yaml#/definitions/uint64-array
-
-Use common property suffixes and drop ref.
-
-> +
-> +  type:
-> +    description: Type of the pin
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    enum: [ext, gnss, int, mux, synce]
-> +
-> +
-
-Just one blank line
-
-
-I bet that half of my questions could be answered with proper hardware
-description which is missing in commit msg and binding description.
-Instead your commit msg explains schema which makes no sense - I
-mentioned, we can read the schema.
-> +required:
-> +  - reg
-Best regards,
-Krzysztof
 
