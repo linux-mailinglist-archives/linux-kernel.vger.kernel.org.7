@@ -1,121 +1,91 @@
-Return-Path: <linux-kernel+bounces-590476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E892A7D34E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:05:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C07A7D34D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3427F1707CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 05:04:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0D38188C1F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 05:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B712226861;
-	Mon,  7 Apr 2025 05:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BA4224F6;
+	Mon,  7 Apr 2025 05:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2HyDl5o0"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Z0Wn13sP"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82482222D4
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 05:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D791938FA3;
+	Mon,  7 Apr 2025 05:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744002102; cv=none; b=aVFrl/y3kWa2bucoUTBjruTyQq18YdCUJ4aXjqx1D0VPNGdIY/8JyfxbnP7QojXnBxwEkNOcnnnC/P1quvLgqz3hjoMmtH7Pzkkef1Z6y23TzhDK9HByNCIbLk+OSKAKSzxQDmLhuWmnrp+KODRnU0FuhWujK9C95RrNqIz605I=
+	t=1744002307; cv=none; b=TtOBONmLDvAyh4f3ZZQs4eCy7ihkre25KNnBLuVomSFSC1YI1Gqe/4z72YJI5e6HUzZC0TEOaYm3WlOWbM+vXHNp127xUwm9rBjUBZtomm/A0+7FNUkiqGIsLL4QfRLVqzmLA0LQni86vSDUY9Q4MiRi5lXtcFLnnva71aD4t/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744002102; c=relaxed/simple;
-	bh=4/dJlTWkcf5FOf5+oh0Up7fh8r5QO82sMonPjvpz42s=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=sGrj0Al0zFuKyvF7Lb11luF7DVr7Bbl5SpzWTeBzuwxeWX6MUeDEuyzo2tUlWl1BSzBiS0qUfiLHXBUhOk4FysZ9xpwZx3G8IehJ4+z4yfg0Cx7oF0mOkITMAgz1LFexqgYf10MQhZhGcLB1TWODwM32+Z1H+KRX78PflC1RZ50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2HyDl5o0; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-af59547f55bso2382981a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Apr 2025 22:01:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744002100; x=1744606900; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AtCRHQR2grinPcYBxNOrxZNvf1a5RF1zR0pJL1Q63Gw=;
-        b=2HyDl5o0K4GRDnDtVvjgF56pDV3nMhss75zm8m2xqL5vdDp82j6fBhoSqb5ppjSHAw
-         AMwFZBcpOtiL0LBIOrT9M9wGGxpSWVVt1aTimsbmWiBynPAgp/MrCmgeCq5UUUI/dBrH
-         2VQXNff6Z9GgYVKfh7WFbPPCYoiyNNuPP1NkmFJ8ejOTxiw7Xbp4PiJTLSguKHC0VPyp
-         SBuanuhQh07JOweG2pSUGTTDvx9Gdy6CtwOtRE/iHaGg6QySXf0ARezh00c8xmhRV+EO
-         aTNFies2yBk47ZLqpk/AdO6aW6w3JVEFef5w3a7XwhNdl3EnGxbQZTjUv+XT7iDM6jy1
-         O8CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744002100; x=1744606900;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AtCRHQR2grinPcYBxNOrxZNvf1a5RF1zR0pJL1Q63Gw=;
-        b=JvH8XDV4E6yIFwqQLPMHObBoi03ZlsQQRyW0eaBO3ZoIQxTUyTSpojxnbCmkWs9ly9
-         Lz8rY4YrGwQEzmtjIjH7xOhl9qYgcKNP8WKTyteQVNffO6GV7wIyDi6Mfi12zwc6sCiy
-         mlCqmTx90Rr54RUFLufk1uQS9bE6jyLcMP3m0psyIFCBrQOoSvdgyjSg1TL5wmdBwAWw
-         4GG01aQjBqiGtEBJksc38t+2WPs2FlQuDiAiaCHLO3Dks/2Olbg+N5rJxzKkBYo8p2S/
-         Kb5prwpNLdNkB7+nG/VFp3ZnXZtzEoBnNAhXM9FpRL1ZmjKKtJ3tHOwvX1fkOdrtkFFE
-         0Bmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVV6kltq83wiARx+P5JUHqNT3RSyOL4/hGUK3z4s86EHjUUIx6AxAylRvjccvDI87mt40uWETEjp9ofEok=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2HuX27Tj52cdyDN8kbvG03ddECL5o+/57YrDYab6QE/Xibkoj
-	s3OOPBzfmPhU1c7I8cA4QGJuj4RmGxypKvIX48V3PxKCM/uNVKpX0ZKleZ708fPEmn1QG82tKRR
-	6pKPkgw==
-X-Google-Smtp-Source: AGHT+IEjajBXa+ImbR9+M7N6IJYR9vPfq9GEqRJ+O38SQ6pLjk2N6Ar0bQ675WJLx+x+Zi12lyBWB7Q29nuS
-X-Received: from pjur7.prod.google.com ([2002:a17:90a:d407:b0:2fc:b544:749e])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:224b:b0:2fe:a742:51b0
- with SMTP id 98e67ed59e1d1-306a4b86c9dmr11892592a91.31.1744002099857; Sun, 06
- Apr 2025 22:01:39 -0700 (PDT)
-Date: Sun,  6 Apr 2025 22:01:01 -0700
-In-Reply-To: <20250407050101.1389825-1-irogers@google.com>
+	s=arc-20240116; t=1744002307; c=relaxed/simple;
+	bh=3RlbR2XuJsv6PPLY9Jiu+JdacViJXQTWrxhlQzUEjb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AcQG7UOw/6h5JyLIQuz4SVLug0m9ELYRHTgV6OTnMWPYTkcJc9E+HmowWHzabnFyRQOB8pPYGeY/4CZKoOTo79ijyP1QO464rhVjg97cdIGzqdUZruKFrUwog9Rs+RqBpdgPa66Go7Ww95H+uWqfbzj07UlfYxmbaVhMimbkiNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Z0Wn13sP; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=4UiTwlP4t/xW5NGvvkumJqkirVU2BhoXZx2+6zulc8w=; b=Z0Wn13sPJS328uueenHJus6O9W
+	DC8gW2avavlR9J2hnC6rX2dVzkC9p6FHg/yJUHIAdTq2xCeYaunbytrAwr4wM6yES7H3Uaztekh4a
+	x0CnhwCExjKf5YIk+XIUIqaYmQRnBB7YFfBYVA3VreiBCIMKUh1P4F2sxjvv5kpuwiac6TO7I3rVi
+	nzL6S0zKQp0xm4dxvjxdJhMaeEdodTgLKWGy8TMz1l04qNodMpvAzYbWjhSTq4TEDZ5iw+mDAj1j7
+	1Zt3zE6EwPxFBQx/dI5fgEJI0aath/9N/8laXG0lc4OF7oNuj8o2/Kr/vefbBHPDMxUy4PtXJ0lbe
+	5bzp9fag==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1u1efD-00DN7z-0O;
+	Mon, 07 Apr 2025 13:04:52 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 07 Apr 2025 13:04:51 +0800
+Date: Mon, 7 Apr 2025 13:04:51 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Abhinaba Rakshit <quic_arakshit@quicinc.com>
+Cc: Thara Gopinath <thara.gopinath@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: crypto: qcom-qce: document QCS615
+ crypto engine
+Message-ID: <Z_Nc83JRS7YuZ8S4@gondor.apana.org.au>
+References: <20250318-enable-qce-for-qcs615-v2-0-c5e05fe22572@quicinc.com>
+ <20250318-enable-qce-for-qcs615-v2-1-c5e05fe22572@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250407050101.1389825-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250407050101.1389825-17-irogers@google.com>
-Subject: [PATCH v2 16/16] perf record: Retirement latency cleanup in evsel__config
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Weilin Wang <weilin.wang@intel.com>, 
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
-	John Garry <john.g.garry@oracle.com>, Howard Chu <howardchu95@gmail.com>, 
-	Levi Yun <yeoreum.yun@arm.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318-enable-qce-for-qcs615-v2-1-c5e05fe22572@quicinc.com>
 
-Perf record will fail with retirement latency events as the open
-doesn't do a perf_event_open system call. Use evsel__config to set up
-such events for recording by removing the flag and enabling sample
-weights - the sample weights containing the retirement latency.
+On Tue, Mar 18, 2025 at 03:13:23PM +0530, Abhinaba Rakshit wrote:
+> Document the crypto engine on the QCS615 platform.
+> 
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Abhinaba Rakshit <quic_arakshit@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/crypto/qcom-qce.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/evsel.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 661a07cbdb25..6a84893e3c58 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1440,9 +1440,10 @@ void evsel__config(struct evsel *evsel, struct record_opts *opts,
- 		attr->branch_sample_type = opts->branch_stack;
- 	}
- 
--	if (opts->sample_weight)
-+	if (opts->sample_weight || evsel->retire_lat) {
- 		arch_evsel__set_sample_weight(evsel);
--
-+		evsel->retire_lat = false;
-+	}
- 	attr->task     = track;
- 	attr->mmap     = track;
- 	attr->mmap2    = track && !perf_missing_features.mmap2;
+Patch applied.  Thanks.
 -- 
-2.49.0.504.g3bcea36a83-goog
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
