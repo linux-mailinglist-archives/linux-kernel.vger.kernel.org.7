@@ -1,121 +1,153 @@
-Return-Path: <linux-kernel+bounces-591722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75F01A7E489
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:33:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A90A7E45A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:29:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7681F3A8ED6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:21:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 107F718939F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B891FBC89;
-	Mon,  7 Apr 2025 15:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05661FAC56;
+	Mon,  7 Apr 2025 15:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1aQY5ZgR"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e6FO9cfy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16CB1F8BC6
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 15:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDD31FA851
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 15:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744039213; cv=none; b=bKFmmUjyLl2hFSU8jLRCIrm+1jkjrlnanuaCfCGC6XiG668TiKTYXq0ZIWm1dfBfMt4qFF2uuiFwfRz87R5nXQ4PsVJFKsSGSncA0To9GSlSWAIfkMXLwP4uv7kzKvZhItSWoIIoBwkc63e2PfVHc2Ca/Hm+jA1CmhgSfnq32/M=
+	t=1744039371; cv=none; b=eJjonoBAVjIA1/zwn0k8oEjNQMyr5DWCRt/eC7Dk/ykerRuiJJUA/eUrGbSzHiTHOv89gRaHNMpakz1GCySm86rtGgSKn20oTcET/3468Lar/j7G0EKXHdotzuqshvsU/HuROc199Bf765la1Dg7sxPGMbYfCW8z9wciWPIGDkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744039213; c=relaxed/simple;
-	bh=u/+KVCI1VmXvlYSWB0tmccv0ERLAgE83Zf8S0Xrnhz0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bGgPz4dJIRuCeWZTfI2mQgcewXO1ifeUwO4qBCmwIZgoNej1ryHVg280fukvZsoc+q/azFc5vUTBj1AJUeaHyChemSWmZN+hGiNNRw1IfYHAmVMqywlhkr5q2h6MPyUgcUiZZPGEI6Ui394W+uzNj+sCMGtIGGKyFWKgOxfYELs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1aQY5ZgR; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b00aa1f50d1so148411a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 08:20:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744039211; x=1744644011; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JTNpEax445O2ynSr3XUTtKC9NAWm3dqDTuE2ry3Vens=;
-        b=1aQY5ZgRYYcT5+UDvfqhWt897f8dVa478ykKnfkhsFhDN8g6oy08FXW/CODVuW6WqM
-         u8rdyWymGtPewMxw8DWYcuxvG/MYV4r3U5GeLXYsUdt7y862tyGUjMOpMh4hIFKBMrPH
-         rQ754qF7ngfNKSbvz1SEcqWPC0SjPAI5SHPvI3istBTccMRo+L2gB8KqzSKJN0wAX0bg
-         OmNH5nht2jR6JQVpwDX7+hV9G3g7+77dBiivY/zl6ZfuNTME6z14es5UkzTdlDLWda/c
-         2jZ+DR09AYeuCvNLKXaaGiUl1Ogf+R6iViwOI3iwlRCJO2ZrBNCJHFz5NtNIgglPiD2P
-         hfQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744039211; x=1744644011;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JTNpEax445O2ynSr3XUTtKC9NAWm3dqDTuE2ry3Vens=;
-        b=dbLsfwXk7vobimSdaQAodLTj0JGpQOpIWNLJA+IV0jAysw9AGPngafh28CWhPBLKEt
-         TcNlr3bYoLgRTIrQYcGc7Lx7FiA7cYYeJyYLOgjyGLNs1Pe3hi3/ceOxvOl3ryDao/s3
-         DHmhLGARUrWsGUOPFXWtj0Zh9cYpDc+Ki8tTxYz5cTi5FuYko4T0EBcNIb+ckJr6PFfo
-         aSvbE/VYgvzAJELmi2LEg4wy9cryB+FNohUtzWVr6wOHEWNyfyeh/2xjLsjo/8713aQ/
-         22pNECBPvI631tWlLg1wfPqwkFVOgqHAmQ79XI55isZWfnxjPKkca+MJdxamP715smP6
-         g1TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUU2LNnp2tTLalC8Gb1RFy5ZBSnbTgkLeZiYN8ptXL+WUyjY3/IIU1Gfcwf3cUtJQLzZySfi0eA4u7o49k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+bDnDVODg6ajii7xN36OBnNplLu/0xOpeHq4udOQJ0bseYx3L
-	nRY32jCBwBDQeSfDSz8bX8Cn6ApOWpRIVGvyXcAWqcUqKu0kfYGhTrZLGo7Qn2w3DHUgmWt8h/I
-	AUw==
-X-Google-Smtp-Source: AGHT+IHFT5IWpb0wEWYBsgf38l3iAGlVDr2qHVuyYE70TQA84d8Gl7Htq0vtNTpBGTTuOvXXCqA42VAV2Ds=
-X-Received: from pfbhg1.prod.google.com ([2002:a05:6a00:8601:b0:736:3d80:706e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3bc8:b0:223:5124:a16e
- with SMTP id d9443c01a7336-22a8a048ffamr208407455ad.5.1744039210859; Mon, 07
- Apr 2025 08:20:10 -0700 (PDT)
-Date: Mon, 7 Apr 2025 08:20:09 -0700
-In-Reply-To: <20250331145643.GF10839@nvidia.com>
+	s=arc-20240116; t=1744039371; c=relaxed/simple;
+	bh=0iTUGwfBCB19jv9H4P+0OSkSNi+DOqnUVr6FKoz2PgM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cw3yCML/qmsyTGEjOKrjOwGrS8FMWLmjHuxc5suEYDd3Aixbp0QZc7Wq0dnwff6XvoLInH33vt29EVM+JUxzGOTWNEUTEcb67/3S7YevfdEKnHxdiKp6LmCbqoEmSqstYYR2xSSZikUhzrZTCV2XObPqal3oA3jf6cB13//LeGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e6FO9cfy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C36FAC4CEDD;
+	Mon,  7 Apr 2025 15:22:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744039370;
+	bh=0iTUGwfBCB19jv9H4P+0OSkSNi+DOqnUVr6FKoz2PgM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=e6FO9cfyKRjC7XXRuld6CHIRvj0S9BPpVRq1Qd4YYZ9sShN/obWkMgPF1fH4BHyUP
+	 MpuhXsbV54OzhtzdYJgoxOXSsamu+ZuA4Pay8jG+AnyWy715sRZ85FrdQ52msvqLUs
+	 ZHR6m0LTloHlgYFoyv9fEdEg6j9JAtxSERpq58mAVooYJefVqpSa4Q7ZJ2hyCT72Od
+	 bbhdeSpDwIGzVgE7ECOxtAIuA0P2xVtw5Aj8QiRYP1+ui/VHX4TEDieKRCcDlPxLq2
+	 AyJV0h0RLIXNSaIo4AQgNU0cKLb2kBwd6E6UsS9PlXtnFQsUelLGuKaTln3sGN9f9o
+	 f1p99Ni3emKHA==
+From: Philipp Stanner <phasta@kernel.org>
+To: Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Philipp Stanner <phasta@kernel.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Cc: dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] drm/sched: Fix memory leaks in drm_sched_fini()
+Date: Mon,  7 Apr 2025 17:22:35 +0200
+Message-ID: <20250407152239.34429-2-phasta@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <Z9sItt8BIgvbBY8M@arm.com> <20250319192246.GQ9311@nvidia.com>
- <Z9s7r2JocpoM_t-m@arm.com> <SA1PR12MB7199C7BD48EB39F536DD34DBB0A62@SA1PR12MB7199.namprd12.prod.outlook.com>
- <Z-QU7qJOf8sEA5R8@google.com> <86y0wrlrxt.wl-maz@kernel.org>
- <Z-QnBcE1TKPChQay@google.com> <86wmcbllg2.wl-maz@kernel.org>
- <Z-RGYO3QVj5JNjRB@google.com> <20250331145643.GF10839@nvidia.com>
-Message-ID: <Z_PtKWnMPzwPb4sp@google.com>
-Subject: Re: [PATCH v3 1/1] KVM: arm64: Allow cacheable stage 2 mapping using
- VMA flags
-From: Sean Christopherson <seanjc@google.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Marc Zyngier <maz@kernel.org>, Ankit Agrawal <ankita@nvidia.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	"joey.gouly@arm.com" <joey.gouly@arm.com>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "will@kernel.org" <will@kernel.org>, 
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>, "shahuang@redhat.com" <shahuang@redhat.com>, 
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>, "david@redhat.com" <david@redhat.com>, 
-	Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>, 
-	Kirti Wankhede <kwankhede@nvidia.com>, "Tarun Gupta (SW-GPU)" <targupta@nvidia.com>, 
-	Vikram Sethi <vsethi@nvidia.com>, Andy Currid <acurrid@nvidia.com>, 
-	Alistair Popple <apopple@nvidia.com>, John Hubbard <jhubbard@nvidia.com>, Dan Williams <danw@nvidia.com>, 
-	Zhi Wang <zhiw@nvidia.com>, Matt Ochs <mochs@nvidia.com>, Uday Dhoke <udhoke@nvidia.com>, 
-	Dheeraj Nigam <dnigam@nvidia.com>, Krishnakant Jaju <kjaju@nvidia.com>, 
-	"alex.williamson@redhat.com" <alex.williamson@redhat.com>, 
-	"sebastianene@google.com" <sebastianene@google.com>, "coltonlewis@google.com" <coltonlewis@google.com>, 
-	"kevin.tian@intel.com" <kevin.tian@intel.com>, "yi.l.liu@intel.com" <yi.l.liu@intel.com>, 
-	"ardb@kernel.org" <ardb@kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"gshan@redhat.com" <gshan@redhat.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"ddutile@redhat.com" <ddutile@redhat.com>, "tabba@google.com" <tabba@google.com>, 
-	"qperret@google.com" <qperret@google.com>, "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 31, 2025, Jason Gunthorpe wrote:
-> On Wed, Mar 26, 2025 at 11:24:32AM -0700, Sean Christopherson wrote:
-> > > I don't know how you reconcile the lack of host mapping and cache
-> > > maintenance. The latter cannot take place without the former.
-> > 
-> > I assume cache maintenance only requires _a_ mapping to the physical memory.
-> > With guest_memfd, KVM has the pfn (which happens to always be struct page memory
-> > today), and so can establish a VA=>PA mapping as needed.
-> 
-> This is why we are forcing FWB in this work, because we don't have a
-> VA mapping and KVM doesn't have the code to create one on demand.
+Changes since the RFC:
+  - (None)
 
-I don't follow.  As it exists today, guest_memfd doesn't touch the direct map,
-i.e. there's already a kernel mapping, KVM doesn't need to create one.
+Howdy,
+
+as many of you know, we have potential memory leaks in drm_sched_fini()
+which have been tried to be solved by various parties with various
+methods in the past.
+
+In our past discussions, we came to the conclusion, that the simplest
+solution, blocking in drm_sched_fini(), is not possible because it could
+cause processes ignoring SIGKILL and blocking for too long (which could
+turn out to be an effective way to generate a funny email from Linus,
+though :) )
+
+Another idea was to have submitted jobs refcount the scheduler. I
+investigated this and we found that this then *additionally* would
+require us to have *the scheduler* refcount everything *in the driver*
+that is accessed through the still running callbacks; since the driver
+would want to unload possibly after a non-blocking drm_sched_fini()
+call. So that's also no solution.
+
+This RFC here is a new approach, somewhat based on the original
+waitque-idea. It looks as follows:
+
+1. Have drm_sched_fini() block until the pending_list becomes empty with
+   a waitque, as a first step.
+2. Provide the scheduler with a callback with which it can instruct the
+   driver to kill the associated fence context. This will cause all
+   pending hardware fences to get signalled. (Credit to Danilo, whose
+   idea this was)
+3. In drm_sched_fini(), first switch off submission of new jobs and
+   timeouts (the latter might not be strictly necessary, but is probably
+   cleaner).
+4. Then, call the aformentioned callback, ensuring that free_job() will
+   be called for all remaining jobs relatively quickly. This has the
+   great advantage that the jobs get cleaned up through the standard
+   mechanism.
+5. Once all jobs are gone, also switch off the free_job() work item and
+   then proceed as usual.
+
+Furthermore, since there is now such a callback, we can provide an
+if-branch checking for its existence. If the driver doesn't provide it,
+drm_sched_fini() operates in "legacy mode". So none of the existing
+drivers should notice a difference and we remain fully backwards
+compatible.
+
+Our glorious beta-tester is Nouveau, which so far had its own waitque
+solution, which is now obsolete. The last two patches port Nouveau and
+remove that waitque.
+
+I've tested this on a desktop environment with Nouveau. Works fine and
+solves the problem (though we did discover an unrelated problem inside
+Nouveau in the process).
+
+Tvrtko's unit tests also run as expected (except for the new warning
+print in patch 3), which is not surprising since they don't provide the
+callback.
+
+I'm looking forward to your input and feedback. I really hope we can
+work this RFC into something that can provide users with a more
+reliable, clean scheduler API.
+
+Philipp
+
+Philipp Stanner (5):
+  drm/sched: Fix teardown leaks with waitqueue
+  drm/sched: Prevent teardown waitque from blocking too long
+  drm/sched: Warn if pending list is not empty
+  drm/nouveau: Add new callback for scheduler teardown
+  drm/nouveau: Remove waitque for sched teardown
+
+ drivers/gpu/drm/nouveau/nouveau_abi16.c |   4 +-
+ drivers/gpu/drm/nouveau/nouveau_drm.c   |   2 +-
+ drivers/gpu/drm/nouveau/nouveau_sched.c |  39 +++++----
+ drivers/gpu/drm/nouveau/nouveau_sched.h |  12 +--
+ drivers/gpu/drm/nouveau/nouveau_uvmm.c  |   8 +-
+ drivers/gpu/drm/scheduler/sched_main.c  | 111 +++++++++++++++++++-----
+ include/drm/gpu_scheduler.h             |  19 ++++
+ 7 files changed, 146 insertions(+), 49 deletions(-)
+
+-- 
+2.48.1
+
 
