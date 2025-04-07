@@ -1,76 +1,51 @@
-Return-Path: <linux-kernel+bounces-591068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 786C4A7DA99
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:02:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88053A7DA7C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:58:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8099A174213
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:00:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65A5A171101
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED86230264;
-	Mon,  7 Apr 2025 09:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hdzhcmfw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13CB23098D;
+	Mon,  7 Apr 2025 09:56:06 +0000 (UTC)
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D2F23535D;
-	Mon,  7 Apr 2025 09:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB873218ABD;
+	Mon,  7 Apr 2025 09:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744019944; cv=none; b=A4BpjNj0t/HhkII0+/fx5dw7k6xvGWNCeNrDs/Z7DfTFpVj+OUb84rXpBucyitFk1CgAukRSgOTteoHs3XCRmTc7DqSQldSn3mzIvc/UxVUKsr64SMMlq3348RNtFeiAcJUb6878wNLgg3yPRL3iHWOvpMN+9kycnq8ORO49DPk=
+	t=1744019766; cv=none; b=ZKCW+oaSTuBGHcpumOoy1XTL4SLOraldjjyHqxpw97pyNapYXwwSYYt085j4/GQFdh2U9wRKiugadwpY91EttmBMaCt5DJLC10+PjNl2SfO2TdGVJkjKsVcwFxxvIkjaKegKv7K6iOT9lNOaoyR+Ecb5PdpGzdL5PWGZ/O8YWVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744019944; c=relaxed/simple;
-	bh=VjmtEJxQyuUAeqbxtsbBB1tsOJr3EnKvfppmPlAeS9U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W6BiAecczSpjSnuy5yFK+8HcsyjE7vAAOJASESGxp+wmnl/cmn6h96ICckxEOhfJ63cgB0l1qWK6MwOjwPIW6xeeCBsdtn6FqZuhR1qs03vWI5WBZMlDQ87vtIY47dG4TiXg55n9E0rL58IedVALMbm4EmsDzLA0BeEgFhYcZpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hdzhcmfw; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744019943; x=1775555943;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=VjmtEJxQyuUAeqbxtsbBB1tsOJr3EnKvfppmPlAeS9U=;
-  b=HdzhcmfwCp918hYcCmCqwwnFO9klzdyuYWZ88Zi3yrgy0/t5EsghAXYe
-   ByD/2RosRgU4yPje/qmWoS4fdtc2lIBnkLYS+Du3SHM8AWzbq6KBgtl65
-   cT7a3IIU/9i8Cc7m/27DEgcWv6Dww9D7dv5ki6pRIImbnB9n6/hCH/x7D
-   mDf7suEUZDCXyP6v9I31Dd8uaue3nmCTXfFWskC1ytZ0o3GeN4VITAobn
-   mj7yolfSbkeaT1FUtmau/YmxFX4KugA86ffjHVBrcBuaRFrh4zqE3ZVCr
-   Ms4y6W8Yq/pTSiV4WfWHofDnw+TIjZ4QkqmHV9yNqskLwDTmlEV+V0hMl
-   g==;
-X-CSE-ConnectionGUID: gkAYI08jRw2hs5t2vxQqxQ==
-X-CSE-MsgGUID: E0rLP0w6R/q+NuVeVt0CIg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11396"; a="49188888"
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="49188888"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 02:59:00 -0700
-X-CSE-ConnectionGUID: EtnsPpHFRO22RdxLKxLZEg==
-X-CSE-MsgGUID: wNJRQu/8QLOOlM850Hwvgw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="128411738"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa010.fm.intel.com with ESMTP; 07 Apr 2025 02:58:58 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id D8A2F5CE; Mon, 07 Apr 2025 12:58:54 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Subject: [PATCH v2 6/6] i2c: core: Deprecate of_node in struct i2c_board_info
-Date: Mon,  7 Apr 2025 12:55:17 +0300
-Message-ID: <20250407095852.215809-7-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250407095852.215809-1-andriy.shevchenko@linux.intel.com>
-References: <20250407095852.215809-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1744019766; c=relaxed/simple;
+	bh=gNhUjMpeEX7mTvcDB/ug16RwEOcyXW1AXaDwQ+wRowk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cws7nqQ0HkJ+YgvBtHV6yTWEO2uWyJi3KrhuJZXODyA4j9kZvdFaouc6Qrsz2qoj7QVvltwouLHfp3O118RBYHiI1YMbK1Ug1Tc3COp50GZMlaTUaR0kv6Ucouy1/ClJTpXeYo110EoAP3Qx1cDNcNOP99xpv2LUREmtG24p0d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201606.home.langchao.com
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202504071755536257;
+        Mon, 07 Apr 2025 17:55:53 +0800
+Received: from locahost.localdomain.com (10.94.5.217) by
+ jtjnmail201606.home.langchao.com (10.100.2.6) with Microsoft SMTP Server id
+ 15.1.2507.39; Mon, 7 Apr 2025 17:55:54 +0800
+From: Charles Han <hanchunchao@inspur.com>
+To: <nbd@nbd.name>, <lorenzo@kernel.org>, <ryder.lee@mediatek.com>,
+	<shayne.chen@mediatek.com>, <sean.wang@mediatek.com>,
+	<matthias.bgg@gmail.com>, <angelogioacchino.delregno@collabora.com>,
+	<howard-yh.hsu@mediatek.com>, <StanleyYP.Wang@mediatek.com>,
+	<chui-hao.chiu@mediatek.com>
+CC: <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	Charles Han <hanchunchao@inspur.com>
+Subject: [PATCH] wifi: mt76: mt7996: Add NULL check in mt7996_thermal_init
+Date: Mon, 7 Apr 2025 17:55:51 +0800
+Message-ID: <20250407095551.32127-1-hanchunchao@inspur.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,31 +53,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+tUid: 2025407175553cfc5208c70a300baf4f5d5e9bd496b54
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-Two members of the same or similar semantics is quite confusing to begin with.
-Moreover, the fwnode covers all possible firmware descriptions that Linux kernel
-supports. Deprecate of_node in struct i2c_board_info, so users will be warned
-and in the future remote it completely.
+devm_kasprintf() can return a NULL pointer on failure,but this
+returned value in mt7996_thermal_init() is not checked.
+Add NULL check in mt7996_thermal_init(), to handle kernel NULL
+pointer dereference error.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Fixes: 69d54ce7491d ("wifi: mt76: mt7996: switch to single multi-radio wiphy")
+Signed-off-by: Charles Han <hanchunchao@inspur.com>
 ---
- include/linux/i2c.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/mediatek/mt76/mt7996/init.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 2e4903b7f7bc..cc1437f29823 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -405,7 +405,7 @@ static inline bool i2c_detect_slave_mode(struct device *dev) { return false; }
-  * @addr: stored in i2c_client.addr
-  * @dev_name: Overrides the default <busnr>-<addr> dev_name if set
-  * @platform_data: stored in i2c_client.dev.platform_data
-- * @of_node: pointer to OpenFirmware device node
-+ * @of_node: **DEPRECATED** - use @fwnode for this
-  * @fwnode: device node supplied by the platform firmware
-  * @swnode: software node for the device
-  * @resources: resources associated with the device
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/init.c b/drivers/net/wireless/mediatek/mt76/mt7996/init.c
+index 6b660424aedc..5af52bd1f1f1 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7996/init.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7996/init.c
+@@ -217,6 +217,9 @@ static int mt7996_thermal_init(struct mt7996_phy *phy)
+ 
+ 	name = devm_kasprintf(&wiphy->dev, GFP_KERNEL, "mt7996_%s.%d",
+ 			      wiphy_name(wiphy), phy->mt76->band_idx);
++	if (!name)
++		return -ENOMEM;
++
+ 	snprintf(cname, sizeof(cname), "cooling_device%d", phy->mt76->band_idx);
+ 
+ 	cdev = thermal_cooling_device_register(name, phy, &mt7996_thermal_ops);
 -- 
-2.47.2
+2.43.0
 
 
