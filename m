@@ -1,256 +1,249 @@
-Return-Path: <linux-kernel+bounces-590865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54627A7D7C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:28:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 689EFA7D7C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18A863BBB7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:27:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A0C01682FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3E4227EA8;
-	Mon,  7 Apr 2025 08:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC464226D1E;
+	Mon,  7 Apr 2025 08:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LG0jaL7H"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UlekL+fR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z4b3KwRY"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0015224B1C;
-	Mon,  7 Apr 2025 08:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744014454; cv=fail; b=eecNHmIAthkkTUjXmZV+ouWAibWXJoiozlE/qkWWFtpcBImGhxtTxWC8TC0PgXn9/FQth0FjxO0vm39Kv648E3yb1IjQWHTl8mCo0U5CFpUuzvteHB9c25v87rpMHILWP7IHEpW+OA1vc8G2wJZkA4ovNnM4BML0+FQ12GRLebA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744014454; c=relaxed/simple;
-	bh=YIN8vso7LUB8ED4UbHhVg0m5mXuxyq3tKNrJHiFr2K8=;
-	h=Date:From:To:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=mU0X4WAClH+8rpn33R6B6PC5ubiwUQgOjNU+xcGfMEkycthm06PArzTsYpGMhtp7PyLFyxI30rIkAS37dMUDUxOUlxGnN6Ljf0cF7lpi37KEWfVsMmep5C66XR0TIFbA7l5w4TXtL6tF81347RyoeeV90eT0u13Q9ZW5x5r5nRs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LG0jaL7H; arc=fail smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744014453; x=1775550453;
-  h=date:from:to:subject:message-id:reply-to:references:
-   in-reply-to:mime-version;
-  bh=YIN8vso7LUB8ED4UbHhVg0m5mXuxyq3tKNrJHiFr2K8=;
-  b=LG0jaL7Hgr8hZihKUA1pWvCLwsRt5s3NYj8q15WhD8dbyptPO+FFHuMI
-   RvNpOkZIhxTh64f5pKxp/XjtcSUdw/lZHQKPWxnP6eSSOU8A9rhkjsnXQ
-   57N9kZi1d5ur3Jq+LH8Mg9ROH4TCyExudkeRcn3hKN0Q8JG/oh3fQhPki
-   Y6F70XdDO1NgnHm5SEF++IvXld2nGoyFe4jmH3wVDsOESz/1dxg9QxQo+
-   IvjDlLFYZOmgq0xs/1r0LCFdXILu2u/MSvosu2lc7D9/tZFDCrWphXJbF
-   3eAnrVv8uLO9wT0IvupuZ8DABGQgpPgPuEHShxhNbuZnQ81EKJ2XGU/M9
-   Q==;
-X-CSE-ConnectionGUID: FJdS9n5nQmuccFM948KGeQ==
-X-CSE-MsgGUID: ZVn7ZKIuTXGvCVf4dSps9g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11396"; a="55572719"
-X-IronPort-AV: E=Sophos;i="6.15,193,1739865600"; 
-   d="scan'208";a="55572719"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 01:27:32 -0700
-X-CSE-ConnectionGUID: ZFULQF4HRvCRXjrnlbZLbw==
-X-CSE-MsgGUID: R+kls1+tRQiHwapxJ5TchQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,193,1739865600"; 
-   d="scan'208";a="128208334"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 01:27:31 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 7 Apr 2025 01:27:30 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 7 Apr 2025 01:27:30 -0700
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.172)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 7 Apr 2025 01:27:29 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ws6ympRa4JkZxptgR9W6zYYupdLSbSIuXHXm/pAxhXz5HV18Fv9WJjaAvMs9FchbuASFKGIqKfQlx+0lkvF7QmBqCT5i4RwpDLm9ZL6plCaj6vSnxyV6k/p2c3fZuchI2mcRa4IYbAM1cDaDvV7HZLvI1mvVO6Kik/QFhnGjKIh0WxtFdT/lyLyg+MzotJ/zB8AtaGxhOOQKvLh8Vps2RUoQMeOk8KH7B3D6oASkuA0v8uaLnwvEcu1ZaedcGR7YIVKdZZg1tPJHVOgNqZg8c6FLrLgR2LjPnafQxpihewpTf+nh8JrnXV8shco7U/0QikJVUJZTqw8rcPUGXr+OAg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cIaKu6WJCga8O8JJv5aEM4FPwIcxqLDyGZh9ZTQSYXw=;
- b=AUM8/1bgAGowHeubrkgDMLnohgz8Y+uN4f+hR4Pa8sVCUswD05uMMGkPEc/MjTRMgKwxzuM1m/a7fEBoHnQ/jIxI5YPFfdvOb3fmjgrS0zkljYfrZE7XTFsMKwsYX32ikIeiLpU97LVkYvndcsvhXqIaKifM2uTjzGYOTsqbeDk4itng5O81p0vw2dsRrBQiaP3XP5PwI3mzm/l3qwcTxbhhXcgrtaFbLQumpm89AeEB+0g/DHIEKTQvIp41QHlxPOEW7CM4UOG+h3bisJfWIwu78b7+lE0mpVSG9wT1k6LrbCt2Iqzsmh/GmVrsKwNm77HSKAhjprCOYjdaAcPB4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- PH7PR11MB6858.namprd11.prod.outlook.com (2603:10b6:510:1ee::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.33; Mon, 7 Apr
- 2025 08:27:26 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%6]) with mapi id 15.20.8583.041; Mon, 7 Apr 2025
- 08:27:26 +0000
-Date: Mon, 7 Apr 2025 16:25:43 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: Michael Roth <michael.roth@amd.com>, <kvm@vger.kernel.org>,
-	<linux-coco@lists.linux.dev>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <jroedel@suse.de>, <thomas.lendacky@amd.com>,
-	<pbonzini@redhat.com>, <seanjc@google.com>, <vbabka@suse.cz>,
-	<amit.shah@amd.com>, <pratikrajesh.sampat@amd.com>, <ashish.kalra@amd.com>,
-	<liam.merwick@oracle.com>, <david@redhat.com>, <vannapurve@google.com>,
-	<ackerleytng@google.com>, <quic_eberman@quicinc.com>
-Subject: Re: [PATCH 3/5] KVM: gmem: Hold filemap invalidate lock while
- allocating/preparing folios
-Message-ID: <Z/OMB7HNO/RQyljz@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20241212063635.712877-1-michael.roth@amd.com>
- <20241212063635.712877-4-michael.roth@amd.com>
- <Z9P01cdqBNGSf9ue@yzhao56-desk.sh.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Z9P01cdqBNGSf9ue@yzhao56-desk.sh.intel.com>
-X-ClientProxiedBy: SI2PR02CA0048.apcprd02.prod.outlook.com
- (2603:1096:4:196::23) To DS7PR11MB5966.namprd11.prod.outlook.com
- (2603:10b6:8:71::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460EE22541D;
+	Mon,  7 Apr 2025 08:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744014366; cv=none; b=H5sLFQbbwNp9vf2JB1C/7W2A2WwOuTNO9Gw6FwutWXvM/oBX3x4W03u7bsqvXgBVp5W4Lx2MoZ2TjtOkvjuNQCJP6RJY50CrEpn6G/kFn3TOMzQOBqDsDa3Je6eAFCalYiQUt66sDb8y0OK0Ce5156NEdLlvqGG4toCQy9Dj24I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744014366; c=relaxed/simple;
+	bh=ZKHPukZoqMbuTJ2lgvcYq0kW/i8OIXcifKmKZ6xQoI0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=EGZWE3vusgz9SzfiLAFkqU3qDwz4oTHeyfTMC9I/6HPDwmxFx9c6Y1iX1z98wexLoRKYUmTWcFWJvrp0VWCMpqlrxOdDt7luIh0UoUEQrFX5iMO1/QyDMpBj37W9lUvgEx0zdaIU11yTBZbKpxbIoVTkJ02E0jTku2dXWIsVhgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UlekL+fR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z4b3KwRY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744014362;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=T928jhb11mCyyDUoYmQa6lOgS7v+VzxkIKfT/fGJ2Ko=;
+	b=UlekL+fRHqrMl0rWDuxbaS65Z9rNHn1mgcqqjrRTEBaCTbwteU6Zi1xNiM/2cMl+cz1zZ9
+	7qyskdCSa/AWLrICA6sleJi7DRhuh7PuSoSx8SKkrqGPQqUBbu7TlXBY7Kr/lPSr1ZP3dR
+	hJrLYnGRGQWLxLUsBnusGZDwcwlODEnTnauzMn4HacRvL4MxAHOh6EzgnG8gqDmE0Gr2nH
+	qdkeBLBvrMX7LBWUsdCwYKEwvZ4/hDYdej7atIDD0vu6EltiQ5Ppdgfv9etGmxxoSz3Bgd
+	uxyk8nVJcJk5vrgzbK2hyzhT2bISqyKba52VxHKh50SXeIRbHV3O+rWZFr6kgg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744014362;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=T928jhb11mCyyDUoYmQa6lOgS7v+VzxkIKfT/fGJ2Ko=;
+	b=z4b3KwRYbmHbyX4yxiAQ0E0wiff6TggfkOJ4X66yOGivixHQAOxeZYT3FnzPhqFqbI07Tm
+	gjeLqLbgTeSjroAQ==
+Date: Mon, 07 Apr 2025 10:26:00 +0200
+Subject: [PATCH] dmaengine: stm32: Don't use %pK through printk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|PH7PR11MB6858:EE_
-X-MS-Office365-Filtering-Correlation-Id: 97bb4dfb-f1ea-4e8f-1c66-08dd75ae075f
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ulK3dhOvVzPNTAX0Pwxel7mMkYbUkyG8AdIAjyMkAVXzvmVubAwdzqPmwk8u?=
- =?us-ascii?Q?kYzT3cJB8VyVFwBzJcJAwBDOOEeCJZXp7+XdOkJxu8ZzIjIJyQRBs8mdDbm3?=
- =?us-ascii?Q?7t3lISYXagtfVmd1OB0TZZKQrq4ZCiLiogIWf1uBeB3K8qEUaFk8/X4z5YRO?=
- =?us-ascii?Q?FSNO+pD8lmt1/Svx0FsbkOyRwtZws0WRbJBlmJ9jdepkBfmQPcIuxwGUSGW5?=
- =?us-ascii?Q?nT/M5JgDlTXCODqh2e9y87uY93kxViE+x0sAuWeev/eR5PGJb58xR5k+/ntH?=
- =?us-ascii?Q?udxNDbUFwoLbUHvP7Aiuwu3QJTn8RyRVoD/J5iD5Bk3f4R8yLMNExhmhEPA2?=
- =?us-ascii?Q?vq2ii+iv32wAh08Yq2DwkRnnnBLx2cg7V6jBRfmVzDFuf/iyd8w4lfwOq/85?=
- =?us-ascii?Q?TTZFvK9FGMNR3WdAvyec9p6il9B6i+KRdErrx1QjA1HuVZX1pyMnXBG1Mc7c?=
- =?us-ascii?Q?hTZQM1DyiEnrWCdpUW8bdIcL5EdAU/tbjDQkGWEUfdNlnnL94oPH3UwLCgte?=
- =?us-ascii?Q?ONXhRDNfIoEONz1Rat0REf3WNx4rRtbGuiNoYFV/tQ3a5KdZ/rATWwAqlpoq?=
- =?us-ascii?Q?CBj6YpozObG93+dLnxA6kAbyK6MxlLAH/7OWYMfqVSC0MG9Q7XdXl+3rdHbB?=
- =?us-ascii?Q?cDX2fbuQb5V4lCBDC/ovJCyCC+cz7Ks2FZKy0nlkr/8O+CMhg7tVsCv6mE0W?=
- =?us-ascii?Q?Ic+VWTuQXhfC+kj12tfIzcnt3W/bARZeJ/Ii/gUNnxbuqYv2tNPEjHVlS5UR?=
- =?us-ascii?Q?rxo3zWiRn+Mb99yAwmmckF+JO7EHzTlrUXMkd3ZIIlLtff1YOZGAgqJKTOTL?=
- =?us-ascii?Q?jfUZozqE6x5c6RlW4M/Z486lToMiMLHt3eYu5FH5l/9AFvOug04WST2MENE1?=
- =?us-ascii?Q?BLnPMHb8HJCGHtrc01weU6KPU9wPt9MSsWfkERqRm4j18R4xVcI58TBBi+2K?=
- =?us-ascii?Q?6DMWvRumbVku5B74wuvYuTRilrEE4SBmMv4x+2KcpMjy2RdnDFgyTubmjBFZ?=
- =?us-ascii?Q?OFhSC+p5MhXbJ7Hytx/IMABA/5PjfLKcdyP4IT6CjbZ/3B/0xfp/8bVRx548?=
- =?us-ascii?Q?WqNSBH/rBriwaQE+9RksOmIgQp93RUsAIzOZSL6uRs+Mi7/mqVxM3Mknfrk7?=
- =?us-ascii?Q?Ph7E47E8awTwABEwJhSYxyG6WZQnJZc9XdWOrc2FHs/GxhDrT/coqiD5F6sb?=
- =?us-ascii?Q?0ya3ihlQKviUuVP0COHMbKz19CYerHy3YQPJ1yzVJQkvw09RyLDRBd5ALecd?=
- =?us-ascii?Q?DLXL8XjuajPJOXUxa0n1QZr9d32m2O33icQXdOF5HA921GWBACWCDtmNOJCU?=
- =?us-ascii?Q?dKPn/laz9H/9SiOYNZTWj9rcGAzZdTSLuQ84qvJMK6RcLDtb7Uk4I3h6gSgU?=
- =?us-ascii?Q?KSpFGRCktAR1tsO0QIFKxTFt+tOkEPwCHmUNMGHVK1PrJSnfhgJQpXQLSVuR?=
- =?us-ascii?Q?LfEegRbAdmo=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?STEBhmkKHXk6iDQ0TUTUIPYYjS9p3gyVT1B157d2UwNDEluDWT0R+unLYCDf?=
- =?us-ascii?Q?WSvFz9CrLzP1ir8our4UyYGgt1NZbpqdtvPCFBSJjLaQGEzWxHjUb2/fNq0I?=
- =?us-ascii?Q?MTqQLV2nQjsLJxEHKZc5PnKHIEN9ZpcEPUZkmF9NkheYEe6EtJurdfiqGLdx?=
- =?us-ascii?Q?uzqJT7eXZPt2ekcRB9jSF+K1kFkz24U3QF1/kMohrl6oTT3sJ+dQgshYIYQl?=
- =?us-ascii?Q?fZIphAmUtN78gqO2TLuuSug4DclLtrFR4NYwkAO5ybhp7nmytC1gIbO7czLp?=
- =?us-ascii?Q?mf1HJaJGn7FJsIGbAr3RSpWFvWeYR5kYIKGKhB6dbQWyCt56W/PCvf7dXd0Y?=
- =?us-ascii?Q?YblnnmDosI+z+RQ03zZc0jArQPCCWwMfiq0Z/erBm/ecc+bbOZ7CpFAsGjcZ?=
- =?us-ascii?Q?5bmxNVFeC7XopRW5lEM4PExwY9xvRRCVZNEQc2RfVsbJ34dT7M8YUpoP6Jgm?=
- =?us-ascii?Q?T6Jt1PA1RWRwhKioouS0Ka/zIamhWectCOGoba9PnhznyzJMEcKr/pbLhk6V?=
- =?us-ascii?Q?uaO44e7busVY4jBlhna4oG4PASm3QJCKaBQSt0f1LbXdcCjtw9jfeUwPvmE/?=
- =?us-ascii?Q?AsYZXcwIZdUIG6KQwnHUxUNJPMEd8LJLSp5+b7KR4l3PAjIrnT/5NhtedHqU?=
- =?us-ascii?Q?RPDWbNuSumESBZi9/OrpFgQ3Co7Be9Dt1F3rh8b/XCQ5+i4du6YpbFnlTLW7?=
- =?us-ascii?Q?ZOX+wM2nzh1FFmU6rgvllC4ePqcfLsznkxP5gerRjB/0YNTyDJ7g9cUZxD9K?=
- =?us-ascii?Q?WKde3Wc4ISI9+ASCuI1Zksy6tVtvpTM+UfZT8Qo0OpPA3hVrAw3SQCugsdXR?=
- =?us-ascii?Q?xMWpIgaNRV+ti2fNq6g0SOpbpyFOwTjnPx7pDksUwcGcBcLQ82eC57wekUIo?=
- =?us-ascii?Q?/63JNQB8N/2YacB/gs/vXNSnCGDd3Tm7IiuA+c5VVxnPbltpX1cvMcoHB7On?=
- =?us-ascii?Q?tTn9t4di4Eowppsu4c0vLzCGM77z7Ib9M/9wjuya8bugrM1AhUmgDtIipNNF?=
- =?us-ascii?Q?fTb3gbgytNI/duCA7QuYZKH3qOL+OMF3TP9n5gIBn2jQS7OygjCpwLYANvvn?=
- =?us-ascii?Q?lcpWBRuro0mWfdMSj8GOWgfEG4rKTwDcyN6wPkSVbEkjp3hTaVu7Fg+RAt8p?=
- =?us-ascii?Q?+5xk/A6/q9LZguDO/AASPaoMidSmWgR1tutWxm1b/PgxN2IV+VjOWF2SqUU9?=
- =?us-ascii?Q?R5POPN8vQD25348h5fZpk8gmjafRKv7boV/hH0Na9bBmw1sSj5b/IAiNbugr?=
- =?us-ascii?Q?j0dboty5kcUzescCD8p+LtVy1FefqCfKDabzxAiR703NrpFdWas0UwX56N5N?=
- =?us-ascii?Q?Kw9Fx58+Vg+HlHPe3+VBDtz/7UIv/8ph9T9XPWkfmK0sbX9e+ItLq15C2gUN?=
- =?us-ascii?Q?wo7vL7hOGQ+pTgBtTRm9JZG6nOyYFkJ3QrKkJ0TrxwIlqK7+ShZ7ogNgzKoJ?=
- =?us-ascii?Q?cW4Y7yIih/QTFkLc9rNA5TvopYZhl5ALWleu38cg4i277DjBUF0eW2m7x3C2?=
- =?us-ascii?Q?L6EQ0CU/LZA6MJda6T2dY/cYejYlbEcjWEDStHoofinbZtfn3EwyQwO4powT?=
- =?us-ascii?Q?ahCbRc266MxrQXjT/h8fVuV3y0clAYsjABZckBNP?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97bb4dfb-f1ea-4e8f-1c66-08dd75ae075f
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 08:27:26.6394
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: q3BxTG2R45kaeWWnM+S8WYvneYB7szCTKukOcu3T7pU2Q99Rk7TsfhPk1E/KVpZHGr61WasjP9seBKZctb1C6g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6858
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250407-restricted-pointers-dma-v1-1-b617dd0e293a@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIABeM82cC/x3MMQqAMAxA0atIZgO1KqhXEYfaRs1glaSIIN7d4
+ viG/x9QEiaFoXhA6GLlI2ZUZQF+c3El5JAN1tjWNKZBIU3CPlHA8+CYSBTD7tD2funq3lXOzJD
+ rU2jh+z+P0/t+mJK5NWkAAAA=
+X-Change-ID: 20250404-restricted-pointers-dma-29cf839a1a0b
+To: =?utf-8?q?Am=C3=A9lie_Delaunay?= <amelie.delaunay@foss.st.com>, 
+ Vinod Koul <vkoul@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: dmaengine@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744014361; l=6492;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=ZKHPukZoqMbuTJ2lgvcYq0kW/i8OIXcifKmKZ6xQoI0=;
+ b=4GwCpsvDlQhbuECcKBrTLhQ91ywVmdNgnTq3Ec5//e+nIqjsBPoi+/Gb/0mFsz8hMNC61Kpa0
+ 0sjj/ikn50MDrOYoCx5fQVWj+IBhDF/2d++a3sgfKD+LuUh0qiXLkM0
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On Fri, Mar 14, 2025 at 05:20:21PM +0800, Yan Zhao wrote:
-> This patch would cause host deadlock when booting up a TDX VM even if huge page
-> is turned off. I currently reverted this patch. No further debug yet.
-This is because kvm_gmem_populate() takes filemap invalidation lock, and for
-TDX, kvm_gmem_populate() further invokes kvm_gmem_get_pfn(), causing deadlock.
+In the past %pK was preferable to %p as it would not leak raw pointer
+values into the kernel log.
+Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
+the regular %p has been improved to avoid this issue.
+Furthermore, restricted pointers ("%pK") were never meant to be used
+through printk(). They can still unintentionally leak raw pointers or
+acquire sleeping looks in atomic contexts.
 
-kvm_gmem_populate
-  filemap_invalidate_lock
-  post_populate
-    tdx_gmem_post_populate
-      kvm_tdp_map_page
-       kvm_mmu_do_page_fault
-         kvm_tdp_page_fault
-	   kvm_tdp_mmu_page_fault
-	     kvm_mmu_faultin_pfn
-	       __kvm_mmu_faultin_pfn
-	         kvm_mmu_faultin_pfn_private
-		   kvm_gmem_get_pfn
-		     filemap_invalidate_lock_shared
-	
-Though, kvm_gmem_populate() is able to take shared filemap invalidation lock,
-(then no deadlock), lockdep would still warn "Possible unsafe locking scenario:
-...DEADLOCK" due to the recursive shared lock, since commit e918188611f0
-("locking: More accurate annotations for read_lock()").
+Switch to the regular pointer formatting which is safer and
+easier to reason about.
+There are still a few users of %pK left, but these use it through seq_file,
+for which its usage is safe.
 
-> > @@ -819,12 +827,16 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
-> >  	pgoff_t index = kvm_gmem_get_index(slot, gfn);
-> >  	struct file *file = kvm_gmem_get_file(slot);
-> >  	int max_order_local;
-> > +	struct address_space *mapping;
-> >  	struct folio *folio;
-> >  	int r = 0;
-> >  
-> >  	if (!file)
-> >  		return -EFAULT;
-> >  
-> > +	mapping = file->f_inode->i_mapping;
-> > +	filemap_invalidate_lock_shared(mapping);
-> > +
-> >  	/*
-> >  	 * The caller might pass a NULL 'max_order', but internally this
-> >  	 * function needs to be aware of any order limitations set by
-> > @@ -838,6 +850,7 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
-> >  	folio = __kvm_gmem_get_pfn(file, slot, index, pfn, &max_order_local);
-> >  	if (IS_ERR(folio)) {
-> >  		r = PTR_ERR(folio);
-> > +		filemap_invalidate_unlock_shared(mapping);
-> >  		goto out;
-> >  	}
-> >  
-> > @@ -845,6 +858,7 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
-> >  		r = kvm_gmem_prepare_folio(kvm, file, slot, gfn, folio, max_order_local);
-> >  
-> >  	folio_unlock(folio);
-> > +	filemap_invalidate_unlock_shared(mapping);
-> >  
-> >  	if (!r)
-> >  		*page = folio_file_page(folio, index);
-> > -- 
-> > 2.25.1
-> > 
-> > 
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+ drivers/dma/stm32/stm32-dma.c  | 10 +++++-----
+ drivers/dma/stm32/stm32-dma3.c | 10 +++++-----
+ drivers/dma/stm32/stm32-mdma.c |  8 ++++----
+ 3 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/dma/stm32/stm32-dma.c b/drivers/dma/stm32/stm32-dma.c
+index 917f8e9223739af853e492d97cecac0e95e0aea3..ee9246c6888ffde2d416270f25890c04c72daff7 100644
+--- a/drivers/dma/stm32/stm32-dma.c
++++ b/drivers/dma/stm32/stm32-dma.c
+@@ -613,7 +613,7 @@ static void stm32_dma_start_transfer(struct stm32_dma_chan *chan)
+ 	reg->dma_scr |= STM32_DMA_SCR_EN;
+ 	stm32_dma_write(dmadev, STM32_DMA_SCR(chan->id), reg->dma_scr);
+ 
+-	dev_dbg(chan2dev(chan), "vchan %pK: started\n", &chan->vchan);
++	dev_dbg(chan2dev(chan), "vchan %p: started\n", &chan->vchan);
+ }
+ 
+ static void stm32_dma_configure_next_sg(struct stm32_dma_chan *chan)
+@@ -676,7 +676,7 @@ static void stm32_dma_handle_chan_paused(struct stm32_dma_chan *chan)
+ 
+ 	chan->status = DMA_PAUSED;
+ 
+-	dev_dbg(chan2dev(chan), "vchan %pK: paused\n", &chan->vchan);
++	dev_dbg(chan2dev(chan), "vchan %p: paused\n", &chan->vchan);
+ }
+ 
+ static void stm32_dma_post_resume_reconfigure(struct stm32_dma_chan *chan)
+@@ -728,7 +728,7 @@ static void stm32_dma_post_resume_reconfigure(struct stm32_dma_chan *chan)
+ 	dma_scr |= STM32_DMA_SCR_EN;
+ 	stm32_dma_write(dmadev, STM32_DMA_SCR(chan->id), dma_scr);
+ 
+-	dev_dbg(chan2dev(chan), "vchan %pK: reconfigured after pause/resume\n", &chan->vchan);
++	dev_dbg(chan2dev(chan), "vchan %p: reconfigured after pause/resume\n", &chan->vchan);
+ }
+ 
+ static void stm32_dma_handle_chan_done(struct stm32_dma_chan *chan, u32 scr)
+@@ -820,7 +820,7 @@ static void stm32_dma_issue_pending(struct dma_chan *c)
+ 
+ 	spin_lock_irqsave(&chan->vchan.lock, flags);
+ 	if (vchan_issue_pending(&chan->vchan) && !chan->desc && !chan->busy) {
+-		dev_dbg(chan2dev(chan), "vchan %pK: issued\n", &chan->vchan);
++		dev_dbg(chan2dev(chan), "vchan %p: issued\n", &chan->vchan);
+ 		stm32_dma_start_transfer(chan);
+ 
+ 	}
+@@ -922,7 +922,7 @@ static int stm32_dma_resume(struct dma_chan *c)
+ 
+ 	spin_unlock_irqrestore(&chan->vchan.lock, flags);
+ 
+-	dev_dbg(chan2dev(chan), "vchan %pK: resumed\n", &chan->vchan);
++	dev_dbg(chan2dev(chan), "vchan %p: resumed\n", &chan->vchan);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/dma/stm32/stm32-dma3.c b/drivers/dma/stm32/stm32-dma3.c
+index 0c6c4258b19561c94f1c68f26ade16b82660ebe6..50e7106c5cb73394c1de52ad5f571f6db63750e6 100644
+--- a/drivers/dma/stm32/stm32-dma3.c
++++ b/drivers/dma/stm32/stm32-dma3.c
+@@ -801,7 +801,7 @@ static void stm32_dma3_chan_start(struct stm32_dma3_chan *chan)
+ 
+ 	chan->dma_status = DMA_IN_PROGRESS;
+ 
+-	dev_dbg(chan2dev(chan), "vchan %pK: started\n", &chan->vchan);
++	dev_dbg(chan2dev(chan), "vchan %p: started\n", &chan->vchan);
+ }
+ 
+ static int stm32_dma3_chan_suspend(struct stm32_dma3_chan *chan, bool susp)
+@@ -1452,7 +1452,7 @@ static int stm32_dma3_pause(struct dma_chan *c)
+ 
+ 	chan->dma_status = DMA_PAUSED;
+ 
+-	dev_dbg(chan2dev(chan), "vchan %pK: paused\n", &chan->vchan);
++	dev_dbg(chan2dev(chan), "vchan %p: paused\n", &chan->vchan);
+ 
+ 	return 0;
+ }
+@@ -1465,7 +1465,7 @@ static int stm32_dma3_resume(struct dma_chan *c)
+ 
+ 	chan->dma_status = DMA_IN_PROGRESS;
+ 
+-	dev_dbg(chan2dev(chan), "vchan %pK: resumed\n", &chan->vchan);
++	dev_dbg(chan2dev(chan), "vchan %p: resumed\n", &chan->vchan);
+ 
+ 	return 0;
+ }
+@@ -1490,7 +1490,7 @@ static int stm32_dma3_terminate_all(struct dma_chan *c)
+ 	spin_unlock_irqrestore(&chan->vchan.lock, flags);
+ 	vchan_dma_desc_free_list(&chan->vchan, &head);
+ 
+-	dev_dbg(chan2dev(chan), "vchan %pK: terminated\n", &chan->vchan);
++	dev_dbg(chan2dev(chan), "vchan %p: terminated\n", &chan->vchan);
+ 
+ 	return 0;
+ }
+@@ -1543,7 +1543,7 @@ static void stm32_dma3_issue_pending(struct dma_chan *c)
+ 	spin_lock_irqsave(&chan->vchan.lock, flags);
+ 
+ 	if (vchan_issue_pending(&chan->vchan) && !chan->swdesc) {
+-		dev_dbg(chan2dev(chan), "vchan %pK: issued\n", &chan->vchan);
++		dev_dbg(chan2dev(chan), "vchan %p: issued\n", &chan->vchan);
+ 		stm32_dma3_chan_start(chan);
+ 	}
+ 
+diff --git a/drivers/dma/stm32/stm32-mdma.c b/drivers/dma/stm32/stm32-mdma.c
+index e6d525901de7ecf822d218b87b95aba6bbf0a3ef..080c1c725216cb627675c372591b4c0c227c3cea 100644
+--- a/drivers/dma/stm32/stm32-mdma.c
++++ b/drivers/dma/stm32/stm32-mdma.c
+@@ -1187,7 +1187,7 @@ static void stm32_mdma_start_transfer(struct stm32_mdma_chan *chan)
+ 
+ 	chan->busy = true;
+ 
+-	dev_dbg(chan2dev(chan), "vchan %pK: started\n", &chan->vchan);
++	dev_dbg(chan2dev(chan), "vchan %p: started\n", &chan->vchan);
+ }
+ 
+ static void stm32_mdma_issue_pending(struct dma_chan *c)
+@@ -1200,7 +1200,7 @@ static void stm32_mdma_issue_pending(struct dma_chan *c)
+ 	if (!vchan_issue_pending(&chan->vchan))
+ 		goto end;
+ 
+-	dev_dbg(chan2dev(chan), "vchan %pK: issued\n", &chan->vchan);
++	dev_dbg(chan2dev(chan), "vchan %p: issued\n", &chan->vchan);
+ 
+ 	if (!chan->desc && !chan->busy)
+ 		stm32_mdma_start_transfer(chan);
+@@ -1220,7 +1220,7 @@ static int stm32_mdma_pause(struct dma_chan *c)
+ 	spin_unlock_irqrestore(&chan->vchan.lock, flags);
+ 
+ 	if (!ret)
+-		dev_dbg(chan2dev(chan), "vchan %pK: pause\n", &chan->vchan);
++		dev_dbg(chan2dev(chan), "vchan %p: pause\n", &chan->vchan);
+ 
+ 	return ret;
+ }
+@@ -1261,7 +1261,7 @@ static int stm32_mdma_resume(struct dma_chan *c)
+ 
+ 	spin_unlock_irqrestore(&chan->vchan.lock, flags);
+ 
+-	dev_dbg(chan2dev(chan), "vchan %pK: resume\n", &chan->vchan);
++	dev_dbg(chan2dev(chan), "vchan %p: resume\n", &chan->vchan);
+ 
+ 	return 0;
+ }
+
+---
+base-commit: e48e99b6edf41c69c5528aa7ffb2daf3c59ee105
+change-id: 20250404-restricted-pointers-dma-29cf839a1a0b
+
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
 
