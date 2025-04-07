@@ -1,110 +1,220 @@
-Return-Path: <linux-kernel+bounces-591394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F38DA7DF3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:30:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 798A6A7DF3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD5721659C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:27:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2773D188A15F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF56217BD9;
-	Mon,  7 Apr 2025 13:27:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1D3253F30;
+	Mon,  7 Apr 2025 13:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="lNtNSDMe"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="oYCVZ4fa"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9524E22A7E8
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 13:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C65253B6F;
+	Mon,  7 Apr 2025 13:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744032461; cv=none; b=AeLTaPEW/SClXo5wkqiwyiNBoty+sHwfsc6nNyv95YDtv5bdfKzPqxYPD16aoSJYk27aFlPEqdzirkboV2xXd6oGYAAnt5CT9c0ib6sTT4YBmLeoufyhsfNSyp+bthXCXdRRuKGDCoQXINeGvk+ROcagBzp6+F4M93zoJUHUyng=
+	t=1744032587; cv=none; b=SkeSw+dTd22lvAOjoUHWuwQvUJLfV3w/463hOBt4EbEfySbHc4GCcv4aAsCYgB97WJwXVzoakd+4HfJddhySLE50Qx6arxRwMCj7qZxN7vyohZ48/eH06EQsgzJazvny+btCZ7iqQNjNeeanN2TR2jPFd3XGpqmOAb4eT98KvLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744032461; c=relaxed/simple;
-	bh=HCsXn91wSxtJmwJS7kx+ePBW9Yt9vtglMV0WAxHHo20=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:Cc:To; b=u3/6qGLiF91RojHdbx6FsW3d7tgx2MUUTOcGcBALdy2n+Cxr7Ez/58e+TigleotOZ1hCaWmc8KDZLhBWAhteeUl7Je8VdX4VxO2TdKMDzsJsLxIsuR8i9H77M7i50EOESnSIGivJ5HEx/K1e8cx+Ha1/VeuD4IVZJkEKdklz0tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=lNtNSDMe; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1744032587; c=relaxed/simple;
+	bh=A2soJRaK2ujZwAk3Fnhsx5SimeSPaGomf6VWJEdb9Mo=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=ECGVthyJ4N2QrfVKBLiXsygItR0O0YGnVkxFhtoxXX8pLgzlcjYcwTio6wnWifMa6Rx6pLNCSZg8qcT4J9aXCp8CJh2yxmzt0FC29vrmeiLYv9f0J+eMWI2KXgXG62cWFkVGhu5gF4I1SlEon9xk0Bo+KuEh0KCa90BEMlcsjJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=oYCVZ4fa; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 537CPr7l008728;
+	Mon, 7 Apr 2025 15:29:30 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=jtcfw4T4ysNtOOYn1QxZQW
+	lJr1R9xdWowKEdb83yll0=; b=oYCVZ4fa2UIE63iEmn/4njKdBK5Dm90yYvzuQr
+	g4CHgv8UEXqO0AH+rCCTYPBFOVMS2wxHYbdn91YC97zz/I1Zya0vqC4V0Oao0WNg
+	LirbxiMMA3Y19Q22IyP0wfbnOHKrKZw4TaqSrdMxy96m8LR/GTzkUIodm2c3Tddv
+	M7C4rtD5+RfisAHqjunjhrGmDw0XXTdcpBOJYMe1j5iZCiX42zwiMRCDU+vw24cs
+	D72myUvURWO6wJHvfhozGOUtE9YoCo2nIEMHomWKvjcDSWBTInFMDbAyLrP4eD4/
+	dIhdlGZ3TiSbcDEKws3GvZAOR0Az3gdbWrsTiEfdILXLqLIQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45tw2gqwyq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Apr 2025 15:29:30 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 32B1640055;
+	Mon,  7 Apr 2025 15:28:29 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8221E9400D1;
+	Mon,  7 Apr 2025 15:27:41 +0200 (CEST)
+Received: from localhost (10.48.87.62) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 7 Apr
+ 2025 15:27:41 +0200
+From: Patrice Chotard <patrice.chotard@foss.st.com>
+Subject: [PATCH v8 0/7] Add STM32MP25 SPI NOR support
+Date: Mon, 7 Apr 2025 15:27:31 +0200
+Message-ID: <20250407-upstream_ospi_v6-v8-0-7b7716c1c1f6@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1744032455;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=j/Kd4gmTIBsFbGqlUqqNMDa2TriLSz39d1NLHeVDZhk=;
-	b=lNtNSDMelpXj5j7iXy9yuM+SO9iNIgdwvYoy1EUevFrw4oFHfLs9Yv97Gl1ilwj5O+KkBv
-	0UBm7enjX/2p3fK4jSnAXwmxXbb4bjnyroWOkSjiqJ24mr0Zz6+9pNSS4c4nlCRtymslmI
-	oAFWHrFK49NIznzOU3x1qE9uBzMHaMgv3luI5TDssIoBAcAK4hYugP9H73FiZjzb2Jh51B
-	i2d+DNKEmVpMy7CcQWiLj5PS2062+2SwF+1VmrKFjlHFPPNYfUezKunTHgwYK/9eIrinO7
-	chO42nA4gxMd8ItCe72BMcG5fRnSW2YnXophtWzmQB3fjYmim5OxoKQIBYTZAg==
-Content-Type: multipart/signed;
- boundary=bb50bd7793a9c5dec92a4e569833fe2102942b111b5b1897cd30a926116a;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Mon, 07 Apr 2025 15:27:21 +0200
-Message-Id: <D90FWJ3O72ML.2DA83AXPJCR3Q@cknow.org>
-Subject: Is kernel/Kconfig.hz still up-to-date?
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-Cc: <linux-kernel@vger.kernel.org>, "Bagas Sanjaya" <bagasdotme@gmail.com>,
- "Dang Huynh" <danct12@riseup.net>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Christoph Lameter"
- <cl@linux.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Thomas
- Gleixner" <tglx@linutronix.de>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMPS82cC/23NSwqDMBCA4atI1o3kpUm76j1KkahjzUIjGRtax
+ Ls3CqWUFmbzD8w3C0EIDpCcsoUEiA6dH1OYQ0aa3o43oK5NTQQTBZOC0fuEcwA7VB4nV8WStko
+ Ka7gWnBUknU0BOvfYycs1de9w9uG5f4jltn1j/BdLw6jUdd3YWkklj+fOI+Y4540fyMZF/SEU+
+ 0foRDDohCm4hNbwb2Jd1xeLtrfZ9QAAAA==
+X-Change-ID: 20250320-upstream_ospi_v6-d432a8172105
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>
+CC: <christophe.kerello@foss.st.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Patrice Chotard
+	<patrice.chotard@foss.st.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-07_04,2025-04-03_03,2024-11-22_01
 
---bb50bd7793a9c5dec92a4e569833fe2102942b111b5b1897cd30a926116a
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+This series adds SPI NOR support for STM32MP25 SoCs from STMicroelectronics.
 
-Hi,
+On STM32MP25 SoCs family, an Octo Memory Manager block manages the muxing,
+the memory area split, the chip select override and the time constraint
+between its 2 Octo SPI children.
 
-I recently had a discussion about the use of HZ_1000 in the kernel
-configuration and the impact on performance.
-My reading of the HZ_1000 help text tells me that HZ_1000 is primarily
-useful for DAW and other systems where RT capabilities are (most)
-important. This is due to "systems requiring fast interactive responses
-to events", whereby I put the emphasis on *requiring*.
+Due to these depedencies, this series adds support for:
+  - Octo Memory Manager driver.
+  - Octo SPI driver.
+  - yaml schema for Octo Memory Manager and Octo SPI drivers.
 
-As *I* understand the rest of the help texts, a higher Hz value can/will
-have a negative effect on f.e. IO performance. And I'm not entirely
-sure, but it seems each CPU (core?) multiplies the nr of interrupts?
+The device tree files adds Octo Memory Manager and its 2 associated Octo
+SPI chidren in stm32mp251.dtsi and adds SPI NOR support in stm32mp257f-ev1
+board.
+    
+Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
 
-But, doing a ``git blame`` on the choices shows that apart from a
-spelling fix in 2025, all the text hasn't changed since 2005/2006.
-But a LOT has changed since then. There are more architectures and the
-hardware and the kernel itself have changed quite a bit since then.
+Changes in v8:
+  - update OMM's dt-bindings:
+    - Remove minItems for clocks and resets properties.
+    - Fix st,syscfg-amcr items declaration.
+    - move power-domains property before vendor specific properties.
+  - Update compatible check wrongly introduced during internal tests in
+    stm32_omm.c.
+  - Move ommanager's node outside bus@42080000's node in stm32mp251.dtsi.
+  - Link to v7: https://lore.kernel.org/r/20250401-upstream_ospi_v6-v7-0-0ef28513ed81@foss.st.com
 
-While the Kconfig.hz default is still HZ_250, the x86 defconfig changed
-to HZ_1000 in 5cb04df8d3f0 ("x86: defconfig updates") (in 2008) and
-there are various distros which have switched to HZ_1000.
+Changes in v7:
+  - update OMM's dt-bindings by updating :
+    - clock-names and reset-names properties.
+    - spi unit-address node.
+    - example.
+  - update stm32mp251.dtsi to match with OMM's bindings update.
+  - update stm32mp257f-ev1.dts to match with OMM's bindings update.
+  - Link to v6: https://lore.kernel.org/r/20250321-upstream_ospi_v6-v6-0-37bbcab43439@foss.st.com
 
-So my questions are: are the Kconfig help text still accurate for
-current (hardware) systems and kernels? Is HZ_250 still the most
-sensible default? Or is the 'newer' HZ_300 better? Or even HZ_1000?
-And does that apply only for x86 or for all architectures?
-(distros seem to vary between architectures f.e.)
+Changes in v6:
+  - Update MAINTAINERS file.
+  - Remove previous patch 1/8 and 2/8, merged by Mark Brown in spi git tree.
+  - Fix Signed-off-by order for patch 3.
+  - OMM driver:
+    - Add dev_err_probe() in error path.
+    - Rename stm32_omm_enable_child_clock() to stm32_omm_toggle_child_clock().
+    - Reorder initialised/non-initialized variable in stm32_omm_configure()
+          and stm32_omm_probe().
+    - Move pm_runtime_disable() calls from stm32_omm_configure() to
+      stm32_omm_probe().
+    - Update children's clocks and reset management.
+    - Use of_platform_populate() to probe children.
+    - Add missing pm_runtime_disable().
+    - Remove useless stm32_omm_check_access's first parameter.
+  - Update OMM's dt-bindings by adding OSPI's clocks and resets.
+  - Update stm32mp251.dtsi by adding OSPI's clock and reset in OMM's node.
 
-Cheers,
-  Diederik
+Changes in v5:
+  - Add Reviewed-by Krzysztof Kozlowski for patch 1 and 3.
 
---bb50bd7793a9c5dec92a4e569833fe2102942b111b5b1897cd30a926116a
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes in v4:
+  - Add default value requested by Krzysztof for st,omm-req2ack-ns,
+    st,omm-cssel-ovr and st,omm-mux properties in st,stm32mp25-omm.yaml
+  - Remove constraint in free form test for st,omm-mux property.
+  - Fix drivers/memory/Kconfig by replacing TEST_COMPILE_ by COMPILE_TEST.
+  - Fix SPDX-License-Identifier for stm32-omm.c.
+  - Fix Kernel test robot by fixing dev_err() format in stm32-omm.c.
+  - Add missing pm_runtime_disable() in the error handling path in
+    stm32-omm.c.
+  - Replace an int by an unsigned int in stm32-omm.c
+  - Remove uneeded "," after terminator in stm32-omm.c.
+  - Update cover letter description to explain dependecies between
+Octo Memory Manager and its 2 Octo SPI children.
 
------BEGIN PGP SIGNATURE-----
+Changes in v3:
+  - Squash defconfig patches 8 and 9.
+  - Update STM32 Octo Memory Manager controller bindings.
+  - Rename st,stm32-omm.yaml to st,stm32mp25-omm.yaml.
+  - Update STM32 OSPI controller bindings.
+  - Reorder DT properties in .dtsi and .dts files.
+  - Replace devm_reset_control_get_optional() by
+    devm_reset_control_get_optional_exclusive() in stm32_omm.c.
+  - Reintroduce region-memory-names management in stm32_omm.c.
+  - Rename stm32_ospi_tx_poll() and stm32_ospi_tx() to respectively to
+    stm32_ospi_poll() and stm32_ospi_xfer() in spi-stm32-ospi.c.
+  - Set SPI_CONTROLLER_HALF_DUPLEX in controller flags in spi-stm32-ospi.c.
 
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZ/PSwAAKCRDXblvOeH7b
-brCXAQCjkQNOEDFeRZ7o+GMldSO4I5E7sDhni1jp4aP7+H+xrwEAiIBbyJRqmnsd
-TC0DnBSS5fnOfyVwXl7f7OQR08U32Aw=
-=9VNX
------END PGP SIGNATURE-----
+Changes in v2:
+  - Move STM32 Octo Memory Manager controller driver and bindings from
+    misc to memory-controllers.
+  - Update STM32 OSPI controller bindings.
+  - Update STM32 Octo Memory Manager controller bindings.
+  - Update STM32 Octo Memory Manager driver to match bindings update.
+  - Update DT to match bindings update.
 
---bb50bd7793a9c5dec92a4e569833fe2102942b111b5b1897cd30a926116a--
+Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+---
+Patrice Chotard (7):
+      MAINTAINERS: add entry for STM32 OCTO MEMORY MANAGER driver
+      dt-bindings: memory-controllers: Add STM32 Octo Memory Manager controller
+      memory: Add STM32 Octo Memory Manager driver
+      arm64: dts: st: Add OMM node on stm32mp251
+      arm64: dts: st: Add ospi port1 pinctrl entries in stm32mp25-pinctrl.dtsi
+      arm64: dts: st: Add SPI NOR flash support on stm32mp257f-ev1 board
+      arm64: defconfig: Enable STM32 Octo Memory Manager and OcstoSPI driver
+
+ .../memory-controllers/st,stm32mp25-omm.yaml       | 226 ++++++++++
+ MAINTAINERS                                        |   6 +
+ arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi      |  51 +++
+ arch/arm64/boot/dts/st/stm32mp251.dtsi             |  54 +++
+ arch/arm64/boot/dts/st/stm32mp257f-ev1.dts         |  32 ++
+ arch/arm64/configs/defconfig                       |   2 +
+ drivers/memory/Kconfig                             |  17 +
+ drivers/memory/Makefile                            |   1 +
+ drivers/memory/stm32_omm.c                         | 474 +++++++++++++++++++++
+ 9 files changed, 863 insertions(+)
+---
+base-commit: 88424abd55ab36c3565898a656589a0a25ecd92f
+change-id: 20250320-upstream_ospi_v6-d432a8172105
+
+Best regards,
+-- 
+Patrice Chotard <patrice.chotard@foss.st.com>
+
 
