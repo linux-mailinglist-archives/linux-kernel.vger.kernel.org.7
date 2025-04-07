@@ -1,163 +1,220 @@
-Return-Path: <linux-kernel+bounces-591743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 419FDA7E4B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:38:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6685A7E4CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC1C1425FFB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:28:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2349616C5BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A881FF1C3;
-	Mon,  7 Apr 2025 15:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9534E202980;
+	Mon,  7 Apr 2025 15:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KDkweTAB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KukuFIp0"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C731FE468;
-	Mon,  7 Apr 2025 15:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405351FF5F4;
+	Mon,  7 Apr 2025 15:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744039643; cv=none; b=jmApTsU57UfJdi1Sg8/0NzXhTC7eyVQ6Vm5ubfRY+xoyaBHdJldIY0LB2029YNcELg8o1Mu/FZUQlzSEvxWXq4gr7z0W0gjL9/UKnoJUg++xonthPJFw6v57yPayglH149sW3anV45RQxQPyWzmaP6d3+lJPkKNHHk3nC+1xbZA=
+	t=1744039657; cv=none; b=h35Kw1JKb5eVRedL61b9k4OxK06nm/uIRPiTr5HwCUBQ/ULjBdr6Fk+5bSo4/lB+nrm+SMxekGSrJq+wFmPA+tz7NU9qDdmyDuoOgfBozGi6npgM43br+/kch0+RdbqC/rd/unSZfA6bIfkRMH3u707mSu9ZyDVbsKwh++d7rAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744039643; c=relaxed/simple;
-	bh=wzVkiX1WHW1+VEd41zgoCl+IvRzbkG2erhgb/grMY6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F+5Bcz+UUIlKhEGpIvq8qn97C+8mUc9g1362tyxvAlTRrUKL85JA98OXQhbZmJjbH7rUlbCh/v/o1uCmsnXQ9cuLP4N4DfFgvp9aqvlj6JWmAaevawimUooy60RJEScJLbu07f7/eQ+MgkF3jRJ/Eia2mv6Z8Tgj+s9fAHB6nMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KDkweTAB; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744039641; x=1775575641;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wzVkiX1WHW1+VEd41zgoCl+IvRzbkG2erhgb/grMY6c=;
-  b=KDkweTABnKRrWzNr6Ob3RSO09XarIaNp1DlAebYbttNksP0PgKwlM6Yx
-   HTyskV5KxRdChGsoPSeq+ltCSh/4BUHjBNKszyM14p4ADjs9D1nk1C81d
-   3o8XHhiF8ls69Hx/2zyoDKSJBcWyVxKZrkYWGl7U/feFuz0C6DCiVbJF7
-   UnYqeLZaaQ91G9FDAGxzH+ZgEDBRQWejsd6SbBjf9idwhFmUE5fNF+wkw
-   WZtotpUtMOEIShzOlfRKM75UTttZ8/iZAIjzUD/WoH5Q/bdGq5L5K8u2o
-   d5H771YKwNBmjymqX4Ls2WrbxCdTqxYzvNNT9sjQQrw9F8H3+XVXKKqNL
-   A==;
-X-CSE-ConnectionGUID: g+cQroHrQ/aRapVHbeMvJA==
-X-CSE-MsgGUID: LrAqoUG7RNe1ITvknoee2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="56071565"
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="56071565"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 08:27:20 -0700
-X-CSE-ConnectionGUID: jvFf7bVAQseoAmXxE0FYLw==
-X-CSE-MsgGUID: HlBrMmKlQUu/6KGFBwYp/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="128496587"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 08:27:12 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1u1oNQ-0000000A6q5-0tDQ;
-	Mon, 07 Apr 2025 18:27:08 +0300
-Date: Mon, 7 Apr 2025 18:27:07 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	s=arc-20240116; t=1744039657; c=relaxed/simple;
+	bh=chi2S72Qz+3Kk/f0pWRKWplRodLpqmUGSLCZAA1sQJ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eg6sjM10KItGg8k5AWHOX861QRRqPvib99O3MfaglBURNUpMYrNGQGHP1mhZvcw9iQddWrA4ObTiaqcybXEZrlP/IstYeML9dWk6sz/6izQ51uuaf7ahLgvGHBzj1MGGLkVm5ebjAbQNH4MNaloKfAyiBfmBVlP83tMpH3y0jww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KukuFIp0; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 140D5432BC;
+	Mon,  7 Apr 2025 15:27:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744039652;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s0/FGDDEEv1bADImBm72Eb+o2LF4PnN49TpkyA00SwI=;
+	b=KukuFIp0YBL5FQjQWYQ8SGM7gkfrYmCM7nnmPpRASGoNkxuFJbGM0XKXsIwRRilROfUgwq
+	ad6wshOz6uKHYkrgtVWgjy4lERLiqko/2OkisS6SdDhqulm4Nde6vJUFhfeICP0joX9rW+
+	3HUdgGa3QxSuhSCz2y4T3lB+J8qt3L4ijmDvhjZX1lopmA+XqDyWMcsDNRLcOkAi7xnxeT
+	xwZM4PbX4ciQYE4BNO87a6N1atu3bnOtMYTM1+0ptAhQlt+DC6n7wdkkhv9LPFzdVK55zA
+	KzbvA57i8wz/lR9Epi8aAVu2EkCKVxnqEqmhObAGuQpYi3hgphLud2IDm1Wngg==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Shawn Guo <shawnguo@kernel.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
 	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 08/16] i2c: core: Introduce i2c_get_adapter_supplier()
-Message-ID: <Z_Puy8eEBc6tubEx@smile.fi.intel.com>
-References: <20250407145546.270683-1-herve.codina@bootlin.com>
- <20250407145546.270683-9-herve.codina@bootlin.com>
+	Douglas Anderson <dianders@chromium.org>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Anusha Srivatsa <asrivats@redhat.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	=?utf-8?q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>,
+	Hui Pu <Hui.Pu@gehealthcare.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	dri-devel@lists.freedesktop.org,
+	asahi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	chrome-platform@lists.linux.dev,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: [PATCH 33/34] drm/bridge: add devm_drm_put_bridge()
+Date: Mon,  7 Apr 2025 17:27:08 +0200
+Message-ID: <20250407-drm-bridge-convert-to-alloc-api-v1-33-42113ff8d9c0@bootlin.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250407-drm-bridge-convert-to-alloc-api-v1-0-42113ff8d9c0@bootlin.com>
+References: <20250407-drm-bridge-convert-to-alloc-api-v1-0-42113ff8d9c0@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250407145546.270683-9-herve.codina@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddtheehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfgggtoffgsehtkeertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudffiefgvdfftdffkeejjefhffduleejleeuieetieetgeehtefhjedtgeegieegnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihrdhfrhhithiirdgsohigpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgedupdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvp
+ dhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Mon, Apr 07, 2025 at 04:55:37PM +0200, Herve Codina wrote:
-> The supplier device of an I2C adapter is the device that calls
-> i2c_add_adapter() or variants and i2c_del_adapter().
-> 
-> Most of the time this supplier device is the parent of the adapter dev.
-> 
-> Exceptions exist with i2c muxes. Indeed, in case of i2c muxes, the
-> parent of the adapter dev points to the adapter dev the mux is connected
+Bridges obtained via devm_drm_bridge_alloc(dev, ...) will be put when the
+requesting device (@dev) is removed.
 
-dev --> device (in both cases)
+However drivers which obtained them may need to put the obtained reference
+explicitly. One such case is if they bind the devm removal action to a
+different device than the one implemented by the driver itself and which
+might be removed at a different time, such as bridge/panel.c.
 
-> to instead of the supplier of this adapter.
-> 
-> Introduce i2c_get_adapter_supplier() and a new supplier field in the
-> adapter structure in order to ease the adapter supplier retrieval.
+Add devm_drm_put_bridge() to manually release a devm-obtained bridge in
+such cases.
 
-...
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
 
-> +/**
-> + * i2c_get_adapter_supplier() - Get the supplier of an adapter
-> + * @adapter: the adapter to get the supplier from
-> + *
-> + * return:
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+To: David Airlie <airlied@gmail.com>
+To: Simona Vetter <simona@ffwll.ch>
+To: Andrzej Hajda <andrzej.hajda@intel.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+To: Robert Foss <rfoss@kernel.org>
+To: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+To: Jonas Karlman <jonas@kwiboo.se>
+To: Jernej Skrabec <jernej.skrabec@gmail.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+To: Shawn Guo <shawnguo@kernel.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+To: Pengutronix Kernel Team <kernel@pengutronix.de>
+To: Fabio Estevam <festevam@gmail.com>
+To: Douglas Anderson <dianders@chromium.org>
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Paul Kocialkowski <paulk@sys-base.io>
+Cc: Dmitry Baryshkov <lumag@kernel.org>
+Cc: Hervé Codina <herve.codina@bootlin.com>
+Cc: Hui Pu <Hui.Pu@gehealthcare.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: asahi@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org
+Cc: chrome-platform@lists.linux.dev
+Cc: imx@lists.linux.dev
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-mediatek@lists.infradead.org
+Cc: linux-amlogic@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: platform-driver-x86@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org
+Cc: freedreno@lists.freedesktop.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+---
+ drivers/gpu/drm/drm_bridge.c | 14 ++++++++++++++
+ include/drm/drm_bridge.h     |  4 ++++
+ 2 files changed, 18 insertions(+)
 
-Return:
-
-> + * Look up and return the &struct device corresponding to the device supplying
-> + * this adapter.
-
-@adapter
-
-> + * The user must call put_device() once done with the supplier returned.
-> + */
-> +struct device *i2c_get_adapter_supplier(struct i2c_adapter *adapter)
-> +{
-> +	return get_device(adapter->supplier ?: adapter->dev.parent);
-
-What will be the meaning when both are set? Why dev.parent is not the same
-as supplier in this case?  Looking at the commit message example, it seems
-like you want to provide a physdev or sysdev (as term supplier seems more
-devlink:ish), like it's done elsewhere. And in the same way _always_ initialise
-it. In such a case, the ambiguity will be gone.
-
-> +}
+diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+index b4c89ec01998b849018ce031c7cd84614e65e710..456363d86080b2a55035c3108c16afa4f9e57e06 100644
+--- a/drivers/gpu/drm/drm_bridge.c
++++ b/drivers/gpu/drm/drm_bridge.c
+@@ -1392,6 +1392,20 @@ struct drm_bridge *of_drm_find_bridge(struct device_node *np)
+ EXPORT_SYMBOL(of_drm_find_bridge);
+ #endif
+ 
++/**
++ * devm_drm_put_bridge - Release a bridge reference obtained via devm
++ * @dev: device that got the bridge via devm
++ * @bridge: pointer to a struct drm_bridge obtained via devm
++ *
++ * Same as drm_bridge_put() for bridge pointers obtained via devm functions
++ * such as devm_drm_bridge_alloc().
++ */
++void devm_drm_put_bridge(struct device *dev, struct drm_bridge *bridge)
++{
++	devm_release_action(dev, drm_bridge_put_void, bridge);
++}
++EXPORT_SYMBOL(devm_drm_put_bridge);
++
+ static void drm_bridge_debugfs_show_bridge(struct drm_printer *p,
+ 					   struct drm_bridge *bridge,
+ 					   unsigned int idx)
+diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+index df9bbf6fd1fb522add28b76406b74cdb7391fc57..5b4e5e935a17ba6fc4a6a53ad0a302e249ca418b 100644
+--- a/include/drm/drm_bridge.h
++++ b/include/drm/drm_bridge.h
+@@ -1167,6 +1167,8 @@ static inline struct drm_bridge *devm_drm_of_get_bridge(struct device *dev,
+ 	return ERR_PTR(-ENODEV);
+ }
+ 
++static inline void devm_drm_put_bridge(struct device *dev, struct drm_bridge *bridge) {}
++
+ static inline struct drm_bridge *drmm_of_get_bridge(struct drm_device *drm,
+ 						     struct device_node *node,
+ 						     u32 port,
+@@ -1176,6 +1178,8 @@ static inline struct drm_bridge *drmm_of_get_bridge(struct drm_device *drm,
+ }
+ #endif
+ 
++void devm_drm_put_bridge(struct device *dev, struct drm_bridge *bridge);
++
+ void drm_bridge_debugfs_params(struct dentry *root);
+ void drm_bridge_debugfs_encoder_params(struct dentry *root, struct drm_encoder *encoder);
+ 
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.49.0
 
 
