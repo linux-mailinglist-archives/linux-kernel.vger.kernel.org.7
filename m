@@ -1,427 +1,454 @@
-Return-Path: <linux-kernel+bounces-591783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E34A7E553
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:57:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B6B9A7E555
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5A91165A3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:47:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B62B174703
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FF8204694;
-	Mon,  7 Apr 2025 15:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76DB204C06;
+	Mon,  7 Apr 2025 15:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Di+yFFj4"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NS2ojMlA"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB06202C41
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 15:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91241204879
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 15:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744040846; cv=none; b=E5HV4e21EDg0ld7ddr0W9bMhORPE/nrrMiEf3W3bFjpZAsVe0NZsO2vlaqkV/r/4WWM8G9/hFoqqa8cgqSUt/90h5Ire3sMilTZALesUa1KvtfiesV9cOOjqN21GOvOsqhR32HiQa3tMqkhEjKPGZ3s3MxVs0dmI0qhBoAqwBjY=
+	t=1744040921; cv=none; b=pnSNC5caLZ2DvHr24E6eySlpeFo6GhtM6oYPFenKOTWfNBr+7p5rN7WFR3n755XdFGdkDpRv7Z3KpJMcWbeNZd6WJIm9ZLfEmgZTZp20hZkzn7AubH/NuTHocswml+H5KBC91C8vC8gisDwMN6k2uiXs7nNY+flQC3JELHPtxco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744040846; c=relaxed/simple;
-	bh=j0U2fbSgXRBr6vNHdptvQBAwQiObutNFZ30/QulH+LU=;
+	s=arc-20240116; t=1744040921; c=relaxed/simple;
+	bh=OhZ61zq/qAjqGLauXEolhorzbFURESUr9alCnlCjyMA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HAKiq7HDG3wG78Ct1qG9DyieenGQskGLS1JCyKHDd2SZxlj61DpP+pM7XS6UYzzg52kzYptC79jMflzdzx3P6Giw43ebeFvJw5Buw+B9m53aiz6mH4dgt/ZIcsJ7tqX7Iw+4pyD3vXz31sgiSmLzUbvOgDUUJDw09+W2c/zIzoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Di+yFFj4; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-736b98acaadso4371909b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 08:47:23 -0700 (PDT)
+	 To:Cc:Content-Type; b=TiYU9qjqLpbqpBv/2F30uBRJDMG4LBDi83M5p4/iIrc4lk8doihqyB1XtebkO31osVpYhmOpWCQUL5rMRm56YpsIeDJbpbjb5LArWdK+RIMoohvPe/uRwvPXdXqppoRnzgNy6VuLgtBrgsnwDpn/oN8pRGIxCWwUR+/DMpDkA8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NS2ojMlA; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54c0fa6d455so5489383e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 08:48:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744040843; x=1744645643; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1744040917; x=1744645717; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bNy53/ZwTHSLz+zRzyZ238Lusm7CUXwB7x08xN1b9bw=;
-        b=Di+yFFj4nsvbiDSX9fPBxWGL5U9e9IiHh6M+1or03DPJHbgQ84YEgO+t7uQ0mkh33n
-         PJD0XmMdWS2L2e+Jon1fcWfsUlpS3KTqFBDnXEUIlSHbt94lo44qWDDvuB3fcRsRECYS
-         YnKIWVsN/k/sOkm5uVcr8XjzTqRhPD2Xjq3RzDteepQn86Xb/jPf/6R6oGgo2IF2rLay
-         wg+agD5r4EyAA3ws2IHzvlfnlHzW2jx6BCZoQW5rdBm2BZTEg6QlQKorV499YV9S5gIi
-         MUazoy5nOmKSK8AP4JYEs1RHJM/FfcTxzIXoQRqs3dqoBRgbT7Jg8S+p6wZ+9BOQqTJ/
-         TILw==
+        bh=KeMO2MoK/gmaMqqfz//pMM3Aa5UXDizNqUpcKkRXTeQ=;
+        b=NS2ojMlAot8ZY3vyT76zxRY212XMN7V/R3U2WN1LJY5z98uW0TGFAtnWreTH7UZHpb
+         T8ln/r9GxGTc7Apxfw6ZKHkszjvgk98gH31MtqXm8hhqanSdLtKFMzEhwXf6a8tPl7VH
+         EFk9whHdYCyUl3AQboBvT/fHjI4PuZnD7gaVA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744040843; x=1744645643;
+        d=1e100.net; s=20230601; t=1744040917; x=1744645717;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bNy53/ZwTHSLz+zRzyZ238Lusm7CUXwB7x08xN1b9bw=;
-        b=s5eIzMfY5BwFgGagdNhErk83HlfT3XldUAt+zvhM3o3WWMb6Dsad3rxK55A75KAmg2
-         /VVoU9tjEcPci71B2cHXHSlzidl+hUU/xhLsV/a4XiX5FmpbofUxrh0CWU/BWteHpA9b
-         gCc1O4p/lAODo/Aw+Mnr3AH1fZqm+b+G9/mNFGxtfXMZzFMk0RW0W8ZUmHlTNh8UopLs
-         YN2F/CP9NzriZ2BjcRPJ0v8b+8g/xWKYT7PPQgVCM0F+4ccSlXkSuJyCxzpXd55ivtMe
-         UtOfOt8eTSWt/t+ohTg5q1Tj+5yOEme/2YDdwe8ycKtRC9gK/TlqT8pE9a1zGgnEfH2m
-         b1mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLP2sS72GdDWA3KOIYERW5uSpDqrQvYv8LEKEjvXl+plm69thW7B1fzUkqOw3uO5v3mOqg1g0tw3JAa/k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmvUDOVghIexJ4ek60CyWuxVa1Px+suKDi2qDlnauqEEp+2uke
-	ttaaKxKq9Awiz1MWHggKMTg5Jrb3V/bOlz2qFca1tkGo+06O8S2+Lnsz9IxQgA4x9Nxew9OqisV
-	bV4j6j9snZngeueYqFnZp8G+BxIwekO7tqTke2Q==
-X-Gm-Gg: ASbGncu9e8gaDGALbM6a3eEpCwtWH04P7jN52t19d5ILJj6atrRV7XC77DmGBK5g7RB
-	nLxOTS30iKWVvbNNkz7DT11mm8YFi3jo044ZG2pBVIuf6sKgdcrgVboeC55oDgoYYJ2UnWXJJAo
-	54TN6bRG4jfJfoKkK+GvMHx4qM3iN9SPZqbD+4WrDoTFi8RmB9wtqZ2pkWYN8=
-X-Google-Smtp-Source: AGHT+IFsF8BZ9rpj3D/vrDRwMv4ljfHYt9ZuYNYZ7VfoyGlYWpvoDHXT8dp74ZQrtLPbP7l//cYdzSnBUvRETkNj0IE=
-X-Received: by 2002:a05:6a00:4603:b0:736:5dae:6b0d with SMTP id
- d2e1a72fcca58-73b6aa44d71mr11392059b3a.10.1744040842652; Mon, 07 Apr 2025
- 08:47:22 -0700 (PDT)
+        bh=KeMO2MoK/gmaMqqfz//pMM3Aa5UXDizNqUpcKkRXTeQ=;
+        b=X0tMxg/UojaSY8Vzb8G0FaCInR9Jlfhnorf0SfOU/dCXgyBFYy4eJIhvLV5I7dbrFg
+         lhj1tjK1YCHI8VEvdDVQbIDxNBhE+k7qZZL5eJ1WGVEVcnS4E3hBCYFGgtRHP9+ZipNO
+         bVrvz+8XQuNZZ25p7P8i52/+j4JSU1P2k8gU1ERG+baR5IwlpihVMhI51Z2cMRq458+W
+         C0RHNlr6Q9CUPl8NRNQvyS53p+lb2cE6l9uDdYUIaakymHBHkIN42qmZ7yR5qF2sqk6j
+         Hcv115SDloWQmgtBRYuZx/7IbgA21pB6PUxQh9OaVF1COwbEtQFB0ev6DOQbXaJwRyjv
+         tFoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVmdul27GkUCSfKQVgREi8XZ/qAShWxasCYNs7hwYwbrFRn1scFArdHkV7G13pb+w+89ccc0ivHdoDxic=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxr3s4u6MMBLlTjCWMgESj/SJZkYFw/3wS0F66rQR6dGzwli5l4
+	r4FiqllUCM3Vujh9LKvhp8IoIaSzH0xHXKsm9SfFEiHvh3R9lrX5TmhfsNr9a9eTcj5Ctmg2Hcc
+	=
+X-Gm-Gg: ASbGncumJgBdkUQQcpTSIvYIJaEXVTjmHt0Ig+M9cWxfOU+q5BAw9LCu8p1gqTizpcK
+	Di3euKOa5t8Y6KjPEBRGmIt+oIKsOy6tOg96wk8h3g7JilaUVIBmqaj0FzWSvT1C5z/prMPFp72
+	NqGBPQcw65jAbRlYQFDuPrLwd/kvqsSH3jkJTYZ1uioAWGlTLmAgknHMIOi5C82pr2djOfamIkR
+	ktdNcr5EQFmZ7cOgspfG05yKXBTueb2tWWaNNkqRs8fcGV+PZFyN9nxNazOHrwyb7dS2CMzL4wm
+	uWlxFtAGW3Y089lvt7EJPDRrPS6YUVAtR6E+Qw2sCw/33Sj34UUPPmYmSge1+Oa+Bu3eJdXCzPX
+	15huKAyQ=
+X-Google-Smtp-Source: AGHT+IEyJFoPEbLPaA708NeyqdDxtoSCU710OF5NGrJwVvXoUK5CYCoQLj6YnOrvi6De08d7t2YUZQ==
+X-Received: by 2002:a05:6512:1282:b0:549:5b54:2c68 with SMTP id 2adb3069b0e04-54c227868f6mr3314761e87.22.1744040916082;
+        Mon, 07 Apr 2025 08:48:36 -0700 (PDT)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e672379sm1289785e87.231.2025.04.07.08.48.35
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Apr 2025 08:48:35 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54993c68ba0so5067221e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 08:48:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVQqRtldGJtlm2mmWBJCjl6yBzjJN1jzw+oOtCBDfymfQ7PmsDpBWyHfxjc5wr1pSRyPE6Rc0tk8rolpB8=@vger.kernel.org
+X-Received: by 2002:a05:6512:6c7:b0:548:794f:f9dd with SMTP id
+ 2adb3069b0e04-54c227708e1mr3603624e87.10.1744040911431; Mon, 07 Apr 2025
+ 08:48:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226-trace-noc-driver-v2-0-8afc6584afc5@quicinc.com> <20250226-trace-noc-driver-v2-2-8afc6584afc5@quicinc.com>
-In-Reply-To: <20250226-trace-noc-driver-v2-2-8afc6584afc5@quicinc.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Mon, 7 Apr 2025 16:47:11 +0100
-X-Gm-Features: ATxdqUGwptWmWGuTEMFywAJMbM58Cdy5rm8GMkf77_zrs0cIkHqC_ImQSl0RKT0
-Message-ID: <CAJ9a7Vhkp2xBZmjGO9iqCVkJJAt2+Dh+QkRH-BaCMUZ=6G+t4g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] coresight: add coresight Trace NOC driver
-To: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, kernel@quicinc.com, 
-	linux-kernel@vger.kernel.org, coresight@lists.linaro.org, 
-	linux-arm-kernel@lists.infradead.org, kernel@oss.qualcomm.com, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250324022120.216923-1-ccc194101@163.com> <3d85d4eb-15b6-431f-9244-23583a26166f@redhat.com>
+In-Reply-To: <3d85d4eb-15b6-431f-9244-23583a26166f@redhat.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 7 Apr 2025 17:48:18 +0200
+X-Gmail-Original-Message-ID: <CANiDSCsDrDQty1T6DM6Au-bptOrJT9x49a=pGOawph1v6iisJw@mail.gmail.com>
+X-Gm-Features: ATxdqUGYOA3uZ-NBLaU7O8bkH19C64j25clGNy-r5EYRAODKZipVQEIO6M61QrE
+Message-ID: <CANiDSCsDrDQty1T6DM6Au-bptOrJT9x49a=pGOawph1v6iisJw@mail.gmail.com>
+Subject: Re: [PATCH v6] media: uvcvideo: Fix bandwidth issue for Alcor camera
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: chenchangcheng <ccc194101@163.com>, laurent.pinchart@ideasonboard.com, 
+	mchehab@kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	chenchangcheng <chenchangcheng@kylinos.cn>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hi
 
-On Wed, 26 Feb 2025 at 11:06, Yuanfang Zhang <quic_yuanfang@quicinc.com> wrote:
+On Mon, 7 Apr 2025 at 15:39, Hans de Goede <hdegoede@redhat.com> wrote:
 >
-> Add driver to support Coresight device Trace NOC(Network On Chip).
-> Trace NOC is an integration hierarchy which is a replacement of
-> Dragonlink configuration. It brings together debug components like
-> TPDA, funnel and interconnect Trace Noc.
+> Hi,
 >
-> It sits in the different subsystem of SOC and aggregates the trace
-> and transports to QDSS trace bus.
+> On 24-Mar-25 03:21, chenchangcheng wrote:
+> > From: chenchangcheng <chenchangcheng@kylinos.cn>
+> >
+> > Some broken device return wrong dwMaxPayloadTransferSize fields,
+> > as follows:
+> > [  218.632537] [pid:20427,cpu6,guvcview,8]uvcvideo: Device requested 2752512 B/frame bandwidth.
+> > [  218.632598] [pid:20427,cpu6,guvcview,9]uvcvideo: No fast enough alt setting for requested bandwidth.
+> >
+> > The maximum packet size of the device is 3 * 1024, according to the
+> > logs above, the device needs to apply for a bandwidth of 0x2a0000.
+> >
+> > Bus 001 Device 008: ID 1b17:6684 Alcor Corp. Slave camera
+> > Device Descriptor:
+> >   bLength                18
+> >   bDescriptorType         1
+> >   bcdUSB               2.00
+> >   bDeviceClass          239 Miscellaneous Device
+> >   bDeviceSubClass         2
+> >   bDeviceProtocol         1 Interface Association
+> >   bMaxPacketSize0        64
+> >   idVendor           0x1b17
+> >   idProduct          0x6684
+> >   bcdDevice            1.05
+> >   iManufacturer           1 Alcor Corp.
+> >   iProduct                2 Slave camera
+> >   iSerial                 0
+> >   bNumConfigurations      1
+> >   Configuration Descriptor:
+> >     bLength                 9
+> >     bDescriptorType         2
+> >     wTotalLength       0x02ad
+> >     bNumInterfaces          2
+> >     bConfigurationValue     1
+> >     iConfiguration          0
+> >     bmAttributes         0x80
+> >       (Bus Powered)
+> >     MaxPower              200mA
+> >     Interface Association:
+> >       bLength                 8
+> >       bDescriptorType        11
+> >       bFirstInterface         0
+> >       bInterfaceCount         2
+> >       bFunctionClass         14 Video
+> >       bFunctionSubClass       3 Video Interface Collection
+> >       bFunctionProtocol       0
+> >       iFunction               4 Slave camera
+> >     Interface Descriptor:
+> >       bLength                 9
+> >       bDescriptorType         4
+> >       bInterfaceNumber        0
+> >       bAlternateSetting       0
+> >       bNumEndpoints           1
+> >       bInterfaceClass        14 Video
+> >       bInterfaceSubClass      1 Video Control
+> >       bInterfaceProtocol      0
+> >       iInterface              4 Slave camera
+> >       VideoControl Interface Descriptor:
+> >
+> >       ....
+> >
+> >       Endpoint Descriptor:
+> >         bLength                 7
+> >         bDescriptorType         5
+> >         bEndpointAddress     0x81  EP 1 IN
+> >         bmAttributes            3
+> >           Transfer Type            Interrupt
+> >           Synch Type               None
+> >           Usage Type               Data
+> >         wMaxPacketSize     0x0010  1x 16 bytes
+> >         bInterval               7
+> >     Interface Descriptor:
+> >       bLength                 9
+> >       bDescriptorType         4
+> >       bInterfaceNumber        1
+> >       bAlternateSetting       0
+> >       bNumEndpoints           0
+> >       bInterfaceClass        14 Video
+> >       bInterfaceSubClass      2 Video Streaming
+> >       bInterfaceProtocol      0
+> >       iInterface              0
+> >       VideoStreaming Interface Descriptor:
+> >         bLength                            14
+> >         bDescriptorType                    36
+> >         bDescriptorSubtype                  1 (INPUT_HEADER)
+> >         bNumFormats                         1
+> >         wTotalLength                   0x01ef
+> >         bEndPointAddress                  130
+> >         bmInfo                              0
+> >         bTerminalLink                       3
+> >         bStillCaptureMethod                 2
+> >         bTriggerSupport                     1
+> >         bTriggerUsage                       0
+> >         bControlSize                        1
+> >         bmaControls( 0)                     0
+> >       VideoStreaming Interface Descriptor:
+> >         bLength                            11
+> >         bDescriptorType                    36
+> >         bDescriptorSubtype                  6 (FORMAT_MJPEG)
+> >         bFormatIndex                        1
+> >         bNumFrameDescriptors                9
+> >         bFlags                              1
+> >           Fixed-size samples: Yes
+> >         bDefaultFrameIndex                  1
+> >         bAspectRatioX                       0
+> >         bAspectRatioY                       0
+> >         bmInterlaceFlags                 0x00
+> >           Interlaced stream or variable: No
+> >           Fields per frame: 1 fields
+> >           Field 1 first: No
+> >           Field pattern: Field 1 only
+> >         bCopyProtect                        0
+> >       VideoStreaming Interface Descriptor:
+> >         bLength                            50
+> >         bDescriptorType                    36
+> >         bDescriptorSubtype                  7 (FRAME_MJPEG)
+> >         bFrameIndex                         1
+> >         bmCapabilities                   0x00
+> >           Still image unsupported
+> >         wWidth                           1920
+> >         wHeight                          1080
+> >         dwMinBitRate                248832000
+> >         dwMaxBitRate                1492992000
+> >         dwMaxVideoFrameBufferSize     6220800
+> >         dwDefaultFrameInterval         333333
+> >         bFrameIntervalType                  6
+> >         dwFrameInterval( 0)            333333
+> >         dwFrameInterval( 1)            400000
+> >         dwFrameInterval( 2)            500000
+> >         dwFrameInterval( 3)            666666
+> >         dwFrameInterval( 4)           1000000
+> >         dwFrameInterval( 5)           2000000
+> >
+> >       ......
+> >
+> >       VideoStreaming Interface Descriptor:
+> >         bLength                            42
+> >         bDescriptorType                    36
+> >         bDescriptorSubtype                  3 (STILL_IMAGE_FRAME)
+> >         bEndpointAddress                    0
+> >         bNumImageSizePatterns               9
+> >         wWidth( 0)                       1920
+> >         wHeight( 0)                      1080
+> >         wWidth( 1)                       2048
+> >         wHeight( 1)                      1536
+> >         wWidth( 2)                       1280
+> >         wHeight( 2)                       720
+> >         wWidth( 3)                       2592
+> >         wHeight( 3)                      1944
+> >         wWidth( 4)                       1280
+> >         wHeight( 4)                      1024
+> >         wWidth( 5)                       1280
+> >         wHeight( 5)                       960
+> >         wWidth( 6)                       1600
+> >         wHeight( 6)                      1200
+> >         wWidth( 7)                        800
+> >         wHeight( 7)                       600
+> >         wWidth( 8)                        640
+> >         wHeight( 8)                       480
+> >         bNumCompressionPatterns             0
+> >       VideoStreaming Interface Descriptor:
+> >         bLength                             6
+> >         bDescriptorType                    36
+> >         bDescriptorSubtype                 13 (COLORFORMAT)
+> >         bColorPrimaries                     1 (BT.709,sRGB)
+> >         bTransferCharacteristics            1 (BT.709)
+> >         bMatrixCoefficients                 4 (SMPTE 170M (BT.601))
+> >     Interface Descriptor:
+> >       bLength                 9
+> >       bDescriptorType         4
+> >       bInterfaceNumber        1
+> >       bAlternateSetting       1
+> >       bNumEndpoints           1
+> >       bInterfaceClass        14 Video
+> >       bInterfaceSubClass      2 Video Streaming
+> >       bInterfaceProtocol      0
+> >       iInterface              0
+> >       Endpoint Descriptor:
+> >         bLength                 7
+> >         bDescriptorType         5
+> >         bEndpointAddress     0x82  EP 2 IN
+> >         bmAttributes            5
+> >           Transfer Type            Isochronous
+> >           Synch Type               Asynchronous
+> >           Usage Type               Data
+> >         wMaxPacketSize     0x1400  3x 1024 bytes
+> >         bInterval               1
+> >     Interface Descriptor:
+> >       bLength                 9
+> >       bDescriptorType         4
+> >       bInterfaceNumber        1
+> >       bAlternateSetting       2
+> >       bNumEndpoints           1
+> >       bInterfaceClass        14 Video
+> >       bInterfaceSubClass      2 Video Streaming
+> >       bInterfaceProtocol      0
+> >       iInterface              0
+> >       Endpoint Descriptor:
+> >         bLength                 7
+> >         bDescriptorType         5
+> >         bEndpointAddress     0x82  EP 2 IN
+> >         bmAttributes            5
+> >           Transfer Type            Isochronous
+> >           Synch Type               Asynchronous
+> >           Usage Type               Data
+> >         wMaxPacketSize     0x0b84  2x 900 bytes
+> >         bInterval               1
+> >     Interface Descriptor:
+> >       bLength                 9
+> >       bDescriptorType         4
+> >       bInterfaceNumber        1
+> >       bAlternateSetting       3
+> >       bNumEndpoints           1
+> >       bInterfaceClass        14 Video
+> >       bInterfaceSubClass      2 Video Streaming
+> >       bInterfaceProtocol      0
+> >       iInterface              0
+> >       Endpoint Descriptor:
+> >         bLength                 7
+> >         bDescriptorType         5
+> >         bEndpointAddress     0x82  EP 2 IN
+> >         bmAttributes            5
+> >           Transfer Type            Isochronous
+> >           Synch Type               Asynchronous
+> >           Usage Type               Data
+> >         wMaxPacketSize     0x0c00  2x 1024 bytes
+> >         bInterval               1
+> >     Interface Descriptor:
+> >       bLength                 9
+> >       bDescriptorType         4
+> >       bInterfaceNumber        1
+> >       bAlternateSetting       4
+> >       bNumEndpoints           1
+> >       bInterfaceClass        14 Video
+> >       bInterfaceSubClass      2 Video Streaming
+> >       bInterfaceProtocol      0
+> >       iInterface              0
+> >       Endpoint Descriptor:
+> >         bLength                 7
+> >         bDescriptorType         5
+> >         bEndpointAddress     0x82  EP 2 IN
+> >         bmAttributes            5
+> >           Transfer Type            Isochronous
+> >           Synch Type               Asynchronous
+> >           Usage Type               Data
+> >         wMaxPacketSize     0x0c00  2x 1024 bytes
+> >         bInterval               1
+> > Device Qualifier (for other device speed):
+> >   bLength                10
+> >   bDescriptorType         6
+> >   bcdUSB               2.00
+> >   bDeviceClass          239 Miscellaneous Device
+> >   bDeviceSubClass         2
+> >   bDeviceProtocol         1 Interface Association
+> >   bMaxPacketSize0        64
+> >   bNumConfigurations      1
+> > Device Status:     0x0000
+> >   (Bus Powered)
+> >
+> > Signed-off-by: chenchangcheng <chenchangcheng@kylinos.cn>
 >
-> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-> ---
->  drivers/hwtracing/coresight/Kconfig          |  13 ++
->  drivers/hwtracing/coresight/Makefile         |   1 +
->  drivers/hwtracing/coresight/coresight-tnoc.c | 190 +++++++++++++++++++++++++++
->  drivers/hwtracing/coresight/coresight-tnoc.h |  53 ++++++++
->  4 files changed, 257 insertions(+)
+> Thanks, patch looks good to me:
 >
-> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
-> index 06f0a7594169c5f03ca5f893b7debd294587de78..6cfd160f09d383ab5f5aa276fa57496a52c8f961 100644
-> --- a/drivers/hwtracing/coresight/Kconfig
-> +++ b/drivers/hwtracing/coresight/Kconfig
-> @@ -247,4 +247,17 @@ config CORESIGHT_DUMMY
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 >
->           To compile this driver as a module, choose M here: the module will be
->           called coresight-dummy.
-> +
-> +config CORESIGHT_TNOC
-> +       tristate "Coresight Trace Noc driver"
-> +       help
-> +         This driver provides support for Trace NoC component.
-> +         Trace NoC is a interconnect that is used to collect trace from
-> +         various subsystems and transport it QDSS trace sink.It sits in
-> +         the different tiles of SOC and aggregates the trace local to the
-> +         tile and transports it another tile or to QDSS trace sink eventually.
-> +
-> +         To compile this driver as a module, choose M here: the module will be
-> +         called coresight-tnoc.
-> +
->  endif
-> diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
-> index 4ba478211b318ea5305f9f98dda40a041759f09f..60b729979f19c8f8848c77c290605132dba1a991 100644
-> --- a/drivers/hwtracing/coresight/Makefile
-> +++ b/drivers/hwtracing/coresight/Makefile
-> @@ -34,6 +34,7 @@ obj-$(CONFIG_CORESIGHT_SINK_TPIU) += coresight-tpiu.o
->  obj-$(CONFIG_CORESIGHT_SINK_ETBV10) += coresight-etb10.o
->  obj-$(CONFIG_CORESIGHT_LINKS_AND_SINKS) += coresight-funnel.o \
->                                            coresight-replicator.o
-> +obj-$(CONFIG_CORESIGHT_TNOC) += coresight-tnoc.o
->  obj-$(CONFIG_CORESIGHT_SOURCE_ETM3X) += coresight-etm3x.o
->  coresight-etm3x-y := coresight-etm3x-core.o coresight-etm-cp14.o \
->                      coresight-etm3x-sysfs.o
-> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.c b/drivers/hwtracing/coresight/coresight-tnoc.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..fad8e61f05ef25989aba1be342c547f835e8953a
-> --- /dev/null
-> +++ b/drivers/hwtracing/coresight/coresight-tnoc.c
-> @@ -0,0 +1,190 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/amba/bus.h>
-> +#include <linux/io.h>
-> +#include <linux/coresight.h>
-> +#include <linux/of.h>
-> +
-> +#include "coresight-priv.h"
-> +#include "coresight-tnoc.h"
-> +#include "coresight-trace-id.h"
-> +
-> +static void trace_noc_enable_hw(struct trace_noc_drvdata *drvdata)
-> +{
-> +       u32 val;
-> +
-> +       /* Set ATID */
-> +       writel_relaxed(drvdata->atid, drvdata->base + TRACE_NOC_XLD);
-> +
-> +       /* Config sync CR */
-> +       writel_relaxed(0xffff, drvdata->base + TRACE_NOC_SYNCR);
-> +
-> +       /* Set frequency value */
-> +       writel_relaxed(drvdata->freq_req_val, drvdata->base + TRACE_NOC_FREQVAL);
-> +
-> +       /* Set Ctrl register */
-> +       val = readl_relaxed(drvdata->base + TRACE_NOC_CTRL);
-> +
-> +       if (drvdata->flag_type == FLAG_TS)
-> +               val = val | TRACE_NOC_CTRL_FLAGTYPE;
-> +       else
-> +               val = val & ~TRACE_NOC_CTRL_FLAGTYPE;
-> +
-> +       if (drvdata->freq_type == FREQ_TS)
-> +               val = val | TRACE_NOC_CTRL_FREQTYPE;
-> +       else
-> +               val = val & ~TRACE_NOC_CTRL_FREQTYPE;
-> +
-> +       val = val | TRACE_NOC_CTRL_PORTEN;
-> +       writel_relaxed(val, drvdata->base + TRACE_NOC_CTRL);
-> +
-> +       dev_dbg(drvdata->dev, "Trace NOC is enabled\n");
-> +}
-> +
-> +static int trace_noc_enable(struct coresight_device *csdev, struct coresight_connection *inport,
-> +                           struct coresight_connection *outport)
-> +{
-> +       struct trace_noc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-> +
-> +       spin_lock(&drvdata->spinlock);
-> +       if (csdev->refcnt == 0)
-> +               trace_noc_enable_hw(drvdata);
-> +
-> +       csdev->refcnt++;
-> +       spin_unlock(&drvdata->spinlock);
-> +
-> +       return 0;
-> +}
-> +
-> +static void trace_noc_disable_hw(struct trace_noc_drvdata *drvdata)
-> +{
-> +       writel_relaxed(0x0, drvdata->base + TRACE_NOC_CTRL);
-> +       dev_dbg(drvdata->dev, "Trace NOC is disabled\n");
-> +}
-> +
-> +static void trace_noc_disable(struct coresight_device *csdev, struct coresight_connection *inport,
-> +                             struct coresight_connection *outport)
-> +{
-> +       struct trace_noc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-> +
-> +       spin_lock(&drvdata->spinlock);
-> +       if (--csdev->refcnt == 0)
-> +               trace_noc_disable_hw(drvdata);
-> +
-> +       spin_unlock(&drvdata->spinlock);
-> +       dev_info(drvdata->dev, "Trace NOC is disabled\n");
-> +}
-> +
-> +static const struct coresight_ops_link trace_noc_link_ops = {
-> +       .enable         = trace_noc_enable,
-> +       .disable        = trace_noc_disable,
-> +};
-> +
-> +static const struct coresight_ops trace_noc_cs_ops = {
-> +       .link_ops       = &trace_noc_link_ops,
-> +};
-> +
-> +static int trace_noc_init_default_data(struct trace_noc_drvdata *drvdata)
-> +{
-> +       int atid;
-> +
-> +       atid = coresight_trace_id_get_system_id();
-> +       if (atid < 0)
-> +               return atid;
-> +
-> +       drvdata->atid = atid;
-> +
-> +       drvdata->freq_type = FREQ_TS;
-> +       drvdata->flag_type = FLAG;
-> +       drvdata->freq_req_val = 0;
-> +
-> +       return 0;
-> +}
-> +
-> +static int trace_noc_probe(struct amba_device *adev, const struct amba_id *id)
-> +{
-> +       struct device *dev = &adev->dev;
-> +       struct coresight_platform_data *pdata;
-> +       struct trace_noc_drvdata *drvdata;
-> +       struct coresight_desc desc = { 0 };
-> +       int ret;
-> +
-> +       desc.name = coresight_alloc_device_name(&trace_noc_devs, dev);
-> +       if (!desc.name)
-> +               return -ENOMEM;
-> +       pdata = coresight_get_platform_data(dev);
-> +       if (IS_ERR(pdata))
-> +               return PTR_ERR(pdata);
-> +       adev->dev.platform_data = pdata;
-> +
-> +       drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-> +       if (!drvdata)
-> +               return -ENOMEM;
-> +
-> +       drvdata->dev = &adev->dev;
-> +       dev_set_drvdata(dev, drvdata);
-> +
-> +       drvdata->base = devm_ioremap_resource(dev, &adev->res);
-> +       if (!drvdata->base)
-> +               return -ENOMEM;
-> +
-> +       spin_lock_init(&drvdata->spinlock);
-> +
-> +       ret = trace_noc_init_default_data(drvdata);
-> +       if (ret)
-> +               return ret;
-> +
-> +       desc.ops = &trace_noc_cs_ops;
-> +       desc.type = CORESIGHT_DEV_TYPE_LINK;
-> +       desc.subtype.link_subtype = CORESIGHT_DEV_SUBTYPE_LINK_MERG;
-> +       desc.pdata = adev->dev.platform_data;
-> +       desc.dev = &adev->dev;
-> +       desc.access = CSDEV_ACCESS_IOMEM(drvdata->base);
-> +       drvdata->csdev = coresight_register(&desc);
-> +       if (IS_ERR(drvdata->csdev))
-> +               return PTR_ERR(drvdata->csdev);
-> +
-> +       pm_runtime_put(&adev->dev);
-> +
-> +       return 0;
-> +}
-> +
-> +static void trace_noc_remove(struct amba_device *adev)
-> +{
-> +       struct trace_noc_drvdata *drvdata = dev_get_drvdata(&adev->dev);
-> +
-> +       coresight_trace_id_put_system_id(drvdata->atid);
-> +       coresight_unregister(drvdata->csdev);
-> +}
-> +
-> +static struct amba_id trace_noc_ids[] = {
-> +       {
-> +               .id     = 0x000f0c00,
-> +               .mask   = 0x000fff00,
-> +       },
-> +       {},
-> +};
-> +MODULE_DEVICE_TABLE(amba, trace_noc_ids);
-> +
-> +static struct amba_driver trace_noc_driver = {
-> +       .drv = {
-> +               .name   = "coresight-trace-noc",
-> +               .owner  = THIS_MODULE,
-> +               .suppress_bind_attrs = true,
-> +       },
-> +       .probe          = trace_noc_probe,
-> +       .remove         = trace_noc_remove,
-> +       .id_table       = trace_noc_ids,
-> +};
-> +
-> +module_amba_driver(trace_noc_driver);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("Trace NOC driver");
-> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.h b/drivers/hwtracing/coresight/coresight-tnoc.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..b6bd1ef659897d8e0994c5e8514e8cbdd16eebd8
-> --- /dev/null
-> +++ b/drivers/hwtracing/coresight/coresight-tnoc.h
-> @@ -0,0 +1,53 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#define TRACE_NOC_CTRL 0x008
-> +#define TRACE_NOC_XLD  0x010
-> +#define TRACE_NOC_FREQVAL      0x018
-> +#define TRACE_NOC_SYNCR        0x020
-> +
-> +/* Enable generation of output ATB traffic.*/
+> Ricardo, do you have any more remarks about this patch ?
 
+LGTM, I forgot to send the trailer sorry
 
+Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
 
-> +#define TRACE_NOC_CTRL_PORTEN  BIT(0)
-> +/* Writing 1 to issue a FREQ or FREQ_TS packet*/
-> +#define TRACE_NOC_CTRL_FREQTSREQ       BIT(5)
-> +/* Sets the type of issued ATB FLAG packets. 0: 'FLAG' packets; 1: 'FLAG_TS' packets.*/
-> +#define TRACE_NOC_CTRL_FLAGTYPE                BIT(7)
-> +/* sets the type of issued ATB FREQ packets. 0: 'FREQ' packets; 1: 'FREQ_TS' packets.*/
-> +#define TRACE_NOC_CTRL_FREQTYPE                BIT(8)
-> +DEFINE_CORESIGHT_DEVLIST(trace_noc_devs, "traceNoc");
+Not sure if Laurent wants the whole lsusb -v as the commit message os
+as a cover letter.
 
-Coresight links do not generate their own packets - please explain
-what these are.
+Both work for me.
 
-As far as I am aware, frequency and flag packets are not part of the
-ATB specification.
-
-If the output bus for this device is not in fact an ATB bus, then it
-should not be referred to as such.
-
-Thanks and regards
-
- Mike
-
-> +
-> +/**
-> + * struct trace_noc_drvdata - specifics associated to a trace noc component
-> + * @base:      memory mapped base address for this component.
-> + * @dev:       device node for trace_noc_drvdata.
-> + * @csdev:     component vitals needed by the framework.
-> + * @spinlock:  only one at a time pls.
-> + * @atid:      id for the trace packet.
-> + * @freqtype:  0: 'FREQ' packets; 1: 'FREQ_TS' packets.
-> + * @flagtype:  0: 'FLAG' packets; 1: 'FLAG_TS' packets.
-> + * @freq_req_val:       set frequency values carried by 'FREQ' and 'FREQ_TS' packets.
-> + */
-> +struct trace_noc_drvdata {
-> +       void __iomem            *base;
-> +       struct device           *dev;
-> +       struct coresight_device *csdev;
-> +       spinlock_t              spinlock; /* lock for the drvdata. */
-> +       u32                     atid;
-> +       u32                     freq_type;
-> +       u32                     flag_type;
-> +       u32                     freq_req_val;
-> +};
-> +
-> +/* freq type */
-> +enum freq_type {
-> +       FREQ,
-> +       FREQ_TS,
-> +};
-> +
-> +/* flag type */
-> +enum flag_type {
-> +       FLAG,
-> +       FLAG_TS,
-> +};
 >
-> --
-> 2.34.1
+>
+> Regards,
+>
+> Hans
+>
+>
+> > ---
+> >  drivers/media/usb/uvc/uvc_driver.c |  9 +++++++++
+> >  drivers/media/usb/uvc/uvc_video.c  | 10 ++++++++++
+> >  drivers/media/usb/uvc/uvcvideo.h   |  1 +
+> >  3 files changed, 20 insertions(+)
+> >
+> > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> > index deadbcea5e22..9b1dedf9773b 100644
+> > --- a/drivers/media/usb/uvc/uvc_driver.c
+> > +++ b/drivers/media/usb/uvc/uvc_driver.c
+> > @@ -3023,6 +3023,15 @@ static const struct usb_device_id uvc_ids[] = {
+> >         .bInterfaceSubClass   = 1,
+> >         .bInterfaceProtocol   = 0,
+> >         .driver_info          = UVC_INFO_QUIRK(UVC_QUIRK_STATUS_INTERVAL) },
+> > +     /* Alcor Corp. Slave camera */
+> > +     { .match_flags          = USB_DEVICE_ID_MATCH_DEVICE
+> > +                             | USB_DEVICE_ID_MATCH_INT_INFO,
+> > +       .idVendor             = 0x1b17,
+> > +       .idProduct            = 0x6684,
+> > +       .bInterfaceClass      = USB_CLASS_VIDEO,
+> > +       .bInterfaceSubClass   = 1,
+> > +       .bInterfaceProtocol   = 0,
+> > +       .driver_info          = UVC_INFO_QUIRK(UVC_QUIRK_OVERFLOW_BANDWIDTH) },
+> >       /* MSI StarCam 370i */
+> >       { .match_flags          = USB_DEVICE_ID_MATCH_DEVICE
+> >                               | USB_DEVICE_ID_MATCH_INT_INFO,
+> > diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+> > index e3567aeb0007..56f23c363870 100644
+> > --- a/drivers/media/usb/uvc/uvc_video.c
+> > +++ b/drivers/media/usb/uvc/uvc_video.c
+> > @@ -262,6 +262,16 @@ static void uvc_fixup_video_ctrl(struct uvc_streaming *stream,
+> >
+> >               ctrl->dwMaxPayloadTransferSize = bandwidth;
+> >       }
+> > +
+> > +     if (stream->intf->num_altsetting > 1 &&
+> > +         ctrl->dwMaxPayloadTransferSize > stream->maxpsize &&
+> > +         stream->dev->quirks & UVC_QUIRK_OVERFLOW_BANDWIDTH) {
+> > +             dev_warn(&stream->intf->dev,
+> > +                      "the max payload transmission size (%d) exceededs the size of the ep max packet (%d). Using the max size.\n",
+> > +                      ctrl->dwMaxPayloadTransferSize,
+> > +                      stream->maxpsize);
+> > +             ctrl->dwMaxPayloadTransferSize = stream->maxpsize;
+> > +     }
+> >  }
+> >
+> >  static size_t uvc_video_ctrl_size(struct uvc_streaming *stream)
+> > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> > index 5e388f05f3fc..8b43d725c259 100644
+> > --- a/drivers/media/usb/uvc/uvcvideo.h
+> > +++ b/drivers/media/usb/uvc/uvcvideo.h
+> > @@ -77,6 +77,7 @@
+> >  #define UVC_QUIRK_DISABLE_AUTOSUSPEND        0x00008000
+> >  #define UVC_QUIRK_INVALID_DEVICE_SOF 0x00010000
+> >  #define UVC_QUIRK_MJPEG_NO_EOF               0x00020000
+> > +#define UVC_QUIRK_OVERFLOW_BANDWIDTH 0x00040000
+> >
+> >  /* Format flags */
+> >  #define UVC_FMT_FLAG_COMPRESSED              0x00000001
+> >
+> > base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
+>
 >
 
 
 -- 
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
+Ricardo Ribalda
 
