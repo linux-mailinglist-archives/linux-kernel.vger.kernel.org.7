@@ -1,127 +1,199 @@
-Return-Path: <linux-kernel+bounces-591285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8EEEA7DDC6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:36:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08297A7DDE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97DE81718E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:36:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0CD73B37A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A47247DF9;
-	Mon,  7 Apr 2025 12:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BF5248879;
+	Mon,  7 Apr 2025 12:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J9oVDJbk"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="qCAqJriv"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EBB227BB5;
-	Mon,  7 Apr 2025 12:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E7823AE64
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 12:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744029373; cv=none; b=PFyk7MbMZHxNs3f5k1kqriLyaqwlRu2BPTP6uI5TLyUzm7sSqbxQuBcOApw07FIUnAoRGxIbRCKA9VKO3o3YdirY6gx+xHTVi7p7SIqQNZHmfrc3xdD5pBOGqHkp6/MIOqX2gkZthghoy3xpUyb9lQ4BiCav4uPLAHfxcJIOEVk=
+	t=1744029509; cv=none; b=M4tljcOPnzl8T9iTwOKDqAP09kE2mOE/tmUHxXttwySZPRNiBM6JJ7ZFYvX31tmsCQSmaC4I4jYX5G6lVoUhIaHvaG6g02v0gS+2LEvUxZYQEbk1Z718syYXRLdsaz5Lx9PF19oYY3JD4KYatRS3e7QbY3HcvV6E95NcZCiC+1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744029373; c=relaxed/simple;
-	bh=dcJyfRfsMmgxmRuoZ6uKnKv89TRcKrAVyw0Xtxreftk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k4T71wJZ4kQ/usrWV8I0dxRffSLCpH6w57R2JDlozaGmLR8Qhn1nGdQrq3wEVilwJIWEZmr/EsJBvlLLzvnjnvmm1S8rvzzuHK1BZakUpTkZCQtxpp4jpik9fr1bEF156zKspPaHE6MM6EyeFCb1koo4jzriRsyMncjauXWcIR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J9oVDJbk; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c592764e24so469008985a.0;
-        Mon, 07 Apr 2025 05:36:11 -0700 (PDT)
+	s=arc-20240116; t=1744029509; c=relaxed/simple;
+	bh=pAtGxBTML0R69VpqhiO34biELTHBQcCt68gQZIWR51M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eqbHouvnDy/nu0hWMV9XO4Ap6g2j67+gCMLeDYT8fEQ90xztp5WCYvwnRVv26TUpddy6bmdCrCndabeutP5140Xp5mYgfRUFq5t82OXfdYEu6hbTCY7Im+W+mxoFHe9gW513RvhiUUPE5i02047ypbEvI/ZpGL8ZDgc579Anw+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=qCAqJriv; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-549946c5346so5107387e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 05:38:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744029370; x=1744634170; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744029506; x=1744634306; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3TcKaW1iKbZzoagO8ECUBHNyiWF3ioNPUUj4VMULq6c=;
-        b=J9oVDJbkDrrqL6fXpRmLfYyjwF690w7uJ7M7zvA1hOttA6X2WntTw2BFm1iLxmkSTL
-         M4VXcYY4ChDWfRpPoFSH5NVepJM5uiFDDJKlbMPjs5XSm5S66e39kvVK5bl/gYOCuNvH
-         IrCK/GYxUIuhpONlMvoAYG5xMAYpkIRdMEhcM6tqltEDhXzg/VTwWTVyhFmRDs+kkcTY
-         j+hiRTB263dA9vjWduwW25heJsps5Nsf4AW3ujuncxEZbkR7k8NpgCo9j0rJRfkMXBnS
-         q5rPUUv/wgGlGwlr7aRShIssgfOVmqJ3rE0ZiH2ApHqyEYsSxiB+6gATTQKq4tZ1quFE
-         JSKw==
+        bh=Iy4szLRSe8vbxOkm8ppBiJGXBESdF1XCg0JLSJwZApU=;
+        b=qCAqJrivBwmRByzmk5eHPdoPWtZ70Uo12USYPwnd8t32Z/OUwvnyIAoInFdhCyhuto
+         7ZlRkPL3lEFe0RukJwm806+Wt1W0xnLSdsHYUUVYi+IOgeQzZK7wjExRpODYCuCm72iO
+         poXbNxAt7UVDsMC9UAffgmdv8x25m73vn0nw6IR+p8gsNI/L3QodEHrZmhGuXRerfiip
+         k03y9yzE2QNPKpP6GngzC6SkRLZooumVQLURqOMiHM09aFvGbQWNNMPDc4Mq9hkKJkwx
+         8U1MgJiT4mTQRn3r15DnLlMZHx7e0hW+18cNKVBg9vhYGNFnupWNZqENsHv0f9+G/ZpS
+         Ah0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744029370; x=1744634170;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1744029506; x=1744634306;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3TcKaW1iKbZzoagO8ECUBHNyiWF3ioNPUUj4VMULq6c=;
-        b=awuqIGy9mjO+6UmopH5yC6MB8qmJqflht3Xt5q+tmfxlvjF74LcdTJwnwbcxMmDR3Q
-         nMW0bvcSNQ8P+D4QbOqxZ7dIC3V9CUnyImRPxbGvl4ikO11E9Uyl01dPC7wuuXDIJpc5
-         ZcniqUhrKc7Uoi00zVaf8GiFrMJUUrK4HPKmjWQ7X0wCZ46bxXRwwALrt0TYFywswpg4
-         n2iwd0J5KRgVDjgh6YKM9BxjgxLhvi8Wa1AAjb3C7A+u5t/Af3Cc5aLScMG3PAMKNp7W
-         3hBs0lwOoUR6KgBQEBCZEhfK5dOdXSkF8rfx9Hy3CNnawOFOMnkaE+ld8qekSpgZB6A6
-         2zoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVIDUilZS0G7spvyA+lUVdDoS/e9xe4exxFJtKQrKn6uQlRSxKflgcY0Ov3iZtkhetNGUeCKUTpUisZb3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj0Wo3XTaFhHu2tRS1pdUwA2a6bL5t7uA3IVBhRvgdYvcforgQ
-	jCN3PDckHDzdW+iwAN3F8EZqL4sGH3rnYbH20NjnCC0/VQfrWcnjVx+gpZ6dSAA=
-X-Gm-Gg: ASbGncvFEbdwYqQ42WnOKkUlS4+H5dwuDA6XyY7sFEMTC5E7RgqQ+PF4fZutw1xdBNN
-	QF1HC050OyhZkpQpxE2tHD4PomQDDVLu5sGdH8hjOYnjXXowzDPHJBAx2Q2K+4BQNxE46E4edEx
-	h1ROWteq7SMqfGcCqMioecpR59XV6YqZ/KoJ8NEHs6/TTbLhwyU00bO7EiLYOg+1qG6R/GUn/bV
-	EUNbx9aXQxJEME5cMo862wiTzX7HuG7X7At6B3ve6qzoMtrls0ely/cPiPxQQLLBcriUmLu8ArG
-	FK4VLz/uEOntP5Hg1fUwNQ0RxZ3Y0KR9oo6tsH5V6lC7Ts45xD2oQD5evt4=
-X-Google-Smtp-Source: AGHT+IFYSVKw5VCmG3zldSTuQDk/3t0DK/gVNVF8RsJQdy0hmP+obfuJJuPgy2KdD4uTEL82O7eV4A==
-X-Received: by 2002:a05:620a:40cc:b0:7c5:9566:83dc with SMTP id af79cd13be357-7c774a57ad1mr1674861285a.25.1744029370535;
-        Mon, 07 Apr 2025 05:36:10 -0700 (PDT)
-Received: from theriatric.mshome.net ([73.123.232.110])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c76ea59e42sm590373885a.77.2025.04.07.05.36.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 05:36:10 -0700 (PDT)
-From: Gabriel Shahrouzi <gshahrouzi@gmail.com>
-To: linux-media@vger.kernel.org
-Cc: andy@kernel.org,
-	hdegoede@redhat.com,
-	mchehab@kernel.org,
-	sakari.ailus@linux.intel.com,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	gshahrouzi@gmail.com
-Subject: [PATCH v3] media: Fix indentation to use TAB instead of spaces
-Date: Mon,  7 Apr 2025 08:36:08 -0400
-Message-ID: <20250407123608.366190-1-gshahrouzi@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <MESSAGE_ID_OF_V2_EMAIL_OR_REVIEW>
-References: <MESSAGE_ID_OF_V2_EMAIL_OR_REVIEW>
+        bh=Iy4szLRSe8vbxOkm8ppBiJGXBESdF1XCg0JLSJwZApU=;
+        b=SYk26yyqcsMz601sIPPvoLK0bGBrZcu5TRDd/aPPx7dzX5xl+nzdwdjgNRKh8wAb77
+         aDbn0+eGsESSR3ap8yeAEdNLQj/vkNF6RdWD21LjCeLjgkvaTtgLDKbcXEdZHKIwn5Ei
+         9j9PEkcEUA6yPlIp/FY/xmkGlCWyvceb8DZ/gQRT+4O0x99xFd7V8xX7UwT2wntvVqYI
+         AFQVf2GvdXio2PyMu8bgFZUbQTDUA36iPTS+OmrFPEeyYXrUFxW9LZqr+sYp2tuTCOtB
+         FdPrq2trghhi0+AgxR0JNwiRDGnkEmD0EOm/u15lJ/PjF5iZbQcN52uVhSiWI6KuP1Oi
+         n+lA==
+X-Forwarded-Encrypted: i=1; AJvYcCUY1Kdbzpd29jo2itxEb7noTuX02y37NipAblyZeFequ2FRkCqIYHkKbMfrZAUQlL0C1nBBNhHgavo1fQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/sM7MGuE4biZGqOSTNcRdYBUE9psHThk6Tkti3IbPGkPngDpq
+	crag6ayM8akuWubHvsm9HfCWOn8AZZ7hAT5qkwtZH0CJit5cd0Ust3IMSrKq2HiFHtU5Q/nsk6X
+	47ngLNQECgkEW3eJCw0xJRUgrIoja58cC9s5n6w==
+X-Gm-Gg: ASbGnctX+C9uq2g6izdtPknzcwkr490ClqfGkq6gm8i7uQNvz0hh9AzgF8krCQNqvCZ
+	3lqPzk4DBR9H9qKpDbXygnKZEk/kvmYGvf0G5BbCgAfxEkX3T8herL2RS9/1zluNDaq1sqy90Fc
+	MGy64M8RpibhlJOQ9EOg2Qb5t3P2HkC31tVFoExAf6tIm59aFENmnUphMcaA==
+X-Google-Smtp-Source: AGHT+IGdH3gSPLDN9gl6cP7jpNmIl84e0kbjukzAlZsBAHpyHrW4IWPlbV43lMfcKk8pPXKe3hAYFgJpiXbC3nQ3wcM=
+X-Received: by 2002:a05:6512:39d2:b0:549:b0f3:43a2 with SMTP id
+ 2adb3069b0e04-54c227dc8cbmr3043106e87.40.1744029505709; Mon, 07 Apr 2025
+ 05:38:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250331-gpio-todo-remove-nonexclusive-v1-0-25f72675f304@linaro.org>
+ <20250331-gpio-todo-remove-nonexclusive-v1-3-25f72675f304@linaro.org>
+ <CACRpkdYMRnmYD1YRavZs7MHEVFM42bOL2=6s4rJzFDnfLJ4fAQ@mail.gmail.com>
+ <CAMRc=McBWncrCcX87a3pYeZ3=uYGNhpSrK74hDP-XNYrT8WMMg@mail.gmail.com> <CACRpkdbeObj7t=quffRrZtZQRRSr6GBeayN3o_8H8zGDD22XpQ@mail.gmail.com>
+In-Reply-To: <CACRpkdbeObj7t=quffRrZtZQRRSr6GBeayN3o_8H8zGDD22XpQ@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 7 Apr 2025 14:38:14 +0200
+X-Gm-Features: ATxdqUGl2wqh4ZOWupG9tgo9s9dJU72oPdHvkqUaP5UmimCE45Echc5dShzPz3k
+Message-ID: <CAMRc=McKgfT1ZLVzsVbBJ5pFc3bwcGT4AyXG+V0JPP0z6ft3tg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] gpio: TODO: track the removal of GPIOD_FLAGS_BIT_NONEXCLUSIVE
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Replace spaces with TAB to comply with kernel coding style.
+On Fri, Apr 4, 2025 at 11:02=E2=80=AFAM Linus Walleij <linus.walleij@linaro=
+.org> wrote:
+>
+> On Tue, Apr 1, 2025 at 10:57=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.p=
+l> wrote:
+>
+> > > If several providers with their own struct device is using one
+> > > and the same GPIO line, the devres consumer is unclear: which
+> > > struct device should own the GPIO line?
+> > >
+> >
+> > Well, other subsystems just use reference-counted resources in this
+> > case but see above - this is not a good fit for GPIOs.
+>
+> So to rehash, for example clocks and regulators are by definition the
+> equivalent to NONEXCLUSIVE, that is their default behaviour.
+>
+> Two devices can surely request the same clock.
+>
+> They can independently issue clk_enable() and clk_disable(),
+> and the semantics is a reference count increase/decrease.
+>
+> They can have the same phandle in the device tree.
+>
+> But GPIOs can not. They can only have one owner.
+>
+> Technically this is because the only reference count we have in a gpio
+> descriptor is the boolean flag FLAG_REQUESTED, and it
+> happens like this in gpiod_request_commit():
+>
+>         if (test_and_set_bit(FLAG_REQUESTED, &desc->flags))
+>                 return -EBUSY;
+>
+> This semantic is in a way natural because what would you do when
+> two owners make something a GPIO cannot do, such as
+> one does gpiod_set_value(1) and the other does gpiod_set_value(0)?
+>
 
-Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
----
-Changes in v2:
-	- Resend using git send-email to fix formatting issues in email body.
-Changes in v3:
-	- Use media prefix.
-	- Capitalize tab to TAB.
----
- .../media/atomisp/pci/isp/kernels/vf/vf_1.0/ia_css_vf.host.c    | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Or even better: one goes gpiod_direction_output(desc, 1), the other
+goes gpiod_direction_input()!
 
-diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/vf/vf_1.0/ia_css_vf.host.c b/drivers/staging/media/atomisp/pci/isp/kernels/vf/vf_1.0/ia_css_vf.host.c
-index ece5e3da34ee..127f12ba2214 100644
---- a/drivers/staging/media/atomisp/pci/isp/kernels/vf/vf_1.0/ia_css_vf.host.c
-+++ b/drivers/staging/media/atomisp/pci/isp/kernels/vf/vf_1.0/ia_css_vf.host.c
-@@ -114,7 +114,7 @@ configure_dma(
- }
- 
- int ia_css_vf_configure(const struct ia_css_binary *binary,
--		        const struct ia_css_frame_info *out_info,
-+			const struct ia_css_frame_info *out_info,
- 			struct ia_css_frame_info *vf_info,
- 			unsigned int *downscale_log2)
- {
--- 
-2.43.0
+One goes gpiod_set_config(OPEN_DRAIN), the other gpiod_set_config(OPEN_SOUR=
+CE)!!
 
+There's just no good way of allowing multiple users to work with the
+same line in a safe and sane way.
+
+> This issue does not exist in resources such as clocks or
+> regulators that only do enable/disable and that is why GPIOs
+> are different from other resources.
+>
+> Then we can think of solutions to that.
+>
+> One way would be to add a new type of refcounted GPIO
+> descriptor for this specific usecase, like (OTOMH):
+>
+> struct gpio_desc_shared {
+>     struct gpio_desc *gpiod;
+>     struct device *devs[MAX_OWNERS];
+>     u32 use_count;
+> };
+>
+> struct gpio_desc_shared *gpiod_shared_get(struct device *dev ...);
+> void gpiod_shared_put(struct gpio_desc_shared *gds);
+>
+> int gpiod_shared_enable(struct gpio_desc_shared *gds);
+> int gpiod_shared_disable(struct gpio_desc_shared *gds);
+>
+> So this compound struct will not be able to set value
+> directly.
+>
+> The gpiod inside that shared descriptor need to be obtained with
+> some gpiolib-internal quirk, not with gpiod_request().
+>
+> It will issue gpiod_set_value(1) on the first enable and
+> gpiod_set_value(0) on last disable its internal descriptor.
+>
+> If existing valid users are switched over to that then the
+> NONEXCLUSIVE stuff can be deleted.
+>
+
+I don't agree with this. I could possibly live with that being used
+exclusively in lower-level core subsystem code (for instance:
+regulator/core.c) but, in this form, this still requires drivers - who
+have no business knowing whether the GPIO they use is shared - to use
+the right API. Not to mention that once you make an interface
+available, people will be very eager to abuse it. IMO this should be
+approached from the other side.
+
+The closest thing to making the sharing opaque to consumers is
+providing a pwrseq-backed, faux GPIO chip that allows a very limited
+set of operations on GPIOs - get, get_value, set_value - and return an
+error on others. A value set would actually be equivalent to "enable
+high" and be refcounted by pwrseq. I have something in mind but this
+cycle, I already have a lot on my plate. I will get to it eventually
+and come up with some code to back my idea.
+
+In any case: the GPIO sharing logic should be hidden, I just need to
+figure out how to make it possible to be notified about when the value
+change actually happens as per Mark's requirement.
+
+Let me reiterate: a random ethernet PHY driver should not have to call
+gpiod_get_shared() or anything similar - why would it? It can be used
+in all kinds of situations, whether the GPIO is shared is none of its
+business.
+
+Bartosz
 
