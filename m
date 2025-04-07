@@ -1,141 +1,132 @@
-Return-Path: <linux-kernel+bounces-590733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DA04A7D647
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:41:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B2857A7D64B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A649B42170B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:35:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 126433B4927
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28783226193;
-	Mon,  7 Apr 2025 07:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C1822652D;
+	Mon,  7 Apr 2025 07:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KZNveTJA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JcrgbstN"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b4V1R35b"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA10224259;
-	Mon,  7 Apr 2025 07:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC1B19CC05;
+	Mon,  7 Apr 2025 07:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744011135; cv=none; b=tY+k0LDSO+ErqJf0157n477Qs7yfVySR4ddhsZA3aQPCew0ETSH52athGenXIypOd6FO2q01LMQiIc2ZgkT+mlnUourzlJAi4R8xEgVNr+O/e6uMf+2EPTMrrs24o4FN5BGDHDOV2q//o/Ia2pDCTdjkIodf0DoZRjrp8lzacmU=
+	t=1744011269; cv=none; b=QSr4Z2hfjqF1mKda7/A4KJlV+/NtuWq/lti1Mr3/XsukEuJgSS255ZKQOfS4cCyBtyY0vVOf79gs8kly8I2ku9G/rsX9U96e/VEbmyiiYuDGYSrlSiwIof1SDiyMrW+/jCCOZwctV3eH20fNxg0d1khXtf2Ps5qRn87Jgvsb9/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744011135; c=relaxed/simple;
-	bh=+EIPvqtMgFTS9th2T1n7+fL7pBAcpJkfuyLspKgWhxw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=S9B7ZhJVbrdRU/Co+WN6AkhNz6sgp6y52hgySUmjbU8U0RxO4ZxSBt2qKzSuOv9yxp76PMRY3gqZPvyfVGodVQPtSCMLz3xnEVud2KV9BzhEI6Pe09njMF8Mkq/7mS7Z47Rq7XU/dcTlAHNvMgg2DfLTb5+y8s6uvPlGjhZNV8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KZNveTJA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JcrgbstN; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 07 Apr 2025 07:32:11 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744011132;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NiCFZ1Mr+g7ZRnBTkYBd7mClBBhyyzQQyj80IVvlZvA=;
-	b=KZNveTJAA684RU9NcG1rIra4ekV1LoVbu9AJSKymPOfjUxPxJ8eRc8F5ZN4CK+Y5KPHIa2
-	YdAqLfoyt0xybH9wst7u57oXqNoSR7pnnefdbocef6Qdz+hUgPj297MDRqoXOLl+npah+W
-	LP8BHYhZBfYjtuhjOoMOvu5YtnJKCkRLxMHM8P/D5PhZUcn3rzEiMvJ0Z82yYXPEI4IjQD
-	F/mQ15PkpI8sC4vJ9SEAgvciQiACkJzSoiCtzyiKvuB3McBtaR0NHwdNE0GhAM9w9nDh9K
-	yZfJ1l4/lecJ1kldl34UalLl07+uDVELbRBgliyHqhXE8ozDeTLZumFVY03M0Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744011132;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NiCFZ1Mr+g7ZRnBTkYBd7mClBBhyyzQQyj80IVvlZvA=;
-	b=JcrgbstNlEGXhAzDMsHn5lwzvLj7Li2+gU9+D+ILzG8qLfDm8W5eiHReLquq7ARr+JbofR
-	zZVwqk6VUh+W7bDQ==
-From: "tip-bot2 for Bartosz Golaszewski" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/urgent] irqchip/davinci: Remove leftover header
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Arnd Bergmann <arnd@arndb.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20250306084552.15894-1-brgl@bgdev.pl>
-References: <20250306084552.15894-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1744011269; c=relaxed/simple;
+	bh=OvFTZWVxok7Yh7TM8jJco47iNhMsnYLxmLRrKQQw3Bc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VhVRGp9RSrva9cyx58QFgkcsvksZlbe2kep6FZFPlcI2ZmSgLa5M++GJ4O2cNASZUMFnS688rofBVaqRpBadej1wmMz6jja+/u2C8leN1iSXHUhHO07ydrrmttBUl8A84e3AQ+US0vkQm1JrH5DeHxC+H77aqam2KSMYG6M9X+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=b4V1R35b; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=E3wml/8+r4IsbKmjPypYCwVOPWR42TPuEreb9gSDrb8=; b=b4V1R35boRkA2HQoNEBDzhpItv
+	haipoU4Zie4sTAAGE83MMpjUFKpI1KRVgAJLMkLn5rbJS4aZYLo+eyswJM9pO/rcXPtrWH66rxCGu
+	61b8TqV+E7afjGroLw7yOuLuX3kV+EkJK9eO5OXxQIwmBEe2HPHfhwXbjL9s2/fsAdFDx/ypm5vvf
+	d0tOt6egMbf53SnpzXLwX1rFCxiDTx4ygSTb9Jf2bxGXlpN6vrkphSGLIvuWU6MvHXhCydrD9CFYh
+	NHHh6tFEoJibIj4vdpHNWjP/ogZpqYnePdoVM+mb5yJucEHk/3aP0PxqRG1uU8mmglqWe5jt0Sdw3
+	ARAmV9UQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u1gzy-0000000GnWG-3Lu5;
+	Mon, 07 Apr 2025 07:34:26 +0000
+Date: Mon, 7 Apr 2025 00:34:26 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Christoph Hellwig <hch@infradead.org>, virtio-comment@lists.linux.dev,
+	mst@redhat.com, Claire Chang <tientzu@chromium.org>,
+	linux-devicetree <devicetree@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	=?iso-8859-1?Q?J=F6rg?= Roedel <joro@8bytes.org>,
+	iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+	graf@amazon.de
+Subject: Re: [RFC PATCH 1/3] content: Add VIRTIO_F_SWIOTLB to negotiate use
+ of SWIOTLB bounce buffers
+Message-ID: <Z_OAAthpLmmyKsXM@infradead.org>
+References: <20250402112410.2086892-1-dwmw2@infradead.org>
+ <20250402112410.2086892-2-dwmw2@infradead.org>
+ <Z-43svGzwoUQaYvg@infradead.org>
+ <148a3c8ee53af585b42ec025c2c7821ad852c66c.camel@infradead.org>
+ <Z-46TDmspmX0BJ2H@infradead.org>
+ <05abb68286dd4bc17b243130d7982a334503095b.camel@infradead.org>
+ <Z-99snVF5ESyJDDs@infradead.org>
+ <fb7ea3ee5bf970fa36b012e16750f533b72903a0.camel@infradead.org>
+ <Z--W_JagTSyhYqzk@infradead.org>
+ <3251F79D-4838-4C89-80BF-6EB19076833A@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174401113139.31282.18030222633323019445.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3251F79D-4838-4C89-80BF-6EB19076833A@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-The following commit has been merged into the irq/urgent branch of tip:
+On Fri, Apr 04, 2025 at 10:39:35AM +0100, David Woodhouse wrote:
+> >> So "for the emulated devices, just use a device model that doesn't do
+> >> arbitrary DMA to system memory" is a nice simple answer, and keeps the
+> >> guest support restricted to its *own* standalone driver.
+> >
+> >It's also one that completely breaks the abstraction. 
+> 
+> Hm? Having a device that simply doesn't *do* any DMA surely doesn't break
+> any system DMA / IOMMU abstractions because it's no longer even relevant
+> to them, which is kind of the point.
+> 
+> Which abstraction did you mean?
 
-Commit-ID:     75f8c87555e6ddeff2c49bd47460a71a940edc48
-Gitweb:        https://git.kernel.org/tip/75f8c87555e6ddeff2c49bd47460a71a940edc48
-Author:        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-AuthorDate:    Thu, 06 Mar 2025 09:45:52 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 07 Apr 2025 09:23:55 +02:00
+Implementing a DMA less device is fine.  Implementing a DMA less virtual
+device to work around the lack of CoCo shared bounce buffers in the
+system is.
 
-irqchip/davinci: Remove leftover header
+> 
+> 
+> > I still don't
+> >understand what the problem is with having the paravirtualized devices
+> >on a different part of the virtual PCIe topology so that the stage2
+> >IOMMU isn't used for them, but instead just the direct mapping or a
+> >stub viommu that blocks all access.
+> 
+> It can't have a direct mapping because the VMM can't access guest
+> memory. It has to be blocked, which is fine.
 
-Commit fa8dede4d0a0 ("irqchip: remove davinci aintc driver") removed the
-davinci aintc driver but left behind the associated header. Remove it
-now.
+I only mentioned direct mapping in not having an IOMMU.  I fully expect
+it not to work.
 
-Fixes: fa8dede4d0a0 ("irqchip: remove davinci aintc driver")
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Link: https://lore.kernel.org/all/20250306084552.15894-1-brgl@bgdev.pl
+> But that's only part of the picture — then how do you actually get data
+> in/out of the device?
+> 
+> By having on-device memory and not attempting DMA to system memory,
+> perhaps...? :)
 
----
- include/linux/irqchip/irq-davinci-aintc.h | 27 +----------------------
- 1 file changed, 27 deletions(-)
- delete mode 100644 include/linux/irqchip/irq-davinci-aintc.h
+By implementing the discovery of a shared pool in host memory as
+discussed in another branch of this thread?
 
-diff --git a/include/linux/irqchip/irq-davinci-aintc.h b/include/linux/irqchip/irq-davinci-aintc.h
-deleted file mode 100644
-index ea4e087..0000000
---- a/include/linux/irqchip/irq-davinci-aintc.h
-+++ /dev/null
-@@ -1,27 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-or-later */
--/*
-- * Copyright (C) 2019 Texas Instruments
-- */
--
--#ifndef _LINUX_IRQ_DAVINCI_AINTC_
--#define _LINUX_IRQ_DAVINCI_AINTC_
--
--#include <linux/ioport.h>
--
--/**
-- * struct davinci_aintc_config - configuration data for davinci-aintc driver.
-- *
-- * @reg: register range to map
-- * @num_irqs: number of HW interrupts supported by the controller
-- * @prios: an array of size num_irqs containing priority settings for
-- *         each interrupt
-- */
--struct davinci_aintc_config {
--	struct resource reg;
--	unsigned int num_irqs;
--	u8 *prios;
--};
--
--void davinci_aintc_init(const struct davinci_aintc_config *config);
--
--#endif /* _LINUX_IRQ_DAVINCI_AINTC_ */
+> >describe this limitation, which is much better than hacking around it
+> >using an odd device model.
+> 
+> It still has the problem that existing drivers in all operating systems
+> produced before 2030 will see the device and try to use it as-is, with
+> no comprehension of this new thing.
+
+Given how much enablement the various CoCo schemes need it won't work
+anyway.
+
+Btw, you mail formatting in the last days went completely crazy.
 
