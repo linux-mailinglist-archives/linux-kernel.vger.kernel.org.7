@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-591164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97AACA7DBF8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:14:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1065A7DBFF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33F1716FC40
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:14:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 494BA3B3462
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66AAF23C8A1;
-	Mon,  7 Apr 2025 11:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A710B23E330;
+	Mon,  7 Apr 2025 11:13:38 +0000 (UTC)
 Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAAB523BD18
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 11:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CC823E25F
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 11:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744024414; cv=none; b=DXGY1vo6P6tR0FEpycbGAk/jlgixtcQAZt5dFmvdBchnpTHlEP5U7Sg/Yq6UcS87gZSzama2R9aHBqdupToUfb8wMbtuYy/XPYkghbDrGuW3rtNQLGzGBjiXGZfYlkGrTm8vpdxKgOQ5FWgXWi+ds2rVosjmCwPMSXLoX8uPGqE=
+	t=1744024418; cv=none; b=HYcgZfEoB79CV4Hfeaa0CSecDns2mSZIuNeQC5z+rndK3hUaqum0H7L9svbIx8hlR7qtouPwZrz3g9437hm6hd5cf6H1umhnuYQgoiwuwJxH37kCrmFz/7lICycXO4OIu6QgXM0/bXE7qsyFto9ANXcAPML94N6hm96HQFEt4Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744024414; c=relaxed/simple;
-	bh=vpop9K5aY7aPnZzRjaWQEaDIOUvcef1dbOk4SQq3ey8=;
+	s=arc-20240116; t=1744024418; c=relaxed/simple;
+	bh=Tpg8PEgvSnro+K2cdpYhdiH19YVGDpcGdLMRJnHUBkQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rM3gnRD7cDPj9hsPSnuEM3cx9bEBUushxTUg7c4b0R8jCZHfZzm5RVEKKRRB7YgX3jiA4h7hHYAfnn3uHxliv/wt3d4s1mbZwQekJk3fTmR80OKXAhlpHOeBb4VHrg8Al7PtipaooG45XIU5EqZdUM7CMaLYBn5o83UvOL1FYiE=
+	 MIME-Version:Content-Type; b=LSVLdbuB/wFgEaJ+os1rPUhC+023GWiCA2OUrSLIu33y12zraqmPCrlagfrwyC9rSIKvGuUFPaDnM2UFTnRJM4ZzDAJjr0TT9RHHkINYIIjGIguqKPEuwEjBSO2GfoJJ9tfTrkFCjXpcv2IWBDQLitMbwnu4WAfQ3qsSXrPOy/U=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
 Received: from Atcsqr.andestech.com (localhost [127.0.0.2] (may be forged))
-	by Atcsqr.andestech.com with ESMTP id 537AoFmU002144
-	for <linux-kernel@vger.kernel.org>; Mon, 7 Apr 2025 18:50:15 +0800 (+08)
+	by Atcsqr.andestech.com with ESMTP id 537AoKFx002145
+	for <linux-kernel@vger.kernel.org>; Mon, 7 Apr 2025 18:50:20 +0800 (+08)
 	(envelope-from ben717@andestech.com)
 Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
-	by Atcsqr.andestech.com with ESMTPS id 537Anlbj001623
+	by Atcsqr.andestech.com with ESMTPS id 537AnmL2001639
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 7 Apr 2025 18:49:47 +0800 (+08)
+	Mon, 7 Apr 2025 18:49:48 +0800 (+08)
 	(envelope-from ben717@andestech.com)
 Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS31.andestech.com
  (10.0.1.89) with Microsoft SMTP Server id 14.3.498.0; Mon, 7 Apr 2025
- 18:49:46 +0800
+ 18:49:48 +0800
 From: Ben Zong-You Xie <ben717@andestech.com>
 To: <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
@@ -49,9 +49,9 @@ CC: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
         <daniel.lezcano@linaro.org>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         <tim609@andestech.com>, "Ben
  Zong-You Xie" <ben717@andestech.com>
-Subject: [PATCH 5/9] dt-bindings: timer: add Andes machine timer
-Date: Mon, 7 Apr 2025 18:49:33 +0800
-Message-ID: <20250407104937.315783-6-ben717@andestech.com>
+Subject: [PATCH 6/9] dt-bindings: cache: ax45mp-cache: allow variable cache-sets for Andes L2 cache
+Date: Mon, 7 Apr 2025 18:49:34 +0800
+Message-ID: <20250407104937.315783-7-ben717@andestech.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250407104937.315783-1-ben717@andestech.com>
 References: <20250407104937.315783-1-ben717@andestech.com>
@@ -66,82 +66,31 @@ Content-Type: text/plain
 X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
 X-DNSRBL: 
 X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 537AoFmU002144
+X-MAIL:Atcsqr.andestech.com 537AoKFx002145
 
-Add the DT binding documentation for Andes machine timer.
-
-The RISC-V architecture defines a machine timer that provides a real-time
-counter and generates timer interrupts. Andes machiner timer (PLMT0) is
-the implementation of the machine timer, and it contains memory-mapped
-registers (mtime and mtimecmp). This device supports up to 32 cores.
+The current device tree binding for the Andes AX45MP L2 cache enforces
+a fixed number of cache-sets (1024). However, there are 2048 cache-sets in
+the QiLai SoC. This change allows both 1024 and 2048 as valid values for
+"cache-sets".
 
 Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
 ---
- .../bindings/timer/andestech,plmt0.yaml       | 42 +++++++++++++++++++
- MAINTAINERS                                   |  1 +
- 2 files changed, 43 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/andestech,plmt0.yaml
+ .../devicetree/bindings/cache/andestech,ax45mp-cache.yaml       | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/timer/andestech,plmt0.yaml b/Documentation/devicetree/bindings/timer/andestech,plmt0.yaml
-new file mode 100644
-index 000000000000..e0ea3ce86b76
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/andestech,plmt0.yaml
-@@ -0,0 +1,42 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/timer/andestech,plmt0.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Andes machine timer
-+
-+maintainers:
-+  - Ben Zong-You Xie <ben717@andestech.com>
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - andestech,qilai-aclint-mtimer
-+      - const: andestech,plmt0
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts-extended:
-+    minItems: 1
-+    maxItems: 32
-+
-+additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts-extended
-+
-+examples:
-+  - |
-+    interrupt-controller@100000 {
-+      compatible = "andestech,qilai-aclint-mtimer", "andestech,plmt0";
-+      reg = <0x100000 0x100000>;
-+      interrupts-extended = <&cpu0intc 7>,
-+                            <&cpu1intc 7>,
-+                            <&cpu2intc 7>,
-+                            <&cpu3intc 7>;
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 645d7137cb07..d1e1b98dfe7b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20730,6 +20730,7 @@ M:	Ben Zong-You Xie <ben717@andestech.com>
- S:	Maintained
- F:	Documentation/devicetree/bindings/interrupt-controller/andestech,plicsw.yaml
- F:	Documentation/devicetree/bindings/riscv/andes.yaml
-+F:	Documentation/devicetree/bindings/timer/andestech,plmt0.yaml
+diff --git a/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml b/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
+index d2cbe49f4e15..798aa71dc4ec 100644
+--- a/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
++++ b/Documentation/devicetree/bindings/cache/andestech,ax45mp-cache.yaml
+@@ -44,7 +44,7 @@ properties:
+     const: 2
  
- RISC-V ARCHITECTURE
- M:	Paul Walmsley <paul.walmsley@sifive.com>
+   cache-sets:
+-    const: 1024
++    enum: [1024, 2048]
+ 
+   cache-size:
+     enum: [131072, 262144, 524288, 1048576, 2097152]
 -- 
 2.34.1
 
