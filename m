@@ -1,121 +1,99 @@
-Return-Path: <linux-kernel+bounces-591458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25154A7E00D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:53:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AF46A7E01D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 173AD16ACFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:49:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C24E1895B32
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679D21ADC83;
-	Mon,  7 Apr 2025 13:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jYEsCBdc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADB01B042F;
+	Mon,  7 Apr 2025 13:48:57 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4566A18DF93;
-	Mon,  7 Apr 2025 13:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A8A19D8A0;
+	Mon,  7 Apr 2025 13:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744033724; cv=none; b=FG0cBMRLBoQ7PRFh8+kI6trNDW4F351UQkQHIfcbjR6ZgwQ38sRD1d2d2MWy3jXWAjXQx0uIxOKMkE03stjMRpqBeDEwzRYSN/IuQ2lkleDYJaAZHC0CYoh9xAp0RoUMlKw0GRJpg+Mruc4c8FPRoqdZlr+Z3j6yJ9TSZSHfMlE=
+	t=1744033737; cv=none; b=K/5QlTL5i7409cCVSHSKf4DsaP6iZsyie5pYwst5mp3V61mfOwa3Yi6zTIRFR01r54ed60HPK8BpBmlewSvkUBrZjdohRBKgSUZjruMOjFXWI3vKdOyeDvo1vHAIElSSynIWdfOrX56MJHczSqj85Bo0GBFpg2xJ9YkVBdaULcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744033724; c=relaxed/simple;
-	bh=UD/hCz5Aq78yv+U4/JzzUE92OQB20imcFEjtRY5f7hI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s9c3G6YbhHBpbvfCuhXs0KrWARsYGHrl5jFewdfGmbUUPpTLLEXwtfyBLJ3ko/JcGzncAwYGszy4HCwQX4ok5dT4vFSZ+nSPJRmjjHR6/Hsk9pteC5RSU2bZUzQfr/MZD9Lv+F0JS8bOCJook78FqiRLMH14DUQKuVfm1BdHIRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jYEsCBdc; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744033723; x=1775569723;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UD/hCz5Aq78yv+U4/JzzUE92OQB20imcFEjtRY5f7hI=;
-  b=jYEsCBdcB4MDBshwC2YbOaw7i+H05l2tTZKOBddopDYsrOD9bgd/q9Lp
-   H4xSu6lnNYsJsBfasyUhfSZZ0sN3X3R2UkOuND8hNe18nNYSR4o/N+jyd
-   AmJhRt/WjLJm/KNGFYDNPlmHUiXx/oMSOG0CuWSZ6TneeoCsp/gLn8j2e
-   g2ZHbpwb4BV8dblHK8OcNqi7f1IDArfop8jGP26wAM+x3M7NAXe455qJ4
-   CyuHEBdNEqt5kE0TcWDx4AchoESMf66FP8c3emFwGc5U1TlesBbGHnm7K
-   JMRHDhUv1dWlTMP2svj2ULSjV3bh39BuXyPYnwXqfQhY1qmUfL+NQK6sS
-   A==;
-X-CSE-ConnectionGUID: dckJsO7ESHuByQGg7JRV0g==
-X-CSE-MsgGUID: zXCWXc92Qj2Nn6JZIcNsQg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="56083588"
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="56083588"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 06:48:42 -0700
-X-CSE-ConnectionGUID: lXc2ks33Q6ex1UOCt0WGhw==
-X-CSE-MsgGUID: OhldmVnDQSKRICz6nzB5yA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="127941572"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 06:48:41 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1u1mq5-0000000A5Jr-3y1Z;
-	Mon, 07 Apr 2025 16:48:37 +0300
-Date: Mon, 7 Apr 2025 16:48:37 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: kernel test robot <lkp@intel.com>
-Cc: Wolfram Sang <wsa-dev@sang-engineering.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Subject: Re: [PATCH v2 2/6] i2c: core: Unify the firmware node type check
-Message-ID: <Z_PXtXIUi4VRjICJ@smile.fi.intel.com>
-References: <20250407095852.215809-3-andriy.shevchenko@linux.intel.com>
- <202504072041.Bv9mOk4o-lkp@intel.com>
+	s=arc-20240116; t=1744033737; c=relaxed/simple;
+	bh=DFeb1yPJZH9VmNhTkFCD3qVmWE+EwOxODBllxBF1Kpc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kwmy6tlHllHTNrwgLu3+/dJ9I1DJIeUXMeGRd8pvH3Emlnbx6Gudw1Rl4XKaXhE4AhawC08yChiNglr311dz5hoeRbqzIBZa7h9Q/QGCiVP3iVp6vbJ+aALFo/h7s8Ac9lUUP8LarJSH1OLJiVI2kRNPqDNKW/pMjM+rLj/IIA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4ZWVr30gC5z1R7nl;
+	Mon,  7 Apr 2025 21:46:59 +0800 (CST)
+Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id C52E01A0188;
+	Mon,  7 Apr 2025 21:48:51 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by kwepemg500010.china.huawei.com
+ (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 7 Apr
+ 2025 21:48:50 +0800
+From: Wang Zhaolong <wangzhaolong1@huawei.com>
+To: <trondmy@kernel.org>, <anna@kernel.org>, <dhowells@redhat.com>,
+	<viro@zeniv.linux.org.uk>
+CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<wangzhaolong1@huawei.com>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>
+Subject: [PATCH] NFS: Fix shift-out-of-bounds UBSAN warning with negative retrans
+Date: Mon, 7 Apr 2025 21:48:50 +0800
+Message-ID: <20250407134850.2484368-1-wangzhaolong1@huawei.com>
+X-Mailer: git-send-email 2.34.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202504072041.Bv9mOk4o-lkp@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemg500010.china.huawei.com (7.202.181.71)
 
-On Mon, Apr 07, 2025 at 08:45:14PM +0800, kernel test robot wrote:
-> Hi Andy,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on wsa/i2c/for-next]
-> [also build test ERROR on linus/master v6.15-rc1 next-20250407]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/i2c-core-Drop-duplicate-check-before-calling-OF-APIs/20250407-180528
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-next
-> patch link:    https://lore.kernel.org/r/20250407095852.215809-3-andriy.shevchenko%40linux.intel.com
-> patch subject: [PATCH v2 2/6] i2c: core: Unify the firmware node type check
-> config: arc-randconfig-002-20250407 (https://download.01.org/0day-ci/archive/20250407/202504072041.Bv9mOk4o-lkp@intel.com/config)
-> compiler: arc-linux-gcc (GCC) 14.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250407/202504072041.Bv9mOk4o-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202504072041.Bv9mOk4o-lkp@intel.com/
-> 
+The previous commit c09f11ef3595 ("NFS: fs_context: validate UDP retrans
+to prevent shift out-of-bounds") added a check to prevent shift values
+that are too large, but it fails to account for negative retrans values.
+When data->retrans is negative, the condition `data->retrans >= 64` is
+skipped, allowing negative values to be copied to context->retrans,
+which is unsigned. This results in a large positive number that can
+trigger the original UBSAN issue[1].
 
-> All error/warnings (new ones prefixed by >>):
+This patch modifies the check to explicitly handle both negative values
+and values that are too large.
 
-Ah, I should compile-test the slave part as well...
-Will be fixed in v3. Since v3 is required, Tomi, I'm going to add the media
-patch to its end.
+[1] https://bugzilla.kernel.org/show_bug.cgi?id=219988
+Fixes: 9954bf92c0cd ("NFS: Move mount parameterisation bits into their own file")
+Signed-off-by: Wang Zhaolong <wangzhaolong1@huawei.com>
+---
+ fs/nfs/fs_context.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
+index 13f71ca8c974..0703ac0349cb 100644
+--- a/fs/nfs/fs_context.c
++++ b/fs/nfs/fs_context.c
+@@ -1161,11 +1161,12 @@ static int nfs23_parse_monolithic(struct fs_context *fc,
+ 		 * for proto == XPRT_TRANSPORT_UDP, which is what uses
+ 		 * to_exponential, implying shift: limit the shift value
+ 		 * to BITS_PER_LONG (majortimeo is unsigned long)
+ 		 */
+ 		if (!(data->flags & NFS_MOUNT_TCP)) /* this will be UDP */
+-			if (data->retrans >= 64) /* shift value is too large */
++			/* Reject invalid retrans values (negative or too large) */
++			if (data->retrans < 0 || data->retrans >= 64)
+ 				goto out_invalid_data;
+ 
+ 		/*
+ 		 * Translate to nfs_fs_context, which nfs_fill_super
+ 		 * can deal with.
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.3
 
 
