@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-592653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44D3A7EFBC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 23:22:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C7FFA7EFC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 23:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDCF418954D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:22:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 640EA3AD4AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A632236E1;
-	Mon,  7 Apr 2025 21:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55201224236;
+	Mon,  7 Apr 2025 21:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NPkWt9uM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EQ3hUieP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095051A08BC
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 21:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3932821B192
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 21:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744060930; cv=none; b=YODA9STjUh/L1YqTIGpSGGJR/ujmZRKoZ9/XJtwH1hNdP1XfbfiS7+Q+1MamSgeR2G22ov6S9ZmvD7qBk3hSI6KJhXNarF+5Rz5xo/kbbq33kTI/JpzRY/WZLxhRXAAVTiSH+nQNpCJ43UpBwjTd1ni9//7KJ4T0sQpvdaO9vek=
+	t=1744060931; cv=none; b=aoYnuKv3uzQ3YHUR4eR04ZUPXgtAPIC34U0WluHi25DmEE/hsyA7T/CdkPodgQ5qzMeqGjI34xB13sLaxg+c0SNKVCQHa43rDsgjxeeSgtc187k61jT31rURjxMg1DzTkR4sbKtRGvliG7UHULOF9RnV2tczHzrFHz4aLhkroe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744060930; c=relaxed/simple;
-	bh=YH2klgv1+YNmSwKYe294v1zMFm+mJ3i/FYBHzY7qVpY=;
+	s=arc-20240116; t=1744060931; c=relaxed/simple;
+	bh=EfF4dAbUv6xiHbKdAZn9zu83Y5I8dMHD1u4TY/zaCGM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mSPW0NfiSOuVYWWGxz8bxOkFBfKJzJZ619G3bhAOO7qw1tABHp9ZvHG+4+S6eDSxRcA73QsXexPGIyi2qIpgQuLz7neSF/tQdQdyzfIpyC1SzU34GXqGQmAU6FSXLNF9zN5y3Ji5216Xzc5qZc0Lb+lFotpTh5NSETy7/nr20dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NPkWt9uM; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version:Content-Type; b=EgYMAvp5uPvTrbgQK5IKimlAcgGvOLRnRctqp8POlVknAit2LOq/4R1X4hCNroL+Ktx3tb3+8qnGDnvIL/5yK5/+CzbdCxv1/W77M5R/VwwI1kWMXBxO7NdJ9i4mseuBX2ZlTBTjJmmhKhyGWfZdQ+HsQnIX+WOCfsZLq8HMbUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EQ3hUieP; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744060928;
+	s=mimecast20190719; t=1744060929;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GvQBB32oIWPf4vbhux4hr6gO5yAT1ux/syBLJoggcGc=;
-	b=NPkWt9uMVbiM8MqCAwVTPbBuWlPtPKQISp7jmYqX9JT9lsWFyquAENOrPonuM/lKIUcL0I
-	KhKpiyOSoox5N9rGOF/JMXa9EwcFgNfdOaf0rNETNJMl1HhtvPhVSmyt15/eeSz8Chm7OP
-	FSFgOMZJAnNKnVEPRh8lJTAJSJNOHmw=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+	bh=YHK0+caqHkWkmDYmUREBSe8ATHgicW3LTgCek9DEivA=;
+	b=EQ3hUiePWcLV2UqkdB2GAoRrYVzYAahrOw6KmIzzCGXcNju2ofOL1Nw82r4swoQQQWgP1c
+	lSBbhd0xmxFtgJwEE4h/ANpaMs+IQttoZq+2ld/bC/JlbSQkep/DzlnGOkGoXqjYED0czW
+	P8Hq7ZlXdlMCiuO9yVvL3IuJfK4ATOQ=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-606-cE3b0L5DOp61xUvvCScDnA-1; Mon,
- 07 Apr 2025 17:22:06 -0400
-X-MC-Unique: cE3b0L5DOp61xUvvCScDnA-1
-X-Mimecast-MFC-AGG-ID: cE3b0L5DOp61xUvvCScDnA_1744060925
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-629-R2lktt8sP8uNOuFnpPEyLg-1; Mon,
+ 07 Apr 2025 17:22:08 -0400
+X-MC-Unique: R2lktt8sP8uNOuFnpPEyLg-1
+X-Mimecast-MFC-AGG-ID: R2lktt8sP8uNOuFnpPEyLg_1744060927
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 03B78180899B;
-	Mon,  7 Apr 2025 21:22:05 +0000 (UTC)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B685819560BB;
+	Mon,  7 Apr 2025 21:22:06 +0000 (UTC)
 Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.90.98])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B23C8180B487;
-	Mon,  7 Apr 2025 21:22:03 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4B040180A803;
+	Mon,  7 Apr 2025 21:22:05 +0000 (UTC)
 From: Waiman Long <longman@redhat.com>
 To: Tejun Heo <tj@kernel.org>,
 	Johannes Weiner <hannes@cmpxchg.org>,
@@ -63,9 +63,9 @@ To: Tejun Heo <tj@kernel.org>,
 Cc: cgroups@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Waiman Long <longman@redhat.com>
-Subject: [PATCH 1/3] cgroup/cpuset: Always use cpu_active_mask
-Date: Mon,  7 Apr 2025 17:21:03 -0400
-Message-ID: <20250407212127.1534285-2-longman@redhat.com>
+Subject: [PATCH 2/3] cgroup/cpuset: Fix obsolete comment in cpuset_css_offline()
+Date: Mon,  7 Apr 2025 17:21:04 -0400
+Message-ID: <20250407212127.1534285-3-longman@redhat.com>
 In-Reply-To: <20250407212127.1534285-1-longman@redhat.com>
 References: <20250407212127.1534285-1-longman@redhat.com>
 Precedence: bulk
@@ -74,129 +74,48 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-The current cpuset code uses both cpu_active_mask and cpu_online_mask
-and it can be confusing which one should be used if we need to update
-the code.
+Move the partition disablement comment from cpuset_css_offline()
+to cpuset_css_killed() and reword it to remove the remnant of
+sched.partition.
 
-The top_cpuset is always synchronized to cpu_active_mask and we should
-avoid using cpu_online_mask as much as possible. An active CPU is always
-an online CPU, but not vice versa. cpu_active_mask and cpu_online_mask
-can differ during hotplug operations.
-
-A CPU is marked active at the last stage of CPU bringup (CPUHP_AP_ACTIVE).
-It is also the stage where cpuset hotplug code will be called to update
-the sched domains so that the scheduler can move a normal task to a
-newly active CPU or remove tasks away from a newly inactivated CPU. The
-online bit is set much earlier in the CPU bringup process and cleared
-much later in CPU teardown.
-
-If cpu_online_mask is used while a hotunplug operation is happening in
-parallel, we may leave an offline CPU in cpu_allowed or have a higher
-chance of leaving an offline CPU in some other masks.  Avoid this
-problem by always using cpu_active_mask in the cpuset code and leave
-a comment as to why the use of cpu_online_mask is discouraged.
-
+Suggested-by: Michal Koutný <mkoutny@suse.com>
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- kernel/cgroup/cpuset.c | 32 +++++++++++++++++++++++---------
- 1 file changed, 23 insertions(+), 9 deletions(-)
+ kernel/cgroup/cpuset.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 306b60430091..583f20942802 100644
+index 583f20942802..1497a2a4b2a3 100644
 --- a/kernel/cgroup/cpuset.c
 +++ b/kernel/cgroup/cpuset.c
-@@ -192,6 +192,20 @@ static inline void notify_partition_change(struct cpuset *cs, int old_prs)
- 		WRITE_ONCE(cs->prs_err, PERR_NONE);
+@@ -3538,11 +3538,7 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
+  * will call rebuild_sched_domains_locked(). That is not needed
+  * in the default hierarchy where only changes in partition
+  * will cause repartitioning.
+- *
+- * If the cpuset has the 'sched.partition' flag enabled, simulate
+- * turning 'sched.partition" off.
+  */
+-
+ static void cpuset_css_offline(struct cgroup_subsys_state *css)
+ {
+ 	struct cpuset *cs = css_cs(css);
+@@ -3560,6 +3556,11 @@ static void cpuset_css_offline(struct cgroup_subsys_state *css)
+ 	cpus_read_unlock();
  }
  
 +/*
-+ * The top_cpuset is always synchronized to cpu_active_mask and we should avoid
-+ * using cpu_online_mask as much as possible. An active CPU is always an online
-+ * CPU, but not vice versa. cpu_active_mask and cpu_online_mask can differ
-+ * during hotplug operations. A CPU is marked active at the last stage of CPU
-+ * bringup (CPUHP_AP_ACTIVE). It is also the stage where cpuset hotplug code
-+ * will be called to update the sched domains so that the scheduler can move
-+ * a normal task to a newly active CPU or remove tasks away from a newly
-+ * inactivated CPU. The online bit is set much earlier in the CPU bringup
-+ * process and cleared much later in CPU teardown.
-+ *
-+ * If cpu_online_mask is used while a hotunplug operation is happening in
-+ * parallel, we may leave an offline CPU in cpu_allowed or some other masks.
++ * If a dying cpuset has the 'cpus.partition' enabled, turn it off by
++ * changing it back to member to free its exclusive CPUs back to the pool to
++ * be used by other online cpusets.
 + */
- static struct cpuset top_cpuset = {
- 	.flags = BIT(CS_ONLINE) | BIT(CS_CPU_EXCLUSIVE) |
- 		 BIT(CS_MEM_EXCLUSIVE) | BIT(CS_SCHED_LOAD_BALANCE),
-@@ -355,18 +369,18 @@ static inline bool partition_is_populated(struct cpuset *cs,
-  * appropriate cpus.
-  *
-  * One way or another, we guarantee to return some non-empty subset
-- * of cpu_online_mask.
-+ * of cpu_active_mask.
-  *
-  * Call with callback_lock or cpuset_mutex held.
-  */
--static void guarantee_online_cpus(struct task_struct *tsk,
-+static void guarantee_active_cpus(struct task_struct *tsk,
- 				  struct cpumask *pmask)
+ static void cpuset_css_killed(struct cgroup_subsys_state *css)
  {
- 	const struct cpumask *possible_mask = task_cpu_possible_mask(tsk);
- 	struct cpuset *cs;
- 
--	if (WARN_ON(!cpumask_and(pmask, possible_mask, cpu_online_mask)))
--		cpumask_copy(pmask, cpu_online_mask);
-+	if (WARN_ON(!cpumask_and(pmask, possible_mask, cpu_active_mask)))
-+		cpumask_copy(pmask, cpu_active_mask);
- 
- 	rcu_read_lock();
- 	cs = task_cs(tsk);
-@@ -2263,7 +2277,7 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
- 	bool force = false;
- 	int old_prs = cs->partition_root_state;
- 
--	/* top_cpuset.cpus_allowed tracks cpu_online_mask; it's read-only */
-+	/* top_cpuset.cpus_allowed tracks cpu_active_mask; it's read-only */
- 	if (cs == &top_cpuset)
- 		return -EACCES;
- 
-@@ -3082,7 +3096,7 @@ static void cpuset_attach_task(struct cpuset *cs, struct task_struct *task)
- 	lockdep_assert_held(&cpuset_mutex);
- 
- 	if (cs != &top_cpuset)
--		guarantee_online_cpus(task, cpus_attach);
-+		guarantee_active_cpus(task, cpus_attach);
- 	else
- 		cpumask_andnot(cpus_attach, task_cpu_possible_mask(task),
- 			       subpartitions_cpus);
-@@ -4026,7 +4040,7 @@ void __init cpuset_init_smp(void)
-  *
-  * Description: Returns the cpumask_var_t cpus_allowed of the cpuset
-  * attached to the specified @tsk.  Guaranteed to return some non-empty
-- * subset of cpu_online_mask, even if this means going outside the
-+ * subset of cpu_active_mask, even if this means going outside the
-  * tasks cpuset, except when the task is in the top cpuset.
-  **/
- 
-@@ -4040,7 +4054,7 @@ void cpuset_cpus_allowed(struct task_struct *tsk, struct cpumask *pmask)
- 
- 	cs = task_cs(tsk);
- 	if (cs != &top_cpuset)
--		guarantee_online_cpus(tsk, pmask);
-+		guarantee_active_cpus(tsk, pmask);
- 	/*
- 	 * Tasks in the top cpuset won't get update to their cpumasks
- 	 * when a hotplug online/offline event happens. So we include all
-@@ -4054,7 +4068,7 @@ void cpuset_cpus_allowed(struct task_struct *tsk, struct cpumask *pmask)
- 		 * allowable online cpu left, we fall back to all possible cpus.
- 		 */
- 		cpumask_andnot(pmask, possible_mask, subpartitions_cpus);
--		if (!cpumask_intersects(pmask, cpu_online_mask))
-+		if (!cpumask_intersects(pmask, cpu_active_mask))
- 			cpumask_copy(pmask, possible_mask);
- 	}
- 
+ 	struct cpuset *cs = css_cs(css);
 -- 
 2.48.1
 
