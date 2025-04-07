@@ -1,127 +1,158 @@
-Return-Path: <linux-kernel+bounces-592641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D4DFA7EFA1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 23:12:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A39B3A7EF7B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54CC017C272
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:12:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B094618933A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD30125522F;
-	Mon,  7 Apr 2025 21:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020F7224252;
+	Mon,  7 Apr 2025 20:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jv74tbaW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="JDhgumvW"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2012550CE;
-	Mon,  7 Apr 2025 21:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D30224240
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 20:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744060241; cv=none; b=VSX5s+LHk7p95W5H1hZAxVHGvZaUYejdehCV9xfzu1v7Xvn5sTdEe4pfz7e2onEpfqJf1DXISLnouvvEaEHfVcwSdZq7/LnK72vATSbz+gEZtc6W6Go5XMxl5KQpW9/RdpEdg6j73tFzPy+0jFF4AUPCB4aOgPMiTudy8tbQ9I4=
+	t=1744059467; cv=none; b=kX09exg1HDLqbchRxzRJH/aH4lqBhl8+GMAlD/K9ZW0MuhzmlC1UsB0wuHmpvyxuHdZhV1kcSFrakVStkmsrVVk3QYvOQ5E5aMrbRRd7I/1Kffa5BscH+aJe0TKcRzehiPrSYkEuIrgXBEazj6k6v3DlkZBL0vreruoYIcJdYIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744060241; c=relaxed/simple;
-	bh=brpFVo8UvhI+dLDZkVYf5Q8wXfm0uRTbp38j5NZgP3E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sgY2q3rbb3o8nWuikuVh+TendZDZK9Wxmlm7ynCQRJUIUkhkwGOo56Jpr57zfDMxf7EpgHSp0rYKaWC2/oA2+HLeP8+EPzMnjnIDW/RwzBKcKL+nnK3enWInK6F52sho7amrMo/saGKzuk8FCIfZbcM5PXv5Y9QNVpp1TyBo7s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jv74tbaW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE84FC4CEED;
-	Mon,  7 Apr 2025 21:10:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744060240;
-	bh=brpFVo8UvhI+dLDZkVYf5Q8wXfm0uRTbp38j5NZgP3E=;
-	h=From:Date:Subject:To:Cc:From;
-	b=Jv74tbaW1z9GlbmKwjUV0u8B8UcWwmKx90JyTHWha8Undg21FQgQZlUqC1PnWgard
-	 hvgv5MDmOjCK1YgSj/aDbgUDsrCyMeKJsyEWzIjThaIvlBBSk95aqSvKyFWJbzzp55
-	 X6Rx2IobOHpM1/0+dkyD4Lh1t/MitCn/0iQKF6njpsulHqHvQlOsVM6g1TII7Vc4kV
-	 +pPDsP8mfDZlkVIiMQT4XYT8CsgVxKb1lhhav++rwT2/07+tDMcJheqSPT7wEdweP+
-	 GGRBK1MGaW5vTMof7VQwwwAvsbaXStldI25Td/rH+tgdFIYiSnISs7c/zB41Bvx27X
-	 IIBlxWvGK4/rw==
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 07 Apr 2025 21:57:32 +0100
-Subject: [PATCH] gcc-plugins: Disable GCC plugins for compile test builds
+	s=arc-20240116; t=1744059467; c=relaxed/simple;
+	bh=79PDk3ouoTDCbg9EC4eLer8PC7RI3PbFhi2CX7eUjt4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nyjAq68Bh8bPTtcnv5vVPNRdDqSnayrXrdionqt014pqx9acORptEQkUUCgZLwtHiwzUtpeLEFkqZDDo3wUpydq18c4QJtnqSw0E/uxTWnz9E0ugu2sJdJcV+WHY6TkKwY79p3HnrVGRUdFQZ1VZkdvIMbyAO3oJN2cB4czar9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=JDhgumvW; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-72bd78e695dso1388446a34.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 13:57:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1744059465; x=1744664265; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1P1bB50EoqnLQLyqYMszDdM6AI6/6Y+zrQz9fxoUI6k=;
+        b=JDhgumvWeWhmg6TVNh1dfBEbL0jCaisNolTLMxvRav5LetDhTw1TnaFLXWZ+d/aQx3
+         3NZmXeJtcaNTiSf40zD5F4bG0dLjd4gJN0gezxGL5Yu3xs7JRfZxZ/0peaLQ8zhTB32G
+         4VgNNb12kl9meW0WTMgo4cmNUtt0/HElbwrAM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744059465; x=1744664265;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1P1bB50EoqnLQLyqYMszDdM6AI6/6Y+zrQz9fxoUI6k=;
+        b=pt5nbQEyOEgePFJ4/6XfjDPVA8zOpYs/aLu0DqpyYpjNTPIjXNDPBX7SjhRqoSp9cA
+         QjF/E3umA+Eo58JrumgAZgTjHUdgVaG5eTjcFgcNSW+rJIifZq43wxyuni2vAGOEbcE1
+         YlBVM5IEgIvgkyfRGHzopA4DGZLupIB3Ry/qr74cw3LE0UAmDJlslQTTkChnCul/6VyY
+         hW2y5FDewbk6c89TwAPuwVs2ogwUWj0xDd9nz6KQZ4G63P/Nx4RC3TVHAfRAY7xVjCYy
+         Xt7my+UxhhSjCK6Ww1+n1zr6aX0nRAMP6Oo2HB6SG9zNtUEwjs/jW8cc3cncF1oOCaSR
+         9uIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVErvZCyM8+GoKTMsalcO3asWEzAZXIYp19BAWe+nyofLNKD2MjLl50AYgtUflkW/nGC8ZXjaPChfHUsZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZKZVD9THKpcBFoPbeGMCsNSWQZ/Rc1gzftI4fLH9xWupk8eAg
+	FBdSd10VdBAVnrBeXQjjwXF/Dm7pzqY5Sy6/aD4GGDr75edTJyjL+n4QyPgxMQ==
+X-Gm-Gg: ASbGncsSO8uQLMLlD8Y1T522svqhZMSppwsaIXXElCEtrs3AIdy2Q1sYRKR4cErrSwh
+	X0J7/LBOAY5sYKRbN+om6/GFVXvUeTjtZKjyHlAuIVBgDMowVa09lm7MBOKgS3aagfVxMqGkHGp
+	j3EWnuYXXnw03huBcjfIt1Rdm/cnLWLdTrT0YS55WD5Te+s39ObWY0bcv+g9MoEWKyOYANhYfJJ
+	/t5wfpdViS00zDYfIz6xYh/VNe3YiCiKER+YjP3w2NsbHupSFkodVRB4rdIWK4iy/QUZk2I9ZV5
+	7vsbyWF9aX1s5XR4gAEsbxZwYRpfYIok7IrUDAMDwYCA9WqjFpQB+loaLLdUb0BHW26OUV99ew0
+	MXemNSnq/hXAlSA==
+X-Google-Smtp-Source: AGHT+IEgB2cpBsVgFxIZDN4uHbzal3DgE5qQcSbB5Pp7Ye6e6rk2ZIUvtGVUOARB/OFjKfpS9l0J5g==
+X-Received: by 2002:a05:6830:4413:b0:72a:449e:2b6e with SMTP id 46e09a7af769-72e40d1f54dmr6733882a34.5.1744059464658;
+        Mon, 07 Apr 2025 13:57:44 -0700 (PDT)
+Received: from [10.69.70.230] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72e652545c1sm92973a34.51.2025.04.07.13.57.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Apr 2025 13:57:44 -0700 (PDT)
+Message-ID: <9088acd0-4650-4b10-88f9-6b6c0b1f9978@broadcom.com>
+Date: Mon, 7 Apr 2025 13:57:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org>
-X-B4-Tracking: v=1; b=H4sIADs89GcC/x3MSwqDMBAA0KvIrDswauunVyku8pnGwRAlg0UQ7
- 27o8m3eCcpZWOFdnZD5JyprKqgfFbjZpMAovhgaal70pB4Xu0v06EWNjYzBOdziHiQpDj3VxnQ
- 0OttCCbbMXzn++We6rhuXJoY4bAAAAA==
-X-Change-ID: 20250407-kbuild-disable-gcc-plugins-8701aa609cb3
-To: Linus Torvalds <torvalds@linux-foundation.org>, 
- Kees Cook <kees@kernel.org>, 
- =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
- =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-hardening@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2028; i=broonie@kernel.org;
- h=from:subject:message-id; bh=brpFVo8UvhI+dLDZkVYf5Q8wXfm0uRTbp38j5NZgP3E=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBn9D9NFa1CcYWHR9Jafm0V3+B0BSeBSppLOL80Eo13
- /5YKXmqJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ/Q/TQAKCRAk1otyXVSH0FVlB/
- 9bzbJ3wzNgGnwSOkcK0bI+lv9NfuUW1TYwntVoPd5trP2im1S0pkznBsxarhFp7KFhCigYv3oV1PK1
- skwMSW2P4lHUVETiN4CgpawF9G7gpGljTiyZd41ZR5Lq+5MUG4//lRJSPUNcY7Jd+V6iknh285jdYZ
- hsNMkwQYwq/7OamiB8djDkOKMXr/uBDEN/8+btNrvy7hWl8DLQl5RBUUPvqqaWp8zcf4nDamKNstce
- MXTcp6nPt0vF0HaY8D0vRaoaiEt6u6XL8UYFAnn8Wmtl129GdHzO3Geiy4NceIz1qK1lfVq/YEeKgX
- x29r3FWVa3t11pD0SjtdoU1TnksOE9
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: mailbox: Add support for bcm74110
+To: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: florian.fainelli@broadcom.com, conor+dt@kernel.org, krzk+dt@kernel.org,
+ robh@kernel.org, jassisinghbrar@gmail.com,
+ bcm-kernel-feedback-list@broadcom.com
+References: <20250404222058.396134-1-justin.chen@broadcom.com>
+ <20250404222058.396134-2-justin.chen@broadcom.com>
+ <b32aa644-6984-476b-abc0-a5416f551bba@kernel.org>
+Content-Language: en-US
+From: Justin Chen <justin.chen@broadcom.com>
+In-Reply-To: <b32aa644-6984-476b-abc0-a5416f551bba@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In current mainline x86_64 allmodconfig builds done with tuxmake GCC 13
-and GCC 14 toolchains (which are Debian ones packaged up into containers)
-generate ICEs in landlock:
 
-Event                            | Plugins
-PLUGIN_FINISH_TYPE               | randomize_layout_plugin
-PLUGIN_FINISH_DECL               | randomize_layout_plugin
-PLUGIN_ATTRIBUTES                | latent_entropy_plugin randomize_layout_plugin
-PLUGIN_START_UNIT                | latent_entropy_plugin stackleak_plugin
-PLUGIN_ALL_IPA_PASSES_START      | randomize_layout_plugin
-/build/stage/linux/security/landlock/fs.c: In function ‘hook_file_ioctl_common’:
-/build/stage/linux/security/landlock/fs.c:1745:61: internal compiler error: in c
-ount_type_elements, at expr.cc:7075
- 1745 |                         .u.op = &(struct lsm_ioctlop_audit) {
-      |                                                             ^
+On 4/6/25 5:27 AM, Krzysztof Kozlowski wrote:
+> On 05/04/2025 00:20, justin.chen@broadcom.com wrote:
+>> +
+>> +maintainers:
+>> +  - Justin Chen <justin.chen@broadcom.com>
+>> +  - Florian Fainelli <florian.fainelli@broadcom.com>
+>> +
+>> +description: Broadcom mailbox hardware first introduced with 74110
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - brcm,bcm74110-mbox
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  interrupts:
+>> +    minItems: 1
+> 
+> Third version of patchset, third entirely different code.
+> 
+> Decide finally what is the hardware and send binding matching it.
+> Hardware did not change last one week three times.
+> 
+> Drop minItems or explain why this is flexible on the same SoC or between
+> boards using same SoC. You can always point me to upstream DTS, which
+> would solve many questions.
+> 
 
-Arnd bisected this to c56f649646ec ("landlock: Log mount-related
-denials") but that commit is fairly obviously not really at fault here,
-most likely this is an issue in the plugin.  Given how disruptive having
-key configs like this failing let's disable the plugins for compile test
-builds until a fix is found.
+We do not have an upstream DTS. We have a scripting engine that 
+generates a DTS and we distribute DTBs to our customers. The example 
+from v2 of my patch was copied from said generated DTS.
 
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- scripts/gcc-plugins/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Apologies as I navigate through the different yaml keywords here. The HW
+isn't changing, I am just struggling with representing the HW using the
+different keywords. And the different implications of using said keywords.
 
-diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
-index e383cda05367..29b03c136165 100644
---- a/scripts/gcc-plugins/Kconfig
-+++ b/scripts/gcc-plugins/Kconfig
-@@ -7,6 +7,7 @@ config HAVE_GCC_PLUGINS
- 
- menuconfig GCC_PLUGINS
- 	bool "GCC plugins"
-+	depends on !COMPILE_TEST
- 	depends on HAVE_GCC_PLUGINS
- 	depends on CC_IS_GCC
- 	depends on $(success,test -e $(shell,$(CC) -print-file-name=plugin)/include/plugin-version.h)
+Here is what I have for v4.
+      items:
+        - description: RX doorbell and watermark interrupts
+        - description: TX doorbell and watermark interrupts
++    description:
++      RX interrupts are required to notify the host of pending messages. TX
++      interrupts are optional. The TX doorbell interrupt is not used by the
++      host, but watermark interrupts may be used to notify a host 
+waiting on
++      a full out queue.
 
----
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-change-id: 20250407-kbuild-disable-gcc-plugins-8701aa609cb3
+Thanks,
+Justin
 
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+>> +    items:
+>> +      - description: RX doorbell and watermark interrupts
+>> +      - description: TX doorbell and watermark interrupts
+>> +
+> 
+> 
+> Best regards,
+> Krzysztof
 
 
