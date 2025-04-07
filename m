@@ -1,121 +1,93 @@
-Return-Path: <linux-kernel+bounces-591330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2A87A7DE56
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:57:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB39CA7DE4F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB34A7A4381
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:56:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A81FA16C2D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177D2253B51;
-	Mon,  7 Apr 2025 12:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19809245022;
+	Mon,  7 Apr 2025 12:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="Qndw7veF"
-Received: from ksmg01.maxima.ru (ksmg01.mt-integration.ru [81.200.124.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6289D235C1B;
-	Mon,  7 Apr 2025 12:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="XgQnXrBJ"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E64323BFBC
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 12:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744030640; cv=none; b=HUIorzr6YPh82MPFq/P+s8tESVLnVefUxMuVKgBUfyguEkzXvt/HtysJO7C734/LosbJX4XGEUfprFs8FqNyRw2WsQL8wAP9KdyDPJBdDtWVlYBzXpw5BkKByOaLBUi4R8OLjBy6RLLyeKMM2t22KPhUgf/KvhSN0B6sQvXRgHg=
+	t=1744030603; cv=none; b=cEubg1ex2dhZ4Bl/AoTW7azvFyk3bNvlqid7RvK28UX1EfNBwMfHx0Jka0aNckZBJUxGhRcNivFZZx+gK2cjEEGQ7xafJpu66jQgnDEG7jC0Cm0KWot5dNgnO3NnOHfb1JhqN0m+esZZxJc5oSMhZ+j/vICY4Ha8ZCnYu/KK8wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744030640; c=relaxed/simple;
-	bh=6wA9Rt0Of/ILVZyU2c5Yl6/N7fY2XvsIHEnfiWtCCTo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k0qfucbRSV869O9X2yZaqWFqY1qaHPDo6Gdn3Npyx5qcLWl3inkCaE12mQ+uh/2grcOHGGAhPGcP9TMbOD5uWh7/FuByFNmvmpX3S2hGp+iqHSsP02VQC7bsbPL5Xa+iQ56JZ+YHHxOU9yzuYvconryyjZDOjKp49n91YWibJ5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=Qndw7veF; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id 7D96EC0032;
-	Mon,  7 Apr 2025 15:57:16 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 7D96EC0032
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1744030636; bh=3lJzVQLzillG9b6LxM0kaU64I+HdegU7uqbXYZPNvAg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=Qndw7veFg0EW0mBbyeCWHLO/ZgyG2Q1PNkzHZaYgg5SOW0utXnD3jX44H7zErcRMF
-	 /GuS3dFC9Z+dntIH/X5jua4GbMQ01+0pOmBmLBASmYHXR6DlA0ionqj60BPqP2xT2b
-	 rXdrioDG3m5rI8r2lpDNn27Ap14Jj442L70CkV4teONgjh47r0663ONt16bXqrnU+G
-	 GdxlYW2lon37hve+L8d6W9BE3QhxLbcmpCzOSLFmau+GF/mG7YjKxaKbk1/BHwLQtS
-	 uIikua/vE/YCzj7CctN/0kgORIaRK4zNB9KDWZktvoLooiu7y1/iFX5zqpPgGsV5o5
-	 7J1kTLjX6zNuQ==
-Received: from ksmg01.maxima.ru (autodiscover.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Mon,  7 Apr 2025 15:57:16 +0300 (MSK)
-Received: from db126-1-abramov-14-d-mosos.mti-lab.com (172.25.20.118) by
- mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 7 Apr 2025 15:57:15 +0300
-From: Ivan Abramov <i.abramov@mt-integration.ru>
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: Ivan Abramov <i.abramov@mt-integration.ru>, Kuniyuki Iwashima
-	<kuniyu@amazon.com>, <linux-wireless@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH v2 3/3] cfg80211: Remove WARN_ON() in cfg80211_pernet_exit()
-Date: Mon, 7 Apr 2025 15:53:44 +0300
-Message-ID: <20250407125345.1238818-4-i.abramov@mt-integration.ru>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250407125345.1238818-1-i.abramov@mt-integration.ru>
-References: <20250407125345.1238818-1-i.abramov@mt-integration.ru>
+	s=arc-20240116; t=1744030603; c=relaxed/simple;
+	bh=18LZ3UeBeD8+PKgIIQH47A2OwH8h/rcoFydIPYn9mgU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=Fi7CIhgHRnTS84XHVvSscc+6GQvo+B8Pimj9TneOCWJceyWn3eazbJbvi4GNjRyaOPogPh+aaOED/A9kOqf20Z19E0xMoSZzvUrUOuDl5+3QPg+BAOBaWaDgyC0N1l++SsMrQpnirNs6Pz7Fk5pWjxH07iiq4BK8hQ89xySIfhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=XgQnXrBJ reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=WMahgglQfhKL4OuHDIAWoSXkPdUPZsYVvzA3TCjbEf0=; b=X
+	gQnXrBJb2R3WZcdOyq6khpMjlzuHyfF5MIDl29e+2RZQA47I/kH5MmOXRE8kMPy7
+	FXhOVSL+UZDGWuhIL6XL/otpGtij/wphUcNCk8zWYJKFs6b9rgiAlPPWtK1xHNRL
+	Y5YfFPlKGAZXDq76HgbgMd3XdLiCUvAoNhE2AmtcLs=
+Received: from xavier_qy$163.com ( [117.131.123.221] ) by
+ ajax-webmail-wmsvr-40-107 (Coremail) ; Mon, 7 Apr 2025 20:56:06 +0800 (CST)
+Date: Mon, 7 Apr 2025 20:56:06 +0800 (CST)
+From: Xavier  <xavier_qy@163.com>
+To: "Lance Yang" <ioworker0@gmail.com>
+Cc: akpm@linux-foundation.org, baohua@kernel.org, catalin.marinas@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	ryan.roberts@arm.com, will@kernel.org
+Subject: Re:Re: [PATCH v1] mm/contpte: Optimize loop to reduce redundant
+ operations
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <20250407112922.17766-1-ioworker0@gmail.com>
+References: <20250407092243.2207837-1-xavier_qy@163.com>
+ <20250407112922.17766-1-ioworker0@gmail.com>
+X-NTES-SC: AL_Qu2fBvyYv00t4CWcYekfmkgWgus/WcW2u/Qj3IRSO5FwjCHp5BA7Y1lTE0bM2/CDFx2OkAiHXThMzOpkY49pWoEMkBbwyGARC+fCx4rMd7OOzw==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mmail-p-exch02.mt.ru (81.200.124.62) To
- mmail-p-exch01.mt.ru (81.200.124.61)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: i.abramov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 54 0.3.54 464169e973265e881193cca5ab7aa5055e5b7016, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;ksmg01.maxima.ru:7.1.1;81.200.124.61:7.1.2;mt-integration.ru:7.1.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 192430 [Apr 07 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/04/07 08:57:00 #27861720
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
+Message-ID: <5e3f976f.bca1.19610528896.Coremail.xavier_qy@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:aygvCgCHr+dmy_NnpzeQAA--.53262W
+X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/1tbiTQYoEGfzsgefNwADs5
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-There's no need to call WARN_ON() in cfg80211_pernet_exit(), since
-every point of failure in cfg80211_switch_netns() is covered with
-WARN_ON(), so remove it.
-
-Found by Linux Verification Center (linuxtesting.org).
-
-Fixes: 463d01832385 ("cfg80211: make aware of net namespaces")
-Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
----
- net/wireless/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/wireless/core.c b/net/wireless/core.c
-index 6f95aad18d47..b77f4ed8f2c0 100644
---- a/net/wireless/core.c
-+++ b/net/wireless/core.c
-@@ -1656,7 +1656,7 @@ static void __net_exit cfg80211_pernet_exit(struct net *net)
- 	rtnl_lock();
- 	for_each_rdev(rdev) {
- 		if (net_eq(wiphy_net(&rdev->wiphy), net))
--			WARN_ON(cfg80211_switch_netns(rdev, &init_net));
-+			cfg80211_switch_netns(rdev, &init_net);
- 	}
- 	rtnl_unlock();
- }
--- 
-2.39.5
-
+CgpIaSBMYW5jZSwKClRoYW5rcyBmb3IgeW91ciBmZWVkYmFjaywgbXkgcmVzcG9uc2UgaXMgYXMg
+Zm9sbG93cy4KCi0tClRoYW5rcywKWGF2aWVyCgoKCgoKQXQgMjAyNS0wNC0wNyAxOToyOToyMiwg
+IkxhbmNlIFlhbmciIDxpb3dvcmtlcjBAZ21haWwuY29tPiB3cm90ZToKPlRoYW5rcyBmb3IgdGhl
+IHBhdGNoLiBXb3VsZCB0aGUgZm9sbG93aW5nIGNoYW5nZSBiZSBiZXR0ZXI/Cj4KPmRpZmYgLS1n
+aXQgYS9hcmNoL2FybTY0L21tL2NvbnRwdGUuYyBiL2FyY2gvYXJtNjQvbW0vY29udHB0ZS5jCj5p
+bmRleCA1NTEwN2QyN2QzZjguLjY0ZWIzYjJmYmYwNiAxMDA2NDQKPi0tLSBhL2FyY2gvYXJtNjQv
+bW0vY29udHB0ZS5jCj4rKysgYi9hcmNoL2FybTY0L21tL2NvbnRwdGUuYwo+QEAgLTE3NCw2ICsx
+NzQsOSBAQCBwdGVfdCBjb250cHRlX3B0ZXBfZ2V0KHB0ZV90ICpwdGVwLCBwdGVfdCBvcmlnX3B0
+ZSkKPiAKPiAJCWlmIChwdGVfeW91bmcocHRlKSkKPiAJCQlvcmlnX3B0ZSA9IHB0ZV9ta3lvdW5n
+KG9yaWdfcHRlKTsKPisKPisJCWlmIChwdGVfeW91bmcob3JpZ19wdGUpICYmIHB0ZV9kaXJ0eShv
+cmlnX3B0ZSkpCj4rCQkJYnJlYWs7Cj4gCX0KPiAKPiAJcmV0dXJuIG9yaWdfcHRlOwo+LS0gCj4K
+PldlIGNhbiBjaGVjayB0aGUgb3JpZ19wdGUgZmxhZ3MgZGlyZWN0bHkgaW5zdGVhZCBvZiB1c2lu
+ZyBleHRyYSBib29sZWFuCj52YXJpYWJsZXMsIHdoaWNoIGdpdmVzIHVzIGFuIGVhcmx5LWV4aXQg
+d2hlbiBib3RoIGRpcnR5IGFuZCB5b3VuZyBmbGFncwo+YXJlIHNldC4KWW91ciB3YXkgb2Ygd3Jp
+dGluZyB0aGUgY29kZSBpcyBpbmRlZWQgbW9yZSBjb25jaXNlLiBIb3dldmVyLCBJIHRoaW5rCiB1
+c2luZyBib29sZWFuIHZhcmlhYmxlcyBtaWdodCBiZSBtb3JlIGVmZmljaWVudC4gQWx0aG91Z2gg
+aXQgaW50cm9kdWNlcwogYWRkaXRpb25hbCB2YXJpYWJsZXMsIGNvbXBhcmluZyBib29sZWFuIHZh
+bHVlcyBpcyBsaWtlbHkgdG8gYmUgbW9yZQogZWZmaWNpZW50IHRoYW4gY2hlY2tpbmcgYml0IHNl
+dHRpbmdzLgoKPgo+QWxzbywgaXMgdGhpcyBvcHRpbWl6YXRpb24gcmVhbGx5IG5lZWRlZCBmb3Ig
+dGhlIGNvbW1vbiBjYXNlPwpUaGlzIGZ1bmN0aW9uIGlzIG9uIGEgaGlnaC1mcmVxdWVuY3kgZXhl
+Y3V0aW9uIHBhdGguIER1cmluZyBkZWJ1Z2dpbmcsCiBJIGZvdW5kIHRoYXQgaW4gbW9zdCBjYXNl
+cywgdGhlIGZpcnN0IGZldyBwYWdlcyBhcmUgYWxyZWFkeSBtYXJrZWQgYXMKIGJvdGggZGlydHkg
+YW5kIHlvdW5nLiBCdXQgY3VycmVudGx5LCB0aGUgcHJvZ3JhbSBzdGlsbCBoYXMgdG8gY29tcGxl
+dGUKIHRoZSBlbnRpcmUgbG9vcCBvZiAxNiBwdGVwIGl0ZXJhdGlvbnMsIHdoaWNoIHNlcmlvdXNs
+eSByZWR1Y2VzIHRoZSBlZmZpY2llbmN5Lgo+Cj5UaGFua3MsCj5MYW5jZQo=
 
