@@ -1,89 +1,88 @@
-Return-Path: <linux-kernel+bounces-591692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60DC6A7E3EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:21:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AA65A7E411
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5302F163ECD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:12:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20666421A95
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920941FCD09;
-	Mon,  7 Apr 2025 15:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03C81FE443;
+	Mon,  7 Apr 2025 15:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="m/6QJy9q"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KpBbCveA"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FADE1FBCA9
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 15:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6691FCFDF
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 15:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744038678; cv=none; b=l6nX70zJ7o9H+qHOG+7gD6w8lC8zpO3Mud9UqflvkkPHubFtvoQZgXpnXqR2Tydzgk+1UF46IvV0AFWhDLE2do7I32q8gzTR0Fx7V1KJ4Q5myxp1Pl22EDHGUz1II8Cq5WlSxZi4nY6lY/xeN6Ece6yZSCJIr6LXNRZKdnh8hCA=
+	t=1744038682; cv=none; b=ZwgQXRKRIrUEGugqECg97tjbvEJbwOIiot/YDqylS9zbmKERmB+PUD5ei7wZX70UoaZ3LFeb455aj0IqMqzSQQz8fBBIowi9/FTthYf9ynhwKLIgWI/TpUOY/792CjxNzAiIvduUmb32yLIa3gsBcrqazcf8Yatp2Grwcf9s7wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744038678; c=relaxed/simple;
-	bh=rpC4/Fp1Jm1yKyuARzvQoHZlvtt/ApP11arkSl2v3Xg=;
+	s=arc-20240116; t=1744038682; c=relaxed/simple;
+	bh=a9M2ccKyY4lBF+8BSsLul3wlaYMo7ScE7hsbV+oCgMQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=q3EfK+ZW4UCamqS7o3CzbbSClNu/mM4BsXiFvbuwUfnoCqLWN9xugEk79tHuB7KpppW6DNtQRmRml7CKw7XYhMEp8eTjmKjyh6xQbSnLCkG+DG/5gMs+ptHhYrBTwDSIL7ergNw5yhSvldxDHJSHUDT5fPIfxRmyXiHE8LX3lQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=m/6QJy9q; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:To:Cc; b=Lw9lMVvxMoezzLNGU3jkEQZqmLvBo0IQ1Uoe9K6cPjE6l+mVBlRnrxZX0cURoNH4tWnTIGL5i7YEzJpl0J6X9bsH5OLegtwBZLr+3HnYZiA8mo+comKVAfO06XQZI6JYD6L6S9izjdvsF29g2K4Icz+8kIaLZ/DyamLO2raHSVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KpBbCveA; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5378doBT017420
-	for <linux-kernel@vger.kernel.org>; Mon, 7 Apr 2025 15:11:16 GMT
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5378e44N028420
+	for <linux-kernel@vger.kernel.org>; Mon, 7 Apr 2025 15:11:19 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SD5Xx7vOEUM/GyGeh/4SwnrwP+CNzq7Qjzti6nJGdWg=; b=m/6QJy9qiIX94tCy
-	chZPqrUcLTSgIPyP9rj4v20xQKxxAFcP/8wfVjqhAJzXzusJIxHOeAXEvj8S4gQP
-	G3y1dO/FigF3JkxJ+/YeOeP6izkD7L4KCcAnFcKkAwaTTxMKPBBwJnv7pjtH51xu
-	RUps2wY1ut/UbHvugVl+nCQ0nZHM6LwqV2S0KxNtDT7dHqHNcnFoVjc6m3oBp63P
-	B2JNtVS6QUHOaSjzYXzFDLgeoyiC8tUrcO9K1+ivgPQbOFCMfH51h2nB1wcCtz6C
-	8FFXndyau1Q+2GRCVibM4i1YsDiej4SGkXvlmeUsP2LxLSa6LC9IIMZcfIVGos+u
-	q7IvnQ==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twg3ckn0-1
+	aSVhAHFwCmKb4di7iY3AClytjvzIBCoWb8Y/fLrSCwk=; b=KpBbCveAIMYucmSn
+	GUbrTB82KoS+GORDkDXSOyojMcBaU2q/O0VB6/JnTHXc3eUeXt3FZZ9aQb/ljmTF
+	5HH+lX3J4EKgxdGYFzg11rdO2JRQa3xDfcMSNkgzmh88moIOPmoFIXq02bpaCXwk
+	OBK2rSocM8gc36EN+6hNPsYaCPFrJl+T03nhi8K/G7Tj1QDWg3sDsvRfPcsMfoHc
+	Zb28fXxu5xk36unzu9uM7+JR1ot0pFW5CkiPgv+2WyghAaJksSQINtqqNOrSUcLl
+	9W9hGN/y8oMD3rR8FSm+oe3zxqV7CZjQ7LKIMq1XYIyBIKgaBDIsSf9Z3jjuU31o
+	fj9ZnQ==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twcyvn73-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 15:11:16 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c579d37eeeso720777285a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 08:11:16 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 15:11:19 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5e2872e57so854463285a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 08:11:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744038675; x=1744643475;
+        d=1e100.net; s=20230601; t=1744038679; x=1744643479;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SD5Xx7vOEUM/GyGeh/4SwnrwP+CNzq7Qjzti6nJGdWg=;
-        b=qz9bJaQbP5YJaPZ3trzYasNFdcncnpW0RG5rlHAuw8GMWmMIHworEcAHRqdl1yzOAk
-         3Aq7756qXzXZf/+ITluM/C8QzmQ+Rve1/dS1GohTMAx5Elgl9pYNtmPMel0fB3bM0+yk
-         RYwWRj894zl/DakpTitvy4VtZYRoXkRmpA/3wGgtRR3wO5Dd+biIRXA1UfmnB0/gKzd1
-         K0083l7As9DXc8HB6WCCdbhR65QHVyycKYGsw4hgWLUb7KrRIgwjEtXp9yCZdMrrBK1D
-         3ABIEdiy90HO56dQiGuupMLOUdvxO9Hj8wWzIPO4c1QCv52jHLJ2uKqDBdklJBPYRTvF
-         ACnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlTG9rmd19PsZwZzo/1FKSBke53Ldwpjm1PiEoo8IknjxxY3Zl1P3auto+DXT1vqlC9/QT4QPT85lIpMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdnYxoKgYfDSIvRKiiFQF9c51ROu/ISntkOH+JGO3z1uS5MK0z
-	4KCjE7ba9tJ7bD8qTNAL86DGiUOa6j3luJLsC0+8H03hxZpaGa781XCvv2K37GiKzDYfD+lI0FC
-	B9BKTqNIyQBMnvzUHtKP2eM/mX/oDxB+jc0VpAshaeuonrb4P57UjP7JcaXh5U7M=
-X-Gm-Gg: ASbGncvcX6lgsg7+desPafZPJY+/TjkKmsrDyU8zxb3l6kJerBTNMMpMRY6Ga8qKqCy
-	cU2SPAah0mOXOCYgwERtvmBC3blS1QhUufyd5bu6tDy8QxWjyjaql4S3/B5WCMTRaLzYvOQTbhx
-	gmxfGanvDUQFZjk8EUpr3v9/3ni3lr1JYvpfr1s7DuxivzInBmyCwlerofvfLwLSmHe7cf8bRiN
-	TB6/O6gP+1erZqncYXTlTYaP7fxFJaAoSjAVD1DFBA7ivnRLrw7e3KtbP4QC/HA4Q6iZI5TqL1/
-	/stYEY+GCdtfEk/44f0Kp/6g0ZiI8WcmXtzxOmMovyUcAXIj67L6c9ts4tMo23QuT/TiSWIp3LT
-	FfSC/9TRLUbnc1lO5sI8iZ2D3SNIl
-X-Received: by 2002:a05:620a:46a1:b0:7c5:55be:7bf8 with SMTP id af79cd13be357-7c774dd6ae6mr1889859085a.38.1744038675358;
-        Mon, 07 Apr 2025 08:11:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH7VhmZeiPqWQSFERVB9I6M4nMOVsDerXUI75MhUVSnlkhzTCnVuqwhozj7Eenae1YuM6/Pgw==
-X-Received: by 2002:a05:620a:46a1:b0:7c5:55be:7bf8 with SMTP id af79cd13be357-7c774dd6ae6mr1889854785a.38.1744038675026;
-        Mon, 07 Apr 2025 08:11:15 -0700 (PDT)
+        bh=aSVhAHFwCmKb4di7iY3AClytjvzIBCoWb8Y/fLrSCwk=;
+        b=fbwaePYSVIP6100Z0ZWtfMRRbM3bmRt+Tj6zw68TtkjOxmMkkTVQqQgiiZGgk/MjRb
+         2LmGSVeke2vpota8v0Vr36xnrQiII66Br8bpqUruZpSGQL+lQq0HNo4llXUOdlpOhSH4
+         ff6V2O5dImhsY03G46YNM4M5u+w6Ju2zykm2TprQl+TPmLeW9eTGc1c06IqlpY2K0r9u
+         PaTX3Qi0NJ+rHiJME3P5oGyq33c+DTmad0YCpoG+u7N3rv1YV54zK7vI6IcfC6kdjoqH
+         xvq9Jn1KcqlVcb9bsZjZmIVlls6HHvSVkahLEpE7q4OUvXbh4jtekdjIfEBEWmbgBeXh
+         b2sw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPpRAjogYr5QRwuMaHr73t93d9wmlo4Yaxobnq84x8Dlb9b+84Yf9r1L4PsYrjHFiT6v3o2C5a/Kn/3Dk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyudW3oB9+8fJLsXCGzm1KgjkfbgdANvTM+WrRPbzEsilEzRJzF
+	sPRqmxL0ERxJLp8mfKmX+S44QT9BoS6j/53cnmgfhzRMN+JToSzlGKxYKNwFRS2oRqaRBlU3zRY
+	aNKlY8Wj9zg627o8mE3r+xfATHUGx28hzL3Z/uw77rzt2xDbSpGTn5x869hV2h4c=
+X-Gm-Gg: ASbGnctSUp/B6a3Esw7ue9ExSvnysze8SIwgXOgv0h4XUlRv3paGNL04BOG8I1LzxNB
+	r0Uu3doD9zvpiFqO6m/E6acnUajkYuey5KY+Mv3vDK5fGclO3fLhO7TlX2mkTHNm4q4nkC7PjwO
+	411WS57pcs09YJqZ2xqWVImB60KhEv6iv22mW+cbAATWJPkvANNPdMqwu/MlYNOemmRCNKd+CWc
+	l9DDNNB9Ir8gwLE1RoMnjycw/R/b8S4B4v2hGToWsazO7XbOtX7vyS5+MCTKoQTJRZSeEZgSd1c
+	PbXNQ7eHqJHuCziyLJi2AOwI4qVJ8tBd181+FjRZn8OGzNw2fAcZCSMKcX/u6ml4mSZQVGdSScF
+	H5J/iT8mcaFNuQ7yE4rcZsErJl1aQ
+X-Received: by 2002:a05:620a:248e:b0:7c5:3cf6:782b with SMTP id af79cd13be357-7c775b11755mr2439018585a.54.1744038677880;
+        Mon, 07 Apr 2025 08:11:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG00325JjCeNUWzFnxGMoZ5wQxn+cqq9N345OXEerWwQFBqm3ArKxIvh5oGMlCyWXKAO7hfSg==
+X-Received: by 2002:a05:620a:248e:b0:7c5:3cf6:782b with SMTP id af79cd13be357-7c775b11755mr2439011385a.54.1744038677393;
+        Mon, 07 Apr 2025 08:11:17 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e635becsm1312572e87.127.2025.04.07.08.11.12
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e635becsm1312572e87.127.2025.04.07.08.11.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 08:11:13 -0700 (PDT)
+        Mon, 07 Apr 2025 08:11:16 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Mon, 07 Apr 2025 18:11:04 +0300
-Subject: [PATCH v5 07/11] drm/display: hdmi-state-helper: handle CEC
- physical address
+Date: Mon, 07 Apr 2025 18:11:05 +0300
+Subject: [PATCH v5 08/11] drm/vc4: hdmi: switch to generic CEC helpers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,7 +91,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250407-drm-hdmi-connector-cec-v5-7-04809b10d206@oss.qualcomm.com>
+Message-Id: <20250407-drm-hdmi-connector-cec-v5-8-04809b10d206@oss.qualcomm.com>
 References: <20250407-drm-hdmi-connector-cec-v5-0-04809b10d206@oss.qualcomm.com>
 In-Reply-To: <20250407-drm-hdmi-connector-cec-v5-0-04809b10d206@oss.qualcomm.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -111,77 +110,336 @@ To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         Dmitry Baryshkov <lumag@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1880;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10704;
  i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=rpC4/Fp1Jm1yKyuARzvQoHZlvtt/ApP11arkSl2v3Xg=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBn8+sExhDhW6OQi6i/U6Ig8nmUGUTQb0EUoQJDh
- Znh+wSYs2CJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ/PrBAAKCRCLPIo+Aiko
- 1ZHkB/9qYGTNRAzZMq+scTKGh9veyvBnT8RzcuRdK3pnwONnhtgz68KF2uGcxdLTtixRjs/5eXn
- BR9LgdgdQqm+bxHAvbZ4RKuWF6BvyY2juw4hHXv8pMjbwMBLHUxp3NYXA4+sUwZxkh30KyzMcOr
- /AfKBESf4zMF5vu8rzQXXRDmOTt18cg3jjZisl/Wv0KV9C+gs3lJDjvE8q1C/+aolT8JBljpMlc
- v6DmPmNLljFvHLjdfJbj7KJddoQ8j/Ky3daADjrMea5LAJdzMn+/DuOrACp2qdAmZQIREQ/q/qe
- LBEw5q21x/fISaBYyLvKUpCsc54CxcAdWhO1hA4hVzjB+XA6
+ bh=a9M2ccKyY4lBF+8BSsLul3wlaYMo7ScE7hsbV+oCgMQ=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBn8+sElSqvMbteBjr/5uBLp48ns+u6zUDJQY9/G
+ 7EUDF0jFrKJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ/PrBAAKCRCLPIo+Aiko
+ 1TgQB/4h6T/gmqw1lm/i7qnC5wFLztk7/+unzgQuoZHqwTsP4Ynj4oVaX1YbIpaopS/Kf1dZhrW
+ KTpX6ymensCIUI4ZZBrTjZFn0+o8xH9itm65Yk8AIIiOpPzZ7kXrQz7XZII0ccYQIkJyR/8lrFi
+ Ec9nHt7cq3QiglVa1gpMKoTICE6iwsgQUN51Md79rnlc9qL7L/eaecHaCtqat9FtQc+F/McAsfu
+ UgRo0SL2mcr99XxQtSbE1kVI80s/QfxL9mc1tr/AyHLdyNIiABNgI7+DknkRYqDwBVhwwaxHoOr
+ 23W65g9w2BgV6HBrCcOeJ8p45qxqHgLKMExIC/g0zI8CKqkA
 X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Proofpoint-GUID: KJ4VoK2xqW3TIaccqwHKZr8kI0wLAav9
-X-Proofpoint-ORIG-GUID: KJ4VoK2xqW3TIaccqwHKZr8kI0wLAav9
-X-Authority-Analysis: v=2.4 cv=I/9lRMgg c=1 sm=1 tr=0 ts=67f3eb14 cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=xYQKfNBhK_rbaXl_Bc8A:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: 8PhHs5e7raALMbHsRSAbJSgxeMj-8OVw
+X-Authority-Analysis: v=2.4 cv=Q4vS452a c=1 sm=1 tr=0 ts=67f3eb17 cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=a9hgYIhf75voWPlnlJQA:9 a=QEXdDO2ut3YA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: 8PhHs5e7raALMbHsRSAbJSgxeMj-8OVw
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-04-07_04,2025-04-03_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- phishscore=0 suspectscore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0
- clxscore=1015 malwarescore=0 adultscore=0 priorityscore=1501
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 phishscore=0
+ bulkscore=0 adultscore=0 malwarescore=0 mlxscore=0 suspectscore=0
+ mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
  definitions=main-2504070106
 
-Call HDMI CEC helpers in order to update physical address of the
-adapter.
+Switch VC4 driver to using CEC helpers code, simplifying hotplug and
+registration / cleanup. The existing vc4_hdmi_cec_release() is kept for
+now.
 
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 ---
- drivers/gpu/drm/display/drm_hdmi_state_helper.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/vc4/Kconfig    |   1 +
+ drivers/gpu/drm/vc4/vc4_hdmi.c | 138 ++++++++++++++++-------------------------
+ drivers/gpu/drm/vc4/vc4_hdmi.h |   1 -
+ 3 files changed, 56 insertions(+), 84 deletions(-)
 
-diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-index d9d9948b29e9d5ef9bc9cc9108b3ace4aca2e3ae..bae7aa624f7db61cc7d5ff7a86a413938963543f 100644
---- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-+++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-@@ -6,6 +6,7 @@
- #include <drm/drm_print.h>
+diff --git a/drivers/gpu/drm/vc4/Kconfig b/drivers/gpu/drm/vc4/Kconfig
+index 123ab0ce178157c3b39466f87c7ac39c8470f329..bb8c40be325033632d3e94db87a16b03554ad3af 100644
+--- a/drivers/gpu/drm/vc4/Kconfig
++++ b/drivers/gpu/drm/vc4/Kconfig
+@@ -35,6 +35,7 @@ config DRM_VC4_HDMI_CEC
+ 	bool "Broadcom VC4 HDMI CEC Support"
+ 	depends on DRM_VC4
+ 	select CEC_CORE
++	select DRM_DISPLAY_HDMI_CEC_HELPER
+ 	help
+ 	  Choose this option if you have a Broadcom VC4 GPU
+ 	  and want to use CEC.
+diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
+index 4797ed1c21f47992fe4d497d904ee31c824cd449..3bc7c4bd496b60ccb0c7dce8b41e5cd9f01b18ab 100644
+--- a/drivers/gpu/drm/vc4/vc4_hdmi.c
++++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+@@ -32,6 +32,7 @@
+  */
  
  #include <drm/display/drm_hdmi_audio_helper.h>
 +#include <drm/display/drm_hdmi_cec_helper.h>
  #include <drm/display/drm_hdmi_helper.h>
  #include <drm/display/drm_hdmi_state_helper.h>
+ #include <drm/display/drm_scdc_helper.h>
+@@ -375,14 +376,6 @@ static void vc4_hdmi_handle_hotplug(struct vc4_hdmi *vc4_hdmi,
  
-@@ -1081,9 +1082,10 @@ drm_atomic_helper_connector_hdmi_update(struct drm_connector *connector,
- 	const struct drm_edid *drm_edid;
+ 	drm_atomic_helper_connector_hdmi_hotplug(connector, status);
  
- 	if (status == connector_status_disconnected) {
--		// TODO: also handle CEC and scramber, HDMI sink disconnected.
-+		// TODO: also handle scramber, HDMI sink disconnected.
- 		drm_connector_hdmi_audio_plugged_notify(connector, false);
- 		drm_edid_connector_update(connector, NULL);
-+		drm_connector_cec_phys_addr_invalidate(connector);
+-	if (status == connector_status_disconnected) {
+-		cec_phys_addr_invalidate(vc4_hdmi->cec_adap);
+-		return;
+-	}
+-
+-	cec_s_phys_addr(vc4_hdmi->cec_adap,
+-			connector->display_info.source_physical_address, false);
+-
+ 	if (status != connector_status_connected)
  		return;
- 	}
  
-@@ -1097,8 +1099,9 @@ drm_atomic_helper_connector_hdmi_update(struct drm_connector *connector,
- 	drm_edid_free(drm_edid);
+@@ -2378,8 +2371,8 @@ static irqreturn_t vc4_cec_irq_handler_rx_thread(int irq, void *priv)
+ 	struct vc4_hdmi *vc4_hdmi = priv;
  
- 	if (status == connector_status_connected) {
--		// TODO: also handle CEC and scramber, HDMI sink is now connected.
-+		// TODO: also handle scramber, HDMI sink is now connected.
- 		drm_connector_hdmi_audio_plugged_notify(connector, true);
-+		drm_connector_cec_phys_addr_set(connector);
+ 	if (vc4_hdmi->cec_rx_msg.len)
+-		cec_received_msg(vc4_hdmi->cec_adap,
+-				 &vc4_hdmi->cec_rx_msg);
++		drm_connector_hdmi_cec_received_msg(&vc4_hdmi->connector,
++						    &vc4_hdmi->cec_rx_msg);
+ 
+ 	return IRQ_HANDLED;
+ }
+@@ -2389,15 +2382,17 @@ static irqreturn_t vc4_cec_irq_handler_tx_thread(int irq, void *priv)
+ 	struct vc4_hdmi *vc4_hdmi = priv;
+ 
+ 	if (vc4_hdmi->cec_tx_ok) {
+-		cec_transmit_done(vc4_hdmi->cec_adap, CEC_TX_STATUS_OK,
+-				  0, 0, 0, 0);
++		drm_connector_hdmi_cec_transmit_done(&vc4_hdmi->connector,
++						     CEC_TX_STATUS_OK,
++						     0, 0, 0, 0);
+ 	} else {
+ 		/*
+ 		 * This CEC implementation makes 1 retry, so if we
+ 		 * get a NACK, then that means it made 2 attempts.
+ 		 */
+-		cec_transmit_done(vc4_hdmi->cec_adap, CEC_TX_STATUS_NACK,
+-				  0, 2, 0, 0);
++		drm_connector_hdmi_cec_transmit_done(&vc4_hdmi->connector,
++						     CEC_TX_STATUS_NACK,
++						     0, 2, 0, 0);
  	}
+ 	return IRQ_HANDLED;
+ }
+@@ -2554,9 +2549,9 @@ static irqreturn_t vc4_cec_irq_handler(int irq, void *priv)
+ 	return ret;
  }
  
+-static int vc4_hdmi_cec_enable(struct cec_adapter *adap)
++static int vc4_hdmi_cec_enable(struct drm_connector *connector)
+ {
+-	struct vc4_hdmi *vc4_hdmi = cec_get_drvdata(adap);
++	struct vc4_hdmi *vc4_hdmi = connector_to_vc4_hdmi(connector);
+ 	struct drm_device *drm = vc4_hdmi->connector.dev;
+ 	/* clock period in microseconds */
+ 	const u32 usecs = 1000000 / CEC_CLOCK_FREQ;
+@@ -2621,9 +2616,9 @@ static int vc4_hdmi_cec_enable(struct cec_adapter *adap)
+ 	return 0;
+ }
+ 
+-static int vc4_hdmi_cec_disable(struct cec_adapter *adap)
++static int vc4_hdmi_cec_disable(struct drm_connector *connector)
+ {
+-	struct vc4_hdmi *vc4_hdmi = cec_get_drvdata(adap);
++	struct vc4_hdmi *vc4_hdmi = connector_to_vc4_hdmi(connector);
+ 	struct drm_device *drm = vc4_hdmi->connector.dev;
+ 	unsigned long flags;
+ 	int idx;
+@@ -2657,17 +2652,17 @@ static int vc4_hdmi_cec_disable(struct cec_adapter *adap)
+ 	return 0;
+ }
+ 
+-static int vc4_hdmi_cec_adap_enable(struct cec_adapter *adap, bool enable)
++static int vc4_hdmi_cec_adap_enable(struct drm_connector *connector, bool enable)
+ {
+ 	if (enable)
+-		return vc4_hdmi_cec_enable(adap);
++		return vc4_hdmi_cec_enable(connector);
+ 	else
+-		return vc4_hdmi_cec_disable(adap);
++		return vc4_hdmi_cec_disable(connector);
+ }
+ 
+-static int vc4_hdmi_cec_adap_log_addr(struct cec_adapter *adap, u8 log_addr)
++static int vc4_hdmi_cec_adap_log_addr(struct drm_connector *connector, u8 log_addr)
+ {
+-	struct vc4_hdmi *vc4_hdmi = cec_get_drvdata(adap);
++	struct vc4_hdmi *vc4_hdmi = connector_to_vc4_hdmi(connector);
+ 	struct drm_device *drm = vc4_hdmi->connector.dev;
+ 	unsigned long flags;
+ 	int idx;
+@@ -2693,10 +2688,10 @@ static int vc4_hdmi_cec_adap_log_addr(struct cec_adapter *adap, u8 log_addr)
+ 	return 0;
+ }
+ 
+-static int vc4_hdmi_cec_adap_transmit(struct cec_adapter *adap, u8 attempts,
++static int vc4_hdmi_cec_adap_transmit(struct drm_connector *connector, u8 attempts,
+ 				      u32 signal_free_time, struct cec_msg *msg)
+ {
+-	struct vc4_hdmi *vc4_hdmi = cec_get_drvdata(adap);
++	struct vc4_hdmi *vc4_hdmi = connector_to_vc4_hdmi(connector);
+ 	struct drm_device *dev = vc4_hdmi->connector.dev;
+ 	unsigned long flags;
+ 	u32 val;
+@@ -2739,84 +2734,66 @@ static int vc4_hdmi_cec_adap_transmit(struct cec_adapter *adap, u8 attempts,
+ 	return 0;
+ }
+ 
+-static const struct cec_adap_ops vc4_hdmi_cec_adap_ops = {
+-	.adap_enable = vc4_hdmi_cec_adap_enable,
+-	.adap_log_addr = vc4_hdmi_cec_adap_log_addr,
+-	.adap_transmit = vc4_hdmi_cec_adap_transmit,
+-};
+-
+-static void vc4_hdmi_cec_release(void *ptr)
+-{
+-	struct vc4_hdmi *vc4_hdmi = ptr;
+-
+-	cec_unregister_adapter(vc4_hdmi->cec_adap);
+-	vc4_hdmi->cec_adap = NULL;
+-}
+-
+-static int vc4_hdmi_cec_init(struct vc4_hdmi *vc4_hdmi)
++static int vc4_hdmi_cec_init(struct drm_connector *connector)
+ {
+-	struct cec_connector_info conn_info;
++	struct vc4_hdmi *vc4_hdmi = connector_to_vc4_hdmi(connector);
+ 	struct platform_device *pdev = vc4_hdmi->pdev;
+ 	struct device *dev = &pdev->dev;
+ 	int ret;
+ 
+-	if (!of_property_present(dev->of_node, "interrupts")) {
+-		dev_warn(dev, "'interrupts' DT property is missing, no CEC\n");
+-		return 0;
+-	}
+-
+-	vc4_hdmi->cec_adap = cec_allocate_adapter(&vc4_hdmi_cec_adap_ops,
+-						  vc4_hdmi,
+-						  vc4_hdmi->variant->card_name,
+-						  CEC_CAP_DEFAULTS |
+-						  CEC_CAP_CONNECTOR_INFO, 1);
+-	ret = PTR_ERR_OR_ZERO(vc4_hdmi->cec_adap);
+-	if (ret < 0)
+-		return ret;
+-
+-	cec_fill_conn_info_from_drm(&conn_info, &vc4_hdmi->connector);
+-	cec_s_conn_info(vc4_hdmi->cec_adap, &conn_info);
+-
+ 	if (vc4_hdmi->variant->external_irq_controller) {
+ 		ret = devm_request_threaded_irq(dev, platform_get_irq_byname(pdev, "cec-rx"),
+ 						vc4_cec_irq_handler_rx_bare,
+ 						vc4_cec_irq_handler_rx_thread, 0,
+ 						"vc4 hdmi cec rx", vc4_hdmi);
+ 		if (ret)
+-			goto err_delete_cec_adap;
++			return ret;
+ 
+ 		ret = devm_request_threaded_irq(dev, platform_get_irq_byname(pdev, "cec-tx"),
+ 						vc4_cec_irq_handler_tx_bare,
+ 						vc4_cec_irq_handler_tx_thread, 0,
+ 						"vc4 hdmi cec tx", vc4_hdmi);
+ 		if (ret)
+-			goto err_delete_cec_adap;
++			return ret;
+ 	} else {
+ 		ret = devm_request_threaded_irq(dev, platform_get_irq(pdev, 0),
+ 						vc4_cec_irq_handler,
+ 						vc4_cec_irq_handler_thread, 0,
+ 						"vc4 hdmi cec", vc4_hdmi);
+ 		if (ret)
+-			goto err_delete_cec_adap;
++			return ret;
+ 	}
+ 
+-	ret = cec_register_adapter(vc4_hdmi->cec_adap, &pdev->dev);
+-	if (ret < 0)
+-		goto err_delete_cec_adap;
++	return 0;
++}
++
++static const struct drm_connector_hdmi_cec_adapter_ops vc4_hdmi_cec_adap_ops = {
++	.base.unregister = drm_connector_hdmi_cec_unregister,
++	.init = vc4_hdmi_cec_init,
++	.enable = vc4_hdmi_cec_adap_enable,
++	.log_addr = vc4_hdmi_cec_adap_log_addr,
++	.transmit = vc4_hdmi_cec_adap_transmit,
++};
++
++static int vc4_hdmi_cec_register(struct vc4_hdmi *vc4_hdmi)
++{
++	struct platform_device *pdev = vc4_hdmi->pdev;
++	struct device *dev = &pdev->dev;
++
++	if (!of_property_present(dev->of_node, "interrupts")) {
++		dev_warn(dev, "'interrupts' DT property is missing, no CEC\n");
++		return 0;
++	}
+ 
+ 	/*
+-	 * NOTE: Strictly speaking, we should probably use a DRM-managed
+-	 * registration there to avoid removing the CEC adapter by the
+-	 * time the DRM driver doesn't have any user anymore.
++	 * NOTE: the CEC adapter will be unregistered from
++	 * drm_connector_cleanup(), which is called from drm_dev_unplug()
++	 * during device unbind.
+ 	 *
+ 	 * However, the CEC framework already cleans up the CEC adapter
+ 	 * only when the last user has closed its file descriptor, so we
+ 	 * don't need to handle it in DRM.
+ 	 *
+-	 * By the time the device-managed hook is executed, we will give
+-	 * up our reference to the CEC adapter and therefore don't
+-	 * really care when it's actually freed.
+-	 *
+ 	 * There's still a problematic sequence: if we unregister our
+ 	 * CEC adapter, but the userspace keeps a handle on the CEC
+ 	 * adapter but not the DRM device for some reason. In such a
+@@ -2827,19 +2804,14 @@ static int vc4_hdmi_cec_init(struct vc4_hdmi *vc4_hdmi)
+ 	 * the CEC framework already handles this too, by calling
+ 	 * cec_is_registered() in cec_ioctl() and cec_poll().
+ 	 */
+-	ret = devm_add_action_or_reset(dev, vc4_hdmi_cec_release, vc4_hdmi);
+-	if (ret)
+-		return ret;
+-
+-	return 0;
+-
+-err_delete_cec_adap:
+-	cec_delete_adapter(vc4_hdmi->cec_adap);
+-
+-	return ret;
++	return drm_connector_hdmi_cec_register(&vc4_hdmi->connector,
++					       &vc4_hdmi_cec_adap_ops,
++					       vc4_hdmi->variant->card_name,
++					       1,
++					       &pdev->dev);
+ }
+ #else
+-static int vc4_hdmi_cec_init(struct vc4_hdmi *vc4_hdmi)
++static int vc4_hdmi_cec_register(struct vc4_hdmi *vc4_hdmi)
+ {
+ 	return 0;
+ }
+@@ -3244,7 +3216,7 @@ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
+ 	if (ret)
+ 		goto err_put_runtime_pm;
+ 
+-	ret = vc4_hdmi_cec_init(vc4_hdmi);
++	ret = vc4_hdmi_cec_register(vc4_hdmi);
+ 	if (ret)
+ 		goto err_put_runtime_pm;
+ 
+diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.h b/drivers/gpu/drm/vc4/vc4_hdmi.h
+index a31157c99bee6b33527c4b558fc72fff65d2a278..8d069718df00d9afc13aadbb12648e2bb75a1721 100644
+--- a/drivers/gpu/drm/vc4/vc4_hdmi.h
++++ b/drivers/gpu/drm/vc4/vc4_hdmi.h
+@@ -147,7 +147,6 @@ struct vc4_hdmi {
+ 	 */
+ 	bool disable_wifi_frequencies;
+ 
+-	struct cec_adapter *cec_adap;
+ 	struct cec_msg cec_rx_msg;
+ 	bool cec_tx_ok;
+ 	bool cec_irq_was_rx;
 
 -- 
 2.39.5
