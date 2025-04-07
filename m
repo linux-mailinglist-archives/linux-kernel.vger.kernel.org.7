@@ -1,156 +1,132 @@
-Return-Path: <linux-kernel+bounces-591091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07E64A7DAF4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:21:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0DB8A7DAEB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:20:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF1D8167F0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:21:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B6A9168251
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0663D230BD1;
-	Mon,  7 Apr 2025 10:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75AB230BCE;
+	Mon,  7 Apr 2025 10:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="S9CmOO3R"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="uGtGiQRS"
+Received: from ksmg01.maxima.ru (ksmg01.mt-integration.ru [81.200.124.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5E2230BC6
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 10:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2DD21D3D9;
+	Mon,  7 Apr 2025 10:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744021258; cv=none; b=vGS9KYB3bk9H7Ast/GVSFEp59yCXeSmnAnWW9yFdlO/fae2gZVM+WhQ/aKcpGGc3GtI/eZS6h0dgU3InAwDB/VU8oVNvq5IbIx0SJqRKDlXARwiRdAPUzJIRNczYBLvSVOrPmsRPCu5qDmQeS2y/oeJD3+3ddvFCxubFsmI7qHA=
+	t=1744021167; cv=none; b=XUHTg6jtDuxek7DKPr5Wh9/pz5amNfwlBJK2zCQClvdLd7UkVVUArO976SkvYo3mdVpgcFfzqYxRUAfrcxO9RE4Fxf7kfp1QbK3sXKb+W9yzpM3kzNJXNiiKbyyFizH+7+HyyvV9nwTBgq41uNDW3iQCcKIWumxFTw5usblaJdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744021258; c=relaxed/simple;
-	bh=gVlihUZSd639fQJOGFXoL+jhz4s84F+ss9pAwAIb588=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=onKMuoKEeEqt6LnWqN/kKp6G2/zHQ/hzCoRmc8HoRCG9B7Up8bSG8BeytsMeGKj1cVLGubDdH7pBymERRMTM+D6GWueUznldfeYbxAGVkbTovAXnH2qz5aNYr3DpQyuqIWbDR7mObVoORL9HBpssCxGP1sFNXiPlDJSLgY/ffdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=S9CmOO3R; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso790561366b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 03:20:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1744021255; x=1744626055; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=athitrIlFUHEiEDxf+01r51uYAvDaVmfFgQ/U9/E5OE=;
-        b=S9CmOO3Rm/OIvtZ5P0FH15jKy5a7MO+4BwQYV+Hu0Ey+cM2OcfhGk2PLVt7tLWGXNJ
-         BjmgPETOqeuGwvGOcVjWQhHnsWld198Gm3kHPYY0Y4jPz5McuZSBPuII10t84KO3c65c
-         oeldKD8iJ8m1SPw0nYz+p1bZnCjY7ffiJHXrk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744021255; x=1744626055;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=athitrIlFUHEiEDxf+01r51uYAvDaVmfFgQ/U9/E5OE=;
-        b=BIolrcbfuaTIXGKh7rHOLMDrjz/yesZWgm8md4sM/JGxBYkOZ5kKaWw9fpfYqDGf5l
-         nzDUe00+t4OcwLeDj5qvjGJWxFOSwU0cNXrMqVc0gMoM7CJiBODjBxQoZIFpnsBnOlnI
-         SC5oxyNaxf7udKzC2sCPYwun8QEg8nB7CNTkb09Li2QWHR9Khe/Uhys+VwXdhPhHaOJa
-         Uv0IBMHp49pdkERxszgmVa1QLSws7yBRpL/TrqktseZw/dYQrbyBzAHOG846KhAk/OAa
-         dup/g8b+NMGjEOa04+6H7ewnBpW9DZlpYeCmVgu/0EDKgWjJNRMUYDsc0wz1MOS1L1UW
-         +WYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZqMuL+o/NMaNL8D5utSzItlmAcunXJx1X6TQnTxkJf9VrzKP1rMZPfVULcY+EQXYDhLpegM5E+RABobM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrOjzQ1rx2HtsLDOLM2jSbANQpIXGgnSkHUNGzKEllFKHlwiYF
-	Ve30jWqE+srx1LNBLpTQfAE5sTTJhzfXKkbMox/qeJ7+kG6PP0bUf3Kjn70ZX6w=
-X-Gm-Gg: ASbGncs+cfvurfoNTKnhEPAtHzjW1QqggJqn+DUYyYugFEX+l2D8EPXp0MwXjsgJU73
-	WRAzy6y7bDK70Gu1zfATC7SE8pXj+EJeZrs7PmBPGdH/AdFXAnaKYLj0iZFapiILFOphMqUeyiH
-	x1AwUklbkADsqxy6sSma8w4L1qzVCrkqNNAOuTUPzBkygdHTH4dll9GCRmtoO7F9TihJEbFtlWg
-	cOn5qp9DCImlCVF8Q8wynkw9R25APmAD25F+JPBl6V+KczMduCLy8rrNVnhi1Sp20NbHMMJwYfb
-	Ku2T1S+kdOnk05vMl1RibNe+jQFE64DEQtd4kKsq7Wo+VSIaGQ==
-X-Google-Smtp-Source: AGHT+IF18aluJtArY+4Lz8Yl8WYJsCo+sYSabuDUCe0n35NtXxKE47amets788BoPar+JoY3CYd37A==
-X-Received: by 2002:a17:907:9728:b0:ac2:87b0:e4a5 with SMTP id a640c23a62f3a-ac7d6c9e900mr866928266b.2.1744021254787;
-        Mon, 07 Apr 2025 03:20:54 -0700 (PDT)
-Received: from localhost ([84.78.159.3])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ac7bfe5c7f7sm712686266b.20.2025.04.07.03.20.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 03:20:54 -0700 (PDT)
-From: Roger Pau Monne <roger.pau@citrix.com>
-To: xen-devel@lists.xenproject.org,
-	linux-kernel@vger.kernel.org
-Cc: Stefano Stabellini <sstabellini@kernel.org>,
-	jason.andryuk@amd.com,
-	Xenia.Ragiadakou@amd.com,
-	Alejandro.GarciaVallejo@amd.com,
-	Roger Pau Monne <roger.pau@citrix.com>,
-	Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH] x86/xen: disable CPU idle and frequency drivers for PVH dom0
-Date: Mon,  7 Apr 2025 12:18:41 +0200
-Message-ID: <20250407101842.67228-1-roger.pau@citrix.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1744021167; c=relaxed/simple;
+	bh=fNPGdzrWquW6H1oNi/sXq1ti71yv7YBXmGrGcdUNT7s=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OvDSWhc0ZuJlK0QC0kr7Ym1MWbiZY8Q10k/0A07fVfVH3UGiKqmujiJkAASCj+JmT05i3djMiDU1h9iDlBZoO7pm5mmU0wVtQxdCxcRZ5svkY5edOS6flgOZsNIvSN9uckSdbqh3f3EuVCOXbauvnxMLgV7MYUwZr1J2XLqU5hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=uGtGiQRS; arc=none smtp.client-ip=81.200.124.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
+Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
+	by ksmg01.maxima.ru (Postfix) with ESMTP id 8D6EDC002B;
+	Mon,  7 Apr 2025 13:19:13 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 8D6EDC002B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
+	s=sl; t=1744021153; bh=fNPGdzrWquW6H1oNi/sXq1ti71yv7YBXmGrGcdUNT7s=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+	b=uGtGiQRSV26qyWcsaf9CHRdGQvTELi6sXwumlyTusF5GjU20VkcbLqXZhIH8yQf/t
+	 BhZuGOSLY9j2v+5PPH9zeg/SxZDHimXAl4jARs5BVoRpacp3NtEGbk7CQXhXkBD+rX
+	 Axsqt0o9A+E3NQ9XjcxOlPEFHfDvBeMZAkI2f95EsU0gDAeDFoIqJXME/+dsP1X/78
+	 rNRIo43B4hL8k74LdV1M3ECvUY8oHrVlQGmcs8s6PvU/CwjUC2dSzVKH54NJvXAoG6
+	 glkydREAxj8k7VtK69dEi0HI4K/9mLUgAJDgZP5eg+tvY9FXKQPo3kOn+42rNHKdz0
+	 Cl6Ur/hmLQCjg==
+Received: from ksmg01.maxima.ru (autodiscover.maxima.ru [81.200.124.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
+	by ksmg01.maxima.ru (Postfix) with ESMTPS;
+	Mon,  7 Apr 2025 13:19:13 +0300 (MSK)
+Received: from ws-8313-abramov.mti-lab.com (172.25.5.19) by
+ mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 7 Apr 2025 13:19:12 +0300
+Date: Mon, 7 Apr 2025 13:19:30 +0300
+From: Ivan Abramov <i.abramov@mt-integration.ru>
+To: Eric Dumazet <edumazet@google.com>
+CC: Stanislav Fomichev <stfomichev@gmail.com>, "David S. Miller"
+	<davem@davemloft.net>,
+	<syzbot+1df6ffa7a6274ae264db@syzkaller.appspotmail.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Kuniyuki Iwashima <kuniyu@amazon.com>, "Stanislav
+ Fomichev" <sdf@fomichev.me>, Ahmed Zaki <ahmed.zaki@intel.com>, "Alexander
+ Lobakin" <aleksander.lobakin@intel.com>, "Eric W. Biederman"
+	<ebiederm@xmission.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: Re: [PATCH net v2] net: Avoid calling WARN_ON() on -ENOMEM in
+ netif_change_net_namespace()
+Message-ID: <20250407131930.70ad6df9d1e8c1f7c413f880@mt-integration.ru>
+In-Reply-To: <CANn89i+UQQ6GqhWisHQEL0ECNFoQqVrO+2Ee3oDzysdR7dh=Ag@mail.gmail.com>
+References: <20250403113519.992462-1-i.abramov@mt-integration.ru>
+	<Z-7N60DKIDLS2GXe@mini-arch>
+	<20250404102919.8d08a70102d5200788d1f091@mt-integration.ru>
+	<CANn89i+UQQ6GqhWisHQEL0ECNFoQqVrO+2Ee3oDzysdR7dh=Ag@mail.gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.30; i686-pc-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: mmail-p-exch02.mt.ru (81.200.124.62) To
+ mmail-p-exch01.mt.ru (81.200.124.61)
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
+X-KSMG-AntiSpam-Envelope-From: i.abramov@mt-integration.ru
+X-KSMG-AntiSpam-Info: LuaCore: 54 0.3.54 464169e973265e881193cca5ab7aa5055e5b7016, {rep_avail}, {Prob_CN_TRASH_MAILERS}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;ksmg01.maxima.ru:7.1.1;81.200.124.61:7.1.2;127.0.0.199:7.1.2;mt-integration.ru:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.61
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 192423 [Apr 07 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 40
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/04/07 08:57:00 #27861720
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 7
 
-When running as a PVH dom0 the ACPI tables exposed to Linux are (mostly)
-the native ones, thus exposing the C and P states, that can lead to
-attachment of CPU idle and frequency drivers.  However the entity in
-control of the CPU C and P states is Xen, as dom0 doesn't have a full view
-of the system load, neither has all CPUs assigned and identity pinned.
+On Fri, 4 Apr 2025 10:53:35 +0200, Eric Dumazet wrote:
+> On Fri, Apr 4, 2025 at 9:29 AM Ivan Abramov <i.abramov@mt-integration.ru> wrote:
+>>
+>> On Thu, 3 Apr 2025 11:05:31 -0700, Stanislav Fomichev wrote:
+>> > On 04/03, Ivan Abramov wrote:
+>> >> It's pointless to call WARN_ON() in case of an allocation failure in
+>> >> device_rename(), since it only leads to useless splats caused by deliberate
+>> >> fault injections, so avoid it.
+>>
+>> > What if this happens in a non-fault injection environment? Suppose
+>> > the user shows up and says that he's having an issue with device
+>> > changing its name after netns change. There will be no way to diagnose
+>> > it, right?
+>>
+>> Failure to allocate a few hundred bytes in kstrdup doesn't seem
+>> practically possible and happens only in fault injection scenarios. Other
+>> types of failures in device_rename will still trigger WARN_ON.
+>
+> If you want to fix this, fix it properly.
+>
+> Do not paper around the issue by silencing a warning.
 
-Like it's done for classic PV guests, prevent Linux from using idle or
-frequency state drivers when running as a PVH dom0.
+As far as I know, WARN_ON call on -ENOMEM is the issue itself, since
+it only fires in testing/deliberate scenarios. And this fixes just that,
+without touching anything else.
 
-On an AMD EPYC 7543P system without this fix a Linux PVH dom0 will keep the
-host CPUs spinning at 100% even when dom0 is completely idle, as it's
-attempting to use the acpi_idle driver.
-
-Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
----
- arch/x86/xen/enlighten_pvh.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/xen/enlighten_pvh.c
-index 0e3d930bcb89..9d25d9373945 100644
---- a/arch/x86/xen/enlighten_pvh.c
-+++ b/arch/x86/xen/enlighten_pvh.c
-@@ -1,5 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/acpi.h>
-+#include <linux/cpufreq.h>
-+#include <linux/cpuidle.h>
- #include <linux/export.h>
- #include <linux/mm.h>
- 
-@@ -123,8 +125,23 @@ static void __init pvh_arch_setup(void)
- {
- 	pvh_reserve_extra_memory();
- 
--	if (xen_initial_domain())
-+	if (xen_initial_domain()) {
- 		xen_add_preferred_consoles();
-+
-+		/*
-+		 * Disable usage of CPU idle and frequency drivers: when
-+		 * running as hardware domain the exposed native ACPI tables
-+		 * causes idle and/or frequency drivers to attach and
-+		 * malfunction.  It's Xen the entity that controls the idle and
-+		 * frequency states.
-+		 *
-+		 * For unprivileged domains the exposed ACPI tables are
-+		 * fabricated and don't contain such data.
-+		 */
-+		disable_cpuidle();
-+		disable_cpufreq();
-+		WARN_ON(xen_set_default_idle());
-+	}
- }
- 
- void __init xen_pvh_init(struct boot_params *boot_params)
--- 
-2.48.1
-
+How should proper fix of this look like? I would be glad to work up
+some solution that satisfies maintainers' vision, but I don't see other
+ways around it without some grand refactoring, which may bring more
+problems than solutions.
 
