@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-590426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C06EA7D2F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:32:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7464A7D2F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8799E188DFE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 04:32:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2621E1887134
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 04:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F717223311;
-	Mon,  7 Apr 2025 04:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDA22236EE;
+	Mon,  7 Apr 2025 04:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="LBPY3WHJ"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Y2R5CTRR"
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA7922258C
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 04:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0893D22259C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 04:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744000263; cv=none; b=espxNuwXom88n9e8WY/dgdIRqFKbxYDVRq8GtR+1Or6xR0VMY3tJ5UPc09ToAySHyMCKK7C3+xV6mocBn83Blv4fb3vt8uk312dtQGqE9t14+ujYEem+6t0Jv7WgymXKbSLsqVSD4/euATroJrGTwRMPw9LWBu+LrR2CoUo0dUs=
+	t=1744000265; cv=none; b=TC5AXn/xG+mog8of0bfTyx37k50JvdsVsLHrnYR3yg7YOtfUWu/XIpfZHGW9zH8KTj6IDdu86yX3Phqrk1ETP4lcpr7E9qstYAqLSyU9xGY+1EAPqrsN7SASWz/GUq/ZJlBAz/a4/ivRPIum23w2kvq7LW6ECkG8V53kDuYkejg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744000263; c=relaxed/simple;
-	bh=topjyXl8cfmVC2wwnmz9rv1A6nyhahSaPg2JtNji6lQ=;
+	s=arc-20240116; t=1744000265; c=relaxed/simple;
+	bh=YRfwgBPjWgBBKoPJSbVVBZYu3/kI4nztcwIUXOqhvgU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tpk5L5iJPHJoXX0W/SAhhhuQZzDvvTWsafP1tVwA2a/K8ecR01d3L7ItNrMklHbeRZEMDNAlqmoopMCHBsXpLC+6q/XsyR6Wby1YNqi6i2q1CUybH9OOVOzOuTR4tBdk8DtD5Doqq2K1gEIxkrOMIWiTq2MDO7J1kQ6RqVTB+yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=LBPY3WHJ; arc=none smtp.client-ip=185.125.188.123
+	 MIME-Version; b=HT9Yf/4a4w21F3DwGasLQvsMwbz3+x+lAYQdhmqrtiwUiFMaQ2cCVwCEBzaceINdBPJK5NIxRJ9WntnNF4ghDVH0yH+TcxoVHfHaGyWO/AvV9RdZR+a2xSRRQV84P6VO4h5D4PxbzaabHQ3uWLkkyTaAeN7Q0EXup7I1FyLS4xQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Y2R5CTRR; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5C2E43F287
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 04:30:59 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 607323F181
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 04:31:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1744000259;
-	bh=JN2InJzY9fip1rzot+r5SY6hkXxBlsffh5kl0Mfv5JI=;
+	s=20210705; t=1744000261;
+	bh=pkRong3R1WAVT/Zk9oY39vsyRup91MiW4yFLIt9P1U4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version;
-	b=LBPY3WHJdVkXWqtvLgTGv4McIMBqZg3tQiVla209NiMLeT/CBJnBAVAga8HoARSad
-	 zlQ/GDfc2lr+ji11vzXC3AW5rWRVAlnhP/dkB6mD8+gnypWUgqwyQTUNfEz0AKvege
-	 fBRP7dY3HY0PbFCZdht2QRlB0CZvE1jyJwU7hWqsKOG6vifiAGUwR1DcjjUIQwdlJn
-	 vVghKLALleMc+1Jgdz9lMmWcsphwKP1WFhNWOx6CA2sW0wq50hByiaidXey8MkEivm
-	 MJEcRAaxbYyUMe9wSP7Z3QPfIrkXOPfEZI0m6+MhJZAzYXUzfqL4tdPP6KTyFCss6i
-	 PVeMeqx1oJ5jw==
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-225107fbdc7so33203375ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Apr 2025 21:30:59 -0700 (PDT)
+	b=Y2R5CTRRuE0j4SPZfgMa+y5bF8mb1EXgiSYwuTo07ni6JQ35mraGecCQLw2L+vFkD
+	 Qs1sw25cxIEacb4dgNHkHtNLfPkOS9SRpTNZzuRs+UBS0VPgsAqCsi679bXCBzlLD8
+	 64248XJTnVpyTE1vzxpPwf5EYyMfzFTgErUKckdFUt6/6f5U2FMYJfcmGepct/hkll
+	 AfURNKE5CkNpFMP3WoagzNcDbuuT/bBJHWe2ylN81G+lU/S/lC560sQ9G02CkIRiM/
+	 r4SFDHKJG/BJtMCwLiF1Ky7sZduCqqWmeg9CvwkiMJSa6pYSLlu+WmndzpBcPovD22
+	 0nWe4WF7yv/Ww==
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-22410053005so64347105ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Apr 2025 21:31:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744000257; x=1744605057;
+        d=1e100.net; s=20230601; t=1744000260; x=1744605060;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JN2InJzY9fip1rzot+r5SY6hkXxBlsffh5kl0Mfv5JI=;
-        b=JVYDJ1qS0HwWAHdVU7+oumSVvkU6yPA8iIJ4e/Q+VZt3S6gyFKEKpBaqcTdw2N42YN
-         LToWnu8MPQ6VsfOzeJuGSCmnnAu31cD0xRIB2wZVMhqgsxDZl7C9HGuPSr4RAJSL6Miw
-         ue2Buc6dJcs2Rnbs6HzP+YIqr8p10R2jG10DBB/UUhgjj0Za7TE3Mjpf88Zxbi0CMm2m
-         74KlC+j2361s/dEA/s2YCaqp65C1AKy7qrvw0O2OZJ1VC3f/UCUZmj0knWSbOJA0jNzu
-         qUI9C+izRjZHpGKhBTNZOF68Dp2EW4t61kG7GAmcQnTJOwnrSA2Dise10HVy1geJiBmy
-         LtLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAEED1lSbQoCn73kVUteNnpTURmKDzPaPkBy3UxKqqWyMQSqw0w1z5vx4cy2ptaZ2wJIFJO5olPrc7jkM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXPHxTuoTO0T/YB64HgAy+6InA++3ykIfotj+q1LWEjzIC33yd
-	D22OOHyz65Bsi9TkJjVfyrTVNOGBE+5ZYr8IJYrGtGuvisGFjPnqci09cd0f1Y2FCssqkATDes1
-	cgb1+vKTb18LFxkc2eQlpG7mLAtSs/OQ/cCuWcZYx/i6HvJtm5mp53C0ohwSxcPyo5hAjXmS5so
-	VOXg==
-X-Gm-Gg: ASbGncvbGr3IB09wF1C5LVmPDyCdsd7hcpLE3lunSW11ivtOmCJiaxXGPJsn91SlqQO
-	S3yc5pVlvZY096TzJ06E13XnTT3fS9bG5CjfEmBdRsMK2LZPPyCCWJ7QbE7bAmTfXh0BBXIRezr
-	pVGWn8N96kOWwJBIilCU9TD+RtsSR/NT1M7KdrL3jbE8eSp0zMfGeJhoANpP89mqSHzB02NRpNk
-	Dfvin5qOe0LnSX20k3YQSEP33ogQfV5R/LXggFJqt/k8X1zCfI0fr0o/QVogYN+GwL+Cje/AtTT
-	6WP6MAdH+vIgAFGN2shZW9S053HFfrUrQQ==
-X-Received: by 2002:a17:903:1948:b0:224:a74:28cd with SMTP id d9443c01a7336-22a8a87d03fmr152760885ad.31.1744000257304;
-        Sun, 06 Apr 2025 21:30:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHMJeKHzvUbt+AOJlfEZJCfM9kHhfstRNImHDDwMKHZqjXIMCC7cuk6cmuwqUav1kWPUQTDcQ==
-X-Received: by 2002:a17:903:1948:b0:224:a74:28cd with SMTP id d9443c01a7336-22a8a87d03fmr152760695ad.31.1744000257046;
-        Sun, 06 Apr 2025 21:30:57 -0700 (PDT)
+        bh=pkRong3R1WAVT/Zk9oY39vsyRup91MiW4yFLIt9P1U4=;
+        b=rPUwKETlPLrAg6p15FeRWaBmlNEd4JOW5zMpwDlglBx/DPWN7ZjiiWF9t2ZJyDYDQf
+         f7LJPklEuVgjOEYCpN08fqG9clyN89ViTJYT+rp6AxXSpdxm2sanDO6tjL/+RJ7bgycj
+         cSzfursiyYx6EaDHAaLvddPKPsOdgODoETHAm7QL+rUQ8SQZYzzG5PEMp7cs7O1s0zKp
+         1wj7Fc7Ak5DT7xx1xby2ZYvqRXz9qOi7itQ9FjCXH7R3AYvt1qvMAizEa91CA3suN9n+
+         Abm2DWmsgsXOJ05m8u8kakToJ+mUSmvmfYTo0/yXL8gHsh38cMV0vgDegQzCAVLueuDn
+         8MoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVx5YSnLUluxA+YC89VcLk9YgsHnORlamxmI1TFFR/9cm7EhdPkbpeszJYIVlDoxqKEvqAeAU23fOH4KKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyl7mx25UTSnujYfHQ+jxZEDbQFe99LSNgihmVfWflk0Y1oMSN9
+	ZsagRIw2Svhj8SoOz3mYZRcI56dSIe32EgoaXmHevfWUIpAVsSfUWrEXAkCggx05LZEqVm12eYH
+	okJaUF7nA2NKSGZiP1f89LJT0w0phZmpkRnNZ5QVkTTtgxz/3y6PslaIAFY6DZ+aADQTwie8ZFs
+	nHbQ==
+X-Gm-Gg: ASbGncugthSTXYJSh0FgepjGafcyeN7sYoZZ6wSDnuPhUZI9nuYw+ryI/rNfbmUgw0B
+	yJgEUWpwEkAF0BIsE+XxNatUvS79uVGMlsu2LHcZ9BE1CF747ba4rjGj3nFas5ioCFE0C1zjOH2
+	uPzCLRXGw8+U4u24k4Qx3UOjxO/aJFYCk6yKQOMC+7vQWuTX0NY3u4DEILG8vfeVZjUGVnckOEX
+	PjRRdN9JVBYe6qMVvnzT74+do0/oUARFcllrMsvfwMdzrZzKrvm7Nhgn82p8lXpY+aUCyW2365l
+	fFb7f1X4sI5uwyl36VbTcam5IDn+EZNbTw==
+X-Received: by 2002:a17:902:f64a:b0:224:194c:6942 with SMTP id d9443c01a7336-22a8a8b828amr164483975ad.34.1744000259685;
+        Sun, 06 Apr 2025 21:30:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFoTBtjgGYyMo8U+tHKN7qfhJYW+OLGU/Ad2psdFbZ7K7/CabhVgATMiQwhPW0bUE1Ii37gcA==
+X-Received: by 2002:a17:902:f64a:b0:224:194c:6942 with SMTP id d9443c01a7336-22a8a8b828amr164483705ad.34.1744000259250;
+        Sun, 06 Apr 2025 21:30:59 -0700 (PDT)
 Received: from localhost.localdomain ([240f:74:7be:1:5985:1f8b:863f:3722])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22978670dbbsm70839525ad.209.2025.04.06.21.30.55
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22978670dbbsm70839525ad.209.2025.04.06.21.30.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Apr 2025 21:30:56 -0700 (PDT)
+        Sun, 06 Apr 2025 21:30:58 -0700 (PDT)
 From: Koichiro Den <koichiro.den@canonical.com>
 To: linux-gpio@vger.kernel.org
 Cc: brgl@bgdev.pl,
@@ -87,9 +87,9 @@ Cc: brgl@bgdev.pl,
 	linus.walleij@linaro.org,
 	maciej.borzecki@canonical.com,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v7 5/9] gpio: aggregator: rename 'name' to 'key' in gpio_aggregator_parse()
-Date: Mon,  7 Apr 2025 13:30:15 +0900
-Message-ID: <20250407043019.4105613-6-koichiro.den@canonical.com>
+Subject: [PATCH v7 6/9] gpio: aggregator: expose aggregator created via legacy sysfs to configfs
+Date: Mon,  7 Apr 2025 13:30:16 +0900
+Message-ID: <20250407043019.4105613-7-koichiro.den@canonical.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250407043019.4105613-1-koichiro.den@canonical.com>
 References: <20250407043019.4105613-1-koichiro.den@canonical.com>
@@ -101,69 +101,324 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rename the local variable 'name' in gpio_aggregator_parse() to 'key'
-because struct gpio_aggregator_line now uses the 'name' field for the
-custom line name and the local variable actually represents a 'key'.
-This change prepares for the next but one commit.
+Expose settings for aggregators created using the sysfs 'new_device'
+interface to configfs. Once written to 'new_device', an "_sysfs.<N>" path
+appears in the configfs regardless of whether the probe succeeds.
+Consequently, users can no longer use that prefix for custom GPIO
+aggregator names. The 'live' attribute changes to 1 when the probe
+succeeds and the GPIO forwarder is instantiated.
 
-No functional change.
+Note that the aggregator device created via sysfs is asynchronous, i.e.
+writing into 'new_device' returns without waiting for probe completion,
+and the probe may succeed, fail, or eventually succeed via deferred
+probe. Thus, the 'live' attribute may change from 0 to 1 asynchronously
+without notice. So, editing key/offset/name while it's waiting for
+deferred probe is prohibited.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The configfs auto-generation relies on create_default_group(), which
+inherently prohibits rmdir(2). To align with the limitation, this commit
+also prohibits mkdir(2) for them. When users want to change the number
+of lines for an aggregator initialized via 'new_device', they need to
+tear down the device using 'delete_device' and reconfigure it from
+scratch. This does not break previous behavior; users of legacy sysfs
+interface simply gain additional almost read-only configfs exposure.
+
+Still, users can write to the 'live' attribute to toggle the device
+unless it's waiting for deferred probe. So once probe succeeds, they can
+deactivate it in the same manner as the devices initialized via
+configfs.
+
 Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
 ---
- drivers/gpio/gpio-aggregator.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/gpio/gpio-aggregator.c | 138 ++++++++++++++++++++++++++++++---
+ 1 file changed, 126 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
-index d1c837f00ffe..2d8a7019b75e 100644
+index 2d8a7019b75e..bea01ebe8cda 100644
 --- a/drivers/gpio/gpio-aggregator.c
 +++ b/drivers/gpio/gpio-aggregator.c
-@@ -998,7 +998,7 @@ static struct configfs_subsystem gpio_aggregator_subsys = {
+@@ -33,6 +33,7 @@
+ #include "dev-sync-probe.h"
+ 
+ #define AGGREGATOR_MAX_GPIOS 512
++#define AGGREGATOR_LEGACY_PREFIX "_sysfs"
+ 
+ /*
+  * GPIO Aggregator sysfs interface
+@@ -131,6 +132,14 @@ static bool gpio_aggregator_is_active(struct gpio_aggregator *aggr)
+ 	return aggr->probe_data.pdev && platform_get_drvdata(aggr->probe_data.pdev);
+ }
+ 
++/* Only aggregators created via legacy sysfs can be "activating". */
++static bool gpio_aggregator_is_activating(struct gpio_aggregator *aggr)
++{
++	lockdep_assert_held(&aggr->lock);
++
++	return aggr->probe_data.pdev && !platform_get_drvdata(aggr->probe_data.pdev);
++}
++
+ static size_t gpio_aggregator_count_lines(struct gpio_aggregator *aggr)
+ {
+ 	lockdep_assert_held(&aggr->lock);
+@@ -189,6 +198,30 @@ static void gpio_aggregator_line_del(struct gpio_aggregator *aggr,
+ 	list_del(&line->entry);
+ }
+ 
++static void gpio_aggregator_free_lines(struct gpio_aggregator *aggr)
++{
++	struct gpio_aggregator_line *line, *tmp;
++
++	list_for_each_entry_safe(line, tmp, &aggr->list_head, entry) {
++		configfs_unregister_group(&line->group);
++		/*
++		 * Normally, we acquire aggr->lock within the configfs
++		 * callback. However, in the legacy sysfs interface case,
++		 * calling configfs_(un)register_group while holding
++		 * aggr->lock could cause a deadlock. Fortunately, this is
++		 * unnecessary because the new_device/delete_device path
++		 * and the module unload path are mutually exclusive,
++		 * thanks to an explicit try_module_get. That's why this
++		 * minimal scoped_guard suffices.
++		 */
++		scoped_guard(mutex, &aggr->lock)
++			gpio_aggregator_line_del(aggr, line);
++		kfree(line->key);
++		kfree(line->name);
++		kfree(line);
++	}
++}
++
+ 
+ /*
+  *  GPIO Forwarder
+@@ -702,7 +735,8 @@ gpio_aggregator_line_key_store(struct config_item *item, const char *page,
+ 
+ 	guard(mutex)(&aggr->lock);
+ 
+-	if (gpio_aggregator_is_active(aggr))
++	if (gpio_aggregator_is_activating(aggr) ||
++	    gpio_aggregator_is_active(aggr))
+ 		return -EBUSY;
+ 
+ 	kfree(line->key);
+@@ -739,7 +773,8 @@ gpio_aggregator_line_name_store(struct config_item *item, const char *page,
+ 
+ 	guard(mutex)(&aggr->lock);
+ 
+-	if (gpio_aggregator_is_active(aggr))
++	if (gpio_aggregator_is_activating(aggr) ||
++	    gpio_aggregator_is_active(aggr))
+ 		return -EBUSY;
+ 
+ 	kfree(line->name);
+@@ -785,7 +820,8 @@ gpio_aggregator_line_offset_store(struct config_item *item, const char *page,
+ 
+ 	guard(mutex)(&aggr->lock);
+ 
+-	if (gpio_aggregator_is_active(aggr))
++	if (gpio_aggregator_is_activating(aggr) ||
++	    gpio_aggregator_is_active(aggr))
+ 		return -EBUSY;
+ 
+ 	line->offset = offset;
+@@ -843,11 +879,12 @@ gpio_aggregator_device_live_store(struct config_item *item, const char *page,
+ 	if (!try_module_get(THIS_MODULE))
+ 		return -ENOENT;
+ 
+-	if (live)
++	if (live && !aggr->init_via_sysfs)
+ 		gpio_aggregator_lockup_configfs(aggr, true);
+ 
+ 	scoped_guard(mutex, &aggr->lock) {
+-		if (live == gpio_aggregator_is_active(aggr))
++		if (gpio_aggregator_is_activating(aggr) ||
++		    (live == gpio_aggregator_is_active(aggr)))
+ 			ret = -EPERM;
+ 		else if (live)
+ 			ret = gpio_aggregator_activate(aggr);
+@@ -859,7 +896,7 @@ gpio_aggregator_device_live_store(struct config_item *item, const char *page,
+ 	 * Undepend is required only if device disablement (live == 0)
+ 	 * succeeds or if device enablement (live == 1) fails.
+ 	 */
+-	if (live == !!ret)
++	if (live == !!ret && !aggr->init_via_sysfs)
+ 		gpio_aggregator_lockup_configfs(aggr, false);
+ 
+ 	module_put(THIS_MODULE);
+@@ -903,7 +940,7 @@ static void gpio_aggregator_device_release(struct config_item *item)
+ 	struct gpio_aggregator *aggr = to_gpio_aggregator(item);
+ 
+ 	/*
+-	 * If the aggregator is active, this code wouldn't be reached,
++	 * At this point, aggr is neither active nor activating,
+ 	 * so calling gpio_aggregator_deactivate() is always unnecessary.
+ 	 */
+ 	gpio_aggregator_free(aggr);
+@@ -925,6 +962,15 @@ gpio_aggregator_device_make_group(struct config_group *group, const char *name)
+ 	if (ret != 1 || nchar != strlen(name))
+ 		return ERR_PTR(-EINVAL);
+ 
++	if (aggr->init_via_sysfs)
++		/*
++		 * Aggregators created via legacy sysfs interface are exposed as
++		 * default groups, which means rmdir(2) is prohibited for them.
++		 * For simplicity, and to avoid confusion, we also prohibit
++		 * mkdir(2).
++		 */
++		return ERR_PTR(-EPERM);
++
+ 	guard(mutex)(&aggr->lock);
+ 
+ 	if (gpio_aggregator_is_active(aggr))
+@@ -962,6 +1008,14 @@ gpio_aggregator_make_group(struct config_group *group, const char *name)
+ 	struct gpio_aggregator *aggr;
+ 	int ret;
+ 
++	/*
++	 * "_sysfs" prefix is reserved for auto-generated config group
++	 * for devices create via legacy sysfs interface.
++	 */
++	if (strncmp(name, AGGREGATOR_LEGACY_PREFIX,
++		    sizeof(AGGREGATOR_LEGACY_PREFIX)) == 0)
++		return ERR_PTR(-EINVAL);
++
+ 	/* arg space is unneeded */
+ 	ret = gpio_aggregator_alloc(&aggr, 0);
+ 	if (ret)
+@@ -998,6 +1052,8 @@ static struct configfs_subsystem gpio_aggregator_subsys = {
  static int gpio_aggregator_parse(struct gpio_aggregator *aggr)
  {
  	char *args = skip_spaces(aggr->args);
--	char *name, *offsets, *p;
-+	char *key, *offsets, *p;
++	struct gpio_aggregator_line *line;
++	char name[CONFIGFS_ITEM_NAME_LEN];
+ 	char *key, *offsets, *p;
  	unsigned int i, n = 0;
  	int error = 0;
- 
-@@ -1007,18 +1007,18 @@ static int gpio_aggregator_parse(struct gpio_aggregator *aggr)
- 	if (!bitmap)
- 		return -ENOMEM;
- 
--	args = next_arg(args, &name, &p);
-+	args = next_arg(args, &key, &p);
- 	while (*args) {
- 		args = next_arg(args, &offsets, &p);
- 
+@@ -1014,9 +1070,24 @@ static int gpio_aggregator_parse(struct gpio_aggregator *aggr)
  		p = get_options(offsets, 0, &error);
  		if (error == 0 || *p) {
  			/* Named GPIO line */
--			error = gpio_aggregator_add_gpio(aggr, name, U16_MAX, &n);
-+			error = gpio_aggregator_add_gpio(aggr, key, U16_MAX, &n);
++			scnprintf(name, sizeof(name), "line%u", n);
++			line = gpio_aggregator_line_alloc(aggr, n, key, -1);
++			if (!line) {
++				error = -ENOMEM;
++				goto err;
++			}
++			config_group_init_type_name(&line->group, name,
++						    &gpio_aggregator_line_type);
++			error = configfs_register_group(&aggr->group,
++							&line->group);
++			if (error)
++				goto err;
++			scoped_guard(mutex, &aggr->lock)
++				gpio_aggregator_line_add(aggr, line);
++
+ 			error = gpio_aggregator_add_gpio(aggr, key, U16_MAX, &n);
  			if (error)
- 				return error;
+-				return error;
++				goto err;
  
--			name = offsets;
-+			key = offsets;
+ 			key = offsets;
  			continue;
- 		}
- 
-@@ -1030,12 +1030,12 @@ static int gpio_aggregator_parse(struct gpio_aggregator *aggr)
+@@ -1030,9 +1101,24 @@ static int gpio_aggregator_parse(struct gpio_aggregator *aggr)
  		}
  
  		for_each_set_bit(i, bitmap, AGGREGATOR_MAX_GPIOS) {
--			error = gpio_aggregator_add_gpio(aggr, name, i, &n);
-+			error = gpio_aggregator_add_gpio(aggr, key, i, &n);
++			scnprintf(name, sizeof(name), "line%u", n);
++			line = gpio_aggregator_line_alloc(aggr, n, key, i);
++			if (!line) {
++				error = -ENOMEM;
++				goto err;
++			}
++			config_group_init_type_name(&line->group, name,
++						    &gpio_aggregator_line_type);
++			error = configfs_register_group(&aggr->group,
++							&line->group);
++			if (error)
++				goto err;
++			scoped_guard(mutex, &aggr->lock)
++				gpio_aggregator_line_add(aggr, line);
++
+ 			error = gpio_aggregator_add_gpio(aggr, key, i, &n);
  			if (error)
- 				return error;
+-				return error;
++				goto err;
  		}
  
--		args = next_arg(args, &name, &p);
-+		args = next_arg(args, &key, &p);
- 	}
+ 		args = next_arg(args, &key, &p);
+@@ -1040,15 +1126,20 @@ static int gpio_aggregator_parse(struct gpio_aggregator *aggr)
  
  	if (!n) {
+ 		pr_err("No GPIOs specified\n");
+-		return -EINVAL;
++		goto err;
+ 	}
+ 
+ 	return 0;
++
++err:
++	gpio_aggregator_free_lines(aggr);
++	return error;
+ }
+ 
+ static ssize_t gpio_aggregator_new_device_store(struct device_driver *driver,
+ 						const char *buf, size_t count)
+ {
++	char name[CONFIGFS_ITEM_NAME_LEN];
+ 	struct gpio_aggregator *aggr;
+ 	struct platform_device *pdev;
+ 	int res;
+@@ -1077,10 +1168,25 @@ static ssize_t gpio_aggregator_new_device_store(struct device_driver *driver,
+ 		goto free_table;
+ 	}
+ 
+-	res = gpio_aggregator_parse(aggr);
++	scnprintf(name, sizeof(name), "%s.%d", AGGREGATOR_LEGACY_PREFIX, aggr->id);
++	config_group_init_type_name(&aggr->group, name, &gpio_aggregator_device_type);
++
++	/*
++	 * Since the device created by sysfs might be toggled via configfs
++	 * 'live' attribute later, this initialization is needed.
++	 */
++	dev_sync_probe_init(&aggr->probe_data);
++
++	/* Expose to configfs */
++	res = configfs_register_group(&gpio_aggregator_subsys.su_group,
++				      &aggr->group);
+ 	if (res)
+ 		goto free_dev_id;
+ 
++	res = gpio_aggregator_parse(aggr);
++	if (res)
++		goto unregister_group;
++
+ 	gpiod_add_lookup_table(aggr->lookups);
+ 
+ 	pdev = platform_device_register_simple(DRV_NAME, aggr->id, NULL, 0);
+@@ -1095,6 +1201,8 @@ static ssize_t gpio_aggregator_new_device_store(struct device_driver *driver,
+ 
+ remove_table:
+ 	gpiod_remove_lookup_table(aggr->lookups);
++unregister_group:
++	configfs_unregister_group(&aggr->group);
+ free_dev_id:
+ 	kfree(aggr->lookups->dev_id);
+ free_table:
+@@ -1111,7 +1219,13 @@ static struct driver_attribute driver_attr_gpio_aggregator_new_device =
+ 
+ static void gpio_aggregator_destroy(struct gpio_aggregator *aggr)
+ {
+-	gpio_aggregator_deactivate(aggr);
++	scoped_guard(mutex, &aggr->lock) {
++		if (gpio_aggregator_is_activating(aggr) ||
++		    gpio_aggregator_is_active(aggr))
++			gpio_aggregator_deactivate(aggr);
++	}
++	gpio_aggregator_free_lines(aggr);
++	configfs_unregister_group(&aggr->group);
+ 	kfree(aggr);
+ }
+ 
 -- 
 2.45.2
 
