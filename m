@@ -1,76 +1,74 @@
-Return-Path: <linux-kernel+bounces-591459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55AE0A7E019
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:56:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF91DA7DFF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7CE91891EA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:49:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 753F716B548
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40821ADC78;
-	Mon,  7 Apr 2025 13:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFF51A0BDB;
+	Mon,  7 Apr 2025 13:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k7dreKtM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZPMWinCE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A8F1AAA0F;
-	Mon,  7 Apr 2025 13:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0019C3FB0E;
+	Mon,  7 Apr 2025 13:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744033726; cv=none; b=B3G/W2QkhPTBGn7RG6p05kiI/mQ6Al8O8RmMT1OF2lwBsPH++5OocwACXlKfsSBnIMLAKz2A4d4qW3Tg2MoHqoWBEgFTFM+M86qw6P4cIk1XMwofDZ8xI7iSiH7WOe1W8k3j/QDg2WUpbyHoWCW9HreXRECfzMsko6oRUDPvHHI=
+	t=1744033699; cv=none; b=JvlRXh+a6pO2DvjsqH3dduJ2Jiw3xrG/m9AxFO1QVcYmkT1/OQvfiBGesBFrn2d2upVV7UIuVWkchqv797iBf45Fc+OhgP6gxxZgURvZ9P52MxbKiKr5bt4zJPs8iU79rWKXvHGboS7ofxpp1diYgK+SPVxgK6EJFLOnuDTcSS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744033726; c=relaxed/simple;
-	bh=hD+ZYmdj1bqxHe5n8QqhW5c1gy2hPeTRcreDRy6dSO8=;
+	s=arc-20240116; t=1744033699; c=relaxed/simple;
+	bh=whXxLvXFtWpjQOYQaStEv117F7Xp+BAD7ZL1ORaR2SM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=btHc8N0ZKbigiLKpqBbEsbp14cfXu8e67FWS3ld1d5CKfpIrXdiMPV1VkpvemXpO19Hcd4R/DX4hQEDHBT5zbO5I7n9hBl/OntEd4jJTRmK2J4jUpfRffI4OOAHL+wOQamJ97z2dU63NFvZYZoC5TYP3kS50uCrZuqatXvfDoF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k7dreKtM; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=NNRnOw8tuZQqbczJK5kRHnLMP/uNTaUgotvYEoW5H7IspOy9ZOb7lKTppf6KJSjfmKdQKVje20ehZ/drWbZICj+CLcrVKvoVPYIthramfKOjOXm5XCyK+o9V86ZNd5QV53IvyW7jXHZKCWxGCCuRSn2bzzwAVNL8hs3J2Qpk15o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZPMWinCE; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744033724; x=1775569724;
+  t=1744033698; x=1775569698;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=hD+ZYmdj1bqxHe5n8QqhW5c1gy2hPeTRcreDRy6dSO8=;
-  b=k7dreKtMwU1Ai6OaXJ1amPQBBBI26YeDwhRSWGh92IJwLO5U4H5aHheD
-   RZq/COdOwxMnuRI0205iQMwC1dGPhVuNrSbcWmzWtrE2NUKpeFx9tOmBF
-   CAba1RQJ09vKLcwLD6cQn6w+ONT7/Yv1yHL7ETT0RAGJK5Z8yKzPIUADB
-   +R/EmfZObVmbA86SRvfNyXAKqdGOo9tPCHHBNlX9wifw987pnlZ0oMob9
-   HbCWzNOCJgonP5wPiCJseJTm+8pdJg/sUn3LxDgEoBPMb6XWKLadippul
-   FNMiHGLPC1y1Q9sjh82SIMF1x+MZQSvki1+5mtxX4p+6L/1udweW4/r0y
-   w==;
-X-CSE-ConnectionGUID: FnHwAPhoSJWrR+2tqCG7cA==
-X-CSE-MsgGUID: 2Xq4POEwSuKfe8noKqf+9w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="56790409"
+  bh=whXxLvXFtWpjQOYQaStEv117F7Xp+BAD7ZL1ORaR2SM=;
+  b=ZPMWinCESY7HTN3UP3VhNMGHI5WJQf56QNZ3z+oHtxac9Xk8xlYFphKF
+   5Ttuq+Ou7btSkNuZE7sZGmjrYhu/DD7L8esZ06XT85/PQVLIwYOPhLz0C
+   uUe3tE8mCKWasMhKb7Z9eQdX2BYb8hSxqDE8ojFV4njZJeKeIEFXWGHbh
+   Cf7TsbuQ5SLGpnGFJzCYke7i6p0yPbthQpgXpfD34SdDO4R64gbdJ/+AF
+   a49enZqHleHdEm/xhxLJj9W0TzbbitEg9KwUHHkj3HlCcnnJPUQL5LFUz
+   JLblG2NOr0orXfEORdANZcn2tT4mnSpWiaqSRpCBprcQnvl4I1S66/RvX
+   Q==;
+X-CSE-ConnectionGUID: z3IljXm1T86uI2EHouIzTw==
+X-CSE-MsgGUID: xc0X2E0uSFaQoD9TroyDEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45132023"
 X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="56790409"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 06:48:44 -0700
-X-CSE-ConnectionGUID: VwkqmzBxRSy+phQRCvg9Tw==
-X-CSE-MsgGUID: orsXOEc6SJyFZBt9iHk+GQ==
+   d="scan'208";a="45132023"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 06:48:15 -0700
+X-CSE-ConnectionGUID: xP/mgxlETKGEpYu9qbtAUw==
+X-CSE-MsgGUID: lXCAbrDPRJW4eSeDFIEa/A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="165163325"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 07 Apr 2025 06:48:42 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u1mq7-0003S5-0y;
-	Mon, 07 Apr 2025 13:48:39 +0000
-Date: Mon, 7 Apr 2025 21:47:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Wolfram Sang <wsa-dev@sang-engineering.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Subject: Re: [PATCH v2 3/6] i2c: core: Switch to fwnode APIs to get IRQ
-Message-ID: <202504072135.1Uy3AQ3g-lkp@intel.com>
-References: <20250407095852.215809-4-andriy.shevchenko@linux.intel.com>
+   d="scan'208";a="127967787"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa007.fm.intel.com with SMTP; 07 Apr 2025 06:48:12 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 07 Apr 2025 16:48:11 +0300
+Date: Mon, 7 Apr 2025 16:48:11 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de, Badhri Jagan Sridharan <badhri@google.com>
+Subject: Re: [PATCH 2/3] usb: typec: tcpm: allow sink (ufp) to toggle into
+ accessory mode debug
+Message-ID: <Z_PXm5XbFk52jq_-@kuha.fi.intel.com>
+References: <20250404-ml-topic-tcpm-v1-0-b99f44badce8@pengutronix.de>
+ <20250404-ml-topic-tcpm-v1-2-b99f44badce8@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,93 +77,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250407095852.215809-4-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20250404-ml-topic-tcpm-v1-2-b99f44badce8@pengutronix.de>
 
-Hi Andy,
++Badhri
 
-kernel test robot noticed the following build errors:
+On Fri, Apr 04, 2025 at 12:43:05AM +0200, Michael Grzeschik wrote:
+> This patch extends the is_debug macro to cover the sink case (ufp). It
+> also handles the transition to access the DEBUG_ACC_ATTACHED state in
+> the sink case. It also handles the debounce case in which the cc
+> pins are not immediately valid after the plug event.
+> 
+> Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
 
-[auto build test ERROR on wsa/i2c/for-next]
-[also build test ERROR on linus/master v6.15-rc1 next-20250407]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/i2c-core-Drop-duplicate-check-before-calling-OF-APIs/20250407-180528
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-next
-patch link:    https://lore.kernel.org/r/20250407095852.215809-4-andriy.shevchenko%40linux.intel.com
-patch subject: [PATCH v2 3/6] i2c: core: Switch to fwnode APIs to get IRQ
-config: i386-buildonly-randconfig-002-20250407 (https://download.01.org/0day-ci/archive/20250407/202504072135.1Uy3AQ3g-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250407/202504072135.1Uy3AQ3g-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504072135.1Uy3AQ3g-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   drivers/i2c/i2c-core-base.c: In function 'i2c_dev_irq_from_resources':
->> drivers/i2c/i2c-core-base.c:911:32: error: implicit declaration of function 'irq_get_irq_data'; did you mean 'irq_set_irq_wake'? [-Werror=implicit-function-declaration]
-     911 |                         irqd = irq_get_irq_data(r->start);
-         |                                ^~~~~~~~~~~~~~~~
-         |                                irq_set_irq_wake
->> drivers/i2c/i2c-core-base.c:911:30: warning: assignment to 'struct irq_data *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-     911 |                         irqd = irq_get_irq_data(r->start);
-         |                              ^
->> drivers/i2c/i2c-core-base.c:915:25: error: implicit declaration of function 'irqd_set_trigger_type' [-Werror=implicit-function-declaration]
-     915 |                         irqd_set_trigger_type(irqd, r->flags & IORESOURCE_BITS);
-         |                         ^~~~~~~~~~~~~~~~~~~~~
-   drivers/i2c/i2c-core-base.c: In function 'i2c_host_notify_irq_map':
->> drivers/i2c/i2c-core-base.c:1458:9: error: implicit declaration of function 'irq_set_chip_and_handler' [-Werror=implicit-function-declaration]
-    1458 |         irq_set_chip_and_handler(virq, &dummy_irq_chip, handle_simple_irq);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/i2c/i2c-core-base.c:1458:41: error: 'dummy_irq_chip' undeclared (first use in this function)
-    1458 |         irq_set_chip_and_handler(virq, &dummy_irq_chip, handle_simple_irq);
-         |                                         ^~~~~~~~~~~~~~
-   drivers/i2c/i2c-core-base.c:1458:41: note: each undeclared identifier is reported only once for each function it appears in
->> drivers/i2c/i2c-core-base.c:1458:57: error: 'handle_simple_irq' undeclared (first use in this function)
-    1458 |         irq_set_chip_and_handler(virq, &dummy_irq_chip, handle_simple_irq);
-         |                                                         ^~~~~~~~~~~~~~~~~
-   drivers/i2c/i2c-core-base.c: In function 'i2c_handle_smbus_host_notify':
->> drivers/i2c/i2c-core-base.c:1508:9: error: implicit declaration of function 'generic_handle_irq_safe' [-Werror=implicit-function-declaration]
-    1508 |         generic_handle_irq_safe(irq);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +911 drivers/i2c/i2c-core-base.c
-
-70762abb9f89d97 drivers/i2c/i2c-core.c      Jarkko Nikula   2013-11-14  897  
-1d7534b6adcd3e4 drivers/i2c/i2c-core-base.c Charles Keepax  2019-06-27  898  int i2c_dev_irq_from_resources(const struct resource *resources,
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  899  			       unsigned int num_resources)
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  900  {
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  901  	struct irq_data *irqd;
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  902  	int i;
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  903  
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  904  	for (i = 0; i < num_resources; i++) {
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  905  		const struct resource *r = &resources[i];
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  906  
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  907  		if (resource_type(r) != IORESOURCE_IRQ)
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  908  			continue;
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  909  
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  910  		if (r->flags & IORESOURCE_BITS) {
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01 @911  			irqd = irq_get_irq_data(r->start);
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  912  			if (!irqd)
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  913  				break;
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  914  
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01 @915  			irqd_set_trigger_type(irqd, r->flags & IORESOURCE_BITS);
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  916  		}
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  917  
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  918  		return r->start;
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  919  	}
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  920  
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  921  	return 0;
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  922  }
-4124c4eba40256b drivers/i2c/i2c-core.c      Dmitry Torokhov 2017-03-01  923  
+> ---
+>  drivers/usb/typec/tcpm/tcpm.c | 34 +++++++++++++++++++++++++++++-----
+>  1 file changed, 29 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+> index 839697c14265e..01714a42f848a 100644
+> --- a/drivers/usb/typec/tcpm/tcpm.c
+> +++ b/drivers/usb/typec/tcpm/tcpm.c
+> @@ -67,6 +67,7 @@
+>  						\
+>  	S(ACC_UNATTACHED),			\
+>  	S(DEBUG_ACC_ATTACHED),			\
+> +	S(DEBUG_ACC_DEBOUNCE),			\
+>  	S(AUDIO_ACC_ATTACHED),			\
+>  	S(AUDIO_ACC_DEBOUNCE),			\
+>  						\
+> @@ -621,7 +622,8 @@ static const char * const pd_rev[] = {
+>  	  !tcpm_cc_is_source((port)->cc1)))
+>  
+>  #define tcpm_port_is_debug(port) \
+> -	(tcpm_cc_is_source((port)->cc1) && tcpm_cc_is_source((port)->cc2))
+> +	((tcpm_cc_is_source((port)->cc1) && tcpm_cc_is_source((port)->cc2)) || \
+> +	 (tcpm_cc_is_sink((port)->cc1) && tcpm_cc_is_sink((port)->cc2)))
+>  
+>  #define tcpm_port_is_audio(port) \
+>  	(tcpm_cc_is_audio((port)->cc1) && tcpm_cc_is_audio((port)->cc2))
+> @@ -4969,7 +4971,13 @@ static void run_state_machine(struct tcpm_port *port)
+>  			tcpm_set_state(port, SRC_UNATTACHED, PD_T_DRP_SRC);
+>  		break;
+>  	case SNK_ATTACH_WAIT:
+> -		if ((port->cc1 == TYPEC_CC_OPEN &&
+> +		if (tcpm_port_is_debug(port))
+> +			tcpm_set_state(port, DEBUG_ACC_ATTACHED,
+> +				       PD_T_CC_DEBOUNCE);
+> +		else if (tcpm_port_is_audio(port))
+> +			tcpm_set_state(port, AUDIO_ACC_ATTACHED,
+> +				       PD_T_CC_DEBOUNCE);
+> +		else if ((port->cc1 == TYPEC_CC_OPEN &&
+>  		     port->cc2 != TYPEC_CC_OPEN) ||
+>  		    (port->cc1 != TYPEC_CC_OPEN &&
+>  		     port->cc2 == TYPEC_CC_OPEN))
+> @@ -4983,6 +4991,12 @@ static void run_state_machine(struct tcpm_port *port)
+>  		if (tcpm_port_is_disconnected(port))
+>  			tcpm_set_state(port, SNK_UNATTACHED,
+>  				       PD_T_PD_DEBOUNCE);
+> +		else if (tcpm_port_is_debug(port))
+> +			tcpm_set_state(port, DEBUG_ACC_ATTACHED,
+> +				       PD_T_CC_DEBOUNCE);
+> +		else if (tcpm_port_is_audio(port))
+> +			tcpm_set_state(port, AUDIO_ACC_ATTACHED,
+> +				       PD_T_CC_DEBOUNCE);
+>  		else if (port->vbus_present)
+>  			tcpm_set_state(port,
+>  				       tcpm_try_src(port) ? SRC_TRY
+> @@ -5281,7 +5295,10 @@ static void run_state_machine(struct tcpm_port *port)
+>  	/* Accessory states */
+>  	case ACC_UNATTACHED:
+>  		tcpm_acc_detach(port);
+> -		tcpm_set_state(port, SRC_UNATTACHED, 0);
+> +		if (port->port_type == TYPEC_PORT_SRC)
+> +			tcpm_set_state(port, SRC_UNATTACHED, 0);
+> +		else
+> +			tcpm_set_state(port, SNK_UNATTACHED, 0);
+>  		break;
+>  	case DEBUG_ACC_ATTACHED:
+>  	case AUDIO_ACC_ATTACHED:
+> @@ -5289,6 +5306,7 @@ static void run_state_machine(struct tcpm_port *port)
+>  		if (ret < 0)
+>  			tcpm_set_state(port, ACC_UNATTACHED, 0);
+>  		break;
+> +	case DEBUG_ACC_DEBOUNCE:
+>  	case AUDIO_ACC_DEBOUNCE:
+>  		tcpm_set_state(port, ACC_UNATTACHED, port->timings.cc_debounce_time);
+>  		break;
+> @@ -5880,7 +5898,8 @@ static void _tcpm_cc_change(struct tcpm_port *port, enum typec_cc_status cc1,
+>  		}
+>  		break;
+>  	case SNK_UNATTACHED:
+> -		if (tcpm_port_is_sink(port))
+> +		if (tcpm_port_is_debug(port) || tcpm_port_is_audio(port) ||
+> +		    tcpm_port_is_sink(port))
+>  			tcpm_set_state(port, SNK_ATTACH_WAIT, 0);
+>  		break;
+>  	case SNK_ATTACH_WAIT:
+> @@ -5943,7 +5962,12 @@ static void _tcpm_cc_change(struct tcpm_port *port, enum typec_cc_status cc1,
+>  
+>  	case DEBUG_ACC_ATTACHED:
+>  		if (cc1 == TYPEC_CC_OPEN || cc2 == TYPEC_CC_OPEN)
+> -			tcpm_set_state(port, ACC_UNATTACHED, 0);
+> +			tcpm_set_state(port, DEBUG_ACC_DEBOUNCE, 0);
+> +		break;
+> +
+> +	case DEBUG_ACC_DEBOUNCE:
+> +		if (tcpm_port_is_debug(port))
+> +			tcpm_set_state(port, DEBUG_ACC_ATTACHED, 0);
+>  		break;
+>  
+>  	case SNK_TRY:
+> 
+> -- 
+> 2.39.5
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+heikki
 
