@@ -1,87 +1,112 @@
-Return-Path: <linux-kernel+bounces-591120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D9ACA7DB70
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:46:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCBEFA7DB3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:30:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26B1C1890BD4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:46:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A07421786D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A76F22F164;
-	Mon,  7 Apr 2025 10:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hTsvqKF9"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAA422154E
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 10:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDD622FDE2;
+	Mon,  7 Apr 2025 10:30:36 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D99513777E
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 10:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744022756; cv=none; b=H2PnG87k7VqtEMqU4ziP14pdG+OJCHrMuwlqJAyih8uV2vTi0c5PEL1wyQq86CW82JWRsufsR8LGLRoOWirlqmdrhOe9LKuiyXJOjOUxzFrYgXkMDa4flqQX1n4FZn6VilwKk/3kalnfaU+z08qn7LbD9Ud/jK+M8WNsL+WPITo=
+	t=1744021836; cv=none; b=dDr9asQgUnU+loRMRzltWtqcpH3JTxYIHVPX2UzkKabc+usfNuH9+qG1xSUAXeD5yOUNvXQut/j16+NsFXZYyxgP8jNZb6eGKXWsxKU3mRqfoU4t6tnPF7nb/yrnReHWPOV5LdBYRghPLiHa80PTUxrG1zgpVPoM0KOUHjwo6dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744022756; c=relaxed/simple;
-	bh=0WsTxfKgBn2Fxbs/Iu9xwBYHLwxUtl0do/GjGIjRm7g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qQMLIGifcVSerzhvGJy72p1rlwsCMr7v3Fxvw3zBAIeAEdod+dDV1O6iHmDdJhDg13Ce8SgWDAjnsFsNNYxixKxkFVlANDWaBp0xo5NxHMQ7DgoGkiPHAsdK0lD6+CC+8b+YvmlKQSTnhYQcQrEFPsxdUJ5IG/+7EO7PZT6nT6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hTsvqKF9; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=KmG6p
-	1xV+apQErcjVNyl7l7EgSjrZ9GSAY/E01bksuw=; b=hTsvqKF9mxaXqdV3xFoft
-	uTu6Kh1UwA5DFVpOL0oi6CE9kLYpm2LMUJ4dS/i+U1lDMoVYmREcsM6pZH8PqfPV
-	3z1zM7NgZPXeOgDDq+7RpxR+5/Hm/CO4JL5O5oXRe4mqgfM4xo9j7CGzHmCD6slr
-	KD1S4ic6ohgW2K8RR/cxpU=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wDHuTk7qfNns8RHEg--.10758S2;
-	Mon, 07 Apr 2025 18:30:20 +0800 (CST)
-From: 18810879172@163.com
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wangxuewen <wangxuewen@kylinos.cn>
-Subject: [PATCH] mm/hugetlb: Add a line break at the end of the format string
-Date: Mon,  7 Apr 2025 18:30:17 +0800
-Message-Id: <20250407103017.2979821-1-18810879172@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1744021836; c=relaxed/simple;
+	bh=4MmmsNnJmBCtjihgTEtAM1RiophjAm0ItwyqsGtZZ14=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qEwuw/HO01u6QY+7gEkidUD/6yLUXBDDJ1UJnedpNYI67gNMh5em8FGe1uaMhTUSr9rWDjAo12xi270lPp6Mml0paEEAhfHMXXpcXKRPd4p+qs2QI9gv8TYO/hIytiXDWpw2IfRbJxNYh1ZLSnpXxJI7TzgFOWjzwNEKLlPORI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1u1jkB-0003Ep-7A; Mon, 07 Apr 2025 12:30:19 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1u1jkA-003k9z-2v;
+	Mon, 07 Apr 2025 12:30:18 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1u1jkA-0008q2-2f;
+	Mon, 07 Apr 2025 12:30:18 +0200
+Message-ID: <7af15c80a6b0f99f0bd1a67252e0403804d39691.camel@pengutronix.de>
+Subject: Re: [PATCH v1 0/2] TH1520 SoC: Add Reset Controller Support
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Michal Wilczynski <m.wilczynski@samsung.com>, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org, 
+	wefu@redhat.com, m.szyprowski@samsung.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 07 Apr 2025 12:30:18 +0200
+In-Reply-To: <20250303152511.494405-1-m.wilczynski@samsung.com>
+References: 
+	<CGME20250303152520eucas1p250f2e6d8eaf1172d8813b04ceb88679c@eucas1p2.samsung.com>
+	 <20250303152511.494405-1-m.wilczynski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDHuTk7qfNns8RHEg--.10758S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrur47Ww48KFy8Ar4fJry3CFg_yoWxCwc_Wr
-	y5Kw1ktr1UWw1a9F42kws3t3W8K39a9Fs3XrWxCFy3tayjqa18CayUWr4j9w4a9FW8WFnx
-	urnxu34UCr15KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU88pnPUUUUU==
-X-CM-SenderInfo: rprymiyqyxmiixs6il2tof0z/1tbiShwo9WfzpDWp5wAAsA
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: wangxuewen <wangxuewen@kylinos.cn>
+On Mo, 2025-03-03 at 16:25 +0100, Michal Wilczynski wrote:
+> This patch series adds reset controller support for the T-Head TH1520 SoC=
+,
+> which is used in boards like the LicheePi 4A. While part of a broader eff=
+ort to
+> enable the Imagination BXM-4-64 GPU upstream, these patches focus on prov=
+iding
+> a dedicated reset controller driver and the corresponding Device Tree
+> nodes/bindings.
+>=20
+> Bigger series cover letter:
+> https://lore.kernel.org/all/20250219140239.1378758-1-m.wilczynski@samsung=
+.com/
+>=20
+> Michal Wilczynski (2):
+>   dt-bindings: reset: Add T-HEAD TH1520 SoC Reset Controller
+>   reset: thead: Add TH1520 reset controller driver
+>=20
+>  .../bindings/reset/thead,th1520-reset.yaml    |  44 ++++++
+>  MAINTAINERS                                   |   3 +
+>  drivers/reset/Kconfig                         |  10 ++
+>  drivers/reset/Makefile                        |   1 +
+>  drivers/reset/reset-th1520.c                  | 135 ++++++++++++++++++
+>  .../dt-bindings/reset/thead,th1520-reset.h    |  16 +++
+>  6 files changed, 209 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reset/thead,th1520-=
+reset.yaml
+>  create mode 100644 drivers/reset/reset-th1520.c
+>  create mode 100644 include/dt-bindings/reset/thead,th1520-reset.h
 
-Missing line break at the end of the format string.
+Applied to reset/next, thanks!
 
-Signed-off-by: wangxuewen <wangxuewen@kylinos.cn>
----
- mm/hugetlb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[1/2] dt-bindings: reset: Add T-HEAD TH1520 SoC Reset Controller
+      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3D30e7573babdc
+[2/2] reset: thead: Add TH1520 reset controller driver
+      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3D4a65326311ab
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 39f92aad7bd1..3e0d361fd299 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4630,7 +4630,7 @@ static void __init hugetlb_sysfs_init(void)
- 		err = hugetlb_sysfs_add_hstate(h, hugepages_kobj,
- 					 hstate_kobjs, &hstate_attr_group);
- 		if (err)
--			pr_err("HugeTLB: Unable to add hstate %s", h->name);
-+			pr_err("HugeTLB: Unable to add hstate %s\n", h->name);
- 	}
- 
- #ifdef CONFIG_NUMA
--- 
-2.34.1
+regards
+Philipp
 
 
