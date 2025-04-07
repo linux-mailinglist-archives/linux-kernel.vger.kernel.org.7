@@ -1,249 +1,189 @@
-Return-Path: <linux-kernel+bounces-591061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041FCA7DA83
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:59:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBF5A7DA92
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 802273A59D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:58:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 158FD18895B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F56230BC6;
-	Mon,  7 Apr 2025 09:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25150230BCC;
+	Mon,  7 Apr 2025 09:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="edUxBtwS"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k8gFFgT0"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB324230251
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 09:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A0B225765;
+	Mon,  7 Apr 2025 09:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744019937; cv=none; b=DpUXgbAGHdAJqAhC1PVaoisNXpJ9ESu6wbtVhY8FAXGG/WBt4FP14H5if8C4dl/584GQvlaebaxvn2GlvgBkqqPrzEJMuY41TIWaxX7n7dKsuqV1eDkSHvxVH9oFD14fs0IZYa7/6peG5h49ln2T+7QDnJFGASYD7qpNWYcRhuI=
+	t=1744019981; cv=none; b=CFFjAYO40yBC+vQoDORTdH3bRdq7Gig6NZAd+sj/aqCbpgKsDrb9uZwcOu5HkeTAxu2XDx/+l0wQEKKR/qJbByPZQ6MecSjzxPydaIa3MHnE8EK7xcMFMIHxiF42wNccQEyiHh082BcUy7TEsXhHZW7MJOrXBHNSuPYUtdlhL/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744019937; c=relaxed/simple;
-	bh=v29T1FbGbcKeRMuW0VbePwisgAp9BsYkH9UNPlwsybg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u1qQUh2x4xn+iuQ9042JZ+k/nwQaDxIEgMnlmsDJc8MLi/GJ7HjyBCtqmXPDx4MngjqAsj6Q+pWsbGOmYprCi0g8iHN1GDvlDtkE/2+2oTytpyenONjXc+r7tDyJxwjqiUXnXkN/Q7yy3EhJWE6Fjqr2LLcfCMOwx+fYCU6AGv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=edUxBtwS; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43ea40a6e98so36327535e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 02:58:55 -0700 (PDT)
+	s=arc-20240116; t=1744019981; c=relaxed/simple;
+	bh=yGxHBajZRJJfoIDp2B2DhtkLQigSG2dL4W9OC7W+C2o=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fOMIOvvx4TlXlSUahxIROstqYlpNKFLmbA2nyYHg2hsBWB4YO9emISiegU8vx42BgiPOV938x1KCphvXMC8+Ky5U7KExUWAFDe+81nZpA5UpwvZEX5BiGgizm/PwK6W8u5shxk5HeY8ucwLECyNCDJpmOrjLO/HFmV/Vg8avHlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k8gFFgT0; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-549b116321aso4865100e87.3;
+        Mon, 07 Apr 2025 02:59:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744019934; x=1744624734; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vrZNuJsrn23JwdNkrVTHfCKc6rDwAMWYvk+A+tg7J78=;
-        b=edUxBtwSu7i/SE+y974xBKU7Qag3//f751DnkXuDgDX+m1K0oqJVGORzJp93HQLVSd
-         IkQAx24itg9gtodyNqslx3hs0cSoqnkYtLCXxMV5ve6KqQ2ox094C+LJetqVrSh8vaLz
-         n/7f/jeRAhulHHiCgZ+OE1n9lwWA5DDWZqzUJ8Q6il1y0HRXd0PTPisacW1CqwWt5JLy
-         0swNsLTyvDLxt3eIai/SDpSCxCVIb4cx47lmycvhC+1sxi8QcDzML7rA6+OmD4sdIfaa
-         xptKySFE6NhwX8TgbJvR2GLxbm1+TP9B1huK/uSqNsgQBWoEF6rqthIOFzHfeaovFWUg
-         c9vA==
+        d=gmail.com; s=20230601; t=1744019978; x=1744624778; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K0eh0BHVtlD2UrTL4wqCP90wqrYXSEQ6XXq15GauWzY=;
+        b=k8gFFgT0OXtclny54luUXEZGK1jjvyD9Hw/a7K5mpqz02SHwUjp+8g8BpA1Q4K+8Y7
+         S4I9EPdXDTq/PoMZj+0VoT7U2rI6nrgXz+XG0Wog5Hm5q+xuiaqEPwnvlUqgYZiDHrPB
+         fGdDRaH5vjN/FXYsCopGek1nwiuJqLPY4oKqwNqH63uBJFNnojx+ZWRhYbfjSHWM3EBi
+         u+WNl8zj8ZASlCFG1h0iLaJiGJDgY3EdHtoUqTex6Rr/sqIICIp57jevetPrhi4UGJ/w
+         rvcWa7y8fTgsnRNHSF3ejIWOoN3Gazbe6PzJQDOXIp3qH56MxfR22Dv1bHwIXCBahLSs
+         HxSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744019934; x=1744624734;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vrZNuJsrn23JwdNkrVTHfCKc6rDwAMWYvk+A+tg7J78=;
-        b=Cp1q3naBrzpM0c8SkmhzNJuqILiWq/O1I+KqfvoIwDv8VDOfCJMX4IcymkUfe2Kv3n
-         Xa84cKfmazMFvw4DqZlh7TM0W3NbEaB2F7teEa3Oq7rpCdT6V2ZXwEKnkYPxAT6nEFxC
-         Uqy1rwrnD+sRLDAW7+XVh7btxL1C73FeyZjK1K6Z5gkVQeEjeC9Dlo2PfB5DY8FOclpK
-         ewqfK6JArWeyE3V+xmrvj28xzj4Cg+3ld+CxEdx3vMx1L8Kdfbo5MAoYDG225ZCODcNO
-         MeIxWGnDq6ggfYwcKj5gdEFBMJDs/bpkqFsd9tVliYBgXQI6eveQ7aHZRDNWvc5awYSG
-         Vd7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXvbP1StWZ5BEZMhuyEBJHZG/USvPIzkouG7DaQ5yuBsYPPEAKOiiAt7dV5os71rE5DzWcrh/sWKWorlJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8MvBHfwEjisPOEm0jNSfM8wmyNP7y+6pCd4smZC+KXZRwkoyO
-	WoUquK8CWrW958Zeq4ba+X1vn93qZtmQXigeLPn03mqGfSYTs9+Mq2h8gMSTJmoyzTjXCaEoJoC
-	bmNs=
-X-Gm-Gg: ASbGnctVeEsIVPhlWNMejafWEpsE9EX3I6hPviplouodPBXJmdkCIaOxN90yrWuwXXp
-	Pz9YrisR8zndIHNNzn/1GS8UNE6p1rS/ceMBJYTW0P+8keOYC3c34I5ODt04BKMkNwMO4oJ/nN9
-	NeUWeVp/LcW743Y9Yz/pFT1LhsIPbTYUcrybWjKNH7RcsGedTBYhgHlGp35qmIRBf2yrgPLRfLk
-	Lb1Y8oce2zl4bBqJnt3aArrM48/KhtHJPq5NESbr2QB6oOIb9/lquhJg09VPgfSI4KFiAVTm1s6
-	u5Y4Uew7mJIeP7kK2I2/Ctvc7YivtUR1YTift9xa2pD+59ejqg/XKfrzPoPsBMqxWaIQrLc7FsL
-	WKoa9TJ+Fbw==
-X-Google-Smtp-Source: AGHT+IFa6RmlxDVU+Z/fAcwEEKxjPn906JwxGNMAIQ21GqtzU5bzQldRFT4YWzFFJnbZpVCs+q7ukw==
-X-Received: by 2002:a05:600c:4754:b0:43c:eec7:eab7 with SMTP id 5b1f17b1804b1-43ee0640054mr78338955e9.11.1744019934216;
-        Mon, 07 Apr 2025 02:58:54 -0700 (PDT)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c3020d938sm11679731f8f.65.2025.04.07.02.58.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Apr 2025 02:58:53 -0700 (PDT)
-Message-ID: <778e2cd0-5371-424f-809d-20f7c3ae5343@linaro.org>
-Date: Mon, 7 Apr 2025 10:58:52 +0100
+        d=1e100.net; s=20230601; t=1744019978; x=1744624778;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K0eh0BHVtlD2UrTL4wqCP90wqrYXSEQ6XXq15GauWzY=;
+        b=XA8pdUET+6gzTDG7WvGqTYa2O4tOsB/njKCxHTDSITp5n8YPDsaraUu9N3kOMChakF
+         wvjKlg57yui8nJ4PVHZ3Slj/TYfl1UUMsDyswV86n9V6KF2CV1toetzcDUYozCakh8Nl
+         T2Ubb0eujoGUfRk6MvnmRTY5DLqV091/VuB8L/Swf1IIPNx7u6ewNRBGkBNs30kJlnEz
+         MToaV688XZtJD96EYuM9eWHkU3OPGqpYHBWt/4CYk0uGrQCgsJloxuh1dMcBiuGdU4hC
+         wEt0hIVn3eJ+b+xJ5EjHm0Dr67X3xLbY1xucprpn2O+A4e5cnQ3iN7HlaWXqCgWSM1CP
+         cKYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVN/+pOEZ435Mwbomj6pQ3FRjByBnhUXHeO1UoaeC0Zw4kH/cROIyfzZzGTO9bX6SHCi7bjFsX4@vger.kernel.org, AJvYcCWmFry9p6sXokEhavgu89FQNqbB1x+F3bSOA0KA25uaqFUGlrbupWOKhMcOH4l5qwFtST6FWuqakriFfMuo@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRFfsZ7N5NHhWEGCVk2xsRR9w3pq/N0dn9Y4eG3gatMI7tIEB7
+	d/W3Dg25ZpSgLnjW8GY+jIyUTMSsxSI4guZwChjttgT8x8WbFoo2
+X-Gm-Gg: ASbGnctuCIftKddUQWXeKx/a0ArBf1p14l5L9vTK8HTJZa7rA28FNoCraTTdzBEN2GC
+	WhapJ93Q8Qcl82Fe5N9V15g6nsOvqtB4UZn+vJYKpa1kgsodhR46ZncUqCzY+Cqs8+7BfwkxiBA
+	amFz94EMTnnfpV8H114Lrxex0nxG/6KOedcyfgfmjPMeUgG/Enjb4s0cYo/7OizGFV8ChExgZlg
+	SzJRlnwF9Gz0FmK19sO+5TllIRGug6bYxtK3xk8sNgjV6IbFRwJHuIP6kvO/Yr0xJ1qj25Hoaik
+	widN5cVtsTxBs0rGvGcICcNq2So3U9NgSawG6qwzEIkd1jRqRLYnggsIWk7l54R7oSydYsfO9GQ
+	=
+X-Google-Smtp-Source: AGHT+IHwkDMThQQsrmXdRg0APF3tkewDcz6lzlSW9TC46yLQkFuh71o2NqPbu+7kx0PyB9DUuy8YOQ==
+X-Received: by 2002:a05:6512:68f:b0:549:8f15:db36 with SMTP id 2adb3069b0e04-54c227ff86dmr3141200e87.51.1744019977324;
+        Mon, 07 Apr 2025 02:59:37 -0700 (PDT)
+Received: from pc636 (host-90-233-203-182.mobileonline.telia.com. [90.233.203.182])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e635c7dsm1182580e87.144.2025.04.07.02.59.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 02:59:36 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 7 Apr 2025 11:59:33 +0200
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Uladzislau Rezki <urezki@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] memcg: vmalloc: simplify MEMCG_VMALLOC updates
+Message-ID: <Z_OiBUdeRRWrUtL-@pc636>
+References: <20250403053326.26860-1-shakeel.butt@linux.dev>
+ <Z-5uQlaPjZtB61C4@pc636>
+ <gl5u2fkxaqe4todqwzsfktvnlghb7vnan2n3bpxum7ibwaznpd@xomzodg47qwe>
+ <Z--1uXnfqfQthYvh@pc636>
+ <bmlkdbqgwboyqrnxyom7n52fjmo76ux77jhqw5odc6c6dfon3h@zdylwtmlywbt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: camss NULL-deref on power on with 6.12-rc2
-To: Johan Hovold <johan@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>
-Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <Zwjw6XfVWcufMlqM@hovoldconsulting.com>
- <Z_OXELLDIfQII6wV@hovoldconsulting.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <Z_OXELLDIfQII6wV@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bmlkdbqgwboyqrnxyom7n52fjmo76ux77jhqw5odc6c6dfon3h@zdylwtmlywbt>
 
-On 07/04/2025 10:12, Johan Hovold wrote:
-> On Fri, Oct 11, 2024 at 11:33:30AM +0200, Johan Hovold wrote:
+On Fri, Apr 04, 2025 at 10:44:05AM -0700, Shakeel Butt wrote:
+> On Fri, Apr 04, 2025 at 12:34:33PM +0200, Uladzislau Rezki wrote:
+> > On Thu, Apr 03, 2025 at 11:20:18AM -0700, Shakeel Butt wrote:
+> > > On Thu, Apr 03, 2025 at 01:17:22PM +0200, Uladzislau Rezki wrote:
+> > > > On Wed, Apr 02, 2025 at 10:33:26PM -0700, Shakeel Butt wrote:
+> > > > > The vmalloc region can either be charged to a single memcg or none. At
+> > > > > the moment kernel traverses all the pages backing the vmalloc region to
+> > > > > update the MEMCG_VMALLOC stat. However there is no need to look at all
+> > > > > the pages as all those pages will be charged to a single memcg or none.
+> > > > > Simplify the MEMCG_VMALLOC update by just looking at the first page of
+> > > > > the vmalloc region.
+> > > > > 
+> > > > > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > > > > ---
+> > > > >  mm/vmalloc.c | 13 +++++--------
+> > > > >  1 file changed, 5 insertions(+), 8 deletions(-)
+> > > > > 
+> > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > > index 3ed720a787ec..cdae76994488 100644
+> > > > > --- a/mm/vmalloc.c
+> > > > > +++ b/mm/vmalloc.c
+> > > > > @@ -3370,12 +3370,12 @@ void vfree(const void *addr)
+> > > > >  
+> > > > >  	if (unlikely(vm->flags & VM_FLUSH_RESET_PERMS))
+> > > > >  		vm_reset_perms(vm);
+> > > > > +	if (vm->nr_pages && !(vm->flags & VM_MAP_PUT_PAGES))
+> > > > > +		mod_memcg_page_state(vm->pages[0], MEMCG_VMALLOC, -vm->nr_pages);
+> > > > >
+> > > > Could you please add a comment stating that the first page should be
+> > > > modified?
+> > > > 
+> > > 
+> > > Sorry, what do you mean by first page should be modified?
+> > > mod_memcg_page_state() will not modify the page but extract memcg from
+> > > it and modify its vmalloc stat.
+> > > 
+> > I meant what you wrote in the commit message. A mod_memcg_page_state() can
+> > be invoked only on a first page within a mapped range, because the rest is
+> > anyway is associated with the same mem_cgroup struct.
+> > 
+> > Just add a comment that we do not need to check all pages. Can you add it?
 > 
->> This morning I hit the below NULL-deref in camss when booting a 6.12-rc2
->> kernel on the Lenovo ThinkPad X13s.
->>
->> I booted the same kernel another 50 times without hitting it again it so
->> it may not be a regression, but simply an older, hard to hit bug.
->>
->> Hopefully you can figure out what went wrong from just staring at the
->> oops and code.
-> 
-> Hit the NULL-pointer dereference during boot that I reported back in
-> October again today with 6.15-rc1.
-> 
-> The camss_find_sensor_pad() function was renamed in 6.15-rc1, but
-> otherwise it looks identical.
-> 
-> Johan
+> Ack. Andrew, please squash the following into the patch.
 > 
 > 
-> [    5.740833] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000030
-> [    5.741162] Mem abort info:
-> [    5.741435]   ESR = 0x0000000096000004
-> [    5.741707]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [    5.741980]   SET = 0, FnV = 0
-> [    5.742249]   EA = 0, S1PTW = 0
-> [    5.742253]   FSC = 0x04: level 0 translation fault
-> [    5.742255] Data abort info:
-> [    5.742257]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> [    5.743264]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> [    5.743267]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [    5.743269] user pgtable: 4k pages, 48-bit VAs, pgdp=000000010fb98000
-> [    5.743272] [0000000000000030] pgd=0000000000000000, p4d=0000000000000000
-> [    5.744064] Internal error: Oops: 0000000096000004 [#1]  SMP
+> From 982971062e6bd04feabf4f6a745469cb9bddef03 Mon Sep 17 00:00:00 2001
+> From: Shakeel Butt <shakeel.butt@linux.dev>
+> Date: Fri, 4 Apr 2025 10:41:52 -0700
+> Subject: [PATCH] memcg : simplify MEMCG_VMALLOC updates - fix
 > 
-> [    5.744645] CPU: 3 UID: 0 PID: 442 Comm: v4l_id Not tainted 6.15.0-rc1 #106 PREEMPT
-> [    5.744647] Hardware name: LENOVO 21BYZ9SRUS/21BYZ9SRUS, BIOS N3HET87W (1.59 ) 12/05/2023
-> [    5.744649] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [    5.744651] pc : camss_find_sensor_pad+0x20/0x74 [qcom_camss]
-> [    5.744661] lr : camss_get_pixel_clock+0x18/0x64 [qcom_camss]
-> [    5.744666] sp : ffff800082dfb8e0
-> [    5.744667] x29: ffff800082dfb8e0 x28: ffff800082dfbc68 x27: ffff143e80404618
-> [    5.744671] x26: 0000000000000000 x25: 0000000000000000 x24: ffff143e9398baa8
-> [    5.744675] x23: ffff800082dfb998 x22: ffff143e9398d9a0 x21: ffff800082dfb9a8
-> [    5.744678] x20: 0000000000000002 x19: 0000000000020001 x18: 0000000000000020
-> [    5.744682] x17: 3030613563613a33 x16: ffffac4db3ccf814 x15: 706e65672f6b6e69
-> [    5.744686] x14: 0000000000000000 x13: ffff143e80b39180 x12: 30613563613a333a
-> [    5.744690] x11: ffffac4db50a8920 x10: 0000000000000000 x9 : 0000000000000000
-> [    5.744693] x8 : ffffac4db4992000 x7 : ffff800082dfb8e0 x6 : ffff800082dfb870
-> [    5.744697] x5 : ffff800082dfc000 x4 : ffff143e9398cc70 x3 : ffff143e9398cb40
-> [    5.744701] x2 : ffff143e9398be00 x1 : ffff143e9398d9a0 x0 : 0000000000000000
-> [    5.744704] Call trace:
-> [    5.744706]  camss_find_sensor_pad+0x20/0x74 [qcom_camss] (P)
-> [    5.744711]  camss_get_pixel_clock+0x18/0x64 [qcom_camss]
-> [    5.744716]  vfe_get+0xb8/0x504 [qcom_camss]
-> [    5.744724]  vfe_set_power+0x30/0x58 [qcom_camss]
-> [    5.744731]  pipeline_pm_power_one+0x13c/0x150 [videodev]
-> [    5.744745]  pipeline_pm_power.part.0+0x58/0xf4 [videodev]
-> [    5.744754]  v4l2_pipeline_pm_use+0x58/0x94 [videodev]
-> [    5.744762]  v4l2_pipeline_pm_get+0x14/0x20 [videodev]
-> [    5.744771]  video_open+0x78/0xf4 [qcom_camss]
-> [    5.744776]  v4l2_open+0x80/0x120 [videodev]
-> [    5.755711]  chrdev_open+0xb4/0x204
-> [    5.755716]  do_dentry_open+0x138/0x4d0
-> [    5.756271]  vfs_open+0x2c/0xe8
-> [    5.756274]  path_openat+0x2b8/0x9fc
-> [    5.756276]  do_filp_open+0x8c/0x144
-> [    5.756277]  do_sys_openat2+0x80/0xdc
-> [    5.756279]  __arm64_sys_openat+0x60/0xb0
-> [    5.757830]  invoke_syscall+0x48/0x110
-> [    5.757834]  el0_svc_common.constprop.0+0xc0/0xe0
-> [    5.758369]  do_el0_svc+0x1c/0x28
-> [    5.758372]  el0_svc+0x48/0x114
-> [    5.758889]  el0t_64_sync_handler+0xc8/0xcc
-> [    5.759184]  el0t_64_sync+0x198/0x19c
-> [    5.759475] Code: f9000bf3 52800033 72a00053 f9402420 (f9401801)
->   
->   
->> [    5.657860] ov5675 24-0010: failed to get HW configuration: -517
->> [    5.676183] vreg_l6q: Bringing 2800000uV into 1800000-1800000uV
->>
->> [    6.517689] qcom-camss ac5a000.camss: Adding to iommu group 22
->>
->> [    6.589201] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000030
->> [    6.589625] Mem abort info:
->> [    6.589960]   ESR = 0x0000000096000004
->> [    6.590293]   EC = 0x25: DABT (current EL), IL = 32 bits
->> [    6.590630]   SET = 0, FnV = 0
->> [    6.591619]   EA = 0, S1PTW = 0
->> [    6.591968]   FSC = 0x04: level 0 translation fault
->> [    6.592298] Data abort info:
->> [    6.592621]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->> [    6.593112]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->> [    6.593450]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->> [    6.593783] user pgtable: 4k pages, 48-bit VAs, pgdp=000000010daef000
->> [    6.594139] [0000000000000030] pgd=0000000000000000, p4d=0000000000000000
->> [    6.594214] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+> Add comment
 > 
->> [    6.594868] CPU: 0 UID: 0 PID: 557 Comm: v4l_id Not tainted 6.12.0-rc2 #165
->> [    6.594871] Hardware name: LENOVO 21BYZ9SRUS/21BYZ9SRUS, BIOS N3HET87W (1.59 ) 12/05/2023
->> [    6.594872] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->> [    6.594874] pc : camss_find_sensor+0x20/0x74 [qcom_camss]
->> [    6.594885] lr : camss_get_pixel_clock+0x18/0x60 [qcom_camss]
->> [    6.594889] sp : ffff800082d538f0
->> [    6.594890] x29: ffff800082d538f0 x28: ffff800082d53c70 x27: ffff670cc0404618
->> [    6.594893] x26: 0000000000000000 x25: 0000000000000000 x24: ffff670cd33173d0
->> [    6.594895] x23: ffff800082d539a8 x22: ffff670cd33192c8 x21: ffff800082d539b8
->> [    6.594898] x20: 0000000000000002 x19: 0000000000020001 x18: 0000000000000000
->> [    6.594900] x17: 0000000000000000 x16: ffffbf0bffbecdd0 x15: 0000000000000001
->> [    6.594902] x14: ffff670cc5c95300 x13: ffff670cc0b38980 x12: ffff670cc5c95ba8
->> [    6.594905] x11: ffffbf0c00f73000 x10: 0000000000000000 x9 : 0000000000000000
->> [    6.594907] x8 : ffffbf0c0085d000 x7 : 0000000000000000 x6 : 0000000000000078
->> [    6.594910] x5 : 0000000000000000 x4 : ffff670cd3318598 x3 : ffff670cd3318468
->> [    6.594912] x2 : ffff670cd3317728 x1 : ffff800082d539b8 x0 : 0000000000000000
->> [    6.594915] Call trace:
->> [    6.594915]  camss_find_sensor+0x20/0x74 [qcom_camss]
->> [    6.594920]  camss_get_pixel_clock+0x18/0x60 [qcom_camss]
->> [    6.594924]  vfe_get+0xb8/0x504 [qcom_camss]
->> [    6.594931]  vfe_set_power+0x30/0x58 [qcom_camss]
->> [    6.594936]  pipeline_pm_power_one+0x13c/0x150 [videodev]
->> [    6.594951]  pipeline_pm_power.part.0+0x58/0xf4 [videodev]
->> [    6.594960]  v4l2_pipeline_pm_use+0x58/0x94 [videodev]
->> [    6.594969]  v4l2_pipeline_pm_get+0x14/0x20 [videodev]
->> [    6.594978]  video_open+0x78/0xf4 [qcom_camss]
->> [    6.594982]  v4l2_open+0x80/0x120 [videodev]
->> [    6.594991]  chrdev_open+0xb4/0x204
->> [    6.594996]  do_dentry_open+0x138/0x4d0
->> [    6.595000]  vfs_open+0x2c/0xe4
->> [    6.595003]  path_openat+0x2b4/0x9fc
->> [    6.595005]  do_filp_open+0x80/0x130
->> [    6.595007]  do_sys_openat2+0xb4/0xe8
->> [    6.595010]  __arm64_sys_openat+0x64/0xac
->> [    6.595012]  invoke_syscall+0x48/0x110
->> [    6.595016]  el0_svc_common.constprop.0+0xc0/0xe0
->> [    6.595018]  do_el0_svc+0x1c/0x28
->> [    6.595021]  el0_svc+0x48/0x114
->> [    6.595023]  el0t_64_sync_handler+0xc0/0xc4
->> [    6.595025]  el0t_64_sync+0x190/0x194
->> [    6.595028] Code: 52800033 72a00053 d503201f f9402400 (f9401801)
->> [    6.595029] ---[ end trace 0000000000000000 ]---
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> ---
+>  mm/vmalloc.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index cdae76994488..bcc90d4357e4 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3370,6 +3370,7 @@ void vfree(const void *addr)
+>  
+>  	if (unlikely(vm->flags & VM_FLUSH_RESET_PERMS))
+>  		vm_reset_perms(vm);
+> +	/* All pages of vm should be charged to same memcg, so use first one. */
+>  	if (vm->nr_pages && !(vm->flags & VM_MAP_PUT_PAGES))
+>  		mod_memcg_page_state(vm->pages[0], MEMCG_VMALLOC, -vm->nr_pages);
+>  	for (i = 0; i < vm->nr_pages; i++) {
+> @@ -3671,6 +3672,7 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+>  		node, page_order, nr_small_pages, area->pages);
+>  
+>  	atomic_long_add(area->nr_pages, &nr_vmalloc_pages);
+> +	/* All pages of vm should be charged to same memcg, so use first one. */
+>  	if (gfp_mask & __GFP_ACCOUNT && area->nr_pages)
+>  		mod_memcg_page_state(area->pages[0], MEMCG_VMALLOC,
+>  				     area->nr_pages);
+> -- 
+> 2.47.1
+> 
+Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 
-I've never seen this myself.
+Thank you!
 
-I wonder, are you building camcc, camss and the sensor driver into your 
-initrd ?
-
----
-bod
-
+--
+Uladzislau Rezki
 
