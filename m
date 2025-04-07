@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-590665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 603B4A7D599
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:23:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB88A7D582
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 987951894810
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:21:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E49517655B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EBB22C339;
-	Mon,  7 Apr 2025 07:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D5622CBDC;
+	Mon,  7 Apr 2025 07:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="2klBk91I"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="UbfjnRyh"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3772422A4E9;
-	Mon,  7 Apr 2025 07:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DC522AE76;
+	Mon,  7 Apr 2025 07:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744010286; cv=none; b=sY3cvEPdLm4a++EgX2ZHyRip8NHpG/Of9Max3XVDlSaTeh6knjpzVrUymZsyNrHq9VMcGJtF3dHF7IIzrnaLRyPgN/KYowDR2BPzHZ3S8KuEL9RP1MDSjwJ5HrBYf2ohFy4ipkVY0msfmfsN3kkd7o5ZQ6Dw9m631AAbcsxQ50M=
+	t=1744010285; cv=none; b=CRlXpUrzZg9v5J0HhH9e8xoRLDDVITZZnlv/CjejbeXtqJ1aXYLY0uodffC8RkjOzz+GROwkSOTD+TikHQ4iN3L8G9daxgmDTvfnLaC1FF60ZcA1TaxWq3VHRsNKLmNUpMs/b4HbGt0cvMCbsHV/HkrSpLRzPTNgmRubuAHQYhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744010286; c=relaxed/simple;
-	bh=yJFAFYNM56x+cSMrgDOAbDyGHyxwarAZGTWyMaoYHCQ=;
+	s=arc-20240116; t=1744010285; c=relaxed/simple;
+	bh=6EXxpCbapBoN57dAJRHeYJrimOx3QJPKEcmhW+Lskuw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cew1srVtjCAIxGPeiy5IBlmgaWyGeDn+pIDwW+15dH4r4kiV74PegoYn8jFrmHb1qkvFHwRowgCCHwXkzTIMtVnSgRYJOFvCCtl0OSEjbkdBu0YhTAiT1RcmzeGf60gDul0GCy9iN7OWah6wTTLSkQ6uIwMPBhMFUsTesTiYujw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=2klBk91I; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=U0OqGBtyhzC2oELqYNK5S+0RPipAgRcOjyryXD9XTDuGqlCoh4i0zxlSoLUEdkug0rM54HeYYR2qwn1ZCnUr2xd2SfhwFJM7dh30smRB3Q6W8TXndhx1xetbaouE+MI6Co+b62AlDKdD8CTtwzdljTUv03wA3VL4/NR9ohz3GHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=UbfjnRyh; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -35,34 +35,36 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=E4xhtBk1zbp0lmzvNeEtXeBgukjshEfh4UTaJs1zTAw=; b=2klBk91IQ5W38Y0AhP0QB0s5dt
-	zHqMTmLh8SRS/ShbJ1PqaTtztFfDP4qGWhri69ED9g2S5BK+rTV+P90/oQDCK31tEmk6G2OkyXGXG
-	eg0/6IFWIQXn3j6KL893B29q0VWPXHrHeaSFSFLPO+TN+RXQPSwfe07011kS/4NHpPmlkEKMJLOPp
-	lOdUhd7dJoK9l6DaH3+yOJM3hODvqCIB0/S8zaU6pcOBSll3t9Ac25JTEB5FlmSmXCndf1rR1qHI0
-	pn/lLUJfZfnZOyospOebyFpBFx2I/q1Z2hg3xj9XNYignQQOH1nU1MbfzDlqPBY5y2RWSELMUCaEM
-	3DRy12Kg==;
+	bh=4VmBqyKq+yIiEc8KQ9+sRwBtfBe5CRaZLqUvC30Bq0U=; b=UbfjnRyhnyK7j21mLA41RABWbI
+	E1b5z1vi32IAOPu08i7tpzQbGlRg3aETD4y8Ulwg5GRUVmrq7ANyJOiq6CB7yS7EgGWXnoU5opwz1
+	Cs/q3hDnT8lOZILMhHP19TILENOa5rllsJCa1xH0RefE5eEijt2a8bj4f+BzTyTIVc6jOtyMbJa7x
+	mnPA5/TSazHjHE6qVkoHjWVXfJhsicNbabOsEEeMNLzR2SoRu+CYWXAI998WPmZcb8p8EeOXV8CJZ
+	TWWsiIEyFT4eobtUNr3yujPnz0Mab43mxO84aMKhaYaUtfvP1gb7LdNP6dtpsae/4p+v7odsCvCPl
+	Zlscb4Ag==;
 Received: from i53875b95.versanet.de ([83.135.91.149] helo=phil..)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1u1gjx-0000tP-0U; Mon, 07 Apr 2025 09:17:53 +0200
+	id 1u1gjx-0000tP-GN; Mon, 07 Apr 2025 09:17:53 +0200
 From: Heiko Stuebner <heiko@sntech.de>
 To: linux-rockchip@lists.infradead.org,
-	Jianfeng Liu <liujianfeng1994@gmail.com>
+	Marcin Juszkiewicz <mjuszkiewicz@redhat.com>
 Cc: Heiko Stuebner <heiko@sntech.de>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Rob Herring <robh@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Johan Jonker <jbx6244@gmail.com>,
+	Rick Wertenbroek <rick.wertenbroek@gmail.com>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: Enable HDMI ports on ArmSoM W3
-Date: Mon,  7 Apr 2025 09:17:43 +0200
-Message-ID: <174401024398.372530.8692340789444388220.b4-ty@sntech.de>
+Subject: Re: [PATCH 0/2] Enable HDMI features on NanoPC-T6
+Date: Mon,  7 Apr 2025 09:17:44 +0200
+Message-ID: <174401024395.372530.10209184803682823778.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250317163240.3083908-1-liujianfeng1994@gmail.com>
-References: <20250317163240.3083908-1-liujianfeng1994@gmail.com>
+In-Reply-To: <20250325-nanopc-t6-hdmi-v1-0-299a2ed45878@redhat.com>
+References: <20250325-nanopc-t6-hdmi-v1-0-299a2ed45878@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,16 +75,24 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 18 Mar 2025 00:32:21 +0800, Jianfeng Liu wrote:
-> Enable the two HDMI ports on ArmSoM W3. And audio output of these two
-> ports are also enabled.
+On Tue, 25 Mar 2025 20:51:45 +0100, Marcin Juszkiewicz wrote:
+> This patchset follows other SBCs and enables second HDMI output and then
+> enables HDMI audio on both ports.
 > 
+> Tested with 1920x1080@60 and 3440x1440@60 displays. Worked nice, audio
+> played on both monitors.
 > 
+> Would be nice to have an option for more than 60Hz (larger screen can do
+> 75Hz) but I assume that this will come one day.
+> 
+> [...]
 
 Applied, thanks!
 
-[1/1] arm64: dts: rockchip: Enable HDMI ports on ArmSoM W3
-      commit: 392275203af1b384fd12df2cef6fb6ee8b3f2b68
+[1/2] arm64: dts: rockchip: enable HDMI1 on FriendlyElec NanoPC-T6
+      commit: fc1f5f5bcac7df327a20f4bfbd4872e17d38601d
+[2/2] arm64: dts: rockchip: enable HDMI sound on FriendlyElec NanoPC-T6
+      commit: c0898e6881f964ca831c407c7019cd7f307d4368
 
 Best regards,
 -- 
