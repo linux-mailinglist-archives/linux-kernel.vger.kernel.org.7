@@ -1,120 +1,150 @@
-Return-Path: <linux-kernel+bounces-591989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CC63A7E7AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:02:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CB6DA7E7C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:06:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B2A03B981B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:57:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA8B73A4FC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079B8215165;
-	Mon,  7 Apr 2025 16:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27CCC21518F;
+	Mon,  7 Apr 2025 17:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBqQ7107"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="my6CmnNh"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE7F215079
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 16:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A6413B2A4
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 17:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744044981; cv=none; b=rsq7TqmmE0EwuPPrkUK/g2HqMsmdkcrIN0+yaijQHdQCgSKtO80nHSq8la6/r5Rk0bW9f37mfgq5CxOhD+SVBCtgaFZw/Z4c8u67Q265lCl2vrq/T3ocIxVL406NRbCj3jP/Pj88svfk9igBoJ41ueu40bkyFestI4P0qVG6zkI=
+	t=1744045230; cv=none; b=LtZB6oHL+4Q5coWnKosn3DXBgwys7rY9pjxnMgqNtFTG5L+nZ2Y7tWVIOcSt+XbwzUCZl72btKBLB7Gt9nRr1GqyMx/uNt0V5PysuLMZPX74mWrCdkl5Abkk9qu3vhTGsZPZ6xTgP/OyHNczOYJJSyULO1jZn5R4ttqoJsOVpcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744044981; c=relaxed/simple;
-	bh=Ipr7PYVaEn6nY3r5e5wreXLQTo72JtqtAbjgfUZeuiY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JLDhOBCiJqB/5JNRq5JRW36oviXfndvycpdLARiV0TrIlB7wp6dwaOqGxdVLgb0vywqZ9oURMFc4AEK1FZ4bN8rIBI9xxwyOLD+N8fBvri2dEhxKsKwpRmlbw3lPdJ3pn27PmxotgSIebJyb3KqK/NKFrsWMt7j37clurs5F1dA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SBqQ7107; arc=none smtp.client-ip=209.85.218.51
+	s=arc-20240116; t=1744045230; c=relaxed/simple;
+	bh=lKAOHcFYo8EsD/tPI8lLppLVgny007wif1MAWivMJng=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TPDXxBvO6TTU9D1TpijrYXa0RBgnuzkWImeFczyeHWfH1/RhJN2ADzhGDruLYwJxQ5Cs/NTks7y66JRhgyf3RAMpCsYk24FmhjvL92yGPGW3m2U6rrrIvntei6wJUetv3RX21iOfpE8a2v6WTQO/Zt3LclVEEbmUwYVqoD6D/UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=my6CmnNh; arc=none smtp.client-ip=209.85.219.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac3b12e8518so855018666b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 09:56:19 -0700 (PDT)
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6f0c30a1cb6so9024976d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 10:00:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744044978; x=1744649778; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9m3SFcS7v9boR9MBhfKth1VUt84e9D1szZVnPdeXUm4=;
-        b=SBqQ7107eg9R44ZutuftlrLO5TiXE39zYuU50gfLIFCSjnBIyDvEWxK+cGYf60x8i7
-         525eycQnMZCdV7+zh5jzOuDnuWYlaLL78AljTB39wPwv3+DKxuzCm7W4juBmL5qYJSJi
-         TwZoiDXCWtXJ3dxyL3VBbjxaQMX8zXlJVHoWiLg8XuubOztGEy6itWafMZbDzE8DmzhD
-         XYWTSoneaqDGarv5vwsX0jXpJFu+eYpOxjrnYVIP3POCd8+xIb7xfGrCnw28zt0gRW5R
-         qo8CEb1GOEud+sPu8bXFO7pOkUJ189+7N2rwSYP4Up5etdSS/SELR+LfxCYTl+Q4GfnF
-         anyQ==
+        d=gmail.com; s=20230601; t=1744045228; x=1744650028; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8/YiCViv84RBjl9Cx+39gU1ba6ZB3RtC4V/ULgvWih8=;
+        b=my6CmnNhPRz013bU63Ifjk+nm8liEV+LIdCmnA3F2V6tdHRbNcKvtOJFreUDKshX/z
+         S3uZRGYa21VCzzm8Yk5TyOP8dmDcEswa/qHkHceo9nPpTJ9LiBapdcEErrdxytDdtjEV
+         /Siq2SJBD46U4NHeudmSED2XBGXy1yN09cddorNZ6gDFJqZhDC8pG3vvG5NMjkAZTsvS
+         nct5LOUmrPGc2LcyRSBtzas8/S3wX/M4Q1n8xKx+z+3sYJTgLCmJnZJearSXQvO0/MN5
+         bCmgCOniKInSTX5DYp/yK7szRw86/HhzxSJaGWJ/TWRkJEPVjFMOLkHMmJ5KW4aXzOe2
+         ahLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744044978; x=1744649778;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9m3SFcS7v9boR9MBhfKth1VUt84e9D1szZVnPdeXUm4=;
-        b=DqXijqeKxXie4cA5VLaFdr+bTJ2W/EXkmIDyeIOuMLFf/Jo36oaFTw3hAODKdDi0AB
-         1HIT02BPCRL5gZP3QQjakoGVcYTqJvkf5NkAB97sDK9gfR1NazhkKnjT1j7BmQD0oWhL
-         21066b5QM3iNJbxlbZGpo/NGdcf/4Bm7RiTK7xx6AKYFFgOP2O4yXl1yv2E5ovewravw
-         dT8e84Ut7P/QdQ/wehQzaG2/ffkLMn+VwkZ3etJDzRoGTF4FItjSHvN3dZXk6ZDHdu7w
-         DLeDFGqRYUMArbCRwI4bbh8Gj8x614N/TX+Xkz9KDBb9u+wBCtQWbjnofRcY147cgRew
-         kJDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUmpVf+4+xM7niTLabaS4jCVDifvaTwewYmhhFbr5jmusMfSFfK31e4FNOQZcT16/qQH18yju9dHYlcVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWIlZvwJ4avrhXLEWpCW1yiDLftUpHdOGpgmremylcGO93srEf
-	WEllvr2n/iWRpe7W42E1H7mzLMk8oN/SxO8ceUfjY9tN/Ic3GA/m
-X-Gm-Gg: ASbGncsbrNHCvwZRFYOzeto8sI2oXYtXoHB9QTtuqogdJjQaJjTf7OQR/zQJrk48/5g
-	HPxEYo3oE4wCX/p3z1OkzkZCIb5sRfYjhCOjNtRXKoM01owoIlbrG6TrA+koRVzs4KanidIByBD
-	uCv4wenIzHYRMbuYjjyq/Kyl0BWo8UVX219an17YGIaA9OYuFNbW/iDRSTrYZ3zmSWrMzjzcbJM
-	/VadgboDxT4LDKiXswGaZ0yVeM60N/O0GEFvr9B2BCcgoi11HJC9GE2B7kayvRPCjq9MFVJk775
-	YURcI4Ggvrqu1SXaAZuiP/tyFcTsUwY2YXA=
-X-Google-Smtp-Source: AGHT+IH1Kz/8T0WZNUgO1gJkkvC4vzCjMpU46O7x6SqVz8u3U8uFqTr3j9NeDtrPnjr1DizbTSckAQ==
-X-Received: by 2002:a17:906:b293:b0:ac8:197f:3ff6 with SMTP id a640c23a62f3a-ac8197f4094mr33183066b.28.1744044977703;
-        Mon, 07 Apr 2025 09:56:17 -0700 (PDT)
-Received: from pc ([196.235.56.129])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7bfe5d46esm786264966b.19.2025.04.07.09.56.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 09:56:17 -0700 (PDT)
-Date: Mon, 7 Apr 2025 17:56:14 +0100
-From: Salah Triki <salah.triki@gmail.com>
-To: Jim Cromie <jim.cromie@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org
-Cc: salah.triki@gmail.com
-Subject: [PATCH] drivers: char: scx200_gpio: check return value of cdev_add()
-Message-ID: <Z_QDrlkYnmsVRe5w@pc>
+        d=1e100.net; s=20230601; t=1744045228; x=1744650028;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8/YiCViv84RBjl9Cx+39gU1ba6ZB3RtC4V/ULgvWih8=;
+        b=YluETIDuNB/WooOktrvBacKzGclhseY68+aI1NOK1ICNj71eVQWMDONdgVmtgkxqqu
+         y4lwvViTKQANs1izwdowwvPIKj8VlgdcIwc8J7kJ3jZhYaO0curOWeeRK16QtCNeSNrZ
+         mnXSyIVp3i/QfQy02hbW2cMXcQLcjfwoNQj0/2G/wwS7joxFmW2fXaTEh8As1tx3FcoY
+         9Fwl4HKWedIOzeE7lcsvEZ8tNPVEYMBXbjM2CSauqvRJDBTZ1CtG+ESge2hC/dcZHURO
+         m6/F9ZXXvb/Jx1DTEQuOyuzO+pTgY7I4mGgSwy5fu/7L1P97wxFSPPDfn3DkBLgXLUBZ
+         brTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVj8bXyosr9UJ5+2/o/2ZHm1PuaFiHyl71WLbpUNM8h25rFuYU36sDLDAqPRCgqavCeoZww5SaWhA4KF4M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYFmyQjEaNhlb1BE/Lar967vu6A2fQoM2RqaND5yd+odknp5tu
+	pUisL28xVlECeSNQ1pyAJdUB1lsK7KervmKUWIZLE2Q3HPq+lf60whZY7zbsZmsKRVC/N6SB0es
+	1UYVNN7zjq0p5z1AHT96O0m1CmVk=
+X-Gm-Gg: ASbGncuND50Hz1eAcz4JHeUAVJ479k6XlYx2RWybsmJT9kWsUZg/aZk6bw5zWWNFEaU
+	9KEP1V/K4pZ6+Pb1rveUwkshI1El8yO49xpNyCec/DGXVA/6LqNZet9pyE2Ow8ye4DAwSuiD3um
+	VCUIXP/w/HZEXcfkTJeqTs6AY6BeDH4exoNE23sHaL8pNyFmx62jXwUmlpiw==
+X-Google-Smtp-Source: AGHT+IEoSeUdMCryKXSbayP1c+WC2bqZA8FDGNrNRXTbmKGhcK6mNdY5gvJclkhUu41WW3Zv8yZKRT5UMbGHv2f98Q0=
+X-Received: by 2002:a05:6214:4116:b0:6e8:ddf6:d136 with SMTP id
+ 6a1803df08f44-6f064b76a4dmr191213426d6.45.1744045227894; Mon, 07 Apr 2025
+ 10:00:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <1743810988579.7.125720@webmail-backend-production-7b88b644bb-5mmj8>
+ <0dbbbe9d17ed489d4a7dbe12026fc6fd@beldev.am> <f8063d3fa7e148fecdda82e40b36e10a@beldev.am>
+ <CAKEwX=NMjfC1bKTVsB+C7eq3y=O0x3v8MW7KxUfhpg6UUr23rw@mail.gmail.com> <f023ba8341f9b44610cc4ac00cf0ee33@beldev.am>
+In-Reply-To: <f023ba8341f9b44610cc4ac00cf0ee33@beldev.am>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Mon, 7 Apr 2025 10:00:16 -0700
+X-Gm-Features: ATxdqUG2qMakDUGu0RhSQrsGq7xAj_E9lQta4YxEQ2uMX-OLhskupLrQ1JiEEiE
+Message-ID: <CAKEwX=MXD9EB242WkB50ZBmZgV-CwrAHp=_oE+e=7yHDfrMHtg@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: add zblock allocator
+To: Igor Belousov <igor.b@beldev.am>
+Cc: vitaly.wool@konsulko.se, Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	Shakeel Butt <shakeel.butt@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Check return value of cdev_add() and in case of error unregister the
-range of device numbers.
+On Mon, Apr 7, 2025 at 9:44=E2=80=AFAM Igor Belousov <igor.b@beldev.am> wro=
+te:
+>
+> Hi Nhat,
+>
+> 2025-04-07 19:51 skrev Nhat Pham:
+> > On Mon, Apr 7, 2025 at 2:00=E2=80=AFAM Igor Belousov <igor.b@beldev.am>=
+ wrote:
+> >>
+> >>
+> >> >>> Do you have zswap/zswapped meminfo metrics from these tests?
+> >> >> Yep, and those look somewhat similar:
+> >> >>  - zblock:
+> >> >> Zswap:            234128 kB
+> >> >> Zswapped:         733216 kB
+> >> >> -  zsmalloc:
+> >> >> Zswap:            286080 kB
+> >> >> Zswapped:         774688 kB
+> >> >
+> >> > I tested the kernel build on a 4-core virtual machine with allocated=
+ 4
+> >> > GB RAM running on a Ryzen 9.
+> >> >
+> >> > The results are the following:
+> >> [...]
+> >>
+> >> Now what's funny is that when I tried to compare how 32 threaded build
+> >> would behave on a 8-core VM I couldn't do it because it OOMs with
+> >> zsmalloc as zswap backend. With zblock it doesn't, though, and the
+> >> results are:
+> >> real    12m14.012s
+> >> user    39m37.777s
+> >> sys     14m6.923s
+> >> Zswap:            440148 kB
+> >> Zswapped:         924452 kB
+> >> zswpin 594812
+> >> zswpout 2802454
+> >> zswpwb 10878
+> >>
+> >> /Igor
+> >
+> > May I ask what compression algorithm you are using?
+>
+> It's LZ4 for all the test runs.
 
-Signed-off-by: Salah Triki <salah.triki@gmail.com>
----
- drivers/char/scx200_gpio.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Can you try zstd and let me know how it goes :)
 
-diff --git a/drivers/char/scx200_gpio.c b/drivers/char/scx200_gpio.c
-index 700e6affea6f..36efcc828e8e 100644
---- a/drivers/char/scx200_gpio.c
-+++ b/drivers/char/scx200_gpio.c
-@@ -107,10 +107,14 @@ static int __init scx200_gpio_init(void)
- 	}
- 
- 	cdev_init(&scx200_gpio_cdev, &scx200_gpio_fileops);
--	cdev_add(&scx200_gpio_cdev, devid, MAX_PINS);
-+	rc = cdev_add(&scx200_gpio_cdev, devid, MAX_PINS);
-+	if (rc)
-+		goto unregister_chrdev_region;
- 
- 	return 0; /* succeed */
- 
-+unregister_chrdev_region:
-+	unregister_chrdev_region(devid, MAX_PINS);
- undo_platform_device_add:
- 	platform_device_del(pdev);
- undo_malloc:
--- 
-2.43.0
+>
+> > And does the zswpwb come from zswap shrinker?
+>
+> Haven't looked into that, to be honest.
 
+Can you check:
+
+/sys/module/zswap/parameters/shrinker_enabled
+
+>
+> /Igor
 
