@@ -1,181 +1,177 @@
-Return-Path: <linux-kernel+bounces-592231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C73F7A7EAB0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:39:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BAF2A7EABA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A60304436A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:32:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F79016996E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19588264A75;
-	Mon,  7 Apr 2025 18:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61125266584;
+	Mon,  7 Apr 2025 18:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="W7m0Jdiq"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2050.outbound.protection.outlook.com [40.107.236.50])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n4lg88nu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7564264613;
-	Mon,  7 Apr 2025 18:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744049650; cv=fail; b=qAgWqAwZT2fYlEzbAwGmefv2d3/i6YOFWI9vwWjRcMJxQ6TMa8T4uPi1inJPSwEdTraxkVNipMitBVG6yE0fh0iL9MInK+yQfhQXDS+2WDa8dqc3OLLMHAs9OybK8GENNxIKQpKZkgV+yccTx2KWkxT7xEM9wZ/GzqIsoxM35cs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744049650; c=relaxed/simple;
-	bh=g3dnni1i4A9YXR5vZ03wGTKwwZVXNeHwuSfPxy5ff+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=oJz/sYr5dpBfrvv6C1VSNx7R9h1s0ETViu1Q9+KB3mj59NKRT2mBM43IARoNypVVv7xAZl+INulF/F3KGH64SXmvLujofccb4a2i3AcwXD2tIlC+rDXrRZ92MhnX0SXMw97340csoZy8E4z3Y+g3u+mhvE3NcHLyd82wjR+gHeM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=W7m0Jdiq; arc=fail smtp.client-ip=40.107.236.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CO0yRNBkdLq8AjdmoIoryS5hHo2Wh5JNmXRCJBO7dPm82wWnrr3Uh4/oSJdL7m7GoNeENNO8vbylSgXxEFeKWm2HE9kqMMX6uAegVrrwxZpnJ1VH78NAb5a/xtOSu+ITmTBBo8lmyICWPvo8akjnoLcbyAWKW9y+rIo2ThygzOM2aQhFRQNL3XBJ7s5zCHRg/2EJ6QOcELGDF3StIrzGDb4/UYSmBJI71xvr7E5jq2/AFiVQpp2H5AhpI4HysZmuDZs2qBBqFK6RaZ87bTlLiF/FZ2aFQfMZwaQjUPTrjlV2SpSv7uHFM0kwrBgvWTyFh7OS4VRvZmobKaXxyFADyw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HIq4eiAO6x80Mrx9AU01/bAOutPc09AynZ++BFAFIyU=;
- b=psK6MCykJdpaR94tPq2ZRd3f7VyXBvdeyhWiKiYLQHzlIkZPgu4S+dSA+yOSB3auHX0/fvY52jzh6TvwbtAeg1KsHbOiPz25Ma7Vjuj+Yk/vRtterUt21XQgWbkv2OvCbMCawPILQjj9i6E4RN+xOSxuACpOKertVvEzOY3Tm8NyTmlY6XPyrb73Q+TU6Lw1XEwjv8Pr1S9o5IrNjOU8JcPkBDhYy5fiqzlqe5J2jixZMtgecXs9SAcevOYp6AZ50qohHvtLTNKK5A5T0+ojZtxSu8KR4ZDVR+TDDvJU/rfHr33Zm31gTeZYW4wkweECmUwNeF5eACSxNGY9knncHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HIq4eiAO6x80Mrx9AU01/bAOutPc09AynZ++BFAFIyU=;
- b=W7m0Jdiqs4qlXIFjjvLCXRFbjko1X0iiPgtMDMS6vPFznfqJfSt7ssnZcFfr40dCDNyTrBkORbp1Qdp3Llenm+lCc5vLaIpKgN3FEXKZQU6zIrrMbKAPqYD7CoN2CUmJW5AzilXaB19T6WEeCK1ZqvBrzpzjneieOeAA91TNdj+BexLZoDF8kEJu9i/2FyUVh+Z9IAM3eQpIkYp4+NJMQDNocntyKbnx/NSrycKsVGHqSJgnj4I+kCuLow9S28zvOCdI7Eh6c0hWeag3tm7eGsu2JVZf88vokjfZtdq/QIH2gRY1/74d/rLHRWNeCzJqjVFKwWaTf+fhAqWrxRjLMQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by CY3PR12MB9630.namprd12.prod.outlook.com (2603:10b6:930:101::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.32; Mon, 7 Apr
- 2025 18:14:06 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8606.028; Mon, 7 Apr 2025
- 18:14:06 +0000
-Date: Mon, 7 Apr 2025 15:14:04 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-	Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2][next] IB/hfi1: Avoid -Wflex-array-member-not-at-end
- warning
-Message-ID: <20250407181404.GA1763434@nvidia.com>
-References: <Z-wiYkll8Vo3ME3P@kspp>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-wiYkll8Vo3ME3P@kspp>
-X-ClientProxiedBy: BL1PR13CA0061.namprd13.prod.outlook.com
- (2603:10b6:208:2b8::6) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2BD266574;
+	Mon,  7 Apr 2025 18:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744049668; cv=none; b=bZs9wljzCGDQwZQdJR+BTMV9QwTyUTluLWUvai+k8cHTNiOX4epqFwz6Mglc+/qXSQxOnx4Jr71UgdQJLg6JtAn08ot5uMEPj1vXkaB4Pu/RlWiWdc+h2EQF1tz5qkcOVtDddFK0VX7gbVNiHwGwbpc1LnpnSHnx/4IW+mtVHpU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744049668; c=relaxed/simple;
+	bh=9MZmQ3RNAYgi3VfmPE9AOSD+2RKITI9HdG8hqPzZGAc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=RHYZlphNIYjuImpSWTkbimfM0JNwxAUrInoRQQJMYc/sE2Nz/NgBV53Ops8nEALqgrfe30yNE2tDE9PH5Xy+VmTWPJTvISkwSwEWiOdY5FFhuwRxbZGGxc2DvGIWKkVhGtoaA4V6g2J+fMgyaPIGRKPaYZExBoHtbjNE8Q+9xvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n4lg88nu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5711C4CEE7;
+	Mon,  7 Apr 2025 18:14:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744049668;
+	bh=9MZmQ3RNAYgi3VfmPE9AOSD+2RKITI9HdG8hqPzZGAc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=n4lg88nuMV2CIV2i3YTkGmCn+V+9fwuY9is2B/UxYfL87ODyVnjJyNPt+W1Uhqpo3
+	 4/souL1O6wU46wR49yn6u/nt0g/h4WUvlZ5rC4vavWvNjNfhAbZuHvxqi7N2CxXRy5
+	 uibN+W9kJxj514mMB+31uejghG/rx0jNE/UKo46htgCMP53MSBWllGFLX31c0cFMnv
+	 T5wCZexRHP70MyFglEwhQbMUikNzvLg24Lvdd821WqLpiZS+RkYmLHbBkhpx3HyPa5
+	 +YDX0/IFypbp+HjpjJZRKUnfRHmC+20tHcvBAASoCxXQLOoHBl/cNQan0a2RwTSPT1
+	 6tl96i1osnZmw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: John Stultz <jstultz@google.com>,
+	Anton Yakovlev <anton.yakovlev@opensynergy.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	virtualization@lists.linux.dev,
+	linux-sound@vger.kernel.org,
+	kernel-team@android.com,
+	Betty Zhou <bettyzhou@google.com>,
+	Takashi Iwai <tiwai@suse.de>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 05/15] sound/virtio: Fix cancel_sync warnings on uninitialized work_structs
+Date: Mon,  7 Apr 2025 14:14:05 -0400
+Message-Id: <20250407181417.3183475-5-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250407181417.3183475-1-sashal@kernel.org>
+References: <20250407181417.3183475-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|CY3PR12MB9630:EE_
-X-MS-Office365-Filtering-Correlation-Id: b2ad1410-1352-4cbc-000a-08dd75fffbbc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wJQoGfK4OOHyxsIAzez0aMWaP7S8TqIGglaRAn1Lmk5JL+H0ycFon8VuI5IQ?=
- =?us-ascii?Q?G08V6axeTABY4Tarby67g0xHxzcdE4zErdBQlFWAnD+MHdlTPjl41ux6ebvS?=
- =?us-ascii?Q?gtdZlWtvPaYfcLhLsMf380MlHqo0vRUsCENI2YDkY37e55HGbk+yRMVa347Q?=
- =?us-ascii?Q?V6KWXG5xDJTtVj99JkqlYCzUKd9yW2TzsyjIqVKELny7u8xpE+0oiGKvzrFo?=
- =?us-ascii?Q?LtbGUqrNmSElL9EYNkrPb52SpVQJ4rk+TFZVEZXZAQLGs8D2JnTarEsQCf9o?=
- =?us-ascii?Q?8EFN9XNtXpSksqG0MjwmG3GPiIcdR2+EP4I2YCQSADgfn+ws+SZnsEtTLj+J?=
- =?us-ascii?Q?POsWqTBpwFHkqqzgSkyWRo11BT79CuBRvaxWya12/XVthyyX2r5ZB+PQHC7Q?=
- =?us-ascii?Q?CFVN2JlM7wkO+4E5XgMLKL5hWtNflbYKdkFfku74f1FIiXX5yZEyA1inyCNw?=
- =?us-ascii?Q?cutZEwHfUVVIsP7ESyhDIQ0RRkoTfUg4hgBe1x1D1inoZlSLvyXqwwCjom4a?=
- =?us-ascii?Q?EWz0dpmtu8GezBxP8HijoZMj1AqPjRQK0ioCnTr+5CUTFK7zZ/kvCeyVtzBB?=
- =?us-ascii?Q?FiK2sqdOwaDZ0A580wGNZdOdQi/l2Np5t4F63XSX98d1gWhtrySNzyH2u9AE?=
- =?us-ascii?Q?/bP37fIbsKSY/DLCRVTjJJW5E6RZ/ugqsB6JGRZsY+7qqSCMOfbl5HI5Ylty?=
- =?us-ascii?Q?6VAFucIVjPk35Ku83OyeUTuNyP2cuK6VbW0fw2sXN3hQrxp9YTWPcNlPNHGu?=
- =?us-ascii?Q?8ggBkvecvDG0mNdftNKhPaLoiE6R00cZrDhB29Oef1U74xoLZwUMmx3QAr8C?=
- =?us-ascii?Q?weGhDzJoiUqHd2r8b6UwEuD+fmPgCp0b9An+TUJMQjjynDJsee2+3wA9BwTM?=
- =?us-ascii?Q?/5SIYOzvpxm/wtloCybTQeZfxzlP8ebSrbMRJORnxs2b0Vvm2IY8QYzxtvZU?=
- =?us-ascii?Q?Vp16JJFZHOQAnFQ0F4Dzg/3z6K7dkR1AtzQH75btakWJ8T3uSsEx53HGTLgL?=
- =?us-ascii?Q?Nyy7A0hyP+Qu/V3GKVt8GvMYFB+kP5U9vRcvb8EVwu0DEDqRvS8NIqwOU8NL?=
- =?us-ascii?Q?iFcmjhH1tl8p840cDN1Er/RXnquMCe57b1EdSisvfuWCvKRe7KNyVL2op7vc?=
- =?us-ascii?Q?VxU3Xzn2l1LSZAD6IBqSP16aRY6r/VrOhYsmEONQANwRG51AGK8GI7gJeHYO?=
- =?us-ascii?Q?ksDOpPv9N17VYugsH0nycJaxYZkrQKBsTVFndMlAloxO8brNFQw6kZL5rbhf?=
- =?us-ascii?Q?snBPna05/L2JJXDHNrKngsXKVQNgW6u0cQqwgbY0bbJfp56FPolEidc4SYrY?=
- =?us-ascii?Q?CzkHJTIsB5u3aCIU1CJfoVdZFCzyUDi2E80V1gYMPg0Eqcpp+su2Oa/txJ0b?=
- =?us-ascii?Q?FC3fLrMDsBdlcUKdZbBhk2iCSsBZaIP2yMNYlUJxdrseG0ZNFd3eyZifpSQu?=
- =?us-ascii?Q?Z9706x2IVOQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?18qgkA6pviy681X8sGCvfsXkO1w+2cVBfWZCF2JBwjYWs36NHtIcWQTkT44u?=
- =?us-ascii?Q?P+MkyIFpqpKvj09Mt88ouVeKW4Ug7Z98eI0TkkiltJML0YCWPyy2FRD+LMXO?=
- =?us-ascii?Q?pr4DCen77jx8D8z8+DQblK/IrNNJouBdo/icooQTDQeoG+43FKbTZ1ZoNsu5?=
- =?us-ascii?Q?g4tt/8vnQCSaRtZTWkk4/Gdz23gdlWmWbfU8rumqBR8RVcKleIqh8we8/jWv?=
- =?us-ascii?Q?HmvMzSnw92XBGqOTxpPjibUXJWeqjommIb+1qbrU/Wm5zt9a9xIaftGDSxdF?=
- =?us-ascii?Q?5hXHgk0nAg6wgXcmY9im/m0UJyA7fjVctRYImi7i8LZ7chC6mgY6z0IDe8NU?=
- =?us-ascii?Q?TU2E2KK72GgO2WNkUNRK/2pCKWyx2old2VOxg/h9gmUgax9jM/gshl84HXuM?=
- =?us-ascii?Q?utet53r7NGefIh2Kgor0wEkjEgNImorrRztGCZ4wi2j3tMsexL4s4bAW1BXA?=
- =?us-ascii?Q?DkhOtRYpKnQOmG9o0Nv5MIei03+llJ4XxynCz1F91OfiXz7J/37nvKo31P3e?=
- =?us-ascii?Q?jTJv8hpVyJlkch9JfUq3T51STEYuIKBha3zDybf/4zyhExwauoB7I3L5lhkE?=
- =?us-ascii?Q?ebsUdeciXLO4iIEUuIIAXxzMwWB3iyX5Df7FRIfMcNlfuyQC6u2tzLHRwzU6?=
- =?us-ascii?Q?jmZeDvixI4a2dc5Uk/FgF8IVe0TWnCK5KNKanKrP1femQUKa0IKF5Mdcr4I3?=
- =?us-ascii?Q?hvhjeXL7LgL7WFe9nliy9/p5z+a2hgj3smLqpzWDfDYcX9/gy0EpGI2jCisM?=
- =?us-ascii?Q?cT3TlkWEFipPtpVH/6hbN4oXjnTN7br9+IejpJRVae/OkUPAE9Edu4yBwVsf?=
- =?us-ascii?Q?YrYdADccYLAPg/8s2IpiJm1gimGNj/ydJO/q0wuamOhfgrtYY13lmkMobglt?=
- =?us-ascii?Q?5XS57KJm+bRP3SYIX5Twa6NoCi6fJ7yliPgVq0wAGkLlDuUzCIvqIw9msd/k?=
- =?us-ascii?Q?Ce39osuwMhPnW0HCasgXSWj9DtGOF+vEhsuVaviAmTf/N3BMsoPZ427VDwgK?=
- =?us-ascii?Q?th4TuD996jUf/n2ytHDxYetwlzzVN857eraYRd78AyvVtPmjo9BXmzIpRBb7?=
- =?us-ascii?Q?bkcXVSoKud69ObiCdt3MGeTlKykLvzv1Vt6H0/vXIx5uZhGvG+/wiKQPws/U?=
- =?us-ascii?Q?9TjFN0JZMBcOud9m2SQE54qJOOEFNUnVBVrNsuyC44xpwCSXm0VxjQqgaCQA?=
- =?us-ascii?Q?tMB4fOqqlSE0b/IK3TxqVUeU8yXxKNjuTOw1729jhdvScEBKYqgUUXem2vtx?=
- =?us-ascii?Q?5TUpVGPt1IipPfzTafHIuxk1ReOUWzbRDj5Xv4WQaAe2ZgeeRyzCzdRisi+O?=
- =?us-ascii?Q?ecDrP7OfWQO1gT8Y7rI+0Zof45ukMd0NZMG7G95LUg4Moa7j5RvZ/IqVXofJ?=
- =?us-ascii?Q?TkXOa9PaWwDbcnG+t74cw7V+CaBcSS+UuYkSU88NrdnloGzumX614JcRlW3t?=
- =?us-ascii?Q?bP9KaZdTuIJQOdrXBCk2+m+RppmGjzQ81v1VWOdPiCnaxeTbbMu8jaIv+Tu8?=
- =?us-ascii?Q?xdTjRhLc/iSyzD9MhSN+346MT8ROYmzfsnL00/vPTytJzMmWlifDuerMfqX0?=
- =?us-ascii?Q?zYj+X71ipbyxZ0RRuBk07KuLqJCNAE31sBGcXocC?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2ad1410-1352-4cbc-000a-08dd75fffbbc
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 18:14:05.9179
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xr6YT1gE6jAeUx2nmpCxTLPrA7v0tN9J6fYFfb37t/OaMX1uSwYxkRb6t+DhwoD+
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY3PR12MB9630
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.86
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 01, 2025 at 11:29:06AM -0600, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
-> 
-> Remove unused flex-array member `class_data` from
-> `struct opa_mad_notice_attr`.
-> 
-> Fix the following warning:
-> 
-> drivers/infiniband/hw/hfi1/mad.c:23:36: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
-> Changes in v2:
->  - Remove unused flexible array. (Jason)
-> 
-> v1:
->  - Link: https://lore.kernel.org/linux-hardening/Z-WgwsCYIXaBxnvs@kspp/
-> 
->  drivers/infiniband/hw/hfi1/mad.h | 1 -
->  1 file changed, 1 deletion(-)
+From: John Stultz <jstultz@google.com>
 
-Applied to for-next, thanks
+[ Upstream commit 3c7df2e27346eb40a0e86230db1ccab195c97cfe ]
 
-Jason
+Betty reported hitting the following warning:
+
+[    8.709131][  T221] WARNING: CPU: 2 PID: 221 at kernel/workqueue.c:4182
+...
+[    8.713282][  T221] Call trace:
+[    8.713365][  T221]  __flush_work+0x8d0/0x914
+[    8.713468][  T221]  __cancel_work_sync+0xac/0xfc
+[    8.713570][  T221]  cancel_work_sync+0x24/0x34
+[    8.713667][  T221]  virtsnd_remove+0xa8/0xf8 [virtio_snd ab15f34d0dd772f6d11327e08a81d46dc9c36276]
+[    8.713868][  T221]  virtsnd_probe+0x48c/0x664 [virtio_snd ab15f34d0dd772f6d11327e08a81d46dc9c36276]
+[    8.714035][  T221]  virtio_dev_probe+0x28c/0x390
+[    8.714139][  T221]  really_probe+0x1bc/0x4c8
+...
+
+It seems we're hitting the error path in virtsnd_probe(), which
+triggers a virtsnd_remove() which iterates over the substreams
+calling cancel_work_sync() on the elapsed_period work_struct.
+
+Looking at the code, from earlier in:
+virtsnd_probe()->virtsnd_build_devs()->virtsnd_pcm_parse_cfg()
+
+We set snd->nsubstreams, allocate the snd->substreams, and if
+we then hit an error on the info allocation or something in
+virtsnd_ctl_query_info() fails, we will exit without having
+initialized the elapsed_period work_struct.
+
+When that error path unwinds we then call virtsnd_remove()
+which as long as the substreams array is allocated, will iterate
+through calling cancel_work_sync() on the uninitialized work
+struct hitting this warning.
+
+Takashi Iwai suggested this fix, which initializes the substreams
+structure right after allocation, so that if we hit the error
+paths we avoid trying to cleanup uninitialized data.
+
+Note: I have not yet managed to reproduce the issue myself, so
+this patch has had limited testing.
+
+Feedback or thoughts would be appreciated!
+
+Cc: Anton Yakovlev <anton.yakovlev@opensynergy.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>
+Cc: virtualization@lists.linux.dev
+Cc: linux-sound@vger.kernel.org
+Cc: kernel-team@android.com
+Reported-by: Betty Zhou <bettyzhou@google.com>
+Suggested-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: John Stultz <jstultz@google.com>
+Message-Id: <20250116194114.3375616-1-jstultz@google.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/virtio/virtio_pcm.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
+
+diff --git a/sound/virtio/virtio_pcm.c b/sound/virtio/virtio_pcm.c
+index c10d91fff2fb0..1ddec1f4f05d5 100644
+--- a/sound/virtio/virtio_pcm.c
++++ b/sound/virtio/virtio_pcm.c
+@@ -337,6 +337,21 @@ int virtsnd_pcm_parse_cfg(struct virtio_snd *snd)
+ 	if (!snd->substreams)
+ 		return -ENOMEM;
+ 
++	/*
++	 * Initialize critical substream fields early in case we hit an
++	 * error path and end up trying to clean up uninitialized structures
++	 * elsewhere.
++	 */
++	for (i = 0; i < snd->nsubstreams; ++i) {
++		struct virtio_pcm_substream *vss = &snd->substreams[i];
++
++		vss->snd = snd;
++		vss->sid = i;
++		INIT_WORK(&vss->elapsed_period, virtsnd_pcm_period_elapsed);
++		init_waitqueue_head(&vss->msg_empty);
++		spin_lock_init(&vss->lock);
++	}
++
+ 	info = kcalloc(snd->nsubstreams, sizeof(*info), GFP_KERNEL);
+ 	if (!info)
+ 		return -ENOMEM;
+@@ -350,12 +365,6 @@ int virtsnd_pcm_parse_cfg(struct virtio_snd *snd)
+ 		struct virtio_pcm_substream *vss = &snd->substreams[i];
+ 		struct virtio_pcm *vpcm;
+ 
+-		vss->snd = snd;
+-		vss->sid = i;
+-		INIT_WORK(&vss->elapsed_period, virtsnd_pcm_period_elapsed);
+-		init_waitqueue_head(&vss->msg_empty);
+-		spin_lock_init(&vss->lock);
+-
+ 		rc = virtsnd_pcm_build_hw(vss, &info[i]);
+ 		if (rc)
+ 			goto on_exit;
+-- 
+2.39.5
+
 
