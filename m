@@ -1,79 +1,81 @@
-Return-Path: <linux-kernel+bounces-590608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F88A7D4E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:05:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 606FDA7D4E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A9083ACDE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:03:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49B5E1671A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E954642D;
-	Mon,  7 Apr 2025 07:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BC6225761;
+	Mon,  7 Apr 2025 07:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ez1E0dBp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="T/EQHLxD"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E12218ADC;
-	Mon,  7 Apr 2025 07:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EEC218ADC;
+	Mon,  7 Apr 2025 07:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744009418; cv=none; b=Vi64nMKqrixZP6e3/yaq57Bb5UrNXl0/t+0wPhTIh2DhKrgCAMNyGOUcyQ39vA3R0UBC7Fr2Xl0nY8pQSCm7ZSozZ2htWU+YvE0w5hvsVlpHQd2osBKZ15LMCNhQ1hW/+nbt+yPn40iApNUd6dvwFkxOU2/zZcq0jXVhGV76JNA=
+	t=1744009454; cv=none; b=U3zcQ3H7O9jj4BCirLR4Wxo46P0CwxsbiDQHyxOpr/i1/aW8uqbw86VVaJkKnhlkejc4zLeuhHAYGyUM2+UniHxY7ukBnLBKmLH5P3o/GyqzXyKkN1IP6gZRsdimQ3iPcnO8FPN2eHUlBySLz/zp9It5kpG/UhFlBM6yqKh/BTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744009418; c=relaxed/simple;
-	bh=qW7X0O7a7+RV3ifNkS2U5b666avtSFWmEmJEcTSbnS0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gLSkTlMcaeoCmOtCuc7kM0CZFDDpcAqilkZKv5GibrPYiMtPr6iT0C98IU8ZE+iM9HLD5V2NG+4CG9efDC1ttUhmMrQGMEnGi37BM38ZWRxcN4taYHBI/sXjTiBI9gFNAyxCEnL5pfCVnv3nay7m55u41pnnlr2mgRqkfQHK54o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ez1E0dBp; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744009416; x=1775545416;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=qW7X0O7a7+RV3ifNkS2U5b666avtSFWmEmJEcTSbnS0=;
-  b=Ez1E0dBpBlG6lvcbCr6N4W2pFkpdBLn4PjXGyn4briX/mX531aVbwIIA
-   5IDdoXWT7pOsf1TEMY1V+SBe8baadeBi+IiSec8VZqr8+o8C3ntGiVv39
-   0FyzlrZcV5R2B6SiUanbGPt9wv4MeQYc0nwggc2siSZrV3B/Sj38Nysjj
-   eGX+dKBQPwYpi/tdpWV+PVSIfZiuHwbv/j1cB7LnYY+9Ye/bdvHIGkyOQ
-   oqjvBtYpezaKevGJpPHdTkll/J48aFHdzcfL1FuNzSOGmnb4emLjAj+5T
-   rbUUJUryixNsoW3DWXxXAGOxaPsuxvPX1BYkeVZqJvomYvUkZ8Ez2fxst
-   A==;
-X-CSE-ConnectionGUID: 3Gn3CUh+QBi2SX127xZ5gg==
-X-CSE-MsgGUID: rNuoRTmQQWGGfJopggyyXA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11396"; a="56747195"
-X-IronPort-AV: E=Sophos;i="6.15,193,1739865600"; 
-   d="scan'208";a="56747195"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 00:03:35 -0700
-X-CSE-ConnectionGUID: keA3zv7tRKemDMN0Z8a4Xw==
-X-CSE-MsgGUID: vhLbNFZ4SnqsNkiuBpWrzQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,193,1739865600"; 
-   d="scan'208";a="127616903"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP; 07 Apr 2025 00:03:32 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 328F5338; Mon, 07 Apr 2025 10:03:31 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andy Shevchenko <andy@kernel.org>
-Subject: [PATCH v1 1/1] x86/PCI: Drop 'pci' suffix from intel_mid_pci.c
-Date: Mon,  7 Apr 2025 10:03:21 +0300
-Message-ID: <20250407070321.3761063-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1744009454; c=relaxed/simple;
+	bh=63hCsI7D4OsJ+8xqEVbujyRPsdm/RcjkVGWNADKmzJ8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t+icdGjf74ZiBqtPePIB8TnnKrjvB/xLs4ywzKN6eQCkTKdlH6mChT8n/DS46KAVFQf8ERe1kG41JEDtQsLwuz/CSGbspevD5O64o5z3EdWVLWrXraXunHOYVgODIB9Lc6h29mMNDk3JCR9Cg93LdzdiWENbYHs1z7Bsnp6jBH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=T/EQHLxD; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5372oDsE001707;
+	Mon, 7 Apr 2025 00:04:00 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=i/2qzHRAmu7K3gRU9dmtnPl
+	/DCrifDSer7QneKYGT/Q=; b=T/EQHLxDZTHFE988VGOuEZjJPjXdZTOdEACmG9j
+	Tr1XAmyFyJt/jL4ME4/GQrXKR7rjUaGVu/wWa+Nr1mUZMNbyjB5RY++15Ltnu19H
+	7bovwEuQYC8wy8BSAvNwb19jdi2sa/QuoEfa1wZqq6nmrNT/ZJOOjmtK24GOpIL5
+	P60Ey+jPCJVq9R+4naWYMftaf1/qvRED+W6fIoxfD8ooqFT3SQk5+6g1J3dM6c29
+	3C1rzBkDjKeB473iMTKlSZSPKWj6kYQ6QDX4eijKjYvqrBYnx7Pc2F5Ocbo/L1Hd
+	r+YCCfAeFtBku4fEMe/mhMIR/UdRiHoR3DAjaasaA48rThg==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 45un99shtx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Apr 2025 00:04:00 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 7 Apr 2025 00:03:58 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 7 Apr 2025 00:03:58 -0700
+Received: from test-OptiPlex-Tower-Plus-7010.marvell.com (unknown [10.29.37.157])
+	by maili.marvell.com (Postfix) with ESMTP id 089155E689E;
+	Mon,  7 Apr 2025 00:03:54 -0700 (PDT)
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Hariprasad Kelam <hkelam@marvell.com>,
+        Sunil Goutham
+	<sgoutham@marvell.com>,
+        Geetha sowjanya <gakula@marvell.com>,
+        "Subbaraya
+ Sundeep" <sbhatta@marvell.com>,
+        Bharat Bhushan <bbhushan2@marvell.com>,
+        "Andrew Lunn" <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        "Eric Dumazet" <edumazet@google.com>,
+        Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Naveen Mamindlapalli
+	<naveenm@marvell.com>
+Subject: [net PATCH] octeontx2-pf: qos: fix VF root node parent queue index
+Date: Mon, 7 Apr 2025 12:33:41 +0530
+Message-ID: <20250407070341.2765426-1-hkelam@marvell.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,60 +83,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=I/JlRMgg c=1 sm=1 tr=0 ts=67f378e0 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=XR8D0OoHHMoA:10 a=M5GUcnROAAAA:8 a=RI5rwOQ5OLZ3BBTcUwgA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: 5dnN9VO_owPMUbQB8nmQR9P-obmrIhhF
+X-Proofpoint-ORIG-GUID: 5dnN9VO_owPMUbQB8nmQR9P-obmrIhhF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-07_02,2025-04-03_03,2024-11-22_01
 
-CE4100 PCI specific code has no 'pci' suffix in the filename,
-intel_mid_pci.c is the only one that duplicates the folder
-name in its filename, drop that redundancy.
+The current code configures the Physical Function (PF) root node at TL1
+and the Virtual Function (VF) root node at TL2.
 
-While at it, group the respective modules in the Makefile.
+This ensure at any given point of time PF traffic gets more priority.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+                    PF root node
+                      TL1
+                     /  \
+                    TL2  TL2 VF root node
+                    /     \
+                   TL3    TL3
+                   /       \
+                  TL4      TL4
+                  /         \
+                 SMQ        SMQ
+
+Due to a bug in the current code, the TL2 parent queue index on the
+VF interface is not being configured, leading to 'SMQ Flush' errors
+
+Fixes: 5e6808b4c68d ("octeontx2-pf: Add support for HTB offload")
+Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
 ---
- MAINTAINERS                                   | 2 +-
- arch/x86/pci/Makefile                         | 6 +++---
- arch/x86/pci/{intel_mid_pci.c => intel_mid.c} | 0
- 3 files changed, 4 insertions(+), 4 deletions(-)
- rename arch/x86/pci/{intel_mid_pci.c => intel_mid.c} (100%)
+ drivers/net/ethernet/marvell/octeontx2/nic/qos.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 96b827049501..1f6514d55b17 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12120,7 +12120,7 @@ M:	Andy Shevchenko <andy@kernel.org>
- L:	linux-kernel@vger.kernel.org
- S:	Supported
- F:	arch/x86/include/asm/intel-mid.h
--F:	arch/x86/pci/intel_mid_pci.c
-+F:	arch/x86/pci/intel_mid.c
- F:	arch/x86/platform/intel-mid/
- F:	drivers/dma/hsu/
- F:	drivers/extcon/extcon-intel-mrfld.c
-diff --git a/arch/x86/pci/Makefile b/arch/x86/pci/Makefile
-index 4933fb337983..c1efd5b0d198 100644
---- a/arch/x86/pci/Makefile
-+++ b/arch/x86/pci/Makefile
-@@ -8,13 +8,13 @@ obj-$(CONFIG_PCI_OLPC)		+= olpc.o
- obj-$(CONFIG_PCI_XEN)		+= xen.o
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/qos.c b/drivers/net/ethernet/marvell/octeontx2/nic/qos.c
+index 0f844c14485a..35acc07bd964 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/qos.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/qos.c
+@@ -165,6 +165,11 @@ static void __otx2_qos_txschq_cfg(struct otx2_nic *pfvf,
  
- obj-y				+= fixup.o
--obj-$(CONFIG_X86_INTEL_CE)      += ce4100.o
- obj-$(CONFIG_ACPI)		+= acpi.o
- obj-y				+= legacy.o irq.o
- 
--obj-$(CONFIG_X86_NUMACHIP)	+= numachip.o
-+obj-$(CONFIG_X86_INTEL_CE)	+= ce4100.o
-+obj-$(CONFIG_X86_INTEL_MID)	+= intel_mid.o
- 
--obj-$(CONFIG_X86_INTEL_MID)	+= intel_mid_pci.o
-+obj-$(CONFIG_X86_NUMACHIP)	+= numachip.o
- 
- obj-y				+= common.o early.o
- obj-y				+= bus_numa.o
-diff --git a/arch/x86/pci/intel_mid_pci.c b/arch/x86/pci/intel_mid.c
-similarity index 100%
-rename from arch/x86/pci/intel_mid_pci.c
-rename to arch/x86/pci/intel_mid.c
+ 		otx2_config_sched_shaping(pfvf, node, cfg, &num_regs);
+ 	} else if (level == NIX_TXSCH_LVL_TL2) {
++		/* configure parent txschq */
++		cfg->reg[num_regs] = NIX_AF_TL2X_PARENT(node->schq);
++		cfg->regval[num_regs] = (u64)hw->tx_link << 16;
++		num_regs++;
++
+ 		/* configure link cfg */
+ 		if (level == pfvf->qos.link_cfg_lvl) {
+ 			cfg->reg[num_regs] = NIX_AF_TL3_TL2X_LINKX_CFG(node->schq, hw->tx_link);
 -- 
-2.47.2
+2.34.1
 
 
