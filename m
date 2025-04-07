@@ -1,47 +1,80 @@
-Return-Path: <linux-kernel+bounces-591060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62B96A7DA7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:57:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 041FCA7DA83
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FA9F7A32ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:56:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 802273A59D3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E0A230996;
-	Mon,  7 Apr 2025 09:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F56230BC6;
+	Mon,  7 Apr 2025 09:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y+j+IA+o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="edUxBtwS"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1182188734;
-	Mon,  7 Apr 2025 09:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB324230251
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 09:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744019864; cv=none; b=PyNKiwKroPDKq3FDUZD9QSHETZ+A9/yloB6YwE6CtlTAQC/fs2QmCCViTcyenI5+sUlF57BsfPtfVUqyD71JdxsnX2UBiCgW7UeiEkctLBVaE0XfqRrPpXLq0KQ2tduCUtylpC6hVCJEnWh/vGQL1aCJwJdTzfoFDhfqaepHlSI=
+	t=1744019937; cv=none; b=DpUXgbAGHdAJqAhC1PVaoisNXpJ9ESu6wbtVhY8FAXGG/WBt4FP14H5if8C4dl/584GQvlaebaxvn2GlvgBkqqPrzEJMuY41TIWaxX7n7dKsuqV1eDkSHvxVH9oFD14fs0IZYa7/6peG5h49ln2T+7QDnJFGASYD7qpNWYcRhuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744019864; c=relaxed/simple;
-	bh=+leZAOgv1p8vUSpsx7CFEyKcsFmvohU4JdSQl13lHkg=;
+	s=arc-20240116; t=1744019937; c=relaxed/simple;
+	bh=v29T1FbGbcKeRMuW0VbePwisgAp9BsYkH9UNPlwsybg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H/JF5M5uXacsAF+jClShs5rjosK7kzdWqyWKa/GJV0Ln7wGnFa6RSu9KD/UPuh5QKz+nAKGnQSxT9W0pGVHfjj0b6FXrE5UBAxBMQSgqqBhlJpl3oZXOpwMhArxnKgPB5Fxm/GFlaNMACqlLdIDYaXBdeDgi9VuC/c06eAyeUgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y+j+IA+o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9DF5C4CEDD;
-	Mon,  7 Apr 2025 09:57:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744019863;
-	bh=+leZAOgv1p8vUSpsx7CFEyKcsFmvohU4JdSQl13lHkg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Y+j+IA+o0qewxZsdrTbggvxB/+6KUQsrUryxr2o8rEIWzhgI4Svq0lY713/dRKJ0Q
-	 cRryF3bpzTtDPKHV2SIC5H3egWanJ8F+8iAaY+n4W6LVEBpLPFor5ml7Je32fXAKUD
-	 WKpTx3kib14X1tO6WUXuSa3rhvB25nE4guOlQ2jC/2A6WZFXq3yqVHy84eS9Afkupn
-	 /sA3m1uX1Nf1DoJC5b5f+xO/emwsopxvHVFic7eyEjfxgjPQMJ0F3YU3A85IUPBDmf
-	 3bqqPTo6GrPUK+T/OkD/xDoH3n+wipGTW4+ewBi+xftyAD31krO+o/ITSTaTgoiIns
-	 Iz5ayF0xjazhg==
-Message-ID: <36c30069-3e7a-495c-8225-acd080732485@kernel.org>
-Date: Mon, 7 Apr 2025 11:57:37 +0200
+	 In-Reply-To:Content-Type; b=u1qQUh2x4xn+iuQ9042JZ+k/nwQaDxIEgMnlmsDJc8MLi/GJ7HjyBCtqmXPDx4MngjqAsj6Q+pWsbGOmYprCi0g8iHN1GDvlDtkE/2+2oTytpyenONjXc+r7tDyJxwjqiUXnXkN/Q7yy3EhJWE6Fjqr2LLcfCMOwx+fYCU6AGv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=edUxBtwS; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43ea40a6e98so36327535e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 02:58:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744019934; x=1744624734; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vrZNuJsrn23JwdNkrVTHfCKc6rDwAMWYvk+A+tg7J78=;
+        b=edUxBtwSu7i/SE+y974xBKU7Qag3//f751DnkXuDgDX+m1K0oqJVGORzJp93HQLVSd
+         IkQAx24itg9gtodyNqslx3hs0cSoqnkYtLCXxMV5ve6KqQ2ox094C+LJetqVrSh8vaLz
+         n/7f/jeRAhulHHiCgZ+OE1n9lwWA5DDWZqzUJ8Q6il1y0HRXd0PTPisacW1CqwWt5JLy
+         0swNsLTyvDLxt3eIai/SDpSCxCVIb4cx47lmycvhC+1sxi8QcDzML7rA6+OmD4sdIfaa
+         xptKySFE6NhwX8TgbJvR2GLxbm1+TP9B1huK/uSqNsgQBWoEF6rqthIOFzHfeaovFWUg
+         c9vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744019934; x=1744624734;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vrZNuJsrn23JwdNkrVTHfCKc6rDwAMWYvk+A+tg7J78=;
+        b=Cp1q3naBrzpM0c8SkmhzNJuqILiWq/O1I+KqfvoIwDv8VDOfCJMX4IcymkUfe2Kv3n
+         Xa84cKfmazMFvw4DqZlh7TM0W3NbEaB2F7teEa3Oq7rpCdT6V2ZXwEKnkYPxAT6nEFxC
+         Uqy1rwrnD+sRLDAW7+XVh7btxL1C73FeyZjK1K6Z5gkVQeEjeC9Dlo2PfB5DY8FOclpK
+         ewqfK6JArWeyE3V+xmrvj28xzj4Cg+3ld+CxEdx3vMx1L8Kdfbo5MAoYDG225ZCODcNO
+         MeIxWGnDq6ggfYwcKj5gdEFBMJDs/bpkqFsd9tVliYBgXQI6eveQ7aHZRDNWvc5awYSG
+         Vd7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXvbP1StWZ5BEZMhuyEBJHZG/USvPIzkouG7DaQ5yuBsYPPEAKOiiAt7dV5os71rE5DzWcrh/sWKWorlJc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8MvBHfwEjisPOEm0jNSfM8wmyNP7y+6pCd4smZC+KXZRwkoyO
+	WoUquK8CWrW958Zeq4ba+X1vn93qZtmQXigeLPn03mqGfSYTs9+Mq2h8gMSTJmoyzTjXCaEoJoC
+	bmNs=
+X-Gm-Gg: ASbGnctVeEsIVPhlWNMejafWEpsE9EX3I6hPviplouodPBXJmdkCIaOxN90yrWuwXXp
+	Pz9YrisR8zndIHNNzn/1GS8UNE6p1rS/ceMBJYTW0P+8keOYC3c34I5ODt04BKMkNwMO4oJ/nN9
+	NeUWeVp/LcW743Y9Yz/pFT1LhsIPbTYUcrybWjKNH7RcsGedTBYhgHlGp35qmIRBf2yrgPLRfLk
+	Lb1Y8oce2zl4bBqJnt3aArrM48/KhtHJPq5NESbr2QB6oOIb9/lquhJg09VPgfSI4KFiAVTm1s6
+	u5Y4Uew7mJIeP7kK2I2/Ctvc7YivtUR1YTift9xa2pD+59ejqg/XKfrzPoPsBMqxWaIQrLc7FsL
+	WKoa9TJ+Fbw==
+X-Google-Smtp-Source: AGHT+IFa6RmlxDVU+Z/fAcwEEKxjPn906JwxGNMAIQ21GqtzU5bzQldRFT4YWzFFJnbZpVCs+q7ukw==
+X-Received: by 2002:a05:600c:4754:b0:43c:eec7:eab7 with SMTP id 5b1f17b1804b1-43ee0640054mr78338955e9.11.1744019934216;
+        Mon, 07 Apr 2025 02:58:54 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c3020d938sm11679731f8f.65.2025.04.07.02.58.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Apr 2025 02:58:53 -0700 (PDT)
+Message-ID: <778e2cd0-5371-424f-809d-20f7c3ae5343@linaro.org>
+Date: Mon, 7 Apr 2025 10:58:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,152 +82,168 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: backlight: kinetic,ktz8866: add ktz8866
- slave compatible
-To: Pengyu Luo <mitltlatltl@gmail.com>, Jianhua Lu <lujianhua000@gmail.com>,
- Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
- Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>
-Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fbdev@vger.kernel.org
-References: <20250407095119.588920-1-mitltlatltl@gmail.com>
- <20250407095119.588920-2-mitltlatltl@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: camss NULL-deref on power on with 6.12-rc2
+To: Johan Hovold <johan@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>
+Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <Zwjw6XfVWcufMlqM@hovoldconsulting.com>
+ <Z_OXELLDIfQII6wV@hovoldconsulting.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250407095119.588920-2-mitltlatltl@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <Z_OXELLDIfQII6wV@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 07/04/2025 11:51, Pengyu Luo wrote:
-> Kinetic ktz8866, found in many android devices, nowadays, some oem use
-> dual ktz8866 to support a larger panel and  higher brightness, add the
-
-Just one space after 'and'.
-
-> binding for slave case.
+On 07/04/2025 10:12, Johan Hovold wrote:
+> On Fri, Oct 11, 2024 at 11:33:30AM +0200, Johan Hovold wrote:
 > 
-> Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
-> ---
->  .../leds/backlight/kinetic,ktz8866.yaml       | 29 +++++++++++++++----
->  1 file changed, 24 insertions(+), 5 deletions(-)
+>> This morning I hit the below NULL-deref in camss when booting a 6.12-rc2
+>> kernel on the Lenovo ThinkPad X13s.
+>>
+>> I booted the same kernel another 50 times without hitting it again it so
+>> it may not be a regression, but simply an older, hard to hit bug.
+>>
+>> Hopefully you can figure out what went wrong from just staring at the
+>> oops and code.
 > 
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/kinetic,ktz8866.yaml b/Documentation/devicetree/bindings/leds/backlight/kinetic,ktz8866.yaml
-> index c914e1276..825a6fbf1 100644
-> --- a/Documentation/devicetree/bindings/leds/backlight/kinetic,ktz8866.yaml
-> +++ b/Documentation/devicetree/bindings/leds/backlight/kinetic,ktz8866.yaml
-> @@ -19,7 +19,9 @@ allOf:
->  
->  properties:
->    compatible:
-> -    const: kinetic,ktz8866
-> +    enum:
-> +      - kinetic,ktz8866
-> +      - kinetic,ktz8866-slave
+> Hit the NULL-pointer dereference during boot that I reported back in
+> October again today with 6.15-rc1.
+> 
+> The camss_find_sensor_pad() function was renamed in 6.15-rc1, but
+> otherwise it looks identical.
+> 
+> Johan
+> 
+> 
+> [    5.740833] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000030
+> [    5.741162] Mem abort info:
+> [    5.741435]   ESR = 0x0000000096000004
+> [    5.741707]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [    5.741980]   SET = 0, FnV = 0
+> [    5.742249]   EA = 0, S1PTW = 0
+> [    5.742253]   FSC = 0x04: level 0 translation fault
+> [    5.742255] Data abort info:
+> [    5.742257]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+> [    5.743264]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> [    5.743267]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> [    5.743269] user pgtable: 4k pages, 48-bit VAs, pgdp=000000010fb98000
+> [    5.743272] [0000000000000030] pgd=0000000000000000, p4d=0000000000000000
+> [    5.744064] Internal error: Oops: 0000000096000004 [#1]  SMP
+> 
+> [    5.744645] CPU: 3 UID: 0 PID: 442 Comm: v4l_id Not tainted 6.15.0-rc1 #106 PREEMPT
+> [    5.744647] Hardware name: LENOVO 21BYZ9SRUS/21BYZ9SRUS, BIOS N3HET87W (1.59 ) 12/05/2023
+> [    5.744649] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [    5.744651] pc : camss_find_sensor_pad+0x20/0x74 [qcom_camss]
+> [    5.744661] lr : camss_get_pixel_clock+0x18/0x64 [qcom_camss]
+> [    5.744666] sp : ffff800082dfb8e0
+> [    5.744667] x29: ffff800082dfb8e0 x28: ffff800082dfbc68 x27: ffff143e80404618
+> [    5.744671] x26: 0000000000000000 x25: 0000000000000000 x24: ffff143e9398baa8
+> [    5.744675] x23: ffff800082dfb998 x22: ffff143e9398d9a0 x21: ffff800082dfb9a8
+> [    5.744678] x20: 0000000000000002 x19: 0000000000020001 x18: 0000000000000020
+> [    5.744682] x17: 3030613563613a33 x16: ffffac4db3ccf814 x15: 706e65672f6b6e69
+> [    5.744686] x14: 0000000000000000 x13: ffff143e80b39180 x12: 30613563613a333a
+> [    5.744690] x11: ffffac4db50a8920 x10: 0000000000000000 x9 : 0000000000000000
+> [    5.744693] x8 : ffffac4db4992000 x7 : ffff800082dfb8e0 x6 : ffff800082dfb870
+> [    5.744697] x5 : ffff800082dfc000 x4 : ffff143e9398cc70 x3 : ffff143e9398cb40
+> [    5.744701] x2 : ffff143e9398be00 x1 : ffff143e9398d9a0 x0 : 0000000000000000
+> [    5.744704] Call trace:
+> [    5.744706]  camss_find_sensor_pad+0x20/0x74 [qcom_camss] (P)
+> [    5.744711]  camss_get_pixel_clock+0x18/0x64 [qcom_camss]
+> [    5.744716]  vfe_get+0xb8/0x504 [qcom_camss]
+> [    5.744724]  vfe_set_power+0x30/0x58 [qcom_camss]
+> [    5.744731]  pipeline_pm_power_one+0x13c/0x150 [videodev]
+> [    5.744745]  pipeline_pm_power.part.0+0x58/0xf4 [videodev]
+> [    5.744754]  v4l2_pipeline_pm_use+0x58/0x94 [videodev]
+> [    5.744762]  v4l2_pipeline_pm_get+0x14/0x20 [videodev]
+> [    5.744771]  video_open+0x78/0xf4 [qcom_camss]
+> [    5.744776]  v4l2_open+0x80/0x120 [videodev]
+> [    5.755711]  chrdev_open+0xb4/0x204
+> [    5.755716]  do_dentry_open+0x138/0x4d0
+> [    5.756271]  vfs_open+0x2c/0xe8
+> [    5.756274]  path_openat+0x2b8/0x9fc
+> [    5.756276]  do_filp_open+0x8c/0x144
+> [    5.756277]  do_sys_openat2+0x80/0xdc
+> [    5.756279]  __arm64_sys_openat+0x60/0xb0
+> [    5.757830]  invoke_syscall+0x48/0x110
+> [    5.757834]  el0_svc_common.constprop.0+0xc0/0xe0
+> [    5.758369]  do_el0_svc+0x1c/0x28
+> [    5.758372]  el0_svc+0x48/0x114
+> [    5.758889]  el0t_64_sync_handler+0xc8/0xcc
+> [    5.759184]  el0t_64_sync+0x198/0x19c
+> [    5.759475] Code: f9000bf3 52800033 72a00053 f9402420 (f9401801)
+>   
+>   
+>> [    5.657860] ov5675 24-0010: failed to get HW configuration: -517
+>> [    5.676183] vreg_l6q: Bringing 2800000uV into 1800000-1800000uV
+>>
+>> [    6.517689] qcom-camss ac5a000.camss: Adding to iommu group 22
+>>
+>> [    6.589201] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000030
+>> [    6.589625] Mem abort info:
+>> [    6.589960]   ESR = 0x0000000096000004
+>> [    6.590293]   EC = 0x25: DABT (current EL), IL = 32 bits
+>> [    6.590630]   SET = 0, FnV = 0
+>> [    6.591619]   EA = 0, S1PTW = 0
+>> [    6.591968]   FSC = 0x04: level 0 translation fault
+>> [    6.592298] Data abort info:
+>> [    6.592621]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+>> [    6.593112]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>> [    6.593450]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+>> [    6.593783] user pgtable: 4k pages, 48-bit VAs, pgdp=000000010daef000
+>> [    6.594139] [0000000000000030] pgd=0000000000000000, p4d=0000000000000000
+>> [    6.594214] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+> 
+>> [    6.594868] CPU: 0 UID: 0 PID: 557 Comm: v4l_id Not tainted 6.12.0-rc2 #165
+>> [    6.594871] Hardware name: LENOVO 21BYZ9SRUS/21BYZ9SRUS, BIOS N3HET87W (1.59 ) 12/05/2023
+>> [    6.594872] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>> [    6.594874] pc : camss_find_sensor+0x20/0x74 [qcom_camss]
+>> [    6.594885] lr : camss_get_pixel_clock+0x18/0x60 [qcom_camss]
+>> [    6.594889] sp : ffff800082d538f0
+>> [    6.594890] x29: ffff800082d538f0 x28: ffff800082d53c70 x27: ffff670cc0404618
+>> [    6.594893] x26: 0000000000000000 x25: 0000000000000000 x24: ffff670cd33173d0
+>> [    6.594895] x23: ffff800082d539a8 x22: ffff670cd33192c8 x21: ffff800082d539b8
+>> [    6.594898] x20: 0000000000000002 x19: 0000000000020001 x18: 0000000000000000
+>> [    6.594900] x17: 0000000000000000 x16: ffffbf0bffbecdd0 x15: 0000000000000001
+>> [    6.594902] x14: ffff670cc5c95300 x13: ffff670cc0b38980 x12: ffff670cc5c95ba8
+>> [    6.594905] x11: ffffbf0c00f73000 x10: 0000000000000000 x9 : 0000000000000000
+>> [    6.594907] x8 : ffffbf0c0085d000 x7 : 0000000000000000 x6 : 0000000000000078
+>> [    6.594910] x5 : 0000000000000000 x4 : ffff670cd3318598 x3 : ffff670cd3318468
+>> [    6.594912] x2 : ffff670cd3317728 x1 : ffff800082d539b8 x0 : 0000000000000000
+>> [    6.594915] Call trace:
+>> [    6.594915]  camss_find_sensor+0x20/0x74 [qcom_camss]
+>> [    6.594920]  camss_get_pixel_clock+0x18/0x60 [qcom_camss]
+>> [    6.594924]  vfe_get+0xb8/0x504 [qcom_camss]
+>> [    6.594931]  vfe_set_power+0x30/0x58 [qcom_camss]
+>> [    6.594936]  pipeline_pm_power_one+0x13c/0x150 [videodev]
+>> [    6.594951]  pipeline_pm_power.part.0+0x58/0xf4 [videodev]
+>> [    6.594960]  v4l2_pipeline_pm_use+0x58/0x94 [videodev]
+>> [    6.594969]  v4l2_pipeline_pm_get+0x14/0x20 [videodev]
+>> [    6.594978]  video_open+0x78/0xf4 [qcom_camss]
+>> [    6.594982]  v4l2_open+0x80/0x120 [videodev]
+>> [    6.594991]  chrdev_open+0xb4/0x204
+>> [    6.594996]  do_dentry_open+0x138/0x4d0
+>> [    6.595000]  vfs_open+0x2c/0xe4
+>> [    6.595003]  path_openat+0x2b4/0x9fc
+>> [    6.595005]  do_filp_open+0x80/0x130
+>> [    6.595007]  do_sys_openat2+0xb4/0xe8
+>> [    6.595010]  __arm64_sys_openat+0x64/0xac
+>> [    6.595012]  invoke_syscall+0x48/0x110
+>> [    6.595016]  el0_svc_common.constprop.0+0xc0/0xe0
+>> [    6.595018]  do_el0_svc+0x1c/0x28
+>> [    6.595021]  el0_svc+0x48/0x114
+>> [    6.595023]  el0t_64_sync_handler+0xc0/0xc4
+>> [    6.595025]  el0t_64_sync+0x190/0x194
+>> [    6.595028] Code: 52800033 72a00053 d503201f f9402400 (f9401801)
+>> [    6.595029] ---[ end trace 0000000000000000 ]---
 
-Does not look right. That's the same device. Same devices have same
-compatible.
+I've never seen this myself.
 
->  
->    reg:
->      maxItems: 1
-> @@ -58,9 +60,16 @@ properties:
->  required:
->    - compatible
->    - reg
-> -  - vddpos-supply
-> -  - vddneg-supply
-> -  - enable-gpios
-> +
-> +if:
-> +  properties:
-> +    compatible:
-> +      const: kinetic,ktz8866
-> +then:
-> +  required:
-> +    - vddpos-supply
-> +    - vddneg-supply
-> +    - enable-gpios
+I wonder, are you building camcc, camss and the sensor driver into your 
+initrd ?
 
-I don't understand why other device does not need power.
+---
+bod
 
->  
->  unevaluatedProperties: false
->  
-> @@ -68,7 +77,7 @@ examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
->  
-> -    i2c {
-> +    i2c0 {
-
-No, don't change.
-
->          #address-cells = <1>;
->          #size-cells = <0>;
->  
-> @@ -84,3 +93,13 @@ examples:
->              kinetic,enable-lcd-bias;
->          };
->      };
-> +
-> +    i2c1 {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        backlight@11 {
-> +            compatible = "kinetic,ktz8866-slave";
-> +            reg = <0x11>;
-
-No real differences here, so drop the example. Anyway, new examples
-would start from - | (see other bindings).
-
-
-
-Best regards,
-Krzysztof
 
