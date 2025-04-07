@@ -1,148 +1,121 @@
-Return-Path: <linux-kernel+bounces-590700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18EAEA7D5EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:31:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 126EEA7D5D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4D201890C29
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:29:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7FF217579A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC0922E41C;
-	Mon,  7 Apr 2025 07:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F694226D11;
+	Mon,  7 Apr 2025 07:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="dXTBA2R3"
-Received: from server.wki.vra.mybluehostin.me (server.wki.vra.mybluehostin.me [162.240.238.73])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ou4sY6f4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1nU2n5g5"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDA622D7A5;
-	Mon,  7 Apr 2025 07:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.238.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C2B22D7B7
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744010555; cv=none; b=XCMWmwkd54F9wmrvlm9iJdHutj9vc125aPSqIDpL471ofYzSw0ix5XUsHy20Cq2OrrWy0hAh+Jiwj+utyqW1Dnc1wqsS3LLfpAzAe2+fOsVsGMG2yIQlbSJW95oyi71joPJw7dNgNpnPd+ZxQJYgAZ/vWgYyucjVhRj+9zSr0HY=
+	t=1744010513; cv=none; b=jJ4VP0KQRBwPv+QQSTbQwrXhtU4vb1KM99W2uGMeS4XQEbDcK4Y3pagQ1LAKK4k8opUE/2KnrhWvsivGOzcsEGmCfAR4/8NLsJxSCxDuZtsyTNP1fHRSIVVpm6pZJ2Byk4tXfWNKrRvn8J3Pb5h/mJrxe/6oLkIxKitxxt3zw2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744010555; c=relaxed/simple;
-	bh=Ii/I5mddvCftJ9dMCVpRvN/4wWN2FqJdz6bxa+Yiuks=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XoHx9ITC4nMb24PuDdZUeDo5bRQ4zburCHZ4vII+ZyEed/Nt62MUFlCS4jldf9zAeLVGF6eqMkB7Yb6EDyqQ345FJYLN68BEIgFEMmdEfA/cFufE1OkqgqYRFwcQJdyDqvEPOh3mjJbGfbJHTwpdXIXv84dZCH3dwAL8/B28KkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=dXTBA2R3; arc=none smtp.client-ip=162.240.238.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=2OcGMAvWHqgKEbFHHN2GoPmqUgUHadsxrmCUAdVfDWA=; b=dXTBA2R3FxdN4LNZVhS0Iyhfuk
-	nCQfjajcz7NbqSdG/QctCuKEfryML0/V2xNynZJ7Ejx6ZKdQ0Nh2XDN/s8xZdiN/9uAKK7umpRXul
-	SM7TBbbfOrx5QTaGCJjBWRgNB/bm+RPzDNaAVpM8AmIjRwrHl4ZAM7CH0FWKEk0OxwzvnMODvTexH
-	xV1az0tcq4/vcBeqImeDfuDGn8tDmkkhyTIgJZFUbJ34bwz41FTlrzqCHuSaPURCq2UT3TuxZD/LQ
-	e803zFhhCe1XJm6xoLCgzpEb4n8XqGoKmEuOjQdhVUOp5uLCNBbMBR7E7JyBdVwufLDg6SnKx+3oy
-	ytTKOrhQ==;
-Received: from [122.175.9.182] (port=46259 helo=cypher.couthit.local)
-	by server.wki.vra.mybluehostin.me with esmtpa (Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1u1goQ-000000005lp-2fd4;
-	Mon, 07 Apr 2025 12:52:31 +0530
-From: Parvathi Pudi <parvathi@couthit.com>
-To: aaro.koskinen@iki.fi,
-	andreas@kemnade.info,
-	khilman@baylibre.com,
-	rogerq@kernel.org,
-	tony@atomide.com
-Cc: linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	nm@ti.com,
-	pratheesh@ti.com,
-	prajith@ti.com,
-	vigneshr@ti.com,
-	danishanwar@ti.com,
-	praneeth@ti.com,
-	srk@ti.com,
-	rogerq@ti.com,
-	afd@ti.com,
-	krishna@couthit.com,
-	pmohan@couthit.com,
-	mohan@couthit.com,
-	parvathi@couthit.com,
-	basharath@couthit.com
-Subject: [PATCH v1 1/1] bus: ti-sysc: PRUSS OCP configuration
-Date: Mon,  7 Apr 2025 12:51:34 +0530
-Message-Id: <20250407072134.1044797-2-parvathi@couthit.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250407072134.1044797-1-parvathi@couthit.com>
-References: <20250407072134.1044797-1-parvathi@couthit.com>
+	s=arc-20240116; t=1744010513; c=relaxed/simple;
+	bh=0moqmrnlm5C4rE6n50GJA2BT/ki/KqRSesvB4S8YSSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BJTsMvs/V50CajnhXVwrQotDwe5bQJqAshJ1ZpJvM59pzUInFx8jiOcZeZEVwKO6oy29njs0UV3YxHkOq37gF0u1zzj7G/PdWmJoZx8j4TpmD24cm7d6eqj3Lcd50FwEczKl3gb2XdcFl/vXkr70y7HdUoa7zVcPQ3OAt74n/XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ou4sY6f4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1nU2n5g5; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 7 Apr 2025 09:21:48 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744010510;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=moC/ANfimYUq4N7KG+rd1xmzyM4h478EFviaRfta0Io=;
+	b=ou4sY6f4o74qgsFU40SQ+0/DZ++5HeqymGXPooJGazMWy6qZVYq+znBd/bev8EIDuCnbHo
+	WTyexp1UpzZzHUYzkO8pLY3Cu337i3LbdIxtXbxuL8wky07kzDweROLsf20t73vMusHfsT
+	wB7bMEYxguIeZb+YyEw8NfO8h4WAnIn1Db4zWnMlqrRGcHNFdpBHYt/zwipvJcHvtnra4Z
+	Uu7DWNrA11OYrnbhFSWMOSBStyLz1D57IkhPibOevlkol+A90kitgr1PwHz58ufxRGrLFu
+	MLJSqMvXFz83+d2Q/tqarrn33PCe4ubE+VSukx8EKyPt++QpW/BMeUcynSp6uA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744010510;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=moC/ANfimYUq4N7KG+rd1xmzyM4h478EFviaRfta0Io=;
+	b=1nU2n5g5imVa8/Vo7twFU3P9izjV4YlQXoxZUgp9jSqTuchET9pkXni2H0JDFiRhBsngzc
+	FC8dh/C+ymGcUUDg==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] locking/mutex: annotate __devm_mutex_init() with
+ __must_check
+Message-ID: <20250407091438-557fe081-0c03-40d9-9b1e-9331c5181e31@linutronix.de>
+References: <20250407-devm-mutex-must-check-v1-1-cf62b440bc33@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.wki.vra.mybluehostin.me
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.wki.vra.mybluehostin.me: authenticated_id: parvathi@couthit.com
-X-Authenticated-Sender: server.wki.vra.mybluehostin.me: parvathi@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250407-devm-mutex-must-check-v1-1-cf62b440bc33@linaro.org>
 
-Updates OCP master port configuration to enable memory access outside
-of the PRU-ICSS subsystem.
+On Mon, Apr 07, 2025 at 09:03:46AM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Unlike the non-managed mutex_init(), devm_mutex_init() can fail (for
+> instance: on OOM). Now that we've fixed all instances of users not
+> checking the return value, annotate it with __must_check to avoid this
+> problem in the future.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  include/linux/mutex.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/mutex.h b/include/linux/mutex.h
+> index 2143d05116be..e194f8c22d72 100644
+> --- a/include/linux/mutex.h
+> +++ b/include/linux/mutex.h
+> @@ -126,7 +126,7 @@ do {							\
+>  
+>  #ifdef CONFIG_DEBUG_MUTEXES
+>  
+> -int __devm_mutex_init(struct device *dev, struct mutex *lock);
+> +int __must_check __devm_mutex_init(struct device *dev, struct mutex *lock);
 
-This set of changes configures PRUSS_SYSCFG.STANDBY_INIT bit to enable
-the OCP master ports during resume sequence and disables the OCP master
-ports during suspend sequence (applicable only on SoCs using OCP
-interconnect like the OMAP family).
+This didn't work for me, see [0].
 
-Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
----
- drivers/bus/ti-sysc.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+	"Unfortunately __must_check/warn_unused_result don't propagate through
+	statement expression."
 
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-index f67b927ae4ca..51caae611acf 100644
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -2036,6 +2036,19 @@ static void sysc_module_disable_quirk_pruss(struct sysc *ddata)
- 	sysc_write(ddata, ddata->offsets[SYSC_SYSCONFIG], reg);
- }
- 
-+static void sysc_module_enable_quirk_pruss(struct sysc *ddata)
-+{
-+	u32 reg;
-+
-+	reg = sysc_read(ddata, ddata->offsets[SYSC_SYSCONFIG]);
-+	/* Clearing the SYSC_PRUSS_STANDBY_INIT bit - Updates OCP master
-+	 * port configuration to enable memory access outside of the
-+	 * PRU-ICSS subsystem.
-+	 */
-+	reg &= (~SYSC_PRUSS_STANDBY_INIT);
-+	sysc_write(ddata, ddata->offsets[SYSC_SYSCONFIG], reg);
-+}
-+
- static void sysc_init_module_quirks(struct sysc *ddata)
- {
- 	if (ddata->legacy_mode || !ddata->name)
-@@ -2088,8 +2101,10 @@ static void sysc_init_module_quirks(struct sysc *ddata)
- 		ddata->module_disable_quirk = sysc_reset_done_quirk_wdt;
- 	}
- 
--	if (ddata->cfg.quirks & SYSC_MODULE_QUIRK_PRUSS)
-+	if (ddata->cfg.quirks & SYSC_MODULE_QUIRK_PRUSS) {
-+		ddata->module_enable_quirk = sysc_module_enable_quirk_pruss;
- 		ddata->module_disable_quirk = sysc_module_disable_quirk_pruss;
-+	}
- }
- 
- static int sysc_clockdomain_init(struct sysc *ddata)
--- 
-2.34.1
+Also it is missing the !CONFIG_DEBUG_MUTEXES case.
+I'll resend my patch once more.
 
+
+[0] https://lore.kernel.org/lkml/20250208-must_check-devm_mutex_init-v3-2-245e417dcc9e@weissschuh.net/
+
+>  
+>  #else
+>  
+> 
+> ---
+> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+> change-id: 20250326-devm-mutex-must-check-8c1b94ae151f
+> 
+> Best regards,
+> -- 
+> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
 
