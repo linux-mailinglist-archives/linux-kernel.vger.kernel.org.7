@@ -1,111 +1,269 @@
-Return-Path: <linux-kernel+bounces-590281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7959FA7D11E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 00:58:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC74CA7D13B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 02:08:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1896816E4FC
-	for <lists+linux-kernel@lfdr.de>; Sun,  6 Apr 2025 22:58:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47DE7188B65B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 00:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396DE19E96A;
-	Sun,  6 Apr 2025 22:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AC4A50;
+	Mon,  7 Apr 2025 00:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ombertech.com header.i=@ombertech.com header.b="fhz9tGZ4"
-Received: from ombertech.com (ombertech.com [74.48.158.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c1g8M+RN"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F9513D89D
-	for <linux-kernel@vger.kernel.org>; Sun,  6 Apr 2025 22:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.48.158.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3970191
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 00:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743980290; cv=none; b=dgF8rWDd2C/Zk4ItMlZVPPWlzYqoKzmswsgjVI98F4egGt8Gb+cGFEybOzccNsrPUVTXhaAanB7ODzYaE5LHTL96uGWfBCExa+I6WENoDCYsM0V4FTv5s1T1zKXBrfeWO8R+yQ1tcsar0Z4mJpUzHMg86OsPBnjASoM1c3mGFWg=
+	t=1743984474; cv=none; b=D5pKNnvTvWVCzEJexXucEtPscres/REQcEewJx1lYv3XvZyMrPykVUogHcPdIbiH+bR+qEVHN638q5VsYqIjOZDZMzktYGOzPIaEProsEv50uynbO470BjovJmT59/oytovKYCnUhjXKdaKJWInMQRELkd31jjfWhY/TrWcgTIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743980290; c=relaxed/simple;
-	bh=dY/i0Dks2KO8z0Hq/GALHzznPitxZdcEM8Oa+/p0C4c=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=kHF/AuKLhWxOcfuknoi04Dsz69msMPJkK3JAfO8B3V1C/kT5Z6C7a4CMDzXbVrojJjI0tVo998W8SiKs/fBLRFhHeTMXe5XT+lg3ENvRhKmd9qtDvrb8se8Sq4CRMcxz+ZpSab0mHxmn5nzQADhk2+FQLRFecdBS3w4t4T18xak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ombertech.com; spf=pass smtp.mailfrom=ombertech.com; dkim=pass (2048-bit key) header.d=ombertech.com header.i=@ombertech.com header.b=fhz9tGZ4; arc=none smtp.client-ip=74.48.158.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ombertech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ombertech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ombertech.com; s=2022;
-	t=1743979995; bh=dY/i0Dks2KO8z0Hq/GALHzznPitxZdcEM8Oa+/p0C4c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fhz9tGZ4b2hHprOIIP0ktQdx8GudvOOKSy2BxKSoV6MPO5yDmSl8D0JKdaGvWKb4a
-	 I91/By6Ig8TJTmY1iqYqc1uE2/qU37DPJQrdjwkM+MKbXs16sgGfq62zP2w+n/lta3
-	 xt5id1EUn0W1g+zkkEWprf5BcQ1Ou2qLY0ff+tWwjXDXfZaAy9KraHvhnX3lAFW9X8
-	 NTaIbk3XbMCQkGRZ5Fjk6+FuYtP6IRTUvX9O+RQnGQ4fuGl8cW34Rf42CxMy0I1QVL
-	 IpbaFi5BTgRFEp3MA26rsH+XcHcjU4BrD6Nnr2vAlffzKZuj1uDLZ5jbt+l9YUAu/S
-	 xfmuEpQ5WBKeA==
-Received: from 192.168.1.100 (unknown [1.145.193.55])
-	by ombertech.com (Postfix) with ESMTPSA id 258175B1A1;
-	Sun,  6 Apr 2025 22:53:13 +0000 (UTC)
-Date: Mon, 7 Apr 2025 09:58:48 +1000
-From: Kevin Koster <lkml@ombertech.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Oerg866 <oerg866@googlemail.com>,
- linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>
-Subject: Re: [PATCH] x86/microcode: Fix crashes on early 486 CPUs due to
- usage of 'cpuid'.
-Message-Id: <20250407095848.7933a358c9f450fe03fb8234@ombertech.com>
-In-Reply-To: <20250406190253.GAZ_LP3RPZInWKcHN7@fat_crate.local>
-References: <CANpbe9Wm3z8fy9HbgS8cuhoj0TREYEEkBipDuhgkWFvqX0UoVQ@mail.gmail.com>
-	<20250405130306.ca9822c1f27db119cc973603@ombertech.com>
-	<20250405093127.GAZ_D4b6NdyTS-UW1J@fat_crate.local>
-	<20250406164049.c0666bc18073e3b88c92d1f1@ombertech.com>
-	<20250406174633.2c581923c145687476191753@ombertech.com>
-	<20250406190253.GAZ_LP3RPZInWKcHN7@fat_crate.local>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-unknown-linux-gnu)
+	s=arc-20240116; t=1743984474; c=relaxed/simple;
+	bh=xSLbhtqT9jWsODyv/HtzXfPET67fr4XVb0hYkeLY//g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UR7odiOx0Y09aXhWdt0VUtj5HKWI1VY5/NFiJheHvFYaNnK6IhlJznc6uQLQ+mCfQc/X++9YHth6GMUFh0SEgivwH8/4lntumjyYrCURddD7tQ5fXQhY9pcqpf3nlndYA5wSMIZj7l8FZNEafB31x8Drn/uOj1fW3OByNotWung=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c1g8M+RN; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e6194e9d2cso7223598a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Apr 2025 17:07:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743984471; x=1744589271; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K/SS26Kqy8ljIl0w5DW1FHiwgX3UcillFs8vuEaBkTM=;
+        b=c1g8M+RNemoc9tsTVAlChBv0gigYSOmGitXp1LmEjikV0d3cITiuGav6sIpHPZIslW
+         n3mosVk6ye+0lpHsAlcv9GWE358FpSbr+BqigzHUQaIfQ+2DHCe7IPgRcTX8wuLZWkpI
+         5RVEguuJ6U1G6al52yx0hf2iBUGRx/sBJC7DIvJ28vjcM+e7zDrN9hZ9Ibya5yJzrSgp
+         yBWXnWAoMx6ZY5UrL6pYGCkwVmclzGu1mk4LejL3zsAAlF2XfXvWxBAfoRX14q4/BXK+
+         PgvffPTeX9RRqRVXSgQAydcH4haIKHX3uGMhWYth2CgiZ4d+2FMRGnFvU//RZDIXcrJk
+         Tmqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743984471; x=1744589271;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K/SS26Kqy8ljIl0w5DW1FHiwgX3UcillFs8vuEaBkTM=;
+        b=owwPdFDVffeaf0ZtOM2o2p0trSBnfEK6mrW7vi6vuyuVpVUtXmliksLO2NUmRv+YCL
+         NNc21bhku+VkvyxaHoilRHoA1ugKNfyxneenCXZuSChezF7CZcfO4uk4hfFWuvfFpjMC
+         v7EsH10P1OHBD7Wn39e9QvjisdPV8SOmUN4S+8QAPdHm56r8pwJBbHb5bra4dLTmDuDM
+         hRX5WyOd36gHOc+mkgSy4unTH4Drhf6oNhU/Pe7m+wM1acFaddYxS8ytHnsQEsJCNuuX
+         Hq8qNQmc4dSdzWPipQQNQaL750tejfQJ9MJlEG4NqlFOw+JKVECbWVOlcN8O3M29sKGH
+         9n0w==
+X-Gm-Message-State: AOJu0YxfydSsMT64i9dsyEfUZ8qdyYftF9Osud/VHcgST1i7rV2qYr3V
+	4X7r6hyEFCqFLI1EksXmvUKq3GYDahaxn/6RK0yD8cdv0P2YV3O64owkOe74tPcYiN2bYEOFevv
+	DNcSrlAwmSB0W/28siqLg61GAVUM=
+X-Gm-Gg: ASbGncsxzbGaVbCQaBxl4qthZSuKbNJcdNufqFA8WNAGbBclHD+LihiCileTOq4aS4D
+	V8nAE0F+P665xUxMwzLwLYI3RnYuxSQ2XbK8E/wx+AvDGXNf3UJ5SxmQJk8YsZQyzgzho7QSqMt
+	OpzjlLPtspxuYemkMuSiW4xLBqeg==
+X-Google-Smtp-Source: AGHT+IHcXndvEkoU7KQ5ppK3Sbf1myOMR28+dVxSzHwMaCrO4RQdHty3cD254sALRVfEZm050YOp1llteGNTHXNEdTU=
+X-Received: by 2002:a05:6402:3592:b0:5e7:8501:8c86 with SMTP id
+ 4fb4d7f45d1cf-5f0b3e490a7mr9224825a12.22.1743984470772; Sun, 06 Apr 2025
+ 17:07:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <fbe93a52-365e-47fe-93a4-44a44547d601@paulmck-laptop>
+ <20250403211514.985900-8-paulmck@kernel.org> <CAGudoHF5H0NhCu-mCjtd1SGRc5P=8X7jmTaP9k12zZixX1-9LA@mail.gmail.com>
+ <276d81e0-3867-471a-8e99-b7582378dd64@paulmck-laptop>
+In-Reply-To: <276d81e0-3867-471a-8e99-b7582378dd64@paulmck-laptop>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 7 Apr 2025 02:07:38 +0200
+X-Gm-Features: ATxdqUGU55mO6Y3iq5YKO74o-5Q0_2tFB5WIvBJKyfCAdnBpExlglMEUN9ym6zw
+Message-ID: <CAGudoHFH=U4eb=t50nr55kTaamsaKHdwPeZZCtJ7JXtYYy7-KQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 8/9] ratelimit: Reduce ratelimit's false-positive misses
+To: paulmck@kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, 
+	Andrew Morton <akpm@linux-foundation.org>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	John Ogness <john.ogness@linutronix.de>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Jon Pan-Doh <pandoh@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Karolina Stolarek <karolina.stolarek@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 6 Apr 2025 21:02:53 +0200
-Borislav Petkov <bp@alien8.de> wrote:
+On Sun, Apr 6, 2025 at 7:41=E2=80=AFPM Paul E. McKenney <paulmck@kernel.org=
+> wrote:
+>
+> On Sat, Apr 05, 2025 at 11:17:00AM +0200, Mateusz Guzik wrote:
+> > On Thu, Apr 3, 2025 at 11:15=E2=80=AFPM Paul E. McKenney <paulmck@kerne=
+l.org> wrote:
+> > >
+> > > The current ratelimit implementation can suffer from false-positive
+> > > misses.  That is, ___ratelimit() might return zero (causing the calle=
+r
+> > > to invoke rate limiting, for example, by dropping printk()s) even whe=
+n
+> > > the current burst has not yet been consumed.  This happens when one C=
+PU
+> > > holds a given ratelimit structure's lock and some other CPU concurren=
+tly
+> > > invokes ___ratelimit().  The fact that the lock is a raw irq-disabled
+> > > spinlock might make low-contention trylock failure seem unlikely, but
+> > > vCPU preemption, NMIs, and firmware interrupts can greatly extend the
+> > > trylock-failure window.
+> > >
+> > > Avoiding these false-positive misses is especially important when
+> > > correlating console logged hardware failures with other information.
+> > >
+> > > Therefore, instead of attempting to acquire the lock on each call to
+> > > ___ratelimit(), construct a lockless fastpath and only acquire the lo=
+ck
+> > > when retriggering (for the next burst) or when resynchronizing (due t=
+o
+> > > either a long idle period or due to ratelimiting having been disabled=
+).
+> > > This reduces the number of lock-hold periods that can be extended
+> > > by vCPU preemption, NMIs and firmware interrupts, but also means that
+> > > these extensions must be of much longer durations (generally moving f=
+rom
+> > > milliseconds to seconds) before they can result in false-positive dro=
+ps.
+> > >
+> > > In addition, the lockless fastpath gets a 10-20% speedup compared to
+> > > the old fully locked code on my x86 laptop.  Your mileage will of cou=
+rse
+> > > vary depending on your hardware, workload, and configuration.
+>
+> Thank you for digging into this!!!
+>
+> > First a nit: the func returns an int with 1 or 0, perhaps one extra
+> > patch to make it bool can be squeezed in here?
+>
+> I can do that.  Patch below.
+>
 
-> On Sun, Apr 06, 2025 at 05:46:33PM +1000, Kevin Koster wrote:
-> > But if I move "cpuid_1_eax = native_cpuid_eax(1);" to after the
-> > microcode_loader_disabled() check in amd.c, like in the first
-> > patch, it boots fine!
-> 
-> Yeah, I noticed that too last night. Here's a hopefully better
-> version after I ran it on my 32-bit Atom - I don't have your old rust
+thanks
 
-There is the 86box emulator which Eric Voirin suggested before for
-reproducing this issue, although that adds the uncertainty of whether
-the emulator matches real hardware behaviour.
+> > One of the previous patches fixes a bug on 32-bit archs.
+> >
+> > Maybe it will sound silly, but my suggestion below hinges on it: is
+> > this patchset written with 32-bit kernels in mind?
+>
+> Yes, that bug fix is reflected in the lockless-fastpath patch.  It no
+> longer treats ->begin=3D=3D0 as special.  The reason that this is 32-bit
+> specific is that at 1000HZ, a 32-bit counter wraps every 50 days or so,
+> which is well within the range of possible uptimes.  Wrapping for 64-bit
+> counter takes way longer.
+>
+> > If not, I wonder if the 32-bit stuff can stay with the locked variant
+> > and the 64-bit can get a lockless fast path which issues 8-byte
+> > cmpxchg on the event count + (to be introduced) sequence counter.
+> >
+> > I think that would be significantly easier to reason about as it would
+> > guarantee no changes are made if someone is reconfiguring the struct,
+> > while providing the same win from single-threaded standpoint.
+> >
+> > I think you know what you mean, but just in case here is a pseudocode
+> > draft of the fast path:
+> >
+> > #define RATELIMIT_NEED_INIT BIT(31)
+> > #define RATELIMIT_IN_FLUX BIT(0)
+> >
+> > struct ratelimit_state_change {
+> >         int             events_left;
+> >         unsigned int    seq;
+> > };
+> >
+> > struct ratelimit_state {
+> >         raw_spinlock_t  lock;
+> >
+> >         int             interval;
+> >         int             burst;
+> >         int             missed;
+> >         struct ratelimit_state_change rsc;
+> >         unsigned long   begin;
+> > };
+> >
+> > seq =3D READ_ONCE(rs->rsc.seq);
+> > smp_rmb();
+> > if (seq & (RATELIMIT_NEED_INIT | RATELIMIT_IN_FLUX))
+> >         goto bad;
+> > begin =3D READ_ONCE(rs->begin);
+> > burst =3D READ_ONCE(rs->burst);
+> > interval =3D READ_ONCE(rs->interval);
+> > events_left =3D READ_ONCE(rs->rsc.events_left;
+> > smp_rmb();
+> > /* checks if we can cmpxchg go here */
+> > ....
+> > /* now the work */
+> > struct ratelimit_state_change new =3D {
+> >         .events_left =3D events_left - 1;
+> >         .seq =3D seq;
+> > }
+> > if (try_cmpxchg64_relaxed(&rs->rsc, ......)) {
+> >         return true; /* succeeded */
+> > }
+> > /* ... retry based on what we got, most likely only ->events_left has c=
+hanged */
+> >
+> > On the stock kernel the struct is 32 bytes. I'm combining flags and
+> > the new seq field to avoid growing it.
+> >
+> > This does cut down on available seq size, but it should be plenty as
+> > is. This also means the slowpath will have to be careful to not
+> > blindly ++ it to not walk into flags, but I think that's easier to
+> > handle that races. ;)
+>
+> In theory, something sort of like this that used a 16-byte cmpxchg
+> and packed the ->begin, ->rs_n_left, and ->flags fields together could
+> simplify this quite a bit.  But not every system has a 16-byte cmpxchg
+> on the on hand and packing into 8 bytes (let alone a 32-bit system's 4
+> bytes) would require painful tradeoffs.  But in practice...
+>
 
-> and maybe you should simply throw it in the garbage - that thing is
-> probably not worth the electricity it uses to power up... :-)
+well cmpxchg16b has atrocious performance and I would not recommend ;)
 
-Well my testing modern Linux on 486s was originally prompted by people
-on the Tiny Core Linux forums finding compatibility issues with old
-PCs. But I like to know Linux really works on the hardware it's built
-for, and I'm not much better, writing this now on a Pentium 1.
+> > That said this is merely a suggestion, I'm not going to push for it.
+> >
+> > I recognize this swaps atomic_dec into an cmpxchg loop which in
+> > principle will have worse throughput in face of multiple CPUs messing
+> > with it. However, the fast path in both your and my variant issues
+> > loads prior to the atomic op which already do most of the damage, so I
+> > don't think this bit matters that much.
+>
+> ...as you say, the full-load throughput of cmpxchg() is lacking compared
+> to that of atomic_dec_return().  And large systems might have serious
+> ___ratelimit() call rates.  Worse yet, the forward-progress properties
+> of cmpxchg() are lacking compared to those of atomic_dec_return(), so I
+> am not at all sold on this packing approach, even for systems providing
+> 16-byte cmpxchg operations.
+>
 
-[snip]
-> diff --git a/arch/x86/kernel/cpu/microcode/amd.c
-> b/arch/x86/kernel/cpu/microcode/amd.c index
-> b61028cf5c8a..dda7f0d409e9 100644
-> --- a/arch/x86/kernel/cpu/microcode/amd.c
-> +++ b/arch/x86/kernel/cpu/microcode/amd.c
-> @@ -1099,7 +1099,7 @@ static int __init save_microcode_in_initrd(void)
->  	enum ucode_state ret;
->  	struct cpio_data cp;
->  
-> -	if (dis_ucode_ldr || c->x86_vendor != X86_VENDOR_AMD || c->x86 < 0x10)
-> +	if (microcode_loader_disabled() || c->x86_vendor != X86_VENDOR_AMD || c->x86 < 0x10)
-		return 0;
+Well in my proposal this is 8-byte cmpxchg, not 16 with the sequence
+counter validating the rest of the state has not changed.
 
-Still fails unless the native_cpuid_eax(1) call is moved under here. After that
-change, it boots fine.
+> Yes, if a given ratelimit_state structure is mostly throttling, the
+> load-only fastpath is there, but the quadratic overload behavior of
+> cmpxchg() would apply during the non-throttling phases.
+>
+
+It is indeed non-ideal, but if you really need good perf here, then I
+would argue literally just one instance of the counter is already bad.
+
+> Never say never, of course, but we would need to see real issues
+> with the atomic_dec_return() approach before it would make sense
+> to take on the packing approach.
+>
+
+I claim my proposal is simpler to reason about as you get an invariant
+nobody changes the event count from under you and they always operate
+on a fully populated state.
+
+All that said, this was a suggestion on the side which requires work
+to implement.
+
+On the other hand your variant is already written and I'm by no means
+trying to block it. I am not in position to ACK it either and afaics
+ratelimit is virtually unmaintained anyway. I guess it's your call
+what to do with it.
 
