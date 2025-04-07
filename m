@@ -1,160 +1,188 @@
-Return-Path: <linux-kernel+bounces-591699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4746A7E3F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:22:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DEABA7E498
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CA77189BFAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:14:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 819DB4251AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AFD1FA859;
-	Mon,  7 Apr 2025 15:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622BE1F7066;
+	Mon,  7 Apr 2025 15:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GG9/qRMT"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kKCzY6Il"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0931F8BCD;
-	Mon,  7 Apr 2025 15:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EAF1F582C;
+	Mon,  7 Apr 2025 15:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744038725; cv=none; b=Mj/PugCmOi/NSMpC/Xx++T43B9z8p4iZUhiQl8NP6YEBVZxrnywfktOinMFJHoUMy9DUkVaQk/kXyaRWx5DeOjrY2LhFEN776Ujcb0fdRHDIFZanZOWO8KKIpkHEA2vynGGJrxNljlh2TKLkHjSg4avpxslrPKzlYlnmIbvvhgw=
+	t=1744038887; cv=none; b=TrNxjOyyoWiKv1z2e9NKWOv+HRA3k2mo4zaU33L61rgCxvzMMk8NVdp1DNeImXc+R0LYtzRNa2gvKteM3gNSzhonpoh4piwtUCZh7xqywVHdU8wHjozxRpG6LtsyhZzJniX3nSw+WktHp6HdCTXbCLMlUNj7bdBk1J5SUKqFFhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744038725; c=relaxed/simple;
-	bh=L5M52uoR+VNHr6Aqz1at4XGsAPpzStQXAW03Nn5h+w0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WsvRSG0809c5PFJABKT2CVvWic2BrXNQnRut+jwISW23rjiE58COC8pOZx04aELau1oQoaQ8ad01V9LVJkW6c2V86ZxA+/+krzYKqF2n7XB61fClLJ+DASnTTH0d3gRuCAFzVhjmPb8983dvaBjtseB/t3AczJztQZ+X+uUySwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GG9/qRMT; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 537E3FIb025560;
-	Mon, 7 Apr 2025 15:11:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=pLqNtHwxdz+KjzF0o
-	4al3IuUdgKeg437/opuwF8rOgY=; b=GG9/qRMTr3c234BdNbl8qcd6JICn1dr6T
-	h+1CwgnJosxDoTGQHDJLnBC+r8sdfje311yGnSrC48KNz6kVG3ETEbXxkIldtS4P
-	DeWcQ/wSyDFqcrEo/l5mNQ2K0Lp2iKaRYkSmtxXTFAGqSvnaN8aWIz5IKTOTOKFq
-	+JDtlQ3sQxmiVDXWN/y5otPtf5J6aL25Ojv2dz/9vWnkrf3ALjS2QQAfJwUkVTgb
-	dIt52+/rxwX4BWgeopjfh5rB3DIp5dxMR6YbMdiedI2eDNzrYRJVARzz4+Y3g9I/
-	CxasV3YuMtzXVUxrwLXF7t0esmIiJJgRgZro+hqrnkdilacrPiCpg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45vg4q8cmm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Apr 2025 15:11:34 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 537EoQ3W019216;
-	Mon, 7 Apr 2025 15:11:34 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45vg4q8cmf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Apr 2025 15:11:34 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 537EKIMr013925;
-	Mon, 7 Apr 2025 15:11:33 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45ufunecfm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Apr 2025 15:11:32 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 537FBVTI19595766
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 7 Apr 2025 15:11:31 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 03DF82004D;
-	Mon,  7 Apr 2025 15:11:31 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E2DFB20043;
-	Mon,  7 Apr 2025 15:11:30 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon,  7 Apr 2025 15:11:30 +0000 (GMT)
-Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 55669)
-	id 88272E175F; Mon, 07 Apr 2025 17:11:30 +0200 (CEST)
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Cc: Hugh Dickins <hughd@google.com>, Nicholas Piggin <npiggin@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>, Juergen Gross <jgross@suse.com>,
-        Jeremy Fitzhardinge <jeremy@goop.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, kasan-dev@googlegroups.com,
-        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
-Subject: [PATCH v1 4/4] mm: Allow detection of wrong arch_enter_lazy_mmu_mode() context
-Date: Mon,  7 Apr 2025 17:11:30 +0200
-Message-ID: <5204eaec309f454efcb5a799c9e0ed9da1dff971.1744037648.git.agordeev@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1744037648.git.agordeev@linux.ibm.com>
-References: <cover.1744037648.git.agordeev@linux.ibm.com>
+	s=arc-20240116; t=1744038887; c=relaxed/simple;
+	bh=R7dIKDlAXXIkueZ+e/t+5gOmT9XoywQLk9xPz/ZXP6U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pf7g/+9FzDmgnujeSMRrL8ZuwJ92vYVQCkjNVV+O2/8kCYH+CDHQzItiGzwww90lte1TmZAPNUCCie9G0uR9HDswIRnatBhLfbl5Uf0rf2+drhVOqL4GhrDV61t7IsdUF/TXFM5g19DQKM6v4bNiHVLPFH4/4Mlt962fCeFXByg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kKCzY6Il; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744038886; x=1775574886;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=R7dIKDlAXXIkueZ+e/t+5gOmT9XoywQLk9xPz/ZXP6U=;
+  b=kKCzY6Ilrf2zX3j6l3pfSX8QGxcU/4F3GcNFcUOf6ilKgN8JFAxkfyGV
+   +xjNpZq1CAr7DBqVeD3MGzNG82tMaA5bxgyaTdj/fXxS4HB90aIcmlkz9
+   LdDK5ZKF4Tnoxuum/PNaOUQ7Cv30xxe4EP6KZa3xjPEnx+2c/5XRUt5CZ
+   81cTez2ZIKTLa/Y4uznfX555Z93P4/LZkpqxrABhSS6EGMgBhZUk4ld6n
+   7Brpj3tGNIzGtvj7hhniBQttm/wAIXtIeagkvLxPKYi2eNb02mkNcqGNV
+   CeruCM9ki0CZPAQHAkkre83hhXTVa4gu1Ah62UqzlMXY9eEhP3BK2DdPH
+   w==;
+X-CSE-ConnectionGUID: D1HYJKfnRL+ymfpl/YkfDA==
+X-CSE-MsgGUID: lsrZiq97T0Gq6+eXlLOVYA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45567954"
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="45567954"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 08:14:45 -0700
+X-CSE-ConnectionGUID: rBrQmG8kSRaDo1uLnTNRHw==
+X-CSE-MsgGUID: eKpg1ryjRj6ASOkWW/BRqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="127962510"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 07 Apr 2025 08:14:44 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 194EEF0; Mon, 07 Apr 2025 18:14:42 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Eddie James <eajames@linux.ibm.com>,
+	Lee Jones <lee@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Pavel Machek <pavel@kernel.org>
+Subject: [PATCH v3 1/1] leds: pca955x: Avoid potential overflow when filling default_label
+Date: Mon,  7 Apr 2025 18:13:26 +0300
+Message-ID: <20250407151441.706378-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: wG_AoPwbLBLy8-Y75yYVC-cpQvofPbGp
-X-Proofpoint-GUID: Yijp_AWT6tzwOtSLybGJbVPGYVge3z23
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-07_04,2025-04-03_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
- mlxscore=0 priorityscore=1501 phishscore=0 mlxlogscore=935 malwarescore=0
- clxscore=1015 suspectscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504070104
 
-The lazy MMU batching may be only be entered and left under the
-protection of the page table locks for all page tables which may
-be modified. Yet, there were cases arch_enter_lazy_mmu_mode()
-was called without the locks taken, e.g. commit b9ef323ea168
-("powerpc/64s: Disable preemption in hash lazy mmu mode").
+GCC compiler (Debian 14.2.0-17) is not happy about printing
+into a too short buffer (when build with `make W=1`):
 
-Make default arch_enter|leave|flush_lazy_mmu_mode() callbacks
-complain at least in case the preemption is enabled to detect
-wrong contexts.
+  drivers/leds/leds-pca955x.c:554:33: note: ‘snprintf’ output between 2 and 12 bytes into a destination of size 8
 
-Most platforms do not implement the callbacks, so to aovid a
-performance impact allow the complaint when CONFIG_DEBUG_VM
-option is enabled only.
+Indeed, the buffer size is chosen based on some assumptions,
+while in general the assigned value might not fit (GCC can't
+prove it does).
 
-Signed-off-by: Alexander Gordeev <agordeev@linux.ibm.com>
+Fix this by changing the bits field in the struct pca955x_chipdef to u8,
+with a positive side effect of the better memory footprint, and convert
+loop iterator to be unsigned. With that done, update format specifiers
+accordingly.
+
+In one case join back string literal as it improves the grepping over the code
+based on the message and remove duplicating information (the driver name is
+printed as pert of the dev_*() output [1]) as we touch the same line anyway.
+
+Link: https://lore.kernel.org/r/4ac527f2-c59e-70a2-efd4-da52370ea557@dave.eu/ [1]
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- include/linux/pgtable.h | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index e2b705c14945..959590bb66da 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -232,9 +232,18 @@ static inline int pmd_dirty(pmd_t pmd)
-  * and the mode cannot be used in interrupt context.
-  */
- #ifndef __HAVE_ARCH_ENTER_LAZY_MMU_MODE
--#define arch_enter_lazy_mmu_mode()	do {} while (0)
--#define arch_leave_lazy_mmu_mode()	do {} while (0)
--#define arch_flush_lazy_mmu_mode()	do {} while (0)
-+static inline void arch_enter_lazy_mmu_mode(void)
-+{
-+	VM_WARN_ON(preemptible());
-+}
-+static inline void arch_leave_lazy_mmu_mode(void)
-+{
-+	VM_WARN_ON(preemptible());
-+}
-+static inline void arch_flush_lazy_mmu_mode(void)
-+{
-+	VM_WARN_ON(preemptible());
-+}
- #endif
+v3: reworked again to satisfy both compilers (LKP)
+v2: updated format specifier once again (LKP)
+
+ drivers/leds/leds-pca955x.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index e9cfde9fe4b1..24a40a1cdb15 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -73,7 +73,7 @@ enum pca955x_type {
+ };
  
- #ifndef pte_batch_hint
+ struct pca955x_chipdef {
+-	int			bits;
++	u8			bits;
+ 	u8			slv_addr;	/* 7-bit slave address mask */
+ 	int			slv_addr_shift;	/* Number of bits to ignore */
+ 	int			blink_div;	/* PSC divider */
+@@ -142,13 +142,13 @@ struct pca955x_platform_data {
+ };
+ 
+ /* 8 bits per input register */
+-static inline int pca955x_num_input_regs(int bits)
++static inline u8 pca955x_num_input_regs(u8 bits)
+ {
+ 	return (bits + 7) / 8;
+ }
+ 
+ /* 4 bits per LED selector register */
+-static inline int pca955x_num_led_regs(int bits)
++static inline u8 pca955x_num_led_regs(u8 bits)
+ {
+ 	return (bits + 3)  / 4;
+ }
+@@ -581,14 +581,14 @@ static int pca955x_probe(struct i2c_client *client)
+ 	struct led_classdev *led;
+ 	struct led_init_data init_data;
+ 	struct i2c_adapter *adapter;
+-	int i, bit, err, nls, reg;
++	u8 i, nls, psc0;
+ 	u8 ls1[4];
+ 	u8 ls2[4];
+ 	struct pca955x_platform_data *pdata;
+-	u8 psc0;
+ 	bool keep_psc0 = false;
+ 	bool set_default_label = false;
+ 	char default_label[8];
++	int bit, err, reg;
+ 
+ 	chip = i2c_get_match_data(client);
+ 	if (!chip)
+@@ -610,16 +610,15 @@ static int pca955x_probe(struct i2c_client *client)
+ 		return -ENODEV;
+ 	}
+ 
+-	dev_info(&client->dev, "leds-pca955x: Using %s %d-bit LED driver at "
+-		 "slave address 0x%02x\n", client->name, chip->bits,
+-		 client->addr);
++	dev_info(&client->dev, "Using %s %u-bit LED driver at slave address 0x%02x\n",
++		 client->name, chip->bits, client->addr);
+ 
+ 	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA))
+ 		return -EIO;
+ 
+ 	if (pdata->num_leds != chip->bits) {
+ 		dev_err(&client->dev,
+-			"board info claims %d LEDs on a %d-bit chip\n",
++			"board info claims %d LEDs on a %u-bit chip\n",
+ 			pdata->num_leds, chip->bits);
+ 		return -ENODEV;
+ 	}
+@@ -694,8 +693,7 @@ static int pca955x_probe(struct i2c_client *client)
+ 			}
+ 
+ 			if (set_default_label) {
+-				snprintf(default_label, sizeof(default_label),
+-					 "%d", i);
++				snprintf(default_label, sizeof(default_label), "%u", i);
+ 				init_data.default_label = default_label;
+ 			} else {
+ 				init_data.default_label = NULL;
 -- 
-2.45.2
+2.47.2
 
 
