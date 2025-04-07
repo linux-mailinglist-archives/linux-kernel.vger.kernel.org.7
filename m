@@ -1,207 +1,325 @@
-Return-Path: <linux-kernel+bounces-591426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3EA6A7DFB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:43:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FB3AA7DFB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:42:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DC4A3AD7ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:38:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C503E1897055
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD361D555;
-	Mon,  7 Apr 2025 13:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="g5QYR7Sx"
-Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19010015.outbound.protection.outlook.com [52.103.68.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4152E13C8E8;
+	Mon,  7 Apr 2025 13:38:21 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5048513C8E8;
-	Mon,  7 Apr 2025 13:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744033096; cv=fail; b=VX5EgrmSifSWxEclG1cS763/HQ6emxgzDt6oPj4fI2zsn7JJLKYdVH9C1wGEePlZPUIzd1To2GqwSq/5F0jBKz43f+EYWskJaUOzbXo73TMgpSa5qdoEVKjr096lxbz8BCQ5uNiIwqCZJAHfSMQRWthf7/LerfTQwDVUi2RErZQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744033096; c=relaxed/simple;
-	bh=jIUBED+pO8R9lW2lVzL2HvgmzKpBpS9oBtNIqrykJzE=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=N7ChpO7eDhnTh7oFnRq3HcdBEhnalnchk4MZeAjvfwbRYOdvbzSO4D3LunmVDB5elEDFsczwlbZFoFto0w3Yvrx7C+CBJI+WPx7mRw2RvRScjo1KX+QGOoM++MyKcoifgQAiT3DBcFFXMzfZyMzYbsiVLzXTdpOLlApzXiweW2Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=g5QYR7Sx; arc=fail smtp.client-ip=52.103.68.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aC9Le8BQ+l63vIOCRk6IRayyx04ZAd8p9bDaYG4UQGM54l+Ih46CJyh0bBKdc9DODdG2V7t2azMj/A93hBCY6A+54LgLow6onXgbBiESkgapnU8OvsYE7Hc6gsL26oSUh5LvVEY5UCLPSM3IHwSVqfcwrpqWAnlggb57RRQWH0XZX9n55hT7jtjdfrPWK5nML8PkHsaNGT9+Mfrzmdpx3PqTL6ZshDxoj73kAGEOv4xweqsuNtYXW3H0PdDuNQKNzyAitAS0Q1jx0KdIeQ2S1jB9dyAYFIEjnDpgqKyOgogPnro6s0RGhcRr8MY4evlbDFCIYkWRrJ4ACEX+oNP8OQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XQeZ+h7jk0KS4dpMaymYhL5l8BSaREklpUecC5FBtUI=;
- b=n9VSFm+aBr27xIQ9Q+3+j25KwUt7MXpGKfP2MFyETVYAKNGePReYMyOMUfg/ioDM9cSHSqmFdUfPfvoI9vs98R/qYUS83YS54ixWWeB8s8DVmCIwAtokn3t6IceqMDN8Ce84VkfqhIBobG6VHpkt0N8z++KVD8Qh4NMQO0k/6To4kgUq2Y4PxVog2f3zPdrGTE4n0qoMvdsWfJTtUu8hXa1ziysCWta+kVccoOEy0I1v5hEvqPXQNzqvmjRU1Z3B4df98zGn/10+X2e7hmP9SfTz6A1Y0gZ1Wn0Ir0ER0cqb58KJTGiXdJk6kTt5hZQddjB4XkvSP/ylzcsP/T2SWQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XQeZ+h7jk0KS4dpMaymYhL5l8BSaREklpUecC5FBtUI=;
- b=g5QYR7Sx3d6R3/LAkEGTdJXHnA246M18bYbnm4Z9lUUwHpnmlarIllZQF6/zKOdHh5vMQK8lFKrSfeo1QGHNOThtR+9t6EqhCnQKUzOs5n4HCJUTu8qMbOrEKWPvhBXynuDZ2o3z0tvnCdn9gWLHnHO9oZW0hqIhwqhz/mqt7YV4buMrNw8kRHJ2ZJGMFKzHBRZ5tTn1Kx8gFiZFy8/mJrhwfdohwKUCvWMXJunF3PPhZ/nzbSFloMeOSm2pnJBDuXMEDt+LamK5BDNbXAPjYW3BB96rr3tBd2LhyE5ke7AlDDAJDEUa3XoGROvzYuQkQbo70zUSpMCfdxf16aBghQ==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by PN3PR01MB6823.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:94::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.34; Mon, 7 Apr
- 2025 13:37:58 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8606.029; Mon, 7 Apr 2025
- 13:37:58 +0000
-Message-ID:
- <PN3PR01MB9597A66B39FF5824E3718EC3B8AA2@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-Date: Mon, 7 Apr 2025 19:07:54 +0530
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v3 3/3] drm/appletbdrm: use %p4cl instead of %p4cc
-From: Aditya Garg <gargaditya08@live.com>
-To: alyssa@rosenzweig.io, Petr Mladek <pmladek@suse.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Sven Peter <sven@svenpeter.dev>, Thomas Zimmermann <tzimmermann@suse.de>,
- Aun-Ali Zaidi <admin@kodeit.net>, Maxime Ripard <mripard@kernel.org>,
- airlied@redhat.com, Simona Vetter <simona@ffwll.ch>,
- Steven Rostedt <rostedt@goodmis.org>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
- apw@canonical.com, joe@perches.com, dwaipayanray1@gmail.com,
- lukas.bulwahn@gmail.com, Kees Cook <kees@kernel.org>, tamird@gmail.com
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
- Hector Martin <marcan@marcan.st>,
- Asahi Linux Mailing List <asahi@lists.linux.dev>
-References: <8153cb02-d8f1-4e59-b2d5-0dfdde7a832e@live.com>
-Content-Language: en-US
-In-Reply-To: <8153cb02-d8f1-4e59-b2d5-0dfdde7a832e@live.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BM1PR01CA0152.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:68::22) To PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:f7::14)
-X-Microsoft-Original-Message-ID:
- <58537fd7-eb7f-488c-a315-ffab4414ec2b@live.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D12156861
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 13:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744033100; cv=none; b=AXVqTCV+hw/CnH4HNYF/BUgAsvEnQDlRbec9go9Fzpj/+u1a0S+NGUQXIAACNBOIXQhd+gtZCVJnDjWHnZ9nC6yrvvW8t+UhK+VMkPmse/wokhW+7juAjoYz193HyDTAO330yls5EeDm8Kw0YYCF1I9tLCjILzbY/kYwI6UhZmg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744033100; c=relaxed/simple;
+	bh=YZ24IjoPPIZZv1j6ya2Q6y1c3Lyezek/7soV2rHdK2A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JrLz2ePCSF2knqfbUVSogMbgkbKGqP/hg/RFNSs0oqK79F/DF63kuuLomaZ33gIYTnaWkSnkqbH5nyImhOI4FgwPEPUHMmo9gdmYWC7WLb05N/6Jd1c6lGrlF0Sy3ccKucMwwzlsMbMHt+PbGSqO6Iqw+U/PQHLKJDg+WQ63Jew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1u1mfq-00070I-WC; Mon, 07 Apr 2025 15:38:03 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1u1mfp-003lrS-1W;
+	Mon, 07 Apr 2025 15:38:01 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1u1mfp-004hsE-1A;
+	Mon, 07 Apr 2025 15:38:01 +0200
+Date: Mon, 7 Apr 2025 15:38:01 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>
+Cc: netdev <netdev@vger.kernel.org>, Oliver Neukum <oneukum@suse.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jose Ignacio Tornos Martinez <jtornosm@redhat.com>,
+	Ming Lei <ming.lei@redhat.com>
+Subject: Re: [PATCH REPOST] usbnet: asix: leave the carrier control to phylink
+Message-ID: <Z_PVOWDMzmLObRM6@pengutronix.de>
+References: <m35xjgdvih.fsf@t19.piap.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PN3PR01MB9597:EE_|PN3PR01MB6823:EE_
-X-MS-Office365-Filtering-Correlation-Id: 238c263d-d9bb-4553-4fcc-08dd75d968de
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|8060799006|7092599003|6090799003|5072599009|19110799003|15080799006|461199028|440099028|3412199025|41001999003|12091999003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VmxraHBKeGtmMmRPSzNiNGZOS051eGVZSndSeWZWeisrTUZsbnBvRDBHZEFV?=
- =?utf-8?B?VHM2SnZ6eGtRQ1lYYlVpWkE2MUtCdEdjdDIzbzFCYlF2eTRXOU1pd1hFM2ZL?=
- =?utf-8?B?RHVqcHBtS1pEMkNIYkRhN1ZxZGYwcmp0NWlidnRReFlUaUpGRFN4Z1NIV2hD?=
- =?utf-8?B?SGp6UXhSaDVWQXZZbHRsRVRhbjRqWVQ5VmphSWRZVld1K2xTZWVOajZnQTBF?=
- =?utf-8?B?c2pZR0d4WFk0WjlFUHoySFJ3amwyUys0OFEyM01CbmNYbzZVS3hBR1ZIUmw3?=
- =?utf-8?B?SnRqT0ZWOTY0U3h1dFF3K1ZCOEVMMVVtb3l5UEEyejRNQmh2WXlaS3ozVUJq?=
- =?utf-8?B?VGlsd0hzL2RjbUFoZDVCTjM5WUxWUFc0TnBQVi8zRk5LM0xnbXhZTVFoTHFI?=
- =?utf-8?B?cjArdUg0cG5XOGpjWFAwT0R6UWoxYWF0cFhiTjU5UnhvMmQvbnpLbmNoWE5T?=
- =?utf-8?B?S0NTVFN2T0hmNFg5aUZzWDRVNVJkU3kwd2R3RWlEUWdLdEpEeDV0aDBZRGpS?=
- =?utf-8?B?amd4d1JiL0paUTZ3eW9QRS83TWpYeVRvL1BaYkJhL0dlbm9uS2o1Y1ZWTmRV?=
- =?utf-8?B?WGhZaXlpMUs4b21PU3BUdFg1WXV3L0x6a1p6dWZ2eG9SUjlXMGZ5am4yOTFR?=
- =?utf-8?B?c1VFR3dyZ0lPV0kyWGxzUzNvQ01tTVBKMHJhSnhTUEp0U3pacHRlZHB5SDQw?=
- =?utf-8?B?SW5EVU43L1BBZ2h4RU56QXlNQ1FsUjRHalV1Y1R2bWY2UGFtRGhobW1pZnRH?=
- =?utf-8?B?ZWZaQWUvRmI3WnJjbVRZaGZpdTkwd0lscDloUE90d1NNOHNqaG8rQk9Gck5X?=
- =?utf-8?B?cHorZmpYRmdOZGdtbXJSN0w0MXQ0YnRpaGprNWVFS3hZeW01ckdTRC9idyty?=
- =?utf-8?B?ZERMRnVpYi9pTkZKRHBqNUNLcFkrNks0bE1VYm4zaDZ0dThhUHhhWktrRTFF?=
- =?utf-8?B?OHkwMzdrTExPLzVDd0pNSVhldTZRY2ladWVpNVFaWjR2c29sU2Q1S2MzSm0r?=
- =?utf-8?B?NjVBaDlkUnoyN01QMnh3UXVTNGZ1ejRmTkxQQjc1ZGVDWG9CdXRQVWtqb2dB?=
- =?utf-8?B?WDdPQzdCNVBXREVLZ1lHOFc5RGF6UDg2VVFuRGdvbEZSZlo0aHcwK1c3VHhQ?=
- =?utf-8?B?dXlHb1JKKytBcGwvMjBnZ3pKUndFSm9sbmtoN2JlK0RhWTExN0VHVit0MnRp?=
- =?utf-8?B?aTNHL21rOHV6UHY4ZU9IK2krQk9uZUliczhFU21Qb0VubUo4dndvQkJ0eGZU?=
- =?utf-8?B?LzhVQVgvSkhHU3BkSFh6ZXF0UW1UVVd0SmpSbFRMU1FENm01MXFYTm9mc3Rx?=
- =?utf-8?B?NkhWcEk4cndWVXVPVGtQMW5CRy9Rc3Yrd0dlVUNQM3VQMkNHSDFOWWFIcjNW?=
- =?utf-8?B?WEx1VG93Umd5YUlTSjNYcFcwU3ZIS3NYd0FCYitVbXpzR2xXNGFvUlVMbDlV?=
- =?utf-8?B?OU9laXdLd2RFQ254ZjcxczBCT3lCaktvL0lNalZPZS9FWmpIQVJVQ3JNeUhq?=
- =?utf-8?B?WC93TXNWdWo3MU1hUElWUWFpc05RbkRrS055K1JkWHVxZ2w3Rlo0WTJRYlJm?=
- =?utf-8?Q?ycQx+0Lb8uT1ao4gBnWVphchl02YlNXReXa3uHQUcHTRI9?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?d2JMUFJxQWMxK1hyRkZUQ2h0NTNkZC8wMTBaOWRsMlRmR1RtbDkrUlNtVVVh?=
- =?utf-8?B?V3pJOEtHZisvaEc2N1dqZWRibW1ZM2RjdGVaS0lnbzdraVlkWE5idzJON3Mw?=
- =?utf-8?B?S0NjTmhlN25vdjBLQjVYUnpCNXd6ZUg1eDA4OVozRTF5SnBRallWcG91RHFx?=
- =?utf-8?B?Ym5ReXZnVkxFd3lpcWNWT0tVbjU5c2tJekhLQWMwR09UZTJwRWJLS3hqU0l0?=
- =?utf-8?B?TGF3YnI0Q1Y3VDd3OGNqNEhtcGtERlFLK0hES2VMVjllV3d0VFJLTDlsS2s4?=
- =?utf-8?B?eE9UYitlcmdqU3lySDBsMWFIcENUWUlqZ0w2dU9CQWhQREpZeGNlcGNkeVFU?=
- =?utf-8?B?VVRzTG9ZWE1EcHdVYVh3ZDNMdzBhTDdvZ011clRaZjQ5aHZrZ0pYL1U5bXNH?=
- =?utf-8?B?U0k1RkJGR3BxdnRWRVcwbi84cW5KSzFZNVFLMUZzRmpWd0pXbTJWV2dXUlpt?=
- =?utf-8?B?Ynlwd2FjVEo3aG9CZkE4UXUvUHJvbkIxWWVrRG9KVmZRZGNaK3N4NjVXMzF5?=
- =?utf-8?B?SDV1K3RZWWtKM0R4Z0pNcXQycEFiL0hJZWNnRGorVVlNNW1lSFRINGF0UDAx?=
- =?utf-8?B?aEY1Q2xCeVgvRm8zb3gyOVdHc0VCS3R3T1d1VkgxN2NkS0N3YU5oNzNFd2Zx?=
- =?utf-8?B?SXZERE0rOUdPeHliNWhMTllGOTRHVnNjMzBlMGhWYVd4b3ZwczZuaEZEU25t?=
- =?utf-8?B?Y2JjZ3BmM2JVL0htWE1BVU1XTExvWTFGcjhsSXNoTG5ZUENIWklrOVZrWW1X?=
- =?utf-8?B?MFN5dkxDK0xUN25VZ1VtcGNrbjBGMHl6UXhPaElwbnlzMGZHZXc5L2syU2k3?=
- =?utf-8?B?WXNjNEJISTJxVFZad2xXdDVNT0RIV2VXMnBod3Y2NENOb2hjVHMrQ0x2OUN6?=
- =?utf-8?B?STlNUDRpalN2MW1iVFUweUMvK1RXOWRQMm1vSXhGZkY3VGRTZWl3NTdTQnlq?=
- =?utf-8?B?N2tsUy9xZ1ZkV3BTdDdtOUV6MThxSlpac2hJdlBFbXVkUmRKWkpnbzl0cEg0?=
- =?utf-8?B?QkR2VnhqWlZGVDF6ZkwzVys4UHdGU3NYMzR2bnV4eTFQTVAvWGlSR0REYVVE?=
- =?utf-8?B?U0ZMR28vLzIzVDFJNytFeEZ6YnRXc2ZJc1lhdGxZVjlPQW5OWXZuQUk0bTlP?=
- =?utf-8?B?OGRYRC9ZK2Qxa2tPUHozdnpUTy9HN0g1RnpyZEFmRkU0eXN6UVVVZlFBeWcv?=
- =?utf-8?B?ZUtKKzVKemFHU3AvVGg5a1ZjYys2YU1RSnpCNW9uSThVTCt5YzJTVERnZ1dx?=
- =?utf-8?B?RjhmQXI1VnlzQWtxS2FqdHhuc1dSWm9Feno1R1crYkZpdnd0YTRWNW9wUVZG?=
- =?utf-8?B?S0pNUlNYYVA0NktFRHZ2NklUelFKRlNJSlJ2R04wNkVkRlR6Z3ZFN3RGK1Fj?=
- =?utf-8?B?UXRCU3MrbEUxWDEyKytmNVJKVWxLR2VobGdIV1QyVDZyTlVwUmNEWVRNSWtC?=
- =?utf-8?B?U1FIUkxWRGhQVjJlRzRNRjdOT0k2Z0w0NHBzakJ6RVRBZ0pkUzVtSGlpRFIv?=
- =?utf-8?B?T3pyUjh6c0RDKzRadTF3RjhQYjFDV1JFK1VNSC85RWtEMENMMkJ1S1J4WkJk?=
- =?utf-8?B?Uklwdk1jeDVWWTNFYzJlLzQ0SVczT2pNdXE5VFZpSE11eGU2dm5JMGhZVnV0?=
- =?utf-8?B?djdzRDhYWXExZlcxa3dsVG5LckQrWlFLditMZjF5NmY5N3dRbm4yOStNN3VH?=
- =?utf-8?B?aFUwbUlBdmljTmpzK0RsKzk4dU1adDhUM0NjU2JDalUycTQ3TVcwZU1NWXBh?=
- =?utf-8?Q?ra3XNoaaG+7thSb74MQD9V5/WRPOtzpgLHL5ff5?=
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 238c263d-d9bb-4553-4fcc-08dd75d968de
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 13:37:58.6267
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3PR01MB6823
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <m35xjgdvih.fsf@t19.piap.pl>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Aditya Garg <gargaditya08@live.com>
+Hi Krzysztof,
 
-Due to lack of a proper printk format, %p4cc was being used instead of
-%p4cl for the purpose of printing FourCCs. But the disadvange was that
-they were being printed in a reverse order. %p4cl should correct this
-issue.
+On Mon, Apr 07, 2025 at 02:08:22PM +0200, Krzysztof Hałasa wrote:
+> [added Oleksij - the author of the phylink code for this driver]
+> 
+> ASIX AX88772B based USB 10/100 Ethernet adapter doesn't come
+> up ("carrier off"), despite the built-in 100BASE-FX PHY positive link
+> indication. The internal PHY is configured (using EEPROM) in fixed
+> 100 Mbps full duplex mode.
+>
+> The primary problem appears to be using carrier_netif_{on,off}() while,
+> at the same time, delegating carrier management to phylink. Use only the
+> latter and remove "manual control" in the asix driver.
 
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- drivers/gpu/drm/tiny/appletbdrm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Good point, this artifact should be partially removed, but not for all
+devices.  Only ax88772 are converted to PHYlink. ax88178 are not
+converted.
 
-diff --git a/drivers/gpu/drm/tiny/appletbdrm.c b/drivers/gpu/drm/tiny/appletbdrm.c
-index 703b9a41a..751b05753 100644
---- a/drivers/gpu/drm/tiny/appletbdrm.c
-+++ b/drivers/gpu/drm/tiny/appletbdrm.c
-@@ -212,7 +212,7 @@ static int appletbdrm_read_response(struct appletbdrm_device *adev,
- 	}
- 
- 	if (response->msg != expected_response) {
--		drm_err(drm, "Unexpected response from device (expected %p4cc found %p4cc)\n",
-+		drm_err(drm, "Unexpected response from device (expected %p4cl found %p4cl)\n",
- 			&expected_response, &response->msg);
- 		return -EIO;
- 	}
-@@ -286,7 +286,7 @@ static int appletbdrm_get_information(struct appletbdrm_device *adev)
- 	}
- 
- 	if (pixel_format != APPLETBDRM_PIXEL_FORMAT) {
--		drm_err(drm, "Encountered unknown pixel format (%p4cc)\n", &pixel_format);
-+		drm_err(drm, "Encountered unknown pixel format (%p4cl)\n", &pixel_format);
- 		ret = -EINVAL;
- 		goto free_info;
- 	}
+> I don't have any other AX88772 board here, but the problem doesn't seem
+> specific to a particular board or settings - it's probably
+> timing-dependent.
+
+The AX88772 portion of the driver, is not forwarding the interrupt to
+the PHY driver. It means, PHY is in polling mode. As long as PHY
+provides proper information, it will work.
+
+On other hand, you seems to use AX88772B in 100BASE-FX mode. I'm sure,
+current PHY driver for this device do not know anything about FX mode:
+drivers/net/phy/ax88796b.c
+
+Which 100BASE-FX PHY  capable device do you use? Is it possible to buy
+it some where?
+
+> Signed-off-by: Krzysztof Hałasa <khalasa@piap.pl>
+> 
+> diff --git a/drivers/net/usb/asix.h b/drivers/net/usb/asix.h
+> index 74162190bccc..8531b804021a 100644
+> --- a/drivers/net/usb/asix.h
+> +++ b/drivers/net/usb/asix.h
+> @@ -224,7 +224,6 @@ int asix_write_rx_ctl(struct usbnet *dev, u16 mode, int in_pm);
+>  
+>  u16 asix_read_medium_status(struct usbnet *dev, int in_pm);
+>  int asix_write_medium_mode(struct usbnet *dev, u16 mode, int in_pm);
+> -void asix_adjust_link(struct net_device *netdev);
+>  
+>  int asix_write_gpio(struct usbnet *dev, u16 value, int sleep, int in_pm);
+>  
+> diff --git a/drivers/net/usb/asix_common.c b/drivers/net/usb/asix_common.c
+> index 72ffc89b477a..7fd763917ae2 100644
+> --- a/drivers/net/usb/asix_common.c
+> +++ b/drivers/net/usb/asix_common.c
+> @@ -414,28 +414,6 @@ int asix_write_medium_mode(struct usbnet *dev, u16 mode, int in_pm)
+>  	return ret;
+>  }
+>  
+> -/* set MAC link settings according to information from phylib */
+> -void asix_adjust_link(struct net_device *netdev)
+> -{
+> -	struct phy_device *phydev = netdev->phydev;
+> -	struct usbnet *dev = netdev_priv(netdev);
+> -	u16 mode = 0;
+> -
+> -	if (phydev->link) {
+> -		mode = AX88772_MEDIUM_DEFAULT;
+> -
+> -		if (phydev->duplex == DUPLEX_HALF)
+> -			mode &= ~AX_MEDIUM_FD;
+> -
+> -		if (phydev->speed != SPEED_100)
+> -			mode &= ~AX_MEDIUM_PS;
+> -	}
+> -
+> -	asix_write_medium_mode(dev, mode, 0);
+> -	phy_print_status(phydev);
+> -	usbnet_link_change(dev, phydev->link, 0);
+> -}
+> -
+>  int asix_write_gpio(struct usbnet *dev, u16 value, int sleep, int in_pm)
+>  {
+>  	int ret;
+> diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
+> index 57d6e5abc30e..af91fc947f40 100644
+> --- a/drivers/net/usb/asix_devices.c
+> +++ b/drivers/net/usb/asix_devices.c
+> @@ -40,22 +40,6 @@ struct ax88172_int_data {
+>  	__le16 res3;
+>  } __packed;
+>  
+> -static void asix_status(struct usbnet *dev, struct urb *urb)
+> -{
+> -	struct ax88172_int_data *event;
+> -	int link;
+> -
+> -	if (urb->actual_length < 8)
+> -		return;
+> -
+> -	event = urb->transfer_buffer;
+> -	link = event->link & 0x01;
+> -	if (netif_carrier_ok(dev->net) != link) {
+> -		usbnet_link_change(dev, link, 1);
+> -		netdev_dbg(dev->net, "Link Status is: %d\n", link);
+> -	}
+> -}
+> -
+>  static void asix_set_netdev_dev_addr(struct usbnet *dev, u8 *addr)
+>  {
+>  	if (is_valid_ether_addr(addr)) {
+> @@ -752,7 +736,6 @@ static void ax88772_mac_link_down(struct phylink_config *config,
+>  	struct usbnet *dev = netdev_priv(to_net_dev(config->dev));
+>  
+>  	asix_write_medium_mode(dev, 0, 0);
+> -	usbnet_link_change(dev, false, false);
+>  }
+>  
+>  static void ax88772_mac_link_up(struct phylink_config *config,
+> @@ -783,7 +766,6 @@ static void ax88772_mac_link_up(struct phylink_config *config,
+>  		m |= AX_MEDIUM_RFC;
+>  
+>  	asix_write_medium_mode(dev, m, 0);
+> -	usbnet_link_change(dev, true, false);
+>  }
+>  
+>  static const struct phylink_mac_ops ax88772_phylink_mac_ops = {
+> @@ -1309,40 +1291,36 @@ static int ax88178_bind(struct usbnet *dev, struct usb_interface *intf)
+>  static const struct driver_info ax8817x_info = {
+>  	.description = "ASIX AX8817x USB 2.0 Ethernet",
+>  	.bind = ax88172_bind,
+> -	.status = asix_status,
+>  	.link_reset = ax88172_link_reset,
+>  	.reset = ax88172_link_reset,
+> -	.flags =  FLAG_ETHER | FLAG_LINK_INTR,
+> +	.flags =  FLAG_ETHER,
+>  	.data = 0x00130103,
+>  };
+>  
+>  static const struct driver_info dlink_dub_e100_info = {
+>  	.description = "DLink DUB-E100 USB Ethernet",
+>  	.bind = ax88172_bind,
+> -	.status = asix_status,
+>  	.link_reset = ax88172_link_reset,
+>  	.reset = ax88172_link_reset,
+> -	.flags =  FLAG_ETHER | FLAG_LINK_INTR,
+> +	.flags =  FLAG_ETHER,
+>  	.data = 0x009f9d9f,
+>  };
+>  
+>  static const struct driver_info netgear_fa120_info = {
+>  	.description = "Netgear FA-120 USB Ethernet",
+>  	.bind = ax88172_bind,
+> -	.status = asix_status,
+>  	.link_reset = ax88172_link_reset,
+>  	.reset = ax88172_link_reset,
+> -	.flags =  FLAG_ETHER | FLAG_LINK_INTR,
+> +	.flags =  FLAG_ETHER,
+>  	.data = 0x00130103,
+>  };
+>  
+>  static const struct driver_info hawking_uf200_info = {
+>  	.description = "Hawking UF200 USB Ethernet",
+>  	.bind = ax88172_bind,
+> -	.status = asix_status,
+>  	.link_reset = ax88172_link_reset,
+>  	.reset = ax88172_link_reset,
+> -	.flags =  FLAG_ETHER | FLAG_LINK_INTR,
+> +	.flags =  FLAG_ETHER,
+>  	.data = 0x001f1d1f,
+>  };
+>  
+> @@ -1350,10 +1328,9 @@ static const struct driver_info ax88772_info = {
+>  	.description = "ASIX AX88772 USB 2.0 Ethernet",
+>  	.bind = ax88772_bind,
+>  	.unbind = ax88772_unbind,
+> -	.status = asix_status,
+>  	.reset = ax88772_reset,
+>  	.stop = ax88772_stop,
+> -	.flags = FLAG_ETHER | FLAG_FRAMING_AX | FLAG_LINK_INTR | FLAG_MULTI_PACKET,
+> +	.flags = FLAG_ETHER | FLAG_FRAMING_AX | FLAG_MULTI_PACKET,
+>  	.rx_fixup = asix_rx_fixup_common,
+>  	.tx_fixup = asix_tx_fixup,
+>  };
+> @@ -1362,11 +1339,9 @@ static const struct driver_info ax88772b_info = {
+>  	.description = "ASIX AX88772B USB 2.0 Ethernet",
+>  	.bind = ax88772_bind,
+>  	.unbind = ax88772_unbind,
+> -	.status = asix_status,
+>  	.reset = ax88772_reset,
+>  	.stop = ax88772_stop,
+> -	.flags = FLAG_ETHER | FLAG_FRAMING_AX | FLAG_LINK_INTR |
+> -	         FLAG_MULTI_PACKET,
+> +	.flags = FLAG_ETHER | FLAG_FRAMING_AX | FLAG_MULTI_PACKET,
+>  	.rx_fixup = asix_rx_fixup_common,
+>  	.tx_fixup = asix_tx_fixup,
+>  	.data = FLAG_EEPROM_MAC,
+> @@ -1376,11 +1351,9 @@ static const struct driver_info lxausb_t1l_info = {
+>  	.description = "Linux Automation GmbH USB 10Base-T1L",
+>  	.bind = ax88772_bind,
+>  	.unbind = ax88772_unbind,
+> -	.status = asix_status,
+>  	.reset = ax88772_reset,
+>  	.stop = ax88772_stop,
+> -	.flags = FLAG_ETHER | FLAG_FRAMING_AX | FLAG_LINK_INTR |
+> -		 FLAG_MULTI_PACKET,
+> +	.flags = FLAG_ETHER | FLAG_FRAMING_AX | FLAG_MULTI_PACKET,
+>  	.rx_fixup = asix_rx_fixup_common,
+>  	.tx_fixup = asix_tx_fixup,
+>  	.data = FLAG_EEPROM_MAC,
+> @@ -1390,11 +1363,9 @@ static const struct driver_info ax88178_info = {
+>  	.description = "ASIX AX88178 USB 2.0 Ethernet",
+>  	.bind = ax88178_bind,
+>  	.unbind = ax88178_unbind,
+> -	.status = asix_status,
+>  	.link_reset = ax88178_link_reset,
+>  	.reset = ax88178_reset,
+> -	.flags = FLAG_ETHER | FLAG_FRAMING_AX | FLAG_LINK_INTR |
+> -		 FLAG_MULTI_PACKET,
+> +	.flags = FLAG_ETHER | FLAG_FRAMING_AX | FLAG_MULTI_PACKET,
+>  	.rx_fixup = asix_rx_fixup_common,
+>  	.tx_fixup = asix_tx_fixup,
+>  };
+> @@ -1412,10 +1383,8 @@ static const struct driver_info hg20f9_info = {
+>  	.description = "HG20F9 USB 2.0 Ethernet",
+>  	.bind = ax88772_bind,
+>  	.unbind = ax88772_unbind,
+> -	.status = asix_status,
+>  	.reset = ax88772_reset,
+> -	.flags = FLAG_ETHER | FLAG_FRAMING_AX | FLAG_LINK_INTR |
+> -	         FLAG_MULTI_PACKET,
+> +	.flags = FLAG_ETHER | FLAG_FRAMING_AX | FLAG_MULTI_PACKET,
+>  	.rx_fixup = asix_rx_fixup_common,
+>  	.tx_fixup = asix_tx_fixup,
+>  	.data = FLAG_EEPROM_MAC,
+> 
+> -- 
+> Krzysztof "Chris" Hałasa
+> 
+> Sieć Badawcza Łukasiewicz
+> Przemysłowy Instytut Automatyki i Pomiarów PIAP
+> Al. Jerozolimskie 202, 02-486 Warszawa
+> 
+> 
+
 -- 
-2.43.0
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
