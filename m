@@ -1,145 +1,162 @@
-Return-Path: <linux-kernel+bounces-591927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 613E2A7E6D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:37:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A3BDA7E6C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 291FD189E2B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:31:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2198D1659F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A8420896C;
-	Mon,  7 Apr 2025 16:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC2B20E01C;
+	Mon,  7 Apr 2025 16:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="IP4dwv/F"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JifTUwvy"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABF41CAA89
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 16:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7DD20DD5A
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 16:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744043399; cv=none; b=vBTQtfIfkC+iL5kmZknLDJQPTQWuvDXHVzVoelyrna6jl5pZWtZgE55+pSlsLY/N62LJefLJbbMMqvuQoh12L5OAJHpYTget06HVmq3KjHqprpqgxlMrizg3ifN9DbfIg/YTiLoHos5vcAphctbDaxgdG+ayWir2fwakWZ/ekH8=
+	t=1744043022; cv=none; b=MWgi7xkBBEn8H9K5Gm0MsUYs99g2Uefr3Ld0IA/Xf3d+HK1ayRgRBgLY6xqfD6SDJxcSwd6SJdP9CiqNaTNrZPqsdN/CK0G7rMJ/NGtgiEwuir5YV4MM86RlvuLZV2fJQ755MhgTfbBLpy205P8O90ViQ5ldD+Iss8wArZ+CmDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744043399; c=relaxed/simple;
-	bh=Qne4eWZwEXtSMD2/rxGqDKbbUMbFF6b80iWm1yWBJ04=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=mN1c5uLfexTcjgHTbPOMKkxahkpBRpCLbyelIFtMcjh+CrMquANEQMBZD64nPR3pKhW9njwgNyGaUBytsX5S1eVfdOJOEx+WWShp/Vz9ld9Jnx6Sq5Xhwq9gGeYmNvEkUOkxjb82oQPWDCcyZbFc7lb0f5NZ1Fhp2wMJJRAXclo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=IP4dwv/F; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1744043386;
-	bh=I+FxG1gHAelGVqFBfkieGZpkydYf2q1/HP45s5HvRZM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=IP4dwv/F5Fr60AV3MfwCiQY+YAMfCoezZczMT0bOfqzpEpG+B63KGyVVHH3Os4pGj
-	 TwiYUN+cvUiLOzXV//QxXfdED/2JWwnRe41A03bs1n4coZTv17U6xuAewN+5O0ioi8
-	 Jfr6XIua0xrf5EayUryqaxiq0HsP3Tqps3r6Pa5Y=
-Received: from localhost.localdomain ([116.148.99.229])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id 5DD3CE78; Tue, 08 Apr 2025 00:23:29 +0800
-X-QQ-mid: xmsmtpt1744043009tnd7z03gz
-Message-ID: <tencent_4EBF99084F5A4A0D6C6AA5282D4FF23E6807@qq.com>
-X-QQ-XMAILINFO: OQ59tfF64tJLDJjfAnNfYV+AuLoyzO91kjIbgdmyFI6ZXeHOgVOnhWb0wAVzDb
-	 tUTKnrOa3S2+3DVmlIgrr6uzEjufj2m7FMDKtPgyt41qpLRTjpZueYbPkCOy6TRtFtjnh5/Bu+gx
-	 dT5VRlOUBCRXzF3zDpDnfPVvPVG9qrFwea9jqSJj+pULJ+hT1kLXesbkmr44/ICxpLNG69lClb+m
-	 yVJ2wmNyID3nzc4EHq45GHDWwT1kR5tOzf9KjFEfPqBE8iudOdUhcOBYclB+QGW35sNLoMsY+dKe
-	 AfU+8+1QSruROL/1bH8CiWtjpmfIHq9+Y01uUleTYSbxmhrMxS5zYYE8Ca+A0lw9UJw9hIlTTY/c
-	 cIcVyntT+O3REUtTHrjdtEFDKztk+bl2rY0z2RSDDzXMLIdO31jtW0conXGHW4ZSVCC6nObA2Uap
-	 tQOEr4Q3AXh/0M/zHMUWDvvg6lEwyxBi6mTbSNT/2nSSv/bRfUnDjohPdy+hnc2qlWeomQSQuJMX
-	 kNy5PStVr/ZxArOvoy69pb4n62jNsbDPb6cIXqQSNCyg1uzaDdAY/5rnX2DVLJL23AJH5uzAtt8Y
-	 5PI7vWUKCJUK4OWbmX5T4cVOU3wW1h8qAQeynAVilNLND2PWJCoeOcnehozSVRbATw0yEMvRTiC4
-	 YffNFyzHoyG1fWAHs59s/lcZMFzYnSNbyK7ulzBi33+ghI22hH90Btcfp0+FZGmLSS8IS8Wa4w5l
-	 li7j6h3vqGDR0LCjc/8CHdFNXg+JHNXMFg5tjPpnX6bWNa73YNHK8jS4ahx5ng+sb6H43UsOv1rl
-	 d6ffQWtDswy/1ZsRa7nXXuTfif5/E1PrPOtirwaFn2OXXyHwQV4JEscJTBw/zWNLchJMkpxxyZfT
-	 7kYiPIi6VqlJ8keWnTGp+DANFLKV0E3DrWW/W0ffCR1esABrtvx5DF8cSXyyv8bGfe3CehJCZ7k7
-	 vY8fXQTvxfpxaj4Kq0LOEt6pu1yiNE
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: zhoumin <teczm@foxmail.com>
-To: gregkh@linuxfoundation.org
-Cc: dakr@kernel.org,
-	akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	rafael@kernel.org,
-	teczm@foxmail.com,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] kobject_uevent: add uevent_helper exist check
-Date: Tue,  8 Apr 2025 00:22:34 +0800
-X-OQ-MSGID: <20250407162234.182798-1-teczm@foxmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <2025040743-kick-computing-0ecd@gregkh>
-References: <2025040743-kick-computing-0ecd@gregkh>
+	s=arc-20240116; t=1744043022; c=relaxed/simple;
+	bh=xK3zdpugWS3t3I7XRyKqSkoBwBn9VFb6ajzBDZzEiQU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ea7U6RTVfMskWveaQvcJlwTdP6UdVhGPknYgWrlA/+mIp9bJiva2XIBcCGImwLMSB6UY/4ywtjY/UoqnieBRvFjoi5z6K+9LuMuq4SXnYNrc4SDBTrooUvlqiqob7x/fjZ/NcL83TfDYCvDOK0eU66EiU6IDpPVeyJhAraTTGRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JifTUwvy; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6f74b78df93so55914637b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 09:23:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744043019; x=1744647819; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rdLI4xLdMKIk5+aH2ShC4YXmxar43nmBcEhmGz0osts=;
+        b=JifTUwvyVvNi4cElR+4XTMQZUiwIh50LATtsx/jJXMSopgf5Rp1gpX/lBXbPHKoByb
+         avZiVmteCwgLlh52T48b53ueFXGIrqplCOaNv4PV8thFXkQZKJLzg3JLwprQ3R4IngaB
+         BoLzlfkfROFT9Lcr+ZZRX4PtH84ZCRSXTkcWsYIYCaNMT1zUTV3V933QYOMltkryokcq
+         eubT02R784B6f5NEXhokgS3A3lxZyrRxwRxoMENP04ouiYDoaNhaU6YwC67YTtCsfg6n
+         gMT08+WiTv8rXjUisSWkgmgD9ntmAIu4SB9lHaoiBfFo6xw4wcx0WGnZAxTIdb0/9psq
+         4CHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744043019; x=1744647819;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rdLI4xLdMKIk5+aH2ShC4YXmxar43nmBcEhmGz0osts=;
+        b=a33CKugBviV/q/F+S3GX3+IVUWb5q9vCRNyR1ljxwRZMDpbb+qFyERuM1xXo8GcBU/
+         AsG7a/HEcRotnzyPGf1/psGlIpTHIABH7N+0ED5VNlmuEXdk+zg9G0HDU7QyotaxYHMK
+         RaDNsLeUOf/OxtGHDnz3Cv3exXEJ61SrkfqyeZVVeC7h49mDB2o33CQZPfqlq6boV8dg
+         9qtCj6ZJCY0OgKNEFcakdafgmM3Hw1q/XKw1a9hCCsZIcaL4KGESycH7Es5zMWgJ7tkW
+         85qTw4gg/uVO8SzcnNarDr6saSRB9hVygyz8X1R2/ddr/HFBPjcr85On5ZaIhY7UD7qs
+         QLiw==
+X-Forwarded-Encrypted: i=1; AJvYcCWb5amg1IC/RbeGEGE/c4c24ObBMeH1sUvdCjvt1QwIz6PedFQ0Daldg4OKMco+tX3skSDS/TGqR96lWJo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywmn+M7rmcWOZgxeUeJ6GVB0y5MTiDnVtCycEV+3KbUJ0uEQr0N
+	JGjDOCLZvQGnW3HEJ9RAOqXfVNejWGqWt9aML01SMgOYgCBJLXzGS8G0eSxDOaV4P6Jc5gZWyIE
+	hM9EzajD+JH7X60zd+zc/ZBbz+XzwaCI/kGE6IA==
+X-Gm-Gg: ASbGncuovz4uMi0AKn8X0hRevbvcH48pMDFUtiyfqOmcSzpk2cIcshXafA/r3qr9P7+
+	hyQ0NSbK3x44UmgDIjIQWL/aBiK9IPLWfNFlD1PwSYsGAKFza09jUJOEFLkzGdg5rKHeTPDk1wD
+	QWgRvOjAas4YvPPcIZcUeUkdn07zc=
+X-Google-Smtp-Source: AGHT+IEvCyoULSP8GtunUj7XByE2xLEZApny/EX5BI9r2HNnS7M/lF2l9CVPZCF8J2YyYgCczjPfSOPcnUbnSfgNgFc=
+X-Received: by 2002:a05:690c:6481:b0:702:627c:94ec with SMTP id
+ 00721157ae682-703e3357786mr243332367b3.35.1744043018812; Mon, 07 Apr 2025
+ 09:23:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250403-dt-cpu-schema-v1-0-076be7171a85@kernel.org>
+ <20250403-dt-cpu-schema-v1-18-076be7171a85@kernel.org> <CAPDyKFrFRrPVJ_t0JrAE1VTbS02hwr=L-EHtqb7CQiWzB1MnQg@mail.gmail.com>
+ <CAL_JsqKygxhcQ=PZW84sfiW7BVXKF839vfNyxS9GwAXuqmN=8g@mail.gmail.com>
+In-Reply-To: <CAL_JsqKygxhcQ=PZW84sfiW7BVXKF839vfNyxS9GwAXuqmN=8g@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 7 Apr 2025 18:23:02 +0200
+X-Gm-Features: ATxdqUG4iYRDoX1uSepWjxp_lc67AACZn0NdIUwL4_627lSdYio0uG7PYHZfOMA
+Message-ID: <CAPDyKFoHQdHED0hHUR7VKin0XG6SVnYXuvPjB=Xe+1o2hpiPJA@mail.gmail.com>
+Subject: Re: [PATCH 18/19] dt-bindings: arm/cpus: Add power-domains constraints
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Viresh Kumar <vireshk@kernel.org>, 
+	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, zhouyanjie@wanyeetech.com, 
+	Conor Dooley <conor@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
+	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-mips@vger.kernel.org, 
+	imx@lists.linux.dev, linux-rockchip@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > But I propose we should make call_usermodehelper_exec fail earlier, link
-> > this:
-> > --- a/lib/kobject_uevent.c
-> > +++ b/lib/kobject_uevent.c
-> > @@ -610,7 +610,7 @@ int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
+On Fri, 4 Apr 2025 at 15:09, Rob Herring <robh@kernel.org> wrote:
+>
+> On Fri, Apr 4, 2025 at 5:37=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.or=
+g> wrote:
 > >
-> > #ifdef CONFIG_UEVENT_HELPER
-> > /* call uevent_helper, usually only enabled during early boot */
-> > - if (uevent_helper[0] && !kobj_usermode_filter(kobj)) {
-> > + if (uevent_helper[0] && !usermodehelper_disabled && !kobj_usermode_filter(kobj)) {
-> > struct subprocess_info *info;
+> > On Fri, 4 Apr 2025 at 05:06, Rob Herring (Arm) <robh@kernel.org> wrote:
+> > >
+> > > The "power-domains" and "power-domains-names" properties are missing =
+any
+> > > constraints. Add the constraints and drop the generic descriptions.
+> > >
+> > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > > ---
+> > >  Documentation/devicetree/bindings/arm/cpus.yaml | 8 ++------
+> > >  1 file changed, 2 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Docume=
+ntation/devicetree/bindings/arm/cpus.yaml
+> > > index 6f74ebfd38df..5bd5822db8af 100644
+> > > --- a/Documentation/devicetree/bindings/arm/cpus.yaml
+> > > +++ b/Documentation/devicetree/bindings/arm/cpus.yaml
+> > > @@ -313,19 +313,15 @@ properties:
+> > >      maxItems: 1
+> > >
+> > >    power-domains:
+> > > -    description:
+> > > -      List of phandles and PM domain specifiers, as defined by bindi=
+ngs of the
+> > > -      PM domain provider (see also ../power_domain.txt).
+> > > +    maxItems: 1
 > >
-> > retval = add_uevent_var(env, "HOME=/");
- 
-> Why? Will this actually change the speed of anything?
+> > There are more than one in some cases. The most is probably three, I th=
+ink.
+>
+> Unless I missed it, testing says otherwise. What would the names be if
+> more than 1 entry?
 
-While the actual speed improvement may be minimal(may vary depending on
-device performance and how many uevents are triggered before rootfs mount),
-I just think executing add_uevent_var(), call_usermodehelper_setup(), and
-call_usermodehelper_exec() is unnecessary in these cases. We can simply
-return early. If you consider this change unnecessary, I'll respectfully
-close this discussion and focus on other areas where more significant
-improvements might be achieved. 
+"psci", "perf", "cpr", etc
 
----
-Appendix: QEMU Test Logs
-In my current QEMU test environment, this code path executes
-2,127 times before rootfs mount. Sample events collected via debug logs:
-	pr_emerg("action:%s devpath:%s\n", action_string, devpath);
+The "psci" is always for CPU power management, the other is for CPU
+performance scaling (which may be more than one power-domain in some
+cases).
 
-[    0.263272] action:add devpath:/bus/faux
-[    0.264278] action:add devpath:/bus/faux/drivers/faux_driver
-[    0.267476] action:add devpath:/bus/platform
-[    0.267559] action:add devpath:/bus/auxiliary
-[    0.267669] action:add devpath:/bus/memory
-[    0.268789] action:add devpath:/devices/system/memory/memory8
-[    0.269501] action:add devpath:/devices/system/memory/memory9
-[    0.269664] action:add devpath:/devices/system/memory/memory10
-[    0.269793] action:add devpath:/devices/system/memory/memory11
-[    0.269889] action:add devpath:/devices/system/memory/memory12
-[    0.270008] action:add devpath:/devices/system/memory/memory13
-[    0.270108] action:add devpath:/devices/system/memory/memory14
-[    0.270208] action:add devpath:/devices/system/memory/memory15
-[    0.270297] action:add devpath:/devices/system/memory/memory16
-[    0.270409] action:add devpath:/devices/system/memory/memory17
-...
-[    1.068185] action:add devpath:/devices/virtual/tty/tty58
-[    1.069597] action:add devpath:/devices/virtual/tty/tty59
-[    1.070887] action:add devpath:/devices/virtual/tty/tty60
-[    1.071801] action:add devpath:/devices/virtual/tty/tty61
-[    1.073554] action:add devpath:/devices/virtual/tty/tty62
-[    1.075086] action:add devpath:/devices/virtual/tty/tty63
-...
-[    3.519928] action:add devpath:/devices/platform/gpio-keys/input/input0/event0
-[    3.521347] action:remove devpath:/devices/virtual/devlink/amba:9030000.pl061--platform:gpio-keys
-[    3.523161] action:bind devpath:/devices/platform/gpio-keys
-[    3.523831] action:add devpath:/bus/platform/drivers/gpio-keys
-[    3.529957] action:add devpath:/bus/amba/drivers/amba-proxy
+I would suggest changing this to "maxItems: 3". That should be
+sufficient I think.
 
-Best regards,
-
-zhoumin
-
+Kind regards
+Uffe
 
