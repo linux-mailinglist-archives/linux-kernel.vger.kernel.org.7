@@ -1,227 +1,90 @@
-Return-Path: <linux-kernel+bounces-592652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC80A7EFBA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 23:20:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 371DDA7EFBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 23:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9720E18958EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:21:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 144031895592
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89EF0223328;
-	Mon,  7 Apr 2025 21:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3842F224227;
+	Mon,  7 Apr 2025 21:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gWdOAxp5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EX30Wao5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9E1218AC7;
-	Mon,  7 Apr 2025 21:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A97C218AAA
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 21:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744060845; cv=none; b=EfVE5ZtKbUpeY7Ah4WU4mIkM6ICDsn+sbITn6Nw5xYzKVL33Lg9EwYPJeYSRY2fr4e98Vksuu3Zd6AkuUJPr3X2lA9YRsbjOKF5vGKNXb5N3obXTVnRVAnYquSpVv9fC5KfsRxhTYpo6iP8IRkVcARfmP1JoSlgAuD4sR91FWc0=
+	t=1744060931; cv=none; b=HKRw1t1kZKHvNdw4BYB4YGrOoQTkoTNU9CLV2ser7Z1pS1htODtNCi1qPjfDnNlJc9KvKbZ4LwycD+FEtTXLT6JNIC9+eLw7kn9dstCgHReOCgU5e+zLVmJIVdz066NFDe8Elons7RsiF8ArPZWYN8SFoH17HXCeQoQE12jeoAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744060845; c=relaxed/simple;
-	bh=EK5DbQDCfWudKq25hayyLCM9CHKKTOxpNscsok0J8IQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dg/rSBgbqQWlinkrgxpR+qW/CBoBrlPKv/y5rW/0A0wdWAssVnAn6P2ZFRnzeWI2w5MR1V4NGUzZVrkjKjtAt6ZqAmrEhYlbQI5o7hH9k7b5XKJqadtCSaR3Q9Y6Q9lV3hXDGREJfW3uPSWwVeZd9g1iSvgQi5xEMDgqyY1IfUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gWdOAxp5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EF78C4CEDD;
-	Mon,  7 Apr 2025 21:20:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744060845;
-	bh=EK5DbQDCfWudKq25hayyLCM9CHKKTOxpNscsok0J8IQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gWdOAxp58qBqTNH5/uLEPagtqX6njXoQN2I94OT9XeDpBKNs8qRSWTVAQ/P2G/j6X
-	 GYx5G28mKG90XLkE7qzDY67kUdC7FQeAjFdCvUvRRAu/3k8ka0oToXIDRqxtjUtZ3x
-	 9aybsl/5RTUaZ0an9R77hAE2MIbUPXs5H1KnS5phYVXHUgKp+ogCGxrLlRcsCduVgG
-	 afwY3O1u4Y1BNgiTzassBh6LOQ7GEUU+nTRuBgiJQy++oLcJzKobV51FDcTbLrbCHS
-	 S5XxhI5CA8rvX9BaXOvIX5KxcS6gTQeik/F5T5BLyT2kU8/kojuta3UBJqj/F6vieZ
-	 GfKbTeoEfVTTA==
-Date: Mon, 7 Apr 2025 23:20:41 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Maciej W. Rozycki" <macro@orcam.me.uk>, Azeem Shaikh <azeemshaikh38@gmail.com>, 
-	Alex Elder <elder@kernel.org>, Sumit Garg <sumit.garg@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] EISA: Increase length of device names
-Message-ID: <b4bzeghwifymbahgtjrehyulb3ezljaexwwqsjnj4utk2koroz@zsru65co3ufp>
-References: <20250407172926.it.281-kees@kernel.org>
+	s=arc-20240116; t=1744060931; c=relaxed/simple;
+	bh=g5CFip42mFQqpEmbBM/+lzFmhN2ygnDKANEGd2AJ6C0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qkSVALsmSq+M8M14zbFKDQ51iG2d4S5U+Fq6vFOO6ll1UU/1+0jEk+yx+UNR1jwxeF33kaqT1KsI+w/0v828jedhdw6EvTYKqZEZyI+iJyvKEaAeQhaLWkPw0LI9MhqM/wEeUQTRoXrRebGB+w3o6rJ+atGO7l+qNCYVm3Y9K0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EX30Wao5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744060928;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=TnEDpx0qUE5Tyu5NVIbxJ4n/nTjH1L4vePOyeympb+0=;
+	b=EX30Wao5DuTbF3StUXNX9tT500Azei2kKZwRiKindNP1xxNIqzkMvRp/XNljF7NDpmbLA3
+	UNDjmF+oTk8nxucqBhgp/3ZbLcGgpcUi2OQOj8m1kLUqddO+8ib3JaF4vkQjPPCYDFUfdO
+	JrcE0OayzqEtweq52UzRz4bpK2wiCWc=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-641-orbbIonaP7CpCAz-xQn1HA-1; Mon,
+ 07 Apr 2025 17:22:04 -0400
+X-MC-Unique: orbbIonaP7CpCAz-xQn1HA-1
+X-Mimecast-MFC-AGG-ID: orbbIonaP7CpCAz-xQn1HA_1744060923
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 699061800257;
+	Mon,  7 Apr 2025 21:22:03 +0000 (UTC)
+Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.90.98])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7C5DB180B487;
+	Mon,  7 Apr 2025 21:22:01 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH 0/3] cgroup/cpuset: Miscellaneous cleanup patches
+Date: Mon,  7 Apr 2025 17:21:02 -0400
+Message-ID: <20250407212127.1534285-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zfmjv7bhmf4xtvt6"
-Content-Disposition: inline
-In-Reply-To: <20250407172926.it.281-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
+This series contains a number of cpuset cleanup patches.
 
---zfmjv7bhmf4xtvt6
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Maciej W. Rozycki" <macro@orcam.me.uk>, Azeem Shaikh <azeemshaikh38@gmail.com>, 
-	Alex Elder <elder@kernel.org>, Sumit Garg <sumit.garg@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] EISA: Increase length of device names
-References: <20250407172926.it.281-kees@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20250407172926.it.281-kees@kernel.org>
+Waiman Long (3):
+  cgroup/cpuset: Always use cpu_active_mask
+  cgroup/cpuset: Fix obsolete comment in cpuset_css_offline()
+  cgroup/cpuset: Add warnings to catch inconsistency in exclusive CPUs
 
-Hi Kees,
+ kernel/cgroup/cpuset.c | 84 ++++++++++++++++++++++++++++++------------
+ 1 file changed, 61 insertions(+), 23 deletions(-)
 
-On Mon, Apr 07, 2025 at 10:29:35AM -0700, Kees Cook wrote:
-> GCC 15's -Wunterminated-string-initialization warned about truncated
-> name strings. Instead of marking them with the "nonstring" attribute[1],
-> increase their length to correctly include enough space for the
-> terminating NUL character, as they are used with %s format specifiers
-> when showing resource allocations in /proc/ioports:
->=20
->         seq_printf(m, "%*s%0*llx-%0*llx : %s\n", ..., r->name);
->=20
-> The strings in eisa.ids have a max length of 73, and the 50 limit was an
-> arbitrary limit that was removed back in 2008 with commit ca52a49846f1
-> ("driver core: remove DEVICE_NAME_SIZE define"). Change the limit to 74
-> so nothing is truncated any more.
->=20
-> Additionally fix the Makefile to use "if_changed" instead of "cmd"
-> to detect changes to the command line used to generate the target,
-> otherwise devlist.h won't be rebuilt.
->=20
-> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D117178 [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Alejandro Colomar <alx@kernel.org>
+-- 
+2.48.1
 
-Acked-by: Alejandro Colomar <alx@kernel.org>
-
-> Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Azeem Shaikh <azeemshaikh38@gmail.com>
-> Cc: Alex Elder <elder@kernel.org>
-> Cc: Sumit Garg <sumit.garg@kernel.org>
->=20
->  v2: crank length to 74 for full coverage and fix Makefile too
->  v1: https://lore.kernel.org/lkml/20250310222424.work.107-kees@kernel.org/
-> ---
->  drivers/eisa/Makefile   | 11 ++++-------
->  drivers/eisa/eisa-bus.c |  2 +-
->  include/linux/eisa.h    |  5 ++++-
->  3 files changed, 9 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/eisa/Makefile b/drivers/eisa/Makefile
-> index a1dd0eaec2d4..f0d6cf7d1f32 100644
-> --- a/drivers/eisa/Makefile
-> +++ b/drivers/eisa/Makefile
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  # Makefile for the Linux device tree
-> =20
-> -obj-$(CONFIG_EISA)	        +=3D eisa-bus.o
-> +obj-$(CONFIG_EISA)	        +=3D devlist.h eisa-bus.o
->  obj-${CONFIG_EISA_PCI_EISA}     +=3D pci_eisa.o
-> =20
->  # virtual_root.o should be the last EISA root device to initialize,
-> @@ -9,14 +9,11 @@ obj-${CONFIG_EISA_PCI_EISA}     +=3D pci_eisa.o
->  obj-${CONFIG_EISA_VIRTUAL_ROOT} +=3D virtual_root.o
-> =20
-> =20
-> -# Ugly hack to get DEVICE_NAME_SIZE value...
-> -DEVICE_NAME_SIZE =3D 50
-> -
->  $(obj)/eisa-bus.o: $(obj)/devlist.h
-> =20
->  quiet_cmd_eisaid =3D GEN     $@
-> -      cmd_eisaid =3D sed -e '/^\#/D' -e 's/^\([[:alnum:]]\{7\}\) \+"\([^=
-"]\{1,$(DEVICE_NAME_SIZE)\}\).*"/EISA_DEVINFO ("\1", "\2"),/' $< > $@
-> +      cmd_eisaid =3D sed -e '/^\#/D' -e 's/^\([[:alnum:]]\{7\}\) \+"\([^=
-"]*                        \)  "/EISA_DEVINFO ("\1", "\2"),/' $< > $@
-
-LGTM.
-
-
-Have a lovely night!
-Alex
-
-> =20
->  clean-files :=3D devlist.h
-> -$(obj)/devlist.h: $(src)/eisa.ids include/linux/device.h
-> -	$(call cmd,eisaid)
-> +$(obj)/devlist.h: $(src)/eisa.ids include/linux/device.h FORCE
-> +	$(call if_changed,eisaid)
-> diff --git a/drivers/eisa/eisa-bus.c b/drivers/eisa/eisa-bus.c
-> index cb586a362944..edceea083b98 100644
-> --- a/drivers/eisa/eisa-bus.c
-> +++ b/drivers/eisa/eisa-bus.c
-> @@ -21,7 +21,7 @@
-> =20
->  struct eisa_device_info {
->  	struct eisa_device_id id;
-> -	char name[50];
-> +	char name[EISA_DEVICE_INFO_NAME_SIZE];
->  };
-> =20
->  #ifdef CONFIG_EISA_NAMES
-> diff --git a/include/linux/eisa.h b/include/linux/eisa.h
-> index f98200cae637..21a2ecc1e538 100644
-> --- a/include/linux/eisa.h
-> +++ b/include/linux/eisa.h
-> @@ -28,6 +28,9 @@
->  #define EISA_CONFIG_ENABLED         1
->  #define EISA_CONFIG_FORCED          2
-> =20
-> +/* Chosen to hold the longest string in eisa.ids. */
-> +#define EISA_DEVICE_INFO_NAME_SIZE 74
-> +
->  /* There is not much we can say about an EISA device, apart from
->   * signature, slot number, and base address. dma_mask is set by
->   * default to parent device mask..*/
-> @@ -41,7 +44,7 @@ struct eisa_device {
->  	u64                   dma_mask;
->  	struct device         dev; /* generic device */
->  #ifdef CONFIG_EISA_NAMES
-> -	char		      pretty_name[50];
-> +	char		      pretty_name[EISA_DEVICE_INFO_NAME_SIZE];
->  #endif
->  };
-> =20
-> --=20
-> 2.34.1
->=20
-
---=20
-<https://www.alejandro-colomar.es/>
-<https://www.alejandro-colomar.es:8443/>
-<http://www.alejandro-colomar.es:8080/>
-
---zfmjv7bhmf4xtvt6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmf0QaIACgkQ64mZXMKQ
-wqm+cg//eBHFhFkJxZKPzp1DP08oDoARdnRx7YJtuMdGmYw0voAl3GIJOzibTcXL
-rpVp3Vl+025WtUrgw95fXld35NmXUqFhvY7i16SQEuziKBCHZusCP9iJSQFktNUh
-/F7i8+y4IGx8WryzMm6jWrFqXXNQNm1WzDH9s3LnWImUslV1cgol47+TESfR4LL+
-H/rzraDFuZHZzdD+P7jUicgxL9lXw8Z84GOSouUkA6VcIvIQjKfiTi2duDNPnK4I
-D/jenrpXs3SFhEBw86Eu4MS7kfkecFsePrLgFL6z+gDPkTAf0Jx79XqZlpBbI9aN
-tgW2EuIiOLfL+FcEOSkqRFesFxgDCjT2JcmmyO8cAU0xjPc4KcFFVU8I2054UYPv
-lpE6XrfciBM1MmE9KPvI1WfuetWfTMv/DE8TqAMgs3+l67EauRZnJqFfYVtih7//
-uoUrUmtCCcGUUjXKB/Wm7+I4Bd2GEsZ9ENGva9nxkoYzAyH7VmvhRiKxqUvlZ44D
-yeAG4jOoroSYIjb7f8B4gy7RBqtq6kw3I8YpUojUy7CaXEuIGhES7h8DOSAl/FtJ
-D7g0EwmBvxKobHD7NBaMjRMzY/lhF7tVEd+UzD2zlf/M5Cdy7Yzft5nSfCv0ge/Q
-OAgf0hZe+djDfQ0SiwI/BlCpQLCv9sR5xPqyR1FY7aVR1E199mA=
-=ntgs
------END PGP SIGNATURE-----
-
---zfmjv7bhmf4xtvt6--
 
