@@ -1,120 +1,137 @@
-Return-Path: <linux-kernel+bounces-592425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358B9A7ECCE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:25:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ADBAA7ECC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A883C4602D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:19:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0280716D7F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2E6254860;
-	Mon,  7 Apr 2025 19:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52D825D532;
+	Mon,  7 Apr 2025 19:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OSd6DjX5"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="IpoS32TM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DLkd2VJ7"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D37253F38
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 19:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1694A25D525
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 19:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744052549; cv=none; b=sbDh7rhLrZwPATVMxH5jOVGyasra+R/9bUlx9ewiO+9XJlde65f9f3q7e4pBySY915E5CRuA+7w91HS2EAjDExKdpOdh9KMIrdaMnrDXlmaRzbBd2Sjvc1Gtf8Kci84j+d128q4EZk9tA2hptf8vM6kf7JP/uXJZ1KfwuLtNVbQ=
+	t=1744052561; cv=none; b=JSrhn8+TWqQgc+WJwrYKwNtqeGlCXXBlpnyjYMuDdwAwZImuP/v6jDj0jN3gyQx59fxw2UCB0ccWnxqXli2WpQhI4GI2Skw4T399HHNMwW/xJeS8cfgpFXSsCstvI0sd9qGPssZo6XMCfulKXa91pnOVrmB5sQ4gent2ElrNxuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744052549; c=relaxed/simple;
-	bh=tpFwO288Tb8nOdpntE32gaJlCk1gAnYqdxjp9nQSYPY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J89wj+0D+y4Yk5OBxmNK626mPfdnL61brNbsA/X8y7TLtaL+htSz1QxQBFrFaoMdgD8igx8p4R8/TqnT7heQ5FRS+qEcnLGrVRfrQBElBQct3XdgjsxDIff3K3YBYoOqTN5I/arGHX26LBIm0cYn2UOExMQG5pj8cyr0KwpoY6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OSd6DjX5; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac3eb3fdd2eso554860366b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 12:02:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1744052544; x=1744657344; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KKDCjSJ25xQvHRgBvdt+RYZW/uH0S48oMFdtUEyp/oc=;
-        b=OSd6DjX5sGaKLK5Qy9Ws2Zu0MfBZrpFJ3ywrLgSE3vCYkmkU2nvIO0ym0AVvxngnzD
-         aIJKQEIEKcs2UmveFz3u5kgIzm98S4lRLjUyvPeMk9wXMiGADuFtSPvRUR54cd+ghD7T
-         PMQIlULaqiGaInspYHecQOqw2b7rVnNW/bw94=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744052544; x=1744657344;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KKDCjSJ25xQvHRgBvdt+RYZW/uH0S48oMFdtUEyp/oc=;
-        b=kLw59+7KX0MZ1uQFV1sHskjsS4HYwc7wowifv2uG1WyirasOxYmwGj6S2N+bWaoaPu
-         oMb2MEQP1dEyZUDnVJNtmkEObEDE/Vf3BJ927bYUNDUwZg2MPW8OR/HM2ZC4b/1HABg2
-         qsyOvJBldes2knwrhAmt9gfc82uh+wVwacwd+IAQqOXB1NcRt/lW63krYiXKL4iv091h
-         8dc16GOA+PT+lW3N4TnalqG/V3Ab69A0WuBDo0F9uJIm093Rb8wzd3dtNK9K8qridTzC
-         /7HQLCTAYy4JFpISmTx95nAvHfcNthIvQ4N5ldlETNTemArBOrtydGWOxp+j/9P8lfNn
-         rkvA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEfJ+ygIDmB+m35qEJXxV4UbDmaWqS6zuKcIGLqkLUOHnZj0hgE0b8fzozKdQcv0/RrqZpPeqqw0Bxjvk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTSqjAA67IdzusVMD+4arpbiZsOHigqptwLdFfFd9QnpEwhlue
-	RXCEF8PTvym3R7b//GzILZgReQkSTBWCzIiwFNdnPubSEHh44wXpF7b8hgokPzCWBJ83BjFPxnv
-	U824=
-X-Gm-Gg: ASbGnct60YWxCPEmUxYRITFGhEp/fPxULw52lKkjuwoo6ZhV+LdflsPV1OoRF/SnbxG
-	Ps7GLa+V2NgZUnQLGhlbclKNkavxzimaZ14mS2umsRdrstIBW4sKJDRYQda9YpIze+ZVTE5eSS0
-	04uZ4Gt2PcxQyiqOlbRluLw6S0X3STaskuFjSkf0mT8HdqJaNK8EjjbMUw2Z9/57/jn/SpFyKUH
-	3zFFym7mflt0lUnDgTXglmNYVEnE/dow5dHru1owfW0HananAkVQpQfUAb1VV6CiOwRcGViXrOa
-	d3CXjaoCp076+XvyMrYFoG5+SJf/Y2EtCwujvz2YKnEHCvZGf1nUuHGNgrkDXlFtxxVGWEE47zx
-	/R2LqKwpKlY7RAoLquvg=
-X-Google-Smtp-Source: AGHT+IEfd2H/tMndPeXtnLTuKehZ+PpCiteNb/R++JA8OGEdlT6B6xXr0kp/VRkszGul20HW9jMetQ==
-X-Received: by 2002:a17:906:f5a9:b0:ac7:cfcc:690d with SMTP id a640c23a62f3a-ac7d1c35d10mr1383012366b.40.1744052544139;
-        Mon, 07 Apr 2025 12:02:24 -0700 (PDT)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7c0185f84sm799408566b.140.2025.04.07.12.02.22
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Apr 2025 12:02:23 -0700 (PDT)
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac3eb3fdd2eso554855166b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 12:02:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUUsg2kLWIkdKd2iTdIjX1aPYbUTSiT8FUQbuf7QkZ7JT/VIqKXz/WcUyClgdASxYbpVv7ZWUCYmslLwBY=@vger.kernel.org
-X-Received: by 2002:a17:906:7149:b0:ac7:ec31:deb0 with SMTP id
- a640c23a62f3a-ac7ec31df15mr624002466b.9.1744052541214; Mon, 07 Apr 2025
- 12:02:21 -0700 (PDT)
+	s=arc-20240116; t=1744052561; c=relaxed/simple;
+	bh=svc4DcTkLa9xLLdF7y21glNY6sBMo2gsG0Mc+7dkW78=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=uD/3jHqIaqAy/mxwT0Iu2EBu1BgVCB/kluAsjpS5NHEo/S77gCtGb0AU8CVlMFPbBDPcZCtLZZG4N7fmRP7sMDjxUJEOPqT5fRK4yhQW+iQviUPoBlYFExpMPgKt3IlN11txE+XJVAgMaaLEU8HInZw//ah6h3m764ecDaF+tbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=IpoS32TM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DLkd2VJ7; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfout.phl.internal (Postfix) with ESMTP id DB938138134B;
+	Mon,  7 Apr 2025 15:02:37 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-12.internal (MEProxy); Mon, 07 Apr 2025 15:02:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1744052557;
+	 x=1744138957; bh=bCo1qyJ6rZTiBfA+a51RdFo714rHFIPWspJfKngp7mU=; b=
+	IpoS32TM2GnPNE8jNWp6Yxp5PoAZZ1OMYqFmOP/lmXEjsxbNamh0lZ6yrpD2dVKA
+	WWCQweWeVuhzc2Pg+9QRByz5/uvT/HZFFnnbBmTXTbLIQICIPl1CSxG+3fkV4CKB
+	8LRFcmpLsPg2E8Gpz24O/EEnrNGZMU2MAOsutpv+5xWiaDbNXmr62KdUIaQixDeQ
+	tjuey6T7gZuL6Bo10i6c2EZyVYK1+2NKjiDOqEfrQRRg3wN61TeisjQ6oWMmkHey
+	eN93pUPLtd0cDZUzYNzDSKXBIV16Oq/S1kZAR1NHg4bzgLTxdz3mi5p/l4vayKCF
+	Urjo5NqY4U6twx007ihGuQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1744052557; x=
+	1744138957; bh=bCo1qyJ6rZTiBfA+a51RdFo714rHFIPWspJfKngp7mU=; b=D
+	Lkd2VJ7beZ5HHqDsQ69haYdUKdbhUW+vTzPtKMLui8vsiN6c4aYYQRsPeB8wTqVH
+	la+9NpAwsbslNrHrISasLf4EfN2/VTZCQhMolxHV2e4gMQKdSgfI7bdryGkZLEUv
+	kfRdnQ7rmk18ZCRjTPWOic/G71fPAEkHrJqzsiRtwfHudOcV9pqG1t209zuQmE2t
+	ZJRJcdIF8huxbtRBGvh4KTY+YBqTwz7MSS3il8zgo0G55eXGe5YL5HOe9xvmJUpW
+	YzUddTCmWDZCUP2S2+1Bm44irlAGBOBKuzdc3xhiNmlgwqJ6uzumj/4bv7TIlE71
+	Oqs9ed3kNfsARPKR8F40g==
+X-ME-Sender: <xms:TSH0Z3QKE0m2joPGDvtjPwxtKcFqHlhBx5FzewDaUBacNWue_5v7pA>
+    <xme:TSH0Z4zHZbuNI-fk5frE4xc_deIbcX55RkINwLJnm1PCdJGFN9PXamLCgUY8hQJho
+    64Lq_GHYAYdHo3WHz8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddtleekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    uddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhgurhgvrdhprhiihiifrg
+    hrrgesrghrmhdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhr
+    ghdruhhkpdhrtghpthhtoheprhhosggvrhhtrdhjrghriihmihhksehfrhgvvgdrfhhrpd
+    hrtghpthhtoheprghltghhrghrkhesghhmrghilhdrtghomhdprhgtphhtthhopehhrgho
+    jhhirghnrdiihhhurghnghesghhmrghilhdrtghomhdprhgtphhtthhopehkrhiikheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepshhsthgrsggvlhhlihhniheskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrd
+    hinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepgigvnhdquggvvhgvlheslhhishht
+    shdrgigvnhhprhhojhgvtghtrdhorhhg
+X-ME-Proxy: <xmx:TSH0Z80WDpD9n7QYR6u06DYm7i-oCpVlSUDHOOTFSl2Doc_16VEgNw>
+    <xmx:TSH0Z3BPWw4u6xEYbpDDusC3mTnWnkIL6Q2Ui596DKGEn1dWCpl7sQ>
+    <xmx:TSH0Zwg3w70j6V51hHBnHO1aAGRspv6bll-Ld8ZdSy2exAP4xSLCIg>
+    <xmx:TSH0Z7o61lvIp-0iMWrlAHHPrn-sjT0O_REA_Kzy-5lQGQOLO8DfFQ>
+    <xmx:TSH0ZwtbPXSiP36-fUYJ42TP6UKSmhyfmOU7arb2HfwqrRW6bUUo3x5T>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 2F08D2220073; Mon,  7 Apr 2025 15:02:37 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202504061053.F27227CA@keescook> <CAHk-=whVfxi4KRu-H=tsgSdoGdDz1bvu0_miJT0BTgAf4igpdg@mail.gmail.com>
- <FFE5FB0B-CC92-4A25-8014-E7548AD1C469@kernel.org> <CAHk-=wijG2dSOOFr8CCYygwxZQxdTUj73rfB8=tyZP-3G-8-og@mail.gmail.com>
- <20250407173741.GA3847400@ax162>
-In-Reply-To: <20250407173741.GA3847400@ax162>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 7 Apr 2025 12:02:04 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi89ogViEN5oTBmcNQXnMEB5_Qse9G401pSNzocP_dqQQ@mail.gmail.com>
-X-Gm-Features: ATxdqUE0ltJpng-EBWeE1UKan15wl_Wwyop6M2frZ8rfpKkAr90nfs4qcjQcUm4
-Message-ID: <CAHk-=wi89ogViEN5oTBmcNQXnMEB5_Qse9G401pSNzocP_dqQQ@mail.gmail.com>
-Subject: Re: [GIT PULL] string fixes for v6.15-rc1
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Andy Shevchenko <andy@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Peter Collingbourne <pcc@google.com>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, Will Deacon <will@kernel.org>, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+X-ThreadId: T689809fba064b46a
+Date: Mon, 07 Apr 2025 21:02:15 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Andrew Davis" <afd@ti.com>, "Andre Przywara" <andre.przywara@arm.com>,
+ "Russell King" <linux@armlinux.org.uk>, "Daniel Mack" <daniel@zonque.org>,
+ "Haojian Zhuang" <haojian.zhuang@gmail.com>,
+ "Robert Jarzmik" <robert.jarzmik@free.fr>,
+ "Alexey Charkov" <alchark@gmail.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Stefano Stabellini" <sstabellini@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ xen-devel@lists.xenproject.org
+Message-Id: <d4a4f00f-ef52-4635-bd81-659e8dcf9fde@app.fastmail.com>
+In-Reply-To: <20250407185650.411887-1-afd@ti.com>
+References: <20250407185650.411887-1-afd@ti.com>
+Subject: Re: [PATCH v5 0/5] Switch more ARM plats to sys-off handler API
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, 7 Apr 2025 at 10:37, Nathan Chancellor <nathan@kernel.org> wrote:
+On Mon, Apr 7, 2025, at 20:56, Andrew Davis wrote:
+> Hello all,
 >
-> So would the following change be acceptable? I can draft up a commit
-> message and send it along today if so.
+> Continuing the quest to remove the legacy pm_power_off() global
+> function handler. Remove uses from arch/arm/ using the helper
+> register_platform_power_off().
+>
+> These have been sent for several cycles without feedback, not
+> sure if there are anymore active platform maintainers who
+> can take these individually, maybe these remaining could
+> go in directly though the arm-soc tree?
 
-Absoluterly. That's the right thing to do.
+Sure, can you send them to soc@lists.linux.dev in a few
+days, with any final Acks you may get? That way it ends up
+in patchwork and I can trivially pick them up.
 
-> +# Ensure clang does not transform certain loops into calls to wcslen() after
-> +# https://github.com/llvm/llvm-project/commit/9694844d7e36fd5e01011ab56b64f27b867aa72d
-> +KBUILD_CFLAGS-$(call clang-min-version, 210000) += -fno-builtin-wcslen
+Since it's only a few one-line changes that all do the
+same thing, you can also combine them into a single patch.
 
-I think you could just use
-
-     KBUILD_CFLAGS += $(call cc-option, -fno-builtin-wcslen)
-
-instead, and not use some version check?
-
-          Linus
+     Arnd
 
