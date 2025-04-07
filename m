@@ -1,123 +1,122 @@
-Return-Path: <linux-kernel+bounces-590802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8481A7D70C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:00:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96425A7D718
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:03:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1768A188BA6F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:00:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4820188A237
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC9E225765;
-	Mon,  7 Apr 2025 08:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79DA223706;
+	Mon,  7 Apr 2025 08:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eVFwLXdX"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="KfKoE0+n"
+Received: from esa6.hc1455-7.c3s2.iphmx.com (esa6.hc1455-7.c3s2.iphmx.com [68.232.139.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6ED35968
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 08:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F175BAD5A;
+	Mon,  7 Apr 2025 08:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.139.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744012823; cv=none; b=NB2/b7tmE81UMJBP8raACOy+3OMtLzjBIz8oyFzzREbw4SiPhSaHdcA0xgDeyoJMH7fowktYsr8bfRqtOtHF0sCC+VSyfnIaKKFCvqZCllLL/XL+Xks9G9SBzfE1VFT9DPu5OPn0Lr+fD6Cm6ZAtu9itXZ2HLz7jmGAlPu1rJPI=
+	t=1744013021; cv=none; b=d6Yaq7gptJgBXQKMWNFaFkRMGaHdtPTGxNQRFH96otzZ0gfr9T7vovY0AeOLnOHUMbbWWCT8MP25vWJTblJJhg8MYn2drc6XlaJNJX0sqtUQFq05wv/vs5fKxzNkoo2SsBRiLyyMEBiHwaOrmwMo+BSdFqa6FhaGP+NoCje7GWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744012823; c=relaxed/simple;
-	bh=3MSWCyW5uI5Z9ZGyZVx2/95ay1GhUkLkvBEaHMuEqJU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Hn+jRktH28uO/FZyFhebWiMz4QBjRfjtf+kb0EYrjQIeEdPxoDk/JB8qZ4ELGeNwFSygh23sZYdAPJ3woHwnaxzKE3WNWNcZFtqOZQaCLjbQPaxAUp+xQza9VKVeeqd+9v4OrdYKmxPdgleJDDs1CZheD6AXANJpBGbuM7igy6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eVFwLXdX; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E61B244371;
-	Mon,  7 Apr 2025 08:00:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744012818;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3MSWCyW5uI5Z9ZGyZVx2/95ay1GhUkLkvBEaHMuEqJU=;
-	b=eVFwLXdXTJXwPIFhA7cVn/m2T20j4rpfa2ue6EFts15Kbbhw7S/fhPvB8CeQGjHsQo5M89
-	W8FnhtVKz+GkrA4Xa30uH7+aI//BmWK+BVBbp//WK+VewDCqMls9z7xyNINscH9fU4h3bU
-	kYCkdaMYFA1F5+B8HOsuDHRmVRybyP9Flzjjpdto5D7WhK2wF5mN11a7CeFoSSaFpKaq7i
-	COjlGUHB9QEKMXbaN4bX9Ue8pw/1w6FRlJEay8s8g+BjxxNu6uzY3l6RvAtOqKty/n7HAW
-	YNpMdm2HQhj+FjQzqPNPHA+qG4uDtnnYzzxvUhKHyfc/tsHL3EevLvKlm879dg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  Md Sadre Alam <quic_mdalam@quicinc.com>,  Mark Brown
- <broonie@kernel.org>,  Varadarajan Narayanan <quic_varada@quicinc.com>,
-  Sricharan Ramabadhran <quic_srichara@quicinc.com>,  Arnd Bergmann
- <arnd@arndb.de>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: spi-qpic: fix common module build
-In-Reply-To: <20250407072745.186831-1-arnd@kernel.org> (Arnd Bergmann's
-	message of "Mon, 7 Apr 2025 09:27:14 +0200")
-References: <20250407072745.186831-1-arnd@kernel.org>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 07 Apr 2025 10:00:16 +0200
-Message-ID: <875xjgflkf.fsf@bootlin.com>
+	s=arc-20240116; t=1744013021; c=relaxed/simple;
+	bh=bEsYDKsEeCem02wFhShv2lx/lA0WPayiWYXzd/tmYgg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uBktTjlgOHhXs05+XKd3UV2Le5Ne6oiJSVpYr6jWo17OgjIqyTqSRsXtsHXTGOc9R8KEKr8nIfJyRuAVfa5qgCkZiO6mc0XApDmXXIMcMqnj49Rp3S5eZGyl9/CV7czM6RPYzC2GXvAarQKAo4T7cdRlBeBCThy60YBG6ltP4T8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=KfKoE0+n; arc=none smtp.client-ip=68.232.139.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1744013020; x=1775549020;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=bEsYDKsEeCem02wFhShv2lx/lA0WPayiWYXzd/tmYgg=;
+  b=KfKoE0+nxdy2pLwWH00d4gtsTThzQlQc9dHt9R1olNGkWN2qirx08xLZ
+   guKD7xm4DGS7T+baSw2jBwdy/DOFex4eqtp3+iZ+zL3H56qBhoTp9l9Ew
+   wy+UO6IXm3JtGrVr7cOHFV3duq5Kmlmqt36WyRRvQOj+B/F8O8EVIjDk+
+   BiqNkxmUbG331Rs8fqS1CJE0y0MojVk/+ATE5QZgz7eubcxTpTRRi7zaQ
+   yJkJzKhwnPObce5aLSfJ7qqTIrR73gxoEmsVi/EqwIu1gquPSNRHNnxwB
+   FOAJx+f8ZrRxL2gzix6T99IaFkur9grBaCqiw0aksz4Z/JTAoZGf5bDYV
+   Q==;
+X-CSE-ConnectionGUID: Tu+DfewJRKWe3g6ycnS0YQ==
+X-CSE-MsgGUID: GoUJnCEBRWutC5y73okiSw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11396"; a="198427340"
+X-IronPort-AV: E=Sophos;i="6.15,193,1739804400"; 
+   d="scan'208";a="198427340"
+Received: from unknown (HELO oym-r1.gw.nic.fujitsu.com) ([210.162.30.89])
+  by esa6.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 17:02:28 +0900
+Received: from oym-m1.gw.nic.fujitsu.com (oym-nat-oym-m1.gw.nic.fujitsu.com [192.168.87.58])
+	by oym-r1.gw.nic.fujitsu.com (Postfix) with ESMTP id 731CED4809;
+	Mon,  7 Apr 2025 17:02:25 +0900 (JST)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+	by oym-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id 366C2D88D2;
+	Mon,  7 Apr 2025 17:02:25 +0900 (JST)
+Received: from iaas-rpma.. (unknown [10.167.135.44])
+	by edo.cn.fujitsu.com (Postfix) with ESMTP id 686EF1A0071;
+	Mon,  7 Apr 2025 16:02:22 +0800 (CST)
+From: Li Zhijian <lizhijian@fujitsu.com>
+To: linux-cxl@vger.kernel.org
+Cc: Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-kernel@vger.kernel.org,
+	Li Zhijian <lizhijian@fujitsu.com>
+Subject: [PATCH v2] cxl/acpi: Verify CHBS length for CXL2.0
+Date: Mon,  7 Apr 2025 16:02:17 +0800
+Message-Id: <20250407080217.76117-1-lizhijian@fujitsu.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduleelieegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeejgeeftdefledvieegvdejlefgleegjefhgfeuleevgfdtjeehudffhedvheegueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeelvddrudekgedruddtkedrfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeelvddrudekgedruddtkedrfedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmpdhrtghpthhtohepqhhuihgtpghmuggrlhgrmhesqhhuihgtihhntgdrtghomhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhop
- ehquhhitggpvhgrrhgruggrsehquhhitghinhgtrdgtohhmpdhrtghpthhtohepqhhuihgtpghsrhhitghhrghrrgesqhhuihgtihhntgdrtghomhdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggv
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hi Arnd,
+Per CXL Spec r3.1 Table 9-21, both CXL1.1 and CXL2.0 have defined their
+own length, verify it to avoid an invalid CHBS.
 
-On 07/04/2025 at 09:27:14 +02, Arnd Bergmann <arnd@kernel.org> wrote:
+Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+---
+V2: don't factor out, just validate # Dan
+---
+ drivers/cxl/acpi.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> When the NAND driver is a loadable module, and the SPI driver is
-> turned off, the common part is not built:
->
-> ERROR: modpost: "qcom_nandc_unalloc" [drivers/spi/spi-qpic-snand.ko] unde=
-fined!
-> ERROR: modpost: "qcom_write_reg_dma" [drivers/spi/spi-qpic-snand.ko] unde=
-fined!
-> ERROR: modpost: "qcom_read_reg_dma" [drivers/spi/spi-qpic-snand.ko] undef=
-ined!
-> ERROR: modpost: "qcom_nandc_dev_to_mem" [drivers/spi/spi-qpic-snand.ko] u=
-ndefined!
-> ERROR: modpost: "qcom_nandc_alloc" [drivers/spi/spi-qpic-snand.ko] undefi=
-ned!
-> ERROR: modpost: "qcom_submit_descs" [drivers/spi/spi-qpic-snand.ko] undef=
-ined!
-> ERROR: modpost: "qcom_clear_read_regs" [drivers/spi/spi-qpic-snand.ko] un=
-defined!
-> ERROR: modpost: "qcom_clear_bam_transaction" [drivers/spi/spi-qpic-snand.=
-ko] undefined!
-> ERROR: modpost: "qcom_read_data_dma" [drivers/spi/spi-qpic-snand.ko] unde=
-fined!
-> ERROR: modpost: "qcom_write_data_dma" [drivers/spi/spi-qpic-snand.ko] und=
-efined!
->
-> Simplify the Makefile to just build the common bits for either of the two,
-> so it will be built-in whenever one of them is, or otherwise a loadable
-> module if needed.
->
-> Fixes: 7304d1909080 ("spi: spi-qpic: add driver for QCOM SPI NAND flash I=
-nterface")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+index cb14829bb9be..2e63e50b2c40 100644
+--- a/drivers/cxl/acpi.c
++++ b/drivers/cxl/acpi.c
+@@ -11,8 +11,6 @@
+ #include "cxlpci.h"
+ #include "cxl.h"
+ 
+-#define CXL_RCRB_SIZE	SZ_8K
+-
+ struct cxl_cxims_data {
+ 	int nr_maps;
+ 	u64 xormaps[] __counted_by(nr_maps);
+@@ -478,8 +476,10 @@ static int cxl_get_chbs_iter(union acpi_subtable_headers *header, void *arg,
+ 
+ 	chbs = (struct acpi_cedt_chbs *) header;
+ 
+-	if (chbs->cxl_version == ACPI_CEDT_CHBS_VERSION_CXL11 &&
+-	    chbs->length != CXL_RCRB_SIZE)
++	if ((chbs->cxl_version == ACPI_CEDT_CHBS_VERSION_CXL11 &&
++	    chbs->length != ACPI_CEDT_CHBS_LENGTH_CXL11) ||
++	   (chbs->cxl_version == ACPI_CEDT_CHBS_VERSION_CXL20 &&
++	    chbs->length != ACPI_CEDT_CHBS_LENGTH_CXL20))
+ 		return 0;
+ 
+ 	if (!chbs->base)
+-- 
+2.47.0
 
-Thanks for the fix, I just applied Geert's identical patch this morning,
-I was waiting for -rc1 to synchronize everything again:
-https://lore.kernel.org/linux-mtd/174401012746.998658.11206994348683987630.=
-b4-ty@bootlin.com/T/#t
-
-Sorry for the delay.
-
-Thanks,
-Miqu=C3=A8l
 
