@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-591297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DA9AA7DDEA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:41:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE770A7DDE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFA883B1563
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:39:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF175189421D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CC524CEFD;
-	Mon,  7 Apr 2025 12:39:47 +0000 (UTC)
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140182500DE;
+	Mon,  7 Apr 2025 12:39:55 +0000 (UTC)
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AD2245028;
-	Mon,  7 Apr 2025 12:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58522505D2;
+	Mon,  7 Apr 2025 12:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744029587; cv=none; b=jhMVmLIVgmahhfhJxPXmbnUuRZSfhYmyX9/sa1Qz0VkIKHijE//KN/P8UR/EJXIJONYX+oY7PB0Wz58jPUFBoC+MS7/BKAko1T6Mb8wyTIV30V01IiebVIEr+mNOWIGF5b9Kfc43CiQqRIjSeB93y1x349dZkyIfuW4hNTs2m2Y=
+	t=1744029594; cv=none; b=Y1b1w/4xpK7Aphr1eJe3tNa/B5jVEhv5Fq5NsYMaKMQpH9xDFz/XEcOKQF/xEmu4IZt1WE6PgEOuPqM/j7RnFuJhOdckv7M9mA1NUz1/lKfdQeQuNTbKqvqadbF2bA0lGX7r9a7kwEr2umtStUA5mUvachx5xtHEGN2Bg//U1OU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744029587; c=relaxed/simple;
-	bh=06AK6QCzrNsaSeCaNUjtkIsTuO5Ff1yFycP5j8rIQ+U=;
+	s=arc-20240116; t=1744029594; c=relaxed/simple;
+	bh=aQ1UuXr0QokrlXqm1mkiZkV7xA2Eksfk8+Uzf96R36c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SMxhPrsD5KaGBsVHx8ddsNVALggF3q5LT8iBXKhzKD5SSq5pMfks8nwaV0a/JJHdM2dBeKHcoPOAjJyVjSDr7c00Ns4++aWdFbEYheGc0ctgJCaWdKmcWyP8RbCu07FpPWLEgCakMadEdHFYhH0ax9QOXzYCDj2wB1c4g3gz+X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn; spf=pass smtp.mailfrom=whut.edu.cn; arc=none smtp.client-ip=101.71.155.101
+	 In-Reply-To:To:Cc; b=hXjvY0p1+qhGJCtW8Rq3jXkbYEfOds6hXmIO5LTniKd9tfDpN+Tld5NHyFRExV6u48X2azrfTfeQ+NpWh62wukZAkysa/fgzB7fJdY2zled+89Ffs++ImvxuyDaw9aa8y2If5vOOmn9FpM6iu9JC9Pp+eyYta6gNgtpGvgX/YuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn; spf=pass smtp.mailfrom=whut.edu.cn; arc=none smtp.client-ip=45.254.49.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whut.edu.cn
 Received: from [127.0.0.1] (gy-adaptive-ssl-proxy-2-entmail-virt205.gy.ntes [27.18.106.237])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 10ef566e8;
-	Mon, 7 Apr 2025 20:39:33 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 10ef566ea;
+	Mon, 7 Apr 2025 20:39:41 +0800 (GMT+08:00)
 From: Ze Huang <huangze@whut.edu.cn>
-Date: Mon, 07 Apr 2025 20:38:46 +0800
-Subject: [PATCH 1/7] dt-bindings: phy: spacemit: add K1 USB2 PHY
+Date: Mon, 07 Apr 2025 20:38:47 +0800
+Subject: [PATCH 2/7] dt-bindings: phy: spacemit: add K1 PCIe/USB3 combo PHY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,7 +42,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250407-b4-k1-usb3-v3-2-v1-1-bf0bcc41c9ba@whut.edu.cn>
+Message-Id: <20250407-b4-k1-usb3-v3-2-v1-2-bf0bcc41c9ba@whut.edu.cn>
 References: <20250407-b4-k1-usb3-v3-2-v1-0-bf0bcc41c9ba@whut.edu.cn>
 In-Reply-To: <20250407-b4-k1-usb3-v3-2-v1-0-bf0bcc41c9ba@whut.edu.cn>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -60,75 +60,91 @@ Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
  linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
  linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744029565; l=1364;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744029565; l=1859;
  i=huangze@whut.edu.cn; s=20250325; h=from:subject:message-id;
- bh=06AK6QCzrNsaSeCaNUjtkIsTuO5Ff1yFycP5j8rIQ+U=;
- b=+MH2aDlKTFotCOTZXikiqGkLorQrDwaSqn6wMYfOjPhCwXXNRPWZ4rUwPOHEo5CemkiEoQK8/
- o+aENhF7C6LAR018bXmzp9EpK+1oTekInmDmnqqe1Ep5K/78fjSMTK4
+ bh=aQ1UuXr0QokrlXqm1mkiZkV7xA2Eksfk8+Uzf96R36c=;
+ b=iMysvMhswOHuOw6sKRzqorGENfr+yTpZptaidrXYdi4w2snquFxjPfw6h6dM82qFxBLQizPTZ
+ NbnC3H8zupuBJID1VwH0D5gukeZERLrOc3xRJXuKBGdTkg6G+dddYbS
 X-Developer-Key: i=huangze@whut.edu.cn; a=ed25519;
  pk=C3zfn/kH6oMJickaXBa8dxTZO68EBiD93F+tAenboRA=
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaGUtOVkpLTEofGEJLS0NKSFYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJTFVKQ1VKS01VSUhMWVdZFhoPEhUdFFlBWU9LSFVKS0lPT09LVUpLS1VLWQ
-	Y+
-X-HM-Tid: 0a96104362f403a1kunm10ef566e8
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDGkgfVklPGUJOTx1JHkodT1YeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJTFVKQ1VKS01VSUhMWVdZFhoPEhUdFFlBWU9LSFVKS0hKTkxOVUpLS1VKQk
+	tLWQY+
+X-HM-Tid: 0a961043805603a1kunm10ef566ea
 X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pyo6OCo5AjJKF0wOEhUuGjM9
-	LSNPCzNVSlVKTE9PS0lCTkNLTUpJVTMWGhIXVRMOGhUcAR47DBMOD1UeHw5VGBVFWVdZEgtZQVlJ
-	TFVKQ1VKS01VSUhMWVdZCAFZQUlCQkI3Bg++
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PxA6Dzo*NjJMD0wKKBVNGjhM
+	GRUaCi5VSlVKTE9PS0lCTkNDSk9OVTMWGhIXVRMOGhUcAR47DBMOD1UeHw5VGBVFWVdZEgtZQVlJ
+	TFVKQ1VKS01VSUhMWVdZCAFZQUhOS043Bg++
 
-Add support for USB2 PHY found on SpacemiT K1 SoC.
+Introduce support for SpacemiT K1 PCIe/USB3 combo PHY controller.
+
+PCIe portA and USB3 controller share this phy, only one of them can work
+at any given application scenario.
 
 Signed-off-by: Ze Huang <huangze@whut.edu.cn>
 ---
- .../devicetree/bindings/phy/spacemit,usb2-phy.yaml | 40 ++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ .../bindings/phy/spacemit,k1-combphy.yaml          | 53 ++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/phy/spacemit,usb2-phy.yaml b/Documentation/devicetree/bindings/phy/spacemit,usb2-phy.yaml
+diff --git a/Documentation/devicetree/bindings/phy/spacemit,k1-combphy.yaml b/Documentation/devicetree/bindings/phy/spacemit,k1-combphy.yaml
 new file mode 100644
-index 0000000000000000000000000000000000000000..ea999cff9c250b144dd049e5ac3c084b22bd56ea
+index 0000000000000000000000000000000000000000..450157b65410b27129603ea1f3523776a1b0a75e
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/spacemit,usb2-phy.yaml
-@@ -0,0 +1,40 @@
++++ b/Documentation/devicetree/bindings/phy/spacemit,k1-combphy.yaml
+@@ -0,0 +1,53 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/phy/spacemit,usb2-phy.yaml#
++$id: http://devicetree.org/schemas/phy/spacemit,k1-combphy.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: SpacemiT K1 SoC USB 2.0 PHY
++title: Spacemit K1 PCIe/USB3 PHY
 +
 +maintainers:
 +  - Ze Huang <huangze@whut.edu.cn>
 +
++description:
++  Combo PHY on SpacemiT K1 SoC.PCIe port A and USB3 controller share this
++  phy, only one of PCIe port A and USB3 port can work at any given application
++  scenario.
++
 +properties:
 +  compatible:
-+    const: spacemit,k1-usb2-phy
++    const: spacemit,k1-combphy
 +
 +  reg:
-+    maxItems: 1
++    maxItems: 2
 +
-+  clocks:
++  reg-names:
++    items:
++      - const: phy_ctrl
++      - const: phy_sel
++
++  resets:
 +    maxItems: 1
 +
 +  "#phy-cells":
-+    const: 0
++    const: 1
 +
 +required:
 +  - compatible
 +  - reg
-+  - clocks
++  - reg-names
++  - resets
 +  - "#phy-cells"
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    usb-phy@c09c0000 {
-+        compatible = "spacemit,k1-usb2-phy";
-+        reg = <0xc09c0000 0x200>;
-+        clocks = <&syscon_apmu 15>;
-+        #phy-cells = <0>;
++    phy@c0b10000 {
++        compatible = "spacemit,k1-combphy";
++        reg = <0xc0b10000 0x800>,
++              <0xd4282910 0x400>;
++        reg-names = "phy_ctrl", "phy_sel";
++        resets = <&syscon_apmu 19>;
++        #phy-cells = <1>;
 +    };
 
 -- 
