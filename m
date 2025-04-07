@@ -1,57 +1,66 @@
-Return-Path: <linux-kernel+bounces-592751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2E7A7F117
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 01:37:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EC7A7F11A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 01:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06C893A8C87
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 23:36:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA0CF1884805
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 23:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B583E22A7F1;
-	Mon,  7 Apr 2025 23:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4212722DFA6;
+	Mon,  7 Apr 2025 23:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XTeUbRM5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ciDyeGuj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F298225419;
-	Mon,  7 Apr 2025 23:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93036227EAB;
+	Mon,  7 Apr 2025 23:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744068953; cv=none; b=t2soUpbv7/3oqwyGtao8e1lf/RKAUh3X+0QnWQKwoo/sQFVnn2NKUbNCvibx8cfg80/3+rfEtFVIFVRWlZ3284mbY42rnoJ0V/G1As8d7XPMavM2dPLYxQDUoxtOqzDer1Hds8/FGjlEYqFu88Kg37g1bUjVyLgN18jfS9A+Xlk=
+	t=1744068958; cv=none; b=o9NGNyY9ScahIzFY6nI5bjGwljfgj4cP/HKzB38yCsNlpd0G/T8ixh6zTsRu85wwRRlzxt5gwBrg3EpSOjyjHeUql2NBWY074AoTz5eYiDal2JTUlzmcUqVNQx7qcqHsl6FeLKVVXNJBhVS36rP3Yg7T87C06H1vRhdxLDiAt4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744068953; c=relaxed/simple;
-	bh=yozm9cxGIl6PFv9CscvIteucNBMjmxoNFv8pwsGuMvw=;
+	s=arc-20240116; t=1744068958; c=relaxed/simple;
+	bh=/z7hTbC2Tb83HvocgGBMaDIyuX2dpreYSjdsnXw0EzM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=EasIFXBG+AZ/pSJAu6rK2MHNr9XjrJqjZGWqZxazIYGvhTsPw1wP9zTB23KvuUB8pMfe2fFzEwyWxnb8NMF6fwpESB0mk38uq2ZOUzVZ5GCSiBeTeBH1kWoTQlpwIpi2SEU93YUyYydMXRQSP5kGAxrq5ejT3yhHUTZarZPjGZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XTeUbRM5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C05A1C4CEE8;
-	Mon,  7 Apr 2025 23:35:50 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ncMmfsJaO8s5zVNl2IxP5PoCBTIyT48G0inxvBgjCuEiO8VvEdVB/yfaTdqq+XHbpMibEn2zaKlqtSk5DhvdlvRF8x0MxVQSrc1v39vuYF1PL2vvb+kixl8LAFTQC1Xv4Gb/lzOq7bOpmgN9cV5/YYGm1fMc7w7dLsu8ARq50/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ciDyeGuj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB30C4CEE8;
+	Mon,  7 Apr 2025 23:35:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744068952;
-	bh=yozm9cxGIl6PFv9CscvIteucNBMjmxoNFv8pwsGuMvw=;
+	s=k20201202; t=1744068958;
+	bh=/z7hTbC2Tb83HvocgGBMaDIyuX2dpreYSjdsnXw0EzM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=XTeUbRM54qVLseBXh4mi3eaqlmrG55xBAoTNDJLlU4m0WKiZC/saQ1no0TyNwiDRV
-	 FtrTgW8mKpxrc6oC9fdthkLPpuhBZhIMSwuoJslRqYfEInVUVXe0sG9mdy7rpI0IF2
-	 nsRaVdNDNiaZC8tCcKFOIYXzeRPJS3rF+3JYcleKfTktXbB8G69hzWbG1sN8Iawaau
-	 waPPsmlYci3wmBG6sKMhUOPAg1ZKIMKLEfYXKVnPOh4pjoU5xYq63R7yrS9jEqmwRi
-	 KUDwdOXxgsQfJyxAoQ4NGd7hgnn2Ula+vthncJlkHlpRwTBxubs4ZaSVphFvLTeZPw
-	 dYDaJKyzEUAbg==
+	b=ciDyeGujRny0XaxzKcsihCyCw5kEbBss8tMWV6F9tpBc7nCfKfPk6iRuEQBjsFzzX
+	 RvqML2ZViHMYjL18WeeR6pa+Nsc5Eo0f0Sh+9ikUOr5eHzlLwXo7zBln0i5W6k6/JN
+	 z+23TeoubYMJKqn18pgEXErO7cB1rCmFpOGYsq3b9+78MyCGopyZg4GakrBGI9kDKA
+	 piFTaZubMo0sFjK5T0lPd1DiNlj8NJNuCFS1T0VlqdA7EVcyvOxdS+X0UuOSfNfq2z
+	 5rYbCgmzw2/iRMESoLcFpA3aj2mPnMTB0LYSpQDHFAYhSIZgPH25gNV7RkJ/Cew0Zq
+	 UF4V9Zgf8wrgQ==
 From: Mark Brown <broonie@kernel.org>
-To: linux-sound@vger.kernel.org, Helen Koike <koike@igalia.com>
-Cc: linux-kernel@vger.kernel.org, cezary.rojewski@intel.com, 
- andriy.shevchenko@linux.intel.com, yung-chuan.liao@linux.intel.com, 
- brent.lu@intel.com, kernel-dev@igalia.com, 
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
-In-Reply-To: <20250403130242.1227770-1-koike@igalia.com>
-References: <20250403130242.1227770-1-koike@igalia.com>
-Subject: Re: [PATCH] ASoC: Intel: Remove unused
- SND_SOC_INTEL_DA7219_MAX98357A_GENERIC
-Message-Id: <174406895051.1337819.12509784076901628972.b4-ty@kernel.org>
-Date: Tue, 08 Apr 2025 00:35:50 +0100
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Clemens Ladisch <clemens@ladisch.de>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Thorsten Blum <thorsten.blum@linux.dev>, 
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
+ Bard Liao <yung-chuan.liao@linux.intel.com>, 
+ Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
+ Heiner Kallweit <hkallweit1@gmail.com>, 
+ Maxim Mikityanskiy <maxtram95@gmail.com>, 
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
+ He Lugang <helugang@uniontech.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Binbin Zhou <zhoubinbin@loongson.cn>, 
+ Tang Bin <tangbin@cmss.chinamobile.com>, 
+ Philipp Stanner <phasta@kernel.org>
+Cc: linux-parisc@vger.kernel.org, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250404121911.85277-2-phasta@kernel.org>
+References: <20250404121911.85277-2-phasta@kernel.org>
+Subject: Re: (subset) [PATCH 00/11] sound: Replace deprecated PCI functions
+Message-Id: <174406895437.1337819.1919250165088744285.b4-ty@kernel.org>
+Date: Tue, 08 Apr 2025 00:35:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,13 +71,16 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c25d1
 
-On Thu, 03 Apr 2025 10:02:42 -0300, Helen Koike wrote:
-> This config was used by bxt_da7219_max98357a and kbl_da7219_max98357a,
-> both were removed.
+On Fri, 04 Apr 2025 14:19:01 +0200, Philipp Stanner wrote:
+> pcim_iomap_table() and pcim_iomap_regions() have been deprecated by the
+> PCI subsystem. In sound/, they can easily be replaced with
+> pcim_iomap_region().
 > 
-> Now it is not used anymore, so remove it.
+> This series was around some time in late summer last year as a single
+> patch. I lost track of it for a while, but Takashi Iwai (AFAIR)
+> requested that I split it by component.
 > 
-> 
+> [...]
 
 Applied to
 
@@ -76,8 +88,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: Intel: Remove unused SND_SOC_INTEL_DA7219_MAX98357A_GENERIC
-      commit: e0cd450a2d207ce44aa88137a045f2d2a31810c2
+[11/11] ASoC: loongson: Replace deprecated PCI functions
+        commit: 7288aa73e5cfb3f37ae93b55d7b7d63eca5140a8
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
