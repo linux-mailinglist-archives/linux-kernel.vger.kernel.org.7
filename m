@@ -1,53 +1,52 @@
-Return-Path: <linux-kernel+bounces-591936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA1DA7E6F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:41:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A81FA7E70B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D13841796FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:34:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9389D3B5A20
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BA720DD7A;
-	Mon,  7 Apr 2025 16:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C7C20E6FD;
+	Mon,  7 Apr 2025 16:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Bhrw953F"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AyOZgjiK"
 Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5820D20C493;
-	Mon,  7 Apr 2025 16:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B712A20D4EE;
+	Mon,  7 Apr 2025 16:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744043653; cv=none; b=ZRkpCgNBR0nNieG/KBYfL1eoWCPHprIx4fQY1RBSBpI6tkZ3ylL9rH+dwWagSxeaOAlWvapm7Ry7PuG+rSMiXKLuRXl/6IH9CvmNu+L24iLEhQMQRNq0BmIgUVZi4C6mkCPQJLkAIYvNRfrxxYvwyHcxR9CguTG08+n1awl5Q58=
+	t=1744043654; cv=none; b=BfvqpXI30V4noA+czgeA2GEMcI7Q7BU5tGaexJHg4zw8VOdksagIf815m81WHakOI2ClgoIp8EXUEvxi/j5n5oCIcQTKDKbhahrImSTqcwTerlVL/LtywJXDFqr+1bZPZ6PHmWnoZClHUxPdnaml835mr/6vB5sY3Ly+3GCQgus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744043653; c=relaxed/simple;
-	bh=oivFHZVchL7odhRtsJKFsVphB5Uewyo34gYrMYxr+H0=;
+	s=arc-20240116; t=1744043654; c=relaxed/simple;
+	bh=dyaLNe+v+VR4r+EBOlsgK7a1g25zkXO9JHxa/rJMmoI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kB7HDnD8hmVSEfHJascU2lYhYj+vu+PaHK10E1tIeE+Cdrigu3LvKL7FKIV4JqcAGd+gWEm2YzSL8l++8eS/26Mpl7PQ0Nl3rvUopzmC/1RIhIFWrWkGioJcvy5VcdSoelAjQlvVziCpSdsdxr3LqTN1TFoI1qFSpujmmuyNDuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Bhrw953F; arc=none smtp.client-ip=217.70.183.195
+	 In-Reply-To:To:Cc; b=bz5nACmLur2mz+v091WpIhDL5kejHvpISv6L7bP3du/dFbb9Cn5mC06VqnWiv4C2TBqVHvbu65N7InDT961dZqJ+cDBVIk51DYhPihSenWlCVjtyVDOTzUJVsMUWLZWmfzkw8zQjSyx0zeSezhrZoaftQuqoIGQirhplfL0Bc6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AyOZgjiK; arc=none smtp.client-ip=217.70.183.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5F4A620452;
-	Mon,  7 Apr 2025 16:34:08 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C7AAF20579;
+	Mon,  7 Apr 2025 16:34:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744043649;
+	t=1744043651;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0Vu+VYaG7J72e2wnMEktbEWju1bIb0fe9q+yEm36Jk0=;
-	b=Bhrw953FvLxlvrMSs37ewyfTwAgA5rB56bwbsAqUhjoZ1LsKgliagmE1X1+eeUx8Zp+N1e
-	23IS91MqF931BMYTzP+j3bEZC848qFneghM6XyK9HzkvAPKE1/eRnlqjLgdyL9e5u13Z+8
-	RtkoiytE29Q8Ku3qED7DCDqE94Q/Pl9ZvchnIQVu9keMgu76mcKkNvy3azKUcENwxB8l6F
-	hIMfZy/dhrGbHh1a/mxL2px9YlJmLeEbQaBV6K1o1aKWQfXkhhJ6O4JQHv7ZiUSPIICWCo
-	9WmFL3Wd0VHVyE7G3chwdpfMcEVIuj7Yg+0HG1b40AXpwKDaml6oRzLO0+AemQ==
+	bh=FsMOy7QRYRved35PCqQuHrlR3pOYMkBV4GzXKflkZTo=;
+	b=AyOZgjiKxPkYfk6DG/FW6H/Di8ZUYWAokF3yYnkHRRWslbgAJNtQj+DZ9o7ZGGvnsWqSw7
+	Mp1epUZ4psulceBqDV6dde9bBxTYn6p7j4mnDFBpUZIBQ9qoa/gfP1M9Rnv9mvwEIgJqT6
+	i9pxyLrOUD2RX1tOJuOcxUmH88x7AV6R2umo2deLb8n6mN7V5K0QRywOqcGsXzhZSBHS50
+	VjaX+StzFYzNS5NSFQHjTDUNEJVv07tETB+W2eigUlidZD5urp1O7cC9zTqFo3PF4XoTIT
+	QKq8GzUyBOfiNPWoIHryQjHwEJfGtmjw/0gq9ZloTy0ffQbxVd+RrBQaYQuVug==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Mon, 07 Apr 2025 18:34:00 +0200
-Subject: [PATCH v2 2/3] drm/panel: simple: Tianma TM070JDHG34-00: add
- delays
+Date: Mon, 07 Apr 2025 18:34:01 +0200
+Subject: [PATCH v2 3/3] drm/panel: simple: add Tianma P0700WXF1MBAA panel
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250407-tianma-p0700wxf1mbaa-v2-2-ede8c5a3f538@bootlin.com>
+Message-Id: <20250407-tianma-p0700wxf1mbaa-v2-3-ede8c5a3f538@bootlin.com>
 References: <20250407-tianma-p0700wxf1mbaa-v2-0-ede8c5a3f538@bootlin.com>
 In-Reply-To: <20250407-tianma-p0700wxf1mbaa-v2-0-ede8c5a3f538@bootlin.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -74,34 +73,87 @@ Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 X-Mailer: b4 0.14.2
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddtieekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeiieeuvdfftefgueduleehueetgffgjeeitedtteetkeeuueeuueekveevvdeuveenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghloheplgduledvrdduieekrddujeekrdejhegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepthhhihgvrhhrhidrrhgvughinhhgsehgmhgrihhlr
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddtieekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeiieeuvdfftefgueduleehueetgffgjeeitedtteetkeeuueeuueekveevvdeuveenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedvnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghloheplgduledvrdduieekrddujeekrdejhegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepthhhihgvrhhrhidrrhgvughinhhgsehgmhgrihhlr
  dgtohhmpdhrtghpthhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshgrmhesrhgrvhhnsghorhhgrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrgh
 X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Add power on/off delays for the Tianma TM070JDHG34-00.
+Add the Tianma P0700WXF1MBAA 7" 1280x800 LVDS RGB TFT LCD panel.
+
+Reuse the timings of the TM070JDHG34-00 as they are identical, even though
+they are described differently by the datasheet as noted in the
+comment. Power up/down timing are slightly different, so add a new struct
+panel_desc for that.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/panel/panel-simple.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/gpu/drm/panel/panel-simple.c | 33 +++++++++++++++++++++++++++++----
+ 1 file changed, 29 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index df718c4a86cb7dc0cd126e807d33306e5a21d8a0..3496ed3e62056938ccc0ed2389ea46eed8d17ea2 100644
+index 3496ed3e62056938ccc0ed2389ea46eed8d17ea2..0bc20547fc3b3b7164e7f5743d30332c479414b5 100644
 --- a/drivers/gpu/drm/panel/panel-simple.c
 +++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -4452,6 +4452,12 @@ static const struct panel_desc tianma_tm070jdhg34_00 = {
- 		.width = 150, /* 149.76 */
- 		.height = 94, /* 93.60 */
- 	},
-+	.delay = {
-+		.prepare = 18,		/* Tr + Tp1 */
-+		.enable = 150,		/* Tp2 */
-+		.disable = 150,		/* Tp4 */
-+		.unprepare = 120,	/* Tp3 */
-+	},
- 	.bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,
+@@ -4418,10 +4418,10 @@ static const struct panel_desc tianma_tm070jvhg33 = {
+ };
+ 
+ /*
+- * The datasheet computes total blanking as back porch + front porch, not
+- * including sync pulse width. This is for both H and V. To make the total
+- * blanking and period correct, subtract the pulse width from the front
+- * porch.
++ * The TM070JDHG34-00 datasheet computes total blanking as back porch +
++ * front porch, not including sync pulse width. This is for both H and
++ * V. To make the total blanking and period correct, subtract the pulse
++ * width from the front porch.
+  *
+  * This works well for the Min and Typ values, but for Max values the sync
+  * pulse width is higher than back porch + front porch, so work around that
+@@ -4430,6 +4430,10 @@ static const struct panel_desc tianma_tm070jvhg33 = {
+  *
+  * Exact datasheet values are added as a comment where they differ from the
+  * ones implemented for the above reason.
++ *
++ * The P0700WXF1MBAA datasheet is even less detailed, only listing period
++ * and total blanking time, however the resulting values are the same as
++ * the TM070JDHG34-00.
+  */
+ static const struct display_timing tianma_tm070jdhg34_00_timing = {
+ 	.pixelclock = { 68400000, 71900000, 78100000 },
+@@ -4462,6 +4466,24 @@ static const struct panel_desc tianma_tm070jdhg34_00 = {
  	.connector_type = DRM_MODE_CONNECTOR_LVDS,
  };
+ 
++static const struct panel_desc tianma_p0700wxf1mbaa = {
++	.timings = &tianma_tm070jdhg34_00_timing,
++	.num_timings = 1,
++	.bpc = 8,
++	.size = {
++		.width = 150, /* 149.76 */
++		.height = 94, /* 93.60 */
++	},
++	.delay = {
++		.prepare = 18,		/* Tr + Tp1 */
++		.enable = 152,		/* Tp2 + Tp5 */
++		.disable = 152,		/* Tp6 + Tp4 */
++		.unprepare = 120,	/* Tp3 */
++	},
++	.bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,
++	.connector_type = DRM_MODE_CONNECTOR_LVDS,
++};
++
+ static const struct display_timing tianma_tm070rvhg71_timing = {
+ 	.pixelclock = { 27700000, 29200000, 39600000 },
+ 	.hactive = { 800, 800, 800 },
+@@ -5247,6 +5269,9 @@ static const struct of_device_id platform_of_match[] = {
+ 	}, {
+ 		.compatible = "tfc,s9700rtwv43tr-01b",
+ 		.data = &tfc_s9700rtwv43tr_01b,
++	}, {
++		.compatible = "tianma,p0700wxf1mbaa",
++		.data = &tianma_p0700wxf1mbaa,
+ 	}, {
+ 		.compatible = "tianma,tm070jdhg30",
+ 		.data = &tianma_tm070jdhg30,
 
 -- 
 2.49.0
