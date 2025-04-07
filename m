@@ -1,121 +1,166 @@
-Return-Path: <linux-kernel+bounces-590516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F854A7D3CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:02:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C29A7D685
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C82C47A3F4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:01:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E0DF420AE1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944272248BD;
-	Mon,  7 Apr 2025 06:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="BrnpHO9O"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B666722A1D1;
+	Mon,  7 Apr 2025 07:38:22 +0000 (UTC)
+Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8064A55;
-	Mon,  7 Apr 2025 06:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF62D224AFB
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744005736; cv=none; b=W8j4jHiQ/HmDCLR7N3spslaVmtUTNztDMKNi9Ds3tCIoJlD78gU8QcPFj3KcDjxXwuumPJmVxelrQvGlzukXNEXQYB9+so9l3wXuX8jOo9oLtzWmEPgWqn9ngHdxPLnO6piOLiENiRi3JP0koK78U8aioH8vjsKhldM/eFRo8sA=
+	t=1744011502; cv=none; b=pV9V2oxRfaZCs6hVfDmHUp1R/tQJPqlazS4x/XHsyNAOPK7m/dELeVnVIdRbp+ZEURCHeaLv9FGMGpFdVetnQ/N/W9O4ZT7GhxewMsttkqI2gQ8MaSQSrpoUt7PuXQ0qaeEPNOblpMCE38rxF8fZ9GSH3JBuK3UsOm7zYhVS1Uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744005736; c=relaxed/simple;
-	bh=H/DN+IGFERvFuFDKrxwkrcuAN/o1R7RZj+ZcKKslgls=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=N2dWhKa3yZaMWcf9fDfP7HKSa4miV6yXtnpJHmaF1DGZSfok9kCFxSiWeIvVMofRW6VFIh1Vl9ZfARqakFNFtWOBTHQ9X2FRYaYLH/hdftVxC+BY5Nt284e8f4kMHlgD/Xtyzo27/n/yi4yMfDD2jFuAxC3ZGpeRSu2eepA7+ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=BrnpHO9O; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5372oEQd001745;
-	Sun, 6 Apr 2025 23:02:03 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	pfpt0220; bh=44fsOX6TG7LBfegSeqHa/Lp8L9umgjt8n2TcLILnhz0=; b=Brn
-	pHO9OXdZar81ZjD8I2axk20ceVRhGGiquMKwKmxyEZ1dz6At4oBZpvQu/1coNSPG
-	2buxJaTkyslG4O3iSOGXv5hKeqwirkeCNcYX29ILThcxp9dTTiK8zIm0VzfV0pbA
-	DLqRfQiCecAmidWBvyt5H6Cs6TUowzsaHxpoSOjAT34WK/VkW2JMPHRHCtwhIQXU
-	gCz8Oo3/94ndXXqw77A9nR0uPnh77Pb5lT3EmtfkCRzQEtpoN7JgozqXzt1nq6ub
-	qKH7ci198DjG1xW/icqdE7fAhKve8G2nK1N+3kJetr24x4hX+XkJuSTKJuo1/p1W
-	h+4TZIAMtq7sNALS/AQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 45un99segn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 06 Apr 2025 23:02:03 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sun, 6 Apr 2025 23:02:02 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sun, 6 Apr 2025 23:02:02 -0700
-Received: from 452e0070d9ab (HY-LT91368.marvell.com [10.29.8.52])
-	by maili.marvell.com (Postfix) with SMTP id E55945E689E;
-	Sun,  6 Apr 2025 23:01:58 -0700 (PDT)
-Date: Mon, 7 Apr 2025 06:01:57 +0000
-From: Subbaraya Sundeep <sbhatta@marvell.com>
-To: Wentao Liang <vulab@iscas.ac.cn>
-CC: <sgoutham@marvell.com>, <gakula@marvell.com>, <hkelam@marvell.com>,
-        <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-        <kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] octeontx2-pf: Add error log
- forcn10k_map_unmap_rq_policer()
-Message-ID: <Z_NqVUSiG6Ia1qSK@452e0070d9ab>
+	s=arc-20240116; t=1744011502; c=relaxed/simple;
+	bh=DuK3bifKObUj/1hjDahLrFJvEo4z68yicijyl+kid9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=N7GTvI7tdIhEEOIIHDVkN3cd0JE0qT1RqXz8FJhBCfB2hpKcRnx9VrGW+ekDK7CPI4SV0BHxNOeLsKzAIb9ZGTV5Uo/rPhhg13zOl0oBAOuFeBLaa+yQrG710Cys8cLPYvTdrs8XD6qYK/Ok3PPv+WLCBNPkezGzIilIwNsB8ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
+X-ASG-Debug-ID: 1744011490-086e2365b944450001-xx1T2L
+Received: from ZXSHMBX1.zhaoxin.com (ZXSHMBX1.zhaoxin.com [10.28.252.163]) by mx1.zhaoxin.com with ESMTP id kLJek5uXD4GYIZIg (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Mon, 07 Apr 2025 15:38:10 +0800 (CST)
+X-Barracuda-Envelope-From: LiamNi-oc@zhaoxin.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
+Received: from ZXSHMBX3.zhaoxin.com (10.28.252.165) by ZXSHMBX1.zhaoxin.com
+ (10.28.252.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Mon, 7 Apr
+ 2025 15:38:10 +0800
+Received: from ZXSHMBX3.zhaoxin.com ([fe80::8cc5:5bc6:24ec:65f2]) by
+ ZXSHMBX3.zhaoxin.com ([fe80::8cc5:5bc6:24ec:65f2%6]) with mapi id
+ 15.01.2507.044; Mon, 7 Apr 2025 15:38:09 +0800
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
+Received: from [10.28.66.46] (10.28.66.46) by ZXBJMBX02.zhaoxin.com
+ (10.29.252.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Mon, 7 Apr
+ 2025 10:19:32 +0800
+Message-ID: <fb523153-5185-4ec3-941c-3abf1a6eeac8@zhaoxin.com>
+Date: Mon, 7 Apr 2025 10:19:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-Authority-Analysis: v=2.4 cv=I/JlRMgg c=1 sm=1 tr=0 ts=67f36a5b cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=8WfIFTDPXWsKq01BisAA:9 a=CjuIK1q_8ugA:10 a=MdnaEeoEtbPGM3ywBibD:22
-X-Proofpoint-GUID: Ups23XZxmlBTK0z0QtCZeE3XS11QHXVF
-X-Proofpoint-ORIG-GUID: Ups23XZxmlBTK0z0QtCZeE3XS11QHXVF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-07_02,2025-04-03_03,2024-11-22_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: x86:Cancel hrtimer in the process of saving PIT
+ state to reduce the performance overhead caused by hrtimer during guest stop.
+To: Sean Christopherson <seanjc@google.com>
+X-ASG-Orig-Subj: Re: [PATCH] KVM: x86:Cancel hrtimer in the process of saving PIT
+ state to reduce the performance overhead caused by hrtimer during guest stop.
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+	<pbonzini@redhat.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
+	<LiamNi@zhaoxin.com>, <CobeChen@zhaoxin.com>, <LouisQi@zhaoxin.com>,
+	<EwanHai@zhaoxin.com>, <FrankZhu@zhaoxin.com>
+References: <20250317091917.72477-1-liamni-oc@zhaoxin.com>
+ <Z9gl5dbTfZsUCJy-@google.com>
+ <676ed22f-9c3f-4013-99d8-37c4c73bb9ac@zhaoxin.com>
+ <Z-_xNpgsYDW0_4Jn@google.com>
+From: LiamNioc <LiamNi-oc@zhaoxin.com>
+In-Reply-To: <Z-_xNpgsYDW0_4Jn@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: ZXSHCAS1.zhaoxin.com (10.28.252.161) To
+ ZXBJMBX02.zhaoxin.com (10.29.252.6)
+X-Moderation-Data: 4/7/2025 3:38:08 PM
+X-Barracuda-Connect: ZXSHMBX1.zhaoxin.com[10.28.252.163]
+X-Barracuda-Start-Time: 1744011490
+X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
+X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at zhaoxin.com
+X-Barracuda-Scan-Msg-Size: 2798
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
+X-Barracuda-Spam-Score: -2.02
+X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.139610
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
 
-On 2025-04-05 at 15:23:34, Wentao Liang (vulab@iscas.ac.cn) wrote:
-> The cn10k_free_matchall_ipolicer() calls the cn10k_map_unmap_rq_policer()
-> for each queue in a for loop without checking for any errors.
-> 
-> Check the return value of the cn10k_map_unmap_rq_policer() function during
-> each loop, and report a warning if the function fails.
-> 
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
-> ---
->  drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c
-> index a15cc86635d6..895f0f8c85b2 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k.c
-> @@ -353,8 +353,10 @@ int cn10k_free_matchall_ipolicer(struct otx2_nic *pfvf)
->  
->  	/* Remove RQ's policer mapping */
->  	for (qidx = 0; qidx < hw->rx_queues; qidx++)
-> -		cn10k_map_unmap_rq_policer(pfvf, qidx,
-> -					   hw->matchall_ipolicer, false);
-> +		rc = cn10k_map_unmap_rq_policer(pfvf, qidx, hw->matchall_ipolicer, false);
-> +		if (rc)
-> +			dev_warn(pfvf->dev,
-> +				 "Failed to unmap RQ's policer.");
 
-Print failed queue number also please.
 
-Thanks,
-Sundeep
->  
->  	rc = cn10k_free_leaf_profile(pfvf, hw->matchall_ipolicer);
->  
-> -- 
-> 2.42.0.windows.2
-> 
+On 2025/4/4 22:48, Sean Christopherson wrote:
+>=20
+>=20
+> [=E8=BF=99=E5=B0=81=E9=82=AE=E4=BB=B6=E6=9D=A5=E8=87=AA=E5=A4=96=E9=83=A8=
+=E5=8F=91=E4=BB=B6=E4=BA=BA =E8=B0=A8=E9=98=B2=E9=A3=8E=E9=99=A9]
+>=20
+> On Tue, Mar 25, 2025, LiamNioc wrote:
+>> On 2025/3/17 21:38, Sean Christopherson wrote:
+>>> On Mon, Mar 17, 2025, Liam Ni wrote:
+>>>> When using the dump-guest-memory command in QEMU to dump
+>>>> the virtual machine's memory,the virtual machine will be
+>>>> paused for a period of time.If the guest (i.e., UEFI) uses
+>>>> the PIT as the system clock,it will be observed that the
+>>>> HRTIMER used by the PIT continues to run during the guest
+>>>> stop process, imposing an additional burden on the system.
+>>>> Moreover, during the guest restart process,the previously
+>>>> established HRTIMER will be canceled,and the accumulated
+>>>> timer events will be flushed.However, before the old
+>>>> HRTIMER is canceled,the accumulated timer events
+>>>> will "surreptitiously" inject interrupts into the guest.
+>>>>
+>>>> SO during the process of saving the KVM PIT state,
+>>>> the HRTIMER need to be canceled to reduce the performance overhead
+>>>> caused by HRTIMER during the guest stop process.
+>>>>
+>>>> i.e. if guest
+>>>>
+>>>> Signed-off-by: Liam Ni <liamni-oc@zhaoxin.com>
+>>>> ---
+>>>>    arch/x86/kvm/x86.c | 4 ++++
+>>>>    1 file changed, 4 insertions(+)
+>>>>
+>>>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>>>> index 045c61cc7e54..75355b315aca 100644
+>>>> --- a/arch/x86/kvm/x86.c
+>>>> +++ b/arch/x86/kvm/x86.c
+>>>> @@ -6405,6 +6405,8 @@ static int kvm_vm_ioctl_get_pit(struct kvm *kvm,=
+ struct kvm_pit_state *ps)
+>>>>
+>>>>         mutex_lock(&kps->lock);
+>>>>         memcpy(ps, &kps->channels, sizeof(*ps));
+>>>> +     hrtimer_cancel(&kvm->arch.vpit->pit_state.timer);
+>>>> +     kthread_flush_work(&kvm->arch.vpit->expired);
+>>>
+>>> KVM cannot assume userspace wants to stop the PIT when grabbing a snaps=
+hot.  It's
+>>> a significant ABI change, and not desirable in all cases.
+>>
+>> When VM Pause, all devices of the virtual machine are frozen, so the PIT
+>> freeze only saves the PIT device status, but does not cancel HRTIMER, bu=
+t
+>> chooses to cancel HRTIMER when VM resumes and refresh the pending task.
+>> According to my observation, before refreshing the pending task, these
+>> pending tasks will secretly inject interrupts into the guest.
+>>
+>> So do we need to cancel the HRTIMER when VM pause=EF=BC=9F
+>=20
+> The problem is that KVM has no real concept of pausing a VM.  There are a=
+ variety
+> of hacky hooks here and there, but no KVM-wide notion of "pause".
+>=20
+> For this case, after getting PIT state, you should be able to use KVM_SET=
+_PIT2 to
+> set the mode of channel[0] to 0xff, which call destroy_pit_timer() via
+> pit_load_count().
+
+Got it.
+so i need to modify the behavior of QEMU's code.
+
+
+
+
 
