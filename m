@@ -1,146 +1,233 @@
-Return-Path: <linux-kernel+bounces-590787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F37BA7D6E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:55:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A407A7D711
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:02:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 005BA1886001
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:55:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3A7E3B6DDE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F458227EA0;
-	Mon,  7 Apr 2025 07:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D032288F4;
+	Mon,  7 Apr 2025 07:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="gY9vH3Rq"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IHXuTen5"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE62227E96
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2D7192D68;
+	Mon,  7 Apr 2025 07:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744012452; cv=none; b=ixQY/oAXRaoGanraeo7dljIrNsIpmBVKHoqbbXl0uFp257+lpUAuw5B9FJjVyb2TA87m7IYC7Zw7HfNwPJKU/SwaUWh4qRmYHtKjS9SCAgBuaJA6SAa93KT8yaJhbe/EmSAq16SphX0p44v5N732/2JWZ6hAXg+rxqK1me+KnRY=
+	t=1744012492; cv=none; b=q5N2ZKYYwudG5uUtt8JLs7tP4Znv5xD7sVoo8yKdqVgALEumwp0BHHTkJT4p81m3Dz9HCVTtpwDygyfhoKyra8FIkiuMDEdXNljtbhzaOZbw3QkJ7RQU/tirWdMw1dJRUsuXx3oLxWrHbGeGEdCOyb1Yi8NJ0dYP4o1WDkvjOfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744012452; c=relaxed/simple;
-	bh=CIvTP/MtFKlZ44qkNUVxMOzv+BaCzXjhTrSxyHWhQJg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RINTS//srvTS3tzpz8ggklDeaGHOnDGbbdfQ+Wrn07/86TvOlZNvGt3OLLh6Gm4bHGFEUZRROHwFVDTWuncEhaBknUQ/iYS5Mg1lnAnOcnjlFKDCHoYI2vVrDu5wgMll7CxRRIPNWhTks8+9d+yLrKtyehSAZutNLiQmS7IWx1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=gY9vH3Rq; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3913b539aabso2258885f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 00:54:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744012448; x=1744617248; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hWxLTEfGg4dc1Gy9lnOUuyFlka68Uiuevn5CcOM/QrM=;
-        b=gY9vH3RqdQR+gB31TeRw9A4NMKK4R3ko1BGYlzuJt71XNoeAmw+yVis7vxE7clYIX7
-         K8FLRG621Tl9wxo4pULgNMDj5aS8hRxljj0KKnmvRqRpJVJzj9vPr+xXZFfRW+dbPsXc
-         UPX/wIqJpVv9C1lF5idpaltVzoMLYRuhyLfStO6LLeg6sBuTNby27ccQ09a+uoY84OmT
-         orCiCGIqRns6tTuP5ByttYjUZDMztsypTQCvFM8EUT0GINoq7WMglffZLpZPitzsLZCu
-         ZTtlGuGVHqVdSK/KMmj/AFhfj03ge6bAXFgmO4N/5oQtePoVkJUA7UP0NC4SO8CKXJuL
-         1FYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744012448; x=1744617248;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hWxLTEfGg4dc1Gy9lnOUuyFlka68Uiuevn5CcOM/QrM=;
-        b=e76bTebOg2jJ///nPzTcH7XrT3GHwvpgsSUPB0SFZoLqSEZ3UpVXhw1JT87CWRzoc6
-         FWSUKsV0adrV39umPJUsqO6Vchbd1NKQqivCMAl/LO/Ln2yXN3k2//6espCR9KUm+jw0
-         vGkJWkE9piq63u+tHWAryGpokT18/maEnavSpk+p/1WppCLfZYDD7dmxRpqGbj/ZEpwO
-         x89itl1FSHcfOYHD/DdbNogUgi6xcVgkj2uvGcb96fNQ32mEBfDKYcG07u6gQqDgLsr7
-         pFXlxLI4gp2+nQAE8QMY6ZzuRi4FDH+USk7IokpYlwhGwUsNTt+sLySKdt+MDxmpXU3Y
-         wSXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0ljYLNL1tQZMFi0xR/ze2StT6TDdQuyLe4RC4Olf+2ptMcTWCv9ux+gcwy1ffoqXovHqng2PFVXY3RQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv9FZGZv4Sg0vOEiRb4MeNMoISC1IKIqUJBVsfrxF6idQQGcR9
-	i8CaKfTrBszfYMuKx4MwnbmGFeVh/ZMKoQehiKeGJ5geuYGhb1s4rQ+NVwfc5Qw=
-X-Gm-Gg: ASbGnctrzc1rCBoiY09ed4Tbd4nK2d9LIoGxVPfQL3/B00G/m5QGFczt/g/6ZSV4TV9
-	6iDbHNgcCbDGvuo7OwhcF8qMftrTu9D69C/mmugqYoUYk1Na7MPcgItg+YB/VUVi0VVsPlwdELl
-	dLa4VZ4iKW7lKm6b1SotAN8RJqy3zFQbMBp/jeIvomcvhNhqgjL1erA3vadFcrNUuhWnyBPCH21
-	1sVeW8UgnTcS8oNH0lAuSB55McRibVgGbwA8oOEzY1ntblZWZfKNwPtDOF1FrdVny0d+IXxDsbL
-	osM1uIwCVvhEASGFbpjb2ceFFDARXLFUjXc2nn+IZv3M
-X-Google-Smtp-Source: AGHT+IHuTVRTtHbtmx6FjkvlzIbJVnydF8KMECgaQSarUJ94LjdvsgdrKIpoRqGzKFTua17ynl8uDg==
-X-Received: by 2002:a5d:5983:0:b0:399:6dc0:f15b with SMTP id ffacd0b85a97d-39cba93cd69mr8684049f8f.48.1744012448217;
-        Mon, 07 Apr 2025 00:54:08 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:8c64:734d:705a:39a7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c301a9bcfsm11494514f8f.33.2025.04.07.00.54.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 00:54:07 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	Srinivas Neeli <srinivas.neeli@amd.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Manikandan Muralidharan <manikandan.m@microchip.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Sander Vanheule <sander@svanheule.net>,
-	Bert Vermeulen <bert@biot.com>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH] dt-bindings: gpio: Correct indentation and style in DTS example
-Date: Mon,  7 Apr 2025 09:54:05 +0200
-Message-ID: <174401244312.28249.6012698269615129555.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250324125326.82270-1-krzysztof.kozlowski@linaro.org>
-References: <20250324125326.82270-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1744012492; c=relaxed/simple;
+	bh=SOZUqudDNfVBB30xlSpIXat86v1zi5Cu5tisd1gvvw0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XEOVNWg6OW12vgB8IHziHO8biH2zIJoCc2ov0Bv74TEWrCTKpWCFD6bxtyRi2D/1QBCKRLqsfpLriXpB/7nT3e4neWoP2djZaETyOkCtb7/vGZvBjFFGlRwjxhBuz9SSY3NErRFPKQtShhJ3kGk0ArbMBRCgQz0/FbolTBRA8Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IHXuTen5; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=SOZUqudDNfVBB30xlSpIXat86v1zi5Cu5tisd1gvvw0=; b=IHXuTen5rUGs9EX4Y6Y0WeG6n9
+	s70R3Eq36Py2UYQ/bemX8p/nLBZkpoBE/PPzxRXtUQ//cpHLLCytPNF/nkamHBu3kZtF1bMkb2Yht
+	uL/xsxJJIZc02xJcHf+J3sdJjhAxiU1trT0O8KfvP/1hmK/00OvA78Te4m0rB8T6RjKMIUBx6BEp0
+	kGPBpTt0Tx4zUjYhPCM4w8Ah5NDh0G2d6RNhser+NY0SE1GT2RyiknXOsWqq/ClVOFTqYyRqPB1wo
+	EQctUfalzYA8cSwf28WIt7ZU4Ucp/G+FTjuINYCgQzMpBncrl7o5QyGtdDz8ytg5ig2KK51bxcTLE
+	QF0N6Zyg==;
+Received: from [172.31.31.145] (helo=u09cd745991455d.lumleys.internal)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u1hJe-00000007sgu-3M0I;
+	Mon, 07 Apr 2025 07:54:46 +0000
+Message-ID: <f54f46399aa2d0066231d95ef9e98526cf217115.camel@infradead.org>
+Subject: Re: [RFC PATCH 1/3] content: Add VIRTIO_F_SWIOTLB to negotiate use
+ of SWIOTLB bounce buffers
+From: David Woodhouse <dwmw2@infradead.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, virtio-comment@lists.linux.dev, 
+ Claire Chang <tientzu@chromium.org>, linux-devicetree
+ <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ =?ISO-8859-1?Q?J=F6rg?= Roedel <joro@8bytes.org>, 
+ iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+ graf@amazon.de
+Date: Mon, 07 Apr 2025 08:54:46 +0100
+In-Reply-To: <Z_N_DNXq9VbPvTfA@infradead.org>
+References: <05abb68286dd4bc17b243130d7982a334503095b.camel@infradead.org>
+	 <Z-99snVF5ESyJDDs@infradead.org>
+	 <fb7ea3ee5bf970fa36b012e16750f533b72903a0.camel@infradead.org>
+	 <20250404040838-mutt-send-email-mst@kernel.org>
+	 <67bd998bfe385088ef863342b9f8714754585476.camel@infradead.org>
+	 <20250404043016-mutt-send-email-mst@kernel.org>
+	 <F30D33D5-38CC-4397-8DC8-9EE1B0FEF40D@infradead.org>
+	 <5cc2f558b0f4d387349c3a2936ff00430804536d.camel@infradead.org>
+	 <20250404062409-mutt-send-email-mst@kernel.org>
+	 <7fd789b61a586417add2115f6752ebec5e7b81bf.camel@infradead.org>
+	 <Z_N_DNXq9VbPvTfA@infradead.org>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-W3jU6GFfEbE2PIQ3ApaF"
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
 
-On Mon, 24 Mar 2025 13:53:26 +0100, Krzysztof Kozlowski wrote:
-> DTS example in the bindings should be indented with 2- or 4-spaces and
-> aligned with opening '- |', so correct any differences like 3-spaces or
-> mixtures 2- and 4-spaces in one binding.  While re-indenting, drop
-> unused labels.
-> 
-> No functional changes here, but saves some comments during reviews of
-> new patches built on existing code.
-> 
-> [...]
+--=-W3jU6GFfEbE2PIQ3ApaF
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks!
+On Mon, 2025-04-07 at 00:30 -0700, Christoph Hellwig wrote:
+> On Fri, Apr 04, 2025 at 12:15:52PM +0100, David Woodhouse wrote:
+> > We could achieve that by presenting the device with a completely new
+> > PCI device/vendor ID so that old drivers don't match, or in the DT
+> > model you could make a new "compatible" string for it. I chose to use a
+> > VIRTIO_F_ bit for it instead, which seemed natural and allows the
+> > device model (under the influence of the system integrator) to *choose*
+> > whether a failure to negotiate such bit is fatal or not.
+>=20
+> Stop thinking about devices.=C2=A0 Your CoCo VM will have that exact same
+> limitation for all devices, because none of them can DMA into random
+> memory.
 
-[1/1] dt-bindings: gpio: Correct indentation and style in DTS example
-      commit: f4271a891dca46ecf6813273ed63e502862f45da
+Nah, most of them are just fine because they're actual passthrough PCI
+devices behind a proper 2-stage IOMMU.
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > So on x86 it might be an e820-reserved region for example.
+>=20
+> Hasn't e820 replaced with something more "elaborate" for UEFI systems
+> anyway?
+
+Sure, it's no longer literally a BIOS call with 0xe820 in any registers
+but Linux still calls it that.
+
+> > I don't think we want the guest OS just *assuming* that there's usable
+> > memory in that e820-reserved region, just because some device says that
+> > it's actually capable of DMA to those addresses.
+> >=20
+> > So it would probably want a separate object, like the separate
+> > `restricted-dma-pool` in DT, which explicitly identifies that range as
+> > a DMA bounce-buffer pool. We probably *can* do that even in ACPI with a
+> > PRP0001 device today, using a `restricted-dma-pool` compatible
+> > property.
+> >=20
+> > Then the OS would need to spot this range in the config space, and say
+> > "oh, I *do* have a swiotlb pool this device can reach", and use that.
+>=20
+> Yes, that's largely how it should work.
+
+The problem in ACPI is matching the device to that SWIOTLB pool. I
+think we can expose a `restricted-dma-pool` node via PRP0001 but then
+we need to associate a particular device (or set of devices) to that
+pool. In DT we do that by referencing it from a `memory-region` node of
+the device itself.
+
+The idea above was that the affected devices would state that they are
+only capable of DMA to that range, and that's how we'd match them up.=20
+
+
+--=-W3jU6GFfEbE2PIQ3ApaF
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
+ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
+AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
+BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
+MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
+a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
+jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
+GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
+aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
+nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
+8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
+HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
+IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
+KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
+BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
+QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
+QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
+ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
+/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
+uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
+xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
+W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
+c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
+VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
+NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
+DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
+sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
+w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
+i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
+kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
+0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
+ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
+blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
+hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
+VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
+HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
+ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
+AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
+cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
+cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
+AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
+aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
+hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
+iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
+8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
+JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
+xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
+EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
+B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
+MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
+KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
+Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
+nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
+WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
+W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
+nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
+g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
+9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
+9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
+sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
+a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
+ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
+AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
+dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
+Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
+MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
+YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
+4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
+6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
+QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
+nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
+MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
+VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
+ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDQwNzA3NTQ0
+NlowLwYJKoZIhvcNAQkEMSIEIAuUwcKPo+gMAB1jQdv63YN0Hoxhpngnzax0hPTv0X2qMGQGCSsG
+AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
+cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
+VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
+cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAkv7etMYOpU+j
+ksVBG9OUjztO+23cHatA3aBzytdj4obSfffLWagyvnceQ21I7Ms7HkFwqwrmo+R9rx/HanFYnLrL
+EHqWbWNj+OxsbNTfPOx4mWulf4VNOw4tuIpw9yomp8WpoV8znhMzJwYilzuZY9NOBgmejRVbV8Bl
+Wfis5tJOf+k5xylQRk7pJwfwc6hj2urhcF2bXmZm2onxuXKXGZDoPRWMwepv5ENr7QsXDjTMPPra
+X5tYsN0OfzIrBGKHByyuD/phCsHCtB3kbB/xAQlMoDvNu4Ych0++dXgQFNJ686Lw8TmsDlh35lKq
+b/Hg1cocoWlqYtUZgWru7X4/aT8pRLgnFZse9Lyi667UWeOYAppFswlR9p7/cu7h5dkIQFb3ARAk
+gIuTdagqWxG+JyaXJbAEDYaRat1wQs3RxHs9LmqsAo/1QkWiJgvWD0H0Xaq1bLzZLo3+KtVK7Q1h
+uhm47BkO5PQYQKMBeiEEuzVttA8T/KpJdZBJIeu9BJhoMLdrdEtG61/0SB85jzdHabRdpOsJ9jm7
+wOsA5WNw/J0ro8MoGEEBFgRVqxJaLkhXAY5E85Zu+3LeKyAH6v4O8+wdc+zycgc5Qf3zzyv8c2sx
+3ntqGq9uU6TpJWKkBc9cdmxHYDJjqA+/ju1xzybK6RXNTSTCEwOfZ3f1KYawuEsAAAAAAAA=
+
+
+--=-W3jU6GFfEbE2PIQ3ApaF--
 
