@@ -1,89 +1,87 @@
-Return-Path: <linux-kernel+bounces-591092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E029CA7DAF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:21:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1753DA7DB01
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C4D77A2219
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:20:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCAF13A9AD6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA0E232377;
-	Mon,  7 Apr 2025 10:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D41230BE2;
+	Mon,  7 Apr 2025 10:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hifiphile-com.20230601.gappssmtp.com header.i=@hifiphile-com.20230601.gappssmtp.com header.b="xsgOGhhZ"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gCw2SI5U"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2081.outbound.protection.outlook.com [40.107.101.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B83231A2B
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 10:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744021267; cv=none; b=bYeLeV/laYKyIUplz8Oq7TR1TJjMlAG2CbLXw3YAL+NoUH1EJjbIywO6KPKBKtgiPzc23RqWPmYcDCymRgrlvmMI5rc5vQqt/tXGVaTkWR+K5zIqyLjyyOTG8BzqFmEadOPvNOal88gp6LXwDAAjljxCTzQIu0y8ZNhkJ16QQUM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744021267; c=relaxed/simple;
-	bh=DnYw7IC8xWuMG+UL/gQ5prUj9HOQyrvroe8K4Ecs5ZI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AwhK2KOipn6ghHOvyO+Eb1hUaSP+g+5DI70spgg6W6Kc94NLlhPF0+d15TgQtYip3Yq3SyOwAtS8I0gIH7Gt6Z996gyEAaaeHvs8JFHLfBHOXYMaOXSiZF2tQTsz48qtH7LcrborTI3JYDWVgHNtvqU7TSIxUU8cwu+nuJwS7F8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hifiphile.com; spf=none smtp.mailfrom=hifiphile.com; dkim=pass (2048-bit key) header.d=hifiphile-com.20230601.gappssmtp.com header.i=@hifiphile-com.20230601.gappssmtp.com header.b=xsgOGhhZ; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hifiphile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=hifiphile.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39727fe912cso1761234f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 03:21:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hifiphile-com.20230601.gappssmtp.com; s=20230601; t=1744021264; x=1744626064; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=L5jGr+pI3zOZTWXmjHZAncBL8qM4rtZILEfUKQGcw3Q=;
-        b=xsgOGhhZ6JgjDw+UVon4kCJDL0z2E7tbvcdnLQwKXhhw/SqwATEsZidArfJeGsYHpw
-         yUMNDBGoUJbhw0hufEoRJb8fRASlzLhY4Jn5fpLuhjUey8Mxnv0fBQtneBf8GOnDI6Tg
-         jSHo8i6Mr8mzR7Uqq8PiiDFG0rz3QMrMsu9laAZZFWWmdiM7qNz44r4IbrUO6Su+6o69
-         miw2w4JrNldvXBspT5qqy5rbGiOz5WUgUIBRXjjlAjqgOq5KGHUVMMZf5NkCT9+3O+Nc
-         Mlzf+YQuUIp/+Lv5KwV2SZgS/dqt8TDWzsjr/KSXbC1CvdENaZIiCCuMUYDSGq2pCrkA
-         IzfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744021264; x=1744626064;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L5jGr+pI3zOZTWXmjHZAncBL8qM4rtZILEfUKQGcw3Q=;
-        b=Mom7SfJywnpJLNHaFOl5kZamBsdDdrXE1YQnRm6xCAcXY3GS6L1GIRp9lPBQgZKnkj
-         JXAnaHKCocOVMlxJ5aIuQHMS/VkUjDBKysrhcOCgHGC/3UCrnc2zDAN9y3GHmq0OYHBf
-         Dsh4qxyihJp7IYECnaPHMGaD1tC+WugqsXUP4fB28J6xPcDV9GKliH4z2gBf/2CpIg7V
-         PEK06Y5JBYBgpomYfJxbCS7KXWdbIy8bOPJvlCYVupXae9dwHi8iklsV4bk8TR+L/NGv
-         g0SjD8KYBj7AFOvDGPi1XBt0wo6m6x34z/PoaNoA8jF1mNbRR2XR1ykk5V7kxJR/vWQ6
-         0sbg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/HBEt4JbmjjCpPIh3mwv2itfIE0L7hpyo1gv9UdE4uBSePc0Pu5vl32d/emtB8TsldTezfXJFjoSTmzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLMwVQXyqb5vxV9yl3XnPFTRVhAzYSE01TvU6SftUlk7y+Ah84
-	0UJ5DGJVyPNbQOgr8Tn1XKSMg1H2glMX414xhc88Kj5DBpcxfenr8Xqk89n76woWeCKWhZ5dAW0
-	gm1E=
-X-Gm-Gg: ASbGncv9nQ4UqbND2Kb4OrcHxcUylnhm+TB0fOb6IKtyoo7KOEc3ZdBohtZ/URAyT+F
-	UznZOtZ1jz0KPyVdaKQ0PwPJe69EcYM+Z8i0RlAIi0/eIcGEPdXK8/ch/oHAW6o8qwhUsRIv10V
-	PIOTf1ENgxd9qdNfpzFdZpkHhWHDF07dQnoEGWWOttL6WgutDvpCTbaiAlafIkJpton5/Dcr44a
-	csVKphF4FZUTk9saBV7ivGbtuQHeym/G44MYTCEn4CmCvEpfJVngXVAvQQJXQtHRZhCLDLeZsnb
-	a4c1pr5rbogLsDtIoyGtQLzije8aDrEu59XQqG3VkncrXUPBMjAciuao
-X-Google-Smtp-Source: AGHT+IHIVQFFxQYUM9c9p5jCB+KaT/H7u/LzBHBry2a7T1ZwTP6sqndz9DYPvtVDPTHqnOcrzzxy+w==
-X-Received: by 2002:a05:6000:2907:b0:39c:1258:2dc8 with SMTP id ffacd0b85a97d-39d6fd0756emr5600592f8f.57.1744021264047;
-        Mon, 07 Apr 2025 03:21:04 -0700 (PDT)
-Received: from localhost.localdomain ([78.199.60.143])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-39c30096896sm11740533f8f.19.2025.04.07.03.21.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 03:21:03 -0700 (PDT)
-From: Zixun LI <admin@hifiphile.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: Zixun LI <admin@hifiphile.com>,
-	linux-crypto@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] crypto: atmel - add CRYPTO_ALG_KERN_DRIVER_ONLY flag to atmel-aes, atmel-sha, atmel-tdes drivers
-Date: Mon,  7 Apr 2025 12:20:49 +0200
-Message-ID: <20250407102050.1747860-1-admin@hifiphile.com>
-X-Mailer: git-send-email 2.49.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBED1A3172;
+	Mon,  7 Apr 2025 10:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744021435; cv=fail; b=F8U4Hj+/GHc0xJzmxVEgrkZqW7gVVgmxC25gPv6BJqd6EDYRj4rpLDk7jVXjrMy8Gce3IHs+WQ3pB+54aOeOGNWVoaAomfHl7V4ZIDFstkFFBwfQgFLvFBL62uRr48a1DC5832KyD6UVsFyoBT0UG1IA1fMprijv6p9vUIDMH98=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744021435; c=relaxed/simple;
+	bh=A5FSntyy2ycBfN+97RQYnfEpETljXpOkzNegHKef2Zo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WeDVU+ctU+Jo7xPqP9gFYlhMFoIUzkcjMX3wk4pbkKqdDq7iSsREbBgLAGkLJdYrZS4lk35PKX4HoqmxaESIjHvCYnOkjIHMS87Jla9FgjxVkA7wvQMjQFrMRm1FxR17SviOlWa0+oQhWi66CDpD9WemdXIgl2zpMHZrgpd494k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gCw2SI5U; arc=fail smtp.client-ip=40.107.101.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Bi3FnxlyVdbqFmL4rPTruLHcsXVa5KxWcsMIU61A8Gnhr9wIPcGTA+xb9yygWq8piwxzymMZ3aiOKZHAoRAMXceEj83p3EVDRabSaxgXkxK/cuLhlB1LQZu+3WR6doKjR7GIeSoC4VEC1xBc4Lju7pEFzOrkcQWtsmxXRRCPwyxphxmYay0NZCw7dyIwli5GcvlM8FQ+U2bvGU9cRoHkh9tloy8/fj3GIMmsldp1ZorcF6vhV/xhkUwpjHvY6kU42Kcv/QBLjadEstjGtqJ0NUK2uB+kfm3dFcrSnqRdTgnYhKaLflPZv1oz7ZxPvIh9e3dth7Wi6kGrJS1+3NoSfQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1DHsVckVTvwPZeWJoRfq3TQ/BEl7/yl79LOmdUujHIg=;
+ b=qSQFYEeUKp+Qbs2xMH6+/M5JXjucxeYlMI5HYZo6Q+neg2Kw6f1DGiDDUWAekOH0crpSEJBX0qjr9V0hF5z6HCEfVHOJvovZB7w1wBzhPMGYyz2wUgBKD90fzp3dO+3g6anrlG4lVGVVDsFjopjVrDSF3PeWL8tVugoJJGClZXHC9/babdq8/9dPaEvUYGFSkUxCrfqo459riTNxuHvFwqnoBVL9fxEymlIKqap9DgGwXoxXFcgYu1Nf/ymCRSaDb7BQv0HAfTCzP50eZ6LsmbXqCKGkhl15TcRQuMO0Wo5GjOR4VFrIXgW1fcEJPTZJ/UD8U5ZMQX4uA+LjWI2JDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1DHsVckVTvwPZeWJoRfq3TQ/BEl7/yl79LOmdUujHIg=;
+ b=gCw2SI5UhIliU6W+vJXT1Gk+DSJjCaI9oUPazPgalqYpP8KXmRPAUxj3f74iAhTzZRIrqk/QnZ11V1diSel1RAyDB44RgSaWplJo2rjxXhZJIcRf+3Pt80j78AIbN6pXabgg48giUiHAih8U4WXgu3spUTJK4gckEFDE3SgqG5MCP0WC9T/UvS0xk+5bWHR6mO962cQCOVzs7yrEW/LzBtWiCJM3JeEfmk4dXpqJHJf4o97wvag93YkqEVsl6d2tVv8vdqjy0BKzEq58Ij7XrOa6HVudlwG2EtoI2vDNuAJ9iBAA0SpnwWDV87bq20KEDCtR9FluFAsPAxiPbx1+Xw==
+Received: from CH2PR19CA0004.namprd19.prod.outlook.com (2603:10b6:610:4d::14)
+ by DS7PR12MB5766.namprd12.prod.outlook.com (2603:10b6:8:75::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.33; Mon, 7 Apr
+ 2025 10:23:50 +0000
+Received: from CH1PEPF0000AD77.namprd04.prod.outlook.com
+ (2603:10b6:610:4d:cafe::24) by CH2PR19CA0004.outlook.office365.com
+ (2603:10b6:610:4d::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.34 via Frontend Transport; Mon,
+ 7 Apr 2025 10:23:50 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH1PEPF0000AD77.mail.protection.outlook.com (10.167.244.55) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8606.22 via Frontend Transport; Mon, 7 Apr 2025 10:23:49 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 7 Apr 2025
+ 03:23:38 -0700
+Received: from robelin-Precision-3660.nvidia.com (10.126.231.35) by
+ rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 7 Apr 2025 03:23:36 -0700
+From: Robert Lin <robelin@nvidia.com>
+To: <thierry.reding@gmail.com>, <daniel.lezcano@linaro.org>,
+	<jonathanh@nvidia.com>, <tglx@linutronix.de>, <pohsuns@nvidia.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<sumitg@nvidia.com>, robelin <robelin@nvidia.com>
+Subject: [PATCH v3 0/3] clocksource: fix Tegra234 SoC Watchdog Timer.
+Date: Mon, 7 Apr 2025 18:23:20 +0800
+Message-ID: <20250407102323.2690911-1-robelin@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,83 +89,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD77:EE_|DS7PR12MB5766:EE_
+X-MS-Office365-Filtering-Correlation-Id: b3d5530e-1e98-4faa-c521-08dd75be49dd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1n1umrqr5uMrTAzEjyiJ0UvJqAjXhEpWNlQPbt0hQTAQQBLbBDZbisrTRv/t?=
+ =?us-ascii?Q?JC72l/OMHqvG3yGdJXSkmmxeaI0CiOOCA7su4Lkb/6aDwcmX5nMROK5Jkej8?=
+ =?us-ascii?Q?wwAWOrDkahkctDEkAKQ446p/CLG4d4DtlFERMWaA0bZ3AzJrPXK0BA3gSB8B?=
+ =?us-ascii?Q?BACny5V6sSa+OsJXyIjK01ij0gS4AMBO3zL5cWeUh6gTpSlKo8w041TFwghA?=
+ =?us-ascii?Q?u8kAND4Xq/YvJBB6XtmaxVLAsHAn6F4/3Wx5EJtqTDWa7tNYJV9gVU3afAsS?=
+ =?us-ascii?Q?rwluJvLnutG/WExETG5eN+CnWYzrcEDKETPrqFF8YGxAjCEJb8msEe/ZLoE/?=
+ =?us-ascii?Q?jZNhH8iqiO3M6qp83SqS0sXPfCVNDMu9dmX8c1KS/B1DVR7hmueVHKH3TIRC?=
+ =?us-ascii?Q?9UW9LskCX8ZsrltWfxvkXLcJNXMosmWRXKkzt19CHZ4gPnNYgIzgXlxk49mh?=
+ =?us-ascii?Q?6hQoRRng1/B/pNsp/n9+OhzaNEJXOF+cQaWef5MZDUJnpNqS/XKXA7q4TL3O?=
+ =?us-ascii?Q?ZynYhGoB4HVOIXQHXsDfC0nLGp0S8bBvk2Wlm3+Z4GT21ByFbba+lJI/QIN+?=
+ =?us-ascii?Q?5r3OiN8X4vXxvsNYpaWV0haSk0FbyVuR574nurOaqF6eSl/ZgsZ/8z7Y0lT9?=
+ =?us-ascii?Q?RgO4qPFv6df8t6KovQ/2UHHbRWd19/HywC7w+BI5IYikpSuhr03NGbOuu6mp?=
+ =?us-ascii?Q?MgNd8xvSZJODnj9hs3UqtHdJkWF5Pg/g7tf8AgI0OHFN6oAGDtdbdh/DvHfU?=
+ =?us-ascii?Q?Rgpo1LiVMt6fYLkHJJ8lZCSxIW8nqw8uchCZLm4m6LEGWV2OeQsKLWgPovWg?=
+ =?us-ascii?Q?Jxi9PCy/yf4TRwukCm1U/+w2ESDv8uKp1hrldnPi2JksJCDkQuc93yneOzWo?=
+ =?us-ascii?Q?jxYLzQmiwGeeJfYtjF3+0LdXbocsUywmliuc3MQ+yHrwPqi1Sjv3gBJTbAuM?=
+ =?us-ascii?Q?XnerB0jHfPGglNZsmHaRBYjdAu7D/hpmO/RUovSajuc1AhJfbgSjjOtoWFqP?=
+ =?us-ascii?Q?0XH8NB8Y0049oD/6Uz93u3GNHcqnq8ZGzCYSwyFD/JR724Poa1DZZ1DZJIkS?=
+ =?us-ascii?Q?u/uGYdUOSnaZ5X73z0hG/47vBtyhhPz90Xe4eciQMh2H4ri/sGvYOYYvRmP3?=
+ =?us-ascii?Q?apG4co9GHMM0Ao25+7NYTQ/pbfHBxNmRoG+y+fBv9XI9umATNvXZL+dgZkTC?=
+ =?us-ascii?Q?GWqeWlYNNv/qd4yRpN4KrVrtKrTQ4eB/cwuItmIDsD70DqmxCJ9/RSIfpqHz?=
+ =?us-ascii?Q?qB/TVxZXQlxHTsk5R6LBXuUrJb9yIKlM88Wtj9fTk0rC1L7ORMUk4dxpsL11?=
+ =?us-ascii?Q?86qmoQsMceFQKIgzzsf1BwcQ/imRR0dy0k3DXAIp0bGykwg9pbp+zQkZZnGs?=
+ =?us-ascii?Q?5DmGnzR6L+1tCNuTttszl27Js0EjqP+YqUT4aZGYPK2PVoNFOcPrQOllhNJY?=
+ =?us-ascii?Q?DPa52huBeTCpQcs1ef2Z5afzcn+ga+qJppUYMSksP0fxz+cL471GkJsIaJT9?=
+ =?us-ascii?Q?vnHyB0uVGJnfYEM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 10:23:49.8422
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3d5530e-1e98-4faa-c521-08dd75be49dd
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD77.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5766
 
-This patch introduces the CRYPTO_ALG_KERN_DRIVER_ONLY flag to the
-atmel-aes, atmel-sha, and atmel-tdes drivers. This flag is set for
-hardware accelerated ciphers accessible through a kernel driver only,
-which is the case of these drivers.
+From: robelin <robelin@nvidia.com>
 
-Signed-off-by: Zixun LI <admin@hifiphile.com>
----
-
-v2: fix indentaion
----
- drivers/crypto/atmel-aes.c  | 5 +++--
- drivers/crypto/atmel-sha.c  | 6 ++++--
- drivers/crypto/atmel-tdes.c | 2 +-
- 3 files changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/crypto/atmel-aes.c b/drivers/crypto/atmel-aes.c
-index f3cb73df941e..266e1d0aca3c 100644
---- a/drivers/crypto/atmel-aes.c
-+++ b/drivers/crypto/atmel-aes.c
-@@ -1948,7 +1948,8 @@ static struct skcipher_alg aes_xts_alg = {
- 	.base.cra_driver_name	= "atmel-xts-aes",
- 	.base.cra_blocksize	= AES_BLOCK_SIZE,
- 	.base.cra_ctxsize	= sizeof(struct atmel_aes_xts_ctx),
--	.base.cra_flags		= CRYPTO_ALG_NEED_FALLBACK,
-+	.base.cra_flags		= CRYPTO_ALG_NEED_FALLBACK |
-+				  CRYPTO_ALG_KERN_DRIVER_ONLY,
-
- 	.min_keysize		= 2 * AES_MIN_KEY_SIZE,
- 	.max_keysize		= 2 * AES_MAX_KEY_SIZE,
-@@ -2471,7 +2472,7 @@ static void atmel_aes_unregister_algs(struct atmel_aes_dev *dd)
-
- static void atmel_aes_crypto_alg_init(struct crypto_alg *alg)
- {
--	alg->cra_flags |= CRYPTO_ALG_ASYNC;
-+	alg->cra_flags |= CRYPTO_ALG_ASYNC | CRYPTO_ALG_KERN_DRIVER_ONLY;
- 	alg->cra_alignmask = 0xf;
- 	alg->cra_priority = ATMEL_AES_PRIORITY;
- 	alg->cra_module = THIS_MODULE;
-diff --git a/drivers/crypto/atmel-sha.c b/drivers/crypto/atmel-sha.c
-index 095ba254a25c..b4e917a8465e 100644
---- a/drivers/crypto/atmel-sha.c
-+++ b/drivers/crypto/atmel-sha.c
-@@ -1254,7 +1254,8 @@ static int atmel_sha_cra_init(struct crypto_tfm *tfm)
- static void atmel_sha_alg_init(struct ahash_alg *alg)
- {
- 	alg->halg.base.cra_priority = ATMEL_SHA_PRIORITY;
--	alg->halg.base.cra_flags = CRYPTO_ALG_ASYNC;
-+	alg->halg.base.cra_flags = CRYPTO_ALG_ASYNC |
-+				   CRYPTO_ALG_KERN_DRIVER_ONLY;
- 	alg->halg.base.cra_ctxsize = sizeof(struct atmel_sha_ctx);
- 	alg->halg.base.cra_module = THIS_MODULE;
- 	alg->halg.base.cra_init = atmel_sha_cra_init;
-@@ -2043,7 +2044,8 @@ static void atmel_sha_hmac_cra_exit(struct crypto_tfm *tfm)
- static void atmel_sha_hmac_alg_init(struct ahash_alg *alg)
- {
- 	alg->halg.base.cra_priority = ATMEL_SHA_PRIORITY;
--	alg->halg.base.cra_flags = CRYPTO_ALG_ASYNC;
-+	alg->halg.base.cra_flags = CRYPTO_ALG_ASYNC |
-+				   CRYPTO_ALG_KERN_DRIVER_ONLY;
- 	alg->halg.base.cra_ctxsize = sizeof(struct atmel_sha_hmac_ctx);
- 	alg->halg.base.cra_module = THIS_MODULE;
- 	alg->halg.base.cra_init	= atmel_sha_hmac_cra_init;
-diff --git a/drivers/crypto/atmel-tdes.c b/drivers/crypto/atmel-tdes.c
-index 099b32a10dd7..96fc19cd62a2 100644
---- a/drivers/crypto/atmel-tdes.c
-+++ b/drivers/crypto/atmel-tdes.c
-@@ -898,7 +898,7 @@ static int atmel_tdes_init_tfm(struct crypto_skcipher *tfm)
- static void atmel_tdes_skcipher_alg_init(struct skcipher_alg *alg)
- {
- 	alg->base.cra_priority = ATMEL_TDES_PRIORITY;
--	alg->base.cra_flags = CRYPTO_ALG_ASYNC;
-+	alg->base.cra_flags = CRYPTO_ALG_ASYNC | CRYPTO_ALG_KERN_DRIVER_ONLY;
- 	alg->base.cra_ctxsize = sizeof(struct atmel_tdes_ctx);
- 	alg->base.cra_module = THIS_MODULE;
+This set of patches includes a fix for watchdog for it may not bark
+due to self-pinging and adds WDIOC_GETTIMELEFT support.
 
 --
-2.49.0
+V3:
+- Improve comment description
+- Refactor to fit codeline within 80 columns
+- Remove unused if(0) blocks
+
+
+V2:
+- Fix a compilation error, a warning and updates copyright
+--
+
+Pohsun Su (2):
+  clocksource/drivers/timer-tegra186: add WDIOC_GETTIMELEFT support
+  clocksource/drivers/timer-tegra186: fix watchdog self-pinging
+
+robelin (1):
+  clocksource/drivers/timer-tegra186: Remove unused bits
+
+ drivers/clocksource/timer-tegra186.c | 86 +++++++++++++++++-----------
+ 1 file changed, 52 insertions(+), 34 deletions(-)
+
+-- 
+2.34.1
 
 
