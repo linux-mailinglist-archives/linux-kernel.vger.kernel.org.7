@@ -1,143 +1,114 @@
-Return-Path: <linux-kernel+bounces-590684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A0F2A7D5BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:28:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB0D0A7D5D8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:30:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 979EB1890AE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:25:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A80CA16327E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E17322A4C9;
-	Mon,  7 Apr 2025 07:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1F22356BE;
+	Mon,  7 Apr 2025 07:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bV2WPlvV"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TKpfrJH3"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A30C22A4CC
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEAC22DF9A;
+	Mon,  7 Apr 2025 07:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744010445; cv=none; b=jPjMcfXrMomgfZhQb7y0FOYz5mjd0cGEzsru4yP6w91EPn64WaqbvKTFzszOmIafpLOT+6XYSFsW/eKHm8fz1X8JLAW10AjXauaVFidLc9RctlHlzPLxrllPPkchwcN1I1zI+feD3mLQJ8HtNQ0wHNlPuk42he5Yb1KpBGHxftw=
+	t=1744010518; cv=none; b=rmzPdUIs6a4l77gEsnbBiSeq7cPoBIvFb3OamPZwzNZD+kFaR+jWjT3EiSxnifkGX5Nickih5K2YUBBv0TV64k/KyRpHhJJEJNwoG6jHTj2UIzSvd9VMpUKsc67Pw1YW79/pMib5/vZ2Ktph/bwQZX3OhfzYIhGi4E9EyzbUXQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744010445; c=relaxed/simple;
-	bh=cHMIUDK3l74NZLLEqV2LIUIplXGhecJNcFy3KgsXMhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J2moUHNI2z/uBUniombnV49eSsZwEbSDvrIOnuIhd4AIFumIjBSgfUtZ0XvOcIaBvUzeKhsenzSkOPO20O4MhF6gjN7gAAz2idpf8EhRUJa2MiguMLSVF3okx2+i5LpTMWcBnrwXDBgvYhKhGuYVbM3tYsx+dKDA8+aQwAx8RUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bV2WPlvV; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3913d129c1aso2697477f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 00:20:42 -0700 (PDT)
+	s=arc-20240116; t=1744010518; c=relaxed/simple;
+	bh=lq/B1uM+ZdZwRZ6B00/5OflkTp2/rdXR/2K2PuehMkU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jReAFc7gsYZ/bqiAQ5ZAHLcfRxqFe10BY+tVy8PjaKhd2tY7DzenImXZagWMjnX84ex/v9FaPT1px3GvjdiGnb5FjuTGbVamhqJlwG+4G+hlbAZ1NVJSF+Wwzxrhbmc+ioG+6Ic0+AT6n5w1R7gMkiJMKFdNF8Kp++JlnGboKoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TKpfrJH3; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-739525d4e12so3355111b3a.3;
+        Mon, 07 Apr 2025 00:21:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744010441; x=1744615241; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8AQPY5eAZttYfbBPqcFbME0mxQEUbb1b9Jm7VX+7QX4=;
-        b=bV2WPlvVJ5ssLyVMN9Ju549lQjaWql7xjS6KkQpj0tBiQA4yE8zAC75pxQnLn2wOtK
-         WIYNcQWCBJ9/+LCyA3NKy9cHFrmeWnPjPv30M7RAfCNTW1yG1rHXhi/IwoTYQ8Y/4OjX
-         HrZXACo8pBCb7bOGR3bKnZiBgSU1orsqmMCxeEqoFz9tao7SY6GILXPciSRMnHQo2ED8
-         xQb0qtA3v0apYMH5m+zgBUNovTZeU4g2zBEbBDIULroPG2RfqvRFfG6ZMg17iDmNGIqa
-         FcewnxFYPjShUUumoYPUMxduf2n5sMwxQLUSTVqKb1RepgCCn0KBO2EfnfUnAf+KSclv
-         TeRw==
+        d=gmail.com; s=20230601; t=1744010516; x=1744615316; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/dP9TEDefRiCfKDK6dCXsCuGcFPJWg2jzI0nw7IpyNo=;
+        b=TKpfrJH3WymlWQcBN3anrZLU7ant6M3E7dxMQWgV4O1VfwiswDMjWVKJHEqUU52rOf
+         Hue82SLsLuFnHSxK2VtoHo6JY6PqTQ9XE885aEMM23g/iysetR9pgcyk3lvBvVa25Y42
+         R1PQ1jXC/Qxjn0ll3Dn58cgXCJPf2adIcWbUNSMeibdMuYlqT+8SiFIBayV6uvm5uiSo
+         VIXHNoMDbZeWJZ2vHXkeVTAw1ZZgougifwFnqqnHslJ8qFInZah+UmT3BrdmKllWqIwg
+         b6DsWcBE3LXCYwyskblIGJd+jStj+38wqpHGYKAJzHS9anWFxjT9oa072Sd4DL1Sjswl
+         mp0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744010441; x=1744615241;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8AQPY5eAZttYfbBPqcFbME0mxQEUbb1b9Jm7VX+7QX4=;
-        b=VXIYK+Bw7i7aw52zJNG/E35mLeHWueEV4uLb7/ZD1IpPhjCz5mLzHUOYgBz2+L9sdg
-         L9BTRofvF2RQgsEZpjdjFq/z9y8+qQczwiqrHCikVCdWu9mw4MJOu80TZkLspaoFYWpX
-         lEeZU12BErIk/Li2bnYgWXexl5kQqIVss6q7lQxiSfkHOFTR+w2nkhPis0RaXQF5DUJT
-         1wUmBpex2TcigXaUJBPU32zkklyg3BdGvreklIqohMKKkUbZRpgHAqkp2ornuV8oWdyg
-         Jld+8rCYI8HDuVdgwTMvX2uFIhyYV37929GUisCx4jUSY0mZkymkvObeurkPcTCSysY1
-         64/A==
-X-Forwarded-Encrypted: i=1; AJvYcCW8a2qjDjTHUQbS6ybVMU8UjDK0qL7JWZ8Vq2lUnblsFdwMJKVfKaqk19Um6o/fHxK9Qx1aacNYi+RVXkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwepFRlGJ/0XdN65xLco5xbstcStkMuSMlv3am/iPudk2x6M0tT
-	RpbOP2psgpboQO8SjTn1DkMV58Bt8x33vmAf07v4+VyZvkemt86BJrYk2kcCMDU=
-X-Gm-Gg: ASbGncvsN6pyNyTXhOKEs1PEIflms2iqRz4Zmi7IWBk8dKYlnZftqMacFa09OJGVSku
-	sg+EDFLXeEAwfAfivR1+yAq+GuEYRBMVSxXtXMUFk4tPtUKJ1VW2UjE5pvuYSQOajU/h4SJfmL1
-	FQXarZMr3JePn+StYYTl26ru7p0+7T2acDd3cx/YroDEgr1UHNEFkV51cj9hfL4lJT6CIkXfOtA
-	u1Kxn+R8lvnwiRcyiesERO9i32o/AiZOci8lSPGLBjh1gBV2PEJ0AONeCN10SLeNBBoTqzFBPgZ
-	Z3a5Vim63RioEKiyUHA1VVDGwm2H+jpWBzenu9cNKlu2pog82A==
-X-Google-Smtp-Source: AGHT+IFlFea8q60vJbXkh0XwiaPvmeolbvPuYxUASQOR+ImsTm/0fCsRTxAtHed3qXOlMSPOZqPAwg==
-X-Received: by 2002:a05:6000:4310:b0:38d:ae1e:2f3c with SMTP id ffacd0b85a97d-39cba94dabdmr9345131f8f.25.1744010440777;
-        Mon, 07 Apr 2025 00:20:40 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39c301b8161sm11374805f8f.50.2025.04.07.00.20.39
+        d=1e100.net; s=20230601; t=1744010516; x=1744615316;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/dP9TEDefRiCfKDK6dCXsCuGcFPJWg2jzI0nw7IpyNo=;
+        b=oSmCpkdNWlMeKbzidfn+38A5lJ1cqjz2zsyCQaYovD7hWLHc8ShLvbLd9YWR7wIQR/
+         PfIRnsaS8nW/UgLq5HwwHg+oDPKdSYkwdcyCLgkgwn8/jkRHhPrwkSwHE72Uf5rb2R2Y
+         BwmvI/pEboUTWJuWg8D2okjXJ2uToZvLeJTQdd4iGmE4YSIGTup+XUB/nmSY3QDrVeQp
+         oT8KHHtBQWadkd+m3/CknIBzsA7HpZB/JUj2O1vZ3EHRU1GyNoG2JMJy6L6IluVN+THU
+         pSJCpACehEgN1/ADarumirxugZy+hqzEp0Qs6im4JUTjm4YsiGGrCqWOL7XohAd+cLIk
+         PGUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWW+KF3Cw8/oolnSOwbHYGFjS+AVPM+vJge6zk1f1sgv9ya3u16Eu3NROslwYx71Z8rAsEOSRC7S30kPGfu@vger.kernel.org, AJvYcCXYYt2ZQvdTSh8xjwy5DFvRr4iuAh5Y10o/wYHmOwk67NGXg4eE+Tf62yNvj2PENn7ptxEIBJ4aIJ7g@vger.kernel.org, AJvYcCXdrPkc+pPdiTIJfCrpRABGKDv0bySbZxbB9VahvkWxo60lFoN6DwPIfI/nU9Y1zs4cHCM1IxTCJKbv@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDDQQLd/8tj8FX7brMCCdh3KnfuoUOfZmW7C0w4jWo4Na8+hHy
+	geJx4D3eYqEiFi/7a3+FbetGnN9dOJrppcSafDRrN/vflWKu1pWw
+X-Gm-Gg: ASbGnctOBXeRq+nO/mPKTzM153e9uJnc8OwhJ+T8z+uFVFExKNXhih0/cpxXOhazouC
+	L7CJpsVNbF54NjqAZqJ3U19rmgF9nbH+yrxzfqwMg3lukebWvTESVTjMxAFVskH4wREWIiYVcxq
+	ACs0/f42le2hQjmwrKVTEWHkQiqdH6b2m0AGeEiK1YFtV63EigZHiXBCzDOw4gEfrfc64gc4im8
+	fW58aTyKvc3Wkqu0FgW9YgPCmKjSV+nHn0QxaGfV4cBMVAsdEJEAhGMdhwF5/V4GZEhVgoStn11
+	xMHunEJzrnUZZ1mMrUNtNc2AH5Q1FQ==
+X-Google-Smtp-Source: AGHT+IFQxRWIvC5wkqCh6heDsDs6qCBCvJgy83QuVa7jiqs/EDCg6zs/0W+VCWvbxeuO/25zv5oksg==
+X-Received: by 2002:a05:6a00:2381:b0:736:5753:12f7 with SMTP id d2e1a72fcca58-739e48cf381mr17596430b3a.3.1744010516171;
+        Mon, 07 Apr 2025 00:21:56 -0700 (PDT)
+Received: from cu.. ([199.182.234.55])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739d97ee60dsm7787598b3a.40.2025.04.07.00.21.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 00:20:40 -0700 (PDT)
-Date: Mon, 7 Apr 2025 10:20:36 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
-Cc: gregkh@linuxfoundation.org, julia.lawall@inria.fr,
-	outreachy@lists.linux.dev, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, andy@kernel.org,
-	david.laight.linux@gmail.com
-Subject: Re: [PATCH v4] staging: rtl8723bs: Use % 4096u instead of & 0xfff
-Message-ID: <0d62aab3-bd51-4739-88a4-9419cca7159a@stanley.mountain>
-References: <Z/NxGilPLPy7KSQ3@ubuntu>
+        Mon, 07 Apr 2025 00:21:55 -0700 (PDT)
+From: Longbin Li <looong.bin@gmail.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>
+Cc: Longbin Li <looong.bin@gmail.com>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH 0/2] riscv: pwm: sophgo: add pwm support for SG2044
+Date: Mon,  7 Apr 2025 15:20:37 +0800
+Message-ID: <20250407072056.8629-1-looong.bin@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z/NxGilPLPy7KSQ3@ubuntu>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Apr 07, 2025 at 06:30:50AM +0000, Abraham Samuel Adekunle wrote:
-> The sequence number is constrained to a range of [0, 4095], which
-> is a total of 4096 values. The bitmask operation using `0xfff` is
-> used to perform this wrap-around. While this is functionally correct,
-> it obscures the intended semantic of a 4096-based wrap.
-> 
-> Using a modulo operation with `4096u` makes the wrap-around logic
-> explicit and easier to understand. It clearly signals that the sequence
-> number cycles though a range of 4096 values.
-> It also makes the code robust against potential changes of the 4096
-> upper limit, especially when it becomes a non power of 2 value while
-> the AND(&) works solely for power of 2 values.
-> 
-> The use of `4096u` also guarantees that the modulo operation is performed
-> with unsigned arithmetic, preventing potential issues with signed types.
-> 
-> Suggested-by: Andy Shevchenko <andy@kernel.org>
-> Signed-off-by: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
-> ---
-> Changes in v3:
-> 	- Added more description to the commit message
-> 	- Removed blank line in tag block.
-> 	-  Added more patch recipients.
-> Changes in v2:
-> 	- Changed the commit message to a more descriptive message which
-> 	makes it clear why the patch does the change.
-> 	- Changed the subject title to include `4096u` to show that an unsigned
-> 	module is used.
-> Changes in v1:
-> 	- Added more patch recipients.
-> 
->  drivers/staging/rtl8723bs/core/rtw_xmit.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/core/rtw_xmit.c b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-> index 297c93d65315..f534bf2448c3 100644
-> --- a/drivers/staging/rtl8723bs/core/rtw_xmit.c
-> +++ b/drivers/staging/rtl8723bs/core/rtw_xmit.c
-> @@ -943,7 +943,7 @@ s32 rtw_make_wlanhdr(struct adapter *padapter, u8 *hdr, struct pkt_attrib *pattr
->  
->  			if (psta) {
->  				psta->sta_xmitpriv.txseq_tid[pattrib->priority]++;
-> -				psta->sta_xmitpriv.txseq_tid[pattrib->priority] &= 0xFFF;
-> +				psta->sta_xmitpriv.txseq_tid[pattrib->priority] &= 4096u;
+This patch adds PWM controller support for four independent
+PWM channel outputs.
 
-You forgot to change the & to %.
+ghost (2):
+  dt-bindings: pwm: sophgo: add pwm controller for SG2044
+  pwm: sophgo: add driver for SG2044
 
-regards,
-dan carpenter
+ .../bindings/pwm/sophgo,sg2042-pwm.yaml       |   4 +-
+ drivers/pwm/pwm-sophgo-sg2042.c               | 162 +++++++++++++++---
+ 2 files changed, 141 insertions(+), 25 deletions(-)
 
+--
+2.48.1
 
