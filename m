@@ -1,221 +1,325 @@
-Return-Path: <linux-kernel+bounces-590444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF599A7D317
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:49:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33E43A7D32C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1863B188B80F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 04:48:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B84963AF585
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 04:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DCE32253F8;
-	Mon,  7 Apr 2025 04:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F35221F30;
+	Mon,  7 Apr 2025 04:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="npah8DRN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="MdUy3juS"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B914B22538F
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 04:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9099D221F0C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 04:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744001201; cv=none; b=AW94OjgCvVmUHhdnJw0TogV6McrcedI3+THGHHXScIZW02oL81oO2+9hK79DesFArgDSyCbMMx0chnSK/GShgB9TSR1ZlC2F+YvxTrPq/+/i0dUpjYfR49PAftVRyuYLjc8UF4oTozBZb/onnyl/1IRRkuSh9FqalusAUXItr/Y=
+	t=1744001449; cv=none; b=UQ0VKLik1QXPTSxEvyedzQTJbXuM77YVhTTzyWJBLx534CCd8lXipc3nLYoX9bDiJiM47naLN+OrYNY55h+E6t3S2wbgNLRR1yvy0Ot4vJ5wnjh4D1LAJfFdKya+A8RKl/zqf5pAgov9poyuJfviEiUdZfMjfpDyUdeME9QgdFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744001201; c=relaxed/simple;
-	bh=cDebycVq9pZjSWmtfxT+24dkoAq4Mrn9Etuxjp80A74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gcCxEK66PPRryzWvkbkVa/y6L+wkFCDoUqmipXnOPViriLfMK78F2jQqtjf35/15d03z/SGy4YoAi3JoRVup1qx86inBLhDxIfSLYBOQibx2Gk6Pfy3ZlC4+wGP0s35hDrkv5jXbJY/2VIYir20DV+IHukkJ2tkrYiOu4l3tVa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=npah8DRN; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744001199; x=1775537199;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cDebycVq9pZjSWmtfxT+24dkoAq4Mrn9Etuxjp80A74=;
-  b=npah8DRNXznRHxTEoznkf7Cuw6RnP3yuSOLa9wyitmUe+OSQPFBqwc6/
-   YV69SglJ/3RPL3wkdNpPZnE6hFOhns+sTwM5npqZdzSZhDSifvx5EKigT
-   TnR6pVdbPw2Y7/kEob/ipzSpkBQhmKabgf1l7WQw1PQbKRTltOZwxt1LY
-   TYj3eb30M/FAwn0e4TDByGvNlRkTWAouHvLXTkdpAFtfNTL0BD5SjMhD1
-   y2PQ4kn93a+MwDHeyrqU0VxgzRiiXE/EIljPcpFwOEVtbT3PMV7wUdG4Z
-   LDsl64CLbd2Nnsluia26utJu5Wv7PXh8cPqsiUEHtX9mlQAYtURx+ni5R
-   g==;
-X-CSE-ConnectionGUID: d3yW1gUlQLqHtcQf48hYZQ==
-X-CSE-MsgGUID: m+s/JUnuR5mo1IQwlyFoBA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11396"; a="45082029"
-X-IronPort-AV: E=Sophos;i="6.15,193,1739865600"; 
-   d="scan'208";a="45082029"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2025 21:46:39 -0700
-X-CSE-ConnectionGUID: TiNzR/hbRMuCM2b0J0C9Kw==
-X-CSE-MsgGUID: DIZn/0IFR/aeyqsIXFmV3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,193,1739865600"; 
-   d="scan'208";a="128356380"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 06 Apr 2025 21:46:37 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u1eNW-0002zz-2D;
-	Mon, 07 Apr 2025 04:46:34 +0000
-Date: Mon, 7 Apr 2025 12:46:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wentao Liang <vulab@iscas.ac.cn>, miquel.raynal@bootlin.com,
-	richard@nod.at, vigneshr@ti.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>
-Subject: Re: [PATCH] mtd: nand: Add error log for marvell_nfc_end_cmd()
-Message-ID: <202504071221.XxGT6EaS-lkp@intel.com>
-References: <20250407020917.1242-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1744001449; c=relaxed/simple;
+	bh=e2ODKiwGGGuPiOhZAw5LSSd25eK8cxcMLz1IG/9vd+E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G64l/MTVEJ+runJ5NNA6bdMZQGvBl5JhaSrnXqFS7QskANkD1IC60wW6S4nuLhCrkbwMMoHN/wcjCaRMKIYEuGJ2KzFhmIjKjQDDMxWizv9MaFKHPifx20T3D4jpLSc9djdlFBfasbfvnHF6fy2QkMBIGV6uDkAuitGeXDaz7qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=MdUy3juS; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-8613f456960so15714739f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 06 Apr 2025 21:50:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1744001446; x=1744606246; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CSbT54uFLuQxmkO99JJbKmBYJPhP8w1aIEAoXHHJX9k=;
+        b=MdUy3juS95eGjSHENJfsgXigio0nMQB/8oryG9WsH/mW1swIpHpUy0YhDoJKmSPDU/
+         53SkzdBe5JEqwK8hC248DPNFigCeKXWZpX9H8N67Vd8zzXuiww7SNjLWHySXO+pRLiZz
+         w2pPmZhk8uRio3b6zVkAT09VoQQkKrIfmrphX0vmhqUmGYnU0yHFYmgovBc7MD6U51XE
+         CJcrAJ2NF9Ai3FV+dKvbnTiXbW09vtN2wAaiUcpjiZv8dv7qoMgUFxDQaUczJ6DqVQ8Q
+         PF3a2H6R4OKSpAzV/60Hnp/JmThV1b2sPSwRc4RD9RZZi2G3Kk6YnZVPmLJzwONGMAnV
+         4qUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744001446; x=1744606246;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CSbT54uFLuQxmkO99JJbKmBYJPhP8w1aIEAoXHHJX9k=;
+        b=Mz+DNYDowfGE7Mr1MkKzXoGyWj0l4rP8Z/SOMYnLIdB6vdqqRfvOmB/18wYsgfHi8H
+         xBAiJCEYOA2aDI11jHe4P0FoLR3KRGHHL+eSz0v+fKXA/UmLJDFg9yo32gOlLBsFtGDp
+         Jh7W/IDoxAUjbrrPQp4aSiVdojct9eWKHGlzwLQwTjj2U4uz9qIsnPRwsLx5USAMRmMC
+         OuBZQEdch97CQGFBoS0/E2Mv6GDh3FGjTr8nKkpYUCW8QVJg1vW9uX92CRHZEMb/U7OD
+         CdrIplvGyvF8JS7+qAcVktXihXHG7ENISAmP5+gHXqFEkyes8z39DZGnHA65ykvrm8fZ
+         skVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtq4MWdn2lvblpuI2pg8UqJKfwXhmU6PD1SQrI1C8lrrBdaRAQK5Yhnc2fH5qX1c8tBdJEOwUqtUrS1YU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yydb6gkQEtsAt2D7X6pgOg/IonSqdvM/cYI2sg/IhNV3ZH1CRfg
+	DipYHOGqyxOWbZhyBMVbX4Dzbl0AcHj/MmHMDFY2o0+n6NRJ8zur/I5zv2r/9pO1IAHcn8O0Sfr
+	VSm4vs1QsozwgoNUacTGxSPy7GVoVCd9ItpsznA==
+X-Gm-Gg: ASbGncsRvgH6IfSc22ga97U8COYoKKDrNEQoLrOYklp+JOHL6foCzmJbe+dpeWIEh02
+	HFy2MupZv0LukvhWTqhaMNfZmBLJcifiOq4Pgb4/4ZoNhxheeLuhByHWxKEO35Ji6Zd50jMpoM4
+	GamiLpETrmIBYChu2RdhJ+UtE48Zue
+X-Google-Smtp-Source: AGHT+IHhVdalfJg/Z7eY6UsCfbBA0DkGD01gM9P/N23DqqMhnu+Yb+G3qK68lvaA0KDDPK6sloLhNYPOVe1kjlQCo1M=
+X-Received: by 2002:a05:6602:4009:b0:85e:201e:3e35 with SMTP id
+ ca18e2360f4ac-8611c2a4dc8mr1200799239f.3.1744001446586; Sun, 06 Apr 2025
+ 21:50:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250407020917.1242-1-vulab@iscas.ac.cn>
+References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com> <20250314-v5_user_cfi_series-v12-10-e51202b53138@rivosinc.com>
+In-Reply-To: <20250314-v5_user_cfi_series-v12-10-e51202b53138@rivosinc.com>
+From: Zong Li <zong.li@sifive.com>
+Date: Mon, 7 Apr 2025 12:50:35 +0800
+X-Gm-Features: ATxdqUEcEvSvDd4YNmxt5x00v_2QFe_U7ZYW7BCOZdpLL6G50qHXNh2VbNcPJLM
+Message-ID: <CANXhq0rpHMWvJhWNUKuiMvJZoqN5iTz7USmZYHff=se-+-H+3w@mail.gmail.com>
+Subject: Re: [PATCH v12 10/28] riscv/mm: Implement map_shadow_stack() syscall
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
+	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
+	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
+	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
+	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Wentao,
+On Sat, Mar 15, 2025 at 5:39=E2=80=AFAM Deepak Gupta <debug@rivosinc.com> w=
+rote:
+>
+> As discussed extensively in the changelog for the addition of this
+> syscall on x86 ("x86/shstk: Introduce map_shadow_stack syscall") the
+> existing mmap() and madvise() syscalls do not map entirely well onto the
+> security requirements for shadow stack memory since they lead to windows
+> where memory is allocated but not yet protected or stacks which are not
+> properly and safely initialised. Instead a new syscall map_shadow_stack()
+> has been defined which allocates and initialises a shadow stack page.
+>
+> This patch implements this syscall for riscv. riscv doesn't require token
+> to be setup by kernel because user mode can do that by itself. However to
+> provide compatibility and portability with other architectues, user mode
+> can specify token set flag.
+>
+> Reviewed-by: Zong Li <zong.li@sifive.com>
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>  arch/riscv/kernel/Makefile  |   1 +
+>  arch/riscv/kernel/usercfi.c | 144 ++++++++++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 145 insertions(+)
+>
+> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+> index 8d186bfced45..3a861d320654 100644
+> --- a/arch/riscv/kernel/Makefile
+> +++ b/arch/riscv/kernel/Makefile
+> @@ -125,3 +125,4 @@ obj-$(CONFIG_ACPI)          +=3D acpi.o
+>  obj-$(CONFIG_ACPI_NUMA)        +=3D acpi_numa.o
+>
+>  obj-$(CONFIG_GENERIC_CPU_VULNERABILITIES) +=3D bugs.o
+> +obj-$(CONFIG_RISCV_USER_CFI) +=3D usercfi.o
+> diff --git a/arch/riscv/kernel/usercfi.c b/arch/riscv/kernel/usercfi.c
+> new file mode 100644
+> index 000000000000..24022809a7b5
+> --- /dev/null
+> +++ b/arch/riscv/kernel/usercfi.c
+> @@ -0,0 +1,144 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2024 Rivos, Inc.
+> + * Deepak Gupta <debug@rivosinc.com>
+> + */
+> +
+> +#include <linux/sched.h>
+> +#include <linux/bitops.h>
+> +#include <linux/types.h>
+> +#include <linux/mm.h>
+> +#include <linux/mman.h>
+> +#include <linux/uaccess.h>
+> +#include <linux/sizes.h>
+> +#include <linux/user.h>
+> +#include <linux/syscalls.h>
+> +#include <linux/prctl.h>
+> +#include <asm/csr.h>
+> +#include <asm/usercfi.h>
+> +
+> +#define SHSTK_ENTRY_SIZE sizeof(void *)
+> +
+> +/*
+> + * Writes on shadow stack can either be `sspush` or `ssamoswap`. `sspush=
+` can happen
+> + * implicitly on current shadow stack pointed to by CSR_SSP. `ssamoswap`=
+ takes pointer to
+> + * shadow stack. To keep it simple, we plan to use `ssamoswap` to perfor=
+m writes on shadow
+> + * stack.
+> + */
+> +static noinline unsigned long amo_user_shstk(unsigned long *addr, unsign=
+ed long val)
+> +{
+> +       /*
+> +        * Never expect -1 on shadow stack. Expect return addresses and z=
+ero
+> +        */
+> +       unsigned long swap =3D -1;
+> +
+> +       __enable_user_access();
+> +       asm goto(
+> +               ".option push\n"
+> +               ".option arch, +zicfiss\n"
+> +               "1: ssamoswap.d %[swap], %[val], %[addr]\n"
 
-kernel test robot noticed the following build errors:
+Hi Deepak,
+It just came to my mind, do we need to ensure that menvcfg.SSE is not
+zero before executing the ssamoswap instruction? Since ssamoswap is
+not encoded using MOP, I=E2=80=99m wondering if we should make sure that
+executing ssamoswap won=E2=80=99t accidentally trigger an illegal instructi=
+on
+exception. Thanks.
 
-[auto build test ERROR on mtd/nand/next]
-[also build test ERROR on linus/master v6.15-rc1 next-20250404]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Wentao-Liang/mtd-nand-Add-error-log-for-marvell_nfc_end_cmd/20250407-101213
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next
-patch link:    https://lore.kernel.org/r/20250407020917.1242-1-vulab%40iscas.ac.cn
-patch subject: [PATCH] mtd: nand: Add error log for marvell_nfc_end_cmd()
-config: arm64-randconfig-001-20250407 (https://download.01.org/0day-ci/archive/20250407/202504071221.XxGT6EaS-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 92c93f5286b9ff33f27ff694d2dc33da1c07afdd)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250407/202504071221.XxGT6EaS-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504071221.XxGT6EaS-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/mtd/nand/raw/marvell_nand.c:89:
-   In file included from include/linux/dmaengine.h:12:
-   In file included from include/linux/scatterlist.h:8:
-   In file included from include/linux/mm.h:2224:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     505 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     512 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     525 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> drivers/mtd/nand/raw/marvell_nand.c:1354:3: error: use of undeclared identifier 'err'
-    1354 |                 err = marvell_nfc_end_cmd(chip, NDSR_RDDREQ,
-         |                 ^
-   drivers/mtd/nand/raw/marvell_nand.c:1356:7: error: use of undeclared identifier 'err'
-    1356 |                 if (err)
-         |                     ^
-   drivers/mtd/nand/raw/marvell_nand.c:1364:3: error: use of undeclared identifier 'err'
-    1364 |                 err = marvell_nfc_end_cmd(chip, NDSR_RDDREQ,
-         |                 ^
-   drivers/mtd/nand/raw/marvell_nand.c:1366:7: error: use of undeclared identifier 'err'
-    1366 |                 if (err)
-         |                     ^
-   3 warnings and 4 errors generated.
-
-
-vim +/err +1354 drivers/mtd/nand/raw/marvell_nand.c
-
-  1302	
-  1303	static void marvell_nfc_hw_ecc_bch_read_chunk(struct nand_chip *chip, int chunk,
-  1304						      u8 *data, unsigned int data_len,
-  1305						      u8 *spare, unsigned int spare_len,
-  1306						      int page)
-  1307	{
-  1308		struct marvell_nand_chip *marvell_nand = to_marvell_nand(chip);
-  1309		struct marvell_nfc *nfc = to_marvell_nfc(chip->controller);
-  1310		const struct marvell_hw_ecc_layout *lt = to_marvell_nand(chip)->layout;
-  1311		int i, ret;
-  1312		struct marvell_nfc_op nfc_op = {
-  1313			.ndcb[0] = NDCB0_CMD_TYPE(TYPE_READ) |
-  1314				   NDCB0_ADDR_CYC(marvell_nand->addr_cyc) |
-  1315				   NDCB0_LEN_OVRD,
-  1316			.ndcb[1] = NDCB1_ADDRS_PAGE(page),
-  1317			.ndcb[2] = NDCB2_ADDR5_PAGE(page),
-  1318			.ndcb[3] = data_len + spare_len,
-  1319		};
-  1320	
-  1321		ret = marvell_nfc_prepare_cmd(chip);
-  1322		if (ret)
-  1323			return;
-  1324	
-  1325		if (chunk == 0)
-  1326			nfc_op.ndcb[0] |= NDCB0_DBC |
-  1327					  NDCB0_CMD1(NAND_CMD_READ0) |
-  1328					  NDCB0_CMD2(NAND_CMD_READSTART);
-  1329	
-  1330		/*
-  1331		 * Trigger the monolithic read on the first chunk, then naked read on
-  1332		 * intermediate chunks and finally a last naked read on the last chunk.
-  1333		 */
-  1334		if (chunk == 0)
-  1335			nfc_op.ndcb[0] |= NDCB0_CMD_XTYPE(XTYPE_MONOLITHIC_RW);
-  1336		else if (chunk < lt->nchunks - 1)
-  1337			nfc_op.ndcb[0] |= NDCB0_CMD_XTYPE(XTYPE_NAKED_RW);
-  1338		else
-  1339			nfc_op.ndcb[0] |= NDCB0_CMD_XTYPE(XTYPE_LAST_NAKED_RW);
-  1340	
-  1341		marvell_nfc_send_cmd(chip, &nfc_op);
-  1342	
-  1343		/*
-  1344		 * According to the datasheet, when reading from NDDB
-  1345		 * with BCH enabled, after each 32 bytes reads, we
-  1346		 * have to make sure that the NDSR.RDDREQ bit is set.
-  1347		 *
-  1348		 * Drain the FIFO, 8 32-bit reads at a time, and skip
-  1349		 * the polling on the last read.
-  1350		 *
-  1351		 * Length is a multiple of 32 bytes, hence it is a multiple of 8 too.
-  1352		 */
-  1353		for (i = 0; i < data_len; i += FIFO_DEPTH * BCH_SEQ_READS) {
-> 1354			err = marvell_nfc_end_cmd(chip, NDSR_RDDREQ,
-  1355						  "RDDREQ while draining FIFO (data)");
-  1356			if (err)
-  1357				dev_err(nfc->dev, "Fail to confirm the NDSR.RDDREQ");
-  1358			marvell_nfc_xfer_data_in_pio(nfc, data,
-  1359						     FIFO_DEPTH * BCH_SEQ_READS);
-  1360			data += FIFO_DEPTH * BCH_SEQ_READS;
-  1361		}
-  1362	
-  1363		for (i = 0; i < spare_len; i += FIFO_DEPTH * BCH_SEQ_READS) {
-  1364			err = marvell_nfc_end_cmd(chip, NDSR_RDDREQ,
-  1365						  "RDDREQ while draining FIFO (OOB)");
-  1366			if (err)
-  1367				dev_err(nfc->dev, "Fail to confirm the NDSR.RDDREQ");
-  1368			marvell_nfc_xfer_data_in_pio(nfc, spare,
-  1369						     FIFO_DEPTH * BCH_SEQ_READS);
-  1370			spare += FIFO_DEPTH * BCH_SEQ_READS;
-  1371		}
-  1372	}
-  1373	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +               _ASM_EXTABLE(1b, %l[fault])
+> +               RISCV_ACQUIRE_BARRIER
+> +               ".option pop\n"
+> +               : [swap] "=3Dr" (swap), [addr] "+A" (*addr)
+> +               : [val] "r" (val)
+> +               : "memory"
+> +               : fault
+> +               );
+> +       __disable_user_access();
+> +       return swap;
+> +fault:
+> +       __disable_user_access();
+> +       return -1;
+> +}
+> +
+> +/*
+> + * Create a restore token on the shadow stack.  A token is always XLEN w=
+ide
+> + * and aligned to XLEN.
+> + */
+> +static int create_rstor_token(unsigned long ssp, unsigned long *token_ad=
+dr)
+> +{
+> +       unsigned long addr;
+> +
+> +       /* Token must be aligned */
+> +       if (!IS_ALIGNED(ssp, SHSTK_ENTRY_SIZE))
+> +               return -EINVAL;
+> +
+> +       /* On RISC-V we're constructing token to be function of address i=
+tself */
+> +       addr =3D ssp - SHSTK_ENTRY_SIZE;
+> +
+> +       if (amo_user_shstk((unsigned long __user *)addr, (unsigned long)s=
+sp) =3D=3D -1)
+> +               return -EFAULT;
+> +
+> +       if (token_addr)
+> +               *token_addr =3D addr;
+> +
+> +       return 0;
+> +}
+> +
+> +static unsigned long allocate_shadow_stack(unsigned long addr, unsigned =
+long size,
+> +                                          unsigned long token_offset, bo=
+ol set_tok)
+> +{
+> +       int flags =3D MAP_ANONYMOUS | MAP_PRIVATE;
+> +       struct mm_struct *mm =3D current->mm;
+> +       unsigned long populate, tok_loc =3D 0;
+> +
+> +       if (addr)
+> +               flags |=3D MAP_FIXED_NOREPLACE;
+> +
+> +       mmap_write_lock(mm);
+> +       addr =3D do_mmap(NULL, addr, size, PROT_READ, flags,
+> +                      VM_SHADOW_STACK | VM_WRITE, 0, &populate, NULL);
+> +       mmap_write_unlock(mm);
+> +
+> +       if (!set_tok || IS_ERR_VALUE(addr))
+> +               goto out;
+> +
+> +       if (create_rstor_token(addr + token_offset, &tok_loc)) {
+> +               vm_munmap(addr, size);
+> +               return -EINVAL;
+> +       }
+> +
+> +       addr =3D tok_loc;
+> +
+> +out:
+> +       return addr;
+> +}
+> +
+> +SYSCALL_DEFINE3(map_shadow_stack, unsigned long, addr, unsigned long, si=
+ze, unsigned int, flags)
+> +{
+> +       bool set_tok =3D flags & SHADOW_STACK_SET_TOKEN;
+> +       unsigned long aligned_size =3D 0;
+> +
+> +       if (!cpu_supports_shadow_stack())
+> +               return -EOPNOTSUPP;
+> +
+> +       /* Anything other than set token should result in invalid param *=
+/
+> +       if (flags & ~SHADOW_STACK_SET_TOKEN)
+> +               return -EINVAL;
+> +
+> +       /*
+> +        * Unlike other architectures, on RISC-V, SSP pointer is held in =
+CSR_SSP and is available
+> +        * CSR in all modes. CSR accesses are performed using 12bit index=
+ programmed in instruction
+> +        * itself. This provides static property on register programming =
+and writes to CSR can't
+> +        * be unintentional from programmer's perspective. As long as pro=
+grammer has guarded areas
+> +        * which perform writes to CSR_SSP properly, shadow stack pivotin=
+g is not possible. Since
+> +        * CSR_SSP is writeable by user mode, it itself can setup a shado=
+w stack token subsequent
+> +        * to allocation. Although in order to provide portablity with ot=
+her architecture (because
+> +        * `map_shadow_stack` is arch agnostic syscall), RISC-V will foll=
+ow expectation of a token
+> +        * flag in flags and if provided in flags, setup a token at the b=
+ase.
+> +        */
+> +
+> +       /* If there isn't space for a token */
+> +       if (set_tok && size < SHSTK_ENTRY_SIZE)
+> +               return -ENOSPC;
+> +
+> +       if (addr && (addr & (PAGE_SIZE - 1)))
+> +               return -EINVAL;
+> +
+> +       aligned_size =3D PAGE_ALIGN(size);
+> +       if (aligned_size < size)
+> +               return -EOVERFLOW;
+> +
+> +       return allocate_shadow_stack(addr, aligned_size, size, set_tok);
+> +}
+>
+> --
+> 2.34.1
+>
 
