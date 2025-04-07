@@ -1,220 +1,150 @@
-Return-Path: <linux-kernel+bounces-591267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A82BA7DD73
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:15:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE4FA7DD76
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25C3D172F01
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:14:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F3441893F68
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C85F24886D;
-	Mon,  7 Apr 2025 12:13:27 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791082459FE;
+	Mon,  7 Apr 2025 12:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c6D5FcEJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0779123C8A2
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 12:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23375244EAB
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 12:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744028006; cv=none; b=uKXQyvkBoYmnCrJg1YmrQZbap5yL1lB3JsDCI88VysRD7M57XxEJMwUqPTS9dUlxiQmdjncLirFoC9Siu4nBRRBfY7Zid+RJbJtaIdJVS8ynPxEe3/HtQTT5HlERGvDXI6v+5kpMG2NRFqdEGt/QMUd2pj3zfc91dGNKKr8169U=
+	t=1744028089; cv=none; b=I+erEAUqnv/ffh91C3KkqVDMQMcWiHoYrMcAoOomH1B6TmDHgfi6g9TK5ln4kJrO1Rd62iJrEu5C8POOx9nYF+smaiU5b9zxVqcfOwmwFSIvzP4NWln4vuUxc/4BW6xgH6KBsUWTGri2Q9Mtzt5m8CEa1+Qc4GYvITK3RWJPwyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744028006; c=relaxed/simple;
-	bh=zH7m9pTi82P9N8dbG4AppsZq3oJl+hTGiKf4nPg3oI8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GSIpr3eirGJVEtt78FZa2OAWS1Mpy9bmXK7zdfrY++L/9DjpSWTiDc//qo7zBoUvHre8N0y/dT9A/7yC80aqffursqQaXWTnuiwOoIpWSc7SIs9juwwozTMdrjjtHYlUI40wqMQPKFPFX/9sBzZ0NhaGdY1LtnA8mYRMj19EQ/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d6e10e3644so41142615ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 05:13:24 -0700 (PDT)
+	s=arc-20240116; t=1744028089; c=relaxed/simple;
+	bh=SJloMABJ9TFapxZzUuoSPn8M6mfm+kJt9tZS7KDLG1g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uoAxwSXbDD+PAr9W6ZkLkIFITyFxOa2scOWuy16MVQsYTlGRMOqbE+Vgo/kc9BDArm53JtkLD++MbTJKf1ln39xYqcPmoieJ3l5KAfjCeq8BUY1fYSFEQc2y60QKcVcBTRlCbS9hP4gUIn3MHtZl7vTGetDQopu84ncvQEwNSiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c6D5FcEJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744028086;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hQ0sePM8qDTqbXQLkavIPlwoEXkE0hK7tfvWemHOezo=;
+	b=c6D5FcEJNMC3NAEZ6R5jMZ2MZGZVBZTCVePnAr2Bi+uDdJLA2Q8SRDpbcqJ2PEg7403e3I
+	WPspHaZkGYfQQEm5dI1NzOeelKftfkd0qtJpv9jG/OLgYR32pfdBq6GfEtBsmGmIrmBo4C
+	Bb0G5dt+37qN4r+sIb3aMaaNqnXjdAg=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-88-gDrDM_cfPeuzYKG82RkSbw-1; Mon, 07 Apr 2025 08:14:45 -0400
+X-MC-Unique: gDrDM_cfPeuzYKG82RkSbw-1
+X-Mimecast-MFC-AGG-ID: gDrDM_cfPeuzYKG82RkSbw_1744028084
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-39979ad285bso2547709f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 05:14:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744028004; x=1744632804;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8sBuYwBdcimnZtn0G1ADj+iI2GJJl6vdeMkk5uNXqfg=;
-        b=aktlq/MvzYMHZgEWOo9nTt9/NESzkQSJZC07b0NZEItp28fpjrT0c2X/9Af7QwJ8wv
-         P04mtNfBVKXB8i6jQFeBrv0zweff+Ad3Ef1EmmAYgjvp8/4gPfm+j0ZL6UBCqVhjqg3h
-         qW6nY9jjIicDdhRYVdqpAS874wG0WuxC/lNKhgolytWljo6eCGzHAm3QZ21HIQaUzkjb
-         vYNans7tahV0arGdd2jf/sqEWeR0zpisL3zuousQt0soSoc0dm9yQyWfKnRBEDVnxnri
-         6pHITnuV1dYbxktx58k/aE4KH5HX/v1ePOlG1qu+RMTPwU4x0dKwpgiN9iYxXKsLFXIH
-         En2A==
-X-Forwarded-Encrypted: i=1; AJvYcCX+6fEaSLho4R3fwtOc6Srw0yLJKPe+pZVtalMwlF+M9jL2GjSx6zxfBQx6dwkB478WHVgN1cfPpW8ns1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfL7mI7NYSvYN8yoki4gpqA7Lyvusjk518pHtojQaOuYjLWABa
-	jszLjYB5APrQdCCFFXi1CTdejL6pOy438kIVZBqAXV9aBIXj64tyE2zoL2J0kWDE8Yqvj/4Shc4
-	36knTGrl7RzhLsNZfchQlZrXDEKQYfBsAFlOYXKr/OGzIwz+LZV91mq8=
-X-Google-Smtp-Source: AGHT+IGimJBmkK9OFoPbeQlFJGlb5UIzDFO0CD55dSnX5KLZYjtw4Cm1xZ+CVaS17rC/wsPApjy7NMLHuyC1xRE6arAnOWUhHTLN
+        d=1e100.net; s=20230601; t=1744028084; x=1744632884;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hQ0sePM8qDTqbXQLkavIPlwoEXkE0hK7tfvWemHOezo=;
+        b=vYbih0P5E558QJ+mA91QNC1B5AV40zIti9Y1riXKvqCZXNa5hoNQZt/w/JkjpgwjDP
+         zlJ7/DbBSUT5ETAkctbU0TV4HOx60JLg7DkX8nOFigxIcw1JoNQDQBNh+W68HBBNbIdg
+         HjHUeCACgeCKp3YPSvJyBumrGKSsOpQPTTU9eAC51V6N3xdv/FfXIwvvAZnZszbCyStX
+         8ve16DbwjP+yNIazhQR6p5huXz+eyRCitPhXQ+4TS86BREd8WtknvO8V+VXvn0Zysros
+         zon3urUF/8UDou9g50DVk6HGmLl6Prcty2Hnfe7uNvrzbmAcXgkWnaS8T6OMnPuEUSp9
+         3ZqA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0xcXRBNpO84wY60HtWwldiLvBBftSx2fFLiPepXSJnZlYqcniK5kqB7sKvPOfLdBxr4IFmFwMHOziK3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwL5kVCixCkdfyhLxiDc+zsln6Rekx/CzFeiQJ8iZ3MjJHLdPr
+	HqdQysa0JI+ZSXQkjsVnlZmMSCkqpzCLeqxrxTVjNgewiUSJ+oCWnUtZ6XV27kaB1SV2QNUayve
+	cX+yEjsbOI88tuGg+g9O3CANBVYLP7EV8uwIsrz0TTWk/iCRqJeQcjTuefCPcdQ==
+X-Gm-Gg: ASbGncu0pzThu+d3mJZFP5NGcgAC3JDzkMx5uuZltvKDtxGkucxGf0bO1E/MzpTY1xw
+	NJJVhwmU5LUByhrKNcsW7q45PywjFywKX+jw4xiPIaB/y27PVSNM8OvxYzxBnskYzdcgBouW3lV
+	I4Ba90I4JhoUZ7iJ9q6x6PSd0XLeOx6atxv/Um7Jyurn5fgtUDOYH3U39nViaGpZoevyX6vfLT9
+	F3fSTo0FvaOHi29jtavFtlLe1NFoVbNZo9WjNsi/E08YuNEj07HYgg6SJSHTad1sIU/OFdFmO0u
+	gm2sQFtzUg==
+X-Received: by 2002:a05:6000:2407:b0:39c:1efb:ee8a with SMTP id ffacd0b85a97d-39d0de67a97mr9877460f8f.38.1744028084297;
+        Mon, 07 Apr 2025 05:14:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFSEq8KBA9rhmZRWPej572rfLMWFkXKUPOcxbVa6ScLXY4TTA4hiqQZurNAgf4uQ4V5gUn8iQ==
+X-Received: by 2002:a05:6000:2407:b0:39c:1efb:ee8a with SMTP id ffacd0b85a97d-39d0de67a97mr9877441f8f.38.1744028083951;
+        Mon, 07 Apr 2025 05:14:43 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c30226a07sm11678907f8f.84.2025.04.07.05.14.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 05:14:43 -0700 (PDT)
+Date: Mon, 7 Apr 2025 08:14:40 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Christoph Hellwig <hch@infradead.org>, virtio-comment@lists.linux.dev,
+	Claire Chang <tientzu@chromium.org>,
+	linux-devicetree <devicetree@vger.kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	=?iso-8859-1?Q?J=F6rg?= Roedel <joro@8bytes.org>,
+	iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+	graf@amazon.de
+Subject: Re: [RFC PATCH 1/3] content: Add VIRTIO_F_SWIOTLB to negotiate use
+ of SWIOTLB bounce buffers
+Message-ID: <20250407081110-mutt-send-email-mst@kernel.org>
+References: <05abb68286dd4bc17b243130d7982a334503095b.camel@infradead.org>
+ <Z-99snVF5ESyJDDs@infradead.org>
+ <fb7ea3ee5bf970fa36b012e16750f533b72903a0.camel@infradead.org>
+ <20250404040838-mutt-send-email-mst@kernel.org>
+ <67bd998bfe385088ef863342b9f8714754585476.camel@infradead.org>
+ <20250404043016-mutt-send-email-mst@kernel.org>
+ <F30D33D5-38CC-4397-8DC8-9EE1B0FEF40D@infradead.org>
+ <5cc2f558b0f4d387349c3a2936ff00430804536d.camel@infradead.org>
+ <20250404062409-mutt-send-email-mst@kernel.org>
+ <7fd789b61a586417add2115f6752ebec5e7b81bf.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18cb:b0:3d5:e002:b8ac with SMTP id
- e9e14a558f8ab-3d6e3f054b0mr114806305ab.9.1744028004051; Mon, 07 Apr 2025
- 05:13:24 -0700 (PDT)
-Date: Mon, 07 Apr 2025 05:13:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67f3c164.050a0220.396535.054b.GAE@google.com>
-Subject: [syzbot] [net?] BUG: soft lockup in wg_packet_tx_worker (3)
-From: syzbot <syzbot+75bc3d000ef2479dc914@syzkaller.appspotmail.com>
-To: cake@lists.bufferbloat.net, davem@davemloft.net, edumazet@google.com, 
-	horms@kernel.org, jhs@mojatatu.com, jiri@resnulli.us, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, toke@toke.dk, xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7fd789b61a586417add2115f6752ebec5e7b81bf.camel@infradead.org>
 
-Hello,
+On Fri, Apr 04, 2025 at 12:15:52PM +0100, David Woodhouse wrote:
+> > What I don't get, is what does the *device* want, exactly?
+> 
+> The device wants to know that a driver won't try to use it without
+> understanding the restriction. Because otherwise the driver will just
+> give it system addresses for DMA and be sad, without any coherent
+> error/failure report about why.
+> 
+> (You could ask the same question about what the *device* wants with
+> VIRTIO_F_ACCESS_PLATFORM, and the answer is much the same).
+> 
+> Or maybe not the *device* per se, but the *system integrator* wants to
+> know that only operating systems which understand the restriction
+> described above, will attempt to drive the device in question.
+> 
+> We could achieve that by presenting the device with a completely new
+> PCI device/vendor ID so that old drivers don't match, or in the DT
+> model you could make a new "compatible" string for it. I chose to use a
+> VIRTIO_F_ bit for it instead, which seemed natural and allows the
+> device model (under the influence of the system integrator) to *choose*
+> whether a failure to negotiate such bit is fatal or not.
 
-syzbot found the following issue on:
+Let's focus on the mmio part, for simplicity.
+So IIUC there's a devicetree attribute restricted dma, that
+guests currently simply ignore.
+You want to fix it in the guest, but you also want to find a clean way
+to detect that it's fixed. Right?
 
-HEAD commit:    a2392f333575 drm/panthor: Clean up FW version information ..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=14a38fb0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8cceedf2e27e877d
-dashboard link: https://syzkaller.appspot.com/bug?extid=75bc3d000ef2479dc914
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+And if so, my question is, why this specific bug especially?
+There likely are a ton of bugs, some more catastrophic than just
+crashing the guest, like data corruption.
+Is it because we were supposed to add it to the virtio spec but
+did not?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+-- 
+MST
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/7df8ceab3279/disk-a2392f33.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/42c5af403371/vmlinux-a2392f33.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/73599b849e20/Image-a2392f33.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+75bc3d000ef2479dc914@syzkaller.appspotmail.com
-
-watchdog: BUG: soft lockup - CPU#1 stuck for 22s! [kworker/1:4:6520]
-Modules linked in:
-irq event stamp: 37763481
-hardirqs last  enabled at (37763480): [<ffff80008b86338c>] __exit_to_kernel_mode arch/arm64/kernel/entry-common.c:85 [inline]
-hardirqs last  enabled at (37763480): [<ffff80008b86338c>] exit_to_kernel_mode+0xdc/0x10c arch/arm64/kernel/entry-common.c:95
-hardirqs last disabled at (37763481): [<ffff80008b860e04>] __el1_irq arch/arm64/kernel/entry-common.c:557 [inline]
-hardirqs last disabled at (37763481): [<ffff80008b860e04>] el1_interrupt+0x24/0x68 arch/arm64/kernel/entry-common.c:575
-softirqs last  enabled at (5415542): [<ffff80008576c928>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (5415546): [<ffff800085777e98>] wg_socket_send_skb_to_peer+0x64/0x1a8 drivers/net/wireguard/socket.c:173
-CPU: 1 UID: 0 PID: 6520 Comm: kworker/1:4 Not tainted 6.14.0-rc7-syzkaller-ga2392f333575 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Workqueue: wg-crypt-wg0 wg_packet_tx_worker
-pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : get_current arch/arm64/include/asm/current.h:19 [inline]
-pc : write_comp_data kernel/kcov.c:245 [inline]
-pc : __sanitizer_cov_trace_const_cmp4+0x8/0xa0 kernel/kcov.c:314
-lr : cake_dequeue+0x43c/0x3da0 net/sched/sch_cake.c:2010
-sp : ffff8000a3ae6e50
-x29: ffff8000a3ae70a0 x28: 00000000000198d0 x27: 0000000000000000
-x26: 1fffe0001f489939 x25: ffff0000fa44c9cc x24: 0000000000000001
-x23: 0000000000000000 x22: 0000000000000001 x21: 0000000000000000
-x20: 0000000000000200 x19: ffff0000fa44c9cc x18: dfff800000000000
-x17: 00000000394bfc7d x16: ffff8000806a25ac x15: 0000000000000001
-x14: 1ffff00012f50b68 x13: 0000000000000000 x12: ffff0000f1bfc2f8
-x11: ffff0000f1bfc2f0 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000c42cdb80 x7 : ffff800080592830 x6 : 0000000000000000
-x5 : 0000000000000001 x4 : 0000000000000001 x3 : ffff80008059283c
-x2 : 0000000000000000 x1 : 0000000000000200 x0 : 0000000000000000
-Call trace:
- __sanitizer_cov_trace_const_cmp4+0x8/0xa0 kernel/kcov.c:313 (P)
- dequeue_skb net/sched/sch_generic.c:293 [inline]
- qdisc_restart net/sched/sch_generic.c:398 [inline]
- __qdisc_run+0x1e0/0x2378 net/sched/sch_generic.c:416
- __dev_xmit_skb net/core/dev.c:4111 [inline]
- __dev_queue_xmit+0xd58/0x35b4 net/core/dev.c:4618
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- neigh_hh_output include/net/neighbour.h:523 [inline]
- neigh_output include/net/neighbour.h:537 [inline]
- ip6_finish_output2+0x1614/0x20f8 net/ipv6/ip6_output.c:141
- __ip6_finish_output net/ipv6/ip6_output.c:-1 [inline]
- ip6_finish_output+0x428/0x7c4 net/ipv6/ip6_output.c:226
- NF_HOOK_COND include/linux/netfilter.h:303 [inline]
- ip6_output+0x274/0x598 net/ipv6/ip6_output.c:247
- dst_output include/net/dst.h:459 [inline]
- ip6_local_out+0x120/0x160 net/ipv6/output_core.c:155
- ip6tunnel_xmit include/net/ip6_tunnel.h:161 [inline]
- udp_tunnel6_xmit_skb+0x4e8/0xa04 net/ipv6/ip6_udp_tunnel.c:111
- send6+0x578/0x940 drivers/net/wireguard/socket.c:152
- wg_socket_send_skb_to_peer+0xfc/0x1a8 drivers/net/wireguard/socket.c:178
- wg_packet_create_data_done drivers/net/wireguard/send.c:251 [inline]
- wg_packet_tx_worker+0x1a8/0x718 drivers/net/wireguard/send.c:276
- process_one_work+0x810/0x1638 kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x97c/0xeec kernel/workqueue.c:3400
- kthread+0x65c/0x7b0 kernel/kthread.c:464
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 6290 Comm: kworker/0:3 Not tainted 6.14.0-rc7-syzkaller-ga2392f333575 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Workqueue: wg-crypt-wg0 wg_packet_tx_worker
-pstate: 00400005 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : queued_spin_lock_slowpath+0x15c/0xd04 kernel/locking/qspinlock.c:380
-lr : queued_spin_lock_slowpath+0x168/0xd04 kernel/locking/qspinlock.c:380
-sp : ffff8000a5367000
-x29: ffff8000a53670c0 x28: 1fffe0001e37f01e x27: dfff800000000000
-x26: 1ffff00014a6ce2c x25: ffff8000a5367040 x24: dfff800000000000
-x23: ffff8000a5367080 x22: ffff700014a6ce08 x21: 0000000000000001
-x20: 1ffff00014a6ce10 x19: ffff0000f1bf80f0 x18: 1fffe000366e7286
-x17: ffff80008fd3d000 x16: ffff800080bf9360 x15: 0000000000000001
-x14: 1fffe0001e37f01e x13: 0000000000000000 x12: 0000000000000000
-x11: ffff60001e37f01f x10: 1fffe0001e37f01e x9 : 0000000000000000
-x8 : 0000000000000001 x7 : ffff800089986c48 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff80008b885908
-x2 : 0000000000000000 x1 : 0000000000000001 x0 : 0000000000000001
-Call trace:
- __cmpwait_case_8 arch/arm64/include/asm/cmpxchg.h:229 [inline] (P)
- __cmpwait arch/arm64/include/asm/cmpxchg.h:257 [inline] (P)
- queued_spin_lock_slowpath+0x15c/0xd04 kernel/locking/qspinlock.c:380 (P)
- queued_spin_lock include/asm-generic/qspinlock.h:114 [inline]
- do_raw_spin_lock+0x2ec/0x334 kernel/locking/spinlock_debug.c:116
- __raw_spin_lock include/linux/spinlock_api_smp.h:134 [inline]
- _raw_spin_lock+0x50/0x60 kernel/locking/spinlock.c:154
- spin_lock include/linux/spinlock.h:351 [inline]
- __dev_xmit_skb net/core/dev.c:4078 [inline]
- __dev_queue_xmit+0xb30/0x35b4 net/core/dev.c:4618
- dev_queue_xmit include/linux/netdevice.h:3313 [inline]
- neigh_hh_output include/net/neighbour.h:523 [inline]
- neigh_output include/net/neighbour.h:537 [inline]
- ip6_finish_output2+0x1614/0x20f8 net/ipv6/ip6_output.c:141
- __ip6_finish_output net/ipv6/ip6_output.c:-1 [inline]
- ip6_finish_output+0x428/0x7c4 net/ipv6/ip6_output.c:226
- NF_HOOK_COND include/linux/netfilter.h:303 [inline]
- ip6_output+0x274/0x598 net/ipv6/ip6_output.c:247
- dst_output include/net/dst.h:459 [inline]
- ip6_local_out+0x120/0x160 net/ipv6/output_core.c:155
- ip6tunnel_xmit include/net/ip6_tunnel.h:161 [inline]
- udp_tunnel6_xmit_skb+0x4e8/0xa04 net/ipv6/ip6_udp_tunnel.c:111
- send6+0x578/0x940 drivers/net/wireguard/socket.c:152
- wg_socket_send_skb_to_peer+0xfc/0x1a8 drivers/net/wireguard/socket.c:178
- wg_packet_create_data_done drivers/net/wireguard/send.c:251 [inline]
- wg_packet_tx_worker+0x1a8/0x718 drivers/net/wireguard/send.c:276
- process_one_work+0x810/0x1638 kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x97c/0xeec kernel/workqueue.c:3400
- kthread+0x65c/0x7b0 kernel/kthread.c:464
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
