@@ -1,155 +1,134 @@
-Return-Path: <linux-kernel+bounces-591968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547EEA7E766
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:56:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E973A7E758
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBC3B1889DF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:51:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE8A77A21E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1CA2139A1;
-	Mon,  7 Apr 2025 16:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QYtsHvD9"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F261021ADB5;
+	Mon,  7 Apr 2025 16:52:34 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5665C21148B;
-	Mon,  7 Apr 2025 16:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836702147F4;
+	Mon,  7 Apr 2025 16:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744044699; cv=none; b=Zkaw/SV8lfJr4oFEsdgiVmw3rUw+nKzhmge9+cdayMXaJn1N+jc5K8eo+QwVQDSFNmk6wMC6k+unHNsXYaeLpASKLiQA9+a8ACfrZYswj5zz8JuLODluFKkqv27W3puc8FsDmkCcCyE3h8/ycbCXLvFMMD0kz9WtZ8qm1g2Tmw8=
+	t=1744044754; cv=none; b=efAYhwK+kAUF3HzJlwBEErfMsv77HWpYtkt70QVcC1+qXwKWeqrLNsIt8FLjYMCIbEHaLFIMIz7KnVHbzv10f5ALAvHLzq109sM+C0Ls7fG+I86Wkz2BIaQnV+Ers4Kt+a2UxtGPHU4rbYrNsLi6Ckioqsz4TM50V5F3PXmHw6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744044699; c=relaxed/simple;
-	bh=ZzdiNXHuskzVB8qqfZ+KEStr8CQJVJ+kBhPW7XeWeY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jNBhiXJ7tXekHnEtuKlZZSaX270BepfoafvrVBYcdDRlRTRfNcuQDiyEfl3lGvxx4nIJ4YUqJ1Q0mB02TLDwOBk/Fgd4eqn2dCSY7jL7kp5PdHgDR7PQx1rnoYkWDL+l2v6NXl+aMWdRfiF/olUaW4MN+6WGmKfs7wwdEy+LvpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QYtsHvD9; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5D6084439C;
-	Mon,  7 Apr 2025 16:51:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744044694;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H1iMwU3ajJMnMcuSPtx2gxJdVmNL3/UCZFSDfHMc86M=;
-	b=QYtsHvD9DTOGiFETvj+We/hzG7h1j54bIDzufGVCgmf9PbORkltx0JqHpWe+aPyMEzw+BY
-	BLDFSYOw4BRIzx3SstgbwbImXzPVHlUsTqWNRXQMNtJwh5XyQjekREZy25k9HxtytuDyZN
-	qV59Wm1ThVZCXTV3w9PeAglD6hgRNxlH/IwDQIUaCvNdsDNQovSjkUY3vwG7oobLiOXONu
-	3fcpBrr6eKbvYY2tiur2Zp4fDRRWjdS+BQCz++nt2rDXujLJerJnif/Ws3w7qaHXJ5i+Nh
-	B4dnM/nggzNsA6Hna2/Z08ckKMc22MO7DWqmr40zEGjIdMt7bvIlwiAJxj0IUQ==
-Date: Mon, 7 Apr 2025 18:51:29 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>, "David S .
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Russell King
- <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, Christian Marangi
- <ansuelsmth@gmail.com>, upstream@airoha.com, Heiner Kallweit
- <hkallweit1@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Clark Wang <xiaoning.wang@nxp.com>, Claudiu
- Beznea <claudiu.beznea@microchip.com>, Claudiu Manoil
- <claudiu.manoil@nxp.com>, Conor Dooley <conor+dt@kernel.org>, Ioana Ciornei
- <ioana.ciornei@nxp.com>, Jonathan Corbet <corbet@lwn.net>, Joyce Ooi
- <joyce.ooi@intel.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Li Yang
- <leoyang.li@nxp.com>, Madalin Bucur <madalin.bucur@nxp.com>, Madhavan
- Srinivasan <maddy@linux.ibm.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, Michal
- Simek <michal.simek@amd.com>, Naveen N Rao <naveen@kernel.org>, Nicholas
- Piggin <npiggin@gmail.com>, Nicolas Ferre <nicolas.ferre@microchip.com>,
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, Rob Herring
- <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>, Robert Hancock
- <robert.hancock@calian.com>, Saravana Kannan <saravanak@google.com>, Shawn
- Guo <shawnguo@kernel.org>, UNGLinuxDriver@microchip.com, Vladimir Oltean
- <vladimir.oltean@nxp.com>, Wei Fang <wei.fang@nxp.com>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC net-next PATCH 00/13] Add PCS core support
-Message-ID: <20250407185129.654e7c9c@kmaincent-XPS-13-7390>
-In-Reply-To: <720b6db8-49c5-47e7-98da-f044fc38fc1a@linux.dev>
-References: <20250403181907.1947517-1-sean.anderson@linux.dev>
-	<20250407182738.498d96b0@kmaincent-XPS-13-7390>
-	<720b6db8-49c5-47e7-98da-f044fc38fc1a@linux.dev>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744044754; c=relaxed/simple;
+	bh=wNBPtN0495VM5MuOkw0I6+oQIO5BBxEfhzqYaYz5iQg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Lj+IghyBCMExX+Wtm7D7ZRsnWRMxbvOVvZcYHmceIFphb1cm58bT0nFE7yMPXniwF6PpTp5Kh/wWP0dkW8cclehDlqrhwDh+5EoQ6zsYSlOp9sme9+MVb+YWfMDAOS7c8v85jEOMD6NqOPbVwx9kJuZ2B4xy4X5/ptWy45c1oec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from localhost.localdomain (178.207.21.175) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 7 Apr
+ 2025 19:52:12 +0300
+From: Roman Smirnov <r.smirnov@omp.ru>
+To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Roman Smirnov <r.smirnov@omp.ru>, Steve French <sfrench@samba.org>,
+	Shirish Pargaonkar <shirishpargaonkar@gmail.com>, Sachin Prabhu
+	<sprabhu@redhat.com>, <linux-cifs@vger.kernel.org>,
+	<samba-technical@lists.samba.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>, Steve French <stfrench@microsoft.com>
+Subject: [PATCH 5.10] cifs: fix integer overflow in match_server()
+Date: Mon, 7 Apr 2025 19:51:48 +0300
+Message-ID: <20250407165150.780252-1-r.smirnov@omp.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddtjedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfduveekuedtvdeiffduleetvdegteetveetvdelteehhfeuhfegvdeuuedtleegnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeegledprhgtphhtthhopehsvggrnhdrrghnuggvrhhsohhnsehlihhnuhigrdguvghvpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegur
- ghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhk
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 04/07/2025 16:40:10
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 192443 [Apr 07 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: r.smirnov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 54 0.3.54
+ 464169e973265e881193cca5ab7aa5055e5b7016
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 178.207.21.175 in (user)
+ dbl.spamhaus.org}
+X-KSE-AntiSpam-Info:
+	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;omp.ru:7.1.1;178.207.21.175:7.1.2
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 178.207.21.175
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 04/07/2025 16:44:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 4/7/2025 3:07:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Mon, 7 Apr 2025 12:33:28 -0400
-Sean Anderson <sean.anderson@linux.dev> wrote:
+From: Roman Smirnov <r.smirnov@omp.ru>
 
-> On 4/7/25 12:27, Kory Maincent wrote:
-> > On Thu,  3 Apr 2025 14:18:54 -0400
-> > Sean Anderson <sean.anderson@linux.dev> wrote:
-> >  =20
-> >> This series adds support for creating PCSs as devices on a bus with a
-> >> driver (patch 3). As initial users,
-> >>=20
-> >> - The Lynx PCS (and all of its users) is converted to this system (pat=
-ch 5)
-> >> - The Xilinx PCS is broken out from the AXI Ethernet driver (patches 6=
--8)
-> >> - The Cadence MACB driver is converted to support external PCSs (namely
-> >>   the Xilinx PCS) (patches 9-10).
-> >>=20
-> >> The last few patches add device links for pcs-handle to improve boot t=
-imes,
-> >> and add compatibles for all Lynx PCSs.
-> >>=20
-> >> Care has been taken to ensure backwards-compatibility. The main source
-> >> of this is that many PCS devices lack compatibles and get detected as
-> >> PHYs. To address this, pcs_get_by_fwnode_compat allows drivers to edit
-> >> the devicetree to add appropriate compatibles. =20
-> >=20
-> > I don't dive into your patch series and I don't know if you have heard
-> > about it but Christian Marangi is currently working on fwnode for PCS:
-> > https://lore.kernel.org/netdev/20250406221423.9723-1-ansuelsmth@gmail.c=
-om
-> >=20
-> > Maybe you should sync with him! =20
->=20
-> I saw that series and made some comments. He is CC'd on this one.
+[ Upstream commit 2510859475d7f46ed7940db0853f3342bf1b65ee ]
 
-Oh indeed, you have replied on his v1, sorry I missed it.
-It seems he forgot to add you in CC in the v2.
+The echo_interval is not limited in any way during mounting,
+which makes it possible to write a large number to it. This can
+cause an overflow when multiplying ctx->echo_interval by HZ in
+match_server().
 
-> I think this approach has two advantages:
->=20
-> - It completely solves the problem of the PCS being unregistered while the
-> netdev (or whatever) is up
-> - I have designed the interface to make it easy to convert existing
->   drivers that may not be able to use the "standard" probing process
->   (because they have to support other devicetree structures for
->   backwards-compatibility).
+Add constraints for echo_interval to smb3_fs_context_parse_param().
 
-Ok, thanks for the clarification!
-I was working on the axienet driver to add support for the 10G version that=
-'s
-why I discovered your series.
+Found by Linux Verification Center (linuxtesting.org) with Svace.
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Fixes: adfeb3e00e8e1 ("cifs: Make echo interval tunable")
+Cc: stable@vger.kernel.org
+Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
+---
+ fs/cifs/connect.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index a3c0e6a4e484..322b8be73bb8 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -1915,6 +1915,12 @@ cifs_parse_mount_options(const char *mountdata, const char *devname,
+ 					 __func__);
+ 				goto cifs_parse_mount_err;
+ 			}
++			if (option < SMB_ECHO_INTERVAL_MIN ||
++			    option > SMB_ECHO_INTERVAL_MAX) {
++				cifs_dbg(VFS, "%s: Echo interval is out of bounds\n",
++					 __func__);
++				goto cifs_parse_mount_err;
++			}
+ 			vol->echo_interval = option;
+ 			break;
+ 		case Opt_snapshot:
+-- 
+2.43.0
+
 
