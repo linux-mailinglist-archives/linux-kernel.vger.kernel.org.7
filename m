@@ -1,117 +1,161 @@
-Return-Path: <linux-kernel+bounces-592333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C200A7EBAC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:58:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 655BBA7EBED
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 088AA189626E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:56:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25D12446654
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF3D25A2DE;
-	Mon,  7 Apr 2025 18:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ARTtZ2RD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616EA25A2B6
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 18:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744050085; cv=none; b=uo6alPFcu0WYmE3Y2peqWydB/jFtwssi7nGPfkYZV6pw721wTBuN8VT/zlDXpfuHRmaOb5uDgZR6dFh750sJblItmNpVDve8e2J+MRN/iQgYIxkC3RHVt5fyShpTv2qtQayZpM4rbI72euC1TfMN0UJjbRS4i5GiRc71nO67Zrw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744050085; c=relaxed/simple;
-	bh=sBuyu8GDFSBAh8ocfuIg/uvXdPS+I0GpOEiqMXd2lww=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UwdivalyF+KieEuO0aEXONm7dibPwcGOP/X0ibpQuJfAAbtqFYsdVX9znyGirLKDctJreB3FuxYZd4mmJL1H8ErRaPYYxjupYaw0Ct/IJB/3sCxRvc4mjXNq/u/Oyg/1Ck108nfZp2+CX6Rjsifw1tfSk0QEmWeJ3HuTIUxn+ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ARTtZ2RD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744050082;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r207ou57TRn4Q0BVpY2sMaqzJuM7STz+41u9bkzpKR4=;
-	b=ARTtZ2RDpvXQeWIE77O1yzU0JJm5dD8OXCeGGTaKmCMNkNlr+RVhZZoCx9HfDiObh4+QDD
-	+JyZ2H2tMa7WR7Hrl2nb2Aat3px4b29y4L9gnF8yB62RKOe9AowVeG74RuxMeNIhPV5t6U
-	XlNv3nmfcLfDobKF+R2Ap97c//BSKGo=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-662-K0TaAE15OlaiLMNeZtQo6Q-1; Mon,
- 07 Apr 2025 14:21:18 -0400
-X-MC-Unique: K0TaAE15OlaiLMNeZtQo6Q-1
-X-Mimecast-MFC-AGG-ID: K0TaAE15OlaiLMNeZtQo6Q_1744050076
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7899318001F6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C831259C85;
 	Mon,  7 Apr 2025 18:21:16 +0000 (UTC)
-Received: from pasta.fast.eng.rdu2.dc.redhat.com (unknown [10.45.224.15])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 352CB1828AA8;
-	Mon,  7 Apr 2025 18:21:12 +0000 (UTC)
-From: Andreas Gruenbacher <agruenba@redhat.com>
-To: cgroups@vger.kernel.org
-Cc: Jan Kara <jack@suse.cz>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Rafael Aquini <aquini@redhat.com>,
-	gfs2@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [RFC 2/2] writeback: Fix false warning in inode_to_wb()
-Date: Mon,  7 Apr 2025 20:21:02 +0200
-Message-ID: <20250407182104.716631-3-agruenba@redhat.com>
-In-Reply-To: <20250407182104.716631-1-agruenba@redhat.com>
-References: <20250407182104.716631-1-agruenba@redhat.com>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RLh1tXPV"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35DD9224882;
+	Mon,  7 Apr 2025 18:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744050076; cv=none; b=LN6BRVj4rVGEKOYZCTLDgtTjDlp5LHdFLq4X9EzhAeQK/XQXcxmSIxD7oYPmtMilYXfS7tAXmS87j8XrTk+3tVK6DQhYE1ZM4nNCEWmSDlne5WysKhyklFj5tnWS30qQvWOr7peWqkF7iOgqfjNGSHHJaGdUGSs0ydJbnDT19qw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744050076; c=relaxed/simple;
+	bh=8wC0V3F7d+ilyrpMWafa8egm5sgRBCeyFuJIZP4vVRk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=scQ/Mnak8RXr4NmT/FHeg9VODNj04DhyYlirN+EfUijmybrp+Bm9XORFBI4OYkgbLaQtDx0syRrZ44vS+S3lCb6Q3VaT72O2ODHnHjMuvliXZDJ4FSWO6YraBJ+xrLrCye3fSqoAtQBKpva/pMwiwN6czXb9kIfaXHnz8O8qAjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RLh1tXPV; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so19967485e9.0;
+        Mon, 07 Apr 2025 11:21:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744050072; x=1744654872; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ES21mMERPPnSMI71+d30thtG1PyOJaAorY/1IBZ9Fis=;
+        b=RLh1tXPVIM8MjiBxxPBUK95dcSPJ5jr2pkYaq4Ne4OSVUoMg83cOXhES7v4ekW9SKx
+         10EPSLD5PH7L4WQRCJXbX+tVNtffvR01hs7/Y+ydWtTRJWsJS4YIIB6r8u5EbH1y+8Bn
+         Wy4B0DFmwJq2292+/mE9nZoWzHGV/x1uy/ofgHRnzAnlt3Emh5Ne6DZH92YOoXJ3iEUW
+         IIFUPt6+AvYVT5qP+xZiXl3PgCiBmYfCsVo82pAL+N4ksUoG2KEjUQ63yeinntOScBlu
+         Oe+CS2DIXh/hch8RVkfgGRv5EyL4cgK6Ev0EXxvsGm6c4l/NVuCKA3C0abL2rZ/rscxk
+         Mnrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744050072; x=1744654872;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ES21mMERPPnSMI71+d30thtG1PyOJaAorY/1IBZ9Fis=;
+        b=I3KVtG/oO0wG4+LKPjXQ3p6n4AbdQkCxj2Pg7vL7W2pE0tPHxmJM8nym6dNkodr58x
+         4xClfmOgYjSEK5qblFi+CxPkA/BVkMOkhNNQOlB2lU7caVRYawnHYxSYETtb1AdojtHR
+         dHHd5rTosnaF36ty/Etav0FAHE5WYM8gk5/7kAWD90A77oG17/A2weQNDM344eyjLW5c
+         Ibf/wbTX2XnNqZSBicSg9gambTJERupHfHyNP3pTW/fIGaGqi/AW9Bk6XZSTi92/3jpX
+         2rylYTg+/4bMZR/6FDGOXzKHyuZb15VzcMii/JswRrGVC+6x6GE81SfArAcKEQYBu+mk
+         Ckfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCsoUMmhqNXaKqp0hIhgs/hEGzE5wa0U2L8kt0IwuMT3OQM4iRh7XVwe9UVt3wiWTiAupfqWdAsIOjNRQS@vger.kernel.org, AJvYcCUQju+Tg3r2unjrYWSIhyr2/UEnC5XKsms/GOoLLYoUo0DCCe2BaUxukTTrGxvTnJJ9+k5DaiOh1k2qOqk=@vger.kernel.org, AJvYcCUwvWNr4cNkq4cm9KgqdorsoqmxY3JWmn/6usp8N4bVe/LKFR1/6LJJWxZ3Ywe5TCuhJorRqWZVYooT5+GC@vger.kernel.org, AJvYcCVTEToWl3r0KCVHMZ2GnmW1bpEXP4i1dO+/X6XYHZEt9IqoOMZvaLxCvl7qmVGkCx/K/BzR0Jl3G+fG@vger.kernel.org, AJvYcCWXb4TeKCIz7+ffGSu6YZM9jBjFeIsE5wTzS3cotQ5FjbESq53nQNITlAbErgTBCAXpD8jDrctEe/1g8A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ7CSspDsfbBiQ8tGlyFvoHGUHOBK/xN92azAo7GwEkURZeXSL
+	klriQVBddRCDOkwzCdWUskl4CUEEO8JbEl3NLGDwgYG2GEez5i0I
+X-Gm-Gg: ASbGncuhJNIXaszIMEtbAGHgUGxvOWj7l8aDGZQD8uHd6+w8h0RU2QTgafKixD6ggao
+	bghsVI1prsFRDg1VYmWuQg6I8OF/sY7yKD0gZ4QTph18NEDYodvHd6gYDtqQg7giORWwq/cCWjB
+	oFEBkToYO2cbJvQI8jcaNwDZxUhgfgQI11bgYe65Bhr+OZihgptS0XalMDztG98MwqKDh2rDLHn
+	+y5if9Zg4ua9migkuRI5h/lSMKA9OmxI60Cg4waOZ9SppSvyAGJqIhPy+7kc8bAwkgazRDr6W1i
+	Mha/mHTnyH+YS1ldcLnQ25sI3Jo7yGtOm8XPv1coVeamdAsLEY+D8muA2iN6XZc0uIS5YEZR3y8
+	REWJH5Sk=
+X-Google-Smtp-Source: AGHT+IH7UT5+ww2+1FoGL9t0kvvVtsQUX0Zd7DaWfpx4PLfPCluuGh6+cQNvkvF3tn8WY4k8enhO3A==
+X-Received: by 2002:a05:600c:8411:b0:43d:d06:3798 with SMTP id 5b1f17b1804b1-43ecf9fe1f0mr113598395e9.20.1744050072429;
+        Mon, 07 Apr 2025 11:21:12 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec3174cf0sm142595365e9.0.2025.04.07.11.21.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 11:21:11 -0700 (PDT)
+Date: Mon, 7 Apr 2025 19:21:10 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Arnd Bergmann <arnd@kernel.org>, linux-kbuild@vger.kernel.org, Arnd
+ Bergmann <arnd@arndb.de>, "H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel
+ <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>, Brian Gerst
+ <brgerst@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Dave Hansen
+ <dave.hansen@linux.intel.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ Ingo Molnar <mingo@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Marc
+ Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Masahiro
+ Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas@fjasle.eu>, Takashi Iwai <tiwai@suse.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Uros Bizjak <ubizjak@gmail.com>, Will Deacon
+ <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH 0/4] Make gcc-8.1 and binutils-2.30 the minimum version
+Message-ID: <20250407192110.5a7ad777@pumpkin>
+In-Reply-To: <20250407164151.GB2536@sol.localdomain>
+References: <20250407094116.1339199-1-arnd@kernel.org>
+	<20250407164151.GB2536@sol.localdomain>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Jan Kara <jack@suse.cz>
+On Mon, 7 Apr 2025 09:41:51 -0700
+Eric Biggers <ebiggers@kernel.org> wrote:
 
-inode_to_wb() is used also for filesystems that don't support cgroup
-writeback. For these filesystems inode->i_wb is stable during the
-lifetime of the inode (it points to bdi->wb) and there's no need to hold
-locks protecting the inode->i_wb dereference. Improve the warning in
-inode_to_wb() to not trigger for these filesystems.
+> On Mon, Apr 07, 2025 at 11:41:12AM +0200, Arnd Bergmann wrote:
+> > From: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > x86 already requires gcc-8.1 since linux-6.15-rc1, which led me to
+> > actually go through all  version checks and make this is the minimum
+> > for all architectures.
+> > 
+> > Most of the actual resulting changes are actually for raising the
+> > binutils version, which eliminates version checks on x86 and arm64.
+> > 
+> > Arnd Bergmann (4):
+> >   kbuild: require gcc-8 and binutils-2.30
+> >   raid6: skip avx512 checks
+> >   x86: remove checks for binutils-2.30 and earlier
+> >   arm64: drop binutils version checks  
+> 
+> This is intended to supersede the patches from Uros that removed checks for
+> binutils < 2.25, right?  See:
+> 
+> * https://lore.kernel.org/linux-crypto/20250404074135.520812-1-ubizjak@gmail.com/
+> * https://lore.kernel.org/linux-crypto/20250404074135.520812-2-ubizjak@gmail.com
+> * https://lore.kernel.org/linux-crypto/20250404074135.520812-3-ubizjak@gmail.com/
+> 
+> If we can indeed bump up the requirement to 2.30, that would be great.
+> 
+> Just a note though: I recently added VAES and VPCLMULQDQ instructions to
+> BoringSSL, which increased the binutils requirement of building BoringSSL to
+> 2.30, and this caused issues in a downstream project; e.g. see
+> https://github.com/briansmith/ring/issues/2463.  Specifically people complained
+> about being unable to build on Amazon Linux 2 and CentOS/RHEL/Oracle Linux 7.
 
-Signed-off-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Andreas Gruenbacher <agruenba@redhat.com>
----
- include/linux/backing-dev.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Just tell them RHEL 7 is no longer supported :-)
+(Was a right PITA installing an extra package on a CentOS 7 system we use as
+a build machine...)
 
-diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
-index 8e7af9a03b41..4069a027582f 100644
---- a/include/linux/backing-dev.h
-+++ b/include/linux/backing-dev.h
-@@ -245,10 +245,11 @@ wb_get_create_current(struct backing_dev_info *bdi, gfp_t gfp)
-  * holding either @inode->i_lock, the i_pages lock, or the
-  * associated wb's list_lock.
-  */
--static inline struct bdi_writeback *inode_to_wb(const struct inode *inode)
-+static inline struct bdi_writeback *inode_to_wb(struct inode *inode)
- {
- #ifdef CONFIG_LOCKDEP
- 	WARN_ON_ONCE(debug_locks &&
-+		     inode_cgwb_enabled(inode) &&
- 		     (!lockdep_is_held(&inode->i_lock) &&
- 		      !lockdep_is_held(&inode->i_mapping->i_pages.xa_lock) &&
- 		      !lockdep_is_held(&inode->i_wb->list_lock)));
--- 
-2.48.1
+In any case it is relatively easy to install a later gcc - even though it ends
+up in a very obscure place.
+
+	David
+
+> 
+> So I just thought I'd mention that, based on past experience with this sort of
+> thing, those are the specific cases where it seems people are most likely to be
+> trying to use binutils < 2.30.
+> 
+> But if those distros are not going to be supported any longer (without
+> installing newer tools on them), or even are already unsupported due to the gcc
+> requirement, bumping up the binutils requirement to 2.30 sounds good to me.
+> 
+> - Eric
+> 
 
 
