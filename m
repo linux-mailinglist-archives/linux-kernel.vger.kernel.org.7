@@ -1,310 +1,323 @@
-Return-Path: <linux-kernel+bounces-592569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A9A6A7EEA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:12:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E8A7A7EEF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:19:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EB7F7A44C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:10:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 226214417DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDE32505A8;
-	Mon,  7 Apr 2025 20:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B17221555;
+	Mon,  7 Apr 2025 20:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OEvaoENE"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=wkennington-com.20230601.gappssmtp.com header.i=@wkennington-com.20230601.gappssmtp.com header.b="xseyQlep"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2876E22ACF7
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 20:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D2222424C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 20:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744056616; cv=none; b=Ltu1lP+j5lzFlsxiVzxZMtu4SwoSN7XC92yORnY833ETqBbImIWfvx/M3zv85UUvxn9Diusr5Hl9KKtbFJP3wfnk9EKpihfZpcVxaODJINs+gV9jBfSdnM72QhN8/yKSzbrFLjvoovW0vcDce5Xj9j0oVFcoEuCbNF6QclV8N3o=
+	t=1744056614; cv=none; b=irVC3DjLk/WP8PJDyKojJXC34n4+ViP9Nx6rpIF5SRqti5jD+ICRZTNJo+WutLJ4/WoyBGpVncy9VNECexYStO8H4Zz8ZctJbBJM1RfuW2M+79KiVZ9/CEMdq+BzH3ka8hEo+3VwgxITdDlqRpat7bBJEczKFZJYuZERkRGADrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744056616; c=relaxed/simple;
-	bh=XK+Af6O6Hgo87rDFwo5UDElsSKT3WIcxVBFG+7S95I8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VUHhz1hRGr+tdskzRHd7sgtdbq/9ychF46YTWl9jdc7FSZ+m9U0kr2NDXF+iO/8BbKiuQo7X/puBfloZ7xw0qcG/LPmc7XKAoTMdWUZup2r6yjhdKfDJrmw/LmXYYywWJeMBDjYCxEOBZFOfg+VZj8b/R1XKC6apy/dLK1wJWIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OEvaoENE; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2264c9d0295so51195ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 13:10:13 -0700 (PDT)
+	s=arc-20240116; t=1744056614; c=relaxed/simple;
+	bh=7RoIT9/RUIJd/OqbMR50Adl4B420MNsQ/i2IPCgIdKg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Hg5WXELu/yXSIHHY06iz4ZbMlwA8Am5kqpPkYHAmO/AvN5r0vdNC0tcREKzMPB1+FfMGCoiDhVXrFbLrK1XcmLstjNUmCi8KaFID42KVeRvPJaP6fJwoXoFgOzj9nWyGeZEUnFzam6y9T3b8c9GM60UQuki+cnjcGJuKThVW9Bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wkennington.com; spf=none smtp.mailfrom=wkennington.com; dkim=pass (2048-bit key) header.d=wkennington-com.20230601.gappssmtp.com header.i=@wkennington-com.20230601.gappssmtp.com header.b=xseyQlep; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wkennington.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=wkennington.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-227aaa82fafso41277125ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 13:10:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744056613; x=1744661413; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=wkennington-com.20230601.gappssmtp.com; s=20230601; t=1744056611; x=1744661411; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7sbJLbDgV00YszfDeeq8tXF6PpKgxMF6D2zjsFK2NWE=;
-        b=OEvaoENEPxTjOBaRsDtV2wxGzKNoq5IPrLg13mqhuhtU6iMZaiZhhzzeZ5/cpit6Ej
-         HyWh3k1+tgaTrrvBivPv/9I4GHjGsg3uB59zN7PE6XMNuRXhQTMu8gUK4/YTgz5mdsvN
-         CZ/dR6K08ivqdJk6gx7C+XzcATIRzA4f8nQhIlo/SdkV57dUYgsVZppTd8U6xwprGxzR
-         cj9ZD4yekLn5H2baY5KZWRoNZO/VD/1ZDZnuYaeEu3nphkU8RQS48c2q9aPxHeJvJfVF
-         nTQIY3nXFbnI+5haEhQxDDUl0u0OrJaNVmnlqbNFbCyt8pSmEU5Qt+xK0DuX4RJ6xYHD
-         qW4Q==
+        bh=SKorvTDcHHWmcS+AjT7qKhMDewJLu0PWpIswTAFjbRo=;
+        b=xseyQlepmsqtgwYCOGLB+yS8EQSTm2mrtGl3mvNapVVxMQy1ZsTKURZICYfWZkmGQN
+         gHRU39FkwcyUUUcDfFLZGn2hL1QjyPoDXdj4ZU98UZboRXgqu2D4cwUZnQgvWP5hDude
+         NnFVt1+QXpubsYc+jiDlKtBFRwrw0ix15Ol19e2Zm8DZPO3JEQwuwViBYVJnjfjyw6fX
+         loIXvabfaHK/WjmXRwkUdDxL1JJHTZwVLb5PvBYlgq4RTF6Gl22ceEyGdnb1gitFqZQN
+         Ivij96PKOxVG5OjaVLSnb/NJVaur5AareQVZLa2adbLCZlK1XByYCf8HGIZ9N6F1y3uW
+         nG6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744056613; x=1744661413;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1744056611; x=1744661411;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7sbJLbDgV00YszfDeeq8tXF6PpKgxMF6D2zjsFK2NWE=;
-        b=sv13KLuZJ6Yw3Uk4MvxGVmkok/PD0eHMbOKZCwbhfgTIRVYxgTgVRMVPnV1B4U/b/D
-         uhoQsV+kIETTp5/XGw47Tvds2/70pOXtru0h28KHR/9Guqp9Y3Ghyb0ruwgKjq/SVdLi
-         DRKxXk9LHKWRQRgr1eaxDGwKsUHDFYJEcAQa6X+u1lQKlKd1eKoUaP2Hz0YBCeX7hO+U
-         2NdY8yqUzLGaP7t4eJQ/P3ZqlRk7HHfZg552fMYFYR+VSWd6zNcrsCbGOezJiOY3ln9b
-         qS16Si1Od69DgB7ejmX7lAHpdzKCLsMXV1Ua9ot7B3OcMIXQ0Ic7KOeKjikjuEGGhwBa
-         7ZIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWzyM79+9PrEv+HMX4gPmS3p2iHCA0DN00/6TTI0iZYVkHg35bh7hmjFSSrdoO+gC1xKEkjtHMTYWd/HZ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY3un16Qb7WmHOFnJmDgBHGCfQoaArTJi1L2koHxyJO0vyZvBK
-	MYHBQwW86ddrWdF7AqU4gxTZ+70B6nMyp1ImdEo93smCkbWdbaqPzwOnU4Lls9Gk+KjAUIfIFRB
-	hxf23kEzQ/RKLUzCnIR+8ogt0JoQ+ouR/ClBB
-X-Gm-Gg: ASbGncu/Bdo13GLZJz0Ecyg9QFn5E5w6PRtQz+VqHWdio/e2xlLmiaXH6bZ4M5xuMgs
-	Jf7a0ddyOWpEA4PCWUn50JxGwaG0Qrmyf0AKx4qw4ApOzO8jL5CaAFl+p5XXpm4nJKZqei2c4k7
-	eeK3Zh1Ro3tg3vKVoPu1q1wEU62LRmwx43/UmzUUnPJ3fgAUIMYUnizQU=
-X-Google-Smtp-Source: AGHT+IG3pfQ60naXGCzm339BeOD/nJbzOmZwFIQ5VsId9IK+f2StEPUia7MLAQXM7gWryiHf1gg4/LenqCMIQ7uu1Gs=
-X-Received: by 2002:a17:903:41c8:b0:21f:9f4:4a03 with SMTP id
- d9443c01a7336-22ab737816amr150715ad.21.1744056613089; Mon, 07 Apr 2025
- 13:10:13 -0700 (PDT)
+        bh=SKorvTDcHHWmcS+AjT7qKhMDewJLu0PWpIswTAFjbRo=;
+        b=M+0/hAMF+fWqQT/XO2v8Dh8iq7RmgN3CyGz/ZOF8y7LQnG35Svr8GMu/UTjjYOXXCU
+         v+9RkL9+yxkW8FjJQSbEjU1Zj0jbSCl7eA3dJ07z9tcmzjeArm7nT+cHpxv21GK0kQNj
+         SjeTh4k4YXjFs4PD5347N69BPjUn1eDUi4qA1OCIMZC2Dpwp9c8FiG3YK6F8seVlRssc
+         txyhMCFOiz5JiIpN+klRSX6iNUdo595AoBPUD4xSzzpuKKsl+NcoRh0SQvVhcyu7kAiU
+         vLQXLC8tW6/rqDlGHybJgCD0ndwxOnZE3OSxtQhH8eHK4WJ7nCri0/EHXblR7COyRit2
+         572A==
+X-Forwarded-Encrypted: i=1; AJvYcCW9gbY7ZgfRG8UZ58SuTbjNV+01+SvaWQpwOda6+fxK0636YR5usRx3QO7KZijiOq66dxFjQYkVfHilJG4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznAKtDnVdee1wMkj3GcY+QtErGvTMbEm7GxUWXITrHbTuS0eQw
+	nvqwJX5c59+hLLTJM/8gjRZuuOApK02MMUiSTElF+jqX/ExcuHf5VwI4wzYq+JA0u5+dnyE2k/Y
+	B
+X-Gm-Gg: ASbGncsTyVHpG40KYGj5Yul4BLj2qJWrRz2EiddJhO2HzSRvJlKHOo1EhpkvibTa94B
+	dA8DPH7mKp6Wz1k8nyVLdOe8mVOkiIkEXI6a2rnMo6GLnmYIzZiPbw6S4XNY0nS3tbPeLELtGS7
+	cuw0BmN47LzJ6e4Z9cKcW4TvzKtapEn2yowO9x8xA6pNAB7HWjoIZbbpUjRYPmIwFN98AwTmoFM
+	rPqe9gTRwLKSMAeT+jt81ccaKGRAIzOXQ9WHZmP+ijmVLpNlA60ugJSJeX3r0jSiD2Ku1wPRY4M
+	Vyf0Ch25XOSwLTMc1eUMxdNxV0Bv+IvN+6AElMrBGIWyBh4HrJ4KZMAME5Lo6/bDqZsGTyLUuz+
+	Qkh5xNTauVEX/GuifaYwCDq+Eqs7fikJd
+X-Google-Smtp-Source: AGHT+IHvXiMbLnANd8/D78KF/tGgUo37pGC3kDLDkaZfEw+83S+ZticgxpE0lAOSgNyNxaubDQZWOw==
+X-Received: by 2002:a17:902:ecc4:b0:224:1eab:97b2 with SMTP id d9443c01a7336-22a8a2da123mr210601995ad.53.1744056611011;
+        Mon, 07 Apr 2025 13:10:11 -0700 (PDT)
+Received: from wak-linux.svl.corp.google.com ([2a00:79e0:2e5b:9:b25a:2d1b:1734:78be])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2297865e0b4sm86087865ad.154.2025.04.07.13.10.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 13:10:10 -0700 (PDT)
+From: "William A. Kennington III" <william@wkennington.com>
+To: Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>
+Cc: linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"William A. Kennington III" <william@wkennington.com>
+Subject: [PATCH v5] hwmon: (pmbus): Introduce page_change_delay
+Date: Mon,  7 Apr 2025 13:10:02 -0700
+Message-ID: <20250407201002.1198092-1-william@wkennington.com>
+X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
+In-Reply-To: <20250404193103.4174977-1-william@wkennington.com>
+References: <20250404193103.4174977-1-william@wkennington.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407050101.1389825-1-irogers@google.com> <20250407050101.1389825-12-irogers@google.com>
- <26916c80-f42b-47a4-8d6e-7d9b3d84163a@linux.intel.com>
-In-Reply-To: <26916c80-f42b-47a4-8d6e-7d9b3d84163a@linux.intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 7 Apr 2025 13:10:02 -0700
-X-Gm-Features: ATxdqUGL1XcrAwjQ0IU_b8XRRekjF67B4j5scWzRqgq2MrEr7A4b8-BgCGDLrjg
-Message-ID: <CAP-5=fUVu1nhSZ2KehLdEMTHCW393EXuk3UjnNjwBpe4EOMt4w@mail.gmail.com>
-Subject: Re: [PATCH v2 11/16] perf intel-tpebs: Add mutex for tpebs_results
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Weilin Wang <weilin.wang@intel.com>, 
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
-	John Garry <john.g.garry@oracle.com>, Howard Chu <howardchu95@gmail.com>, 
-	Levi Yun <yeoreum.yun@arm.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Apr 7, 2025 at 12:49=E2=80=AFPM Liang, Kan <kan.liang@linux.intel.c=
-om> wrote:
->
->
->
-> On 2025-04-07 1:00 a.m., Ian Rogers wrote:
-> > Ensure sample reader isn't racing with events being added/removed.
->
-> Is it a bug fix?
->
-> I think the tpebs have been merged for a while. Should the backport be
-> required?
+We have some buggy pmbus devices that require a delay after performing a
+page change operation before trying to issue more commands to the
+device.
 
-Because things like interval mode aren't currently working with tpebs
-I think the issues that could arise are minimal. A fixes tag would
-drag in this whole series and I'm not sure that's what we want.
+This allows for a configurable delay after page changes, but not
+affecting other read or write operations.
 
-Thanks,
-Ian
+This makes a slight behavioral tweak to the existing delay logic, where
+it considers the longest of delays between operations, instead of always
+chosing the write delay over the access delay.
 
-> Thanks,
-> Kan>
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/util/intel-tpebs.c | 51 ++++++++++++++++++++++++++++++-----
-> >  1 file changed, 44 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/tools/perf/util/intel-tpebs.c b/tools/perf/util/intel-tpeb=
-s.c
-> > index 452ce3698221..29616d087bce 100644
-> > --- a/tools/perf/util/intel-tpebs.c
-> > +++ b/tools/perf/util/intel-tpebs.c
-> > @@ -16,6 +16,7 @@
-> >  #include "debug.h"
-> >  #include "evlist.h"
-> >  #include "evsel.h"
-> > +#include "mutex.h"
-> >  #include "session.h"
-> >  #include "tool.h"
-> >  #include "cpumap.h"
-> > @@ -32,6 +33,7 @@ bool tpebs_recording;
-> >  static LIST_HEAD(tpebs_results);
-> >  static pthread_t tpebs_reader_thread;
-> >  static struct child_process tpebs_cmd;
-> > +static struct mutex tpebs_mtx;
-> >
-> >  struct tpebs_retire_lat {
-> >       struct list_head nd;
-> > @@ -51,6 +53,19 @@ struct tpebs_retire_lat {
-> >
-> >  static struct tpebs_retire_lat *tpebs_retire_lat__find(struct evsel *e=
-vsel);
-> >
-> > +static void tpebs_mtx_init(void)
-> > +{
-> > +     mutex_init(&tpebs_mtx);
-> > +}
-> > +
-> > +static struct mutex *tpebs_mtx_get(void)
-> > +{
-> > +     static pthread_once_t tpebs_mtx_once =3D PTHREAD_ONCE_INIT;
-> > +
-> > +     pthread_once(&tpebs_mtx_once, tpebs_mtx_init);
-> > +     return &tpebs_mtx;
-> > +}
-> > +
-> >  static int evsel__tpebs_start_perf_record(struct evsel *evsel, int con=
-trol_fd[], int ack_fd[])
-> >  {
-> >       const char **record_argv;
-> > @@ -59,13 +74,15 @@ static int evsel__tpebs_start_perf_record(struct ev=
-sel *evsel, int control_fd[],
-> >       char cpumap_buf[50];
-> >       struct tpebs_retire_lat *t;
-> >
-> > +     mutex_lock(tpebs_mtx_get());
-> >       list_for_each_entry(t, &tpebs_results, nd)
-> >               tpebs_event_size++;
-> >
-> >       record_argv =3D malloc((10 + 2 * tpebs_event_size) * sizeof(*reco=
-rd_argv));
-> > -     if (!record_argv)
-> > +     if (!record_argv) {
-> > +             mutex_unlock(tpebs_mtx_get());
-> >               return -ENOMEM;
-> > -
-> > +     }
-> >       record_argv[i++] =3D "perf";
-> >       record_argv[i++] =3D "record";
-> >       record_argv[i++] =3D "-W";
-> > @@ -101,6 +118,7 @@ static int evsel__tpebs_start_perf_record(struct ev=
-sel *evsel, int control_fd[],
-> >       list_for_each_entry(t, &tpebs_results, nd)
-> >               t->started =3D true;
-> >
-> > +     mutex_unlock(tpebs_mtx_get());
-> >       return ret;
-> >  }
-> >
-> > @@ -112,9 +130,12 @@ static int process_sample_event(const struct perf_=
-tool *tool __maybe_unused,
-> >  {
-> >       struct tpebs_retire_lat *t;
-> >
-> > +     mutex_lock(tpebs_mtx_get());
-> >       t =3D tpebs_retire_lat__find(evsel);
-> > -     if (!t)
-> > +     if (!t) {
-> > +             mutex_unlock(tpebs_mtx_get());
-> >               return -EINVAL;
-> > +     }
-> >       /*
-> >        * Need to handle per core results? We are assuming average retir=
-e
-> >        * latency value will be used. Save the number of samples and the=
- sum of
-> > @@ -123,6 +144,7 @@ static int process_sample_event(const struct perf_t=
-ool *tool __maybe_unused,
-> >       t->count +=3D 1;
-> >       t->sum +=3D sample->retire_lat;
-> >       t->val =3D (double) t->sum / t->count;
-> > +     mutex_unlock(tpebs_mtx_get());
-> >       return 0;
-> >  }
-> >
-> > @@ -229,7 +251,6 @@ static struct tpebs_retire_lat *tpebs_retire_lat__n=
-ew(struct evsel *evsel)
-> >               return NULL;
-> >       }
-> >       result->evsel =3D evsel;
-> > -     list_add_tail(&result->nd, &tpebs_results);
-> >       return result;
-> >  }
-> >
-> > @@ -282,16 +303,22 @@ static struct tpebs_retire_lat *tpebs_retire_lat_=
-_find(struct evsel *evsel)
-> >  static int evsel__tpebs_prepare(struct evsel *evsel)
-> >  {
-> >       struct evsel *pos;
-> > -     struct tpebs_retire_lat *tpebs_event =3D tpebs_retire_lat__find(e=
-vsel);
-> > +     struct tpebs_retire_lat *tpebs_event;
-> >
-> > +     mutex_lock(tpebs_mtx_get());
-> > +     tpebs_event =3D tpebs_retire_lat__find(evsel);
-> >       if (tpebs_event) {
-> >               /* evsel, or an identically named one, was already prepar=
-ed. */
-> > +             mutex_unlock(tpebs_mtx_get());
-> >               return 0;
-> >       }
-> >       tpebs_event =3D tpebs_retire_lat__new(evsel);
-> >       if (!tpebs_event)
-> >               return -ENOMEM;
-> >
-> > +     list_add_tail(&tpebs_event->nd, &tpebs_results);
-> > +     mutex_unlock(tpebs_mtx_get());
-> > +
-> >       /*
-> >        * Eagerly prepare all other evsels on the list to try to ensure =
-that by
-> >        * open they are all known.
-> > @@ -317,6 +344,7 @@ static int evsel__tpebs_prepare(struct evsel *evsel=
-)
-> >  int evsel__tpebs_open(struct evsel *evsel)
-> >  {
-> >       int ret;
-> > +     bool tpebs_empty;
-> >
-> >       /* We should only run tpebs_start when tpebs_recording is enabled=
-. */
-> >       if (!tpebs_recording)
-> > @@ -336,7 +364,10 @@ int evsel__tpebs_open(struct evsel *evsel)
-> >       if (ret)
-> >               return ret;
-> >
-> > -     if (!list_empty(&tpebs_results)) {
-> > +     mutex_lock(tpebs_mtx_get());
-> > +     tpebs_empty =3D list_empty(&tpebs_results);
-> > +     mutex_unlock(tpebs_mtx_get());
-> > +     if (!tpebs_empty) {
-> >               struct pollfd pollfd =3D { .events =3D POLLIN, };
-> >               int control_fd[2], ack_fd[2], len;
-> >               char ack_buf[8];
-> > @@ -436,8 +467,10 @@ int evsel__tpebs_read(struct evsel *evsel, int cpu=
-_map_idx, int thread)
-> >        */
-> >       tpebs_stop();
-> >
-> > +     mutex_lock(tpebs_mtx_get());
-> >       t =3D tpebs_retire_lat__find(evsel);
-> >       val =3D rint(t->val);
-> > +     mutex_unlock(tpebs_mtx_get());
-> >
-> >       if (old_count) {
-> >               count->val =3D old_count->val + val;
-> > @@ -460,9 +493,13 @@ int evsel__tpebs_read(struct evsel *evsel, int cpu=
-_map_idx, int thread)
-> >   */
-> >  void evsel__tpebs_close(struct evsel *evsel)
-> >  {
-> > -     struct tpebs_retire_lat *t =3D tpebs_retire_lat__find(evsel);
-> > +     struct tpebs_retire_lat *t;
-> >
-> > +     mutex_lock(tpebs_mtx_get());
-> > +     t =3D tpebs_retire_lat__find(evsel);
-> > +     list_del_init(&t->nd);
-> >       tpebs_retire_lat__delete(t);
-> > +     mutex_unlock(tpebs_mtx_get());
-> >
-> >       if (list_empty(&tpebs_results))
-> >               tpebs_stop();
->
+Signed-off-by: William A. Kennington III <william@wkennington.com>
+---
+V1 -> V2: Simplify how the backoff time is stored and computed
+V2 -> V3: Use the BIT macro
+V3 -> V4: Move defines up
+	  Move op combos outside update call
+	  Remove unused PMBUS_OP_READ
+V4 -> V5: Rebase onto 6.15-rc1
+
+ drivers/hwmon/pmbus/pmbus.h      |  1 +
+ drivers/hwmon/pmbus/pmbus_core.c | 69 ++++++++++++++++----------------
+ 2 files changed, 36 insertions(+), 34 deletions(-)
+
+diff --git a/drivers/hwmon/pmbus/pmbus.h b/drivers/hwmon/pmbus/pmbus.h
+index ddb19c9726d6..742dafc44390 100644
+--- a/drivers/hwmon/pmbus/pmbus.h
++++ b/drivers/hwmon/pmbus/pmbus.h
+@@ -482,6 +482,7 @@ struct pmbus_driver_info {
+ 	 */
+ 	int access_delay;		/* in microseconds */
+ 	int write_delay;		/* in microseconds */
++	int page_change_delay;		/* in microseconds */
+ };
+ 
+ /* Regulator ops */
+diff --git a/drivers/hwmon/pmbus/pmbus_core.c b/drivers/hwmon/pmbus/pmbus_core.c
+index cfeba2e4c5c3..be6d05def115 100644
+--- a/drivers/hwmon/pmbus/pmbus_core.c
++++ b/drivers/hwmon/pmbus/pmbus_core.c
+@@ -32,6 +32,13 @@
+ #define PMBUS_ATTR_ALLOC_SIZE	32
+ #define PMBUS_NAME_SIZE		24
+ 
++/*
++ * The type of operation used for picking the delay between
++ * successive pmbus operations.
++ */
++#define PMBUS_OP_WRITE		BIT(0)
++#define PMBUS_OP_PAGE_CHANGE	BIT(1)
++
+ static int wp = -1;
+ module_param(wp, int, 0444);
+ 
+@@ -113,8 +120,8 @@ struct pmbus_data {
+ 
+ 	int vout_low[PMBUS_PAGES];	/* voltage low margin */
+ 	int vout_high[PMBUS_PAGES];	/* voltage high margin */
+-	ktime_t write_time;		/* Last SMBUS write timestamp */
+-	ktime_t access_time;		/* Last SMBUS access timestamp */
++
++	ktime_t next_access_backoff;	/* Wait until at least this time */
+ };
+ 
+ struct pmbus_debugfs_entry {
+@@ -169,32 +176,26 @@ EXPORT_SYMBOL_NS_GPL(pmbus_set_update, "PMBUS");
+ static void pmbus_wait(struct i2c_client *client)
+ {
+ 	struct pmbus_data *data = i2c_get_clientdata(client);
+-	const struct pmbus_driver_info *info = data->info;
+-	s64 delta;
++	s64 delay = ktime_us_delta(data->next_access_backoff, ktime_get());
+ 
+-	if (info->access_delay) {
+-		delta = ktime_us_delta(ktime_get(), data->access_time);
+-
+-		if (delta < info->access_delay)
+-			fsleep(info->access_delay - delta);
+-	} else if (info->write_delay) {
+-		delta = ktime_us_delta(ktime_get(), data->write_time);
+-
+-		if (delta < info->write_delay)
+-			fsleep(info->write_delay - delta);
+-	}
++	if (delay > 0)
++		fsleep(delay);
+ }
+ 
+-/* Sets the last accessed timestamp for pmbus_wait */
+-static void pmbus_update_ts(struct i2c_client *client, bool write_op)
++/* Sets the last operation timestamp for pmbus_wait */
++static void pmbus_update_ts(struct i2c_client *client, int op)
+ {
+ 	struct pmbus_data *data = i2c_get_clientdata(client);
+ 	const struct pmbus_driver_info *info = data->info;
++	int delay = info->access_delay;
++
++	if (op & PMBUS_OP_WRITE)
++		delay = max(delay, info->write_delay);
++	if (op & PMBUS_OP_PAGE_CHANGE)
++		delay = max(delay, info->page_change_delay);
+ 
+-	if (info->access_delay)
+-		data->access_time = ktime_get();
+-	else if (info->write_delay && write_op)
+-		data->write_time = ktime_get();
++	if (delay > 0)
++		data->next_access_backoff = ktime_add_us(ktime_get(), delay);
+ }
+ 
+ int pmbus_set_page(struct i2c_client *client, int page, int phase)
+@@ -209,13 +210,13 @@ int pmbus_set_page(struct i2c_client *client, int page, int phase)
+ 	    data->info->pages > 1 && page != data->currpage) {
+ 		pmbus_wait(client);
+ 		rv = i2c_smbus_write_byte_data(client, PMBUS_PAGE, page);
+-		pmbus_update_ts(client, true);
++		pmbus_update_ts(client, PMBUS_OP_WRITE | PMBUS_OP_PAGE_CHANGE);
+ 		if (rv < 0)
+ 			return rv;
+ 
+ 		pmbus_wait(client);
+ 		rv = i2c_smbus_read_byte_data(client, PMBUS_PAGE);
+-		pmbus_update_ts(client, false);
++		pmbus_update_ts(client, 0);
+ 		if (rv < 0)
+ 			return rv;
+ 
+@@ -229,7 +230,7 @@ int pmbus_set_page(struct i2c_client *client, int page, int phase)
+ 		pmbus_wait(client);
+ 		rv = i2c_smbus_write_byte_data(client, PMBUS_PHASE,
+ 					       phase);
+-		pmbus_update_ts(client, true);
++		pmbus_update_ts(client, PMBUS_OP_WRITE);
+ 		if (rv)
+ 			return rv;
+ 	}
+@@ -249,7 +250,7 @@ int pmbus_write_byte(struct i2c_client *client, int page, u8 value)
+ 
+ 	pmbus_wait(client);
+ 	rv = i2c_smbus_write_byte(client, value);
+-	pmbus_update_ts(client, true);
++	pmbus_update_ts(client, PMBUS_OP_WRITE);
+ 
+ 	return rv;
+ }
+@@ -284,7 +285,7 @@ int pmbus_write_word_data(struct i2c_client *client, int page, u8 reg,
+ 
+ 	pmbus_wait(client);
+ 	rv = i2c_smbus_write_word_data(client, reg, word);
+-	pmbus_update_ts(client, true);
++	pmbus_update_ts(client, PMBUS_OP_WRITE);
+ 
+ 	return rv;
+ }
+@@ -405,7 +406,7 @@ int pmbus_read_word_data(struct i2c_client *client, int page, int phase, u8 reg)
+ 
+ 	pmbus_wait(client);
+ 	rv = i2c_smbus_read_word_data(client, reg);
+-	pmbus_update_ts(client, false);
++	pmbus_update_ts(client, 0);
+ 
+ 	return rv;
+ }
+@@ -468,7 +469,7 @@ int pmbus_read_byte_data(struct i2c_client *client, int page, u8 reg)
+ 
+ 	pmbus_wait(client);
+ 	rv = i2c_smbus_read_byte_data(client, reg);
+-	pmbus_update_ts(client, false);
++	pmbus_update_ts(client, 0);
+ 
+ 	return rv;
+ }
+@@ -484,7 +485,7 @@ int pmbus_write_byte_data(struct i2c_client *client, int page, u8 reg, u8 value)
+ 
+ 	pmbus_wait(client);
+ 	rv = i2c_smbus_write_byte_data(client, reg, value);
+-	pmbus_update_ts(client, true);
++	pmbus_update_ts(client, PMBUS_OP_WRITE);
+ 
+ 	return rv;
+ }
+@@ -520,7 +521,7 @@ static int pmbus_read_block_data(struct i2c_client *client, int page, u8 reg,
+ 
+ 	pmbus_wait(client);
+ 	rv = i2c_smbus_read_block_data(client, reg, data_buf);
+-	pmbus_update_ts(client, false);
++	pmbus_update_ts(client, 0);
+ 
+ 	return rv;
+ }
+@@ -2524,7 +2525,7 @@ static int pmbus_read_coefficients(struct i2c_client *client,
+ 	rv = i2c_smbus_xfer(client->adapter, client->addr, client->flags,
+ 			    I2C_SMBUS_WRITE, PMBUS_COEFFICIENTS,
+ 			    I2C_SMBUS_BLOCK_PROC_CALL, &data);
+-	pmbus_update_ts(client, true);
++	pmbus_update_ts(client, PMBUS_OP_WRITE);
+ 
+ 	if (rv < 0)
+ 		return rv;
+@@ -2728,7 +2729,7 @@ static int pmbus_init_common(struct i2c_client *client, struct pmbus_data *data,
+ 	if (!(data->flags & PMBUS_NO_CAPABILITY)) {
+ 		pmbus_wait(client);
+ 		ret = i2c_smbus_read_byte_data(client, PMBUS_CAPABILITY);
+-		pmbus_update_ts(client, false);
++		pmbus_update_ts(client, 0);
+ 
+ 		if (ret >= 0 && (ret & PB_CAPABILITY_ERROR_CHECK)) {
+ 			if (i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_PEC))
+@@ -2744,13 +2745,13 @@ static int pmbus_init_common(struct i2c_client *client, struct pmbus_data *data,
+ 	data->read_status = pmbus_read_status_word;
+ 	pmbus_wait(client);
+ 	ret = i2c_smbus_read_word_data(client, PMBUS_STATUS_WORD);
+-	pmbus_update_ts(client, false);
++	pmbus_update_ts(client, 0);
+ 
+ 	if (ret < 0 || ret == 0xffff) {
+ 		data->read_status = pmbus_read_status_byte;
+ 		pmbus_wait(client);
+ 		ret = i2c_smbus_read_byte_data(client, PMBUS_STATUS_BYTE);
+-		pmbus_update_ts(client, false);
++		pmbus_update_ts(client, 0);
+ 
+ 		if (ret < 0 || ret == 0xff) {
+ 			dev_err(dev, "PMBus status register not found\n");
+-- 
+2.49.0.504.g3bcea36a83-goog
+
 
