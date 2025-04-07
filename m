@@ -1,103 +1,138 @@
-Return-Path: <linux-kernel+bounces-591887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D82CA7E61A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:20:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A81DAA7E685
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0249E7A056E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:19:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B66FE424BE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4404B2080D4;
-	Mon,  7 Apr 2025 16:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338B6206F1A;
+	Mon,  7 Apr 2025 16:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NSRN+E5g";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PBoLOEMW"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eXsnlvd3"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2FC20E6F0
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 16:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9650207E0C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 16:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744042561; cv=none; b=VG2HFkTJDP9xsUHazgSQn26nWJycAP6pPiDYMpwp3RtSNaOvk6QXOwAIj8GGZvGeFYnCvjZBN8FU67h+h2ct2a6cQ+2i71A0NbnPDiqoseOdPLQ7rA5wXpiwPOfObWJLas58tITO3IcCU1LZCHHN3n+wqF/LJt/3zasAYE+/FIs=
+	t=1744042640; cv=none; b=kCpoxqHcPpFKDTRFLnE1awivWrfJIs099QlqoarEAheKrZGoBonRRPg0lEMNwqY1vYYpu8qUUN0W0r5CXBXvHrAGhd7E14pjnlecGxhHKDW06LxBZ7cnUvKW2cZqBd1Y/VfvrWhWcyQPMhE7DfVilUQsLlxvZNZKK2FxRCRO6qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744042561; c=relaxed/simple;
-	bh=91gvHqHPOc53Dp2GfJTatN6rIy4QHEKxxdSxnbSlPIE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tvFvp/tc9o6a37tngPNtR2BBqgZLDN5tJO1IkTY/6OryhdW4aXvin7C9qKREW4y1YpklX3bIRHEomjMYFjvHM0cFXe0hK3roig0/0eCN4yIvxpUNR5PI08pMloxHMPoCi6+PXvrg5TFlimNcYqWN2EWj+5Vynw7+Gp+SUshOSb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NSRN+E5g; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PBoLOEMW; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 7 Apr 2025 18:15:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744042558;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Fz7uJL1ohohlWM7+X3g8H30ATSD/74W4U5rDjq4waLI=;
-	b=NSRN+E5g5+jwx+N5XY/zz12Om/VKVUF3edsDzQtWC5giwU4RB4iXkPVDUty/FWN3c4FBX/
-	fJLlfS1l/YN8hLq3orF4UfWRBEmK5UAY9Q5JrMXnMBW0AOeG9zhBAQstCPciFRSylugqCK
-	TD7axi3dxCJXCph01xjwJk8IJ4XAVl6ban+oiRpDChFbu48bnR5A2sU5+bSoglyqzz/+re
-	tAAUYR68o6HezHy96ENY4ZYYsY+btuRaOWWVFNsjAk+GmExdy0E+V1CNs0J8JxAvJ0L0CD
-	3SnTViVsySaiwrk4JmpP2yst/Dfb+uUE5EGNSdquQNOhbOwRdoxkKnTSSRhwvg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744042558;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Fz7uJL1ohohlWM7+X3g8H30ATSD/74W4U5rDjq4waLI=;
-	b=PBoLOEMW7TSEcMsEVK0hPwQWx9mMg8WNlxzo5dODVL0dOU2vApr4dYrsJ4uqOAwxv+HOPA
-	Mw0Bt32k/JO4gEAw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 00/21] futex: Add support task local hash maps,
- FUTEX2_NUMA and FUTEX2_MPOL
-Message-ID: <20250407161557.bYYnmJSr@linutronix.de>
-References: <20250312151634.2183278-1-bigeasy@linutronix.de>
- <0713a015-b8dc-49db-a329-30891a10378c@linux.ibm.com>
+	s=arc-20240116; t=1744042640; c=relaxed/simple;
+	bh=M1Ww5unhqTe1EyqMmMPiP4uQRre5NADcj59S0PG9HlY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QBtlCE/wZpXsIGowTQuyIjMSxgd/53rJQRyUXUJ6Cp4YYBvIMOETLOXi/tSYnpGqDW8ggeQB/IZnEvZwT1eXuFj1/Q0U8+FOJTNyUJjO6db34t2L8bqy7BXM/zLOKZZ8WoUDg24gJozZ2WyINiFgdL6QJxqXBk9D0ybUk6v0368=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eXsnlvd3; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ab78e6edb99so661167766b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 09:17:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744042637; x=1744647437; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z5dWdjDoB7tV16wie4HuXtECtARsTapeiDBOI2mjVMA=;
+        b=eXsnlvd3mfYxlbNO1hxRb69ozi2A16+c40wDohrkzF38XoXYBowrNSFMbuGALSnMpb
+         EIUyFoSIORgzu9JT2qk2saEboSJYZrqdyKrMh4OjJUrvQYkYHlw9sCG1f0fZhah2L1HK
+         Frs8nRVfRZUG1EYNle0XRXP3REUzshsytvYsP4UGfBh236VCUlfe/UBLxr73FIXWSDbR
+         0fkI3PxggFOSJn8Yd+I1foe4PSEMjVSnAJ4SvbnHuQXc7CHwhVSZrajRZx7K877k5As0
+         Wb5EFU+0XsGqQCmDKUACZb4lswhiZMzE6Vx5+BZWbtbETR6gJ5vDlvcV3drqByAjJ5oV
+         RZgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744042637; x=1744647437;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z5dWdjDoB7tV16wie4HuXtECtARsTapeiDBOI2mjVMA=;
+        b=CwxcehSXkCUQBijQim5p/oQsPcP7+7jISGA7ppRX1h9XlQzKCVm98NzEdnyN+Xw1Jd
+         LrvCvmGjiehtkq+b3idU4138gh2PU8ZmenI4WWvB8+eX1lP6QG8Ztw4pGjOTYuTOSCTw
+         7QFoWweNv3TRH7rnP9pYye5DY1PD91LGwOJa/1dFmqWjW5cAnDUPutvu+ysoB6agYsgh
+         Mo/g14LrOdGRLalMx5e19g4mmbzEZLHA5AdpsRjViIie8OL7wP+L70BDXxE+cG+YVF58
+         UOYmOdmr9wb+KwW6j75PxQBaPklBQwhSI99Qey8eKSKtfgOvoF8Ye5sJs4qxu2r8KdT2
+         W+Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCW04MVPshKs7KQy4N/Z2q0+Cy4Dom06d+TwsripEHnXTnySNzAwDFuqIdpBcDhiwhwS5iUUOdGeV+7ViFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzPCYZZzHfF7CUk9pXzUA7zYfsu8YOeE9zVqCdOU/Kb5Qrzjsj
+	C3HlXR16vSJnQuv7OqIGsk7ZpuPTmt4BIFk63fX7UfFAHqNOFxwi7VkpCcuawBRGkgdtgXoVqCO
+	1hJEB6asL4Ry1NeinM0aqe321RDc=
+X-Gm-Gg: ASbGncusdC+YUVFL8XpF+91iNyMxJb7u74rCEAPehCtdjd2NimyT1fZeoRDj9Jha11L
+	MlMa5ts9K6yg1DXOoXVXuI1MXU1crGz68MRXPAQTL0Ait+wID1af0dZCKcQAvjBgtqSPaQlLLJ8
+	YCacpij9XEBp8Y7kFLN4vtA6fztIjC
+X-Google-Smtp-Source: AGHT+IGNu05igSzsB9qr+safVkgEWAEilmeq1LaVE8+q905EG7rWD56u1oRjMkrKzXWg1zJRa313vmHYEdMtarh8ilM=
+X-Received: by 2002:a17:907:72c3:b0:ac7:9acf:4ef with SMTP id
+ a640c23a62f3a-ac7d6e9fe06mr1100759766b.56.1744042636891; Mon, 07 Apr 2025
+ 09:17:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <Z/PyMXTjCHduOhKX@HP-650>
+In-Reply-To: <Z/PyMXTjCHduOhKX@HP-650>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 7 Apr 2025 19:16:39 +0300
+X-Gm-Features: ATxdqUGyZhHukxzKPlEcZ8ruaP7I5jVWDX33j5hs0O4jvIHR1fBTUQZaL_QgaYs
+Message-ID: <CAHp75VdtUhUBL5d103RunY5EvgmTQVH48S21N1-1KmDM0q44Aw@mail.gmail.com>
+Subject: Re: [PATCH v5] staging: rtl8723bs: Use % 4096u instead of & 0xfff
+To: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
+Cc: gregkh@linuxfoundation.org, julia.lawall@inria.fr, 
+	outreachy@lists.linux.dev, linux-staging@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, david.laight.linux@gmail.com, andy@kernel.org, 
+	dan.carpenter@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <0713a015-b8dc-49db-a329-30891a10378c@linux.ibm.com>
 
-On 2025-03-18 18:54:22 [+0530], Shrikanth Hegde wrote:
-> I ran "perf bench futex all" as is. No change has been made to perf.
-=E2=80=A6
+On Mon, Apr 7, 2025 at 6:54=E2=80=AFPM Abraham Samuel Adekunle
+<abrahamadekunle50@gmail.com> wrote:
+>
+> The sequence number is constrained to a range of [0, 4095], which
+> is a total of 4096 values. The bitmask operation using `& 0xfff` is
+> used to perform this wrap-around. While this is functionally correct,
+> it obscures the intended semantic of a 4096-based wrap.
+>
+> Using a modulo operation `% 4096u` makes the wrap-around logic
+> explicit and easier to understand. It clearly signals that the
+> sequence number cycles through a range of 4096 values.
+> It also makes the code robust against potential changes of the 4096
+> upper limit, especially when it becomes a non power of 2 value while
+> the AND(&) works solely for power of 2 values.
+>
+> The use of `% 4096u` also guarantees that the modulo operation is
+> performed with unsigned arithmetic, preventing potential issues with
+> the signed types.
 
-I just posted v11
-	https://lore.kernel.org/all/20250407155742.968816-1-bigeasy@linutronix.de/
+...
 
-this series extends "perf bench futex" with
-- -b switch to specify number of buckets to use. Default is auto-scale,
-  0 is global hash, everything is the number of buckets.
-- The used buckets are displayed after the run
-- -I switches freezes the used buckets so the get/ put can be avoided.
-  This brings the invocations/sec back to where it was.
+> -                                               psta->BA_starting_seqctrl=
+[pattrib->priority & 0x0f] =3D (tx_seq+1)&0xfff;
+> +                                               psta->BA_starting_seqctrl=
+[pattrib->priority & 0x0f] =3D (tx_seq+1)%4096u;
 
-If you use the "all" instead of "hash" then the arguments are skipped.
+> -                                               psta->BA_starting_seqctrl=
+[pattrib->priority & 0x0f] =3D (pattrib->seqnum+1)&0xfff;
+> +                                               psta->BA_starting_seqctrl=
+[pattrib->priority & 0x0f] =3D (pattrib->seqnum+1)%4096u;
 
-I did not wire up the MPOL part. IMHO in order to make sense, the memory
-allocation should based on the NUMA node and then the OP itself could be
-based on the NUMA node.
+To reduce churn, it would be nice to have another patch _before_ this
+one that makes above clearer (by adding spaces) as we already new in
+practice that it's hard to read:
+So, this will become two lines in each of the cases, and in this patch
+only one of those line will be touched.
 
-Sebastian
+...
+
+Besides that I haven't found in the changelog if you have looked at
+the entire driver code and checked that all usages of this field is
+done in the same / similar way and no need to convert anything more
+that these.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
