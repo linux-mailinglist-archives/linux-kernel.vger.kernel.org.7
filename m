@@ -1,272 +1,123 @@
-Return-Path: <linux-kernel+bounces-592082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17627A7E8EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:50:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D191A7E8F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EC143BCC44
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:44:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BE99189AC7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF554221D94;
-	Mon,  7 Apr 2025 17:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558DC217712;
+	Mon,  7 Apr 2025 17:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRLjMRHl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=archlinuxcn.org header.i=@archlinuxcn.org header.b="5EYR3LV5"
+Received: from wiki.archlinuxcn.org (wiki.archlinuxcn.org [104.245.9.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2299D21C9E0;
-	Mon,  7 Apr 2025 17:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EE12135D1;
+	Mon,  7 Apr 2025 17:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.245.9.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744047751; cv=none; b=PY9h20T9FjSKyGEHYUKeO/0qWSAlolsjmN4pApJwODNS+Gq+CtHBUF/eAL/pMWgCRB7bgepvQ/hcfMN0w20exPhmntsQXVzgveBuM0J8GFfScOInDKYfCS4DUBG3GxstUqCioZ9zU0xF3GJ8SPePC9ZK9u6gwBCbC4KBJW99M2w=
+	t=1744047792; cv=none; b=PZplZpk0LmBbu2J3TQkPYaKHW6EeK97Rb9eaF+EI2Ys0P6FuCoaRr8a0yPpRh54P5qFHZMjZiHkSx3LZ/zwoNzAj0gTftrAVNGKs8fTjALufc6eYxn/Uv53wAFCmEOw5zt4CN80YMEZ5PJQEfKdxDQRyup7fqK/KNy/FcgjEj5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744047751; c=relaxed/simple;
-	bh=nmLiqJamG5V2Ys3W6lwPvxgJ53poaGnijKkT4FeQwME=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=H2JTFqZ/uijSjXNuq0t79apV6isJdziPnrhoEVhnr02v82yYyPk+EGXlSGCRzeDSghHkyBQvTiBTku1u+tuDUg0SJJXwelF02GkyOnKKv97EPezTf1Aj5vDQ7rRGJoSzy1NQ6ouN54EVzfAI3A68nO/3/bbQFNTtMViRPDzu5Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRLjMRHl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F695C4CEDD;
-	Mon,  7 Apr 2025 17:42:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744047750;
-	bh=nmLiqJamG5V2Ys3W6lwPvxgJ53poaGnijKkT4FeQwME=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=XRLjMRHlTDivIg6LYFuBPUsdJYmp3nUkVnMM2YxlCicRLKBbB5qQcCe9dT2CZqx9y
-	 zuNkccOrVq2/SeqGnVprwBjrmLXQ1BBvVqnUXp22yan6nqviXCEwlj/cyCxlcrtu1+
-	 /23UcDZ8cYiWxWWu8nzyDr3Xk6HF9icuUCn8YPIL+liD/mIAFjitghkPWU15w0fPJV
-	 Qetpi78KO8aDSUMQpmwJAahyq1YtpgB4RHBhuW6kB3cuNLDdfXPMIdYFSQJrJyd5+n
-	 byRPVTirXCkyuq43I7bcUkCz0s/1V3vuHMYdFoA8csyx976g1txCxMEl7WHjFsdvjL
-	 n1SwEoBRcO9tA==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Date: Mon, 07 Apr 2025 12:41:31 -0500
-Subject: [PATCH v21 2/4] arm64: Handle BRBE booting requirements
+	s=arc-20240116; t=1744047792; c=relaxed/simple;
+	bh=8hWmLsettw34H0/IdlPq3m8ikToGK0KA8pLw/AI0uRw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=juJNkVCz0r/CbJeWeQDMZjUkNvqt1oTpY3lqmCVs2YZXBv5QbijpCXONyLhe0X0vX9OM3SSpK0CFxcjSAZ9UdmfijSWJbni/ov6dE93Nzpracbyr65rLuF4vKd27RfTxZIC+pjDkMgB8Nduvljx2Ql1mdRdqqnP/MxXCuVo7c5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=archlinuxcn.org; spf=pass smtp.mailfrom=archlinuxcn.org; dkim=pass (2048-bit key) header.d=archlinuxcn.org header.i=@archlinuxcn.org header.b=5EYR3LV5; arc=none smtp.client-ip=104.245.9.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=archlinuxcn.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=archlinuxcn.org
+DKIM-Signature: a=rsa-sha256; bh=4P3JWbPT48Pf/5vDpLRBWrxPuB5msRnmEau32urQ6js=;
+ c=relaxed/relaxed; d=archlinuxcn.org;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:Message-Id:Message-Id:References:Autocrypt:Openpgp;
+ i=@archlinuxcn.org; s=default; t=1744047770; v=1; x=1744479770;
+ b=5EYR3LV5y+rnUUPIQPn980+LSt38JyzX8NUXtH7fEqhD3/nANw6ThW1sQXPqA3lsqd4zbHF5
+ C2SkMhhiBU93XHswqv7Uir0b7PDihCS6A+dm7N0iz6x4JdHM9FQNn1VCX2i7RjdbuQ3E+AmBJqj
+ aHmkAo7wZnQXJHfPNFr8bhEi84hs6XRnb9nmECjbOr/CMkMezHutWDjHDrsyw17TuY9yX4/smKj
+ o0GcORU3YVY1Hggo9GZ8Ioi6KgxbLCjs+fvnv2W767MRcmyfU8eRbyKTs1W0Ntg8Q9QZARm7GAF
+ blO+WXMhHgcfzT3jhPI+m/UpajNtSS0uXtXEuHrjSaMcw==
+Received: by wiki.archlinuxcn.org (envelope-sender
+ <integral@archlinuxcn.org>) with ESMTPS id f4f16034; Tue, 08 Apr 2025
+ 01:42:50 +0800
+From: Integral <integral@archlinuxcn.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Integral <integral@archlinuxcn.org>
+Subject: [PATCH] bcachefs: indent error messages of invalid compression
+Date: Tue,  8 Apr 2025 01:41:31 +0800
+Message-ID: <20250407174129.251920-3-integral@archlinuxcn.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250407-arm-brbe-v19-v21-2-ff187ff6c928@kernel.org>
-References: <20250407-arm-brbe-v19-v21-0-ff187ff6c928@kernel.org>
-In-Reply-To: <20250407-arm-brbe-v19-v21-0-ff187ff6c928@kernel.org>
-To: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Jonathan Corbet <corbet@lwn.net>, 
- Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Zenghui Yu <yuzenghui@huawei.com>, James Clark <james.clark@linaro.org>, 
- Anshuman Khandual <anshuman.khandual@arm.com>, Leo Yan <leo.yan@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- kvmarm@lists.linux.dev
-X-Mailer: b4 0.15-dev
+Content-Transfer-Encoding: 8bit
 
-From: Anshuman Khandual <anshuman.khandual@arm.com>
+This patch uses printbuf_indent_add_nextline() to set a consistent
+indentation level for error messages of invalid compression.
 
-To use the Branch Record Buffer Extension (BRBE), some configuration is
-necessary at EL3 and EL2. This patch documents the requirements and adds
-the initial EL2 setup code, which largely consists of configuring the
-fine-grained traps and initializing a couple of BRBE control registers.
+In my previous patch [1], the newline is added by using '\n' in
+the argument of prt_str(). This patch replaces '\n' with prt_newline()
+to make indentation level work correctly.
 
-Before this patch, __init_el2_fgt() would initialize HDFGRTR_EL2 and
-HDFGWTR_EL2 with the same value, relying on the read/write trap controls
-for a register occupying the same bit position in either register. The
-'nBRBIDR' trap control only exists in bit 59 of HDFGRTR_EL2, while bit
-59 of HDFGWTR_EL2 is RES0, and so this assumption no longer holds.
+[1] Link: https://lore.kernel.org/20250406152659.205997-2-integral@archlinuxcn.org
 
-To handle HDFGRTR_EL2 and HDFGWTR_EL2 having (slightly) different bit
-layouts, __init_el2_fgt() is changed to accumulate the HDFGRTR_EL2 and
-HDFGWTR_EL2 control bits separately. While making this change the
-open-coded value (1 << 62) is replaced with
-HDFG{R,W}TR_EL2_nPMSNEVFR_EL1_MASK.
-
-The BRBCR_EL1 and BRBCR_EL2 registers are unusual and require special
-initialisation: even though they are subject to E2H renaming, both have
-an effect regardless of HCR_EL2.TGE, even when running at EL2, and
-consequently both need to be initialised. This is handled in
-__init_el2_brbe() with a comment to explain the situation.
-
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>
-Reviewed-by: Leo Yan <leo.yan@arm.com>
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-[Mark: rewrite commit message, fix typo in comment]
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: "Rob Herring (Arm)" <robh@kernel.org>
-Tested-by: James Clark <james.clark@linaro.org>
+Signed-off-by: Integral <integral@archlinuxcn.org>
 ---
-v20:
- - Document that MDCR_EL3.SBRBE can be 0b01 also
- - Fix "HDFGWTR_EL2 is RES0" in commit msg
----
- Documentation/arch/arm64/booting.rst | 21 +++++++++
- arch/arm64/include/asm/el2_setup.h   | 86 ++++++++++++++++++++++++++++++++++--
- 2 files changed, 104 insertions(+), 3 deletions(-)
+ fs/bcachefs/compress.c | 12 ++++++++----
+ fs/bcachefs/opts.c     |  1 +
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/arch/arm64/booting.rst b/Documentation/arch/arm64/booting.rst
-index dee7b6de864f..a627c1e0e4a0 100644
---- a/Documentation/arch/arm64/booting.rst
-+++ b/Documentation/arch/arm64/booting.rst
-@@ -358,6 +358,27 @@ Before jumping into the kernel, the following conditions must be met:
+diff --git a/fs/bcachefs/compress.c b/fs/bcachefs/compress.c
+index d68c3c7896a3..a107aa88a875 100644
+--- a/fs/bcachefs/compress.c
++++ b/fs/bcachefs/compress.c
+@@ -713,8 +713,10 @@ int bch2_opt_compression_parse(struct bch_fs *c, const char *_val, u64 *res,
+ 	level_str = p;
  
-     - HWFGWTR_EL2.nSMPRI_EL1 (bit 54) must be initialised to 0b01.
+ 	ret = match_string(bch2_compression_opts, -1, type_str);
+-	if (ret < 0 && err)
+-		prt_str(err, "invalid compression type\n");
++	if (ret < 0 && err) {
++		prt_str(err, "invalid compression type");
++		prt_newline(err);
++	}
+ 	if (ret < 0)
+ 		goto err;
  
-+  For CPUs with feature Branch Record Buffer Extension (FEAT_BRBE):
-+
-+  - If EL3 is present:
-+
-+    - MDCR_EL3.SBRBE (bits 33:32) must be initialised to 0b01 or 0b11.
-+
-+  - If the kernel is entered at EL1 and EL2 is present:
-+
-+    - BRBCR_EL2.CC (bit 3) must be initialised to 0b1.
-+    - BRBCR_EL2.MPRED (bit 4) must be initialised to 0b1.
-+
-+    - HDFGRTR_EL2.nBRBDATA (bit 61) must be initialised to 0b1.
-+    - HDFGRTR_EL2.nBRBCTL  (bit 60) must be initialised to 0b1.
-+    - HDFGRTR_EL2.nBRBIDR  (bit 59) must be initialised to 0b1.
-+
-+    - HDFGWTR_EL2.nBRBDATA (bit 61) must be initialised to 0b1.
-+    - HDFGWTR_EL2.nBRBCTL  (bit 60) must be initialised to 0b1.
-+
-+    - HFGITR_EL2.nBRBIALL (bit 56) must be initialised to 0b1.
-+    - HFGITR_EL2.nBRBINJ  (bit 55) must be initialised to 0b1.
-+
-   For CPUs with the Scalable Matrix Extension FA64 feature (FEAT_SME_FA64):
+@@ -728,8 +730,10 @@ int bch2_opt_compression_parse(struct bch_fs *c, const char *_val, u64 *res,
+ 			ret = -EINVAL;
+ 		if (!ret && level > 15)
+ 			ret = -EINVAL;
+-		if (ret < 0 && err)
+-			prt_str(err, "invalid compression level\n");
++		if (ret < 0 && err) {
++			prt_str(err, "invalid compression level");
++			prt_newline(err);
++		}
+ 		if (ret < 0)
+ 			goto err;
  
-   - If EL3 is present:
-diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
-index ebceaae3c749..e7fcba1e7d8e 100644
---- a/arch/arm64/include/asm/el2_setup.h
-+++ b/arch/arm64/include/asm/el2_setup.h
-@@ -189,6 +189,39 @@
- .Lskip_set_cptr_\@:
- .endm
+diff --git a/fs/bcachefs/opts.c b/fs/bcachefs/opts.c
+index cd7b0cd293c7..f35fde896253 100644
+--- a/fs/bcachefs/opts.c
++++ b/fs/bcachefs/opts.c
+@@ -365,6 +365,7 @@ int bch2_opt_parse(struct bch_fs *c,
+ 		   struct printbuf *err)
+ {
+ 	ssize_t ret;
++	printbuf_indent_add_nextline(err, 2);
  
-+/*
-+ * Configure BRBE to permit recording cycle counts and branch mispredicts.
-+ *
-+ * At any EL, to record cycle counts BRBE requires that both BRBCR_EL2.CC=1 and
-+ * BRBCR_EL1.CC=1.
-+ *
-+ * At any EL, to record branch mispredicts BRBE requires that both
-+ * BRBCR_EL2.MPRED=1 and BRBCR_EL1.MPRED=1.
-+ *
-+ * When HCR_EL2.E2H=1, the BRBCR_EL1 encoding is redirected to BRBCR_EL2, but
-+ * the {CC,MPRED} bits in the real BRBCR_EL1 register still apply.
-+ *
-+ * Set {CC,MPRED} in both BRBCR_EL2 and BRBCR_EL1 so that at runtime we only
-+ * need to enable/disable these in BRBCR_EL1 regardless of whether the kernel
-+ * ends up executing in EL1 or EL2.
-+ */
-+.macro __init_el2_brbe
-+	mrs	x1, id_aa64dfr0_el1
-+	ubfx	x1, x1, #ID_AA64DFR0_EL1_BRBE_SHIFT, #4
-+	cbz	x1, .Lskip_brbe_\@
-+
-+	mov_q	x0, BRBCR_ELx_CC | BRBCR_ELx_MPRED
-+	msr_s	SYS_BRBCR_EL2, x0
-+
-+	__check_hvhe .Lset_brbe_nvhe_\@, x1
-+	msr_s	SYS_BRBCR_EL12, x0	// VHE
-+	b	.Lskip_brbe_\@
-+
-+.Lset_brbe_nvhe_\@:
-+	msr_s	SYS_BRBCR_EL1, x0	// NVHE
-+.Lskip_brbe_\@:
-+.endm
-+
- /* Disable any fine grained traps */
- .macro __init_el2_fgt
- 	mrs	x1, id_aa64mmfr0_el1
-@@ -196,16 +229,48 @@
- 	cbz	x1, .Lskip_fgt_\@
- 
- 	mov	x0, xzr
-+	mov	x2, xzr
- 	mrs	x1, id_aa64dfr0_el1
- 	ubfx	x1, x1, #ID_AA64DFR0_EL1_PMSVer_SHIFT, #4
- 	cmp	x1, #3
- 	b.lt	.Lskip_spe_fgt_\@
-+
- 	/* Disable PMSNEVFR_EL1 read and write traps */
--	orr	x0, x0, #(1 << 62)
-+	orr	x0, x0, #HDFGRTR_EL2_nPMSNEVFR_EL1_MASK
-+	orr	x2, x2, #HDFGWTR_EL2_nPMSNEVFR_EL1_MASK
- 
- .Lskip_spe_fgt_\@:
-+#ifdef CONFIG_ARM64_BRBE
-+	mrs	x1, id_aa64dfr0_el1
-+	ubfx	x1, x1, #ID_AA64DFR0_EL1_BRBE_SHIFT, #4
-+	cbz	x1, .Lskip_brbe_reg_fgt_\@
-+
-+	/*
-+	 * Disable read traps for the following registers
-+	 *
-+	 * [BRBSRC|BRBTGT|RBINF]_EL1
-+	 * [BRBSRCINJ|BRBTGTINJ|BRBINFINJ|BRBTS]_EL1
-+	 */
-+	orr	x0, x0, #HDFGRTR_EL2_nBRBDATA_MASK
-+
-+	/*
-+	 * Disable write traps for the following registers
-+	 *
-+	 * [BRBSRCINJ|BRBTGTINJ|BRBINFINJ|BRBTS]_EL1
-+	 */
-+	orr	x2, x2, #HDFGWTR_EL2_nBRBDATA_MASK
-+
-+	/* Disable read and write traps for [BRBCR|BRBFCR]_EL1 */
-+	orr	x0, x0, #HDFGRTR_EL2_nBRBCTL_MASK
-+	orr	x2, x2, #HDFGWTR_EL2_nBRBCTL_MASK
-+
-+	/* Disable read traps for BRBIDR_EL1 */
-+	orr	x0, x0, #HDFGRTR_EL2_nBRBIDR_MASK
-+
-+.Lskip_brbe_reg_fgt_\@:
-+#endif /* CONFIG_ARM64_BRBE */
- 	msr_s	SYS_HDFGRTR_EL2, x0
--	msr_s	SYS_HDFGWTR_EL2, x0
-+	msr_s	SYS_HDFGWTR_EL2, x2
- 
- 	mov	x0, xzr
- 	mrs	x1, id_aa64pfr1_el1
-@@ -246,7 +311,21 @@
- .Lset_fgt_\@:
- 	msr_s	SYS_HFGRTR_EL2, x0
- 	msr_s	SYS_HFGWTR_EL2, x0
--	msr_s	SYS_HFGITR_EL2, xzr
-+	mov	x0, xzr
-+#ifdef CONFIG_ARM64_BRBE
-+	mrs	x1, id_aa64dfr0_el1
-+	ubfx	x1, x1, #ID_AA64DFR0_EL1_BRBE_SHIFT, #4
-+	cbz	x1, .Lskip_brbe_insn_fgt_\@
-+
-+	/* Disable traps for BRBIALL instruction */
-+	orr	x0, x0, #HFGITR_EL2_nBRBIALL_MASK
-+
-+	/* Disable traps for BRBINJ instruction */
-+	orr	x0, x0, #HFGITR_EL2_nBRBINJ_MASK
-+
-+.Lskip_brbe_insn_fgt_\@:
-+#endif /* CONFIG_ARM64_BRBE */
-+	msr_s	SYS_HFGITR_EL2, x0
- 
- 	mrs	x1, id_aa64pfr0_el1		// AMU traps UNDEF without AMU
- 	ubfx	x1, x1, #ID_AA64PFR0_EL1_AMU_SHIFT, #4
-@@ -320,6 +399,7 @@
- 	__init_el2_hcrx
- 	__init_el2_timers
- 	__init_el2_debug
-+	__init_el2_brbe
- 	__init_el2_lor
- 	__init_el2_stage2
- 	__init_el2_gicv3
+ 	switch (opt->type) {
+ 	case BCH_OPT_BOOL:
 
+base-commit: 4d37602fceff942694069cf33cc55863277bd1c2
 -- 
-2.47.2
+2.49.0
 
 
