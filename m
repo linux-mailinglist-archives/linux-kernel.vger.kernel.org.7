@@ -1,129 +1,110 @@
-Return-Path: <linux-kernel+bounces-592262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5331A7EACD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:40:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA3EA7EAA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:38:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9808F189087F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:39:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33E557A5CD2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA632550B1;
-	Mon,  7 Apr 2025 18:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25ED254AF4;
+	Mon,  7 Apr 2025 18:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xe7fLD4t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NIXonLt1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C5C269817;
-	Mon,  7 Apr 2025 18:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0AF267731;
+	Mon,  7 Apr 2025 18:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744049713; cv=none; b=kH+yymOjw07T9feFVskUZs1oVvQS5MDsvgU39YRiwjIBv815PTDP1qJBK2x2tSa4B94nMIAgeWko/M2XsU0X2nP3piG2zk/FZOcYrLH2O17+kDrbaezXOi9Lq2XrmOuRRapzumRfCFDDTPbCg7piwqQ6x5erczfzClqDYlZJYhY=
+	t=1744049690; cv=none; b=Y4sy3KhCXedJt6c8ot5tjKL0UUi+xCgVBdRGzS+/SJ4n5OR1XXXzPoTLJNlxs5c/UrXQ76HLq+zBkAdQZvda/RB9oxfjQssgw6gh5kamW3JxAru6EdQJRNL1DD9YvTEXA/6OeoZWze6MZBryJrE7AG6K9QK6f4xALm++J1029FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744049713; c=relaxed/simple;
-	bh=QNsoeK8DnciAtuDtVld6p1u5T3ejqruwhCx/D5HmAkc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Uttr/r1SO0Rg5cXRK1HbrK/j1mvKJXflx6T+r8wCUF/3b0V1OZXe7swUbAEPaFf8DtxJ8rsZGs3ralKJM81t0cibmXTOSAk7uD4stRPH2rlNPxGuafwZBx6yDhds72I0EXlFLHxOBgNrcmcQKZ0xcf1R88GSOgPgGbyI06FucGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xe7fLD4t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CBD4C4CEE9;
-	Mon,  7 Apr 2025 18:15:11 +0000 (UTC)
+	s=arc-20240116; t=1744049690; c=relaxed/simple;
+	bh=roTV4fCBWYKtx7tR13LEF6bSe/MmWW79N66Dk4jgSkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MwSOhGbvwz28Ue+K0y6wd0lp5svIE2UYFxhp2NZlEuTupFc1Ne7Yhgi781uhXJ/I+hHQmGu82UP+AG36xrd3N69Ns481ptHHG5l9wqbxg7JqKHiPN2ycmpORdaCJZvKVmlJs0ZgiZFEtkq6x/3MGEJk+2CkPLR14dv6u1sfYmcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NIXonLt1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A00C9C4CEE7;
+	Mon,  7 Apr 2025 18:14:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744049712;
-	bh=QNsoeK8DnciAtuDtVld6p1u5T3ejqruwhCx/D5HmAkc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Xe7fLD4tBC+5nVLwmmW7ue+gQjhfsHHtwWIUwHEUM9OI7pKA5ul2dD2hmKcItIfOF
-	 W34XMPEFScjzCwfs+pYkLx3pTx++1opfR1P+Pqkc1xEGN4rlFaZI5SMwu1bRu6gGh1
-	 EzQtxBGweAHQAU70/XQwMLYH6J654qf33GvXLBkeZfpsCUZQyabKxMe2JTv/q+pu9Z
-	 5tmRL7ph3rtj4uOseC0uVcJ8pa+FrfmHRM8Q5mBeRGv5ThB5VVD8qcK7Fj68rD1hxo
-	 4/eJmbs1NE6YhFyJf4ziqAbo5KXxoJy8ofVFAIuxvSwsP8igey9IjLLxLxacGGqLM+
-	 xbftN+mrSa4Ng==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
-	kernel test robot <lkp@intel.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	nathan@kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH AUTOSEL 6.1 12/13] objtool, ASoC: codecs: wcd934x: Remove potential undefined behavior in wcd934x_slim_irq_handler()
-Date: Mon,  7 Apr 2025 14:14:46 -0400
-Message-Id: <20250407181449.3183687-12-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250407181449.3183687-1-sashal@kernel.org>
-References: <20250407181449.3183687-1-sashal@kernel.org>
+	s=k20201202; t=1744049690;
+	bh=roTV4fCBWYKtx7tR13LEF6bSe/MmWW79N66Dk4jgSkI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NIXonLt1oMwV1DOQJSeK3B40+6p6j24z3O8dhm0pzGEEfCBHhzCAYMflHFyIv8qhR
+	 XAA3/6l+dz+cCRkZ0DO96zwxiy4hCcWYBg81BYITFzqVT5tf13kP2mnrEXlaLcstTG
+	 3qg6LAz0AeRL8aoeq3M8OXdyODYcuB8bQPaSQcKR0VJXtGIlagA0Zlbam2kln9Txpb
+	 mWx+aGRN/7HGO3V31ldITu+d29kIImpM/a1Q/6XYVKxs7Bpt/QMTw+xU2qLjWvQUbe
+	 YJypWBrZm3mBlL6BPiXsLd0BBPs2nQzlCHV91stSHpEiq5RSGkpSCqBvNqLUVXf9nY
+	 J6AS1A+iJd/SA==
+Date: Mon, 7 Apr 2025 21:14:46 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Stefano Garzarella <sgarzare@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-coco@lists.linux.dev,
+	linux-integrity@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	x86@kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+	Joerg Roedel <jroedel@suse.de>,
+	Dionna Glaze <dionnaglaze@google.com>,
+	Claudio Carvalho <cclaudio@linux.ibm.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-kernel@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v6 0/4] Enlightened vTPM support for SVSM on SEV-SNP
+Message-ID: <Z_QWFjJbPWIsBP2s@kernel.org>
+References: <20250403100943.120738-1-sgarzare@redhat.com>
+ <20250407134643.GDZ_PXQ0OlzcMjiGgp@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.133
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250407134643.GDZ_PXQ0OlzcMjiGgp@fat_crate.local>
 
-From: Josh Poimboeuf <jpoimboe@kernel.org>
+On Mon, Apr 07, 2025 at 03:46:43PM +0200, Borislav Petkov wrote:
+> On Thu, Apr 03, 2025 at 12:09:38PM +0200, Stefano Garzarella wrote:
+> > Stefano Garzarella (4):
+> >   x86/sev: add SVSM vTPM probe/send_command functions
+> >   svsm: add header with SVSM_VTPM_CMD helpers
+> >   tpm: add SNP SVSM vTPM driver
+> >   x86/sev: register tpm-svsm platform device
+> > 
+> >  arch/x86/include/asm/sev.h  |   9 +++
+> >  include/linux/tpm_svsm.h    | 149 ++++++++++++++++++++++++++++++++++++
+> >  arch/x86/coco/sev/core.c    |  67 ++++++++++++++++
+> >  drivers/char/tpm/tpm_svsm.c | 128 +++++++++++++++++++++++++++++++
+> >  drivers/char/tpm/Kconfig    |  10 +++
+> >  drivers/char/tpm/Makefile   |   1 +
+> >  6 files changed, 364 insertions(+)
+> >  create mode 100644 include/linux/tpm_svsm.h
+> >  create mode 100644 drivers/char/tpm/tpm_svsm.c
+> 
+> Jarrko,
+> 
+> should I take the whole bunch through the tip tree?
+> 
+> No point in splitting between two trees...
 
-[ Upstream commit 060aed9c0093b341480770457093449771cf1496 ]
+It's cleanly separated and does not even touch any shared headers,
+so I don't see any issues on doing that. I.e., I'm with it :-)
 
-If 'port_id' is negative, the shift counts in wcd934x_slim_irq_handler()
-also become negative, resulting in undefined behavior due to shift out
-of bounds.
+> 
+> Thx.
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
+> 
 
-If I'm reading the code correctly, that appears to be not possible, but
-with KCOV enabled, Clang's range analysis isn't always able to determine
-that and generates undefined behavior.
-
-As a result the code generation isn't optimal, and undefined behavior
-should be avoided regardless.  Improve code generation and remove the
-undefined behavior by converting the signed variables to unsigned.
-
-Fixes the following warning with UBSAN:
-
-  sound/soc/codecs/snd-soc-wcd934x.o: warning: objtool: .text.wcd934x_slim_irq_handler: unexpected end of section
-
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Mark Brown <broonie@kernel.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/7e863839ec7301bf9c0f429a03873d44e484c31c.1742852847.git.jpoimboe@kernel.org
-Closes: https://lore.kernel.org/oe-kbuild-all/202503180044.oH9gyPeg-lkp@intel.com/
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- sound/soc/codecs/wcd934x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/codecs/wcd934x.c b/sound/soc/codecs/wcd934x.c
-index 0b5999c819db9..04c50f9acda18 100644
---- a/sound/soc/codecs/wcd934x.c
-+++ b/sound/soc/codecs/wcd934x.c
-@@ -2281,7 +2281,7 @@ static irqreturn_t wcd934x_slim_irq_handler(int irq, void *data)
- {
- 	struct wcd934x_codec *wcd = data;
- 	unsigned long status = 0;
--	int i, j, port_id;
-+	unsigned int i, j, port_id;
- 	unsigned int val, int_val = 0;
- 	irqreturn_t ret = IRQ_NONE;
- 	bool tx;
--- 
-2.39.5
-
+BR, Jarkko
 
