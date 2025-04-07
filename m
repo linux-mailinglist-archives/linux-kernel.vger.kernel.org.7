@@ -1,116 +1,101 @@
-Return-Path: <linux-kernel+bounces-592101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F9EA7E900
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:52:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56AE1A7E833
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D8A07A4701
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:51:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A23C3ABB9D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851A4217F5D;
-	Mon,  7 Apr 2025 17:52:25 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04B32163B8;
+	Mon,  7 Apr 2025 17:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CVBDKLHD"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2109A4A02;
-	Mon,  7 Apr 2025 17:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946D12116FD
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 17:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744048345; cv=none; b=Z/7l51I3tRm0oxtsXWOuneru3buW/RBjKXf+y6YAHnHTLxpgrVJCHkggTpNO8EGVZqEYeej4mfVWCN8oVkT3A1/F3d7dNR+GkgZZC3Eo415d5Ehm7agvnOrvEm1QcUFMVcxjcb8c7UV4Qf5PqcgcwzbL1yM4wDoUqs5IiyN0hTM=
+	t=1744046840; cv=none; b=N9Sx8P37/P+9P4jYPRd2C0L4292CC0Um5c29dF0kREDr1xh0ldoXoAOgbMpO+dJu2eW4V89Ut8AMqBLKkdVJDalsm0BEWAHi3C05kSg8oTPUpu22+sQoY85UopFeBbjK69s8Z7EbEY3gdANaFPAy3e4VxtUFH2Y4xAq9B8voS1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744048345; c=relaxed/simple;
-	bh=qCXjZbYfOUQdvaJOulkLaljFnMlS3JxgtFCl65KJ/WA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vvrl0N4OeKoWQYsOsJl+KnkvyNT4iNdbYc2/LSjiQ3g5teL6iJ9gq+pTNPZ5nUhA7wYBs0r/KiLXUWQeX+wh3cNsujuuscuUxhfIZVDD7jCOc90S5wQGvfhR99XbgATBQXO7kjKwNTWY7idI5IE18ukN5psTx7RJfeaEqZoirms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1u1qEH-000000008Gs-2MWH;
-	Mon, 07 Apr 2025 17:25:49 +0000
-Date: Mon, 7 Apr 2025 18:25:43 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: "Christian Marangi (Ansuel)" <ansuelsmth@gmail.com>
-Cc: Sean Anderson <sean.anderson@linux.dev>,
-	Kory Maincent <kory.maincent@bootlin.com>, netdev@vger.kernel.org,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-	upstream@airoha.com, Heiner Kallweit <hkallweit1@gmail.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	Claudiu Beznea <claudiu.beznea@microchip.com>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ioana Ciornei <ioana.ciornei@nxp.com>,
-	Jonathan Corbet <corbet@lwn.net>, Joyce Ooi <joyce.ooi@intel.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Li Yang <leoyang.li@nxp.com>, Madalin Bucur <madalin.bucur@nxp.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <michal.simek@amd.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	Robert Hancock <robert.hancock@calian.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Shawn Guo <shawnguo@kernel.org>, UNGLinuxDriver@microchip.com,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Wei Fang <wei.fang@nxp.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [RFC net-next PATCH 00/13] Add PCS core support
-Message-ID: <Z_QKl-4563l05WB3@makrotopia.org>
-References: <20250403181907.1947517-1-sean.anderson@linux.dev>
- <20250407182738.498d96b0@kmaincent-XPS-13-7390>
- <720b6db8-49c5-47e7-98da-f044fc38fc1a@linux.dev>
- <CA+_ehUyAo7fMTe_P0ws_9zrcbLEWVwBXDKbezcKVkvDUUNg0rg@mail.gmail.com>
- <1aec6dab-ed03-4ca3-8cd1-9cfbb807be10@linux.dev>
- <CA+_ehUzeMBFrDEb7Abn3UO3S7VVjMiKc+2o=p5RGjPDkfLPVtQ@mail.gmail.com>
+	s=arc-20240116; t=1744046840; c=relaxed/simple;
+	bh=tjiGdsQp446cAAljbjHrCNcoZko0oAthJ7ARyT3rwro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p+ulX+hMbgd5bbEisSC4wvOaHpvpHpBBZp3NAmzI7Yg/JWfBv1MemLM0KKaH4WGkSSVQABc3CNl8K5W9YB8T7ficxQPxd76gj35Bvr+ulY42Y38Z6UGsTR316AW1V4p5ncYq2KhB0Sv+Swm7apDpmv0s22DxI0sdzUMBhgKkYyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CVBDKLHD; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <54304499-c5ce-4a6e-9fe8-ce7844379cdd@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744046836;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7BoZUSQTLENy9wH34VHXkqxJQv7Mux8ViHjIKiftxO4=;
+	b=CVBDKLHDxSI5+1SVXXzPderrRjq5PdrIwteBlnwDoptDqGlM0nxRosoQQcrkCu7PcEF9YY
+	P4AkB6KGUv6C5EZ06H81Y29LowCJKhj9i1v3ajS043cy+Faf/6v2O6xT4BEpTRSdV5/2Q9
+	D03p9gEnaUsRuGNigGcBmY9JKpbeD78=
+Date: Mon, 7 Apr 2025 22:56:19 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+_ehUzeMBFrDEb7Abn3UO3S7VVjMiKc+2o=p5RGjPDkfLPVtQ@mail.gmail.com>
+Subject: Re: [PATCH v2 07/18] drm/bridge: cdns-dsi: Fail if HS rate changed
+ when validating PHY config
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Jyri Sarha <jyri.sarha@iki.fi>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, Francesco Dolcini <francesco@dolcini.it>,
+ Devarsh Thakkar <devarsht@ti.com>
+References: <20250402-cdns-dsi-impro-v2-0-4a093eaa5e27@ideasonboard.com>
+ <20250402-cdns-dsi-impro-v2-7-4a093eaa5e27@ideasonboard.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+In-Reply-To: <20250402-cdns-dsi-impro-v2-7-4a093eaa5e27@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Apr 07, 2025 at 07:21:38PM +0200, Christian Marangi (Ansuel) wrote:
-> Il giorno lun 7 apr 2025 alle ore 19:00 Sean Anderson
-> > I agree that a "cells" approach would require this, but
-> >
-> > - There are no in-tree examples of where this is necessary
-> > - I think this would be easy to add when necessary
-> >
+
+
+On 02/04/25 19:00, Tomi Valkeinen wrote:
+> The phy_validate() can change the HS clock rate we passed to it in the
+> PHY config, depending on what the HW can actually do. The driver just
+> ignores this at the moment, but if the actual HS clock rate is different
+> than the requested one, the pipeline will fail as all the DSI timing
+> calculations will be incorrect.
 > 
-> There are no in-tree cause only now we are starting to support
-> complex configuration with multiple PCS placed outside the MAC.
+> There are ways to improve DSI operation for various clock rates, but for
+> now, just add a check to see if the rate changed, and return an error if
+> that happens.
 > 
-> I feel it's better to define a standard API for them now before
-> we permit even more MAC driver to implement custom property
-> and have to address tons of workaround for compatibility.
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> ---
+>  drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
 
-Qualcomm's PCS driver will require offering multiple phylink_pcs by a
-single device/of_node. So while it's true that there is currently no
-in-tree user for that, that very user is already knocking on our doors.
+Reviewed-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
 
-See
-https://patchwork.kernel.org/project/netdevbpf/list/?series=931658&state=*
+-- 
+Regards
+Aradhya
+
 
