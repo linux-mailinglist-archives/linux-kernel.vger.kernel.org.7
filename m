@@ -1,151 +1,112 @@
-Return-Path: <linux-kernel+bounces-590348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0F3FA7D1FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 04:09:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3281A7D202
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 04:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13F363AD7E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 02:08:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3DBC3AC38F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 02:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B38212D8D;
-	Mon,  7 Apr 2025 02:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cAQeyW70"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAB9212F94;
+	Mon,  7 Apr 2025 02:10:02 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8272742A9B
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 02:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056B0212D65
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 02:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743991715; cv=none; b=uGaMPeN+xomT3j73yJw//gYqhGZqyMntsgklsSo2xS7AuCWGZD89xypB202I3wVbTcijX4uMm05vDcrt9SINB+/HnkchYC0jxOT3hbSInh+6ZZbKh/zFj0AA28Nf7WPOQpbHomurg0oD3NIYwDQXzIIBRooxE0aRu3A9d8yXmcM=
+	t=1743991801; cv=none; b=SwTSaPiOlzyTiJAyt4YEpL9HdQgd+Wy90r3ZUCL63VCQWWWG/voUV4QPfjV2NXDkDG0kGrDcMXas4PAeZUPVvTPybwh3Z9ky8LpvwIUCx7gganpIY6RQdb4kSKDooTHvW7SHW3rpCyAj+TNjmsn5jKZQ3GBBCUR2rK+UF6xMRLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743991715; c=relaxed/simple;
-	bh=xm2ScceSyaOMTCAkQf3KIDsk6uIz8avCUOolRNi4Fuk=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=iJxWqXtBdhrDRowLORQe8CqhaYg3phdL5tpkfns441Qoh3xVwiV0jX6xdXESx3hlFXnufZBXoUaVgHXkQy/gft7wRnAlIcVjvRdx7jzAdXM7IQLkXKEtBprfLNpO9is4TNygxbYeEOqZBduHUFqnfC94aJ8mhL6xx95GTAP7DxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cAQeyW70; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C498CC4CEE3;
-	Mon,  7 Apr 2025 02:08:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743991713;
-	bh=xm2ScceSyaOMTCAkQf3KIDsk6uIz8avCUOolRNi4Fuk=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=cAQeyW70FWP6Nri9RCE9s1AysIfjqTm2A7Y3SDdBHqRrT7Oj0KLsF/Ge+J4bsMWwg
-	 ds3u1ZjrFNXvnkfpWKl2NIoIv8rYGvX8Bm5q2lHrKx4uUxZz/PuqMnjDhCocFXTlD6
-	 bFp3lqCE2DiBO2CLXdKXfXSb+qj8N+7pjTCS3zi9oPyTeZ29tOmXk3MYng8grKJSoQ
-	 qvwKFgUXakpp6xjD5AHzpsIIWx1FR+AGbJlACJvgO+3eghM78u2+ahv2f9/rxcYhhP
-	 +mYnMKVkvkwMcnqlz7LzDige1CBB7vTEldOpLlWNSWzgrgUSzU+vyuMbgLRCwedAvW
-	 bvv1/jDs2ibbA==
-Message-ID: <7059eada-a51d-4f68-b62a-0f2c89c9b01c@kernel.org>
-Date: Mon, 7 Apr 2025 10:08:30 +0800
+	s=arc-20240116; t=1743991801; c=relaxed/simple;
+	bh=W5PvpIs3YYQPP/nm47aShabS05J2uCrQMtCbey8iOOY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r0v+EFLq9QpEv6oLWO1YoeqKMNOzXkzM318Jg+xRKKkHFWZr0aSWj9iLl4VLNqka62VMCuHcxsGBJQv2+724TkGbbbsu3TOSdRKXVCPSXaz+BqKl6OnQVwDs/6urhBiVzFQ9aCCW6g0kxVHRBTct/7zznyKTKRk0PgQ8e/ubbyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowAA3dQ3gM_NnLGnGBg--.8741S2;
+	Mon, 07 Apr 2025 10:09:42 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: miquel.raynal@bootlin.com,
+	richard@nod.at,
+	vigneshr@ti.com
+Cc: linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: [PATCH] mtd: nand: Add error log for marvell_nfc_end_cmd()
+Date: Mon,  7 Apr 2025 10:09:16 +0800
+Message-ID: <20250407020917.1242-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, pilhyun.kim@sk.com
-Subject: Re: [PATCH v5] f2fs: prevent the current section from being selected
- as a victim during GC
-To: Jaegeuk Kim <jaegeuk@kernel.org>, "yohan.joung" <yohan.joung@sk.com>
-References: <20250403232107.2960-1-yohan.joung@sk.com>
- <Z_A5SWl1ueMTZxV0@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <Z_A5SWl1ueMTZxV0@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAA3dQ3gM_NnLGnGBg--.8741S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7urWrZw1xWw1UtFW8AF4fXwb_yoW8AryDpw
+	4rZFW5KF40ya1YyrnxJa1DuFy5t3Z3K348K3Wvva4j9r4xGF4jgrsFya40gF1UAayfAw1a
+	qrZxKr9Y9Fn0yFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvG14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+	1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+	7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
+	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AK
+	xVWUAVWUtwCY02Avz4vE14v_Gr1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
+	73UjIFyTuYvjfUYdgADUUUU
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCRAFA2fytf-jFwAAs0
 
-On 4/5/25 03:55, Jaegeuk Kim wrote:
-> Hi Yohan,
-> 
-> I modified this patch after applying the clean up by
-> 
-> https://lore.kernel.org/linux-f2fs-devel/20250404195442.413945-1-jaegeuk@kernel.org/T/#u
-> 
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -486,6 +486,11 @@ static inline void __set_test_and_free(struct f2fs_sb_info *sbi,
-> 
->         free_i->free_sections++;
-> 
-> +       if (GET_SEC_FROM_SEG(sbi, sbi->next_victim_seg[BG_GC]) == secno)
-> +               sbi->next_victim_seg[BG_GC] = NULL_SEGNO;
-> +       if (GET_SEC_FROM_SEG(sbi, sbi->next_victim_seg[FG_GC]) == secno)
-> +               sbi->next_victim_seg[FG_GC] = NULL_SEGNO;
+The function marvell_nfc_hw_ecc_bch_read_chunk() calls the function
+marvell_nfc_end_cmd(), but dose not check its return value. Since it
+is incorrect to bail from the loop if the marvell_nfc_end_cmd() fails,
+an error log is necessary to prevent silent failure.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/mtd/nand/raw/marvell_nand.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-Thanks,
-
-> +
->  unlock_out:
->         spin_unlock(&free_i->segmap_lock);
->  }
-> 
-> On 04/04, yohan.joung wrote:
->> When selecting a victim using next_victim_seg in a large section, the
->> selected section might already have been cleared and designated as the
->> new current section, making it actively in use.
->> This behavior causes inconsistency between the SIT and SSA.
->>
->> F2FS-fs (dm-54): Inconsistent segment (70961) type [0, 1] in SSA and SIT
->> Call trace:
->> dump_backtrace+0xe8/0x10c
->> show_stack+0x18/0x28
->> dump_stack_lvl+0x50/0x6c
->> dump_stack+0x18/0x28
->> f2fs_stop_checkpoint+0x1c/0x3c
->> do_garbage_collect+0x41c/0x271c
->> f2fs_gc+0x27c/0x828
->> gc_thread_func+0x290/0x88c
->> kthread+0x11c/0x164
->> ret_from_fork+0x10/0x20
->>
->> issue scenario
->> segs_per_sec=2
->> - seg#0 and seg#1 are all dirty
->> - all valid blocks are removed in seg#1
->> - gc select this sec and next_victim_seg=seg#0
->> - migrate seg#0, next_victim_seg=seg#1
->> - checkpoint -> sec(seg#0, seg#1)  becomes free
->> - allocator assigns sec(seg#0, seg#1) to curseg
->> - gc tries to migrate seg#1
->>
->> Signed-off-by: yohan.joung <yohan.joung@sk.com>
->> Signed-off-by: Chao Yu <chao@kernel.org>
->> ---
->>  fs/f2fs/segment.h | 9 ++++++++-
->>  1 file changed, 8 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
->> index 0465dc00b349..0773283babfa 100644
->> --- a/fs/f2fs/segment.h
->> +++ b/fs/f2fs/segment.h
->> @@ -474,8 +474,15 @@ static inline void __set_test_and_free(struct f2fs_sb_info *sbi,
->>  		next = find_next_bit(free_i->free_segmap,
->>  				start_segno + SEGS_PER_SEC(sbi), start_segno);
->>  		if (next >= start_segno + usable_segs) {
->> -			if (test_and_clear_bit(secno, free_i->free_secmap))
->> +			if (test_and_clear_bit(secno, free_i->free_secmap)) {
->>  				free_i->free_sections++;
->> +
->> +				if (GET_SEC_FROM_SEG(sbi, sbi->next_victim_seg[BG_GC]) == secno)
->> +					sbi->next_victim_seg[BG_GC] = NULL_SEGNO;
->> +
->> +				if (GET_SEC_FROM_SEG(sbi, sbi->next_victim_seg[FG_GC]) == secno)
->> +					sbi->next_victim_seg[FG_GC] = NULL_SEGNO;
->> +			}
->>  		}
->>  	}
->>  skip_free:
->> -- 
->> 2.33.0
+diff --git a/drivers/mtd/nand/raw/marvell_nand.c b/drivers/mtd/nand/raw/marvell_nand.c
+index 303b3016a070..1069a17dae9d 100644
+--- a/drivers/mtd/nand/raw/marvell_nand.c
++++ b/drivers/mtd/nand/raw/marvell_nand.c
+@@ -1351,16 +1351,20 @@ static void marvell_nfc_hw_ecc_bch_read_chunk(struct nand_chip *chip, int chunk,
+ 	 * Length is a multiple of 32 bytes, hence it is a multiple of 8 too.
+ 	 */
+ 	for (i = 0; i < data_len; i += FIFO_DEPTH * BCH_SEQ_READS) {
+-		marvell_nfc_end_cmd(chip, NDSR_RDDREQ,
+-				    "RDDREQ while draining FIFO (data)");
++		err = marvell_nfc_end_cmd(chip, NDSR_RDDREQ,
++					  "RDDREQ while draining FIFO (data)");
++		if (err)
++			dev_err(nfc->dev, "Fail to confirm the NDSR.RDDREQ");
+ 		marvell_nfc_xfer_data_in_pio(nfc, data,
+ 					     FIFO_DEPTH * BCH_SEQ_READS);
+ 		data += FIFO_DEPTH * BCH_SEQ_READS;
+ 	}
+ 
+ 	for (i = 0; i < spare_len; i += FIFO_DEPTH * BCH_SEQ_READS) {
+-		marvell_nfc_end_cmd(chip, NDSR_RDDREQ,
+-				    "RDDREQ while draining FIFO (OOB)");
++		err = marvell_nfc_end_cmd(chip, NDSR_RDDREQ,
++					  "RDDREQ while draining FIFO (OOB)");
++		if (err)
++			dev_err(nfc->dev, "Fail to confirm the NDSR.RDDREQ");
+ 		marvell_nfc_xfer_data_in_pio(nfc, spare,
+ 					     FIFO_DEPTH * BCH_SEQ_READS);
+ 		spare += FIFO_DEPTH * BCH_SEQ_READS;
+-- 
+2.42.0.windows.2
 
 
