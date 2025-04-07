@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-590659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B6B5A7D58A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:22:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC8D2A7D598
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:23:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D56113BDCB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:19:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ABBA18832D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B7522AE6B;
-	Mon,  7 Apr 2025 07:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44EA722CBE5;
+	Mon,  7 Apr 2025 07:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="CCWFB7Ty"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0titYTkD"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A0522A1D4;
-	Mon,  7 Apr 2025 07:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3865A22B8CE;
+	Mon,  7 Apr 2025 07:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744010281; cv=none; b=QHPSvA3GnM/K384AvmYjwFoBFmCsBjGGPl1gAXkcB09r2xwxWGzyAZHizbS0fwG0Wnzd8lBv9Q/ReJBSXp4lk25MquTowkbUqm/8ncUDfWR71nBweBLrqj7RvJT7HLbOYM+OW7bzhPUEvdO9tjZE1EwK33glxXuH42/T0/LEWsE=
+	t=1744010285; cv=none; b=f320DJ1iXXK5lcAvFIqSo6AclbKWnmfacujaRzt2g+shDO0tYMpOkPHnnow8QbJ8Z2neyxZqPrV9AK7w2Xlp+py6Ja+gUTNEj/3uzSNmI2yvf5ug531QbZRPW5yo0HudTbp3VIpZ+4lBPOqS0TyRyRyFCkjtbgKByDkurx7D994=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744010281; c=relaxed/simple;
-	bh=iX3zewBTvxovNqMvdbqa5066P6HDtF1rRKFpMZBdFLg=;
+	s=arc-20240116; t=1744010285; c=relaxed/simple;
+	bh=C403OQ+m823DK01/9mwZnbhQwWB3bMp6kAoRCCmwXiE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YpHCBS2VTdJfshwNYhyB+1TWOqqoDfFF7zGhQiZN+42opLjq2U8adJW0qigi439qc9Udrvl7ov0PWa8aVIBPxceTnzozuaLYBmisluJks+djj4ZG6UB7vnNpd5HkMPgLnpAgm//3ywEkiSyFtadW/LQTGi2osLQnXIFyURkiTJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=CCWFB7Ty; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=I1vt97W7ow2Tu22rEk/Gqoo1ft8TLsLEPtG8O0HiDmaxFGMdvJ+/2jw1iXMJxfEZ5E9FZdmc1yEaaQfL35mnwBWj4jb1SHWR+tTmgpbOUtPYlFIJ7xd9jtMFlKJ2gXO101Hs6f6ktyL6t4TM8G+EpuV7zyQoxaBvz7MLoAVfoNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0titYTkD; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -35,33 +35,34 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=XrhZLC/gWu44yM/JXNBUfkny0yyqCUz+uaOnp1SH628=; b=CCWFB7TyuHv14vo2yVNtr3NiM3
-	l98FtBjdbLBhuyZw1d3gP1gS8Zj7wCAjJrtvIIkjbT+007HCeyhN0EOkX/syQwlDcNqRODgJDlupN
-	HiNWcySXh0JgaNhIMyUVMaITuZ7IWDcd1HYI7M9qunRlr2P+uZ/Y+HUL9kGx4gsgL/SA4RqJLyc91
-	K5GpqnBDBqXPyvVrKJDnzG3uIUNZTw9t4Kwg64Doj3w7bZ4etbeQAgnpONfh3938Ef2PaVdzSCB33
-	r0+UB7bStGsG5EY+ZIpiYfA4c/klYaP3lPHfZiHJR3L8LL9x+1X47PYGjv5al8YEPi45tI9vmLhAf
-	KDXi6FkA==;
+	bh=1JjkQbWY/HnPp5mgL4PyI7UmyjOUB6NOpVVT766uZ7M=; b=0titYTkDoxaYelZsph46XGJIsw
+	MPqXxVEmr2+oK/6jc1wOBx0xJ3EWYSUY6MDQUFF8OkLjm/aBxnqx20eco1CAiUAqjzMMKUd2yFVPZ
+	1v6jaVhAoqis+uX7ZelcAeA3jm+DPWFj/2u1nv+wE6hNiKpoFdtspe5djqLV2si4avIjEDvtSl9Wg
+	KTgQB14K3WPERh50xu5k0u92785ScWt49Daql1c3DTG3/ZiSyGouBUdLbLKq10+Yok1RYnUA5xYmS
+	60gWwsiB80IKmCZWZ4e93bZahbNyZanyjoAtTJ4siokgxNPB3xB22HM5dcPNZKXdB5nBxxXXi3hhB
+	s59kFcNQ==;
 Received: from i53875b95.versanet.de ([83.135.91.149] helo=phil..)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1u1gju-0000tP-Jw; Mon, 07 Apr 2025 09:17:50 +0200
+	id 1u1gjv-0000tP-2Q; Mon, 07 Apr 2025 09:17:51 +0200
 From: Heiko Stuebner <heiko@sntech.de>
 To: Andy Yan <andyshrk@163.com>
 Cc: Heiko Stuebner <heiko@sntech.de>,
-	dsimic@manjaro.org,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	krzk+dt@kernel.org,
+	inux-rockchip@lists.infradead.org,
 	Andy Yan <andy.yan@rock-chips.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: aliase sdhci as mmc0 for rk3566 box demo
-Date: Mon,  7 Apr 2025 09:17:38 +0200
-Message-ID: <174401024398.372530.4282077768159194558.b4-ty@sntech.de>
+Subject: Re: [PATCH] ARM: dts: rockchip: Add aliases for MMC devices
+Date: Mon,  7 Apr 2025 09:17:39 +0200
+Message-ID: <174401024396.372530.9920450693183884709.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20241221104920.4193034-1-andyshrk@163.com>
-References: <20241221104920.4193034-1-andyshrk@163.com>
+In-Reply-To: <20250324125215.160616-1-andyshrk@163.com>
+References: <20250324125215.160616-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,16 +73,16 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Sat, 21 Dec 2024 18:49:07 +0800, Andy Yan wrote:
-> Follow most others rk356x based boards, and u-boot only use mmc0/1
-> as mmc boot targets, so aliase sdhci as mmc0.
+On Mon, 24 Mar 2025 20:52:11 +0800, Andy Yan wrote:
+> Add aliases for the MMC devices so that after the system starts up,
+> they will all have fixed device numbers.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] arm64: dts: rockchip: aliase sdhci as mmc0 for rk3566 box demo
-      commit: b6490faab67c4436abeddb5c9e1fb0e8791d58ad
+[1/1] ARM: dts: rockchip: Add aliases for MMC devices
+      commit: d15d8d234248d6575b2d4efc14731d0a623f89d0
 
 Best regards,
 -- 
