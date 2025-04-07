@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-591871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17844A7E64E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:25:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC71A7E632
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22876446135
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:16:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B8401887F17
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9AF20F06F;
-	Mon,  7 Apr 2025 16:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06F02116E4;
+	Mon,  7 Apr 2025 16:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M77DlkIh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UjWSCZ/y"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3D420F06E
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 16:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802A2211464
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 16:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744042365; cv=none; b=PCPuqt5SkyrGs3CdBpM8mISoJurfXcsk4qECZYRldDHGKGEl15X2k42fAZkYFNgwx6xGrpOnQKppN5qMxGEuUWlkwz7Hc82xr6JuI6AvAbrmkcZJ8V4Ze+OTxC7KQ7mFXPME7Fg+dHzPZc/3C+K3O16R+1Cmzr7MRsxtCC1gJYM=
+	t=1744042371; cv=none; b=endy2axasD6Fi7d6J2HtCDhTN7CiN4F41NqwuXVUDUruSiqyzlzBeFPuHT5kiUKNvwzRYL0A1PX2pr2cf8J13vAA17WVccbnQj7T4DXahDo+ow8sGIbXlplUUmZpZD3/idOA4BO+STwLYhP15iI4QDU8Zwt8aMub2E95iff6ndg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744042365; c=relaxed/simple;
-	bh=CHVQUjPLvJ7fK0LyaLJS3WmyYbej6Uh9Len6O7znwa8=;
+	s=arc-20240116; t=1744042371; c=relaxed/simple;
+	bh=31vqYQwn/J2VYn5vPyEE1407XeQoddh8cnodS3c1KD8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lQr30UWzQ0JhmiDuCC9h8yAL3RuQGLjWPciwWhT1LQrmXEL30lK70ZZGw8zoyfppXwUTIb4B0Hbpr1PxTR0wZ0HU+GlXYZfOFCaxVrA8f4uR9NdBBJ+/MjJl3o5fXyG1gOqqNc+zN/JaAOSxRjI+2xNnLQIPFZUsH8o0fVj539o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M77DlkIh; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=oBVho3qB6GRhtBNYHKb/Bi3+eudSy1CSFH1WvN8J07E/eSqib/zWwOlb216lEES8tXf1nu9xt1CLR7BxVzGL8AgbuBwXyq/EHx9fpvoIST0XXQ2rcdfaKTjqLAZa/AVnvC/ueN8uB3pu10v7JmBz37pBopkt4bsT/znjaIAjyN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UjWSCZ/y; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744042361;
+	s=mimecast20190719; t=1744042368;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=KBIstxJZIatf0asUmmZkh+WHsnG4IUit448otRZVL0U=;
-	b=M77DlkIhPOU1o3OhHSik2Jxcl6Zg9TBoypBQZFNTQRcF0RLIV8t6IMwfqAkxTM3hrB2X3w
-	WBs3TG9Wje/k5G0TjmvxyCVRNsocRl8xBOypRbswscmV233au+Wa/QZjmArtl21JDmLV+g
-	q6ZIQNWQx0tNYyyjv9vM6kPOp8XwYHg=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+	bh=V+GN2gS8lk8pQaqDs/K8fd6AI38wy4xbJjG61joXzQc=;
+	b=UjWSCZ/yTxhrCTmu+oEq/vWp5on/5IzK1thi9bypf/WzKszXa2I6twM6BwLBqnTfahu4ya
+	QSDblQ5r6K0hoEIhfbUWA9wWMRd/zTFJZppafTLsHHep+Z1/RaXvZpzo/VSBNtDBZlsMH9
+	ci5XzeNfqyjOPnULkVcn7hzaAfBw52E=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-568-rRbd53bMP9KgWfP-0uUc9Q-1; Mon,
- 07 Apr 2025 12:12:39 -0400
-X-MC-Unique: rRbd53bMP9KgWfP-0uUc9Q-1
-X-Mimecast-MFC-AGG-ID: rRbd53bMP9KgWfP-0uUc9Q_1744042358
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-267-yym-QkhWNcG3NDV6VRRqsg-1; Mon,
+ 07 Apr 2025 12:12:44 -0400
+X-MC-Unique: yym-QkhWNcG3NDV6VRRqsg-1
+X-Mimecast-MFC-AGG-ID: yym-QkhWNcG3NDV6VRRqsg_1744042362
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 316B3180AF4C;
-	Mon,  7 Apr 2025 16:12:38 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7EA55180034D;
+	Mon,  7 Apr 2025 16:12:42 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.40])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1EAC9195609D;
-	Mon,  7 Apr 2025 16:12:34 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7F1251828AA4;
+	Mon,  7 Apr 2025 16:12:39 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: netdev@vger.kernel.org
 Cc: David Howells <dhowells@redhat.com>,
@@ -69,9 +69,9 @@ Cc: David Howells <dhowells@redhat.com>,
 	Chuck Lever <chuck.lever@oracle.com>,
 	linux-afs@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2 12/13] rxrpc: Add more CHALLENGE/RESPONSE packet tracing
-Date: Mon,  7 Apr 2025 17:11:25 +0100
-Message-ID: <20250407161130.1349147-13-dhowells@redhat.com>
+Subject: [PATCH net-next v2 13/13] rxrpc: rxperf: Add test RxGK server keys
+Date: Mon,  7 Apr 2025 17:11:26 +0100
+Message-ID: <20250407161130.1349147-14-dhowells@redhat.com>
 In-Reply-To: <20250407161130.1349147-1-dhowells@redhat.com>
 References: <20250407161130.1349147-1-dhowells@redhat.com>
 Precedence: bulk
@@ -81,13 +81,11 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Add more tracing for CHALLENGE and RESPONSE packets.  Currently, rxrpc only
-has client-relevant tracepoints (rx_challenge and tx_response), but add the
-server-side ones too.
-
-Further, record the service ID in the rx_challenge tracepoint as well.
+Add RxGK server keys of bytes containing { 0, 1, 2, 3, 4, ... } to the
+server keyring for the rxperf test server.  This allows the rxperf test
+client to connect to it.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Marc Dionne <marc.dionne@auristor.com>
@@ -99,173 +97,111 @@ cc: Simon Horman <horms@kernel.org>
 cc: linux-afs@lists.infradead.org
 cc: netdev@vger.kernel.org
 ---
- include/trace/events/rxrpc.h | 78 +++++++++++++++++++++++++++++++++++-
- net/rxrpc/output.c           |  2 +
- net/rxrpc/rxgk.c             |  4 ++
- net/rxrpc/rxkad.c            |  2 +
- 4 files changed, 85 insertions(+), 1 deletion(-)
+ net/rxrpc/rxperf.c | 68 ++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 65 insertions(+), 3 deletions(-)
 
-diff --git a/include/trace/events/rxrpc.h b/include/trace/events/rxrpc.h
-index 920439df1f6f..378d2dfc7392 100644
---- a/include/trace/events/rxrpc.h
-+++ b/include/trace/events/rxrpc.h
-@@ -1201,6 +1201,39 @@ TRACE_EVENT(rxrpc_rx_conn_abort,
- 		      __entry->abort_code)
- 	    );
+diff --git a/net/rxrpc/rxperf.c b/net/rxrpc/rxperf.c
+index c76fbccfbb91..0377301156b0 100644
+--- a/net/rxrpc/rxperf.c
++++ b/net/rxrpc/rxperf.c
+@@ -8,6 +8,7 @@
+ #define pr_fmt(fmt) "rxperf: " fmt
+ #include <linux/module.h>
+ #include <linux/slab.h>
++#include <crypto/krb5.h>
+ #include <net/sock.h>
+ #include <net/af_rxrpc.h>
+ #define RXRPC_TRACE_ONLY_DEFINE_ENUMS
+@@ -550,9 +551,9 @@ static int rxperf_process_call(struct rxperf_call *call)
+ }
  
-+TRACE_EVENT(rxrpc_tx_challenge,
-+	    TP_PROTO(struct rxrpc_connection *conn, rxrpc_serial_t serial,
-+		     u32 version, u32 nonce),
-+
-+	    TP_ARGS(conn, serial, version, nonce),
-+
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,	conn)
-+		    __field(rxrpc_serial_t,	serial)
-+		    __field(u32,		version)
-+		    __field(u32,		nonce)
-+		    __field(u16,		service_id)
-+		    __field(u8,			security_ix)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->conn = conn->debug_id;
-+		    __entry->serial = serial;
-+		    __entry->version = version;
-+		    __entry->nonce = nonce;
-+		    __entry->service_id = conn->service_id;
-+		    __entry->security_ix = conn->security_ix;
-+			   ),
-+
-+	    TP_printk("C=%08x CHALLENGE r=%08x sv=%u+%u v=%x n=%x",
-+		      __entry->conn,
-+		      __entry->serial,
-+		      __entry->service_id,
-+		      __entry->security_ix,
-+		      __entry->version,
-+		      __entry->nonce)
-+	    );
-+
- TRACE_EVENT(rxrpc_rx_challenge,
- 	    TP_PROTO(struct rxrpc_connection *conn, rxrpc_serial_t serial,
- 		     u32 version, u32 nonce, u32 min_level),
-@@ -1213,6 +1246,7 @@ TRACE_EVENT(rxrpc_rx_challenge,
- 		    __field(u32,		version)
- 		    __field(u32,		nonce)
- 		    __field(u32,		min_level)
-+		    __field(u16,		service_id)
- 		    __field(u8,			security_ix)
- 			     ),
+ /*
+- * Add a key to the security keyring.
++ * Add an rxkad key to the security keyring.
+  */
+-static int rxperf_add_key(struct key *keyring)
++static int rxperf_add_rxkad_key(struct key *keyring)
+ {
+ 	key_ref_t kref;
+ 	int ret;
+@@ -578,6 +579,47 @@ static int rxperf_add_key(struct key *keyring)
+ 	return ret;
+ }
  
-@@ -1222,18 +1256,60 @@ TRACE_EVENT(rxrpc_rx_challenge,
- 		    __entry->version = version;
- 		    __entry->nonce = nonce;
- 		    __entry->min_level = min_level;
-+		    __entry->service_id = conn->service_id;
- 		    __entry->security_ix = conn->security_ix;
- 			   ),
- 
--	    TP_printk("C=%08x CHALLENGE r=%08x sx=%u v=%x n=%x ml=%x",
-+	    TP_printk("C=%08x CHALLENGE r=%08x sv=%u+%u v=%x n=%x ml=%x",
- 		      __entry->conn,
- 		      __entry->serial,
-+		      __entry->service_id,
- 		      __entry->security_ix,
- 		      __entry->version,
- 		      __entry->nonce,
- 		      __entry->min_level)
- 	    );
- 
-+TRACE_EVENT(rxrpc_tx_response,
-+	    TP_PROTO(struct rxrpc_connection *conn, rxrpc_serial_t serial,
-+		     struct rxrpc_skb_priv *rsp),
++#ifdef CONFIG_RXGK
++/*
++ * Add a yfs-rxgk key to the security keyring.
++ */
++static int rxperf_add_yfs_rxgk_key(struct key *keyring, u32 enctype)
++{
++	const struct krb5_enctype *krb5 = crypto_krb5_find_enctype(enctype);
++	key_ref_t kref;
++	char name[64];
++	int ret;
++	u8 key[32];
 +
-+	    TP_ARGS(conn, serial, rsp),
++	if (!krb5 || krb5->key_len > sizeof(key))
++		return 0;
 +
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,	conn)
-+		    __field(rxrpc_serial_t,	serial)
-+		    __field(rxrpc_serial_t,	challenge)
-+		    __field(u32,		version)
-+		    __field(u32,		kvno)
-+		    __field(u16,		ticket_len)
-+		    __field(u16,		appdata_len)
-+		    __field(u16,		service_id)
-+		    __field(u8,			security_ix)
-+			     ),
++	/* The key is just { 0, 1, 2, 3, 4, ... } */
++	for (int i = 0; i < krb5->key_len; i++)
++		key[i] = i;
 +
-+	    TP_fast_assign(
-+		    __entry->conn	= conn->debug_id;
-+		    __entry->serial	= serial;
-+		    __entry->challenge	= rsp->resp.challenge_serial;
-+		    __entry->version	= rsp->resp.version;
-+		    __entry->kvno	= rsp->resp.kvno;
-+		    __entry->ticket_len = rsp->resp.ticket_len;
-+		    __entry->service_id = conn->service_id;
-+		    __entry->security_ix = conn->security_ix;
-+			   ),
++	sprintf(name, "%u:6:1:%u", RX_PERF_SERVICE, enctype);
 +
-+	    TP_printk("C=%08x RESPONSE r=%08x cr=%08x sv=%u+%u v=%x kv=%x tl=%u",
-+		      __entry->conn,
-+		      __entry->serial,
-+		      __entry->challenge,
-+		      __entry->service_id,
-+		      __entry->security_ix,
-+		      __entry->version,
-+		      __entry->kvno,
-+		      __entry->ticket_len)
-+	    );
++	kref = key_create_or_update(make_key_ref(keyring, true),
++				    "rxrpc_s", name,
++				    key, krb5->key_len,
++				    KEY_POS_VIEW | KEY_POS_READ | KEY_POS_SEARCH |
++				    KEY_USR_VIEW,
++				    KEY_ALLOC_NOT_IN_QUOTA);
 +
- TRACE_EVENT(rxrpc_rx_response,
- 	    TP_PROTO(struct rxrpc_connection *conn, rxrpc_serial_t serial,
- 		     u32 version, u32 kvno, u32 ticket_len),
-diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
-index 8138f35d7945..0af19bcdc80a 100644
---- a/net/rxrpc/output.c
-+++ b/net/rxrpc/output.c
-@@ -953,6 +953,8 @@ void rxrpc_send_response(struct rxrpc_connection *conn, struct sk_buff *response
- 	serial = rxrpc_get_next_serials(conn, 1);
- 	wserial = htonl(serial);
- 
-+	trace_rxrpc_tx_response(conn, serial, sp);
++	if (IS_ERR(kref)) {
++		pr_err("Can't allocate rxperf server key: %ld\n", PTR_ERR(kref));
++		return PTR_ERR(kref);
++	}
 +
- 	ret = skb_store_bits(response, offsetof(struct rxrpc_wire_header, serial),
- 			     &wserial, sizeof(wserial));
++	ret = key_link(keyring, key_ref_to_ptr(kref));
++	if (ret < 0)
++		pr_err("Can't link rxperf server key: %d\n", ret);
++	key_ref_put(kref);
++	return ret;
++}
++#endif
++
+ /*
+  * Initialise the rxperf server.
+  */
+@@ -607,9 +649,29 @@ static int __init rxperf_init(void)
+ 		goto error_keyring;
+ 	}
+ 	rxperf_sec_keyring = keyring;
+-	ret = rxperf_add_key(keyring);
++	ret = rxperf_add_rxkad_key(keyring);
++	if (ret < 0)
++		goto error_key;
++#ifdef CONFIG_RXGK
++	ret = rxperf_add_yfs_rxgk_key(keyring, KRB5_ENCTYPE_AES128_CTS_HMAC_SHA1_96);
++	if (ret < 0)
++		goto error_key;
++	ret = rxperf_add_yfs_rxgk_key(keyring, KRB5_ENCTYPE_AES256_CTS_HMAC_SHA1_96);
++	if (ret < 0)
++		goto error_key;
++	ret = rxperf_add_yfs_rxgk_key(keyring, KRB5_ENCTYPE_AES128_CTS_HMAC_SHA256_128);
++	if (ret < 0)
++		goto error_key;
++	ret = rxperf_add_yfs_rxgk_key(keyring, KRB5_ENCTYPE_AES256_CTS_HMAC_SHA384_192);
++	if (ret < 0)
++		goto error_key;
++	ret = rxperf_add_yfs_rxgk_key(keyring, KRB5_ENCTYPE_CAMELLIA128_CTS_CMAC);
++	if (ret < 0)
++		goto error_key;
++	ret = rxperf_add_yfs_rxgk_key(keyring, KRB5_ENCTYPE_CAMELLIA256_CTS_CMAC);
  	if (ret < 0)
-diff --git a/net/rxrpc/rxgk.c b/net/rxrpc/rxgk.c
-index 6175fc54ba90..ba8bc201b8d3 100644
---- a/net/rxrpc/rxgk.c
-+++ b/net/rxrpc/rxgk.c
-@@ -668,6 +668,8 @@ static int rxgk_issue_challenge(struct rxrpc_connection *conn)
- 	serial = rxrpc_get_next_serials(conn, 1);
- 	whdr->serial = htonl(serial);
+ 		goto error_key;
++#endif
  
-+	trace_rxrpc_tx_challenge(conn, serial, 0, *(u32 *)&conn->rxgk.nonce);
-+
- 	ret = do_udp_sendmsg(conn->local->socket, &msg, len);
- 	if (ret > 0)
- 		conn->peer->last_tx_at = ktime_get_seconds();
-@@ -1203,6 +1205,8 @@ static int rxgk_verify_response(struct rxrpc_connection *conn,
- 	if (xdr_round_up(token_len) + sizeof(__be32) > len)
- 		goto short_packet;
- 
-+	trace_rxrpc_rx_response(conn, sp->hdr.serial, 0, sp->hdr.cksum, token_len);
-+
- 	offset	+= xdr_round_up(token_len);
- 	len	-= xdr_round_up(token_len);
- 
-diff --git a/net/rxrpc/rxkad.c b/net/rxrpc/rxkad.c
-index 0b5e007c7de9..3657c0661cdc 100644
---- a/net/rxrpc/rxkad.c
-+++ b/net/rxrpc/rxkad.c
-@@ -685,6 +685,8 @@ static int rxkad_issue_challenge(struct rxrpc_connection *conn)
- 	serial = rxrpc_get_next_serial(conn);
- 	whdr.serial = htonl(serial);
- 
-+	trace_rxrpc_tx_challenge(conn, serial, 0, conn->rxkad.nonce);
-+
- 	ret = kernel_sendmsg(conn->local->socket, &msg, iov, 2, len);
- 	if (ret < 0) {
- 		trace_rxrpc_tx_fail(conn->debug_id, serial, ret,
+ 	ret = rxperf_open_socket();
+ 	if (ret < 0)
 
 
