@@ -1,256 +1,133 @@
-Return-Path: <linux-kernel+bounces-591776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E656A7E4F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:42:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D9F9A7E4FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC0B77A3368
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:41:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 594807A3420
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4168D202C24;
-	Mon,  7 Apr 2025 15:42:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C382045B8;
+	Mon,  7 Apr 2025 15:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GjL3OIYe"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ObF23tKu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CDD3202973;
-	Mon,  7 Apr 2025 15:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365C12036F6;
+	Mon,  7 Apr 2025 15:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744040555; cv=none; b=QaZk2uHxCXp8onmUM8iASarhRJB8a+oaY+6X+q8Y+7K6xTmH8w6W/fn99xOS6EqHZnh6hMeWEdIC/B0UeaIrvc7bIsCqfZwl5iFfuIRrOOjnDAQQSY0kZLoubUqu5cqKIRX9DNZar2HDjyfToOPBRl0uJvCm8QYR/KD3V9Q9cOg=
+	t=1744040590; cv=none; b=Tk5CiLVoZ3N2RtKIY26VPvhNw+1Zf9ul80ncFwuVNTJiQAinevd+7DS4t5OFzxmnCMl5wMs7l8rACfVOJR1gNte54dv3Y8Wxz5Yj8YFp5+We3KR5Bf/pirUoIpykLemgAs3VKj/gF8DFj+b6ZUan0qajhuATGVy920uJED9ueBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744040555; c=relaxed/simple;
-	bh=yPfzbYwfYsZAnZVLHNRkMj2YFdxKeiRsoAYHu5QBxh0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dbhjG6tZz/cz99gLF1DGaFwX3Y7xamygnKdxGHRWtXEvrwWDYRFC9aHF6vwtH/td6OStGfwaS+wY6egDPkzSH+KTwDEEJu65olGCqhkzd5QEfDv2FHmLAMGOPbKp64kyPXeGenqBvsw6iP8NPRtLlH3PRyhbXm5aOM4ae+wp7sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GjL3OIYe; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744040550;
-	bh=yPfzbYwfYsZAnZVLHNRkMj2YFdxKeiRsoAYHu5QBxh0=;
-	h=From:Date:Subject:To:Cc:From;
-	b=GjL3OIYekEJ2DhTKuyXPHbGVbffgZt0uVi537TbqYYHRx0JfQOzjXu54/KE4gDqcA
-	 NUPOIOYYOe/k6tFZCH42lRHjpkp+sHSmB5x6Qvt8cGuM4p0mzdgR+pvWlWYbUcmXvf
-	 Oa8Y73J7jjWqDjvYazTMl+dy6kY69E8PFDeATjjOgCydoVmluP2D1PSvE5dory+7uo
-	 6VtrUvc9ro+Y0lpN0czS56rLP+KovFWCrjUsM60HDo+0k+3ISFVcdSxqkpA4nDZGVl
-	 xlLHFgtcUDHHUHmJpxW0bmDGmXTmAyt0ZICZTTtohsEYcvUGeXYq9ZVEt76FUqpHcE
-	 Sy9BXSiAZB++g==
-Received: from [192.168.1.63] (unknown [70.107.117.78])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2C5DE17E0EC0;
-	Mon,  7 Apr 2025 17:42:29 +0200 (CEST)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Mon, 07 Apr 2025 11:42:03 -0400
-Subject: [PATCH] docs: automarkup: Move common logic to add and resolve
- xref to helper
+	s=arc-20240116; t=1744040590; c=relaxed/simple;
+	bh=+bfBlrTODZYu3pKVpWowUt5ekRSxDmvofhdH7JASR9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J3tvhLyVBwbIPtPcnp+TknVTco7awDS74FLwG20VMpBeboqt9TyHscyfclKcgIFF9lSJrsHAWK5X/XpI8zxmBE2LQd1RDOUKQLAm7CCUSxbEimY+XaAkYlCdQLS+JFCAVwxuJv93Es4G1OYZQUNMCDEBAwqaH5U9EJKT/riGANo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ObF23tKu; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744040589; x=1775576589;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+bfBlrTODZYu3pKVpWowUt5ekRSxDmvofhdH7JASR9A=;
+  b=ObF23tKuc/zre5XJ4WY+l+jeR96cvn6oIPxB73mjHaEtfLIcbVExqYSj
+   RrNiueqan2eaYsISKgL/2aCTqI1jhdSkHBewTsneywly28qHO8NRc1AZk
+   /IB25SCEyjxXgyQnMv2KAfiwMGoNCAY+8wfqUUuwsjUH9IVuwMk6m7HOK
+   DwQ81f7axn/3NQyU5CwKDP3MPRBtBZlLpchgtvEqA7Yql9r1T5nj2QY93
+   CeyYHD6TTcl1rPnj7E2g4hb8lua48/PBaVdJwV3iTz3h80pcDnJVIcY10
+   jPKlztFOPRKdHurfpY0Zdscy/WZverE2dI0dNhuNtYsY/1kIz+xeIfj3E
+   w==;
+X-CSE-ConnectionGUID: vaRHodjPQselcu6sB0bpMw==
+X-CSE-MsgGUID: PGolypC6TUOar++ZLZ/hUw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="56096639"
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="56096639"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 08:43:08 -0700
+X-CSE-ConnectionGUID: z2HD4fT+SiaRoL9kWQVDJQ==
+X-CSE-MsgGUID: +KOv1CCeSF2YtmEZIw2xfA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="133195403"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 08:42:59 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u1och-0000000A75j-0ycM;
+	Mon, 07 Apr 2025 18:42:55 +0300
+Date: Mon, 7 Apr 2025 18:42:55 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Wolfram Sang <wsa@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 13/16] i2c: busses: at91: Add MCHP_LAN966X_PCI dependency
+Message-ID: <Z_PyfyBq5cDeIQwS@smile.fi.intel.com>
+References: <20250407145546.270683-1-herve.codina@bootlin.com>
+ <20250407145546.270683-14-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250407-automarkup-resolve-xref-helper-v1-1-9cac06ad580f@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAEry82cC/x2NwQqDMBAFf0X27EIMFmt/RTyE5KlLrQmbKoL47
- w09DgMzF2WoINOrukhxSJa4FWjqivzithksoTBZYx+mNR27/Rs/Tt97YkWO6wE+FRMvWBOUQx8
- 8vOnbyT6pRFJxcv4Hw3jfP1l6E4lwAAAA
-X-Change-ID: 20250407-automarkup-resolve-xref-helper-d9dcec094f28
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: kernel@collabora.com, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250407145546.270683-14-herve.codina@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Several of the markup functions contain the same code, calling into
-sphinx's pending_xref and resolve_xref functions to add and resolve a
-cross-reference, with only a few of the parameters changed (domain,
-reference type, markup content). Move this logic to its own function and
-reuse it in the markup functions.
+On Mon, Apr 07, 2025 at 04:55:42PM +0200, Herve Codina wrote:
+> The AT91 I2C driver depends on ARCH_AT91.
+> 
+> This I2C controller can be used by the LAN966x PCI device and so
+> it needs to be available when the LAN966x PCI device is enabled.
 
-No functional change.
+...
 
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- Documentation/sphinx/automarkup.py | 78 ++++++++++----------------------------
- 1 file changed, 20 insertions(+), 58 deletions(-)
+>  config I2C_AT91
+>  	tristate "Atmel AT91 I2C Two-Wire interface (TWI)"
+> -	depends on ARCH_AT91 || COMPILE_TEST
+> +	depends on ARCH_AT91 || MCHP_LAN966X_PCI || COMPILE_TEST
 
-diff --git a/Documentation/sphinx/automarkup.py b/Documentation/sphinx/automarkup.py
-index ecf54d22e9dc6ab459a91fde580c1cf161f054ed..8b129835e521428c0bafdc1584c8ce69252a668d 100644
---- a/Documentation/sphinx/automarkup.py
-+++ b/Documentation/sphinx/automarkup.py
-@@ -128,13 +128,11 @@ def note_failure(target):
- # own C role, but both match the same regex, so we try both.
- #
- def markup_func_ref_sphinx3(docname, app, match):
--    cdom = app.env.domains['c']
-     #
-     # Go through the dance of getting an xref out of the C domain
-     #
-     base_target = match.group(2)
-     target_text = nodes.Text(match.group(0))
--    xref = None
-     possible_targets = [base_target]
-     # Check if this document has a namespace, and if so, try
-     # cross-referencing inside it first.
-@@ -146,22 +144,8 @@ def markup_func_ref_sphinx3(docname, app, match):
-             if (target not in Skipfuncs) and not failure_seen(target):
-                 lit_text = nodes.literal(classes=['xref', 'c', 'c-func'])
-                 lit_text += target_text
--                pxref = addnodes.pending_xref('', refdomain = 'c',
--                                              reftype = 'function',
--                                              reftarget = target,
--                                              modname = None,
--                                              classname = None)
--                #
--                # XXX The Latex builder will throw NoUri exceptions here,
--                # work around that by ignoring them.
--                #
--                try:
--                    xref = cdom.resolve_xref(app.env, docname, app.builder,
--                                             'function', target, pxref,
--                                             lit_text)
--                except NoUri:
--                    xref = None
--
-+                xref = add_and_resolve_xref(app, docname, 'c', 'function',
-+                                            target, contnode=lit_text)
-                 if xref:
-                     return xref
-                 note_failure(target)
-@@ -188,13 +172,11 @@ def markup_c_ref(docname, app, match):
-                    RE_typedef: 'type',
-                    }
- 
--    cdom = app.env.domains['c']
-     #
-     # Go through the dance of getting an xref out of the C domain
-     #
-     base_target = match.group(2)
-     target_text = nodes.Text(match.group(0))
--    xref = None
-     possible_targets = [base_target]
-     # Check if this document has a namespace, and if so, try
-     # cross-referencing inside it first.
-@@ -206,21 +188,9 @@ def markup_c_ref(docname, app, match):
-             if not (match.re == RE_function and target in Skipfuncs):
-                 lit_text = nodes.literal(classes=['xref', 'c', class_str[match.re]])
-                 lit_text += target_text
--                pxref = addnodes.pending_xref('', refdomain = 'c',
--                                              reftype = reftype_str[match.re],
--                                              reftarget = target, modname = None,
--                                              classname = None)
--                #
--                # XXX The Latex builder will throw NoUri exceptions here,
--                # work around that by ignoring them.
--                #
--                try:
--                    xref = cdom.resolve_xref(app.env, docname, app.builder,
--                                             reftype_str[match.re], target, pxref,
--                                             lit_text)
--                except NoUri:
--                    xref = None
--
-+                xref = add_and_resolve_xref(app, docname, 'c',
-+                                            reftype_str[match.re], target,
-+                                            contnode=lit_text)
-                 if xref:
-                     return xref
- 
-@@ -231,7 +201,6 @@ def markup_c_ref(docname, app, match):
- # cross reference to that page
- #
- def markup_doc_ref(docname, app, match):
--    stddom = app.env.domains['std']
-     #
-     # Go through the dance of getting an xref out of the std domain
-     #
-@@ -239,22 +208,8 @@ def markup_doc_ref(docname, app, match):
-     target = match.group(2)
-     if absolute:
-        target = "/" + target
--    xref = None
--    pxref = addnodes.pending_xref('', refdomain = 'std', reftype = 'doc',
--                                  reftarget = target, modname = None,
--                                  classname = None, refexplicit = False)
--    #
--    # XXX The Latex builder will throw NoUri exceptions here,
--    # work around that by ignoring them.
--    #
--    try:
--        xref = stddom.resolve_xref(app.env, docname, app.builder, 'doc',
--                                   target, pxref, None)
--    except NoUri:
--        xref = None
--    #
--    # Return the xref if we got it; otherwise just return the plain text.
--    #
-+
-+    xref = add_and_resolve_xref(app, docname, 'std', 'doc', target)
-     if xref:
-         return xref
-     else:
-@@ -265,7 +220,6 @@ def markup_doc_ref(docname, app, match):
- # with a cross reference to that page
- #
- def markup_abi_ref(docname, app, match, warning=False):
--    stddom = app.env.domains['std']
-     #
-     # Go through the dance of getting an xref out of the std domain
-     #
-@@ -280,7 +234,15 @@ def markup_abi_ref(docname, app, match, warning=False):
-             kernel_abi.log.warning("%s not found", fname)
-         return nodes.Text(match.group(0))
- 
--    pxref = addnodes.pending_xref('', refdomain = 'std', reftype = 'ref',
-+    xref = add_and_resolve_xref(app, docname, 'std', 'ref', target)
-+    if xref:
-+        return xref
-+    else:
-+        return nodes.Text(match.group(0))
-+
-+def add_and_resolve_xref(app, docname, domain, reftype, target, contnode=None):
-+    dom_obj = app.env.domains[domain]
-+    pxref = addnodes.pending_xref('', refdomain = domain, reftype = reftype,
-                                   reftarget = target, modname = None,
-                                   classname = None, refexplicit = False)
- 
-@@ -289,8 +251,8 @@ def markup_abi_ref(docname, app, match, warning=False):
-     # work around that by ignoring them.
-     #
-     try:
--        xref = stddom.resolve_xref(app.env, docname, app.builder, 'ref',
--                                   target, pxref, None)
-+        xref = dom_obj.resolve_xref(app.env, docname, app.builder, reftype,
-+                                    target, pxref, contnode)
-     except NoUri:
-         xref = None
-     #
-@@ -298,8 +260,8 @@ def markup_abi_ref(docname, app, match, warning=False):
-     #
-     if xref:
-         return xref
--    else:
--        return nodes.Text(match.group(0))
-+
-+    return None
- 
- #
- # Variant of markup_abi_ref() that warns whan a reference is not found
+I would drop it altogether in similar way as suggested for the clock driver.
 
----
-base-commit: a4cda136f021ad44b8b52286aafd613030a6db5f
-change-id: 20250407-automarkup-resolve-xref-helper-d9dcec094f28
-
-Best regards,
 -- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
+With Best Regards,
+Andy Shevchenko
+
 
 
