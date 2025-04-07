@@ -1,207 +1,148 @@
-Return-Path: <linux-kernel+bounces-591873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC71A7E632
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:23:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4A73A7E61D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B8401887F17
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:17:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA8BD16A7EA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06F02116E4;
-	Mon,  7 Apr 2025 16:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110D72066F8;
+	Mon,  7 Apr 2025 16:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UjWSCZ/y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="mYnDhU3D"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802A2211464
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 16:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88AC2063E2
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 16:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744042371; cv=none; b=endy2axasD6Fi7d6J2HtCDhTN7CiN4F41NqwuXVUDUruSiqyzlzBeFPuHT5kiUKNvwzRYL0A1PX2pr2cf8J13vAA17WVccbnQj7T4DXahDo+ow8sGIbXlplUUmZpZD3/idOA4BO+STwLYhP15iI4QDU8Zwt8aMub2E95iff6ndg=
+	t=1744042297; cv=none; b=Tq2slodWS9yNqAxB2B0YVNH5AAOp4V91qdBBLx57t8i3N2nGLf9Pi+GdbodvXWTTFZYEoUW//zeXDcJ/SyfB7XIT80JEptZOussmwlZl8boMEhmAezRxXgVsX9hA2HZ/vNOtbbGyPlT2qtxzit21ib6aipSFkMLFDil+aCu1D4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744042371; c=relaxed/simple;
-	bh=31vqYQwn/J2VYn5vPyEE1407XeQoddh8cnodS3c1KD8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oBVho3qB6GRhtBNYHKb/Bi3+eudSy1CSFH1WvN8J07E/eSqib/zWwOlb216lEES8tXf1nu9xt1CLR7BxVzGL8AgbuBwXyq/EHx9fpvoIST0XXQ2rcdfaKTjqLAZa/AVnvC/ueN8uB3pu10v7JmBz37pBopkt4bsT/znjaIAjyN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UjWSCZ/y; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744042368;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V+GN2gS8lk8pQaqDs/K8fd6AI38wy4xbJjG61joXzQc=;
-	b=UjWSCZ/yTxhrCTmu+oEq/vWp5on/5IzK1thi9bypf/WzKszXa2I6twM6BwLBqnTfahu4ya
-	QSDblQ5r6K0hoEIhfbUWA9wWMRd/zTFJZppafTLsHHep+Z1/RaXvZpzo/VSBNtDBZlsMH9
-	ci5XzeNfqyjOPnULkVcn7hzaAfBw52E=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-267-yym-QkhWNcG3NDV6VRRqsg-1; Mon,
- 07 Apr 2025 12:12:44 -0400
-X-MC-Unique: yym-QkhWNcG3NDV6VRRqsg-1
-X-Mimecast-MFC-AGG-ID: yym-QkhWNcG3NDV6VRRqsg_1744042362
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7EA55180034D;
-	Mon,  7 Apr 2025 16:12:42 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.40])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7F1251828AA4;
-	Mon,  7 Apr 2025 16:12:39 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: netdev@vger.kernel.org
-Cc: David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	linux-afs@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2 13/13] rxrpc: rxperf: Add test RxGK server keys
-Date: Mon,  7 Apr 2025 17:11:26 +0100
-Message-ID: <20250407161130.1349147-14-dhowells@redhat.com>
-In-Reply-To: <20250407161130.1349147-1-dhowells@redhat.com>
-References: <20250407161130.1349147-1-dhowells@redhat.com>
+	s=arc-20240116; t=1744042297; c=relaxed/simple;
+	bh=KsEVGnKj/ZyTEWL4B7MD7vW31lMYLs6SHQSHn99IlbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IXeU3SuHaIdh8OhvWl2EfChLEVWEy4XfaXWfMzeAKVx357fviICBPIiB3qYRLC1dXuxATwHx01DVkUUjdQ47S7wkXSCIGrMEI5eiiIbrjzdQJ0Ggb4Oapf6EwbDSXmUu3Xbw0ZO5Q7cIveXOmP+VKh4khaNb9u00FL7Ypzb8ZZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=mYnDhU3D; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3f68460865aso3241202b6e.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 09:11:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1744042294; x=1744647094; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IXnl4aWwI+gQDZ+ekrtdQrNLGHmA4HgqPoIupV2xsTw=;
+        b=mYnDhU3DWA8oM1S9IbIwiq172/sJD5Z7UBgxzomgiHngUsNQK6Pm/auV08yw7AqsBh
+         xDRusZZnbIcGLSsiNYhov+V9cfDK6FkGvAYnYgg+lSUkRGHUHiNGuJcGScc0ZUVPaeIP
+         x1YBj1E80XQJ2xrJd2Vi2ejBt53dn+TpzMsnEuldPX+8//l1K2e2eBoKFWmRMm3cETVg
+         gYP2RzoGx5GcmkT8PLW6i4ZIcXJPZVTEHLvmKps9EHNP1v4Nf0KvXH0y5Pe8W4eIl/Tw
+         hx1W6fzr0mO349cl4MCFcWRgJw8XeoA2+sWmQlhoBdvA/Ary55uOBmuj8ju0jlcGK2lK
+         Cm7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744042294; x=1744647094;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IXnl4aWwI+gQDZ+ekrtdQrNLGHmA4HgqPoIupV2xsTw=;
+        b=V1o8YUeogcGAk08ku72W1XhVXM7XSpwTx87+KNU83S0O27H6U8xaKASYv6jlx2N4/s
+         4as9OJ22nZV7V1EFvn8IkLPS24eYLye6OJdrDsKIm7tvG2MY26rd1DKjXukZEmtg2sZQ
+         JlsP8QNw05e71NJeUmEjIuiA71tGE1VTXCFnn5W3XbKUoZiPzlVgVAMKw09ibjryGuOY
+         z5kcUg6RWyTuTDQqe0v+AzVk1hY6WCui9w/HSkpV/gy/g2zO7fykUOorMdemI3rEQIpi
+         7YUOJev8GkTtbFtNB2GwLN2uQZYKrRSzPsyfECMUbMA7HhfNQjcQUfEKcS6A8xmZw9Mv
+         sEbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+8CyyINxMBhOpZFTig7Lb/jWwBj3cv+JFzBNSORwu4EEHrjrZgGo0XHRyhW4krDw2ShX68Cz7rmfuvCo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8BfYdzRpTZUAJDVWFgLW+t1fssUfEkU2omEzv+VBFRR8jZvkF
+	HCyc3lni+bDcP5yWykSeeYeAYZ1fZvNn2IXHMN8HpRVf5ICdgTXh0uO/3UUk1g==
+X-Gm-Gg: ASbGncvyTwJ83xBw96Q8AzvD6U/I2UQ6Yo9plZbnRHBj2pF3q8eKSPcyn6fxAa0gRXN
+	Fh9aS1OK23A93ze+ldC1VfqGEDUc6ZpMo2smrC1wcNBZObzGVd8BlYXIs8gN6AnQwEPHrspLQwd
+	m91peVCsjd6KHm7VHYyl9qzaV3E7+n3KXYNxyUAKj3QBJevqQ9RKY7ZliPgEAkCFI2CwOILrxN1
+	g46wn0qf1yMNVF66o/N4OZoCVinFT12bJciHhN+FvV2Xb1Lo2kASV6VUTr4i6iexkKry2SD8jl1
+	vRG9PPciLyverYOeSJBSsKKzDt1VvG64ACcDexr7mQ/aQ5GSStswmlB06lSp
+X-Google-Smtp-Source: AGHT+IH0qPZB6EY8Bou7VhukIEhOImDstOm21SEVFOUQ2wnTC9y+fjZ2IdwbjWiLzgW3nK17LwAB4A==
+X-Received: by 2002:a05:6808:3a0a:b0:3f6:684f:2f17 with SMTP id 5614622812f47-40045630365mr9869082b6e.30.1744042294576;
+        Mon, 07 Apr 2025 09:11:34 -0700 (PDT)
+Received: from rowland.harvard.edu ([12.111.7.147])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-4003ff9adb6sm1770193b6e.27.2025.04.07.09.11.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 09:11:33 -0700 (PDT)
+Date: Mon, 7 Apr 2025 12:11:32 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: =?utf-8?Q?Micha=C5=82?= Pecio <michal.pecio@gmail.com>
+Cc: Paul Menzel <pmenzel@molgen.mpg.de>,
+	Mathias Nyman <mathias.nyman@linux.intel.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: xhci: WARN Set TR Deq Ptr cmd failed due to incorrect slot or ep
+ state.
+Message-ID: <3efb52b8-0974-4125-a344-00f459fbe4e4@rowland.harvard.edu>
+References: <c279bd85-3069-4841-b1be-20507ac9f2d7@molgen.mpg.de>
+ <b356f743-44b5-4f48-a289-fae0afe106ff@linux.intel.com>
+ <84b400f8-2943-44e0-8803-f3aac3b670af@molgen.mpg.de>
+ <20250406002311.2a76fc64@foxbook>
+ <ade0d77a-651a-4b03-bf21-00369fdc22f8@rowland.harvard.edu>
+ <20250406095008.0dbfd586@foxbook>
+ <20250406175032.12b7d284@foxbook>
+ <14197657-0a0f-45a8-ac36-dd37b16a1565@rowland.harvard.edu>
+ <20250407074905.2d236fb9@foxbook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <20250407074905.2d236fb9@foxbook>
 
-Add RxGK server keys of bytes containing { 0, 1, 2, 3, 4, ... } to the
-server keyring for the rxperf test server.  This allows the rxperf test
-client to connect to it.
+On Mon, Apr 07, 2025 at 07:49:05AM +0200, Michał Pecio wrote:
+> On Sun, 6 Apr 2025 15:26:41 -0400, Alan Stern wrote:
+> > I'd guess that you're seeing the result of the
+> > 
+> > 		usb_disable_interface(udev, intf, true);
+> > 
+> > call in usb_reset_and_verify_device().  This call is made following
+> > the actual reset, as part of the procedure for putting everything
+> > back to the way it was before the reset.
+> 
+> Your guess is right. I added dump_stack() to those calls.
+> 
+> The bug is triggered by this function calling usb_disable_interface()
+> and usb_enable_interface() after usb_hcd_alloc_bandwidth().
+> 
+> These two issue endpoint_disable() and endpoint_reset() to the HCD and
+> xhci_hcd appears to be confused about the intent of the former, because
+> it clears host_ep->hcpriv, breaking all future endpoint_reset() calls.
+> 
+> Since 6.15, this call informs xhci_hcd that device endpoint has been
+> cleared and pending URBs can be started, so this isn't working now.
+> 
+> 
+> BTW, that's not a corner of the driver which I'm very familiar with,
+> but AFAIU this disable/enable sequence is pointless for xHCI if done
+> on freshly created endpoints. It would only wait for clearing TT to
+> finish (there should be none) and issue some commands to clear the
+> toggle/sequence state (which should be blank).
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: Simon Horman <horms@kernel.org>
-cc: linux-afs@lists.infradead.org
-cc: netdev@vger.kernel.org
----
- net/rxrpc/rxperf.c | 68 ++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 65 insertions(+), 3 deletions(-)
+It looks like the purpose of the calls to usb_disable_interface() and 
+usb_enable_interface() in usb_reset_device() is to update the data 
+structures in the core and to notify HC drivers that ignore the 
+reset_device callback.
 
-diff --git a/net/rxrpc/rxperf.c b/net/rxrpc/rxperf.c
-index c76fbccfbb91..0377301156b0 100644
---- a/net/rxrpc/rxperf.c
-+++ b/net/rxrpc/rxperf.c
-@@ -8,6 +8,7 @@
- #define pr_fmt(fmt) "rxperf: " fmt
- #include <linux/module.h>
- #include <linux/slab.h>
-+#include <crypto/krb5.h>
- #include <net/sock.h>
- #include <net/af_rxrpc.h>
- #define RXRPC_TRACE_ONLY_DEFINE_ENUMS
-@@ -550,9 +551,9 @@ static int rxperf_process_call(struct rxperf_call *call)
- }
- 
- /*
-- * Add a key to the security keyring.
-+ * Add an rxkad key to the security keyring.
-  */
--static int rxperf_add_key(struct key *keyring)
-+static int rxperf_add_rxkad_key(struct key *keyring)
- {
- 	key_ref_t kref;
- 	int ret;
-@@ -578,6 +579,47 @@ static int rxperf_add_key(struct key *keyring)
- 	return ret;
- }
- 
-+#ifdef CONFIG_RXGK
-+/*
-+ * Add a yfs-rxgk key to the security keyring.
-+ */
-+static int rxperf_add_yfs_rxgk_key(struct key *keyring, u32 enctype)
-+{
-+	const struct krb5_enctype *krb5 = crypto_krb5_find_enctype(enctype);
-+	key_ref_t kref;
-+	char name[64];
-+	int ret;
-+	u8 key[32];
-+
-+	if (!krb5 || krb5->key_len > sizeof(key))
-+		return 0;
-+
-+	/* The key is just { 0, 1, 2, 3, 4, ... } */
-+	for (int i = 0; i < krb5->key_len; i++)
-+		key[i] = i;
-+
-+	sprintf(name, "%u:6:1:%u", RX_PERF_SERVICE, enctype);
-+
-+	kref = key_create_or_update(make_key_ref(keyring, true),
-+				    "rxrpc_s", name,
-+				    key, krb5->key_len,
-+				    KEY_POS_VIEW | KEY_POS_READ | KEY_POS_SEARCH |
-+				    KEY_USR_VIEW,
-+				    KEY_ALLOC_NOT_IN_QUOTA);
-+
-+	if (IS_ERR(kref)) {
-+		pr_err("Can't allocate rxperf server key: %ld\n", PTR_ERR(kref));
-+		return PTR_ERR(kref);
-+	}
-+
-+	ret = key_link(keyring, key_ref_to_ptr(kref));
-+	if (ret < 0)
-+		pr_err("Can't link rxperf server key: %d\n", ret);
-+	key_ref_put(kref);
-+	return ret;
-+}
-+#endif
-+
- /*
-  * Initialise the rxperf server.
-  */
-@@ -607,9 +649,29 @@ static int __init rxperf_init(void)
- 		goto error_keyring;
- 	}
- 	rxperf_sec_keyring = keyring;
--	ret = rxperf_add_key(keyring);
-+	ret = rxperf_add_rxkad_key(keyring);
-+	if (ret < 0)
-+		goto error_key;
-+#ifdef CONFIG_RXGK
-+	ret = rxperf_add_yfs_rxgk_key(keyring, KRB5_ENCTYPE_AES128_CTS_HMAC_SHA1_96);
-+	if (ret < 0)
-+		goto error_key;
-+	ret = rxperf_add_yfs_rxgk_key(keyring, KRB5_ENCTYPE_AES256_CTS_HMAC_SHA1_96);
-+	if (ret < 0)
-+		goto error_key;
-+	ret = rxperf_add_yfs_rxgk_key(keyring, KRB5_ENCTYPE_AES128_CTS_HMAC_SHA256_128);
-+	if (ret < 0)
-+		goto error_key;
-+	ret = rxperf_add_yfs_rxgk_key(keyring, KRB5_ENCTYPE_AES256_CTS_HMAC_SHA384_192);
-+	if (ret < 0)
-+		goto error_key;
-+	ret = rxperf_add_yfs_rxgk_key(keyring, KRB5_ENCTYPE_CAMELLIA128_CTS_CMAC);
-+	if (ret < 0)
-+		goto error_key;
-+	ret = rxperf_add_yfs_rxgk_key(keyring, KRB5_ENCTYPE_CAMELLIA256_CTS_CMAC);
- 	if (ret < 0)
- 		goto error_key;
-+#endif
- 
- 	ret = rxperf_open_socket();
- 	if (ret < 0)
+The fact is, there are lots of operations carried out by the core which 
+can affect the HC drivers, and I don't think anybody has audited the 
+callbacks used to communicate between the two.  I don't even know offhand 
+if any HC drivers besides xhci-hcd uses these callbacks.
 
+It would be a good idea to check whether this stuff should be updated and 
+improved.
+
+Alan Stern
 
