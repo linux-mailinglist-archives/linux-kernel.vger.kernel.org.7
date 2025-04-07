@@ -1,172 +1,222 @@
-Return-Path: <linux-kernel+bounces-591295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAC4AA7DDDD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:40:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 587BCA7DE09
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB7A1188709F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:39:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6F6A3A8113
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F1B2475D0;
-	Mon,  7 Apr 2025 12:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A6C2505A7;
+	Mon,  7 Apr 2025 12:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TfAT628f"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qhJZ6oeS"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12AB1A7044;
-	Mon,  7 Apr 2025 12:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616F722F178
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 12:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744029571; cv=none; b=I+EMAJy9rCoGr5rZr4QjWsEwGdoxbgt85sRYBEniGB5DIulMTUWyzv8c3oMJXmUp7HdABmn7ccV62qcFMSSX0mOzGfcOhZ00C4HMhlx1Dj+O9X/el9vOno2uLb+4y5jv/Q4o6xdz92+AU9ej5etA1BMUuaP/7jroKVhBQY8fcRQ=
+	t=1744029763; cv=none; b=J2jg1TDyz2b0s7/XJaYUL2ty15518D3jVF39F1hUO9r03te3kbCWD28ZVe/k0hdYHIr0uhvWHlTRAgh7JTB3tPN3JZAH4X2w4zfTMVBZ0z63uw6vgeLCb52qiaPk5TvltH6bACcYNDZJtKYCiklpX/JRQTCwvtN1cQcC+SPSTGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744029571; c=relaxed/simple;
-	bh=gVwXd919qwdVvBnlix5/kGCGSDzwuyFY8SUtVZrZ+gg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JSsOcjIa7IzsVFhmj/pFexHa5bZvmGiFJFkZjWyn2FA2lNXnBChKryqMKaGwxxHSqNMxi6c/bijtITQqVzlwuyFYwItZJjshZ23SDjgkvUl7ajaXiAujwQEhfZ1n3iPRePyI7yRCV7zl9eGQqV4lEevUHa6f3smHpoEaiMM7rv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TfAT628f; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2254e0b4b79so51233395ad.2;
-        Mon, 07 Apr 2025 05:39:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744029569; x=1744634369; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jqcszFjiY+Y27P7zL5H3ARQuOUut/C9C9Lyd9JHvtz8=;
-        b=TfAT628f6kuUiRv4Tt8HOnwm3MG4gHHPvVBaZSpXZd7+mttCYhYBuxYAXe0IGn8Bxd
-         uExfIGF/yIla1dFMBgrM0iLAOxVdPi6CLgf17YHbPdNtBCL5YY4xHH6ytOA6r8l65EI4
-         MB0+gj7MI2iSCD2Jv9Qo+1hUDF0qcMY7dqwQmr+kkPj3hpReNbEQi2igA3h4sfQ+O0vS
-         CGKxsmVoGhFDb03WObaPT30KCLw1aBXtNFEUXx5wSGrmNZ7RDlJDKTzPXmAW+oqLIznP
-         8dChmEHqNC9HuAnirypnY765hhJhJbulpa5idnP/8J+QqAnT4Ikgw9aDOIEkH2XVN/0z
-         lbxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744029569; x=1744634369;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jqcszFjiY+Y27P7zL5H3ARQuOUut/C9C9Lyd9JHvtz8=;
-        b=r+MYM7Dcj+4s/14qcxKFsZPz7EYFR0ThcpGAGg2gC3ihYu7ZEnyPJdt+PNS6HHw7MG
-         VNm/M1CHrQ7rGb3v1sFlRkO3VXCDN8NXGUmEd+aQdoee0A77WTNnGvzYAZOR6xgwz3qS
-         oB8IUAwY2qC8lthxN379bNIu3qy/ugSAMovubh7iRz0pyQcmuyQcW5dGXgsk67X2llc/
-         XhC8w9NUAVNQfO31likEYmuL8ZP8BWPe35eh+pfany7w0pihjLd0gCIfYGOr0C3ueR4C
-         3oi6dsXyZFTKOw3374Tuu4AjmP/npi4oS5VRpImAnVGcWE6uR8dFxm0qxyC9zyNqpA/j
-         zxQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIG0qFygR6U3dDUak0wL2b0oUrUV/NTCIyV3AnvC2AiObsV5eLFxZRwif/p7HG7kBTb7FnbbvZior3cPNG@vger.kernel.org, AJvYcCXqdfwgAZLsZL3R7jUy8FkmH2l2vNe6vkB8t5v6aPAx2d3r+2SVceNwIC4tHMwMay43Prfure1TEA3xvWM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfgTX4TChZC6r4KZi2ZEtoD6HQfXsR7SgSaxWyf1PpABzyiePV
-	yClLTwxdxyFRPpRQ3BrOlhJPXjVeVm/0GyYFOf1+QChlqwQYxEi/
-X-Gm-Gg: ASbGncvnxduzIHls0Kv25TvY+hmonmB5QQ+ibzSCy/Z8Ztg6nKfs7j+zW6ynTC/LR/U
-	QqRnvueUn0GMzcnTxiRzBJRkNSDo9xU1o3SCzXDSOGhSlWN89h2j4IFuGOIjFLLGhI+4OKUHGj7
-	D03H2Ly1Ky1h0qb3kc5mjXE60FKN92IZ9a6JGxFw97fCfvuTHTQWASzGBQ+5JBomXvf5GsdJNWE
-	SsPUShRJJUje9WbNdyD6M5fapbFPUj2yE2jSrTFGZEzwE6J1C3eRCwXxPcGIKS+7w/xIGTpvYqW
-	txP3xALB7mJ9rd/DDudJ1Q/Q7p0pr/TGWABSJbA15g/8iqQIxHCJoW1NSzafhehPdzfzBFAv+yX
-	n1XWUKxGrGj28gqT+NfYL0gxYNYI/JSmwJ0N7yaqSrTRiTtrJ7S6J
-X-Google-Smtp-Source: AGHT+IFEVGUSoYS1JmDqtU019RQE7MA11l/maqzFklmFLnc6Zt4IppcP3qxlg0IP1WUL3SYihQNhrw==
-X-Received: by 2002:a17:902:e541:b0:224:24d5:f20a with SMTP id d9443c01a7336-22a8a8d3173mr178795425ad.48.1744029569090;
-        Mon, 07 Apr 2025 05:39:29 -0700 (PDT)
-Received: from DESKTOP-NBGHJ1C.flets-east.jp (p12284229-ipxg45101marunouchi.tokyo.ocn.ne.jp. [60.39.60.229])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22978777259sm79456365ad.251.2025.04.07.05.39.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 05:39:28 -0700 (PDT)
-From: Ryo Takakura <ryotkkr98@gmail.com>
-To: lkp@intel.com
-Cc: alex@ghiti.fr,
-	aou@eecs.berkeley.edu,
-	bigeasy@linutronix.de,
-	conor.dooley@microchip.com,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	john.ogness@linutronix.de,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-serial@vger.kernel.org,
-	oe-kbuild-all@lists.linux.dev,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	pmladek@suse.com,
-	ryotkkr98@gmail.com,
-	samuel.holland@sifive.com,
-	u.kleine-koenig@baylibre.com
-Subject: Re: [PATCH v2] serial: sifive: Switch to nbcon console
-Date: Mon,  7 Apr 2025 21:39:20 +0900
-Message-Id: <20250407123920.14443-1-ryotkkr98@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <202504060816.EWk91sJS-lkp@intel.com>
-References: <202504060816.EWk91sJS-lkp@intel.com>
+	s=arc-20240116; t=1744029763; c=relaxed/simple;
+	bh=rctXt83zXIP6KxDoTjw8wSIbxXWr3qOfeUT6pkhLgpQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=hGPNYmWUxpAHFgfPFh3A9dKsga0fDFeTBTQua/tnRpL1pwDvdJWAT0ZHSmY2iowlJHCnQoQZEVwBBX87moXfSZDzAdZi6Ua441zBuZuX5VJ1m2/MCZOcPB8noWFAykOGET5dTNXofLSCgbLHTg22KY7fnb3yFTKRBgseqOpZOF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qhJZ6oeS; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250407124238euoutp02df1fa9f5773e811e2eaa6e2e02bb6d0b~0CdM_LuRK2066620666euoutp02t
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 12:42:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250407124238euoutp02df1fa9f5773e811e2eaa6e2e02bb6d0b~0CdM_LuRK2066620666euoutp02t
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1744029758;
+	bh=S5MQ2CqKcA2NrUFZoojUG3FGbumOimUda8wAlinmrVk=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=qhJZ6oeSJCAmhKlZ7GPi8UifuoPo1XKhIGZkwZjA98mkDbKxXsxCHJmARs0J0ZEwX
+	 niwFXF74/ChQZinlhCn6OKsw9MGlb/trKSMR9bXTizAvPB2w7ZRK1c8C14ArCRkaT+
+	 MsZg4+KxsZIAQegPHxfz09zjfuUdIezIziMLRIK0=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20250407124238eucas1p2b223f89a362856532d1b7ec419ce2e55~0CdMldgaJ1835018350eucas1p2z;
+	Mon,  7 Apr 2025 12:42:38 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id DE.0C.20397.E38C3F76; Mon,  7
+	Apr 2025 13:42:38 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250407124237eucas1p24a7c88ddf939379e622f261a2f13fa8f~0CdMKf4m80542505425eucas1p2T;
+	Mon,  7 Apr 2025 12:42:37 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250407124237eusmtrp19fff47f6ac6db6d47ac4a1f3795d184d~0CdMJyb_73074830748eusmtrp1k;
+	Mon,  7 Apr 2025 12:42:37 +0000 (GMT)
+X-AuditID: cbfec7f5-ed1d670000004fad-73-67f3c83eb159
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 9D.A5.19654.D38C3F76; Mon,  7
+	Apr 2025 13:42:37 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250407124235eusmtip20541764491a44fc45336d4dd36ca10e5~0CdKOqlIf0516105161eusmtip2F;
+	Mon,  7 Apr 2025 12:42:35 +0000 (GMT)
+Message-ID: <377bfc52-db94-4d76-ab47-8076933bc7e7@samsung.com>
+Date: Mon, 7 Apr 2025 14:42:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7] KEYS: Add a list for unreferenced keys
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: keyrings@vger.kernel.org, Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	stable@vger.kernel.org, David Howells <dhowells@redhat.com>, Lukas Wunner
+	<lukas@wunner.de>, Ignat Korchagin <ignat@cloudflare.com>, Herbert Xu
+	<herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, Paul Moore
+	<paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn"
+	<serge@hallyn.com>, James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <Z_PATvNUE-qBDEEV@kernel.org>
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0xbVRzO6b29vRAKd4WNkwES6mTK021ozjIlLnHmmuwPM7dkInN2cFMm
+	UMgtqDMm1m4UoVWbCisUOhhLHHvIowOysQisieXR2TK2FWgZGATpUBi1Nh2rNtLeTfnvO9/j
+	fL/fySExkZrYTp6UVTCsTFIiJiLxPsu6PTN3xCt9+bGfj5rtZ3C0qgzgSL2ciMzfjPFR97ck
+	arKqANKtawFqbBgBqKPzAg/1zigJNDe7zkMjNosA3e1vJtCaZp5A7qUE5NLpcbQysC5A9nGb
+	ALV2zwNkVFiJN+JoT5OWoHsuTfPoNc8HdN/QC7Tj5nv0Wd0YQZsu1xC0tm0I0Bp/AT3xcwdB
+	//CjG9CPBu4TtNf0HN1Q3cene70u/J2YvMjXCpmSkx8zbHbuh5FF87Y2QfmVxE+nb7YIFOAM
+	rAURJKRy4O99flALIkkR1Q5gnTHIDwki6i8AO/U5nOAF0KobAM8Sk//cxjnhIoC+a7f53MED
+	oEtfRYRcQioXLto78BDGqR1Q/WUNn+O3wNHGhTC/lUqGc84GQQjHbvi7uq6HPXHUTqgK3Ahf
+	ilGDfKie84cDGBUPnQstvBAmqF2wdqU2XBZBpUFlwMbnPMnwdG8TFgpDKhgBPX+04tzcb8I7
+	06qnO8TC5eEeAYcTofU7Dc4FqgFsDczxuIMWQMWS82liH5yxPdmoIzcqXoKd/dkcvR+6TI9A
+	iIZUNJxa2cINEQ11fXqMo4XwK5WIc6dCw3DHf7W3xicwLRAbNr2LYdOahk3rGP7vbQX4ZRDP
+	VMpLpYx8j4z5JEsuKZVXyqRZBWWlJrDxX63BYd910L7syTIDHgnMAJKYOE64d+xPqUhYKDn1
+	GcOWHWcrSxi5GSSQuDhe2DZYJRVRUkkFU8ww5Qz7TOWREdsVvMLVjzLcV9W+yeojK45rlnzm
+	3XjvEUn+K8e3pWGmHVf2j1SQg2dTHPKoPM2lA6OPf7FUnz8R/FsGhcGk+uS8enHN/beKGzPL
+	cp7XHLtnDQzcXWUzis45ug3taXAtNuXBXuMdVUzlw/TmOv+QrKr/1cSUXw+3694eV6zzi13d
+	75dLXkyfUs76orHhnmLPjNN84sG+idOkMTa1EykyZmhx/e5tO2FWJqtaKlEe6ppMWDjV0PIk
+	e9nccche+HXC4j22UNn78OCe0S/SLwwsuvPr2Khzjs9fr48uSD18UD+7UOc44Lz1ffZPzjW7
+	8epWNinmN8tu17EbqVNjSUfdSb6o81FiXF4k2ZWGsXLJv7q3nJceBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLKsWRmVeSWpSXmKPExsVy+t/xe7q2Jz6nG+z+omgx53wLi8W7pt8s
+	Ft2vZCwO9Z1itdjYz2Ex+3Qbo8WknxMYLWbOOMFosW79YiaLrXea2Czu3/vJZHHi3DF2i8u7
+	5rBZfOh5xGbx4rm0xe1J01ks3u77yW5x/sI5dosFGx8xWsxtOM3mIOLxcfYENo8tK28yeXz4
+	GOex7YCqx7XdkR7TJp1i89i0qpPNY8KiA4wePd+TPS6dXcfmsXbvC0aP9/uusnl83iTnMaN9
+	G6vH1s+3WQL4o/RsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstS
+	i/TtEvQyHp1bxF6wWqbi5u757A2MLRJdjJwcEgImEtf/nmEBsYUEljJKNPwPhYjLSJyc1sAK
+	YQtL/LnWxdbFyAVU855R4s7Lu0wgCV4BO4mn59eBNbMIqEh0N3ayQsQFJU7OfAIWFxWQl7h/
+	awY7iC0MVL9hww6wGhEBdYm23ztZQYYyCxxklVg2eQM7xIa/jBKX/7xjBKliFhCXuPVkPtg2
+	NgFDia63IGdwcnAKaEk0/T7HClFjJtG1tQuqXl6ieets5gmMQrOQHDILyahZSFpmIWlZwMiy
+	ilEktbQ4Nz232EivODG3uDQvXS85P3cTIzCdbDv2c8sOxpWvPuodYmTiYDzEKMHBrCTCa3nq
+	U7oQb0piZVVqUX58UWlOavEhRlNgaExklhJNzgcmtLySeEMzA1NDEzNLA1NLM2MlcV62K+fT
+	hATSE0tSs1NTC1KLYPqYODilGpiE1wscuMF6J/bmvhnrT+5aG70k907SqRzb32z5VVL+DXda
+	J01ndDDKOfn53sZwn7kbmAUzKn7eF383b1bBwjeVdrt/cfxJu+ZnYrlcZqP69MgSjdcOUt8U
+	vC9dXJlZaMZluD1h478/Mcf+7xVZ8crpauy3kqPrLNvq1jO/3Gy6X1l69a9L3F9M5Sw+rz71
+	7P1tTrO7u0PtXgnMc6xibfk8Ncc6U8/m81WjBbetW3/cKjrJHbGqgNFl+wYTlQtPEmpDy8rO
+	lNn4py/4FX700x1Zo4o3B9vne5v7/lHmaPPVLE6PNJLtncPnnWumYHcx1rP+8WM3Hgn74rNH
+	lbaXaXBwHfw25dANn9tf57aU/T6sxFKckWioxVxUnAgAwQLgHrADAAA=
+X-CMS-MailID: 20250407124237eucas1p24a7c88ddf939379e622f261a2f13fa8f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250407102514eucas1p1b297b7b6012a5ece4ccdca8e0e2c7956
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250407102514eucas1p1b297b7b6012a5ece4ccdca8e0e2c7956
+References: <20250407023918.29956-1-jarkko@kernel.org>
+	<CGME20250407102514eucas1p1b297b7b6012a5ece4ccdca8e0e2c7956@eucas1p1.samsung.com>
+	<32c1e996-ac34-496f-933e-a266b487da1a@samsung.com>
+	<Z_O1v8awuTeJ9qfS@kernel.org> <Z_PATvNUE-qBDEEV@kernel.org>
 
-On Sun, 6 Apr 2025 08:48:12 +0800, kernel test robot wrote:
->kernel test robot noticed the following build warnings:
+On 07.04.2025 14:08, Jarkko Sakkinen wrote:
+> On Mon, Apr 07, 2025 at 02:23:49PM +0300, Jarkko Sakkinen wrote:
+>> On Mon, Apr 07, 2025 at 12:25:11PM +0200, Marek Szyprowski wrote:
+>>> On 07.04.2025 04:39, Jarkko Sakkinen wrote:
+>>>> From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+>>>>
+>>>> Add an isolated list of unreferenced keys to be queued for deletion, and
+>>>> try to pin the keys in the garbage collector before processing anything.
+>>>> Skip unpinnable keys.
+>>>>
+>>>> Use this list for blocking the reaping process during the teardown:
+>>>>
+>>>> 1. First off, the keys added to `keys_graveyard` are snapshotted, and the
+>>>>      list is flushed. This the very last step in `key_put()`.
+>>>> 2. `key_put()` reaches zero. This will mark key as busy for the garbage
+>>>>      collector.
+>>>> 3. `key_garbage_collector()` will try to increase refcount, which won't go
+>>>>      above zero. Whenever this happens, the key will be skipped.
+>>>>
+>>>> Cc: stable@vger.kernel.org # v6.1+ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+>>> This patch landed in today's linux-next as commit b0d023797e3e ("keys:
+>>> Add a list for unreferenced keys"). In my tests I found that it triggers
+>>> the following lockdep issue:
+>>>
+>>> ================================
+>>> WARNING: inconsistent lock state
+>>> 6.15.0-rc1-next-20250407 #15630 Not tainted
+>>> --------------------------------
+>>> inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
+>>> ksoftirqd/3/32 [HC0[0]:SC1[1]:HE1:SE0] takes:
+>>> c13fdd68 (key_serial_lock){+.?.}-{2:2}, at: key_put+0x74/0x128
+>>> {SOFTIRQ-ON-W} state was registered at:
+>>>     lock_acquire+0x134/0x384
+>>>     _raw_spin_lock+0x38/0x48
+>>>     key_alloc+0x2fc/0x4d8
+>>>     keyring_alloc+0x40/0x90
+>>>     system_trusted_keyring_init+0x50/0x7c
+>>>     do_one_initcall+0x68/0x314
+>>>     kernel_init_freeable+0x1c0/0x224
+>>>     kernel_init+0x1c/0x12c
+>>>     ret_from_fork+0x14/0x28
+>>> irq event stamp: 234
+>>> hardirqs last  enabled at (234): [<c0cb7060>]
+>>> _raw_spin_unlock_irqrestore+0x5c/0x60
+>>> hardirqs last disabled at (233): [<c0cb6dd0>]
+>>> _raw_spin_lock_irqsave+0x64/0x68
+>>> softirqs last  enabled at (42): [<c013bcd8>] handle_softirqs+0x328/0x520
+>>> softirqs last disabled at (47): [<c013bf10>] run_ksoftirqd+0x40/0x68
+>> OK what went to -next went there by accident and has been removed,
+>> sorry. I think it was like the very first version of this patch.
+>>
+>> Thanks for informing anyhow!
 >
->[auto build test WARNING on tty/tty-testing]
->[also build test WARNING on tty/tty-next tty/tty-linus linus/master v6.14 next-20250404]
->[If your patch is applied to the wrong git tree, kindly drop us a note.
->And when submitting patch, we suggest to use '--base' as documented in
->https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Testing branch: https://web.git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/?h=keys-graveyard
 >
->url:    https://github.com/intel-lab-lkp/linux/commits/Ryo-Takakura/serial-sifive-Switch-to-nbcon-console/20250405-230051
->base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tty-testing
->patch link:    https://lore.kernel.org/r/20250405145915.493173-1-ryotkkr98%40gmail.com
->patch subject: [PATCH v2] serial: sifive: Switch to nbcon console
->config: arm-randconfig-002-20250406 (https://download.01.org/0day-ci/archive/20250406/202504060816.EWk91sJS-lkp@intel.com/config)
->compiler: arm-linux-gnueabi-gcc (GCC) 7.5.0
->reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250406/202504060816.EWk91sJS-lkp@intel.com/reproduce)
->
->If you fix the issue in a separate patch/commit (i.e. not just a new version of
->the same patch/commit), kindly add following tags
->| Reported-by: kernel test robot <lkp@intel.com>
->| Closes: https://lore.kernel.org/oe-kbuild-all/202504060816.EWk91sJS-lkp@intel.com/
->
->All warnings (new ones prefixed by >>):
->
->>> drivers/tty/serial/sifive.c:155: warning: Function parameter or struct member 'console_line_ended' not described in 'sifive_serial_port'
+> I updated my next this morning so should be fixed soon...
 
-Thank you for reporting.
-I overlooked this... I'll add a description for it.
+I've just checked that branch and it still triggers lockdep issue. The 
+following change is needed to get it fixed:
 
-Sincerely,
-Ryo Takakura
+diff --git a/security/keys/gc.c b/security/keys/gc.c
+index 0a3beb68633c..b22dc93eb4b4 100644
+--- a/security/keys/gc.c
++++ b/security/keys/gc.c
+@@ -302,9 +302,9 @@ static void key_garbage_collector(struct work_struct 
+*work)
+                 key_schedule_gc(new_timer);
+         }
 
->vim +155 drivers/tty/serial/sifive.c
->
->45c054d0815b15 Paul Walmsley 2019-04-12  131  
->45c054d0815b15 Paul Walmsley 2019-04-12  132  /*
->45c054d0815b15 Paul Walmsley 2019-04-12  133   *
->45c054d0815b15 Paul Walmsley 2019-04-12  134   */
->45c054d0815b15 Paul Walmsley 2019-04-12  135  
->45c054d0815b15 Paul Walmsley 2019-04-12  136  /**
->180bb243de730c Lee Jones     2020-11-04  137   * struct sifive_serial_port - driver-specific data extension to struct uart_port
->45c054d0815b15 Paul Walmsley 2019-04-12  138   * @port: struct uart_port embedded in this struct
->45c054d0815b15 Paul Walmsley 2019-04-12  139   * @dev: struct device *
->45c054d0815b15 Paul Walmsley 2019-04-12  140   * @ier: shadowed copy of the interrupt enable register
->45c054d0815b15 Paul Walmsley 2019-04-12  141   * @baud_rate: UART serial line rate (e.g., 115200 baud)
->180bb243de730c Lee Jones     2020-11-04  142   * @clk: reference to this device's clock
->45c054d0815b15 Paul Walmsley 2019-04-12  143   * @clk_notifier: clock rate change notifier for upstream clock changes
->45c054d0815b15 Paul Walmsley 2019-04-12  144   *
->45c054d0815b15 Paul Walmsley 2019-04-12  145   * Configuration data specific to this SiFive UART.
->45c054d0815b15 Paul Walmsley 2019-04-12  146   */
->45c054d0815b15 Paul Walmsley 2019-04-12  147  struct sifive_serial_port {
->45c054d0815b15 Paul Walmsley 2019-04-12  148  	struct uart_port	port;
->45c054d0815b15 Paul Walmsley 2019-04-12  149  	struct device		*dev;
->45c054d0815b15 Paul Walmsley 2019-04-12  150  	unsigned char		ier;
->45c054d0815b15 Paul Walmsley 2019-04-12  151  	unsigned long		baud_rate;
->45c054d0815b15 Paul Walmsley 2019-04-12  152  	struct clk		*clk;
->45c054d0815b15 Paul Walmsley 2019-04-12  153  	struct notifier_block	clk_notifier;
->328ee9dbff3941 Ryo Takakura  2025-04-05  154  	bool			console_line_ended;
->45c054d0815b15 Paul Walmsley 2019-04-12 @155  };
->45c054d0815b15 Paul Walmsley 2019-04-12  156  
->
->-- 
->0-DAY CI Kernel Test Service
->https://github.com/intel/lkp-tests/wiki
+-       spin_lock(&key_graveyard_lock);
++       spin_lock_irqsave(&key_graveyard_lock, flags);
+         list_splice_init(&key_graveyard, &graveyard);
+-       spin_unlock(&key_graveyard_lock);
++       spin_unlock_irqrestore(&key_graveyard_lock, flags);
+
+         if (unlikely(gc_state & KEY_GC_REAPING_DEAD_2) ||
+             !list_empty(&graveyard)) {
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
