@@ -1,97 +1,78 @@
-Return-Path: <linux-kernel+bounces-592354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 469B2A7EC31
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:12:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C75A7EC2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42B4C17DAFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:01:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F0E93BFF29
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85FD253B76;
-	Mon,  7 Apr 2025 18:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6117625EFB8;
+	Mon,  7 Apr 2025 18:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ftbpo4if"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WHfAUcus"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095D72116EE
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 18:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC40254AEF
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 18:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744050841; cv=none; b=a/kbqNkiygTj0HxFYdArvIC92QqLBnu2EQZDFhkNsIf/8s/mG18WBGorh18f8VdJhvtXCydQMdwNShy+IO28jJb3PXW3pgra/QLMybqqc6wxmEW+rdYTX9pOnWWgCMRRnAHvUYa/E7YiEQBf11fzaC3NSQoxQuojBh8FMh4Qe/k=
+	t=1744050986; cv=none; b=LF2Yee8u+Yals2SJds85MFtOViXoFfKjlFyx7hFl4ZNYRIDG7Q4F+eJjMfIgy4ddDoKOf0D2q01vbR+rFHkdlJT6SkJ90NVQ5z7C1TIZtwY4Qp9WSMIeT37yHIcU/LopPjhYuaHEwIGxLIt5WrCFxR03w9LU8Qe6k+1CrDy8+xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744050841; c=relaxed/simple;
-	bh=z/W2vvT43/AMNqZeflj2Jx6YCpGmGV1tBn+Hc9TCEZM=;
+	s=arc-20240116; t=1744050986; c=relaxed/simple;
+	bh=clu5ak3B8TVqiA5LPfOQC49/MbbUVBN2G57mLhXE6vc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CuST1AKPRg12Lhr3Ts5g9tzyzj+x5h/w/7ZF0ApwWRJa0DDRqheWg3Eci3oTtsvdZkcqC0cmXCZK+hCoajV1SMiSH7BchIroRJdtnXBi27uvvuYxRQsLNxHqd5fxs4Icr6QCHgHWQksngmUS6AN12Mf93kAI4xTxlNJMEjXvnnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ftbpo4if; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43d0359b1fcso30079335e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 11:33:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744050838; x=1744655638; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Q8FZtvZTV1xf5prMpLMQCunOAEoyNTNUS/rIy+fX6A=;
-        b=ftbpo4ifO2YM/kl6XfGenm9mCdNcFiWwTLShpPV1HCLZQBOQOiQU2gQZ1yZTrWkIHm
-         g7opCozwzS8Ccx6pqz6n3m160+OJoUsbVvL2JIrz/O5/D4xEbi2G+uuHs8JFnWAeiSJs
-         3hbtp5A/fV3KN7+aPHg+rd2TPqoRn75Gbx24Ux7xeFSTH+9G3JCHmp256p7X1mH9Ne5d
-         oRhu6yMYjlnZPtXX7MbvdQPqVl6JDjxKkB4cVLammPdNEA9OGOgBRavqDJRxhjWoqGJq
-         OXD8qsxy1BkKaMe9KoFUGbAsNmb6Q2z/kfXMh9NxmUYtWFk7tOSgLBSpKejzOTR65l95
-         vuHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744050838; x=1744655638;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Q8FZtvZTV1xf5prMpLMQCunOAEoyNTNUS/rIy+fX6A=;
-        b=gkhVCThuxYP3QiYgDW9YN0tCoQmX8W/KZIjeoTQty3Kp+P8TeBDwVQGrtEbwAWKTeZ
-         VbrWuKGUHYT3WbikGlZvhtVy5lRrKZTMHNq19acTksx0XmINBp07G3yehyIrn80hQ3dL
-         A9mKyWyQqaHnmNk4kSd07dzBy+lJoRc+TGBbp9kVT7I6mChfBiLcE7GUHB2mCqEohNGM
-         AdlnoKCQHcRW7ZJORMXqLq0PMzCVW9NtmiEYwQVKaPAVPEaGgaNLBQNrTOfZmPaina+V
-         Qv1y8anfAWYL724QRhz3PURU6ugxH0L9F3D4rewaAC9zGhX6CBCdmq52tdFnbOqxUsMT
-         G6ww==
-X-Forwarded-Encrypted: i=1; AJvYcCWQSNHJxQgFnc4bJTH4n4jmrpvapzYYxC6zBRHiZrn/ZaItzNRKitLnk3LSpUTx5kz9ccARP9bv0W75prc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt/6Iok5jgSNB6wjo7jDWLJcUd9MrDNd/N26ZTJyeba08GVjC+
-	kjZRukh4YWWPAuzQiTep4RCWxpy+0hg7eBc0XyL/8QKZcHN3lSxLTbdkZmSjLNo=
-X-Gm-Gg: ASbGncuONlO7OXHwscmXLRwHoEwpvy3sS7ZC0X36hqhOFedoQVEjBL5SXQGjix89C98
-	qrGDz6p3lDsTRcF0pw6/4Iu+JWsc1q40bBwOdtPEZ+KJ6cvC2HYdj0oPzR8ECg1hrGxWLOiHws8
-	bEWm+NlbLvi7hj9PAtBEs/+4kL1cMXbJBPYOFaM4q4CJJPsaCg+K6Q9mxdFO9fIPIWDW3U6psvC
-	vaLt1HgD3Ru+fEuf4lzI07/Wf9H6Lk0uYDNgzcpPX43GDNZK36ctKgjPuaAvqdZSBpOXlH/lDDD
-	S4UH/5XJ9M1+T81fQ4aSp97oKCFIGw1ilQYnDHRlA+bLDpy/Zg==
-X-Google-Smtp-Source: AGHT+IHzcKL+Ro+1VDQHtsz6UDXVmnIKRiBvSmLdVRJxOTL6M8DI/p++pzvmcvqih0sTH4Xu9HIUgA==
-X-Received: by 2002:a05:600c:3b20:b0:43d:b33:679c with SMTP id 5b1f17b1804b1-43f0e5edd6dmr4141455e9.14.1744050838001;
-        Mon, 07 Apr 2025 11:33:58 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43ec364cb9asm137138975e9.31.2025.04.07.11.33.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 11:33:57 -0700 (PDT)
-Date: Mon, 7 Apr 2025 21:33:54 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, x86@kernel.org,
-	kernel test robot <lkp@intel.com>,
-	Dan Carpenter <error27@gmail.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=QQcsdlyn86jV4DEcNRA4hkHzddTdiIe8MhenKNLD/QXsyK0+ZououALbTn98WEkQqi3wEMudLPLMNWpd5AFEveDAHD391i5eUM+pfBZod7/XotSa9MS+JF6AH7Jm1HC9o5FYPr5w2YnVVoQyzDfD7JUixZbzl/QV7FdwsQt2LgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WHfAUcus; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744050985; x=1775586985;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=clu5ak3B8TVqiA5LPfOQC49/MbbUVBN2G57mLhXE6vc=;
+  b=WHfAUcus4yOP986nggLI7/QUbrEFhDgCfdUA0l23LAfeRAGKA6Gy7+TJ
+   Y/HHYs/rdGr5kSu1vJsUjCHVsXjmzxLylsLDYwaAraxz1gNSPzVQoaEaF
+   A1v1rJ+BYShDl5UchsADcdMDQPFXsmG5BbsW07ABCU1M6Sl6OqNhVS7Fe
+   Spx3ruywcHTq8dvfMbe2UhZFVrPiBvGQurt8spW9HBj6gy1SX3J4zp7Tw
+   lAt4oqUtY71jTtOBcsEmbExw4lxAnRXARlssdI12+qekD61tceMeyLS8g
+   vH0s0ZeQpUOmChZJTzOGx4wk6ZkzuSRL6ypvHygQ4pVeV/ygkIKZ7S+l2
+   A==;
+X-CSE-ConnectionGUID: GuUrc0O/SqG4eai9IQk4/w==
+X-CSE-MsgGUID: jo/2lxsYStaQnvwTgwHdvg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45342811"
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="45342811"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 11:36:25 -0700
+X-CSE-ConnectionGUID: 8PUsYf4lQYqYrTM0PUUWaA==
+X-CSE-MsgGUID: kU95a8bLS0W3vMbxHtA+vA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="128015400"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 07 Apr 2025 11:36:23 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u1rKV-0003hv-0e;
+	Mon, 07 Apr 2025 18:36:19 +0000
+Date: Tue, 8 Apr 2025 02:35:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Colin Ian King <colin.king@intel.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Rik van Riel <riel@surriel.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v1] x86/mm/pat: (un)track_pfn_copy() fix + improvements
-Message-ID: <4961949a-75db-4071-a478-fdc543c1dd28@stanley.mountain>
-References: <20250404124931.2255618-1-david@redhat.com>
- <Z_K5uW2eu7GInRxs@gmail.com>
- <630caa8e-2ee2-4895-9e4e-8bf2fa079100@redhat.com>
- <Z_QCYzEJXTnd97Sf@gmail.com>
+	Song Liu <song@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] md/raid6 algorithms: scale test duration for speedier
+ boots
+Message-ID: <202504080240.huURqAeM-lkp@intel.com>
+References: <20250407143105.60-1-colin.king@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,32 +81,116 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z_QCYzEJXTnd97Sf@gmail.com>
+In-Reply-To: <20250407143105.60-1-colin.king@intel.com>
 
-On Mon, Apr 07, 2025 at 06:50:43PM +0200, Ingo Molnar wrote:
-> > diff --git a/mm/memory.c b/mm/memory.c
-> > index 2d8c265fc7d60..1a35165622e1c 100644
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -1361,7 +1361,7 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
-> >         struct mm_struct *dst_mm = dst_vma->vm_mm;
-> >         struct mm_struct *src_mm = src_vma->vm_mm;
-> >         struct mmu_notifier_range range;
-> > -       unsigned long next, pfn;
-> > +       unsigned long next, pfn = 0;
-> 
-> Ack.
-> 
-> I hate it how uninitialized variables are even a thing in C, and why
-> there's no compiler switch to turn it off for the kernel. (At least for
-> non-struct variables. Even for structs I would zero-initialize and
-> *maybe* allow a non-initialized opt-in for cases where it matters. It
-> matters in very few cases in praxis. And don't get me started about the
-> stupidity that is to not initialize holes in struct members ...)
+Hi Colin,
 
-Everyone sane uses CONFIG_INIT_STACK_ALL_ZERO these days.
+kernel test robot noticed the following build errors:
 
-regards,
-dan carpenter
+[auto build test ERROR on akpm-mm/mm-nonmm-unstable]
+[also build test ERROR on akpm-mm/mm-everything linus/master v6.15-rc1 next-20250407]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Colin-Ian-King/md-raid6-algorithms-scale-test-duration-for-speedier-boots/20250407-225435
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
+patch link:    https://lore.kernel.org/r/20250407143105.60-1-colin.king%40intel.com
+patch subject: [PATCH] md/raid6 algorithms: scale test duration for speedier boots
+config: i386-buildonly-randconfig-002-20250407 (https://download.01.org/0day-ci/archive/20250408/202504080240.huURqAeM-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250408/202504080240.huURqAeM-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504080240.huURqAeM-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   ld: lib/raid6/algos.o: in function `raid6_choose_gen':
+>> lib/raid6/algos.c:191: undefined reference to `__udivdi3'
+>> ld: lib/raid6/algos.c:209: undefined reference to `__udivdi3'
+   ld: lib/raid6/algos.c:223: undefined reference to `__udivdi3'
+
+
+vim +191 lib/raid6/algos.c
+
+   156	
+   157	static inline const struct raid6_calls *raid6_choose_gen(
+   158		void *(*const dptrs)[RAID6_TEST_DISKS], const int disks)
+   159	{
+   160		unsigned long perf;
+   161		const unsigned long max_perf = 2500;
+   162		int start = (disks>>1)-1, stop = disks-3;	/* work on the second half of the disks */
+   163		const struct raid6_calls *const *algo;
+   164		const struct raid6_calls *best;
+   165		const u64 ns_per_mb = 1000000000 >> 20;
+   166		u64 n, ns, t, ns_best = ~0ULL;
+   167	
+   168		for (best = NULL, algo = raid6_algos; *algo; algo++) {
+   169			if (!best || (*algo)->priority >= best->priority) {
+   170				if ((*algo)->valid && !(*algo)->valid())
+   171					continue;
+   172	
+   173				if (!IS_ENABLED(CONFIG_RAID6_PQ_BENCHMARK)) {
+   174					best = *algo;
+   175					break;
+   176				}
+   177	
+   178				preempt_disable();
+   179				t = local_clock();
+   180				for (perf = 0; perf < max_perf; perf++) {
+   181					(*algo)->gen_syndrome(disks, PAGE_SIZE, *dptrs);
+   182				}
+   183				ns = local_clock() - t;
+   184				preempt_enable();
+   185	
+   186				if (ns < ns_best) {
+   187					ns_best = ns;
+   188					best = *algo;
+   189				}
+   190				n = max_perf * PAGE_SIZE * ns_per_mb * (disks - 2);
+ > 191				pr_info("raid6: %-8s gen() %5llu MB/s (%llu ns)\n", (*algo)->name, (ns > 0) ? n / ns : 0, ns);
+   192			}
+   193		}
+   194	
+   195		if (!best) {
+   196			pr_err("raid6: Yikes! No algorithm found!\n");
+   197			goto out;
+   198		}
+   199	
+   200		raid6_call = *best;
+   201	
+   202		if (!IS_ENABLED(CONFIG_RAID6_PQ_BENCHMARK)) {
+   203			pr_info("raid6: skipped pq benchmark and selected %s\n",
+   204				best->name);
+   205			goto out;
+   206		}
+   207	
+   208		n = max_perf * PAGE_SIZE * ns_per_mb * (disks - 2);
+ > 209		pr_info("raid6: using algorithm %s gen() %llu MB/s (%llu ns)\n",
+   210			best->name, (ns_best > 0) ? n / ns_best : 0, ns_best);
+   211	
+   212		if (best->xor_syndrome) {
+   213			preempt_disable();
+   214			t = local_clock();
+   215			for (perf = 0; perf < max_perf; perf++) {
+   216				best->xor_syndrome(disks, start, stop,
+   217						   PAGE_SIZE, *dptrs);
+   218			}
+   219			ns = local_clock() - t;
+   220			preempt_enable();
+   221	
+   222			n = max_perf * PAGE_SIZE * ns_per_mb * (disks - 2);
+   223			pr_info("raid6: .... xor() %llu MB/s, rmw enabled (%llu ns)\n", (ns > 0) ? n / ns : 0, ns);
+   224		}
+   225	out:
+   226		return best;
+   227	}
+   228	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
