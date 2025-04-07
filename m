@@ -1,110 +1,144 @@
-Return-Path: <linux-kernel+bounces-592022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B03DA7E82C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:27:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14829A7E834
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCD97176708
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:27:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A9C8176704
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0DB2163B8;
-	Mon,  7 Apr 2025 17:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F340216E26;
+	Mon,  7 Apr 2025 17:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FAYpiYzB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r5W6cTOm"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C610A2163A4
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 17:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B3F2116FD
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 17:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744046815; cv=none; b=YGPnbemF8PeySE7ZaNAkpFt67Z+LKNgoF69Ri0LRxMMlDq+Xv+SjD9QlmNBICw8hbZ4+fx8t90sRrUYF1N+xq2lP/P3Q/2kYRRo9sl+2bzSskEqE8GOqSGo+9Obdv5FvlShOtD7l8mJQ/FqgHo8B4Kq/iaGE5wA8ZegES5oLcH0=
+	t=1744046896; cv=none; b=c0CLVI8Cukk/nXhju72AVlvi0DxWw4BYWGXbQX3ICyctISyBXNRyHpkOc1zV5hlx/oZY9F4Pm27xgyQAqna0K5D9KcimoS2lDAlLvbxG9ocfqBlGypMYas7UuqC9piGCzNZrGa2WQyIiwRAMUUZHkvxhUmffxsrzzJhw5sPugfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744046815; c=relaxed/simple;
-	bh=yp6ISIWr8empZJZm6Z4F5lpdHQEM5y/1Vf9ItJrdlJ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SV9VJO8DyjfRmDMUZZbDcLKPVlL0tUf+06z5R5uFkgfiZO1wZ1wKoV2+fzZ0GbDK/Gi1Y8cMnvchLy5qVONZs/Jch/eQNDXpFsQsb6v7qJmjeqPCtKzdKJmTRhvO9ey+sHYg2iFWXrkR+mxdeNaCXTEQZjRVEFq0dq8OYztGH7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FAYpiYzB; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744046814; x=1775582814;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=yp6ISIWr8empZJZm6Z4F5lpdHQEM5y/1Vf9ItJrdlJ0=;
-  b=FAYpiYzB/KSWdyxHn+HmXnZ+5UX/MlI7PjD4b3WCUfefQpLyXmTllsiK
-   es+bKt3l+ys2yA5qmKT9OglHtdcc8KOsO1NNj3G5gTP4GdJFjTa8AHhLJ
-   3kjzTjJxb3c9DoShh29XdH+dz3swSe9i5SFMYpx4UsAUhp1wCiK41lMqk
-   ML8gxrV2U7DuDaSAsLO34Y+LV0xvwPh2brhPikGT9YjjO3OFWj8hCmka3
-   5U1+Y1D5crKuxS+oXrMKaJ7g85bsoFsV/AQ78neXOIUJ/BCPTGAhMbWKX
-   P2WfM5OougBOiDDt21WnqwiQdXcD5kwwR53sIgxdCmpQK5QLzV0iaRy2X
-   g==;
-X-CSE-ConnectionGUID: KANmeUd1QjO+9ZiVbuhQ9Q==
-X-CSE-MsgGUID: YnVwgzsdRhm/JjP0fRPXRA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45160065"
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="45160065"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 10:26:54 -0700
-X-CSE-ConnectionGUID: u4jOUj7tRVmMvNaRtDk7nQ==
-X-CSE-MsgGUID: u8Z/PO4wR9iARtGYqw+ydg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="127773678"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP; 07 Apr 2025 10:26:52 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 07EF6F0; Mon, 07 Apr 2025 20:26:49 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH v1 1/1] x86/early_printk: Fix comment for "pciserial" case
-Date: Mon,  7 Apr 2025 20:26:49 +0300
-Message-ID: <20250407172649.792996-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1744046896; c=relaxed/simple;
+	bh=a6Z+ENeEuUU+yC9/pxXn5f1hhHRj75A4YQ3p6o52+7Y=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=pnfjcs9/qk3IPdm2jmm+QHRLR3k5I0T0k19eh7G32lui3nc+zW2NxLOEzT6mqpCD670McZaaV67EebL6I6XduNZQQfqxcGdtTxF+qmLHlPfHWDF3rmal4hpnzP2Si2PKI1hpLDoqZOhQmPWFfEP3KO8+TDiu2G+sMWb2G5Ykhn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r5W6cTOm; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5259327a937so1922637e0c.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 10:28:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744046894; x=1744651694; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=a6Z+ENeEuUU+yC9/pxXn5f1hhHRj75A4YQ3p6o52+7Y=;
+        b=r5W6cTOmlNjbbX7waUS2oQItsqO8EDCzKHEHkZnuaakpZs6kqnjy8gyj5J4a/CrzPu
+         wsWL4Om5TE+kXck6IfiV6tZi/qlHA21IfootF6x2+7oSHQWbL3ANH41PsUq8ZAG02qpF
+         XMySGKBPmOzS+tK2YUKidZIAzt507fw93bvtw0WfMoY3vKO2L1Mu/OQbSd8yLoSvTxQy
+         QkpkNVJF2njHy32gBMhINPyd8sOSL2ENF4tus87n46yRzApeorcNZ4iA4UDwrFXCPl50
+         rK5xslg4qwRhZiqWOVO04Cw/ATCUXMmq8K+hokH98dmtHkAdl9mWZ65+TXhYQsS48lh9
+         FgUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744046894; x=1744651694;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=a6Z+ENeEuUU+yC9/pxXn5f1hhHRj75A4YQ3p6o52+7Y=;
+        b=TILOmnBn9B/ZrazEdzGKfB12ukHNGFXQkIPSTaVthsudtEGyAANU8qzE8ssDV//BdQ
+         s2Tifk+cIqr0UF57S1bvOqqrPdPDPt+ekxk+qALfW/mJsmC7v7G+CKV1Q7J+D6Va31DD
+         6i3dXtFCaYiSwlPl3gqcETQ2nwq0cNvJqcMNiyog5aGnnZB7iFf+dct+YdFOwnvLAt1/
+         3t4J4/GrPh1He5WPcJHOz9buNz5AKle1RmurpX6RGRhYWQ64dcqtzfKaQZHMY3RXaEvY
+         SYyFqXzn32WbUUrK7NhPJmSBoaiusBZ29ZJD30z/8p4ckiitghehBgpK6I6xlM41gg0E
+         P0hw==
+X-Gm-Message-State: AOJu0YyEIbKrxe3TC1i+JX/qry23TGYPj7ryNndEf+D6F+9L4E2wmNhR
+	Zoa4xwk8WJZu/6PrSBVNSytm0udy4ow5vQK8l9JRkhuUA2jXqMEe9dIf6hJNgWv94C1D3x6yCkc
+	rpcII35XZyZvKOACrL47yQ+TRIdJqLR0y00pc0wRnaLzbFEgdBN4=
+X-Gm-Gg: ASbGnctSB/Ji7YzzPjhx6OcZCI+CLamyLGzP8s4oBx3ig4w8Cj79F82tHO10ySncv+l
+	P4Wx+CfTGIyKL/yRyzrd2WY16pvKTa0zuLqN0fgqfbnJSVa+M6VzgY+zq6kAzBC85g9J2gFon0H
+	0XhQRG9xFf6zKyU9HkdZJEBrDqUW7OsUADRnbj5jXjuzu1KpvuBpUo4D/HCtA=
+X-Google-Smtp-Source: AGHT+IEVmMkitaw4QXdhkgwEdPJbukthI9jSNdopAjIIvfIiiFbgx7Oz2lGA20nc3VtA0Aj3qI6veAxd6wO3GXeed4k=
+X-Received: by 2002:a05:6122:3122:b0:526:1ddc:1896 with SMTP id
+ 71dfb90a1353d-52772cd6318mr5308951e0c.0.1744046893651; Mon, 07 Apr 2025
+ 10:28:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Mon, 7 Apr 2025 22:58:02 +0530
+X-Gm-Features: ATxdqUG0lZPw-xmkzQsqNG-x55VknO4sMa7eENem1IFu3dmqQUBmDzTB3tDNgw4
+Message-ID: <CA+G9fYvOanQBYXKSg7C6EU30k8sTRC0JRPJXYu7wWK51w38QUQ@mail.gmail.com>
+Subject: Build: arm rustgcc unknown argument '-mno-fdpic'
+To: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, rust-for-linux@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, laura.nao@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 
-The comment seem contains the copy'n'paste error when mentioning "serial"
-instead of "pciserial" (with double quotes). Fix this. With that, move
-it upper, so we don't calculate buf twice.
+Regressions on arm build with config rustgcc-lkftconfig-kselftest on the
+Linux mainline and next failed with CONFIG_RUST=y enabled.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- arch/x86/kernel/early_printk.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+First seen on the v6.14-13039-ge8b471285262 (April 3, 2025)
+Bad: v6.15-rc1
+Good: v6.14-12966-ga2cc6ff5ec8f ( April 3, 2025 )
 
-diff --git a/arch/x86/kernel/early_printk.c b/arch/x86/kernel/early_printk.c
-index dc053641698c..4a9ba7cb7e5a 100644
---- a/arch/x86/kernel/early_printk.c
-+++ b/arch/x86/kernel/early_printk.c
-@@ -442,9 +442,9 @@ static int __init setup_early_printk(char *buf)
- 		}
- #ifdef CONFIG_PCI
- 		if (!strncmp(buf, "pciserial", 9)) {
--			early_pci_serial_init(buf + 9);
-+			buf += 9; /* Keep from match the above "pciserial" */
-+			early_pci_serial_init(buf);
- 			early_console_register(&early_serial_console, keep);
--			buf += 9; /* Keep from match the above "serial" */
- 		}
- #endif
- 		if (!strncmp(buf, "vga", 3) &&
--- 
-2.47.2
+Bad: next-20250327
+Good: next-20250326
 
+* arm, build
+ - rustgcc-lkftconfig-kselftest
+
+Regression Analysis:
+- New regression? Yes
+- Reproducibility? Yes
+
+Build regression: arm rustgcc unknown argument '-mno-fdpic'
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build log
+Unable to generate bindings: clang diagnosed error: error: unknown
+argument: '-mno-fdpic'
+
+
+## Source
+* Kernel version: v6.15-rc1
+* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+* Git sha: 0af2f6be1b4281385b618cb86ad946eded089ac8
+* Git describe: v6.15-rc1
+* Project details:
+https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.15-rc1/
+* compiler: gcc version (Debian 14.2.0-19) 14.2.0
+* Toolchain: rustgcc
+* build config: rustgcc-lkftconfig-kselftest
+
+## Test
+* Test log: https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.15-rc1/testrun/27924146/suite/build/test/rustgcc-lkftconfig-kselftest/log
+* Test details:
+https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.15-rc1/testrun/27924146/suite/build/test/rustgcc-lkftconfig-kselftest/
+* Test history:
+https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.15-rc1/testrun/27924146/suite/build/test/rustgcc-lkftconfig-kselftest/history/
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2vNMCPjd4rTR3hQdnzAuHzLE1NR/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2vNMCPjd4rTR3hQdnzAuHzLE1NR/config
+* Test history on next:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250407/testrun/27929685/suite/build/test/rustgcc-lkftconfig-kselftest/history/
+
+## Steps to reproduce
+ - tuxmake --runtime podman --target-arch arm --toolchain rustgcc
+--kconfig defconfig --kconfig-add
+https://gitlab.com/Linaro/lkft/kernel-fragments/-/raw/main/systemd.config
+--kconfig-add CONFIG_ARM_LPAE=y --kconfig-add CONFIG_GCC_PLUGINS=n
+--kconfig-add tools/testing/selftests/rust/config TARGETS=rust dtbs
+dtbs-legacy headers kernel kselftest modules
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
