@@ -1,137 +1,264 @@
-Return-Path: <linux-kernel+bounces-590396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E48AA7D282
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 05:38:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D86D4A7D28A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 05:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBBA83AD0DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 03:37:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 112537A3199
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 03:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EDF8212D6C;
-	Mon,  7 Apr 2025 03:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139A32153CB;
+	Mon,  7 Apr 2025 03:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="IsdxRras"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PSH08hLe"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C423079FD;
-	Mon,  7 Apr 2025 03:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329552144D1
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 03:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743997076; cv=none; b=nCVYCwt4DtFT3hfPCO5gt028eYZ7H4yw7pvibxVTX+NK1j2Cqo/+oyPwEiFVrdQiFvP3xyyMOgzOyAdDJ72B5GkY/zClmjpj/ZH8VC1+s1uZsNjfn9mJ1tB5Y40r24d/fi84ktNi4exym5z2/n9cwZ3iApPmoyO/mYvGt6KwSNQ=
+	t=1743997133; cv=none; b=qRtI3duCQVFwhq+Xo46NOescGW8LS453jjlRpX+zglx+YpNPN7yldSOpUKhlTjUU9XU+1HG0XUzBvSPgFUYtMS7PvAy1LFep9K1Zkkwi9JsVdqPSpDIrEm9GgZy0Wm01b0zZeHP9XJy1hzN/5BCtjLbL/qx1XNtLngInaZSVTgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743997076; c=relaxed/simple;
-	bh=PyuwHWmTOOmVj1ltBrX/9lsDSMce3Xq03MY1eBoT2Ug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dLpv0EXzqC9A9e2/yEJlJA01UtskE9fTWL68BmRXmWYZT5c613Ge5XizaD14OfEiZnvbR/VhStTDkJ+EUc785B46f0/Kd4w7U5Hog7TEimXZPHbmfN3ROyXaOJnNnpreaq/4MM6JKULBN0Go1p9ZmYza6WIMsGcl5AV5tNgg41s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=IsdxRras; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=j5LtAP9dH0se3Aa+dj5UG/sESuo0SmU97FCP6hGcPME=; b=IsdxRras8/9Ro0ZiSNQ4QHrRBI
-	lTpxyE5+DAGAeVziAF+y2ckcROmb7slyNm9SmC6bhaIx1lAMp45YpRHlODod6TmLrAJDNpKzwmU4b
-	h56EaQ75YFS2cbHbMsDTxfAj+Y8+Blqy5ck2OGO08qO6UtQonZVP9cZR05k3OJQrl4Auyqk7XWXCN
-	mA8tnqY7yyh1yZCvUvKges+sUq4lrsJ65l9hAJh0qAkKRvn8ZhUpcd+R31KjfUY5Rts4izoE72opK
-	cYDaGv/5CL7gw71FGPphOepmPjY5QUZeuErWt+IDW+YMeQDGIfUqb9H1gw2v48zUVs32a8mAN9Ek/
-	cfI7YOgw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1u1dIl-00DMJi-0A;
-	Mon, 07 Apr 2025 11:37:36 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 07 Apr 2025 11:37:35 +0800
-Date: Mon, 7 Apr 2025 11:37:35 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Zixun LI <admin@hifiphile.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: atmel - add CRYPTO_ALG_KERN_DRIVER_ONLY flag to
- atmel-aes, atmel-sha, atmel-tdes drivers
-Message-ID: <Z_NIf4EEeLRv4fFT@gondor.apana.org.au>
-References: <20250319150657.2698916-1-zli@ogga.fr>
+	s=arc-20240116; t=1743997133; c=relaxed/simple;
+	bh=jZgaX4jmVsHYBspYE/CHJXeQ6ix47dfRPbg7bvlz8mc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Yg5VRFQET2Yhg4hI6VXz1WzBJrM4rbyxFDz+HznwKnz10VHjRzkktfUMvm2/vkHzqjDjU5RXJo78KoVFWH1PcwBuiy78Mi77ffP7JYNfHWfJQCYcvKSe57jLgVkEFjJU8+0mc2WBbZbFpO+T1bWElb44/WggCaSiuMUYajG87gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PSH08hLe; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1743997119;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TLwyuuy4aI3x0fwEsZllh/AdDqppEyi7Fwatm110DFQ=;
+	b=PSH08hLemfgJhQFFxmJBpvROYAqZI7MpC0rqfgqbjIl/TN2RjSOOeCFfB3+Dj9AxbpiuFz
+	NStsFT5lv9y3NH8iMn4jclT9WIIvS++m29FPMag/+cSWo4E4waLDoaP40Pj9R54ZF8/++d
+	YhT2CFggqgP3BzLRBbwh/UR46tcv7kU=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250319150657.2698916-1-zli@ogga.fr>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: CONFIG_HUGETLB_PAGE_OPTIMIZE_VMEMMAP is broken, was Re: [RFC
+ PATCH 0/6] Deep talk about folio vmap
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <6f76a497-248b-4f92-9448-755006c732c8@vivo.com>
+Date: Mon, 7 Apr 2025 11:37:56 +0800
+Cc: bingbu.cao@linux.intel.com,
+ Christoph Hellwig <hch@lst.de>,
+ Matthew Wilcox <willy@infradead.org>,
+ Gerd Hoffmann <kraxel@redhat.com>,
+ Vivek Kasireddy <vivek.kasireddy@intel.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Shuah Khan <shuah@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,
+ linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org,
+ linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org,
+ opensource.kernel@vivo.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <FDB7F930-8537-4B79-BAA6-AA782B39943A@linux.dev>
+References: <20250327092922.536-1-link@vivo.com>
+ <20250404090111.GB11105@lst.de>
+ <9A899641-BDED-4773-B349-56AF1DD58B21@linux.dev>
+ <43DD699A-5C5D-429B-A2B5-61FBEAE2E252@linux.dev>
+ <e9f44d16-fd9a-4d82-b40e-c173d068676a@vivo.com>
+ <E4D6E02F-BC82-4630-8CB8-CD1A0163ABCF@linux.dev>
+ <6f76a497-248b-4f92-9448-755006c732c8@vivo.com>
+To: Huan Yang <link@vivo.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Mar 19, 2025 at 04:06:56PM +0100, Zixun LI wrote:
-> 
-> diff --git a/drivers/crypto/atmel-aes.c b/drivers/crypto/atmel-aes.c
-> index 90dcae7049b7..8a6ee5ac9956 100644
-> --- a/drivers/crypto/atmel-aes.c
-> +++ b/drivers/crypto/atmel-aes.c
-> @@ -1948,7 +1948,8 @@ static struct skcipher_alg aes_xts_alg = {
->  	.base.cra_driver_name	= "atmel-xts-aes",
->  	.base.cra_blocksize	= AES_BLOCK_SIZE,
->  	.base.cra_ctxsize	= sizeof(struct atmel_aes_xts_ctx),
-> -	.base.cra_flags		= CRYPTO_ALG_NEED_FALLBACK,
-> +	.base.cra_flags		= CRYPTO_ALG_NEED_FALLBACK |
-> +						  CRYPTO_ALG_KERN_DRIVER_ONLY,
 
-This should be indented like this:
 
-	.base.cra_flags		= CRYPTO_ALG_NEED_FALLBACK |
-				  CRYPTO_ALG_KERN_DRIVER_ONLY,
+> On Apr 7, 2025, at 11:21, Huan Yang <link@vivo.com> wrote:
+>=20
+>=20
+> =E5=9C=A8 2025/4/7 10:57, Muchun Song =E5=86=99=E9=81=93:
+>>=20
+>>> On Apr 7, 2025, at 09:59, Huan Yang <link@vivo.com> wrote:
+>>>=20
+>>>=20
+>>> =E5=9C=A8 2025/4/4 18:07, Muchun Song =E5=86=99=E9=81=93:
+>>>>> On Apr 4, 2025, at 17:38, Muchun Song <muchun.song@linux.dev> =
+wrote:
+>>>>>=20
+>>>>>=20
+>>>>>=20
+>>>>>> On Apr 4, 2025, at 17:01, Christoph Hellwig <hch@lst.de> wrote:
+>>>>>>=20
+>>>>>> After the btrfs compressed bio discussion I think the hugetlb =
+changes that
+>>>>>> skip the tail pages are fundamentally unsafe in the current =
+kernel.
+>>>>>>=20
+>>>>>> That is because the bio_vec representation assumes tail pages do =
+exist, so
+>>>>>> as soon as you are doing direct I/O that generates a bvec =
+starting beyond
+>>>>>> the present head page things will blow up.  Other users of =
+bio_vecs might
+>>>>>> do the same, but the way the block bio_vecs are generated are =
+very suspect
+>>>>>> to that.  So we'll first need to sort that out and a few other =
+things
+>>>>>> before we can even think of enabling such a feature.
+>>>>>>=20
+>>>>> I would like to express my gratitude to Christoph for including me =
+in the
+>>>>> thread. I have carefully read the cover letter in [1], which =
+indicates
+>>>>> that an issue has arisen due to the improper use of `vmap_pfn()`. =
+I'm
+>>>>> wondering if we could consider using `vmap()` instead. In the HVO =
+scenario,
+>>>>> the tail struct pages do **exist**, but they are read-only. I've =
+examined
+>>>>> the code of `vmap()`, and it appears that it only reads the struct =
+page.
+>>>>> Therefore, it seems feasible for us to use `vmap()` (I am not a =
+expert in
+>>>>> udmabuf.). Right?
+>>>> I believe my stance is correct. I've also reviewed another thread =
+in [2].
+>>>> Allow me to clarify and correct the viewpoints you presented. You =
+stated:
+>>>>   "
+>>>>    So by HVO, it also not backed by pages, only contains folio =
+head, each
+>>>>    tail pfn's page struct go away.
+>>>>   "
+>>>> This statement is entirely inaccurate. The tail pages do not cease =
+to exist;
+>>>> rather, they are read-only. For your specific use-case, please use =
+`vmap()`
+>>>> to resolve the issue at hand. If you wish to gain a comprehensive =
+understanding
+>>> I see the document give a simple graph to point:
+>>>=20
+>>>  +-----------+ ---virt_to_page---> +-----------+   mapping to   =
++-----------+
+>>>  |           |                                     |     0     | =
+-------------> |     0     |
+>>>  |           | +-----------+                +-----------+
+>>>  |           |                                      |     1     | =
+-------------> |     1     |
+>>>  |           | +-----------+                +-----------+
+>>>  |           |                                      |     2     | =
+----------------^ ^ ^ ^ ^ ^
+>>>  |           | +-----------+                      | | | | |
+>>>  |           |                                      |     3     | =
+------------------+ | | | |
+>>>  |           | +-----------+                        | | | |
+>>>  |           |                                      |     4     | =
+--------------------+ | | |
+>>>  |    PMD    | +-----------+                          | | |
+>>>  |   level   |                                   |     5     | =
+----------------------+ | |
+>>>  |  mapping  | +-----------+                             | |
+>>>  |           |                                     |     6     | =
+------------------------+ |
+>>>  |           | +-----------+                              |
+>>>  |           |                                     |     7     | =
+--------------------------+
+>>>  |           |                                    +-----------+
+>>>  |           |
+>>>  |           |
+>>>  |           |
+>>>  +-----------+
+>>>=20
+>>> If I understand correct, each 2-7 tail's page struct is freed, so if =
+I just need map page 2-7, can we use vmap do
+>>>=20
+>>> something correctly?
+>> The answer is you can. It is essential to distinguish between virtual
+>=20
+> Thanks for your reply, but I still can't understand it. For example, I =
+need vmap a hugetlb HVO folio's
+>=20
+> 2-7 page:
+>=20
+> struct page **pages =3D kvmalloc(sizeof(*pages), 6, GFP_KENREL);
+>=20
+> for (i =3D 2; i < 8; ++i)
+>=20
+>     pages[i] =3D folio_page(folio, i);    //set 2-7 range page into =
+pages,
+>=20
+> void *vaddr =3D vmap(pages, 6, 0, PAGE_KERNEL);
+>=20
+> For no HVO pages, this can work. If HVO enabled, do "pages[i] =3D =
+folio_page(folio, i);" just
+>=20
+> got the head page? and how vmap can correctly map each page?
 
-> diff --git a/drivers/crypto/atmel-sha.c b/drivers/crypto/atmel-sha.c
-> index 3622120add62..40f6ed5b20ee 100644
-> --- a/drivers/crypto/atmel-sha.c
-> +++ b/drivers/crypto/atmel-sha.c
-> @@ -1254,7 +1254,8 @@ static int atmel_sha_cra_init(struct crypto_tfm *tfm)
->  static void atmel_sha_alg_init(struct ahash_alg *alg)
->  {
->  	alg->halg.base.cra_priority = ATMEL_SHA_PRIORITY;
-> -	alg->halg.base.cra_flags = CRYPTO_ALG_ASYNC;
-> +	alg->halg.base.cra_flags = CRYPTO_ALG_ASYNC |
-> +							   CRYPTO_ALG_KERN_DRIVER_ONLY;
-
-	alg->halg.base.cra_flags = CRYPTO_ALG_ASYNC |
-				   CRYPTO_ALG_KERN_DRIVER_ONLY;
-
-> @@ -2043,7 +2044,8 @@ static void atmel_sha_hmac_cra_exit(struct crypto_tfm *tfm)
->  static void atmel_sha_hmac_alg_init(struct ahash_alg *alg)
->  {
->  	alg->halg.base.cra_priority = ATMEL_SHA_PRIORITY;
-> -	alg->halg.base.cra_flags = CRYPTO_ALG_ASYNC;
-> +	alg->halg.base.cra_flags = CRYPTO_ALG_ASYNC |
-> +							   CRYPTO_ALG_KERN_DRIVER_ONLY;
-
-	alg->halg.base.cra_flags = CRYPTO_ALG_ASYNC |
-				   CRYPTO_ALG_KERN_DRIVER_ONLY;
-
-> diff --git a/drivers/crypto/atmel-tdes.c b/drivers/crypto/atmel-tdes.c
-> index 099b32a10dd7..3a6a890172cd 100644
-> --- a/drivers/crypto/atmel-tdes.c
-> +++ b/drivers/crypto/atmel-tdes.c
-> @@ -898,7 +898,8 @@ static int atmel_tdes_init_tfm(struct crypto_skcipher *tfm)
->  static void atmel_tdes_skcipher_alg_init(struct skcipher_alg *alg)
->  {
->  	alg->base.cra_priority = ATMEL_TDES_PRIORITY;
-> -	alg->base.cra_flags = CRYPTO_ALG_ASYNC;
-> +	alg->base.cra_flags = CRYPTO_ALG_ASYNC |
-> +						  CRYPTO_ALG_KERN_DRIVER_ONLY;
-
-This fits on one line, no need to split.
+Why do you think folio_page(folio, i) (i =E2=89=A0 0) returns the head =
+page?
+Is it speculation or tested? Please base it on the actual situation
+instead of indulging in wild thoughts.
 
 Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Muchun.
+
+>=20
+> Please correct me. :)
+>=20
+> Thanks,
+>=20
+> Huan Yang
+>=20
+>> address (VA) and physical address (PA). The VAs of tail struct pages
+>> aren't freed but remapped to the physical page mapped by the VA of =
+the
+>> head struct page (since contents of those tail physical pages are the
+>> same). Thus, the freed pages are the physical pages mapped by =
+original
+>> tail struct pages, not their virtual addresses. Moreover, while it
+>> is possible to read the virtual addresses of these tail struct pages,
+>> any write operations are prohibited since it is within the realm of
+>> acceptability that the kernel is expected to perform write operations
+>> solely on the head struct page of a compound head and conduct read
+>> operations only on the tail struct pages. BTW, folio infrastructure
+>> is also based on this assumption.
+>>=20
+>> Thanks,
+>> Muchun.
+>>=20
+>>> Or something I still misunderstand, please correct me.
+>>>=20
+>>> Thanks,
+>>>=20
+>>> Huan Yang
+>>>=20
+>>>> of the fundamentals of HVO, I kindly suggest a thorough review of =
+the document
+>>>> in [3].
+>>>>=20
+>>>> [2] =
+https://lore.kernel.org/lkml/5229b24f-1984-4225-ae03-8b952de56e3b@vivo.com=
+/#t
+>>>> [3] Documentation/mm/vmemmap_dedup.rst
+>>>>=20
+>>>>> [1] =
+https://lore.kernel.org/linux-mm/20250327092922.536-1-link@vivo.com/T/#m05=
+5b34978cf882fd44d2d08d929b50292d8502b4
+>>>>>=20
+>>>>> Thanks,
+>>>>> Muchun.
+
+
 
