@@ -1,114 +1,120 @@
-Return-Path: <linux-kernel+bounces-591451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C3F4A7DFDD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:46:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5901A7E008
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C51FC7A3D68
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:45:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A2D53B1EEE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30331ADC83;
-	Mon,  7 Apr 2025 13:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DF518C345;
+	Mon,  7 Apr 2025 13:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="i+b9Qm4R"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UPPvKkJH"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D8C1A8F6D;
-	Mon,  7 Apr 2025 13:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D9C149C51;
+	Mon,  7 Apr 2025 13:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744033587; cv=none; b=b1lcqUKGlNrEw9yaDTfxUKvKFkzXhsUO8PyEs8+axlfqbkgMZyF6ixtP8+yBrWcIRmO2t2LxGvo8/E4smD2zgrvpnh4LmRjHQnsdedJz6ke233Atc7GHZ/noKFLnMYG54hDIEirH8MtLBqNy+XF6DO8yDzVoewV+MvMtBvT1p34=
+	t=1744033639; cv=none; b=LEv1hxLwN62xPS8cP/tj9JwooRQXVqGsECJNqtVBdQ3a4MWf3qN6KrY7SnKPIZ3xXw1zFXTCDiAOXrr/Ll+8ARVmHVOEfkaFJRO8OljUDwEZ92NmFtkcHIF0ngJHXiBIbv6lnBiEdLys0OdNlUbCNCki1vt/NcGEkkjb3cLcASo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744033587; c=relaxed/simple;
-	bh=2sgdfPDLUZQq25ly4X6z/HegrTfy4G1nncio2f3/Lp8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KpyX5KJsoV8VQtg/WeodlaUc5pgceEtOQMQC1/ANusugrzjeSBUmtajxKFhaVHSvkGfDUk6O8Rwl8cnGf5Y3OhmdBy2SIOeTUWjqF2mzpIr040Wldv7bXCIkkNWiUx6VVSMlMBTq6hoeN6M6Y8Y+5XGE2A6YLadMCZyuTkvJoFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=i+b9Qm4R; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id F29B4442A3;
-	Mon,  7 Apr 2025 13:46:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744033576;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+3Vrefcf/NQ+JQxSP5ld2ShyoQDx5GSabMC/kL9H49g=;
-	b=i+b9Qm4RpUC95spqhOdbohwP/qQCK6GvMnmHFO1cOgPcmWCoafh0BxHuEexLCgRmKA9t21
-	Yu0Q/18Zcal8laTx28aA/x05T1OZFL47PL/yj9rq7bnpcWWEtnj9G1kkj9yBSJzr62gg+R
-	CqqBDHtv70zvA743gHo+0lbyXnmwsvngB+SRboyDmmOUDOTa1qOAn8TsX8PvRVN45UHSIS
-	OV10edGh87/+0R4PG8VSijPOtljEhrcoXYKFnNy1YKHfSS8hrfnyfWxKC1kkakNxmjb1fL
-	2l3O0Dy/J71nfvX4+R5Ng5kAJXgte8njuIIK8XerrQObme9frsaq55OOuFZYQg==
-Date: Mon, 7 Apr 2025 15:46:13 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Marek Pazdan <mpazdan@arista.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- intel-wired-lan@lists.osuosl.org, Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Willem de
- Bruijn <willemb@google.com>, Alexander Lobakin
- <aleksander.lobakin@intel.com>, Mina Almasry <almasrymina@google.com>,
- Edward Cree <ecree.xilinx@gmail.com>, Daniel Zahka
- <daniel.zahka@gmail.com>, Jianbo Liu <jianbol@nvidia.com>, Gal Pressman
- <gal@nvidia.com>
-Subject: Re: [PATCH 2/2] ice: add qsfp transceiver reset and presence pin
- control
-Message-ID: <20250407154613.00e7afe2@kmaincent-XPS-13-7390>
-In-Reply-To: <20250407123714.21646-2-mpazdan@arista.com>
-References: <20250407123714.21646-1-mpazdan@arista.com>
-	<20250407123714.21646-2-mpazdan@arista.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1744033639; c=relaxed/simple;
+	bh=vNWTMdv+jOoNEEp8FYoMLcDNadO7j1Y3ZibXpl+7a4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aolPimi2pgKvY8+9L0aD0lOqyU8hax8y0B4cFy5fG4xp23EdfWlnajBZRpiZ9iqXi3r2lRKtPeBDMutWyim5apMeGwkbZcInzZuaZkubeOWLwZL1eHyLha6fc/tqd91+CJLx20d+vPd0gbqWPFhDQpOAkPc+W/s+3UWmh73sRjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UPPvKkJH; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7FE1140E0214;
+	Mon,  7 Apr 2025 13:47:11 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id W35ScQmYY_sJ; Mon,  7 Apr 2025 13:47:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1744033628; bh=C+DuWs1QJWCyb+Jz2U+p7g01q+x5MgKJ0a73l6qpKdQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UPPvKkJHieclp2Wt2o8CsohsLi3oXKOkbYBOMOVZy2+2Emp0LA4cwUhQoXZWyQfnw
+	 Eut9e3ssiA4hn94EdNU/GTsJnc7IrjZcG5bJlf+shsvMScRocDQ7/rPjVLMb8rok5m
+	 2UbOaq/Kt2pt5W/BPkeEvGA9KZNhYyo8SQb9vBA8czHS7cv806Ofv5m2CZR7V8BWJ0
+	 8fYPdV9mZ74FrJQFWsQY0Aiw7Lmzyou2ACMhtHiy0Q9ajJOTvUvkZiZAhbXr7AM8/O
+	 dw6GfjdH4M0nZJR35pfv3F0C+R7jf7P84EUemW0apmj2J7DXbFgcca1rLjCxcqLeDr
+	 jM3ZsKXxYaBMgDtB1VTibFZKd234cmDpAybbLFBsbEBnUpjB1A72rIJ6N1UsBRfgdB
+	 Q7IQzP7HiuFwhTs3gsxjLlS94itJ8D0y9SMJ5OiM4FAQihU4JLNQEpkzLrC1el3K8A
+	 wU3TxSj3OCJN1lFCdR+a8TFPGbOYoosqkn4OwEn7GiHeHWtB0Ig9s/ac1i9Smmkqe5
+	 ihhUiRUoEch+K9UgDXopkStgG+vFQwZ0rxqYG18W9yEQX/rkkMyjJGWRFpOycNlr+f
+	 FK4JLIsQKZ1jU4G1VSvLvRV5GCeMwO6H9DHrbPLjT1uE0zE/G0sel+BTsiEL1GQ7i0
+	 Xkve7DdzMvtEYcCCG1toS5fc=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 138D640E019F;
+	Mon,  7 Apr 2025 13:46:50 +0000 (UTC)
+Date: Mon, 7 Apr 2025 15:46:43 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Stefano Garzarella <sgarzare@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-coco@lists.linux.dev,
+	linux-integrity@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	x86@kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+	Joerg Roedel <jroedel@suse.de>,
+	Dionna Glaze <dionnaglaze@google.com>,
+	Claudio Carvalho <cclaudio@linux.ibm.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-kernel@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v6 0/4] Enlightened vTPM support for SVSM on SEV-SNP
+Message-ID: <20250407134643.GDZ_PXQ0OlzcMjiGgp@fat_crate.local>
+References: <20250403100943.120738-1-sgarzare@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddtfeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddtpdhrtghpthhtohepmhhprgiiuggrnhesrghrihhsthgrrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihhnthgvlhdqfihirhgvugdqlhgrnhesl
- hhishhtshdrohhsuhhoshhlrdhorhhgpdhrtghpthhtoheprghnthhhohhnhidrlhdrnhhguhihvghnsehinhhtvghlrdgtohhmpdhrtghpthhtohepphhriigvmhihshhlrgifrdhkihhtshiivghlsehinhhtvghlrdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvght
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250403100943.120738-1-sgarzare@redhat.com>
 
-On Mon,  7 Apr 2025 12:35:38 +0000
-Marek Pazdan <mpazdan@arista.com> wrote:
+On Thu, Apr 03, 2025 at 12:09:38PM +0200, Stefano Garzarella wrote:
+> Stefano Garzarella (4):
+>   x86/sev: add SVSM vTPM probe/send_command functions
+>   svsm: add header with SVSM_VTPM_CMD helpers
+>   tpm: add SNP SVSM vTPM driver
+>   x86/sev: register tpm-svsm platform device
+> 
+>  arch/x86/include/asm/sev.h  |   9 +++
+>  include/linux/tpm_svsm.h    | 149 ++++++++++++++++++++++++++++++++++++
+>  arch/x86/coco/sev/core.c    |  67 ++++++++++++++++
+>  drivers/char/tpm/tpm_svsm.c | 128 +++++++++++++++++++++++++++++++
+>  drivers/char/tpm/Kconfig    |  10 +++
+>  drivers/char/tpm/Makefile   |   1 +
+>  6 files changed, 364 insertions(+)
+>  create mode 100644 include/linux/tpm_svsm.h
+>  create mode 100644 drivers/char/tpm/tpm_svsm.c
 
-> Commit f3c1c896f5a8 ("ethtool: transceiver reset and presence pin control=
-")
-> adds ioctl API extension for get/set-phy-tunable so that transceiver
-> reset and presence pin control is enabled.
+Jarrko,
 
-I don't think pointing and explaining the first commit is relevant here.
+should I take the whole bunch through the tip tree?
 
-> This commit adds functionality to utilize the API in ice driver.
+No point in splitting between two trees...
 
-Please do not use "This commit/patch/change", but imperative mood. See
-longer explanation here:
-https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submi=
-tting-patches.rst#L95
+Thx.
 
-You could simply write:
-Add support for the newly introduced transceiver reset feature in the ice
-driver.
+-- 
+Regards/Gruss,
+    Boris.
 
-> According to E810 datasheet QSFP reset and presence pins are being
-> connected to SDP0 and SDP2 pins on controller host. Those pins can
-> be accessed using AQ commands for GPIO get/set.[O
-
-Weird character at the end.
-
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+https://people.kernel.org/tglx/notes-about-netiquette
 
