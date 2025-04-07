@@ -1,166 +1,92 @@
-Return-Path: <linux-kernel+bounces-590683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1384A7D5E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:31:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37522A7D618
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B351D3BE4D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:24:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 104FF3AE4B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AE8221D9A;
-	Mon,  7 Apr 2025 07:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="GV3ZwaPw"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5602235C04;
+	Mon,  7 Apr 2025 07:21:59 +0000 (UTC)
+Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9F47E110
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2643F22DF8C;
+	Mon,  7 Apr 2025 07:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744010420; cv=none; b=iIHz7O1QOOkXyY4RId6SUa+4rAumXA0h67R3ozE4j1AUyqnPyUXrJwOlKzd2zsTKsxhQGT5Ro1LFHDmyvCce59PPV3rZ+47gY+qkT9bG5Y8OGUbh9mvmxOmzCl6BSkpcx4fLYnZQxr1B99GAfEFzmouInkoiGgRHlw9z/usOuU0=
+	t=1744010519; cv=none; b=tZ8DY7lVW0kLl11RWyAfMFTReleH7X97pNB93pp6vA0ws1iyGG3c46TBQDb1cExwICWx0Yc4j9u7lWJZXK07/ulcyHQ5D0Ii3CQZON5hTKelBWpGTWhxIw2kPKtb7/57rQa/yfPbnrG9tsST3Hm5+e9zY1cvuim3SiZGyxw/FWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744010420; c=relaxed/simple;
-	bh=vB97Q1YPbq16AwOxn+yN6Er1uY//wlkJ2Wtv7a3Qbug=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pgojmtyI/DHn7skIaNvU5qkZuCQX5XivJKHPAI6ibgGbiS1YW+sg1xB0h/dtD5xu/fK/h6OWI+z0MNtVwELS2jqy6Y+T67lGr0hho4u90fo5vfOArxnNAlK1Q82YKusZNWq9NzDKVOhEwOkMfKjMWbEOidpAMu9jKQq2YXz7Pt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=GV3ZwaPw; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso25286425e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 00:20:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744010417; x=1744615217; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NZkA1+Q3u+jEfVBi0l7ljj4vwe6IMZ6cjm27iXV9wpo=;
-        b=GV3ZwaPw3Hk+auH+WqV5uLeWRsnQddF7ajTcaT67jdpyZX7/oukOgxB13wC4YPSRtX
-         T2El5GbD3/o6iGfJ9x5cAkqw75hoG4+7vk9VOt0fG3B9uTU4WrmltT6rCoM0yS9NMkWN
-         Ra2apicd36+bONy3Ij9pGVsIzMr0FkiBAS30l+c0KYCnBBYW0SAth7WlGFwMk8yBzDZy
-         L9fmkTpYWUZKaxitEIW7tuEbWqHFV5iynAccV3W44kkZ3hiS1+NoIIVR4T2eFZeaS03W
-         WJ5YFKo85lPobx/QV+ewuaQTCRTDRthKwT5Eib1rv3w0raJppAQWnUFXYdm5RZb6fRKS
-         oW2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744010417; x=1744615217;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NZkA1+Q3u+jEfVBi0l7ljj4vwe6IMZ6cjm27iXV9wpo=;
-        b=bYonk1MEaRroEXgHhlbd9m9FUVZlgNK1O0rRiv9fGPgZJNM/ktcOS92fkcVInlDfUf
-         qAQWfX5Mpm6ROgzXmjIZ9IbzysJGyUhYy27H3u60P4fumS6NJyzftWUuQAznMOiaYmZ4
-         bqWjZ8rVAZMaUhyGvZ5hqELIRAJt+A/nc8xwtnJRHjeL64s9hmhvNCiwF3+EOPgFmm+P
-         7FIUi3vvl2dzCOaMcKsIfhO6PZ+1BTUP7IzmrF5pCk3gtc16uMzpbQ+8FgfrTtRgj4UX
-         3ulkwVzPrhIVzK3Hhy+ZUXPeViZGbTyYTnkZPR+Ka4FLtkpTPhbEM4HpPiHzbT2m3pKZ
-         1OVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXzVsX3qoKIVK3IvP1iMvZRc+MM/viS6rN1ckHSEiWFV1XaqkeGH/v14qjQfa21RTb4Qs4QzhkJCk89x9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtoPOK2LRbUqnfCzPr8XdTiu+UxOrybDFFx4/4vPpVSAPSgHTB
-	d6MtR7LMh9ctm+WSF672MxyxKc073xnJforQ9XqP0wPZktb9fRoxo7wBKI0jlh4=
-X-Gm-Gg: ASbGncskKHTblyzJRlXEpV/fSIGL1WHY2DiL9cKezR2vGy6FCq5RCPVC0x3EV5wsetY
-	G/hNFIbLwNdHUEquFX+ZRXV/yv4gLyAfk8Wuw2BWV33o6kuJydD/pgnNrFwy17xSu0hipm0pSZf
-	Ep5qPMmXe6a38nzEtLuXFvi/6aI0iF6Ix3vvVjU8nph+ZpAXgif0uYdxoPn0zkSqq8DwjsT6+tM
-	CIxmc6YiJHSfapKVHCYy+I2TlyoNYk+6dNDdauTrszaHC5uf7jJLYm8SdAksBaMwCIv+jn3gNzw
-	bU8hIUoIjgf1CD6eU3EzYv37ai3i2oUaQ/XGlg==
-X-Google-Smtp-Source: AGHT+IHpPjFFlJDSkBPgrO6I41uexMOHig1BRBPlRgzV6SsR14UibMi/3rCWV6DQ/1uJeGXoDG6rTg==
-X-Received: by 2002:a05:600c:4ecc:b0:43d:2313:7b49 with SMTP id 5b1f17b1804b1-43ecf85f4d2mr100415065e9.12.1744010416824;
-        Mon, 07 Apr 2025 00:20:16 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:8c64:734d:705a:39a7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec3669002sm121751175e9.33.2025.04.07.00.20.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 00:20:16 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 07 Apr 2025 09:20:15 +0200
-Subject: [PATCH] m68k: coldfire: gpio: use new line value setter callbacks
+	s=arc-20240116; t=1744010519; c=relaxed/simple;
+	bh=gwlbrJ4E+kM2LfDpPto20YwjkS8MNLC7fHkGVJptOIQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Dur0eitt8nXMqTjgO8lFz/DqVNjhhkhkws37IvXv2Rl75r5ikSDk5AvHH1mRi4mSmTUULU2Rc+28hgb5jip5AX6FBhJsCBqDXxlpBzUxd8lqGS9H7Nde/so0FmzO8RGx875wQSxi4f8tXhuWeSIoI7BJqBJctrZHiDZ1Er93ISk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201606.home.langchao.com
+        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202504071520345929;
+        Mon, 07 Apr 2025 15:20:34 +0800
+Received: from locahost.localdomain.com (10.94.5.217) by
+ jtjnmail201606.home.langchao.com (10.100.2.6) with Microsoft SMTP Server id
+ 15.1.2507.39; Mon, 7 Apr 2025 15:20:34 +0800
+From: Charles Han <hanchunchao@inspur.com>
+To: <saeedm@nvidia.com>, <tariqt@nvidia.com>, <leon@kernel.org>,
+	<andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <lariel@nvidia.com>,
+	<paulb@nvidia.com>, <maord@nvidia.com>
+CC: <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Charles Han <hanchunchao@inspur.com>
+Subject: [PATCH V2] net/mlx5e: fix potential null dereference in mlx5e_tc_nic_create_miss_table
+Date: Mon, 7 Apr 2025 15:20:31 +0800
+Message-ID: <20250407072032.5232-1-hanchunchao@inspur.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0e08292e-9280-4ef6-baf7-e9f642d33177@gmail.com>
+References: <0e08292e-9280-4ef6-baf7-e9f642d33177@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250407-gpiochip-set-rv-m68k-v1-1-7fdc9132b6e8@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAK5882cC/x3MQQqAIBBA0avErBswpbSuEi2ixhoikzEiiO6et
- HyL/x9IJEwJuuIBoYsTHyGjKguY1jEshDxng1a6VkY3uEQ+ppUjJjpRLtwbt6F1rbdWO+Otg5x
- GIc/3v+2H9/0A+d+MBmYAAAA=
-To: Greg Ungerer <gerg@linux-m68k.org>, 
- Geert Uytterhoeven <geert@linux-m68k.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1765;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=xpjlcs0Z+gAlZJFbn5AlXbcR6QRO7s3gx9jjA4Yf1Zg=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn83ywLwPBxfPzoX+y2laB9IHxbDRLfAaKx6afO
- m3U3MGsITSJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ/N8sAAKCRARpy6gFHHX
- chzFD/9187tA+35Bnp9Rx8W4LxG/AeuKg9A73cy0c8KWQhWSdM7ri1UlLP1a9NbaUQtyH0By9oC
- 2APZ0yRzXqSfFYP9fK9ZpYEkio/d8gepkwbFdcq1RTKbdManuCywpeHrTFSgCeRle93oLeV2ofV
- 4Fnaam5T5+Zc9A7UFqUOqM7xd0fJ+Ra9pfRuZSYTKPp3vf1mfRPSsjePo629D3APbon9HuQV8rn
- eLMrSdZXM8UcgnJE2V60b/O3ANrlia6TT69eCm/giNkX+WCMV05mE/keSk+H7TUea4EH+efyZtR
- 5Ycvv0s4Bi/+hI+/0Nh5gygp7khgI07qS9KZd3ygckstGgN/MirZNmYDK0OAZclCtRBGonphGOC
- TbXVVwoU81g20JSUbSMLZyC48lU7atrB9mUelvCzhINdJ8MkFHsG+aPRNuZiyAX2BVWjCDy5OSe
- ttX7s70dOMQVlCvDk1hogR1MYfXblwVVsk/2oQ1REV+JpRFaR0HnJRpklfVNFfkdGvPfJ6XdFxV
- x8GqV+b5JdJCeOxqkRt1lmXLxPXSl+AA29VwFzNiTcGgMY0ZO/LZ+8lLv6g45e6D6azdn/HQjz2
- z70FQNuZ99Uzf0Uo0Nb8qLBv03mX+x4EP1Cu8gH06P23VusZFg0pK4/dFo+xSeZbDhkMg5ikjT/
- d0J+f7HA6IKvfxw==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+tUid: 2025407152034ba30f3d455ddc3e2cb5a8f6e9b48885a
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+mlx5_get_flow_namespace() may return a NULL pointer, dereferencing it
+without NULL check may lead to NULL dereference.
+Add a NULL check for ns.
 
-struct gpio_chip now has callbacks for setting line values that return
-an integer, allowing to indicate failures. Convert the driver to using
-them.
-
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Fixes: 66cb64e292d2 ("net/mlx5e: TC NIC mode, fix tc chains miss table")
+Signed-off-by: Charles Han <hanchunchao@inspur.com>
 ---
-struct gpio_chip now has callbacks for setting line values that return
-an integer, allowing to indicate failures. We're in the process of
-converting all GPIO drivers to using the new API. This series converts
-all m68k board-file level controllers.
----
- arch/m68k/coldfire/gpio.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_tc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/m68k/coldfire/gpio.c b/arch/m68k/coldfire/gpio.c
-index ca26de257871..30e5a4ed799d 100644
---- a/arch/m68k/coldfire/gpio.c
-+++ b/arch/m68k/coldfire/gpio.c
-@@ -123,10 +123,12 @@ static int mcfgpio_direction_output(struct gpio_chip *chip, unsigned offset,
- 	return __mcfgpio_direction_output(offset, value);
- }
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+index 9ba99609999f..c2f23ac95c3d 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+@@ -5216,6 +5216,10 @@ static int mlx5e_tc_nic_create_miss_table(struct mlx5e_priv *priv)
+ 	ft_attr.level = MLX5E_TC_MISS_LEVEL;
+ 	ft_attr.prio = 0;
+ 	ns = mlx5_get_flow_namespace(priv->mdev, MLX5_FLOW_NAMESPACE_KERNEL);
++	if (!ns) {
++		netdev_err(priv->mdev, "Failed to get flow namespace\n");
++		return -EOPNOTSUPP;
++	}
  
--static void mcfgpio_set_value(struct gpio_chip *chip, unsigned offset,
--			      int value)
-+static int mcfgpio_set_value(struct gpio_chip *chip, unsigned int offset,
-+			     int value)
- {
- 	__mcfgpio_set_value(offset, value);
-+
-+	return 0;
- }
- 
- static int mcfgpio_request(struct gpio_chip *chip, unsigned offset)
-@@ -158,7 +160,7 @@ static struct gpio_chip mcfgpio_chip = {
- 	.direction_input	= mcfgpio_direction_input,
- 	.direction_output	= mcfgpio_direction_output,
- 	.get			= mcfgpio_get_value,
--	.set			= mcfgpio_set_value,
-+	.set_rv			= mcfgpio_set_value,
- 	.to_irq			= mcfgpio_to_irq,
- 	.base			= 0,
- 	.ngpio			= MCFGPIO_PIN_MAX,
-
----
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-change-id: 20250326-gpiochip-set-rv-m68k-789f77283f78
-
-Best regards,
+ 	*ft = mlx5_create_auto_grouped_flow_table(ns, &ft_attr);
+ 	if (IS_ERR(*ft)) {
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.43.0
 
 
