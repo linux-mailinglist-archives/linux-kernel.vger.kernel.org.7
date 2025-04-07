@@ -1,184 +1,423 @@
-Return-Path: <linux-kernel+bounces-592468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8FDA7ED84
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:36:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DBB6A7ED8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE26E19E091B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:31:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED81516445E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BD82236F3;
-	Mon,  7 Apr 2025 19:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C47204F6F;
+	Mon,  7 Apr 2025 19:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Gi+8MJKk"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CxIpMACt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB15A222587;
-	Mon,  7 Apr 2025 19:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1185A2F2A;
+	Mon,  7 Apr 2025 19:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744054069; cv=none; b=sJI6nE72atTxmpLbLmWTmNwZjPTWqykZAWOOF4gMppAW0n9N7yGbdy1N0DMOpv97MULvqq0l/GhE6lohh/4T9IlzaEvruCtPX7bK7xg/oi2qOXgh44x3XR2pVuow5/l9FcE8bzwCek2kYZH8j9cGNd5/dgtbR6hMMnt2fgsC6YA=
+	t=1744054391; cv=none; b=UrFK08r7VbJZFoATOHN6wHG11L6xBEfNmmmwdePXsEzfyAlsSI2KenLuc51a2DRUCjJ9exZnkGGbNtAzQrhkLDWz3jtztSQ3MtkHXfv9cGmZ1qrXPvZryEIifjyBPUh69p3sQlHAh51Cx1o+tQKiKHwByOnDoFgQ5ojilhyksPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744054069; c=relaxed/simple;
-	bh=nWMPJiZ/C1me5It7a1cdWkDqp5i0FTr20WskxIIMaYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WSkKuzsv67Hu3rIkvH+mzsasjSXFweQV9rIV5SgDuZ6P0fbqVtC0/jFQVgPBznljvDr26FsloK/1WrTPDYBAFfPilOIBLQmImCQt/MOIvWPmsu18IYMdiYjfi3pTGFhGLL5jegfS5D+Abq6HdPcEHb3FLLuszv2mNMizV4+KQIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Gi+8MJKk; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 37D604421F;
-	Mon,  7 Apr 2025 19:27:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744054065;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cjEt/IPzaAdKLiLHC8nJ5ihJ1fjZFnzeMJstnBzp7XQ=;
-	b=Gi+8MJKk54bvu0U11jHOJw08NvtnpAzunZzJXO4mlFlnzsLVy8DFQIv5f1cwemOl31f/in
-	yXq1Um8EF62nuW+7K5/FANGhJKfIDt3FpxkAeF2Uw52NGHGgsgSLt5hId5UF1i3v6U7LiQ
-	QV71SvnJzRB4Bv9Y0pBT6LtPqcjAci3aXj9uPyPUUIhwMeK2lXlaYCBe0svd+nHK7Htak4
-	/9HotCk7aCwdmAu+N82j0bdVIG/9XNextLdkUXD3MPHCRUDF3rNzBb5f+B2kzx0rN1agcB
-	y2M7EU6B7HGxiOcK1BDKg9fGTg+UZIk8/GVGNr8AJuzWT4pQ2/Cw+JF6m2DEKA==
-Date: Mon, 7 Apr 2025 21:27:39 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Ilpo =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jagan Teki
- <jagan@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Douglas Anderson
- <dianders@chromium.org>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Krzysztof
- Kozlowski <krzk@kernel.org>, Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>, Anusha Srivatsa <asrivats@redhat.com>, Paul
- Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>,
- =?UTF-8?B?SGVydsOp?= Codina <herve.codina@bootlin.com>, Hui Pu
- <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- dri-devel@lists.freedesktop.org, asahi@lists.linux.dev, LKML
- <linux-kernel@vger.kernel.org>, chrome-platform@lists.linux.dev,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-renesas-soc@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, linux-stm32@st-md-mailman.stormreply.com,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Hans de Goede
- <hdegoede@redhat.com>
-Subject: Re: [PATCH 02/34] platform: arm64: acer-aspire1-ec: convert to
- devm_drm_bridge_alloc() API
-Message-ID: <20250407212739.1e991b6a@booty>
-In-Reply-To: <a9000632-a6d1-d369-c317-9ee73aa645dc@linux.intel.com>
-References: <20250407-drm-bridge-convert-to-alloc-api-v1-0-42113ff8d9c0@bootlin.com>
-	<20250407-drm-bridge-convert-to-alloc-api-v1-2-42113ff8d9c0@bootlin.com>
-	<a9000632-a6d1-d369-c317-9ee73aa645dc@linux.intel.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1744054391; c=relaxed/simple;
+	bh=RrtH/nD1uFMYPrOsQE4EjIFgCUo0VKpTZ+3/dIza3Tk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=sfL85C3OC7A8DSFqqjdPD7bAvLfDb4Rc62zdUgfECW4HXvOfLZP4tdkBhbKM4wIUgDoOjedTHMp2oR0BdUCUgW4O9tenLmX0Zohjc8JE5duJxm3fPUnj8ifCWsrwqFTG+P88ebolTV+MtrQoiztFubqjULY4r2X5Q+Kc7/+FGz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CxIpMACt; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744054389; x=1775590389;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=RrtH/nD1uFMYPrOsQE4EjIFgCUo0VKpTZ+3/dIza3Tk=;
+  b=CxIpMACt4c1mhBXd6WFIIfrxuOQvxi6h8R+PGktlyb6tTEM4bvCZdxXK
+   iBL1DuJ79MnmhrsK7AxKZ1Skjg816y252o8l4/uqNmFbmL+ii98RyV3Y6
+   I8q8kQy5z8E4gcfZRaOtIge3XBVkswSZI0T/YfOtMoD297vGMT73MqRPM
+   R0FM4PCmG4p8Gx8xMQniunrG6GphM2JWDRwxJgjKpCoDk+Qymb9LtH0TB
+   FvidnAAe0wephdCyOWObYykRXJTlbXh5nl+XcFXbXQJHAvby5UBa7Wzh5
+   c3nK9Q4PrA/REG/IWqGa91lJmixBFAvk9OD1k81bu/itFL2InZ6KX1hoX
+   g==;
+X-CSE-ConnectionGUID: G29oGrjgQpylSgD6dKQSug==
+X-CSE-MsgGUID: jwV55EQ6Su6RsubSM/Yqow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45578368"
+X-IronPort-AV: E=Sophos;i="6.15,196,1739865600"; 
+   d="scan'208";a="45578368"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 12:33:08 -0700
+X-CSE-ConnectionGUID: dQ5nDWjXRpSrqe10qDlYIg==
+X-CSE-MsgGUID: brwscPrJTG+Bw0uVFofDFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,196,1739865600"; 
+   d="scan'208";a="132183735"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 12:33:08 -0700
+Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id D0F6020B5736;
+	Mon,  7 Apr 2025 12:33:04 -0700 (PDT)
+Message-ID: <7457b450-9f13-4528-b5e1-2f10f0a7be12@linux.intel.com>
+Date: Mon, 7 Apr 2025 15:33:03 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/16] perf intel-tpebs: Refactor tpebs_results list
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Weilin Wang <weilin.wang@intel.com>, James Clark <james.clark@linaro.org>,
+ Xu Yang <xu.yang_2@nxp.com>, John Garry <john.g.garry@oracle.com>,
+ Howard Chu <howardchu95@gmail.com>, Levi Yun <yeoreum.yun@arm.com>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250407050101.1389825-1-irogers@google.com>
+ <20250407050101.1389825-10-irogers@google.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20250407050101.1389825-10-irogers@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddutdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvddtuedtfefgueehiefhjeeiffekudfhgfdtledvffekhfegteduieejveevteehnecuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgeefpdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigr
- dhinhhtvghlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrgh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Transfer-Encoding: 7bit
 
-Hello Ilpo,
 
-On Mon, 7 Apr 2025 19:46:59 +0300 (EEST)
-Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
 
-> On Mon, 7 Apr 2025, Luca Ceresoli wrote:
->=20
-> > This is the new API for allocating DRM bridges.
-> >=20
-> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> >=20
-> > ---
-> >=20
-> > Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-> > Cc: "Ilpo J=C3=A4rvinen" <ilpo.jarvinen@linux.intel.com>
-> > Cc: Hans de Goede <hdegoede@redhat.com>
-> > ---
-> >  drivers/platform/arm64/acer-aspire1-ec.c | 7 +++----
-> >  1 file changed, 3 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/drivers/platform/arm64/acer-aspire1-ec.c b/drivers/platfor=
-m/arm64/acer-aspire1-ec.c
-> > index 958fe1bf5f85bb69ac7962f217de9f0b40cde9a1..438532a047e68799ac53a16=
-a4c813fc16be997b9 100644
-> > --- a/drivers/platform/arm64/acer-aspire1-ec.c
-> > +++ b/drivers/platform/arm64/acer-aspire1-ec.c
-> > @@ -452,9 +452,9 @@ static int aspire_ec_probe(struct i2c_client *clien=
-t)
-> >  	int ret;
-> >  	u8 tmp;
-> > =20
-> > -	ec =3D devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
-> > -	if (!ec)
-> > -		return -ENOMEM;
-> > +	ec =3D devm_drm_bridge_alloc(dev, struct aspire_ec, bridge, &aspire_e=
-c_bridge_funcs);
-> > +	if (IS_ERR(ec))
-> > +		return PTR_ERR(ec);
-> > =20
-> >  	ec->client =3D client;
-> >  	i2c_set_clientdata(client, ec);
-> > @@ -497,7 +497,6 @@ static int aspire_ec_probe(struct i2c_client *clien=
-t)
-> >  	fwnode =3D device_get_named_child_node(dev, "connector");
-> >  	if (fwnode) {
-> >  		INIT_WORK(&ec->work, aspire_ec_bridge_update_hpd_work);
-> > -		ec->bridge.funcs =3D &aspire_ec_bridge_funcs;
-> >  		ec->bridge.of_node =3D to_of_node(fwnode);
-> >  		ec->bridge.ops =3D DRM_BRIDGE_OP_HPD;
-> >  		ec->bridge.type =3D DRM_MODE_CONNECTOR_USB; =20
->=20
-> Hi Luca,
->=20
-> It took a while to locate where the code for the new helper is. I suggest=
-=20
-> if you need send another version of the series directly linking to the=20
-> commit in the cover letter so that it won't take multiple hoops to find i=
-t=20
-> if one wants to review the code and is not having all drm trees easily at=
-=20
-> hand. Here it is for the benefit of other pdx86 people:
->=20
-> https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/0cc6aadd7fc1e629b=
-715ea3d1ba537ef2da95eec
+On 2025-04-07 1:00 a.m., Ian Rogers wrote:
+> evsel names and metric-ids are used for matching but this can be
+> problematic, for example, multiple occurrences of the same retirement
+> latency event become a single event for the record. Change the name of
+> the record events so they are unique and reflect the evsel of the
+> retirement latency event that opens them (the retirement latency
+> event's evsel address is embedded within them). This allows an evsel
+> based close to close the event when the retirement latency event is
+> closed. This is important as perf stat has an evlist and the session
+> listen to the record events has an evlist, knowing which event should
+> remove the tpebs_retire_lat can't be tied to an evlist list as there
+> is more than 1, so closing which evlist should cause the tpebs to
+> stop? Using the evsel and the last one out doing the tpebs_stop is
+> cleaner.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/builtin-stat.c     |   2 -
+>  tools/perf/util/evlist.c      |   1 -
+>  tools/perf/util/evsel.c       |   2 +-
+>  tools/perf/util/intel-tpebs.c | 152 ++++++++++++++++++++--------------
+>  tools/perf/util/intel-tpebs.h |   2 +-
+>  5 files changed, 94 insertions(+), 65 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index 68ea7589c143..80e491bd775b 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -681,8 +681,6 @@ static enum counter_recovery stat_handle_error(struct evsel *counter)
+>  	if (child_pid != -1)
+>  		kill(child_pid, SIGTERM);
+>  
+> -	tpebs_delete();
+> -
+>  	return COUNTER_FATAL;
+>  }
+>  
+> diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+> index c1a04141aed0..0a21da4f990f 100644
+> --- a/tools/perf/util/evlist.c
+> +++ b/tools/perf/util/evlist.c
+> @@ -183,7 +183,6 @@ void evlist__delete(struct evlist *evlist)
+>  	if (evlist == NULL)
+>  		return;
+>  
+> -	tpebs_delete();
+>  	evlist__free_stats(evlist);
+>  	evlist__munmap(evlist);
+>  	evlist__close(evlist);
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index 121283f2f382..554252ed1aab 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -2759,7 +2759,7 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
+>  void evsel__close(struct evsel *evsel)
+>  {
+>  	if (evsel__is_retire_lat(evsel))
+> -		tpebs_delete();
+> +		evsel__tpebs_close(evsel);
+>  	perf_evsel__close(&evsel->core);
+>  	perf_evsel__free_id(&evsel->core);
+>  }
+> diff --git a/tools/perf/util/intel-tpebs.c b/tools/perf/util/intel-tpebs.c
+> index e42f3ec39a64..e3227646a9cc 100644
+> --- a/tools/perf/util/intel-tpebs.c
+> +++ b/tools/perf/util/intel-tpebs.c
+> @@ -35,10 +35,10 @@ static struct child_process tpebs_cmd;
+>  
+>  struct tpebs_retire_lat {
+>  	struct list_head nd;
+> -	/* Event name */
+> -	char *name;
+> -	/* Event name with the TPEBS modifier R */
+> -	const char *tpebs_name;
+> +	/** @evsel: The evsel that opened the retire_lat event. */
+> +	struct evsel *evsel;
+> +	/** @event: Event passed to perf record. */
+> +	char *event;
+>  	/* Count of retire_latency values found in sample data */
+>  	size_t count;
+>  	/* Sum of all the retire_latency values in sample data */
+> @@ -49,6 +49,8 @@ struct tpebs_retire_lat {
+>  	bool started;
+>  };
+>  
+> +static struct tpebs_retire_lat *tpebs_retire_lat__find(struct evsel *evsel);
+> +
+>  static int evsel__tpebs_start_perf_record(struct evsel *evsel, int control_fd[], int ack_fd[])
+>  {
+>  	const char **record_argv;
+> @@ -85,7 +87,7 @@ static int evsel__tpebs_start_perf_record(struct evsel *evsel, int control_fd[],
+>  
+>  	list_for_each_entry(t, &tpebs_results, nd) {
+>  		record_argv[i++] = "-e";
+> -		record_argv[i++] = t->name;
+> +		record_argv[i++] = t->event;
+>  	}
+>  	record_argv[i++] = NULL;
+>  	assert(i == 10 + 2 * tpebs_event_size || i == 8 + 2 * tpebs_event_size);
+> @@ -108,27 +110,20 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
+>  				struct evsel *evsel,
+>  				struct machine *machine __maybe_unused)
+>  {
+> -	int ret = 0;
+> -	const char *evname;
+>  	struct tpebs_retire_lat *t;
+>  
+> -	evname = evsel__name(evsel);
+> -
+> +	t = tpebs_retire_lat__find(evsel);
+> +	if (!t)
+> +		return -EINVAL;
+>  	/*
+>  	 * Need to handle per core results? We are assuming average retire
+>  	 * latency value will be used. Save the number of samples and the sum of
+>  	 * retire latency value for each event.
+>  	 */
+> -	list_for_each_entry(t, &tpebs_results, nd) {
+> -		if (!strcmp(evname, t->name)) {
+> -			t->count += 1;
+> -			t->sum += sample->retire_lat;
+> -			t->val = (double) t->sum / t->count;
+> -			break;
+> -		}
+> -	}
+> -
+> -	return ret;
+> +	t->count += 1;
+> +	t->sum += sample->retire_lat;
+> +	t->val = (double) t->sum / t->count;
+> +	return 0;
+>  }
+>  
+>  static int process_feature_event(struct perf_session *session,
+> @@ -183,50 +178,98 @@ static int tpebs_stop(void)
+>  	return ret;
+>  }
+>  
+> -static char *evsel__tpebs_name(struct evsel *evsel)
+> +/**
+> + * evsel__tpebs_event() - Create string event encoding to pass to `perf record`.
+> + */
+> +static int evsel__tpebs_event(struct evsel *evsel, char **event)
+>  {
+>  	char *name, *modifier;
+> +	int ret;
+>  
+>  	name = strdup(evsel->name);
+> -	if (!name)
+> -		return NULL;
+> +	if (!*name)
+> +		return -ENOMEM;
 
-Apologies, indeed you have a good point. I added the link to the cover
-letter so it will be in v2, if any.
+if (!name)?
 
-> Acked-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+Thanks,
+Kan
 
-Thanks!
+>  
+>  	modifier = strrchr(name, 'R');
+>  	if (!modifier) {
+> -		pr_err("Tpebs event missing modifier '%s'\n", name);
+> -		free(name);
+> -		return NULL;
+> +		ret = -EINVAL;
+> +		goto out;
+>  	}
+> -
+>  	*modifier = 'p';
+> -	return name;
+> +	modifier = strchr(name, ':');
+> +	if (!modifier)
+> +		modifier = strrchr(name, '/');
+> +	if (!modifier) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +	*modifier = '\0';
+> +	if (asprintf(event, "%s/name=tpebs_event_%p/%s", name, evsel, modifier + 1) > 0)
+> +		ret = 0;
+> +	else
+> +		ret = -ENOMEM;
+> +out:
+> +	if (ret)
+> +		pr_err("Tpebs event modifier broken '%s'\n", evsel->name);
+> +	free(name);
+> +	return ret;
+>  }
+>  
+>  static struct tpebs_retire_lat *tpebs_retire_lat__new(struct evsel *evsel)
+>  {
+>  	struct tpebs_retire_lat *result = zalloc(sizeof(*result));
+> +	int ret;
+>  
+>  	if (!result)
+>  		return NULL;
+>  
+> -	result->tpebs_name = evsel->name;
+> -	result->name = evsel__tpebs_name(evsel);
+> -	if (!result->name) {
+> +	ret = evsel__tpebs_event(evsel, &result->event);
+> +	if (ret) {
+>  		free(result);
+>  		return NULL;
+>  	}
+> +	result->evsel = evsel;
+>  	list_add_tail(&result->nd, &tpebs_results);
+>  	return result;
+>  }
+>  
+> +static void tpebs_retire_lat__delete(struct tpebs_retire_lat *r)
+> +{
+> +	zfree(&r->event);
+> +	free(r);
+> +}
+> +
+>  static struct tpebs_retire_lat *tpebs_retire_lat__find(struct evsel *evsel)
+>  {
+>  	struct tpebs_retire_lat *t;
+> +	uint64_t num;
+> +	const char *evsel_name;
+>  
+> +	/*
+> +	 * Evsels will match for evlist with the retirement latency event. The
+> +	 * name with "tpebs_event_" prefix will be present on events being read
+> +	 * from `perf record`.
+> +	 */
+> +	if (evsel__is_retire_lat(evsel)) {
+> +		list_for_each_entry(t, &tpebs_results, nd) {
+> +			if (t->evsel == evsel)
+> +				return t;
+> +		}
+> +		return NULL;
+> +	}
+> +	evsel_name = strstr(evsel->name, "tpebs_event_");
+> +	if (!evsel_name) {
+> +		/* Unexpected that the perf record should have other events. */
+> +		return NULL;
+> +	}
+> +	errno = 0;
+> +	num = strtoull(evsel_name + 12, NULL, 16);
+> +	if (errno) {
+> +		pr_err("Bad evsel for tpebs find '%s'\n", evsel->name);
+> +		return NULL;
+> +	}
+>  	list_for_each_entry(t, &tpebs_results, nd) {
+> -		if (t->tpebs_name == evsel->name ||
+> -		    !strcmp(t->tpebs_name, evsel->name) ||
+> -		    (evsel->metric_id && !strcmp(t->tpebs_name, evsel->metric_id)))
+> +		if ((uint64_t)t->evsel == num)
+>  			return t;
+>  	}
+>  	return NULL;
+> @@ -363,8 +406,12 @@ int evsel__tpebs_open(struct evsel *evsel)
+>  		close(ack_fd[0]);
+>  		close(ack_fd[1]);
+>  	}
+> -	if (ret)
+> -		tpebs_delete();
+> +	if (ret) {
+> +		struct tpebs_retire_lat *t = tpebs_retire_lat__find(evsel);
+> +
+> +		list_del_init(&t->nd);
+> +		tpebs_retire_lat__delete(t);
+> +	}
+>  	return ret;
+>  }
+>  
+> @@ -414,34 +461,19 @@ int tpebs_set_evsel(struct evsel *evsel, int cpu_map_idx, int thread)
+>  	return 0;
+>  }
+>  
+> -static void tpebs_retire_lat__delete(struct tpebs_retire_lat *r)
+> -{
+> -	zfree(&r->name);
+> -	free(r);
+> -}
+> -
+> -
+> -/*
+> - * tpebs_delete - delete tpebs related data and stop the created thread and
+> - * process by calling tpebs_stop().
+> - *
+> - * This function is called from evlist_delete() and also from builtin-stat
+> - * stat_handle_error(). If tpebs_start() is called from places other then perf
+> - * stat, need to ensure tpebs_delete() is also called to safely free mem and
+> - * close the data read thread and the forked perf record process.
+> +/**
+> + * evsel__tpebs_close() - delete tpebs related data. If the last event, stop the
+> + * created thread and process by calling tpebs_stop().
+>   *
+> - * This function is also called in evsel__close() to be symmetric with
+> - * tpebs_start() being called in evsel__open(). We will update this call site
+> - * when move tpebs_start() to evlist level.
+> + * This function is called in evsel__close() to be symmetric with
+> + * evsel__tpebs_open() being called in evsel__open().
+>   */
+> -void tpebs_delete(void)
+> +void evsel__tpebs_close(struct evsel *evsel)
+>  {
+> -	struct tpebs_retire_lat *r, *rtmp;
+> +	struct tpebs_retire_lat *t = tpebs_retire_lat__find(evsel);
+>  
+> -	tpebs_stop();
+> +	tpebs_retire_lat__delete(t);
+>  
+> -	list_for_each_entry_safe(r, rtmp, &tpebs_results, nd) {
+> -		list_del_init(&r->nd);
+> -		tpebs_retire_lat__delete(r);
+> -	}
+> +	if (list_empty(&tpebs_results))
+> +		tpebs_stop();
+>  }
+> diff --git a/tools/perf/util/intel-tpebs.h b/tools/perf/util/intel-tpebs.h
+> index cc98203719c8..5c671181ec60 100644
+> --- a/tools/perf/util/intel-tpebs.h
+> +++ b/tools/perf/util/intel-tpebs.h
+> @@ -11,7 +11,7 @@ struct evsel;
+>  extern bool tpebs_recording;
+>  
+>  int evsel__tpebs_open(struct evsel *evsel);
+> -void tpebs_delete(void);
+> +void evsel__tpebs_close(struct evsel *evsel);
+>  int tpebs_set_evsel(struct evsel *evsel, int cpu_map_idx, int thread);
+>  
+>  #endif /* __INTEL_TPEBS_H */
 
-> I assume you want this to go through the drm tree where the helper alread=
-y=20
-> is?
-
-MY best guess is that drm-misc-next is the appropriate branch, and it
-is where the helper is already present, but I'll let maintainers decide
-what is most appropriate.
-
-Luca
-
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
