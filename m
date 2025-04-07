@@ -1,203 +1,190 @@
-Return-Path: <linux-kernel+bounces-591047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 000DFA7DA43
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:52:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E45DAA7DA53
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:55:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 307C7163F44
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:50:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 668BF3AFA8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB4422FF2D;
-	Mon,  7 Apr 2025 09:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B27232378;
+	Mon,  7 Apr 2025 09:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Al0JkPmX"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331B123AD
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 09:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="beIMauX9"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30810230BCD;
+	Mon,  7 Apr 2025 09:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744019452; cv=none; b=YMDnAYebk/wpk9fSPshI3YmJqwqXo7jeVUUpltIgTTZivfh6j9PuXs7RoAuSy2LlJl3kgS1sZmnbB7+kqDv3c3uxK2XxAVbON36yHY+l4/dNnkH1lRrP7n2LBaahaxJv8bI51ST3pIm/730QBpFkKDNmIoPBTV0QmmgMBPEWfDc=
+	t=1744019645; cv=none; b=gZRAr/X/4UMfywZJdb54dmpw/h33pupbBCGqI4xrElmUm6IWU0zqKJMHDB2okSxskZUAIdOF+hpV4uKZwfgGZ4DtlN9azaUHK4C0hp1X3m9Zyaib27GigYWDqmuN3BPlUM4j7t1ZFc+HB7hOFRCG4Lx0rcF8od449YL76HaGgtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744019452; c=relaxed/simple;
-	bh=918JyGq2JULBb2VBV8xSHWvUe12OuXjvjyi1QXWH9+o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ua7KNMJzX/y1BCTQZoMzO4o+fy3tXG9TYoO0FC5KRP/J/6y+mZamasAM8pTE3vAB7eHcgNiUxXYsYCGMfGkjfjHhHdrgGsdXlmVdFuaQ4AFxQVWlIBar5FiY5aU+A2a4ew5P8bkcbe1TBFUjCqxhueuG+BVu5OKoWXUqfmGgreY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Al0JkPmX; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D07D6432F4;
-	Mon,  7 Apr 2025 09:50:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744019447;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=un1sepzSSrQyyA7E1EuGMdvogzWZ9PqXPPCQRmW27Io=;
-	b=Al0JkPmXCMyWKJwSKMD/zgMi561P28OTCGtw1w/ulS8iOmM1CI/GUhAcysU+67PDUIL+Vd
-	uwo3RZ01D/S8pUF1px+RS6314PIns7DAUyk0suG62RlPxpE6Xf2SNLAOC/jYGiAHxIsgVX
-	jbGTH5pQtzbTzn8eoqT2GDntvXwjEejIuSGRVGlshP5o3eT4yeAzEn1/FCSg3JzLns5WXf
-	qqgXXqls8zI8Zadt1RADniTCbnCU7G5ARScilubNhH//63BovGULrHoKFAqCuax09s3KsX
-	UKO4WijJBM6WKXBOsct0awVkg62RcMVCinNok49h2EsKRDt1e/TmAxU3H5+FGQ==
-Message-ID: <f902bafa-6102-4a8c-a74f-48e3975e8ffd@bootlin.com>
-Date: Mon, 7 Apr 2025 11:50:43 +0200
+	s=arc-20240116; t=1744019645; c=relaxed/simple;
+	bh=AMs5E/7vQcoP8JN9w616wirweniY6V8tlDMDX8ZpMuI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DXfwnBzmKqprSzYQXqsVfFotHgELDMdgk7h6EAD72lQYCGFa4qPZqgUkDhrBmrU/uXcVdLROGjdYCfRkBXBRr5O+KMEphJGGTaNU+LS43QrLRCltHxD+J1OjAGTLCZxNl8J6iKqGrL19B8lFJQ+Zf68y+uuXyuiobVYnnMt6YxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=beIMauX9; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=u3iQT
+	sgB3fD+GDZqARLvaV5AEywdpsJ78jzKEjbTXJk=; b=beIMauX98rUS6wmxCp8VD
+	LDc5admd8h6chAxW6WyYyfGEEyIMK8wHPvmrPjnN0ywF1Q02fr1ht6c1y2RHdTrm
+	bscSqEdCHCzbEYrPYGHFV3FVOvYOoIageM/qOaXk0SZz4nwBVCnL6B5njz4iKYMQ
+	G3j6i1vR/1SFQ2q+8lF8lU=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDnJwOToPNnTOavEg--.16370S4;
+	Mon, 07 Apr 2025 17:53:25 +0800 (CST)
+From: lvxiafei <xiafei_xupt@163.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>
+Cc: lvxiafei <lvxiafei@sensetime.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org
+Subject: [PATCH] netfilter: netns nf_conntrack: per-netns net.netfilter.nf_conntrack_max sysctl
+Date: Mon,  7 Apr 2025 17:50:51 +0800
+Message-Id: <20250407095052.49526-1-xiafei_xupt@163.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 0/5] drm/bridge: add devm_drm_bridge_alloc() with
- bridge refcount
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Inki Dae <inki.dae@samsung.com>,
- Jagan Teki <jagan@amarulasolutions.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Anusha Srivatsa <asrivats@redhat.com>, Paul Kocialkowski
- <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>,
- =?UTF-8?Q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>,
- Hui Pu <Hui.Pu@gehealthcare.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20250326-drm-bridge-refcount-v9-0-5e0661fe1f84@bootlin.com>
-Content-Language: en-US
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <20250326-drm-bridge-refcount-v9-0-5e0661fe1f84@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduleelkeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeejgeejgedutdekhfffgfegudeutdetgfeuveegteeftddtfeevueffgfevgfevkeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrvddvkegnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfedupdhrtghpthhtoheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkv
- ghrnhgvlhdrohhrghdprhgtphhtthhopefnrghurhgvnhhtrdhpihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepjhhonhgrsheskhifihgsohhordhsvgdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhm
-X-GND-Sasl: louis.chauvet@bootlin.com
+X-CM-TRANSID:_____wDnJwOToPNnTOavEg--.16370S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZFWDtr1rZw1kGrWrCFWUCFg_yoWruF1DpF
+	n5t3y7tw47Jr4Yya18u3ykZF43Kws3C34a9rn8Ja4FywsxKry5Ga1rGFyxtF98tr40yFy3
+	ZF4jqr17Aa1ktFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UZ0edUUUUU=
+X-CM-SenderInfo: x0ldwvplb031rw6rljoofrz/xtbBMRIoU2fzmdGv8QAAsa
 
+From: lvxiafei <lvxiafei@sensetime.com>
 
+The modification of nf_conntrack_max in one netns
+should not affect the value in another one.
 
-Le 26/03/2025 à 18:47, Luca Ceresoli a écrit :
-> This series improves the way DRM bridges are allocated and initialized and
-> makes them reference-counted. The goal of reference counting is to avoid
-> use-after-free by drivers which got a pointer to a bridge and keep it
-> stored and used even after the bridge has been deallocated.
-> 
-> The overall goal is supporting Linux devices with a DRM pipeline whose
-> final components can be hot-plugged and hot-unplugged, including one or
-> more bridges. For more details see the big picture [0].
-> 
-> DRM bridge drivers will have to be adapted to the new API -- the change is
-> trivial for most cases. This series converts two of them to serve as an
-> example. The remaining ones will be done as a follow-up after this first
-> part is merged.
-> 
-> After that, refcounting will have to be added on the two sides: all
-> functions returning a bridge pointer and all code obtaining such a
-> pointer. A few examples have been sent in v7 (link below), they are OK, but
-> I removed them since v8 because they must be merged only after converting
-> all bridges.
-> 
-> Here's the grand plan:
-> 
->   A. add new alloc API and refcounting (this series, at least patches 1-3)
->   B. after (A), convert all bridge drivers to new API
->   C. after (A), add documentation and kunit tests
->   D. after (B), add get/put to drm_bridge_add/remove() + attach/detech()
->      (patches 3-4 in the v7 series)
->   E. after (B), convert accessors (including patches 5-9 in the v7 series
->      which convert drm_bridge_chain_get_first_bridge() and its users);
->      this is a large work and can be done in chunks
->   F. after (A), debugfs: show refcount, show removed bridges
->   
-> Layout of this:
-> 
->   1. Add the new API and refcounting:
-> 
->      drm/bridge: add devm_drm_bridge_alloc()
->      drm/bridge: add support for refcounting
->      drm/bridge: deprecate old-style bridge allocation
-> 
->   2. convert a few bridge drivers (bridge providers) to the new API:
-> 
->      drm/bridge: ti-sn65dsi83: use dynamic lifetime management
->      drm/bridge: samsung-dsim: use dynamic lifetime management
-> 
-> [0] https://lore.kernel.org/dri-devel/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/
-> 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Applied on drm-misc-next, thanks!
+Signed-off-by: lvxiafei <lvxiafei@sensetime.com>
+---
+ include/net/netns/conntrack.h           |  1 +
+ net/netfilter/nf_conntrack_core.c       | 12 +++++++-----
+ net/netfilter/nf_conntrack_standalone.c |  6 ++++--
+ 3 files changed, 12 insertions(+), 7 deletions(-)
 
+diff --git a/include/net/netns/conntrack.h b/include/net/netns/conntrack.h
+index bae914815aa3..dd31ba205419 100644
+--- a/include/net/netns/conntrack.h
++++ b/include/net/netns/conntrack.h
+@@ -102,6 +102,7 @@ struct netns_ct {
+ 	u8			sysctl_acct;
+ 	u8			sysctl_tstamp;
+ 	u8			sysctl_checksum;
++	u8			sysctl_max;
+ 
+ 	struct ip_conntrack_stat __percpu *stat;
+ 	struct nf_ct_event_notifier __rcu *nf_conntrack_event_cb;
+diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
+index 7f8b245e287a..5f0dbd358d66 100644
+--- a/net/netfilter/nf_conntrack_core.c
++++ b/net/netfilter/nf_conntrack_core.c
+@@ -1498,7 +1498,7 @@ static bool gc_worker_can_early_drop(const struct nf_conn *ct)
+ 
+ static void gc_worker(struct work_struct *work)
+ {
+-	unsigned int i, hashsz, nf_conntrack_max95 = 0;
++	unsigned int i, hashsz;
+ 	u32 end_time, start_time = nfct_time_stamp;
+ 	struct conntrack_gc_work *gc_work;
+ 	unsigned int expired_count = 0;
+@@ -1509,8 +1509,6 @@ static void gc_worker(struct work_struct *work)
+ 	gc_work = container_of(work, struct conntrack_gc_work, dwork.work);
+ 
+ 	i = gc_work->next_bucket;
+-	if (gc_work->early_drop)
+-		nf_conntrack_max95 = nf_conntrack_max / 100u * 95u;
+ 
+ 	if (i == 0) {
+ 		gc_work->avg_timeout = GC_SCAN_INTERVAL_INIT;
+@@ -1538,6 +1536,7 @@ static void gc_worker(struct work_struct *work)
+ 		}
+ 
+ 		hlist_nulls_for_each_entry_rcu(h, n, &ct_hash[i], hnnode) {
++			unsigned int nf_conntrack_max95 = 0;
+ 			struct nf_conntrack_net *cnet;
+ 			struct net *net;
+ 			long expires;
+@@ -1567,11 +1566,14 @@ static void gc_worker(struct work_struct *work)
+ 			expires = clamp(nf_ct_expires(tmp), GC_SCAN_INTERVAL_MIN, GC_SCAN_INTERVAL_CLAMP);
+ 			expires = (expires - (long)next_run) / ++count;
+ 			next_run += expires;
++			net = nf_ct_net(tmp);
++
++			if (gc_work->early_drop)
++				nf_conntrack_max95 = net->ct.sysctl_max / 100u * 95u;
+ 
+ 			if (nf_conntrack_max95 == 0 || gc_worker_skip_ct(tmp))
+ 				continue;
+ 
+-			net = nf_ct_net(tmp);
+ 			cnet = nf_ct_pernet(net);
+ 			if (atomic_read(&cnet->count) < nf_conntrack_max95)
+ 				continue;
+@@ -1654,7 +1656,7 @@ __nf_conntrack_alloc(struct net *net,
+ 	/* We don't want any race condition at early drop stage */
+ 	ct_count = atomic_inc_return(&cnet->count);
+ 
+-	if (nf_conntrack_max && unlikely(ct_count > nf_conntrack_max)) {
++	if (net->ct.sysctl_max && unlikely(ct_count > net->ct.sysctl_max)) {
+ 		if (!early_drop(net, hash)) {
+ 			if (!conntrack_gc_work.early_drop)
+ 				conntrack_gc_work.early_drop = true;
+diff --git a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
+index 2f666751c7e7..5ac1893e9045 100644
+--- a/net/netfilter/nf_conntrack_standalone.c
++++ b/net/netfilter/nf_conntrack_standalone.c
+@@ -615,7 +615,7 @@ enum nf_ct_sysctl_index {
+ static struct ctl_table nf_ct_sysctl_table[] = {
+ 	[NF_SYSCTL_CT_MAX] = {
+ 		.procname	= "nf_conntrack_max",
+-		.data		= &nf_conntrack_max,
++		.data		= &init_net.ct.sysctl_max,
+ 		.maxlen		= sizeof(int),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_minmax,
+@@ -948,7 +948,7 @@ static struct ctl_table nf_ct_sysctl_table[] = {
+ static struct ctl_table nf_ct_netfilter_table[] = {
+ 	{
+ 		.procname	= "nf_conntrack_max",
+-		.data		= &nf_conntrack_max,
++		.data		= &init_net.ct.sysctl_max,
+ 		.maxlen		= sizeof(int),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec_minmax,
+@@ -1063,6 +1063,7 @@ static int nf_conntrack_standalone_init_sysctl(struct net *net)
+ 
+ 	table[NF_SYSCTL_CT_COUNT].data = &cnet->count;
+ 	table[NF_SYSCTL_CT_CHECKSUM].data = &net->ct.sysctl_checksum;
++	table[NF_SYSCTL_CT_MAX].data = &net->ct.sysctl_max;
+ 	table[NF_SYSCTL_CT_LOG_INVALID].data = &net->ct.sysctl_log_invalid;
+ 	table[NF_SYSCTL_CT_ACCT].data = &net->ct.sysctl_acct;
+ #ifdef CONFIG_NF_CONNTRACK_EVENTS
+@@ -1139,6 +1140,7 @@ static int nf_conntrack_pernet_init(struct net *net)
+ 	int ret;
+ 
+ 	net->ct.sysctl_checksum = 1;
++	net->ct.sysctl_max = nf_conntrack_max;
+ 
+ 	ret = nf_conntrack_standalone_init_sysctl(net);
+ 	if (ret < 0)
 -- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.40.1
 
 
