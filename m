@@ -1,132 +1,166 @@
-Return-Path: <linux-kernel+bounces-591399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8152BA7DF3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:30:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 841C5A7DF26
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0489D1885F8A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:30:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2C221889DA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044E8253F20;
-	Mon,  7 Apr 2025 13:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260D3253F02;
+	Mon,  7 Apr 2025 13:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="WDb2CwGD"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QFOsvz1D"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CD1253B70;
-	Mon,  7 Apr 2025 13:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4ED22A7E8
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 13:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744032587; cv=none; b=tmwq4MeBabexL3U5u5pyo5hcwXpkPR8RUD0CC4XiU7qhYV0JImTUyCPRzo/pASX0OagXTXtd8aS/CTiouU3KpQCjB4GOxkhoyYVSGwHM3HZkNmeVouXv2I+9gHxUCv8+FaBB+MSu4SL0pB5PsUWmxk85LvHMaWP+on8LAXFLXw8=
+	t=1744032504; cv=none; b=L5ZmY2WCMYmGjflhT4q7ZicUCi8F7u9g5pR+727phFGtBEISL1XUDuOheQSxQBjGCZIt33KRb8LePg32YJdh4hSOLGxskIyutedkm1P9aq2WkkaxOctuBRL5i1q4yrhXZYuUxBC0W7w1is5KCBaE7KycFhIa9U1MeZyb1w/MaIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744032587; c=relaxed/simple;
-	bh=pNCuaRq20ihRDPIs6gWBbwsMGTzuOJxHjP1yYRN8ZiQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=RHaXZ3px5L6QtqGkFY09+iHLZoaKjSyIe66Am2gA3H3D/QNe6Lc7y36WKoHIj8MCB1E+BfoAt08vV8Y/FeXR0DoIulO0qPi4IVl210/dZzWKiTL51OrUFTB33wPepfmw8TcSBRMAyJtMGAEZpEJfZxVLn+wshZq5/sSsVZUuLPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=WDb2CwGD; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 537CPsvl008739;
-	Mon, 7 Apr 2025 15:29:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	WwkG1pZIiujSvSdNAeNRVIU4m+oKTZ5N+BMPOnssFpU=; b=WDb2CwGDoGtAzSr2
-	Pl0f0frt8o3g+L9Pxy3wWWPy+rR728r403TKUNm8eu8h8BdzDzlmsMqYhucSP6oa
-	l5+ArHeR0FPGhYDd67F7BalVgzW9aPcZC2N1xF/M/yXcIWd2WeP/ow7J/o70NArB
-	YNofjsYdv0oReFDT307Bex0vqe0m3DRAid0ufl4aguSk0dAdmjsEoR+DZpnpwrBn
-	hUEc5M7Csxe1EiYTffp6qQyyMUDTRTOS/Jmp6qH0WSNH2OKIP4WI5hbxpkTSHr1W
-	ZB9SAdjpIa9h61ssUcJRIVk9lpwwRz5I3g+EGscceByzztWZrN5zef3sp1/99ho9
-	jzWc9w==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45tw2gqwyn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Apr 2025 15:29:28 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D521E40059;
-	Mon,  7 Apr 2025 15:28:35 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8D11B9400D0;
-	Mon,  7 Apr 2025 15:27:46 +0200 (CEST)
-Received: from localhost (10.48.87.62) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 7 Apr
- 2025 15:27:46 +0200
-From: Patrice Chotard <patrice.chotard@foss.st.com>
-Date: Mon, 7 Apr 2025 15:27:38 +0200
-Subject: [PATCH v8 7/7] arm64: defconfig: Enable STM32 Octo Memory Manager
- and OcstoSPI driver
+	s=arc-20240116; t=1744032504; c=relaxed/simple;
+	bh=WBhV0P50uEemvYkCTcchjpLIuIOu7LWYOWRI3TWiHow=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=V1Ehzx90e4IUdOnWGPMc5kPh6GgJoB6R4uP9hMpwNQrXuUJaLjMD7d1zIdPPSGEV15CCsv1yyspmy/J1r/MK06NIHamOaDQrKNhUT6dBRYvlm9uapzWGo4QnvT5zCERvmfYgIrT9kl57iDLw5ng2nqJi2iBK4G62KiyxceOmYIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QFOsvz1D; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744032501;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jFoPwO5vUc8+rAcXR9YnRFfcZSPIuCpPg3z/cEeH+VA=;
+	b=QFOsvz1DtQk6dSj7I3TFcBtaH/jyegfUzcty4wZsBXOPFrmuOVAGL0GPcaO3LOM8dWqdhl
+	1kL3Z8R7cW2mhip5V0jFy3S3WYEz23WWXdjD/gNUqaxgh674JBSj3oKOAFXO2SqlD7K8YE
+	Zu/OubdKPc/EmpI9jizW8K3TP+7gLf4=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-686-9rJso_2iP4mEcPXsMMgHMg-1; Mon,
+ 07 Apr 2025 09:28:19 -0400
+X-MC-Unique: 9rJso_2iP4mEcPXsMMgHMg-1
+X-Mimecast-MFC-AGG-ID: 9rJso_2iP4mEcPXsMMgHMg_1744032497
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EBAE0195608A;
+	Mon,  7 Apr 2025 13:28:16 +0000 (UTC)
+Received: from localhost (dhcp-192-216.str.redhat.com [10.33.192.216])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C48FF1809B6A;
+	Mon,  7 Apr 2025 13:28:15 +0000 (UTC)
+From: Cornelia Huck <cohuck@redhat.com>
+To: David Hildenbrand <david@redhat.com>, Halil Pasic <pasic@linux.ibm.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+ virtualization@lists.linux.dev, kvm@vger.kernel.org, Chandra Merla
+ <cmerla@redhat.com>, Stable@vger.kernel.org, Thomas Huth
+ <thuth@redhat.com>, Eric Farman <farman@linux.ibm.com>, Heiko Carstens
+ <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Wei Wang
+ <wei.w.wang@intel.com>
+Subject: Re: [PATCH v1] s390/virtio_ccw: don't allocate/assign airqs for
+ non-existing queues
+In-Reply-To: <9126bfbf-9461-4959-bd38-1d7bc36d7701@redhat.com>
+Organization: "Red Hat GmbH, Sitz: Werner-von-Siemens-Ring 12, D-85630
+ Grasbrunn, Handelsregister: Amtsgericht =?utf-8?Q?M=C3=BCnchen=2C?= HRB
+ 153243,
+ =?utf-8?Q?Gesch=C3=A4ftsf=C3=BChrer=3A?= Ryan Barnhart, Charles Cachera,
+ Michael O'Neill, Amy
+ Ross"
+References: <20250404063619.0fa60a41.pasic@linux.ibm.com>
+ <4a33daa3-7415-411e-a491-07635e3cfdc4@redhat.com>
+ <d54fbf56-b462-4eea-a86e-3a0defb6298b@redhat.com>
+ <20250404153620.04d2df05.pasic@linux.ibm.com>
+ <d6f5f854-1294-4afa-b02a-657713435435@redhat.com>
+ <20250404160025.3ab56f60.pasic@linux.ibm.com>
+ <6f548b8b-8c6e-4221-a5d5-8e7a9013f9c3@redhat.com>
+ <20250404173910.6581706a.pasic@linux.ibm.com>
+ <20250407034901-mutt-send-email-mst@kernel.org>
+ <2b187710-329d-4d36-b2e7-158709ea60d6@redhat.com>
+ <20250407042058-mutt-send-email-mst@kernel.org>
+ <20250407151249.7fe1e418.pasic@linux.ibm.com>
+ <9126bfbf-9461-4959-bd38-1d7bc36d7701@redhat.com>
+User-Agent: Notmuch/0.38.3 (https://notmuchmail.org)
+Date: Mon, 07 Apr 2025 15:28:13 +0200
+Message-ID: <87h6309k42.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250407-upstream_ospi_v6-v8-7-7b7716c1c1f6@foss.st.com>
-References: <20250407-upstream_ospi_v6-v8-0-7b7716c1c1f6@foss.st.com>
-In-Reply-To: <20250407-upstream_ospi_v6-v8-0-7b7716c1c1f6@foss.st.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>
-CC: <christophe.kerello@foss.st.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Patrice Chotard
-	<patrice.chotard@foss.st.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-07_04,2025-04-03_03,2024-11-22_01
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Enable STM32 OctoSPI driver.
-Enable STM32 Octo Memory Manager (OMM) driver which is needed
-for OSPI usage on STM32MP257F-EV1 board.
+On Mon, Apr 07 2025, David Hildenbrand <david@redhat.com> wrote:
 
-Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+> On 07.04.25 15:12, Halil Pasic wrote:
+>> On Mon, 7 Apr 2025 04:34:29 -0400
+>> "Michael S. Tsirkin" <mst@redhat.com> wrote:
+>> 
+>>> On Mon, Apr 07, 2025 at 10:17:10AM +0200, David Hildenbrand wrote:
+>>>> On 07.04.25 09:52, Michael S. Tsirkin wrote:
+>>>>> On Fri, Apr 04, 2025 at 05:39:10PM +0200, Halil Pasic wrote:
+>>>>>>>
+>>>>>>> Not perfect, but AFAIKS, not horrible.
+>>>>>>
+>>>>>> It is like it is. QEMU does queue exist if the corresponding feature
+>>>>>> is offered by the device, and that is what we have to live with.
+>>>>>
+>>>>> I don't think we can live with this properly though.
+>>>>> It means a guest that does not know about some features
+>>>>> does not know where to find things.
+>>>>
+>>>> Please describe a real scenario, I'm missing the point.
+>>>
+>>>
+>>> OK so.
+>>>
+>>> Device has VIRTIO_BALLOON_F_FREE_PAGE_HINT and VIRTIO_BALLOON_F_REPORTING
+>>> Driver only knows about VIRTIO_BALLOON_F_REPORTING so
+>>> it does not know what does VIRTIO_BALLOON_F_FREE_PAGE_HINT do.
+>>> How does it know which vq to use for reporting?
+>>> It will try to use the free page hint one.
+>> 
+>> First, sorry for not catching up again with the discussion earlier.
+>> 
+>> I think David's point is based on the assumption that by the time feature
+>> with the feature bit N+1 is specified and allocates a queue Q, all
+>> queues with indexes smaller than Q are allocated and possibly associated
+>> with features that were previously specified (and probably have feature
+>> bits smaller than N+1).
+>> 
+>> I.e. that we can mandate, even if you don't want to care about other
+>> optional features, you have to, because we say so, for the matter of
+>> virtqueue existence. And anything in the future, you don't have to care
+>> about because the queue index associated with future features is larger
+>> than Q, so it does not affect our position.
+>> 
+>> I think that argument can fall a part if:
+>> * future features reference optional queues defined in the past
+>> * somebody managed to introduce a limbo where a feature is reserved, and
+>>    they can not decide if they want a queue or not, or make the existence
+>>    of the queue depend on something else than a feature bit.
+>
+> Staring at the cross-vmm, including the adding+removing of features and 
+> queues that are not in the spec, I am wondering if (in a world with 
+> fixed virtqueues)
+>
+> 1) Feature bits must be reserved before used.
+>
+> 2) Queue indices must be reserved before used.
+>
+> It all smells like a problem similar to device IDs ...
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index bde1287ad9a7a1341162b817873eb651bb310d52..3674d9138bae6deba19c0d13586aa6e1de6750c5 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -580,6 +580,7 @@ CONFIG_SPI_QUP=y
- CONFIG_SPI_QCOM_GENI=m
- CONFIG_SPI_S3C64XX=y
- CONFIG_SPI_SH_MSIOF=m
-+CONFIG_SPI_STM32_OSPI=m
- CONFIG_SPI_SUN6I=y
- CONFIG_SPI_TEGRA210_QUAD=m
- CONFIG_SPI_TEGRA114=m
-@@ -1518,6 +1519,7 @@ CONFIG_EXTCON_USB_GPIO=y
- CONFIG_EXTCON_USBC_CROS_EC=y
- CONFIG_FSL_IFC=y
- CONFIG_RENESAS_RPCIF=m
-+CONFIG_STM32_OMM=m
- CONFIG_IIO=y
- CONFIG_EXYNOS_ADC=y
- CONFIG_IMX8QXP_ADC=m
-
--- 
-2.25.1
+Indeed, we need a rule "reserve a feature bit/queue index before using
+it, even if you do not plan to spec it properly".
 
 
