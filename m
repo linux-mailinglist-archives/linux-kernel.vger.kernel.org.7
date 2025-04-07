@@ -1,177 +1,118 @@
-Return-Path: <linux-kernel+bounces-592160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 639E1A7E9CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:19:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 619CAA7E9B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 390D817DBC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:15:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3FC63A9ECD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C380255258;
-	Mon,  7 Apr 2025 18:11:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55E62222AA;
+	Mon,  7 Apr 2025 18:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFBBMlmd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g5Q+9D4r"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75314255245;
-	Mon,  7 Apr 2025 18:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D18221703
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 18:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744049488; cv=none; b=LYXw5uRyltlbin3yIcJ8uuEa0ZGMwKFWewZrMU/2SfqiVnQsdWluKW1bkojiwUuJbnBjTkpa3zJuL5aS28GEKzplq7CItl8Ls1FMSUlV7XO899jLiV3TO66dzZbT0+f7hBqW05eG7ZAPOIdPOSVkudTr2QsK433BlF/8XGyBZs8=
+	t=1744049433; cv=none; b=PnNkv7vZYmzn8hOf07sufeuFDv5u+P9B3jWPwalgdzb8X1u2mJ0cAoTjmNfMTghmBUC2qxOy/SqWdGYB/awPlYtus1/7apSagA+EVG5rmAqM81+S+Zu3nXewzv3IGL7NsHhx0ETtsPfIs5nNF95q+pxNVor9NxaeH6QsKDJSbx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744049488; c=relaxed/simple;
-	bh=5P89sXxtBIlT0wEuM1sFJ4xm2Bx1KLp8Xd6qLhzwK7c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Oxu9kZEH2HVarzficVr3zcgMWLdJk3vIDxLCKNgtydfcFv3RnYo6LUXcvh/H7u6OZZLk6xXcFA+0MBQTC4Pv+JtsljwoIiuEvNrl7wSmcKLRF5ABXut+bHi0NVggwqTKuG5lx8XBB5/HYJYBBERjDKhrIMur97+rf8mGvyk1ouQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZFBBMlmd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AF21C4CEE9;
-	Mon,  7 Apr 2025 18:11:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744049487;
-	bh=5P89sXxtBIlT0wEuM1sFJ4xm2Bx1KLp8Xd6qLhzwK7c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZFBBMlmdUjYgmPVbNhYtnBWWTIthTUo/fSew+YeR0t+3yLUByERfEy2Duyk45zXjM
-	 TQeP2H4dCH71btZUrVE/XRSi1nw02lruJqUXk1xal3IgJrQKiq5C4wtJO/hCjmozxF
-	 0YaBfoIJzzuPQXJ5h2EKqY5Pu28Qe60t05txEFSa9rs5+Ze3bmGDN9VsX6gnj+TWOj
-	 v96LlYwAt4IErtt1A7hcGwYYhCyYCxsVlIuBXeyKijujCeCla9aAmOtq/pmTXjIP/W
-	 Px6tjI5e6svi6oerQX7KsYHDyiHTCCkHipidb/aOByPVIhV5vqWbQ0oE4o31PRJSWq
-	 j72Ye0kb9cU0g==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: John Stultz <jstultz@google.com>,
-	Anton Yakovlev <anton.yakovlev@opensynergy.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	virtualization@lists.linux.dev,
-	linux-sound@vger.kernel.org,
-	kernel-team@android.com,
-	Betty Zhou <bettyzhou@google.com>,
-	Takashi Iwai <tiwai@suse.de>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 6.14 11/31] sound/virtio: Fix cancel_sync warnings on uninitialized work_structs
-Date: Mon,  7 Apr 2025 14:10:27 -0400
-Message-Id: <20250407181054.3177479-11-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250407181054.3177479-1-sashal@kernel.org>
-References: <20250407181054.3177479-1-sashal@kernel.org>
+	s=arc-20240116; t=1744049433; c=relaxed/simple;
+	bh=v9npP5qbKRifiCIf9b7irGIXhNLkL7PO9tLewH6PPVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oOeWLiQyHPIBtD6kDjUCSnyhp5ei3YAlSDWfLvyjFGWGpyiu8sshwtKmG3g16f3eW+58Lwc4ZTE2elr2JHIsI3SB602crHKH8FXaALhUYd2pqW/Bw6ZsWD7s9NSlPd8xaasBic/L5TzpKsCOhBL+NyIuTSYIf4A85T4tl7sfRPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g5Q+9D4r; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43690d4605dso31856525e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 11:10:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744049430; x=1744654230; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K2jy8IatPgSK7yiHP9LyAJS3rO34x8/Nplf/sO52+c8=;
+        b=g5Q+9D4rDRCwARJ/i/u/XG+JzBQnY32OlcNWplUnQAXiI833NrkrhuwTDOtmhpEO1B
+         VGxjq5z3zPqTZoSLoYQlvDOnTtLfgYNNHmLqtFzn+HjrkZmTEHtSUBgIgGXgUYpBmCwz
+         Mm3+lJUp5m7PUNDieFPL5DM0lk6ehur2r52dfJQj/UnPv+EjY6UFqlRlRYVdKHHg4Cyn
+         nX/6iRgGLyDb/81jCmUkduEKhHTEA/hM2zwA/5SNMGYHrgffu7VJTns28z0SSo+lFDIZ
+         hE3T+WZ+d6jRRPspQbkyQvsrtxJwnz0NGkv/pE2ZrGX/44yRFFWF3e6JPabuLvVE7iOL
+         Ssjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744049430; x=1744654230;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K2jy8IatPgSK7yiHP9LyAJS3rO34x8/Nplf/sO52+c8=;
+        b=Ubh8odFBw34DRjSibyLy/WK4nNjn2Ad4EoKGHtI9RWZpitmQrFbbIkqccm4eDkZZth
+         fS0QFtQRlQl2Dq1dEBB4hU2VRsUfhD18CE/29CGoZd7eqHuCIe4/00yTMRwznyOjwmsx
+         /PLaQ2obU57Shm4J/SbWVt8Fvu4pUpM59a+vv9RkwhH+/9dxxSfUVl8NwqMZExP9iU0G
+         OsfTVDaXpe07VdKzuCp9awd3cDcanHzfddxdAD6X9aZSvFZcp1GFVF3poNlJwYYs5vr4
+         Xue9yGW3zge/DDeNksepAy8Jwb1gxykLFKrdj23q69WsnsPAPWU3KfLhDCQfQ/zCyKj/
+         24Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+SB0euszbI1oED+2b1JJuFoH0uu3tr+bMDOVYkK8f83lnG+pJZtkSYm13kqzAqvCemgwuXt7bJZ7hZoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv4fTzFyCMfpYl1jDWrO+APH//fJGO24JGmVaAUzmXguBpM/Co
+	0bZCqeJT46T/OVjpevNSTaa5kWuna+901H9GD+ygw/jnv/dEeDCXdpnysw==
+X-Gm-Gg: ASbGnctImGVBqE/fsYzBw7I1U24u0ThKi65Mwiq+Z1QO+sRcN2wXnAxLv72MaIt1shq
+	gFdgl7g3anb4JT3/mjqtQEqKHersScOHCj2bbmzo8KwJIGrW7YUHkUa1Xq8svhwpZxKuKnTCZNc
+	BV5iWlJOeyBq+REDqYrLnNgkGPQbUJ/Gq3/kG28U/BnpJ6NSvew1B/jfF6RFzTGVQ/STBd47oCf
+	VCkyrv0lZTVbOvXinzW66EqYGxkBylTlT+g+Z/4Nr+9Tyb3l5n7NopAzPwFjpMbhvZow4qaY1RL
+	flpG2HAHJMiXNjEG3t6l5WELDVHZHYz58Vl+SD8AMzc447SXOLsPCw7jiq+8VTZRRGclarUBhpU
+	2b+rORT0=
+X-Google-Smtp-Source: AGHT+IHaegiIWGdjPbnxhlEDw1k6oGNTFiTAtEH0eFypa2jskzJXuIGn2vVlNXDffixeGV1f7yuI3w==
+X-Received: by 2002:a05:6000:4021:b0:391:2df9:772d with SMTP id ffacd0b85a97d-39cb3596914mr11334861f8f.13.1744049429775;
+        Mon, 07 Apr 2025 11:10:29 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c3020d5d1sm12959981f8f.77.2025.04.07.11.10.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 11:10:29 -0700 (PDT)
+Date: Mon, 7 Apr 2025 19:10:27 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Kevin Koster <lkml@ombertech.com>
+Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
+ Oerg866 <oerg866@googlemail.com>, linux-kernel@vger.kernel.org, Ingo Molnar
+ <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86/microcode: Fix crashes on early 486 CPUs due to
+ usage of 'cpuid'.
+Message-ID: <20250407191027.54494cec@pumpkin>
+In-Reply-To: <20250408002150.8955343f4e2f2ac31b4663e8@ombertech.com>
+References: <CANpbe9Wm3z8fy9HbgS8cuhoj0TREYEEkBipDuhgkWFvqX0UoVQ@mail.gmail.com>
+	<20250405130306.ca9822c1f27db119cc973603@ombertech.com>
+	<20250405093127.GAZ_D4b6NdyTS-UW1J@fat_crate.local>
+	<20250406164049.c0666bc18073e3b88c92d1f1@ombertech.com>
+	<20250406174633.2c581923c145687476191753@ombertech.com>
+	<20250406190253.GAZ_LP3RPZInWKcHN7@fat_crate.local>
+	<20250407095848.7933a358c9f450fe03fb8234@ombertech.com>
+	<20250407102927.GAZ_OpBw5hJ2QTFsKz@fat_crate.local>
+	<20250408002150.8955343f4e2f2ac31b4663e8@ombertech.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.14.1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: John Stultz <jstultz@google.com>
+On Tue, 8 Apr 2025 00:21:50 +1000
+Kevin Koster <lkml@ombertech.com> wrote:
 
-[ Upstream commit 3c7df2e27346eb40a0e86230db1ccab195c97cfe ]
-
-Betty reported hitting the following warning:
-
-[    8.709131][  T221] WARNING: CPU: 2 PID: 221 at kernel/workqueue.c:4182
 ...
-[    8.713282][  T221] Call trace:
-[    8.713365][  T221]  __flush_work+0x8d0/0x914
-[    8.713468][  T221]  __cancel_work_sync+0xac/0xfc
-[    8.713570][  T221]  cancel_work_sync+0x24/0x34
-[    8.713667][  T221]  virtsnd_remove+0xa8/0xf8 [virtio_snd ab15f34d0dd772f6d11327e08a81d46dc9c36276]
-[    8.713868][  T221]  virtsnd_probe+0x48c/0x664 [virtio_snd ab15f34d0dd772f6d11327e08a81d46dc9c36276]
-[    8.714035][  T221]  virtio_dev_probe+0x28c/0x390
-[    8.714139][  T221]  really_probe+0x1bc/0x4c8
-...
+> > > and I'm not much better, writing this now on a Pentium 1.  
+> > 
+> > Lemme guess: this is your main machine you use for daily work?  
+> 
+> For email/news every morning, then a (newer) laptop afterwards.
 
-It seems we're hitting the error path in virtsnd_probe(), which
-triggers a virtsnd_remove() which iterates over the substreams
-calling cancel_work_sync() on the elapsed_period work_struct.
+Buy yourself a raspberry pi.
 
-Looking at the code, from earlier in:
-virtsnd_probe()->virtsnd_build_devs()->virtsnd_pcm_parse_cfg()
-
-We set snd->nsubstreams, allocate the snd->substreams, and if
-we then hit an error on the info allocation or something in
-virtsnd_ctl_query_info() fails, we will exit without having
-initialized the elapsed_period work_struct.
-
-When that error path unwinds we then call virtsnd_remove()
-which as long as the substreams array is allocated, will iterate
-through calling cancel_work_sync() on the uninitialized work
-struct hitting this warning.
-
-Takashi Iwai suggested this fix, which initializes the substreams
-structure right after allocation, so that if we hit the error
-paths we avoid trying to cleanup uninitialized data.
-
-Note: I have not yet managed to reproduce the issue myself, so
-this patch has had limited testing.
-
-Feedback or thoughts would be appreciated!
-
-Cc: Anton Yakovlev <anton.yakovlev@opensynergy.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: virtualization@lists.linux.dev
-Cc: linux-sound@vger.kernel.org
-Cc: kernel-team@android.com
-Reported-by: Betty Zhou <bettyzhou@google.com>
-Suggested-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: John Stultz <jstultz@google.com>
-Message-Id: <20250116194114.3375616-1-jstultz@google.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- sound/virtio/virtio_pcm.c | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
-
-diff --git a/sound/virtio/virtio_pcm.c b/sound/virtio/virtio_pcm.c
-index 967e4c45be9bb..2f7c5e709f075 100644
---- a/sound/virtio/virtio_pcm.c
-+++ b/sound/virtio/virtio_pcm.c
-@@ -339,6 +339,21 @@ int virtsnd_pcm_parse_cfg(struct virtio_snd *snd)
- 	if (!snd->substreams)
- 		return -ENOMEM;
- 
-+	/*
-+	 * Initialize critical substream fields early in case we hit an
-+	 * error path and end up trying to clean up uninitialized structures
-+	 * elsewhere.
-+	 */
-+	for (i = 0; i < snd->nsubstreams; ++i) {
-+		struct virtio_pcm_substream *vss = &snd->substreams[i];
-+
-+		vss->snd = snd;
-+		vss->sid = i;
-+		INIT_WORK(&vss->elapsed_period, virtsnd_pcm_period_elapsed);
-+		init_waitqueue_head(&vss->msg_empty);
-+		spin_lock_init(&vss->lock);
-+	}
-+
- 	info = kcalloc(snd->nsubstreams, sizeof(*info), GFP_KERNEL);
- 	if (!info)
- 		return -ENOMEM;
-@@ -352,12 +367,6 @@ int virtsnd_pcm_parse_cfg(struct virtio_snd *snd)
- 		struct virtio_pcm_substream *vss = &snd->substreams[i];
- 		struct virtio_pcm *vpcm;
- 
--		vss->snd = snd;
--		vss->sid = i;
--		INIT_WORK(&vss->elapsed_period, virtsnd_pcm_period_elapsed);
--		init_waitqueue_head(&vss->msg_empty);
--		spin_lock_init(&vss->lock);
--
- 		rc = virtsnd_pcm_build_hw(vss, &info[i]);
- 		if (rc)
- 			goto on_exit;
--- 
-2.39.5
-
+	David
 
