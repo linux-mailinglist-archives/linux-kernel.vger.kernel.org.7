@@ -1,110 +1,124 @@
-Return-Path: <linux-kernel+bounces-592384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC839A7EC4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:14:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A04A7EC4F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3762A189744A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:09:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 508AC188203F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC0B2550D7;
-	Mon,  7 Apr 2025 18:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD6D21B185;
+	Mon,  7 Apr 2025 18:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJHzxrjd"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QKn5WvM1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12ED4223711
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 18:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CF2219A71;
+	Mon,  7 Apr 2025 18:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744051412; cv=none; b=pQthpNgt+4bSwCAyEZq7VA4A9+AzIgmi8ejDDPYCHhKJiqI4IqMBNQGr2P08eZ0KdbIe7+wXI2MOYNgNpilDIt6JdkFzVRZ+CvDRlXxEbP6mVympTnB3V9JsGy93WoVGYBtNQi8Z44M5ESKnq6cR0rJ46Rg/GPSmOe0XLuL/ip4=
+	t=1744051472; cv=none; b=N8llArKv+aN7/OLeOzT+tJYVfnlh6H19cbTofmwuIo6WA3+S2LuiWt/8G4SSv3wcDGUghG50YePcx8X+t1I7azJ4QGtoGGW1u7ORFHcKaH2IBUFFyl8gbqaJyojCyq4Ik4NpMT4RHTw8mUIon4niF54Vnl+WgnLHMNV9ZTRM9QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744051412; c=relaxed/simple;
-	bh=h/CVDXsSQlyfQ2kUJhazc0K5bzfJ26q2OZlJOb+12ww=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bOTbEmTiSVRuI540VgVXMikqx+OjY8Li/YQ4Kylj8mKes3px6L2V8jwWUL48fjxnwJ0jc8oF3tSvXY8jb6HSLNnco0jatbUhLTp5iTUHxhUwwWyR7LzKPnwz9RiLdQMsD1tmfMF2drUZ0pL7xMy5sNrLnkkMaLJI4tTVd5XV6iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VJHzxrjd; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6eaf1b6ce9aso53806556d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 11:43:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744051410; x=1744656210; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ThGAEe8SUOt8TjxlbmORHevSyZBCtSYTqWKLqXb4HDI=;
-        b=VJHzxrjdXY+g4gNUHEAKFiCJN3myPAu3awEjzWWze4/S6hTM7ulH9/1Y8x1/lifW/T
-         6557wc0o1/moAmbDVWN/gPcbLmbpS+hRbMUyTGQFGIhk/DjnB/ePnarlMjSS/D4l7kFq
-         hChmfJptyMZQ4Fg7q8DumLG7ZAj2p/1BISxlkFODn+ZBa+8tIleICG5upTOcEH1qpojl
-         nSJB3wrtyAmjpDmElvcNKpVjCFR89GijuVy+o7KLc7FXD/wZ2VQljYVwDoR998++gPDz
-         XvRtgpJA00uC9hmKMmO1+YddemF9jGurocJN/In/kpsNAoSKVl9NpqTCCDheB3E3dODB
-         J3ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744051410; x=1744656210;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ThGAEe8SUOt8TjxlbmORHevSyZBCtSYTqWKLqXb4HDI=;
-        b=GGF5qbCYOKDfxPKPq/VU800X5+3zu/EYGODhhaL6O+HqtK5ofroTbv3zrCoK0nBgmS
-         UIkysdtfFRO9MXj4F3VKmWQ412nJd96eYDB6p5mc2V9q/NFJpLksgGL9tj9b8t2tAL7t
-         VMeMFmSZxz9wQ5cMvR0fQU/hnzGzzk/nuB0DH97feZ04r+15JXMqzR04y3l7FK7kv0vo
-         GQsbBxLkca22bK5nVqDjGe9Cd+lvf6imGMDr5rBSZG8gdeASDK4R8T9UuFsbzA/I1Ngn
-         gr89wiN/SERplFyIr3wrRlYhPpRobIpSsIWDdc2PQTVt7DygTjSLDaqyYWttAo7W7F3i
-         QLmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVq2aqn11sUYKIL3GTWcFcqLgDr1g8haFpmza7YoC5uW9rMC3nmuZS+HB7XA+SXFJagPAzDJi6p0N2NEzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhnV5aSzFyUthxCr2FV0gi5HCOENikYVEALP7ZGCNn9OKwQWWR
-	fzxvkAEZVlJwrFmiJBHlNcn5d2VKv1+vqB8zcVZi06RmZfiGCnHw
-X-Gm-Gg: ASbGncurYaG/PhpRMZ8JBGWeRbKFbJaH6O9pJjbaB/R3I8C1M8gqXkH4ThT1gIHLYCq
-	9NUOOf0LPfIwijLQvUk3tnuxhQ9zuBzc9MGBokixkWHbsmYR+bxuXvVxaCWM1HqCNYVwHPuVhhp
-	9Hxihf4RJC54OFAsWQO+QuZetpuSMb3BceKDkIH7zBF9cGNE0rVDbEY7Ss44B4PRStDBeAWJiTw
-	Ru/Xd2h0R2SjOrDXwUF6CS3X0I3XKTEhwiDx9lz/65LUaPvPIV+gp4I80si/GRaK6SWsQcLKyFY
-	nRWUck4brJwF8woaj7mvhTav88dcCIjqFa5MztFooHweQBZ9RmVyDuFPo2Pp25b9z+BOMRNVXBH
-	eri/9GGRS37T+ITqO4A==
-X-Google-Smtp-Source: AGHT+IEBF4xyMnRv6/v6gqvZ7JsoI7cj64ikKR8FFif4HqagTpFLN9Qo2+oJO4SM0vGxBHm+ZrFa4Q==
-X-Received: by 2002:a05:6214:c44:b0:6e8:fbb7:6764 with SMTP id 6a1803df08f44-6f0b74f8de4mr128070686d6.45.1744051409932;
-        Mon, 07 Apr 2025 11:43:29 -0700 (PDT)
-Received: from joshuahahn-mbp.thefacebook.com ([2620:10d:c091:500::4:2dbb])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ef0f00f158sm62079476d6.35.2025.04.07.11.43.29
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 07 Apr 2025 11:43:29 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: joshua.hahnjy@gmail.com
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH] test
-Date: Mon,  7 Apr 2025 14:43:27 -0400
-Message-Id: <20250407184327.31779-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1744051472; c=relaxed/simple;
+	bh=jrjhlUOHynHcx5AA4mfIaHb/PgLP0VTcSvdCpFklOW4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dk1n3S8MztV+ZqlbgvQ2yJnFfGMXnrvGp17wupL7yMkN0VEkEsVB+RBQingz2CNo9mMseDXtj23Mi/11G0DRN96HbgO2FOIplnWfTNvlsgomubjBHoFjGZF95E5LOEbq4lcYhElEJr5M8CrYQAMY9IFZ+pGQB2C4U2iOcsnkk9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QKn5WvM1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34E3EC4AF09;
+	Mon,  7 Apr 2025 18:44:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744051472;
+	bh=jrjhlUOHynHcx5AA4mfIaHb/PgLP0VTcSvdCpFklOW4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QKn5WvM1GA2AG/Svczk91A+QLVZHuPEjHGZL2Ki++3DDWdp6SiIMXejUhyXUIeVMu
+	 ZSuyvhf4bwZPZO1P2W8PofkaaIGgapcN2NXabAliaVyKaWhCvSHv667qKPVcwCyTzx
+	 RCEwzvjhJ3Peat3KzL2RTXiRRZ+Do/RTvSn9s3+YsuHsDou2OHBnbKL2wRm6FWP6Mm
+	 KaVDYMY/OuEfWcM4h4ober+VpcL3MRL4s3H06SSgExxYZmJ+vd2WFTw/V7TRg2pvVT
+	 7uFMfnX8D5jpAjF/R35c2HSOAirgDDCVj3PlqFV4I6M4B+iV+qGw9tPrReDzCRkyjM
+	 MZyJBfV/KJHZg==
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2c77f0136e9so1572002fac.3;
+        Mon, 07 Apr 2025 11:44:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUXEQHv+wyiDxXREyjO15iQi1JmLXBgIDfN5h0QyEr0Y4vCJb1MAG2MtutvWGzoiQIc/9ent5ztscUR@vger.kernel.org, AJvYcCVkyQ/W/JV8PMPZ7U3ZzyBOlt1zK1+MlSpsE0beB7X/LnSSuC5AQ7pg1tS6ekPhhADoWM/SJSS3JTo5GuHo@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7eT68pGYfn5CrESxDXJ/qrIFG5sfFbB+z4Ko3FPrq4egCxFpK
+	+cf2ZSNOWwZwUrbubyiaIWRTCRKqQf1yErlNblRyHg1rTyWJArNSaY2W5P9VDohkDTVAKMsHc4q
+	Jajljs+KkOi9trPjw7SaBzpOt8nQ=
+X-Google-Smtp-Source: AGHT+IGDKEf4L7LLFk6lEMOK9b//paytgxDhy9rdlk4xNS3DtC1Jd1+QhbDCRgSMgnpkHk3WYbiF8WA4V/9SCb1Idas=
+X-Received: by 2002:a05:6870:a79b:b0:2c2:b9cc:afb8 with SMTP id
+ 586e51a60fabf-2cd32e4b747mr5718988fac.7.1744051471468; Mon, 07 Apr 2025
+ 11:44:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250331163227.280501-1-andriy.shevchenko@linux.intel.com>
+ <CAJZ5v0gcbnWA4Whyn-x7uaqEbPow9Sqa3_GO4Z_cBcpYLcF3RQ@mail.gmail.com> <Z_QbFgSFMv58-QmM@smile.fi.intel.com>
+In-Reply-To: <Z_QbFgSFMv58-QmM@smile.fi.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 7 Apr 2025 20:44:20 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hFNqUTVn4wVqigzhHTnmPU63+Z8iFwv++=gx8P7A-cow@mail.gmail.com>
+X-Gm-Features: ATxdqUEaxWSnaUVQQPj9SUIA5lG4Bpvuf2UCM_7ORvRYQjAbNkPgmEJXzzlo4q0
+Message-ID: <CAJZ5v0hFNqUTVn4wVqigzhHTnmPU63+Z8iFwv++=gx8P7A-cow@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] device property: Add a note to the fwnode.h
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Zijun Hu <quic_zijuhu@quicinc.com>, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Len Brown <lenb@kernel.org>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
----
- mm/swap.c | 1 +
- 1 file changed, 1 insertion(+)
+On Mon, Apr 7, 2025 at 8:36=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Mon, Apr 07, 2025 at 08:17:17PM +0200, Rafael J. Wysocki wrote:
+> > On Mon, Mar 31, 2025 at 6:32=E2=80=AFPM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > >
+> > > Add a note to the fwnode.h that the header should not be used
+> > > directly in the leaf drivers, they all should use the higher
+> > > level APIs and the respective headers.
+> >
+> > This sounds like a solution to a problem, but the problem statement is =
+missing.
+>
+> > What's your motivation?
+>
+> Found a few drivers that are mistakenly include fwnode.h while they meant=
+ to
+> have either of.h or more likely property.h.
 
-diff --git a/mm/swap.c b/mm/swap.c
-index 10decd9dffa1..9d2d831c018e 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -12,6 +12,7 @@
-  * Started 18.12.91
-  * Swap aging added 23.2.95, Stephen Tweedie.
-  * Buffermem limits added 12.3.98, Rik van Riel.
-+ *
-  */
- 
- #include <linux/mm.h>
+I see.
 
-base-commit: b8f52214c61a5b99a54168145378e91b40d10c90
--- 
-2.39.5 (Apple Git-154)
+I would then say
+
+"This header file provides low-level data types and definitions for
+firmware and device property providers.  The respective API header
+files supplied by them should contain all of the requisite data types
+and definitions for end users, so including it directly should not be
+necessary."
+
+And I would mention that the purpose is to give guidance to driver
+writers to avoid repeating a common mistake.
+
+>
+> ...
+>
+> > > + * Note, this header is not meant to be used by the leaf drivers.
+> > > + * It provides the low level data types and definitions for the firm=
+ware
+> > > + * and device property providers. The respective API headers should
+> > > + * guarantee all the required data types and definitions without inc=
+luding
+> > > + * this header directly.
+>
+> --
 
