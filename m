@@ -1,95 +1,101 @@
-Return-Path: <linux-kernel+bounces-591834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84726A7E5B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:10:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ABADA7E590
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC5641898379
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:03:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E93E216A30F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCD3206F18;
-	Mon,  7 Apr 2025 15:59:27 +0000 (UTC)
-Received: from mx.gpxsee.org (mx.gpxsee.org [37.205.14.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A786D207DF0;
+	Mon,  7 Apr 2025 15:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CcuoTgV4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738D52066E4;
-	Mon,  7 Apr 2025 15:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.14.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C90A204C11;
+	Mon,  7 Apr 2025 15:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744041567; cv=none; b=aFQztY4rsPqBQGsxsT0vwNxFa+twSJJ0hYMVNAOrQkIUjP3BaC1tF5MhngCZrQ1OYMsEeqIdhuBRN/lSzXsTSYsaxFw0pKMnuWNEfoYktVLWdQdyFx3m4eeVaixiRBStFOKcxbXuv4apw4eecsAUIqLrR7sEdDFSonEOh9TPZRM=
+	t=1744041202; cv=none; b=dog1YwzrB/kHryQ7aaMtzHRKlvQfaylR/qMaazq7dLFu8lFGXYIlo/4Ye82xPpfKShZ+i9Dto2D6/gYNOlrr652MUtxYpoc0Va4/LExkO+oDZikf3h90/hjMTNNtDamcrwS82Z5i4Ts+sAK0Jvds+8hjv3M2Pt+wSLbB2mqpKr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744041567; c=relaxed/simple;
-	bh=JwqOQkNelC69EItq+At4pUrJoaPuZVJh2g7lZpkUbDU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OlA/O8CoQYFo8Tz+pSrtaoN/t5QqzMe28BHBHPkCwuPw122G3K9cgzNp4ud8JwE/sZXUbEAXlGuElWeulBNl/9oOR/ZRUJLpxb+GJCN7CuD6d/DIo2rN215PHRScEdbqtKMJtsOZ29wzOT7WQQPOrGMBhMPfy0CyqWOC8+OYSL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org; spf=pass smtp.mailfrom=gpxsee.org; arc=none smtp.client-ip=37.205.14.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gpxsee.org
-Received: from mgb4.. (unknown [62.77.71.229])
-	by mx.gpxsee.org (Postfix) with ESMTPSA id E80A86AF4C;
-	Mon, 07 Apr 2025 17:50:40 +0200 (CEST)
-From: tumic@gpxsee.org
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org,
+	s=arc-20240116; t=1744041202; c=relaxed/simple;
+	bh=NIrIJzzmdQL32hJN2sevH3JixRQ0+8i8QHBKjFJpt5o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f843lp7QXjGM0KgVv3QzOOs0qDCAqrSGCXBVnyMjrivSk+tnBYGFHjBeJU3FeXxI4rx0Vya/gcj5B0QkfPd7v3zZkpiBQfNedtzMa8rTAaOs82DejBBF/aEV8f9QqQEcEp59+7TMrA+b9+b6pKEjoS63hZHwFvf5YwVuulbKOYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CcuoTgV4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B207C4CEE7;
+	Mon,  7 Apr 2025 15:53:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744041201;
+	bh=NIrIJzzmdQL32hJN2sevH3JixRQ0+8i8QHBKjFJpt5o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CcuoTgV47FXyu6zNK+dq2segR1GdghpPTPda+6XN00y2K+8rJo7H0kIZtgREE8ret
+	 xiPrhuZeMJZiNO0f5SgpSU4bn+WB1SwVk9QMgsIRaJZrsRCCJJ5MQq22uaklCAWr3p
+	 RCSa96y7/Tjg8eBgeGwWMTKuxoTPQfNUKrnK2m8a7G+FbugClJgP/pzrNVPMRreg5f
+	 LGbpzKYe46OlGiCOLqdsWXslA7ZF8zXhprO5LZjFqafFLSBA1Nej6sP1BBnwgyG/Fv
+	 xMB7FCT0vP8cSGaTEo3sT2/hSQVdC8tx7eAdlyNlmCuVUTpMigDARSS/KeuyfJ6Zgr
+	 CmfeyiEeMcyjQ==
+From: Conor Dooley <conor@kernel.org>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	drew@pdp7.com,
+	guoren@kernel.org,
+	wefu@redhat.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	jszhang@kernel.org,
+	ulf.hansson@linaro.org,
+	m.szyprowski@samsung.com,
+	Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Martin=20T=C5=AFma?= <martin.tuma@digiteqautomotive.com>
-Subject: [PATCH] media: mgb4: Fix resolution change events triggering
-Date: Mon,  7 Apr 2025 17:50:35 +0200
-Message-ID: <20250407155035.3804-1-tumic@gpxsee.org>
-X-Mailer: git-send-email 2.48.1
+	linux-riscv@lists.infradead.org
+Subject: Re: (subset) [PATCH v8 0/5] TH1520 SoC: Add AON firmware & power-domain support
+Date: Mon,  7 Apr 2025 16:53:03 +0100
+Message-ID: <20250407-diabolic-draw-200389f7d6f0@spud>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250311171900.1549916-1-m.wilczynski@samsung.com>
+References:  <CGME20250311172030eucas1p12dda42760f751174e774b8d1a3d3f4cd@eucas1p1.samsung.com> <20250311171900.1549916-1-m.wilczynski@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=657; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=n+5hM5kQu6ehBQ3n8017RawWqIN18GKPHpFuSaJtspw=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDOmfv9w78Ij31uJti0qcPn9UvyjW1zH94RHDDZG1DJ+6X /yfkxfp3lHKwiDGwSArpsiSeLuvRWr9H5cdzj1vYeawMoEMYeDiFICJzCpk+M1mvj/LPvDz037h SRO3vs1+a+fS33fCuZm172lyo7OdYxsjQ8sti/PNp0IbLrEFvmBy6Db5KMIf8iaLq0X9ocBlnz5 1VgA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
-From: Martin Tůma <martin.tuma@digiteqautomotive.com>
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Always generate the resolution change event when the HW reports it and only
-discard the streaming termination in case the new resolution is the same as
-the old one. The old logic prevented events on
-"no signal" -> "valid resolution" transitions as VIDIOC_QUERY_DV_TIMINGS
-never updates the timings when there is no signal present.
+On Tue, 11 Mar 2025 18:18:55 +0100, Michal Wilczynski wrote:
+> This patch series introduces and documents power management (PM) support and
+> the AON firmware driver for the T-Head TH1520 SoC, as used on the LicheePi 4A
+> board. While part of a larger effort to enable the Imagination BXM-4-64 GPU
+> upstream, these patches can merge independently.
+> 
+> Bigger series cover letter:
+> https://lore.kernel.org/all/20250219140239.1378758-1-m.wilczynski@samsung.com/
+> 
+> [...]
 
-Signed-off-by: Martin Tůma <martin.tuma@digiteqautomotive.com>
----
- drivers/media/pci/mgb4/mgb4_vin.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Applied to riscv-config-for-next, thanks!
 
-diff --git a/drivers/media/pci/mgb4/mgb4_vin.c b/drivers/media/pci/mgb4/mgb4_vin.c
-index 434eaf0440e2..6e806e075837 100644
---- a/drivers/media/pci/mgb4/mgb4_vin.c
-+++ b/drivers/media/pci/mgb4/mgb4_vin.c
-@@ -749,14 +749,14 @@ static void signal_change(struct work_struct *work)
- 	u32 width = resolution >> 16;
- 	u32 height = resolution & 0xFFFF;
- 
--	if (timings->width != width || timings->height != height) {
--		static const struct v4l2_event ev = {
--			.type = V4L2_EVENT_SOURCE_CHANGE,
--			.u.src_change.changes = V4L2_EVENT_SRC_CH_RESOLUTION,
--		};
-+	static const struct v4l2_event ev = {
-+		.type = V4L2_EVENT_SOURCE_CHANGE,
-+		.u.src_change.changes = V4L2_EVENT_SRC_CH_RESOLUTION,
-+	};
- 
--		v4l2_event_queue(&vindev->vdev, &ev);
-+	v4l2_event_queue(&vindev->vdev, &ev);
- 
-+	if (timings->width != width || timings->height != height) {
- 		if (vb2_is_streaming(&vindev->queue))
- 			vb2_queue_error(&vindev->queue);
- 	}
+[5/5] riscv: Enable PM_GENERIC_DOMAINS for T-Head SoCs
+      https://git.kernel.org/conor/c/54fe9380a50b
 
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
--- 
-2.48.1
-
+Thanks,
+Conor.
 
