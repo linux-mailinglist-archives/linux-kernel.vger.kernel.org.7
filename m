@@ -1,163 +1,98 @@
-Return-Path: <linux-kernel+bounces-592426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6013A7ED09
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:29:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18801A7ED02
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FA9E3A6B3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:19:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D47BC423F67
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE0E254AE0;
-	Mon,  7 Apr 2025 19:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA1421C16B;
+	Mon,  7 Apr 2025 19:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="KDfXqTAF"
-Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OMDR6KzA"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBFB254851;
-	Mon,  7 Apr 2025 19:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1003221703
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 19:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744052550; cv=none; b=rZ49V1jcVeSM/yyUDXk9bMbhapUVDqd1b3PQDbTnbvzP/FScJTlgdqQXyAxJa7aGmURh3a1VoKhgVllOqa53b8zgOWoxDgJ8njF3v51o2a5bN+yjT2NuJHZYPTPrs6Wws/SU97R3oRJrqOwt8cCfUZ0rqzZ4T8hX0U/2wrUCV2w=
+	t=1744052534; cv=none; b=PgiXwkRuF+2+p87BmdbTVr9g2NpHLqOCy8fc/HXJ4dxdoTDwVVph8XJqujfuaP+G+/VeTT9li64mFLJ5m2tZRjwNPKmkNzx1KRmT2WzAoNljm0bGae3qc4CIF6g45o5CcAvXt6ARU4P9aQmNaxGfx7o0z3fALyi4BrqiDBjOf+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744052550; c=relaxed/simple;
-	bh=yC6QZ/8jVM9KGam6L49RetYOUxCetakx6TQbeX39JKc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VNMReDrugZb030ydyausKPYeNsCPWRRRQHX3q5rJMj9sEBKOLFFaCovQN1yiYsy3zff8tMEo96ugX62aeylFQ4qDV4NEFeHIyPO0q85JFWe7LJVqURPGWwYuP6oISQVHW2c+sVZtvs4yui4tgyIXxuBwsXZ7p8HOz7fyMJbc8tM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=KDfXqTAF; arc=none smtp.client-ip=185.226.149.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
-	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1u1rjh-00Cluc-P9; Mon, 07 Apr 2025 21:02:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector1; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Subject:Date:From;
-	bh=KVp3ZQyloTuaLdQygQMAf/QKWBZdcAiGhMuu41ke8zs=; b=KDfXqTAFYtd1CycSD/yrGuxMFd
-	6keGPaUtFoWvl1mnGl64rwW2xmdVb7Jjvilc4nYtxokgHygmeNSsPOTcmRdTf0Q3+4ZvG0zOWixBt
-	4+bPlFYCbLfJiC7cKpQzmxVgaf4Ga0DBvwGTRb0zltTq14WNLfjYlxWGhTjCDs9LYFyC0ncsUSwiz
-	M4OoB89KuKrIpIxQrQKMut4BklWnSAEAhl1RHHIm8GZpikTon2f3hc1PtMcfZlZivfCxIOyqNUG9x
-	sRnGtJPf53QrRA44sjiKqF8jRKXhvRU9W5uJ0XGJldRL+doLZdtkLsPKHdTwEKrQgG2ged0FR8JWH
-	61quWWHw==;
-Received: from [10.9.9.73] (helo=submission02.runbox)
-	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1u1rjg-0001CO-MP; Mon, 07 Apr 2025 21:02:20 +0200
-Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1u1rjN-009Ivh-O1; Mon, 07 Apr 2025 21:02:01 +0200
-From: Michal Luczaj <mhal@rbox.co>
-Date: Mon, 07 Apr 2025 21:01:02 +0200
-Subject: [PATCH net-next] net: Drop unused @sk of
- __skb_try_recv_from_queue()
+	s=arc-20240116; t=1744052534; c=relaxed/simple;
+	bh=5p46mHbHYbgNmEFKQBrcT25druIMYBXTDi09U3Z07wM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=kOf0eG6GlZ2ioQSQ1NZQWQLIwvrnZFLaA8V8rlg+SC0xIhWvfwE6CF6Z7g18Pg5R5iLBV4tug4Kt9nzjG/P7QE2X2hyiZFGRPoRWeuJZ6LiAYfNwl4jjnZHkaU2PuDKptGaxttZdwQZv4lYvhhd2ew+H29MtDGnB/gAZRm0BUC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OMDR6KzA; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744052529;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r9jGo2/h5oGHCzMdIv7e/mxRijM3ED9bWZOjvtDk/LE=;
+	b=OMDR6KzAJpkeYOUOHNpIvfuRhmA+gZRzFJJ86oErTUJpx9c1RAxEXETBzDPmlKJo588BbS
+	D6nUY33RWvQG37dUmhJuSC1KGUQCpeT6yzgIYmdOlornAJc1lEbXzbcHLbZAxl07GEZ5PY
+	3wFRaCCA2Od07P4M2ScI7Ddxx5M2fV0=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.2\))
+Subject: Re: [PATCH] scsi: elx: sli4: Replace deprecated strncpy() with
+ strscpy()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <202504071126.37117C5D@keescook>
+Date: Mon, 7 Apr 2025 21:01:53 +0200
+Cc: James Smart <james.smart@broadcom.com>,
+ Ram Vegesna <ram.vegesna@broadcom.com>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ linux-hardening@vger.kernel.org,
+ linux-scsi@vger.kernel.org,
+ target-devel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250407-cleanup-drop-param-sk-v1-1-cd076979afac@rbox.co>
-X-B4-Tracking: v=1; b=H4sIAO0g9GcC/x3MQQqDMBBA0avIrDuQhkTQq5QuQjLq0DqGiZaAe
- PcGl2/x/wmFlKnA2J2g9OPCmzQ8Hx3EJchMyKkZrLHeONNj/FKQI2PSLWMOGlYsHxyi9a53yQ/
- RQ2uz0sT1/r5AaEehusP7uv69hwFQcQAAAA==
-X-Change-ID: 20250406-cleanup-drop-param-sk-9c25464d59c5
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- David Ahern <dsahern@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Michal Luczaj <mhal@rbox.co>
-X-Mailer: b4 0.14.2
+Message-Id: <67E5FE26-F258-4690-A466-236A7E7484E8@linux.dev>
+References: <20250226185531.1092-2-thorsten.blum@linux.dev>
+ <202504071126.37117C5D@keescook>
+To: Kees Cook <kees@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-__skb_try_recv_from_queue() deals with a queue, @sk is never used.
-Remove sk from function parameters, adapt callers.
+On 7. Apr 2025, at 20:28, Kees Cook wrote:
+> On Wed, Feb 26, 2025 at 07:55:26PM +0100, Thorsten Blum wrote:
+>> strncpy() is deprecated for NUL-terminated destination buffers; use
+>> strscpy() instead.
+>> 
+>> Compile-tested only.
+>> 
+>> Link: https://github.com/KSPP/linux/issues/90
+>> Cc: linux-hardening@vger.kernel.org
+>> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+>> ---
+> 
+> Standard question for these kinds of conversions: Why is it safe that
+> this is not NUL padded? I haven't found where this buffer is being
+> zeroed out, but it probably is (given the "- 1" on the length), but
+> without run-time testing, this needs much more careful analysis.
 
-No functional change intended.
+I think this was submitted before I started to explain this better.
 
-Signed-off-by: Michal Luczaj <mhal@rbox.co>
----
- include/linux/skbuff.h | 3 +--
- net/core/datagram.c    | 5 ++---
- net/ipv4/udp.c         | 8 ++++----
- 3 files changed, 7 insertions(+), 9 deletions(-)
+'wr_obj' is the zeroed out 'buf' returned from sli_config_cmd_init().
 
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index b974a277975a8a7b6f40c362542e9e8522539009..f1381aff0f896220b2b6bc706aaca17b8f28fd8b 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -4105,8 +4105,7 @@ static inline void skb_frag_list_init(struct sk_buff *skb)
- int __skb_wait_for_more_packets(struct sock *sk, struct sk_buff_head *queue,
- 				int *err, long *timeo_p,
- 				const struct sk_buff *skb);
--struct sk_buff *__skb_try_recv_from_queue(struct sock *sk,
--					  struct sk_buff_head *queue,
-+struct sk_buff *__skb_try_recv_from_queue(struct sk_buff_head *queue,
- 					  unsigned int flags,
- 					  int *off, int *err,
- 					  struct sk_buff **last);
-diff --git a/net/core/datagram.c b/net/core/datagram.c
-index f0693707aece46bb5ffd2143a0773d54c234999c..f0634f0cb8346d69923f65183dbdf000b6993cf9 100644
---- a/net/core/datagram.c
-+++ b/net/core/datagram.c
-@@ -163,8 +163,7 @@ static struct sk_buff *skb_set_peeked(struct sk_buff *skb)
- 	return skb;
- }
- 
--struct sk_buff *__skb_try_recv_from_queue(struct sock *sk,
--					  struct sk_buff_head *queue,
-+struct sk_buff *__skb_try_recv_from_queue(struct sk_buff_head *queue,
- 					  unsigned int flags,
- 					  int *off, int *err,
- 					  struct sk_buff **last)
-@@ -261,7 +260,7 @@ struct sk_buff *__skb_try_recv_datagram(struct sock *sk,
- 		 * However, this function was correct in any case. 8)
- 		 */
- 		spin_lock_irqsave(&queue->lock, cpu_flags);
--		skb = __skb_try_recv_from_queue(sk, queue, flags, off, &error,
-+		skb = __skb_try_recv_from_queue(queue, flags, off, &error,
- 						last);
- 		spin_unlock_irqrestore(&queue->lock, cpu_flags);
- 		if (error)
-diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
-index 2742cc7602bb58535e8ef217d9ffc3fea7ff9297..1696cc5a2dcdc4f9c40c65b4d61c722a1cd9ca9a 100644
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -1942,8 +1942,8 @@ struct sk_buff *__skb_recv_udp(struct sock *sk, unsigned int flags,
- 		error = -EAGAIN;
- 		do {
- 			spin_lock_bh(&queue->lock);
--			skb = __skb_try_recv_from_queue(sk, queue, flags, off,
--							err, &last);
-+			skb = __skb_try_recv_from_queue(queue, flags, off, err,
-+							&last);
- 			if (skb) {
- 				if (!(flags & MSG_PEEK))
- 					udp_skb_destructor(sk, skb);
-@@ -1964,8 +1964,8 @@ struct sk_buff *__skb_recv_udp(struct sock *sk, unsigned int flags,
- 			spin_lock(&sk_queue->lock);
- 			skb_queue_splice_tail_init(sk_queue, queue);
- 
--			skb = __skb_try_recv_from_queue(sk, queue, flags, off,
--							err, &last);
-+			skb = __skb_try_recv_from_queue(queue, flags, off, err,
-+							&last);
- 			if (skb && !(flags & MSG_PEEK))
- 				udp_skb_dtor_locked(sk, skb);
- 			spin_unlock(&sk_queue->lock);
+I'll update the description and submit a v2.
 
----
-base-commit: 61f96e684edd28ca40555ec49ea1555df31ba619
-change-id: 20250406-cleanup-drop-param-sk-9c25464d59c5
-
-Best regards,
--- 
-Michal Luczaj <mhal@rbox.co>
+Thanks,
+Thorsten
 
 
