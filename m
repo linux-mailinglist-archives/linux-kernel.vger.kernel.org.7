@@ -1,164 +1,195 @@
-Return-Path: <linux-kernel+bounces-590644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4B72A7D55B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:18:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 159D9A7D54E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 607F13BA9BB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:16:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7F59172C1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42A22288D3;
-	Mon,  7 Apr 2025 07:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250F5229B26;
+	Mon,  7 Apr 2025 07:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOamAa+x"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="NHBJCgDr"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD5C22837F;
-	Mon,  7 Apr 2025 07:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C092D225403
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744010079; cv=none; b=u+zCCNHegIdPAJMuhRbiNkZaiLfQJpN3Emd7GnKcDDSeBfYH8zHjYa6S5+ipH/p/7D3nCs+Vkg6Q+pzTRYUzWOYBD+vb3SUr5JEL5ClujKs7oEPsRimSNeGHU4aM1Vt/HJs/qw7LlGvABv3bTtv6CpWH0L0BeFvlWJ1ouH/Kvqg=
+	t=1744010101; cv=none; b=l4qCN5tR9Wk22U7CY2wJ0OfyxE1lBsPiEeM/C68FQKVdSYdv+xRr9yRJKzwvb43eeA4Saldpzfk4eJ5P0bCrwF3O4XbL7k1TRBX8QHxx1OBLUOmxkSI+H4U2+2ULZLQcdnWeqYDAQrTz7Zl5aWxcW9ADbOV7iYuX0Y3Uegi1BYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744010079; c=relaxed/simple;
-	bh=FP1SkxxlLN1o6l1fuR3qV3eVrpuL5VbTab6nmjVx/VY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S4UwQyP54uq0GeQL+IOlAwLtgT2CFEexK80z1e+xv/zJhZZsmjaIcvdrihSuzFCSWavrSMM/c8x09ffiEevWqcxyVt9DgY5gZMfbXC+W4RPJyWyy8j4+Qy8qWCu+X0dsHyCvyQU/euG2e/V7OawPctKbNF1OwvEZcMh/qCMHYdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XOamAa+x; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aaf0f1adef8so636584966b.3;
-        Mon, 07 Apr 2025 00:14:37 -0700 (PDT)
+	s=arc-20240116; t=1744010101; c=relaxed/simple;
+	bh=MbweKfDFcHiSBs1x7OoNhsHi066QD9imvaYUduhtZOk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SBQ/W0fdSVp5jeRyEfhv5OzVvtKhPagcMuiUOrQTfpViss6Sk9O9SIe4CyAyh1q9XWh90GYHV4posmzCXcfMQNEnWekXWILELBbafSe5oOmroLlUkz//yZOsRs9NQ7nkXeNhD0Ef7t95o9DOzGVZOwBBA/6KlK7q4gVPl5aOmM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=NHBJCgDr; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-39129fc51f8so3136772f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 00:14:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744010076; x=1744614876; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VfpFjJ9Ywgo+fCsxfHoRVSozL31icc7S90ulPG/izxs=;
-        b=XOamAa+x/nmtcAZ0CDwFa6yWlxoNgfXG6PRdrsfqPhBEVItGkFnnxt3Ox1B43zGX0n
-         ytt5XpfmUbXQ1N0Spkfkr/gxqPbop5ZJ6+jgc+8hvOm3uaasAMoUi8Y5z4d6UoE97oMh
-         Rhe9+oSB04GnTkN+BUprSEsc0QanThwyUTXwIqJ2YhHBsIK8u5bVIz1fBCrKUR65Li0I
-         9nETxz9UuKUn/obqUAl9aahPqBxZ7x3CasOKfgigwrQbjmyfKgmLds/KY3+3ZdO2jCZi
-         fEt/3mXGb7SYYUvNm15cpPAbpsqle/Clp1NoBrhwDZKbf0UmEbdOp/o0bBZYZydKTK+t
-         tBiA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744010098; x=1744614898; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qQJq7bLNv9KR26qv53DN+VLCkGsehwu1X3TDIPfPRkk=;
+        b=NHBJCgDrCYbaFuZGMF2HaAeHCHV1m0oqEqcvmlRxSLPTcLwccObx/pQQynHFcQYKAc
+         eOCKhVh9k1v7J98fRpUxYd7kVVWy31rTh7YLWB3VQISZ+F3CnWvfDwoFbuff/MGCH+SA
+         QkWXJvOaKD+qYZjl2zr7rdiyjzK/MSdZDYDTgkgFZJNAml6y4RPggxvTeF/1lmPwhv5I
+         r8762k76nX9tVI9uE4iEB7qlnnizbkgReH6Tnb/F9FfHIM5uIPk9KWF8BDvFH1H71JoU
+         2WHjMKa3+j/xSdNIIXF4VIvFbHcnK74zBXqOIuddV0NnNBIQn6lO63HcbDOLvivPcFnD
+         lhOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744010076; x=1744614876;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VfpFjJ9Ywgo+fCsxfHoRVSozL31icc7S90ulPG/izxs=;
-        b=B5chSrc2PeorTyIbkRu8Rg3VLkg+RfW5Dg3HCXIp4A7tY5kQD7TX8sjNv7ovbXyIZl
-         a+iufoIP+1UXOPBoWD9pUwC0U0mxhh6N3GfhViPvLzwMNe2Ku4dWly35E4oBMKWiDWSb
-         DL0x0fG++3u/rs4lDAr4TZ6M3kiWHPP8qB4p3ri9RROSl4dGN+JQIxcFCOPZ2h6Scc9t
-         TgQQQaoN6OeEH6NNg7GmWIEZ2fCbL2ORBLgH5jcG8SDolwL8wtEsOTuGQA2PVTxljLzB
-         foDtTFjRy2HJnbcbFR1ioJN7Il09hrLQcSx1TVtuuQNOXr1VvlEhUzTJ1aTaA8YjFyCc
-         7YFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMgWcV+b+2DIZvmgORiqyG7RTY349RNbc5Hnr7hOTgnRuT1rOQigxCUb+ztjglH75zrspVdPtjJTu+PeE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/3oK2GbB49zXA4pFv/LK9QbCWyw5HmDAW7kgJ2L0kXIQT80xL
-	K0PB4a5TtYKy0k+BrE08HIzhBamnrEgYByNTxPSfu4z5XkNM0Fq0H30twfUBHOvOtYtjH1vhvTK
-	mAs3sUCO3DmpZv1K8LVocG8FgdL5iQ6zvyut0JA==
-X-Gm-Gg: ASbGnctsLc0URfxwR5YTGh1v9v0Ix3Uhuvy1ISW6FdtDBZkKPXUX723A+R/bOgifJee
-	EMA04yRH3eEpXNHXcPDJ9mXp7WMdMAA8MPuxQrNDzClS1MDocNRzX2jONY3bhwQSybXkXpgXaDl
-	U44YyAtPv9d5la1ScfIIQS/hJKnVVB
-X-Google-Smtp-Source: AGHT+IEL6GSQKfnlmteZNhU5B89hKWABObXNBz1o6Dmpp3gIpzoQTW1m2Z1rOVB5g7oh2gth+A1Sf5dOyUdJI9Pvd/o=
-X-Received: by 2002:a17:907:d25:b0:ac3:b12c:b1f2 with SMTP id
- a640c23a62f3a-ac7d6d81279mr787300666b.35.1744010075353; Mon, 07 Apr 2025
- 00:14:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744010098; x=1744614898;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qQJq7bLNv9KR26qv53DN+VLCkGsehwu1X3TDIPfPRkk=;
+        b=s8vsZkM5FVSeNu8OiXd8KLPR4GXoNBCgP06tWLCmDB6mtP1itnYTmgfSazbEppqccz
+         pU4I989Wzl469O55ED//EtkGzz0sjCRmoyVvS2Dec4Fs3IwTOOkl3JR+z83aFHC9clE3
+         3s8TbK3vBHH2pN3gcvPHFiaQxSgcta/V7Q3ISnzzWpRixAQSvdKh0f+TS53kWxSv3mcp
+         atpWPjB1/vO9q9OScdQCkjrxSlV6xsV7zsZNIy2tiTlktXk9qo3wfHpRyWLO7zgNBobB
+         5vk8dGlYBNUemctixhM9j+fryGTxPfYF7M5SVURbi1Iq2UVqS0FXvap+FhNoYsZO0ozG
+         w9qA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgXQOewgy1m6OBU8YKfmadAanVuvUATqwI3S8UQqSnOxB9fmeOMTCXd2f39ITN1qHtRHr2vbELq59nyM0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGKtkpmQmF8i2sI3oAcrv6oJsM1Uk3fpmeSdPQnek4R1orOPac
+	d/G4ksgDpT4N+QsT4NEa6y/GjO3D3N4kRpgHw/BhxXx9royGbftRQwL5nbaXr74=
+X-Gm-Gg: ASbGncsXBpuvp+sdUu2wuePsQOWVpJiJGnqC/eo0LwG7g0R14iXPyd52XsbFQBgL4QG
+	7FJNtA+v99rO0l0qjKUx3IqclhaGhlGd2r9BN6EG3iStYAZhhb4KLa1AWhbaYKlnOTLmWZG0E8b
+	0ZeaZ+9/0IZ8RqzgD68Kjm6qto75BvhKJLEvxP1vZ6+qZReY2F2WCZIxqe/lLdRzNFKLTP0JP7g
+	qTHPxDlAoWkgFuqeNFbHzgVX7Pt3rlaODOk9lE5CiL6WaLIutuHy0WE6eMEUWiiztAHlRvUL12s
+	EGVfoiFA2LJDFp6z2Q7QaZ6Am1qZhLbNnEzDONQ1TEaNj/sI
+X-Google-Smtp-Source: AGHT+IGP9iEwmcI9KW5YLuJo4zjunZA/QstskF0EVDjIclE0IgMIg3XGRl/bwqpue/ansqOprhfVRQ==
+X-Received: by 2002:adf:9dc7:0:b0:39d:724f:a8a0 with SMTP id ffacd0b85a97d-39d724faacamr4274025f8f.58.1744010098097;
+        Mon, 07 Apr 2025 00:14:58 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:8c64:734d:705a:39a7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c3020d9cfsm11171239f8f.78.2025.04.07.00.14.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 00:14:57 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 07 Apr 2025 09:14:52 +0200
+Subject: [PATCH] staging: greybus: use new GPIO line value setter callbacks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250322164709.500340-1-malayarout91@gmail.com> <Z_NknPrx26vMuJ-9@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
-In-Reply-To: <Z_NknPrx26vMuJ-9@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
-From: malaya kumar rout <malayarout91@gmail.com>
-Date: Mon, 7 Apr 2025 12:44:23 +0530
-X-Gm-Features: ATxdqUH7z8xaH6QNtmM_fJi0hPTpTyUOipii1PSflJyBXO0W8DmtmRLctdSVMX8
-Message-ID: <CAE2+fR_t2-207Ji+YoFKt2QrotCfAME0Ean9EbPEn-9c7HuONQ@mail.gmail.com>
-Subject: Re: [PATCH] tools/hv: Memory Leak on realloc
-To: Wei Liu <wei.liu@kernel.org>
-Cc: linux-kernel@vger.kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Dexuan Cui <decui@microsoft.com>, 
-	linux-hyperv@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250407-gpiochip-set-rv-greybus-v1-1-9d4f721db7ca@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAGt782cC/x3MwQ5FMBBA0V+RWZtE2xR5v/JiQY2aDc0MQsS/a
+ yzP4t4blIRJ4VfcIHSw8rpkmLKAMPdLJOQxG2xlfeWcwZh4DTMnVNpQDoxC17ArhtG62jfem7a
+ GXCehic/v/O+e5wUCf6oOaQAAAA==
+To: Rui Miguel Silva <rmfrfs@gmail.com>, Johan Hovold <johan@kernel.org>, 
+ Alex Elder <elder@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2795;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=lyZeQa2YMvW1R6DaShLQf+xZvZ4ShyP+YJTcj58/Ae4=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn83txCrzzqktCdet4fuf9XzYf1ZwcHfntFZErp
+ 4ADsauyzUWJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ/N7cQAKCRARpy6gFHHX
+ crAVD/9D1veSf7MDcWSr/6lqGTLb4aG6bDhwc7mW048pgU9xifNfOp8SgOzPHGGHRX6urg7Z/gk
+ yd4lESSeEbkVRk+LdBIBFG6CZO2lcui2De1CMRvfwVi9KfazF8rHM1kqjSGD2XlVi5xxSDCi1FT
+ usxfWpsVl2DOYO/Hh7UZ4YXfp1az0nPbSBSagjvtvxNVilWo0FXWS0Nh0E/lfoE7tGZJupTzkX3
+ SLaVQcLtSYqtMOWM7U3uLFBm9NRRto74njjuWdjTVzHzlWHp9BxC4abWwUstkHRrc92CsE/Z+A7
+ Ika8DzpqQKLXo0+Q4CpHmWDH/NKAjQsXSPnn6KtETA01GEs2f/JDxoTzo+v9oNXXagI+M7GWHKD
+ k9z0fCb0lx/Yz1vQ34RDduoj0bJinM5068EedFCEIpRjXCaEcJcmobGrTXuxWHDA1S0RvgUO28E
+ Uv6/v9qf0AmYdKBx7qwNpQ9U4kPFcmUH7xvG/RlLfMHSlcbSNMcRnulKXZqIXTKw+oTqkYriapo
+ BCcefKnwzNERsenbpiVUVs1gBt0yVDMCPLDXbZUeTdM2ZEKL4k7qcNxuNE7g6UCF+bVD8/Wa7rl
+ ntFFQYrgQSOSU211+Su3ufTL1N0h0yjF+6TnWaU85AJKfK/GxikZEjc4C4D6ySOJH10vZqqY3Gc
+ 4TYOf8py0zESLYg==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Mon, Apr 7, 2025 at 11:07=E2=80=AFAM Wei Liu <wei.liu@kernel.org> wrote:
->
-> On Sat, Mar 22, 2025 at 10:16:47PM +0530, Malaya Kumar Rout wrote:
-> > Static analysis for hv_kvp_daemon.c with cppcheck : error:
-> >
-> > hv_kvp_daemon.c:359:3: error: Common realloc mistake:
-> > 'record' nulled but not freed upon failure [memleakOnRealloc]
-> > record =3D realloc(record, sizeof(struct kvp_record) *
-> >
-> > If realloc() fails, record is now NULL.
-> > If we directly assign this NULL to record, the reference to the previou=
-sly allocated memory is lost.
-> > This causes a memory leak because the old allocated memory remains but =
-is no longer accessible.
-> >
-> > A temporary pointer was utilized when invoking realloc() to prevent
-> > the loss of the original allocation in the event of a failure
->
-> While this patch finds a problem, it misses the big picture.
->
-> If realloc fails, the process quits. It depends on the OS to reclaim the
-> memory. Freeing this one instance to prevent a memory leak is not
-> sufficient -- there can be already memory allocated prior to a failure.
->
-> Unless this program is sufficiently reworked to be resilient against
-> OOM, this change itself does not bring much value.
->
-> That being said, thank you for writing a patch and went through the
-> trouble to submit it.
->
-> Thanks,
-> Wei.
->
-I greatly appreciate your prompt review.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Thanks,
-Malaya Kumar Rout
+struct gpio_chip now has callbacks for setting line values that return
+an integer, allowing to indicate failures. Convert the driver to using
+them.
 
-> >
-> > CC: linux-kernel@vger.kernel.org
-> >     linux-hyperv@vger.kernel.org
-> > Signed-off-by: Malaya Kumar Rout <malayarout91@gmail.com>
-> > ---
-> >  tools/hv/hv_kvp_daemon.c | 11 +++++++----
-> >  1 file changed, 7 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
-> > index 04ba035d67e9..6807832209f0 100644
-> > --- a/tools/hv/hv_kvp_daemon.c
-> > +++ b/tools/hv/hv_kvp_daemon.c
-> > @@ -356,11 +356,14 @@ static int kvp_key_add_or_modify(int pool, const =
-__u8 *key, int key_size,
-> >        */
-> >       if (num_records =3D=3D (ENTRIES_PER_BLOCK * num_blocks)) {
-> >               /* Need to allocate a larger array for reg entries. */
-> > -             record =3D realloc(record, sizeof(struct kvp_record) *
-> > -                      ENTRIES_PER_BLOCK * (num_blocks + 1));
-> > -
-> > -             if (record =3D=3D NULL)
-> > +             struct kvp_record *temp =3D realloc(record, sizeof(struct=
- kvp_record) *
-> > +                             ENTRIES_PER_BLOCK * (num_blocks + 1));
-> > +             if (!temp) {
-> > +                     free(record);
-> > +                     record =3D NULL;
-> >                       return 1;
-> > +             }
-> > +             record =3D temp;
-> >               kvp_file_info[pool].num_blocks++;
-> >
-> >       }
-> > --
-> > 2.43.0
-> >
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/staging/greybus/gpio.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/staging/greybus/gpio.c b/drivers/staging/greybus/gpio.c
+index 16bcf7fc8158..f81c34160f72 100644
+--- a/drivers/staging/greybus/gpio.c
++++ b/drivers/staging/greybus/gpio.c
+@@ -185,8 +185,8 @@ static int gb_gpio_get_value_operation(struct gb_gpio_controller *ggc,
+ 	return 0;
+ }
+ 
+-static void gb_gpio_set_value_operation(struct gb_gpio_controller *ggc,
+-					u8 which, bool value_high)
++static int gb_gpio_set_value_operation(struct gb_gpio_controller *ggc,
++				       u8 which, bool value_high)
+ {
+ 	struct device *dev = &ggc->gbphy_dev->dev;
+ 	struct gb_gpio_set_value_request request;
+@@ -195,7 +195,7 @@ static void gb_gpio_set_value_operation(struct gb_gpio_controller *ggc,
+ 	if (ggc->lines[which].direction == 1) {
+ 		dev_warn(dev, "refusing to set value of input gpio %u\n",
+ 			 which);
+-		return;
++		return -EPERM;
+ 	}
+ 
+ 	request.which = which;
+@@ -204,10 +204,12 @@ static void gb_gpio_set_value_operation(struct gb_gpio_controller *ggc,
+ 				&request, sizeof(request), NULL, 0);
+ 	if (ret) {
+ 		dev_err(dev, "failed to set value of gpio %u\n", which);
+-		return;
++		return ret;
+ 	}
+ 
+ 	ggc->lines[which].value = request.value;
++
++	return 0;
+ }
+ 
+ static int gb_gpio_set_debounce_operation(struct gb_gpio_controller *ggc,
+@@ -457,11 +459,11 @@ static int gb_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ 	return ggc->lines[which].value;
+ }
+ 
+-static void gb_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
++static int gb_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
+ {
+ 	struct gb_gpio_controller *ggc = gpiochip_get_data(chip);
+ 
+-	gb_gpio_set_value_operation(ggc, (u8)offset, !!value);
++	return gb_gpio_set_value_operation(ggc, (u8)offset, !!value);
+ }
+ 
+ static int gb_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
+@@ -555,7 +557,7 @@ static int gb_gpio_probe(struct gbphy_device *gbphy_dev,
+ 	gpio->direction_input = gb_gpio_direction_input;
+ 	gpio->direction_output = gb_gpio_direction_output;
+ 	gpio->get = gb_gpio_get;
+-	gpio->set = gb_gpio_set;
++	gpio->set_rv = gb_gpio_set;
+ 	gpio->set_config = gb_gpio_set_config;
+ 	gpio->base = -1;		/* Allocate base dynamically */
+ 	gpio->ngpio = ggc->line_max + 1;
+
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250331-gpiochip-set-rv-greybus-cd2365755186
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
 
