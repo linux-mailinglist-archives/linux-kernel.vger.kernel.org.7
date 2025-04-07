@@ -1,191 +1,124 @@
-Return-Path: <linux-kernel+bounces-590735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D69A7D65E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:43:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61117A7D63C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AE13422AC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:36:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37774188E109
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3E522A4DB;
-	Mon,  7 Apr 2025 07:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B983224AFB;
+	Mon,  7 Apr 2025 07:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Qw8UL5/v"
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bDKVarx4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iz9eGnbK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DEC22578F;
-	Mon,  7 Apr 2025 07:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE4D1A238A;
+	Mon,  7 Apr 2025 07:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744011194; cv=none; b=dUQjrcyA7yFHQti1T6XGyfh+FM+46EWRHhdP5/KmKaPXr6/4a5GLe/NQfBnA7stSu14DN/vcWC05qYCmtlqz5GnGtC+9tK9vl5WuIMOAH1Bqc7Ef7YtTiq2J4Wjrjt42q9lqMAkig7xyAhvmmGQ1fV2ubyX2xOSIQ7o8Yuj8ofA=
+	t=1744011135; cv=none; b=H7u+CzFNe0HVYAQ1XXlCUcUrc0FavNS7AJ4tqm4+oEwBKwqWAQrYS43pwYoOtEDV7uAmirJFuTHAG7RsvCDbdgWD9bwatYeRPobVaTxAHcxiVWAhVj84veIgXKlmjndsSu8dkaZnz9fjdrBPXFiWjcM/Q6sExGEZks1xCWeE1ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744011194; c=relaxed/simple;
-	bh=fCY1+la4eQvFvDRvh93ct8JfkxtSVtpRbuKhVwoB5xg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HxsErbjYteGo/Wqzmll8hh3k6fc3swDG3wpEaPp2AbJ+SU89AQqhQ/8Q+qapj8wZ3qWLKq0ReI1h0QRsQ4rMmYeqUd3oJSoqKHml44CoIYV0ZrVpaXV3XW8KmqUD2W4rL4G2slY/V74G/XuJ7hae2Yu0YATMm4zroARh7nhKEW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Qw8UL5/v; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1744011168;
-	bh=ujXS0FgueD86zddeDAdyWMT2cBug04ILGQlsCY9hmYg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Qw8UL5/vxBrC/IlmlpF0suld3kCwm7DCUWT2BR6/nem9JeXZFQb+B8Yl7v4ZTemRe
-	 rYQvGFbPy7hwzJpZe3KafQoDbjetnpsAwFh7MzmNGz0pfCUkIp2wKBLG8kROLfQXYi
-	 r8HCvYEAHXCBkcS4v0S5blW57pHosPHYHzKA0vYo=
-X-QQ-mid: bizesmtpip2t1744011126ti91xe0
-X-QQ-Originating-IP: MZU5Kp0oUCxzzZmM9WIay6KjBEOsm/+aTXBPuVZzFOI=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 07 Apr 2025 15:32:04 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 13693046250538745828
-EX-QQ-RecipientCnt: 8
-From: WangYuli <wangyuli@uniontech.com>
-To: tsbogend@alpha.franken.de,
-	macro@orcam.me.uk
-Cc: linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH 0/6] MIPS: Resolve build problems on decstation_64
-Date: Mon,  7 Apr 2025 15:31:58 +0800
-Message-ID: <11740B01E659CAFF+20250407073158.493183-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1744011135; c=relaxed/simple;
+	bh=8MLOUBHPZC2MbjSghE5jkWGcu3uy5RIwzxKc8jXLiIU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Jolf3grIatTFrECxxsWaFwVIK3h5ViJRVKwp2pNs+1hALJ+kJyAaw12tVug1MeRn/TzrN6ZAqgYUeG5yjCSFJRDo7oQyvShwvRrRoPbCSNqx4yljuMShaonnH11jcogW6a6A6SIxNqpAZQtjScPnyPMIXD+TGDm1WhkRT4jf/PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bDKVarx4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iz9eGnbK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 07 Apr 2025 07:32:06 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744011132;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CPohzg2O6EanjcJ+6wjo4VYDXa6mgLYgMZE1Ap7kpFQ=;
+	b=bDKVarx4paCG05sg7/P8187hTUqRFwKQnp/W1cJY1fkJG7uXU/9aXBqlNVwgUGDDUnSG+V
+	jjyHWe9mpy3Z+n9Ub1kAUXlCga9XMQcCff9z7Sd1VprbjgjFUaF+bIFSuhe8xNPdNVIUI0
+	K8kSJuf1HgR77Y+9U5eloGF55ZC+6OjPH0YLMlMYCxQ+C69PYPVHh/c7Xl359gu8T+9YoE
+	c80VVG9V125VjkOSbcOSOEsb2wEX6Tj/5j2JE5GojxyRWumEKRwadpJgL7yMHbmN3zkac4
+	MH/TxjEsq3ZtpRS2CHerbd5P3NJqj7XfWuL11D+ap25u5RKwr2Wd3Bd7HdB0ew==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744011132;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CPohzg2O6EanjcJ+6wjo4VYDXa6mgLYgMZE1Ap7kpFQ=;
+	b=iz9eGnbKbx3euMvHZ/QI5vSrZ2s1cjG8xeeZGLwBy5/klnHJZr2/D7BodWhy2jkqJH7Fq1
+	Qd91vIk2mZo7OzBQ==
+From: "tip-bot2 for Inochi Amaoto" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/urgent] irqchip/sg2042-msi: Add missing chip flags
+Cc: Inochi Amaoto <inochiama@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20250405055625.1530180-1-inochiama@gmail.com>
+References: <20250405055625.1530180-1-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OMHTpzRlrft8NzrkuFzwtWj3efd/j67oudXDFU5oPVc8RmR1GN5Fq0mx
-	N3+OjBRJ9DXcnh3KtS6/O0Da2agC//oCBANnRAmyZNx7q4+AxlclPDzBwibkfPp8rm+jADI
-	DnmltuLBgA5GVm3DUerLbt83TM8G/DkYhWsXA0C/EQz9TreAo9IjAdnvjY4UK+6iXwulCf1
-	e2Nd3dRoo8Tpe/bAvQ+pQ8PH8aJd6GmYXiaie5VRUoau95Oey3Cn9PKq2hCvlkj861CWUqY
-	gl4cCpowz24oPjAL2Qo2IPmBOmV9ba47SJcuDd8cWCNP+tP50PqkDeFXlNq0ESe1IuFYaGs
-	Vf11jM7J4A95pCEM5QWlCPPpUmI/+7CT7qJMLK6Du2k6ncvT9A5xnXTI++Le4QZNvaqU9EN
-	S+J58zCBYhS/5yGbKKv0fS1hG/tRSG4cvjSx8HgWQu+eN4kgm8901V/6cDE8qXr27lKb9QI
-	VugLC+vdDixrJTSh62TwUPB7rlAyOJMqqoxwJt9c1r93XWirOOe/6vv3ffoD6PKtKJBNAxU
-	yWmOuNXP9BLcQ5MjIhGoUYa+Hhl/UrLZeyR6R5RoByyyiHtOsTuF1VTZ8jPQUS8J1LSKVmr
-	heDuxlAOperDxqalbECmdwF6WDOPIobQKfe/u5hgvdWOcaoscVmt3TuvohH1HN5qSRrb0CL
-	qZDTUzQeXlGGSKSnUVsRe7+SJTMbh8dNQ4h8ia/N9boVD+BnmBFpqvIZo1qp/KxVFSxbpfU
-	1Nu03CXj2A4hlmZjxswXO9TgQyOKlk+e4P/K99BKXD1L6pIejbje11IP3QXdobBSwpaOlmq
-	tEdg6N2+iIGIyz8GGHftS2OutZaOBlnYMWfJNHQJdyVYgt6glQPBckM/xkeYCREaBYEBi4l
-	kiGsV3nOoskg5WPkfSLkiqD5tUKvOLTlVux6gRKUTobpAJ16FpDagGSSZrlxrSx7JTAURrh
-	Y4Fn2YviYAJuHJsD++Oe8HBtfh0/xjSERgmIsMoM54JiS2ZQvcqWVKjGsXLLXPl7CHrE=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+Message-ID: <174401112660.31282.10731182221763237853.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-[ Part 1 ]: MIPS: dec: Only check -msym32 when need compiler
+The following commit has been merged into the irq/urgent branch of tip:
 
-During 'make modules_install', the need-compiler variable becomes
-null, so Makefile.compiler isn't included.
-    
-This results in call cc-option-yn returning nothing.
-    
-For more technical details on why need-compiler is null during
-'make modules_install' and why no compiler invocation is actually
-needed at this point, please refer to commit 4fe4a6374c4d ("MIPS:
-Only fiddle with CHECKFLAGS if need-compiler") and commit
-805b2e1d427a ("kbuild: include Makefile.compiler only when compiler
-is needed").
-    
-Commit a79a404e6c22 ("MIPS: Fix CONFIG_CPU_DADDI_WORKAROUNDS
-`modules_install' regression") tried to fix the same issue but it
-caused a compile error on clang compiler because it doesn't support
-'-msym32'. Then, commit 18ca63a2e23c ("MIPS: Probe toolchain support
-of -msym32") fixed it but reintroduced the CONFIG_CPU_DADDI_WORKAROUNDS
-`modules_install' regression.
+Commit-ID:     305825d09b15586d2e4311e0c12f10f2a0c18ac5
+Gitweb:        https://git.kernel.org/tip/305825d09b15586d2e4311e0c12f10f2a0c18ac5
+Author:        Inochi Amaoto <inochiama@gmail.com>
+AuthorDate:    Sat, 05 Apr 2025 13:56:24 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Mon, 07 Apr 2025 09:23:55 +02:00
 
-Wrapping this entire code block with #ifdef need-compiler to avoid
-all issues is the best solution for now.
-    
-To get rid of spurious "CONFIG_CPU_DADDI_WORKAROUNDS unsupported
-without -msym32" error.
+irqchip/sg2042-msi: Add missing chip flags
 
-Moreover, I also identified an unnecessary check for KBUILD_SYM32
-in this Makefile section. Eliminate it for code simplification.
+The sg2042-msi driver uses the fallback callbacks set by
+msi_lib_init_dev_msi_info(). commit 1c000dcaad2b ("irqchip/irq-msi-lib:
+Optionally set default irq_eoi()/irq_ack()") changed the behavior of the
+fallback mechanism by making it opt-in.
 
-NOTE:
+The sg2042-msi was not fixed up for this, which causes a NULL pointer
+dereference due to the missing irq_ack() callback.
 
-It is particularly important to note that this code fix does not
-imply that we have resolved the problem entirely.
+Add the missing chip flag to msi_parent_ops.
 
-In fact, the entire application of cc-option and its auxiliary
-commands within the kernel codebase currently carries significant
-risk.
+Fixes: c66741549424 ("irqchip: Add the Sophgo SG2042 MSI interrupt controller")
+Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20250217085657.789309-3-apatel@ventanamicro.com
+Link: https://lore.kernel.org/all/20250405055625.1530180-1-inochiama@gmail.com
 
-When we execute make modules_install, the Makefile for the
-corresponding architecture under arch/subarches/Makefile is
-invariably included. Within these files, there are numerous
-usages of cc-option and its auxiliary commands, all of which will
-return empty strings. The reason other architectures can
-successfully complete compilation under these circumstances is
-purely because they do not, unlike MIPS, check the return values
-of cc-option and its auxiliary commands within their Makefiles
-and halt the compilation process when the expected results are
-not received.
+---
+ drivers/irqchip/irq-sg2042-msi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-A feasible approach to remediation might be to encapsulate all
-usages of cc-option and its auxiliary commands within conditional
-statements across all architecture Makefiles, preventing their
-execution entirely during make modules_install.
-
-However, this would lead to a massive number of inelegant
-modifications, and these broader implications may require
-deliberation by Masahiro Yamada.
-
-Regardless, this does not preclude us from addressing the
-issue on MIPS first.
-
-Link: https://lore.kernel.org/all/41107E6D3A125047+20250211135616.1807966-1-wangyuli@uniontech.com/
-Link: https://lore.kernel.org/all/F49F5EE9975F29EA+20250214094758.172055-1-wangyuli@uniontech.com/
-Link: https://lore.kernel.org/all/8ABBF323414AEF93+20250217142541.48149-1-wangyuli@uniontech.com/
-
-
-[ Part 2 ]: MIPS: decstation_64_defconfig: Compile the kernel with warnings as errors
-
-Patch ("MIPS: dec: Only check -msym32 when need compiler") allows
-us to compile kernel image packages with decstation_64_defconfig.
-
-However, compilation warnings remain during the build.
-
-Address these warnings and enable CONFIG_WERROR for decstation_64_defconfig.
-
-Link: https://lore.kernel.org/all/487CE8AA937621E2+20250218125101.663980-1-wangyuli@uniontech.com/
-Link: https://lore.kernel.org/all/EA0AFB15DDCF65C1+20250227141949.1129536-1-wangyuli@uniontech.com/
-Link: https://lore.kernel.org/all/303EFD6BFBDAC7C8+20250305033436.31214-1-wangyuli@uniontech.com/
-
-WangYuli (6):
-  MIPS: dec: Only check -msym32 when need compiler
-  MIPS: Eliminate Redundant KBUILD_SYM32 Checks
-  MIPS: dec: Create reset.h
-  MIPS: dec: Remove dec_irq_dispatch()
-  MIPS: decstation_64_defconfig: Update configs dependencies
-  MIPS: decstation_64_defconfig: Compile the kernel with warnings as
-    errors
-
- arch/mips/Makefile                        |  6 ++--
- arch/mips/configs/decstation_64_defconfig | 43 +++++++++--------------
- arch/mips/dec/int-handler.S               |  2 +-
- arch/mips/dec/prom/init.c                 |  3 +-
- arch/mips/dec/reset.c                     |  2 ++
- arch/mips/dec/setup.c                     | 15 ++------
- arch/mips/include/asm/dec/reset.h         | 20 +++++++++++
- 7 files changed, 47 insertions(+), 44 deletions(-)
- create mode 100644 arch/mips/include/asm/dec/reset.h
-
--- 
-2.49.0
-
+diff --git a/drivers/irqchip/irq-sg2042-msi.c b/drivers/irqchip/irq-sg2042-msi.c
+index ee682e8..375b55a 100644
+--- a/drivers/irqchip/irq-sg2042-msi.c
++++ b/drivers/irqchip/irq-sg2042-msi.c
+@@ -151,6 +151,7 @@ static const struct irq_domain_ops sg2042_msi_middle_domain_ops = {
+ static const struct msi_parent_ops sg2042_msi_parent_ops = {
+ 	.required_flags		= SG2042_MSI_FLAGS_REQUIRED,
+ 	.supported_flags	= SG2042_MSI_FLAGS_SUPPORTED,
++	.chip_flags		= MSI_CHIP_FLAG_SET_ACK,
+ 	.bus_select_mask	= MATCH_PCI_MSI,
+ 	.bus_select_token	= DOMAIN_BUS_NEXUS,
+ 	.prefix			= "SG2042-",
 
