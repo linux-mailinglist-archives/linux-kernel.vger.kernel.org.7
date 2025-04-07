@@ -1,178 +1,140 @@
-Return-Path: <linux-kernel+bounces-592141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E963A7E98B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E2ACA7E990
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45E76188C58A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:11:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12F71188E85E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2168E224227;
-	Mon,  7 Apr 2025 18:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C3722170A;
+	Mon,  7 Apr 2025 18:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nb3t/RBd"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="aMYIGLxL"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCB5223706;
-	Mon,  7 Apr 2025 18:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744049388; cv=none; b=H5yxbKa5j+5zDGKl9klmrIfpoj7L9T9uzDD41x896I8+OfmPgDLGdncTCY/RlkkIy8EvgN2/SMe6la7JBVZ4HTscQOParXkxrbXw2JkAi7sEHUUqkC9PKmJxRYP+kcGLucP4JgGi/4riNnITH1Az4qgRb8w9Ug+6pfQG/Jv9Zi4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744049388; c=relaxed/simple;
-	bh=RvuKAktVa96t1lOsp3K5Pu+p7/BjZYrqr/zoz3phUFU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DS2RnMqEOZCAmt2leMHfSHNg9rtLT1smgNrawkZkljt8kf+JxoN1G4kFRWM/zmg/Q6YJu6z4ajOiohuvzyjyb0jzvMXXMgRoPeCfb0L8UeyJsxqm4175nPgpI8btCDYX6i0hlcSs9diJvirWaMp5toDn/kesQ8lebd3mTV0SkwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nb3t/RBd; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-223fb0f619dso45801785ad.1;
-        Mon, 07 Apr 2025 11:09:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744049386; x=1744654186; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fyM5SZww3BsIxLq5imP6WPb97ECb0VvvV7XlSlZ6uaA=;
-        b=Nb3t/RBdiz5r1mOI1FxJLhd/VioJyWw1m/BtOkXK8nS5djPq+1RXllFagn3tGiPIZ3
-         OhLqD/xA5NPkiIoSf1Nft+/a8p1qv3qrfK66kRqwcwEcCMiB2I/HVyg1f3LJmOrNRRqS
-         RLV8BJSXh9zF5IPU8tVJ4aZDwb+VY+dyEHDwZJPAo7qBzZaSuz9N6BkVVIvclTa7c/ll
-         6bMQYrfGtvvnleTr7+5u8fLZ2J4Q2KUsfSQGH7zCYtq3tZ2lTnzZOXDqtNmZv3XouqYM
-         X4UTDhob8vxDBXlTKDtM20WOz7yA2XHre6YYifCG2LO7IZ/n17K0A2nN0MynPTpok+7g
-         GIpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744049386; x=1744654186;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fyM5SZww3BsIxLq5imP6WPb97ECb0VvvV7XlSlZ6uaA=;
-        b=rx0UdbUuKY/PINsYEHlNvjA9xGY2rKp9xHWj/6CmLl7DlYcnDXckGbI+gJf5t1S1f/
-         vHpL9kMZ9Iatw2w0b0z3jbbMK9U5zeNdJlwNf6dewOBTyD4dEXjKYV3ki5gYdHc/YFtY
-         Re6kjJRVAvzFJW9rSCvJRUFWGD/QkdwBYZyYEohKnGwg984dcclBPEo/HeMg+AhvjlFQ
-         3j+DwfzJOGZldNMbTGIfN6pmXCJ4Q9ZlJmuMGoQSRFJDYcZoTEHnIh2B9sKhT4aT5BRP
-         NBXEvTLVoHmbcK58XgDGrroVeDTa7kGlOkPwR3JkYmriC8mlH1e1ffmuGU+m7OzE76Ca
-         HnwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVA1yTnzShX1B3nw0xAudaZTMAC3MF+mNEQp2JAe0a515tfI8kI8MF8CKnv0NM2pYK7c9XfF5puRk6FBsou@vger.kernel.org, AJvYcCWiQUMO9Rqq1GmfaxriJM4W82tzAAyP2pYJdreWhD/DVMFhpvkUsYZlvmsnZHx7FbVh3pLB/4NfzT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrZGZn5XQTdLHrc+Abqo3AyRs1LctXLXcC2mIxR3ix2+ckzh4I
-	rFjViYvnfTDl2bcz30Kkmva2rw2pBwm1xymHY2TRjoRxyDrNFoXL
-X-Gm-Gg: ASbGncuBdX1meJ8cXTcBrHCKnyQ/MHPmIvJAw5bi3pyA5CY/SpddzfX9PGdl0kS305W
-	62EgPclP/wO4UT1sY6VfeDCsGT0UizkcQXAQQmu1oVi14tYZ8egnu69rgi+Vk9MfC9wOhnP8Ysi
-	C4bEc35Lr51H9xctiTIpYQo9ziwGFvjpA4piw08Phd3yqLBz7TH/RP2HL/G0kGKw8HpDPnnh3Uk
-	Gap2TyFAZ7HDNbp0AFOXaSsyxjyMsVnJurpt6EcxxZOGu7ugDMVEN8DT4Dw0DFARZ4t63B55oNJ
-	er54NL+v4DJ/2FDaWGcj8OHyTVTcoW9p8AFfSRY5D3mU6zI9+eXe4ZpFdqji+reRgRnodAFcKWH
-	8M3VzjEgZUj6zPub04qgrxaFw+zmpbLCsag==
-X-Google-Smtp-Source: AGHT+IH4QUToL7D8e8p/6On2iiP6OQv/SkBOfhg4jmTT3eYoxpzbIuK2HeFgMoBbObddEAjzAiLW1w==
-X-Received: by 2002:a17:902:c40c:b0:224:c47:cbd with SMTP id d9443c01a7336-22a89ebe8e4mr191891385ad.0.1744049386163;
-        Mon, 07 Apr 2025 11:09:46 -0700 (PDT)
-Received: from localhost.localdomain (118-160-134-247.dynamic-ip.hinet.net. [118.160.134.247])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2297865e03esm84282455ad.146.2025.04.07.11.09.42
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 07 Apr 2025 11:09:45 -0700 (PDT)
-From: Andy Chiu <andybnac@gmail.com>
-To: linux-riscv@lists.infradead.org,
-	alexghiti@rivosinc.com,
-	palmer@dabbelt.com
-Cc: Andy Chiu <andybnac@gmail.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	bjorn@rivosinc.com,
-	puranjay12@gmail.com,
-	paul.walmsley@sifive.com,
-	greentime.hu@sifive.com,
-	nick.hu@sifive.com,
-	nylon.chen@sifive.com,
-	eric.lin@sifive.com,
-	vicent.chen@sifive.com,
-	zong.li@sifive.com,
-	yongxuan.wang@sifive.com,
-	samuel.holland@sifive.com,
-	olivia.chu@sifive.com,
-	c2232430@gmail.com
-Subject: [PATCH v4 12/12] riscv: Documentation: add a description about dynamic ftrace
-Date: Tue,  8 Apr 2025 02:08:36 +0800
-Message-Id: <20250407180838.42877-12-andybnac@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-145)
-In-Reply-To: <20250407180838.42877-1-andybnac@gmail.com>
-References: <20250407180838.42877-1-andybnac@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECE42206B6;
+	Mon,  7 Apr 2025 18:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744049411; cv=pass; b=fWk/6Uu42Xx0zGwnAa8yf+HFjZjTL7JqIoyi5thgeMa8rW14/MXE4wZcqtJakY6yprRMJ9ztcb8nLrCo0NCNCzBRo0NC8pWyZDUyIbumlLcJLS0NRVn6HhKBo2G3wycJqFiJdtYF1tgpIOdblD5w6VpHxoEo7y8qAOLvdkNsp0c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744049411; c=relaxed/simple;
+	bh=w+f7Lr7WyqYv3iH7mWqMTgKQhvPiitOPImCoN/8GPoA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=m+uE5/W/56vtY5tIBqgDH2Eaj/+as8tPGtiCtI1vBE0GwLcMG15E3uAZ9HRzgbjXFuNPRHV6NfNsDVf2Pmi64kSh1ZpEIJJEcwN2vlE9w4rWYXMldAnz3VBOUqYR2SP7AcsrRT2vgXnR4nGgEcj7noIx8SEUdygEN1KGyn4MaM4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=aMYIGLxL; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744049382; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=MA29WiSaM/qGw8Ez5IWEq+k0N2YAnfiNfAhPgQHriNRPs3EL3yjtKFFtGwEbVGsyo3QmNx0TTr8siu2V121Ox4gfxO8Lnz60I6ZI+pK7jPSNwtlEgfVtFnXaWFk+dJilbETEQ2Ob1jpwG7IHHKL2QDQlRQoXjvn6yDoyRnv6ZJg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744049382; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=i7yUmtcPXYs5jDz4UO9uvLqV1/UD2ocMo6ScIwBAIPA=; 
+	b=MzysafK93/6rHCj0cYFISDahwz2lsGydQU5sYBwQBuLQo1Vo5UbN0PHoTIAojVuGMDnLH4JwQGsJTHWxImSERg5GqWGlb92nJBrpiq2dBZAgGYrsnzbx4O9KySgYEqT2zhzGULJUEEnDicmtAfNE0Bz/atsW4cR9xR91i+0DD1o=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744049382;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=i7yUmtcPXYs5jDz4UO9uvLqV1/UD2ocMo6ScIwBAIPA=;
+	b=aMYIGLxLmuS8LHedJmkzvIWJCZ21bwD1Ms9cqEuChNGK7MNfmvOdJdPQv40ImOev
+	8fmXjtvGPgf649q2yQnwB1xLrMnC7pBaYu2E1ujWsCSSP/jWjJvjs2LJQihe4UEsQy5
+	FJ0aXsuuj/ukpo4MjOIU6/YUezwv01Ach2y1GsSo=
+Received: by mx.zohomail.com with SMTPS id 1744049380397611.0260384445199;
+	Mon, 7 Apr 2025 11:09:40 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: [PATCH 0/4] RK3576 USB Enablement
+Date: Mon, 07 Apr 2025 20:09:13 +0200
+Message-Id: <20250407-rk3576-sige5-usb-v1-0-67eec166f82f@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMkU9GcC/yXMywqDQAyF4VcZsm7KXBhbfJXiYpxGG4raJioF8
+ d076PI7cP4NlIRJoTYbCK2sPI0F7mIgv9LYE/KzGLz10QZ/R3mHeKtQuaeIi7bog3XWJ6KUE5T
+ bR6jj35F8NKeFvkspz+cIbVLCPA0Dz7VZq6uLKNlBs+9/rj/QuI8AAAA=
+X-Change-ID: 20250328-rk3576-sige5-usb-230102aeeaca
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Kever Yang <kever.yang@rock-chips.com>, 
+ Frank Wang <frank.wang@rock-chips.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ kernel@collabora.com, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.2
 
-Add a section in cmodx to describe how dynamic ftrace works on riscv,
-limitations, and assumptions.
+This series is the result of what I thought would be a quick 10 minute
+job, but turned out to be more like 3 days of pain, suffering, and
+confusion. This should be expected with USB Type C though.
 
-Signed-off-by: Andy Chiu <andybnac@gmail.com>
+The first patch in the series extends the inno usb2 PHY binding in order
+for us to be able to do what the second patch in the series does, which
+is fiddle with some GRF flags in that driver when the PHY is connected
+to a USB Type C port. Without this change, devices on USB-C simply don't
+enumerate at all, as the state machine gets stuck waiting for vbus to go
+low or something along those lines.
+
+An alternate way to implement this would've been a vendor property in
+the PHY binding which is then checked for in the driver and needs to be
+present in all rockchip inno u2phy instances that happen to be connected
+to a USB Type C connector. This is what downstream does, for example.
+
+Patch 3 was really lovely to run into and needed a good amount of
+sleuthing. I'm still certain this is "the wrong" fix, as it simply keeps
+the PHY on, but it's a fix nonetheless, and one which has precedent,
+namely in the RK3399. If someone is on a hunt to save milliamps in the
+future, they might want to invest the time to come up with a less
+sledgehammer sized solution for this problem, e.g. by disabling power
+management until the controller is fully initialised.
+
+Patch 4 adds the USB related nodes, including associated regulators and
+Type C controllers, to the Sige5 tree.
+
+As it stands, superspeed on the Sige 5's Type C port is still finnicky;
+after a full day of debugging I still can't figure out why superspeed
+only works in one cable orientation. I did a thorough pick through the
+usbdp PHY driver, comparing it with what downstream has, etc. etc.
+Because everything to do with testing Type-C ultimately comes down to
+narrowing down the search space of non-compliant devices and
+non-compliant cables to where you can sort of guess at the bug, it's a
+huge time investment to debug this, and I'd rather submit the series
+as-is right now for review and maybe some additional insight and testing
+from someone with a wider variety of USB Type C cables and devices.
+
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 ---
- Documentation/arch/riscv/cmodx.rst | 46 +++++++++++++++++++++++++-----
- 1 file changed, 39 insertions(+), 7 deletions(-)
+Nicolas Frattaroli (4):
+      dt-bindings: phy: rockchip,inno-usb2phy: add port property
+      phy: rockchip: inno-usb2: add soft vbusvalid control
+      arm64: dts: rockchip: add phy suspend quirk to usb on rk3576
+      arm64: dts: rockchip: enable USB on Sige5
 
-diff --git a/Documentation/arch/riscv/cmodx.rst b/Documentation/arch/riscv/cmodx.rst
-index 8c48bcff3df9..e009873b2d17 100644
---- a/Documentation/arch/riscv/cmodx.rst
-+++ b/Documentation/arch/riscv/cmodx.rst
-@@ -10,13 +10,45 @@ modified by the program itself. Instruction storage and the instruction cache
- program must enforce its own synchronization with the unprivileged fence.i
- instruction.
- 
--However, the default Linux ABI prohibits the use of fence.i in userspace
--applications. At any point the scheduler may migrate a task onto a new hart. If
--migration occurs after the userspace synchronized the icache and instruction
--storage with fence.i, the icache on the new hart will no longer be clean. This
--is due to the behavior of fence.i only affecting the hart that it is called on.
--Thus, the hart that the task has been migrated to may not have synchronized
--instruction storage and icache.
-+CMODX in the Kernel Space
-+---------------------
-+
-+Dynamic ftrace
-+---------------------
-+
-+Essentially, dynamic ftrace directs the control flow by inserting a function
-+call at each patchable function entry, and patches it dynamically at runtime to
-+enable or disable the redirection. In the case of RISC-V, 2 instructions,
-+AUIPC + JALR, are required to compose a function call. However, it is impossible
-+to patch 2 instructions and expect that a concurrent read-side executes them
-+without a race condition. This series makes atmoic code patching possible in
-+RISC-V ftrace. Kernel preemption makes things even worse as it allows the old
-+state to persist across the patching process with stop_machine().
-+
-+In order to get rid of stop_machine() and run dynamic ftrace with full kernel
-+preemption, we partially initialize each patchable function entry at boot-time,
-+setting the first instruction to AUIPC, and the second to NOP. Now, atmoic
-+patching is possible because the kernel only has to update one instruction.
-+According to Ziccif, as long as an instruction is naturally aligned, the ISA
-+guarantee an  atomic update.
-+
-+By fixing down the first instruction, AUIPC, the range of the ftrace trampoline
-+is limited to +-2K from the predetermined target, ftrace_caller, due to the lack
-+of immediate encoding space in RISC-V. To address the issue, we introduce
-+CALL_OPS, where an 8B naturally align metadata is added in front of each
-+pacthable function. The metadata is resolved at the first trampoline, then the
-+execution can be derect to another custom trampoline.
-+
-+CMODX in the User Space
-+---------------------
-+
-+Though fence.i is an unprivileged instruction, the default Linux ABI prohibits
-+the use of fence.i in userspace applications. At any point the scheduler may
-+migrate a task onto a new hart. If migration occurs after the userspace
-+synchronized the icache and instruction storage with fence.i, the icache on the
-+new hart will no longer be clean. This is due to the behavior of fence.i only
-+affecting the hart that it is called on. Thus, the hart that the task has been
-+migrated to may not have synchronized instruction storage and icache.
- 
- There are two ways to solve this problem: use the riscv_flush_icache() syscall,
- or use the ``PR_RISCV_SET_ICACHE_FLUSH_CTX`` prctl() and emit fence.i in
+ .../bindings/phy/rockchip,inno-usb2phy.yaml        |   5 +
+ .../boot/dts/rockchip/rk3576-armsom-sige5.dts      | 153 +++++++++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3576.dtsi           |   2 +
+ drivers/phy/rockchip/phy-rockchip-inno-usb2.c      |  78 ++++++++++-
+ 4 files changed, 234 insertions(+), 4 deletions(-)
+---
+base-commit: 64e9fdfc89a76fed38d8ddeed72d42ec71957ed9
+change-id: 20250328-rk3576-sige5-usb-230102aeeaca
+
+Best regards,
 -- 
-2.39.3 (Apple Git-145)
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
 
