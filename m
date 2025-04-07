@@ -1,105 +1,121 @@
-Return-Path: <linux-kernel+bounces-590604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E30A7D4D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:00:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD56A7D4DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 938E616B8F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:00:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCDD6188AD72
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8960822576A;
-	Mon,  7 Apr 2025 06:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4A12253E1;
+	Mon,  7 Apr 2025 07:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="EBYumcHB"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h1thFlpx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0D6145355
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 06:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1704642D
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744009197; cv=none; b=OxBJe3TaLiwCe5nCIcAJFi8PNwCNDsAdUYhqLm9Cpgu4EhKej2rC/pGjBnyspQfVjR732dagoFzUuq/0bTaua7/otgYshJL19IQt0CZSLVqWzTmxTVy1/QLLfe0mkw1lFo5pYZuVN+mGNnhqMG0LKRlmPzNq99B74lp0NBkV3z8=
+	t=1744009327; cv=none; b=uVpOCYEwzypmBF5ezbBH1nDlqRgF9KB6YGaxe+l3GRrxVpy+eaMSfvOtT3H/fxw6yuzTmOa3TIO1AwjhBFB8gGh231JPgf45pzamCbbC/eHq/UCwZGNDvyw7iMeYzy6hNmE90Ot6tEiUkz1Dk3E/4VZJdlbXVeLC5968FGk9BFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744009197; c=relaxed/simple;
-	bh=zclVBcAH8FQLUCLJiKJqGovQwhajw/4BLJO78dfjJIU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=it0jsTBe/lcSlxyZQj9kvKksz3RdUfNpvNFKHievt48bZ7wdR0vl2mswFmXQ9+/eE6vEo6MiKQ3g7xS/xRVfNgneLv16ynIPYhDlu5acx9HqaP2UQGa4ghxnr8nUeB8MlcnHUozmng692U2sJnYz4ZMA6pQXZv/bhLZj3kBo1F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=EBYumcHB; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30f30200b51so563831fa.3
-        for <linux-kernel@vger.kernel.org>; Sun, 06 Apr 2025 23:59:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744009193; x=1744613993; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zclVBcAH8FQLUCLJiKJqGovQwhajw/4BLJO78dfjJIU=;
-        b=EBYumcHBZISJ6GwoSlWwc7yNxjOhT8JscNt0IjjkDiEBKgpib4lAoW0TUNBkQp1aVd
-         xM2SBXI5qs+CL7o2zvxEOu5+qNI4esIbeQPPjG5kuhr+pCb0F/SEaYcy/qx6Sqgk1+Yh
-         l1dh27sytKwYAVaiyUOaTYw0/73UMXAOq2xsjOXqTjp7vSj/wF8IqPlPSbIbv5uOjwb4
-         i7inJ3++M3isx0zkK9UPJhfic7SO2vsEVHm/KlpuGVj9g5SP0O/OXLk2HL9LdOSrZTiH
-         xY7LqjOSTMtS9p8HDJtC/nFLBeZr/Ds+QDX0mdAuAD84jfTOIDbDGGh3J8FhFHKqP4T3
-         mRZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744009193; x=1744613993;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zclVBcAH8FQLUCLJiKJqGovQwhajw/4BLJO78dfjJIU=;
-        b=c/LZ+PuHfv6/sc45j3QN+3DZRWco6Mha530P+HQmoBgOT8mkziM30/3zn3mRuCR0Wh
-         yll5vPK1n2zlZ1FkdgqLM2UYXqPLo7A/sejWLXVAPc4C6w6K9mzYf0hRGh0O92nUZlYJ
-         iisMALiTJfuUAQpeDQYesvGBc8oGyJ08EEJOB1kcqwAvZoHUujZXezQz6hCRWPA9c9mO
-         5izSP3SiQO1+bT3vgXUFERgUR0A42w4xvk1U1hUa8WcKELa3uLjFfkIiaUIpeOHbttka
-         NS0JV0YyFqsIWmZI89/2VN8OJLyN2MJXyT81LG879aGa9H1Z5mZkRwk5wQ+9UEDM2meF
-         21PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkm8oTjNjH6T10Vvd+vBxTz9jRFIb6Dx+PGj9xT+9/vCphlRVfeQYikcoN8skG5gIf2l2Xx4RGO48jTv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMAl+L6rQnrBpfzs8KU+LT/jSn+AxponU6VFgnbdk9UISBhU2x
-	Y/xJdoOyR+yhNeCg2Q74Ay6wv+XLRm4QDNpg+d29yUXBSm6VS0f8J8aSSMPpzJlQclOYhxQ3S7N
-	KmF2I/OwhgtEzy6OPnnXlhrrEZltoipUeA8ctxA==
-X-Gm-Gg: ASbGncuMZ4aLrB/non4v/WXag6s4GOt0RBy4KcAa9VorOPHB11cFzVBRe/g65bKX0ft
-	uk/mVTOnvTsOazBotbr2+zbUrV9MYU7DQBEzQRjy5EDxos+slw5MtmBXUby3iuBojcz5e8lrMCD
-	eg9BZI91EKDjhQfsdwyG8kOj5D38FxgRnx6PYh4P/6XfmHcHk9gGOpjQ4vSQ==
-X-Google-Smtp-Source: AGHT+IGv1uriNC7HzAl+L8w0q6fWjV1SIj4jMIhKs+aiDpdh7nDo2D+RjAXdjN+uWj4LcQxS1M6SDdv0uiDwrLRQ5uE=
-X-Received: by 2002:a05:6512:3501:b0:549:5802:b32d with SMTP id
- 2adb3069b0e04-54c232bf59bmr2983829e87.3.1744009193191; Sun, 06 Apr 2025
- 23:59:53 -0700 (PDT)
+	s=arc-20240116; t=1744009327; c=relaxed/simple;
+	bh=zAXkig2M6EwcCtpZSzMSmifZRAkE8ANEzH7KjbwpMBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lmJDnGgWI3Xk9tjg5GU2jecUo0OUQ9MIauE3LR8jQco0gsDhY9yWRl0NTGhgyRp32KFOxxp5N8jUUkxrQ7xY1T68idG8ZnTfSBuERIN9ZKBrPFxOFqoGSvF/jJEST5s5XMY3OJqafSOfLP/uKzmTtGREAW5sVS5GCf6r7w+t7CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h1thFlpx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E4E1C4CEDD;
+	Mon,  7 Apr 2025 07:02:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744009324;
+	bh=zAXkig2M6EwcCtpZSzMSmifZRAkE8ANEzH7KjbwpMBM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h1thFlpxJIYCA76Yt5U65h3W04YH3QJm0qj7Sx0Qi9iWZWxfjaYnnbt4SSKliKtI3
+	 c+5J8itnrcTnQFUBrCxNAiHTaoUcp2bIEkGBKekW/2r+3HJMTV3LMHGES0hs8+uFDR
+	 nHrMHs01zcqWbZdE0q73nHMtazQUsNBxC2+o245k=
+Date: Mon, 7 Apr 2025 09:00:35 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: zhoumin <teczm@foxmail.com>
+Cc: rafael@kernel.org, dakr@kernel.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kobject_uevent: add uevent_helper exist check
+Message-ID: <2025040731-eternity-statutory-4a80@gregkh>
+References: <tencent_B971903B40AFCF5878B6532261672A5D6A0A@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306084552.15894-1-brgl@bgdev.pl>
-In-Reply-To: <20250306084552.15894-1-brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 7 Apr 2025 08:59:41 +0200
-X-Gm-Features: ATxdqUHWFAXkM7nuErogQ0GJfGARsg3Weoa-64QKGoAPzT9SjUAGTJTgsj9Xz7g
-Message-ID: <CAMRc=MfFnK_nLPa9vnAiqF64=7Z10bme4xFyOwL-D20FQxDkyg@mail.gmail.com>
-Subject: Re: [PATCH] irqchip: davinci: remove leftover header
-To: Thomas Gleixner <tglx@linutronix.de>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_B971903B40AFCF5878B6532261672A5D6A0A@qq.com>
 
-On Thu, Mar 6, 2025 at 9:45=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl> =
-wrote:
->
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Commit fa8dede4d0a0 ("irqchip: remove davinci aintc driver") removed the
-> davinci aintc driver but left behind the associated header. Remove it
-> now.
->
-> Fixes: fa8dede4d0a0 ("irqchip: remove davinci aintc driver")
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Sat, Apr 05, 2025 at 01:31:02AM +0800, zhoumin wrote:
+> The kernel creates uevent_helper process for every uevent sent,
+> even if the uevent_helper does not exist. Before the rootfs is
+> mounted, a large number of events are generated. This change
+> introduces uevent_helper existence check to prevent unnecessary
+> operations.
+
+What problem is this causing?  What changed to make this actually be a
+problem?
+
+> Logs a debug messase before call_usermodehelper_setup.
+
+I can not parse this sentence, sorry.
+
+> e.g.: pr_emerg("action:%s devpath:%s\n", action_string, devpath);
+> You will see a large number of uevent_helper processes
+> are attempted to be created before the rootfs is mounted.
+
+Again, why is that a problem?
+
+> Signed-off-by: zhoumin <teczm@foxmail.com>
+
+Please use your name here, not an alias.
+
 > ---
+>  lib/kobject_uevent.c | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+> index b7f2fa08d9c8..f3d34ded141a 100644
+> --- a/lib/kobject_uevent.c
+> +++ b/lib/kobject_uevent.c
+> @@ -28,6 +28,7 @@
+>  #include <net/sock.h>
+>  #include <net/netlink.h>
+>  #include <net/net_namespace.h>
+> +#include <linux/namei.h>
+>  
+>  
+>  atomic64_t uevent_seqnum;
+> @@ -58,6 +59,23 @@ static const char *kobject_actions[] = {
+>  	[KOBJ_UNBIND] =		"unbind",
+>  };
+>  
+> +#ifdef CONFIG_UEVENT_HELPER
+> +static int uevent_helper_lookup(void)
+> +{
+> +	static int ret = -ENOENT;
+> +	struct path path;
+> +
+> +	if (!ret)
+> +		return ret;
+> +
+> +	ret = kern_path(uevent_helper, LOOKUP_FOLLOW, &path);
+> +	if (!ret)
+> +		path_put(&path);
 
-Gentle ping.
+What happens when the root filesystem changes to the new one?  This
+feels wrong as Andrew said.
 
-Bartosz
+thanks,
+
+greg k-h
 
