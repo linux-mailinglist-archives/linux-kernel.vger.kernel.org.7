@@ -1,187 +1,106 @@
-Return-Path: <linux-kernel+bounces-592377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E015A7EC35
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:12:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE2FA7ECF7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03B091889189
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:07:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 438143BF1EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081E0263C74;
-	Mon,  7 Apr 2025 18:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4485B25B661;
+	Mon,  7 Apr 2025 19:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ja+q7cue"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="O+8BqO7M"
+Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B25263C6B
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 18:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172F22222D4;
+	Mon,  7 Apr 2025 19:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744051286; cv=none; b=aJ1E6tSlQQbFtmpOoHbqX7dsojTnxtAzQEiTHk5FvCVNdu/htaDuaELJqj9WCUoAidVP33ZOVJzifPaXj0MRe65TT1hf/AeqmavG/kWNTcBtWsHZnTe0H63Z17sJ9mX0DYM5Huf/PDBUm+Vwc+qt9tTNc400+f4PfjrGGHLwu5w=
+	t=1744052619; cv=none; b=RLkUs47DiCnc9caJCcxajxYAtymQsakRM+q6TVicWfeieB3ned0EvpU32f4wbh/Z67XVITdfYW5ADrrT/KxjdsLFH/Dp6k89G3Bxb2YdKlkYpBRKLmD0F80Y/gCrzb3x3MFINJlswBo1icHyzNxltp9iqwZhLigsQo3VzHwqf5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744051286; c=relaxed/simple;
-	bh=nK3FiUMU9SwGqAn1k3UA4EJzY11tlg+gTK/nHfoUzEs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MD4zKO4at9ixFUIGyav+g0pVuM8ONiia6QygzXuMDU5V06X1yzdrUt8kvO+uRKYqIJHum/nDrlXkTauhC0CB248MujyDEMEZwspTLBrpjKab7q37/KfQxONkJ9Os6xFduBcmDhR7vntCAvkKx2La08xUy9NQKiZQadFk8dftcyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Ja+q7cue; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 537H127F016641;
-	Mon, 7 Apr 2025 18:41:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2023-11-20; bh=+W7IS
-	dG8szb9zeJ330uZlJcsSPgv9PK2sFXgns5vqWg=; b=Ja+q7cueKl5J+zWvTjdt9
-	8eAZR1+yo0XRy5GEVRw3njJXDoAMZXHgkVTzHhvjDprVluZo9N57QsGSKyWLey3y
-	dv+p+ag9up2cDcgR/6OO652Z/GqhRk12sgfmuaiKC791SY4cnoBwiKzc4RpiucAl
-	5dqdKzgvV0SVeFA3RwFMKEHJBtYcYgXzVJR7dOhilu1VN1Bk4lBCbQ5OBtxUUOiC
-	kYa7SXnDAkUeTXEdPxSxQ3uYHLYltpHGcigllgUasoYlZX+cN1Sk/4x+6+dpaX/c
-	XfKORTv1RSOhriGLM68X/fs6NsogDfBb9ird6/P7BVpMz28OJAb5Fh6FRA3e5a8A
-	w==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45tvjcua7g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 07 Apr 2025 18:41:09 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 537IbAYh023937;
-	Mon, 7 Apr 2025 18:41:09 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 45ttyefwte-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 07 Apr 2025 18:41:08 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 537IY5Db038909;
-	Mon, 7 Apr 2025 18:41:08 GMT
-Received: from sidhakum-ubuntu.osdevelopmeniad.oraclevcn.com (sidhakum-ubuntu.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.250.108])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 45ttyefwqr-7;
-	Mon, 07 Apr 2025 18:41:08 +0000
-From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-To: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, liam.howlett@oracle.com,
-        willy@infradead.org, Sidhartha Kumar <sidhartha.kumar@oracle.com>,
-        "Liam R . Howlett" <Liam.Howlett@Oracle.com>
-Subject: [PATCH v4 6/6] maple_tree: reorder mas->store_type case statements
-Date: Mon,  7 Apr 2025 18:41:02 +0000
-Message-ID: <20250407184102.2155415-7-sidhartha.kumar@oracle.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250407184102.2155415-1-sidhartha.kumar@oracle.com>
-References: <20250407184102.2155415-1-sidhartha.kumar@oracle.com>
+	s=arc-20240116; t=1744052619; c=relaxed/simple;
+	bh=9jUK5fFO/zBSCtoslWjYR97SvHCJCuRCU0KIKS3G5a0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=V28jqYTh9LDQqWaM3qd/qc5jA2ppL4BJE7ryYwOrGz3af4lBw1a3OABh17YfoQbYBsP3u47XW+p48WSawBmAYFuYjUKeM1NYXcFyPbVg2l6a9U0L47FY5euYK2bhjNxbj4RZbzgojT6aLgNcPG+bUfXIVvTgvDTs24VBfvziWa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=O+8BqO7M; arc=none smtp.client-ip=185.226.149.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
+	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1u1rQC-00CpZg-VG; Mon, 07 Apr 2025 20:42:12 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector1; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From; bh=B46oeqhR6OuooSI1uvUNydwdBFfTPFTrPvRqV6TVJlY=
+	; b=O+8BqO7M0VZFCHknGdVU2zQ/2dkc5OFRM/4XZMGQfM+V1PvaK+faD9P2Gr1VKilTIllvKeQaD
+	1awEBt/PiRh/mP0j2XNS5gEz3RH21Hh2wum0GvVuCu3vIUZ6ngYH0z0wa4IaFAs5+RMEFWz312qTy
+	4RDI6XvcaiU/O01W52l0DXvK5Pt6PBXm6KZbK01Gkf6cRl2U1yBDATGjWcFgHk/c9/XaOln9HPSBo
+	vUVoqG2RilDPKLsOpnnzQjFaOhuSlhQljB7G9FaASog2qeMoEC/IIgmiMGobf14NeUZ43K0HRaM1E
+	Rz0SxZ0oNeRG5pXQvMxW4ZdKG+leqDl2OLtCAQ==;
+Received: from [10.9.9.74] (helo=submission03.runbox)
+	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1u1rQC-0001M7-HP; Mon, 07 Apr 2025 20:42:12 +0200
+Received: by submission03.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1u1rPz-008fhd-5o; Mon, 07 Apr 2025 20:41:59 +0200
+From: Michal Luczaj <mhal@rbox.co>
+Subject: [PATCH net-next 0/2] vsock: SOCK_LINGER rework
+Date: Mon, 07 Apr 2025 20:41:42 +0200
+Message-Id: <20250407-vsock-linger-v1-0-1458038e3492@rbox.co>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-07_05,2025-04-07_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 mlxscore=0
- mlxlogscore=999 suspectscore=0 adultscore=0 spamscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
- definitions=main-2504070130
-X-Proofpoint-ORIG-GUID: BfDzaKACSBh63y6jvwJTyYULhApBmvAO
-X-Proofpoint-GUID: BfDzaKACSBh63y6jvwJTyYULhApBmvAO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGYc9GcC/x2MQQqAIBAAvxJ7bsEsJftKdAhbayksVEKI/p50H
+ IaZByIFpghD9UCgmyOfvkBTV2C32a+EvBQGKaQSrejwjqfd8eCiAhohNSlnTK8tlOQK5Dj/uxE
+ 8JfSUE0zv+wFVJPPHaAAAAA==
+X-Change-ID: 20250304-vsock-linger-9026e5f9986c
+To: Stefano Garzarella <sgarzare@redhat.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>, 
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+ Stefan Hajnoczi <stefanha@redhat.com>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+ Michal Luczaj <mhal@rbox.co>
+X-Mailer: b4 0.14.2
 
-Move the unlikely case that mas->store_type is invalid to be the last
-evaluated case and put liklier cases higher up.
+Change vsock's lingerning to wait, on close() and shutdown(), until all
+data is sent, i.e. until workers picked all the packets for processing.
 
-Suggested-by: Liam R. Howlett <liam.howlett@oracle.com>
-Reviewed-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+Changes in v1:
+- Do not assume `unsent_bytes()` is implemented by all transports [Stefano]
+- Link to v0: https://lore.kernel.org/netdev/df2d51fd-03e7-477f-8aea-938446f47864@rbox.co/
+
+Signed-off-by: Michal Luczaj <mhal@rbox.co>
 ---
- lib/maple_tree.c | 51 ++++++++++++++++++++++++------------------------
- 1 file changed, 25 insertions(+), 26 deletions(-)
+Michal Luczaj (2):
+      vsock: Linger on unsent data
+      vsock/test: Expand linger test to ensure close() does not misbehave
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index 98b06709d864..8425728e3c5a 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -4085,15 +4085,6 @@ static inline void mas_wr_store_entry(struct ma_wr_state *wr_mas)
- 	unsigned char new_end = mas_wr_new_end(wr_mas);
- 
- 	switch (mas->store_type) {
--	case wr_invalid:
--		MT_BUG_ON(mas->tree, 1);
--		return;
--	case wr_new_root:
--		mas_new_root(mas, wr_mas->entry);
--		break;
--	case wr_store_root:
--		mas_store_root(mas, wr_mas->entry);
--		break;
- 	case wr_exact_fit:
- 		rcu_assign_pointer(wr_mas->slots[mas->offset], wr_mas->entry);
- 		if (!!wr_mas->entry ^ !!wr_mas->content)
-@@ -4115,6 +4106,14 @@ static inline void mas_wr_store_entry(struct ma_wr_state *wr_mas)
- 	case wr_rebalance:
- 		mas_wr_bnode(wr_mas);
- 		break;
-+	case wr_new_root:
-+		mas_new_root(mas, wr_mas->entry);
-+		break;
-+	case wr_store_root:
-+		mas_store_root(mas, wr_mas->entry);
-+		break;
-+	case wr_invalid:
-+		MT_BUG_ON(mas->tree, 1);
- 	}
- 
- 	return;
-@@ -4179,19 +4178,10 @@ static inline int mas_prealloc_calc(struct ma_wr_state *wr_mas, void *entry)
- 	unsigned char delta = height - wr_mas->vacant_height;
- 
- 	switch (mas->store_type) {
--	case wr_invalid:
--		WARN_ON_ONCE(1);
--		break;
--	case wr_new_root:
--		ret = 1;
--		break;
--	case wr_store_root:
--		if (likely((mas->last != 0) || (mas->index != 0)))
--			ret = 1;
--		else if (((unsigned long) (entry) & 3) == 2)
--			ret = 1;
--		else
--			ret = 0;
-+	case wr_exact_fit:
-+	case wr_append:
-+	case wr_slot_store:
-+		ret = 0;
- 		break;
- 	case wr_spanning_store:
- 		if (wr_mas->sufficient_height < wr_mas->vacant_height)
-@@ -4211,10 +4201,19 @@ static inline int mas_prealloc_calc(struct ma_wr_state *wr_mas, void *entry)
- 	case wr_node_store:
- 		ret = mt_in_rcu(mas->tree) ? 1 : 0;
- 		break;
--	case wr_append:
--	case wr_exact_fit:
--	case wr_slot_store:
--		ret = 0;
-+	case wr_new_root:
-+		ret = 1;
-+		break;
-+	case wr_store_root:
-+		if (likely((mas->last != 0) || (mas->index != 0)))
-+			ret = 1;
-+		else if (((unsigned long) (entry) & 3) == 2)
-+			ret = 1;
-+		else
-+			ret = 0;
-+		break;
-+	case wr_invalid:
-+		WARN_ON_ONCE(1);
- 	}
- 
- 	return ret;
+ include/net/af_vsock.h                  |  1 +
+ net/vmw_vsock/af_vsock.c                | 25 +++++++++++++++++++++++++
+ net/vmw_vsock/virtio_transport_common.c | 25 +++----------------------
+ tools/testing/vsock/vsock_test.c        | 30 +++++++++++++++++++++++++++---
+ 4 files changed, 56 insertions(+), 25 deletions(-)
+---
+base-commit: 61f96e684edd28ca40555ec49ea1555df31ba619
+change-id: 20250304-vsock-linger-9026e5f9986c
+
+Best regards,
 -- 
-2.43.0
+Michal Luczaj <mhal@rbox.co>
 
 
