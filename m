@@ -1,129 +1,198 @@
-Return-Path: <linux-kernel+bounces-591855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D139A7E5EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:16:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66C85A7E62B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5042188A741
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:10:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F66C3B743B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1419C205E08;
-	Mon,  7 Apr 2025 16:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963C52063E1;
+	Mon,  7 Apr 2025 16:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uCSADcsw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Csv1NTOF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706E42054EE;
-	Mon,  7 Apr 2025 16:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44766205E3E
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 16:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744042219; cv=none; b=BYHxypslhCscZI2Mjg+dsYElZqAdWK9dz/oG8zvl9EZgOBx37YsmzDuiP8DSJcW1gwXupQHGRf9bf0HX5P/2CU7uzXO1MqgjA4uyeUOrR1Wkt+z6e2wWxPFrSIXn04Uufiog41StSX0WT7x+DCSSAYUbo/Nq79JhYDAVPaSLRSE=
+	t=1744042306; cv=none; b=Xz5J8qTJvO9bN8uS0eRWFgxQW49dHJxQXnqY/Si4iqsjTHBVwKxI4O6MmC0Z5MXxP9MFmvffGOThTGcEaLpbHjI1daxFt/e6xpc47KCKGHVu0nCFxNQMvlou/x72TczWFsdCcjD4tfpVYTcjBPceVyjTNuzslsiwN6Q5kaeIr08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744042219; c=relaxed/simple;
-	bh=T/icUZNKagvrKD/XyMsdV5kUXZvHz0F432ZQ6gD6/bc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nf2s2Umm8NwcnQ85qew6MZFAcLAuiKQuoEqIMy995Bw7y788YdbYwtV7GGJHZMLhO4FvwktIeFRLSKbvS9hvpM6J/5da5kIgdQwJp0H2A8ZHmBXR9ACBFig3XkUpB/uNHhRiYeSyQeusH7g3g3gaV25tPfbPAnLWJnJ1IgbG4h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uCSADcsw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BA86C4CEDD;
-	Mon,  7 Apr 2025 16:10:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744042219;
-	bh=T/icUZNKagvrKD/XyMsdV5kUXZvHz0F432ZQ6gD6/bc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uCSADcswQIgmHv9oHsLj9h4sGt3gtocSsO3jdUKpd+jKaOH8nQfKzmfm4woAno6NN
-	 ymVchZUBmmnbhQhN7zMQl1h1dAo44xBd6sGtcOBjGNqkkSKdNVPB38ZJAqNU4AjjGL
-	 MbKC5udI1PomP+E/ZbVSHRCt4sPTm4UWgGMqkZ6St3oRwyOBthcc6DRtqbvfMRSpKt
-	 d+wbjuc13tikm6zQvxnVYfiI7CqHsk0+CYdXDIMqzFLrOXjkH2UEUT0RJ6rjFSMdNi
-	 gdf1JrW62iBFzpwTZX8WG/lapMNvFFii1nDV6XANfrjE94Umjn5ZUHwYgI9gIfuhxC
-	 RGy9BJ5DsapnA==
-Date: Mon, 7 Apr 2025 17:10:13 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Bincai Liu <bincai.liu@mediatek.com>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chunfeng Yun <chunfeng.yun@mediatek.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Jitao Shi <jitao.shi@mediatek.com>, dri-devel@lists.freedesktop.org,
-	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-phy@lists.infradead.org
-Subject: Re: [PATCH 1/4] dt-bindings: soc: mediatek: add mipi yaml for MT8196
-Message-ID: <20250407-cramp-fidelity-b3a6db245938@spud>
-References: <20250407133138.22449-1-bincai.liu@mediatek.com>
- <20250407133138.22449-2-bincai.liu@mediatek.com>
+	s=arc-20240116; t=1744042306; c=relaxed/simple;
+	bh=BF93SruOi4SJLs3qYKFVD0YuF6aeAyEuwTkG+AFVMug=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Nozp+0o9Gb8h2SLXQl/DSZVfi33FZf7xI85OLWqxPOl6SGfve0pCA35yC1lneJTwpIXtvygG2VusbwA3BFEt32ow4bu6dpkiKfi7c+fsBCm1fy+H5tRxW4P1opoxv0MF46F43+OyTmGJFO0hikbFtLyoVFnv4q06OmQeNwfl01o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Csv1NTOF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744042304;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=4BZS8OzrijhjJ+znuRtZhTpd6m/6rBcT/o0yRbV8pvk=;
+	b=Csv1NTOF/hFYyrOlu7tK5Hl4g+qXL7X7yN3bXAeoSLeQ8C99Ppy2Il14J/D9c1ELqGdGRa
+	E9KKtYez9UNW77Q9Fp7X4z+KGmLqFCf3rzAMJDZmRU3CMtc9e7fGSDrmlS2Ziux9UE0Oit
+	rZAnZywFsx4WbHJYeICP5GGZ/vAPHEo=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-118-H99E9py5NoC5_lZ6coOL2Q-1; Mon,
+ 07 Apr 2025 12:11:40 -0400
+X-MC-Unique: H99E9py5NoC5_lZ6coOL2Q-1
+X-Mimecast-MFC-AGG-ID: H99E9py5NoC5_lZ6coOL2Q_1744042299
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A0518180025F;
+	Mon,  7 Apr 2025 16:11:38 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.40])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DBBDE1828A80;
+	Mon,  7 Apr 2025 16:11:34 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: netdev@vger.kernel.org
+Cc: David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	linux-afs@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2 00/13] rxrpc, afs: Add AFS GSSAPI security class to AF_RXRPC and kafs
+Date: Mon,  7 Apr 2025 17:11:13 +0100
+Message-ID: <20250407161130.1349147-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="8xUyRlIlJRn2Mb1P"
-Content-Disposition: inline
-In-Reply-To: <20250407133138.22449-2-bincai.liu@mediatek.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
+Here's a set of patches to add basic support for the AFS GSSAPI security
+class to AF_RXRPC and kafs.  It provides transport security for keys that
+match the security index 6 (YFS) for connections to the AFS fileserver and
+VL server.
 
---8xUyRlIlJRn2Mb1P
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Note that security index 4 (OpenAFS) can also be supported using this, but
+it needs more work as it's slightly different.
 
-On Mon, Apr 07, 2025 at 09:31:22PM +0800, Bincai Liu wrote:
-> Add compatible string to support mipi for MT8196.
+The patches also provide the ability to secure the callback channel -
+connections from the fileserver back to the client that are used to pass
+file change notifications, amongst other things.  When challenged by the
+fileserver, kafs will generate a token specific to that server and include
+it in the RESPONSE packet as the appdata.  The server then extracts this
+and uses it to send callback RPC calls back to the client.
 
-You need to point out in your commit message here and in the mipi
-binding patch, why a fallback compatible is not suitable.
+It can also be used to provide transport security on the callback channel,
+but a further set of patches is required to provide the token and key to
+set that up when the client responds to the fileserver's challenge.
 
-Cheers,
-Conor.
+This makes use of the previously added crypto-krb5 library that is now
+upstream (last commit fc0cf10c04f4).
 
->=20
-> Signed-off-by: Bincai Liu <bincai.liu@mediatek.com>
-> ---
->  Documentation/devicetree/bindings/phy/mediatek,dsi-phy.yaml | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/phy/mediatek,dsi-phy.yaml =
-b/Documentation/devicetree/bindings/phy/mediatek,dsi-phy.yaml
-> index f6e494d0d89b..ed99e959bf4b 100644
-> --- a/Documentation/devicetree/bindings/phy/mediatek,dsi-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/mediatek,dsi-phy.yaml
-> @@ -37,6 +37,7 @@ properties:
->        - const: mediatek,mt2701-mipi-tx
->        - const: mediatek,mt8173-mipi-tx
->        - const: mediatek,mt8183-mipi-tx
-> +      - const: mediatek,mt8196-mipi-tx
-> =20
->    reg:
->      maxItems: 1
-> --=20
-> 2.45.2
->=20
+This series of patches consist of the following parts:
 
---8xUyRlIlJRn2Mb1P
-Content-Type: application/pgp-signature; name="signature.asc"
+ (0) Update kdoc comments to remove some kdoc builder warnings.
 
------BEGIN PGP SIGNATURE-----
+ (1) Push reponding to CHALLENGE packets over to recvmsg() or the kernel
+     equivalent so that the application layer can include user-defined
+     information in the RESPONSE packet.  In a follow-up patch set, this
+     will allow the callback channel to be secured by the AFS filesystem.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ/P45QAKCRB4tDGHoIJi
-0uZ2AQCmQRddIAahlK8Ed+uZbLQZVr9L4zCTUWXg3FZUCLVczwD+KTSQUSVEAcAA
-ytubYwzhw6MZqL5MEKTRb+4e+b1dCA0=
-=3pKV
------END PGP SIGNATURE-----
+ (2) Add the AF_RXRPC RxGK security class that uses a key obtained from the
+     AFS GSS security service to do Kerberos 5-based encryption instead of
+     pcbc(fcrypt) and pcbc(des).
 
---8xUyRlIlJRn2Mb1P--
+ (3) Add support for callback channel encryption in kafs.
+
+ (4) Provide the test rxperf server module with some fixed krb5 keys.
+
+David
+
+The patches can be found on this branch also:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=rxrpc-next
+
+CHANGES
+=======
+ver #2)
+ - Fix use of %zx instead of %lx.
+ - Add a patch to add 'Return:' descriptions into existing kdoc comments.
+ - Add 'Return:' descriptions into new kdoc comments.
+ - Add a function API ref at the end of rxrpc.rst.
+
+David Howells (13):
+  rxrpc: kdoc: Update function descriptions and add link from rxrpc.rst
+  rxrpc: Pull out certain app callback funcs into an ops table
+  rxrpc: Allow CHALLENGEs to the passed to the app for a RESPONSE
+  rxrpc: Add the security index for yfs-rxgk
+  rxrpc: Add YFS RxGK (GSSAPI) security class
+  rxrpc: rxgk: Provide infrastructure and key derivation
+  rxrpc: rxgk: Implement the yfs-rxgk security class (GSSAPI)
+  rxrpc: rxgk: Implement connection rekeying
+  rxrpc: Allow the app to store private data on peer structs
+  rxrpc: Display security params in the afs_cb_call tracepoint
+  afs: Use rxgk RESPONSE to pass token for callback channel
+  rxrpc: Add more CHALLENGE/RESPONSE packet tracing
+  rxrpc: rxperf: Add test RxGK server keys
+
+ Documentation/networking/rxrpc.rst |   15 +
+ fs/afs/Kconfig                     |    1 +
+ fs/afs/Makefile                    |    1 +
+ fs/afs/cm_security.c               |  340 +++++++
+ fs/afs/internal.h                  |   20 +
+ fs/afs/main.c                      |    1 +
+ fs/afs/misc.c                      |   27 +
+ fs/afs/rxrpc.c                     |   40 +-
+ fs/afs/server.c                    |    2 +
+ include/crypto/krb5.h              |    5 +
+ include/keys/rxrpc-type.h          |   17 +
+ include/net/af_rxrpc.h             |   51 +-
+ include/trace/events/afs.h         |   11 +-
+ include/trace/events/rxrpc.h       |  163 +++-
+ include/uapi/linux/rxrpc.h         |   77 +-
+ net/rxrpc/Kconfig                  |   23 +
+ net/rxrpc/Makefile                 |    6 +-
+ net/rxrpc/af_rxrpc.c               |   93 +-
+ net/rxrpc/ar-internal.h            |   78 +-
+ net/rxrpc/call_accept.c            |   34 +-
+ net/rxrpc/call_object.c            |   22 +-
+ net/rxrpc/conn_event.c             |  134 ++-
+ net/rxrpc/conn_object.c            |    2 +
+ net/rxrpc/insecure.c               |   13 +-
+ net/rxrpc/io_thread.c              |   12 +-
+ net/rxrpc/key.c                    |  187 ++++
+ net/rxrpc/oob.c                    |  381 ++++++++
+ net/rxrpc/output.c                 |   60 +-
+ net/rxrpc/peer_object.c            |   22 +-
+ net/rxrpc/protocol.h               |   20 +
+ net/rxrpc/recvmsg.c                |  132 ++-
+ net/rxrpc/rxgk.c                   | 1367 ++++++++++++++++++++++++++++
+ net/rxrpc/rxgk_app.c               |  285 ++++++
+ net/rxrpc/rxgk_common.h            |  139 +++
+ net/rxrpc/rxgk_kdf.c               |  287 ++++++
+ net/rxrpc/rxkad.c                  |  296 +++---
+ net/rxrpc/rxperf.c                 |   78 +-
+ net/rxrpc/security.c               |    3 +
+ net/rxrpc/sendmsg.c                |   22 +-
+ net/rxrpc/server_key.c             |   42 +
+ 40 files changed, 4268 insertions(+), 241 deletions(-)
+ create mode 100644 fs/afs/cm_security.c
+ create mode 100644 net/rxrpc/oob.c
+ create mode 100644 net/rxrpc/rxgk.c
+ create mode 100644 net/rxrpc/rxgk_app.c
+ create mode 100644 net/rxrpc/rxgk_common.h
+ create mode 100644 net/rxrpc/rxgk_kdf.c
+
 
