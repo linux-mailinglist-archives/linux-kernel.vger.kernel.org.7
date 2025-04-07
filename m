@@ -1,81 +1,63 @@
-Return-Path: <linux-kernel+bounces-591811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E75A7E5A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:06:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13742A7E5CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:13:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1B923B055D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:57:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 408C8442F5C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491482046B4;
-	Mon,  7 Apr 2025 15:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198702063CA;
+	Mon,  7 Apr 2025 15:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IQ4Z06Yg"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RnfscsZj"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2502054F5;
-	Mon,  7 Apr 2025 15:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1DE205E22;
+	Mon,  7 Apr 2025 15:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744041469; cv=none; b=MnQTbLQpqkbX188uVk2dFXtBmbAlvyCbChqJv+OdW39EplA5GeD+5/NME5AHXbqnsapF10XA56yMkx7/RjOb8p+MzA9ZboABoHbyBL1MoybWB7U/zyY/mQBiqxFOYYdyNXtA+DHzHoElo2jptJFW4XtH3m3JbhaIvsLulx2sCIs=
+	t=1744041541; cv=none; b=TwV0VM+LU1qlTg2hGZ2iNKXrrWTLPlufW4ung1z6VwHoNCzjPhr8kL0Uad4ZpTk0zIZ2mlmvhyz1HJnT3DIvTqPRvadK9HjIjIFXBokW/EchgkAwPbGXI1Cl8ICSovPJvFwY5LaJmtT0s27edyo7e5Zv03ErxWlKpaLtFw0lE9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744041469; c=relaxed/simple;
-	bh=H+CdtIhmID2/drSfh5+XjpR6UYF4Qy4pqbDGwhcpi1A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W9jz0wLafK1H229neCFx0nVLEirS6d8J4ehl5W/hx+lHLucXdY4kgE0k8t4/AZmNLgc9g4yWoaUkUiDm1WDPSyDnQ4Ih1LOJN78fz36+geekQjVLX0pT29kqwTxaIVhTu3f+CHgtkMmGMB39SnKRLXgk52BgPCCrlZ0VWDzCCb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IQ4Z06Yg; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2295d78b433so42647755ad.2;
-        Mon, 07 Apr 2025 08:57:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744041467; x=1744646267; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=v5r35eAB9xHFrwGXzgL7ZcsIMlZ9GDgOCNF5pC7M0bw=;
-        b=IQ4Z06YgRYFcMsry0WbkmTmUUTG3A2dyY/IA69a1CS9EiYzy7tyGVE8m5kvPRtMxxT
-         LiPGmm2ZlHdEXZsLo2rsLJJWVUOo8dDNe/cUXK7cMq5uN8Fo3lAr3JwAwWsg52ml/ENF
-         do1EzN0Iu4jnEaA3LWM59BPV6Aa/g49N/xf4skn6GFqulJ/DgDNYR10JazbAf3xkSeQ/
-         6y4OLXmXGkkypwc3ydBj+0+JiuH+coEIRXYkJaOyJWXiSdSkZU6WKlABQITP9Iyio/E2
-         G/hoVQaS8T5zrqjPBa6BXWRMY4RlrVl1NZbORq8tn7/lxKvszQoh3dh8c1hE5oKQnjSW
-         cqKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744041467; x=1744646267;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v5r35eAB9xHFrwGXzgL7ZcsIMlZ9GDgOCNF5pC7M0bw=;
-        b=NzUiZdwhvK3zCbZau5CpexIP8dkSEN4z8tmStH40O2n3OWk7FhVaQqGGmgk6Bk19zc
-         Wjt5qjyb6YyzfA3UJ43CTgIlzrLsZsrKDgWwerTuLAgYVJmOm+d7yhKdLULSwRZ+Z55d
-         4D9sAibEIqd76ySoeUy7Ko+agNG7G8qcNkWazSFWltiq85TXLYDU0kaVVpy5elT8Fkx0
-         Ka9X1Lz9KC+zkZBGh96QZcNKYPOj/ZijCRyNkW2qKqM+wKz7DIXQbV2neErEbldLRdIv
-         dSSc/MjwTmCrdSzOgo0QH9HArZDA7/M8an+yni2unabvngnrbCFIAGdfdl0GTJVkxcO7
-         uyww==
-X-Forwarded-Encrypted: i=1; AJvYcCV870F6yqQVUoWFcIOKjzV+3OUF+Fd5OXcgkPR7xpxf+ukTycjAlSqDUJjE+I9dZ0iE8hitY5fGM5QkWCgwceZnbek=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmAr1SHfC9d7Qm79Ivk+8Wg/EvsIVNVBU3xREKa0siv/2NKNXL
-	aDVQCDHXbPfioY3jPMuolri7IQA3yaZiqdyZ9Ll8cIfm7Y5jU5Gu
-X-Gm-Gg: ASbGncv9BqvmzlepeNlzVfm4d3dUY45G6UwLINfAVvykMMeeiLqLyLM6xXMqDDYdpQJ
-	ts59s5WBfSCnuZolOumeMgCtELL7Mca1yy0IZhuq8udgXWOQeEwwXOEu40KtryomlDZQq7Q1KaA
-	pC3gpbB2GbGWVgiO/e4pLfw/TwOGGW68Mg6YJ488I/vP07T9yPFXJ9g4t2w6RMMihZ4lmjm4W7U
-	5YneCtPa5NYCYZRVK/BIKrdxqNXHrkUpUtuEA3G0IjkBrmfE1l8PehkrHZYKurmJ3pPlP/06KAE
-	82blW1M10b2cjNlCH1MsP+y9r/8jbzwCEqJ+keOTwqyoGvuujCNXkgG4k4/zIH7255hiPeA3VRD
-	GMseNlL6/PztUhYZp+WCmQxB9S5Fu
-X-Google-Smtp-Source: AGHT+IFBRwllDf9K+EOnjhqcFFxAPq/2hjZGxCvm4B7YpsWaiJHVT4hb0raWmhns3hpBw+Rx3nS3Sg==
-X-Received: by 2002:a17:903:246:b0:223:faf5:c82 with SMTP id d9443c01a7336-22a8a045fe5mr152539315ad.8.1744041466969;
-        Mon, 07 Apr 2025 08:57:46 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229785c27b3sm83336955ad.97.2025.04.07.08.57.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Apr 2025 08:57:45 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <2c0b957b-3a7c-4607-9a8b-79fcbf7297c8@roeck-us.net>
-Date: Mon, 7 Apr 2025 08:57:44 -0700
+	s=arc-20240116; t=1744041541; c=relaxed/simple;
+	bh=7xL2Pvejkhm/LMdO01nWJ0qjQpyVLWiU7owkz4pgwew=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ioi0n81C2D3nmd+0iFiMdt8tlWj+VbVBTqHCdQklZU4tabpyXBWfOlsvGg2S2iyLHU58NvjE2Lu49Fhf6WwnvVS/Ca9nLgwzOJ0sjt65dJrP6r34vLBhm0kgjDn4WpCbLp8myeUwXbOsq5BaKYGdYCNTa2adFuIvlBlKxRbeNPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RnfscsZj; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 537Fwp64412378
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 7 Apr 2025 10:58:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1744041531;
+	bh=CM1BJ12DnqqQb7OjNUW+NjZkGcwmy/JnA2JZ39Kh3aw=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=RnfscsZjHDPkYoOtGmVavQryimF7JMTVgyOOkpBGdsqkznTmyCjbmQT6ibOtFncnz
+	 jqBBmCAksx5FiZ26rjiXhZl8xprGLx+B6MXliWgaTyddHS02I+oDnkIPGBdgpxRAf2
+	 Dm+Wm96RicagazhqJ9aXWi77m4b7m91wH8CyaSmw=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 537FwoH5114980
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 7 Apr 2025 10:58:50 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 7
+ Apr 2025 10:58:50 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 7 Apr 2025 10:58:50 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 537FwnDW117852;
+	Mon, 7 Apr 2025 10:58:50 -0500
+Message-ID: <e131298f-3713-482a-a740-ff89709270b4@ti.com>
+Date: Mon, 7 Apr 2025 10:58:49 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,119 +65,243 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/4] tracing: Use vmap_page_range() to map memmap ring
- buffer
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Vincent Donnefort <vdonnefort@google.com>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Jann Horn <jannh@google.com>
-References: <20250402144903.993276623@goodmis.org>
- <20250402144953.754618481@goodmis.org>
- <4f8ece8b-8862-4f7c-8ede-febd28f8a9fe@roeck-us.net>
- <20250407112352.264e12b0@gandalf.local.home>
+Subject: Re: [PATCH v6 06/11] arm64: dts: ti: k3-am62a7-sk: Enable IPC with
+ remote processors
+To: Judith Mendez <jm@ti.com>,
+        Devarsh Thakkar
+	<devarsht@lewv0571a.ent.ti.com>,
+        Nishanth Menon <nm@ti.com>, Hari Nagalla
+	<hnagalla@ti.com>
+CC: Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Beleswar Padhi <b-padhi@ti.com>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Markus Schneider-Pargmann <msp@baylibre.com>
+References: <20250405001518.1315273-1-jm@ti.com>
+ <20250405001518.1315273-7-jm@ti.com>
+ <6868f593-0728-4e92-a57b-87db6a0037f6@ti>
+ <f42607f5-e39d-48a1-89c0-11d4982a2426@ti.com>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20250407112352.264e12b0@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <f42607f5-e39d-48a1-89c0-11d4982a2426@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 4/7/25 08:23, Steven Rostedt wrote:
-> On Sun, 6 Apr 2025 10:39:27 -0700
-> Guenter Roeck <linux@roeck-us.net> wrote:
+On 4/7/25 9:13 AM, Judith Mendez wrote:
+> Hi Devarsh,
 > 
->> non-MMU builds (xtensa:nommu_kc705_defconfig):
-> 
-> Bah!
-> 
-:-)
-
+> On 4/7/25 8:54 AM, Devarsh Thakkar wrote:
+>> Hi Judith,
 >>
->> kernel/trace/trace.o:(.init.literal+0x250): undefined reference to `get_vm_area'
+>> On 05/04/25 05:45, Judith Mendez wrote:
+>>  > From: Devarsh Thakkar <devarsht@ti.com>
+>>>
+>>
+>> Thanks for the patch.
+>>
+>>> For each remote proc, reserve memory for IPC and bind the mailbox
+>>> assignments. Two memory regions are reserved for each remote processor.
+>>> The first region of 1MB of memory is used for Vring shared buffers
+>>> and the second region is used as external memory to the remote processor
+>>> for the resource table and for tracebuffer allocations.
+>>>
+>>> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+>>> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+>>> Signed-off-by: Judith Mendez <jm@ti.com>
+>>> ---
+>>>   arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 96 +++++++++++++++++++++++--
+>>>   1 file changed, 90 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+>>> index 1c9d95696c839..7d817b447c1d0 100644
+>>> --- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+>>> +++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+>>> @@ -52,6 +52,42 @@ linux,cma {
+>>>               linux,cma-default;
+>>>           };
+>>> +        c7x_0_dma_memory_region: c7x-dma-memory@99800000 {
+>>> +            compatible = "shared-dma-pool";
+>>> +            reg = <0x00 0x99800000 0x00 0x100000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        c7x_0_memory_region: c7x-memory@99900000 {
+>>> +            compatible = "shared-dma-pool";
+>>> +            reg = <0x00 0x99900000 0x00 0xf00000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        mcu_r5fss0_core0_dma_memory_region: r5f-dma-memory@9b800000 {
+>>> +            compatible = "shared-dma-pool";
+>>> +            reg = <0x00 0x9b800000 0x00 0x100000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        mcu_r5fss0_core0_memory_region: r5f-dma-memory@9b900000 {
+>>> +            compatible = "shared-dma-pool";
+>>> +            reg = <0x00 0x9b900000 0x00 0xf00000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9c800000 {
+>>> +            compatible = "shared-dma-pool";
+>>> +            reg = <0x00 0x9c800000 0x00 0x100000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
+>>> +            compatible = "shared-dma-pool";
+>>> +            reg = <0x00 0x9c900000 0x00 0xf00000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>>           secure_tfa_ddr: tfa@9e780000 {
+>>>               reg = <0x00 0x9e780000 0x00 0x80000>;
+>>>               alignment = <0x1000>;
+>>> @@ -63,12 +99,6 @@ secure_ddr: optee@9e800000 {
+>>>               alignment = <0x1000>;
+>>>               no-map;
+>>>           };
+>>> -
+>>> -        wkup_r5fss0_core0_memory_region: r5f-dma-memory@9c900000 {
+>>> -            compatible = "shared-dma-pool";
+>>> -            reg = <0x00 0x9c900000 0x00 0x01e00000>;
+>>> -            no-map;
+>>> -        };
+>>>       };
+>>
+>> This is missing the edgeAI specific remote-core carveouts and RTOS-to-RTOS IPC memory regions [1] being used by edgeAI firmwares which come as pre-packaged in the official SDK release for AM62A.
+>>
+>> There is only one official SDK release for AM62A (which is edgeAI based) [2] which packages these edgeAI remoteproc firmwares and in my view it is a fair expectation that remote core careveouts in device-tree should align with firmwares released in SDK.
+>>
+
+Why should Linux upstream care about what we do in our current evil vendor SDKs?
+We change things around every cycle, and do all kinds of hacky things to just
+"make it work" for the current SDK release.
+
+>> This is because most developers (including me) and vendors download this official SDK release and use it with latest upstream kernel and modules (right now we are applying required patches locally) and this patch won't suffice for this, in-fact it won't work since the remoteproc firmwares are already using regions beyond the reserved-regions from this patch.
+
+Then that firmware team should fix their firmware, Linux should not
+do things just because some builds of a firmware did the wrong thing.
+
+Just a random example from the top of my mind here, a while back
+someone on the codec firmware team decided to take the standard RPMSG
+name service structure and modify it to suit some specific usecase
+they had, suddenly all the firmware we made for AM57x devices stopped
+working on upstream kernels. Instead of fixing the firmware we just
+carried a hack for the same in our vendor kernel trees. Now customers
+have no path to use this old firmware on newer kernels as adding the
+hack to upstream Linux (rightly) failed [0].
+
+Let's not do that again, if we have firmware that doesn't follow
+upstream, then let's fix the firmware, not hack around it upstream.
+
+The edgeAI firmware folks have no issue ignoring existing upstream
+IPC carveouts and simply replacing them all with their own custom
+ones in their SDK[1], I see no reason they cannot continue doing that
+if they don't want to fix their firmware.
+
 > 
-> Does this fix it?
+> I understand your point, currently with this patch remoteproc loading
+> will not work for some cores. However, the goal here is to standardize
+> as much as possible the memory carveout sizes, push the "demo firmware"
+> to request resources the correct way from resource table, and move away
+> from this dependency and limitations that we have with our firmware. We
+> should soon be able to generate our own firmware using Zephyr,  which
+> Andrew is pioneering, so with this firmware we should move to the
+> correct direction upstream. Downstream we are still using the memory
+> carveout sizes that the firmware folk want so desperately to keep, for
+> now..
 > 
 
-Yes, it does.
++1
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
+I have this Zephyr based firmware for AM62A working and it uses the
+standard IPC regions as specified in this patch. I'll be posting the PR
+for it in Zephyr upstream by the end of week.
 
-Thanks,
-Guenter
+For this patch as it is:
 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index b581e388a9d9..8ddf6b17215c 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -9806,6 +9806,7 @@ static int instance_mkdir(const char *name)
->   	return ret;
->   }
->   
-> +#ifdef CONFIG_MMU
->   static u64 map_pages(unsigned long start, unsigned long size)
->   {
->   	unsigned long vmap_start, vmap_end;
-> @@ -9828,6 +9829,12 @@ static u64 map_pages(unsigned long start, unsigned long size)
->   
->   	return (u64)vmap_start;
->   }
-> +#else
-> +static inline u64 map_pages(unsigned long start, unsigned long size)
-> +{
-> +	return 0;
-> +}
-> +#endif
->   
->   /**
->    * trace_array_get_by_name - Create/Lookup a trace array, given its name.
+Acked-by: Andrew Davis <afd@ti.com>
+
+Andrew
+
+[0] https://lore.kernel.org/lkml/20241011123922.23135-1-richard@nod.at/
+[1] https://git.ti.com/cgit/edgeai/meta-edgeai/tree/recipes-kernel/linux/linux-ti-staging/j721e-evm/0001-arm64-dts-ti-Add-DTB-overlays-for-vision-apps-and-ed.patch?h=kirkstone
+
+> ~ Judith
 > 
+>>
+>> [1]: https://git.ti.com/cgit/ti-linux-kernel/ti-linux-kernel/tree/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts?h=ti-linux-6.6.y-cicd#n103
+>> [2]: https://www.ti.com/tool/PROCESSOR-SDK-AM62A
+>>
+>> Regards
+>> Devarsh
+>>
+>>>       opp-table {
+>>> @@ -741,3 +771,57 @@ dpi1_out: endpoint {
+>>>           };
+>>>       };
+>>>   };
+>>> +
+>>> +&mailbox0_cluster0 {
+>>> +    status = "okay";
+>>> +
+>>> +    mbox_r5_0: mbox-r5-0 {
+>>> +        ti,mbox-rx = <0 0 0>;
+>>> +        ti,mbox-tx = <1 0 0>;
+>>> +    };
+>>> +};
+>>> +
+>>> +&mailbox0_cluster1 {
+>>> +    status = "okay";
+>>> +
+>>> +    mbox_c7x_0: mbox-c7x-0 {
+>>> +        ti,mbox-rx = <0 0 0>;
+>>> +        ti,mbox-tx = <1 0 0>;
+>>> +    };
+>>> +};
+>>> +
+>>> +&mailbox0_cluster2 {
+>>> +    status = "okay";
+>>> +
+>>> +    mbox_mcu_r5_0: mbox-mcu-r5-0 {
+>>> +        ti,mbox-rx = <0 0 0>;
+>>> +        ti,mbox-tx = <1 0 0>;
+>>> +    };
+>>> +};
+>>> +
+>>> +&wkup_r5fss0 {
+>>> +    status = "okay";
+>>> +};
+>>> +
+>>> +&wkup_r5fss0_core0 {
+>>> +    mboxes = <&mailbox0_cluster0>, <&mbox_r5_0>;
+>>> +    memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
+>>> +            <&wkup_r5fss0_core0_memory_region>;
+>>> +};
+>>> +
+>>> +&mcu_r5fss0 {
+>>> +    status = "okay";
+>>> +};
+>>> +
+>>> +&mcu_r5fss0_core0 {
+>>> +    mboxes = <&mailbox0_cluster2>, <&mbox_mcu_r5_0>;
+>>> +    memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
+>>> +            <&mcu_r5fss0_core0_memory_region>;
+>>> +};
+>>> +
+>>> +&c7x_0 {
+>>> +    mboxes = <&mailbox0_cluster1>, <&mbox_c7x_0>;
+>>> +    memory-region = <&c7x_0_dma_memory_region>,
+>>> +            <&c7x_0_memory_region>;
+>>> +    status = "okay";
+>>> +};
+>>
 > 
-> -- Steve
-
 
