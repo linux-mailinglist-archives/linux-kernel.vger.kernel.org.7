@@ -1,156 +1,160 @@
-Return-Path: <linux-kernel+bounces-591455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D547DA7E015
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:55:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ACCDA7E011
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:54:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E3F01899F5E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:47:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83B86169A1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C797155300;
-	Mon,  7 Apr 2025 13:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4BC1C1AB4;
+	Mon,  7 Apr 2025 13:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8jw5LJZ"
-Received: from mail-pg1-f196.google.com (mail-pg1-f196.google.com [209.85.215.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lUDPVglC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3342349641
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 13:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FA41B042F;
+	Mon,  7 Apr 2025 13:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744033644; cv=none; b=rFKyDpM3ZyLkcWquXsPBZ4uzBZ8n6hDhxRmKImwlNmbiMy8u45+fDKlsWl6EK4txkoFajRpQUJs1rZDDZKFJng07twxu7kiVilsZ8ft5z7S2sl2X/ZgfXgcFEMQMKO50TBeYFm08f4GY+LoRS2zoxy43Srw/wuNnmyt+Fdrx+l8=
+	t=1744033728; cv=none; b=IWYqJsY5ifmGFbisEyAfITRVGUH+mwV8jiUS7WnRSUVNGuHJjwty40mSbAhZd9KtcWyxy22Z9eHZuWK7hMw+CsmFs8AX444DcEYDlH6fxPHmVl4mlsLjcVR7+HqXNtU9BNOCah/oZ0iKJcez4siczMQAf1CiNBwioAgIUiFSlYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744033644; c=relaxed/simple;
-	bh=nBFMMBsghcHJzLgBobziMdH8ahuh+l61GC0hU05u+N4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NusD+VRMChqAu4SfWAVc9NzNH+HfkqpqX7hZ1ws8bZFcI7Dn5JaHArZSuxBWgWf/s1HY9mLVIbgl4NCfJ7n3OpzU9rfEXbezJo+kXffiCNcXKIehTI67vN57POb7l5Tu2dET4hlRAIEgYedhi4JqOawQQRmahQw+eC2WFpu2X/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z8jw5LJZ; arc=none smtp.client-ip=209.85.215.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f196.google.com with SMTP id 41be03b00d2f7-af5085f7861so2697515a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 06:47:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744033642; x=1744638442; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jqi69oZTtxiQ76XlmXeV3ooNl+Gv9DPSGvNyg2kJkx8=;
-        b=Z8jw5LJZ1P6TpNv+S6EpvcpZi8YlVcj1629F277lq/rBUEE0Gk+RyId1Ui2AHxeJub
-         2v80Na+h4XCAg2kuNeyA+HMJp38pf0bIzibszJuRgwLy8YW4A9nwrQv9C1w0oe/1NKVJ
-         Ks1QwmgZM/IaUGiJlEueZ6V0Jyitms6IkbA+s0Sn/USyqB/spSbxLI6knF7ba4BWCDZW
-         GZTO1txT+Q4psSovcvoDA0ws39AK/CvjZWJThggftJVNJ+HOTF9Vav6uea3G/UIbAjAN
-         yWadTm9FH6R2r9fQTlCpC2pfmyumVTQi2UdolsMAmmG0PF77hEP7NvV4GoOgYW4Xcj/l
-         FH4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744033642; x=1744638442;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jqi69oZTtxiQ76XlmXeV3ooNl+Gv9DPSGvNyg2kJkx8=;
-        b=G2AzdqY6/5517frm8wPNri1fsmxE1j7IUbBXsvjpBprQ+bAih0fsBCmRZrY8kX6WOb
-         zI/4tQ4RAH2EsMbYfh8GYhg4aoN0OJF94xZNxdJ9kWYw5RDRZb2HOduUQD66T9l5k1nr
-         gnpwa4ipe/duOW7ZNiBnIYoZI/kn6UM9te7jjoU+l2YNDh0X5prBQh9Quk8xSUaNlGKa
-         tgARFtJsfuHTpF0bhbVoCS7Wuuq7v9m0bl7HSR2cVYb5CmLQPjKKmXeZhDbDdqEHQMSv
-         /V1oH556Tm0c/4UcLvI+va/418SvT46OOd8YlJ41RVhXGILnlNNKOrKDVmFljz20W6kV
-         SqEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUj2724z6cGMWgZfyHzwfsUwGv6THQxElnhdPz/qZHDEg2Ub1NDuNLCL4FqWFYLAcSk9HhGyrTd7VtN8M0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywoa6I0Uph+53KIEb4osrs7Bjf6GrymQWaJhW4/IRpiQ+E2L5Gp
-	MB0kYcnzZxM2B157acRQLjzi8BOdVhEzFIqoPUMO0s5ffc1DZswU
-X-Gm-Gg: ASbGnctC1HkQC3W/PycVxTn5734mgX5HW1rwAetsw8T/LOI5vL3/a9tyte4hYwO4WRm
-	NMht8YQXK/v8RzBDyBkia54F5Blzf2OuMK2l/HEovQYzq7c+6hXuvNpU5qFO9f37P/zCu+83stf
-	VxtEjPxvPwdKo9kYVxVXTGS1QNiQEtwzVlyi5FJbVPwi4rH+M+FW6sPAyV2q+uNE51Xtkzenq7/
-	f6tFuAzRayVAHLTsfMd/jS+Cdr7v6VJ/V9GTwxlIt+LI9k0j8azH7OIV7VgJxWQH/f7Hl5sFca4
-	BQpQnFkl8oHF/A4EAi7AI9Nohh9PyBivYBwfKz9kxNWZJI87ZA3OCu/EVc1NRj/m/iYed1yt
-X-Google-Smtp-Source: AGHT+IGF3POrrpxSeXgGs9iUraO6GYQoPqRSmV2ULtdstn3j2U3sHLyUjOPqlvtrIAalRZbY4kQvCQ==
-X-Received: by 2002:a17:90b:3a44:b0:301:1d9f:4ba2 with SMTP id 98e67ed59e1d1-306a4900a4dmr17898712a91.28.1744033642476;
-        Mon, 07 Apr 2025 06:47:22 -0700 (PDT)
-Received: from localhost.localdomain ([202.43.239.100])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3057cb5a86asm8988418a91.32.2025.04.07.06.47.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 06:47:21 -0700 (PDT)
-From: hupu <hupu.gm@gmail.com>
-To: jstultz@google.com,
-	linux-kernel@vger.kernel.org
-Cc: juri.lelli@redhat.com,
-	peterz@infradead.org,
-	vschneid@redhat.com,
-	mingo@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	hupu@transsion.com,
-	hupu <hupu.gm@gmail.com>
-Subject: [RFC 1/1] sched: Skip redundant operations for proxy tasks needing return migration
-Date: Mon,  7 Apr 2025 21:47:12 +0800
-Message-ID: <20250407134712.93062-1-hupu.gm@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1744033728; c=relaxed/simple;
+	bh=DRFXhK1JzU2VBd/uy4yTqEAFDJzhKgAsa35yJcL9TRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sEA2HVrAhEal1uEWYIjKOoT1+XeR1o7yovhDyjbZSTOrHeThtdvAFCAU55+n/E9gCL17xetH1Lrl9vkZmvI9+YvlJ6718e5fJRWwmoog6couF/PVinDaTgtSOc4OwxcWyKKDClbHPOcx4iPg8Dv3zYvPkfazPmfT37LxFvmAVY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lUDPVglC; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744033727; x=1775569727;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DRFXhK1JzU2VBd/uy4yTqEAFDJzhKgAsa35yJcL9TRQ=;
+  b=lUDPVglCVd3aYZ01tVbJvE+/6loScbr8uDHhBWiRvPVGejO8MiD8d7Kt
+   4+kjqHPrgAbN2pHWVtro8G+Mp0k19MHla83V1ttX+PakfG18fQ1lEzuSb
+   WjY3IY7gqefeV1Lnoox0k97tE8B6KgpZy9llUB9IL7cLtrzbIVFwBo9tS
+   KuVEmGoGN0hi7KLGPyPPq4iO1jssO1bkHKN70CQxsrCK1yshn4UNbSmek
+   GTnjvBsI/+4xujRSHZKXbB2LIgWRS5EuGwQiTxsJlXYzKcy10oFw86xGx
+   HUE5skkc1iATZ0jkHM00XjpGM0VsB/GzoZQzb35azsISlnMq8KF8VV3j5
+   Q==;
+X-CSE-ConnectionGUID: d//c37E0S5yvspBqgjPubA==
+X-CSE-MsgGUID: R/QF+PjkQDCWzU9HbQMXDg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="56790412"
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="56790412"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 06:48:44 -0700
+X-CSE-ConnectionGUID: VK8AjloWTMKxZsrS58prFA==
+X-CSE-MsgGUID: fPEcj9zoSOqCLCkYQ+Ns4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="165163324"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 07 Apr 2025 06:48:42 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u1mq7-0003S3-0q;
+	Mon, 07 Apr 2025 13:48:39 +0000
+Date: Mon, 7 Apr 2025 21:47:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Wolfram Sang <wsa-dev@sang-engineering.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: Re: [PATCH v2 2/6] i2c: core: Unify the firmware node type check
+Message-ID: <202504072133.J8njROAD-lkp@intel.com>
+References: <20250407095852.215809-3-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250407095852.215809-3-andriy.shevchenko@linux.intel.com>
 
-Move the proxy_needs_return() check earlier in ttwu_runnable() to avoid
-unnecessary scheduling operations when a proxy task requires return
-migration to its original CPU.
+Hi Andy,
 
-The current implementation performs several operations (rq clock update,
-enqueue, and wakeup preemption checks) before checking for return
-migration needs. This is inefficient because:
+kernel test robot noticed the following build errors:
 
-1. For tasks needing return migration, these operations are redundant
-   since the task will be dequeued from current rq anyway
-2. The task may not even be allowed to run on current CPU due to
-   possible affinity changes during blocking
-3. The proper CPU selection will be handled by select_task_rq() in
-   the subsequent try_to_wake_up() logic
+[auto build test ERROR on wsa/i2c/for-next]
+[also build test ERROR on linus/master v6.15-rc1 next-20250407]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-By moving the proxy_needs_return() check to the beginning, we:
-- Avoid unnecessary rq clock updates
-- Skip redundant enqueue operations
-- Eliminate meaningless wakeup preemption checks
-- Let the normal wakeup path handle proper CPU selection
+url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/i2c-core-Drop-duplicate-check-before-calling-OF-APIs/20250407-180528
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-next
+patch link:    https://lore.kernel.org/r/20250407095852.215809-3-andriy.shevchenko%40linux.intel.com
+patch subject: [PATCH v2 2/6] i2c: core: Unify the firmware node type check
+config: arm-randconfig-002-20250407 (https://download.01.org/0day-ci/archive/20250407/202504072133.J8njROAD-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 92c93f5286b9ff33f27ff694d2dc33da1c07afdd)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250407/202504072133.J8njROAD-lkp@intel.com/reproduce)
 
-This optimization is particularly valuable in proxy execution scenarios
-where tasks frequently migrate between CPUs.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504072133.J8njROAD-lkp@intel.com/
 
-Signed-off-by: hupu <hupu.gm@gmail.com>
----
- kernel/sched/core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+All errors (new ones prefixed by >>):
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index ca4ca739eb85..ebb4bc1800e3 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4162,6 +4162,10 @@ static int ttwu_runnable(struct task_struct *p, int wake_flags)
- 
- 	rq = __task_rq_lock(p, &rf);
- 	if (task_on_rq_queued(p)) {
-+		if (proxy_needs_return(rq, p)) {
-+			_trace_sched_pe_return_migration(p);
-+			goto out;
-+		}
- 		update_rq_clock(rq);
- 		if (p->se.sched_delayed) {
- 			proxy_remove_from_sleeping_owner(p);
-@@ -4174,10 +4178,6 @@ static int ttwu_runnable(struct task_struct *p, int wake_flags)
- 			 */
- 			wakeup_preempt(rq, p, wake_flags);
- 		}
--		if (proxy_needs_return(rq, p)) {
--			_trace_sched_pe_return_migration(p);
--			goto out;
--		}
- 		ttwu_do_wakeup(p);
- 		ret = 1;
- 	}
+>> drivers/i2c/i2c-core-slave.c:117:3: error: call to undeclared function 'for_each_child_node_scoped'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     117 |                 for_each_child_node_scoped(fwnode, child) {
+         |                 ^
+>> drivers/i2c/i2c-core-slave.c:117:44: error: expected ';' after expression
+     117 |                 for_each_child_node_scoped(fwnode, child) {
+         |                                                          ^
+         |                                                          ;
+>> drivers/i2c/i2c-core-slave.c:117:38: error: use of undeclared identifier 'child'; did you mean 'ihold'?
+     117 |                 for_each_child_node_scoped(fwnode, child) {
+         |                                                    ^~~~~
+         |                                                    ihold
+   include/linux/fs.h:2758:13: note: 'ihold' declared here
+    2758 | extern void ihold(struct inode * inode);
+         |             ^
+   drivers/i2c/i2c-core-slave.c:118:29: error: use of undeclared identifier 'child'; did you mean 'ihold'?
+     118 |                         fwnode_property_read_u32(child, "reg", &reg);
+         |                                                  ^~~~~
+         |                                                  ihold
+   include/linux/fs.h:2758:13: note: 'ihold' declared here
+    2758 | extern void ihold(struct inode * inode);
+         |             ^
+   4 errors generated.
+
+
+vim +/for_each_child_node_scoped +117 drivers/i2c/i2c-core-slave.c
+
+    97	
+    98	/**
+    99	 * i2c_detect_slave_mode - detect operation mode
+   100	 * @dev: The device owning the bus
+   101	 *
+   102	 * This checks the device nodes for an I2C slave by checking the address
+   103	 * used in the reg property. If the address match the I2C_OWN_SLAVE_ADDRESS
+   104	 * flag this means the device is configured to act as a I2C slave and it will
+   105	 * be listening at that address.
+   106	 *
+   107	 * Returns true if an I2C own slave address is detected, otherwise returns
+   108	 * false.
+   109	 */
+   110	bool i2c_detect_slave_mode(struct device *dev)
+   111	{
+   112		struct fwnode_handle *fwnode = dev_fwnode(dev);
+   113	
+   114		if (is_of_node(fwnode)) {
+   115			u32 reg;
+   116	
+ > 117			for_each_child_node_scoped(fwnode, child) {
+
 -- 
-2.47.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
