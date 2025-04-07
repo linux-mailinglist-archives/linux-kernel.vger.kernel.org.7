@@ -1,124 +1,295 @@
-Return-Path: <linux-kernel+bounces-592541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E25EA7EE66
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:05:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AEB6A7EE7E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFFF91897C66
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:03:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52E503B8536
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713ED21ADA2;
-	Mon,  7 Apr 2025 20:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E6D2248B8;
+	Mon,  7 Apr 2025 19:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jO/s3FtH"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ebiyFJu6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8852139DC;
-	Mon,  7 Apr 2025 20:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0242D21ABB2;
+	Mon,  7 Apr 2025 19:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744056190; cv=none; b=QZPXI41MdTVvq7Ssb/FHohxF2psBzkwMtvjfPlaW+l5VxVq+fxASigHn4FaCqIEeju9A3hjg8kE33zYAdJCgE11uxKRkB3qpbkvJIff4EzDYQi9zvUXA3xpGTxO9WY5MI90SWIe6zLXP+5Ra5p8zZX8xQrS8tqQw9EXzUSt15NQ=
+	t=1744055459; cv=none; b=OgUbivRK2zGFHrNf0BraxdgjZjQmDhBik6RzBe2eVAbUtGUBp/dOVEEuFpEIznDsAcecgVRkFAROojL2cFlytxe0/LXmzulH4IUAeI5Ax/v8HDac60KDZyRP1IiZd4K7P+hEojfT7pV8HQFPFWmLeHzBRCEdYlG/4K8tw87dTDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744056190; c=relaxed/simple;
-	bh=ducg16hfR8hZueXDsQDQPB98oESAhaelf79Gxs3b3Nc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cz2Zp4B3/fWDnwOOGEcNa89Bxbnf8coZKS5DDAFfiG4QibL5T08yMeUdBtq7AQq6tBSmtz8Tybm10zPn5a9b20YkFH23joAfOP5BZfhEWoMQiF8rg/OT/PYuAznEDiT6+BDZEn6aj4yi1l9HLdg87BF0VDwvjd4IpafTH4MYHJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jO/s3FtH; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2c77a5747e0so2618995fac.2;
-        Mon, 07 Apr 2025 13:03:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744056188; x=1744660988; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g/HVQqx7ACy8Wke2eXLxg0sKouM8xAKI7gwGAUQ/F7s=;
-        b=jO/s3FtH2f1zbvV4T0yDgQ/hRkuUDxJfwe73UVW7FdoBsqieA9niYnO8+MqnrvDqHI
-         Ct5ObN0w9eB0cvZt/FM33WChSp0T8H9Yx8qzkjZGLa99b0t5sUqg7uwR81h7HNmiPSDJ
-         f1N03aBhbKs5T5VjiSHBoXQPDPw0XGxtU8oOPyS+YZkCZD8sWH8v6nLbNoJ04NU/Y7Ue
-         ogVKrLH7G8DhHYMy4cxzwk5PvN9pViUQtdEaFkmShUtlOsKBDTLeMUHzl4PdwJC+eDcr
-         3irFfb1xr/os8ylLd5gmQeZ2uQmHLeZGBGPOjENOxUoMeuZZr9JuAIZ3mx3x8GcKUQ14
-         Qo5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744056188; x=1744660988;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g/HVQqx7ACy8Wke2eXLxg0sKouM8xAKI7gwGAUQ/F7s=;
-        b=FYoC6DdfAenrllJhtMtfI+IUQgM6IkXmEsHs+YiaRCMMTinW7SE7xBPVGSL0KX6Hwf
-         OASrAtAuIvgy09SPEZBrWOAmIME5qCs77rfC3drUS6WJPkkk8aWjEzVZ2uyNipoOI5Le
-         fuhkyCfUt2yVuShDXqLeIrw/fZ0G0EhKSJlKAGAbenifmcv2pGMkA7lcU7gFwOd9b9qV
-         f7c1OvajCu7fOrs/65bqwp5w82qyjU9IZq9dLCAs46U33kA+g/ljq5jNhVF3vpVBCXhR
-         mxBu6lsL/LK5kU/Y6ebvjarhAL0ApX6M0AvXi/WEr1fFXrL5uqnzI/0ZinzZfb5KhOi+
-         JicQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUre+iSZZfAd26M1qO1Lty+InJ/hFByenGQQO0vZI20Xm6NmIHgotcPANxDOrjkcW+ii7fRubLBbUfX0rM=@vger.kernel.org, AJvYcCWLoxdPM0LaOuEIHFIhdHJ2e8vytuYKng0PSPfS6JiP+tauc4BOTgcQpzfNRsuvXmbz2WAiPGjRSxBMahMq6tI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaFHowruG9OjmEG1nBRtUwBOUXGOMUAqWA0RBgryElxL+xhtKI
-	KfnhqhJPdDVpeJO8Gt6pkftmGbE3Zjk8IweCg9/UxXlnFuZuOjxu
-X-Gm-Gg: ASbGncuDIT4OPf3+7klmluN22jXseXZE//9xB/Tl2t7soqPOcsi/wx7ylbQhrfj/WzU
-	jGhtzKTmnji9npJJoq1A6hd13YdNYaNXnL4u6c6lFxmDknEvUyijL3N/uwXi5VfqJ7HOLJqTema
-	QZZMlH9mT2+SbLelobp8J08hnAVJKDUxpJVFf8dB731Ivg1Usg6rG3L6CDu+O3SgxJQ4rrlfBqO
-	+viVeODke1buKibKivvOG0yj0KlsYKKmj9mZBBjA8ygzct2si+2rUhc7C266swKFlxcVO9cjoP0
-	T2iJh3ueC9UiduDC4C2CGdJDgMtY5algpmLIyVzp2kLExsL1F+acACf9KzQvqWmrXhZw6wUaw+t
-	XIXSbIYVxEzYspqbn
-X-Google-Smtp-Source: AGHT+IEEJurb5ksp2fl+uD+idand6jtxtZrvPetDZX8MmlzKvRN2A/ZVHQqQepzpL/TrEfq200nwbg==
-X-Received: by 2002:a05:6870:e38e:b0:29d:c832:7ef6 with SMTP id 586e51a60fabf-2cd331bc71cmr5607523fac.39.1744056186749;
-        Mon, 07 Apr 2025 13:03:06 -0700 (PDT)
-Received: from my-computer.lan (c-73-76-29-249.hsd1.tx.comcast.net. [73.76.29.249])
-        by smtp.googlemail.com with ESMTPSA id 46e09a7af769-72e651a0ee7sm73360a34.38.2025.04.07.13.03.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 13:03:06 -0700 (PDT)
-From: Andrew Ballance <andrewjballance@gmail.com>
-To: liam.howlett@oracle.com
-Cc: a.hindborg@kernel.org,
-	akpm@linux-foundation.org,
-	alex.gaynor@gmail.com,
-	aliceryhl@google.com,
-	andrewjballance@gmail.com,
-	benno.lossin@proton.me,
-	bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com,
-	brauner@kernel.org,
-	dakr@kernel.org,
-	dingxiangfei2009@gmail.com,
-	gary@garyguo.net,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	maple-tree@lists.infradead.org,
-	ojeda@kernel.org,
-	rust-for-linux@vger.kernel.org,
-	tmgross@umich.edu,
-	wedsonaf@gmail.com
-Subject: Re: [RFC PATCH 2/2] rust: add maple tree abstractions
-Date: Mon,  7 Apr 2025 15:02:50 -0500
-Message-ID: <20250407200250.1671534-1-andrewjballance@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cons6o6begjlf4eu3wvhplimbrjtns553nugtblki7u23a3u3p@efca7vmgmr6w>
-References: <cons6o6begjlf4eu3wvhplimbrjtns553nugtblki7u23a3u3p@efca7vmgmr6w>
+	s=arc-20240116; t=1744055459; c=relaxed/simple;
+	bh=bNjLVl+1+o6bDJegZq154BXvcz2DcKtxl/T+cACjFPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YXmtWLhfKFei5+z3KXo7wWHFKQt2SxIE3kYQ6mh/vVl0WMLW6iAbbTNRWgI742v7bdbTlM5YKOGhlCBHDG9XMKtvZrG3QEv3E/TuF6MIv2uonFhk8OprnEMx/heZS7dOyu+6geJZZIbi7e1EpPZRM2Fq78B1tJlFLLJXxtd02Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ebiyFJu6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DB0EC4CEDD;
+	Mon,  7 Apr 2025 19:50:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744055458;
+	bh=bNjLVl+1+o6bDJegZq154BXvcz2DcKtxl/T+cACjFPc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ebiyFJu66+Inb3lNwPMehXgHHe7m0xo8g36/b6DJeX9HFiY2cRnrWNamBul3v/hSI
+	 g9MJAFO7QTQQu7yeRJZ9gQgH5r5G3giZ2JMVPe65jPcYu9wHaU5QyVKI9+g14VlnW/
+	 PvgH6hhwr9Jbi6Ga+Q475sGtj1NMc+W7FKE4Y0aDU1SYzIkns6uzwZX/Vz0/OqEclI
+	 c9PYXXuOBpWXiHpjdjmayjgv73HkaZ29lLBUtvIn0mPCYbOzGyuF6RFvzIOwUupu/a
+	 Jd5wQqXDa6L9f0MdZct/Rp5IPesMy5vcjPtFml9MONoBWSGP3MUDqZK3ao+XD9b6jD
+	 MhuiT4CyOx17Q==
+Date: Mon, 7 Apr 2025 12:50:55 -0700
+From: Kees Cook <kees@kernel.org>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] drm/nouveau: chan: Avoid
+ -Wflex-array-member-not-at-end warnings
+Message-ID: <202504071227.E8484EB@keescook>
+References: <Z-67Hm9uHEJs0RGw@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-67Hm9uHEJs0RGw@kspp>
 
-On Mon, Apr 07, 2025 at 09:59:21AM -0400, Liam R. Howlett wrote:
-> * Andrew Ballance <andrewjballance@gmail.com> [250405 02:03]:
-> > maple trees are sparse array like data structure that maps
-> > non-overlapping ranges to pointers.
+On Thu, Apr 03, 2025 at 10:45:18AM -0600, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
 > 
-> Why do you think the maple tree is a spare array like data structure?
+> Use the `DEFINE_RAW_FLEX()` helper for a few on-stack definitions
+> of a flexible structure where the size of the flexible-array member
+> is known at compile-time, and refactor the rest of the code,
+> accordingly.
 > 
+> So, with these changes, fix the following warnings:
+> 
+> drivers/gpu/drm/nouveau/nouveau_chan.c:274:37: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/gpu/drm/nouveau/nouveau_chan.c:371:46: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/gpu/drm/nouveau/nouveau_chan.c:524:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+>  drivers/gpu/drm/nouveau/nouveau_chan.c | 115 ++++++++++++-------------
+>  1 file changed, 56 insertions(+), 59 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_chan.c b/drivers/gpu/drm/nouveau/nouveau_chan.c
+> index cd659b9fd1d9..a7e70517b7cd 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_chan.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_chan.c
+> @@ -270,10 +270,7 @@ nouveau_channel_ctor(struct nouveau_cli *cli, bool priv, u64 runm,
+>  		{    NV03_CHANNEL_DMA     , 0 },
+>  		{}
+>  	};
+> -	struct {
+> -		struct nvif_chan_v0 chan;
+> -		char name[TASK_COMM_LEN+16];
+> -	} args;
+> +	DEFINE_RAW_FLEX(struct nvif_chan_v0, args, name, TASK_COMM_LEN + 16);
+>  	struct nvif_device *device = &cli->device;
+>  	struct nouveau_channel *chan;
+>  	const u64 plength = 0x10000;
+> @@ -298,28 +295,28 @@ nouveau_channel_ctor(struct nouveau_cli *cli, bool priv, u64 runm,
+>  		return ret;
+>  
+>  	/* create channel object */
+> -	args.chan.version = 0;
+> -	args.chan.namelen = sizeof(args.name);
+> -	args.chan.runlist = __ffs64(runm);
+> -	args.chan.runq = 0;
+> -	args.chan.priv = priv;
+> -	args.chan.devm = BIT(0);
+> +	args->version = 0;
+> +	args->namelen = __struct_size(args) - sizeof(*args);
 
-I called the maple tree "sparse array like" because indexes that have
-no entry map to null and there can be gaps between ranges. I did not
-mean to imply that a maple tree was literally a sparse array. 
+Does __struct_size(args->name) work here (and later)?
 
-Would you like me to reword this?
+> +	args->runlist = __ffs64(runm);
+> +	args->runq = 0;
+> +	args->priv = priv;
+> +	args->devm = BIT(0);
+>  	if (hosts[cid].oclass < NV50_CHANNEL_GPFIFO) {
+> -		args.chan.vmm = 0;
+> -		args.chan.ctxdma = nvif_handle(&chan->push.ctxdma);
+> -		args.chan.offset = chan->push.addr;
+> -		args.chan.length = 0;
+> +		args->vmm = 0;
+> +		args->ctxdma = nvif_handle(&chan->push.ctxdma);
+> +		args->offset = chan->push.addr;
+> +		args->length = 0;
+>  	} else {
+> -		args.chan.vmm = nvif_handle(&chan->vmm->vmm.object);
+> +		args->vmm = nvif_handle(&chan->vmm->vmm.object);
+>  		if (hosts[cid].oclass < FERMI_CHANNEL_GPFIFO)
+> -			args.chan.ctxdma = nvif_handle(&chan->push.ctxdma);
+> +			args->ctxdma = nvif_handle(&chan->push.ctxdma);
+>  		else
+> -			args.chan.ctxdma = 0;
+> -		args.chan.offset = ioffset + chan->push.addr;
+> -		args.chan.length = ilength;
+> +			args->ctxdma = 0;
+> +		args->offset = ioffset + chan->push.addr;
+> +		args->length = ilength;
+>  	}
+> -	args.chan.huserd = 0;
+> -	args.chan.ouserd = 0;
+> +	args->huserd = 0;
+> +	args->ouserd = 0;
+>  
+>  	/* allocate userd */
+>  	if (hosts[cid].oclass >= VOLTA_CHANNEL_GPFIFO_A) {
+> @@ -329,27 +326,28 @@ nouveau_channel_ctor(struct nouveau_cli *cli, bool priv, u64 runm,
+>  		if (ret)
+>  			return ret;
+>  
+> -		args.chan.huserd = nvif_handle(&chan->mem_userd.object);
+> -		args.chan.ouserd = 0;
+> +		args->huserd = nvif_handle(&chan->mem_userd.object);
+> +		args->ouserd = 0;
+>  
+>  		chan->userd = &chan->mem_userd.object;
+>  	} else {
+>  		chan->userd = &chan->user;
+>  	}
+>  
+> -	snprintf(args.name, sizeof(args.name), "%s[%d]", current->comm, task_pid_nr(current));
+> +	snprintf(args->name, __struct_size(args) - sizeof(*args), "%s[%d]",
+> +		 current->comm, task_pid_nr(current));
+>  
+>  	ret = nvif_object_ctor(&device->object, "abi16ChanUser", 0, hosts[cid].oclass,
+> -			       &args, sizeof(args), &chan->user);
+> +			       args, __struct_size(args), &chan->user);
+>  	if (ret) {
+>  		nouveau_channel_del(pchan);
+>  		return ret;
+>  	}
+>  
+> -	chan->runlist = args.chan.runlist;
+> -	chan->chid = args.chan.chid;
+> -	chan->inst = args.chan.inst;
+> -	chan->token = args.chan.token;
+> +	chan->runlist = args->runlist;
+> +	chan->chid = args->chid;
+> +	chan->inst = args->inst;
+> +	chan->token = args->token;
+>  	return 0;
+>  }
+>  
+> @@ -367,17 +365,17 @@ nouveau_channel_init(struct nouveau_channel *chan, u32 vram, u32 gart)
+>  		return ret;
+>  
+>  	if (chan->user.oclass >= FERMI_CHANNEL_GPFIFO) {
+> -		struct {
+> -			struct nvif_event_v0 base;
+> -			struct nvif_chan_event_v0 host;
+> -		} args;
+> +		DEFINE_RAW_FLEX(struct nvif_event_v0, args, data,
+> +				sizeof(struct nvif_chan_event_v0));
+> +		struct nvif_chan_event_v0 *host =
+> +				(struct nvif_chan_event_v0 *)args->data;
+>  
+> -		args.host.version = 0;
+> -		args.host.type = NVIF_CHAN_EVENT_V0_KILLED;
+> +		host->version = 0;
+> +		host->type = NVIF_CHAN_EVENT_V0_KILLED;
+>  
+>  		ret = nvif_event_ctor(&chan->user, "abi16ChanKilled", chan->chid,
+>  				      nouveau_channel_killed, false,
+> -				      &args.base, sizeof(args), &chan->kill);
+> +				      args, __struct_size(args), &chan->kill);
+>  		if (ret == 0)
+>  			ret = nvif_event_allow(&chan->kill);
+>  		if (ret) {
+> @@ -520,46 +518,45 @@ nouveau_channels_fini(struct nouveau_drm *drm)
+>  int
+>  nouveau_channels_init(struct nouveau_drm *drm)
+>  {
+> -	struct {
+> -		struct nv_device_info_v1 m;
+> -		struct {
+> -			struct nv_device_info_v1_data channels;
+> -			struct nv_device_info_v1_data runlists;
+> -		} v;
+> -	} args = {
+> -		.m.version = 1,
+> -		.m.count = sizeof(args.v) / sizeof(args.v.channels),
+
+sizeof(args.v) == sizeof(struct nv_device_info_v1_data) * 2
+
+and sizeof(args.v.channels) == sizeof(struct nv_device_info_v1_data).
+
+Isn't this just "2"? i.e. isn't struct nv_device_info_v1::count the
+counted_by for struct nv_device_info_v1::data?
+
+> -		.v.channels.mthd = NV_DEVICE_HOST_CHANNELS,
+> -		.v.runlists.mthd = NV_DEVICE_HOST_RUNLISTS,
+> -	};
+> +	DEFINE_RAW_FLEX(struct nv_device_info_v1, args, data, 2);
+> +	struct nv_device_info_v1_data *channels = &args->data[0];
+> +	struct nv_device_info_v1_data *runlists = &args->data[1];
+>  	struct nvif_object *device = &drm->client.device.object;
+>  	int ret, i;
+>  
+> -	ret = nvif_object_mthd(device, NV_DEVICE_V0_INFO, &args, sizeof(args));
+> +	args->version = 1;
+> +	args->count = (__struct_size(args) - sizeof(*args)) /
+> +		      sizeof(*args->data);
+> +	channels->mthd = NV_DEVICE_HOST_CHANNELS;
+> +	runlists->mthd = NV_DEVICE_HOST_RUNLISTS;
+> +
+> +	ret = nvif_object_mthd(device, NV_DEVICE_V0_INFO, args,
+> +			       __struct_size(args));
+>  	if (ret ||
+> -	    args.v.runlists.mthd == NV_DEVICE_INFO_INVALID || !args.v.runlists.data ||
+> -	    args.v.channels.mthd == NV_DEVICE_INFO_INVALID)
+> +	    runlists->mthd == NV_DEVICE_INFO_INVALID || !runlists->data ||
+> +	    channels->mthd == NV_DEVICE_INFO_INVALID)
+>  		return -ENODEV;
+>  
+> -	drm->chan_nr = drm->chan_total = args.v.channels.data;
+> -	drm->runl_nr = fls64(args.v.runlists.data);
+> +	drm->chan_nr = drm->chan_total = channels->data;
+> +	drm->runl_nr = fls64(runlists->data);
+>  	drm->runl = kcalloc(drm->runl_nr, sizeof(*drm->runl), GFP_KERNEL);
+>  	if (!drm->runl)
+>  		return -ENOMEM;
+>  
+>  	if (drm->chan_nr == 0) {
+>  		for (i = 0; i < drm->runl_nr; i++) {
+> -			if (!(args.v.runlists.data & BIT(i)))
+> +			if (!(runlists->data & BIT(i)))
+>  				continue;
+>  
+> -			args.v.channels.mthd = NV_DEVICE_HOST_RUNLIST_CHANNELS;
+> -			args.v.channels.data = i;
+> +			channels->mthd = NV_DEVICE_HOST_RUNLIST_CHANNELS;
+> +			channels->data = i;
+>  
+> -			ret = nvif_object_mthd(device, NV_DEVICE_V0_INFO, &args, sizeof(args));
+> -			if (ret || args.v.channels.mthd == NV_DEVICE_INFO_INVALID)
+> +			ret = nvif_object_mthd(device, NV_DEVICE_V0_INFO, args,
+> +					       __struct_size(args));
+> +			if (ret || channels->mthd == NV_DEVICE_INFO_INVALID)
+>  				return -ENODEV;
+>  
+> -			drm->runl[i].chan_nr = args.v.channels.data;
+> +			drm->runl[i].chan_nr = channels->data;
+>  			drm->runl[i].chan_id_base = drm->chan_total;
+>  			drm->runl[i].context_base = dma_fence_context_alloc(drm->runl[i].chan_nr);
+>  
+
+Otherwise looks good.
+
+-Kees
+
+-- 
+Kees Cook
 
