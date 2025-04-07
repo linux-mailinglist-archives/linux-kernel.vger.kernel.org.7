@@ -1,97 +1,119 @@
-Return-Path: <linux-kernel+bounces-591483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4D35A7E065
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:05:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71CABA7E075
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7D13188C232
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:59:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20281189063A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20421B4121;
-	Mon,  7 Apr 2025 13:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37C11C5486;
+	Mon,  7 Apr 2025 14:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HXG8+zHj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WvTc0BdE"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275C7846D;
-	Mon,  7 Apr 2025 13:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8F81BD4E4
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 14:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744034366; cv=none; b=AD7+6xIM+Vlz+C6ur7MAbqUXYOvLPxoaGaOeX4x9PjwkRrVGCKhpiWT7rl6pWP3wHLCtg1ekF5mVr5YXpZxoX3l35MQot7uVEfWMwY87r8y32w9hkpjgJJfcWiZ29coV+J5K2LLNl9yBYjpvuMTb5FzSwt7gMwYQERC4UZJ41yQ=
+	t=1744034435; cv=none; b=P563LOTLHA38BZIEp49aLitaq7btGol6mlX2+AqW4eKo+wfbLmdURgIPWY5FRcBqRofscTdqZyUQcQ1vF9NqzaD1I7arJJhAPS1SDAVEWT4WhBGjEwxKPY2Q3boElbOXNJTI9liUS9QJxvnJU3I3FMN8kmhcksd3HuwdxShxvrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744034366; c=relaxed/simple;
-	bh=8s2WBNabZQFxBl7Vpsud+lJ/8w8F8nDe+peMa/6CfYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tYzJXc+tTJiyN9YYSV/sUkLVC5EEFTqeGC00XtkizI/w8DNjJg/i19ETMtk8aYR4s9s2nOsSmlzCMH7ArsTqBDPhYHH0wfkHh/5tYM5KQ6tRVbe2SyT0U07cbMQwYs12cx6jCykp/O8Ld+MK+swnrR0jyzcYuHcKFKG8MjZGhRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HXG8+zHj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55286C4CEDD;
-	Mon,  7 Apr 2025 13:59:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744034365;
-	bh=8s2WBNabZQFxBl7Vpsud+lJ/8w8F8nDe+peMa/6CfYw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HXG8+zHjOCj+V48R59reR4E1O9Q2qp21nTZlonWp9Xyp0ycMi0V/9lST8jdTr0JrB
-	 dwa44fh0Om/zzKA0zGhuyNwgJ0BTsdSwrk6QZp8p3UGwoHZA0O0dLZiodAr4W829ZG
-	 TUxObNX6z/efLUgEv34gVPOMdySNc0fUQDCPZe7b4T3sGHYDcLThD8icihBOG8/kN+
-	 uTKEbi0PwlM+9+WH5COIS7hYG+6oEuN2nvg/YVU5dAjKKt/kHkgWwePWd4N/KkT1kq
-	 zDWY70pHKi3qVH9AjH7qXgKhX0cG6jwP/4slFVjbxAE6EyzKWkS5OHwpfyF+1fNF7s
-	 t2QGiCC2GYohQ==
-Date: Mon, 7 Apr 2025 08:59:24 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, linux-riscv@lists.infradead.org,
-	linux-hwmon@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, linux-kernel@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Yixun Lan <dlan@gentoo.org>, sophgo@lists.linux.dev,
-	Chao Wei <chao.wei@sophgo.com>, Longbin Li <looong.bin@gmail.com>,
-	linux-i2c@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	ghost <2990955050@qq.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	linux-mmc@vger.kernel.org, Jisheng Zhang <jszhang@kernel.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>
-Subject: Re: [PATCH 5/9] dt-bindings: hwmon: Add Sophgo SG2044 external
- hardware monitor support
-Message-ID: <174403436377.2164588.13246068752333809704.robh@kernel.org>
-References: <20250407010616.749833-1-inochiama@gmail.com>
- <20250407010616.749833-6-inochiama@gmail.com>
+	s=arc-20240116; t=1744034435; c=relaxed/simple;
+	bh=/6uprZLADz8IwUmk8EgesHcuIVKbMrDNRmW1j/TmpH8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oHqicbeVEDxJq4ECSLJCL+qr/vcZmd+69RSy1G4TeIDHHHw6Pfvnk1brme57jcP+ZUFT9R9X27S3yZW8wVS4Y8BxdAFR6rzd4vY5Njlx7uFrhmULV+YpNMZXhcrniA5Y+4RYHkDWPKsuQjCGAUvWA3JgMe/CKo26C/vRRGP8XRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WvTc0BdE; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744034419;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ZsTxmJA06+KEIIYttk/IyeF44+Ud1z93XW6H7Gh8cAs=;
+	b=WvTc0BdEASl8hhzN38d6ZSUYZgiCq0AULq66M0bvOVUsjc8bXNrwu2s8EyARzv4cCvwKYo
+	gwbywHfCTkNj5jPsFqjYYuoFTZrBGmYnLV+7+bb2CbOENYIAhLaUEjeo6WuDmbrgqqv/FZ
+	pH3tVVYhns34Ylnw8dAUqPhKJODLfK0=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: bpf@vger.kernel.org
+Cc: mrpre@163.com,
+	Jiayuan Chen <jiayuan.chen@linux.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Neal Cardwell <ncardwell@google.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	David Ahern <dsahern@kernel.org>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	Antony Antony <antony.antony@secunet.com>,
+	Christian Hopps <chopps@labn.net>,
+	netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND net-next v3 0/2] tcp: add a new TW_PAWS drop reason
+Date: Mon,  7 Apr 2025 21:59:49 +0800
+Message-ID: <20250407140001.13886-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250407010616.749833-6-inochiama@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
+
+PAWS is a long-standing issue, especially when there are upstream network
+devices, making it more prone to occur.
+
+Currently, packet loss statistics for PAWS can only be viewed through MIB,
+which is a global metric and cannot be precisely obtained through tracing
+to get the specific 4-tuple of the dropped packet. In the past, we had to
+use kprobe ret to retrieve relevant skb information from
+tcp_timewait_state_process().
+
+---
+Re-sending the patch after merge window.
+
+v2 -> v3: use new SNMP counter and drop reason suggested by Eric.
+https://lore.kernel.org/netdev/5cdc1bdd9caee92a6ae932638a862fd5c67630e8@linux.dev/T/#t
+
+I didn't provide a packetdrill script.
+I struggled for a long time to get packetdrill to fix the client port, but
+ultimately failed to do so...
+
+Instead, I wrote my own program to trigger PAWS, which can be found at
+https://github.com/mrpre/nettrigger/tree/main
+'''
+//assume nginx running on 172.31.75.114:9999, current host is 172.31.75.115
+iptables -t filter -I OUTPUT -p tcp --sport 12345 --tcp-flags RST RST -j DROP
+./nettrigger -i eth0 -s 172.31.75.115:12345 -d 172.31.75.114:9999 -action paws
+'''
 
 
-On Mon, 07 Apr 2025 09:06:10 +0800, Inochi Amaoto wrote:
-> The MCU device on SG2044 exposes the same interface as SG2042, which is
-> already supported by the kernel.
-> 
-> Add compatible string for monitor device of SG2044.
-> 
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> ---
->  .../devicetree/bindings/hwmon/sophgo,sg2042-hwmon-mcu.yaml  | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
+Jiayuan Chen (2):
+  tcp: add TCP_RFC7323_TW_PAWS drop reason
+  tcp: add LINUX_MIB_PAWS_TW_REJECTED counter
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+ Documentation/networking/net_cachelines/snmp.rst | 2 ++
+ include/net/dropreason-core.h                    | 7 +++++++
+ include/net/tcp.h                                | 3 ++-
+ include/uapi/linux/snmp.h                        | 1 +
+ net/ipv4/proc.c                                  | 1 +
+ net/ipv4/tcp_ipv4.c                              | 3 ++-
+ net/ipv4/tcp_minisocks.c                         | 9 ++++++---
+ net/ipv6/tcp_ipv6.c                              | 3 ++-
+ 8 files changed, 23 insertions(+), 6 deletions(-)
+
+-- 
+2.47.1
 
 
