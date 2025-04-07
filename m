@@ -1,132 +1,132 @@
-Return-Path: <linux-kernel+bounces-590842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49D3DA7D796
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:20:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC7BA7D727
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44339188ACD0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:19:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E25544200CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C46322A4CC;
-	Mon,  7 Apr 2025 08:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B721221DB9;
+	Mon,  7 Apr 2025 08:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="hKV9wWN3"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Kl+KgrHe"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7ABC227E86;
-	Mon,  7 Apr 2025 08:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC33145355;
+	Mon,  7 Apr 2025 08:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744013906; cv=none; b=ZU0aPWMfd3658jbPXMTSVcdGZThhknkTiaiZBhQfYI/zq5PiumZ89EbWXCwlBTek+xkcGu0XdoxlWZ+wMYy014aUmIc15PXQOBRzMX9Iu1nngG1WD95dJ+hs62wc39q1NEixGXvbcUDsncbUgsgbZLNFmKqNbSxx24uRFN3nYBk=
+	t=1744012842; cv=none; b=dMPrKXJmqZbFbvA+fr5sEFXHHcOFQr1ASegoI5KJPHGUG6aDbD78KnHhOCDeNFsGIaiLz6dFti3pU0VgTnwisXTmEARPJKZJYia7VOzRo6ODOgQSd/eFLEik2350GSfBc0k4Hf28hIcd5lLATdwkr1DmPMEeco2Lt6zWg34XUjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744013906; c=relaxed/simple;
-	bh=RSCsB9LyBZKImdCS3CO3v6PdojzJl9JVl7oocdENeNE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=j7R4qlUEZFXX3KpdTt8gr6ULQZb5pDc0BeV/Qf4zwNt0kyORjdqGqZkvkNxeEN3leESxd/6JjF9CePlRNackkAhvS60jcVOGui4i86k4ofmk5CY+jyDJ04a99nl1gAxWRirWE4Lu6KseQLx2U0Jf+MAW1I0wKgWSywkNeZnECQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=hKV9wWN3; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Type:MIME-Version:Message-ID:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=QLfWDAfI2AnhA5OmyBMH2GN+AZpLJ7m9IQNoTTz/1Q4=; b=hKV9wWN32qu+WchUIFvT0Y/SjM
-	2jWOqCMP8azbf0L91SpOxo+jsmyFsk7lkPVPctusn8AFPs+uDq3cXumQ8vwCDqJb37TPEiAKa9bne
-	RbbZxzRlPl0klHLLP90DXY7loMrOTto9cmul4NyOA2xrH3CUjNgiBDwKv3Yr2l9GnMefHeXwxxlQv
-	ltnzBYGSKj5GRTbbRU+qux7UPNP2AGeKxkMA9Js8C8lFn9OvtxS6X8IqDKekKor8QQdM2E0h+TWb8
-	GuzUWCPrSvf0NS6FQ9ojvlb2cFTRyFkE/izVHQN0aBdPIWJ72lnKmNNErX/pewmwHs7Pa7RwoOGht
-	Cpjw6ing==;
-Received: from 79.red-83-60-111.dynamicip.rima-tde.net ([83.60.111.79] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1u1h3B-00CmbI-HY; Mon, 07 Apr 2025 09:37:45 +0200
-From: Ricardo =?utf-8?Q?Ca=C3=B1uelo?= Navarro <rcn@igalia.com>
-To: Xin Long <lucien.xin@gmail.com>
-Cc: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, kernel-dev@igalia.com, linux-sctp@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Subject: Re: [PATCH] sctp: check transport existence before processing a
- send primitive
-In-Reply-To: <CADvbK_evR93rj1ZT_bzLKFqNQLPQ2BM0mzKnriGGsO5t07GAHQ@mail.gmail.com>
-References: <20250402-kasan_slab-use-after-free_read_in_sctp_outq_select_transport-v1-1-da6f5f00f286@igalia.com>
- <CADvbK_dTX3c9wgMa8bDW-Hg-5gGJ7sJzN5s8xtGwwYW9FE=rcg@mail.gmail.com>
- <87tt75efdj.fsf@igalia.com>
- <CADvbK_c69AoVyFDX2YduebF9DG8YyZM7aP7aMrMyqJi7vMmiSA@mail.gmail.com>
- <CADvbK_d+vr-t7D1GZJ86gG6oS+Nzy7MDVh_+7Je6hqCdez4Axw@mail.gmail.com>
- <87r028dyye.fsf@igalia.com>
- <CADvbK_evR93rj1ZT_bzLKFqNQLPQ2BM0mzKnriGGsO5t07GAHQ@mail.gmail.com>
-Date: Mon, 07 Apr 2025 09:37:44 +0200
-Message-ID: <87o6x8e81j.fsf@igalia.com>
+	s=arc-20240116; t=1744012842; c=relaxed/simple;
+	bh=czluTlRENttFbngRG8Ww5kqyYIBW8J2Tzsepd3iJifA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=qmnQiv7PEvL2lk6Hp04zEitjRIyOfesVIZSzVGV1cwuDjGLc1hNfVmuH/eoxNrf5aCO2zH4bvhktaP5cMCyHvFgMrNdX+g7xi/K2OBUJTQSaXIu0E6tPQCzA46LJvyZy0pIcpa4JV+SZcyz23mqUpFzbAft+AwH5lk5cT8KjnE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Kl+KgrHe; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1744012825; x=1744617625; i=markus.elfring@web.de;
+	bh=0jZmhDZudwbmeQKUZf99XBuFy576VsgeJRC56CQxISU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Kl+KgrHeWQp9HhxxSC2q7E0/B3G/WAiO/wMBrnYkUPUmu0YjSHFmco6/V2Okd7VN
+	 wJ0RrDJeczZnRtb3ji1hAf5pHdvO93rxu1d8Kq7IxLXunj39ReFo7ik3EBbjTfmJx
+	 EkRETrGKbX2c7DQHON6dJ08zVVKMkkq7dvN+2/M5bOjES4XZIUqKoM/x1gXdzPlYa
+	 VT+sRbTY/kF0bbR8fLwljfgmL/jTkzAbTbkO9j1PRpO55OW2xCYNuoyrUJgcU1i3P
+	 fCFzgqwr26J4yOk9EDpu1iXpObROW50D8vs+jpvsx6ZncFutSDcw6EzHe6fX5Qksp
+	 3au2ql1gjpdGcChStQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.4]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Melax-1tTBbI21VF-00jGQQ; Mon, 07
+ Apr 2025 10:00:25 +0200
+Message-ID: <946ab07c-47d0-443a-9ece-2ce65d586bef@web.de>
+Date: Mon, 7 Apr 2025 10:00:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+To: Henry Martin <bsdhenrymartin@gmail.com>, linux-wireless@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Chad Monroe <chad@monroe.io>, Felix Fietkau <nbd@nbd.name>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Peter Chiu <chui-hao.chiu@mediatek.com>, Ryder Lee <ryder.lee@mediatek.com>,
+ Sean Wang <sean.wang@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>,
+ Shengyu Qu <wiagn233@outlook.com>
+References: <20250407061900.85317-1-bsdhenrymartin@gmail.com>
+Subject: Re: [PATCH v2] wifi: mt76: mt7915: Fix null-ptr-deref in
+ mt7915_mmio_wed_init()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250407061900.85317-1-bsdhenrymartin@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:oLbjMncbOULxE9gX3qvqqW9FqKIyHZrKv6CYE+c/GKKRkDElqtj
+ GgUW6lLILmh6lGxnqBPfN28dBS1rPRUqjByrgfxFFAyDL8eSLoeWu7p9WKw7yTBKXGaDBtm
+ QprydO14pTEfekV/cHFu+G6/2wVefZu8VrJPYWMK0KH4mzgJPSHKfOKRvdOiOZnBr+alMHs
+ nKeh54XLeOq9FcJEw8A4A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:EqVqH2Yl4Hk=;pXLjU/2QG4i6RlQsohpA8k64bMJ
+ b/BflAaMnh9FBt8b42gDhJknR8RaiG7KJDpCQE/Ak6Dfo6nQyKrYhbOpA/YU0Fvtawgu725HX
+ hPnIeMaAoXPHxZ2hMsObAgg8XX6sjGiG4/ZG2YCWU4Ws2cSEDICGxW1JFJHWDQqs1nkdIWHGw
+ pizqWSTOFJfUh36IrPAY4BLEVyP4IffcNND5x7LQDD/6vlIFpfHjdSmTTtPGhqgtqgE8G2q3z
+ oQFFzrCbwIievGtgANlwmY/rbNRAt0/gOCTXbX8vxgpj6tCc3K1ltUlzTPO4eKZn+V1G1A2x3
+ 7hcxVIiR1TA0TCekD8qc65/QPP8r6demyZ5qjV2FTW+AeyAe0KrwHsyzHbYSBp1QstVpA4Kfa
+ +9SsPcCPZnbmZkPzrJ4ooniLQW6Lk+E5xhXkz3JbffoW7AJPfyhXI/M73cdkjcTma8sr9lboc
+ NhmiGOQCcxoG1YgT2zDZKiFWB+gXSR31Qj9664TjHlBsnQH/ypLXQEUVvvtv8J6kqmy7njOY2
+ mHEiG5nywQg1GTlrfqVNIZ4+NtoYiapJKnWHASs+vcQ/C1Fjr8072IUcRA3q3wGGlMTTIBNu3
+ 5cMtCW5rX5BNbVV22DRiC5Ej/2o5H9j0ONfj6+8SROIYQDSuzuBi2SMp/Fh+3VrNI7x7V0L5U
+ vOBtw4/OLHvzDEKSH40pYQCItF2ZPrxSAN93PzcCwA0AWwIfHqk919yFuK7WdGZbzbQIWz/Px
+ 9AtxT4Supp1k6rr7eYnbaSDSzG6QZZqj5WjVyhOg2l7Z8duCmzwrwpPwLK1Ab6M5AsmdaPyra
+ o8eDkwmYENqB0hDu7bd+V274kHSNi1TqPHOmxFnwwXBKVCk1R+uwLrno7pJJJUCVZfgh1vGdB
+ 9CZNZBNbbtDS+Vkz1bnsGMK71xor2a0eG+gLS9P2zvR2jq90Tocr5c4ulsn/VeFTnRh1D0ZZx
+ RNJiKish+PhFGze8yEgQpcDGf3AoQNubfaiYEWby6Fcm6AG0is1/yDKQh8kKKfa0G5nTKB7g5
+ PdWO/c3dfLYqUvA0m/ZFl3ShpL+fe880bGOxJmmTkRHUQoOYHH9IsRUm6C1JEjr03dKi365Am
+ n/gKFSJS5e91lUIJPiVofO7+cEQm6JG6V7S6DxRq3XGmhYR1OfOJHjBE13QINkXX/KZ39r5vg
+ THdrerspw+59R6G1IAGm2knRlnAUZH6iZ+RtTUTzZsFsApSKsIZ1RS/+CYphIwCUXIsAYIOLi
+ HfaP5yUvZIYC5sGQYOVVEeufEjqhJgpELGgeV5uf3ydArbO+DgeKYe7v89JHxaAAfcRYO6uVo
+ ZAXYABc1A7MfsKgCYGEY9T22x0FgxXb1AZNZM7jv/N7gJmtr7bSoYuERUvB/xpg/Rhww0vcZz
+ 1jaAP7U8vVFyCRvvtjPZOaGzfOy4SW9WvU5WAxZVq8aIo/sSdDtvWIs6fMcz2IR2dDj0eROgm
+ eFFuV2GogkEMq9wu7zVu1YDO4CvoY9vjnuabMHctsd/SrbGWa
 
-On Fri, Apr 04 2025 at 10:22:38, Xin Long <lucien.xin@gmail.com> wrote:
+=E2=80=A6
+> Prevent null pointer dereference in mt7915_mmio_wed_init().
 
->> Something like this:
->>
->> @@ -9225,7 +9227,9 @@ static int sctp_wait_for_sndbuf(struct sctp_association *asoc, long *timeo_p,
->>         pr_debug("%s: asoc:%p, timeo:%ld, msg_len:%zu\n", __func__, asoc,
->>                  *timeo_p, msg_len);
->>
->> -       /* Increment the association's refcnt.  */
->> +       /* Increment the transport and association's refcnt. */
->> +       if (transport)
->> +               sctp_transport_hold(transport);
->>         sctp_association_hold(asoc);
->>
->>         /* Wait on the association specific sndbuf space. */
->> @@ -9252,6 +9256,8 @@ static int sctp_wait_for_sndbuf(struct sctp_association *asoc, long *timeo_p,
->>                 lock_sock(sk);
->>                 if (sk != asoc->base.sk)
->>                         goto do_error;
->> +               if (transport && transport->dead)
->> +                       goto do_nonblock;
->>
->>                 *timeo_p = current_timeo;
->>         }
->> @@ -9259,7 +9265,9 @@ static int sctp_wait_for_sndbuf(struct sctp_association *asoc, long *timeo_p,
->>  out:
->>         finish_wait(&asoc->wait, &wait);
->>
->> -       /* Release the association's refcnt.  */
->> +       /* Release the transport and association's refcnt. */
->> +       if (transport)
->> +               sctp_transport_put(transport);
->>         sctp_association_put(asoc);
->>
->>         return err;
->>
->>
->> So by the time the sending thread re-claims the socket lock it can tell
->> whether someone else removed the transport by checking transport->dead
->> (set in sctp_transport_free()) and there's a guarantee that the
->> transport hasn't been freed yet because we hold a reference to it.
->>
->> If the whole receive path through sctp_assoc_rm_peer() is protected by
->> the same socket lock, as you said, this should be safe. The tests I ran
->> seem to work fine. If you're ok with it I'll send another patch to
->> supersede this one.
->>
-> LGTM.
+Can any other summary phrase variant become more desirable accordingly?
 
-Good, thanks! I submitted a patch that supersedes this one:
-https://lore.kernel.org/linux-sctp/20250404-kasan_slab-use-after-free_read_in_sctp_outq_select_transport__20250404-v1-1-5ce4a0b78ef2@igalia.com
-so we can drop this.
 
-Cheers,
-Ricardo
+=E2=80=A6
+> +++ b/drivers/net/wireless/mediatek/mt76/mt7915/mmio.c
+=E2=80=A6
+> @@ -678,6 +681,9 @@ int mt7915_mmio_wed_init(struct mt7915_dev *dev, voi=
+d *pdev_ptr,
+>  		wed->wlan.bus_type =3D MTK_WED_BUS_AXI;
+>  		wed->wlan.base =3D devm_ioremap(dev->mt76.dev, res->start,
+>  					      resource_size(res));
+> +		if (!wed->wlan.base)
+> +			return -ENOMEM;
+> +
+=E2=80=A6
+
+Would the function =E2=80=9Cdevm_platform_get_and_ioremap_resource=E2=80=
+=9D be applicable
+in this else branch?
+https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/base/platform.c#=
+L87
+
+Regards,
+Markus
 
