@@ -1,645 +1,200 @@
-Return-Path: <linux-kernel+bounces-590942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F00EA7D8C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:58:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3852EA7D8CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B93811886629
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:56:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF09C18924D8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDC521D011;
-	Mon,  7 Apr 2025 08:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED68C22A7ED;
+	Mon,  7 Apr 2025 08:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ypu/Nfye"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="WGddcadz"
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011006.outbound.protection.outlook.com [52.101.129.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEF5229B1E
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 08:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744016151; cv=none; b=dFCFkLz5XNQKTJSRuy3ZnIzeSI8QvJBV1p4y7YtCRKWdcUV7CVwIDE2b3kUEy36ZqjzSX4aGGLBYgSOFcwHnQxkLfUy29LE1ewB0/3VWotKNSIsFss/jvG6hj4z9eZ0uFdaU4cnDPZkbhzUsgnxKxX0Ev9dbQMU01SKIh6gDIlM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744016151; c=relaxed/simple;
-	bh=0OLQI/RJjtpMhMe/e1bBeJkkny0qk2ULECSY66zw7uc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TgQzwGOGt7zPVHHE89vKgISvm043U/eKGkAkTHzOYjp+qqyBTdqlkFqT3WdZx1VAqqp8CuEzZhl8Ux6dEXl/6aEHknxJouw+PLNLyh8o5+oGUCOpcq+9YmbJyBznwWAj5LTNWlAhJYjmdwRW4r6F48W2zQUgatLyL544aYdWHc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ypu/Nfye; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43d2d952eb1so27342645e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 01:55:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744016147; x=1744620947; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=usZvs6KCLTgjGr0SVDdV9KkJaypefAlDD3xqFkv+Ahk=;
-        b=ypu/Nfye5uU362Pwj3xMxkcDcidtsFIQWXRAdVZWYkJLeLUHU0Z6lpz8XfcPgRnf/8
-         gLwStplfK/9nR6L2DYKaNjwGEnX1xlE9grY9sm0b+ioiw4ML3TzcDaH/E5WI2KeKnyvF
-         JTaRzOEJVTVbxvdZ3D2sZma7L7hgTTjpxWVN7wwXMGzQKm/FBRjPwnZlef4nUneTWv2J
-         lJBlOMLH/tnh8py2T38/4yqoodu+TiIoXjpNvfxIZlqntGiXeX4u0FWAd1KVm2vM9NGI
-         Br8GCWqfbggdwVPzV8LTNOJtYkb1+UvY0UEwKNDt0CNRtUYKiYV2vnauRF79pK2EXnpy
-         a2Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744016147; x=1744620947;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=usZvs6KCLTgjGr0SVDdV9KkJaypefAlDD3xqFkv+Ahk=;
-        b=PHL3OUa6FNkQHiFci1WzhtlO54hw2E/4FD4biqSSXLc60ZhJipzD/wJBPC8cbytjt4
-         bgLm6pTmTiMQ+uZTc8B7FMghjkWqfIOzmJ14h79U3nEMjIdNYXt1ofk3AJMeoFV6aLEc
-         +8dvyA15KjyLl4O3l/Pfa/oWect2G2KHeuiU7mq+pnAnhGdu4hzB4WASCEaBKxjWKP67
-         af7FsllMq0Ic/feI2LzpMQ6Vi1uhKpH0hR5CDac30Nb5UU1AxhLNbd9iSPXK1uNaEkzG
-         9BB+ydmlUHyNciJipkRFrEhdXr1sfQ8Mc1SL9Z8yAhl3HBMguUkxAcifZyCCMR9ED5Xo
-         iHOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwG+MoQyeAMxGFakFOpA/F6LxgBhCGIZLJcpAuQR5Mk8UZKRE3JR4zm+r+QN24B/xVZGe1VsbW3L8CEWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyed3s2IfKJ8Ow1RNWxt4O6QkiBC1elA6UUL7da0rOYoEgnijol
-	OzSrygv0WhurrX3Z65uj1kDnH7Pg+B60WaH5Enixb2Izo5xQDLuR+22Nd9R6gK4=
-X-Gm-Gg: ASbGncsBz0nwHznXLcTJ0WCULoQeol6fDIjeTqOrwQfNjtvp1Iiundg1RFeqPkLUTPV
-	5eH8vFL+tUAqDZ/Bfr9w0pWVfpAgPKSGJDH1jQxWoz7abB6HJeXMpSWMGaQlINkXGqeHhSTQ/fo
-	cwFnG4QUR3GfjL7N9maxserAJls1VMxP+IkWpiKgNjwFFJhnac3LjfWeNLIMbS21vnFd9akTnN7
-	dRu729Q19qN9yMNSkXfkI8a66ViEKm09kVJ8otpT7cgWHx9Ip3MW3lLK6keR0aVk/6PNxghp0lk
-	7FR07tADHHuzZoKPqx0qnz4RTdV0boYpcZCAaeMS7OxZ0uVK
-X-Google-Smtp-Source: AGHT+IHkOpZ5UWfNCm7D0PZAZL/ZLHhBDc6m6mb4xiPQsIW15234vRHFYT+yvby5B9w2sdj4Hzpxzg==
-X-Received: by 2002:a05:600c:3489:b0:43c:f0ae:da7 with SMTP id 5b1f17b1804b1-43ee0617025mr74208375e9.7.1744016147044;
-        Mon, 07 Apr 2025 01:55:47 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec163107csm127864145e9.3.2025.04.07.01.55.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 01:55:46 -0700 (PDT)
-Message-ID: <0a1f45f3221f74fdde0f388b3693e51c771bb307.camel@linaro.org>
-Subject: Re: [PATCH v3 09/32] mfd: sec: add support for S2MPG10 PMIC
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki
- <s.nawrocki@samsung.com>, Chanwoo Choi	 <cw00.choi@samsung.com>, Alim
- Akhtar <alim.akhtar@samsung.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Russell King	
- <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon	 <will@kernel.org>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker	
- <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-Date: Mon, 07 Apr 2025 09:55:45 +0100
-In-Reply-To: <20250404091858.GA43241@google.com>
-References: <20250403-s2mpg10-v3-0-b542b3505e68@linaro.org>
-	 <20250403-s2mpg10-v3-9-b542b3505e68@linaro.org>
-	 <20250404091858.GA43241@google.com>
-Content-Type: text/plain; charset="UTF-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1584C227EBB;
+	Mon,  7 Apr 2025 08:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.6
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744016181; cv=fail; b=k7zDdROAI647CKJBR1JiZYyEvmWhvoNHmBVRQWIFIxFXu/2HhvTagMbO6x0F0xEyXQb3YVUoJF8jdS6IbWDQ/8bLvLKJwLOkyDwGUN7IZxjQqL/YFJjk204/JpMgeuw5YWwdC5C/cV5g7+Ykfr1VqNA+tddhuVIRYOKh5gYW9fc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744016181; c=relaxed/simple;
+	bh=sUT5N/vWjJ4s8K4q13NrJvR0g0qnj09r9hJzH0QUsdo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dGdxD6cPLqdiHrJhUhtomzAruCkKkXsO8QMS6LWp3yMJ3wrT/JPJLcCpmXZZukwstFau8irSeHf47CUbaa2drlo9wttgUAMcudnxelClm3fw+cNR/RbQllOxk9EXRuXDD0WPLwb+Hfm33yyFimDWQyNhoVF9AjW+CYm5xAZfPjs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=WGddcadz; arc=fail smtp.client-ip=52.101.129.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vA1fIxzLrCCpmSEFAQT5SntE6KEVrmmi4fGZaOmE5+ZYjC4k8aJN8Ic5laJsmqXUar9pBLDdrhkDkyqdoj8Di4e0Kyy+UmfIpxHwD+2rA3dTdh+jbCPBDju9z94Z/WdrnRvtQJund/TFrIoiH1ocMu/tA0QtRL9vSgzYTm53o2jDKWvV+Zu2Gqd5i2A6u55j2S9CDr/jgimIpSDTHHnituzb5gupHAsJGFPkZ6qLCzU1OCMoFb0/sTm60oZ6/TdZTGX8qrT5zM11aRKbPkSper6jHEiZInx6frQfdo72UIy5AeDdLd/qiJVFFp72t6zrQV2Q1hPRZcAatdVgX15nSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cq5rdIKhDwNasBUpUi5k88bYrxHdgtMZwwtOrisMwPc=;
+ b=fuUfIc8DXqlWtx7mp0oeZ8wlFUNzJmT+OZ+Y7j41s2uUml773fec05pn7OKGwDCLtgIIRXgjzC5LD28aVoGPgvjdV4dIycl/a9krYda3+Q4BEQqQEcd3UK1psOPYR+AxsK879FjC1GztfzWBlcnsFu6+L8ZuGNlpyEzBtaEJDgae7WrOLrh3OQG1Mn6wPTUq/u3W9QX9nAEgN31yrsGhtX6sSDR4vGmqWvpnDYoKkf9YsZtZg7QApSNECSbG0lu1feY01lO0kdWPH10NCHG4Hb2Rej18kWZSh4Iv4ieAAIwHTg0dABHXsd3/QNO9QOThltQSroaptS1qPZQezE2ZLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cq5rdIKhDwNasBUpUi5k88bYrxHdgtMZwwtOrisMwPc=;
+ b=WGddcadzWT7VxtoMvqjRh1ZeAxB8VVVHRKSyxPcBlgbZ+UcUlhLFOXVNtIZQKLL9tUxbCU4gl4j71UH4M6+SIh9MLBjbWElYWNj1yPwm6lmHYXGIHyg1pyfVEte58svgTPx/ALuPG+BD9tUy//RxPRpogEiyrIVZjPu4xK9zhGRGjFOHhv438549/8VmknyUbq0q3MPiYQvdIFsmRtqXNdg3nBDgvhpcvXgzD9SdJfEZyVVBwytlDYMhTygH4AyLVBmWpn2nXL21t1dDdGaTFzZkq1mtKC1qN/vUHfmLaUqJF1VKMYmCIYW8S5s1p5kBigOxqeU9YDYDe8q5nwlwgQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR06MB6273.apcprd06.prod.outlook.com (2603:1096:820:ec::10)
+ by JH0PR06MB6318.apcprd06.prod.outlook.com (2603:1096:990:1b::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.54; Mon, 7 Apr
+ 2025 08:56:10 +0000
+Received: from KL1PR06MB6273.apcprd06.prod.outlook.com
+ ([fe80::9d21:d819:94e4:d09]) by KL1PR06MB6273.apcprd06.prod.outlook.com
+ ([fe80::9d21:d819:94e4:d09%3]) with mapi id 15.20.8583.047; Mon, 7 Apr 2025
+ 08:56:09 +0000
+From: Huan Tang <tanghuan@vivo.com>
+To: huobean@gmail.com
+Cc: James.Bottomley@HansenPartnership.com,
+	alim.akhtar@samsung.com,
+	avri.altman@wdc.com,
+	beanhuo@micron.com,
+	bvanassche@acm.org,
+	ebiggers@google.com,
+	keosung.park@samsung.com,
+	linux-kernel@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux@weissschuh.net,
+	luhongfei@vivo.com,
+	manivannan.sadhasivam@linaro.org,
+	martin.petersen@oracle.com,
+	minwoo.im@samsung.com,
+	opensource.kernel@vivo.com,
+	peter.wang@mediatek.com,
+	quic_cang@quicinc.com,
+	quic_mnaresh@quicinc.com,
+	quic_nguyenb@quicinc.com,
+	tanghuan@vivo.com,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v8] ufs: core: Add WB buffer resize support
+Date: Mon,  7 Apr 2025 16:56:01 +0800
+Message-Id: <20250407085601.223-1-tanghuan@vivo.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <1a7a6e077f3750b0385388187cd52010eef4a085.camel@gmail.com>
+References: <1a7a6e077f3750b0385388187cd52010eef4a085.camel@gmail.com>
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2-1 
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR06CA0003.apcprd06.prod.outlook.com
+ (2603:1096:4:186::14) To KL1PR06MB6273.apcprd06.prod.outlook.com
+ (2603:1096:820:ec::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR06MB6273:EE_|JH0PR06MB6318:EE_
+X-MS-Office365-Filtering-Correlation-Id: f146cc73-bdd3-4f61-7d0e-08dd75b20a70
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|7416014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?4seUliILlEp7vf8GR2qtUvR7DM42JCwSMBOKIBhuxSGdmqhRif0A3etJ4z+V?=
+ =?us-ascii?Q?Q+v63Y6VVYgmig7+INZd2GwepZOrIPYpFNbhvypsdIt75hAm4SfTHkpmS8L8?=
+ =?us-ascii?Q?1T7gD/WBrvgxtbBdJVwyxdJzvkg2/wRL8skkEN1A9FAzDNOpt705BTYHYkSC?=
+ =?us-ascii?Q?OBYEIdulrsCKH9BqZHUMY4h6ZnziXVZAa1oakhJx2fkKma9Sfd5b3TlWPK18?=
+ =?us-ascii?Q?TfLmTV2H4+SISlhF5y9fB8l1FI24Iwc/6kl9EcTQ/zPYgb3rLSL0jDaOkeZZ?=
+ =?us-ascii?Q?qw7NvyZ7sfdMMVeLa9AXJA5dCc9L/5hXEvNCj7JVtBidjtW35/ZFxxQtlgBl?=
+ =?us-ascii?Q?mmg3Yg4uY1QTk60gpEFMuEJg+G9+5bWgRtxqpfUUL4Z6iqZdWNwU7HmMDAfj?=
+ =?us-ascii?Q?mFUyl5yB2MW+q6ypKP8y/4Wj0goOoTbCaP8cPvO89/tKplDvuHTVlqshNbnx?=
+ =?us-ascii?Q?gMOJB+jXVDB79Mw97UspatlXRxC8Q0+nGtyF7WzolcRLDYALaCqa+p6jzVdA?=
+ =?us-ascii?Q?qTcKHLKzMDjMreKow7FNsEtWa1Vaz2/A2sHrwcl/C7nwcDH1tDNtn0Z7Vrr5?=
+ =?us-ascii?Q?2HVz6DXWyARjs3kY3JLwWrB8KCMQ29XRUtJO/Iy+p4pDYCEGUgubzAwa5/4V?=
+ =?us-ascii?Q?nO4HBeKwVOnnXs3GAssv7hVxLRRERD4V116QYtJqgQw5KDkH1+KUXrla8QJ4?=
+ =?us-ascii?Q?tJ2RGho3OuPcTzGP6Vynvt9lJQxyNS9e9g0zYN1wHoCb9U5H85j3unvyYly4?=
+ =?us-ascii?Q?qg7uhLtrdmpgVhzMyRHAH+KyCIkvmHbhWJLIk49THpS8xd4M0mcRYwgJj5bT?=
+ =?us-ascii?Q?vBcExZ+UiR/BXD/Gx4otS9bEUWE9QCsbCXbegFTt4JVechCK3t7T1vG08czQ?=
+ =?us-ascii?Q?Wnzuia4JhEa01E8cIE/dS75jCyE8qc75LHuSGoWbbsSwRh9DoYlyadB+EAjd?=
+ =?us-ascii?Q?ZRWvuXQR9ninR9FeZSsD3yvCjzJ2jALPsegPg6vMufvSQNS9ZznzuqTThHY+?=
+ =?us-ascii?Q?biKwSpg9ETExmvx6hiwyeK20pK6AO/Tltzc2NFS24xpciatXs0pm6bn9wRl1?=
+ =?us-ascii?Q?O5X0BvipMGueveEnRqgWXIAfGxcrje4rFDftA/YSY3QvrGju/vc48ADrWzXY?=
+ =?us-ascii?Q?/h54fmAUs1wSFX99G5JNgejmuCsN3TsDFAgttH0XkXaGqUQek8iJ0DS5o5x4?=
+ =?us-ascii?Q?DFhvZWulK5BZFdcyGa7VOZtDDJwG2dPCm7UEr6S0fW8CvPiBluZ75LSFgd2K?=
+ =?us-ascii?Q?3cefKSW6B7aR3nyPf8kSDlwW7EI++r2mdj5u1ymkRJUJ8XlPEGdwMwa+9Ykw?=
+ =?us-ascii?Q?yA0+E04sGlj75a0hmgFmVK0QFtYk5Tm78bAo0yzTkcCw4gBpEerCd6M4GpPz?=
+ =?us-ascii?Q?X+pqWF0IwEbVhOASAjE3FJTyU/eo3kg6sFM3zomT/korIQ0Daj4k3y7TCVuc?=
+ =?us-ascii?Q?7cvGWfiYhpvnGnebJ9aIm+JefJ5YFyAM?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6273.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?jvqaUDp9ZNYjfqDG/iYW1y5dneX1brjLmQ+wjC8cbrAWejnUt8mPDlXRGYCc?=
+ =?us-ascii?Q?JD8axfHt2+mx9H30n7usqez5SXZHrO9n/nCbbf9Utnew8mHonSD63xKuDSEf?=
+ =?us-ascii?Q?WZGoG7oCbLmErpCk5Tijun95bdfC43OHAv1XeuSsyYh7LV77khyYHKBM1R7A?=
+ =?us-ascii?Q?alE5wtMq1tXU+loPcKBk4F6XJTImMlplJ/tLadmC84IT5YUt/nUeUqbdHH0M?=
+ =?us-ascii?Q?mXPr6m4+mRmxm6Pl03nzDKxIXNr5wmxPjSCZ4DF7E5X4zYAz6jCaUmKgnxCa?=
+ =?us-ascii?Q?1wApGeS73KdUIUneBQZYmqgvst8Tsglh68nkuQu1F0x1GY5uOW0LJ1nKpr9v?=
+ =?us-ascii?Q?++dooeHd+A5uqIrPaIvKzXNeTdUwHEAyFHTaSudq/x4l3+im3x3bbd5V7vye?=
+ =?us-ascii?Q?qJhw+6tI4mrL123Jae0mQBmp9pLbiBd2NDOkuJNxuv63ZXqwMpYH+CLirrpO?=
+ =?us-ascii?Q?rAvTmHo//6hgm5gUaMMoiAgDewMLMLFJRX38RZwMjwPq2T9ve8sL8GoZL38Z?=
+ =?us-ascii?Q?V9UZrztIoaG9kiR1cnRpsgjHCI3gRNimWCK2ex1hA3BgyBMxJOnWLOiv5Z4p?=
+ =?us-ascii?Q?JijUzhk2NF8ToDuNJy3qaFQvlDxw07vB5AzJwOwoa0FmPWdyJ3UxKKZwBNSX?=
+ =?us-ascii?Q?3R0A2vTa/PNx24FazWXgjw75QarG03gobF0J1In5eCMiOK7LCW/vaU5iuJS4?=
+ =?us-ascii?Q?9S+IbwqfBM8SjnlaWFAeASIkIc0zOB1FyP+wzXKUP0iZtJDnwRsdKwodbaya?=
+ =?us-ascii?Q?jxHjV7itEjG4VBaKdTZhimMbD8lAF2h6QHHfGoDn0zmQZP1CzRJDbVdP36MR?=
+ =?us-ascii?Q?rZpIBj3bbkhnujy9rphZzE1Z7LBAEPlXlwAgOYLX9Sn0WyxSQ9GEd+EZh6y9?=
+ =?us-ascii?Q?qkU7u99UiACoBsvhARwkZieB25x8OrvFtMDstRDQV3ATvi7/cFFeLAsemkgt?=
+ =?us-ascii?Q?MxW4zYtkfcPrQY9EYgsW8S5ww84XrHf8TxZ1qHM6jUOixLMfnIvwM1LKfvJb?=
+ =?us-ascii?Q?ENXbSMklnVPN0sD4CxVnVoGNoHLt+fsqLD5Gre6ae50aZlJPQ3Q7iO61u4QQ?=
+ =?us-ascii?Q?wOmfOpSYxfCbghNINXCDhxPYwLzVrODTMovM7XXWIISEwL4yKwlM/5nUpQqn?=
+ =?us-ascii?Q?oFxEcZ45MEoD2yiu32D1P59U/EI2DqTZdPCNw0plqcrV37gxFbAgc6jJDa+/?=
+ =?us-ascii?Q?x3z0jN/6gw2Y3R5wpAucNwFE8Lx/K4LIdx4AVf2bfQbqW4WEfEMeXiBTkrnQ?=
+ =?us-ascii?Q?dNtIPw2x+BgIZjD9hWLgMCjsScogOpdxoB1XTLpfS5901ZqUKkRn2AdEEj2d?=
+ =?us-ascii?Q?Kc6TSOP7eNdi1x76U18tWb/baO2XhV1iyWVIqtT/eBfGpx9Cyl6iUPrdiz9R?=
+ =?us-ascii?Q?SVIq3eFsRHn5sjEMjGHP7laNhklpS27Vvc1s0ZToGTN+7C1S+0Rt25NHYHse?=
+ =?us-ascii?Q?IJyXlE6QZWQ1gEm8h5mXdyWCPgNFMOKvIbDHZAp2FxPRwkHhPaBJDy3iOqAm?=
+ =?us-ascii?Q?R/97+4lS5brFimVl6x9EP8CxcnHCYR/LwOVL+1VsA0WtxylW/oriY1oq7rL3?=
+ =?us-ascii?Q?fCLws7nMQFFyC3KfRf9Go+usVLqYAfHaS0mr4tqj?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f146cc73-bdd3-4f61-7d0e-08dd75b20a70
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6273.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 08:56:09.8767
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FMEu3QZ7RT1MWtNSOJlA68ixvtjLtUN84LI/2ZGlyJVxQg9CVblP6jayeRXpmD/w3TqFw7ecatgemxh6pmC7fw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6318
 
-Hi,
-
-Thanks Lee for your review!
-
-On Fri, 2025-04-04 at 10:18 +0100, Lee Jones wrote:
-> On Thu, 03 Apr 2025, Andr=C3=A9 Draszik wrote:
-
-[...]
-
-> > diff --git a/drivers/mfd/sec-acpm.c b/drivers/mfd/sec-acpm.c
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..39dbb968086ac835b96ed3e=
-4efa68868fda63429
-> > --- /dev/null
-> > +++ b/drivers/mfd/sec-acpm.c
-> > @@ -0,0 +1,465 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright 2020 Google Inc
-> > + * Copyright 2025 Linaro Ltd.
-> > + *
-> > + * Samsung S2MPG1x ACPM driver
-> > + */
-> > +
-> > +#include <linux/array_size.h>
-> > +#include <linux/device.h>
-> > +#include <linux/firmware/samsung/exynos-acpm-protocol.h>
-> > +#include <linux/mfd/samsung/core.h>
-> > +#include <linux/mfd/samsung/rtc.h>
-> > +#include <linux/mfd/samsung/s2mpg10.h>
-> > +#include <linux/mod_devicetable.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/pm.h>
-> > +#include <linux/property.h>
-> > +#include <linux/regmap.h>
-> > +#include "sec-core.h"
-> > +
-> > +#define ACPM_MAX_BULK_DATA=C2=A0=C2=A0 8
-> > +
-> > +struct sec_pmic_acpm_platform_data {
->=20
-> This isn't platform data.=C2=A0 It's driver data.
->=20
-> Platform data is passed in, driver data is derived.
-
-This is the match data from of_device_id::data, it is passed in
-via device_get_match_data().
-
->=20
-> See how the other drivers do this:
->=20
-> =C2=A0 $ git grep ddata -- drivers/mfd
-
-I had followed the example of drivers/mfd/rk8xx-i2c.c
-
-I can rename it to struct sec_pmic_acpm_chip_data if you prefer or
-something like that, but the rk8xx driver also calls this platform
-data.
-
-ddata in drivers/mfd/ generally seems used for dynamically allocated
-runtime driver data. That's not the case here.
-
-> > +	int device_type;
-> > +
-> > +	unsigned int acpm_chan_id;
-> > +	u8 speedy_channel;
-> > +
-> > +	const struct regmap_config *regmap_cfg_common;
-> > +	const struct regmap_config *regmap_cfg_pmic;
-> > +	const struct regmap_config *regmap_cfg_rtc;
-> > +	const struct regmap_config *regmap_cfg_meter;
-> > +};
-> > +
-> > +static const struct regmap_range s2mpg10_common_registers[] =3D {
-> > +	regmap_reg_range(0x00, 0x02), /* CHIP_ID_M, INT, INT_MASK */
-> > +	regmap_reg_range(0x0a, 0x0c), /* speedy control */
-> > +	regmap_reg_range(0x1a, 0x2a), /* debug */
->=20
-> Nit: I like comments to start with an upper-case char.
-
-OK
-
->=20
-> > +};
-> > +
-> > +static const struct regmap_range s2mpg10_common_ro_registers[] =3D {
-> > +	regmap_reg_range(0x00, 0x01),
-> > +	regmap_reg_range(0x28, 0x2a),
->=20
-> Why describe some, but not all ranges?
-
-They're all covered above. I'll duplicate them here and elsewhere.
-
-> > +struct sec_pmic_acpm_shared_bus_context {
-> > +	const struct acpm_handle *acpm;
-> > +	unsigned int acpm_chan_id;
-> > +	u8 speedy_channel;
-> > +};
-> > +
-> > +enum sec_pmic_acpm_accesstype {
-> > +	SEC_PMIC_ACPM_ACCESSTYPE_COMMON =3D 0x00,
-> > +	SEC_PMIC_ACPM_ACCESSTYPE_PMIC =3D 0x01,
-> > +	SEC_PMIC_ACPM_ACCESSTYPE_RTC =3D 0x02,
-> > +	SEC_PMIC_ACPM_ACCESSTYPE_METER =3D 0x0a,
-> > +	SEC_PMIC_ACPM_ACCESSTYPE_WLWP =3D 0x0b,
-> > +	SEC_PMIC_ACPM_ACCESSTYPE_TRIM =3D 0x0f,
-> > +};
-> > +
-> > +struct sec_pmic_acpm_bus_context {
-> > +	struct sec_pmic_acpm_shared_bus_context *shared;
-> > +	enum sec_pmic_acpm_accesstype type;
-> > +};
-> > +
-> > +static int sec_pmic_acpm_bus_write(void *context, const void *data,
-> > +				=C2=A0=C2=A0 size_t count)
->=20
-> Nit: You can tidy this, and similar line-feeds, up by using 100-chars her=
-e.
-
-Will do.
-
-> > +{
-> > +	struct sec_pmic_acpm_bus_context *ctx =3D context;
-> > +	const struct acpm_handle *acpm =3D ctx->shared->acpm;
-> > +	const struct acpm_pmic_ops *pmic_ops =3D &acpm->ops.pmic_ops;
-> > +	u8 reg;
-> > +
-> > +	if (count < 2 || count > (ACPM_MAX_BULK_DATA + 1))
->=20
-> 2 because?=C2=A0 Either comment or define magic numbers please.
->=20
-> > +		return -EINVAL;
-> > +
-> > +	reg =3D *(u8 *)data;
->=20
-> No API to conduct this raw read for you?=C2=A0 readl(), *_to_cpu() or sim=
-ilar?
-
-This is just regmap, passing a buffer. First byte(s) contains the reg
-address, depending on the regmap_config used during creation, and remainder
-the values starting from that address. This is not an I/O read as such, it'=
-s
-only extracting the register address. See e.g. regmap_parse_8().
-
-I'll reflow it a little.
-
->=20
-> > +	++data;
-> > +	--count;
-> > +
-> > +	return pmic_ops->bulk_write(acpm, ctx->shared->acpm_chan_id,
-> > +				=C2=A0=C2=A0=C2=A0 ctx->type, reg,
-> > +				=C2=A0=C2=A0=C2=A0 ctx->shared->speedy_channel, count, data);
-> > +}
-> > +
-> > +static int sec_pmic_acpm_bus_read(void *context, const void *reg_buf,
-> > +				=C2=A0 size_t reg_size, void *val_buf,
-> > +				=C2=A0 size_t val_size)
-> > +{
-> > +	struct sec_pmic_acpm_bus_context *ctx =3D context;
-> > +	const struct acpm_handle *acpm =3D ctx->shared->acpm;
-> > +	const struct acpm_pmic_ops *pmic_ops =3D &acpm->ops.pmic_ops;
-> > +	u8 reg;
-> > +
-> > +	if (reg_size !=3D 1 || !val_size || val_size > ACPM_MAX_BULK_DATA)
-> > +		return -EINVAL;
-> > +
-> > +	reg =3D *(u8 *)reg_buf;
-> > +
-> > +	return pmic_ops->bulk_read(acpm, ctx->shared->acpm_chan_id,
-> > +				=C2=A0=C2=A0 ctx->type, reg,
-> > +				=C2=A0=C2=A0 ctx->shared->speedy_channel,
-> > +				=C2=A0=C2=A0 val_size, val_buf);
-> > +}
-> > +
-> > +static int sec_pmic_acpm_bus_reg_update_bits(void *context, unsigned i=
-nt reg,
-> > +					=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int mask,
-> > +					=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int val)
-> > +{
-> > +	struct sec_pmic_acpm_bus_context *ctx =3D context;
-> > +	const struct acpm_handle *acpm =3D ctx->shared->acpm;
-> > +	const struct acpm_pmic_ops *pmic_ops =3D &acpm->ops.pmic_ops;
-> > +
-> > +	return pmic_ops->update_reg(acpm, ctx->shared->acpm_chan_id,
-> > +				=C2=A0=C2=A0=C2=A0 ctx->type, reg & 0xff,
-> > +				=C2=A0=C2=A0=C2=A0 ctx->shared->speedy_channel, val, mask);
-> > +}
-> > +
-> > +static const struct regmap_bus sec_pmic_acpm_regmap_bus =3D {
-> > +	.write =3D sec_pmic_acpm_bus_write,
-> > +	.read =3D sec_pmic_acpm_bus_read,
-> > +	.reg_update_bits =3D sec_pmic_acpm_bus_reg_update_bits,
-> > +	.max_raw_read =3D ACPM_MAX_BULK_DATA,
-> > +	.max_raw_write =3D ACPM_MAX_BULK_DATA,
-> > +};
-> > +
-> > +static struct regmap *
-> > +sec_pmic_acpm_regmap_init(struct device *dev,
->=20
-> Place both of these on the same line please.
->=20
-> > +			=C2=A0 struct sec_pmic_acpm_shared_bus_context *shared_ctx,
-> > +			=C2=A0 enum sec_pmic_acpm_accesstype type,
-> > +			=C2=A0 const struct regmap_config *cfg, bool do_attach)
-> > +{
-> > +	struct sec_pmic_acpm_bus_context *ctx;
-> > +	struct regmap *regmap;
-> > +
-> > +	ctx =3D devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> > +	if (!ctx)
-> > +		return ERR_PTR(-ENOMEM);
-> > +
-> > +	ctx->shared =3D shared_ctx;
-> > +	ctx->type =3D type;
-> > +
-> > +	regmap =3D devm_regmap_init(dev, &sec_pmic_acpm_regmap_bus, ctx, cfg)=
-;
-> > +	if (IS_ERR(regmap))
-> > +		return ERR_PTR(dev_err_probe(dev, PTR_ERR(regmap),
->=20
-> dev_err_cast_probe()
->=20
-> > +					=C2=A0=C2=A0=C2=A0=C2=A0 "regmap init (%s) failed\n",
-> > +					=C2=A0=C2=A0=C2=A0=C2=A0 cfg->name));
-> > +
-> > +	if (do_attach) {
-> > +		int ret;
-> > +
-> > +		ret =3D regmap_attach_dev(dev, regmap, cfg);
-> > +		if (ret)
-> > +			return ERR_PTR(dev_err_probe(dev, ret,
->=20
-> dev_err_ptr_probe()
-
-Thanks! I had forgotten about those two.
-
-> > +						=C2=A0=C2=A0=C2=A0=C2=A0 "regmap attach (%s) failed\n",
-> > +						=C2=A0=C2=A0=C2=A0=C2=A0 cfg->name));
-> > +	}
-> > +
-> > +	return regmap;
-> > +}
-> > +
-> > +static void sec_pmic_acpm_mask_common_irqs(void *regmap_common)
-> > +{
-> > +	regmap_write(regmap_common, S2MPG10_COMMON_INT_MASK,
-> > +		=C2=A0=C2=A0=C2=A0=C2=A0 S2MPG10_COMMON_INT_SRC);
->=20
-> Single line.=C2=A0 And others like it.
->=20
-> > +}
-> > +
-> > +static int sec_pmic_acpm_probe(struct platform_device *pdev)
-> > +{
-> > +	struct regmap *regmap_common, *regmap_pmic, *regmap;
-> > +	const struct sec_pmic_acpm_platform_data *pdata;
-> > +	struct sec_pmic_acpm_shared_bus_context *shared_ctx;
-> > +	const struct acpm_handle *acpm;
-> > +	struct device *dev;
-> > +	int ret, irq;
-> > +
-> > +	dev =3D &pdev->dev;
->=20
-> You can do this during the declaration.
->=20
-> > +	pdata =3D device_get_match_data(dev);
-> > +	if (!pdata)
-> > +		return dev_err_probe(dev, -ENODEV,
-> > +				=C2=A0=C2=A0=C2=A0=C2=A0 "unsupported device type\n");
-> > +
-> > +	acpm =3D devm_acpm_get_by_node(dev, pdev->dev.parent->of_node);
->=20
-> You have 'dev' now.=C2=A0 Please use it.
->=20
-> > +	if (IS_ERR(acpm))
-> > +		return dev_err_probe(dev, PTR_ERR(acpm),
-> > +				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to get acpm (2)\n");
-> > +
-> > +	irq =3D platform_get_irq(pdev, 0);
-> > +	if (irq < 0)
-> > +		return irq;
-> > +
-> > +	shared_ctx =3D devm_kzalloc(dev, sizeof(*shared_ctx), GFP_KERNEL);
-> > +	if (!shared_ctx)
-> > +		return -ENOMEM;
-> > +
-> > +	shared_ctx->acpm =3D acpm;
-> > +	shared_ctx->acpm_chan_id =3D pdata->acpm_chan_id;
-> > +	shared_ctx->speedy_channel =3D pdata->speedy_channel;
-> > +
-> > +	regmap_common =3D sec_pmic_acpm_regmap_init(dev, shared_ctx,
-> > +						=C2=A0 SEC_PMIC_ACPM_ACCESSTYPE_COMMON,
-> > +						=C2=A0 pdata->regmap_cfg_common, false);
-> > +	if (IS_ERR(regmap_common))
-> > +		return PTR_ERR(regmap_common);
-> > +
-> > +	/* Mask all interrupts from 'common' block, until successful init */
-> > +	ret =3D regmap_write(regmap_common, S2MPG10_COMMON_INT_MASK,
-> > +			=C2=A0=C2=A0 S2MPG10_COMMON_INT_SRC);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret,
-> > +				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to mask common block interrupts\n=
-");
-> > +
-> > +	regmap_pmic =3D sec_pmic_acpm_regmap_init(dev, shared_ctx,
-> > +						SEC_PMIC_ACPM_ACCESSTYPE_PMIC,
-> > +						pdata->regmap_cfg_pmic, false);
-> > +	if (IS_ERR(regmap_pmic))
-> > +		return PTR_ERR(regmap_pmic);
-> > +
-> > +	regmap =3D sec_pmic_acpm_regmap_init(dev, shared_ctx,
-> > +					=C2=A0=C2=A0 SEC_PMIC_ACPM_ACCESSTYPE_RTC,
-> > +					=C2=A0=C2=A0 pdata->regmap_cfg_rtc, true);
-> > +	if (IS_ERR(regmap))
-> > +		return PTR_ERR(regmap);
-> > +
-> > +	regmap =3D sec_pmic_acpm_regmap_init(dev, shared_ctx,
-> > +					=C2=A0=C2=A0 SEC_PMIC_ACPM_ACCESSTYPE_METER,
-> > +					=C2=A0=C2=A0 pdata->regmap_cfg_meter, true);
-> > +	if (IS_ERR(regmap))
-> > +		return PTR_ERR(regmap);
-> > +
-> > +	ret =3D sec_pmic_probe(dev, pdata->device_type, irq, regmap_pmic, NUL=
-L);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	if (device_property_read_bool(dev, "wakeup-source"))
-> > +		devm_device_init_wakeup(dev);
-> > +
-> > +	/*
-> > +	 * Unmask PMIC interrupt from 'common' block, now that everything is =
-in
-> > +	 * place.
-> > +	 */
-> > +	ret =3D regmap_clear_bits(regmap_common, S2MPG10_COMMON_INT_MASK,
-> > +				S2MPG10_COMMON_INT_SRC_PMIC);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret,
-> > +				=C2=A0=C2=A0=C2=A0=C2=A0 "failed to unmask PMIC interrupt\n");
-> > +
-> > +	/* Mask all interrupts from 'common' block on shutdown */
-> > +	ret =3D devm_add_action_or_reset(dev, sec_pmic_acpm_mask_common_irqs,
-> > +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 regmap_common);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static void sec_pmic_acpm_shutdown(struct platform_device *pdev)
-> > +{
-> > +	sec_pmic_shutdown(&pdev->dev);
->=20
-> sec_pmic_shutdown() takes a pointer to i2c_client (unless you changed it
-> somewhere else).=C2=A0 If the later is true, then why not make it take a
-> pointer to platform_device and omit this abstraction?
-
-I changed it earlier indeed to support both I2C and ACPM transports, simila=
-r
-to drivers/mfd/rk*. The I2C driver doesn't have a struct platform_device,
-but it has struct i2c_client::dev, hence I'm passing struct device to the
-common code, like in the rk8xx example.
-
-[...]
-
->=20
-> > diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
-> > index 4d49bb42bd0d109263f485c8b58e88cdd8d598d9..bf86281401ac6ff05c90c2d=
-71c84744709ed79cb 100644
-> > --- a/drivers/mfd/sec-irq.c
-> > +++ b/drivers/mfd/sec-irq.c
-> > @@ -11,6 +11,7 @@
-> > =C2=A0#include <linux/irq.h>
-> > =C2=A0#include <linux/mfd/samsung/core.h>
-> > =C2=A0#include <linux/mfd/samsung/irq.h>
-> > +#include <linux/mfd/samsung/s2mpg10.h>
-> > =C2=A0#include <linux/mfd/samsung/s2mps11.h>
-> > =C2=A0#include <linux/mfd/samsung/s2mps14.h>
-> > =C2=A0#include <linux/mfd/samsung/s2mpu02.h>
-> > @@ -20,6 +21,60 @@
-> > =C2=A0#include <linux/regmap.h>
-> > =C2=A0#include "sec-core.h"
-> > =C2=A0
-> > +static const struct regmap_irq s2mpg10_irqs[] =3D {
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_PWRONF, 0, S2MPG10_IRQ_PWRONF_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_PWRONR, 0, S2MPG10_IRQ_PWRONR_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_JIGONBF, 0, S2MPG10_IRQ_JIGONBF_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_JIGONBR, 0, S2MPG10_IRQ_JIGONBR_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_ACOKBF, 0, S2MPG10_IRQ_ACOKBF_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_ACOKBR, 0, S2MPG10_IRQ_ACOKBR_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_PWRON1S, 0, S2MPG10_IRQ_PWRON1S_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_MRB, 0, S2MPG10_IRQ_MRB_MASK),
-> > +
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_RTC60S, 1, S2MPG10_IRQ_RTC60S_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_RTCA1, 1, S2MPG10_IRQ_RTCA1_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_RTCA0, 1, S2MPG10_IRQ_RTCA0_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_RTC1S, 1, S2MPG10_IRQ_RTC1S_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_WTSR_COLDRST, 1, S2MPG10_IRQ_WTSR_COLDRST_=
-MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_WTSR, 1, S2MPG10_IRQ_WTSR_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_WRST, 1, S2MPG10_IRQ_WRST_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_SMPL, 1, S2MPG10_IRQ_SMPL_MASK),
-> > +
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_120C, 2, S2MPG10_IRQ_INT120C_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_140C, 2, S2MPG10_IRQ_INT140C_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_TSD, 2, S2MPG10_IRQ_TSD_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_PIF_TIMEOUT1, 2, S2MPG10_IRQ_PIF_TIMEOUT1_=
-MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_PIF_TIMEOUT2, 2, S2MPG10_IRQ_PIF_TIMEOUT2_=
-MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_SPD_PARITY_ERR, 2, S2MPG10_IRQ_SPD_PARITY_=
-ERR_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_SPD_ABNORMAL_STOP, 2, S2MPG10_IRQ_SPD_ABNO=
-RMAL_STOP_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_PMETER_OVERF, 2, S2MPG10_IRQ_PMETER_OVERF_=
-MASK),
-> > +
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_OCP_B1M, 3, S2MPG10_IRQ_OCP_B1M_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_OCP_B2M, 3, S2MPG10_IRQ_OCP_B2M_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_OCP_B3M, 3, S2MPG10_IRQ_OCP_B3M_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_OCP_B4M, 3, S2MPG10_IRQ_OCP_B4M_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_OCP_B5M, 3, S2MPG10_IRQ_OCP_B5M_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_OCP_B6M, 3, S2MPG10_IRQ_OCP_B6M_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_OCP_B7M, 3, S2MPG10_IRQ_OCP_B7M_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_OCP_B8M, 3, S2MPG10_IRQ_OCP_B8M_MASK),
-> > +
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_OCP_B9M, 4, S2MPG10_IRQ_OCP_B9M_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_OCP_B10M, 4, S2MPG10_IRQ_OCP_B10M_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_WLWP_ACC, 4, S2MPG10_IRQ_WLWP_ACC_MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_SMPL_TIMEOUT, 4, S2MPG10_IRQ_SMPL_TIMEOUT_=
-MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_WTSR_TIMEOUT, 4, S2MPG10_IRQ_WTSR_TIMEOUT_=
-MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_SPD_SRP_PKT_RST, 4, S2MPG10_IRQ_SPD_SRP_PK=
-T_RST_MASK),
-> > +
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_PWR_WARN_CH0, 5, S2MPG10_IRQ_PWR_WARN_CH0_=
-MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_PWR_WARN_CH1, 5, S2MPG10_IRQ_PWR_WARN_CH1_=
-MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_PWR_WARN_CH2, 5, S2MPG10_IRQ_PWR_WARN_CH2_=
-MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_PWR_WARN_CH3, 5, S2MPG10_IRQ_PWR_WARN_CH3_=
-MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_PWR_WARN_CH4, 5, S2MPG10_IRQ_PWR_WARN_CH4_=
-MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_PWR_WARN_CH5, 5, S2MPG10_IRQ_PWR_WARN_CH5_=
-MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_PWR_WARN_CH6, 5, S2MPG10_IRQ_PWR_WARN_CH6_=
-MASK),
-> > +	REGMAP_IRQ_REG(S2MPG10_IRQ_PWR_WARN_CH7, 5, S2MPG10_IRQ_PWR_WARN_CH7_=
-MASK),
-> > +};
-> > +
-> > =C2=A0static const struct regmap_irq s2mps11_irqs[] =3D {
-> > =C2=A0	[S2MPS11_IRQ_PWRONF] =3D {
-> > =C2=A0		.reg_offset =3D 0,
-> > @@ -320,6 +375,16 @@ static const struct regmap_irq s5m8767_irqs[] =3D =
-{
-> > =C2=A0	},
-> > =C2=A0};
-> > =C2=A0
-> > +static const struct regmap_irq_chip s2mpg10_irq_chip =3D {
-> > +	.name =3D "s2mpg10",
-> > +	.irqs =3D s2mpg10_irqs,
-> > +	.num_irqs =3D ARRAY_SIZE(s2mpg10_irqs),
-> > +	.num_regs =3D 6,
-> > +	.status_base =3D S2MPG10_PMIC_INT1,
-> > +	.mask_base =3D S2MPG10_PMIC_INT1M,
-> > +	/* all interrupt sources are read-to-clear */
->=20
-> TOUPPER(a);
->=20
-> Comments usually go on-top of the thing they're commenting on.
-
-This comment is where .ack_base would usually be specified, but I'll move i=
-t.
-
-[...]
-
-> > diff --git a/include/linux/mfd/samsung/s2mpg10.h b/include/linux/mfd/sa=
-msung/s2mpg10.h
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..778ff16ef6668ded514e8dc=
-7242f369cb9c2d0e6
-> > --- /dev/null
-> > +++ b/include/linux/mfd/samsung/s2mpg10.h
-> > @@ -0,0 +1,454 @@
-> > +/* SPDX-License-Identifier: GPL-2.0+ */
-> > +/*
-> > + * Copyright 2015 Samsung Electronics
-> > + * Copyright 2020 Google Inc
-> > + * Copyright 2025 Linaro Ltd.
-> > + */
-> > +
-> > +#ifndef __LINUX_MFD_S2MPG10_H
-> > +#define __LINUX_MFD_S2MPG10_H
-> > +
-> > +/* Common registers (type 0x000) */
-> > +enum s2mpg10_common_reg {
-> > +	S2MPG10_COMMON_CHIPID,
-> > +	S2MPG10_COMMON_INT,
-> > +	S2MPG10_COMMON_INT_MASK,
-> > +	S2MPG10_COMMON_SPD_CTRL1 =3D 0x0a,
-> > +	S2MPG10_COMMON_SPD_CTRL2,
-> > +	S2MPG10_COMMON_SPD_CTRL3,
-> > +	S2MPG10_COMMON_MON1SEL =3D 0x1a,
-> > +	S2MPG10_COMMON_MON2SEL,
-> > +	S2MPG10_COMMON_MONR,
-> > +	S2MPG10_COMMON_DEBUG_CTRL1,
-> > +	S2MPG10_COMMON_DEBUG_CTRL2,
-> > +	S2MPG10_COMMON_DEBUG_CTRL3,
-> > +	S2MPG10_COMMON_DEBUG_CTRL4,
-> > +	S2MPG10_COMMON_DEBUG_CTRL5,
-> > +	S2MPG10_COMMON_DEBUG_CTRL6,
-> > +	S2MPG10_COMMON_DEBUG_CTRL7,
-> > +	S2MPG10_COMMON_DEBUG_CTRL8,
-> > +	S2MPG10_COMMON_TEST_MODE1,
-> > +	S2MPG10_COMMON_TEST_MODE2,
-> > +	S2MPG10_COMMON_SPD_DEBUG1,
-> > +	S2MPG10_COMMON_SPD_DEBUG2,
-> > +	S2MPG10_COMMON_SPD_DEBUG3,
-> > +	S2MPG10_COMMON_SPD_DEBUG4,
-> > +};
-> > +
-> > +/* for S2MPG10_COMMON_INT and S2MPG10_COMMON_INT_MASK */
->=20
-> TOUPPER(f), etc.
-
-Still getting used to this, sorry I missed them
-
-Thanks Lee!
-
-Andre'
-
+> you must ensure the mode en_mode is within valid range (0-2), why not=0D
+> use enum?=0D
+> =0D
+> =0D
+> > +{=0D
+> > +       int ret;=0D
+> > +       u8 index;=0D
+> > +=0D
+> > +       index =3D ufshcd_wb_get_query_index(hba);=0D
+> > +       ret =3D ufshcd_query_attr_retry(hba,=0D
+> > UPIU_QUERY_OPCODE_WRITE_ATTR,=0D
+> > +                               QUERY_ATTR_IDN_WB_BUF_RESIZE_EN,=0D
+> > index, 0, &en_mode);=0D
+> > +       if (ret)=0D
+> > +               dev_err(hba->dev, "%s: Enable WB buf resize operation=0D
+> > failed %d\n",=0D
+> > +                       __func__, ret);=0D
+> > +=0D
+> > +       return ret;=0D
+> > +=0D
+=0D
+Bean sir,=0D
+=0D
+Thanks for you reply! =0D
+Is the patch below okay?=0D
+https://lore.kernel.org/all/20250407085143.173-1-tanghuan@vivo.com/=0D
 
