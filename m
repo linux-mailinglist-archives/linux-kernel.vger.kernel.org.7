@@ -1,204 +1,106 @@
-Return-Path: <linux-kernel+bounces-591648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDAF9A7E307
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:04:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30858A7E2CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C137E189329A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:55:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5C6C7A5570
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B198D1EEA20;
-	Mon,  7 Apr 2025 14:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB9C1F7066;
+	Mon,  7 Apr 2025 14:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a+f7Mlz+"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VZy+Qku8"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAD41EB5E4;
-	Mon,  7 Apr 2025 14:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB6C1F5850;
+	Mon,  7 Apr 2025 14:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744037565; cv=none; b=ttUSQbC6zex+bEZOb7CpzvnyPd7tdvVoTG+WSINHQjUR1eMylEhIQbXPgD+9Ye4Bg5HsiRQkBAUIePQaVULFYijU8ThSfuuVmq6MHuq5krgOIoqXmhczGAMhij6oeTV8fhFVeVgl022JSbsHlGXi8lnUvj4TiE1nSQMhJKTtnMk=
+	t=1744037674; cv=none; b=WR8AbY6dMyfkqkFHMmiMF80TWf6YB/Lz0VOt2RL+G0XetqeoD28/z5mk1a8r2mcVMNFfHpM4pwMLGPq4xlRLppzBGJKA8UxIJZU8gy5ebJxcYLwTHZGs4Kp2au81qFgLk+cM/KDTL30eyL/voehYDuOcvWncUdvm4lnptdIR+7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744037565; c=relaxed/simple;
-	bh=pCyiXCf1/A8xml47smeAz/I3a4filcF1iQCDtSStSK4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Gl9jIBaOT7thJmhDOk8L6PzhEHjMwW8ZwCTYs/0qX+/5oCmWbOSgd1lQA9OLmnlNaVzi4fDvncFazUwpfNtsdxGfUufGTgv3Wym6s9NjSwQNp+xOs0Wnd/P8MYxspTfTfhmwkznJYeIUc8w6tg2C4Bh012gAVvkLeBRcgpMma1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a+f7Mlz+; arc=none smtp.client-ip=209.85.160.179
+	s=arc-20240116; t=1744037674; c=relaxed/simple;
+	bh=djx/lkobo8tUlwcO3BW9u3dE+Zph7Qrj48+ZuppEceI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AaaGqvf7c0DfE4cbK/VHj477WdUGmRSN7mD5SGHJ2cksZPQSkeUq+FfaQlv+Dm3eVJs7lVgh2C8ptHXL94NoZ6X+sggJWW2i6HyR60ybayidTTV/DYV6EjpK2fM+5X282C7UJz/Id7H0ulcHq5c9QONrankJARx1SPkwV6MIThM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VZy+Qku8; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4769b16d4fbso22303271cf.2;
-        Mon, 07 Apr 2025 07:52:40 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5499614d3d2so5134103e87.3;
+        Mon, 07 Apr 2025 07:54:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744037559; x=1744642359; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WhKqwIIgX36Jf+RJwT/l1hiIh7wr6DbCAVI5VFkdzZs=;
-        b=a+f7Mlz+XsOYrWbEMeaXRSkERHkErm7VCobX56hU1jVwh9zElbhUsv4NWFObhyovtg
-         ojai0satVfMB+WNp4u9/okqOvJKlDVSTFmsYy/RuD+eDRqY7MJQpU035p3qzNp9QaITW
-         eNPSc8eigCO70GKJzb1I6uQpd2BagXvWSbxTmigr/8pwMKcKUdyX54D8RWS9dTVGj7/m
-         y98ZJKRzLnnOcYsn0eVv6h3EzF8CWA1SITbmfBPDJ1qQMPxEKpN5//QQTSdWhXUA1SOk
-         pxpc/germw5XHlXbhz50F2/vNYrKdFoZLijLcx1LMG1DW0drk18ZjDwSibteuMSdmX10
-         QaaQ==
+        d=gmail.com; s=20230601; t=1744037671; x=1744642471; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=djx/lkobo8tUlwcO3BW9u3dE+Zph7Qrj48+ZuppEceI=;
+        b=VZy+Qku8/OtiaFp9JAlU2YTzOji7vJe0eZvSktTJbQex2/J5qFfRCQ4sNSEWTIYwAU
+         1loHHd1MjqkRNko8jS4sa5F/wRgMn5GgX7ZbTh0sPV96PjmRf2Lo6pBiGDXPs7JMN462
+         rvz6BqqakI9Ktz3TM90ZjCCB15tMqjnITT0Nktcima938b6RSNPH+fBfW6YBs+Zo7PGf
+         X0EKNO09XNmIri1uViwfnpbz49sA0nlrsF2h1wLj+BKzS+pb3xt4G4G2VYaNYgrvmtnk
+         r9eXaxV7yg01z2QMo6Yz1yvKpHvARTcJwNRYblFlKhCx2Lt4B2w+lUOjds2dyhT/1pyY
+         KRVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744037559; x=1744642359;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1744037671; x=1744642471;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WhKqwIIgX36Jf+RJwT/l1hiIh7wr6DbCAVI5VFkdzZs=;
-        b=rg9UKiZvqz/3qANU3IhWJtRvaC7n9Ne1kfBJTfWrugyasn8Qfl7vac62SeIxdkUCa2
-         kserrTnEb1bMe+8YXHhK9tReOYCNEOc4UTqm4Pnv6MSmeEG05Gf1z2xuorAhg2Qatn4i
-         MOm/T3CIiGx5UjLJ/i2kjGm1dobqxPmxzRsalwoS9SSMIIj3umU+H+lzIvKa4oi8scAB
-         IaqdeCs/E3w2Ha0t4Gz3m8T2TGszx3OZoGx75kqM/QewFmDIBYEEfz/4Vy98zLCDBjtT
-         jbf1rm75ihIim4uwee4x+X3PWqLBO2ncF+1IyW4janVOUdEZWE7y+sqS1wd2/E0UMp7h
-         fdtg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQqUTkJhbQWkcqk8BQyZd3yv7u2MMJyDdVyc5dsXTTsCy/8fQtKblJD6fNh81nrtI6IMoe1uuYR/EMb4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYwGanFRAD/+FmX+DKdkVPSCWPxyhbOh6HnJ6rMKQVHPqBWn0C
-	yE4HCxI7yzdcUEosfxw3Ioydhyl3AsK84LWIhbHikaIC6SkN2Fz/
-X-Gm-Gg: ASbGncu+DeF9Jfeugk4xXA/dTL7Fjliz1+9/+HsGDB33H6jlSQ5foE1VpsU6fNpUAPJ
-	PNhtqgsSEOosHAY9pgdSyRPLiUmoZrIwC5aW7V/pt2otmF7yprvPAGQ+HZzoTLUg+KUKYw8cJSs
-	qn2Qrt8r0bHY1OCbMhk8elFw1LQ43w+HbiAQMRMRkcDYm1iJzwNs7llzXMn3K4o5mP5zX1hu3MN
-	4VNp7o0ZmmPgKb3FR9hBOiPMpVY1rTcChnXUgRDsJFGw61AflptKLMzTDt54as0Tkw4hmc65LjM
-	daSqE15uQV1x/rjedXN3Vd3Gji4vZxCgbdeC1+tsuQ0OLSt8V2JBzHids1MPiMC0H68BEmlZpRX
-	1Z8iGayjBF/XL1ZtquCY3TQvNu+MkEi5RoJPCGZmsDxe6iWOKWXxdpQ==
-X-Google-Smtp-Source: AGHT+IFCGkkdyhhrxU14wvgTU+kI8yw4ur3kW5NZIA570Chg+1dqT1fYQbVcQ6Ews4xW5qIvvCPoEQ==
-X-Received: by 2002:ac8:7e84:0:b0:476:add4:d2c3 with SMTP id d75a77b69052e-47925a26c13mr197177391cf.38.1744037559089;
-        Mon, 07 Apr 2025 07:52:39 -0700 (PDT)
-Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2620:10d:c091:600::1:d8ac])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-479364eaa28sm33065601cf.28.2025.04.07.07.52.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 07:52:38 -0700 (PDT)
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 07 Apr 2025 10:52:34 -0400
-Subject: [PATCH v3 4/4] rust: alloc: replace `Vec::set_len` with `inc_len`
+        bh=djx/lkobo8tUlwcO3BW9u3dE+Zph7Qrj48+ZuppEceI=;
+        b=ehDh43yZ0yIytejrrC/wbfR0qgmvfS7x+dpBxiaYUE80tYiNyVZdne2pRxvUW6wBuQ
+         LSdLDcUcJGSTXI+kmx6bH+f08sWgPzvXXEjl2zI31m7/JXou0Yzq2TQJd1D6gEqFj6E9
+         2tgBM3e+lXDzbehCOcNc6xx/wuvLR6xMm4T4XQHBltdeGCAeqrXgpS03sRxFs3WOudyR
+         2PEm7BZzr1Jw6wbuxwCbS4UZ4udLxj8aKuly/T7yTBeFIhIPzgCGKHLMsXk2LYNEUPa9
+         wNC8gvVIXKv6XSD0rjjKJvedDZX+UGGzmxnPssJJcp20LCCwra5cqAlDHkl32ySQpPcs
+         iKVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWq2asxag+NRq+r+w19o2VdaFrmTGyEJBJ/8PGJ364RksXSZFNBIV4HZwrMG9XfGnzMSw1hWRjhI4JFiY8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIzLPuKJVZc6sR8z29ZsQAhqHQzCVyWE3NL7EqqvZKG8ISvt7N
+	YAz4he/TJv7e4U22t3fLHBHhB4eIPguElrYR2l3gXII4xdqlvC+orvHTW5AB98Ixkhil4zy7sAH
+	lhFFGY79HcGFmcDznrjxhJIegHNY=
+X-Gm-Gg: ASbGncvf0FqwCzumo2FOT2dsN36pL3VqWw5rnFN5c4qJ/pgWbzHbj9vqaiCdSH91hlT
+	l8u4uz+RIQIOGmLEHG1ESMszU+P2tiTa1/mTmKL0ViqvOdHY+F5UFo1/TZIhdUm8MKjSFahgBwa
+	kYeN4eGhlzRgh6qi7OoSTpkwezbgrb5RkBc51ZV6Gx0/hldVD5ZaoF
+X-Google-Smtp-Source: AGHT+IGw4w66yWLlVDcoqUNPDHsp/rI73/jCCY+lCH49mLgHpGkwQxm2DQA/ev1yTm3bj9Or80jelc2Iwy++I20CbFY=
+X-Received: by 2002:a05:6512:308c:b0:545:c23:9a94 with SMTP id
+ 2adb3069b0e04-54c2335c783mr3259183e87.48.1744037671036; Mon, 07 Apr 2025
+ 07:54:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250407-vec-set-len-v3-4-c5da0d03216e@gmail.com>
 References: <20250407-vec-set-len-v3-0-c5da0d03216e@gmail.com>
 In-Reply-To: <20250407-vec-set-len-v3-0-c5da0d03216e@gmail.com>
-To: Danilo Krummrich <dakr@kernel.org>, 
- Andrew Ballance <andrewjballance@gmail.com>, 
- Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Tamir Duberstein <tamird@gmail.com>
-X-Mailer: b4 0.15-dev
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 7 Apr 2025 10:53:55 -0400
+X-Gm-Features: ATxdqUG1SPo3Wy4tNo1FRDVr7qoubaKRIp8WvHtp35HMPPueDMLmKtIWNo-vxig
+Message-ID: <CAJ-ks9=3ckTSWuCWq0SV4EX75a_c70c=VKjur-+GFUHKi8+zmA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] rust: alloc: split `Vec::set_len` into `Vec::{inc,dec}_len`
+To: Danilo Krummrich <dakr@kernel.org>, Andrew Ballance <andrewjballance@gmail.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Rename `set_len` to `inc_len` and simplify its safety contract.
+On Mon, Apr 7, 2025 at 10:52=E2=80=AFAM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
+>
+> This series is the product of a discussion[0] on the safety requirements
+> of `set_len`.
+>
+> Link: https://lore.kernel.org/all/20250315154436.65065-1-dakr@kernel.org/=
+ [0]
+> Link: https://lore.kernel.org/all/20250316111644.154602-2-andrewjballance=
+@gmail.com/ [1]
 
-Note that the usage in `CString::try_from_fmt` remains correct as the
-receiver is known to have `len == 0`.
-
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
----
- rust/kernel/alloc/kvec.rs | 25 ++++++++++++-------------
- rust/kernel/str.rs        |  2 +-
- rust/kernel/uaccess.rs    |  2 +-
- 3 files changed, 14 insertions(+), 15 deletions(-)
-
-diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-index d0b46aa36169..fdfdb77de7f1 100644
---- a/rust/kernel/alloc/kvec.rs
-+++ b/rust/kernel/alloc/kvec.rs
-@@ -185,20 +185,19 @@ pub fn len(&self) -> usize {
-         self.len
-     }
- 
--    /// Forcefully sets `self.len` to `new_len`.
-+    /// Increments `self.len` by `additional`.
-     ///
-     /// # Safety
-     ///
--    /// - `new_len` must be less than or equal to [`Self::capacity`].
--    /// - If `new_len` is greater than `self.len`, all elements within the interval
--    ///   [`self.len`,`new_len`) must be initialized.
-+    /// - `additional` must be less than or equal to `self.capacity - self.len`.
-+    /// - All elements within the interval [`self.len`,`self.len + additional`) must be initialized.
-     #[inline]
--    pub unsafe fn set_len(&mut self, new_len: usize) {
--        debug_assert!(new_len <= self.capacity());
--
--        // INVARIANT: By the safety requirements of this method `new_len` represents the exact
--        // number of elements stored within `self`.
--        self.len = new_len;
-+    pub unsafe fn inc_len(&mut self, additional: usize) {
-+        // Guaranteed by the type invariant to never underflow.
-+        debug_assert!(additional <= self.capacity() - self.len());
-+        // INVARIANT: By the safety requirements of this method this represents the exact number of
-+        // elements stored within `self`.
-+        self.len += additional;
-     }
- 
-     /// Decreases `self.len` by `count`.
-@@ -322,7 +321,7 @@ pub fn push(&mut self, v: T, flags: Flags) -> Result<(), AllocError> {
-         // SAFETY: We just initialised the first spare entry, so it is safe to increase the length
-         // by 1. We also know that the new length is <= capacity because of the previous call to
-         // `reserve` above.
--        unsafe { self.set_len(self.len() + 1) };
-+        unsafe { self.inc_len(1) };
-         Ok(())
-     }
- 
-@@ -526,7 +525,7 @@ pub fn extend_with(&mut self, n: usize, value: T, flags: Flags) -> Result<(), Al
-         // SAFETY:
-         // - `self.len() + n < self.capacity()` due to the call to reserve above,
-         // - the loop and the line above initialized the next `n` elements.
--        unsafe { self.set_len(self.len() + n) };
-+        unsafe { self.inc_len(n) };
- 
-         Ok(())
-     }
-@@ -557,7 +556,7 @@ pub fn extend_from_slice(&mut self, other: &[T], flags: Flags) -> Result<(), All
-         //   the length by the same number.
-         // - `self.len() + other.len() <= self.capacity()` is guaranteed by the preceding `reserve`
-         //   call.
--        unsafe { self.set_len(self.len() + other.len()) };
-+        unsafe { self.inc_len(other.len()) };
-         Ok(())
-     }
- 
-diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-index 878111cb77bc..d3b0b00e05fa 100644
---- a/rust/kernel/str.rs
-+++ b/rust/kernel/str.rs
-@@ -886,7 +886,7 @@ pub fn try_from_fmt(args: fmt::Arguments<'_>) -> Result<Self, Error> {
- 
-         // SAFETY: The number of bytes that can be written to `f` is bounded by `size`, which is
-         // `buf`'s capacity. The contents of the buffer have been initialised by writes to `f`.
--        unsafe { buf.set_len(f.bytes_written()) };
-+        unsafe { buf.inc_len(f.bytes_written()) };
- 
-         // Check that there are no `NUL` bytes before the end.
-         // SAFETY: The buffer is valid for read because `f.bytes_written()` is bounded by `size`
-diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
-index 80a9782b1c6e..e4882f113d79 100644
---- a/rust/kernel/uaccess.rs
-+++ b/rust/kernel/uaccess.rs
-@@ -290,7 +290,7 @@ pub fn read_all<A: Allocator>(mut self, buf: &mut Vec<u8, A>, flags: Flags) -> R
- 
-         // SAFETY: Since the call to `read_raw` was successful, so the next `len` bytes of the
-         // vector have been initialized.
--        unsafe { buf.set_len(buf.len() + len) };
-+        unsafe { buf.inc_len(len) };
-         Ok(())
-     }
- }
-
--- 
-2.49.0
-
+Oops, dangling reference here. I removed the mention of Andrew's
+series because it has been merged.
 
