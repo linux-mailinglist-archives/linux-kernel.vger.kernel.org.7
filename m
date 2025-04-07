@@ -1,153 +1,171 @@
-Return-Path: <linux-kernel+bounces-591880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0922A7E648
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:25:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A543A7E650
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C04CA19017BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:18:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E34A17EB25
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9053E20A5F0;
-	Mon,  7 Apr 2025 16:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6F8209F38;
+	Mon,  7 Apr 2025 16:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="endZq3d6"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="azkGcDLR"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451F320A5E5
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 16:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AA91B3934;
+	Mon,  7 Apr 2025 16:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744042447; cv=none; b=ajuZG0nezOiFRrd59oMD1b7DE2icNKpGWFiTGb+CCzyJsb8+RZAXFvNOOBNIjz4jwHGFQ3eNZ05JKIP2M4RQQWQ701flgSdIsilqHnt1wfzP4Ryk7jpVw3hD2ipR3q1/O80m/HKY6t84dQdXWCcILL8VvYJEVbTHoST3nikFNBo=
+	t=1744042428; cv=none; b=d/d9BHSZJZ57Fbf4G9UoByD6Faulx7e7FPmeN8VMejCRMN5sxSKprop10fM+aYSITgubqrw246aeI0wps8k9fBjoHbMNLI9pX5HBus6svx1u/wqGkzxfayEgaTc//RWtLlgn/J9YjDgwU0ArNQ6MJEKgWr6f4iK0kpMIeSif7jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744042447; c=relaxed/simple;
-	bh=MZ1+v4Yr8SrxsYFLNiPWcJ3X3rXXmM+Atb5i9VRwigw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XBrMfSKNYrKYTFvNcjfU92+MkXV+1e2DJH2ny8lafziEHvJoGFUkAqh5mjTNo9WPj88v20F+7zLjUfD8v2lokWhaYfoEFI3gZ2+AXEuhr0w9L84GmPXUeWajVlCfZKRQR3qNUhf9W9vvTbc1WK84KIXiyziiAutFQ7lPqj6Je1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=endZq3d6; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6feab7c5f96so43068217b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 09:14:05 -0700 (PDT)
+	s=arc-20240116; t=1744042428; c=relaxed/simple;
+	bh=p2zobvi7rWLFeSuUW0t9mkfYAvLLJwM3P3t01NCBP3g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EDgut0uWS+6HFEtpBu7fUiylq60DyMXPF5VXKFs7848YADk9m60dyEXBU6+ydCr0GVqjZOgN+b8+p3TwbbKMWpeq3BH9KLkJcdVHCRvbxXmoeF0p9T+rwppcsXlrOw5PdCWqqHOMENLUHTsMB3wQLDFEnTxA/BveaVWRFi8NOmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=azkGcDLR; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso42627165e9.2;
+        Mon, 07 Apr 2025 09:13:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744042445; x=1744647245; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bod33nGx35GYDGeyLDpG4qYPRiHJzUFJHwZD8P4WupU=;
-        b=endZq3d6f2rGBycLrcxNGnEUlxVaR8NwpKrT1XudIkVdUOkbzPggfFGfOlzpYKnUOF
-         D1Lga+Nwnt+zVDusaHfz9jmONa54DD7079bRQQA1oafjVIxsPCdLrQQ5bwpsowclji+d
-         YSImJOejdLXF6oGTGmuGaj3qaMGVPpXI8ptu/890dc5FwuPqR7xZG4rOJM9hcfKOAi5o
-         Jtm1E6S1BsPzc56+0MZh1izD70z/ge+ViuYlo2CQIfmR/2iSioQkql9KHoIiw7zk2enj
-         z7RPhShjiortuBqkwrbW8HGxxENiigwiS9dsDhANO0Lz+VKOR6nozIaM55La461Tfn9W
-         0QBQ==
+        d=gmail.com; s=20230601; t=1744042424; x=1744647224; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=70LGfavtABLJLsgIq6Bm88SDdFJG1TJDo/u2Aa0VN/w=;
+        b=azkGcDLRakHzIGjEPd5CePOJ2tSA1cESxCWZNsZ5zdu/2I/Vu6+4+oy1ErssUVWg5A
+         27t97hhkKtfB+Wxpkw9F9AcVmYYwXCj/4l7be1e0L8jht2KHy0In+1dopcpt8V30OFt9
+         AdJczDb17ZyMXSPnsVsFxVZcMrcoR5lRkYpLGvFkvKCX7UfE87p0PTj45sIZwGiKu0Hl
+         uzbyvtm4AZ9ybx7NozMGXfLs6yqe0zj2O0k9iQKL/FZBOPfvYv29Z9xIBE87x3edUoL+
+         D6wcoCrsGvcVPju9iKOtb92IrglvsjXxkrCEP6aGTkhd1WQtL3HPTIZVAtg6aeoFdFaK
+         xy3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744042445; x=1744647245;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bod33nGx35GYDGeyLDpG4qYPRiHJzUFJHwZD8P4WupU=;
-        b=SBO7SUBHWTM7vCNdnVIJ088XWTGsX/S/X2KyNNlQALC8R1fwDjE0URVw8A+4NETyoC
-         b6+W1Fq3WoVQehrOwSKPmlUQB6nhi1spFoqGBzEFswxb8f5xQMa4qteTwiX+i+XXEWG6
-         4DlVZ/SlylUchtbzmGqxGvOzpj5df6zT9ocw2ZmV3C4BlQfscKhcsS1vfM+CfaErBMOr
-         dNpodec3J0fNiAvjASlAVu1BCaTuYTzmmOcl9I7B0gAKf/7sDYOfe4tS6PCIrJ71fivg
-         epf61HuJvOP+mt9xlUmqOiK4WmPY3bZHmikg7wkI02Px7thGfcKLgGX8SFrNAfrp2Dq4
-         Z3Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpn6KaLP6s/352VsTt3jgB2v3mED/Ts8uN391SKSLgBi4OdI3WH9nuGRP1aTQRyuwS1o2bcIM3W90TUCg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlZvnEii0Xo2Y0lUsaeu8FOFOPflUl3TNwp1G5izlNrb8hbdKU
-	GGJrXNrxCsk4iG6eZrKld/xtL74wPd+pvQz0gBsC2/A/Qpa9Nc78tacUv6fkksg4gayLJR2J0Gu
-	U4svUXCB6PWaQ2K1d7LiToCMRmIPT/dwQCL1vAA==
-X-Gm-Gg: ASbGncutFGGxb1M8GJj7zHqBvUgQrKlyElS+nwWEhn+zSUCTX0FYp1earD9N1L2CwhR
-	eXlH0NR9rvroDqv04rQnjtMnt0jba+PvaFvcg2z7uSQ+5+r6hMpUUpDrziZ4IZtuEW45C4BZn68
-	I71fv4i6S1BzHq8M4NJjKX7QMNoO4=
-X-Google-Smtp-Source: AGHT+IFoDbEoYCGI/fKsfvc1W3WRJ48PIrl3shNMLSyLyHUCZEKjVWa8xv5qbOXVgK1f6QWGAMLLH1qGHEVK9aquLzg=
-X-Received: by 2002:a05:690c:4c11:b0:702:5689:356e with SMTP id
- 00721157ae682-703e1546003mr227916307b3.12.1744042445057; Mon, 07 Apr 2025
- 09:14:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744042424; x=1744647224;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=70LGfavtABLJLsgIq6Bm88SDdFJG1TJDo/u2Aa0VN/w=;
+        b=D1mpjjAFbpWs8B+oqkdFJRkJX8y1dJk9Q9d3MTZRsoPDCHU4IlYoNfH4OBCd82IyqU
+         K7Jgk5Jod3TPRgBkaireXGTpM0O55S8HM82bKVRefRkwv/MpRidMWJbM04PYyFuOBcIF
+         PbPd9NsBQYzC9a9VN6RQUYiVmSVC70vUOo06D5Aks0WmJx5QuTKWCrRFon6iwFKra4iv
+         CghmREdEDtCM5hoWjyF+A0BIY8HZpVaJ6jN5FajCAjugM+zfvmUxF5OVCyUlDvHHdkGU
+         a/VvZQiKh1RVq0EatsoPnai7uadKDbKDjgnGeWH3fmTgKGezBO1+qH4QlWHyvz1zJ/OQ
+         64Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNP5YgI73SGWvGaNxxOd71vzxPbCjhr+OEq/pO0/hLqFCytdb/0i7Fii0EgtzEqDcrsaPQ/uRzAwFP+V2g@vger.kernel.org, AJvYcCVvRcCQZe7oE611jpRaz/7XY4Eo3RZEg2if54LZ6qlvG9B4rNicu+VsEYBtwYYFyCUOSg5O/8ycCBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5QgQdEoylfkYrCpNzxU+7ns+1sfjXpaiiDvi7+VwbcQ+/m9oH
+	dIz9M7PcW66P5ypV3EpvtoLs0Cb0cAojATq84NgQH9u8/nmQzYo6
+X-Gm-Gg: ASbGncsgVF8icgLff52XR/FopZiTEwVV3vKCGlmcKr2+0SHB6lYvruK63a/V2Fc2ZRA
+	GqyNcZbX003ov5Aoz/2aGfguwHlLEVJKxUbp/bGTE2gfF0Dzvk0abAwWy/ZMSiT+27Yz4biO34L
+	q0NSfVd5MKvoKR1TZ7jWxfYrrwAoZdfDROB58j01aeBsivdwM10EBJN3O9SKDocXCnB8fbdUHGx
+	2gNgPWyc/1hILYWdFd+brPHwF/T97VvyDhQBprWNXJ8DdtssQHYOL4zqEIqJRGKCs2DGDk7iM34
+	2Sr6/7d3fzdFtx2XWyEvgxdY5E3w54kFWZvVmgLYmysAS431E6e/dnPgI63pQNezG4KjCw7efot
+	Hv+Src1oG2rkK36st
+X-Google-Smtp-Source: AGHT+IF+LRS5kJ8HAD2cz4rJeC67p0ChUWXfOfl/gjpqN8sIiWg6owJ812B5obdplJyggnWpsz9FxA==
+X-Received: by 2002:a05:600c:5124:b0:43c:f3e4:d6f7 with SMTP id 5b1f17b1804b1-43ecfa18f8emr125832185e9.31.1744042423705;
+        Mon, 07 Apr 2025 09:13:43 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c301b6321sm12278444f8f.44.2025.04.07.09.13.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 09:13:43 -0700 (PDT)
+Message-ID: <b0c6eb83a052fe6e1656d47e118b1e70336e38d1.camel@gmail.com>
+Subject: Re: [PATCH v3 4/5] iio: dac: adi-axi-dac: add data source get
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Angelo Dureghello <adureghello@baylibre.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+	 <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter
+ Clausen	 <lars@metafoo.de>, Jonathan Corbet <corbet@lwn.net>, Olivier
+ Moysan	 <olivier.moysan@foss.st.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>
+Cc: linux-iio@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 07 Apr 2025 17:13:43 +0100
+In-Reply-To: <20250407-wip-bl-ad3552r-fixes-v3-4-61874065b60f@baylibre.com>
+References: <20250407-wip-bl-ad3552r-fixes-v3-0-61874065b60f@baylibre.com>
+	 <20250407-wip-bl-ad3552r-fixes-v3-4-61874065b60f@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230621144019.3219858-1-abel.vesa@linaro.org> <2786d9ff-0579-429b-b431-a8547cbf6fb6@ti>
-In-Reply-To: <2786d9ff-0579-429b-b431-a8547cbf6fb6@ti>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 7 Apr 2025 18:13:28 +0200
-X-Gm-Features: ATxdqUG2bTsfDvA_PWKUIhjRNtwJmFpgrRLM7JC797JM0tWqTf0FSYOqcVvkHm8
-Message-ID: <CAPDyKFodE6KokC9uwZZgF+VGCc5JCA5YjB7okUkELAn16V=nvA@mail.gmail.com>
-Subject: Re: [RFC PATCH v5 0/4] PM: domain: Support skiping disabling unused
- domains until sync state
-To: Devarsh Thakkar <devarsht@lewv0571a.ent.ti.com>
-Cc: Abel Vesa <abel.vesa@linaro.org>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Kevin Hilman <khilman@kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, 
-	Bjorn Andersson <andersson@kernel.org>, linux-pm@vger.kernel.org, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 7 Apr 2025 at 16:13, Devarsh Thakkar
-<devarsht@lewv0571a.ent.ti.com> wrote:
->
-> Hi Abel,
->
-> On 21/06/23 20:10, Abel Vesa wrote:
->
-> Thanks a lot for working on this.
->
-> > This new approach drops the is_off change that was part of v4. That was
-> > kind of beyond the scope of this patchset. This new approach changes the
-> > boot_keep_on in such a way that we won't need any kind of new locking
-> > for a PD. This involves using the patch [1] for adding dev_set_drv_sync_state
-> > from Saravana for allowing the genpd core to set a default sync state
-> > callback for a provider that doesn't register one by itself. While at it,
-> > we can add another such API but this time to query a device's sync state.
-> > Then, we filter out each power off request in such a way that if a boot
-> > powered on power domain is not attached to its consumer device and
-> > the provider has not state synced yet, the power off request is skipped.
-> >
-> > [1] https://lore.kernel.org/all/20210407034456.516204-2-saravanak@google.com/
-> >
-> > No worth mentioning what changed since v4 as this version is almost
-> > entirely reworked.
-> >
-> > Abel Vesa (3):
-> >    driver core: Add dev_is_drv_state_synced()
-> >    PM: domains: Ignore power off request for enabled unused domains
-> >    PM: domains: Add and set generic sync state callback
-> >
-> > Saravana Kannan (1):
-> >    driver core: Add dev_set_drv_sync_state()
-> >
->
-> Could you please share if you are planning to re-spin this series as
-> non-RFC in near future ?
->
-> We think that these patches would be useful to enable smooth display
-> transition from boot-loader to kernel space, something which our team is
-> working on, so just wanted to know your plans for this series.
+On Mon, 2025-04-07 at 10:52 +0200, Angelo Dureghello wrote:
+> From: Angelo Dureghello <adureghello@baylibre.com>
+>=20
+> Add data source getter.
+>=20
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> ---
 
-I am working on it as we speak, but I need a few more days for
-testing. You should expect something to hit LKML later this week or at
-least early next week.
+Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
 
-I will keep you posted!
-
-Kind regards
-Uffe
-
->
->
-> Regards
-> Devarsh
->
-> >   drivers/base/power/domain.c | 72 +++++++++++++++++++++++++++++++++++++
-> >   include/linux/device.h      | 26 ++++++++++++++
-> >   include/linux/pm_domain.h   |  4 +++
-> >   3 files changed, 102 insertions(+)
-> >
->
+> =C2=A0drivers/iio/dac/adi-axi-dac.c | 30 ++++++++++++++++++++++++++++++
+> =C2=A01 file changed, 30 insertions(+)
+>=20
+> diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-axi-dac.=
+c
+> index
+> f86acb98b0cffb09bf4d4626f932bf1edc911e2b..8ed5ad1fa24cef649056bc5f4ca80ab=
+bf28b
+> 9323 100644
+> --- a/drivers/iio/dac/adi-axi-dac.c
+> +++ b/drivers/iio/dac/adi-axi-dac.c
+> @@ -536,6 +536,35 @@ static int axi_dac_data_source_set(struct iio_backen=
+d
+> *back, unsigned int chan,
+> =C2=A0	}
+> =C2=A0}
+> =C2=A0
+> +static int axi_dac_data_source_get(struct iio_backend *back, unsigned in=
+t
+> chan,
+> +				=C2=A0=C2=A0 enum iio_backend_data_source *data)
+> +{
+> +	struct axi_dac_state *st =3D iio_backend_get_priv(back);
+> +	int ret;
+> +	u32 val;
+> +
+> +	if (chan > AXI_DAC_CHAN_CNTRL_MAX)
+> +		return -EINVAL;
+> +
+> +	ret =3D regmap_read(st->regmap, AXI_DAC_CHAN_CNTRL_7_REG(chan), &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	switch (val) {
+> +	case AXI_DAC_DATA_INTERNAL_TONE:
+> +		*data =3D IIO_BACKEND_INTERNAL_CONTINUOUS_WAVE;
+> +		return 0;
+> +	case AXI_DAC_DATA_DMA:
+> +		*data =3D IIO_BACKEND_EXTERNAL;
+> +		return 0;
+> +	case AXI_DAC_DATA_INTERNAL_RAMP_16BIT:
+> +		*data =3D IIO_BACKEND_INTERNAL_RAMP_16BIT;
+> +		return 0;
+> +	default:
+> +		return -EIO;
+> +	}
+> +}
+> +
+> =C2=A0static int axi_dac_set_sample_rate(struct iio_backend *back, unsign=
+ed int
+> chan,
+> =C2=A0				=C2=A0=C2=A0 u64 sample_rate)
+> =C2=A0{
+> @@ -818,6 +847,7 @@ static const struct iio_backend_ops axi_ad3552r_ops =
+=3D {
+> =C2=A0	.request_buffer =3D axi_dac_request_buffer,
+> =C2=A0	.free_buffer =3D axi_dac_free_buffer,
+> =C2=A0	.data_source_set =3D axi_dac_data_source_set,
+> +	.data_source_get =3D axi_dac_data_source_get,
+> =C2=A0	.ddr_enable =3D axi_dac_ddr_enable,
+> =C2=A0	.ddr_disable =3D axi_dac_ddr_disable,
+> =C2=A0	.data_stream_enable =3D axi_dac_data_stream_enable,
 
