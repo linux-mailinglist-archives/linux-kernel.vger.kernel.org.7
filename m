@@ -1,226 +1,136 @@
-Return-Path: <linux-kernel+bounces-590693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 129B5A7D5DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:30:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FDA1A7D5EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0DF91892ECB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:27:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 879F03BF9F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E130322D78D;
-	Mon,  7 Apr 2025 07:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A126122A4F0;
+	Mon,  7 Apr 2025 07:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QulxOSFM"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="d+ZKdVxh"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B9B22D7B2
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BCC22B8A7
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744010506; cv=none; b=orXNglRKrOtEwF79rs/YzQfzWnD/1xm8o1RRcgErJIrAGgw/f4d6mHwdZZX8ZSkUZefWd/lWvibiMMqKJDK34GapXqwbOUfjPwCNCYI78PLk21eghc6+WGG/X31QwdkXvpSZqS1vM2j64BpQQGu9jXUAdJumO1w/4oy8Wtzv+a0=
+	t=1744010485; cv=none; b=GLzL13Dy1pfWKMt1WJtfjZWpT04XFeJrl2S+vwfvBmCc+QZCVG/OsC0BanyqQpQHbwk3amLWl+Zwjl/I7Ic4aUOILyAYxEJU5RrzJ279W4Ldfqz8xpgpPd+ZxlPiAu+VCNFaLMSIFV2dZ0+BTsgrTaGxKBoPF6EZ6upvvKxcZdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744010506; c=relaxed/simple;
-	bh=fAniwQ2l4Cj7KEk83CZ8a/6av2wQtDd8XL2PSrRIVME=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ukRmkHysZtWcQxZUZbWHEormPUr1dXdXjLCb+YvDj90Q3s2jwNbiHwfzH9Gbn0x6FCQcJ/tl1ldE9b+tsplgrcDcqVyulRKduRxRkZIvo3u0yDmZtJQSwYgFPdYx6bBL/s7QoWg+WajmswlbuTOqc8Cv3+DcyRnukp2YyQMtASY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QulxOSFM; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e61da95244so6668101a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 00:21:43 -0700 (PDT)
+	s=arc-20240116; t=1744010485; c=relaxed/simple;
+	bh=G5BhxWKBbXgp0hqNK0eP2RvhQKS5wVohdK+Cskejh0E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MZmjRePKO9DlB5j+mPvrexScELTjfENT6HCj9TSmKP+hTiPRiALMS/VSkBHbK92WkFE/Sz66V+JZqR+8qq3cxVhcem1MmoYdDjKMmIa5/0EnCMlPwKF4eH3/z1WVJmSNXHVzShcYDC2PiFvUVynISIjun/Eptc7i3m+TXe7y6gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=d+ZKdVxh; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so44932335e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 00:21:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744010502; x=1744615302; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F54nal2TDjFsjimAMiM7HlxBlU6Yyu5pByAT3w0izG0=;
-        b=QulxOSFMX7qjH2oJ9Fu8WVng/bbz/89d2ntEaQN0RN21aCMkHzwulVtvEpn7vZaYqx
-         bcOK33x949biTPoFwicq+Ti36ryuzFUM9amxkj+0/y2a4irc+fNrWQ1Xvy1TQjMf+UdR
-         Z5BMg3REZEGhOZauSZUrFnrnJeTqPG8sQtvfBqoEzWmSgHcm+9W99rjR1CVwg4h7Lxq4
-         6osMwKTtnpfyKIUQgih9jyLtUYkHFx3E26ncNU03e1upmckUCDTtHf+EybqY3S4S6KNV
-         AnUbQH+SK+o5sMju7da0v89E4icLegrI14vMaZ7HUooG8GhvOEIHtq1mOfAibJBXjPEQ
-         9F0Q==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744010482; x=1744615282; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3rn1KdFJ/AqShrvU/Gc3KSw9wUJ6mAkmkxSw61iKgtg=;
+        b=d+ZKdVxhk/rJ3zS9ZTFVp2jGL1cNQRZK7CzuBWKig4cATYsQpSx9AmdMOenKQBjqcZ
+         bOiKqL12INBw94zcuchoG8WN478tsgYqTV24ldWPUlhzXxxW9KsXtei0IK7rr0ci3KVx
+         wbvRl3hBNEmHytaBgtn1Hz6CvHYgI8s59ZoV4C8+j5S8ix+W/J7q1j45fxBhZH7I/5yg
+         B47u5EEylWkHWpR11Ai/mqz8hv1nqhVs4ukrpyGHnYoGC6bb03cLRyTnetU+NF31fPkI
+         6bwBMCwq7M+vitlMWnapWUoE9a73yqGlnTQ6lAXkb8i5Z3J8m68azI78Xt85MS4avWBV
+         A6tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744010502; x=1744615302;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1744010482; x=1744615282;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=F54nal2TDjFsjimAMiM7HlxBlU6Yyu5pByAT3w0izG0=;
-        b=soZcp44B1InYwDRxtP/AyHzC10Qg/dpcoZP8/03T3ebpHRadV6emQsZoQQhPrMUw75
-         vTjFVsEKsdASR5W/jfRu5yWWfN1mYco2kdTyMgLmekIyGaEbMZw1IQAKB0ms81xK4p82
-         BRqU9nE3pTBY2BCZlca2NdE/8hrWqVhk32aQ+CK+ohABWev/sqN7kHHWhABR8RmfV9bg
-         3kQJo6oTegj/cMqEGVxIdSrL/b3qTh/t+VkbgGHnyRB6ZIC5cqsvDuqimZxvrNwcAIl5
-         OrFd12LDqYwL0OHmBbiNR4VjqTDGNq98uWMQrfX5PhCWYKNBp8PXtaM3VU+JrH+32VbL
-         aN7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUuj4mOAmZ+PjGiYkeYORWrSzTRJeFQA0rTkRK38Z7DHIPFMw0L52tP3NgYvZbTN/HgrubovKmwPyFxnq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWd8GePKlqC36TF7lHmUTb0gdyJ3nRffZGIvtji7EQaDb+7grQ
-	6ayF6cHBVHxcXJ2tgs/631T0UcraBaTCnDDtwVRbYjtRAzMT+qYA
-X-Gm-Gg: ASbGnctrcjv4+8189cFMwYAxZULfxBWIEBqNdKbeNLeVaa8qW0EsTqQ2txmLT+xD0xP
-	sYlyFJgNs+E1nzDmtewK4cer9uwkOfiQfYqTKVqtRyU7fJQCCvTzyXeN4Vi9J5/eXhcb0UAbfbR
-	XDZk+vXQL/oi2E96HcLp1fFz6eOi8tClle5JLdN4/gBHDFtD5KPuuKtrrhY12/GAJpA/Wyw4mMS
-	Iej3eNLGWVIYVJs28jkFtJ3QiLDlofCEuEtprKUM0rOHC2yi7Rwf6F88/lhiOBSZloif/xd0lle
-	uZ9iYjkSrwDdGNGnlSbtq+pMF+7Y650/bWr7
-X-Google-Smtp-Source: AGHT+IG6zktGRolRnsUnshN1iGHF/Lubu+TAxgdAa3h3wMA/x8jcfYEbJfLM1j4E+UsIKNmSBWKyBA==
-X-Received: by 2002:a17:907:1c0e:b0:ac3:bdd2:e70c with SMTP id a640c23a62f3a-ac7d195c0e2mr1010089666b.35.1744010502037;
-        Mon, 07 Apr 2025 00:21:42 -0700 (PDT)
-Received: from fedora.. ([193.77.86.199])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7bfee3815sm694954066b.80.2025.04.07.00.21.41
+        bh=3rn1KdFJ/AqShrvU/Gc3KSw9wUJ6mAkmkxSw61iKgtg=;
+        b=S/lT5nMCGGWDfD7NnkfvWTRezDvS8XDcJrOW4Eaf7qV2+qOcUoNHQWiERVqamvCimo
+         3OwXWuur6SECEgJGlojScr992HbyM9EYqDHqTNamcFBbqGFQql743l2cDAIibNbzcPLp
+         d/FWA7mCBo1KbwsIUKeQu6kAc12Ukk0S3ZhV6iO2svdWBqkLL/uWyKNQJufuxsegjdeo
+         zD7RZgbmt+XFC18B0+6gBpSG5dAiBYoZb7oTw24bYeUyY5FoCfgiZGi9yWowirpEpv8Q
+         xcoqJXTfGzgfW/F14K4X1StOrycNKYzXG+vCcbrgkR+7EJ8Lbt8Jt0/1thtPXpR1Efe7
+         wFHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXz+/sDagg+/FE4rdtqy4VoHv6gDY9ihKUv2PkFpFEd/sDLYZ9MCgUFPlP8GdwpX54LSBdkRvJP/nj35AM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysZ3voOnjcpStpTXLNVloEVsxBelmmM9cnhUvpNqlfXwRceQPj
+	fINvRi5ANbZzsB/upGbab3HM1xEbASZT1Nco96KZtrAne3if47tkkWWVuOf5050=
+X-Gm-Gg: ASbGncuZ0xbSUhuMpOpcHr939EC6ExvotNcAwlBz9QLQAhRN5HdzS+gJunlWnjuQvzL
+	wWUOY6rb3D6P5wy99vhAGc3pMhbOv2XS4Xa0LQCIE1Cf1JXiTgD6ptaCxeMfhd1wpulVcOmH5ti
+	Srq5cVV/zaXcGuJEYSXxx3KRlpB2OhEWsCp/eVhfC+PcMCp6C7PTYriLatNGO5itD55bwcpP0QT
+	/xT/L7JODUVcj1e+wwAeQg9wijjmP8ufCKShzD1laFwsadbQ1qNr8FyNHkrICV9+7vHHfbyKEFz
+	8PqYkIyt3gKFkwZ6wY94pNM14TVI9jEcmrjPig==
+X-Google-Smtp-Source: AGHT+IF3fwVNb2bYwy3gGcRdiJ6n2qvbc0eHaCUCLwGx5d/paU3tpQWJQL3gak9CAzdw/0GxBrYVVQ==
+X-Received: by 2002:a05:600c:1387:b0:43c:f513:9585 with SMTP id 5b1f17b1804b1-43ed0bde88amr115663405e9.13.1744010482599;
+        Mon, 07 Apr 2025 00:21:22 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:8c64:734d:705a:39a7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec34bbd9csm119983655e9.20.2025.04.07.00.21.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 00:21:41 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH RESEND -tip v2] x86/asm: Use asm_inline() instead of asm() in __untagged_addr()
-Date: Mon,  7 Apr 2025 09:21:04 +0200
-Message-ID: <20250407072129.33440-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        Mon, 07 Apr 2025 00:21:22 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/2] memory: omap-gpmc: improve the GPIO chip
+ implementation
+Date: Mon, 07 Apr 2025 09:21:18 +0200
+Message-Id: <20250407-gpiochip-set-rv-memory-v1-0-5ab0282a9da7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO5882cC/x3MQQ5AMBBA0avIrE1CRSuuIhbUqFnQZipCGnfXW
+ L7F/wkiCVOEvkggdHFkf2TUZQF2mw5HyEs2qEq1VaMMusDebhww0oly4U67lwc7M6+qsVrPZoI
+ cB6GV7388jO/7AavQW1JoAAAA
+To: Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=826;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=G5BhxWKBbXgp0hqNK0eP2RvhQKS5wVohdK+Cskejh0E=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn83zxNFy+D3OFGZQiHvVr2CLLklaekrUcVUbZP
+ 2oAph4muviJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ/N88QAKCRARpy6gFHHX
+ cqgSD/9ORogsSvmUy6nkmE9Tdj5hGwclTRfgN5V5ZAkZ4h0MPIFpydP1HYQIrOQh3qs5YnYEjWw
+ TjaUlOkOS8h1aRF1UHrcQIN3YqHCYNQV0c90/JAU93KxscLSDudGnTLhsAhEgf/7lASrHD+Pz2m
+ 8R5oCgIBjs0lVMlC1G8Mo1x7O+99MnLSgJ6c/rGjwmbiLcr+VJUTrwEnaaz4GnaNbb8FfuIlpVf
+ MES2mGs5iiz5L9MFIVAhxG+OHy5SPNnYwoR2mwogdsGkeRVmlupPxSir+6pmwsj+uTXRljmnoUC
+ Z6OeRr4ftM7oqU8dTx0RDAQGc2zj4bgQTK4oYdOk33XcgIWkrQVN4td1gSZvAt+q7/gUWsYtCx8
+ sSHeEcJ2oi7iYwNbZzsIhWLP0OndRf8At/ysz37QrQ6BkAyz/vNAOY74iiDtTJP8F5rUXi2U/Qu
+ nViaPE4rS8mhn80FWMpJGVUidb4shAHmQGJwM2ZeR7dofvBwyRlsmINs96tyk34NRuz6jskt+C6
+ yVWGUBo44ySi0RHHVbvHHEFbdQAhxDZa5P9LFvBCCz0VQkgf6gL+C/Cd0z/1CVEffHR7ldNKQ/4
+ VWXqcfStg1eKohXZwdfVb8dowdD/44XadeTBhusFiinOu8T65O+KSfv/+vB58nZj/mieQRMgaSj
+ Okt2wBpbzS0tDvw==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Use asm_inline() to instruct the compiler that the size of asm()
-is the minimum size of one instruction, ignoring how many instructions
-the compiler thinks it is. ALTERNATIVE macro that expands to several
-pseudo directives causes instruction length estimate to count
-more than 20 instructions.
+struct gpio_chip now has callbacks for setting line values that return
+an integer, allowing to indicate failures. We're in the process of
+converting all GPIO drivers to using the new API. However, this
+driver doesn't even need the set() callback so let's remove it
+altogether.
 
-bloat-o-meter reports minimal code size increase
-(x86_64 defconfig with CONFIG_ADDRESS_MASKING, gcc-14.2.1):
-
-  add/remove: 2/2 grow/shrink: 5/1 up/down: 2365/-1995 (370)
-
-	Function                          old     new   delta
-	-----------------------------------------------------
-	do_get_mempolicy                    -    1449   +1449
-	copy_nodes_to_user                  -     226    +226
-	__x64_sys_get_mempolicy            35     213    +178
-	syscall_user_dispatch_set_config  157     332    +175
-	__ia32_sys_get_mempolicy           31     206    +175
-	set_syscall_user_dispatch          29     181    +152
-	__do_sys_mremap                  2073    2083     +10
-	sp_insert                         133     117     -16
-	task_set_syscall_user_dispatch    172       -    -172
-	kernel_get_mempolicy             1807       -   -1807
-
-  Total: Before=21423151, After=21423521, chg +0.00%
-
-The code size increase is due to the compiler inlining
-more functions that inline untagged_addr(), e.g:
-
-task_set_syscall_user_dispatch() is now fully inlined in
-set_syscall_user_dispatch():
-
-	000000000010b7e0 <set_syscall_user_dispatch>:
-	  10b7e0:	f3 0f 1e fa          	endbr64
-	  10b7e4:	49 89 c8             	mov    %rcx,%r8
-	  10b7e7:	48 89 d1             	mov    %rdx,%rcx
-	  10b7ea:	48 89 f2             	mov    %rsi,%rdx
-	  10b7ed:	48 89 fe             	mov    %rdi,%rsi
-	  10b7f0:	65 48 8b 3d 00 00 00 	mov    %gs:0x0(%rip),%rdi
-	  10b7f7:	00
-	  10b7f8:	e9 03 fe ff ff       	jmp    10b600 <task_set_syscall_user_dispatch>
-
-that after inlining becomes:
-
-	000000000010b730 <set_syscall_user_dispatch>:
-	  10b730:	f3 0f 1e fa          	endbr64
-	  10b734:	65 48 8b 05 00 00 00 	mov    %gs:0x0(%rip),%rax
-	  10b73b:	00
-	  10b73c:	48 85 ff             	test   %rdi,%rdi
-	  10b73f:	74 54                	je     10b795 <set_syscall_user_dispatch+0x65>
-	  10b741:	48 83 ff 01          	cmp    $0x1,%rdi
-	  10b745:	74 06                	je     10b74d <set_syscall_user_dispatch+0x1d>
-	  10b747:	b8 ea ff ff ff       	mov    $0xffffffea,%eax
-	  10b74c:	c3                   	ret
-	  10b74d:	48 85 f6             	test   %rsi,%rsi
-	  10b750:	75 7b                	jne    10b7cd <set_syscall_user_dispatch+0x9d>
-	  10b752:	48 85 c9             	test   %rcx,%rcx
-	  10b755:	74 1a                	je     10b771 <set_syscall_user_dispatch+0x41>
-	  10b757:	48 89 cf             	mov    %rcx,%rdi
-	  10b75a:	49 b8 ef cd ab 89 67 	movabs $0x123456789abcdef,%r8
-	  10b761:	45 23 01
-	  10b764:	90                   	nop
-	  10b765:	90                   	nop
-	  10b766:	90                   	nop
-	  10b767:	90                   	nop
-	  10b768:	90                   	nop
-	  10b769:	90                   	nop
-	  10b76a:	90                   	nop
-	  10b76b:	90                   	nop
-	  10b76c:	49 39 f8             	cmp    %rdi,%r8
-	  10b76f:	72 6e                	jb     10b7df <set_syscall_user_dispatch+0xaf>
-	  10b771:	48 89 88 48 08 00 00 	mov    %rcx,0x848(%rax)
-	  10b778:	48 89 b0 50 08 00 00 	mov    %rsi,0x850(%rax)
-	  10b77f:	48 89 90 58 08 00 00 	mov    %rdx,0x858(%rax)
-	  10b786:	c6 80 60 08 00 00 00 	movb   $0x0,0x860(%rax)
-	  10b78d:	f0 80 48 08 20       	lock orb $0x20,0x8(%rax)
-	  10b792:	31 c0                	xor    %eax,%eax
-	  10b794:	c3                   	ret
-	  10b795:	48 09 d1             	or     %rdx,%rcx
-	  10b798:	48 09 f1             	or     %rsi,%rcx
-	  10b79b:	75 aa                	jne    10b747 <set_syscall_user_dispatch+0x17>
-	  10b79d:	48 c7 80 48 08 00 00 	movq   $0x0,0x848(%rax)
-	  10b7a4:	00 00 00 00
-	  10b7a8:	48 c7 80 50 08 00 00 	movq   $0x0,0x850(%rax)
-	  10b7af:	00 00 00 00
-	  10b7b3:	48 c7 80 58 08 00 00 	movq   $0x0,0x858(%rax)
-	  10b7ba:	00 00 00 00
-	  10b7be:	c6 80 60 08 00 00 00 	movb   $0x0,0x860(%rax)
-	  10b7c5:	f0 80 60 08 df       	lock andb $0xdf,0x8(%rax)
-	  10b7ca:	31 c0                	xor    %eax,%eax
-	  10b7cc:	c3                   	ret
-	  10b7cd:	48 8d 3c 16          	lea    (%rsi,%rdx,1),%rdi
-	  10b7d1:	48 39 fe             	cmp    %rdi,%rsi
-	  10b7d4:	0f 82 78 ff ff ff    	jb     10b752 <set_syscall_user_dispatch+0x22>
-	  10b7da:	e9 68 ff ff ff       	jmp    10b747 <set_syscall_user_dispatch+0x17>
-	  10b7df:	b8 f2 ff ff ff       	mov    $0xfffffff2,%eax
-	  10b7e4:	c3                   	ret
-
-Please note a series of NOPs that get replaced with an alternative:
-
-	    11f0:	65 48 23 05 00 00 00 	and    %gs:0x0(%rip),%rax
-	    11f7:	00
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
-v2: Include asm dumps of inlining in the commit message.
----
- arch/x86/include/asm/uaccess_64.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Bartosz Golaszewski (2):
+      memory: omap-gpmc: use the dedicated define for GPIO direction
+      memory: omap-gpmc: remove GPIO set() and direction_output() callbacks
 
-diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
-index c52f0133425b..3c1bec3a0405 100644
---- a/arch/x86/include/asm/uaccess_64.h
-+++ b/arch/x86/include/asm/uaccess_64.h
-@@ -26,8 +26,8 @@ extern unsigned long USER_PTR_MAX;
-  */
- static inline unsigned long __untagged_addr(unsigned long addr)
- {
--	asm (ALTERNATIVE("",
--			 "and " __percpu_arg([mask]) ", %[addr]", X86_FEATURE_LAM)
-+	asm_inline (ALTERNATIVE("", "and " __percpu_arg([mask]) ", %[addr]",
-+				X86_FEATURE_LAM)
- 	     : [addr] "+r" (addr)
- 	     : [mask] "m" (__my_cpu_var(tlbstate_untag_mask)));
- 
+ drivers/memory/omap-gpmc.c | 15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250327-gpiochip-set-rv-memory-87bf23c66b7a
+
+Best regards,
 -- 
-2.49.0
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
