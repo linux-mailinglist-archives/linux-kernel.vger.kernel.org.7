@@ -1,120 +1,122 @@
-Return-Path: <linux-kernel+bounces-591454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5901A7E008
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:53:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67623A7E007
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A2D53B1EEE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:47:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B60123B022E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DF518C345;
-	Mon,  7 Apr 2025 13:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D08D188596;
+	Mon,  7 Apr 2025 13:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UPPvKkJH"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N2f3JLgJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D9C149C51;
-	Mon,  7 Apr 2025 13:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA496FB0;
+	Mon,  7 Apr 2025 13:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744033639; cv=none; b=LEv1hxLwN62xPS8cP/tj9JwooRQXVqGsECJNqtVBdQ3a4MWf3qN6KrY7SnKPIZ3xXw1zFXTCDiAOXrr/Ll+8ARVmHVOEfkaFJRO8OljUDwEZ92NmFtkcHIF0ngJHXiBIbv6lnBiEdLys0OdNlUbCNCki1vt/NcGEkkjb3cLcASo=
+	t=1744033611; cv=none; b=UaxPV8D5zzri3inOIaMMC7uaJYT+MQODs8+26fa8WEmkJZffuKOpWLPtUU93Ma2BYKt+5K3Tq0q+HhMCadse+hjyQxlpg4Eb9Ur9UGsytBFMbxClZr8XslVDB0iMSwrawJxSZU2gpS/N/PeCCeMhQWkrW+0FYaEcjYTJZK6AzQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744033639; c=relaxed/simple;
-	bh=vNWTMdv+jOoNEEp8FYoMLcDNadO7j1Y3ZibXpl+7a4g=;
+	s=arc-20240116; t=1744033611; c=relaxed/simple;
+	bh=weGawcpgqSXgSdCICLq2nu14LtyVIvpNlEqyxGwRtTM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aolPimi2pgKvY8+9L0aD0lOqyU8hax8y0B4cFy5fG4xp23EdfWlnajBZRpiZ9iqXi3r2lRKtPeBDMutWyim5apMeGwkbZcInzZuaZkubeOWLwZL1eHyLha6fc/tqd91+CJLx20d+vPd0gbqWPFhDQpOAkPc+W/s+3UWmh73sRjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UPPvKkJH; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7FE1140E0214;
-	Mon,  7 Apr 2025 13:47:11 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id W35ScQmYY_sJ; Mon,  7 Apr 2025 13:47:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1744033628; bh=C+DuWs1QJWCyb+Jz2U+p7g01q+x5MgKJ0a73l6qpKdQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UPPvKkJHieclp2Wt2o8CsohsLi3oXKOkbYBOMOVZy2+2Emp0LA4cwUhQoXZWyQfnw
-	 Eut9e3ssiA4hn94EdNU/GTsJnc7IrjZcG5bJlf+shsvMScRocDQ7/rPjVLMb8rok5m
-	 2UbOaq/Kt2pt5W/BPkeEvGA9KZNhYyo8SQb9vBA8czHS7cv806Ofv5m2CZR7V8BWJ0
-	 8fYPdV9mZ74FrJQFWsQY0Aiw7Lmzyou2ACMhtHiy0Q9ajJOTvUvkZiZAhbXr7AM8/O
-	 dw6GfjdH4M0nZJR35pfv3F0C+R7jf7P84EUemW0apmj2J7DXbFgcca1rLjCxcqLeDr
-	 jM3ZsKXxYaBMgDtB1VTibFZKd234cmDpAybbLFBsbEBnUpjB1A72rIJ6N1UsBRfgdB
-	 Q7IQzP7HiuFwhTs3gsxjLlS94itJ8D0y9SMJ5OiM4FAQihU4JLNQEpkzLrC1el3K8A
-	 wU3TxSj3OCJN1lFCdR+a8TFPGbOYoosqkn4OwEn7GiHeHWtB0Ig9s/ac1i9Smmkqe5
-	 ihhUiRUoEch+K9UgDXopkStgG+vFQwZ0rxqYG18W9yEQX/rkkMyjJGWRFpOycNlr+f
-	 FK4JLIsQKZ1jU4G1VSvLvRV5GCeMwO6H9DHrbPLjT1uE0zE/G0sel+BTsiEL1GQ7i0
-	 Xkve7DdzMvtEYcCCG1toS5fc=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 138D640E019F;
-	Mon,  7 Apr 2025 13:46:50 +0000 (UTC)
-Date: Mon, 7 Apr 2025 15:46:43 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Stefano Garzarella <sgarzare@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-coco@lists.linux.dev,
-	linux-integrity@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	x86@kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
-	Joerg Roedel <jroedel@suse.de>,
-	Dionna Glaze <dionnaglaze@google.com>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	linux-kernel@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v6 0/4] Enlightened vTPM support for SVSM on SEV-SNP
-Message-ID: <20250407134643.GDZ_PXQ0OlzcMjiGgp@fat_crate.local>
-References: <20250403100943.120738-1-sgarzare@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mYl45iX5KDKFmMJQiycwHdwBIJP5QiKjLNV4myQKiPNIJcvmG3Gu9UL4GOrzK2Z4KoF3ynrc+O2SVi7m1O98VAkJzvJgOjbi+ahGHhi4XniuEjylDo4MyCuIZKdohLI30PAIEsBbxiP6110dHxq1EmsHclgrzPl4CFgwSnI75Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N2f3JLgJ; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744033609; x=1775569609;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=weGawcpgqSXgSdCICLq2nu14LtyVIvpNlEqyxGwRtTM=;
+  b=N2f3JLgJN+gKTnA2VOhGPboyCJoA+QbUtZTCXriaF96HGChQwYUIrMHM
+   kI+vfD1CZG3QxMu7E3NSdIqBQbhatT64f1+AFph9+IiYhrLw+luLBsLGJ
+   ULznqE8uMw40MGvizNJ/lz8xXexXJFa0u2JZx9LyH1hmpFR663HmrhDf5
+   hZSXMJ6h9paZIiwXc6MoTFMS1s415i9vwScXBPW+AgNlZljphI6jRBOTH
+   YU7IaSaQJvYs3S31lTyAKcipexPptUbHDobYL5U5phGguVTgkv1rPgJyO
+   X4DMeyJ2bLCQvHaAACu1O/dvg4T6Uky6o42Q6ReSwdnQ7Xr235BtIq/Oj
+   Q==;
+X-CSE-ConnectionGUID: e/mVVpYlSYOiH4utVCKr0g==
+X-CSE-MsgGUID: zAm/3qAKQVSO+URIACzdVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45131897"
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="45131897"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 06:46:49 -0700
+X-CSE-ConnectionGUID: lYP5rdUIRAm5Vi1/V0ObKA==
+X-CSE-MsgGUID: MbEvAxCgQzWmANqzoVbzwA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="127967534"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa007.fm.intel.com with SMTP; 07 Apr 2025 06:46:46 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 07 Apr 2025 16:46:45 +0300
+Date: Mon, 7 Apr 2025 16:46:45 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de, Badhri Jagan Sridharan <badhri@google.com>
+Subject: Re: [PATCH 1/3] usb: typec: tcpm: allow to use sink in accessory mode
+Message-ID: <Z_PXRQB9zgmXvpEA@kuha.fi.intel.com>
+References: <20250404-ml-topic-tcpm-v1-0-b99f44badce8@pengutronix.de>
+ <20250404-ml-topic-tcpm-v1-1-b99f44badce8@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250403100943.120738-1-sgarzare@redhat.com>
+In-Reply-To: <20250404-ml-topic-tcpm-v1-1-b99f44badce8@pengutronix.de>
 
-On Thu, Apr 03, 2025 at 12:09:38PM +0200, Stefano Garzarella wrote:
-> Stefano Garzarella (4):
->   x86/sev: add SVSM vTPM probe/send_command functions
->   svsm: add header with SVSM_VTPM_CMD helpers
->   tpm: add SNP SVSM vTPM driver
->   x86/sev: register tpm-svsm platform device
++Badhri
+
+On Fri, Apr 04, 2025 at 12:43:04AM +0200, Michael Grzeschik wrote:
+> Since the function tcpm_acc_attach is not setting the data and role for
+> for the sink case we extend it to check for it first.
 > 
->  arch/x86/include/asm/sev.h  |   9 +++
->  include/linux/tpm_svsm.h    | 149 ++++++++++++++++++++++++++++++++++++
->  arch/x86/coco/sev/core.c    |  67 ++++++++++++++++
->  drivers/char/tpm/tpm_svsm.c | 128 +++++++++++++++++++++++++++++++
->  drivers/char/tpm/Kconfig    |  10 +++
->  drivers/char/tpm/Makefile   |   1 +
->  6 files changed, 364 insertions(+)
->  create mode 100644 include/linux/tpm_svsm.h
->  create mode 100644 drivers/char/tpm/tpm_svsm.c
+> Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
 
-Jarrko,
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-should I take the whole bunch through the tip tree?
-
-No point in splitting between two trees...
-
-Thx.
+> ---
+>  drivers/usb/typec/tcpm/tcpm.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+> index a99db4e025cd0..839697c14265e 100644
+> --- a/drivers/usb/typec/tcpm/tcpm.c
+> +++ b/drivers/usb/typec/tcpm/tcpm.c
+> @@ -4551,12 +4551,17 @@ static void tcpm_snk_detach(struct tcpm_port *port)
+>  static int tcpm_acc_attach(struct tcpm_port *port)
+>  {
+>  	int ret;
+> +	enum typec_role role;
+> +	enum typec_data_role data;
+>  
+>  	if (port->attached)
+>  		return 0;
+>  
+> -	ret = tcpm_set_roles(port, true, TYPEC_SOURCE,
+> -			     tcpm_data_role_for_source(port));
+> +	role = tcpm_port_is_sink(port) ? TYPEC_SINK : TYPEC_SOURCE;
+> +	data = tcpm_port_is_sink(port) ? tcpm_data_role_for_sink(port)
+> +				       : tcpm_data_role_for_source(port);
+> +
+> +	ret = tcpm_set_roles(port, true, role, data);
+>  	if (ret < 0)
+>  		return ret;
+>  
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+heikki
 
