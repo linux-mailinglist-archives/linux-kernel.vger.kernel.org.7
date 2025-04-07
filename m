@@ -1,143 +1,115 @@
-Return-Path: <linux-kernel+bounces-590550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30D97A7D448
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:37:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 475EAA7D45B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D012169E2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:37:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2337D16EECA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0189F2253E8;
-	Mon,  7 Apr 2025 06:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E762253FE;
+	Mon,  7 Apr 2025 06:41:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="XA46FmkP"
-Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gWfKNRQj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92C1823DE;
-	Mon,  7 Apr 2025 06:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589B12135A4;
+	Mon,  7 Apr 2025 06:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744007846; cv=none; b=Uxw3dZOG7TLBbykxr2y0f67xcT8AQMnTcb31V9NGSi/xOm79PB+7edIxJgxs8NFnmdAs69TiVu+7SjOY8cnFfn1XDd+c/iwoiFLUTD0J+YiAma2cdDyyl+COSofRn2VbAdDQvw4FhPak1+2iWRSB98GfJBvuQwcFh82K/PmC73Q=
+	t=1744008109; cv=none; b=IHMXjnsmvqeFTMxFwdk+AiIe9j/GXapSzXjO9MDglAGwMuyZk6Z6w+QDDBmZRYITKVKznX1ra7zdBOPpSk/NX/rMJPrSFEUDJngfVifEG/WiSmOLc7FHuLfCdH8uGkby1UoV9+07mZH943eSFviV2iy73nBRiWm403aQCz15WGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744007846; c=relaxed/simple;
-	bh=1PLeiOJan5E04enkubnodEdWWhd/M6a1vmpMxhunRCA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kyM5+PijeVPgoQ3TzhZB7XwP89K9F/RajQh2N88hoq5TxS5lPPXIuNvZkqdOjrkLv4bc135oZ6yKm9hG6WRMiQOXAFnTF4FsP80+KWvA9f/Mq33LLpFVuGr6JoairJGtVVq2gM3dsBKLGykfNiuTNCoar3QzQAswwWFL3yEMsSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=XA46FmkP; arc=none smtp.client-ip=52.119.213.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1744007846; x=1775543846;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=VLIhyyYceNiIMAaYJakHuJEpyqlifxIxyTlUbCOBkRM=;
-  b=XA46FmkPZmlir7C2spH2HCH6Rg2/9y3EGB2+YuSg3CIocAqW1Y2mrM5w
-   B8GABkMryVNPNV+fAvO4/X7lG9UIxBOeUZCMEGBrDCgvtMQ6kBdIBadHP
-   CZ84jINUbzjNWyTSk2Gnao1pxyxFObB2mgIZ8qO63OtVnS2PEiGVO1YHG
-   A=;
-X-IronPort-AV: E=Sophos;i="6.15,193,1739836800"; 
-   d="scan'208";a="286171158"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 06:37:21 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:16998]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.43.57:2525] with esmtp (Farcaster)
- id 9f665dd0-fa91-4dce-b38f-b6545df837b6; Mon, 7 Apr 2025 06:37:20 +0000 (UTC)
-X-Farcaster-Flow-ID: 9f665dd0-fa91-4dce-b38f-b6545df837b6
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 7 Apr 2025 06:37:20 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.106.100.47) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 7 Apr 2025 06:37:16 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <syzbot+45016fe295243a7882d3@syzkaller.appspotmail.com>
-CC: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<horms@kernel.org>, <kuba@kernel.org>, <kuniyu@amazon.com>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <sdf@fomichev.me>, <syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [net?] WARNING: bad unlock balance in do_setlink
-Date: Sun, 6 Apr 2025 23:37:01 -0700
-Message-ID: <20250407063703.20757-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <67f3694f.050a0220.0a13.0280.GAE@google.com>
-References: <67f3694f.050a0220.0a13.0280.GAE@google.com>
+	s=arc-20240116; t=1744008109; c=relaxed/simple;
+	bh=PCQiGG6B2DNaakC53prIZJdI+gBuGzvVt2GLvpU+2cE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tTGBA/v3X/ej8jxDBOouuXn83CtoFkCXqp94DWRftffZ4dDuM/I2+sGV2BL0aHPnAeUq00oyk85eLvd498SEpFsRRNcKOiJQgwztoLfMAfmWnx6m3dztNEpOYyVLjozC80l+3+l/sDYFwkQ7/hqj6WU4XWdZR7Cpw8pKZ/kJ1KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gWfKNRQj; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744008108; x=1775544108;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PCQiGG6B2DNaakC53prIZJdI+gBuGzvVt2GLvpU+2cE=;
+  b=gWfKNRQjv7tDSGmUXG0+teaqCvd1+vV2KP0WX7wzDcnivYdYKWDWt/zj
+   kGnq/KKlUEPlx7fHskHlu220fYFrneVXjm3W9H/KEeosPUzGEboJMxud5
+   JWwhhAtC7LGI7uEJZHHti5Hg885Q6Okc2glezjQKb6AXffGzUVQ9UMWnf
+   JlQb5bGpzzMBBjJ8ZYTJa5TQkGvFlXBTIAzd+2TQsN1C0anc3JDcThiiZ
+   cgwFaQ4ZDozJH8qf6BKZKho3hthnu9DDESgwvDnYVOdpXZ73BeJFZoP3r
+   UP17hmtt3eq6ks5Yvq4j6oXyLzYcgWIuPbaM9wJKEiqJWeRXtTmRuCm+F
+   Q==;
+X-CSE-ConnectionGUID: CSJ9rAG7T82RQ6MVRr6EVQ==
+X-CSE-MsgGUID: kOVNx4PGSA2YfHVL9G2xuQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11396"; a="56739012"
+X-IronPort-AV: E=Sophos;i="6.15,193,1739865600"; 
+   d="scan'208";a="56739012"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2025 23:41:47 -0700
+X-CSE-ConnectionGUID: 4PuUPLd0TvK25LbH6hG7Nw==
+X-CSE-MsgGUID: RR+H+9wGQgGAI79CRQ80Aw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,193,1739865600"; 
+   d="scan'208";a="158831349"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2025 23:41:44 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u1gAv-00000009yco-3xUB;
+	Mon, 07 Apr 2025 09:41:41 +0300
+Date: Mon, 7 Apr 2025 09:41:41 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Mika Westerberg <westeri@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v2 0/6] gpiolib: acpi: Refactor to shrink the code by ~8%
+Message-ID: <Z_NzpTUiXMPffXmI@smile.fi.intel.com>
+References: <20250403160034.2680485-1-andriy.shevchenko@linux.intel.com>
+ <20250404044318.GL3152277@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D037UWB002.ant.amazon.com (10.13.138.121) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250404044318.GL3152277@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: syzbot <syzbot+45016fe295243a7882d3@syzkaller.appspotmail.com>
-Date: Sun, 06 Apr 2025 22:57:35 -0700
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    8bc251e5d874 Merge tag 'nf-25-04-03' of git://git.kernel.o..
-> git tree:       net
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1133afb0580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=24f9c4330e7c0609
-> dashboard link: https://syzkaller.appspot.com/bug?extid=45016fe295243a7882d3
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1040823f980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=151d194c580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/a500d5daba83/disk-8bc251e5.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/2459c792199a/vmlinux-8bc251e5.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/558655fb055e/bzImage-8bc251e5.xz
-> 
-> The issue was bisected to:
-> 
-> commit dbfc99495d960134bfe1a4f13849fb0d5373b42c
-> Author: Stanislav Fomichev <sdf@fomichev.me>
-> Date:   Tue Apr 1 16:34:47 2025 +0000
-> 
->     net: dummy: request ops lock
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13233998580000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=10a33998580000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17233998580000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+45016fe295243a7882d3@syzkaller.appspotmail.com
-> Fixes: dbfc99495d96 ("net: dummy: request ops lock")
-> 
-> =====================================
-> WARNING: bad unlock balance detected!
-> 6.14.0-syzkaller-12504-g8bc251e5d874 #0 Not tainted
-> -------------------------------------
-> syz-executor814/5834 is trying to release lock (&dev_instance_lock_key) at:
-> [<ffffffff89f41f56>] netdev_unlock include/linux/netdevice.h:2756 [inline]
-> [<ffffffff89f41f56>] netdev_unlock_ops include/net/netdev_lock.h:48 [inline]
-> [<ffffffff89f41f56>] do_setlink+0xc26/0x43a0 net/core/rtnetlink.c:3406
-> but there are no more locks to release!
+On Fri, Apr 04, 2025 at 07:43:18AM +0300, Mika Westerberg wrote:
+> On Thu, Apr 03, 2025 at 06:59:11PM +0300, Andy Shevchenko wrote:
+> > A simple refactoring of the GPIO ACPI library parts to get an impressive
+> > ~8% code shrink on x86_64 and ~2% on x86_32. Also reduces a C code a bit.
+> > 
+> > add/remove: 0/2 grow/shrink: 0/5 up/down: 0/-1221 (-1221)
+> > Function                                     old     new   delta
+> > acpi_gpio_property_lookup                    425     414     -11
+> > acpi_find_gpio.__UNIQUE_ID_ddebug478          56       -     -56
+> > acpi_dev_gpio_irq_wake_get_by.__UNIQUE_ID_ddebug480      56       -     -56
+> > acpi_find_gpio                               354     216    -138
+> > acpi_get_gpiod_by_index                      462     307    -155
+> > __acpi_find_gpio                             877     638    -239
+> > acpi_dev_gpio_irq_wake_get_by                695     129    -566
+> > Total: Before=15375, After=14154, chg -7.94%
 
-#syz test
+> Looks good now,
+> 
+> Acked-by: Mika Westerberg <westeri@kernel.org>
 
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index c23852835050..925d634f724e 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -3027,7 +3027,7 @@ static int do_setlink(const struct sk_buff *skb, struct net_device *dev,
- 
- 	err = validate_linkmsg(dev, tb, extack);
- 	if (err < 0)
--		goto errout;
-+		return err;
- 
- 	if (tb[IFLA_IFNAME])
- 		nla_strscpy(ifname, tb[IFLA_IFNAME], IFNAMSIZ);
+
+Pushed to my review and testing queue, thanks!
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
