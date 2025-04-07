@@ -1,115 +1,102 @@
-Return-Path: <linux-kernel+bounces-592533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E727A7EE71
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:06:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E863A7EE98
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D75317F773
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:00:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9AAE3A9A97
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E68222562;
-	Mon,  7 Apr 2025 19:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B96224257;
+	Mon,  7 Apr 2025 19:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tgzhskYL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mAYinYCb"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1561221F0A;
-	Mon,  7 Apr 2025 19:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F7D2236E0;
+	Mon,  7 Apr 2025 19:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744055846; cv=none; b=keTxbciyh6VvZhK73DWPValqWA9565tTuZH1nvP9CoxmvjQWFciRu3/e7RjdBUSDZMmYnggfUfj/VpsXugZMJx4VLowM3+waU2OoEQXGYGDvOiBFwVocuTxQ1B0t7OkXoKXsKycwJqLNfgCO2R7YzVtML61E9bo+2zav4tH4vqI=
+	t=1744055869; cv=none; b=hSNRpLH98ISguYrDAnLRCSjhwLfcgXd/Ifk+dPqdhokcGZUhqNunKUO0u/U6wQX75Vkgsms0lNpqH4li5av2E57aGhfrwd8OGvow8vsRHLM1uJllKbEHnxgd3NUd+g3iDB1rrDTMgsapQbaTl2J/tlRy4lbuXulee3bFj7ozckg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744055846; c=relaxed/simple;
-	bh=rIJwEoz8xFlQQVlAO/VsBXMyVwVYpieUYx8Cva0KGTE=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sv5/pMRUQtZ++vzCIcMK302r06hJSsvV8FmuF3r8l9WVTgW4223F0LreDnbTLyYIhniQek0KWkSihgh7HwH8F19wvGhv3GpBGYED0EA8w30E8NmJnr1h8tUiI8W/L6PYqR3puKxl9ts/OruHJdNxVkHLCaJd2qOp4PPisR9vFFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tgzhskYL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 46C75C4CEDD;
-	Mon,  7 Apr 2025 19:57:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744055846;
-	bh=rIJwEoz8xFlQQVlAO/VsBXMyVwVYpieUYx8Cva0KGTE=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=tgzhskYL/PMGu21tr58ueykP3Q9fyZrBrWKSjpXZzf9QPTcv4daFvZbDkTnQnJwHe
-	 bBCw/cKcTpEXxuwHd6AkZi4va7FU3cm63s/iRaJ/+zqWekoQLnOntua7eVAfYN/f2P
-	 apvimfZjkeZHsd1rwC5UIYWCQ/Yp7tmL/43BQj7SrrdFTwd9ZIF2UeY3KCtjnmSkW1
-	 ++GxQOGpopt9U+iwBSXQ+syM3KLi16PMFi/yGxk4l7Z2OrdHXgxI1GJkFC402dsSw4
-	 4M4PSbL+fycvNhfMc+MSP0WDV8OQFBl3iEVRgA2tR3a0nGkXHRPOeaOJwX14+wKu7m
-	 ZlcZRxMmZQs7g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FBEFC36010;
-	Mon,  7 Apr 2025 19:57:26 +0000 (UTC)
-From: Jean-Baptiste Maneyrol via B4 Relay <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org>
-Subject: [PATCH v2 0/2] iio: imu: inv_icm42600: switch to use generic name
- irq get
-Date: Mon, 07 Apr 2025 21:57:15 +0200
-Message-Id: <20250407-iio-imu-inv-icm42600-rework-interrupt-using-names-v2-0-c278acf587b2@tdk.com>
+	s=arc-20240116; t=1744055869; c=relaxed/simple;
+	bh=BcFYwrrUvlWqghmgRn3eq2YEAKq4QVcILIm1acwgZio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i1JuDIGVSaSqvsGT88CnXT+oeXLGB97zn3JTqjR9os7vpacV+d+E3g6RTWUUqf3Y0fR3I5GE/RQQLivyzzkvN0hYYyhzIzj3lpKRiq4NWDo2UjdDUJO3dNaYn8dLvDLz60bv8brsghgMed67S6Jh+MXiCn4Dj60Xz6SJKIUgABU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mAYinYCb; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1744055864;
+	bh=BcFYwrrUvlWqghmgRn3eq2YEAKq4QVcILIm1acwgZio=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mAYinYCbNAeIX1DWVSf1aQ7fQ6goCEva8SkneIcLZBbvxm8sQvw7GSq6pw924DhZc
+	 z+kCAueRMW3HXX04KVA8buPPxdYn7A81sXaaYH6QOwDg2UWf6UoAa6Jwz+Ngtd7Fko
+	 5hIhHBFzH/uybzDROa1glUlgn1LF4MypslEOT+i3MsdP3e9Fm76LGNHaiWpOR4AqQd
+	 7L9b7b17KfTtAzrkV0MM62jsM4yI5qwG1bcK6p7899tU82nYhT0Pu7v/Takayut/nX
+	 iSApwnUYeBV/qEpAsdNvC5OTbfzOjpRcw22UH4qG8OdWEdxuLFRIBrSWeXMUW7sq9R
+	 cW+L678MNIB3A==
+Received: from notapiano (unknown [70.107.117.78])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7F3EF17E0CBE;
+	Mon,  7 Apr 2025 21:57:43 +0200 (CEST)
+Date: Mon, 7 Apr 2025 15:57:41 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: kernel@collabora.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: automarkup: Move common logic to add and resolve
+ xref to helper
+Message-ID: <b06fff0d-7e15-45ac-877c-62479526a1aa@notapiano>
+References: <20250407-automarkup-resolve-xref-helper-v1-1-9cac06ad580f@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIABsu9GcC/52OQQ7CIBBFr2JYOwYoWHXlPUwXFcZ20gANtKhpe
- nex3sDle4v//sISRsLELruFRcyUKPgCcr9jpm99h0C2MJNcal5JDUQByM1APgMZp+SRc4j4DHE
- obsIY53GCOZHvwLcOE9yrc23Q1vJUaVZ2x4gPem3NW1O4pzSF+N4uZPG1v5ri6o9aFsChlmi14
- Ny2Ql0nOxxMcKxZ1/UD/A4HzfAAAAA=
-X-Change-ID: 20250325-iio-imu-inv-icm42600-rework-interrupt-using-names-b397ced72835
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744055845; l=1344;
- i=jean-baptiste.maneyrol@tdk.com; s=20240923; h=from:subject:message-id;
- bh=rIJwEoz8xFlQQVlAO/VsBXMyVwVYpieUYx8Cva0KGTE=;
- b=MVjajOAMvhvW8ch5RkVeX8GmZZbQOrXdcvzHU+tA5GN7UEQXJqDv5QbJVYoJGlajjxAzi4KWT
- pUHelmpxrRwDc34RBXCdat+LH/CkpVmEvi08CPObIilHZCG+niO56pR
-X-Developer-Key: i=jean-baptiste.maneyrol@tdk.com; a=ed25519;
- pk=bRqF1WYk0hR3qrnAithOLXSD0LvSu8DUd+quKLxCicI=
-X-Endpoint-Received: by B4 Relay for
- jean-baptiste.maneyrol@tdk.com/20240923 with auth_id=218
-X-Original-From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-Reply-To: jean-baptiste.maneyrol@tdk.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250407-automarkup-resolve-xref-helper-v1-1-9cac06ad580f@collabora.com>
 
-The purpose of this series is to switch to fwnode_irq_get_by_name()
-in the core module instead of using irq from the bus parsing.
-Add interrupt naming and support only INT1.
+On Mon, Apr 07, 2025 at 11:42:03AM -0400, Nícolas F. R. A. Prado wrote:
+> Several of the markup functions contain the same code, calling into
+> sphinx's pending_xref and resolve_xref functions to add and resolve a
+> cross-reference, with only a few of the parameters changed (domain,
+> reference type, markup content). Move this logic to its own function and
+> reuse it in the markup functions.
+> 
+> No functional change.
+> 
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+>  Documentation/sphinx/automarkup.py | 78 ++++++++++----------------------------
+>  1 file changed, 20 insertions(+), 58 deletions(-)
+> 
+> diff --git a/Documentation/sphinx/automarkup.py b/Documentation/sphinx/automarkup.py
+> index ecf54d22e9dc6ab459a91fde580c1cf161f054ed..8b129835e521428c0bafdc1584c8ce69252a668d 100644
+> --- a/Documentation/sphinx/automarkup.py
+> +++ b/Documentation/sphinx/automarkup.py
+> @@ -128,13 +128,11 @@ def note_failure(target):
+>  # own C role, but both match the same regex, so we try both.
+>  #
+>  def markup_func_ref_sphinx3(docname, app, match):
+> -    cdom = app.env.domains['c']
+>      #
+>      # Go through the dance of getting an xref out of the C domain
+>      #
 
-Signed-off-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
----
-Changes in v2:
-- Add INT2 in interrupt-names enum and fix enum
-- Add fallback to first interrupt if naming is not here to ensure
-  backward compatibility
-- Link to v1: https://lore.kernel.org/r/20250404-iio-imu-inv-icm42600-rework-interrupt-using-names-v1-0-72ed5100da14@tdk.com
+I just noticed I missed these comments, they refer to the code that was moved to
+the helper. I'll delete them in the markup functions for v2.
 
----
-Jean-Baptiste Maneyrol (2):
-      dt-bindings: iio: imu: icm42600: add interrupt naming support
-      iio: imu: inv_icm42600: switch to use generic name irq get
-
- .../bindings/iio/imu/invensense,icm42600.yaml           | 13 +++++++++++++
- drivers/iio/imu/inv_icm42600/inv_icm42600.h             |  2 +-
- drivers/iio/imu/inv_icm42600/inv_icm42600_core.c        | 17 +++++++++++++++--
- drivers/iio/imu/inv_icm42600/inv_icm42600_i2c.c         |  2 +-
- drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c         |  2 +-
- 5 files changed, 31 insertions(+), 5 deletions(-)
----
-base-commit: e3ee177e2a3e21ef4502f68336023154049d2acd
-change-id: 20250325-iio-imu-inv-icm42600-rework-interrupt-using-names-b397ced72835
-
-Best regards,
--- 
-Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-
-
+Thanks,
+Nícolas
 
