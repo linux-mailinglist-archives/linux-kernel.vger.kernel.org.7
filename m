@@ -1,164 +1,101 @@
-Return-Path: <linux-kernel+bounces-590601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9352A7D4D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:00:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 904F0A7D4CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DE9F1886041
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:59:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35A791670C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCD2225413;
-	Mon,  7 Apr 2025 06:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9EC227BB5;
+	Mon,  7 Apr 2025 06:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="fyxFsUzX"
-Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RxSxXE56"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F6D22540A;
-	Mon,  7 Apr 2025 06:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709A2225A34;
+	Mon,  7 Apr 2025 06:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744008958; cv=none; b=QeI0EoFVXKXL31lqqu4xFaD+l2V0gqJTtBkVtpVnUCEoJxhliwJGOFLJZHlNks8c7JC/pjbSofHZxxpGfcZ6+hJA3FZtnLLBNjeh2wDuf26UCPlQYi/icjj37HPgYayImtgHuJL5HeCwY4xyRjHmNFF9ybS2XNqjgxCYvpYogx4=
+	t=1744009145; cv=none; b=FL3m/gppMdWmVv3kjRnn8thlIAWRcu3LyT0qU0vvHb38vGSOVkVy2/9WMmaiRZdM3spiHRFl7HNyCuuqPePiXtK5RizWXgZMpb3yx5UzgP/ted2gfT9DpFxiWJwt3tq3fFIts4T90x4NgLLLnllbNnchQjnXTAwkLGHFDpbxogs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744008958; c=relaxed/simple;
-	bh=0RsV/UiWuSYyhNTxCLLOFl3X8Rix1KUqQ5uoJ8qyXVI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pG56BC30kLinraDwqMzElOh/wdHQ4HahqWex98KO1IZovivh413HHiHVEvRRgqLZMcco9zz7MIwpjZ9mYRJ1P2HWoEN0U5sbYu8zbXkQHdPylxWqaEj2E3itsTMmGPlvqkTfSghQiodKrzM59rVlzqfGQ5ozIsSg6MX84Eq3Ol8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=fyxFsUzX; arc=none smtp.client-ip=15.184.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1744008927;
-	bh=0RsV/UiWuSYyhNTxCLLOFl3X8Rix1KUqQ5uoJ8qyXVI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=fyxFsUzXmwXxAl66K3xJxK/9pBh8rdwMPgQvkMkajhmNpASTe9zYgaaVsrdjBHcqx
-	 LfJhcEkKoWwlsmUkVxtpEBA6u02EFMgHkZvvkvc227yMpnAWgfasjdqjsC/3qemWwW
-	 OKXUuZaZEyYKGWZy42DCd1fL5tDoBPSPX/nctO9Y=
-X-QQ-mid: bizesmtpip4t1744008914t06b9eb
-X-QQ-Originating-IP: GU3L6N8JcwWfgXCNUbLufMg08lqQRsb+nd9ZB3aqLTo=
-Received: from [IPV6:240e:668:120a::212:156] ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 07 Apr 2025 14:55:13 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 17120012834144405305
-EX-QQ-RecipientCnt: 8
-Message-ID: <E1C033BA7FD27C8D+cab4d687-98df-49c6-adc9-e55a1c8fef34@uniontech.com>
-Date: Mon, 7 Apr 2025 14:55:13 +0800
+	s=arc-20240116; t=1744009145; c=relaxed/simple;
+	bh=Uk8IEJjSk6lDLTgiBkYUJt4GuvbJc5JKYcglOwe3qY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tUgW0GhFjmkomLkFwxBCePvSx0y1X4yLRime2hUIfdlDKFbymdtnWyu6Hnf03FphfFXhy/GObmkulm/+2FMtwssYAp0Z2ECJpeEbLUPg48ECC/sgT0v20blP+C3Z17Z95gCstecLlCpNHFHzuKO41AuBotKShjxG1r9ezr3gd1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RxSxXE56; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CE64C4CEDD;
+	Mon,  7 Apr 2025 06:59:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744009144;
+	bh=Uk8IEJjSk6lDLTgiBkYUJt4GuvbJc5JKYcglOwe3qY0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RxSxXE56MDJE8vtcJ0H7OR9N0MjXRsra/eRHC8S1WxM2K4Pct6HI/HRHnLK6zUNY7
+	 8KIkFavKw9ZE1HxlmGNCFi/e4Q3WVdHN/AQAK9bhpCjTCE7eVVbc7fQw0iDuMod5db
+	 xcpGN0pT1VXE3HZ++qgo1CrS39ghMCsFGF0GdxYc=
+Date: Mon, 7 Apr 2025 08:57:35 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: philipp.g.hortmann@gmail.com, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v5] staging: rtl8723bs: Add error handling for sd_read()
+Message-ID: <2025040745-penny-graffiti-9ae7@gregkh>
+References: <20250406023513.2727-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] MIPS: dec: Remove dec_irq_dispatch()
-To: macro@orcam.me.uk, tsbogend@alpha.franken.de
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
- zhanjun@uniontech.com, niecheng1@uniontech.com, guanwentao@uniontech.com,
- chenlinxuan@uniontech.com
-References: <303EFD6BFBDAC7C8+20250305033436.31214-1-wangyuli@uniontech.com>
-Content-Language: en-US
-From: WangYuli <wangyuli@uniontech.com>
-Autocrypt: addr=wangyuli@uniontech.com; keydata=
- xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
- IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
- qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
- 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
- 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
- VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
- DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
- o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
-In-Reply-To: <303EFD6BFBDAC7C8+20250305033436.31214-1-wangyuli@uniontech.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------KN0coP3cYQR4uMxnh4wuE0WS"
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OQEfmBmUqqJ6FBuux7cBN0soiSsYrXvj8jwXLxfmDF9i0U12mYFYRUC8
-	4qnoBo/YQMSZm5YobklCRJS8bRXe1AyCUx05oP05dLeEqnPwfWgCRpl2w4hBToyLpSvok48
-	Dq9yWBzTbtGuvZf/PCqD/ej+14b3qlePbioivCSzu52fEQD+wFZGnS7uuQRgKP3DQA1f08l
-	68VPKz2Ebu8F4WyqGNixncAN4nrqsdro52X3/hhNcOYN8kjUzQepGiB+HPZZdc2gznSeqhL
-	ytEvk7zLntKKuXq3L9MkWMOcMhUYzMGlxMFXNgn6J7ugqTVKGqTF06aR7DKznglyrYKhGwl
-	pzWrLuFottOyf1HTtHepnv6yi+sUJ+vpnZtofaB3u+9xO2+2at005lxelgnKGHqSFVF7vbi
-	Kz7dvEgBmwucr0E4Su5DTUSqSDEESiEL/elgIBeBFl1ax8MNFDFj4YBsEG8II5kKPIPHEJj
-	dBf9voLRPOsa4gUYSYVPjpIsFZl8W3Zu/ETTT1DoB5JqATtiTrz8ewkoenjlVdLRRdM7j/3
-	sRZgFZgC8LKh/DVz3KZKQ1jh95j8dTKPVWlTVK7nofmQ3PzjA6uPs+Bs+Q53QPRyKyukHA2
-	YQQ5ko0tJLB5udSMf/2I61hmnlM5VUpPloG2E2stEZ8I6ekGyoLd/Gy71GBsw2EvWBwBcqZ
-	ZmeNnWghSOFe1RcytUAi23lQfvHlcUxTSg9j60X5/xUKGyzosv7gbdZGMLNX9qM8UTxtTQv
-	sI6VecMEj0xgNFpbID43cPvzXm77Bt+/kw0uYvAAhj+cMsQ1cv2KaLDd6OpSvN2mZl0dWwa
-	4JVClt03g5oCZagHXldtHSkjbPAK0zVhR9buiuxa8m/xPr/KETeoEl9lWLdSV01DzPkNa3k
-	fxWl8473TVaf61NnKtmC6T1QiQWXOnHcY/FrwNY0xXePZkj4XRNol/fnRo9gJn6z+9CKQ5z
-	WMthSuyUUlT7c0hIfqerAv0mmruTfEal0aGlAbiuQ8SF8RpoDyEEGWoWec2bHM6l8E5Kyvs
-	/S8MZG/pff7BvVSxZY8CSlZEMbhXY=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250406023513.2727-1-vulab@iscas.ac.cn>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------KN0coP3cYQR4uMxnh4wuE0WS
-Content-Type: multipart/mixed; boundary="------------EyBmMelODotX0r1tdK24hhvY";
- protected-headers="v1"
-From: WangYuli <wangyuli@uniontech.com>
-To: macro@orcam.me.uk, tsbogend@alpha.franken.de
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
- zhanjun@uniontech.com, niecheng1@uniontech.com, guanwentao@uniontech.com,
- chenlinxuan@uniontech.com
-Message-ID: <cab4d687-98df-49c6-adc9-e55a1c8fef34@uniontech.com>
-Subject: Re: [PATCH v2] MIPS: dec: Remove dec_irq_dispatch()
-References: <303EFD6BFBDAC7C8+20250305033436.31214-1-wangyuli@uniontech.com>
-In-Reply-To: <303EFD6BFBDAC7C8+20250305033436.31214-1-wangyuli@uniontech.com>
+On Sun, Apr 06, 2025 at 10:35:13AM +0800, Wentao Liang wrote:
+> The sdio_read32() calls sd_read(), but does not handle the error if
+> sd_read() fails. This could lead to subsequent operations processing
+> invalid data. A proper implementation can be found in sdio_readN().
 
---------------EyBmMelODotX0r1tdK24hhvY
-Content-Type: multipart/mixed; boundary="------------TN7x9oijtL0BFlCv0EKyNKOK"
+Great, why not use that instead?
 
---------------TN7x9oijtL0BFlCv0EKyNKOK
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+> Add error handling for the sd_read() to free tmpbuf and return error
+> code if sd_read() fails. This ensure that the memcpy() is only performed
+> when the read operation is successful.
+> 
+> Fixes: 554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
+> Cc: stable@vger.kernel.org # v4.12+
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+> v5: Fix error code
+> v4: Add change log and fix error code
+> v3: Add Cc flag
+> v2: Change code to initialize val
+> 
+>  drivers/staging/rtl8723bs/hal/sdio_ops.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/rtl8723bs/hal/sdio_ops.c b/drivers/staging/rtl8723bs/hal/sdio_ops.c
+> index 21e9f1858745..d79d41727042 100644
+> --- a/drivers/staging/rtl8723bs/hal/sdio_ops.c
+> +++ b/drivers/staging/rtl8723bs/hal/sdio_ops.c
+> @@ -185,7 +185,12 @@ static u32 sdio_read32(struct intf_hdl *intfhdl, u32 addr)
+>  			return SDIO_ERR_VAL32;
+>  
+>  		ftaddr &= ~(u16)0x3;
+> -		sd_read(intfhdl, ftaddr, 8, tmpbuf);
+> +		err = sd_read(intfhdl, ftaddr, 8, tmpbuf);
+> +		if (err) {
+> +			kfree(tmpbuf);
+> +			return SDIO_ERR_VAL32;
 
-SGkgYWxsLA0KDQo2LjE1LXJjMSBpcyByZWxlYXNlZC4NCg0KSXQgbG9va3MgbGlrZSBhIHBv
-cnRpb24gb2YgdGhpcyBwYXRjaHNldCBhbmQgaXRzIGltcGxpY2l0IGRlcGVuZGVuY2llcyAN
-CmdvdCBtZXJnZWQgaW50byBtYWlubGluZS4NCg0KSSd2ZSBhbHJlYWR5IGFkZHJlc3NlZCB0
-aGUgcmVzdCwgYW5kIEknbGwgYmUgc2VuZGluZyBvdXQgYSBmcmVzaCANCnBhdGNoc2V0IHRv
-IGF2b2lkIGFueSBtZXNzLg0KDQpUaGFua3MsDQoNCi0tIA0KV2FuZ1l1bGkNCg==
---------------TN7x9oijtL0BFlCv0EKyNKOK
-Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+Why isn't the error that you get from the lower levels being returned
+here instead?  Throwing that away feels wrong, don't you think?
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+thanks,
 
-xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
-P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
-FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
-AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
-bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
-AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
-GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
-7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
-/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
-=3DBlkq
------END PGP PUBLIC KEY BLOCK-----
-
---------------TN7x9oijtL0BFlCv0EKyNKOK--
-
---------------EyBmMelODotX0r1tdK24hhvY--
-
---------------KN0coP3cYQR4uMxnh4wuE0WS
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZ/N20QUDAAAAAAAKCRDF2h8wRvQL7q6h
-AP4h5Su80DrjeNbLGczOJ8/S6JFYE/dilFkVYzQIHTS4EwD+IpeCXJgSzkSjBkknbChUsibhl38y
-8S4pqZyv8h2j4AM=
-=ocBW
------END PGP SIGNATURE-----
-
---------------KN0coP3cYQR4uMxnh4wuE0WS--
+greg k-h
 
