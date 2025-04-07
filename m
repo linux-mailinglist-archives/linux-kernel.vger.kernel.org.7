@@ -1,125 +1,259 @@
-Return-Path: <linux-kernel+bounces-592439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70CADA7ECFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:28:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70BB0A7ED8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E52F188CBE9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:23:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B23BC1883CED
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4E82236F6;
-	Mon,  7 Apr 2025 19:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1022222D1;
+	Mon,  7 Apr 2025 19:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="Xdf9CB2d"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="LlKTXg+d"
+Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D822222D1
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 19:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334BD1FF5F7;
+	Mon,  7 Apr 2025 19:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744053008; cv=none; b=oB2T2N/TZ6RVSKtKed9bYDs0M4AuoeG1C1WBMCw3N9N/VVfNeYu0tglCHd5Dh0IqfH9U3sxTEn2QNEbsUKVLbQE7vfWBEpGS3UoCzBHDAHnhCSky4PcrYSFAHhYfJPzZtPI5z+bRdbyBuZHKWH364P2kr5SFjcb5Zr6YLu2gG5k=
+	t=1744054196; cv=none; b=njTLQEswtlFNCHe7A2xdEgI57YZoGgbnFVIAT87gmtqCI1JB6rtYyPh8b4dRuryHD4feL5fM7leWzpLeJp+XDV9GqJfxjIOCycPvcuygfdt+ofC599L+clWGg7KZI4IQU8odoS9OtysEsIcZzNSzXaqP5fOg+CtPm1hQB6lmS20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744053008; c=relaxed/simple;
-	bh=hlvX3dKMPy7AKbI9AZt2/QooFInqEXvd3/I/fL8l5fI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YSIDMAbzmANr8SdRrc95o0sAAr5QHKduZpCEzKSdbjjY1cG1fEJfA4PsfR0hqLs8Zb+rN21YFYTEgVhl84q189f79ZUrMTxa1Fx9lMjLLB5EoYsMTl1CMCpZ/iWPnz2Tn4Po8FVBZPV4ui0cw+VuHwOPUooz4nN5wdUlxv2Y8L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=Xdf9CB2d; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
-	by cmsmtp with ESMTPS
-	id 1oDdu0oyCf1UX1rr6uq5YR; Mon, 07 Apr 2025 19:10:00 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id 1rr5udIW8YlC61rr5u2VZm; Mon, 07 Apr 2025 19:10:00 +0000
-X-Authority-Analysis: v=2.4 cv=d4HzywjE c=1 sm=1 tr=0 ts=67f42308
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=B3fuDwYyW55wTQKIj88FGw==:17
- a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
- a=QyXUC8HyAAAA:8 a=r2MVV0ggy3cR_goCns0A:9 a=QEXdDO2ut3YA:10
- a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=6Fx0cjpFIDP4TVvSQqu5zpeRXwbcNwQbAPGVgowUYRY=; b=Xdf9CB2dHJJGo5zpUmzK33wSBC
-	oqUBtFezyXl6wHdvY7YydiHqg1RVT0c/TSV/uffAA3UEOPueeWF8wyz6L72Au/5KEqy09cdegIfvt
-	npIxnP15aME7/oaENDMfM53z9se1OI337fnPiI0Hh3+0QwiM7JHlwrA5I+oxttpA0JM6UB3xbfgFN
-	rC+2CFTz+ft/f3TyX8LEpexdnI3wwGu5wQpKJ4a1KnXQt9dSOxF5VZausMuHQ3BO2OPhGBsWyRarq
-	dIMZDpv7P0Lv9YVo2cd+SYcVd4W0IF71SYJ5i7AThHgjwNQNxPiMatsyKhKzgOGp/W1ULUjnaLXvD
-	4GXlA3yQ==;
-Received: from [201.172.174.147] (port=39666 helo=[192.168.15.6])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1u1rr3-00000002JT0-2lW1;
-	Mon, 07 Apr 2025 14:09:57 -0500
-Message-ID: <b5ab34b1-e27a-40ca-be24-56a28b5d37bd@embeddedor.com>
-Date: Mon, 7 Apr 2025 13:09:51 -0600
+	s=arc-20240116; t=1744054196; c=relaxed/simple;
+	bh=QxbJUQj494NJu8ZjgJ05X2q3+gIgGLIBqzCnPxe0YBw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Wo84BRp0LV/HOS6qVyIcLVXYQfloMAc/L/tQmgbwfOaVZ+7VYTHL54wEciZHPvMwzShfOReXYD5JAV5coy5j2z0Ur37AZiA1Rb7iW7HTJ48O12EC0xsSCIdslRSuOzxRoDKl5hXw7lQ4OE0xdKaAQ22HnMJj5A/GIsx6c9sBLR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=LlKTXg+d; arc=none smtp.client-ip=168.119.26.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
+	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
+	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=O40M1F4FENumpeawEN/zW0HV0k/GzWMb+PW3MS2kdeI=; b=LlKTXg+dXXhUmVPx2ZyqdR1/3W
+	dAq7E8QCV8RWayeTm/0ESqnhvcMKoys7h6YK0dWBvztEzbOpkwm3AM0qSCUES7j+vjOGhGL3CycUG
+	j3vwSJC7liLPPL+PFrZE/QAIEuwd7MNC6nvJxxxKqb0G+Z/gVcmBXdF8K1Vy+BbZwNEfMP6zR92Q4
+	h84rzZChgAWx8HoKjK5LeuEl3gUTypBP+CaQKau6Wp6yOxulbt/LaaWMGKwCcHqQrWVxQ5vkp2Nwv
+	L9scyRvxvqXTkHYamJD+YYB4rRpS6nj6kgYapvIiUcueXenErGHJJjMOKD/Pko5aLZHxlvZBm6R/h
+	24ZeZNzQ==;
+Received: from sslproxy04.your-server.de ([78.46.152.42])
+	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <git@apitzsch.eu>)
+	id 1u1rrg-000MKL-05;
+	Mon, 07 Apr 2025 21:10:36 +0200
+Received: from [92.206.190.59] (helo=framework.lan)
+	by sslproxy04.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <git@apitzsch.eu>)
+	id 1u1rrf-000OkW-1w;
+	Mon, 07 Apr 2025 21:10:35 +0200
+Message-ID: <29677b7d5ceb07693d0b530c88a5aa9bde6c04dd.camel@apitzsch.eu>
+Subject: Re: [PATCH RESEND 0/4] media: i2c: imx214: Problem with CCS PLL
+ calculator
+From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Ricardo Ribalda <ribalda@kernel.org>, Mauro Carvalho Chehab
+	 <mchehab@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
+	phone-devel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 07 Apr 2025 21:10:34 +0200
+In-Reply-To: <4c62bb9d5575e9075b39500917e09687d37cf7ca.camel@apitzsch.eu>
+References: <20250308-imx214_clk_freq-v1-0-467a4c083c35@apitzsch.eu>
+		 <Z87I2xh0HY-YD_tZ@kekkonen.localdomain>
+	 <4c62bb9d5575e9075b39500917e09687d37cf7ca.camel@apitzsch.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] UAPI: ndctl / acpi: intel: Avoid multiple
- -Wflex-array-member-not-at-end warnings
-To: Kees Cook <kees@kernel.org>, Alison Schofield <alison.schofield@intel.com>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Dan Williams <dan.j.williams@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
- Ira Weiny <ira.weiny@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Len Brown <lenb@kernel.org>, nvdimm@lists.linux.dev,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <Z618ILbAR8YAvTkd@kspp> <Z65xV2TaFY32eYdp@aschofie-mobl2.lan>
- <202504071106.3A0AF875F@keescook>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <202504071106.3A0AF875F@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.174.147
-X-Source-L: No
-X-Exim-ID: 1u1rr3-00000002JT0-2lW1
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.6]) [201.172.174.147]:39666
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfPnSeRfacVhmtCjtsc1XeDmZ/d3nv+St/9ofoVqIhJJ8ydFGoEW1ODOd0wCAbTLpLLAxezp0iTD6hhaSZkbeCKCadJMbfpfDkT6s/YjwCEN2KSyZUU+e
- oZfzP7U0fsKkZBOmYMRi/zCoJf9sCNHDKTWjYNhHFAlaY9e/UIb5yoqr0fN0wgtaG9RQaXNcHQAxsluv0LSFwftD+LYmRbxvpsVj1qOU/5u4kTIOEV3Bhcrj
+X-Authenticated-Sender: andre@apitzsch.eu
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27601/Mon Apr  7 10:42:24 2025)
 
+Am Montag, dem 10.03.2025 um 23:35 +0100 schrieb Andr=C3=A9 Apitzsch:
+> Hi Sakari,
+>=20
+> Am Montag, dem 10.03.2025 um 11:11 +0000 schrieb Sakari Ailus:
+> > Hi Andr=C3=A9,
+> >=20
+> > On Sat, Mar 08, 2025 at 10:47:54PM +0100, Andr=C3=A9 Apitzsch via B4
+> > Relay
+> > wrote:
+> > > The imx214 driver currently supports only a 24MHz external clock.
+> > > But
+> > > there are devices, like Qualcomm-MSM8916-based phones, which
+> > > cannot
+> > > provide this frequency. To make the sensor usable by those
+> > > devices,
+> > > add
+> > > support for 23.88MHz clock.
+> > >=20
+> > > Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> > > ---
+> > > Andr=C3=A9 Apitzsch (4):
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Calculate link bit=
+ rate from clock
+> > > frequency
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Prepare for variab=
+le clock frequency
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Read clock frequen=
+cy from device tree
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: i2c: imx214: Add support for 23=
+.88MHz clock
+> > >=20
+> > > =C2=A0drivers/media/i2c/imx214.c | 188
+> > > +++++++++++++++++++++++++++++++++++----------
+> > > =C2=A01 file changed, 146 insertions(+), 42 deletions(-)
+> >=20
+> > Thanks for the patches.
+> >=20
+> > Do you think the driver could use the CCS PLL calculator? The PLL
+> > appears to be compliant. The AR0234 driver will do the same. (The
+> > sensor might just work with the CCS driver, too, but that's another
+> > discussion.)
+> >=20
+> Using the CCS PLL calculator seems quite complicated compared to
+> switching to the CCS driver. That's why I looked at the later first.
+> But for it to work, quirks already need to be applied in
+> ccs_power_on(), to disable writing to COMPRESSION_MODE, and in
+> ccs_identify_module(), to change the MODULE_MANUFACTURER_ID register.
+>=20
+> I'll check if CCS PLL calculator could be used.
+>=20
+> Best regards,
+> Andr=C3=A9
 
-> Gustavo, any updates on this patch? I'm skimming through patchwork to
-> check on stalled patches...
-> 
+Hi Sakari,
 
-Yep, I proposed a couple of patches for this:
+the CCS PLL calculator seems to work (up to one problem) and to be a
+more elegant way forward.
+The problem is, that the pixel rate is too small by a factor of 10 and
+I cannot figure out why. Any help would be appreciated.
 
-https://lore.kernel.org/linux-hardening/a66056cf-570c-4875-b5cf-c51e2bc488d9@intel.com/t/#mf958b73b3021db415b9e9c623c3f386259ca0829
-(not sure why my patch doesn't show up on linux-hardening anymore...)
+My devices uses a clock-frequency of 24000000 and a link-frequency of
+600000000. There are four data lanes.
+The calculator returns a pixel rate of 480.000.000. The expected value
+is 4800.000.000.
 
-And this is the most recent alternative:
-https://lore.kernel.org/linux-hardening/Z-QpUcxFCRByYcTA@kspp/
+You can find the PLL input parameters in [1] and the generated debug
+output below.
 
-Thanks
---
-Gustavo
+Best regards,
+Andr=C3=A9
+
+[1] https://github.com/a-andre/linux/blob/58e10a814985f700579847ac7c99468a6=
+5cb55bb/drivers/media/i2c/imx214.c#L1116-L1196
+
+$ dmesg | grep imx
+[   17.851215] imx214 4-0010: vt_lanes: 4
+[   17.851245] imx214 4-0010: op_lanes: 4
+[   17.851254] imx214 4-0010: binning: 1x1
+[   17.851262] imx214 4-0010: min / max op_pre_pll_clk_div: 1 / 15
+[   17.851272] imx214 4-0010: pre-pll check: min / max op_pre_pll_clk_div: =
+1 / 15
+[   17.851281] imx214 4-0010: mul 50 / div 1
+[   17.851290] imx214 4-0010: pll_op check: min / max op_pre_pll_clk_div: 1=
+ / 15
+[   17.851300] imx214 4-0010: op_pre_pll_clk_div 1
+[   17.851308] imx214 4-0010: more_mul_max: max_op_pll_multiplier check: 24
+[   17.851317] imx214 4-0010: more_mul_max: max_pll_op_clk_freq_hz check: 1
+[   17.851325] imx214 4-0010: more_mul_max: max_op_sys_clk_div check: 1
+[   17.851333] imx214 4-0010: more_mul_max: min_pll_multiplier check: 1
+[   17.851341] imx214 4-0010: more_mul_min: min_op_pll_op_clk_freq_hz check=
+: 1
+[   17.851349] imx214 4-0010: more_mul_min: min_op_pll_multiplier check: 1
+[   17.851357] imx214 4-0010: more_mul_factor: 1
+[   17.851365] imx214 4-0010: more_mul_factor: min_op_sys_clk_div: 1
+[   17.851373] imx214 4-0010: final more_mul: 1
+[   17.851381] imx214 4-0010: op_sys_clk_div: 1
+[   17.851389] imx214 4-0010: op_pix_clk_div: 10
+[   17.851398] imx214 4-0010: min_vt_div: 10
+[   17.851406] imx214 4-0010: min_vt_div: max_vt_pix_clk_freq_hz: 10
+[   17.851414] imx214 4-0010: min_vt_div: min_vt_clk_div: 10
+[   17.851422] imx214 4-0010: max_vt_div: 40
+[   17.851486] imx214 4-0010: max_vt_div: min_vt_pix_clk_freq_hz: 40
+[   17.851502] imx214 4-0010: min_sys_div: 2
+[   17.851510] imx214 4-0010: min_sys_div: max_vt_pix_clk_div: 2
+[   17.851518] imx214 4-0010: min_sys_div: max_pll_op_clk_freq_hz: 2
+[   17.851526] imx214 4-0010: min_sys_div: one or even: 2
+[   17.851534] imx214 4-0010: max_sys_div: 4
+[   17.851541] imx214 4-0010: max_sys_div: min_vt_pix_clk_div: 4
+[   17.851549] imx214 4-0010: max_sys_div: min_vt_pix_clk_freq_hz: 4
+[   17.851557] imx214 4-0010: pix_div 3 too small or too big (5--10)
+[   17.851568] imx214 4-0010: ext_clk_freq_hz		24000000
+[   17.851578] imx214 4-0010: vt_pre_pll_clk_div		1
+[   17.851587] imx214 4-0010: vt_pll_multiplier		50
+[   17.851595] imx214 4-0010: vt_pll_ip_clk_freq_hz	24000000
+[   17.851603] imx214 4-0010: vt_pll_op_clk_freq_hz	1200000000
+[   17.851612] imx214 4-0010: vt_sys_clk_div		2
+[   17.851620] imx214 4-0010: vt_pix_clk_div		5
+[   17.851629] imx214 4-0010: vt_sys_clk_freq_hz	600000000
+[   17.851637] imx214 4-0010: vt_pix_clk_freq_hz	120000000
+[   17.851645] imx214 4-0010: op_sys_clk_div		1
+[   17.851653] imx214 4-0010: op_pix_clk_div		10
+[   17.851661] imx214 4-0010: op_sys_clk_freq_hz	1200000000
+[   17.851669] imx214 4-0010: op_pix_clk_freq_hz	120000000
+[   17.851677] imx214 4-0010: pixel rate in pixel array:	480000000
+[   17.851685] imx214 4-0010: pixel rate on CSI-2 bus:	480000000
+[   17.851694] imx214 4-0010: flags lane-speed
+[   17.869313] imx214 4-0010: vt_lanes: 4
+[   17.869342] imx214 4-0010: op_lanes: 4
+[   17.869352] imx214 4-0010: binning: 1x1
+[   17.869361] imx214 4-0010: min / max op_pre_pll_clk_div: 1 / 15
+[   17.869372] imx214 4-0010: pre-pll check: min / max op_pre_pll_clk_div: =
+1 / 15
+[   17.869382] imx214 4-0010: mul 50 / div 1
+[   17.869391] imx214 4-0010: pll_op check: min / max op_pre_pll_clk_div: 1=
+ / 15
+[   17.869400] imx214 4-0010: op_pre_pll_clk_div 1
+[   17.869409] imx214 4-0010: more_mul_max: max_op_pll_multiplier check: 24
+[   17.869417] imx214 4-0010: more_mul_max: max_pll_op_clk_freq_hz check: 1
+[   17.869426] imx214 4-0010: more_mul_max: max_op_sys_clk_div check: 1
+[   17.869435] imx214 4-0010: more_mul_max: min_pll_multiplier check: 1
+[   17.869443] imx214 4-0010: more_mul_min: min_op_pll_op_clk_freq_hz check=
+: 1
+[   17.869451] imx214 4-0010: more_mul_min: min_op_pll_multiplier check: 1
+[   17.869460] imx214 4-0010: more_mul_factor: 1
+[   17.869468] imx214 4-0010: more_mul_factor: min_op_sys_clk_div: 1
+[   17.869476] imx214 4-0010: final more_mul: 1
+[   17.869483] imx214 4-0010: op_sys_clk_div: 1
+[   17.869491] imx214 4-0010: op_pix_clk_div: 10
+[   17.869501] imx214 4-0010: min_vt_div: 10
+[   17.869509] imx214 4-0010: min_vt_div: max_vt_pix_clk_freq_hz: 10
+[   17.869517] imx214 4-0010: min_vt_div: min_vt_clk_div: 10
+[   17.869525] imx214 4-0010: max_vt_div: 40
+[   17.869533] imx214 4-0010: max_vt_div: min_vt_pix_clk_freq_hz: 40
+[   17.869541] imx214 4-0010: min_sys_div: 2
+[   17.869549] imx214 4-0010: min_sys_div: max_vt_pix_clk_div: 2
+[   17.869557] imx214 4-0010: min_sys_div: max_pll_op_clk_freq_hz: 2
+[   17.869565] imx214 4-0010: min_sys_div: one or even: 2
+[   17.869572] imx214 4-0010: max_sys_div: 4
+[   17.869580] imx214 4-0010: max_sys_div: min_vt_pix_clk_div: 4
+[   17.869588] imx214 4-0010: max_sys_div: min_vt_pix_clk_freq_hz: 4
+[   17.869596] imx214 4-0010: pix_div 3 too small or too big (5--10)
+[   17.869607] imx214 4-0010: ext_clk_freq_hz		24000000
+[   17.869616] imx214 4-0010: vt_pre_pll_clk_div		1
+[   17.869624] imx214 4-0010: vt_pll_multiplier		50
+[   17.869633] imx214 4-0010: vt_pll_ip_clk_freq_hz	24000000
+[   17.869642] imx214 4-0010: vt_pll_op_clk_freq_hz	1200000000
+[   17.869651] imx214 4-0010: vt_sys_clk_div		2
+[   17.869659] imx214 4-0010: vt_pix_clk_div		5
+[   17.869667] imx214 4-0010: vt_sys_clk_freq_hz	600000000
+[   17.869675] imx214 4-0010: vt_pix_clk_freq_hz	120000000
+[   17.869684] imx214 4-0010: op_sys_clk_div		1
+[   17.869692] imx214 4-0010: op_pix_clk_div		10
+[   17.869699] imx214 4-0010: op_sys_clk_freq_hz	1200000000
+[   17.869707] imx214 4-0010: op_pix_clk_freq_hz	120000000
+[   17.869716] imx214 4-0010: pixel rate in pixel array:	480000000
+[   17.869724] imx214 4-0010: pixel rate on CSI-2 bus:	480000000
+[   17.869732] imx214 4-0010: flags lane-speed
 
