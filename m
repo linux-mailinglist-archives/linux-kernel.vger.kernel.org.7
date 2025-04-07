@@ -1,165 +1,307 @@
-Return-Path: <linux-kernel+bounces-590860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B770A7D7B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:25:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ADD4A7D7F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3784316CFAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:25:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C835C1892C8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00E32288E3;
-	Mon,  7 Apr 2025 08:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7A922A1CD;
+	Mon,  7 Apr 2025 08:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="K4Hf+WXL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WDg7p30+";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="K4Hf+WXL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WDg7p30+"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VgtTGKt5"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DDA2288D6
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 08:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775D3228CB7
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 08:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744014314; cv=none; b=OIqKXyAHXbF4jGwPg8GiiH/Or2CkaLiy38P2YxXpNBhPlQ5dIbN4b001UDTFoiB2OZVuqY/kAR0wTHcR+1TxaRqCqgfNqzQf9+rgunam+2KIEbvu5T/714QWvIc91b6yGbmiDphOg7BCZRUI9LamP+M4cWSB9sHfzi9XDVLbJPM=
+	t=1744014680; cv=none; b=PsX2L2ZW06bn5FrWiBfaqOcaFzwNUJs083gqHPVpFyfw7y2JyqCicSl1PUEJg4IthdalcxO3yNEg9r2xyLUI0NQ/up7ObOz79afNctJY41RoTymtQ31J83jKCzj2+wcStQFZTHJdewuta0GkUHIAJnX3pGLM8KmQ8tULcg87TPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744014314; c=relaxed/simple;
-	bh=/hIMl4+mLhpPLboiB20WfdNYrJJ6PlLDES0zxElaMkA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZDSWnGPqsCgCW0txDyJn0/EQgJqioqW+OYLkhk5KgsoN/R+wZ5DqSEPzWst6c9DZEmnBfcKDt+GyBfKvZHheYumIEbuGAY75TjjGmyDnBP6sxmjRCoN1g/3SlNZXK22b1iUZYU2pvdtQtKjzGfvSyDV6daFn17hG8xH2G9u475M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=K4Hf+WXL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WDg7p30+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=K4Hf+WXL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WDg7p30+; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B055321180;
-	Mon,  7 Apr 2025 08:25:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744014310; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eucjGI5L+fAJv1gXj894Li5EaWdn6CCCGtiawNIWpJo=;
-	b=K4Hf+WXLAkSXhS3yV9Pl6bV1pHvueah2bMNJmiB3TCjJMbqAiVX6UYrjWWKt9xPZb4LYVF
-	+1saiOFi6faeC2L4mYaf3DPGJ3i8w0nrVIm/qLRBTYYQWpSCAR9p89olQHcyTKaDVcmUR7
-	8GhtrSj84S8wCJ3NWhW137AQaNkPNBk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744014310;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eucjGI5L+fAJv1gXj894Li5EaWdn6CCCGtiawNIWpJo=;
-	b=WDg7p30+DJ6D+/ia4v+fLmfTzseJcRF7kqPsm9SLc2WjPA3uIbrPMCOvDQpOBVfdR6RMey
-	gQmxpBABj7+xBJAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744014310; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eucjGI5L+fAJv1gXj894Li5EaWdn6CCCGtiawNIWpJo=;
-	b=K4Hf+WXLAkSXhS3yV9Pl6bV1pHvueah2bMNJmiB3TCjJMbqAiVX6UYrjWWKt9xPZb4LYVF
-	+1saiOFi6faeC2L4mYaf3DPGJ3i8w0nrVIm/qLRBTYYQWpSCAR9p89olQHcyTKaDVcmUR7
-	8GhtrSj84S8wCJ3NWhW137AQaNkPNBk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744014310;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eucjGI5L+fAJv1gXj894Li5EaWdn6CCCGtiawNIWpJo=;
-	b=WDg7p30+DJ6D+/ia4v+fLmfTzseJcRF7kqPsm9SLc2WjPA3uIbrPMCOvDQpOBVfdR6RMey
-	gQmxpBABj7+xBJAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9922813691;
-	Mon,  7 Apr 2025 08:25:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9fANJeaL82cdLAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 07 Apr 2025 08:25:10 +0000
-Message-ID: <35a061e5-d6c6-43e8-87d3-2edf1d9a517d@suse.cz>
-Date: Mon, 7 Apr 2025 10:25:10 +0200
+	s=arc-20240116; t=1744014680; c=relaxed/simple;
+	bh=iXVamY6u/C2hMSRCsgJ2VHqlYQT+aaLKnmXLyBDSWU8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ul+AH/oRpYmzXf3u6bNm4lnaW+zG7Q30IwrBDG0s7aYQ3xcIemO7mYoamgoUC9jys4vq5PCY+7OSc7ILOmuw1ZACGUeaSeMHMYvFXQH4PVBBZacfsjAOtT75AcJ3hV8UCEFBl7w9VLzrn+8diwfbY96Q99hTBDvndbQ7x8OB2Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VgtTGKt5; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3014cb646ecso2916690a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 01:31:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744014677; x=1744619477; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1+AuL3DcqV5GVUhiqRc2Nd48VMpJ7TsE4261T2PQP/w=;
+        b=VgtTGKt5dP15FHMyNNmHaIN8xK0/hJ42UleOFKsQUs/glFDOhrYZ1V0Q/ifkoD+Ggn
+         Ws56pcg98FXJs//crtm09gg9VE/ln4goqD+u1mf7dbRhzRVIwrPL7UVnF+lVTDys7DCe
+         gU/6lq34SsAw0S90GiHy2PPFL8th/JLUycmHt3byBR5O1fiRFYPJjTqscrVDi+dgZd8G
+         /JTywYmgeKYYjLVmXzn/qLraeev8uMOusCvRYATGBfU6v4iJHMmoLK9gjZg/6cBeuWAI
+         2WHu7d61P3ih+1etQIibsOu3TGyL3vhyBWiBKBR+6IvnLsGXVhGwQ8ryZRDASpaQaQIl
+         o6FA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744014677; x=1744619477;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1+AuL3DcqV5GVUhiqRc2Nd48VMpJ7TsE4261T2PQP/w=;
+        b=ENviWI7QQ/3HoZpOfwLKirTYYR6imhJ0xAe7JxAap37sqmlfiLGxg378NQi1j8qBaT
+         xlesld3V7ZWqWBk8BsLl6Jd18dzIKYSQzK5hh+aQnQyByOF1mKiAFkN54q6L2w+yrRXH
+         up6WRH5XDjtvH2pzk6R3VuRz/CHzno3/lapAzI1i9VituWKdCBrv6Hn85gq5Q6+YPlHW
+         Q6JJWezXQNzOF/3TjhuXKL9RhdJfnWgKuvwuqYQaDKqFncAYXFxYeO9N8ozYmSe6v7Bh
+         +bOq+xv9QH1/LKHa7HABExWzNw3Zdn79q1QKkNqg4+fSfkFkIhhypGYl32ZEuk59b7DH
+         6HtA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBSWnGqTY7xrpus0EcDk2MMsQ1hpYMazhcdZRlvf0G9HtyyRty2Vqrt24J3rnwc70ReESMeploKfWFG2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTbbaD1wWnlEKVpc2PJQRNy7imJeufRasWIoxUCAR4r6kva93g
+	WpmB6VnAR+A3MeJsjhXq7fEI7c4oK4uX8bInAKrE3tX/AuROP546lLAgWQExaWgK1X5kemQ2TWg
+	iW8b18JfI7z2ziVSijvKYISucEXlsQ7cz
+X-Gm-Gg: ASbGncsuRHkAzmMd1M1yNYMmcYkEEU5zQCyx8svh0BM9/fqFL0yRV34es47EZ8dqu7v
+	5kl6Z/Exvr+Eek+cVb5rA9tJM1x+2zGTSZi1PF5JSKtf6+pn6foaOWsuGoF20ph/1zJwaeil6/D
+	xxgdNNqpUu4PlreRH0Cg/XvD603Q==
+X-Google-Smtp-Source: AGHT+IFdlEidcd/UXbYPe0+ffGmcV59rPZtCWYl3VoCyaX0rTErHQvbbAztPP4Te8GdL6Wm/Dl0/8lNIxKUz6dkjmFg=
+X-Received: by 2002:a17:90a:c885:b0:2ee:ed1c:e451 with SMTP id
+ 98e67ed59e1d1-306a4899ec6mr16825306a91.15.1744014677562; Mon, 07 Apr 2025
+ 01:31:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] slub_kunit: Add missing MODULE_DESCRIPTION() to fix
- modpost warning
-Content-Language: en-US
-To: Shivank Garg <shivankg@amd.com>, akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc: kent.overstreet@linux.dev, kuba@kernel.org, harry.yoo@oracle.com,
- kees@kernel.org, Arnd Bergmann <arnd@arndb.de>
-References: <20250407072153.871265-1-shivankg@amd.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20250407072153.871265-1-shivankg@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+References: <20250407075400.1113177-1-linchengming884@gmail.com> <20250407075400.1113177-4-linchengming884@gmail.com>
+In-Reply-To: <20250407075400.1113177-4-linchengming884@gmail.com>
+From: Cheng Ming Lin <linchengming884@gmail.com>
+Date: Mon, 7 Apr 2025 16:25:39 +0800
+X-Gm-Features: ATxdqUG3x4BK_I5T8_CepJIC9o3-XKfmNfcS4cR5nsg9vjkEEH6eILEeoHEGnzI
+Message-ID: <CAAyq3SYUjyXCPqfiXi=dRNkicf9osxMrZ3Mf2-eHJVMUDnRs5g@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] mtd: spi-nor: macronix: Add fixups for MX25L3255E
+To: tudor.ambarus@linaro.org, pratyush@kernel.org, mwalle@kernel.org, 
+	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com, 
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: alvinzhou@mxic.com.tw, leoyu@mxic.com.tw, 
+	Cheng Ming Lin <chengminglin@mxic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/7/25 09:21, Shivank Garg wrote:
-> Fix a modpost warning due to the missing MODULE_DESCRIPTION() macro in
-> slub_kunit.c:
-> 
->   WARNING: modpost: missing MODULE_DESCRIPTION() in lib/tests/slub_kunit.o
-> 
-> Signed-off-by: Shivank Garg <shivankg@amd.com>
+Sorry for missing the minimum testing requirements.
+Here are the details:
 
-Hi, AFAICS Arnd's fixes [1] for this and other modules is in -mm already.
+zynq> cat /sys/bus/spi/devices/spi0.0/spi-nor/jedec_id
+c29e16
+zynq> cat /sys/bus/spi/devices/spi0.0/spi-nor/manufacturer
+macronix
+zynq> hexdump -Cv /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
+00000000  53 46 44 50 00 01 01 ff  00 00 01 09 30 00 00 ff  |SFDP........0.=
+..|
+00000010  c2 00 01 04 60 00 00 ff  ff ff ff ff ff ff ff ff  |....`.........=
+..|
+00000020  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |..............=
+..|
+00000030  e5 20 f1 ff ff ff ff 01  44 eb 08 6b 08 3b 04 bb  |. ......D..k.;=
+..|
+00000040  ee ff ff ff ff ff 00 ff  ff ff 00 ff 0c 20 0f 52  |............. =
+.R|
+00000050  10 d8 00 ff ff ff ff ff  ff ff ff ff ff ff ff ff  |..............=
+..|
+00000060  00 36 00 27 9e 49 ff ff  d9 f8 ff ff ff ff ff ff  |.6.'.I........=
+..|
+00000070
+zynq> sha256sum /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
+cf7b2e5b00388040786877de15f7594fcc064a1b7dbe34393a06d462cc1da9b0
+/sys/bus/spi/devices/spi0.0/spi-nor/sfdp
+zynq> cat /sys/kernel/debug/spi-nor/spi0.0/capabilities
+Supported read modes by the flash
+ 1S-1S-1S
+  opcode        0x03
+  mode cycles   0
+  dummy cycles  0
+ 1S-1S-2S
+  opcode        0x3b
+  mode cycles   0
+  dummy cycles  8
+ 1S-2S-2S
+  opcode        0xbb
+  mode cycles   0
+  dummy cycles  4
+ 1S-1S-4S
+  opcode        0x6b
+  mode cycles   0
+  dummy cycles  8
+ 1S-4S-4S
+  opcode        0xeb
+  mode cycles   2
+  dummy cycles  4
 
-[1]
-https://lore.kernel.org/all/20250324173242.1501003-10-arnd@kernel.org/T/#m265ef1255bed7e2ab47fbcf2242a2d98d4875417
+Supported page program modes by the flash
+ 1S-1S-1S
+  opcode        0x02
+ 1S-4S-4S
+  opcode        0x38
+zynq> cat /sys/kernel/debug/spi-nor/spi0.0/params
+name            (null)
+id              c2 9e 16 c2 9e 16
+size            4.00 MiB
+write size      1
+page size       256
+address nbytes  3
+flags           HAS_16BIT_SR
 
+opcodes
+ read           0xeb
+  dummy cycles  6
+ erase          0xd8
+ program        0x38
+ 8D extension   none
+
+protocols
+ read           1S-4S-4S
+ write          1S-4S-4S
+ register       1S-1S-1S
+
+erase commands
+ 20 (4.00 KiB) [1]
+ 52 (32.0 KiB) [2]
+ d8 (64.0 KiB) [3]
+ c7 (4.00 MiB)
+
+sector map
+ region (in hex)   | erase mask | overlaid
+ ------------------+------------+----------
+ 00000000-003fffff |     [   3] | no
+zynq> dd if=3D/dev/urandom of=3D/tmp/spi_test bs=3D1M count=3D2
+2+0 records in
+2+0 records out
+2097152 bytes (2.0MB) copied, 0.084038 seconds, 23.8MB/s
+zynq> mtd_debug erase /dev/mtd0 0 2097152
+Erased 2097152 bytes from address 0x00000000 in flash
+zynq> mtd_debug read /dev/mtd0 0 2097152 /tmp/spi_read
+Copied 2097152 bytes from address 0x00000000 in flash to /tmp/spi_read
+zynq> hexdump /tmp/spi_read
+0000000 ffff ffff ffff ffff ffff ffff ffff ffff
+*
+0200000
+zynq> sha256sum /tmp/spi_read
+4bda3a28f4ffe603c0ec1258c0034d65a1a0d35ab7bd523a834608adabf03cc5  /tmp/spi_=
+read
+zynq> mtd_debug write /dev/mtd0 0 2097152 /tmp/spi_test
+Copied 2097152 bytes from /tmp/spi_test to address 0x00000000 in flash
+zynq> mtd_debug read /dev/mtd0 0 2097152 /tmp/spi_read
+Copied 2097152 bytes from address 0x00000000 in flash to /tmp/spi_read
+zynq> sha256sum /tmp/spi*
+0be542d171336e052532d4b4f50b148293f7436f640211644df075da8682f54a  /tmp/spi_=
+read
+0be542d171336e052532d4b4f50b148293f7436f640211644df075da8682f54a  /tmp/spi_=
+test
+zynq> mtd_debug erase /dev/mtd0 0 2097152
+Erased 2097152 bytes from address 0x00000000 in flash
+zynq> mtd_debug read /dev/mtd0 0 2097152 /tmp/spi_read
+Copied 2097152 bytes from address 0x00000000 in flash to /tmp/spi_read
+zynq> sha256sum /tmp/spi*
+4bda3a28f4ffe603c0ec1258c0034d65a1a0d35ab7bd523a834608adabf03cc5  /tmp/spi_=
+read
+0be542d171336e052532d4b4f50b148293f7436f640211644df075da8682f54a  /tmp/spi_=
+test
+zynq> mtd_debug info /dev/mtd0
+mtd.type =3D MTD_NORFLASH
+mtd.flags =3D MTD_CAP_NORFLASH
+mtd.size =3D 4194304 (4M)
+mtd.erasesize =3D 65536 (64K)
+mtd.writesize =3D 1
+mtd.oobsize =3D 0
+regions =3D 0
+
+Cheng Ming Lin <linchengming884@gmail.com> =E6=96=BC 2025=E5=B9=B44=E6=9C=
+=887=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=883:59=E5=AF=AB=E9=81=93=
+=EF=BC=9A
+>
+> From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+>
+> SFDP of MX25L3255E is JESD216, which does not include the Quad
+> Enable bit Requirement in BFPT. As a result, during BFPT parsing,
+> the quad_enable method is not set to spi_nor_sr1_bit6_quad_enable.
+> Therefore, it is necessary to correct this setting by late_init.
+>
+> In addition, MX25L3255E also supports 1-4-4 page program in 3-byte
+> address mode. However, since the 3-byte address 1-4-4 page program
+> is not defined in SFDP, it needs to be configured in late_init.
+>
+> Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
 > ---
->  lib/tests/slub_kunit.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/lib/tests/slub_kunit.c b/lib/tests/slub_kunit.c
-> index d47c472b0520..f1bc30be6503 100644
-> --- a/lib/tests/slub_kunit.c
-> +++ b/lib/tests/slub_kunit.c
-> @@ -323,6 +323,8 @@ static struct kunit_suite test_suite = {
->  	.init = test_init,
->  	.test_cases = test_cases,
->  };
+>  drivers/mtd/spi-nor/macronix.c | 30 ++++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+>
+> diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macroni=
+x.c
+> index 07e0bd0b70a0..4bbd3b651cec 100644
+> --- a/drivers/mtd/spi-nor/macronix.c
+> +++ b/drivers/mtd/spi-nor/macronix.c
+> @@ -58,6 +58,31 @@ macronix_qpp4b_post_sfdp_fixups(struct spi_nor *nor)
+>         return 0;
+>  }
+>
+> +static int
+> +mx25l3255e_late_init_fixups(struct spi_nor *nor)
+> +{
+> +       /*
+> +        * SFDP of MX25L3255E is JESD216, which does not include the Quad
+> +        * Enable bit Requirement in BFPT. As a result, during BFPT parsi=
+ng,
+> +        * the quad_enable method is not set to spi_nor_sr1_bit6_quad_ena=
+ble.
+> +        * Therefore, it is necessary to correct this setting by late_ini=
+t.
+> +        */
+> +       nor->params->quad_enable =3D spi_nor_sr1_bit6_quad_enable;
 > +
->  kunit_test_suite(test_suite);
->  
-> +MODULE_DESCRIPTION("KUnit tests for SLUB allocator");
->  MODULE_LICENSE("GPL");
-
+> +       /*
+> +        * In addition, MX25L3255E also supports 1-4-4 page program in 3-=
+byte
+> +        * address mode. However, since the 3-byte address 1-4-4 page pro=
+gram
+> +        * is not defined in SFDP, it needs to be configured in late_init=
+.
+> +        */
+> +       struct spi_nor_flash_parameter *params =3D nor->params;
+> +
+> +       params->hwcaps.mask |=3D SNOR_HWCAPS_PP_1_4_4;
+> +       spi_nor_set_pp_settings(&params->page_programs[SNOR_CMD_PP_1_4_4]=
+,
+> +                               SPINOR_OP_PP_1_4_4, SNOR_PROTO_1_4_4);
+> +
+> +       return 0;
+> +}
+> +
+>  static const struct spi_nor_fixups mx25l25635_fixups =3D {
+>         .post_bfpt =3D mx25l25635_post_bfpt_fixups,
+>         .post_sfdp =3D macronix_qpp4b_post_sfdp_fixups,
+> @@ -67,6 +92,10 @@ static const struct spi_nor_fixups macronix_qpp4b_fixu=
+ps =3D {
+>         .post_sfdp =3D macronix_qpp4b_post_sfdp_fixups,
+>  };
+>
+> +static const struct spi_nor_fixups mx25l3255e_fixups =3D {
+> +       .late_init =3D mx25l3255e_late_init_fixups,
+> +};
+> +
+>  static const struct flash_info macronix_nor_parts[] =3D {
+>         {
+>                 .id =3D SNOR_ID(0xc2, 0x20, 0x10),
+> @@ -199,6 +228,7 @@ static const struct flash_info macronix_nor_parts[] =
+=3D {
+>         }, {
+>                 /* MX25L3255E */
+>                 .id =3D SNOR_ID(0xc2, 0x9e, 0x16),
+> +               .fixups =3D &mx25l3255e_fixups,
+>         },
+>         /*
+>          * This spares us of adding new flash entries for flashes that ca=
+n be
+> --
+> 2.25.1
+>
 
