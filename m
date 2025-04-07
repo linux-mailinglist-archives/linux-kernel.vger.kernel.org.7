@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-592645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6BA8A7EFA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 23:13:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2C36A7EFA6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 23:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1D621894611
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:13:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D66618984E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD722561A9;
-	Mon,  7 Apr 2025 21:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F63B2566E3;
+	Mon,  7 Apr 2025 21:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CCEP7HrN"
-Received: from mail-ot1-f74.google.com (mail-ot1-f74.google.com [209.85.210.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SXZQH6Rh"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046812561A5
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 21:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19072561BB
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 21:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744060247; cv=none; b=chyVmjfW4vYgbhywxSf6NRHQaWnIr4LquHDdBGJos3SIpq9lFyP5TbhFkpPWfI37r3CLAlEaOjMASITQmtRu3nuCiq/TJHQkIdzUmqJr13gpZ9V9Fi1C9Wr+FRl3K5PV8NcxvE78tr+NRNZ+1ho13xfPDvNPxffzL90kqzU4KgU=
+	t=1744060249; cv=none; b=IjRQkTYdKQL3sCmepAA5R1YKbwJu0fAylYZyDdHsym8YKq/JzlJeSlTFShtzhHraAB/rEXILodhBZpPTbGWA/VoKCWedNUeAxgJu4NQirzjBTuxpbWtoDpHq8vcIdaCT1WSJ5LxSdqV2kPtOuaLNtBNYFZ7wUNo9rJ3a+YjxKSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744060247; c=relaxed/simple;
-	bh=DOdUTxLI7/zQjgCEpln88RgVE7J5L5+nYgmvVB4LmPU=;
+	s=arc-20240116; t=1744060249; c=relaxed/simple;
+	bh=j+ajFhze8XNvNedW0+qQsxa4xJpNyLgqbtH3uNHZnh4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=ZL/DwHzHJeUG/yUvI1r5SQsj23E/lVs2zxEJOiYHkKX5X6WSREsDprNxdCegC4xhIiWsHKKYQu1EvA7DyJHuJiWqJkR5g+f5p2OjaXJCthYTIzar+jk5quJmlCvy/sFQIBXTY11Y5tyGEDhNmLxmPiZcKCMi1GiodaBQ1bzoNEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CCEP7HrN; arc=none smtp.client-ip=209.85.210.74
+	 To:Content-Type; b=sLf6q0KMc814U5PcrT6yC6vAFFhVgOcPBtSI9L+dgbtMuann2YTLHyIiA3JV+lID/nbF5viynfOh6kEcdvdWqeJgDA5trXzLLcFTDveEO8FeP8WVB3f9e0I5pKlpqnNeTghe4YBf3r2avP4KGsV5VL58G6Lg2PPWrPKlJaQs1Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SXZQH6Rh; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-ot1-f74.google.com with SMTP id 46e09a7af769-72b881599f6so4481612a34.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 14:10:45 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-af91ea9e885so4197482a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 14:10:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744060245; x=1744665045; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1744060247; x=1744665047; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=bbV+FoNiQvVRc13/UCAfNK3Jak/b5U1tJ5tpMxpqA0g=;
-        b=CCEP7HrNwBRsKmyyVSru7yW+4opRoVEczz/hVTAnlXjP8M9MuBUJ0qcIkrkB5Iu7p1
-         lQsQm/QGLdPJJ72rputOtaBQ90PSdIpa5FwCHmtGgl26YX/WsNWk1jjWEDyOgMGFEZUX
-         GAHkYzXMBBxYrwNqe4BRR4DUSFTQ2vZgqQW50QS8CsjTJGsTuQsvJfNBCXKL77DOvRSE
-         FESa8h7Pg8Ve4s8QD51wnGSrc2TyzWR7ceNUme/X/zkGsmLgTTd4Yi/vrwDWWUFh8+Si
-         wUSPklJvK82AgPKa5t5dbOWKttlKO0Z9vuXDK+m8y3B/V5XtaapyBYZpdV568tuHx+r3
-         CVLA==
+        bh=CHpmhSJgyl8CfNQkTk9ozGn6lbmpXan8KmxzNdnU62A=;
+        b=SXZQH6Rhw68T0VZ1RYwjBm+YCrN1K5CHQJ8oD+lV/710ZjJWGZq21ThaVOCEbt7vvx
+         LgAe4AO+ASMkEyMBFrsP1hqSZA9H33CduUvbVwJBYRu9DclyRXuS47dXZTDQkqVd1o2r
+         gmJ4BqVS4wo8LtvWpkYs2A8ArdrliDu4ylZw7wjSk+o+Er4Sjub2DDRE9iM3YY14UG8/
+         9lBi3ZpzU4WNVLF30ijvjmqi+AoH78d9YH9JeN6f2TG3YU+zqkiBUYS0qQJHj7tsEIGF
+         //ue5StwhfLf6T06OQcqnVo+NsN0LXjR994hMsDd+txqkVdzOnegY+nFm/yndMwLKPGm
+         4YMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744060245; x=1744665045;
+        d=1e100.net; s=20230601; t=1744060247; x=1744665047;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bbV+FoNiQvVRc13/UCAfNK3Jak/b5U1tJ5tpMxpqA0g=;
-        b=i0uZhHZNaQFSgGpOB0mTiKCwPbFGFcWB+/KQp8qvxj0MCFKMTZxQipGHttcIfXrhA3
-         rZWIKN+SLpW8Vhjcl9GWrLqzs4DccYC8DVdP4kpZhNUVpIw+u6nb1XuVOwYQEovd4KEn
-         aS14btcYaE5xf1WLbOXDUngN7srS7mzMcm/8o1mY82MNNiUDlFOXc2WwbH4e+JMSj+ZS
-         s21kqLi0pWarzSEh0y5jl8JR7g80TH+xzSGHW7T9L8Xh5AcIpXo9SK64Rf60sQjZ8HXU
-         IjapaWNFWw4R44wNj+HTBpNlCZJ3TXtAdg6ANDonOZGskrPuQ89l3kZwYaEq6rUMeZBW
-         ex3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVu5h+z9RhYG5H/SjTwOYOXwT9Py+iAtr61YcsmaJLMd6BuDYdZBFrBAvl+39PytY+WVH/UA+dT/RurqNY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2/jLKLQLtajg980QxD5YCD3AXa26uTsJJyGeC21eUUtPION3z
-	MFpesz4Mzznpmi7fOzagkrouTHJViHuk+AXZ0rUXEkXlRIe08oxlirVOPf1YcckdV2FVmqMSQGd
-	qkbYj5Q==
-X-Google-Smtp-Source: AGHT+IHvSiuBOO02/UbSYhhz96i5QSBrJEvlzEK8IJSZdcVPKNE6XbUiOCTXlBXY1mne4J6Eb41byqs/Fhez
-X-Received: from oacsc18.prod.google.com ([2002:a05:6871:5e12:b0:2b8:e26f:1d53])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6830:d8c:b0:72b:87bd:ad47
- with SMTP id 46e09a7af769-72e366b0c07mr8386588a34.3.1744060245194; Mon, 07
- Apr 2025 14:10:45 -0700 (PDT)
-Date: Mon,  7 Apr 2025 14:09:34 -0700
+        bh=CHpmhSJgyl8CfNQkTk9ozGn6lbmpXan8KmxzNdnU62A=;
+        b=CjZIXcY+Q+KZyCDalRvTVx74zWyFuya/djXz6ZV6ionqcmJ4Zx24SBz5X6aoaApZS9
+         xIrarkvh27eKiuYTVPdWEY8zUwwI8BoIjbcIO6PrCbZhkiathwK3gwxWfnUjna4nO78x
+         Ril4bGEcEFJ4COQkYARod0BP2GB/SHOAH4mTR3DKmYEy1NgC3RIcvTAkmTlJYdoSbSmG
+         dZaNlI81EHHqvkdEIEfZfcQgpC/pm9M773j//jCDmVhV55DQASGi6XPM5TeNhGva1e+1
+         eNfy2QbsO7mNybyhovrrpb+L1n/v9c1aufcumOJ7aD9NImSf7RQigov6aBqFkgvjoPEs
+         0nCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTQb+F1h/EeL7P3OAI30nlk/Xzh/f34SZ2eB6ODO8Zn9rYunt1pk3Njb7ncwmV+EZV90qFPWnWwUbyasY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg5L/wFKh9+TP8mq40qtyIKlv9kkemhxy+PMksDMn9DAPh0G72
+	i+nrt87y3f3ZC7yWO6uzFShnE6Ctl2UW0PXnvgFh3Z0rCij3uLql4Yqx7BBbBKwDFknkaFbGv2Z
+	PmUKW2g==
+X-Google-Smtp-Source: AGHT+IEwSvokNi/bh76gbjqrB9lCNL67U9jQB6qnUBpqgfqIQSvWOOeL5/jsukJeGPYmZaTV7kgFf9IZb7nR
+X-Received: from plhu6.prod.google.com ([2002:a17:903:1246:b0:223:f321:1a96])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:98b:b0:224:1074:63a2
+ with SMTP id d9443c01a7336-22a8a8cf281mr180860945ad.43.1744060247123; Mon, 07
+ Apr 2025 14:10:47 -0700 (PDT)
+Date: Mon,  7 Apr 2025 14:09:35 -0700
 In-Reply-To: <20250407210937.131681-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250407210937.131681-1-irogers@google.com>
 X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250407210937.131681-14-irogers@google.com>
-Subject: [PATCH v3 13/16] perf intel-tpebs: Use stats for retirement latency statistics
+Message-ID: <20250407210937.131681-15-irogers@google.com>
+Subject: [PATCH v3 14/16] perf stat: Add mean, min, max and last --tpebs-mode options
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -88,61 +88,155 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-struct stats provides access to mean, min and max. It also provides
-uniformity with statistics code used elsewhere in perf.
+Add command line configuration option for how retirement latency
+events are combined. The default "mean" gives the average of
+retirement latency. "min" or "max" give the smallest or largest
+retirment latency times respectively. "last" uses the last retirment
+latency sample's time.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/intel-tpebs.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ tools/perf/Documentation/perf-stat.txt |  7 +++++++
+ tools/perf/builtin-stat.c              | 27 ++++++++++++++++++++++++++
+ tools/perf/util/intel-tpebs.c          | 20 ++++++++++++++++++-
+ tools/perf/util/intel-tpebs.h          |  8 ++++++++
+ 4 files changed, 61 insertions(+), 1 deletion(-)
 
+diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
+index 2bc063672486..61d091670dee 100644
+--- a/tools/perf/Documentation/perf-stat.txt
++++ b/tools/perf/Documentation/perf-stat.txt
+@@ -506,6 +506,13 @@ this option is not set. The TPEBS hardware feature starts from Intel Granite
+ Rapids microarchitecture. This option only exists in X86_64 and is meaningful on
+ Intel platforms with TPEBS feature.
+ 
++--tpebs-mode=[mean|min|max|last]::
++Set how retirement latency events have their sample times
++combined. The default "mean" gives the average of retirement
++latency. "min" or "max" give the smallest or largest retirment latency
++times respectively. "last" uses the last retirment latency sample's
++time.
++
+ --td-level::
+ Print the top-down statistics that equal the input level. It allows
+ users to print the interested top-down metrics level instead of the
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 80e491bd775b..4adf2ae53b11 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -2327,6 +2327,30 @@ static void setup_system_wide(int forks)
+ 	}
+ }
+ 
++static int parse_tpebs_mode(const struct option *opt, const char *str,
++			    int unset __maybe_unused)
++{
++	enum tpebs_mode *mode = opt->value;
++
++	if (!strcasecmp("mean", str)) {
++		*mode = TPEBS_MODE__MEAN;
++		return 0;
++	}
++	if (!strcasecmp("min", str)) {
++		*mode = TPEBS_MODE__MIN;
++		return 0;
++	}
++	if (!strcasecmp("max", str)) {
++		*mode = TPEBS_MODE__MAX;
++		return 0;
++	}
++	if (!strcasecmp("last", str)) {
++		*mode = TPEBS_MODE__LAST;
++		return 0;
++	}
++	return -1;
++}
++
+ int cmd_stat(int argc, const char **argv)
+ {
+ 	struct opt_aggr_mode opt_mode = {};
+@@ -2431,6 +2455,9 @@ int cmd_stat(int argc, const char **argv)
+ #ifdef HAVE_ARCH_X86_64_SUPPORT
+ 		OPT_BOOLEAN(0, "record-tpebs", &tpebs_recording,
+ 			"enable recording for tpebs when retire_latency required"),
++		OPT_CALLBACK(0, "tpebs-mode", &tpebs_mode, "tpebs-mode",
++			"Mode of TPEBS recording: mean, min or max",
++			parse_tpebs_mode),
+ #endif
+ 		OPT_UINTEGER(0, "td-level", &stat_config.topdown_level,
+ 			"Set the metrics level for the top-down statistics (0: max level)"),
 diff --git a/tools/perf/util/intel-tpebs.c b/tools/perf/util/intel-tpebs.c
-index a9446e7a1c5c..de9fea601964 100644
+index de9fea601964..6b00bd5b0af1 100644
 --- a/tools/perf/util/intel-tpebs.c
 +++ b/tools/perf/util/intel-tpebs.c
-@@ -18,6 +18,7 @@
- #include "evsel.h"
- #include "mutex.h"
- #include "session.h"
-+#include "stat.h"
- #include "tool.h"
- #include "cpumap.h"
- #include "metricgroup.h"
-@@ -42,12 +43,8 @@ struct tpebs_retire_lat {
- 	struct evsel *evsel;
- 	/** @event: Event passed to perf record. */
+@@ -31,6 +31,7 @@
+ #define PERF_DATA		"-"
+ 
+ bool tpebs_recording;
++enum tpebs_mode tpebs_mode;
+ static LIST_HEAD(tpebs_results);
+ static pthread_t tpebs_reader_thread;
+ static struct child_process tpebs_cmd;
+@@ -45,6 +46,8 @@ struct tpebs_retire_lat {
  	char *event;
--	/* Count of retire_latency values found in sample data */
--	size_t count;
--	/* Sum of all the retire_latency values in sample data */
--	int sum;
--	/* Average of retire_latency, val = sum / count */
--	double val;
-+	/** @stats: Recorded retirement latency stats. */
-+	struct stats stats;
+ 	/** @stats: Recorded retirement latency stats. */
+ 	struct stats stats;
++	/** @last: Last retirement latency read. */
++	uint64_t last;
  	/* Has the event been sent to perf record? */
  	bool started;
  };
-@@ -145,9 +142,7 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
+@@ -142,6 +145,7 @@ static int process_sample_event(const struct perf_tool *tool __maybe_unused,
  	 * latency value will be used. Save the number of samples and the sum of
  	 * retire latency value for each event.
  	 */
--	t->count += 1;
--	t->sum += sample->retire_lat;
--	t->val = (double) t->sum / t->count;
-+	update_stats(&t->stats, sample->retire_lat);
++	t->last = sample->retire_lat;
+ 	update_stats(&t->stats, sample->retire_lat);
  	mutex_unlock(tpebs_mtx_get());
  	return 0;
- }
-@@ -522,7 +517,7 @@ int evsel__tpebs_read(struct evsel *evsel, int cpu_map_idx, int thread)
+@@ -517,7 +521,21 @@ int evsel__tpebs_read(struct evsel *evsel, int cpu_map_idx, int thread)
  			return ret;
  		mutex_lock(tpebs_mtx_get());
  	}
--	val = rint(t->val);
-+	val = rint(t->stats.mean);
+-	val = rint(t->stats.mean);
++	switch (tpebs_mode) {
++	case TPEBS_MODE__MIN:
++		val = rint(t->stats.min);
++		break;
++	case TPEBS_MODE__MAX:
++		val = rint(t->stats.max);
++		break;
++	case TPEBS_MODE__LAST:
++		val = t->last;
++		break;
++	default:
++	case TPEBS_MODE__MEAN:
++		val = rint(t->stats.mean);
++		break;
++	}
  	mutex_unlock(tpebs_mtx_get());
  
  	if (old_count) {
+diff --git a/tools/perf/util/intel-tpebs.h b/tools/perf/util/intel-tpebs.h
+index 218a82866cee..9475e2e6ea74 100644
+--- a/tools/perf/util/intel-tpebs.h
++++ b/tools/perf/util/intel-tpebs.h
+@@ -8,7 +8,15 @@
+ struct evlist;
+ struct evsel;
+ 
++enum tpebs_mode {
++	TPEBS_MODE__MEAN,
++	TPEBS_MODE__MIN,
++	TPEBS_MODE__MAX,
++	TPEBS_MODE__LAST,
++};
++
+ extern bool tpebs_recording;
++extern enum tpebs_mode tpebs_mode;
+ 
+ int evsel__tpebs_open(struct evsel *evsel);
+ void evsel__tpebs_close(struct evsel *evsel);
 -- 
 2.49.0.504.g3bcea36a83-goog
 
