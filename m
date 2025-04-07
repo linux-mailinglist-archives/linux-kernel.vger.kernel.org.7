@@ -1,100 +1,97 @@
-Return-Path: <linux-kernel+bounces-591012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A917CA7D9A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:26:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8587A7D9AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F2AB166E4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:25:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D209188AFAA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98538227BA4;
-	Mon,  7 Apr 2025 09:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HA0tP20R"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330B322A1E5;
+	Mon,  7 Apr 2025 09:29:26 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B8914A82;
-	Mon,  7 Apr 2025 09:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F205E42A97
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 09:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744017942; cv=none; b=dh82K+DDEX/PMul2szhxStFxnSa60gIVgv9UuIFg+pieuq+zmeRkfo3Ylau73oehJPE2TYjKyL1zb/SMqGZvVTT8dcAsoer7L67nrHlKB0pufGU17Of88Qkr3VHB8RyXwUlfNJpBT/bXsWYq8ckvqFlXIebCgF7fiMWT1+IPKIQ=
+	t=1744018165; cv=none; b=UWB5aqXPFPWjoI3ltzU9KhzMWU4GtvZTWhd5+v5J6MO75kdkilNNi8JEukz9YromXT6Dg/V+tK+lx9464P5v3GvJYLNDaaaFvP8HxxNcSY+mtiOctfOJeEh1bDdFJ1bBR4JUTMcbMNBxLvCN9/UVxKWcxmRXWIFOQJEQ6egm+1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744017942; c=relaxed/simple;
-	bh=TIea3HR0WabIaCEMALu390cFpJtUiF5TcTQQ8YCUWQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tCudWS8bAeiA7ctgH7PW+ba3R7pp3+rQx7wpmPKuQcc7U0U2YpytCedYokpx4crFDpSnweztE3AswTtHeS851SLbji7zo7BzKJib1PBn4TJst7zuSv2LJ7/zhqoFYKTP45MSrX9Jx2/HX23IPn4KfhGVW4U9ngXx7vE1776GlqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HA0tP20R; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744017940; x=1775553940;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TIea3HR0WabIaCEMALu390cFpJtUiF5TcTQQ8YCUWQE=;
-  b=HA0tP20RoiPPg9ITEX3eVEHrVxJq+YMPeXOcj1QgnJt1V3d/41iw1YLK
-   wZPBhGaQF60dBE6XVWfozpZmNZ3j5L4eC+TC+XF5GI2W7z8jrLX6zRAXd
-   wMOSXIv53ZvZbJiCTHyrOh2XQhCfBBN8sCjp22/fC1NHs2paNkDQ2K0wy
-   +Olb//8zBMh/qUIzBZcc44hjzF5n1+RyEHoqHtDH14tiedzz4013zgC/k
-   NWC1tCzn1v4VZTZAGMckBOsB2JTQUxDIa0i1aM5eCUyogDubBPtOdPpt3
-   PxGGHTPFrEuJ9LPE4yzJpSiUl61hxcuJJ5tmbU4AWXyzAxsqIe2QUKUJb
-   A==;
-X-CSE-ConnectionGUID: be5EN/82RhqV3nuJMsOilQ==
-X-CSE-MsgGUID: 4aYYHBjFSaWBn89uyKUV7Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11396"; a="56763601"
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="56763601"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 02:25:39 -0700
-X-CSE-ConnectionGUID: 2l5//JO1RWGWyV5jJ2/czQ==
-X-CSE-MsgGUID: mUFE9s3vQ1ioQu6znzjMQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="132750919"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa003.jf.intel.com with ESMTP; 07 Apr 2025 02:25:37 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 139D5340; Mon, 07 Apr 2025 12:25:35 +0300 (EEST)
-Date: Mon, 7 Apr 2025 12:25:35 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Dionna Amalie Glaze <dionnaglaze@google.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Ard Biesheuvel <ardb+git@google.com>, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Borislav Petkov <bp@alien8.de>, 
-	Kevin Loughlin <kevinloughlin@google.com>
-Subject: Re: [PATCH v2 3/3] x86/boot: Implement early memory acceptance for
- SEV-SNP
-Message-ID: <ldrma6tce2bwhenu5kobjzvk7cz445ubfmpcynwadqudgvzuh3@aibigcdzui6m>
-References: <20250404082921.2767593-5-ardb+git@google.com>
- <20250404082921.2767593-8-ardb+git@google.com>
- <l6izksy3qtvo6t6l3v44xhuzmrnl2ijv7fx5ypvaz7kjxvpwhh@4zwlvxyfrp43>
- <CAMj1kXGwnTkb1bUDaRpkh3ES8thcUVQE7+qgfZQw+RORtvtv-g@mail.gmail.com>
- <CAAH4kHbxMDGQy3v9ef1ZdqK0TNzpm==BJgx1KiUpRP-CRKDx4w@mail.gmail.com>
+	s=arc-20240116; t=1744018165; c=relaxed/simple;
+	bh=z7t6QH+N2XUYtmtRBR++y9Nz0dDyYYhT9cPaHlAhx5w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ireqvwvjAO9UDxfucgVpHQmk3YN5cmKwKqF18l1t9dSzXOpFdQ+uK/ehDjPoIclNpTO4Nl292p3pTt/tBFP0waw7Zu8wlglbaMSnFnq0S07ReuMPrfnvoLyY226pPdF5GFZKeZzUQbbd1dHOAEjdlLXdJCgFRHhaXkqoeUV1XMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowAC39g7kmvNng3XXBg--.11322S2;
+	Mon, 07 Apr 2025 17:29:10 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: dpenkler@gmail.com,
+	gregkh@linuxfoundation.org,
+	matchstick@neverthere.org,
+	arnd@arndb.de,
+	dominik.karol.piatkowski@protonmail.com,
+	nathan@kernel.org,
+	niharchaithanya@gmail.com
+Cc: linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] staging: gpib: fmh_gpib: Remove unnecessary .owner assignment
+Date: Mon,  7 Apr 2025 17:26:32 +0800
+Message-Id: <20250407092632.2952200-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAH4kHbxMDGQy3v9ef1ZdqK0TNzpm==BJgx1KiUpRP-CRKDx4w@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAC39g7kmvNng3XXBg--.11322S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xr1UXw13tw4fCw4Duw43trb_yoW3trc_C3
+	40gF1xJF1xGay2v3WYq3W5ur92kFn8Xr4ftr1jqFZxAw43Xr4UArn5uFyYq3sxJFWUKFyU
+	Cr40qwsxuw13tjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbTAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8uwCF04k20xvY0x0EwIxGrw
+	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
+	14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
+	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxK
+	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI
+	0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfUe2-eDUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Fri, Apr 04, 2025 at 08:07:03AM -0700, Dionna Amalie Glaze wrote:
-> If the GHCB is available, we should always prefer it.
+Remove .owner field if calls are used which set it automatically.
+Generated by: scripts/coccinelle/api/platform_no_drv_owner.cocci.
 
-I believe we should consider the cost of code duplication in this
-situation.
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/staging/gpib/fmh_gpib/fmh_gpib.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-If the non-early version is only used in the kexec path, it will not be
-tested as frequently and could be more easily broken. I think it would be
-acceptable for kexec to be slightly slower if it results in more
-maintainable code.
-
+diff --git a/drivers/staging/gpib/fmh_gpib/fmh_gpib.c b/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
+index 53f4b3fccc3c..12d9e83e3156 100644
+--- a/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
++++ b/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
+@@ -1631,7 +1631,6 @@ MODULE_DEVICE_TABLE(of, fmh_gpib_of_match);
+ static struct platform_driver fmh_gpib_platform_driver = {
+ 	.driver = {
+ 		.name = DRV_NAME,
+-		.owner = THIS_MODULE,
+ 		.of_match_table = fmh_gpib_of_match,
+ 	},
+ 	.probe = &fmh_gpib_platform_probe
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.25.1
+
 
