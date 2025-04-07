@@ -1,117 +1,146 @@
-Return-Path: <linux-kernel+bounces-591821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A779AA7E5AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:08:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20F34A7E59D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84FD13BFA52
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:59:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2C14176619
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E36820767B;
-	Mon,  7 Apr 2025 15:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786E12054F5;
+	Mon,  7 Apr 2025 15:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YUitFDit";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0oy7WEbu"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZCBiS9n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C226D2063F9
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 15:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9022054E6;
+	Mon,  7 Apr 2025 15:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744041477; cv=none; b=lBrqTWfxrviPYTgItzLaiY9NoKcn8xz/VHouWsPquvLjYs/QmGf+d89KVmqpENvW42ed7IyW5BEeWRICX6kJ4tbyMk+Bm6tmgajvG/uiSSnLe1jSQLRq2Mkt/VWwWl71Olhp7naSdpUrzyvkIhHEuErAIVsSb4CiEvOZFKRhgy8=
+	t=1744041456; cv=none; b=qN6rhTeRqgnIGuQmwrHZqHB03bdMPCInnh4D19hCMdANrBOVcB+8vHLFzypyo30wjdP4ZIid5cx4ul1tcDMOg12vsf8paH/o5rvkt6MTwc0hS0LG3QzX4MRyHdW0oRqb3o8OO3QOKPBfgtEm1B7sYj20i+pwAulYzasRgi0AM8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744041477; c=relaxed/simple;
-	bh=NMtemmKnPmyQcs6axqNmBbUMi56qsYrZm/MNY3rHVaw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Sswi+ycxwHK5LwfaGDRWc5dbxWLKBFRx8lFLSlKWYFsguSdD3UWpSBfTI3p/EA2Ag50yArI3MbnZwhzHJ9Y3BOBVlNcf+OrDbFYCQpG7lh9fsQ5dOpjsQ1Y46idA4vGvmm23glxMHld0FUlYt0HjT6WXrKGlo95HB/v7XuFf3kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YUitFDit; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0oy7WEbu; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744041471;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0GEZ2YVGNjbG0flB6FM5Jwo67WRq8Fq4s1znrOXO320=;
-	b=YUitFDit1l1ulvjRVfD1lUjJvYd/W7Jhcb5snUDvaKUfXfpFdm0oF2he/Kb1TWi2GdSr2E
-	Co5KqqRZI1fYu/gEWlFU1M1QQdHF7qxI7UAgMeFePMsmZGEQmeqnbGgv7U28+CcZE6zXl/
-	rR+fNMIgK7P8WqXFP3Z5ns6QLs/jSg82pwc/WcbjJRf+z/+elVGhaCpCULztTGeGcvsP5G
-	H6t1pn/cWVEfYMfCXEKMJVhPHM9MJXuD/tykMqCXywGCdnK2j7oLGDGipwHu8+3Ow/w+8I
-	rG06Nbcvs6bVHLlMx9ufihAfSFZG39qMI4vlx92aHJ99UTR9iKii4JlHwMrO9w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744041471;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0GEZ2YVGNjbG0flB6FM5Jwo67WRq8Fq4s1znrOXO320=;
-	b=0oy7WEbu4uB8C6mb5fVgmtt0wZ1lrq5kOYB2xfwCKH6oOMZoh89spQzEht3etaSYGMw0UY
-	s6XiOC31oWAAOPAg==
-To: linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v11 08/19] futex: Acquire a hash reference in futex_wait_multiple_setup().
-Date: Mon,  7 Apr 2025 17:57:31 +0200
-Message-ID: <20250407155742.968816-9-bigeasy@linutronix.de>
-In-Reply-To: <20250407155742.968816-1-bigeasy@linutronix.de>
-References: <20250407155742.968816-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1744041456; c=relaxed/simple;
+	bh=P6WfDcKUG6ij+O3XNj8oJSkT957LTNnQmlpDyjZOrAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E4ZEBW5h4pJ2mjCY1MOhB6exiBX+01Q+RLyXHOzpkLt2fF+lL3s7W9UJ7b0Qh927l/14VxWjX3aHwOHv5g8Q5Qo2CKRnGe5z2Zw+1cGo5XUXVePp487SFXUZ2rdVRzWCRJxC89t4L+gLRbxL6DnHVJekV1JfgYCyOikopklZNSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZCBiS9n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75EE1C4CEDD;
+	Mon,  7 Apr 2025 15:57:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744041456;
+	bh=P6WfDcKUG6ij+O3XNj8oJSkT957LTNnQmlpDyjZOrAE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DZCBiS9nOSxiZcN7m5z0UG9ItN5pgt9XGQ+z+kz6T6gCVe2uFdzd6ylx8hwJih+he
+	 l0fEmrm/6/U6Rcg7FvJEXlwWz6rrUv1PZCSixGhKMAcrNNZSoAOiLGKcwEOf9ED9LA
+	 R+JjurDItjiKJVKA0i7Ex8b6XaMt/+5vRxA4dYT5v0J9Qi6EWHRZjn8qvzbjbo8br4
+	 R0TCsVaGKoUGKaewTu1n0Jl/XWDQI2Y9I3jtv6SBiJF2VupvWINP1o9R6ubsWAzqKP
+	 pEuZ8YXmHR1IZD6XVQf/y4ma6urkf0xa2QoH/WDU7LyhqeYwhZPwwNQXLegqj36/Ym
+	 NoVyXEi7ByxPw==
+Date: Mon, 7 Apr 2025 16:57:32 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Johann Neuhauser <jneuhauser@dh-electronics.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Liam Girdwood <lgirdwood@gmail.com>
+Subject: Re: [PATCH 0/3] regulator: userspace-consumer: Add regulator event
+ uevents
+Message-ID: <c74e44b7-87f7-46bd-93d7-fdb1568bae90@sirena.org.uk>
+References: <20250404134009.2610460-1-jneuhauser@dh-electronics.com>
+ <b5fa7d1a-16bf-4031-8990-f559cf589b67@sirena.org.uk>
+ <a18c4ad3b9f647c08d71b4550b5f1cf9@dh-electronics.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="DcO1LR1dPcZocI6S"
+Content-Disposition: inline
+In-Reply-To: <a18c4ad3b9f647c08d71b4550b5f1cf9@dh-electronics.com>
+X-Cookie: Meester, do you vant to buy a duck?
+
+
+--DcO1LR1dPcZocI6S
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-futex_wait_multiple_setup() changes task_struct::__state to
-!TASK_RUNNING and then enqueues on multiple futexes. Every
-futex_q_lock() acquires a reference on the global hash which is dropped
-later.
-If a rehash is in progress then the loop will block on
-mm_struct::futex_hash_bucket for the rehash to complete and this will
-lose the previously set task_struct::__state.
+On Mon, Apr 07, 2025 at 02:17:10PM +0000, Johann Neuhauser wrote:
+> From: Mark Brown <broonie@kernel.org>
+> >On Fri, Apr 04, 2025 at 03:40:06PM +0200, Johann Neuhauser wrote:
 
-Acquire a reference on the local hash to avoiding blocking on
-mm_struct::futex_hash_bucket.
+> >> This series adds support for regulator event reporting via uevents to =
+the
+> >> userspace-consumer regulator driver. The goal is to provide userspace =
+with
+> >> a straightforward mechanism to monitor and respond to important regula=
+tor
+> >> events such as overcurrent conditions, voltage changes, and enable/dis=
+able
+> >> transitions.
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- kernel/futex/waitwake.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> >This sounds like you're trying to use userspace-consumer in production
+> >rather than as a test bodge...   what's the actual use case here?
 
-diff --git a/kernel/futex/waitwake.c b/kernel/futex/waitwake.c
-index d52541bcc07e9..bd8fef0f8d180 100644
---- a/kernel/futex/waitwake.c
-+++ b/kernel/futex/waitwake.c
-@@ -406,6 +406,12 @@ int futex_wait_multiple_setup(struct futex_vector *vs,=
- int count, int *woken)
- 	int ret, i;
- 	u32 uval;
-=20
-+	/*
-+	 * Make sure to have a reference on the private_hash such that we
-+	 * don't block on rehash after changing the task state below.
-+	 */
-+	guard(private_hash)();
-+
- 	/*
- 	 * Enqueuing multiple futexes is tricky, because we need to enqueue
- 	 * each futex on the list before dealing with the next one to avoid
---=20
-2.49.0
+> We have a hardware setup where the USB-A port is directly connected (D+/D-
+> lines) to the SoC, while its VBUS line is driven by an external I=B2C-bas=
+ed PMIC.
+> If a connected USB device attempts to draw more than approximately 800mA,
+> the PMIC detects an overcurrent condition, automatically disables the out=
+put,
+> and communicates an overcurrent event via the regulator framework.
 
+You absolutely should not be using the userspace consumer for this.
+
+> Currently, the generic USB HCD drivers lack a built-in mechanism for hand=
+ling
+> or recovering from such regulator-related events, particularly for report=
+ing or
+> re-enabling regulator outputs after an OC condition occurs. The DA8xx OHCI
+> driver is one exception, as it indeed provides such functionality, but
+> integrating similar support into the generic USB HCD drivers seemed unlik=
+ely to
+> be accepted upstream.
+
+Why not?  This seems like a perfectly reasonable thing to want to do, if
+only as far as generating notifications to userspace.
+
+> While I was aware that using the userspace-consumer driver might be seen =
+as
+> somewhat of a workaround for special cases, I did not fully consider that=
+ it
+> was intended primarily as a temporary testing solution and perhaps not su=
+itable
+> for this kind of production usage. I'd be grateful for any suggestions or=
+ advice you
+> might have on the appropriate approach or alternative solutions you could
+> recommend for upstream integration.
+
+I'd expect the consumer driver to be listening for events and offering
+some sort of handling and/or interface for this that's joined up with
+whatever the consumer is doing.  That basically means that your initial
+thought above sounds about right to me.
+
+--DcO1LR1dPcZocI6S
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfz9esACgkQJNaLcl1U
+h9BMrgf9FRUpRdRSIzST7RGtwJ/rq8bRqv+jgbQq06eOIsvLQI+nLOZ+17Kc5CQe
+AvPXgaY2fXCuMz+Kctu7ytlRxOh/A3wCRd2i8pvgoVugMLMoxSLuoTmfaTp9Sba9
+y9dZWE8lxNfpjG5UU6JM5qNs1y8SH8iJ8YUpfkKhm/pJIPaxLfLWwYY/45Lpgz2c
+AYvAVEmZ0RyyO6Byp999PRVb3Tjhdnro8ulN0nhP3pU6k0AwSuU5x3468MkfyfMI
+a3BPI5EhYSMU9Np4BGkB0z4j5PU23ggUmfLEEm0h1lTPAErtJInpxEkYp8wuLsQ/
+yEyrcXpQJirBFyHVw8JQf/tDKJBPDA==
+=+dGy
+-----END PGP SIGNATURE-----
+
+--DcO1LR1dPcZocI6S--
 
