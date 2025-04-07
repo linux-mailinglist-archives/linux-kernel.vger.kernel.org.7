@@ -1,428 +1,310 @@
-Return-Path: <linux-kernel+bounces-591761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81A26A7E4DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:41:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D77B1A7E4FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8781242105A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:35:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32D20420485
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F821FFC79;
-	Mon,  7 Apr 2025 15:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0601FFC74;
+	Mon,  7 Apr 2025 15:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OXtxLSHw"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Z/Cp+2cz"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340B91FF7BE;
-	Mon,  7 Apr 2025 15:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73821FFC52;
+	Mon,  7 Apr 2025 15:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744040098; cv=none; b=iB4VPVrdN3StDxv0s/s9lMHkVQrNjCgnM4LyA+t+wWSDv7vd2aoOgISufhmLPqWwSdsdSzeLiluMHwxrZU9XFXSCRr4z4siqjMGdpyiXW+IzFMSNKu3Gr8Bpk3VmTBXmziZG1i5E8MP/EEC/9y3Laz1CLj8J5LpsJcAmXoNGqXE=
+	t=1744040114; cv=none; b=B9J9vXLPwJK1M1t7XbSR48JMNXgvAUcDOgEvTXPDwADEfytxRgMk/QLe3Y7zAhzZ+N/zvkKR/rXVdQOcnBrwWHATH51BBi9RuEqsWIKqYe3Pzv4pIutymL+vUPLGy1p0iLGPlzJG/LIX70vs0mXCgW06B1Iy58sA7kyDA77KNto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744040098; c=relaxed/simple;
-	bh=SXp863tEdsPOfVeUTQE2gJNqOf7wVYALK/7L1u5n6Y8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=B7PNKWEKJTAWqqQh4o2jXpDDeWzRetetygTCCr/1qevY78UpBUAygEKcDWTcVPwDh+cRMmYlvAwsowXSSf5mm+N47nVfiol3PkZ1RUg9P/0dJhh0mJsrDSOmhulcffi4vqLhF0rMyexhhejo1cpL/40B34tiJokSZnjab16Uhfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OXtxLSHw; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 537FYfZ4912281
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 7 Apr 2025 10:34:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744040081;
-	bh=Yf91FIV7pqdZEOqJ1VYC9DRC150PBhFLqKhIbEZVIuE=;
-	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=OXtxLSHwDAZ7flXI4OSGXuZRLwIv6GM5xuDcfEJcWCyX/tiqPh6bRiar/6T7OagNJ
-	 dm6oUSCOd9GNe6189Y3lzJk7ltEcjka7D+ECm7/Jvi9MFa4nB/u+zkblfG5NJd28gh
-	 +VWyTaITT1pzK3n/6WC1a64XtECX0ogMQggu3SQg=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 537FYf7l101679
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 7 Apr 2025 10:34:41 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 7
- Apr 2025 10:34:40 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 7 Apr 2025 10:34:40 -0500
-Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 537FYeNN090540;
-	Mon, 7 Apr 2025 10:34:40 -0500
-From: Bryan Brattlof <bb@ti.com>
-Date: Mon, 7 Apr 2025 10:34:40 -0500
-Subject: [PATCH v4 3/3] arm64: dts: ti: k3-am62l: add initial reference
- board file
+	s=arc-20240116; t=1744040114; c=relaxed/simple;
+	bh=UAiYR4HEjH4deRgvYsBVBXeSC80e5Vmf+5fBtyEwfWg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HeFhSnW3Hgsa9ML7HrBPbZ8l6shfh2PM3EbLOW35+70BM7W45LsrK8VDn726Wi2Q90LqHo/zLEUyC8NxayLMTo/366g8S+0h7ZF7yuzbYk73JnpyQ7UXUG0OTYz+Np87aaJRZZndCJwTJo4Pa4vpkNUoxHM690PtYP/VJL5GhIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Z/Cp+2cz; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1744040109;
+	bh=UAiYR4HEjH4deRgvYsBVBXeSC80e5Vmf+5fBtyEwfWg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Z/Cp+2czp8CCfjbd972Vib8FiGq1FXHgcmZ9XK7NshNhHqIhLtumqBWwW1wfWh63S
+	 +vcTWGYautqRiYzmOa7RxcAxsMVQLgaeky29Yf6Ztl97Ny/Y1x4jf6bLMcfFk4Ml25
+	 KWtqlYn1HujKMZzbTCoY+6YttWqQpItW6HBWLOuxERkPA2Ebg1atl0sUgaBq7qng+m
+	 SgTj9jATet1WxDNL1r0zBYfrZCB8knl27v84t8iRaJJCy9+YT6PJBQEuPt8LkVrf5b
+	 TGXsC1LhTlcC+jqfQvvMzGzlAY/ZjhiY1ovkVKYbOPQMelgh6GPdQcyQ0fkD0L2wHv
+	 lnkaIie4E+Inw==
+Received: from [IPv6:2606:6d00:11:e976::c41] (unknown [IPv6:2606:6d00:11:e976::c41])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3DC7A17E07FD;
+	Mon,  7 Apr 2025 17:35:07 +0200 (CEST)
+Message-ID: <c020b5d7dffba6238763a3b82e941a8c218e4dad.camel@collabora.com>
+Subject: Re: [PATCH v7 09/12] media: rkvdec: Add get_image_fmt ops
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Jonas Karlman <jonas@kwiboo.se>, Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Sebastian Fricke <sebastian.fricke@collabora.com>, Mauro Carvalho Chehab
+	 <mchehab@kernel.org>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Boris Brezillon
+ <boris.brezillon@collabora.com>, 	linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-rockchip@lists.infradead.org,
+ linux-staging@lists.linux.dev, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, Alex Bee <knaerzche@gmail.com>, Benjamin
+ Gaignard	 <benjamin.gaignard@collabora.com>, Detlev Casanova	
+ <detlev.casanova@collabora.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
+ Christopher Obbard <christopher.obbard@linaro.org>
+Date: Mon, 07 Apr 2025 11:35:05 -0400
+In-Reply-To: <cc53dbbf-405b-452b-b007-00588d6c8839@kwiboo.se>
+References: 
+	<20250225-rkvdec_h264_high10_and_422_support-v7-0-7992a68a4910@collabora.com>
+	 <20250225-rkvdec_h264_high10_and_422_support-v7-9-7992a68a4910@collabora.com>
+	 <e6b99109-bd35-46ff-a4e2-eb69b549dcbc@xs4all.nl>
+	 <77bdada5dce991842e377759c8e173ada115694f.camel@collabora.com>
+	 <47c0011f-693d-4c94-8a1b-f0174f3d5b89@xs4all.nl>
+	 <19a11d429d9078b82f27e108aa5ac80cc4041bef.camel@collabora.com>
+	 <cc53dbbf-405b-452b-b007-00588d6c8839@kwiboo.se>
+Organization: Collabora Canada
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.56.0 (3.56.0-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250407-am62lx-v4-3-ce97749b9eae@ti.com>
-References: <20250407-am62lx-v4-0-ce97749b9eae@ti.com>
-In-Reply-To: <20250407-am62lx-v4-0-ce97749b9eae@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Bryan Brattlof <bb@ti.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8855; i=bb@ti.com;
- h=from:subject:message-id; bh=sJU6QN41AvURPq4gvOMbnuJNjx0oXePdDpDxA/jZgGU=;
- b=owNCWmg5MUFZJlNZXl/zFgAAYn///v/rl6lt73ff7f/j3b1/jXM3e3cqrf9N36+c3flH6v+wA
- RswjtIDQGQBoaGgNAGgGgaMgAABkAAGmgNqGRoGg0aaMQMmnqZGmmmRpmp5TPVDoDIGTIBpkyAA
- BkMQYQaGmgAG1AepoA9TQaYh6g0Gmh6mg9IaaMgYQ9QGgYOTT1NBo0NDCaNNAxA0MRoyYjQAyNN
- AAyaaMJkGTAEDQYgyABkaAaaANBoAAyo49FJq4CRDT0nxUIE2F+5aV44a6QfiRAIZAdPwYs3ToZ
- ftGeAblRwAdHS9WZgX41ZsqQI9umKslWDT1yTvhhMLnJx18Ezfze/Ym5Mc1zaFJaDciX5VpQvBG
- AJvCo0IZY+DxalGMCGH18BYWdB2HmqpEZBcrH0AnB2u+6zdfkMd1V992deLBWmo2No/ouGeEeE8
- MoPgTI8YBpdbkkqyar+9EddENdcUVyLEOhVKx/cilHW7yE4JBQJ1aIH2Roy3aGs29K5SGMdQhJr
- /YwEqTsVNJhwrlkGwAS4/0oRbr0HODPEeUkGmyCLUsWJRx/4ZsOpygSE15cX+KM9twyuC5m6+QQ
- GGa7jnKE16wmzSylVjY+LOjFnAo0u6C5irREplCtc1GRj1o+YAg7WEL+0mT0nhBG2PS7FAZURry
- 1TL1fDbvRdyRThQkF5f8xY=
-X-Developer-Key: i=bb@ti.com; a=openpgp;
- fpr=D3D177E40A38DF4D1853FEEF41B90D5D71D56CE0
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
 
-From: Vignesh Raghavendra <vigneshr@ti.com>
+Le lundi 07 avril 2025 à 17:07 +0200, Jonas Karlman a écrit :
+> On 2025-04-07 16:59, Nicolas Dufresne wrote:
+> > Le lundi 07 avril 2025 à 16:17 +0200, Hans Verkuil a écrit :
+> > > On 07/04/2025 15:52, Nicolas Dufresne wrote:
+> > > > Le lundi 07 avril 2025 à 13:09 +0200, Hans Verkuil a écrit :
+> > > > > On 25/02/2025 10:40, Sebastian Fricke wrote:
+> > > > > > From: Jonas Karlman <jonas@kwiboo.se>
+> > > > > > 
+> > > > > > Add support for a get_image_fmt() ops that returns the required image
+> > > > > > format.
+> > > > > > 
+> > > > > > The CAPTURE format is reset when the required image format changes and
+> > > > > > the buffer queue is not busy.
+> > > > > > 
+> > > > > > Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> > > > > > Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+> > > > > > Tested-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+> > > > > > Tested-by: Christopher Obbard <chris.obbard@collabora.com>
+> > > > > > ---
+> > > > > >  drivers/staging/media/rkvdec/rkvdec.c | 49 +++++++++++++++++++++++++++++++++--
+> > > > > >  drivers/staging/media/rkvdec/rkvdec.h |  2 ++
+> > > > > >  2 files changed, 49 insertions(+), 2 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/staging/media/rkvdec/rkvdec.c b/drivers/staging/media/rkvdec/rkvdec.c
+> > > > > > index 70154948b4e32e2c439f259b0f1e1bbc8b52b063..5394079509305c619f1d0c1f542bfc409317c3b7 100644
+> > > > > > --- a/drivers/staging/media/rkvdec/rkvdec.c
+> > > > > > +++ b/drivers/staging/media/rkvdec/rkvdec.c
+> > > > > > @@ -111,15 +111,60 @@ static int rkvdec_try_ctrl(struct v4l2_ctrl *ctrl)
+> > > > > >  {
+> > > > > >  	struct rkvdec_ctx *ctx = container_of(ctrl->handler, struct rkvdec_ctx, ctrl_hdl);
+> > > > > >  	const struct rkvdec_coded_fmt_desc *desc = ctx->coded_fmt_desc;
+> > > > > > +	struct v4l2_pix_format_mplane *pix_mp = &ctx->decoded_fmt.fmt.pix_mp;
+> > > > > > +	enum rkvdec_image_fmt image_fmt;
+> > > > > > +	struct vb2_queue *vq;
+> > > > > > +	int ret;
+> > > > > > +
+> > > > > > +	if (desc->ops->try_ctrl) {
+> > > > > > +		ret = desc->ops->try_ctrl(ctx, ctrl);
+> > > > > > +		if (ret)
+> > > > > > +			return ret;
+> > > > > > +	}
+> > > > > > +
+> > > > > > +	if (!desc->ops->get_image_fmt)
+> > > > > > +		return 0;
+> > > > > >  
+> > > > > > -	if (desc->ops->try_ctrl)
+> > > > > > -		return desc->ops->try_ctrl(ctx, ctrl);
+> > > > > > +	image_fmt = desc->ops->get_image_fmt(ctx, ctrl);
+> > > > > > +	if (ctx->image_fmt == image_fmt)
+> > > > > > +		return 0;
+> > > > > > +
+> > > > > > +	if (rkvdec_is_valid_fmt(ctx, pix_mp->pixelformat, image_fmt))
+> > > > > > +		return 0;
+> > > > > > +
+> > > > > > +	/* format change not allowed when queue is busy */
+> > > > > > +	vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx,
+> > > > > > +			     V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
+> > > > > > +	if (vb2_is_busy(vq))
+> > > > > > +		return -EINVAL;
+> > > 
+> > > Looking closer, this code is just wrong. It does these format change
+> > > tests for any control, so if more controls are added in the future, then
+> > > those will be checked the same way, which makes no sense.
+> > 
+> > "Just wrong" should be kept for code that is semantically incorrect,
+> > just a suggestion for choice of wording.
+> > 
+> > > 
+> > > These tests belong to the actual control that you 'try'. In this case
+> > > rkvdec_h264_validate_sps(). This function already checks the width and
+> > > height, but it should also check the image format. It is all in the
+> > > wrong place.
+> 
+> Keep in mind that rkvdec_try_ctrl and rkvdec_s_ctrl are only used for
+> CID_STATELESS_H264_SPS (and in future also CID_STATELESS_HEVC_SPS) not
+> any other control, so this is already in the correct place?
+> 
+> Maybe the naming of the functions are too generic, they could be named
+> rkvdec_sps_try_ctrl and rkvdec_sps_s_ctrl or similar if that makes more
+> sense?
 
-Add the initial board file for the AM62L3's Evaluation Module.
+So we are missing that check for VP9? It will be needed for AV1 when
+rkvdec2 support gets added.
 
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
-Signed-off-by: Bryan Brattlof <bb@ti.com>
----
-Changes from v1:
- - switched to non-direct links so TRM updates are automatic
- - removed current-speed property from main_uart0
- - removed empty reserved-memory{} node
- - removed serial2 from aliases{} node
- - corrected main_uart0 pinmux
+Nicolas
 
-Changes from v2:
- - alphabetized phandles
- - corrected macros and node names for main_uart0 pinmux node
-
-Changes from v3:
- - added and enabled more nodes that have been validated
- - added link to data sheet which is now public
----
- arch/arm64/boot/dts/ti/k3-am62l3-evm.dts | 294 +++++++++++++++++++++++++++++++
- 1 file changed, 294 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-am62l3-evm.dts b/arch/arm64/boot/dts/ti/k3-am62l3-evm.dts
-new file mode 100644
-index 0000000000000..3007803ac3c35
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am62l3-evm.dts
-@@ -0,0 +1,294 @@
-+// SPDX-License-Identifier: GPL-2.0-only or MIT
-+/*
-+ * Device Tree file for the AM62L3 Evaluation Module
-+ * Copyright (C) 2024 Texas Instruments Incorporated - https://www.ti.com/
-+ *
-+ * Technical Reference Manual: https://www.ti.com/lit/pdf/sprujb4
-+ * Data Sheet: https://www.ti.com/lit/pdf/sprspa1
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+
-+#include "k3-am62l3.dtsi"
-+#include "k3-pinctrl.h"
-+
-+/ {
-+	compatible = "ti,am62l3-evm", "ti,am62l3";
-+	model = "Texas Instruments AM62L3 Evaluation Module";
-+
-+	chosen {
-+		stdout-path = &uart0;
-+	};
-+
-+	gpio_keys: gpio-keys {
-+		compatible = "gpio-keys";
-+		autorepeat;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usr_btn_pins_default>;
-+
-+		usr: button-usr {
-+			label = "User Key";
-+			linux,code = <BTN_0>;
-+			gpios = <&gpio0 90 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usr_led_pins_default>;
-+
-+		led-0 {
-+			label = "am62-sk:green:heartbeat";
-+			gpios = <&gpio0 123 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+			function = LED_FUNCTION_HEARTBEAT;
-+			default-state = "on";
-+		};
-+	};
-+
-+	memory@80000000 {
-+		reg = <0x00000000 0x80000000 0x00000000 0x80000000>;
-+		device_type = "memory";
-+		bootph-all;
-+	};
-+
-+	vcc_1v8: regulator-3 {
-+		/* output of TPS6282518DMQ */
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc_1v8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vcc_3v3_sys>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	vcc_3v3_sys: regulator-1 {
-+		/* output of LM61460-Q1 */
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc_3v3_sys";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&vmain_pd>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	vmain_pd: regulator-0 {
-+		/* TPS65988 PD CONTROLLER OUTPUT */
-+		bootph-all;
-+		compatible = "regulator-fixed";
-+		regulator-name = "vmain_pd";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+};
-+
-+&i2c0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c0_pins_default>;
-+	clock-frequency = <400000>;
-+	status = "okay";
-+	bootph-all;
-+
-+	eeprom@51 {
-+		/* AT24C512C-MAHM-T or M24512-DFMC6TG */
-+		compatible = "atmel,24c512";
-+		reg = <0x51>;
-+	};
-+};
-+
-+&i2c1 {
-+	pinctrl-0 = <&i2c1_pins_default>;
-+	pinctrl-names = "default";
-+	clock-frequency = <100000>;
-+	status = "okay";
-+	bootph-all;
-+
-+	exp1: gpio@22 {
-+		compatible = "ti,tca6424";
-+		reg = <0x22>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio-line-names = "", "",
-+			"UART1_FET_SEL", "MMC1_SD_EN",
-+			"VPP_EN", "EXP_PS_3V3_EN",
-+			"UART1_FET_BUF_EN", "",
-+			"DSI_GPIO0", "DSI_GPIO1",
-+			"", "BT_UART_WAKE_SOC_3V3",
-+			"USB_TYPEA_OC_INDICATION", "",
-+			"", "WLAN_ALERTn",
-+			"HDMI_INTn", "TEST_GPIO2",
-+			"MCASP0_FET_EN", "MCASP0_BUF_BT_EN",
-+			"MCASP0_FET_SEL", "DSI_EDID",
-+			"PD_I2C_IRQ", "IO_EXP_TEST_LED";
-+
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <91 IRQ_TYPE_EDGE_FALLING>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+
-+		pinctrl-0 = <&gpio0_ioexp_intr_pins_default>;
-+		pinctrl-names = "default";
-+		bootph-all;
-+	};
-+
-+	exp2: gpio@23 {
-+		compatible = "ti,tca6424";
-+		reg = <0x23>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio-line-names = "BT_EN_SOC", "VOUT0_FET_SEL0",
-+			"", "",
-+			"", "",
-+			"", "",
-+			"WL_LT_EN", "EXP_PS_5V0_EN",
-+			"TP45", "TP48",
-+			"TP46", "TP49",
-+			"TP47", "TP50",
-+			"GPIO_QSPI_NAND_RSTn", "GPIO_HDMI_RSTn",
-+			"GPIO_CPSW1_RST", "GPIO_CPSW2_RST",
-+			"", "GPIO_AUD_RSTn",
-+			"GPIO_eMMC_RSTn", "SoC_WLAN_SDIO_RST";
-+
-+		bootph-all;
-+	};
-+};
-+
-+&pmx0 {
-+	gpio0_ioexp_intr_pins_default: gpio0-ioexp-intr-default-pins {
-+		pinctrl-single,pins = <
-+			AM62LX_IOPAD(0x01b0, PIN_INPUT, 7)	 /* (B12) SPI0_D1.GPIO0_91 */
-+		>;
-+		bootph-all;
-+	};
-+
-+	i2c0_pins_default: i2c0-default-pins {
-+		pinctrl-single,pins = <
-+			AM62LX_IOPAD(0x01cc, PIN_INPUT_PULLUP, 0) /* (B7) I2C0_SCL */
-+			AM62LX_IOPAD(0x01d0, PIN_INPUT_PULLUP, 0) /* (A7) I2C0_SDA */
-+		>;
-+		bootph-all;
-+	};
-+
-+	i2c1_pins_default: i2c1-default-pins {
-+		pinctrl-single,pins = <
-+			AM62LX_IOPAD(0x01d4, PIN_INPUT_PULLUP, 0) /* (D7) I2C1_SCL */
-+			AM62LX_IOPAD(0x01d8, PIN_INPUT_PULLUP, 0) /* (A6) I2C1_SDA */
-+		>;
-+	};
-+
-+	mmc0_pins_default: mmc0-default-pins {
-+		pinctrl-single,pins = <
-+			AM62LX_IOPAD(0x0214, PIN_INPUT_PULLUP, 0) /* (D2) MMC0_CMD */
-+			AM62LX_IOPAD(0x020c, PIN_OUTPUT, 0)	 /* (B2) MMC0_CLK */
-+			AM62LX_IOPAD(0x0208, PIN_INPUT_PULLUP, 0) /* (D3) MMC0_DAT0 */
-+			AM62LX_IOPAD(0x0204, PIN_INPUT_PULLUP, 0) /* (D4) MMC0_DAT1 */
-+			AM62LX_IOPAD(0x0200, PIN_INPUT_PULLUP, 0) /* (C1) MMC0_DAT2 */
-+			AM62LX_IOPAD(0x01fc, PIN_INPUT_PULLUP, 0) /* (C2) MMC0_DAT3 */
-+			AM62LX_IOPAD(0x01f8, PIN_INPUT_PULLUP, 0) /* (C4) MMC0_DAT4 */
-+			AM62LX_IOPAD(0x01f4, PIN_INPUT_PULLUP, 0) /* (B3) MMC0_DAT5 */
-+			AM62LX_IOPAD(0x01f0, PIN_INPUT_PULLUP, 0) /* (A3) MMC0_DAT6 */
-+			AM62LX_IOPAD(0x01ec, PIN_INPUT_PULLUP, 0) /* (B4) MMC0_DAT7 */
-+		>;
-+		bootph-all;
-+	};
-+
-+	mmc1_pins_default: mmc1-default-pins {
-+		pinctrl-single,pins = <
-+			AM62LX_IOPAD(0x0230, PIN_INPUT, 0)	 /* (Y3) MMC1_CMD */
-+			AM62LX_IOPAD(0x0228, PIN_OUTPUT, 0)	 /* (Y2) MMC1_CLK */
-+			AM62LX_IOPAD(0x0224, PIN_INPUT, 0)	 /* (AA1) MMC1_DAT0 */
-+			AM62LX_IOPAD(0x0220, PIN_INPUT_PULLUP, 0) /* (Y4) MMC1_DAT1 */
-+			AM62LX_IOPAD(0x021c, PIN_INPUT_PULLUP, 0) /* (AA2) MMC1_DAT2 */
-+			AM62LX_IOPAD(0x0218, PIN_INPUT_PULLUP, 0) /* (AB2) MMC1_DAT3 */
-+			AM62LX_IOPAD(0x0234, PIN_INPUT, 0)	 /* (B6) MMC1_SDCD */
-+		>;
-+		bootph-all;
-+	};
-+
-+	uart0_pins_default: uart0-default-pins {
-+		pinctrl-single,pins = <
-+			AM62LX_IOPAD(0x01b4, PIN_INPUT, 0)	 /* (D13) UART0_RXD */
-+			AM62LX_IOPAD(0x01b8, PIN_OUTPUT, 0)	 /* (C13) UART0_TXD */
-+		>;
-+		bootph-all;
-+	};
-+
-+	uart1_pins_default: uart1-default-pins {
-+		pinctrl-single,pins = <
-+			AM62LX_IOPAD(0x0180, PIN_INPUT, 2)	 /* (A8) MCASP0_AXR3.UART1_CTSn */
-+			AM62LX_IOPAD(0x0184, PIN_OUTPUT, 2)	 /* (B10) MCASP0_AXR2.UART1_RTSn */
-+			AM62LX_IOPAD(0x0198, PIN_INPUT, 2)	 /* (C11) MCASP0_AFSR.UART1_RXD */
-+			AM62LX_IOPAD(0x019c, PIN_OUTPUT, 2)	 /* (A12) MCASP0_ACLKR.UART1_TXD */
-+		>;
-+		bootph-all;
-+	};
-+
-+	usb1_default_pins: usb1-default-pins {
-+		pinctrl-single,pins = <
-+			AM62LX_IOPAD(0x0248, PIN_INPUT | PIN_DS_PULLUD_ENABLE | PIN_DS_PULL_UP, 0) /* (A5) USB1_DRVVBUS */
-+		>;
-+	};
-+
-+	usr_btn_pins_default: usr-btn-default-pins {
-+		pinctrl-single,pins = <
-+			AM62LX_IOPAD(0x01ac, PIN_INPUT, 7)	 /* (E12) SPI0_D0.GPIO0_90 */
-+		>;
-+	};
-+
-+	usr_led_pins_default: usr-led-default-pins {
-+		pinctrl-single,pins = <
-+			AM62LX_IOPAD(0x0238, PIN_OUTPUT, 7)	 /* (D24) MMC1_SDWP.GPIO0_123 */
-+		>;
-+	};
-+};
-+
-+&sdhci0 {
-+	/* eMMC */
-+	pinctrl-0 = <&mmc0_pins_default>;
-+	pinctrl-names = "default";
-+	non-removable;
-+	status = "okay";
-+	bootph-all;
-+};
-+
-+&sdhci1 {
-+	/* SD/MMC */
-+	pinctrl-0 = <&mmc1_pins_default>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+	bootph-all;
-+};
-+
-+&uart0 {
-+	pinctrl-0 = <&uart0_pins_default>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+	bootph-all;
-+};
-+
-+&uart1 {
-+	pinctrl-0 = <&uart1_pins_default>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+	bootph-all;
-+};
-+
-+&usb1 {
-+	pinctrl-0 = <&usb1_default_pins>;
-+	pinctrl-names = "default";
-+	dr_mode = "host";
-+};
-+
-+&usbss1 {
-+	ti,vbus-divider;
-+	status = "okay";
-+};
+> 
+> Regards,
+> Jonas
+> 
+> > 
+> > We can do that too. Though, this was generalized since once you enable
+> > the other codecs, you endup with code duplication. I know this series
+> > is an extract from a larger one.
+> > 
+> > So let's suggest to make a helper that combines rkvdec_is_valid_fmt()
+> > and the busy check. Though on that, please reply to my comment below
+> > (which you skipped).
+> > 
+> > > 
+> > > > > 
+> > > > > This makes no sense to me. This just tries a control, and that should just
+> > > > > work, regardless of vb2_is_busy(). It's a 'try', so you are not actually
+> > > > > changing anything.
+> > > > 
+> > > > See comment below, notice that this code is only reached if the control
+> > > > introduce parameters that are not compatible with the current capture
+> > > > queue fmt. The entire function uses "success" early exit, so the
+> > > > further down you get in the function, the less likely your control is
+> > > > valid.
+> > > > 
+> > > > > 
+> > > > > > +
+> > > > > > +	return 0;
+> > > > > > +}
+> > > > > > +
+> > > > > > +static int rkvdec_s_ctrl(struct v4l2_ctrl *ctrl)
+> > > > > > +{
+> > > 
+> > > If there is a try_ctrl op specified, then the control framework
+> > > will call that first before calling s_ctrl. So any validation that
+> > > try_ctrl did does not need to be done again in s_ctrl.
+> > > 
+> > > The same comment with try_ctrl is valid here as well: if there are
+> > > image format checks that need to be done, then those need to be done
+> > > per control and not as a generic check. If new controls are added in
+> > > the future, then you don't want the same checks to apply to the new
+> > > controls as well.
+> > 
+> > I don't think the behaviour of try_ctrl and that being embedded in set
+> > calls was being questioned by anyone. Can you reply to the last
+> > paragraph below ?
+> > 
+> > > 
+> > > Regards,
+> > > 
+> > > 	Hans
+> > > 
+> > > > > > +	struct rkvdec_ctx *ctx = container_of(ctrl->handler, struct rkvdec_ctx, ctrl_hdl);
+> > > > > > +	const struct rkvdec_coded_fmt_desc *desc = ctx->coded_fmt_desc;
+> > > > > > +	struct v4l2_pix_format_mplane *pix_mp = &ctx->decoded_fmt.fmt.pix_mp;
+> > > > > > +	enum rkvdec_image_fmt image_fmt;
+> > > > > > +
+> > > > > > +	if (!desc->ops->get_image_fmt)
+> > > > > > +		return 0;
+> > > > > > +
+> > > > > > +	image_fmt = desc->ops->get_image_fmt(ctx, ctrl);
+> > > > > > +	if (ctx->image_fmt == image_fmt)
+> > > > > > +		return 0;
+> > > > > 
+> > > > > If you really can't set a control when the queue is busy, then that should
+> > > > > be tested here, not in try_ctrl. And then you return -EBUSY.
+> > > > > 
+> > > > > Am I missing something here?
+> > > > 
+> > > > When I reviewed, I had imagine that s_ctrl on a request would just run
+> > > > a try. Now that I read that more careful, I see that it does a true set
+> > > > on separate copy. So yes, this can safely be moved here.
+> > > > 
+> > > > Since you seem wondering "If you really can't set a control", let me
+> > > > explain what Jonas wants to protect against. RKVdec does not have any
+> > > > color conversion code, the header compound control (which header
+> > > > depends on the codec), contains details such as sub-sampling and color
+> > > > depth. Without color conversion, when the image format is locked (the
+> > > > busy queue), you can't request the HW to decode a frame witch does not
+> > > > fit. This could otherwise lead to buffer overflow in the HW,
+> > > > fortunately protected by the iommu, but you don't really want to depend
+> > > > on the mmu.
+> > > > 
+> > > > I've never used try_ctrl in my decade of v4l2, so obviously, now that I
+> > > > know that s_ctrl on request is not a try, I'm fine with rejecting this
+> > > > PR, sending a new version and making a PR again. But if I was to use
+> > > > this API in userspace, my intuitive expectation would be that this
+> > > > should fail try(), even if its very rarely valid to check the queue
+> > > > state in try control.
+> > 
+> > Here, since we seem to disagree on the behaviour try should have for
+> > this specific validation. What you asked on first pass is to make it so
+> > that TRY will succeed, and SET will fail. I don't really like that
+> > suggestion.
+> > 
+> > Nicolas
+> > 
+> > > > 
+> > > > Nicolas
+> > > > 
+> > > > > 
+> > > > > Regards,
+> > > > > 
+> > > > > 	Hans
+> > > > > 
+> > > > > > +
+> > > > > > +	ctx->image_fmt = image_fmt;
+> > > > > > +	if (!rkvdec_is_valid_fmt(ctx, pix_mp->pixelformat, ctx->image_fmt))
+> > > > > > +		rkvdec_reset_decoded_fmt(ctx);
+> > > > > >  
+> > > > > >  	return 0;
+> > > > > >  }
+> > > > > >  
+> > > > > >  static const struct v4l2_ctrl_ops rkvdec_ctrl_ops = {
+> > > > > >  	.try_ctrl = rkvdec_try_ctrl,
+> > > > > > +	.s_ctrl = rkvdec_s_ctrl,
+> > > > > >  };
+> > > > > >  
+> > > > > >  static const struct rkvdec_ctrl_desc rkvdec_h264_ctrl_descs[] = {
+> > > > > > diff --git a/drivers/staging/media/rkvdec/rkvdec.h b/drivers/staging/media/rkvdec/rkvdec.h
+> > > > > > index 6f8cf50c5d99aad2f52e321f54f3ca17166ddf98..e466a2753ccfc13738e0a672bc578e521af2c3f2 100644
+> > > > > > --- a/drivers/staging/media/rkvdec/rkvdec.h
+> > > > > > +++ b/drivers/staging/media/rkvdec/rkvdec.h
+> > > > > > @@ -73,6 +73,8 @@ struct rkvdec_coded_fmt_ops {
+> > > > > >  		     struct vb2_v4l2_buffer *dst_buf,
+> > > > > >  		     enum vb2_buffer_state result);
+> > > > > >  	int (*try_ctrl)(struct rkvdec_ctx *ctx, struct v4l2_ctrl *ctrl);
+> > > > > > +	enum rkvdec_image_fmt (*get_image_fmt)(struct rkvdec_ctx *ctx,
+> > > > > > +					       struct v4l2_ctrl *ctrl);
+> > > > > >  };
+> > > > > >  
+> > > > > >  enum rkvdec_image_fmt {
+> > > > > > 
+> > > > 
+> > 
 
 -- 
-2.48.1
-
+Nicolas Dufresne
+Principal Engineer at Collabora
 
