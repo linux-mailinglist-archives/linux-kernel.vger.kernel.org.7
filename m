@@ -1,225 +1,219 @@
-Return-Path: <linux-kernel+bounces-592586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72DFDA7EF22
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:22:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA0EA7EF51
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B64A4450EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:16:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F21D42624C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A532550BC;
-	Mon,  7 Apr 2025 20:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE891222560;
+	Mon,  7 Apr 2025 20:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="RxmnLzF2"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40154224234;
-	Mon,  7 Apr 2025 20:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UkfsFdNv";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="li9kf7/6";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UkfsFdNv";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="li9kf7/6"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3912222D5
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 20:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744056830; cv=none; b=MoBOO3g3FNTZZ8VPOLj7XQpbD2tSmgyc4T/waqc0OZLFySMHR1Jx98XMZQoV7kJ1E7zH3KP4uiNURhxE5wbJ3vvDI78LRJj2UmNb5qXE75cHgc/9HwZL2TcpGc6Vg2JkCuplPelUVMY4FK73Bw/wP7TmTP7RFnQeA5w1iKKiChw=
+	t=1744056848; cv=none; b=hLT/u+icpeJzmwX0GdYzKZDrjfR7zXLZHmSfiBdavvMtERY6VyUX23D24nI5ETpqxCnpd5yfoHbh7MX8VVDDkQysU4f24AcfOBC+iiKXwPsqtNkz/NupGiI2rIFhuwZOLl4yBTMq4R27dJkoyU8Hc9ixeQDiIEbkNmhAs7LB/kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744056830; c=relaxed/simple;
-	bh=kNfVG+yZpaLRq1OoCyzPL29BMRStZnd75S1TRZZzGyA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HPMGQC9BLIr+5cPA96O7jJKJK362Be/4nB7fNsa6DKG4nQuDbce8Pc2lh3Zv91xVjHirTuYzU/2fLRkHwm0scQT+URcit0berLRR2vTE9ihBDbxaz2fRd9vBb/u7cxvZl1CyWG5Hda70fi9LiHB8MAU3LsMYdx6FGxph7Kkm3hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=RxmnLzF2; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from romank-3650.corp.microsoft.com (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 7F22C2113E83;
-	Mon,  7 Apr 2025 13:13:42 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7F22C2113E83
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1744056822;
-	bh=SIS7Ml4VZ/wIhHt29L18904r+oPLJIB7CTsSxudVE84=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RxmnLzF2XngTwFiyKKH5hdLGJE0nEzHXDwMz6IcLNsXAa5X+x7hkym2LCUETAmXjE
-	 A1I7K+DEKgTBLx6zwLoYV5xzk7tSpZv8IQs3J34wsuW+/Nta1VC3/xiYcpGcRHCeP2
-	 CeHyVMWlrCbQLtmhnn2JQvXbrAot+cu6qCgG061U=
-From: Roman Kisel <romank@linux.microsoft.com>
-To: arnd@arndb.de,
-	bhelgaas@google.com,
-	bp@alien8.de,
-	catalin.marinas@arm.com,
-	conor+dt@kernel.org,
-	dan.carpenter@linaro.org,
-	dave.hansen@linux.intel.com,
-	decui@microsoft.com,
-	haiyangz@microsoft.com,
-	hpa@zytor.com,
-	joey.gouly@arm.com,
-	krzk+dt@kernel.org,
-	kw@linux.com,
-	kys@microsoft.com,
-	lenb@kernel.org,
-	lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org,
-	mark.rutland@arm.com,
-	maz@kernel.org,
-	mingo@redhat.com,
-	oliver.upton@linux.dev,
-	rafael@kernel.org,
-	robh@kernel.org,
-	rafael.j.wysocki@intel.com,
-	ssengar@linux.microsoft.com,
-	sudeep.holla@arm.com,
-	suzuki.poulose@arm.com,
-	tglx@linutronix.de,
-	wei.liu@kernel.org,
-	will@kernel.org,
-	yuzenghui@huawei.com,
-	devicetree@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-acpi@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	x86@kernel.org
-Cc: apais@microsoft.com,
-	benhill@microsoft.com,
-	bperkins@microsoft.com,
-	sunilmut@microsoft.com
-Subject: [PATCH hyperv-next v7 11/11] PCI: hv: Get vPCI MSI IRQ domain from DeviceTree
-Date: Mon,  7 Apr 2025 13:13:36 -0700
-Message-ID: <20250407201336.66913-12-romank@linux.microsoft.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250407201336.66913-1-romank@linux.microsoft.com>
-References: <20250407201336.66913-1-romank@linux.microsoft.com>
+	s=arc-20240116; t=1744056848; c=relaxed/simple;
+	bh=m2r4l3UGzxwc1/hUk7+vO4U3JDWDIQ3dvvFsqPHtTBQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O5xnA+3I676ULe6A8vNlt2WM3AGmmKfDmmTtwGQqKknXNFa/ms3ZIG2F890ri3DEEYX8IZBAugAvjtzEQNWcxsvo6PDcY4xEnOWm5GFCdtOv96xnWrKkYtxi5COjK9VjDLATs4XCNyam7T4YaatXALiBwwcv7mXAegIO/WHVcVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UkfsFdNv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=li9kf7/6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UkfsFdNv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=li9kf7/6; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 165871F388;
+	Mon,  7 Apr 2025 20:14:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744056843; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wl7zU7FUr+GdZUdm7QvfE7yoCiEaOjw64gYZQZ0dkMk=;
+	b=UkfsFdNv6NGHjDuJhfhNZsh6CQKPN+sT0FHNmOYad0yPajxjxOk2Z80TvGKshOH1b2RgF1
+	3sIzIYIgUfPgF52GF9wr3Xkf6q5Ox04LkUh0JqheWxDEiOvPh4dOpwqh7ZEbUvA5TBL3u6
+	y1rPURHfj4F77jkdiboeZAo+ZN6xDZ4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744056843;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wl7zU7FUr+GdZUdm7QvfE7yoCiEaOjw64gYZQZ0dkMk=;
+	b=li9kf7/6GPwwgB3Wheb0q1rgaX8nTdMtSwJ/v5OJM4pLgpoOFUt79OByuL1VxoDRFWV/HJ
+	cZR+9wxySm+aFKAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UkfsFdNv;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="li9kf7/6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744056843; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wl7zU7FUr+GdZUdm7QvfE7yoCiEaOjw64gYZQZ0dkMk=;
+	b=UkfsFdNv6NGHjDuJhfhNZsh6CQKPN+sT0FHNmOYad0yPajxjxOk2Z80TvGKshOH1b2RgF1
+	3sIzIYIgUfPgF52GF9wr3Xkf6q5Ox04LkUh0JqheWxDEiOvPh4dOpwqh7ZEbUvA5TBL3u6
+	y1rPURHfj4F77jkdiboeZAo+ZN6xDZ4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744056843;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wl7zU7FUr+GdZUdm7QvfE7yoCiEaOjw64gYZQZ0dkMk=;
+	b=li9kf7/6GPwwgB3Wheb0q1rgaX8nTdMtSwJ/v5OJM4pLgpoOFUt79OByuL1VxoDRFWV/HJ
+	cZR+9wxySm+aFKAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E89D313691;
+	Mon,  7 Apr 2025 20:14:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id siEhOAoy9Gd6DwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 07 Apr 2025 20:14:02 +0000
+Message-ID: <d6b4a68d-b2bc-4f85-8e53-e3460a37974c@suse.cz>
+Date: Mon, 7 Apr 2025 22:14:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/2] MAINTAINERS: add MM subsection for the page
+ allocator
+Content-Language: en-US
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+ David Hildenbrand <david@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Mel Gorman <mgorman@techsingularity.net>,
+ Suren Baghdasaryan <surenb@google.com>, Brendan Jackman
+ <jackmanb@google.com>, Michal Hocko <mhocko@kernel.org>
+References: <20250407200508.121357-3-vbabka@suse.cz>
+ <20250407200508.121357-4-vbabka@suse.cz>
+ <E7917C18-F3FC-41DC-AABD-1C0DF2367EAB@nvidia.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <E7917C18-F3FC-41DC-AABD-1C0DF2367EAB@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 165871F388
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,cmpxchg.org:email,nvidia.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-The hyperv-pci driver uses ACPI for MSI IRQ domain configuration on
-arm64. It won't be able to do that in the VTL mode where only DeviceTree
-can be used.
+On 4/7/25 22:12, Zi Yan wrote:
+> On 7 Apr 2025, at 16:05, Vlastimil Babka wrote:
+> 
+>> Add a subsection for the page allocator, including compaction as it's
+>> crucial for high-order allocations and works together with the
+>> anti-fragmentation features. Volunteer myself as a reviewer.
+>>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: Zi Yan <ziy@nvidia.com>
+>> Cc: Johannes Weiner <hannes@cmpxchg.org>
+>> Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+>> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+>> Cc: Mel Gorman <mgorman@techsingularity.net>
+>> Cc: Suren Baghdasaryan <surenb@google.com>
+>> Cc: Brendan Jackman <jackmanb@google.com>
+>> Cc: Michal Hocko <mhocko@kernel.org>
+>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+>> ---
+>> Extra reviewers would be welcome, including/not limited the people I
+>> Cc'd based on my recollection and get_maintainers --git
+>> Also if I missed any related file please lmk. Thanks.
+>>
+>>  MAINTAINERS | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+> 
+> Acked-by: Zi Yan <ziy@nvidia.com>
 
-Update the hyperv-pci driver to get vPCI MSI IRQ domain in the DeviceTree
-case, too.
+Thanks.
 
-Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/controller/pci-hyperv.c | 72 ++++++++++++++++++++++++++---
- 1 file changed, 66 insertions(+), 6 deletions(-)
+> I am happy to help review patches for page allocator and
+> compaction too. Should I send a separate patch to add myself?
+> Or you can add
+> 
+> R:    Zi Yan <ziy@nvidia.com>
+> 
+> in your next version?
 
-diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-index 6084b38bdda1..2d7de07bbf38 100644
---- a/drivers/pci/controller/pci-hyperv.c
-+++ b/drivers/pci/controller/pci-hyperv.c
-@@ -50,6 +50,7 @@
- #include <linux/irqdomain.h>
- #include <linux/acpi.h>
- #include <linux/sizes.h>
-+#include <linux/of_irq.h>
- #include <asm/mshyperv.h>
- 
- /*
-@@ -817,9 +818,17 @@ static int hv_pci_vec_irq_gic_domain_alloc(struct irq_domain *domain,
- 	int ret;
- 
- 	fwspec.fwnode = domain->parent->fwnode;
--	fwspec.param_count = 2;
--	fwspec.param[0] = hwirq;
--	fwspec.param[1] = IRQ_TYPE_EDGE_RISING;
-+	if (is_of_node(fwspec.fwnode)) {
-+		/* SPI lines for OF translations start at offset 32 */
-+		fwspec.param_count = 3;
-+		fwspec.param[0] = 0;
-+		fwspec.param[1] = hwirq - 32;
-+		fwspec.param[2] = IRQ_TYPE_EDGE_RISING;
-+	} else {
-+		fwspec.param_count = 2;
-+		fwspec.param[0] = hwirq;
-+		fwspec.param[1] = IRQ_TYPE_EDGE_RISING;
-+	}
- 
- 	ret = irq_domain_alloc_irqs_parent(domain, virq, 1, &fwspec);
- 	if (ret)
-@@ -887,10 +896,46 @@ static const struct irq_domain_ops hv_pci_domain_ops = {
- 	.activate = hv_pci_vec_irq_domain_activate,
- };
- 
-+#ifdef CONFIG_OF
-+
-+static struct irq_domain *hv_pci_of_irq_domain_parent(void)
-+{
-+	struct device_node *parent;
-+	struct irq_domain *domain;
-+
-+	parent = of_irq_find_parent(hv_get_vmbus_root_device()->of_node);
-+	if (!parent)
-+		return NULL;
-+	domain = irq_find_host(parent);
-+	of_node_put(parent);
-+
-+	return domain;
-+}
-+
-+#endif
-+
-+#ifdef CONFIG_ACPI
-+
-+static struct irq_domain *hv_pci_acpi_irq_domain_parent(void)
-+{
-+	acpi_gsi_domain_disp_fn gsi_domain_disp_fn;
-+
-+	if (acpi_irq_model != ACPI_IRQ_MODEL_GIC)
-+		return NULL;
-+	gsi_domain_disp_fn = acpi_get_gsi_dispatcher();
-+	if (!gsi_domain_disp_fn)
-+		return NULL;
-+	return irq_find_matching_fwnode(gsi_domain_disp_fn(0),
-+				     DOMAIN_BUS_ANY);
-+}
-+
-+#endif
-+
- static int hv_pci_irqchip_init(void)
- {
- 	static struct hv_pci_chip_data *chip_data;
- 	struct fwnode_handle *fn = NULL;
-+	struct irq_domain *irq_domain_parent = NULL;
- 	int ret = -ENOMEM;
- 
- 	chip_data = kzalloc(sizeof(*chip_data), GFP_KERNEL);
-@@ -907,9 +952,24 @@ static int hv_pci_irqchip_init(void)
- 	 * way to ensure that all the corresponding devices are also gone and
- 	 * no interrupts will be generated.
- 	 */
--	hv_msi_gic_irq_domain = acpi_irq_create_hierarchy(0, HV_PCI_MSI_SPI_NR,
--							  fn, &hv_pci_domain_ops,
--							  chip_data);
-+#ifdef CONFIG_ACPI
-+	if (!acpi_disabled)
-+		irq_domain_parent = hv_pci_acpi_irq_domain_parent();
-+#endif
-+#ifdef CONFIG_OF
-+	if (!irq_domain_parent)
-+		irq_domain_parent = hv_pci_of_irq_domain_parent();
-+#endif
-+	if (!irq_domain_parent) {
-+		WARN_ONCE(1, "Invalid firmware configuration for VMBus interrupts\n");
-+		ret = -EINVAL;
-+		goto free_chip;
-+	}
-+
-+	hv_msi_gic_irq_domain = irq_domain_create_hierarchy(irq_domain_parent, 0,
-+		HV_PCI_MSI_SPI_NR,
-+		fn, &hv_pci_domain_ops,
-+		chip_data);
- 
- 	if (!hv_msi_gic_irq_domain) {
- 		pr_err("Failed to create Hyper-V arm64 vPCI MSI IRQ domain\n");
--- 
-2.43.0
+Sure, will do, thanks!
+
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 4fe7cf5fc4ea..610636f622b1 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -15511,6 +15511,16 @@ F:	mm/numa.c
+>>  F:	mm/numa_emulation.c
+>>  F:	mm/numa_memblks.c
+>>
+>> +MEMORY MANAGEMENT - PAGE ALLOCATOR
+>> +M:	Andrew Morton <akpm@linux-foundation.org>
+>> +R:	Vlastimil Babka <vbabka@suse.cz>
+>> +L:	linux-mm@kvack.org
+>> +S:	Maintained
+>> +F:	mm/compaction.c
+>> +F:	mm/page_alloc.c
+>> +F:	include/linux/gfp.h
+>> +F:	include/linux/compaction.h
+>> +
+>>  MEMORY MANAGEMENT - SECRETMEM
+>>  M:	Andrew Morton <akpm@linux-foundation.org>
+>>  M:	Mike Rapoport <rppt@kernel.org>
+>> -- 
+>> 2.49.0
+> 
+> 
+> Best Regards,
+> Yan, Zi
 
 
