@@ -1,282 +1,138 @@
-Return-Path: <linux-kernel+bounces-591271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7B3DA7DD86
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:17:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA81A7DD3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 931AA16B573
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:17:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF7543B1D72
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAEF24A06A;
-	Mon,  7 Apr 2025 12:16:53 +0000 (UTC)
-Received: from ni.piap.pl (ni.piap.pl [195.187.100.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A06F2459F9;
+	Mon,  7 Apr 2025 12:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kAmHA8/Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B1C23C8A2;
-	Mon,  7 Apr 2025 12:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.187.100.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAADC226CF8;
+	Mon,  7 Apr 2025 12:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744028212; cv=none; b=XLmoNa3zZeTP9dZ8HCyUeEHdyzq/zxnmn2bsddYtiNDvUmLR1hGe6gfGQ2ERG6vi+DtPS4agGGApo67WciUBZsj2qB56KXdj35I7fqBssl1jMY+DiSYizHZbLueKwyyEbMqcz0qMbz/Yt0igF0DnbMvc1xMSUS9g6b8m36vtzro=
+	t=1744027731; cv=none; b=LZG2ZKwVzAI5Hss9tig8D+tnRC06k7ivqtOmMHALj/efmy5HKx/s2gvg5UR8GjwvrSl8/fBHtUZcM9lkxAznaYNuiFtu4qIWUy4oK08n29WG/CRg3wMd54Fs3PTgtPq5fL/B4A6fFZ9JrF344yNdfJWcBI1Ve9xlTaw3tgAytPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744028212; c=relaxed/simple;
-	bh=xubMfw//x/RFaDwKiRF/1W9/jIwtt+5+L6qQ9VbzsKQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pxsf8NrzWyf2VOJzKkxFR3Lm+ZN29foCpP8ERm0aNYEMjU11dMYnGXbg3bFAKhgSPyTM7dO7RTDhJ8Zd3vddoS3JFD+mtbfqIeEoxaTaLkDR2p8Jg/1o6yfAsP5V4CsKlVrgW6mfZZtS0YKMKjigURTrYl7ER2G2/ntlNWwtuNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl; spf=pass smtp.mailfrom=piap.pl; arc=none smtp.client-ip=195.187.100.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=piap.pl
-Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
-	by ni.piap.pl (Postfix) with ESMTPS id 605ADC3EEAF9;
-	Mon,  7 Apr 2025 14:08:22 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl 605ADC3EEAF9
-From: =?utf-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
-To: netdev <netdev@vger.kernel.org>
-Cc: Oliver Neukum <oneukum@suse.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jose Ignacio Tornos Martinez
- <jtornosm@redhat.com>, Ming Lei <ming.lei@redhat.com>, Oleksij Rempel
- <o.rempel@pengutronix.de>
-Subject: [PATCH REPOST] usbnet: asix: leave the carrier control to phylink
-Sender: khalasa@piap.pl
-Date: Mon, 07 Apr 2025 14:08:22 +0200
-Message-ID: <m35xjgdvih.fsf@t19.piap.pl>
+	s=arc-20240116; t=1744027731; c=relaxed/simple;
+	bh=UZnv5Rm+14QbI32ATi83bgsLO1QK5w/4fgnuv7LgFP4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OKOHLVwvSvr0zwotha2i5ZjODzZntuqRNsQTZAdu+QANTdfcwleSuhD2v8q6W9q1iSfoxo8YFxpRIkoPlCFniwWTrWJy0Y2CW92/6g9VkXKDynVa5VXO5QRmLIrqGzL1suak2aJrrRb0vqin/ocGx+vQiXxrwRS6CX2dTise3yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kAmHA8/Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A3A6C4CEDD;
+	Mon,  7 Apr 2025 12:08:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744027731;
+	bh=UZnv5Rm+14QbI32ATi83bgsLO1QK5w/4fgnuv7LgFP4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kAmHA8/ZHeDE3gqd6toeq3JVk+vEF1VPW99d/ohcxC2MRlOGGuIyoFgBFgTEp6zX9
+	 PHZbnPTwjfer5BmiRJYO1XauotoDHB8POI7ds/ywDnciH7shYWw8pGEy6Uq4DIaZt2
+	 WpzdAc6sGApd5Qs5VPUeKh2LXCtB8zdl660wQrDz9Lp87YT+5W1tsOC2XfobvB+bmJ
+	 yg5fss5Eza1mouID3pgY0/0v1aoI0w3bgo/FrLiVvpEaqTzcB0XS7xJFeV3HyedLAj
+	 A0wXia88hkaHuM5tF/Z0Auq/pG8237B+XuRTR9oFkihKKnAjW/vcx9YKWwfoA2wj3T
+	 0qCQFC/uKCrVw==
+Date: Mon, 7 Apr 2025 15:08:46 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: keyrings@vger.kernel.org, Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Ignat Korchagin <ignat@cloudflare.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v7] KEYS: Add a list for unreferenced keys
+Message-ID: <Z_PATvNUE-qBDEEV@kernel.org>
+References: <20250407023918.29956-1-jarkko@kernel.org>
+ <CGME20250407102514eucas1p1b297b7b6012a5ece4ccdca8e0e2c7956@eucas1p1.samsung.com>
+ <32c1e996-ac34-496f-933e-a266b487da1a@samsung.com>
+ <Z_O1v8awuTeJ9qfS@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z_O1v8awuTeJ9qfS@kernel.org>
 
-[added Oleksij - the author of the phylink code for this driver]
+On Mon, Apr 07, 2025 at 02:23:49PM +0300, Jarkko Sakkinen wrote:
+> On Mon, Apr 07, 2025 at 12:25:11PM +0200, Marek Szyprowski wrote:
+> > On 07.04.2025 04:39, Jarkko Sakkinen wrote:
+> > > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> > >
+> > > Add an isolated list of unreferenced keys to be queued for deletion, and
+> > > try to pin the keys in the garbage collector before processing anything.
+> > > Skip unpinnable keys.
+> > >
+> > > Use this list for blocking the reaping process during the teardown:
+> > >
+> > > 1. First off, the keys added to `keys_graveyard` are snapshotted, and the
+> > >     list is flushed. This the very last step in `key_put()`.
+> > > 2. `key_put()` reaches zero. This will mark key as busy for the garbage
+> > >     collector.
+> > > 3. `key_garbage_collector()` will try to increase refcount, which won't go
+> > >     above zero. Whenever this happens, the key will be skipped.
+> > >
+> > > Cc: stable@vger.kernel.org # v6.1+ Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> > This patch landed in today's linux-next as commit b0d023797e3e ("keys: 
+> > Add a list for unreferenced keys"). In my tests I found that it triggers 
+> > the following lockdep issue:
+> > 
+> > ================================
+> > WARNING: inconsistent lock state
+> > 6.15.0-rc1-next-20250407 #15630 Not tainted
+> > --------------------------------
+> > inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
+> > ksoftirqd/3/32 [HC0[0]:SC1[1]:HE1:SE0] takes:
+> > c13fdd68 (key_serial_lock){+.?.}-{2:2}, at: key_put+0x74/0x128
+> > {SOFTIRQ-ON-W} state was registered at:
+> >    lock_acquire+0x134/0x384
+> >    _raw_spin_lock+0x38/0x48
+> >    key_alloc+0x2fc/0x4d8
+> >    keyring_alloc+0x40/0x90
+> >    system_trusted_keyring_init+0x50/0x7c
+> >    do_one_initcall+0x68/0x314
+> >    kernel_init_freeable+0x1c0/0x224
+> >    kernel_init+0x1c/0x12c
+> >    ret_from_fork+0x14/0x28
+> > irq event stamp: 234
+> > hardirqs last  enabled at (234): [<c0cb7060>] 
+> > _raw_spin_unlock_irqrestore+0x5c/0x60
+> > hardirqs last disabled at (233): [<c0cb6dd0>] 
+> > _raw_spin_lock_irqsave+0x64/0x68
+> > softirqs last  enabled at (42): [<c013bcd8>] handle_softirqs+0x328/0x520
+> > softirqs last disabled at (47): [<c013bf10>] run_ksoftirqd+0x40/0x68
+> 
+> OK what went to -next went there by accident and has been removed,
+> sorry. I think it was like the very first version of this patch.
+> 
+> Thanks for informing anyhow!
 
-ASIX AX88772B based USB 10/100 Ethernet adapter doesn't come
-up ("carrier off"), despite the built-in 100BASE-FX PHY positive link
-indication. The internal PHY is configured (using EEPROM) in fixed
-100 Mbps full duplex mode.
 
-The primary problem appears to be using carrier_netif_{on,off}() while,
-at the same time, delegating carrier management to phylink. Use only the
-latter and remove "manual control" in the asix driver.
+Testing branch: https://web.git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/?h=keys-graveyard
 
-I don't have any other AX88772 board here, but the problem doesn't seem
-specific to a particular board or settings - it's probably
-timing-dependent.
+I updated my next this morning so should be fixed soon...
 
-Signed-off-by: Krzysztof Ha=C5=82asa <khalasa@piap.pl>
+> 
+> BR, Jarkko
 
-diff --git a/drivers/net/usb/asix.h b/drivers/net/usb/asix.h
-index 74162190bccc..8531b804021a 100644
---- a/drivers/net/usb/asix.h
-+++ b/drivers/net/usb/asix.h
-@@ -224,7 +224,6 @@ int asix_write_rx_ctl(struct usbnet *dev, u16 mode, int=
- in_pm);
-=20
- u16 asix_read_medium_status(struct usbnet *dev, int in_pm);
- int asix_write_medium_mode(struct usbnet *dev, u16 mode, int in_pm);
--void asix_adjust_link(struct net_device *netdev);
-=20
- int asix_write_gpio(struct usbnet *dev, u16 value, int sleep, int in_pm);
-=20
-diff --git a/drivers/net/usb/asix_common.c b/drivers/net/usb/asix_common.c
-index 72ffc89b477a..7fd763917ae2 100644
---- a/drivers/net/usb/asix_common.c
-+++ b/drivers/net/usb/asix_common.c
-@@ -414,28 +414,6 @@ int asix_write_medium_mode(struct usbnet *dev, u16 mod=
-e, int in_pm)
- 	return ret;
- }
-=20
--/* set MAC link settings according to information from phylib */
--void asix_adjust_link(struct net_device *netdev)
--{
--	struct phy_device *phydev =3D netdev->phydev;
--	struct usbnet *dev =3D netdev_priv(netdev);
--	u16 mode =3D 0;
--
--	if (phydev->link) {
--		mode =3D AX88772_MEDIUM_DEFAULT;
--
--		if (phydev->duplex =3D=3D DUPLEX_HALF)
--			mode &=3D ~AX_MEDIUM_FD;
--
--		if (phydev->speed !=3D SPEED_100)
--			mode &=3D ~AX_MEDIUM_PS;
--	}
--
--	asix_write_medium_mode(dev, mode, 0);
--	phy_print_status(phydev);
--	usbnet_link_change(dev, phydev->link, 0);
--}
--
- int asix_write_gpio(struct usbnet *dev, u16 value, int sleep, int in_pm)
- {
- 	int ret;
-diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
-index 57d6e5abc30e..af91fc947f40 100644
---- a/drivers/net/usb/asix_devices.c
-+++ b/drivers/net/usb/asix_devices.c
-@@ -40,22 +40,6 @@ struct ax88172_int_data {
- 	__le16 res3;
- } __packed;
-=20
--static void asix_status(struct usbnet *dev, struct urb *urb)
--{
--	struct ax88172_int_data *event;
--	int link;
--
--	if (urb->actual_length < 8)
--		return;
--
--	event =3D urb->transfer_buffer;
--	link =3D event->link & 0x01;
--	if (netif_carrier_ok(dev->net) !=3D link) {
--		usbnet_link_change(dev, link, 1);
--		netdev_dbg(dev->net, "Link Status is: %d\n", link);
--	}
--}
--
- static void asix_set_netdev_dev_addr(struct usbnet *dev, u8 *addr)
- {
- 	if (is_valid_ether_addr(addr)) {
-@@ -752,7 +736,6 @@ static void ax88772_mac_link_down(struct phylink_config=
- *config,
- 	struct usbnet *dev =3D netdev_priv(to_net_dev(config->dev));
-=20
- 	asix_write_medium_mode(dev, 0, 0);
--	usbnet_link_change(dev, false, false);
- }
-=20
- static void ax88772_mac_link_up(struct phylink_config *config,
-@@ -783,7 +766,6 @@ static void ax88772_mac_link_up(struct phylink_config *=
-config,
- 		m |=3D AX_MEDIUM_RFC;
-=20
- 	asix_write_medium_mode(dev, m, 0);
--	usbnet_link_change(dev, true, false);
- }
-=20
- static const struct phylink_mac_ops ax88772_phylink_mac_ops =3D {
-@@ -1309,40 +1291,36 @@ static int ax88178_bind(struct usbnet *dev, struct =
-usb_interface *intf)
- static const struct driver_info ax8817x_info =3D {
- 	.description =3D "ASIX AX8817x USB 2.0 Ethernet",
- 	.bind =3D ax88172_bind,
--	.status =3D asix_status,
- 	.link_reset =3D ax88172_link_reset,
- 	.reset =3D ax88172_link_reset,
--	.flags =3D  FLAG_ETHER | FLAG_LINK_INTR,
-+	.flags =3D  FLAG_ETHER,
- 	.data =3D 0x00130103,
- };
-=20
- static const struct driver_info dlink_dub_e100_info =3D {
- 	.description =3D "DLink DUB-E100 USB Ethernet",
- 	.bind =3D ax88172_bind,
--	.status =3D asix_status,
- 	.link_reset =3D ax88172_link_reset,
- 	.reset =3D ax88172_link_reset,
--	.flags =3D  FLAG_ETHER | FLAG_LINK_INTR,
-+	.flags =3D  FLAG_ETHER,
- 	.data =3D 0x009f9d9f,
- };
-=20
- static const struct driver_info netgear_fa120_info =3D {
- 	.description =3D "Netgear FA-120 USB Ethernet",
- 	.bind =3D ax88172_bind,
--	.status =3D asix_status,
- 	.link_reset =3D ax88172_link_reset,
- 	.reset =3D ax88172_link_reset,
--	.flags =3D  FLAG_ETHER | FLAG_LINK_INTR,
-+	.flags =3D  FLAG_ETHER,
- 	.data =3D 0x00130103,
- };
-=20
- static const struct driver_info hawking_uf200_info =3D {
- 	.description =3D "Hawking UF200 USB Ethernet",
- 	.bind =3D ax88172_bind,
--	.status =3D asix_status,
- 	.link_reset =3D ax88172_link_reset,
- 	.reset =3D ax88172_link_reset,
--	.flags =3D  FLAG_ETHER | FLAG_LINK_INTR,
-+	.flags =3D  FLAG_ETHER,
- 	.data =3D 0x001f1d1f,
- };
-=20
-@@ -1350,10 +1328,9 @@ static const struct driver_info ax88772_info =3D {
- 	.description =3D "ASIX AX88772 USB 2.0 Ethernet",
- 	.bind =3D ax88772_bind,
- 	.unbind =3D ax88772_unbind,
--	.status =3D asix_status,
- 	.reset =3D ax88772_reset,
- 	.stop =3D ax88772_stop,
--	.flags =3D FLAG_ETHER | FLAG_FRAMING_AX | FLAG_LINK_INTR | FLAG_MULTI_PAC=
-KET,
-+	.flags =3D FLAG_ETHER | FLAG_FRAMING_AX | FLAG_MULTI_PACKET,
- 	.rx_fixup =3D asix_rx_fixup_common,
- 	.tx_fixup =3D asix_tx_fixup,
- };
-@@ -1362,11 +1339,9 @@ static const struct driver_info ax88772b_info =3D {
- 	.description =3D "ASIX AX88772B USB 2.0 Ethernet",
- 	.bind =3D ax88772_bind,
- 	.unbind =3D ax88772_unbind,
--	.status =3D asix_status,
- 	.reset =3D ax88772_reset,
- 	.stop =3D ax88772_stop,
--	.flags =3D FLAG_ETHER | FLAG_FRAMING_AX | FLAG_LINK_INTR |
--	         FLAG_MULTI_PACKET,
-+	.flags =3D FLAG_ETHER | FLAG_FRAMING_AX | FLAG_MULTI_PACKET,
- 	.rx_fixup =3D asix_rx_fixup_common,
- 	.tx_fixup =3D asix_tx_fixup,
- 	.data =3D FLAG_EEPROM_MAC,
-@@ -1376,11 +1351,9 @@ static const struct driver_info lxausb_t1l_info =3D {
- 	.description =3D "Linux Automation GmbH USB 10Base-T1L",
- 	.bind =3D ax88772_bind,
- 	.unbind =3D ax88772_unbind,
--	.status =3D asix_status,
- 	.reset =3D ax88772_reset,
- 	.stop =3D ax88772_stop,
--	.flags =3D FLAG_ETHER | FLAG_FRAMING_AX | FLAG_LINK_INTR |
--		 FLAG_MULTI_PACKET,
-+	.flags =3D FLAG_ETHER | FLAG_FRAMING_AX | FLAG_MULTI_PACKET,
- 	.rx_fixup =3D asix_rx_fixup_common,
- 	.tx_fixup =3D asix_tx_fixup,
- 	.data =3D FLAG_EEPROM_MAC,
-@@ -1390,11 +1363,9 @@ static const struct driver_info ax88178_info =3D {
- 	.description =3D "ASIX AX88178 USB 2.0 Ethernet",
- 	.bind =3D ax88178_bind,
- 	.unbind =3D ax88178_unbind,
--	.status =3D asix_status,
- 	.link_reset =3D ax88178_link_reset,
- 	.reset =3D ax88178_reset,
--	.flags =3D FLAG_ETHER | FLAG_FRAMING_AX | FLAG_LINK_INTR |
--		 FLAG_MULTI_PACKET,
-+	.flags =3D FLAG_ETHER | FLAG_FRAMING_AX | FLAG_MULTI_PACKET,
- 	.rx_fixup =3D asix_rx_fixup_common,
- 	.tx_fixup =3D asix_tx_fixup,
- };
-@@ -1412,10 +1383,8 @@ static const struct driver_info hg20f9_info =3D {
- 	.description =3D "HG20F9 USB 2.0 Ethernet",
- 	.bind =3D ax88772_bind,
- 	.unbind =3D ax88772_unbind,
--	.status =3D asix_status,
- 	.reset =3D ax88772_reset,
--	.flags =3D FLAG_ETHER | FLAG_FRAMING_AX | FLAG_LINK_INTR |
--	         FLAG_MULTI_PACKET,
-+	.flags =3D FLAG_ETHER | FLAG_FRAMING_AX | FLAG_MULTI_PACKET,
- 	.rx_fixup =3D asix_rx_fixup_common,
- 	.tx_fixup =3D asix_tx_fixup,
- 	.data =3D FLAG_EEPROM_MAC,
-
---=20
-Krzysztof "Chris" Ha=C5=82asa
-
-Sie=C4=87 Badawcza =C5=81ukasiewicz
-Przemys=C5=82owy Instytut Automatyki i Pomiar=C3=B3w PIAP
-Al. Jerozolimskie 202, 02-486 Warszawa
+BR, Jarkko
 
