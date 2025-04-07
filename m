@@ -1,106 +1,207 @@
-Return-Path: <linux-kernel+bounces-591231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F39A7DCE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:54:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C48BA7DCEE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:54:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4F771699E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:53:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791C5188F11A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1267F2459EF;
-	Mon,  7 Apr 2025 11:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nm5H3CY4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F71233734;
+	Mon,  7 Apr 2025 11:53:31 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AAF23A98A;
-	Mon,  7 Apr 2025 11:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6598E22D794
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 11:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744026680; cv=none; b=jqbhJHGNea98kiblJYVFTh79nkki6w0KamRZfG8UbM+zvvmqlroawsM4l6a8Jisb47l3ldHWVZr73i97LXfF4xwX2HWfS5WUkR3k73wbeLiQtjZgX3ggqlGOcTmyjAm7bqoI0qGvldSgLXVXV/ywPhYyd5jhAG+5oG/ob4oTO7I=
+	t=1744026811; cv=none; b=Mp1dnhSHtlH4YwJaeWGEC0H4v++/rxpCp+9NkLIAuAYYiANSgnLjQCPb5R6FjV8kNVFvctc62q2jp3rfoDgwtfkM/0kB4KoO6xylvsXXYEbxOvS+a6m808R79LbNDPK5hyxLJ/Tcx3qm8v8b8S6xrR7A6T8wYAbtib2owlKplEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744026680; c=relaxed/simple;
-	bh=Ik3s3Zrm66CWBd2uHsVOVNJBfGhDtUFb3oOjqByk5iE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Vrk4k1OY/J1FCjTPVmZzNhBUP60FoyUQvH0uIwVTNuKOPzWCduP6PjF4Ct2EuEZz0FUFjJlEhP7YG6hJA3UNBD9MgEXqcBWeRrlme7rYfeWgaeyRGjIV1hAiKvKOeiCMQ8WTADeDgK6038QbvCywCM49QcjB71bDNqwOWhXd3L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nm5H3CY4; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744026679; x=1775562679;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=Ik3s3Zrm66CWBd2uHsVOVNJBfGhDtUFb3oOjqByk5iE=;
-  b=nm5H3CY4J342u68AgyUFtBy01/evPR15S9NGIqSRGWOrnWaq/Ra7BB+J
-   2rAbiZCwqUjRpftQ4tJ530TfIsM0XI1q3lyijZwPRC4k68n+7pM6aElEn
-   pj2+vh5H9oGni76ApAgnESyOm9qmjBd0q27f66gFTcdu9aY0iHXpDffVc
-   emdK7Kk4euaTVPBnISDKS9HI4bRsaAmgCLEnBsHGBPc1dT4mOgE9czeaS
-   E6Q/pTUgKgHJK3yhSxjw2gsRyErIzGqTWciqlCAIAIqDM07VTqUNGU755
-   fUwZa3M59fX2GjyIZU4J506mVc4wXBaGXVoDPIH3Rp5YOl+6Oc5J2GF8g
-   g==;
-X-CSE-ConnectionGUID: 3nPEeTzxTE2ud3CeNYMSeQ==
-X-CSE-MsgGUID: VXxQDtMuQryrou8ncbOAOw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45499628"
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="45499628"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 04:51:19 -0700
-X-CSE-ConnectionGUID: WImpXkGZRc6sKC/XWFNbfg==
-X-CSE-MsgGUID: ffyjnnGDQ267Y9MuZMaxKg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
-   d="scan'208";a="132071774"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.229])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 04:51:16 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>, 
- David E Box <david.e.box@linux.intel.com>, 
- Andy Shevchenko <andy.shevchenko@gmail.com>, 
- Choong Yong Liang <yong.liang.choong@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250313085526.1439092-1-yong.liang.choong@linux.intel.com>
-References: <20250313085526.1439092-1-yong.liang.choong@linux.intel.com>
-Subject: Re: [PATCH v2] platform/x86: intel_pmc_ipc: add option to build
- without ACPI
-Message-Id: <174402667086.2623.12054422494397087928.b4-ty@linux.intel.com>
-Date: Mon, 07 Apr 2025 14:51:10 +0300
+	s=arc-20240116; t=1744026811; c=relaxed/simple;
+	bh=NCCctF/X0MoUzCs4K/uT98GCQBx106uFZXE9qPzQapA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=addd5lJHUCEo0CF1/lXWYrX1DEHnUOismEolHsHdL/ZulkFKDRulNSZNJeuaoEaHSgqVMpu3VHRUXB+LcvBu24fxf2ofgjOD92H5EwIjHXUQ7epyokA/JKQG/aJ/P8IghnmKfhZxRr5WdR3FcNMeNPdtyLdq8h92F3hJ1Eu1lo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d451ad5b2dso52251965ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 04:53:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744026808; x=1744631608;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6SWVqjL//hcLnAkvxJwkPgBqne5zgY402Ha3DCDbu50=;
+        b=lStBAuEx28U5Hl9rKqQ0fZd9OJdnputpFRklayYdPvz3rrYxlJ+mjn2jEf23lVSDxs
+         oo093wBWe+rbuxQ7GZ+bJaLKUUR9PP8zcmxADfRBzpi1GAFkS5aKYOHpfMMe/EwdSGK2
+         dhxgbEw4sf7yFi/MNT4PMUERHa7tMZjO9mos/ryPwFw40dBE2QA0ZbWvcocSUltsyGJG
+         zjAAEXG9asHeoYEIQ5PFlEro6BP7gmC2Kb9MvlFBZW97oPaQDJ83aslyseV/0jzPUK5Z
+         dLdASUvjBHttgAvgFD2gRpz7O8u2Da0YeGvvQ33Y0+v8GTN9Se9v/Diq9Gyo/bOMAUaq
+         dU8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVc4DhSgDooYj28OR0me/4r+09OZcnqQ6D7LHbXuhd55HlDtH5w83J7Rxo1yvt7lTROnBoY9rQIt5ZPZus=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLlUXmuSXZjI8CQiwBUpwrY4onrGv2+Mr4GBq3xNvj3ZV6Wk84
+	YGgkEkzsSA0oxCv6D7Cw9iZ5Z2vVloeM3K0ZzDq8jJXNrji3cRSNtEUuGsySm0URuZjPxmpy/GG
+	vMGLSdwAHko9b8lvN5WKMDvDDapB28YFFUp8VSoIyWQ94bcLd3DETu4k=
+X-Google-Smtp-Source: AGHT+IH3clogijSCrNF7bvPd9TVvbxN5RUhNGMjweeIVh1CqIfB+DtByVQY4zAhKK1rMjOk4j6SFO2nhMLZnpRnwVpkSFzwHJ3q9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+X-Received: by 2002:a05:6e02:2182:b0:3d4:2acc:81fa with SMTP id
+ e9e14a558f8ab-3d6e3f89b8fmr118877825ab.2.1744026808507; Mon, 07 Apr 2025
+ 04:53:28 -0700 (PDT)
+Date: Mon, 07 Apr 2025 04:53:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67f3bcb8.050a0220.34461.0102.GAE@google.com>
+Subject: [syzbot] [sctp?] WARNING: refcount bug in sctp_generate_timeout_event
+From: syzbot <syzbot+c7dd9f1bd1d2ad0e5637@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org, 
+	lucien.xin@gmail.com, marcelo.leitner@gmail.com, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 13 Mar 2025 16:55:26 +0800, Choong Yong Liang wrote:
+Hello,
 
-> Introduce a configuration option that allows users to build the
-> intel_pmc_ipc driver without ACPI support. This is useful for
-> systems where ACPI is not available or desired.
-> 
-> Based on the discussion from the patch [1], it was necessary to
-> provide this option to accommodate specific use cases.
-> 
-> [...]
+syzbot found the following issue on:
+
+HEAD commit:    9bae8f4f2168 selftests/bpf: Make res_spin_lock test less v..
+git tree:       bpf
+console output: https://syzkaller.appspot.com/x/log.txt?x=14ed9fb0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f2054704dd53fb80
+dashboard link: https://syzkaller.appspot.com/bug?extid=c7dd9f1bd1d2ad0e5637
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/20830627571a/disk-9bae8f4f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7f2da93cab39/vmlinux-9bae8f4f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0719a55401d0/bzImage-9bae8f4f.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c7dd9f1bd1d2ad0e5637@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+refcount_t: addition on 0; use-after-free.
+WARNING: CPU: 0 PID: 6783 at lib/refcount.c:25 refcount_warn_saturate+0x13a/0x1d0 lib/refcount.c:25
+Modules linked in:
+CPU: 0 UID: 0 PID: 6783 Comm: syz.2.263 Not tainted 6.14.0-syzkaller-g9bae8f4f2168 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+RIP: 0010:refcount_warn_saturate+0x13a/0x1d0 lib/refcount.c:25
+Code: 00 6a a1 8c e8 07 88 7d fc 90 0f 0b 90 90 eb b9 e8 cb 67 be fc c6 05 3a e3 44 0b 01 90 48 c7 c7 60 6a a1 8c e8 e7 87 7d fc 90 <0f> 0b 90 90 eb 99 e8 ab 67 be fc c6 05 1b e3 44 0b 01 90 48 c7 c7
+RSP: 0018:ffffc90000007b28 EFLAGS: 00010246
+RAX: f4de809b98aa7600 RBX: ffff8880738bc004 RCX: ffff88802665da00
+RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000002 R08: ffffffff81827a12 R09: fffffbfff1d7a978
+R10: dffffc0000000000 R11: fffffbfff1d7a978 R12: dffffc0000000000
+R13: 0000000000000002 R14: ffff88802a051440 R15: ffff8880738bc000
+FS:  00007f7af0ba46c0(0000) GS:ffff888124f96000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00002000000000c0 CR3: 000000007c37c000 CR4: 00000000003526f0
+DR0: 0000200000000300 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000600
+Call Trace:
+ <IRQ>
+ sctp_generate_timeout_event+0x1ca/0x360 net/sctp/sm_sideeffect.c:284
+ call_timer_fn+0x189/0x650 kernel/time/timer.c:1789
+ expire_timers kernel/time/timer.c:1840 [inline]
+ __run_timers kernel/time/timer.c:2414 [inline]
+ __run_timer_base+0x66e/0x8e0 kernel/time/timer.c:2426
+ run_timer_base kernel/time/timer.c:2435 [inline]
+ run_timer_softirq+0xb7/0x170 kernel/time/timer.c:2445
+ handle_softirqs+0x2d6/0x9b0 kernel/softirq.c:579
+ __do_softirq kernel/softirq.c:613 [inline]
+ invoke_softirq kernel/softirq.c:453 [inline]
+ __irq_exit_rcu+0xfb/0x220 kernel/softirq.c:680
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
+ sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:arch_check_zapped_pte+0x3a/0xb0 arch/x86/mm/pgtable.c:890
+Code: 7c c6 53 00 48 83 c3 20 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df 80 3c 08 00 74 08 48 89 df e8 c9 ef bd 00 4c 8b 3b <48> bb 00 00 00 00 20 00 00 00 48 89 de 4c 21 fe 31 ff e8 1f cb 53
+RSP: 0018:ffffc9000306f240 EFLAGS: 00000246
+RAX: 1ffff110066e0804 RBX: ffff888033704020 RCX: dffffc0000000000
+RDX: ffffc9000ccc4000 RSI: 000000000007ffff RDI: 0000000000080000
+RBP: ffffc9000306f610 R08: ffffffff8211d084 R09: 1ffffd4000394330
+R10: dffffc0000000000 R11: fffff94000394331 R12: ffffea0001ca1980
+R13: dffffc0000000000 R14: 8000000072866007 R15: 00000000180400fb
+ zap_present_folio_ptes mm/memory.c:1518 [inline]
+ zap_present_ptes mm/memory.c:1586 [inline]
+ do_zap_pte_range mm/memory.c:1687 [inline]
+ zap_pte_range mm/memory.c:1731 [inline]
+ zap_pmd_range mm/memory.c:1823 [inline]
+ zap_pud_range mm/memory.c:1852 [inline]
+ zap_p4d_range mm/memory.c:1873 [inline]
+ unmap_page_range+0x20d7/0x44d0 mm/memory.c:1894
+ unmap_vmas+0x3ce/0x5f0 mm/memory.c:1984
+ exit_mmap+0x2bc/0xde0 mm/mmap.c:1284
+ __mmput+0x115/0x420 kernel/fork.c:1379
+ copy_process+0x2891/0x3d10 kernel/fork.c:2693
+ kernel_clone+0x242/0x930 kernel/fork.c:2844
+ __do_sys_clone kernel/fork.c:2987 [inline]
+ __se_sys_clone kernel/fork.c:2971 [inline]
+ __x64_sys_clone+0x268/0x2e0 kernel/fork.c:2971
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7aefd8d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7af0ba3fe8 EFLAGS: 00000206 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007f7aeffa5fa0 RCX: 00007f7aefd8d169
+RDX: 00002000000000c0 RSI: 0000000000000000 RDI: 0000000082001000
+RBP: 00007f7aefe0e2a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f7aeffa5fa0 R15: 00007ffe033b7728
+ </TASK>
+----------------
+Code disassembly (best guess), 4 bytes skipped:
+   0:	48 83 c3 20          	add    $0x20,%rbx
+   4:	48 89 d8             	mov    %rbx,%rax
+   7:	48 c1 e8 03          	shr    $0x3,%rax
+   b:	48 b9 00 00 00 00 00 	movabs $0xdffffc0000000000,%rcx
+  12:	fc ff df
+  15:	80 3c 08 00          	cmpb   $0x0,(%rax,%rcx,1)
+  19:	74 08                	je     0x23
+  1b:	48 89 df             	mov    %rbx,%rdi
+  1e:	e8 c9 ef bd 00       	call   0xbdefec
+  23:	4c 8b 3b             	mov    (%rbx),%r15
+* 26:	48 bb 00 00 00 00 20 	movabs $0x2000000000,%rbx <-- trapping instruction
+  2d:	00 00 00
+  30:	48 89 de             	mov    %rbx,%rsi
+  33:	4c 21 fe             	and    %r15,%rsi
+  36:	31 ff                	xor    %edi,%edi
+  38:	e8                   	.byte 0xe8
+  39:	1f                   	(bad)
+  3a:	cb                   	lret
+  3b:	53                   	push   %rbx
 
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-fixes branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
-local branch there, which might take a while.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-The list of commits applied:
-[1/1] platform/x86: intel_pmc_ipc: add option to build without ACPI
-      commit: d8455a63f731b4f585acc4d49fd7ad78db63b3d0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
---
- i.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
