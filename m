@@ -1,355 +1,146 @@
-Return-Path: <linux-kernel+bounces-591294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87174A7DDDB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:40:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90BA9A7DDEB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFF9F189245F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:39:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 347C93B16B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EF123C8C5;
-	Mon,  7 Apr 2025 12:38:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8257323BCED
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 12:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FAC824DFE3;
+	Mon,  7 Apr 2025 12:39:47 +0000 (UTC)
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF1423AE64;
+	Mon,  7 Apr 2025 12:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744029536; cv=none; b=FTqih4fEPo+fBSrqo+wS3JDX4f6fz50nn6kbfUoZ+irZ0s/YJrJEBjDNeykop856GNhH4yhh7HHbzB2QHf9DnwpKl1WlliTAkMJcdCRoEAv+rMl356pS73ztsoRcBm8kw/o0IB8/WT19HCRz2otYKjBiM8OujURuFvKEWA7/IBA=
+	t=1744029587; cv=none; b=C7qy4qS6qtLS5oSsDg3Y/nS8LKQ/wX85CGnT5yPkm7+LF4/4ckKfGmUEmUa+tJIyTndhgN+Ofu0ru2OmeWqkmcehZKwW9b6XX8bUc9W6Fq8jZxlSY9WVEf+TxY9dxtzZtLaC1zPLAHhAroZ278SNeoqHQAlN+sAk6sq2Shw1eHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744029536; c=relaxed/simple;
-	bh=6bKDCHTfDbaEUtrNSKM8z1lFJZIKmrUbuVF21BbGOgQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UiPSUm0y0c6gVLt1QOP2EVD8GZwzhOOFV9uEfAg7aPa/J2olOBitbZ1FBEwbSCZ6obdD+m4u4QMe1aAIZ3c8NJg9YVVJn+vaLYDE5sTVh0JF0T3sxA1TUeKj7bXVzPt1jOVK7izTRYhltxA64VU1tE+CRqIcALlJdHswBOEw80k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E9EB7106F;
-	Mon,  7 Apr 2025 05:38:53 -0700 (PDT)
-Received: from [10.57.70.149] (unknown [10.57.70.149])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D06EC3F694;
-	Mon,  7 Apr 2025 05:38:49 -0700 (PDT)
-Message-ID: <2792b9df-fc82-4252-af64-cf888a36f561@arm.com>
-Date: Mon, 7 Apr 2025 13:38:39 +0100
+	s=arc-20240116; t=1744029587; c=relaxed/simple;
+	bh=guydDGrxtfiF0QxuG+IbBP1EBPIlelU7O0fNN/qWZUY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JuffQdnJOzfpv1k5sPMgyfP/GC4UEQs6vQJIFIKF/1gc0NQQprb9itneTY2SEnTiMEPybQCQUiri15PN7JMybXK/x0nzrLQCe8XXUD9CL6SuEmqD1khb8T5CBHfCrVO+CFt9ZNf3HST4paBnBfVjnZZHDOmYz7moFpAd2siNV3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn; spf=pass smtp.mailfrom=whut.edu.cn; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=whut.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whut.edu.cn
+Received: from [127.0.0.1] (gy-adaptive-ssl-proxy-2-entmail-virt205.gy.ntes [27.18.106.237])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 10ef566e5;
+	Mon, 7 Apr 2025 20:39:25 +0800 (GMT+08:00)
+From: Ze Huang <huangze@whut.edu.cn>
+Subject: [PATCH 0/7] Add USB3.0 PHY and host controller support for
+ SpacemiT K1 SoC
+Date: Mon, 07 Apr 2025 20:38:45 +0800
+Message-Id: <20250407-b4-k1-usb3-v3-2-v1-0-bf0bcc41c9ba@whut.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iommu/mediatek: Fix NULL pointer deference in
- mtk_iommu_device_group
-To: Chen-Yu Tsai <wenst@chromium.org>, Joerg Roedel <joro@8bytes.org>
-Cc: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
- Yong Wu <yong.wu@mediatek.com>, Will Deacon <will@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- "Rob Herring (Arm)" <robh@kernel.org>, kernel@collabora.com,
- Joerg Roedel <jroedel@suse.de>, Jason Gunthorpe <jgg@ziepe.ca>,
- iommu@lists.linux.dev, linux-mediatek@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20250403-fix-mtk-iommu-error-v2-1-fe8b18f8b0a8@collabora.com>
- <CAGXv+5HJpTYmQ2h-GD7GjyeYT7bL9EBCvu0mz5LgpzJZtzfW0w@mail.gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <CAGXv+5HJpTYmQ2h-GD7GjyeYT7bL9EBCvu0mz5LgpzJZtzfW0w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFbH82cC/3WOQW6DMBBFr4K87iB77MGAqoiseoaqysLAlFgJ0
+ NgENYpy97pkneUb6f03dxE5eI6izu4i8Oqjn6cE6i0T3dFNA4PvEwuUSNJIC62Bk4JrbDWsGhB
+ UUaJzpkKiSiTrJ/C3/90Wvw5PDny5puHleRStiwzdPI5+qbO1yBVB6NS/O3KMbkvW2ftW1LJQl
+ izJHNGUMvWOfDvz5G6N6TGfw7B7IWKJSqLWuZLWSk2ggM89hyb42MXFhTy98EJGLJSiiix8fO4
+ NkSybgadlnnfi8Hj8AT3ztXI0AQAA
+X-Change-ID: 20250407-b4-k1-usb3-v3-2-1682aa492559
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Ze Huang <huangze@whut.edu.cn>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744029565; l=3284;
+ i=huangze@whut.edu.cn; s=20250325; h=from:subject:message-id;
+ bh=guydDGrxtfiF0QxuG+IbBP1EBPIlelU7O0fNN/qWZUY=;
+ b=Ghi1yoX13LsL5SLUgC8pQHW4O7dQb14bN9AeNv91Q+HWvOJWXFbLeEsB2kpBYQQlEISEzAiFr
+ zTTHHmy28hhD9VK+mM5N7b4F11BN+cuWUUXYa2rT4UkbdGbiiSbzdB+
+X-Developer-Key: i=huangze@whut.edu.cn; a=ed25519;
+ pk=C3zfn/kH6oMJickaXBa8dxTZO68EBiD93F+tAenboRA=
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZHR4dVh0fGBpNQkNOQkhMGVYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJTFVKQ1VKS01VSUhMWVdZFhoPEhUdFFlBWU9LSFVKS0lPT09LVUpLS1VLWQ
+	Y+
+X-HM-Tid: 0a961043447103a1kunm10ef566e5
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OCo6Aww5HzIMIUwtOBU3GjQt
+	KBwwChJVSlVKTE9PS0lCTkxJQk9CVTMWGhIXVRMOGhUcAR47DBMOD1UeHw5VGBVFWVdZEgtZQVlJ
+	TFVKQ1VKS01VSUhMWVdZCAFZQU5KQ0M3Bg++
 
-On 2025-04-07 6:17 am, Chen-Yu Tsai wrote:
-> Hi,
-> 
-> On Thu, Apr 3, 2025 at 6:24 PM Louis-Alexis Eyraud
-> <louisalexis.eyraud@collabora.com> wrote:
->>
->> Currently, mtk_iommu calls during probe iommu_device_register before
->> the hw_list from driver data is initialized. Since iommu probing issue
->> fix, it leads to NULL pointer dereference in mtk_iommu_device_group when
->> hw_list is accessed with list_first_entry (not null safe).
->>
->> So, change the call order to ensure iommu_device_register is called
->> after the driver data are initialized.
->>
->> Fixes: 9e3a2a643653 ("iommu/mediatek: Adapt sharing and non-sharing pgtable case")
->> Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe path")
->> Reviewed-by: Yong Wu <yong.wu@mediatek.com>
->> Tested-by: Chen-Yu Tsai <wenst@chromium.org> # MT8183 Juniper, MT8186 Tentacruel
->> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> Tested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
->> ---
->> This patch fixes a NULL pointer dereference that occurs during the
->> mtk_iommu driver probe and observed at least on several Mediatek Genio boards:
->> ```
->> Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-> 
-> This is a reminder to please land this and send to Linus ASAP.
-> 
-> This fixes the v6.15-rc1 kernel on all the MediaTek Chromebook platforms,
-> except for MT8188, which seems to have another issue in iommu_get_dma_domain()
-> used from the DRM driver:
-> 
->      Disabling lock debugging due to kernel taint
->      Unable to handle kernel NULL pointer dereference at virtual
-> address 0000000000000158
+This patch series introduces support for the USB on the SpacemiT K1 SoC,
+including DWC3 host controller, PCIe/USB3.0 combo PHY and the USB2.0 PHY.
+The implementation has been tested on the Milk-V Jupiter and BananaPi-f3.
 
- From the offset and the stacktrace code dump, this would appear to be 
-the dereference of dev->iommu_group->default_domain, when 
-dev->iommu_group is NULL (and CONFIG_DEBUG_LOCK_ALLOC makes the mutex 
-really big). Which is a bit weird, as to get into iommu-dma at all in 
-that state would suggest that whatever device this is has been removed 
-and had its group torn down again after iommu_setup_dma_ops() has run... 
-but either way that implies the DRM driver is passing an arbitrary 
-device to the DMA API without making sure it's actualy valid.
+USB3.0 PHY for usb2 is shared with PCIe port A, meaning that only one of
+these interfaces (PCIe or USB3.0) can be active at a given time.
 
-Trying to trace the provenance of dma_dev from mtk_gem_create() back 
-through the rest of the driver is quite the rabbit-hole, but it seems 
-like in at least one case it can lead back to an 
-of_find_device_by_node() in ovl_adaptor_comp_init(), which definitely 
-looks sufficiently sketchy.
+Overview of USB controllers on K1 SoC[1]:
 
-Thanks,
-Robin.
+Link: https://developer.spacemit.com/documentation?token=AjHDwrW78igAAEkiHracBI9HnTb#part5 [1]
+---
+Ze Huang (7):
+      dt-bindings: phy: spacemit: add K1 USB2 PHY
+      dt-bindings: phy: spacemit: add K1 PCIe/USB3 combo PHY
+      dt-bindings: usb: add SpacemiT K1 DWC3 glue
+      phy: spacemit: support K1 USB2.0 PHY controller
+      phy: spacemit: add USB3 support for K1 PCIe/USB3 combo PHY
+      usb: dwc3: add spacemit dwc3 glue layer driver
+      riscv: dts: spacemit: add usb3.0 support for K1
 
->      Mem abort info:
->        ESR = 0x0000000096000005
->        EC = 0x25: DABT (current EL), IL = 32 bits
->        SET = 0, FnV = 0
->        EA = 0, S1PTW = 0
->        FSC = 0x05: level 1 translation fault
->      Data abort info:
->        ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
->        CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->        GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->      user pgtable: 4k pages, 39-bit VAs, pgdp=00000001185ab000
->      [0000000000000158] pgd=0000000000000000, p4d=0000000000000000,
-> pud=0000000000000000
->      Internal error: Oops: 0000000096000005 [#1]  SMP
->      Modules linked in: mtk_vcodec_dec_hw mtk_vcodec_dec mtk_vcodec_enc
-> v4l2_vp9 v4l2_h264 mtk_vcodec_dbgfs mtk_jpeg mtk_vcodec_common
-> cros_ec_sensors mtk_jpeg_enc_hw cros_ec_sensors_core mtk_jpeg_dec_hw
-> mtk_vpu v4l2_mem2mem videobuf2_v4l2 snd_sof_mt8186
-> videobuf2_dma_contig snd_sof_xtensa_dsp sha1_ce videobuf2_memops
-> mtk_adsp_common mtk_scp videobuf2_common snd_sof_of mtk_rpmsg snd_sof
-> rpmsg_core cros_ec_sensorhub hid_google_hammer hid_vivaldi_common
-> snd_sof_utils mtk_scp_ipi fuse
->      CPU: 6 UID: 0 PID: 12 Comm: kworker/u32:0 Tainted: G    B
->       6.15.0-rc1-00001-gfed05d98b726 #628 PREEMPT
-> 06e695da6360d22824958738f9ba1c9b2416be19
->      Tainted: [B]=BAD_PAGE
->      Hardware name: Google Ciri sku2 board (DT)
->      Workqueue: events_unbound deferred_probe_work_func
->      pstate: 40400009 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->      pc : iommu_get_dma_domain+0x30/0x58
->      lr : iommu_get_dma_domain+0x30/0x58
->      sp : ffffffc080186ee0
->      x29: ffffffc080186ee0 x28: ffffff80c4c59028 x27: 0000000000000000
->      x26: 0000000000000014 x25: 0068000000000f0b x24: ffffff80c4c5ca28
->      x23: 00000000008ca000 x22: 1ffffff810030df8 x21: ffffff80c20ea010
->      x20: ffffff80c20ea010 x19: 0000000000000000 x18: 0000000000000000
->      x17: 3d3d3d3d3d3d3d3d x16: 3d3d3d3d3d3d3d3d x15: 0720072007200720
->      x14: 0720072007200720 x13: ffffff80c0a1bb80 x12: ffffffbae2ca45e9
->      x11: 1ffffffae2ca45e8 x10: ffffffbae2ca45e8 x9 : dfffffc000000000
->      x8 : 000000451d35ba18 x7 : ffffffd716522f47 x6 : 0000000000000001
->      x5 : ffffffd716522f40 x4 : ffffffbae2ca45e9 x3 : ffffffd713717e6c
->      x2 : 0000000000000001 x1 : ffffff80c0941dc0 x0 : 0000000000000001
->      Call trace:
->       iommu_get_dma_domain+0x30/0x58 (P)
->       __iommu_dma_alloc_noncontiguous+0x34/0x498
->       iommu_dma_alloc+0x2f0/0x3e0
->       dma_alloc_attrs+0x1b4/0x3b8
->       mtk_gem_create+0x124/0x170
->       mtk_gem_dumb_create+0x84/0x180
->       drm_mode_create_dumb+0xf8/0x128
->       drm_client_framebuffer_create+0x11c/0x240
->       drm_fbdev_dma_driver_fbdev_probe+0x154/0x5a0
->       __drm_fb_helper_initial_config_and_unlock+0x4f0/0x928
->       drm_fb_helper_initial_config+0x50/0x68
->       drm_fbdev_client_hotplug+0xc0/0x120
->       drm_client_register+0xa0/0x100
->       drm_fbdev_client_setup+0xc8/0x260
->       drm_client_setup+0x60/0xd0
->       mtk_drm_bind+0x4f0/0xaf0
->       try_to_bring_up_aggregate_device+0x258/0x2f0
->       __component_add+0x104/0x240
->       component_add+0x1c/0x38
->       mtk_disp_rdma_probe+0x180/0x260
->       platform_probe+0x98/0x128
->       really_probe+0x118/0x3c0
->       __driver_probe_device+0xc0/0x198
->       driver_probe_device+0x64/0x1f8
->       __device_attach_driver+0xf0/0x1b0
->       bus_for_each_drv+0xf4/0x178
->       __device_attach+0x120/0x240
->       device_initial_probe+0x1c/0x30
->       bus_probe_device+0xdc/0xe8
->       deferred_probe_work_func+0xec/0x140
->       process_one_work+0x428/0xa80
->       worker_thread+0x2c0/0x538
->       kthread+0x258/0x380
->       ret_from_fork+0x10/0x20
->      Code: 97e8f12c f9422673 91056260 97e8f129 (f940ae60)
->      ---[ end trace 0000000000000000 ]---
->      Kernel panic - not syncing: Oops: Fatal exception
->      SMP: stopping secondary CPUs
->      Kernel Offset: 0x1693600000 from 0xffffffc080000000
->      PHYS_OFFSET: 0x40000000
->      CPU features: 0x0e00,000002e0,01202650,8200720b
->      Memory Limit: none
->      Rebooting in 30 seconds..
-> 
-> 
-> 
-> Thanks
-> ChenYu
-> 
->> Mem abort info:
->>    ESR = 0x0000000096000004
->>    EC = 0x25: DABT (current EL), IL = 32 bits
->>    SET = 0, FnV = 0
->>    EA = 0, S1PTW = 0
->>    FSC = 0x04: level 0 translation fault
->> Data abort info:
->>    ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->>    CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->>    GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->> user pgtable: 4k pages, 48-bit VAs, pgdp=0000000101380000
->> [0000000000000000] pgd=0000000000000000, p4d=0000000000000000
->> Internal error: Oops: 0000000096000004 [#1]  SMP
->> Modules linked in: btusb btrtl mt6315_regulator btintel mtk_vcodec_dec
->>    btmtk v4l2_vp9 btbcm mtk_vcodec_enc v4l2_h264 mtk_vcodec_dbgfs
->>    bluetooth mtk_jpeg ecdh_generic mtk_vcodec_common mtk_jpeg_enc_hw
->>    mtk_jpeg_dec_hw ecc v4l2_mem2mem rfkill videobuf2_dma_contig
->>    videobuf2_memops videobuf2_v4l2 videodev videobuf2_common mc
->>    mt6360_charger mcp251xfd it5205 goodix_ts can_dev panfrost
->>    drm_shmem_helper gpu_sched lvts_thermal mtk_svs mtk_adsp_mailbox
->>    snd_soc_dmic mtk_scp mtk_rpmsg mtk_scp_ipi mtk_cmdq_mailbox
->>    mediatek_cpufreq_hw spmi_mtk_pmif fuse dm_mod ip_tables x_tables
->>    ipv6 mediatek_drm tcpci_mt6360 drm_display_helper drm_client_lib
->>    tcpci drm_dma_helper drm_kms_helper tcpm drm mtk_mutex mtk_mmsys
->>    typec rtc_mt6397 mtk_cmdq_helper phy_mtk_pcie pcie_mediatek_gen3
->>    dwmac_mediatek stmmac_platform stmmac pwm_mtk_disp pcs_xpcs pwm_bl
->>    backlight
->> CPU: 5 UID: 0 PID: 12 Comm: kworker/u32:0 Not tainted 6.14.0-next-20250326 #4 PREEMPT
->> Hardware name: MediaTek Genio 1200 EVK-P1V2-EMMC (DT)
->> Workqueue: events_unbound deferred_probe_work_func
->> pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->> pc : mtk_iommu_device_group+0x2c/0xe0
->> lr : __iommu_probe_device+0x130/0x490
->> sp : ffff8000827b3970
->> x29: ffff8000827b3970 x28: ffff0000c0028000 x27: ffff80008164f2b8
->> x26: ffff0000cbc47130 x25: ffff80008096a9f0 x24: ffff80008164f5a8
->> x23: ffff800082684b60 x22: ffff8000827b3a80 x21: ffff0000cbc47130
->> x20: ffffffffffffffed x19: ffff0000c117c010 x18: 0000000000000000
->> x17: 6f702d616d642d64 x16: 6574636972747365 x15: 0000000000000002
->> x14: 0000000000000000 x13: 0000000000128d55 x12: 6f632d616d642e30
->> x11: 0000000000000100 x10: 0000000000000001 x9 : 0000000000000220
->> x8 : 0101010101010101 x7 : ffff0000c117c010 x6 : 306c766f2c727461
->> x5 : 0000000000000000 x4 : ffff0000c10a2de8 x3 : ffff0000c10a2e70
->> x2 : ffff0000c01a4600 x1 : 0000000000000000 x0 : ffff0000c65470c0
->> Call trace:
->>   mtk_iommu_device_group+0x2c/0xe0 (P)
->>   __iommu_probe_device+0x130/0x490
->>   probe_iommu_group+0x3c/0x70
->>   bus_for_each_dev+0x7c/0xe0
->>   iommu_device_register+0xd8/0x22c
->>   mtk_iommu_probe+0x270/0x53c
->>   platform_probe+0x68/0xd8
->>   really_probe+0xbc/0x2c0
->>   __driver_probe_device+0x78/0x120
->>   driver_probe_device+0x3c/0x154
->>   __device_attach_driver+0xb8/0x140
->>   bus_for_each_drv+0x88/0xe8
->>   __device_attach+0xa0/0x190
->>   device_initial_probe+0x14/0x20
->>   bus_probe_device+0xb4/0xc0
->>   deferred_probe_work_func+0x90/0xc8
->>   process_one_work+0x148/0x284
->>   worker_thread+0x2cc/0x3cc
->>   kthread+0x12c/0x204
->>   ret_from_fork+0x10/0x20
->> Code: b4000500 f9401c01 92800254 f9409821 (f9400035)
->> ---[ end trace 0000000000000000 ]---
->> ```
->>
->> I've tested this patch on Mediatek Genio 510-EVK and 1200-EVK boards
->> with a kernel based on linux-next (tag: next-20250327).
->> ---
->> Changes in v2:
->> - Fix goto label usage in device registration error case
->> - Add review and test trailers
->> - Link to v1: https://lore.kernel.org/r/20250327-fix-mtk-iommu-error-v1-1-df969158e752@collabora.com
->> ---
->>   drivers/iommu/mtk_iommu.c | 26 +++++++++++++-------------
->>   1 file changed, 13 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
->> index 034b0e670384a24df10130cbbff95ce8e0bc092d..df98d0c65f5469c6803cd9d151c85ad855558cf5 100644
->> --- a/drivers/iommu/mtk_iommu.c
->> +++ b/drivers/iommu/mtk_iommu.c
->> @@ -1372,15 +1372,6 @@ static int mtk_iommu_probe(struct platform_device *pdev)
->>          platform_set_drvdata(pdev, data);
->>          mutex_init(&data->mutex);
->>
->> -       ret = iommu_device_sysfs_add(&data->iommu, dev, NULL,
->> -                                    "mtk-iommu.%pa", &ioaddr);
->> -       if (ret)
->> -               goto out_link_remove;
->> -
->> -       ret = iommu_device_register(&data->iommu, &mtk_iommu_ops, dev);
->> -       if (ret)
->> -               goto out_sysfs_remove;
->> -
->>          if (MTK_IOMMU_HAS_FLAG(data->plat_data, SHARE_PGTABLE)) {
->>                  list_add_tail(&data->list, data->plat_data->hw_list);
->>                  data->hw_list = data->plat_data->hw_list;
->> @@ -1390,19 +1381,28 @@ static int mtk_iommu_probe(struct platform_device *pdev)
->>                  data->hw_list = &data->hw_list_head;
->>          }
->>
->> +       ret = iommu_device_sysfs_add(&data->iommu, dev, NULL,
->> +                                    "mtk-iommu.%pa", &ioaddr);
->> +       if (ret)
->> +               goto out_list_del;
->> +
->> +       ret = iommu_device_register(&data->iommu, &mtk_iommu_ops, dev);
->> +       if (ret)
->> +               goto out_sysfs_remove;
->> +
->>          if (MTK_IOMMU_IS_TYPE(data->plat_data, MTK_IOMMU_TYPE_MM)) {
->>                  ret = component_master_add_with_match(dev, &mtk_iommu_com_ops, match);
->>                  if (ret)
->> -                       goto out_list_del;
->> +                       goto out_device_unregister;
->>          }
->>          return ret;
->>
->> -out_list_del:
->> -       list_del(&data->list);
->> +out_device_unregister:
->>          iommu_device_unregister(&data->iommu);
->>   out_sysfs_remove:
->>          iommu_device_sysfs_remove(&data->iommu);
->> -out_link_remove:
->> +out_list_del:
->> +       list_del(&data->list);
->>          if (MTK_IOMMU_IS_TYPE(data->plat_data, MTK_IOMMU_TYPE_MM))
->>                  device_link_remove(data->smicomm_dev, dev);
->>   out_runtime_disable:
->>
->> ---
->> base-commit: bc960e3e32c8b940c10b14557271355f66ae4db1
->> change-id: 20250327-fix-mtk-iommu-error-af6ec347d057
->>
->> Best regards,
->> --
->> Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
->>
+ .../bindings/phy/spacemit,k1-combphy.yaml          |  53 +++++
+ .../devicetree/bindings/phy/spacemit,usb2-phy.yaml |  40 ++++
+ .../devicetree/bindings/usb/spacemit,k1-dwc3.yaml  |  78 +++++++
+ arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts    |  55 +++++
+ arch/riscv/boot/dts/spacemit/k1.dtsi               |  52 +++++
+ drivers/phy/Kconfig                                |   1 +
+ drivers/phy/Makefile                               |   1 +
+ drivers/phy/spacemit/Kconfig                       |  20 ++
+ drivers/phy/spacemit/Makefile                      |   3 +
+ drivers/phy/spacemit/phy-k1-combphy.c              | 229 +++++++++++++++++++++
+ drivers/phy/spacemit/phy-k1-usb2.c                 | 132 ++++++++++++
+ drivers/usb/dwc3/Kconfig                           |   7 +
+ drivers/usb/dwc3/Makefile                          |   1 +
+ drivers/usb/dwc3/dwc3-spacemit.c                   | 127 ++++++++++++
+ 14 files changed, 799 insertions(+)
+---
+base-commit: 64e9fdfc89a76fed38d8ddeed72d42ec71957ed9
+change-id: 20250407-b4-k1-usb3-v3-2-1682aa492559
+prerequisite-message-id: <20250306175750.22480-2-heylenay@4d2.org>
+prerequisite-patch-id: e0f9037d659502b7f10588f15b80505724eb9e35
+prerequisite-patch-id: 4414e37b16b1bc0039239f07da8c35935efb1601
+prerequisite-patch-id: 1e65bc4c0c0d41baef743819c311ad53f6696094
+prerequisite-patch-id: 43ef72522e30620f0244e0e22bd844884d89b0cd
+prerequisite-patch-id: 73008ee7c04e90cd4e825a3f5bd2e44ec24d8ad3
+prerequisite-message-id: <20250328210233.1077035-1-elder@riscstar.com>
+prerequisite-patch-id: 9b026005eb6ee1430ab7ca67edfc21de85a19dd2
+prerequisite-patch-id: 8ee238181e50c76d92458b149b72fa4909e0fede
+prerequisite-patch-id: 66f3ee8eb1cc016112dace699bce292b617a3186
+prerequisite-patch-id: c2deec49fc0308a08908fd9badadc10f921af348
+prerequisite-patch-id: 99afc2efdffc0fffe47a31e7b07b72af9d1d2e18
+prerequisite-patch-id: d06e8cd0fae4c405dbb56832a1fe48bfaa4e0fab
+prerequisite-patch-id: 5f53f8bf16fb067628092daebc4831293261aa01
+prerequisite-message-id: <20250226115957-GYA45508@gentoo>
+prerequisite-patch-id: 82dd2631d36c3fafb82768d3d89022ed956020c6
+prerequisite-patch-id: 5cc63738ba2d463e1840a91a94357f43199bd68f
+prerequisite-patch-id: f44247679d46a51c242703eca370ce0e3db2e61f
+prerequisite-patch-id: 9d4cd8be42a37798815d0aaae21d3c022f815414
+
+Best regards,
+-- 
+Ze Huang <huangze@whut.edu.cn>
 
 
