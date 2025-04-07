@@ -1,152 +1,138 @@
-Return-Path: <linux-kernel+bounces-592405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDDB2A7ECA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:21:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22CD7A7EC97
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 603D542510A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:14:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C05818877F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FD8221F0E;
-	Mon,  7 Apr 2025 18:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F85258CDB;
+	Mon,  7 Apr 2025 18:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cwPr6b4g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZF6Mwva6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31182AEE2;
-	Mon,  7 Apr 2025 18:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0865822E41C;
+	Mon,  7 Apr 2025 18:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744052219; cv=none; b=ruEOcu4m/eE/pRkXccrf6PMBDHtYJycGIz4/T11twnojc5760ggcSJBu+p+jWGff9pOZNvZEnRuuDQuUfccGmKBXaNBY9IE0VD/zm3e56nr0I08B5TA7Vk/lYBI0jY2Fn+BwH/XOGsQ9nEqRHZHAlYPqvOQHZLjdkcoQGKAXGFI=
+	t=1744052301; cv=none; b=BgzyaR1mROZMMuxAiGZeBrPzZZBaS82WbdGX57NiF+M6Ahf6dZA7SnjtflH8wIVzA8oKAklb2anEy8rkjoKZZlR9l6ZlatI3+L4u5mGW/0S3WVbayNpPMKuNjZw0LeABBg9bN6ErnSgdGyXQO2xjAsOOpH2EKZH92qxsL2GBtIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744052219; c=relaxed/simple;
-	bh=wLJWwrYORWIHIpPIhjB3g9vQ/xdK4n0sVOSib6gaI64=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WS8mCn+V1Md4m52/u8/7pexrw1L3o4HJjU9+tccMOxY7Qh0IMYIJwIoDWujJdaTwRS4V1OFjG68QfAVRmON13uJayFybVPLvwaAmUZQC6lnFzjApI4nF6k8O6WKyeA9xTfjUCMkTOqj5o6t6KMUghEgM/bJ/G2NSrigu51XxsAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cwPr6b4g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7979BC4CEDD;
-	Mon,  7 Apr 2025 18:56:58 +0000 (UTC)
+	s=arc-20240116; t=1744052301; c=relaxed/simple;
+	bh=RJY+f1R8hI4t/Wsf1l9yEDTJPhNF5RCZngtFawzlXwc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MrTJEvkDt5lSg67SDNyiVxbXOnVzf5W3bg/wyN3k9W8RdIyvJE8okXme5wpxrbBL5Z5mLxJn2DCdLAKcoKf/koKmlOCBlgz7rTKjVJw6YFYt5vyKYHdBPs7yGdHqAOcfhKlbjuU5Bjk0hrfLoJmykITd1MgURuduY5g4JtA6aL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZF6Mwva6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77358C4CEDD;
+	Mon,  7 Apr 2025 18:58:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744052219;
-	bh=wLJWwrYORWIHIpPIhjB3g9vQ/xdK4n0sVOSib6gaI64=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cwPr6b4gswwfPNBCIgOGjSfjgFHBc2bJBrs8Z5jpucxGX36KB4KEITfFnBRc8IO2u
-	 6hilSExO3p41cfPj+5tndMmWyV4KdsvOWJvpLwmO34uWhd2GhoNyrUTDM7ipQHQycp
-	 SNhowbBzNkdJLLRoV3ZQB7HIYdE+eY40mPmpicv2VG9xWAbUugi9BKPUikWqqYaBtB
-	 Dmg6gUvEAVBpFiZtV5WA1t6nqX2hz0DOQVSBiOjMxjzdx6r43rkK1v7RTmloplHEni
-	 9hB72FyPnmX/CKYweVdJJzznxSpTQ02RUDGoni6QVnUGK0RUkNeyjXODHB/ZwlM38/
-	 DQTtM8VlY+NDg==
-Message-ID: <ebfaae8d-7186-454f-ba06-b86fea357d03@kernel.org>
-Date: Mon, 7 Apr 2025 13:56:57 -0500
+	s=k20201202; t=1744052300;
+	bh=RJY+f1R8hI4t/Wsf1l9yEDTJPhNF5RCZngtFawzlXwc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZF6Mwva6UbJZzY0vnZ9L5tUFhcQF8KHT8qbFcwyDqIJkvI5YnJxnwh8DTRKC9itRw
+	 QGHVd+fiUPzjSYtyx2fLVTh0ls7zriFZdp7cfc/4PQxNA4ew0xzN5GFaiQCPRqH2l2
+	 1A84Viiss7tpJyfI7L+sYf00qXOJqTFFpoAQg/gmfiwwShZ85+75GRLxG4AA9SZoOF
+	 bruJqFYNkHWNDQft+qfH7jzE/OYTTZUEaqgILb+ocwSqoHLb2ZRYxUKgkOebLf2hql
+	 eE0Cu1XQnL7Ivh2hsGIbg/b19rdqOEyHZyAgitB5iBMilmpaa388dJXGfQNiKjO79Z
+	 4+HnP4AC9ao/Q==
+Date: Mon, 7 Apr 2025 11:58:17 -0700
+From: Kees Cook <kees@kernel.org>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] ext4: Avoid -Wflex-array-member-not-at-end warning
+Message-ID: <202504071156.2344BA19@keescook>
+References: <Z-SF97N3AxcIMlSi@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] x86/CPU/AMD: Print the reason for the last reset
-To: Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>
-Cc: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
- "H . Peter Anvin" <hpa@zytor.com>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- Yazen Ghannam <yazen.ghannam@amd.com>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20250407162525.1357673-1-superm1@kernel.org>
- <20250407162525.1357673-2-superm1@kernel.org> <Z_Qdn_WYAalNAHOi@gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <Z_Qdn_WYAalNAHOi@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-SF97N3AxcIMlSi@kspp>
 
-On 4/7/2025 1:46 PM, Ingo Molnar wrote:
+On Wed, Mar 26, 2025 at 04:55:51PM -0600, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
 > 
-> * Mario Limonciello <superm1@kernel.org> wrote:
+> Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
+> a flexible structure where the size of the flexible-array member
+> is known at compile-time, and refactor the rest of the code,
+> accordingly.
 > 
->> +++ b/Documentation/admin-guide/amd/amd-reboot-reason.csv
->> @@ -0,0 +1,21 @@
->> +Bit, Type, Reason
->> +0, Pin, Thermal trip (BP_THERMTRIP_L)
->> +1, Pin, Power button
->> +2, Pin, SHUTDOWN# pin
->> +4, Remote, Remote ASF power off command
->> +9, Internal, Thermal trip (internal)
->> +16, Pin, User reset (BP_SYS_RST_L)
->> +17, Software, PCI reset (PMIO 0xC4)
->> +18, Software, CF9 reset (0x04)
->> +19, Software, CF9 reset (0x06)
->> +20, Software, CF9 reset (0x0E)
->> +21, Sleep, Power state or ACPI state transition
->> +22, Pin, Keyboard reset (KB_RST_L)
->> +23, Internal, Internal CPU shutdown
->> +24, Hardware, Failed boot timer
->> +25, Hardware, Watchdog timer
->> +26, Remote, Remote ASF reset command
->> +27, Internal, Data fabric sync flood event due to uncorrected error
->> +29, Internal, MP1 Watchdog timer timeout
->> +30, Internal, Parity error
->> +31, Internal, SW sync flood event
+> So, with these changes, fix the following warning:
 > 
-> So I'd much prefer if each bit was iterated, and the above reasons were
-> printed out clearly, instead of some arbitrary meta grouping that
-> removes useful diagnostic information:
+> fs/ext4/mballoc.c:3041:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 > 
->> +#define PIN_RESET	(BIT(0) | BIT(1) | BIT(2) | BIT(16) | BIT(22))
->> +#define REMOTE_RESET	(BIT(4) | BIT(26))
->> +#define INTERNAL_RESET	(BIT(9) | BIT(23) | BIT(27) | BIT(29) | BIT(30) | BIT(31))
->> +#define SW_RESET	(BIT(17) | BIT(18) | BIT(19) | BIT(20))
->> +#define HW_RESET	(BIT(24) | BIT(25))
->> +#define SLEEP_RESET	(BIT(21))
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+>  fs/ext4/mballoc.c | 18 ++++++++----------
+>  1 file changed, 8 insertions(+), 10 deletions(-)
 > 
->> +	pr_info("System reset was due to %s (0x%08x)\n",
->> +		get_s5_reset_reason(value), value);
-> 
-> I realize that the entire numeric value gets printed as well, but it's
-> the symbolic decoding that is most useful to humans.
+> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+> index 0d523e9fb3d5..f88424c28194 100644
+> --- a/fs/ext4/mballoc.c
+> +++ b/fs/ext4/mballoc.c
+> @@ -3037,10 +3037,8 @@ static int ext4_mb_seq_groups_show(struct seq_file *seq, void *v)
+>  	unsigned char blocksize_bits = min_t(unsigned char,
+>  					     sb->s_blocksize_bits,
+>  					     EXT4_MAX_BLOCK_LOG_SIZE);
+> -	struct sg {
+> -		struct ext4_group_info info;
+> -		ext4_grpblk_t counters[EXT4_MAX_BLOCK_LOG_SIZE + 2];
+> -	} sg;
+> +	DEFINE_RAW_FLEX(struct ext4_group_info, sg, bb_counters,
+> +			EXT4_MAX_BLOCK_LOG_SIZE + 2);
 
-The way that I "envisioned" this working was someone uses their machine 
-and suddenly hits a problem.  When they do they look at 
-amd/debugging.rst and then run:
+Yup, struct ext4_group_info::bb_counters is ext4_grpblk_t, so everything
+matches up.
 
-"journalctl -k | grep "System reset was due"
+>  
+>  	group--;
+>  	if (group == 0)
+> @@ -3048,7 +3046,7 @@ static int ext4_mb_seq_groups_show(struct seq_file *seq, void *v)
+>  			      " 2^0   2^1   2^2   2^3   2^4   2^5   2^6  "
+>  			      " 2^7   2^8   2^9   2^10  2^11  2^12  2^13  ]\n");
+>  
+> -	i = (blocksize_bits + 2) * sizeof(sg.info.bb_counters[0]) +
+> +	i = (blocksize_bits + 2) * sizeof(sg->bb_counters[0]) +
+>  		sizeof(struct ext4_group_info);
+>  
+>  	grinfo = ext4_get_group_info(sb, group);
+> @@ -3068,14 +3066,14 @@ static int ext4_mb_seq_groups_show(struct seq_file *seq, void *v)
+>  	 * We care only about free space counters in the group info and
+>  	 * these are safe to access even after the buddy has been unloaded
+>  	 */
+> -	memcpy(&sg, grinfo, i);
+> -	seq_printf(seq, "#%-5u: %-5u %-5u %-5u [", group, sg.info.bb_free,
+> -			sg.info.bb_fragments, sg.info.bb_first_free);
+> +	memcpy(sg, grinfo, i);
+> +	seq_printf(seq, "#%-5u: %-5u %-5u %-5u [", group, sg->bb_free,
+> +			sg->bb_fragments, sg->bb_first_free);
+>  	for (i = 0; i <= 13; i++)
+>  		seq_printf(seq, " %-5u", i <= blocksize_bits + 1 ?
+> -				sg.info.bb_counters[i] : 0);
+> +				sg->bb_counters[i] : 0);
+>  	seq_puts(seq, " ]");
+> -	if (EXT4_MB_GRP_BBITMAP_CORRUPT(&sg.info))
+> +	if (EXT4_MB_GRP_BBITMAP_CORRUPT(sg))
+>  		seq_puts(seq, " Block bitmap corrupted!");
+>  	seq_putc(seq, '\n');
+>  	return 0;
 
-and then map the odd duck(s) out to the table.
+Replacements looks good.
 
-> 
-> Also, by printing unknown but set bits as 'unknown' we'd have a way to
-> clearly signal to users that there's some new diagnostic flag the
-> kernel doesn't understand yet.
+Reviewed-by: Kees Cook <kees@kernel.org>
 
-Right.
-
-> 
-> Just a couple of examples:
-> 
->   - Printing "Internal, Data fabric sync flood event due to uncorrected error"
->     or "Internal, Parity error" would indicate potential RAM module troubles,
->     while "Internal, Thermal trip (internal)" would indicate cooling system
->     troubles. But with your patch both get printed as some sort of 'internal CPU'
->     problem that is unnecessarily unhelpful...
-> 
->   - I don't think representing bit 24 ('Hardware, Failed boot timer') as
->     'Hardware induced' reboot is really helpful either, to me it appears to be
->     a failed bootup time treshold that is more of a firmware thing that may or
->     may not indicate hardware troubles.
-> 
->   - etc. etc.
-> 
-> Basically, the finegrained list of reasons looks perfectly usable to
-> me, let's not dumb it down for users unnecessarily, okay?
-
-Boris, your thoughts please?
-
-
+-- 
+Kees Cook
 
