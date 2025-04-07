@@ -1,109 +1,91 @@
-Return-Path: <linux-kernel+bounces-590924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E321FA7D886
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:51:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C3C0A7D883
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEF7C3B0E39
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:51:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 776407A34F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C94226883;
-	Mon,  7 Apr 2025 08:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D06228CB7;
+	Mon,  7 Apr 2025 08:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TqCUj+ND"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0Dnn0tsY"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE742288D6;
-	Mon,  7 Apr 2025 08:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39331225764;
+	Mon,  7 Apr 2025 08:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744015905; cv=none; b=cpZD0fmyB8nw70nMpiOnoxMqdmSgVB++wjEjDK3gP8/nh8BQi1HfRV5y5sFpBJIC8K+4D4zKhRcBlkvTSQA9J3GpgctHJCn0KUUirFWyrGeRhKeYQJ4Ghjs3RiGPfAg20I7/FIRMVqt4izJuv6YK+QsucybG8j4MAtaXyFYI5qg=
+	t=1744015891; cv=none; b=NLv07j3VwC3RZXBComvUIyQU1kIdAmxUqQcO7ksHjIybcUm8Q5lHcUEMz56ed+vRpzt8hNie5UfOP+MMFcSQ/eeGw5Xsyvn1hqrrP/4f0AubMv9reesIaqfbkzkuZ/q4Yti6mFlLMN/x5fQukK53TRlFt1A8q8nFz4GB+7s1R70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744015905; c=relaxed/simple;
-	bh=/cZ4bLwYN3F5IlIV369ScToRFFo5Y2ZC1Fw5hv9absI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d4no9Oot/sNaUe44auBC76GivwNcQOGCZ4qTk/B5O8ZHhtTIKyJiideSM2DY9voBdqaTby69hjLsdNmc7y9AYA3x/6QjxJgfW1WxA5BmhbRf+KWJuDjk3TD2CGdm+eN/HWMXI9abKFZglmiBG1s9STxTaZu6GNwm61ibsD3SIZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TqCUj+ND; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4F07C4CEDD;
-	Mon,  7 Apr 2025 08:51:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744015904;
-	bh=/cZ4bLwYN3F5IlIV369ScToRFFo5Y2ZC1Fw5hv9absI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=TqCUj+NDK/sbQgrGvHdijroyFHd81/aqWTTu5eeUBozVH4GcbdydFZQJuS5Ia0DEw
-	 uPONKsVeV68lNlbzcmJCNkPTgnjqVfIpSqrQxNgrGqAE0FRlFGaK/UUC5FkQ56bOjF
-	 0TB64KilrZMePFrtgHf0l5xFZaYxPUHXxpcuq56/fRH9/3/mHJawMp0zx/Q6ahD7pk
-	 A+kXwAcLFUGsbapMDA5etFa7tS9FRsZiUa5cPwbXXnMsk+sOe5yCGo+7Q6UGLx640C
-	 DulE/aHTL6f8pivUIKxhX4Ds5hSXNx6k44KfIlDRkywB3UaO/VtdrYLNyCKEYhCPAU
-	 akFF+SoEduXvg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1u1iCs-000000005YX-2yRE;
-	Mon, 07 Apr 2025 10:51:50 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Robert Foss <rfoss@kernel.org>,
-	Todor Tomov <todor.too@gmail.com>,
-	Bryan ODonoghue <bryan.odonoghue@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>,
-	linux-media@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Depeng Shao <quic_depengs@quicinc.com>
-Subject: [PATCH] media: qcom: camss: csid: suppress CSID log spam
-Date: Mon,  7 Apr 2025 10:51:25 +0200
-Message-ID: <20250407085125.21325-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1744015891; c=relaxed/simple;
+	bh=cgFMoVhFsVsQuhzN0oPZnKuo1WBBdB+pN2xtQ9S128k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bK4T0llBRfszXKWgYlTl5Smew8fJ86ifPDsXahPuV2KjOH/bmkI9SiwQGyq+bKqpmTPhVlCmMNVwr015kbz3C43PMqgkCE6DpeUFDJL7NpD6xvfG+DUVPHS6yBCDwz1CnhN0HuXVMSgI16exzrLTwxUW57EHOBKvoP8IIV3uVjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0Dnn0tsY; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=AqJgXjOTWo8t0DUAqIkgmqFLug8gZ7gxKZ1gLMUCv9M=; b=0Dnn0tsYcbtenCdb3OGIfRdXOl
+	fstm/HPBAC6tjIUhoWZOWnPn3P/8rHZkCNV3mE3DTS17/kAUntZ44RHMoMxlA+Unz4HiB0vDbrcx3
+	X9Pnd2Lr7zMlsQSJkkCXR6GleXwnl2qaue4MPVmxKHftgSYtcSS1RvTaQblcg06g3zt4lZxq+2KQJ
+	mbV6xwCE1H/NmH1zKHcSq7lDWUhfIiTD5NFdA28ioouAwzBu7apvCkZu3O8matkPsHyJPIAB1XNoC
+	MFI6k4Nl8Qrik/hl/uli7ovpjoRdp1VdBDAZWiIgi2RYk3yTIW8zR/qWoGQJPSVmmWnpd8oXEfZHb
+	xQcXbjuw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1u1iCW-0000000H4sH-2j0J;
+	Mon, 07 Apr 2025 08:51:28 +0000
+Date: Mon, 7 Apr 2025 01:51:28 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Leon Romanovsky <leon@kernel.org>, pr-tracker-bot@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] vfs mount
+Message-ID: <Z_OSEJ-Bd-wL1CpS@infradead.org>
+References: <20250322-vfs-mount-b08c842965f4@brauner>
+ <174285005920.4171303.15547772549481189907.pr-tracker-bot@kernel.org>
+ <20250401170715.GA112019@unreal>
+ <20250403-bankintern-unsympathisch-03272ab45229@brauner>
+ <20250403-quartal-kaltstart-eb56df61e784@brauner>
+ <196c53c26e8f3862567d72ed610da6323e3dba83.camel@HansenPartnership.com>
+ <6pfbsqikuizxezhevr2ltp6lk6vqbbmgomwbgqfz256osjwky5@irmbenbudp2s>
+ <CAHk-=wjksLMWq8At_atu6uqHEY9MnPRu2EuRpQtAC8ANGg82zw@mail.gmail.com>
+ <Z--YEKTkaojFNUQN@infradead.org>
+ <CAHk-=wjjGb0Uik101G-B76pp+Xvq5-xa1azJF0EwRxb_kisi2Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjjGb0Uik101G-B76pp+Xvq5-xa1azJF0EwRxb_kisi2Q@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-A recent commit refactored the printing of the CSID hardware version, but
-(without it being mentioned) also changed the log level from debug to
-info.
+On Fri, Apr 04, 2025 at 07:19:27AM -0700, Linus Torvalds wrote:
+> On Fri, 4 Apr 2025 at 01:28, Christoph Hellwig <hch@infradead.org> wrote:
+> >
+> > Or just kill the non-scoped guard because it simply is an insane API.
+> 
+> The scoped guard may be odd, but it's actually rather a common
+> situation.  And when used with the proper indentation, it also ends up
+> being pretty visually clear about what part of a function is under the
+> lock.
 
-This results in repeated log spam during use, for example, on the Lenovo
-ThinkPad X13s:
-
-	qcom-camss ac5a000.camss: CSID:0 HW Version = 1.0.0
-	qcom-camss ac5a000.camss: CSID:0 HW Version = 1.0.0
-	qcom-camss ac5a000.camss: CSID:0 HW Version = 1.0.0
-	qcom-camss ac5a000.camss: CSID:0 HW Version = 1.0.0
-	qcom-camss ac5a000.camss: CSID:0 HW Version = 1.0.0
-
-Suppress the version logging by demoting to debug level again.
-
-Fixes: f759b8fd3086 ("media: qcom: camss: csid: Move common code into csid core")
-Cc: Depeng Shao <quic_depengs@quicinc.com>
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- drivers/media/platform/qcom/camss/camss-csid.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
-index d08117f46f3b..5284b5857368 100644
---- a/drivers/media/platform/qcom/camss/camss-csid.c
-+++ b/drivers/media/platform/qcom/camss/camss-csid.c
-@@ -613,8 +613,8 @@ u32 csid_hw_version(struct csid_device *csid)
- 	hw_gen = (hw_version >> HW_VERSION_GENERATION) & 0xF;
- 	hw_rev = (hw_version >> HW_VERSION_REVISION) & 0xFFF;
- 	hw_step = (hw_version >> HW_VERSION_STEPPING) & 0xFFFF;
--	dev_info(csid->camss->dev, "CSID:%d HW Version = %u.%u.%u\n",
--		 csid->id, hw_gen, hw_rev, hw_step);
-+	dev_dbg(csid->camss->dev, "CSID:%d HW Version = %u.%u.%u\n",
-+		csid->id, hw_gen, hw_rev, hw_step);
- 
- 	return hw_version;
- }
--- 
-2.49.0
+The scoped one with proper indentation is fine.  The non-scoped one is
+the one that is really confusing and odd.
 
 
