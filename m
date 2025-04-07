@@ -1,144 +1,113 @@
-Return-Path: <linux-kernel+bounces-591410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6326BA7DF64
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:34:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EB8CA7DF70
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56E281892459
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:32:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C4A33B3E50
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BB117A31A;
-	Mon,  7 Apr 2025 13:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185C414F9E2;
+	Mon,  7 Apr 2025 13:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="MflTLccG"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pzDd6IgT"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196FD4437C;
-	Mon,  7 Apr 2025 13:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F7B86352;
+	Mon,  7 Apr 2025 13:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744032715; cv=none; b=qqo7k0Kcf3Oru2+Y1j5eVUIwSjUDNJ1RKgpVGaoS+OxjKY2xrw8wlp2lJ4LJJ2u/ZIBnmTrkhv8Q6mEa1qN5r6XzJdRlptzpFAbfWARpSuVRl4uabFeIUWhKU9TFLasFSqhJrUXKeX4VpHT9bBr6W1Aj4i/2RMiUtVj297YYois=
+	t=1744032730; cv=none; b=P9kpfOv+1jP5ryBEGMINr9uslaR9zi0tZxdf05eDqnH8yCv9ZkEYBPZg4fohimbictB3o/h/aOP+phRFaQy5hR7H/6EfPeto/ZfrEF2c+emWgKZnHYXWY1fq+leUJQtpnThPx6HmpOcw8x6mVWVtCslz8KV8k4hEd0FWGXwynMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744032715; c=relaxed/simple;
-	bh=K1zVKRTMOlerezdqLw1WLLO/zTiOwTFY1n4Yqua3xEI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GqS6vNzp5eIUfG/6dfXC1dzBEnuK4jWcxWRta+k0i/6k+ERYHhRM1hSCZEkdZCglNERN2lZ9jKvTE72esScJ/pCW9ELJlHPJpYIwKF4KN0P+82E83N0vK1BphGhCPScH+wNvfg9h4eFMBlW7iocfg1cx7FZy/AxU0TQy+JiwZRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=MflTLccG; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: a64f4dee13b411f0aae1fd9735fae912-20250407
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=0TmOhe1bI1nRNV0NE53OyjwkYey+CrXkJvZIridblTc=;
-	b=MflTLccGJpLit7Gr+NV3MbXWbzGvQ2CoWjHt7LUbcKdzXjYDXQwf0+k9+Atjys+Pr1bzpGUqb71F99soDlNhOoP65nfrI5Yza7M8ZBKdZUQ3mDlxV2hxqfeOQTOsS563CvuqS+UbYoKZSnj+w2iVHXMx4b4/uPmYazjGHCFpoz4=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:acea105c-f982-4713-9526-d499165a32b3,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:0ef645f,CLOUDID:fa98c7a5-c619-47e3-a41b-90eedbf5b947,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: a64f4dee13b411f0aae1fd9735fae912-20250407
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
-	(envelope-from <bincai.liu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1774815493; Mon, 07 Apr 2025 21:31:45 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Mon, 7 Apr 2025 21:31:44 +0800
-Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Mon, 7 Apr 2025 21:31:43 +0800
-From: Bincai Liu <bincai.liu@mediatek.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chunfeng Yun <chunfeng.yun@mediatek.com>,
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Jitao Shi <jitao.shi@mediatek.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-phy@lists.infradead.org>,
-	Bincai Liu <bincai.liu@mediatek.com>
-Subject: [PATCH 4/4] drm/mediatek: dsi: Enable runtime PM
-Date: Mon, 7 Apr 2025 21:31:25 +0800
-Message-ID: <20250407133138.22449-5-bincai.liu@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250407133138.22449-1-bincai.liu@mediatek.com>
-References: <20250407133138.22449-1-bincai.liu@mediatek.com>
+	s=arc-20240116; t=1744032730; c=relaxed/simple;
+	bh=CV1TYOC+Hc1Y1OftiZIoW2xzm1Py+waPZZku52ovkpg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HW0vkp//rk6VygH1k9llXOAiWK4Q95nZwmQJzib6OE8eXDeO1h/wJvLBdYiR0TuzXcAEEdD7PB4Uv24qV08YNYRxWw4LZDwN+HSocyawHhc0s6YN8z8EPEsbo0GUxKU/tq2I3zYwXOSJNyBu4rdEOUUItQqnXSfFzg4YdMjaK5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pzDd6IgT; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E372D4431F;
+	Mon,  7 Apr 2025 13:32:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744032726;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FgBkAfF7LRh3OjsY0EeWJNc7q8ieecweD7h2bVdhnwU=;
+	b=pzDd6IgTeal0WpkpWTMQcRZZo0sGBgmuBkicvVFeXcclqzMuD5Bre5csabultSvIrWabAA
+	4NnsU8sG7lv2IVtGJO+5Lrki7OWFbmwlg+mJUn5a+teZdvkzZMZY+fpWtN39NQxSr6TvoK
+	uWKdyRgv0FzDLExNQkJpuyH9HwEEyvGuz55mrWptmxrsS0/WVxt/4HSl8NGmIRHudi7leM
+	vnHx+N6Jgb7zQQHFtvuERN6irFV564ds4WLSYWxZ4luMsUiHU64P7JXj8XB4iFYhXQL6dZ
+	PXxWIKszN/4ZYtF5zbi776wpIW7oMq13jSf4rw9RU9BzCz3QQz49JFbxiwJ9HA==
+Date: Mon, 7 Apr 2025 15:32:03 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Marek Pazdan <mpazdan@arista.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ intel-wired-lan@lists.osuosl.org, Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Willem de
+ Bruijn <willemb@google.com>, Alexander Lobakin
+ <aleksander.lobakin@intel.com>, Mina Almasry <almasrymina@google.com>,
+ Edward Cree <ecree.xilinx@gmail.com>, Daniel Zahka
+ <daniel.zahka@gmail.com>, Jianbo Liu <jianbol@nvidia.com>, Gal Pressman
+ <gal@nvidia.com>
+Subject: Re: [PATCH 1/2] ethtool: transceiver reset and presence pin control
+Message-ID: <20250407153203.0a3037d7@kmaincent-XPS-13-7390>
+In-Reply-To: <20250407123714.21646-1-mpazdan@arista.com>
+References: <20250407123714.21646-1-mpazdan@arista.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddtfedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddtpdhrtghpthhtohepmhhprgiiuggrnhesrghrihhsthgrrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihhnthgvlhdqfihirhgvugdqlhgrnhesl
+ hhishhtshdrohhsuhhoshhlrdhorhhgpdhrtghpthhtoheprghnthhhohhnhidrlhdrnhhguhihvghnsehinhhtvghlrdgtohhmpdhrtghpthhtohepphhriigvmhihshhlrgifrdhkihhtshiivghlsehinhhtvghlrdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvght
+X-GND-Sasl: kory.maincent@bootlin.com
 
-This power is new added in MT8196. So runtime PM is enable
-to turn off dsi power to reduce power consumption.
+On Mon,  7 Apr 2025 12:35:37 +0000
+Marek Pazdan <mpazdan@arista.com> wrote:
 
-Signed-off-by: Bincai Liu <bincai.liu@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_dsi.c | 5 +++++
- 1 file changed, 5 insertions(+)
+> Signal Definition section (Other signals) of SFF-8636 Spec mentions that
+> additional signals like reset and module present may be implemented for
+> a specific hardware. There is currently no user space API for control of
+> those signals so user space management applications have no chance to
+> perform some diagnostic or configuration operations. This patch uses
+> get_phy_tunable/set_phy_tunable ioctl API to provide above control to
+> user space. Despite ethtool reset option seems to be more suitable for
+> transceiver module reset control, ethtool reset doesn't allow for reset
+> pin assertion and deassertion. Userspace API may require control over
+> when pin will be asserte and deasserted so we cannot trigger reset and
+> leave it to the driver when deassert should be perfromed.
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-index b1467d6bed06..21cfba1f9b89 100644
---- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-@@ -12,6 +12,7 @@
- #include <linux/of_platform.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/reset.h>
- #include <linux/units.h>
- 
-@@ -715,6 +716,7 @@ static int mtk_dsi_poweron(struct mtk_dsi *dsi)
- 	dsi->data_rate = DIV_ROUND_UP_ULL(dsi->vm.pixelclock * bit_per_pixel,
- 					  dsi->lanes);
- 
-+	pm_runtime_get_sync(dsi->host.dev);
- 	ret = clk_set_rate(dsi->hs_clk, dsi->data_rate);
- 	if (ret < 0) {
- 		dev_err(dev, "Failed to set data rate: %d\n", ret);
-@@ -789,6 +791,7 @@ static void mtk_dsi_poweroff(struct mtk_dsi *dsi)
- 	clk_disable_unprepare(dsi->digital_clk);
- 
- 	phy_power_off(dsi->phy);
-+	pm_runtime_put_sync(dsi->host.dev);
- 
- 	dsi->lanes_ready = false;
- }
-@@ -1272,6 +1275,7 @@ static int mtk_dsi_probe(struct platform_device *pdev)
- 	dsi->bridge.funcs = &mtk_dsi_bridge_funcs;
- 	dsi->bridge.of_node = dev->of_node;
- 	dsi->bridge.type = DRM_MODE_CONNECTOR_DSI;
-+	pm_runtime_enable(dev);
- 
- 	return 0;
- }
-@@ -1282,6 +1286,7 @@ static void mtk_dsi_remove(struct platform_device *pdev)
- 
- 	mtk_output_dsi_disable(dsi);
- 	mipi_dsi_host_unregister(&dsi->host);
-+	pm_runtime_disable(&pdev->dev);
- }
- 
- static const struct mtk_dsi_driver_data mt8173_dsi_driver_data = {
--- 
-2.45.2
+nit: performed
 
+ETHTOOL_PHY_G/STUNABLE IOCTLs are targeting the PHY of the NIC but IIUC in =
+your
+case you are targeting the reset of the QSFP module. Maybe phylink API is m=
+ore
+appropriate for this feature.
+
+You have to add net-next prefix in the subject like this [PATCH net-next 1/=
+2]
+when you add new support to net subsystem.
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
