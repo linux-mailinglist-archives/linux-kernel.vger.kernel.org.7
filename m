@@ -1,100 +1,120 @@
-Return-Path: <linux-kernel+bounces-590526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7263CA7D3EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:20:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 108F1A7D40A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F7933ACB84
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:20:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A97E7A4150
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87EFE224AF8;
-	Mon,  7 Apr 2025 06:20:50 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBF88F64;
+	Mon,  7 Apr 2025 06:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="T67kECPf"
+Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF6F188A0E;
-	Mon,  7 Apr 2025 06:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2A83C0B;
+	Mon,  7 Apr 2025 06:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744006850; cv=none; b=kqhGfvKNJAsbrVnlByzJoe1lTAoVpRZ3laDIjCGkkV/JYeIlwP7UNWa4yEZVLDqarymUC5HSpNQ9B/ei3lmLzziSngEqnZ5OB7MU2xSdkWVq8ZHoXX6PPjdnkS+Xi61Ms2TxteNM80KTr8awh3K25DjMui+d/5hksUN5Hp1LefI=
+	t=1744007450; cv=none; b=PEv0759mqsnqS71yjd9BCHWHMNAM3afRgrZoSriKzkY0WwoQBZL2JHng2LkXGqeuxrJ+WxMrjlbINSThqJXhr47DwvEBn39IxqnOW7UexT2aQXi3tAVhOSvmhsifujmie0gO2+JMEUAqmRR8GrRLe43bw3e8d3ZAmSiPBxnc8vY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744006850; c=relaxed/simple;
-	bh=kxPU36NHbznjgMk9d+008xEfUM7BFBvgFh9CNVtNsrw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BwHYQURfmf/kZ8r5MxqXh5SsxK6sTVFGbYkQfmUjx+iJiVDM6CStVRa2KrOShsQPdmT2pjVdjKaUWBiCRY0dCA0gbmRm1xVTtCafHPvT1kcFLtTwkz3vyrolfKkGwvNcbiLaqeeoEwOVzzZ6ylTP0Y/pHiP7/CWsauATlGZnV+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowADnIwyvbvNn2NrPBg--.10924S2;
-	Mon, 07 Apr 2025 14:20:31 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: perex@perex.cz,
-	tiwai@suse.com,
-	dan.carpenter@linaro.org,
-	baojun.xu@ti.com,
-	broonie@kernel.org,
-	ckeepax@opensource.cirrus.com,
-	andriy.shevchenko@linux.intel.com,
-	nathan@kernel.org
-Cc: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] ALSA: hda/tas2781: Remove unnecessary NULL check before release_firmware()
-Date: Mon,  7 Apr 2025 14:19:39 +0800
-Message-Id: <20250407061939.2771803-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1744007450; c=relaxed/simple;
+	bh=Mbsqq+6fCCPLoE8/BcquABwEHP6K3EYwcjR7Z+gthvk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rm2t49/XqUyS7IlCSLacROzfyUfiDhyD740tpu6OTw/50S0YfJ+kUsOJFiLteNRSn820dSiwbEqKinjR3zVxXrwZubGrnszLanOaqvFfmVpJy5NJf6tXLCrkv2SJDrY09aW1dH0u/26ksctNIQ5Y/Yri7QWojLen0+6m3iQmW/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=T67kECPf; arc=none smtp.client-ip=199.247.17.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
+Received: from spock.localnet (unknown [212.20.115.26])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by prime.voidband.net (Postfix) with ESMTPSA id CB416635B040;
+	Mon, 07 Apr 2025 08:20:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+	s=dkim-20170712; t=1744006859;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=vjO3TAnFOqalGZ8xSYfbpH7cqt+Bfn6P2ZGcPBU9VrA=;
+	b=T67kECPfT42QpBEFPxPp59Fv0xiLmj2hM27rMbf3PfIKcxYgnmWvIuC9rghujRZRFdM0Lg
+	OXW+pL+q8oqvHeq1MxJ33fg7ygvcgVzndpV6ERoQYM+RUooRVmY8vFRu0DRzGp9UfDT57I
+	jR5vQAtmHZab6o88WIQahsLsJEnageU=
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: linux-kernel@vger.kernel.org
+Cc: netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+ Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>,
+ Andrew Lunn <andrew+netdev@lunn.ch>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>
+Subject: objtool warning in ice_free_prof_mask
+Date: Mon, 07 Apr 2025 08:20:45 +0200
+Message-ID: <4970551.GXAFRqVoOG@natalenko.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowADnIwyvbvNn2NrPBg--.10924S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtw18ZF4ktr4xXry8Cry7Awb_yoW3Wrb_CF
-	4rCr1kuF48X39Fqw13ZF1YvrWfXasrZryxWr1SkFWUJa93K3yFga4UCF1DWFZ8urWFk3sa
-	grn8Ca1DAryqqjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbTAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_GF1l42xK82IYc2Ij64vIr4
-	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
-	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
-	8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
-	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14
-	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU8FApDUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: multipart/signed; boundary="nextPart1916258.tdWV9SEqCh";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-release_firmware() checks for NULL pointers internally.
-Remove unneeded NULL check for fmw here.
+--nextPart1916258.tdWV9SEqCh
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: linux-kernel@vger.kernel.org
+Subject: objtool warning in ice_free_prof_mask
+Date: Mon, 07 Apr 2025 08:20:45 +0200
+Message-ID: <4970551.GXAFRqVoOG@natalenko.name>
+MIME-Version: 1.0
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- sound/pci/hda/tas2781_hda_spi.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Hello.
 
-diff --git a/sound/pci/hda/tas2781_hda_spi.c b/sound/pci/hda/tas2781_hda_spi.c
-index 399f2e4c3b62..25175ff4b3aa 100644
---- a/sound/pci/hda/tas2781_hda_spi.c
-+++ b/sound/pci/hda/tas2781_hda_spi.c
-@@ -1003,8 +1003,7 @@ static void tasdev_fw_ready(const struct firmware *fmw, void *context)
- 	 */
- 
- out:
--	if (fmw)
--		release_firmware(fmw);
-+	release_firmware(fmw);
- 	pm_runtime_mark_last_busy(tas_hda->priv->dev);
- 	pm_runtime_put_autosuspend(tas_hda->priv->dev);
- }
+With v6.15-rc1, CONFIG_OBJTOOL_WERROR=y and gcc 14.2.1 the following happens:
+
+```
+drivers/net/ethernet/intel/ice/ice.o: error: objtool: ice_free_prof_mask.isra.0() falls through to next function ice_free_flow_profs.cold()
+drivers/net/ethernet/intel/ice/ice.o: error: objtool: ice_free_prof_mask.isra.0.cold() is missing an ELF size annotation
+```
+
+If I mark ice_write_prof_mask_reg() as noinline, this warning disappears.
+
+Any idea what's going wrong?
+
+Thank you.
+
 -- 
-2.25.1
+Oleksandr Natalenko, MSE
+--nextPart1916258.tdWV9SEqCh
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmfzbr0ACgkQil/iNcg8
+M0vZkhAA1tXUFHurvbvtwTDQNNs1ru9REB1w9TKVmN62Dgv9US35rAtlFot4wulq
+43xzWuIcgR6OrHd9/39OZ9BJE2RVzOBIcBHYexgXCnX9BkH0A+y9LobJA8cMrLt+
+bp/TNhJqxbobWt+YPLAWgIujNANpeepexdN/oJoW857M1dj2QQmLLHkPdAGyOhTv
+jXPA+Ul+TJm4PN+u/q3WdWpUZHhXrWn5ICfyx+dzYqoYRpgQD84B/YMUasqA2R5d
+ClWK5PTQq80ynDVdVLh1KKb3gXBornnQumLcalZijIz/Mwc8ELLfjt9Xv2XNdS5n
+vlCw49IH2rvU+1zYhMx4DLkVh3n22pyL+Msp3UQt8klFlQ88ko8aK9Gh2Y5q+BLr
+oHMokSoj92aZKjznihYWdsBst/QpFOmGTMOEtD0cHtxobZVfQnfHfd/i4yLPHWwS
+ouogXxD5lx0Kx8SS4unDa4UtNP4ZQHcOmUt4l2EYeI0rnwus0NBDWGb7jdGgtuU7
+1IJcJ+zs9uCEELgLDuPV67Q+2WBhqebZlJZC48vgLV47AuZ+r2XQP8BDl2F0Bh6J
+cIDAiz07u3LBAaPByYdTQY0YZVr8z79MvNpGxKwNXt2LYE1yksOgpzmeUsYp+Mjb
+gGBSJckC6a4KwNCG/i2gaYB/65jUaBVypebWMEGnDvF4qSLhFDw=
+=UuCv
+-----END PGP SIGNATURE-----
+
+--nextPart1916258.tdWV9SEqCh--
+
+
 
 
