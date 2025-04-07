@@ -1,136 +1,158 @@
-Return-Path: <linux-kernel+bounces-590945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FE59A7D8BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:57:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD190A7D8D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D4727A3067
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:55:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01E443A7B3E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB04322A4D1;
-	Mon,  7 Apr 2025 08:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RrdX40aR"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A3922A1ED;
+	Mon,  7 Apr 2025 08:57:40 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C40B22A1CF
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 08:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648CD227EBB;
+	Mon,  7 Apr 2025 08:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744016183; cv=none; b=PabdzWQVPfwBkcY32aea3V/8bCiaBpc3/VaFqUxkpNbfvllpK2W5jSOCsj6SFFSBRoxLKEc8Q4C1Qg8yZHc+LMTTwjkMHyFLnWM/9JI2DcuUxKbpon9ExQl3D3C4YvqpRaxTq7YY3nbFt5I+NJ5oYFXWjI1N359pOje551BG8bw=
+	t=1744016260; cv=none; b=CTO13619s1OSE2b/vGqc+Uu4MQfy7yoEfipKA+2OqPMjuOiL0zFf7lt0P/4g7zow8dp1GB7dVAfaU9pIass14T6l/FgzkqCQPz6nHNwvovGF9cwbrM1TFE4lJcob+7PPAublmNqMLiY3LnpNvxtknRF952Cq2bUSDSZfy7Hg2J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744016183; c=relaxed/simple;
-	bh=Fy62SzMM/9Z57xu5AwOs9PXpTps4H2GdXp0QBEtXn5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J5/aKE8/RPWVSjMzCDrXE2kDI8qcGvG6VSr7ld+ldTcRxvcTEn7SvBDZz0lYHNKBJOMH9YMTZquNbQMwkEbZqVfOvGc5ghPoqDXVpmrsLH+cn2zjELeIuHKO+8Wk6u8rmkVqQolazyqI1n5iqUw+k6NBd0C2C0Ch6cYeOX8L/08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RrdX40aR; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso44932595e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 01:56:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744016177; x=1744620977; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4lZ26/MzKr4Ipcy6k7wbvxY0bsuMHsFajLH+7Kr41sA=;
-        b=RrdX40aR6g2S/eLF0+VwBPoE0i0PAItUJv1MvVpoE4A9E0BYtFKSZM0jjalg5d0bU6
-         6NHzqEziqfL27VMfKzbytOPZjjis3VoTDo0jPC0nDl+d5doGixGd5WPfszsn8COfL7EF
-         DRQaBMdA7Uc5kGx8HTPnvV76kYO365ZsVtpF/dHU/D4Chguhf29n2fI9vOmhvTaieTKn
-         gew26rTsSEqycYU6ApT+di+cxBVrRJe5rlFDU7KuuO09NJVvbbHdQkXQcSs5G7h4IB6R
-         Rw1uR98uMd+c7ao54nQaOACFPatYYVZAElhsw9eVQSIMuHVNSalI6S+tDE77kvsh8bvu
-         GcHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744016177; x=1744620977;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4lZ26/MzKr4Ipcy6k7wbvxY0bsuMHsFajLH+7Kr41sA=;
-        b=aKgMdqwOvEQi/g1ILcybkidskUJx+MPzSG6e+4BS5Hln2vTgHx5ibDfw2qsgQdqz54
-         n9CTLCZgzwV194o+PS/yjDA3zmtHQDN/ZUk2/2vJB/e3Mn3V69acex8uQgNZ3yMI5h4n
-         ycPA7HAvHAdkvcAsU64vT+RevIDtFv2kZgpbGn4YxPQatWHtUuAFKCeg6T+ESPFReRAs
-         OqsHyinf4fV8dwGnVbfQZX/AJymVjMCizvnH3lFfNEl5aYd2Jx+O9jmuYDIZ08mmsue2
-         ElYfAqLF7IQCyBM6hMX1EqENAm8GzYGmp9RX7f7NfiTK9H9pCf+PAL+QdQFNGVqVCnOZ
-         FPvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQWbqbUh4jeAiurDazLDShvvGH06xhuNj1VEzi75aJRXQzgpGmCRZA9Wu3XkXwSrjthuu3a9qxVZry1Hk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUa3h+Gowra+biZg89CMhAMJdqugFn+A1J1OFLgmw1LewEHELU
-	X4EarwjyCCVP2s1QwQG8El5egJcKZP2k9g2x2gTRvx3xCKPcc6HNUjkz8ggLp4s=
-X-Gm-Gg: ASbGnct6tODt67Axh74bQyByye6QveVYBRxnoJvhY6AVoFPNWA6OnFNkYQLsJVFoP2h
-	u5hklE3QjLtHMJFqikQ//oyUQ8C83qjkPDDjxKi3m8iCQW3s2P2t9eToPkcV6iZ35MGGiFBa2ES
-	Fy/DPieXXMLOHQZ41H8awuv9UlOQbLtjC+Pf+KT7cQh5L8KLgn0R8IGbc13n3WoniYwk9xagNW+
-	mbxCFza3pNHJ0kt7xGZ8DsHCV/491YvY1Avy8wOBI4JF4AhBW17CPwnPf1qu/TbcVnMH7usbAhA
-	p5PjEypig02VcmKTVM1Wh/rv/coy+cvOIpsiND3TOzp9/nTFb71CAh/tFnEU
-X-Google-Smtp-Source: AGHT+IFX/DkqBzJz9j5+HAQzhFFiQfm7Y5i8Q/6EzrAHz716OWaZOhpPQhlCWHCWVl6h0q1QhF4T0A==
-X-Received: by 2002:a05:600c:3b14:b0:43c:ec97:75db with SMTP id 5b1f17b1804b1-43ed0bf6aeemr106771475e9.11.1744016177517;
-        Mon, 07 Apr 2025 01:56:17 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43ec3428298sm124599685e9.8.2025.04.07.01.56.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 01:56:17 -0700 (PDT)
-Date: Mon, 7 Apr 2025 11:56:13 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: sunliming@linux.dev, dave.stevenson@raspberrypi.com, mcanal@igalia.com,
-	kernel-list@raspberrypi.com, maarten.lankhorst@linux.intel.com,
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	sunliming <sunliming@kylinos.cn>, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] drm/vc4: fix uninitialized smatch warnings
-Message-ID: <e5e557bf-53b9-49ca-9bd7-3dfe85ccbbb8@stanley.mountain>
-References: <20250405024503.694981-1-sunliming@linux.dev>
- <20250407-colorful-important-saluki-5e4ac5@houat>
+	s=arc-20240116; t=1744016260; c=relaxed/simple;
+	bh=IdcyUBwERIiAph3pi0kYkd0EFJEvKaHy/Yuzopv2i6M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rugqGG2ur/qoJs3bG1W0w5stGlfilA7PkfGoqrgQ8QtWXA5Am0x6Iv/vfYBFoFquQYk2DaAZFm9gKrWt24fJXQ1GTYWUDoa2cgAOZJKFzC7J0rLioSOWyWA94pgP7sLrIwCartV1rYDPLc0B8PTXmwEHo4/ZSNAjhUsVdXEFyss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5373In7e007025;
+	Mon, 7 Apr 2025 08:57:21 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45tsr1j43s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 07 Apr 2025 08:57:20 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Mon, 7 Apr 2025 01:57:19 -0700
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Mon, 7 Apr 2025 01:57:16 -0700
+From: <jianqi.ren.cn@windriver.com>
+To: <stable@vger.kernel.org>
+CC: <patches@lists.linux.dev>, <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>, <jianqi.ren.cn@windriver.com>,
+        <jhs@mojatatu.com>, <xiyou.wangcong@gmail.com>, <jiri@resnulli.us>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <michal.swiatkowski@linux.intel.com>
+Subject: [PATCH 6.1.y] net/sched: act_mirred: don't override retval if we already lost the skb
+Date: Mon, 7 Apr 2025 16:57:15 +0800
+Message-ID: <20250407085715.2139993-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250407-colorful-important-saluki-5e4ac5@houat>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=Td6WtQQh c=1 sm=1 tr=0 ts=67f39370 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=A7XncKjpAAAA:8 a=J1Y8HTJGAAAA:8 a=t7CeM3EgAAAA:8
+ a=z6SZLS2PjRZJ6NiNSX0A:9 a=R9rPLQDAdC6-Ub70kJmZ:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-ORIG-GUID: r4KI00hYE4PdK--cfHtkBMxxe-4CpzXT
+X-Proofpoint-GUID: r4KI00hYE4PdK--cfHtkBMxxe-4CpzXT
+X-Sensitive_Customer_Information: Yes
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-07_02,2025-04-03_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
+ mlxlogscore=999 clxscore=1015 lowpriorityscore=0 adultscore=0 bulkscore=0
+ impostorscore=0 phishscore=0 spamscore=0 suspectscore=0 priorityscore=1501
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.21.0-2502280000
+ definitions=main-2504070064
 
-On Mon, Apr 07, 2025 at 09:13:59AM +0200, Maxime Ripard wrote:
-> On Sat, Apr 05, 2025 at 10:45:03AM +0800, sunliming@linux.dev wrote:
-> > From: sunliming <sunliming@kylinos.cn>
-> > 
-> > Fix below smatch warnings:
-> > drivers/gpu/drm/vc4/vc4_gem.c:604 vc4_lock_bo_reservations() error: uninitialized symbol 'ret'.
-> > 
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > Closes: https://lore.kernel.org/r/202504021500.3AM1hKKS-lkp@intel.com/
-> > Signed-off-by: sunliming <sunliming@kylinos.cn>
-> > ---
-> >  drivers/gpu/drm/vc4/vc4_gem.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/vc4/vc4_gem.c b/drivers/gpu/drm/vc4/vc4_gem.c
-> > index 8125f87edc60..04ea1696fc5d 100644
-> > --- a/drivers/gpu/drm/vc4/vc4_gem.c
-> > +++ b/drivers/gpu/drm/vc4/vc4_gem.c
-> > @@ -582,7 +582,7 @@ static int
-> >  vc4_lock_bo_reservations(struct vc4_exec_info *exec,
-> >  			 struct drm_exec *exec_ctx)
-> >  {
-> > -	int ret;
-> > +	int ret = 0;
-> >  
-> >  	/* Reserve space for our shared (read-only) fence references,
-> >  	 * before we commit the CL to the hardware.
-> 
-> I don't see a code path where ret is used without being initialized. Can
-> you clarify that in the commit log?
+From: Jakub Kicinski <kuba@kernel.org>
 
-Apparently the drm_exec_until_all_locked() loop always iterates at least
-once.  If you have the cross function database then this is parsed
-automatically, but I've also hard coded it as a loop at least once macro
-just a 1 minute ago to silence this false positive.s
+[ Upstream commit 166c2c8a6a4dc2e4ceba9e10cfe81c3e469e3210 ]
 
-regards,
-dan carpenter
+If we're redirecting the skb, and haven't called tcf_mirred_forward(),
+yet, we need to tell the core to drop the skb by setting the retcode
+to SHOT. If we have called tcf_mirred_forward(), however, the skb
+is out of our hands and returning SHOT will lead to UaF.
 
+Move the retval override to the error path which actually need it.
+
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Fixes: e5cf1baf92cb ("act_mirred: use TC_ACT_REINSERT when possible")
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[Minor conflict resolved due to code context change.]
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+---
+Verified the build test
+---
+ net/sched/act_mirred.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/net/sched/act_mirred.c b/net/sched/act_mirred.c
+index 36395e5db3b4..df64acc8acde 100644
+--- a/net/sched/act_mirred.c
++++ b/net/sched/act_mirred.c
+@@ -259,13 +259,13 @@ static int tcf_mirred_act(struct sk_buff *skb, const struct tc_action *a,
+ 	dev = rcu_dereference_bh(m->tcfm_dev);
+ 	if (unlikely(!dev)) {
+ 		pr_notice_once("tc mirred: target device is gone\n");
+-		goto out;
++		goto err_cant_do;
+ 	}
+ 
+ 	if (unlikely(!(dev->flags & IFF_UP)) || !netif_carrier_ok(dev)) {
+ 		net_notice_ratelimited("tc mirred to Houston: device %s is down\n",
+ 				       dev->name);
+-		goto out;
++		goto err_cant_do;
+ 	}
+ 
+ 	/* we could easily avoid the clone only if called by ingress and clsact;
+@@ -279,7 +279,7 @@ static int tcf_mirred_act(struct sk_buff *skb, const struct tc_action *a,
+ 	if (!use_reinsert) {
+ 		skb2 = skb_clone(skb, GFP_ATOMIC);
+ 		if (!skb2)
+-			goto out;
++			goto err_cant_do;
+ 	}
+ 
+ 	want_ingress = tcf_mirred_act_wants_ingress(m_eaction);
+@@ -321,12 +321,16 @@ static int tcf_mirred_act(struct sk_buff *skb, const struct tc_action *a,
+ 	}
+ 
+ 	err = tcf_mirred_forward(want_ingress, skb2);
+-	if (err) {
+-out:
++	if (err)
+ 		tcf_action_inc_overlimit_qstats(&m->common);
+-		if (tcf_mirred_is_act_redirect(m_eaction))
+-			retval = TC_ACT_SHOT;
+-	}
++	__this_cpu_dec(mirred_nest_level);
++
++	return retval;
++
++err_cant_do:
++	if (is_redirect)
++		retval = TC_ACT_SHOT;
++	tcf_action_inc_overlimit_qstats(&m->common);
+ 	__this_cpu_dec(mirred_nest_level);
+ 
+ 	return retval;
+-- 
+2.34.1
 
 
