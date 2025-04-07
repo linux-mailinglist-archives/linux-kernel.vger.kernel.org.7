@@ -1,131 +1,115 @@
-Return-Path: <linux-kernel+bounces-591990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A107A7E774
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:57:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5949A7E71C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 425FE7A34A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:56:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2699188754D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B672153C4;
-	Mon,  7 Apr 2025 16:57:17 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAADD20F061;
+	Mon,  7 Apr 2025 16:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jx56oOeJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2154879B;
-	Mon,  7 Apr 2025 16:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0236620E30C;
+	Mon,  7 Apr 2025 16:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744045037; cv=none; b=OSC0o6d0SYxNvDjuOI16uMmnqCt68KLakz+KwJHglUxqQqsD4oI3wodyJivtemWq/hMDtA/ITHjCp5gFl002zoGvXn5lQXITFydEF4axCCF7Bhj4G/Yl3zWBXwAyFhSLk+mrJAIds8pyVm2QOQ7iuGhx4xUxzqxpz/vYdVIdbI4=
+	t=1744044115; cv=none; b=m2kblExlD3511+FZdWrCc/DcW/Rf6pcLlvyucxe/Av5QcHaf9bM6bL2b9uHShgRwRly1fWbzqHjEqxFjY9Iy13WsFY8FLQHlnBpt/tAN5BGDLt22kdFFN1vkARrRroRrDFxnjjnojaV4baKfJZpH7kTmNyGLCFCHIxkWfFiOG+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744045037; c=relaxed/simple;
-	bh=fVOlvEKHAoex+96mqsldAlAhMfNcp5FCshpoMDp/TAI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hSKbJSL7hVkz1e9oSrM3kNA7scXNVozRMatGxc76u7rFL6O1nhUxJfHi239Bjgjru/J9ofzXpHc99qz9rv8SUq4XLBoPVljLvtV7gInweG7ygIzefoLeMjLiY/WOYbk0h4SnXI4aVuCUDc0TJ/ige4G0ccGCXWK6iPiVnFPpr0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from localhost.localdomain (178.207.21.175) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 7 Apr
- 2025 19:41:53 +0300
-From: Roman Smirnov <r.smirnov@omp.ru>
-To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Roman Smirnov <r.smirnov@omp.ru>, Steve French <sfrench@samba.org>,
-	Shirish Pargaonkar <shirishpargaonkar@gmail.com>, Sachin Prabhu
-	<sprabhu@redhat.com>, <linux-cifs@vger.kernel.org>,
-	<samba-technical@lists.samba.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, Steve French <stfrench@microsoft.com>
-Subject: [PATCH 5.15] cifs: fix integer overflow in match_server()
-Date: Mon, 7 Apr 2025 19:41:37 +0300
-Message-ID: <20250407164138.644037-1-r.smirnov@omp.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1744044115; c=relaxed/simple;
+	bh=2DZaBdiIWfRi2cZXVupSLX8P1kQDQE1JN+1+Y8S2N2Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oJ0N0By+HDGtINQcAFHco8ma/ct3oSB61NIN27FTXpX81VWuMJrMRPFVzfNej1cXOiddKYTYsmm9ua6xjjkfBEkzFFa/JnDSJCxSvnX8WVxZz2z0KZK9G8K0rGSUPA5KA5Jjzz4IAlvV2GFTVrysg8MBPv0v7mc9/6JLE7mXJxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jx56oOeJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B715DC4CEDD;
+	Mon,  7 Apr 2025 16:41:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744044113;
+	bh=2DZaBdiIWfRi2cZXVupSLX8P1kQDQE1JN+1+Y8S2N2Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jx56oOeJKQbuRt2tp4+Xt6FIXUoZzIU/0LeM+CA9psDCzTxiRu73kTHMT8QNjQzxj
+	 NeJABgeGL2rOuTieaPWkit/Ti5qv6ZStUTbHWHH3sGmNBPrWvZZ5jFTC5/Y5G/Q5io
+	 csCPtwRcv7BVxCHj9xNP8nZc9ibQFOSwLZNMC44ARnPnjs2YZRo9CNfe5XgXv4ts97
+	 bOV/tzzCrGy41yMfhpifKnNcb9JXzPXg+YKSZZjjpPNJIrfhpHY8d5IZ8b8K+ND4sX
+	 OwjRJYyUZVeLpVEwwNRlqVAYJWUxvA00mDxRjqHnFU1wv5uh8MEYjIdA1XX5fWDld1
+	 X+TPrxdxwu2Aw==
+Date: Mon, 7 Apr 2025 09:41:51 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	"H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Borislav Petkov <bp@alien8.de>, Brian Gerst <brgerst@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ingo Molnar <mingo@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, Takashi Iwai <tiwai@suse.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uros Bizjak <ubizjak@gmail.com>, Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH 0/4] Make gcc-8.1 and binutils-2.30 the minimum version
+Message-ID: <20250407164151.GB2536@sol.localdomain>
+References: <20250407094116.1339199-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 04/07/2025 16:28:07
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 192443 [Apr 07 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: r.smirnov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 54 0.3.54
- 464169e973265e881193cca5ab7aa5055e5b7016
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;178.207.21.175:7.1.2
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 178.207.21.175
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 04/07/2025 16:31:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 4/7/2025 3:07:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250407094116.1339199-1-arnd@kernel.org>
 
-From: Roman Smirnov <r.smirnov@omp.ru>
+On Mon, Apr 07, 2025 at 11:41:12AM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> x86 already requires gcc-8.1 since linux-6.15-rc1, which led me to
+> actually go through all  version checks and make this is the minimum
+> for all architectures.
+> 
+> Most of the actual resulting changes are actually for raising the
+> binutils version, which eliminates version checks on x86 and arm64.
+> 
+> Arnd Bergmann (4):
+>   kbuild: require gcc-8 and binutils-2.30
+>   raid6: skip avx512 checks
+>   x86: remove checks for binutils-2.30 and earlier
+>   arm64: drop binutils version checks
 
-[ Upstream commit 2510859475d7f46ed7940db0853f3342bf1b65ee ]
+This is intended to supersede the patches from Uros that removed checks for
+binutils < 2.25, right?  See:
 
-The echo_interval is not limited in any way during mounting,
-which makes it possible to write a large number to it. This can
-cause an overflow when multiplying ctx->echo_interval by HZ in
-match_server().
+* https://lore.kernel.org/linux-crypto/20250404074135.520812-1-ubizjak@gmail.com/
+* https://lore.kernel.org/linux-crypto/20250404074135.520812-2-ubizjak@gmail.com
+* https://lore.kernel.org/linux-crypto/20250404074135.520812-3-ubizjak@gmail.com/
 
-Add constraints for echo_interval to smb3_fs_context_parse_param().
+If we can indeed bump up the requirement to 2.30, that would be great.
 
-Found by Linux Verification Center (linuxtesting.org) with Svace.
+Just a note though: I recently added VAES and VPCLMULQDQ instructions to
+BoringSSL, which increased the binutils requirement of building BoringSSL to
+2.30, and this caused issues in a downstream project; e.g. see
+https://github.com/briansmith/ring/issues/2463.  Specifically people complained
+about being unable to build on Amazon Linux 2 and CentOS/RHEL/Oracle Linux 7.
 
-Fixes: adfeb3e00e8e1 ("cifs: Make echo interval tunable")
-Cc: stable@vger.kernel.org
-Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
----
- fs/cifs/fs_context.c | 5 +++++
- 1 file changed, 5 insertions(+)
+So I just thought I'd mention that, based on past experience with this sort of
+thing, those are the specific cases where it seems people are most likely to be
+trying to use binutils < 2.30.
 
-diff --git a/fs/cifs/fs_context.c b/fs/cifs/fs_context.c
-index fb3651513f83..3479f0072cf6 100644
---- a/fs/cifs/fs_context.c
-+++ b/fs/cifs/fs_context.c
-@@ -1088,6 +1088,11 @@ static int smb3_fs_context_parse_param(struct fs_context *fc,
- 		}
- 		break;
- 	case Opt_echo_interval:
-+		if (result.uint_32 < SMB_ECHO_INTERVAL_MIN ||
-+		    result.uint_32 > SMB_ECHO_INTERVAL_MAX) {
-+			cifs_errorf(fc, "echo interval is out of bounds\n");
-+			goto cifs_parse_mount_err;
-+		}
- 		ctx->echo_interval = result.uint_32;
- 		break;
- 	case Opt_snapshot:
--- 
-2.43.0
+But if those distros are not going to be supported any longer (without
+installing newer tools on them), or even are already unsupported due to the gcc
+requirement, bumping up the binutils requirement to 2.30 sounds good to me.
 
+- Eric
 
