@@ -1,127 +1,150 @@
-Return-Path: <linux-kernel+bounces-592346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28F3A7EBD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:02:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FA28A7EBFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86ED6188C291
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:59:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF4DE3BDC69
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6A8222573;
-	Mon,  7 Apr 2025 18:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFACC25D557;
+	Mon,  7 Apr 2025 18:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="kKg7YfyT"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kuH5vU+E"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC8D2222D2
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 18:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993FF2222C2
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 18:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744050474; cv=none; b=jYbwE0R4JQQOx5Q1XD1g5IptbmuVW2sl1v5CX+4/2gCelpud3YxDHgqUs9oFtvLM1WO/6OGCeCKdvst68htEVhd9S5zUfPg6/jjMYJsYgkxMHmAJh97GzRQJY42wE+RwVlyssUdHExWFcvECiUAHl2yf0+jm8QXcCberHMa0CJA=
+	t=1744050513; cv=none; b=cIAQ6SMOZwo8QgfMfec7qX8K7bpgHw90Cjv3YF9kLaMMYWwxKYVtyVpcTuMgxAJU3ITRINSnc42/O0EaABdll+S4l2rGDkQSTkCusyj8lUYZ6JDM+dHc4vTYdazenf2uyPXGOCMl9UPLF/1mSqtth/AoOIa9XjMfW1+CN+5Fc60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744050474; c=relaxed/simple;
-	bh=ILO2pDkDATVl5xlVItoRt9kbG9feenEnlD3ixktoGDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=roBVnz8ebQVDGG0mZ0+D/mmM7UyvCHR0yro86b71w/mqbuIyHkfwmC9w3ejGMHl6cFWW1vnTVCru8ni/hGaepRJG7If+O9uy5H4MWu8x9dkpWa0nvd48pQexCY4Vr7DRzxoOzoRChYY7d1hRSmgF29RSjXDxutD8eEQCaJG+DcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=kKg7YfyT; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4769bbc21b0so42282441cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 11:27:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1744050472; x=1744655272; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LipqWD1+mRA3ccfnYHF9wzUPGn6IorpYD8/e+3VH2Y0=;
-        b=kKg7YfyTNF4cEGz6srxHV9pDdxGPsMs/PUwZwgqQzft9kT0gmBNCuMz6QxUTVApbE3
-         W0+7HkgR06PVqkz0WcUq+BtjKduKbAiAD1wnLeYYCghkfJmnbgJWjUy8WW6p7bPpDHuG
-         MNRW0dIwzbGPBNfUSFVhdYAHAK2Kv//4KRvwki3uInfKRj6C2jfpVUv1f68N1ELwPDU/
-         HR5Y1x8GM+hCHRaAym9c+roWM6cTDS2oLN1F2judIvqtegI9JU70WnNtVXdj2Du7yIp4
-         4RqTSpXHe6912HgNLMDn406Ic1iKU9GMV+EsjgcdWrFw85AnsMABvZmuc6hT2Fj0Cvbr
-         sl+A==
+	s=arc-20240116; t=1744050513; c=relaxed/simple;
+	bh=N4Q2PJWuhAfKBzdAFmDbrPwhxv0aR7cTpTq+LF7pe9Y=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iaUIa0ekDZCRVeM/8ZPKYQmScpG04jyvHnetdJaIBU93U6DqJjEMf3CqqNKPPGzDRKfE3XaVoegpEjT2y1hTt5ssWE0eOKnlSjA1EcnzinlslJ5QOKzHB1i303qitsLruObYezFxsWSfbumnncZ2fb5/xSM3CVTWbfRHk8qCcSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kuH5vU+E; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 537HfMpK002437
+	for <linux-kernel@vger.kernel.org>; Mon, 7 Apr 2025 18:28:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=wRtFH9qTygTaGiFNeyhmWD
+	BRYBZEnxZC4l/kcFqqpoQ=; b=kuH5vU+EYMWqwZR6Efbh0S42A/nGPS25kDBRIE
+	dXlEbL+em5TuFVQg7nw7hh9BPS6WLCWNTrH+FOiNcWP1Y/8pWLlFLbLL+qK8g5O+
+	fVs4pp1loMy0jIhSB5qRp6DsjrdAJ2qGF7Lm/7Ae4TxI09fHpnaNGTiBsnLv43vZ
+	xLIL9A4fPeKyRgMlDKXW29x2tQcMqD1qwIgCi0wnuXLvMtXcOTlTPU7I2Twq7jTl
+	5omEOJKJu45BYbu62sds0WnDgHTSQIn05bVO7p1Y6lCG9aCaI5lUQX0I2hcs0xls
+	StHOgyrqE7jgZgO3BruXEDgiFlsMEzpcG+5V7+xdDaFaN/DQ==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twtaw66q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 18:28:30 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2ff798e8c93so4691007a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 11:28:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744050472; x=1744655272;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LipqWD1+mRA3ccfnYHF9wzUPGn6IorpYD8/e+3VH2Y0=;
-        b=ozL2PMtYOgEjsqUJwqE7aI1n8mwZyhYsxahagcw8jkV5GwVrB0SlbF/V/7oZP84Vl5
-         rxz8ylDynBeeiKMtFQf5pXLBiLt2ZEq3S4woj/Ym7cYrPeE49rdP9TBKdr6GHJADquxe
-         Gs6qZS2QJqX9ykUTuCgQfo1WSn2fc2jcxxfVTaZN+P/bq69U7gGKBsT3i0GoW1Rrwoxg
-         9J3sv/QhPfA3g7ZcwLZ9LCkKE9yZKeFH/nh7tRoeS14vLv/aGiWUdFWMMMbslM+GwghC
-         lqzCSpCfIS6PnSRQ2fJVpYBTOro3u9GeHD6PaPn6nsz+jTw/FqBc5IdaKU7NrqVlpPWm
-         hZFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXdHQamE7mOHSJePzQx4CGVxL9Xf8C7L3EtgyKH/VEcP1+6Wkvkm0XdcS53MDmeHHZoXyJo/Nt6mlkyCHk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3S7c+RdIs97XPTpdqlsAVNozY+/E3AviveAFpKTb8Ovzwy4R1
-	ACcKTw8I4wi01CMwu3JDOCXiWuLvmTkZ48I1G/UsGMf8W9xaa5CJqdY3+ItvRdE=
-X-Gm-Gg: ASbGnct6zynO5uMMxobsAfOw5f4BEbFsYt3DiWlbKukQtIyheud6rDflTSXmKCLV1c9
-	iqG5t+gE75mJsyXDJ3sh7HCF97/+0LV0z9dRp7Ep75FhgITKbp0zEddI9ymIyACRAsAF+MmdEaI
-	vdS8Pd66syiEwPUldKgSSyYosQMMBRnxPEsMVzFDmd24p7C4cFMy0WTLZlyqA9cpLkRV5YpzzhU
-	2ssXOmC6IZr7OBB1G9hyxmVHFY8L6KqHqhO/IMuUqY3iiF+e9xHhfloV05QR2rqbk3LIAPXk9rg
-	rhpvnd9LyO3mePWnayMWo6JzVETMvHFEswEe6YamhlRL0mpRBwX2DhfV4TbQH4p40aUiI/Ox6yi
-	hx50JP8ers09sfKYRttqAaIc=
-X-Google-Smtp-Source: AGHT+IE/m8/Fdsf69NCfrjgfUS4jJCYgvOivQ5nUV/iyctDTmBmE5TpokwkCVsL1qlBP7xetviS9Og==
-X-Received: by 2002:a05:622a:1211:b0:476:7018:9ae4 with SMTP id d75a77b69052e-47930fc2e7dmr153017351cf.16.1744050471657;
-        Mon, 07 Apr 2025 11:27:51 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-167-219-86.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.219.86])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4791b0876easm63483561cf.34.2025.04.07.11.27.50
+        d=1e100.net; s=20230601; t=1744050509; x=1744655309;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wRtFH9qTygTaGiFNeyhmWDBRYBZEnxZC4l/kcFqqpoQ=;
+        b=FnDOZi/Ed+I6zMMPLgZ+sQ3ZoyRqeWoGJPAp9fLLAvJiuNQrMdE5mEjgrXtwyOqv0l
+         gpFtMq3hNorw6ixlZ6B33/P4mxH1owGFhJhu1HOJDrQGw9gT1fqaGPRlJFDAm6eH/ge8
+         U3qoBln59KxVQZkPvZZGqEeUGkfbdTLI/A83vWqHootVxLeGGmEMrl6RDcs67LVsyJ/I
+         eeG2iv+rLBLBSdCoBlsZlZbAhefyE7UCBhqlRwOXv+2mD8DCmE+POejiVgMr7yAGdw24
+         spwKle7wiqwZkHB89b5a1D2E2Yyt90ukuYz9zhl4T+oCq0aEzDJX7k3ZzjWZO1V4zmzJ
+         nhDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXYTVIcAltVUY65OY00s3b8UIRA6a+47cVA04sI/KvgYDJ1tNP7dOcJkM9qguM8eJfcn8rhZ50CcYfpwaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO3iHfaddvJ1jbP8xm/zAMObdWi1H71Zml9a8ngne5kWdm/WhB
+	ApPHEGpYoXmIevM7Flfde6yEh6jHb3jm+1oS5XJk+Zy3iuJYK6GhzVOND7AKcvrS6qgOFMyzX9j
+	dJ3+imjSWsgmJIjD5ZWVymyOVSUdPaCRelwceyfJEtv4yVNlQZvpXQmQJLqM04hs6j70dawU=
+X-Gm-Gg: ASbGncs9nKOaSJJdSR1ZbyFsUYaS67tglEr3Ef9KuBMSo0PflkVnhZFQXY7o/lmmY6u
+	G4LAJYh3oq06OGOqsyeku4A0WCB3798Wt8UBR5bWUJkj8Y0lv128WFst5ItHwdpFcDfhBz6jl1C
+	34Btkk2/53MxyVvH2SgKsPSRiDJhbSMuHugvgppwHfjGrWnCn0Pi1kRHqadr0/lhOhjYclO1Zib
+	IfDIn8xOV8JBvPNK2szcZBLbkCOiO6/T5EwLD5GfA6bYCA/z5ZIASt439yL51tvNGyULR34Ig3L
+	JyipZ5lsSF3C2odIiWZ6NV1xoPAorTEnz++lKSaY1bA5/jDCEW1h
+X-Received: by 2002:a17:90b:2d87:b0:305:5f2c:c577 with SMTP id 98e67ed59e1d1-306af6eaa6fmr12257117a91.3.1744050509440;
+        Mon, 07 Apr 2025 11:28:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGIkUUFJJbz5/DUqQ15ZO3tVB8cccmjhRILJ6c9sC2XH5uCBz5Q6S4AWzXEYCb3NL0aVsUrzg==
+X-Received: by 2002:a17:90b:2d87:b0:305:5f2c:c577 with SMTP id 98e67ed59e1d1-306af6eaa6fmr12257085a91.3.1744050509015;
+        Mon, 07 Apr 2025 11:28:29 -0700 (PDT)
+Received: from [169.254.0.1] (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30588a30974sm9181431a91.25.2025.04.07.11.28.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 11:27:50 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1u1rCI-00000007Qnx-1UJD;
-	Mon, 07 Apr 2025 15:27:50 -0300
-Date: Mon, 7 Apr 2025 15:27:50 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-	Leon Romanovsky <leon@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
-	Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Maher Sanalla <msanalla@nvidia.com>, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RDMA/hfi1: use a struct group to avoid warning
-Message-ID: <20250407182750.GA1727154@ziepe.ca>
-References: <20250403144801.3779379-1-arnd@kernel.org>
+        Mon, 07 Apr 2025 11:28:28 -0700 (PDT)
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Date: Mon, 07 Apr 2025 11:28:26 -0700
+Subject: [PATCH] wifi: ath12k: Fix misspelling "upto" in dp.c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250403144801.3779379-1-arnd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250407-upto-v1-1-23ca65f2ccdf@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAEkZ9GcC/x3MQQ7CIBCF4auQWTsJpSixV2lcTHGUWQgEqjEh3
+ F3q8kv+9xpULsIVFtWg8EeqpDgwnRT4QPHJKPdhMNqctdUO33lPSO5ir2421s0WRpoLP+T7v1l
+ vwxtVxq1Q9OEY0x7wRRKh9x+O6w5hcQAAAA==
+To: Johannes Berg <johannes@sipsolutions.net>,
+        Jeff Johnson <jjohnson@kernel.org>
+Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+X-Mailer: b4 0.14.0
+X-Proofpoint-GUID: iVWvacEkV47Myf0F2zlWkSSh5e4zD1-m
+X-Authority-Analysis: v=2.4 cv=LLlmQIW9 c=1 sm=1 tr=0 ts=67f4194e cx=c_pps a=0uOsjrqzRL749jD1oC5vDA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=UkFjiLiVbqrHbZXL8LAA:9 a=QEXdDO2ut3YA:10
+ a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-ORIG-GUID: iVWvacEkV47Myf0F2zlWkSSh5e4zD1-m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-07_05,2025-04-07_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ clxscore=1015 mlxlogscore=953 malwarescore=0 phishscore=0
+ lowpriorityscore=0 priorityscore=1501 mlxscore=0 spamscore=0 adultscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504070128
 
-On Thu, Apr 03, 2025 at 04:47:53PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> On gcc-11 and earlier, the driver sometimes produces a warning
-> for memset:
-> 
-> In file included from include/linux/string.h:392,
->                  from drivers/infiniband/hw/hfi1/mad.c:6:
-> In function 'fortify_memset_chk',
->     inlined from '__subn_get_opa_hfi1_cong_log' at drivers/infiniband/hw/hfi1/mad.c:3873:2,
->     inlined from 'subn_get_opa_sma' at drivers/infiniband/hw/hfi1/mad.c:4114:9:
-> include/linux/fortify-string.h:480:4: error: call to '__write_overflow_field' declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror]
->     __write_overflow_field(p_size_field, size);
->     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> This seems to be a false positive, and I found no nice way to rewrite
-> the code to avoid the warning, but adding a a struct group works.
+ath12k-check is flagging:
 
-Er.. so do we really want to fix it or just ignore this on gcc-11? Or
-is there really a compile bug here and it is mis-generating the code?
+drivers/net/wireless/ath/ath12k/dp.c:1656: 'upto' may be misspelled - perhaps 'up to'?
 
-The unneeded struct group seems ugly to me?
+Replace "upto" with "up to" and split the comment line so that it
+doesn't exceed 80 columns.
 
-Jason
+Signed-off-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+---
+To be honest, I saw this when I was processing the original patch, but
+I thought this was just in the commit text and let it slide. But now
+that I see it is in the code, I'm fixing it.
+---
+ drivers/net/wireless/ath/ath12k/dp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath12k/dp.c b/drivers/net/wireless/ath/ath12k/dp.c
+index 80b9f4594dee..59f61341383a 100644
+--- a/drivers/net/wireless/ath/ath12k/dp.c
++++ b/drivers/net/wireless/ath/ath12k/dp.c
+@@ -1653,7 +1653,8 @@ static int ath12k_dp_reoq_lut_setup(struct ath12k_base *ab)
+ 
+ 	/* Bits in the register have address [39:8] LUT base address to be
+ 	 * allocated such that LSBs are assumed to be zero. Also, current
+-	 * design supports paddr upto 4 GB max hence it fits in 32 bit register only
++	 * design supports paddr up to 4 GB max hence it fits in 32 bit
++	 * register only
+ 	 */
+ 
+ 	ath12k_hif_write32(ab, HAL_SEQ_WCSS_UMAC_REO_REG + HAL_REO1_QDESC_LUT_BASE0(ab),
+
+---
+base-commit: 4bcceba241524d8d52bdadf216f9f894e394fcde
+change-id: 20250407-upto-a76497324734
+
 
