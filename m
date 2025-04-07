@@ -1,134 +1,112 @@
-Return-Path: <linux-kernel+bounces-591897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71D15A7E691
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:32:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C62AA7E694
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A1F5421AF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:22:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49E78425685
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E9D20C034;
-	Mon,  7 Apr 2025 16:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F00120E014;
+	Mon,  7 Apr 2025 16:20:10 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDEB5206F15
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 16:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0A020DD67;
+	Mon,  7 Apr 2025 16:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744042772; cv=none; b=A8jbedohoCAruJUuC0gkGL1oLr9ko8iv0RIijl17NEjYoT7FV1wpdCk3AzLVONq3W9BrKUgEpi3OVqbT0/g8pwM1dggknGHRjemT9xGMcqaUTAj7rz5fq68kx4PCrbPsI1ykCbXCdDBVnnqdCGb5q9WGfPWXlt1+cppg0Qb54ZU=
+	t=1744042809; cv=none; b=mZm7a+Rv6GbpKom2ZUfKNvAF77XM6lovqEnTAjwEFlL3/GjAMxle2IFeRQWAd03aTB6Hf5kP43v6+WCvFQyInxJ0kq4e+kocxGXgAY6cXoyWeoAJM+JDcSrTz7bQE4LI/tT05kbgrWgdiXTF1N1XGRbzGXE135MOlCZw42TK+b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744042772; c=relaxed/simple;
-	bh=4UC/rgfRBB7IjSpqVVak6OnBM5vwAuWy08QCMNXJA7w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aksDVUcywSSGIaLtrdu76fpEOn8RuZT7YLaZocjk8hhpZT5UVLT5vkBg1OEpXkfCAREEi0VVDHo7+LZAESCrznuzRUr80ejVK4DUXDEfgDfVPbMhWcHcadogFO5h/aK+NIZgPC3ratXLlrR73CAXL46kTqp1vgDAk6jNS3v3NfU=
+	s=arc-20240116; t=1744042809; c=relaxed/simple;
+	bh=JDPA6wKqzvHim0qA4SSjZ7cp9/9aIauy8o/GHqLnmcs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nzT+ZVqpvr0ZrJ7kRnU9hHJ3AGpzOmkJSzfDwqqLFFsMgdxKO+KFEnPiLbinYK8r7HYa9rHPvjk6Mqlu8+rsdFHXRuE3rNaBCPE7MxIyIyjcmtndbn52OIsPP5pN5Gp44lV42gapCvJilFl2c8VJ+CJrdkO9UIjCg4xafZY75NE=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 10A2B106F;
-	Mon,  7 Apr 2025 09:19:31 -0700 (PDT)
-Received: from [10.163.47.133] (unknown [10.163.47.133])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DAEE03F694;
-	Mon,  7 Apr 2025 09:19:25 -0700 (PDT)
-Message-ID: <027cc666-a562-46fa-bca5-1122ea00ec0e@arm.com>
-Date: Mon, 7 Apr 2025 21:49:21 +0530
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C208106F;
+	Mon,  7 Apr 2025 09:20:08 -0700 (PDT)
+Received: from u200865.usa.arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AF1D53F694;
+	Mon,  7 Apr 2025 09:20:06 -0700 (PDT)
+From: Jeremy Linton <jeremy.linton@arm.com>
+To: linux-trace-kernel@vger.kernel.org
+Cc: linux-perf-users@vger.kernel.org,
+	mhiramat@kernel.org,
+	oleg@redhat.com,
+	peterz@infradead.org,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	thiago.bauermann@linaro.org,
+	broonie@kernel.org,
+	yury.khrustalev@arm.com,
+	kristina.martsenko@arm.com,
+	liaochang1@huawei.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Jeremy Linton <jeremy.linton@arm.com>
+Subject: [PATCH v2 0/6] arm64: Enable UPROBES with GCS
+Date: Mon,  7 Apr 2025 11:19:45 -0500
+Message-ID: <20250407161951.560865-1-jeremy.linton@arm.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mm/contpte: Optimize loop to reduce redundant
- operations
-To: Lance Yang <ioworker0@gmail.com>, Xavier <xavier_qy@163.com>
-Cc: akpm@linux-foundation.org, baohua@kernel.org, catalin.marinas@arm.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- ryan.roberts@arm.com, will@kernel.org
-References: <20250407092243.2207837-1-xavier_qy@163.com>
- <20250407112922.17766-1-ioworker0@gmail.com>
- <5e3f976f.bca1.19610528896.Coremail.xavier_qy@163.com>
- <CAK1f24=hwXCg6K8a=qoWi2DGEWFGBcenSGRoKXtJEo=iR4DtDw@mail.gmail.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <CAK1f24=hwXCg6K8a=qoWi2DGEWFGBcenSGRoKXtJEo=iR4DtDw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Currently uprobes and the Arm Guarded Control Stack (GCS) feature are
+exclusive of each other. This restriction needs to be lifted in order
+to utilize GCS for generic Linux distro images where the expectation
+is that core debugging features like uprobes work.
 
-Hi Xavier,
+This series adds some user accessors to read/push/pop the userspace
+shadow stack. It then utilizes those functions in the uprobe paths
+as needed to synchronize GCS with the changes in control flow at
+probe locations. 
 
-On 07/04/25 7:01 pm, Lance Yang wrote:
-> On Mon, Apr 7, 2025 at 8:56 PM Xavier <xavier_qy@163.com> wrote:
->>
->>
->>
->> Hi Lance,
->>
->> Thanks for your feedback, my response is as follows.
->>
->> --
->> Thanks,
->> Xavier
->>
->>
->>
->>
->>
->> At 2025-04-07 19:29:22, "Lance Yang" <ioworker0@gmail.com> wrote:
->>> Thanks for the patch. Would the following change be better?
->>>
->>> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
->>> index 55107d27d3f8..64eb3b2fbf06 100644
->>> --- a/arch/arm64/mm/contpte.c
->>> +++ b/arch/arm64/mm/contpte.c
->>> @@ -174,6 +174,9 @@ pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
->>>
->>>                if (pte_young(pte))
->>>                        orig_pte = pte_mkyoung(orig_pte);
->>> +
->>> +              if (pte_young(orig_pte) && pte_dirty(orig_pte))
->>> +                      break;
->>>        }
+Along the way we fix a bug in the core gcs task handling and export
+some uprobe quality of life functionality for use in arch specific code.
 
-Quite the coincidence, I was thinking of doing exactly this some days 
-back and testing it out : ) Can you do a microanalysis whether this gets 
-us a benefit or not? This looks like an optimization on paper but may 
-not be one after all because CONT_PTES is only 16 and a simple loop 
-without extra if-conditions may just be faster.
+The KCONFIG restriction is then dropped.
 
->>>
->>>        return orig_pte;
->>> --
->>>
->>> We can check the orig_pte flags directly instead of using extra boolean
->>> variables, which gives us an early-exit when both dirty and young flags
->>> are set.
->> Your way of writing the code is indeed more concise. However, I think
->>   using boolean variables might be more efficient. Although it introduces
->>   additional variables, comparing boolean values is likely to be more
->>   efficient than checking bit settings.
->>
->>>
->>> Also, is this optimization really needed for the common case?
->> This function is on a high-frequency execution path. During debugging,
->>   I found that in most cases, the first few pages are already marked as
->>   both dirty and young. But currently, the program still has to complete
->>   the entire loop of 16 ptep iterations, which seriously reduces the efficiency.
-> 
-> Hmm... agreed that this patch helps when early PTEs are dirty/young, but
-> for late-ones-only cases, it only introduces overhead with no benefit, IIUC.
-> 
-> So, let's wait for folks to take a look ;)
-> 
-> Thanks,
-> Lance
-> 
->>>
->>> Thanks,
->>> Lance
-> 
+v1->v2:
+	Drop uprobe_warn() patch
+	Fix copy_thread_gcs() bug created by fixing task_gcs_el0_enabled()
+	Comments, now describe issues with reading userspace GCS pages
+	Rebased to 6.15
+
+Jeremy Linton (6):
+  arm64/gcs: task_gcs_el0_enable() should use passed task
+  arm64: probes: Break ret out from bl/blr
+  arm64: uaccess: Add additional userspace GCS accessors
+  arm64: probes: Add GCS support to bl/blr/ret
+  arm64: uprobes: Add GCS support to uretprobes
+  arm64: Kconfig: Remove GCS restrictions on UPROBES
+
+ arch/arm64/Kconfig                       |  1 -
+ arch/arm64/include/asm/gcs.h             |  2 +-
+ arch/arm64/include/asm/uaccess.h         | 42 ++++++++++++++++++++++++
+ arch/arm64/kernel/probes/decode-insn.c   |  7 ++--
+ arch/arm64/kernel/probes/simulate-insn.c | 38 ++++++++++++++++++---
+ arch/arm64/kernel/probes/simulate-insn.h |  3 +-
+ arch/arm64/kernel/probes/uprobes.c       | 30 +++++++++++++++++
+ arch/arm64/kernel/process.c              |  6 ++--
+ 8 files changed, 115 insertions(+), 14 deletions(-)
+
+-- 
+2.49.0
 
 
