@@ -1,354 +1,114 @@
-Return-Path: <linux-kernel+bounces-592537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F02B1A7EE78
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:07:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D83A7EE95
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F46216D0B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:01:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 845E5176A0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9BC226CE4;
-	Mon,  7 Apr 2025 19:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1042253F01;
+	Mon,  7 Apr 2025 19:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="AVAopYbg"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cIVEKfCP"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C462236E0
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 19:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E32253B56;
+	Mon,  7 Apr 2025 19:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744055874; cv=none; b=WcjNVWq9HQeprvPRjg5rokeHVKobUg31Gmr9USkiSyRIzYq8WfVeo/7NIcw0dytAjla2jXD58dGBPwhu9h8a55Px33RzPDMBpbZAeMgtDN2ZJB6BPSDd0KqAC5KQF7Ge2OsvppznszitLqs4/R4JR7EW0MurkQErl0OdGhcWHqI=
+	t=1744055990; cv=none; b=R+0kbEq7GCiYdJC1IWPnQv+ns72WXWCWNclbAoYG7jDJCTH5zmK7GxjkuE3yuUZVRPnQrcX2a4E54NCTQubAIB2FAkUCSWAChMmUWYTvG2BXhAv3R4d+b8o0gW8YnA005UX/WO3V7+QLE6Nja3KTQCVVOrDWQki9GdQggxqOFgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744055874; c=relaxed/simple;
-	bh=OJIanmJobNF+BPU7TD7hAWBum72j0t/Ss/ccBjXxtjk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RXVADqVPu1mMle0pMq1K3sRalaINEg//LP1sWIvubl3r8dpbj4IvVqVTMAMthB7EUTZxWQmULoA5XimXseZglu8YfLwPwxRc6yfN2GjwiANY1iNNuCdiGy3nkv666zHOfhb+SRHSJi3QHeuWwhIEfOkjKTmwn+j9JFtLXpNYJnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=AVAopYbg; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5004a.ext.cloudfilter.net ([10.0.29.221])
-	by cmsmtp with ESMTPS
-	id 1gSiuyUkmf1UX1sbPuqW3C; Mon, 07 Apr 2025 19:57:52 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id 1sbOu7WEhjrgq1sbPuh3Ku; Mon, 07 Apr 2025 19:57:51 +0000
-X-Authority-Analysis: v=2.4 cv=PK7E+uqC c=1 sm=1 tr=0 ts=67f42e3f
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=B3fuDwYyW55wTQKIj88FGw==:17
- a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
- a=7uxg95fy6kqncDjJJCgA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=yeTqSNh5wvMq1AuGfJRbvqgnVUFu7Bju2bJWfkxGsL8=; b=AVAopYbgXF9Q8S1Rm7e790qQYG
-	nU82WNSw5adlIxyWfJpKcedeEzKhLZY0QGle+29PYXdUiYMWkHToRIb9C+XWS4/8M1SyB0TgDxuXv
-	KkY/na9eG+JmqwgLC4nPHxq6XCtjwIv8AEkVg+O78VPQkvCOaqanEM1VYBW2H679pjbG+zae4jRjE
-	pE7dbMLw6pVny++KMVS+aCnrQVlfMHxo0QY0dhiLJgMuM4Am22Vf8Nb65WOdXuPSW5txlUv6EeRjm
-	4i4W0eubcdvEyfF0vKmAq+7hva5UunMgv571iMD4GWvtzrJUpcLWh277VeAPTJcTL4Qm09EE3njDi
-	E1CAKC6w==;
-Received: from [201.172.174.147] (port=36762 helo=[192.168.15.6])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1u1sbO-00000001mlB-0scu;
-	Mon, 07 Apr 2025 14:57:50 -0500
-Message-ID: <d8e63b8a-7a2c-46dc-a15c-9399044a23ee@embeddedor.com>
-Date: Mon, 7 Apr 2025 13:57:48 -0600
+	s=arc-20240116; t=1744055990; c=relaxed/simple;
+	bh=fG/JotKUwrRStewHDslmD7KAYdZmrjaakxc3PwvYuig=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hSES2ke1LnHJj/dQ7dd424vmgW9tztJthjFMts88Vr4Alo1GJ0gcWUn3G555gSHZS2Z00sW99geAimilKND2/lj2fEiRk6pwwq3Zu5N8N8dbmIpbVTQulOQPyoDlgl+gLWiBad5g5TVNNXC0KlEthrV9RM3+G4QbivsBUI2hi2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cIVEKfCP; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-72c1419f73eso3008149a34.1;
+        Mon, 07 Apr 2025 12:59:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744055988; x=1744660788; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W5HVrCjT0rbXRAZpGIjJMIUCrhaf+V5aTTeFWXjljB4=;
+        b=cIVEKfCPUIDtQFEMQPyr/dQObuovZCfOLow9KJ2fvqoP/55AtUe54jAmb0T2gkoY4x
+         F/uP7uiOQ6mvEBQPWWccTOhSF5TcLjiMjMLfpMefdGq0trmpz1E9h1z05AI50ujwkCAb
+         Tbn2W+OhWJdFkmpwZUEnixqjf8wprhL0pv1GxxgUtW7ak2yAXv0eyvJ6Vs11zLWz/rXa
+         q//0z2egYLkJQRkOm/CcXWS6I1Uz8w+ZxGRIcNRJzklja0w1D1edplV0o2K6g1iBcCNt
+         0ZRgKZ1bvux7c2iC0eQ6p7b13N0cp0pRCsuCfgF2PCxivjuSfayRF1KXGG6xpR/lgzmf
+         3sVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744055988; x=1744660788;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W5HVrCjT0rbXRAZpGIjJMIUCrhaf+V5aTTeFWXjljB4=;
+        b=GRVFqSm6z6C4PqW+u5zB7u2PvzxtYTynR/jbD1gMLasE6CahBFrRLzvET8gfYFS8xm
+         PWR6zwrL44xXK4UA91r+wRbfN7PySJZk8KFOKAeJFQ9v5VxWEIOcG5OPzAnScjN3fLK/
+         kLHp1zzukNHt17pp8orgPmT52keEzoB4Tl3lYL9806Qgw2tzsGOukC+ce1YdAs3SaRKG
+         BorIFAVMhvEiWqgGtAllmd7Hx1HBsWkrXNPOd4Bsb35cYFf1U/LOMkYKAsQwSfaFlXgL
+         egjwlIMgr5WB/+OHjaB8LOOTFBn8qW9rxj4jYZQsp6q5ctCXGE0AuORbC/oAwctoNjDd
+         ge2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV+q81aht+B0ed7ARSl0Z5hpO8+2WyZIiIgUMG2ON51f1IdN5/6IpW+H4qTMh/QMyVrj6yrzYyPtsGc8V8=@vger.kernel.org, AJvYcCW0M0O253GEtTb9BTgF5ib8BmnJZL22MlqKSFsdWC2mkvRuH8r/IE+mM4rN+53ym1fV6UvjHbh8kylRGzK6D1c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzibbRsGadPrIT6rg/SeWoSaZQeTaLfEWmb9E/zH0kFvAlO6Bvx
+	+ultrf/+yXmbpjcCHE88FVb7XtLXNOSIMVe/0xAV8NF7IFu8XWHM
+X-Gm-Gg: ASbGncszqTYtufwaMG/rC4IRtlt7ALA52KcpHL+5FJwvByeIUn+QSNPsrYrbzLKUcRh
+	p5YTzOD4tDjvREwJXygo19Gu1OtNcvd5xGBDl0obmYgPeVj1P+zdVt3W/fwPl7DxCdth58207wI
+	sfRpwHndFQOlzFxJzOafWfFnIA/oW0ZBCWBoIaHpMIEcI/XyF4dT00mqzBdyiPMn5W9LuRG0tAY
+	7wYSUpRx4X9dYUIBurdTqy/4f4kAnQhsKp8iJEbevU8KdYh+TK4Rt7mbQu15qs/qJ6Fh5pl7oL8
+	vuZShWl6iQWzhkC3GLSDqtYh8x+GqVzr4l6fwYDzxPIqmN8R3hXZwoXkyYnJdYG+vUVL51KqM06
+	Z8bjm5VyrKe0YSLTI
+X-Google-Smtp-Source: AGHT+IES4Ldx5nS67QIlJrHGyF55/l5wh0DjOa58vveqXFlQYR5XXUkpxN7lfM18rO0Cj0ndNlFqXQ==
+X-Received: by 2002:a9d:5f18:0:b0:72a:97c2:3f91 with SMTP id 46e09a7af769-72e64a72099mr461993a34.6.1744055987736;
+        Mon, 07 Apr 2025 12:59:47 -0700 (PDT)
+Received: from my-computer.lan (c-73-76-29-249.hsd1.tx.comcast.net. [73.76.29.249])
+        by smtp.googlemail.com with ESMTPSA id 46e09a7af769-72e6527249esm68060a34.68.2025.04.07.12.59.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 12:59:47 -0700 (PDT)
+From: Andrew Ballance <andrewjballance@gmail.com>
+To: tamird@gmail.com
+Cc: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	andrewjballance@gmail.com,
+	benno.lossin@proton.me,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	dakr@kernel.org,
+	gary@garyguo.net,
+	linux-kernel@vger.kernel.org,
+	ojeda@kernel.org,
+	rust-for-linux@vger.kernel.org,
+	tmgross@umich.edu
+Subject: Re: [PATCH v3 3/4] rust: alloc: refactor `Vec::truncate` using `dec_len`
+Date: Mon,  7 Apr 2025 14:58:21 -0500
+Message-ID: <20250407195821.1670860-1-andrewjballance@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250407-vec-set-len-v3-3-c5da0d03216e@gmail.com>
+References: <20250407-vec-set-len-v3-3-c5da0d03216e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] drm/nouveau: chan: Avoid
- -Wflex-array-member-not-at-end warnings
-To: Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <Z-67Hm9uHEJs0RGw@kspp> <202504071227.E8484EB@keescook>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <202504071227.E8484EB@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.174.147
-X-Source-L: No
-X-Exim-ID: 1u1sbO-00000001mlB-0scu
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.6]) [201.172.174.147]:36762
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 31
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfBpzW2UYzdoaTsOToSGzoy8Jydylrr767fiG62Yq7+mOrL0mTZwb90GLrwzGP+3F3DXO/+hEw+iNvSou8pmAEUbQWcYZ/4JqrwK1PSYLDzERz1+P2MFz
- QyrOq/DD3GtjYwcRvUlsFBKNPB5O8pn2ldXhlXygFcPAqj7fKpQewqrIYEX3HAWYUEWrB7leYSKFXC6eKPiEvVuyG/xJz4IGgMGH/OpWsLrwybRZkpZK1kft
+Content-Transfer-Encoding: 8bit
 
-
-
-On 07/04/25 13:50, Kees Cook wrote:
-> On Thu, Apr 03, 2025 at 10:45:18AM -0600, Gustavo A. R. Silva wrote:
->> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
->> getting ready to enable it, globally.
->>
->> Use the `DEFINE_RAW_FLEX()` helper for a few on-stack definitions
->> of a flexible structure where the size of the flexible-array member
->> is known at compile-time, and refactor the rest of the code,
->> accordingly.
->>
->> So, with these changes, fix the following warnings:
->>
->> drivers/gpu/drm/nouveau/nouveau_chan.c:274:37: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->> drivers/gpu/drm/nouveau/nouveau_chan.c:371:46: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->> drivers/gpu/drm/nouveau/nouveau_chan.c:524:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
->> ---
->>   drivers/gpu/drm/nouveau/nouveau_chan.c | 115 ++++++++++++-------------
->>   1 file changed, 56 insertions(+), 59 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/nouveau/nouveau_chan.c b/drivers/gpu/drm/nouveau/nouveau_chan.c
->> index cd659b9fd1d9..a7e70517b7cd 100644
->> --- a/drivers/gpu/drm/nouveau/nouveau_chan.c
->> +++ b/drivers/gpu/drm/nouveau/nouveau_chan.c
->> @@ -270,10 +270,7 @@ nouveau_channel_ctor(struct nouveau_cli *cli, bool priv, u64 runm,
->>   		{    NV03_CHANNEL_DMA     , 0 },
->>   		{}
->>   	};
->> -	struct {
->> -		struct nvif_chan_v0 chan;
->> -		char name[TASK_COMM_LEN+16];
->> -	} args;
->> +	DEFINE_RAW_FLEX(struct nvif_chan_v0, args, name, TASK_COMM_LEN + 16);
->>   	struct nvif_device *device = &cli->device;
->>   	struct nouveau_channel *chan;
->>   	const u64 plength = 0x10000;
->> @@ -298,28 +295,28 @@ nouveau_channel_ctor(struct nouveau_cli *cli, bool priv, u64 runm,
->>   		return ret;
->>   
->>   	/* create channel object */
->> -	args.chan.version = 0;
->> -	args.chan.namelen = sizeof(args.name);
->> -	args.chan.runlist = __ffs64(runm);
->> -	args.chan.runq = 0;
->> -	args.chan.priv = priv;
->> -	args.chan.devm = BIT(0);
->> +	args->version = 0;
->> +	args->namelen = __struct_size(args) - sizeof(*args);
+On Mon, Apr 07, 2025 at 10:52:33AM -0400, Tamir Duberstein wrote:
+> Use `checked_sub` to satisfy the safety requirements of `dec_len` and
+> replace nearly the whole body of `truncate` with a call to `dec_len`.
 > 
-> Does __struct_size(args->name) work here (and later)?
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-Why not?
+This looks cleaner than  my version.
 
-I mean, this should be equivalent to `TASK_COMM_LEN+16`, I could
-use the latter if people prefer it (see my comments below).
-
-> 
->> +	args->runlist = __ffs64(runm);
->> +	args->runq = 0;
->> +	args->priv = priv;
->> +	args->devm = BIT(0);
->>   	if (hosts[cid].oclass < NV50_CHANNEL_GPFIFO) {
->> -		args.chan.vmm = 0;
->> -		args.chan.ctxdma = nvif_handle(&chan->push.ctxdma);
->> -		args.chan.offset = chan->push.addr;
->> -		args.chan.length = 0;
->> +		args->vmm = 0;
->> +		args->ctxdma = nvif_handle(&chan->push.ctxdma);
->> +		args->offset = chan->push.addr;
->> +		args->length = 0;
->>   	} else {
->> -		args.chan.vmm = nvif_handle(&chan->vmm->vmm.object);
->> +		args->vmm = nvif_handle(&chan->vmm->vmm.object);
->>   		if (hosts[cid].oclass < FERMI_CHANNEL_GPFIFO)
->> -			args.chan.ctxdma = nvif_handle(&chan->push.ctxdma);
->> +			args->ctxdma = nvif_handle(&chan->push.ctxdma);
->>   		else
->> -			args.chan.ctxdma = 0;
->> -		args.chan.offset = ioffset + chan->push.addr;
->> -		args.chan.length = ilength;
->> +			args->ctxdma = 0;
->> +		args->offset = ioffset + chan->push.addr;
->> +		args->length = ilength;
->>   	}
->> -	args.chan.huserd = 0;
->> -	args.chan.ouserd = 0;
->> +	args->huserd = 0;
->> +	args->ouserd = 0;
->>   
->>   	/* allocate userd */
->>   	if (hosts[cid].oclass >= VOLTA_CHANNEL_GPFIFO_A) {
->> @@ -329,27 +326,28 @@ nouveau_channel_ctor(struct nouveau_cli *cli, bool priv, u64 runm,
->>   		if (ret)
->>   			return ret;
->>   
->> -		args.chan.huserd = nvif_handle(&chan->mem_userd.object);
->> -		args.chan.ouserd = 0;
->> +		args->huserd = nvif_handle(&chan->mem_userd.object);
->> +		args->ouserd = 0;
->>   
->>   		chan->userd = &chan->mem_userd.object;
->>   	} else {
->>   		chan->userd = &chan->user;
->>   	}
->>   
->> -	snprintf(args.name, sizeof(args.name), "%s[%d]", current->comm, task_pid_nr(current));
->> +	snprintf(args->name, __struct_size(args) - sizeof(*args), "%s[%d]",
->> +		 current->comm, task_pid_nr(current));
->>   
->>   	ret = nvif_object_ctor(&device->object, "abi16ChanUser", 0, hosts[cid].oclass,
->> -			       &args, sizeof(args), &chan->user);
->> +			       args, __struct_size(args), &chan->user);
->>   	if (ret) {
->>   		nouveau_channel_del(pchan);
->>   		return ret;
->>   	}
->>   
->> -	chan->runlist = args.chan.runlist;
->> -	chan->chid = args.chan.chid;
->> -	chan->inst = args.chan.inst;
->> -	chan->token = args.chan.token;
->> +	chan->runlist = args->runlist;
->> +	chan->chid = args->chid;
->> +	chan->inst = args->inst;
->> +	chan->token = args->token;
->>   	return 0;
->>   }
->>   
->> @@ -367,17 +365,17 @@ nouveau_channel_init(struct nouveau_channel *chan, u32 vram, u32 gart)
->>   		return ret;
->>   
->>   	if (chan->user.oclass >= FERMI_CHANNEL_GPFIFO) {
->> -		struct {
->> -			struct nvif_event_v0 base;
->> -			struct nvif_chan_event_v0 host;
->> -		} args;
->> +		DEFINE_RAW_FLEX(struct nvif_event_v0, args, data,
->> +				sizeof(struct nvif_chan_event_v0));
->> +		struct nvif_chan_event_v0 *host =
->> +				(struct nvif_chan_event_v0 *)args->data;
->>   
->> -		args.host.version = 0;
->> -		args.host.type = NVIF_CHAN_EVENT_V0_KILLED;
->> +		host->version = 0;
->> +		host->type = NVIF_CHAN_EVENT_V0_KILLED;
->>   
->>   		ret = nvif_event_ctor(&chan->user, "abi16ChanKilled", chan->chid,
->>   				      nouveau_channel_killed, false,
->> -				      &args.base, sizeof(args), &chan->kill);
->> +				      args, __struct_size(args), &chan->kill);
->>   		if (ret == 0)
->>   			ret = nvif_event_allow(&chan->kill);
->>   		if (ret) {
->> @@ -520,46 +518,45 @@ nouveau_channels_fini(struct nouveau_drm *drm)
->>   int
->>   nouveau_channels_init(struct nouveau_drm *drm)
->>   {
->> -	struct {
->> -		struct nv_device_info_v1 m;
->> -		struct {
->> -			struct nv_device_info_v1_data channels;
->> -			struct nv_device_info_v1_data runlists;
->> -		} v;
->> -	} args = {
->> -		.m.version = 1,
->> -		.m.count = sizeof(args.v) / sizeof(args.v.channels),
-> 
-> sizeof(args.v) == sizeof(struct nv_device_info_v1_data) * 2
-> 
-> and sizeof(args.v.channels) == sizeof(struct nv_device_info_v1_data).
-> 
-> Isn't this just "2"? i.e. isn't struct nv_device_info_v1::count the
-> counted_by for struct nv_device_info_v1::data?
-
-Yes, it's just `2`. However, I didn't want to explicitly use the magic
-number, in case people don't like it, as in other similar patches (in
-other subsystems).
-
-But, yeah, it's `2`. :)
-
-Thanks
---
-Gustavo
-
-> 
->> -		.v.channels.mthd = NV_DEVICE_HOST_CHANNELS,
->> -		.v.runlists.mthd = NV_DEVICE_HOST_RUNLISTS,
->> -	};
->> +	DEFINE_RAW_FLEX(struct nv_device_info_v1, args, data, 2);
->> +	struct nv_device_info_v1_data *channels = &args->data[0];
->> +	struct nv_device_info_v1_data *runlists = &args->data[1];
->>   	struct nvif_object *device = &drm->client.device.object;
->>   	int ret, i;
->>   
->> -	ret = nvif_object_mthd(device, NV_DEVICE_V0_INFO, &args, sizeof(args));
->> +	args->version = 1;
->> +	args->count = (__struct_size(args) - sizeof(*args)) /
->> +		      sizeof(*args->data);
->> +	channels->mthd = NV_DEVICE_HOST_CHANNELS;
->> +	runlists->mthd = NV_DEVICE_HOST_RUNLISTS;
->> +
->> +	ret = nvif_object_mthd(device, NV_DEVICE_V0_INFO, args,
->> +			       __struct_size(args));
->>   	if (ret ||
->> -	    args.v.runlists.mthd == NV_DEVICE_INFO_INVALID || !args.v.runlists.data ||
->> -	    args.v.channels.mthd == NV_DEVICE_INFO_INVALID)
->> +	    runlists->mthd == NV_DEVICE_INFO_INVALID || !runlists->data ||
->> +	    channels->mthd == NV_DEVICE_INFO_INVALID)
->>   		return -ENODEV;
->>   
->> -	drm->chan_nr = drm->chan_total = args.v.channels.data;
->> -	drm->runl_nr = fls64(args.v.runlists.data);
->> +	drm->chan_nr = drm->chan_total = channels->data;
->> +	drm->runl_nr = fls64(runlists->data);
->>   	drm->runl = kcalloc(drm->runl_nr, sizeof(*drm->runl), GFP_KERNEL);
->>   	if (!drm->runl)
->>   		return -ENOMEM;
->>   
->>   	if (drm->chan_nr == 0) {
->>   		for (i = 0; i < drm->runl_nr; i++) {
->> -			if (!(args.v.runlists.data & BIT(i)))
->> +			if (!(runlists->data & BIT(i)))
->>   				continue;
->>   
->> -			args.v.channels.mthd = NV_DEVICE_HOST_RUNLIST_CHANNELS;
->> -			args.v.channels.data = i;
->> +			channels->mthd = NV_DEVICE_HOST_RUNLIST_CHANNELS;
->> +			channels->data = i;
->>   
->> -			ret = nvif_object_mthd(device, NV_DEVICE_V0_INFO, &args, sizeof(args));
->> -			if (ret || args.v.channels.mthd == NV_DEVICE_INFO_INVALID)
->> +			ret = nvif_object_mthd(device, NV_DEVICE_V0_INFO, args,
->> +					       __struct_size(args));
->> +			if (ret || channels->mthd == NV_DEVICE_INFO_INVALID)
->>   				return -ENODEV;
->>   
->> -			drm->runl[i].chan_nr = args.v.channels.data;
->> +			drm->runl[i].chan_nr = channels->data;
->>   			drm->runl[i].chan_id_base = drm->chan_total;
->>   			drm->runl[i].context_base = dma_fence_context_alloc(drm->runl[i].chan_nr);
->>   
-> 
-> Otherwise looks good.
-> 
-> -Kees
-> 
+Reviewed-by: Andrew Ballance <andrewjballance@gmail.com>
 
 
