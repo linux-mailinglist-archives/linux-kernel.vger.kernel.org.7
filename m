@@ -1,134 +1,164 @@
-Return-Path: <linux-kernel+bounces-590599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 064C9A7D4CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:59:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9352A7D4D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A3B6188ED71
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:59:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DE9F1886041
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4284B226533;
-	Mon,  7 Apr 2025 06:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCD2225413;
+	Mon,  7 Apr 2025 06:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xv+M4Mat"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="fyxFsUzX"
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D0422539E
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 06:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F6D22540A;
+	Mon,  7 Apr 2025 06:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744008872; cv=none; b=HU5/2iEIQeiyGg98uYa6+yEGNNQZvmujMEk5t82+zNgvXz0PaObSfeJoQJosN7JqTY51w1jAjGFHzR5J3cKOQU5P0ZaFb254FCmvRaPlY80Y+8jTz3MTbh4Lijyh/CpxY/gu8WPKRMUY27ymwhJBWCIvKSw2JM/+qxODCAtwBYg=
+	t=1744008958; cv=none; b=QeI0EoFVXKXL31lqqu4xFaD+l2V0gqJTtBkVtpVnUCEoJxhliwJGOFLJZHlNks8c7JC/pjbSofHZxxpGfcZ6+hJA3FZtnLLBNjeh2wDuf26UCPlQYi/icjj37HPgYayImtgHuJL5HeCwY4xyRjHmNFF9ybS2XNqjgxCYvpYogx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744008872; c=relaxed/simple;
-	bh=LS5VAFFXIJwM/MSSY+05QkBo1gZOgTa9umjd9LQcztk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g+fTDbA81BigrcOD2vnl0PO3GnjVMEEAq68xpWzlZacL/3dnu16u/LCqynRRQtLQ4LMkWACyPXg5kpkGsUMBjpdB0ljFHwzqkmezU1fntcJBRSb0hr6WtryCsHQykPsIjIy0ghYgq9CbKOuPhuuStkWnz/0r2qvt5ZdvVzfGYGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xv+M4Mat; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 309CFC4CEDD;
-	Mon,  7 Apr 2025 06:54:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744008872;
-	bh=LS5VAFFXIJwM/MSSY+05QkBo1gZOgTa9umjd9LQcztk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xv+M4Mat5kHI/qdqSL1tzNzCIwVTRpJIvLTTz4+vqLSkmxjAYPJTnHqeeemP5FFEO
-	 /dZE3YfGdn97xTFXNNgBFNxwviUiSYPYZnlvaEQmGGH7DlrA5GdDfwKyftkELYmjFK
-	 RdqQl+fSbVkSlMb7CV/ZNZc8md4SZy7xEV7O5ncMWpfVIwUJPNZy1ybNdEDUWB0yyn
-	 tz3/y8runsfEn4FmEgStx5g1Gt+Gl66+pxmnMx/Y1+bsx7VFAoeB+F57ypOQN8jlKq
-	 D0KOIRo/zaQSAebLkPOEX1gShEGyMIoaPDF61zp9GF4QIvBzvuKboPdpSFoQK+S+w8
-	 bnG2TkLxajhrw==
-Date: Mon, 7 Apr 2025 09:54:23 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Sauerwein, David" <dssauerw@amazon.de>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Hildenbrand <david@redhat.com>, Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mike Rapoport <rppt@linux.ibm.com>, Will Deacon <will@kernel.org>,
-	kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 2/7] mm: Implement for_each_valid_pfn() for
- CONFIG_FLATMEM
-Message-ID: <Z_N2nyKYBOf2PoBz@kernel.org>
-References: <20250404155959.3442111-1-dwmw2@infradead.org>
- <20250404155959.3442111-2-dwmw2@infradead.org>
+	s=arc-20240116; t=1744008958; c=relaxed/simple;
+	bh=0RsV/UiWuSYyhNTxCLLOFl3X8Rix1KUqQ5uoJ8qyXVI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pG56BC30kLinraDwqMzElOh/wdHQ4HahqWex98KO1IZovivh413HHiHVEvRRgqLZMcco9zz7MIwpjZ9mYRJ1P2HWoEN0U5sbYu8zbXkQHdPylxWqaEj2E3itsTMmGPlvqkTfSghQiodKrzM59rVlzqfGQ5ozIsSg6MX84Eq3Ol8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=fyxFsUzX; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1744008927;
+	bh=0RsV/UiWuSYyhNTxCLLOFl3X8Rix1KUqQ5uoJ8qyXVI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=fyxFsUzXmwXxAl66K3xJxK/9pBh8rdwMPgQvkMkajhmNpASTe9zYgaaVsrdjBHcqx
+	 LfJhcEkKoWwlsmUkVxtpEBA6u02EFMgHkZvvkvc227yMpnAWgfasjdqjsC/3qemWwW
+	 OKXUuZaZEyYKGWZy42DCd1fL5tDoBPSPX/nctO9Y=
+X-QQ-mid: bizesmtpip4t1744008914t06b9eb
+X-QQ-Originating-IP: GU3L6N8JcwWfgXCNUbLufMg08lqQRsb+nd9ZB3aqLTo=
+Received: from [IPV6:240e:668:120a::212:156] ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 07 Apr 2025 14:55:13 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 17120012834144405305
+EX-QQ-RecipientCnt: 8
+Message-ID: <E1C033BA7FD27C8D+cab4d687-98df-49c6-adc9-e55a1c8fef34@uniontech.com>
+Date: Mon, 7 Apr 2025 14:55:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250404155959.3442111-2-dwmw2@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] MIPS: dec: Remove dec_irq_dispatch()
+To: macro@orcam.me.uk, tsbogend@alpha.franken.de
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+ zhanjun@uniontech.com, niecheng1@uniontech.com, guanwentao@uniontech.com,
+ chenlinxuan@uniontech.com
+References: <303EFD6BFBDAC7C8+20250305033436.31214-1-wangyuli@uniontech.com>
+Content-Language: en-US
+From: WangYuli <wangyuli@uniontech.com>
+Autocrypt: addr=wangyuli@uniontech.com; keydata=
+ xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
+ IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
+ qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
+ 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
+ 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
+ VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
+ DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
+ o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
+In-Reply-To: <303EFD6BFBDAC7C8+20250305033436.31214-1-wangyuli@uniontech.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------KN0coP3cYQR4uMxnh4wuE0WS"
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OQEfmBmUqqJ6FBuux7cBN0soiSsYrXvj8jwXLxfmDF9i0U12mYFYRUC8
+	4qnoBo/YQMSZm5YobklCRJS8bRXe1AyCUx05oP05dLeEqnPwfWgCRpl2w4hBToyLpSvok48
+	Dq9yWBzTbtGuvZf/PCqD/ej+14b3qlePbioivCSzu52fEQD+wFZGnS7uuQRgKP3DQA1f08l
+	68VPKz2Ebu8F4WyqGNixncAN4nrqsdro52X3/hhNcOYN8kjUzQepGiB+HPZZdc2gznSeqhL
+	ytEvk7zLntKKuXq3L9MkWMOcMhUYzMGlxMFXNgn6J7ugqTVKGqTF06aR7DKznglyrYKhGwl
+	pzWrLuFottOyf1HTtHepnv6yi+sUJ+vpnZtofaB3u+9xO2+2at005lxelgnKGHqSFVF7vbi
+	Kz7dvEgBmwucr0E4Su5DTUSqSDEESiEL/elgIBeBFl1ax8MNFDFj4YBsEG8II5kKPIPHEJj
+	dBf9voLRPOsa4gUYSYVPjpIsFZl8W3Zu/ETTT1DoB5JqATtiTrz8ewkoenjlVdLRRdM7j/3
+	sRZgFZgC8LKh/DVz3KZKQ1jh95j8dTKPVWlTVK7nofmQ3PzjA6uPs+Bs+Q53QPRyKyukHA2
+	YQQ5ko0tJLB5udSMf/2I61hmnlM5VUpPloG2E2stEZ8I6ekGyoLd/Gy71GBsw2EvWBwBcqZ
+	ZmeNnWghSOFe1RcytUAi23lQfvHlcUxTSg9j60X5/xUKGyzosv7gbdZGMLNX9qM8UTxtTQv
+	sI6VecMEj0xgNFpbID43cPvzXm77Bt+/kw0uYvAAhj+cMsQ1cv2KaLDd6OpSvN2mZl0dWwa
+	4JVClt03g5oCZagHXldtHSkjbPAK0zVhR9buiuxa8m/xPr/KETeoEl9lWLdSV01DzPkNa3k
+	fxWl8473TVaf61NnKtmC6T1QiQWXOnHcY/FrwNY0xXePZkj4XRNol/fnRo9gJn6z+9CKQ5z
+	WMthSuyUUlT7c0hIfqerAv0mmruTfEal0aGlAbiuQ8SF8RpoDyEEGWoWec2bHM6l8E5Kyvs
+	/S8MZG/pff7BvVSxZY8CSlZEMbhXY=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-On Fri, Apr 04, 2025 at 04:59:54PM +0100, David Woodhouse wrote:
-> From: David Woodhouse <dwmw@amazon.co.uk>
-> 
-> In the FLATMEM case, the default pfn_valid() just checks that the PFN is
-> within the range [ ARCH_PFN_OFFSET .. ARCH_PFN_OFFSET + max_mapnr ).
-> 
-> The for_each_valid_pfn() function can therefore be a simple for() loop
-> using those as min/max respectively.
-> 
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> ---
->  include/asm-generic/memory_model.h | 26 +++++++++++++++++++++++++-
->  1 file changed, 25 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/asm-generic/memory_model.h b/include/asm-generic/memory_model.h
-> index a3b5029aebbd..044536da3390 100644
-> --- a/include/asm-generic/memory_model.h
-> +++ b/include/asm-generic/memory_model.h
-> @@ -30,7 +30,31 @@ static inline int pfn_valid(unsigned long pfn)
->  	return pfn >= pfn_offset && (pfn - pfn_offset) < max_mapnr;
->  }
->  #define pfn_valid pfn_valid
-> -#endif
-> +
-> +static inline bool first_valid_pfn(unsigned long *pfn)
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------KN0coP3cYQR4uMxnh4wuE0WS
+Content-Type: multipart/mixed; boundary="------------EyBmMelODotX0r1tdK24hhvY";
+ protected-headers="v1"
+From: WangYuli <wangyuli@uniontech.com>
+To: macro@orcam.me.uk, tsbogend@alpha.franken.de
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+ zhanjun@uniontech.com, niecheng1@uniontech.com, guanwentao@uniontech.com,
+ chenlinxuan@uniontech.com
+Message-ID: <cab4d687-98df-49c6-adc9-e55a1c8fef34@uniontech.com>
+Subject: Re: [PATCH v2] MIPS: dec: Remove dec_irq_dispatch()
+References: <303EFD6BFBDAC7C8+20250305033436.31214-1-wangyuli@uniontech.com>
+In-Reply-To: <303EFD6BFBDAC7C8+20250305033436.31214-1-wangyuli@uniontech.com>
 
-This is now different from SPARSEMEM version. Do we need it at all?
+--------------EyBmMelODotX0r1tdK24hhvY
+Content-Type: multipart/mixed; boundary="------------TN7x9oijtL0BFlCv0EKyNKOK"
 
-> +{
-> +	/* avoid <linux/mm.h> include hell */
->
-> +	extern unsigned long max_mapnr;
-> +	unsigned long pfn_offset = ARCH_PFN_OFFSET;
-> +
-> +	if (*pfn < pfn_offset) {
-> +		*pfn = pfn_offset;
-> +		return true;
-> +	}
-> +
-> +	if ((*pfn - pfn_offset) < max_mapnr)
-> +		return true;
-> +
-> +	return false;
-> +}
-> +
-> +#ifndef for_each_valid_pfn
-> +#define for_each_valid_pfn(pfn, start_pfn, end_pfn)			       \
-> +	for (pfn = max_t(unsigned long, start_pfn, ARCH_PFN_OFFSET);	\
-> +	     pfn < min_t(unsigned long, end_pfn, ARCH_PFN_OFFSET + max_mapnr); \
-> +			 pfn++)
-> +#endif /* for_each_valid_pfn */
-> +#endif /* valid_pfn */
->  
->  #elif defined(CONFIG_SPARSEMEM_VMEMMAP)
->  
-> -- 
-> 2.49.0
-> 
+--------------TN7x9oijtL0BFlCv0EKyNKOK
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
--- 
-Sincerely yours,
-Mike.
+SGkgYWxsLA0KDQo2LjE1LXJjMSBpcyByZWxlYXNlZC4NCg0KSXQgbG9va3MgbGlrZSBhIHBv
+cnRpb24gb2YgdGhpcyBwYXRjaHNldCBhbmQgaXRzIGltcGxpY2l0IGRlcGVuZGVuY2llcyAN
+CmdvdCBtZXJnZWQgaW50byBtYWlubGluZS4NCg0KSSd2ZSBhbHJlYWR5IGFkZHJlc3NlZCB0
+aGUgcmVzdCwgYW5kIEknbGwgYmUgc2VuZGluZyBvdXQgYSBmcmVzaCANCnBhdGNoc2V0IHRv
+IGF2b2lkIGFueSBtZXNzLg0KDQpUaGFua3MsDQoNCi0tIA0KV2FuZ1l1bGkNCg==
+--------------TN7x9oijtL0BFlCv0EKyNKOK
+Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
+P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
+FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
+AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
+bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
+AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
+GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
+7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
+/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
+=3DBlkq
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------TN7x9oijtL0BFlCv0EKyNKOK--
+
+--------------EyBmMelODotX0r1tdK24hhvY--
+
+--------------KN0coP3cYQR4uMxnh4wuE0WS
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZ/N20QUDAAAAAAAKCRDF2h8wRvQL7q6h
+AP4h5Su80DrjeNbLGczOJ8/S6JFYE/dilFkVYzQIHTS4EwD+IpeCXJgSzkSjBkknbChUsibhl38y
+8S4pqZyv8h2j4AM=
+=ocBW
+-----END PGP SIGNATURE-----
+
+--------------KN0coP3cYQR4uMxnh4wuE0WS--
 
