@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-590661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0FEEA7D58B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:22:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 603B4A7D599
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 000E81892182
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:20:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 987951894810
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C7C22AE75;
-	Mon,  7 Apr 2025 07:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EBB22C339;
+	Mon,  7 Apr 2025 07:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="uEPwYIy5"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="2klBk91I"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A6822A1FA;
-	Mon,  7 Apr 2025 07:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3772422A4E9;
+	Mon,  7 Apr 2025 07:18:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744010281; cv=none; b=Fs2HiYXt2eMmDJZ9OcMD5RpKBD+FNnEaHPG6OCZuW99Fr9o9+3buzlvRkLAjXc+3lwyD2PVp7P+EaK5vKpyAgDCOgUguR19YwCLwX7fmIaJd2vZFWLVU35/fFgTaMJ4wkbHMJnKaFjqX+SppSg4011oLGq2LpUE4VmErhYzNPtk=
+	t=1744010286; cv=none; b=sY3cvEPdLm4a++EgX2ZHyRip8NHpG/Of9Max3XVDlSaTeh6knjpzVrUymZsyNrHq9VMcGJtF3dHF7IIzrnaLRyPgN/KYowDR2BPzHZ3S8KuEL9RP1MDSjwJ5HrBYf2ohFy4ipkVY0msfmfsN3kkd7o5ZQ6Dw9m631AAbcsxQ50M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744010281; c=relaxed/simple;
-	bh=nmv8OWXgTqi0EjjqSMgeczMmyJRpy0wv6rmCIXKbk88=;
+	s=arc-20240116; t=1744010286; c=relaxed/simple;
+	bh=yJFAFYNM56x+cSMrgDOAbDyGHyxwarAZGTWyMaoYHCQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oFJESSWk1/4kn2kgDg3NvIshoiQDeumD46jh0VcA+HufzJ7Fw5NvBgm2vl0vzlmL7NfwILHEKDhcdnbw4O1tGeTfewCUqDE5PY/17dUdtrRdn205+pfyc5cmFwCge2T6PHuvGGtB1VSqJY5yuvXzfrPa9ERK7D5fX4C/wLstdf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=uEPwYIy5; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=cew1srVtjCAIxGPeiy5IBlmgaWyGeDn+pIDwW+15dH4r4kiV74PegoYn8jFrmHb1qkvFHwRowgCCHwXkzTIMtVnSgRYJOFvCCtl0OSEjbkdBu0YhTAiT1RcmzeGf60gDul0GCy9iN7OWah6wTTLSkQ6uIwMPBhMFUsTesTiYujw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=2klBk91I; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -35,34 +35,34 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=CD5pkChFnmWgrszF5d2TZFlBk0vyaVCC45Ph73rxnSg=; b=uEPwYIy5GXqjN4brgbrRj+p1ct
-	URMzK34Yqnbi99ZeTq6NdHSwvBZbaNh4Q+3KIcfDSZbwmqeEXHvc/9JG5ANAusPVWKgkUTnz3ibzw
-	K52w/opAnmJb9rJk0pmH/OeNbddbo99JJdk5M2EmNRuAIVs0nWVUpKBuQuw0exmxW7zppZMKhg659
-	kqF63IZ7DNDPxkRj5gjbSYZqLhbIIZElAjU3yOmIRGQt9ABqciG8hvYbsCebo6jcYzhX/ApD2tqjb
-	5j2Wap+CpklXuFw9VwzLbKO7VTK1wRrdvMOXdVFBONkvhZV2J/ysQnKBrSNkQHW0aAGz6Jyp1xWCx
-	OREEDvpA==;
+	bh=E4xhtBk1zbp0lmzvNeEtXeBgukjshEfh4UTaJs1zTAw=; b=2klBk91IQ5W38Y0AhP0QB0s5dt
+	zHqMTmLh8SRS/ShbJ1PqaTtztFfDP4qGWhri69ED9g2S5BK+rTV+P90/oQDCK31tEmk6G2OkyXGXG
+	eg0/6IFWIQXn3j6KL893B29q0VWPXHrHeaSFSFLPO+TN+RXQPSwfe07011kS/4NHpPmlkEKMJLOPp
+	lOdUhd7dJoK9l6DaH3+yOJM3hODvqCIB0/S8zaU6pcOBSll3t9Ac25JTEB5FlmSmXCndf1rR1qHI0
+	pn/lLUJfZfnZOyospOebyFpBFx2I/q1Z2hg3xj9XNYignQQOH1nU1MbfzDlqPBY5y2RWSELMUCaEM
+	3DRy12Kg==;
 Received: from i53875b95.versanet.de ([83.135.91.149] helo=phil..)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1u1gjw-0000tP-I4; Mon, 07 Apr 2025 09:17:52 +0200
+	id 1u1gjx-0000tP-0U; Mon, 07 Apr 2025 09:17:53 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Quentin Schulz <foss+kernel@0leil.net>
+To: linux-rockchip@lists.infradead.org,
+	Jianfeng Liu <liujianfeng1994@gmail.com>
 Cc: Heiko Stuebner <heiko@sntech.de>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Quentin Schulz <quentin.schulz@cherry.de>
-Subject: Re: [PATCH 0/2] arm64: dts: rockchip: enable HDMI audio on RK3588 Jaguar and RK3588 Tiger Haikou
-Date: Mon,  7 Apr 2025 09:17:42 +0200
-Message-ID: <174401024399.372530.2324362238627427658.b4-ty@sntech.de>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: Enable HDMI ports on ArmSoM W3
+Date: Mon,  7 Apr 2025 09:17:43 +0200
+Message-ID: <174401024398.372530.8692340789444388220.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250317-tsd-rk3588-hdmi-audio-v1-0-0b8ceb9597a6@cherry.de>
-References: <20250317-tsd-rk3588-hdmi-audio-v1-0-0b8ceb9597a6@cherry.de>
+In-Reply-To: <20250317163240.3083908-1-liujianfeng1994@gmail.com>
+References: <20250317163240.3083908-1-liujianfeng1994@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,22 +73,16 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 17 Mar 2025 13:07:25 +0100, Quentin Schulz wrote:
-> Both have an HDMI TX port and can carry audio, therefore let's simply
-> enable the nodes required to get HDMI audio on that port.
+On Tue, 18 Mar 2025 00:32:21 +0800, Jianfeng Liu wrote:
+> Enable the two HDMI ports on ArmSoM W3. And audio output of these two
+> ports are also enabled.
 > 
-> This is based on next-20250314 and the following series needs to be
-> applied in order to reach userspace:
-> https://lore.kernel.org/linux-rockchip/cover.1741886382.git.robin.murphy@arm.com/
 > 
-> [...]
 
 Applied, thanks!
 
-[1/2] arm64: dts: rockchip: Enable HDMI audio output for RK3588 Jaguar
-      commit: f46705afd1aafd843e28e981447c92469e846673
-[2/2] arm64: dts: rockchip: Enable HDMI audio output for RK3588 Tiger Haikou
-      commit: 200b3fa574c9377ff0b4e69a6ca4668939bf0cad
+[1/1] arm64: dts: rockchip: Enable HDMI ports on ArmSoM W3
+      commit: 392275203af1b384fd12df2cef6fb6ee8b3f2b68
 
 Best regards,
 -- 
