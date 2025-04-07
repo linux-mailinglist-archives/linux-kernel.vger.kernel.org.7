@@ -1,60 +1,53 @@
-Return-Path: <linux-kernel+bounces-592059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C590A7E897
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:41:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D7A2A7E8A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A68B34406D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:38:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50A4E17C983
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAF425525F;
-	Mon,  7 Apr 2025 17:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8367B22171D;
+	Mon,  7 Apr 2025 17:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KWLu1ztK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AIvM9G9K"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169A725524F;
-	Mon,  7 Apr 2025 17:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39F721B1AB;
+	Mon,  7 Apr 2025 17:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744047240; cv=none; b=dBHwwfybS3vDDXA8nLXEBUthoRuyAHC7TU7CSp0fzU/ALnD+cSnPOPii3XdkGQxS+aZbFmMh5v7OSIaQ7NJNAFH2Y/pqeh7BF7G7CyUtxeWgZwtjGE3itCOb/t7R10LdgZeBvFsb3zRiGT1SObI5RoBg7YwZwpHfKRVBV7KwYRs=
+	t=1744047272; cv=none; b=aiTqj/4X5F0XxCc2YZUMaZIYmfJPFe/wulixQVaQd+ypslj6hk7YY3CM9hKuL8RrF0FcgdE3Va2ftJZdh4EBYs7t5Pm3gSxoxhaCimeIIHRKTR7GH2wKQ4juJgJwwyI6ok8NC72yzRaMg1KXyww5orZnQiX5izXFKFPGnkn7TKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744047240; c=relaxed/simple;
-	bh=5zlDeiuL9DgF/BlOHl+qwQ7JDuCW686ISBIaHc651Yo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fWOfePjL6yHm6qyHMfME+CNJl68lx8gpPjIUAf/D9aoh/k7DVNkhW3tkKebkbDbC5wYELpKBy06b8BHCvk39NuCaSPjJnXCL94ua/QJqXS+EvGipaEZqYzmWHsLiqCZsESOlIc73rbXHLm1mO+ogdHRg0HImPtuobixtdNYsMR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KWLu1ztK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A2FEC4CEE9;
-	Mon,  7 Apr 2025 17:33:57 +0000 (UTC)
+	s=arc-20240116; t=1744047272; c=relaxed/simple;
+	bh=o63Kr8wHNE3EOi+oVha6nVGxp6Yoorpa1gflUrhu3J0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lrOjQ2+GpfEyOtpGpOHF7c1F0AVK+uW6rgTfslcH4YcG3e4n2jPbe774fBGsGEYxKo9Y+un+4GW4IpA5wyE6YleU9pAKUpwB0gBD1Uhsq4CP/LuwgQQmNjjU7jkoQKABg6B3+PSil0vCMUQTGkZ+DiNdwmgo1PBGkGdo3IvlQdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AIvM9G9K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D753C4CEDD;
+	Mon,  7 Apr 2025 17:34:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744047239;
-	bh=5zlDeiuL9DgF/BlOHl+qwQ7JDuCW686ISBIaHc651Yo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KWLu1ztKxj+u68He4wtSFTYHUbqcfekr+20JiLGGg0ExuUEQUF+l3kOndmoXkkCUs
-	 iizQ/TafNhaN1T950Oja51szTRDgt0oe7BcBZ0kldpIdmimu5wyh3k8774HZWJu8iO
-	 c6EcckZVd28qeumMyWTYrRf6tnb17HdJy/wh463Zf7I4eKO7uVjkEiEqBUfUjtv9pO
-	 meqeIPfl18yAKKOPyf/LlqQrLgUyt5fdEfBKjrK0G9ChVzcsgDFzuh79qjFfOhuIWM
-	 GXE98g9W2k48+Wc9IVj7jqBQC8mPrQC3VLZ/T1Hwm5nXk/khpJfRlaD4KocyTL/lWv
-	 DVIzpEC/s5yIA==
-Date: Mon, 7 Apr 2025 19:33:54 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Roberto Ricci <io@r-ricci.it>
-Subject: Re: [PATCH v3] x86/e820: Fix handling of subpage regions when
- calculating nosave ranges
-Message-ID: <Z_QMghKBVFz_EDap@gmail.com>
-References: <20250406-fix-e820-nosave-v3-1-f3787bc1ee1d@qtmlabs.xyz>
- <Z_LGqgUhDrTmzj5r@gmail.com>
- <Z_LJv9gATY6nk4Yu@gmail.com>
- <78346ff0-d5ee-48f0-ac4d-762a5ec18eb7@qtmlabs.xyz>
+	s=k20201202; t=1744047272;
+	bh=o63Kr8wHNE3EOi+oVha6nVGxp6Yoorpa1gflUrhu3J0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=AIvM9G9KtpnXpve51JFF+dO41kdErgyup6M1biPljJfC7vmEl8MjpousOzbV1gO2E
+	 A8CVidrgrX6diPFz7sZau3F8VS1Zno9Kzjhz95lNVA5WX7bbilMG/DALG/3AK9YNht
+	 SzYkGhGBUSxVaJAOHYHXc/2bVDTLy7lqzOKcYB5PEqK3wO6mcgY+FFavLePnBIv8U/
+	 Esgi8xocqAGLMdzhmjJ2k3MNAfoO5G0FpVfqIkbnozdCHRoVF9bK0VvvNTGmiCpUNx
+	 mug97U3IaFYJXmgbGxhsR8WR/vD5BpDVG9onn+JwRLACkyGjqfKGRqylhUsHv1EWfY
+	 Mu0P+Co0aizzg==
+Date: Mon, 7 Apr 2025 07:34:31 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>,
+	cgroups@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Subject: [GIT PULL] cgroup: Fixes for v6.15-rc1
+Message-ID: <Z_QMp_w1wVoU5A2w@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,70 +56,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <78346ff0-d5ee-48f0-ac4d-762a5ec18eb7@qtmlabs.xyz>
 
+The following changes since commit 1e7857b28020ba57ca7fdafae7ac855ba326c697:
 
-* Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz> wrote:
+  x86: don't re-generate cpufeaturemasks.h so eagerly (2025-03-31 14:19:55 -0700)
 
-> On 4/7/25 01:36, Ingo Molnar wrote:
-> 
-> > * Ingo Molnar<mingo@kernel.org> wrote:
-> > 
-> > > * Myrrh Periwinkle<myrrhperiwinkle@qtmlabs.xyz> wrote:
-> > > 
-> > > > The current implementation of e820__register_nosave_regions suffers from
-> > > > multiple serious issues:
-> > > >   - The end of last region is tracked by PFN, causing it to find holes
-> > > >     that aren't there if two consecutive subpage regions are present
-> > > >   - The nosave PFN ranges derived from holes are rounded out (instead of
-> > > >     rounded in) which makes it inconsistent with how explicitly reserved
-> > > >     regions are handled
-> > > > 
-> > > > Fix this by:
-> > > >   - Treating reserved regions as if they were holes, to ensure consistent
-> > > >     handling (rounding out nosave PFN ranges is more correct as the
-> > > >     kernel does not use partial pages)
-> > > >   - Tracking the end of the last RAM region by address instead of pages
-> > > >     to detect holes more precisely
-> > > > 
-> > > > Cc:stable@vger.kernel.org
-> > > > Fixes: e5540f875404 ("x86/boot/e820: Consolidate 'struct e820_entry *entry' local variable names")
-> > > So why is this SHA1 indicated as the root cause? AFAICS that commit
-> > > does nothing but cleanups, so it cannot cause such regressions.
-> > BTW.:
-> > 
-> >   A) "It was the first random commit that seemed related, sry"
-> >   B) "It's a 15 years old bug, but I wanted to indicate a fresh, 8-year old bug to get this into -stable. Busted!"
-> 
-> You got me :) How did you know that this is a 15 years old bug?
+are available in the Git repository at:
 
-Call it a 'regression radar' that every kernel maintainer develops 
-after their first 20 years or so - each bug has a distinct feeling
-to them, and this one felt genuinely *ancient*.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git/ tags/cgroup-for-6.15-rc1-fixes
 
-> [...] (although I didn't think the age of the bug a patch fixes would 
-> affect its chances of getting to -stable)
+for you to fetch changes up to a22b3d54de94f82ca057cc2ebf9496fa91ebf698:
 
-Yeah, it doesn't really affect its -stable elibility much once we move 
-outside the ~6-12 months window that upstream recognizes as a 
-semi-recent regression - it was mostly my lame attempt at deadpan 
-humor, trying to play off 15 year old bugs against 8 year old bugs as 
-if 8 years old bugs were fresh. Yeah, I know, it's not funny even to me 
-anymore, I'm weird that way. ;-)
+  cgroup/cpuset: Fix race between newly created partition and dying one (2025-04-01 21:46:22 -1000)
 
-> This specific revision was picked since it's the latest one that this 
-> patch can be straightforwardly applied to (there is a (trivial) merge 
-> conflict with -stable, though).
+----------------------------------------------------------------
+cgroup: Fixes for v6.15-rc1
 
-Yeah. So in the x86/urgent commit I've tagged the other commit you 
-pinpointed in your followup mail:
+- A number of cpuset remote partition related fixes and cleanups along with
+  selftest updates.
 
-    Fixes: e8eff5ac294e ("[PATCH] Make swsusp avoid memory holes and reserved memory regions on x86_64")
+- A change from this merge window made cgroup_rstat_updated_list() called
+  outside cgroup_rstat_lock leading to list corruptions. Fix it by
+  relocating the call inside the lock.
 
-Just to give backporters *some* chance at fixing this ancient bug
-in older kernels, if they really want to.
+----------------------------------------------------------------
+Shakeel Butt (1):
+      cgroup: rstat: call cgroup_rstat_updated_list with cgroup_rstat_lock
 
-Thanks,
+Waiman Long (10):
+      cgroup/cpuset: Fix incorrect isolated_cpus update in update_parent_effective_cpumask()
+      cgroup/cpuset: Fix error handling in remote_partition_disable()
+      cgroup/cpuset: Remove remote_partition_check() & make update_cpumasks_hier() handle remote partition
+      cgroup/cpuset: Don't allow creation of local partition over a remote one
+      cgroup/cpuset: Code cleanup and comment update
+      cgroup/cpuset: Remove unneeded goto in sched_partition_write() and rename it
+      selftest/cgroup: Update test_cpuset_prs.sh to use | as effective CPUs and state separator
+      selftest/cgroup: Clean up and restructure test_cpuset_prs.sh
+      selftest/cgroup: Add a remote partition transition test to test_cpuset_prs.sh
+      cgroup/cpuset: Fix race between newly created partition and dying one
 
-	Ingo
+ include/linux/cgroup-defs.h                       |   1 +
+ include/linux/cgroup.h                            |   2 +-
+ kernel/cgroup/cgroup.c                            |   6 +
+ kernel/cgroup/cpuset-internal.h                   |   1 +
+ kernel/cgroup/cpuset.c                            | 401 ++++++++------
+ kernel/cgroup/rstat.c                             |   3 +-
+ tools/testing/selftests/cgroup/test_cpuset_prs.sh | 617 ++++++++++++++--------
+ 7 files changed, 651 insertions(+), 380 deletions(-)
+
+-- 
+tejun
 
