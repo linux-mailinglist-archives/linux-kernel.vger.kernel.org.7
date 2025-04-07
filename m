@@ -1,159 +1,225 @@
-Return-Path: <linux-kernel+bounces-591255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBEC0A7DD41
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:10:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE688A7DD70
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F86C1891435
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:10:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0CC63ADC8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BB6247DF0;
-	Mon,  7 Apr 2025 12:10:29 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B8824EAA5;
+	Mon,  7 Apr 2025 12:12:28 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DE322F155
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 12:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A92A24E00C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 12:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744027829; cv=none; b=NA+t5zfGKVgCMe9l85oRJ0snr3MuA6aroFley4nJ81htjy2DjrkL73BwctL0FG+gCvzDTYqi2yVBfKw7Exm1j4Lqz3fzeNc08z8ApFW0yIlm8awOwKVX58lODJsp9LG5KfU3I66WrnfTgFKBxJYRJ2+4QwTZ5BeXw23cFWMdsKc=
+	t=1744027947; cv=none; b=Y9B8P0JIb00b2Bn6G9eKeEgwDwLV+O8+3iVhZdAA3pxst1HDe2taCF3T5duJXy5lArk6IsolCL0Qxe7njF7zkHAFXLleHfB1VrIljgp+NYh62HOyGdlSKDIVAKIgIwxnsjHhe5HbsuD+s+1VxjETbydG+UGErKsBj1eZ5/Y3Sjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744027829; c=relaxed/simple;
-	bh=o2PUEl1xK7F+0BpHbTouPhn+jOyVOVeoIMgDvtPcvfM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uZ/N+MiRR25uO4HNTFpkrRqNxMjJsmGKOJFh+i6Tj8iXcp87fSt4SeDQso5tYby74SegywujYnSrOdSKmAu5N11DplDEXTOaX2KjLFuYlcDuft7/HMEAm2nJZR00WLSCzFVggPGauqeSUTiqGp7ln7VRD7pLtJbe0v2B0MSBdCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+	s=arc-20240116; t=1744027947; c=relaxed/simple;
+	bh=JM8bcgmFvSjE+4oVjYG+DDsuNpUJvzbvA+QreWwAcI4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Svm4Yet9jooxdEwqgG2GFVljc64a/5t3Lb3qWQAE4x0rlDnfWoeZQkDvW26hauXFxhABHvuywimnqxhT+XG6o9UD9RZfOMkCkL1arz2lzoHIzkS0gajgMjlgsN9qbDYAUG8tQNsFguJt6Z+SMMhsfNhb5Egm5s8d0E4HwVAsx/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d451ad5b2dso52484465ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 05:10:27 -0700 (PDT)
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-85dd46b20bfso434202139f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 05:12:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744027826; x=1744632626;
+        d=1e100.net; s=20230601; t=1744027945; x=1744632745;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ek3zenkEspUnPBFxUqi4hppRRFoyjsM8PYzyIlaXi+M=;
-        b=RzRkTEORr4rtFlS0yu5AtGJo6oELs+a/JufZjnYFifYVRx/AyXHTmwO8VmU6lXroga
-         3ZhZrmiqv7jsYZgAZ9aFFU9/tg1HE2lqf3YAPAAfCa/XgbcDfpgF0p2zS+0CEpAUUYpq
-         PWUCa01uWQhwWobucfKCEKIjzCYllYAX8sqnYs66eZIky9fz4AiRcXXJDvHoRg+55/HA
-         yKQq7tlocrQNFzGc4na1S+pgZIy5YqhhxHb0KRryjE+uLBPTxgoZHxxsCwSc9rVAEO3C
-         gcI/m7aeDINdVmKlso9V+8dnM5QXLjoCOjNHudfEiyahACH+TpSJiqSjiUgWNepchani
-         TZUA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnYEY6/Zro7FAHuEpAlBRFeXqcZgC1HzRGFc0vKq0ZeuCtZnhSjPyUHh8V9n1rcLA9FzqU0EIt4wYGPu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxTx6YE3+7HbeMq+UFtNl5fsZx8b/2xVY7ysBLRXsjUEkmM4MO
-	uEM0ShsThxmVXL7ddNr9iRCftIvv1ppgXM3PSHpitrtSOIaaj6pPKCewXaOJ78memLOSJmFa8/3
-	EgHtUBeM9+yQfglpqODCyWqXx9v64FjByIBWZUiKhp8RiCdRR2giCwew=
-X-Google-Smtp-Source: AGHT+IFYM5ksmjv1b4OvqMewkWsrKU9taPe63uEt219GP6/ajJ6mPw1jBDvuYCsKtLpSchTvjyEO2E9mY5CGHO+mOYX6kJJccGw4
+        bh=39rzYLbyRA0XbeEFzfZRxovGuCqjIyzpwm7iw9NJxXY=;
+        b=eaq3rTi8ONGzk1MJ819POkXahOzHsQq3YPl+1v0yfZG4vg15mg68Bf+4XwW2xJWA9d
+         SFE6hdt1RPo3SGtBb+Xg9NQq2xCFkFhV3ImXSym9Ozb2PuRdUmq0zvocRshA7kk/g4jY
+         JbxDYrHJ0gIvVcZU//ewRWE8k+exgnzCrj+Vwh8Eg0NA+wHVieNHrVyCs9uwIqD+S5+q
+         St5oMTyZ2d0EUi8tLc5KLqGB7EUeq3ukizaXRqUfO5wVCLpx7wqco9s5yswRY4kznSf3
+         0oEQ4eTJYJ4F17rBOIJfPkTslvgnBc2mSTIti1jmDN9ShocwzluffW29NCffHUBuG+LY
+         SUuA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/TewFsE28pHMdFHix+TCuiKdCBebzq+NGOtIYajHloq1TyZ9wg8pPw4hvbE3mrcFbS5cSqobPw/jXJOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJLFwfSX6lP//0kQavD1XFOIn8TgW7ebQIvFWSTtMvmIWQdgxH
+	6PZDJEphhoWZtTItRXAU35LxG2hgBkKgJ5nNhwAfXBDyo0t7rxnLkoTkDL7joBgSbf0TZKHceCU
+	p8hpgMjUSNcan70zy7bnRmg3XWurYnp4tbhC9Yne+3y6MKyOAxZQcyq8=
+X-Google-Smtp-Source: AGHT+IH/sQYargxhNszMsKXjelkLl0r9VSiw1P3K9FFxLfUjVRMCFaViDb2DQ5eE+Js+VQH3uxVlIjAR+ZcuDB4hhWPNd3AJUTV2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3e90:b0:3d3:f72c:8fd8 with SMTP id
- e9e14a558f8ab-3d6e3fea50fmr107239995ab.6.1744027826656; Mon, 07 Apr 2025
- 05:10:26 -0700 (PDT)
-Date: Mon, 07 Apr 2025 05:10:26 -0700
+X-Received: by 2002:a05:6e02:1846:b0:3d5:890b:d9df with SMTP id
+ e9e14a558f8ab-3d6e3f73e25mr132004245ab.15.1744027945033; Mon, 07 Apr 2025
+ 05:12:25 -0700 (PDT)
+Date: Mon, 07 Apr 2025 05:12:25 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67f3c0b2.050a0220.396535.0547.GAE@google.com>
-Subject: [syzbot] [f2fs?] kernel BUG in dec_valid_block_count
-From: syzbot <syzbot+8b376a77b2f364097fbe@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <67f3c129.050a0220.107db6.0593.GAE@google.com>
+Subject: [syzbot] [kernel?] BUG: soft lockup in cfg80211_wext_siwfreq
+From: syzbot <syzbot+b6fabe77c2559522cbd7@syzkaller.appspotmail.com>
+To: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	linux-kernel@vger.kernel.org, mingo@redhat.com, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    a1b5bd45d4ee Merge tag 'usb-6.15-rc1' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=174ffc3f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6fe3b5e6a2cb1cc2
-dashboard link: https://syzkaller.appspot.com/bug?extid=8b376a77b2f364097fbe
+HEAD commit:    1e7857b28020 x86: don't re-generate cpufeaturemasks.h so e..
+git tree:       bpf-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1606094c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f8721be6a767792
+dashboard link: https://syzkaller.appspot.com/bug?extid=b6fabe77c2559522cbd7
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=148427cf980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c9f7b0580000
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-a1b5bd45.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8b14e02f603d/vmlinux-a1b5bd45.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/cc06cac05b38/bzImage-a1b5bd45.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/697f78a4edc0/mount_0.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=10ffca74580000)
+disk image: https://storage.googleapis.com/syzbot-assets/8ae0388d997b/disk-1e7857b2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9f7f7867e1cb/vmlinux-1e7857b2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/dc428f20aac5/bzImage-1e7857b2.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8b376a77b2f364097fbe@syzkaller.appspotmail.com
+Reported-by: syzbot+b6fabe77c2559522cbd7@syzkaller.appspotmail.com
 
-------------[ cut here ]------------
-kernel BUG at fs/f2fs/f2fs.h:2521!
-Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5312 Comm: syz-executor407 Not tainted 6.14.0-syzkaller-12886-ga1b5bd45d4ee #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:dec_valid_block_count+0x3b2/0x3c0 fs/f2fs/f2fs.h:2521
-Code: 8a 01 fe e9 80 fd ff ff e8 db 64 97 fd 48 c7 c7 60 6e 31 8f 4c 89 e6 48 89 da e8 39 aa 14 01 e9 73 fe ff ff e8 bf 64 97 fd 90 <0f> 0b 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc9000d39f078 EFLAGS: 00010293
-RAX: ffffffff842bf2c1 RBX: 00000000fffffcda RCX: ffff88801f41a440
-RDX: 0000000000000000 RSI: 00000000000003fa RDI: 00000000000000d4
-RBP: 1ffff110082999f4 R08: ffffffff842bef72 R09: fffff52001a73e00
-R10: dffffc0000000000 R11: fffff52001a73e00 R12: ffff8880414ccfa4
-R13: dffffc0000000000 R14: ffff8880414cc000 R15: 00000000000003fa
-FS:  00007f5c4fc216c0(0000) GS:ffff88808c599000(0000) knlGS:0000000000000000
+watchdog: BUG: soft lockup - CPU#0 stuck for 144s! [syz.0.44:6093]
+Modules linked in:
+irq event stamp: 31919317
+hardirqs last  enabled at (31919316): [<ffffffff81844f49>] handle_softirqs+0x1e9/0x9b0 kernel/softirq.c:563
+hardirqs last disabled at (31919317): [<ffffffff8c2dab0e>] sysvec_apic_timer_interrupt+0xe/0xc0 arch/x86/kernel/apic/apic.c:1049
+softirqs last  enabled at (31919312): [<ffffffff8184596b>] __do_softirq kernel/softirq.c:613 [inline]
+softirqs last  enabled at (31919312): [<ffffffff8184596b>] invoke_softirq kernel/softirq.c:453 [inline]
+softirqs last  enabled at (31919312): [<ffffffff8184596b>] __irq_exit_rcu+0xfb/0x220 kernel/softirq.c:680
+softirqs last disabled at (31919315): [<ffffffff8184596b>] __do_softirq kernel/softirq.c:613 [inline]
+softirqs last disabled at (31919315): [<ffffffff8184596b>] invoke_softirq kernel/softirq.c:453 [inline]
+softirqs last disabled at (31919315): [<ffffffff8184596b>] __irq_exit_rcu+0xfb/0x220 kernel/softirq.c:680
+CPU: 0 UID: 0 PID: 6093 Comm: syz.0.44 Not tainted 6.14.0-syzkaller-g1e7857b28020 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+RIP: 0010:kasan_check_range+0x1ba/0x2a0 mm/kasan/generic.c:189
+Code: fb 48 8d 5d 07 48 85 ed 48 0f 49 dd 48 83 e3 f8 48 29 dd 74 12 41 80 3b 00 0f 85 b3 00 00 00 49 ff c3 48 ff cd 75 ee 5b 41 5c <41> 5e 41 5f 5d c3 cc cc cc cc 40 84 ed 75 61 f7 c5 00 ff 00 00 75
+RSP: 0018:ffffc90000007a78 EFLAGS: 00000256
+RAX: 1ffff92000000f01 RBX: ffffffff81a77055 RCX: ffffffff81a77055
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffc90000007b00
+RBP: 0000000000000000 R08: ffffc90000007b07 R09: 1ffff92000000f60
+R10: dffffc0000000000 R11: fffff52000000f61 R12: 0000000000000008
+R13: dffffc0000000000 R14: dffffc0000000001 R15: fffff52000000f61
+FS:  00007f78f9e696c0(0000) GS:ffff888124faf000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f5c4fc00d58 CR3: 0000000043b00000 CR4: 0000000000352ef0
+CR2: 00007ff8d15feff0 CR3: 0000000035462000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ __asan_memcpy+0x29/0x70 mm/kasan/shadow.c:105
+ __bpf_trace_rcu_utilization+0xd5/0x140 include/trace/events/rcu.h:27
+ __do_trace_rcu_utilization include/trace/events/rcu.h:27 [inline]
+ trace_rcu_utilization+0x1b4/0x1e0 include/trace/events/rcu.h:27
+ rcu_core+0x135/0x17a0 kernel/rcu/tree.c:2796
+ handle_softirqs+0x2d6/0x9b0 kernel/softirq.c:579
+ __do_softirq kernel/softirq.c:613 [inline]
+ invoke_softirq kernel/softirq.c:453 [inline]
+ __irq_exit_rcu+0xfb/0x220 kernel/softirq.c:680
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:696
+ instr_sysvec_irq_work arch/x86/kernel/irq_work.c:17 [inline]
+ sysvec_irq_work+0xa3/0xc0 arch/x86/kernel/irq_work.c:17
+ </IRQ>
+ <TASK>
+ asm_sysvec_irq_work+0x1a/0x20 arch/x86/include/asm/idtentry.h:738
+RIP: 0010:rcu_read_unlock_special+0x8a/0x570 kernel/rcu/tree_plugin.h:694
+Code: f1 f1 f1 00 f2 f2 f2 49 89 04 14 66 41 c7 44 14 09 f3 f3 41 c6 44 14 0b f3 65 44 8b 3d af 84 bd 11 41 f7 c7 00 00 f0 00 74 44 <48> c7 44 24 20 0e 36 e0 45 4a c7 04 22 00 00 00 00 66 42 c7 44 22
+RSP: 0018:ffffc90004be70a0 EFLAGS: 00000206
+RAX: 337b379826375900 RBX: 1ffff9200097ce1c RCX: ffffffff93671020
+RDX: dffffc0000000000 RSI: ffffffff8e691f31 RDI: ffffffff8ca184c0
+RBP: ffffc90004be7180 R08: ffffffff905f5377 R09: 1ffffffff20bea6e
+R10: dffffc0000000000 R11: fffffbfff20bea6f R12: 1ffff9200097ce18
+R13: ffff8880262ec060 R14: ffffc90004be70e0 R15: ffffffff8ed40300
+ __rcu_read_unlock+0xa1/0x110 kernel/rcu/tree_plugin.h:438
+ rcu_read_unlock include/linux/rcupdate.h:873 [inline]
+ class_rcu_destructor include/linux/rcupdate.h:1155 [inline]
+ unwind_next_frame+0x1aa4/0x23b0 arch/x86/kernel/unwind_orc.c:680
+ arch_stack_walk+0x11e/0x150 arch/x86/kernel/stacktrace.c:25
+ stack_trace_save+0x11a/0x1d0 kernel/stacktrace.c:122
+ kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
+ kasan_record_aux_stack+0xbf/0xd0 mm/kasan/generic.c:548
+ __call_rcu_common kernel/rcu/tree.c:3082 [inline]
+ call_rcu+0x172/0xad0 kernel/rcu/tree.c:3202
+ __dentry_kill+0x497/0x630 fs/dcache.c:679
+ dput+0x19f/0x2b0 fs/dcache.c:902
+ find_next_child fs/libfs.c:603 [inline]
+ simple_recursive_removal+0x2bd/0x8f0 fs/libfs.c:618
+ debugfs_remove+0x49/0x70 fs/debugfs/inode.c:805
+ ieee80211_sta_debugfs_remove+0x40/0x60 net/mac80211/debugfs_sta.c:1285
+ __sta_info_destroy_part2+0x35e/0x450 net/mac80211/sta_info.c:1508
+ __sta_info_flush+0x5ee/0x720 net/mac80211/sta_info.c:1640
+ sta_info_flush net/mac80211/sta_info.h:927 [inline]
+ ieee80211_ibss_disconnect+0x2c7/0x7c0 net/mac80211/ibss.c:686
+ ieee80211_ibss_leave+0x4a/0x150 net/mac80211/ibss.c:1831
+ rdev_leave_ibss net/wireless/rdev-ops.h:574 [inline]
+ cfg80211_leave_ibss+0x1ef/0x430 net/wireless/ibss.c:203
+ cfg80211_ibss_wext_siwfreq+0x1ef/0x310 net/wireless/ibss.c:321
+ cfg80211_wext_siwfreq+0x220/0x870 net/wireless/wext-compat.c:781
+ ioctl_standard_call+0xda/0x190 net/wireless/wext-core.c:1043
+ wireless_process_ioctl net/wireless/wext-core.c:-1 [inline]
+ wext_ioctl_dispatch+0xe4/0x410 net/wireless/wext-core.c:1014
+ wext_handle_ioctl+0x15a/0x260 net/wireless/wext-core.c:1075
+ sock_ioctl+0x181/0x900 net/socket.c:1243
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:906 [inline]
+ __se_sys_ioctl+0xf1/0x160 fs/ioctl.c:892
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f78f8f8d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f78f9e69038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f78f91a5fa0 RCX: 00007f78f8f8d169
+RDX: 0000200000000040 RSI: 0000000000008b04 RDI: 000000000000000c
+RBP: 00007f78f900e2a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f78f91a5fa0 R15: 00007ffd5dcefa88
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 1036 Comm: kworker/u8:5 Not tainted 6.14.0-syzkaller-g1e7857b28020 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Workqueue: events_unbound toggle_allocation_gate
+RIP: 0010:csd_lock_wait kernel/smp.c:340 [inline]
+RIP: 0010:smp_call_function_many_cond+0x1bac/0x2d40 kernel/smp.c:885
+Code: 03 84 c0 75 7e 45 8b 65 00 44 89 e6 83 e6 01 31 ff e8 58 02 0c 00 41 83 e4 01 4c 8b 64 24 68 75 07 e8 08 fe 0b 00 eb 41 f3 90 <48> b8 00 00 00 00 00 fc ff df 0f b6 04 03 84 c0 75 11 41 f7 45 00
+RSP: 0018:ffffc90003cb7640 EFLAGS: 00000293
+RAX: ffffffff81b780bd RBX: 1ffff110170c823d RCX: ffff888027071e00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc90003cb7840 R08: ffffffff81b78088 R09: 1ffffffff20bea6e
+R10: dffffc0000000000 R11: fffffbfff20bea6f R12: ffff8880b873ad08
+R13: ffff8880b86411e8 R14: ffff8880b873ad00 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8881250af000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffc34b52000 CR3: 000000000eb38000 CR4: 00000000003526f0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
  <TASK>
- f2fs_truncate_data_blocks_range+0xc8c/0x11a0 fs/f2fs/file.c:695
- truncate_dnode+0x417/0x740 fs/f2fs/node.c:973
- truncate_nodes+0x3ec/0xf50 fs/f2fs/node.c:1014
- f2fs_truncate_inode_blocks+0x8e3/0x1370 fs/f2fs/node.c:1197
- f2fs_do_truncate_blocks+0x840/0x12b0 fs/f2fs/file.c:810
- f2fs_truncate_blocks+0x10d/0x300 fs/f2fs/file.c:838
- f2fs_truncate+0x417/0x720 fs/f2fs/file.c:888
- f2fs_setattr+0xc4f/0x12f0 fs/f2fs/file.c:1112
- notify_change+0xbca/0xe90 fs/attr.c:552
- do_truncate+0x222/0x310 fs/open.c:65
- handle_truncate fs/namei.c:3466 [inline]
- do_open fs/namei.c:3849 [inline]
- path_openat+0x2e4f/0x35d0 fs/namei.c:4004
- do_filp_open+0x284/0x4e0 fs/namei.c:4031
- do_sys_openat2+0x12b/0x1d0 fs/open.c:1429
- do_sys_open fs/open.c:1444 [inline]
- __do_sys_creat fs/open.c:1522 [inline]
- __se_sys_creat fs/open.c:1516 [inline]
- __x64_sys_creat+0x124/0x170 fs/open.c:1516
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5c4fc6c839
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 81 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f5c4fc21218 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
-RAX: ffffffffffffffda RBX: 00007f5c4fcf8608 RCX: 00007f5c4fc6c839
-RDX: 00007f5c4fc6c839 RSI: 0000000000000009 RDI: 0000200000000080
-RBP: 00007f5c4fcf8600 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f5c4fcc58f4
-R13: 0000200000000100 R14: 0031656c69662f2e R15: 0000200000000080
+ on_each_cpu_cond_mask+0x3f/0x80 kernel/smp.c:1052
+ on_each_cpu include/linux/smp.h:71 [inline]
+ text_poke_sync arch/x86/kernel/alternative.c:2455 [inline]
+ text_poke_bp_batch+0x354/0xb30 arch/x86/kernel/alternative.c:2665
+ text_poke_flush arch/x86/kernel/alternative.c:2856 [inline]
+ text_poke_finish+0x30/0x50 arch/x86/kernel/alternative.c:2863
+ arch_jump_label_transform_apply+0x1c/0x30 arch/x86/kernel/jump_label.c:146
+ static_key_enable_cpuslocked+0x136/0x260 kernel/jump_label.c:210
+ static_key_enable+0x1a/0x20 kernel/jump_label.c:223
+ toggle_allocation_gate+0xc0/0x250 mm/kfence/core.c:850
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xac3/0x18e0 kernel/workqueue.c:3319
+ worker_thread+0x870/0xd50 kernel/workqueue.c:3400
+ kthread+0x7b7/0x940 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
  </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:dec_valid_block_count+0x3b2/0x3c0 fs/f2fs/f2fs.h:2521
-Code: 8a 01 fe e9 80 fd ff ff e8 db 64 97 fd 48 c7 c7 60 6e 31 8f 4c 89 e6 48 89 da e8 39 aa 14 01 e9 73 fe ff ff e8 bf 64 97 fd 90 <0f> 0b 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc9000d39f078 EFLAGS: 00010293
-RAX: ffffffff842bf2c1 RBX: 00000000fffffcda RCX: ffff88801f41a440
-RDX: 0000000000000000 RSI: 00000000000003fa RDI: 00000000000000d4
-RBP: 1ffff110082999f4 R08: ffffffff842bef72 R09: fffff52001a73e00
-R10: dffffc0000000000 R11: fffff52001a73e00 R12: ffff8880414ccfa4
-R13: dffffc0000000000 R14: ffff8880414cc000 R15: 00000000000003fa
-FS:  00007f5c4fc216c0(0000) GS:ffff88808c599000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f5c4fc00d58 CR3: 0000000043b00000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
 ---
@@ -166,10 +232,6 @@ https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
