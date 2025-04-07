@@ -1,112 +1,118 @@
-Return-Path: <linux-kernel+bounces-591175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63810A7DC24
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:22:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF06A7DC42
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:29:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 039FE7A5668
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:21:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E5F91891EF1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A6823A9B1;
-	Mon,  7 Apr 2025 11:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B7223BF99;
+	Mon,  7 Apr 2025 11:27:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ifa7NOEf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ARcF3FHg"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CEF20E6FB;
-	Mon,  7 Apr 2025 11:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78B923AE67;
+	Mon,  7 Apr 2025 11:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744024947; cv=none; b=SVdXIZfX4qYVKri9oWb/ymrGLlhbo43FhbgqyxLR8ZJ6TsS2NPJYhi6fbrUIDfGM5JmnBcHWBpxyeICTs3hZxARIXOIuKZn7itOERRsE2IVuQOpqR/VQx0A7mFvuiWW4B6tsdFDnuKs+LPePJaywnzg8Z8Odg5Qpgip7D8nuz8U=
+	t=1744025262; cv=none; b=tAdWzusgffsSUtTJu33vZPZLyR2JknmLCeKVSWQwX/SXmZDx0FI/lNoiOtn+xwKXadJXz4CoN4fx1uAW5xLyiF5YUyZk6EnfNvdCvXLGiLniViYxc8qpZSTF+ZEMIYmrQFBm0YQA3ufRcY0HNr9wBP4e1GrqOffdbGI3ZPr2XME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744024947; c=relaxed/simple;
-	bh=r82YfUQKHA8SpPqT1MraF0loP2XAnUryjmxg1o30qAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=la1K4UYMdn6i1hbaRDlUHf/5K9NDEpGlYCp1XPxazpo1uTt6XrCSyfptt8Wk7sZLzp/l/zhpCAxjOw1+KeB6Lm/a6qAyxljR60Q7QL6zrhHLTEPV8Jq+vfQ749MxY67uD5FJYNy2y7MtqpFmz1kXqI65slfW8bVck2tPPnaDkZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ifa7NOEf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C88CFC4CEDD;
-	Mon,  7 Apr 2025 11:22:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744024946;
-	bh=r82YfUQKHA8SpPqT1MraF0loP2XAnUryjmxg1o30qAQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ifa7NOEfglT2WxL4l8xfldhVv0NyTkYPtRtC4S2B3MBXNmWMeq+oXhky4STZypUu/
-	 6xrxi8nexqrZA4XBtv4yM4HdbEKk7jQa45EPdydv+RQXQspti8MqRNRgGXpNkY5yxt
-	 y88Z2J7Bj5N7n5vJ97LRBQ2FNYUMJ/fdwnrt/x+bD2kl1Ueg02yBKjMP2bD+UlwWxS
-	 1Rj4oj/5N3lv9MMe8PwXxnPgJQTY9tpHpZvROBtq6ReOMPpDbYZSsU6uobV0sWl7Oa
-	 143D3GRKlkaZ1UxCAa1LhJGkoEI2pExei/5W4tNMeuslLe9cA2j9joeRjG9dTSX6Jn
-	 iams365nlzE7g==
-Date: Mon, 7 Apr 2025 13:22:22 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christoph Hellwig <hch@infradead.org>, 
-	Mateusz Guzik <mjguzik@gmail.com>, James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Leon Romanovsky <leon@kernel.org>, pr-tracker-bot@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] vfs mount
-Message-ID: <20250407-ziegen-heilfroh-f9033bcd8e2f@brauner>
-References: <20250322-vfs-mount-b08c842965f4@brauner>
- <174285005920.4171303.15547772549481189907.pr-tracker-bot@kernel.org>
- <20250401170715.GA112019@unreal>
- <20250403-bankintern-unsympathisch-03272ab45229@brauner>
- <20250403-quartal-kaltstart-eb56df61e784@brauner>
- <196c53c26e8f3862567d72ed610da6323e3dba83.camel@HansenPartnership.com>
- <6pfbsqikuizxezhevr2ltp6lk6vqbbmgomwbgqfz256osjwky5@irmbenbudp2s>
- <CAHk-=wjksLMWq8At_atu6uqHEY9MnPRu2EuRpQtAC8ANGg82zw@mail.gmail.com>
- <Z--YEKTkaojFNUQN@infradead.org>
- <CAHk-=wjjGb0Uik101G-B76pp+Xvq5-xa1azJF0EwRxb_kisi2Q@mail.gmail.com>
+	s=arc-20240116; t=1744025262; c=relaxed/simple;
+	bh=093rrwsmRiqMHVzVRyHSZKXYoLgYn1XFtxsIr38PXd8=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=mjm8Zs+acq+l7o1gvXJumB1BAZqlMfp6sR4JWKf5WalNyAdLehi+7TuNZmkknhvTFjRWvn7vkRCl/0kyVJsa1fAdylryInrn9kXoj2KGHH9P+xpzniBenBYitvrJsfz8Q8EDZIBvAEgQSg7pg6C8CTHfjiCmkX23MKtVE3AhbEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ARcF3FHg; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1744024951; bh=OIMPWzh9MNaYKe51Y4PxWwdbK6/caOHyB47lalq/Giw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ARcF3FHgac1cBtfU/xYwkXL9sRUEHtpKKFu1SwGHfMFM/QRLFQ5gHU5IhfB1De/yU
+	 gEokIErEQBTYGWlxXs+PF/BBYDnEAZmb/xJlVO21REJZskg7QRdl1Bq3BQKPZmWxYv
+	 8AKz6I+IHd5gb6w6cjZN+gVWSDtrp1evFxEs3VJE=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
+	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
+	id 59C84251; Mon, 07 Apr 2025 19:22:28 +0800
+X-QQ-mid: xmsmtpt1744024948t3yx4n6wg
+Message-ID: <tencent_ABAECE4C9727C606CDD2D6C67209852EC406@qq.com>
+X-QQ-XMAILINFO: ORuEwgb9eurkQv1vLgVvgl69FjKBMdrYxy4FNZvmCEmHg27T/Qt3YjNmYaxJCz
+	 EmeEHAn0bWMiidYxwb8uBTCGf77qeavPqlUbh373Ti+gH4f3vcVTQg6r+tFbCyaXoXebRuYHbv67
+	 ooRCp0tGHMjPDdx5lf1s1PxVg6E5fiBlLK8en79VewN+Uy9qeuEd1XypyjiKjDr9VKLeA3k61HxE
+	 74MfASVN8dnz1KFTT8/Y5NakDvF0p+zHrJI9Lx28Zj/GM08ed6kyMkLCMJMPmPhHO9VvjA5qybiT
+	 pIWBq4mt2WbvqZ03A570oNGPllStNRhy7Pt4wHQa0cfO4wd+i3/8Hx7HsI1fWCHeeUalIm3/vHef
+	 6Ya55BJLY3ZT7UziimXrOfvDMQLkkn2LbQu3YbI+q54jNiUEkcXI+JIvOTRR9IsbcAopvtg+v0cd
+	 S84v1jmz+vScCFWP7SvIPlauKhy+8JarHrXJpToUh6Vb/KVCMOI/pGZzvbrh+5MLTpWc37uDgXUI
+	 MAEgftHz7zXyAHTnAwD92NvJGwKSvSaToNiHyFpsTSBhAsc0Crd32xRLxWI6S40I6GZOMqsH+EQd
+	 ePyD/rQCJGAqaA+X2MrN2dI8/dk592lChh3b6M8zh95B7K/sfIlMSirCuFkK5RXhqU8d6tBVdwZK
+	 OgwcZiHBRT2v4Fn419jGgFNLSoblBVZYkrFxPg74LMMSi0srrRhyY+lkwiTvQjEIDmd0XpRGCYJg
+	 wEW98q+KN70YzCGsonglchzP4/vfcghxTKUVqnZao/+A/Bx0NtcZ4yaV9jNXRKDJB/CwbbeT0m6R
+	 rawwkZPzrxlLme59uGvC5haohOv8/7duDZrZOSMrPkdpZSpgdAe1iP+cBKI0lefztxA7QZjJ6MIg
+	 yCTFR45TnerQg3o2MzO9TB3+tkWjMEAl2Dyzzsm1Tv
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+10d145ea96fc91185445@syzkaller.appspotmail.com
+Cc: davem@davemloft.net,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	horms@kernel.org,
+	kuba@kernel.org,
+	kuniyu@amazon.com,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	sdf@fomichev.me,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] net: get ops lock under dev valid
+Date: Mon,  7 Apr 2025 19:22:27 +0800
+X-OQ-MSGID: <20250407112226.570082-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <67f36908.050a0220.0a13.027f.GAE@google.com>
+References: <67f36908.050a0220.0a13.027f.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjjGb0Uik101G-B76pp+Xvq5-xa1azJF0EwRxb_kisi2Q@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Apr 04, 2025 at 07:19:27AM -0700, Linus Torvalds wrote:
-> On Fri, 4 Apr 2025 at 01:28, Christoph Hellwig <hch@infradead.org> wrote:
-> >
-> > Or just kill the non-scoped guard because it simply is an insane API.
-> 
-> The scoped guard may be odd, but it's actually rather a common
-> situation. And when used with the proper indentation, it also ends up
-> being pretty visually clear about what part of a function is under the
-> lock.
-> 
-> But yeah, if you don't end up using it right, it ends up very very wrong.
-> 
-> Not that that is any different from "if ()" or any other similar
-> construct, but obviously people are much more *used* to 'if ()' and
-> friends.
-> 
-> An 'if ()" without the nested statement looks very wrong - although
-> it's certainly not unheard of - while a 'scoped_guard()' without the
-> nested statement might visually pass just because it doesn't trigger
-> the same visceral "that's not right" reaction.
-> 
-> So I don't think it's an insane API, I think it's mostly that it's a
-> _newish_ API.
+Make sure that dev is not NULL before locking ops. 
 
-Both the scoped and non-scoped guards are very useful. I initially used
-a scoped variant but then reworked the code to use a non-scoped one and
-fscked it up.
+Fixes: 8965c160b8f7 ("net: use netif_disable_lro in ipv6_add_dev")
+Reported-by: syzbot+10d145ea96fc91185445@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ net/ipv6/addrconf.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-I agree with Linus here it was just me not having the same "Oh right,
-that's odd reaction.".
+diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
+index 2cffb8f4a2bc..5d9fd01e6265 100644
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -3154,12 +3154,13 @@ int addrconf_add_ifaddr(struct net *net, void __user *arg)
+ 
+ 	rtnl_net_lock(net);
+ 	dev = __dev_get_by_index(net, ireq.ifr6_ifindex);
+-	netdev_lock_ops(dev);
+-	if (dev)
++	if (dev) {
++		netdev_lock_ops(dev);
+ 		err = inet6_addr_add(net, dev, &cfg, 0, 0, NULL);
++		netdev_unlock_ops(dev);
++	}
+ 	else
+ 		err = -ENODEV;
+-	netdev_unlock_ops(dev);
+ 	rtnl_net_unlock(net);
+ 	return err;
+ }
+-- 
+2.43.0
 
-I love the guard infrastructure. It's a massive improvement. Thanks to
-Peter for finally bringing this into the kernel after I've worked with
-this for years in userspace already. It literally helped obliterate
-nearly all memory safety bugs in systemd and I'm confident it will have
-positive effects in the kernel long-term as well.
-
-And please, can we (collective we) for once all decide to not turn yet
-another issue into a two week thread of New York Times Opinion pieces on
-how Things Really Are and Should Have Been Done. :)
 
