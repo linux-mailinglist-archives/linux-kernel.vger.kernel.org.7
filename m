@@ -1,150 +1,124 @@
-Return-Path: <linux-kernel+bounces-592349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FA28A7EBFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:06:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F29E7A7EBE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF4DE3BDC69
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:59:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B424D188C324
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFACC25D557;
-	Mon,  7 Apr 2025 18:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B92825DAE6;
+	Mon,  7 Apr 2025 18:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kuH5vU+E"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V9OFDeBF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993FF2222C2
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 18:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8391625D903;
+	Mon,  7 Apr 2025 18:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744050513; cv=none; b=cIAQ6SMOZwo8QgfMfec7qX8K7bpgHw90Cjv3YF9kLaMMYWwxKYVtyVpcTuMgxAJU3ITRINSnc42/O0EaABdll+S4l2rGDkQSTkCusyj8lUYZ6JDM+dHc4vTYdazenf2uyPXGOCMl9UPLF/1mSqtth/AoOIa9XjMfW1+CN+5Fc60=
+	t=1744050515; cv=none; b=XyuFP3cvfosS+YVsmG9KCxyksTmEP/AMEy9WDisG9g6N/zFi9zuYOWy+I2ryCQyyVMm+wr5RB8KkJ/1Zh9vAykspj987sjHhFQQSnH/LcsQ6PAVMKRetBj+3QraqC92hdBQxlpCdOprwlPhB0MifrTacDNZnm9MYcE9Ja2OTg10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744050513; c=relaxed/simple;
-	bh=N4Q2PJWuhAfKBzdAFmDbrPwhxv0aR7cTpTq+LF7pe9Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iaUIa0ekDZCRVeM/8ZPKYQmScpG04jyvHnetdJaIBU93U6DqJjEMf3CqqNKPPGzDRKfE3XaVoegpEjT2y1hTt5ssWE0eOKnlSjA1EcnzinlslJ5QOKzHB1i303qitsLruObYezFxsWSfbumnncZ2fb5/xSM3CVTWbfRHk8qCcSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kuH5vU+E; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 537HfMpK002437
-	for <linux-kernel@vger.kernel.org>; Mon, 7 Apr 2025 18:28:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=wRtFH9qTygTaGiFNeyhmWD
-	BRYBZEnxZC4l/kcFqqpoQ=; b=kuH5vU+EYMWqwZR6Efbh0S42A/nGPS25kDBRIE
-	dXlEbL+em5TuFVQg7nw7hh9BPS6WLCWNTrH+FOiNcWP1Y/8pWLlFLbLL+qK8g5O+
-	fVs4pp1loMy0jIhSB5qRp6DsjrdAJ2qGF7Lm/7Ae4TxI09fHpnaNGTiBsnLv43vZ
-	xLIL9A4fPeKyRgMlDKXW29x2tQcMqD1qwIgCi0wnuXLvMtXcOTlTPU7I2Twq7jTl
-	5omEOJKJu45BYbu62sds0WnDgHTSQIn05bVO7p1Y6lCG9aCaI5lUQX0I2hcs0xls
-	StHOgyrqE7jgZgO3BruXEDgiFlsMEzpcG+5V7+xdDaFaN/DQ==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twtaw66q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 18:28:30 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2ff798e8c93so4691007a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 11:28:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744050509; x=1744655309;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wRtFH9qTygTaGiFNeyhmWDBRYBZEnxZC4l/kcFqqpoQ=;
-        b=FnDOZi/Ed+I6zMMPLgZ+sQ3ZoyRqeWoGJPAp9fLLAvJiuNQrMdE5mEjgrXtwyOqv0l
-         gpFtMq3hNorw6ixlZ6B33/P4mxH1owGFhJhu1HOJDrQGw9gT1fqaGPRlJFDAm6eH/ge8
-         U3qoBln59KxVQZkPvZZGqEeUGkfbdTLI/A83vWqHootVxLeGGmEMrl6RDcs67LVsyJ/I
-         eeG2iv+rLBLBSdCoBlsZlZbAhefyE7UCBhqlRwOXv+2mD8DCmE+POejiVgMr7yAGdw24
-         spwKle7wiqwZkHB89b5a1D2E2Yyt90ukuYz9zhl4T+oCq0aEzDJX7k3ZzjWZO1V4zmzJ
-         nhDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYTVIcAltVUY65OY00s3b8UIRA6a+47cVA04sI/KvgYDJ1tNP7dOcJkM9qguM8eJfcn8rhZ50CcYfpwaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO3iHfaddvJ1jbP8xm/zAMObdWi1H71Zml9a8ngne5kWdm/WhB
-	ApPHEGpYoXmIevM7Flfde6yEh6jHb3jm+1oS5XJk+Zy3iuJYK6GhzVOND7AKcvrS6qgOFMyzX9j
-	dJ3+imjSWsgmJIjD5ZWVymyOVSUdPaCRelwceyfJEtv4yVNlQZvpXQmQJLqM04hs6j70dawU=
-X-Gm-Gg: ASbGncs9nKOaSJJdSR1ZbyFsUYaS67tglEr3Ef9KuBMSo0PflkVnhZFQXY7o/lmmY6u
-	G4LAJYh3oq06OGOqsyeku4A0WCB3798Wt8UBR5bWUJkj8Y0lv128WFst5ItHwdpFcDfhBz6jl1C
-	34Btkk2/53MxyVvH2SgKsPSRiDJhbSMuHugvgppwHfjGrWnCn0Pi1kRHqadr0/lhOhjYclO1Zib
-	IfDIn8xOV8JBvPNK2szcZBLbkCOiO6/T5EwLD5GfA6bYCA/z5ZIASt439yL51tvNGyULR34Ig3L
-	JyipZ5lsSF3C2odIiWZ6NV1xoPAorTEnz++lKSaY1bA5/jDCEW1h
-X-Received: by 2002:a17:90b:2d87:b0:305:5f2c:c577 with SMTP id 98e67ed59e1d1-306af6eaa6fmr12257117a91.3.1744050509440;
-        Mon, 07 Apr 2025 11:28:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGIkUUFJJbz5/DUqQ15ZO3tVB8cccmjhRILJ6c9sC2XH5uCBz5Q6S4AWzXEYCb3NL0aVsUrzg==
-X-Received: by 2002:a17:90b:2d87:b0:305:5f2c:c577 with SMTP id 98e67ed59e1d1-306af6eaa6fmr12257085a91.3.1744050509015;
-        Mon, 07 Apr 2025 11:28:29 -0700 (PDT)
-Received: from [169.254.0.1] (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30588a30974sm9181431a91.25.2025.04.07.11.28.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 11:28:28 -0700 (PDT)
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Date: Mon, 07 Apr 2025 11:28:26 -0700
-Subject: [PATCH] wifi: ath12k: Fix misspelling "upto" in dp.c
+	s=arc-20240116; t=1744050515; c=relaxed/simple;
+	bh=t9TUQsEt5Q9gIOtHF38LsFjD/8E4Sfx5Y8wLVTNcThA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dYHH3m0LzDkh8oR2Q2uF1EptJmFRijT9zh/2tWOHQw87+26eT7tzHXGtCIPoSIJOtBem6NzxGmQMUgLxUbeAyvvIIT3u6oIdRpTg/t/3/q6khQKtES+RsLaKt69mVVLsj15/vnA8iifHLuZ+4Dj8hpsXZJH7hGd4aGZ8+hrJ57U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V9OFDeBF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F100CC4CEDD;
+	Mon,  7 Apr 2025 18:28:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744050515;
+	bh=t9TUQsEt5Q9gIOtHF38LsFjD/8E4Sfx5Y8wLVTNcThA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V9OFDeBFLFfhzZFtHLwRrBF+XIHuHUCJNloCXOSafflkYLjxTNErR3QE7PpyAY8G0
+	 oM2oUFEtOllLn1NmB94n+hwstzCt2bOjDdX4VoiNKrddcnGmpdic4Cz/yRHmZz7QFc
+	 nCV3LLR4sNHud4N5meQyEh4q/sqCRWb0MfYBfQJfGpCIUWfMxn5bwk4SXtJd6J3JUw
+	 aR/ehGVeCa9HHrNClCq/RiWWv0uF8aWPxcQHFcevsDGPoj6uDyrPXI6snymjBf6Iqy
+	 gZQbkx+HkYWYDZVHi4aCERl+bUd3HyzdPdHZGznnlN+O7pikgis3pUDMtrdLddifCU
+	 mObCa+3aPlJLQ==
+Date: Mon, 7 Apr 2025 11:28:32 -0700
+From: Kees Cook <kees@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: James Smart <james.smart@broadcom.com>,
+	Ram Vegesna <ram.vegesna@broadcom.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-hardening@vger.kernel.org, linux-scsi@vger.kernel.org,
+	target-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: elx: sli4: Replace deprecated strncpy() with
+ strscpy()
+Message-ID: <202504071126.37117C5D@keescook>
+References: <20250226185531.1092-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250407-upto-v1-1-23ca65f2ccdf@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAEkZ9GcC/x3MQQ7CIBCF4auQWTsJpSixV2lcTHGUWQgEqjEh3
- F3q8kv+9xpULsIVFtWg8EeqpDgwnRT4QPHJKPdhMNqctdUO33lPSO5ir2421s0WRpoLP+T7v1l
- vwxtVxq1Q9OEY0x7wRRKh9x+O6w5hcQAAAA==
-To: Johannes Berg <johannes@sipsolutions.net>,
-        Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-X-Mailer: b4 0.14.0
-X-Proofpoint-GUID: iVWvacEkV47Myf0F2zlWkSSh5e4zD1-m
-X-Authority-Analysis: v=2.4 cv=LLlmQIW9 c=1 sm=1 tr=0 ts=67f4194e cx=c_pps a=0uOsjrqzRL749jD1oC5vDA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=UkFjiLiVbqrHbZXL8LAA:9 a=QEXdDO2ut3YA:10
- a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-ORIG-GUID: iVWvacEkV47Myf0F2zlWkSSh5e4zD1-m
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-07_05,2025-04-07_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- clxscore=1015 mlxlogscore=953 malwarescore=0 phishscore=0
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 spamscore=0 adultscore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504070128
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226185531.1092-2-thorsten.blum@linux.dev>
 
-ath12k-check is flagging:
+On Wed, Feb 26, 2025 at 07:55:26PM +0100, Thorsten Blum wrote:
+> strncpy() is deprecated for NUL-terminated destination buffers; use
+> strscpy() instead.
+> 
+> Compile-tested only.
+> 
+> Link: https://github.com/KSPP/linux/issues/90
+> Cc: linux-hardening@vger.kernel.org
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  drivers/scsi/elx/libefc_sli/sli4.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/scsi/elx/libefc_sli/sli4.c b/drivers/scsi/elx/libefc_sli/sli4.c
+> index 5e7fb110bc3f..d9a231fc0e0d 100644
+> --- a/drivers/scsi/elx/libefc_sli/sli4.c
+> +++ b/drivers/scsi/elx/libefc_sli/sli4.c
+> @@ -3804,7 +3804,7 @@ sli_cmd_common_write_object(struct sli4 *sli4, void *buf, u16 noc,
+>  	wr_obj->desired_write_len_dword = cpu_to_le32(dwflags);
+>  
+>  	wr_obj->write_offset = cpu_to_le32(offset);
+> -	strncpy(wr_obj->object_name, obj_name, sizeof(wr_obj->object_name) - 1);
+> +	strscpy(wr_obj->object_name, obj_name);
 
-drivers/net/wireless/ath/ath12k/dp.c:1656: 'upto' may be misspelled - perhaps 'up to'?
+Standard question for these kinds of conversions: Why is it safe that
+this is not NUL padded? I haven't found where this buffer is being
+zeroed out, but it probably is (given the "- 1" on the length), but
+without run-time testing, this needs much more careful analysis.
 
-Replace "upto" with "up to" and split the comment line so that it
-doesn't exceed 80 columns.
+-Kees
 
-Signed-off-by: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
----
-To be honest, I saw this when I was processing the original patch, but
-I thought this was just in the commit text and let it slide. But now
-that I see it is in the code, I'm fixing it.
----
- drivers/net/wireless/ath/ath12k/dp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+>  	wr_obj->host_buffer_descriptor_count = cpu_to_le32(1);
+>  
+>  	bde = (struct sli4_bde *)wr_obj->host_buffer_descriptor;
+> @@ -3833,7 +3833,7 @@ sli_cmd_common_delete_object(struct sli4 *sli4, void *buf, char *obj_name)
+>  			 SLI4_SUBSYSTEM_COMMON, CMD_V0,
+>  			 SLI4_RQST_PYLD_LEN(cmn_delete_object));
+>  
+> -	strncpy(req->object_name, obj_name, sizeof(req->object_name) - 1);
+> +	strscpy(req->object_name, obj_name);
+>  	return 0;
+>  }
+>  
+> @@ -3856,7 +3856,7 @@ sli_cmd_common_read_object(struct sli4 *sli4, void *buf, u32 desired_read_len,
+>  		cpu_to_le32(desired_read_len & SLI4_REQ_DESIRE_READLEN);
+>  
+>  	rd_obj->read_offset = cpu_to_le32(offset);
+> -	strncpy(rd_obj->object_name, obj_name, sizeof(rd_obj->object_name) - 1);
+> +	strscpy(rd_obj->object_name, obj_name);
+>  	rd_obj->host_buffer_descriptor_count = cpu_to_le32(1);
+>  
+>  	bde = (struct sli4_bde *)rd_obj->host_buffer_descriptor;
+> -- 
+> 2.48.1
+> 
 
-diff --git a/drivers/net/wireless/ath/ath12k/dp.c b/drivers/net/wireless/ath/ath12k/dp.c
-index 80b9f4594dee..59f61341383a 100644
---- a/drivers/net/wireless/ath/ath12k/dp.c
-+++ b/drivers/net/wireless/ath/ath12k/dp.c
-@@ -1653,7 +1653,8 @@ static int ath12k_dp_reoq_lut_setup(struct ath12k_base *ab)
- 
- 	/* Bits in the register have address [39:8] LUT base address to be
- 	 * allocated such that LSBs are assumed to be zero. Also, current
--	 * design supports paddr upto 4 GB max hence it fits in 32 bit register only
-+	 * design supports paddr up to 4 GB max hence it fits in 32 bit
-+	 * register only
- 	 */
- 
- 	ath12k_hif_write32(ab, HAL_SEQ_WCSS_UMAC_REO_REG + HAL_REO1_QDESC_LUT_BASE0(ab),
-
----
-base-commit: 4bcceba241524d8d52bdadf216f9f894e394fcde
-change-id: 20250407-upto-a76497324734
-
+-- 
+Kees Cook
 
