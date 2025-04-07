@@ -1,213 +1,153 @@
-Return-Path: <linux-kernel+bounces-591874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E92AEA7E635
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:23:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0922A7E648
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E9D818877DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:17:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C04CA19017BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F862066F8;
-	Mon,  7 Apr 2025 16:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9053E20A5F0;
+	Mon,  7 Apr 2025 16:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="br8R2GIP"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="endZq3d6"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5C12066EF;
-	Mon,  7 Apr 2025 16:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451F320A5E5
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 16:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744042379; cv=none; b=rYNc9thr+jqiL4J4z/WzJH3fFSQOT/V/SdkFziXeqWYa2oZJrfkXyOKfEegxbApiuhgF/hCqHND53E/mj1cKSjSBOVKhQo7gjOr243xvStR690LwOEV86ERh8Lx7kX3hszfI7Fbi3CZ7c3Fn3GPZLBELM+nu01trspWd8YgxXnM=
+	t=1744042447; cv=none; b=ajuZG0nezOiFRrd59oMD1b7DE2icNKpGWFiTGb+CCzyJsb8+RZAXFvNOOBNIjz4jwHGFQ3eNZ05JKIP2M4RQQWQ701flgSdIsilqHnt1wfzP4Ryk7jpVw3hD2ipR3q1/O80m/HKY6t84dQdXWCcILL8VvYJEVbTHoST3nikFNBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744042379; c=relaxed/simple;
-	bh=ZAPVS+gOYLQX255ZJo3mBjglhSU+jqR3+Ldyi1Zahx4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JWbrjaTtEGWPf5XuN1twphQAyMEpVh7zSxMTrIy8wzo+wQ5yrHTPH16Jr9+KpGb5XYgiHgOvIQeYAk7XX722kUpYAAzPC1QugduYLpDfdRzi+v6huha3otpDICtqw7PWyuMOw1sSuTdX04RGh80Lhg/nSnGp1Gl5JaOIMZaectQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=br8R2GIP; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so19051795e9.0;
-        Mon, 07 Apr 2025 09:12:56 -0700 (PDT)
+	s=arc-20240116; t=1744042447; c=relaxed/simple;
+	bh=MZ1+v4Yr8SrxsYFLNiPWcJ3X3rXXmM+Atb5i9VRwigw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XBrMfSKNYrKYTFvNcjfU92+MkXV+1e2DJH2ny8lafziEHvJoGFUkAqh5mjTNo9WPj88v20F+7zLjUfD8v2lokWhaYfoEFI3gZ2+AXEuhr0w9L84GmPXUeWajVlCfZKRQR3qNUhf9W9vvTbc1WK84KIXiyziiAutFQ7lPqj6Je1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=endZq3d6; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6feab7c5f96so43068217b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 09:14:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744042375; x=1744647175; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=RLDy66M+skbjiXw8NJvCe4Orr2lfF4gig4D2dSbfbp0=;
-        b=br8R2GIP0a7oAf5WXMEeWvenVzchBIlZfjYEizMdgoF09oza5Q9M8CXPyvLF/JUywd
-         BJNGdlUuZCsloA9+KKV5j/fO3SHNTz37EEOctCyPQN+mxBCARySvAikbTF1LqYOB89Gg
-         rN77s9LYMt8wuB4I5GkwY5IZrs174F3QoUH2X0foH4onyPHvt87mtAJjaXdq3L1Tbm1B
-         r7Ip0CTjh2ddL0IhIiaW6/v4WfiwdIgEqKDdVR+Yr7yFHQjNgU2GnkwPIMtazpylfZvU
-         7JiWtxP6cQdnIK/zkXmz0pTp4kHeKwH/ZQf6kbh6t3Iejma6Y11NzKNKqLfSCQEOGVvc
-         ABsQ==
+        d=linaro.org; s=google; t=1744042445; x=1744647245; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bod33nGx35GYDGeyLDpG4qYPRiHJzUFJHwZD8P4WupU=;
+        b=endZq3d6f2rGBycLrcxNGnEUlxVaR8NwpKrT1XudIkVdUOkbzPggfFGfOlzpYKnUOF
+         D1Lga+Nwnt+zVDusaHfz9jmONa54DD7079bRQQA1oafjVIxsPCdLrQQ5bwpsowclji+d
+         YSImJOejdLXF6oGTGmuGaj3qaMGVPpXI8ptu/890dc5FwuPqR7xZG4rOJM9hcfKOAi5o
+         Jtm1E6S1BsPzc56+0MZh1izD70z/ge+ViuYlo2CQIfmR/2iSioQkql9KHoIiw7zk2enj
+         z7RPhShjiortuBqkwrbW8HGxxENiigwiS9dsDhANO0Lz+VKOR6nozIaM55La461Tfn9W
+         0QBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744042375; x=1744647175;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RLDy66M+skbjiXw8NJvCe4Orr2lfF4gig4D2dSbfbp0=;
-        b=Zl30XFq+uIYj1urdxDptsYWwFzm3EAeF6aAXBl9w7mWI11fWgyjZscLili9lD2hU8P
-         4LmXe1DEzvzKu6g4YLENgslFbznCKUImWOM6gNXN94A801pbr4YCEYXqjfLlnPHDRuau
-         SaFUYwDaUJ3PWrN2Mlqbcn1Of6rJ/nfYTTH1EtdGUOMeKz90TPOGaAwu5/BNS2sGZ56P
-         GFUZqtm1AsJSt1JwYmcm3yaDd9cu47XTRQm8SR81oVBCR4escl7VVYIPialCFiHbPbhg
-         ryrxYLrxDyy6Jc3trJL+h1ffgF+ZZare9zV/lQJxw3IWv+J3AfcxyK0yar5Pq9fJVeRB
-         JEwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwHIai3kuvETI9CpbSRUenC0r8bFhLkL9UwjYnEDc6D4qEmrZU6rJNQ7LDtR03rkN3LM8L2iGZ+s0=@vger.kernel.org, AJvYcCXOUXHac0SoV8DdzcqGjuesAo6fTbWZkNz3nuZv3OYq5rq3OtZefNQZsTAKlnHpKV1YJzRirn+mBI7p1+wA@vger.kernel.org
-X-Gm-Message-State: AOJu0YziU0k1b5pjLddaGKxLBKDD0Ay3fYW8sdjIfjZTbzVfBi37XQwM
-	dBYOGiZYTOxE9GQvnY0FZk8HUXBBNYg9tC8xC+MyXZrhcaZBYQbz
-X-Gm-Gg: ASbGncuoWSZuunmxuxaco6BQB3eRvwGOT/Otz31qIwix6zEbv9RPagVuHQUTzrjY/Os
-	nPU+QAEqCCrrccLNNZ55XyhdapMdEO1nWs+wsqoBbC9kgSw/8LUgG/P/+z4yTFbi2zx6/jAID0y
-	nD/W1zv7Jq0OEoPA9+6ZFbxfg2DoS5pe17I6unq6BqD+plp6SL47nGw+oQaYFcsSZi04Akoz2Fx
-	MZP8f8vOUgk+JWIyLZqFnsD2Ylr0Wgxy3mEa9IEvZDZFshSDIf2wWwOjCUJUeDg1h170uhZvhvc
-	xz7bCTN97mlbDYxq5eZIqMuLD6IMaqnr4eGx39eyMewgqqL3IQ77wtkB6nh64qUCCLHMlzbL0Vr
-	HJebMbayct3gPgwUf
-X-Google-Smtp-Source: AGHT+IGavjcD1KAEWkLQOWDLjtHgtYaw58xAL940PRwvs9hdMB5w+SN/KBABwEIWKBrtqylQIiLSzg==
-X-Received: by 2002:a05:600c:3b94:b0:43d:649:4e50 with SMTP id 5b1f17b1804b1-43f0ab8c6d2mr14232785e9.13.1744042375344;
-        Mon, 07 Apr 2025 09:12:55 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c30226f2bsm12663765f8f.96.2025.04.07.09.12.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 09:12:54 -0700 (PDT)
-Message-ID: <3ac77217946c26069be967065b316c63e12d626b.camel@gmail.com>
-Subject: Re: [PATCH v3 3/5] iio: backend: add support for data source get
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Angelo Dureghello <adureghello@baylibre.com>, Nuno =?ISO-8859-1?Q?S=E1?=
-	 <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter
- Clausen	 <lars@metafoo.de>, Jonathan Corbet <corbet@lwn.net>, Olivier
- Moysan	 <olivier.moysan@foss.st.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>
-Cc: linux-iio@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 07 Apr 2025 17:12:55 +0100
-In-Reply-To: <20250407-wip-bl-ad3552r-fixes-v3-3-61874065b60f@baylibre.com>
-References: <20250407-wip-bl-ad3552r-fixes-v3-0-61874065b60f@baylibre.com>
-	 <20250407-wip-bl-ad3552r-fixes-v3-3-61874065b60f@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.0 
+        d=1e100.net; s=20230601; t=1744042445; x=1744647245;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bod33nGx35GYDGeyLDpG4qYPRiHJzUFJHwZD8P4WupU=;
+        b=SBO7SUBHWTM7vCNdnVIJ088XWTGsX/S/X2KyNNlQALC8R1fwDjE0URVw8A+4NETyoC
+         b6+W1Fq3WoVQehrOwSKPmlUQB6nhi1spFoqGBzEFswxb8f5xQMa4qteTwiX+i+XXEWG6
+         4DlVZ/SlylUchtbzmGqxGvOzpj5df6zT9ocw2ZmV3C4BlQfscKhcsS1vfM+CfaErBMOr
+         dNpodec3J0fNiAvjASlAVu1BCaTuYTzmmOcl9I7B0gAKf/7sDYOfe4tS6PCIrJ71fivg
+         epf61HuJvOP+mt9xlUmqOiK4WmPY3bZHmikg7wkI02Px7thGfcKLgGX8SFrNAfrp2Dq4
+         Z3Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCXpn6KaLP6s/352VsTt3jgB2v3mED/Ts8uN391SKSLgBi4OdI3WH9nuGRP1aTQRyuwS1o2bcIM3W90TUCg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlZvnEii0Xo2Y0lUsaeu8FOFOPflUl3TNwp1G5izlNrb8hbdKU
+	GGJrXNrxCsk4iG6eZrKld/xtL74wPd+pvQz0gBsC2/A/Qpa9Nc78tacUv6fkksg4gayLJR2J0Gu
+	U4svUXCB6PWaQ2K1d7LiToCMRmIPT/dwQCL1vAA==
+X-Gm-Gg: ASbGncutFGGxb1M8GJj7zHqBvUgQrKlyElS+nwWEhn+zSUCTX0FYp1earD9N1L2CwhR
+	eXlH0NR9rvroDqv04rQnjtMnt0jba+PvaFvcg2z7uSQ+5+r6hMpUUpDrziZ4IZtuEW45C4BZn68
+	I71fv4i6S1BzHq8M4NJjKX7QMNoO4=
+X-Google-Smtp-Source: AGHT+IFoDbEoYCGI/fKsfvc1W3WRJ48PIrl3shNMLSyLyHUCZEKjVWa8xv5qbOXVgK1f6QWGAMLLH1qGHEVK9aquLzg=
+X-Received: by 2002:a05:690c:4c11:b0:702:5689:356e with SMTP id
+ 00721157ae682-703e1546003mr227916307b3.12.1744042445057; Mon, 07 Apr 2025
+ 09:14:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20230621144019.3219858-1-abel.vesa@linaro.org> <2786d9ff-0579-429b-b431-a8547cbf6fb6@ti>
+In-Reply-To: <2786d9ff-0579-429b-b431-a8547cbf6fb6@ti>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 7 Apr 2025 18:13:28 +0200
+X-Gm-Features: ATxdqUG2bTsfDvA_PWKUIhjRNtwJmFpgrRLM7JC797JM0tWqTf0FSYOqcVvkHm8
+Message-ID: <CAPDyKFodE6KokC9uwZZgF+VGCc5JCA5YjB7okUkELAn16V=nvA@mail.gmail.com>
+Subject: Re: [RFC PATCH v5 0/4] PM: domain: Support skiping disabling unused
+ domains until sync state
+To: Devarsh Thakkar <devarsht@lewv0571a.ent.ti.com>
+Cc: Abel Vesa <abel.vesa@linaro.org>, "Rafael J . Wysocki" <rafael@kernel.org>, 
+	Kevin Hilman <khilman@kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, 
+	Bjorn Andersson <andersson@kernel.org>, linux-pm@vger.kernel.org, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 2025-04-07 at 10:52 +0200, Angelo Dureghello wrote:
-> From: Angelo Dureghello <adureghello@baylibre.com>
->=20
-> Add backend support for getting the data source used.
->=20
-> The ad3552r HDL implements an internal ramp generator, so adding the
-> getter to allow data source get/set by debugfs.
->=20
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> ---
+On Mon, 7 Apr 2025 at 16:13, Devarsh Thakkar
+<devarsht@lewv0571a.ent.ti.com> wrote:
+>
+> Hi Abel,
+>
+> On 21/06/23 20:10, Abel Vesa wrote:
+>
+> Thanks a lot for working on this.
+>
+> > This new approach drops the is_off change that was part of v4. That was
+> > kind of beyond the scope of this patchset. This new approach changes the
+> > boot_keep_on in such a way that we won't need any kind of new locking
+> > for a PD. This involves using the patch [1] for adding dev_set_drv_sync_state
+> > from Saravana for allowing the genpd core to set a default sync state
+> > callback for a provider that doesn't register one by itself. While at it,
+> > we can add another such API but this time to query a device's sync state.
+> > Then, we filter out each power off request in such a way that if a boot
+> > powered on power domain is not attached to its consumer device and
+> > the provider has not state synced yet, the power off request is skipped.
+> >
+> > [1] https://lore.kernel.org/all/20210407034456.516204-2-saravanak@google.com/
+> >
+> > No worth mentioning what changed since v4 as this version is almost
+> > entirely reworked.
+> >
+> > Abel Vesa (3):
+> >    driver core: Add dev_is_drv_state_synced()
+> >    PM: domains: Ignore power off request for enabled unused domains
+> >    PM: domains: Add and set generic sync state callback
+> >
+> > Saravana Kannan (1):
+> >    driver core: Add dev_set_drv_sync_state()
+> >
+>
+> Could you please share if you are planning to re-spin this series as
+> non-RFC in near future ?
+>
+> We think that these patches would be useful to enable smooth display
+> transition from boot-loader to kernel space, something which our team is
+> working on, so just wanted to know your plans for this series.
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+I am working on it as we speak, but I need a few more days for
+testing. You should expect something to hit LKML later this week or at
+least early next week.
 
-> =C2=A0drivers/iio/industrialio-backend.c | 28 +++++++++++++++++++++++++++=
-+
-> =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0 5 +++++
-> =C2=A02 files changed, 33 insertions(+)
->=20
-> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industriali=
-o-
-> backend.c
-> index
-> a43c8d1bb3d0f4dda4277cac94b0ea9232c071e4..c1eb9ef9db08aec8437d0d00cf77914=
-ad661
-> 1b72 100644
-> --- a/drivers/iio/industrialio-backend.c
-> +++ b/drivers/iio/industrialio-backend.c
-> @@ -380,6 +380,34 @@ int iio_backend_data_source_set(struct iio_backend *=
-back,
-> unsigned int chan,
-> =C2=A0}
-> =C2=A0EXPORT_SYMBOL_NS_GPL(iio_backend_data_source_set, "IIO_BACKEND");
-> =C2=A0
-> +/**
-> + * iio_backend_data_source_get - Get current data source
-> + * @back: Backend device
-> + * @chan: Channel number
-> + * @data: Pointer to receive the current source value
-> + *
-> + * A given backend may have different sources to stream/sync data. This
-> allows
-> + * to know what source is in use.
-> + *
-> + * RETURNS:
-> + * 0 on success, negative error number on failure.
-> + */
-> +int iio_backend_data_source_get(struct iio_backend *back, unsigned int c=
-han,
-> +				enum iio_backend_data_source *data)
-> +{
-> +	int ret;
-> +
-> +	ret =3D iio_backend_op_call(back, data_source_get, chan, data);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (*data >=3D IIO_BACKEND_DATA_SOURCE_MAX)
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_NS_GPL(iio_backend_data_source_get, "IIO_BACKEND");
-> +
-> =C2=A0/**
-> =C2=A0 * iio_backend_set_sampling_freq - Set channel sampling rate
-> =C2=A0 * @back: Backend device
-> diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
-> index
-> e45b7dfbec35c094942a3034fc6057a7960b9772..e59d909cb65924b4872cadd4b7e5e89=
-4c13c
-> 189f 100644
-> --- a/include/linux/iio/backend.h
-> +++ b/include/linux/iio/backend.h
-> @@ -84,6 +84,7 @@ enum iio_backend_interface_type {
-> =C2=A0 * @chan_disable: Disable one channel.
-> =C2=A0 * @data_format_set: Configure the data format for a specific chann=
-el.
-> =C2=A0 * @data_source_set: Configure the data source for a specific chann=
-el.
-> + * @data_source_get: Data source getter for a specific channel.
-> =C2=A0 * @set_sample_rate: Configure the sampling rate for a specific cha=
-nnel.
-> =C2=A0 * @test_pattern_set: Configure a test pattern.
-> =C2=A0 * @chan_status: Get the channel status.
-> @@ -115,6 +116,8 @@ struct iio_backend_ops {
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct iio_backend_da=
-ta_fmt *data);
-> =C2=A0	int (*data_source_set)(struct iio_backend *back, unsigned int chan=
-,
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum iio_backend_data_sourc=
-e data);
-> +	int (*data_source_get)(struct iio_backend *back, unsigned int chan,
-> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum iio_backend_data_source *da=
-ta);
-> =C2=A0	int (*set_sample_rate)(struct iio_backend *back, unsigned int chan=
-,
-> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u64 sample_rate_hz);
-> =C2=A0	int (*test_pattern_set)(struct iio_backend *back,
-> @@ -176,6 +179,8 @@ int iio_backend_data_format_set(struct iio_backend *b=
-ack,
-> unsigned int chan,
-> =C2=A0				const struct iio_backend_data_fmt *data);
-> =C2=A0int iio_backend_data_source_set(struct iio_backend *back, unsigned =
-int chan,
-> =C2=A0				enum iio_backend_data_source data);
-> +int iio_backend_data_source_get(struct iio_backend *back, unsigned int c=
-han,
-> +				enum iio_backend_data_source *data);
-> =C2=A0int iio_backend_set_sampling_freq(struct iio_backend *back, unsigne=
-d int
-> chan,
-> =C2=A0				=C2=A0 u64 sample_rate_hz);
-> =C2=A0int iio_backend_test_pattern_set(struct iio_backend *back,
+I will keep you posted!
+
+Kind regards
+Uffe
+
+>
+>
+> Regards
+> Devarsh
+>
+> >   drivers/base/power/domain.c | 72 +++++++++++++++++++++++++++++++++++++
+> >   include/linux/device.h      | 26 ++++++++++++++
+> >   include/linux/pm_domain.h   |  4 +++
+> >   3 files changed, 102 insertions(+)
+> >
+>
 
