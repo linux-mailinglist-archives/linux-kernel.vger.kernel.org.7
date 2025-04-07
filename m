@@ -1,151 +1,238 @@
-Return-Path: <linux-kernel+bounces-592477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C35B3A7EDAD
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:44:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A28D3A7EDAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:44:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C9AA16C918
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:37:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C0F83B5317
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202301FF5F7;
-	Mon,  7 Apr 2025 19:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CE4210184;
+	Mon,  7 Apr 2025 19:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NUsva2T2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sd2dR38p"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7358922068F;
-	Mon,  7 Apr 2025 19:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1284B322B;
+	Mon,  7 Apr 2025 19:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744054589; cv=none; b=AAE69tLYQaGdPNrcu0WaWScJajWkmCWnU5gWayYh/Uc0GRaT+coiUnTJtU9ABZzq+jB9lWmIvaPuxX2fVxvW/ox09v3fx9XOmU7nV2UlqfzPDwU8KC8+d+3guIrjE0fmk4ZCyTDhXwNGg+u9rg4Hsp4qBj5nbdVmpHcXzqZc14g=
+	t=1744054635; cv=none; b=Q5p57i5nd8Lau+wPpGttd1pP+4fedin3ZYqBG2jA5Z6S8tSkiA4pJU2i76ofddGOwMGsCqsov3ofYTpy/JBoWPJbh94UD1r0VuA/O0L2LlZevfR6f4pgfWPaAhW0XeEAlOW4LM/rr82tiS6klm556MYKC4Fi+lNT6gWhdpaesFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744054589; c=relaxed/simple;
-	bh=C2w2lOcwPcrCvotdyulR6kXCscgjaiIOaat+VIngv+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dHMNYeVr8FrsNSHl1qGaTPaVeJO4daUM69OQCVp5svcS/Lv8GV2eCEIglbq15jDP8lbSiay+FpvCOg36Lvf9cjdaVTBomc0YhnlQcB2RxC/UqfHTk8AhKpKfuQ27/GGK9B6BPi6JcHELYMFY8zDyc7J7lwsuAj3u7ZW3b+savWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NUsva2T2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65E10C4CEEC;
-	Mon,  7 Apr 2025 19:36:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744054588;
-	bh=C2w2lOcwPcrCvotdyulR6kXCscgjaiIOaat+VIngv+A=;
-	h=Date:From:To:Cc:Subject:From;
-	b=NUsva2T2lhgFXF9sxYwI7KwExu4fozsIVeM7QGt4A2j7gcuHp0RdxRj3ITCA2K32E
-	 aYuKkjIR9Iv6vgdkNF5Fg+QtrNxlDtuEtbEw5HdBaSmHgvbdyCpINsmqIiqIbnLHVS
-	 qLBeETi+e2DSUOABw8OU7hAnABYcxtJ8SobFig56O+y/BmHCov6oC7KlXZDUR7Du0i
-	 zg7ld7bNK/usVq7lNTzWYs83JdS1DMfHZu3WuKEgVap8bLXdfko9Ys8LZJx68hP2Ur
-	 W1WIiCfrvoFF6UW3ck4OdiOEZtiDjf4y5WLHXWZtvSythLHREa2uQMakoypvqCMSjw
-	 1nKTyf9yEoOMg==
-Date: Mon, 7 Apr 2025 13:36:26 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v2][next] w1: Avoid -Wflex-array-member-not-at-end warnings
-Message-ID: <Z_QpOlDTvyfRs4Su@kspp>
+	s=arc-20240116; t=1744054635; c=relaxed/simple;
+	bh=HjwarU8zVf5V8BaST0tniwaLzZx9LCBq/SilvNIuTHw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Z8WN8jX5qkwSr47bnMc5suZyAmpufGszMtWZqDkdkVJsiyo0h6eVCTvXbnPfBCyOAwxFoshWwBZyhFX6gLXyDCsJ6OxR8ukfPZrJL5ViopkcI2X7977erFz+2QgDmott/7U9+NQncPmvnw/f7SKjIBzZ/pksmv0TMgU8XkdUHXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sd2dR38p; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744054634; x=1775590634;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=HjwarU8zVf5V8BaST0tniwaLzZx9LCBq/SilvNIuTHw=;
+  b=Sd2dR38pyHsxh7Hqi5SUehh9bGzIo5PY9NQlJw3peV7iV13/PCvV+dED
+   WJvAzZ/E2Pw1FumTO2o8kG4U+sVJWZ+u5+vGE49amvEQGKm7Qb52vFYoB
+   qPIs5xqWEusclWdFC+F9+juYg2l2gQqq/ujzC/P0uggdaeU4XaUxGhieA
+   /mi2vokfmN7iyw7UaaXhLbARG7AXkn0yRvQ4yAu2zHcxFB6ZjOiCtCW5z
+   ERdFRrLyrfQjwTi9mAKJB3ZYMwttnEltlEKENI1Ge2L/iNMJWb7oM/mUC
+   H5Soh4whT3e2IN36zdlAcak/u9f6p2mzP3LRcN1OGy2LYGthSccEGliyg
+   Q==;
+X-CSE-ConnectionGUID: CGfmKvHeTLaUq1luveraxA==
+X-CSE-MsgGUID: US190fsrTpeLqh3FsXvhEQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="44605813"
+X-IronPort-AV: E=Sophos;i="6.15,196,1739865600"; 
+   d="scan'208";a="44605813"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 12:37:13 -0700
+X-CSE-ConnectionGUID: Diuess4BSVaNXjm4s78FDA==
+X-CSE-MsgGUID: VcogT0mRTziODGA6uI5/sA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,196,1739865600"; 
+   d="scan'208";a="128045556"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 12:37:12 -0700
+Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 7C91C20B5736;
+	Mon,  7 Apr 2025 12:37:10 -0700 (PDT)
+Message-ID: <b7e707fb-c362-4005-9ff5-e69928732eec@linux.intel.com>
+Date: Mon, 7 Apr 2025 15:37:09 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 10/16] perf intel-tpebs: Add support for updating
+ counts in evsel__tpebs_read
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Weilin Wang <weilin.wang@intel.com>, James Clark <james.clark@linaro.org>,
+ Xu Yang <xu.yang_2@nxp.com>, John Garry <john.g.garry@oracle.com>,
+ Howard Chu <howardchu95@gmail.com>, Levi Yun <yeoreum.yun@arm.com>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250407050101.1389825-1-irogers@google.com>
+ <20250407050101.1389825-11-irogers@google.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20250407050101.1389825-11-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
 
-Use the `DEFINE_RAW_FLEX()` helper for on-stack definitions of
-a flexible structure where the size of the flexible-array member
-is known at compile-time, and refactor the rest of the code,
-accordingly.
 
-So, with these changes, fix the following warnings:
+On 2025-04-07 1:00 a.m., Ian Rogers wrote:
+> Rename to reflect evsel argument and for consistency with other tpebs
+> functions. Update count from prev_raw_counts when
+> available. Eventually this will allow inteval mode support.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/evsel.c       | 11 ++------
+>  tools/perf/util/intel-tpebs.c | 52 ++++++++++++++---------------------
+>  tools/perf/util/intel-tpebs.h |  2 +-
+>  3 files changed, 25 insertions(+), 40 deletions(-)
+> 
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index 554252ed1aab..1d343f51225b 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -1718,11 +1718,6 @@ static int evsel__read_one(struct evsel *evsel, int cpu_map_idx, int thread)
+>  	return perf_evsel__read(&evsel->core, cpu_map_idx, thread, count);
+>  }
+>  
+> -static int evsel__read_retire_lat(struct evsel *evsel, int cpu_map_idx, int thread)
+> -{
+> -	return tpebs_set_evsel(evsel, cpu_map_idx, thread);
+> -}
+> -
+>  static void evsel__set_count(struct evsel *counter, int cpu_map_idx, int thread,
+>  			     u64 val, u64 ena, u64 run, u64 lost)
+>  {
+> @@ -1730,8 +1725,8 @@ static void evsel__set_count(struct evsel *counter, int cpu_map_idx, int thread,
+>  
+>  	count = perf_counts(counter->counts, cpu_map_idx, thread);
+>  
+> -	if (counter->retire_lat) {
+> -		evsel__read_retire_lat(counter, cpu_map_idx, thread);
+> +	if (evsel__is_retire_lat(counter)) {
+> +		evsel__tpebs_read(counter, cpu_map_idx, thread);
+>  		perf_counts__set_loaded(counter->counts, cpu_map_idx, thread, true);
+>  		return;
+>  	}
+> @@ -1889,7 +1884,7 @@ int evsel__read_counter(struct evsel *evsel, int cpu_map_idx, int thread)
+>  		return evsel__hwmon_pmu_read(evsel, cpu_map_idx, thread);
+>  
+>  	if (evsel__is_retire_lat(evsel))
+> -		return evsel__read_retire_lat(evsel, cpu_map_idx, thread);
+> +		return evsel__tpebs_read(evsel, cpu_map_idx, thread);
+>  
+>  	if (evsel->core.attr.read_format & PERF_FORMAT_GROUP)
+>  		return evsel__read_group(evsel, cpu_map_idx, thread);
+> diff --git a/tools/perf/util/intel-tpebs.c b/tools/perf/util/intel-tpebs.c
+> index e3227646a9cc..452ce3698221 100644
+> --- a/tools/perf/util/intel-tpebs.c
+> +++ b/tools/perf/util/intel-tpebs.c
+> @@ -415,49 +415,39 @@ int evsel__tpebs_open(struct evsel *evsel)
+>  	return ret;
+>  }
+>  
+> -
+> -int tpebs_set_evsel(struct evsel *evsel, int cpu_map_idx, int thread)
+> +int evsel__tpebs_read(struct evsel *evsel, int cpu_map_idx, int thread)
+>  {
+> -	__u64 val;
+> +	struct perf_counts_values *count, *old_count = NULL;
+>  	struct tpebs_retire_lat *t;
+> -	struct perf_counts_values *count;
+> +	uint64_t val;
+> +
+> +	/* Only set retire_latency value to the first CPU and thread. */
+> +	if (cpu_map_idx != 0 || thread != 0)
+> +		return 0;
+> +
+> +	if (evsel->prev_raw_counts)
+> +		old_count = perf_counts(evsel->prev_raw_counts, cpu_map_idx, thread);
+>  
+> -	/* Non reitre_latency evsel should never enter this function. */
+> -	if (!evsel__is_retire_lat(evsel))
+> -		return -1;
+> +	count = perf_counts(evsel->counts, cpu_map_idx, thread);
+>  
+>  	/*
+>  	 * Need to stop the forked record to ensure get sampled data from the
+>  	 * PIPE to process and get non-zero retire_lat value for hybrid.
+>  	 */
+>  	tpebs_stop();
+> -	count = perf_counts(evsel->counts, cpu_map_idx, thread);
+>  
+>  	t = tpebs_retire_lat__find(evsel);
+> -
+> -	/* Set ena and run to non-zero */
+> -	count->ena = count->run = 1;
+> -	count->lost = 0;
+> -
+> -	if (!t) {
+> -		/*
+> -		 * Set default value or 0 when retire_latency for this event is
+> -		 * not found from sampling data (record_tpebs not set or 0
+> -		 * sample recorded).
+> -		 */
+> -		count->val = 0;
+> -		return 0;
+> +	val = rint(t->val);
+> +
+> +	if (old_count) {
+> +		count->val = old_count->val + val;
+> +		count->run = old_count->run + 1;
+> +		count->ena = old_count->ena + 1;
+> +	} else {
+> +		count->val = val;
+> +		count->run++;
+> +		count->ena++;
+>  	}
 
-drivers/w1/w1_netlink.c:198:31: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/w1/w1_netlink.c:219:31: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+It seems utilizing the prev_raw_counts has been used in other place,
+e.g., hwmon_pmu. Is it possible to factor out a common function for it?
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
-Changes in v2:
- - Fix memcpy() instance - use new pointer `pkg_msg`, instead of `packet`. (Kees)
-
-v1:
- - Link: https://lore.kernel.org/linux-hardening/Z-WD2NP_1A0ratnI@kspp/
-
- drivers/w1/w1_netlink.c | 42 ++++++++++++++++++++---------------------
- 1 file changed, 20 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/w1/w1_netlink.c b/drivers/w1/w1_netlink.c
-index 691978cddab7..724a008cf342 100644
---- a/drivers/w1/w1_netlink.c
-+++ b/drivers/w1/w1_netlink.c
-@@ -194,16 +194,16 @@ static void w1_netlink_queue_status(struct w1_cb_block *block,
- static void w1_netlink_send_error(struct cn_msg *cn, struct w1_netlink_msg *msg,
- 	int portid, int error)
- {
--	struct {
--		struct cn_msg cn;
--		struct w1_netlink_msg msg;
--	} packet;
--	memcpy(&packet.cn, cn, sizeof(packet.cn));
--	memcpy(&packet.msg, msg, sizeof(packet.msg));
--	packet.cn.len = sizeof(packet.msg);
--	packet.msg.len = 0;
--	packet.msg.status = (u8)-error;
--	cn_netlink_send(&packet.cn, portid, 0, GFP_KERNEL);
-+	DEFINE_RAW_FLEX(struct cn_msg, packet, data,
-+			sizeof(struct w1_netlink_msg));
-+	struct w1_netlink_msg *pkt_msg = (struct w1_netlink_msg *)packet->data;
-+
-+	memcpy(packet, cn, sizeof(*packet));
-+	memcpy(pkt_msg, msg, sizeof(*pkt_msg));
-+	packet->len = sizeof(*pkt_msg);
-+	pkt_msg->len = 0;
-+	pkt_msg->status = (u8)-error;
-+	cn_netlink_send(packet, portid, 0, GFP_KERNEL);
- }
- 
- /**
-@@ -215,22 +215,20 @@ static void w1_netlink_send_error(struct cn_msg *cn, struct w1_netlink_msg *msg,
-  */
- void w1_netlink_send(struct w1_master *dev, struct w1_netlink_msg *msg)
- {
--	struct {
--		struct cn_msg cn;
--		struct w1_netlink_msg msg;
--	} packet;
--	memset(&packet, 0, sizeof(packet));
-+	DEFINE_RAW_FLEX(struct cn_msg, packet, data,
-+			sizeof(struct w1_netlink_msg));
-+	struct w1_netlink_msg *pkg_msg = (struct w1_netlink_msg *)packet->data;
- 
--	packet.cn.id.idx = CN_W1_IDX;
--	packet.cn.id.val = CN_W1_VAL;
-+	packet->id.idx = CN_W1_IDX;
-+	packet->id.val = CN_W1_VAL;
- 
--	packet.cn.seq = dev->seq++;
--	packet.cn.len = sizeof(*msg);
-+	packet->seq = dev->seq++;
-+	packet->len = sizeof(*msg);
- 
--	memcpy(&packet.msg, msg, sizeof(*msg));
--	packet.msg.len = 0;
-+	memcpy(pkg_msg, msg, sizeof(*msg));
-+	pkg_msg->len = 0;
- 
--	cn_netlink_send(&packet.cn, 0, 0, GFP_KERNEL);
-+	cn_netlink_send(packet, 0, 0, GFP_KERNEL);
- }
- 
- static void w1_send_slave(struct w1_master *dev, u64 rn)
--- 
-2.43.0
+Thanks,
+Kan> -
+> -	/*
+> -	 * Only set retire_latency value to the first CPU and thread.
+> -	 */
+> -	if (cpu_map_idx == 0 && thread == 0)
+> -		val = rint(t->val);
+> -	else
+> -		val = 0;
+> -
+> -	count->val = val;
+>  	return 0;
+>  }
+>  
+> diff --git a/tools/perf/util/intel-tpebs.h b/tools/perf/util/intel-tpebs.h
+> index 5c671181ec60..218a82866cee 100644
+> --- a/tools/perf/util/intel-tpebs.h
+> +++ b/tools/perf/util/intel-tpebs.h
+> @@ -12,6 +12,6 @@ extern bool tpebs_recording;
+>  
+>  int evsel__tpebs_open(struct evsel *evsel);
+>  void evsel__tpebs_close(struct evsel *evsel);
+> -int tpebs_set_evsel(struct evsel *evsel, int cpu_map_idx, int thread);
+> +int evsel__tpebs_read(struct evsel *evsel, int cpu_map_idx, int thread);
+>  
+>  #endif /* __INTEL_TPEBS_H */
 
 
