@@ -1,150 +1,193 @@
-Return-Path: <linux-kernel+bounces-591991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CB6DA7E7C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:06:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53FA2A7E7C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA8B73A4FC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:00:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2237016AB9D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27CCC21518F;
-	Mon,  7 Apr 2025 17:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0F0215F42;
+	Mon,  7 Apr 2025 17:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="my6CmnNh"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="X97KDpLR"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A6413B2A4
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 17:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF39215760
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 17:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744045230; cv=none; b=LtZB6oHL+4Q5coWnKosn3DXBgwys7rY9pjxnMgqNtFTG5L+nZ2Y7tWVIOcSt+XbwzUCZl72btKBLB7Gt9nRr1GqyMx/uNt0V5PysuLMZPX74mWrCdkl5Abkk9qu3vhTGsZPZ6xTgP/OyHNczOYJJSyULO1jZn5R4ttqoJsOVpcg=
+	t=1744045258; cv=none; b=IBNfnLK7xECDC0kRTyLVsYpckeY26BXcwZZkFOA1UZmHF05O1jo5z6M82+5kWiY8lt47rFNXM9r9rnmuoxi2JT+3XQ9kIA9S61jgmQ0DwlOKIxryRj3eOBOx6MuPzPInYeHBluGmjtRaZ86Fp3ch/RREdP1YB3dqjl2VNOu9lZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744045230; c=relaxed/simple;
-	bh=lKAOHcFYo8EsD/tPI8lLppLVgny007wif1MAWivMJng=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TPDXxBvO6TTU9D1TpijrYXa0RBgnuzkWImeFczyeHWfH1/RhJN2ADzhGDruLYwJxQ5Cs/NTks7y66JRhgyf3RAMpCsYk24FmhjvL92yGPGW3m2U6rrrIvntei6wJUetv3RX21iOfpE8a2v6WTQO/Zt3LclVEEbmUwYVqoD6D/UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=my6CmnNh; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6f0c30a1cb6so9024976d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 10:00:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744045228; x=1744650028; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8/YiCViv84RBjl9Cx+39gU1ba6ZB3RtC4V/ULgvWih8=;
-        b=my6CmnNhPRz013bU63Ifjk+nm8liEV+LIdCmnA3F2V6tdHRbNcKvtOJFreUDKshX/z
-         S3uZRGYa21VCzzm8Yk5TyOP8dmDcEswa/qHkHceo9nPpTJ9LiBapdcEErrdxytDdtjEV
-         /Siq2SJBD46U4NHeudmSED2XBGXy1yN09cddorNZ6gDFJqZhDC8pG3vvG5NMjkAZTsvS
-         nct5LOUmrPGc2LcyRSBtzas8/S3wX/M4Q1n8xKx+z+3sYJTgLCmJnZJearSXQvO0/MN5
-         bCmgCOniKInSTX5DYp/yK7szRw86/HhzxSJaGWJ/TWRkJEPVjFMOLkHMmJ5KW4aXzOe2
-         ahLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744045228; x=1744650028;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8/YiCViv84RBjl9Cx+39gU1ba6ZB3RtC4V/ULgvWih8=;
-        b=YluETIDuNB/WooOktrvBacKzGclhseY68+aI1NOK1ICNj71eVQWMDONdgVmtgkxqqu
-         y4lwvViTKQANs1izwdowwvPIKj8VlgdcIwc8J7kJ3jZhYaO0curOWeeRK16QtCNeSNrZ
-         mnXSyIVp3i/QfQy02hbW2cMXcQLcjfwoNQj0/2G/wwS7joxFmW2fXaTEh8As1tx3FcoY
-         9Fwl4HKWedIOzeE7lcsvEZ8tNPVEYMBXbjM2CSauqvRJDBTZ1CtG+ESge2hC/dcZHURO
-         m6/F9ZXXvb/Jx1DTEQuOyuzO+pTgY7I4mGgSwy5fu/7L1P97wxFSPPDfn3DkBLgXLUBZ
-         brTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVj8bXyosr9UJ5+2/o/2ZHm1PuaFiHyl71WLbpUNM8h25rFuYU36sDLDAqPRCgqavCeoZww5SaWhA4KF4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYFmyQjEaNhlb1BE/Lar967vu6A2fQoM2RqaND5yd+odknp5tu
-	pUisL28xVlECeSNQ1pyAJdUB1lsK7KervmKUWIZLE2Q3HPq+lf60whZY7zbsZmsKRVC/N6SB0es
-	1UYVNN7zjq0p5z1AHT96O0m1CmVk=
-X-Gm-Gg: ASbGncuND50Hz1eAcz4JHeUAVJ479k6XlYx2RWybsmJT9kWsUZg/aZk6bw5zWWNFEaU
-	9KEP1V/K4pZ6+Pb1rveUwkshI1El8yO49xpNyCec/DGXVA/6LqNZet9pyE2Ow8ye4DAwSuiD3um
-	VCUIXP/w/HZEXcfkTJeqTs6AY6BeDH4exoNE23sHaL8pNyFmx62jXwUmlpiw==
-X-Google-Smtp-Source: AGHT+IEoSeUdMCryKXSbayP1c+WC2bqZA8FDGNrNRXTbmKGhcK6mNdY5gvJclkhUu41WW3Zv8yZKRT5UMbGHv2f98Q0=
-X-Received: by 2002:a05:6214:4116:b0:6e8:ddf6:d136 with SMTP id
- 6a1803df08f44-6f064b76a4dmr191213426d6.45.1744045227894; Mon, 07 Apr 2025
- 10:00:27 -0700 (PDT)
+	s=arc-20240116; t=1744045258; c=relaxed/simple;
+	bh=8EEyvQc+5pIBnE2p/7oYhHwo0mC7KQRRPdeL6ZI6qiw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OpQAj6788TDffSia/B3yjRPi6y8nrWxm9/rZYcQwBxN7bZCDP9y/c9q29RfJ+1f6iVQJQXMcUFNxNQ72gGXRglbLswnJI3VbkBo7fQtUDBKDI6BJn2J8V5TGJJHbHRNnGDNZw8AwXgYwmuDwRXJnAyswbo+Wvms0LKpvP3pxsh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=X97KDpLR; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <1aec6dab-ed03-4ca3-8cd1-9cfbb807be10@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744045243;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oLDAmjclRasSVpfEYONAaYZO702FQiJJq0bMQnxY2As=;
+	b=X97KDpLRfMghEYf9sxoBxmw793lbUNyIZX2MhCZr0epog6FScf9fPv/rbXMCRI4WlxGsF1
+	ACaKep6rqwnu785TYkn30Pqnpl9BJRWA+kOGZfrTVeDuXFPVxZz98GZ//C62FkDo4bfBee
+	qs640GM1x6TnhIGk7qK8bfPHB7/TZxI=
+Date: Mon, 7 Apr 2025 13:00:34 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1743810988579.7.125720@webmail-backend-production-7b88b644bb-5mmj8>
- <0dbbbe9d17ed489d4a7dbe12026fc6fd@beldev.am> <f8063d3fa7e148fecdda82e40b36e10a@beldev.am>
- <CAKEwX=NMjfC1bKTVsB+C7eq3y=O0x3v8MW7KxUfhpg6UUr23rw@mail.gmail.com> <f023ba8341f9b44610cc4ac00cf0ee33@beldev.am>
-In-Reply-To: <f023ba8341f9b44610cc4ac00cf0ee33@beldev.am>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Mon, 7 Apr 2025 10:00:16 -0700
-X-Gm-Features: ATxdqUG2qMakDUGu0RhSQrsGq7xAj_E9lQta4YxEQ2uMX-OLhskupLrQ1JiEEiE
-Message-ID: <CAKEwX=MXD9EB242WkB50ZBmZgV-CwrAHp=_oE+e=7yHDfrMHtg@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: add zblock allocator
-To: Igor Belousov <igor.b@beldev.am>
-Cc: vitaly.wool@konsulko.se, Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	Shakeel Butt <shakeel.butt@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC net-next PATCH 00/13] Add PCS core support
+To: "Christian Marangi (Ansuel)" <ansuelsmth@gmail.com>
+Cc: Kory Maincent <kory.maincent@bootlin.com>, netdev@vger.kernel.org,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+ upstream@airoha.com, Heiner Kallweit <hkallweit1@gmail.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Clark Wang <xiaoning.wang@nxp.com>,
+ Claudiu Beznea <claudiu.beznea@microchip.com>,
+ Claudiu Manoil <claudiu.manoil@nxp.com>, Conor Dooley <conor+dt@kernel.org>,
+ Ioana Ciornei <ioana.ciornei@nxp.com>, Jonathan Corbet <corbet@lwn.net>,
+ Joyce Ooi <joyce.ooi@intel.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Li Yang <leoyang.li@nxp.com>, Madalin Bucur <madalin.bucur@nxp.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Simek <michal.simek@amd.com>,
+ Naveen N Rao <naveen@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+ Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Robert Hancock <robert.hancock@calian.com>,
+ Saravana Kannan <saravanak@google.com>, Shawn Guo <shawnguo@kernel.org>,
+ UNGLinuxDriver@microchip.com, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ Wei Fang <wei.fang@nxp.com>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-doc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linuxppc-dev@lists.ozlabs.org
+References: <20250403181907.1947517-1-sean.anderson@linux.dev>
+ <20250407182738.498d96b0@kmaincent-XPS-13-7390>
+ <720b6db8-49c5-47e7-98da-f044fc38fc1a@linux.dev>
+ <CA+_ehUyAo7fMTe_P0ws_9zrcbLEWVwBXDKbezcKVkvDUUNg0rg@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <CA+_ehUyAo7fMTe_P0ws_9zrcbLEWVwBXDKbezcKVkvDUUNg0rg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Apr 7, 2025 at 9:44=E2=80=AFAM Igor Belousov <igor.b@beldev.am> wro=
-te:
->
-> Hi Nhat,
->
-> 2025-04-07 19:51 skrev Nhat Pham:
-> > On Mon, Apr 7, 2025 at 2:00=E2=80=AFAM Igor Belousov <igor.b@beldev.am>=
- wrote:
-> >>
-> >>
-> >> >>> Do you have zswap/zswapped meminfo metrics from these tests?
-> >> >> Yep, and those look somewhat similar:
-> >> >>  - zblock:
-> >> >> Zswap:            234128 kB
-> >> >> Zswapped:         733216 kB
-> >> >> -  zsmalloc:
-> >> >> Zswap:            286080 kB
-> >> >> Zswapped:         774688 kB
-> >> >
-> >> > I tested the kernel build on a 4-core virtual machine with allocated=
- 4
-> >> > GB RAM running on a Ryzen 9.
-> >> >
-> >> > The results are the following:
-> >> [...]
-> >>
-> >> Now what's funny is that when I tried to compare how 32 threaded build
-> >> would behave on a 8-core VM I couldn't do it because it OOMs with
-> >> zsmalloc as zswap backend. With zblock it doesn't, though, and the
-> >> results are:
-> >> real    12m14.012s
-> >> user    39m37.777s
-> >> sys     14m6.923s
-> >> Zswap:            440148 kB
-> >> Zswapped:         924452 kB
-> >> zswpin 594812
-> >> zswpout 2802454
-> >> zswpwb 10878
-> >>
-> >> /Igor
-> >
-> > May I ask what compression algorithm you are using?
->
-> It's LZ4 for all the test runs.
+On 4/7/25 12:46, Christian Marangi (Ansuel) wrote:
+> Il giorno lun 7 apr 2025 alle ore 18:33 Sean Anderson
+> <sean.anderson@linux.dev> ha scritto:
+>>
+>> On 4/7/25 12:27, Kory Maincent wrote:
+>> > On Thu,  3 Apr 2025 14:18:54 -0400
+>> > Sean Anderson <sean.anderson@linux.dev> wrote:
+>> >
+>> >> This series adds support for creating PCSs as devices on a bus with a
+>> >> driver (patch 3). As initial users,
+>> >>
+>> >> - The Lynx PCS (and all of its users) is converted to this system (patch 5)
+>> >> - The Xilinx PCS is broken out from the AXI Ethernet driver (patches 6-8)
+>> >> - The Cadence MACB driver is converted to support external PCSs (namely
+>> >>   the Xilinx PCS) (patches 9-10).
+>> >>
+>> >> The last few patches add device links for pcs-handle to improve boot times,
+>> >> and add compatibles for all Lynx PCSs.
+>> >>
+>> >> Care has been taken to ensure backwards-compatibility. The main source
+>> >> of this is that many PCS devices lack compatibles and get detected as
+>> >> PHYs. To address this, pcs_get_by_fwnode_compat allows drivers to edit
+>> >> the devicetree to add appropriate compatibles.
+>> >
+>> > I don't dive into your patch series and I don't know if you have heard about it
+>> > but Christian Marangi is currently working on fwnode for PCS:
+>> > https://lore.kernel.org/netdev/20250406221423.9723-1-ansuelsmth@gmail.com
+>> >
+>> > Maybe you should sync with him!
+>>
+>> I saw that series and made some comments. He is CC'd on this one.
+>>
+>> I think this approach has two advantages:
+>>
+>> - It completely solves the problem of the PCS being unregistered while the netdev
+>>   (or whatever) is up
+>> - I have designed the interface to make it easy to convert existing
+>>   drivers that may not be able to use the "standard" probing process
+>>   (because they have to support other devicetree structures for
+>>   backwards-compatibility).
+>>
+> 
+> I notice this and it's my fault for taking too long to post v2 of the PCS patch.
+> There was also this idea of entering the wrapper hell but I scrapped that early
+> as I really feel it's a workaround to the current problem present for
+> PCS handling.
 
-Can you try zstd and let me know how it goes :)
+It's no workaround. The fundamental problem is that drivers can become
+unbound at any time, and we cannot make consumers drop their references.
+Every subsystem must deal with this reality, or suffer from
+user-after-free bugs. See [1-3] for discussion of this problem in
+relation to PCSs and PHYs, and [4] for more discussion of my approach.
 
->
-> > And does the zswpwb come from zswap shrinker?
->
-> Haven't looked into that, to be honest.
+[1] https://lore.kernel.org/netdev/YV7Kp2k8VvN7J0fY@shell.armlinux.org.uk/
+[2] https://lore.kernel.org/netdev/20220816163701.1578850-1-sean.anderson@seco.com/
+[3] https://lore.kernel.org/netdev/9747f8ef-66b3-0870-cbc0-c1783896b30d@seco.com/
+[3] https://lpc.events/event/17/contributions/1627/
 
-Can you check:
+> And the real problem IMHO is that currently PCS handling is fragile and with too
+> many assumptions. With Daniel we also discussed backwards-compatibility.
+> (mainly needed for mt7621 and mt7986 (for mediatek side those are the 2
+> that slipped in before it was correctly complained that things were
+> taking a bad path)
+> 
+> We feel v2 permits correct support of old implementations.
+> The ""legacy"" implementation pose the assumption that PCS is never removed
+> (unless the MAC driver is removed)
+> That fits v2 where a MAC has to initially provide a list of PCS to
+> phylink instance.
 
-/sys/module/zswap/parameters/shrinker_enabled
+And what happens when the driver is unbound from the device and suddenly
+a PCS on that list is free'd memory but is in active use by a netdev?
 
->
-> /Igor
+> With this implementation, a MAC can manually parse whatever PCS node structure
+> is in place and fill the PCS.
+> 
+> As really the "late" removal/addition of a PCS can only be supported with fwnode
+> implementation as dedicated PCS driver will make use of that.
+
+I agree that a "cells" approach would require this, but
+
+- There are no in-tree examples of where this is necessary
+- I think this would be easy to add when necessary
+
+> I honestly hope we can skip having to enter the wrapper hell.
+
+Unfortunately, this is required by the kernel driver model :l
+
+> Anyway I also see you made REALLY GOOD documentation.
+
+Thanks. One of my peeves is subsystems that have zero docs...
+
+> Would be ideal to
+> collaborate for that. Anyway it's up to net maintainers on what path to follow.
+> 
+> Just my 2 cent on the PCS topic.
+
+--Sean
 
