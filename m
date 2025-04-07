@@ -1,233 +1,117 @@
-Return-Path: <linux-kernel+bounces-591473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C09ADA7E03F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D873CA7E046
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC08B3AE797
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:52:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2E5F3B13FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5E21ADC9B;
-	Mon,  7 Apr 2025 13:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA071ADC83;
+	Mon,  7 Apr 2025 13:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iTvIuzxU"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XiXOjgvI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F039E18309C;
-	Mon,  7 Apr 2025 13:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39731A8F6D;
+	Mon,  7 Apr 2025 13:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744033956; cv=none; b=Wu918hcb6k9cIXyk3sTVWf4PfbWo1pBjKDbnWQSac4TC7swPAyT5BWmR5zHpmM2YL9RYaEsL3K7g93TfR1n4b4VXnvqAAs/A4FMM+SqE/0aGO1HfRVNvizKMl/P53w+nJrLQFdnnwyURHN+xYonP+0S5vzjYSagSsGO6I0XjSi0=
+	t=1744033981; cv=none; b=e7AwPPkk12IKH8KsPMpv1m6/t2n7SuBlPioN2r76HKhNRfTmplP3HmIAX3thV8Is4QD+8GxQn8NhNULYEPb6t5avw1ddDaQnkyPQXjA1REQbjtTRgmcv564GocmvNpQiWS1c7GzNyjTMx9VUG79S7qN5Q2Q7wPJYoB0S0Of3hAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744033956; c=relaxed/simple;
-	bh=AvmCGkM8u6k1w56iBZRvCudCuwVtYQRZVcLroU7KZWw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dsitkJSZWh5576pIfasv6jwaEFmnRBYm1WlwLL8muUV9tNk40FRjZSa0kg9RYP5ikS6ZWcvTm+JivPGLJEqM74AWm5xblxg7bXDm5kWXCBVejUlTP/KO9qar3Tc7GrpSi0yhW6LdWEOc/Hgm/7csYoeh7qgW5V6+H8mNSVApSUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iTvIuzxU; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744033951;
-	bh=AvmCGkM8u6k1w56iBZRvCudCuwVtYQRZVcLroU7KZWw=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=iTvIuzxUPKAPP0exP2+Vin+Q8GrD/goiJouenHZx4PQ72VOhHaAYcp+7mXoFiVKTE
-	 I40vD9/8CmdI9cRH9IDHjbla0Ru1Yzx/16jWdK47/i+kM1E28cfnllsFAbMKFuOQJU
-	 sJguV5U9zeZ0ptHTJ6Hos9UZOVKZ+6Ag8qYy0a+nPup5O28kd/hMDDUREReFcMVodW
-	 NFXtx90Ma8TR7jqIYvZt0Hx5PwB69YyyZnjSamJ8qB4jfTnZ8UCrNAORIYKYxYsi2S
-	 AJzmeciI0F6RjIdb4z/Rhkwcz0pANIpkM3+vGQmGnpEnfgD7YW7Wl2qTt6+BfaRG5q
-	 h4dwKfhJY9ByA==
-Received: from [IPv6:2606:6d00:11:e976::c41] (unknown [IPv6:2606:6d00:11:e976::c41])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1B2AC17E02BE;
-	Mon,  7 Apr 2025 15:52:28 +0200 (CEST)
-Message-ID: <77bdada5dce991842e377759c8e173ada115694f.camel@collabora.com>
-Subject: Re: [PATCH v7 09/12] media: rkvdec: Add get_image_fmt ops
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Hans Verkuil <hverkuil@xs4all.nl>, Sebastian Fricke	
- <sebastian.fricke@collabora.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>,  Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Boris Brezillon	
- <boris.brezillon@collabora.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev, Mauro
- Carvalho Chehab <mchehab+huawei@kernel.org>, Alex Bee
- <knaerzche@gmail.com>, Benjamin Gaignard	
- <benjamin.gaignard@collabora.com>, Detlev Casanova	
- <detlev.casanova@collabora.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
- Jonas Karlman <jonas@kwiboo.se>, Christopher Obbard
- <christopher.obbard@linaro.org>
-Date: Mon, 07 Apr 2025 09:52:27 -0400
-In-Reply-To: <e6b99109-bd35-46ff-a4e2-eb69b549dcbc@xs4all.nl>
-References: 
-	<20250225-rkvdec_h264_high10_and_422_support-v7-0-7992a68a4910@collabora.com>
-	 <20250225-rkvdec_h264_high10_and_422_support-v7-9-7992a68a4910@collabora.com>
-	 <e6b99109-bd35-46ff-a4e2-eb69b549dcbc@xs4all.nl>
-Organization: Collabora Canada
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.56.0 (3.56.0-1.fc42) 
+	s=arc-20240116; t=1744033981; c=relaxed/simple;
+	bh=r7kBNPEW0WRcFadtyDS13FnmZe7b22hJY5aSsMgnt7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W92Hd6jBvZq1H3OwNuGZqRIrhD4qT/Vi2FW0vaWhzWnYm/lOFECo7j4azRxxiJuj1X2jCfgTo3oa/944tGb4LOGuBim0Z1UudOOwe/MXs9sK9WGFh9ggSYklsehEbmwAHBCNgnT2K2Wx00DaJ28EDMxymZcI58VyTNCETiX29AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XiXOjgvI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 288BBC4CEDD;
+	Mon,  7 Apr 2025 13:52:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744033981;
+	bh=r7kBNPEW0WRcFadtyDS13FnmZe7b22hJY5aSsMgnt7w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XiXOjgvIyF/YAsvifGIAgwZSmdMPUBs8MUAv5WO/tTM9zgRdJRpJBzggWfyrE/SL5
+	 tCfb08yJ/tEtFrD/THXLhPl+W5894aOVGSDQ4iRTTEaVLeu50TiepYFrg0+TuqDPJ1
+	 wTODaQJPKl+6BwavHCB2cm0+s1ZNkVv+voYlkQhx76VkFanddVLnPQToXYip7+XX5T
+	 FKE1n/oIFxIYofFZM9Mb5TbFAO5QNWoni1tEUSjT5PYTilyuSFhBPcj5WDQZ5i080f
+	 7jvXdKmc17n+jVe4MESYfaRv0txDi8UbvQOiTz68KnUJH8oXvhS0+LeEIQXSHI5lW8
+	 FAu79b4Bzwzng==
+Date: Mon, 7 Apr 2025 14:52:57 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 0/4] gpio: deprecate and track the removal of GPIO
+ workarounds for regulators
+Message-ID: <841a919f-2a13-4488-aa1e-a5a07824ed76@sirena.org.uk>
+References: <CAMRc=Mcq9yag6yBswhW0OJ8MKzGBpscwo+UGpfCo2aha93LzXA@mail.gmail.com>
+ <846010c0-7dc1-421c-8136-9ae2894c9acd@sirena.org.uk>
+ <CAMRc=Mff0TkeiHbM3TAJLJ2HYU_nnPFUpUjbWsdCnW6O4E=+gQ@mail.gmail.com>
+ <c3bb82f9-5a2f-4a14-9726-f3e10bf5d427@sirena.org.uk>
+ <CAMRc=Mc_nXwvj_9w6w8cB3K58AVLHBLCV+MOO1z_6y+uuT86Og@mail.gmail.com>
+ <a484f0b2-c09a-4a6a-a30e-4c8660d755a6@sirena.org.uk>
+ <CAMRc=MeFqvJ3g3GhrZzto+jfgCUhtcRRyWqx51gCkKhYUqtsGg@mail.gmail.com>
+ <c16d3116-256d-470d-96dd-7f3dbe3334c3@sirena.org.uk>
+ <CAMRc=MeYcgje7dFq8WDiTB8mTQ1COv3a_6xhAGkTukD_V25Wgw@mail.gmail.com>
+ <df350510-64c9-46b4-9f82-ebd6b04bba36@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="TF6//jndVbndOY/a"
+Content-Disposition: inline
+In-Reply-To: <df350510-64c9-46b4-9f82-ebd6b04bba36@sirena.org.uk>
+X-Cookie: Meester, do you vant to buy a duck?
 
-Le lundi 07 avril 2025 à 13:09 +0200, Hans Verkuil a écrit :
-> On 25/02/2025 10:40, Sebastian Fricke wrote:
-> > From: Jonas Karlman <jonas@kwiboo.se>
-> > 
-> > Add support for a get_image_fmt() ops that returns the required image
-> > format.
-> > 
-> > The CAPTURE format is reset when the required image format changes and
-> > the buffer queue is not busy.
-> > 
-> > Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> > Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> > Tested-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> > Tested-by: Christopher Obbard <chris.obbard@collabora.com>
-> > ---
-> >  drivers/staging/media/rkvdec/rkvdec.c | 49 +++++++++++++++++++++++++++++++++--
-> >  drivers/staging/media/rkvdec/rkvdec.h |  2 ++
-> >  2 files changed, 49 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/staging/media/rkvdec/rkvdec.c b/drivers/staging/media/rkvdec/rkvdec.c
-> > index 70154948b4e32e2c439f259b0f1e1bbc8b52b063..5394079509305c619f1d0c1f542bfc409317c3b7 100644
-> > --- a/drivers/staging/media/rkvdec/rkvdec.c
-> > +++ b/drivers/staging/media/rkvdec/rkvdec.c
-> > @@ -111,15 +111,60 @@ static int rkvdec_try_ctrl(struct v4l2_ctrl *ctrl)
-> >  {
-> >  	struct rkvdec_ctx *ctx = container_of(ctrl->handler, struct rkvdec_ctx, ctrl_hdl);
-> >  	const struct rkvdec_coded_fmt_desc *desc = ctx->coded_fmt_desc;
-> > +	struct v4l2_pix_format_mplane *pix_mp = &ctx->decoded_fmt.fmt.pix_mp;
-> > +	enum rkvdec_image_fmt image_fmt;
-> > +	struct vb2_queue *vq;
-> > +	int ret;
-> > +
-> > +	if (desc->ops->try_ctrl) {
-> > +		ret = desc->ops->try_ctrl(ctx, ctrl);
-> > +		if (ret)
-> > +			return ret;
-> > +	}
-> > +
-> > +	if (!desc->ops->get_image_fmt)
-> > +		return 0;
-> >  
-> > -	if (desc->ops->try_ctrl)
-> > -		return desc->ops->try_ctrl(ctx, ctrl);
-> > +	image_fmt = desc->ops->get_image_fmt(ctx, ctrl);
-> > +	if (ctx->image_fmt == image_fmt)
-> > +		return 0;
-> > +
-> > +	if (rkvdec_is_valid_fmt(ctx, pix_mp->pixelformat, image_fmt))
-> > +		return 0;
-> > +
-> > +	/* format change not allowed when queue is busy */
-> > +	vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx,
-> > +			     V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
-> > +	if (vb2_is_busy(vq))
-> > +		return -EINVAL;
-> 
-> This makes no sense to me. This just tries a control, and that should just
-> work, regardless of vb2_is_busy(). It's a 'try', so you are not actually
-> changing anything.
 
-See comment below, notice that this code is only reached if the control
-introduce parameters that are not compatible with the current capture
-queue fmt. The entire function uses "success" early exit, so the
-further down you get in the function, the less likely your control is
-valid.
+--TF6//jndVbndOY/a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int rkvdec_s_ctrl(struct v4l2_ctrl *ctrl)
-> > +{
-> > +	struct rkvdec_ctx *ctx = container_of(ctrl->handler, struct rkvdec_ctx, ctrl_hdl);
-> > +	const struct rkvdec_coded_fmt_desc *desc = ctx->coded_fmt_desc;
-> > +	struct v4l2_pix_format_mplane *pix_mp = &ctx->decoded_fmt.fmt.pix_mp;
-> > +	enum rkvdec_image_fmt image_fmt;
-> > +
-> > +	if (!desc->ops->get_image_fmt)
-> > +		return 0;
-> > +
-> > +	image_fmt = desc->ops->get_image_fmt(ctx, ctrl);
-> > +	if (ctx->image_fmt == image_fmt)
-> > +		return 0;
-> 
-> If you really can't set a control when the queue is busy, then that should
-> be tested here, not in try_ctrl. And then you return -EBUSY.
-> 
-> Am I missing something here?
+On Mon, Apr 07, 2025 at 02:33:53PM +0100, Mark Brown wrote:
+> On Mon, Apr 07, 2025 at 03:29:09PM +0200, Bartosz Golaszewski wrote:
+>=20
+> > Basically: we may set the GPIO to 1 but it was already enabled and we
+> > tell consumers the regulator was just enabled when it wasn't OR we set
+> > the GPIO to 0 and tell consumers the regulator was disabled when there
+> > are still users of this GPIO so it's not true either.
+>=20
+> > AFAICT, it's used in a few places to put the regulator consumer in
+> > reset if the power was *actually* disabled.
+>=20
+> Yes, and also do things like not bother to reinitialise the hardware if
+> we kept the power on.
 
-When I reviewed, I had imagine that s_ctrl on a request would just run
-a try. Now that I read that more careful, I see that it does a true set
-on separate copy. So yes, this can safely be moved here.
+BTW, as an example of something that might go wrong if we didn't get
+reset when we expected to be one common thing the would be for the
+driver to reset it's register cache back to the hardware defaults but if
+the power wasn't really lost that won't reflect the actual hardware
+state.
+back to the hardware defaults=20
 
-Since you seem wondering "If you really can't set a control", let me
-explain what Jonas wants to protect against. RKVdec does not have any
-color conversion code, the header compound control (which header
-depends on the codec), contains details such as sub-sampling and color
-depth. Without color conversion, when the image format is locked (the
-busy queue), you can't request the HW to decode a frame witch does not
-fit. This could otherwise lead to buffer overflow in the HW,
-fortunately protected by the iommu, but you don't really want to depend
-on the mmu.
+--TF6//jndVbndOY/a
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I've never used try_ctrl in my decade of v4l2, so obviously, now that I
-know that s_ctrl on request is not a try, I'm fine with rejecting this
-PR, sending a new version and making a PR again. But if I was to use
-this API in userspace, my intuitive expectation would be that this
-should fail try(), even if its very rarely valid to check the queue
-state in try control.
+-----BEGIN PGP SIGNATURE-----
 
-Nicolas
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfz2LgACgkQJNaLcl1U
+h9C9LQf/QIbHAWF8EhP1Wt/gpFzue7lJKceOhlLYJjD+nWLSTIf1Zo150javMGDs
+5hBNLfTaO/d3NSMGpuORvgBz1ru2whiyrNwKg4ndu8FrIWEIABVrD4uC31ysLSkG
+xfp2n01IzTMjNzdxGi5R1xkfNvjeR2DdAgAMigQAO3mPFDByyWH4SPQGP+v4EVyg
+r03ykaChJRYGrsnHFycyJoOXoTLZUp9UMLin09Phrie2B8Q8LnzFP+QOC1GOOyAf
+b06g8VSpODI9e4cC4VuTpTWcW3uOHh4iER4tAQfFzHKiZKK1RkZ4Vkf0+wAUn9eR
+HivJKdAAYzF8mM1lnGi6X5d/ji6p/A==
+=21A3
+-----END PGP SIGNATURE-----
 
-> 
-> Regards,
-> 
-> 	Hans
-> 
-> > +
-> > +	ctx->image_fmt = image_fmt;
-> > +	if (!rkvdec_is_valid_fmt(ctx, pix_mp->pixelformat, ctx->image_fmt))
-> > +		rkvdec_reset_decoded_fmt(ctx);
-> >  
-> >  	return 0;
-> >  }
-> >  
-> >  static const struct v4l2_ctrl_ops rkvdec_ctrl_ops = {
-> >  	.try_ctrl = rkvdec_try_ctrl,
-> > +	.s_ctrl = rkvdec_s_ctrl,
-> >  };
-> >  
-> >  static const struct rkvdec_ctrl_desc rkvdec_h264_ctrl_descs[] = {
-> > diff --git a/drivers/staging/media/rkvdec/rkvdec.h b/drivers/staging/media/rkvdec/rkvdec.h
-> > index 6f8cf50c5d99aad2f52e321f54f3ca17166ddf98..e466a2753ccfc13738e0a672bc578e521af2c3f2 100644
-> > --- a/drivers/staging/media/rkvdec/rkvdec.h
-> > +++ b/drivers/staging/media/rkvdec/rkvdec.h
-> > @@ -73,6 +73,8 @@ struct rkvdec_coded_fmt_ops {
-> >  		     struct vb2_v4l2_buffer *dst_buf,
-> >  		     enum vb2_buffer_state result);
-> >  	int (*try_ctrl)(struct rkvdec_ctx *ctx, struct v4l2_ctrl *ctrl);
-> > +	enum rkvdec_image_fmt (*get_image_fmt)(struct rkvdec_ctx *ctx,
-> > +					       struct v4l2_ctrl *ctrl);
-> >  };
-> >  
-> >  enum rkvdec_image_fmt {
-> > 
-
--- 
-Nicolas Dufresne
-Principal Engineer at Collabora
+--TF6//jndVbndOY/a--
 
