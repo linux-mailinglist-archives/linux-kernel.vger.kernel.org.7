@@ -1,999 +1,366 @@
-Return-Path: <linux-kernel+bounces-590852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE470A7D7AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:23:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CF2BA7D798
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1179E188CEFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:23:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9FAD7A2734
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2498E2288C6;
-	Mon,  7 Apr 2025 08:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B714225A22;
+	Mon,  7 Apr 2025 08:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="k1yzJPfx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DmJw7gpq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3AE22A1E2;
-	Mon,  7 Apr 2025 08:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2DE155A59
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 08:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744014115; cv=none; b=rZyijNXAL+N2KoYUWXLZonRxMQZ4YCEY4zzstQtEVzYjmX1ZYOyOmgyx7baYKGMJKrgwmSJgk3CARwHvMGwU0oRv4+5f0ptptpTYHKet8JNUZubEGkC+re1DZKSdow5zE7P10C0pw+qZkovZjPPoWNChMFLImnD9ZlsEbbdqxyQ=
+	t=1744014050; cv=none; b=ZHLiZQdY1EiTTJqGdqnLGXcAtuAWtYzWIWeOx0rrjySFHdov+ZUFV5SfkUPcbT6slcXdxUYN2bp+7xcH9jybHaoRMvzzmdS4khlO2t1sPWVQ39GpMX1GGCnJcAi9kz83GAmK0OvNKdZe1na0oLFRR5cS7B2XUYAChEpbg0mKnOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744014115; c=relaxed/simple;
-	bh=Gy7496cwbknI6p1aiz7+xBjXfs4pwhxMt1p8/p5sNJM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=snv3XisSlWyLqb410so9+8Gl0g8LNo2pzKif02PgIbnul04VFTx/N54NAxWWKw365XVPJFh1D2vK8wQIoccOlOsi/9X3h5MQbWnTnkXLutuMYWxz9Dw0srUMAA89u3u6V7rS38b5NRDYoVDpYgjug/vZ9ajm9t8JC5bJCtkA80E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=k1yzJPfx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63D1FC4CEEA;
-	Mon,  7 Apr 2025 08:21:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744014114;
-	bh=Gy7496cwbknI6p1aiz7+xBjXfs4pwhxMt1p8/p5sNJM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=k1yzJPfxxuAhpdWVgurVxGr3H3rLuBXthFZLqwjFAH1KqLweyqRx3WvJx6u0OclaE
-	 g84NXQ74vzixBWi2WGOhr5xd+EH9T0ilRHMCHKH//XzvwY3wVF0/b6vCu5mfSg0lOd
-	 A1JUBae7VS5xj1tLrH2b9hGZjzRxljEsK5/nKMmY=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	torvalds@linux-foundation.org,
-	stable@vger.kernel.org
-Cc: lwn@lwn.net,
-	jslaby@suse.cz,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: Linux 6.13.10
-Date: Mon,  7 Apr 2025 10:20:15 +0200
-Message-ID: <2025040715-subduing-portable-49d0@gregkh>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <2025040715-antiquity-retired-a642@gregkh>
-References: <2025040715-antiquity-retired-a642@gregkh>
+	s=arc-20240116; t=1744014050; c=relaxed/simple;
+	bh=PMQfT6d4GwVVZrwpYw6jFUFyMMDe7NT6bma1//9QBR4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BF31CamDll254TmM6SHRRvsEo+qM4jl31TKUTPhvUYMFtpsf+q5MZvXm4wBPwrHdr6vXc16MI7E8gtVyYR3FkB9tuNRvHxQRnHbjw4ZhIWKHBRPMbGIcBRotGcsHuVxAF98uvtxy5cqp47uWuiz34nFeaMJ30MXgz9fo0l/jnj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DmJw7gpq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744014044;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6foLXJiT89sSwqOs3tgZWdAu5yXlYl8zLUUJZt72hn8=;
+	b=DmJw7gpqmmVmDcc4bwpCI3LKmttX9zVUra9cP5hDuz9PeoHSW1JGab0WXG9qEIbwvfMMq0
+	V6ET5njSQYyREoK8z8C3yJl7yYfSs+FMmabMYkmEaYu/PmDoDkF311+JtHWp62Cf2oIKhK
+	Di+WJfG/sI9OqdgoLQvfuAShYnRAPEk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-486-lBQgAU_eODGuRslN3yPDCw-1; Mon, 07 Apr 2025 04:20:42 -0400
+X-MC-Unique: lBQgAU_eODGuRslN3yPDCw-1
+X-Mimecast-MFC-AGG-ID: lBQgAU_eODGuRslN3yPDCw_1744014041
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43ce8f82e66so26183675e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 01:20:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744014041; x=1744618841;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6foLXJiT89sSwqOs3tgZWdAu5yXlYl8zLUUJZt72hn8=;
+        b=Z58H6gc3MwWFzkygqNRXM24BNoD37ABunPtbwQuIgN13dfu8QriPZQ4IQgZmG+Nmng
+         KtAhwFnBdR3/2Pm6YuWjOPUO3clV4CmW7ygRCJgaL6eNfpGMN8XR9iD0Otp9YdHX3ejQ
+         Yq/jdoUyWSUbMesuZpTyryt9vDvSUDP5646+DLXlaCyXQ2KUfIHGtEhIyhnMF8lEZYTZ
+         QG8sBR6qQYX/lCLwjFUvnLNFrILUkKiNdffaBy0FHTQyfJBDLYYidYXNLP+8x7tvji+P
+         2CuKn5bp9ZzTDGiHGoixEHiOouHopM9uSU0aLi86pn992EWqiw4kgCu2cRcpdOKmpn8c
+         rjDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQqYU8h5rFNxXOEcmloOukW2eM0JJw3T4Q0cyOTqvy9s3S3VhoWOIJmEmHRa5yGeBa7Nke79EYgT8R9fA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUIJWHUhNl/YGej1/PKkFDNHA531gZrtjjD6Azw73M5ycolaGD
+	8MZkaoP/tN/NpR/wQ+msEbG1uR7xS/OIAFtkduKR1tb9XxpJ5mQsv+SRdxq66UOAKEzW7YfCNaV
+	uQgeXIZZTMCuUpge6Aq6oDR/gN5D2lBXr7w5a8dla1iRSSMY/4XRi4DA42C7J+A==
+X-Gm-Gg: ASbGncuD0aOCCrJqVrXNDJMQ/YEU5/HMWvtR3FapJlw1//xYL4F3TYMYS/2ggQevqJf
+	JxzYQwsgkzeHeWrR1mg9ol3T7XJEA22roYNG/X3PJ5xACSNxEx5ambkS5xS3B8UeSvxdeVZK4vz
+	r8Y5Merc8Bo73BgQFy6N4FqshpKv29OAMuMybdoHNcwwyUC70fIyzcOHWYKjjtK8iBx0Z6A/5p6
+	RwG9BooOqwAUa3F24QlM/q1HLoTTqwpEbPNn5xaONb4WCGnoBRvvqXW+QYF0D3LnYR7G8ANCKPH
+	GTUHuGMyLg==
+X-Received: by 2002:a05:6000:270d:b0:39c:1257:dbaa with SMTP id ffacd0b85a97d-39d14762f71mr5721177f8f.58.1744014041285;
+        Mon, 07 Apr 2025 01:20:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGK6VXPWY67VKNhdqGQZzAkm7nKVVM4QZ8CIZIcBYFmMD455PZ0i6KwRn5CDCLA0GlDi04kKw==
+X-Received: by 2002:a05:6000:270d:b0:39c:1257:dbaa with SMTP id ffacd0b85a97d-39d14762f71mr5721161f8f.58.1744014040796;
+        Mon, 07 Apr 2025 01:20:40 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c3020d64dsm11537661f8f.70.2025.04.07.01.20.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 01:20:40 -0700 (PDT)
+Date: Mon, 7 Apr 2025 04:20:37 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/19] virtio_ring: introduce virtqueue ops
+Message-ID: <20250407041729-mutt-send-email-mst@kernel.org>
+References: <20250324054333.1954-1-jasowang@redhat.com>
+ <20250324060127.2358-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250324060127.2358-1-jasowang@redhat.com>
 
-diff --git a/Makefile b/Makefile
-index 21a34e8991ac..ffed1f493b48 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- VERSION = 6
- PATCHLEVEL = 13
--SUBLEVEL = 9
-+SUBLEVEL = 10
- EXTRAVERSION =
- NAME = Baby Opossum Posse
- 
-diff --git a/drivers/counter/microchip-tcb-capture.c b/drivers/counter/microchip-tcb-capture.c
-index 2f096a5b973d..c391ac38b990 100644
---- a/drivers/counter/microchip-tcb-capture.c
-+++ b/drivers/counter/microchip-tcb-capture.c
-@@ -368,6 +368,25 @@ static int mchp_tc_probe(struct platform_device *pdev)
- 			channel);
- 	}
- 
-+	/* Disable Quadrature Decoder and position measure */
-+	ret = regmap_update_bits(regmap, ATMEL_TC_BMR, ATMEL_TC_QDEN | ATMEL_TC_POSEN, 0);
-+	if (ret)
-+		return ret;
-+
-+	/* Setup the period capture mode */
-+	ret = regmap_update_bits(regmap, ATMEL_TC_REG(priv->channel[0], CMR),
-+				 ATMEL_TC_WAVE | ATMEL_TC_ABETRG | ATMEL_TC_CMR_MASK |
-+				 ATMEL_TC_TCCLKS,
-+				 ATMEL_TC_CMR_MASK);
-+	if (ret)
-+		return ret;
-+
-+	/* Enable clock and trigger counter */
-+	ret = regmap_write(regmap, ATMEL_TC_REG(priv->channel[0], CCR),
-+			   ATMEL_TC_CLKEN | ATMEL_TC_SWTRG);
-+	if (ret)
-+		return ret;
-+
- 	priv->tc_cfg = tcb_config;
- 	priv->regmap = regmap;
- 	counter->name = dev_name(&pdev->dev);
-diff --git a/drivers/counter/stm32-lptimer-cnt.c b/drivers/counter/stm32-lptimer-cnt.c
-index cf73f65baf60..b249c8647639 100644
---- a/drivers/counter/stm32-lptimer-cnt.c
-+++ b/drivers/counter/stm32-lptimer-cnt.c
-@@ -58,37 +58,43 @@ static int stm32_lptim_set_enable_state(struct stm32_lptim_cnt *priv,
- 		return 0;
- 	}
- 
-+	ret = clk_enable(priv->clk);
-+	if (ret)
-+		goto disable_cnt;
-+
- 	/* LP timer must be enabled before writing CMP & ARR */
- 	ret = regmap_write(priv->regmap, STM32_LPTIM_ARR, priv->ceiling);
- 	if (ret)
--		return ret;
-+		goto disable_clk;
- 
- 	ret = regmap_write(priv->regmap, STM32_LPTIM_CMP, 0);
- 	if (ret)
--		return ret;
-+		goto disable_clk;
- 
- 	/* ensure CMP & ARR registers are properly written */
- 	ret = regmap_read_poll_timeout(priv->regmap, STM32_LPTIM_ISR, val,
- 				       (val & STM32_LPTIM_CMPOK_ARROK) == STM32_LPTIM_CMPOK_ARROK,
- 				       100, 1000);
- 	if (ret)
--		return ret;
-+		goto disable_clk;
- 
- 	ret = regmap_write(priv->regmap, STM32_LPTIM_ICR,
- 			   STM32_LPTIM_CMPOKCF_ARROKCF);
- 	if (ret)
--		return ret;
-+		goto disable_clk;
- 
--	ret = clk_enable(priv->clk);
--	if (ret) {
--		regmap_write(priv->regmap, STM32_LPTIM_CR, 0);
--		return ret;
--	}
- 	priv->enabled = true;
- 
- 	/* Start LP timer in continuous mode */
- 	return regmap_update_bits(priv->regmap, STM32_LPTIM_CR,
- 				  STM32_LPTIM_CNTSTRT, STM32_LPTIM_CNTSTRT);
-+
-+disable_clk:
-+	clk_disable(priv->clk);
-+disable_cnt:
-+	regmap_write(priv->regmap, STM32_LPTIM_CR, 0);
-+
-+	return ret;
- }
- 
- static int stm32_lptim_setup(struct stm32_lptim_cnt *priv, int enable)
-diff --git a/drivers/hid/hid-plantronics.c b/drivers/hid/hid-plantronics.c
-index 25cfd964dc25..acb9eb18f7cc 100644
---- a/drivers/hid/hid-plantronics.c
-+++ b/drivers/hid/hid-plantronics.c
-@@ -6,9 +6,6 @@
-  *  Copyright (c) 2015-2018 Terry Junge <terry.junge@plantronics.com>
-  */
- 
--/*
-- */
--
- #include "hid-ids.h"
- 
- #include <linux/hid.h>
-@@ -23,30 +20,28 @@
- 
- #define PLT_VOL_UP		0x00b1
- #define PLT_VOL_DOWN		0x00b2
-+#define PLT_MIC_MUTE		0x00b5
- 
- #define PLT1_VOL_UP		(PLT_HID_1_0_PAGE | PLT_VOL_UP)
- #define PLT1_VOL_DOWN		(PLT_HID_1_0_PAGE | PLT_VOL_DOWN)
-+#define PLT1_MIC_MUTE		(PLT_HID_1_0_PAGE | PLT_MIC_MUTE)
- #define PLT2_VOL_UP		(PLT_HID_2_0_PAGE | PLT_VOL_UP)
- #define PLT2_VOL_DOWN		(PLT_HID_2_0_PAGE | PLT_VOL_DOWN)
-+#define PLT2_MIC_MUTE		(PLT_HID_2_0_PAGE | PLT_MIC_MUTE)
-+#define HID_TELEPHONY_MUTE	(HID_UP_TELEPHONY | 0x2f)
-+#define HID_CONSUMER_MUTE	(HID_UP_CONSUMER | 0xe2)
- 
- #define PLT_DA60		0xda60
- #define PLT_BT300_MIN		0x0413
- #define PLT_BT300_MAX		0x0418
- 
--
--#define PLT_ALLOW_CONSUMER (field->application == HID_CP_CONSUMERCONTROL && \
--			    (usage->hid & HID_USAGE_PAGE) == HID_UP_CONSUMER)
--
--#define PLT_QUIRK_DOUBLE_VOLUME_KEYS BIT(0)
--#define PLT_QUIRK_FOLLOWED_OPPOSITE_VOLUME_KEYS BIT(1)
--
- #define PLT_DOUBLE_KEY_TIMEOUT 5 /* ms */
--#define PLT_FOLLOWED_OPPOSITE_KEY_TIMEOUT 220 /* ms */
- 
- struct plt_drv_data {
- 	unsigned long device_type;
--	unsigned long last_volume_key_ts;
--	u32 quirks;
-+	unsigned long last_key_ts;
-+	unsigned long double_key_to;
-+	__u16 last_key;
- };
- 
- static int plantronics_input_mapping(struct hid_device *hdev,
-@@ -58,34 +53,43 @@ static int plantronics_input_mapping(struct hid_device *hdev,
- 	unsigned short mapped_key;
- 	struct plt_drv_data *drv_data = hid_get_drvdata(hdev);
- 	unsigned long plt_type = drv_data->device_type;
-+	int allow_mute = usage->hid == HID_TELEPHONY_MUTE;
-+	int allow_consumer = field->application == HID_CP_CONSUMERCONTROL &&
-+			(usage->hid & HID_USAGE_PAGE) == HID_UP_CONSUMER &&
-+			usage->hid != HID_CONSUMER_MUTE;
- 
- 	/* special case for PTT products */
- 	if (field->application == HID_GD_JOYSTICK)
- 		goto defaulted;
- 
--	/* handle volume up/down mapping */
- 	/* non-standard types or multi-HID interfaces - plt_type is PID */
- 	if (!(plt_type & HID_USAGE_PAGE)) {
- 		switch (plt_type) {
- 		case PLT_DA60:
--			if (PLT_ALLOW_CONSUMER)
-+			if (allow_consumer)
- 				goto defaulted;
--			goto ignored;
-+			if (usage->hid == HID_CONSUMER_MUTE) {
-+				mapped_key = KEY_MICMUTE;
-+				goto mapped;
-+			}
-+			break;
- 		default:
--			if (PLT_ALLOW_CONSUMER)
-+			if (allow_consumer || allow_mute)
- 				goto defaulted;
- 		}
-+		goto ignored;
- 	}
--	/* handle standard types - plt_type is 0xffa0uuuu or 0xffa2uuuu */
--	/* 'basic telephony compliant' - allow default consumer page map */
--	else if ((plt_type & HID_USAGE) >= PLT_BASIC_TELEPHONY &&
--		 (plt_type & HID_USAGE) != PLT_BASIC_EXCEPTION) {
--		if (PLT_ALLOW_CONSUMER)
--			goto defaulted;
--	}
--	/* not 'basic telephony' - apply legacy mapping */
--	/* only map if the field is in the device's primary vendor page */
--	else if (!((field->application ^ plt_type) & HID_USAGE_PAGE)) {
-+
-+	/* handle standard consumer control mapping */
-+	/* and standard telephony mic mute mapping */
-+	if (allow_consumer || allow_mute)
-+		goto defaulted;
-+
-+	/* handle vendor unique types - plt_type is 0xffa0uuuu or 0xffa2uuuu */
-+	/* if not 'basic telephony compliant' - map vendor unique controls */
-+	if (!((plt_type & HID_USAGE) >= PLT_BASIC_TELEPHONY &&
-+	      (plt_type & HID_USAGE) != PLT_BASIC_EXCEPTION) &&
-+	      !((field->application ^ plt_type) & HID_USAGE_PAGE))
- 		switch (usage->hid) {
- 		case PLT1_VOL_UP:
- 		case PLT2_VOL_UP:
-@@ -95,8 +99,11 @@ static int plantronics_input_mapping(struct hid_device *hdev,
- 		case PLT2_VOL_DOWN:
- 			mapped_key = KEY_VOLUMEDOWN;
- 			goto mapped;
-+		case PLT1_MIC_MUTE:
-+		case PLT2_MIC_MUTE:
-+			mapped_key = KEY_MICMUTE;
-+			goto mapped;
- 		}
--	}
- 
- /*
-  * Future mapping of call control or other usages,
-@@ -105,6 +112,8 @@ static int plantronics_input_mapping(struct hid_device *hdev,
-  */
- 
- ignored:
-+	hid_dbg(hdev, "usage: %08x (appl: %08x) - ignored\n",
-+		usage->hid, field->application);
- 	return -1;
- 
- defaulted:
-@@ -123,38 +132,26 @@ static int plantronics_event(struct hid_device *hdev, struct hid_field *field,
- 			     struct hid_usage *usage, __s32 value)
+On Mon, Mar 24, 2025 at 02:01:21PM +0800, Jason Wang wrote:
+> This patch introduces virtqueue ops which is a set of the callbacks
+> that will be called for different queue layout or features. This would
+> help to avoid branches for split/packed and will ease the future
+> implementation like in order.
+> 
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+
+
+
+
+> ---
+>  drivers/virtio/virtio_ring.c | 96 +++++++++++++++++++++++++-----------
+>  1 file changed, 67 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index a2884eae14d9..ce1dc90ee89d 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -159,9 +159,30 @@ struct vring_virtqueue_packed {
+>  	size_t event_size_in_bytes;
+>  };
+>  
+> +struct vring_virtqueue;
+> +
+> +struct virtqueue_ops {
+> +	int (*add)(struct vring_virtqueue *_vq, struct scatterlist *sgs[],
+> +		   unsigned int total_sg, unsigned int out_sgs,
+> +		   unsigned int in_sgs,	void *data,
+> +		   void *ctx, bool premapped, gfp_t gfp);
+> +	void *(*get)(struct vring_virtqueue *vq, unsigned int *len, void **ctx);
+> +	bool (*kick_prepare)(struct vring_virtqueue *vq);
+> +	void (*disable_cb)(struct vring_virtqueue *vq);
+> +	bool (*enable_cb_delayed)(struct vring_virtqueue *vq);
+> +	unsigned int (*enable_cb_prepare)(struct vring_virtqueue *vq);
+> +	bool (*poll)(const struct vring_virtqueue *vq, u16 last_used_idx);
+> +	void *(*detach_unused_buf)(struct vring_virtqueue *vq);
+> +	bool (*more_used)(const struct vring_virtqueue *vq);
+> +	int (*resize)(struct vring_virtqueue *vq, u32 num);
+> +	void (*reset)(struct vring_virtqueue *vq);
+> +};
+
+I like it that it's organized but
+I worry about the overhead of indirect calls here.
+How about a switch statement instead?
+
+struct vring_virtqueue {
+	enum vring_virtqueue_ops ops;
+
+}
+
+
+@@ -2248,10 +2303,8 @@ static inline int virtqueue_add(struct virtqueue *_vq,
  {
- 	struct plt_drv_data *drv_data = hid_get_drvdata(hdev);
-+	unsigned long prev_tsto, cur_ts;
-+	__u16 prev_key, cur_key;
- 
--	if (drv_data->quirks & PLT_QUIRK_DOUBLE_VOLUME_KEYS) {
--		unsigned long prev_ts, cur_ts;
-+	/* Usages are filtered in plantronics_usages. */
- 
--		/* Usages are filtered in plantronics_usages. */
-+	/* HZ too low for ms resolution - double key detection disabled */
-+	/* or it is a key release - handle key presses only. */
-+	if (!drv_data->double_key_to || !value)
-+		return 0;
- 
--		if (!value) /* Handle key presses only. */
--			return 0;
-+	prev_tsto = drv_data->last_key_ts + drv_data->double_key_to;
-+	cur_ts = drv_data->last_key_ts = jiffies;
-+	prev_key = drv_data->last_key;
-+	cur_key = drv_data->last_key = usage->code;
- 
--		prev_ts = drv_data->last_volume_key_ts;
--		cur_ts = jiffies;
--		if (jiffies_to_msecs(cur_ts - prev_ts) <= PLT_DOUBLE_KEY_TIMEOUT)
--			return 1; /* Ignore the repeated key. */
--
--		drv_data->last_volume_key_ts = cur_ts;
-+	/* If the same key occurs in <= double_key_to -- ignore it */
-+	if (prev_key == cur_key && time_before_eq(cur_ts, prev_tsto)) {
-+		hid_dbg(hdev, "double key %d ignored\n", cur_key);
-+		return 1; /* Ignore the repeated key. */
- 	}
--	if (drv_data->quirks & PLT_QUIRK_FOLLOWED_OPPOSITE_VOLUME_KEYS) {
--		unsigned long prev_ts, cur_ts;
--
--		/* Usages are filtered in plantronics_usages. */
--
--		if (!value) /* Handle key presses only. */
--			return 0;
--
--		prev_ts = drv_data->last_volume_key_ts;
--		cur_ts = jiffies;
--		if (jiffies_to_msecs(cur_ts - prev_ts) <= PLT_FOLLOWED_OPPOSITE_KEY_TIMEOUT)
--			return 1; /* Ignore the followed opposite volume key. */
--
--		drv_data->last_volume_key_ts = cur_ts;
--	}
--
- 	return 0;
- }
- 
-@@ -196,12 +193,16 @@ static int plantronics_probe(struct hid_device *hdev,
- 	ret = hid_parse(hdev);
- 	if (ret) {
- 		hid_err(hdev, "parse failed\n");
--		goto err;
-+		return ret;
- 	}
- 
- 	drv_data->device_type = plantronics_device_type(hdev);
--	drv_data->quirks = id->driver_data;
--	drv_data->last_volume_key_ts = jiffies - msecs_to_jiffies(PLT_DOUBLE_KEY_TIMEOUT);
-+	drv_data->double_key_to = msecs_to_jiffies(PLT_DOUBLE_KEY_TIMEOUT);
-+	drv_data->last_key_ts = jiffies - drv_data->double_key_to;
-+
-+	/* if HZ does not allow ms resolution - disable double key detection */
-+	if (drv_data->double_key_to < PLT_DOUBLE_KEY_TIMEOUT)
-+		drv_data->double_key_to = 0;
- 
- 	hid_set_drvdata(hdev, drv_data);
- 
-@@ -210,29 +211,10 @@ static int plantronics_probe(struct hid_device *hdev,
- 	if (ret)
- 		hid_err(hdev, "hw start failed\n");
- 
--err:
- 	return ret;
- }
- 
- static const struct hid_device_id plantronics_devices[] = {
--	{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
--					 USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3210_SERIES),
--		.driver_data = PLT_QUIRK_DOUBLE_VOLUME_KEYS },
--	{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
--					 USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3220_SERIES),
--		.driver_data = PLT_QUIRK_DOUBLE_VOLUME_KEYS },
--	{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
--					 USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3215_SERIES),
--		.driver_data = PLT_QUIRK_DOUBLE_VOLUME_KEYS },
--	{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
--					 USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3225_SERIES),
--		.driver_data = PLT_QUIRK_DOUBLE_VOLUME_KEYS },
--	{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
--					 USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3325_SERIES),
--		.driver_data = PLT_QUIRK_FOLLOWED_OPPOSITE_VOLUME_KEYS },
--	{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
--					 USB_DEVICE_ID_PLANTRONICS_ENCOREPRO_500_SERIES),
--		.driver_data = PLT_QUIRK_FOLLOWED_OPPOSITE_VOLUME_KEYS },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS, HID_ANY_ID) },
- 	{ }
- };
-@@ -241,6 +223,14 @@ MODULE_DEVICE_TABLE(hid, plantronics_devices);
- static const struct hid_usage_id plantronics_usages[] = {
- 	{ HID_CP_VOLUMEUP, EV_KEY, HID_ANY_ID },
- 	{ HID_CP_VOLUMEDOWN, EV_KEY, HID_ANY_ID },
-+	{ HID_TELEPHONY_MUTE, EV_KEY, HID_ANY_ID },
-+	{ HID_CONSUMER_MUTE, EV_KEY, HID_ANY_ID },
-+	{ PLT2_VOL_UP, EV_KEY, HID_ANY_ID },
-+	{ PLT2_VOL_DOWN, EV_KEY, HID_ANY_ID },
-+	{ PLT2_MIC_MUTE, EV_KEY, HID_ANY_ID },
-+	{ PLT1_VOL_UP, EV_KEY, HID_ANY_ID },
-+	{ PLT1_VOL_DOWN, EV_KEY, HID_ANY_ID },
-+	{ PLT1_MIC_MUTE, EV_KEY, HID_ANY_ID },
- 	{ HID_TERMINATOR, HID_TERMINATOR, HID_TERMINATOR }
- };
- 
-diff --git a/drivers/memstick/host/rtsx_usb_ms.c b/drivers/memstick/host/rtsx_usb_ms.c
-index 6eb892fd4d34..3878136227e4 100644
---- a/drivers/memstick/host/rtsx_usb_ms.c
-+++ b/drivers/memstick/host/rtsx_usb_ms.c
-@@ -813,6 +813,7 @@ static void rtsx_usb_ms_drv_remove(struct platform_device *pdev)
- 
- 	host->eject = true;
- 	cancel_work_sync(&host->handle_req);
-+	cancel_delayed_work_sync(&host->poll_card);
- 
- 	mutex_lock(&host->host_mutex);
- 	if (host->req) {
-diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-index e9208a8d2bfa..a5a4252ea19f 100644
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -1365,9 +1365,11 @@ static const struct usb_device_id products[] = {
- 	{QMI_QUIRK_SET_DTR(0x1bc7, 0x10a0, 0)}, /* Telit FN920C04 */
- 	{QMI_QUIRK_SET_DTR(0x1bc7, 0x10a4, 0)}, /* Telit FN920C04 */
- 	{QMI_QUIRK_SET_DTR(0x1bc7, 0x10a9, 0)}, /* Telit FN920C04 */
-+	{QMI_QUIRK_SET_DTR(0x1bc7, 0x10b0, 0)}, /* Telit FE990B */
- 	{QMI_QUIRK_SET_DTR(0x1bc7, 0x10c0, 0)}, /* Telit FE910C04 */
- 	{QMI_QUIRK_SET_DTR(0x1bc7, 0x10c4, 0)}, /* Telit FE910C04 */
- 	{QMI_QUIRK_SET_DTR(0x1bc7, 0x10c8, 0)}, /* Telit FE910C04 */
-+	{QMI_QUIRK_SET_DTR(0x1bc7, 0x10d0, 0)}, /* Telit FN990B */
- 	{QMI_FIXED_INTF(0x1bc7, 0x1100, 3)},	/* Telit ME910 */
- 	{QMI_FIXED_INTF(0x1bc7, 0x1101, 3)},	/* Telit ME910 dual modem */
- 	{QMI_FIXED_INTF(0x1bc7, 0x1200, 5)},	/* Telit LE920 */
-diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-index 44179f4e807f..aeab2308b150 100644
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -178,6 +178,17 @@ int usbnet_get_ethernet_addr(struct usbnet *dev, int iMACAddress)
- }
- EXPORT_SYMBOL_GPL(usbnet_get_ethernet_addr);
- 
-+static bool usbnet_needs_usb_name_format(struct usbnet *dev, struct net_device *net)
-+{
-+	/* Point to point devices which don't have a real MAC address
-+	 * (or report a fake local one) have historically used the usb%d
-+	 * naming. Preserve this..
-+	 */
-+	return (dev->driver_info->flags & FLAG_POINTTOPOINT) != 0 &&
-+		(is_zero_ether_addr(net->dev_addr) ||
-+		 is_local_ether_addr(net->dev_addr));
-+}
-+
- static void intr_complete (struct urb *urb)
- {
- 	struct usbnet	*dev = urb->context;
-@@ -1762,13 +1773,11 @@ usbnet_probe (struct usb_interface *udev, const struct usb_device_id *prod)
- 		if (status < 0)
- 			goto out1;
- 
--		// heuristic:  "usb%d" for links we know are two-host,
--		// else "eth%d" when there's reasonable doubt.  userspace
--		// can rename the link if it knows better.
-+		/* heuristic: rename to "eth%d" if we are not sure this link
-+		 * is two-host (these links keep "usb%d")
-+		 */
- 		if ((dev->driver_info->flags & FLAG_ETHER) != 0 &&
--		    ((dev->driver_info->flags & FLAG_POINTTOPOINT) == 0 ||
--		     /* somebody touched it*/
--		     !is_zero_ether_addr(net->dev_addr)))
-+		    !usbnet_needs_usb_name_format(dev, net))
- 			strscpy(net->name, "eth%d", sizeof(net->name));
- 		/* WLAN devices should always be named "wlan%d" */
- 		if ((dev->driver_info->flags & FLAG_WLAN) != 0)
-diff --git a/drivers/tty/serial/8250/8250_dma.c b/drivers/tty/serial/8250/8250_dma.c
-index f245a84f4a50..bdd26c9f34bd 100644
---- a/drivers/tty/serial/8250/8250_dma.c
-+++ b/drivers/tty/serial/8250/8250_dma.c
-@@ -162,7 +162,7 @@ void serial8250_tx_dma_flush(struct uart_8250_port *p)
- 	 */
- 	dma->tx_size = 0;
- 
--	dmaengine_terminate_async(dma->rxchan);
-+	dmaengine_terminate_async(dma->txchan);
- }
- 
- int serial8250_rx_dma(struct uart_8250_port *p)
-diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250/8250_pci.c
-index df4d0d832e54..73c200127b08 100644
---- a/drivers/tty/serial/8250/8250_pci.c
-+++ b/drivers/tty/serial/8250/8250_pci.c
-@@ -2727,6 +2727,22 @@ static struct pci_serial_quirk pci_serial_quirks[] = {
- 		.init		= pci_oxsemi_tornado_init,
- 		.setup		= pci_oxsemi_tornado_setup,
- 	},
-+	{
-+		.vendor		= PCI_VENDOR_ID_INTASHIELD,
-+		.device		= 0x4026,
-+		.subvendor	= PCI_ANY_ID,
-+		.subdevice	= PCI_ANY_ID,
-+		.init		= pci_oxsemi_tornado_init,
-+		.setup		= pci_oxsemi_tornado_setup,
-+	},
-+	{
-+		.vendor		= PCI_VENDOR_ID_INTASHIELD,
-+		.device		= 0x4021,
-+		.subvendor	= PCI_ANY_ID,
-+		.subdevice	= PCI_ANY_ID,
-+		.init		= pci_oxsemi_tornado_init,
-+		.setup		= pci_oxsemi_tornado_setup,
-+	},
- 	{
- 		.vendor         = PCI_VENDOR_ID_INTEL,
- 		.device         = 0x8811,
-@@ -5253,6 +5269,14 @@ static const struct pci_device_id serial_pci_tbl[] = {
- 		PCI_ANY_ID, PCI_ANY_ID,
- 		0, 0,
- 		pbn_b2_2_115200 },
-+	{       PCI_VENDOR_ID_INTASHIELD, 0x0BA2,
-+		PCI_ANY_ID, PCI_ANY_ID,
-+		0, 0,
-+		pbn_b2_2_115200 },
-+	{       PCI_VENDOR_ID_INTASHIELD, 0x0BA3,
-+		PCI_ANY_ID, PCI_ANY_ID,
-+		0, 0,
-+		pbn_b2_2_115200 },
- 	/*
- 	 * Brainboxes UC-235/246
- 	 */
-@@ -5373,6 +5397,14 @@ static const struct pci_device_id serial_pci_tbl[] = {
- 		PCI_ANY_ID, PCI_ANY_ID,
- 		0, 0,
- 		pbn_b2_4_115200 },
-+	{	PCI_VENDOR_ID_INTASHIELD, 0x0C42,
-+		PCI_ANY_ID, PCI_ANY_ID,
-+		0, 0,
-+		pbn_b2_4_115200 },
-+	{	PCI_VENDOR_ID_INTASHIELD, 0x0C43,
-+		PCI_ANY_ID, PCI_ANY_ID,
-+		0, 0,
-+		pbn_b2_4_115200 },
- 	/*
- 	 * Brainboxes UC-420
- 	 */
-@@ -5599,6 +5631,20 @@ static const struct pci_device_id serial_pci_tbl[] = {
- 		PCI_ANY_ID, PCI_ANY_ID,
- 		0, 0,
- 		pbn_oxsemi_1_15625000 },
-+	/*
-+	 * Brainboxes XC-235
-+	 */
-+	{	PCI_VENDOR_ID_INTASHIELD, 0x4026,
-+		PCI_ANY_ID, PCI_ANY_ID,
-+		0, 0,
-+		pbn_oxsemi_1_15625000 },
-+	/*
-+	 * Brainboxes XC-475
-+	 */
-+	{	PCI_VENDOR_ID_INTASHIELD, 0x4021,
-+		PCI_ANY_ID, PCI_ANY_ID,
-+		0, 0,
-+		pbn_oxsemi_1_15625000 },
- 
- 	/*
- 	 * Perle PCI-RAS cards
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 57b0632a3db6..433cf2267e16 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -1484,6 +1484,19 @@ static int lpuart32_config_rs485(struct uart_port *port, struct ktermios *termio
- 
- 	unsigned long modem = lpuart32_read(&sport->port, UARTMODIR)
- 				& ~(UARTMODIR_TXRTSPOL | UARTMODIR_TXRTSE);
-+	u32 ctrl;
-+
-+	/* TXRTSE and TXRTSPOL only can be changed when transmitter is disabled. */
-+	ctrl = lpuart32_read(&sport->port, UARTCTRL);
-+	if (ctrl & UARTCTRL_TE) {
-+		/* wait for the transmit engine to complete */
-+		lpuart32_wait_bit_set(&sport->port, UARTSTAT, UARTSTAT_TC);
-+		lpuart32_write(&sport->port, ctrl & ~UARTCTRL_TE, UARTCTRL);
-+
-+		while (lpuart32_read(&sport->port, UARTCTRL) & UARTCTRL_TE)
-+			cpu_relax();
-+	}
-+
- 	lpuart32_write(&sport->port, modem, UARTMODIR);
- 
- 	if (rs485->flags & SER_RS485_ENABLED) {
-@@ -1503,6 +1516,10 @@ static int lpuart32_config_rs485(struct uart_port *port, struct ktermios *termio
- 	}
- 
- 	lpuart32_write(&sport->port, modem, UARTMODIR);
-+
-+	if (ctrl & UARTCTRL_TE)
-+		lpuart32_write(&sport->port, ctrl, UARTCTRL);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/tty/serial/stm32-usart.c b/drivers/tty/serial/stm32-usart.c
-index 1ec5d8c3aef8..0854ad8c90cd 100644
---- a/drivers/tty/serial/stm32-usart.c
-+++ b/drivers/tty/serial/stm32-usart.c
-@@ -965,10 +965,8 @@ static void stm32_usart_start_tx(struct uart_port *port)
- {
- 	struct tty_port *tport = &port->state->port;
- 
--	if (kfifo_is_empty(&tport->xmit_fifo) && !port->x_char) {
--		stm32_usart_rs485_rts_disable(port);
-+	if (kfifo_is_empty(&tport->xmit_fifo) && !port->x_char)
- 		return;
--	}
- 
- 	stm32_usart_rs485_rts_enable(port);
- 
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index dfe1a676d487..e24109c2ab54 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -2862,6 +2862,10 @@ static int handle_tx_event(struct xhci_hcd *xhci,
- 		if (!ep_seg) {
- 
- 			if (ep->skip && usb_endpoint_xfer_isoc(&td->urb->ep->desc)) {
-+				/* this event is unlikely to match any TD, don't skip them all */
-+				if (trb_comp_code == COMP_STOPPED_LENGTH_INVALID)
-+					return 0;
-+
- 				skip_isoc_td(xhci, td, ep, status);
- 				if (!list_empty(&ep_ring->td_list))
- 					continue;
-diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index dba1db259cd3..40015c41b129 100644
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1755,11 +1755,20 @@ static inline void xhci_write_64(struct xhci_hcd *xhci,
- }
- 
- 
--/* Link TRB chain should always be set on 0.95 hosts, and AMD 0.96 ISOC rings */
-+/*
-+ * Reportedly, some chapters of v0.95 spec said that Link TRB always has its chain bit set.
-+ * Other chapters and later specs say that it should only be set if the link is inside a TD
-+ * which continues from the end of one segment to the next segment.
-+ *
-+ * Some 0.95 hardware was found to misbehave if any link TRB doesn't have the chain bit set.
-+ *
-+ * 0.96 hardware from AMD and NEC was found to ignore unchained isochronous link TRBs when
-+ * "resynchronizing the pipe" after a Missed Service Error.
-+ */
- static inline bool xhci_link_chain_quirk(struct xhci_hcd *xhci, enum xhci_ring_type type)
- {
- 	return (xhci->quirks & XHCI_LINK_TRB_QUIRK) ||
--	       (type == TYPE_ISOC && (xhci->quirks & XHCI_AMD_0x96_HOST));
-+	       (type == TYPE_ISOC && (xhci->quirks & (XHCI_AMD_0x96_HOST | XHCI_NEC_HOST)));
- }
- 
- /* xHCI debugging */
-diff --git a/fs/bcachefs/fs-ioctl.c b/fs/bcachefs/fs-ioctl.c
-index 405cf08bda34..e599d5ac6e4d 100644
---- a/fs/bcachefs/fs-ioctl.c
-+++ b/fs/bcachefs/fs-ioctl.c
-@@ -520,10 +520,12 @@ static long bch2_ioctl_subvolume_destroy(struct bch_fs *c, struct file *filp,
- 		ret = -ENOENT;
- 		goto err;
- 	}
--	ret = __bch2_unlink(dir, victim, true);
-+
-+	ret =   inode_permission(file_mnt_idmap(filp), d_inode(victim), MAY_WRITE) ?:
-+		__bch2_unlink(dir, victim, true);
- 	if (!ret) {
- 		fsnotify_rmdir(dir, victim);
--		d_delete(victim);
-+		d_invalidate(victim);
- 	}
- err:
- 	inode_unlock(dir);
-diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
-index 4a765555bf84..1c8fcb04b3cd 100644
---- a/fs/nfsd/nfs4recover.c
-+++ b/fs/nfsd/nfs4recover.c
-@@ -2052,7 +2052,6 @@ static inline int check_for_legacy_methods(int status, struct net *net)
- 		path_put(&path);
- 		if (status)
- 			return -ENOTDIR;
--		status = nn->client_tracking_ops->init(net);
- 	}
- 	return status;
- }
-diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
-index aac91466279f..3e01781aeb7b 100644
---- a/kernel/cgroup/rstat.c
-+++ b/kernel/cgroup/rstat.c
-@@ -612,36 +612,33 @@ static void cgroup_force_idle_show(struct seq_file *seq, struct cgroup_base_stat
- void cgroup_base_stat_cputime_show(struct seq_file *seq)
- {
- 	struct cgroup *cgrp = seq_css(seq)->cgroup;
--	u64 usage, utime, stime, ntime;
-+	struct cgroup_base_stat bstat;
- 
- 	if (cgroup_parent(cgrp)) {
- 		cgroup_rstat_flush_hold(cgrp);
--		usage = cgrp->bstat.cputime.sum_exec_runtime;
-+		bstat = cgrp->bstat;
- 		cputime_adjust(&cgrp->bstat.cputime, &cgrp->prev_cputime,
--			       &utime, &stime);
--		ntime = cgrp->bstat.ntime;
-+			       &bstat.cputime.utime, &bstat.cputime.stime);
- 		cgroup_rstat_flush_release(cgrp);
- 	} else {
--		/* cgrp->bstat of root is not actually used, reuse it */
--		root_cgroup_cputime(&cgrp->bstat);
--		usage = cgrp->bstat.cputime.sum_exec_runtime;
--		utime = cgrp->bstat.cputime.utime;
--		stime = cgrp->bstat.cputime.stime;
--		ntime = cgrp->bstat.ntime;
-+		root_cgroup_cputime(&bstat);
- 	}
- 
--	do_div(usage, NSEC_PER_USEC);
--	do_div(utime, NSEC_PER_USEC);
--	do_div(stime, NSEC_PER_USEC);
--	do_div(ntime, NSEC_PER_USEC);
-+	do_div(bstat.cputime.sum_exec_runtime, NSEC_PER_USEC);
-+	do_div(bstat.cputime.utime, NSEC_PER_USEC);
-+	do_div(bstat.cputime.stime, NSEC_PER_USEC);
-+	do_div(bstat.ntime, NSEC_PER_USEC);
- 
- 	seq_printf(seq, "usage_usec %llu\n"
- 			"user_usec %llu\n"
- 			"system_usec %llu\n"
- 			"nice_usec %llu\n",
--			usage, utime, stime, ntime);
-+			bstat.cputime.sum_exec_runtime,
-+			bstat.cputime.utime,
-+			bstat.cputime.stime,
-+			bstat.ntime);
- 
--	cgroup_force_idle_show(seq, &cgrp->bstat);
-+	cgroup_force_idle_show(seq, &bstat);
- }
- 
- /* Add bpf kfuncs for cgroup_rstat_updated() and cgroup_rstat_flush() */
-diff --git a/net/atm/mpc.c b/net/atm/mpc.c
-index 324e3ab96bb3..12da0269275c 100644
---- a/net/atm/mpc.c
-+++ b/net/atm/mpc.c
-@@ -1314,6 +1314,8 @@ static void MPOA_cache_impos_rcvd(struct k_message *msg,
- 	holding_time = msg->content.eg_info.holding_time;
- 	dprintk("(%s) entry = %p, holding_time = %u\n",
- 		mpc->dev->name, entry, holding_time);
-+	if (entry == NULL && !holding_time)
-+		return;
- 	if (entry == NULL && holding_time) {
- 		entry = mpc->eg_ops->add_entry(msg, mpc);
- 		mpc->eg_ops->put(entry);
-diff --git a/net/ipv6/netfilter/nf_socket_ipv6.c b/net/ipv6/netfilter/nf_socket_ipv6.c
-index a7690ec62325..9ea5ef56cb27 100644
---- a/net/ipv6/netfilter/nf_socket_ipv6.c
-+++ b/net/ipv6/netfilter/nf_socket_ipv6.c
-@@ -103,6 +103,10 @@ struct sock *nf_sk_lookup_slow_v6(struct net *net, const struct sk_buff *skb,
- 	struct sk_buff *data_skb = NULL;
- 	int doff = 0;
- 	int thoff = 0, tproto;
-+#if IS_ENABLED(CONFIG_NF_CONNTRACK)
-+	enum ip_conntrack_info ctinfo;
-+	struct nf_conn const *ct;
-+#endif
- 
- 	tproto = ipv6_find_hdr(skb, &thoff, -1, NULL, NULL);
- 	if (tproto < 0) {
-@@ -136,6 +140,25 @@ struct sock *nf_sk_lookup_slow_v6(struct net *net, const struct sk_buff *skb,
- 		return NULL;
- 	}
- 
-+#if IS_ENABLED(CONFIG_NF_CONNTRACK)
-+	/* Do the lookup with the original socket address in
-+	 * case this is a reply packet of an established
-+	 * SNAT-ted connection.
-+	 */
-+	ct = nf_ct_get(skb, &ctinfo);
-+	if (ct &&
-+	    ((tproto != IPPROTO_ICMPV6 &&
-+	      ctinfo == IP_CT_ESTABLISHED_REPLY) ||
-+	     (tproto == IPPROTO_ICMPV6 &&
-+	      ctinfo == IP_CT_RELATED_REPLY)) &&
-+	    (ct->status & IPS_SRC_NAT_DONE)) {
-+		daddr = &ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple.src.u3.in6;
-+		dport = (tproto == IPPROTO_TCP) ?
-+			ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple.src.u.tcp.port :
-+			ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple.src.u.udp.port;
-+	}
-+#endif
-+
- 	return nf_socket_get_sock_v6(net, data_skb, doff, tproto, saddr, daddr,
- 				     sport, dport, indev);
- }
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index f952918191ef..ee1682a2e038 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -10472,6 +10472,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x103c, 0x8811, "HP Spectre x360 15-eb1xxx", ALC285_FIXUP_HP_SPECTRE_X360_EB1),
- 	SND_PCI_QUIRK(0x103c, 0x8812, "HP Spectre x360 15-eb1xxx", ALC285_FIXUP_HP_SPECTRE_X360_EB1),
- 	SND_PCI_QUIRK(0x103c, 0x881d, "HP 250 G8 Notebook PC", ALC236_FIXUP_HP_MUTE_LED_COEFBIT2),
-+	SND_PCI_QUIRK(0x103c, 0x881e, "HP Laptop 15s-du3xxx", ALC236_FIXUP_HP_MUTE_LED_COEFBIT2),
- 	SND_PCI_QUIRK(0x103c, 0x8846, "HP EliteBook 850 G8 Notebook PC", ALC285_FIXUP_HP_GPIO_LED),
- 	SND_PCI_QUIRK(0x103c, 0x8847, "HP EliteBook x360 830 G8 Notebook PC", ALC285_FIXUP_HP_GPIO_LED),
- 	SND_PCI_QUIRK(0x103c, 0x884b, "HP EliteBook 840 Aero G8 Notebook PC", ALC285_FIXUP_HP_GPIO_LED),
-@@ -10729,6 +10730,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x1043, 0x1d4e, "ASUS TM420", ALC256_FIXUP_ASUS_HPE),
- 	SND_PCI_QUIRK(0x1043, 0x1da2, "ASUS UP6502ZA/ZD", ALC245_FIXUP_CS35L41_SPI_2),
- 	SND_PCI_QUIRK(0x1043, 0x1df3, "ASUS UM5606WA", ALC294_FIXUP_BASS_SPEAKER_15),
-+	SND_PCI_QUIRK(0x1043, 0x1264, "ASUS UM5606KA", ALC294_FIXUP_BASS_SPEAKER_15),
- 	SND_PCI_QUIRK(0x1043, 0x1e02, "ASUS UX3402ZA", ALC245_FIXUP_CS35L41_SPI_2),
- 	SND_PCI_QUIRK(0x1043, 0x1e11, "ASUS Zephyrus G15", ALC289_FIXUP_ASUS_GA502),
- 	SND_PCI_QUIRK(0x1043, 0x1e12, "ASUS UM3402", ALC287_FIXUP_CS35L41_I2C_2),
-diff --git a/sound/usb/mixer_quirks.c b/sound/usb/mixer_quirks.c
-index 23fcd680167d..9b0bf626cd02 100644
---- a/sound/usb/mixer_quirks.c
-+++ b/sound/usb/mixer_quirks.c
-@@ -4216,6 +4216,52 @@ static void snd_dragonfly_quirk_db_scale(struct usb_mixer_interface *mixer,
- 	}
- }
- 
-+/*
-+ * Some Plantronics headsets have control names that don't meet ALSA naming
-+ * standards. This function fixes nonstandard source names. By the time
-+ * this function is called the control name should look like one of these:
-+ * "source names Playback Volume"
-+ * "source names Playback Switch"
-+ * "source names Capture Volume"
-+ * "source names Capture Switch"
-+ * If any of the trigger words are found in the name then the name will
-+ * be changed to:
-+ * "Headset Playback Volume"
-+ * "Headset Playback Switch"
-+ * "Headset Capture Volume"
-+ * "Headset Capture Switch"
-+ * depending on the current suffix.
-+ */
-+static void snd_fix_plt_name(struct snd_usb_audio *chip,
-+			     struct snd_ctl_elem_id *id)
-+{
-+	/* no variant of "Sidetone" should be added to this list */
-+	static const char * const trigger[] = {
-+		"Earphone", "Microphone", "Receive", "Transmit"
-+	};
-+	static const char * const suffix[] = {
-+		" Playback Volume", " Playback Switch",
-+		" Capture Volume", " Capture Switch"
-+	};
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(trigger); i++)
-+		if (strstr(id->name, trigger[i]))
-+			goto triggered;
-+	usb_audio_dbg(chip, "no change in %s\n", id->name);
-+	return;
-+
-+triggered:
-+	for (i = 0; i < ARRAY_SIZE(suffix); i++)
-+		if (strstr(id->name, suffix[i])) {
-+			usb_audio_dbg(chip, "fixing kctl name %s\n", id->name);
-+			snprintf(id->name, sizeof(id->name), "Headset%s",
-+				 suffix[i]);
-+			return;
-+		}
-+	usb_audio_dbg(chip, "something wrong in kctl name %s\n", id->name);
-+}
-+
- void snd_usb_mixer_fu_apply_quirk(struct usb_mixer_interface *mixer,
- 				  struct usb_mixer_elem_info *cval, int unitid,
- 				  struct snd_kcontrol *kctl)
-@@ -4233,5 +4279,10 @@ void snd_usb_mixer_fu_apply_quirk(struct usb_mixer_interface *mixer,
- 			cval->min_mute = 1;
- 		break;
- 	}
-+
-+	/* ALSA-ify some Plantronics headset control names */
-+	if (USB_ID_VENDOR(mixer->chip->usb_id) == 0x047f &&
-+	    (cval->control == UAC_FU_MUTE || cval->control == UAC_FU_VOLUME))
-+		snd_fix_plt_name(mixer->chip, &kctl->id);
- }
- 
-diff --git a/tools/perf/Documentation/intel-hybrid.txt b/tools/perf/Documentation/intel-hybrid.txt
-index e7a776ad25d7..0379903673a4 100644
---- a/tools/perf/Documentation/intel-hybrid.txt
-+++ b/tools/perf/Documentation/intel-hybrid.txt
-@@ -8,15 +8,15 @@ Part of events are available on core cpu, part of events are available
- on atom cpu and even part of events are available on both.
- 
- Kernel exports two new cpu pmus via sysfs:
--/sys/devices/cpu_core
--/sys/devices/cpu_atom
-+/sys/bus/event_source/devices/cpu_core
-+/sys/bus/event_source/devices/cpu_atom
- 
- The 'cpus' files are created under the directories. For example,
- 
--cat /sys/devices/cpu_core/cpus
-+cat /sys/bus/event_source/devices/cpu_core/cpus
- 0-15
- 
--cat /sys/devices/cpu_atom/cpus
-+cat /sys/bus/event_source/devices/cpu_atom/cpus
- 16-23
- 
- It indicates cpu0-cpu15 are core cpus and cpu16-cpu23 are atom cpus.
-@@ -60,8 +60,8 @@ can't carry pmu information. So now this type is extended to be PMU aware
- type. The PMU type ID is stored at attr.config[63:32].
- 
- PMU type ID is retrieved from sysfs.
--/sys/devices/cpu_atom/type
--/sys/devices/cpu_core/type
-+/sys/bus/event_source/devices/cpu_atom/type
-+/sys/bus/event_source/devices/cpu_core/type
- 
- The new attr.config layout for PERF_TYPE_HARDWARE:
- 
-diff --git a/tools/perf/Documentation/perf-list.txt b/tools/perf/Documentation/perf-list.txt
-index d0c65fad419a..c3ffd93f94d7 100644
---- a/tools/perf/Documentation/perf-list.txt
-+++ b/tools/perf/Documentation/perf-list.txt
-@@ -188,7 +188,7 @@ in the CPU vendor specific documentation.
- 
- The available PMUs and their raw parameters can be listed with
- 
--  ls /sys/devices/*/format
-+  ls /sys/bus/event_source/devices/*/format
- 
- For example the raw event "LSD.UOPS" core pmu event above could
- be specified as
-diff --git a/tools/perf/arch/x86/util/iostat.c b/tools/perf/arch/x86/util/iostat.c
-index 366b44d0bb7e..ac26ad07ccc1 100644
---- a/tools/perf/arch/x86/util/iostat.c
-+++ b/tools/perf/arch/x86/util/iostat.c
-@@ -32,7 +32,7 @@
- #define MAX_PATH 1024
- #endif
- 
--#define UNCORE_IIO_PMU_PATH	"devices/uncore_iio_%d"
-+#define UNCORE_IIO_PMU_PATH	"bus/event_source/devices/uncore_iio_%d"
- #define SYSFS_UNCORE_PMU_PATH	"%s/"UNCORE_IIO_PMU_PATH
- #define PLATFORM_MAPPING_PATH	UNCORE_IIO_PMU_PATH"/die%d"
- 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index fdf5172646a5..55745b780f28 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -97,7 +97,7 @@
- #include <internal/threadmap.h>
- 
- #define DEFAULT_SEPARATOR	" "
--#define FREEZE_ON_SMI_PATH	"devices/cpu/freeze_on_smi"
-+#define FREEZE_ON_SMI_PATH	"bus/event_source/devices/cpu/freeze_on_smi"
- 
- static void print_counters(struct timespec *ts, int argc, const char **argv);
- 
-diff --git a/tools/perf/util/mem-events.c b/tools/perf/util/mem-events.c
-index bf5090f5220b..9c4adfb45f62 100644
---- a/tools/perf/util/mem-events.c
-+++ b/tools/perf/util/mem-events.c
-@@ -189,7 +189,7 @@ static bool perf_pmu__mem_events_supported(const char *mnt, struct perf_pmu *pmu
- 	if (!e->event_name)
- 		return true;
- 
--	scnprintf(path, PATH_MAX, "%s/devices/%s/events/%s", mnt, pmu->name, e->event_name);
-+	scnprintf(path, PATH_MAX, "%s/bus/event_source/devices/%s/events/%s", mnt, pmu->name, e->event_name);
- 
- 	return !stat(path, &st);
- }
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 08a9d0bd9301..d217678631ff 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -35,12 +35,12 @@
- #define UNIT_MAX_LEN	31 /* max length for event unit name */
- 
- enum event_source {
--	/* An event loaded from /sys/devices/<pmu>/events. */
-+	/* An event loaded from /sys/bus/event_source/devices/<pmu>/events. */
- 	EVENT_SRC_SYSFS,
- 	/* An event loaded from a CPUID matched json file. */
- 	EVENT_SRC_CPU_JSON,
- 	/*
--	 * An event loaded from a /sys/devices/<pmu>/identifier matched json
-+	 * An event loaded from a /sys/bus/event_source/devices/<pmu>/identifier matched json
- 	 * file.
- 	 */
- 	EVENT_SRC_SYS_JSON,
+      struct vring_virtqueue *vq = to_vvq(_vq);
+
+	switch (vq->ops) {
+	 VQ_PACKED:
+	 VQ_SPLIT:
+	 VQ_IN_ORDER:
+	}
+
+
+}
+
+
+What do you think?
+
+
+
+> +
+>  struct vring_virtqueue {
+>  	struct virtqueue vq;
+>  
+> +	struct virtqueue_ops *ops;
+> +
+>  	/* Is this a packed ring? */
+>  	bool packed_ring;
+>  
+> @@ -1116,6 +1137,8 @@ static int vring_alloc_queue_split(struct vring_virtqueue_split *vring_split,
+>  	return 0;
+>  }
+>  
+> +struct virtqueue_ops split_ops;
+> +
+>  static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
+>  					       struct vring_virtqueue_split *vring_split,
+>  					       struct virtio_device *vdev,
+> @@ -1134,6 +1157,7 @@ static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
+>  		return NULL;
+>  
+>  	vq->packed_ring = false;
+> +	vq->ops = &split_ops;
+>  	vq->vq.callback = callback;
+>  	vq->vq.vdev = vdev;
+>  	vq->vq.name = name;
+> @@ -2076,6 +2100,8 @@ static void virtqueue_reset_packed(struct vring_virtqueue *vq)
+>  	virtqueue_vring_init_packed(&vq->packed, !!vq->vq.callback);
+>  }
+>  
+> +struct virtqueue_ops packed_ops;
+> +
+>  static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
+>  					       struct vring_virtqueue_packed *vring_packed,
+>  					       struct virtio_device *vdev,
+> @@ -2107,6 +2133,7 @@ static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
+>  	vq->broken = false;
+>  #endif
+>  	vq->packed_ring = true;
+> +	vq->ops = &packed_ops;
+>  	vq->dma_dev = dma_dev;
+>  	vq->use_dma_api = vring_use_dma_api(vdev);
+>  
+> @@ -2194,6 +2221,34 @@ static int virtqueue_resize_packed(struct vring_virtqueue *vq, u32 num)
+>  	return -ENOMEM;
+>  }
+>  
+> +struct virtqueue_ops split_ops = {
+> +	.add = virtqueue_add_split,
+> +	.get = virtqueue_get_buf_ctx_split,
+> +	.kick_prepare = virtqueue_kick_prepare_split,
+> +	.disable_cb = virtqueue_disable_cb_split,
+> +	.enable_cb_delayed = virtqueue_enable_cb_delayed_split,
+> +	.enable_cb_prepare = virtqueue_enable_cb_prepare_split,
+> +	.poll = virtqueue_poll_split,
+> +	.detach_unused_buf = virtqueue_detach_unused_buf_split,
+> +	.more_used = more_used_split,
+> +	.resize = virtqueue_resize_split,
+> +	.reset = virtqueue_reset_split,
+> +};
+> +
+> +struct virtqueue_ops packed_ops = {
+> +	.add = virtqueue_add_packed,
+> +	.get = virtqueue_get_buf_ctx_packed,
+> +	.kick_prepare = virtqueue_kick_prepare_packed,
+> +	.disable_cb = virtqueue_disable_cb_packed,
+> +	.enable_cb_delayed = virtqueue_enable_cb_delayed_packed,
+> +	.enable_cb_prepare = virtqueue_enable_cb_prepare_packed,
+> +	.poll = virtqueue_poll_packed,
+> +	.detach_unused_buf = virtqueue_detach_unused_buf_packed,
+> +	.more_used = more_used_packed,
+> +	.resize = virtqueue_resize_packed,
+> +	.reset = virtqueue_reset_packed,
+> +};
+> +
+>  static int virtqueue_disable_and_recycle(struct virtqueue *_vq,
+>  					 void (*recycle)(struct virtqueue *vq, void *buf))
+>  {
+> @@ -2248,10 +2303,8 @@ static inline int virtqueue_add(struct virtqueue *_vq,
+>  {
+>  	struct vring_virtqueue *vq = to_vvq(_vq);
+>  
+> -	return vq->packed_ring ? virtqueue_add_packed(vq, sgs, total_sg,
+> -					out_sgs, in_sgs, data, ctx, premapped, gfp) :
+> -				 virtqueue_add_split(vq, sgs, total_sg,
+> -					out_sgs, in_sgs, data, ctx, premapped, gfp);
+> +	return vq->ops->add(vq, sgs, total_sg,
+> +			    out_sgs, in_sgs, data, ctx, premapped, gfp);
+>  }
+>  
+>  /**
+> @@ -2437,8 +2490,7 @@ bool virtqueue_kick_prepare(struct virtqueue *_vq)
+>  {
+>  	struct vring_virtqueue *vq = to_vvq(_vq);
+>  
+> -	return vq->packed_ring ? virtqueue_kick_prepare_packed(vq) :
+> -				 virtqueue_kick_prepare_split(vq);
+> +	return vq->ops->kick_prepare(vq);
+>  }
+>  EXPORT_SYMBOL_GPL(virtqueue_kick_prepare);
+>  
+> @@ -2508,8 +2560,7 @@ void *virtqueue_get_buf_ctx(struct virtqueue *_vq, unsigned int *len,
+>  {
+>  	struct vring_virtqueue *vq = to_vvq(_vq);
+>  
+> -	return vq->packed_ring ? virtqueue_get_buf_ctx_packed(vq, len, ctx) :
+> -				 virtqueue_get_buf_ctx_split(vq, len, ctx);
+> +	return vq->ops->get(vq, len, ctx);
+>  }
+>  EXPORT_SYMBOL_GPL(virtqueue_get_buf_ctx);
+>  
+> @@ -2531,10 +2582,7 @@ void virtqueue_disable_cb(struct virtqueue *_vq)
+>  {
+>  	struct vring_virtqueue *vq = to_vvq(_vq);
+>  
+> -	if (vq->packed_ring)
+> -		virtqueue_disable_cb_packed(vq);
+> -	else
+> -		virtqueue_disable_cb_split(vq);
+> +	return vq->ops->disable_cb(vq);
+>  }
+>  EXPORT_SYMBOL_GPL(virtqueue_disable_cb);
+>  
+> @@ -2557,8 +2605,7 @@ unsigned int virtqueue_enable_cb_prepare(struct virtqueue *_vq)
+>  	if (vq->event_triggered)
+>  		vq->event_triggered = false;
+>  
+> -	return vq->packed_ring ? virtqueue_enable_cb_prepare_packed(vq) :
+> -				 virtqueue_enable_cb_prepare_split(vq);
+> +	return vq->ops->enable_cb_prepare(vq);
+>  }
+>  EXPORT_SYMBOL_GPL(virtqueue_enable_cb_prepare);
+>  
+> @@ -2579,8 +2626,7 @@ bool virtqueue_poll(struct virtqueue *_vq, unsigned int last_used_idx)
+>  		return false;
+>  
+>  	virtio_mb(vq->weak_barriers);
+> -	return vq->packed_ring ? virtqueue_poll_packed(vq, last_used_idx) :
+> -				 virtqueue_poll_split(vq, last_used_idx);
+> +	return vq->ops->poll(vq, last_used_idx);
+>  }
+>  EXPORT_SYMBOL_GPL(virtqueue_poll);
+>  
+> @@ -2623,8 +2669,7 @@ bool virtqueue_enable_cb_delayed(struct virtqueue *_vq)
+>  	if (vq->event_triggered)
+>  		vq->event_triggered = false;
+>  
+> -	return vq->packed_ring ? virtqueue_enable_cb_delayed_packed(vq) :
+> -				 virtqueue_enable_cb_delayed_split(vq);
+> +	return vq->ops->enable_cb_delayed(vq);
+>  }
+>  EXPORT_SYMBOL_GPL(virtqueue_enable_cb_delayed);
+>  
+> @@ -2640,14 +2685,13 @@ void *virtqueue_detach_unused_buf(struct virtqueue *_vq)
+>  {
+>  	struct vring_virtqueue *vq = to_vvq(_vq);
+>  
+> -	return vq->packed_ring ? virtqueue_detach_unused_buf_packed(vq) :
+> -				 virtqueue_detach_unused_buf_split(vq);
+> +	return vq->ops->detach_unused_buf(vq);
+>  }
+>  EXPORT_SYMBOL_GPL(virtqueue_detach_unused_buf);
+>  
+>  static inline bool more_used(const struct vring_virtqueue *vq)
+>  {
+> -	return vq->packed_ring ? more_used_packed(vq) : more_used_split(vq);
+> +	return vq->ops->more_used(vq);
+>  }
+>  
+>  /**
+> @@ -2785,10 +2829,7 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
+>  	if (recycle_done)
+>  		recycle_done(_vq);
+>  
+> -	if (vq->packed_ring)
+> -		err = virtqueue_resize_packed(vq, num);
+> -	else
+> -		err = virtqueue_resize_split(vq, num);
+> +	err = vq->ops->resize(vq, num);
+>  
+>  	return virtqueue_enable_after_reset(_vq);
+>  }
+> @@ -2822,10 +2863,7 @@ int virtqueue_reset(struct virtqueue *_vq,
+>  	if (recycle_done)
+>  		recycle_done(_vq);
+>  
+> -	if (vq->packed_ring)
+> -		virtqueue_reset_packed(vq);
+> -	else
+> -		virtqueue_reset_split(vq);
+> +	vq->ops->reset(vq);
+>  
+>  	return virtqueue_enable_after_reset(_vq);
+>  }
+> -- 
+> 2.42.0
+
 
