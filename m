@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-591433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92202A7DFD2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:45:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD80A7DFC7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F33E83BB078
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:39:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20AA0188E0EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF1817ADF8;
-	Mon,  7 Apr 2025 13:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E028F15A864;
+	Mon,  7 Apr 2025 13:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jpOE4Xsi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M2qELMEy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4E7146593;
-	Mon,  7 Apr 2025 13:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3E1A926
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 13:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744033204; cv=none; b=ntET27M5Xt2mTFs9UmmrTfZ7ERXDSeM9MibyK8GYqLvqIXRWjO0AhdazgJYWkcpsw8Fu7c71zpZnVXOdrJErBou9Y4jAW/pm0MLXF2fFQtv/d0Pdt3aQs+abnRpHC8DYMOg9inQyDbEy9s4Was0JZtcqN78e19tnW/qYhhdPeO4=
+	t=1744033237; cv=none; b=na/wp3jDMcMPmqLb2j46sLml/VlogyGHWrj6gKYVpnuoP+tbwlbdLkEUJkZHufzG71tPFBCtiKyvEktQBlUPi+JNOg27UfZUXSeM05IW2mP0ek3i4WozePqJtASZxSBw+uACQqPhk541z2ECBIORsjCp2xt56fFEAVun/f1s9xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744033204; c=relaxed/simple;
-	bh=3Jsy3U8ncbmDNsptsfF9HvnjrFQt4I1GMdj0SZq/fzs=;
+	s=arc-20240116; t=1744033237; c=relaxed/simple;
+	bh=2+8xpWDE1JSa1sgMFp+UIO4irSIqbfQMvph9iOUZezQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cUdGhBRDY6R9rlmmKEMkGjTiZWxOPYEnWcn8RxF12j3iMOKZjg6CbfCUpmmdhO/JDdR1zDBLSIU+3Ksy7YUHGj4y5AuAyrVRyxjdwuxRwAyGmRBTqmei5UAorUAaOtJBGYynWGv1HaeQ4kGY+myRximsvExnQ+HKiAI4TJVfKB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jpOE4Xsi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 020E2C4CEDD;
-	Mon,  7 Apr 2025 13:40:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744033203;
-	bh=3Jsy3U8ncbmDNsptsfF9HvnjrFQt4I1GMdj0SZq/fzs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jpOE4XsiNPaNz5DJf0PaXDEDnphzgxL8k9uTxP0AKGzcklQGu3k6nKw5At/sHjQPU
-	 Nc/RE53PVfGHBx/bo2Vf4BGXZvw+ak/a/23PdGHvw8KarWw1loqMVgGPuJ/3I+NA2y
-	 U0+c9prQ+RnOJHvMy+aQ3KbglvYEdmWoUKnUhv4Km64VuFE6Yqic5sKz/VsUuVd4mA
-	 wG3nu0TNHb0lsdT2nIE6A3/IjeRBQ+glkfCN0M5VVzsB5NxiHl4G4+58kO0Edtwc7v
-	 1ujEUlavDc5/6ueEdJVqnhmgOUGenEcZhNtYTzlLuIhEPs7AVuC5Bd0DaSUF9Kxoyi
-	 YFPKeLz3gxmTA==
-Date: Mon, 7 Apr 2025 08:40:01 -0500
-From: Rob Herring <robh@kernel.org>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	ghost <2990955050@qq.com>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Jisheng Zhang <jszhang@kernel.org>, Chao Wei <chao.wei@sophgo.com>,
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-mmc@vger.kernel.org, Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH 4/9] dt-bindings: reset: sophgo: Add SG2044 bindings.
-Message-ID: <20250407134001.GA2088093-robh@kernel.org>
-References: <20250407010616.749833-1-inochiama@gmail.com>
- <20250407010616.749833-5-inochiama@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GD2Ale+5JLXM1sYs4APauGe46N9EDVY/O5Is0fMXk51X2cTqoegCKmTckIxHwuwhey6S/lsSMpz7hEFHwi9tKN7dcA/p/B7NDcwqmMOgzNy9Yer7U1if8+JWzar2Q/nJ0LGuqTWtQiRAqDGH7get7X+CqDrBcHbzpq2HB5Wx2y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M2qELMEy; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744033235; x=1775569235;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2+8xpWDE1JSa1sgMFp+UIO4irSIqbfQMvph9iOUZezQ=;
+  b=M2qELMEyO0OFXbVNZB3+/Skgk/ZhMLgxReTKRlmYCUjQmOsSW57tkNX9
+   DGGVUIT9bTroOETxiYYj7+8pH/xncbYxGr+31kBDnCLKl0Ss4OcaI6t+c
+   Mf1UcnMSayULX6Cqsz4f3Mc114vFidNA/ACiFPXwDb34XGGPe81RcP16C
+   SFeViF+BvubNqrGOeDlSVT/eMRtd5gVaceRdF9Anwbxh5fU2zzrFBB7os
+   ihVbKoHwiNm0hCi5FUpKUvRRaq4tPmocgiiK9r3Nhspr4bQiKiT5VDgFL
+   4g6huboPT8FXKIaYjui+kHImbj8KZWshohUz39LbTCWN0q9xq4gYirDYn
+   w==;
+X-CSE-ConnectionGUID: IanGWpgzSJOj4VuFPrN2bw==
+X-CSE-MsgGUID: rwpQ1CRITai+79MsizHeyA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45309229"
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="45309229"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 06:40:35 -0700
+X-CSE-ConnectionGUID: KdokhP2wTFe2ZhORUHPceg==
+X-CSE-MsgGUID: 484JDqSkQoOPMb+Q+c2BWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="132934246"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 06:40:34 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u1miF-0000000A5Cw-0TiG;
+	Mon, 07 Apr 2025 16:40:31 +0300
+Date: Mon, 7 Apr 2025 16:40:30 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] devres: simplify devm_kstrdup() using devm_kmemdup()
+Message-ID: <Z_PVztG9gGd7g03N@smile.fi.intel.com>
+References: <20250407121311.1702521-1-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,22 +77,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250407010616.749833-5-inochiama@gmail.com>
+In-Reply-To: <20250407121311.1702521-1-raag.jadav@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Apr 07, 2025 at 09:06:09AM +0800, Inochi Amaoto wrote:
-> The SG2044 shares the same reset controller as SG2042, so it
-> is just enough to use the compatible string of SG2042 as a
-> basis.
+On Mon, Apr 07, 2025 at 05:43:11PM +0530, Raag Jadav wrote:
+> devm_kstrdup() logic pretty much reflects devm_kmemdup() for strings,
+> so just reuse it.
 
-You can drop 'binding.' from the subject.
+...
 
-> 
-> Add compatible string for the reset controller of SG2044.
-> 
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> ---
->  .../devicetree/bindings/reset/sophgo,sg2042-reset.yaml     | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+>  char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
+>  {
+> -	size_t size;
+> -	char *buf;
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> -	if (!s)
+> -		return NULL;
+
+There is no point to touch these lines.
+And this is the style used in the file elsewhere.
+
+> -	size = strlen(s) + 1;
+> -	buf = devm_kmalloc(dev, size, gfp);
+> -	if (buf)
+> -		memcpy(buf, s, size);
+> -	return buf;
+> +	return s ? devm_kmemdup(dev, s, strlen(s) + 1, gfp) : NULL;
+>  }
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
