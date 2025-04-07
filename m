@@ -1,125 +1,67 @@
-Return-Path: <linux-kernel+bounces-590602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE049A7D4CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:59:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35472A7D484
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:51:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 595641670C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:59:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D73CA188E349
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFDF225A22;
-	Mon,  7 Apr 2025 06:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f4Fxxy8P"
-Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0439522540A;
+	Mon,  7 Apr 2025 06:51:21 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A65225776
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 06:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1042322B;
+	Mon,  7 Apr 2025 06:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744009140; cv=none; b=TxB17NH6xT1ZlwMCu2bZ8zLDC2DjLm0mihn2eAoFJVNJ24cOloek0sFNohFx0c3nKVeItwgfCS5724QU8KrKZxaraFGmFWzPb34oSQTpR6aEyqH2ibk3x9z+vcxiSsJ20YVYNnX0QKCKIA+b99knoaiZt71l1i5UTye7ZmhOQO4=
+	t=1744008680; cv=none; b=B6rrxZu7u5YCMtzetStoO9r13krJmV5EVJy422PaZxTv3FD57JBGlANF1fSC2xJvEE4YzyKhFdKbqaqHfjVjWvYtOEWFft2K3I0fA1Auprs0e6L+jagSgY4O48TeUf0FdjfhpdQIKWinhO0aEudS+y4n8sbGksHhk706TVYIi40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744009140; c=relaxed/simple;
-	bh=z+jxWqKxyeO5QNJuDToNT3262v1CJ58P5Q9DJ8I/mso=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IYYGJMXBfaEXWuKIeu60CJ6RZjA78MkvArb7+XheHulCqAXFSMlFJjN/a7vVPMSrYMoARbz5v1kxab1rWA4BGJGDXdn/X/cbA7A8SrIoOWwAeGdXo67hnSDyQdTUV1tzdS1BEnoJj2zqNyQNRbvfA4+/19wQ3DofMrWINnjelFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f4Fxxy8P; arc=none smtp.client-ip=217.70.178.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	by mslow3.mail.gandi.net (Postfix) with ESMTP id 87F1C582803
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 06:51:09 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E0AEA44354;
-	Mon,  7 Apr 2025 06:51:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744008662;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CtkCibXJB/RAmbeTC0As2u6SgcfbFFbzL81/+9wXhXA=;
-	b=f4Fxxy8P4A8uNP2ya5EyjjqSi8Jlhk+SbkkDPZMSuBCy2I4z7CrB0NoeTp+9wF1ic9GcIo
-	ynP4N5mlg/G0CAOwRSnJ7DenxNN7zlKfQM9PrmKyx0KxlmpZRIRXRbYgIL/qB1T9DCySpE
-	pmykKA6sWDHCEq5nu0c5+Ke1jflZQvuRve+hcolWZcRJrvAw3RB5IK1FB6NhBEGP4zjyNe
-	FNPZK2gmtqi37AvlQiVPxqn1UfrkryW4MrC3T+ydQFlvAqlRikT/UxE68FS5+7gCtcpUOs
-	HL5xr6BNP1Re6aLILxxklJgBABEr0J4VsG1A3yBfaKGE8LRnTGnZJRisRZ7jHw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Wentao Liang <vulab@iscas.ac.cn>
-Cc: richard@nod.at,  vigneshr@ti.com,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mtd: bcm47xxnflash: Add error handling for
- bcm47xxnflash_ops_bcm4706_ctl_cmd()
-In-Reply-To: <20250405143348.2477-1-vulab@iscas.ac.cn> (Wentao Liang's message
-	of "Sat, 5 Apr 2025 22:33:47 +0800")
-References: <20250405143348.2477-1-vulab@iscas.ac.cn>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 07 Apr 2025 08:51:00 +0200
-Message-ID: <875xjgihwr.fsf@bootlin.com>
+	s=arc-20240116; t=1744008680; c=relaxed/simple;
+	bh=tzBmK7cmEirE67951CjBYF7TlBQ2fFR57orfuBTWVgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NgRMw79NHr6UQlk4I6FgqyRvEXtplcsk37ckB9aZBClFKWb/xGBNogUa3Gtp9I3hXm9uY/BJ7vkWE4A/OL2WV01MSBQli197X92l24E7hN73nBWLJujomvjbDm3LSuILvW7pxYibNnYc+bIreStrqClEOm3gUEQxpCM+dSpAgeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 540DE68BFE; Mon,  7 Apr 2025 08:51:11 +0200 (CEST)
+Date: Mon, 7 Apr 2025 08:51:11 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, alx@kernel.org, brauner@kernel.org,
+	djwong@kernel.org, dchinner@redhat.com, linux-man@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com,
+	linux-api@vger.kernel.org
+Subject: Re: [PATCH RFC] statx.2: Add stx_atomic_write_unit_max_opt
+Message-ID: <20250407065111.GA18891@lst.de>
+References: <20250319114402.3757248-1-john.g.garry@oracle.com> <20250320070048.GA14099@lst.de> <c656fa4d-eb76-4caa-8a71-a8d8a2ba6206@oracle.com> <20250320141200.GC10939@lst.de> <7311545c-e169-4875-bc6c-97446eea2c45@oracle.com> <20250323064029.GA30848@lst.de> <5485c1ad-8a20-40bc-aa75-68b820de5e1c@oracle.com> <20250404090601.GA12163@lst.de> <aab0aa19-f279-42b4-9ab7-0cc6e2fa3b9f@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: 0
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduleelhedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhephffvvefujghffgffkfggtgfgsehtqhertddtreejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepffeghfejtdefieeguddukedujeektdeihfelleeuieeuveehkedvleduheeivdefnecukfhppeelvddrudekgedruddtkedrfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeelvddrudekgedruddtkedrfedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohephedprhgtphhtthhopehvuhhlrggssehishgtrghsrdgrtgdrtghnpdhrtghpthhtoheprhhitghhrghrugesnhhougdrrghtpdhrtghpthhtohepvhhighhnvghshhhrsehtihdrtghomhdprhgtphhtthhopehlihhnuhigqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aab0aa19-f279-42b4-9ab7-0cc6e2fa3b9f@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hello Liang,
-
-On 05/04/2025 at 22:33:47 +08, Wentao Liang <vulab@iscas.ac.cn> wrote:
-
-> The bcm47xxnflash_ops_bcm4706_cmd_ctrl() calls
-> bcm47xxnflash_ops_bcm4706_ctl_cmd() without printing error message. A
-> proper implementation can be found in
-> bcm47xxnflash_ops_bcm4706_write().
-
-This is a problem with cmd_ctrl, but this interface has been deprecated
-~5y ago and people encouraged to transition to ->exec_op(). Did you
-personally experience issues with that or is this just code analysis? If
-you are actually using this driver, I'd highly suggest to update the
-driver.
-
-> Add error log to the bcm47xxnflash_ops_bcm4706_ctl_cmd() to prevent
-> silent failure.
+On Fri, Apr 04, 2025 at 10:23:09AM +0100, John Garry wrote:
+>> that optimized case will not involve the usual hardware offload.
+>>
+>>
+> stx_atomic_write_unit_max_opt it is then.
 >
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
-> ---
->  drivers/mtd/nand/raw/bcm47xxnflash/ops_bcm4706.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mtd/nand/raw/bcm47xxnflash/ops_bcm4706.c b/drivers/m=
-td/nand/raw/bcm47xxnflash/ops_bcm4706.c
-> index 6487dfc64258..c89129588bb6 100644
-> --- a/drivers/mtd/nand/raw/bcm47xxnflash/ops_bcm4706.c
-> +++ b/drivers/mtd/nand/raw/bcm47xxnflash/ops_bcm4706.c
-> @@ -182,7 +182,8 @@ static void bcm47xxnflash_ops_bcm4706_cmd_ctrl(struct=
- nand_chip *nand_chip,
->  	if (cmd !=3D NAND_CMD_RESET)
->  		code |=3D NCTL_CSA;
->=20=20
-> -	bcm47xxnflash_ops_bcm4706_ctl_cmd(b47n->cc, code);
-> +	if (bcm47xxnflash_ops_bcm4706_ctl_cmd(b47n->cc, code))
-> +		pr_err("%s ctl_cmd didn't work!\n", __func__);
+> Or stx_atomic_write_unit_max_optimal or stx_atomic_write_unit_max_fast. Or 
+> similar..
 
-dev_err() is probably better
-__func__ is not needed
-If we want to make it a bit usable, I'd say that the return code shall
-be there as well.
-
->  }
->=20=20
->  /* Default nand_select_chip calls cmd_ctrl, which is not used in BCM4706=
- */
-
-Thanks,
-Miqu=C3=A8l
+As we've used opt in various other ABIs I'd stick to that.
 
 
