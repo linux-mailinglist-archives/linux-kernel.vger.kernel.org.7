@@ -1,180 +1,171 @@
-Return-Path: <linux-kernel+bounces-592032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 742B9A7E84D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:31:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D4C6A7E855
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76BD5176998
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:31:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11AA43BAA81
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF15121B9F7;
-	Mon,  7 Apr 2025 17:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0831122154D;
+	Mon,  7 Apr 2025 17:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xOnqdr91";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Sj50TaCR"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1WfzKgK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7C0217727;
-	Mon,  7 Apr 2025 17:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526D021C9EE;
+	Mon,  7 Apr 2025 17:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744046982; cv=none; b=PWUEJD60kzDBSML1WkMrDRTa3AxzwRL1Z2tIaAQvp0YWBucqdqg55HrAIhvxZ6m7Vv5e/M6UX9gOTiM2dTVdloaR8qxa75s/pcvreXWvrVSFenPhPv7052OokuUcKWORAQpE+F78EhNA+tm9KqxB7g7PyGCpdcLUVNLMztgV5+Y=
+	t=1744046984; cv=none; b=fTVu8qFYUfykxfzvHSw2q7nR6zNMRptukT9mp4nwzfleUzybgICy5MMMeK4tbRHDD9ebZNCUaP+BpGintDAsoDa0FusiTxL7MhSCmCDvPFdwRTzLokZtLddEzWS/1/ItCTOWNm6q/3AMgGtIxm+uZCqv+GLzNBB5yOdUqM4p9HQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744046982; c=relaxed/simple;
-	bh=Ae7s0sZ4Zx6k346VjblLIi165drnn7cUExdqbW77Dos=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=QjTR8ocFkbEhE+Ag/lCY9koiu6VChcS/Hy2CyKisxHkuC6yDkYtmdp/+br6DjpWs0xNNDZRvhByw4+YAK7JBJDujDmFuPeQidpYbElEBNkIr3IclCPT9CJz6JS2zGhugiWQZO/h5ya8MZO2aUM10isg7KWx9C9/uhkO5dtcnfjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xOnqdr91; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Sj50TaCR; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 07 Apr 2025 17:29:33 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744046977;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yYJveTcpMfqH/k0+ktUtmw8ttCMVtye0N3XZidpAX3Y=;
-	b=xOnqdr91qssa5q23OLcemwEDw6REShJwFYdyL0M2O2uGhO0RXZjbh6YhLuntwChcs7g9v+
-	m/sdD7Pt4hOZ/unsT8TNO31dBJ83y7J4Ep3SHqqklK3uDYO8GeMlhTKx87kuGs+F2jRFzf
-	V1b2bL7192YjWR8avTy5NPytcpL/6Nx3RsCb6PH+7fh++gIdHMOwVTqjDEp61XnnivwhED
-	cMcNnDEjTskSZv4YghI02y6HxoLTRet7nFfbJpg4yhV6iXMh7N8ewW7rAwjMICe4omGVgH
-	7XON9NPD5paezd7WRZKawKYkEKPfzVrCHz38s7fyrOoSy7HPRUmD7XbZVf90mA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744046977;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yYJveTcpMfqH/k0+ktUtmw8ttCMVtye0N3XZidpAX3Y=;
-	b=Sj50TaCRC7qjymRx3tpsBP/xoryPB35N2+K5HAYsFaqel2CWWVXZNrsu4FCTkZd+21OhN2
-	hf8q/tDyCqv92vAw==
-From: "tip-bot2 for Myrrh Periwinkle" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/e820: Fix handling of subpage regions when
- calculating nosave ranges in e820__register_nosave_regions()
-Cc: Roberto Ricci <io@r-ricci.it>,
- Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>,
- Ingo Molnar <mingo@kernel.org>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Ard Biesheuvel <ardb@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
- Kees Cook <keescook@chromium.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- David Woodhouse <dwmw@amazon.co.uk>, Len Brown <len.brown@intel.com>,
- stable@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250406-fix-e820-nosave-v3-1-f3787bc1ee1d@qtmlabs.xyz>
-References: <20250406-fix-e820-nosave-v3-1-f3787bc1ee1d@qtmlabs.xyz>
+	s=arc-20240116; t=1744046984; c=relaxed/simple;
+	bh=Y56DO+aQRPCY5yQB0R16rZt+S1/MCsRiFYTZs4yOjj4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jE6G0wzgM1gO1rVbRzvrUZ/Ens9SDVHEPIR66jkKi/GB+DByqixAvuX/TnSVhwjebEmFIyTsxp2gKTREmRQ3rtqY8cqMBuj8sFmdwbBP+p2VZ0PBnNj45yTxsM1FHwfcFJr41b1hmXP/K/mulajELiy4mYCBmEmWg73J3OlqHeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E1WfzKgK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9697C4CEEE;
+	Mon,  7 Apr 2025 17:29:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744046983;
+	bh=Y56DO+aQRPCY5yQB0R16rZt+S1/MCsRiFYTZs4yOjj4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=E1WfzKgKCt4SgeEDDWwUT4E4twz9yGyxdTp6+8MqGzG8jUWUQC1lA0w351L+Ii1s/
+	 XW7sYkbn2Ft3jg87GRZwD9m76n6RbRgKq3E7IN+rjAzar5eTCSe8vXTVksrxJpgPNC
+	 6IXO8mYNuAPe8wiSeayjuleQeJ0SphxcefYaUXbT1nvqY86XlAKI2jBBMq63QifsbZ
+	 z07VeixjFhsHWE5liVXTD64io/KnfOHK0RxgzT9m6ly64VOBHwLKwO8JY+LR4QP3Pi
+	 UW878es2wOrQQuLZ/VNruWrbOSggUflFVs8rpc8G7rP2bDHEQ7j+mPxpBuqvxHStWa
+	 zxHFrb8lcFiPg==
+From: Kees Cook <kees@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alejandro Colomar <alx@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	"Maciej W. Rozycki" <macro@orcam.me.uk>,
+	Azeem Shaikh <azeemshaikh38@gmail.com>,
+	Alex Elder <elder@kernel.org>,
+	Sumit Garg <sumit.garg@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2] EISA: Increase length of device names
+Date: Mon,  7 Apr 2025 10:29:35 -0700
+Message-Id: <20250407172926.it.281-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174404697318.31282.6099676690393066740.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3862; i=kees@kernel.org; h=from:subject:message-id; bh=Y56DO+aQRPCY5yQB0R16rZt+S1/MCsRiFYTZs4yOjj4=; b=owGbwMvMwCVmps19z/KJym7G02pJDOlfuOt2Bc6I5BYwuCsS/WcnD8Pj3/Nf5ixSVNtw8cFZ8 f8Tlkj2dpSyMIhxMciKKbIE2bnHuXi8bQ93n6sIM4eVCWQIAxenAEzE15WRYaLU4TN8HEc+L3wQ yvo2PLTmqsuyFNmXhy8XPU7OZ37CKcHIsN1llu+qQJtTzZtSIx8d0Hjl9Pbr9OKdAf8v2bw83ca /ix0A
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/urgent branch of tip:
+GCC 15's -Wunterminated-string-initialization warned about truncated
+name strings. Instead of marking them with the "nonstring" attribute[1],
+increase their length to correctly include enough space for the
+terminating NUL character, as they are used with %s format specifiers
+when showing resource allocations in /proc/ioports:
 
-Commit-ID:     f2f29da9f0d4367f6ff35e0d9d021257bb53e273
-Gitweb:        https://git.kernel.org/tip/f2f29da9f0d4367f6ff35e0d9d021257bb53e273
-Author:        Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
-AuthorDate:    Sun, 06 Apr 2025 11:45:22 +07:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 07 Apr 2025 19:20:08 +02:00
+        seq_printf(m, "%*s%0*llx-%0*llx : %s\n", ..., r->name);
 
-x86/e820: Fix handling of subpage regions when calculating nosave ranges in e820__register_nosave_regions()
+The strings in eisa.ids have a max length of 73, and the 50 limit was an
+arbitrary limit that was removed back in 2008 with commit ca52a49846f1
+("driver core: remove DEVICE_NAME_SIZE define"). Change the limit to 74
+so nothing is truncated any more.
 
-While debugging kexec/hibernation hangs and crashes, it turned out that
-the current implementation of e820__register_nosave_regions() suffers from
-multiple serious issues:
+Additionally fix the Makefile to use "if_changed" instead of "cmd"
+to detect changes to the command line used to generate the target,
+otherwise devlist.h won't be rebuilt.
 
- - The end of last region is tracked by PFN, causing it to find holes
-   that aren't there if two consecutive subpage regions are present
-
- - The nosave PFN ranges derived from holes are rounded out (instead of
-   rounded in) which makes it inconsistent with how explicitly reserved
-   regions are handled
-
-Fix this by:
-
- - Treating reserved regions as if they were holes, to ensure consistent
-   handling (rounding out nosave PFN ranges is more correct as the
-   kernel does not use partial pages)
-
- - Tracking the end of the last RAM region by address instead of pages
-   to detect holes more precisely
-
-These bugs appear to have been introduced about ~18 years ago with the very
-first version of e820_mark_nosave_regions(), and its flawed assumptions were
-carried forward uninterrupted through various waves of rewrites and renames.
-
-[ mingo: Added Git archeology details, for kicks and giggles. ]
-
-Fixes: e8eff5ac294e ("[PATCH] Make swsusp avoid memory holes and reserved memory regions on x86_64")
-Reported-by: Roberto Ricci <io@r-ricci.it>
-Tested-by: Roberto Ricci <io@r-ricci.it>
-Signed-off-by: Myrrh Periwinkle <myrrhperiwinkle@qtmlabs.xyz>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Len Brown <len.brown@intel.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20250406-fix-e820-nosave-v3-1-f3787bc1ee1d@qtmlabs.xyz
-Closes: https://lore.kernel.org/all/Z4WFjBVHpndct7br@desktop0a/
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117178 [1]
+Signed-off-by: Kees Cook <kees@kernel.org>
 ---
- arch/x86/kernel/e820.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+Cc: Alejandro Colomar <alx@kernel.org>
+Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Azeem Shaikh <azeemshaikh38@gmail.com>
+Cc: Alex Elder <elder@kernel.org>
+Cc: Sumit Garg <sumit.garg@kernel.org>
 
-diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-index 57120f0..9d8dd8d 100644
---- a/arch/x86/kernel/e820.c
-+++ b/arch/x86/kernel/e820.c
-@@ -753,22 +753,21 @@ void __init e820__memory_setup_extended(u64 phys_addr, u32 data_len)
- void __init e820__register_nosave_regions(unsigned long limit_pfn)
- {
- 	int i;
--	unsigned long pfn = 0;
-+	u64 last_addr = 0;
+ v2: crank length to 74 for full coverage and fix Makefile too
+ v1: https://lore.kernel.org/lkml/20250310222424.work.107-kees@kernel.org/
+---
+ drivers/eisa/Makefile   | 11 ++++-------
+ drivers/eisa/eisa-bus.c |  2 +-
+ include/linux/eisa.h    |  5 ++++-
+ 3 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/eisa/Makefile b/drivers/eisa/Makefile
+index a1dd0eaec2d4..f0d6cf7d1f32 100644
+--- a/drivers/eisa/Makefile
++++ b/drivers/eisa/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ # Makefile for the Linux device tree
  
- 	for (i = 0; i < e820_table->nr_entries; i++) {
- 		struct e820_entry *entry = &e820_table->entries[i];
+-obj-$(CONFIG_EISA)	        += eisa-bus.o
++obj-$(CONFIG_EISA)	        += devlist.h eisa-bus.o
+ obj-${CONFIG_EISA_PCI_EISA}     += pci_eisa.o
  
--		if (pfn < PFN_UP(entry->addr))
--			register_nosave_region(pfn, PFN_UP(entry->addr));
+ # virtual_root.o should be the last EISA root device to initialize,
+@@ -9,14 +9,11 @@ obj-${CONFIG_EISA_PCI_EISA}     += pci_eisa.o
+ obj-${CONFIG_EISA_VIRTUAL_ROOT} += virtual_root.o
+ 
+ 
+-# Ugly hack to get DEVICE_NAME_SIZE value...
+-DEVICE_NAME_SIZE = 50
 -
--		pfn = PFN_DOWN(entry->addr + entry->size);
--
- 		if (entry->type != E820_TYPE_RAM)
--			register_nosave_region(PFN_UP(entry->addr), pfn);
-+			continue;
+ $(obj)/eisa-bus.o: $(obj)/devlist.h
  
--		if (pfn >= limit_pfn)
--			break;
-+		if (last_addr < entry->addr)
-+			register_nosave_region(PFN_DOWN(last_addr), PFN_UP(entry->addr));
-+
-+		last_addr = entry->addr + entry->size;
- 	}
-+
-+	register_nosave_region(PFN_DOWN(last_addr), limit_pfn);
- }
+ quiet_cmd_eisaid = GEN     $@
+-      cmd_eisaid = sed -e '/^\#/D' -e 's/^\([[:alnum:]]\{7\}\) \+"\([^"]\{1,$(DEVICE_NAME_SIZE)\}\).*"/EISA_DEVINFO ("\1", "\2"),/' $< > $@
++      cmd_eisaid = sed -e '/^\#/D' -e 's/^\([[:alnum:]]\{7\}\) \+"\([^"]*\)"/EISA_DEVINFO ("\1", "\2"),/' $< > $@
  
- #ifdef CONFIG_ACPI
+ clean-files := devlist.h
+-$(obj)/devlist.h: $(src)/eisa.ids include/linux/device.h
+-	$(call cmd,eisaid)
++$(obj)/devlist.h: $(src)/eisa.ids include/linux/device.h FORCE
++	$(call if_changed,eisaid)
+diff --git a/drivers/eisa/eisa-bus.c b/drivers/eisa/eisa-bus.c
+index cb586a362944..edceea083b98 100644
+--- a/drivers/eisa/eisa-bus.c
++++ b/drivers/eisa/eisa-bus.c
+@@ -21,7 +21,7 @@
+ 
+ struct eisa_device_info {
+ 	struct eisa_device_id id;
+-	char name[50];
++	char name[EISA_DEVICE_INFO_NAME_SIZE];
+ };
+ 
+ #ifdef CONFIG_EISA_NAMES
+diff --git a/include/linux/eisa.h b/include/linux/eisa.h
+index f98200cae637..21a2ecc1e538 100644
+--- a/include/linux/eisa.h
++++ b/include/linux/eisa.h
+@@ -28,6 +28,9 @@
+ #define EISA_CONFIG_ENABLED         1
+ #define EISA_CONFIG_FORCED          2
+ 
++/* Chosen to hold the longest string in eisa.ids. */
++#define EISA_DEVICE_INFO_NAME_SIZE 74
++
+ /* There is not much we can say about an EISA device, apart from
+  * signature, slot number, and base address. dma_mask is set by
+  * default to parent device mask..*/
+@@ -41,7 +44,7 @@ struct eisa_device {
+ 	u64                   dma_mask;
+ 	struct device         dev; /* generic device */
+ #ifdef CONFIG_EISA_NAMES
+-	char		      pretty_name[50];
++	char		      pretty_name[EISA_DEVICE_INFO_NAME_SIZE];
+ #endif
+ };
+ 
+-- 
+2.34.1
+
 
