@@ -1,116 +1,102 @@
-Return-Path: <linux-kernel+bounces-592676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99502A7F034
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 00:14:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2229A7F035
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 00:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46B2E3B1477
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:12:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2159176D81
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1755B22422D;
-	Mon,  7 Apr 2025 22:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06E52248AE;
+	Mon,  7 Apr 2025 22:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HzE1iM4q"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJuWELVU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317EF16F8F5;
-	Mon,  7 Apr 2025 22:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A86224236;
+	Mon,  7 Apr 2025 22:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744063931; cv=none; b=uCl6vDxRkVULo7Tu2+KjiDEYtYe/BS9OaTQwpEJZ2eqlGS+ZERnrznztiTtM15NTzcwhzT4oT4dX5sDpUVy7B1WAXcUVzCuyEoeZy87NNJTL4iqqKfJKG1McnnKAM7jKAvFM1hNoGcuxskNTVkp5PugDqFhKob6djZObKGRBY9E=
+	t=1744064103; cv=none; b=Agvf+iZgGcnrAr+qrIbpZGW/BvkoVP5Nw/2aS4or2cHOI/yOFY+izZ4+xCR/w3ZsuRB65lkx1I52SiY4zl2LmCSHoUGaIQKlqawHlLl6hWnRus2DsOUj8p5wnElRmPd2mSPxnOPE9MJn4FyO+aCaWbx0ZHWC6YceQYENhS6yPRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744063931; c=relaxed/simple;
-	bh=+KO5FDR9NB3gjHpmBOa8QAjj0hR5oW3JHAtOLCvZUOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hgIbI8FbFsuKhH4OYss0PVYnY42fQ3dkTW75LajORhZcul1V6OHctr907bcu5L3Wp7NMRGlmd8Zux+eX9GlEnzYoGZ4eOgCCW1vZnc7tejSCIf4vhi8ijSP0Zi21rOAL2P44osVd/+Fmeo6cyLtD6NiYIUbYe8+oNkGxeQI++3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HzE1iM4q; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2255003f4c6so43715045ad.0;
-        Mon, 07 Apr 2025 15:12:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744063929; x=1744668729; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+KO5FDR9NB3gjHpmBOa8QAjj0hR5oW3JHAtOLCvZUOk=;
-        b=HzE1iM4qxJ0O8Cj6hufFRBxkgGDfuvi83oyhtkuCYMeH2nTgI7bjHO6eRyP/I7gyj5
-         LBJO+dZPWOBiTQPTK6/sdVrGbG1Py6AunvHQ9MGufGAnYfJ8hRVX274nGXxcoex3Nlsb
-         3Ja/7GPhKtfVhhQjGcC2viBLelN/opxIVlMWhDmzF8oGKsWRs+QIXh4PaeD8otxJtSbI
-         K6LmgM7sF0y06fVie2ZdUrCyc7t0wK+1540wFfR8/kaHp7AoxSFyvA0M8KX8No6eej8J
-         CKKXC1xy+jsR2QKBD6aL7wREYDVsG95E3IYzqA5njKx/rDnvemJSj03F1h+7RxJbaLmA
-         pCZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744063929; x=1744668729;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+KO5FDR9NB3gjHpmBOa8QAjj0hR5oW3JHAtOLCvZUOk=;
-        b=uxLdB/qi5r7lX1DFiGwhcYe9fq5KOhKMA9tCdGN8qP6Gn22w89MiFc5bD0rY8lBIju
-         ETXgu6WZlqC+4mJII3aieXDltSTrZwYeErjgm5EiSkDULqmUdEHouvqWGw2Y/mfruayZ
-         fTHX/uLlyhXl9XJa8FPIb2b+XreOW5hIX0P5QvcM8zh/vZs3/ULP8+laBEXavcnRiMR4
-         GSyvPK2sIh9x+0lDz5gCCoO8rSmDiB5+wxyxl/6fXv7+EvYgRoG2TohBh9OxFN20v+OI
-         mRvlnlWtTUs7ONtuOhzfyYdu8N8VagxVXbfZVQrW+xVk42x0zMySZbm1CHUEaRoTYPHb
-         s1fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrst8ZeGTGwCUoxH4igWhM7vZpsoq18yYJBwPMfia1kNCJ4lSszZ8CdwqUclUBYfI62VouiX4vX2/XoT8=@vger.kernel.org, AJvYcCVW6sJSouL9lDn7ZyOGGydmfFGi4P84tX0eMKbffQlf4/0oqfS2PNicTOTyyWjQBtmwZqTXCdsg@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZXwkry1mx2PwdQhDBQtNxtQ7nFgAOHcD5guyZp007v7AtET7f
-	D5MaDZwYb+1otl2e7QDkshHE+kjSVLLdT3pgP96d9q2/PKzRAInU
-X-Gm-Gg: ASbGncueJIo1w2m4Jtiw5cV++sbi9PpAtkeyZKCElKaJHPtJg2rhWmaoPxAnf1m1Pea
-	qS7/Sh++LQdHU0JNEdzNSlPJdyyfqWg2mvrHadNxh8zsduYhGVN2bKEhmDEd6ehQbRCAB0f9Lto
-	k26oei2wD1/EeAzpmE/SwR4BU5BWSK+New14zonk8VMzrGtrUmhO+jrF6+MRuChPCcz5nneoGV9
-	/SHq8D2mHihS0K8g7sxTPCWyBVc1yTt5Dyt4aXfJanuNplPHN/mw/+iaJupJb0MkozTy84p5bLg
-	+HNTyWVfiFFnhmIGyMPDme0rQPe218MfEhJOkk3sehM=
-X-Google-Smtp-Source: AGHT+IEvjikd/I77m2fm22oAI4Ks5ABnEUbcCmTxIM1VAO9N8vzwrz5hN/axnWQLVcFkyCGKsBihsA==
-X-Received: by 2002:a17:902:f646:b0:229:1717:8826 with SMTP id d9443c01a7336-22a8a06d686mr210345955ad.28.1744063929357;
-        Mon, 07 Apr 2025 15:12:09 -0700 (PDT)
-Received: from mythos-cloud ([125.138.201.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229785ad9a0sm86483995ad.39.2025.04.07.15.12.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 15:12:08 -0700 (PDT)
-Date: Tue, 8 Apr 2025 07:12:04 +0900
-From: Moon Yeounsu <yyyynoom@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6] net: dlink: add support for reporting stats
- via `ethtool -S` and `ip -s -s link show`
-Message-ID: <Z_RNtOY5PPS5A9v4@mythos-cloud>
-References: <20250407134930.124307-1-yyyynoom@gmail.com>
- <122f35a6-a8b6-446a-a76d-9b761c716dfe@lunn.ch>
+	s=arc-20240116; t=1744064103; c=relaxed/simple;
+	bh=VSVFpQj3hn1f1mOYrZD1BOgazgCdpZCs00LueNXdzzQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JOVeEZ+o9H03NF9PpaLXBFeg3eQ2D+HxvJgVL4ew0uqAEkqE2B+wZciZhwEmVrssjBNeS8tMF5sGhcyg6/u+SNyhNVoDBYSTFTTaJWNzhz1/wWBkbS34MrKN21YHiXVsKemrT+8SEZvrzbGHVPm8zoAMT2P9m4460BISLWsna4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJuWELVU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 690FBC4CEDD;
+	Mon,  7 Apr 2025 22:15:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744064102;
+	bh=VSVFpQj3hn1f1mOYrZD1BOgazgCdpZCs00LueNXdzzQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=XJuWELVUhqQI8860xY5NNgWNmLZ/iEIuwT3i4O4xBmSd+gEver/RHjgXSMdguCUwo
+	 /HOlrnvMI6jEUOAxTwJTMfNTOzN38f0kCUyEwyPLMBZMrdehC6SfR+qRPowJoaDre3
+	 bXTlmo3tACC/54sWNlCYN9n+5ktc3PLUTSzE0UY4dKnmL3Ait/lDs7Oh8MfANZu+mz
+	 87HptC9AAu6YTDk6jjYu2xxBbV6hyznNjX05DQYx54Tm8fkyXx+6Rw/FkWBXmGI51D
+	 17M37eFe5Lh23GhWllcKmr5NgezNU6aMI0grfKKSP/WdtbPne3MKh/DyUIDnAvASeb
+	 pKy3IlIe4BkNg==
+From: Mark Brown <broonie@kernel.org>
+To: linus.walleij@linaro.org, brgl@bgdev.pl, krzk@kernel.org, 
+ lgirdwood@gmail.com, andriy.shevchenko@intel.com, 
+ "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+In-Reply-To: <20250327004945.563765-1-peng.fan@oss.nxp.com>
+References: <20250327004945.563765-1-peng.fan@oss.nxp.com>
+Subject: Re: [PATCH V2 1/2] gpiolib: of: Add polarity quirk for s5m8767
+Message-Id: <174406410013.1124451.2033233013803863409.b4-ty@kernel.org>
+Date: Mon, 07 Apr 2025 23:15:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <122f35a6-a8b6-446a-a76d-9b761c716dfe@lunn.ch>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c25d1
 
-On Mon, Apr 07, 2025 at 10:43:41PM +0200, Andrew Lunn wrote:
+On Thu, 27 Mar 2025 08:49:44 +0800, Peng Fan (OSS) wrote:
+> This is prepare patch for switching s5m8767 regulator driver to
+> use GPIO descriptor. DTS for exynos5250 spring incorrectly specifies
+> "active low" polarity for the DVS and DS line. But per datasheet,
+> they are actually active high. So add polarity quirk for it.
+> 
+> 
 
-> That is an odd way of doing it. It would be better to repeat the
-> static const struct dlink_stats.
+Applied to
 
-Oh, I see — sorry about that. I wasn’t aware it might be considered an odd approach.
-If you don’t mind, could you please explain a bit more about why it seems problematic to you?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-Let me briefly share my reasoning behind the current design:
-Each ethtool stats function (e.g., get_ethtool_XXX) gathers a specific group of related statistics.
-You can see this grouping in action in my patch.
-So, I thought managing each stat group in that way would make the code more intuitive,
-and help simplify the logic for developers who use or extend it.
+Thanks!
 
-I'm still new to kernel development, so there are many things I don't fully understand yet.
-I'd appreciate it if you could feel free to point out anything.
+[1/2] gpiolib: of: Add polarity quirk for s5m8767
+      (no commit info)
+[2/2] regulator: s5m8767: Convert to GPIO descriptors
+      commit: 16b19bfd80402bb98135c4b65344e859883766ec
 
-Thank you for reviewing my patch!
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
