@@ -1,112 +1,289 @@
-Return-Path: <linux-kernel+bounces-590741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BFA7A7D676
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:44:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D458A7D66B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D5C8421A29
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:37:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D66DD420E50
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00BD226865;
-	Mon,  7 Apr 2025 07:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78429212B14;
+	Mon,  7 Apr 2025 07:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="QFVzwYkU"
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I4WLD5Ga"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A10185920;
-	Mon,  7 Apr 2025 07:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CB679CF
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744011476; cv=none; b=uYWej8cFamAB0wh1/DzgCmV2XLv3dp8OeUFVZ/DcCVnptHZodnDBibcAJUo/ZpG5dP2t19237jNh4pM7uqXU3/+REhCzROngSXkGLfyNDmRphSqHQJ55IbpbrKf3hTeGoqmdnb/jzrBNE+5h80d9kFs4xfat5/SRKnpYJlzoggQ=
+	t=1744011413; cv=none; b=cPkHj4OKPp8Qx6h54CQ1GvpCkyxpGiofdwBfNC5W4pUi6n8IF/FI6JMYqf0/xplf/WwqKZl1xNmi7VDasptjizPbDX/2vd0dR5A/wwurKTsEvddtfJZDTroJK8mvGqFa0eaBThT3HoLPZXRkYXDreay8JM0T6ImEyd7Zd6ePtEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744011476; c=relaxed/simple;
-	bh=niHZ7SywtqEBXhJxXUoQ5qHTD9B3hV3qxTLETfQVkRM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C/8WSM/d8CNTmYjzQi0qMu7znQ2pQ4k8PiN7mnbkdS+ktU+zq8QR2NitkdZyYNh19/cbXbay/7/xBXXWxnJrs2HlHAOco2SqBmIn3x1Yg9HLbAjvUIouZRo2YVn1KNQvstyA75/VqA9IMT631HDLVyWp6d+vBHyhRkCZPyZ2NRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=QFVzwYkU; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1744011464;
-	bh=TTsZEPwrBCz/1dlJoPGkzqJ2iCyPoKODASZBVNBm63g=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=QFVzwYkUp7/0YXmOYc77Vw8VUAHv9K8Lx3nN4iGtvZGq4aAZILNNy0c0hnwTs3PG6
-	 IcA68dp9k7YDdUPCJRhPyc11/AhSL4u0JgE/mjmfM5kpQP8UaxQGgIGUKIZuVSjQUw
-	 eO9XMaG/2DGkGe1usKz4uWfFagGkCqj0+12K99X8=
-X-QQ-mid: bizesmtpip3t1744011421t80f82c
-X-QQ-Originating-IP: vgyjA3JwGgo1td1m2zDCHvAGGPVP7//IjViELQggqP4=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 07 Apr 2025 15:36:59 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 14365369474605265875
-EX-QQ-RecipientCnt: 8
-From: WangYuli <wangyuli@uniontech.com>
-To: wangyuli@uniontech.com
-Cc: guanwentao@uniontech.com,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	macro@orcam.me.uk,
-	niecheng1@uniontech.com,
-	tsbogend@alpha.franken.de,
-	zhanjun@uniontech.com
-Subject: [PATCH 6/6] MIPS: decstation_64_defconfig: Compile the kernel with warnings as errors
-Date: Mon,  7 Apr 2025 15:36:22 +0800
-Message-ID: <58DFBC3D4C9FC64F+20250407073622.495364-6-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <11740B01E659CAFF+20250407073158.493183-1-wangyuli@uniontech.com>
-References: <11740B01E659CAFF+20250407073158.493183-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1744011413; c=relaxed/simple;
+	bh=koynGf8+CdcmajpfO3doLXZJyU8BUTJFfTEZhbf/uRA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L3wmQn+7jVpA/MIcUzoF81EqoyvAst6IIXZRBD856QHOT7ZTisZfRu+FnMiWVXBkRWuVp3WZMCecyDb8s3oWhPbhsV2wqBZRSouitqlhOowLleX1h0hTkURVrmztmf0AmFiCOiWeqqN/MVGN6o92SsH2FiiEG+OXh6s6KwUFnJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I4WLD5Ga; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3014678689aso3239377a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 00:36:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744011411; x=1744616211; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=g9hu9BIiKiLrAv9dyMtSU+8zo4UvBiFanlHUMy4ezNo=;
+        b=I4WLD5GaIzNeIGjoGCdOqnrYe9v7149BWRuEz2zVrMWdxPs2tETmbzRpj5Lf4t2FXv
+         bI15IeIxzA0o7fT2YHlDJMxYg5o4uBAWJY5ZVi3KdSp53OMxz1cM3LXpllQsd7joXlRZ
+         7DrG1C25ZkOSkcoTPid3sjv880UdaJC4Q1rKSWCB9NwVJaoYkCVEuie/17mHOpL9dMGr
+         ZN6y4t4A15VVZh4pSA20x7FV/pRg3A/BiflnNC9LHKc42ewUM6tgEoAOBW+UkXby3HMl
+         aekpmlZe4OyIN52hDE4CwZuR+O9L5wzTiw9MYobEAbZva1uNOlSTSPqplhuihyw4Ma8Q
+         yZVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744011411; x=1744616211;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g9hu9BIiKiLrAv9dyMtSU+8zo4UvBiFanlHUMy4ezNo=;
+        b=OWTwokIJx1iKdOS/8vs2MGocKjqYprNh0CYVBLcicEsI+Vto5oTrz6aY9i03t6Xvh4
+         zt0rfPXxMnt+xND5XAyCUNzPMTVtDOD+Fdx4W+CVZ8xytMtspk41lMylOT6mTnTh68Wi
+         +AMOTjhX63eiiuzQBLakhuJEE79GiofhVQirQccCX7janxzXCWwGMAWpF7RXCU7/JMOg
+         +VxmeEOBRDqaWcrrFWDq9P5rNyhWMjbTNOZ5JLGrhNRzfQLeB1uHAu2qSjbO9TJKMka8
+         XKxDr/GB7X3hfEads0opjYxOeMu9CtGywP504tVK7+sJZhMSIBe73sXsYhOVsyI84SI7
+         jPlg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWmFjnxb7hlTeX0lZGGGDmPqmSpoWCjnOmrMaHMolXgf1YTk8QZZYzxSyQVEcqF4jnj4YOpLUp6A0b71s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywdHUSI9YV4WgccKMFgeK3H3EIGWcnNKrtxXQ9byCnsO8ufg4H
+	pFA5AFaw4S6ZV5E9NFSLsTSDlh6hBQ9aWBLkHpWy6Q4z7GOSCxRpxnKQBjIk2A==
+X-Gm-Gg: ASbGncv1cNSUq5y5ImVTDVbE2dsZo2yGEL9JxTro01PI2M15D149aUhKco65OxXcUgi
+	G37ULWLhm9VnvgjXxSpxsyDH7AOmB6rj7s0+1a4mMwzOpcjdV0CYN5tuuUv8sEAt/fAcgj7eish
+	QHJFDYzk55h7JN3bPXzmuoQ6pdaXU8eIHjFU/OSKnLaf/OxCpoHL4FRBkg2I1zVnxnMjR0C5Ba3
+	eQjilBcX6fAx0xtXfOxGdQGT3LFkmCqtAnUb+R0ykaypUtbITdnPvgTeL2Pata+XHYvALrowCN1
+	b9Um/RQiNFHHCiJu4wBmg7/7yuABuwwyxS2u9t0seH5e3beCQw8TkWc=
+X-Google-Smtp-Source: AGHT+IGzvdPdmWxd4WyWmrDKQ+6Kp6xrKgrTzXN8i5RbG1vlBal+aGVp4TmGrHiie98FKikeCFAn/g==
+X-Received: by 2002:a17:90b:2fc5:b0:2ef:19d0:2261 with SMTP id 98e67ed59e1d1-306a48a2359mr19194444a91.16.1744011411044;
+        Mon, 07 Apr 2025 00:36:51 -0700 (PDT)
+Received: from thinkpad ([36.255.17.160])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3057cb91b9esm8316402a91.45.2025.04.07.00.36.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 00:36:50 -0700 (PDT)
+Date: Mon, 7 Apr 2025 13:06:45 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] PCI: Add sysfs support for exposing PTM context
+Message-ID: <jh2kntthtj5dz4dmltc63ye3v4owsl5evcnzpf5anrzdzqzms6@hng6ciwzry3t>
+References: <20250324-pcie-ptm-v2-0-c7d8c3644b4a@linaro.org>
+ <20250324-pcie-ptm-v2-1-c7d8c3644b4a@linaro.org>
+ <b76aaf39-1a03-ffbf-ae44-66dd01753bc7@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OJo9j87u+UJVCsaUKG/0nTaU5/jP2VtUE+olkX6buirH77Wv24pxC0cW
-	rYFgCC34Y3HPJt/2D9Gllvb5BdKpkWazLvGvyAVKD0CLxZNOtj+BeQCOSDbwm3BDZ937BuB
-	hQ8m9M+Pks0Ji1EOQVH59Mhoq+tljb8EGHNSbMwAtF4z55bt0ZZ8kdfdIZeo2VLiYs/lTMx
-	vJoha+o7hnRsv2g0ravgtgT+6AgjAmLnpI/09VsldkvBehRlhvOsT5avrGZUfHiNoOx/jR3
-	s7CkE5lLDhFrXHFgt+Ii/6FdD+wknI/EksD0LTUKXgVU8U7RreObh9DNmU1gRlpWNRp+5WQ
-	wl0yRwx7oxNFwRgc7U3huynJMq0ved4L9aAIgK8oxTF3QqudiHi85Dqpfs42JViQ52T6JWI
-	XZuGSDdQjy5LK3G3SnWlloTiLrMgKgJ3zl1DH6LEEP1IZbhRKGFeJIdiCNrXIk59QbJpaqg
-	elhnyEiLsoLa2Vspqeae8m0JNl+Uf9DtIEWcLauOGdS0fgrgOqhAx/VdVfSURpL+UXrBANd
-	RJozj47EC13SjpzBKIkuzWuBwNkuBH5MOidUY5Dq9KZnY64+B5cTUcbsEBNb+CjsuekEp4V
-	xGYYXkF+LAa7nXUP3krmF6qG4y2UOOxTui8UMJ0W2flEV3lEIr9rTtAxLI6It4cJBlMEoke
-	+Ft9CQaGWSJXhZ5iLv/IBbZVh7oKoWXfKOF7G9qDes0laO9dmq4X6TugdfC8F9mMMI40XSy
-	gaup/AQOK2sK58OET7ohNQDAR+0k/o1X6XMLkxK1ph1L+RPThE5yJ4MrAF5Xv1WwyAgwT1p
-	2ca9JR7upJ4NItpqT9Oey9M3o0NQkXm46rQoW5CCSdiTOKqKuVyYD4qdE/cOb+CfX59MfCW
-	cDSepUOFHU0roWWl2UBRq8HgIzToUHXSVMY5MOG46Dp7prZ6mAOgDUZxCXgLJKwlls7bBhK
-	Cqk/6fLk3goH+wnJkzJ0kyV2lK+edSUZ8GBw4SdZI9ZdPQ7UIFjVva6lLW410M89fArSmmg
-	iuav88DFQvhqG4anbohRiPi7ZkIg4=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+In-Reply-To: <b76aaf39-1a03-ffbf-ae44-66dd01753bc7@linux.intel.com>
 
-All compilation issues under decstation_64_defconfig have been
-resolved, and it is now safe to enable CONFIG_WERROR now.
+On Mon, Mar 24, 2025 at 03:01:49PM +0200, Ilpo Järvinen wrote:
+> On Mon, 24 Mar 2025, Manivannan Sadhasivam via B4 Relay wrote:
+> 
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > 
+> > Precision Time Management (PTM) mechanism defined in PCIe spec r6.0,
+> > sec 6.22 allows precise coordination of timing information across multiple
+> > components in a PCIe hierarchy with independent local time clocks.
+> 
+> Hi Mani,
+> 
+> PCIe r6.0.1 sec 6.22 is about Readiness Notification (RN) and PTM is 6.21, 
+> did you perhaps mistype the section number?
+> 
 
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- arch/mips/configs/decstation_64_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Oops, yeah. I referred the PCIe 5.0 spec, but mistakenly quoted 6.0. Will fix
+it.
 
-diff --git a/arch/mips/configs/decstation_64_defconfig b/arch/mips/configs/decstation_64_defconfig
-index bf579866cf4b..12415c5dd28c 100644
---- a/arch/mips/configs/decstation_64_defconfig
-+++ b/arch/mips/configs/decstation_64_defconfig
-@@ -1,3 +1,4 @@
-+CONFIG_WERROR=y
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
- CONFIG_HIGH_RES_TIMERS=y
+> > PCI core already supports enabling PTM in the root port and endpoint
+> > devices through PTM Extended Capability registers. But the PTM context
+> > supported by the PTM capable components such as Root Complex (RC) and
+> > Endpoint (EP) controllers were not exposed as of now.
+> > 
+> > Hence, add the sysfs support to expose the PTM context to userspace from
+> > both PCIe RC and EP controllers. Controller drivers are expected to call
+> > pcie_ptm_create_sysfs() to create the sysfs attributes for the PTM context
+> > and call pcie_ptm_destroy_sysfs() to destroy them. The drivers should also
+> > populate the relevant callbacks in the 'struct pcie_ptm_ops' structure
+> > based on the controller implementation.
+> > 
+> > Below PTM context are exposed through sysfs:
+> > 
+> > PCIe RC
+> > =======
+> > 
+> > 1. PTM Local clock
+> > 2. PTM T2 timestamp
+> > 3. PTM T3 timestamp
+> > 4. PTM Context valid
+> > 
+> > PCIe EP
+> > =======
+> > 
+> > 1. PTM Local clock
+> > 2. PTM T1 timestamp
+> > 3. PTM T4 timestamp
+> > 4. PTM Master clock
+> > 5. PTM Context update
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  Documentation/ABI/testing/sysfs-platform-pcie-ptm |  70 ++++++
+> >  MAINTAINERS                                       |   1 +
+> >  drivers/pci/pcie/ptm.c                            | 268 ++++++++++++++++++++++
+> >  include/linux/pci.h                               |  35 +++
+> >  4 files changed, 374 insertions(+)
+> > 
+> > diff --git a/Documentation/ABI/testing/sysfs-platform-pcie-ptm b/Documentation/ABI/testing/sysfs-platform-pcie-ptm
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..010c3e32e2b8eaf352a8e1aad7420d8a3e948dae
+> > --- /dev/null
+> > +++ b/Documentation/ABI/testing/sysfs-platform-pcie-ptm
+> > @@ -0,0 +1,70 @@
+> > +What:		/sys/devices/platform/*/ptm/local_clock
+> > +Date:		February 2025
+> > +Contact:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > +Description:
+> > +		(RO) PTM local clock in nanoseconds. Applicable for both Root
+> > +		Complex and Endpoint controllers.
+> > +
+> > +What:		/sys/devices/platform/*/ptm/master_clock
+> > +Date:		February 2025
+> > +Contact:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > +Description:
+> > +		(RO) PTM master clock in nanoseconds. Applicable only for
+> > +		Endpoint controllers.
+> > +
+> > +What:		/sys/devices/platform/*/ptm/t1
+> > +Date:		February 2025
+> > +Contact:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > +Description:
+> > +		(RO) PTM T1 timestamp in nanoseconds. Applicable only for
+> > +		Endpoint controllers.
+> > +
+> > +What:		/sys/devices/platform/*/ptm/t2
+> > +Date:		February 2025
+> > +Contact:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > +Description:
+> > +		(RO) PTM T2 timestamp in nanoseconds. Applicable only for
+> > +		Root Complex controllers.
+> > +
+> > +What:		/sys/devices/platform/*/ptm/t3
+> > +Date:		February 2025
+> > +Contact:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > +Description:
+> > +		(RO) PTM T3 timestamp in nanoseconds. Applicable only for
+> > +		Root Complex controllers.
+> > +
+> > +What:		/sys/devices/platform/*/ptm/t4
+> > +Date:		February 2025
+> > +Contact:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > +Description:
+> > +		(RO) PTM T4 timestamp in nanoseconds. Applicable only for
+> > +		Endpoint controllers.
+> > +
+> > +What:		/sys/devices/platform/*/ptm/context_update
+> > +Date:		February 2025
+> > +Contact:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > +Description:
+> > +		(RW) Control the PTM context update mode. Applicable only for
+> > +		Endpoint controllers.
+> > +
+> > +		Following values are supported:
+> > +
+> > +		* auto = PTM context auto update trigger for every 10ms
+> > +
+> > +		* manual = PTM context manual update. Writing 'manual' to this
+> > +			   file triggers PTM context update (default)
+> > +
+> > +What:		/sys/devices/platform/*/ptm/context_valid
+> > +Date:		February 2025
+> > +Contact:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > +Description:
+> > +		(RW) Control the PTM context validity (local clock timing).
+> > +		Applicable only for Root Complex controllers. PTM context is
+> > +		invalidated by hardware if the Root Complex enters low power
+> > +		mode or changes link frequency.
+> > +
+> > +		Following values are supported:
+> > +
+> > +		* 0 = PTM context invalid (default)
+> > +
+> > +		* 1 = PTM context valid
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index b4d09d52a750b320f689c1365791cdfa6e719fde..f1bac092877df739328347481bd14f6701a7df19 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -18213,6 +18213,7 @@ Q:	https://patchwork.kernel.org/project/linux-pci/list/
+> >  B:	https://bugzilla.kernel.org
+> >  C:	irc://irc.oftc.net/linux-pci
+> >  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git
+> > +F:	Documentation/ABI/testing/sysfs-platform-pcie-ptm
+> >  F:	Documentation/devicetree/bindings/pci/
+> >  F:	drivers/pci/controller/
+> >  F:	drivers/pci/pci-bridge-emul.c
+> > diff --git a/drivers/pci/pcie/ptm.c b/drivers/pci/pcie/ptm.c
+> > index 7cfb6c0d5dcb6de2a759b56d6877c95102b3d10f..bfa632b76a87ad304e966a8edfb5dba14d58a23c 100644
+> > --- a/drivers/pci/pcie/ptm.c
+> > +++ b/drivers/pci/pcie/ptm.c
+> > @@ -10,6 +10,8 @@
+> >  #include <linux/pci.h>
+> >  #include "../pci.h"
+> >  
+> > +struct device *ptm_device;
+> > +
+> >  /*
+> >   * If the next upstream device supports PTM, return it; otherwise return
+> >   * NULL.  PTM Messages are local, so both link partners must support it.
+> > @@ -252,3 +254,269 @@ bool pcie_ptm_enabled(struct pci_dev *dev)
+> >  	return dev->ptm_enabled;
+> >  }
+> >  EXPORT_SYMBOL(pcie_ptm_enabled);
+> > +
+> > +static ssize_t context_update_store(struct device *dev,
+> > +			      struct device_attribute *attr,
+> > +			      const char *buf, size_t count)
+> > +{
+> > +	struct pcie_ptm *ptm = dev_get_drvdata(dev);
+> > +	int ret;
+> > +
+> > +	if (!ptm->ops->context_update_store)
+> > +		return -EOPNOTSUPP;
+> > +
+> > +	ret = ptm->ops->context_update_store(ptm->pdata, buf);
+> 
+> Do these store funcs need some locking? Who is responsible about it?
+> 
+
+Good catch! I obviously missed the locking here.
+
+> Why isn't buf parsed here and converted to some define/enum values, what 
+> is the advantage of passing it on as char *?
+> 
+
+Only because I was not sure if the values are going to be the same across all
+implementations. But since I document 'auto' and 'manual' in ABI documentation,
+I think it makes sense to pass the values directly.
+
+- Mani
+
 -- 
-2.49.0
-
+மணிவண்ணன் சதாசிவம்
 
