@@ -1,191 +1,138 @@
-Return-Path: <linux-kernel+bounces-591021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C0EAA7D9C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:35:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE91CA7D9CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A7B83AA5DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:35:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCDD91695BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B5923098D;
-	Mon,  7 Apr 2025 09:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dhBcz9C7"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857FE22A4D6;
-	Mon,  7 Apr 2025 09:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F0022FE0C;
+	Mon,  7 Apr 2025 09:37:58 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0421AAE28;
+	Mon,  7 Apr 2025 09:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744018506; cv=none; b=NLISuHtIMpf/3SdnsJZ723jXtLcuMgXErxZljWLeU8KelNGCWJx0XiuTynFo7JZv4SooECfp8yYnVsL2lqsgfdju5DedG08T0Xhh9OkWM1omHTpllsLd89MiiI2Qkf0/QqWqRYDxXzL/lWkHWLdYEP8d2GPG7TvMqxy/yIBEHlU=
+	t=1744018677; cv=none; b=Gbu/Uggsy09rg+UjW2NeiELW7WAtPSPDOzn0O4AOGic0jY+1KC4XuiOLvXMvhlovjU6tKpARjXMW+OrqA7Ckqlnm+ABdGDFJaOR6rCI1SI+LNligDlAzvwEwo60Xoak6yVjfTvpke8uUJP0wrZQUbYaCJz3SYrivmyzc2UKR2Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744018506; c=relaxed/simple;
-	bh=NA/Nd0Ddf2jORatQD4g6yIs1ne9f1uLXUzl99732yc8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iIiZdkTinlIfmmrpJE/O1C/v7u2gbhVWTKKKwepn0j//n/nw7RZM06lHEbXX8JRHxHWI7zG+MMyvkFLfc+2UVtDPfStNy1SE2H/4w76grS511BQf9Aq39QMxjOZNb8KDtwPoRbxRKK78UGbpzL/smrhyu9XoeFXC5ZCKoptHhIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dhBcz9C7; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-224341bbc1dso34729935ad.3;
-        Mon, 07 Apr 2025 02:35:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744018504; x=1744623304; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=e3fVOy8mns/9JIDsaRuopOAvHNx0fO3H/yc9m6/qJXA=;
-        b=dhBcz9C72nOh88cyHuVKzc9Mj1lJ90mOTZ37LCkrBfP8fgPZYxxFwK7oglW6qDjoaW
-         IdCS9gABnZ0jKW08RY4q0lR1Z11SjwkgLVK0N+8v2W1vuM0B1SNalVNEcG4m386Eknjz
-         qM6STO4qejUT5Ed7G1UWNyCGyjQVata3oDAnUsby1UWamTfXluaNeZSJz7IwtK2kaMVj
-         MeLjPLTK56ySUSK63JzT5NfNCSyNOzqfpOT4BXonbn5IhW9778aW4WkMHZGI3NUPI6lF
-         5DjTp8UgFlVxSpAgMhhkFFFX9CUdLt/tUufP56bDa5q+nKx/0qQ/6/oY/kiOiLdCRCyF
-         bjUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744018504; x=1744623304;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e3fVOy8mns/9JIDsaRuopOAvHNx0fO3H/yc9m6/qJXA=;
-        b=Ja/p0IHTifmAPbYpYhDRNbaOcC6qQFQM1+Fjy2OYGIiLPjfLJXaBYrQjCbqN5JwbTN
-         MeXKT3Un2v+eKP4UxQAuN4Dun0SDMEtA/KMCTTJNhCOz02EFZZG4uXbc8h5yE2rucTBK
-         IQ8l/KyORlM24HUjP/xxXYhSyvo52d39/962zazhvI6UAv/znSeXnzytDtsWv+ovxm/8
-         /oN3ajVBhmi2aiJit65CTMppycgkbFqSYxyhINeTKnx40iitAHuZXaG+eadTMZGmCn4X
-         kiiS67JGV6entGcUNO80kD23QdU/abV4d4XrkkUxMU8OgYIGrnDJfU3DIQHsz0P+W9FO
-         aTtg==
-X-Forwarded-Encrypted: i=1; AJvYcCWdQG7/skepdFaS8xFPyaExNRev4w1J2M9LS2T+WhrUDSKMsOxVCIVjlsvE7F5GeDrmvKCqtghag4I7pRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye36hjuOVG8WIsk71dyB6o/nfNDtPpSuze6rxyie8aCtST5fV6
-	zy/EmI0Ek90MMzLKp3Rc6MGK9eUmG/s5YC9LpSNaLaDgOXd6sX3q
-X-Gm-Gg: ASbGncv2KUeVvG4hCyX2BADFhbZiHmZUQ+L/bis5TyZH0mIIvDZilYY95fjqo3y3AWl
-	xLt71KZsRqIpAwxoc8xqjoH16GYRYRnbj2cjjqHM+PeiwqpNdqz8jbvO66+sNkeAOYNRKLE6qMm
-	QAaba793Ha3IqWp8MYTUUXQ5mu2B+mWJ1nJ33ikercMDyhUMW4GWyW4dct5n32rVyZAhIdS6xef
-	nOq25ufkm8QbYrQbP+J+nsOikWgX7hbttX4IOioSJ1ylGQbiSkgT5hhHHX3cpRgdiXo+dcVXsBu
-	7c/f/ZBBawSfF+thzCxZ2YPPel0XKeVb12HKEmh68b2LgCmVyw==
-X-Google-Smtp-Source: AGHT+IFN5Aj47HVwSZNa0w+mDnCZklaD4x92z/LhnYjRYcRlKKi9NZjwjG50B6PZzoYQmqv6RINMmA==
-X-Received: by 2002:a17:902:d485:b0:223:3bf6:7e6a with SMTP id d9443c01a7336-22a95529550mr137783025ad.12.1744018503634;
-        Mon, 07 Apr 2025 02:35:03 -0700 (PDT)
-Received: from fedora ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229785ada7csm76473015ad.31.2025.04.07.02.34.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 02:35:02 -0700 (PDT)
-Date: Mon, 7 Apr 2025 09:34:55 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Jay Vosburgh <jv@jvosburgh.net>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Simon Horman <horms@kernel.org>, Cosmin Ratiu <cratiu@nvidia.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 net] bonding: use permanent address for MAC swapping if
- device address is same
-Message-ID: <Z_OcP36h_XOhAfjv@fedora>
-References: <20250401090631.8103-1-liuhangbin@gmail.com>
- <3383533.1743802599@famine>
+	s=arc-20240116; t=1744018677; c=relaxed/simple;
+	bh=EuEA2yEZnbY0BhR9l4M5pcQ1yh2rrp4dfcKgMY7mxro=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tAMYvSX0di8Zvq505KylSHiBHKjLBuePPtQB5hb3gg1LxdV9AjoSXaYIoocnlkajCuWwOmEQfpmPJPiLLnDYz5LZgEDv6u6XVR8U4FhtilW6K+1S4Z0g96m0DOwdjS1/QkjW0+VFXSBo8lqA5bmYExbqE+XhWNHR036yn+zvqzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-75-67f39ce63774
+From: Rakie Kim <rakie.kim@sk.com>
+To: Oscar Salvador <osalvador@suse.de>
+Cc: akpm@linux-foundation.org,
+	gourry@gourry.net,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com,
+	dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com,
+	david@redhat.com,
+	Jonathan.Cameron@huawei.com,
+	kernel_team@skhynix.com,
+	honggyu.kim@sk.com,
+	yunjeong.mun@sk.com,
+	Rakie Kim <rakie.kim@sk.com>
+Subject: Re: [PATCH v6 3/3] mm/mempolicy: Support memory hotplug in weighted interleave
+Date: Mon,  7 Apr 2025 18:37:32 +0900
+Message-ID: <20250407093738.406-1-rakie.kim@sk.com>
+X-Mailer: git-send-email 2.48.1.windows.1
+In-Reply-To: <Z--bppMUIo5k5eOF@localhost.localdomain>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3383533.1743802599@famine>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOLMWRmVeSWpSXmKPExsXC9ZZnoe6zOZ/TDc60iVjMWb+GzWL61AuM
+	Fl/X/2K2+Hn3OLvFqoXX2CyOb53HbnF+1ikWi8u75rBZ3Fvzn9XizLQii9VrMhy4PXbOusvu
+	0d12md2j5chbVo/Fe14yeWz6NInd48SM3yweOx9aerzfd5XNY/Ppao/Pm+QCuKK4bFJSczLL
+	Uov07RK4Mi7tnsZS8EOw4sOLDqYGxh18XYycHBICJhLfp7UzdzFygNkf/zuBmGwCShLH9saA
+	VIgIqElMe9XI3sXIxcEs8J1JovnMNHaQhLBAuMT3+09YQOpZBFQlPpxKBwnzChhLbHr5jxFi
+	uqZEw6V7TCA2p4CpxITPU1hAbCEBHolXG/YzQtQLSpyc+QQsziwgL9G8dTYzyC4Jge9sEnv7
+	fzJDDJKUOLjiBssERv5ZSHpmIelZwMi0ilEoM68sNzEzx0QvozIvs0IvOT93EyMw+JfV/one
+	wfjpQvAhRgEORiUe3h1un9OFWBPLiitzDzFKcDArifBanvqULsSbklhZlVqUH19UmpNafIhR
+	moNFSZzX6Ft5ipBAemJJanZqakFqEUyWiYNTqoHR++bmjQ+nPDZVD7gY6sRf6WobxWio7fyp
+	3VmEO6dOvzF1+f7rjEkTz63w2bhy/pYOmbd3c8wfOF/2edjezFlQUPGZVXqG3tkL162tpi9d
+	qGlytbk1sJlLz4PlmcFy9qRfr4/V29Q+fTAhSu7b+eTmk+I706fcun5g3WHxs3NK4zYdfmae
+	pPFGiaU4I9FQi7moOBEA02HKlXoCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrILMWRmVeSWpSXmKPExsXCNUNNS/fZnM/pBmc+cFjMWb+GzWL61AuM
+	Fl/X/2K2+Hn3OLvF52evmS1WLbzGZnF86zx2i8NzT7JanJ91isXi8q45bBb31vxntTgzrcji
+	0LXnrBar12RY/N62gs2B32PnrLvsHt1tl9k9Wo68ZfVYvOclk8emT5PYPU7M+M3isfOhpcf7
+	fVfZPL7d9vBY/OIDk8fm09UenzfJBfBEcdmkpOZklqUW6dslcGVc2j2NpeCHYMWHFx1MDYw7
+	+LoYOTgkBEwkPv53AjHZBJQkju2N6WLk5BARUJOY9qqRvYuRi4NZ4DuTRPOZaewgCWGBcInv
+	95+wgNSzCKhKfDiVDhLmFTCW2PTyHyOILSGgKdFw6R4TiM0pYCox4fMUFhBbSIBH4tWG/YwQ
+	9YISJ2c+AYszC8hLNG+dzTyBkWcWktQsJKkFjEyrGEUy88pyEzNzTPWKszMq8zIr9JLzczcx
+	AgN+We2fiTsYv1x2P8QowMGoxMN7o/FTuhBrYllxZe4hRgkOZiURXstTQCHelMTKqtSi/Pii
+	0pzU4kOM0hwsSuK8XuGpCUIC6YklqdmpqQWpRTBZJg5OqQbGkN3a+hEH6zmZUq+oVdWWHF4c
+	p7EoXDFonuK+CRNds5Jmde9dlrVW8ZhC7DO7OOWT6n6Lfi839Lj1lcFQJeuQ/r792heOcDiE
+	79Ls5LxoraxV9mA7U5dp7a97ydHSP5+nTri14Rrvvenf7xu9FJrWuKnrcNxfh87rMQ/+CWv/
+	NZluN+P1hPxYJZbijERDLeai4kQAkX4dnnQCAAA=
+X-CFilter-Loop: Reflected
 
-On Fri, Apr 04, 2025 at 02:36:39PM -0700, Jay Vosburgh wrote:
-> Hangbin Liu <liuhangbin@gmail.com> wrote:
+On Fri, 4 Apr 2025 10:43:18 +0200 Oscar Salvador <osalvador@suse.de> wrote:
+> On Fri, Apr 04, 2025 at 04:46:21PM +0900, Rakie Kim wrote:
+> > The weighted interleave policy distributes page allocations across multiple
+> > NUMA nodes based on their performance weight, thereby improving memory
+> > bandwidth utilization. The weight values for each node are configured
+> > through sysfs.
+> > 
+> > Previously, sysfs entries for configuring weighted interleave were created
+> > for all possible nodes (N_POSSIBLE) at initialization, including nodes that
+> > might not have memory. However, not all nodes in N_POSSIBLE are usable at
+> > runtime, as some may remain memoryless or offline.
+> > This led to sysfs entries being created for unusable nodes, causing
+> > potential misconfiguration issues.
+> > 
+> > To address this issue, this patch modifies the sysfs creation logic to:
+> > 1) Limit sysfs entries to nodes that are online and have memory, avoiding
+> >    the creation of sysfs entries for nodes that cannot be used.
+> > 2) Support memory hotplug by dynamically adding and removing sysfs entries
+> >    based on whether a node transitions into or out of the N_MEMORY state.
+> > 
+> > Additionally, the patch ensures that sysfs attributes are properly managed
+> > when nodes go offline, preventing stale or redundant entries from persisting
+> > in the system.
+> > 
+> > By making these changes, the weighted interleave policy now manages its
+> > sysfs entries more efficiently, ensuring that only relevant nodes are
+> > considered for interleaving, and dynamically adapting to memory hotplug
+> > events.
+> > 
+> > Signed-off-by: Rakie Kim <rakie.kim@sk.com>
+> > Signed-off-by: Honggyu Kim <honggyu.kim@sk.com>
+> > Signed-off-by: Yunjeong Mun <yunjeong.mun@sk.com>
 > 
-> >Similar with a951bc1e6ba5 ("bonding: correct the MAC address for "follow"
-> >fail_over_mac policy"). The fail_over_mac follow mode requires the formerly
-> >active slave to swap MAC addresses with the newly active slave during
-> >failover. However, the slave's MAC address can be same under certain
-> >conditions:
-> >
-> >1) ip link set eth0 master bond0
-> >   bond0 adopts eth0's MAC address (MAC0).
-> >
-> >1) ip link set eth1 master bond0
-> >   eth1 is added as a backup with its own MAC (MAC1).
-> >
-> >3) ip link set eth0 nomaster
-> >   eth0 is released and restores its MAC (MAC0).
-> >   eth1 becomes the active slave, and bond0 assigns MAC0 to eth1.
+> For the memory-hotplug bits: Reviewed-by: Oscar Salvador
+> <osalvador@suse.de<
 > 
-> 	This step leaves both the bond+eth1 and the independent eth0
-> using the same MAC address.  There is a warning printed for this, and
-> allowing the duplicated MAC address assignment has been the behavior for
-> a very long time, and to my knowledge hasn't caused issues (I presume
-> because swapping interfaces in and out of a bond willy nilly doesn't
-> happen much outside of test cases).
-
-Yes, until the NetworkManager become the default interface configuration tool
-on some release. When set a slave down, the nmcli will remove the interface
-from bond... This causes the issue to be triggered more often.
-
-> >4) ip link set eth0 master bond0
-> >   eth0 is re-added to bond0, but both eth0 and eth1 now have MAC0,
-> >   breaking the follow policy.
-> >
-> >To resolve this issue, we need to swap the new active slave’s permanent
-> >MAC address with the old one. The new active slave then uses the old
-> >dev_addr, ensuring that it matches the bond address. After the fix:
+> Just one thing that caught my eye:
 > 
-> 	Which interface is the "new active" in this situation?  Adding
-> eth0 back into the bond should not cause a change of active, eth0 would
-> be added as a backup.
-
-When do fail-over, the "new active" literally. E.g.
-
-> >5) ip link set bond0 type bond active_slave eth0
-> >   dev_addr is the same, swap old active eth1's MAC (MAC0) with eth0.
-> >   Swap new active eth0's permanent MAC (MAC0) to eth1.
-> >   MAC addresses remain unchanged.
-
-The new active slave is eth0 here.
+> Cannot add_weighted_interleave_group be __init? AFAICS, it only gets
+> called at boot time?
 > 
 > 
-> 	So this patch's change wouldn't actually resolve the MAC
-> conflict until a failover takes place?  I.e., if we only do step 4 but
-> not step 5 or 6, eth0 and eth1 will both have the same MAC address.  Am
-> I understanding correctly?
+> -- 
+> Oscar Salvador
+> SUSE Labs
 
-Yes, you are right. At step 4, there is no failover, so eth0 is still using
-it's own mac address. How about set the mac at enslave time, with this we
-can get correct mac directly. e.g.
+Thank you for your response regarding this patch.
+I agree that `add_weighted_interleave_group` can be marked with __init,
+as it is only called during system boot.
+I will make this change in the next revision.
 
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index 950d8e4d86f8..0d4e1ddd900d 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -2120,6 +2120,24 @@ int bond_enslave(struct net_device *bond_dev, struct net_device *slave_dev,
- 			slave_err(bond_dev, slave_dev, "Error %d calling set_mac_address\n", res);
- 			goto err_restore_mtu;
- 		}
-+	} else if (bond->params.fail_over_mac == BOND_FOM_FOLLOW &&
-+		   BOND_MODE(bond) == BOND_MODE_ACTIVEBACKUP &&
-+		   memcmp(slave_dev->dev_addr, bond_dev->dev_addr, bond_dev->addr_len) == 0) {
-+		/* Set slave to current active slave's permanent mac address to
-+		 * avoid duplicate mac address.
-+		 */
-+		curr_active_slave = rcu_dereference(bond->curr_active_slave);
-+		if (curr_active_slave) {
-+			memcpy(ss.__data, curr_active_slave->perm_hwaddr,
-+			       curr_active_slave->dev->addr_len);
-+			ss.ss_family = slave_dev->type;
-+			res = dev_set_mac_address(slave_dev, (struct sockaddr *)&ss,
-+					extack);
-+			if (res) {
-+				slave_err(bond_dev, slave_dev, "Error %d calling set_mac_address\n", res);
-+				goto err_restore_mtu;
-+			}
-+		}
- 	}
+Rakie
 
-Thanks
-Hangbin
 
