@@ -1,218 +1,123 @@
-Return-Path: <linux-kernel+bounces-590746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02F03A7D637
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:39:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD22A7D66F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF3D07A5E09
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:38:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2248D1883F7C
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190CE22425C;
-	Mon,  7 Apr 2025 07:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BEC19ABC6;
+	Mon,  7 Apr 2025 07:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="QjlaFhHI"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="RxdWrJGi"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1A3224AFB
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A1519DF60
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744011492; cv=none; b=qKH6U7T204peqYY+PbCoiBkg6UUkvJYfDgylPo/ye5I53zp4yjSiFsy9Ck9Ubz8ynnd3wLa+r0Ahhrb5/v3VU8jMTQm88eumYXGQ3lExNPhOz/bBxfeMOYgCEslr0FoluO5XjBdR7Z9AtBaQRDlYfRZapuVHjz8i+Mtk21VueA0=
+	t=1744011694; cv=none; b=G1Ac2lR6l38o19tLnuCFUNN3q1W7e6aAMpYzoPaexGj4JLP3zpj7fNsZJdWzj/EXqAkKqrZ4k5VMx3c/WWlxjhKWRneO9M8PF4ZAxlHLStoBuqE1ywVoD7ITNISZT/D+e5zACr/ub3pIa+3XxOtSw//DMrJP3YozY8aqpyZBDuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744011492; c=relaxed/simple;
-	bh=ilz5/Is23/2Et0wJx3nSR2tMPcZiNpLCnMfguSiZ1Ik=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LFTdY5XWAR5O3F2RylQd0g4YUKJSzUcUYudhcyD1rhnKlQohVvCsTM41iUKGXaXYXmZF03TXGRZNovaGf1fI+wuzDgG5mpQlDjcXZ/lDRgWZXa4U3UIFPNB0GnO9w6rhs4X6VgTq+Gq+MNZnw3dMSMb2wdHSr6K+TeotaeHdrCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=QjlaFhHI; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1744011485; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=gYYSg5YwDogLH+IRS2vLAy217JvW0dvLBFZE5xtZqxk=;
-	b=QjlaFhHIGPJ53A5zMFH2o6imbKbi0BcxkuDAgKIA1oyVf+YMsC0G4M7YPuTAKfqq5imedPy771ELrcOX0v4Xwv8mTRXNEjRoHULan7rRfa+7qn62IkCR2yWWOuRdKmYtPZ9ut9pZwxSyTKh3lQIi7C+HIEA3NMaPJi8J7Am9jEg=
-Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WVqMIo9_1744011483 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 07 Apr 2025 15:38:04 +0800
-From: "Huang, Ying" <ying.huang@linux.alibaba.com>
-To: Nikhil Dhama <nikhil.dhama@amd.com>
-Cc: <akpm@linux-foundation.org>,  <bharata@amd.com>,
-  <huang.ying.caritas@gmail.com>,  <linux-kernel@vger.kernel.org>,
-  <linux-mm@kvack.org>,  <mgorman@techsingularity.net>,
-  <raghavendra.kodsarathimmappa@amd.com>,  <oe-lkp@lists.linux.dev>,
-  <lkp@intel.com>
-Subject: Re: [PATCH] mm: pcp: scale batch to reduce number of high order pcp
- flushes on deallocation
-In-Reply-To: <20250407063259.49271-1-nikhil.dhama@amd.com> (Nikhil Dhama's
-	message of "Mon, 7 Apr 2025 12:02:59 +0530")
-References: <875xjmuiup.fsf@DESKTOP-5N7EMDA>
-	<20250407063259.49271-1-nikhil.dhama@amd.com>
-Date: Mon, 07 Apr 2025 15:38:14 +0800
-Message-ID: <87r024o1zt.fsf@DESKTOP-5N7EMDA>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1744011694; c=relaxed/simple;
+	bh=wUxnoVJrOkhN8ol+6ufOgx0J5Xy6IYNdh22iPwhPO0w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aux+bja0z/xYLgVwQe3UpgSyRsdLLv5RYVTmMWWBCm/LGyxN6JzRi1RqtVNvKmGnOdlULkzokq+u664De06IZbQgQb+qtH9uKsYis8c4O6zk/hq7Pq+a6WJperU50DhtJdlUbqHE/YLbUUaORD9LnpkCm6PzT43t6fFSwJ54NmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=RxdWrJGi; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf034d4abso43313585e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 00:41:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744011691; x=1744616491; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uz22H0sKHi0P6ChA8f8l89RVIB0HG3tTa0TbQ2D4N4E=;
+        b=RxdWrJGiH2w8Wlfhk1ImgZ4sTnRqHYSa/norO4NdFlG6iIhWXeX8T7TrYP+Qsqc72i
+         dnpQ08vDVGWt/hQvcT5vYLE0RNNLcJKHK0XPGdY7NbW5DpmSNxALhiKVCqnkiitnjgwc
+         hoNTi7GpkYP7x/BGmP/EvFEFwx84Y865pEGEXr995F/Ekg9xwcT7vUcQ9rhHRRTZij3b
+         QGLUFAuwA74I7EhNrCYLGNXcuTUigOqIXG7fczNr+gPCr8xw1HTdkUomJ2TDpQ4A9+dm
+         sKzqfnodOyIyU6ZzyvQtmHUSAkgJOD5UXGtHtYpY9wGiw5dMWWs7+KZMrg2SeBtHmV2m
+         bPgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744011691; x=1744616491;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Uz22H0sKHi0P6ChA8f8l89RVIB0HG3tTa0TbQ2D4N4E=;
+        b=T5Rmr9OYhpwluRS9DtRERemfukJvm0cDJOYFdk1W2cmVlcnX7AHYGEmXQYmkMs3MKt
+         grArKycOpGpT7qsEMoyDmYNEqWwgG2XcjtQdcavVWqMG1a342YIKvn4ySW8qNchlDmZ4
+         GteOCkF3EgyNPZQHtUa9fLfwEIJhc3lZ23QmTwfvfCxWE8POUhkK7MJo0DgjN55MyuCM
+         /WIRC6dOIHzzUhP9prb6fu0ERRG6Jmikcj7ESYz4LVphprWMuEsXCPJbl4GEW13eCNZo
+         mIj7hjpRg/vWQV6vg3Z1rdAgW2oyVZJ6NHwq+UVr6DeZpznTlJdioVxYT7IaVz+F3LPm
+         pWHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxffu4s17KAUv9zQJqLNuxNsT96PZAxQqqlwFSHp329vrfPlvkQ64veAFB7Dlp88j1FgfGgHRvhDXoLPs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc5LwuzWPBBfSvscemTivyrT/VPO54rInSdRh/q1BJsxIthNWZ
+	cISpYTz6csS+8ZFuEWDedQCUIsW38/6+kljt4nli+/dL+JZrHPT3BiVAYShFbUc=
+X-Gm-Gg: ASbGncv50ExtS6oTC7qWrjhWQgvh7aj4MkP5a8qK4AWdNxStSBrmuwoK4ocdReHWlxv
+	RKaFyKzQ5JrP3H3K2CwmHq+zkFWuE4KFbaL17Nrm9PSgNAdpjEbcgcROMdpS6bLW5Au4gGqeFOz
+	0ZeamJ+Z0JmyQmqlX0tW5nlQb1MikcGNr5W/DAeF0y48KTU4uPfapcrBYUb+laMCDaKLfzQkA3E
+	68WEOX1TSGqeBvloiMv7P4gtKUzK+5/PYm/1HSuNKtdOGSzP9yLntBsvjT9b4akW5RCp/AfKHva
+	ef4Vg2KiateFxHBlU6IiJwTY7e5o217G5UwCnzNsieqY
+X-Google-Smtp-Source: AGHT+IFHFUB/LjMCMRZ1FmL1ZohnhrBOQtU3VyuHCtAN6Bq4uju9hGTT9QfacVvXg7wSnqGBuluI6w==
+X-Received: by 2002:a05:600c:4754:b0:43c:eec7:eab7 with SMTP id 5b1f17b1804b1-43ee0640054mr73289405e9.11.1744011691047;
+        Mon, 07 Apr 2025 00:41:31 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:8c64:734d:705a:39a7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c301a6a60sm11029472f8f.29.2025.04.07.00.41.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 00:41:29 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Peng Fan <peng.fan@nxp.com>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] gpio: immutable tag between the GPIO and regulator tree for the s5m8767 polarity quirk
+Date: Mon,  7 Apr 2025 09:41:22 +0200
+Message-ID: <20250407074122.23773-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Transfer-Encoding: 8bit
 
-Nikhil Dhama <nikhil.dhama@amd.com> writes:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-> On 4/3/2025 7:06 AM, Huang, Ying wrote:
->
->>
->> Nikhil Dhama <nikhil.dhama@amd.com> writes:
->>
->>> On 3/30/2025 12:22 PM, Huang, Ying wrote:
->>>
->>>>
->>>> Hi, Nikhil,
->>>>
->>>> Nikhil Dhama <nikhil.dhama@amd.com> writes:
->>>>
->>>>> In old pcp design, pcp->free_factor gets incremented in nr_pcp_free()
->>>>> which is invoked by free_pcppages_bulk(). So, it used to increase
->>>>> free_factor by 1 only when we try to reduce the size of pcp list or
->>>>> flush for high order.
->>>>> and free_high used to trigger only for order > 0 and order <
->>>>> costly_order and free_factor > 0.
->>>>>
->>>>> and free_factor used to scale down by a factor of 2 on every successful
->>>>> allocation.
->>>>>
->>>>> for iperf3 I noticed that with older design in kernel v6.6, pcp list was
->>>>> drained mostly when pcp->count > high (more often when count goes above
->>>>> 530). and most of the time free_factor was 0, triggering very few
->>>>> high order flushes.
->>>>>
->>>>> Whereas in the current design, free_factor is changed to free_count to keep
->>>>> track of the number of pages freed contiguously,
->>>>> and with this design for iperf3, pcp list is getting flushed more
->>>>> frequently because free_high heuristics is triggered more often now.
->>>>>
->>>>> In current design, free_count is incremented on every deallocation,
->>>>> irrespective of whether pcp list was reduced or not. And logic to
->>>>> trigger free_high is if free_count goes above batch (which is 63) and
->>>>> there are two contiguous page free without any allocation.
->>>>> (and with cache slice optimisation).
->>>>>
->>>>> With this design, I observed that high order pcp list is drained as soon
->>>>> as both count and free_count goes about 63.
->>>>>
->>>>> and due to this more aggressive high order flushing, applications
->>>>> doing contiguous high order allocation will require to go to global list
->>>>> more frequently.
->>>>>
->>>>> On a 2-node AMD machine with 384 vCPUs on each node,
->>>>> connected via Mellonox connectX-7, I am seeing a ~30% performance
->>>>> reduction if we scale number of iperf3 client/server pairs from 32 to 64.
->>>>>
->>>>> So, though this new design reduced the time to detect high order flushes,
->>>>> but for application which are allocating high order pages more
->>>>> frequently it may be flushing the high order list pre-maturely.
->>>>> This motivates towards tuning on how late or early we should flush
->>>>> high order lists.
->>>>>
->>>>> for free_high heuristics. I tried to scale batch and tune it,
->>>>> which will delay the free_high flushes.
->>>>>
->>>>>
->>>>>                       score   # free_high
->>>>> -----------           -----   -----------
->>>>> v6.6 (base)           100             4
->>>>> v6.12 (batch*1)        69           170
->>>>> batch*2                69           150
->>>>> batch*4                74           101
->>>>> batch*5               100            53
->>>>> batch*6               100            36
->>>>> batch*8               100             3
->>>>>
->>>>> scaling batch for free_high heuristics with a factor of 5 or above restores
->>>>> the performance, as it is reducing the number of high order flushes.
->>>>>
->>>>> On 2-node AMD server with 384 vCPUs each,score for other benchmarks with
->>>>> patch v2 along with iperf3 are as follows:
->>>>
->>>> Em..., IIUC, this may disable the free_high optimizations.  free_high
->>>> optimization is introduced by Mel Gorman in commit f26b3fa04611
->>>> ("mm/page_alloc: limit number of high-order pages on PCP during bulk
->>>> free").  So, this may trigger regression for the workloads in the
->>>> commit.  Can you try it too?
->>>>
->>>
->>> Hi, I ran netperf-tcp as in commit f26b3fa04611 ("mm/page_alloc: limit
->>> number of high-order pages on PCP during bulk free"),
->>>
->>> On a 2-node AMD server with 384 vCPUs, results I observed are as follows:
->>>
->>>                                   6.12                     6.12
->>>                                vanilla   freehigh-heuristicsopt
->>> Hmean     64         732.14 (   0.00%)        736.90 (   0.65%)
->>> Hmean     128       1417.46 (   0.00%)       1421.54 (   0.29%)
->>> Hmean     256       2679.67 (   0.00%)       2689.68 (   0.37%)
->>> Hmean     1024      8328.52 (   0.00%)       8413.94 (   1.03%)
->>> Hmean     2048     12716.98 (   0.00%)      12838.94 (   0.96%)
->>> Hmean     3312     15787.79 (   0.00%)      15822.40 (   0.22%)
->>> Hmean     4096     17311.91 (   0.00%)      17328.74 (   0.10%)
->>> Hmean     8192     20310.73 (   0.00%)      20447.12 (   0.67%)
->>>
->>> It is not regressing for netperf-tcp.
->>
->> Thanks a lot for your data!
->>
->> Think about this again.  Compared with the pcp->free_factor solution,
->> the pcp->free_count solution will trigger free_high heuristics more
->> early, this causes performance regression in your workloads.  So, it's
->> reasonable to raise the bar to trigger free_high.  And, it's also
->> reasonable to use a stricter threshold, as you have done in this patch.
->> However, "5 * batch" appears too magic and adapt to one type of machine.
->>
->> Let's step back to do some analysis.  In the original pcp->free_factor
->> solution, free_high is triggered for contiguous freeing with size
->> ranging from "batch" to "pcp->high + batch".  So, the average value is
->> about "batch + pcp->high / 2".  While in the pcp->free_count solution,
->> free_high will be triggered for contiguous freeing with size "batch".
->> So, to restore the original behavior, it seems that we can use the
->> threshold "batch + pcp->high_min / 2".  Do you think that this is
->> reasonable?  If so, can you give it a try?
->
-> Hi, 
->
-> I have tried your suggestion as setting threshold to "batch + pcp->high_min / 2",
-> scores for different benchmarks on the same machine 
-> (2-Node AMD server with 384 vCPUs each) are as follows:
->
->                       iperf3    lmbench3            netperf         kbuild
->                                (AF_UNIX)      (SCTP_STREAM_MANY)
->                      -------   ---------      -----------------     ------
-> v6.6  vanilla (base)    100          100                  100          100
-> v6.12 vanilla            69          113                 98.5         98.8
-> v6.12 avg_threshold     100        110.3                100.2         99.3
->
-> and for netperf-tcp, it is as follows:
->
->                                   6.12                     6.12
->                                vanilla   avg_free_high_threshold
-> Hmean     64         732.14 (   0.00%)        730.45 (  -0.23%)
-> Hmean     128       1417.46 (   0.00%)       1419.44 (   0.14%)
-> Hmean     256       2679.67 (   0.00%)       2676.45 (  -0.12%)
-> Hmean     1024      8328.52 (   0.00%)       8339.34 (   0.13%)
-> Hmean     2048     12716.98 (   0.00%)      12743.68 (   0.21%)
-> Hmean     3312     15787.79 (   0.00%)      15887.25 (   0.63%)
-> Hmean     4096     17311.91 (   0.00%)      17332.68 (   0.12%)
-> Hmean     8192     20310.73 (   0.00%)      20465.09 (   0.76%)
+Mark,
 
-Thanks a lot for test and results!
+Please pull the following GPIO change allowing you to apply the patch[1]
+converting the s5m8767 regulator driver to using GPIO descriptors.
 
-It looks good to me.  Can you submit a formal patch?
+Bartosz
 
----
-Best Regards,
-Huang, Ying
+[1] https://lore.kernel.org/all/20250327004945.563765-2-peng.fan@oss.nxp.com/
+
+The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-s5m8767-polarity-quirk-for-v6.16-rc1
+
+for you to fetch changes up to 4e310626eb4df52a31a142c1360fead0fcbd3793:
+
+  gpiolib: of: Add polarity quirk for s5m8767 (2025-04-07 09:33:29 +0200)
+
+----------------------------------------------------------------
+gpiolib: of: Add polarity quirk for s5m8767
+
+----------------------------------------------------------------
+Peng Fan (1):
+      gpiolib: of: Add polarity quirk for s5m8767
+
+ drivers/gpio/gpiolib-of.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
