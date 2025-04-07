@@ -1,161 +1,160 @@
-Return-Path: <linux-kernel+bounces-592331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 655BBA7EBED
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:04:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B49EBA7EBF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:05:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25D12446654
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:55:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2B7D442549
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C831259C85;
-	Mon,  7 Apr 2025 18:21:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B634327E1BE;
+	Mon,  7 Apr 2025 18:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RLh1tXPV"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="gzPe++zm"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35DD9224882;
-	Mon,  7 Apr 2025 18:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CBD22E41C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 18:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744050076; cv=none; b=LN6BRVj4rVGEKOYZCTLDgtTjDlp5LHdFLq4X9EzhAeQK/XQXcxmSIxD7oYPmtMilYXfS7tAXmS87j8XrTk+3tVK6DQhYE1ZM4nNCEWmSDlne5WysKhyklFj5tnWS30qQvWOr7peWqkF7iOgqfjNGSHHJaGdUGSs0ydJbnDT19qw=
+	t=1744050085; cv=none; b=kjr3kGm3Dyy5DiYHo2QZ9pzXjbKdJ5E90DWaQAbtMoON03b4sJl0OkcREWIe0N2LjkRjnxhTTFnFEJcxmBJTTOO+ykX9lxBh6yZp1QtDHGK5HkhdZjd8Ee015lM/dE2mixOgsdehn8WGVM7zRfxusjfkHgVZ3Y7JZRvT7t7HuVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744050076; c=relaxed/simple;
-	bh=8wC0V3F7d+ilyrpMWafa8egm5sgRBCeyFuJIZP4vVRk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=scQ/Mnak8RXr4NmT/FHeg9VODNj04DhyYlirN+EfUijmybrp+Bm9XORFBI4OYkgbLaQtDx0syRrZ44vS+S3lCb6Q3VaT72O2ODHnHjMuvliXZDJ4FSWO6YraBJ+xrLrCye3fSqoAtQBKpva/pMwiwN6czXb9kIfaXHnz8O8qAjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RLh1tXPV; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so19967485e9.0;
-        Mon, 07 Apr 2025 11:21:13 -0700 (PDT)
+	s=arc-20240116; t=1744050085; c=relaxed/simple;
+	bh=k1/9lyFJSiqegBG9DyQcR/UywbSI25i+yvmVs8N1+BI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P+OKtlMq/4WpJnAgt+ZLs0CDFsmeSvP1GHgaDmQo7DpVlxrYF0SkHfKRdrHQNot3sb4auvc0kFYedSv7Z3eFtnBiLG+/w63mwhMCZlkHcDm+GWb6uvw7SsMfU+QgTu6RLMvALox+mdKMuXqsUnQxUE/a83vT6zJQ5Hwzk1dBucg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=gzPe++zm; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2295d78b45cso60553195ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 11:21:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744050072; x=1744654872; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ES21mMERPPnSMI71+d30thtG1PyOJaAorY/1IBZ9Fis=;
-        b=RLh1tXPVIM8MjiBxxPBUK95dcSPJ5jr2pkYaq4Ne4OSVUoMg83cOXhES7v4ekW9SKx
-         10EPSLD5PH7L4WQRCJXbX+tVNtffvR01hs7/Y+ydWtTRJWsJS4YIIB6r8u5EbH1y+8Bn
-         Wy4B0DFmwJq2292+/mE9nZoWzHGV/x1uy/ofgHRnzAnlt3Emh5Ne6DZH92YOoXJ3iEUW
-         IIFUPt6+AvYVT5qP+xZiXl3PgCiBmYfCsVo82pAL+N4ksUoG2KEjUQ63yeinntOScBlu
-         Oe+CS2DIXh/hch8RVkfgGRv5EyL4cgK6Ev0EXxvsGm6c4l/NVuCKA3C0abL2rZ/rscxk
-         Mnrg==
+        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1744050083; x=1744654883; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=y1Xymma/bXOddjzuMPc0uNib0InwbFB+6iU+FgAga1I=;
+        b=gzPe++zm+JekE18C9GWD3KIiM7mEP8NenmYMUF+gK/4JTHHwB8hPvY/OC7opILkV33
+         PwoSQDnrLlCAn1jUABQSloGyDUKSbHE9g+ESY4cdpHhznOKRUapg7120/VsvVL1V8B+Z
+         5NLmIAITW7+0Mx/TLbQT6mjgpFNoBk4eSSAJaKxwcHIrd9UZ2/c5NzY/pT7HiJgF3c3G
+         k96yOjWuCUDqUyDNnwg12ZfcO+bf2TU3loxYAbqUpf4/RrmXf5o3uUpB70op1QBsdUNu
+         JFayC2+98G1rcD6n7ehDXjmVBG+7IAlgvV9rPnfHtyoueGgRbTRYP/mhRtMLU1GaU0K0
+         QW5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744050072; x=1744654872;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ES21mMERPPnSMI71+d30thtG1PyOJaAorY/1IBZ9Fis=;
-        b=I3KVtG/oO0wG4+LKPjXQ3p6n4AbdQkCxj2Pg7vL7W2pE0tPHxmJM8nym6dNkodr58x
-         4xClfmOgYjSEK5qblFi+CxPkA/BVkMOkhNNQOlB2lU7caVRYawnHYxSYETtb1AdojtHR
-         dHHd5rTosnaF36ty/Etav0FAHE5WYM8gk5/7kAWD90A77oG17/A2weQNDM344eyjLW5c
-         Ibf/wbTX2XnNqZSBicSg9gambTJERupHfHyNP3pTW/fIGaGqi/AW9Bk6XZSTi92/3jpX
-         2rylYTg+/4bMZR/6FDGOXzKHyuZb15VzcMii/JswRrGVC+6x6GE81SfArAcKEQYBu+mk
-         Ckfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCsoUMmhqNXaKqp0hIhgs/hEGzE5wa0U2L8kt0IwuMT3OQM4iRh7XVwe9UVt3wiWTiAupfqWdAsIOjNRQS@vger.kernel.org, AJvYcCUQju+Tg3r2unjrYWSIhyr2/UEnC5XKsms/GOoLLYoUo0DCCe2BaUxukTTrGxvTnJJ9+k5DaiOh1k2qOqk=@vger.kernel.org, AJvYcCUwvWNr4cNkq4cm9KgqdorsoqmxY3JWmn/6usp8N4bVe/LKFR1/6LJJWxZ3Ywe5TCuhJorRqWZVYooT5+GC@vger.kernel.org, AJvYcCVTEToWl3r0KCVHMZ2GnmW1bpEXP4i1dO+/X6XYHZEt9IqoOMZvaLxCvl7qmVGkCx/K/BzR0Jl3G+fG@vger.kernel.org, AJvYcCWXb4TeKCIz7+ffGSu6YZM9jBjFeIsE5wTzS3cotQ5FjbESq53nQNITlAbErgTBCAXpD8jDrctEe/1g8A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ7CSspDsfbBiQ8tGlyFvoHGUHOBK/xN92azAo7GwEkURZeXSL
-	klriQVBddRCDOkwzCdWUskl4CUEEO8JbEl3NLGDwgYG2GEez5i0I
-X-Gm-Gg: ASbGncuhJNIXaszIMEtbAGHgUGxvOWj7l8aDGZQD8uHd6+w8h0RU2QTgafKixD6ggao
-	bghsVI1prsFRDg1VYmWuQg6I8OF/sY7yKD0gZ4QTph18NEDYodvHd6gYDtqQg7giORWwq/cCWjB
-	oFEBkToYO2cbJvQI8jcaNwDZxUhgfgQI11bgYe65Bhr+OZihgptS0XalMDztG98MwqKDh2rDLHn
-	+y5if9Zg4ua9migkuRI5h/lSMKA9OmxI60Cg4waOZ9SppSvyAGJqIhPy+7kc8bAwkgazRDr6W1i
-	Mha/mHTnyH+YS1ldcLnQ25sI3Jo7yGtOm8XPv1coVeamdAsLEY+D8muA2iN6XZc0uIS5YEZR3y8
-	REWJH5Sk=
-X-Google-Smtp-Source: AGHT+IH7UT5+ww2+1FoGL9t0kvvVtsQUX0Zd7DaWfpx4PLfPCluuGh6+cQNvkvF3tn8WY4k8enhO3A==
-X-Received: by 2002:a05:600c:8411:b0:43d:d06:3798 with SMTP id 5b1f17b1804b1-43ecf9fe1f0mr113598395e9.20.1744050072429;
-        Mon, 07 Apr 2025 11:21:12 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec3174cf0sm142595365e9.0.2025.04.07.11.21.11
+        d=1e100.net; s=20230601; t=1744050083; x=1744654883;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y1Xymma/bXOddjzuMPc0uNib0InwbFB+6iU+FgAga1I=;
+        b=rpREsLpIC0nFyiRJTeut25auaZAN9dUIiHKARITIAHvZMXa8v+VZYRFXp43yVgHEIe
+         o7Cex+70IKKWwlT79o0SSFv+6HLQvsoMJLPcQeMNvFVZHl2s03FDoSV1FcxX+fzAC/RF
+         x4FSjcNrvBfTlEp1MVEJAc1jGguGC//FIzsgWG33fLI6befgO9NjwnyWlwEH6+GOUR4o
+         6Q6iDwSH4go2SiVHJwZsE/30ZF3l2coshCElhb3M0tT8waJ2BiQmoYTW0yualucAXI89
+         PlBWdFA6r2tASqmvfFS0FIaTosCNdHRvGnLkNmhdiisll4DnNrR3ndgNdJ15Y9RNov3M
+         W5Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLGifKS4urZT5cjeX4RwKiyx4p4EY5+NCu4MSKqeRFUOZnfZ10kqFH0kul1bW78UB9Tx5LlZ3QFbmOVuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNQkIvDZul8UsWRZfDOPqDraKIonKFYSApSBsAYXYzEF1o5ZjO
+	dNFNdsiB5f9FvMA4m/i5vh350tY+JUu6C2j+VOE6Xs5rKBPEB9Tm4KD3DxSjATM=
+X-Gm-Gg: ASbGncuSANZPJpXDnXmSVxnGhwh2/a9GFQObYi7FrxcveemjtptOWTYs3DB4cIiJUOP
+	sOA5+5bKbb1KI+wH+eZu1Hdw09gmhzYsFzYzxcrksY7lv4zpA5J15lEu9aMydc6QepXeqn8od29
+	VEfNSq2NZVFh3BlCad3bkeqfvf9VXrfC5aiFTGBSzruD+2c/Da40vVvbb7xsdNFNjlxL1FChGUV
+	sEe5OiF8+2+XSC6ONLxygn7dslxJ9sObee3Qth11bIK16WeavBEx5D02c0n/H5t+Qex5TTm7z9s
+	QxWibi2nyl4jTrnbXAOVd1V6
+X-Google-Smtp-Source: AGHT+IH4N8/3oA4wTPg2n7e91UEX+RmIscvqAqA1lYwbrZipQb/yeKPrP5GdySfDb3Kadj7CbVN/Yg==
+X-Received: by 2002:a17:902:d4c2:b0:21f:74ec:1ff0 with SMTP id d9443c01a7336-22a8a0a3892mr142523725ad.32.1744050083610;
+        Mon, 07 Apr 2025 11:21:23 -0700 (PDT)
+Received: from x1 ([97.115.235.21])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2297866e612sm84407055ad.200.2025.04.07.11.21.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 11:21:11 -0700 (PDT)
-Date: Mon, 7 Apr 2025 19:21:10 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Arnd Bergmann <arnd@kernel.org>, linux-kbuild@vger.kernel.org, Arnd
- Bergmann <arnd@arndb.de>, "H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel
- <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>, Brian Gerst
- <brgerst@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Dave Hansen
- <dave.hansen@linux.intel.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- Ingo Molnar <mingo@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Marc
- Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Masahiro
- Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nicolas@fjasle.eu>, Takashi Iwai <tiwai@suse.com>, Thomas
- Gleixner <tglx@linutronix.de>, Uros Bizjak <ubizjak@gmail.com>, Will Deacon
- <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH 0/4] Make gcc-8.1 and binutils-2.30 the minimum version
-Message-ID: <20250407192110.5a7ad777@pumpkin>
-In-Reply-To: <20250407164151.GB2536@sol.localdomain>
-References: <20250407094116.1339199-1-arnd@kernel.org>
-	<20250407164151.GB2536@sol.localdomain>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Mon, 07 Apr 2025 11:21:23 -0700 (PDT)
+Date: Mon, 7 Apr 2025 11:21:21 -0700
+From: Drew Fustini <drew@pdp7.com>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, guoren@kernel.org,
+	wefu@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, jszhang@kernel.org,
+	p.zabel@pengutronix.de, m.szyprowski@samsung.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v7 3/3] riscv: dts: thead: Add device tree VO clock
+ controller
+Message-ID: <Z/QXofChW/HeJ7DJ@x1>
+References: <20250403094425.876981-1-m.wilczynski@samsung.com>
+ <CGME20250403094433eucas1p2da03e00ef674c1f5aa8d41f2a7371319@eucas1p2.samsung.com>
+ <20250403094425.876981-4-m.wilczynski@samsung.com>
+ <Z/BoQIXKEhL3/q50@x1>
+ <17d69810-9d1c-4dd9-bf8a-408196668d7b@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <17d69810-9d1c-4dd9-bf8a-408196668d7b@samsung.com>
 
-On Mon, 7 Apr 2025 09:41:51 -0700
-Eric Biggers <ebiggers@kernel.org> wrote:
-
-> On Mon, Apr 07, 2025 at 11:41:12AM +0200, Arnd Bergmann wrote:
-> > From: Arnd Bergmann <arnd@arndb.de>
+On Mon, Apr 07, 2025 at 05:30:43PM +0200, Michal Wilczynski wrote:
+> 
+> 
+> On 4/5/25 01:16, Drew Fustini wrote:
+> > On Thu, Apr 03, 2025 at 11:44:25AM +0200, Michal Wilczynski wrote:
+> >> VO clocks reside in a different address space from the AP clocks on the
+> >> T-HEAD SoC. Add the device tree node of a clock-controller to handle
+> >> VO address space as well.
+> >>
+> >> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> >> ---
+> >>  arch/riscv/boot/dts/thead/th1520.dtsi | 7 +++++++
+> >>  1 file changed, 7 insertions(+)
+> >>
+> >> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+> >> index 527336417765..d4cba0713cab 100644
+> >> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
+> >> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+> >> @@ -489,6 +489,13 @@ clk: clock-controller@ffef010000 {
+> >>  			#clock-cells = <1>;
+> >>  		};
+> >>  
+> >> +		clk_vo: clock-controller@ffef528050 {
+> >> +			compatible = "thead,th1520-clk-vo";
+> >> +			reg = <0xff 0xef528050 0x0 0xfb0>;
 > > 
-> > x86 already requires gcc-8.1 since linux-6.15-rc1, which led me to
-> > actually go through all  version checks and make this is the minimum
-> > for all architectures.
+> > Thanks for your patch. It is great to have more of the clocks supported
+> > upstream.
 > > 
-> > Most of the actual resulting changes are actually for raising the
-> > binutils version, which eliminates version checks on x86 and arm64.
+> > The TH1520 System User Manual shows 0xFF_EF52_8000 for VO_SUBSYS on page
+> > 205. Is there a reason you decided to use 0xFF_EF52_8050 as the base?
 > > 
-> > Arnd Bergmann (4):
-> >   kbuild: require gcc-8 and binutils-2.30
-> >   raid6: skip avx512 checks
-> >   x86: remove checks for binutils-2.30 and earlier
-> >   arm64: drop binutils version checks  
+> > I see on page 213 that the first register for VO_SUBSYS starts with
+> > VOSYS_CLK_GATE at offset 0x50. I figure you did this to have the
+> > CCU_GATE macros use offset of 0x0 instead 0x50.
+> > 
+> > I kind of think the reg property using the actual base address
+> > (0xFF_EF52_8000) makes more sense as that's a closer match to the tables
+> > in the manual. But I don't have a strong preference if you think think
+> > using 0xef528050 makes the CCU_GATE macros easier to read.
 > 
-> This is intended to supersede the patches from Uros that removed checks for
-> binutils < 2.25, right?  See:
+> Thank you for your comment.
 > 
-> * https://lore.kernel.org/linux-crypto/20250404074135.520812-1-ubizjak@gmail.com/
-> * https://lore.kernel.org/linux-crypto/20250404074135.520812-2-ubizjak@gmail.com
-> * https://lore.kernel.org/linux-crypto/20250404074135.520812-3-ubizjak@gmail.com/
+> This was discussed some time ago. The main issue was that the address
+> space was fragmented between clocks and resets. Initially, I proposed
+> using syscon as a way to abstract this, but the idea wasn't particularly
+> well received.
 > 
-> If we can indeed bump up the requirement to 2.30, that would be great.
+> So at the start of the 0xFF_EF52_8000 there is a reset register GPU_RST_CFG
+> I need for resetting the GPU.
 > 
-> Just a note though: I recently added VAES and VPCLMULQDQ instructions to
-> BoringSSL, which increased the binutils requirement of building BoringSSL to
-> 2.30, and this caused issues in a downstream project; e.g. see
-> https://github.com/briansmith/ring/issues/2463.  Specifically people complained
-> about being unable to build on Amazon Linux 2 and CentOS/RHEL/Oracle Linux 7.
+> For reference, here's the earlier discussion: [1]
+> 
+> [1] - https://lore.kernel.org/all/1b05b11b2a8287c0ff4b6bdd079988c7.sboyd@kernel.org/
 
-Just tell them RHEL 7 is no longer supported :-)
-(Was a right PITA installing an extra package on a CentOS 7 system we use as
-a build machine...)
+Thanks for the explanation.
 
-In any case it is relatively easy to install a later gcc - even though it ends
-up in a very obscure place.
-
-	David
-
-> 
-> So I just thought I'd mention that, based on past experience with this sort of
-> thing, those are the specific cases where it seems people are most likely to be
-> trying to use binutils < 2.30.
-> 
-> But if those distros are not going to be supported any longer (without
-> installing newer tools on them), or even are already unsupported due to the gcc
-> requirement, bumping up the binutils requirement to 2.30 sounds good to me.
-> 
-> - Eric
-> 
+Reviewed-by: Drew Fustini <drew@pdp7.com>
 
 
