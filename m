@@ -1,135 +1,115 @@
-Return-Path: <linux-kernel+bounces-592272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6898EA7EB39
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:48:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D845A7EAE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F4A03BD894
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:41:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA1137A5AE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C555526A1C2;
-	Mon,  7 Apr 2025 18:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B6226AAB8;
+	Mon,  7 Apr 2025 18:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ncetSlKo"
-Received: from mail-yw1-f194.google.com (mail-yw1-f194.google.com [209.85.128.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tq3995Fz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841A526A0E4;
-	Mon,  7 Apr 2025 18:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A2F26AA9B;
+	Mon,  7 Apr 2025 18:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744049735; cv=none; b=IGMEw8z9E6wvLBiZVtVemc7PKwb6hUwyd3qkx0uNciSSbOMYpoWbDSGzyLUBhv9e9Ly1+bBINqwQW4SEeDwKrHNUgRAjMAMSmjjrGj7VK6v2m78zOs6O/Jw0EiNVVG5d0xwFgqtQy0OLzxSh+fXAULbkzZ7Z+p0IiXeY3uyrC+E=
+	t=1744049742; cv=none; b=DRm318DOiIiH0Xqx93q7ugKFZBKJwErSK+sUW3MNvKKnOEsSuXtYmRuV2gja74oMEWbMH34hp7lpuVvY8nKNJRSyDQTomaJtN7oUs8/zMq3ZhPvrlFSlfmbJjtbWCxxxqcTJANv0qm8pygM/vMPLAxJenPwQ4r6S32/4D9wIMhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744049735; c=relaxed/simple;
-	bh=0DGW2GtE/wbTFy6zNvPW1hLpO8FevOBzZbFxsl4xPjE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cb/F3/4ST82D2Dyjt7BWZGJoWlD6BOKA7E8qBus0EDJREsg9e7IQrd3W4LzNXIfqWpP0oz6ViESAa45BHmKMXWjM7TliwLke/466x/GADmv4WSRaBTHqyRAtM+4Ha5dwzO0JvgRZK+mfTWo7vFKEPpbVpvsus1pguHQH7pAu4Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ncetSlKo; arc=none smtp.client-ip=209.85.128.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f194.google.com with SMTP id 00721157ae682-6ff07872097so42695127b3.3;
-        Mon, 07 Apr 2025 11:15:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744049732; x=1744654532; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=W+y7j0d94ESJiQTrZdM7W+yXTrmSLOAkjPT20fXhISA=;
-        b=ncetSlKoAU6LPDlx3wYCW5Fe02RWX7yhDHhFRsnDBSb3lhPuVoY0p3zSoUUN0RdM18
-         QQO2/omYiPD4cNFNmtiF+3PBXXD4n4s7xPkAzpL/RUdgPVSxcu4SWiR5nZDnIsh61AGE
-         XjENQ868zn+mfS+jXYCM+s13SJCvk5s4nnfUajK8Tcq0qAGxOpdQRoY/njXrnOW3MfgT
-         ndA/iaZJYcdn5kY6obNyyXd7DzEGstpkMLdi4OcxxHrh5xUTSQmnYeLyOPpG7x2wbDLF
-         1F8JKno9jm7zgIoVATu1EPDiFHqQnw14SaPEkb9YurmbTksQkA8kRSG1jQv1JmtyAKm+
-         0LjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744049732; x=1744654532;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W+y7j0d94ESJiQTrZdM7W+yXTrmSLOAkjPT20fXhISA=;
-        b=qZhwTGwl743jab2YK4sbsODgmo6R2po/RoGSaUfG7ZTElqVcDBuy+EeRkmE3RBc7iM
-         fQaUfkWiPvPxkoRiZwu7Chd/e7qICyy76pZff0ONC34P6/E8PO3doD+4EswyVnf5zqwA
-         h6YYEMUaFMr4iGZjLxE2P/MQLkngRO/SODxuDOfVqmyBBlpX7nsakVGhXAxBn4oHyHYf
-         fs6YYk5Oze9wrVMWe+ZCKnmgrKLM7/8bopVeuyLqqlVlMOdh9GJAoIBKxSsD9h2L0xJ7
-         3toFaYH29cKsEDxcloNc7fa5kayqcotGyDgvptgq99ULKWTXMCIVzLXF+tnUFxDN+uaf
-         Hzsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXmn5TiM5Jp8D8jXYiMDFB57uWHs3En1FTDxoUadWKx/m3cpxqpi0tUfFLLRZEVGW+2vaG67mtYPgE3J0I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnxuBHQoqcsjLc45rYm7r5yCn3VbYfJA88Bf7HOs9jrJNW1+Zk
-	/FI3m+1gWNYj6B9MdQL7qhQE9dLAUHmrK5512jbyS1soMhgrk+Bb
-X-Gm-Gg: ASbGncvnY3RsSBgouO0ALOJqan3RydLZ9Lnmjjj8L0+L2IkaWDPStuset/sJqwrdDl6
-	5dO/IvxDLr9+3sUziqFgb1Fu6VpWF3oW7Q14nZ6YLgUrCwkqicWRs5Nl+LX8h9Ex423kokn44X5
-	EEl7tBpT4yAds9hdSMIb7E7YmtEETdpjNOiehDzZ4rDX8IKaeAAw3lMqDKe1tTKrO/hPs/EBBLW
-	kUq04xBev2UVN10VouXib95wcqxJ9WRV5caZ/Urri/s41ZMFS+L4vvT9mLK3VT1elFAZ7RkCwrb
-	7S5o6RIX9In/83Vcn3xcXtaEMmZ4o8FRB0Yo2LoOoQbV26+l/1SNxV0qso3tfYP+QhhcDhmRwXH
-	PLQ==
-X-Google-Smtp-Source: AGHT+IF2uFzNJUA+HFuJSyLd8tdsQvhlIigDoTzGOxEQtLXp81AorTYnwP7QptlT3IUmR4B0WPnQ9w==
-X-Received: by 2002:a05:690c:2506:b0:6fb:9389:3cde with SMTP id 00721157ae682-703e14f8287mr237326997b3.3.1744049732407;
-        Mon, 07 Apr 2025 11:15:32 -0700 (PDT)
-Received: from [10.102.6.66] ([208.97.243.82])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-703d1fa6f24sm26502997b3.98.2025.04.07.11.15.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Apr 2025 11:15:32 -0700 (PDT)
-Message-ID: <af01e665-08bb-4b60-ba0b-1784dd8a5ce3@gmail.com>
-Date: Mon, 7 Apr 2025 14:15:31 -0400
+	s=arc-20240116; t=1744049742; c=relaxed/simple;
+	bh=bKU4fsm3ABdtwrGzO/jCO7MgFHkMrzVGZTc9c995lsY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=rK2JegtqKYij+tzJYlPbR0gyMgCzSYEdfueAeFFQfuO4Lxpk9TBdf0wXSvQdTaqhAuCsCedMdLxiv5HtP7R4/tlSQewinTWwFm+WI+ZrLeVuuH7AuerZXLg/upbZEraD5CCxAfLWHqTO5D0WOwiuR8lp0R7bqY3COj4398aI+Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tq3995Fz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B4A6C4CEE7;
+	Mon,  7 Apr 2025 18:15:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744049742;
+	bh=bKU4fsm3ABdtwrGzO/jCO7MgFHkMrzVGZTc9c995lsY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Tq3995FziTlgJBRWg2zqJVmA+IjzR9fjEEycZX019iYDS1rx6Nc2YfrtsxOwrKmUP
+	 HINx0lJn5GZAyre3TtgWVxyzhMFbN+sAaDdHZ4IIL4huawnAS2oUsrh5d2/+ZQsMus
+	 uZp6t+3SzDPTvHhRJP0TiBW0WlmML8V0JEZhCIC0FXN9IAsGIxkuYLfh2VwofNrwoq
+	 SiRyPrNBBNfMf8CTB2cuTuOfS5yiZkob4q41hTcObQplQnq4lBtSzVXU6g3OUsa86Q
+	 WzTbj2lXRUvbVnATLEj5gI7bj0Dx5LM7MUCyBTR3BdL2ZPEEA1eELDD7w9vfNBFi5W
+	 CoDdQjYcOtTTQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	kernel test robot <oliver.sang@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	dmaengine@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 2/4] dmaengine: dmatest: Fix dmatest waiting less when interrupted
+Date: Mon,  7 Apr 2025 14:15:32 -0400
+Message-Id: <20250407181536.3183979-2-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250407181536.3183979-1-sashal@kernel.org>
+References: <20250407181536.3183979-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v3 net-next 0/3] Add support for mdb offload failure
- notification
-To: Jakub Kicinski <kuba@kernel.org>, Joseph Huang <Joseph.Huang@garmin.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Roopa Prabhu <roopa@nvidia.com>,
- Nikolay Aleksandrov <razor@blackwall.org>, Simon Horman <horms@kernel.org>,
- linux-kernel@vger.kernel.org, bridge@lists.linux.dev
-References: <20250404212940.1837879-1-Joseph.Huang@garmin.com>
- <20250407102941.4331a41e@kernel.org>
-Content-Language: en-US
-From: Joseph Huang <joseph.huang.2024@gmail.com>
-In-Reply-To: <20250407102941.4331a41e@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.10.235
+Content-Transfer-Encoding: 8bit
 
-On 4/7/2025 1:29 PM, Jakub Kicinski wrote:
-> On Fri, 4 Apr 2025 17:29:32 -0400 Joseph Huang wrote:
->> Currently the bridge does not provide real-time feedback to user space
->> on whether or not an attempt to offload an mdb entry was successful.
->>
->> This patch set adds support to notify user space about failed offload
->> attempts, and is controlled by a new knob mdb_offload_fail_notification.
->>
->> A break-down of the patches in the series:
->>
->> Patch 1 adds offload failed flag to indicate that the offload attempt
->> has failed. The flag is reflected in netlink mdb entry flags.
->>
->> Patch 2 adds the new bridge bool option mdb_offload_fail_notification.
->>
->> Patch 3 notifies user space when the result is known, controlled by
->> mdb_offload_fail_notification setting.
-> 
-> You submitted this during the merge window, when the net-next tree
-> was closed. See:
-> https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
-> Could you repost so that the series will be re-enqueued?
-> 
-> Thanks!
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
 
-Sure thing!
+[ Upstream commit e87ca16e99118ab4e130a41bdf12abbf6a87656c ]
 
-A couple of questions:
+Change the "wait for operation finish" logic to take interrupts into
+account.
 
-- Should the re-post be v3 (no change) or v4 (bump)?
-- Do I re-post after 6.15 is released? Around what time frame (so that I 
-can set a reminder)?
+When using dmatest with idxd DMA engine, it's possible that during
+longer tests, the interrupt notifying the finish of an operation
+happens during wait_event_freezable_timeout(), which causes dmatest to
+cleanup all the resources, some of which might still be in use.
 
-Thanks,
-Joseph
+This fix ensures that the wait logic correctly handles interrupts,
+preventing premature cleanup of resources.
+
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202502171134.8c403348-lkp@intel.com
+Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+Link: https://lore.kernel.org/r/20250305230007.590178-1-vinicius.gomes@intel.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/dma/dmatest.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c
+index a3a172173e345..915724fd7ea6f 100644
+--- a/drivers/dma/dmatest.c
++++ b/drivers/dma/dmatest.c
+@@ -825,9 +825,9 @@ static int dmatest_func(void *data)
+ 		} else {
+ 			dma_async_issue_pending(chan);
+ 
+-			wait_event_freezable_timeout(thread->done_wait,
+-					done->done,
+-					msecs_to_jiffies(params->timeout));
++			wait_event_timeout(thread->done_wait,
++					   done->done,
++					   msecs_to_jiffies(params->timeout));
+ 
+ 			status = dma_async_is_tx_complete(chan, cookie, NULL,
+ 							  NULL);
+-- 
+2.39.5
+
 
