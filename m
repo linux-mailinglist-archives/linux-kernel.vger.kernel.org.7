@@ -1,107 +1,194 @@
-Return-Path: <linux-kernel+bounces-590750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE072A7D666
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:43:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46076A7D694
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:47:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87F1A1671DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:42:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 801E742195A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A9C2248AA;
-	Mon,  7 Apr 2025 07:41:56 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBC1225A22;
+	Mon,  7 Apr 2025 07:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Uh1FIZEH"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0533619ABC6;
-	Mon,  7 Apr 2025 07:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424B0224259
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744011716; cv=none; b=UU1TJTONlqUaKzWPXwzTCoL/C54rLKusgaupxbj3ocvqvWoNF1fvQ27scUHvBfkpVCx6FtznkN61GNWpLE9uup+DH/04NWhjPpI3XHRwk5gYsgVsFTDnDWi1wD3JvrbwbGUXtS5x8mP5tIMBw9P599mC8qwYpiCQaJYsC9uO19I=
+	t=1744011770; cv=none; b=LqZ9ifJogjat1OuP8/ldKVnXcz4u3IdrK3o6AEwobVIP24/xu64rLmvgE9nyathY71E2j+EiO+THCgwLD69Ik3jA4XZYFjTV0JJ2F6rSlsI3jVzsVdO/h8XK+In5dZbDeT9i+e6+4kLfDozZ7bj3jKtaHovdUc9xsdWNrD0H+5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744011716; c=relaxed/simple;
-	bh=4sYWNtAc4YF7YZg03HO0SzkfYuVw4goAQfDHPc5y0l0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DOwcIweB6EAtzAoOH1rBiN8x48R90fZFQ+K6FpX8Ij2GtTqTGDfTL+HjWjstOArsguINCo4eZ0Zb0vbwye5I/v2Kjmf3tp42Rw5xzfEH7yDd+RIZ0AilgSCHgoQAf24IRdon+gwdqWr3v2BY1YQvWU8tZGQXAcZFcbRn/EZ9kIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-03 (Coremail) with SMTP id rQCowABnCzixgfNnEbXVBg--.3292S2;
-	Mon, 07 Apr 2025 15:41:40 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: davem@davemloft.net,
-	andreas@gaisler.com,
-	make24@iscas.ac.cn,
-	sam@ravnborg.org,
-	dawei.li@shingroup.cn
-Cc: sparclinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	stable@vger.kernel.org
-Subject: [PATCH RESEND] sparc: fix error handling in scan_one_device()
-Date: Mon,  7 Apr 2025 15:41:27 +0800
-Message-Id: <20250407074127.2581452-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1744011770; c=relaxed/simple;
+	bh=TT2CwatyE3PScxA6aGzLKHWl9XyGLFx6ZMSmhaOgntY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FwVA7ywPiseghKs6IlymTTIKuj6AQiS921AcXZlFQgYbGDyWTgLMtc5RxY+HxM1fT+fZgf9YrPaUoQZo715JeGQAh2f7KZ+iFfZ2B8EX0c1zTL8yHgfki2LZrr1f4Z7+PJslAnllB2lSoa/NTdWoIzAj13HyQP5NmMuEfBriZTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Uh1FIZEH; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so14350355e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 00:42:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744011765; x=1744616565; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+SH50cqVXDjMtrk7e8ugGB2VmAlt5N0M4eNdMhk4w28=;
+        b=Uh1FIZEHmLO0ydh4g3L1wDcEVKdGWwgWXtbRPV/o+Oj0BJqWxxkySgzxioEXA952tN
+         piNPrlYHsPuQrSqhi2xn75UocRDQWCrvy8Ne4q6+V+FIKf8+9zMItUcK5M/ObxggDXmv
+         AOAK3h/yzTGb76Ma/1SmYr17oDYo5CYTDZm8eFip5o7WN1bRgcXERAhKm1In8/Z1T22H
+         HR8bTogDpOw19JMVITLhPd4FOL6fZaPMYnYIyzKSAuqBbXFT2JTus6h20i8Lc7w6Z6Xo
+         VS/VkYtqO01JKldyu82WcqHTaDn5kyOQ9vqYYpfWofh/Xcf2ow609LpulSCLEy9+VYPi
+         19yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744011765; x=1744616565;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+SH50cqVXDjMtrk7e8ugGB2VmAlt5N0M4eNdMhk4w28=;
+        b=U/KtJ7LCrC649uJ/XB5ZgUFU44BN6OROSJtGTDp0OoEmnFmSCO4gaUcU5hDdIysTK4
+         THFSazTX7Pqk8Sw2Z8f93DRD0uOb7UEhXFMi9cYae4Lwn17wjlJXYkZBqKV2cFBl2sHM
+         Woel4KVbrWWVVmdig2O5JvqJse4tEGPzh0aOZpK+3Pf4gwfyzjYSN3gOyoryuD4x7OxJ
+         7E/iw19xWCGeoPKwxnuEz5yQcAr+yCpnbJfUtH3hlGYpr+etDDv/btPNuiwCEtwgB2zO
+         lLVHQwbVEOfWbTJPQhcfT9w2Wxr3rkBW8eUYNEzDJBsrbGuD6IFgHkUexn7Zbw9JfE0w
+         S4Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBW+LpvdcxLUGhHn70cLZfHwCEC3wBOr7uWTEa9YekSW/4T5+JjFB0I8mTj+YJEF2JXKPS1HiaCRbSpII=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/O7ZWZI9RxoD2Y0Ns7j4jF/s7kgw0Zc2aEcxdb4X9bwd/CtKM
+	j+bJFF3A0ao5iie/L4TQTacsCbUQflH/2ub6N2i3wHhC3FprMx0nrw0YhjaSeIE=
+X-Gm-Gg: ASbGncvbzw9xBMjKgsCqLiIwnIXSRIhIHpo20zflB95GVux3HDsNV4koSOSERUhzG3a
+	VdrhSHAhCmXv3npL56DNfIZ/FiGnG63a0UvwBSokWo3zYFyYCYJfBIH+wGkiVconnMkR5gg3IUz
+	MvwS9DZfANNX6Wf1M8ypWl6K/5GXZ1dby0xHD/XaFSiQyd1C16w9WduNEz78LGeSg2mSdiW8Z8J
+	k+B5cOhXfWiL1Ebhm2Ory+no9d+DBni+gWvGZAu7iI6rT5biyiQ1elu//K7ecXbZd5zkTjwMh5u
+	vjtCe1Bn151Xj9Z2WUVazTwMJO7q4Px/TbpypkGvSEGohFruIdY2GPflGpOQqlx6TWt5IcKex/j
+	sPFUFn6WRHNCObvvz
+X-Google-Smtp-Source: AGHT+IGj4oFOpbFlCSYKH70mEMH5XLqpGaZABBghjAnvaw9bAjEggbo9aAX8vuvntuy/p28yBQRuZQ==
+X-Received: by 2002:a05:600c:4f46:b0:43d:db5:7b1a with SMTP id 5b1f17b1804b1-43ecf86a5f9mr108047395e9.12.1744011765391;
+        Mon, 07 Apr 2025 00:42:45 -0700 (PDT)
+Received: from archlinux (host-87-15-70-119.retail.telecomitalia.it. [87.15.70.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec1630de9sm124012395e9.1.2025.04.07.00.42.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 00:42:44 -0700 (PDT)
+Date: Mon, 7 Apr 2025 09:41:32 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 3/3] iio: adc: ad7606: add SPI offload support
+Message-ID: <vjxnpbxvvh2vdjsamdznhrmrwwfwt5tjhugqik3ktueopajv6l@wmehdnowjvjq>
+References: <20250403-wip-bl-spi-offload-ad7606-v1-0-1b00cb638b12@baylibre.com>
+ <20250403-wip-bl-spi-offload-ad7606-v1-3-1b00cb638b12@baylibre.com>
+ <20250405164041.7d2e586b@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowABnCzixgfNnEbXVBg--.3292S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7GF13GrWUGF4kuFW8WF43GFg_yoWktwbEga
-	12v34UWr1fAwsagw43Ar4a9r1xtrnFyFWrK34Iyr1kJayrXrZrWrs5Gw4vvr9rWa17Cr1D
-	Za4qqrsFkr1SgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb38FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
-	evJa73UjIFyTuYvjfUF0eHDUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250405164041.7d2e586b@jic23-huawei>
 
-Once of_device_register() failed, we should call put_device() to
-decrement reference count for cleanup. Or it could cause memory leak.
-So fix this by calling put_device(), then the name can be freed in
-kobject_cleanup().
+Hi Jonathan,
 
-As comment of device_add() says, 'if device_add() succeeds, you should
-call device_del() when you want to get rid of it. If device_add() has
-not succeeded, use only put_device() to drop the reference count'.
+On 05.04.2025 16:40, Jonathan Cameron wrote:
+> On Thu, 03 Apr 2025 18:19:06 +0200
+> Angelo Dureghello <adureghello@baylibre.com> wrote:
+> 
+> > From: Angelo Dureghello <adureghello@baylibre.com>
+> > 
+> > Add SPI offload support for this family.
+> > 
+> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> Hi Angelo,
+> 
+> Code looks fine, but there is a TODO I'd like to know more about
+> as it sounds 'ominous'. 
+> 
+> Otherwise this needs a dt review for patch 1 before I queue it up.
+> 
+> Jonathan
+> > diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
+> > index b2b975fb7fea4d1af6caef59e75ca495501bc140..b086122497eb22042171580878160334f56baa23 100644
+> > --- a/drivers/iio/adc/ad7606_spi.c
+> > +++ b/drivers/iio/adc/ad7606_spi.c
+> 
+> > +static int ad7606_spi_offload_probe(struct device *dev,
+> > +				    struct iio_dev *indio_dev)
+> > +{
+> > +	struct ad7606_state *st = iio_priv(indio_dev);
+> > +	struct spi_device *spi = to_spi_device(dev);
+> > +	struct spi_bus_data *bus_data;
+> > +	struct dma_chan *rx_dma;
+> > +	struct spi_offload_trigger_info trigger_info = {
+> > +		.fwnode = dev_fwnode(dev),
+> > +		.ops = &ad7606_offload_trigger_ops,
+> > +		.priv = st,
+> > +	};
+> > +	int ret;
+> > +
+> > +	bus_data = devm_kzalloc(dev, sizeof(*bus_data), GFP_KERNEL);
+> > +	if (!bus_data)
+> > +		return -ENOMEM;
+> > +	st->bus_data = bus_data;
+> > +
+> > +	bus_data->offload = devm_spi_offload_get(dev, spi,
+> > +						 &ad7606_spi_offload_config);
+> > +	ret = PTR_ERR_OR_ZERO(bus_data->offload);
+> > +	if (ret && ret != -ENODEV)
+> > +		return dev_err_probe(dev, ret, "failed to get SPI offload\n");
+> > +	/* Allow main ad7606_probe function to continue. */
+> > +	if (ret == -ENODEV)
+> > +		return 0;
+> > +
+> > +	ret = devm_spi_offload_trigger_register(dev, &trigger_info);
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret,
+> > +				     "failed to register offload trigger\n");
+> > +
+> > +	bus_data->offload_trigger = devm_spi_offload_trigger_get(dev,
+> > +		bus_data->offload, SPI_OFFLOAD_TRIGGER_DATA_READY);
+> > +	if (IS_ERR(bus_data->offload_trigger))
+> > +		return dev_err_probe(dev, PTR_ERR(bus_data->offload_trigger),
+> > +				     "failed to get offload trigger\n");
+> > +
+> > +	/* TODO: PWM setup should be ok, done for the backend. PWM mutex ? */
+> 
+> I don't understand this todo. Perhaps some more details?
+>
+it was just an initial comment i did, when i started the things
+was not clear.
+Let me know if you can remove it, or i can send a v2.
 
-Found by code review.
+Thanks a lot.
 
-Cc: stable@vger.kernel.org
-Fixes: cf44bbc26cf1 ("[SPARC]: Beginnings of generic of_device framework.")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- arch/sparc/kernel/of_device_64.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/sparc/kernel/of_device_64.c b/arch/sparc/kernel/of_device_64.c
-index f98c2901f335..4272746d7166 100644
---- a/arch/sparc/kernel/of_device_64.c
-+++ b/arch/sparc/kernel/of_device_64.c
-@@ -677,7 +677,7 @@ static struct platform_device * __init scan_one_device(struct device_node *dp,
+Regards,
+angelo
  
- 	if (of_device_register(op)) {
- 		printk("%pOF: Could not register of device.\n", dp);
--		kfree(op);
-+		put_device(&op->dev);
- 		op = NULL;
- 	}
- 
--- 
-2.25.1
-
+> > +	rx_dma = devm_spi_offload_rx_stream_request_dma_chan(dev,
+> > +							     bus_data->offload);
+> > +	if (IS_ERR(rx_dma))
+> > +		return dev_err_probe(dev, PTR_ERR(rx_dma),
+> > +				     "failed to get offload RX DMA\n");
+> > +
+> > +	ret = devm_iio_dmaengine_buffer_setup_with_handle(dev, indio_dev,
+> > +		rx_dma, IIO_BUFFER_DIRECTION_IN);
+> > +	if (ret)
+> > +		return dev_err_probe(dev, PTR_ERR(rx_dma),
+> > +				     "failed to setup offload RX DMA\n");
+> > +
+> > +	/* Use offload ops. */
+> > +	indio_dev->setup_ops = &ad7606_offload_buffer_setup_ops;
+> > +
+> > +	st->offload_en = true;
+> > +
+> > +	return 0;
+> > +}
+> 
+> 
 
