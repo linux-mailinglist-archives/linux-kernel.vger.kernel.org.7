@@ -1,127 +1,218 @@
-Return-Path: <linux-kernel+bounces-592100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDAAEA7E924
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:56:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC59AA7E92F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44181189B0B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:51:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 568D21884313
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F90215186;
-	Mon,  7 Apr 2025 17:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8EB2135CD;
+	Mon,  7 Apr 2025 17:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zMnClYon"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f66dLywR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE85216E01
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 17:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44D22163B8;
+	Mon,  7 Apr 2025 17:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744048272; cv=none; b=eU2kJF0PHzIok9gZAv7o2WXD8JcmJry5AYk/slTgEQpU+/jUqrlI9m2wFwbzrNdhZiy+b8mT4WZKJQ/5FBd3snpR32XNQ180CTVJJfw/NXiR77BQyOnEDso50uArfUf+qwGiX0Fe4lErA/qVXDStcxk4LExv929yLJPxxQ+/244=
+	t=1744048439; cv=none; b=G5S0iFzH4Ebv9vCim+MLU4Z+Qp7Bv/pck1TMQmbi/KPSd2mE2MY081vDEhopxWXV7kqnnM9YvIXqfxixb0fuDo7lMX8DIgRT5CvQQ5vtlMpfu5VIgl+1W+ImCeGZdBfVaG4EnsdkOgVwEfBn6Lruc3rykQYgg8loK2rj6mDsQTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744048272; c=relaxed/simple;
-	bh=0zjNM9dFoJpTEvEmQW4onWMxpWkB12U2X0BMSHbeSbA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XwnP/l095Fl3c7NOfUd9RegqWv+ZoXwbE78NFYq4nvTxdFCjRg4sErIn01M/Z19NgMMXXubUPJfC6JPw69Frz08JzBy6aXYbixH5evZXJ4hqqAYa6QTO90FYlC4h+YzIFLRmqxnUFbsvAAOOqrHSlQy9k6GGo20MXUfrAWv2ohE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zMnClYon; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22403cbb47fso49919775ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 10:51:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744048270; x=1744653070; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=VY91Ztk0jKcUdYVunqeI1fUjcT5ASJ+JXFcinKfCuVw=;
-        b=zMnClYonMcIg6dTsgkoNqCFlQA710y4aGg1YhKymCGLkcWBNfaCh02mt3bNZ+Gc0Dt
-         ZbxGmWBMwuVQcTnImhqlaEnqkD/YyeF9ZX8fV3eUX9/h1f6bMS//HYnReBguZV1Pkk7r
-         HGPwvBTfK6ADyG6OXdtitO/m6WyAiCcAFJuo9jzumUZ6eNQlNnlawms/CpjapoSAMwBj
-         F0j5tFONa1vFW1p+3Luwe0Z/gv4RjKHOzemtHUpE/j38TL2tkW+Sl+vdshtPpLbqJ+nB
-         Bz/stjWM6Ot7xMAOOpmtZuuSObPfGYlEAEWPTlLNxInxKHvZesb6S4d8OdmXHQ9ZFyIs
-         LMiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744048270; x=1744653070;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VY91Ztk0jKcUdYVunqeI1fUjcT5ASJ+JXFcinKfCuVw=;
-        b=XToxAJDWyJVSTck0qnQAV2PALnInE0JvE/e68Ac3OcMhDmDQKNSN/3gLxm1HgpPshB
-         qN6QxKZdXidMvjf1/Amo7eIVFHVy0QWtzgxD+qS0tAFkZLM8xAaMloGwSDxvvBYFTwcS
-         IlsCg8TZmiDh4WRyPKXrBTJJd54s9x4PGL8NelBHgznA0yhZM3e0+Y/RlP42l2TXxSiO
-         QWLmwTg8t8mM9Ad7oWB27q34IVlXuTkNw1pxkqZbyGLcJnTd4TB8wrKeqXR1tn8xssJF
-         17zIgwhRqg1jYSmkzM7S7Sf0XNmCHN9cTgWfHDAATNtJX2OtXuWUfz7Lb9nLjf591J/c
-         H4eg==
-X-Forwarded-Encrypted: i=1; AJvYcCXRqjBEJbYtZ2uTqOutQtAAk2tNuyp+kmL/7uljQ75vfIjqImU+y6Khmxz2a6769pl/5fpAUhKhMU9Bn1M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx53/oWucInRuBtOP64pyCKITCjhbcBvXg6ZdYdf4p7akOzrBC5
-	Ka+sAW7hsCuh/KyG2XpZm585OjeR8QsjttOet/BaWNq07l1n74I0978nLHQUkW0t60Oh7XVOASU
-	=
-X-Gm-Gg: ASbGncuTX6ndLwzHijQkjn8t9STSiHfhCYYYWD76c5dctJSAKlYqFod3y4RWjOWoIrr
-	YTMKtuzSPoAFLCk1o+SDZ2gZtP1Y3yIPeZSa1jiqfMePw8rTA8J5Muh5zIAXFjoxXPQtqT6EYKG
-	uCtwIgApidw/iYd6f3arXPIzIqwxkIKSOw3QD8IdbEJsfuvm+yWS6f4IofzE6qsD4X0O5z/3nd5
-	M8etgjsCFWH7uQMzoiNVBqycNA1MZ7R8GBvuLzSuxrdwLsPb/ls2wrZzVl/jiD8CvVkOBzcpU26
-	xsRqesQgLIaW6FT/rEQx60iTHqsS8hPfs75nSczaYCpP5cqV1eA27a0wQGVqcSXQbp4=
-X-Google-Smtp-Source: AGHT+IE7m+MVWIOyNIrcTveZ3d0m14foKlW7+98jfMKafcP4qh7P2NiqavTJmiS80pjt1sxX5q7qJg==
-X-Received: by 2002:a17:903:1aa7:b0:224:3c6:7865 with SMTP id d9443c01a7336-22a8a85a2c3mr169775595ad.3.1744048270554;
-        Mon, 07 Apr 2025 10:51:10 -0700 (PDT)
-Received: from thinkpad ([120.56.196.217])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229786608c6sm84002195ad.148.2025.04.07.10.51.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 10:51:10 -0700 (PDT)
-Date: Mon, 7 Apr 2025 23:21:05 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: "Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>
-Cc: jingoohan1@gmail.com, lpieralisi@kernel.org, kw@linux.com, 
-	robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_cang@quicinc.com, mrana@quicinc.com, 
-	yuqiang <quic_qianyu@quicinc.com>
-Subject: Re: [PATCH] PCI: dwc: Set PORT_LOGIC_LINK_WIDTH to one lane
-Message-ID: <t7urbtpoy26muvqnvebdctm7545pllly44bymimy7wtazcd7gj@mofvna4v5sd3>
-References: <1524e971-8433-1e2d-b39e-65bad0d6c6ce@quicinc.com>
+	s=arc-20240116; t=1744048439; c=relaxed/simple;
+	bh=xNvsMA5KuahdV6GrJ8OI8sJo38Wk+r/4u7W6iwE+6P8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XpYxvEM8XzMSSRv+xiwRNkw2jKvatLM9c1tHK8ApKbFCiuKgG58JjYW594DbNO6aRCu+yuTrcRvygwMKttBJhKNySStQ+3hhRagFLuakqJWsQDpzrLH/ohAwimALFpDouRetfb51WXXPLVNsvG+BVpPAPmNbXXKD7lnjXiXEj1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f66dLywR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63B69C4CEE7;
+	Mon,  7 Apr 2025 17:53:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744048439;
+	bh=xNvsMA5KuahdV6GrJ8OI8sJo38Wk+r/4u7W6iwE+6P8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=f66dLywRuL//vqXKAd24lUb3o5bIe2aCZtIRJ6b/if5xhWewKkbg1aaKYcNOxQPWz
+	 9X/fz5zyjyrIqi+x7ueOo9SZP3Q2+T+X2qMdbJQtLEscZRjqpKc9q8uuyI6QmvMNNa
+	 vyhJOJRUR6/ZCG1wd8Ajv0F3XPtzjE69DMt8QTl1J4MLuQIiKacymMwwu0bH1HWfOF
+	 TdMX48m8mgBsWqNj5TjEt+39M6b4z4KehaozgrwIUf6fk7iAK1Tzc/nFJNR/HhymZa
+	 Mf0F8yf2HEDER9IrlZXAI8R3FIO7XTMH6zshIF04yn6z5TF14jk86vvqsegHj0xBK3
+	 Ts9klsgOrHwMw==
+Message-ID: <9b38d033-72aa-4fb0-b1ee-41bbe3884040@kernel.org>
+Date: Mon, 7 Apr 2025 19:53:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1524e971-8433-1e2d-b39e-65bad0d6c6ce@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/28] mfd: Add Microchip ZL3073x support
+To: Ivan Vecera <ivecera@redhat.com>, netdev@vger.kernel.org
+Cc: Michal Schmidt <mschmidt@redhat.com>,
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ Lee Jones <lee@kernel.org>, Kees Cook <kees@kernel.org>,
+ Andy Shevchenko <andy@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250407172836.1009461-1-ivecera@redhat.com>
+ <20250407172836.1009461-2-ivecera@redhat.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250407172836.1009461-2-ivecera@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 12, 2024 at 04:19:12PM +0800, Wenbin Yao (Consultant) wrote:
-> PORT_LOGIC_LINK_WIDTH field of the PCIE_LINK_WIDTH_SPEED_CONTROL register
-> indicates the number of lanes to check for exit from Electrical Idle in
-> Polling.Active and L2.Idle. It is used to limit the effective link width to
-> ignore broken or unused lanes that detect a receiver to prevent one or more
-> bad Receivers or Transmitters from holding up a valid Link from being
-> configured.
+On 07/04/2025 19:28, Ivan Vecera wrote:
+> This adds base MFD driver for Microchip Azurite ZL3073x chip family.
+
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+
+> These chips provide DPLL and PHC (PTP) functionality and they can
+> be connected over I2C or SPI bus.
 > 
-> In a PCIe link that support muiltiple lanes, setting PORT_LOGIC_LINK_WIDTH
-> to 1 will not affect the link width that is actually intended to be used.
 
-Where in the spec it is defined?
+...
 
-> But setting it to a value other than 1 will lead to link training fail if
-> one or more lanes are broken.
-> 
+> +/**
+> + * zl3073x_get_regmap_config - return pointer to regmap config
+> + *
+> + * Returns pointer to regmap config
+> + */
+> +const struct regmap_config *zl3073x_get_regmap_config(void)
+> +{
+> +	return &zl3073x_regmap_config;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(zl3073x_get_regmap_config, "ZL3073X");
+> +
+> +struct zl3073x_dev *zl3073x_dev_alloc(struct device *dev)
+> +{
+> +	struct zl3073x_dev *zldev;
+> +
+> +	return devm_kzalloc(dev, sizeof(*zldev), GFP_KERNEL);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(zl3073x_dev_alloc, "ZL3073X");
+> +
+> +int zl3073x_dev_init(struct zl3073x_dev *zldev)
+> +{
+> +	devm_mutex_init(zldev->dev, &zldev->lock);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_NS_GPL(zl3073x_dev_init, "ZL3073X");
+> +
+> +void zl3073x_dev_exit(struct zl3073x_dev *zldev)
+> +{
+> +}
+> +EXPORT_SYMBOL_NS_GPL(zl3073x_dev_exit, "ZL3073X");
 
-Which means the link partner is not able to downsize the link during LTSSM?
+Why do you add empty exports?
 
-> Hence, always set PORT_LOGIC_LINK_WIDTH to 1 no matter how many lanes the
-> port actually supports to make linking up more robust. Link can still be
-> established with one lane at least if other lanes are broken.
-> 
 
-This looks like a specific endpoint/controller issue to me. Where exactly did
-you see the issue?
 
-- Mani
+> diff --git a/drivers/mfd/zl3073x-spi.c b/drivers/mfd/zl3073x-spi.c
+> new file mode 100644
+> index 0000000000000..a6b9a366a7585
+> --- /dev/null
+> +++ b/drivers/mfd/zl3073x-spi.c
+> @@ -0,0 +1,71 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/spi/spi.h>
+> +#include "zl3073x.h"
+> +
+> +static const struct spi_device_id zl3073x_spi_id[] = {
+> +	{ "zl3073x-spi", },
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(spi, zl3073x_spi_id);
+> +
+> +static const struct of_device_id zl3073x_spi_of_match[] = {
+> +	{ .compatible = "microchip,zl3073x-spi" },
 
--- 
-மணிவண்ணன் சதாசிவம்
+
+You need bindings. If they are somewhere in this patchset then you need
+correct order so before users (see DT submitting patches).
+
+> +static void zl3073x_spi_remove(struct spi_device *spidev)
+> +{
+> +	struct zl3073x_dev *zldev;
+> +
+> +	zldev = spi_get_drvdata(spidev);
+> +	zl3073x_dev_exit(zldev);
+> +}
+> +
+> +static struct spi_driver zl3073x_spi_driver = {
+> +	.driver = {
+> +		.name = "zl3073x-spi",
+> +		.of_match_table = of_match_ptr(zl3073x_spi_of_match),
+
+Drop of_match_ptr, you have warnings here.
+
+
+> +	},
+> +	.probe = zl3073x_spi_probe,
+> +	.remove = zl3073x_spi_remove,
+> +	.id_table = zl3073x_spi_id,
+> +};
+> +
+
+
+
+Best regards,
+Krzysztof
 
