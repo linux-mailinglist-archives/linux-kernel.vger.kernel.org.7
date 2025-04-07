@@ -1,128 +1,135 @@
-Return-Path: <linux-kernel+bounces-591363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A94CA7DEC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:16:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D07CA7DEE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7166188CC7C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:16:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A54D3B4A69
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC696253F12;
-	Mon,  7 Apr 2025 13:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5B82561A2;
+	Mon,  7 Apr 2025 13:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="OREqnu70"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I9klFOGN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0856253F0C
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 13:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4C3255244
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 13:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744031728; cv=none; b=EWk9jhDNQyjHFFr6zYEN+Ketdx9uKMZXdcWWAWLQDCGnf/4C/OgkQqSF8oHe2FB+lA9GZpzmq+PAofQ+k2XvDjwNqYgU52P2E09pQHx3ssm8Bg3G0LNZ1GbDoBqmZ9ssg/v3aERzJ+j6KbyMgB8QEqI8fv2glWUah3V7XmJg2QA=
+	t=1744031801; cv=none; b=OEntqlFeNfDHD6V3esf9mMmgZJqYQbQ/HbO+PMbar5YpoYFgbZkh+0AouM3DI7wZPpAmcsFGbx84VXbFwF3RKKqnQ2R2Y4Omzie6jh/E+/xF7h2cNSe/DExtb33sqJinUILd00J2rI0xXladpCJoS8BHdtvruWENulljef640U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744031728; c=relaxed/simple;
-	bh=HgYlzcnLJ9b9/mpCUEd5T6pQNP655u5D2bo0QC6XM4w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OGPLdHMY8EFu+O9irQ0BdRq8JIZVkT87t+856bOHeAsoctQ1dKFOiauV6rdWRwaoxz1TFltLJIx8kRty2W9lSwb0InUdcoLq1/IVvjHCWdhOKGRfVKn1HjBz1eHj8CwLduHA1b0uu+ox+9ln42uUqspilG8Qd+4DM4EWGEY8Dgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=OREqnu70; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54b1095625dso5259796e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 06:15:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744031725; x=1744636525; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qjOh7XzZGVY4R8MmVTia4KQX1z2/N3OeHsPkBIQsJrs=;
-        b=OREqnu70ZL8CBgn3ojRabwvpHhTUQoobpg+ra+hOcP6rCtuzOtOgBj+MD66xoVJgrX
-         SB7x2THEIobkS4MmoljEPnZwqjm1t1YQOZnqUAYeWS/AegPLKVxEJzdhtu8XQVz3lhQg
-         k9cfNu6gBAToeutnDR7wfZbC4mdr3SFPMHt7tUQDdnPC48BGQ0qQDZh5XoVDgdhP3kyz
-         2MROhLX4hw9C7aKDIMDh8RshN8P+O78QWkklSNEpe95ocLruzDS/R9GzM65K4G5Cv3Di
-         GT4JxgY5Ft+LORhg1/IeV0jpdGK0ov83HruyNXNrMlBgyLZ9mBnApCFtKySQUhY4Mfwi
-         O7bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744031725; x=1744636525;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qjOh7XzZGVY4R8MmVTia4KQX1z2/N3OeHsPkBIQsJrs=;
-        b=JjXMWIM+OFs2DiadLOWmELlkkW+7dCcl1FA1kzjKZPCisHYC18TkCg5ImjE7R+DuQT
-         NZX5DD1Fin/HjtrSJTIMqUBofXDfO2uCkGTRJcJnvRSMoe2UGWdbmS1OE80RhCEMAAr/
-         2qrV830zd+L/nWjiq1CEzhVdDu3jZB+N/Gzprqd8QEymq6C4zIu38Uv5kapv1vHplkmV
-         q8ais3NR64ydgbj8FTGpJb4qIQHS6GjRhuEM/thi4Id397joiq8lu4+x1TdqY1HzwZzc
-         0Lq7UmjpSzqXcMZSsZ7HpfsoQEYtq29iwHD/TZITTg5XyYZ0qUy38hH0GQ41C5Megb8n
-         jEXA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzTuwjN36nO0uGZkgMrdh7r1/L8kaPbROzKsCwzN61UJIT7+vREF0HzXjH3gKBV3nzq1q1ixX4LIl36PY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqF2S5XkImaR4M+nMgMtpwzCm4ojqAEgRHC4Ckl9oLauUSmENL
-	2jW0CyWDe20qdDmAPh0/i/024Wvo7TzTG2oG1n6o33reicw2/xs1RiPUfwuGoSm0n+xyoI5sq7n
-	RWcWjwnZedkefwFkAnKuC/OVTv9eeMCKuATcLRg==
-X-Gm-Gg: ASbGncsETbFpv34Xvvp+R8naljtXyg+lQGk45xGyBbQAtR0WRqgex9tLQjFERb8+Xcx
-	HgqjHVxE286h3dkjF3rhhJGsPRoS+1jibG8g+eCpZrJkxR9+o74N4pXOC6xxEMEQEMSi/GNtVW7
-	YdFZWplghDcF87INlEkSQ1hZmOtXZwLqzm0ctLhG5WE1nZ+sj0xUIa3U9CgQ==
-X-Google-Smtp-Source: AGHT+IHGh/udpIDf412kVmxk8cC6uRbVuJQNw0qJ5UZ+KPEK/XSf1l3aNBgq+8C7/E7v0WR/Tz7A5hPNiTW4JagzLhA=
-X-Received: by 2002:a05:6512:250e:b0:549:8f10:ec25 with SMTP id
- 2adb3069b0e04-54c227936a6mr4385760e87.31.1744031724736; Mon, 07 Apr 2025
- 06:15:24 -0700 (PDT)
+	s=arc-20240116; t=1744031801; c=relaxed/simple;
+	bh=sFiXCOjce2Arik6LJN+4blzXwIJFWZxpXEbeG/RlRZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mx4pyV8xGQEev58uJA5RFmmJYrTZsYmAnktqG+g1fkKbAKHOTx2H3wO6EX2fvoJL+9jUI0/EZToeM9+jNAcSioqqFri6B6eYemzJVybXhMubLqKdTSfA3bw71EXT7Iq2UnAfxsgtv+xD9mtFyhiEic97ySPVEFsJ+P242/FmIXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I9klFOGN; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744031800; x=1775567800;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=sFiXCOjce2Arik6LJN+4blzXwIJFWZxpXEbeG/RlRZA=;
+  b=I9klFOGNpFOTAth5ikpIiA8s6bjsaSinP4y+HfnJxdPZ9R95QoKN10mT
+   bnXXImJJt+LZyekOHAAM2aQNvvjtErNSW+nTzYQWiA+z74LDyyud3xUJT
+   mrb2Synbxsz489dSG4a32VpF+R51fmGBDpy8GmW72gNvgAgZo9D7EkFQF
+   Lx7wfl8w8aVclUe7yzNRsUVCUGj2ZIH+g5fGG3gMC61Wkw0Dz5ZzR+nZ+
+   eb4zZAsokchrWXCi4m757PsXaHUFfrLFQZOeoKjUOVRQfJeeLPx8BAgSo
+   F3Ql4YZh7T2fj++x0htRM+Q7AH/QTUKvHCbt0wNyJsg882IyhMalIwY1J
+   g==;
+X-CSE-ConnectionGUID: Tv/0LaQJTF6ULH7M4TpGUw==
+X-CSE-MsgGUID: z/paNY3WTqGTwEDc5XY7Ww==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="44560189"
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="44560189"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 06:16:39 -0700
+X-CSE-ConnectionGUID: nm+WR+MkQ0690w1hCuAelQ==
+X-CSE-MsgGUID: 6J8LletqQjut895dvahgAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="132088892"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 07 Apr 2025 06:16:37 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u1mL5-0003Qd-1S;
+	Mon, 07 Apr 2025 13:16:35 +0000
+Date: Mon, 7 Apr 2025 21:15:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nam Cao <namcao@linutronix.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: include/linux/hrtimer.h:348:9: sparse: sparse: dereference of
+ noderef expression
+Message-ID: <202504072155.5UAZjYGU-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250401-gpio-todo-remove-nonexclusive-v2-0-7c1380797b0d@linaro.org>
- <c8ca3c8a-3201-4dde-9050-69bc2c9152c4@sirena.org.uk> <CAMRc=Mcq9yag6yBswhW0OJ8MKzGBpscwo+UGpfCo2aha93LzXA@mail.gmail.com>
- <846010c0-7dc1-421c-8136-9ae2894c9acd@sirena.org.uk> <CAMRc=Mff0TkeiHbM3TAJLJ2HYU_nnPFUpUjbWsdCnW6O4E=+gQ@mail.gmail.com>
- <c3bb82f9-5a2f-4a14-9726-f3e10bf5d427@sirena.org.uk> <CAMRc=Mc_nXwvj_9w6w8cB3K58AVLHBLCV+MOO1z_6y+uuT86Og@mail.gmail.com>
- <a484f0b2-c09a-4a6a-a30e-4c8660d755a6@sirena.org.uk>
-In-Reply-To: <a484f0b2-c09a-4a6a-a30e-4c8660d755a6@sirena.org.uk>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 7 Apr 2025 15:15:13 +0200
-X-Gm-Features: ATxdqUGTMDclH5TnKhaYhwXEVKf8DzhgQCWQOa-7tBSTsQlS14Edzh1z_6W0Qgc
-Message-ID: <CAMRc=MeFqvJ3g3GhrZzto+jfgCUhtcRRyWqx51gCkKhYUqtsGg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] gpio: deprecate and track the removal of GPIO
- workarounds for regulators
-To: Mark Brown <broonie@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, Apr 2, 2025 at 4:08=E2=80=AFPM Mark Brown <broonie@kernel.org> wrot=
-e:
->
-> > I believe pwrseq could actually be used to hide the enable counting
-> > for GPIOs behind a faux GPIO chip and the consumer would never see a
-> > pwrseq handle - they would instead use GPIO consumer interfaces and
-> > we'd have to agree on what logic would we put behind gpiod_set_value()
-> > (should it effectively work as gpiod_enable() meaning: value is 1 as
-> > long as at least one user sets it to 1?) and
-> > gpiod_direction_input()/output() (same thing: highest priority is
-> > gpiod_direction_output(HIGH) and as long as at least one user sets it
-> > as such, we keep it).
->
-> Like I say that doesn't do the right thing since other users need to be
-> able to see when something changes on the GPIO.  If that just happens on
-> normal gpiolib then that complicates usage for the default case since
-> they now have to worry about things not actually happening when
-> requested which doesn't seem ideal.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   0af2f6be1b4281385b618cb86ad946eded089ac8
+commit: 04257da0c99c9d4ff7c5bb93046482e1f7d34938 hrtimers: Make callback function pointer private
+date:   2 days ago
+config: powerpc-randconfig-r112-20250407 (https://download.01.org/0day-ci/archive/20250407/202504072155.5UAZjYGU-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce: (https://download.01.org/0day-ci/archive/20250407/202504072155.5UAZjYGU-lkp@intel.com/reproduce)
 
-If I understand correctly, regulator_ena_gpio_ctrl()[1] changes the
-GPIO value (even if it's shared) and then notifies regulator consumers
-about a DISABLE event. Now if we'd be implicitly sharing the GPIO with
-an enable-counter, we could possibly emit an event that's a
-false-positive?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504072155.5UAZjYGU-lkp@intel.com/
 
-In any case: I'll allow myself to apply this series, as the
-description does not define a specific approach to take and instead
-just allows us to track the rework.
+sparse warnings: (new ones prefixed by >>)
+   drivers/tty/serial/xilinx_uartps.c: note: in included file (through include/linux/pm.h, include/linux/device.h, include/linux/platform_device.h):
+>> include/linux/hrtimer.h:348:9: sparse: sparse: dereference of noderef expression
+>> include/linux/hrtimer.h:348:9: sparse: sparse: dereference of noderef expression
 
-Bartosz
+vim +348 include/linux/hrtimer.h
 
-[1] https://elixir.bootlin.com/linux/v6.13/source/drivers/regulator/core.c#=
-L2607
+4346f65426cbce Oliver Hartkopp 2008-04-30  327  
+8f02e3563bb582 Nam Cao         2024-10-31  328  /**
+8f02e3563bb582 Nam Cao         2024-10-31  329   * hrtimer_update_function - Update the timer's callback function
+8f02e3563bb582 Nam Cao         2024-10-31  330   * @timer:	Timer to update
+8f02e3563bb582 Nam Cao         2024-10-31  331   * @function:	New callback function
+8f02e3563bb582 Nam Cao         2024-10-31  332   *
+8f02e3563bb582 Nam Cao         2024-10-31  333   * Only safe to call if the timer is not enqueued. Can be called in the callback function if the
+8f02e3563bb582 Nam Cao         2024-10-31  334   * timer is not enqueued at the same time (see the comments above HRTIMER_STATE_ENQUEUED).
+8f02e3563bb582 Nam Cao         2024-10-31  335   */
+8f02e3563bb582 Nam Cao         2024-10-31  336  static inline void hrtimer_update_function(struct hrtimer *timer,
+8f02e3563bb582 Nam Cao         2024-10-31  337  					   enum hrtimer_restart (*function)(struct hrtimer *))
+8f02e3563bb582 Nam Cao         2024-10-31  338  {
+2ea97b76d6712b Thomas Gleixner 2025-02-07  339  #ifdef CONFIG_PROVE_LOCKING
+8f02e3563bb582 Nam Cao         2024-10-31  340  	guard(raw_spinlock_irqsave)(&timer->base->cpu_base->lock);
+8f02e3563bb582 Nam Cao         2024-10-31  341  
+8f02e3563bb582 Nam Cao         2024-10-31  342  	if (WARN_ON_ONCE(hrtimer_is_queued(timer)))
+8f02e3563bb582 Nam Cao         2024-10-31  343  		return;
+8f02e3563bb582 Nam Cao         2024-10-31  344  
+8f02e3563bb582 Nam Cao         2024-10-31  345  	if (WARN_ON_ONCE(!function))
+8f02e3563bb582 Nam Cao         2024-10-31  346  		return;
+2ea97b76d6712b Thomas Gleixner 2025-02-07  347  #endif
+8f02e3563bb582 Nam Cao         2024-10-31 @348  	timer->function = function;
+8f02e3563bb582 Nam Cao         2024-10-31  349  }
+8f02e3563bb582 Nam Cao         2024-10-31  350  
+
+:::::: The code at line 348 was first introduced by commit
+:::::: 8f02e3563bb5824eb01c94f2c75f1dcee2d05625 hrtimers: Introduce hrtimer_update_function()
+
+:::::: TO: Nam Cao <namcao@linutronix.de>
+:::::: CC: Thomas Gleixner <tglx@linutronix.de>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
