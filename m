@@ -1,137 +1,182 @@
-Return-Path: <linux-kernel+bounces-591390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CBF0A7DF2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:29:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11025A7DF19
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF91C177175
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:26:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AFFB188855B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F98F253F0D;
-	Mon,  7 Apr 2025 13:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01DE253B5F;
+	Mon,  7 Apr 2025 13:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r6BY655S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="b8wx4H8z"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2051.outbound.protection.outlook.com [40.107.237.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7164723E349;
-	Mon,  7 Apr 2025 13:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744032357; cv=none; b=Ii8FF3ot+rn8DCqIgIVrLECUOgHD9m8LPSJk2Nj1KTzgEmfneAh0Fb5IK6TefuOcEj+d9z8WFUDgWqezwuM70IAAGHZrj3FeMhYqTWreeHtRO0UmxpwDF2Y/1z77xwfxT1+0h6Q4ajGmpZVBdHx8INNEW5FeeVT4hhoglSLt7QQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744032357; c=relaxed/simple;
-	bh=b1zRwSwMdCchEFyuh6cDIP7vGCbroduKVm2a2qoCE4s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qwzK4gKLPuXsqWTJVheVsC3A87+HhGTHebQgrx3TInXJt6XixViSoy8LGrYvi06UuIsk52bF092BVG4Wce5+k7GSKcPOVzkNFxwKIriC33SjHe0V9fHeCW2mqR4Q5Ybzjeswg861mICtTzVgxEmsCsI4uAU7fS77kfvWfPLIpLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r6BY655S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F935C4CEDD;
-	Mon,  7 Apr 2025 13:25:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744032356;
-	bh=b1zRwSwMdCchEFyuh6cDIP7vGCbroduKVm2a2qoCE4s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=r6BY655SIUdGNY2K2nBTnUI9+KZLQKVx/Szfkf7ER5Oc8ZKUdZ6hsl9pYXQudX1nN
-	 skbTV03Fc/Q0xRptf2SC7xvkz0LGi/TG0r0CdrBm70peHfhllmdZoCe9IwBPlyID36
-	 7D3oOYDFyfhbC46hzc6/G4FoyKSfW9S7v4KjSgCOf5/uWofI9ywAI3PfLQ8HK7C5t4
-	 FLzsEL9Pf4S90HWjAcooP2j2UNnvyPk7VvutSLy9Rcxse5nvGUfC+ZY3lfoR/+mn8Q
-	 5lx75hkllLI7TmgPDDmsSZ5tChw+QjZQDCaSkoE5WsXIWlZH6sS7asf2a3z0jMDehn
-	 IzWmfjKstYUhw==
-Message-ID: <abac53a6-cba7-4962-9f34-ab2eac9e6e3d@kernel.org>
-Date: Mon, 7 Apr 2025 15:25:50 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E17253F13;
+	Mon,  7 Apr 2025 13:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744032378; cv=fail; b=PvoigoU/4VUrXSW9rzo0wcU72arTBxv+ZJNF6N6pAsJj+fNvGDZwSnODquTKuyO/Zts/v4Qxrqu7YKt5h16RR8frBayKi1GcLFBxP3SAWaGLh+Lj/Jp3RJ0Ge0Eg9BZiVjHmHN0nmGcvhX28ejaELjg5JaODhMhqZ+KH+psL4WA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744032378; c=relaxed/simple;
+	bh=NM0/nFihtua0SgiJ1JXphu4GBoCcLMGOa5v0WGAKN1c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=anOPEzIsD97bT/rMjBBQ805PdgxyVp7R/yI5L3Tb7opskbzQH5T5a8kZxaytrRIbra4YJRq3/Gs0F0FoPSJuYxmcLvX7AWK6seQynsUR++9d2YRsP3NbidsqWxwyo2NtY1rCPWxkS/DgpHgUm08QQSH77yRy82Io+JEyXjrsONw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=b8wx4H8z; arc=fail smtp.client-ip=40.107.237.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BYZVmqfLQKlNU85u94gCjFBouK4PyAoqjBXiFIii7iFLyFcC4Q2bIAtV0REQspQeRjIJzwKfpwU0SHJJRPo4OPpkwNJnTLhsJ2tcyC8Vy6c6eR1cbRBdIcWmjSE6OZ0J5Qy2P++4hNFzXyZZYPTpBKphvErfyTe8xe/FNFZykSVMmTAJEibGIkqZGOHAqXyTE7jeuGKIrrPiSI6s8EVL4bSvnLZAh1KqYzk3/NhHyM/ndZzd/mmiPQKW2bqTl2U+qJ7fpSVq3STsz7fZctxrA4dllX7cMdF4b/Bc4iI7x6PIC00z7T3dJISgs+qI9xL5YsvJuqrjPmSmsywyruBwcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Jjlc9YKryFCoScj7PIdlCQo7Mc0hJ9cD24e2hV+UHZA=;
+ b=aBDUUES1O5li7xLiPXKY+yuV2icK4e0arkWjGSqLF9ua95kKKl8q+F3k4RaTZrMCWxpu/5p6bFmhboshftmMkRWMcfH+5jI7GhVvzEddciHUOEqgUVzBUO2iHUd1X2KilZ+Qeg18u1nFA7Kwgeo0hVQTtxWmIYMZ0G0n4ZwcjiGI7UH9ywK5d7RqjrtZyt+0fd6Rjv3eQ8xEIIe4nanjCk4TBvbyWwfT/0CyXyo6UsdXys/f2lJbgfcMfZ7YQzv2vtbz0OKNOhZMh5oDi2Z76ts2q6D/DKRaNuegklmxlH8MHT9icp6m4RicAYJ6sf8ZfubWp31yJidVQWXwVJAUiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Jjlc9YKryFCoScj7PIdlCQo7Mc0hJ9cD24e2hV+UHZA=;
+ b=b8wx4H8z8wnUHpZXxoJCdFYKHYTLT32cCc+fjH0rm1KNXucTPMKfDk7mXc0y8EUaWZXWvLXWd6IovxJGGK4HvpEu1K3U8kXpLM/A14t2P4eYbmq9+Regmns9cfKpoabYNRIZr/WOWMQ9GYPOOhG/w0O83xtS3CmeX23xLh2MRqyBmz0A7uNgQuJtSygIQvGMdZDrqpV3beMJOzfM9lUMT7py4IuY0Ibc6HTLnPOre0HKR7F21O2FHs1HVH0a3ZT6kGM6PgAjV5H/8LyPp3qWwTki6FxHNKbjrkXUcW3irNRDPbsoisEptz+YkGLapPSkgaaWiK6oihmjpFyVsGls8Q==
+Received: from CH0PR03CA0070.namprd03.prod.outlook.com (2603:10b6:610:cc::15)
+ by PH7PR12MB8014.namprd12.prod.outlook.com (2603:10b6:510:27c::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.34; Mon, 7 Apr
+ 2025 13:26:09 +0000
+Received: from CH2PEPF00000146.namprd02.prod.outlook.com
+ (2603:10b6:610:cc:cafe::6) by CH0PR03CA0070.outlook.office365.com
+ (2603:10b6:610:cc::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.35 via Frontend Transport; Mon,
+ 7 Apr 2025 13:26:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CH2PEPF00000146.mail.protection.outlook.com (10.167.244.103) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8606.22 via Frontend Transport; Mon, 7 Apr 2025 13:26:08 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 7 Apr 2025
+ 06:26:01 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 7 Apr 2025 06:26:01 -0700
+Received: from vdi.nvidia.com (10.127.8.9) by mail.nvidia.com (10.126.190.182)
+ with Microsoft SMTP Server id 15.2.1544.14 via Frontend Transport; Mon, 7 Apr
+ 2025 06:26:01 -0700
+From: David Thompson <davthompson@nvidia.com>
+To: <hdegoede@redhat.com>, <ilpo.jarvinen@linux.intel.com>,
+	<vadimp@nvidia.com>
+CC: <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	David Thompson <davthompson@nvidia.com>
+Subject: [PATCH] mlxbf-bootctl: use sysfs_emit_at() in secure_boot_fuse_state_show()
+Date: Mon, 7 Apr 2025 13:25:58 +0000
+Message-ID: <20250407132558.2418719-1-davthompson@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] phy: spacemit: support K1 USB2.0 PHY controller
-To: Ze Huang <huangze@whut.edu.cn>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-References: <20250407-b4-k1-usb3-v3-2-v1-0-bf0bcc41c9ba@whut.edu.cn>
- <20250407-b4-k1-usb3-v3-2-v1-4-bf0bcc41c9ba@whut.edu.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250407-b4-k1-usb3-v3-2-v1-4-bf0bcc41c9ba@whut.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000146:EE_|PH7PR12MB8014:EE_
+X-MS-Office365-Filtering-Correlation-Id: 78e09503-9c28-461a-f404-08dd75d7c1e2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?u1Bh2gDEUL2Ctj/6DWnF159x+OLu5FpQQ165a/J8+c6NjkkPDHeTfeEZX7m7?=
+ =?us-ascii?Q?Wekaa8pZj8hbyEUvOtdPII83709jT3XfduhGlK7GgFuVtnAoy8x6egq/Mtyl?=
+ =?us-ascii?Q?qS6GpOO9IxVhXLKRDaYH1UCRxHLBE68uuTSTxJlReTgBel5zS2g8a+0fu7Qz?=
+ =?us-ascii?Q?laNePa3ScozAi5Cp5DkwcqMhy+2QqqKB9kGBE7obisxGqKeQ6KXthXpJ72F+?=
+ =?us-ascii?Q?NruZr4Hcc+4Io9hatJkfVJomuUK/mElQYn63WEzdWwjiXp59qmO13OXWTiI1?=
+ =?us-ascii?Q?yplaZ/j24DwVn+wRd8Fc86YxuzF5ozcZXH3lG4c4rQOoVVysq+RCNouCw2VL?=
+ =?us-ascii?Q?kQNVzgCtOMLBQA7BQ3F5UMneufM3fTwyDevBkEz6LwvWAKKzrgWMeimnuUIe?=
+ =?us-ascii?Q?cfjLB162eFcmIssDZWWz46ZPne4SnlWKg9xUT/ITPy9JsCUZsd+El1SH8QQA?=
+ =?us-ascii?Q?xCp9lndKxFgqCs+BreyYHJaSu7QAC1Dmn3ja/JGRHa97W0eUat4dL/GLaoFj?=
+ =?us-ascii?Q?Tx0XSpmbvQksElr5iR1buKmcNpUahPLYJ2PImHpPZSM6rGqVdM4bzl7UiF58?=
+ =?us-ascii?Q?j8o9nJ1fe+3JYQv6th4UT7z87aKKA35wGK5GD4HJzZEOJLPp1+CnMPUZ5BHJ?=
+ =?us-ascii?Q?esDHnGLVcwegt941CN56QYhudC4D1acAT1cmT8Z1nT0YhkDbZYlFZema93qY?=
+ =?us-ascii?Q?xNTA9onutG4jp4xpu+Bq1Mp+ca5gtCiunE87oHdHqgHBJ259FDmBiHXSzUiD?=
+ =?us-ascii?Q?NgVg1JWL97GfmygdDEwct79B5J9+Po/z40IlJ2acIxXqN6WCvvhoXsQl+I0F?=
+ =?us-ascii?Q?e9lgpmPRqh1h4j5YkSFAHp2ACAAu4ks+qrYCdkU1yjgzxqF/FxnDA+8+mD7x?=
+ =?us-ascii?Q?OTAHUfranqmBQ+xnK/SbwMwWamKTPeJyauUrKQgY2IzZRKzlhsm+9ADgExtt?=
+ =?us-ascii?Q?YqYYx+nrFIgxL2IMMBM8PwZgTay6R6//RI1j02u9xc00u1TP4xrw88PCdgRc?=
+ =?us-ascii?Q?eVGzq6Q647sFMfIzaw/I25047q10xDTWJhg7yJlIpLJdq/4P1LriiNQZOjpg?=
+ =?us-ascii?Q?YyIH5Hul/iQ++N5jdOMyCz1CqcLp3Q1akLNyzTBNxTNpDVroUPHi6s6Uyaic?=
+ =?us-ascii?Q?qahpW1cbaJPjBArCZJ70iBZrAz0qECK9hvdpLGd8VMPL0d0fh5hBtIhAFXOS?=
+ =?us-ascii?Q?l8Sf/r5UOB2FX/LyXVQHbqnBoPbkWX2CKgti4u7Zbsa2GEQ/SWlLn73MIM4a?=
+ =?us-ascii?Q?sDvszhM5TTLVdNZ6OyxKp5bXREtFX71ByTMAfI9S3bzOKxdS1udrL5qsXNVh?=
+ =?us-ascii?Q?0BTtwwkpkdGx2Aii7cViTJarY5hlJ47wIQKZmrRXd9zSQBEJbDuzFYdiiPkU?=
+ =?us-ascii?Q?iFqX+I6iDaYYEH8dD+uE1MvG2LLpJTSX+SiXk3MbcjWmx/kKc8j0ROZvoB8Q?=
+ =?us-ascii?Q?gqAEDOrIlCQSSxxLPtcH75/hvkCJafKvs1WrxvjNbBUerqNODpzjspMNLsi4?=
+ =?us-ascii?Q?yc+8bKN1HjqB5ek=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 13:26:08.6210
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 78e09503-9c28-461a-f404-08dd75d7c1e2
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000146.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8014
 
-On 07/04/2025 14:38, Ze Huang wrote:
-> +static const struct of_device_id spacemit_usb2phy_dt_match[] = {
-> +	{ .compatible = "spacemit,k1-usb2-phy", },
-> +	{ /* sentinal */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, spacemit_usb2phy_dt_match);
-> +
-> +static struct platform_driver spacemit_usb2_phy_driver = {
-> +	.probe	= spacemit_usb2phy_probe,
-> +	.driver = {
-> +		.name   = "spacemit-usb2-phy",
-> +		.owner  = THIS_MODULE,
+A warning is seen when running the latest kernel on a BlueField SOC:
+[251.512704] ------------[ cut here ]------------
+[251.512711] invalid sysfs_emit: buf:0000000003aa32ae
+[251.512720] WARNING: CPU: 1 PID: 705264 at fs/sysfs/file.c:767 sysfs_emit+0xac/0xc8
 
+The warning is triggered because the mlxbf-bootctl driver invokes
+"sysfs_emit()" with a buffer pointer that is not aligned to the
+start of the page. The driver should instead use "sysfs_emit_at()"
+to support non-zero offsets into the destination buffer.
 
-Take recent drivers and use them as base. There is no such 'owner' since
-10 years.
+Fixes: 9886f575de5a ("platform/mellanox: mlxbf-bootctl: use sysfs_emit() instead of sprintf()")
 
+Signed-off-by: David Thompson <davthompson@nvidia.com>
+---
+ drivers/platform/mellanox/mlxbf-bootctl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/platform/mellanox/mlxbf-bootctl.c b/drivers/platform/mellanox/mlxbf-bootctl.c
+index b95dcb8d483c..c18a5b96de5c 100644
+--- a/drivers/platform/mellanox/mlxbf-bootctl.c
++++ b/drivers/platform/mellanox/mlxbf-bootctl.c
+@@ -333,9 +333,9 @@ static ssize_t secure_boot_fuse_state_show(struct device *dev,
+ 			else
+ 				status = valid ? "Invalid" : "Free";
+ 		}
+-		buf_len += sysfs_emit(buf + buf_len, "%d:%s ", key, status);
++		buf_len += sysfs_emit_at(buf, buf_len, "%d:%s ", key, status);
+ 	}
+-	buf_len += sysfs_emit(buf + buf_len, "\n");
++	buf_len += sysfs_emit_at(buf, buf_len, "\n");
+ 
+ 	return buf_len;
+ }
+-- 
+2.43.2
+
 
