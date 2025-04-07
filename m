@@ -1,58 +1,93 @@
-Return-Path: <linux-kernel+bounces-591894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A089A7E662
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:28:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E13A7E68B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:31:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 919F2444E30
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:22:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E072161951
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B82A209F58;
-	Mon,  7 Apr 2025 16:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B20213E99;
+	Mon,  7 Apr 2025 16:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kVRIsCwT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="hgBbv+tn"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A216F206F3D;
-	Mon,  7 Apr 2025 16:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364991DE4C8
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 16:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744042700; cv=none; b=UQWL74iF5LIrp0YhyynvoR4dOSxFS4z0AnheIaPa5phN15lUmrz7hhFQD2Q5QXlG+USSFOQVvMWPKOqbfI99wv/HqDuDl+p7c4V/DqX42kMM6gc1tx+2qrgScStgVAEurvrLbKRsy3MrUa25kvifnXy9pjpNaXTATC+47HvQYoY=
+	t=1744042743; cv=none; b=eVAkqIKKnd/Zac1+fBRilSd8ip9Igd9wYW33OYBMJgZ0oigJyDSuUsXg4y0rlVumDVyFwnQAGStN6YDblXvJBS5d6UwOyBs+jId3XlhA4XEDYlLfNWhfIL/tdAlCgLkr1ZeIWVST81czB2O0hCdk+lKIoA7iO1tm7c8MkpfG+lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744042700; c=relaxed/simple;
-	bh=Npy/xy0YV1ziwkRI72xXbsBU6c5ZpgqGLAv3/5M2HgA=;
+	s=arc-20240116; t=1744042743; c=relaxed/simple;
+	bh=oQfeLGLwN0ia9mkF/LrZhoiRwa+hmOwNqpU0xO/chsM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jQ3ucAfkIPp5CRtwWGIVzp7pqNPzJglGilVK66NVFVVwdKqPD40plv0oepGPSyDQgVwbkc6H9wuo5V04x7CRRU8GzRt8VyX3jnU0zeivGW3C+no8q/8JrfFZNAG8sWnHvtd0EVAXLvfQe50QtsGY8AJbW1kj0V3SjSe+LOnaPe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kVRIsCwT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52057C4CEDD;
-	Mon,  7 Apr 2025 16:18:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744042700;
-	bh=Npy/xy0YV1ziwkRI72xXbsBU6c5ZpgqGLAv3/5M2HgA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kVRIsCwT+c6EbalzQ8v601BWz4AtFEcupFLn/1nR//IQRZbJUmUMlOWsp12GLXMzV
-	 R9zN/8xEoglBghyQ1+7ICgEIXdK9WWHoe4gKi067Ltvp4z6C2PKnYUATPq3HBHFS7t
-	 6HP9Yrr+q/3ZhfXa9C5q9qtfGRJyIl4YXh7Hop7JG82R5cVrRHFGeXIXR/zFo/iNrF
-	 UTAomdSPbn88DYS/QwzOuViJhQ8tRVVv1ZXMRFuKhrhMS4rAMQNIUsjWq/VKmFml+p
-	 rfxB9Ii7fedu+nrGnoTwNYfwJ3Kjg/4ZHDx5GfaEeu2BdVbn6sdxhmDDtCUWpCDy8G
-	 r6gUrtGZxLTnw==
-Date: Mon, 7 Apr 2025 17:18:15 +0100
-From: Simon Horman <horms@kernel.org>
-To: Charles Han <hanchunchao@inspur.com>
-Cc: saeedm@nvidia.com, tariqt@nvidia.com, leon@kernel.org,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, lariel@nvidia.com,
-	paulb@nvidia.com, maord@nvidia.com, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] net/mlx5e: fix potential null dereference in
- mlx5e_tc_nic_create_miss_table
-Message-ID: <20250407161815.GR395307@horms.kernel.org>
-References: <0e08292e-9280-4ef6-baf7-e9f642d33177@gmail.com>
- <20250407072032.5232-1-hanchunchao@inspur.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gm2I89YzArJPMCYvNI2+fGd2c3gSOS2kWmE7lqQNdPLQrlVIiSYBpnOSfvvhk8dj5ac07k7M5Xq9UeyEf8nfxrTeyZNhfkIj3Yn5qnFdPqkIuNxQQrFKUd+XDaphJQ7nRtzNFgny0PZoO/mJvI7ucRQMfDsB4343VpbEenFYXBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=hgBbv+tn; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39ac56756f6so3927023f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 09:19:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744042739; x=1744647539; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FlvRbUOqYjIG9Hb+k1k+g6fdWn9FeWH5VnocqRc/bEs=;
+        b=hgBbv+tnGW2Hf+TMWrtQEODiGSglq6jGf9+7Y1Gycp6G4O7jzt6JO/fF7WJ5+dHBJE
+         YfOpDUxFiIqHxEhHdxmp6x8F4ESdRjp0bQqBSCmvM5MeKUybnM1lr95MmMhVrFqZALWE
+         gwsjKtsG7zE9TgORbAprhJXQoUv+ILeE9f6A5SdJkkwdZjaPCGf5wR6inFvdLYuDAx6w
+         1o19DFH92b3dXNTz08eWIweW4F/w+NcelHOzdkncik5fxzhF3k0f0MWLDiksEoj0z04H
+         +yiAp8xANdFRLQOLN4k1zqZOJcRrypNgHw3TK8s7tSvOwNUEZR/I6lPXtRCVG/S2bHJR
+         k3ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744042739; x=1744647539;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FlvRbUOqYjIG9Hb+k1k+g6fdWn9FeWH5VnocqRc/bEs=;
+        b=q181Lyo7m78kBI152MSwUtTP6ih0EA1FGvfr9YcWEe20XryOrNNE3P6GM+qbhrJMEz
+         hqYG5xiWmLtGL/3tIJ+iblol3igXw4frXJoUVdMz8kFIY60dXuzSZgZPJkuKJaHDm9/M
+         ZNGl9vLgwQaNkCu4wYinaS9cIGhVHCrIBuTdUeqSuVnQtxyzCbtFbVG+rE0yu/bMc4Vt
+         8QNYehcyg7hipU2PGddXgdNxgeX3g16h6lCdYha+1zqdbeu28buVTiFmSGDwB/7NT1BY
+         kViesnpo1lNhWeipGvlaaZEpQqQpitH2mt8rcqNNtFFyNFh5RB80o8/CyxbZ98WAK896
+         BJaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUl2A7+GPo99P54ZkWfm/csXs1pcjxTJLuYZhKoDSnBDRYyKrf7ON4ImiJH6vmhvSMsrPhF3PWtL6wngk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk318/rrKdyLJ/zlx9d9xdFt2mO/8YDBsxfEbFq2/MqjLoUSPK
+	tIlAZU7KUwdLZIZL/uVM95udfqe+8JxScg0geOKW77Rp40d36lM1SppJ8L17+dM=
+X-Gm-Gg: ASbGncuhPlZsmNoPq892VnHwJ1CHOUdWhD8763SNMb/7VElZJgxTmF5+Wfg3HvCm6X2
+	FJsPQcct4hX1mRSmgMYhCTKduIjFYk0yqi1hSARxvb/+BsiVjPkRvyhc020sjvZ5JKEq1mJe909
+	aKCIbuViRMKKoEBa9yjy0gUypJz9nBvfWa2J9ceb7ndBVnri+Lu83NU3DDyX3ZlZvSC9uZ9q+5v
+	rk7nLfQUaU+p9AQ1G0u7YBr3Y58/AI5YIF5LicNkLPDygP/UDk3bD/RYVzHizRLWjSfXP2FCu8a
+	q6lIR3okyjtH65P9vVTqUwPeRiQ4YcCgtD0wmWQrx+7QdPeaILwjiQDrcQqx5kqOOIHTEU3nInM
+	DidBz8rovZ7sTTIzG8GpyqKslzKWQs2l+t/grEg==
+X-Google-Smtp-Source: AGHT+IGAiFgCHKC4NxdMI0XYxiblAlo6teR2sZ4ryX4FXGKNTm7nHjhUAQ7KJxNf9HDeA8CDyhXndw==
+X-Received: by 2002:a05:6000:2285:b0:391:3049:d58d with SMTP id ffacd0b85a97d-39cadc85ab6mr11452084f8f.0.1744042739225;
+        Mon, 07 Apr 2025 09:18:59 -0700 (PDT)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c30226da7sm12857720f8f.98.2025.04.07.09.18.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 09:18:58 -0700 (PDT)
+Date: Mon, 7 Apr 2025 17:18:56 +0100
+From: Daniel Thompson <daniel@riscstar.com>
+To: Pengyu Luo <mitltlatltl@gmail.com>
+Cc: Jianhua Lu <lujianhua000@gmail.com>, Lee Jones <lee@kernel.org>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
+	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH 4/4] backlight: ktz8866: add definitions to make it more
+ readable
+Message-ID: <Z_P68OP1c8XcbXle@aspen.lan>
+References: <20250407095119.588920-1-mitltlatltl@gmail.com>
+ <20250407095119.588920-5-mitltlatltl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,50 +96,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250407072032.5232-1-hanchunchao@inspur.com>
+In-Reply-To: <20250407095119.588920-5-mitltlatltl@gmail.com>
 
-On Mon, Apr 07, 2025 at 03:20:31PM +0800, Charles Han wrote:
-> mlx5_get_flow_namespace() may return a NULL pointer, dereferencing it
-> without NULL check may lead to NULL dereference.
-> Add a NULL check for ns.
-> 
-> Fixes: 66cb64e292d2 ("net/mlx5e: TC NIC mode, fix tc chains miss table")
-> Signed-off-by: Charles Han <hanchunchao@inspur.com>
+On Mon, Apr 07, 2025 at 05:51:19PM +0800, Pengyu Luo wrote:
+> LSB, MSB and their handling are slightly confused, so improve it.
+>
+> Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
 > ---
->  drivers/net/ethernet/mellanox/mlx5/core/en_tc.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-> index 9ba99609999f..c2f23ac95c3d 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
-> @@ -5216,6 +5216,10 @@ static int mlx5e_tc_nic_create_miss_table(struct mlx5e_priv *priv)
->  	ft_attr.level = MLX5E_TC_MISS_LEVEL;
->  	ft_attr.prio = 0;
->  	ns = mlx5_get_flow_namespace(priv->mdev, MLX5_FLOW_NAMESPACE_KERNEL);
-> +	if (!ns) {
-> +		netdev_err(priv->mdev, "Failed to get flow namespace\n");
+>  drivers/video/backlight/ktz8866.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/video/backlight/ktz8866.c b/drivers/video/backlight/ktz8866.c
+> index b67ca136d..5364ecfc0 100644
+> --- a/drivers/video/backlight/ktz8866.c
+> +++ b/drivers/video/backlight/ktz8866.c
+> @@ -24,7 +24,9 @@
+>  #define DEVICE_ID 0x01
+>  #define BL_CFG1 0x02
+>  #define BL_CFG2 0x03
+> +/* least significant byte */
+>  #define BL_BRT_LSB 0x04
+> +/* most significant byte */
 
-Hi Charles,
+I'm not convinced these comments are necessary.
 
-This does not seem to be correct. gcc-14.2.0 says:
 
-drivers/net/ethernet/mellanox/mlx5/core/en_tc.c: In function 'mlx5e_tc_nic_create_miss_table':
-drivers/net/ethernet/mellanox/mlx5/core/en_tc.c:5220:32: error: passing argument 1 of 'netdev_err' from incompatible pointer type [-Wincompatible-pointer-types]
- 5220 |                 netdev_err(priv->mdev, "Failed to get flow namespace\n");
-      |                            ~~~~^~~~~~
-      |                                |
-      |                                struct mlx5_core_dev *
-In file included from ./include/linux/skbuff.h:39,
-                 from ./include/linux/netlink.h:7,
-                 from ./include/net/flow_offload.h:6,
-                 from drivers/net/ethernet/mellanox/mlx5/core/en_tc.c:34:
-./include/net/net_debug.h:20:42: note: expected 'const struct net_device *' but argument is of type 'struct mlx5_core_dev *'
-   20 | void netdev_err(const struct net_device *dev, const char *format, ...);
-      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+>  #define BL_BRT_MSB 0x05
+>  #define BL_EN 0x08
+>  #define LCD_BIAS_CFG1 0x09
+> @@ -47,6 +49,8 @@
+>  #define PWM_HYST 0x5
+>
+>  #define CURRENT_SINKS_MASK GENMASK(5, 0)
+> +#define LOWER_BYTE GENMASK(2, 0)
 
-...
+I like using masks and FIELD_GET() but this is not a byte. These are
+the least significant bits.
 
--- 
-pw-bot: changes-requested
+
+Daniel.
 
