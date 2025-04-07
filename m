@@ -1,247 +1,151 @@
-Return-Path: <linux-kernel+bounces-590346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0456AA7D1F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 04:08:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0F3FA7D1FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 04:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1178B188D47B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 02:08:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13F363AD7E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 02:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4D62139B2;
-	Mon,  7 Apr 2025 02:07:29 +0000 (UTC)
-Received: from mx2.zhaoxin.com (mx2.zhaoxin.com [61.152.208.219])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B38212D8D;
+	Mon,  7 Apr 2025 02:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cAQeyW70"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E7521324F
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 02:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.152.208.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8272742A9B
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 02:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743991649; cv=none; b=MQ92CnxXvK4og8Oaj4mZc8BH0q1H6GE4kQJZbfKC8KoLNUtJFHajhPsjW7onHjmm7noFRzLCIN8BAs+E9TseyHnWCwaMmOc4Eu+kN7o3Xg9fUCoRQvZ8QpNqiZ9OLT7dE6ZHRcippvxSnq0eswy9keyrmk4pVgMyjdknQ+cWwCI=
+	t=1743991715; cv=none; b=uGaMPeN+xomT3j73yJw//gYqhGZqyMntsgklsSo2xS7AuCWGZD89xypB202I3wVbTcijX4uMm05vDcrt9SINB+/HnkchYC0jxOT3hbSInh+6ZZbKh/zFj0AA28Nf7WPOQpbHomurg0oD3NIYwDQXzIIBRooxE0aRu3A9d8yXmcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743991649; c=relaxed/simple;
-	bh=MGi4qtb6SLMs94x+IvcEx7bVKqBnqXah0fRCJh5j1lM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ustGIQYeuN6xX0uQgDs5lZXqUDoggPWeC6a1dxjLvzEHlvV/MDqCZEB77BCGkx1zNk2/SsPCJwAJzuWJ0dNS/z5F/UXtiueSCKPEgPerrh+PYvxScIPJNugKbIf6KNGHhOgyhnZnjudshXVjpA3cnoFwAqS0CwcDlEAD4S3bJQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=61.152.208.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1743991642-1eb14e119e07000001-xx1T2L
-Received: from ZXSHMBX2.zhaoxin.com (ZXSHMBX2.zhaoxin.com [10.28.252.164]) by mx2.zhaoxin.com with ESMTP id vIuMEgiPZyEdy58z (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Mon, 07 Apr 2025 10:07:22 +0800 (CST)
-X-Barracuda-Envelope-From: LeoLiu-oc@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
-Received: from ZXSHMBX3.zhaoxin.com (10.28.252.165) by ZXSHMBX2.zhaoxin.com
- (10.28.252.164) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Mon, 7 Apr
- 2025 10:07:22 +0800
-Received: from ZXSHMBX3.zhaoxin.com ([fe80::8cc5:5bc6:24ec:65f2]) by
- ZXSHMBX3.zhaoxin.com ([fe80::8cc5:5bc6:24ec:65f2%6]) with mapi id
- 15.01.2507.044; Mon, 7 Apr 2025 10:07:22 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
-Received: from xin.lan (10.32.64.1) by ZXBJMBX03.zhaoxin.com (10.29.252.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Mon, 7 Apr
- 2025 10:06:04 +0800
-From: LeoLiu-oc <LeoLiu-oc@zhaoxin.com>
-To: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
-	<tony.luck@intel.com>, <bp@alien8.de>, <bhelgaas@google.com>,
-	<robert.moore@intel.com>, <yazen.ghannam@amd.com>, <avadhut.naik@amd.com>,
-	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <acpica-devel@lists.linux.dev>
-CC: <CobeChen@zhaoxin.com>, <TonyWWang@zhaoxin.com>, <ErosZhang@zhaoxin.com>,
-	<leoliu@zhaoxin.com>, LeoLiuoc <LeoLiu-oc@zhaoxin.com>
-Subject: [PATCH v6 4/4] PCI: ACPI: Add new pci_acpi_program_hest_aer_params()
-Date: Mon, 7 Apr 2025 10:05:57 +0800
-X-ASG-Orig-Subj: [PATCH v6 4/4] PCI: ACPI: Add new pci_acpi_program_hest_aer_params()
-Message-ID: <20250407020557.1225166-5-LeoLiu-oc@zhaoxin.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250407020557.1225166-1-LeoLiu-oc@zhaoxin.com>
-References: <20250407020557.1225166-1-LeoLiu-oc@zhaoxin.com>
+	s=arc-20240116; t=1743991715; c=relaxed/simple;
+	bh=xm2ScceSyaOMTCAkQf3KIDsk6uIz8avCUOolRNi4Fuk=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=iJxWqXtBdhrDRowLORQe8CqhaYg3phdL5tpkfns441Qoh3xVwiV0jX6xdXESx3hlFXnufZBXoUaVgHXkQy/gft7wRnAlIcVjvRdx7jzAdXM7IQLkXKEtBprfLNpO9is4TNygxbYeEOqZBduHUFqnfC94aJ8mhL6xx95GTAP7DxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cAQeyW70; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C498CC4CEE3;
+	Mon,  7 Apr 2025 02:08:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743991713;
+	bh=xm2ScceSyaOMTCAkQf3KIDsk6uIz8avCUOolRNi4Fuk=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=cAQeyW70FWP6Nri9RCE9s1AysIfjqTm2A7Y3SDdBHqRrT7Oj0KLsF/Ge+J4bsMWwg
+	 ds3u1ZjrFNXvnkfpWKl2NIoIv8rYGvX8Bm5q2lHrKx4uUxZz/PuqMnjDhCocFXTlD6
+	 bFp3lqCE2DiBO2CLXdKXfXSb+qj8N+7pjTCS3zi9oPyTeZ29tOmXk3MYng8grKJSoQ
+	 qvwKFgUXakpp6xjD5AHzpsIIWx1FR+AGbJlACJvgO+3eghM78u2+ahv2f9/rxcYhhP
+	 +mYnMKVkvkwMcnqlz7LzDige1CBB7vTEldOpLlWNSWzgrgUSzU+vyuMbgLRCwedAvW
+	 bvv1/jDs2ibbA==
+Message-ID: <7059eada-a51d-4f68-b62a-0f2c89c9b01c@kernel.org>
+Date: Mon, 7 Apr 2025 10:08:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- ZXBJMBX03.zhaoxin.com (10.29.252.7)
-X-Moderation-Data: 4/7/2025 10:07:21 AM
-X-Barracuda-Connect: ZXSHMBX2.zhaoxin.com[10.28.252.164]
-X-Barracuda-Start-Time: 1743991642
-X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.36:4443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 5073
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
-X-Barracuda-Spam-Score: -2.02
-X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.139598
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, pilhyun.kim@sk.com
+Subject: Re: [PATCH v5] f2fs: prevent the current section from being selected
+ as a victim during GC
+To: Jaegeuk Kim <jaegeuk@kernel.org>, "yohan.joung" <yohan.joung@sk.com>
+References: <20250403232107.2960-1-yohan.joung@sk.com>
+ <Z_A5SWl1ueMTZxV0@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <Z_A5SWl1ueMTZxV0@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: LeoLiuoc <LeoLiu-oc@zhaoxin.com>
+On 4/5/25 03:55, Jaegeuk Kim wrote:
+> Hi Yohan,
+> 
+> I modified this patch after applying the clean up by
+> 
+> https://lore.kernel.org/linux-f2fs-devel/20250404195442.413945-1-jaegeuk@kernel.org/T/#u
+> 
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -486,6 +486,11 @@ static inline void __set_test_and_free(struct f2fs_sb_info *sbi,
+> 
+>         free_i->free_sections++;
+> 
+> +       if (GET_SEC_FROM_SEG(sbi, sbi->next_victim_seg[BG_GC]) == secno)
+> +               sbi->next_victim_seg[BG_GC] = NULL_SEGNO;
+> +       if (GET_SEC_FROM_SEG(sbi, sbi->next_victim_seg[FG_GC]) == secno)
+> +               sbi->next_victim_seg[FG_GC] = NULL_SEGNO;
 
-Call the func pci_acpi_program_hest_aer_params() for every PCIe device,
-the purpose of this function is to extract register value from HEST PCIe
-AER structures and program them into AER Capabilities. This function
-applies to all hardware platforms that has a PCI Express AER structure
-in HEST.
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-Signed-off-by: LeoLiuoc <LeoLiu-oc@zhaoxin.com>
----
- drivers/pci/pci-acpi.c | 88 ++++++++++++++++++++++++++++++++++++++++++
- drivers/pci/pci.h      |  6 +++
- drivers/pci/probe.c    |  1 +
- 3 files changed, 95 insertions(+)
+Thanks,
 
-diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-index af370628e583..027057faca33 100644
---- a/drivers/pci/pci-acpi.c
-+++ b/drivers/pci/pci-acpi.c
-@@ -19,6 +19,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/pm_qos.h>
- #include <linux/rwsem.h>
-+#include <acpi/apei.h>
- #include "pci.h"
-=20
- /*
-@@ -806,6 +807,93 @@ int pci_acpi_program_hp_params(struct pci_dev *dev)
- 	return -ENODEV;
- }
-=20
-+#ifdef CONFIG_ACPI_APEI
-+/*
-+ * program_hest_aer_common() - configure AER common registers for Root Por=
-ts,
-+ * Endpoints and PCIe to PCI/PCI-X bridges
-+ */
-+static void program_hest_aer_common(struct acpi_hest_aer_common aer_common=
-, struct pci_dev *dev,
-+				    int pos)
-+{
-+	u32 uncor_mask =3D aer_common.uncorrectable_mask;
-+	u32 uncor_severity =3D aer_common.uncorrectable_severity;
-+	u32 cor_mask =3D aer_common.correctable_mask;
-+	u32 adv_cap =3D aer_common.advanced_capabilities;
-+
-+	pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_MASK, uncor_mask);
-+	pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_SEVER, uncor_severity);
-+	pci_write_config_dword(dev, pos + PCI_ERR_COR_MASK, cor_mask);
-+	pci_write_config_dword(dev, pos + PCI_ERR_CAP, adv_cap);
-+}
-+
-+static void program_hest_aer_root(struct acpi_hest_aer_root *aer_root, str=
-uct pci_dev *dev, int pos)
-+{
-+	u32 root_err_cmd =3D aer_root->root_error_command;
-+
-+	pci_write_config_dword(dev, pos + PCI_ERR_ROOT_COMMAND, root_err_cmd);
-+}
-+
-+static void program_hest_aer_bridge(struct acpi_hest_aer_bridge *hest_aer_=
-bridge,
-+				    struct pci_dev *dev, int pos)
-+{
-+	u32 uncor_mask2 =3D hest_aer_bridge->uncorrectable_mask2;
-+	u32 uncor_severity2 =3D hest_aer_bridge->uncorrectable_severity2;
-+	u32 adv_cap2 =3D hest_aer_bridge->advanced_capabilities2;
-+
-+	pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_MASK2, uncor_mask2);
-+	pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_SEVER2, uncor_severity2);
-+	pci_write_config_dword(dev, pos + PCI_ERR_CAP2, adv_cap2);
-+}
-+
-+static void program_hest_aer_params(struct hest_parse_aer_info info)
-+{
-+	struct pci_dev *dev;
-+	int port_type;
-+	int pos;
-+	struct acpi_hest_aer_root *hest_aer_root;
-+	struct acpi_hest_aer *hest_aer_endpoint;
-+	struct acpi_hest_aer_bridge *hest_aer_bridge;
-+
-+	dev =3D info.pci_dev;
-+	port_type =3D pci_pcie_type(dev);
-+	pos =3D pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ERR);
-+	if (!pos)
-+		return;
-+
-+	switch (port_type) {
-+	case PCI_EXP_TYPE_ROOT_PORT:
-+		hest_aer_root =3D (struct acpi_hest_aer_root *)info.data;
-+		program_hest_aer_common(hest_aer_root->aer, dev, pos);
-+		program_hest_aer_root(hest_aer_root, dev, pos);
-+		break;
-+	case PCI_EXP_TYPE_ENDPOINT:
-+		hest_aer_endpoint =3D (struct acpi_hest_aer *)info.data;
-+		program_hest_aer_common(hest_aer_endpoint->aer, dev, pos);
-+		break;
-+	case PCI_EXP_TYPE_PCI_BRIDGE:
-+		hest_aer_bridge =3D (struct acpi_hest_aer_bridge *)info.data;
-+		program_hest_aer_common(hest_aer_bridge->aer, dev, pos);
-+		program_hest_aer_bridge(hest_aer_bridge, dev, pos);
-+		break;
-+	default:
-+		break;
-+	}
-+}
-+
-+void pci_acpi_program_hest_aer_params(struct pci_dev *dev)
-+{
-+	struct hest_parse_aer_info info =3D {
-+		.pci_dev =3D dev
-+	};
-+
-+	if (!pci_is_pcie(dev))
-+		return;
-+
-+	if (apei_hest_parse(hest_parse_pcie_aer, &info) > 0)
-+		program_hest_aer_params(info);
-+}
-+#endif
-+
- /**
-  * pciehp_is_native - Check whether a hotplug port is handled by the OS
-  * @bridge: Hotplug port to check
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index b81e99cd4b62..46af751878f5 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -977,6 +977,12 @@ static inline void pci_save_aer_state(struct pci_dev *=
-dev) { }
- static inline void pci_restore_aer_state(struct pci_dev *dev) { }
- #endif
-=20
-+#ifdef CONFIG_ACPI_APEI
-+void pci_acpi_program_hest_aer_params(struct pci_dev *dev);
-+#else
-+static inline void pci_acpi_program_hest_aer_params(struct pci_dev *dev) {=
- }
-+#endif
-+
- #ifdef CONFIG_ACPI
- bool pci_acpi_preserve_config(struct pci_host_bridge *bridge);
- int pci_acpi_program_hp_params(struct pci_dev *dev);
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 364fa2a514f8..77477a9a7d83 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -2366,6 +2366,7 @@ static void pci_configure_device(struct pci_dev *dev)
- 	pci_configure_serr(dev);
-=20
- 	pci_acpi_program_hp_params(dev);
-+	pci_acpi_program_hest_aer_params(dev);
- }
-=20
- static void pci_release_capabilities(struct pci_dev *dev)
---=20
-2.34.1
+> +
+>  unlock_out:
+>         spin_unlock(&free_i->segmap_lock);
+>  }
+> 
+> On 04/04, yohan.joung wrote:
+>> When selecting a victim using next_victim_seg in a large section, the
+>> selected section might already have been cleared and designated as the
+>> new current section, making it actively in use.
+>> This behavior causes inconsistency between the SIT and SSA.
+>>
+>> F2FS-fs (dm-54): Inconsistent segment (70961) type [0, 1] in SSA and SIT
+>> Call trace:
+>> dump_backtrace+0xe8/0x10c
+>> show_stack+0x18/0x28
+>> dump_stack_lvl+0x50/0x6c
+>> dump_stack+0x18/0x28
+>> f2fs_stop_checkpoint+0x1c/0x3c
+>> do_garbage_collect+0x41c/0x271c
+>> f2fs_gc+0x27c/0x828
+>> gc_thread_func+0x290/0x88c
+>> kthread+0x11c/0x164
+>> ret_from_fork+0x10/0x20
+>>
+>> issue scenario
+>> segs_per_sec=2
+>> - seg#0 and seg#1 are all dirty
+>> - all valid blocks are removed in seg#1
+>> - gc select this sec and next_victim_seg=seg#0
+>> - migrate seg#0, next_victim_seg=seg#1
+>> - checkpoint -> sec(seg#0, seg#1)  becomes free
+>> - allocator assigns sec(seg#0, seg#1) to curseg
+>> - gc tries to migrate seg#1
+>>
+>> Signed-off-by: yohan.joung <yohan.joung@sk.com>
+>> Signed-off-by: Chao Yu <chao@kernel.org>
+>> ---
+>>  fs/f2fs/segment.h | 9 ++++++++-
+>>  1 file changed, 8 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+>> index 0465dc00b349..0773283babfa 100644
+>> --- a/fs/f2fs/segment.h
+>> +++ b/fs/f2fs/segment.h
+>> @@ -474,8 +474,15 @@ static inline void __set_test_and_free(struct f2fs_sb_info *sbi,
+>>  		next = find_next_bit(free_i->free_segmap,
+>>  				start_segno + SEGS_PER_SEC(sbi), start_segno);
+>>  		if (next >= start_segno + usable_segs) {
+>> -			if (test_and_clear_bit(secno, free_i->free_secmap))
+>> +			if (test_and_clear_bit(secno, free_i->free_secmap)) {
+>>  				free_i->free_sections++;
+>> +
+>> +				if (GET_SEC_FROM_SEG(sbi, sbi->next_victim_seg[BG_GC]) == secno)
+>> +					sbi->next_victim_seg[BG_GC] = NULL_SEGNO;
+>> +
+>> +				if (GET_SEC_FROM_SEG(sbi, sbi->next_victim_seg[FG_GC]) == secno)
+>> +					sbi->next_victim_seg[FG_GC] = NULL_SEGNO;
+>> +			}
+>>  		}
+>>  	}
+>>  skip_free:
+>> -- 
+>> 2.33.0
 
 
