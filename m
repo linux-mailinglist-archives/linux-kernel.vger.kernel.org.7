@@ -1,212 +1,118 @@
-Return-Path: <linux-kernel+bounces-592601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74CC7A7EF2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:24:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E7AA7EF46
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:29:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C3F07A5751
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:23:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE691179F77
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC94D21B8F8;
-	Mon,  7 Apr 2025 20:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE3521D5AF;
+	Mon,  7 Apr 2025 20:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="iS2ZmAgy"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2042.outbound.protection.outlook.com [40.107.243.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Png2GZsW"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39B82116ED;
-	Mon,  7 Apr 2025 20:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744057446; cv=fail; b=m3nqM805aTyQVMxKfc5dZ/kYEDYhXyciRmmFrMbBdAUESu/Nl+NeNs0R1SsKrLRGOd+d0rWUKRu6IwrDdNcSc0i5N3WV2Ubab5FiSNs5QTcLjE+/X2nZ7XFkcSU5rOJRZ+cQfSET00DL3QW+AH/UZsENmV9/XSG8gjw4VC2wMTE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744057446; c=relaxed/simple;
-	bh=rpzyBDhcJGMvyRutBGGF0u9+Bt60VDzucniMK5RuTws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=MxIW4TsFKsUtHllIz6T6Z83kdYl4ioJZgd5aFNHKQKHY7Mr1eZVu45gzAJVY9gpT9F1kn4pqJVWSQKxuTHCFsO//kX/WBypDrT/taPHHLYzUCSKb0fdKAa/ZL94THFLjbdwk71aJyBV+ICmviKVYX6hHnODngj5ZyPJqxSGugKs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=iS2ZmAgy; arc=fail smtp.client-ip=40.107.243.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C9AV7w4VC8c1A6SNC/jubavuA/lOiykk5LVK7k9Gnkk3Tuy3jEVtPZyjT7cduTeFGPe73olttUQO12ft3t1Uik71TOTNhdguxGyxvLwcrb2Zv4FZv4nZmE1n2YMQsrhck2SjT0P1jrq4erHL6/KVi+gDh4STRF4IaWu3C7kVef/HA4uc91fOabjtElRW3NT8Ab1RqO8T+6bUuyQCN87G20PKepEg6hB9FxwVQGeI5jSxEi+uZe8yaynt8ZKVOvHDycDokx0MOzP2zJ61d1Ajg6IB89cT+a79+SMzHUyOi+7wu02Wm183B5hJX6NV9auLGB3/LVAlxhmPv7BfiSaiYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Aaw4dgmvnXO+BIVgfKXiPQzAqTaG2wskN3ds+K1Gb6Y=;
- b=KvUEPElb0e4UkUIvP84W2glCesF30tQFykoCuGkQoj4u59N98udbyHrRBS34gnnPNRpUwNkmHYOBJC31I3OblYHm1RGnodiiUcchfQn1mGM84NKr5lBaC0XmhLZvgGAVjKaxDssa/4V+/L9iZbqvvj6GObvmid/z3O3n+/EceP6lG9Asy66QxnoRPmStTI9cC4CosheWu3VncAfOm2LI6/uXSkZ5EPiAR6+CgBC77UTvtjqSSysXBn8+zDh39mCGFyhRP2L1K3jCRnC3wDHvIx/xYEkJeXfvbDvnWZYw+IOvllMTo5LLzaX6DaHX4ouJxaLiZiTuvOokFF/nOxKl+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Aaw4dgmvnXO+BIVgfKXiPQzAqTaG2wskN3ds+K1Gb6Y=;
- b=iS2ZmAgyfJ9CXFTK1gw8dlaF9SYh4rZtnzk5B0FT3PmAza5SMbu6wj+EAPDLHGGsNk6g+lYLc9nxXUwdMsYRYqo9aTaSm5W1k4yu/B2g/puXgj07BO0upTgS4jeYx9vqtSW+kIzDRKAnVJLYisP4VNCN9SwpLF03BuRPMm+tVe8qYe+yOtJA4L5SQR2LgsKKZh+Zfu4UzkNbgmsaUqLxxuzyHrkYO09pNo3b6JY8bEuw2UZwwFaEBosAtzqGvQrF+BBjTwPBL7cZ60XPSImH6mYmUUoVnY1blrU6Q9i9gl8z3GMg5kbfQu/97PTVom4a2RU0ENiXfNsvPAV+1kzCNA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
- by DS0PR12MB8480.namprd12.prod.outlook.com (2603:10b6:8:159::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.33; Mon, 7 Apr
- 2025 20:24:00 +0000
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5%6]) with mapi id 15.20.8606.028; Mon, 7 Apr 2025
- 20:23:59 +0000
-Date: Mon, 7 Apr 2025 22:23:49 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	stable@vger.kernel.org, Rik van Riel <riel@surriel.com>
-Subject: Re: [PATCH] sched_ext: Use kvzalloc for large exit_dump allocation
-Message-ID: <Z_Q0VeRgMRJCvYnh@gpd3>
-References: <20250407-scx-v1-1-774ba74a2c17@debian.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250407-scx-v1-1-774ba74a2c17@debian.org>
-X-ClientProxiedBy: MI1P293CA0013.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:2::15) To CY5PR12MB6405.namprd12.prod.outlook.com
- (2603:10b6:930:3e::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6114921ABBC
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 20:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744057526; cv=none; b=OSSIQ42rBo60VuMGDPN7Jwnb0WVhZqDMp74QMaB4QLxPUMFhAqS6doxIl1MLlE29djPQBEkB2E/TiXSxfF0Bs80voRda9L+uQmyQvb7Qbhl4TiQduIyE4prfsOppUOMRmVx6+d/6EJfu94MmpaMzC8l61yfGQlEXL78wuy7Zfbg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744057526; c=relaxed/simple;
+	bh=LvjjTUBL7nRo0DS6OmeCHChrliSBmLsfHeg9Df9+4bI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KT+7dqEWC1KX2KHvzfYti93fXOEzutn1zngSE8t17bMYm6fPJjZoCwRHhcKChNq/Qv1JhEaZyC1WigT0LBWXRO03+67ECICWT7jmyqaigvggmMx8wyadig/+tIoCC1HkKfy5IEPoMC78J9mYbVN/ETYyvKMnCSOjyrKflmsgwi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Png2GZsW; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5ed43460d6bso7524909a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 13:25:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1744057522; x=1744662322; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oZ0zUiXGKdgO4azOtSCYJ2wFMy4AzS9ZbaPfuT4i/eM=;
+        b=Png2GZsWeZBZQzyKB3o722j2pyU0zzi7sCGDyfxBkQOgSVRRR5mUNhGgcmyxnDBGxe
+         C3RIhjGH6+I+/RrzBdzHnHN0JTMtJvrDhUodtOMulRPthni1rWP8YFA5I4v4L2pe3zFc
+         0UbPFvYvqleYRBN2mw0qT4NAls1rGFVExFwfw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744057522; x=1744662322;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oZ0zUiXGKdgO4azOtSCYJ2wFMy4AzS9ZbaPfuT4i/eM=;
+        b=YBbWI3tWUtAaAzr3qqO87FfX+RlP/N9m1oQ726KufWGXjyGCuLZ+xcDK+8ZrkbWQ+J
+         cva7+hKavRX4U18XAYcEOW9fODHHB9NWXKKek3Guxntg+D4Zf6UC1a3NIBZbE+g8/x4G
+         LM3hY1YEHKxe14fiZBClj1/qXR8dXK8aBWFp7MDPavi9E0N86SCGBKrfI274wY5LW3xJ
+         +oZaVrrI/PgqHBSXPoEPk95dn0a7ASr5DLNtwH0E5Ty/eY0N83ZlRV1setb9BL/n49LQ
+         7R84En+EKDMA+uVYCfEezf+3KnOEhya6NhbQodKur2c0TlzjM1tVzJprvd8kkG/u4Suq
+         W99A==
+X-Forwarded-Encrypted: i=1; AJvYcCWrSwC13dehT0GAp4ObIjT4E2ETbyevdeR62QjBbanAL8/Jcz9OwnkPvbbUWOeyV0k9WaDJbbEcwx2e/9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIchPIASvKC8xJc+SMw+k+hmmcpa9oNpbIeOGBTOR4zbnns+4B
+	eQYWMi8wHFkXkUFXcejjpsJswPoc2r4X/h7LBX/eCRVl83EkxBOENe6G5AtGkCCVmhYqTnG5U/R
+	SV2s=
+X-Gm-Gg: ASbGncsty5jAcm2jrmcscAiEgYuVJZwgvf/+9+QH8NgettjGDzJ0CGMWJ8x9OxK5mDQ
+	F6H+rEOugQFIqvmiqRXJguJjLb3wXk0v/EgXn6ioW/s9VzcMdzOTuGr/i8/HhPm9FtEOxZY7KGh
+	wtd5g9JZr5HU4N/TdXHa4GdSRaEyEx88PM2yOsdo6d4hXYcGkLho5U5qv7VYAH/4cpQpQ/ncXG7
+	rhhxoE45Rxan96f4ngjw5nDJ30aEW8aImniy//q7B9h8zu3o5HQGcFOvWjHfF6rN3Z5CN5x5Avx
+	KoVNYYZqdoeGsg1PqNm1w6ZJD10eoQG9brSqnG6oIQm561pZMNWEUFPqNiZzaHttQCAyXrJEBpa
+	U+cwDmxWgQYSGX/Jq2AU=
+X-Google-Smtp-Source: AGHT+IGVMspw7pAsVKuhEoJNMBvDjiZ5COjHnQDYusUXaIGTMdwTmsIN0Ze3lwodo27FyOa5V535sQ==
+X-Received: by 2002:a17:907:9693:b0:ac7:7f13:2e80 with SMTP id a640c23a62f3a-ac7d6c9f3b0mr1024776766b.9.1744057522448;
+        Mon, 07 Apr 2025 13:25:22 -0700 (PDT)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7c01c10dcsm795301066b.180.2025.04.07.13.25.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Apr 2025 13:25:21 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac25520a289so842689666b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 13:25:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCULcTF1LWQicHih9Hi+Lm5rLNZCLcOBnecbdgpuVa0bHpYu5ABDtALK+deuodSK/C3WQziHVueR/f/TRdE=@vger.kernel.org
+X-Received: by 2002:a17:907:720e:b0:abf:6cc9:7ef5 with SMTP id
+ a640c23a62f3a-ac7d6e07739mr1134446266b.47.1744057521070; Mon, 07 Apr 2025
+ 13:25:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|DS0PR12MB8480:EE_
-X-MS-Office365-Filtering-Correlation-Id: b76d4869-01bc-46d7-8b20-08dd7612211d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?oPPC/9IxWwxqH5+9tK3Qwq9vIB1Innl8tLeve4XERCfQ2yZIGm/7RzU1XY9b?=
- =?us-ascii?Q?SJf8EV4QtxS2I/C704AVIpXWv9zAg8wR4Doq3XedyQE1b8q4uX2AMmrELgL7?=
- =?us-ascii?Q?Ulj8GeqXgNbnAQl9cWznVfIG7s+Yqup/wXBixqIJTWXN9HlFvsNcVjE8YBlz?=
- =?us-ascii?Q?y9hom5wU/ZzPoldbQ/0kZPhdQppMF+diH75VqCEuO7ieLAUE0i8hgC2oCYcj?=
- =?us-ascii?Q?gHn1BzVaWzxYCQxGqaOh8ulGktEcmyqNyx5g6RB0+ir6ucBEAYYmLHpNFUSr?=
- =?us-ascii?Q?XRIunJczeret4tE1zrv1yHWrI8NgJe24DcI699+BLkolOCrRtNmM2F7GwZ75?=
- =?us-ascii?Q?lbqkBaBtQ+ARNuMif3KeCXyyD3rIsaQYRedZ1tQKXuJwlgfNn+RD82WSpN5/?=
- =?us-ascii?Q?Efj0YtRqXXsWeHOgiDNlyBvyvXI1wVBp6gz9RF8sHsM96UiWbzWkjthzhMIC?=
- =?us-ascii?Q?tUS0oHNM8zqtJAzSGqQTOBbu+8jFfdBOYixKiIsUncRT99GGLenDgFTxVrE7?=
- =?us-ascii?Q?lUeHSdvcKDTiYGV+WlI8fFygj5X+ct0DVdvARVACjvf97EXyIhDFVe3MLkel?=
- =?us-ascii?Q?DuS11+80YZhK/fdaBvdgtrtaKcdnfAsKd3+RsMMgZKjQrlUkj8/KXSz3BH1j?=
- =?us-ascii?Q?LQh2aVj24v1oBRpLlNU3uquR3lNrZbCj5JLRx6YXyCsMXS56FNPcfFlttk9A?=
- =?us-ascii?Q?JeCDi9J6+2He/O8J9bWwytxN9FayXh9uLJ6xL6Ryifah6AEbETDZPVcVXhrb?=
- =?us-ascii?Q?3sSGiORDVdj3hmP9hOGFfHTz7pW2tHsYJ+zQF+pjBZ+NQijI6sVDDVXsu1/0?=
- =?us-ascii?Q?Dyizmgx5akLbItQcaoaQYJXqj6RbbTQOo8H9FqhFF0BdFYMA/qM94nVqYBWC?=
- =?us-ascii?Q?91Yf0we3erEN18XVVehZOzpOp+bjCJwqFPMZ4Te1TMlAidQjT5X5AcZiELnx?=
- =?us-ascii?Q?+AKQWlaZvMkh0ai33ZvFJv+FAo6A7oSXVUXnmrjtbahxkmUGR9jWquyqbbdH?=
- =?us-ascii?Q?htrXvoMuC0H/TEfJ34A2KEWuoJfNVXiD5Dm8mAsnxvXCkw+RunscT8YdKGHK?=
- =?us-ascii?Q?r6Gt/znTH+yr3s4HWlIwEca6vMAl1JOwFOtlVGNAdZxtXuTKKGXw9y0bOvcp?=
- =?us-ascii?Q?GkTWOTIcjvUWqgqBFnN6HLr1A6UsjsUPv3ewbSFhZLJMR9SnWQEriVJyWJhe?=
- =?us-ascii?Q?OkBPM6og+fv/3yRLQRiIlLiDAB2HRu0COl7Dd+kTew0Em6wraFq6DbX8F06Y?=
- =?us-ascii?Q?ITouhhWh0oKx0UM3BSXvmBBRirnmEPrLKjSTgH1oHeJRiXHOoFxqK6oLex/d?=
- =?us-ascii?Q?0Qu/k6XkcE/K/qLhLMaLK54+N3lrvsstozKmPMzf2OQHnqyqKuB7SpTAd7aL?=
- =?us-ascii?Q?vg11in/r/3kjJQDz6LTIYOs0S76d?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Lj92N61GDCwpcjiD/UUYyT/BAshZ0ho8OYewVbKrIxnin56RMC/LaQX9HVXY?=
- =?us-ascii?Q?oqKR04dRGdLv0RUU+cilTQgc5XRxukUBRJhS8n8bJn+qwazSVyrohihi62En?=
- =?us-ascii?Q?VZRDg+U8LRKv4P2jMqOC0dKeG0pF1CakSHXImp+gLO2rskaIV9jkTWhgoyZ+?=
- =?us-ascii?Q?jgrvezgq1DtOJEbtGEND69gr7hpCYsRoWSRPErTmZ6brRX5Dl88mLaHktuTL?=
- =?us-ascii?Q?1XZVcO//i3Nzojcockw4ozAzjEPu4MD6hcLc33Oj8i5Yr2I7Nif05ejBxJHh?=
- =?us-ascii?Q?E0OZZiYLZI0PHjRlpDARvwQdDArua6qFKyCT2w0Ee4ypq3gSwRHS9ChRo3s/?=
- =?us-ascii?Q?D/KtDlU0+Ddpg9AeYszhl/UoyiCHXc0Afw1REpRCMEFtIxTtsa1A89DiAA6W?=
- =?us-ascii?Q?knpbOUdfoSaUuVZ67knfN/opoSpzRk/Hky/2MwlFjIQIqREzZWC2V3otqSNi?=
- =?us-ascii?Q?2EDU3rBmiptQB9hNz4Q/yV1vnpHSA2BlPkUpAKrQYWlRIUn3YsUN4IGcnvDH?=
- =?us-ascii?Q?N2PutGQqoD44raA/S0ehC3Efrzc82mkDr4AzuRY2JGSDrFUROwmbz+cTzEiR?=
- =?us-ascii?Q?c7OoLL4H8bh31gbYrYWwQ6LeRB3itWa/xMsSz1OpbAVlbe/mjlz6IlsRKsLf?=
- =?us-ascii?Q?k8wY4xx48SHL+IS2aIxJt4IZ9z9BstuxSTFPCjQkYp/nC46/qHYrmKtxzhUI?=
- =?us-ascii?Q?/X2xs/EaXgsoOpyzmn1jACbnzQiVfUNIhaTIZtJUWgns74wKFF5LN0AguwCL?=
- =?us-ascii?Q?XMOvMAzIwKPyxDLf8WGkSHPR76j/ijWFgwl+SifE9CBkxlFceZgiPIbCYKAP?=
- =?us-ascii?Q?fRM11WQq9EMtmgamKQsV+YQ1pvZcO3tOuRbcp4uiLDCPBzaPVHtABE05WPd2?=
- =?us-ascii?Q?VNn+Tbp6ZXjeHfMHAUOHzfMwO6cqRAhkihPCZ6xr+wHaKVNedXsAlI1QJlAf?=
- =?us-ascii?Q?7g7G3dR3NYiZWF68KOTIfJP6uOeoT14qG5jdZC5P2pPOTSZhmd9udyMRBy85?=
- =?us-ascii?Q?M4xMnD/X+gUrxUN+bk7PLeE6qDQRekQ8ljC4Tx8orMIsbDN34++R1EBxvZ6p?=
- =?us-ascii?Q?oVklm/xxRuOVqIXZiKTtC9CUVThYmDi+fZ5WLvHokaCAac/MmhQx8skQvGtS?=
- =?us-ascii?Q?ixLVyVPWZcKMNngQ+b1fHvM2i9qdv4xxda29YyXRcOq8seRbrsX93+URcJk8?=
- =?us-ascii?Q?aptolr7/mnMQtj0zKOZ/y2LDZzRaP99CEmojOawUHUrqvvrSk7O2xXNeE2JY?=
- =?us-ascii?Q?SakYoJzApDWpzVnNuuHiXCePP4uEy9CfmyGxA/lVNil45pEDpEsDE0g+1agv?=
- =?us-ascii?Q?OrtNuRJJrjGq6ebRh3nhluQrl7VLwpIibgwYgivZCCrbIRuLQnlefvBCSsec?=
- =?us-ascii?Q?eFdmA/2LlpAWqY+E8nawyZ58uUqWzZ3hjjKsoeRgJYFuTUK62/OgsRjNaXrs?=
- =?us-ascii?Q?wuy6GZQY3met2rgkoqmostKtISSu5TCvEnvaLCEbJX/ZeLi8AmrHGXqS3dJJ?=
- =?us-ascii?Q?rJcmbe4SFsuvU3FIhv7jr2r86/6qUlz+caQfY2eyQsGFTlnOkTT21sNz1L69?=
- =?us-ascii?Q?mePKdoHOvZEgwDzGH4Yb6syJgUl0ZFgrmiiTt5oy?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b76d4869-01bc-46d7-8b20-08dd7612211d
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 20:23:59.4746
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FmGUPBjIg2Ru+knPDpGx32J+3HAVebaeiHNkEI8WVvqt9kqR52NZ/o2l6ilgmLYghvjnQcgxhPxBYyABwp5G7w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8480
+References: <202504061053.F27227CA@keescook> <CAHk-=whVfxi4KRu-H=tsgSdoGdDz1bvu0_miJT0BTgAf4igpdg@mail.gmail.com>
+ <FFE5FB0B-CC92-4A25-8014-E7548AD1C469@kernel.org> <CAHk-=wijG2dSOOFr8CCYygwxZQxdTUj73rfB8=tyZP-3G-8-og@mail.gmail.com>
+ <20250407173741.GA3847400@ax162> <CAHk-=wi89ogViEN5oTBmcNQXnMEB5_Qse9G401pSNzocP_dqQQ@mail.gmail.com>
+ <20250407192537.GA518371@ax162>
+In-Reply-To: <20250407192537.GA518371@ax162>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 7 Apr 2025 13:25:04 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiQgK1ciFurQcHib8gF5oD8ZrWOaCPLDNLn=7ZvkF4=mQ@mail.gmail.com>
+X-Gm-Features: ATxdqUGmNt-Le7y3oz-w0oLuti0mExsYRb0CjSrNEPREpJDOaXWw0kBCxRew8Z4
+Message-ID: <CAHk-=wiQgK1ciFurQcHib8gF5oD8ZrWOaCPLDNLn=7ZvkF4=mQ@mail.gmail.com>
+Subject: Re: [GIT PULL] string fixes for v6.15-rc1
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Andy Shevchenko <andy@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Peter Collingbourne <pcc@google.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Will Deacon <will@kernel.org>, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Breno,
+ On Mon, 7 Apr 2025 at 12:25, Nathan Chancellor <nathan@kernel.org> wrote:
+>
+> or if you do want this for GCC too, unconditionally adding it should be
+> fine too.
 
-On Mon, Apr 07, 2025 at 12:50:29PM -0700, Breno Leitao wrote:
-> Replace kzalloc with kvzalloc for the exit_dump buffer allocation, which
-> can require large contiguous memory (up to order=9) depending on the
-> implementation. This change prevents allocation failures by allowing the
-> system to fall back to vmalloc when contiguous memory allocation fails.
-> 
-> Since this buffer is only used for debugging purposes, physical memory
-> contiguity is not required, making vmalloc a suitable alternative.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 07814a9439a3b0 ("sched_ext: Print debug dump after an error exit")
-> Suggested-by: Rik van Riel <riel@surriel.com>
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+I think if unconditionally works, that's probably the best option
+simply because it's the simplest option.
 
-Makes sense to me.
+But I don't see 'wcslen' in the gcc docs, which was why I was assuming
+it wanted that "check if it works" thing with "$(call cc-option,...)"
 
-Acked-by: Andrea Righi <arighi@nvidia.com>
+I don't think we need to call out the particular compiler, since the
+argument against using it is not compiler-specific per se.
 
-Thanks,
--Andrea
-
-> ---
->  kernel/sched/ext.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index 66bcd40a28ca1..c82725f9b0559 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -4639,7 +4639,7 @@ static struct scx_exit_info *alloc_exit_info(size_t exit_dump_len)
->  
->  	ei->bt = kcalloc(SCX_EXIT_BT_LEN, sizeof(ei->bt[0]), GFP_KERNEL);
->  	ei->msg = kzalloc(SCX_EXIT_MSG_LEN, GFP_KERNEL);
-> -	ei->dump = kzalloc(exit_dump_len, GFP_KERNEL);
-> +	ei->dump = kvzalloc(exit_dump_len, GFP_KERNEL);
->  
->  	if (!ei->bt || !ei->msg || !ei->dump) {
->  		free_exit_info(ei);
-> 
-> ---
-> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-> change-id: 20250407-scx-11dbf94803c3
-> 
-> Best regards,
-> -- 
-> Breno Leitao <leitao@debian.org>
-> 
+             Linus
 
