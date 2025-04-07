@@ -1,340 +1,259 @@
-Return-Path: <linux-kernel+bounces-592110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92238A7E949
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:04:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D49A7E94D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 20:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DAB0188E015
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:02:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BD5E3B7F0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989B92063D0;
-	Mon,  7 Apr 2025 18:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB6421A444;
+	Mon,  7 Apr 2025 18:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="KnKOBp0t"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RttCvuN6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257632185B8
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 18:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B227D21146F;
+	Mon,  7 Apr 2025 18:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744048921; cv=none; b=G4pJT/cHIMVlMIl+cNI6R5oe9waUYvAyUyKeoMpgBQzbIYK74nKL5lWtJFtHbwxPj9o6tSvr9o+tY1wORLDqMUxicYgka/wSlh/K9xRu7JSTcMbFY9Wge75cmUpaR5r/4V4eNjSJoZrIkB6Qi8iYmykYyjkUOmffLmtDw4fQsJE=
+	t=1744049023; cv=none; b=cJ2jAULFqKPAAPIaghHFVIxZRIvr4PFldjXeHj9IF3+YOMUe7zRjxMpdKWV6+i+jMggxmYTWX9fkcuCyRojq2+/Ypt2Vachut04ICScQQO/ycLLm0dLAN3zn25QWpou7cZdswnjDZNBbZB4dvP79yGdAvBl6ljsugTZf6gatH5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744048921; c=relaxed/simple;
-	bh=OlubQZ/Pw1xCPoYgPf2Ou8I2Ct/l0oRNxp+u9ANWv+4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rPAPY0uDw5AeXxvQ+U+lo0yoknmE1GHo8SzkxBTSkQoZ6ZgEd9SvN5XVUkFC2gj5HWFJTzkdtfL9y7vDAONRwjq8oLpmMyulsYFoZTVjVuS86bE08tIOzmxTfbpH8MA4ziCwXjgT6Ihd5aHGGxoRZ57xQInpQpuTlHXYUhJhPPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=KnKOBp0t; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6e8fc176825so39568796d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 11:01:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1744048917; x=1744653717; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1Vt8cqKYnz2MPMdOl9mwLikohokhtaGg2JyeHvDBS+M=;
-        b=KnKOBp0tz14qvUqhJ/3dVfwNQIxC4ef2Yo74QbQO50eO3YijG64jHTENEzW20nizFY
-         JBkuo1AVf6sbY87tUe6tI/qzPzzhrLjGj9KE3JWLcBh2WSJUT+arSeYoIkeAQQZB5HP8
-         wMItP7c5SRkomCPLntOgYB2xOldbsB48OZ9klhcPwfhb34KaMeGhGSfElZD+9GjBBdXF
-         dSo+4wog4C3aG3AY4Hp3EcJoWsM36U8tWOXMYnRJ8YbD1AstFO7Kj97WaRGDGrzOqNCn
-         BglpFdSzvrAxytAQL+H2VKQv2wgvFOkWVRDsqDiva/4khMFE4z5h39d98NAXFKSfPqzc
-         f8zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744048917; x=1744653717;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1Vt8cqKYnz2MPMdOl9mwLikohokhtaGg2JyeHvDBS+M=;
-        b=ns0yRlYs0hfjVTgIElxj/XPLCrlxzjdANUefS+NgJ6Ob9COHe3H3gfABFrUEnOs+TT
-         hU3buac6uB82cYlD1ubCsiaBpZy7d0DFiFD5UYrXae/5+bhVxAMFOTf5m8fmIngbRHmf
-         +dQUgoarlzdZ5icotgqsSQtG/8SpwFTiQtQYG09MeITpcXzBtR/UHHP8OWaJ9wOYQIb3
-         2X8pWnx7Gpg+v7OAUUKRNtjYNnGcjoaDQ+cMSwg5anx0YD8VmNzSL+gCtRRCBhah1LYi
-         NnPyE6RS5gSGmnIOZerytVeIcwzE/PIxW2r2ppskzw396dlXHN7wZO4EPLHlM9vkYFTq
-         5rCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWcTXmmGWFnq+35TtqatSoYvBFIVizKyIGMIzSmPuq7Qk+4KzZnbj7b5WYB+hNTPGgrjmnAiavl+xKZus8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7F7mdAWbh6OWxXP4aRrxTa0bcBAHFSWOiBFwno1gfcOOvuGtl
-	Fzg+A2xfybsmZlEyxbOHWVSuTomH256XBIrltKNAK2ZtPXZUuc0RyzyCr9A5ou4KYaHM3s4GsXc
-	+
-X-Gm-Gg: ASbGnctRlG/lEaBa1Y3IJa+jTG55Sl1A92jQwnh2lokXm4IcDBdhA8ci0la6EGFJlGk
-	0fV3mat2nZP7w+n/mpilr1z7iD6sgdsiWTO+gJdbBtk9IBCTPl3J0vpN29TLNp+YniQqtyTOBXP
-	4ntJWUVbaK91ah1YYtOMRyyeLkYmJpc7eFStZqnSLfaCzcnZ6pxKW4OaYkI6yhhWb0Vl5oYS1kP
-	tTIUU92fGPo2by8o7fBWP3rSOgy/0cMTPX+NuO4ZZ2ZptvMwiWjg9XZ+8LdmA7IT2z340mQgcb4
-	gQ5kGsdPp4gQaDSF8UdVRFMOS8h+7qmkJvMlryjq3e8=
-X-Google-Smtp-Source: AGHT+IHfFCek/TyjJu8JV4kDrZVOMYWdBjD2hitXLlxQyYiBJ0cTlZewGMIdCZoA2TkopLyyoCy34g==
-X-Received: by 2002:a05:6214:19c9:b0:6d4:1425:6d2d with SMTP id 6a1803df08f44-6f01e7e46dcmr204245356d6.43.1744048916738;
-        Mon, 07 Apr 2025 11:01:56 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:365a:60ff:fe62:ff29])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c76ea8304asm628078985a.103.2025.04.07.11.01.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 11:01:56 -0700 (PDT)
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Brendan Jackman <jackmanb@google.com>,
-	Mel Gorman <mgorman@techsingularity.net>,
-	Carlos Song <carlos.song@nxp.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	kernel test robot <oliver.sang@intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 1/2] mm: page_alloc: speed up fallbacks in rmqueue_bulk()
-Date: Mon,  7 Apr 2025 14:01:53 -0400
-Message-ID: <20250407180154.63348-1-hannes@cmpxchg.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1744049023; c=relaxed/simple;
+	bh=YHIy5Y1koKmkECfrSnEDyoWYCat4HjXEskfIpv3fwuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=CPU728wXrKkt3/MO+3gzG5ulVPef7xtq0bYulk/Q9fLscX+pjdzq5PODYHSUCflD/aFERrUtnGMfgUMXlwM6f1QBXGwOfAoVdZ7P8HXYxJXkBr1mBt5PGSlIylCwvYXt9RRqnNSUA1wAdatArICk9kKyFI6+0FJjsNYguTVlMms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RttCvuN6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0CDAC4CEDD;
+	Mon,  7 Apr 2025 18:03:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744049023;
+	bh=YHIy5Y1koKmkECfrSnEDyoWYCat4HjXEskfIpv3fwuc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=RttCvuN6FYjIuyMSpBvHJlb4NGyWZ/3GBZXejCnlcffyyRb6qBm7entEeT5evaQPe
+	 LF0Y0672+3ZAnwDw6WTDneKn3v8souc6WjSgylaiDpxYunKnwcZj2aCfx1rd5invPL
+	 tBhB17TFw4gFjshVKtaDfsnXWzrIe8GsvSp0EKT1tgW4qdDsoptaI4oabflYTQKqah
+	 0S0QDF0bxdh3qiwItJEEY2RlOOnJ8Yd1d4s+7BKH0GEopNDPQU+7M4phafo7qggkpP
+	 qmvHquthg0WYzrN/WkyrxyW/lHo+3k6cCJK2Ffia4l+TYXQIuehc971AnL7F8FZX1I
+	 x1p5l2w16/ZBw==
+Date: Mon, 7 Apr 2025 13:03:41 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: tglx@linutronix.de, maz@kernel.org, linux-kernel@vger.kernel.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
+	Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+	Toan Le <toan@os.amperecomputing.com>,
+	Joyce Ooi <joyce.ooi@intel.com>, Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2 07/57] irqdomain: pci: Switch to of_fwnode_handle()
+Message-ID: <20250407180341.GA189772@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250319092951.37667-8-jirislaby@kernel.org>
 
-The test robot identified c2f6ea38fc1b ("mm: page_alloc: don't steal
-single pages from biggest buddy") as the root cause of a 56.4%
-regression in vm-scalability::lru-file-mmap-read.
+On Wed, Mar 19, 2025 at 10:29:00AM +0100, Jiri Slaby (SUSE) wrote:
+> of_node_to_fwnode() is irqdomain's reimplementation of the "officially"
+> defined of_fwnode_handle(). The former is in the process of being
+> removed, so use the latter instead.
+> 
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Cc: Jingoo Han <jingoohan1@gmail.com>
+> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: "Krzysztof Wilczyński" <kw@linux.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>
+> Cc: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> Cc: Toan Le <toan@os.amperecomputing.com>
+> Cc: Joyce Ooi <joyce.ooi@intel.com>
+> Cc: Jim Quinlan <jim2101024@gmail.com>
+> Cc: Nicolas Saenz Julienne <nsaenz@kernel.org>
+> Cc: Florian Fainelli <florian.fainelli@broadcom.com>
+> Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+> Cc: Ray Jui <rjui@broadcom.com>
+> Cc: Scott Branden <sbranden@broadcom.com>
+> Cc: Ryder Lee <ryder.lee@mediatek.com>
+> Cc: Jianjun Wang <jianjun.wang@mediatek.com>
+> Cc: Michal Simek <michal.simek@amd.com>
+> Cc: Daire McNamara <daire.mcnamara@microchip.com>
+> Cc: linux-pci@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-rpi-kernel@lists.infradead.org
+> Cc: linux-mediatek@lists.infradead.org
 
-Carlos reports an earlier patch, c0cd6f557b90 ("mm: page_alloc: fix
-freelist movement during block conversion"), as the root cause for a
-regression in worst-case zone->lock+irqoff hold times.
+Applied to pci/irq for v6.16, thanks!
 
-Both of these patches modify the page allocator's fallback path to be
-less greedy in an effort to stave off fragmentation. The flip side of
-this is that fallbacks are also less productive each time around,
-which means the fallback search can run much more frequently.
-
-Carlos' traces point to rmqueue_bulk() specifically, which tries to
-refill the percpu cache by allocating a large batch of pages in a
-loop. It highlights how once the native freelists are exhausted, the
-fallback code first scans orders top-down for whole blocks to claim,
-then falls back to a bottom-up search for the smallest buddy to steal.
-For the next batch page, it goes through the same thing again.
-
-This can be made more efficient. Since rmqueue_bulk() holds the
-zone->lock over the entire batch, the freelists are not subject to
-outside changes; when the search for a block to claim has already
-failed, there is no point in trying again for the next page.
-
-Modify __rmqueue() to remember the last successful fallback mode, and
-restart directly from there on the next rmqueue_bulk() iteration.
-
-Oliver confirms that this improves beyond the regression that the test
-robot reported against c2f6ea38fc1b:
-
-commit:
-  f3b92176f4 ("tools/selftests: add guard region test for /proc/$pid/pagemap")
-  c2f6ea38fc ("mm: page_alloc: don't steal single pages from biggest buddy")
-  acc4d5ff0b ("Merge tag 'net-6.15-rc0' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net")
-  2c847f27c3 ("mm: page_alloc: speed up fallbacks in rmqueue_bulk()")   <--- your patch
-
-f3b92176f4f7100f c2f6ea38fc1b640aa7a2e155cc1 acc4d5ff0b61eb1715c498b6536 2c847f27c37da65a93d23c237c5
----------------- --------------------------- --------------------------- ---------------------------
-         %stddev     %change         %stddev     %change         %stddev     %change         %stddev
-             \          |                \          |                \          |                \
-  25525364 ±  3%     -56.4%   11135467           -57.8%   10779336           +31.6%   33581409        vm-scalability.throughput
-
-Carlos confirms that worst-case times are almost fully recovered
-compared to before the earlier culprit patch:
-
-  2dd482ba627d (before freelist hygiene):    1ms
-  c0cd6f557b90  (after freelist hygiene):   90ms
- next-20250319    (steal smallest buddy):  280ms
-    this patch                          :    8ms
-
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Reported-by: Carlos Song <carlos.song@nxp.com>
-Tested-by: kernel test robot <oliver.sang@intel.com>
-Fixes: c0cd6f557b90 ("mm: page_alloc: fix freelist movement during block conversion")
-Fixes: c2f6ea38fc1b ("mm: page_alloc: don't steal single pages from biggest buddy")
-Closes: https://lore.kernel.org/oe-lkp/202503271547.fc08b188-lkp@intel.com
-Cc: stable@vger.kernel.org	# 6.10+
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
----
- mm/page_alloc.c | 100 +++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 74 insertions(+), 26 deletions(-)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index f51aa6051a99..03b0d45ed45a 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -2194,11 +2194,11 @@ try_to_claim_block(struct zone *zone, struct page *page,
-  * The use of signed ints for order and current_order is a deliberate
-  * deviation from the rest of this file, to make the for loop
-  * condition simpler.
-- *
-- * Return the stolen page, or NULL if none can be found.
-  */
-+
-+/* Try to claim a whole foreign block, take a page, expand the remainder */
- static __always_inline struct page *
--__rmqueue_fallback(struct zone *zone, int order, int start_migratetype,
-+__rmqueue_claim(struct zone *zone, int order, int start_migratetype,
- 						unsigned int alloc_flags)
- {
- 	struct free_area *area;
-@@ -2236,14 +2236,26 @@ __rmqueue_fallback(struct zone *zone, int order, int start_migratetype,
- 		page = try_to_claim_block(zone, page, current_order, order,
- 					  start_migratetype, fallback_mt,
- 					  alloc_flags);
--		if (page)
--			goto got_one;
-+		if (page) {
-+			trace_mm_page_alloc_extfrag(page, order, current_order,
-+						    start_migratetype, fallback_mt);
-+			return page;
-+		}
- 	}
- 
--	if (alloc_flags & ALLOC_NOFRAGMENT)
--		return NULL;
-+	return NULL;
-+}
-+
-+/* Try to steal a single page from a foreign block */
-+static __always_inline struct page *
-+__rmqueue_steal(struct zone *zone, int order, int start_migratetype)
-+{
-+	struct free_area *area;
-+	int current_order;
-+	struct page *page;
-+	int fallback_mt;
-+	bool claim_block;
- 
--	/* No luck claiming pageblock. Find the smallest fallback page */
- 	for (current_order = order; current_order < NR_PAGE_ORDERS; current_order++) {
- 		area = &(zone->free_area[current_order]);
- 		fallback_mt = find_suitable_fallback(area, current_order,
-@@ -2253,25 +2265,28 @@ __rmqueue_fallback(struct zone *zone, int order, int start_migratetype,
- 
- 		page = get_page_from_free_area(area, fallback_mt);
- 		page_del_and_expand(zone, page, order, current_order, fallback_mt);
--		goto got_one;
-+		trace_mm_page_alloc_extfrag(page, order, current_order,
-+					    start_migratetype, fallback_mt);
-+		return page;
- 	}
- 
- 	return NULL;
--
--got_one:
--	trace_mm_page_alloc_extfrag(page, order, current_order,
--		start_migratetype, fallback_mt);
--
--	return page;
- }
- 
-+enum rmqueue_mode {
-+	RMQUEUE_NORMAL,
-+	RMQUEUE_CMA,
-+	RMQUEUE_CLAIM,
-+	RMQUEUE_STEAL,
-+};
-+
- /*
-  * Do the hard work of removing an element from the buddy allocator.
-  * Call me with the zone->lock already held.
-  */
- static __always_inline struct page *
- __rmqueue(struct zone *zone, unsigned int order, int migratetype,
--						unsigned int alloc_flags)
-+	  unsigned int alloc_flags, enum rmqueue_mode *mode)
- {
- 	struct page *page;
- 
-@@ -2290,16 +2305,47 @@ __rmqueue(struct zone *zone, unsigned int order, int migratetype,
- 		}
- 	}
- 
--	page = __rmqueue_smallest(zone, order, migratetype);
--	if (unlikely(!page)) {
--		if (alloc_flags & ALLOC_CMA)
-+	/*
-+	 * Try the different freelists, native then foreign.
-+	 *
-+	 * The fallback logic is expensive and rmqueue_bulk() calls in
-+	 * a loop with the zone->lock held, meaning the freelists are
-+	 * not subject to any outside changes. Remember in *mode where
-+	 * we found pay dirt, to save us the search on the next call.
-+	 */
-+	switch (*mode) {
-+	case RMQUEUE_NORMAL:
-+		page = __rmqueue_smallest(zone, order, migratetype);
-+		if (page)
-+			return page;
-+		fallthrough;
-+	case RMQUEUE_CMA:
-+		if (alloc_flags & ALLOC_CMA) {
- 			page = __rmqueue_cma_fallback(zone, order);
--
--		if (!page)
--			page = __rmqueue_fallback(zone, order, migratetype,
--						  alloc_flags);
-+			if (page) {
-+				*mode = RMQUEUE_CMA;
-+				return page;
-+			}
-+		}
-+		fallthrough;
-+	case RMQUEUE_CLAIM:
-+		page = __rmqueue_claim(zone, order, migratetype, alloc_flags);
-+		if (page) {
-+			/* Replenished native freelist, back to normal mode */
-+			*mode = RMQUEUE_NORMAL;
-+			return page;
-+		}
-+		fallthrough;
-+	case RMQUEUE_STEAL:
-+		if (!(alloc_flags & ALLOC_NOFRAGMENT)) {
-+			page = __rmqueue_steal(zone, order, migratetype);
-+			if (page) {
-+				*mode = RMQUEUE_STEAL;
-+				return page;
-+			}
-+		}
- 	}
--	return page;
-+	return NULL;
- }
- 
- /*
-@@ -2311,6 +2357,7 @@ static int rmqueue_bulk(struct zone *zone, unsigned int order,
- 			unsigned long count, struct list_head *list,
- 			int migratetype, unsigned int alloc_flags)
- {
-+	enum rmqueue_mode rmqm = RMQUEUE_NORMAL;
- 	unsigned long flags;
- 	int i;
- 
-@@ -2321,7 +2368,7 @@ static int rmqueue_bulk(struct zone *zone, unsigned int order,
- 	}
- 	for (i = 0; i < count; ++i) {
- 		struct page *page = __rmqueue(zone, order, migratetype,
--								alloc_flags);
-+					      alloc_flags, &rmqm);
- 		if (unlikely(page == NULL))
- 			break;
- 
-@@ -2934,6 +2981,7 @@ struct page *rmqueue_buddy(struct zone *preferred_zone, struct zone *zone,
- {
- 	struct page *page;
- 	unsigned long flags;
-+	enum rmqueue_mode rmqm = RMQUEUE_NORMAL;
- 
- 	do {
- 		page = NULL;
-@@ -2945,7 +2993,7 @@ struct page *rmqueue_buddy(struct zone *preferred_zone, struct zone *zone,
- 		if (alloc_flags & ALLOC_HIGHATOMIC)
- 			page = __rmqueue_smallest(zone, order, MIGRATE_HIGHATOMIC);
- 		if (!page) {
--			page = __rmqueue(zone, order, migratetype, alloc_flags);
-+			page = __rmqueue(zone, order, migratetype, alloc_flags, &rmqm);
- 
- 			/*
- 			 * If the allocation fails, allow OOM handling and
--- 
-2.49.0
-
+> ---
+>  drivers/pci/controller/dwc/pcie-designware-host.c    | 2 +-
+>  drivers/pci/controller/mobiveil/pcie-mobiveil-host.c | 2 +-
+>  drivers/pci/controller/pci-xgene-msi.c               | 2 +-
+>  drivers/pci/controller/pcie-altera-msi.c             | 2 +-
+>  drivers/pci/controller/pcie-brcmstb.c                | 2 +-
+>  drivers/pci/controller/pcie-iproc-msi.c              | 2 +-
+>  drivers/pci/controller/pcie-mediatek.c               | 2 +-
+>  drivers/pci/controller/pcie-xilinx-dma-pl.c          | 2 +-
+>  drivers/pci/controller/pcie-xilinx-nwl.c             | 2 +-
+>  drivers/pci/controller/plda/pcie-plda-host.c         | 2 +-
+>  10 files changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index ecc33f6789e3..d1cd48efad43 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -227,7 +227,7 @@ static const struct irq_domain_ops dw_pcie_msi_domain_ops = {
+>  int dw_pcie_allocate_domains(struct dw_pcie_rp *pp)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> -	struct fwnode_handle *fwnode = of_node_to_fwnode(pci->dev->of_node);
+> +	struct fwnode_handle *fwnode = of_fwnode_handle(pci->dev->of_node);
+>  
+>  	pp->irq_domain = irq_domain_create_linear(fwnode, pp->num_vectors,
+>  					       &dw_pcie_msi_domain_ops, pp);
+> diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c b/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
+> index 0e088e74155d..6628eed9d26e 100644
+> --- a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
+> +++ b/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
+> @@ -435,7 +435,7 @@ static const struct irq_domain_ops msi_domain_ops = {
+>  static int mobiveil_allocate_msi_domains(struct mobiveil_pcie *pcie)
+>  {
+>  	struct device *dev = &pcie->pdev->dev;
+> -	struct fwnode_handle *fwnode = of_node_to_fwnode(dev->of_node);
+> +	struct fwnode_handle *fwnode = of_fwnode_handle(dev->of_node);
+>  	struct mobiveil_msi *msi = &pcie->rp.msi;
+>  
+>  	mutex_init(&msi->lock);
+> diff --git a/drivers/pci/controller/pci-xgene-msi.c b/drivers/pci/controller/pci-xgene-msi.c
+> index 7bce327897c9..69a9c0a87639 100644
+> --- a/drivers/pci/controller/pci-xgene-msi.c
+> +++ b/drivers/pci/controller/pci-xgene-msi.c
+> @@ -247,7 +247,7 @@ static int xgene_allocate_domains(struct xgene_msi *msi)
+>  	if (!msi->inner_domain)
+>  		return -ENOMEM;
+>  
+> -	msi->msi_domain = pci_msi_create_irq_domain(of_node_to_fwnode(msi->node),
+> +	msi->msi_domain = pci_msi_create_irq_domain(of_fwnode_handle(msi->node),
+>  						    &xgene_msi_domain_info,
+>  						    msi->inner_domain);
+>  
+> diff --git a/drivers/pci/controller/pcie-altera-msi.c b/drivers/pci/controller/pcie-altera-msi.c
+> index e1cee3c0575f..5fb3a2e0017e 100644
+> --- a/drivers/pci/controller/pcie-altera-msi.c
+> +++ b/drivers/pci/controller/pcie-altera-msi.c
+> @@ -164,7 +164,7 @@ static const struct irq_domain_ops msi_domain_ops = {
+>  
+>  static int altera_allocate_domains(struct altera_msi *msi)
+>  {
+> -	struct fwnode_handle *fwnode = of_node_to_fwnode(msi->pdev->dev.of_node);
+> +	struct fwnode_handle *fwnode = of_fwnode_handle(msi->pdev->dev.of_node);
+>  
+>  	msi->inner_domain = irq_domain_add_linear(NULL, msi->num_of_vectors,
+>  					     &msi_domain_ops, msi);
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index 8b2b099e81eb..1f356fca07a2 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -581,7 +581,7 @@ static const struct irq_domain_ops msi_domain_ops = {
+>  
+>  static int brcm_allocate_domains(struct brcm_msi *msi)
+>  {
+> -	struct fwnode_handle *fwnode = of_node_to_fwnode(msi->np);
+> +	struct fwnode_handle *fwnode = of_fwnode_handle(msi->np);
+>  	struct device *dev = msi->dev;
+>  
+>  	msi->inner_domain = irq_domain_add_linear(NULL, msi->nr, &msi_domain_ops, msi);
+> diff --git a/drivers/pci/controller/pcie-iproc-msi.c b/drivers/pci/controller/pcie-iproc-msi.c
+> index 649fcb449f34..804b3a5787c5 100644
+> --- a/drivers/pci/controller/pcie-iproc-msi.c
+> +++ b/drivers/pci/controller/pcie-iproc-msi.c
+> @@ -451,7 +451,7 @@ static int iproc_msi_alloc_domains(struct device_node *node,
+>  	if (!msi->inner_domain)
+>  		return -ENOMEM;
+>  
+> -	msi->msi_domain = pci_msi_create_irq_domain(of_node_to_fwnode(node),
+> +	msi->msi_domain = pci_msi_create_irq_domain(of_fwnode_handle(node),
+>  						    &iproc_msi_domain_info,
+>  						    msi->inner_domain);
+>  	if (!msi->msi_domain) {
+> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> index 811a8b4acd50..efcc4a7c17be 100644
+> --- a/drivers/pci/controller/pcie-mediatek.c
+> +++ b/drivers/pci/controller/pcie-mediatek.c
+> @@ -485,7 +485,7 @@ static struct msi_domain_info mtk_msi_domain_info = {
+>  
+>  static int mtk_pcie_allocate_msi_domains(struct mtk_pcie_port *port)
+>  {
+> -	struct fwnode_handle *fwnode = of_node_to_fwnode(port->pcie->dev->of_node);
+> +	struct fwnode_handle *fwnode = of_fwnode_handle(port->pcie->dev->of_node);
+>  
+>  	mutex_init(&port->lock);
+>  
+> diff --git a/drivers/pci/controller/pcie-xilinx-dma-pl.c b/drivers/pci/controller/pcie-xilinx-dma-pl.c
+> index dd117f07fc95..71cf13ae51c7 100644
+> --- a/drivers/pci/controller/pcie-xilinx-dma-pl.c
+> +++ b/drivers/pci/controller/pcie-xilinx-dma-pl.c
+> @@ -470,7 +470,7 @@ static int xilinx_pl_dma_pcie_init_msi_irq_domain(struct pl_dma_pcie *port)
+>  	struct device *dev = port->dev;
+>  	struct xilinx_msi *msi = &port->msi;
+>  	int size = BITS_TO_LONGS(XILINX_NUM_MSI_IRQS) * sizeof(long);
+> -	struct fwnode_handle *fwnode = of_node_to_fwnode(port->dev->of_node);
+> +	struct fwnode_handle *fwnode = of_fwnode_handle(port->dev->of_node);
+>  
+>  	msi->dev_domain = irq_domain_add_linear(NULL, XILINX_NUM_MSI_IRQS,
+>  						&dev_msi_domain_ops, port);
+> diff --git a/drivers/pci/controller/pcie-xilinx-nwl.c b/drivers/pci/controller/pcie-xilinx-nwl.c
+> index 8d6e2a89b067..9cf8a96f7bc4 100644
+> --- a/drivers/pci/controller/pcie-xilinx-nwl.c
+> +++ b/drivers/pci/controller/pcie-xilinx-nwl.c
+> @@ -495,7 +495,7 @@ static int nwl_pcie_init_msi_irq_domain(struct nwl_pcie *pcie)
+>  {
+>  #ifdef CONFIG_PCI_MSI
+>  	struct device *dev = pcie->dev;
+> -	struct fwnode_handle *fwnode = of_node_to_fwnode(dev->of_node);
+> +	struct fwnode_handle *fwnode = of_fwnode_handle(dev->of_node);
+>  	struct nwl_msi *msi = &pcie->msi;
+>  
+>  	msi->dev_domain = irq_domain_add_linear(NULL, INT_PCI_MSI_NR,
+> diff --git a/drivers/pci/controller/plda/pcie-plda-host.c b/drivers/pci/controller/plda/pcie-plda-host.c
+> index 4153214ca410..4c7a9fa311e3 100644
+> --- a/drivers/pci/controller/plda/pcie-plda-host.c
+> +++ b/drivers/pci/controller/plda/pcie-plda-host.c
+> @@ -150,7 +150,7 @@ static struct msi_domain_info plda_msi_domain_info = {
+>  static int plda_allocate_msi_domains(struct plda_pcie_rp *port)
+>  {
+>  	struct device *dev = port->dev;
+> -	struct fwnode_handle *fwnode = of_node_to_fwnode(dev->of_node);
+> +	struct fwnode_handle *fwnode = of_fwnode_handle(dev->of_node);
+>  	struct plda_msi *msi = &port->msi;
+>  
+>  	mutex_init(&port->msi.lock);
+> -- 
+> 2.49.0
+> 
 
