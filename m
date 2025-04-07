@@ -1,93 +1,127 @@
-Return-Path: <linux-kernel+bounces-592629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06F27A7EF90
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 23:10:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A56BA7EFA9
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 23:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B388E17C155
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:10:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BEFD1893A61
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 21:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC6B223701;
-	Mon,  7 Apr 2025 21:10:04 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA855223709;
+	Mon,  7 Apr 2025 21:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cfMm1r2u";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cNDOwg1H"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BA722257E
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 21:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093182236FC
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 21:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744060204; cv=none; b=cD9q2ix4IKm4/AYYBtJ4TxIHYIs6dD2uADxh5CI4cpwCqWrwxRfk4R4ZnyUQC0cCa7CGw3xXk4iHGU7dqJSHYYnv5SxcRGVzlH3nU+TdFxvBhLnoJegxkHNktESLSR8TWhB8/mObl/jmqzeZ3q39CT+H764UnZnXeu7w4gRuJ9o=
+	t=1744060319; cv=none; b=rGIwgxYfOl0q56G3OkJ1l6SW6zoL2J+c4L0sdMXLZE4z3WLorBlcIpR4Msw5vxWGvWMt11yalXjfiODMQu3GS2K+ZaA5s2t4snfXDQQfDdLRrt4SUxImJv1/W1qj8KYCrBDMELJ94hSE48ilAN7P6chSH17QIB2rKN8A98Mu9h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744060204; c=relaxed/simple;
-	bh=l33H7W/dajNswr6zoB4uEzQnZ3xV2ksVZyWMgdOsk+c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=vAtoj8s/kJS1na+1MBSBYdvPtsUajSTZYKg1Xch+nvgPqOZzr6tLxBjgUZ0PS7eCfXF419UgAqCdfbdAUBO0/cJmX7b+UoCM0f/N6ZQqdVo0texHOZsi+wRg4vSJ8gEZoZVRdau5lmLJ2lHFKUSh4aa0yuB+kfrLLM3bL5r+vjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d586b968cfso111526435ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 14:10:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744060201; x=1744665001;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=obSJQ5g5QULaHlCzGG1efUqikPTPRZ9Sdsw5hiAMvVs=;
-        b=oDYIW0yJSgaLQ7WLXmo5TjNliFes8PjCGq4P7Gry70k/uSpDFvZI4CUTChLimoXZUS
-         X+Co7ciRljAJHZbx9QDFhVFpIaBqyD+T99hMQDZq7ZRBeBlYPKDbgFNbOmqPJLyoL2jR
-         0ZpcoF5LoU5mRl3w2gruKlGqXjytNsTCCNP534YkR7g8d+367pTWuNtOc9xfLQ/k4FPf
-         lI7JJMHbBCAc55DkP07QAoSBC5zYdoXRWHiCG/M28E2cfAfnrBtuiki7IcbXwPBEayJa
-         D5538RKGs58Tdbo5ihDoRWYFpH1n+pveRBExl5VnQNgxUeTHCsha0AdkQ08dXYDO8H+Z
-         /flA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6QMQGAINzwJdVn8NERLE3MRFxt6aykEpxoJG6D4IEHUPL0wwgjQZga94r0CCzmaE2UKqx01aboeDB5OM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztMI3qxFXcTfESYghqYbIxxGPVrEINRhxDgo//D4HMmWzqXVBy
-	MTAJJ7dFeS697hmVy0A0h3tOjW3GlB3mFTq7Vq7WWFJ/2VNHcxCMgd4dBNlLyA/9fjoinOJnWbM
-	q60wnl1Dryb2KRvL0yjyyVDzuC1VBCXr2sE+kHtaxeuHYYCbLaRCgNks=
-X-Google-Smtp-Source: AGHT+IH3y067eDUmOjv5CFVChEZZ+wYOKbqcRDrio8C6VJxigSI3fEGx40IpkZ9McIdubTIYOFN7nscVeIXbCNAf69zlWSylOENX
+	s=arc-20240116; t=1744060319; c=relaxed/simple;
+	bh=cR6fyTJ1l0ao1DRGrKqZ1gTqGYbGtCvH5cd7+LJHy6M=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=bD8XefvNSNGPd3nB/cC7lsR+ME3bQEDpDPyg9cYtMtmzrKVxqaMPii9UYpAG5I7eus8Y9oPRV166Mzh1ls6F+Lpqrt0EZAvfVpZEniH7FEves/jbsGKwf1vHkPzr6XtOjoJmSURQqcuqhd5FM7kHaj9e/O0E6674FsgW6/T/lew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cfMm1r2u; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cNDOwg1H; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744060314;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=33eB0XJEihdFu7uaA2YoXjeNopOx78bqYoFb1asG3U8=;
+	b=cfMm1r2u0L0heM73VpvfdQrU+Usb2myH5nL4Okwu4tuwo+4degqzJF/PHHZsba4cZ/S/aW
+	GANlBdwhVxaMTly6gHdDAinHR+Di0rvEAqdSRX9l376eHOoXasHFkF3AG3qx7pLvYiRZS5
+	K8CVyo5aJGdA/e9vHEpkyQFbXxD5JELVV3EjhyRihHWedPuqIW5xDj2NoRpatCuE7iUEm1
+	NjeJbxtJsOyFM/1FomkBajhRzJ30YC1qlFWB6HbCRJ6d04jM1Cb3V4V4AnFYVSvD+XM1tR
+	VfQyZKkK5eWJv8/Z30SAkGxC/iNtMdVfJbFiOtvpvV3Db4swKpEdRIb1/Xg24Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744060314;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=33eB0XJEihdFu7uaA2YoXjeNopOx78bqYoFb1asG3U8=;
+	b=cNDOwg1H6N3TNeBQw8FgWHEXokZ9o7ZglMD2kL5kjeaBsoRk8PiTYKJMDv66bUB0ODLLYa
+	IJWaRs8AQoGAWAAQ==
+To: Maxim Kochetkov <fido_max@inbox.ru>, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, peterz@infradead.org, elver@google.com,
+ namcao@linutronix.de, samuel.holland@sifive.com,
+ daniel.lezcano@linaro.org, apatel@ventanamicro.com
+Subject: Re: [PATCH 1/1] time/sched_clock: move sched_clock_register() out
+ of .init section
+In-Reply-To: <f57e8a74-4124-457c-b5c9-d193505ba093@inbox.ru>
+References: <20250404050540.13507-1-fido_max@inbox.ru> <8734ekwkqk.ffs@tglx>
+ <f57e8a74-4124-457c-b5c9-d193505ba093@inbox.ru>
+Date: Mon, 07 Apr 2025 23:11:54 +0200
+Message-ID: <87wmbvvfqd.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2199:b0:3d4:244b:db20 with SMTP id
- e9e14a558f8ab-3d6e3f653acmr156570565ab.16.1744060201704; Mon, 07 Apr 2025
- 14:10:01 -0700 (PDT)
-Date: Mon, 07 Apr 2025 14:10:01 -0700
-In-Reply-To: <67f34d24.050a0220.0a13.027c.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67f43f29.050a0220.396535.0554.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] [overlayfs?] WARNING in file_seek_cur_needs_f_lock
-From: syzbot <syzbot+4036165fc595a74b09b2@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, amir73il@gmail.com, dhowells@redhat.com, 
-	edumazet@google.com, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, sven@narfation.org, 
-	sw@simonwunderlich.de, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-syzbot has bisected this issue to:
+On Mon, Apr 07 2025 at 10:25, Maxim Kochetkov wrote:
+> 07.04.2025 09:26, Thomas Gleixner wrote:
+>> On Fri, Apr 04 2025 at 08:05, Maxim Kochetkov wrote:
+>>> The sched_clock_register() is widely used by clocksource timer
+>>> drivers. The __init prefix forces them to be initialized using
+>>> macro TIMER_OF_DECLARE with __init prefixed function.
+>> 
+>> No, it does not. It requires that they are built in, not more.
+>
+> Thank you for review.
+>
+> Let me explain some more. I'm trying to solve similar problem, as 
+> described at 
+> https://patchwork.kernel.org/project/linux-arm-kernel/patch/20240312192519.1602493-1-samuel.holland@sifive.com/#25759271
+>
+> I have both PLIC and clocksource module configured as Y (not m) in 
+> Kconfig. So both of them are included in kernel Image binary. But I 
+> still unable to probe clocksource device because it depends of PLIC irq.
+> And PLIC probes much later than TIMER_OF_DECLARE part of the clocksource 
+> driver.
 
-commit 00b35530811f2aa3d7ceec2dbada80861c7632a8
-Author: Eric Dumazet <edumazet@google.com>
-Date:   Thu Feb 6 14:04:22 2025 +0000
+Which is not a problem as all built-in drivers probe _before_ the init
+section is discarded.
 
-    batman-adv: adopt netdev_hold() / netdev_put()
+> I tried to convert clocksource driver to regular platform device and
+> it works fine except warning:
+>
+> WARNING: modpost: vmlinux: section mismatch in reference: 
+> dw_apb_timer_probe+0x136 (section: .text.unlikely) -> 
+> sched_clock_register (section: .init.text)
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=175f8c04580000
-start commit:   16cd1c265776 Merge tag 'timers-cleanups-2025-04-06' of git..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=14df8c04580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10df8c04580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c79406130aa88d22
-dashboard link: https://syzkaller.appspot.com/bug?extid=4036165fc595a74b09b2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14f9bd98580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1571c7e4580000
+Of course. The warning is because you invoke sched_clock_register()
+from dw_apb_timer_probe(), which is regular text. See
 
-Reported-by: syzbot+4036165fc595a74b09b2@syzkaller.appspotmail.com
-Fixes: 00b35530811f ("batman-adv: adopt netdev_hold() / netdev_put()")
+drivers/clocksource/ingenic-ost.c
+drivers/clocksource/timer-cadence-ttc.c
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+how to implement a builtin platform driver, which does not suffer from
+that problem despite invoking sched_clock_register() from their init
+functions.
+
+> Dropping __init from sched_clock_register() helps to solve this issue.
+
+It solves it at the wrong point for a builtin platform driver
+
+> Anyway, this patch opens opportunity to compile clocksource drivers as 
+> modules and probe them much later.
+
+That's an orthogonal issue and needs to be discussed seperately from the
+problem at hand.
+
+Thanks,
+
+        tglx
 
