@@ -1,110 +1,106 @@
-Return-Path: <linux-kernel+bounces-590315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 711E0A7D197
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 03:10:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D109A7D1BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 03:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D73B1702F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 01:10:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96D65188CF82
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 01:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1837C1BD9C7;
-	Mon,  7 Apr 2025 01:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j+iUWVe6"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E522116E4;
+	Mon,  7 Apr 2025 01:28:24 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82BC12CDAE;
-	Mon,  7 Apr 2025 01:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408D13FC3;
+	Mon,  7 Apr 2025 01:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743988178; cv=none; b=jXCo6pden7wv8EfW9VdPV94Lov8KJxcoo14s+QVwOze4mNq4w8GGd3hFoQSYpfKAsxaGlcxvZ2H3OKR6vTcj6uaROLe+ipQqyX2qgLfDcq+TGq4Z8FXbaWib1uw3Lbf9QFOoEz4duCLWI6T19LzF7ZUXCfSyGnrqQ3nBIrgqNm0=
+	t=1743989303; cv=none; b=j6bllwfyp5aE7DzpUTDGQ+rd5HgY7cm/u/AnUHaWkq2UmGVUrPULrdsH2RQH1sDPLUsWi+M7+yQQbEuYnk0d1YWUIz0AD8uxG3f6wS+npD5KUIYFgTAzcsZrHCOMznvqDkanl7M4RNwITlBAc6Og0PAG17b8yvyOC6F5lZ/4SRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743988178; c=relaxed/simple;
-	bh=qFpJkpO6DX3BTQg+eiAtTfhhkQ3s3RXSaTPwP48oVPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HZIYO7Fqe4143OO8fxq5tDoFFkc34SGbmWOS3EFvloLAmrn8Y7cW0k5wQu+reUf8zcotLk5go1DPPGsa2z83ZJxvEfBkkTwKipSk4QqsIo5u8O/9PsyRm3XqYF/zFGp/LSDfmdArDREsCxiw3XF9pd23cvKyAzvkTtcJsSOOVxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j+iUWVe6; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-477282401b3so40455931cf.1;
-        Sun, 06 Apr 2025 18:09:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743988176; x=1744592976; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hTaxpP+0BisXpBWkHEPT5jUCMTocLUlCjk3pVjz+dsA=;
-        b=j+iUWVe6j7LFZ3xU6i1TU9QcGtmD2hG6RuMJqwFBoi0TMGvskZcqxoKRpejFEZ4ey1
-         Z0EHc7QaPhcm/Pn8Qch0plbG3PKkbvZ+TxcrvvvkqwgQ19TCfFecbW3qBVie6Iy7NY/W
-         k0pM+70aYfdoDZKN0RM64X/9V3yu7D3p3hN5bfy5lwwlMIFeoQfVgC3uzmogtSQgrF2h
-         Dq/omhczqYBqnCt1PpE2tmG3vxxhDRRsU/8igSNcEWb1qmUUnWIMc6Zsq4bAS4gBQEgw
-         ILuocmjZLJd8rYCotY97maeNtqehqSrnnYpVlEqiB1xI3Ll+YoFrpyOHvHOsu+oDCOUk
-         oWYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743988176; x=1744592976;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hTaxpP+0BisXpBWkHEPT5jUCMTocLUlCjk3pVjz+dsA=;
-        b=leTqD/yO094z6s3dhQwkyTMJGjKcWmAltqxPdgLYSUEFzu9dBQ6xD63g/pGQDawOK0
-         9WpUIoHLviYUvkkApUoI9K+9qFjG8ZAbxvhfzIs0ZcGoQr98WxlqNPMv0sFpNqjkiXb4
-         V9SaBR00NlMGPQ4xahm/Fqo3YvJcGW4QZFRrcP9UAIc3GtXyNaPEDL2ItPSNCLEZx6+l
-         0S0Fxk2yuErCwjFgM7RZQerMMAKeWAb0KyFnLuX081uL8A62ggKjr1ynO6YoAzGXCn/S
-         GCdKNkLtDBPUb3NWVWLw7oV/50q8BF4Wq+FLFmfjh/ERYa6wcwU0+Q44Mt2IUswI9kxl
-         jDlw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1Au7voQnh3QBqZYO9ZqJlhe+0/2wiJfLPXENtaRH1mm/kdtxVsprAWDr3i830n1ICDyNnXGcR5yseXcND@vger.kernel.org, AJvYcCVYJwf62ldAtiqAQlL4ut3+YCB2m68wtroMRly0KDGzJtSoRm46PXFyhti1V18LTVY73npM958efpWU@vger.kernel.org, AJvYcCVanqDUqr325+OidOPFR4dOHsYy2KwaUiqNxLb4D+x92wXcA6Lm+bV5aioG0bXYP6eySwsqlNtccKbu@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY1tyNdptXfucPFAaVzGQFpI2k9d+f57ohotw4WeLZVF30jhmJ
-	4eWnvC1nHyFdkqpFT1N/iBl1cW4OzFkRnIXOZsoR1WrB1OwKkw1k
-X-Gm-Gg: ASbGncuQ56QWn6cwZlB3GDB9R8zA8w7BEVs0ZzX2bBMxe6MR7QHCxF7vwamd6cyZzRU
-	J6pLpXQhgTMX2j2CWtHQsqS1IFm5TmURnQnvrCTS5fDDlL/cb2kmJgQ4m9QQ8M8L6P6g9Vq1v31
-	3JYjPXIF8RF2D8Be3dDd7QmwXsXrjnhcgqEOU6RwgadOyiINrtaJwbF9kPSeZOgxkDnIP3P9bu+
-	1z+ALOoLA01bcy4PMoRtQEmgs/vU0+5r/gOV7hB4AkTivWIJpGDLuHv3PI5LlpEa5NStigPfB3Z
-	sMaG8mJ+vjMkA65g2PiY
-X-Google-Smtp-Source: AGHT+IEmKlIM4zH7lzG9UIKklSuD+qJQ6td8rm/OkZNC5rmvxg8J4PmWcLtB3/5GZa2BN0aYjGS/Gg==
-X-Received: by 2002:a05:622a:180a:b0:476:80ce:a61f with SMTP id d75a77b69052e-479310eacfcmr110677731cf.39.1743988175814;
-        Sun, 06 Apr 2025 18:09:35 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4791b1444d2sm53175581cf.76.2025.04.06.18.09.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Apr 2025 18:09:35 -0700 (PDT)
-Date: Mon, 7 Apr 2025 09:09:01 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
-	sophgo@lists.linux.dev, devicetree@vger.kernel.org, linux-rtc@vger.kernel.org
-Cc: Jingbao Qiu <qiujingbao.dlmu@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Arnd Bergmann <arnd@arndb.de>, Yangyu Chen <cyy@cyyself.name>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v13 1/3] dt-bindings: soc: sophgo: add RTC support for
- Sophgo CV1800 series
-Message-ID: <vxjtdvy5vxhmqldgvt4mgeuor36gdjriiai7y3rej3tevuwisa@wpupxzhvc3tt>
-References: <20250309202629.3516822-1-alexander.sverdlin@gmail.com>
- <20250309202629.3516822-2-alexander.sverdlin@gmail.com>
+	s=arc-20240116; t=1743989303; c=relaxed/simple;
+	bh=8CfLDbKuh5+ZoxMWcl20u+RCFvy8oYza47qfogj25xU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=HXhDovx22j+Bv9NgFWwjhzIo5YEAZ9kK4KJWt6/cRUQkkotS1UYTuNzEZyrlhrM49qhMvPhzcpBHjuR8hALtHVaIoVw+ttKf/3Wg1WlokGYlNPPMk5tzdrpKMGv+QgSST+k9muNAy/q5N8NSMqQI8v0CJyprjBibVCNAxrq4gls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZWB1k68HHz4f3jtP;
+	Mon,  7 Apr 2025 09:09:14 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id C3E031A058E;
+	Mon,  7 Apr 2025 09:09:32 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgA3m1_IJfNnypPxIg--.52167S3;
+	Mon, 07 Apr 2025 09:09:30 +0800 (CST)
+Subject: Re: [PATCH RFC v2 00/14] md: introduce a new lockless bitmap
+To: Christoph Hellwig <hch@lst.de>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: xni@redhat.com, colyli@kernel.org, axboe@kernel.dk, agk@redhat.com,
+ snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, yi.zhang@huawei.com,
+ yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250328060853.4124527-1-yukuai1@huaweicloud.com>
+ <20250404092739.GA14046@lst.de>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <1b4e3ddc-be1b-8266-13c1-5654c4c79e9b@huaweicloud.com>
+Date: Mon, 7 Apr 2025 09:09:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250309202629.3516822-2-alexander.sverdlin@gmail.com>
+In-Reply-To: <20250404092739.GA14046@lst.de>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgA3m1_IJfNnypPxIg--.52167S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrtw45tr13AFykKFy7tw47urg_yoWxKrcEkF
+	43WryrGwn7A342gan7Kr1fZrs5K34UJF93trZ2qFy3Ww1fAF1fAa9akr95A3ZxJ3Z3trZr
+	KF1DJrWDXr129jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbfAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbmsjUUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Sun, Mar 09, 2025 at 09:26:23PM +0100, Alexander Sverdlin wrote:
-> From: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
+Hi,
+
+ÔÚ 2025/04/04 17:27, Christoph Hellwig Ð´µÀ:
+> On Fri, Mar 28, 2025 at 02:08:39PM +0800, Yu Kuai wrote:
+>> 1) user must apply the following mdadm patch, and then llbitmap can be
+>> enabled by --bitmap=lockless
+>> https://lore.kernel.org/all/20250327134853.1069356-1-yukuai1@huaweicloud.com/
+>> 2) this set is cooked on the top of my other set:
+>> https://lore.kernel.org/all/20250219083456.941760-1-yukuai1@huaweicloud.com/
 > 
-> Add RTC devicetree binding for Sophgo CV1800 series SoC. The device is
-> called RTC, but contains control registers of other HW blocks in its
-> address space, most notably of Power-on-Reset (PoR) module, DW8051 IP
-> (MCU core), accompanying SRAM, hence putting it in SoC subsystem.
+> I tried to create a tree to review the entire thing but failed.  Can you
+> please also provide a working git branch?
+
+Of course, here is the branch:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/yukuai/linux.git/log/?h=md-6.15
+
+Thanks,
+Kuai
+
+> 
+> .
 > 
 
-I think this is a mfd device, so why not moving this into mfd subsystem?
-
-Regards,
-Inochi
 
