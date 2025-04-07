@@ -1,152 +1,166 @@
-Return-Path: <linux-kernel+bounces-590905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC15A7D84E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:44:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0B28A7D852
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:44:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 427077A31AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:42:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61F9A7A31AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE7C189BB5;
-	Mon,  7 Apr 2025 08:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D711229B1F;
+	Mon,  7 Apr 2025 08:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eskuvMgP"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="WWFWpwHc"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33E52288EA
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 08:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2BA6227EBF
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 08:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744015431; cv=none; b=ovoP26IU/cqpwjCjzfvAJ6+RXYJECx0HpaVyJQESHW8F8my8SLBNhUyPXYI4/xpv5Y2zEETpreE3R6WORDmK1qiNLjJVNml5ThhmHlLtMkGnwoj4usfZyiQE7FWIG/Bo8berCZqthE4eHayi7/net1WbDt7u1NH7btdpua0eYAo=
+	t=1744015440; cv=none; b=C4ahYH9DqbBzXMOxjn7JY9O6VbWtYtNZKWCJaL3nT1Mr8kZRqm3tRUkVnAIEB0nErQK4OaDtSoB86LZeYbI55Jb5FmKWbZ92qYxioTway8hj4exswqbNmyIWCNo5pQM/UMpxZZObcY+BzEIQG8BTbyyhTt9HLRyZR1vRr8fugzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744015431; c=relaxed/simple;
-	bh=keeF2gzO1BG5TWSeisN2mF/28JltLtP+6/MPGcZqXK0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YXTLsDw63p9ryD0J7x0cyLI4xH1uU/wlzudk9taqKPIxPURAcxT8T2OE3cmfRQeusNgwwbt/lWrqZKL1H3RvyHms1T5YUu0XV0F2lDMFBOfDNakiSoEBjGqlTuS1DhQ+/8vuooqyCp3yvgzYrbUD2GUhIHMlLIQzYg1PWhns4d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eskuvMgP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5378doiW017443
-	for <linux-kernel@vger.kernel.org>; Mon, 7 Apr 2025 08:43:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3LBZTe8by3wdJUm3j4TfqVrMn6/WCYmbjyVJqI9BVQI=; b=eskuvMgPTq/478q1
-	aQrcm1nxa4BmpCqiMspO3aan+oaX57dgYk8O3sZaJSJ/GfvuXof7lncClX/UqrLE
-	i7LggPpgmUzsg+cILKjgk6TbgDvXNEzqD/K+hVjjnSxD3LcIZhrta09w6OG/yL7h
-	FeEUUwtyrQepSTHAyZd/zD5ItJVRoPKQ/mpqNnW4nMS6jcr1g+0DFZaOv9hLsSoh
-	3ViF+iGeWObcIeLR5UJEio7DAHMcJfAUak/5EUgJABMyzlIkwnvvAu+IairodlNd
-	QoYecjWf9Mq1DTw07kU/jroJLWRBOVk/hVnhnJWFUIdWKRB9o8lnV4PD7ZeTzxU2
-	FSzYag==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twg3bjm9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 08:43:48 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6ecf6a05e9dso1353066d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 01:43:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744015428; x=1744620228;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3LBZTe8by3wdJUm3j4TfqVrMn6/WCYmbjyVJqI9BVQI=;
-        b=j5FAoLVlmIi/07xgMDjqI/NiqeZCMhdXZc+pfJzRh3HWG9DWsh6T+QRShySSoOI3iY
-         NPeuaJP5oBEl/nPLffHprNrVMBBh4yC5ZggExm77JDOBtd4SVCPkJg24q1A+MvDRzHqD
-         QFXXvMGK3aFCojw4u4yRPVF9MmCP/6JBNzHo9ALoyXZtAdVtpi/NhJ9uI8HbZe3JU9rh
-         wvdC67l7njmVq/WqFIFTpW5GuPfgPUeMPqlPIZi1FBVH6O972MR531QvB1LuTeiqvf8h
-         I6dKwG+Ibvgp8t8ibrgvTaroPbOhp0AoTK+WsZ1DDrrzdEI3qhbiXas13+oTbSkXuRP+
-         DjkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU84b95HdczOChW7nEUR5D5Ac/rX/h9ZeuAdsIUXBzaOkHGg866RlXw3HzxUI4uNvf+dZXSNRfeFZuUWjo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKXho99xv29UWN3VE/CH57Omm/mVTHL+5SbUQH6mAQcWeZ9yrV
-	BTM1eopjV18QgIclGrth9B816vyKmVlU8kC+oeNgtlTfq/4SGtf8lj8x+htoidWJKqGhVL0g6Yz
-	IfJ3ew3qAYr+hjgSH7gTuC0VJ5um3hSEGvhqZ0LiDRpNJ27ppjh6QMT1FGik6jk4=
-X-Gm-Gg: ASbGncsfeRLIm3I2Or1EnxW6Fhc/IZdlYwKXqlhw/0mlx38GFCbZ+Ho6tlmg3z7zh1/
-	nk8sEccIFt/XitjdwCqx3djJ4yanFewj557A32MMlfMXsm52N7MuS60xIAQdM81CihHvdtRTfeU
-	EPn6oyjysxfFh/EWLgZHGx9p50UPJhOJCe0hKHw4VjolU5czgH21zt+fnx1tn7W+80ur00+M+Up
-	J/kE01xRojvhsJyELgOn310BcUrJahAVV0roJZVE4ZwIpYW87rk7MJWY/e3mMJP7kg/ZTBdg1Ay
-	cDPL67O7FUtg/H6kAZBdiimbODn9Sd2lXarNnmOz1en7GeP4gEpmn/35PPsbgwS9wqzkJw==
-X-Received: by 2002:a05:6214:e8e:b0:6e4:29f8:1e9e with SMTP id 6a1803df08f44-6f00214d08fmr68496646d6.0.1744015427725;
-        Mon, 07 Apr 2025 01:43:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEFebGzNDRB0fY7+hPc7f12BLxECnTU/bMrpcOZJhMDdfXfqIZ/Ci0T8pDYTDUbni8F9lrsXA==
-X-Received: by 2002:a05:6214:e8e:b0:6e4:29f8:1e9e with SMTP id 6a1803df08f44-6f00214d08fmr68496546d6.0.1744015427351;
-        Mon, 07 Apr 2025 01:43:47 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7c013f34dsm701813966b.87.2025.04.07.01.43.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Apr 2025 01:43:46 -0700 (PDT)
-Message-ID: <9eb0b21c-6830-4636-8a92-e174e34d779a@oss.qualcomm.com>
-Date: Mon, 7 Apr 2025 10:43:43 +0200
+	s=arc-20240116; t=1744015440; c=relaxed/simple;
+	bh=RmKUxhGCaDfPpJywicPWios8UDu9ibXEEKvZ9YOdG2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=iri0mhbKlK3m1Yhgj9Oi9eE/0z96TOdgIeTG9BwcT4VsRmKtYZ1WOFYl4kVLIsothrk9iKXcaxWaigbuBTCHIE+iDW2qKWEz3WI9VbCmzWhhQewRGYDhG6v6a4zAP27w5zXeIeYv7CEZT1grJZ+2c05Vu8r+fzmg1vmwsHQ92nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=WWFWpwHc; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from localhost (unknown [10.10.165.5])
+	by mail.ispras.ru (Postfix) with ESMTPSA id E09E740755D8;
+	Mon,  7 Apr 2025 08:43:48 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru E09E740755D8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1744015429;
+	bh=bVvnde9LYGm8pmSZbYF4pWYxMC89ikwIShwOp7lq0S4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=WWFWpwHcIfZjYXczFXwFVnIkCCTE5pxdgCH5GTgRq4R1bN19BTwm5vjkOd+iW5HhI
+	 2/WVv2WX5LMKTygmUk8Jz9ryyW/XW9QZ+DsOK5Vah4+76C0eC7CgCg828jBGfJMpyN
+	 7EM/7/YaGxH+MaXzz/pdKaPlabhEb5IOl5qlv28U=
+Date: Mon, 7 Apr 2025 11:43:48 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: David Hildenbrand <david@redhat.com>, peterx@redhat.com
+Cc: mawupeng <mawupeng1@huawei.com>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, x86@kernel.org, xrivendell7@gmail.com, wang1315768607@163.com, 
+	fleischermarius@gmail.com, dave.hansen@linux.intel.com, luto@kernel.org, 
+	peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	hpa@zytor.com, akpm@linux-foundation.org
+Subject: Re: [PATCH v1] x86/mm/pat: fix VM_PAT handling when fork() fails in
+ copy_page_range()
+Message-ID: <yph6s75zq4lpkrito7gzralkayxtibz4zxizzfjw43i73yldzv@o6lwk3rzvihy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 1/3] soc: qcom: ice: make qcom_ice_program_key() take
- struct blk_crypto_key
-To: Eric Biggers <ebiggers@kernel.org>, linux-scsi@vger.kernel.org
-Cc: linux-block@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Gaurav Kashyap <quic_gaurkash@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Jens Axboe <axboe@kernel.dk>, Konrad Dybcio <konradybcio@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20250404231533.174419-1-ebiggers@kernel.org>
- <20250404231533.174419-2-ebiggers@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250404231533.174419-2-ebiggers@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 1CtWr-Qo8sOxkSzHTdoCrd5aOeUcJZgO
-X-Proofpoint-ORIG-GUID: 1CtWr-Qo8sOxkSzHTdoCrd5aOeUcJZgO
-X-Authority-Analysis: v=2.4 cv=I/9lRMgg c=1 sm=1 tr=0 ts=67f39044 cx=c_pps a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=1XWaLZrsAAAA:8 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=frSOPK2eQqz-eahEfmcA:9 a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-07_02,2025-04-03_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- phishscore=0 suspectscore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0
- clxscore=1015 malwarescore=0 adultscore=0 priorityscore=1501
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504070062
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <262aa19c-59fe-420a-aeae-0b1866a3e36b@redhat.com>
 
-On 4/5/25 1:15 AM, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> qcom_ice_program_key() currently accepts the key as an array of bytes,
-> algorithm ID, key size enum, and data unit size.  However both callers
-> have a struct blk_crypto_key which contains all that information.  Thus
-> they both have similar code that converts the blk_crypto_key into the
-> form that qcom_ice_program_key() wants.  Once wrapped key support is
-> added, the key type would need to be added to the arguments too.
-> 
-> Therefore, this patch changes qcom_ice_program_key() to take in all this
-> information as a struct blk_crypto_key directly.  The calling code is
-> updated accordingly.  This ends up being much simpler, and it makes the
-> key type be passed down automatically once wrapped key support is added.
-> 
-> Based on a patch by Gaurav Kashyap <quic_gaurkash@quicinc.com> that
-> replaced the byte array argument only.  This patch makes the
-> blk_crypto_key replace other arguments like the algorithm ID too,
-> ensuring that there remains only one source of truth.
-> 
-> Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Tested-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org> # sm8650
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
+Hi, David, Peter
 
-Acked-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Sorry for reviving an old thread. I've tried to keep the context as-is.
+Here is an original link in the archives:
+https://lore.kernel.org/lkml/20241029210331.1339581-1-david@redhat.com/T/#u
 
-Konrad
+Please see below.
+
+On 07.11.24 10:08, David Hildenbrand wrote
+> On 07.11.24 09:43, mawupeng wrote:
+> > On 2024/10/31 17:47, David Hildenbrand wrote:
+> >> On 30.10.24 22:32, Peter Xu wrote:
+> >>> On Tue, Oct 29, 2024 at 10:03:31PM +0100, David Hildenbrand wrote:
+> >>>> If track_pfn_copy() fails, we already added the dst VMA to the maple
+> >>>> tree. As fork() fails, we'll cleanup the maple tree, and stumble over
+> >>>> the dst VMA for which we neither performed any reservation nor copied
+> >>>> any page tables.
+> >>>>
+> >>>> Consequently untrack_pfn() will see VM_PAT and try obtaining the
+> >>>> PAT information from the page table -- which fails because the page
+> >>>> table was not copied.
+> >>>>
+> >>>> The easiest fix would be to simply clear the VM_PAT flag of the dst VMA
+> >>>> if track_pfn_copy() fails. However, the whole thing is about "simply"
+> >>>> clearing the VM_PAT flag is shaky as well: if we passed track_pfn_copy()
+> >>>> and performed a reservation, but copying the page tables fails, we'll
+> >>>> simply clear the VM_PAT flag, not properly undoing the reservation ...
+> >>>> which is also wrong.
+> >>>
+> >>> David,
+> >>>
+> >>
+> >> Hi Peter,
+> >>
+> >>> Sorry to not have chance yet reply to your other email..
+> >>>
+> >>> The only concern I have with the current fix to fork() is.. we started to
+> >>> have device drivers providing fault() on PFNMAPs as vfio-pci does, then I
+> >>> think it means we could potentially start to hit the same issue even
+> >>> without fork(), but as long as the 1st pgtable entry of the PFNMAP range is
+> >>> not mapped when the process with VM_PAT vma exit()s, or munmap() the vma.
+> >>
+> >> As these drivers are not using remap_pfn_range, there is no way they could currently get VM_PAT set.
+> >>
+> >> So what you describe is independent of the current state we are fixing here, and this fix should sort out the issues with current VM_PAT handling.
+> >>
+> >> It indeed is an interesting question how to handle reservations when *not* using remap_pfn_range() to cover the whole area.
+> >>
+> >> remap_pfn_range() handles VM_PAT automatically because it can do it: it knows that the whole range will map consecutive PFNs with the same protection, and we expect not parts of the range suddenly getting unmapped (and any driver that does that is buggy).
+> >>
+> >> This behavior is, however, not guaranteed to be the case when remap_pfn_range() is *not* called on the whole range.
+> >>
+> >> For that case (i.e., vfio-pci) I still wonder if the driver shouldn't do the reservation and leave VM_PAT alone.
+> >>
+> >> In the driver, we'd do the reservation once and not worry about fork() etc ... and we'd undo the reservation once the last relevant VM_PFNMAP VMA is gone or the driver let's go of the device. I assume there are already mechanisms in place to deal with that to some degree, because the driver cannot go away while any VMA still has the VM_PFNMAP mapping -- otherwise something would be seriously messed up.
+> >>
+> >> Long story short: let's look into not using VM_PAT for that use case.
+> >>
+> >> Looking at the VM_PAT issues we had over time, not making it more complicated sounds like a very reasonable thing to me :)
+> > 
+> > Hi David,
+> > 
+> > The VM_PAT reservation do seems complicated. It can trigger the same warning in get_pat_info if remap_p4d_range fails:
+> > 
+> > remap_pfn_range
+> >    remap_pfn_range_notrack
+> >      remap_pfn_range_internal
+> >        remap_p4d_range	// page allocation can failed here
+> >      zap_page_range_single
+> >        unmap_single_vma
+> >          untrack_pfn
+> >            get_pat_info
+> >              WARN_ON_ONCE(1);
+> > 
+> > Any idea on this problem?
+> 
+> In remap_pfn_range(), if remap_pfn_range_notrack() fails, we call 
+> untrack_pfn(), to undo the tracking.
+> 
+> The problem is that zap_page_range_single() shouldn't do that 
+> untrack_pfn() call.
+> 
+> That should be fixed by Peter's patch:
+> 
+> https://lore.kernel.org/all/20240712144244.3090089-1-peterx@redhat.com/T/#u
+
+
+The fix seemingly has not been applied so the issue in question still
+persists. There is a long thread on that patch without an explicit
+conclusion. Did the patch cause any problems or its status changed?
+
+
+Thanks for your time!
+
+
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
 
