@@ -1,398 +1,213 @@
-Return-Path: <linux-kernel+bounces-591713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5378DA7E436
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:26:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0C49A7E4C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC768188A190
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:18:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 220E31884783
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE361FDA7A;
-	Mon,  7 Apr 2025 15:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B461FF1D3;
+	Mon,  7 Apr 2025 15:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="OcDPPBat"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="qzldn2AC"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0D81F8758
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 15:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AD11FF1C5
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 15:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744039050; cv=none; b=XVyESRpbzWjlNltPrPCUx0EmnbUcMcTKGen+rnpaOLIV26BUK7dEAjD9iacqFaNxyYZ+3nu+mzOHDYR8dVnRydnP0WWIfhP4V3acbnP6JXYtifaCBoBpCRwp1HirSmby1p53aEBX5rOLe2P8QmTHIeLmHvsdjGKpsnIBK2WTayQ=
+	t=1744039980; cv=none; b=kfLfUfsKBA/14ZFRnvb22CFBi4/OQHD+qR9GDhQhe6N6wVtty0gPFtljmwPkpsn2UQcsri0OqCIaWRr7Qxv2s2RVnfhnVSRHLOdeC+LzVhYF5rVTlrqEMgYyY23R8Z6Rp/xv2Vov9HGE8UJIFEhf/asuJp/Dynxv0C4JTf3OcTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744039050; c=relaxed/simple;
-	bh=FgGFkvM/ECGwvSRBJ3r5FjilqzfkrJcBce7/X6Gx1fM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HpVSkBZ7+OgVu4GVtfuFSoXQEJ9CGXAd946R2liUjgdN1hwyij/Lz+FibEUagh/aACJ2L82e4ExE8YJKLCz/UrTkq0Pt2SdeGIJyH6FbT3p8WZgC6HPihqVUZ0poIJlbYvUgoZvU978e4kKXJvFFnO7VFOqUBC/L7IhDa0vYNIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=OcDPPBat; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7c5b8d13f73so469271785a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 08:17:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1744039047; x=1744643847; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ePiwJtWqlANqnCk2rR6tEp8SjDwgJ0HyiP7oZXjHj8o=;
-        b=OcDPPBatfzn6Zzvx/nDnHQIVBEqqHVhqzVRM/9wt67uYbZogdyUMJ5ciHrE+75Vpgt
-         R51JRp0+FBVPHB5bnQ5v3y2MC5oyXRUlnmd83af4o19m/1nKlO6tEVFPgkjLqRcTmiUI
-         3VXuNkglwxcJ3mMj7ZPK5T3zpCissXtZXng+gALTrU2eGySw7c1qs+9rFdDy8pdt9lrR
-         blYe7Jpg6swXstQSCjEIHAycaK0OIbPFPefQGWG4XbFheGj3J5cHEKKmGWJraAnSUk8v
-         Zn+VBLcSsQDlmdx4KUCIUu+cRhRbYwe5IJTUM9sjWCYi/q1Htt8YfHhGnP9AABLF82NN
-         az6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744039047; x=1744643847;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ePiwJtWqlANqnCk2rR6tEp8SjDwgJ0HyiP7oZXjHj8o=;
-        b=XpRn3K9OjUb13b54Nu2YmXCgbbB/rVL8yc6WxieDZxNrvDV6la+M3fXHzFboSn7Ktl
-         e8K7CfBSzLMnZb012nU4Et+1gJq6dll9tz+xOiAne6OqcZSWgY87qVNc2O713MFWK+Zp
-         /foGaf9nlG6G69uh52Bfn+V21cSPccQi6Rs341Jq3B+2NGzg5IuvQxoO+K3SzBrtuK0n
-         yZXRJSwuIFk7X1176z7f4ul7FCsZVqX7xP+93llvCTd0uJ5vndJsSe5dZ9kYU+9Odebl
-         nD7uBnkoWqhhYKjbrO5hzJoGBYrxWkzWkR2Csr8PIkv7KweERKNTeykTv+592/YZUGS0
-         x0bg==
-X-Forwarded-Encrypted: i=1; AJvYcCXg5o7rDWxVqqs6FPgp9ftY88uSTOk7Un2Qd0QlcK42ZAazPXgFDwkdLAuz5tM1ML+rysGc+SCuIiC6EHs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywkag4AD+aYqGAvwpke18vshfjxne4NnxM0JTSEQi9b8IPxK5Po
-	gJ0pu4vhp2txPJ5d1cESF7N5hT3eDY9i06sjOr6eB8p4notYfFBcFigNDOcOc3s=
-X-Gm-Gg: ASbGncukQaNVS103/vwDjrsi98oWSP8/IfDo+vnA2FKCgyKC7smvOXiW+ZAbIewc/gm
-	vYXrBxlcgQc6PAA0lKLYQ4EFdVhD7fXfzPS+w9c2RXXHh9Y9VG1QKzCFxPVrW1iVzzCw2hU/vIM
-	NoWoWzBAW2SRxDwfI6CbnDurqfWrAEWSmSrVHjtR+1kPlQbRSQPNAjeRKJPKWeACmVn2jxQzxze
-	1etZwGWvNnQ54zGKzx9/6S73eOwa0LwWadfwnslgZ+aTzXED48RWC9175K1pIxcFNh4gn+nLacS
-	aM5SA0MP+muRQSnYEMkO/90MjzoZc1+pFlSs+jpLySAqxD1M2w==
-X-Google-Smtp-Source: AGHT+IFMZnMbTyTQh098Zt7F9FsPuh2cDoKqbCbOEQoYMRNbuRJjmQBNxdpIsF9J7BtIACIamCOHKg==
-X-Received: by 2002:a05:620a:40c5:b0:7c5:9ac7:2ccc with SMTP id af79cd13be357-7c775b15514mr1550295185a.55.1744039046981;
-        Mon, 07 Apr 2025 08:17:26 -0700 (PDT)
-Received: from ?IPv6:2606:6d00:11:e976::c41? ([2606:6d00:11:e976::c41])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c76ea58d63sm610314885a.87.2025.04.07.08.17.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 08:17:26 -0700 (PDT)
-Message-ID: <f4eec2aa4856edbbb2f1e9248dffd9aff62c1a80.camel@ndufresne.ca>
-Subject: Re: [PATCH 4/5] media: vcodec: Implement manual request completion
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Sebastian Fricke <sebastian.fricke@collabora.com>, Sakari Ailus	
- <sakari.ailus@linux.intel.com>, Laurent Pinchart	
- <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>,  Hans Verkuil <hverkuil@xs4all.nl>, Tiffany Lin
- <tiffany.lin@mediatek.com>, Andrew-CT Chen	 <andrew-ct.chen@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>,  Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	kernel@collabora.com
-Date: Mon, 07 Apr 2025 11:17:25 -0400
-In-Reply-To: <20250314-sebastianfricke-vcodec_manual_request_completion_with_state_machine-v1-4-5e277a3d695b@collabora.com>
-References: 
-	<20250314-sebastianfricke-vcodec_manual_request_completion_with_state_machine-v1-0-5e277a3d695b@collabora.com>
-	 <20250314-sebastianfricke-vcodec_manual_request_completion_with_state_machine-v1-4-5e277a3d695b@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.0 (3.56.0-1.fc42) 
+	s=arc-20240116; t=1744039980; c=relaxed/simple;
+	bh=TY6heNeFM1OOuzrectrcS0JXw2w9T2gE6uc5pVQU444=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=DGY5BKe8u2XYJIKEulEZB1mE1xhZXF9wy2RMyscKRsKeBlwyN9jh1DSmPsu+22TvB+mXflYqiFFbzpKhODALDCl3lAC/LWtqSYRUmZCib0WQugz4x0/Fu9NIauEpO0tos+QsZ5LUvWDpdJqeNg2yqHA8tU3JyPmiwMtwUJOnZEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=qzldn2AC; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1744039668;
+	bh=pqBg53Ns1xja7oMx811o/GQNHkknbYjQH3SS9D1/k0M=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=qzldn2ACw/ucc4A4Fvm8pJdM6MUnUNDUPe+ZtXh/6VL0SB+PNMrnBOZy5ahIFEU/R
+	 EmzRuA7Ao0WtqxhRqzCPRXuwhM7PhvR8xPmsFRAk4rgLsyLcqaEKhyyF6fFAjrn+vx
+	 CdqhbW+L8dAnJZjNs75Hf4e2Ia7hPwRnnaJAe9dw=
+Received: from localhost.localdomain ([116.148.99.229])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 4C821AA8; Mon, 07 Apr 2025 23:19:08 +0800
+X-QQ-mid: xmsmtpt1744039148tfye3nbng
+Message-ID: <tencent_019E709405D8474A5D5A21E429D046331808@qq.com>
+X-QQ-XMAILINFO: NafziRg7Bx69DXcLapSd2zOb5dkWppsWdezpsk7Ta9NrjuCRQ0LFWOaJgJfOAb
+	 J4aavbUiFZRgsJWRxqFhn8adlTJ04J4y1B1abnXRvzc52TYursDI7TEOOjt//bUNWN9dbylPOr1V
+	 8BSNiNygfNYiGccFjC7FvGs8gHY24yUAN4KDl9IS5GSCmU9stAshMKShUvV9JZ8eKufCgtnH08E6
+	 9zu1ysJlbJ4xmyEfNf5vhcXdS/3eP/1sHE3cZayZ5expSDzzTvT8MJsdjvYY2Hnmkr1dSyeIXDju
+	 +Q9tMUcLexVSD/QiXcxf+63VskoWvaWrl2vuuYqWcXpc+NkNiOUpuMsIEX7eO4r4XpbC+Y3+t4YV
+	 ovb1R2BLpJVyc53bbGTfB+k/EcdIT9Svzdv/2MwK+5eQ9WUwHG8ZzBjAuI2pMq5hiaGWnGau9Yy+
+	 ZnIDI5k0JHAS9ustNLlEbGoA/qiR7xPpKMxQCRWc0J5sqiWmI413Wwih4HHfmmO5opxWsIOtV5GW
+	 GzoMaHTtX7SOOl5YqKwLVMjOkqvju5OOlCKeLCQHigFrIfsjazZnzrGiRRw5Pc6tVrRaQvkyK1I0
+	 I9Y5LkMp2S0Yyar4n1+ebB3V9zc6ZSE6rL4kreLwKrf/iF1qqrLCDwJtciBUUg4g+keYDpYA3dAM
+	 K5SLJ/Rs4YoraQFHri8bALv0hmhtNaCnk9y23S923DjsYnfjQRbFQkV4BzgVs8oQEI324MXH+SgY
+	 EKLBVz4PTQbCsf1DjIcon5mzJ0Fl4HaIFA1L2Q8rQy+PthUfPOz/jp+P6otIAql/dMZScJahEJrZ
+	 Gob3sVUEEraaEqHO38JFFMh1gmputubYvC+Ly8nv1ErsJRAfboi8dDVdujEbEgWxHhIObUh63D7n
+	 tuCPwZtbecSgkoipZ1E1g6LGEOmMUTuuCmDJ3CYK4pcN/H7F4oG+vnyYXrSmvpE2MEK2Fq+gA5nR
+	 W/1SQ8hAp6kl0cyjS9fggjr/Ed1w6I
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: zhoumin <teczm@foxmail.com>
+To: gregkh@linuxfoundation.org
+Cc: dakr@kernel.org,
+	akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	rafael@kernel.org,
+	teczm@foxmail.com,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] kobject_uevent: add uevent_helper exist check
+Date: Mon,  7 Apr 2025 23:18:12 +0800
+X-OQ-MSGID: <20250407151812.116592-1-teczm@foxmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <2025040731-eternity-statutory-4a80@gregkh>
+References: <2025040731-eternity-statutory-4a80@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Le vendredi 14 mars 2025 =C3=A0 14:26 +0100, Sebastian Fricke a =C3=A9crit=
-=C2=A0:
-> Rework how requests are completed in the MediaTek VCodec driver, by
-> implementing the new manual request completion feature, which allows to
-> keep a request open while allowing to add new bitstream data.
-> This is useful in this case, because the hardware has a LAT and a core
-> decode work, after the LAT decode the bitstream isn't required anymore
-> so the source buffer can be set done and the request stays open until
-> the core decode work finishes.
->=20
-> Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
+Hi Greg
+
+I appreciate your patience in addressing this.
+
+> > The kernel creates uevent_helper process for every uevent sent,
+> > even if the uevent_helper does not exist. Before the rootfs is
+> > mounted, a large number of events are generated. This change
+> > introduces uevent_helper existence check to prevent unnecessary
+> > operations.
+
+> What problem is this causing? What changed to make this actually be a
+problem?
+
+I think calling uevent_helper before rootfs mount is pointless and waste
+time, because uevent_helper does not exist at that stage. For example,
+fs_initcall(chr_dev_init),subsys_initcall(usb_init) and etc, these module
+run before rootfs_initcall and will trigger kobject_uevent when
+uevent_helper isn't ready.
+
+However, I've discovered this issue was already addressed by commit:
+<b234ed6d629420827e2839c8c8935be85a0867fd> ("init: move
+usermodehelper_enable() to populate_rootfs()")
+
+Due to my device running an outdated kernel version, this change wasn't
+immediately apparent to me.
+
+But I propose we should make call_usermodehelper_exec fail earlier, link
+this:
+--- a/lib/kobject_uevent.c
++++ b/lib/kobject_uevent.c
+@@ -610,7 +610,7 @@ int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
+
+ #ifdef CONFIG_UEVENT_HELPER
+        /* call uevent_helper, usually only enabled during early boot */
+-       if (uevent_helper[0] && !kobj_usermode_filter(kobj)) {
++       if (uevent_helper[0] && !usermodehelper_disabled && !kobj_usermode_filter(kobj)) {
+                struct subprocess_info *info;
+
+                retval = add_uevent_var(env, "HOME=/");
+
+
+If this is helpful, I can submit a follow-up patch.
+
+> > Logs a debug messase before call_usermodehelper_setup.
+
+> I can not parse this sentence, sorry.
+
+What I'd say is to add such a line of debug logs.
+
+> > e.g.: pr_emerg("action:%s devpath:%s\n", action_string, devpath);
+> > You will see a large number of uevent_helper processes
+> > are attempted to be created before the rootfs is mounted.
+
+> Again, why is that a problem?
+
+Like I said at the beginning.
+
+
+> Signed-off-by: zhoumin
+
+> Please use your name here, not an alias.
+
+This is the Pinyin spelling of my Chinese name.
+
 > ---
-> =C2=A0.../mediatek/vcodec/common/mtk_vcodec_cmn_drv.h=C2=A0=C2=A0=C2=A0 |=
- 13 ++++++
-> =C2=A0.../mediatek/vcodec/decoder/mtk_vcodec_dec.c=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0 4 +-
-> =C2=A0.../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c=C2=A0=C2=A0 | 52 +=
-+++++++++++++++++++++
-> =C2=A0.../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h=C2=A0=C2=A0 |=C2=
-=A0 4 ++
-> =C2=A0.../vcodec/decoder/mtk_vcodec_dec_stateless.c=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 46 +++++++++----------
-> =C2=A05 files changed, 94 insertions(+), 25 deletions(-)
->=20
-> diff --git a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_cmn=
-_drv.h b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_cmn_drv.h
-> index 6087e27bd604d24e5d37b48de5bb37eab86fc1ab..81ec5beecfaed239ed70bee34=
-60aae27e476231c 100644
-> --- a/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_cmn_drv.h
-> +++ b/drivers/media/platform/mediatek/vcodec/common/mtk_vcodec_cmn_drv.h
-> @@ -105,6 +105,19 @@ enum mtk_instance_state {
-> =C2=A0	MTK_STATE_ABORT =3D 4,
-> =C2=A0};
-> =C2=A0
-> +/**
-> + * enum mtk_request_state - Stages of processing a request
-> + * MTK_REQUEST_RECEIVED: Hardware prepared for the LAT decode
-> + * MTK_REQUEST_DONE_WITH_BITSTREAM: LAT decode finished, the bitstream i=
-s not
-> + *				=C2=A0=C2=A0=C2=A0 needed anymore
-> + * MTK_REQUEST_COMPLETE: CORE decode finished
-> + */
-> +enum mtk_request_state {
-> +	MTK_REQUEST_RECEIVED =3D 0,
-> +	MTK_REQUEST_LAT_DONE =3D 1,
-> +	MTK_REQUEST_CORE_DONE =3D 2,
-> +};
-> +
-> =C2=A0enum mtk_fmt_type {
-> =C2=A0	MTK_FMT_DEC =3D 0,
-> =C2=A0	MTK_FMT_ENC =3D 1,
-> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_de=
-c.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c
-> index 98838217b97d45ed2b5431fdf87c94e0ff79fc57..036ad191a9c3e644fe99b4ce2=
-5d6a089292f1e57 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c
-> @@ -889,8 +889,10 @@ void vb2ops_vdec_stop_streaming(struct vb2_queue *q)
-> =C2=A0					src_buf->vb2_buf.req_obj.req;
-> =C2=A0				v4l2_m2m_buf_done(src_buf,
-> =C2=A0						VB2_BUF_STATE_ERROR);
-> -				if (req)
-> +				if (req) {
-> =C2=A0					v4l2_ctrl_request_complete(req, &ctx->ctrl_hdl);
-> +					media_request_manual_complete(req);
-> +				}
-> =C2=A0			}
-> =C2=A0		}
-> =C2=A0		return;
-> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_de=
-c_drv.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv=
-.c
-> index 9247d92d431d8570609423156b989878f7901f1c..d9c7aaec0c4515cb73b80c913=
-b1ad5b08392dd18 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c
-> @@ -26,6 +26,58 @@
-> =C2=A0#include "mtk_vcodec_dec_pm.h"
-> =C2=A0#include "../common/mtk_vcodec_intr.h"
-> =C2=A0
-> +const char *state_to_str(enum mtk_request_state state)
+> lib/kobject_uevent.c | 20 +++++++++++++++++++-
+> 1 file changed, 19 insertions(+), 1 deletion(-)
+>
+> diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+> index b7f2fa08d9c8..f3d34ded141a 100644
+> --- a/lib/kobject_uevent.c
+> +++ b/lib/kobject_uevent.c
+> @@ -28,6 +28,7 @@
+> #include
+> #include
+> #include
+> +#include
+>
+>
+> atomic64_t uevent_seqnum;
+> @@ -58,6 +59,23 @@ static const char *kobject_actions[] = {
+> [KOBJ_UNBIND] = "unbind",
+> };
+>
+> +#ifdef CONFIG_UEVENT_HELPER
+> +static int uevent_helper_lookup(void)
 > +{
-> +	switch (state) {
-> +	case MTK_REQUEST_RECEIVED:
-> +		return "RECEIVED";
-> +	case MTK_REQUEST_LAT_DONE:
-> +		return "LAT_DONE";
-> +	case MTK_REQUEST_CORE_DONE:
-> +		return "CORE_DONE";
-> +	default:
-> +		return "UNKNOWN";
-> +	}
-> +}
+> + static int ret = -ENOENT;
+> + struct path path;
 > +
-> +int mtk_vcodec_complete(struct mtk_vcodec_dec_ctx *ctx, enum mtk_request=
-_state state,
-> +			enum vb2_buffer_state buffer_state, struct media_request *src_buf_req=
-)
-> +{
-> +	struct vb2_v4l2_buffer *src_buf, *dst_buf;
+> + if (!ret)
+> + return ret;
 > +
-> +	mutex_lock(&ctx->lock);
-> +
-> +	if (ctx->req_state >=3D state) {
-> +		mutex_unlock(&ctx->lock);
-> +		return -EINVAL;
-> +	}
-> +
-> +	switch (ctx->req_state) {
-> +	case MTK_REQUEST_RECEIVED:
-> +		v4l2_ctrl_request_complete(src_buf_req, &ctx->ctrl_hdl);
-> +		src_buf =3D v4l2_m2m_src_buf_remove(ctx->m2m_ctx);
-> +		v4l2_m2m_buf_done(src_buf, buffer_state);
-> +		ctx->req_state =3D MTK_REQUEST_LAT_DONE;
-> +		if (state =3D=3D MTK_REQUEST_LAT_DONE)
-> +			break;
-> +		fallthrough;
-> +	case MTK_REQUEST_LAT_DONE:
-> +		dst_buf =3D v4l2_m2m_dst_buf_remove(ctx->m2m_ctx);
-> +		v4l2_m2m_buf_done(dst_buf, buffer_state);
-> +		media_request_manual_complete(src_buf_req);
-> +		ctx->req_state =3D MTK_REQUEST_CORE_DONE;
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	mtk_v4l2_vdec_dbg(3, ctx, "Switch state from %s to %s.\n",
-> +			=C2=A0 state_to_str(ctx->req_state), state_to_str(state));
-> +	ctx->req_state =3D state;
-> +	mutex_unlock(&ctx->lock);
-> +	return 0;
-> +}
-> +
-> =C2=A0static int mtk_vcodec_get_hw_count(struct mtk_vcodec_dec_ctx *ctx, =
-struct mtk_vcodec_dec_dev *dev)
-> =C2=A0{
-> =C2=A0	switch (dev->vdec_pdata->hw_arch) {
-> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_de=
-c_drv.h b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv=
-.h
-> index ac568ed14fa257d25b533b6fd6b3cd341227ecc2..21c2301363d0151ba3cf384a2=
-a32fff9f5d46034 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h
-> @@ -185,6 +185,7 @@ struct mtk_vcodec_dec_ctx {
-> =C2=A0	struct mtk_q_data q_data[2];
-> =C2=A0	int id;
-> =C2=A0	enum mtk_instance_state state;
-> +	enum mtk_request_state req_state;
+> + ret = kern_path(uevent_helper, LOOKUP_FOLLOW, &path);
+> + if (!ret)
+> + path_put(&path);
 
-As you discovered before I came to do that final review, this is the
-wrong version of the patchset. The request state must be per-request.
-Looking forward your v2.
+> What happens when the root filesystem changes to the new one? This
+feels wrong as Andrew said.
 
-Nicolas
+If a user performs actions like chroot into a new rootfs that lacks
+uevent_helper, this should be considered a rootfs configuration error
+rather than a kernel issue. The kernel shouldn't handle missing helpers
+at this stage.
 
-> =C2=A0
-> =C2=A0	const struct vdec_common_if *dec_if;
-> =C2=A0	void *drv_handle;
-> @@ -326,6 +327,9 @@ wake_up_dec_ctx(struct mtk_vcodec_dec_ctx *ctx, unsig=
-ned int reason, unsigned in
-> =C2=A0	wake_up_interruptible(&ctx->queue[hw_id]);
-> =C2=A0}
-> =C2=A0
-> +int mtk_vcodec_complete(struct mtk_vcodec_dec_ctx *ctx, enum mtk_request=
-_state state,
-> +			enum vb2_buffer_state buffer_state, struct media_request *src_buf_req=
-);
-> +
-> =C2=A0#define mtk_vdec_err(ctx, fmt, args...)=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 \
-> =C2=A0	mtk_vcodec_err((ctx)->id, (ctx)->dev->plat_dev, fmt, ##args)
-> =C2=A0
-> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_de=
-c_stateless.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_d=
-ec_stateless.c
-> index afa224da0f4165cf5701d6861f1f787c6317bfe4..9187d7bcfc8aea17f3fc98d94=
-419777d8026db51 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_state=
-less.c
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_state=
-less.c
-> @@ -247,7 +247,6 @@ static const struct v4l2_frmsize_stepwise stepwise_fh=
-d =3D {
-> =C2=A0static void mtk_vdec_stateless_cap_to_disp(struct mtk_vcodec_dec_ct=
-x *ctx, int error,
-> =C2=A0					=C2=A0=C2=A0 struct media_request *src_buf_req)
-> =C2=A0{
-> -	struct vb2_v4l2_buffer *vb2_dst;
-> =C2=A0	enum vb2_buffer_state state;
-> =C2=A0
-> =C2=A0	if (error)
-> @@ -255,17 +254,7 @@ static void mtk_vdec_stateless_cap_to_disp(struct mt=
-k_vcodec_dec_ctx *ctx, int e
-> =C2=A0	else
-> =C2=A0		state =3D VB2_BUF_STATE_DONE;
-> =C2=A0
-> -	vb2_dst =3D v4l2_m2m_dst_buf_remove(ctx->m2m_ctx);
-> -	if (vb2_dst) {
-> -		v4l2_m2m_buf_done(vb2_dst, state);
-> -		mtk_v4l2_vdec_dbg(2, ctx, "free frame buffer id:%d to done list",
-> -				=C2=A0 vb2_dst->vb2_buf.index);
-> -	} else {
-> -		mtk_v4l2_vdec_err(ctx, "dst buffer is NULL");
-> -	}
-> -
-> -	if (src_buf_req)
-> -		v4l2_ctrl_request_complete(src_buf_req, &ctx->ctrl_hdl);
-> +	mtk_vcodec_complete(ctx, MTK_REQUEST_CORE_DONE, state, src_buf_req);
-> =C2=A0}
-> =C2=A0
-> =C2=A0static struct vdec_fb *vdec_get_cap_buffer(struct mtk_vcodec_dec_ct=
-x *ctx)
-> @@ -308,6 +297,7 @@ static void vb2ops_vdec_buf_request_complete(struct v=
-b2_buffer *vb)
-> =C2=A0	struct mtk_vcodec_dec_ctx *ctx =3D vb2_get_drv_priv(vb->vb2_queue)=
-;
-> =C2=A0
-> =C2=A0	v4l2_ctrl_request_complete(vb->req_obj.req, &ctx->ctrl_hdl);
-> +	media_request_manual_complete(vb->req_obj.req);
-> =C2=A0}
-> =C2=A0
-> =C2=A0static void mtk_vdec_worker(struct work_struct *work)
-> @@ -358,12 +348,17 @@ static void mtk_vdec_worker(struct work_struct *wor=
-k)
-> =C2=A0	else
-> =C2=A0		mtk_v4l2_vdec_err(ctx, "vb2 buffer media request is NULL");
-> =C2=A0
-> +	mutex_lock(&ctx->lock);
-> +	ctx->req_state =3D MTK_REQUEST_RECEIVED;
-> +	mutex_unlock(&ctx->lock);
-> +
-> =C2=A0	ret =3D vdec_if_decode(ctx, bs_src, NULL, &res_chg);
-> +
-> =C2=A0	if (ret && ret !=3D -EAGAIN) {
-> =C2=A0		mtk_v4l2_vdec_err(ctx,
-> -				=C2=A0 "[%d] decode src_buf[%d] sz=3D0x%zx pts=3D%llu ret=3D%d res_c=
-hg=3D%d",
-> +				=C2=A0 "[%d] decode src_buf[%d] sz=3D0x%zx pts=3D%llu res_chg=3D%d r=
-et=3D%d",
-> =C2=A0				=C2=A0 ctx->id, vb2_src->index, bs_src->size,
-> -				=C2=A0 vb2_src->timestamp, ret, res_chg);
-> +				=C2=A0 vb2_src->timestamp, res_chg, ret);
-> =C2=A0		if (ret =3D=3D -EIO) {
-> =C2=A0			mutex_lock(&ctx->lock);
-> =C2=A0			dec_buf_src->error =3D true;
-> @@ -372,18 +367,15 @@ static void mtk_vdec_worker(struct work_struct *wor=
-k)
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	state =3D ret ? VB2_BUF_STATE_ERROR : VB2_BUF_STATE_DONE;
-> +	if (ret !=3D -EAGAIN)
-> +		mtk_vcodec_complete(ctx, MTK_REQUEST_LAT_DONE, state, src_buf_req);
-> +
-> =C2=A0	if (!IS_VDEC_LAT_ARCH(dev->vdec_pdata->hw_arch) ||
-> =C2=A0	=C2=A0=C2=A0=C2=A0 ctx->current_codec =3D=3D V4L2_PIX_FMT_VP8_FRAM=
-E) {
-> -		v4l2_m2m_buf_done_and_job_finish(dev->m2m_dev_dec, ctx->m2m_ctx, state=
-);
-> -		if (src_buf_req)
-> -			v4l2_ctrl_request_complete(src_buf_req, &ctx->ctrl_hdl);
-> -	} else {
-> -		if (ret !=3D -EAGAIN) {
-> -			v4l2_m2m_src_buf_remove(ctx->m2m_ctx);
-> -			v4l2_m2m_buf_done(vb2_v4l2_src, state);
-> -		}
-> -		v4l2_m2m_job_finish(dev->m2m_dev_dec, ctx->m2m_ctx);
-> +		mtk_vcodec_complete(ctx, MTK_REQUEST_CORE_DONE, state, src_buf_req);
-> =C2=A0	}
-> +
-> +	v4l2_m2m_job_finish(dev->m2m_dev_dec, ctx->m2m_ctx);
-> =C2=A0}
-> =C2=A0
-> =C2=A0static void vb2ops_vdec_stateless_buf_queue(struct vb2_buffer *vb)
-> @@ -731,9 +723,15 @@ static int fops_media_request_validate(struct media_=
-request *mreq)
-> =C2=A0	return vb2_request_validate(mreq);
-> =C2=A0}
-> =C2=A0
-> +static void fops_media_request_queue(struct media_request *mreq)
-> +{
-> +	media_request_mark_manual_completion(mreq);
-> +	v4l2_m2m_request_queue(mreq);
-> +}
-> +
-> =C2=A0const struct media_device_ops mtk_vcodec_media_ops =3D {
-> =C2=A0	.req_validate	=3D fops_media_request_validate,
-> -	.req_queue	=3D v4l2_m2m_request_queue,
-> +	.req_queue	=3D fops_media_request_queue,
-> =C2=A0};
-> =C2=A0
-> =C2=A0static void mtk_vcodec_add_formats(unsigned int fourcc,
+Apply to the question of another mail.
+Link: https://lore.kernel.org/lkml/2025040731-eternity-statutory-4a80@gregkh/
+
+
+> > > Is there any measurable reduction in boot time?
+> >
+> > This depends on the number of uevent and the performance of the device.
+> > In fact, I found this issue during a project to optomize boot time,
+> > and on my embedded device, it can be optimized by at least 2 seconds.
+ 
+> So you are spending 2 seconds in failing to lookup the uevent helper
+> path? That feels really wrong, how long does your boot take overall?
+> What % is 2 seconds?
+
+The measurements were taken on a device running kernel 4.4.65 using
+/proc/uptime. The 129s average boot time served as baseline for comparing
+the time difference before and after the changes, though this metric is no
+longer the primary concern.
+
+Would you like me to submit a formal patch with above changes.
+
+
+Best regards,
+
+zhoumin
+
 
