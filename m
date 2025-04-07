@@ -1,200 +1,156 @@
-Return-Path: <linux-kernel+bounces-591533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6486A7E17E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:28:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A260A7E181
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5A8B3A5A4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:21:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E21E017BB75
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637691DA109;
-	Mon,  7 Apr 2025 14:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BB0191461;
+	Mon,  7 Apr 2025 14:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jtqTBtVl"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cEdE/fiW"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2516F191461
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 14:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C6F1DA2E5
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 14:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744035689; cv=none; b=QpoLFNuHqROSRn22x8JzUz9vluqSUU4Co9Xg/JA7w0/Jodd2kXR8PYAXhX0pktQXCAv++8oPyI0D3soOSoNQRo9ClwpFWPcqVy27ZAVvGUO6o4ZwM5SFnX7b1YOW2gcfskHT6nafE/xy+Q42eQtrZTpD7iUZK+HZj1hudaWpx2I=
+	t=1744035804; cv=none; b=EMLA6PIKgmUHNYd+9K+nnVWm0fTaxBAwJlso4XYPTF9eDI2f9ZpSkBAjcKvQK5SxtYsy1L+/4cZuIiwGA2CiYB6NNuqtyQbCqb2JxRZPW0JT6QQHaIcJR5Y5PDmm9rM/IzyNXzrS6ZDozFFhxI4XJPEz7kjguUcHxaJ/vcDL+dE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744035689; c=relaxed/simple;
-	bh=dzE1HWCAbIlovD3ylh8gnjP7z03csLo26efJxL1PvO8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Cv0ZUgCGMpTkQ/Ek7FH5yRa0X+PQ4KR24xjTZb/TTXwMPaLgQA4E5ZvvbJRikEi4LsqEqIbKdqfGDlJxpuwg8MNmyYV8DbQuFvaESkk8bxB8N5ChuGD8IdPuu+D6qDiCKaAxhxcE3egNj2lZ+pdezIlDngQETW8RqTqJqcd1H6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jtqTBtVl; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5378doGK009987
-	for <linux-kernel@vger.kernel.org>; Mon, 7 Apr 2025 14:21:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=CwSbBrXfS6Q75dvQ5OFQ3E
-	oVcgAuH0NLnZgqci7OVjg=; b=jtqTBtVlFDFJgHBmqqQzV5HufjZLaHfkqMRXhH
-	PUwBsuxSbPJntYnsZxrmNvkx3BXivkpnE6QM8M74ect1CMYSXQv8DmwTOz0zwyfp
-	YkMbRZiEV8WwRZnoHBGN/YWBX+eROMAWCy7oIQfE2FAOqBPDbQPd0xQcRpbuvJDA
-	ZycY+guOzTs6zVQrCzdZOGzOIHjKzF1tW/T3dHmcI3yB8gCKvTLXyrDqX9apQkKM
-	+Ro5WUGWnGKpTqlUe67e5o7tYy8WhjJc2QF0gjV0qO2v+INQtvklLoTNs1mkfS2u
-	XHkX4nzxP2YDjMSAbbxYETOakQV+90LMAFHHnC7OvFUjuHOQ==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twpm4dy4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 14:21:27 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2240a96112fso67114075ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 07:21:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744035686; x=1744640486;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CwSbBrXfS6Q75dvQ5OFQ3EoVcgAuH0NLnZgqci7OVjg=;
-        b=Cl4x/qlq+6U46M8wNUc2B4L2OJhsvjJZnhRtixpXiJfrir7IxnQoDruYKXrxdeRwkD
-         3oDWhmGOlDzx9vKXHhYLTQ0gl67TlDXH8BohoiWd8NIIwXEIMv0YTLU1p+LfhvbXL8KV
-         KooBoHvfueoXm45cCvLfF0TBk5ViCjcu7VHMFTJ4Hx/ntVY99ZVmkra1ccZdaHHz4wVs
-         8HZhg+UnsJu5DrQnyX+VGgg//6ZO9ydsoYn/utS86C0AkDb9LOWQhWSf3m5tJdi42HoK
-         h70NtutLa2uNFJk+q90ftLPl59U9JtJu7jGA2ndXtjiUEOg/mieAtWUlAZ76X0zOH9pa
-         R0qA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwVgLXplxKkOEEbc303lwK1NdnWs5uTxTQvlo+Ierx6J3IsfG1wVu9qnlXeaVZDQ/P08nSRakYOzkSk70=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz60C42cv3U+121kA1tSDNTGoqNexOZuyylvU9ATg7u41MgE5qV
-	VeDThcpSSk4VoPOuZZlEbKIphHcTjbcA72sO6UblGt9dMQOvqsPuDflcyoeCtvdmzFi8xFYsCSx
-	VMDKR9S95Sc+Rd8TXpJSkriJ1yV0S267ujzh/WZh5PrvwbQ5Jr1fMlTNpfG0jx28=
-X-Gm-Gg: ASbGncvTBUf3dvReh+9uscd9IQNCZBzmjWUG14capdcQk5++PJFAo7/Dmg5M7MlSej5
-	lxZwjvVRQVF0RHx/v0+A94Z71nf+LGYl2eL0baEFvNdcKAfIDb+4iBo5FAdncpgHmo45bAHJtBp
-	XC5GgR+30Vz7/jWHPIlg0+FUWOMEDWD7x6u5xKOsLU28jA3TrEGXisTbFDf4Kv5q7+ukD65zLFu
-	9eQJR4kN5L7B67tndJDqTr69JXm0XtyYupqhGfkC5f0vZDcbXmO+grcwREQiQt3VGF6rrVSfDNv
-	q1UGfumneJWm8LU6ZM/6mtE4uqrbcGj1qwonlJgcPlb71AGiIom9k1K9rS7ztKbNq0BuBuJkUir
-	V79tWKpYYtYUaifosAl6L4kdNxMVSMBKNzfMbhVEDgZxAiXrreDk=
-X-Received: by 2002:a17:902:c943:b0:220:c86d:d7eb with SMTP id d9443c01a7336-22a8a0a381cmr158971215ad.36.1744035686130;
-        Mon, 07 Apr 2025 07:21:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHz1xFJAWKNFlff2dP27w7LQzbBRsHcd82SHSqknDBxkMIW7Hb99wQELM+zJzzGCvqq7OP4Ag==
-X-Received: by 2002:a17:902:c943:b0:220:c86d:d7eb with SMTP id d9443c01a7336-22a8a0a381cmr158970795ad.36.1744035685713;
-        Mon, 07 Apr 2025 07:21:25 -0700 (PDT)
-Received: from hu-kathirav-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739da0b3feesm8774877b3a.140.2025.04.07.07.21.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 07:21:25 -0700 (PDT)
-From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-Date: Mon, 07 Apr 2025 19:51:17 +0530
-Subject: [PATCH] phy: qcom-qusb2: Update the phy settings for IPQ5424
+	s=arc-20240116; t=1744035804; c=relaxed/simple;
+	bh=Mho1OhZMPQYWvUWnQkKuL8qqQ0XtidXWn2GdqBHMZvY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oAegYYsADoJRTDbU9dntCcqX28rIW9BFb6jygr/3eAzEELQuTvAazSicB3CCsxNMO9M2NpjiTnGbEsNb+RFCFQGC6b+3QAaqfptUWlWsvjil0FM+vSS28FQyoK5iNiQn3ffQo/XbjrlUr6MYYBgmTEB1M0ug2/eAzkHb3c7muHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cEdE/fiW; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744035799;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=W4wct51PbY7VBGxtjbRhs1YFFpceh3G8shb37lDzbWo=;
+	b=cEdE/fiWurBuimab6570vjRdY0FrgT2Aa/7nsKqs0pYFRFrKnb63sG8Nb9+acF1GnKRmnl
+	oqZ9lJLAtVXFh7icMb83bpWiufZcEICFC2grkhTNjfnaq9oPAdFBvR+v+ZTkLRgGeNpDGE
+	AoSFYVdpkmkrlbU48LmDiwYyj/32Li4=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: bpf@vger.kernel.org
+Cc: mrpre@163.com,
+	Jiayuan Chen <jiayuan.chen@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Jakub Sitnicki <jakub@cloudflare.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH bpf-next v1 0/4] bpf, sockmap: Fix data loss and panic issues
+Date: Mon,  7 Apr 2025 22:21:19 +0800
+Message-ID: <20250407142234.47591-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250407-revert_hs_phy_settings-v1-1-ec94e316ea19@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAFzf82cC/4WNTQ6CMBCFr0JmbUlbFcSV9zCEQJnSSYRipxIJ4
- e5WL+DmJd/L+9mAMRAyXLMNAi7E5KcE6pCBce00oKA+MWipz/IkS5FCGGLjuJnd2jDGSNPAwhZ
- dhabotK5KSOU5oKX3b/heJ3bE0Yf197Oor/t3clFCid5KpY9VZ82lvXnm/PlqH8aPY54E6n3fP
- 1gCGVLDAAAA
-X-Change-ID: 20250407-revert_hs_phy_settings-f6b9ec6b2297
-To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-        Varadarajan Narayanan <quic_varada@quicinc.com>,
-        Dmitry Baryshkov <lumag@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744035683; l=2972;
- i=kathiravan.thirumoorthy@oss.qualcomm.com; s=20230906;
- h=from:subject:message-id; bh=dzE1HWCAbIlovD3ylh8gnjP7z03csLo26efJxL1PvO8=;
- b=hDsoWguSNfzwvOHoNVYe3omJP1fRy9CR2nBN0ll9hxrZVsbYN7jwZADIXwVsYz0swcJLnUtB6
- AyHzKIZ3uwnDqvjh3tqWccv3NUzyhTPpsYcwCJ6gcYar2Odhjp/Bf35
-X-Developer-Key: i=kathiravan.thirumoorthy@oss.qualcomm.com; a=ed25519;
- pk=xWsR7pL6ch+vdZ9MoFGEaP61JUaRf0XaZYWztbQsIiM=
-X-Proofpoint-GUID: q4FBryFsp2vSVi3_X9tz1i3-_2FxVF2-
-X-Proofpoint-ORIG-GUID: q4FBryFsp2vSVi3_X9tz1i3-_2FxVF2-
-X-Authority-Analysis: v=2.4 cv=MpRS63ae c=1 sm=1 tr=0 ts=67f3df67 cx=c_pps a=cmESyDAEBpBGqyK7t0alAg==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=EUmpfdxrmR1wFgAKqUcA:9 a=QEXdDO2ut3YA:10
- a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-07_04,2025-04-03_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 clxscore=1015 priorityscore=1501 impostorscore=0
- spamscore=0 bulkscore=0 suspectscore=0 malwarescore=0 adultscore=0
- phishscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504070101
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Update the phy settings for IPQ5424 to meet compliance requirements.
-The current settings do not meet the requirements, and the design team
-has requested to use the settings used for IPQ6018.
+I was writing a benchmark based on sockmap + TCP and discovered several
+issues:
 
-Revert the commit 9c56a1de296e ("phy: qcom-qusb2: add QUSB2 support for
-IPQ5424") and reuse the IPQ6018 settings.
+1. When EAGAIN occurs, the direction of skb is incorrect, causing data
+   loss when retry.
+2. When sending partial data, the offset is not recorded, leading to
+   duplicate data being sent when retry.
+3. An unexpected BUG_ON() judgment in skb_linearize is triggered.
+4. The memory of psock->ingress_skb is not limited by the socket buffer
+   and memcg.
 
-Fixes: 9c56a1de296e ("phy: qcom-qusb2: add QUSB2 support for IPQ5424")
-Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
----
- drivers/phy/qualcomm/phy-qcom-qusb2.c | 27 +--------------------------
- 1 file changed, 1 insertion(+), 26 deletions(-)
+Issues 1, 2, and 3 are described in each patch's commit message.
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-index 1f5f7df14d5a2ff041fe15aaeb6ec5ce52ab2a81..49c37c53b38e70db2a1591081a1a12db7092555d 100644
---- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-@@ -151,21 +151,6 @@ static const struct qusb2_phy_init_tbl ipq6018_init_tbl[] = {
- 	QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_AUTOPGM_CTL1, 0x9F),
- };
- 
--static const struct qusb2_phy_init_tbl ipq5424_init_tbl[] = {
--	QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL, 0x14),
--	QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TUNE1, 0x00),
--	QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TUNE2, 0x53),
--	QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TUNE4, 0xc3),
--	QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_TUNE, 0x30),
--	QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_USER_CTL1, 0x79),
--	QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_USER_CTL2, 0x21),
--	QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TUNE5, 0x00),
--	QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_PWR_CTRL, 0x00),
--	QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TEST2, 0x14),
--	QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_TEST, 0x80),
--	QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_AUTOPGM_CTL1, 0x9f),
--};
--
- static const struct qusb2_phy_init_tbl qcs615_init_tbl[] = {
- 	QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TUNE1, 0xc8),
- 	QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TUNE2, 0xb3),
-@@ -359,16 +344,6 @@ static const struct qusb2_phy_cfg ipq6018_phy_cfg = {
- 	.autoresume_en   = BIT(0),
- };
- 
--static const struct qusb2_phy_cfg ipq5424_phy_cfg = {
--	.tbl            = ipq5424_init_tbl,
--	.tbl_num        = ARRAY_SIZE(ipq5424_init_tbl),
--	.regs           = ipq6018_regs_layout,
--
--	.disable_ctrl   = POWER_DOWN,
--	.mask_core_ready = PLL_LOCKED,
--	.autoresume_en   = BIT(0),
--};
--
- static const struct qusb2_phy_cfg qcs615_phy_cfg = {
- 	.tbl            = qcs615_init_tbl,
- 	.tbl_num        = ARRAY_SIZE(qcs615_init_tbl),
-@@ -955,7 +930,7 @@ static const struct phy_ops qusb2_phy_gen_ops = {
- static const struct of_device_id qusb2_phy_of_match_table[] = {
- 	{
- 		.compatible	= "qcom,ipq5424-qusb2-phy",
--		.data		= &ipq5424_phy_cfg,
-+		.data		= &ipq6018_phy_cfg,
- 	}, {
- 		.compatible	= "qcom,ipq6018-qusb2-phy",
- 		.data		= &ipq6018_phy_cfg,
+Regarding issue 4, this patchset does not cover it as it is difficult to
+handle in practice, and I am still working on it.
+
+Here is a brief description of the issue:
+When using sockmap to skb/stream redirect, if the receiving end does not
+perform read operations, all data will be buffered in ingress_skb.
+
+For example:
+'''
+// set memory limit to 50G
+cgcreate -g memory:myGroup
+cgset -r memory.max="5000M" myGroup
+
+// start benchmark and disable consumer from reading
+cgexec -g "memory:myGroup" ./bench sockmap -c 2 -p 1 -a --rx-verdict-ingress --delay-consumer=-1 -d 100
+Iter   0 ( 29.179us): Send Speed 2668.548 MB/s (20360.406 calls/s), ... Rcv Speed    0.000 MB/s (   0.000 calls/s)
+Iter   1 ( -7.237us): Send Speed 2694.467 MB/s (20557.149 calls/s), ... Rcv Speed    0.000 MB/s (   0.000 calls/s)
+Iter   2 ( -1.918us): Send Speed 2693.404 MB/s (20548.039 calls/s), ... Rcv Speed    0.000 MB/s (   0.000 calls/s)
+Iter   3 ( -0.684us): Send Speed 2693.138 MB/s (20548.014 calls/s), ... Rcv Speed    0.000 MB/s (   0.000 calls/s)
+Iter   4 (  7.879us): Send Speed 2698.620 MB/s (20588.838 calls/s), ... Rcv Speed    0.000 MB/s (   0.000 calls/s)
+Iter   5 ( -3.224us): Send Speed 2696.553 MB/s (20573.066 calls/s), ... Rcv Speed    0.000 MB/s (   0.000 calls/s)
+Iter   6 ( -5.409us): Send Speed 2699.705 MB/s (20597.111 calls/s), ... Rcv Speed    0.000 MB/s (   0.000 calls/s)
+Iter   7 ( -0.439us): Send Speed 2699.691 MB/s (20597.009 calls/s), ... Rcv Speed    0.000 MB/s (   0.000 calls/s)
+...
+
+// memory usage are not limited
+cat /proc/slabinfo | grep skb
+skbuff_small_head   11824024 11824024    704   46    8 : tunables    0    0    0 : slabdata 257044 257044      0
+skbuff_fclone_cache 11822080 11822080    512   32    4 : tunables    0    0    0 : slabdata 369440 369440      0
+'''
+Thus, a simple socket in a large file upload/download model can eat the
+entire OS memory.
+
+We must charge the skb memory to psock->sk, and if we do not want losing
+skb, we need to feedback the error info to read_sock/read_skb when the
+enqueue operation of psock->ingress_skb fails.
 
 ---
-base-commit: 2bdde620f7f2bff2ff1cb7dc166859eaa0c78a7c
-change-id: 20250407-revert_hs_phy_settings-f6b9ec6b2297
+My another patch related to stability also requires maintainers to spare
+some time from their busy schedules for review.
+https://lore.kernel.org/bpf/20250317092257.68760-1-jiayuan.chen@linux.dev/T/#t
 
-Best regards,
+
+Jiayuan Chen (4):
+  bpf, sockmap: Fix data lost during EAGAIN retries
+  bpf, sockmap: fix duplicated data transmission
+  bpf, sockmap: Fix panic when calling skb_linearize
+  selftest/bpf/benchs: Add benchmark for sockmap usage
+
+ net/core/skmsg.c                              |  48 +-
+ tools/testing/selftests/bpf/Makefile          |   2 +
+ tools/testing/selftests/bpf/bench.c           |   4 +
+ .../selftests/bpf/benchs/bench_sockmap.c      | 599 ++++++++++++++++++
+ .../selftests/bpf/progs/bench_sockmap_prog.c  |  65 ++
+ 5 files changed, 697 insertions(+), 21 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/benchs/bench_sockmap.c
+ create mode 100644 tools/testing/selftests/bpf/progs/bench_sockmap_prog.c
+
 -- 
-Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+2.47.1
 
 
