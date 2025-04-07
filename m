@@ -1,121 +1,103 @@
-Return-Path: <linux-kernel+bounces-592091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CBFBA7E8F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:51:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D288A7E8F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 19:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C98217F7DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:46:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CD74176B90
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF8D2185AB;
-	Mon,  7 Apr 2025 17:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D9E217F31;
+	Mon,  7 Apr 2025 17:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/sKjp9/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Q34nmnxa"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0C12144A1;
-	Mon,  7 Apr 2025 17:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFC0217663;
+	Mon,  7 Apr 2025 17:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744047973; cv=none; b=H1ewG4m4OxPC7AbRb0dwymCKoaKh0PgjMddjcnPLg9242f0cBqS+dGEm38fbbcfNoNa+8FqhsYxmLtChF0y7gSfFFwq9HG/mT7NfSqiwOXLp5BdINUo0Va9FWs+iGEuYdj9vylnAQ4QtoFoqTuMsFxIjffpbqvJGKLijnvu+GIs=
+	t=1744048017; cv=none; b=SYtNmqUr3SghSlIA2vsP7SvCeS0arCjc4Ojwu8v50bMzkmIUqG6thNpi5jYgvIY4LCP8oiEUYNUsr9RvBvNhSDLFFX2HyiAZN9uE/ddqb84DtdJMC3cn4PcGOR2LmIkzyeXUCUMHTT3sS0mKTty5/sR0c9S5gpZlb3i/wqxnVIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744047973; c=relaxed/simple;
-	bh=0fKTXOZW5qo0X+TiPkjQ6mKAeLsXB/zopMIkwzFYKkY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CBxfIt0WyEKCsHi0XlqGMkZi5TGvIT0eE7P2mSxubRyOqVdIxCcxY3cQixq/FpsyJzsIXDHqVMW2YegaPjS4+KdncoqIfBNGChEw29mLehHTUoDG6l9uL2mLtL3eKO93SMhmtCW6rhGE7l1iK7gAy3MhsHvLA3veEqXajMVXkBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/sKjp9/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70126C4CEE9;
-	Mon,  7 Apr 2025 17:46:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744047972;
-	bh=0fKTXOZW5qo0X+TiPkjQ6mKAeLsXB/zopMIkwzFYKkY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=h/sKjp9/0UEj3NLNlpbKVUKjaab0cvUHzBQftW4GVPyilANLb59ujPgeoT+CjTiT6
-	 jffT6zLc+nk9TJZOqffiBsieyO7M1SBjEsgWDJoh3ycdyARaeZBfg2O7qtxA6OD2PM
-	 LmvYX33jzf5hYPcxvc+fj8NG45DtQyGUeE1q3P5WBOAGW6SJjdVhbeG8gG7ZwfV3oa
-	 Z8t6lz0Z5/0xOX+cUJVfIXTWsL1/EDkQoRhBQoQMYieq0V9Bi3s9ZEtXD7dxI2WV+L
-	 rBqUOD/WGboMxqn3Gf9TDHGXtsEhT+gd6FIp1pONwv8rKS1EIF8C0z6nTLZ7bmIxrI
-	 VTV95pfDJ0FzQ==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5499bd3084aso4383318e87.0;
-        Mon, 07 Apr 2025 10:46:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVOAut0xVKefLeG6WX19cyMGw5saXIEGXDexOhCDpnie8W+K4rzoglvNkIzK95Ss0878YlpUmM4K4e9OcqI@vger.kernel.org, AJvYcCXpGbfFzylxB/GtvkAaHJkQo/Z5BPm2Hg4BqbZWjKlmMCuFzc1cUssI9WV6CJftedAJD2GAgcMxvTI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU1tfspCSx7y36pI5Mn/uF9ybXwjT3X2YYEyULsoqWRhYNUjst
-	9b+pPVCbP2XPk4jQRVCdzH2dP017AY+3IsocZFGsIAn1YeaU7bz7/QKg3UL5e62mWT9UQIokg6h
-	vkUDSpD5oqjZwD430eih4nLpSkhs=
-X-Google-Smtp-Source: AGHT+IGhlKGWnsMcOTGKmTWl7l4Q+R+vNEutfZ2rMUOfKaUEuAlPYG819aLiXhL+YHA/4nzk483tdd68kdI6IZm798s=
-X-Received: by 2002:a05:6512:3056:b0:549:c1e6:cbb9 with SMTP id
- 2adb3069b0e04-54c22767ef4mr3237009e87.9.1744047970782; Mon, 07 Apr 2025
- 10:46:10 -0700 (PDT)
+	s=arc-20240116; t=1744048017; c=relaxed/simple;
+	bh=3eN6/YjifecY2HB/tUwnGoB4rpyuQ8SNs7xbMNOujKw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ve0nIjTI9gv2YsvrPQImO1/gzLrRy+lF5V66oHJLOQQUaVVoj6oAZ1aqZ3xMEDUalIyL/o2Xh6DmNfLF+wn5WdGG8JMoDHCMtMaPeWH8Qg4QL7ZMeJ1YPOnYkuPj90GZJiPRhSLK3ht1IeLRhcZ0ELGTj6MfNilSqfoeJyRV/EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Q34nmnxa; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 537HkmVB433156
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 7 Apr 2025 12:46:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1744048008;
+	bh=9NeDdgCH1H4EeC0G6DnpevkoDIVJiaLovnZau5WGOP0=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=Q34nmnxaMZ1CS2wyY/kvpvY7APtq9bRgRKyMojLXwf+y8Oe2wXpBU2yoz5nU0mNtp
+	 he4X6tYoXu70yXDFSni2VVptH6W25q6/4rcO/b89JCyZUPNRencgfBh30RYvJ90ZLV
+	 2imXYtQOCLwy1AXg6/L5FWtFCRrT4Q3r89/VoNAI=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 537HkmaF102999
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 7 Apr 2025 12:46:48 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 7
+ Apr 2025 12:46:48 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 7 Apr 2025 12:46:48 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 537HkmYQ124236;
+	Mon, 7 Apr 2025 12:46:48 -0500
+Date: Mon, 7 Apr 2025 12:46:48 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Bryan Brattlof <bb@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 2/3] arm64: dts: ti: k3-am62l: add initial
+ infrastructure
+Message-ID: <20250407174648.exd57yivoj4rvson@going>
+References: <20250407-am62lx-v4-0-ce97749b9eae@ti.com>
+ <20250407-am62lx-v4-2-ce97749b9eae@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250404082921.2767593-5-ardb+git@google.com> <20250404082921.2767593-8-ardb+git@google.com>
- <l6izksy3qtvo6t6l3v44xhuzmrnl2ijv7fx5ypvaz7kjxvpwhh@4zwlvxyfrp43>
- <CAMj1kXGwnTkb1bUDaRpkh3ES8thcUVQE7+qgfZQw+RORtvtv-g@mail.gmail.com>
- <CAAH4kHbxMDGQy3v9ef1ZdqK0TNzpm==BJgx1KiUpRP-CRKDx4w@mail.gmail.com>
- <ldrma6tce2bwhenu5kobjzvk7cz445ubfmpcynwadqudgvzuh3@aibigcdzui6m>
- <Z_QA6GwqoxdW6D0e@gmail.com> <CAMj1kXGWPopQupteK0=mqd5z29Oj4Ye6KyPfgup-nHQO863Qow@mail.gmail.com>
- <grmalijxenphqg664brbqbreitq3qkancb7qv32yjdwzfoqowy@6tavdslt75i7>
-In-Reply-To: <grmalijxenphqg664brbqbreitq3qkancb7qv32yjdwzfoqowy@6tavdslt75i7>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 7 Apr 2025 19:45:59 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHcdT8X8uUyd+9eEF1Nc=CBNj2M4z172DUU7g_pJ5BHuw@mail.gmail.com>
-X-Gm-Features: ATxdqUETiXubx7oL92fu01tgK_Ofbmg0d3GrBgABA6pQ3UBszjzW9WPybc7BwRM
-Message-ID: <CAMj1kXHcdT8X8uUyd+9eEF1Nc=CBNj2M4z172DUU7g_pJ5BHuw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] x86/boot: Implement early memory acceptance for SEV-SNP
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Ingo Molnar <mingo@kernel.org>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-	Dionna Amalie Glaze <dionnaglaze@google.com>, Ard Biesheuvel <ardb+git@google.com>, linux-efi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Borislav Petkov <bp@alien8.de>, 
-	Kevin Loughlin <kevinloughlin@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250407-am62lx-v4-2-ce97749b9eae@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, 7 Apr 2025 at 19:33, Kirill A. Shutemov <kirill@shutemov.name> wrote:
->
-> On Mon, Apr 07, 2025 at 07:21:17PM +0200, Ard Biesheuvel wrote:
-> > On Mon, 7 Apr 2025 at 18:44, Ingo Molnar <mingo@kernel.org> wrote:
-> > >
-> > >
-> > > * Kirill A. Shutemov <kirill.shutemov@linux.intel.com> wrote:
-> > >
-> > > > On Fri, Apr 04, 2025 at 08:07:03AM -0700, Dionna Amalie Glaze wrote:
-> > > > > If the GHCB is available, we should always prefer it.
-> > > >
-> > > > I believe we should consider the cost of code duplication in this
-> > > > situation.
-> > > >
-> > > > If the non-early version is only used in the kexec path, it will not be
-> > > > tested as frequently and could be more easily broken. I think it would be
-> > > > acceptable for kexec to be slightly slower if it results in more
-> > > > maintainable code.
-> > >
-> > > Absolutely so.
-> > >
-> >
-> > It would be nice if someone could quantify 'slightly slower' - I am
-> > leaning to the same conclusion but I have no clue what the actual
-> > performance impact is.
->
-> If we can survive the performance of the initial boot, we can live with it
-> for kexec.
->
+On 10:34-20250407, Bryan Brattlof wrote:
+[..]
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62l-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62l-main.dtsi
+> new file mode 100644
+> index 0000000000000..697181c2e7f51
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/ti/k3-am62l-main.dtsi
+> @@ -0,0 +1,672 @@
+> +// SPDX-License-Identifier: GPL-2.0-only or MIT
+> +/*
+> + * Device Tree file for the AM62L main domain peripherals
+> + * Copyright (C) 2024 Texas Instruments Incorporated - https://www.ti.com/
 
-The initial boot does not occur via the decompressor, but via the EFI
-stub, where memory acceptance is handled by the firmware (as it
-should).
+Fix the copyright year please. We are in 2025.
 
-Given that the traditional decompressor carves out an allocation from
-the raw E820 map without using any of the higher level APIs, it has to
-accept the memory itself if it is marked as unaccepted in the table.
-
-Perhaps the decompressor should try to avoid unaccepted memory?
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
