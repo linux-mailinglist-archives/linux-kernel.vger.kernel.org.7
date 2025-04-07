@@ -1,157 +1,226 @@
-Return-Path: <linux-kernel+bounces-591356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69FB7A7DEAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:14:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0B11A7DE9D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:13:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E90B188BF69
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:14:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E06D16B19F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2172253B6E;
-	Mon,  7 Apr 2025 13:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CBC5680;
+	Mon,  7 Apr 2025 13:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HQVezAXu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzP11lJ+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8871B253B53
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 13:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DA92288D2;
+	Mon,  7 Apr 2025 13:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744031602; cv=none; b=B52irJJRTyENpZNb2b1QWdDMEKCYWpzpMIIhmkVJxlkSIysF90pMGC7wuGvr1DVCucQO+Sqgsg7KEVRHS3HIlAC+fRlHzekjaPKtsem/aJYU9TKkT093FgQbJsPzErquZS50GPX1mQ4O7z+qz4v2swvfYfqHwmQV7selo9rGDag=
+	t=1744031581; cv=none; b=VRpwxEPZFFjgCZtJD9NXYjQZu/hilWCYJsz7ikBY7CMN5zIrvH6M14zurLjKSZI2v//BVxWbrfmzewnCAfWSTlBqMIgHKfBUUIldqpJ6MTmtty9N1MKeMm8j1KGRVP0o9MOMSPRzsWPPud3AsD0/t9HnULUJk+1V6G+fdx9fJ3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744031602; c=relaxed/simple;
-	bh=Ga2K09VmKsNU+0mnEVhgO1+H24/PI+fT+YcdrRb2qEw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-type; b=e14YVu3ZU4SME6EqKMQ4NaCHR1AA5jAv9M5rSJGdbY98NmHK4aYWe6epMfLQ+X3xSuQdrWpfzuMBRNWFnTfPFqCxgLWBY05q+i3D2Eh5QQa4dv5TJnA597KSYqN4DYe2XI02Caeabj5ccOoQygQy/R7XHRBjZ36MKPNT45mlLZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HQVezAXu; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744031599;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vCiYE/HbpALtWNARoJxya1tjWc8KeYYpYFoVh2t216c=;
-	b=HQVezAXu7l8vht59hAPVuqMlXnVdWkbwjWL+OLjO66gHkY7hwGWj5vRADk/5krn7o1TFRs
-	2JaFDTAXHgcRmLPBtabIVqjc9zBlrZCpUIpVNpazCflnxeuol2G5dILk1/mQQYFYa0K9hM
-	ejUqVKWuqH5De5yHCh9a6ghLiTIFF6s=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-15-qfcsyhZAM0ed2Hn7nCr1MQ-1; Mon, 07 Apr 2025 09:13:18 -0400
-X-MC-Unique: qfcsyhZAM0ed2Hn7nCr1MQ-1
-X-Mimecast-MFC-AGG-ID: qfcsyhZAM0ed2Hn7nCr1MQ_1744031598
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c54a6b0c70so382247785a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 06:13:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744031598; x=1744636398;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vCiYE/HbpALtWNARoJxya1tjWc8KeYYpYFoVh2t216c=;
-        b=Xgnrm0SMRqt6kfeLBz3gmcU/NfpgJoupHueF5p5CLmC5DEdDlHlRHwSq1W2UTykm7E
-         zlQ35ij++BG2Hr+dJOF5gNHytr5c4vQ8jGwp+y+2DuyVUiiYheE6HYr5znkrdl2uiIs5
-         nuQ02Rm4RZRDgLnszyl+Qh5e6Wh7OXSKtbC4vJLPKUfY9bsw2pqEAp0q7g+JaC4t/Z18
-         IFXfRB3kfTR9zwlInVeCGR1mECgeiyXzSuOGGZhdzgYBqM+j2E4zDfZrE8CcRZMNPIyx
-         y6bnTYhZ7b4hLHozdbCGHpvhHzNchROFC0LvsLfaZTn2FhJKg78ARed4EBYui56+X0D+
-         y62w==
-X-Forwarded-Encrypted: i=1; AJvYcCXhlfpb6Ix7MZU3dhVV1iufSIKdrgr+NeDsfkVKZnnIIU83hma/HuIHCdBSEVTlbhR0cikDCnE4vG5fCgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBbiU2FtB3ANY1yYu+VpOxJdRgmK73SbmKYzz32o71zmeII2L8
-	qYYcFMI/mbblKC4+SRBJUIIeMYVIXNZvOOSf10Ym6UcQ3rk0MLGnZuswzmwJQfMg6FRmEAMTqAk
-	8PA/7dlTIWunZuEjEYh/9KOst77dBfD+h9vjm95+vBOJoKSzO58iDtWMR/Jwy4g==
-X-Gm-Gg: ASbGncuqssJHZ3+vaSDyRy7aCrNo23dlOeLjs1oY6J6k86MV+IZGYVjnxuXmFqkL5IH
-	F64Rciw6vBC1aDvz48YsKafWKuC6pKKCxrbds+yz/H2fBUG9BY1LNVbKKEqLRzd8VFsk5SXG0Ls
-	vq5dTOy0r/aJ4lntco7qKh7UygcDDqV5Mx3zTg2HEfkOtj5apWFbimA3aDyG3pn6ZsxfTDzl4IC
-	rZw5jicO3djx+Z0MX/LIP0vDXcfFY7OHsf/mWusWrHncWMGECEOh1yGLyVW8lbK4TrMYuhqg0kx
-	d763KuY/QPxQpc1rTioYUm+xKcYmXNw/cuzTEPC1WQ==
-X-Received: by 2002:a05:6214:2a8c:b0:6e8:f568:22e8 with SMTP id 6a1803df08f44-6f0584e7218mr192571066d6.15.1744031597940;
-        Mon, 07 Apr 2025 06:13:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFockwKyOARh1pqCe+ax8s85aAbuAeIui04lL9zrBZU1ZDa7xBuA5q5m9Vib49h98pfLr3qNw==
-X-Received: by 2002:a05:6214:2a8c:b0:6e8:f568:22e8 with SMTP id 6a1803df08f44-6f0584e7218mr192570576d6.15.1744031597548;
-        Mon, 07 Apr 2025 06:13:17 -0700 (PDT)
-Received: from x1.. (c-98-219-206-88.hsd1.pa.comcast.net. [98.219.206.88])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ef0f138e15sm57662556d6.82.2025.04.07.06.13.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 06:13:15 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-To: sboyd@kernel.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mripard@redhat.com
-Subject: [PATCH 4/8] clk: test: introduce clk_dummy_gate for a mock gate
-Date: Mon,  7 Apr 2025 09:12:54 -0400
-Message-ID: <20250407131258.70638-5-bmasney@redhat.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250407131258.70638-1-bmasney@redhat.com>
-References: <20250407131258.70638-1-bmasney@redhat.com>
+	s=arc-20240116; t=1744031581; c=relaxed/simple;
+	bh=9LX9ZPt/GJDIyCQinksGC4kEpielS/uNfiHsifgyKao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q3i9dRJwJ07VFRFIu4l+ma35Dny8rqzVLkCwSFxuutDoawm1oi2Gvo2XoKqmbS8KDt1jLEDJypP0+/f412tSCVSOFqSoUsNEC2BxviCWzwYlyjOIeM6Gc5uQFWl7LZyOBXSiAmsLi82Y03/UzPRBeLdBFpxZ9qA0UrBGnj52NfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzP11lJ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D883BC4CEDD;
+	Mon,  7 Apr 2025 13:12:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744031580;
+	bh=9LX9ZPt/GJDIyCQinksGC4kEpielS/uNfiHsifgyKao=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bzP11lJ+quKnQ3UwS1qX2OPEVeB1Vc5E4xZ76YaSTHGEbHrYjePNj1wmDMoR9vYlL
+	 J3NOi7V9EK/R+xpFOSFRLWa3UYh6pJpobQty71M+Y9b1Z4qpgTT8MK0VOLK3mXy1lD
+	 JlGFd4ceEh6MSJn05qtShaAmsnL8+pkbWdQ1T9cqhnkzEUtzfHIkfNG2+nQ5HFGg7Q
+	 Ts4CLFOqhdAIcHbL5qRiR9kvkoaI9yRBKkrXY1vT19FRRx1NGIFCulRsUHihMEDXiz
+	 7UeW1nqxOcu3HXD782lWJBjOpyhzXEzhL/beT9H3l/yMDaheo1pZGLRTiwr/9OsZrg
+	 P9axT9IloFQZg==
+Message-ID: <6a9bd37e-ffec-4365-891a-64259c0cc115@kernel.org>
+Date: Mon, 7 Apr 2025 15:12:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-type: text/plain
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 11/11] ASoC: dt-bindings: mediatek,mt8196-mt6681: add
+ mt8196-mt6681 document
+To: "Darren.Ye" <darren.ye@mediatek.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org
+References: <20250407120708.26495-1-darren.ye@mediatek.com>
+ <20250407120708.26495-12-darren.ye@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250407120708.26495-12-darren.ye@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This is used to mock up a gate in the clk kunit tests.
+On 07/04/2025 14:06, Darren.Ye wrote:
+> +
+> +allOf:
+> +  - $ref: sound-card-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
- drivers/clk/clk_test.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+Drop
 
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index 7d4dd1a559db..14ae88df5389 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -181,6 +181,40 @@ static const struct clk_ops clk_dummy_div_ops = {
- 	.set_rate = clk_dummy_div_set_rate,
- };
- 
-+struct clk_dummy_gate {
-+	struct clk_hw hw;
-+	bool enabled;
-+};
-+
-+static int clk_dummy_gate_enable(struct clk_hw *hw)
-+{
-+	struct clk_dummy_gate *gate = container_of(hw, struct clk_dummy_gate, hw);
-+
-+	gate->enabled = true;
-+
-+	return 0;
-+}
-+
-+static void clk_dummy_gate_disable(struct clk_hw *hw)
-+{
-+	struct clk_dummy_gate *gate = container_of(hw, struct clk_dummy_gate, hw);
-+
-+	gate->enabled = false;
-+}
-+
-+static int clk_dummy_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_dummy_gate *gate = container_of(hw, struct clk_dummy_gate, hw);
-+
-+	return gate->enabled;
-+}
-+
-+static const struct clk_ops clk_dummy_gate_ops = {
-+	.enable = clk_dummy_gate_enable,
-+	.disable = clk_dummy_gate_disable,
-+	.is_enabled = clk_dummy_gate_is_enabled,
-+};
-+
- struct clk_multiple_parent_ctx {
- 	struct clk_dummy_context parents_ctx[2];
- 	struct clk_hw hw;
--- 
-2.49.0
+> +      - enum:
+> +          - mediatek,mt8196-mt6681-sound
+> +          - mediatek,mt8196-nau8825-sound
+> +          - mediatek,mt8196-rt5682s-sound
+> +          - mediatek,mt8196-rt5650-sound
+> +
+> +  audio-routing:
+> +    description:
+> +      Valid names could be the input or output widgets of audio components,
+> +      power supplies, MicBias of codec and the software switch.
+> +
+> +  mediatek,platform:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: The phandle of MT8188 ASoC platform.
+> +
+> +  mediatek,adsp:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      The phandle of the MT8188 ADSP platform, which is the optional Audio DSP
+> +      hardware that provides additional audio functionalities if present.
+> +      The AFE will link to ADSP when the phandle is provided.
+> +
+> +patternProperties:
+> +  "^dai-link-[0-9]+$":
+> +    type: object
+> +    description:
+> +      Container for dai-link level properties and CODEC sub-nodes.
+> +
 
+Everything looks here exactly the same as mt8188-mt6359, except accdet.
+Are you sure, really, really sure these are different and you do not
+have accdet?
+
+> +    properties:
+> +      link-name:
+> +        description:
+> +          This property corresponds to the name of the BE dai-link to which
+> +          we are going to update parameters in this node.
+> +        items:
+> +          enum:
+> +            - TDM_DPTX_BE
+> +            - I2SOUT6_BE
+> +            - I2SIN6_BE
+> +            - I2SOUT4_BE
+> +            - I2SOUT3_BE
+> +
+> +      codec:
+> +        description: Holds subnode which indicates codec dai.
+> +        type: object
+> +        additionalProperties: false
+> +        properties:
+> +          sound-dai:
+> +            minItems: 1
+> +            maxItems: 2
+> +        required:
+> +          - sound-dai
+> +
+> +      dai-format:
+> +        description: audio format.
+> +        items:
+> +          enum:
+> +            - i2s
+> +            - right_j
+> +            - left_j
+> +            - dsp_a
+> +            - dsp_b
+> +
+> +      mediatek,clk-provider:
+> +        $ref: /schemas/types.yaml#/definitions/string
+> +        description: Indicates dai-link clock master.
+> +        items:
+> +          enum:
+> +            - cpu
+> +            - codec
+> +
+> +    additionalProperties: false
+> +
+> +    required:
+> +      - link-name
+> +
+> +unevaluatedProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - mediatek,platform
+> +
+> +examples:
+> +  - |
+> +    sound {
+> +        compatible = "mediatek,mt8196-mt6681-sound";
+> +        model = "mt8196-mt6681";
+> +        mediatek,platform = <&afe>;
+
+Make the example complete.
+
+
+
+Best regards,
+Krzysztof
 
