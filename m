@@ -1,106 +1,88 @@
-Return-Path: <linux-kernel+bounces-590546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB0C3A7D43E
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:35:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF490A7D439
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C83C188DC5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:35:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A053A896D
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 06:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EA2225766;
-	Mon,  7 Apr 2025 06:35:26 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9B42253B7;
+	Mon,  7 Apr 2025 06:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jeuRe9kG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB492253E9;
-	Mon,  7 Apr 2025 06:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F852222B5;
+	Mon,  7 Apr 2025 06:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744007726; cv=none; b=DHOXWedE9YIZFaqh2PJvGYNf7ZtJSUcpcL3CXpFhxKKx4ISgbTw6IDOq8OQm/g2tNuXdCCYejtELfTehjhBtPCVWulT22ErUEaxAC9Yzx0XkfGRwARYWYVKZR+s7qBhZYm9vRAyGn46Z4QA0zQjWBBA4OUKpwYdYbjqZ9YJHhOk=
+	t=1744007658; cv=none; b=VFflrvO8zXHz9IvuiBsTygBq4hruK+Q0A01JWuDMOcOVtAysxjlN9nGXEKVV0xzzXSo0NMd3wKwyBXbopAr7xnoaOpGX8tNDBv1Q2VhEGgSrH3BAVrHTp/5S5J6Vu9sVRBdnrIP+21yW2uv3u14R6k685tvfCd6nFZafkIWOweA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744007726; c=relaxed/simple;
-	bh=/1Tn3fdh1YmHdKYpDHBh99LOXaHvuuJ86z8clOnHlIU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kX4rB9DZrIBBjkJlpd2SWWQfONoqrOAt2Vdk9jex4j1sSLZK+rxcgL8Yrxabx5VI/9PMb6I08bEbsdh0JA486qTzd96gQr53WWsQLxQHTeBRQUEi4N2/whY7vG3CSL5GCt7GXE+Ipg3Uv6Qv1FZM+86h9n2px00wpkT9U1LP90Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowAC37gYdcvNnHnHQBg--.10866S2;
-	Mon, 07 Apr 2025 14:35:10 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	ckeepax@opensource.cirrus.com,
-	rf@opensource.cirrus.com,
-	simont@opensource.cirrus.com,
-	peterz@infradead.org
-Cc: patches@opensource.cirrus.com,
-	linux-sound@vger.kernel.org,
+	s=arc-20240116; t=1744007658; c=relaxed/simple;
+	bh=F11fDBMw5qn285+fkZeSc1pLnkzv4B4whfL04ih4law=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mitXCTLK5qYwgjjhG/KIskD5uF0kd0A5EkMt3dnbEsTJpnCRp0uLck1dVceUarilZg1p9MVDMbRnBO3MFcSdoBUqGB+YcIelmGAaYdpaOY/sE6xNqfZbAsX3U+owJbP6R747CeZvnrlr8gVC9+lOlahiSLxm+kEM50GEfheUE1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jeuRe9kG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13BFFC4CEE8;
+	Mon,  7 Apr 2025 06:34:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744007655;
+	bh=F11fDBMw5qn285+fkZeSc1pLnkzv4B4whfL04ih4law=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=jeuRe9kGufU8+PPrx5sEagn1j8hzekfVNP81vaDE2sgMGlgwvJUXpUGfcc+Gff75e
+	 pTKkZHpHSt5n9W3uTwBc1hCQ3e+OxWCD6yOaN7Co7LoSI/3CQnma1BuKj9q6D8WGGJ
+	 bRGL6mKzaWt1XZYXPATPqJcgOJhk7P306wWAbot8McAvMjWm1REkGQ0y15o6k2JnZm
+	 fzU+xw6RVmsaGZsfF3loVDiE+6v2h5z/e2WGA6M3p4wkzK3MOda8PfS1a3ee6AUgke
+	 w0SBOaZkqP58qfZv0DU1IliOCtV2M8bmCdV3e4waiMqs7COraMz2ZNz4mj4VX/7HbT
+	 izZ87Xo0pmsSA==
+From: Mike Rapoport <rppt@kernel.org>
+To: Wei Yang <richard.weiyang@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Mike Rapoport <rppt@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
 	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] ASoC: wm_adsp: Remove unnecessary NULL check before release_firmware()
-Date: Mon,  7 Apr 2025 14:34:03 +0800
-Message-Id: <20250407063403.2772040-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	linux-trace-kernel@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-mm@kvack.org
+Subject: Re: [PATCH] memblock tests: Fix mutex related build error
+Date: Mon,  7 Apr 2025 09:34:05 +0300
+Message-ID: <174400747484.63432.18336494235808087526.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <174399023133.47537.7375975856054461445.stgit@devnote2>
+References: <174399023133.47537.7375975856054461445.stgit@devnote2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAC37gYdcvNnHnHQBg--.10866S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtw18ZF4ktr4xXry8JrW5KFg_yoWfXrg_Aa
-	ykCw18GryxtrW3X347ur1avrW3uay5ur1rJrnFyayUJryDJw4Sqw1UWan5ua18X3yIka4f
-	ZF1DZrWDC398JjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
-	8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8AwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUcjjkUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-release_firmware() checks for NULL pointers internally.
-Remove unneeded NULL check for fmw here.
+On Mon, 07 Apr 2025 10:43:51 +0900, Masami Hiramatsu (Google) wrote:
+> Fix mutex and free_reserved_area() related build errors which have
+> been introduced by commit 74e2498ccf7b ("mm/memblock: Add reserved
+> memory release function").
+> 
+> 
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- sound/soc/codecs/wm_adsp.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Applied to fixes branch of memblock.git tree, thanks!
 
-diff --git a/sound/soc/codecs/wm_adsp.c b/sound/soc/codecs/wm_adsp.c
-index 91c8697c29c3..ffd826f30e15 100644
---- a/sound/soc/codecs/wm_adsp.c
-+++ b/sound/soc/codecs/wm_adsp.c
-@@ -718,12 +718,10 @@ static void wm_adsp_release_firmware_files(struct wm_adsp *dsp,
- 					   const struct firmware *coeff_firmware,
- 					   char *coeff_filename)
- {
--	if (wmfw_firmware)
--		release_firmware(wmfw_firmware);
-+	release_firmware(wmfw_firmware);
- 	kfree(wmfw_filename);
- 
--	if (coeff_firmware)
--		release_firmware(coeff_firmware);
-+	release_firmware(coeff_firmware);
- 	kfree(coeff_filename);
- }
- 
--- 
-2.25.1
+[1/1] memblock tests: Fix mutex related build error
+      commit: ed471e1984939a500eea179bc16e1c2aadf00db5
+
+tree: https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock
+branch: fixes
+
+--
+Sincerely yours,
+Mike.
 
 
