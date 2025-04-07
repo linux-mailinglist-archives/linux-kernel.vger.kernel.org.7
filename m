@@ -1,105 +1,155 @@
-Return-Path: <linux-kernel+bounces-590507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5C3CA7D3A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:50:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 146BAA7D38B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 917287A43FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 05:49:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A69463AB0B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 05:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7A1224890;
-	Mon,  7 Apr 2025 05:50:40 +0000 (UTC)
-Received: from sxb1plsmtpa01-04.prod.sxb1.secureserver.net (sxb1plsmtpa01-04.prod.sxb1.secureserver.net [92.204.81.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA19224258
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 05:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.204.81.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37087221F1C;
+	Mon,  7 Apr 2025 05:31:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E141C6B4;
+	Mon,  7 Apr 2025 05:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744005040; cv=none; b=lPJzH2gzFq+TuOxIB7HE+ofJ77tLk9twi7/2pJEvZnl9LS2k9UN9qwMpgYhLAjmtBINxr0G6AXtue4aOOnVaDP5tzG1FoWdciA6NfoEXuuZCfrUbsZf2I37CETYO5fg6l4KuwodVpOV1NXzN0LbgBLt36S+EKawCe//VXWyOcDY=
+	t=1744003894; cv=none; b=WeapvPa6gtKTYzLKoYz12mhwa6SUrWg/bGAVDXZ6CjDWI8eBT4PNVsZw+1PQTA9wtL/uXHdigJ5pI0Wb0/sCgOngFhA9OUH/bRTqIiC0FrqCyG+ChEQXNF4b4Y6fVSW3yV8mywozI0n3zJKdbOa/qDZzy7whB3ja+R5VV3wAV4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744005040; c=relaxed/simple;
-	bh=qyEm1ZA4yiL/b1lEXBMroVsfG9cT3DHpkXGoKCl2Ppw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=pOlyPCFq1p+ukjEgjStLn6Cg1i4OwF0fK7OJ4yU5BS3+i0nS8PXWmx0nmdfkAeIrg0cQ5qlKMVL0u1n3xZZa3zJGC8+/zbmyYY22s2zdwLR5+NT/3+cJNMQ3yvi3y9Q4PQKi2atGoiwYOH4n1bKJVl8MrEla4e7lARLlfrXXwIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=92.204.81.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
-Received: from [192.168.178.95] ([82.69.79.175])
-	by :SMTPAUTH: with ESMTPSA
-	id 1f4tuKfifINjl1f4vuE9Mb; Sun, 06 Apr 2025 22:31:26 -0700
-X-CMAE-Analysis: v=2.4 cv=NI8v+16g c=1 sm=1 tr=0 ts=67f3632f
- a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
- a=IkcTkHD0fZMA:10 a=u6sYcmGwt8sEfABpyM8A:9 a=QEXdDO2ut3YA:10
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk
-Message-ID: <2a13ea1c-08df-4807-83d4-241831b7a2ec@squashfs.org.uk>
-Date: Mon, 7 Apr 2025 06:30:35 +0100
+	s=arc-20240116; t=1744003894; c=relaxed/simple;
+	bh=vzKn42vmU3YBYe5mDLuqrSyTsvv4kVJ8L+DKlZiid1U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gl/+YBJH5uYfqIf3SP0HaJy/Lc19Cq/uk7JkoKUXVWVwrHmM61gsjdlqsW/+tXxzbPjN+3ZFO00wLTJSs0v2uStH2je2U9UCcRq3AeA5+seb999buaHaL4aPqa3JPREnH9sJuOpTxmL9ZgQCT67juftPAKK6E4HqNz01CMkuPeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B171F106F;
+	Sun,  6 Apr 2025 22:31:26 -0700 (PDT)
+Received: from a077893.blr.arm.com (a077893.blr.arm.com [10.162.42.8])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 527C93F6A8;
+	Sun,  6 Apr 2025 22:31:18 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-mm@kvack.org
+Cc: mark.rutland@arm.com,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org
+Subject: [PATCH V2 0/3] mm/ptdump: Drop assumption that pxd_val() is u64
+Date: Mon,  7 Apr 2025 11:01:10 +0530
+Message-Id: <20250407053113.746295-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: syzbot+65761fc25a137b9c8c6e@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org, phillip@squashfs.org.uk,
- squashfs-devel-owner@lists.sourceforge.net,
- squashfs-devel@lists.sourceforge.net, syzkaller-bugs@googlegroups.com,
- phillip.lougher@gmail.com
-References: <67f1f6f6.050a0220.0a13.025a.GAE@google.com>
-Subject: Re: [syzbot] [squashfs?] UBSAN: shift-out-of-bounds in
- squashfs_bio_read
-Content-Language: en-US
-From: Phillip Lougher <phillip@squashfs.org.uk>
-In-Reply-To: <67f1f6f6.050a0220.0a13.025a.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfIM042gc/8JGCsd7GfE3sA190hiyYn41HftL2t7HhD8jU/qkoLtCZqDF90lN8wJOcPKl07Wi1+sGAwAQlbTQx3zgpXQL6HqfxJts/adOAEf1qR25kIpU
- NRZXPLUfj1bRszpEsdhBJ4f8Tbg6XRXgZD+Loh62vK/iF6LpL/OprcdFna+L6ByjLqex5N+hPGuWQKcy+9KXvpkRRtiBpZHgVU5il4afUdNzmX9C1Y8julWL
- QiVB8A1CwbaD6WMT6LQYjN1ySrv/ybH3szOl+0bP7ImaglxyiDZ5HWglZ6Mqrn7eI+rBE0LWK8Vg5vffjd6Uf30ihR7tIdmzeATslYypGVNZLVMjYsobUTkJ
- Kwxz52sWqF/i4+AwLLMbxNJl/YhCBzD0sUdpUPkMid1KdPzLg5BZaNiQrD9JroU1irflNFqUwSEwUFCynQW1tbPaV9lZCNY9t8bL520e1E4DkuiKSz00CZrb
- ab3UrmHmEdWRMB4Z81OjagXzJOmCootaFHc26fQx6z8u3kCYUqHyfM80GVg=
+Content-Transfer-Encoding: 8bit
 
-I have spent most of Sunday on this syzbot issue, because it is one of
-those PITAs, which are difficult to reproduce, and are full of red
-herrings.
+Last argument passed down in note_page() is u64 assuming pxd_val() returned
+value (all page table levels) is 64 bit - which might not be the case going
+ahead when D128 page tables is enabled on arm64 platform. Besides pxd_val()
+is very platform specific and its type should not be assumed in generic MM.
+A similar problem exists for effective_prot(), although it is restricted to
+x86 platform.
 
-Firstly, this issue has nothing to do with corrupted Squashfs
-filesystems.  This is the because the failure occurs before the Squashfs
-filesystem superblock has been read, and thus filesystem corruption
-doesn't come into it.  Thus the source of the failure is elsewhere in
-the obfusticated auto-generated C reproducer.
+This series splits note_page() and effective_prot() into individual page
+table level specific callbacks which accepts corresponding pxd_t page table
+entry as an argument instead and later on all subscribing platforms could
+derive pxd_val() from the table entries as required and proceed as before.
 
-Digging deeper into the reproducer, it turns out the reproducer is
-forking multiple processes which after mounting the Squashfs filesystem,
-issues a LOOP_SET_BLOCK_SIZE(r0, 0x4c09, 0x8000) ioctl on loopback
-device /dev/loop0.  Now, if this ioctl occurs at the same time another
-process is in the process of mounting a Squashfs filesystem on
-/dev/loop0, the failure occurs.   The ioctl has to be issued in the
-early part of squashfs_fill_super() before the superblock has been read.
-When this happens, the following code in squashfs_fill_super() fails.
+Define ptdesc_t type which describes the basic page table descriptor layout
+on arm64 platform. Subsequently all level specific pxxval_t descriptors are
+derived from ptdesc_t thus establishing a common original format, which can
+also be appropriate for page table entries, masks and protection values etc
+which are used at all page table levels.
 
-----
-msblk->devblksize = sb_min_blocksize(sb, SQUASHFS_DEVBLK_SIZE);
-msblk->devblksize_log2 = ffz(~msblk->devblksize);
-----
+This series has been tested on arm64 platform but it does build on other
+relevant platforms (v6.15-rc1).
 
-sb_min_blocksize() returns 0, which means msblk->devblksize is set to 0.
+Changes in V2:
 
-As a result, ffz(~msblk->devblksize) returns 64, and
-msblk->devblksize_log2 is set to 64.
+- Added a patch to split effective_prot() callback per Alexander
+- Added a patch to define ptdesc_t data type on arm64 platform per Ryan
 
-This subsequently causes the
+Changes in V1:
 
-UBSAN: shift-out-of-bounds in fs/squashfs/block.c:195:36
-shift exponent 64 is too large for 64-bit type 'u64' (aka 'unsigned long long')
+https://lore.kernel.org/all/20250317061818.16244-1-anshuman.khandual@arm.com/
 
-The fix is to check for a 0 return by sb_min_blocksize().
+- Added note_page_flush() callback and implemented the same on all
+  subscribing platforms
+- Moved note_page() argument change from u64 to pteval_t on arm64 platform
+  from second patch to the first patch instead
 
-I'll send a patch tomorrow.
+Changes in RFC:
 
-Phillip
+https://lore.kernel.org/all/20250310095902.390664-1-anshuman.khandual@arm.com/
+
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Steven Price <steven.price@arm.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+Cc: Heiko Carstens <hca@linux.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-riscv@lists.infradead.org
+Cc: linux-s390@vger.kernel.org
+Cc: linux-mm@kvack.org
+
+Anshuman Khandual (3):
+  mm/ptdump: Split note_page() into level specific callbacks
+  mm/ptdump: Split effective_prot() into level specific callbacks
+  arm64/mm: Define ptdesc_t
+
+ arch/arm64/include/asm/pgtable-types.h | 20 +++++---
+ arch/arm64/include/asm/ptdump.h        | 24 ++++++---
+ arch/arm64/kernel/efi.c                |  4 +-
+ arch/arm64/kernel/pi/map_kernel.c      |  2 +-
+ arch/arm64/kernel/pi/map_range.c       |  4 +-
+ arch/arm64/kernel/pi/pi.h              |  2 +-
+ arch/arm64/mm/mmap.c                   |  2 +-
+ arch/arm64/mm/ptdump.c                 | 50 ++++++++++++++++--
+ arch/powerpc/mm/ptdump/ptdump.c        | 46 ++++++++++++++++-
+ arch/riscv/mm/ptdump.c                 | 46 ++++++++++++++++-
+ arch/s390/mm/dump_pagetables.c         | 46 ++++++++++++++++-
+ arch/x86/mm/dump_pagetables.c          | 71 +++++++++++++++++++++++++-
+ include/linux/ptdump.h                 | 15 ++++--
+ mm/ptdump.c                            | 62 ++++++++++++++--------
+ 14 files changed, 339 insertions(+), 55 deletions(-)
+
+-- 
+2.25.1
+
 
