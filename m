@@ -1,162 +1,133 @@
-Return-Path: <linux-kernel+bounces-591739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C97C1A7E48A
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:34:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A26B2A7E4C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DC411885762
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:27:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE790162ED8
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B50201253;
-	Mon,  7 Apr 2025 15:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YxrS4pTq"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868571FF5EF;
+	Mon,  7 Apr 2025 15:26:32 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D969E1FECD7
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 15:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352461FCFE5;
+	Mon,  7 Apr 2025 15:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744039522; cv=none; b=ahFERuvozFh66/26hycPGgaJnhKYnIjZ3cp/W8BCkLNcMnDHrRBaP3Ai/eSymn70oYopDc4SmykDfe8eSSRq4Z0o9Rf72spRKuvW2Rn2uROI4gIfwpKd5UAM9N4Y18FQ+ztuG6UOLdGJCVYoF3qMVujzkNMnoTT57RJc/bNfd8Y=
+	t=1744039592; cv=none; b=Mbl3p4NUyyLuWMVUBMxgjSsM+9zVHEoPEOK3TFb1FwRjRKt6iDvXD0onVeFuwsY5UDOZ3civE4jULd5ToeJLDXm8b8r+y9xupycMWen3XdJFeUApLa/pMqYsXzh4Dm2ToFzrvATp72ri1nYhfXuI77Nw4SWEGdmJ3iAC/iV3yNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744039522; c=relaxed/simple;
-	bh=P/Ks5ThkyG4NgbSPXxPyQOvCZo0EyEbEsiYV97hCPbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BHF2rirUWX3IJhfCAHkdMQDhy5KL1EltIKnXeWv7/3ej4FidZLikbeLVfC2g9xKZRF1nJeFii/dKaS4LIMt7BxLmoI2AtIjhFSbrGB6kTUB2Q8xLgu6vE0UMFVpoMXUbG9qjwQKyzFEY3jWhHeo0TcDJgijvuPX8EH7oi8PnG5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YxrS4pTq; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cfb6e9031so42002915e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 08:25:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1744039518; x=1744644318; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rBI/ctOg6rttQTImP8b9T2x38eCYUNV1RiePYdYKl88=;
-        b=YxrS4pTqEbn8hx1OqpN7VI3d1itcVhX6fPAnLD2BmN5FbOSrp05YzUtKKTtt0zX1Sy
-         O81POSo1wvCeLOaDXfoqaTymFaCvq07zPXoC8hFIQhAn9VCQ9v6JzRNjOaE84pozzT4y
-         DpOHh+NnBi0sCgMJKfGhHDiVnxH30W5+gsZPkdMAW2e+dZrt2XNvDPuFo1s/7IRc5+7x
-         neDmuBORgGlfMgXOb37Xc6piukpuXd79TShQsQYxOws3PspwPfvQZBiV/HJ/pFKRP9N4
-         hI6BIJQA/d25Qp8iIj1iukTY9s1hKCy2ls1sxNLX3Z49to+40bDCy1QK0d9WVcbeOkw5
-         /aYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744039518; x=1744644318;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rBI/ctOg6rttQTImP8b9T2x38eCYUNV1RiePYdYKl88=;
-        b=LV8VjjYWLzllDdObpVj6rOLckbg7eZDihd4zLkXsd3XEOAuEfJ/QBv6wyruXDAIOBL
-         VI5hjflZTZ1YSHDvPWRjImXLQ14AnH/bQXl3SwUF4cpAArCOnHv3V7QxSmbd0yXeOjpK
-         xSN1utEOcEPV6v3qUwWcwVT7pjsYS6oUT8OdBVsnrF410sqb4mrFNgWaV9CDbJ9aFPgo
-         97ESg/BIak4j6vP5YGrJRJvHmj0yUyS7p/zjMYDJK4o1an+yhHMTAEaXd2o3JchFbc7H
-         6XqtlaMcg2Xs0liMGBog9f3fbaW4Pg2oIhbr95QwnYBDo7vuDVst5XUKcu593GrmFXMM
-         vMZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVODOfz2iuuYivfv6/WqJIE5/zI5YNPScN7ODHl/u/W4Fh7Qf8A2IUmqei6Yzgmp2jPbf4SNX2NxbMwcvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzyec8rb3wZSrpqYUW14wYM7/gCtd8+sBDpYEXUpbmMvtlyU4NL
-	4xaD+n4nbapypYx/+MAFKe6XHKO0WplAWedNVqTkhHCUeQibuqkyL/0zrcLA8xA=
-X-Gm-Gg: ASbGncvW2CoQhAidx9EyiVzK+6VSLc1aklwAAiUrlcf4PntR6VtssAYwfRFA/MuQ1eE
-	oOnhCyrDHg3qf71KHRtNf1vplCY2WoG9b2+C8YtYIKmkC3Rshdc+S1P3CNC5P0hRRpN4FR6cQ9s
-	ntvfV9+QmvGdY7iL1sTz9H5E/uFM+Yeu5LHoq+E0RQQRwqF7MZkYTk/ll22HzP19GVnOKGbYJZu
-	65wiiCkEMrIh8IR3LYTDd4QbXYwsi2eOWNKOaBWz3rpZfELQhx5SJZSHM1sWJmR33Of7uBstWZu
-	NYbOOu631igXvUO/8hmST4qGvY1BBNVjzPkkx9MvJfwabhjkM0fHbAmxGw==
-X-Google-Smtp-Source: AGHT+IEuUH3J67sjhqDoixk/QkJ0y0B2AA37FiOvvQzo5BNHB8IYmL/PuWEwjrbhfyj5yQcGP3H1UA==
-X-Received: by 2002:a05:600c:3b08:b0:43d:b85:1831 with SMTP id 5b1f17b1804b1-43ecf585cacmr129997875e9.0.1744039518078;
-        Mon, 07 Apr 2025 08:25:18 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec34be2ffsm132570725e9.22.2025.04.07.08.25.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 08:25:17 -0700 (PDT)
-Date: Mon, 7 Apr 2025 17:25:15 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
-	Tejun Heo <tj@kernel.org>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] mm/vmscan: Skip memcg with !usage in
- shrink_node_memcgs()
-Message-ID: <awgbdn6gwnj4kfaezsorvopgsdyoty3yahdeanqvoxstz2w2ke@xc3sv43elkz5>
-References: <20250407014159.1291785-1-longman@redhat.com>
- <20250407014159.1291785-2-longman@redhat.com>
+	s=arc-20240116; t=1744039592; c=relaxed/simple;
+	bh=8rmoI+MLumkyOH9sGcP/FhAE5tgXLwAl3apFYQe0AAY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Nl8WaM/WL6zz/z7Zqtjn3vI7zj6sfiJD3w73emnGsYfBQDpLC/yHh8MGdH3+kVZk209v5+iAcef9NFnlaxOFEKsYpzMPat5yu9gxKPCwo71x7cCZcGzCFMopRGQnNeDwK5PgcjNebS8iFnHcrx5qgLymsFEGj0TjqMX1BhMNTZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from [127.0.1.1] (unknown [IPv6:2a01:e0a:3e8:c0d0:3b93:9152:d50e:6d45])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 77E85479E0;
+	Mon,  7 Apr 2025 15:26:26 +0000 (UTC)
+Authentication-Results: Plesk;
+        spf=pass (sender IP is 2a01:e0a:3e8:c0d0:3b93:9152:d50e:6d45) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[127.0.1.1]
+Received-SPF: pass (Plesk: connection is authenticated)
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+Date: Mon, 07 Apr 2025 17:26:21 +0200
+Subject: [PATCH] net: ppp: Add bound checking for skb d on ppp_sync_txmung
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lu3xupyh5hd532gg"
-Content-Disposition: inline
-In-Reply-To: <20250407014159.1291785-2-longman@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: 
+ <20250407-bound-checking-ppp_txmung-v1-1-cfcd2efe39e3@arnaud-lcm.com>
+X-B4-Tracking: v=1; b=H4sIAJzu82cC/x2MQQqAIBAAvxJ7TrBQkr4SEaWbLZGJZgTh35NuM
+ 4eZFyIGwgh99ULAmyKdrkhTV6C32VlkZIpDy1vJBZdsOZMzTG+od3KWee+n6zlSQaF4p5UUaJS
+ E0vuAKz3/exhz/gAF42cZawAAAA==
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: linux-ppp@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, contact@arnaud-lcm.com,
+ skhan@linuxfoundation.org,
+ syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744039586; l=1904;
+ i=contact@arnaud-lcm.com; s=20250405; h=from:subject:message-id;
+ bh=8rmoI+MLumkyOH9sGcP/FhAE5tgXLwAl3apFYQe0AAY=;
+ b=M6469qTLfHJ5l/l/pfI2SwTDPs62ZlfhL9gHLufnvBlbu+ZSXJi5pvv87oofaVyVgE7IflGke
+ WLJrJ1oDwCkB4ruypAKnkFkUh1eA9WvqskTQEjyP69bw9cnYSq9jhJ2
+X-Developer-Key: i=contact@arnaud-lcm.com; a=ed25519;
+ pk=Ct5pwYkf/5qSRyUpocKOdGc2XBlQoMYODwgtlFsDk7o=
+X-PPP-Message-ID: <174403958690.22797.5110854261377796838@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
+Ensure we have enough data in linear buffer from skb before accessing
+initial bytes. This prevents potential out-of-bounds accesses
+when processing short packets.
 
---lu3xupyh5hd532gg
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v4 1/2] mm/vmscan: Skip memcg with !usage in
- shrink_node_memcgs()
-MIME-Version: 1.0
+When ppp_sync_txmung receives an incoming package with an empty
+payload:
+(remote) gef➤  p *(struct pppoe_hdr *) (skb->head + skb->network_header)
+$18 = {
+	type = 0x1,
+	ver = 0x1,
+	code = 0x0,
+	sid = 0x2,
+        length = 0x0,
+	tag = 0xffff8880371cdb96
+}
 
-Hi Waiman.
+from the skb struct (trimmed)
+      tail = 0x16,
+      end = 0x140,
+      head = 0xffff88803346f400 "4",
+      data = 0xffff88803346f416 ":\377",
+      truesize = 0x380,
+      len = 0x0,
+      data_len = 0x0,
+      mac_len = 0xe,
+      hdr_len = 0x0,
 
-On Sun, Apr 06, 2025 at 09:41:58PM -0400, Waiman Long <longman@redhat.com> wrote:
- ...
-> diff --git a/tools/testing/selftests/cgroup/test_memcontrol.c b/tools/testing/selftests/cgroup/test_memcontrol.c
-> index 16f5d74ae762..bab826b6b7b0 100644
-> --- a/tools/testing/selftests/cgroup/test_memcontrol.c
-> +++ b/tools/testing/selftests/cgroup/test_memcontrol.c
+it is not safe to access data[2].
 
-I'd suggest updating also the header of the test for clarity and then
-exempt the Child 2 ('E') conditionally from comparisons, something like:
+Reported-by: syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=29fc8991b0ecb186cf40
+Tested-by: syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
+Fixes: 9946eaf552b1 ("Merge tag 'hardening-v6.14-rc2' of git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux")
+Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+---
+ drivers/net/ppp/ppp_synctty.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-@@ -380,10 +380,10 @@ static bool reclaim_until(const char *memcg, long goal);
-  *
-  * Then it checks actual memory usages and expects that:
-  * A/B    memory.current ~= 50M
-- * A/B/C  memory.current ~= 29M
-- * A/B/D  memory.current ~= 21M
-- * A/B/E  memory.current ~= 0
-- * A/B/F  memory.current  = 0
-+ * A/B/C  memory.current ~= 29M, memory.events:low > 0
-+ * A/B/D  memory.current ~= 21M, memory.events:low > 0
-+ * A/B/E  memory.current ~= 0,   memory.events:low not specified (==0 w/out memory_recursiveprot)
-+ * A/B/F  memory.current  = 0,   memory.events:low == 0
-  * (for origin of the numbers, see model in memcg_protection.m.)
-  *
-  * After that it tries to allocate more than there is
-@@ -527,6 +527,7 @@ static int test_memcg_protection(const char *root, bool min)
+diff --git a/drivers/net/ppp/ppp_synctty.c b/drivers/net/ppp/ppp_synctty.c
+index 644e99fc3623..520d895acc60 100644
+--- a/drivers/net/ppp/ppp_synctty.c
++++ b/drivers/net/ppp/ppp_synctty.c
+@@ -506,6 +506,11 @@ ppp_sync_txmunge(struct syncppp *ap, struct sk_buff *skb)
+ 	unsigned char *data;
+ 	int islcp;
+ 
++	/* Ensure we can safely access protocol field and LCP code */
++	if (!skb || !pskb_may_pull(skb, 3)) {
++		kfree_skb(skb);
++		return NULL;
++	}
+ 	data  = skb->data;
+ 	proto = get_unaligned_be16(data);
+ 
 
-        for (i = 0; i < ARRAY_SIZE(children); i++) {
-                int no_low_events_index = 1;
-+               int ignore_low_events_index = has_recursiveprot ? 2 : -1;
-                long low, oom;
+---
+base-commit: 9946eaf552b194bb352c2945b54ff98c8193b3f1
+change-id: 20250405-bound-checking-ppp_txmung-4807c854ed85
 
-                oom = cg_read_key_long(children[i], "memory.events", "oom ");
-@@ -534,6 +535,8 @@ static int test_memcg_protection(const char *root, bool min)
+Best regards,
+-- 
+Arnaud Lecomte <contact@arnaud-lcm.com>
 
-                if (oom)
-                        goto cleanup;
-+               if (i == ignore_low_events_index)
-+                       continue;
-                if (i <= no_low_events_index && low <= 0)
-                        goto cleanup;
-                if (i > no_low_events_index && low)
-
---lu3xupyh5hd532gg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ/PuWQAKCRAt3Wney77B
-ScwcAP46No9qCK9KNhyaGyrJbha1L6AsoeFeO9BW0ZboeZ5NRAEAvEX67kbDxGFX
-Obe817O6E0lDvyjPXo6bT4YSjrBk1AQ=
-=yLF8
------END PGP SIGNATURE-----
-
---lu3xupyh5hd532gg--
 
