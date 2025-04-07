@@ -1,108 +1,135 @@
-Return-Path: <linux-kernel+bounces-590898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EECDDA7D833
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:40:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E319A7D823
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EDE516ECAC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:39:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B822188EBEA
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 08:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3E2221F1A;
-	Mon,  7 Apr 2025 08:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9542C226D1E;
+	Mon,  7 Apr 2025 08:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="LHYmZFDc"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VfhuKKF0"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAE81A8F93;
-	Mon,  7 Apr 2025 08:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917FF22689C
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 08:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744015179; cv=none; b=lbyz+iHsrobuuK2Z99HdMt0rlJlpVS4NEFCpW8mNMTqVB1pTXpqrWLrQcuJNDDA357ZWuNrAfmxRJTP/0w9TsMKmXEwKQlKQwo+l8JHbffHOnt5ZTfEzTgMQX1pBIuBA5AamildkFbBzGuugKnRUI1UVJ0pxy8DGaEHANTvo5ug=
+	t=1744015045; cv=none; b=j8dlVrYbhyzfHRRLd5o9lw4Sg+efSDvmundj2seEuWL5RIHH4GKVo4vYOFyFZ6A7sI+euGX3GvJa/NoKtFyuaQDvWmpwcqMJPHmt+1YBdOHNIbEZyIonQdcZaY/ptGOn30VwLkADNsIhNdtanfb5jacoHleLC6I4oK1pvVighyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744015179; c=relaxed/simple;
-	bh=0z/KT8TLIee1h3yP3HPJiOBL7ZOWc8WaVvSDGwnLOdE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y4rbIdeVcpLhJU4bO48mNdM33G2xRAOwknxApyaWgzr/267Fs7lEJciyFHygQM+uKEhJNtOXQnlCdWT/F0lGl67/3CE9RZ2ZfaOlF1Ig5YfpXxMghvzEA2riyRNvqvTlm84v9bYNxztJ0szyBNyAKEuokDycv2yHBtjzA4AWCU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=LHYmZFDc; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5378d75g030209;
-	Mon, 7 Apr 2025 10:39:10 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=M4fDmZRN7yquUeZo8bSMP2
-	LmovWfrpFiqUhwN/ePUVc=; b=LHYmZFDc7FLDVSArv6RpKwZQLAukYgWXCJIpgv
-	errUQg9s9rqoLZJK/t/p/2MPeJQVpXwmiZpphYN4LjeZWJUY+huriQB9Zgc2jC2L
-	kvauvSrXFld++hAtUey0VbDCZKd6r54aanX+BRhlm544Lc1P2jlf0g8aKvF72el/
-	sn0w/n0cs4Ku7q+dQm2WkacdoJb6CBaBAVPBCoETHHXX4e+8pdU8qlV6yCaPVjzw
-	XbWtAUlIau2H2DWh3dEQ9N0JcG3nl/bGWuTvHyFDJc1zHdKeuae9eP3rM6/hh1mP
-	vrqYvwn06bHdTyu8wVGZcNGvUaHH9id+iO3/q5sDsmD/1LDQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45tw6e6hvt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 07 Apr 2025 10:39:10 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 6F4164006A;
-	Mon,  7 Apr 2025 10:38:11 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B94F693C4C2;
-	Mon,  7 Apr 2025 10:35:41 +0200 (CEST)
-Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 7 Apr
- 2025 10:35:41 +0200
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>
-CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <maz@kernel.org>, Christian Bruel <christian.bruel@foss.st.com>
-Subject: [PATCH 1/2] arm64: dts: st: Adjust interrupt-controller for aarch64
-Date: Mon, 7 Apr 2025 10:35:12 +0200
-Message-ID: <20250407083513.2072434-1-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1744015045; c=relaxed/simple;
+	bh=r9MKe/SVH5Cpaz/tNBI5uI7KSiWB2m0t/5DQuFADqN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=smarIw3I3pwqy9I7JuuRM9snFTGbyMLH1Ngl6ThGdCAdPt9KPbNJzwdD21UX6R8+nQKM/ve+aTxeFXarAQldNlwWw2W+EKzSngjNmI3hf01umIHDffBF02Gj5r2RccUToWFpp0kIVpzRAVkuFZmKKeVeoXfvtyi3Yhe/aiTkTLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VfhuKKF0; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2264c9d0295so324955ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 01:37:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744015043; x=1744619843; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PM1xp6gzVd/l23ioaAQhkaBubnLpRRJNpYojAABDe0E=;
+        b=VfhuKKF0VF5NV8pmqp3gn4ZiuVWu7z2Q7x4sv8PtHaQkh30dsCYr5KrAzp/j5oASnh
+         AndhI0IEbBPgO/mrPmhq2aX22wwb91nnKZcC2lKN5YFad/+NVuwYHD4IuYrHetetROsh
+         TvSBGbXKl8GZ1rdTPE3DLQj3MkVR+aeztcHV/mYUu6Hpptf1z7ZHhJmknxqSKJtfWQF4
+         BB0sfZrHLInVRNV06AY59R9tXKJP5jtiYzs/7uIMn4dOJacAZxxwCydA4NYT1wTF8VSD
+         akeVFufUUqNxKRcSwVX4nS8vPcxsR6dVcXa7GpcAesKj2MrkgI9cyBPMEfMLizpRKk+p
+         6Z3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744015043; x=1744619843;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PM1xp6gzVd/l23ioaAQhkaBubnLpRRJNpYojAABDe0E=;
+        b=lucl5YuSVETVf+JjmG1gQJNHoPrMhIBFtCn4aRCmbO9VRFaVuksspdFrjRPQjMFkY/
+         0fz/bULoHpFvqRSicgd3OvNGHEkZCJqQsBziV2hkRfILpkTC5E6lEp5+oHyhPqE4a539
+         oUzQ4uo/EX6eaoZo+17rEZ8kjLmGh1d8XKyz1tf30S+RL3VjOnlaPN1D8uUSn/tEBtox
+         2+hICMXc59hmcjumoHFzmNEkT6BidxdAqNEUvK7YuTXIN0N7P2FEmTOIfAdinJC+zZwk
+         FWQ8HZab4CcItICgbSctfsLZVxk/rWmWYo0QHAs7MXzN8+2VHIHadx4E/c9dWWQhRE0Q
+         bA6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXSg0B4QvWTDapKOz2dyaTxVWGS4n6F4wV6NsZz7oLj0k0h5JpeMtT5prVzPp336iA2N4AC5O3P6+ZGDt0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2prHVdXhxAC1TLD3/IwoyWx/cQUrGB69DaOln1zZ4iZTtn0Uk
+	R0TcPvPTUeoGXpfe8RRlOFUt/c8gWh2Jp9/Kre+jGTXAa1H54f1azhCR6KQVfA==
+X-Gm-Gg: ASbGncsEx1rSf8Dy/K2ACrMNFFoYNPXUE3f4Zp/8JKD8Ybna19WKqsZbecFhb9CHSb7
+	MyAFMs/0AGJA2k2Gp/9OddnS+RKJV17I/N12ssZCvuIRAHQRjYGZwJf7rp/MQ2hZEo7p+1n7X5C
+	DRNrNzNa364u9sIyPyu+DIomEDpFI91ziFNLFiKMqfLzkAD4I7vmnxbjvXRVIDJi34dm7hNIylw
+	PchwgZZZVToDPeGROGJqBwU2cgINoDfip0Ck6jbc7xvLZEodfw8IBUHIfex0XIRoNrCrs6FVSt4
+	eeadd8SbNLO43WpgTuMrQ04PnKguP4CqXHa4O64PMRhB/XwvrJuyHT1gF++oBoi6Goe73Hk4K9E
+	eFLo=
+X-Google-Smtp-Source: AGHT+IFEcecwODNx4wiqbqJKpBlZrrA4mcqLS8OyyMt6tYMj4vc7ksfjibFdVhVKjFGu4nMmJA0OlA==
+X-Received: by 2002:a17:903:2308:b0:215:8232:5596 with SMTP id d9443c01a7336-22a95e638e2mr3367595ad.16.1744015042625;
+        Mon, 07 Apr 2025 01:37:22 -0700 (PDT)
+Received: from google.com (188.152.87.34.bc.googleusercontent.com. [34.87.152.188])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739d97d19c5sm7904646b3a.20.2025.04.07.01.37.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 01:37:22 -0700 (PDT)
+Date: Mon, 7 Apr 2025 08:37:14 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"jgg@nvidia.com" <jgg@nvidia.com>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 1/4] iommu/arm-smmu-v3: Pass in vmid to
+ arm_smmu_make_s2_domain_ste()
+Message-ID: <Z_OOukRG0foehmV6@google.com>
+References: <cover.1741150594.git.nicolinc@nvidia.com>
+ <214b10db02f1046efdc70e2c4803111357f60070.1741150594.git.nicolinc@nvidia.com>
+ <a95b39a55c324907a7001d3a2cdf076b@huawei.com>
+ <Z8iNfnZ9N5Lczxmq@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-07_02,2025-04-03_03,2024-11-22_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8iNfnZ9N5Lczxmq@Asurada-Nvidia>
 
-Use gic-400 compatible and remove address-cells = <1>.
+On Wed, Mar 05, 2025 at 09:44:30AM -0800, Nicolin Chen wrote:
+> On Wed, Mar 05, 2025 at 08:50:17AM +0000, Shameerali Kolothum Thodi wrote:
+> > > diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> > > b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> > > index bd9d7c85576a..e08c4ede4b2d 100644
+> > > --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> > > +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> > > @@ -887,7 +887,7 @@ struct arm_smmu_entry_writer_ops {
+> > >  void arm_smmu_make_abort_ste(struct arm_smmu_ste *target);
+> > >  void arm_smmu_make_s2_domain_ste(struct arm_smmu_ste *target,
+> > >  				 struct arm_smmu_master *master,
+> > > -				 struct arm_smmu_domain *smmu_domain,
+> > > +				 struct arm_smmu_domain *smmu_domain,
+> > > u16 vmid,
+> > >  				 bool ats_enabled);
+> > 
+> > Now that vmid is an input, do we need some kind of validation here as
+> > at least vmid = 0 is reserved I guess for bypass STEs.
+> 
+> Perhaps it should do a WARN_ON_ONCE(!vmid), as it doesn't make
+> sense for a caller to make an S2-bypass STE with this function.
+> 
 
-Fixes: 5d30d03aaf785 ("arm64: dts: st: introduce stm32mp25 SoCs family")
-Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
----
- arch/arm64/boot/dts/st/stm32mp251.dtsi | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
++1, a warning should suffice as the caller isn't expected to call this
+with vmid = 0. For the s2 bypass case, we already set vmid field to 0 in
+make_cdtable_ste for clients who *really* want the vmid = 0.
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-index f3c6cdfd7008..379e290313dc 100644
---- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
-+++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-@@ -115,9 +115,8 @@ scmi_vdda18adc: regulator@7 {
- 	};
- 
- 	intc: interrupt-controller@4ac00000 {
--		compatible = "arm,cortex-a7-gic";
-+		compatible = "arm,gic-400";
- 		#interrupt-cells = <3>;
--		#address-cells = <1>;
- 		interrupt-controller;
- 		reg = <0x0 0x4ac10000 0x0 0x1000>,
- 		      <0x0 0x4ac20000 0x0 0x2000>,
--- 
-2.34.1
+> Thanks
+> Nicolin
+> 
 
+Thanks
+Praan
 
