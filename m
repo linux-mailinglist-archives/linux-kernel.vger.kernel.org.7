@@ -1,123 +1,132 @@
-Return-Path: <linux-kernel+bounces-591712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B78CA7E45C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:30:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE98A7E45F
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 17:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 585784422AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:18:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB2DD3BE063
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 15:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD27A1F890D;
-	Mon,  7 Apr 2025 15:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547981F892E;
+	Mon,  7 Apr 2025 15:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lzbIn2/7"
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lLdcR7HN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77141F873D
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 15:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E859A1F8BBC;
+	Mon,  7 Apr 2025 15:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744039047; cv=none; b=mvNGfc42tFKFYLuCl2bFab+60oG9cEdgwF/0a6sOHP6fnpIUM3i80rcIPFdlHEucm7mFJmYWPIJ5GuB9RiYZObFYMmnDz+CBfG+skM3qEh0AkzE1ohClHgHJVV4fvl4TVmvKPAiTJ+fpwAbHnisQjaDwf3Z4yBE8pWPcHCiOm7M=
+	t=1744039059; cv=none; b=ezs4ecL33J1VueEKn2uJJk7VEotVGnirOeJVXdfC/lQpbnGvHUF15ykYYuHjPFXf4GzcuUi1SIbgdIWdsSQ+2Yij2yFPG0cYVikMcSf2dcaNt5yfDaR8BgifPjPrTzR7vQ4ZBVBizfPTh6oUNBicYEuPqPtTknStnr2p74aHbmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744039047; c=relaxed/simple;
-	bh=GaZNzpjk/uSgd7Vcok7kqgIyRmErrAqGopWkMjs6OpY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cknKfK+FqprOaJ8dBERyMSqp0bbFKPtiAd2iQ2TYvYpihqqFhrONkCDM5VtRfjDZLdcTHgcCSGlUTW+a6sb2afMn6/9fne4jGbDQpyeZ6kVwoAP4iEt0aBpooUqrQfzQWcaiNCPnMH1KnyeG4h7dhEI+TVfV+A+znl1sDO5RsbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lzbIn2/7; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-86cce5dac90so1905387241.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 08:17:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744039044; x=1744643844; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KryXeeMhvo1fW/6I9/fSFEwrg48LYI4766MWfuI9U48=;
-        b=lzbIn2/7g/12fp9oO0etqdTxF7EBqzHlWCqUgCXRPZ6/Xdl6QpmVO7GdVDZqQVuLWp
-         2hDIj/yEoRnjhVQQqO3XJ0LukaA02Inic4InlEmFIfx5SaSSGNuU0ce0a0aGxA+B8LZT
-         jkpalZ/5qBxbm60EUaGU4Nn+ViX2+DrQVlLu5EfKHMtwNxqSBrPgYEMOUThcvyNa780k
-         MawCUs/rlu9Fucyt5uh9pEjlos/mg0iUlnWhsPfrhWGGykry5xI4t5hdVo0p8QjqcI3e
-         dBOfXkpj6/Loo10ugeUWeiwOdgASwe9xwJiAwmXdbK+m1/NstlNAOiJKCAuGi0kIWBvb
-         b2Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744039044; x=1744643844;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KryXeeMhvo1fW/6I9/fSFEwrg48LYI4766MWfuI9U48=;
-        b=Hq0JDvsJyWgCqZM8kPD6jNQ+YUXMOAh7i87hkgOAJJReTaA+3Aadf/8gOJINxY+H+E
-         3P2YlpmU3jJPjCK+f4Iph4Q+6GNjMkiw18PXbT4TorT+WIigjt2NA4LbBVHnFbV1PtpT
-         n92kJjHba+PC1KLvImkARI/u+V5CGVtphBr/57hPOq7xNdnD9et/H8LyXa/RoY2FrVn0
-         sX+fVxwCwZPamNEjwAOeXgIf7af3bcxQSSvhZFKvva8+xcllJCgJ4Tc3TfyaJbyfzxxl
-         hHHO+gv/5YYbXEFnCl34Q/+cr+HPu4ZrgxmwQ1EawpKJYyowOa9ZnModi+7vYx84Wsra
-         Dnnw==
-X-Gm-Message-State: AOJu0Yy6bFfuSz/5V8PFnVJWYd7B+SCDFqtKPaVs8LTkMK+KjyJVSMvs
-	cC9Zkn/r/HCf+9NPI0YvPB5j8RK+2GRxaEg3yeKUf1ysmlZyXEMSoA49Mq+PfWkswozrRAijUih
-	8Evys4xUgCs96M19wPL2G62H8QN2N98osA1IbcdMqPX1xihwwS3w=
-X-Gm-Gg: ASbGncsL3cy6pfymh4U0NFU5AeMfLGziJhzopgtS8I8PThUKBfopImUgli2e9QRLrLe
-	faQTMp1QRF/hisCYy9tIg3QMHXY30J0ghHCFIlQ+8IefBaAB93y9GPBipvNXWoEnt9ILKFPZ1Km
-	nvA1tRXTE9EfJ9ATzHjq7OTlnof3ohsZx6HVJlZuHoH9zpklovsiwlqdkYOCglZ2RBVkH4MA==
-X-Google-Smtp-Source: AGHT+IH206FpiM+rgrTfBvzV0b82SkEbcn4bNrTAoNzAs2SHWJTBE9HK0oB8k1t4NMwGB0Ykc0SphwFI8gTwN3tKzBE=
-X-Received: by 2002:a05:6122:888:b0:50a:c70b:9453 with SMTP id
- 71dfb90a1353d-5276459e61cmr8027565e0c.10.1744039044078; Mon, 07 Apr 2025
- 08:17:24 -0700 (PDT)
+	s=arc-20240116; t=1744039059; c=relaxed/simple;
+	bh=PslDmB+xXRuJt9oVyCJAThWQ5Sbb1YZU0r34pKry31k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YI5HgVAEFkx5XedswTdEGWZWS+K8oX5ryYDxVYR+58W/aoSM0wz+0zrXV+zDP83sps0WamYAo9+MxuYF6m+FnS/v6HDjcy6FDSez0eDUAQ65JVoWHnnYdS4lvxyfoe/xkRkEGoC/nNOUjn+rDziz/MTC45Mj+NebFTrDxzLNS/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lLdcR7HN; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744039058; x=1775575058;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PslDmB+xXRuJt9oVyCJAThWQ5Sbb1YZU0r34pKry31k=;
+  b=lLdcR7HNBKPe9NE9bjFLVic+KdDj3jQig0gKMe3As0FdWc8wMh1LK9+0
+   9diiUoXj7fA9ouvq4aaWGQqY1ob3OZ7BRpsjzuTE9CY2keomKJabcCjCk
+   nzXuiZYfJbo09WCKe7xDszmXR0gaX2barW3TH0WFnSLa5HayWIVsXDhxR
+   KOfMWH2B2rWhMSK6Y6hHZ8gyhInyF6fsrrBE98LXrcue6dVAjqvByDOf5
+   6oU/myhP9/jxC88pfWYSyU9wiw5CarjMK+P0oWRH2bFoyuB2T+gcTxD83
+   2DQOULbBlbSxnTlMg+qtWRCcXBobC4FGmjA7vjjGiAPathx9+5gSVPyrD
+   w==;
+X-CSE-ConnectionGUID: QZjZWV4wRCq5ZR0yirHesg==
+X-CSE-MsgGUID: Gjgrttn3Qc+wW8QZkElQGg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="56069866"
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="56069866"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 08:17:37 -0700
+X-CSE-ConnectionGUID: Q9eEfbCtQner0+TLJmb8Tg==
+X-CSE-MsgGUID: /e5hd6FESmOlGWRlOu5MBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,194,1739865600"; 
+   d="scan'208";a="158973456"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 08:17:28 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1u1oE0-0000000A6hm-3YVn;
+	Mon, 07 Apr 2025 18:17:24 +0300
+Date: Mon, 7 Apr 2025 18:17:24 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Wolfram Sang <wsa@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 01/16] Revert "treewide: Fix probing of devices in DT
+ overlays"
+Message-ID: <Z_PshFwFJQ0z8JOU@smile.fi.intel.com>
+References: <20250407145546.270683-1-herve.codina@bootlin.com>
+ <20250407145546.270683-2-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYt4VVa3kUDR+ze05xM+fRmMBVfbBTsypUq5oOpAfuzjfg@mail.gmail.com>
-In-Reply-To: <CA+G9fYt4VVa3kUDR+ze05xM+fRmMBVfbBTsypUq5oOpAfuzjfg@mail.gmail.com>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Mon, 7 Apr 2025 20:47:12 +0530
-X-Gm-Features: ATxdqUE5kxlj_8OqC8jsSD6w0dhR5AxZd7mod0ynt5NdSzSdKupNdtTOZT5YBTE
-Message-ID: <CA+G9fYtNcnAEVs70eH2yP5UxRBsfrN2B1nKNcggGQ7FNMAJMmg@mail.gmail.com>
-Subject: Re: next-20250407: qemu_x86_64 clang-20, clang-nightly no console log
- but gcc-13 boot pass
-To: open list <linux-kernel@vger.kernel.org>, clang-built-linux <llvm@lists.linux.dev>, 
-	Linux Regressions <regressions@lists.linux.dev>, lkft-triage@lists.linaro.org
-Cc: Nathan Chancellor <nathan@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>, 
-	Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>, dwmw@amazon.co.uk, 
-	"H. Peter Anvin" <hpa@zytor.com>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250407145546.270683-2-herve.codina@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, 7 Apr 2025 at 17:15, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
->
-> Regressions on qemu-x86_64 with clang-20 and clang-nightly on the
-> Linux next-20250407 and no console output.
->
-> The gcc-13 builds boot pass on qemu-x86_64.
->
-> First seen on the next-20250407.
-> Bad: next-20250407
-> Good:next-20250404
->
-> * qemu-x86_64, boot
->  - boot/clang-20-lkftconfig
->  - boot/clang-20-lkftconfig-compat
->  - boot/clang-nightly-lkftconfig
->
-> Regression Analysis:
-> - New regression? Yes
-> - Reproducibility? Yes
->
-> Boot regression: qemu_x86_64 clang-20, clang-nightly no console log
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+On Mon, Apr 07, 2025 at 04:55:30PM +0200, Herve Codina wrote:
+> From: Saravana Kannan <saravanak@google.com>
+> 
+> From: Saravana Kannan <saravanak@google.com>
 
-Anders bisected this and found,
-# first bad commit:
-   [cc34e658c6db493c1524077e95b42d478de58f2b]
-   x86/boot: Move the early GDT/IDT setup code into startup/
+No need to have this in the commit message.
 
-Lore report link,
- - https://lore.kernel.org/all/CA+G9fYt4VVa3kUDR+ze05xM+fRmMBVfbBTsypUq5oOpAfuzjfg@mail.gmail.com/
+> This reverts commit 1a50d9403fb90cbe4dea0ec9fd0351d2ecbd8924.
+> 
+> While the commit fixed fw_devlink overlay handling for one case, it
+> broke it for another case. So revert it and redo the fix in a separate
+> patch.
 
-- Naresh
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
