@@ -1,220 +1,208 @@
-Return-Path: <linux-kernel+bounces-591263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F12B5A7DD5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:12:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09210A7DD29
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 14:07:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F85E3B09C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:12:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CFAA3AD57E
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C392517B0;
-	Mon,  7 Apr 2025 12:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D669C2459C2;
+	Mon,  7 Apr 2025 12:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="QBe9XOC9"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="nb8rbChU"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A4724EF8E;
-	Mon,  7 Apr 2025 12:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6C01B4223
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 12:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744027882; cv=none; b=dS/dvwQAKIyqrYunqYYymvLKgHPkcw3aCAYOl33RoOZqx/+Pzg1LyYqtUlYNrBFz0IGZN/NTN5WqKHF+i2PAL1LqHeu4prcvhP+wO4IHZFDR79kodWSLCY9M94opNqxQTsoxuXeRFN5j3ZDfRDjYc/H89W6PXGI3lOBsNer8nkQ=
+	t=1744027631; cv=none; b=B5/uEJjVKqT54qJg8K/WjE0kAyPXoWGVxXuFlyZynhWceRwBYp4x5PUeQHUf+7LH7ZplwN6Jly4qO8DcCedsTzfIRwX92E+on8mTkN4+VlbURW/UaOywRmNxzuczBKQETW4DGlm5Qah0p4SRz4eJExJ7N5lWl6aGRHyO22f3cnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744027882; c=relaxed/simple;
-	bh=oGpnu5Y7EnY5P9X1AiW9ING7v/3dxT5f+8RiP8Atz6U=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TjHFBYchBeDJafFES8eBc2eCv9ps9V7wyF+00pxryodI5sXOdF+/V6NQt902YpUIvrvtIRzsYGxsAzjxal0YF6SrGchCle/jr4dx16nGzpKyjtlWKdtR9jQXUrBvOGoyRaeK5O4/PhJa/8Z5xx6GIKHgmG65thj8uRs0E3k3eEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=QBe9XOC9; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 67e5d95c13a911f08eb9c36241bbb6fb-20250407
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=JAbvFEC9Kt8P81+V2sHCH2GZ+SfpkGkZ983AinyulB0=;
-	b=QBe9XOC9EKl3dXzsG+QhTOASN2pIL0YXHLka+8q3B+WxciMlFgS93GrdghqknIpkZZnShrtKpz/bbje5AgvpmKLd/NwIWk7lE12HunsAmfUp565JKwqcr9xjZWro65WzndLR1o8YzQIEd6+RKkf2RFwDLiFL1ZbgW/FUEdgRHkw=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:fd415e5c-a356-43b6-985c-d494dd762da9,IP:0,UR
-	L:25,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:25
-X-CID-META: VersionHash:0ef645f,CLOUDID:cff20a4b-a527-43d8-8af6-bc8b32d9f5e9,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:11|83|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OS
-	A:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 67e5d95c13a911f08eb9c36241bbb6fb-20250407
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
-	(envelope-from <darren.ye@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 126983391; Mon, 07 Apr 2025 20:11:16 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Mon, 7 Apr 2025 20:11:14 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Mon, 7 Apr 2025 20:11:14 +0800
-From: Darren.Ye <darren.ye@mediatek.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Linus
- Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>, Darren Ye
-	<darren.ye@mediatek.com>
-Subject: [PATCH v2 11/11] ASoC: dt-bindings: mediatek,mt8196-mt6681: add mt8196-mt6681 document
-Date: Mon, 7 Apr 2025 20:06:35 +0800
-Message-ID: <20250407120708.26495-12-darren.ye@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250407120708.26495-1-darren.ye@mediatek.com>
-References: <20250407120708.26495-1-darren.ye@mediatek.com>
+	s=arc-20240116; t=1744027631; c=relaxed/simple;
+	bh=QijosWpX/tMSElIdY0cNB2sln/MkYD8vRQRvDg+r1Ug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JHnMW2YXqXsX9QUT0qMryNB9OxqG3opfIkPJ3Az7oItgDGZyp4QselgZyqud5likPhdceYP0bEwrtyxMli62vfihxowKcMmQtT61QS9IPGha3PoZLwU91Yhh4WQ9etEoFk2MdzX6x7N+0RCyw52GdWkw70iSosdvAAa6gKACgD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=nb8rbChU; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5498d2a8b89so4895361e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 05:07:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744027628; x=1744632428; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r7SbASEqc4kTu4n995FrYvq2ycnZirBnlYS1N+sfK70=;
+        b=nb8rbChUlWCzMpRGf0piGJwF1vg0MinBC52ecua0V1apbwrSg9yyO5YyYOkox20MGy
+         JNZYFNMmDfeTgK3YOZ2DURbHj9g85OggKv4rqDn681Ri3pIVVWmsD29p2G8/VW+3YFQm
+         81nMYphHG4N9V2jdruMosZgXOMuoBmqhZvUPIfoOPat9O8CQIo0eMFpwsGJV2uTBuXo7
+         VLVv4kNBgXbVpZDgyzqEllvHDWKzzkzcQnkRYDxIMoWWSJc2qOSX+B+LxSAvef1oHK0W
+         vzxN+uVZB12BaYJ5wIdet1SCKVysrV3Y6RWgZCiaVxtENLBY4MuXbWVX9oTMmLPto4Jv
+         gHgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744027628; x=1744632428;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r7SbASEqc4kTu4n995FrYvq2ycnZirBnlYS1N+sfK70=;
+        b=J+WiNVJ0R3RDTeZD0n6q3Ta0zpUdyzB++1FkUyua37pv2/PmT6/ex1Y3BleCgAhPlq
+         /r+dN2HC9UD6qQNv8Tom1wh8K0ZTfGKJ8ZpG01EbxrvB5b6ldulg3oZcGrXDcAhndXQj
+         3kJD1wwpxTgU7bBJGjneAq8d3ywXUC8dAfV6BBsbd0tzDnxgTV0cEekrejfoE/hWVdBQ
+         r4W4n//HuyWnBZ/69eAJWxsA+9PidokgFlwAqqKqohmivnQkovGECKZj9oz/EB1GKQ0g
+         guTvtGxWt5BQP4vo4VhE/QCLa2TZlEbr6/AQyhPDldzM6ZdA9kWdjAwmTWmY14auUB9B
+         f8Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCUz/bkEPniqnhdtUivaiy3wKRuWpDL53ZLBku3wpoLYYszEsnEfGbL0Bk3GCAOVqoXDjDlJUy8/AF+Qm7Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7zASwvvegEOJBj2nQy7Ph85tM4atTNT29HIx8EC7HcgLk33X9
+	IP38y/Z0p6Du6z5i4cowmrMUgovmZqSAaqtnvMjLetGhfu1jNtEpR0TSNrQ34NeOSAVffHvJmO1
+	LcOJqfSoGB8n7aqpINKZSSmpLMe4nQqWiXDLMuQ==
+X-Gm-Gg: ASbGncvg33Q/iHfoLGAwuPcpSxEdkyyOloXCGKL6C/+ip3Bk6jYpFWucEhDLsiwTuOr
+	/psFvIMDG/tPONFb8rjCm2v9cxvdD6Ez6Bop8xYUVAmXkG0+OJ9Koop80Z6uCQsf4GbJkdnuHK2
+	m3fCOz8HOerH427BDZPp1qFJeq7CvXTofUSn97sONY1FaydtI/KlcgvlV7JQ==
+X-Google-Smtp-Source: AGHT+IGPZ6awsiOV6Shdl57C3nogGkA6h04FdU0EYd3ZNKrjClunDFo2+U/KP/CvYAcDoK24o/ABPUhMDZT5OmpR4t8=
+X-Received: by 2002:a05:6512:3d17:b0:549:8537:79d6 with SMTP id
+ 2adb3069b0e04-54c227ff7d3mr3267126e87.48.1744027627635; Mon, 07 Apr 2025
+ 05:07:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+References: <20250406010532.1212894-1-peng.fan@oss.nxp.com>
+In-Reply-To: <20250406010532.1212894-1-peng.fan@oss.nxp.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 7 Apr 2025 14:06:55 +0200
+X-Gm-Features: ATxdqUE1c5LUH70uItxocQjmtswA_Nx3hD1iJ11QlQXtmWmAC-eVZ9yl2g_6C6Y
+Message-ID: <CAMRc=MdgaiJGJt8UainKG=rKTeZjd4sAdaPbQcYEz1pxZGfYKQ@mail.gmail.com>
+Subject: Re: [PATCH V2] ASoC: codec: ak5386: Convert to GPIO descriptors
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Peng Fan <peng.fan@nxp.com>, 
+	"open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:GPIO SUBSYSTEM:Keyword:(devm_)?gpio_(request|free|direction|get|set)" <linux-gpio@vger.kernel.org>, andriy.shevchenko@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Darren Ye <darren.ye@mediatek.com>
+On Sun, Apr 6, 2025 at 3:06=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.com=
+> wrote:
+>
+> From: Peng Fan <peng.fan@nxp.com>
+>
+>  of_gpio.h is deprecated, update the driver to use GPIO descriptors.
+>  - Use devm_gpiod_get_optional to get GPIO descriptor.
+>  - Use gpiod_set_value to configure output value.
+>
+> With legacy of_gpio API, the driver set GPIO value 1 to power up
+> AK5386, and set value 0 to power down.
+> Per datasheet for PDN(reset_gpio in the driver):
+>  Power Down & Reset Mode Pin
+>  =E2=80=9CH=E2=80=9D: Power up, =E2=80=9CL=E2=80=9D: Power down & Reset
+>  The AK5386 must be reset once upon power-up.
+>
+> There is no in-tree DTS using this codec, and the bindings does not
+> specify polarity. Per driver and datasheet, the GPIO polarity should be
+> active-high which is to power up the codec. So using GPIOD_OUT_LOW
+> when get the GPIO descriptor matches GPIOF_OUT_INIT_LOW when using
+> of_gpio API.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>
+> V2:
+>  Typo fixes in commit log
+>  Drop uneeded gpio check before gpiod_set_value
+>  Include more headers
+>
+>  sound/soc/codecs/ak5386.c | 28 +++++++++++++---------------
+>  1 file changed, 13 insertions(+), 15 deletions(-)
+>
+> diff --git a/sound/soc/codecs/ak5386.c b/sound/soc/codecs/ak5386.c
+> index 21a44476f48d..6525d50b7ab2 100644
+> --- a/sound/soc/codecs/ak5386.c
+> +++ b/sound/soc/codecs/ak5386.c
+> @@ -6,11 +6,13 @@
+>   * (c) 2013 Daniel Mack <zonque@gmail.com>
+>   */
+>
+> +#include <linux/device.h>
+> +#include <linux/dev_printk.h>
+> +#include <linux/err.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/module.h>
+> -#include <linux/slab.h>
+> -#include <linux/of.h>
+> -#include <linux/of_gpio.h>
+>  #include <linux/regulator/consumer.h>
+> +#include <linux/slab.h>
+>  #include <sound/soc.h>
+>  #include <sound/pcm.h>
+>  #include <sound/initval.h>
+> @@ -20,7 +22,7 @@ static const char * const supply_names[] =3D {
+>  };
+>
+>  struct ak5386_priv {
+> -       int reset_gpio;
+> +       struct gpio_desc *reset_gpio;
+>         struct regulator_bulk_data supplies[ARRAY_SIZE(supply_names)];
+>  };
+>
+> @@ -110,8 +112,7 @@ static int ak5386_hw_params(struct snd_pcm_substream =
+*substream,
+>          * the AK5386 in power-down mode (PDN pin =3D =E2=80=9CL=E2=80=9D=
+).
+>          */
+>
+> -       if (gpio_is_valid(priv->reset_gpio))
+> -               gpio_set_value(priv->reset_gpio, 1);
+> +       gpiod_set_value(priv->reset_gpio, 1);
+>
+>         return 0;
+>  }
+> @@ -122,8 +123,7 @@ static int ak5386_hw_free(struct snd_pcm_substream *s=
+ubstream,
+>         struct snd_soc_component *component =3D dai->component;
+>         struct ak5386_priv *priv =3D snd_soc_component_get_drvdata(compon=
+ent);
+>
+> -       if (gpio_is_valid(priv->reset_gpio))
+> -               gpio_set_value(priv->reset_gpio, 0);
+> +       gpiod_set_value(priv->reset_gpio, 0);
+>
+>         return 0;
+>  }
+> @@ -177,14 +177,12 @@ static int ak5386_probe(struct platform_device *pde=
+v)
+>         if (ret < 0)
+>                 return ret;
+>
+> -       priv->reset_gpio =3D of_get_named_gpio(dev->of_node,
+> -                                            "reset-gpio", 0);
+> +       priv->reset_gpio =3D devm_gpiod_get_optional(dev, "reset", GPIOD_=
+OUT_LOW);
+> +       if (IS_ERR(priv->reset_gpio))
+> +               return dev_err_probe(dev, PTR_ERR(priv->reset_gpio),
+> +                                    "Failed to get AK5386 reset GPIO\n")=
+;
+>
+> -       if (gpio_is_valid(priv->reset_gpio))
+> -               if (devm_gpio_request_one(dev, priv->reset_gpio,
+> -                                         GPIOF_OUT_INIT_LOW,
+> -                                         "AK5386 Reset"))
+> -                       priv->reset_gpio =3D -EINVAL;
+> +       gpiod_set_consumer_name(priv->reset_gpio, "AK5386 Reset");
+>
+>         return devm_snd_soc_register_component(dev, &soc_component_ak5386=
+,
+>                                       &ak5386_dai, 1);
+> --
+> 2.37.1
+>
 
-Add document for mt8196 board with mt6681.
-
-Signed-off-by: Darren Ye <darren.ye@mediatek.com>
----
- .../sound/mediatek,mt8196-mt6681.yaml         | 114 ++++++++++++++++++
- 1 file changed, 114 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/mediatek,mt8196-mt6681.yaml
-
-diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt8196-mt6681.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt8196-mt6681.yaml
-new file mode 100644
-index 000000000000..2c1b0df05c27
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/mediatek,mt8196-mt6681.yaml
-@@ -0,0 +1,114 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/mediatek,mt8196-mt6681.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: MediaTek MT8196 ASoC sound card
-+
-+maintainers:
-+  - Darren Ye <darren.ye@mediatek.com>
-+
-+allOf:
-+  - $ref: sound-card-common.yaml#
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - mediatek,mt8196-mt6681-sound
-+          - mediatek,mt8196-nau8825-sound
-+          - mediatek,mt8196-rt5682s-sound
-+          - mediatek,mt8196-rt5650-sound
-+
-+  audio-routing:
-+    description:
-+      Valid names could be the input or output widgets of audio components,
-+      power supplies, MicBias of codec and the software switch.
-+
-+  mediatek,platform:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: The phandle of MT8188 ASoC platform.
-+
-+  mediatek,adsp:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      The phandle of the MT8188 ADSP platform, which is the optional Audio DSP
-+      hardware that provides additional audio functionalities if present.
-+      The AFE will link to ADSP when the phandle is provided.
-+
-+patternProperties:
-+  "^dai-link-[0-9]+$":
-+    type: object
-+    description:
-+      Container for dai-link level properties and CODEC sub-nodes.
-+
-+    properties:
-+      link-name:
-+        description:
-+          This property corresponds to the name of the BE dai-link to which
-+          we are going to update parameters in this node.
-+        items:
-+          enum:
-+            - TDM_DPTX_BE
-+            - I2SOUT6_BE
-+            - I2SIN6_BE
-+            - I2SOUT4_BE
-+            - I2SOUT3_BE
-+
-+      codec:
-+        description: Holds subnode which indicates codec dai.
-+        type: object
-+        additionalProperties: false
-+        properties:
-+          sound-dai:
-+            minItems: 1
-+            maxItems: 2
-+        required:
-+          - sound-dai
-+
-+      dai-format:
-+        description: audio format.
-+        items:
-+          enum:
-+            - i2s
-+            - right_j
-+            - left_j
-+            - dsp_a
-+            - dsp_b
-+
-+      mediatek,clk-provider:
-+        $ref: /schemas/types.yaml#/definitions/string
-+        description: Indicates dai-link clock master.
-+        items:
-+          enum:
-+            - cpu
-+            - codec
-+
-+    additionalProperties: false
-+
-+    required:
-+      - link-name
-+
-+unevaluatedProperties: false
-+
-+required:
-+  - compatible
-+  - mediatek,platform
-+
-+examples:
-+  - |
-+    sound {
-+        compatible = "mediatek,mt8196-mt6681-sound";
-+        model = "mt8196-mt6681";
-+        mediatek,platform = <&afe>;
-+        dai-link-0 {
-+            link-name = "I2SOUT6_BE";
-+            dai-format = "i2s";
-+            mediatek,clk-provider = "cpu";
-+            codec {
-+                sound-dai = <&nau8825>;
-+            };
-+        };
-+    };
-+
--- 
-2.45.2
-
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
