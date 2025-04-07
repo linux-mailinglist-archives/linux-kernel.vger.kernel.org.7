@@ -1,291 +1,237 @@
-Return-Path: <linux-kernel+bounces-590673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-590674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A001A7D5AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:26:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52A63A7D59B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 09:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBBB01892362
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:23:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9385817546B
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 07:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9198A22FAE1;
-	Mon,  7 Apr 2025 07:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A274022FE0D;
+	Mon,  7 Apr 2025 07:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JR+zVPCn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ThZgJr/w"
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012047.outbound.protection.outlook.com [52.101.71.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AAB22DFA1
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 07:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744010309; cv=none; b=LMFp7Kk6kg8vkS0SZOuh7E6aAfT2/EAjWGl/pjLHXrU7WoWkQA2m2Pg/Del4RCTw1yI5+1ZKdndEXexk4HUvDF8l0GGLt+1M7pr1l6ilt7ZRu+pLtLY9jDj16aS2eeOqMB2C5pLpR/kXgbVzCCYghh4iBNJVtJLaAOLdwsasyyc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744010309; c=relaxed/simple;
-	bh=mYjOcwQPXCEo3PAx43/TpsYRavbohMhCu6cggyetg2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NiPYODAu6C3FruDWXPCTZNhZKjQ7IOZNdkgYKg1Y6xJCS3+bF1qY2KaZzGbevX+V1WqaBiEj2+Xq725BTVT1buL5Y2hpxyH71Tu86zq2FQC1RjgwwhYOm/X5kY89TYAH+NbhhEywRompxWNHdGrJXLjTsTTEJmZSlQEjjaOIQsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JR+zVPCn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744010306;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ksYnepkSTzEXZ8AtLLerRetDOK5boPEguFAzQ11Hx88=;
-	b=JR+zVPCnjdArxONaZ3CThTE/vbswvabCpkcFSjIV0Wh9gK5MSo+wgR32M4Vva3/1flQiTa
-	CMBLTRl6EzmC2O2ew7++Ye3zXsbnGhjubwEid3DJx6d+tXlgo9xSAsFKp9SrdCOIer7Top
-	7urgjIhp9ZAT0fDamclMCDizvn+SoVw=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-364-YonQLkQuO0-f6g4bpu8f9w-1; Mon, 07 Apr 2025 03:18:24 -0400
-X-MC-Unique: YonQLkQuO0-f6g4bpu8f9w-1
-X-Mimecast-MFC-AGG-ID: YonQLkQuO0-f6g4bpu8f9w_1744010304
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3912d9848a7so2421254f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 00:18:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744010303; x=1744615103;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ksYnepkSTzEXZ8AtLLerRetDOK5boPEguFAzQ11Hx88=;
-        b=UPN1pkbwA17IjqZNTbwuLvXNi6bM5B3ueFEy4a0DGxvBNQwfXeH/z1POTVlagQ55DH
-         /Tou7GIncwaXoy/O6iXPnwNCKQetK0efcBpETup2UIKJWGYlVL4sj3lalv4leum42IpR
-         qgOrrgm7pLHR3DjzqSUpXwdMvdIqxxt7O+Ck7GdnLJQrr4ormZn15BF7wllodze3Rmjd
-         kEH1zYa++jWZnw1oa8JAYTrb3QlHjuWmjCFvFFH/cAJ2KMFyipRliWI9IVXxnifxaCdv
-         5knPtxtKVRHFAqqxmO6zxEl6UR/ZpO69ADGbDm8gEuZUU2ydMeBbRJM9QttoEqTeGtcy
-         GojQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9vHKOqQCMtBkgA7oY+MQU0dbYDum6XNL9UAj03MuB56h7Zgp6YMYBGoibcZ9FmWx+4db3J0cnTsu6DgA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXB7vRxHVCF2cH/xo+k9C9vZ6Wk6f5MVSg+757p8968HKuavDf
-	DjSoh69dkvIJRMKdKNUiWBfF7Mi7uPtEd1rhB9WKk4OK2U/C+Yr30OwZgWInxEGYA61+ezzT+ni
-	/Hd1nDwtktJwdXepWSPlgG5PH4N6Wux5Gp9rQMCe1k/3nn+Z1MnJ3qZZ54Rd4bg==
-X-Gm-Gg: ASbGncu+lsk1k8O5uyZCwjkrpgs/UPhK5GIDsgn/qPnfNG6HJ7tAnJ6csgIohhtMzEG
-	1/293bV51OmbQ4CTo/lPqPhxrBj6lFM08fT7lApvtik15LqyAyOWnBgQqb5URWHT1skx0EF5U88
-	F/t1QrzP07QMvpsVKGQLD13zVgXImVS7RkjFyI+SvpoJ/vDy1Z+2DRE/A1umgM0NEBqfjCdnBah
-	2lrtYked8enhFavwrMrzkOck5Ux23/BMl99ba6Lqr0xhYtnRb/oCrOLp4AevuKUYYLk/drB0XSG
-	TEI9vbRFwDScHHxw1Ei0So2lU5sTDDIOTUTEW19S8fty
-X-Received: by 2002:a5d:64e5:0:b0:38d:df15:2770 with SMTP id ffacd0b85a97d-39c2e4819a9mr14959489f8f.0.1744010303577;
-        Mon, 07 Apr 2025 00:18:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFCewS4OYeFc4l1AEVvAmgrTnvuewlFO6ZFzx0aFkXbHOPgtLMJqitW5fI/xaiiqBRFAZWr9Q==
-X-Received: by 2002:a5d:64e5:0:b0:38d:df15:2770 with SMTP id ffacd0b85a97d-39c2e4819a9mr14959456f8f.0.1744010303214;
-        Mon, 07 Apr 2025 00:18:23 -0700 (PDT)
-Received: from [192.168.3.141] (p5b0c6a16.dip0.t-ipconnect.de. [91.12.106.22])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c30226acfsm11018796f8f.88.2025.04.07.00.18.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Apr 2025 00:18:22 -0700 (PDT)
-Message-ID: <4450ec71-8a8f-478c-a66e-b53d858beb02@redhat.com>
-Date: Mon, 7 Apr 2025 09:18:21 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCBD22A7FE;
+	Mon,  7 Apr 2025 07:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744010318; cv=fail; b=E1YluP/D9wezYgReOP//d5HSfI33ijlJuOMcvmGiBjV0Www29GEsk/ZZ25K3NJS8wJ1FQwynNkhh5EUVHOo0Lqm2gdIG7zj6IGAWIZrngvvazHDEpUztcuHnxUF+8ojPYt1V0FG3sWW42G5jhaLBkrJ1MvVft62IVaKCg8u3QMo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744010318; c=relaxed/simple;
+	bh=ROWUsargyfr8ZG+N1WJ5DBvr1QhALHkdfoHdCZSrGF0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=eAX4NKl0LyggHYzERxsVAHFZBuj/cuuymEMCJMknLK48e8Ve1AgSnDPSCllLqdDzQ1qT0kLfD+pflFsrrcs1Sc898DmF8O9YvlyPQmbVK1ske5+2pWhyLgCODhK51smEy7MYDJj26GDRvucPQUTMrWvPrLPk9dd8vKoXPLpGfAA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ThZgJr/w; arc=fail smtp.client-ip=52.101.71.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UavpF6fWfWVmS/zGSRhO6lUn0wFeBxy85uyPL5LbllVfP7CKt8R+I9IlzwXb0WuomuSq169Jk9IFLGnsvvvYOR/cS6Fqrc1Hr8ztPOlViqmk+V8/8V1GxdTUxy7N2GF41S/iNpWH17nTLVLU/5dWbmFAO6u8lEGF1ca4GU6R3T86xrcFgtVcLEu/ZN4dVHQmeoEdk0qlcmNF+HqMv8ukkJINaA7rx6a+oNzULsOM3Lzt46Gl0aUMb7L7QDdO/bereftlOk5bDuc7zckvCk4ARns2BltjjW6ZQ2RutvRhFxtKNA6Bw7H/MGhZyq1ALZIvGz7IWunmvbL63/YZ1iptzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=plncZWp54IVxWWNCLH8XiTMR2lKfeg+TQI/HBHLV7yU=;
+ b=VSA6e5qiD/17XSmrqaEyv7GzR0p65FcycKIeAqbRMm7+XAncywNM42IVbNEHDhs9mPJpPYTBRF7GJbR2Qhq4UXSqaPtXntQQYHAuEYE6vaQoEpzkv0VdGeVwZXoGd1qGtNRGi2bQOq8cz6aoTBF9dMUi27stoTdQKAyzR/Krlukr0bcHbaMn8jrVw5quk9NGPDz8jyNDH1wHASZs1zpqHPzEENL1o/Q4BZjsV5GVYGaLq/fjNoFwjb+RkHCWdl+AYnqoOFmOqPUH5B91TDQ0+eUoqbaU4BV7gswU5jof4iv+DeH223VcR5LtUPLpHkTS4tsC7+UHC0ryxhKuJjK6VQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=plncZWp54IVxWWNCLH8XiTMR2lKfeg+TQI/HBHLV7yU=;
+ b=ThZgJr/wPo92Rf7hiaoVtfbP3WGTUD26KB62r6ftq+9WGdWwPZsfLQlm58aMnJsFJBPHnvHsvRBmGmfz6YpO04HYcjO7XkU+HODRxffdgTUJtxBS7CFb0D6wZCLi+LN7gizsPzeUk4/5aCu2gR74SmtO6XvZvf1U+e/42LTyuPIcWlqcsmakwVnK7YMFsa6hhNQlTbhvKkuXI910vZ4UMWiXO3z5ASJ/DtCJp84k2/SVLrV6x3ayRYRh/+0woaQzX9kSwP7XpjmjpgnGnttW5//FRdY9Oh1qRqFJkXZsA2wh/L9d3V3M2b6r5wqx0J4rLbNk5wrUVFMSmqCA2T/jyw==
+Received: from DB9PR04MB8429.eurprd04.prod.outlook.com (2603:10a6:10:242::19)
+ by DB8PR04MB6858.eurprd04.prod.outlook.com (2603:10a6:10:113::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.34; Mon, 7 Apr
+ 2025 07:18:32 +0000
+Received: from DB9PR04MB8429.eurprd04.prod.outlook.com
+ ([fe80::2edf:edc4:794f:4e37]) by DB9PR04MB8429.eurprd04.prod.outlook.com
+ ([fe80::2edf:edc4:794f:4e37%5]) with mapi id 15.20.8583.041; Mon, 7 Apr 2025
+ 07:18:32 +0000
+From: Sherry Sun <sherry.sun@nxp.com>
+To: Francesco Dolcini <francesco@dolcini.it>
+CC: Hongxing Zhu <hongxing.zhu@nxp.com>, "l.stach@pengutronix.de"
+	<l.stach@pengutronix.de>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"kw@linux.com" <kw@linux.com>, "robh@kernel.org" <robh@kernel.org>,
+	"bhelgaas@google.com" <bhelgaas@google.com>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "shawnguo@kernel.org"
+	<shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com"
+	<festevam@gmail.com>, dl-linux-imx <linux-imx@nxp.com>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH V2 2/4] dt-bindings: imx6q-pcie: Add wake-gpios property
+Thread-Topic: [PATCH V2 2/4] dt-bindings: imx6q-pcie: Add wake-gpios property
+Thread-Index: AQHaLabE+/mqsANsskSLK4N2coNpALOWMC4AgASMryA=
+Date: Mon, 7 Apr 2025 07:18:32 +0000
+Message-ID:
+ <DB9PR04MB8429588E7CF00BDC9CDA863F92AA2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+References: <20231213092850.1706042-1-sherry.sun@nxp.com>
+ <20231213092850.1706042-3-sherry.sun@nxp.com>
+ <20250404094130.GA35433@francesco-nb>
+In-Reply-To: <20250404094130.GA35433@francesco-nb>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DB9PR04MB8429:EE_|DB8PR04MB6858:EE_
+x-ms-office365-filtering-correlation-id: 0a90a64a-97ab-423d-1db2-08dd75a46780
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?HAPhqp6vLUacYPob+iCQkL697/l1140STVhBs7WDHvwG8g9+Z/UHlC8RuNk/?=
+ =?us-ascii?Q?zHYLLgguDkzapmlisrMSzFPScpB0Wya4vhnlXSgwxWQDsP+v/CD7zGDVnGTE?=
+ =?us-ascii?Q?pBthPR7h6kyXQD1USvBGR5zfdeGAcEIxMq39SoMwKV+BfjlTXVNdntFJ3quD?=
+ =?us-ascii?Q?0cu2pqB9iBjuevshb2s7rFTXGj2cPJ5r6DBrJ7wXrI/FwoLC64MA0ShvCRHs?=
+ =?us-ascii?Q?Vu9aJ7dqzrVbmoNlpAXsuqPLJ8zp2t/qEFhNj2oEuVfHCg7dr32+N9iMPQpt?=
+ =?us-ascii?Q?3jHiWG5dHjBtc5/qdJR5jtHwK3tTthLFZqQJK5s9UTjs5StmknN1R/7fw98p?=
+ =?us-ascii?Q?Jdxj29uCcaJR1Ss7m3vkP3Hk7XEEeUZ8fUTUSQhiMC1u26rYA3lip+mLaeKs?=
+ =?us-ascii?Q?jjsb6I71/jHfYCStEZLeWttOxoaN638IiU05YPoaWJHnZvqUK3Y/RuLzyw8x?=
+ =?us-ascii?Q?2v4zl9n4h4wLe6H4OWSCMNf2KVmo7WxW2R9KaDA/ye+LDiKxCEsLPpbb+jN2?=
+ =?us-ascii?Q?gEKmISgkpM2nka3oX2WQD1ihWZ29hvDP7NsHQX9RcHKl8YNVynKoRW3N9+YZ?=
+ =?us-ascii?Q?E7bCN+VZlovCPHfWE2JmDou5K+cHEebp71oQhKXLTngAApb+yU83YBwmbO55?=
+ =?us-ascii?Q?YE1+x/yU6UbUNlqFb628Ccx3MmYAdBZPEvutbeBrbi5MFH23dqa9lRoFDvkg?=
+ =?us-ascii?Q?y7TrDQytiK03aqUjvjopiUQcPIxCD54i9+e2eqHk5LOsZQNt90wjRmkwoQEL?=
+ =?us-ascii?Q?ZoOS+fb12luCnmdsF7fdXJf8hrS8wnu8Ja8lIY2jMsGm8n8KtJcXkAkX3zBU?=
+ =?us-ascii?Q?M3uqHrSmo8Ri9qlPQpADq17JJqQej0l8+PgM5bFEuHmgPJFuJcXF85gW8naa?=
+ =?us-ascii?Q?gCQePM9LWDzwczCmpyw3nwXgETTdBsSwL2/rr3TglQWnR8xnWmUtBfV5KfLh?=
+ =?us-ascii?Q?yLxfko7zi2tnuCyg9Em6gTaSVIkrGnTrETikjxKlsfG4P87uXn1VzWVxXxG1?=
+ =?us-ascii?Q?loCkjnIHCqAgaY5rkUramWme4Vrpw9uOOAyj1MgLvBp5mM24DKqBz5Mx7wi+?=
+ =?us-ascii?Q?1H7jipQiAm54ePd9B97YrYsh2XX9zOcL3Ts+nynVc+tDzzMfhPEDROw/qd0y?=
+ =?us-ascii?Q?9oiUIA7z3ieI/n5KNd3BG8V+OJusJ4KvqQCykPRgawjTIA9Do2BinAba3XvF?=
+ =?us-ascii?Q?9JtHU+hVMd8JZrmny2y+4jerTkp+28XWMsDbETeXKHf8eGTW1jzgycFQCyi7?=
+ =?us-ascii?Q?xcP9Lmdb+VKBUj0TM0Ry8JnJkwzJK5lf0vqXv6Eq7FE18k2jq20PMiqZxst3?=
+ =?us-ascii?Q?WNwFkk3reRcgVHu9u6WV5EB9s8pChFPixqIOTpdpItmmuHh7Pz/czkpzIQqj?=
+ =?us-ascii?Q?ssyjbUPV2m5KM82O5Hg6bGsA1t/RJX5DvxRf4z1Wuut403rofMunsCxSsoA/?=
+ =?us-ascii?Q?SRQdkXfCWmOPoqbZvy0BnKL2g8B2OVU5?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8429.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?016VoYNL78HCQQnipc75oFX+A1yW+tjZ8wQpsG3zCEtnjZzJDBovdXqdgwpv?=
+ =?us-ascii?Q?S+N6a9odEQ6lCr5BzjW1tJ0+vezyzAhOaKGiTHt5ZVCYOQftLFLqQb69kMUI?=
+ =?us-ascii?Q?JX9OOAOJS3dO5mt3bia4pAdtxEqSBXxkcs1OkQv55Wch7bv6WAawxDmnN4nY?=
+ =?us-ascii?Q?GwmOKjoO1kP84xM+Crdzyfs+Ibzjst/WP+uyOGrmap9PegYswU98RD3MlXts?=
+ =?us-ascii?Q?ZC2jTKLcUfximA6KELQ+Cin6a4AVTnou2e2VFt8WUapXPmEelWIVdpsuBZnr?=
+ =?us-ascii?Q?4aETo+HXl9Qj8TqfzT2mZbdyRBJdt8MgVO8DMqMiyH3pY0ugRfkSHIdbHoD3?=
+ =?us-ascii?Q?UFGKV1nCwkMVDG7aVmxYncWZXXITx/c7Tb+JLonKFBgnMEY/yLyOX3Lpfr8i?=
+ =?us-ascii?Q?KMmcIn2uDMDk7WaCvMp6A0xJrksWqkSzmPib5rku/hqWIr84R7cK73Wi7Vki?=
+ =?us-ascii?Q?MmY4Oy7KV3BhIZHptfXHQJ1gKITCBY3UojzcxtXrLIyLHUhjZzljrmStVWa7?=
+ =?us-ascii?Q?1Skzf6ju42fzk0AC+R5JX9A3TqEMOFbm0L7yZG7oLogU/0qFa6LSOFphgE2q?=
+ =?us-ascii?Q?6VDv4muQvNEI4Uw2qkKz0S7U0LtzpKLm4tsUop3VEzlSgQQ63JAGn1yhXdSi?=
+ =?us-ascii?Q?ilZOV0DiSQg8jbO6QtKhxRNpvPEJQIA0hRR2vM+8KDEFjGcmiIaHdgePTM/S?=
+ =?us-ascii?Q?A0pnBL6sLSV3rWd+BxL3meIv+dCUZ64kWfBkaekQn3pYJq4JFfb/ubsrNqwm?=
+ =?us-ascii?Q?q08rWB5TLWuZGOMcnVmxBuuLAY8LqeAjlTUmlnHXfOKVNiEfaqqGTsRypeMO?=
+ =?us-ascii?Q?g/+PZ0/LsG4ItBWHDeHmUggxTjaQdUKwOA04eItG73e2VFPDU3oRXLqBBqLg?=
+ =?us-ascii?Q?IdVfiXq0xRfG56DvqiQCx1YJHlGQ255DsZ3HJIRgj2cWa4A/Iv3YRRjVWzuY?=
+ =?us-ascii?Q?CRd1bac48fi2H8mP4z9KjJv8ChNmEQIzYLJGlyL2NFsEMdeQDc8bHN+bdTo8?=
+ =?us-ascii?Q?ePt4VRICEC9o42n4k1sOKm01PKdapRdOZUYwiGLJySUI1Ssb4XWC5TaF1s1m?=
+ =?us-ascii?Q?A/5zBWH5Tqk3SaZ8/YBtoqYNGdUH3vJKVBjQynOvX0JDwU45dMcIi03th8zp?=
+ =?us-ascii?Q?j8y7B/H5qcC7gRm4vVDhbp7Kt8X0EBhCR5o0nMkeUerQvf0I/8+hGgOJUKjn?=
+ =?us-ascii?Q?k7k+Th6tPbGh0Ma/fXs0D7gXDwHuHdG3dJ3g8diM3HQesYI2KuDOF1CWDljK?=
+ =?us-ascii?Q?hZvxbcehPhvE7AT/JhBXcOhfbMq8r83mOYOyRNjj8ExzyXT1rZiDHeNKtEKx?=
+ =?us-ascii?Q?K3EwiK7m0+dkZJMCVOdHV/HiyO1hjhCagQixh0/sd+zzfMspe1RM6h8OqE+Z?=
+ =?us-ascii?Q?ExdExispzvLmUr2RrVywLnBHQOK8VVHd5V9ZzSioVxQZrwj+kJYoViODJK6s?=
+ =?us-ascii?Q?woVXTLeQH755LEZVfCxosBoT4qJquuiCZGTYrq6tgBJdx0D2txq0xelr20DY?=
+ =?us-ascii?Q?rW7OnfXargqwWq1GvdjC2pjBNIWeJktl/c5pYb3k4xB/En1nT6csvyHOBQr6?=
+ =?us-ascii?Q?tAaZMKMtrP6TmWfXqJA=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] s390/virtio_ccw: don't allocate/assign airqs for
- non-existing queues
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Halil Pasic <pasic@linux.ibm.com>, linux-kernel@vger.kernel.org,
- linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
- kvm@vger.kernel.org, Chandra Merla <cmerla@redhat.com>,
- Stable@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
- Thomas Huth <thuth@redhat.com>, Eric Farman <farman@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Wei Wang <wei.w.wang@intel.com>
-References: <20250402203621.940090-1-david@redhat.com>
- <20250403161836.7fe9fea5.pasic@linux.ibm.com>
- <e2936e2f-022c-44ee-bb04-f07045ee2114@redhat.com>
- <20250404063619.0fa60a41.pasic@linux.ibm.com>
- <4a33daa3-7415-411e-a491-07635e3cfdc4@redhat.com>
- <d54fbf56-b462-4eea-a86e-3a0defb6298b@redhat.com>
- <20250404153620.04d2df05.pasic@linux.ibm.com>
- <d6f5f854-1294-4afa-b02a-657713435435@redhat.com>
- <20250406144025-mutt-send-email-mst@kernel.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250406144025-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-On 06.04.25 20:42, Michael S. Tsirkin wrote:
-> On Fri, Apr 04, 2025 at 03:48:49PM +0200, David Hildenbrand wrote:
->> On 04.04.25 15:36, Halil Pasic wrote:
->>> On Fri, 4 Apr 2025 12:55:09 +0200
->>> David Hildenbrand <david@redhat.com> wrote:
->>>
->>>> For virito-balloon, we should probably do the following:
->>>>
->>>>    From 38e340c2bb53c2a7cc7c675f5dfdd44ecf7701d9 Mon Sep 17 00:00:00 2001
->>>> From: David Hildenbrand <david@redhat.com>
->>>> Date: Fri, 4 Apr 2025 12:53:16 +0200
->>>> Subject: [PATCH] virtio-balloon: Fix queue index assignment for
->>>>     non-existing queues
->>>>
->>>> Signed-off-by: David Hildenbrand <david@redhat.com>
->>>> ---
->>>>     device-types/balloon/description.tex | 22 ++++++++++++++++------
->>>>     1 file changed, 16 insertions(+), 6 deletions(-)
->>>>
->>>> diff --git a/device-types/balloon/description.tex b/device-types/balloon/description.tex
->>>> index a1d9603..a7396ff 100644
->>>> --- a/device-types/balloon/description.tex
->>>> +++ b/device-types/balloon/description.tex
->>>> @@ -16,6 +16,21 @@ \subsection{Device ID}\label{sec:Device Types / Memory Balloon Device / Device I
->>>>       5
->>>>     \subsection{Virtqueues}\label{sec:Device Types / Memory Balloon Device / Virtqueues}
->>>> +
->>>> +\begin{description}
->>>> +\item[inflateq] Exists unconditionally.
->>>> +\item[deflateq] Exists unconditionally.
->>>> +\item[statsq] Only exists if VIRTIO_BALLOON_F_STATS_VQ is set.
->>>> +\item[free_page_vq] Only exists if VIRTIO_BALLOON_F_FREE_PAGE_HINT is set.
->>>> +\item[reporting_vq] Only exists if VIRTIO_BALLOON_F_PAGE_REPORTING is set.
->>>
->>> s/is set/is negotiated/?
->>>
->>> I think we should stick to "feature is offered" and "feature is
->>> negotiated".
->>>
->>>> +\end{description}
->>>> +
->>>> +\begin{note}
->>>> +Virtqueue indexes are assigned sequentially for existing queues, starting
->>>> +with index 0; consequently, if a virtqueue does not exist, it does not get
->>>> +an index assigned. Assuming all virtqueues exist for a device, the indexes
->>>> +are:
->>>> +
->>>>     \begin{description}
->>>>     \item[0] inflateq
->>>>     \item[1] deflateq
->>>> @@ -23,12 +38,7 @@ \subsection{Virtqueues}\label{sec:Device Types / Memory Balloon Device / Virtque
->>>>     \item[3] free_page_vq
->>>>     \item[4] reporting_vq
->>>>     \end{description}
->>>> -
->>>> -  statsq only exists if VIRTIO_BALLOON_F_STATS_VQ is set.
->>>> -
->>>> -  free_page_vq only exists if VIRTIO_BALLOON_F_FREE_PAGE_HINT is set.
->>>> -
->>>> -  reporting_vq only exists if VIRTIO_BALLOON_F_PAGE_REPORTING is set.
->>>> +\end{note}
->>>>     \subsection{Feature bits}\label{sec:Device Types / Memory Balloon Device / Feature bits}
->>>>     \begin{description}
->>>
->>> Sounds good to me! But I'm still a little confused by the "holes". What
->>> confuses me is that i can think of at least 2 distinct types of "holes":
->>> 1) Holes that can be filled later. The queue conceptually exists, but
->>>      there is no need to back it with any resources for now because it is
->>>      dormant (it can be seen a hole in comparison to queues that need to
->>>     materialize -- vring, notifiers, ...)
->>> 2) Holes that can not be filled without resetting the device: i.e. if
->>>      certain features are not negotiated, then a queue X does not exist,
->>>      but subsequent queues retain their index.
->>
->> I think it is not about "negotiated", that might be the wrong terminology.
->>
->> E.g., in QEMU virtio_balloon_device_realize() we define the virtqueues
->> (virtio_add_queue()) if virtio_has_feature(s->host_features).
->>
->> That is, it's independent of a feature negotiation (IIUC), it's static for
->> the device --  "host_features"
-> 
-> 
-> No no that is a bad idea. Breaks forward compatibility.
-> 
-> Oh my. I did not realize. It is really broken hopelessly.
-> 
-> Because, note, the guest looks at the guest features :)
-
-Can you elaborate why?
-
-statsq = 2
-
-free_page_vq = statsq + host_offered_feat(VIRTIO_BALLOON_F_STATS_VQ)
-
-reporting_vq = free_page_vq + 
-host_offered_feat(VIRTIO_BALLOON_F_FREE_PAGE_HINT)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8429.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0a90a64a-97ab-423d-1db2-08dd75a46780
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Apr 2025 07:18:32.7500
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zePYGErRNsxnqe5jRR07qO3ZKpl02JtMxAmZJsogP8KzSk2Ydg4yUlAV572rpE9W9hcstYQ4MamJq9XB+duy+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB6858
 
 
-Independent of any upcoming features. And if a new feature defines a new 
-virtqueue
 
-new_vq = reporting_vq +  host_offered_feat(VIRTIO_BALLOON_F_PAGE_REPORTING)
+> -----Original Message-----
+> From: Francesco Dolcini <francesco@dolcini.it>
+> Sent: Friday, April 4, 2025 5:42 PM
+> To: Sherry Sun <sherry.sun@nxp.com>
+> Cc: Hongxing Zhu <hongxing.zhu@nxp.com>; l.stach@pengutronix.de;
+> lpieralisi@kernel.org; kw@linux.com; robh@kernel.org;
+> bhelgaas@google.com; krzysztof.kozlowski+dt@linaro.org;
+> conor+dt@kernel.org; shawnguo@kernel.org; s.hauer@pengutronix.de;
+> kernel@pengutronix.de; festevam@gmail.com; dl-linux-imx <linux-
+> imx@nxp.com>; linux-pci@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org
+> Subject: Re: [PATCH V2 2/4] dt-bindings: imx6q-pcie: Add wake-gpios prope=
+rty
+>=20
+> Hello
+>=20
+> On Wed, Dec 13, 2023 at 05:28:48PM +0800, Sherry Sun wrote:
+> > Add wake-gpios property that can be used to wakeup the host processor.
+> >
+> > Signed-off-by: Sherry Sun <sherry.sun@nxp.com>
+> > Reviewed-by: Richard Zhu <hongxing.zhu@nxp.com>
+> > ---
+> >  Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml
+> > b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml
+> > index 81bbb8728f0f..fba757d937e1 100644
+> > --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml
+> > +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml
+> > @@ -72,6 +72,12 @@ properties:
+> >        L=3Doperation state) (optional required).
+> >      type: boolean
+> >
+> > +  wake-gpios:
+> > +    description: If present this property specifies WAKE# sideband sig=
+naling
+> > +      to implement wakeup functionality. This is an input GPIO pin for=
+ the
+> Root
+> > +      Port mode here. Host drivers will wakeup the host using the IRQ
+> > +      corresponding to the passed GPIO.
+> > +
+>=20
+> From what I know it is possible to share the same WAKE# signal for multip=
+le
+> root ports. Is this going to work fine with this binding? Same question o=
+n the
+> driver.
+>=20
+> We do have design exactly like that, so it's not a theoretical question.
+>=20
 
-We only have to make sure in the spec that these calculations always hold.
+Hi Francesco,
+The current design doesn't support such case, maybe some changes in the dri=
+ver could achieve that (mark the wake-gpio as GPIOD_FLAGS_BIT_NONEXCLUSIVE =
+and the interrupt as IRQF_SHARED, etc.).
+But usually each RC has its own WAKE# pin assigned. We have not come across=
+ a case where multiple RC share the same WAKE# pin.
 
-Querying of the host offered features already happens as part of 
-determining the actual guest usable feature (driver_offered & host_offered).
-
-
-> Now I am beginning to think we should leave the spec alone
-> and fix the drivers ... Ugh ....
-
-We could always say that starting with feature X, queue indexes are 
-fixed again. E.g., VIRTIO_BALLOON_F_X would have it's virtqueue fixed at 
-index 5, independent of the other (older) features where the virtqueue 
-indexes are determined like today.
-
-Won't make the implementation easier, though, I'm afraid.
-
-(I also thought about a way to query the virtqueue index for a feature, 
-but that's probably overengineering)
-
--- 
-Cheers,
-
-David / dhildenb
-
+Best Regards
+Sherry
 
