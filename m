@@ -1,99 +1,90 @@
-Return-Path: <linux-kernel+bounces-591134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09CE5A7DB9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 12:56:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B4AA7DBD4
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 13:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC2653B03A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 10:56:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 767043B2656
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 11:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134AC238D56;
-	Mon,  7 Apr 2025 10:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="aaapZUht"
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0392723AE8B;
+	Mon,  7 Apr 2025 11:04:53 +0000 (UTC)
+Received: from a3.inai.de (a3.inai.de [144.76.212.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71431235C03
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 10:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D81C23816E;
+	Mon,  7 Apr 2025 11:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.212.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744023399; cv=none; b=qc2VwhJ4S8ZuNgiM2ikcVNR3KW3HErPYAmavcUBFfZX34tASUCsqXKmoD504g/JbE5GyppwRcstUqf9dqHRqZ53w7Aw1ODbAiUh/f+TYfJY0MMW//+ivb7AYF+EDKSefUTYMFOu8asNSwalPrcZww4Tv4mtQYdFRI5yIhdOrr6I=
+	t=1744023892; cv=none; b=O7aI+MicX9eDPlpUpbGHDfO7RfbjehzLOpnmg9hRPw9LDEJHgGH54BT7tXjyqUVFdjwlslzvZWT35bRWMA/3KuQPtEeOZjOhr5Pg+8JFVa3kVklgDbcq8dwzEGGCNfTzWBnQGlUjPU0YUzT0gZM8nU+0IXJEWa6pTwjFxLD1bVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744023399; c=relaxed/simple;
-	bh=ad3PDh/4CBYX4YIw9XSYaYN+zGi062AKgi3/Oe3j5Cc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aCsSVv0WIgGQmIkqm7F4BkeazhA3WFWwc/IE/B17lIj2PFIBxqZdde0Od7JuZ6taehpyWvAiW+CaFQwP5o96oWW5/PFxpaYVjhKc/zzOz0acMJD7JZ2ybyBZKT/zAvzS6pLvJB10bsuM59aQo7RfqDKlkHwhMCC7XpzMHpdF01Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=aaapZUht; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id E50DF240029
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 12:56:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-	t=1744023389; bh=ad3PDh/4CBYX4YIw9XSYaYN+zGi062AKgi3/Oe3j5Cc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:From;
-	b=aaapZUhtosjr/SGvQGdPfT8kW5PgTKl5Z3rP/VbxXMZAu7i1D+L8JFL2Dx62vxLt8
-	 i+NkcqrwWeyZHWBC09i1aum7b4HXPmyz/TT/HnWR7elxytlMVaL0g58vcPRAesP6fR
-	 yj41Q4y3M5ofg59KcA5ESZ4MCmsJVsOO0MaO58U3ka3GWOF3EMWm89AaZNqLlnbtnW
-	 BvyKKOw6H3yi/YZ2fv8Gfb3nVD0fZXIvecdNsF9SFwDcTjm+iinq4ZZO4FCw05/Ln5
-	 4uIJL3cyNG5fNobqbU62H0B5YUCWsXOnAhFmids+xqvmRIGoJQ7ZX08piZu/8a1Rvv
-	 5+aPHJzoBHGhg==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4ZWR3H6glDz9rxN;
-	Mon,  7 Apr 2025 12:56:27 +0200 (CEST)
-Date: Mon,  7 Apr 2025 10:56:27 +0000
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-To: Bitterblue Smith <rtl8821cerfe2@gmail.com>
-Cc: j.ne@posteo.net, Johannes Berg <johannes@sipsolutions.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Matthias Kaehlcke <mka@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Jes Sorensen <Jes.Sorensen@gmail.com>,
-	linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 0/2] Onboard USB device support for RTL8188 2.4GHz USB
- WiFi module
-Message-ID: <Z_OvWwunajTcg9TJ@probook>
-References: <20250403-rtl-onboard-v1-0-10ca9a6a4ee0@posteo.net>
- <14513d89-1ee3-4d90-bd26-1d761714a8a9@gmail.com>
+	s=arc-20240116; t=1744023892; c=relaxed/simple;
+	bh=uVe+27Fbkboe9GyFp5PvTPiAjmTC4NE/kPRGr/Qrozg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Qis5KNerPel9E7Pzw4EKuNXIfRY+nxPOBjfpt3aYRA1/mF1dOrdyLHTjw41ddoLjtU+/CDoDMr8C3Jp5iojCyxdeAqr/En/uFHnY6/mu8oNhUcIT4wf8IEgm78k7GWPjLAzsQs1vHvBeLUM54xKA8M3xQuCwXlYJMJHdxCbSdnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inai.de; spf=pass smtp.mailfrom=inai.de; arc=none smtp.client-ip=144.76.212.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inai.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inai.de
+Received: by a3.inai.de (Postfix, from userid 25121)
+	id 56DA0100383FE0; Mon,  7 Apr 2025 12:56:33 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by a3.inai.de (Postfix) with ESMTP id 568651101311E4;
+	Mon,  7 Apr 2025 12:56:33 +0200 (CEST)
+Date: Mon, 7 Apr 2025 12:56:33 +0200 (CEST)
+From: Jan Engelhardt <ej@inai.de>
+To: Florian Westphal <fw@strlen.de>
+cc: lvxiafei <xiafei_xupt@163.com>, "David S. Miller" <davem@davemloft.net>, 
+    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+    Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+    Pablo Neira Ayuso <pablo@netfilter.org>, 
+    Jozsef Kadlecsik <kadlec@netfilter.org>, lvxiafei <lvxiafei@sensetime.com>, 
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+Subject: Re: [PATCH] netfilter: netns nf_conntrack: per-netns
+ net.netfilter.nf_conntrack_max sysctl
+In-Reply-To: <20250407101352.GA10818@breakpoint.cc>
+Message-ID: <66ror6q2-7pq2-os23-rq8r-8426ppr6pnps@vanv.qr>
+References: <20250407095052.49526-1-xiafei_xupt@163.com> <20250407101352.GA10818@breakpoint.cc>
+User-Agent: Alpine 2.26 (LSU 649 2022-06-02)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <14513d89-1ee3-4d90-bd26-1d761714a8a9@gmail.com>
-
-On Mon, Apr 07, 2025 at 01:37:17AM +0300, Bitterblue Smith wrote:
-> On 03/04/2025 17:07, J. Neuschäfer via B4 Relay wrote:
-> > This patchset adds rtl8188 (usbbda,179) to the onboard_usb_dev driver.
-> 
-> RTL8188 could mean at least five different chips (C, E, F, G).
-> Should you use a more specific name like RTL8188EU?
-
-Yes, that's a good point.
-
-I'm not completely sure which name to pick, though:
-
- - The chip is marked RTL8188ETV (see photo[1])
- - The RTL8XXXU driver reports it as RTL8188EU
+Content-Type: text/plain; charset=US-ASCII
 
 
-Best regards,
-J. Neuschäfer
+On Monday 2025-04-07 12:13, Florian Westphal wrote:
+>lvxiafei <xiafei_xupt@163.com> wrote:
+>> The modification of nf_conntrack_max in one netns
+>> should not affect the value in another one.
+>
+>nf_conntrack_max can only be changed in init_net.
+>
+>Given the check isn't removed:
+>   /* Don't allow non-init_net ns to alter global sysctls */
+>   if (!net_eq(&init_net, net)) {
+>       table[NF_SYSCTL_CT_MAX].mode = 0444;
+>
+>... this patch seems untested?
+>
+>But, removing this check would allow any netns to consume
+>arbitrary amount of kernel memory.
+>
+>How do you prevent this?
 
+By inheriting an implicit limit from the parent namespace somehow.
+For example, even if you set the kernel.pid_max sysctl in the initial
+namespace to something like 9999, subordinate namespace have
+kernel.pid_max=4million again, but nevertheless are unable to use
+more than 9999 PIDs. Or so documentation the documentation
+from commit d385c8bceb14665e935419334aa3d3fac2f10456 tells me
+(I did not try to create so many processes by myself).
 
-[1]: https://c3voc.de/gallery/misc/fernsehfee/92QVxQl.jpg.html
+A similar logic would have to be applied for netfilter sysctls
+if they are made modifiable in subordinate namespaces.
 
