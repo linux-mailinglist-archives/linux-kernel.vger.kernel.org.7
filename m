@@ -1,148 +1,84 @@
-Return-Path: <linux-kernel+bounces-592733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB3BCA7F0E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 01:23:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3179A7F03A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 00:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 827B23AE45F
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 23:21:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A4533AC702
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 22:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DCB229B28;
-	Mon,  7 Apr 2025 23:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC3F1F4199;
+	Mon,  7 Apr 2025 22:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LbGDQoWy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ombertech.com header.i=@ombertech.com header.b="FzFmP1jn"
+Received: from ombertech.com (ombertech.com [74.48.158.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164A121C163
-	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 23:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE6333E1
+	for <linux-kernel@vger.kernel.org>; Mon,  7 Apr 2025 22:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.48.158.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744068006; cv=none; b=F96QgxiJ8bPgIVG/BhBV8QJADCqq4MnKMPJqbN29NIsacRsEUeypb4eC8j0wLqYJHYMs2LOb9IRWFWguG1AW3Y6KjBep+Zot/KkQvAojIRYaEmNkFOWPtdJZE08s5KcTFMb6rqpnXFa9+N6m+r/xEd4dpj7uoCu7M7HdvIzn16M=
+	t=1744064379; cv=none; b=lJfYIT7loLcnIdebsK5QOR0vnLBwpDTng+P1RKGQ4PESCP+7FBTPnm37bLHaGGCzyq6gsM5UZTSxyrLuvLnPgf3zBeGeqku7fL2gXDd110uL2itKKWp8tC2kXNmKls1F2Bz6IiH7V01hMiNcRcaoSf7gysqpMPZDJXRe/CNMlCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744068006; c=relaxed/simple;
-	bh=Ell+TiAR+gMi4isFjx8EW+xy21+P6XYWO/FJdjmF9mg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Mba6htXsc4S3AT5Z6vzsusknSYuzmffTKB13dYVGilBbOPukk/+ZCS+vigo1xHe+5AGWe046fYK9f3Jo0adES6KZd+fLuEHUgvdVholyHo5QhVLp4S8pEG9uuxUqeMdoje8yDrSGTQZhZBN7E6Qz0PAhuuxi6q60G+n7B+T/ww4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LbGDQoWy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AD8EC4CEEC;
-	Mon,  7 Apr 2025 23:20:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744068005;
-	bh=Ell+TiAR+gMi4isFjx8EW+xy21+P6XYWO/FJdjmF9mg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=LbGDQoWyLig5aU7qQDOpT7DczpCp8SmP0/jnFWSa1FW8Zerb8CNviKc/fGl0uf2DX
-	 KxuBtehoqxYWyH1Gci4G79MEwd8WA8f1E8uj52VGmb2Ng9ZXszdXY1d8lG2DLSOCS/
-	 ArTlWHhRUWTsQVfeXwznjhUpE9wMmsPp8KUQ3oEpEME8DCOTSw3KmtA/fgOGx6arIv
-	 uf7kX/DjLE3GfIjmCnwTniAXQkP7hrPQQeyKoTkLWJLZti9FQPHgotprj9qZRbIrON
-	 bmF7p96ZqdAdzO9Dc3X0ZESoj2sNSvQXp713T+cLjkohyXzt2irMqxrvMap+uXCMUg
-	 6j4IjYpZmR7hA==
-Date: Mon, 7 Apr 2025 13:20:04 -1000
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH sched_ext/for-6.16] sched_ext: Remove cpu.weight / cpu.idle
- unimplemented warnings
-Message-ID: <Z_RdpDkLCXm140RT@slm.duckdns.org>
+	s=arc-20240116; t=1744064379; c=relaxed/simple;
+	bh=9RYcwfi9OWFIA4tTmXrTgshenclo4cCNO7OnCXuKIvU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=rzYaQsfPVkiS3cgwfmfIi0zjP7j7WO/bnJyjkzf1Qf9F3eC2ExjmWBpGIR0ZsW0zl+569RwZMxnYidtCVMrJMVsOeDl0t/erzT3xi4Dry8gV68nVbWRnar57tZ2kLIoe4rq9FCg85GIFZXdA9Y7rmXkNcsF1veNqB2OYj4VzLfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ombertech.com; spf=pass smtp.mailfrom=ombertech.com; dkim=pass (2048-bit key) header.d=ombertech.com header.i=@ombertech.com header.b=FzFmP1jn; arc=none smtp.client-ip=74.48.158.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ombertech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ombertech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ombertech.com; s=2022;
+	t=1744064082; bh=9RYcwfi9OWFIA4tTmXrTgshenclo4cCNO7OnCXuKIvU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FzFmP1jn1nudEZu0+LYTYzg3lwRbj4fFqoi13uDrIRAfL2MjztjZymkfGvCvj21Kl
+	 ay/FceA35SN0XlZY4Wvixpb+HgPkaWb4Rie4BgdidCJf7A64EXShQr4IDXP80DcBh8
+	 gAPvG2xJdLjxhVQeNGagoJ7YdcLo4SKEp34vg5LbKSWJyu75P2JcT510wRzCcJebF4
+	 A11dgxft1h1fqTO1TzUAnnxjYD9QAfYRmEcoB4OecwsGRHlOOIZplT5RenmwJkiZm8
+	 x3T/xNb47IB3AfcICP1s+jJEOtI4Teo4Qp6EBevCUtlTg7WnjX6lsE1LWejryWz5T4
+	 yMhB2Yd5z4qkg==
+Received: from 192.168.1.100 (unknown [1.145.134.47])
+	by ombertech.com (Postfix) with ESMTPSA id 0D3B1603CC;
+	Mon,  7 Apr 2025 22:14:39 +0000 (UTC)
+Date: Tue, 8 Apr 2025 09:20:16 +1000
+From: Kevin Koster <lkml@ombertech.com>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
+ Oerg866 <oerg866@googlemail.com>, linux-kernel@vger.kernel.org, Ingo Molnar
+ <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org
+Subject: Re: [PATCH] x86/microcode: Fix crashes on early 486 CPUs due to
+ usage of 'cpuid'.
+Message-Id: <20250408092016.27c8ec942a82459e1a9b9997@ombertech.com>
+In-Reply-To: <A08760B5-0E1A-4D21-8621-73516D1D67F0@zytor.com>
+References: <CANpbe9Wm3z8fy9HbgS8cuhoj0TREYEEkBipDuhgkWFvqX0UoVQ@mail.gmail.com>
+	<20250405130306.ca9822c1f27db119cc973603@ombertech.com>
+	<20250405093127.GAZ_D4b6NdyTS-UW1J@fat_crate.local>
+	<20250406164049.c0666bc18073e3b88c92d1f1@ombertech.com>
+	<20250406174633.2c581923c145687476191753@ombertech.com>
+	<20250406190253.GAZ_LP3RPZInWKcHN7@fat_crate.local>
+	<20250407095848.7933a358c9f450fe03fb8234@ombertech.com>
+	<20250407102927.GAZ_OpBw5hJ2QTFsKz@fat_crate.local>
+	<20250408002150.8955343f4e2f2ac31b4663e8@ombertech.com>
+	<A08760B5-0E1A-4D21-8621-73516D1D67F0@zytor.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-sched_ext generates warnings when cpu.weight / cpu.idle are set to
-non-default values if the BPF scheduler doesn't implement weight support.
-These warnings don't provide much value while adding constant annoyance. A
-BPF scheduler may not implement any particular behavior and there's nothing
-particularly special about missing cgroup weight support. Drop the warnings.
+On Mon, 07 Apr 2025 07:38:59 -0700
+"H. Peter Anvin" <hpa@zytor.com> wrote:
+> Can you please not post stack traces without any symbol information
+> either internal or external? It is just random hex digits in the
+> absence of a System.map or vmlinux file.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
----
- kernel/sched/ext.c |   40 +---------------------------------------
- 1 file changed, 1 insertion(+), 39 deletions(-)
-
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -3896,34 +3896,6 @@ bool scx_can_stop_tick(struct rq *rq)
- 
- DEFINE_STATIC_PERCPU_RWSEM(scx_cgroup_rwsem);
- static bool scx_cgroup_enabled;
--static bool cgroup_warned_missing_weight;
--static bool cgroup_warned_missing_idle;
--
--static void scx_cgroup_warn_missing_weight(struct task_group *tg)
--{
--	if (scx_enable_state() == SCX_DISABLED || cgroup_warned_missing_weight)
--		return;
--
--	if ((scx_ops.flags & SCX_OPS_HAS_CGROUP_WEIGHT) || !tg->css.parent)
--		return;
--
--	pr_warn("sched_ext: \"%s\" does not implement cgroup cpu.weight\n",
--		scx_ops.name);
--	cgroup_warned_missing_weight = true;
--}
--
--static void scx_cgroup_warn_missing_idle(struct task_group *tg)
--{
--	if (!scx_cgroup_enabled || cgroup_warned_missing_idle)
--		return;
--
--	if (!tg->idle)
--		return;
--
--	pr_warn("sched_ext: \"%s\" does not implement cgroup cpu.idle\n",
--		scx_ops.name);
--	cgroup_warned_missing_idle = true;
--}
- 
- int scx_tg_online(struct task_group *tg)
- {
-@@ -3933,8 +3905,6 @@ int scx_tg_online(struct task_group *tg)
- 
- 	percpu_down_read(&scx_cgroup_rwsem);
- 
--	scx_cgroup_warn_missing_weight(tg);
--
- 	if (scx_cgroup_enabled) {
- 		if (SCX_HAS_OP(cgroup_init)) {
- 			struct scx_cgroup_init_args args =
-@@ -4072,9 +4042,7 @@ void scx_group_set_weight(struct task_gr
- 
- void scx_group_set_idle(struct task_group *tg, bool idle)
- {
--	percpu_down_read(&scx_cgroup_rwsem);
--	scx_cgroup_warn_missing_idle(tg);
--	percpu_up_read(&scx_cgroup_rwsem);
-+	/* TODO: Implement ops->cgroup_set_idle() */
- }
- 
- static void scx_cgroup_lock(void)
-@@ -4268,9 +4236,6 @@ static int scx_cgroup_init(void)
- 
- 	percpu_rwsem_assert_held(&scx_cgroup_rwsem);
- 
--	cgroup_warned_missing_weight = false;
--	cgroup_warned_missing_idle = false;
--
- 	/*
- 	 * scx_tg_on/offline() are excluded through scx_cgroup_rwsem. If we walk
- 	 * cgroups and init, all online cgroups are initialized.
-@@ -4280,9 +4245,6 @@ static int scx_cgroup_init(void)
- 		struct task_group *tg = css_tg(css);
- 		struct scx_cgroup_init_args args = { .weight = tg->scx_weight };
- 
--		scx_cgroup_warn_missing_weight(tg);
--		scx_cgroup_warn_missing_idle(tg);
--
- 		if ((tg->scx_flags &
- 		     (SCX_TG_ONLINE | SCX_TG_INITED)) != SCX_TG_ONLINE)
- 			continue;
+OK, I'll replace them with "[snip stack trace]" in future unless asked
+for the System.map file too.
 
