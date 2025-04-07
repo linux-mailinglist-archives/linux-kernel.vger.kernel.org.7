@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-591937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-591936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FFC3A7E6F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:41:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA1DA7E6F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 18:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1713C3BFB2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:34:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D13841796FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  7 Apr 2025 16:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5D420DD6F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BA720DD7A;
 	Mon,  7 Apr 2025 16:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WZceOXZH"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Bhrw953F"
 Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581AF20C46C;
-	Mon,  7 Apr 2025 16:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5820D20C493;
+	Mon,  7 Apr 2025 16:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744043653; cv=none; b=ozTRhUIB4PSdQDFLFFB/q7WMBDOd3bwWumd9VTk/VWGBgfBmIFASCK+Jp9Iuiy4b+kjVBHHXEv8Emlpf8fvSreXViW+zPBdxTEh29tcirtiOyJ44VfiJpFf1ru1z0XUWH4Kqs6g3FvB7z2jAfPZzNa6c4v35wJKr7TyaKwWWtrU=
+	t=1744043653; cv=none; b=ZRkpCgNBR0nNieG/KBYfL1eoWCPHprIx4fQY1RBSBpI6tkZ3ylL9rH+dwWagSxeaOAlWvapm7Ry7PuG+rSMiXKLuRXl/6IH9CvmNu+L24iLEhQMQRNq0BmIgUVZi4C6mkCPQJLkAIYvNRfrxxYvwyHcxR9CguTG08+n1awl5Q58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1744043653; c=relaxed/simple;
-	bh=dUl/+bEyGiU/qu+Y6Ab+9ROyCiGZlNL3IUYutIlCKMk=;
+	bh=oivFHZVchL7odhRtsJKFsVphB5Uewyo34gYrMYxr+H0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Zbl6MToz/zQ3Qg0Eja7IWgcOxvS27N8G9RkZ1FGKkVL6b6wpQSfR+S22gaCUMmRkOhpc/XnEhTJ6A5iCuBpfCS282jQzwTJ5xWwuzu7PIZfez9CnZxTGxvGw47skIRdl9v7Y6PgwtArgJVP01oeOM5sGNWErtMqy0zfeDXpOkjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WZceOXZH; arc=none smtp.client-ip=217.70.183.195
+	 In-Reply-To:To:Cc; b=kB7HDnD8hmVSEfHJascU2lYhYj+vu+PaHK10E1tIeE+Cdrigu3LvKL7FKIV4JqcAGd+gWEm2YzSL8l++8eS/26Mpl7PQ0Nl3rvUopzmC/1RIhIFWrWkGioJcvy5VcdSoelAjQlvVziCpSdsdxr3LqTN1TFoI1qFSpujmmuyNDuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Bhrw953F; arc=none smtp.client-ip=217.70.183.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E8C3B2047E;
-	Mon,  7 Apr 2025 16:34:06 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5F4A620452;
+	Mon,  7 Apr 2025 16:34:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744043648;
+	t=1744043649;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lLTa7CZ+7PS3VX0urrg7v+OaNonYLpOictArwCt4TjQ=;
-	b=WZceOXZH3RH2uh/pUc1zyW5ERpfYjwwxTptyii25ofF0U0QP2G9YjcueUe7Mw3Is9QRPpI
-	ZUc54w3f1muk2V+eYlgZHHk/h+/RaZMH7a+AZEpwI9gI2FMYQCMdAI7y8TKyb9nx/viW5w
-	p6ymorX/1TBfHXr6aBpNPYrQkW7852D1koV3fjnR1zCzUVn+L4mby5/4U3pKJ88SlFMhrx
-	xZJrw4VQEt/C3VKPSnvTa33qJPx4uFtj8jqM2k3tKYmB2YlJG/DbmnA8Oy3J7jm/EUMzZE
-	Jk9b61jNr8hiEMnbYRyFef/bglKKBrjm6qKh5NTTQkyMlfVbRMFRrFhtYM00tA==
+	bh=0Vu+VYaG7J72e2wnMEktbEWju1bIb0fe9q+yEm36Jk0=;
+	b=Bhrw953FvLxlvrMSs37ewyfTwAgA5rB56bwbsAqUhjoZ1LsKgliagmE1X1+eeUx8Zp+N1e
+	23IS91MqF931BMYTzP+j3bEZC848qFneghM6XyK9HzkvAPKE1/eRnlqjLgdyL9e5u13Z+8
+	RtkoiytE29Q8Ku3qED7DCDqE94Q/Pl9ZvchnIQVu9keMgu76mcKkNvy3azKUcENwxB8l6F
+	hIMfZy/dhrGbHh1a/mxL2px9YlJmLeEbQaBV6K1o1aKWQfXkhhJ6O4JQHv7ZiUSPIICWCo
+	9WmFL3Wd0VHVyE7G3chwdpfMcEVIuj7Yg+0HG1b40AXpwKDaml6oRzLO0+AemQ==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Mon, 07 Apr 2025 18:33:59 +0200
-Subject: [PATCH v2 1/3] dt-bindings: display: simple: Add Tianma
- P0700WXF1MBAA panel
+Date: Mon, 07 Apr 2025 18:34:00 +0200
+Subject: [PATCH v2 2/3] drm/panel: simple: Tianma TM070JDHG34-00: add
+ delays
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250407-tianma-p0700wxf1mbaa-v2-1-ede8c5a3f538@bootlin.com>
+Message-Id: <20250407-tianma-p0700wxf1mbaa-v2-2-ede8c5a3f538@bootlin.com>
 References: <20250407-tianma-p0700wxf1mbaa-v2-0-ede8c5a3f538@bootlin.com>
 In-Reply-To: <20250407-tianma-p0700wxf1mbaa-v2-0-ede8c5a3f538@bootlin.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -70,36 +70,38 @@ To: Neil Armstrong <neil.armstrong@linaro.org>,
 Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
  "Pu, Hui" <Hui.Pu@gehealthcare.com>, dri-devel@lists.freedesktop.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Conor Dooley <conor.dooley@microchip.com>
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
 X-Mailer: b4 0.14.2
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddtieekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeiieeuvdfftefgueduleehueetgffgjeeitedtteetkeeuueeuueekveevvdeuveenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghloheplgduledvrdduieekrddujeekrdejhegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudelpdhrtghpthhtohepshgrmhesrhgrvhhnsghorhhgrdhorhhgpdhrtghpthhtohepqhhuihgtpghjvghsshiihhgrnhesqhhuihgtihhntgdrtghomhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdpr
- hgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtohepjfhuihdrrfhusehgvghhvggrlhhthhgtrghrvgdrtghomhdprhgtphhtthhopegtohhnohhrrdguohholhgvhiesmhhitghrohgthhhiphdrtghomhdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhg
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddtieekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeiieeuvdfftefgueduleehueetgffgjeeitedtteetkeeuueeuueekveevvdeuveenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghloheplgduledvrdduieekrddujeekrdejhegnpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepthhhihgvrhhrhidrrhgvughinhhgsehgmhgrihhlr
+ dgtohhmpdhrtghpthhtohepuggvvhhitggvthhrvggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshgrmhesrhgrvhhnsghorhhgrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrgh
 X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Add the Tianma Micro-electronics P0700WXF1MBAA 7.0" LVDS LCD TFT panel.
+Add power on/off delays for the Tianma TM070JDHG34-00.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- Documentation/devicetree/bindings/display/panel/panel-simple.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/panel/panel-simple.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-index b5c8eb4fa2d166d0c3c33cdc8bae35853dba2223..1b593e092e3196da4a1ca11fe08f5c2e0e87854f 100644
---- a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
-@@ -286,6 +286,8 @@ properties:
-       - startek,kd070wvfpa
-         # Team Source Display Technology TST043015CMHX 4.3" WQVGA TFT LCD panel
-       - team-source-display,tst043015cmhx
-+        # Tianma Micro-electronics P0700WXF1MBAA 7.0" WXGA (1280x800) LVDS TFT LCD panel
-+      - tianma,p0700wxf1mbaa
-         # Tianma Micro-electronics TM070JDHG30 7.0" WXGA TFT LCD panel
-       - tianma,tm070jdhg30
-         # Tianma Micro-electronics TM070JDHG34-00 7.0" WXGA (1280x800) LVDS TFT LCD panel
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index df718c4a86cb7dc0cd126e807d33306e5a21d8a0..3496ed3e62056938ccc0ed2389ea46eed8d17ea2 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -4452,6 +4452,12 @@ static const struct panel_desc tianma_tm070jdhg34_00 = {
+ 		.width = 150, /* 149.76 */
+ 		.height = 94, /* 93.60 */
+ 	},
++	.delay = {
++		.prepare = 18,		/* Tr + Tp1 */
++		.enable = 150,		/* Tp2 */
++		.disable = 150,		/* Tp4 */
++		.unprepare = 120,	/* Tp3 */
++	},
+ 	.bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,
+ 	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+ };
 
 -- 
 2.49.0
