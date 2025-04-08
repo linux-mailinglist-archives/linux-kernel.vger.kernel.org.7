@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-594695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AFC8A81556
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:05:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D51A8155F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26BB91BA25CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:05:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C14A988551B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4924244195;
-	Tue,  8 Apr 2025 19:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC78246327;
+	Tue,  8 Apr 2025 19:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dzKU7ZBy";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PlLwO5n6"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="abahP1od";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pPNliHrl"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A2023E33E;
-	Tue,  8 Apr 2025 19:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7B123FC6D;
+	Tue,  8 Apr 2025 19:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744139103; cv=none; b=aKnFHuV3mWaKJEqbbzcOdzErJvFueoBl8QX9EBrMj4BTZRvxPyoPZyCGGj4nxBRRpqDDa83EdJaI/STgTqVTpCHK8KCrOW/tqPJAjXrauYM3ipcJ/o86rXsMf76+AiEaZ+kyRx7xYjOqEFjco9bNVd64jElVHE1PFMC731wGjVQ=
+	t=1744139104; cv=none; b=IdCSyoHjxl8yFrpOmNd8aSAel00i+jenS72XrFj2uD1kvoKokjkrsQwQq5wc+k0cYGzJuh7fxEpEEPv3VCvyvisn3012J6GWcY2pEUs6wOR81xRB5szWiB0cdJs/Sm9mi4tO18bB5SYG1KF41xe7mg+JDtPrgurx97PkcNv3JR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744139103; c=relaxed/simple;
-	bh=etO5Rxr3kbo5q6ARLiFeArHUNwzsPkinNqgy/kQzHac=;
+	s=arc-20240116; t=1744139104; c=relaxed/simple;
+	bh=s+evPkGMB2EjG5yJYcn8p86MxrJS69bPDbmalgLTUOA=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=QWrwR0I8HEjoWd0R5FaINrm1614DpDt+F0BX0nMNGwJ7ynJbLhtDlfkSKUovzaO6tajQ6uQ5vEPXmfXCcmeKZZ+173+5oQHc4wmSttm25cA3P0O431Q/ZMUU/ovU1xhDmS9UOIBuiBTcDeBT11SaRa0nFkwpTaYh8COdWLrqQq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dzKU7ZBy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PlLwO5n6; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=uRJDgutsbPb3QQ3iG8ni7feAa9yTJt8CtYL02rnhe7uV4RZSIy7BX962Zfeq6H3iunwyO6FfD2/fSIrhGuXWdBUUohLmIx/oIpgE2VUFEe+yJpDDmOJ6a0DzgUiwAH6Bggqlr+TLWSOtv9jIywCLJC4LnvkFrZnjrVQcaG+YIqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=abahP1od; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pPNliHrl; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 08 Apr 2025 19:04:58 -0000
+Date: Tue, 08 Apr 2025 19:04:59 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744139099;
+	s=2020; t=1744139100;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SPrIBgTQZjtEiBLIySu/QU1Um6Vtg8RowcyIdRcgf28=;
-	b=dzKU7ZByMyoRCEGl8QV4ZaiR+uaBEAIQYfd1mUNHzCyWbhWGXVjhbpsKyj8vJiaI5Y/Ed8
-	1piia/Gg6yHtIj1aUNaHtWWCvcUCkOEzm7TkdvT07wmWBVYW4zIlppKg8rfb6BlB41t9eP
-	fJgPYUMnogB1ICJWjvZDgi35SjnOUVrJ76LawurqQVLi6bbLIC+Q+GDXcQ89x31YE0yV57
-	RrTWkjFVkpx7CfvFIeWkR7EFaNPOfq4KtHFTEQSPVzuq0iLeFbpHI7VEx8BaxZdo8d1uie
-	c76P76rRkyGBd30ea+Q9kjBVSSz6YqaU0nPCpChh+QRJTAOhiYNnp32wueN7Lw==
+	bh=w4JKswxk+rSC5t9LiAJgTNTYxRIH+H7+OERZuRJyFTo=;
+	b=abahP1odzyt4dnxaNPO0yY2OOFGk4etRdg0lIaesqZzR/zDHEgccd+avQS5P+1sjBuZJIa
+	KFuiuD5IJzaZY6+IEU4si+qwsbwGpBNc2ppGVymzZxaaVtamDuC0LgwTI7evVxxDnmGCxX
+	CNerRhVCvJQFl5lWPPLT4Nu4gHb7n0umz3M1LDM7PZpp9aE+ZdRJjHNLO68bGBbvQnZydY
+	qfiSblzCXJ1s4PtE2derx705oK/DD6r/tT9ITlJgPlUAE8kkCuz8Ug2taRxHG34G8pbri2
+	eszlyS+HLr4BAsI0lFNc3z7qO9FCAnWo7RNr5/UPr2JUpRpGEvrBRk0g0WQjfw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744139099;
+	s=2020e; t=1744139100;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SPrIBgTQZjtEiBLIySu/QU1Um6Vtg8RowcyIdRcgf28=;
-	b=PlLwO5n6fuagqrSF9BhtpyV30lZZ8qvQKecDPb0sv7LNonNfJwu58xc8k5/Q29jeoBSla4
-	XhgqFXawAC0kUmCg==
+	bh=w4JKswxk+rSC5t9LiAJgTNTYxRIH+H7+OERZuRJyFTo=;
+	b=pPNliHrlMqDP2NSkK1V0pHdwWhyV4isSnxR0CSTrbDVxXrcMbczxL7KoxpefMWm2OeVfcc
+	Febz5wlLDH3SEAAg==
 From: "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: perf/core] perf/x86/intel: Track the num of events needs late setup
+Subject: [tip: perf/core] perf/x86: Add dynamic constraint
 Cc: Kan Liang <kan.liang@linux.intel.com>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>,
  Thomas Falcon <thomas.falcon@intel.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250327195217.2683619-3-kan.liang@linux.intel.com>
-References: <20250327195217.2683619-3-kan.liang@linux.intel.com>
+In-Reply-To: <20250327195217.2683619-2-kan.liang@linux.intel.com>
+References: <20250327195217.2683619-2-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174413909896.31282.5281771887955722948.tip-bot2@tip-bot2>
+Message-ID: <174413909966.31282.14537140922539948654.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,118 +82,148 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     0a6557938d8f189024a03aca77e58763930840ee
-Gitweb:        https://git.kernel.org/tip/0a6557938d8f189024a03aca77e58763930840ee
+Commit-ID:     4dfe3232cc04325a09e96f6c7f9546ba6c0b132b
+Gitweb:        https://git.kernel.org/tip/4dfe3232cc04325a09e96f6c7f9546ba6c0b132b
 Author:        Kan Liang <kan.liang@linux.intel.com>
-AuthorDate:    Thu, 27 Mar 2025 12:52:14 -07:00
+AuthorDate:    Thu, 27 Mar 2025 12:52:13 -07:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Tue, 08 Apr 2025 20:55:48 +02:00
 
-perf/x86/intel: Track the num of events needs late setup
+perf/x86: Add dynamic constraint
 
-When a machine supports PEBS v6, perf unconditionally searches the
-cpuc->event_list[] for every event and check if the late setup is
-required, which is unnecessary.
+More and more features require a dynamic event constraint, e.g., branch
+counter logging, auto counter reload, Arch PEBS, etc.
 
-The late setup is only required for special events, e.g., events support
-counters snapshotting feature. Add n_late_setup to track the num of
-events that needs the late setup.
+Add a generic flag, PMU_FL_DYN_CONSTRAINT, to indicate the case. It
+avoids keeping adding the individual flag in intel_cpuc_prepare().
 
-Other features, e.g., auto counter reload feature, require the late
-setup as well. Add a wrapper, intel_pmu_pebs_late_setup, for the events
-that support counters snapshotting feature.
+Add a variable dyn_constraint in the struct hw_perf_event to track the
+dynamic constraint of the event. Apply it if it's updated.
+
+Apply the generic dynamic constraint for branch counter logging.
+Many features on and after V6 require dynamic constraint. So
+unconditionally set the flag for V6+.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Tested-by: Thomas Falcon <thomas.falcon@intel.com>
-Link: https://lkml.kernel.org/r/20250327195217.2683619-3-kan.liang@linux.intel.com
+Link: https://lkml.kernel.org/r/20250327195217.2683619-2-kan.liang@linux.intel.com
 ---
- arch/x86/events/intel/core.c | 14 ++++++++++++++
- arch/x86/events/intel/ds.c   |  3 +--
- arch/x86/events/perf_event.h |  5 +++++
- 3 files changed, 20 insertions(+), 2 deletions(-)
+ arch/x86/events/core.c       |  1 +
+ arch/x86/events/intel/core.c | 21 +++++++++++++++------
+ arch/x86/events/intel/lbr.c  |  2 +-
+ arch/x86/events/perf_event.h |  1 +
+ include/linux/perf_event.h   |  1 +
+ 5 files changed, 19 insertions(+), 7 deletions(-)
 
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 6866cc5..a0fe51e 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -674,6 +674,7 @@ static int __x86_pmu_event_init(struct perf_event *event)
+ 	event->hw.idx = -1;
+ 	event->hw.last_cpu = -1;
+ 	event->hw.last_tag = ~0ULL;
++	event->hw.dyn_constraint = ~0ULL;
+ 
+ 	/* mark unused */
+ 	event->hw.extra_reg.idx = EXTRA_REG_NONE;
 diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 9724928..6105024 100644
+index 09d2d66..9724928 100644
 --- a/arch/x86/events/intel/core.c
 +++ b/arch/x86/events/intel/core.c
-@@ -2603,6 +2603,8 @@ static void intel_pmu_del_event(struct perf_event *event)
- 		intel_pmu_lbr_del(event);
- 	if (event->attr.precise_ip)
- 		intel_pmu_pebs_del(event);
-+	if (is_pebs_counter_event_group(event))
-+		this_cpu_ptr(&cpu_hw_events)->n_late_setup--;
- }
+@@ -3730,10 +3730,9 @@ intel_get_event_constraints(struct cpu_hw_events *cpuc, int idx,
+ 	if (cpuc->excl_cntrs)
+ 		return intel_get_excl_constraints(cpuc, event, idx, c2);
  
- static int icl_set_topdown_event_period(struct perf_event *event)
-@@ -2914,12 +2916,24 @@ static void intel_pmu_enable_event(struct perf_event *event)
+-	/* Not all counters support the branch counter feature. */
+-	if (branch_sample_counters(event)) {
++	if (event->hw.dyn_constraint != ~0ULL) {
+ 		c2 = dyn_constraint(cpuc, c2, idx);
+-		c2->idxmsk64 &= x86_pmu.lbr_counters;
++		c2->idxmsk64 &= event->hw.dyn_constraint;
+ 		c2->weight = hweight64(c2->idxmsk64);
  	}
- }
  
-+void intel_pmu_late_setup(void)
-+{
-+	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-+
-+	if (!cpuc->n_late_setup)
-+		return;
-+
-+	intel_pmu_pebs_late_setup(cpuc);
-+}
-+
- static void intel_pmu_add_event(struct perf_event *event)
- {
- 	if (event->attr.precise_ip)
- 		intel_pmu_pebs_add(event);
- 	if (intel_pmu_needs_branch_stack(event))
- 		intel_pmu_lbr_add(event);
-+	if (is_pebs_counter_event_group(event))
-+		this_cpu_ptr(&cpu_hw_events)->n_late_setup++;
- }
+@@ -4135,15 +4134,19 @@ static int intel_pmu_hw_config(struct perf_event *event)
+ 		leader = event->group_leader;
+ 		if (branch_sample_call_stack(leader))
+ 			return -EINVAL;
+-		if (branch_sample_counters(leader))
++		if (branch_sample_counters(leader)) {
+ 			num++;
++			leader->hw.dyn_constraint &= x86_pmu.lbr_counters;
++		}
+ 		leader->hw.flags |= PERF_X86_EVENT_BRANCH_COUNTERS;
  
- /*
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index 1f7e1a6..486881f 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1355,9 +1355,8 @@ static void __intel_pmu_pebs_update_cfg(struct perf_event *event,
- }
+ 		for_each_sibling_event(sibling, leader) {
+ 			if (branch_sample_call_stack(sibling))
+ 				return -EINVAL;
+-			if (branch_sample_counters(sibling))
++			if (branch_sample_counters(sibling)) {
+ 				num++;
++				sibling->hw.dyn_constraint &= x86_pmu.lbr_counters;
++			}
+ 		}
  
+ 		if (num > fls(x86_pmu.lbr_counters))
+@@ -4943,7 +4946,7 @@ int intel_cpuc_prepare(struct cpu_hw_events *cpuc, int cpu)
+ 			goto err;
+ 	}
  
--static void intel_pmu_late_setup(void)
-+void intel_pmu_pebs_late_setup(struct cpu_hw_events *cpuc)
- {
--	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
- 	struct perf_event *event;
- 	u64 pebs_data_cfg = 0;
- 	int i;
+-	if (x86_pmu.flags & (PMU_FL_EXCL_CNTRS | PMU_FL_TFA | PMU_FL_BR_CNTR)) {
++	if (x86_pmu.flags & (PMU_FL_EXCL_CNTRS | PMU_FL_TFA | PMU_FL_DYN_CONSTRAINT)) {
+ 		size_t sz = X86_PMC_IDX_MAX * sizeof(struct event_constraint);
+ 
+ 		cpuc->constraint_list = kzalloc_node(sz, GFP_KERNEL, cpu_to_node(cpu));
+@@ -6665,6 +6668,12 @@ __init int intel_pmu_init(void)
+ 	}
+ 
+ 	/*
++	 * Many features on and after V6 require dynamic constraint,
++	 * e.g., Arch PEBS, ACR.
++	 */
++	if (version >= 6)
++		x86_pmu.flags |= PMU_FL_DYN_CONSTRAINT;
++	/*
+ 	 * Install the hw-cache-events table:
+ 	 */
+ 	switch (boot_cpu_data.x86_vfm) {
+diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
+index f44c3d8..05acd64 100644
+--- a/arch/x86/events/intel/lbr.c
++++ b/arch/x86/events/intel/lbr.c
+@@ -1618,7 +1618,7 @@ void __init intel_pmu_arch_lbr_init(void)
+ 	x86_pmu.lbr_nr = lbr_nr;
+ 
+ 	if (!!x86_pmu.lbr_counters)
+-		x86_pmu.flags |= PMU_FL_BR_CNTR;
++		x86_pmu.flags |= PMU_FL_BR_CNTR | PMU_FL_DYN_CONSTRAINT;
+ 
+ 	if (x86_pmu.lbr_mispred)
+ 		static_branch_enable(&x86_lbr_mispred);
 diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index f5ba165..4410cf0 100644
+index 2c0ce0e..f5ba165 100644
 --- a/arch/x86/events/perf_event.h
 +++ b/arch/x86/events/perf_event.h
-@@ -261,6 +261,7 @@ struct cpu_hw_events {
- 	struct event_constraint	*event_constraint[X86_PMC_IDX_MAX];
+@@ -1042,6 +1042,7 @@ do {									\
+ #define PMU_FL_MEM_LOADS_AUX	0x100 /* Require an auxiliary event for the complete memory info */
+ #define PMU_FL_RETIRE_LATENCY	0x200 /* Support Retire Latency in PEBS */
+ #define PMU_FL_BR_CNTR		0x400 /* Support branch counter logging */
++#define PMU_FL_DYN_CONSTRAINT	0x800 /* Needs dynamic constraint */
  
- 	int			n_excl; /* the number of exclusive events */
-+	int			n_late_setup; /* the num of events needs late setup */
- 
- 	unsigned int		txn_flags;
- 	int			is_fake;
-@@ -1581,6 +1582,8 @@ void intel_pmu_disable_bts(void);
- 
- int intel_pmu_drain_bts_buffer(void);
- 
-+void intel_pmu_late_setup(void);
-+
- u64 grt_latency_data(struct perf_event *event, u64 status);
- 
- u64 cmt_latency_data(struct perf_event *event, u64 status);
-@@ -1637,6 +1640,8 @@ void intel_pmu_pebs_disable_all(void);
- 
- void intel_pmu_pebs_sched_task(struct perf_event_pmu_context *pmu_ctx, bool sched_in);
- 
-+void intel_pmu_pebs_late_setup(struct cpu_hw_events *cpuc);
-+
- void intel_pmu_drain_pebs_buffer(void);
- 
- void intel_pmu_store_pebs_lbrs(struct lbr_entry *lbr);
+ #define EVENT_VAR(_id)  event_attr_##_id
+ #define EVENT_PTR(_id) &event_attr_##_id.attr.attr
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 7f49a58..54dad17 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -158,6 +158,7 @@ struct hw_perf_event {
+ 		struct { /* hardware */
+ 			u64		config;
+ 			u64		last_tag;
++			u64		dyn_constraint;
+ 			unsigned long	config_base;
+ 			unsigned long	event_base;
+ 			int		event_base_rdpmc;
 
