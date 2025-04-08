@@ -1,169 +1,395 @@
-Return-Path: <linux-kernel+bounces-593764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16B8A7FE5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:12:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B00A7FCDD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EF1A188AB62
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:06:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D31747A534D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AC126A083;
-	Tue,  8 Apr 2025 11:04:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D39268683;
+	Tue,  8 Apr 2025 10:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h6B0Jzrj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tzLcawWQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17325269CF0;
-	Tue,  8 Apr 2025 11:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2A9267F4F;
+	Tue,  8 Apr 2025 10:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744110244; cv=none; b=LQSURtsHjlpzQv/yaHMqH+ksXxNb2/6bGajNz0zIitHZUG7FwgooYWiLH3n/TI5GFaRYyRQpSoLtRePXUmEnhfkgEVDPBpsmzQzYeY5PwbdBPl3iAZeVqVckX5ibifSuM4pAdiJ0E1/JAfz3MAPOKs2ntMTQA7eiVEUrjEe/4F0=
+	t=1744109454; cv=none; b=BUW+Q7KqtjoW63MKrf4t76g1PGEb3uUHpPkdlETvDJzZWATobSwNhyYo5DcQmoX733P5EG1wy13VYAQbNTNPurAfYAOHREklEbHgXVTpiCO82Utzz59gLWXfmqQMH+XRN24d+E/u7bwge2bgjSMrYfluSaLFLv82vEYiYQIHxfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744110244; c=relaxed/simple;
-	bh=eF8ykuB3zv9H36H3ho5AqA1fkqlQywk4736N5EJ2uVM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kc7p19yv2Xyqna2zbYqfUxhn+WiDjk/XGN+0iMjFUss3qcdOdOTlazjgPstfwkch+v8jRRQz4+gqHGxZfROMFM1zYbjbhNrpxW2+I6acF07lHVtK1YEA7FLRPivx21vOELov2Me1g6KjNGRiFdEsoD8c1iUNyZuskO/JmavgrZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h6B0Jzrj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35C8CC4CEE5;
-	Tue,  8 Apr 2025 11:04:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1744110243;
-	bh=eF8ykuB3zv9H36H3ho5AqA1fkqlQywk4736N5EJ2uVM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=h6B0JzrjLdW1aaQX/sBoTjFHeefoXkJPG4hutp3k721udh3TBJhqYBFzc875BzTWA
-	 P7sGWFJwVqY2W4jJtK9tkh+0FAJxl6i2pTo/4d7M1NdMyYuhCbCMKy0fg3T5b826jd
-	 f63A1xgZ6P1gNJIJ8vEQx/lydT29LEUpNQ4C1Ox4=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	Jakub Acs <acsjakub@amazon.de>,
-	Theodore Tso <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mahmoud Adam <mngyadam@amazon.com>,
-	security@kernel.org
-Subject: [PATCH 5.10 221/227] ext4: fix OOB read when checking dotdot dir
-Date: Tue,  8 Apr 2025 12:49:59 +0200
-Message-ID: <20250408104826.925865160@linuxfoundation.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250408104820.353768086@linuxfoundation.org>
-References: <20250408104820.353768086@linuxfoundation.org>
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
+	s=arc-20240116; t=1744109454; c=relaxed/simple;
+	bh=Vrm1y9HqogqdHdZx/otTpwpDwGxKKMfsXeVRsPHkIPM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Q0MjMg/D999SzXwd0WMRE6rgX2SBs3cVQ5JjDNykdngn5cGn6yb8kc7ccW78gNIf5EpIJM3ZxBTsgzCS+OZcEr1le5tfkd+JDCI/iTdeZoZegdVCcJCu6iLYhTuBJypcTbfzGdPMJk39MmAJe8QLImd+NTzxD+Ll90jiE6dLpew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tzLcawWQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A611C4CEE7;
+	Tue,  8 Apr 2025 10:50:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744109454;
+	bh=Vrm1y9HqogqdHdZx/otTpwpDwGxKKMfsXeVRsPHkIPM=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=tzLcawWQATZ8Pi02Ek0c2w0JiKTdVzqmJ54DWu0iKI0Gl5Brf3ZBf3fX11s+6QPTd
+	 OGJwxrcYaz+q92XkrM/e8SeVbHC9J0/65GJoXDYDoZfuUWUA+kkj6lAQosjUgHNoef
+	 OsfH114c8EbIXYH5wSyqemtTcPK5i48qBTQauMsw6SO/rLDao6U1obS29zNl1uY2Tn
+	 unxasP/FOsML1WcMa0R6+QvvhntPOc5zL6jib6GS5pEolEXEMTB8tJPHYeJy906PGt
+	 qOmq89+/xT9P0JBU7s+dMPTfowqpQp47v1vMM1Br1srI7DCkbEpO5QEPl46qfWhN8i
+	 +qGogvLi8gDcA==
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Date: Tue, 08 Apr 2025 12:50:00 +0200
+Subject: [PATCH 01/24] Documentation: devicetree: bindings: Add GICv5 DT
+ bindings
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250408-gicv5-host-v1-1-1f26db465f8d@kernel.org>
+References: <20250408-gicv5-host-v1-0-1f26db465f8d@kernel.org>
+In-Reply-To: <20250408-gicv5-host-v1-0-1f26db465f8d@kernel.org>
+To: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Sascha Bischoff <sascha.bischoff@arm.com>, 
+ Timothy Hayes <timothy.hayes@arm.com>, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>
+X-Mailer: b4 0.14.2
 
-5.10-stable review patch.  If anyone has any objections, please let me know.
+The GICv5 interrupt controller architecture is composed of:
 
-------------------
+- one or more Interrupt Routing Service (IRS)
+- zero or more Interrupt Translation Service (ITS)
+- zero or more Interrupt Wire Bridge (IWB)
 
-From: Acs, Jakub <acsjakub@amazon.de>
+Describe a GICv5 implementation by specifying a top level node
+corresponding to the GICv5 system component.
 
-commit d5e206778e96e8667d3bde695ad372c296dc9353 upstream.
+IRS nodes are added as GICv5 system component children.
 
-Mounting a corrupted filesystem with directory which contains '.' dir
-entry with rec_len == block size results in out-of-bounds read (later
-on, when the corrupted directory is removed).
+An ITS is associated with an IRS so ITS nodes are described
+as IRS children - use the hierarchy explicitly in the device
+tree to define the association.
 
-ext4_empty_dir() assumes every ext4 directory contains at least '.'
-and '..' as directory entries in the first data block. It first loads
-the '.' dir entry, performs sanity checks by calling ext4_check_dir_entry()
-and then uses its rec_len member to compute the location of '..' dir
-entry (in ext4_next_entry). It assumes the '..' dir entry fits into the
-same data block.
+IWB nodes are described as GICv5 system component children - to make it
+explicit that are part of the GICv5 system component; an IWB is
+connected to a single ITS but the connection is made explicit through
+the msi-parent property and therefore is not required to be explicit
+through a parent-child relationship in the device tree.
 
-If the rec_len of '.' is precisely one block (4KB), it slips through the
-sanity checks (it is considered the last directory entry in the data
-block) and leaves "struct ext4_dir_entry_2 *de" point exactly past the
-memory slot allocated to the data block. The following call to
-ext4_check_dir_entry() on new value of de then dereferences this pointer
-which results in out-of-bounds mem access.
-
-Fix this by extending __ext4_check_dir_entry() to check for '.' dir
-entries that reach the end of data block. Make sure to ignore the phony
-dir entries for checksum (by checking name_len for non-zero).
-
-Note: This is reported by KASAN as use-after-free in case another
-structure was recently freed from the slot past the bound, but it is
-really an OOB read.
-
-This issue was found by syzkaller tool.
-
-Call Trace:
-[   38.594108] BUG: KASAN: slab-use-after-free in __ext4_check_dir_entry+0x67e/0x710
-[   38.594649] Read of size 2 at addr ffff88802b41a004 by task syz-executor/5375
-[   38.595158]
-[   38.595288] CPU: 0 UID: 0 PID: 5375 Comm: syz-executor Not tainted 6.14.0-rc7 #1
-[   38.595298] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-[   38.595304] Call Trace:
-[   38.595308]  <TASK>
-[   38.595311]  dump_stack_lvl+0xa7/0xd0
-[   38.595325]  print_address_description.constprop.0+0x2c/0x3f0
-[   38.595339]  ? __ext4_check_dir_entry+0x67e/0x710
-[   38.595349]  print_report+0xaa/0x250
-[   38.595359]  ? __ext4_check_dir_entry+0x67e/0x710
-[   38.595368]  ? kasan_addr_to_slab+0x9/0x90
-[   38.595378]  kasan_report+0xab/0xe0
-[   38.595389]  ? __ext4_check_dir_entry+0x67e/0x710
-[   38.595400]  __ext4_check_dir_entry+0x67e/0x710
-[   38.595410]  ext4_empty_dir+0x465/0x990
-[   38.595421]  ? __pfx_ext4_empty_dir+0x10/0x10
-[   38.595432]  ext4_rmdir.part.0+0x29a/0xd10
-[   38.595441]  ? __dquot_initialize+0x2a7/0xbf0
-[   38.595455]  ? __pfx_ext4_rmdir.part.0+0x10/0x10
-[   38.595464]  ? __pfx___dquot_initialize+0x10/0x10
-[   38.595478]  ? down_write+0xdb/0x140
-[   38.595487]  ? __pfx_down_write+0x10/0x10
-[   38.595497]  ext4_rmdir+0xee/0x140
-[   38.595506]  vfs_rmdir+0x209/0x670
-[   38.595517]  ? lookup_one_qstr_excl+0x3b/0x190
-[   38.595529]  do_rmdir+0x363/0x3c0
-[   38.595537]  ? __pfx_do_rmdir+0x10/0x10
-[   38.595544]  ? strncpy_from_user+0x1ff/0x2e0
-[   38.595561]  __x64_sys_unlinkat+0xf0/0x130
-[   38.595570]  do_syscall_64+0x5b/0x180
-[   38.595583]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-Fixes: ac27a0ec112a0 ("[PATCH] ext4: initial copy of files from ext3")
-Signed-off-by: Jakub Acs <acsjakub@amazon.de>
-Cc: Theodore Ts'o <tytso@mit.edu>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-Cc: linux-ext4@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Mahmoud Adam <mngyadam@amazon.com>
-Cc: stable@vger.kernel.org
-Cc: security@kernel.org
-Link: https://patch.msgid.link/b3ae36a6794c4a01944c7d70b403db5b@amazon.de
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>
 ---
- fs/ext4/dir.c |    3 +++
- 1 file changed, 3 insertions(+)
+ .../bindings/interrupt-controller/arm,gic-v5.yaml  | 268 +++++++++++++++++++++
+ MAINTAINERS                                        |   7 +
+ 2 files changed, 275 insertions(+)
 
---- a/fs/ext4/dir.c
-+++ b/fs/ext4/dir.c
-@@ -88,6 +88,9 @@ int __ext4_check_dir_entry(const char *f
- 	else if (unlikely(le32_to_cpu(de->inode) >
- 			le32_to_cpu(EXT4_SB(dir->i_sb)->s_es->s_inodes_count)))
- 		error_msg = "inode out of bounds";
-+	else if (unlikely(next_offset == size && de->name_len == 1 &&
-+			  de->name[0] == '.'))
-+		error_msg = "'.' directory cannot be the last in data block";
- 	else
- 		return 0;
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v5.yaml b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v5.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..5c78375c298a0115c55872f439eb04d4171c4381
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v5.yaml
+@@ -0,0 +1,268 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/interrupt-controller/arm,gic-v5.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ARM Generic Interrupt Controller, version 5
++
++maintainers:
++  - Lorenzo Pieralisi <lpieralisi@kernel.org>
++  - Marc Zyngier <maz@kernel.org>
++
++description: |
++  The GICv5 architecture defines the guidelines to implement GICv5
++  compliant interrupt controllers for AArch64 systems.
++
++  The GICv5 specification can be found at
++  https://developer.arm.com/documentation/aes0070
++
++  The GICv5 architecture is composed of multiple components:
++    - one or more IRS (Interrupt Routing Service)
++    - zero or more ITS (Interrupt Translation Service)
++    - zero or more IWB (Interrupt Wire Bridge)
++
++  The architecture defines:
++    - PE-Private Peripheral Interrupts (PPI)
++    - Shared Peripheral Interrupts (SPI)
++    - Logical Peripheral Interrupts (LPI)
++
++allOf:
++  - $ref: /schemas/interrupt-controller.yaml#
++
++properties:
++  compatible:
++    const: arm,gic-v5
++
++  interrupt-controller: true
++
++  "#address-cells":
++    enum: [ 1, 2 ]
++  "#size-cells":
++    enum: [ 1, 2 ]
++
++  ranges: true
++
++  "#interrupt-cells":
++    description: |
++      Specifies the number of cells needed to encode an interrupt source.
++      Must be a single cell with a value 3.
++
++      The 1st cell corresponds to the INTID.Type field in the INTID; 1 for PPI,
++      3 for SPI. LPI interrupts must not be described in the bindings since
++      they are allocated dynamically by the software component managing them.
++
++      The 2nd cell contains the interrupt INTID.ID field.
++
++      The 3rd cell is the flags, encoded as follows:
++      bits[3:0] trigger type and level flags.
++
++        1 = low-to-high edge triggered
++        2 = high-to-low edge triggered
++        4 = active high level-sensitive
++        8 = active low level-sensitive
++
++      Cells 4 and beyond are reserved for future use and must have a value
++      of 0 if present.
++    const: 3
++
++  interrupts:
++    description:
++      Interrupt source of the VGIC maintenance interrupt.
++    maxItems: 1
++
++required:
++  - compatible
++
++patternProperties:
++  "^irs@[0-9a-f]+$":
++    type: object
++    description:
++      GICv5 has one or more Interrupt Routing Services (IRS) that are
++      responsible for handling IRQ state and routing.
++
++    additionalProperties: false
++    properties:
++      compatible:
++        const: arm,gic-v5-irs
++
++      "#address-cells":
++        enum: [ 1, 2 ]
++      "#size-cells":
++        enum: [ 1, 2 ]
++
++      ranges: true
++
++      dma-noncoherent:
++        description:
++          Present if the GIC IRS permits programming shareability and
++          cacheability attributes but is connected to a non-coherent
++          downstream interconnect.
++
++      reg:
++        minItems: 1
++        items:
++          - description: IRS control frame
++          - description: IRS setlpi frame
++
++      cpus:
++        $ref: /schemas/types.yaml#/definitions/phandle-array
++        description:
++          Should be a list of phandles to CPU nodes (as described in
++          Documentation/devicetree/bindings/arm/cpus.yaml) corresponding to
++          CPUs managed by the IRS.
++
++      arm,iaffids:
++        $ref: /schemas/types.yaml#/definitions/uint16-array
++        description:
++          Should be a list of u16 values representing IAFFID IDs associated
++          with the CPU whose CPU node phandle is at the same index in the
++          cpus array.
++
++    patternProperties:
++      "^msi-controller@[0-9a-f]+$":
++        type: object
++        description:
++          GICv5 has zero or more Interrupt Translation Services (ITS) that are
++          used to route Message Signalled Interrupts (MSI) to the CPUs. Each
++          ITS is connected to an IRS.
++        additionalProperties: false
++        properties:
++          compatible:
++            const: arm,gic-v5-its
++
++          dma-noncoherent:
++            description:
++              Present if the GIC ITS permits programming shareability and
++              cacheability attributes but is connected to a non-coherent
++              downstream interconnect.
++
++          msi-controller: true
++
++          "#msi-cells":
++            description:
++              The single msi-cell is the DeviceID of the device which will
++              generate the MSI.
++            const: 1
++
++          reg:
++            items:
++              - description: ITS control frame
++              - description: ITS translate frame
++
++        required:
++          - compatible
++          - msi-controller
++          - "#msi-cells"
++          - reg
++
++    required:
++      - compatible
++      - reg
++      - cpus
++      - arm,iaffids
++
++  "^interrupt-controller@[0-9a-f]+$":
++    type: object
++    description:
++      GICv5 has zero or more Interrupt Wire Bridges (IWB) that are responsible
++      for translating wire signals into interrupt messages to the ITS.
++
++    additionalProperties: false
++    properties:
++      compatible:
++        const: arm,gic-v5-iwb
++
++      interrupt-controller: true
++
++      "#address-cells":
++        const: 0
++
++      "#interrupt-cells":
++        description: |
++          Specifies the number of cells needed to encode an interrupt source.
++          Must be a single cell with a value 2.
++
++          The 1st cell corresponds to the IWB wire.
++
++          The 2nd cell is the flags, encoded as follows:
++          bits[3:0] trigger type and level flags.
++
++          1 = low-to-high edge triggered
++          2 = high-to-low edge triggered
++          4 = active high level-sensitive
++          8 = active low level-sensitive
++
++          Cells 3 and beyond are reserved for future use and must have a value
++          of 0 if present.
++        const: 2
++
++      reg:
++        items:
++          - description: IWB control frame
++
++      msi-parent: true
++
++    required:
++      - compatible
++      - reg
++      - msi-parent
++
++additionalProperties: false
++
++examples:
++  - |
++    interrupt-controller {
++      compatible = "arm,gic-v5";
++      #interrupt-cells = <3>;
++      #address-cells = <2>;
++      #size-cells = <2>;
++      ranges;
++
++      interrupt-controller;
++
++      interrupts = <1 25 4>;
++
++      irs@2f1a0000 {
++        compatible = "arm,gic-v5-irs";
++        #address-cells = <2>;
++        #size-cells = <2>;
++        ranges;
++
++        reg = <0x0 0x2f1a0000 0x0 0x10000>;  // IRS_CONFIG_FRAME for NS
++
++        arm,iaffids = /bits 16 <0 1 2 3 4 5 6 7>;
++        cpus = <&{/cpus/cpu@0}>, <&{/cpus/cpu@100}>, <&{/cpus/cpu@200}>,
++               <&{/cpus/cpu@300}>, <&{/cpus/cpu@10000}>, <&{/cpus/cpu@10100}>,
++               <&{/cpus/cpu@10200}>, <&{/cpus/cpu@10300}>;
++
++        msi-controller@2f120000 {
++          compatible = "arm,gic-v5-its";
++
++          msi-controller;
++          #msi-cells = <1>;
++
++          reg = <0x0 0x2f120000 0x0 0x10000    // ITS_CONFIG_FRAME for NS
++                 0x0 0x2f130000 0x0 0x10000>;  // ITS_TRANSLATE_FRAME
++        };
++      };
++
++      interrupt-controller@2f000000 {
++        compatible = "arm,gic-v5-iwb";
++        #address-cells = <0>;
++
++        interrupt-controller;
++        #interrupt-cells = <2>;
++
++        reg = <0x0 0x2f000000 0x0 0x10000>;
++
++        msi-parent = <&its0 64>;
++      };
++    };
++
++    device@0 {
++      reg = <0 4>;
++      interrupts = <3 115 4>;
++    };
++
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 96b82704950184bd71623ff41fc4df31e4c7fe87..f3ed84466da19906953b5396a5f4b50e878c376e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1901,6 +1901,13 @@ F:	drivers/irqchip/irq-gic*.[ch]
+ F:	include/linux/irqchip/arm-gic*.h
+ F:	include/linux/irqchip/arm-vgic-info.h
  
++ARM GENERIC INTERRUPT CONTROLLER V5 DRIVERS
++M:	Lorenzo Pieralisi <lpieralisi@kernel.org>
++M:	Marc Zyngier <maz@kernel.org>
++L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
++S:	Maintained
++F:	Documentation/devicetree/bindings/interrupt-controller/arm,gic-v5.yaml
++
+ ARM HDLCD DRM DRIVER
+ M:	Liviu Dudau <liviu.dudau@arm.com>
+ S:	Supported
 
+-- 
+2.48.0
 
 
