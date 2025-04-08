@@ -1,128 +1,202 @@
-Return-Path: <linux-kernel+bounces-593445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15939A7F952
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:23:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F158A7F960
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:26:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3F171713E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:23:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 189C517928B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C467264F83;
-	Tue,  8 Apr 2025 09:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4AD26659E;
+	Tue,  8 Apr 2025 09:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GerwB3Ol"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cx4HGTyc"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE8126158A
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 09:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18398266581
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 09:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744104175; cv=none; b=l8XZqBRYzSOfQBiZIwCNOae9Ar381RF9/KuyIdsH8/8ewAH5zKWsAswRbOc2QkTqhNtXWdixTZFovbmQAasSpZrHdhurM9XbA2KbXZNnYqX1k4vl5IeA3RF4Fs+JSRKnOgSmk0m5iGG5IjltznSCRCdikBsxJlLZvrg4NOiPZSk=
+	t=1744104257; cv=none; b=ub9zBnq+I3UM46SxsayfM4FswAsMSR2oRjMi0VVdhwtY2p6JxjHozlnT6xu0tvhjMii53glLdkxYF6HSnNbX1WACsRLslFZ6iDCRiDiyFHYL6+s7exDrjcIMFVAEuInVk8xg5hCyFK+1P9loVOtGcnvkZRGB6ItT10tkF0e+3hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744104175; c=relaxed/simple;
-	bh=/M7kO/AN0DirQE8MCvfxa2LHwD+GEtyiWtNwq5y8tYs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G54P++DR7+iXebSfnWhCvqypd+pq10DtZ6dyTBKj4TfztvQQV/eJo/Vz7Xz2SV/qqSsSd04t3Tb3F1lBjMvlb16BG2aDUPSpDbnX+Tj1POY2K8c88wPcgeQwJHvsWHgvjaD73J6CkPGvPZmWnQ6v1A+/ETvd4EhFmPPsJ0f0pv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GerwB3Ol; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-523f670ca99so2402168e0c.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 02:22:54 -0700 (PDT)
+	s=arc-20240116; t=1744104257; c=relaxed/simple;
+	bh=Sfgq//T2QbdbqoMqrWL7BQLUnjSkh+kpgtWBCSQivcU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=I4iQZOWuIowkayp44KOK3XAEcSMN1kkm8lM20+gRYEB9iCudH8UW9rZGpJelmZkUB7Z44x8s4BKtZMc3n1KPS9wRj2r+SL95AB20FPORympXILtxtUyC+XzyRB9egYznKRbLSAEQERMdOiQ+p/Bw4h8nBznI8WNVP9P1RuBeASE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cx4HGTyc; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43d51bd9b45so36714935e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 02:24:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744104173; x=1744708973; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XQJxu0CgY3ztGh+KGz1XEllD5aCbm4Ec5wR9oKzfzj8=;
-        b=GerwB3OllRaBwdjkzLFrV59TAmT4Ch0fQnKS9P2dupuCmgfBY4DglZJdkYsOLuTxSv
-         aum6AgFU8xJFf7RZ1JVBsNVjw8NM7+nENNKSJ1pARlTLNcG+f9IRY5T/6sh3ep0LNzh7
-         gaoPiaLg4C/1lElaNaeRFJdcKUGMNu4nsod1dDLK+ruvDxzoBqH8w8ta4zinNMz4MceP
-         eGsPnlC2y+XrS9aQDTlu7p++nPuihtDmokgr/4WubZctY3rxYP6YJxWmF92yAlX9A3hC
-         rePeb7Zn2m5ov88zUGLsd2X8a7/L2ZGc/ojvysjNEjgeOgQZsFLbSyYif+JkUPgiBdrr
-         Q7uA==
+        d=google.com; s=20230601; t=1744104253; x=1744709053; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BKgSHP0UtGt+oV0m7wKF/tLoW5odDMj8vC7ZBIsrjgA=;
+        b=cx4HGTycjH4KeEr0pMv7vXk2vfEVLqn+WWn+LNGQ/tIY4o6W5FZbPCg86+LIy/OZjc
+         aAFQ7FUmLwDvjjbFt7Cb/7vmGRE6XhFg32wOy6GM6KlNH7l9AAoY1Lexv5Zrs8FQdwSx
+         vDvQp8tMo8SJJA0CjQvtrvb2tUKbdlpX+SVezJlklIixHQTzU+oJRz68IXPCdvNHie8E
+         l0ipdVRyV0AEUb7D5lv3Tg7gp1yFp2S2/6zIJR8u74LDQvIkQ2rgPdZ7Kf+CiTUY37WQ
+         qDbPD56dUcCxI60YI/xEALRVKR1qo7wgYo5pAittjbXjwyBOQFqdrx7QG/D6e5jn+b3+
+         psLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744104173; x=1744708973;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XQJxu0CgY3ztGh+KGz1XEllD5aCbm4Ec5wR9oKzfzj8=;
-        b=pkwZMfhnhtemPDp6gVOKAfsE8dh0CwVLPu0pdkyLzsW9ljLWqDCHzAm8s1qhXsyihs
-         79mP8eu0fc6LbqRsaZr3C8z/Styxz8vGaErJpcXNT8P8pVYBMjKgOFfKOG3qlIAYejCI
-         /eGjnu6qFqfv4iwCVwgg/5QV3V8Oaa38HdjzWd2Kw/CKou3bqQrRl5+tt+TKyiEAOvQI
-         ljWa1gjFmOR9GMbuLOg8ofGV01nwH0Oa/Qb4PNG/YoPdsFDvEX+nCmiOIV0p209S3iYe
-         RixEaaDio3HSUOn59KIfA07A1nbYZdjJr6fMBYZh1CtqjzwZMmjEFQCxP6HLBlFQdUJs
-         bOWg==
-X-Forwarded-Encrypted: i=1; AJvYcCVryis1lDHDpPREXQQvVPvCtuZS9UUY3NH6Pr5JrjPPUkYu9crLXaQwyh3tlhuTu1YdB9SxsRixPUCgpmk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZJE6VIPelW3/w00Iaw1Pv3ZWpG5buywr3eMvO9iXF/Izqoa9n
-	mn7OY3jG6kWomteYKfp31MhDPuaVe4FzIxbSsELGN4Q5DOvCLpkIvOm72cVqM+GVP/lfm1sy6cq
-	f6DGaFlw52fP3YX69z8yYLQbqKBM=
-X-Gm-Gg: ASbGncvTFv7DmCrY2RnHNLKcWkMCfH37ZB8ptuczOx9atzp+p41QMJ0OpYHo0DT00Eb
-	V7pIx/KCoA14TZEPvMr0jac1neZ4CE6p4veqUxYXIw6ZdNrkVJVHtjYGoIIO+fYTEdQhnQDD6bs
-	iKA0EhbeFN6WBNfou9m12qacS+M1M=
-X-Google-Smtp-Source: AGHT+IFqm7trkHxsW9aThI6ptC3yUFdyXutxAMPMGPBTlY31LBfZp0Y12C6f0vwYqJkOnUOQsHoXmwZRHrcKeAih2cI=
-X-Received: by 2002:a05:6122:6585:b0:520:51a4:b84f with SMTP id
- 71dfb90a1353d-5276444fe9cmr12081257e0c.4.1744104173131; Tue, 08 Apr 2025
- 02:22:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744104253; x=1744709053;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BKgSHP0UtGt+oV0m7wKF/tLoW5odDMj8vC7ZBIsrjgA=;
+        b=gqMyOlIOTVzVY5gGRRsjrDFDhWLpEx3i15pumb3VftTo4DxFTFXEGhtceH9D0GIENH
+         LbnS4BXVFvmGxjovXXxAjlQ0FzAWMZ1Eilc4G1y4RUshApFX2wpQah4ErOqU26oW8o9Z
+         imEiOrpY2NfzPmnEwzTQ8NifB1Q4aeGmc/i8qvN+08hnivi5o6An1LI9dNDiAzTKBejM
+         XuTOLnomw+RPt5dIXjAppuBexl5oif8f19Qs3tZvCbR4svkqAN7olMUCI1cU+ilCGeDF
+         grIv9Grndh4i/lS+JivLRCDVLEWzRqOXCoNh9hHHuh/ZQLTB7zBikav+JaZTj/4bZom1
+         Wtgw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7FEcf90aA9UiBkp66gpksIvD1H/HlqJPOU3+W1uG9feE4iSHTWFGRoCGYMpV3IVX/pVEL21bnzk6Q+Wk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxObX6/ycJpZazb64/+Twwqkm3ywsp4CffRyCZcJ5L34G6GnTUZ
+	93zZiFf8ikDci3nzFLoamol//0eJMw1paNuhnLtdj0Ve8tXKXBuFYq5Vg5I13Yl8q3BLJBd8m62
+	7Ixd7WCo6EfWWCw==
+X-Google-Smtp-Source: AGHT+IGKxxFnPnuYQhaMn/C1VHYnvMuiIufsTL+sO+MIIaikeAKJnyM61wTXLBWoQ3PMLnGlIdAs32Q49e1duTw=
+X-Received: from wmbbg30.prod.google.com ([2002:a05:600c:3c9e:b0:43d:44cf:11f8])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3c8d:b0:43b:cc42:c54f with SMTP id 5b1f17b1804b1-43ecf85f20amr127759175e9.14.1744104253433;
+ Tue, 08 Apr 2025 02:24:13 -0700 (PDT)
+Date: Tue, 08 Apr 2025 09:22:44 +0000
+In-Reply-To: <20250408-vma-v16-0-d8b446e885d9@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <cover.1744061673.git.abrahamadekunle50@gmail.com>
- <4ccdbfd3e8d74d99679927f294f71cfb694fcc6c.1744061673.git.abrahamadekunle50@gmail.com>
- <CAHp75Vfp8Je1fUavSwTDAM_5_rDaDfXETa2oM5f0CjL1mxWX_Q@mail.gmail.com>
-In-Reply-To: <CAHp75Vfp8Je1fUavSwTDAM_5_rDaDfXETa2oM5f0CjL1mxWX_Q@mail.gmail.com>
-From: Samuel Abraham <abrahamadekunle50@gmail.com>
-Date: Tue, 8 Apr 2025 10:22:44 +0100
-X-Gm-Features: ATxdqUHWCJobI7lIeUJ-4_4hJAPdZTYS5oHhQSwcsK_KLFX4CDP6067roMe28Hs
-Message-ID: <CADYq+fbh=kG2JABmdF8FjjPiyigMpnJ7WhQh+faqRk6FJe4MBQ@mail.gmail.com>
-Subject: Re: [PATCH v6 1/2] staging: rtl8723bs: Add white spaces around binary operators
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: outreachy@lists.linux.dev, gregkh@linuxfoundation.org, 
-	julia.lawall@inria.fr, linux-staging@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, david.laight.linux@gmail.com, andy@kernel.org, 
-	dan.carpenter@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250408-vma-v16-0-d8b446e885d9@google.com>
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4043; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=Sfgq//T2QbdbqoMqrWL7BQLUnjSkh+kpgtWBCSQivcU=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBn9Osphtn+zBbO8bZFvj7pkZhABnr8VbaFiFEa8
+ vSFFXvSY0CJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ/TrKQAKCRAEWL7uWMY5
+ RuB5D/9RA7H3cjo5/vuxD/VzZyAqYJY0YR+6BZctDljbIzIBs0tHYjQGyX3i9/lx7Z7I24HZgG3
+ GYQdZnhqBnxIJeK+aTd3+I6/0Kxt/6IQR6Q12dP9St1jrQR8QY0NbbDlJIpZsh4EnSERgXH4VR2
+ Iv/dWP2koycKPHA53sb047tk00stSC8FBUFUrjU+fXIPEprHdC2O05Nn5ARdWJUF/teV+/VTF6O
+ MjPU9y7a0TfFX9kS24LGjGguBGUuk04TbeSD3AJ4zI5ttYztwe4rDoy0G5JK0WAdqdOzGvUzjyA
+ AqLPw3Ciycje/cSkNmjIHN4NgE5iCyRh6m6L/7vT4aE+XlSlK/fFXROSRYWDwRSP/MQc0QPPXCm
+ NN3I1c3hL62W/8E3tveIBF+7V6kp8O8061h//5D2SScR/0OuE8ZVF+UvtYcgqS+ZHSWbog/rDqb
+ LvsWYiaW8W+F501INqaTk2CdldRz8wUlYQ2xCRWzFZTlkuXChlDP4Zf8Uhv25SGDKHNwfGiWyoC
+ cw7vMFfyvtUFsM0wxwdFhrB6PlXfugS1gsYCk4jrqO7Oq1WipRemsXxl5MPxVF9hjTQSISjPoT4
+ mlt0NTtEaoXDAUWMGbFJyHdFpelBc1wv8qCvZZmccvdR9ztCb6uhqJ185K2TK0waNVyj8MsR5Cz nJaPeEL8PTxVTAw==
+X-Mailer: b4 0.14.2
+Message-ID: <20250408-vma-v16-7-d8b446e885d9@google.com>
+Subject: [PATCH v16 7/9] rust: miscdevice: add mmap support
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	John Hubbard <jhubbard@nvidia.com>, "Liam R. Howlett" <Liam.Howlett@Oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>, Suren Baghdasaryan <surenb@google.com>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, rust-for-linux@vger.kernel.org, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Apr 8, 2025 at 8:20=E2=80=AFAM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Tue, Apr 8, 2025 at 12:54=E2=80=AFAM Abraham Samuel Adekunle
-> <abrahamadekunle50@gmail.com> wrote:
-> >
-> > The code contains no spaces around binary operators making it
-> > hard to read. This also doesn't adhere to Linux kernel coding
-> > style.
-> >
-> > Add white spaces around the binary operators to increase readability
-> > and endure adherence to Linux kernel coding styles.
->
-> ...
->
-> > -                                               psta->BA_starting_seqct=
-rl[pattrib->priority & 0x0f] =3D (tx_seq+1)&0xfff;
-> > +                                               psta->BA_starting_seqct=
-rl[pattrib->priority & 0x0f] =3D (tx_seq + 1) & 0xfff;
->
-> > -                                               psta->BA_starting_seqct=
-rl[pattrib->priority & 0x0f] =3D (pattrib->seqnum+1)&0xfff;
-> > +                                               psta->BA_starting_seqct=
-rl[pattrib->priority & 0x0f] =3D (pattrib->seqnum + 1) & 0xfff;
->
-> You mentioned Linux coding style, which also requires lines not to be
-> so long. These lines are. That's why a few versions ago I suggested
-> you to change these to be two lines each. I don't know how many times
-> to repeat this (it's third one).
+Add the ability to write a file_operations->mmap hook in Rust when using
+the miscdevice abstraction. The `vma` argument to the `mmap` hook uses
+the `VmaNew` type from the previous commit; this type provides the
+correct set of operations for a file_operations->mmap hook.
 
-Okay, sorry
-I will add a third patch for a line break before the patch for %
-operations since each patch should handle a single thing.
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Acked-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Acked-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+Reviewed-by: Gary Guo <gary@garyguo.net>
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+ rust/kernel/miscdevice.rs | 45 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-Thanks.
+diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+index fa9ecc42602a477328a25b5d357db90b59dc72ae..9d9771247c3865761c4387467de3f1d1a82691b7 100644
+--- a/rust/kernel/miscdevice.rs
++++ b/rust/kernel/miscdevice.rs
+@@ -14,6 +14,7 @@
+     error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
+     ffi::{c_int, c_long, c_uint, c_ulong},
+     fs::File,
++    mm::virt::VmaNew,
+     prelude::*,
+     seq_file::SeqFile,
+     str::CStr,
+@@ -119,6 +120,22 @@ fn release(device: Self::Ptr, _file: &File) {
+         drop(device);
+     }
+ 
++    /// Handle for mmap.
++    ///
++    /// This function is invoked when a user space process invokes the `mmap` system call on
++    /// `file`. The function is a callback that is part of the VMA initializer. The kernel will do
++    /// initial setup of the VMA before calling this function. The function can then interact with
++    /// the VMA initialization by calling methods of `vma`. If the function does not return an
++    /// error, the kernel will complete initialization of the VMA according to the properties of
++    /// `vma`.
++    fn mmap(
++        _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
++        _file: &File,
++        _vma: &VmaNew,
++    ) -> Result {
++        build_error!(VTABLE_DEFAULT_ERROR)
++    }
++
+     /// Handler for ioctls.
+     ///
+     /// The `cmd` argument is usually manipulated using the utilties in [`kernel::ioctl`].
+@@ -223,6 +240,33 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+         0
+     }
+ 
++    /// # Safety
++    ///
++    /// `file` must be a valid file that is associated with a `MiscDeviceRegistration<T>`.
++    /// `vma` must be a vma that is currently being mmap'ed with this file.
++    unsafe extern "C" fn mmap(
++        file: *mut bindings::file,
++        vma: *mut bindings::vm_area_struct,
++    ) -> c_int {
++        // SAFETY: The mmap call of a file can access the private data.
++        let private = unsafe { (*file).private_data };
++        // SAFETY: This is a Rust Miscdevice, so we call `into_foreign` in `open` and
++        // `from_foreign` in `release`, and `fops_mmap` is guaranteed to be called between those
++        // two operations.
++        let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
++        // SAFETY: The caller provides a vma that is undergoing initial VMA setup.
++        let area = unsafe { VmaNew::from_raw(vma) };
++        // SAFETY:
++        // * The file is valid for the duration of this call.
++        // * There is no active fdget_pos region on the file on this thread.
++        let file = unsafe { File::from_raw_file(file) };
++
++        match T::mmap(device, file, area) {
++            Ok(()) => 0,
++            Err(err) => err.to_errno(),
++        }
++    }
++
+     /// # Safety
+     ///
+     /// `file` must be a valid file that is associated with a `MiscDeviceRegistration<T>`.
+@@ -291,6 +335,7 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+     const VTABLE: bindings::file_operations = bindings::file_operations {
+         open: Some(Self::open),
+         release: Some(Self::release),
++        mmap: if T::HAS_MMAP { Some(Self::mmap) } else { None },
+         unlocked_ioctl: if T::HAS_IOCTL {
+             Some(Self::ioctl)
+         } else {
+
+-- 
+2.49.0.504.g3bcea36a83-goog
+
 
