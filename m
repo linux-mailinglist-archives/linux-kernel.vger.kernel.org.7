@@ -1,334 +1,331 @@
-Return-Path: <linux-kernel+bounces-592935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B30BA7F30B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:09:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3062A7F313
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F4D67A55F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 03:08:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 016E917523E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 03:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6DD246335;
-	Tue,  8 Apr 2025 03:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7564622DFAD;
+	Tue,  8 Apr 2025 03:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MonFW/qQ"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2082.outbound.protection.outlook.com [40.107.94.82])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fywo3f8I"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2056.outbound.protection.outlook.com [40.107.237.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B3D4A1E;
-	Tue,  8 Apr 2025 03:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF4F1DE2A1;
+	Tue,  8 Apr 2025 03:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.56
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744081737; cv=fail; b=LQP8B0VI9IAy9W+EkGhQLRtFRBldA6iyF4T7xkNmJH9c2TuFbdreuqHTu/+tWQoOTKpzEWtls7tc5mYtOu66gqF/QStCO8BDzFZ7HCGCq4HrwfTrfsj3b6mToXjvppTHvqQ5trn+N1dNq4P42/8MbVAnxDbOE09/ZsaU73WmCFE=
+	t=1744081769; cv=fail; b=cDP4iasR0Y+/XwiCTmPJQETiHI1w95p4cqUUY+gCxGXer/Sz6n88aI8JsBbW2cNtMTXTJQKt5Jui+il951iKpCj7kYVGc8tAydK/XuxIbCCgm8iMa4s/VWMncWzZY6MIWRZu8LT3sxPFOmJCkkkRMP26+6Qz4VtXj03Njf5o/mc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744081737; c=relaxed/simple;
-	bh=9epIaHHQK8o6xLQqKwNqVSnzZZoZ860wB9KRjeQFiyE=;
-	h=Content-Type:Date:Message-Id:To:Cc:Subject:From:References:
-	 In-Reply-To:MIME-Version; b=CjpElIJWuYGNwWmzIvTAw5iPikGqM4yKAZnWxa3zevIA+wFOTSXkw3yc6lLK82xkN6DYW06stvRC5B6D4lM3xoKsMFNCikkCjQ/Kmrjoey0dYiZDe8BlCpWNHJMtNY81C5tOTOLHezmSZlvx0GOWU9l6CEILAugQG2PGptC1VZs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MonFW/qQ; arc=fail smtp.client-ip=40.107.94.82
+	s=arc-20240116; t=1744081769; c=relaxed/simple;
+	bh=PwZFeKZGiYILs4oGLJhkYc0idlsdYM7LI62MQ/O6j4c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B7rh+gS1LInvXZQyV8sZCcIums4IABbtaFwOdMPZAzXiRnFGdcTWEMTokJYO2yIB0ElMYr5aYj90i2qhKcQgfOyAMyHKCecL7rAYbeyKcZYdlRBzd8PFROuWX6g5TjC6gMheZ7HNAdNrYYzRgAu6CroT9Xa9ZZiBWtpdUEFtyic=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fywo3f8I; arc=fail smtp.client-ip=40.107.237.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HvjcNenitswRaTjfCaWHQ8kfrDQy6hImPMo53XINtTY+FrCxzH/lHeqE42jLHjcyqsMkEApQjJiz15fbc8H/R1ZdeaZ7+H7cizidokVttYv5wjzDfBY0cxw5IGLuiB2UDTwznxie6m/Ak9sOgR8yzisjuIOpHuRcMgTuSvj7WxkWhQHXGVInOqW/CUNbWh2N/4Px+lqIPzE0bJNXVbxqLvBvovrz6i0ycNfwR7mlS3DeADlzzoeyBluTAOntlPARRMXW1DJ3O+7ZLFy6wONQJVSscngmMUDlAcOeYZYyaFmT2MQnFDCMl3ZjGQHdD4w85oZFH5CFbqPCMmDkBsrxMQ==
+ b=WTpnIpcy0OBD8Q71vt+grCKstbv/E3mVhrJ03sKuYQxL2yhXL/sShOxFJ+OEWafNPz88nwfKOA2CFw/GTZO1N5Z/F9uTs4SDLtLJdmFxdQ7hpRtmk/L9ZkDdZoeS1UXNT+2x0fOpmOY6nmI2GcslAxZ2vuVLUI2X3zpAeIcQOGN6hiSGAQoHCh9dMP01K1hrLQuQWtQyA78NEqkgz/G9Wc4IEc9Fzou0NmuqhoegSJKjzuCiIZq5jwgyPoQPCUYw4JQhB2Cm6htHk3Z060sUteGdFbefemAxcj43IbUrQqR6iUp5tIQ6HMVIdVyAcCrxUi4FMffHcRFxD6V8ONo7hw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+ZKKTRRF54mKXbKEV/KV8MFAD/i8fH+HycaO6HC1MSg=;
- b=SyhAJQJ8fiuxyoh3jmnurhRimn3Xr8P2coR1qP6kUkhfes5PXypvDT0MhlFYvVOIGbhCRxjCW7aVYeTytWW3uuFqxO9q5sbctUHH1TI5URnMEiyi0dXTZSirJ0f5yUyrTyVnAkjMSEhoe0PJGmmVeKIWBwhghq+uMDMzXyes2PjYLJDn3KPyDqc/pYJCr8YLt+HnFu3Pv4gu/pEIoPjDBWA7fVgs24c7xsylWodFVI1MPCFEuxIywOCYq0FiMJGgPA67TmwPAGsrGB75bczX+R5BeXxRclVFz10OCBIi1Vhn66qoMtPo1ncC0eIDfH+Yzct2mJHO9gj2qqBVhdgx2w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
+ bh=Q6X0IH5qSMC3NspQcC8Jpdc5d7pOaui/yy5XH8Uo7nY=;
+ b=y36skmCcsqbLjUbyobgSRmLS6bE10AJtRYmJe9/x/+Flp8b6Fq0RLYU5o8a8w8SBPrZJlvU/X5JvggvtYkBB6QbOJtS8I+/+VptDEcgTHx/CXgrBD1+BI+4/yHOYt4MgziFZIV/miBptrvqWZMEeMcNrRfy/lxoIwJtytDeorra1GcgF2jo0KJBIwt9sPc7y1D8EkWCRicrikqT5sMoe1JxaHIq5U6olKBsiCnKSyz/aF3kLaiCRGcHYvEmA/fSStJ24/hyaU8S/4MN/sn+NBg2wfotr6jbzJLpEUiTQdtkEwzbTMtFM3ep4voiGzUYaOXdEEXh7Tz1RdWBhUfo7Iw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+ZKKTRRF54mKXbKEV/KV8MFAD/i8fH+HycaO6HC1MSg=;
- b=MonFW/qQIgOaFpoasjakN+nM0TsklE1e7Bfq4/urXY/mYQmHc8+ddOT3ehnRxbnjyxGZcQZrSkI8pJ+9knPUTzASg5xE2mj3LVjpLrKK2c2H4fVrjhRAR6yAagvAu5nJCVkncONOHC2/Bpvnl8gRmpl8WhXZnaNbHdqHWWDyczOQMBy7vIdw77yZlqiXh7jG46WJUSMLcimvSwZoMYon1xou8S4oWgxAA29l1bif5u+/n79b5ZD/uBTUU4jnie5mxReQwgsy9qkPZ+iUBemRumEcJKgwBiADztf7g/9M5eqyxKFIYilGInUpJQ6P3ZxSLgkTCxNxhaR0u9ltw4WPtw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MN2PR12MB3997.namprd12.prod.outlook.com (2603:10b6:208:161::11)
- by CYXPR12MB9443.namprd12.prod.outlook.com (2603:10b6:930:db::9) with
+ bh=Q6X0IH5qSMC3NspQcC8Jpdc5d7pOaui/yy5XH8Uo7nY=;
+ b=fywo3f8IcvIP4AX2yWo88InWReGisfk8Up83VgShoUG4xAOWPePC5vopKTCrn33n/kSrVvO6FeEOd1lGTKZbLOzUobh7088u8Q2Qip6g5iiTWNhCDoVCcEDtE1MO3xsk7s0gp0s1F7QoXQzU2lSlA+6DMV8sEFmkKhaq0z4vf7kQyu8VYeej77+KlEqlc8l8IRbGuIzDEl7yVvf773/2+ksjCsn2zFLsec/DrBcmojALHnT206lCjwe+mIwZmTq14JGAeznY5IYIlm4q7fSomoHbarkWJzM2YrsEU6+8fl9qCuwxdyMQaAsstI7snu+t8AXZmMvFAELFxf3eSkWpCw==
+Received: from CH0PR03CA0278.namprd03.prod.outlook.com (2603:10b6:610:e6::13)
+ by LV8PR12MB9112.namprd12.prod.outlook.com (2603:10b6:408:184::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8583.42; Tue, 8 Apr
- 2025 03:08:53 +0000
-Received: from MN2PR12MB3997.namprd12.prod.outlook.com
- ([fe80::d161:329:fdd3:e316]) by MN2PR12MB3997.namprd12.prod.outlook.com
- ([fe80::d161:329:fdd3:e316%6]) with mapi id 15.20.8606.029; Tue, 8 Apr 2025
- 03:08:53 +0000
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 08 Apr 2025 12:08:49 +0900
-Message-Id: <D90XDHJWABTC.1VM2A3KYOT0UL@nvidia.com>
-To: "Abdiel Janulgue" <abdiel.janulgue@gmail.com>, <a.hindborg@kernel.org>,
- <ojeda@kernel.org>
-Cc: "Danilo Krummrich" <dakr@kernel.org>, "Daniel Almeida"
- <daniel.almeida@collabora.com>, "Robin Murphy" <robin.murphy@arm.com>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <benno.lossin@proton.me>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "open
- list:DMA MAPPING HELPERS DEVICE DRIVER API [RUST]"
- <rust-for-linux@vger.kernel.org>, "Marek Szyprowski"
- <m.szyprowski@samsung.com>, "open list:DMA MAPPING HELPERS"
- <iommu@lists.linux.dev>, "open list" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] rust: dma: add as_slice/write functions for
- CoherentAllocation
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250326201230.3193329-1-abdiel.janulgue@gmail.com>
- <20250326201230.3193329-4-abdiel.janulgue@gmail.com>
-In-Reply-To: <20250326201230.3193329-4-abdiel.janulgue@gmail.com>
-X-ClientProxiedBy: OS7PR01CA0191.jpnprd01.prod.outlook.com
- (2603:1096:604:250::10) To MN2PR12MB3997.namprd12.prod.outlook.com
- (2603:10b6:208:161::11)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.35; Tue, 8 Apr
+ 2025 03:09:23 +0000
+Received: from CH3PEPF00000016.namprd21.prod.outlook.com
+ (2603:10b6:610:e6:cafe::79) by CH0PR03CA0278.outlook.office365.com
+ (2603:10b6:610:e6::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.35 via Frontend Transport; Tue,
+ 8 Apr 2025 03:09:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH3PEPF00000016.mail.protection.outlook.com (10.167.244.121) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8655.0 via Frontend Transport; Tue, 8 Apr 2025 03:09:22 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 7 Apr 2025
+ 20:09:10 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 7 Apr
+ 2025 20:09:09 -0700
+Received: from waynec-Precision-5760.nvidia.com (10.127.8.13) by
+ mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.14 via
+ Frontend Transport; Mon, 7 Apr 2025 20:09:08 -0700
+From: Wayne Chang <waynec@nvidia.com>
+To: <waynec@nvidia.com>, <jonathanh@nvidia.com>, <thierry.reding@gmail.com>,
+	<jckuo@nvidia.com>, <vkoul@kernel.org>, <kishon@kernel.org>
+CC: <linux-phy@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: [PATCH V3 1/1] phy: tegra: xusb: Use a bitmask for UTMI pad power state tracking
+Date: Tue, 8 Apr 2025 11:09:05 +0800
+Message-ID: <20250408030905.990474-1-waynec@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR12MB3997:EE_|CYXPR12MB9443:EE_
-X-MS-Office365-Filtering-Correlation-Id: 795f83b3-2eee-4c8f-bc83-08dd764ab13f
+X-MS-TrafficTypeDiagnostic: CH3PEPF00000016:EE_|LV8PR12MB9112:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0644fda7-80a9-426c-6861-08dd764ac31c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|10070799003|7416014|366016|7053199007;
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YnBTZkdSa3g0dndrTmpZSkxqVkU3M3VTalVIZ2dHODZNUjBOLzhjUjdpdU1V?=
- =?utf-8?B?ZThCSXlSZE40TEx3cEp5SVI0TUczcjdHNXpnZ2YzVDBKUVdqUlhrSUxGaFVK?=
- =?utf-8?B?L3FRTlZmMG9DU0wxWW1wNTUvYVpkSjFsMUhmZURuTFNlcFVnMlVzbThYYkdE?=
- =?utf-8?B?eGFuOUg3UGZQT0VibnVvb09aM2NVRjRtNytDcUkrVTUyNzhSQWgxbzFzRUVW?=
- =?utf-8?B?dW5pcTliL1NCODE1MXFDdVQ1aTQ2d1NJTkNkdlJKeHc0QU1VK1lBVVh5em5O?=
- =?utf-8?B?Q1oyd2FRd1dSNDNReFZzbUhIVDVoUFRXV1Zka3JaZEMzZHRQVGlhU1pzQ29l?=
- =?utf-8?B?emZZRUFOT1h2clJlYlJIclY0QjNqZzhQZWZEekxRMDZJcDJGK1orblN3dFl5?=
- =?utf-8?B?aURkek1hN1pQSWVDaGZmc1BQVHVRaWl3MWVhMmNyL1FJZEtwdWs2TFYycmlS?=
- =?utf-8?B?UmtqSnF1c3YyNk9kWXlza09VUUEyVkdVeFN0Z1NjcDZBREViUmdsZzVOK2Rj?=
- =?utf-8?B?ZFhva0I0M1g0MHNHcnJLM01TRlRBNDg1NjhnSVJTaXZOT2Zaa21aeUZYc3lk?=
- =?utf-8?B?ZmNSa2ZMVHJvdUpNYmZwcXBWbDlJbWI4dUM0cmp2ZTRyNTc0NlRsVTlwblBo?=
- =?utf-8?B?TlJ1cUxDNFd6dzYzZEtjUWVuMXhNWWpOcm45NnM5bjFJQUpGdnRoYmR0NnBN?=
- =?utf-8?B?dzZGcnJRc1g4VjQ0ekdGVjgycmlZYjh0dXEvcUMrb3ZrYWNuU2d0cXdZQmlT?=
- =?utf-8?B?RjliQVZjNlRUMGxnNzc1dndteENKeHl2cHhpbHBzMXk1RnhJSEErYkpncnk0?=
- =?utf-8?B?RDdVbGNsQXNLMDhkemdHdWRkNEU3K2x1VkR6aFlHUE5NUEprRHh6WVhRWlQr?=
- =?utf-8?B?UlM0UlhnZS96UWRsSWhkMEgyRWp1WlY3dFMybWNrQXVUR1BWdlJnYkFqTjlI?=
- =?utf-8?B?eDQ4KytOMVBoUXF4eFlES1c0OVY0ODI4ZkFMRm1PNGRoVk1jMVIzOHpXcWxN?=
- =?utf-8?B?L2FkRGR2UHdXcDAvYWdMemN5bUZsaFdpRkF5a1BuVmJKNXYzdExlNDNReFFx?=
- =?utf-8?B?eHY1RS9Gb0l3QUVrRHVGT0RDRDhBQVIzOEVMSWtwT1A4VkM2ZzZLYUpRMHF5?=
- =?utf-8?B?aStzNnY2Sk15RENYa2hVc1psZ0FLN3pUeVM4U3VmcmRFN2hYSUc1b1p0Wm9Y?=
- =?utf-8?B?RmxCZjlvUjVpbjdwaEJYb2x5ZFR4aEM4VmxHc092V0lWUkorNG5JOXVPNXBv?=
- =?utf-8?B?V3ArQnI0MHpnSENKTERBU2JNNDg5bDNpRHdkSG1md1NKN25uWlVycEc5R2dW?=
- =?utf-8?B?Ni9DS0svdk1Xa3pNejdkZlBLNFdScFZ1UFh6THZkSGVuSXg2YlNubnZjSVo0?=
- =?utf-8?B?d1VxdmRlUFN1TzZPMDF2QmR5cWZmaG1ZQzQrVWZYUlFTa09EU0xKNWRwSTli?=
- =?utf-8?B?WmdlSEt4aEVGUjd1WVhGZDMrK2RQbHVxQkZVZURvdjhFeU53U1BVQlZKMmpP?=
- =?utf-8?B?enFKSmNRbWpJajVKN0FNSWNNaVBwSHNUa1Q5bWNyd2taeWNJWmYrZE9MVmFp?=
- =?utf-8?B?RGlIUTVXUGhra1lHQUFCTUxOWUVRb1FRcTRoQ0tvdFIzbklvQVRNdDd2blpx?=
- =?utf-8?B?N1hZL2ZXOXNlaTNhWFVHRlhKRGQzK3J2TG9RNUgrU2czVFZ3TmtRODhwY1lS?=
- =?utf-8?B?ems0U0Z3WHFhcERKcy81MjV0MHVYMHd3UE10YmhObHltdmErdTNyaHBvRnNH?=
- =?utf-8?B?SE5LSUxaMmR2dmpOMnRmbEl5eGVlUkRGYXFlYWFhZ1NwTTdhcmdndUtPSHdP?=
- =?utf-8?B?ZU9RSnZlbzhnOWdYalhjUjF6bzlSVVdZOE5ZT2sraGhEaHovcTRJTGk3NGRG?=
- =?utf-8?Q?1jbUzLnwJ/H7C?=
+	=?us-ascii?Q?TUCrWvAiRDNoHxJEdqRyloHWvMdg+1qSxD+t4hPOrC/Ieb905vu6t0OYYoJ+?=
+ =?us-ascii?Q?fo2FO9QDcaiRzB08i4kDFmkAj6HlmX5b+dwApE+SmhCTp80fllXnJ7oLEiFT?=
+ =?us-ascii?Q?s6sZy1MpV0EUeuIAAWx5fwEYqmQdRLA//EfCmpvhJrQ0b9T9cXSSYlcQPh11?=
+ =?us-ascii?Q?q4FPDpKU/QtxFXjYd3Mi7kkmyVlpJrD4Hav7kfLRYUgzAoMLiPDyM4psF0el?=
+ =?us-ascii?Q?M15VXT0MWCUW3X6qsBOmJjMRn0kq6LfAWO0OpzIs4hBoYYThSAEiN+NRl/4N?=
+ =?us-ascii?Q?wC0R2HNGEYjR4pWYR9anmFay/3pIvjGWs29SWIyggwd3JRx7HtENYl/4fcbN?=
+ =?us-ascii?Q?uOlVrNPR9vimw/EimtCI0rN3puuko/Z3PdQGekyBnEm5BQ1zHRFp63WBjwqI?=
+ =?us-ascii?Q?aKVRqrLHL0ntXgi9p0Z0QGQTCUyGAxXiE3xdMCi/EuwhFFQPbXkitgjnW7T5?=
+ =?us-ascii?Q?eOh1YfE51kec5rmqTG02kHH3TvzngyTXoNu5iyaH3fw6PWdbCFTvUqQHpM2z?=
+ =?us-ascii?Q?CEkkdpXme218BArfuzfQECRam/QRkc58W7a9R9EjQJZmZRtop7b7COZWe+v1?=
+ =?us-ascii?Q?0jM3OJitK4ROe8tlOJQHiBNrz0a1KJwFloZpisrMgZpkZ/TswrJCSMIJaDI5?=
+ =?us-ascii?Q?4a0sWQnIb570DtEQlqkxIHB5LHPb4nIDi0xmb27Jr+1As/5LB3tqKTXeYFoS?=
+ =?us-ascii?Q?7a/P8XXAE/vesCbadZeixHtzz0ihlsx5f9a0gWQbEb9tSNkSXFjcdbAcq7iA?=
+ =?us-ascii?Q?6MKk0QfXxQtGOyYdz3CdSqgXPJ3E7ulfPI2ITDjYZfjU4dAY7PAo/kQASKGe?=
+ =?us-ascii?Q?DLNcY9mQSxIJIVz0UgiENsk5m0tzSunWulZ/CQUkjH3OsITZZr8fEeUyQ0da?=
+ =?us-ascii?Q?7WTYVotGlpePiO5bDb5i5k4q7WenA39OCCtlp22coD3gLOIIROzw0LgyfeQG?=
+ =?us-ascii?Q?KRm3WzwTTcIYCBrhsHL0U4qdbUvY0todCXfefrB58fJbajqY4msF6DiL2EKU?=
+ =?us-ascii?Q?3ErmCla7OVUVbT7DVGLShoRtOsV1Y5Aath7g8fkmJ/ZopeVY5k3WgvV/MW4M?=
+ =?us-ascii?Q?BPzdafbhQUtIQszRLvsQv/9nE3J8Fzp5UTrO1qu9Vst2MamL2wXHuh7Os5B4?=
+ =?us-ascii?Q?K9B8y1STrf9ODngMdHNSjy7o3irimtfRM+X1BQYCnybbPe0nMHwD7sTKPVeL?=
+ =?us-ascii?Q?pAEaDOz74UjNyC51QyNd9E1roHUNDeM9zI9/+xxKs82r0fHtfWK43HA5b6OQ?=
+ =?us-ascii?Q?0mfh9Of/WLDRmeSd0yYEMb4VqTneehglGnOQNniFE3KwfR2KEAX9x4KxQJUV?=
+ =?us-ascii?Q?OHDdeAlIa5zmY0kack9cst8pbvNJfS1u9GCMirVHPPOXn1c7GfV5Bn6vmUMy?=
+ =?us-ascii?Q?HVIKTOV5W8aJh61czTneFo27pdlz1ajXCKNmGOSYXU23d6pVQ6YhPQNHO07B?=
+ =?us-ascii?Q?ds4sF1uXLutuOcANPkWGwOrkQP8gUD8psUjkP/CQUANHFCBnJ4sZLt2UWygQ?=
+ =?us-ascii?Q?gKSYPDGl/3uw7m8=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3997.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(10070799003)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YjJGSmR0bUljc3lDUWt0TWZqRnZyNG55UUliaWJieUlUNWIrU2R6TjRla1hD?=
- =?utf-8?B?MGcyZTg3dFVkUXQrSEFHdWJiNmdJa1N0QmJwTmhuUXNFQTRKbVpoa20yN2Fv?=
- =?utf-8?B?dTQyNHY0cUJMVXVQenp1WkJYZ1VUWHp0VmxkTDBIR3ZlK244dnZ6MXFJMXYx?=
- =?utf-8?B?OGVEKzlySGYzNStRK09BamF3NFFibU5TMWxpM0RsaEdWdXhBUHhwbEpEU3NV?=
- =?utf-8?B?d3dXaktPbXBqTTlRM3JpSW9yOStINUw2ellpUWpHUWZMNk50cUtOK05ablJO?=
- =?utf-8?B?MHJ6dWphV2xpa2xwSDRjTlFEYWFQTlNIM2xHdmY1TGxQdzVkdGZRQkdSakU3?=
- =?utf-8?B?aGVYRlBhUUNaalVLL2RjVFFybG1xUk9mYUJCNFFxVGFrejNMSHVDUXNxaTRF?=
- =?utf-8?B?WUVHcHZVRkg5UlhWMEZBZHMycWJKOUI5N0VRaXVCcVdlSHgxWlM4eXRiUzNE?=
- =?utf-8?B?NHFkNmF5Nm5HZ25ub3dMaWZlVjZWUU0xWXVrc3NvS1UzREJQOExqWTF2SGhk?=
- =?utf-8?B?KzZ4aG1SRWdnWnI0aGI1cHdQOTY1cmVMaU9SaDB0MXNIRWFSVyt3ek1PUjhv?=
- =?utf-8?B?VkJtMXR0a21TTGFrWk01aXN6alpINUhodzFXV0ZiZExQWFY0cGpOVW9kZ2Ux?=
- =?utf-8?B?QXBQb2hvTStyTVhtbWJXWHhkajJDTHZRcXArRWYvZ1JzNG1SYzk3ZXVoNGFv?=
- =?utf-8?B?dWpJekZuWGJSRjhsd0RNMzgvRjlxWDI2OUxvS1FCNGp3SDc0R2NDZithMGFn?=
- =?utf-8?B?TzM2djl3OGtkbEtDZU9ISXhmVUx0VTBWbDRXc1dDZDB2ZWs4d0tPQ1NrRTJQ?=
- =?utf-8?B?WHdHNHdmQmp2TXhIL1FEVnRXVHpWdWFoSGtWVm15RS9ucXV5Y0tSeEtoSTE5?=
- =?utf-8?B?VEdOZUhKQ2w4WDhSbmNyOHhsTis2V3laaWt4Q2tJZFFIblVsb1RFc3Q2Nm5r?=
- =?utf-8?B?T2VpVVpKTkFkSHZOQWh6TXV5UEE5d1VaL3l0WkJzdGpkd0duaDRqRzBlYkJx?=
- =?utf-8?B?a3hBUktvVU9OR3Jvd05ubEdKTGxsNjR5QVlEdEppaG5xYlRQdWtyUHJnalhk?=
- =?utf-8?B?SytkTWRGcExVMjdab2JRYjlXd3NodUxkTHRVVUZsalNVMjU4Yy9pdjVPR1hF?=
- =?utf-8?B?cHB4Y3FhRk4rVGNMeHQzSFB3Y0pxMXNKSTRpSjZWVVR0ZHkrSk5kUHZxRDdL?=
- =?utf-8?B?SjdVbi9QQ0tSNWVJSUNSSE8xRy9DN0NyRW5OQ0tvK1c3WmFIVGZ1L0VSaWlZ?=
- =?utf-8?B?Ni9QengzWGtOeU9TQk96WEYwaG4wbEZCRnN0bVFBYm9sdjdUNVU4OUdOL1cv?=
- =?utf-8?B?ZGpLSnpzTHVuOHV1UzVvOTNNUUxmNFhFSlE0ZG9ORk5PbTJPckxKNVJkcWVX?=
- =?utf-8?B?REJjVDZRUjhkV0hUWmQrdXgxeGJiNW1DUURqajVGQUpVSE9PWnBmWlU1cnJJ?=
- =?utf-8?B?c04zZ1Y5OGMweml1Ym8zQjRFQ09kZ2F1aVFwT2lneE5IR2lodXo4bWZEcUFx?=
- =?utf-8?B?cW8yM3dPRkczczJoWmM0YmlHUUl4SVlNZXJ3eTduWFVjUDlqeDc2YmlUNGFV?=
- =?utf-8?B?U0FIY2ExeUc5S0xjQnhZVnFUYlB1ZW9lLzRxZXFBT1h5SHdqVkNDUUxLSWNm?=
- =?utf-8?B?S2ExbVBmd00wbmJVOSszZU5aSkNGYlJqbnJhVEFHNnd6dWh5eDl5QkZkNm4r?=
- =?utf-8?B?MC9hUjBRNVpEMTN5WFA5UnJXL2F4UHV1cC8yMUhKeWFHajliVmtpSERyQ01G?=
- =?utf-8?B?cE5BTUFGcHIxWDROaWNlczNHR0l5Z1R6Z3F6ZEVncTU4NndEZ1djQ3NodDg3?=
- =?utf-8?B?SHFCek8xaisxSE4zN1Q0RWNPQ0U0d25HYlJ0Z0EvcFY4QUp5OG1zKzhkM2ZE?=
- =?utf-8?B?U0xUMVREQWlDWm9Xa3lxSHZBVUU0bExhSkl6bmYwRGphZzgzaUFxbzFQUGcw?=
- =?utf-8?B?NnNFN1N4RHhhd1AzYTEzeDlxU0RkMHZnK2p6N2xCZW95S0JXTThtbGY4aHc2?=
- =?utf-8?B?Q1VHYzBYbE9DbUNwOHptb1pZNnlnd0FHamFOK2RRcGRYZjRBV0FXUzZUZzlo?=
- =?utf-8?B?U1kvemFxRmpqb2pPeVpEOGRuTmw0TGltNWNyYWVLcnhucDJIZE50SGpJaFNp?=
- =?utf-8?B?dThxaEVXcHJkaTF0a2lsbXlBa0o0emVETERQZG5GcG9WekFlcjlYc2kyZXhM?=
- =?utf-8?Q?cnymGL/Ra9+R2YETrH6HE5b7cSF+8I5y02y5GDI3QdaA?=
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 795f83b3-2eee-4c8f-bc83-08dd764ab13f
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3997.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2025 03:08:53.2953
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2025 03:09:22.7973
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0644fda7-80a9-426c-6861-08dd764ac31c
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fxIOGyOAJplypZb/HPmGPjAjG9mjXQBd0o55BtdUuwZuT6lxt7Ef4vJq0e7GGDSIlpAAfco4g7Alxd2BOtomDg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9443
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH3PEPF00000016.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9112
 
-Hi Abdiel,
+The current implementation uses bias_pad_enable as a reference count to
+manage the shared bias pad for all UTMI PHYs. However, during system
+suspension with connected USB devices, multiple power-down requests for
+the UTMI pad result in a mismatch in the reference count, which in turn
+produces warnings such as:
 
-On Thu Mar 27, 2025 at 5:11 AM JST, Abdiel Janulgue wrote:
-> Add unsafe accessors for the region for reading or writing large
-> blocks of data.
->
-> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> ---
->  rust/kernel/dma.rs | 87 ++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 87 insertions(+)
->
-> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
-> index 24a6f10370c4..24025ec602ff 100644
-> --- a/rust/kernel/dma.rs
-> +++ b/rust/kernel/dma.rs
-> @@ -218,6 +218,93 @@ pub fn dma_handle(&self) -> bindings::dma_addr_t {
->          self.dma_handle
->      }
-> =20
-> +    /// Returns the data from the region starting from `offset` as a sli=
-ce.
-> +    /// `offset` and `count` are in units of `T`, not the number of byte=
-s.
-> +    ///
-> +    /// Due to the safety requirements of slice, the caller should consi=
-der that the region could
-> +    /// be modified by the device at anytime. For ringbuffer type of r/w=
- access or use-cases where
-> +    /// the pointer to the live data is needed, `start_ptr()` or `start_=
-ptr_mut()` could be
-> +    /// used instead.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// * Callers must ensure that no hardware operations that involve t=
-he buffer are currently
-> +    ///   taking place while the returned slice is live.
-> +    /// * Callers must ensure that this call does not race with a write =
-to the same region while
-> +    ///   while the returned slice is live.
-> +    pub unsafe fn as_slice(&self, offset: usize, count: usize) -> Result=
-<&[T]> {
-> +        let end =3D offset.checked_add(count).ok_or(EOVERFLOW)?;
-> +        if end >=3D self.count {
+[  237.762967] WARNING: CPU: 10 PID: 1618 at tegra186_utmi_pad_power_down+0x160/0x170
+[  237.763103] Call trace:
+[  237.763104]  tegra186_utmi_pad_power_down+0x160/0x170
+[  237.763107]  tegra186_utmi_phy_power_off+0x10/0x30
+[  237.763110]  phy_power_off+0x48/0x100
+[  237.763113]  tegra_xusb_enter_elpg+0x204/0x500
+[  237.763119]  tegra_xusb_suspend+0x48/0x140
+[  237.763122]  platform_pm_suspend+0x2c/0xb0
+[  237.763125]  dpm_run_callback.isra.0+0x20/0xa0
+[  237.763127]  __device_suspend+0x118/0x330
+[  237.763129]  dpm_suspend+0x10c/0x1f0
+[  237.763130]  dpm_suspend_start+0x88/0xb0
+[  237.763132]  suspend_devices_and_enter+0x120/0x500
+[  237.763135]  pm_suspend+0x1ec/0x270
 
-IIUC this should be `if end > self.count`.
+The root cause was traced back to the dynamic power-down changes
+introduced in commit a30951d31b25 ("xhci: tegra: USB2 pad power controls"),
+where the UTMI pad was being powered down without verifying its current
+state. This unbalanced behavior led to discrepancies in the reference
+count.
 
-> +            return Err(EINVAL);
-> +        }
-> +        // SAFETY:
-> +        // - The pointer is valid due to type invariant on `CoherentAllo=
-cation`,
-> +        // we've just checked that the range and index is within bounds.=
- The immutability of the
-> +        // of data is also guaranteed by the safety requirements of the =
-function.
-> +        // - `offset` can't overflow since it is smaller than `self.coun=
-t` and we've checked
-> +        // that `self.count` won't overflow early in the constructor.
-> +        Ok(unsafe { core::slice::from_raw_parts(self.cpu_addr.add(offset=
-), count) })
-> +    }
-> +
-> +    /// Performs the same functionality as [`CoherentAllocation::as_slic=
-e`], except that a mutable
-> +    /// slice is returned.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// * Callers must ensure that no hardware operations that involve t=
-he buffer are currently
-> +    ///   taking place while the returned slice is live.
-> +    /// * Callers must ensure that this call does not race with a read o=
-r write to the same region
-> +    ///   while the returned slice is live.
-> +    pub unsafe fn as_slice_mut(&self, offset: usize, count: usize) -> Re=
-sult<&mut [T]> {
-> +        let end =3D offset.checked_add(count).ok_or(EOVERFLOW)?;
-> +        if end >=3D self.count {
+To rectify this issue, this patch replaces the single reference counter
+with a bitmask, renamed to utmi_pad_enabled. Each bit in the mask
+corresponds to one of the four USB2 PHYs, allowing us to track each pad's
+enablement status individually.
 
-Ditto.
+With this change:
+  - The bias pad is powered on only when the mask is clear.
+  - Each UTMI pad is powered on or down based on its corresponding bit
+    in the mask, preventing redundant operations.
+  - The overall power state of the shared bias pad is maintained
+    correctly during suspend/resume cycles.
 
-> +            return Err(EINVAL);
-> +        }
-> +        // SAFETY:
-> +        // - The pointer is valid due to type invariant on `CoherentAllo=
-cation`,
-> +        // we've just checked that the range and index is within bounds.=
- The immutability of the
-> +        // of data is also guaranteed by the safety requirements of the =
-function.
-> +        // - `offset` can't overflow since it is smaller than `self.coun=
-t` and we've checked
-> +        // that `self.count` won't overflow early in the constructor.
-> +        Ok(unsafe { core::slice::from_raw_parts_mut(self.cpu_addr.add(of=
-fset), count) })
-> +    }
-> +
-> +    /// Writes data to the region starting from `offset`. `offset` is in=
- units of `T`, not the
-> +    /// number of bytes.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// * Callers must ensure that no hardware operations that involve t=
-he buffer overlaps with
-> +    ///   this write.
-> +    /// * Callers must ensure that this call does not race with a read o=
-r write to the same region
-> +    ///   that overlaps with this write.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// # fn test(alloc: &mut kernel::dma::CoherentAllocation<u8>) -> Re=
-sult {
-> +    /// let somedata: [u8; 4] =3D [0xf; 4];
-> +    /// let buf: &[u8] =3D &somedata;
-> +    /// // SAFETY: No hw operation on the device and no other r/w access=
- to the region at this point.
-> +    /// unsafe { alloc.write(buf, 0)?; }
-> +    /// # Ok::<(), Error>(()) }
-> +    /// ```
-> +    pub unsafe fn write(&self, src: &[T], offset: usize) -> Result {
-> +        let end =3D offset.checked_add(src.len()).ok_or(EOVERFLOW)?;
-> +        if end >=3D self.count {
+The mutex used to prevent race conditions during UTMI pad enable/disable
+operations has been moved from the tegra186_utmi_bias_pad_power_on/off
+functions to the parent functions tegra186_utmi_pad_power_on/down. This
+change ensures that there are no race conditions when updating the bitmask.
 
-Ditto.
+Cc: stable@vger.kernel.org
+Fixes: a30951d31b25 ("xhci: tegra: USB2 pad power controls")
+Signed-off-by: Wayne Chang <waynec@nvidia.com>
+---
+V1 -> V2: holding the padctl->lock to protect shared bitmask
+V2 -> V3: updating the commit message with the mutex changes
+ drivers/phy/tegra/xusb-tegra186.c | 44 +++++++++++++++++++------------
+ 1 file changed, 27 insertions(+), 17 deletions(-)
 
-> +            return Err(EINVAL);
-> +        }
-> +        // SAFETY:
-> +        // - The pointer is valid due to type invariant on `CoherentAllo=
-cation`
-> +        // and we've just checked that the range and index is within bou=
-nds.
-> +        // - `offset` can't overflow since it is smaller than `self.coun=
-t` and we've checked
-> +        // that `self.count` won't overflow early in the constructor.
-> +        unsafe {
-> +            core::ptr::copy_nonoverlapping(src.as_ptr(), self.cpu_addr.a=
-dd(offset), src.len())
-> +        };
-
-How about leveraging as_slice_mut() so this unsafe block can be removed?
-
-Cheers,
-Alex.
+diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
+index fae6242aa730..cc7b8a6a999f 100644
+--- a/drivers/phy/tegra/xusb-tegra186.c
++++ b/drivers/phy/tegra/xusb-tegra186.c
+@@ -237,6 +237,8 @@
+ #define   DATA0_VAL_PD				BIT(1)
+ #define   USE_XUSB_AO				BIT(4)
+ 
++#define TEGRA_UTMI_PAD_MAX 4
++
+ #define TEGRA186_LANE(_name, _offset, _shift, _mask, _type)		\
+ 	{								\
+ 		.name = _name,						\
+@@ -269,7 +271,7 @@ struct tegra186_xusb_padctl {
+ 
+ 	/* UTMI bias and tracking */
+ 	struct clk *usb2_trk_clk;
+-	unsigned int bias_pad_enable;
++	DECLARE_BITMAP(utmi_pad_enabled, TEGRA_UTMI_PAD_MAX);
+ 
+ 	/* padctl context */
+ 	struct tegra186_xusb_padctl_context context;
+@@ -603,12 +605,8 @@ static void tegra186_utmi_bias_pad_power_on(struct tegra_xusb_padctl *padctl)
+ 	u32 value;
+ 	int err;
+ 
+-	mutex_lock(&padctl->lock);
+-
+-	if (priv->bias_pad_enable++ > 0) {
+-		mutex_unlock(&padctl->lock);
++	if (!bitmap_empty(priv->utmi_pad_enabled, TEGRA_UTMI_PAD_MAX))
+ 		return;
+-	}
+ 
+ 	err = clk_prepare_enable(priv->usb2_trk_clk);
+ 	if (err < 0)
+@@ -667,17 +665,8 @@ static void tegra186_utmi_bias_pad_power_off(struct tegra_xusb_padctl *padctl)
+ 	struct tegra186_xusb_padctl *priv = to_tegra186_xusb_padctl(padctl);
+ 	u32 value;
+ 
+-	mutex_lock(&padctl->lock);
+-
+-	if (WARN_ON(priv->bias_pad_enable == 0)) {
+-		mutex_unlock(&padctl->lock);
+-		return;
+-	}
+-
+-	if (--priv->bias_pad_enable > 0) {
+-		mutex_unlock(&padctl->lock);
++	if (!bitmap_empty(priv->utmi_pad_enabled, TEGRA_UTMI_PAD_MAX))
+ 		return;
+-	}
+ 
+ 	value = padctl_readl(padctl, XUSB_PADCTL_USB2_BIAS_PAD_CTL1);
+ 	value |= USB2_PD_TRK;
+@@ -690,13 +679,13 @@ static void tegra186_utmi_bias_pad_power_off(struct tegra_xusb_padctl *padctl)
+ 		clk_disable_unprepare(priv->usb2_trk_clk);
+ 	}
+ 
+-	mutex_unlock(&padctl->lock);
+ }
+ 
+ static void tegra186_utmi_pad_power_on(struct phy *phy)
+ {
+ 	struct tegra_xusb_lane *lane = phy_get_drvdata(phy);
+ 	struct tegra_xusb_padctl *padctl = lane->pad->padctl;
++	struct tegra186_xusb_padctl *priv = to_tegra186_xusb_padctl(padctl);
+ 	struct tegra_xusb_usb2_port *port;
+ 	struct device *dev = padctl->dev;
+ 	unsigned int index = lane->index;
+@@ -705,9 +694,16 @@ static void tegra186_utmi_pad_power_on(struct phy *phy)
+ 	if (!phy)
+ 		return;
+ 
++	mutex_lock(&padctl->lock);
++	if (test_bit(index, priv->utmi_pad_enabled)) {
++		mutex_unlock(&padctl->lock);
++		return;
++	}
++
+ 	port = tegra_xusb_find_usb2_port(padctl, index);
+ 	if (!port) {
+ 		dev_err(dev, "no port found for USB2 lane %u\n", index);
++		mutex_unlock(&padctl->lock);
+ 		return;
+ 	}
+ 
+@@ -724,18 +720,28 @@ static void tegra186_utmi_pad_power_on(struct phy *phy)
+ 	value = padctl_readl(padctl, XUSB_PADCTL_USB2_OTG_PADX_CTL1(index));
+ 	value &= ~USB2_OTG_PD_DR;
+ 	padctl_writel(padctl, value, XUSB_PADCTL_USB2_OTG_PADX_CTL1(index));
++
++	set_bit(index, priv->utmi_pad_enabled);
++	mutex_unlock(&padctl->lock);
+ }
+ 
+ static void tegra186_utmi_pad_power_down(struct phy *phy)
+ {
+ 	struct tegra_xusb_lane *lane = phy_get_drvdata(phy);
+ 	struct tegra_xusb_padctl *padctl = lane->pad->padctl;
++	struct tegra186_xusb_padctl *priv = to_tegra186_xusb_padctl(padctl);
+ 	unsigned int index = lane->index;
+ 	u32 value;
+ 
+ 	if (!phy)
+ 		return;
+ 
++	mutex_lock(&padctl->lock);
++	if (!test_bit(index, priv->utmi_pad_enabled)) {
++		mutex_unlock(&padctl->lock);
++		return;
++	}
++
+ 	dev_dbg(padctl->dev, "power down UTMI pad %u\n", index);
+ 
+ 	value = padctl_readl(padctl, XUSB_PADCTL_USB2_OTG_PADX_CTL0(index));
+@@ -748,7 +754,11 @@ static void tegra186_utmi_pad_power_down(struct phy *phy)
+ 
+ 	udelay(2);
+ 
++	clear_bit(index, priv->utmi_pad_enabled);
++
+ 	tegra186_utmi_bias_pad_power_off(padctl);
++
++	mutex_unlock(&padctl->lock);
+ }
+ 
+ static int tegra186_xusb_padctl_vbus_override(struct tegra_xusb_padctl *padctl,
+-- 
+2.25.1
 
 
