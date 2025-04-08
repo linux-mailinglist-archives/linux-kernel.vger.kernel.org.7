@@ -1,193 +1,163 @@
-Return-Path: <linux-kernel+bounces-594301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD36A80FED
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:28:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 670ABA80FE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B392F1887944
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:23:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4D731888D98
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8567222CBE2;
-	Tue,  8 Apr 2025 15:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9214A22ACDC;
+	Tue,  8 Apr 2025 15:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SlBgCIex"
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kI36TUkd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A4622B5B1
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 15:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83E61D5CCD;
+	Tue,  8 Apr 2025 15:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744125778; cv=none; b=L0+R8V7/G7aEvS12fdGfdQR2lwNDto5Sp51ytmGDUWljWfWBC9Jag5EByZI8QOwLiYIPdZqesSamk5H6Jgbb1SbGP8/7PyjNyZINstXpoC4TFL5uZ3pM16LgyIfLAXomtRpKXJvGJr4bLyzGgBXWWqiItT8caXr9bBwZKg0BoCY=
+	t=1744125773; cv=none; b=h7Z+j5YgWr7KPddnLD9RZDfPaf3HoWnPhXzChLYhYTB9qO6/TRcXJwrV9mjyzaABlRESKy1QJM2otEmOXYqZpxrdRqZha/KWcfCgxK/rgx8O+oq6EyQJcWIX/5bxWDaSnjb2g68GhAzb/mkpvoDMKQXkv5Tcl28TRfaJw7MdxjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744125778; c=relaxed/simple;
-	bh=3lpzITRPn00lYD/ndslRx6AUWRX254zjphl4pSWfNo8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=opftk87vI4jjetgiQFMbFmel9zic8NmJImjPOTfbG5qyxeCh1ixHr7pI6n0EkK61F1eSobuadC8mrEGHMGFul8qw1+OolTNjkNaEaFtD61kyefxB/fiJqUI1zA0DiSOHmVZONrrxLJbugnzOvrGm4lAiv6/Rnxf+bb5ey9m/agU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SlBgCIex; arc=none smtp.client-ip=209.85.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-86d377306ddso2457420241.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 08:22:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744125776; x=1744730576; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cxg9LKA6+kQvyEUrjxprc+UTcXgCvZJ1Wa5TchzdHtU=;
-        b=SlBgCIexBNg9JgdgukxvMc1NlzxmsmSjw6EvTBALeRrNjiCk3Mxi4hkMsJe9a5qHOF
-         kbjl1k7uapT68wIzrr8tsbYsbkVa50oO78+I89U/675QSAYWqCuWqwBBJr8sVcd2quoZ
-         5s/ajZc6KiJdtb1VSyLeoa4nB2vOAmc5Ohh1RlqF8MeRGVI9WiHvZmgCTsXTDFhdtdzK
-         XAOr7FvO7ga1JEPnKcP79qQ0FI3LNWBisPb3iCy22tsBCEOXT1U26YrZ40ZKCpVk8jez
-         dmQByVz3nHS1xozJQjOzplaxUYj8A2B7XiyQnXMUrrEC3EFmCQ+lSgv7mPSsiWZl1BE/
-         4wRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744125776; x=1744730576;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Cxg9LKA6+kQvyEUrjxprc+UTcXgCvZJ1Wa5TchzdHtU=;
-        b=AzxGXf2L6kOp/4kzdx/phGZEuF2PGGEPqJFqbOWcM8ww6q5U5kT2zjioOBwQq3Y+b9
-         KgK1pkpVlVT7TADxDe63/3aZF71xDR203ImEA7QEIqIZGbu+uTIMroOQdy3xU6q0dmwd
-         E4P6MUc/zEdB+Pc02RLOeEqwljEW9Gj0ATDFffYxYYptbiTYztvRwRzarqczJGVaWPfw
-         cPrzcnDpzs2XzoC2pV509zY24lDq2yzKE+RWUhxvcdOHU35eNywnnulNEBa7uS0cQT1k
-         lOl8r4j+7SXf8Q6+aSyjH21PRicreB7jhZR4da5GlwORwC0OO44BSrtgSuSTnrDMpz2g
-         J33Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXNKUXTT/+VnKYnRUcvN5gKNLv8+nwAsQTxpFSSAneHmTeN6SUIslHcZl/Tqgv8C845693n0dgT1S1BIeo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwaFPGFaz7aVFTJAb9FTGvMlPi7H6MyaZMKBCHtPE/Ex39Y8X4
-	bIOTuqzQbkKl3UqXQpSQbnHkZwSCzFMslgZItzsZRpQ1cMjoNZcvc+k41yUW1nBFpn6nAEx314A
-	HaPPqScoYxIS7SxMhG9sCyh+lFTOQkJyhxAZqng==
-X-Gm-Gg: ASbGncsjZ/X6DA/7bhM5WYhL216K2OFBf7lFhgwkE1dJiIbVA4tc57nltOLXbmRoKPx
-	OzGerkHZMCUWXjUPMBRvq9mSoSpwhuAdZuZFJ4AMQIk1n32iS6WOYOpy7pbiMvwfLSg4/qunAzc
-	nVbv9eipAzI80QEKDHk7ofsJTX9tQ9J1B/etNFLbOU7kuYmclDMdRSl4g1ZGj6nikzuVY=
-X-Google-Smtp-Source: AGHT+IEtePmmvCUqzXP4fQmhOiQg0gVcd3/T0A8xgplxbFp6FtfV9GDDW+Rjpln3N7ol4Kj4hD73PnpvQwrVCf9mnBM=
-X-Received: by 2002:a05:6122:1d0a:b0:520:4996:7d2a with SMTP id
- 71dfb90a1353d-527730f997amr9204517e0c.10.1744125775647; Tue, 08 Apr 2025
- 08:22:55 -0700 (PDT)
+	s=arc-20240116; t=1744125773; c=relaxed/simple;
+	bh=D9XuG7Ugb2+SGuMTNvueeFKYwGqptTWhQqYGjQrqjVo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WTriqMjNsgUCk6j8DiPcVHfZ5Gyqe0pl+XT28CGJixPP08HR3GRQex4T9QA7W+xxZO8NX6oydOpY41OimWheomjfwrGpYGMDRihbFVjtmHTYoy3jm760jjTRIOLb2czwGk+uhJmM4TDnEVyJmarx7SuJEc9zPuedBpHnkHcvMco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kI36TUkd; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744125772; x=1775661772;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=D9XuG7Ugb2+SGuMTNvueeFKYwGqptTWhQqYGjQrqjVo=;
+  b=kI36TUkdxAL1F6SaZBV+p0rrdE3AvTAFOvcke9YEJJ34JEQmxWW+Uy9M
+   pAcXbTyJo5TzGRbkITAdvchzpLVgrqfjuej2opI1tdCbBxhrPg3DSuKiN
+   n929iOw+55/p8IDmzUe/lfuhtjqgkiJCurpwXUg32WMjzDOjkzITtRjOA
+   zz6NmBWkqto21hv4imPCVb3QzGYGzRxUC3fUDkR7Zox5trM7y3guAP18e
+   mAGCvKOB0E30HEfqRdE1NEo2I9ndsd/0hDG5S2iTD0vuqXD+3bXrb7SCf
+   0onqZoTU/Rpl8Y8e+IfVozZCovjOP4soumfsGqIv8aYTosw6mzD6G+0y2
+   Q==;
+X-CSE-ConnectionGUID: iDcuMDoEQ6KTeSh6tuBVPA==
+X-CSE-MsgGUID: +EgVbc5iTOSkChp3lPQKdw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="56936743"
+X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
+   d="scan'208";a="56936743"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 08:22:51 -0700
+X-CSE-ConnectionGUID: Ib9xckXnQRq6rJZ0mR1kdw==
+X-CSE-MsgGUID: IfuAIkdqSzeGpojNSuwg2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
+   d="scan'208";a="133023105"
+Received: from ssimmeri-mobl2.amr.corp.intel.com (HELO [10.124.220.83]) ([10.124.220.83])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 08:22:49 -0700
+Message-ID: <409d2019-a409-4e97-a16f-6b345b0f5a38@intel.com>
+Date: Tue, 8 Apr 2025 08:22:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250408104914.247897328@linuxfoundation.org>
-In-Reply-To: <20250408104914.247897328@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 8 Apr 2025 20:52:44 +0530
-X-Gm-Features: ATxdqUEXqLGH0AeyqvbH4fTDpyq3lu_NpjMbeRtitNjowMQG1rjdctxiPvSjWaY
-Message-ID: <CA+G9fYu_OLOYK_+X6urte_9VA4jye7_GcTbDd1GzjnBB1VYtKg@mail.gmail.com>
-Subject: Re: [PATCH 6.14 000/731] 6.14.2-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/12] x86: pgtable: Always use pte_free_kernel()
+To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Mark Rutland <mark.rutland@arm.com>, Matthew Wilcox <willy@infradead.org>,
+ Michael Ellerman <mpe@ellerman.id.au>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Peter Zijlstra <peterz@infradead.org>, Qi Zheng
+ <zhengqi.arch@bytedance.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Will Deacon <will@kernel.org>, Yang Shi <yang@os.amperecomputing.com>,
+ linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-csky@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+ linux-openrisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, x86@kernel.org
+References: <20250408095222.860601-1-kevin.brodsky@arm.com>
+ <20250408095222.860601-3-kevin.brodsky@arm.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250408095222.860601-3-kevin.brodsky@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 8 Apr 2025 at 16:36, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.14.2 release.
-> There are 731 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 10 Apr 2025 10:47:53 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.14.2-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.14.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 4/8/25 02:52, Kevin Brodsky wrote:
+> Page table pages are normally freed using the appropriate helper for
+> the given page table level. On x86, pud_free_pmd_page() and
+> pmd_free_pte_page() are an exception to the rule: they call
+> free_page() directly.
+> 
+> Constructor/destructor calls are about to be introduced for kernel
+> PTEs. To avoid missing dtor calls in those helpers, free the PTE
+> pages using pte_free_kernel() instead of free_page().
+> 
+> While at it also use pmd_free() instead of calling pagetable_dtor()
+> explicitly at the PMD level.
 
-1)
-Regressions on arm64, 390 tinyconfig, allnoconfig builds with clang-20
-and gcc-13 on the stable-rc 6.14.
+Looks sane and adding consistency is nice.
 
-2)
-Regressions on arm, arm64 rustclang-lkftconfig-kselftest builds with
-clang-20 and gcc-13 on the stable-rc 6.14.
+Are there any tests for folio_test_pgtable() at free_page() time? If we
+had that, it would make it less likely that another free_page() user
+could sneak in without calling the destructor.
 
-First seen on the 6.14.2-rc1
-Bad: v6.14.1-732-gabe68470bb82
-Good: v6.14.1
-
-* arm64 and s390, build
- - build/gcc-13-tinyconfig
- - build/clang-20-tinyconfig
-
-* arm and arm64, build
- -  build/rustclang-lkftconfig-kselftest
-
-Regression Analysis:
-- New regression? Yes
-- Reproducibility? Yes
-
-Build regression: arm64 s390 tinyconfig undefined reference to
-`dl_rebuild_rd_accounting'
-Build regression: arm64 arm rust pci.rs cannot find type `Core` in
-module `device`
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-1)
-## Build log
-aarch64-linux-gnu-ld: kernel/sched/build_utility.o: in function
-`partition_sched_domains_locked':
-build_utility.c:(.text+0x3668): undefined reference to
-`dl_rebuild_rd_accounting'
-build_utility.c:(.text+0x3668): relocation truncated to fit:
-R_AARCH64_CALL26 against undefined symbol `dl_rebuild_rd_accounting
-
-2)
-## Build log rust
-error[E0412]: cannot find type `Core` in module `device`
-  --> /builds/linux/rust/kernel/pci.rs:69:58
-   |
-69 |         let pdev = unsafe { &*pdev.cast::<Device<device::Core>>() };
-   |                                                          ^^^^ not
-found in `device`
-
-
-## Source
-* Kernel version: 6.14.2-rc1
-* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* Git sha: abe68470bb82714d059d1df4a32cb6fd5466dc0e
-* Git describe: v6.14.1-732-gabe68470bb82
-* Project details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.14.y/build/v6.14.1-732-gabe68470bb82/
-
-## Test
-* Build log: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.14.y/build/v6.14.1-732-gabe68470bb82/testrun/27939968/suite/build/test/gcc-13-tinyconfig/log
-* Build details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.14.y/build/v6.14.1-732-gabe68470bb82/testrun/27939968/suite/build/test/gcc-13-tinyconfig/details/
-* Build history:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.14.y/build/v6.14.1-732-gabe68470bb82/testrun/27939968/suite/build/test/gcc-13-tinyconfig/history/
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2vReGJ6wjd1n99Nsg9WaH58qupU/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2vReGJ6wjd1n99Nsg9WaH58qupU/config
-* Build rust history:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.14.y/build/v6.14.1-732-gabe68470bb82/testrun/27940128/suite/build/test/rustclang-lkftconfig-kselftest/history/
-* Build rust details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.14.y/build/v6.14.1-732-gabe68470bb82/testrun/27940128/suite/build/test/rustclang-lkftconfig-kselftest/details/
-* Build rust log:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.14.y/build/v6.14.1-732-gabe68470bb82/testrun/27940128/suite/build/test/rustclang-lkftconfig-kselftest/log
-
-## Steps to reproduce
- - tuxmake --runtime podman --target-arch arm64 --toolchain gcc-13
---kconfig tinyconfig
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
 
