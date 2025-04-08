@@ -1,88 +1,59 @@
-Return-Path: <linux-kernel+bounces-594207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DA60A80ECE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:48:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC12A80EBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AAD64614C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:46:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA6441896DF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265B3226D0F;
-	Tue,  8 Apr 2025 14:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2031DF252;
+	Tue,  8 Apr 2025 14:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TLs5lB9Q"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eU9Evarw"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BEF1C5D61;
-	Tue,  8 Apr 2025 14:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0A1152532;
+	Tue,  8 Apr 2025 14:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744123543; cv=none; b=COryo1jWpcVmTaM390ngMOR/tWoLC4ug+m8/SDRtcoNg+e67JAUoXjNZa41eNOH8d5nVolrWGOygN6lmOshp85nxcImsKOQNOuUbB4BTJWcfeRYOu5poiIDjtUPq+LLPGvcgWdA7k7T2WZ9xDMeX5ojD0ugSS1mSY3pkAtHMlU8=
+	t=1744123536; cv=none; b=hw/s/MHAhHuJzlw4ObcxzIUP1RrCd9getMXDIVJd0GsVWMrMMHMXomxCJqdHYmCXaM6SrPfGBtkzzDcEi8UxNxONMaUwUocln7celNDEBignsY6j6rJX3YzsQIBfx+2NXtshw3wmcAp9CYvcVzpQbBl3ybymoNnTsQLAxifFoF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744123543; c=relaxed/simple;
-	bh=7T4CpB6DGc+gXmXeKE+QAVK5wOG1xBkOti6BP2/W8Ow=;
+	s=arc-20240116; t=1744123536; c=relaxed/simple;
+	bh=irNlBo1IryRAe63MAHnAMbf6FqWMhnjsTarLwK/Bi/I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DLZgpcM71DsPuNZsDIc5qsB8tdQ0KoOMnQ7FyDzsFY1tRuSol9rHPYKyikFqRoTAJfTLmaQJHAJFMOi7dPWgOcFNCWrnrQC3rZvYQKvw0dR9a/aAyCdTmAkDtZACmyrQPzmX0ibMp3u8iXTf93y0C+1XFB2a9Bd6gzP+Jahh8zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TLs5lB9Q; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ZU8AgxcMgNb7+V6IhjT3po2+emT09ZzOnp6Z/8jLn6c=; b=TLs5lB9Q6k6NOM0ejAiZKSUmbw
-	Dj+iAfTAAhm+Ug5dOAXdaCUR0ebD73P/pVGjYFtKaTG8ZV+/atjxB8tqHRg7WBYsJwW5Vwwr7EF9c
-	EXg2eTLofm8UMCn7fjXC4Ewz5LuW28/Ib8u6LPJzVd95vL9xcZUe0UdgFLyk1LVTAELk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u2ACU-008PSe-Gy; Tue, 08 Apr 2025 16:45:18 +0200
-Date: Tue, 8 Apr 2025 16:45:18 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Herve Codina <herve.codina@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CNynEtlOtHNz9hh5ZT4NlaJy6O4rmLWG1SMw7ZajXuHtMVamKpDsqUTaUSaVQ1hwyDpCZ/Rt5denQG+lk156B1Dx5OoqA6NqZ7l14CRjXq5XCwW+SU7xJUm9hlPGKLmSwKtqHlgdMg+lGMeVJ2oSv+KGj54m+75411QegPOO1PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eU9Evarw; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 109EC44341;
+	Tue,  8 Apr 2025 14:45:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744123532;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U7VTXtzY8zJJywqc76L9MeA0ZKx5Ng26dSN8EWcxsZU=;
+	b=eU9EvarwQjr3999mkmhDsMhEeE2HwnCjWKg3d5E/JQdFwM+TznkG6xUDJCesMr0S+XwN0s
+	GkkXlVzZjzE+yqVTTv3pEJz1msyLzBUrtgxbzQd8D8B2f/N3k8XlWy3RdHewjIkU6Tov4V
+	Ly9JIHoWXgdV6xWjx5tcHdXEdolSMGw/sCqkAGgXT/0tYLlNzj8UClyzaxhvYqCGPVnlzk
+	A9lXzsO8hZWONu+lGZVFA+n91Mfacs0WoHcvKbY0cuxfjlbjMICiIpETeoukzP2qnP8BMG
+	JRZko8li35U2T8TKPHjXwVel5MYRXjapL7bfLeXXWHf/u1aoEWdMYQiKCD8ytQ==
+Date: Tue, 8 Apr 2025 16:45:31 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 15/16] misc: lan966x_pci: Add dtso nodes in order to
- support SFPs
-Message-ID: <e370fcd3-bd58-47d1-bc0c-c0abeebbefdc@lunn.ch>
-References: <20250407145546.270683-1-herve.codina@bootlin.com>
- <20250407145546.270683-16-herve.codina@bootlin.com>
- <19f1a382-1b6b-42bd-a548-a1a5644c9a1b@lunn.ch>
- <20250408162603.02d6c3a1@bootlin.com>
+	Ard Biesheuvel <ardb@kernel.org>, linux-rtc@vger.kernel.org,
+	linux-efi@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 4/8] rtc: efi: Transition to the faux device
+ interface
+Message-ID: <174412352089.3870554.10940173443800637826.b4-ty@bootlin.com>
+References: <20250318-plat2faux_dev-v2-0-e6cc73f78478@arm.com>
+ <20250318-plat2faux_dev-v2-4-e6cc73f78478@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,51 +62,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250408162603.02d6c3a1@bootlin.com>
+In-Reply-To: <20250318-plat2faux_dev-v2-4-e6cc73f78478@arm.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdeffeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieejfefhffekjeeuheevueevjedvleevjeetudffheeutdffudefjeduffeuvddtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmegrugdtfeemgehflegtmeeffeejfhemfheffegunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmegrugdtfeemgehflegtmeeffeejfhemfheffegupdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhuuggvvghprdhhohhllhgrsegrr
+ hhmrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhrthgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqvghfihesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Tue, Apr 08, 2025 at 04:26:03PM +0200, Herve Codina wrote:
-> Hi Andrew,
+On Tue, 18 Mar 2025 17:01:42 +0000, Sudeep Holla wrote:
+> The EFI RTC driver does not require the creation of a platform device.
+> Originally, this approach was chosen for simplicity when the driver was
+> first implemented.
 > 
-> On Mon, 7 Apr 2025 22:05:31 +0200
-> Andrew Lunn <andrew@lunn.ch> wrote:
+> With the introduction of the lightweight faux device interface, we now
+> have a more appropriate alternative. Migrate the driver to utilize the
+> faux bus, given that the platform device it previously created was not
+> a real one anyway. This will simplify the code, reducing its footprint
+> while maintaining functionality.
 > 
-> > On Mon, Apr 07, 2025 at 04:55:44PM +0200, Herve Codina wrote:
-> > > Add device-tree nodes needed to support SFPs.
-> > > Those nodes are:
-> > >  - the clock controller
-> > >  - the i2c controller
-> > >  - the i2c mux
-> > >  - the SFPs themselves and their related ports in the switch
-> > > 
-> > > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> > > ---
-> > >  drivers/misc/lan966x_pci.dtso | 111 ++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 111 insertions(+)
-> > > 
-> > > diff --git a/drivers/misc/lan966x_pci.dtso b/drivers/misc/lan966x_pci.dtso
-> > > index 94a967b384f3..a2015b46cd44 100644
-> > > --- a/drivers/misc/lan966x_pci.dtso
-> > > +++ b/drivers/misc/lan966x_pci.dtso  
-> > 
-> > What exactly does this DTSO file represent?
-> 
-> The dsto represents de board connected to the PCI slot and identified
-> by its PCI vendor/device IDs.
+> [...]
 
-Then i think the name lan966x_pci.dtso is too generic. It should be
-named after whatever microchip calls the RDK.
+Applied, thanks!
 
-> We can move the PCI chip in a dtsi included by this dtso but in the
-> end this leads to the exact same representation. Further more, moving
-> out the PCI chip description in its own dtsi out of this dtso can be
-> done in a second step when an other dtso uses the same chip.
+[4/8] rtc: efi: Transition to the faux device interface
+      https://git.kernel.org/abelloni/c/89a378d01e7e
 
-And what would you call this pulled out dtsi file? lan966x_pci.dtsi?
-That is going to be confusing.
+Best regards,
 
-Naming is hard, but we should assume this PCIe device is going to be
-successful, and a number of OEMs will build cards around it, so there
-needs to be space within the naming scheme for them.
-
-	Andrew
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
