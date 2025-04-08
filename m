@@ -1,178 +1,193 @@
-Return-Path: <linux-kernel+bounces-593244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0262A7F721
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:56:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E70A7F714
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:53:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 955563B31C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:53:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB2F9189126E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1457F263F40;
-	Tue,  8 Apr 2025 07:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B218D26159A;
+	Tue,  8 Apr 2025 07:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="UIYe0fuf"
-Received: from MA0PR01CU012.outbound.protection.outlook.com (mail-southindiaazolkn19011033.outbound.protection.outlook.com [52.103.67.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bR5YL44z"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CC625F996;
-	Tue,  8 Apr 2025 07:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744098779; cv=fail; b=FJdlGtL/GOkGAdh6G4kHE2wkq1w4T30gZRQNXRXhAocx3StJIOEDxKAQTvu8mZSbeSV1CxZ+OADHB3KpqIhbm7atmiR7N0yjw+vLTI/O/KLcm35w/fPyXGO7JwR8ccFGo1VAveYrahy82iUUS03+xk7OrNCradCGVrsIL9coAUc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744098779; c=relaxed/simple;
-	bh=HellkLztnimcNPwFEFB597OiPxAyCFZ3oRHrkflchDY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=qDQycLHvm9UGHHQwsJ53aYPb4XpKXiSIBfGYVsLKHaVP8NTVz5Y6BaRZZFOBWOlwuoI6EbfILnW2qh7YEOAiPhxt5lwGgW+fWjmQ4nPexC5npv/wMyG3mQ31sc8LJ+Y65BVObwlo2tjg8l7N2vkOQ7P3CtOc509GZ2KJsHfBshk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=UIYe0fuf; arc=fail smtp.client-ip=52.103.67.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ng6F2qo8AN5lfS6FPfpNrPJD9u02FXPYtlOzgqBKanG/96Za9Z+Luli4q84xh+DCM2d2TcOq3cX8ahFwTD0lNbLdEN/qxYUfLO9UsRfzXnmWkPgFIVi5ZfzKZDoCEgOmrxm7rkYMJRixPUUZPEHX4PMmDevAo5W3lb4nHdB0EH5ykIRp3S5NrlZoOXWszDUq2vA2bcpj9yJDFqXezI8w4n0p/6+gTsm3nuCKQaYDayyErO6JPSjcHYCTqjx+6egOt+s5EPaL/UtiOu1ShrRKUYiPdevLJ8xkSB4QW63bbhiI35mm1cCDD45qSOM0FAMu/QNctiYAyzkrVft+LLxGKg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=psJIyLWdYNdYdLuCfxZUG3zYq9FRvdvhUWVNHAxY2n8=;
- b=JWluoc0xbHKo3WOvDl2BYLFAeMQ+JYcKCON9a0eSSvjleV6O+CAAfdAWdUdxWf0QN23mpzTolPtT2reZsjaZ0zB8SuPP/zcYSLmXVp8qpUU9grwD4KQAYQDG13ju42d9zpsZxK5QWF7RMn0Jfp1KThsNEj2wVihRuiA1NHGlZ7o29jEzyrSfG6HEz0MDHAepyTXoSzH3kjN2aekR0tNiOAeTi4bWv1S4cz6r+n1KvwB+z/TcQgAVZo24rlwUMjf8hpE/S1SpRDNZ9jRGpJJAn5up3IfMnpHTV+lHA1in8W3Ed+lShqNpa9yQGwvln5DjyIq3b2w53f3ZdYpHQ8qUtg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=psJIyLWdYNdYdLuCfxZUG3zYq9FRvdvhUWVNHAxY2n8=;
- b=UIYe0fufpqoSxvnD+yOsdSbdgtdB3BT5BVZOkrl7CG7pxjZ7uTOD4aRbkFsH1R2vMZTqGyAGHn3iR/D6RJZ/rtrSQkcaq39TaN/C2QRChDe4SCF7av+Sn+mjrEdVlwlGytv3jXGrjEVu4RzxIRMfPFkHSXYrVeLJLwe5sOPz1koAEbWoMr+mT/Z2vqyA6HJ8FfR+5qU/qVWIC7INRK6yDJadhc3GK6947hH42RddJwCibLuwvzq6ihvwPOAQ0JdT6SCG1WXJC+oDEC0TpJJhZ6FgnGU3oTjzm1rvM5+z28+/bRO8FgG7EsPKyQqA/9yX4Ul/Edg9y3XWxSk/7LQ/LQ==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by MAXPR01MB4213.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:8::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.35; Tue, 8 Apr
- 2025 07:52:52 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8606.029; Tue, 8 Apr 2025
- 07:52:52 +0000
-Message-ID:
- <PN3PR01MB9597001E80B673AA1E4033C0B8B52@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-Date: Tue, 8 Apr 2025 13:22:50 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] HID: appletb-kbd: Use secs_to_jiffies() instead of
- msecs_to_jiffies()
-To: Thorsten Blum <thorsten.blum@linux.dev>, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250407082930.742229-2-thorsten.blum@linux.dev>
-Content-Language: en-US
-From: Aditya Garg <gargaditya08@live.com>
-In-Reply-To: <20250407082930.742229-2-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN4P287CA0121.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:2b2::8) To PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:f7::14)
-X-Microsoft-Original-Message-ID:
- <a065a402-9486-4ca5-9b1c-e34cb927d909@live.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0376C25F78F
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 07:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744098777; cv=none; b=bo8q9HnEde4kG8rjrIiwbEzI1nTYS1CEZULQ/gteDdGUae7FKRSYHBRgF2CzAbczxiUIiY4TuNma9C8Zzs05Q1p8LrMm0Vbq52xUDLVUvxR6vzMBJ1sPv50PBi3bDREOF8a/nKSSd9z3RtJafCOxu5YifMGWOnU8+bnMxjqOo3k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744098777; c=relaxed/simple;
+	bh=CTsItxJL+eAetG/isG1aUgyaeY2KhExTdrxot2RtR78=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jUQ9KBNkf6Rf+ZNas+oWZvx/lhOT+0aYYIBqjIALwcbiFu8KgtmNq+qeyblfDY3cpy65pcQHrAjuLH24opuxVM1Pz49qswEKPMjHabXNTcY5Nf4q3nOV908IqPtHOmk6Cnu93NGyYc7CUgjZPk7CCQHQNL2ehodfM+dGAnebMxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bR5YL44z; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-39c266c1389so3688068f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 00:52:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744098773; x=1744703573; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VjqzmMMacWbqnYleHoXhpQrGKOlADT8P8Fl3BGcFhsk=;
+        b=bR5YL44zld3EMthCyGntjPuWWVshcp2NhQSxYhlg6yAtAMHcMLzH+WwJBrhf6nBoob
+         knCErgGn+jukq0pxMFm1XVDTh2vox5aJbKJDk2k5X0joNqrJJbWlhdliLsrrnOwoSPvA
+         HfvLiD2hRsZV8CJaKByHn549MqtNxiGkI5IbKhWGZp12ZM+f/ukccKSDl6x8z4HaTh8K
+         QgfZ8dsSRHlKyDdQ1HAxB714b6FP2wvVKIn2QIEUpuVu+PBV6dDPYqWlKRSve8aOAigF
+         8uIONxyneu8QjewgBZ0a7bgrA7FdJK+PtzhePGE8aY932MDTBOSZk5li75vbZ1eeh0FW
+         43FQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744098773; x=1744703573;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VjqzmMMacWbqnYleHoXhpQrGKOlADT8P8Fl3BGcFhsk=;
+        b=Fy5GrsPHedMMiSm5YIApXuPow0tADGygHhoL/lfneIo8B2Zv2iwOKvaL5qUxeosKZ0
+         xtwG2tL90VVLx5oDXBGzmu8p3RqSuB4Pn/ZjHKPifspTXJ8qdrsWW6QB6tQ//vx0sjYb
+         gqbv7EECxzlkC/PxCjX7x5ls36xvawaRH10eZAaTN3EI8cE4Tx1ArApxa/vaOfg7EE75
+         dKsm6VCLQSJ7fy9dVosnRXXfRn98frkS638chM8AYSADPIP66onpzGz4FKb2NEECxSu/
+         yC5izyviC/VISFMs5xCdfZKmHelPIdRI0YqlQGJhe/J38UauuTTJAJOlkyI3Pu9eMjx1
+         LHiw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8+4lWmCizHbZGhXiQC6pvBN4wIj9KcpxuF+py+HfJomawcbyj2gIwM53dsBdIIUG6VT3beqqfCW82KAM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXJSFy2eCllqay6gQzXbGefvmpX2TEcE9k1SPMNkwR7aQkuhYh
+	b9cffyG3+BEU7Yapw7ZkW15Bzbh/DBSQGUW9SKYEfUyZzUClZ05kCmmrkk7CUOM=
+X-Gm-Gg: ASbGncvNHfac2rvugskpUgEhH5YL+uztIgodRyygdGetGQ+CK0wa2au7oFxjZI3h7wR
+	YPnzEnH4due8pVP0/cVWBZhvHpORoKWTc6XodSoAkiVjyi2nwbkVusQHHcPaZhgIOCaWlfwJRxI
+	d+FPFG2peef7OjcXXvTIEFv87+Wk6WDt+7oTTbaz8V/5utOAE0+7zvDuP370Jcx1SL9Zp/t7vTC
+	YCyqP+dHX94rG/3II39z+rzbswjY2Nx26T+rKmXyy/YyuBxSw/nX0MisGYMNbKd94prc/PudmmV
+	7RtAtGMxL1Hmdny5y9LFEHQUwxDSAYwNJGMBy0vLV5RJQf0978rgg4hg1pYO/iJlo3lCJf7w5Q=
+	=
+X-Google-Smtp-Source: AGHT+IFjPNgRl4VdkKERBfDPcS8BhfY+2C/V1T+Jsm5dqC+mD8MANyETkIFS4IOMCADrnAUsLmNxeg==
+X-Received: by 2002:a5d:588f:0:b0:390:d6b0:b89 with SMTP id ffacd0b85a97d-39d146622b5mr11257778f8f.50.1744098773275;
+        Tue, 08 Apr 2025 00:52:53 -0700 (PDT)
+Received: from [192.168.68.117] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43ec169b4e4sm156238455e9.20.2025.04.08.00.52.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Apr 2025 00:52:52 -0700 (PDT)
+Message-ID: <206d1405-5a8b-4f2a-8545-458c88345a41@linaro.org>
+Date: Tue, 8 Apr 2025 08:52:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PN3PR01MB9597:EE_|MAXPR01MB4213:EE_
-X-MS-Office365-Filtering-Correlation-Id: abb55536-5055-401d-05b8-08dd76725da6
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|7092599003|15080799006|6090799003|8060799006|19110799003|461199028|5072599009|440099028|3412199025;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aHJHdXdzMnJ4aEVQM3dwSmdGWlZrY3JsN1l2VXc3emhqQjZtR0tXOE81M3ZX?=
- =?utf-8?B?SjF6U2tBMGxRUjk4djNkblY1VjFudVFad2orQ1JHcXZtSkdXekp2c0lBTzBT?=
- =?utf-8?B?TDlCTkRUYjdmeGNZdGlPaWUwV1N1UWdPS2pwSXQva0lRYzVUL0JtSHZGMjFH?=
- =?utf-8?B?aEQra1dOdFBkZk1JVXFKeElPbXJhWDZ4NW5IcGppQVY3MHpHOEYwSWdPVDhp?=
- =?utf-8?B?TXpyK3pSd3hYd3pPNk9VVkE1RExadUI4M0ZyeVF0Y20rY1ZRUjFmaEFuWFM2?=
- =?utf-8?B?VUlTMWV5MEFHYnB3QzdBSEh0cmc5dmUwbU1NdFMxSDhPWGtheHBteFRNc3hI?=
- =?utf-8?B?SHFpak9Bai94d3gwdlRodjV0eGhwTktpM1RGNjY5djhvWk52Z1VoVjBTZ2N2?=
- =?utf-8?B?MzJnSUZxbm9LaTA2NldKdkdyOFVSWmhzQzBvcG5OWTN1NTkyMHdNUmVUY294?=
- =?utf-8?B?WWkyV1FaNlFHb0p5UjVxcTc4UFZBOEdhS2pyRDEwTndUY2VXUDJqUlNXeElo?=
- =?utf-8?B?enZSZzRUblRQTFZuRVlCQzBqcUx2Q1EvWFdRNTNPSlBRT0FoSlpMVWx5VzZS?=
- =?utf-8?B?N2xFZHRLdGNPd2RCVFhWNlJ2M0lWRzZhSGdXV2NqZXhoYmdJMGNHdUZCUnpN?=
- =?utf-8?B?NzV3WHJ5MHZZdE9VUkxEcW9sZU8wMTRnek8xMDdzK1RTUmZyRUw3dWUwQ0g5?=
- =?utf-8?B?TVI3Tnd6ZVRaT0ZhN205Ukt6NkhpbkRsR2xlYmxxekxhbXVhSjlQYmtEaGw1?=
- =?utf-8?B?Z2grSUt2aVZlVmxNNk1CVE1ZeDkzWmhpOWRXa210UlE3dWxBSTVZYVRqZUJI?=
- =?utf-8?B?SFlhTHgwam9yZlpkZlZOMTdrSGUvU3VXNWx2d0lncHIyVGtjZHowbyswMEhK?=
- =?utf-8?B?RW84ZFRQY3NEQzRUQnUyUWhDSE1OTHhheVREWHBaN1QvV1pTRDdJS3BGK00y?=
- =?utf-8?B?RlZKM3U4c0YxY01Wd0RZaDE5eGRyNEo3MHBacTY2cURySEZyQm9DeWM5eTFr?=
- =?utf-8?B?Z3lmK0crWmNDN2xEamR2Rlhicy9pdU9iTHg4cjZQVnpaUWlKblZMaDl3Sklo?=
- =?utf-8?B?NGs5WWJ0L2hvaWZqUTkyV0NSSytmKzRiNGtNSnFXQmFEdzNDS25JRjMzNllL?=
- =?utf-8?B?cHJwdzd3NU9qZFVHYUEyUGRFTkdIY09FdncwWmM5cG1MSjF4MWRuRG0xK3lG?=
- =?utf-8?B?SnROYlpZY0VyL1dURkp3MER6SkxEOFRldXo0VjhMeXhoQjZvMTlyZEhlc3RT?=
- =?utf-8?B?Vk5PMWRXWVZ1VzkrL0pYUmlGS2E1dWV1YmNnaG9JYUxrTExTNjRzUEFCbDQz?=
- =?utf-8?B?ZXZKRGJVQ1RzM2NoaGlBb2EzbVQ5dncreWp4VHp6aE1mZTdCMHhJQUN3ZUpt?=
- =?utf-8?B?U2lPL3l2MkZpL0xCYkIwdE0vakVhR3hLamtKWTFIK0g3N0hBaW9nTXdBYmFS?=
- =?utf-8?B?NVhQMTlSbTZRUFpGc2h1K3Q3RWhEK0IvSDBxWHI3SytUNVQ4d1BOQ29yS1JJ?=
- =?utf-8?B?TTRLYnNZUnFWSXplTjZBWHA5ZDN1K0lXNDdCaWFBNVp2cmFPQ2U0Z201OEpG?=
- =?utf-8?B?YnRndz09?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cmF4emRFODZYbllBU1l1WjJjcXhHdmVLSFNHakRUL25KblRyUW1wNThlV202?=
- =?utf-8?B?eFNOcCtjL09WRG93S2RRL09CaUVXZlRXbGpaR2NoNCtaejVKMFZGNnRvRGFX?=
- =?utf-8?B?RGREb0VkN0FYdVdERGxjZlpqOXZOb1diQmkvSG1zMkpOZk1wQUNZeGJJYm9v?=
- =?utf-8?B?YkQ2QkU0blFuZFMrRE9IUlBmNDllWGFobXYrbm81c0UxNFVSWUFZTEYwd0Ra?=
- =?utf-8?B?c3lkYmYxdUhBT3V0aVFseUdQOWFSTzAvYnNtd2lHeERMWUx5Ny95UGdDTC9t?=
- =?utf-8?B?WVJMMWtibmJDODVZN3pzQm1idWcxQnloa3BHNTZZU1pMZFFmaXIxaDVBMURC?=
- =?utf-8?B?TkRxWFF2bzNpdUdSS1hReW0vQThjSW9yc1dybU9EZ2owcGFwWUQzQXJKckFh?=
- =?utf-8?B?b1daeE81YUh1YzFNa09Za2dpRnJHZHJjSXNsbGNwaldFR3A0eVM3N1ZlMVl3?=
- =?utf-8?B?NHN6bkxabm1rUVJqZnpqWGh4dHpETkdpcWhHZ25JdDJNRHM3MkRtVjVuL0Jt?=
- =?utf-8?B?cVEyNGg0VzhzZHczcVd4cEpONDVPSjhEN2x4VXFGZjVacTQ5bUVvUERYS0M0?=
- =?utf-8?B?aFlrTDBRNWszZTBPcDNKWFk5cWZYSjU1WEFGaDFYQk5nd3daODFCaGt4Q0kx?=
- =?utf-8?B?MHk0eVQ0UGs0YTk0S0RQL2VqTFp0ZmxUekErQUxQYmwxTUVkT2tQSHdIekhK?=
- =?utf-8?B?NzZ5VnFid3hCeFpVeW9vRTM0YWVtK014d1NFQjl3ZUdCVUxxNzBUd2xJWnF4?=
- =?utf-8?B?aFErZGdGYWRJcHhoYVE2Mk5oZ1U0d3hIZUsydnlZK25BOEVrQlN2SkF5UDgy?=
- =?utf-8?B?Q0oyUFA3bTdhT0NGR21McjlTQytvNkR3dWtSejY2WUVBdFVmeXFHTlpGOU9R?=
- =?utf-8?B?MVNxMmVWeWh4emZOUXNYVW0yU1QyK242TUhWU2xsUFlxeENBZCtBdSttSmlB?=
- =?utf-8?B?Umd0NGQ2T2Q1MitoVmZpVktBUkFscHpEUUdDazNlZWdNcHd3NUN6K1FZdXo1?=
- =?utf-8?B?em9qaFNab0g0OXFwcEE3T3oxMGNnSWI2N0lJL2M0cVlNVmVlMTZ1NW1NMzk2?=
- =?utf-8?B?dnY1QVphNTBEdzAzY3NoVk92SjlqL3hZeEowUW5Ja0RjUjZDcTNCSzd2WlBM?=
- =?utf-8?B?dG9pZDV0UFpqQk9tUGk2ZGFpNmUvNHRsWk9tUmRNR044eGN4L2FKWVBKWjlx?=
- =?utf-8?B?OHFLWklMM1ViMy9GMUVpOEJtV3pkSmR5UXpVTWRXckg2Vkx2VDJOTFlMOCsw?=
- =?utf-8?B?YUdtNjNhNUVnazdiRVhNYjM3RTJBWFFLVUlYZG5iQzhjMVRzVjBiQjhpd3VC?=
- =?utf-8?B?SWc4ajZlNlVIeXR6dG9wT3lBbzVhc3dEU25XWkNsd2s2bS9pTUxvTE0zaW9r?=
- =?utf-8?B?SG9zVHg0ZExXUW5PSkRYN1d5TVNpMEliaW5ndTBaMGJ0VVMrOEVYSUxQRG1G?=
- =?utf-8?B?OG1uNmc5Z09qSjRMYnBzS2tia0xKSWdYdUlYMnN3NEdmQnhMYTlnY1lqeU5G?=
- =?utf-8?B?SXQrcWNJdmJTRlV1RVhPZ1p4TkhzUGZ4bXB3RG0zejhyK1FENVZRbjBYK1RR?=
- =?utf-8?B?VnRWNkRjY1lHVklCb0lNNzhkbEo2akhnSXFPcHNIeUs0ZDcwWWxWQUtyVXk0?=
- =?utf-8?B?bGxJN0dJMU5La0hBTWRNRDEwdkIrR0xsZHVjVDR6S0tUL0V2aDVMM1pCcmZP?=
- =?utf-8?B?eDdSQWtoZkl6dHRtenVxSUNMK05wOUFVWTdZdEdVUUllT0xaM0sxRmxmc2ov?=
- =?utf-8?Q?OAIQAAYlMqTMtvqjHk4nx+9tUESWlaxMA/K0jKk?=
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: abb55536-5055-401d-05b8-08dd76725da6
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2025 07:52:52.8157
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAXPR01MB4213
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 RESEND] nvmem: layouts: u-boot-env: remove crc32
+ endianness conversion
+To: "Michael C. Pratt" <mcpratt@pm.me>
+Cc: Christian Lamparter <chunkeey@gmail.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <rafal@milecki.pl>, linux-kernel@vger.kernel.org,
+ INAGAKI Hiroshi <musashino.open@gmail.com>
+References: <20250405045617.26106-1-mcpratt@pm.me>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <20250405045617.26106-1-mcpratt@pm.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
-On 07/04/25 1:59 pm, Thorsten Blum wrote:
-> Use secs_to_jiffies() instead of msecs_to_jiffies() and avoid scaling
-> the module params 'appletb_tb_idle_timeout' and 'appletb_tb_dim_timeout'
-> to milliseconds. secs_to_jiffies() expands to simpler code and reduces
-> the size of 'hid-appletb-kbd.ko'.
+On 05/04/2025 05:57, Michael C. Pratt wrote:
+> On 11 Oct 2022, it was reported that the crc32 verification
+> of the u-boot environment failed only on big-endian systems
+> for the u-boot-env nvmem layout driver with the following error.
 > 
-> Reformat the code to silence multiple checkpatch warnings.
+>    Invalid calculated CRC32: 0x88cd6f09 (expected: 0x096fcd88)
 > 
-> No functional changes intended.
+> This problem has been present since the driver was introduced,
+> and before it was made into a layout driver.
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> The suggested fix at the time was to use further endianness
+> conversion macros in order to have both the stored and calculated
+> crc32 values to compare always represented in the system's endianness.
+> This was not accepted due to sparse warnings
+> and some disagreement on how to handle the situation.
+> Later on in a newer revision of the patch, it was proposed to use
+> cpu_to_le32() for both values to compare instead of le32_to_cpu()
+> and store the values as __le32 type to remove compilation errors.
+> 
+> The necessity of this is based on the assumption that the use of crc32()
+> requires endianness conversion because the algorithm uses little-endian,
+> however, this does not prove to be the case and the issue is unrelated.
+> 
+> Upon inspecting the current kernel code,
+> there already is an existing use of le32_to_cpu() in this driver,
+> which suggests there already is special handling for big-endian systems,
+> however, it is big-endian systems that have the problem.
+> 
+> This, being the only functional difference between architectures
+> in the driver combined with the fact that the suggested fix
+> was to use the exact same endianness conversion for the values
+> brings up the possibility that it was not necessary to begin with,
+> as the same endianness conversion for two values expected to be the same
+> is expected to be equivalent to no conversion at all.
+> 
+> After inspecting the u-boot environment of devices of both endianness
+> and trying to remove the existing endianness conversion,
+> the problem is resolved in an equivalent way as the other suggested fixes.
+> 
+> Ultimately, it seems that u-boot is agnostic to endianness
+> at least for the purpose of environment variables.
+> In other words, u-boot reads and writes the stored crc32 value
+> with the same endianness that the crc32 value is calculated with
+> in whichever endianness a certain architecture runs on.
+> 
+> Therefore, the u-boot-env driver does not need to convert endianness.
+> Remove the usage of endianness macros in the u-boot-env driver,
+> and change the type of local variables to maintain the same return type.
+> 
+> If there is a special situation in the case of endianness,
+> it would be a corner case and should be handled by a unique "compatible".
+> 
+> Even though it is not necessary to use endianness conversion macros here,
+> it may be useful to use them in the future for consistent error printing.
+
+> 
+> Fixes: d5542923f200 ("nvmem: add driver handling U-Boot environment variables")
+> Reported-by: INAGAKI Hiroshi <musashino.open@gmail.com>
+
+CC Stable is missing.
+
+--srini
+> Link: https://lore.kernel.org/all/20221011024928.1807-1-musashino.open@gmail.com
+> Signed-off-by: Michael C. Pratt <mcpratt@pm.me>
 > ---
-
-LGTM
-
-Reviewed-by: Aditya Garg <gargaditya08@live.com>
-Tested-by: Aditya Garg <gargaditya08@live.com>
+>   drivers/nvmem/layouts/u-boot-env.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/nvmem/layouts/u-boot-env.c b/drivers/nvmem/layouts/u-boot-env.c
+> index 731e6f4f12b2..21f6dcf905dd 100644
+> --- a/drivers/nvmem/layouts/u-boot-env.c
+> +++ b/drivers/nvmem/layouts/u-boot-env.c
+> @@ -92,7 +92,7 @@ int u_boot_env_parse(struct device *dev, struct nvmem_device *nvmem,
+>   	size_t crc32_data_offset;
+>   	size_t crc32_data_len;
+>   	size_t crc32_offset;
+> -	__le32 *crc32_addr;
+> +	uint32_t *crc32_addr;
+>   	size_t data_offset;
+>   	size_t data_len;
+>   	size_t dev_size;
+> @@ -143,8 +143,8 @@ int u_boot_env_parse(struct device *dev, struct nvmem_device *nvmem,
+>   		goto err_kfree;
+>   	}
+>   
+> -	crc32_addr = (__le32 *)(buf + crc32_offset);
+> -	crc32 = le32_to_cpu(*crc32_addr);
+> +	crc32_addr = (uint32_t *)(buf + crc32_offset);
+> +	crc32 = *crc32_addr;
+>   	crc32_data_len = dev_size - crc32_data_offset;
+>   	data_len = dev_size - data_offset;
+>   
+> 
+> base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
 
