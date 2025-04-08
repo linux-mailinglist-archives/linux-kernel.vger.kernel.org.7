@@ -1,85 +1,74 @@
-Return-Path: <linux-kernel+bounces-593209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60AC9A7F69F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:42:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43BEBA7F68B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB67B3BD948
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD43C1891F30
 	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D798261390;
-	Tue,  8 Apr 2025 07:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB916263C7C;
+	Tue,  8 Apr 2025 07:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aooWy6bP"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="C7zsN+HP"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125E3263C74;
-	Tue,  8 Apr 2025 07:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04F325FA26
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 07:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744097846; cv=none; b=B/FpvNSA1prz060YAbc5ovnh11OFv0vZA0QClySTXNicc0NXNgAEd3iG0nWf5XqBbhNifrEb8KaCHzOh8+IcCYxyz2xOHwtq+sOFv8317egY1ENJsE2zJSkJtqEJCGjMi0nRA+GEL07OkyYDHLOxO29LGJWRelJcP1vAst8hvbs=
+	t=1744097828; cv=none; b=g1An9+tT1d4+ItMyeaH3iuUDlhsQur1L1GZPy4kl8jGYVNnpHyktUVNsU+la/SQlx/qCVXUk6YB19FJdwRZRFDAt9EnQvNi5ZBXnVCLt0j8m507bfCWKdj9uSOM/vtIp2JVdGOaRIhWrUvrHg+jsDKPgV1TdoexeRT54ee/cvhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744097846; c=relaxed/simple;
-	bh=ar5XQBlEF7k0tqNfubHLeA/je1jwcPGbfwtzEwWTm8o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TU3UMWKXY3YkfkOPUjnBdEUaQXdfuphVUH63WRtky4YvsDu0LDimpqXAKpaYmnZdJebvWkhmgXYkfKRO7EzHnsg/YLvrtGlcAWg1cQ3ICQfbSKiUB7EPAm8dzBaqOUKaHRPcS97Ptt4/qdTzDrU1N69mmDKdlL5eTcp1GHq36pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aooWy6bP; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cf680d351so36388435e9.0;
-        Tue, 08 Apr 2025 00:37:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744097843; x=1744702643; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+bV3HaOye67+5wSUQFO1LCTh5AfAgyxfb2bNbTE+s74=;
-        b=aooWy6bP2KOKNR8vK5NP7K/kwlqCqVOn7j7bMiKBhmazL8tF4KOvw7jHHRuvMg2nO/
-         /hn9t4hrvwonSY0jCubLchgKsHMus5PSKtpQKJYtdF7I87XWfRZoVN8HNSwhJperXJXT
-         kw5qNzoLB6fVEX9kxWKwZf0FTlRDIH/r/RhlqcUbxnS67Ge62ZDkFOcKkiTN3UNZxEla
-         yVgNxT0KTNxZtLF5l/SItrdLJpBC+pIFLaZLYjRl8OOUzBnQFY+tXGnp+GahNy4Y9pbq
-         2u3qPFLA4a1DvUYifB7FDqbrUxZz2CpmfvBxUSZYg7L1jbzM8eLVcq4kGon8DRYocaVm
-         pAHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744097843; x=1744702643;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+bV3HaOye67+5wSUQFO1LCTh5AfAgyxfb2bNbTE+s74=;
-        b=mHfT50cZ2o+3nMsn/fh9smwQxGIcvN3doyg+hJ807ItMvliyuJvWEqhpo04s+DaYSz
-         DXZGslESp2zAuczkagnubP0G/k/MZvwhh/TsWUq05MdA3Ko6709L4uvhjQoCKA/ZDm1D
-         h1oZ45mWBumvEUrGEtDTnB00wVfHpnponGXbwQHN97FGcJHwNzcgw6UkIW618P7IUpCG
-         wOiC0HTu3qOotrgLHKT4m3A4+aX6/0Pr/CLgcBKkHdJh0J1TDl1u715XKqGYDjFYyuc5
-         1Rmvnmje5G+VW2aob0LXTGI9AWvLLscCvZ6HHx6RSrTwZKBV3zMHwR37FzOdFCHFsHAx
-         LNAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUV1uZ/U5Iys27BuHxjgLcHJMeR713okT66p9O/hjHpxC63irFOcyo6vkdvLs3ZbTZffg18KMbRHJbB6I1f@vger.kernel.org, AJvYcCXphyaIXYUxzIGUXPDUyP7RnydNPU3k5DUFmrIuxIKPehTxlQNksZ1uIygF8RmJOPSCiGAnYs9CX86RKE8C@vger.kernel.org
-X-Gm-Message-State: AOJu0YznlCvoQJfZ+FDJqE4TK1+kLXWxTPa7FEWP/1VZxyq5/C9SjQ+Z
-	ZQcXsltwRQ0XhQAbg3P8LBY5QASODh5wBLwAZX4yKcZIf03c0y7R
-X-Gm-Gg: ASbGnctLJztQpSACwxwDSVRHWZf6Br96VnTgy3qJe4MuAZmV6gx4IGYJXpgFHfs9vbE
-	cMJQ8xcKYh3nzFZcHfQfuw1+gagkkdQPz2Ph5R4RZ5mkBMYo2cd8TYGIfufJr33voBtGL1DMETz
-	Z2TUktN9+yoVUIMi517BxpU0kM9jnB0OF6rCNU90eVH6OKYgDpftTmNALGi+cZ+YKLsMXZyuB8t
-	J0PUxL9uZhccdIhJjF82CT5Zi3pHjIOb9NfYFbUbwkKhyGjns+qYMRVhx26wXYe51iEcMFts8qW
-	7bb6VNVeg6F+QpEmJgrltCdKMBz6B3q/FY1098LTv/MHvWobltuY3snkzIxQAm5HohlxJMQ=
-X-Google-Smtp-Source: AGHT+IHzV7lgRhl3LcbHjjyj7Zx8jLcnrpxEQQSh7UM3VRWVmNsHnrWx+IPdYbdIeKdplyQbnDd2qQ==
-X-Received: by 2002:a05:6000:184d:b0:39c:266c:434 with SMTP id ffacd0b85a97d-39d82110daemr1768446f8f.27.1744097843073;
-        Tue, 08 Apr 2025 00:37:23 -0700 (PDT)
-Received: from f.. (cst-prg-66-32.cust.vodafone.cz. [46.135.66.32])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec34a7615sm151512065e9.9.2025.04.08.00.37.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 00:37:22 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] fs: unconditionally use atime_needs_update() in pick_link()
-Date: Tue,  8 Apr 2025 09:36:41 +0200
-Message-ID: <20250408073641.1799151-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1744097828; c=relaxed/simple;
+	bh=FOc10CU6cFIA7geG+YLgieKATWTB7zuFtsCN+hfFgtw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b+zxAZyFuOSljh/+evTI11EWNWAuhovLr1v9AT3zJiQXwBdo5cCCKw32MDYeYvn94B/CMz+IkgHJq+qdIwm2LK9SQPr4XqZ15b7z3rDcBaFiyt9Egk9h2b4TrfKiOavVbVOS9DYkGECRbfJzXHhUnj9qKWxg7NEFCHnziNSFqok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=C7zsN+HP; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 42613d40144c11f0aae1fd9735fae912-20250408
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=5fIewfRHgqHusXK3VZZV3qKak18ZJEB3oyX1A6sI74Y=;
+	b=C7zsN+HPDgCgw7ecOCnmBGcXF0FX+ESm1w5mt1lX/cW5BhqgMBfBMha10uarzrRekII9iITaLv2MiLl2OBoRcbJdvYx+b0q+/8MDQjuCDVNgFSbKy5SDM9LL6SIzCQuekxJktFrBzw4fJmrbCf6KlM4L8apvMOY3lRDdq8qrnOw=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:f7baa0c2-d052-43cd-881d-a9a573a47dc8,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:0ef645f,CLOUDID:019c4fc7-16da-468a-87f7-8ca8d6b3b9f7,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 42613d40144c11f0aae1fd9735fae912-20250408
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
+	(envelope-from <yiru.zhang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 806329905; Tue, 08 Apr 2025 15:37:01 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Tue, 8 Apr 2025 15:36:59 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Tue, 8 Apr 2025 15:36:59 +0800
+From: yiru zhang <yiru.zhang@mediatek.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+	<mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, Alexander
+ Shishkin <alexander.shishkin@linux.intel.com>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>, yiru
+ zhang <yiru.zhang@mediatek.com>
+Subject: [PATCH] [Patch v1]Add ETE devarch condition in etm4_init_iomem_access
+Date: Tue, 8 Apr 2025 15:36:46 +0800
+Message-ID: <20250408073651.17140-1-yiru.zhang@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,40 +76,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Vast majority of the time the func returns false.
-
-This avoids a branch to determine whether we are in RCU mode.
-
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+Due to ETE supported, so add ETE devarch condition in etm4_init_iomem_access.
+Signed-off-by: yiru zhang <yiru.zhang@mediatek.com>
 ---
- fs/namei.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/hwtracing/coresight/coresight-etm4x-core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 360a86ca1f02..ae2643ff14dc 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1905,13 +1905,13 @@ static const char *pick_link(struct nameidata *nd, struct path *link,
- 			unlikely(link->mnt->mnt_flags & MNT_NOSYMFOLLOW))
- 		return ERR_PTR(-ELOOP);
- 
--	if (!(nd->flags & LOOKUP_RCU)) {
-+	if (unlikely(atime_needs_update(&last->link, inode))) {
-+		if (nd->flags & LOOKUP_RCU) {
-+			if (!try_to_unlazy(nd))
-+				return ERR_PTR(-ECHILD);
-+		}
- 		touch_atime(&last->link);
- 		cond_resched();
--	} else if (atime_needs_update(&last->link, inode)) {
--		if (!try_to_unlazy(nd))
--			return ERR_PTR(-ECHILD);
--		touch_atime(&last->link);
+diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+index 2b8f10463840..971b9f0fe5e4 100644
+--- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
++++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+@@ -1135,8 +1135,9 @@ static bool etm4_init_iomem_access(struct etmv4_drvdata *drvdata,
+ 	 * with MMIO. But we cannot touch the OSLK until we are
+ 	 * sure this is an ETM. So rely only on the TRCDEVARCH.
+ 	 */
+-	if ((devarch & ETM_DEVARCH_ID_MASK) != ETM_DEVARCH_ETMv4x_ARCH) {
+-		pr_warn_once("TRCDEVARCH doesn't match ETMv4 architecture\n");
++	if ((devarch & ETM_DEVARCH_ID_MASK) != ETM_DEVARCH_ETMv4x_ARCH \
++	&& (devarch & ETM_DEVARCH_ID_MASK) != ETM_DEVARCH_ETE_ARCH) {
++		pr_warn_once("TRCDEVARCH doesn't match ETMv4&ETE architecture\n");
+ 		return false;
  	}
  
- 	error = security_inode_follow_link(link->dentry, inode,
 -- 
-2.43.0
+2.46.0
 
 
