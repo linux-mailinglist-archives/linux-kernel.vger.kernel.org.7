@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-593084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADC66A7F4F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:28:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4177BA7F4FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49E483B1F7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:27:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7F313B20C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C2E25F7B6;
-	Tue,  8 Apr 2025 06:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DBDD25F7B8;
+	Tue,  8 Apr 2025 06:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KCxPKDAt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNoUfRHm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20099204599;
-	Tue,  8 Apr 2025 06:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C1D226170;
+	Tue,  8 Apr 2025 06:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744093675; cv=none; b=pU1vQCC3RT5slYkqJG3O9ACX8FF0tZAPOg6PYIrd1sS7go3cX/7Dj0grD+f7d7cXwMY5Qvx1jBSPfKY2h6k+iqtVqf7EPwCrtl5lCw2ON1PvYjPqHLFVSnWOEnatGfo2ia6tgDigqkJAatajN88TZXuPc9RdSEyUuwhKe7tahcI=
+	t=1744093752; cv=none; b=euUvXUVvxLQvFHeTOb93TfA8sQWU73hRS84RqyP0dgO5c/xFbUp3l9rnVbbsoRuXnkov1viGCGhyI+jicnmO/vx+6pFM90OkKVzMJivVUqpq03uj30b0y0LYDkT43+menG/jxfzyxC4ho8XY9tegQfqL0D07CIMRwxltjkHQ13E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744093675; c=relaxed/simple;
-	bh=sMS+pgw6gVqh68XJIsm5XK7zPr1Qw6uCBmzpegKq8po=;
+	s=arc-20240116; t=1744093752; c=relaxed/simple;
+	bh=OLLi5Lp4foT1nQeIS5bBtPzSI/fuO0b+C8fsID1r/r4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DiI4GATQLyiQbd6nEcNqPLMFR5vSZefbv2A8HYZ9NQtMl0M3rJNsiqfaVYmJp/0XqrvKhyW5oMwr+NSqA+XHLY8SZHejTc6DtHBN8eAdHJy7692TjFL0on9WjA5v36G00DjDO8gRh8ANqBFujBZaLJS1N39RxMeaW72Y/03wqcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KCxPKDAt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEA00C4CEE5;
-	Tue,  8 Apr 2025 06:27:53 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jo+3BkLoQhr6wu1wSO5CWZ53zhYCvhR/UM557WEjqj0WeXL9lkxxfKycpv0qQ19hXI7rENHZa9PHbludJhPQhVZxx48rbWO02GslS1D2OD4chC16T71soeRFTElNcxgAMeInFQs46xAF8fLeXz/gm47bDUZb/ofr6XqsbmA+8A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNoUfRHm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADAA2C4CEE5;
+	Tue,  8 Apr 2025 06:29:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744093674;
-	bh=sMS+pgw6gVqh68XJIsm5XK7zPr1Qw6uCBmzpegKq8po=;
+	s=k20201202; t=1744093751;
+	bh=OLLi5Lp4foT1nQeIS5bBtPzSI/fuO0b+C8fsID1r/r4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KCxPKDAtYbCUGWLAiugHnlJ1jfR7zWnnyv2OFh5PAfDoXZ5tNhjnYj7CCDh9B4YZr
-	 XBmjYBbC965nulCVvYBO33HlCKoyIb6T9L8+o6kkcPbMC1XL8UdineCjJrOqAm8hBn
-	 qJSX7QgOzaL9eL0P46aTPKRWWE/2PEJXSpZNv9W62YJmepkAFgw7oPDwOjEohJrRcK
-	 vPgCUGoYuZZGPBDkWZaGmprtjx1O5BqTz0ZP+XMUgSSswwnZYFbys0Yi1QK7/hgGTt
-	 AelyZ9xgtBpZmhTCEgPBnZHn2F/RRbPngzI7jYEKmxwfHvglujYi5USJVC1oadHCFE
-	 7DncsVfNmNocQ==
-Date: Tue, 8 Apr 2025 08:27:51 +0200
+	b=WNoUfRHmZvqb+BW/YiOmrlVpV5cMcIBLwSFiRZ2Ap6B2KrOsu7JS/Oj2iuTyqE2Vx
+	 t3MEOT4Sy9p+1hyiUDlyzxSOOa2x8gxHyoKa2TjRoPJsXeZzuc1TBEgtu5357uq2pY
+	 ZZtP2q611R24psKpzeSk+83NDso78CtRAgY6vdvs8P2Yv3H1eUTWHIJj2aSzVPFZvg
+	 UK7NdiLPWWX5vFhNpbpqC28s8Gp1xclSmLDFC/4RE+5ClP7GOQ5QNwvhsxLmrW/7+o
+	 yHnPx4eFD3it9x2XCJlw3k6M0+lYD6Wo8r3NWNSe5jy4e+egUJaw6nL0h+l4yyp3Gg
+	 8KPRSeGTcD9pA==
+Date: Tue, 8 Apr 2025 08:29:08 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Friday Yang <friday.yang@mediatek.com>
 Cc: Yong Wu <yong.wu@mediatek.com>, Rob Herring <robh@kernel.org>, 
@@ -48,11 +48,11 @@ Cc: Yong Wu <yong.wu@mediatek.com>, Rob Herring <robh@kernel.org>,
 	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
 	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v6 1/3] dt-bindings: memory: mediatek: Add SMI reset and
- clamp for MT8188
-Message-ID: <20250408-bulky-optimistic-lobster-69ed77@shite>
+Subject: Re: [PATCH v6 3/3] memory: mtk-smi: mt8188: Use
+ devm_pm_runtime_enable
+Message-ID: <20250408-woodoo-quick-worm-bf82b4@shite>
 References: <20250408033206.12176-1-friday.yang@mediatek.com>
- <20250408033206.12176-2-friday.yang@mediatek.com>
+ <20250408033206.12176-4-friday.yang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,56 +61,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250408033206.12176-2-friday.yang@mediatek.com>
+In-Reply-To: <20250408033206.12176-4-friday.yang@mediatek.com>
 
-On Tue, Apr 08, 2025 at 11:31:54AM GMT, Friday Yang wrote:
-> From: "Friday Yang" <friday.yang@mediatek.com>
-> 
-> Add 'resets' and 'reset-names' properties for SMI LARBs to support
-> SMI reset operations.
-> On the MediaTek platform, some SMI LARBs are directly connected to
-> the SMI Common, while others are connected to the SMI Sub-Common,
-> which in turn is connected to the SMI Common. The hardware block
-> diagram can be described as follows.
-> 
->              SMI-Common(Smart Multimedia Interface Common)
->                  |
->          +----------------+------------------+
->          |                |                  |
->          |                |                  |
->          |                |                  |
->          |                |                  |
->          |                |                  |
->        larb0       SMI-Sub-Common0     SMI-Sub-Common1
->                    |      |     |      |             |
->                   larb1  larb2 larb3  larb7       larb9
+On Tue, Apr 08, 2025 at 11:31:56AM GMT, Friday Yang wrote:
+> Replace pm_runtime_enable with the devres-enabled version which
+> can trigger pm_runtime_disable.
 > 
 > Signed-off-by: Friday Yang <friday.yang@mediatek.com>
 > ---
->  .../mediatek,smi-common.yaml                  |  2 ++
->  .../memory-controllers/mediatek,smi-larb.yaml | 19 +++++++++++++++++++
->  2 files changed, 21 insertions(+)
+>  drivers/memory/mtk-smi.c | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
 > 
+> diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
+> index f25d46d2ef33..daef6d350419 100644
+> --- a/drivers/memory/mtk-smi.c
+> +++ b/drivers/memory/mtk-smi.c
+> @@ -713,16 +713,17 @@ static int mtk_smi_larb_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto err_link_remove;
+> 
+> -	pm_runtime_enable(dev);
+> +	ret = devm_pm_runtime_enable(dev);
+> +	if (ret)
+> +		goto err_link_remove;
+> +
+>  	platform_set_drvdata(pdev, larb);
+>  	ret = component_add(dev, &mtk_smi_larb_component_ops);
+>  	if (ret)
+> -		goto err_pm_disable;
+> +		goto err_link_remove;
+> 
+>  	return 0;
+> 
+> -err_pm_disable:
+> -	pm_runtime_disable(dev);
 
-<form letter>
-This is a friendly reminder during the review process.
-
-It looks like you received a tag and forgot to add it.
-
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions of patchset, under or above your Signed-off-by tag, unless
-patch changed significantly (e.g. new properties added to the DT
-bindings). Tag is "received", when provided in a message replied to you
-on the mailing list. Tools like b4 can help here. However, there's no
-need to repost patches *only* to add the tags. The upstream maintainer
-will do that for tags received on the version they apply.
-
-Please read:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
+You now broke/changed the order of cleanup without any explanation.
 
 Best regards,
 Krzysztof
