@@ -1,134 +1,80 @@
-Return-Path: <linux-kernel+bounces-593026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9B7EA7F427
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:30:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42431A7F450
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2566189728F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:31:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1086A173C24
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D87D207A03;
-	Tue,  8 Apr 2025 05:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KqhvpYe3"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FFE215066;
+	Tue,  8 Apr 2025 05:42:54 +0000 (UTC)
+Received: from sxb1plsmtpa01-09.prod.sxb1.secureserver.net (sxb1plsmtpa01-09.prod.sxb1.secureserver.net [188.121.53.90])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC2120330
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 05:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B592063FA
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 05:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744090252; cv=none; b=mt1CMF/DzOeRtWau5SLdDuy8FF4GIjh2HeaoLBRxbS+HIhQLn6GfPInsB+eP4p/QWNRfEWbHERNRlhK7TJiDaOV5eRXbrTFckaOHqtQnbhKaQR55A/f1sStqpzSz0zZygyAxJcNEs4OKd/8plnxHesuEwOlANTWo7CWJdQCYxD8=
+	t=1744090973; cv=none; b=c8rLez0nQDVHXb17VTJ9vRV7C0X+FngjUqO8TwytOM0hLPv5Uhr7e/JsSzYzcEjS6mABdo8MEwcy8kGUXA/ZUMZbw6i+i8NOzQMQu5mJL6uP3zIMdCEGdg/K4yUyAeFOpQME/Cp1A/Yg4yAzBpdP2rBgo1FYGfJeT4GgxoPDkSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744090252; c=relaxed/simple;
-	bh=vs7thu9ZGjlYIf6x+aITyKdaIi50BAkOES4aa0JW7Ac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dcUj/t/QrunrgX9D22N9sf29u6NSR5Hnc9O8gB8zDoQ9RLUfVCEwWLPwlEUBKfM8W838w+PjtaS7cA2uAf8sLBGhZf2Ho5uD29k35UIDH2ZPOH/wVCVCOheu+9qto8h+VkpXU5RV+BC1jmJkWviU6XRYeI7dwZlJHLquZrLYKBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KqhvpYe3; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2240aad70f2so151745ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 22:30:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744090250; x=1744695050; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iIblNaCDqbuIOdoWiMsvT5bzQtdq7ut/Mrgb9e4M8PA=;
-        b=KqhvpYe3agxIdALzddfYEFQWdCXmxSJED4EVqgKz+w+Y8vjXHb5MbbegpWaUb0JCL5
-         GpoH4wDLdmopMPENuO5TBHK8GoR2mQYNzDgco/WJvZb52yJohWpHikd+bhd4iLW0VZYU
-         IJp2DSbIFtz6/qvz6IhcL2Rag3OIpeUryNuULWNVEmAe/8jlVqzNPZu7mkECQczWy6sO
-         vGuDXtmS+fRj/I7wkb4b3OU6USC9M3sQKrGUy5AleZ7EUW/EO4vVHwjtSJGdPdMnwKT7
-         7DL4tY9s446hVrSj0Ve51+pQR4BZyRpBqtVwqAAqRiQNCZcJ0FkSl6uthC8O+5NzyKZr
-         RTFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744090250; x=1744695050;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iIblNaCDqbuIOdoWiMsvT5bzQtdq7ut/Mrgb9e4M8PA=;
-        b=ZCWCEA2sp/Pm7tPfuUlggqv1cbhiqlIVupYWTR2Tx5A6n84HjGZkMcwMKMBHe8pDde
-         MnblmjqWiXbXvqy5KAXnmKAUFuY/gQIApmjANVbIN7ZZzln6c5NDKw7ZgX52AwsFmDjl
-         ozcpk4tLabgmb6AlUNg3oxM/rcDp2TpjyVKSpG3yJNuj2bjASwARCeI4vGMgynvygZiY
-         owITHPXAJyiPZEEY53kGLHCj9IbF6FFtVL1MZs+lrXg7n/Bqi+GbL6DTcNvQTpgwzHnn
-         oeeZ/QaMx37OvFzNFbc6e3qc19zc+ON7LCj3xdXZYdl8B/u7KD0MWuviuvmLWnrtMQ0e
-         gRUA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4qNyvhjPe5JSvYC/3xfA4P/Q+sTgp3G4iJCWdjbeFRRy9AMMq76M44dzpcSY4nJnx4+ICBNoqdKav4W0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysvWm/4yYIv8uXIbg+gFzacgykAZPS7qeL5JOywvXAmrfXMMuL
-	T2VL6Tzd+kOpRvJeXMTNmH3KT5BIi6elBEoaPOlYBsCKk+lvuMdj10nF1SQ/oUeMyGzDl+MCsxb
-	kug==
-X-Gm-Gg: ASbGncsl0b/79ea616QgCxL2mhyFSXVWIBbkydFt4xYVCtMJsiQ8xr+kwaqy2kG5WXx
-	xjSbUedR9VIODETIC+8T8t5FCVANyQCbHtW02MjgFUh1c6YFQJwA0gdeB1nBWAk//4Dfzf3zEk8
-	BzOIwjNqysCcehatdtgpwmWj8TlLotAIQPmliL2NrDG35HSdR0Bl9UKwLDcqFzqZHUDyhikLy8U
-	0F7+4v+3YwgJtHLNgtHnoo9VuLImavsmp2w6GRIlFW7TJHBVs6Nzlct5zrISEwKdSgw+DnmW23+
-	G0MW7x2VbAQDkOgavCMLSy9ZqOjTMKUR/XXwo4m/IfP0uOggfa/xeomgd4hFenIjVReg9CU5Y92
-	TzfA=
-X-Google-Smtp-Source: AGHT+IEVENxuSQ9koyTDCtEVC43uFdSdVMF6wPG/+02fUSwR03JHFDiN0ICdqRcuMfCQhrHrrYOGyQ==
-X-Received: by 2002:a17:903:22d2:b0:223:3b76:4e25 with SMTP id d9443c01a7336-22ab804c493mr1114505ad.17.1744090250071;
-        Mon, 07 Apr 2025 22:30:50 -0700 (PDT)
-Received: from google.com (188.152.87.34.bc.googleusercontent.com. [34.87.152.188])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739d97ee90asm9907314b3a.57.2025.04.07.22.30.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 22:30:49 -0700 (PDT)
-Date: Tue, 8 Apr 2025 05:30:41 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, will@kernel.org,
-	robin.murphy@arm.com, jgg@ziepe.ca, nicolinc@nvidia.com,
-	jsnitsel@redhat.com, kevin.tian@intel.com, ddutile@redhat.com
-Subject: Re: [PATCH] iommu/arm-smmu-v3: Add missing S2FWB feature detection
-Message-ID: <Z_S0gVMuAqrv3R_v@google.com>
-References: <20250408033351.1012411-1-aneesh.kumar@kernel.org>
+	s=arc-20240116; t=1744090973; c=relaxed/simple;
+	bh=LXuGmP+5eI2TnnMyC1FFsctp5JoeYuH/0EnQ5k2XhjE=;
+	h=Message-ID:Date:MIME-Version:To:From:Cc:Subject:Content-Type; b=SUPHseaN4trUPpAIyqXqHC+UljMpEsMJ5lyYuNbS0iWjI7imBJqIhrsWOdYb8eCDeXf8Y2fVeJbweogXoPYOC/6VfPx4f89wzRWvc4IShTvwiwywsfcDjDphxSlS7/r9F5HH+oLjgzRaLv788kY8g/UDTipaww6wn9j96rZBzD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
+Received: from [192.168.178.95] ([82.69.79.175])
+	by :SMTPAUTH: with ESMTPSA
+	id 21bfujqzDxJGd21bhufVIz; Mon, 07 Apr 2025 22:34:46 -0700
+X-CMAE-Analysis: v=2.4 cv=ZqoXK87G c=1 sm=1 tr=0 ts=67f4b577
+ a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
+ a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8 a=FXvPX3liAAAA:8 a=36k9kUrpFmN1ouI47esA:9
+ a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10 a=UObqyxdv-6Yh2QiB9mM_:22
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk
+Message-ID: <86290c9b-ba40-4ebd-96c1-d3a258abe9d4@squashfs.org.uk>
+Date: Tue, 8 Apr 2025 06:33:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250408033351.1012411-1-aneesh.kumar@kernel.org>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Jan Kara <jack@suse.cz>, Andreas Gruenbacher <agruenba@redhat.com>,
+ Namjae Jeon <linkinjeon@kernel.org>, Sungjong Seo <sj1557.seo@samsung.com>,
+ OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+ Carlos Maiolino <cem@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>
+From: Phillip Lougher <phillip@squashfs.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Luis Chamberlain <mcgrof@kernel.org>
+Subject: Recent changes mean sb_min_blocksize() can now fail
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfLgiVd6w7M1jJ8sxx/5VfnM0oNjxj3+zXBOKGWp9QyJM+1OrRGPRadhmTQ6uxIhSqs8CBa7rDntCLR/pMBIuPxl6r5O9W6W2eHmmNzqBx2B2OV8KaJ8d
+ NuWIkMO2MBbW8c+HnDL7oWTgP+Xf0IENCaa1x/KMyADqDZ/ykUwsOeM1w8AE6wgzeVsAR/GGG7xkRjC8Eee0MOlb+37zD4FuIYV32618X9j9HoRUcBvlMj7o
+ dAytz1y+t4Hrwkpgu/27DhsSw/fVcjJqmHpmH7ltEQcu909KQIhOGWTYGsFB7JMBOF3G06EjL7/8r5BGmqyrDSRBp9s5xqtIQyhD/KOcO+j4NGqcI2K8ruV7
+ 4aVjjIQ0DrPvShzZfA/p4lC0MlGA4rIr5nc/ffkuViWhshlr8bnswblMbKAjliEKAQiYGRLNYpWqOplLP3EqSIb9/0/FI4mDAPmu6ky4MT9G3zTKkI/1yagS
+ leM1xnJd5q+2XrIU
 
-On Tue, Apr 08, 2025 at 09:03:51AM +0530, Aneesh Kumar K.V (Arm) wrote:
-> Commit 67e4fe398513 ("iommu/arm-smmu-v3: Use S2FWB for NESTED domains")
-> introduced S2FWB usage but omitted the corresponding feature detection.
-> As a result, vIOMMU allocation fails on FVP in arm_vsmmu_alloc(), due to
-> the following check:
-> 
-> 	if (!arm_smmu_master_canwbs(master) &&
-> 	    !(smmu->features & ARM_SMMU_FEAT_S2FWB))
-> 		return ERR_PTR(-EOPNOTSUPP);
-> 
-> This patch adds the missing detection logic to prevent allocation
-> failure when S2FWB is supported.
-> 
-> Fixes: 67e4fe398513 ("iommu/arm-smmu-v3: Use S2FWB for NESTED domains")
-> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
-> ---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> index 358072b4e293..c7d297ceabdb 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> @@ -4405,6 +4405,8 @@ static int arm_smmu_device_hw_probe(struct arm_smmu_device *smmu)
->  	reg = readl_relaxed(smmu->base + ARM_SMMU_IDR3);
->  	if (FIELD_GET(IDR3_RIL, reg))
->  		smmu->features |= ARM_SMMU_FEAT_RANGE_INV;
-> +	if (FIELD_GET(IDR3_FWB, reg))
-> +		smmu->features |= ARM_SMMU_FEAT_S2FWB;
->  
->  	/* IDR5 */
->  	reg = readl_relaxed(smmu->base + ARM_SMMU_IDR5);
+Hi,
 
-Indeed. Looks like setting the feature flag was missed previously.
+A recent (post 6.14) change to the kernel means sb_min_blocksize() can now fail,
+and any filesystem which doesn't check the result may behave unexpectedly as a
+result.  This change has recently affected Squashfs, and checking the kernel code,
+a number of other filesystems including isofs, gfs2, exfat, fat and xfs do not
+check the result.  This is a courtesy email to warn others of this change.
 
-Reviewed-by: Pranjal Shrivastava <praan@google.com>
+The following emails give the relevant details.
 
-Thanks,
-Praan
+https://lore.kernel.org/all/2a13ea1c-08df-4807-83d4-241831b7a2ec@squashfs.org.uk/
+https://lore.kernel.org/all/129d4f39-6922-44e9-8b1c-6455ee564dda@squashfs.org.uk/
+
+Regards
+
+Phillip
 
