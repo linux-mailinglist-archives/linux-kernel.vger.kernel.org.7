@@ -1,112 +1,103 @@
-Return-Path: <linux-kernel+bounces-593279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8528A7F78C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:17:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68E0AA7F790
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBEFD179ED1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:17:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A654A1895FB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE25263C8E;
-	Tue,  8 Apr 2025 08:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072E22641EA;
+	Tue,  8 Apr 2025 08:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="fbfgajkn"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IcygTj4i"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B5E212B1E;
-	Tue,  8 Apr 2025 08:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708A3263F21;
+	Tue,  8 Apr 2025 08:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744100198; cv=none; b=hg2YA2h8ItHYb1Rnrz55qBRIzqnqkWR19EZV7nau5kCYDyhLhZTkmRtC/fpd4u+Q4nMsbKOrByGKEuchkptfLOELPQEoGrZTA1RsaWxqJPiTjta1SvnxT2PHUKCyqj4iTuRT4uP8EN5lxJruF3llC31MSq6XT7NmjA8EMpLfapo=
+	t=1744100174; cv=none; b=kra0zxnCrOg+AtfZtl5J/wNuHcy4y33NIVmpJ9NjkyvfZbf7KmUJUAiXBPRrfdlK6HEu3Lkwp2eJySpjQJdU5LF6ZKBdcMeUek/4pLqu7Q79skwdxWpKdXxoBYPZR3rqbsZy2M4EHoR3oNhf4Ihbd1d/muea3wUvgztpnVOJtKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744100198; c=relaxed/simple;
-	bh=gGX6UMUGnQ2Av7O9kFgjOas/NIxooQ2MtNkrVcn8x9Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=awJ8uwd3zfQhFP+/LD/wb/7BNKsDR3axT14AlMppdNjDB4X1BNqNICdQ7iApZH61zPIa9Qc37Nyx1AiiDE0vA9mrfVwWCMbrj67Da2645tUF7hx/l+sIPza1yAtnDfZ6Rx7PjFNAjyi5DXhr2nQ0JJl4LjjSN+akaot8qv3IGDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=fbfgajkn; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1744100131;
-	bh=UXyiqpnsI36hihBNFzdtwvD8db5+Ldya1XbcBW6k468=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=fbfgajkn7kV6f9N5EXQux0yrMAtKUWEy5HZA7ntUNc6xP5F5SmrFEPaGzh5mf1BJC
-	 Bwei13ZFHqSd5lc6wAB33ym6T6bA3G+xiAf87hSXkDvM4sxXEL+lY0Yyc+Y6mXUALD
-	 PuiajRk9ACt+a9MUSQcKwOXPqLYvdQIlfbW+uraA=
-X-QQ-mid: bizesmtpip3t1744100088t83c1f1
-X-QQ-Originating-IP: hsUu7WyaKWQDhq6vANxm2D6GHbiN77lhE6Ao2GFxXx4=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 08 Apr 2025 16:14:46 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 1393141986018351372
-EX-QQ-RecipientCnt: 11
-From: WangYuli <wangyuli@uniontech.com>
-To: masahiroy@kernel.org,
-	nathan@kernel.org,
-	nicolas.schier@linux.dev
-Cc: linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	samitolvanen@google.com,
-	petr.pavlu@suse.com,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH v2 0/2] kbuild: Support gendwarfksyms
-Date: Tue,  8 Apr 2025 16:14:41 +0800
-Message-ID: <215802BA292C2DF6+20250408081441.61776-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1744100174; c=relaxed/simple;
+	bh=FiJ5NF+1WARuSYMtETcpimlKIydq+Nlvvyv4konBGaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bnLzjuYVeOTS3IGXE18ZOWT3+xjd28QYtJ09Fhw77QBdY0nS0BeY6NhLaU4QSCf6G60itc45cmwRz12/vUIGc/cHwTxJsRJuiAIA0IMeHLyKE6Rh3vfGWcdv7hbh9XaK61q6NbjgEn9yKg4UaJlgh4ZwbcFtbU/2a5ib/y7/7xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IcygTj4i; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A9AAC42EF5;
+	Tue,  8 Apr 2025 08:16:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744100164;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bc4rwIDLF1iVOu2eAJ6iVj5b+ZsPv7fwVYGZIcqecA8=;
+	b=IcygTj4iqLO/e5Hcdqx2PnwRMhLfXla5rawBBIrb8gMpuRrjIqixAa6XGpxlnWl/8yat/v
+	ixBtroYN7vLS6evxjGrD1af5t2soGjwlE+2c2TxHPvYZbuFytJ0BRg6G9DpzPf6kOIklas
+	pDEcOzEytjje/xCF/dua5wgcBoIcNIqUzDRai93yN9fDjkqfPlbff5xdSgA8MyC9avsuu+
+	zv9OhC8mnkAl3rnZLQ2Kl3ffo1DVrdV74FzUB2uZRD2RCHHy57NM+BHx5d6XO+iJh+F+lB
+	2lLBi4VdatUpUYjrJIRE6Y5BgJGmPMthuZZtSaDhuIhcRRqFukEijInQouvGAA==
+Date: Tue, 8 Apr 2025 10:16:01 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Peter Ujfalusi
+ <peter.ujfalusi@gmail.com>, Oder Chiou <oder_chiou@realtek.com>, Shenghao
+ Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, Baojun Xu
+ <baojun.xu@ti.com>, David Rhodes <david.rhodes@cirrus.com>, Richard
+ Fitzgerald <rf@opensource.cirrus.com>, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ patches@opensource.cirrus.com, Bartosz Golaszewski
+ <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 08/12] ASoC: codecs: idt821034: use new GPIO line value
+ setter callbacks
+Message-ID: <20250408101601.110c407a@bootlin.com>
+In-Reply-To: <20250408-gpiochip-set-rv-sound-v1-8-dd54b6ca1ef9@linaro.org>
+References: <20250408-gpiochip-set-rv-sound-v1-0-dd54b6ca1ef9@linaro.org>
+	<20250408-gpiochip-set-rv-sound-v1-8-dd54b6ca1ef9@linaro.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NzSDQCFWCzVTYSs1+un13MRhHyR/C+NvHv8GbF1YjNnHpTVjnIAU0R1X
-	qXHqQnnMxQk2wXbNUvjrLK73ZAHeRmTER0ooWnfJdlYZ3n14LOqcX1sCkM7HxeXxq2XDpCp
-	7h44mav9FMkuHTyUoTTyt7VfDj6rqja7IDPQqW3UojkE3Nqs6W1Yf1xhvwi6Rir9vtVy5TO
-	FuySxSYyzNHCEcqpiaClWQs06ryLYpoYJ95Eyy+TeVxK2fa5ljRNbpju7NDDJi41oYh83rd
-	4YF6f/TDyp+16ttGD4/a2hq4Q1OERF6CsI5EQ+XxJP/2nqg+nyO8vMfjbkBqC6mtzZQn4Yj
-	LnYOraR698YUltWjzM8FCrjgfb/31eUo7v8n6sIwGUp1F59MxFehTvnSoXPG4v/wcT0ApFW
-	PufYyFN8f58XN2mi4sqFL1/pp1LnXOzgWzBcudrRToIhleoe5dVjzJJY+GbP5iAcIOuyZ9Z
-	thSg8jrnN0EsII/i2qQoI6ebSQvU7wp63t/PB2olRs05PoKd6NWMvCRPUNDoBb72v4TyorN
-	i5UtmLhSyHiY+LRiDzv2M1jCV5LO0h3UUsoGWxaaP6BYGFaWjtDVWuIrL2oarhCo1lsSZyf
-	HjrdoVEBRhF2/FHK77kNmPWBby+iPINcgnnz5EZDDmTJrzVOAF3CyW7mci3QIE4uoaRTkFr
-	sjf2Jmou2R/70gugTxqaXoqyzOmPemR3rmNSe0p1jV1LGazqdLBA3DwOyyQ0GIHi8xBuv8G
-	+q7uNP2Pb5O9CYlv9NrSoGcWPYMGwTsivaC9yRe8vwnRryH4FUf9qKNMTeWkDg949YYQ2Jr
-	bowSXU0Redxs2DaCUvX26SU80n0Zesd2VF20/0oIwm/dvMlh4i2OghSxfIhHGZGtq91Wuve
-	0RAoJHpJrKUGKT5jOPcaU7c4OqWYuZaCpEDFqIW9FwrqfxZZGTTQPDp6OmbabFg7sFUktvT
-	agOr34t20rGjtdHTmvZ+nGBmksWSdDzIDYRwIM72HctZUrQ==
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddvheejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedukedprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehpvghrvgigsehpvghrvgigrdgtiidprhgtphhtthhopehtihifr
+ ghisehsuhhsvgdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopehpvghtvghrrdhujhhfrghluhhsihesghhmrghilhdrtghomhdprhgtphhtthhopehouggvrhgptghhihhouhesrhgvrghlthgvkhdrtghomh
+X-GND-Sasl: herve.codina@bootlin.com
 
-Commit f28568841ae0 ("tools: Add gendwarfksyms") adds a
-gendwarfksyms tool but did not add build depends for kbuild.
+Hi Bartosz,
 
-Add the package who provides the dwarf.h header.
+On Tue, 08 Apr 2025 09:38:26 +0200
+Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-NOTE:
-There is no need to alter scripts/package/PKGBUILD as the
-libelf package, which provides dwarf.h for Arch Linux, is
-already listed in makedepends.
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> struct gpio_chip now has callbacks for setting line values that return
+> an integer, allowing to indicate failures. Convert the driver to using
+> them.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  sound/soc/codecs/idt821034.c | 19 ++++++++++++-------
+>  1 file changed, 12 insertions(+), 7 deletions(-)
+> 
 
-WangYuli (2):
-  kbuild: deb-pkg: Add libdw-dev:native to Build-Depends-Arch
-  kbuild: rpm-pkg: Add elfutils-devel to BuildRequires
+Acked-by: Herve Codina <herve.codina@bootlin.com>
 
- scripts/package/kernel.spec | 1 +
- scripts/package/mkdebian    | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
--- 
-2.49.0
-
+Best regards,
+Hervé
 
