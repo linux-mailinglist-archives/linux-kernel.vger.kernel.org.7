@@ -1,123 +1,127 @@
-Return-Path: <linux-kernel+bounces-594831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3442A8171A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:46:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC442A8171C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 540DE8A3D8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:46:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1271C8A3CC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EDA7253B76;
-	Tue,  8 Apr 2025 20:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A658821638C;
+	Tue,  8 Apr 2025 20:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N3Lf5SWX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8KIlSZQZ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iGXqeYmt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD0413CFB6;
-	Tue,  8 Apr 2025 20:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39DB513CFB6
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 20:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744145177; cv=none; b=pqcbAqyltqqYpeS54oLV6MSN2SetRZHoSjTR0pa7HvWNSttnXmRYiqj+xveY3sc3E7pswBOozb96rObjVeKxKjw1JJqrV5rQuipCOs6AGbh888Aq3Fe0isV0GRvuaKwtPj39wCToi8jPSWjv+4gpfBldHp3pi248r4rc6iWJipM=
+	t=1744145202; cv=none; b=sZm1MvRR7EvH90Cy612TIL4UY6R7AcakBpFNk9tEZy/FCPH9qwRjv2OBVfBgZLO7QA6h2/cY1qoZRsoHGNly5s3ir4gxld02MKXSDe7yNAs+i/VGT2Rx2xuSHLnMNIy7a7d95vLP+ybTQ7Kk/8l08dbuLQWZLqtkOkQqtrTmHB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744145177; c=relaxed/simple;
-	bh=u39T35B34fYXsBnCwvMFidu0oqxlNOBHbamzZN8WIpY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BLRK5mPct3TX0+Nuspbz+brjwp96SB9rEVf5fycHmGBfEOC4r7fSveK+J23LVGeXkpZTt1G0Wbs9zkRZgzcIrrL97e6OWTHOK25uIs9VoZbUZOEoMJLuCNITa9YkmtML2s1MRV5c8D/VxahrAm04UzKCWqAb0Z0DGXNDhjeflOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N3Lf5SWX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8KIlSZQZ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744145172;
+	s=arc-20240116; t=1744145202; c=relaxed/simple;
+	bh=pygF+ZSdbKYdFeQiu6iveVNCcysYlRcyT9rck4z6eiM=;
+	h=To:cc:Subject:MIME-Version:Content-Type:From:Date:Message-ID; b=ikQ3MK6a2+HUvgKhkJ74174Lhi6Jhdwz/GVnRpyuWkhKAdfaNCBvLLzckB6NdzNU3f3ocSSmFF5G7Z/dcXMuGgKftF8ErYmSL0uUD7BSIQRLj1D0iO7VuTvYIy5vV5aBqje4vvigaw/HQJUh93hRwyRrhEOzAJZRnpFlmHLA+jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iGXqeYmt; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744145199;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LHO1UWAx+rQVZhZ6xiO8xRwG9UO76flaCcgfv2XvOAw=;
-	b=N3Lf5SWXqan5qexbq5HkKtyCja0aTFOm5S58qHEzNYUeMbm2sikAKQqIJ4bpzVCLN+3n33
-	Q7B1hJ5ER2NuFwPOkbu6odJLxj3gcjd4zGEAuG+dcvlyxd6l8wrsZTdhnUXq+MtA38Ibie
-	1KwAtdVFa1QP0PlTH5TLVbyxZnbd/QXeZaPTYlrZC4bNWn5fZ46HcZW9Mjqbnw8PBYxYVh
-	Gk/VMeg6knYgowR5cgbOUilosA8zwX4AzvzEQ7e14h5iiqnFkh2vj73PeYDxfuS5jl+YTk
-	Cshcj1DRBmP9jBeor+N5BuIxfQDOve4RIM4KiSFr7iCO4yk633Tv0gocDtYSrg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744145172;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LHO1UWAx+rQVZhZ6xiO8xRwG9UO76flaCcgfv2XvOAw=;
-	b=8KIlSZQZy1zxpwG55jbCCbtoV6tIGVFf8OSjMqluR9YwqbSREVUDUY5uVZl1UjsFZAl5Fk
-	rczOqaqWKfGersBQ==
-To: Bert Karwatzki <spasswolf@web.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
- James.Bottomley@HansenPartnership.com, Jonathan.Cameron@huawei.com,
- allenbh@gmail.com, d-gole@ti.com, dave.jiang@intel.com,
- haiyangz@microsoft.com, jdmason@kudzu.us, kristo@kernel.org,
- linux-hyperv@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-scsi@vger.kernel.org, logang@deltatee.com,
- manivannan.sadhasivam@linaro.org, martin.petersen@oracle.com,
- maz@kernel.org, mhklinux@outlook.com, nm@ti.com, ntb@lists.linux.dev,
- peterz@infradead.org, ssantosh@kernel.org, wei.huang2@amd.com,
- wei.liu@kernel.org, spasswolf@web.de
-Subject: Re: commit 7b025f3f85ed causes NULL pointer dereference
-In-Reply-To: <f303b266172050f2ec0dc5168b23e0cea9138b01.camel@web.de>
-References: <20250408120446.3128-1-spasswolf@web.de> <87iknevgfb.ffs@tglx>
- <87friivfht.ffs@tglx>
- <f303b266172050f2ec0dc5168b23e0cea9138b01.camel@web.de>
-Date: Tue, 08 Apr 2025 22:46:12 +0200
-Message-ID: <87a58qv0tn.ffs@tglx>
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=xU+rcssVzd6sgJjw8xmnFPHxLXA9Q5HvfNjc6qmn0+4=;
+	b=iGXqeYmt2hSeXZsgj4Hkt5joXO7Ox+Z4ZSPd/gl7HZDIV7sGw23PUcvnKWgWM91QmSDOHT
+	zxRLjUlms4t0JADT/ji1cdnEF6IpDxdfmN3BJ2bzcRR89bbHELBibB81r7aE02Q3cs0XGY
+	nLeve8TgMkOt95S1+7GLFxJc67YcQUM=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-212-fN4CTezkOKyou8zZWjgMlw-1; Tue,
+ 08 Apr 2025 16:46:35 -0400
+X-MC-Unique: fN4CTezkOKyou8zZWjgMlw-1
+X-Mimecast-MFC-AGG-ID: fN4CTezkOKyou8zZWjgMlw_1744145193
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7679F180AF79;
+	Tue,  8 Apr 2025 20:46:32 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.40])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2037A1956094;
+	Tue,  8 Apr 2025 20:46:29 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+To: Christian Brauner <brauner@kernel.org>
+cc: dhowells@redhat.com,
+    syzbot+3b6c5c6a1d0119b687a1@syzkaller.appspotmail.com,
+    syzbot+8245611446194a52150d@syzkaller.appspotmail.com,
+    syzbot+1aa62e6852a6ad1c7944@syzkaller.appspotmail.com,
+    syzbot+54e6c2176ba76c56217e@syzkaller.appspotmail.com,
+    Marc Dionne <marc.dionne@auristor.com>,
+    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] afs: Fix afs_dynroot_readdir() to not use the RCU read lock
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1637993.1744145165.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+From: David Howells <dhowells@redhat.com>
+Date: Tue, 08 Apr 2025 21:46:29 +0100
+Message-ID: <1638014.1744145189@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Tue, Apr 08 2025 at 18:20, Bert Karwatzki wrote:
-> Am Dienstag, dem 08.04.2025 um 17:29 +0200 schrieb Thomas Gleixner:
->> > Can you please decode the lines please via:
->> >
->> >     scripts/faddr2line vmlinux msi_domain_first_desc+0x4/0x30
->> >     scripts/faddr2line vmlinux msix_setup_interrupts+0x23b/0x280
->>
->
-> I had to recompile with CONFIG_DEBUG_INFO=Y, and reran the test, the calltrace
-> is identical.
->
-> $ scripts/faddr2line vmlinux msi_domain_first_desc+0x4/0x30
-> msi_domain_first_desc+0x4/0x30:
-> msi_domain_first_desc at kernel/irq/msi.c:400
->
-> So it seems msi_domain_first_desc() is called with dev = NULL.
+afs_dynroot_readdir() uses the RCU read lock to walk the cell list whilst
+emitting cell automount entries - but dir_emit() may write to a userspace
+buffer, thereby causing a fault to occur and waits to happen.
 
-Yup
+Fix afs_dynroot_readdir() to get a shared lock on net->cells_lock instead.
 
-> $ scripts/faddr2line vmlinux msix_setup_interrupts+0x23b/0x280
-> msix_setup_interrupts+0x23b/0x280:
-> msix_update_entries at drivers/pci/msi/msi.c:647 (discriminator 1)
+This can be triggered by enabling lockdep, preconfiguring a number of
+cells, doing "mount -t afs none /afs -o dyn" (or using the kafs-client
+package with afs.mount systemd unit enabled) and then doing "ls /afs".
 
-Aaarg. The patch below should fix that.
-
-Thanks,
-
-        tglx
+Fixes: 1d0b929fc070 ("afs: Change dynroot to create contents on demand")
+Reported-by: syzbot+3b6c5c6a1d0119b687a1@syzkaller.appspotmail.com
+Reported-by: syzbot+8245611446194a52150d@syzkaller.appspotmail.com
+Reported-by: syzbot+1aa62e6852a6ad1c7944@syzkaller.appspotmail.com
+Reported-by: syzbot+54e6c2176ba76c56217e@syzkaller.appspotmail.com
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
+cc: linux-fsdevel@vger.kernel.org
 ---
-diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
-index 4027abcafe7a..77cc27e45b66 100644
---- a/drivers/pci/msi/msi.c
-+++ b/drivers/pci/msi/msi.c
-@@ -680,8 +680,8 @@ static int __msix_setup_interrupts(struct pci_dev *__dev, struct msix_entry *ent
- 	if (ret)
- 		return ret;
- 
--	retain_ptr(dev);
- 	msix_update_entries(dev, entries);
-+	retain_ptr(dev);
- 	return 0;
+ fs/afs/dynroot.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
+index 691e0ae607a1..8c6130789fde 100644
+--- a/fs/afs/dynroot.c
++++ b/fs/afs/dynroot.c
+@@ -348,9 +348,9 @@ static int afs_dynroot_readdir(struct file *file, stru=
+ct dir_context *ctx)
+ 	}
+ =
+
+ 	if ((unsigned long long)ctx->pos <=3D AFS_MAX_DYNROOT_CELL_INO) {
+-		rcu_read_lock();
++		down_read(&net->cells_lock);
+ 		ret =3D afs_dynroot_readdir_cells(net, ctx);
+-		rcu_read_unlock();
++		up_read(&net->cells_lock);
+ 	}
+ 	return ret;
  }
- 
+
 
