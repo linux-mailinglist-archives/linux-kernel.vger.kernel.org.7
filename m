@@ -1,105 +1,162 @@
-Return-Path: <linux-kernel+bounces-594164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50F7DA80E0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:32:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E24DFA80E31
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:35:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 469E14E4451
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:29:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE3CB3BE0D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2765122B5AD;
-	Tue,  8 Apr 2025 14:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CF1228CBE;
+	Tue,  8 Apr 2025 14:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="OFSxVztI"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YusIxalj"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2805C22AE45;
-	Tue,  8 Apr 2025 14:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C811D61B9
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 14:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744122481; cv=none; b=QSV/9nOgeLcBAfPchtxAUWczDznnkIlKUsbQFc8V25DLqmNShzkCg48qqlOjuTqcFMaO6PRNIjJm2+RWl2T0TV29R6T3GRkn42RXbQX97FABnp9DGFOIRi6502SI+ZjRSsBLM8NNoxaQOFNj6m0WePct/J5ignUrR3TelB9Ayb8=
+	t=1744122471; cv=none; b=l5PCq16lSYlA0iv4mnCrBkFppGyJ+M2450L4ZhQ2NawOPQROhLT1OMZXWkeF3SU1bF2bvYrIIh8MCH7tBa+krdLKMiNZlpEJkRM11FgYnDgZx1/ECm1FKB52gv74fAx8vX5WV0RBsZbUp7JJVn4zoKGGC42QeNQ4L1drt/D3eXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744122481; c=relaxed/simple;
-	bh=oBvPXTDoawXXTh1nSPqX82Qcczec9zWjDK26sxmbimg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HMtN2+DEh1uOG1BtUzRG+hUEvA1agOcUTcqa0+cYosQzesxJJqCF2SJEOCg75iPDQwY9a416hCW7DGaeErIBoFB91udOiB7zfa/Glhn/PfjGOcV/fXvxUJQLAATmlvqBsY14sse/LSqEJmacUD3m2813BWyxCWzJKUT0r1vXxP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=OFSxVztI; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=AMa6u84bfpisRdGUTui7ZAbRD3OzT3HWV8+rzJ/A6mQ=; b=OFSxVztIM2I0QtONqn2shMWwB7
-	oDpN5BuFtbvpECYu7FQdHPgKaUA7FlTYiiIyEhfbWdNyg2w0/PzRz0LeadbBjU8LW2SpJQ3qTECdL
-	xG7Udlot7lnceivkfXJcOgvak/pfmTAhN1kgcsBkvkMtlejoMc6QrRCFttXrkRuEtCkag7Qz9CwAI
-	NTUuQCDWIHAgjFqyegNHEwF62fvlmLfhNJdB9y8IIU44FVZo29iwbd6wetU+426tkuhLBS3rjexyc
-	ffjtMGHoKvGOqsHWg39l58oSwSpDWH9Wq8J0oGqJpUM+P5UeXXzhc4PW9VfuYiFWpOpNbXjaemXvK
-	lrqRFXJg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33128)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1u29va-0007ZZ-0Z;
-	Tue, 08 Apr 2025 15:27:50 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1u29vX-0001Ux-0N;
-	Tue, 08 Apr 2025 15:27:47 +0100
-Date: Tue, 8 Apr 2025 15:27:46 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>, Joe Damato <jdamato@fastly.com>
-Cc: Michael Klein <michael@fossekall.de>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND net-next v5 1/4] net: phy: realtek: Group RTL82* macro
- definitions
-Message-ID: <Z_UyYgkLAvbU0ufp@shell.armlinux.org.uk>
-References: <20250407182155.14925-1-michael@fossekall.de>
- <20250407182155.14925-2-michael@fossekall.de>
- <Z_SPgqil9HFyU7Y6@LQ3V64L9R2>
- <96fcff68-6a96-49fe-b771-629d3bef03ea@lunn.ch>
+	s=arc-20240116; t=1744122471; c=relaxed/simple;
+	bh=CDtFymud+fAGNxgNr7trOsagr9iisZY/ePnxZw8eSTY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=tHgNE97z4Rl9mDnJYy4Zt7fZ951hXkmTl3J7qnKcfqIseka/7YfvBPPJICzw2J33JzGYPeORM2i/ABvAx6B5E9UOXdMAkfBrZfPsmvSw7Hsz/qSDoooN52XKiTn79lYWMxpsnh9aI/wPdJXIW74wZNBvrNYgf8fRXgsphJ1W52Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YusIxalj; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-399749152b4so3017980f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 07:27:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744122468; x=1744727268; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=maYeBHyukcD41Ok36kPrsdL9APyex77i93BMZAgSjDY=;
+        b=YusIxaljRzCQJ5/fkKKLEm/nxmBlFYFRIe0Q3wTpMl9oIi1lr0jTf5vRq0q61TM3w6
+         +aa7vdpVmEHI/8R1CnfHoIgk3vAQFUXzt4IyEdEJbWZBqXaTJVSdamFXYoqKh0EyyNZG
+         e8YYBmCu6w2ODn9adP3aNpqPdtL2GatphnrbGFPO97Ib2gPgpVLwAZtotuUMGY11KRaj
+         Sc5p6gSP5AmC8H5RCsZmpXU8IGI+CtXTGD30hOmPr6OyhKH527CfQOJHi7opauYlbisS
+         PtlFZ9lHmdarZkCBVD+4mjV73MAGYCs0JnW9XV6ntRmOL33B+h8DcIeMYnfad/QkjPkV
+         yPOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744122468; x=1744727268;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=maYeBHyukcD41Ok36kPrsdL9APyex77i93BMZAgSjDY=;
+        b=irvnd2kyTEFjKqogK8beR8HKBKWquRB1D7LtpZoRayPTUsvyJiR4oWYc4Zvot/aSx5
+         ZTT8aZl9H1Tv+X5MHWqzPV6PC0To5G2qIJNx/pwbVllO5tp8quN7SySuSMrUBKR4n+4K
+         n5Vz0HlKAclEMp0H5tygy/3tOyqlq+50W8dECP4Zz3PPo67byxA7oBLmqnMHadTR2i/4
+         J44nr7GpTv3UfPKqcKqOrcP2vKRA5Jl4sxSPhg0xQuxy/BWew2YOtmJkM5bDdtHwklVb
+         9F2Iw6t3NVh1uQwPOH/tsCIXm7z/bAFNf7dItsxmFbxhuh+8TUHNCCtKtGICy/fngUfx
+         g9Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPegn4ITy3hwuWcLYdZZeCzMXHKIuv2IKJTrXJFrprhIO8POX8DzeDQ8c9okmWMh4t0posXitiG60vO7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu5akT4wRAnPONnfcax+t+Pp4Q9+YETxp4qkr0DE4uTiPgg9bF
+	qZZxs6L0k+o8gUIlkD8ioxyC/GH/Cpjvoac4FJe3kFb1y6Xg59PeV8GPLmWrT1I=
+X-Gm-Gg: ASbGncveKwNVnarWfkyMfiJmjRxuFkHfr3TtxoLDdBqYnl6Jwc6PORsBoeAinKyDGWs
+	yjGp/ohrZJs3M/wRC+daQzzqBhUduFeAwtpXFLvFeQx4ZAH70Oa02bEPQSwh+3yChixNJexTFQh
+	EmKaPsAZBrfiX3V8xk3U7wXDkIHcl8FwSJuotmH3fZGmhS0WMPIAXvhZo+hKIYoXgdk6f+d2xZy
+	XjaSlrwwNpJ470kVULRxrFH9HRts3HrjszT+Z7WyYkA+o+OCE4XjMcR56+9dL1Pe4M4X3LS/xM3
+	1bIGPHc+jFzFNf5rv0hpRBwDoe/Ou+AzJ0koEV/nDS6vuX69BkEtOnHUnfyW64M4zb86mMOmVGU
+	nq1zQneATrhTy1ne0qOo55A==
+X-Google-Smtp-Source: AGHT+IHOQl3NOqzgesmZMaye/+jS53HYFNcdFr4mTBR4HNItRvuMdvVuoVoOZXlrImVcJ2UxCZ7isA==
+X-Received: by 2002:a05:6000:4011:b0:391:31f2:b99a with SMTP id ffacd0b85a97d-39cb35b2527mr16291235f8f.5.1744122467955;
+        Tue, 08 Apr 2025 07:27:47 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:3daa:5b6d:6ccb:4c71? ([2a01:e0a:3d9:2080:3daa:5b6d:6ccb:4c71])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec34be2f4sm161009595e9.19.2025.04.08.07.27.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Apr 2025 07:27:47 -0700 (PDT)
+Message-ID: <81d462fb-b118-4354-82b5-92c33d870b44@linaro.org>
+Date: Tue, 8 Apr 2025 16:27:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <96fcff68-6a96-49fe-b771-629d3bef03ea@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 07/10] pinctrl: sx150x: enable building modules with
+ COMPILE_TEST=y
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Ludovic Desroches <ludovic.desroches@microchip.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Xianwei Zhao <xianwei.zhao@amlogic.com>,
+ Patrick Rudolph <patrick.rudolph@9elements.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250408-gpiochip-set-rv-pinctrl-part1-v1-0-c9d521d7c8c7@linaro.org>
+ <20250408-gpiochip-set-rv-pinctrl-part1-v1-7-c9d521d7c8c7@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250408-gpiochip-set-rv-pinctrl-part1-v1-7-c9d521d7c8c7@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Apr 08, 2025 at 02:17:19PM +0200, Andrew Lunn wrote:
-> This i don't follow, you normally keep register bits next to the
-> register. This is particularly important when the register bits don't
-> have the register name embedded within it.
+On 08/04/2025 09:17, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Increase the build coverage by enabling the sx150x modules with
+> COMPILE_TEST=y.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>   drivers/pinctrl/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+> index 464cc9aca157..94eb41bb9cf2 100644
+> --- a/drivers/pinctrl/Kconfig
+> +++ b/drivers/pinctrl/Kconfig
+> @@ -541,7 +541,7 @@ config PINCTRL_STMFX
+>   
+>   config PINCTRL_SX150X
+>   	bool "Semtech SX150x I2C GPIO expander pinctrl driver"
+> -	depends on I2C=y
+> +	depends on I2C=y || COMPILE_TEST
+>   	select PINMUX
+>   	select PINCONF
+>   	select GENERIC_PINCONF
+> 
 
-Agreed - the worst thing is when one reads driver code, where the
-registers offsets are all defined one after each other, and the
-individual register bits are defined elsewhere and without prefixes
-that identify which register they pertain to or comments that identify
-that.
-
-So yes, please keep register bits and bitfield definitions next to
-the register offset definition they pertain to, it's way nicer to
-read that way.
-
-Also, having register offset definitions sorted by offset means when
-reading documentation, locating the definitions actually used is much
-easier. Using the same value (hex or decimal) as the documentation
-also aids this.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
