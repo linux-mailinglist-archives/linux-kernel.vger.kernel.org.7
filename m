@@ -1,112 +1,93 @@
-Return-Path: <linux-kernel+bounces-593759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03647A7FE09
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:09:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBBA8A7FDDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA3A51896971
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:03:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D977442404
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631F5268C7C;
-	Tue,  8 Apr 2025 11:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF87526A0F9;
+	Tue,  8 Apr 2025 11:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="AYWx5KYo"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SysSRzyN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61DA1267B65;
-	Tue,  8 Apr 2025 11:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384B5269B15;
+	Tue,  8 Apr 2025 11:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744110052; cv=none; b=QljEL9t23x6QGHDTx3gAn3rngTHEzIbtnA19gyyFUgKEAj00GD+JRqoWiTMRH7aGVwhPoQ5TH405/c+4I/tQho2CgGN5bx9yoVT885HFzO8+OKs8c43kCFl5/bcl7Q9VJ2Fh9x1I/7zi9e65oFBIjUSGbmnrmg1GYuJq7SO1l3g=
+	t=1744110001; cv=none; b=OGdFhFnBRLqUAqMfKZwqKk2cEKLjDPrcD7TM24NTHwP1Zr0rRY8pdOsbR+xHOxCiXyiB47oMH8WNEd+SxoPrw/tgraYx3KqrPhxuIS6eCtcvtHUiJvWk9+x0C60VrdJzQr6UOf3M399Uwhwx9fyyFH8ggUdlhvacYAAEE0LGZaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744110052; c=relaxed/simple;
-	bh=wZtNChfV7QOu2QO2ElEUsUzkKu9O7qNQsyFXu5NwBt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A3AfvFBekx84uqtDVExtNUdHIWqAmMNBpxnvdP10BDmZ7ew7cooMm/gwwhISJrQfrRwUqXGNRdmntSOO6S8VRGb357DHqraszVN6LaQEodPPWz2bl60D7dcmMo5iJpIS3yEuPIEUmsGD7IbDoyoSC/vATsURjopt4Oqxxc4zXP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=AYWx5KYo; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0BFF540E021D;
-	Tue,  8 Apr 2025 11:00:47 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id C04Qe2trqGVA; Tue,  8 Apr 2025 11:00:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1744110036; bh=Mlgg2ceV8x70fyOMoJlodD+LImFBfrga3myZ0BJHFP0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AYWx5KYooH1CNy5l+82g+0TpOtccqXgbsnaSOlS6QxwRuc7lAxOmdvddOs+XsQ5TN
-	 Q4fhtfXZapd4hWT3AwQeLUHxlkBc8fQLf0T+1rae/iYtuJPrSJ2RCNfQTW99J5YtpN
-	 LqSXEVaI8bGy2E+ejeXObcTWszDzvDMm7zE095lE+cow8DyS9+Ol3e6Q6NIC3K4yED
-	 q7Bwg0vehlrtsagcaFHQ0v3ZE41egIOndgIia4yFkKv7wabNUrKP17yKYkMlMF6L5o
-	 huPMbm6smqvTpflQj+SlgIotT2B+TJUXSBGh2fW7lsO44ymx9iaVF4GSwX9DaV7AlA
-	 MbmUBqeCnMJmPDammwCdU+CsXXU75DAJIgovdI1DUHL/STC+UiLDISf/f2uNIUx8Ux
-	 EojYTLu954qpZMbsbjRBAdNKC8v5EQAEuKPjdnbgmM74lSN6zqAt3bjcApupRtvIVz
-	 RMxDAHCXGqeWWKJBT9DKDsOvz/5Pe5cBFdTcwkhpz8IYzpjCdIzkN2GoKU2FfvL5Vy
-	 z1s07mL0GM9wtnda5x2VxeIGgAArkM5YBwaxkbw2BWP4Ac6NXPCH4fagbiDDo7o0bB
-	 TLHCCE4lLGOE7qBDmxetDidmM0XKv9TnOagCsP9vD4HRNXREyBfd7IY30I87H1s3q5
-	 1+Pz7bilGO1pZMPI+KpaMeTM=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A0A9740E019F;
-	Tue,  8 Apr 2025 11:00:18 +0000 (UTC)
-Date: Tue, 8 Apr 2025 13:00:12 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-coco@lists.linux.dev,
-	linux-integrity@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	x86@kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
-	Joerg Roedel <jroedel@suse.de>,
-	Dionna Glaze <dionnaglaze@google.com>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	linux-kernel@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v6 4/4] x86/sev: register tpm-svsm platform device
-Message-ID: <20250408110012.GFZ_UBvOcEfEcIM4mI@fat_crate.local>
-References: <20250403100943.120738-1-sgarzare@redhat.com>
- <20250403100943.120738-5-sgarzare@redhat.com>
+	s=arc-20240116; t=1744110001; c=relaxed/simple;
+	bh=3mCSAWnUMIyBPcA7HtiTW90K6L+F5iOa4GEatyISkRM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=s7ZGUuJctHzyvnzP2oEGggse0+ur3GPJe7BazuJYcz7z4n3VyF/b4VAF5U9tAfXb6L1ujiidJ9dEfLCtPRQUyx5Wl8CaxtjXD598z3EumwXva0xxijHbALKOKO6ME6o9yQNtFWSytihB7+Lcs9kzFAS/nxnbZAmcz/8oI99KXro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SysSRzyN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3D22C4CEE5;
+	Tue,  8 Apr 2025 11:00:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744110000;
+	bh=3mCSAWnUMIyBPcA7HtiTW90K6L+F5iOa4GEatyISkRM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=SysSRzyNGgiwAjXrlCuiemoxy63HjGGi6F1tovXfTO+H38Fk6cI7kz1Fh/vmK8Luz
+	 1+woG828u/MmLXJ5Ozp1doRbDOlrbMpSslQiD6MpEgZrlss5xB2VvtKd4rKMXtfu7l
+	 vuR/TQqrb4vU9QKCIB/i4virF2NWiISfvgcxMqMZ2CEj0curuftCciWPL3+VeTa/cp
+	 iAv+js4GeR8haKHwoyG/qJSWIc2kPZkJAvhmaGZCg6M+vZSv9qICNuL2yOkBGX1R/y
+	 aZOz5YktZWSuavBp/xReH45bFGXpWcc0fUEM7hM6XFv8Hta+ZUWO7falyrSFaB6edb
+	 T1xkCHTA5nETg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 736BE38111D4;
+	Tue,  8 Apr 2025 11:00:39 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250403100943.120738-5-sgarzare@redhat.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] hamradio: Remove unnecessary strscpy_pad() size
+ arguments
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174411003830.1874546.17151956229664119847.git-patchwork-notify@kernel.org>
+Date: Tue, 08 Apr 2025 11:00:38 +0000
+References: <20250407082607.741919-2-thorsten.blum@linux.dev>
+In-Reply-To: <20250407082607.741919-2-thorsten.blum@linux.dev>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: t.sailer@alumni.ethz.ch, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux-hams@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Thu, Apr 03, 2025 at 12:09:42PM +0200, Stefano Garzarella wrote:
-> @@ -2697,6 +2702,9 @@ static int __init snp_init_platform_device(void)
->  	if (platform_device_register(&sev_guest_device))
->  		return -ENODEV;
->  
-> +	if (platform_device_register(&tpm_svsm_device))
-> +		return -ENODEV;
+Hello:
 
-So I don't understand the design here:
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-You've exported the probe function - snp_svsm_vtpm_probe() - and you're
-calling it in tpm_svsm_probe().
+On Mon,  7 Apr 2025 10:26:07 +0200 you wrote:
+> If the destination buffer has a fixed length, strscpy_pad()
+> automatically determines its size using sizeof() when the argument is
+> omitted. This makes the explicit sizeof() calls unnecessary - remove
+> them.
+> 
+> No functional changes intended.
+> 
+> [...]
 
-So why aren't you registering the platform device there too but are doing this
-unconditional strange thing here?
+Here is the summary with links:
+  - [net-next] hamradio: Remove unnecessary strscpy_pad() size arguments
+    https://git.kernel.org/netdev/net-next/c/48afd5550524
 
+You are awesome, thank you!
 -- 
-Regards/Gruss,
-    Boris.
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
 
