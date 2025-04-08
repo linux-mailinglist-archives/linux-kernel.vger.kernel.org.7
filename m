@@ -1,105 +1,153 @@
-Return-Path: <linux-kernel+bounces-593468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE778A7F982
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:31:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4637A7FA36
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:48:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A31A23B42DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:28:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F9813B5585
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8EF264FBE;
-	Tue,  8 Apr 2025 09:28:10 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45F1264F90
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 09:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBD7265CC6;
+	Tue,  8 Apr 2025 09:44:48 +0000 (UTC)
+Received: from out198-9.us.a.mail.aliyun.com (out198-9.us.a.mail.aliyun.com [47.90.198.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB80265CA1;
+	Tue,  8 Apr 2025 09:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744104490; cv=none; b=TMknX3Q3+PmaATDIe3ex31Cv5ECt9o8ZeU5NVKHbtBTZ7ij83KUaSna0PLu8qiyg6jROrAVFQKGmYh3HrAkMGiCKTR0+sPkr/yGsdNB+wDhYB5Y4t0IdLfi4pNwbsQjy6r0eAkvb3zNz2fg/3gh25xKu51XSUH6E7zVXsCV3tlU=
+	t=1744105488; cv=none; b=FIoX5eL010OabjvAltA8Jq5f7mvRxIuSs1DSlmeC+rQrQMg4I5KZ4nBd8dmEObSJ5NSt6/QkqRUe3UgLkb9O2j3JnXeuQ1zHuS/an+Yn3ramsLVeDVQVSqjq0jkBX2WNrYWtB6cvjY/mBXVgL+JtQsMUMOuKBI6UFysYxcC2Nek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744104490; c=relaxed/simple;
-	bh=eyqOzFeAfWPRcomofF0iPt9yEMcU5b0bxRDqwp3CnvM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZIwcXu7aSX/jDpg+1x4WuDBM+x0rkGm1jMwSJbc6Rr/rSGXxPnez7Z5Vn37tm2IYgFkiixBgGZ0GKh1o3Fa7ctoLFpGtJznE4jm4e2smBVldwXJ1+TaLwm7mZSqeAjhZ7YWjful7sLkTeN28RxLTPf/8nkd2tawNF1/vNnsMEjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8Bx364f7PRnRRC1AA--.21063S3;
-	Tue, 08 Apr 2025 17:27:59 +0800 (CST)
-Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMBxLscd7PRnF350AA--.24496S2;
-	Tue, 08 Apr 2025 17:27:58 +0800 (CST)
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] LoongArch: Enhance robust of kprobe
-Date: Tue,  8 Apr 2025 17:27:56 +0800
-Message-ID: <20250408092756.22339-1-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.42.0
+	s=arc-20240116; t=1744105488; c=relaxed/simple;
+	bh=GixCokwCS7+n5tP2v6Bl4rJr3BXVl1PYohdWXt19vS4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Lwhj15p6SS3HhO0sYzhwFi5kv4xZf0lRjjlKop5vVEziXGnEOKUCuQOLYbNQ+cbZCkNhQjsx6eA8pqoCWrl7RBgcHvO7f7iTbRszfJYIeI47TeP3APO9rnBkXCLaq2MvHJ0V5FPKvWbBtwoyBf7g3OBU63SH8d9jFjdLEgARfg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com; spf=pass smtp.mailfrom=motor-comm.com; arc=none smtp.client-ip=47.90.198.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motor-comm.com
+Received: from sun-VirtualBox..(mailfrom:Frank.Sae@motor-comm.com fp:SMTPD_---.cGww6yv_1744104515 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Tue, 08 Apr 2025 17:28:50 +0800
+From: Frank Sae <Frank.Sae@motor-comm.com>
+To: Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Frank <Frank.Sae@motor-comm.com>,
+	netdev@vger.kernel.org
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Parthiban.Veerasooran@microchip.com,
+	linux-kernel@vger.kernel.org,
+	"andrew+netdev @ lunn . ch" <andrew+netdev@lunn.ch>,
+	lee@trager.us,
+	horms@kernel.org,
+	linux-doc@vger.kernel.org,
+	corbet@lwn.net,
+	geert+renesas@glider.be,
+	xiaogang.fan@motor-comm.com,
+	fei.zhang@motor-comm.com,
+	hua.sun@motor-comm.com
+Subject: [PATCH net-next v4 00/14] yt6801: Add Motorcomm yt6801 PCIe driver
+Date: Tue,  8 Apr 2025 17:28:21 +0800
+Message-Id: <20250408092835.3952-1-Frank.Sae@motor-comm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMBxLscd7PRnF350AA--.24496S2
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7Cr1kKFyfJw1DGFW7XFy5trc_yoW8WryfpF
-	47Cas5tr4kW3W0va4qv34xur10yFWDCrWxWw4UA345Kws8uwn0vr1xG3WDXF95W3yFqr1S
-	vF1rKrWIqF1DCFgCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
-	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v2
-	6r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jnUUUUUUUU=
 
-Currently, interrupts need to be disabled before single-step mode is set,
-it requires that the CSR_PRMD_PIE must be cleared in save_local_irqflag()
-which is called by setup_singlestep(), this is reasonable.
+This series includes adding Motorcomm YT6801 Gigabit ethernet driver
+ and adding yt6801 ethernet driver entry in MAINTAINERS file.
+YT6801 integrates a YT8531S phy.
 
-But in the first kprobe breakpoint exception, if the irq is enabled at the
-beginning of do_bp(), it will not be disabled at the end of do_bp() due to
-the CSR_PRMD_PIE has been cleared in save_local_irqflag(). For this case,
-it may corrupt exception context when restoring exception after do_bp() in
-handle_bp(), this is not reasonable.
-
-Based on the above analysis, in order to make sure the irq is disabled at
-the end of do_bp() for the first kprobe breakpoint exception, it is proper
-to disable irq first before clearing CSR_PRMD_PIE in save_local_irqflag().
-
-Fixes: 6d4cc40fb5f5 ("LoongArch: Add kprobes support")
-Co-developed-by: Tianyang Zhang <zhangtianyang@loongson.cn>
-Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+Signed-off-by: Frank Sae <Frank.Sae@motor-comm.com>
 ---
- arch/loongarch/kernel/kprobes.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/loongarch/kernel/kprobes.c b/arch/loongarch/kernel/kprobes.c
-index 8ba391cfabb0..6eab97636e6b 100644
---- a/arch/loongarch/kernel/kprobes.c
-+++ b/arch/loongarch/kernel/kprobes.c
-@@ -113,6 +113,7 @@ NOKPROBE_SYMBOL(set_current_kprobe);
- static void save_local_irqflag(struct kprobe_ctlblk *kcb,
- 			       struct pt_regs *regs)
- {
-+	local_irq_disable();
- 	kcb->saved_status = regs->csr_prmd;
- 	regs->csr_prmd &= ~CSR_PRMD_PIE;
- }
+v4:
+ - Redefine rges and bits
+ - Reorganize the read and write function of regs
+ - Replae ‘pcim_iomap_regions’ as 'pcim_iomap_region'
+ - Replae ‘mutex_lock(&priv->mutex)’ as 'rtnl_lock（）'
+ - Replae ‘phydev_info(...YT6801.\n");’ as 'dev_info_once（...YT6801.\n");'
+   in phy driver
+ - Remove pcim_iomap_table
+ - Use "yt6801: " and "net: phy: motorcomm: " as prefixes for these patches
+
+v3: https://patchwork.kernel.org/project/netdevbpf/cover/20250228100020.3944-1-Frank.Sae@motor-comm.com/
+ - Remove about 5000 lines of code
+ - Remove statistics, ethtool, WoL, PHY handling ...
+ - Reorganize this driver code and remove redundant code
+ - Remove unnecessary yt_dbg information
+ - Remove netif_carrier_on/netif_carrier_off
+ - Remove hw_ops
+ - Add PHY_INTERFACE_MODE_INTERNAL mode in phy driver to support yt6801
+ - Replae '#ifdef CONFIG_PCI_MSI' as 'if (IS_ENABLED(CONFIG_PCI_MSI) {}'
+ - Replae ‘fxgmac_pdata val’ as 'priv'
+
+v2: https://patchwork.kernel.org/project/netdevbpf/cover/20241120105625.22508-1-Frank.Sae@motor-comm.com/
+ - Split this driver into multiple patches.
+ - Reorganize this driver code and remove redundant code
+ - Remove PHY handling code and use phylib.
+ - Remove writing ASPM config
+ - Use generic power management instead of pci_driver.suspend()/resume()
+ - Add Space before closing "*/"
+
+v1: https://patchwork.kernel.org/project/netdevbpf/patch/20240913124113.9174-1-Frank.Sae@motor-comm.com/
+
+
+This patch is to add the ethernet device driver for the PCIe interface of
+ Motorcomm YT6801 Gigabit Ethernet.
+We tested this driver on an Ubuntu x86 PC with YT6801 network card.
+
+Frank Sae (14):
+  yt6801: Add support for a pci table in this module
+  yt6801: Implement mdio register
+  yt6801: Implement pci_driver shutdown
+  yt6801: Implement the fxgmac_init function
+  yt6801: Implement the .ndo_open function
+  yt6801: Implement the fxgmac_start function
+  net:phy:motorcomm: Add PHY_INTERFACE_MODE_INTERNAL to support YT6801
+  yt6801: Implement the fxgmac_hw_init function
+  yt6801: Implement the poll functions
+  yt6801: Implement .ndo_start_xmit function
+  yt6801: Implement some net_device_ops function
+  yt6801: Implement pci_driver suspend and resume
+  yt6801: Add makefile and Kconfig
+  yt6801: update ethernet documentation and maintainer
+
+ .../device_drivers/ethernet/index.rst         |    1 +
+ .../ethernet/motorcomm/yt6801.rst             |   20 +
+ MAINTAINERS                                   |    8 +
+ drivers/net/ethernet/Kconfig                  |    1 +
+ drivers/net/ethernet/Makefile                 |    1 +
+ drivers/net/ethernet/motorcomm/Kconfig        |   27 +
+ drivers/net/ethernet/motorcomm/Makefile       |    6 +
+ .../net/ethernet/motorcomm/yt6801/Makefile    |    8 +
+ .../ethernet/motorcomm/yt6801/yt6801_desc.c   |  565 ++++
+ .../ethernet/motorcomm/yt6801/yt6801_desc.h   |   35 +
+ .../ethernet/motorcomm/yt6801/yt6801_main.c   | 3006 +++++++++++++++++
+ .../ethernet/motorcomm/yt6801/yt6801_type.h   |  956 ++++++
+ drivers/net/phy/motorcomm.c                   |    6 +
+ 13 files changed, 4640 insertions(+)
+ create mode 100644 Documentation/networking/device_drivers/ethernet/motorcomm/yt6801.rst
+ create mode 100644 drivers/net/ethernet/motorcomm/Kconfig
+ create mode 100644 drivers/net/ethernet/motorcomm/Makefile
+ create mode 100644 drivers/net/ethernet/motorcomm/yt6801/Makefile
+ create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801_desc.c
+ create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801_desc.h
+ create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801_main.c
+ create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801_type.h
+
 -- 
-2.42.0
+2.34.1
 
 
