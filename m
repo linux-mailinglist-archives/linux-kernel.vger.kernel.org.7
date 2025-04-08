@@ -1,158 +1,134 @@
-Return-Path: <linux-kernel+bounces-595042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E869DA81955
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 01:27:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD15BA81946
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 01:23:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9BF8448658
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:24:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1F691BA339C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE042571BB;
-	Tue,  8 Apr 2025 23:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CBF2566D9;
+	Tue,  8 Apr 2025 23:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K/hvt4AH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JL9OLAUu"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F1E2571B2
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 23:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA71B25291E;
+	Tue,  8 Apr 2025 23:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744154652; cv=none; b=hJZDSfrGff0R46h0Eg5jy2+TR67PnNNg4hyrzliJcjnFp78dYBbvIoUuGBQn2ScT85Gn9AmLD54ZkvQLJl/YGiFKCMwFg42LbsGhOwoWly9IS0dQzT1jvW36KdvF5QQOcpoWZhNVKsuWT0ZPNedDG9Lg1eltRJOJFL4LeJsoQHE=
+	t=1744154628; cv=none; b=YErEj9DxtPvnNzfcRp0VW/03CxRpXA8rqGVf/STMg74qwAtsXgmWLabgPBYH5Niepo6AeK/peHcZl6O5hmIXrqZAEIoCSdPXcnyHoCI3PkX5mLIPvtxyAvtiy8k/BrT6+9eL+OymcpvruwlorPGVES3ib6h1RCZuXma/E3Jd2eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744154652; c=relaxed/simple;
-	bh=Z+y+TvvbX6H4MZSWf6kxTQkHX4zoax64bXySg9jfE/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IwXwnxj4aKBouUHZnQZLvgqFqPuTSk29AF6bLJSv4VGEau7UyqE6cNg2J6Q9lkJtzuJHcTAfow/UfKr5zuPJR6rbG0+wq3SzE3MXmTSZ9yEev4ViocFheEHRoTbh5kzk53lJU096/I/2IkDWShRBOO6V+B2T6nFcEcr4OuspECM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K/hvt4AH; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744154651; x=1775690651;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Z+y+TvvbX6H4MZSWf6kxTQkHX4zoax64bXySg9jfE/Q=;
-  b=K/hvt4AHJC9svbfBftvfGl+cPuKhf+Hp/JpKFrGfIKkxnZzLQQ5oxUlk
-   vGaQ8kpK8k4maPsvvyPqHc7X8/L6kWJbDx+cDVXtK35q1b1lpfkuUiqwi
-   f1RJ1AYrPtI055oq+yYkxDvO8cd+j1XbDef0r2DASvoiJVheLixUdDZ85
-   q1pmnlTwMqtGqPH4eIBZrFaJqAMN2hk+4S+7TW/Kgc3eiUrv/KmBQyU1f
-   mQh6ljBHo0WwC3UuPlldzVyJCldHJ3VGPgRodSYgIX9vBWkRUjTlR5OCA
-   ajzFYYPLWzj+9tMzgZs8duopTHq6jg1ozIfbvT+5tMPWH5V5BBRUxn85f
-   w==;
-X-CSE-ConnectionGUID: TyWG+S7gTKWBVcGshJspeQ==
-X-CSE-MsgGUID: Um8OflU6Q22yFfFKVz/Bvw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="48318155"
-X-IronPort-AV: E=Sophos;i="6.15,199,1739865600"; 
-   d="scan'208";a="48318155"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 16:24:10 -0700
-X-CSE-ConnectionGUID: /1fLLVCGSayODjVfxoFgPw==
-X-CSE-MsgGUID: OzRJ/k2PQoaIkhLenW6lUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,199,1739865600"; 
-   d="scan'208";a="128944671"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 08 Apr 2025 16:24:08 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u2IIY-00084V-1P;
-	Tue, 08 Apr 2025 23:24:06 +0000
-Date: Wed, 9 Apr 2025 07:23:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: fs/namei.c:232:6: error: unexpected token, expected comma
-Message-ID: <202504090937.ZGGFamL2-lkp@intel.com>
+	s=arc-20240116; t=1744154628; c=relaxed/simple;
+	bh=H0XMTlNnGNJTLmiGDH4a+wLj1hWrBoxh71FQw71GxLE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lcQ5cCzA1qkPDFBHjVUoqqq1v0RzSfJxOiWlq/6RbahlUUCV1BidEZ/TQa74vxIDLEGaohVEQ7sw/lNXHlhym6lGBqwOJBmmLMzae0EBXHVVKhNOFf/PvqJF3dSgsoWs1hhHSvoOlnSZVD8gjrxonAIjFz52FvzMvaNjO5qZsus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JL9OLAUu; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-af51e820336so5783922a12.1;
+        Tue, 08 Apr 2025 16:23:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744154626; x=1744759426; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fJsDFlUL6Zd7eUl9Dh4knyb3AG+zCCjQeQsb2X2t9Bk=;
+        b=JL9OLAUuTF3/AUD7ShxQJEEPxxONZ1/oSAOYvQIJQ3awGHRhtRWEnopgrBIMe3U7S+
+         fucwj/K+R910KPOLJcep7FKdNCaqyNk5c78l/Bn8gUMfoaiiNnduaGiJR5vTqoyF6BoD
+         wNsG2YfOgnYwaWwKG2uPBtrvcuKvuS5XgwhrW/nc4jkgOK5MykNVYgkuqKDWgYZG5BC7
+         t/XrgX3ZSSRw5oVSJrRXiDgr3UnutXInC5nJUxJrEtlFW19c4W1FIv4pbLiyjpLYZwjq
+         q53v5hyN+EeX5LiaIsMf8cFDd4insBfB19RdfTaVZBZtQYlwV4BIruQV76Kl9KsesEVu
+         G0Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744154626; x=1744759426;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fJsDFlUL6Zd7eUl9Dh4knyb3AG+zCCjQeQsb2X2t9Bk=;
+        b=LgKhl6qMjbVnvBYOSmz5jl2aRDPPeD3ocq8R6pAmfnsl+VY8kVnG/OWFvMM1e/+SB6
+         3GjkC8p1jEpi+ZQ7v3a3/0GKq/M9y4jp8TVDDp+WJyTZKkPztvrtiyGSUN47bZEIO9fI
+         eVOv15CUEuv0x/UDxP6uilxWnl8SK5bpnRcDkCWvQilHdUyXqerT2nKMifTv/4pfUG4r
+         0ImBDgF3QPgW+srxpXvpIoQ5yIulaHYKpEAiLQkYlUDVwEjhQR04/qGOnaFaMshOzkO5
+         pV6/o2WYJyxB+HlmZ4U7BoN61Gd0MuDw1hA30ydLzZf1dAYQy517R12DmGF4NU5AFUeB
+         efsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBhnVQlJkCAfcUH40xKGNigJGLCAMwC5P7MbvPgx+x3ND6sYW//eCBSI3u2JEseRm7irn6Ky6Q@vger.kernel.org, AJvYcCWeTXMV7xbG42AQ/zsgcvq6Yw/xTlyzhEJfBxdGSjWBRPYMInv1xtT8H59Ff5pI1DKmksUbECZYNm3YEyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym7ytM1aze6DkbsIoZmvlQBAJGRAKM9qg6CCNrLqclQa1Ty2w6
+	CtBqQ+0qZxIwXblHedgLjJpZY4O2Jg6CGQ7oUEkvgIiJPR5yhBQ1DgmfMJTdZaGu
+X-Gm-Gg: ASbGncshg+OK9iDn9qrDPy+hXNs2lvQ/Q2ho+/XnXm+EmmfzhpcB1GLC2SF0u189cg7
+	ZQQ3LBdNgDmNR+modQlwI1VMPOiYMWOEn32a0SwlQOxPzqhMR4y+p6A2sac08CsIC0B/ExBzBn7
+	/uNsr4tqXaTjikqMg0GQdvaRaCov20Tob8p6jPQ2Exyh1pAKcSxHfWDaD8CgVu2LlFcmOjiZD6G
+	6mIMA2Ji3HDHhmULA7YKSYrDORFXE9lx9BNRQYlxSNkLlKAIAifL1GXHkZ0TRix7HenTDWditTa
+	k0K64M3TFumKe4EDiMwiKu3BsR4FG9GfyKdm4DD1bRbXnTOd6QWeKVKIGaZRp5e1aym4+mH4HbG
+	kJmjYeed/MbrRAHZM82KR
+X-Google-Smtp-Source: AGHT+IFFouWJcmS4FsC+uzQYbefLVU/J64864RiYNcgtYEjIQGYjhLjftfFGyU9f6PSM9PUWQtkJ9g==
+X-Received: by 2002:a17:903:1447:b0:223:501c:7581 with SMTP id d9443c01a7336-22ac29a6710mr13568425ad.16.1744154625913;
+        Tue, 08 Apr 2025 16:23:45 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:115c:1:f94c:8e92:7ff5:32bf? ([2620:10d:c090:500::4:98ff])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229785c01b7sm106231095ad.96.2025.04.08.16.23.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Apr 2025 16:23:45 -0700 (PDT)
+Message-ID: <93ac7481-43c0-4207-8965-2d793c90263c@gmail.com>
+Date: Tue, 8 Apr 2025 16:23:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 0/2] GCPS Spec Compliance Patch Set
+To: Paul Fertser <fercerpav@gmail.com>
+Cc: Sam Mendoza-Jonas <sam@mendozajonas.com>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, npeacock@meta.com,
+ akozlov@meta.com
+References: <cover.1744048182.git.kalavakunta.hari.prasad@gmail.com>
+ <ee5feee4-e74a-4dc6-ad8e-42cf9c81cb3c@mendozajonas.com>
+ <b1abcf84-e187-468f-a05e-e634e825210c@gmail.com>
+ <Z/VqQVGI6oP5oEzB@home.paul.comp>
+ <1d570fb8-1da0-4aa6-99f5-052adf559091@gmail.com>
+ <Z/V2pCKe8N6Uxa0O@home.paul.comp>
+ <b1d373d7-77e5-4341-a685-07a617935db5@gmail.com>
+ <Z/WkmPcCJ0e2go97@home.paul.comp>
+Content-Language: en-US
+From: Hari Kalavakunta <kalavakunta.hari.prasad@gmail.com>
+In-Reply-To: <Z/WkmPcCJ0e2go97@home.paul.comp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   bec7dcbc242c6c087cede1a6fdfaeb5d6eaf25bf
-commit: e896474fe4851ffc4dd860c92daa906783090346 getname_maybe_null() - the third variant of pathname copy-in
-date:   6 months ago
-config: mips-randconfig-r064-20250408 (https://download.01.org/0day-ci/archive/20250409/202504090937.ZGGFamL2-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 92c93f5286b9ff33f27ff694d2dc33da1c07afdd)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250409/202504090937.ZGGFamL2-lkp@intel.com/reproduce)
+On 4/8/2025 3:35 PM, Paul Fertser wrote:
+> On Tue, Apr 08, 2025 at 03:02:14PM -0700, Hari Kalavakunta wrote:
+>> On 4/8/2025 12:19 PM, Paul Fertser wrote:
+>>
+>>> In other words, you're testing your code only with simulated data so
+>>> there's no way to guarantee it's going to work on any real life
+>>> hardware (as we know hardware doesn't always exactly match the specs)?
+>>> That's unsettling. Please do mention it in the commit log, it's an
+>>> essential point. Better yet, consider going a bit off-centre after the
+>>> regular verification and do a control run on real hardware.
+>>>
+>>> After all, that's what the code is for so if it all possible it's
+>>> better to know if it does the actual job before merging (to avoid
+>>> noise from follow-up patches like yours which fix something that never
+>>> worked because it was never tested).
+>>
+>> I would like to request a week's time to integrate a real hardware
+>> interface, which will enable me to test and demonstrate end-to-end results.
+>> This will also allow me to identify and address any additional issues that
+>> may arise during the testing process. Thank you for the feedback.
+> 
+> Thank you for doing the right thing! Looking forward to your updated
+> patch (please do not forget to consider __be64 for the fields).
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504090937.ZGGFamL2-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from fs/namei.c:25:
-   In file included from include/linux/pagemap.h:8:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> fs/namei.c:232:6: error: unexpected token, expected comma
-     232 |         if (get_user(c, pathname))
-         |             ^
-   arch/mips/include/asm/uaccess.h:97:33: note: expanded from macro 'get_user'
-      97 |         access_ok(__p, sizeof(*__p)) ? __get_user((x), __p) :           \
-         |                                        ^
-   arch/mips/include/asm/uaccess.h:177:23: note: expanded from macro '__get_user'
-     177 |                 __get_data_asm((x), user_lb, __gu_ptr);                 \
-         |                                     ^
-   <inline asm>:3:10: note: instantiated into assembly here
-       3 |         .set    eva
-         |                    ^
-   fs/namei.c:232:6: error: instruction requires a CPU feature not currently enabled
-     232 |         if (get_user(c, pathname))
-         |             ^
-   arch/mips/include/asm/uaccess.h:97:33: note: expanded from macro 'get_user'
-      97 |         access_ok(__p, sizeof(*__p)) ? __get_user((x), __p) :           \
-         |                                        ^
-   arch/mips/include/asm/uaccess.h:177:23: note: expanded from macro '__get_user'
-     177 |                 __get_data_asm((x), user_lb, __gu_ptr);                 \
-         |                                     ^
-   <inline asm>:4:2: note: instantiated into assembly here
-       4 |         lbe $3, 0($4)
-         |         ^
-   1 warning and 2 errors generated.
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
-
-
-vim +232 fs/namei.c
-
-   225	
-   226	struct filename *__getname_maybe_null(const char __user *pathname)
-   227	{
-   228		struct filename *name;
-   229		char c;
-   230	
-   231		/* try to save on allocations; loss on um, though */
- > 232		if (get_user(c, pathname))
-   233			return ERR_PTR(-EFAULT);
-   234		if (!c)
-   235			return NULL;
-   236	
-   237		name = getname_flags(pathname, LOOKUP_EMPTY);
-   238		if (!IS_ERR(name) && !(name->name[0])) {
-   239			putname(name);
-   240			name = NULL;
-   241		}
-   242		return name;
-   243	}
-   244	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I had not previously considered using __be64 for the struct 
+ncsi_rsp_gcps_pkt, as it is an interface structure. I would like to seek 
+your input on whether it is a good idea to use __be64 for interface 
+messages. In my experience, I haven't come across implementations that 
+utilize __be64. I am unsure about the portability of this approach, 
+particularly with regards to the Management Controller (MC).
 
