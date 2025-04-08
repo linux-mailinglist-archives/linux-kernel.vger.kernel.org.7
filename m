@@ -1,162 +1,215 @@
-Return-Path: <linux-kernel+bounces-593420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4360BA7F8F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:05:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D43A7F902
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9E1216CA4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:04:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 632183BE271
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF076263899;
-	Tue,  8 Apr 2025 09:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031322641F4;
+	Tue,  8 Apr 2025 09:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FhzLihHh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="F+8UFiFX";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FhzLihHh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="F+8UFiFX"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Gf1uXAuc"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2061.outbound.protection.outlook.com [40.107.243.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978BB22257F
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 09:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744103072; cv=none; b=vDThTQy4OkCcazJtDnK3tF+JKQRxKs5g+8d9khuKpB1LpRTJ2DcIgaXtOPCvCNI5aB4VTTwa1OBck6jjOg02IxkzkLcmNmRfIZ1P+VPsJnpopVCti+JY0KxoGgscvlS6yFbWn5zgXmA0YFlPky1SFnnzG+nbebkzadvj25TvyM4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744103072; c=relaxed/simple;
-	bh=yYfvPE1w1pc8keRbvI/GaEEjWYkeqEZp3BkO2j/JcfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n1xpPvob7166agmZW2FSjD5OtZg3dImmo8jt8ZzI9TYACSCf5KZiS6w8TBPqTLd4BGudGu5kA3anEAH6Gtm+K205gj7iKcp7+9qDz2jB3EWXPeAT4Ut0PLHgFznO5WVlwywx4+s6eVT3OHtF77+2RjrgYlizxR+vDzOeXNMnCbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FhzLihHh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=F+8UFiFX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FhzLihHh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=F+8UFiFX; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C5BBB21180;
-	Tue,  8 Apr 2025 09:04:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744103068; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ckfo8fOph7ZzwdOOHPG1tC3S5ShhyBJ/++mhVbO/yPQ=;
-	b=FhzLihHhlSf62m8rXTUc5p7euJYsU209Yu9iQ90Esc9RJT3/XCJh4c1rkcEbDdWjcFPit5
-	ACcfgrMQ3xUyRwhN9Q0ASVDRxNpUyj4FrifSph9bbWOLotAsguOTNUpNGq1kKu2KAv/9Ro
-	gpjI+HjU57AVTuai+f9ffX2gMHtOREY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744103068;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ckfo8fOph7ZzwdOOHPG1tC3S5ShhyBJ/++mhVbO/yPQ=;
-	b=F+8UFiFXWK3Bl3yRApuRZSLF8/+RBwilbV4lkv+MPGv/UicQOEofqCPfLb21Hr8sgFCo5n
-	cu5mSMhhPwV8/yDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744103068; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ckfo8fOph7ZzwdOOHPG1tC3S5ShhyBJ/++mhVbO/yPQ=;
-	b=FhzLihHhlSf62m8rXTUc5p7euJYsU209Yu9iQ90Esc9RJT3/XCJh4c1rkcEbDdWjcFPit5
-	ACcfgrMQ3xUyRwhN9Q0ASVDRxNpUyj4FrifSph9bbWOLotAsguOTNUpNGq1kKu2KAv/9Ro
-	gpjI+HjU57AVTuai+f9ffX2gMHtOREY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744103068;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ckfo8fOph7ZzwdOOHPG1tC3S5ShhyBJ/++mhVbO/yPQ=;
-	b=F+8UFiFXWK3Bl3yRApuRZSLF8/+RBwilbV4lkv+MPGv/UicQOEofqCPfLb21Hr8sgFCo5n
-	cu5mSMhhPwV8/yDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 56C7013691;
-	Tue,  8 Apr 2025 09:04:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +y1lEpzm9GdEXQAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 08 Apr 2025 09:04:28 +0000
-Date: Tue, 8 Apr 2025 11:04:22 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Baoquan He <bhe@redhat.com>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, david@redhat.com,
-	mingo@kernel.org, yanjun.zhu@linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] mm/gup: remove unneeded checking in
- follow_page_pte()
-Message-ID: <Z_Tmljh8dfhRMtCM@localhost.localdomain>
-References: <20250407030306.411977-1-bhe@redhat.com>
- <20250407030306.411977-3-bhe@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56ABC22332A;
+	Tue,  8 Apr 2025 09:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744103093; cv=fail; b=nmX7R4uwxQ/BGN6eFVfhnBXdXrwXi33QC5wDzO/RJW09QffoMIcSNGZ1d8ZE2sSD2VL1vR6PEYJKMmmZQCGpP68IDKifJNjSsWUK1diBEhRigu6L7mzSGWIyajsb2zGQeamabWKTHLGL+uCZDlODiCOCAA7udtm6qZSjGaU7/Yk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744103093; c=relaxed/simple;
+	bh=4q+1/WxX8+135DiowNUZGeTD0R7z0xdO3mTSIJGIoSA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=DfqTGoZjLC+EM7AQUljw+mlHznSd3fWH1LipneQ72wO6CMJNZ+LP5jLqRXUWVZkK4mv2jYefPZnSTcgWFQdvJq8WR9FMT7mX08f7jqndKiMEmP9cYVRURui7TLiBCC60t9RiN/IUuwYeZDXMtCpFNd4+ANHiZlCS4FoyvjASlto=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Gf1uXAuc; arc=fail smtp.client-ip=40.107.243.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SqyqAxUErD4fl3+RxoMk1td5PE7qO0H7HUD8wl6uNrjJ6J/PCCASMu4zSci4lpCA1y58bbAQWeYclqBzNicoMf3dR9RCwqKJE8eHKkKxu/9IYVDJNjyttXFCRkRo1U1sIWxRAdGmCxFB1TyJHZ+MA5oNCDyewVX7Ws2BmigQL7pF9C7930dwUd+aPfFaTfeyWwfxXIzCfD6EEoI9rjx5rIgEYFCMnu/DCRLDFc+aTg5SJ2ncqV9An/LPQrfChqK4WkhBACv0oP06XnFVK/HfwVMQFEMbW2OPT7AK9luMb8t0ntrUX0cEgKj/Omes8jF6xxGfZKqIc7YgDapAlb3QZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=i2cKgJnm+diEhSRYoRpRwRpfxGilwN/jMzWIYdmMEnI=;
+ b=ltxbLHxiT2o8zgpJMTNguPpUklFeTFryFBTxV1Jnd1boCFZQtpnKO0kZ06vvZJiCymq1Tia+atFUXgUM3tesZEzXs5vCbj9mhQdWWkaenHLlzTb7FInZS7OhFH8Ea4ZJo+iYbJ7iYRmYzFkTWRxrFPwOuFdfASzxOnD1DvZuL4g54DypJrDjsxllWitzhI8bH0gNyQQftEm9rRzTPqAWMPDIcaOM+Gt2MuRE+12Woj7LvMFrGLZbSvEgXMNdOL6KqCrHtOLDEpVI+CsQ/SzpTSMCHPDrSa2A0R3fkXdylVke9LMbH1F3PKHWmPnr9DRZQuiD2zoDWydGMsIAFwHigQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i2cKgJnm+diEhSRYoRpRwRpfxGilwN/jMzWIYdmMEnI=;
+ b=Gf1uXAucMcl5NWrX02ljGEZcx6NBNQjUu63QrwdVBd6EpkxYgDUqRvAjP3FG4qqi27WcIJu0ovipjkQi2Huo+kHV7Dav/cTLSo+xQEZASzrhAxAfLEJGtks8lghhK/0fYBnIMiCdHZhOYRntJz/Yna3W39VDyssK3KLhfucziMO9BRBXUwfaz0nL+VnLI1Ct3SYWjeWs0yuBJpKIb+Cl1ilo0KDoZ3wR4M4v2zF0HvWBRUwpHxKH1DD8D/kv3KwnbQ0vRfIdQlaQ+N5dNeJBtGzQnMKKk22IGohz+b3THYOQr521bQRz4D2cRIJ571/AUWH7Ujs/jvfYgaL/q7Vk6Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BL3PR12MB6473.namprd12.prod.outlook.com (2603:10b6:208:3b9::16)
+ by SA1PR12MB5640.namprd12.prod.outlook.com (2603:10b6:806:23e::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.29; Tue, 8 Apr
+ 2025 09:04:48 +0000
+Received: from BL3PR12MB6473.namprd12.prod.outlook.com
+ ([fe80::25e1:5ee7:117:8923]) by BL3PR12MB6473.namprd12.prod.outlook.com
+ ([fe80::25e1:5ee7:117:8923%2]) with mapi id 15.20.8583.043; Tue, 8 Apr 2025
+ 09:04:48 +0000
+Message-ID: <281111d0-2aa5-4ffd-b023-aa4f854a500d@nvidia.com>
+Date: Tue, 8 Apr 2025 14:34:40 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2] ASoC: soc-pcm: Optimize hw_params() BE DAI call
+To: broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+ linux-sound@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ jonathanh@nvidia.com, thierry.reding@gmail.com, mkumard@nvidia.com,
+ spujar@nvidia.com
+References: <20250408083022.3671283-1-sheetal@nvidia.com>
+Content-Language: en-US
+From: "Sheetal ." <sheetal@nvidia.com>
+In-Reply-To: <20250408083022.3671283-1-sheetal@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA1PR01CA0165.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:71::35) To BL3PR12MB6473.namprd12.prod.outlook.com
+ (2603:10b6:208:3b9::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250407030306.411977-3-bhe@redhat.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR12MB6473:EE_|SA1PR12MB5640:EE_
+X-MS-Office365-Filtering-Correlation-Id: bb430ea7-79cb-4a0e-45f7-08dd767c69ef
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QllFV04vckxoVFgwYXFmNjFSZzVSdUE0M2lpUGVCM1JEUk42UUJScTRLRitZ?=
+ =?utf-8?B?aTFKSUI5OGRvOS9sUjhlcFpZQU1JOFpJcUN1WFBrSGprcTlMdFdUR09pSGx6?=
+ =?utf-8?B?OHdmcW1MbEZKK0pJT3BGK1lCamxMTFJrL2U1YW8vOFpjR2YvdmJzQ2FxMG5u?=
+ =?utf-8?B?ejJNY3BDU1hIbDNYczhkKzFJUlcwd1hGeWhOY3VLL0hxaWcxd28rNnRWNUUr?=
+ =?utf-8?B?OEkyalJBTFdKb21NVzJUc2kvNXhEdnE3YTVLTmFJd1YrVlBGRUo5T2ZvUitL?=
+ =?utf-8?B?MlFDWFZmRXFEMERQaTczVXd4SlN2V2VFb0c3dXh0dUluQmtGZXZRZlpNSlFG?=
+ =?utf-8?B?UllLbGYrUHUrSmkvaVY5K1pSWUE0d00zcjUyU0NrNmxBcU1LZnZ3a3VBMC9M?=
+ =?utf-8?B?VStZa1lUTk1IYXdTV2VMVWZOOS9CL0lORXhzV3l5R3dwTkFqSHBoenRqV0Fi?=
+ =?utf-8?B?ZWdkZ1Jsb0laZE8vVjYrenBMd0ZtK3dhZHFhTWdvRWFlcllKOG0yTDl1OGhl?=
+ =?utf-8?B?Y3c2Q0kwVTc2amhCNjZ3clEyUHNNVkx6N3QyaEY2SUp1bXNHL0E5ci9CTlRQ?=
+ =?utf-8?B?c2piUkx1RzZKMytXREpSeG9mNVFLTEozdDVoaitFTUIzUE84Mm1BYmNnYUcw?=
+ =?utf-8?B?dUZtSWZXQW9PWlhSbjFWeWZKU3Y3MTM0cmVoTEhJaUk3dlYrZVpacFdCajdJ?=
+ =?utf-8?B?MEkwbWhWUWcyQ0JYUjA1QzRRNVFsRi9rZVVreWJ2KzlHNUc4UVdXVG9tRnJu?=
+ =?utf-8?B?ejg5cUdNVUdRM3BiWFVCaTc1RlplR3A5MkRFSnE3bVY2RFJIV2JFekhTUzls?=
+ =?utf-8?B?ZVJwc3V1cmxrTUZxRDNDZE0zL3J4cEVKalYzWHVPeS9BMEdDMnFqZGk0ZjNU?=
+ =?utf-8?B?c1dJdE5teEJBNE1UQ0p6cXYvOFFNTGNtTHluUWZRWWFla3VYQnlJUE1KMllw?=
+ =?utf-8?B?RHI1VFFnM25TMlFnUFE5elpqQkN1M3puZE5wRTRvRFRpdS9ZOGJuVEVVVS9Z?=
+ =?utf-8?B?dU00RVFFWkFVNk5jemlOaFlibHFYT2kzakE4ZWFsVDd0RDJ2TW8vMmFwdURX?=
+ =?utf-8?B?T2JXcHpyaG83MmR6cnU5OUlRZkk3c2NEUC9jTTR1bWE5ZVJkOW5ETDRuai9O?=
+ =?utf-8?B?MDZRMHFNajFpbmlHUCtNb05Sa0syVGhCNzFlVjZZTXNCdWZNNG8wcXVaSUVN?=
+ =?utf-8?B?bGo4T2tqQUtlZ0tRODZVdGpoZEQzQUY5V3NreWhNZmxHNURLTmVGSmVpTDNI?=
+ =?utf-8?B?UWh4c0tNOE45Wlowd2RFS3hyNVdtU2ZkN0VzS0FseE9wR2R2TklEdG1HRk8x?=
+ =?utf-8?B?WlJ1K0Rna0ZIczRUdDhIbGhFcjAzSVVkUThPb25vSVc3Qm5JZ09xSFQremtX?=
+ =?utf-8?B?VmpBMU9OZFpOZGtJMldIRnBQbGhHM2IwTVcrSVdPc1FCR0wxVExEekVwZkRX?=
+ =?utf-8?B?aVcvcE5wdnZPRXdIVHRYaVAxbEVwQlB5TkljTTdUaEtkaWp0S0QyR2lJWC8r?=
+ =?utf-8?B?RjBHdDZRanplWW9XeVhodHlQUEZFdzFPOHoyZzR0eGEzQytBS3Z4bWc2MnJh?=
+ =?utf-8?B?M2xUQUsrZmllVlpLbjN1VGFpS0RFa0RqM1dhaTBUSTBZS3JGbkIzSXhheTNy?=
+ =?utf-8?B?YnBMMHJTV1JFUjhEM2ZEQ1VTUUl1cnU0TkdXSE9md0ZoeHlUS0oycTc1UFQ4?=
+ =?utf-8?B?SDB5Ky9OVWRDVGg5NVpIaVRxaGVzUmJvM0QxVGlaZTFBK2UyZW5EL2k1K3RZ?=
+ =?utf-8?B?bnhjZThudmlJVGhORSt1U1RKS1V5bEpCWnBvcjlVNVY1K0hEWm5sTUk5U2RK?=
+ =?utf-8?B?SDRsNnViV0xlQnRKWkxMdTZwV2p0V2ZoRytLZVVjU29TVERwY08xR0FBTlZW?=
+ =?utf-8?B?Tnd1T1dsd3BFcE9nQjhHSHEwS2ppZEZYVXI1blM2NjJubm9NaDh0QzROckJM?=
+ =?utf-8?Q?NtX3r13a6Qw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB6473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VUtxZXVWY1MydzJjRkh0TGM2dmJsdmNLQXRaRG11SU1sNy8rRWVmTXFGSjRR?=
+ =?utf-8?B?ODk5RE91bm85bzFudjh1MGxYbmtwRUtTTmxLdFZxaXhQREY3bnZpQWcvR3Bk?=
+ =?utf-8?B?ZDBZMzhVcU9yMzhuWDRtUXZUU0Y3NUs3dUN6NDlIOHFvL2w5Y2xKVmhtSFpx?=
+ =?utf-8?B?ODdlSzN0a0JBc0VBVjhSdkRRTlhWMGVNakFYVjRSVCtHM21zcVRFZXE0ZSt6?=
+ =?utf-8?B?Y1RVWEFnMDh5TjhVSkk5K2Z6cmQ5MmZEcHhra2JhYVNhOHdQUGVjYWtKYTlZ?=
+ =?utf-8?B?d0tlc3dOMHdBWW9oZnNYTnRxNGNJa0ordERGUHhEUTFuMkhwTmdvdWFsR0lv?=
+ =?utf-8?B?UTJTenFTdlo2d2huWml4UmZDckRoTXpMSkFZQnRqVDMrbTRZWEdaa0RvVmJE?=
+ =?utf-8?B?Q0dHK3VYYzN5eFgrcGgweDR5MytwQmZOZlpIZStralQxOVF6alN4ZG13M1ll?=
+ =?utf-8?B?ZVJ5c1VCNWhnUHV5Y1NZZDZUY1RBUkxGSWtsaVhzYnYvc1VVZDRZY0h5NUVH?=
+ =?utf-8?B?emY1V3N0MlNWZ2Mvekp5VlIvaFE5WTBidzc3ZWhEb3hIQWdzTVRvYS9ydUlJ?=
+ =?utf-8?B?SHk2SDhrVGVFL2F1b290QUlUem1MNWpMYk8zcHZhMzVnaEdLK1hNNU16Tito?=
+ =?utf-8?B?am5aR2FPZUZEUXphajdKd0I3QjVyNGlkZmM4dDlldXN2RDNTMUppZHk3UkUv?=
+ =?utf-8?B?SjFockp4ZUtyUFM2TCtvQkVnSUlydnpRQ3RCZ2h1R0w1dXZEUTg5Zk9UWVZn?=
+ =?utf-8?B?bTlVMCtqMGZ5ZEJsSWNpUDhEdEZmUDI4U0tJRGkxL2k0WlpzSFlMQVJZN3lJ?=
+ =?utf-8?B?T3YzREU4QmM3V1RCL1FHYi9DODF5NXRFMUljQTFaSjBEQ0ZwdnBpZkJRckVz?=
+ =?utf-8?B?WVJLcjVmRmlVWGhXcFQvMjQ1bTdoS2xzUWFRN040ek5XODZPSEFVbmtLUUth?=
+ =?utf-8?B?U3hMZlhPTitObVh1L0hnWlZoNDZocGVMVmJ4Sld4UERCeVBrUGhrQVlHSktE?=
+ =?utf-8?B?dDArQ1lzSXZLWVgrT0h3U3JlMmZ0RGVVSUdHS00vMVlFNUNkcTlHanVadTRr?=
+ =?utf-8?B?TjFFc2pRR0xYZ0g1SHhNRjlLaG9JejVhV3h5S3NRNWtCVE41dUNXajFuQ3k5?=
+ =?utf-8?B?NFFWZmtqWXV2a3licGxpR0Q0UStuTmtFdHBmc0xobEtOMmZ6UW5VMXkzZUk2?=
+ =?utf-8?B?c0V2ditkNWdyM3ljYWxpalNsQ08wT3hqOS8vZjJUbTg2VWZpUnRYalZpeS8r?=
+ =?utf-8?B?cjJ5ajF3NGZFV0RxY2VCTDlvOHFEdHIvKytSTFdGeUVHS2hqY2l2aXl3K3Iw?=
+ =?utf-8?B?OHFjMUdVUGZMK1JRSUlVeFZpRDRYQmRBNHFGVVdibHBxbDY4R1RRanR2WEhq?=
+ =?utf-8?B?YXc4NWY1YXc5Qm1kdU45SDVyOHRoWXpldGtSZGJmcndoSDBlM0s5OXJFR3pB?=
+ =?utf-8?B?d1RabnJZZk11NE1EbGZUT2UrWC9MUDRUYlNadWZycEd5d0NTbkM5NUYyOEx0?=
+ =?utf-8?B?cGNIazRuMGd0S1lGUFloTUxsbjF5K1JBNjVTbGFqWFdMN1FlcUxOYXZPNUZB?=
+ =?utf-8?B?NElRSi9RcUZnUjR1ZEo4Y2dHTTV0NW8zR1lrbGlLZ3l0NEZPbGZjbHhybjdr?=
+ =?utf-8?B?Q3JYcTRGdnJiTmQxVm5TakJudFBFcTErVjZaYVBKMW0wTzgzMExRV1I4cTBL?=
+ =?utf-8?B?Tkw5Mmx3RWVseStDODhNR2FxZGVBcDZBV0hXdWlTeHd4K3R1My9MZUcwV2JX?=
+ =?utf-8?B?TVA2RDFIeG9ZZWRTR2IrK09jQ2RudjdVYVpDSUIyUnJySGUyTEI2ZUExZlRi?=
+ =?utf-8?B?SlRhYm1QdXM3OWR4cU9qMnAxbFQvenltZjY5dSsxMXkyVXhrRXJRNXpzVFVV?=
+ =?utf-8?B?K0hrMGZSU0E2YkZHSmxUS0JhYWt1NmZreEtoY3U1bG9maWpsaUxEWnVLeEJT?=
+ =?utf-8?B?ZVRkZGMrTG1qVFN6Tk9WcUFVRExyOGIyb0NwZ04yRFMwOG85aUlKU2NTcEg5?=
+ =?utf-8?B?QndyeTBFaW1FcWlIc0lnU0FXeVZsMCtYU08rRUNJTXZLSGFGSzdFYmpaWEc5?=
+ =?utf-8?B?K0g3Vmo2aWJGelJZbXZZYXNUc3J5dUVUR1lsQ2ttd2VVRkFCMjV0Zy82Z0s0?=
+ =?utf-8?Q?FaJgdoVK3dKqpAL8l5QxMhQB1?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb430ea7-79cb-4a0e-45f7-08dd767c69ef
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB6473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2025 09:04:48.6281
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MuRhNOtve5EadV3eYbWGDIf6XWcswBkPjDXuamD0bWExqWH4yX4uqJwONA4hwj/BHqnE4T5/5MUrnlxpl+RVdg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB5640
 
-On Mon, Apr 07, 2025 at 11:03:05AM +0800, Baoquan He wrote:
-> In __get_user_pages(), it will traverse page table and take a reference
-> to the page the given user address corresponds to if GUP_GET or GUP_PIN
-> is set. However, it's not supported both GUP_GET and GUP_PIN are set.
-> Even though this check need be done, it should be done earlier, but not
-> doing it till entering into follow_page_pte() and failed.
-> 
-> Furthermore, this checking has been done in is_valid_gup_args() and all
-> external users of __get_user_pages() will call is_valid_gup_args() to
-> catch the illegal setting. We don't need to worry about internal users
-> of __get_user_pages() because the gup_flags are set by MM code correctly.
-> 
-> Here remove the checking in follow_page_pte(), and add VM_WARN_ON_ONCE()
-> to catch the possible exceptional setting just in case.
-> 
-> And also change the VM_BUG_ON to VM_WARN_ON_ONCE() for checking
-> (!!pages != !!(gup_flags & (FOLL_GET | FOLL_PIN))) because the checking
-> has been done in is_valid_gup_args() for external users of __get_user_pages().
+Hi,
 
-I will also note that you changed the flags check to VM_WARN_ON_ONCE.
-I guess this is fine as we have the WARN_ON_ONCE version in
-is_valid_gup_args().
+This patch should be a V1 and the "changes in v2" were based upon an 
+initial internal review.
 
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-
-LGTM,
-
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Please let me know if the change should be re-sent as V1.
 
 
--- 
-Oscar Salvador
-SUSE Labs
+On 08-04-2025 14:00, Sheetal . wrote:
+> From: Sheetal <sheetal@nvidia.com>
+>
+> The hw_params() function for BE DAI was being called multiple times due
+> to an unnecessary SND_SOC_DPCM_STATE_HW_PARAMS state check.
+>
+> Remove the redundant state check to ensure hw_params() is called only once
+> per BE DAI configuration.
+>
+> Signed-off-by: Sheetal <sheetal@nvidia.com>
+> ---
+> Changes in v2:
+> - Update commit message as its not a fix.
+> - Marked as RFC patch as it requires feedback from other users
+>    perspective as well.
+> - The patch is being sent separately as other patch is not RFC.
+>
+>   sound/soc/soc-pcm.c | 1 -
+>   1 file changed, 1 deletion(-)
+>
+> diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+> index d7f6d3a6d312..c73be27c4ecb 100644
+> --- a/sound/soc/soc-pcm.c
+> +++ b/sound/soc/soc-pcm.c
+> @@ -2123,7 +2123,6 @@ int dpcm_be_dai_hw_params(struct snd_soc_pcm_runtime *fe, int stream)
+>   			continue;
+>   
+>   		if ((be->dpcm[stream].state != SND_SOC_DPCM_STATE_OPEN) &&
+> -		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_HW_PARAMS) &&
+>   		    (be->dpcm[stream].state != SND_SOC_DPCM_STATE_HW_FREE))
+>   			continue;
+>   
 
