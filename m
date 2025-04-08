@@ -1,137 +1,112 @@
-Return-Path: <linux-kernel+bounces-594511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB07A8132C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:01:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1090BA8132F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D73BF1891680
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:01:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82A1B4E2ED3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD7E4A00;
-	Tue,  8 Apr 2025 17:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01F923BD16;
+	Tue,  8 Apr 2025 17:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="bsohgrHM"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BjuyYhAb"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DF722FF4D
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 17:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFB523A98D;
+	Tue,  8 Apr 2025 17:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744131667; cv=none; b=DM7sYqUbJRFS9MTrItAxffRg1cWxeMzYrtcP1azGcof4U7nasdjWW5jRlENVU1bHFtEHeDdj0THPfXsyK47iJJVusIafRWZnkiPkXQGqd8RtYw78Rg8tb4mUDVS7de8PfB4YvvFv0BB9tNUy1RrbsfJBap3xN4c3Ng+4rw9Aa80=
+	t=1744131671; cv=none; b=T00Ux2DYP7H9ufGgrJWKM0xJbWtSLaIHHZUBnpbfY26IpbgJo5dPthgzkTBpZJjGd3CfTnVqVeoVkIHL9Vgi472pOQGw9T/vGY2NBXp0L4bblZeMw0xY9x7/+1o6PPkvuvdIRknIE7Q7CDmXYO0qx7bpnq9ER51AZxe171eCubQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744131667; c=relaxed/simple;
-	bh=Tg8C3b1rOY1CSWk04jheGSA1ilW4cXdRxQ5PtypNTYA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cvhph8jUlSvKB/N61CClI7rbycHELQW7/2xNNLYhmSSi3JtxojH+0riywXgQseEHj4wbzwscPbuQXIvcNGsbws6z7fIe85mvKVxKPMhh5WFjiSSrhQ9UWkrfDsQgr6nXdePjC0UOzLuvckhLwcUaQ35baUutNtVRm8ICw18/9/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=bsohgrHM; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-47691d82bfbso114451811cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 10:01:02 -0700 (PDT)
+	s=arc-20240116; t=1744131671; c=relaxed/simple;
+	bh=N6kP2++cC4tYB/jmzigw2pfWwl2+6CJWNdXFfBt87EY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L4cuD20KHXcQ/t+Akx5RkzKSTg4P42VLcJclo8D4slx62BoJqvKkkLoQoVHv4oJe4djgftbJMqJexi37QTPFCmp1U1yjmaOBVAZQO/IPhavWqilGznTIppo96dnvH18ey4S6LJcjzPnJtg5PmKGs9Uegv3EER1e2iZbpl+Sq6H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BjuyYhAb; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-301302a328bso6261069a91.2;
+        Tue, 08 Apr 2025 10:01:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1744131662; x=1744736462; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zpzhn6xCE53mAtkyCbedASbK8gEL7iLOARsPXqOtB8M=;
-        b=bsohgrHMx1PburCRzAX+gXY3wS2qZAxw/cUyLt42rkhdwcRyu2YqiAEltpNZGjHBx+
-         HUFf3wi+Ml4aj9Mt+q+cLgRCVm9p068ky/jFuWFur7vCqsihpgLwXZ7lOJyhXCr0X79V
-         Gkd7JJ3fNTF+siL0DtgIiDxHdwNUGIV0xjAuoePPcnAQxjOpo1EpCpOD4uLQrd5wZJZW
-         DgxSNMdJApxzeIz3ZTcbdPEa1Hna3ish1d+fNtZCvzkIL9eq58z3GZoqiCJt2UNF+5GD
-         uHQOnymcMUyxGeLWKmTerNjuhzUkjwiNBFI8qF/b8UtKBgT8VZt8bv48WD3BlHR6o0nL
-         BGOQ==
+        d=gmail.com; s=20230601; t=1744131669; x=1744736469; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DWc9jP7frlP15MsVrsg1eAcE6YUj4TFtJPNbl9lMOFI=;
+        b=BjuyYhAbQyfldKgmPTJWNKsYaw1Hj6Pi2O7hK1kZX6elQ8H8DBtObYZDHcEzvl6qLT
+         GWnXGftE2d3LjMqkjkk+hFt63HQgXOM2UeF9Qgof0m7kXrHuflV/yXZ+CEYS9RamXtyh
+         syVAKTG3H+f6Qc5WhEeWuUz4XKDrqcJ7y1khwIQf4CQE10UAvbgFCvzO66i692Vc1Brg
+         iTreD1p8XB4+eIc5VhFOFakrQhMWLHjKmPyBfG4keSHfJr4kcoJwe8mETCJhdH+7ZH99
+         is1ZjdoriGGNgFJC8KQLQ+9qltYywcAv4kxg+3JLxF1w1hpn8em5LiP2ehAoHoALsCZf
+         gXJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744131662; x=1744736462;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zpzhn6xCE53mAtkyCbedASbK8gEL7iLOARsPXqOtB8M=;
-        b=RLPWX42D9IdIrdReQN+kWDH6dY8hz92sI7/w+hzd2MO8TaSHzuuMWnSWNgNCnujeB7
-         yJn8SgjCo3TXCvy8pTVfKThLNVhQSm40+qzrr0DLTeotVL7FP2fgcYQZ31ORkqWvw7dd
-         W+s88YoHdSJP8XDpefZyvf7XIwSQR33mpVK/lOGNVeIwzQ7IVnVGadJWzzXEnecTrQYV
-         fUPF96MSwoGD/pnhmqBQ1r7RTLu8EO4kJbbYUZzOjXzP6kJBSz8N9uYU8E+FGPkgKduj
-         W90NVTLKh1PUbHgJ/2hMynlNH9nbe8IDQ/YzU6n0KScyLCvKVOoMziPBPQTzf2XhVirx
-         Ofsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVg0rucsfXgjuIcP03cP1hBZ29DEZQG0nlUykBtR6DaB3vgTFJxlhIoxLEeklTGwx/h5nPsYnfxBnSm9TE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUGq72zWgOdkY8Bgu+bSBXjQFkyXAThipqkylEPfmCdjMzqlnx
-	cOWgR40gOGpclkr/GOvaJeJkh3HwJVmA/g5xf7OSgCbLDLA2jdcJY1kgHytLKg==
-X-Gm-Gg: ASbGncsMGJPfEqmwGGo44i1d4+BdeFVx1ADOE6dqTZHTvv4ThX/cA4iWlEwDBKQTpOO
-	ArOi30lyRdRIBptzf+wLaQDUyPnOSLEsT9GehAfjk4ZENsrVaSFkJA4tMq19Vt87G17q2vmOGIi
-	satQPcBkbI5cNOzKu8I/PIMhiX9dlby1vbz5zpYd4xSnB2D6WPX5dThrfksd6wnVdTKtHyLsBFN
-	TdN3HkIQ/0trfAEo88d0YTHae7QKr9kVAM0oQ9F7xM/rMzMrdCU2f2Gi9oCGFmSHMVLKYbwutr8
-	0HDR28Qg0amLAiadWHYmbdeMtE/bZzukpBYa0YcYB8f3ivLPkFxHmKA=
-X-Google-Smtp-Source: AGHT+IEysSqswzuNKiB8rn8xmkqLQ0WmwDSclxBP7ExDTpni521Ot0pUbkPfNzGjU97ScPjpo0cLGA==
-X-Received: by 2002:a05:622a:1812:b0:477:1edc:baaa with SMTP id d75a77b69052e-47924902f72mr236718651cf.6.1744131661797;
-        Tue, 08 Apr 2025 10:01:01 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::93b])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4791b088428sm78218491cf.38.2025.04.08.10.01.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 10:01:01 -0700 (PDT)
-Date: Tue, 8 Apr 2025 13:00:58 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH] USB: core: Correct API
- usb_(enable|disable)_autosuspend() prototypes
-Message-ID: <b82feb96-0f5c-41e6-a472-667c8ae4f367@rowland.harvard.edu>
-References: <20250408-fix_usb_hdr-v1-1-e785c5b49481@quicinc.com>
+        d=1e100.net; s=20230601; t=1744131669; x=1744736469;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DWc9jP7frlP15MsVrsg1eAcE6YUj4TFtJPNbl9lMOFI=;
+        b=H8iEFtgI6m31o6MihmiWvZNSXXy9KUaJ4IX4I3FJAQpd0/ZHDkMMn03flKx5PXNYY9
+         nXQDiEgYEApMJmQvSoo0yfulE2mKYFTG0faDVRz4boRhAsgQACXxzT1ocoCpt7DDllIl
+         I4bVMHHSDHGSv2WDHak6zT+r124lzuESMBNpvNKEHTH8SO59XIyCbAc++hxScxWnkLgD
+         3ygSVVYI+kP6FxcrIcKk5WRbl2j/4rd/bXt+F4iyw7ANr3GG+dNGvmtMX/A72gHO0+QC
+         j2OepgAemVwgC+hyXDDXvAVKsw25Ih5M5Va+iAfZydb6rH+02UiHljlVcPXAMEWwS3L7
+         mksQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuvjhsp3N0h91eciyBSKvh3qosvcnUQZPSG1VKb1ErbgaNvrjaqxqjesNCkQ7whgb8YV4xdoQEEeJqs2M=@vger.kernel.org, AJvYcCXAGoQLUu+VVJT6cZ31w8dAvF0/+6q51/5XkK+/VSxwPQ2//Wt4Qnxk+SF/ap6fcYLivgVFuw6O@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxOb6QdKZpeBwA3Qok/zlYRHPUJrs0aijY0AhJsclCpe4sYXHx
+	fLoNWy2O7w9JRlnoyJ8a7CK2zLqhVF1Vwn6QDmiu30T1neX5sDHlMlXIr5JK9z/6
+X-Gm-Gg: ASbGnctNYs+y7+h9htq2NmV05yCOlJoDO6fokYvmsTDiUgU/5BRD2EdmuFDd6FEbl/h
+	oVHlIWjWvt8VGAzuHHwXcTAF1aMCwVDr0P6KxGhVPSsh6dLwKQri8V/NXfm8ae29mR8x6nZ3CR7
+	KEX9rISvG5vKt8NXQ5KN4qEsI96M+xHu6JYwN0d3BKh6vasNUVNgnKkrHLlT8zIXt92K/UwTspA
+	hnLgU+1ugPbHZoyHfVKlTR1Qvj5WD5WWr1bjo06ZKV8QX2ZpWzLa8Nl4Vo2bknq6uGKM+rSVKkr
+	Ip5QayPxmAU/Hr3ABYRzkZO++VXa/IdkmoPilOfcnTs1QhvnGTf346CXx5aL0X9/rCFjxPIj7Pk
+	gI9hxoMIRQNmpDlqmZUC+
+X-Google-Smtp-Source: AGHT+IG18mb409Cnnfo0FgJPQtpkR3IOWmGFxLJQRKYZN3B9w5fVN9mvVZ8KR0T8Mgq30KwBagp/FQ==
+X-Received: by 2002:a17:90b:1347:b0:2ff:5016:7fd2 with SMTP id 98e67ed59e1d1-306a626a0a1mr24782562a91.24.1744131667576;
+        Tue, 08 Apr 2025 10:01:07 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:115c:1:ed73:89b2:721a:76ad? ([2620:10d:c090:500::5:7de6])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306d3738b90sm1980962a91.1.2025.04.08.10.01.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Apr 2025 10:01:07 -0700 (PDT)
+Message-ID: <b1abcf84-e187-468f-a05e-e634e825210c@gmail.com>
+Date: Tue, 8 Apr 2025 10:01:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250408-fix_usb_hdr-v1-1-e785c5b49481@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 0/2] GCPS Spec Compliance Patch Set
+To: Sam Mendoza-Jonas <sam@mendozajonas.com>, fercerpav@gmail.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: npeacock@meta.com, akozlov@meta.com
+References: <cover.1744048182.git.kalavakunta.hari.prasad@gmail.com>
+ <ee5feee4-e74a-4dc6-ad8e-42cf9c81cb3c@mendozajonas.com>
+Content-Language: en-US
+From: Hari Kalavakunta <kalavakunta.hari.prasad@gmail.com>
+In-Reply-To: <ee5feee4-e74a-4dc6-ad8e-42cf9c81cb3c@mendozajonas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Apr 08, 2025 at 08:08:51PM +0800, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> API usb_(enable|disable)_autosuspend() have inconsistent prototypes
-> regarding if CONFIG_PM is defined.
-> 
-> Correct prototypes when the macro is undefined by referring to those
-> when the macro is defined.
-> 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
+On 4/7/2025 2:44 PM, Sam Mendoza-Jonas wrote:
+> On 8/04/2025 4:19 am, kalavakunta.hari.prasad@gmail.com wrote:
 
-Reviewed-by: Alan Stern <stern@rowland.harvard.edu>
-
->  include/linux/usb.h | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/include/linux/usb.h b/include/linux/usb.h
-> index b46738701f8dc46085f251379873b6a8a008d99d..1b2545b4363bcf3ef97a53a004ebf456eb9d5d05 100644
-> --- a/include/linux/usb.h
-> +++ b/include/linux/usb.h
-> @@ -815,10 +815,10 @@ static inline void usb_mark_last_busy(struct usb_device *udev)
->  
->  #else
->  
-> -static inline int usb_enable_autosuspend(struct usb_device *udev)
-> -{ return 0; }
-> -static inline int usb_disable_autosuspend(struct usb_device *udev)
-> -{ return 0; }
-> +static inline void usb_enable_autosuspend(struct usb_device *udev)
-> +{ }
-> +static inline void usb_disable_autosuspend(struct usb_device *udev)
-> +{ }
->  
->  static inline int usb_autopm_get_interface(struct usb_interface *intf)
->  { return 0; }
+> Looking at e.g. DSP0222 1.2.0a, you're right about the field widths, but 
+> it's not particularly explicit about whether the full 64 bits is used. 
+> I'd assume so, but do you see the upper bits of e.g. the packet counters 
+> return expected data? Otherwise looks good.
 > 
-> ---
-> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-> change-id: 20250408-fix_usb_hdr-8305358f42e1
-> 
-> Best regards,
-> -- 
-> Zijun Hu <quic_zijuhu@quicinc.com>
+It is possible that these statistics have not been previously explored 
+or utilized, which may explain why they went unnoticed. As you pointed 
+out, the checksum offset within the struct is not currently being 
+checked, and similarly, the returned packet sizes are also not being 
+verified.
 
