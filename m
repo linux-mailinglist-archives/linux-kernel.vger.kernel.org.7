@@ -1,128 +1,226 @@
-Return-Path: <linux-kernel+bounces-593540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69705A7FA51
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:52:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADBE3A7FA6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B39CE17E7F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:51:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BA1B171977
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41157266B6F;
-	Tue,  8 Apr 2025 09:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E7526773D;
+	Tue,  8 Apr 2025 09:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VnFPbrh4"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PI6obIRN"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF04226D17;
-	Tue,  8 Apr 2025 09:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F5026658E;
+	Tue,  8 Apr 2025 09:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744105890; cv=none; b=M2BGT3xvhLytT+k3ojqlQAtH5JZykadhUKrd65l0Hu5TOMwttteee5XrYitjg4KYW+f+I5Id+V6KKIWGFIY2HBJ0qEmMBn+ipCxmSJ1UIDvHMSy5RXPcmRuwSes/UalVdRHi0gl6121+lygjc2zuhTOuMORoPrQv2f9WQ0+GOa4=
+	t=1744105942; cv=none; b=eYoxNZE7q7z5/Ch8muQlqX28/xxg9MY/i8jeJZ4rmQltUdZ16hfosOxR8t5FhIxu5r7+5kxxhWyXMlnjRpR4N85hKmsHp7NHU+qZbhBlBd8/4TDJ0ZQG9Joov1jPbVsx/ft2hG0WHlGpRpmOp5YAtLoKgGN6MmdW0WQqNvmG59o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744105890; c=relaxed/simple;
-	bh=FpsaObry1FIu0nkhtdGSmNrq+OfI8A4Xs9kB/CmtKkE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=szYdkzVm6m7SFfBy+ni1TKyK5ALGIZPBKZ58IoK0jHm3nBRc8LaJg7XSHofGs09pk1IXS+YQeK72wd5ZLDl/mky/6DtJKxuPbZzwt5NAlo+kuWHMaUzm12NZvxk8tNAILl6dvZG9ZkVjzoDpHRNnvfB4whu2X2C0xuxr3aRbh64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VnFPbrh4; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5382GfQB015965;
-	Tue, 8 Apr 2025 09:51:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Ed63OzewtrZIzsKehMuw++mw1XYT/gtKAztZU1CTx3Q=; b=VnFPbrh4VqCJXpFo
-	CHaGHV3zsl3H/gFF8MyvE3vapZzuOZwlvEqU7qDHTvUSc80m218UXi/8SD9N3PH5
-	dHe5xeQJ1NiuMhklUy+4s+p9Npqhu19A79oQC3mJ7fKu52RA552hSfILKFw/gB/r
-	F3C5G5B9MirlvmlexCojWuBLVNAe4q4UZ8mqcWl2zO/GFtiwcjDkTiAxDHvtDI3q
-	h/jmwkn+4lNZyweLgK64L53bcQezWUCChAJSs4MxiW8UexuQ6dgJaqiWL3MMVhSb
-	iBVuFCytCHoah75lmeQAwC/P8FNdPVGw0ELpDbnWUK2BhY3srei4/YKRfgwYPHKk
-	+rlBSw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twftf7d3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Apr 2025 09:51:19 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5389pIAs007302
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 8 Apr 2025 09:51:18 GMT
-Received: from [10.216.15.222] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 8 Apr 2025
- 02:51:15 -0700
-Message-ID: <22e79435-0b29-b0a0-9446-cb5311b87ec7@quicinc.com>
-Date: Tue, 8 Apr 2025 15:21:11 +0530
+	s=arc-20240116; t=1744105942; c=relaxed/simple;
+	bh=+pieVBMn7QfjdokldPhNPVxrqCi619G+B46duDbn4f0=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=iTGoRZK3CLyd+uInyoMQthKPzOm781wmD9Y2+wBvVCD+ca2Sq+yH+sDmOshn1Frpz9gcEq/tvcCpQg1NFVrRr5+lPDO2I04yKgTgokwQ5lfbEtn9cZKb9JuykT/zH7YIc3JDgAu1/ZKm/r25bivG3i+/QzibTLsRIivfymP+Z7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PI6obIRN; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-39c31e4c3e5so3278862f8f.0;
+        Tue, 08 Apr 2025 02:52:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744105937; x=1744710737; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dMfOxJ+ivVKCbrvfLFliBdEaPDrw2fQxzA5hHL8RHBE=;
+        b=PI6obIRNIVmJmjqWbfbkhNUMqVT9WXchW9bOXwtgdXIvgUiaPcHgMvt5q1kwoLcJ3Y
+         G/0Xgvk4ctv19XkBsXK9boD6AZYYIpkN/uGVdbbw801W5HlxcOtRIe9mz8xJLSXyeyRo
+         sYc4kJLrgMHVlLThRGr5LW9SF1zPsnVb9X8lHTz6FrQVCrZ28F9yShVVAFE6KyOrOEoi
+         1DbMG+Ijd6D9VJNtZ6YtxbRn19isbeo12DY6xQyYlT/oHG/8Sr+cMp2uvoPX9HSW6fY9
+         ydKs+aay87OD6uucpilKjyb3j3WRsNZ7ecFYAzunqVbZnhWcOvGXEzJI8JPRGQHgStKu
+         /ztA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744105937; x=1744710737;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dMfOxJ+ivVKCbrvfLFliBdEaPDrw2fQxzA5hHL8RHBE=;
+        b=ZUJFetFPq9ed/tZ3sVwG5wGIKonUj8PyrqyIlFyaCogwdJ7yLhtyJztM3UqD+/W07k
+         p61V+N4NG0JoKAkFY4fNLnhgejXTMzH3G++3/hUVqbPBNt6c+ZWYhikf5+DuruayCFFO
+         F6flRgJ2le/vpIUF9TGVF98ar/cVqlLAohYtaLTg2xlGtNf3FwHONJXntE5Yr6OwedkL
+         aTV8tyUoySUHUaT44ZUbZrWhbJyFCK2sdCaQpg7S+qPo9Q3ZPorPQDTxTsu03N6gnw2x
+         365JRfPl4E7UVNOsw9kwqJ3V055Ezc9tevs4/8T6ecAh6v2wv+LcfXcou6g6mnlP5SUy
+         cJvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVifPlMl3wqjRj6RpOkzD94CrgFnfF7Nv6jCEN0M7+TlhzQQcRGaZnPzkcwoIjeM3odsmusttiq+AKq2/U1@vger.kernel.org, AJvYcCXoeq27ZoaMAhNcrrRvBQ+ucicWDkDv1NnCLXgbsHYFmnCcBK8LqJowB7a27KTOfMfH0RFicclj@vger.kernel.org, AJvYcCXvTBlq6LtR8IMm4hrRHTNDwgVvmYCx0dDHAMoPps6pSJCUWabMhdPokRIBp8CB3k0WxULA6L57ijVv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2+j99zw8Gb0dj7bb8A/NB/xgPsl+tL45CY9zVmdtt1Y1A5OKV
+	pLy4ziCwPo+qQFzCohbeUVo2RoYEaPzgl+ha4D4XezDgPJ0OVtCj
+X-Gm-Gg: ASbGncsyQG21IKVmMiSrvCK6oR/zo6c0PYuuE3gH902B6VWVDANkmTY39n1BNhLD1qg
+	B9OG9NCJm5MgZbwvWvajtxaV7BZBDpieL6qK1zatM4TZ41rxrh9dXtBc4ROzmC6HTfy5JLSExpy
+	iza+ztxFN4dxqL/DtlsCWrx/fZRQ5cwpsqrwhHpm0A1UqirZRI24U/0xymN80Lez8EF/97oa9ay
+	vqVUX2Iu3Qq8JjjOV8FjHaq7FnKgR7gINwca1QpSvUmkpFoYcvuNzmBr/WKwgPUMr3EfyHau47f
+	uIaGQCVIcYkcyfE4O1LNvKEGBLRkwuLzenWT2kLJ1gi76JzC5Pl45/tSmKcsXbrhlvyre7ZfVyd
+	E5SULyGVDT6yEAg==
+X-Google-Smtp-Source: AGHT+IEXwpGN30PUlfHaaWGCiZEymBLvKdCoOgEM1azp0/BEOQhn10oJuQ7dwscnj+583gxofkLISQ==
+X-Received: by 2002:a5d:64cd:0:b0:391:2f15:c1f4 with SMTP id ffacd0b85a97d-39cba93d7e4mr13535785f8f.55.1744105937328;
+        Tue, 08 Apr 2025 02:52:17 -0700 (PDT)
+Received: from localhost.localdomain (93-34-88-225.ip49.fastwebnet.it. [93.34.88.225])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-39c3020dacfsm14493310f8f.72.2025.04.08.02.52.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 02:52:17 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>,
+	Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	"Chester A. Unal" <chester.a.unal@arinc9.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Simon Horman <horms@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: [net-next PATCH v14 04/16] dt-bindings: net: Document support for AN8855 Switch Internal PHY
+Date: Tue,  8 Apr 2025 11:51:11 +0200
+Message-ID: <20250408095139.51659-5-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250408095139.51659-1-ansuelsmth@gmail.com>
+References: <20250408095139.51659-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH ath-next v4 2/9] wifi: ath12k: add reference counting for
- core attachment to hardware group
-Content-Language: en-US
-To: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>,
-        Johannes Berg
-	<johannes@sipsolutions.net>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        "Karthikeyan
- Periyasamy" <quic_periyasa@quicinc.com>,
-        Kalle Valo <kvalo@kernel.org>, Harshitha Prem <quic_hprem@quicinc.com>
-CC: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-        <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250408-fix_reboot_issues_with_hw_grouping-v4-0-95e7bf048595@oss.qualcomm.com>
- <20250408-fix_reboot_issues_with_hw_grouping-v4-2-95e7bf048595@oss.qualcomm.com>
-From: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
-In-Reply-To: <20250408-fix_reboot_issues_with_hw_grouping-v4-2-95e7bf048595@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=B5+50PtM c=1 sm=1 tr=0 ts=67f4f197 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=GNQ4sJM4HwgcdJPfVrgA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: bWQL2uAlmVuy6JMbahaDRVCZrnTkouUn
-X-Proofpoint-ORIG-GUID: bWQL2uAlmVuy6JMbahaDRVCZrnTkouUn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-08_03,2025-04-07_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=938
- suspectscore=0 malwarescore=0 bulkscore=0 phishscore=0 spamscore=0
- priorityscore=1501 adultscore=0 impostorscore=0 lowpriorityscore=0
- mlxscore=0 clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504080070
+Content-Transfer-Encoding: 8bit
 
+Document support for AN8855 Switch Internal PHY.
 
+Airoha AN8855 is a 5-port Gigabit Switch that expose the Internal
+PHYs on the MDIO bus.
 
-On 4/8/2025 11:36 AM, Aditya Kumar Singh wrote:
-> Currently, driver does not manage reference counting for attaching and
-> detaching cores to/from hardware groups. This can lead to issues when
-> multiple cores are involved. Or with same core, attach/detach is called
-> multiple times back to back.
-> 
-> Fix this issue by using reference counting.
-> 
-> With that, it is now ensured that the core is properly attached or detached
-> from the hardware group and even back to back calls will not alter the
-> count.
-> 
-> Additionally, add some debug logs during the attachment and detachment
-> events for better debugging and tracking.
-> 
-> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.3.1-00173-QCAHKSWPL_SILICONZ-1
-> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.4.1-00199-QCAHKSWPL_SILICONZ-1
-> Tested-on: WCN7850 hw2.0 PCI WLAN.HMT.1.0.c5-00481-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
-> 
-> Signed-off-by: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
+Each PHY might need to be calibrated to correctly work with the
+use of the eFUSE provided by the Switch SoC. This can be enabled by
+defining in the PHY node the NVMEM cell properties.
 
-Reviewed-by: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/net/airoha,an8855-phy.yaml       | 83 +++++++++++++++++++
+ 1 file changed, 83 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/airoha,an8855-phy.yaml
+
+diff --git a/Documentation/devicetree/bindings/net/airoha,an8855-phy.yaml b/Documentation/devicetree/bindings/net/airoha,an8855-phy.yaml
+new file mode 100644
+index 000000000000..d2f86116badf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/airoha,an8855-phy.yaml
+@@ -0,0 +1,83 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/airoha,an8855-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Airoha AN8855 Switch Internal PHY
++
++maintainers:
++  - Christian Marangi <ansuelsmth@gmail.com>
++
++description: >
++  Airoha AN8855 is a 5-port Gigabit Switch that expose the Internal
++  PHYs on the MDIO bus.
++
++  Each PHY might need to be calibrated to correctly work with the
++  use of the eFUSE provided by the Switch SoC.
++
++allOf:
++  - $ref: ethernet-phy.yaml#
++
++select:
++  properties:
++    compatible:
++      contains:
++        enum:
++          - ethernet-phy-idc0ff.0410
++  required:
++    - compatible
++
++properties:
++  reg:
++    maxItems: 1
++
++  nvmem-cells:
++    items:
++      - description: phandle to SoC eFUSE tx_a
++      - description: phandle to SoC eFUSE tx_b
++      - description: phandle to SoC eFUSE tx_c
++      - description: phandle to SoC eFUSE tx_d
++
++  nvmem-cell-names:
++    items:
++      - const: tx_a
++      - const: tx_b
++      - const: tx_c
++      - const: tx_d
++
++required:
++  - compatible
++  - reg
++
++dependentRequired:
++  nvmem-cells: [ nvmem-cell-names ]
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    mdio {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        ethernet-phy@1 {
++            compatible = "ethernet-phy-idc0ff.0410",
++                         "ethernet-phy-ieee802.3-c45";
++
++            reg = <1>;
++        };
++
++        ethernet-phy@2 {
++            compatible = "ethernet-phy-idc0ff.0410",
++                         "ethernet-phy-ieee802.3-c45";
++
++            reg = <2>;
++
++            nvmem-cells = <&shift_sel_port0_tx_a>,
++                          <&shift_sel_port0_tx_b>,
++                          <&shift_sel_port0_tx_c>,
++                          <&shift_sel_port0_tx_d>;
++            nvmem-cell-names = "tx_a", "tx_b", "tx_c", "tx_d";
++        };
++    };
+-- 
+2.48.1
+
 
