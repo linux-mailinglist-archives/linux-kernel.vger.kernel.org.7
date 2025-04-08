@@ -1,165 +1,216 @@
-Return-Path: <linux-kernel+bounces-593367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8423DA7F865
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:51:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34397A7F86D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F7AE177CEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:47:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0242819E0DFC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E9626463C;
-	Tue,  8 Apr 2025 08:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD834264F8A;
+	Tue,  8 Apr 2025 08:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FT4NDH3Z"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VhcFBuyB"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED9F26461F
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48265264A81;
+	Tue,  8 Apr 2025 08:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744102026; cv=none; b=FDnhJUfjkkv745T5auGaawaIDPKRvsZ2gMERsMreka2jn+rEVJzuC9zIUPtR1trU5KuzK7pmccnKjOxBZPCqjo5s6I8D0bdLN0vmLSNfhKeNHeK0Se4jDZ+VTerfp3HjafHj6+JpWrFgAnPCks/68V+gyFkgo7cJNQCF72K/M4A=
+	t=1744102039; cv=none; b=tBSqYuHEJmI7LG9SkHOkDCNU9QA1sxWjgEYHEX/W8B3h1FrgtdZLIqazpQODKNSw1UPrq3J7Gr5JCoxl8uD7uyTTBhUtD8jpPpZqVqTInfEsmjIzI0ao4WtYIG2I+HIwjP+eTxK4aQ395N/odGdMeVLQKdbEEa0ENQ/zSxmcX84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744102026; c=relaxed/simple;
-	bh=19EHsdE1bZ+YVYDU1b7eM0iQEptWpKohr3JWObLGJU0=;
+	s=arc-20240116; t=1744102039; c=relaxed/simple;
+	bh=B0IsYzujNWakaE1iqEpz4vSYxCtpvgN2LbAmzO0uIBU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lbj2FWFSk/DnyiIOemt7NdIHfGgzERw51Nr2OBdOYtoufsFARHURiXnLCCNzBaxwCUWakxObw2Th7UdWCt+nzqsv/hgqJSLmmGVMEftVCS6ZIgmt2T6k1881WHPCCKTsB+w9gzMYRf7hoeyAozydDVtMl5Apczo0S8IEPmbGsKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FT4NDH3Z; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744102025; x=1775638025;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=19EHsdE1bZ+YVYDU1b7eM0iQEptWpKohr3JWObLGJU0=;
-  b=FT4NDH3ZQy8+0DvkKFndPMAZW8mHyynuk4one+UaATJLONRkXXdgdi8F
-   AydzYNK9rTkbIvixUX1vR0Dkt2EKzPtQdeh6FOWPPFzv4c8okwLyCHcUr
-   w5vwQ1vsb0MYf8yHObn26j7+eupCyR1wXlMuO8d2SRTApMP6JGWSXiLmj
-   HaE0ssmJ9cfa13HqgijdgkIZCRRj0dB0WI9JCZ9oUQ/UqC6QN+st2OoQh
-   RyHSAACXei76+LdTvpqmV2XrDA4EUw8TRruuXv3Yc4tzfvotin8OwzzSA
-   XEP1IScyYR5H3TjUgk9GncZIOrKJd72UIEznqfetPqTiFcwrU7m63fgPq
-   A==;
-X-CSE-ConnectionGUID: /lxp0reaScG5mWxtNeN9uA==
-X-CSE-MsgGUID: ahMaDdhVTN6sbj4/XJfDKQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="56501614"
-X-IronPort-AV: E=Sophos;i="6.15,197,1739865600"; 
-   d="scan'208";a="56501614"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 01:47:04 -0700
-X-CSE-ConnectionGUID: VvT5D5EVQI2xekrHRoD8+Q==
-X-CSE-MsgGUID: OR77LEDTRhGT7AMDsqhqTg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,197,1739865600"; 
-   d="scan'208";a="165432588"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 01:47:03 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1u24bk-0000000ALJg-0PSk;
-	Tue, 08 Apr 2025 11:47:00 +0300
-Date: Tue, 8 Apr 2025 11:46:59 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: gregkh@linuxfoundation.org, david.m.ertman@intel.com,
-	ira.weiny@intel.com, lee@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mfd: core: Support auxiliary device
-Message-ID: <Z_Tig8ElS5e_UN6I@smile.fi.intel.com>
-References: <20250407074614.1665575-1-raag.jadav@intel.com>
- <Z_OQgqt0Wg17N05j@smile.fi.intel.com>
- <Z_TXDg67AtWzNXbg@black.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GvLivtS4E4giYHuhy8ELd0SPSoIDve2VqazcvXyg0PR2M9xEzzb8d81jD3D+dkCp7pT1vSpqYQWKflfhKXhk1xHjj1p1YS6aMAXqgo3Tdq5cdPQfKvJ/urY51npwXzMjbu44atyOJyQIs6bu4wcARZ8S6xeg7g1OHshvrctX44A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VhcFBuyB; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5497590ffbbso1077859e87.1;
+        Tue, 08 Apr 2025 01:47:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744102034; x=1744706834; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kY40UyFStKuqJ+1ez/XLZm6hrcSWgcSElLoYXyYUisg=;
+        b=VhcFBuyBtNZ3hPvctv0Pr30b3wlt1+NIKXU0SSVNJ+j/rvkqwIpETW0zLluXvSlR4Q
+         AG1bNXCQpO7gl7WjUEXvv82q352wyyjJkFPnaFpM9AquSVIcHoAT2P757OCi5Ckd5tYY
+         2JX++Mtw+/CQRKf7GBjgT4EgSgIu4YYAC6p057BF0OHMLAH+aSTu4dzk+R/ybWupRbpx
+         v3LRNEcAx7u+d/USmjTcfERXyS58XtHhzzlUQE13/p1QPMyctV9AJ/AlP6fF45DIfEaz
+         8H9Uz7yYEo0+CKwBLr1noKLZqWQ+SltFiSEAtFHO9oezZu36ZvQfk8eZ36RdOHhyVXjg
+         iMCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744102034; x=1744706834;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kY40UyFStKuqJ+1ez/XLZm6hrcSWgcSElLoYXyYUisg=;
+        b=kiFXGkAaNLNAP26k7W+B6th2NjArWObWagL3QL3mTUgOXAlT4ufTptxzMlqp99oqpS
+         noVqqY49hQX8UkrmeorW++b9TXIL2yTWhLgD+Se3l7ZNqDX/3TSFN8RDV3okEMBxLn6Q
+         zd/OCZkCgw+CE9J82GH4axkmovtrXGprzoiAG4j/CCyQ1J4Au36tSyBDLn+PukVZ6EPd
+         L9ga7af5FaMBJx4CZOSWS5BX9urZEFc2/17EYDQS75vLPUOIlgIXouAkmtEstKV0pjAA
+         fuKikrIrl/TubyvLJhcSMZvUXcObOG1y1iIqmp8ViNZXq8QbwNHu1nzYw5HkyWwJb2wV
+         CT+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVq9JkRxFwOjxCRoLgAzSw8iTaoCyyA8XV7JuoCETOcgPI2ZA7kmgYb9vlDrq/7i4Z3GxxFsDQVF7YjK3CJ@vger.kernel.org, AJvYcCXhARxLIFHlJf3s4ccMVo7viah/W/qrEOmZSK0hxfFw6wJWMoT40N1jRkraeDtFPyoEBsQahpcjJwT5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6kChcTKLhPGhoXo3Yu1B/lQVd2el2XexKVvIlZ366gSs9dtxI
+	18IIskwF3kxuO5HA3X7ZMP4JhhWf2R9WHUz80qsrunyqRfbukty8aFdLuQ==
+X-Gm-Gg: ASbGncux6nKoryQOMgSyDSUIjsV8GyUyzXYDoZEFayoiJf3e5opM6TivLmg3RT6jCAY
+	cLYjnRWI9AJEZ1fPaluMKkVGC3pJ7XsKBZwT1fiddoK/+d3h7wxoYzOcI3Uw0PaMG/X7NdCFDHR
+	wY5SFITdAIJvMPddM5rovSDWbG4bXI3gJIcbeLhHy56wyL+YMcnTzEoGNd0D33+PlEqRRZypB3/
+	BV+/IMl+aS2kuaVp/zoMLOVOK7eUiV8bb2oC05IkR3OjKGG2Hzvti44He4CqM4E5MxPpaiErpX9
+	oe5qhSegH5kJC4hIt0XLhfY0IQNL65z+14F10UqxRIbEbwo=
+X-Google-Smtp-Source: AGHT+IHFiIIFDm1UowaX18Jk0lsFTWI1qWmwsrhka/r2unDV+KrF2q31ossm9zn29tkTzTTL1e0pOA==
+X-Received: by 2002:a05:6512:4006:b0:545:48c:6352 with SMTP id 2adb3069b0e04-54c2334719cmr4516463e87.43.1744102034298;
+        Tue, 08 Apr 2025 01:47:14 -0700 (PDT)
+Received: from mva-rohm ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e65d73bsm1479868e87.183.2025.04.08.01.47.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 01:47:13 -0700 (PDT)
+Date: Tue, 8 Apr 2025 11:47:10 +0300
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 12/14] mfd: bd96801: Support ROHM BD96806
+Message-ID: <ccc95ae33613648fdcba08915777d945412ac5c4.1744090658.git.mazziesaccount@gmail.com>
+References: <cover.1744090658.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="5eDF41KqnAFZJ5F+"
+Content-Disposition: inline
+In-Reply-To: <cover.1744090658.git.mazziesaccount@gmail.com>
+
+
+--5eDF41KqnAFZJ5F+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z_TXDg67AtWzNXbg@black.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 08, 2025 at 10:58:06AM +0300, Raag Jadav wrote:
-> On Mon, Apr 07, 2025 at 11:44:50AM +0300, Andy Shevchenko wrote:
-> > On Mon, Apr 07, 2025 at 01:16:14PM +0530, Raag Jadav wrote:
+The ROHM BD96806 is from the software perspective almost identical to
+the ROHM BD96802. The main difference is different voltage tuning
+ranges. Add support differentiating these PMICs based on the compatible,
+and invoking the regulator driver with correct IC type.
 
-...
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Acked-by: Lee Jones <lee@kernel.org>
 
-> > > PS: I'm leaning towards not doing any of the ioremap or regmap on MFD
-> > > side and think that we should enforce child devices to not overlap.
-> > 
-> > Yes, but we will have the cases in the future, whatever,
-> > for the first step it's okay.
-> 
-> I've always found such devices to have a parent specific functionality
-> that fall under a specific subsystem instead of needing a generic MFD for
-> it. But I'd love to be surprised.
+---
+Revision history:
+v2 =3D> :
+  - No changes
+v1 =3D> v2:
+ - Use chip_type enum
+---
+ drivers/mfd/rohm-bd96801.c       | 23 +++++++++++++++++++++++
+ include/linux/mfd/rohm-generic.h |  1 +
+ 2 files changed, 24 insertions(+)
 
-We have very "nice" MFD user, which blows up all issues with shared resources
-and so on, look at drivers/mfd/sm501.c. The most problematic part there is
-request_region().
+diff --git a/drivers/mfd/rohm-bd96801.c b/drivers/mfd/rohm-bd96801.c
+index dd0be7d675b8..66fa017ad568 100644
+--- a/drivers/mfd/rohm-bd96801.c
++++ b/drivers/mfd/rohm-bd96801.c
+@@ -225,6 +225,11 @@ static struct mfd_cell bd96805_cells[] =3D {
+ 	[REGULATOR_CELL] =3D { .name =3D "bd96805-regulator", },
+ };
+=20
++static struct mfd_cell bd96806_cells[] =3D {
++	[WDG_CELL] =3D { .name =3D "bd96806-wdt", },
++	[REGULATOR_CELL] =3D { .name =3D "bd96806-regulator", },
++};
++
+ static const struct regmap_range bd96801_volatile_ranges[] =3D {
+ 	/* Status registers */
+ 	regmap_reg_range(BD96801_REG_WD_FEED, BD96801_REG_WD_FAILCOUNT),
+@@ -617,6 +622,20 @@ static const struct bd968xx bd96805_data =3D {
+ 	.unlock_val =3D BD96801_UNLOCK,
+ };
+=20
++static struct bd968xx bd96806_data =3D {
++	.errb_irqs =3D bd96802_reg_errb_irqs,
++	.intb_irqs =3D bd96802_reg_intb_irqs,
++	.num_errb_irqs =3D ARRAY_SIZE(bd96802_reg_errb_irqs),
++	.num_intb_irqs =3D ARRAY_SIZE(bd96802_reg_intb_irqs),
++	.errb_irq_chip =3D &bd96802_irq_chip_errb,
++	.intb_irq_chip =3D &bd96802_irq_chip_intb,
++	.regmap_config =3D &bd96802_regmap_config,
++	.cells =3D bd96806_cells,
++	.num_cells =3D ARRAY_SIZE(bd96806_cells),
++	.unlock_reg =3D BD96801_LOCK_REG,
++	.unlock_val =3D BD96801_UNLOCK,
++};
++
+ static int bd96801_i2c_probe(struct i2c_client *i2c)
+ {
+ 	struct regmap_irq_chip_data *intb_irq_data, *errb_irq_data;
+@@ -642,6 +661,9 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
+ 	case ROHM_CHIP_TYPE_BD96805:
+ 		ddata =3D &bd96805_data;
+ 		break;
++	case ROHM_CHIP_TYPE_BD96806:
++		ddata =3D &bd96806_data;
++		break;
+ 	default:
+ 		dev_err(&i2c->dev, "Unknown IC\n");
+ 		return -EINVAL;
+@@ -739,6 +761,7 @@ static const struct of_device_id bd96801_of_match[] =3D=
+ {
+ 	{ .compatible =3D "rohm,bd96801", .data =3D (void *)ROHM_CHIP_TYPE_BD9680=
+1 },
+ 	{ .compatible =3D "rohm,bd96802", .data =3D (void *)ROHM_CHIP_TYPE_BD9680=
+2 },
+ 	{ .compatible =3D "rohm,bd96805", .data =3D (void *)ROHM_CHIP_TYPE_BD9680=
+5 },
++	{ .compatible =3D "rohm,bd96806", .data =3D (void *)ROHM_CHIP_TYPE_BD9680=
+6 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, bd96801_of_match);
+diff --git a/include/linux/mfd/rohm-generic.h b/include/linux/mfd/rohm-gene=
+ric.h
+index 867acf5baefc..579e8dcfcca4 100644
+--- a/include/linux/mfd/rohm-generic.h
++++ b/include/linux/mfd/rohm-generic.h
+@@ -19,6 +19,7 @@ enum rohm_chip_type {
+ 	ROHM_CHIP_TYPE_BD96801,
+ 	ROHM_CHIP_TYPE_BD96802,
+ 	ROHM_CHIP_TYPE_BD96805,
++	ROHM_CHIP_TYPE_BD96806,
+ 	ROHM_CHIP_TYPE_AMOUNT
+ };
+=20
+--=20
+2.49.0
 
-> > > If there's a need to handle common register access by parent device,
-> > > then I think it warrants its own driver which adds auxiliary devices
-> > > along with a custom interface to communicate with them, and MFD on
-> > > AUX is not the right solution for it.
 
-...
+--5eDF41KqnAFZJ5F+
+Content-Type: application/pgp-signature; name=signature.asc
 
-> > > -static const struct device_type mfd_dev_type = {
-> > > -	.name	= "mfd_device",
-> > > +enum mfd_dev {
-> > > +	MFD_AUX_DEV,
-> > > +	MFD_PLAT_DEV,
-> > > +	MFD_MAX_DEV
-> > > +};
-> > > +
-> > > +static const struct device_type mfd_dev_type[MFD_MAX_DEV] = {
-> > > +	[MFD_AUX_DEV]	= { .name = "mfd_auxiliary_device" },
-> > > +	[MFD_PLAT_DEV]	= { .name = "mfd_platform_device" },
-> > >  };
-> > 
-> > This is likely an ABI breakage if anything looks in sysfs for mfd_device.
-> 
-> I have no insight on the usecase here. Can you please elaborate?
+-----BEGIN PGP SIGNATURE-----
 
-drivers/base/core.c
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmf04o4ACgkQeFA3/03a
+ocXSkQf9HjqegysJnNXSSi9wIIw9OBFQPPFKdtzVRX8qfLDX3y9ULAyI2vsGR7pp
+/rlr2wyTzsgm8FmcYlPNCZvjpybPGnpUnh3Y06nrs2SxmzBUx4Xt8Dn8RusbyiHb
+qEOYuR8am9ndj/K5u2qyfSygLDsFOhms3KsH7of9KbaTJFmUkOaDNrjTzBwau2BL
+yl7rYna2bEII0Q7WgZMqRspg16NqhQI/L6SrfqMj1WoD481Xl7c4Bc43OJku8KR+
+k/yj+bpdIA+32v0rom9gD8i6JfXidCb1T/kiTGYcBKhz0Hoc5PxWopC/RXD8p69I
+x/8IEUIgZaKEGlASkpdXcJOYIS2Vgw==
+=AtqN
+-----END PGP SIGNATURE-----
 
-        if (dev->type && dev->type->name)
-		add_uevent_var(env, "DEVTYPE=%s", dev->type->name);
-
-You broke ABI, it's no go.
-
-...
-
-> > > +/*
-> > > + * Common structure between MFD parent and auxiliary child device.
-> > > + * To be used by leaf drivers to access child device resources.
-> > > + */
-> > > +struct mfd_aux_device {
-> > > +	struct auxiliary_device auxdev;
-> > 
-> > > +	struct resource	mem;
-> > > +	struct resource	irq;
-> > > +	/* Place holder for other types */
-> > > +	struct resource	ext;
-> > 
-> > Why this can't be simply a VLA?
-> 
-> Because it requires resouce identification, and with that we're back to
-> platform style get_resource() and friends.
-
-Yes, and it can be done by calling resource_type() over each and checked
-respectively. So, why do you need them to open code?
-
-> > > +};
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--5eDF41KqnAFZJ5F+--
 
