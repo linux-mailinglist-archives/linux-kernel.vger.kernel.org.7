@@ -1,163 +1,159 @@
-Return-Path: <linux-kernel+bounces-593327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 371EDA7F80E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:38:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D107A7F80F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F53F1892607
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:37:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C44547A2BED
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C514A263F2B;
-	Tue,  8 Apr 2025 08:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2EE263C6B;
+	Tue,  8 Apr 2025 08:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yp4ZVFaS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="d3gSowO5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="c0vX2+O/"
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D49320B7EF;
-	Tue,  8 Apr 2025 08:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6402627EA;
+	Tue,  8 Apr 2025 08:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744101447; cv=none; b=UbMDXEBc8X0JLNkCQf/RqtkB6/3c6TbUe5oJW/mYGxepkDfRBdf4JVAXWD7tjc6JN0/0VLWISjN2NJ+7Meltz9SMmNqCPEMuH+btfkmoFR8wW17DnpvO/8Tgjux6j6juo//+3z2hDQWBVGnaXTs66qiJduKZUunaYsUBtzUJhbk=
+	t=1744101494; cv=none; b=OI3uqU9s9AHa8L0VomQ+HXjQthmzgfxc/s3hEf4+0pbWBpeSPK0EMAx+JbwVfSqWe9ZXEmT6zI5GF9fJWrvwl/Vvk9ynxE8j2MToWbN+kXnMxlGIL5jcDWZrV1XH4Q4ni24cIjfL98hvW2IBKkF+3sVHVQG+OSrZkEAjJdnt/j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744101447; c=relaxed/simple;
-	bh=SvXSy4Bwc8FNM6LghY0/XjdUPptV5lIp/P0jRiL6ISQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UKMsTCGD+6X+PizKMr5Y2vBrzyrJJZfTaDvNiI7p195AKefeRlO83cW611sXvt6WO1Sv8gSXCT3D9I/UalDZki4Shjt/IKr5/mGU+v6q6pvKpknvNNMMMOae2X7SFsO4mJrzD8BSNa9Q46JTxwmMLSHEk++wjTbF0aMIgPBKIag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yp4ZVFaS; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744101446; x=1775637446;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SvXSy4Bwc8FNM6LghY0/XjdUPptV5lIp/P0jRiL6ISQ=;
-  b=Yp4ZVFaSQpqGEYLu8ekNDOaaYlTNkOUuohFUTNz4WNThBtGYMcJNzLDG
-   z0pCHK/o+7DF24wbNb3q0g71QPrkKIhybJ6ZSRWnbpg5OlTmnf4O+f4Gn
-   1dtn8j2HtXO/BFj1uRp9ovKFLsH5f9fqx2zSBvBVYWnceEId/km4Ehk0u
-   d2VrptegYZSNj4mBiQGsSx9t5cOSOIMYin0VxF5oEY40D1y8p4OVaLI8O
-   cTIpmDrMRuy+dYVboG6Ijgo+glsHxHAHJSHhin59rtE2jXkdS6ftbIfw3
-   Gocb120mGJGSyVj8TlpyD3cp1OJ8q4tGsUmexIXQI65eMVTT7KLtScnyL
-   Q==;
-X-CSE-ConnectionGUID: gvtAdtUSTJymApEX919Tug==
-X-CSE-MsgGUID: pqcemKqCRvmcZ353Ayq4Wg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="67994266"
-X-IronPort-AV: E=Sophos;i="6.15,197,1739865600"; 
-   d="scan'208";a="67994266"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 01:37:25 -0700
-X-CSE-ConnectionGUID: jpTNmXQaT9+L7DNYwIqmJw==
-X-CSE-MsgGUID: ikIri5WYRNCpI9WfHswheQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,197,1739865600"; 
-   d="scan'208";a="128533582"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 01:37:21 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1u24SN-0000000ALAx-1TUY;
-	Tue, 08 Apr 2025 11:37:19 +0300
-Date: Tue, 8 Apr 2025 11:37:19 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	devicetree@vger.kernel.org,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>, linux-kernel@vger.kernel.org,
-	Danilo Krummrich <dakr@kernel.org>, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH 1/2] device property: Add optional nargs_prop for
- get_reference_args
-Message-ID: <Z_TgP0epJ3cJzlUt@smile.fi.intel.com>
-References: <20250407223714.2287202-1-sean.anderson@linux.dev>
- <20250407223714.2287202-2-sean.anderson@linux.dev>
+	s=arc-20240116; t=1744101494; c=relaxed/simple;
+	bh=XX34lPy+Q29lQ57hsRPpZu70XY8syx0PGiPZ9KWfto4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=UcUdXsMaof60w/gMGe6rH1FaTh6GQyvTZ2TAERWT4bmLURbVJAg1n+h/dR7ULNWYrilrx2rtFNusmwvNv2UFDeSsjb/jX9x0wZB3vHS+9OrGk8ZSztK26jssn3+hZ0CugUuYz42s0z1xSsnyims5xlI61eK+8iA2KEsUmN/QJjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=d3gSowO5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=c0vX2+O/; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id C4F48114017C;
+	Tue,  8 Apr 2025 04:38:11 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-12.internal (MEProxy); Tue, 08 Apr 2025 04:38:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1744101491;
+	 x=1744187891; bh=VlvkU1faDx+thQEdDrOoGOPLhFtXWFIgx9WnhEz6y6Y=; b=
+	d3gSowO5zzowHZ2h4AqNsVzu9wnZXqlT1UveryZFYO11x/R+WzxEbG7SbS0ZCKPd
+	y8bicZcOBeg/URkB010IHD4eZ4BY9pmR23R3IEgF2aStwFFpx/v7+mi022toaFpr
+	9uGD4z3t6Fv6a6HnTPFUpTN/xYmHSG8eOmR1SmwvGW01bcgpV96+Nz6JPvM+SJ2J
+	/Y6FqkFXSghM9MKEt//4vfLMH/n9YKzqohfpd/BiIUYMe12+ysS3Lwq36PeU1x3n
+	2IyOq+6Ksb4fqk0ZKwuhCGAuOyoxmlHrlawmmdhD+UtavNBO4KQ92Nj9pqaEWwJA
+	y2mYP84KYYHZ5wJNf41A/w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1744101491; x=
+	1744187891; bh=VlvkU1faDx+thQEdDrOoGOPLhFtXWFIgx9WnhEz6y6Y=; b=c
+	0vX2+O/tBfL+SfZ/cBvm6NUH0nAu6SUQeZe1kW++6GCH0XCzRzHVhkdH+nIcW79Q
+	Id00SH6dNRVSyhObO2J1FIkNCL/93+L+NhMs24v886kOoekO80jyFf6uTHExLTWd
+	2MZoQyfbVFCYtqvt/UFs1oJlmDAaY2hT5U7hCQnYGf3ilwFirYmMlS4GAPOuWpZc
+	mNuIjIckRSmXqskOYZ4CJOhSquM32S4Mi73WkJ0Koe4A3yUu2Iz3tWC+2y6WxjkF
+	ZQdf/u4a1TtcIVYRU0ibiaOZ0PdW6R6+DSdyx/SbwZhcDumnynvG14+xsehBuxb4
+	WrEsNwxeZ5L10Ao7opjLQ==
+X-ME-Sender: <xms:cuD0Zznghr422oPqDPolst399HuAmFd-Clo7xVYEpSpf4Ac0XLubkw>
+    <xme:cuD0Z23KYreNX_nkPYOohrNeTmnZeZrcqHUL_ASDg_jcR8_vTrW1oSoK9YJhlB1aD
+    EhHFzxhgIp8INrtzUg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddviedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    uddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnmhgrghejsehgmhgrih
+    hlrdgtohhmpdhrtghpthhtohepmhgrthhtshhtkeeksehgmhgrihhlrdgtohhmpdhrtghp
+    thhtohepphgruhhlmhgtkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhitghhrg
+    hrugdrhhgvnhguvghrshhonheslhhinhgrrhhordhorhhgpdhrtghpthhtohepthhorhhv
+    rghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehmrg
+    gtrhhosehorhgtrghmrdhmvgdruhhkpdhrtghpthhtohepghhlrghusghithiisehphhih
+    shhikhdrfhhuqdgsvghrlhhinhdruggvpdhrtghpthhtohepihhnkhesuhhnshgvvghnrd
+    hprghrthhspdhrtghpthhtoheplhhinhhugidqrghlphhhrgesvhhgvghrrdhkvghrnhgv
+    lhdrohhrgh
+X-ME-Proxy: <xmx:cuD0Z5p2yvCKgKIGVW4kpMODvptzKgkFKhSjrwpjtl1CCgpuRVZCog>
+    <xmx:cuD0Z7lHnpNeAU1-5Y_dV16uJuIqhP4BJXwcpWr2-nx558x4W_uITg>
+    <xmx:cuD0Zx2EpNc5h69ZU2yEht0pz4693TraFiNHcUMpFq4XDJz146rQDA>
+    <xmx:cuD0Z6vqYBG4PBFu0HbdLrZvGeiipMCwJwyQJ7dASSI2saQ1fo6PRw>
+    <xmx:c-D0Zz5O0f_2t6RPrZkGXiK8j5klBf1TEFNJ5yOBW8jX3idx6r7qqAr8>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1F6232220073; Tue,  8 Apr 2025 04:38:10 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250407223714.2287202-2-sean.anderson@linux.dev>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-ThreadId: T56050b542f246355
+Date: Tue, 08 Apr 2025 10:37:49 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: "Richard Henderson" <richard.henderson@linaro.org>,
+ "Ivan Kokshaysky" <ink@unseen.parts>, "Matt Turner" <mattst88@gmail.com>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ "Magnus Lindholm" <linmag7@gmail.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>, linux-alpha@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-Id: <e1356a60-525b-4405-ad5b-eb6e93de8fef@app.fastmail.com>
+In-Reply-To: 
+ <CAHk-=whKa0-myNkpq2aMCQ=o7S+Sqj--TQEM8wfC9b2C04jidA@mail.gmail.com>
+References: <alpine.DEB.2.21.2502181912230.65342@angie.orcam.me.uk>
+ <CAHk-=wgBZk1FFOyiTKLnz4jNe-eZtYsrztcYRRXZZxF8evk1Rw@mail.gmail.com>
+ <alpine.DEB.2.21.2502202106200.65342@angie.orcam.me.uk>
+ <alpine.DEB.2.21.2504072042350.29566@angie.orcam.me.uk>
+ <CAHk-=whKa0-myNkpq2aMCQ=o7S+Sqj--TQEM8wfC9b2C04jidA@mail.gmail.com>
+Subject: Re: [PATCH] Alpha: Emulate unaligned LDx_L/STx_C for data consistency
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, Apr 07, 2025 at 06:37:13PM -0400, Sean Anderson wrote:
-> get_reference_args does not permit falling back to nargs when nargs_prop
-> is missing. This makes it difficult to support older devicetrees where
-> nargs_prop may not be present. Add support for this by converting nargs
-> to a signed value. Where before nargs was ignored if nargs_prop was
-> passed, now nargs is only ignored if it is strictly negative. When it is
-> positive, nargs represents the fallback cells to use if nargs_prop is
-> absent.
+On Tue, Apr 8, 2025, at 02:34, Linus Torvalds wrote:
+> On Mon, 7 Apr 2025 at 13:46, Maciej W. Rozycki <macro@orcam.me.uk> wrote:
+>>
+>>  So unless I'm proved otherwise (e.g. that all such code paths are now
+>> gone from networking, which may or may not be the case: I saw IPX go but I
+>> can see AppleTalk still around; or that no sub-longword accesses are ever
+>> used in the relevant networking paths), I'm going to keep kernel emulation
+>> in v2, because what just used to be wrapped in an unaligned LDQ/STQ pair,
+>> which we trapped on and emulated, will now become an LDQ_L/STQ_C loop.
+>>
+>>  Do you happen to know what the situation is here?
+>
+> I think networking ends up using 'get_unaligned()' properly for header
+> accesses these days for any of this.
+>
+> If you don't, some architectures will literally silently give you
+> garbage back and not even fault.
+>
+> Admittedly that's mainly some really broken old 32-bit ARM stuff and
+> hopefully it's all dead by now.
 
-And what is the case to support old DTs on most likely outdated hardware?
+Yes, the last one doing this was EBSA110, which we removed in 2020.
 
-...
+> So unless you actually *see* the unaligned faults, I really think you
+> shouldn't emulate them.
+>
+> And I'd like to know where they are if you do see them
 
->  	ret = fwnode_call_int_op(fwnode, get_reference_args, prop, nargs_prop,
-> -				 nargs, index, args);
-> +				 nargs_prop ? -1 : nargs, index, args);
+FWIW, all the major architectures that have variants without
+unaligned load/store (arm32, mips, ppc, riscv) trap and emulate
+them for both user and kernel access for normal memory, but
+they don't emulate it for atomic ll/sc type instructions.
+These instructions also trap and kill the task on the
+architectures that can do hardware unaligned access (x86
+cmpxchg8b being a notable exception).
 
->  	return fwnode_call_int_op(fwnode->secondary, get_reference_args, prop, nargs_prop,
-> -				  nargs, index, args);
-> +				  nargs_prop ? -1 : nargs, index, args);
-
-I don't understand why it's needed here. The nargs_prop is passed to the callee.
-
-...
-
-> -				 unsigned int nargs, unsigned int index,
-> +				 int nargs, unsigned int index,
-
-As per above.
-
-...
-
->  		error = property_entry_read_int_array(ref->node->properties,
->  						      nargs_prop, sizeof(u32),
->  						      &nargs_prop_val, 1);
-> -		if (error)
-
-> +
-
-Stray blank line.
-
-> +		if (error == -EINVAL) {
-
-Why do we need an explicit error code check? This is fragile. Just check the
-parameter before calling the above.
-
-> +			if (nargs < 0)
-> +				return error;
-> +		} else if (error) {
->  			return error;
-> -
-> -		nargs = nargs_prop_val;
-> +		} else {
-> +			nargs = nargs_prop_val;
-> +		}
-
-...
-
->  of_fwnode_get_reference_args(const struct fwnode_handle *fwnode,
->  			     const char *prop, const char *nargs_prop,
-> -			     unsigned int nargs, unsigned int index,
-> +			     int nargs, unsigned int index,
->  			     struct fwnode_reference_args *args)
-
-Same comments as per above.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+     Arnd
 
