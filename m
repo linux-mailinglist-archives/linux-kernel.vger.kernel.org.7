@@ -1,131 +1,176 @@
-Return-Path: <linux-kernel+bounces-594770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0EECA81632
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:00:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8CC8A8162D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDB74883273
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:00:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BB7446837F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49542505D6;
-	Tue,  8 Apr 2025 20:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7749221ABCD;
+	Tue,  8 Apr 2025 19:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s3H3mzi4"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IdgILvda"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0231252904
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 19:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DCF1D63C4
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 19:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744142400; cv=none; b=mqPVfyPGSc2Ek10fLxnvIJ6kwxghue86cBsoD7Wl0Ha27zTS+9SJAdMpPpoZoZ5mpDO7a8jqpXhwacx/ANoJ3ojJ35Sikn/eumtwucbhzwyCnD1Zi5UOlacB0BreiXYAIw9F21cFm/fEa3piv/NTVVikjuqBbOCDXQOW0CrGNas=
+	t=1744142381; cv=none; b=Gh3LNxLe8WwZOLOjumYdvfVZ6tHE7ZpjoYskaOtKyyMT101xBVt/HL+i27eqISxD49zJ3iWmEVou8JgqQOfCO4/Z/Q+gOjVVzR1fkf8M8STBr2D9Dkgjjw/bZEmzjhmRFvBnM0KOGoqisUk/s/fYuEEqC9hzaPzmRShkaClpH6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744142400; c=relaxed/simple;
-	bh=3eKMst404MCWjVtSOpxFUSarhxkSczCeQNB0k+53r8U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Vnb7fDfThD5haC4Tmvn4uTmD8v0qSbn1mJnhh7x2Dyuiikr9KNT2dcdmgX3pLTuLr+gvG/xe1HCGKTlQRbXXi+4wRSuP7K7YE7gB9yTjgk5vlDnVu7Eg/Al1sebXfOzkyL2sPzQq/4DG/4hpkwJM3KdsoEJeQfEpBAkxxm98HT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yabinc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s3H3mzi4; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yabinc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-22406ee0243so44816365ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 12:59:58 -0700 (PDT)
+	s=arc-20240116; t=1744142381; c=relaxed/simple;
+	bh=T3dxU9Xzp9z0tf6G7dXM8herRtcII2CldD29N7/opUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Z782VSH869WBUyOIU3gFtbbt3uhY36T6RH5psUEozIyuomRDIbrryX/nZJkSfFm13uw0gJx9w+ksN42ENC/5n+xN5T/uHpqC046xRI30OfrZo31lmlArk/z69pzsSXsPtZdUtPT6e3ILcEs5QV6aBUiALfZ3snxiZur/qjjckHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IdgILvda; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7390d21bb1cso5873330b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 12:59:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744142398; x=1744747198; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q34M/yB/cQDsaQGLM78DLdQn24/bplv98nkSF+8rs08=;
-        b=s3H3mzi41P/Y9FtMnX3wkSTYUUXr21hn6TvEP20Ss8e3lhyaygTT3utNTZrliLTxzC
-         rrD69+/Gsie7KccZmcu6WI53+Vp9X5qdE28QDxEdwddalKmvuBdV/kfX1QCiQNGANLv4
-         IkmISdU7EMq5bMS6XtqN7ELl7ND76E2SqQt0czbMPbUriSQHILi3PZR8jncWsfAFyhtc
-         yIYMf2YbUsHtkZhAACEC7kAreg00y+ZWmRoG0THhpRRkrExzJorCpZP9mECQOLE0cyHl
-         Ksn22TqoemUJd9XA+/CilhmZq7ERGJk9nctqfZvZDfVgxqg2RfIPLhBS54uD/noznMvk
-         KqTg==
+        d=chromium.org; s=google; t=1744142379; x=1744747179; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=P36tuhRNiXUx83uwdjI7YGhqW3UK9LAxmTlrMVh1D9o=;
+        b=IdgILvdaSSt31NfzSJDntSsraVrg1swZByNq55EayrGs7kaYcXoVm9GmYmjLes43b+
+         ECJLyYYo+EYrUkImvn6RUtk6QGMOzstGElXo3PjaIqHs/pKkCs0ojjCPCnPZi7xWk9l8
+         1KBl6DpivUKNWm0Zr+Q1XpFWi4JVtdg4D2DyY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744142398; x=1744747198;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q34M/yB/cQDsaQGLM78DLdQn24/bplv98nkSF+8rs08=;
-        b=FA42Ak3FSBi1cw8oSquW/HdkT3Hn5AL6+xq2Y6dXOht24Erq+Bl+rUrGjk+AIsCqDH
-         AwUjH5L35aiqIwgxIU6cU3TQnPWNUW39aI9GiMkDrqaFS3vx0X0DPjoAKZfDcVQMTWrT
-         iE0NVsjSGkO3En9oFZ4TtDVA0gnZluQw7QBdTYffimG2HCAFz43Drm9qytn0CPz/PU8S
-         guayGsP5AKge+Bd6GIgZU9C9d7JUifZ3XI09C+Ev8eFAGP5s2+WYZrZleYNHLUeUb1fU
-         l61K39nLTmrHfaC2hMvmwNpHxvvIRBO8K5317aHxrWKdKPyLqe9TaHlndQBTgPEn8Pn3
-         FRHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVtZ9hEnhAlrLY8HM+fvY2hzG9fVNOt0XON14HAcmN/2JK0kyivpeZRnEaDiCWvfCmMJbwdmP3vrOEsiCg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxre/qTgffaRLJpLoN0ecVFXGj4NcunI8sgeZSCNTq9ZAJlesTr
-	j9zhnXewjWXdMkck2LsjAa2KnJl6jFjpmdU4c7o1UrZ2MUzOnSVrw3YtN+XCJnKILo3FFm/J9pg
-	Q
-X-Google-Smtp-Source: AGHT+IGNR5b/BrzCv+igEUSxJYcjHRcZBXMY8xbV6NXow+K+OzxccVFEs8fcuddoHlcYKYCwVdfk4FJMh9g=
-X-Received: from plqt8.prod.google.com ([2002:a17:902:a5c8:b0:220:d79f:a9bd])
- (user=yabinc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1450:b0:223:53fb:e1dd
- with SMTP id d9443c01a7336-22ac3f2f26dmr387475ad.9.1744142398107; Tue, 08 Apr
- 2025 12:59:58 -0700 (PDT)
-Date: Tue,  8 Apr 2025 12:59:22 -0700
-In-Reply-To: <20250408195922.770377-1-yabinc@google.com>
+        d=1e100.net; s=20230601; t=1744142379; x=1744747179;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P36tuhRNiXUx83uwdjI7YGhqW3UK9LAxmTlrMVh1D9o=;
+        b=ReHRRXfNBxH7929l3h8h2llizwYBlq4lnG33GNxoBV96mWhWzaeKx1H2gROmU4WXEV
+         z88W96/5bg8GNklPtgK59Gt8R5E83TBhIhwxiu5mCGmA0csu5dzDtatJlHRTCQMr1aYU
+         O3w2bVMZplhjuJA9/OyLN006nI3AceljhSHA/oHIFdzlD7UUNl9j5WjXRiqOmvw/c6Gj
+         faU/7u1fejEjyDrb54R8KUiFHkOdz0aoQI4Y5TsT5s6yYyaeXjRqLBPrVCxEjD+eNmYk
+         /U72WEO3QIlwQi4SiCpub9Vz0MVJXhRJ4WHOGmq7c3i1/3DnRcv5W8PfM1NLBRtBpYMo
+         UIVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsFJuvcGzbK795Twps1lRLOh14PDjq7Lu5/bttV9g9jYYN7mV/nrBgsYjgZf9XMCL5gHz4LoK77woR8Ww=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd6XczMuJJJ77DUhU3z4S9+IfvE7HuA62owGCofBdVpwGYbxab
+	j7UWYMZx4u4tSK6YXIjxp4d6SFPHdQg7wMHd/ZM+NeSUvz2sLeB0P+TJeCi4ZA==
+X-Gm-Gg: ASbGncscptpk1NkCXBOfM4CoPsyz+8TgQxD0tLaAAKCaVcyw0Rwdu8upTJlx8OgPhwR
+	oqNW9xFbEMjB+x84ki1Gw0PfxZr2L1RTLzcYUGpXuHfE0/cf4Nl4RtcN9IiArdwWUZQ0uqjdgFF
+	hjdD5wZVGQnVIa+6UAChAqOHhHcD5TyUWyr3IvXGoqy5V9iKAf1mXMut5d6QipZNkY7iNgODZLN
+	Y4CaPfmS4xzRT4YqqN4RHM3llg7II93Fr0QmWtQ5Z4dqp8/sP/sHlr0uSTIj/yNl/6/asprnKIZ
+	G9JtYg8pJut0XTKPynK8HCf109lvzTAhU4YK+H/zWWp5p1A+2kjM+vEBhiVSIyrgEx/akMFr/TW
+	dyZq15qE=
+X-Google-Smtp-Source: AGHT+IFEVy+GFyChwMyGX3zYW7HedKd+ZJuOOOX9WnEe0gqFxgoin7KxxjobZqlNVSmcDzY3B3n1dA==
+X-Received: by 2002:a05:6a00:1148:b0:736:3c6a:be02 with SMTP id d2e1a72fcca58-73bae4d52femr329321b3a.11.1744142379428;
+        Tue, 08 Apr 2025 12:59:39 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:f6a0:ca46:b8a5:169e])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-739d97f1c4bsm10955081b3a.70.2025.04.08.12.59.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Apr 2025 12:59:38 -0700 (PDT)
+Date: Tue, 8 Apr 2025 12:59:36 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	dmitry.baryshkov@linaro.org, Tsai Sung-Fu <danielsftsai@google.com>
+Subject: [RFC] PCI: pwrctrl and link-up dependencies
+Message-ID: <Z_WAKDjIeOjlghVs@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250408195922.770377-1-yabinc@google.com>
-X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-Message-ID: <20250408195922.770377-3-yabinc@google.com>
-Subject: [PATCH v3 2/2] coresight: core: Disable helpers for devices that fail
- to enable
-From: Yabin Cui <yabinc@google.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org>, 
-	James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@arm.com>, 
-	Jie Gan <quic_jiegan@quicinc.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Yabin Cui <yabinc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-When enabling a SINK or LINK type coresight device fails, the
-associated helpers should be disabled.
+TL;DR: PCIe link-up may depend on pwrctrl; however, link-startup is
+often run before pwrctrl gets involved. I'm exploring options to resolve
+this.
 
-Signed-off-by: Yabin Cui <yabinc@google.com>
-Suggested-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- drivers/hwtracing/coresight/coresight-core.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Hi all,
 
-diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-index fb43ef6a3b1f..a56ba9087538 100644
---- a/drivers/hwtracing/coresight/coresight-core.c
-+++ b/drivers/hwtracing/coresight/coresight-core.c
-@@ -486,8 +486,10 @@ int coresight_enable_path(struct coresight_path *path, enum cs_mode mode,
- 			 * that need disabling. Disabling the path here
- 			 * would mean we could disrupt an existing session.
- 			 */
--			if (ret)
-+			if (ret) {
-+				coresight_disable_helpers(csdev);
- 				goto out;
-+			}
- 			break;
- 		case CORESIGHT_DEV_TYPE_SOURCE:
- 			/* sources are enabled from either sysFS or Perf */
-@@ -496,10 +498,13 @@ int coresight_enable_path(struct coresight_path *path, enum cs_mode mode,
- 			parent = list_prev_entry(nd, link)->csdev;
- 			child = list_next_entry(nd, link)->csdev;
- 			ret = coresight_enable_link(csdev, parent, child, source);
--			if (ret)
-+			if (ret) {
-+				coresight_disable_helpers(csdev);
- 				goto err;
-+			}
- 			break;
- 		default:
-+			coresight_disable_helpers(csdev);
- 			goto err;
- 		}
- 	}
--- 
-2.49.0.504.g3bcea36a83-goog
+I'm currently looking at reworking how some (currently out-of-tree, but I'm
+hoping to change that) pcie-designware based drivers integrate power sequencing
+for their endpoint devices, as well as the corresponding start_link()
+functionality.
 
+For power sequencing, drivers/pci/pwrctrl/ looks like a very good start at what
+we need, since we have various device-specific regulators, GPIOs, and
+sequencing requirements, which we'd prefer not to encode directly in the
+controller driver.
+
+For link startup, pcie-designware-host.c currently
+(a) starts the link via platform-specific means (dw_pcie::ops::start_link()) and
+(b) waits for the link training to complete.
+
+However, (b) will fail if the other end of the link is not powered up --
+e.g., if the appropriate pwrctrl driver has not yet loaded, or its
+device hasn't finished probing. Today, this can mean the designware
+driver will either fail to probe, or at least waste time for a condition
+that we can't achieve (link up), depending on the HW/driver
+implementation.
+
+I'm wondering how any designware-based platforms (on which I believe pwrctrl
+was developed) actually support this, and how I should look to integrate
+additional platforms/drivers. From what I can tell, the only way things would
+work today would either be if:
+(1) a given platform uses the dw_pcie_rp::use_linkup_irq==true functionality,
+    which means pcie-designware-host will only start the link, but not wait for
+    training to succeed. (And presumably the controller will receive its
+    link-up IRQ after power sequencing is done, at which point both pwrctrl and
+    the IRQ may rescan the PCI bus.) Or:
+(2) pci/pwrctrl sequencing only brings up some non-critical power rails for the
+    device in question, so link-up can actually succeed even without
+    pwrctrl.
+
+My guess is that (1) is the case, and specifically that the relevant folks are
+using the pcie-qcom.c, with its "global" IRQ used for link-up events.
+
+So how should I replicate this on other designware-based platforms? I suppose
+if the platform in question has a link-up IRQ, I can imitate (1). But what if
+it doesn't? (Today, we don't validate and utilize a link-up IRQ, although it's
+possible there is one available. Additionally, we use various retry mechanisms
+today, which don't trivially fit into this framework, as we won't know when
+precisely to retry, if power sequencing is controlled entirely by some other
+entity.)
+
+Would it make sense to introduce some sort of pwrctrl -> start_link()
+dependency? For example, I see similar work done in this series [1], for
+slightly different reasons. In short, that series adds new
+pci_ops::{start,stop}_link() callbacks, and teaches a single pwrctrl driver to
+stop and restart the bridge link before/after powering things up.
+
+I also see that Manivannan has a proposal out [2] to add semi-generic
+link-down + retraining support to core code. It treads somewhat similar
+ground, and I could even imagine that its pci_ops::retrain_link()
+callback could even be reimplemented in terms of the aforementioned
+pci_ops::{start,stop}_link(), or possibly vice versa.
+
+Any thoughts here? Sorry for a lot of text and no patch, but I didn't just want
+to start off by throwing a 3rd set of patches on top of the existing ones that
+tread similar ground[1][2].
+
+Regards,
+Brian
+
+[1] [PATCH v4 00/10] PCI: Enable Power and configure the TC956x PCIe switch
+https://lore.kernel.org/linux-pci/20250225-qps615_v4_1-v4-0-e08633a7bdf8@oss.qualcomm.com/
+
+[PATCH v4 03/10] PCI: Add new start_link() & stop_link function ops
+https://lore.kernel.org/linux-pci/20250225-qps615_v4_1-v4-3-e08633a7bdf8@oss.qualcomm.com/
+
+[...]
+[
+[PATCH v4 08/10] PCI: pwrctrl: Add power control driver for tc956x
+https://lore.kernel.org/linux-pci/20250225-qps615_v4_1-v4-8-e08633a7bdf8@oss.qualcomm.com/
+
+[2] [PATCH 0/2] PCI: Add support for handling link down event from host bridge drivers
+https://lore.kernel.org/linux-pci/20250221172309.120009-1-manivannan.sadhasivam@linaro.org/
 
