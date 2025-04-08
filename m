@@ -1,58 +1,66 @@
-Return-Path: <linux-kernel+bounces-593263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33FEA7F754
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:10:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F3F7A7F759
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 975141892D01
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:10:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C69037A839C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77BD263C84;
-	Tue,  8 Apr 2025 08:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B722641C6;
+	Tue,  8 Apr 2025 08:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SQoqcgoS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="qF9Znl9v"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADF220459F;
-	Tue,  8 Apr 2025 08:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51982638B0;
+	Tue,  8 Apr 2025 08:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744099805; cv=none; b=hZqtBqnGg+9i6ReaWQDgqQBRT9YidN3N+Q6t8POSm8/PuWsNggq3Y8wBTyKQA12fZMTBYWOZMh1kcnxQgtn3teNqRQOqALRs3GhoOLul5zQG4jhz3YmYdg/3+7NRFdciUOL7y4zJpA4HeH+fmLefcQUaxJHJR4Vr0jlkkIbUSUA=
+	t=1744099886; cv=none; b=L991J1/oANK8GSLpgy5OG1ugO7TMSvs2eLDany/q8vDbakxxTLZT8ilc2yQEU1uPP8Thf7/HuOTmEhcDnLG+eyKtQnswa91qK2iwE/F0PSQMVP03qMZST1clG/lB944sl2t2uxI5EUv77dT2HqIe3GSm3AmD+obLz4Hr3+rSIIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744099805; c=relaxed/simple;
-	bh=KuTOWjeh1mKtEtTStWh2LsIuxKIuB+Nc0WiTwPf/dYo=;
+	s=arc-20240116; t=1744099886; c=relaxed/simple;
+	bh=0NFejXXQ5C/Irc7QVCHJxI7ymX8Um1SmC/6y0Sf6bps=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HQ62gqob5b47MywqSmx+b2dyej2C5Moe746JuzNLVr3s9ga8bL7rh8pcY/T5ccdTKqcOYZilM06mI/4QilwAeEksph39fB3xyg684FcLyomdlOBsYhA4ExR+4p/rweMW5+EicPrWIvQ2Xzb/AMn/po1nPSeUgV93vVeLUcp1aUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SQoqcgoS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 271AAC4CEE5;
-	Tue,  8 Apr 2025 08:10:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744099804;
-	bh=KuTOWjeh1mKtEtTStWh2LsIuxKIuB+Nc0WiTwPf/dYo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SQoqcgoSrZuDSLOM4aBawP4yEXKXh1leZyLF2XgXF7P/P7wvzSU8Dwecwfen73Pgy
-	 GC3RsB/XhCizUx+AcG5ydDy4drxJqwE04ocNLxscB8cgyIahM9nab2jXD3V9zsHbkL
-	 8EGtu4H5gc2KHE1lo4DvPaxYswmtRhYq/PMxl1p89yVP3tBE5FlDoDixDUeD3vyZiv
-	 Ew6KqSp4CkM8gJYPjq+VKOyVYiq8yLlIFHAFcas3F40N6p5UnIRkVamFmeE77MX8CT
-	 GDzNt+E7w3dFZdLC5IqTVKpMrTslDPIsY/kp98mZ0t9wsqh64L+foU+hGB8JMwQ0Eb
-	 e/lI6rkaQSNiA==
-Date: Tue, 8 Apr 2025 10:09:59 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Malaya Kumar Rout <malayarout91@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3] selftests/x86/lam: fix resource leak in do_uring()
- and allocate_dsa_pasid()
-Message-ID: <Z_TZ138UxQ_uZzys@gmail.com>
-References: <Z_QXURMplbCtx-YB@gmail.com>
- <20250407193449.461948-1-malayarout91@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MhLrXevYIy/4Ac6cdLcVTNOgBOnoO1jcUaN5nRzW1fJlxMFFgtCQweCWTDrLWrOeaRu7x9VuQFA9wclLu6eSCXx6/0OnT7D4iqzsRbNQrHlWhYI4xMviTMB5U2RrTmNYl+3snc5C9xUWt6JKkOKa6zwASnR2NPfqo66N8lqVrus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=qF9Znl9v; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=BJqa6CzCTAkaDv71FdSxwPL/T5p0WkVuqJBIvve0EHU=; b=qF9Znl9vlveOLcfy/Lf7p749Wn
+	Ad2WcxwsLLrlScrw70HmNPgSwlIyALU09S/SKeVKLW3Jbv80V8NWledW+PbIakXukYDD/JN2fz6kk
+	75Yl2Jd2xiNFF6275NJj6SJq6qMIW3dqZn1Dgg1Wn2IohcDN+E/L4uSJRHTzULexp1d6dxn9nf21t
+	hXJ/sACLCgSQPZ/wuaqC+Uhm+QRQLg7ewJqWZOhdlGXbDNe9FoItJRgXBUMnBSKYe6r7AWc+hY7uy
+	ti535Pu3O0WZBvEplyNZBD/+ui7rL2HSiSg7o5ntXiCGEBb3+Wh2ltvxdmsA+RstHn78rWHGIFJml
+	/bbK1P1Q==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1u242r-00DonW-0E;
+	Tue, 08 Apr 2025 16:10:58 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 08 Apr 2025 16:10:57 +0800
+Date: Tue, 8 Apr 2025 16:10:57 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Ashish Kalra <Ashish.Kalra@amd.com>
+Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, thomas.lendacky@amd.com,
+	john.allen@amd.com, michael.roth@amd.com, dionnaglaze@google.com,
+	nikunj@amd.com, ardb@kernel.org, kevinloughlin@google.com,
+	Neeraj.Upadhyay@amd.com, aik@amd.com, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-coco@lists.linux.dev
+Subject: Re: [PATCH v7 0/8] Move initializing SEV/SNP functionality to KVM
+Message-ID: <Z_TaEXCXpDM6wa-m@gondor.apana.org.au>
+References: <cover.1742850400.git.ashish.kalra@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,77 +69,119 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250407193449.461948-1-malayarout91@gmail.com>
+In-Reply-To: <cover.1742850400.git.ashish.kalra@amd.com>
 
-
-* Malaya Kumar Rout <malayarout91@gmail.com> wrote:
-
-> Exception branch returns without closing
-> the file descriptors 'file_fd' and 'fd'
+On Mon, Mar 24, 2025 at 09:13:41PM +0000, Ashish Kalra wrote:
+> From: Ashish Kalra <ashish.kalra@amd.com>
 > 
-> Signed-off-by: Malaya Kumar Rout <malayarout91@gmail.com>
-> ---
->  tools/testing/selftests/x86/lam.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+> Remove initializing SEV/SNP functionality from PSP driver and instead add
+> support to KVM to explicitly initialize the PSP if KVM wants to use
+> SEV/SNP functionality.
 > 
-> diff --git a/tools/testing/selftests/x86/lam.c b/tools/testing/selftests/x86/lam.c
-> index 18d736640ece..88482d8112de 100644
-> --- a/tools/testing/selftests/x86/lam.c
-> +++ b/tools/testing/selftests/x86/lam.c
-> @@ -682,7 +682,7 @@ int do_uring(unsigned long lam)
->  		return 1;
->  
->  	if (fstat(file_fd, &st) < 0)
-> -		return 1;
-> +		goto cleanup;
->  
->  	off_t file_sz = st.st_size;
->  
-> @@ -690,7 +690,7 @@ int do_uring(unsigned long lam)
->  
->  	fi = malloc(sizeof(*fi) + sizeof(struct iovec) * blocks);
->  	if (!fi)
-> -		return 1;
-> +		goto cleanup;
->  
->  	fi->file_sz = file_sz;
->  	fi->file_fd = file_fd;
-> @@ -698,7 +698,7 @@ int do_uring(unsigned long lam)
->  	ring = malloc(sizeof(*ring));
->  	if (!ring) {
->  		free(fi);
-> -		return 1;
-> +		goto cleanup;
->  	}
->  
->  	memset(ring, 0, sizeof(struct io_ring));
-> @@ -729,6 +729,8 @@ int do_uring(unsigned long lam)
->  	}
->  
->  	free(fi);
-> +cleanup:
-> +	close(file_fd);
->  
->  	return ret;
->  }
-> @@ -1192,6 +1194,7 @@ void *allocate_dsa_pasid(void)
->  	if (wq == MAP_FAILED)
->  		perror("mmap");
->  
-> +	close(fd);
->  	return wq;
+> This removes SEV/SNP initialization at PSP module probe time and does
+> on-demand SEV/SNP initialization when KVM really wants to use 
+> SEV/SNP functionality. This will allow running legacy non-confidential
+> VMs without initializating SEV functionality. 
+> 
+> The patch-set includes the fix to not continue with SEV INIT if SNP
+> INIT fails as RMP table must be initialized before calling SEV INIT
+> if host SNP support is enabled.
+> 
+> This will assist in adding SNP CipherTextHiding support and SEV firmware
+> hotloading support in KVM without sharing SEV ASID management and SNP
+> guest context support between PSP driver and KVM and keeping all that
+> support only in KVM.
+> 
+> To support SEV firmware hotloading, SEV Shutdown will be done explicitly
+> prior to DOWNLOAD_FIRMWARE_EX and SEV INIT post it to work with the
+> requirement of SEV to be in UNINIT state for DOWNLOAD_FIRMWARE_EX.
+> NOTE: SEV firmware hotloading will only be supported if there are no
+> active SEV/SEV-ES guests. 
+> 
+> v7:
+> -  Drop the Fixes: tag for patch 01, as continuing with SEV INIT
+> after SNP INIT(_EX) failure will still cause SEV INIT to fail,
+> we are simply aborting here after SNP INIT(_EX) failure.
+> - Fix commit logs.
+> - Add additional reviewed-by's.
+> 
+> v6:
+> - Add fix to not continue with SEV INIT if SNP INIT fails as RMP table 
+> must be initialized before calling SEV INIT if host SNP support is enabled.
+> - Ensure that for SEV IOCTLs requiring SEV to be initialized, 
+> _sev_platform_init_locked() is called instead of __sev_platform_init_locked()
+> to ensure that both implicit SNP and SEV INIT is done for these ioctls and
+> followed by __sev_firmware_shutdown() to do both SEV and SNP shutdown.
+> - Refactor doing SEV and SNP INIT implicitly for specific SEV and SNP
+> ioctls into sev_move_to_init_state() and snp_move_to_init_state(). 
+> - Ensure correct error code is returned from sev_ioctl_do_pdh_export() 
+> if platform is not in INIT state.
+> - Remove dev_info() from sev_pci_init() because this would have printed
+> a duplicate message.
+> 
+> v5:
+> - To maintain 1-to-1 mapping between the ioctl commands and the SEV/SNP commands, 
+> handle the implicit INIT in the same way as SHUTDOWN, which is to use a local error
+> for INIT and in case of implicit INIT failures, let the error logs from 
+> __sev_platform_init_locked() OR __sev_snp_init_locked() be printed and always return
+> INVALID_PLATFORM_STATE as error back to the caller.
+> - Add better error logging for SEV/SNP INIT and SHUTDOWN commands.
+> - Fix commit logs.
+> - Add more acked-by's, reviewed-by's, suggested-by's.
+> 
+> v4:
+> - Rebase on linux-next which has the fix for SNP broken with kvm_amd
+> module built-in.
+> - Fix commit logs.
+> - Add explicit SEV/SNP initialization and shutdown error logs instead
+> of using a common exit point.
+> - Move SEV/SNP shutdown error logs from callers into __sev_platform_shutdown_locked()
+> and __sev_snp_shutdown_locked().
+> - Make sure that we continue to support both the probe field and psp_init_on_probe
+> module parameter for PSP module to support SEV INIT_EX.
+> - Add reviewed-by's.
+> 
+> v3:
+> - Move back to do both SNP and SEV platform initialization at KVM module
+> load time instead of SEV initialization on demand at SEV/SEV-ES VM launch
+> to prevent breaking QEMU which has a check for SEV to be initialized 
+> prior to launching SEV/SEV-ES VMs. 
+> - As both SNP and SEV platform initialization and shutdown is now done at
+> KVM module load and unload time remove patches for separate SEV and SNP
+> platform initialization and shutdown.
+> 
+> v2:
+> - Added support for separate SEV and SNP platform initalization, while
+> SNP platform initialization is done at KVM module load time, SEV 
+> platform initialization is done on demand at SEV/SEV-ES VM launch.
+> - Added support for separate SEV and SNP platform shutdown, both 
+> SEV and SNP shutdown done at KVM module unload time, only SEV
+> shutdown down when all SEV/SEV-ES VMs have been destroyed, this
+> allows SEV firmware hotloading support anytime during system lifetime.
+> - Updated commit messages for couple of patches in the series with
+> reference to the feedback received on v1 patches.
+> 
+> Ashish Kalra (8):
+>   crypto: ccp: Abort doing SEV INIT if SNP INIT fails
+>   crypto: ccp: Move dev_info/err messages for SEV/SNP init and shutdown
+>   crypto: ccp: Ensure implicit SEV/SNP init and shutdown in ioctls
+>   crypto: ccp: Reset TMR size at SNP Shutdown
+>   crypto: ccp: Register SNP panic notifier only if SNP is enabled
+>   crypto: ccp: Add new SEV/SNP platform shutdown API
+>   KVM: SVM: Add support to initialize SEV/SNP functionality in KVM
+>   crypto: ccp: Move SEV/SNP Platform initialization to KVM
+> 
+>  arch/x86/kvm/svm/sev.c       |  12 ++
+>  drivers/crypto/ccp/sev-dev.c | 245 +++++++++++++++++++++++++----------
+>  include/linux/psp-sev.h      |   3 +
+>  3 files changed, 194 insertions(+), 66 deletions(-)
+> 
+> -- 
+> 2.34.1
 
-So in your previous patch you closed the file before the perror(), 
-presumably so that file-leak detection in Valgrind or whatever tool you 
-are using doesn't trigger.
-
-But here it's done after the perror() call, why? It's perfectly fine to 
-close the mapping fd straight after an mmap() call.
-
-Finally, it would be nice to quote the before/after output of the leak 
-detection tool you are using.
-
-Thanks,
-
-	Ingo
+Patches 7-8 applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
