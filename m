@@ -1,252 +1,174 @@
-Return-Path: <linux-kernel+bounces-593647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 371D2A7FBC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:27:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98523A7FBB7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:26:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB8091890F5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:22:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72F81167B12
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9DC267AF7;
-	Tue,  8 Apr 2025 10:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3173C26868E;
+	Tue,  8 Apr 2025 10:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hvj3SFXQ"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yG0wFQCk"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DE020459F;
-	Tue,  8 Apr 2025 10:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A45E267F61
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 10:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744107506; cv=none; b=hTJGPskkdr2j4YHuO47zNqewAICMylomr+1z+qIhOAaz/j+GNjefGRevIFde6VEhkZ/h9GsQzzZa7m5I3gf4LaZ/p2QOuz3X9PV2mnInzaXkSebgigDGLQnrdf5o/xzHg63DU94T/JYKILSYJysIhh4wBup7nrC/R8l99uxpx+k=
+	t=1744107618; cv=none; b=W+F6B+F2HdPDFMTzTn79+GKVpw4g6BCE5dhR/nCykB71hgaWbrH07GKpYQrGiomEK3qNApZfLw15N88t8x1f6mlI5ndhWOJMP3z7CGltwLvhOLIlW0YJksE36yPGA3L/jpNugYQoirR4LoGj6kgghLR+HVH2C9hh89hjl3qP800=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744107506; c=relaxed/simple;
-	bh=d8JQ+MyNMKTBF2IizxU/b6I/RWItXomgcUIW0s0VUKU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=btmOqF4aUHIF6vsefuliI06Afi5VwG7yKZF+75ZC4Ufjcjaf3t9m7BAdj8JbC0qDCvHU+w4swS2QkWLdJ/ALPnHzzcmVPYWYP7AmzY2kWRD9Img/0Nc+djzcXgs0BJb0zUVxLDYAIGqJBTfbOUBrf1eYMgvcVLFiQPoY/py6Pps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hvj3SFXQ; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-54b0d638e86so6502483e87.1;
-        Tue, 08 Apr 2025 03:18:24 -0700 (PDT)
+	s=arc-20240116; t=1744107618; c=relaxed/simple;
+	bh=VqkQDwdjjBLXg0xsTy9tSOcc4xRmbJVc0CLEPpdho78=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=g3FFeFaFkfGbrGvN+4kAB4b1cCHU8r/UQyfcG8VczsTfwpU9tgS/l8tJdQAoENUb0xXi57t39XpcfLxDA4s44hTUIfTtqDPWgA73tWIUglHQgKyWdWLtkN3X+oDm7XU+cEA8TLP5sZNn2W/dtxJcdqVLHv65xRHYr5uy0xm1v0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yG0wFQCk; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-39c1efbefc6so3109228f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 03:20:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744107503; x=1744712303; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GBkkvpBAwxMLDl3JDRufEPMKoNS7FiCw8zDnhwNt4xY=;
-        b=Hvj3SFXQdplfaZiCsb292KpDlDU5un5GcQINhj1K0FX1cpsnQOtV/3EwKed3vTYEYv
-         9GWQ5w62wIYB3DkYeadmSjycwphTEsafBsp45JqY9+cI4K7ReNZ/peN2KlSLpPAa2iAv
-         gHu/gb+y09yjNjMAFuM66sV0SXx6ppQrXbT/x8IIdi8PGv4/e294PnurkwKn4GO5CkYu
-         22Z2W1Ci0XW8anCXnZ2QxSydEZCt3CdRZOIj5eMpn3UMI41a6/uogcgnmJQFAhM32IlH
-         Vxy1brjULCm1X5WElbT4mf2UriOhO6dvJ9MPy41p489adBbXgTKyq3pHcRCuRt4tgdQv
-         9h5A==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744107613; x=1744712413; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vaQaFHxZ5nKN+lY9D9HQ1Xp3+zQ5MlJgomgir2Nxsdg=;
+        b=yG0wFQCkfMXYslCHGeRjYoRhcxA0LZBji6cmfW1P4gIAELPkpS7pIyMT7kxL9Rb71L
+         hx3RiXyGm9TV9qV+QspyR0LYC1nfFwghJ1TTlE4A8EvManyuApTUK9HZbLbfsU0S41Nj
+         2H8+/8rSY1GC1dwyVP00y7zRoiR0O7KkBHFgbsL/+bEuGssyOW7YvX/naWqMvEM4iWXh
+         kA0UZkeyS7Q3ouncoVH/y1d2rZP/xasbsKd8PR5zLeL7/sgxt1l9gv/yD7bw/YVjGleQ
+         lMJ+jwfslFz4yOy9nUpKzEfBMMKvkY/V9OPVwtFjBfiMf3ti+dycUvkor8IO782pgvC5
+         b+MQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744107503; x=1744712303;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GBkkvpBAwxMLDl3JDRufEPMKoNS7FiCw8zDnhwNt4xY=;
-        b=a1ytr2E4ylHlK3QrELkUZK4GQ24WqXetu+aTT/3OE+/nXQztE0HVJcd8Fu425RNEuW
-         ZicsuEzsuCn3SSpy9JDC+b47u5YDjwF3iXxH0zBmP4Kk7We5BHSyr9UrNVur7xn3mRIN
-         L6o/Mbux/ZYmfx79v4zWUr0mzTmlsh1AA0G8gUZuo9Yxg2OGuTf4bMAAz6VESrS7edK7
-         xO0CEY6whLM95SzE4W8sh5bWwMlvwWrS5ER2DKhTBlhca0ReHircoJWYTZRmuYdBz7PN
-         MgDe9M61eMCuePmCZvnoFG26OLdlKxpRT2dKcX4IRaJ54zLmvZBSPL9HzmlbHhMOpZZV
-         hPtw==
-X-Forwarded-Encrypted: i=1; AJvYcCU85qHV+eNmeRTqIniiSnu05p2RVfFmygnhDtKxqrci2nJpdwjZnVE4VCbMp4aVOWEKPtc9GaxqHDxy@vger.kernel.org, AJvYcCUXBqYMjaVm24wte2lZjOMWvXsjUfjNv5Of1z3tBYQo6tg+e+sK0spaXl/r1qg8O0dXW4flMz5c7D7Q8/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlOnbN5zTriD5FOhzWaPIhjLlu0+mlNtv5P67KpZU3CFtM7Bus
-	pKssxLYXey1shTInIque+Z3NmsQd8kMdV9Go83BuOrrO6Q96nAxa
-X-Gm-Gg: ASbGnct2P3ljdwd+1e0E/GoQhwDn1Ky1cSWYGjWqFaJRSqqhihP4g2R7aNHt7a/08Va
-	L+VIH2SE2qaM/kd81f6+XXqBfqqR25mPTNBQdIpAhBv1AqRW81wCDNvqk92tayNzOQz5DrnfvPr
-	RXvSxqCeK7rBNHPjO86IvH4EFiziIUe3WDw3qI5tshKEW7Y38d/cbwMpUYu7zyvmMEx5sSb2tUh
-	qEZHDyDyA0ypPwatLuWJNkSxwDAPLRMZyQ5PCUusl3HkDL7dwwA4bT1GMxXFqVfuzke9KxNhg6p
-	ZUKmJEFDBKdPi3VAztH0IbjXIH2aL70bXU2TvO0AgkLXnKtc0uamClrYxThU6AGonsS9K37r
-X-Google-Smtp-Source: AGHT+IE33f1qbai7AfYia4ni2e8TuOOEK5WgNlxelgpVl5tugeQ44eLgh1uzbezRxcSqsbh50XLuIQ==
-X-Received: by 2002:a05:6512:1281:b0:549:39ca:13fc with SMTP id 2adb3069b0e04-54c227ff6ddmr4769141e87.49.1744107502358;
-        Tue, 08 Apr 2025 03:18:22 -0700 (PDT)
-Received: from foxbook (adtq195.neoplus.adsl.tpnet.pl. [79.185.228.195])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e67244fsm1463149e87.247.2025.04.08.03.18.21
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Tue, 08 Apr 2025 03:18:21 -0700 (PDT)
-Date: Tue, 8 Apr 2025 12:18:17 +0200
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: Alan Stern <stern@rowland.harvard.edu>, Mathias Nyman
- <mathias.nyman@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Paul Menzel <pmenzel@molgen.mpg.de>, Mathias Nyman
- <mathias.nyman@linux.intel.com>, linux-usb@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>
-Subject: [PATCH RFC RFT] usb: hcd: Add a usb_device argument to
- hc_driver.endpoint_reset()
-Message-ID: <20250408121817.6ae8defd@foxbook>
-In-Reply-To: <3efb52b8-0974-4125-a344-00f459fbe4e4@rowland.harvard.edu>
-References: <c279bd85-3069-4841-b1be-20507ac9f2d7@molgen.mpg.de>
-	<b356f743-44b5-4f48-a289-fae0afe106ff@linux.intel.com>
-	<84b400f8-2943-44e0-8803-f3aac3b670af@molgen.mpg.de>
-	<20250406002311.2a76fc64@foxbook>
-	<ade0d77a-651a-4b03-bf21-00369fdc22f8@rowland.harvard.edu>
-	<20250406095008.0dbfd586@foxbook>
-	<20250406175032.12b7d284@foxbook>
-	<14197657-0a0f-45a8-ac36-dd37b16a1565@rowland.harvard.edu>
-	<20250407074905.2d236fb9@foxbook>
-	<3efb52b8-0974-4125-a344-00f459fbe4e4@rowland.harvard.edu>
+        d=1e100.net; s=20230601; t=1744107613; x=1744712413;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vaQaFHxZ5nKN+lY9D9HQ1Xp3+zQ5MlJgomgir2Nxsdg=;
+        b=wtRHkZ0UczFzUR7vIKKu9ISS7Fhrxpp0n6Z4uG4YQkrcGSVecOzpzNFnns1tfjLyRV
+         hLn1TGmiDTnqU96ODX7vGVnzlXPd0QLda0pxK8PuAfBEsg53vK44+knXzUEcT9A18qtn
+         EITktZ7HNlIA+YnuIvHp53yDUq2KCccLvE8Xc9cnbi3B5g5WmpGJrVrCP26+OR1uDq0+
+         WWSDAQxFqmeGwxP8ovmSQ1+muxz4XAttgZPVpIwiNp7h3nxxxNnydUUnhnctzGqpBK/2
+         3nAsThjy7RDqfl79HtfzSqpbpNrR2uauKtcwKyx60PZngakm1WRM3vvHBLuPeR8sfDNp
+         Z8mA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4z11zad5DaFctazSPFPKQv5W643F0nu0NtGJMV10VZTyafY+DZB9aMdy6RaRHzIqX6uW8aGaXKGmtfvs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT/4BmTTVFB7G66POD6WSUWM2di6RWRkEGcGzhQq/D4JXCwc52
+	LKFgC3KK+PZecNmE/KrNs/60XuL8CeJRnHqEdWZ4cR504dXQDRFg/lltrffKnbQ=
+X-Gm-Gg: ASbGncujV7KuevNrupir/ECFdIr1ZMRS4c5VQKO7to5z7H8H2/So5j8mW8UFy36NRVE
+	h0cj8ZsNwzDVFvDl9cLp6hqXEVlbGGHE+drk6Nj/XWQl9bgCCdZiQqtlX3FmlBPS2B8MSyVeFwz
+	atXICYCp61riMRLqEhIjQ8TFEBBLkELM79AMw5BZL+ULMMeX+2PwY5/8CrWMNIk0vQ0HGhoWSac
+	/6wAtAoXR7H+luqdPz4gPuE4rgePcVzimkBnrnVjq4NDT5MBjuO6bfhPHYOgcZzbbiBn6silNrp
+	nLgA3Ep/Za2grE1LVFc+oKLxMTTV4wHsolpbb84RqjbB+0CBUHKdvfX/K0msmASla21oFw0Pc3+
+	SUGrArbKiTYw6NkBdrsNAkA==
+X-Google-Smtp-Source: AGHT+IGcbz9EPZCqgrBKNQ8aQeRDCGZyMg6GG7p5JvSkTyWeu0NoTLGjdTFe1Q3xhSgsj7nwDpOzeA==
+X-Received: by 2002:a05:6000:2410:b0:391:4389:f36a with SMTP id ffacd0b85a97d-39d6fd0229bmr9811971f8f.48.1744107612907;
+        Tue, 08 Apr 2025 03:20:12 -0700 (PDT)
+Received: from [192.168.0.2] (host-87-15-70-119.retail.telecomitalia.it. [87.15.70.119])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39d7c6d838bsm4396138f8f.69.2025.04.08.03.20.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 03:20:12 -0700 (PDT)
+From: Angelo Dureghello <adureghello@baylibre.com>
+X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
+Subject: [PATCH v4 0/5] iio: ad3552r-hs: add support for internal ramp
+ generator
+Date: Tue, 08 Apr 2025 12:18:50 +0200
+Message-Id: <20250408-wip-bl-ad3552r-fixes-v4-0-b33c0264bd78@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAr49GcC/4XNTQ6CMBAF4KuYrq1pO0MBV97DuOjPIE0QSGtQY
+ 7i71Y3GSFy+N3nf3FmiGCix7erOIk0hhaHPAdcr5lrTH4kHnzNTQhUClOSXMHLbceOhKFTkTbh
+ S4mig0jWik6VgeTpGeh3ycn/IuQ3pPMTb68skn+0fcJJccHDSGIW1lxp21ty6YCNt3HBiT3NSH
+ w4sOSo7zpO3CALrkn448HZQlAsOZEfLqkShC6tF8+XM8/wAjaWTHUsBAAA=
+X-Change-ID: 20250321-wip-bl-ad3552r-fixes-4a386944c170
+To: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ Olivier Moysan <olivier.moysan@foss.st.com>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>
+Cc: linux-iio@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Angelo Dureghello <adureghello@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2510;
+ i=adureghello@baylibre.com; h=from:subject:message-id;
+ bh=VqkQDwdjjBLXg0xsTy9tSOcc4xRmbJVc0CLEPpdho78=;
+ b=owGbwMvMwCXGf3bn1e/btlsznlZLYkj/8kOQZ064XHzXNd2ubwkCv658uW316gnT28kl19/We
+ 3AEijT+7ShlYRDjYpAVU2SpS4wwCb0dKqW8gHE2zBxWJpAhDFycAjCRDesZ/lfX9vDc1n2qyv7Z
+ 7o/e72MrG09/uFOepHx98orn13zzth5nZHifeUWureeFD+9pxy/pb5fzB9tbG8rnXXnlsD7euT5
+ LmxcA
+X-Developer-Key: i=adureghello@baylibre.com; a=openpgp;
+ fpr=703CDFAD8B573EB00850E38366D1CB9419AF3953
 
-xHCI needs usb_device in this callback so it employed some hacks that
-proved unreliable in the long term and made the code a little tricky.
+Add support to enable the HDL IP core internal ramp generator,
+actually managed by the adi-axi-dac backend. 
 
-Make USB core supply it directly and simplify xhci_endpoint_reset().
-Use xhci_check_args() to prevent resetting emulated endpoints of root
-hubs and to deduplicate argument validation and improve debuggability.
+It works this way:
 
-Update ehci_endpoint_reset(), which is the only other such callback,
-to accept (and ignore) the new argument.
+/sys/bus/iio/devices/iio:device0# echo 1 > buffer0/out_voltage0_en 
+/sys/bus/iio/devices/iio:device0# echo 1 > buffer0/out_voltage1_en                                           
+/sys/bus/iio/devices/iio:device0# echo 1 > buffer0/enable 
 
-This fixes the root cause of a 6.15-rc1 regression reported by Paul,
-which I was able to reproduce locally. It also solves the general
-problem of xhci_endpoint_reset() becoming a no-op after device reset
-or changing configuration or altsetting. Although nobody complained
-because halted endpoints are reset automatically by xhci_hcd, it was
-a bug - sometimes class drivers want to reset not halted endpoints.
+Activating ramp generator:
 
-Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Closes: https://lore.kernel.org/linux-usb/c279bd85-3069-4841-b1be-20507ac9f2d7@molgen.mpg.de/
-Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+/sys/kernel/debug/iio/iio:device0# echo -n backend-ramp-generator > data_source
+
+Deactivating:
+
+/sys/kernel/debug/iio/iio:device0# echo -n iio-buffer > data_source
+
+Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 ---
+Changes in v4:
+- set data source based on hw channels available (model_data),
+- use a string array for data_source debugfs attribute,
+- modify debugfs accessors to use the string array,
+- add new "data_source_available" debugfs attr,
+- fix documentation accordingly.
+- Link to v3: https://lore.kernel.org/r/20250407-wip-bl-ad3552r-fixes-v3-0-61874065b60f@baylibre.com
 
-Is such change acceptable to interested parties?
+Changes in v3:
+- add mutex description,
+- use devm_mutex_init and check for return value.
+- Link to v2: https://lore.kernel.org/r/20250331-wip-bl-ad3552r-fixes-v2-0-cdedb430497e@baylibre.com
 
-It solves the problem completely for me, because as Alan said,
-core calls endpoint_reset() after installing a new config or alt
-to notify HCDs that ignore reset_device(), and also those which
-implement it incompletely, I guess ;)
+Changes in v2:
+- doc, add few words for generic spi driver version,
+- axi-dac, add a separate patch to check cntrl chan validity,
+- axi-dac, return EIO on a wrong source on get, 
+- add a lock on debugfs file access,
+- use const strings and strlen on file access.
+- Link to v1: https://lore.kernel.org/r/20250321-wip-bl-ad3552r-fixes-v1-0-3c1aa249d163@baylibre.com
 
-Unlike clearing EP_STALLED on reset_device() or drop_endpoint(),
-this also fixes cases when another STALL happens after device
-reset and the device is not reset again. For example, I see that
-when I insert a card after the original problem happens.
+---
+Angelo Dureghello (5):
+      iio: dac: adi-axi-dac: add cntrl chan check
+      docs: iio: add documentation for ad3552r driver
+      iio: backend: add support for data source get
+      iio: dac: adi-axi-dac: add data source get
+      iio: dac: ad3552r-hs: add support for internal ramp
 
-At this point I can insert or remove the card, plug or unplug
-the reader and reload ums-realtek in any order, it all works.
+ Documentation/iio/ad3552r.rst      |  73 ++++++++++++++++
+ Documentation/iio/index.rst        |   1 +
+ MAINTAINERS                        |   1 +
+ drivers/iio/dac/ad3552r-hs.c       | 166 +++++++++++++++++++++++++++++++++++--
+ drivers/iio/dac/adi-axi-dac.c      |  54 ++++++++++++
+ drivers/iio/industrialio-backend.c |  28 +++++++
+ include/linux/iio/backend.h        |   5 ++
+ 7 files changed, 322 insertions(+), 6 deletions(-)
+---
+base-commit: eb870a5af7db1e5ca59330875125230b28e630f9
+change-id: 20250321-wip-bl-ad3552r-fixes-4a386944c170
 
-Paul, could you check if this patch works on your hardware too?
-
- drivers/usb/core/hcd.c      |  2 +-
- drivers/usb/host/ehci-hcd.c |  3 ++-
- drivers/usb/host/xhci.c     | 27 ++++++++-------------------
- include/linux/usb/hcd.h     |  2 +-
- 4 files changed, 12 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index a63c793bac21..d2433807a397 100644
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -1986,7 +1986,7 @@ void usb_hcd_reset_endpoint(struct usb_device *udev,
- 	struct usb_hcd *hcd = bus_to_hcd(udev->bus);
- 
- 	if (hcd->driver->endpoint_reset)
--		hcd->driver->endpoint_reset(hcd, ep);
-+		hcd->driver->endpoint_reset(hcd, udev, ep);
- 	else {
- 		int epnum = usb_endpoint_num(&ep->desc);
- 		int is_out = usb_endpoint_dir_out(&ep->desc);
-diff --git a/drivers/usb/host/ehci-hcd.c b/drivers/usb/host/ehci-hcd.c
-index 6d1d190c914d..813cdedb14ab 100644
---- a/drivers/usb/host/ehci-hcd.c
-+++ b/drivers/usb/host/ehci-hcd.c
-@@ -1044,7 +1044,8 @@ ehci_endpoint_disable (struct usb_hcd *hcd, struct usb_host_endpoint *ep)
- }
- 
- static void
--ehci_endpoint_reset(struct usb_hcd *hcd, struct usb_host_endpoint *ep)
-+ehci_endpoint_reset(struct usb_hcd *hcd, struct usb_device *udev,
-+		    struct usb_host_endpoint *ep)
- {
- 	struct ehci_hcd		*ehci = hcd_to_ehci(hcd);
- 	struct ehci_qh		*qh;
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 0452b8d65832..5bf89ba7e2b8 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -3161,11 +3161,10 @@ static void xhci_endpoint_disable(struct usb_hcd *hcd,
-  * resume. A new vdev will be allocated later by xhci_discover_or_reset_device()
-  */
- 
--static void xhci_endpoint_reset(struct usb_hcd *hcd,
-+static void xhci_endpoint_reset(struct usb_hcd *hcd, struct usb_device *udev,
- 		struct usb_host_endpoint *host_ep)
- {
- 	struct xhci_hcd *xhci;
--	struct usb_device *udev;
- 	struct xhci_virt_device *vdev;
- 	struct xhci_virt_ep *ep;
- 	struct xhci_input_control_ctx *ctrl_ctx;
-@@ -3175,7 +3174,12 @@ static void xhci_endpoint_reset(struct usb_hcd *hcd,
- 	u32 ep_flag;
- 	int err;
- 
-+	err = xhci_check_args(hcd, udev, host_ep, 1, true, __func__);
-+	if (err <= 0)
-+		return;
-+
- 	xhci = hcd_to_xhci(hcd);
-+	vdev = xhci->devs[udev->slot_id];
- 	ep_index = xhci_get_endpoint_index(&host_ep->desc);
- 
- 	/*
-@@ -3185,28 +3189,13 @@ static void xhci_endpoint_reset(struct usb_hcd *hcd,
- 	 */
- 	if (usb_endpoint_xfer_control(&host_ep->desc) && ep_index == 0) {
- 
--		udev = container_of(host_ep, struct usb_device, ep0);
--		if (udev->speed != USB_SPEED_FULL || !udev->slot_id)
--			return;
--
--		vdev = xhci->devs[udev->slot_id];
--		if (!vdev || vdev->udev != udev)
--			return;
--
--		xhci_check_ep0_maxpacket(xhci, vdev);
-+		if (udev->speed == USB_SPEED_FULL)
-+			xhci_check_ep0_maxpacket(xhci, vdev);
- 
- 		/* Nothing else should be done here for ep0 during ep reset */
- 		return;
- 	}
- 
--	if (!host_ep->hcpriv)
--		return;
--	udev = (struct usb_device *) host_ep->hcpriv;
--	vdev = xhci->devs[udev->slot_id];
--
--	if (!udev->slot_id || !vdev)
--		return;
--
- 	ep = &vdev->eps[ep_index];
- 
- 	spin_lock_irqsave(&xhci->lock, flags);
-diff --git a/include/linux/usb/hcd.h b/include/linux/usb/hcd.h
-index ac95e7c89df5..179c85337eff 100644
---- a/include/linux/usb/hcd.h
-+++ b/include/linux/usb/hcd.h
-@@ -304,7 +304,7 @@ struct hc_driver {
- 
- 	/* (optional) reset any endpoint state such as sequence number
- 	   and current window */
--	void	(*endpoint_reset)(struct usb_hcd *hcd,
-+	void	(*endpoint_reset)(struct usb_hcd *hcd, struct usb_device *udev,
- 			struct usb_host_endpoint *ep);
- 
- 	/* root hub support */
+Best regards,
 -- 
-2.48.1
+Angelo Dureghello <adureghello@baylibre.com>
+
 
