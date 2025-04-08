@@ -1,124 +1,131 @@
-Return-Path: <linux-kernel+bounces-594878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EB3DA817B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:40:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C04DA817B9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECBDE16E48F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:40:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61EB21B656EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4156E2550D0;
-	Tue,  8 Apr 2025 21:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NUz+y2ea"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E64E255236;
+	Tue,  8 Apr 2025 21:40:32 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D62242930
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 21:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40682550DB
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 21:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744148411; cv=none; b=fxrhPeaT28/nQj03seIgB0Dd4dL3RYO7I3MjzuvDT5r2zTTk0hg+2ZxVYWFH+p24FZLH4EqEkbLomYDqr8DuhlnsX7HGCqmyewUMLHjnVDdXt/tp2m/ThLtT5KfeyO9fcqMiD77AulwwErcxW7O1mV/SNwjRJyrmQ0U/5keS0Jo=
+	t=1744148432; cv=none; b=bAfgLkc2GRX80DXvA/YEbxmYr8xTh84v1iT5tMITEIqVaOAIGDD9Vo4p1omB1K5ZpdOtkKhx4EWKJpQfkr/FQFw5W5k4gmLV8Kv7j+l2G13z5lErqZWpnVa7IFxMF3FqWYqDQvRIz4J42zD+vY+WtX5lUJtAdiBYHR/r0N2NMCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744148411; c=relaxed/simple;
-	bh=SktKjID9PX6Mi7F9PD1XLt4SH9Ai1yb/YoZf11MhWgw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kpQ0SZT8XKqRMC29XZLHVjVonbrZwFvBQxGZfJ559ImAGwszmft3+nHGrncf2iFCRvo/HJXgP+WDcu6PMgk22ThGZFEHxpvz75zjmhi+IfqSfI7L49gB2AZsXZ+Pfc9gB8F42+LZcevO4ResqRmcx6QWBIxyrIFHqjtonaFCYq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NUz+y2ea; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5499bd3084aso5776547e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 14:40:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1744148408; x=1744753208; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gGze2p6ov5nhKjVxLmH8WTXrOTuNddI/56IYEuj8SXE=;
-        b=NUz+y2ea6PoQJpOJHj3Br0Q0aqOoDkMnJ3kJCiCZALMSTz7M7q/qqFpaCTVQDAn+wV
-         LpuLm56wnvG1niApPxCK1jMYLAWY6GKtypQuEYpEonClpENP+knLVvb/wgCyqyGqCKyq
-         GxJVG4yQ/dPw611XQLPWxVI7F89RNOuJta3Rk=
+	s=arc-20240116; t=1744148432; c=relaxed/simple;
+	bh=0Fu2Jby4IZi3f5YFORTDkehXA9IedVEL6Ecbc+Pr6cw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=MBkzbKucfAY5Ljv/ile6kvfGOyVfmZq2QB8gtnPBsM5AaSD6bpyroiuL1pKpssm0qyZ1I3hZw2hn0SiFzZQ85Qc4fKcnxyZJMZZOW3xwoXPtDm43RHN+TSvLsYp7hmx2viNEf6/YDisRX1OQZ+32gJGXDNxTaBY7tjjRlRHV1o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d43541a706so60961785ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 14:40:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744148408; x=1744753208;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gGze2p6ov5nhKjVxLmH8WTXrOTuNddI/56IYEuj8SXE=;
-        b=Vgr/SS+KjQeAafTdegJeFo4LkdBmhLs4S7mrPR+D0C5ms+gSs5LWaoTSyciHRzMflG
-         Ojr8JTqeR4FnsHim37jIQQ32T3GLb+xporpyzv7G+Z+0CK6FyanqPYPZ2Dlv57SolDQ7
-         U3D6EkCsZCsK7aV/94W3adRD+ojyrbZtfDSQFQcWICfBKmcYjkTom7q+qV3aljFcMUPr
-         oOPbC6yfl++MHw7iA0ky33VGV2X7WcHtEewqz5F2I1LkUcOar+aanc6HwSLn75tWuzGN
-         37n1V+uSiXp4Eglvg+lcpExBrM9dFS5dEGXM3hKRrtjgI2ksRDh0U0ghh5tQfATmBmsI
-         Ec4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUax6qcLirkHUbHlnlBN2me7/t2wZ+jM6IL9cRcEjvAANzLW9OxJoldFc2brpo0Drx0E+Eacb480Y6Zbao=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQlqRMkyGTrcVW4dKS2XzRxe94WUzZRdRHY3VSHNIqzX6rGqnf
-	8II4STTlrmQG4h7zHeSEa/3kN2Qa1+yPlD4mV5aEpM5njt5t1uwrp8X6GL3kCrn0ndSbM8exF6c
-	=
-X-Gm-Gg: ASbGnctw2hnKSL17LP5UsILNIH7D2Nigb+nlZBXXigleNobcTEjzm78STjTaw3QJWXM
-	XrrExy5wUocMLTU8hgPPAHryzuaiBKUK1VRes6mIr1IxV7w3nQIouOGRR+Z07Q6citIyQ7XPrpJ
-	Rqgys2V7gw2UnDU/zkj/N0C+jqo8Z19OtU8e/DKWMzwS5h4Jf5Q7sEyzga6cPZNLkGTISJ62uWN
-	4/C4If1c752VMNknscayYJsq/aJPXK06N2YI4Gw4DvMcZy/6jfLrcEi1aWSSgh6Rhmdh6Wa4TQT
-	UpEFBw8EX6ppnWX1uGNM2QMJvjx+uj6IDEFSOhI0nFyhggr+cjdPkUWPwi9VkDs/cEVi9NLmAh4
-	4NjaQX2U=
-X-Google-Smtp-Source: AGHT+IFb1C5khOvzPRxQL6jhQQZC9tdPyee/u1j7xEmpom4dvwiIhlo0sd8gWb5gYkBWqQyefKRI9g==
-X-Received: by 2002:a2e:b893:0:b0:30b:8f84:49c5 with SMTP id 38308e7fff4ca-30f4504097cmr339841fa.28.1744148407825;
-        Tue, 08 Apr 2025 14:40:07 -0700 (PDT)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30f031ce768sm20556341fa.89.2025.04.08.14.40.07
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Apr 2025 14:40:07 -0700 (PDT)
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-549b116321aso6912007e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 14:40:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUK3z/wmfqLnA9CTSmuLmShAf/3FDBayWguzqD3kFBTYZ/bTcjInHF1nVmw7NfIVTUnNdWcqBAqgdwrvt4=@vger.kernel.org
-X-Received: by 2002:a05:6512:ba5:b0:545:1db5:f224 with SMTP id
- 2adb3069b0e04-54c444b6994mr53176e87.11.1744148406896; Tue, 08 Apr 2025
- 14:40:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744148430; x=1744753230;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aG6mXlXpyxc14RmTlGpoycr6Zv8mM/crazzDdicDGG8=;
+        b=QzrEIhRZz5lzgS/4pM6LOXo+Svq0R7olm0r7Zrf8cSJeba/OHnB6bjQ9Kx8iOyOVAm
+         wFeFWakb4fHvkSlENn0vsHofZbY8ch3Tt0JQY/I4p3JCa4eetXYjVKp9+Y+J3iwt5HN0
+         dCObjsmYS7Uy72ePsCNKJRqp72UD21v2hkO/AA3LLxwXqzciz1Y3dGe1jrijawxwzHmJ
+         KdGQMNpI9jTX5JPa8wkt3LtcMNNIt1/7CQeJHHrrCjdBa6ai1cxo+lOD21Dr/qXNpIq3
+         7koJLx2qjEaOAhvXoMDt+4dU3X4FjwbtDqNBcpMjTY5xB8BUlHLJOvyaetgkwQfONhAJ
+         MlYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkmR7ueJs6kIp/8UUKvwhWfZeGKkub7mov4hfjypo6ttPSL884DxnxfvAvTi4h6Q+mKtcNOZ7M6Ng+xWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGkC82dgKsCKV6xxi1GbwUKonbbv6AR+3XY5K0LBRfYt/UADHT
+	vxcKehfVyDX6QgO3rrz+xvCpzYpzVuAnepCJHN2xSLcmjBweoP6ZFM0pR155rHawNgq/cvSybDt
+	K5jAwqDYzGS7s5uNiqijZXIed7aNJilwycdr+G6l2Bg9QO/cKN5MrE/E=
+X-Google-Smtp-Source: AGHT+IHD9LAcPC3LEF/tGMUuGkQYrgbQILB4qAgmVrRZN7HmVaXNsax6qpqhnf6CeymqTo+nAmXUAO7KnDQgGyQlsclAw4nligEg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225-spx-v1-1-e935b27eb80d@chromium.org> <12647854.O9o76ZdvQC@radijator>
- <Z_Tgp8L_8goc63K1@pampelmuse> <Z_TtXaRnaU1zXbXv@pampelmuse>
- <Z_T8OiLQzKDGhOJs@pampelmuse> <MW5PR13MB5632E13F8F5B0B2B6DE3D16CFDB52@MW5PR13MB5632.namprd13.prod.outlook.com>
- <2025040816-pork-lisp-7b66@gregkh>
-In-Reply-To: <2025040816-pork-lisp-7b66@gregkh>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 8 Apr 2025 23:39:55 +0200
-X-Gmail-Original-Message-ID: <CANiDSCs0timX+XN8xNsMKEXnaj58+FpfL791UyFo7djNOE6dLQ@mail.gmail.com>
-X-Gm-Features: ATxdqUFKlgiTWgAKq3QwhMHai6z7obJaUq6teJeVC8rjjJ6u-OBXDk3g8rw1cDM
-Message-ID: <CANiDSCs0timX+XN8xNsMKEXnaj58+FpfL791UyFo7djNOE6dLQ@mail.gmail.com>
-Subject: Re: spdxcheck: python git module considered harmful (was RE: [PATCH]
- scripts/spdxcheck: Limit the scope of git.Repo)
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Bird, Tim" <Tim.Bird@sony.com>, Gon Solo <gonsolo@gmail.com>, 
-	=?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
-	Thomas Gleixner <tglx@linutronix.de>, 
-	"linux-spdx@vger.kernel.org" <linux-spdx@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+X-Received: by 2002:a05:6e02:3b07:b0:3d5:8922:77a0 with SMTP id
+ e9e14a558f8ab-3d77c2a8cd3mr7095015ab.18.1744148429834; Tue, 08 Apr 2025
+ 14:40:29 -0700 (PDT)
+Date: Tue, 08 Apr 2025 14:40:29 -0700
+In-Reply-To: <67f4d325.050a0220.396535.0558.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67f597cd.050a0220.258fea.0003.GAE@google.com>
+Subject: Re: [syzbot] [net?] WARNING in __linkwatch_sync_dev
+From: syzbot <syzbot+48c14f61594bdfadb086@syzkaller.appspotmail.com>
+To: andrew@lunn.ch, davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	jv@jvosburgh.net, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, sdf@fomichev.me, 
+	stfomichev@gmail.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Tim
+syzbot has found a reproducer for the following issue on:
 
-On Tue, 8 Apr 2025 at 20:12, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+HEAD commit:    7702d0130dc0 Add linux-next specific files for 20250408
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=138fa7e4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=91edf513888f57d7
+dashboard link: https://syzkaller.appspot.com/bug?extid=48c14f61594bdfadb086
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11520398580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b1323f980000
 
-> > Let me know if anyone objects to me working up a refactoring of spdxcheck.py
-> > eliminating the use of the python 'git' module, and submitting it for review.
->
-> No objection from me!
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/0603dd3556b9/disk-7702d013.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d384baaee881/vmlinux-7702d013.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1ac172735b6c/bzImage-7702d013.xz
 
-SGTM. Depending on how much time you need to implement it, we could
-land something with `del` as Gon proposed. I can send a v2 if needed.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+48c14f61594bdfadb086@syzkaller.appspotmail.com
 
-Let me know what you think
+------------[ cut here ]------------
+RTNL: assertion failed at ./include/net/netdev_lock.h (56)
+WARNING: CPU: 1 PID: 12 at ./include/net/netdev_lock.h:56 netdev_ops_assert_locked include/net/netdev_lock.h:56 [inline]
+WARNING: CPU: 1 PID: 12 at ./include/net/netdev_lock.h:56 __linkwatch_sync_dev+0x30d/0x360 net/core/link_watch.c:279
+Modules linked in:
+CPU: 1 UID: 0 PID: 12 Comm: kworker/u8:0 Not tainted 6.15.0-rc1-next-20250408-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Workqueue: bond0 bond_mii_monitor
+RIP: 0010:netdev_ops_assert_locked include/net/netdev_lock.h:56 [inline]
+RIP: 0010:__linkwatch_sync_dev+0x30d/0x360 net/core/link_watch.c:279
+Code: 7c fe ff ff e8 f4 63 cc f7 c6 05 83 28 53 06 01 90 48 c7 c7 60 5c 51 8d 48 c7 c6 8a 9b 67 8e ba 38 00 00 00 e8 04 6b 8b f7 90 <0f> 0b 90 90 e9 4d fe ff ff 89 d9 80 e1 07 38 c1 0f 8c 19 fd ff ff
+RSP: 0018:ffffc90000117710 EFLAGS: 00010246
+RAX: 6875daac7c816500 RBX: 0000000000000000 RCX: ffff88801c685a00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff81824ed2 R09: fffffbfff1d7a700
+R10: dffffc0000000000 R11: fffffbfff1d7a700 R12: 0000000000000000
+R13: dffffc0000000000 R14: ffff888034096008 R15: ffff888034096000
+FS:  0000000000000000(0000) GS:ffff888125089000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fa9d1a29440 CR3: 0000000075fc0000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ethtool_op_get_link+0x15/0x60 net/ethtool/ioctl.c:63
+ bond_check_dev_link+0x1fb/0x4b0 drivers/net/bonding/bond_main.c:864
+ bond_miimon_inspect drivers/net/bonding/bond_main.c:2734 [inline]
+ bond_mii_monitor+0x49d/0x3170 drivers/net/bonding/bond_main.c:2956
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xac3/0x18e0 kernel/workqueue.c:3319
+ worker_thread+0x870/0xd50 kernel/workqueue.c:3400
+ kthread+0x7b7/0x940 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
 
-
--- 
-Ricardo Ribalda
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
