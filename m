@@ -1,146 +1,120 @@
-Return-Path: <linux-kernel+bounces-593131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B779A7F594
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:05:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F5A5A7F599
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8EEB17BCEC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:05:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0EAE17BFD7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6997A261392;
-	Tue,  8 Apr 2025 07:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4C525FA23;
+	Tue,  8 Apr 2025 07:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLXn6B/j"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HhBKXmf2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07814261360;
-	Tue,  8 Apr 2025 07:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54B725F798;
+	Tue,  8 Apr 2025 07:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744095905; cv=none; b=cTS0E4RABbwEgmEVWu1k2MQYk1REOrDtkAS8+DCbYpQkWrPcRTL/tB/NZvaHVO7wYSTVAJxW1fRVK5IASPd4IWNQwM2qPvWVXyTBXJAFXjSIgw31i/R3YAM9G3rbdSsmu+tDE+LCl3WmWVllm1U1gs5EsiwLe1sD6UC+I4azwWI=
+	t=1744095926; cv=none; b=lWDclQqvTc/AVn3PIOiPS4CAHF/Ogu+rzmSabv5iIgwBVvIDvxU81dMWxMRc2jcqYCM58dLjb5059HsVz4D9uv3BKkRGnq8kxwNxxYIZQoDx8qG1aesam8ikEWsNchLAecXVVpuCzyQ7U/1K/MLSpREpblNaDk3ZTtQv7hEL7bU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744095905; c=relaxed/simple;
-	bh=YCGDQojD8nya6OBnR7iagaQHAlVaXzUTMmVsiIk5blE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jeSMeICr+ntXjNdIzeO2PpFDfCSZA9Ts8Ov6CJKsIMhdIehylqccrkA3hhsZoiLLGq7/HmHtlOXUcHABmKDmjwu7fXepgj3QwQKLOqFXAZFNAPk+hfsBNCFK3KFl244rb3RtvkpFRMRILg3x6Y/+fky/YnRpucY1GncXv1qDF0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLXn6B/j; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30c461a45f8so51166551fa.1;
-        Tue, 08 Apr 2025 00:05:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744095902; x=1744700702; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i11n14/4d12JDY2DmtQ7aKWTPCB2K2tXSiZI90yPfyM=;
-        b=kLXn6B/j00FfQm/HeFGKXD5QtYhE7Qs0tBfpyccMCeYH4EqY3+Zo3piQ71gsx6DLXQ
-         T24z0/yWlJ3ZdNsHEAG7/RLyTa7P/iSxclGjT/A3LJrAtSJLhCKPgunUJVZeIUUmoh0A
-         qClQLFn5yzkeZTEYPcU6z/g3u+e8R3fxO6nyngTbcrv8mpn9PMxv8hAuWSXkasDnuGiR
-         vUJ9FuiNrrtnzfkNPEv7hGDt2+WBOEHbUreE5StpzUg4hONdR5N3ZYqKSHFOgP+qDC5c
-         qYVNi79Cl6bwN0/RpKpox5LrFNPLrhCp3cvPrD+c6NaCcsnwqKbynGWZPGcqy9VR7oIR
-         I67w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744095902; x=1744700702;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i11n14/4d12JDY2DmtQ7aKWTPCB2K2tXSiZI90yPfyM=;
-        b=d/35hNEUP2p0izjT44I+IBCG8npJtrU7T3w3LuixL1NBrkhc5dPKe2azA+BGqabuTw
-         ZL6VJCvJ7YcqD6FKqip8yUpgtfLr/HiZEJ9p/nhgcK5BVZ5dDPBlvD3KvWD2Py+NeEjJ
-         /Kh7J0tBwJDJip0BVWFij9W1xkB688BtPe1k8O1m4R8MY5Kg6LyrAR7v3/zltrGJ/YKw
-         bVEJLRm/zwthyisla0pGJJcbKHSlH9bPy35pq1vfE3uglgpKNQgJdu0Req8+k6Sn4QKi
-         +0gPeJdpXzfl0vS5OPgmAuJV9ttd2ZW/u6OpwGbYsLzcCygO6rLK6xt7aIut+T0GpQCO
-         4WhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOjKKBPzMaXLpmDMiiD7Rwpht7QENQu0HQvKFrXaqkAleS4Mz8H4vmDLyNLVUF/s6LzmN6grK72vOflEAK@vger.kernel.org, AJvYcCX9j1Oe5lCul70arN/dIYSkNOY7DzhCTcNR2QiBCGzLxFKoZKhk7jk/dIj7tSmDOzaJxKwuvzIATuho@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4usDNOuNb+DOgoVguk1cVFmZbSI7DZahy1HwCe3/47/edUZfG
-	CYGgBPTpolJ/vsjcCWeXeU+HD/DDnGHfwj7QMWwz5HVUP1CRIAJ1
-X-Gm-Gg: ASbGncvYquUKRGYfebGdI6KEt7cHWPk+QrwhvAUZgJM/l1b7M9Qox3KYOfOQZ164iaf
-	nrtg47f8AVNwNzIOtn9D66RhnlN3fXv2mZ6epIlxuXPrSE89Ji5NSJdClH1S7ckq2xL9s2CmFJw
-	JBzW9b4s1JvNRuC7QImgKMQKX2Qr5P4vjOAr5CsKiLeVF7eJ8DUFG2gN6S6G4BWlHHW0W0cetoW
-	KISPuUfCYa8FRqs9P95KJ0b6Ps2D4eKrXLH6IMt5xy9wrSUlKFHKpueMA4kSqGfKZU28ES/JA4A
-	twa898aJduUSyoyRl41mvHCLjCY7viZEpBbOC7CHNJxLSTdmVLDYNgbBa78/M0chQiscVjhm0+O
-	4NiBm5Hx5Mlcd
-X-Google-Smtp-Source: AGHT+IFweT18OMKEwMuPZL1sAyNuy95xRHNHIIz/+725Kq7sjzQyRwU4H6VFXOnMdyuzO5rCuDw9xg==
-X-Received: by 2002:a05:651c:989:b0:309:2ed:72df with SMTP id 38308e7fff4ca-30f0bf50394mr40218871fa.24.1744095901929;
-        Tue, 08 Apr 2025 00:05:01 -0700 (PDT)
-Received: from [192.168.1.11] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30f031bcd37sm19252841fa.76.2025.04.08.00.05.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 00:05:00 -0700 (PDT)
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-Date: Tue, 08 Apr 2025 09:04:30 +0200
-Subject: [PATCH v3 3/3] MAINTAINERS: add entry for Sitronix ST7571 LCD
- Controller
+	s=arc-20240116; t=1744095926; c=relaxed/simple;
+	bh=GciUSmDoiyOOH8RESRqc/QgBNQpo9ZXAnJgR53gp4So=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c4kPITsppd0ljVEi6iK6O3YSVSIAnTX+wvF5wlp0zbIFdnoxi5FU62aIxfxh0mUbdGafpV/Zf53mC7etxdyTP0JgZT+XQyQb1+b1V9HQGz9pMIMqmphjt0aKCIoWfeYf1UtJUMY3YTH17W9QcmIRvCp+yhR0DnP0rADsN4SDEQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HhBKXmf2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EF76C4CEE5;
+	Tue,  8 Apr 2025 07:05:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744095926;
+	bh=GciUSmDoiyOOH8RESRqc/QgBNQpo9ZXAnJgR53gp4So=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HhBKXmf2loebWjpDATXkQowrCtc9eRDG2jooHYgtnX/ND1fwM/DXn9ndz99JTWBG0
+	 dSDhLzo1RIDGNLhIkzX8H6TPpt/RftkdzcmtW52paJwsb4gAUum2S9tl3cmKoTbaGC
+	 n3TwbNINdKoCB2v85KYPwPAdZbpIb1HiK6Fzy+GEQhlIWlp175/ce8lZbWYvO6XH6k
+	 jQW5eAp/68D5fzVZJzh3D6sMt+XLmkAf305YhMpxsH6UDmE5SN8DPqjUix8SZj9EQb
+	 c5iUx+hYhSvGYb4t2xOy59B+Vt3loE44+lx+gF7f73jK9JiC0W6f62hei2NvehaEt6
+	 E4UOOmnt45OHQ==
+Date: Tue, 8 Apr 2025 09:05:24 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 3/3] iio: imu: st_lsm6dsx: Fix wakeup source leaks on
+ device unbind
+Message-ID: <Z_TKtP_5S99Nakrs@lore-desk>
+References: <20250406-b4-device-wakeup-leak-iio-v1-0-2d7d322a4a93@linaro.org>
+ <20250406-b4-device-wakeup-leak-iio-v1-3-2d7d322a4a93@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250408-st7571-v3-3-200693efec57@gmail.com>
-References: <20250408-st7571-v3-0-200693efec57@gmail.com>
-In-Reply-To: <20250408-st7571-v3-0-200693efec57@gmail.com>
-To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=954;
- i=marcus.folkesson@gmail.com; h=from:subject:message-id;
- bh=YCGDQojD8nya6OBnR7iagaQHAlVaXzUTMmVsiIk5blE=;
- b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBn9MqSKP5h8IxUt3tj8KSjZst0/DK3ePN4fRnIZ
- RaulY19LpuJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCZ/TKkgAKCRCIgE5vWV1S
- MusgD/0Rm5O0xsoOa0hrInGGh3xTpRan1/qYSMbzqbntwNtFVuAJS2qFMQHUzjRRo876g2wBhrl
- tVHdOa5Mws9M9WDVXV9gl3Y3YUUhb3A73bPu4fcYFezB+l8EKIM/tWCkccAAEdurADlnhlUJT1g
- 9KZ433Vf7QjooRYWXmrfs0V2RVyLwKpwtYsncODbhn/psZLl+OCjuEUafXaVUOAnN1HIQgb1vtv
- PyTZKZ6ksGEdozDboo9Y6HU2R++4LO+3ud6mfg+g98HXE02moXFB0N8d8UK8HBfh7OrqNTBcP5a
- kCYoRxhFCvXIy98IT/aE3tlC4O1kvV8DD2JoXLnb6mWFqfeBxOm5elx3apa1NNaE/xJgXVeDA1x
- ZsDYD5aJ5ph61JeRqUkxpO10nrVKxVnSWvfQKkbOA+/ImL7Fy4jcQ1s+YyinLyqWPRJf3dZU5W8
- rfQUFJ/fZla7z/ZqWEmFCm8Rj+zua78TXUKn7ZR8lNmngNo05TuBSkfwmp0NAJrLPz5mNZJ2Z8M
- Ogpc71FndO5Ay+Kx8xbmF+69baWDWfoA/WKnsmZKWKbsn4EhNRQPm4mpFcXdVvlu2poBaudsBCy
- 53CRD1jqvNzr/IIC/B5mzSoY9ts5CJpzUFIRrUEYauwXGnHa/AQY4UsfKlFyNH8uRNsOhZcUEc2
- QrrWkW8xBQ2fjnA==
-X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
- fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="s3vjrGR+QtVN7rVS"
+Content-Disposition: inline
+In-Reply-To: <20250406-b4-device-wakeup-leak-iio-v1-3-2d7d322a4a93@linaro.org>
 
-Add MAINTAINERS entry for the Sitronix ST7571 dot matrix LCD
-controller.
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
----
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+--s3vjrGR+QtVN7rVS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 889bd4a59551c9bc125f94944a6e1c7e3ef2de83..eeae24fda846b9f63400ebb08c3fa7f02f3f4b19 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7572,6 +7572,12 @@ T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
- F:	Documentation/devicetree/bindings/display/sitronix,st7586.txt
- F:	drivers/gpu/drm/tiny/st7586.c
- 
-+DRM DRIVER FOR SITRONIX ST7571 PANELS
-+M:	Marcus Folkesson <marcus.folkesson@gmail.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/display/sitronix,st7571.yaml
-+F:	drivers/gpu/drm/tiny/st7571-i2c.c
-+
- DRM DRIVER FOR SITRONIX ST7701 PANELS
- M:	Jagan Teki <jagan@amarulasolutions.com>
- S:	Maintained
+> Device can be unbound, so driver must also release memory for the wakeup
+> source.
 
--- 
-2.49.0
+Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
 
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c b/drivers/iio/i=
+mu/st_lsm6dsx/st_lsm6dsx_core.c
+> index 4fdcc2acc94ed0f594116b9141ce85f7c4449a58..96c6106b95eef60b43eb41fef=
+67889d44d5836db 100644
+> --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
+> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
+> @@ -2719,8 +2719,11 @@ int st_lsm6dsx_probe(struct device *dev, int irq, =
+int hw_id,
+>  	}
+> =20
+>  	if (device_property_read_bool(dev, "wakeup-source") ||
+> -	    (pdata && pdata->wakeup_source))
+> -		device_init_wakeup(dev, true);
+> +	    (pdata && pdata->wakeup_source)) {
+> +		err =3D devm_device_init_wakeup(dev);
+> +		if (err)
+> +			return dev_err_probe(dev, err, "Failed to init wakeup\n");
+> +	}
+> =20
+>  	return 0;
+>  }
+>=20
+> --=20
+> 2.45.2
+>=20
+
+--s3vjrGR+QtVN7rVS
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZ/TKswAKCRA6cBh0uS2t
+rOgiAP0XRypFHUm+gAEZRrabccqH17B5Tp2XEjsujDO9TsmlMwD+LQBZVclZuoGz
+s7oaY38hSzzhd5wAUkrhmyRXALvwDAc=
+=FnZy
+-----END PGP SIGNATURE-----
+
+--s3vjrGR+QtVN7rVS--
 
