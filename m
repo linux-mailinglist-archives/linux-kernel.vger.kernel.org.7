@@ -1,128 +1,151 @@
-Return-Path: <linux-kernel+bounces-593409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E22C7A7F8F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:05:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 498E7A7F8D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37EC33B2055
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:58:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60BA1189E322
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D28221DA0;
-	Tue,  8 Apr 2025 08:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DZ5qJ+c0"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D28C33CA
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE332263F51;
+	Tue,  8 Apr 2025 09:00:16 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632762185BE
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 09:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744102743; cv=none; b=VaHYxv1kdzjlkSje/j/KVG+w9Xbs/noKwROTLqKLunFX9xv/ar7nOf40kqtwmvj/o7jNYzIGCsjusUQyw4Z/uBdNt12P/0OywX/exZVc9NdrogVEolt2msemaBc3Nkycp+Oqubwq7snPbwOF/3rT2mtAiU0C8Ev28vIHzHURuqw=
+	t=1744102816; cv=none; b=cQ4iRxp6C0VBPhw9bnrW6lI1RpXLekolPnPhKoT8AWc72zWo8ETbi2sl3jKnEPLOT49+AyAxc2Lr29F0tesHj4ANHx0axhvQjQ/PR2qt0GyZIhupWk1kTvzzNmRQD8IITOTndnI7k/z795oEIqDIH3UJ8YAiX8CHzK7SxDglAd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744102743; c=relaxed/simple;
-	bh=72jwfitser1aQb9gjC6pY+/0SixGdsnc79rvI3BbmAk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=q2ro/kJZGSFdAXFeo27RAi9iG6yqGfGKhONDU0jpWZ97jFJkWTzHNxdnOwfj6I7BDCFRJ9ueZak2kWtjC2RNDduGYHXBHhOi0ggZ0l/7IcuQFGXLdpA1Wamu4gIcXQXrI/Avl8xq6loy5vuV8hZ8pbVZovRfSJ1A8lX8/FZIcLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DZ5qJ+c0; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=zKhG9
-	qiEMRLJS/mGX8jO8pyM5ReATHHbxqdxWWXsPx8=; b=DZ5qJ+c0PnOUua2pWcX9w
-	MAkfLRn2tolNjzPPBDRwOJ/120UmLBKlssIdgsWiCq1umm/otz5XdwNI/7UuOqk+
-	vo7XJPCRlnBwwkRmiUkM3XWUhfPqmuHgXBSpc4W5uJ3P5SxJboDpkQmPLNr8xsmA
-	xl/yBB/UfBP2cuGTFh5E0g=
-Received: from localhost (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wCHF00m5fRnQGxPEw--.37725S2;
-	Tue, 08 Apr 2025 16:58:14 +0800 (CST)
-From: Xavier <xavier_qy@163.com>
-To: dev.jain@arm.com,
-	akpm@linux-foundation.org,
-	baohua@kernel.org,
-	ryan.roberts@arm.com,
-	catalin.marinas@arm.com,
-	ioworker0@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	will@kernel.org,
-	xavier_qy@163.com
-Subject: [PATCH v2 1/1] mm/contpte: Optimize loop to reduce redundant operations
-Date: Tue,  8 Apr 2025 16:58:09 +0800
-Message-Id: <20250408085809.2217618-2-xavier_qy@163.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250408085809.2217618-1-xavier_qy@163.com>
-References: <027cc666-a562-46fa-bca5-1122ea00ec0e@arm.com>
- <20250408085809.2217618-1-xavier_qy@163.com>
+	s=arc-20240116; t=1744102816; c=relaxed/simple;
+	bh=nl1hpaXBm54KjyizKr5foqeIrLkVu4aS5xEBVQ231t8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=A1QG+vdq2rGWN7O8JyKWXKwgdNxVHri21uf0jvEhxindYjWBV46sRpZHU7NTqI3Uu7JQFTXgqy8Y9eYJI0B2d5lZeQyvtSgTXz3qIj/7VkDoWnwrg53W5agjFFHYxW713Rw6eNfA+Qek5MPOiBrf6RFTaWQWfzlhyQ0qVVcoErU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1u24nS-0001k3-Nf; Tue, 08 Apr 2025 10:59:06 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1u24nR-003tta-2c;
+	Tue, 08 Apr 2025 10:59:05 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1u24nR-0003e6-2L;
+	Tue, 08 Apr 2025 10:59:05 +0200
+Message-ID: <710569e305924a0a84e9792bc779d37a24011477.camel@pengutronix.de>
+Subject: Re: [PATCH v8 3/7] memory: Add STM32 Octo Memory Manager driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Patrice Chotard <patrice.chotard@foss.st.com>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>
+Cc: christophe.kerello@foss.st.com, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org
+Date: Tue, 08 Apr 2025 10:59:05 +0200
+In-Reply-To: <20250407-upstream_ospi_v6-v8-3-7b7716c1c1f6@foss.st.com>
+References: <20250407-upstream_ospi_v6-v8-0-7b7716c1c1f6@foss.st.com>
+	 <20250407-upstream_ospi_v6-v8-3-7b7716c1c1f6@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCHF00m5fRnQGxPEw--.37725S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ww18ZFWxZrykJw17ZFy3twb_yoW8Xw4xpr
-	y8CwnIqr17JFnxG393Jw1rJry5Jws3tFW7ArnIya1UJryF9rn5u34Fk34a9rWUGrZ5X3y8
-	Zw1UtrnruFW7CF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piXyCJUUUUU=
-X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/1tbiTQwpEGf03i7+0gAAs3
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-This commit optimizes the contpte_ptep_get function by adding early
- termination logic. It checks if the dirty and young bits of orig_pte
- are already set and skips redundant bit-setting operations during
- the loop. This reduces unnecessary iterations and improves performance.
+On Mo, 2025-04-07 at 15:27 +0200, Patrice Chotard wrote:
+> Octo Memory Manager driver (OMM) manages:
+>   - the muxing between 2 OSPI busses and 2 output ports.
+>     There are 4 possible muxing configurations:
+>       - direct mode (no multiplexing): OSPI1 output is on port 1 and OSPI=
+2
+>         output is on port 2
+>       - OSPI1 and OSPI2 are multiplexed over the same output port 1
+>       - swapped mode (no multiplexing), OSPI1 output is on port 2,
+>         OSPI2 output is on port 1
+>       - OSPI1 and OSPI2 are multiplexed over the same output port 2
+>   - the split of the memory area shared between the 2 OSPI instances.
+>   - chip select selection override.
+>   - the time between 2 transactions in multiplexed mode.
+>   - check firewall access.
+>=20
+> Signed-off-by: Christophe Kerello <christophe.kerello@foss.st.com>
+> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+> ---
+>  drivers/memory/Kconfig     |  17 ++
+>  drivers/memory/Makefile    |   1 +
+>  drivers/memory/stm32_omm.c | 474 +++++++++++++++++++++++++++++++++++++++=
+++++++
+>  3 files changed, 492 insertions(+)
+>=20
+[...]
+> diff --git a/drivers/memory/stm32_omm.c b/drivers/memory/stm32_omm.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..db50aeffb0aa32a9d51a205d8=
+ba30ab2299e1c34
+> --- /dev/null
+> +++ b/drivers/memory/stm32_omm.c
+> @@ -0,0 +1,474 @@
+[...]
+> +static int stm32_omm_disable_child(struct device *dev)
+> +{
+> +	static const char * const resets_name[] =3D {"ospi1", "ospi2"};
+> +	struct stm32_omm *omm =3D dev_get_drvdata(dev);
+> +	struct reset_control *reset;
+> +	int ret;
+> +	u8 i;
+> +
+> +	ret =3D stm32_omm_toggle_child_clock(dev, true);
+> +	if (!ret)
+> +		return ret;
+> +
+> +	for (i =3D 0; i < omm->nb_child; i++) {
+> +		reset =3D reset_control_get_exclusive(dev, resets_name[i]);
+> +		if (IS_ERR(reset)) {
+> +			dev_err(dev, "Can't get %s reset\n", resets_name[i]);
+> +			return PTR_ERR(reset);
+> +		};
+> +
+> +		/* reset OSPI to ensure CR_EN bit is set to 0 */
+> +		reset_control_assert(reset);
+> +		udelay(2);
+> +		reset_control_deassert(reset);
+> +
+> +		reset_control_put(reset);
 
-Signed-off-by: Xavier <xavier_qy@163.com>
----
- arch/arm64/mm/contpte.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+With this reset_control_put(), you are effectively stating that you
+don't care about the state of the reset line after this point. To
+guarantee the reset line stays deasserted, the driver should keep the
+reset control around.
 
-diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
-index bcac4f55f9c1..034d153d7d19 100644
---- a/arch/arm64/mm/contpte.c
-+++ b/arch/arm64/mm/contpte.c
-@@ -152,6 +152,18 @@ void __contpte_try_unfold(struct mm_struct *mm, unsigned long addr,
- }
- EXPORT_SYMBOL_GPL(__contpte_try_unfold);
- 
-+#define CHECK_CONTPTE_FLAG(start, ptep, orig_pte, flag) \
-+	do { \
-+		int _start = start; \
-+		pte_t *_ptep = ptep; \
-+		while (_start++ < CONT_PTES) { \
-+			if (pte_##flag(__ptep_get(_ptep++))) { \
-+				orig_pte = pte_mk##flag(orig_pte); \
-+				break; \
-+			} \
-+		} \
-+	} while (0)
-+
- pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
- {
- 	/*
-@@ -169,11 +181,17 @@ pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte)
- 	for (i = 0; i < CONT_PTES; i++, ptep++) {
- 		pte = __ptep_get(ptep);
- 
--		if (pte_dirty(pte))
-+		if (pte_dirty(pte)) {
- 			orig_pte = pte_mkdirty(orig_pte);
-+			CHECK_CONTPTE_FLAG(i, ptep, orig_pte, young);
-+			break;
-+		}
- 
--		if (pte_young(pte))
-+		if (pte_young(pte)) {
- 			orig_pte = pte_mkyoung(orig_pte);
-+			CHECK_CONTPTE_FLAG(i, ptep, orig_pte, dirty);
-+			break;
-+		}
- 	}
- 
- 	return orig_pte;
--- 
-2.34.1
+Are you requesting and dropping the reset controls here so the child
+drivers can request them at some point? If so, there is an
+acquire/relase mechanism for this:
 
+https://docs.kernel.org/driver-api/reset.html#c.reset_control_acquire
+
+Either way, reset_control_get/put() belong in probe/remove.
+
+regards
+Philipp
 
