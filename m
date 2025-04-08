@@ -1,221 +1,126 @@
-Return-Path: <linux-kernel+bounces-593352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81422A7F844
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:47:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C7C2A7F83B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01DAD19E0B23
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:44:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE2484411EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953F4264637;
-	Tue,  8 Apr 2025 08:43:39 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36B4263F47;
+	Tue,  8 Apr 2025 08:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="zLjGAeR0"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B272641ED
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCCFB1CF8B
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744101819; cv=none; b=VXq3urB1tbs+hAb1OtTqt6aobf4SwDjCvcW/kv9ylm2ScMRKF/xtnd2dHGJaGzUyIH5gVtzioPjYkVUqYyjK3WbyxtxDdgz/n+SobO4JHNkdbxZ3R60U+i1em7rkyWkopomlBl+nZ78cjlmC5NqIxholal84ie7I0A2RCWngxyo=
+	t=1744101808; cv=none; b=GQ9wSK9K6kQ8FhRnxLeyiAOvFxRwe/lvBWvrkaC400xZpLzvU97TOcJ2fhSZuSXac/uLBKiZ7Rfl/ZoI3GU3MFsYqYB8KsgxnRNUrvgWg1MpQvIha3kkgXPdd2/EYW809GlgaA4NaMTAylReZAe1YwuYM7lK70VTenAeMd/Wub8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744101819; c=relaxed/simple;
-	bh=IigLZ85NtC6nPMgorphx/w1EgLYavay6s9uBp6J7T3Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PWEN3IbVj/i2hL5cttaC67Zsj8I0bpko0oqBW6i5hhHJJG5O2XyYxu5xrmwM2pjZJiO2Vl9M374g8mx6tkqHAFJEpIgn+h5e/RM2mGddkNFUo+pzdySVLl3iBRoumH+5kYLizvFI1qW0qRGYaqAYewRMeKzTZmvElcfbCuLdzVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from ubt.. (unknown [210.73.43.1])
-	by APP-05 (Coremail) with SMTP id zQCowAA3dg6p4fRnGBEpBw--.8246S4;
-	Tue, 08 Apr 2025 16:43:23 +0800 (CST)
-From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexandre Ghiti <alex@ghiti.fr>
-Cc: Deepak Gupta <debug@rivosinc.com>,
-	Ved Shanbhogue <ved@rivosinc.com>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V6 2/2] riscv: mm: Add uffd write-protect support
-Date: Tue,  8 Apr 2025 16:43:01 +0800
-Message-Id: <20250408084301.68186-3-zhangchunyan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250408084301.68186-1-zhangchunyan@iscas.ac.cn>
-References: <20250408084301.68186-1-zhangchunyan@iscas.ac.cn>
+	s=arc-20240116; t=1744101808; c=relaxed/simple;
+	bh=GXK3ZGW9tf6Q9chAz2456V+BotYGmE/J2SwhelVDqRc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TCBMZecVWACoOocPcojWqhYZxrvj9nzPjl87alQcN7EUKnoiaxaIGaoHL2Q9OvmPY1mM5z6DnNMDUcvplbGxtv2bonzqCVLYQoFGv8H2CSCMJhthmGPMNXnfsObQqDiTbviwUfhEOrbFKjUGdgKVhy9koedfz0rGtanY65d4ol8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=zLjGAeR0; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39c2688619bso3191985f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 01:43:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744101804; x=1744706604; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OePFKTyhdQdf/eaJWtXJyGR/G6HZO3R3hL0HNN3AkLo=;
+        b=zLjGAeR0zAq5ImoYHeZVbsy2fU6FueyrusA0simpCwgi7YYHc+LsdkjrvovnMz3j7W
+         QW1YRqYFmbM4gLqHAFSTBjlNv34Ei4SF36EOV+sJpnKuPoE0ChU3/S6Yy22KM+wxGK9l
+         cbZYvIcEVRDR/+tJdtGNnB7J/GQ2vieqD25U6/8VqG5/lrveTxj6t1oqxB056XinUjYZ
+         zHerYN5YroukP9ovMsp71PDixVz9vUksioactbdUubhUNmweNMgQFBeKKnEIcJvi9IZ5
+         meissqGqMvCAaPp6v12rqMIuQk2zcZHL5coATQsU9HkotA/nTfMhaqY6u+hLDHjUnS0Y
+         j5eA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744101804; x=1744706604;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OePFKTyhdQdf/eaJWtXJyGR/G6HZO3R3hL0HNN3AkLo=;
+        b=a8QBbp6z2THUnoP9J6UPG9suH+Ryb5NSXVuveXVg7Cc/4pMu/VVs/pdUjoQVs8Db6V
+         Iz+8Hk8qvoyZnzZTBfeDunGMNqLACkhDDjmCFgW3D3SJipx8cnP3QAt9qAlXVbzDUh9d
+         Jw8QVxXrsdj2YkBKzq4VoDJEcQd/oxdHUPiHxVZ6SBoIXK9bBcBOGCiOLC4NR3hAuJVD
+         oA+ZH+0b4wp6Vy79p4ES2ThBlVihlc9Mtv+p0i8ZFAqpziFwLL6UrxuLZqJAhoaUEH5d
+         v1dq2JRKV3bKoSbkkI+8ClcjuIzgECRdEmImJIAR8NCPbC7dsYE1QOhm/lQcx0VKe/jI
+         fwGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXVhF7vz7GPJhR7FPlQv05sCtheKg5kZDqia6+QzRWG7xn3rphpKY6a/0fbct0wMOXt4FPQ5mumm1waqSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzG+OyjsOWhBiZEXdYco1kUMGbBrLi5Bx7JWSmIMeXh3K9S6Ww
+	ujNQ/iQu06yGcmdp9RhsEllBnG/X6DBgZbEo61Rn+LXXkUROZHf0dR5IehFBXzw=
+X-Gm-Gg: ASbGncsJxpolBE+dnvTVUr8rA+nQc0gxaHbBENs/M8E1+3InmYLem6GGyEmlcJ8NaTj
+	xuDL+lPKFEUN2/pis8Q7yXPs+TlRgDXfOwWsZhWgX4MXHD1QOM1iAHiLaeV8iMbJGUxJM4CvSBs
+	LGiR5RlodGUHnr5nnX7AVsE3qhUUR+1Txcctt5J8TPqkI3t+bkxtKYaFgzMDkyx2rx3V6nASkKE
+	5gWSkYZh2j0MbcfR+Mr19uiyYgRmjRaZj+kUBlR6VKflrV1na9cpaspAJaxmL+K4sdzRla1tccE
+	BsTxBjp8p/WKAN+xW9/z/h1ThJQbn5QoneTJGtdpyQlq
+X-Google-Smtp-Source: AGHT+IEGC1m/9gJgDIPNZJo3xHP2dSgiPLSh/AneDnG9bwnv4PbEsI/+WnvpUUlb/P2XY7yG+BFXkQ==
+X-Received: by 2002:a05:6000:1aca:b0:390:fdba:ac7 with SMTP id ffacd0b85a97d-39cba97f346mr13060051f8f.51.1744101804000;
+        Tue, 08 Apr 2025 01:43:24 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:2adf:eaae:f6ea:1a73])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c30096ecasm14689544f8f.18.2025.04.08.01.43.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 01:43:23 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] gpio: deprecate and track the removal of GPIO workarounds for regulators
+Date: Tue,  8 Apr 2025 10:43:22 +0200
+Message-ID: <174410179723.40269.7114336096842145653.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250401-gpio-todo-remove-nonexclusive-v2-0-7c1380797b0d@linaro.org>
+References: <20250401-gpio-todo-remove-nonexclusive-v2-0-7c1380797b0d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAA3dg6p4fRnGBEpBw--.8246S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF48ZrWkAry3JrykGw48Zwb_yoWrCr1kpr
-	s5Ga1rurWDXrn7KayftrW0grWrZws3Wa4jqr9xCa1kJFyUKrWDXF95Kry3try8XFWvy347
-	WFWrKr1rCw47JFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmqb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI
-	8067AKxVWUXwA2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF
-	64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcV
-	CY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIE
-	c7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I
-	8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCF
-	s4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x
-	0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC
-	6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
-	C2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_
-	JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
-	WUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
-	CTnIWIevJa73UjIFyTuYvjxUVmiiUUUUU
-X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiBg0GB2f0uarFFQABsb
 
-The Svrsw60t59b extension allows to free the PTE reserved bits 60 and 59
-for software, this patch uses bit 60 for uffd-wp tracking
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Additionally for tracking the uffd-wp state as a PTE swap bit, we borrow
-bit 4 which is not involved into swap entry computation.
 
-Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
----
- arch/riscv/Kconfig                    |  1 +
- arch/riscv/include/asm/pgtable-bits.h | 14 ++++++
- arch/riscv/include/asm/pgtable.h      | 65 +++++++++++++++++++++++++++
- 3 files changed, 80 insertions(+)
+On Tue, 01 Apr 2025 14:46:41 +0200, Bartosz Golaszewski wrote:
+> The GPIOD_FLAGS_BIT_NONEXCLUSIVE flag and devm_gpiod_unhinge() helpers
+> were introduced as hacky workarounds for resource ownership issues in the
+> regulator subsystem. Unfortunately, people started using the former in
+> other places too and now it's in all kinds of drivers.
+> 
+> Let's deprecate both symbols officially, add them to the MAINTAINERS
+> keywords so that it pops up on our radars when used again, add a task to
+> track it and I plan to use the power sequencing subsystem to handle the
+> cases where non-exclusive access to GPIOs is required.
+> 
+> [...]
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index ef79b4f24e90..c6e3830e823e 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -145,6 +145,7 @@ config RISCV
- 	select HAVE_ARCH_TRACEHOOK
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if 64BIT && MMU
- 	select HAVE_ARCH_USERFAULTFD_MINOR if 64BIT && USERFAULTFD
-+	select HAVE_ARCH_USERFAULTFD_WP if 64BIT && MMU && USERFAULTFD
- 	select HAVE_ARCH_VMAP_STACK if MMU && 64BIT
- 	select HAVE_ASM_MODVERSIONS
- 	select HAVE_CONTEXT_TRACKING_USER
-diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
-index 22b5e6314e85..f4fd822316f5 100644
---- a/arch/riscv/include/asm/pgtable-bits.h
-+++ b/arch/riscv/include/asm/pgtable-bits.h
-@@ -35,6 +35,20 @@
- #define _PAGE_SWP_SOFT_DIRTY	0
- #endif /* CONFIG_MEM_SOFT_DIRTY */
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+
-+/* ext_svrsw60t59b: Bit(60) for uffd-wp tracking */
-+#define _PAGE_UFFD_WP		(1UL << 60)
-+/*
-+ * Bit 4 is not involved into swap entry computation, so we
-+ * can borrow it for swap page uffd-wp tracking.
-+ */
-+#define _PAGE_SWP_UFFD_WP	_PAGE_USER
-+#else
-+#define _PAGE_UFFD_WP		0
-+#define _PAGE_SWP_UFFD_WP	0
-+#endif
-+
- #define _PAGE_TABLE     _PAGE_PRESENT
- 
- /*
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 14461ffe6321..ee0fbca28a76 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -425,6 +425,38 @@ static inline pte_t pte_wrprotect(pte_t pte)
- 	return __pte(pte_val(pte) & ~(_PAGE_WRITE));
- }
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+static inline bool pte_uffd_wp(pte_t pte)
-+{
-+	return !!(pte_val(pte) & _PAGE_UFFD_WP);
-+}
-+
-+static inline pte_t pte_mkuffd_wp(pte_t pte)
-+{
-+	return pte_wrprotect(__pte(pte_val(pte) | _PAGE_UFFD_WP));
-+}
-+
-+static inline pte_t pte_clear_uffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) & ~(_PAGE_UFFD_WP));
-+}
-+
-+static inline bool pte_swp_uffd_wp(pte_t pte)
-+{
-+	return !!(pte_val(pte) & _PAGE_SWP_UFFD_WP);
-+}
-+
-+static inline pte_t pte_swp_mkuffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) | _PAGE_SWP_UFFD_WP);
-+}
-+
-+static inline pte_t pte_swp_clear_uffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) & ~(_PAGE_SWP_UFFD_WP));
-+}
-+#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
-+
- /* static inline pte_t pte_mkread(pte_t pte) */
- 
- static inline pte_t pte_mkwrite_novma(pte_t pte)
-@@ -853,6 +885,38 @@ static inline pud_t pud_mkspecial(pud_t pud)
- }
- #endif
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+static inline bool pmd_uffd_wp(pmd_t pmd)
-+{
-+	return pte_uffd_wp(pmd_pte(pmd));
-+}
-+
-+static inline pmd_t pmd_mkuffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_mkuffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline pmd_t pmd_clear_uffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_clear_uffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline bool pmd_swp_uffd_wp(pmd_t pmd)
-+{
-+	return pte_swp_uffd_wp(pmd_pte(pmd));
-+}
-+
-+static inline pmd_t pmd_swp_mkuffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_swp_mkuffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline pmd_t pmd_swp_clear_uffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_swp_clear_uffd_wp(pmd_pte(pmd)));
-+}
-+#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
-+
- #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
- static inline bool pmd_soft_dirty(pmd_t pmd)
- {
-@@ -978,6 +1042,7 @@ extern pmd_t pmdp_collapse_flush(struct vm_area_struct *vma,
-  *	bit            0:	_PAGE_PRESENT (zero)
-  *	bit       1 to 2:	(zero)
-  *	bit            3:	_PAGE_SWP_SOFT_DIRTY
-+ *	bit            4:	_PAGE_SWP_UFFD_WP
-  *	bit            5:	_PAGE_PROT_NONE (zero)
-  *	bit            6:	exclusive marker
-  *	bits      7 to 11:	swap type
+Applied, thanks!
+
+[1/4] gpio: deprecate the GPIOD_FLAGS_BIT_NONEXCLUSIVE flag
+      https://git.kernel.org/brgl/linux/c/6deb8435f6bfcc9b6c7efe3b8a941ae2fb731495
+[2/4] gpio: deprecate devm_gpiod_unhinge()
+      https://git.kernel.org/brgl/linux/c/686e54ea31f3b7d9d20ac1fa2d0295d649c41f56
+[3/4] MAINTAINERS: add more keywords for the GPIO subsystem entry
+      https://git.kernel.org/brgl/linux/c/3af64f175b2405270bd0926153d9856a49b58352
+[4/4] gpio: TODO: track the removal of regulator-related workarounds
+      https://git.kernel.org/brgl/linux/c/2de1cf175c00927c286f8bd72e18602fe072af95
+
+Best regards,
 -- 
-2.34.1
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
