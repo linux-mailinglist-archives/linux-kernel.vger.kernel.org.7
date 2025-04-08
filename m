@@ -1,91 +1,135 @@
-Return-Path: <linux-kernel+bounces-593309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84733A7F7D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:29:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FCE4A7F7DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:30:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA9421897BF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:29:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 518573ADCB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC07263C95;
-	Tue,  8 Apr 2025 08:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134EB263F3E;
+	Tue,  8 Apr 2025 08:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LhknSs6E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TbjRdyZC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1149514AD29;
-	Tue,  8 Apr 2025 08:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDBE2641CC;
+	Tue,  8 Apr 2025 08:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744100940; cv=none; b=fvPtS7hy06TFtc/3g7Ls8yUObBYMMnFWmpzURH/L9eBm4//Gx1pS6/5KaMkpsGbgDYh67Zxj2pEF+AW2Xs1xqCcAFwDedVxdsGCiZvOGldrYI4a5sCyvIuelu7S4o02uZO72vc3oZw7DQyrw7J+Ryorc2aNtR8TGZozMn9RSOWM=
+	t=1744101010; cv=none; b=GsU5pU0Bu2NTwV9MTNflv2+XQLXdTXJOoiOVlCO+71UZOBvYljxr5Oy2h+4cZqfmcx04s2AxZ7wR4qz0TvPZeNrTTs6ZvCGenafmacPKTYwIbVjR1c+lb9Zfgv2l1i0PjE6vRbOz5AObF6S/01396XmyUJsSRu96HbP/dayDPLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744100940; c=relaxed/simple;
-	bh=w7YzOAdB0AOkzbLpklUzeIust3CO7A4mhXh1lMfhEJc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oqpdHW2ZJ7DZkc8oD691qjewejCakJ3aoa3LuCtJlWL0DpmSmu3gmv3mGz9rnLT7U05Biz3HKXx0q4aV/CPWnjwQ7RGLFMQ0/WIK9Tpp2h2MYyphS+dmd8fkHhb0owDNUjb/VZWfjcAn5cLKdeMjBRzkQ47uf0kE9Ond07AMTHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LhknSs6E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2B00C4CEE5;
-	Tue,  8 Apr 2025 08:28:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744100938;
-	bh=w7YzOAdB0AOkzbLpklUzeIust3CO7A4mhXh1lMfhEJc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LhknSs6E+fdSdb0lcGkLLfQebPRU0QL2bXUjeVQV2+g7EgA6iQ4bEo1aPTkoXkurF
-	 vtEZt95OOFzG+6J/HGHm35zm5CE4Hqy6LDUitDSdGJgUEsFJTTbKQCTbwn8MxBPZxB
-	 /orc79RWC/jPp6wLLDEl8Y7dhQUxFHpN6rjRVALv/eEVu51gZLmBVpG1j5/0vluC+k
-	 E95TdOhatu57F8dDm9n9F27UeIsymfiE4cdfMFYDT9RJEtFZo0UXecugaBsqNR4kWf
-	 hSdSVEchbhwJikPGdR6W5I1y6b9+E9MDZ45IujuJlPqvGgS4jpyQnFwM0F8Hhn9T2J
-	 MnXaKXotDAHdQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: (subset) [PATCH 1/3] fs: sort out cosmetic differences between stat funcs and add predicts
-Date: Tue,  8 Apr 2025 10:28:47 +0200
-Message-ID: <20250408-mietwagen-gegeben-378f07e5ea14@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250406235806.1637000-1-mjguzik@gmail.com>
-References: <20250406235806.1637000-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1744101010; c=relaxed/simple;
+	bh=mtQ0cgbg65B3Y14wimzpCJkbW0UL7A7exIM5eb44PFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j3ZPogUyrL4pHHI0EbNu8cWAllEo4NgZdaDfgGUQ34F8RbnbOD+Kwvng38WZT0xk7GHBL28T2PqNmXnK8F5t+R99/W/QDZ7vx3ndjg1StpicA3wUTzksxVFFG03edprq9CbpV02gq7Z79RS0WwoSiUmcGdnXZRnV6JklzpHPfVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TbjRdyZC; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744101008; x=1775637008;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mtQ0cgbg65B3Y14wimzpCJkbW0UL7A7exIM5eb44PFI=;
+  b=TbjRdyZCO+n53ndhyWeWREL1PoDz9cY+gtH7rczLjTkhv/uXDYTUQzBr
+   K10E6JN4X24uUOZdsuR4W9bUAYZF9mT8UJD5NLIFYNT17ZedIJbJjPI3J
+   IU96tJjNLtuuMVFs0gKPc5tqm2A889RYt2zL0ef7WfgrWsV8qPiB5Q/RM
+   QFX36dGE2xoGDVKAa8PpBeG0g3/BQ4l6IRSkGBtipR4JIpELyogXV+vVf
+   MjU8PHyNBuKX5B7U937l+TTM5knLLFJcZycvzEh9WM4pUCpz+jf8VV8yk
+   uuEm0RAA/+l2B5p8IaPSVlAXv8ZVuFa0ti0MzoaZFH/Lpp4hCLu4Mv+w0
+   w==;
+X-CSE-ConnectionGUID: FJ2ai5R2QUutrbg9K9Flhw==
+X-CSE-MsgGUID: OYsK20KaS2mR2LDSwSIC6Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="44770229"
+X-IronPort-AV: E=Sophos;i="6.15,197,1739865600"; 
+   d="scan'208";a="44770229"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 01:30:07 -0700
+X-CSE-ConnectionGUID: 80DLV24cQKSaJb5P60LKlA==
+X-CSE-MsgGUID: ntoy4gz8TbKZqevi3o7V2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,197,1739865600"; 
+   d="scan'208";a="133402993"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 01:30:04 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1u24LI-0000000AL5R-1HaE;
+	Tue, 08 Apr 2025 11:30:00 +0300
+Date: Tue, 8 Apr 2025 11:30:00 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Denis Mukhin <dmkhn@proton.me>
+Cc: Denis Mukhin <dmukhin@ford.com>, Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] x86/early_printk: add MMIO-based UARTs
+Message-ID: <Z_TeiDVh50u7OhIw@smile.fi.intel.com>
+References: <20250324-earlyprintk-v3-1-aee7421dc469@ford.com>
+ <Z_P_nWrl4JQJVy2c@black.fi.intel.com>
+ <vCbvBjUt9kPZhYP0tXAoVKrIn5hk5ON-HEqi2OjnCECThGJ73vh7S4qAKspAlxtgBAHFv1Sc_k6Hmdeq_nYXReITCt2FNRy1wWZR-udke9c=@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1020; i=brauner@kernel.org; h=from:subject:message-id; bh=w7YzOAdB0AOkzbLpklUzeIust3CO7A4mhXh1lMfhEJc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR/uefa5p3bJ/SzvvGBy7fe//+jHrIJMh1x/SxmUniK7 VNxVKt6RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEQ4XjEyfJXh0LBqN643qEpc y7dj9+63d8ofbq7cEndD68bVTW128xkZlr6qX2CrPWXHXfPQ+0+0FLeyful55ZHj/eP/2pI0dhF xbgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <vCbvBjUt9kPZhYP0tXAoVKrIn5hk5ON-HEqi2OjnCECThGJ73vh7S4qAKspAlxtgBAHFv1Sc_k6Hmdeq_nYXReITCt2FNRy1wWZR-udke9c=@proton.me>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, 07 Apr 2025 01:58:04 +0200, Mateusz Guzik wrote:
-> This is a nop, but I did verify asm improves.
+On Mon, Apr 07, 2025 at 11:04:42PM +0000, Denis Mukhin wrote:
+> On Monday, April 7th, 2025 at 9:38 AM, Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+> > On Mon, Mar 24, 2025 at 05:55:40PM -0700, Denis Mukhin wrote:
+
+> > > During the bring-up of an x86 board, the kernel was crashing before
+> > > reaching the platform's console driver because of a bug in the firmware,
+> > > leaving no trace of the boot progress.
+> > > 
+> > > It was discovered that the only available method to debug the kernel
+> > > boot process was via the platform's MMIO-based UART, as the board lacked
+> > > an I/O port-based UART, PCI UART, or functional video output.
+> > > 
+> > > Then it turned out that earlyprintk= does not have a knob to configure
+> > > the MMIO-mapped UART.
+> > > 
+> > > Extend the early printk facility to support platform MMIO-based UARTs
+> > > on x86 systems, enabling debugging during the system bring-up phase.
+> > > 
+> > > The command line syntax to enable platform MMIO-based UART is:
+> > > earlyprintk=mmio,membase[,{nocfg|baudrate}][,keep]
+> > > 
+> > > Note, the change does not integrate MMIO-based UART support to:
+> > > arch/x86/boot/early_serial_console.c
+> > > 
+> > > Also, update kernel parameters documentation with the new syntax and
+> > > add missing 'nocfg' setting to PCI serial cards description.
+> > 
+> > Just for your information: Have you seen this rather old series of mine?
+> > 
+> > https://bitbucket.org/andy-shev/linux/commits/branch/topic%2Fx86%2Fboot-earlyprintk
 > 
+> This is a nice cleanup!
+> Thanks for sharing.
 > 
+> Sorry, I haven't seen the series above, I had to write a patch (which was months ago).
+> It's just I could not post it on the mailing list until recently.
 
-Applied to the vfs-6.16.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.16.misc branch should appear in linux-next soon.
+No problem. Can you look at
+https://lore.kernel.org/r/20250407172214.792745-1-andriy.shevchenko@linux.intel.com
+? I forgot to Cc you and that is an important fix.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.16.misc
-
-[1/3] fs: sort out cosmetic differences between stat funcs and add predicts
-      https://git.kernel.org/vfs/vfs/c/eaec2cd1670d
-[2/3] fs: predict not having to do anything in fdput()
-      https://git.kernel.org/vfs/vfs/c/5f3e0b4a1f59
 
