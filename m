@@ -1,224 +1,191 @@
-Return-Path: <linux-kernel+bounces-593700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB107A7FC5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:40:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 121E1A7FC90
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C21717A9A06
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:38:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E5A9188ABA2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A14267393;
-	Tue,  8 Apr 2025 10:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E3IREDl5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966E4267B91;
+	Tue,  8 Apr 2025 10:39:34 +0000 (UTC)
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7258A264A88;
-	Tue,  8 Apr 2025 10:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17EA266595;
+	Tue,  8 Apr 2025 10:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744108750; cv=none; b=MVhiVqabqhWHy2iZuXGmeaG4urZ4zXFTde/Ad/05IAX+IEJNMSQgJo1WMSCOEuH221Q2Ab0lKcBV2UCB0FFrMbguNwIHglZ3+1fBAa0BYUyo2+lAhWdtF22FM2Fg+OAw988xaUpEmuXbDPEr9H9tPH59N2d2GkF7Xjmm8SG2tDk=
+	t=1744108774; cv=none; b=SDd8YRvXAfZ78/vRJRh8Q0uNweibTjpVCJ35P1njqucvvG/TC1RxFQak9tft+07olMH2LJbaZQGWGsFSM5NnMgtGQJGyudC9DXGIAkns3syPca3XjHx2q0/ag5fg/cM8E7KqNksqF5VEC+T3majLC4BKysUbashG3MPZpyXZqec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744108750; c=relaxed/simple;
-	bh=QpJG9H5T8cY42DnW9QAlexFT0QzgTyNQEECGuCjDIgY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FbRAV0/OxvyuSNU2kxFxx+I94r0Vrshnl1QqQAsNVzGv5utCqibsTJNNEP1X6jGkKgLYj9UrIOxmD2J5o+u2tMoF/wTbrtH6zYByq/V+fs54dMVmkwhdvQvJ4FWf/yBQtgsVoVw3+f3JJRv5YdQJN8jdQTcEKn4WK2LYgoQAdL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E3IREDl5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DEA7C4CEE5;
-	Tue,  8 Apr 2025 10:39:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744108750;
-	bh=QpJG9H5T8cY42DnW9QAlexFT0QzgTyNQEECGuCjDIgY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E3IREDl5rD0W3NMQqmocoXRX7qSKOF/dyEEcWk9r2j50qHmukxA9sLvVo5wNsXMqC
-	 ItNS9cSTk+LMZT9RyMA21RNIqJZpiwU4ImpwJv4C8vX9idx/PAgyv/6vjl96gAIxwi
-	 b6GMue5xgUs1vPixD0m1ysf0za+bSq9+NI+0v+V6AzYjNzL3ECr3i73YV2jzaD4i7I
-	 c0POxch8T5g40tmfF+Wzwc+RE3+JB5SdQETtcQSrqN47624gqgQiKOhR0TYURkDVPc
-	 U3rELYatB5Suu+xk18vL2ogBdnZx6mxa0gF1W7VMqy7mCU21aNB+/P/WidXgWw1An6
-	 1pIMe5xziafUQ==
-Date: Tue, 8 Apr 2025 18:39:06 +0800
-From: Coly Li <colyli@kernel.org>
-To: Gabriel Shahrouzi <gshahrouzi@gmail.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, 
-	linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	kernelmentees@lists.linuxfoundation.org
-Subject: Re: [PATCH 2/2] bcache: Fix warnings for incorrect type in
- assignments
-Message-ID: <zqhlvh3jftam6ka5hu7ardcnaeyzvbvbmttjqubeeutuhcmurp@dsgpwpwvgj6y>
-References: <20250408033322.401680-1-gshahrouzi@gmail.com>
- <20250408033322.401680-3-gshahrouzi@gmail.com>
- <7muoawncdumcsclkcxklw6olqcjko63et26ptbh5lidximffoh@lu34aqtcujtn>
- <CAKUZ0zKWDVocdSa60ZZPjq9u24wEW+EaUsXoUrrCF=Z+pacGHQ@mail.gmail.com>
+	s=arc-20240116; t=1744108774; c=relaxed/simple;
+	bh=9MjVRH9gj1+f5MDFfIfL7UmI6wmnt2YXQolaQypXD3Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E3k6JKch2w+NtQF9CAXS2qh3/yHLomEwRRZwmxJ20leEggAe5aRFyPohUkgwPj1NIAdReHMkcf4jpSoGMGEzYtkki9eeJuFww7jPUHc5HSashNHIS5qI4evvNTsivcBnEfcTKNJ3If4RyQEqcxuWe4p+Y698D38DFgMLK97NcI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1670043280;
+	Tue,  8 Apr 2025 10:39:16 +0000 (UTC)
+Message-ID: <2c0a0c3a-368c-44cb-9d4b-245f5b3dada1@ghiti.fr>
+Date: Tue, 8 Apr 2025 12:39:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKUZ0zKWDVocdSa60ZZPjq9u24wEW+EaUsXoUrrCF=Z+pacGHQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 06/28] riscv/mm : ensure PROT_WRITE leads to VM_READ |
+ VM_WRITE
+Content-Language: en-US
+To: Deepak Gupta <debug@rivosinc.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Christian Brauner <brauner@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>,
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+ Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com,
+ andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com,
+ atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
+ alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org,
+ rick.p.edgecombe@intel.com, Zong Li <zong.li@sifive.com>
+References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
+ <20250314-v5_user_cfi_series-v12-6-e51202b53138@rivosinc.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250314-v5_user_cfi_series-v12-6-e51202b53138@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddvkeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpedthfelfeejgeehveegleejleelgfevhfekieffkeeujeetfedvvefhledvgeegieenucfkphepvddttddumeekiedumeeffeekvdemvghfledtmeehsgegieemkeeludekmegtledujeemjeekjedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddttddumeekiedumeeffeekvdemvghfledtmeehsgegieemkeeludekmegtledujeemjeekjedvpdhhvghloheplgfkrfggieemvddttddumeekiedumeeffeekvdemvghfledtmeehsgegieemkeeludekmegtledujeemjeekjedvngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeegledprhgtphhtthhopeguvggsuhhgsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdprhgtphhtthhopegsp
+ hesrghlihgvnhekrdguvgdprhgtphhtthhopegurghvvgdrhhgrnhhsvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhhprgesiiihthhorhdrtghomhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
+X-GND-Sasl: alex@ghiti.fr
 
-On Tue, Apr 08, 2025 at 03:15:00AM +0800, Gabriel Shahrouzi wrote:
-> On Tue, Apr 8, 2025 at 12:58 AM Coly Li <colyli@kernel.org> wrote:
-> >
-> > On Mon, Apr 07, 2025 at 11:33:22PM +0800, Gabriel Shahrouzi wrote:
-> > > Remove unnecessary cpu_to_le16() and cpu_to_le32() conversions when
-> > > assigning values (priorities, timestamps) to native integer type
-> > > members. Prevent incorrect byte ordering for big-endian systems.
-> > >
-> >
-> > Hmm, why do you feel the conversions are unncessary? Please explain
-> > with details.
-> I used Sparse for static analysis on bcache and it gave incorrect type
-> in assignment warnings.
-> 
-> For example:
-> 
-> u->invalidated = cpu_to_le32((u32)ktime_get_real_seconds());
-> 
-> ktime_get_real_seconds() returns back u64 and gets casted down to a
-> u32. u is of type struct uuid_entry whose member fields are either u8,
-> u32, or u64. A conversion here contradicts the type it should be
-> assigned.
-> 
-> From my understanding, this would not produce an unexpected result if
-> the value were to be read from or written to some location which seems
-> to be the case here. I believe it would only cause issues on
-> big-endian systems if the value were to be modified in some way.
-> 
 
-Yes you are right, and I agree with you.
+On 14/03/2025 22:39, Deepak Gupta wrote:
+> `arch_calc_vm_prot_bits` is implemented on risc-v to return VM_READ |
+> VM_WRITE if PROT_WRITE is specified. Similarly `riscv_sys_mmap` is
+> updated to convert all incoming PROT_WRITE to (PROT_WRITE | PROT_READ).
+> This is to make sure that any existing apps using PROT_WRITE still work.
+>
+> Earlier `protection_map[VM_WRITE]` used to pick read-write PTE encodings.
+> Now `protection_map[VM_WRITE]` will always pick PAGE_SHADOWSTACK PTE
+> encodings for shadow stack. Above changes ensure that existing apps
+> continue to work because underneath kernel will be picking
+> `protection_map[VM_WRITE|VM_READ]` PTE encodings.
+>
+> Reviewed-by: Zong Li <zong.li@sifive.com>
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>   arch/riscv/include/asm/mman.h    | 25 +++++++++++++++++++++++++
+>   arch/riscv/include/asm/pgtable.h |  1 +
+>   arch/riscv/kernel/sys_riscv.c    | 10 ++++++++++
+>   arch/riscv/mm/init.c             |  2 +-
+>   4 files changed, 37 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/include/asm/mman.h b/arch/riscv/include/asm/mman.h
+> new file mode 100644
+> index 000000000000..392c9c2d2e78
+> --- /dev/null
+> +++ b/arch/riscv/include/asm/mman.h
+> @@ -0,0 +1,25 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __ASM_MMAN_H__
+> +#define __ASM_MMAN_H__
+> +
+> +#include <linux/compiler.h>
+> +#include <linux/types.h>
+> +#include <uapi/asm/mman.h>
+> +
+> +static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
+> +						   unsigned long pkey __always_unused)
+> +{
+> +	unsigned long ret = 0;
+> +
+> +	/*
+> +	 * If PROT_WRITE was specified, force it to VM_READ | VM_WRITE.
+> +	 * Only VM_WRITE means shadow stack.
+> +	 */
+> +	if (prot & PROT_WRITE)
+> +		ret = (VM_READ | VM_WRITE);
+> +	return ret;
+> +}
+> +
+> +#define arch_calc_vm_prot_bits(prot, pkey) arch_calc_vm_prot_bits(prot, pkey)
+> +
+> +#endif /* ! __ASM_MMAN_H__ */
+> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+> index 050fdc49b5ad..8c528cd7347a 100644
+> --- a/arch/riscv/include/asm/pgtable.h
+> +++ b/arch/riscv/include/asm/pgtable.h
+> @@ -178,6 +178,7 @@ extern struct pt_alloc_ops pt_ops __meminitdata;
+>   #define PAGE_READ_EXEC		__pgprot(_PAGE_BASE | _PAGE_READ | _PAGE_EXEC)
+>   #define PAGE_WRITE_EXEC		__pgprot(_PAGE_BASE | _PAGE_READ |	\
+>   					 _PAGE_EXEC | _PAGE_WRITE)
+> +#define PAGE_SHADOWSTACK       __pgprot(_PAGE_BASE | _PAGE_WRITE)
+>   
+>   #define PAGE_COPY		PAGE_READ
+>   #define PAGE_COPY_EXEC		PAGE_READ_EXEC
+> diff --git a/arch/riscv/kernel/sys_riscv.c b/arch/riscv/kernel/sys_riscv.c
+> index d77afe05578f..43a448bf254b 100644
+> --- a/arch/riscv/kernel/sys_riscv.c
+> +++ b/arch/riscv/kernel/sys_riscv.c
+> @@ -7,6 +7,7 @@
+>   
+>   #include <linux/syscalls.h>
+>   #include <asm/cacheflush.h>
+> +#include <asm-generic/mman-common.h>
+>   
+>   static long riscv_sys_mmap(unsigned long addr, unsigned long len,
+>   			   unsigned long prot, unsigned long flags,
+> @@ -16,6 +17,15 @@ static long riscv_sys_mmap(unsigned long addr, unsigned long len,
+>   	if (unlikely(offset & (~PAGE_MASK >> page_shift_offset)))
+>   		return -EINVAL;
+>   
+> +	/*
+> +	 * If PROT_WRITE is specified then extend that to PROT_READ
+> +	 * protection_map[VM_WRITE] is now going to select shadow stack encodings.
+> +	 * So specifying PROT_WRITE actually should select protection_map [VM_WRITE | VM_READ]
+> +	 * If user wants to create shadow stack then they should use `map_shadow_stack` syscall.
+> +	 */
+> +	if (unlikely((prot & PROT_WRITE) && !(prot & PROT_READ)))
+> +		prot |= PROT_READ;
+> +
+>   	return ksys_mmap_pgoff(addr, len, prot, flags, fd,
+>   			       offset >> (PAGE_SHIFT - page_shift_offset));
+>   }
+> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> index 15b2eda4c364..9d6661638d0b 100644
+> --- a/arch/riscv/mm/init.c
+> +++ b/arch/riscv/mm/init.c
+> @@ -342,7 +342,7 @@ pgd_t early_pg_dir[PTRS_PER_PGD] __initdata __aligned(PAGE_SIZE);
+>   static const pgprot_t protection_map[16] = {
+>   	[VM_NONE]					= PAGE_NONE,
+>   	[VM_READ]					= PAGE_READ,
+> -	[VM_WRITE]					= PAGE_COPY,
+> +	[VM_WRITE]					= PAGE_SHADOWSTACK,
+>   	[VM_WRITE | VM_READ]				= PAGE_COPY,
+>   	[VM_EXEC]					= PAGE_EXEC,
+>   	[VM_EXEC | VM_READ]				= PAGE_READ_EXEC,
+>
 
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
-> Looking at the commit history for when the code for this specific
-> example was first introduced (12 years ago), it seems like this was
-> the author’s intent. It looks like the intention was to store the
-> value as little endian in uint32_t. Doing this, the author saves space
-> / time. If the type was le32 instead, the conversion would have to be
-> applied each time it’s used. Alternatively, if another member variable
-> was defined but for the le32 version, then extra space is used up.
-> 
-
-This is kind of convention that on-media values are stored in little
-endian, for portablity purpose. But bcache is special, current
-implementation and usage don't require/support portability on different
-byte order machines. So cpu_to/from_le** routines are almostly
-unnecessary indeed.
-
-*BUT* the cast (u32) works as expected on big endian machine as well,
-same result generated as little indian machine does. The out-of-order
-issue on big endian machine for the code you mentioned won't happen. 
-
-> In the unlikely event that these specific files change drastically,
-> making sure the types are the same serves as a preventative measure
-> to make sure it’s not misused. On the other hand, making the change
-> most likely goes against the author’s original intent and could cause
-> something unintended.
-> >
-> > I don't mean the modification is correct or incorrect, just want to
-> > see detailed analysis and help me understand in correct why as you
-> > are.
-> >
-> > BTW, did you have chance to test your patch on big-endian machine?
-> I only analyzed the compilation warnings so far. I’ll look into trying
-> to test this on a big-endian machine.
-> 
-> 
-
-You may have a try and verify my statement.
-
-And for the change in bch_prio_write(), this is something out of your
-orignal scope of this patch. The prio width is 16bits, byte order and
-length truncation issue doesn't apply here.
-
-After all, no mather the cpu_to_le*() or le*_to_cpu() routines are used
-or not, the code works well. Because bcache cache device dosn't port
-between big and little endian machines.
-
-I don't want to unify the code to all use cpu_to_le*() routines or
-remove all these routines, both sides make sense and resonable.
-IMHO they are just changes for changing. So I intend to keep it as what
-Kent orignally wrote it.
-
-Thanks.
-
-> > > Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
-> > > ---
-> > >  drivers/md/bcache/super.c | 12 ++++++------
-> > >  1 file changed, 6 insertions(+), 6 deletions(-)
-> > >
-> > > diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> > > index e42f1400cea9d..c4c5ca17fb600 100644
-> > > --- a/drivers/md/bcache/super.c
-> > > +++ b/drivers/md/bcache/super.c
-> > > @@ -648,7 +648,7 @@ int bch_prio_write(struct cache *ca, bool wait)
-> > >               for (b = ca->buckets + i * prios_per_bucket(ca);
-> > >                    b < ca->buckets + ca->sb.nbuckets && d < end;
-> > >                    b++, d++) {
-> > > -                     d->prio = cpu_to_le16(b->prio);
-> > > +                     d->prio = b->prio;
-> > >                       d->gen = b->gen;
-> > >               }
-> > >
-> > > @@ -721,7 +721,7 @@ static int prio_read(struct cache *ca, uint64_t bucket)
-> > >                       d = p->data;
-> > >               }
-> > >
-> > > -             b->prio = le16_to_cpu(d->prio);
-> > > +             b->prio = d->prio;
-> > >               b->gen = b->last_gc = d->gen;
-> > >       }
-> > >
-> > > @@ -832,7 +832,7 @@ static void bcache_device_detach(struct bcache_device *d)
-> > >
-> > >               SET_UUID_FLASH_ONLY(u, 0);
-> > >               memcpy(u->uuid, invalid_uuid, 16);
-> > > -             u->invalidated = cpu_to_le32((u32)ktime_get_real_seconds());
-> > > +             u->invalidated = (u32)ktime_get_real_seconds();
-> > >               bch_uuid_write(d->c);
-> > >       }
-> > >
-> > > @@ -1188,7 +1188,7 @@ void bch_cached_dev_detach(struct cached_dev *dc)
-> > >  int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
-> > >                         uint8_t *set_uuid)
-> > >  {
-> > > -     uint32_t rtime = cpu_to_le32((u32)ktime_get_real_seconds());
-> > > +     uint32_t rtime = (u32)ktime_get_real_seconds();
-> > >       struct uuid_entry *u;
-> > >       struct cached_dev *exist_dc, *t;
-> > >       int ret = 0;
-> > > @@ -1230,7 +1230,7 @@ int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
-> > >           (BDEV_STATE(&dc->sb) == BDEV_STATE_STALE ||
-> > >            BDEV_STATE(&dc->sb) == BDEV_STATE_NONE)) {
-> > >               memcpy(u->uuid, invalid_uuid, 16);
-> > > -             u->invalidated = cpu_to_le32((u32)ktime_get_real_seconds());
-> > > +             u->invalidated = (u32)ktime_get_real_seconds();
-> > >               u = NULL;
-> > >       }
-> > >
-> > > @@ -1591,7 +1591,7 @@ int bch_flash_dev_create(struct cache_set *c, uint64_t size)
-> > >
-> > >       get_random_bytes(u->uuid, 16);
-> > >       memset(u->label, 0, 32);
-> > > -     u->first_reg = u->last_reg = cpu_to_le32((u32)ktime_get_real_seconds());
-> > > +     u->first_reg = u->last_reg = (u32)ktime_get_real_seconds();
-> > >
-> > >       SET_UUID_FLASH_ONLY(u, 1);
-> > >       u->sectors = size >> 9;
-> > > --
-> > > 2.43.0
-> > >
-> >
-> > --
-> > Coly Li
-> 
-
--- 
-Coly Li
 
