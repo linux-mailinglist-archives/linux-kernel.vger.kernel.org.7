@@ -1,146 +1,119 @@
-Return-Path: <linux-kernel+bounces-594371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E20FBA810BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:53:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2509EA810C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B27A189C8B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:48:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C8A2422D94
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888BE236433;
-	Tue,  8 Apr 2025 15:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D924122C325;
+	Tue,  8 Apr 2025 15:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="niCnm59S"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e/uslT+T"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FDB235C00
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 15:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6E9225A39
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 15:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744127159; cv=none; b=F2jnr4AGbYSwFmJkBG2dluO7zPpkMPKBokzB8eE96v0OJWLLx9oMM1ILwZ7HHm2knPyN9qj2dt6582OGSKXwOr+XhyakAU0HOfPgMRUiyAKlsWmbTDBJgW+dWSD+y+7Zv5vSPAoi7mmNJQ71HIWTbmT9f0hUByYA8BgyW7rHePU=
+	t=1744127305; cv=none; b=u4s3eG70gL8aqAYdFL2bvfA6ofjGU2wlcAImMQoCswShTrpfKyU18uvRCNG0FiIrg+jZTdsKTRzRKJCxBvjelKZE/sRvhwh8/xA05wOfq0kSgdt+aQT8Q46tyOX+ApGgOmN0+9Q9P7Umc1m3TRjZXLczOX/4YH956AnDZiurkmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744127159; c=relaxed/simple;
-	bh=mjBuZ4+ZgrBFpY/9zvDNPYwTF8Lw4OT1AFFQ3ui0A8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i8U4mLIiTmYi9kmOmgfaMypqGUno+CPt8Gt4hk4uBlVCJg1M1BLDsenHBPdFLoegHvIDimroZPMeaqEytenFZGz7WfdWPYhp8vd/cUEI+AjFOldUBl+x8myOXpd94DsEJqpAapvAV0aWemoBA6+dXsaS3dlKCeaVyYLhVbtnYiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=niCnm59S; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4775ce8a4b0so101783811cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 08:45:57 -0700 (PDT)
+	s=arc-20240116; t=1744127305; c=relaxed/simple;
+	bh=A0X2oY7kJM6AnHWEVzm/3YKFeirzE3HktAc2i3L70cM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qJbt9sLVoS253LYnF6hF0GXCxSJEtTc0v/QobjKSmAPtURROVRaoO46k0WyftqE3Q6xN4dIq1zIpf4KkmmGlpSr0E4n08M8j7ZzTTfcz6Gyb5W9HI+x3XiU+rMjqozSE+SdCA/6I9mKRRiAvmNWrNFg7HkksGPTDJeJpi0Ud2v0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e/uslT+T; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cf825f46bso4958095e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 08:48:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1744127156; x=1744731956; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VoXkx7vCK0V8Vdi8YRN6LJcm0AotHEaK6mdkVU4exog=;
-        b=niCnm59So3Ij29BsoGLZF141Hw63RbHoWrnJwoFwjvtN6RxgBFEwEGGugA64wHRSN7
-         JB/xyfsBkI0Ob9ZWXE3+4XZVpfBmTvKFKHQthGLKNNZdSeoFfm6O9ct2KFt827KJ+VWC
-         rC2rSec/pMaKZFesovKj5DJ2twY5LW7MMhHLaiDyqdfK9hAo0/ZqHDUwxCd8cejhbw8G
-         3BIpGJzzO3XzmDoEK2i0+ywcCzEX/HqwLsfTD5I6scBY4Q5y6IY48y+I/YBKfp9+x0eB
-         BZnJeFBmd9PkHRlEpGoEFgPQUgKnsMD9215zFo6yuqX8qT5DqEpgm5IDI0lBKBXcD5RW
-         aq/A==
+        d=gmail.com; s=20230601; t=1744127302; x=1744732102; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QaaXIgNJLKIxXw7YwzQeOHsKq9Pk6Yi0MGZAiqMRFcs=;
+        b=e/uslT+TLhO4ktDzjD5d8tJjxjjuaUhDTJ9gCikBv/57z9dotvmAWP6+S379hMxkhn
+         YWCLKnWqnp9qer07A51O43fhh8uW2DFDe0dllY+x92FOfR6AKkzIMmD2qrBohn5lCjFk
+         CTzseguGNi7U9A9DAHTG9neHiMDrnPCTXo5d9Qq5AC52OvwWw8ULZdZ8Gx9TUSNJOMll
+         iSObOWA3XgsbP4RUz3oM+HPhfpfn9l3TqVd+tXcxzkZXNFZ14/3SSTpTEOLH8uzxzOPe
+         tOOKW85RmWm2vq7j17I0vw9hMeJqTcfEoEFLs40c4GGHrPM74AXIZPEIehcZJkIlEW6h
+         vhWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744127156; x=1744731956;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VoXkx7vCK0V8Vdi8YRN6LJcm0AotHEaK6mdkVU4exog=;
-        b=lhtoPhRqu5GEIXdA8eU8ELgnX1u+xP6EZw6Npae4ttyH+sr2spjJR630z30xs2wvC9
-         IkoEje+BJVfxC17T429bGD9Ii3xqsdyFH4ccLEiYeOv576D83Qs46l1e9tYbz8Gp5nJ6
-         +lNgtmwzRwLo63QFKGtk5NaGx6iKrl6lCzWFKlbDsBCm3394qjYUBZtaellrQxeQIbXX
-         4jPvFCWBqZltctDos4EdQFIO0ZvTlHbedzFcPsDEkiDYcpr4A4eVQu67GYByrvH1J3t6
-         i7pW5KDNC8FlWNCQCSHjGq996RXupxF1En8XW+trO319uUcXbrpMTMMaNrfpZfZmiTQt
-         rkug==
-X-Forwarded-Encrypted: i=1; AJvYcCVJoJJNx+yJxQX30VRBsRyY2aObXfXZAdxJFAOYitHo34vaJ4UI78bmjpeTCuDVI28ZHNciHp16AK+p/+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5PV9N49dzm51B/+5oa5CAQoCkfemqH2RhaYVfwfSs4Y6J2Dmu
-	+kRTJhm0hrfvOxqSOxpwYdZvT1hGiMPGHvpErNzpnkVCErJBTE+RK2AV/OkQ6KU=
-X-Gm-Gg: ASbGncvfZVpmMvLrsaLdqXcm5J06Yuvbbo2NeEwLgkjPHHgWhXjQIPLS8tzYCRcTWf5
-	//omF8xnKMf0s5VLSrKEdOtqans1FLfer2AyyzJ+OolHJooCfn0tvJkD84CngWkVtSxzvQIIZGB
-	iwAXqTUuNVfPt14Y2vsFV7wPmmzPqGnDSPI1RYOyyKMNdXqlH53cLV06VBLkmwG5L/K3InN3Ybs
-	n7scIf7SgOdEzhoLcgTNQ5TiASC1/mKdGzna7xgiwbYAO7QSjDgTnobKOliLSEpYzNAlgOsDp1w
-	Il7s1OqS7Hsg+JOg+5iY8vl3KKZizA9pVdmC1mqj7/txgksGFKRaNPyOQEHRw+jsmTvjR9D2dyE
-	ueypTy5F+I4ZaUh1Q69uwyWx2Gig=
-X-Google-Smtp-Source: AGHT+IE0t0oHePrcFXYkuYevl7iuOHqLSKUup+qyVgXocIBtQicJgUL+StRyzSINlW/hNULuQT1bVw==
-X-Received: by 2002:ac8:7f01:0:b0:476:b06a:716e with SMTP id d75a77b69052e-479249a7ef6mr322034311cf.34.1744127155544;
-        Tue, 08 Apr 2025 08:45:55 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4791b07456csm77885091cf.32.2025.04.08.08.45.54
+        d=1e100.net; s=20230601; t=1744127302; x=1744732102;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QaaXIgNJLKIxXw7YwzQeOHsKq9Pk6Yi0MGZAiqMRFcs=;
+        b=WNml7K2NOOPgfOUKddy091Gqv7FWp2Ee9mohbYUzZ874KZeH2VT4F1tPTO73vuF+Dh
+         3IRUjw1fPFFPoZeQoga6G2h/9IuGzkI0/6DdZMyxhvn4gKf4hpTzl0xdTbQeaV6xsKOQ
+         zhBbwHC7MT4W3kyMIIUy0+P+0URs5uep+r3cLxJMezzXhy8K26puKOs7wUBYP4rWT0OE
+         meR1CHMm8NgfHPiWLm8ccY3sI8LlQNVaZi89ZwVL3LNYmXgp5irIGXs7cJ+q1i0DZHJc
+         S+yVuXq6oEJZS+3IhPyKg+2zSvsbnyW+mLS7aYD06dhEh82/6Fn3ymxrFBUjQPZ2SDE/
+         K3ow==
+X-Forwarded-Encrypted: i=1; AJvYcCV1YfHMyGRJ/55wzxYfFdsUEB6HbklAawdOgvjiU7in/5RpcOLQ8MbgA1JvtMn0yBz3jl2wNiX/MFXr0cA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxVwpu11GCHWlJI7ZQqxdAnkclpmtZHDMZzHGPlBR3WM1Kg3vd
+	yBfeAgtp22aK+pZBpdfDEyvxFciUd26PP49G2Vk+Gv4lWpa3GvQpkQZ9H3uV
+X-Gm-Gg: ASbGncuyFa7zTsC0zQp6P6iBVR4kO/TTS4oDQ4QFC46hWkmaXRKSlZKL6fPuB94vVdG
+	o+AkMULn7xSW4+AUpm4/jzqOQEYVhGUR7uCSdQI2M5IdGSfuZkAlgzFnYfMqt1K1yHQUPN0jdxh
+	H+OVnbKXhyyCDCMT9TkQhX040xhKk28wvn104rO91b+4hVS/hSOgRyAGLe+jCXETqfc0+Kvjqm2
+	JiV2CtW3cZagIBNMEZKG4Nwei/toUTOcNjuqtlB5+e03k7nk0e/XsKeUFhG8MudQIn/DYosRZKo
+	1Qu8gy0h//E1uhd4H56LFmivUzMgSDglrfLZi4qqJ0bSo5CMVJ0Ccyvq
+X-Google-Smtp-Source: AGHT+IF5OWquYgZ+SqsV3ILAxabDl9QL1OXepjXtseXsxMMluVO2opI4lBuuPbsE4nzLYXiKTparIQ==
+X-Received: by 2002:a05:600c:3b9f:b0:43b:ca39:a9b8 with SMTP id 5b1f17b1804b1-43ecf83ec83mr56894605e9.2.1744127301550;
+        Tue, 08 Apr 2025 08:48:21 -0700 (PDT)
+Received: from mosaic.enunes.eu.com ([85.93.96.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec366b571sm166903995e9.40.2025.04.08.08.48.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 08:45:55 -0700 (PDT)
-Date: Tue, 8 Apr 2025 11:45:53 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Robert Richter <rrichter@amd.com>
-Cc: Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+        Tue, 08 Apr 2025 08:48:21 -0700 (PDT)
+From: Erico Nunes <nunes.erico@gmail.com>
+To: Qiang Yu <yuq825@gmail.com>
+Cc: christian.koenig@amd.com,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	lima@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Terry Bowman <terry.bowman@amd.com>
-Subject: Re: [PATCH v2 08/15] cxl/region: Use the endpoint's SPA range to
- find a region
-Message-ID: <Z_VEsYYevJ-BPJnx@gourry-fedora-PF4VCD3F>
-References: <20250218132356.1809075-1-rrichter@amd.com>
- <20250218132356.1809075-9-rrichter@amd.com>
+	Erico Nunes <nunes.erico@gmail.com>
+Subject: [PATCH 0/1] drm/lima: implement the file flush callback
+Date: Tue,  8 Apr 2025 17:46:36 +0200
+Message-ID: <20250408154637.1637082-1-nunes.erico@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218132356.1809075-9-rrichter@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 18, 2025 at 02:23:49PM +0100, Robert Richter wrote:
-> To find the correct region and root port of an endpoint of a system
-> needing address translation, the endpoint's HPA range must be
-> translated to each of the parent port address ranges up to the root
-> decoder.
-> 
-> Use the calculated SPA range of an endpoint to find the endpoint's
-> region.
-> 
+This prevents a user bug in lima reported in [1].
+I'm not sure this is the entire bug fix, but Christian had also
+suggested we implement this callback in a previous review [2].
+I took the amdgpu implementation as a base for this.
 
-After debugging some other patches, I think this patch needs to just be
-rolled in with the introduction of cxled->spa_range (Patch 5).
+I noticed that most other drivers don't implement this though, in
+particular the other ones for embedded GPUs. Should they, or does
+this indicate that we have a different bug to be fixed in lima?
 
-(spa_range == hpa_range) up to this point, so this is effectively a NOP.
+[1] https://gitlab.freedesktop.org/mesa/mesa/-/issues/12007
+[2] https://lore.kernel.org/all/20230606143247.433018-1-nunes.erico@gmail.com/T/#mf5c7a2492201c8ec82bee47eb5615714d5c5aac2
 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> ---
->  drivers/cxl/core/region.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 6d5ede5b4c43..ffe6038249ed 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -3535,7 +3535,6 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
->  
->  static int cxl_endpoint_decoder_add(struct cxl_endpoint_decoder *cxled)
->  {
-> -	struct range *hpa = &cxled->cxld.hpa_range;
->  	struct cxl_root_decoder *cxlrd = cxled->cxlrd;
->  	struct cxl_region_params *p;
->  	struct cxl_region *cxlr;
-> @@ -3547,7 +3546,7 @@ static int cxl_endpoint_decoder_add(struct cxl_endpoint_decoder *cxled)
->  	 * one does the construction and the others add to that.
->  	 */
->  	mutex_lock(&cxlrd->range_lock);
-> -	cxlr = cxl_find_region_by_range(cxlrd, hpa);
-> +	cxlr = cxl_find_region_by_range(cxlrd, &cxled->spa_range);
->  	if (!cxlr)
->  		cxlr = construct_region(cxlrd, cxled);
->  	mutex_unlock(&cxlrd->range_lock);
-> -- 
-> 2.39.5
-> 
+Erico Nunes (1):
+  drm/lima: implement the file flush callback
+
+ drivers/gpu/drm/lima/lima_ctx.c | 18 ++++++++++++++++++
+ drivers/gpu/drm/lima/lima_ctx.h |  1 +
+ drivers/gpu/drm/lima/lima_drv.c | 17 ++++++++++++++++-
+ 3 files changed, 35 insertions(+), 1 deletion(-)
+
+-- 
+2.49.0
+
 
