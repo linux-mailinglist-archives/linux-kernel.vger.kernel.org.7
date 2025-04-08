@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-593297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DDA5A7F7C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:25:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D021AA7F7BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F10E13B29F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:22:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C76D97A3ABC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89DD264634;
-	Tue,  8 Apr 2025 08:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F318264FAC;
+	Tue,  8 Apr 2025 08:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QjILnKe9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GL8Itij/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42726263F49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDE926463C
 	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744100488; cv=none; b=pjA7GBybTwiuW4aphgXZZgfojVpp61R9sLhupQgDPm7SzD/AL9lua3gB7/7xV4UnOZaco9QfF38mG9b7+erfDKV60JyFLTvNdCDoNFYUQ79gXJtO9xcHS6ikEwSP+0wzyA6SnsDPvwxl1IPIBkOK4qwk+EhOcn9n3P9BaRvc3l8=
+	t=1744100489; cv=none; b=JdSOiXveqEX/or1kfvPeXlAv9PoH1fZL7x9QC+vivlgEBHUd+uFxCHYyklyH6j3HUiHns8igyu34sU7UYRqhIzmCZvjJYcKlU35A7seMvS7GSRpoX5kjK4Elu85eu4EJXbXJF9TITSX/bA3DqpFQ9cbcOnSTQq0YdEjkNeXa70g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744100488; c=relaxed/simple;
-	bh=k6bnnSwlEHgFA+riTMEYB1mSt8DFIyiepASBiJ7AxcM=;
+	s=arc-20240116; t=1744100489; c=relaxed/simple;
+	bh=DNXe2cltquMRMBaAJp3jzbgLWlgty9WIo+JVZVQJGRw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YcLBQSakMoc2R/575qq2K1JEu6317gllWlwzS2Tch/s3u1Mbadc0IDkTDiVV0pr6TmJwut/c6dudAvxfdMrY+2c8UiCaTjvdCkIzylLEthTSzxCQcseIaTc3JeilJP51GeNmhQDp8eG/J2hGyU5w56IwjkotvaycPzN8Y6aE8J8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QjILnKe9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B801DC4CEEA;
-	Tue,  8 Apr 2025 08:21:27 +0000 (UTC)
+	 MIME-Version; b=KKC8WFy5JRlljfbITSWjnhYIHLTb4xsH5ZiIkMEcIYjZMCut1jMRUPPBoxyyArezYX92vivyWb6MZou8r/oMsSzorFgb4yHcHq6qaVGhd0poUFPTyTIGuCZtLO4BcuCEWSU0IcwW5yYXz8upal5TOX+kVpA81GbqU1icjxcs+vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GL8Itij/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F9D8C4CEE9;
+	Tue,  8 Apr 2025 08:21:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1744100488;
-	bh=k6bnnSwlEHgFA+riTMEYB1mSt8DFIyiepASBiJ7AxcM=;
+	bh=DNXe2cltquMRMBaAJp3jzbgLWlgty9WIo+JVZVQJGRw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QjILnKe9EtX4PjZMFZ71m3m72cHJcRAUn8jsGof/0oGnjjEGczY8KcsjulTpNBFNy
-	 H4YYdNuYYj35gmgF5ISnUCVSEsJfPUWw7CeYsUWxqZ/HexjNJC517SXh7ip/w0QMBk
-	 XMli3oO824wplaKuZne9woPRqQgakDGrerD+dsWyIYuVMa1NqaaYI1NRdhL8DS6YKR
-	 RJEThCViB4tfyT73hclew+akX1aJOO6ByGuyLjOVZ83Tp/EtS/+hUeh/afCbvrjWGM
-	 mqXwh8AA1LFxzq0EWgS7hW5nE2AsccXYT+qPsXEATFBV9uulr47Bp2Ymo90kdS76dJ
-	 ENSJAXEExtr4w==
+	b=GL8Itij/tMPdirFnEzoi2iZQFWDbWE7hFWFboPu5By7aM7rYb6Uj4uhAPJ/F1zW6i
+	 f8fBPuNpvaPlg94Yq1516mJMbjcP002LVRU+CPevhx4KVclswWTFMXvLF9NR0KOqFg
+	 pYuiiB/A+qIQfRxzgD1kdskgTgHSU4ainhZ4sgtwnOrkERaAu/wjxOTgxcCAHDhVGP
+	 aZf8oDNYWDNfpzusHDaIsKUskBGTAw+6dNrsmHYwBc0GGgUPdYoJUjt54F1ruPhKlX
+	 BacHRKJgSJZBZmBtVDOM/HHf42ifzvCPaaw4eBPOYMIvGdfwkUY8m1JTpNGKgL7cjk
+	 YKaEG94Hwj4FA==
 From: Josh Poimboeuf <jpoimboe@kernel.org>
 To: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Ingo Molnar <mingo@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH RFC 3/5] noinstr: Use asm_inline() in instrumentation_{begin,end}()
-Date: Tue,  8 Apr 2025 01:21:16 -0700
-Message-ID: <7cb41fe7e87a003fc925164d5cc18efd8e95fcc0.1744098446.git.jpoimboe@kernel.org>
+Subject: [PATCH RFC 4/5] x86/alternative: Improve code generation readability
+Date: Tue,  8 Apr 2025 01:21:17 -0700
+Message-ID: <35ae5c17e8cc88506b5ae8f3b06d9491f7ef319c.1744098446.git.jpoimboe@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1744098446.git.jpoimboe@kernel.org>
 References: <cover.1744098446.git.jpoimboe@kernel.org>
@@ -60,45 +60,241 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use asm_inline() to prevent the compiler from making poor inlining
-decisions based on the length of the objtool annotations.
+Improve the readability and compactness of alternatives code.
 
-For a defconfig kernel built with GCC 14.2.1, bloat-o-meter reports a
-0.18% text size increase:
+---------------------
+ALTERNATIVE() before:
+---------------------
 
-  add/remove: 88/433 grow/shrink: 967/487 up/down: 87579/-52630 (34949)
-  Total: Before=19448407, After=19483356, chg +0.18%
+  	# ALT: oldinstr
+  771:
+  	rep movsb
+  772:
+  # ALT: padding
+  .skip -(((775f-774f)-(772b-771b)) > 0) * ((775f-774f)-(772b-771b)),0x90
+  773:
+  .pushsection .altinstructions,"a"
+   .long 771b - .
+   .long 774f - .
+   .4byte (((1 << 0) << 16) | ((18*32+ 4)))
+   .byte 773b-771b
+   .byte 775f-774f
+  .popsection
+  .pushsection .altinstr_replacement, "ax"
+  # ALT: replacement
+  774:
+  	call rep_movs_alternative
+  775:
+  .popsection
 
-Presumably the text growth is due to increased inlining.  A net total of
-345 functions were removed.
+--------------------
+ALTERNATIVE() after:
+--------------------
+
+ # <ALTERNATIVE>
+ 771:	rep movsb
+ 772:	.skip -(((775f-774f)-(772b-771b)) > 0) * ((775f-774f)-(772b-771b)),0x90
+ 773:
+ # ALT ENTRY:
+ .pushsection .altinstructions,"a";  .long 771b - .;  .long 774f - .;  .4byte (((1 << 0) << 16) | ((18*32+ 4)));  .byte 773b-771b;  .byte 775f-774f; .popsection
+ # ALT REPLACEMENT:
+ .pushsection .altinstr_replacement, "ax"
+ 774:	call rep_movs_alternative
+ 775:
+ .popsection
+ # </ALTERNATIVE>
+
+-----------------------
+ALTERNATIVE_2() before:
+-----------------------
+
+ 	# ALT: oldinstr
+ 771:
+ 	# ALT: oldinstr
+ 771:
+ 	jmp 6f
+ 772:
+ # ALT: padding
+ .skip -(((775f-774f)-(772b-771b)) > 0) * ((775f-774f)-(772b-771b)),0x90
+ 773:
+ .pushsection .altinstructions,"a"
+  .long 771b - .
+  .long 774f - .
+  .4byte ( 3*32+21)
+  .byte 773b-771b
+  .byte 775f-774f
+ .popsection
+ .pushsection .altinstr_replacement, "ax"
+ # ALT: replacement
+ 774:
+ 	jmp .L4	#
+ 775:
+ .popsection
+
+ 772:
+ # ALT: padding
+ .skip -(((775f-774f)-(772b-771b)) > 0) * ((775f-774f)-(772b-771b)),0x90
+ 773:
+ .pushsection .altinstructions,"a"
+  .long 771b - .
+  .long 774f - .
+  .4byte 297	#
+  .byte 773b-771b
+  .byte 775f-774f
+ .popsection
+ .pushsection .altinstr_replacement, "ax"
+ # ALT: replacement
+ 774:
+
+ 775:
+ .popsection
+
+----------------------
+ALTERNATIVE_2() after:
+----------------------
+
+ # <ALTERNATIVE_2>
+ 771:
+ 771:	jmp 6f
+ 772:	.skip -(((775f-774f)-(772b-771b)) > 0) * ((775f-774f)-(772b-771b)),0x90
+ 773:
+ # ALT ENTRY:
+ .pushsection .altinstructions,"a";  .long 771b - .;  .long 774f - .;  .4byte ( 3*32+21);  .byte 773b-771b;  .byte 775f-774f; .popsection
+ # ALT REPLACEMENT:
+ .pushsection .altinstr_replacement, "ax"
+ 774:	jmp .L4	#
+ 775:
+ .popsection
+ 772:	.skip -(((775f-774f)-(772b-771b)) > 0) * ((775f-774f)-(772b-771b)),0x90
+ 773:
+ # ALT ENTRY:
+ .pushsection .altinstructions,"a";  .long 771b - .;  .long 774f - .;  .4byte 297;  .byte 773b-771b;  .byte 775f-774f; .popsection	#
+ # ALT REPLACEMENT:
+ .pushsection .altinstr_replacement, "ax"
+ 774:
+ 775:
+ .popsection
+ # </ALTERNATIVE_2>
 
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 ---
- include/linux/instrumentation.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/alternative.h | 88 +++++++++++++++++++++---------
+ 1 file changed, 63 insertions(+), 25 deletions(-)
 
-diff --git a/include/linux/instrumentation.h b/include/linux/instrumentation.h
-index bf675a8aef8a..b1007407d272 100644
---- a/include/linux/instrumentation.h
-+++ b/include/linux/instrumentation.h
-@@ -9,7 +9,7 @@
+diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
+index 4a37a8bd87fd..6472d53625dc 100644
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -151,46 +151,84 @@ static inline int alternatives_text_reserved(void *start, void *end)
+ #define alt_rlen		"775f-774f"
  
- /* Begin/end of an instrumentation safe region */
- #define __instrumentation_begin(c) ({					\
--	asm volatile(__stringify(c) ": nop\n\t"				\
-+	asm_inline volatile(__stringify(c) ": nop\n\t"			\
- 		     ANNOTATE_INSTR_BEGIN(__ASM_BREF(c))		\
- 		     : : "i" (c));					\
- })
-@@ -47,7 +47,7 @@
-  * part of the condition block and does not escape.
-  */
- #define __instrumentation_end(c) ({					\
--	asm volatile(__stringify(c) ": nop\n\t"				\
-+	asm_inline volatile(__stringify(c) ": nop\n\t"			\
- 		     ANNOTATE_INSTR_END(__ASM_BREF(c))			\
- 		     : : "i" (c));					\
- })
+ #define OLDINSTR(oldinstr)						\
+-	"# ALT: oldinstr\n"						\
+-	"771:\n\t" oldinstr "\n772:\n"					\
+-	"# ALT: padding\n"						\
+-	".skip -(((" alt_rlen ")-(" alt_slen ")) > 0) * "		\
+-		"((" alt_rlen ")-(" alt_slen ")),0x90\n"		\
++	"771:" oldinstr "\n"						\
++	"772:\t.skip -(((" alt_rlen ")-(" alt_slen ")) > 0) * "		\
++		      "((" alt_rlen ")-(" alt_slen ")),0x90\n"		\
+ 	"773:\n"
+ 
+-#define ALTINSTR_ENTRY(ft_flags)					      \
+-	".pushsection .altinstructions,\"a\"\n"				      \
+-	" .long 771b - .\n"				/* label           */ \
+-	" .long 774f - .\n"				/* new instruction */ \
+-	" .4byte " __stringify(ft_flags) "\n"		/* feature + flags */ \
+-	" .byte " alt_total_slen "\n"			/* source len      */ \
+-	" .byte " alt_rlen "\n"				/* replacement len */ \
++#define ALTINSTR_ENTRY(ft_flags)					\
++	"# ALT ENTRY:\n"						\
++	".pushsection .altinstructions,\"a\"; "				\
++	" .long 771b - .; "			/* label           */	\
++	" .long 774f - .; "			/* new instruction */	\
++	" .4byte " __stringify(ft_flags) "; "	/* feature + flags */	\
++	" .byte " alt_total_slen "; "		/* source len      */	\
++	" .byte " alt_rlen "; "			/* replacement len */	\
+ 	".popsection\n"
+ 
+-#define ALTINSTR_REPLACEMENT(newinstr)		/* replacement */	\
++#define ALTINSTR_REPLACEMENT(newinstr)					\
++	"# ALT REPLACEMENT:\n"						\
+ 	".pushsection .altinstr_replacement, \"ax\"\n"			\
+-	"# ALT: replacement\n"						\
+-	"774:\n\t" newinstr "\n775:\n"					\
+-	".popsection\n"
++	"774:\t" newinstr "\n"						\
++	"775:\n"							\
++	".popsection"
+ 
+-/* alternative assembly primitive: */
+-#define ALTERNATIVE(oldinstr, newinstr, ft_flags)			\
++
++#define __ALTERNATIVE(oldinstr, newinstr, ft_flags)			\
+ 	OLDINSTR(oldinstr)						\
+ 	ALTINSTR_ENTRY(ft_flags)					\
+ 	ALTINSTR_REPLACEMENT(newinstr)
+ 
+-#define ALTERNATIVE_2(oldinstr, newinstr1, ft_flags1, newinstr2, ft_flags2) \
+-	ALTERNATIVE(ALTERNATIVE(oldinstr, newinstr1, ft_flags1), newinstr2, ft_flags2)
++#define __ALTERNATIVE_2(oldinstr,					\
++			newinstr1, ft_flags1,				\
++			newinstr2, ft_flags2)				\
++	__ALTERNATIVE("\n"						\
++		      __ALTERNATIVE(oldinstr,				\
++				    newinstr1, ft_flags1),		\
++		      newinstr2, ft_flags2)
++
++#define __ALTERNATIVE_3(oldinstr,					\
++			newinstr1, ft_flags1,				\
++			newinstr2, ft_flags2,				\
++			newinstr3, ft_flags3)				\
++	__ALTERNATIVE("\n"						\
++		      __ALTERNATIVE_2(oldinstr,				\
++				      newinstr1, ft_flags1,		\
++				      newinstr2, ft_flags2),		\
++		      newinstr3, ft_flags3)
++
++
++#define ALTERNATIVE(oldinstr, newinstr, ft_flags)			\
++	"\n# <ALTERNATIVE>\n"						\
++	__ALTERNATIVE("\t" oldinstr, newinstr, ft_flags)		\
++	"\n# </ALTERNATIVE>\n"
++
++#define ALTERNATIVE_2(oldinstr,						\
++		      newinstr1, ft_flags1,				\
++		      newinstr2, ft_flags2)				\
++	"\n# <ALTERNATIVE_2>\n"						\
++	__ALTERNATIVE_2("\t"						\
++			oldinstr,					\
++			newinstr1, ft_flags1,				\
++			newinstr2, ft_flags2)				\
++	"\n# </ALTERNATIVE_2>\n"
++
++#define ALTERNATIVE_3(oldinstr,						\
++		      newinstr1, ft_flags1,				\
++		      newinstr2, ft_flags2,				\
++		      newinstr3, ft_flags3)				\
++	"\n# <ALTERNATIVE_3>\n"						\
++	__ALTERNATIVE_3("\t"						\
++			oldinstr,					\
++			newinstr1, ft_flags1,				\
++			newinstr2, ft_flags2,				\
++			newinstr3, ft_flags3)				\
++	"\n# </ALTERNATIVE_3>\n"
+ 
+ /* If @feature is set, patch in @newinstr_yes, otherwise @newinstr_no. */
+ #define ALTERNATIVE_TERNARY(oldinstr, ft_flags, newinstr_yes, newinstr_no) \
+ 	ALTERNATIVE_2(oldinstr, newinstr_no, X86_FEATURE_ALWAYS, newinstr_yes, ft_flags)
+ 
+-#define ALTERNATIVE_3(oldinstr, newinstr1, ft_flags1, newinstr2, ft_flags2, \
+-			newinstr3, ft_flags3)				\
+-	ALTERNATIVE(ALTERNATIVE_2(oldinstr, newinstr1, ft_flags1, newinstr2, ft_flags2), \
+-		      newinstr3, ft_flags3)
+-
+ /*
+  * Alternative instructions for different CPU types or capabilities.
+  *
 -- 
 2.49.0
 
