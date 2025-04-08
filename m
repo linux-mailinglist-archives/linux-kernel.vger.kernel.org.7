@@ -1,420 +1,213 @@
-Return-Path: <linux-kernel+bounces-594153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CAFFA80DD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:26:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1452AA80E08
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E2737AC56D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:24:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B85B881FBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F4A1D5172;
-	Tue,  8 Apr 2025 14:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4809C1DF252;
+	Tue,  8 Apr 2025 14:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DDl2xGV6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="G3cBy/zC"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CFB14AD2D
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 14:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B751E9B16;
+	Tue,  8 Apr 2025 14:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744122344; cv=none; b=PtWY4KwaKIdT1PxDjsAdLjcaFW68rX4RClICi2hCLWBt9i7MowKhtJpZ0jVpUBu4jVR8vjR1hVQtRe2pQuNEiyF7irzz7f8NzgT+nbzNfLZnwGfPt07nNNJKrbDd8BPPUaQS8MTdbJwi72lkMHCxi67v7vurV/o4uhvEcLifDpo=
+	t=1744122378; cv=none; b=OO0pz+nKbUPNjVEHjSz0wIihiERqFHs5iHQCaVOwBnb0CmjMAZg3MuvAPhjKEFQ66sSojdEaNianBHQeTXxIApRnxtGjKjSNKW+qQCfpeoTI1mNpxL81/JyzTFAPO5Wxd+q1Xeu19MW1zuDP6/0iekLG1e1G/Ybj3EoBdTkcZKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744122344; c=relaxed/simple;
-	bh=o9SbxjFmy56UpmIx0oi+ZQHqDhIiT+abssNTnn2ZEXM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Txf2MMO3WbWEI3KfScgGdO24UDJ8kdetEwAGTs+zCu21opXvbB+9ogiKyHZwlxRZXqtOfI+g4eFoIU0gCXNqrxwBUpor4AAyw0HlJsJBPrcnqDnJOF+zyJvziT0BzpVcbySq5IgDlSdDvBp5r4Cf3MJ+QAW0bF8M/0WgK53Xoao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DDl2xGV6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744122339;
+	s=arc-20240116; t=1744122378; c=relaxed/simple;
+	bh=Q8kG5YWNNyJvLfphoBOBXwTMIflX0uzldOomWr9w70w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rc/ArfStq4wkQRWRICbMbU6wP7eZcDBTxIKSXWt/QDf1iXGaQ9+qXb7PX9xG2hrNOvYaH8cU/ZyzsQXlWXZlvK4YWTucKDrNoVmulNqUbR37smddHHvo9g0xgf4MHSpjZfUtTYM3KI721g4zqtzwVDhb+N9i98VHQmqI7qA/4Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=G3cBy/zC; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 89BA8442A2;
+	Tue,  8 Apr 2025 14:26:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744122368;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=cdYzwQdmas4AvXbPEP9rA3v9GgJ/jWsMLp6HlDh9xY4=;
-	b=DDl2xGV6/IPCIGdqbz8mPP+V1HesFWlsRWdA1pkoaA/WcnXOZG5jouR3gwIY1DjQNjarpf
-	QsWBMrRtYIc77GNReAZc6FY2JUZcNhXeFsxj+9D73k9a+rxBWSw5pgduUalmM7mbvppCe/
-	3sP8pR3gic8/olgfudKR0V7sg8xTRGw=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-428-gLH-BhZONfuwKuFaeFcc1g-1; Tue, 08 Apr 2025 10:25:36 -0400
-X-MC-Unique: gLH-BhZONfuwKuFaeFcc1g-1
-X-Mimecast-MFC-AGG-ID: gLH-BhZONfuwKuFaeFcc1g_1744122335
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43d3b211d0eso33384755e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 07:25:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744122335; x=1744727135;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cdYzwQdmas4AvXbPEP9rA3v9GgJ/jWsMLp6HlDh9xY4=;
-        b=swK5YI2SELIl1JhzDdBp4Y/Aprbyf5DDSjRU+LUhUYGa7prdfQuw06nK28caR+5DpX
-         CeQvyOHUVdu4A0C5oiebPycwDRT03DSJFcpLRbh4kxhiSi2byGrsF3MdNFGiV4glNoa1
-         d6GTYUTCq7CZihq1nRtCNkNaZgyK4eePYtIMj5fFcr/2+EleufH18b+1Q9sPmusZuuHJ
-         FNqrVo4ZfxgbH/OpfuoEIyfAMr6PhSS8459BmnZPM55ISicrGrQQpLhzbYh55u79KJRW
-         bB2rxUOr7SX3b87vbvdzHHeoCGTbnwij08lsE4IVQCnGzYk5iHHKNRM0qpgxI8KSgdW3
-         /TOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3UX0fUqBHQ4DU815udglDhTwLeG4SDhXmrW3TFtfcTcywxIWTXILJOYzO3B/mo0CGP9ahvQ+j+2ID25A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs9X7HAdcdCGXbPVPGuacEeuUyGHjeyHhlabwdF/FP5A/JQjxQ
-	uI++DL4ZmrGxxUlRVpVRmzqSC/oDHfYv6xF7BfD1mX+LaUKM6Tzgz21f5+4AbyUGkePxBW6fmjv
-	NtlAC6i5YmWRwtXktqIui0MHKhOka1utpv9vYjTmdjGAcgRDT90v4VPi2cRI0Xw==
-X-Gm-Gg: ASbGncuID8V20Gi3hOaun0noVeiDis5XwE/vcCDXOZ1ZdXjhziyIC19IkALTZ5si9vU
-	iTsmKkGGHA58iAzzjw4DMsZFqlmX2tZjRm6KgRqbP3j3Ngk5FC7wLAh/y04pDeAg3+3mX9ZzWUd
-	o8Bn/tgPGXqsuO8Or431vcBlqtCUKH25iW4Kn7ExGDl0HeyRDFW8S1SNWk6D8dFv+rajBRSs2pt
-	tRughfAGoVR76o5W21nig9IhYxeLu6zHYT8FPofvS+ZTJgyYO+672zWha16LZ5dox4pa3knYIcY
-	osZC0Nnvv3SFRfsL+zRsGliKlM9SdEYsbAY48bvDjEMeng==
-X-Received: by 2002:a05:600c:4fcf:b0:439:8878:5029 with SMTP id 5b1f17b1804b1-43f0e559b59mr25070665e9.2.1744122335140;
-        Tue, 08 Apr 2025 07:25:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEmTbfxJIh666ObJTK1RRy0WNRsx3t3PI5C48zyEfbY1TrN6gfjIulvoD2QknSx2rkn+d8uDg==
-X-Received: by 2002:a05:600c:4fcf:b0:439:8878:5029 with SMTP id 5b1f17b1804b1-43f0e559b59mr25070395e9.2.1744122334712;
-        Tue, 08 Apr 2025 07:25:34 -0700 (PDT)
-Received: from [192.168.3.141] (p4ff236e3.dip0.t-ipconnect.de. [79.242.54.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f0e5e8dfasm28445335e9.27.2025.04.08.07.25.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Apr 2025 07:25:34 -0700 (PDT)
-Message-ID: <b26b32c9-6b3a-4ab4-9ef4-c20b415d5483@redhat.com>
-Date: Tue, 8 Apr 2025 16:25:33 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=wWC1t5C7Psv+WkhU4vEeLTJB5SiU/U5h01ZyvIxqatY=;
+	b=G3cBy/zC21TopTZxsSm3Hm56tKYPMHyF3UnKgpMl87ahvIrG/PTDf1B88csRkMHc8tNK3d
+	g1mXIvcrZtRIp1lcQFGenQXx3nOQ38o7Ze1Lq0GKYoBLYJEnMhRw9mKdZ90dV7TG0NHl0p
+	c/mXwowQAoVeLJ/Ip6VxqiXyOYCJgtzR+n2yfcHPIYoMm7dwckguem0ir/jl3VU+0a/rTM
+	VrHq1w8wPVMN80rnY/I7B+ErA2xHbUonBWik26u6aR2l+iXgIfgDtPK+xq204VkoHeJpJK
+	5SWnj30FdxKPC68R1qOEm/mUoB/A+dWmLkGEnruusrKLgvo41ZX6VkN3legqAQ==
+Date: Tue, 8 Apr 2025 16:26:03 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Derek
+ Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
+ Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Saravana
+ Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Mark
+ Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 15/16] misc: lan966x_pci: Add dtso nodes in order to
+ support SFPs
+Message-ID: <20250408162603.02d6c3a1@bootlin.com>
+In-Reply-To: <19f1a382-1b6b-42bd-a548-a1a5644c9a1b@lunn.ch>
+References: <20250407145546.270683-1-herve.codina@bootlin.com>
+	<20250407145546.270683-16-herve.codina@bootlin.com>
+	<19f1a382-1b6b-42bd-a548-a1a5644c9a1b@lunn.ch>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] mm,slub: Do not special case N_NORMAL nodes for
- slab_nodes
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: Oscar Salvador <osalvador@suse.de>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-cxl@vger.kernel.org
-References: <20250408084153.255762-1-osalvador@suse.de>
- <20250408084153.255762-2-osalvador@suse.de>
- <92ff4f7f-90d2-48ab-8f7d-7fc3485276b5@redhat.com> <Z_UwPmyxyu8YNLG_@harry>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Z_UwPmyxyu8YNLG_@harry>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdeffedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeguddprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtp
+ hhtthhopehshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshdrhhgruhgvrhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepkhgvrhhnvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehfvghsthgvvhgrmhesghhmrghilhdrtghomh
+X-GND-Sasl: herve.codina@bootlin.com
 
-On 08.04.25 16:18, Harry Yoo wrote:
-> On Tue, Apr 08, 2025 at 12:17:52PM +0200, David Hildenbrand wrote:
->> On 08.04.25 10:41, Oscar Salvador wrote:
->>> Currently, slab_mem_going_going_callback() checks whether the node has
->>> N_NORMAL memory in order to be set in slab_nodes.
->>> While it is true that gettind rid of that enforcing would mean
->>> ending up with movables nodes in slab_nodes, the memory waste that comes
->>> with that is negligible.
->>>
->>> So stop checking for status_change_nid_normal and just use status_change_nid
->>> instead which works for both types of memory.
->>>
->>> Also, once we allocate the kmem_cache_node cache  for the node in
->>> slab_mem_online_callback(), we never deallocate it in
->>> slab_mem_off_callback() when the node goes memoryless, so we can just
->>> get rid of it.
->>>
->>> The only side effect is that we will stop clearing the node from slab_nodes.
->>>
->>
->> Feel free to add a Suggested-by: if you think it applies.
->>
->>
->> Do we have to take care of the N_NORMAL_MEMORY check in kmem_cache_init() ? Likely it
->> would have to be a N_MEMORY check.
->>
->>
->> But, I was wondering if we could get rid of the "slab_nodes" thingy as a first step?
+Hi Andrew,
+
+On Mon, 7 Apr 2025 22:05:31 +0200
+Andrew Lunn <andrew@lunn.ch> wrote:
+
+> On Mon, Apr 07, 2025 at 04:55:44PM +0200, Herve Codina wrote:
+> > Add device-tree nodes needed to support SFPs.
+> > Those nodes are:
+> >  - the clock controller
+> >  - the i2c controller
+> >  - the i2c mux
+> >  - the SFPs themselves and their related ports in the switch
+> > 
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > ---
+> >  drivers/misc/lan966x_pci.dtso | 111 ++++++++++++++++++++++++++++++++++
+> >  1 file changed, 111 insertions(+)
+> > 
+> > diff --git a/drivers/misc/lan966x_pci.dtso b/drivers/misc/lan966x_pci.dtso
+> > index 94a967b384f3..a2015b46cd44 100644
+> > --- a/drivers/misc/lan966x_pci.dtso
+> > +++ b/drivers/misc/lan966x_pci.dtso  
 > 
-> The following commit says that SLUB has slab_nodes thingy for a reason...
-> kmem_cache_node might not be ready yet even when N_NORMAL_MEMORY check
-> says it now has normal memory.
+> What exactly does this DTSO file represent?
 
-node_states_set_node() is called from memory hotplug code after 
-MEM_GOING_ONLINE and after online_pages_range().
-
-Pages might be isolated at that point, but node_states_set_node() is set 
-only after the memory notifier (MEM_GOING_ONLINE) was triggered.
-
-So I don't immediately see the problem assuming that we never free the 
-structures.
-
-But yeah, this is what I raised below: "Not sure if there are any races 
-to consider" :)
+The dsto represents de board connected to the PCI slot and identified
+by its PCI vendor/device IDs.
 
 > 
-> @Vlastimil maybe a dumb question but why not check s->node[nid]
-> instead of having slab_nodes bitmask?
 > 
-> commit 7e1fa93deff44677a94dfc323ff629bbf5cf9360
-> Author: Vlastimil Babka <vbabka@suse.cz>
-> Date:   Wed Feb 24 12:01:12 2021 -0800
+> > @@ -47,6 +47,47 @@ sys_clk: clock-15625000 {
+> >  				clock-frequency = <15625000>;  /* System clock = 15.625MHz */
+> >  			};
+> >  
+> > +			i2c0_emux: i2c0-emux {
+> > +				compatible = "i2c-mux-pinctrl";
+> > +				#address-cells = <1>;
+> > +				#size-cells = <0>;
+> > +				i2c-parent = <&i2c0>;
+> > +				pinctrl-names = "i2c102", "i2c103", "idle";
+> > +				pinctrl-0 = <&i2cmux_0>;
+> > +				pinctrl-1 = <&i2cmux_1>;
+> > +				pinctrl-2 = <&i2cmux_pins>;
+> > +
+> > +				i2c102: i2c@0 {
+> > +					reg = <0>;
+> > +					#address-cells = <1>;
+> > +					#size-cells = <0>;
+> > +				};
+> > +
+> > +				i2c103: i2c@1 {
+> > +					reg = <1>;
+> > +					#address-cells = <1>;
+> > +					#size-cells = <0>;
+> > +				};
+> > +			};
+> > +
+> > +			sfp2: sfp2 {
+> > +				compatible = "sff,sfp";
+> > +				i2c-bus = <&i2c102>;
+> > +				tx-disable-gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
+> > +				los-gpios = <&gpio 25 GPIO_ACTIVE_HIGH>;
+> > +				mod-def0-gpios = <&gpio 18 GPIO_ACTIVE_LOW>;
+> > +				tx-fault-gpios = <&gpio 2 GPIO_ACTIVE_HIGH>;  
 > 
->      mm, slab, slub: stop taking memory hotplug lock
->      
->      Since commit 03afc0e25f7f ("slab: get_online_mems for
->      kmem_cache_{create,destroy,shrink}") we are taking memory hotplug lock for
->      SLAB and SLUB when creating, destroying or shrinking a cache.  It is quite
->      a heavy lock and it's best to avoid it if possible, as we had several
->      issues with lockdep complaining about ordering in the past, see e.g.
->      e4f8e513c3d3 ("mm/slub: fix a deadlock in show_slab_objects()").
->      
->      The problem scenario in 03afc0e25f7f (solved by the memory hotplug lock)
->      can be summarized as follows: while there's slab_mutex synchronizing new
->      kmem cache creation and SLUB's MEM_GOING_ONLINE callback
->      slab_mem_going_online_callback(), we may miss creation of kmem_cache_node
->      for the hotplugged node in the new kmem cache, because the hotplug
->      callback doesn't yet see the new cache, and cache creation in
->      init_kmem_cache_nodes() only inits kmem_cache_node for nodes in the
->      N_NORMAL_MEMORY nodemask, which however may not yet include the new node,
->      as that happens only later after the MEM_GOING_ONLINE callback.
->      
->      Instead of using get/put_online_mems(), the problem can be solved by SLUB
->      maintaining its own nodemask of nodes for which it has allocated the
->      per-node kmem_cache_node structures.  This nodemask would generally mirror
->      the N_NORMAL_MEMORY nodemask, but would be updated only in under SLUB's
->      control in its memory hotplug callbacks under the slab_mutex.  This patch
->      adds such nodemask and its handling.
->      
->      Commit 03afc0e25f7f mentiones "issues like [the one above]", but there
->      don't appear to be further issues.  All the paths (shared for SLAB and
->      SLUB) taking the memory hotplug locks are also taking the slab_mutex,
->      except kmem_cache_shrink() where 03afc0e25f7f replaced slab_mutex with
->      get/put_online_mems().
->      
->      We however cannot simply restore slab_mutex in kmem_cache_shrink(), as
->      SLUB can enters the function from a write to sysfs 'shrink' file, thus
->      holding kernfs lock, and in kmem_cache_create() the kernfs lock is nested
->      within slab_mutex.  But on closer inspection we don't actually need to
->      protect kmem_cache_shrink() from hotplug callbacks: While SLUB's
->      __kmem_cache_shrink() does for_each_kmem_cache_node(), missing a new node
->      added in parallel hotplug is not fatal, and parallel hotremove does not
->      free kmem_cache_node's anymore after the previous patch, so use-after free
->      cannot happen.  The per-node shrinking itself is protected by
->      n->list_lock.  Same is true for SLAB, and SLOB is no-op.
->      
->      SLAB also doesn't need the memory hotplug locking, which it only gained by
->      03afc0e25f7f through the shared paths in slab_common.c.  Its memory
->      hotplug callbacks are also protected by slab_mutex against races with
->      these paths.  The problem of SLUB relying on N_NORMAL_MEMORY doesn't apply
->      to SLAB, as its setup_kmem_cache_nodes relies on N_ONLINE, and the new
->      node is already set there during the MEM_GOING_ONLINE callback, so no
->      special care is needed for SLAB.
->      
->      As such, this patch removes all get/put_online_mems() usage by the slab
->      subsystem.
->      
->      Link: https://lkml.kernel.org/r/20210113131634.3671-3-vbabka@suse.cz
->      Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
->      Cc: Christoph Lameter <cl@linux.com>
->      Cc: David Hildenbrand <david@redhat.com>
->      Cc: David Rientjes <rientjes@google.com>
->      Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
->      Cc: Michal Hocko <mhocko@kernel.org>
->      Cc: Pekka Enberg <penberg@kernel.org>
->      Cc: Qian Cai <cai@redhat.com>
->      Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
->      Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
->      Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> DT files are generally hierarchical. There is a soc .dtsi file which
+> describes everything internal to the SoC.  And then we have .dts file
+> which describes the board the SoC is placed on.
 > 
->>
->>  From 518a2b83a9c5bd85d74ddabbc36ce5d181a88ed6 Mon Sep 17 00:00:00 2001
->> From: David Hildenbrand <david@redhat.com>
->> Date: Tue, 8 Apr 2025 12:16:13 +0200
->> Subject: [PATCH] tmp
->>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->> ---
->>   mm/slub.c | 56 ++++---------------------------------------------------
->>   1 file changed, 4 insertions(+), 52 deletions(-)
->>
->> diff --git a/mm/slub.c b/mm/slub.c
->> index b46f87662e71d..afe31149e7f4e 100644
->> --- a/mm/slub.c
->> +++ b/mm/slub.c
->> @@ -445,14 +445,6 @@ static inline struct kmem_cache_node *get_node(struct kmem_cache *s, int node)
->>   	for (__node = 0; __node < nr_node_ids; __node++) \
->>   		 if ((__n = get_node(__s, __node)))
->> -/*
->> - * Tracks for which NUMA nodes we have kmem_cache_nodes allocated.
->> - * Corresponds to node_state[N_NORMAL_MEMORY], but can temporarily
->> - * differ during memory hotplug/hotremove operations.
->> - * Protected by slab_mutex.
->> - */
->> -static nodemask_t slab_nodes;
->> -
->>   #ifndef CONFIG_SLUB_TINY
->>   /*
->>    * Workqueue used for flush_cpu_slab().
->> @@ -3706,10 +3698,9 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
->>   	if (!slab) {
->>   		/*
->>   		 * if the node is not online or has no normal memory, just
->> -		 * ignore the node constraint
->> +		 * ignore the node constraint.
->>   		 */
->> -		if (unlikely(node != NUMA_NO_NODE &&
->> -			     !node_isset(node, slab_nodes)))
->> +		if (unlikely(node != NUMA_NO_NODE && !node_state(node, N_NORMAL_MEMORY)))
->>   			node = NUMA_NO_NODE;
->>   		goto new_slab;
->>   	}
->> @@ -3719,7 +3710,7 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
->>   		 * same as above but node_match() being false already
->>   		 * implies node != NUMA_NO_NODE
->>   		 */
->> -		if (!node_isset(node, slab_nodes)) {
->> +		if (!node_state(node, N_NORMAL_MEMORY)) {
->>   			node = NUMA_NO_NODE;
->>   		} else {
->>   			stat(s, ALLOC_NODE_MISMATCH);
->> @@ -5623,7 +5614,7 @@ static int init_kmem_cache_nodes(struct kmem_cache *s)
->>   {
->>   	int node;
->> -	for_each_node_mask(node, slab_nodes) {
->> +	for_each_node_state(node, N_NORMAL_MEMORY) {
->>   		struct kmem_cache_node *n;
->>   		if (slab_state == DOWN) {
->> @@ -6164,30 +6155,6 @@ static int slab_mem_going_offline_callback(void *arg)
->>   	return 0;
->>   }
->> -static void slab_mem_offline_callback(void *arg)
->> -{
->> -	struct memory_notify *marg = arg;
->> -	int offline_node;
->> -
->> -	offline_node = marg->status_change_nid_normal;
->> -
->> -	/*
->> -	 * If the node still has available memory. we need kmem_cache_node
->> -	 * for it yet.
->> -	 */
->> -	if (offline_node < 0)
->> -		return;
->> -
->> -	mutex_lock(&slab_mutex);
->> -	node_clear(offline_node, slab_nodes);
->> -	/*
->> -	 * We no longer free kmem_cache_node structures here, as it would be
->> -	 * racy with all get_node() users, and infeasible to protect them with
->> -	 * slab_mutex.
->> -	 */
->> -	mutex_unlock(&slab_mutex);
->> -}
->> -
->>   static int slab_mem_going_online_callback(void *arg)
->>   {
->>   	struct kmem_cache_node *n;
->> @@ -6229,11 +6196,6 @@ static int slab_mem_going_online_callback(void *arg)
->>   		init_kmem_cache_node(n);
->>   		s->node[nid] = n;
->>   	}
->> -	/*
->> -	 * Any cache created after this point will also have kmem_cache_node
->> -	 * initialized for the new node.
->> -	 */
->> -	node_set(nid, slab_nodes);
->>   out:
->>   	mutex_unlock(&slab_mutex);
->>   	return ret;
->> @@ -6253,8 +6215,6 @@ static int slab_memory_callback(struct notifier_block *self,
->>   		break;
->>   	case MEM_OFFLINE:
->>   	case MEM_CANCEL_ONLINE:
->> -		slab_mem_offline_callback(arg);
->> -		break;
->>   	case MEM_ONLINE:
->>   	case MEM_CANCEL_OFFLINE:
->>   		break;
->> @@ -6309,7 +6269,6 @@ void __init kmem_cache_init(void)
->>   {
->>   	static __initdata struct kmem_cache boot_kmem_cache,
->>   		boot_kmem_cache_node;
->> -	int node;
->>   	if (debug_guardpage_minorder())
->>   		slub_max_order = 0;
->> @@ -6321,13 +6280,6 @@ void __init kmem_cache_init(void)
->>   	kmem_cache_node = &boot_kmem_cache_node;
->>   	kmem_cache = &boot_kmem_cache;
->> -	/*
->> -	 * Initialize the nodemask for which we will allocate per node
->> -	 * structures. Here we don't need taking slab_mutex yet.
->> -	 */
->> -	for_each_node_state(node, N_NORMAL_MEMORY)
->> -		node_set(node, slab_nodes);
->> -
->>   	create_boot_cache(kmem_cache_node, "kmem_cache_node",
->>   			sizeof(struct kmem_cache_node),
->>   			SLAB_HWCACHE_ALIGN | SLAB_NO_OBJ_EXT, 0, 0);
->> -- 
->> 2.48.1
->>
->>
->> Not sure if there are any races to consider ... just an idea.
->>
->> -- 
->> Cheers,
->>
->> David / dhildenb
->>
+> We have a slightly different setup here. A PCI chip instead of a SoC.
+> And a PCI card in a slot, which could be seen as the board.
+> 
+> The SFP cage is on the board. How the GPIOs and i2c busses are wired
+> to the SFP cage is a board property, not a SoC/PCI chip
+> property. Different boards could wire them up differently. So to me,
+> it seems wrong these nodes are here. They should be in a dtso file
+> which represents the PCIe board in the slot, and that .dtso file
+> imports the .dtso file which represents the PCIe chip.
+
+The PCI vendor/device ID identifies the board. This is the PCI
+peripheral connected to the PCI slot and enumerated. This dtso
+describes the board.
+
+The dtso in that case is the equivalent of the dts.
+
+We can move the PCI chip in a dtsi included by this dtso but in the
+end this leads to the exact same representation. Further more, moving
+out the PCI chip description in its own dtsi out of this dtso can be
+done in a second step when an other dtso uses the same chip.
+
+This dtso, describing the board, is applied on the PCI device node.
+SDP, i2c mux, ... are described at the same level as the fixed-clock
+component for instance.
+
+> 
+> I suppose this comes down to, what do the PCIe IDs represent, since
+> that is what is used for probing? The PCIe chip, or the board as a
+> whole. When somebody purchases the chips from Microchip, and builds
+> their own board, are they required to have their own PCIe IDs, and a
+> .dtso file representing their board design? The PCIe chip part should
+> be reusable, so we are talking about stacked dtso files, or at least
+> included .dtso files.
 > 
 
+Staked dtso implies stacked overlays and I think is is not a correct
+description. There is only one piece of hardware that can be plugged or
+un-plugged: the PCI board. This piece of hardware should be fully
+described by only one overlay (one dtso).
 
--- 
-Cheers,
+IMHO, the only reason I can see to have multiple overlay is to apply a
+first overlay which help to identify the board connected. For instance,
+an eeprom description where some ids are stored and needed to identify
+the board. In the PCI case, this is not needed, the PCI vendor/device
+IDs are here to identify the board.
 
-David / dhildenb
-
+Best regards,
+Hervé
 
