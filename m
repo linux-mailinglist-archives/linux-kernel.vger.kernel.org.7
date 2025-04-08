@@ -1,126 +1,120 @@
-Return-Path: <linux-kernel+bounces-593349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C7C2A7F83B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:46:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77941A7F849
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE2484411EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:43:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FB2F188D33C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36B4263F47;
-	Tue,  8 Apr 2025 08:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6373A263F5E;
+	Tue,  8 Apr 2025 08:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="zLjGAeR0"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBs+n2N8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCCFB1CF8B
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80F12185B8;
+	Tue,  8 Apr 2025 08:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744101808; cv=none; b=GQ9wSK9K6kQ8FhRnxLeyiAOvFxRwe/lvBWvrkaC400xZpLzvU97TOcJ2fhSZuSXac/uLBKiZ7Rfl/ZoI3GU3MFsYqYB8KsgxnRNUrvgWg1MpQvIha3kkgXPdd2/EYW809GlgaA4NaMTAylReZAe1YwuYM7lK70VTenAeMd/Wub8=
+	t=1744101837; cv=none; b=QSGnSQpUzmB1NwT1Emxy2MpZ1niKxVLkXtNv5XGY3sdkzMqFVEhithPmb7Tcm3zk6F45wneInJhfaEzNU5eOmG/MYHq+aqJRwt+rGxxfXze9ml/eohc1X5AJ9CQdUvdjd1JYhwWGOmuDbVe5+6+xaLixcO6erKR3hnRDsyfxM/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744101808; c=relaxed/simple;
-	bh=GXK3ZGW9tf6Q9chAz2456V+BotYGmE/J2SwhelVDqRc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TCBMZecVWACoOocPcojWqhYZxrvj9nzPjl87alQcN7EUKnoiaxaIGaoHL2Q9OvmPY1mM5z6DnNMDUcvplbGxtv2bonzqCVLYQoFGv8H2CSCMJhthmGPMNXnfsObQqDiTbviwUfhEOrbFKjUGdgKVhy9koedfz0rGtanY65d4ol8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=zLjGAeR0; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39c2688619bso3191985f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 01:43:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744101804; x=1744706604; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OePFKTyhdQdf/eaJWtXJyGR/G6HZO3R3hL0HNN3AkLo=;
-        b=zLjGAeR0zAq5ImoYHeZVbsy2fU6FueyrusA0simpCwgi7YYHc+LsdkjrvovnMz3j7W
-         QW1YRqYFmbM4gLqHAFSTBjlNv34Ei4SF36EOV+sJpnKuPoE0ChU3/S6Yy22KM+wxGK9l
-         cbZYvIcEVRDR/+tJdtGNnB7J/GQ2vieqD25U6/8VqG5/lrveTxj6t1oqxB056XinUjYZ
-         zHerYN5YroukP9ovMsp71PDixVz9vUksioactbdUubhUNmweNMgQFBeKKnEIcJvi9IZ5
-         meissqGqMvCAaPp6v12rqMIuQk2zcZHL5coATQsU9HkotA/nTfMhaqY6u+hLDHjUnS0Y
-         j5eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744101804; x=1744706604;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OePFKTyhdQdf/eaJWtXJyGR/G6HZO3R3hL0HNN3AkLo=;
-        b=a8QBbp6z2THUnoP9J6UPG9suH+Ryb5NSXVuveXVg7Cc/4pMu/VVs/pdUjoQVs8Db6V
-         Iz+8Hk8qvoyZnzZTBfeDunGMNqLACkhDDjmCFgW3D3SJipx8cnP3QAt9qAlXVbzDUh9d
-         Jw8QVxXrsdj2YkBKzq4VoDJEcQd/oxdHUPiHxVZ6SBoIXK9bBcBOGCiOLC4NR3hAuJVD
-         oA+ZH+0b4wp6Vy79p4ES2ThBlVihlc9Mtv+p0i8ZFAqpziFwLL6UrxuLZqJAhoaUEH5d
-         v1dq2JRKV3bKoSbkkI+8ClcjuIzgECRdEmImJIAR8NCPbC7dsYE1QOhm/lQcx0VKe/jI
-         fwGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVhF7vz7GPJhR7FPlQv05sCtheKg5kZDqia6+QzRWG7xn3rphpKY6a/0fbct0wMOXt4FPQ5mumm1waqSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzG+OyjsOWhBiZEXdYco1kUMGbBrLi5Bx7JWSmIMeXh3K9S6Ww
-	ujNQ/iQu06yGcmdp9RhsEllBnG/X6DBgZbEo61Rn+LXXkUROZHf0dR5IehFBXzw=
-X-Gm-Gg: ASbGncsJxpolBE+dnvTVUr8rA+nQc0gxaHbBENs/M8E1+3InmYLem6GGyEmlcJ8NaTj
-	xuDL+lPKFEUN2/pis8Q7yXPs+TlRgDXfOwWsZhWgX4MXHD1QOM1iAHiLaeV8iMbJGUxJM4CvSBs
-	LGiR5RlodGUHnr5nnX7AVsE3qhUUR+1Txcctt5J8TPqkI3t+bkxtKYaFgzMDkyx2rx3V6nASkKE
-	5gWSkYZh2j0MbcfR+Mr19uiyYgRmjRaZj+kUBlR6VKflrV1na9cpaspAJaxmL+K4sdzRla1tccE
-	BsTxBjp8p/WKAN+xW9/z/h1ThJQbn5QoneTJGtdpyQlq
-X-Google-Smtp-Source: AGHT+IEGC1m/9gJgDIPNZJo3xHP2dSgiPLSh/AneDnG9bwnv4PbEsI/+WnvpUUlb/P2XY7yG+BFXkQ==
-X-Received: by 2002:a05:6000:1aca:b0:390:fdba:ac7 with SMTP id ffacd0b85a97d-39cba97f346mr13060051f8f.51.1744101804000;
-        Tue, 08 Apr 2025 01:43:24 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:2adf:eaae:f6ea:1a73])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c30096ecasm14689544f8f.18.2025.04.08.01.43.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 01:43:23 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Mark Brown <broonie@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] gpio: deprecate and track the removal of GPIO workarounds for regulators
-Date: Tue,  8 Apr 2025 10:43:22 +0200
-Message-ID: <174410179723.40269.7114336096842145653.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250401-gpio-todo-remove-nonexclusive-v2-0-7c1380797b0d@linaro.org>
-References: <20250401-gpio-todo-remove-nonexclusive-v2-0-7c1380797b0d@linaro.org>
+	s=arc-20240116; t=1744101837; c=relaxed/simple;
+	bh=P5m3QFVw+X3gs9ohqO7sbUbfBw2sYBlUeGNDal0H9Pk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JJVDXcjAuCEdOkjvnwhXWVg+nrBYfe+3ZCXnVNeTPRk5FIKt7yHaXCxPfugKQYu/oloXirLcgi/mBJ0KGI1jnIlnB9bVTBtP7F2dzPNN50024ZEY5EG2P6mWnlEM2Y4zRxbXkI6hcXMRNgRVwbvPNbc5sROq3hS8GssHDiR+fmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LBs+n2N8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E712C4CEE5;
+	Tue,  8 Apr 2025 08:43:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744101837;
+	bh=P5m3QFVw+X3gs9ohqO7sbUbfBw2sYBlUeGNDal0H9Pk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=LBs+n2N8NhUFecbrk3bW0GlDry7rkHeoLfO826D1eGVSyfoN/ElHkzLrmJ20wp6Jx
+	 jBogmLGexOMxSaIsDPVritZvZJQAjMjTOmQjiDtXw6zrM3LwXtm2nooVwLnhf/Qk96
+	 IJ6Ct9w6y+SmRa93zcfqibRoYnHAqDZu48oNQfIo79kc0mxYDmHqxcXdOV2SQsAvUr
+	 QtwAWD7HB3jNGJVs55zgGIOsY54i/WZrE3mAQrk6Ae8eTmeloA71vbZaXUjVNjncKH
+	 vLBO5NkPRl+Le+38fOD4ljoM7uvLGfDUSKOcscXFeUllb4ZqRV6+I+h2zTP9MvrC2d
+	 cn9DpIhxSMlYw==
+From: Mattijs Korpershoek <mkorpershoek@kernel.org>
+To: Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>,
+ John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>,
+ Christian =?utf-8?Q?K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: Mattijs Korpershoek <mkorpershoek@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org, Maxime Ripard <mripard@kernel.org>
+Subject: Re: [PATCH v3 1/2] dma-buf: heaps: system: Remove global variable
+In-Reply-To: <20250407-dma-buf-ecc-heap-v3-1-97cdd36a5f29@kernel.org>
+References: <20250407-dma-buf-ecc-heap-v3-0-97cdd36a5f29@kernel.org>
+ <20250407-dma-buf-ecc-heap-v3-1-97cdd36a5f29@kernel.org>
+Date: Tue, 08 Apr 2025 10:43:53 +0200
+Message-ID: <875xjf11rq.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Maxime,
 
+Thank you for the patch.
 
-On Tue, 01 Apr 2025 14:46:41 +0200, Bartosz Golaszewski wrote:
-> The GPIOD_FLAGS_BIT_NONEXCLUSIVE flag and devm_gpiod_unhinge() helpers
-> were introduced as hacky workarounds for resource ownership issues in the
-> regulator subsystem. Unfortunately, people started using the former in
-> other places too and now it's in all kinds of drivers.
-> 
-> Let's deprecate both symbols officially, add them to the MAINTAINERS
-> keywords so that it pops up on our radars when used again, add a task to
-> track it and I plan to use the power sequencing subsystem to handle the
-> cases where non-exclusive access to GPIOs is required.
-> 
-> [...]
+On lun., avril 07, 2025 at 18:29, Maxime Ripard <mripard@kernel.org> wrote:
 
-Applied, thanks!
+> The system heap is storing its struct dma_heap pointer in a global
+> variable but isn't using it anywhere.
+>
+> Let's move the global variable into system_heap_create() to make it
+> local.
+>
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
 
-[1/4] gpio: deprecate the GPIOD_FLAGS_BIT_NONEXCLUSIVE flag
-      https://git.kernel.org/brgl/linux/c/6deb8435f6bfcc9b6c7efe3b8a941ae2fb731495
-[2/4] gpio: deprecate devm_gpiod_unhinge()
-      https://git.kernel.org/brgl/linux/c/686e54ea31f3b7d9d20ac1fa2d0295d649c41f56
-[3/4] MAINTAINERS: add more keywords for the GPIO subsystem entry
-      https://git.kernel.org/brgl/linux/c/3af64f175b2405270bd0926153d9856a49b58352
-[4/4] gpio: TODO: track the removal of regulator-related workarounds
-      https://git.kernel.org/brgl/linux/c/2de1cf175c00927c286f8bd72e18602fe072af95
+Reviewed-by: Mattijs Korpershoek <mkorpershoek@kernel.org>
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/dma-buf/heaps/system_heap.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/system_heap.c
+> index 26d5dc89ea1663a0d078e3a5723ca3d8d12b935f..82b1b714300d6ff5f3e543059dd8215ceaa00c69 100644
+> --- a/drivers/dma-buf/heaps/system_heap.c
+> +++ b/drivers/dma-buf/heaps/system_heap.c
+> @@ -19,12 +19,10 @@
+>  #include <linux/module.h>
+>  #include <linux/scatterlist.h>
+>  #include <linux/slab.h>
+>  #include <linux/vmalloc.h>
+>  
+> -static struct dma_heap *sys_heap;
+> -
+>  struct system_heap_buffer {
+>  	struct dma_heap *heap;
+>  	struct list_head attachments;
+>  	struct mutex lock;
+>  	unsigned long len;
+> @@ -422,10 +420,11 @@ static const struct dma_heap_ops system_heap_ops = {
+>  };
+>  
+>  static int __init system_heap_create(void)
+>  {
+>  	struct dma_heap_export_info exp_info;
+> +	struct dma_heap *sys_heap;
+>  
+>  	exp_info.name = "system";
+>  	exp_info.ops = &system_heap_ops;
+>  	exp_info.priv = NULL;
+>  
+>
+> -- 
+> 2.49.0
 
