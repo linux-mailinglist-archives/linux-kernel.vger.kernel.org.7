@@ -1,64 +1,50 @@
-Return-Path: <linux-kernel+bounces-593018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4590A7F40C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:17:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D73A7F416
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20BAC3B2014
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:17:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E51617C4BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673F020968E;
-	Tue,  8 Apr 2025 05:17:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E191F94A;
+	Tue,  8 Apr 2025 05:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="ag68ibvF"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wbN111ko"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749A11F94A;
-	Tue,  8 Apr 2025 05:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9EB253B4E;
+	Tue,  8 Apr 2025 05:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744089451; cv=none; b=e6JeGj1HPCaACVqpYbO53Vg/quZCOY0K1QDbd4V7Bo6l8yQNrMkizsZ/U4uz/nSWDL0HJcfT+IFDW2iNrwsLYSZDQ5t/AVlHi+yDXHUyUnqav7EksxfaquBzhX+GWsRLtxrXtUYRcsyqtKjgP8n75Lb9vtjL4S7yb6Iy7BUlwwM=
+	t=1744089590; cv=none; b=fjyk5BqGVy4FQSwzY9/mYiW2WESPOMFSsC2+T7MqJbJ/REFCfHguOkIho7E64XCeoxN1r1JS4nDsvrqvEGLzVd9x/VlWe4PUiHj+oB/jNPsBogVzohygRMOY3yBGOgMAhRZmSWU/fm4qa8eZz23qlGhO5FWdrEiijgeRdn6//Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744089451; c=relaxed/simple;
-	bh=qI+vY1A5wV0XjhjSNpeKTMGZXi9Vm/a4ANb9gFFEK68=;
+	s=arc-20240116; t=1744089590; c=relaxed/simple;
+	bh=6GBm8mUPt1kQdqjLA6hxiATej9VkFQyogG8+sWfT4fA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PHmeZsR3bF0+QWXUaciYIyU++QX8d8FVCzSyNQBfpdVSXRbpE3UOze4X27gVRK02/s0KBYnKSFtEWFHrHrvOOtEvjAVqwyAE9V17vhrIamZVt3me/J3bXKkvERq2bkMtRVzQfixm2AVHkbdG9aqj/fyK2uwmNOGYP0hlJ1onkqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=ag68ibvF; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=hN70HOkvOYMaSx7AQ3/aqo4uy4shGsHTRJRTiN34J38=; b=ag68ibvF7mJP9kd4/HQZGKIdCX
-	oNm/GvJdnc75UPKok67c9rz1Wucb7mRkfD5J7Hs6iyPFz21ueTPr1qMKY2ccJlLgBWkPWj6OA9Nj+
-	FFlGI2ttSw+vERbp36os+PNumVZVCewA/9KukHP7dZQnTkHoj+MRQnwJrQSDLtTeL8jEJYr13BHLI
-	b5nUQZu62cVZdnSpabvIw08puNZDTcrrpTy6L6ny7ZLtpJ/z00NYdKbkj64Lle/8NqOmvJDQMng8c
-	SWTyI74CyT7HyyfjsndbkjEmdp+en1CNBF6vBdNtQsddl744GkscipNhVURRFbmciGs29UCf4AYRu
-	W1/ERTeg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1u21Kq-00DmDt-0s;
-	Tue, 08 Apr 2025 13:17:21 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 08 Apr 2025 13:17:20 +0800
-Date: Tue, 8 Apr 2025 13:17:20 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-	Pankaj Gupta <pankaj.gupta@nxp.com>,
-	Gaurav Jain <gaurav.jain@nxp.com>, linux-crypto@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-kernel@vger.kernel.org,
-	Valentin Ciocoi Radulescu <valentin.ciocoi@nxp.com>
-Subject: [PATCH] crypto: caam/qi - Fix drv_ctx refcount bug
-Message-ID: <Z_SxYFdyBJTYe_7G@gondor.apana.org.au>
-References: <17f9af67-de10-4b96-99ef-3c5cd78124c0@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MrEG2zF5qL6XtUrx8/Bw9gkC5qct3VQVXb592i/lhoOkIlwwv6zZAdm3rk4cRcYrRpK5gBw5EhF/toF6X728AyPp8m6lTaZs84pm4HvkrDp7T3uoPN6pzgQmkMj903clGwuepQ9PuqY7eAJRFL9/aHzaHmWERNjhgOobFSsA5Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wbN111ko; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AB42C4CEEA;
+	Tue,  8 Apr 2025 05:19:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744089590;
+	bh=6GBm8mUPt1kQdqjLA6hxiATej9VkFQyogG8+sWfT4fA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wbN111koqxsN/ETd6KHqYpZa37OMaCij8L0nhMB0v9Zrk18hMNCYZ9WspVqaaNx5I
+	 o0dSm+RuCX7g7DCn5cQIcge1/QYqLtu5zvmecv+8n85IYDqkyZ9TaU7sXwLxWieRBM
+	 /D/nV186FpCMxenSl4XIwE4edoaO78YkjmI7q40A=
+Date: Tue, 8 Apr 2025 07:18:17 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: philipp.g.hortmann@gmail.com, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v7] staging: rtl8723bs: Add error handling for sd_read()
+Message-ID: <2025040814-curtsy-overrule-1caf@gregkh>
+References: <20250408044152.3009-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,67 +53,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <17f9af67-de10-4b96-99ef-3c5cd78124c0@linux.dev>
+In-Reply-To: <20250408044152.3009-1-vulab@iscas.ac.cn>
 
-On Mon, Apr 07, 2025 at 07:16:38PM -0400, Sean Anderson wrote:
->
-> [    2.731344] refcount_t: decrement hit 0; leaking memory.
+On Tue, Apr 08, 2025 at 12:41:52PM +0800, Wentao Liang wrote:
+> The sdio_read32() calls sd_read(), but does not handle the error if
+> sd_read() fails. This could lead to subsequent operations processing
+> invalid data. A proper implementation can be found in sdio_readN(),
+> which has an error handling for the sd_read().
 
-...
+Great, why not move to that instead?
 
-> [    2.731496] caam_rsp_fq_dqrr_cb (include/linux/refcount.h:336 include/linux/refcount.h:351 drivers/crypto/caam/qi.c:593) 
-> [    2.731502] qman_p_poll_dqrr (drivers/soc/fsl/qbman/qman.c:1652 drivers/soc/fsl/qbman/qman.c:1759) 
-> [    2.731510] caam_qi_poll (drivers/crypto/caam/qi.c:491) 
-> [    2.731514] __napi_poll (net/core/dev.c:7328) 
-> [    2.731520] net_rx_action (net/core/dev.c:7394 net/core/dev.c:7514) 
-> [    2.731524] handle_softirqs (arch/arm64/include/asm/jump_label.h:36 include/trace/events/irq.h:142 kernel/softirq.c:562) 
-> [    2.731530] __do_softirq (kernel/softirq.c:596) 
-> [    2.731533] ____do_softirq (arch/arm64/kernel/irq.c:82) 
-> [    2.731538] call_on_irq_stack (arch/arm64/kernel/entry.S:897) 
-> [    2.731542] do_softirq_own_stack (arch/arm64/kernel/irq.c:87) 
-> [    2.731547] __irq_exit_rcu (kernel/softirq.c:442 kernel/softirq.c:662) 
-> [    2.731550] irq_exit_rcu (kernel/softirq.c:681) 
-> [    2.731554] el1_interrupt (arch/arm64/kernel/entry-common.c:565 arch/arm64/kernel/entry-common.c:575) 
-> [    2.731561] el1h_64_irq_handler (arch/arm64/kernel/entry-common.c:581) 
-> [    2.731567] el1h_64_irq (arch/arm64/kernel/entry.S:596) 
-> [    2.731570] qman_enqueue (drivers/soc/fsl/qbman/qman.c:2354) (P)
-> [    2.731576] caam_qi_enqueue (drivers/crypto/caam/qi.c:125) 
+> Add error handling for the sd_read() to free tmpbuf and return error
+> code if sd_read() fails. This ensure that the memcpy() is only performed
+> when the read operation is successful.
+> 
+> Since none of the callers check for the errors, there is no need to
+> return the error code propagated from sd_read(). Returning SDIO_ERR_VAL32
+> might be a better choice, which is a specialized error code for SDIO.
 
-So caam_qi_enqueue hasn't had a chance to increment the refcount
-and the IRQ already came in to decrement it.  Lesson is that you
-should always increment your refcount before you give it away.
+Again, fixing the callers would be best.
 
----8<---
-Ensure refcount is raised before request is enqueued since it could
-be dequeued before the call returns.
+> Another problem of returning propagated error code is that the error
+> code is a s32 type value, which is not fit with the u32 type return value
+> of the sdio_read32().
 
-Reported-by: Sean Anderson <sean.anderson@linux.dev>
-Cc: <stable@vger.kernel.org>
-Fixes: 11144416a755 ("crypto: caam/qi - optimize frame queue cleanup")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Then that too should be fixed :)
 
-diff --git a/drivers/crypto/caam/qi.c b/drivers/crypto/caam/qi.c
-index 7701d00bcb3a..b6e7c0b29d4e 100644
---- a/drivers/crypto/caam/qi.c
-+++ b/drivers/crypto/caam/qi.c
-@@ -122,12 +122,12 @@ int caam_qi_enqueue(struct device *qidev, struct caam_drv_req *req)
- 	qm_fd_addr_set64(&fd, addr);
- 
- 	do {
-+		refcount_inc(&req->drv_ctx->refcnt);
- 		ret = qman_enqueue(req->drv_ctx->req_fq, &fd);
--		if (likely(!ret)) {
--			refcount_inc(&req->drv_ctx->refcnt);
-+		if (likely(!ret))
- 			return 0;
--		}
- 
-+		refcount_dec(&req->drv_ctx->refcnt);
- 		if (ret != -EBUSY)
- 			break;
- 		num_retries++;
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> An practical option would be to go through all the callers and add error
+> handling, which need to pass a pointer to u32 *val and return zero on
+> success or negative on failure. It is not a better choice since will cost
+> unnecessary effort on the error code.
+
+I don't understand why this would be unnecessary effort, it would do the
+right thing, correct?
+
+> The other opion is to replace sd_read() by sd_read32(), which return an
+> u32 type error code that can be directly used as the return value of
+> sdio_read32(). But, it is also a bad choice to use sd_read32() in a
+> alignment failed branch.
+
+What do you mean by "alignment failed branch"?
+
+> Fixes: 554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
+> Cc: stable@vger.kernel.org # v4.12+
+
+Why is this cc: stable?  Can you duplicate this problem on your system?
+Have you tested this change?
+
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+> v7: Fix error code and add patch explanation
+> v6: Fix improper code to propagate error code
+> v5: Fix error code
+> v4: Add change log and fix error code
+> v3: Add Cc flag
+> v2: Change code to initialize val
+> 
+>  drivers/staging/rtl8723bs/hal/sdio_ops.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/rtl8723bs/hal/sdio_ops.c b/drivers/staging/rtl8723bs/hal/sdio_ops.c
+> index 21e9f1858745..d79d41727042 100644
+> --- a/drivers/staging/rtl8723bs/hal/sdio_ops.c
+> +++ b/drivers/staging/rtl8723bs/hal/sdio_ops.c
+> @@ -185,7 +185,12 @@ static u32 sdio_read32(struct intf_hdl *intfhdl, u32 addr)
+>  			return SDIO_ERR_VAL32;
+>  
+>  		ftaddr &= ~(u16)0x3;
+> -		sd_read(intfhdl, ftaddr, 8, tmpbuf);
+> +		err = sd_read(intfhdl, ftaddr, 8, tmpbuf);
+> +		if (err) {
+> +			kfree(tmpbuf);
+> +			return SDIO_ERR_VAL32;
+> +		}
+
+Again, I think this whole "hal wrapper" should be removed instead, and
+not papered over like this.  If you dig deep enough, it all boils down
+to a call to sdio_readb(), which is an 8 bit read, so the alignment
+issues are not a problem, and if an error happens the proper error value
+is returned from that saying what happened.  Why not work on that like I
+recommended?  That would allow for at least 3, if not more, layers of
+indirection to be removed from this driver, making it more easy to
+understand and maintain over time.
+
+thanks,
+
+greg k-h
 
