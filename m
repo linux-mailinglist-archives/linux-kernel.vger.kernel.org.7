@@ -1,118 +1,68 @@
-Return-Path: <linux-kernel+bounces-594486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D915A812B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:45:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 976A1A8141E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 710AE1BA5F9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:44:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6948646854B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E46230242;
-	Tue,  8 Apr 2025 16:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C4623BCFB;
+	Tue,  8 Apr 2025 17:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vNQahXzs"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="Okvnehus"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5D322F167
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 16:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24A922F39F
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 17:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744130617; cv=none; b=V0d2pjY3DOqVW+Re2TReEsD6NLyhIaaG98XoL9EZFj00R3xJ7dr+qZSv/YjmH0kSXPdaCJPqMt0OvgcXIzPVx52OqzqDtlE8v7lPUQouTbw1tHkTKR/xh5gcFqsrgXJQNHYeh9RpGc7hFVSFXYO1N5MwNoPCc/5/OquKvQl6twM=
+	t=1744134893; cv=none; b=AiudyMqA9SwPyCe2JuDscR1R9kha1JPQnHhvZA3Vua8kbRWPhIHCLuBaRICkzKVfxkjw0BxjmtmWogPu0RiCPxmJgqDhCGwr2fyvM2dtfhEk6kqXZrfhcia/q0pbEQcs7iGwwctQioB2ZB1XOtKejYYQa5HNC4WgDkCp+z84xtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744130617; c=relaxed/simple;
-	bh=EMGJL06zBcH8/bK3L8ffU+XphSEbrqEm5rUSMYBj7/0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qVO8G7yF5dWYQNtSYxUsg2wzfdsVvJeEdLnUT5lBDClRIirUCpu6TNmFHbkpDsMKcvieHhXTJG8kZRAtfvsxHwXW6LbYC6uecycE3KCyrRC5UEjjDAv+NDLC5u5KeI7JlnLuvQbnNmO9pljxc8brlCRECz2ZlV6TPT1h0Sb/EYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vNQahXzs; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-47666573242so3431cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 09:43:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744130614; x=1744735414; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1FiKiNCaVFv2Cyr7Q7f6YrTxmfWsn+IwY5nbyf35odU=;
-        b=vNQahXzsxZQPqCDqJ2G3MUDKA3glypyAPy45iqIf/f7jNW4dqbxT7rKfiVHoxcrQEo
-         /C0dWzRQlJys1QyVpq8F4OwYo5xnd8ajx8ywWEQkBjDPYb8n737jqq3+rnI4CGfoN/5v
-         spFKxUS9+CSnumPNJIwBlSOR3V3SxKXGzi0KgoVYsywwSYzcaf38ts9ouifDDCAxZvru
-         yPYVRXrTBnVQ9dk1IdVs/6mwY58L/5nGSqJwp7k/04IGmWXs3dgWh2zKuXCcv+loENsO
-         div/IDFazsntD7jM29aGBdl+jfpuO79SlX4qVnkXCrQWG8gftS8Vpcotq+3iYCHp3zVS
-         MHBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744130614; x=1744735414;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1FiKiNCaVFv2Cyr7Q7f6YrTxmfWsn+IwY5nbyf35odU=;
-        b=fsPFWsjDhwrTvO075bIXtc8Z9HId4OR0IIA2b+rHfHNCieMmRxdIifwIBg0mCFI71O
-         a+5eM7xCJXa9kmHJNhMiAMhGt25DWL+axjYxHgy8lfz6TY/up4VS6eWsErpxnrmqF6IA
-         KfTrtleLex4g+mtgg1bbNSGYJnApKz+iDzCD4gIEXR8PUGwN+s4/kZFQwaT42Xuei/on
-         0+rI4MShs+FG8t40GIXk3/LAlRsIvx3Tsb9Z6cYppwKjxk7s2RI+UQ7fHNQooUXTCTzi
-         AEJ1hZwEIBzgnuWUR0jKMLsZi6gov3hPSCloKX7F3U9dKfBUzzf5ILtURmG1zf+MNnlF
-         PTcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZlZKFs7V+rYdmkWuhyPJUNyrqHGR5Zr4t9jPtICW6ApdrXXT94X2FfNTZRDWajdJIpUa/YPqruqlyC9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3NsPM4s5EEwTglpaY/zzy1J/0Vm5goA8sosRHyNOYIiQREaKs
-	Iw8wZvXjIP8nSrqEYx8SxcIBCQvIukk9s4QFnOQvmYNuXScx6hB6Ve/5WgI040fn3WoxJr7t2Lo
-	48I1d6RBf+5sx830NpMh6o+D802gwZlznmJBo
-X-Gm-Gg: ASbGnct7bmlTtUV8gba0IaTKCe+RukKEhVwGVKFpyT4ZMK8PlQ+V7+u7wTTgoaNcPcp
-	mbjalh87NZCAgz1iRz5gG6RZq0zuB6AyVLUDpQSFE3MbEPtB6eXYBHJtuQ9M9bSsL+lK4v1hfSG
-	Gbv4z75Wyt1V/v5nbMzL6JG5LR0oYEQc4e9fqBM0/MWRVxygbf7rIih/iZgA5wR+0QQ5w=
-X-Google-Smtp-Source: AGHT+IHUWQvLcrCIeytX8WdQFcIxjeAwfPlwbo7B6E6aJQhKTc0WFzSxKyLGGdC974vlRDvFfaEJkQN1B0nRXBOv2FI=
-X-Received: by 2002:a05:622a:198e:b0:477:86aa:8829 with SMTP id
- d75a77b69052e-47956216f1cmr3920371cf.3.1744130614272; Tue, 08 Apr 2025
- 09:43:34 -0700 (PDT)
+	s=arc-20240116; t=1744134893; c=relaxed/simple;
+	bh=DLp7+lfnL8KdjgGKxSFd10D0tbhfX1Xaz/s1ljdW/IM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=SUV+FhWeXoQ6AjIUGZqq9y5GVMSyzop2rDe0WUpo6mDOzhem4vST4DVzFDLlUye6Udw0ibNCSUmBGC5iCRfkvdzFj8qM/bE1Rv5a3nyi3Af2fDu69OyqI0RDEGJoqtFS0FNma2qP0jc6mkQFNJzG+meX1E5wCuRM2CFbCCiWzB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=Okvnehus; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1744130623;
+	bh=DLp7+lfnL8KdjgGKxSFd10D0tbhfX1Xaz/s1ljdW/IM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=OkvnehusfA7tseY+u6Umufo9iKk91JOFLnHLF5s7kStz3ls9AC3lb+8AEvavsJKiD
+	 2Q4TtLPgBg8STW39emmX8fSaGNQgetCFLHJ0mQAHxSPO7rdrYBUaYE8L0Ei4e9cbuB
+	 b016a47sQCy0qpouNfVhpWdBOk0ufRmoAikHhpqY=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id B2C3A406F5; Tue,  8 Apr 2025 09:43:43 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id B1E7B401F1;
+	Tue,  8 Apr 2025 09:43:43 -0700 (PDT)
+Date: Tue, 8 Apr 2025 09:43:43 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Harry Yoo <harry.yoo@oracle.com>
+cc: Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, 
+    Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+    patches@lists.linux.dev, Pekka Enberg <penberg@kernel.org>, 
+    Joonsoo Kim <iamjoonsoo.kim@lge.com>, David Rientjes <rientjes@google.com>, 
+    Roman Gushchin <roman.gushchin@linux.dev>
+Subject: Re: [RFC PATCH 1/2] MAINTAINERS: update SLAB ALLOCATOR maintainers
+In-Reply-To: <Z_Qz55SbnHK9LoW1@harry>
+Message-ID: <7edbb6f4-ba0d-3c56-5aef-066b5f4d90e9@gentwo.org>
+References: <20250407200508.121357-3-vbabka@suse.cz> <Z_Qz55SbnHK9LoW1@harry>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407200508.121357-3-vbabka@suse.cz> <20250407200508.121357-4-vbabka@suse.cz>
- <D91BI0ICWA7L.3P7ILKPYMKGMZ@google.com>
-In-Reply-To: <D91BI0ICWA7L.3P7ILKPYMKGMZ@google.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 8 Apr 2025 09:43:23 -0700
-X-Gm-Features: ATxdqUGBt28o8ERjPE6GWLD7R0zA_rTTTrRVJtvv2fQ4PNvjAZyr1xF_AaXtqn8
-Message-ID: <CAJuCfpEgFTvfAgfrsks_gSTLNfDF0Ehf5tX6FLPwj4piPPC60g@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] MAINTAINERS: add MM subsection for the page allocator
-To: Brendan Jackman <jackmanb@google.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Mel Gorman <mgorman@techsingularity.net>, 
-	Michal Hocko <mhocko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, Apr 8, 2025 at 7:13=E2=80=AFAM Brendan Jackman <jackmanb@google.com=
-> wrote:
->
-> On Mon Apr 7, 2025 at 8:05 PM UTC, Vlastimil Babka wrote:
-> > Add a subsection for the page allocator, including compaction as it's
-> > crucial for high-order allocations and works together with the
-> > anti-fragmentation features. Volunteer myself as a reviewer.
->
-> Thanks for volunteering and thanks for proposing this update.
->
-> > Extra reviewers would be welcome, including/not limited the people I
-> > Cc'd based on my recollection and get_maintainers --git
-> > Also if I missed any related file please lmk. Thanks.
->
-> If this is a "more the merrier" situation I'd also be happy to be
-> an R: here:
->
-> +R:     Brendan Jackman <jackmanb@google.com>
 
-Same here.
+Acked-by: Christoph Lameter (Ampere) <cl@linux.com>
 
-+R:     Suren Baghdasaryan <surenb@google.com>
-
-Thanks Vlastimil!
 
