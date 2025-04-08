@@ -1,275 +1,125 @@
-Return-Path: <linux-kernel+bounces-594365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41420A810AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:52:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C6AA810B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50AE65013E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:46:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FAFA50270F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3C722D796;
-	Tue,  8 Apr 2025 15:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3F722F39C;
+	Tue,  8 Apr 2025 15:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQ2SRjqZ"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lhsCs2J3"
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A058B22CBD0;
-	Tue,  8 Apr 2025 15:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8ADE22ACE3
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 15:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744127048; cv=none; b=W9gWzVP3uSCzLinEimfkz4i+bkNzUg5icBdw9cex1mfSOS2XlByUm58neHgcwneSv8B3a81XAXSxgjlZGOGfk1qPZipLsArC+ewDOegLwPIV0kt7jGVx/wkNlIp7sKGBWGAPnAhYNxQfSyQ8MvgRQ5TWiWLvZc8NBSv2jYOi1h0=
+	t=1744127076; cv=none; b=WPxdleYcGNnXc9O1umAbgzdjQdvcVSbGfiMxhNN+7s/+jwNKyeDVPhd5vFcvglMs2Eh/DjILow9944IJOB7yWTwjJMdWNJJG+Zn7ENS4flixVwIgf35qRz+gKNz/vQeVK8cHJrlbkqJ+WOfyc7h6W8llQBMJJUWQlrDW4J6tuo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744127048; c=relaxed/simple;
-	bh=HDWBIrxoIEOJTUhyncNcFX8jtIjekzzynwwrBz/zgJ4=;
+	s=arc-20240116; t=1744127076; c=relaxed/simple;
+	bh=K5G2ZwYExtfm1cVAQRkf9bRTo5tSCqqa0BaWlL4b0yM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RONM0PhRa8P4j9ruHdsABwA9/snEonr6LPTvp5lawiSIca6TEvIYl9x/vfP50A2mVA3uwFsOt/PZqgBJ3fo3EiKa6YRLJwMnqL24QPBrORcz/XFes7GgTq7Ta/2yvivtgRYMzLhAWl/E934eki+B8ogCnoQMb70iKoT/lrRcMJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jQ2SRjqZ; arc=none smtp.client-ip=209.85.219.41
+	 To:Cc:Content-Type; b=gXCoPS0VRwGcek0uwnTi4nchk0FtzCLjJ2HTYudhxTAunfLNYJjgakc0jEQGnQ1JYF9QVeohytiw1I2tYSe+Z6d5V/0jW/3IwhtbRSsXz7stXjYwaivgfHxgZ4v4AhA7bI6mKiEhYsv39FMqC/wzgM+6cVCTnr8PjDDjQOAin8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lhsCs2J3; arc=none smtp.client-ip=209.85.221.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6eeb7589db4so60205106d6.1;
-        Tue, 08 Apr 2025 08:44:06 -0700 (PDT)
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5259331b31eso2684219e0c.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 08:44:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744127045; x=1744731845; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744127073; x=1744731873; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=reeoYvxYItdd7KUhzGsTnl24tBhKlbJEGhQp4n5yZys=;
-        b=jQ2SRjqZNk6UqRNVStlz7lrLHO7uxrD+etpZ5vbNXMcNmSzMs3BeQCiZQ/+TQd8Y9G
-         utQwaob2nhmi8CtIPEHKx77QDjQ4g3zrSTPBqJs50dUH1xUCD2uE9UWvkxovPH+YZVRh
-         Zw+R0Gnl+smOkm4Lf7RKXusGNpjTPDkTLjPssmQOrDKalGhGzRAAEdDFH7SUPg429g5s
-         UcB5t9znIINYadSfEV2J93xPYsOGV81Bo39gfLqzF55xId+hhb+hTb4qCCnjv9eJAC1U
-         GIEUtsgZ5EJvnc/MIhe1lO0yeqk1UkfTRP/YeZFvJiwhpadr9eklD7F5/ZYxKTyLviUF
-         R9bQ==
+        bh=K5G2ZwYExtfm1cVAQRkf9bRTo5tSCqqa0BaWlL4b0yM=;
+        b=lhsCs2J3gOyhayGbJJCr5daX8DGMpL/PpE6juWE9N7TiUDLu/agnvLUcPrEgRTRH94
+         2O6dFCsvAgmK6qTTjUBev7I5N+OX5QADs/KXQI+u5B4fNB1l2BMKZWqKRfwUKIrc89U6
+         EG30ZqkMPkIr+1dPzaoccueNqSuPjdmXLWxTSjH6L7tiNUhEzJh8D7E0HfB6ZHumj1x+
+         EfWxDwyfY+jraO0Gt5B8DgJN3ySOqPj122cyZLxV0t+lgt7WZti0xkp5jYkZAyR9k8bp
+         4Ywg+PVz810RPg8TFZKwms2AoXmYxfspEYT9uUXvG5DWBOGJCYOcLpK1kH8JwtWv1T8V
+         7hAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744127045; x=1744731845;
+        d=1e100.net; s=20230601; t=1744127073; x=1744731873;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=reeoYvxYItdd7KUhzGsTnl24tBhKlbJEGhQp4n5yZys=;
-        b=CuC0kWDzXhNEAW6P7K2rXZhm4j8D+17JBzlmVzkOZ3GzbN1nXpnDOP/a8iOhMF601S
-         Mt0RcK6nwdkC8gpTL6gLq3bZNfOJrt2dNgaQeY2XWoaM6KCCUJLUC4BE3d8L+0IupwWo
-         38wbLj0B03VOZkuDV6UI10+4KLGvGRPx3gZT8KLSfw1K2Yt43+VptEIGIz9gfsJYx77B
-         Sb50LF7D8Das7lNqNfLjA8uZc0Js3HejHDKnONiwVw+/ZMb7Ez1TVzjTZkYVpSU6t4b1
-         NqrBvkjqPX2Tehb+eXOaV5dPVKBWtv6ktfVMkoBg3RrGyK4BW+V0q9zZIW4Ek82xIct8
-         Gw8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUs9dUmcMC8aYqvQPVgezQE2WdgziLEKBI0K3Ox4TyDstVDzuQF+yBRJHKcrEbzqAT45cGbtwwWJKqsGiw+@vger.kernel.org, AJvYcCVIBYU/eCFFSEgq6bLdNh57Mkr+tUoE9ZOAnUCcB+EnCmU7JsdnEl++rP21XavJyMEtEs9KaChAiLA=@vger.kernel.org, AJvYcCXc9BrK6YW5N+S6YtRuwOuOc9BJmPUqHzPH9M4I0Dt/FA6VJmqblYzyLyu5hbNU5Gk4DvJ5QBK2@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG+QInt1DUc2EhIcH059RFmQjrI5fmfPH24d0CJOffwybQ7CJy
-	y6qchCU5os2X5SzcHaQMHVJVw0b6+xR8TcyrzkjeM/EU7a1ZsTbWuJq43wDB/O+2zCtZwK43pg2
-	HRlWOp+W1Ev5lM6qTGN6Tkp75Ag8=
-X-Gm-Gg: ASbGncuMHPi7+lwILoUpWjPDBRGxYFs7DVE4d9e1TQbO3pGu6MxJGzrmAjcp3F8Hos4
-	O0OvIYcWssv5OoDaBNHfYykUjPe1vhxOXKjiB4wUZ6bF18SnfCvtgXUkXxEhwMwONlalsO5XW99
-	N4gZTAMVGnPnNdXg4S1VYK+YVH1tG0UAN062BsKiovX3DQqvIGYk/nlP9fVA==
-X-Google-Smtp-Source: AGHT+IF5WXdcFK/qrko60GZWMJ9z/lrRCbPJa3p0lyBkNeVsUG2gDnLUBctnRZfwUhghIHT3QEEGbxR/fcwxhONO0xY=
-X-Received: by 2002:a05:6214:20ce:b0:6ed:1da2:afb9 with SMTP id
- 6a1803df08f44-6f05848f418mr344645726d6.19.1744127045531; Tue, 08 Apr 2025
- 08:44:05 -0700 (PDT)
+        bh=K5G2ZwYExtfm1cVAQRkf9bRTo5tSCqqa0BaWlL4b0yM=;
+        b=Z+wdJKM7+TC1bYj+DYE4u/um+mpXaxd5u96zyJ+ychzVUAk28PaqiD8EFDLClqZ55k
+         er+bWefnoftjwhYVzs0GE4EM6/I8AM+LseOpSOgCZ5u1uXedz9/zxWBPpUCM+jfw3dUU
+         hXk0Vx75qKXRQRBgs5/aNkTIenYWzI2XQlu1HlUq5dHoKhA6e2g/gw1o629k4fmYUh8U
+         hAFgHcC/znhzqKwvutuvX0K1CBCWRZxUbNuyMnKHiL3c4tYpa5PTOFHrtN0Cm3jZD8EH
+         CNrGaHDcswMYhKMaga4x1tKhPEYcuxst0WfZxM2+zOybqW+y8Q18/BMG40hUpAzQoF14
+         wQlg==
+X-Forwarded-Encrypted: i=1; AJvYcCXMblHH8Wh9IXMVILH6C2gKilO/B0PBjRzvq1+MVb0FtxBwC54yENRVdDQHxYPy5rAsN2reWKA+N3u3hEs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4ZZp1uGXL2hyaJzq61FIrnhS/1DqVQroWZHbS4HQl2xcLa2bR
+	9shVNrUXidYJMyjo8yRmEVPvXiFSgoAJQrbG88NngVnA6aNThpWSVkG5KKdnbD30yD90E0zkvai
+	8Ibf2NqaDf2p6ctI97lQ5HE/PkRc=
+X-Gm-Gg: ASbGnctOBJ7CEhghTEhKeGZ5eI6K9kJ1hEgvBNRpsN3QuXePukoJQDu+jCCsY0Ypb51
+	90sfaZa5DgYnBHKOdoOyPSDwCjYJBI/C2Sf22/W5jFVznet05zhBQ1rvguIlhryqdlmt/mfzTy7
+	mu+1qBTS/8p9Nkljmsxj2nt1PAPA==
+X-Google-Smtp-Source: AGHT+IEOAhODFXCQCQCyky6pL+wFmfnADJsayHXZE3pW2I0MMTvuO6cpstPg2O9EQVXHQS/6scTNoBoqj0OUtwsn1mE=
+X-Received: by 2002:a05:6122:1daa:b0:51f:3eee:89f2 with SMTP id
+ 71dfb90a1353d-52765c2973fmr10907463e0c.2.1744127073729; Tue, 08 Apr 2025
+ 08:44:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407234223.1059191-1-nphamcs@gmail.com> <20250407234223.1059191-5-nphamcs@gmail.com>
- <20250408150019.GB816@cmpxchg.org> <CAKEwX=PzsdYupTp=0pyHa48PbtmAwUe_JBKjV9N-fLvLwB0SwA@mail.gmail.com>
-In-Reply-To: <CAKEwX=PzsdYupTp=0pyHa48PbtmAwUe_JBKjV9N-fLvLwB0SwA@mail.gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Tue, 8 Apr 2025 08:43:54 -0700
-X-Gm-Features: ATxdqUGz4vsP2W5hwYJQzhrTKN5NxXh5yEJOebR2aaMkEy7r_wMz7Iwxi5kHDXM
-Message-ID: <CAKEwX=MVaS1RdaEePy_QsByGVN36YnKvzKzHPUUQ0woj7aDrKQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 04/14] mm: swap: swap cache support for virtualized swap
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, hughd@google.com, 
-	yosry.ahmed@linux.dev, mhocko@kernel.org, roman.gushchin@linux.dev, 
-	shakeel.butt@linux.dev, muchun.song@linux.dev, len.brown@intel.com, 
-	chengming.zhou@linux.dev, kasong@tencent.com, chrisl@kernel.org, 
-	huang.ying.caritas@gmail.com, ryan.roberts@arm.com, viro@zeniv.linux.org.uk, 
-	baohua@kernel.org, osalvador@suse.de, lorenzo.stoakes@oracle.com, 
-	christophe.leroy@csgroup.eu, pavel@kernel.org, kernel-team@meta.com, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	linux-pm@vger.kernel.org
+References: <cover.1744117091.git.abrahamadekunle50@gmail.com>
+ <c71ec1f13a2a5cc38a745314f134f6e7eb935227.1744117091.git.abrahamadekunle50@gmail.com>
+ <Z_U2ohN4wbbOtepn@smile.fi.intel.com>
+In-Reply-To: <Z_U2ohN4wbbOtepn@smile.fi.intel.com>
+From: Samuel Abraham <abrahamadekunle50@gmail.com>
+Date: Tue, 8 Apr 2025 16:44:24 +0100
+X-Gm-Features: ATxdqUHHI5EBrUMCMRukwAxv7kKLnF4ZevAVt444jh7qUnEHaPD1eIkis-CJSoA
+Message-ID: <CADYq+fZFRF5SLLyfG12hUJLjNk+njWyC6H34S_warp61zYv8wQ@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] staging: rtl8723bs: Use % 4096 instead of & 0xfff
+To: Andy Shevchenko <andy@kernel.org>
+Cc: outreachy@lists.linux.dev, julia.lawall@inria.fr, 
+	gregkh@linuxfoundation.org, linux-staging@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, david.laight.linux@gmail.com, 
+	dan.carpenter@linaro.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 8, 2025 at 8:34=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> wrote:
+On Tue, Apr 8, 2025 at 4:12=E2=80=AFPM Andy Shevchenko <andy@kernel.org> wr=
+ote:
 >
-> On Tue, Apr 8, 2025 at 8:00=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.or=
-g> wrote:
+> On Tue, Apr 08, 2025 at 01:31:42PM +0000, Abraham Samuel Adekunle wrote:
+> > The sequence number is constrained to a range of [0, 4095], which
+> > is a total of 4096 values. The bitmask operation using `& 0xfff` is
+> > used to perform this wrap-around. While this is functionally correct,
+> > it obscures the intended semantic of a 4096-based wrap.
 > >
-> > On Mon, Apr 07, 2025 at 04:42:05PM -0700, Nhat Pham wrote:
-> > > Currently, the swap cache code assumes that the swap space is of a fi=
-xed
-> > > size. The virtual swap space is dynamically sized, so the existing
-> > > partitioning code cannot be easily reused.  A dynamic partitioning is
-> > > planned, but for now keep the design simple and just use a flat
-> > > swapcache for vswap.
-> > >
-> > > Since the vswap's implementation has begun to diverge from the old
-> > > implementation, we also introduce a new build config
-> > > (CONFIG_VIRTUAL_SWAP). Users who do not select this config will get t=
-he
-> > > old implementation, with no behavioral change.
-> > >
-> > > Signed-off-by: Nhat Pham <nphamcs@gmail.com>
-> > > ---
-> > >  mm/Kconfig      | 13 ++++++++++
-> > >  mm/swap.h       | 22 ++++++++++------
-> > >  mm/swap_state.c | 68 +++++++++++++++++++++++++++++++++++++++++------=
---
-> > >  3 files changed, 85 insertions(+), 18 deletions(-)
-> > >
-> > > diff --git a/mm/Kconfig b/mm/Kconfig
-> > > index 1b501db06417..1a6acdb64333 100644
-> > > --- a/mm/Kconfig
-> > > +++ b/mm/Kconfig
-> > > @@ -22,6 +22,19 @@ menuconfig SWAP
-> > >         used to provide more virtual memory than the actual RAM prese=
-nt
-> > >         in your computer.  If unsure say Y.
-> > >
-> > > +config VIRTUAL_SWAP
-> > > +     bool "Swap space virtualization"
-> > > +     depends on SWAP
-> > > +     default n
-> > > +     help
-> > > +             When this is selected, the kernel is built with the new=
- swap
-> > > +             design. This will allow us to decouple the swap backend=
-s
-> > > +             (zswap, on-disk swapfile, etc.), and save disk space wh=
-en we
-> > > +             use zswap (or the zero-filled swap page optimization).
-> > > +
-> > > +             There might be more lock contentions with heavy swap us=
-e, since
-> > > +             the swap cache is no longer range partitioned.
-> > > +
-> > >  config ZSWAP
-> > >       bool "Compressed cache for swap pages"
-> > >       depends on SWAP
-> > > diff --git a/mm/swap.h b/mm/swap.h
-> > > index d5f8effa8015..06e20b1d79c4 100644
-> > > --- a/mm/swap.h
-> > > +++ b/mm/swap.h
-> > > @@ -22,22 +22,27 @@ void swap_write_unplug(struct swap_iocb *sio);
-> > >  int swap_writepage(struct page *page, struct writeback_control *wbc)=
-;
-> > >  void __swap_writepage(struct folio *folio, struct writeback_control =
-*wbc);
-> > >
-> > > -/* linux/mm/swap_state.c */
-> > > -/* One swap address space for each 64M swap space */
-> > > +/* Return the swap device position of the swap slot. */
-> > > +static inline loff_t swap_slot_pos(swp_slot_t slot)
-> > > +{
-> > > +     return ((loff_t)swp_slot_offset(slot)) << PAGE_SHIFT;
-> > > +}
-> >
-> > In the same vein as the previous email, please avoid mixing moves,
-> > renames and new code as much as possible. This makes it quite hard to
-> > follow what's going on.
-> >
-> > I think it would be better if you structure the series as follows:
-> >
-> > 1. Prep patches. Separate patches for moves, renames, new code.
-> >
-> > 3. mm: vswap
-> >    - config VIRTUAL_SWAP
-> >    - mm/vswap.c with skeleton data structures, init/exit, Makefile hook=
-up
-> >
-> > 4. (temporarily) flatten existing address spaces
-> >
-> >    IMO you can do the swapcache and zswap in one patch
-> >
-> > 5+. conversion patches
-> >
-> >     Grow mm/vswap.c as you add discrete components like the descriptor
-> >     allocator, swapoff locking, the swap_cgroup tracker etc.
-> >
-> >     You're mostly doing this part already. But try to order them by
-> >     complexity and on a "core to periphery" gradient. I.e. swapoff
-> >     locking should probably come before cgroup stuff.
-> >
-> > Insert move and rename patches at points where they make the most
-> > sense. I.e. if they can be understood in the current upstream code
-> > already, put them with step 1 prep patches. If you find a move or a
-> > rename can only be understood in the context of one of the components,
-> > put them in a prep patch right before that one.
+> > Using a modulo operation `% 4096u` makes the wrap-around logic
+> > explicit and easier to understand. It clearly signals that the
+> > sequence number cycles through a range of 4096 values.
+> > It also makes the code robust against potential changes of the 4096
+> > upper limit, especially when it becomes a non power of 2 value while
 >
-> Makes sense, yeah! I'll try to avoid mixing moves/renames/new code as
-> much as I can.
+> power-of-2
 >
-> >
-> > > @@ -260,6 +269,28 @@ void delete_from_swap_cache(struct folio *folio)
-> > >       folio_ref_sub(folio, folio_nr_pages(folio));
-> > >  }
-> > >
-> > > +#ifdef CONFIG_VIRTUAL_SWAP
-> > > +void clear_shadow_from_swap_cache(int type, unsigned long begin,
-> > > +                             unsigned long end)
-> > > +{
-> > > +     swp_slot_t slot =3D swp_slot(type, begin);
-> > > +     swp_entry_t entry =3D swp_slot_to_swp_entry(slot);
-> > > +     unsigned long index =3D swap_cache_index(entry);
-> > > +     struct address_space *address_space =3D swap_address_space(entr=
-y);
-> > > +     void *old;
-> > > +     XA_STATE(xas, &address_space->i_pages, index);
-> > > +
-> > > +     xas_set_update(&xas, workingset_update_node);
-> > > +
-> > > +     xa_lock_irq(&address_space->i_pages);
-> > > +     xas_for_each(&xas, old, entry.val + end - begin) {
-> > > +             if (!xa_is_value(old))
-> > > +                     continue;
-> > > +             xas_store(&xas, NULL);
-> > > +     }
-> > > +     xa_unlock_irq(&address_space->i_pages);
-> >
-> > I don't think you need separate functions for this, init, exit etc. if
-> > you tweak the macros to resolve to one tree. The current code already
-> > works if swapfiles are smaller than SWAP_ADDRESS_SPACE_PAGES and there
-> > is only one tree, after all.
+> > the AND(&) works solely for power of 2 values.
 >
-> For clear_shadow_from_swap_cache(), I think I understand what you want
-> - keep clear_shadow_from_swap_cache() the same for two
-> implementations, but at caller sites, have the callers themselves
-> determine the range in swap cache (i.e (begin, end)).
+> power-of-2
 >
-> I'm a bit confused with init and exit, but I assume there is a way to
-> do it for them as well.
+> > The use of `% 4096u` also guarantees that the modulo operation is
+> > performed with unsigned arithmetic, preventing potential issues with
+> > the signed types.
 >
-> I will note though, that it might increase the number of ifdefs
-> sections (or alternatively, IS_ENABLED() checks), because these
-> functions are called in different contexts for the two
-> implementations:
->
-> 1. init and exit are called in swapon/swapoff in the old
-> implementation. They are called in swap initialization in the virtual
-> swap implementation.
->
-> 2. Similarly, we clear swap cache shadows when we free physical swap
-> slots in the old implementation, and when we free virtual swap slots
-> in the new implementation,
->
-> I think it is good actually, because it makes the difference explicit
-> rather than implicit. Also, it helps us know exactly which code block
-> to target when we unify the two implementations :) Just putting it out
-> there.
+> Reviewed-by: Andy Shevchenko <andy@kernel.org>
 
-Actually, I think I was confused.
+Thank you, Andy for your patience with me and guidance and the review.
 
-At this stage, we have no real difference in the implementations yet -
-it's purely single tree vs multiple trees. So you're right - we
-shouldn't even need two implementations of the code...
+I have sent the updated patch.
 
-I'll fix this.
-
->
-> >
-> > This would save a lot of duplication and keep ifdefs more confined.
+Adekunle.
 
