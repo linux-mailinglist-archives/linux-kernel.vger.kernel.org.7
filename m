@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-594693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5772A8155A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:06:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE4AA81559
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:05:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FCFD3BB24E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:04:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 768011BA27EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBF82417D8;
-	Tue,  8 Apr 2025 19:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438A824501D;
+	Tue,  8 Apr 2025 19:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ij2N01l3";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YlPKfR0D"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bk+Kv1o7";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xd7epz2w"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0031CD1E0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70A51E8348;
 	Tue,  8 Apr 2025 19:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744139102; cv=none; b=MGFIGxyEXNZ6fRQsDcCteFlyUcNaxTu1Mw8zRmdxcf4lZ7fDaItJQzF9IpW7apZ9rKz0JRg3/SNIblb43JGgJilbvHP07AbiYVnzPxjMj0VH0PcUaQ0duy7cY+wGYCEkaZ3JtEWoDSjP6HECgwsvncA0ahnfWytapEjp+eh2kzk=
+	t=1744139103; cv=none; b=l4/d0UX2CjjETielyW8jZ2cl/rhv3bCw0N9gvThkXOw7llP+BCGG6jWcorL8cYbf7h2MatbeR4c/EBjxgm9qw3JFc6NH2GCVvXWud0Cjman0Q9aE+J1QksS4GImhH+eWVUjQShGVzUiCpZ+mO2FQDLNNZpbYcQvHq4HjAtOKZhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744139102; c=relaxed/simple;
-	bh=pp9ZSiF31gO1luJsRcp1ScynOVufAQYh0s9NSzlOXZs=;
+	s=arc-20240116; t=1744139103; c=relaxed/simple;
+	bh=Wn8e1MXp2UJdExf5JikiAb8wnn4BJ1y2vIBYO1I6Oxc=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=dY6pz+o7s9r8Eb4EsCOZY69f/vdmO3uj9JmXvfhoAnkVREX/Jv/h4TYzQfSG42PE/JZzUUPvJ/LK5U20watJHndt4NcRU9bNOgPYtSbQi1rXQ8uqruwbRTfYkDdvpJq6OQ8s0AAgWW33N9ZxyKy22tWCHbAR3GEnT2eR/QzWAag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ij2N01l3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YlPKfR0D; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=antRbRTPTx9x3edP0jL4Srm6xA+/rtuJ3bfb5zrmYh3QWutdN568UQrnJ93NbAwXdtpSyPSsEDFOfnxZch6GOo3zZISgsIm+XKlGxVy/bUr7hXtfPjjjE/cuwE1qFpTdHdqJWdYSDyfishscr0HtUDYPB+j1De0cXHleKhYzsJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bk+Kv1o7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xd7epz2w; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 08 Apr 2025 19:04:57 -0000
+Date: Tue, 08 Apr 2025 19:04:58 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744139098;
+	s=2020; t=1744139099;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qiEWWQdodPE311SJkdgd9BCElzJ+IlZCpHBf10zLR+c=;
-	b=ij2N01l3cNK/BzJwBI5Op0ObCWVmhS9b/YwxqS6tyUE1R+AtUVfBoKzaKDcuW4Rb0LLYxC
-	qHcKfNu6JqBSHHbueui90jeFSBMPhDs+KtsTfpRy5yUjhBSXeXeR3mxnjHmb8ClLe8QzPH
-	64ONZbGrcrjVBCYPjItAjJYrKcgRdA2rU+7pAqLsCVHRz+2wkIo2r4eKNk0Fui8UIDcQXn
-	iAxKmKuLqpaxvsYwzbEwNWW4XoAUQIx+07xm6McgRxm+db+Gfu484s0iEsOHi1ODSNriAJ
-	YwiSYSXbEPPJGmIO2T/usNVJCaGvSCLQCS9UW4BrQLtZqWVpIieA2PG9vdjQlw==
+	bh=5/pnUEhm0DZbo6F3fSk+JoKEtcvEBcYobdMPXVcces8=;
+	b=bk+Kv1o78uLQTUeOiK2VqowNiNlC1hoS+dH1E7I+NAGs+aOoH8gjsJgJzVD0AK+OC7hgqm
+	UDzSgQ07KVsc7ZYHGXBVPQ3IrpCj78oWvHbXFiPwWRN/gE/8/YfoenEaYeQ3KNs9oILUIl
+	CiEm5zcEpe/emBvoVCCDvjqBqcOhrBoByGtrbVf527UFyMZLGxjX5e2yvuGXsMNYQlZZKh
+	wD85IlFeMgl/2IZCHaMLPU18unBC/uCOnsVMoRFZNuu4Jw4rqcAbZZ+QF0PkNKRuIGzqhC
+	9LcnHMICg7J5QbBAh9Eb44ylht/Xj4zXFOHnJ96iee1MCF7B3FYVB8jvMCmMgQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744139098;
+	s=2020e; t=1744139099;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qiEWWQdodPE311SJkdgd9BCElzJ+IlZCpHBf10zLR+c=;
-	b=YlPKfR0D7Q68ahVT2D714xrjghItCgPJyAgExGqSEkdrp/eK6ZHsWwr7Zyw9DRfCtghGon
-	+3JfRWv2TkaRlkBA==
+	bh=5/pnUEhm0DZbo6F3fSk+JoKEtcvEBcYobdMPXVcces8=;
+	b=xd7epz2wZa25ImH8d2PppeMGcRBHcdcZzvLtHKjtOLs4Y0XK03FOhxs838QyNmjbkbpQWZ
+	R0WHl7yQyGRFLQAA==
 From: "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf/x86/intel: Add CPUID enumeration for the auto
- counter reload
+Subject: [tip: perf/core] perf: Extend the bit width of the arch-specific flag
 Cc: Kan Liang <kan.liang@linux.intel.com>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>,
  Thomas Falcon <thomas.falcon@intel.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250327195217.2683619-5-kan.liang@linux.intel.com>
-References: <20250327195217.2683619-5-kan.liang@linux.intel.com>
+In-Reply-To: <20250327195217.2683619-4-kan.liang@linux.intel.com>
+References: <20250327195217.2683619-4-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174413909765.31282.11473149016229388139.tip-bot2@tip-bot2>
+Message-ID: <174413909831.31282.3118773367374848387.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,99 +82,98 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     1856c6c2f8416b1340652cccfa1fc302ac8d5ecd
-Gitweb:        https://git.kernel.org/tip/1856c6c2f8416b1340652cccfa1fc302ac8d5ecd
+Commit-ID:     c9449c8506a5df5052ef4d17867699517b10b55a
+Gitweb:        https://git.kernel.org/tip/c9449c8506a5df5052ef4d17867699517b10b55a
 Author:        Kan Liang <kan.liang@linux.intel.com>
-AuthorDate:    Thu, 27 Mar 2025 12:52:16 -07:00
+AuthorDate:    Thu, 27 Mar 2025 12:52:15 -07:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Tue, 08 Apr 2025 20:55:49 +02:00
 
-perf/x86/intel: Add CPUID enumeration for the auto counter reload
+perf: Extend the bit width of the arch-specific flag
 
-The counters that support the auto counter reload feature can be
-enumerated in the CPUID Leaf 0x23 sub-leaf 0x2.
+The auto counter reload feature requires an event flag to indicate an
+auto counter reload group, which can only be scheduled on specific
+counters that enumerated in CPUID. However, the hw_perf_event.flags has
+run out on X86.
 
-Add acr_cntr_mask to store the mask of counters which are reloadable.
-Add acr_cause_mask to store the mask of counters which can cause reload.
-Since the e-core and p-core may have different numbers of counters,
-track the masks in the struct x86_hybrid_pmu as well.
+Two solutions were considered to address the issue.
+- Currently, 20 bits are reserved for the architecture-specific flags.
+  Only the bit 31 is used for the generic flag. There is still plenty
+  of space left. Reserve 8 more bits for the arch-specific flags.
+- Add a new X86 specific hw_perf_event.flags1 to support more flags.
+
+The former is implemented. Enough room is still left in the global
+generic flag.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Tested-by: Thomas Falcon <thomas.falcon@intel.com>
-Link: https://lkml.kernel.org/r/20250327195217.2683619-5-kan.liang@linux.intel.com
+Link: https://lkml.kernel.org/r/20250327195217.2683619-4-kan.liang@linux.intel.com
 ---
- arch/x86/events/intel/core.c      | 10 ++++++++++
- arch/x86/events/perf_event.h      | 17 +++++++++++++++++
- arch/x86/include/asm/perf_event.h |  1 +
- 3 files changed, 28 insertions(+)
+ arch/x86/events/perf_event_flags.h | 41 ++++++++++++++---------------
+ include/linux/perf_event.h         |  2 +-
+ 2 files changed, 22 insertions(+), 21 deletions(-)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 6105024..876678a 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -5069,6 +5069,16 @@ static void update_pmu_cap(struct x86_hybrid_pmu *pmu)
- 		pmu->fixed_cntr_mask64 = fixed_cntr;
- 	}
- 
-+	if (eax.split.acr_subleaf) {
-+		cpuid_count(ARCH_PERFMON_EXT_LEAF, ARCH_PERFMON_ACR_LEAF,
-+			    &cntr, &fixed_cntr, &ecx, &edx);
-+		/* The mask of the counters which can be reloaded */
-+		pmu->acr_cntr_mask64 = cntr | ((u64)fixed_cntr << INTEL_PMC_IDX_FIXED);
-+
-+		/* The mask of the counters which can cause a reload of reloadable counters */
-+		pmu->acr_cause_mask64 = ecx | ((u64)edx << INTEL_PMC_IDX_FIXED);
-+	}
-+
- 	if (!intel_pmu_broken_perf_cap()) {
- 		/* Perf Metric (Bit 15) and PEBS via PT (Bit 16) are hybrid enumeration */
- 		rdmsrl(MSR_IA32_PERF_CAPABILITIES, pmu->intel_cap.capabilities);
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 4410cf0..ab9af2e 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -708,6 +708,15 @@ struct x86_hybrid_pmu {
- 			u64		fixed_cntr_mask64;
- 			unsigned long	fixed_cntr_mask[BITS_TO_LONGS(X86_PMC_IDX_MAX)];
- 	};
-+
-+	union {
-+			u64		acr_cntr_mask64;
-+			unsigned long	acr_cntr_mask[BITS_TO_LONGS(X86_PMC_IDX_MAX)];
-+	};
-+	union {
-+			u64		acr_cause_mask64;
-+			unsigned long	acr_cause_mask[BITS_TO_LONGS(X86_PMC_IDX_MAX)];
-+	};
- 	struct event_constraint		unconstrained;
- 
- 	u64				hw_cache_event_ids
-@@ -806,6 +815,14 @@ struct x86_pmu {
- 			u64		fixed_cntr_mask64;
- 			unsigned long	fixed_cntr_mask[BITS_TO_LONGS(X86_PMC_IDX_MAX)];
- 	};
-+	union {
-+			u64		acr_cntr_mask64;
-+			unsigned long	acr_cntr_mask[BITS_TO_LONGS(X86_PMC_IDX_MAX)];
-+	};
-+	union {
-+			u64		acr_cause_mask64;
-+			unsigned long	acr_cause_mask[BITS_TO_LONGS(X86_PMC_IDX_MAX)];
-+	};
- 	int		cntval_bits;
- 	u64		cntval_mask;
- 	union {
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index 812dac3..70d1d94 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -195,6 +195,7 @@ union cpuid10_edx {
+diff --git a/arch/x86/events/perf_event_flags.h b/arch/x86/events/perf_event_flags.h
+index 1d9e385..7007833 100644
+--- a/arch/x86/events/perf_event_flags.h
++++ b/arch/x86/events/perf_event_flags.h
+@@ -2,23 +2,24 @@
+ /*
+  * struct hw_perf_event.flags flags
   */
- #define ARCH_PERFMON_EXT_LEAF			0x00000023
- #define ARCH_PERFMON_NUM_COUNTER_LEAF		0x1
-+#define ARCH_PERFMON_ACR_LEAF			0x2
+-PERF_ARCH(PEBS_LDLAT,		0x00001) /* ld+ldlat data address sampling */
+-PERF_ARCH(PEBS_ST,		0x00002) /* st data address sampling */
+-PERF_ARCH(PEBS_ST_HSW,		0x00004) /* haswell style datala, store */
+-PERF_ARCH(PEBS_LD_HSW,		0x00008) /* haswell style datala, load */
+-PERF_ARCH(PEBS_NA_HSW,		0x00010) /* haswell style datala, unknown */
+-PERF_ARCH(EXCL,			0x00020) /* HT exclusivity on counter */
+-PERF_ARCH(DYNAMIC,		0x00040) /* dynamic alloc'd constraint */
+-PERF_ARCH(PEBS_CNTR,		0x00080) /* PEBS counters snapshot */
+-PERF_ARCH(EXCL_ACCT,		0x00100) /* accounted EXCL event */
+-PERF_ARCH(AUTO_RELOAD,		0x00200) /* use PEBS auto-reload */
+-PERF_ARCH(LARGE_PEBS,		0x00400) /* use large PEBS */
+-PERF_ARCH(PEBS_VIA_PT,		0x00800) /* use PT buffer for PEBS */
+-PERF_ARCH(PAIR,			0x01000) /* Large Increment per Cycle */
+-PERF_ARCH(LBR_SELECT,		0x02000) /* Save/Restore MSR_LBR_SELECT */
+-PERF_ARCH(TOPDOWN,		0x04000) /* Count Topdown slots/metrics events */
+-PERF_ARCH(PEBS_STLAT,		0x08000) /* st+stlat data address sampling */
+-PERF_ARCH(AMD_BRS,		0x10000) /* AMD Branch Sampling */
+-PERF_ARCH(PEBS_LAT_HYBRID,	0x20000) /* ld and st lat for hybrid */
+-PERF_ARCH(NEEDS_BRANCH_STACK,	0x40000) /* require branch stack setup */
+-PERF_ARCH(BRANCH_COUNTERS,	0x80000) /* logs the counters in the extra space of each branch */
++PERF_ARCH(PEBS_LDLAT,		0x0000001) /* ld+ldlat data address sampling */
++PERF_ARCH(PEBS_ST,		0x0000002) /* st data address sampling */
++PERF_ARCH(PEBS_ST_HSW,		0x0000004) /* haswell style datala, store */
++PERF_ARCH(PEBS_LD_HSW,		0x0000008) /* haswell style datala, load */
++PERF_ARCH(PEBS_NA_HSW,		0x0000010) /* haswell style datala, unknown */
++PERF_ARCH(EXCL,			0x0000020) /* HT exclusivity on counter */
++PERF_ARCH(DYNAMIC,		0x0000040) /* dynamic alloc'd constraint */
++PERF_ARCH(PEBS_CNTR,		0x0000080) /* PEBS counters snapshot */
++PERF_ARCH(EXCL_ACCT,		0x0000100) /* accounted EXCL event */
++PERF_ARCH(AUTO_RELOAD,		0x0000200) /* use PEBS auto-reload */
++PERF_ARCH(LARGE_PEBS,		0x0000400) /* use large PEBS */
++PERF_ARCH(PEBS_VIA_PT,		0x0000800) /* use PT buffer for PEBS */
++PERF_ARCH(PAIR,			0x0001000) /* Large Increment per Cycle */
++PERF_ARCH(LBR_SELECT,		0x0002000) /* Save/Restore MSR_LBR_SELECT */
++PERF_ARCH(TOPDOWN,		0x0004000) /* Count Topdown slots/metrics events */
++PERF_ARCH(PEBS_STLAT,		0x0008000) /* st+stlat data address sampling */
++PERF_ARCH(AMD_BRS,		0x0010000) /* AMD Branch Sampling */
++PERF_ARCH(PEBS_LAT_HYBRID,	0x0020000) /* ld and st lat for hybrid */
++PERF_ARCH(NEEDS_BRANCH_STACK,	0x0040000) /* require branch stack setup */
++PERF_ARCH(BRANCH_COUNTERS,	0x0080000) /* logs the counters in the extra space of each branch */
++PERF_ARCH(ACR,			0x0100000) /* Auto counter reload */
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 54dad17..5c54732 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -144,7 +144,7 @@ struct hw_perf_event_extra {
+  * PERF_EVENT_FLAG_ARCH bits are reserved for architecture-specific
+  * usage.
+  */
+-#define PERF_EVENT_FLAG_ARCH			0x000fffff
++#define PERF_EVENT_FLAG_ARCH			0x0fffffff
+ #define PERF_EVENT_FLAG_USER_READ_CNT		0x80000000
  
- union cpuid35_eax {
- 	struct {
+ static_assert((PERF_EVENT_FLAG_USER_READ_CNT & PERF_EVENT_FLAG_ARCH) == 0);
 
