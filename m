@@ -1,195 +1,128 @@
-Return-Path: <linux-kernel+bounces-593929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0B33A80A26
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:01:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EBDBA8095F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFEC18A6586
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:43:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C236D4E4866
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A654270EC0;
-	Tue,  8 Apr 2025 12:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC83A27605A;
+	Tue,  8 Apr 2025 12:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="i38pXdN3";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kKLLycsG";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="i38pXdN3";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kKLLycsG"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FBE270EAA
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 12:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TCaZdcmO"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0BC206F18;
+	Tue,  8 Apr 2025 12:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744115936; cv=none; b=DobUVjAgqvQBO7LPgD/U72YIEbmS3at1p1XsNRa2Wqn+T7BuGgUfnZ/qao+yd51PVBDGWni4ifJl5nMvSzj1sMmxrIfmYxrnkYbSP0VvbQYi/RTDFV0yHcKv44qnA6cFaJ6kpX0bguQkydy23btZEtiU9zjaPcLq903ZA07F0Wg=
+	t=1744116005; cv=none; b=qcQZm5fAHArOwH7RnQjaLNGWpVoqj2KfAihhpEyMD4QbI/LqTozjSBUXv6buEz9ft9XR2S9pmY8VdZs22eTnSERWa/mUmRmZaYvMuFpHQ8r1ghTP9jjpJgZtjFFaqg58aPR7HTCdjZrDwCioPCExnJw0T1o9Bfk45RYcG6gmueo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744115936; c=relaxed/simple;
-	bh=tWLj6hCTsUsy6skIxsCU1gYwVX8zNsVwBhJlCYL3OzY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b3/6MRFRkhdyECDj+mUM0czvCDDroWqDbOC8HkWFuAUkSoOqVs8VFgBfP/Irnz6LwBbClBuI7tYehE4Q1isefOo246kt/+pea1IW2bKKDg5y+jbUqsqzBdEmjTxkOi1Uh50mm+UoHTkxHcX9fnFLZWKRzBrnQUvkRDkPPvTvOUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=i38pXdN3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kKLLycsG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=i38pXdN3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kKLLycsG; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0023F21180;
-	Tue,  8 Apr 2025 12:38:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744115933; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8voFhDCx4f+vOltHZnCvK7t+rzaa2lYXmMfMaNjmzDo=;
-	b=i38pXdN3uxy6/fiJwvPf3f2kVzSnCVr91xkJorD68qkbF70+Nr6jto02WuC6YwX1gFQgZK
-	vvJv+fGbmS3V3ZB1MWrbQU3bKNWUyvpnqgBB1jl9veaqQFy16jUyfSEtCKFMAlrwdZKSvw
-	pQz9bsY7F8daKNkaufeCJvoV7RtMfe0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744115933;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8voFhDCx4f+vOltHZnCvK7t+rzaa2lYXmMfMaNjmzDo=;
-	b=kKLLycsG5O6YoetIWEaS+haiDd5Z3u+cabWxbBODL7ujKZTz/G/hiezsBVOkw7o82oGCj3
-	LIv6HP8Qww/OEoAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744115933; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8voFhDCx4f+vOltHZnCvK7t+rzaa2lYXmMfMaNjmzDo=;
-	b=i38pXdN3uxy6/fiJwvPf3f2kVzSnCVr91xkJorD68qkbF70+Nr6jto02WuC6YwX1gFQgZK
-	vvJv+fGbmS3V3ZB1MWrbQU3bKNWUyvpnqgBB1jl9veaqQFy16jUyfSEtCKFMAlrwdZKSvw
-	pQz9bsY7F8daKNkaufeCJvoV7RtMfe0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744115933;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8voFhDCx4f+vOltHZnCvK7t+rzaa2lYXmMfMaNjmzDo=;
-	b=kKLLycsG5O6YoetIWEaS+haiDd5Z3u+cabWxbBODL7ujKZTz/G/hiezsBVOkw7o82oGCj3
-	LIv6HP8Qww/OEoAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C976A13691;
-	Tue,  8 Apr 2025 12:38:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ejmYMNwY9WcXIwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 08 Apr 2025 12:38:52 +0000
-Date: Tue, 08 Apr 2025 14:38:52 +0200
-Message-ID: <87mscqhlpf.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: open list <linux-kernel@vger.kernel.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	linux-sound@vger.kernel.org,
-	kunit-dev@googlegroups.com,
-	clang-built-linux <llvm@lists.linux.dev>,
-	Pei Xiao <xiaopei01@kylinos.cn>,
-	Takashi Iwai <tiwai@suse.de>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: sound_kunit.c: error: address of array 'card->id' will always evaluate to 'true' [-Werror,-Wpointer-bool-conversion]
-In-Reply-To: <CA+G9fYsNUbN0PsDQBqVAoUSjSXa5igOjntBFh_TF6m8A4FNDsw@mail.gmail.com>
-References: <CA+G9fYsNUbN0PsDQBqVAoUSjSXa5igOjntBFh_TF6m8A4FNDsw@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1744116005; c=relaxed/simple;
+	bh=W2T7YCdGADKb75b9b3DlWwavvOCPJ0/TwhvEwmQo7f4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=UYRFFVmUQvWXyDWpa1/oBr7Thb8GZcdeYmcIOSsxMWIj8QIXPOqZJijP9Fh7lpL2HQA44JQi9mZNAwRyCJIcJ/a5eSkvy6jg4hkUuydWD35zCOVP62T74mnbnZF6qGFj/GjTEXkR/OWkYWd4jXvvImzEQnahT3nT+KWzrhhYg3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TCaZdcmO; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=W2T7Y
+	CdGADKb75b9b3DlWwavvOCPJ0/TwhvEwmQo7f4=; b=TCaZdcmOEC/SZynHAHLgD
+	lCdsXB0IaOmQ0WUoOtRqdOPzO1I5js4hWQIu+Hbz3mD9GLipxDvvo7XXlTfdzTg3
+	BQsTpn2YVHv021pE9euB414Zfl7soUMKBdIpWkd4xL4L4cjqzZgP4Bx3sh9FcABN
+	7peCjWyNPtsstIBc0a+Ot8=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDnpgLtGPVneK_AEw--.41217S4;
+	Tue, 08 Apr 2025 20:39:10 +0800 (CST)
+From: lvxiafei <xiafei_xupt@163.com>
+To: fw@strlen.de
+Cc: coreteam@netfilter.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	horms@kernel.org,
+	kadlec@netfilter.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvxiafei@sensetime.com,
+	netdev@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	pabeni@redhat.com,
+	pablo@netfilter.org,
+	xiafei_xupt@163.com
+Subject: Re: [PATCH V2] netfilter: netns nf_conntrack: per-netns net.netfilter.nf_conntrack_max sysctl
+Date: Tue,  8 Apr 2025 20:39:08 +0800
+Message-Id: <20250408123908.3608-1-xiafei_xupt@163.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20250408095854.GB536@breakpoint.cc>
+References: <20250408095854.GB536@breakpoint.cc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,linaro.org:email,linaro.org:url]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
-
-On Tue, 08 Apr 2025 14:35:21 +0200,
-Naresh Kamboju wrote:
-> 
-> Regressions on x86_64 build allyesconfig with clang-20 failed on the
-> Linux next-20250408 tag.
-> 
-> First seen on the next-20250408.
-> Bad: next-20250408
-> Good: next-20250407
-> 
-> * x86, build
->  - build/clang-20-allyesconfig
-> 
-> Regression Analysis:
-> - New regression? Yes
-> - Reproducibility? Yes
-> 
-> Boot regression: x86_64 allyesconfig address of array 'card->id' will
-> always evaluate to 'true'
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> ## Boot log
-> sound/core/sound_kunit.c:271:31: error: address of array 'card->id'
-> will always evaluate to 'true' [-Werror,-Wpointer-bool-conversion]
->   271 |         kunit_info(test, "%s", card->id ? card->id : "(null)");
->       |                                ~~~~~~^~ ~
-> 
-> 
-> ## Source
-> * Kernel version: 6.15.0-rc1
-> * Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> * Git sha: 7702d0130dc002bab2c3571ddb6ff68f82d99aea
-> * Git describe: next-20250408
-> * Project details:
-> https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250408/
-> 
-> ## Test
-> * Test log: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250408/testrun/27937063/suite/build/test/clang-20-allyesconfig/log
-> * Test details:
-> https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250408/testrun/27937063/suite/build/test/clang-20-allyesconfig/details/
-> * Test history:
-> https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250408/testrun/27937063/suite/build/test/clang-20-allyesconfig/history/
-> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2vQpM7f8SQvntzGG0Tdgxj2amGb/
-> * Kernel config:
-> https://storage.tuxsuite.com/public/linaro/lkft/builds/2vQpM7f8SQvntzGG0Tdgxj2amGb/config
-> * compiler: clang Debian clang version 20.1.2
-> (++20250330123306+5ba194972878-1~exp1~20250330003423.94)
-> 
-> ## Steps to reproduce
->  - tuxmake --runtime podman --target-arch x86_64 --toolchain clang-20
-> --kconfig allyesconfig LLVM=1 LLVM_IAS=1
-
-The relevant patch was already dropped.
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnpgLtGPVneK_AEw--.41217S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Kw47XrWfAFyfGrWxGw43GFg_yoW8uFW8p3
+	yftrZrAryDtan3A34kKw17Ca1Fy393Ar13KF1UCFy8Cay5KrnI9rWxKF17CF97Cw4kCr1a
+	vr4jvr1kJas5AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUhF4_UUUUU=
+X-CM-SenderInfo: x0ldwvplb031rw6rljoofrz/1tbiKBMpU2f05gwTsgACsb
 
 
-thanks,
+On Tue, 8 Apr 2025 11:58:54 Florian Westphal <fw@strlen.de> wrote:
+> That seems the wrong thing to do.
+> There must be some way to limit the netns conntrack usage.
+>
+> Whats the actual intent here?
+>
+> You could apply max = min(init_net->max, net->max)
+> Or, you could relax it as long as netns are owned
+> by initial user ns, I guess.
+>
+> Or perhaps its possible to make a guesstimate of
+> the maximum memory needed by the new limit, then
+> account that to memcg (at sysctl change time), and
+> reject if memcg is exhausted.
+>
+> No other ideas at the moment, but I do not like the
+> "no limits" approach.
 
-Takashi
+The original nf_conntrack_max is a global variable.
+Modification will affect the connection tracking
+limit in other netns, and the maximum memory
+consumption = number of netns * nf_conntrack_max
+
+This modification can make nf_conntrack_max support
+the netns level to set the size of the connection
+tracking table, and more flexibly limit the connection
+tracking of each netns. For example, the initial user ns
+has a default value (=max_factor*nf_conntrack_htable_size).
+The nf_conntrack_max when netns 1 and netns 2 are created
+is the same as the nf_conntrack_max in the initial user ns.
+You can set it to netns 1 1k and netns 2 2k without
+affecting each other.
+
+If you are worried that different netns may exceed the
+initial user limit and memory limit when setting,
+apply max = min(init_net->max, net->max), the value in
+netns is not greater than init_net->max, and the new
+maximum memory consumption <= the original maximum memory
+consumption, which limits memory consumption to a certain
+extent. However, this will bring several problems:
+
+1. Do not allow nf_conntrack_max in other netns to be greater
+than nf_conntrack_max of the initial user. For example, when
+other netns carry north-south traffic, the actual number of
+connection tracking is greater than that of the initial user.
+
+2. If nf_conntrack_max of the initial user is increased, the
+maximum memory consumption will inevitably increase by n copies
+
+3. If nf_conntrack_max of the initial user is reduced, will
+the existing connections in other netns be affected?
+
 
