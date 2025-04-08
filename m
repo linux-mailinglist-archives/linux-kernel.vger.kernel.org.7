@@ -1,64 +1,88 @@
-Return-Path: <linux-kernel+bounces-593637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA43A7FB85
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:19:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45248A7FBFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C526F7A95BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:18:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A86FC16C2F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1849F268C5D;
-	Tue,  8 Apr 2025 10:15:03 +0000 (UTC)
-Received: from out198-10.us.a.mail.aliyun.com (out198-10.us.a.mail.aliyun.com [47.90.198.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F184B26A0BF;
+	Tue,  8 Apr 2025 10:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Od1W2qo3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2E6266B7A;
-	Tue,  8 Apr 2025 10:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907672673A5;
+	Tue,  8 Apr 2025 10:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744107302; cv=none; b=SNLry3e4r74fO1jSamgBjjC/ZXYjaaIkFM+M94JHrKcKmYX7+VFMTxQ1ANSdTuyx/gEyBK4vg40wIvNX627rKqNVZIIgJYMPLe/xdDzVc6pjpANpjUm+MMisZvmO4pQRRP6JkfpJtXq1KcvcOrQkMhW6sgMX5JEkUmBM9+DGOE0=
+	t=1744107698; cv=none; b=awfsQF7evP7Z4SpEFD0NAEzV+/SC0FntZYIQij6blYfHjT5oRkqjtqdlyeDK19TFlPd3r1n1acFUvpmcw2ut3leirD31FzXcBDh0OU7fH02Gsn8qtn9hUOZaouc4V8ibkAGrxgS9gx2RutZh2TBoiwCjxbi5rdg13PEBGz4itTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744107302; c=relaxed/simple;
-	bh=q84VNs04UjsotkVFZBu4Ao5ebq+6b4PjM4qEIPxVrrI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Vhyn1y3gAgFXYpHB1boh0XkQkg+GtgIUj9/djPQJsyqqLpihEp0bclvcpZ76ebtKuNUkEWXUcrea6z0WUBql75ObvBWlK1E/BH5KOoZV71epTtnw04nQw4V+uxYJ1rmqXjtSDd0AaG0NtEpaoDTHgu3BCw6y9LiXAkJsuWplXNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com; spf=pass smtp.mailfrom=motor-comm.com; arc=none smtp.client-ip=47.90.198.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motor-comm.com
-Received: from sun-VirtualBox..(mailfrom:Frank.Sae@motor-comm.com fp:SMTPD_---.cGww7Nd_1744104534 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Tue, 08 Apr 2025 17:28:54 +0800
-From: Frank Sae <Frank.Sae@motor-comm.com>
-To: Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Frank <Frank.Sae@motor-comm.com>,
-	netdev@vger.kernel.org
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Parthiban.Veerasooran@microchip.com,
-	linux-kernel@vger.kernel.org,
-	"andrew+netdev @ lunn . ch" <andrew+netdev@lunn.ch>,
-	lee@trager.us,
-	horms@kernel.org,
+	s=arc-20240116; t=1744107698; c=relaxed/simple;
+	bh=2TWbx80DBfebYdtB+8UqZOQggmllLAdKvcVPGbHUZJk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qY7R4fnpb2u29CQtoEWWT/+bU4r0nM3HMt4fOooH6Pr3/kVKN9/lME70cfBAGBlfnWpy9gru/Y/fAijKJrzWa7LeRA/xL0a6bNILYtxpz7CuHyGdFS5VFI5HoQhCKmKx4QR33QxpTSrILvL+YC3L0pcTjFsx9DqdEKEGIzJ5llE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Od1W2qo3; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744107696; x=1775643696;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=2TWbx80DBfebYdtB+8UqZOQggmllLAdKvcVPGbHUZJk=;
+  b=Od1W2qo34OL0DoK/GNBY/hN7EtGlGZtIxpMZ0HGKu29UZXl/0RmjsinD
+   W7AKNIfWAt/4kExRv+oSkb4zxkABrOK220qxstL/JCjtGE3AnFyC1zPYl
+   TE9d+eckvu3w5t8qku+ltZUGrxREMBhuo+lnCEc1V1GKipF8k7Vm+iAPr
+   Dk2NBLxNWQfWP0BOJTw+UGr8y1TEbFWTBlqikS0wBTw+F+SRsTY6wXi1z
+   NPLuECfio3veFjiME/+c9s9q5hQ6/mbHSgZVcQgCtAjlMUVa/hXNknger
+   BwSgfsFtUJ5Dao3mCtDmakRbhp8/XVBUc+Sz5pdnB7pa7LEtNEKPDdU8g
+   g==;
+X-CSE-ConnectionGUID: NIEZ6w9yQ5Cel7uETZsk0w==
+X-CSE-MsgGUID: 3yLdRBXIQvq6LmXHS6K3Tw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="56196520"
+X-IronPort-AV: E=Sophos;i="6.15,197,1739865600"; 
+   d="scan'208";a="56196520"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 03:21:19 -0700
+X-CSE-ConnectionGUID: AkbhsusUSYGQ+uYCTBeKCA==
+X-CSE-MsgGUID: ECRVkKJ1RkOqWDOy3NxCKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,197,1739865600"; 
+   d="scan'208";a="132360362"
+Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
+  by fmviesa003.fm.intel.com with ESMTP; 08 Apr 2025 03:21:10 -0700
+From: Chen Yu <yu.c.chen@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Tejun Heo <tj@kernel.org>,
+	"Michal Koutny" <mkoutny@suse.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Mel Gorman <mgorman@suse.de>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: cgroups@vger.kernel.org,
 	linux-doc@vger.kernel.org,
-	corbet@lwn.net,
-	geert+renesas@glider.be,
-	xiaogang.fan@motor-comm.com,
-	fei.zhang@motor-comm.com,
-	hua.sun@motor-comm.com
-Subject: [PATCH net-next v4 05/14] yt6801: Implement the .ndo_open function
-Date: Tue, 08 Apr 2025 18:14:39 +0800
-Message-Id: <20250408092835.3952-6-Frank.Sae@motor-comm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250408092835.3952-1-Frank.Sae@motor-comm.com>
-References: <20250408092835.3952-1-Frank.Sae@motor-comm.com>
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Tim Chen <tim.c.chen@intel.com>,
+	Aubrey Li <aubrey.li@intel.com>,
+	Chen Yu <yu.chen.surf@foxmail.com>,
+	Chen Yu <yu.c.chen@intel.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Subject: [PATCH v2] sched/numa: Add statistics of numa balance task migration and swap
+Date: Tue,  8 Apr 2025 18:14:44 +0800
+Message-Id: <20250408101444.192519-1-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,423 +91,166 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Implement the .ndo_open function to Calculate the Rx buffer size, allocate
- the channels and rings.
+On systems with NUMA balancing enabled, it is found that tracking
+the task activities due to NUMA balancing is helpful. NUMA balancing
+has two mechanisms for task migration: one is to migrate the task to
+an idle CPU in its preferred node, the other is to swap tasks on
+different nodes if they are on each other's preferred node.
 
-Signed-off-by: Frank Sae <Frank.Sae@motor-comm.com>
+The kernel already has NUMA page migration statistics in
+/sys/fs/cgroup/mytest/memory.stat and /proc/{PID}/sched,
+but does not have statistics for task migration/swap.
+Add the task migration and swap count accordingly.
+
+The following two new fields:
+
+numa_task_migrated
+numa_task_swapped
+
+will be displayed in both
+/sys/fs/cgroup/{GROUP}/memory.stat and /proc/{PID}/sched
+
+Introducing both pertask and permemcg NUMA balancing statistics helps
+to quickly evaluate the performance and resource usage of the target
+workload. For example, the user can first identify the container which
+has high NUMA balance activity and then narrow down to a specific task
+within that group, and tune the memory policy of that task.
+In summary, it is plausible to iterate the /proc/$pid/sched to find the
+offending task, but the introduction of per memcg tasks' Numa balancing
+aggregated  activity can further help users identify the task in a
+divide-and-conquer way.
+
+Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Tested-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 ---
- .../ethernet/motorcomm/yt6801/yt6801_desc.c   | 219 ++++++++++++++++++
- .../ethernet/motorcomm/yt6801/yt6801_desc.h   |   2 +
- .../ethernet/motorcomm/yt6801/yt6801_main.c   |  84 +++++++
- .../ethernet/motorcomm/yt6801/yt6801_type.h   |  19 +-
- 4 files changed, 323 insertions(+), 1 deletion(-)
+v1->v2:
+Update the Documentation/admin-guide/cgroup-v2.rst. (Michal)
+---
+ Documentation/admin-guide/cgroup-v2.rst |  6 ++++++
+ include/linux/sched.h                   |  4 ++++
+ include/linux/vm_event_item.h           |  2 ++
+ kernel/sched/core.c                     | 10 ++++++++--
+ kernel/sched/debug.c                    |  4 ++++
+ mm/memcontrol.c                         |  2 ++
+ mm/vmstat.c                             |  2 ++
+ 7 files changed, 28 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/motorcomm/yt6801/yt6801_desc.c b/drivers/net/ethernet/motorcomm/yt6801/yt6801_desc.c
-index a83ebb478..0891c4fef 100644
---- a/drivers/net/ethernet/motorcomm/yt6801/yt6801_desc.c
-+++ b/drivers/net/ethernet/motorcomm/yt6801/yt6801_desc.c
-@@ -48,3 +48,222 @@ void fxgmac_desc_data_unmap(struct fxgmac_pdata *priv,
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index f293a13b42ed..b698be14942c 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1652,6 +1652,12 @@ The following nested keys are defined.
+ 	  numa_hint_faults (npn)
+ 		Number of NUMA hinting faults.
  
- 	desc_data->mapped_as_page = 0;
- }
++	  numa_task_migrated (npn)
++		Number of task migration by NUMA balancing.
 +
-+static int fxgmac_ring_init(struct fxgmac_pdata *priv, struct fxgmac_ring *ring,
-+			    unsigned int dma_desc_count)
-+{
-+	/* Descriptors */
-+	ring->dma_desc_count = dma_desc_count;
-+	ring->dma_desc_head =
-+		dma_alloc_coherent(priv->dev, (sizeof(struct fxgmac_dma_desc) *
-+				   dma_desc_count),
-+				   &ring->dma_desc_head_addr, GFP_KERNEL);
-+	if (!ring->dma_desc_head)
-+		return -ENOMEM;
++	  numa_task_swapped (npn)
++		Number of task swap by NUMA balancing.
 +
-+	/* Array of descriptor data */
-+	ring->desc_data_head = kcalloc(dma_desc_count,
-+				       sizeof(struct fxgmac_desc_data),
-+				       GFP_KERNEL);
-+	if (!ring->desc_data_head)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
-+static void fxgmac_ring_free(struct fxgmac_pdata *priv,
-+			     struct fxgmac_ring *ring)
-+{
-+	if (!ring)
-+		return;
-+
-+	if (ring->desc_data_head) {
-+		for (u32 i = 0; i < ring->dma_desc_count; i++)
-+			fxgmac_desc_data_unmap(priv,
-+					       FXGMAC_GET_DESC_DATA(ring, i));
-+
-+		kfree(ring->desc_data_head);
-+		ring->desc_data_head = NULL;
-+	}
-+
-+	if (ring->rx_hdr_pa.pages) {
-+		dma_unmap_page(priv->dev, ring->rx_hdr_pa.pages_dma,
-+			       ring->rx_hdr_pa.pages_len, DMA_FROM_DEVICE);
-+		put_page(ring->rx_hdr_pa.pages);
-+
-+		ring->rx_hdr_pa.pages = NULL;
-+		ring->rx_hdr_pa.pages_len = 0;
-+		ring->rx_hdr_pa.pages_offset = 0;
-+		ring->rx_hdr_pa.pages_dma = 0;
-+	}
-+
-+	if (ring->rx_buf_pa.pages) {
-+		dma_unmap_page(priv->dev, ring->rx_buf_pa.pages_dma,
-+			       ring->rx_buf_pa.pages_len, DMA_FROM_DEVICE);
-+		put_page(ring->rx_buf_pa.pages);
-+
-+		ring->rx_buf_pa.pages = NULL;
-+		ring->rx_buf_pa.pages_len = 0;
-+		ring->rx_buf_pa.pages_offset = 0;
-+		ring->rx_buf_pa.pages_dma = 0;
-+	}
-+	if (ring->dma_desc_head) {
-+		dma_free_coherent(priv->dev, (sizeof(struct fxgmac_dma_desc) *
-+				  ring->dma_desc_count), ring->dma_desc_head,
-+				  ring->dma_desc_head_addr);
-+		ring->dma_desc_head = NULL;
-+	}
-+}
-+
-+static void fxgmac_rings_free(struct fxgmac_pdata *priv)
-+{
-+	struct fxgmac_channel *channel = priv->channel_head;
-+
-+	fxgmac_ring_free(priv, channel->tx_ring);
-+
-+	for (u32 i = 0; i < priv->channel_count; i++, channel++)
-+		fxgmac_ring_free(priv, channel->rx_ring);
-+}
-+
-+static int fxgmac_rings_alloc(struct fxgmac_pdata *priv)
-+{
-+	struct fxgmac_channel *channel = priv->channel_head;
-+	int ret;
-+
-+	ret = fxgmac_ring_init(priv, channel->tx_ring, priv->tx_desc_count);
-+	if (ret < 0) {
-+		dev_err(priv->dev, "Initializing Tx ring failed");
-+		goto err_init_ring;
-+	}
-+
-+	for (u32 i = 0; i < priv->channel_count; i++, channel++) {
-+		ret = fxgmac_ring_init(priv, channel->rx_ring,
-+				       priv->rx_desc_count);
-+		if (ret < 0) {
-+			dev_err(priv->dev, "Initializing Rx ring failed\n");
-+			goto err_init_ring;
-+		}
-+	}
-+	return 0;
-+
-+err_init_ring:
-+	fxgmac_rings_free(priv);
-+	return ret;
-+}
-+
-+static void fxgmac_channels_free(struct fxgmac_pdata *priv)
-+{
-+	struct fxgmac_channel *channel = priv->channel_head;
-+
-+	kfree(channel->tx_ring);
-+	channel->tx_ring = NULL;
-+
-+	kfree(channel->rx_ring);
-+	channel->rx_ring = NULL;
-+
-+	kfree(channel);
-+	priv->channel_head = NULL;
-+}
-+
-+void fxgmac_channels_rings_free(struct fxgmac_pdata *priv)
-+{
-+	fxgmac_rings_free(priv);
-+	fxgmac_channels_free(priv);
-+}
-+
-+static void fxgmac_set_msix_tx_irq(struct fxgmac_pdata *priv,
-+				   struct fxgmac_channel *channel)
-+{
-+	priv->channel_irq[FXGMAC_MAX_DMA_RX_CHANNELS] =
-+		priv->msix_entries[FXGMAC_MAX_DMA_RX_CHANNELS].vector;
-+	channel->dma_irq_tx = priv->channel_irq[FXGMAC_MAX_DMA_RX_CHANNELS];
-+}
-+
-+static int fxgmac_channels_alloc(struct fxgmac_pdata *priv)
-+{
-+	struct fxgmac_channel *channel_head, *channel;
-+	struct fxgmac_ring *tx_ring, *rx_ring;
-+	int ret = -ENOMEM;
-+
-+	channel_head = kcalloc(priv->channel_count,
-+			       sizeof(struct fxgmac_channel), GFP_KERNEL);
-+
-+	if (!channel_head)
-+		return ret;
-+
-+	tx_ring = kcalloc(FXGMAC_TX_1_RING, sizeof(struct fxgmac_ring),
-+			  GFP_KERNEL);
-+	if (!tx_ring)
-+		goto err_tx_ring;
-+
-+	rx_ring = kcalloc(priv->rx_ring_count, sizeof(struct fxgmac_ring),
-+			  GFP_KERNEL);
-+	if (!rx_ring)
-+		goto err_rx_ring;
-+
-+	channel = channel_head;
-+	for (u32 i = 0; i < priv->channel_count; i++, channel++) {
-+		snprintf(channel->name, sizeof(channel->name), "channel-%u", i);
-+		channel->priv = priv;
-+		channel->queue_index = i;
-+		channel->dma_regs = (priv)->hw_addr + DMA_CH_BASE +
-+				    (DMA_CH_INC * i);
-+
-+		if (priv->per_channel_irq) {
-+			priv->channel_irq[i] = priv->msix_entries[i].vector;
-+
-+			if (IS_ENABLED(CONFIG_PCI_MSI) &&  i < FXGMAC_TX_1_RING)
-+				fxgmac_set_msix_tx_irq(priv, channel);
-+
-+			/* Get the per DMA rx interrupt */
-+			ret = priv->channel_irq[i];
-+			if (ret < 0) {
-+				dev_err(priv->dev, "channel irq[%u] failed\n",
-+					i + 1);
-+				goto err_irq;
-+			}
-+
-+			channel->dma_irq_rx = ret;
-+		}
-+
-+		if (i < FXGMAC_TX_1_RING)
-+			channel->tx_ring = tx_ring++;
-+
-+		if (i < priv->rx_ring_count)
-+			channel->rx_ring = rx_ring++;
-+	}
-+
-+	priv->channel_head = channel_head;
-+	return 0;
-+
-+err_irq:
-+	kfree(rx_ring);
-+
-+err_rx_ring:
-+	kfree(tx_ring);
-+
-+err_tx_ring:
-+	kfree(channel_head);
-+
-+	dev_err(priv->dev, "%s failed:%d\n", __func__, ret);
-+	return ret;
-+}
-+
-+int fxgmac_channels_rings_alloc(struct fxgmac_pdata *priv)
-+{
-+	int ret;
-+
-+	ret = fxgmac_channels_alloc(priv);
-+	if (ret < 0)
-+		goto err_alloc;
-+
-+	ret = fxgmac_rings_alloc(priv);
-+	if (ret < 0)
-+		goto err_alloc;
-+
-+	return 0;
-+
-+err_alloc:
-+	fxgmac_channels_rings_free(priv);
-+	return ret;
-+}
-diff --git a/drivers/net/ethernet/motorcomm/yt6801/yt6801_desc.h b/drivers/net/ethernet/motorcomm/yt6801/yt6801_desc.h
-index a4c7a8af2..dfe783004 100644
---- a/drivers/net/ethernet/motorcomm/yt6801/yt6801_desc.h
-+++ b/drivers/net/ethernet/motorcomm/yt6801/yt6801_desc.h
-@@ -16,4 +16,6 @@
- void fxgmac_desc_data_unmap(struct fxgmac_pdata *priv,
- 			    struct fxgmac_desc_data *desc_data);
+ 	  pgdemote_kswapd
+ 		Number of pages demoted by kswapd.
  
-+int fxgmac_channels_rings_alloc(struct fxgmac_pdata *priv);
-+void fxgmac_channels_rings_free(struct fxgmac_pdata *priv);
- #endif /* YT6801_DESC_H */
-diff --git a/drivers/net/ethernet/motorcomm/yt6801/yt6801_main.c b/drivers/net/ethernet/motorcomm/yt6801/yt6801_main.c
-index 5294ca638..dce712306 100644
---- a/drivers/net/ethernet/motorcomm/yt6801/yt6801_main.c
-+++ b/drivers/net/ethernet/motorcomm/yt6801/yt6801_main.c
-@@ -21,6 +21,8 @@
- #include "yt6801_type.h"
- #include "yt6801_desc.h"
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 56ddeb37b5cd..2e91326c16ec 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -549,6 +549,10 @@ struct sched_statistics {
+ 	u64				nr_failed_migrations_running;
+ 	u64				nr_failed_migrations_hot;
+ 	u64				nr_forced_migrations;
++#ifdef CONFIG_NUMA_BALANCING
++	u64				numa_task_migrated;
++	u64				numa_task_swapped;
++#endif
  
-+const struct net_device_ops *fxgmac_get_netdev_ops(void);
-+
- #define PHY_WR_CONFIG(reg_offset)	(0x8000205 + ((reg_offset) * 0x10000))
- static int fxgmac_phy_write_reg(struct fxgmac_pdata *priv, u32 reg_id, u32 data)
+ 	u64				nr_wakeups;
+ 	u64				nr_wakeups_sync;
+diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
+index 5a37cb2b6f93..df8a1b30930f 100644
+--- a/include/linux/vm_event_item.h
++++ b/include/linux/vm_event_item.h
+@@ -64,6 +64,8 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
+ 		NUMA_HINT_FAULTS,
+ 		NUMA_HINT_FAULTS_LOCAL,
+ 		NUMA_PAGE_MIGRATE,
++		NUMA_TASK_MIGRATE,
++		NUMA_TASK_SWAP,
+ #endif
+ #ifdef CONFIG_MIGRATION
+ 		PGMIGRATE_SUCCESS, PGMIGRATE_FAIL,
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index b434c2f7e3c1..54e7d63f7785 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3352,6 +3352,11 @@ void set_task_cpu(struct task_struct *p, unsigned int new_cpu)
+ #ifdef CONFIG_NUMA_BALANCING
+ static void __migrate_swap_task(struct task_struct *p, int cpu)
  {
-@@ -409,6 +411,28 @@ static void fxgmac_stop(struct fxgmac_pdata *priv)
- 	netdev_tx_reset_queue(txq);
- }
++	__schedstat_inc(p->stats.numa_task_swapped);
++
++	if (p->mm)
++		count_memcg_events_mm(p->mm, NUMA_TASK_SWAP, 1);
++
+ 	if (task_on_rq_queued(p)) {
+ 		struct rq *src_rq, *dst_rq;
+ 		struct rq_flags srf, drf;
+@@ -7955,8 +7960,9 @@ int migrate_task_to(struct task_struct *p, int target_cpu)
+ 	if (!cpumask_test_cpu(target_cpu, p->cpus_ptr))
+ 		return -EINVAL;
  
-+static void fxgmac_restart(struct fxgmac_pdata *priv)
-+{
-+	int ret;
-+
-+	/* If not running, "restart" will happen on open */
-+	if (!netif_running(priv->ndev) && priv->dev_state != FXGMAC_DEV_START)
-+		return;
-+
-+	fxgmac_stop(priv);
-+	fxgmac_free_tx_data(priv);
-+	fxgmac_free_rx_data(priv);
-+	ret = fxgmac_start(priv);
-+	if (ret < 0)
-+		dev_err(priv->dev, "fxgmac start failed:%d.\n", ret);
-+}
-+
-+static void fxgmac_restart_work(struct work_struct *work)
-+{
-+	rtnl_lock();
-+	fxgmac_restart(container_of(work, struct fxgmac_pdata, restart_work));
-+	rtnl_unlock();
-+}
- static void fxgmac_config_powerdown(struct fxgmac_pdata *priv)
- {
- 	fxgmac_io_wr_bits(priv, MAC_CR, MAC_CR_RE, 1); /* Enable MAC Rx */
-@@ -452,6 +476,57 @@ static int fxgmac_net_powerdown(struct fxgmac_pdata *priv)
- 	return 0;
- }
- 
-+static int fxgmac_calc_rx_buf_size(struct fxgmac_pdata *priv, unsigned int mtu)
-+{
-+	u32 rx_buf_size, max_mtu = FXGMAC_JUMBO_PACKET_MTU - ETH_HLEN;
-+
-+	if (mtu > max_mtu) {
-+		dev_err(priv->dev, "MTU exceeds maximum supported value\n");
-+		return -EINVAL;
-+	}
-+
-+	rx_buf_size = mtu + ETH_HLEN + ETH_FCS_LEN + VLAN_HLEN;
-+	rx_buf_size =
-+		clamp_val(rx_buf_size, FXGMAC_RX_MIN_BUF_SIZE, PAGE_SIZE * 4);
-+
-+	rx_buf_size = (rx_buf_size + FXGMAC_RX_BUF_ALIGN - 1) &
-+		      ~(FXGMAC_RX_BUF_ALIGN - 1);
-+
-+	return rx_buf_size;
-+}
-+
-+static int fxgmac_open(struct net_device *ndev)
-+{
-+	struct fxgmac_pdata *priv = netdev_priv(ndev);
-+	int ret;
-+
-+	priv->dev_state = FXGMAC_DEV_OPEN;
-+
-+	/* Calculate the Rx buffer size before allocating rings */
-+	ret = fxgmac_calc_rx_buf_size(priv, ndev->mtu);
-+	if (ret < 0)
-+		goto unlock;
-+
-+	priv->rx_buf_size = ret;
-+	ret = fxgmac_channels_rings_alloc(priv);
-+	if (ret < 0)
-+		goto unlock;
-+
-+	INIT_WORK(&priv->restart_work, fxgmac_restart_work);
-+	ret = fxgmac_start(priv);
-+	if (ret < 0)
-+		goto err_channels_and_rings;
-+
-+	return 0;
-+
-+err_channels_and_rings:
-+	fxgmac_channels_rings_free(priv);
-+	dev_err(priv->dev, "%s, channel alloc failed\n", __func__);
-+unlock:
-+	rtnl_unlock();
-+	return ret;
-+}
-+
- #define EFUSE_FISRT_UPDATE_ADDR				255
- #define EFUSE_SECOND_UPDATE_ADDR			209
- #define EFUSE_MAX_ENTRY					39
-@@ -949,6 +1024,15 @@ static int fxgmac_drv_probe(struct device *dev, struct fxgmac_resources *res)
- 	return ret;
- }
- 
-+static const struct net_device_ops fxgmac_netdev_ops = {
-+	.ndo_open		= fxgmac_open,
-+};
-+
-+const struct net_device_ops *fxgmac_get_netdev_ops(void)
-+{
-+	return &fxgmac_netdev_ops;
-+}
-+
- static int fxgmac_probe(struct pci_dev *pcidev, const struct pci_device_id *id)
- {
- 	struct fxgmac_resources res;
-diff --git a/drivers/net/ethernet/motorcomm/yt6801/yt6801_type.h b/drivers/net/ethernet/motorcomm/yt6801/yt6801_type.h
-index 87095f8a2..d52de4482 100644
---- a/drivers/net/ethernet/motorcomm/yt6801/yt6801_type.h
-+++ b/drivers/net/ethernet/motorcomm/yt6801/yt6801_type.h
-@@ -180,7 +180,6 @@
- #define MAC_HWF2R_AUXSNAPNUM		GENMASK(30, 28)
- 
- #define MAC_HWF3R			0x2128
+-	/* TODO: This is not properly updating schedstats */
 -
- #define MAC_MDIO_ADDR			0x2200
- #define MAC_MDIO_ADDR_BUSY		BIT(0)
- #define MAC_MDIO_ADDR_GOC		GENMASK(3, 2)
-@@ -235,6 +234,20 @@
- #define DMA_CH_RCR_RBSZ			GENMASK(14, 1)
- #define DMA_CH_RCR_PBL			GENMASK(21, 16)
++	__schedstat_inc(p->stats.numa_task_migrated);
++	if (p->mm)
++		count_memcg_events_mm(p->mm, NUMA_TASK_MIGRATE, 1);
+ 	trace_sched_move_numa(p, curr_cpu, target_cpu);
+ 	return stop_one_cpu(curr_cpu, migration_cpu_stop, &arg);
+ }
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index 56ae54e0ce6a..f971c2af7912 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -1206,6 +1206,10 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
+ 		P_SCHEDSTAT(nr_failed_migrations_running);
+ 		P_SCHEDSTAT(nr_failed_migrations_hot);
+ 		P_SCHEDSTAT(nr_forced_migrations);
++#ifdef CONFIG_NUMA_BALANCING
++		P_SCHEDSTAT(numa_task_migrated);
++		P_SCHEDSTAT(numa_task_swapped);
++#endif
+ 		P_SCHEDSTAT(nr_wakeups);
+ 		P_SCHEDSTAT(nr_wakeups_sync);
+ 		P_SCHEDSTAT(nr_wakeups_migrate);
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 83c2df73e4b6..1ba1fa9ed8cb 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -460,6 +460,8 @@ static const unsigned int memcg_vm_event_stat[] = {
+ 	NUMA_PAGE_MIGRATE,
+ 	NUMA_PTE_UPDATES,
+ 	NUMA_HINT_FAULTS,
++	NUMA_TASK_MIGRATE,
++	NUMA_TASK_SWAP,
+ #endif
+ };
  
-+struct fxgmac_ring_buf {
-+	struct sk_buff *skb;
-+	dma_addr_t skb_dma;
-+	unsigned int skb_len;
-+};
-+
-+/* Common Tx and Rx DMA hardware descriptor */
-+struct fxgmac_dma_desc {
-+	__le32 desc0;
-+	__le32 desc1;
-+	__le32 desc2;
-+	__le32 desc3;
-+};
-+
- /* Page allocation related values */
- struct fxgmac_page_alloc {
- 	struct page *pages;
-@@ -446,6 +459,8 @@ struct fxgmac_pdata {
- 	unsigned int tx_pause;
- 	unsigned int rx_pause;
- 
-+	unsigned int rx_buf_size;	/* Current Rx buffer size */
-+
- 	/* Device interrupt */
- 	int dev_irq;
- 	unsigned int per_channel_irq;
-@@ -477,6 +492,8 @@ struct fxgmac_pdata {
- 
- 	u32 msg_enable;
- 	u32 reg_nonstick[(MSI_PBA - GLOBAL_CTRL0) >> 2];
-+
-+	struct work_struct restart_work;
- 	enum fxgmac_dev_state dev_state;
- #define FXGMAC_POWER_STATE_DOWN			0
- #define FXGMAC_POWER_STATE_UP			1
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index 651318765ebf..4abd2ca05d2a 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1342,6 +1342,8 @@ const char * const vmstat_text[] = {
+ 	"numa_hint_faults",
+ 	"numa_hint_faults_local",
+ 	"numa_pages_migrated",
++	"numa_task_migrated",
++	"numa_task_swapped",
+ #endif
+ #ifdef CONFIG_MIGRATION
+ 	"pgmigrate_success",
 -- 
-2.34.1
+2.25.1
 
 
