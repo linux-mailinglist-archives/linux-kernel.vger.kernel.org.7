@@ -1,144 +1,141 @@
-Return-Path: <linux-kernel+bounces-593775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46BCCA7FF94
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:22:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03A36A80005
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BF261891D1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:17:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF6A83B1B23
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B97268694;
-	Tue,  8 Apr 2025 11:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445C4268FDE;
+	Tue,  8 Apr 2025 11:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fBI6Y0Pd"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JW1B0Flz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7380E26738B;
-	Tue,  8 Apr 2025 11:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF639268FD2
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 11:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744111004; cv=none; b=uR82CPrpA3ycjtbBQzaey9PmREIRyTcmpJjlrGoDwV+q5bz/mHPDHd0kF/2IHcjTI0OHEIMqccmjR0BONJ9n58w9PjxDjlDy8vhyCvTABA7pXsOPZCFw4T0uQrAg0UdeCQHZyTcAwKKKmyw6At+VyxTd+09GDHgStWSH0jKYppM=
+	t=1744111216; cv=none; b=BQhCI5DRxQxwfg4+KGi7FdciibcdRKfBNmjubl+w6UPZ5HV8gD86d+1DvxoPVosyC/pQunDO16zdEdBWmFVCHj+Au7oM8mDMP3n8P4a/GgMAtVWvi9p3AUui1giXMGIA3Cmq7/VHE6sWSdwnENkNc4rLEn9ClDiiKnvPItpQ4VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744111004; c=relaxed/simple;
-	bh=Rs1VDrfkKYspHuvyPdg5qkfl/f18RpD/0VWPjsoz9AA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=clJ3InL+6WNbUWIKI3EEmHEBwTHwRLOVezsDic7fN/cVHe2OYlaKkDHaLWO7+389n/6p0RYoNGkiUPCI+aoiRH7joFK42iFk+nDgv4RkviAZSmhp13AXcE0sUiWzcpXIaTcNGwEua49REiMRH4FBJIbm/7tYleGdINI1bggIhhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fBI6Y0Pd; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DDBCD78E;
-	Tue,  8 Apr 2025 13:14:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1744110881;
-	bh=Rs1VDrfkKYspHuvyPdg5qkfl/f18RpD/0VWPjsoz9AA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fBI6Y0Pdl8J5Ng5N9UaqZo3SizMvHnr34sFg4UcRdurTRV+H+QanOe1aW36FBjmqk
-	 V+klsKZEeZP0BT8U4iVyAe8TUgBm3UXQp+1EizvjMCEaVGYSuAoRMLtw/8lcZvY7fa
-	 IrFgyDcWvdsQZZhuUENepJrjpcQHvMvorW8E3upE=
-Date: Tue, 8 Apr 2025 14:16:13 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Paul Elder <paul.elder@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: i2c: thp7312: use fwnode_for_each_child_node()
-Message-ID: <20250408111613.GC31475@pendragon.ideasonboard.com>
-References: <Z90qM33DvkTMGg_x@mva-rohm>
- <20250321104100.GC25483@pendragon.ideasonboard.com>
- <Z_Ti7aQK2_OlrUee@kekkonen.localdomain>
- <20250408101252.GB31475@pendragon.ideasonboard.com>
- <3d8546b9-92bd-40da-a61a-4534ba7779db@gmail.com>
- <Z_T8N8aHR-2OzHAO@kekkonen.localdomain>
- <6f6a0ade-09fd-49eb-a8ae-ac8849b8ce92@gmail.com>
- <Z_UDmqZoPtybJr95@kekkonen.localdomain>
+	s=arc-20240116; t=1744111216; c=relaxed/simple;
+	bh=IsnK/CJhMOB5ezHxsAL2yUfPY5VpgkdOg9K3FGVRifE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WVXa2xMNcpvlQXLSA+VA7nGz35Ky8YaFGapTuzwOpkguRlhwrmYDP7LooK+L/LZS8gxPLxo3yx9cdcwmzG8SRPm/nUt8bZd8Eq6B8jvy8Iyx9jH8gT5bq4MplpPF60cFtdeLej3L9FrVSqewx2NBxdbhnYvQrsmfIxaXwvSzn1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JW1B0Flz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744111212;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zxlGUJtYElxMWl8rsjV0NknW3/JmIWt6QA0dt0dS8Gg=;
+	b=JW1B0Flz1OSNpy2Le5EkHFwUS9EKwR4LGUPFS9n092VG3/QYVUMo5txyTkYwLI/h+C8p80
+	yt48+ic/dgyBXelwB/+qSaabb80oJXUeJkEQPkvY9RMaDGhrFk6QND08fpPzQd6d+D1Ktc
+	cT/1OYdMTmpLb3PIXh+Xl0w/FwwMXDQ=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-240-e2J9cplEOYiaGWCla06KWA-1; Tue, 08 Apr 2025 07:20:11 -0400
+X-MC-Unique: e2J9cplEOYiaGWCla06KWA-1
+X-Mimecast-MFC-AGG-ID: e2J9cplEOYiaGWCla06KWA_1744111210
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-22403329f9eso45965555ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 04:20:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744111210; x=1744716010;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zxlGUJtYElxMWl8rsjV0NknW3/JmIWt6QA0dt0dS8Gg=;
+        b=s7vgh/jNks8K91lTBE3I4iH+V3O2AKC/HUZPy6bmTWYOYPtYYVX/nn2/wYX6Y29M1B
+         0yA4ZjbJntvoKCis6m7VpJPFq/nnx8Ov8MR+gh/WlFxQJDUKmkZbY7e3wQAZ4FmcoHiK
+         b6LZhXLLuV+mW6EJx+H+H8M1idWp860fpI7zNwMChJprPNP+jaiwIkvBmFO6Hz5Sabl8
+         cQKxoXjoPKIF0Fjm65YW2m3pVF4zKoQrpp2+rQNmdKy19bqTk9QqIOmvza0CRM7SKuTw
+         EbAPL7iroJI4kfQcYB+z17go98L2NXoiM658LMOh/aPxIvFYIWzKGOwCvtuhsTBvLi3g
+         ie9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVxqk6xifylCtanI/uVULHZTH6ICqZHr7WlrYgOVrAX32xxskjPK8T7JOooVU+WYPmcEbG2uQYxtHvtSf0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxnb9WFgpSEw3dkYN0GgewNduBqd3O0YJ+Ud0CM9CzT7Cd/W+IN
+	wliX7lWL0Zd0U6wML6rQsRgq0HvnbhDEmfbWadmLo8Oeu2eF37x1jZr2pkhABh0QhAkuajXehHo
+	J80grLw3cl9mTGq1ftrCiQBht5RGH4ErZ1QvH6bOuLYZrzyPVRNZoXBqbg2dP0mAEU7mYvVxca7
+	aiZF5IU7lFwjBQyC+6PNbSvUg/U02hVcIR9fSg
+X-Gm-Gg: ASbGncvUXVW065LRIIqiv3uqtUBcJ5L4DcE/OaWkKrtwXx2/JUrOYg3DtJnJRT//YBe
+	Trfhyy1SGgXdSeBx/gJunrUttpFOeYn0Onp4XmX0Po5lnQy3aOWsddaWL8nnr4yElESbrAz0=
+X-Received: by 2002:a17:902:e809:b0:220:cb1a:da5 with SMTP id d9443c01a7336-22a8a8cec34mr238988855ad.40.1744111210555;
+        Tue, 08 Apr 2025 04:20:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGfj3NzNQEOef+4bFL5S7xAlawV84jImrAOEcndKQ7zZiAPCt7WHwsWtCqW95u4ZSL3aeAqCFB/AGt6ESaJB0M=
+X-Received: by 2002:a17:902:e809:b0:220:cb1a:da5 with SMTP id
+ d9443c01a7336-22a8a8cec34mr238988485ad.40.1744111210268; Tue, 08 Apr 2025
+ 04:20:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z_UDmqZoPtybJr95@kekkonen.localdomain>
+References: <20250407182104.716631-1-agruenba@redhat.com> <20250407182104.716631-2-agruenba@redhat.com>
+ <77b1b228-3799-43e3-ab30-5aec1d633816@I-love.SAKURA.ne.jp>
+In-Reply-To: <77b1b228-3799-43e3-ab30-5aec1d633816@I-love.SAKURA.ne.jp>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Tue, 8 Apr 2025 13:19:58 +0200
+X-Gm-Features: ATxdqUF091z-QTWG4loZUeytMgFUpudH-__g8f1MG4U6oA2wpIwWgfAYKS_mKk4
+Message-ID: <CAHc6FU5HrGWYpOwd6OMhG7EdyjB3zp-RV5dP=W-=29VnYa96-w@mail.gmail.com>
+Subject: Re: [RFC 1/2] gfs2: replace sd_aspace with sd_inode
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: cgroups@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Rafael Aquini <aquini@redhat.com>, gfs2@lists.linux.dev, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 08, 2025 at 11:08:10AM +0000, Sakari Ailus wrote:
-> Moi,
-> 
-> On Tue, Apr 08, 2025 at 01:42:12PM +0300, Matti Vaittinen wrote:
-> > On 08/04/2025 13:36, Sakari Ailus wrote:
-> > > Hei Laurent, Matti,
-> > > 
-> > > On Tue, Apr 08, 2025 at 01:26:42PM +0300, Matti Vaittinen wrote:
-> > > > On 08/04/2025 13:12, Laurent Pinchart wrote:
-> > > > > Hi Sakari,
-> > > > > 
-> > > > > On Tue, Apr 08, 2025 at 08:48:45AM +0000, Sakari Ailus wrote:
-> > > > > > On Fri, Mar 21, 2025 at 12:41:00PM +0200, Laurent Pinchart wrote:
-> > > > > > > On Fri, Mar 21, 2025 at 10:58:27AM +0200, Matti Vaittinen wrote:
-> > > > > > > > When fwnode_for_each_available_child_node() is used on the device-tree
-> > > > > > > > backed systems, it renders to same operation as the
-> > > > > > > > fwnode_for_each_child_node(), because the fwnode_for_each_child_node()
-> > > > > > > > does only iterate through those device-tree nodes which are available.
-> > > > > > > 
-> > > > > > > This makes me wonder why the OF backend implements
-> > > > > > > fwnode_for_each_child_node() as fwnode_for_each_available_child_node().
-> > > > > > > Is that on purpose, or is it a bug ?
-> > > > > > 
-> > > > > > I discussed this with Rafael and he didn't recall why the original
-> > > > > > implementation was like that. The general direction later on has been not
-> > > > > > to present unavailable nodes over the fwnode interface.
-> > > > > > 
-> > > > > > So I'd say:
-> > > > > > 
-> > > > > > Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > > > > > 
-> > > > > > We should also change the documentation of the fwnode API accordingly.
-> > > > > 
-> > > > > Does that also mean that the fwnode_for_each_available_child_node()
-> > > > > function will be dropped ? It's used by few drivers (5 in addition to
-> > > > > the thp7312 driver, plus 3 call sites in drivers/base/core.c), so a
-> > > > > patch series to drop it should be easy.
-> > > > > 
-> > > > 
-> > > > I assume the fwnode_for_each_available_child_node() still makes sense for
-> > > > ACPI backed users, no?
-> > > 
-> > > Not really (see my earlier explanation in
-> > > <Z9mQPJwnKAkPHriT@kekkonen.localdomain>).
-> > 
-> > I capture that the _named_ available nodes don't have value as ACPI names
-> > aren't really what is expected by the _named_ callers. What I didn't pick is
-> > that the fwnode_for_each_available_child_node() - which should iterate all
-> > available child nodes ignoring the name - wouldn't be useful.
-> 
-> Fair enough. I don't think we need to support enumerating unavailable ACPI
-> device nodes in this API. I'd indeed change the behaviour so that only
-> available nodes are enumerated. I can post a patch for that.
+On Tue, Apr 8, 2025 at 8:04=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2025/04/08 3:21, Andreas Gruenbacher wrote:
+> > @@ -1156,6 +1146,18 @@ static int gfs2_fill_super(struct super_block *s=
+b, struct fs_context *fc)
+> >       sb->s_flags |=3D SB_NOSEC;
+> >       sb->s_magic =3D GFS2_MAGIC;
+> >       sb->s_op =3D &gfs2_super_ops;
+> > +
+> > +     /* Set up an address space for metadata writes */
+> > +     sdp->sd_inode =3D new_inode(sb);
+> > +     if (!sdp->sd_inode)
+> > +             goto fail_free;
+> > +     sdp->sd_inode->i_ino =3D GFS2_BAD_INO;
+> > +     sdp->sd_inode->i_size =3D OFFSET_MAX;
+> > +
+> > +     mapping =3D gfs2_aspace(sdp);
+> > +     mapping->a_ops =3D &gfs2_rgrp_aops;
+> > +     mapping_set_gfp_mask(mapping, GFP_NOFS);
+> > +
+> >       sb->s_d_op =3D &gfs2_dops;
+> >       sb->s_export_op =3D &gfs2_export_ops;
+> >       sb->s_qcop =3D &gfs2_quotactl_ops;
+>
+> This will be an inode leak when hitting e.g.
+>
+>         error =3D init_names(sdp, silent);
+>         if (error)
+>                 goto fail_free;
+>
+> path, for what free_sbd() in
+>
+> fail_free:
+>         free_sbd(sdp);
+>         sb->s_fs_info =3D NULL;
+>         return error;
+>
+> path does is nothing but free_percpu() and kfree().
 
-Unless there's a specific reason against it that I wouldn't be aware of,
-I would also very much favour merging the fwnode_for_each_child_node()
-and fwnode_for_each_available_child_node() functions into a single one
-that only enumerates available nodes, with a consistent behaviour across
-all backend. Having fwnode_for_each_child_node() return unavailable ACPI
-nodes but not unavailable DT nodes would be really confusing.
+Indeed, an iput() is indeed needed in that case.
 
-> > > I think all the *available* stuff
-> > > should be removed from include/linux/property.h, apart from
-> > > fwnode_device_is_availble(), which should be turned to work on struct
-> > > device to signal its availability for device nodes only.
-> > 
-> > I am not saying I have any understanding of the uses of the 'unavailable'
-> > nodes. As such I am not arguing over what you say here :)
+Thanks,
+Andreas
 
--- 
-Regards,
-
-Laurent Pinchart
 
