@@ -1,55 +1,61 @@
-Return-Path: <linux-kernel+bounces-593966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D7EA80A63
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:04:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA9CEA80AAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5821D1BA5F66
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:58:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07069901D83
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948B027E1D5;
-	Tue,  8 Apr 2025 12:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10CA227F4C6;
+	Tue,  8 Apr 2025 12:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TjT6ldQd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kHWt6b4o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E478427E1B6;
-	Tue,  8 Apr 2025 12:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525E527EC93;
+	Tue,  8 Apr 2025 12:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744116543; cv=none; b=fi41mJRaoH6fZmFMOqRs9TPjM7O8bqCn+Wo+yucCs+0TJ50RiHmRMQlqGJs2e0NVup9W7+EehgkR5aOLDXuwI4IZxluHXORJ6krJ0bItBqkBdDNkJJ2Plxp0y3GoABjZCIrqhh2lnWOuyXxnFNwITvmefQz8d2pNZiJ7nAKzAIA=
+	t=1744116547; cv=none; b=nIH9CSRlANWcXIFRKw2bFeT1UUJYKv9sXmdBHEu+h6Db0rVXjpLXubw5w+yNyP4HKtFX3AsQhn+e1C9GZmghTLcuqjzJZKPhKUQDUVLmTSvrIMrnWiiOsJN9mshdEk86ACom628UtCCuGJCiHo8Q75ITnGRtCmOPwHQbNVplAYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744116543; c=relaxed/simple;
-	bh=LqMi7yTcpzHfovVjCbZnS6Eo20XGaYhxccE3dOrGFm8=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Gz2OcdElgT32IwRXMoNqgj2SGQe/TdkzKgOMM8f7r89pyDbfmD9Z4OtuhZmkf4QFHEWoLsHydKZ3aZCBxfhtp5ngrXXghHp5fYvTZM7sQhGpJDqcq6ufqgzgHmfSX5pB4/PUwD5QUpxAQVkDazjlwH+zBP5neoWmjzuE2ctm+o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TjT6ldQd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE103C4CEEB;
-	Tue,  8 Apr 2025 12:49:00 +0000 (UTC)
+	s=arc-20240116; t=1744116547; c=relaxed/simple;
+	bh=vKT4C/GTC6IQ9JYbZes2rZEbu8WnSSrIU6DtAnt8Gv4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mwmtxYSbqP/DB0q7FwqvikhvYpr1xx8YWZK6+WZjJnPnzjQIbwDm5L7HKG16jX0OsaacocVbxml5QIT6wdSYxgV8u5HQFvXIR+0/exnS6/fFfRPUVXKJJo48KLvEyQcrEItN6DtS5sgHMTty1gZonmqvg2h0wI07AmGim9AVjpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kHWt6b4o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EC80C4CEEC;
+	Tue,  8 Apr 2025 12:49:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744116542;
-	bh=LqMi7yTcpzHfovVjCbZnS6Eo20XGaYhxccE3dOrGFm8=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=TjT6ldQd3B223SWb0Uev7oL+NZ1tTFWhF42OuGLtRqK8URO72kdIJWHys0DHQsMvr
-	 ZyekufT0bV90o56LXzOytcrAA00uwP3AbFJO816JZm1HqnbbtQK1k3wYRDnniBRd3v
-	 Qr5ggqQIajSvMnTHOGBpOK96RLLRon2DhhB+pJXMG6hX7r+ftIRuaEeQT3ZqGLcMpb
-	 739kTSC5JpaZOAhP0vgad4dKoaafpy6IWNfkyIDhnMK29mfTtMAuR3oUj3MxB3sBBO
-	 vT4WHpRTnALmNYL5dcgeZUOtGpZ5d6GtADjLfl7JmVSUHPQp7O4oX4dBOOoo9xJmlp
-	 7CiauRaT6nULQ==
+	s=k20201202; t=1744116546;
+	bh=vKT4C/GTC6IQ9JYbZes2rZEbu8WnSSrIU6DtAnt8Gv4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=kHWt6b4oMvIthJlMku0Z8R2pq9+6O0s1tZ/V33yDLuw1jVvTlSKngzjmPYbrSxPeW
+	 upbiPdKqb1y62Q/xY7wU3BczXQqTmhtDmyAUoHawFemVmWCONGNCvPgO/DiPu3N4Lw
+	 HY+L3g9gw+gMs0yQSNQtfEiA8vNI4QV4bttPvN2/r3b0bAVbiHNzs51/fmur5sHuDq
+	 xQva2DC4Zy+vRRyr48b908Cn9Uhq1j6qwXsYAJf0ymM+CdHSnGEnKgvGZHXAWo2iF9
+	 4pBQ1Z5KlkHcBmqvidCQ5SU5zvmx3NXD6ov8jql5kLHOL3b+8/Mr3RvEhoUAb+2a2O
+	 y+wl7irHtKAtA==
 From: Mark Brown <broonie@kernel.org>
-To: shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com, 
- nicoleotsuka@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
- linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
- linux-kernel@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>
-In-Reply-To: <20250328085744.1893434-1-shengjiu.wang@nxp.com>
-References: <20250328085744.1893434-1-shengjiu.wang@nxp.com>
-Subject: Re: [PATCH 0/4] ASoC: fsl_sai: add several improvements
-Message-Id: <174411654045.2091760.1822661747375320582.b4-ty@kernel.org>
-Date: Tue, 08 Apr 2025 13:49:00 +0100
+To: peda@axentia.se, andersson@kernel.org, krzk+dt@kernel.org, 
+ srinivas.kandagatla@linaro.org
+Cc: ivprusov@salutedevices.com, luca.ceresoli@bootlin.com, 
+ zhoubinbin@loongson.cn, paulha@opensource.cirrus.com, lgirdwood@gmail.com, 
+ robh@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
+ perex@perex.cz, tiwai@suse.com, dmitry.baryshkov@oss.qualcomm.com, 
+ linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ johan+linaro@kernel.org
+In-Reply-To: <20250327100633.11530-1-srinivas.kandagatla@linaro.org>
+References: <20250327100633.11530-1-srinivas.kandagatla@linaro.org>
+Subject: Re: (subset) [PATCH v6 0/6] ASoC: wcd938x: enable t14s audio
+ headset
+Message-Id: <174411654299.2091760.16115765833106462248.b4-ty@kernel.org>
+Date: Tue, 08 Apr 2025 13:49:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,18 +66,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c25d1
 
-On Fri, 28 Mar 2025 16:57:40 +0800, Shengjiu Wang wrote:
-> Add several improvements for the sai interface.
-> 1.allow to set mclk rate with zero clk_id for master mode
-> 2.add xlate_tdm_slot_mask() callback to avoid channel constrain
-> 3.separate 'is_dsp_mode' for tx and rx
-> 4.separate set_tdm_slot() for tx and rx
+On Thu, 27 Mar 2025 10:06:27 +0000, srinivas.kandagatla@linaro.org wrote:
+> On Lenovo ThinkPad T14s, the headset is connected via a HiFi Switch to
+> support CTIA and OMTP headsets. This switch is used to minimise pop and
+> click during headset type switching.
 > 
-> Shengjiu Wang (4):
->   ASoC: fsl_sai: allow to set mclk rate with zero clk_id
->   ASoC: fsl_sai: add xlate_tdm_slot_mask() callback
->   ASoC: fsl_sai: separate 'is_dsp_mode' for tx and rx
->   ASoC: fsl_sai: separate set_tdm_slot() for tx and rx
+> This patchset adds required bindings and changes to codec and dts to
+> tnable the regulator required to power this switch along with wiring up
+> gpio that control the headset switching.
 > 
 > [...]
 
@@ -81,14 +83,12 @@ Applied to
 
 Thanks!
 
-[1/4] ASoC: fsl_sai: allow to set mclk rate with zero clk_id
-      commit: 78b3bcfd5697f486946f559f56dbf78c30e22f27
-[2/4] ASoC: fsl_sai: add xlate_tdm_slot_mask() callback
-      commit: 4fe9d03b48cce3edb679ce1f404f19d242537a66
-[3/4] ASoC: fsl_sai: separate 'is_dsp_mode' for tx and rx
-      commit: e4b543d51ef1e723bde12d160121b7358a005b4f
-[4/4] ASoC: fsl_sai: separate set_tdm_slot() for tx and rx
-      commit: 1d9119794c10023ebd7c901aa9aa2c74eb833177
+[3/6] ASoC: codecs: wcd-mbhc: cleanup swap_gnd_mic api
+      commit: 6417066fb41f70c5aec242a36cbb6def8c99303f
+[4/6] ASoC: dt-bindings: wcd93xx: add bindings for audio mux controlling hp
+      commit: fe19245d3efd5bf714623e83f2056bc46d9339b1
+[5/6] ASoC: codecs: wcd938x: add mux control support for hp audio mux
+      commit: eec611d26f84800852a9badbeafa76db3cdc9118
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
