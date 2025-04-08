@@ -1,205 +1,86 @@
-Return-Path: <linux-kernel+bounces-594827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41AFBA8170A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:41:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A46DA81736
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:55:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94D308A3BCA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:41:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34BD27B167E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435E1252905;
-	Tue,  8 Apr 2025 20:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B56B253F23;
+	Tue,  8 Apr 2025 20:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JPPyVr+Y"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="pbfovDHk"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22B3225779
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 20:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353F824886B;
+	Tue,  8 Apr 2025 20:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744144908; cv=none; b=johqtqqkLFE1C4jet9AQGj2i3LTquCGI736Emv9/5GhR9G82jflaG4ntcTWGrZR8VX2IPxZq1d7/fuvezFA3rkrc0yvIH5IHqtycsntxs7SiIMvUPXufbW4/vO9541MNwPvzmNdcylc2CypCpghJo75f/+GwVplJ4uUUlaGdBnQ=
+	t=1744145693; cv=none; b=GCeLBnRO+K43TLnUcxrDM1cfhOgyVJjKEIDfwdsO9tpTbP8urHufvBypf+A4t4gV2ChangEaPl7qTbPXDzXbcWlrtqoaP192ETkwPniGKLHpM91k/WUNc7XG8DbwraeVLlbCVAZ+TWGLjdIjhxqP3PqlKH+XvTeGa+EIfULejYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744144908; c=relaxed/simple;
-	bh=GFB0IF7Cn0n4Q6auzito82YpH6bLTABJG6OGJs/6TS4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HBZPhgQy0i6ElxCQe+q5dvlpWBdTTRosgtrIqOTR/B8ka5OYXhK/oH4YcGF1xL/jNzdooTb07giE6ruVeCt0Jmalj6getCnwNwn6a7u2WzyI62xNv2uGILcTxhzAZo3/HHZhuOyQEQW5VIVylMOSrlJHZ4nEkkmQIioKol56gAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JPPyVr+Y; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4766631a6a4so59420061cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 13:41:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744144905; x=1744749705; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EVTdQLCsbN0cVigq4hecvHon4nuKEqP1DouZoJpgWNU=;
-        b=JPPyVr+YbsUVUi5cLz/VJMGK3vKMpRSZ7wlURa9SdaHZ/5R4GEG7tWYdMgjwM8WxOt
-         Retasq//MfGjgzCmBeye36JdkYef9qzXzaUhKUGA5ezFf13TmmkUFhLvnpbAniOSLquC
-         9ap/HbBHNGZ9ySGix20Efn1rGpMkfcjPDA2wCb8ov36LAg6bGTtFDBlcnFvGukQ/XGeR
-         Sa3g227DoP5CidGSluHS0XXr4K/qTZfPbZs/zNu9JgsAzVCEDL6e+qulkbh59NvN7mnc
-         89VaFPwyPFLJ3+QhNIPCy5C1N+Dsz0ABIJOID8FedxbcLrJtVKDWOHjAfu7IDBFgJK0g
-         tERA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744144905; x=1744749705;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EVTdQLCsbN0cVigq4hecvHon4nuKEqP1DouZoJpgWNU=;
-        b=fNuj0UBEwQSW4ORbXgGIq6/8r3ay0B2czup2VD/0Hy1D6JOjeeiJByaQmQZNffpSOG
-         UjWBWiFBAbrDXJY47MiyzXd0ucyYB4wT6Lzm+FPjYrfjEbC3AGiESvRpGRmEjdjDFdda
-         vWXbzHt//yQa/45AF4coBtxWP/e+WJG+htk3dUvUMUcnmXYu08ZgLalwiDu9S42/pV3r
-         uO0jQGOhCNWBNIzqpnTazKTRMHJCzINyenybbCclMW9iHVkeFXX0EGMZ7jfkPofcer7t
-         +o8XDPwlxfQPADjbputFNjgz3wcYO9EgdDRiERcHJAq84mDvrf9+15Go/mp34uBcrusJ
-         xhrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVt2sbbalwdxyyKsf3AG4K6/KrFBZHe3oqxmOuioCCwmr1Tc3B2zlJEin3z2DCytzOaNAgOu8SbO86BOX0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaW5od50j20PZQIvnTJSSoMaM0tu2VJ++wyHibuA3IT/uXmKpn
-	09T/wXXBHZvgwNMiAKsPUcUAmg1FbgzNE/X41YKo5zGvpzV5zGdt3T+HDTYwIyDB10ghT+HNF2L
-	domorzUMAmg129+sbG4ESl9Vr3i7b7lo2oLIt
-X-Gm-Gg: ASbGncuZfYpbQxOmNmsetrzrLXz+Y6MNMqNwZqTwkaXwAN5QDWKKh0co+XE1zGzQUGH
-	WmOD9iyHdNva3s84/inOLoC54clxQ/r84g00VFbG4Pu7aM+OTjPhBN5U457C6SLLR4zTH4CMOtv
-	3d5VLnsPrGRwF+gHvkNw1c9T0ozDs=
-X-Google-Smtp-Source: AGHT+IHJucqGqBT/cZhrNZIpCoklFKHoTaYd9R9xPvw5vruQlW3Ys48NKk7evtKCO1P/cXlXV9rnwOG3DxLGerAttFE=
-X-Received: by 2002:a05:622a:1390:b0:476:8288:9558 with SMTP id
- d75a77b69052e-4795f37e439mr5938161cf.46.1744144904629; Tue, 08 Apr 2025
- 13:41:44 -0700 (PDT)
+	s=arc-20240116; t=1744145693; c=relaxed/simple;
+	bh=WG+cj5i1GbTabFslLXYHUzovUuREFvJlBBWLxyJtbIo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=r4KsPTgKmgPLbRpvzCskaAKhd7xuXL1p9POEQdXPsyfelUj6Cx/p1zeNb8VzTuGDC2l4lH7hJRr2KIrxd4Q/xKo0xaDcQWQ0WA2TsLcrZhmr/4m3Pi5tR9L9g7Z/oG6Zl5x8V+Vui68wczohKZwrDCnO9iqyzFTFsLiAiQU2Rf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=pbfovDHk; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1744145065;
+	bh=WG+cj5i1GbTabFslLXYHUzovUuREFvJlBBWLxyJtbIo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=pbfovDHk6lOSLkh5+VshEKxpw9B2s+e5b5FfhUL4EZnfD3cJ8DoosczLAsisV8yLW
+	 umFdiuqcSaxDGjjDJMEhONIexkS5nTlxQhV+7rIZqunpDswAg7lrxgRJaepklVq5uH
+	 AaB6mcgkwWIipDh4qnIq7YInk1uNnee2r6rFR1L0=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 51AF04028A; Tue,  8 Apr 2025 13:44:25 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 4EEF6401F1;
+	Tue,  8 Apr 2025 13:44:25 -0700 (PDT)
+Date: Tue, 8 Apr 2025 13:44:25 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+cc: Sweet Tea Dorminy <sweettea@google.com>, Mateusz Guzik <mjguzik@gmail.com>, 
+    linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+    "Paul E. McKenney" <paulmck@kernel.org>, 
+    Steven Rostedt <rostedt@goodmis.org>, 
+    Masami Hiramatsu <mhiramat@kernel.org>, Dennis Zhou <dennis@kernel.org>, 
+    Tejun Heo <tj@kernel.org>, Martin Liu <liumartin@google.com>, 
+    David Rientjes <rientjes@google.com>, christian.koenig@amd.com, 
+    Shakeel Butt <shakeel.butt@linux.dev>, 
+    Johannes Weiner <hannes@cmpxchg.org>, 
+    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+    "Liam R . Howlett" <Liam.Howlett@Oracle.com>, 
+    Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+    Christian Brauner <brauner@kernel.org>, 
+    Wei Yang <richard.weiyang@gmail.com>, David Hildenbrand <david@redhat.com>, 
+    Miaohe Lin <linmiaohe@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+    linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
+    Yu Zhao <yuzhao@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+    Matthew Wilcox <willy@infradead.org>
+Subject: Re: [RFC PATCH v2] Introduce Hierarchical Per-CPU Counters
+In-Reply-To: <f014a9bb-0653-4682-8608-7fe6e2ad5ee6@efficios.com>
+Message-ID: <c013632c-b4ca-fb3d-9be5-b02ca5a3d859@gentwo.org>
+References: <20250408160508.991738-1-mathieu.desnoyers@efficios.com> <f90d7646-99a3-48f5-ba2e-850c73592080@gentwo.org> <f014a9bb-0653-4682-8608-7fe6e2ad5ee6@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z_PfCosPB7GS4DJl@mini-arch> <20250407161308.19286-1-kuniyu@amazon.com>
- <CANp29Y5RjJD3FK8zciRL92f0+tXEaZ=DbzSF3JrnVRGyDmag2A@mail.gmail.com>
- <CACT4Y+acJ-D6TiynzWef4vAwTNhCNAgey=RmfZHEXDJVrPxDCg@mail.gmail.com>
- <CANn89iK=SrbwSN20nKY5y71huhsabLEdX=OGsdqwMPZOmNW8Gw@mail.gmail.com> <CANp29Y5cTga9UrkySy6GiOco+nOHuDnFOWSb5PF-P0i6hU+hnA@mail.gmail.com>
-In-Reply-To: <CANp29Y5cTga9UrkySy6GiOco+nOHuDnFOWSb5PF-P0i6hU+hnA@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 8 Apr 2025 22:41:32 +0200
-X-Gm-Features: ATxdqUG1UVRLynsyei216IbnoTCMsa2TfGH7-rydQFtiDybzeVMSm_mghwzM5oU
-Message-ID: <CANn89iJTHf-sJCqcyrFJiLMLBOBgtN0+KrfPSuW0mhOzLS08Rw@mail.gmail.com>
-Subject: Re: [syzbot] [net?] WARNING: bad unlock balance in do_setlink
-To: Aleksandr Nogikh <nogikh@google.com>, Sven Eckelmann <sven@narfation.org>
-Cc: Dmitry Vyukov <dvyukov@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, stfomichev@gmail.com, 
-	andrew@lunn.ch, davem@davemloft.net, horms@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	sdf@fomichev.me, syzbot+45016fe295243a7882d3@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, Apr 8, 2025 at 10:16=E2=80=AFPM Aleksandr Nogikh <nogikh@google.com=
-> wrote:
->
-> On Tue, Apr 8, 2025 at 1:33=E2=80=AFPM Eric Dumazet <edumazet@google.com>=
- wrote:
-> >
-> > On Tue, Apr 8, 2025 at 12:44=E2=80=AFPM Dmitry Vyukov <dvyukov@google.c=
-om> wrote:
-> > >
-> > > On Tue, 8 Apr 2025 at 10:11, Aleksandr Nogikh <nogikh@google.com> wro=
-te:
-> > > >
-> > > > On Mon, Apr 7, 2025 at 6:13=E2=80=AFPM 'Kuniyuki Iwashima' via syzk=
-aller-bugs
-> > > > <syzkaller-bugs@googlegroups.com> wrote:
-> > > > >
-> > > > > From: Stanislav Fomichev <stfomichev@gmail.com>
-> > > > > Date: Mon, 7 Apr 2025 07:19:54 -0700
-> > > > > > On 04/07, syzbot wrote:
-> > > > > > > Hello,
-> > > > > > >
-> > > > > > > syzbot has tested the proposed patch but the reproducer is st=
-ill triggering an issue:
-> > > > > > > unregister_netdevice: waiting for DEV to become free
-> > > > > > >
-> > > > > > > unregister_netdevice: waiting for batadv0 to become free. Usa=
-ge count =3D 3
-> > > > > >
-> > > > > > So it does fix the lock unbalance issue, but now there is a han=
-g?
-> > > > >
-> > > > > I think this is an orthogonal issue.
-> > > > >
-> > > > > I saw this in another report as well.
-> > > > > https://lore.kernel.org/netdev/67f208ea.050a0220.0a13.025b.GAE@go=
-ogle.com/
-> > > > >
-> > > > > syzbot may want to find a better way to filter this kind of noise=
-.
-> > > > >
-> > > >
-> > > > Syzbot treats this message as a problem worthy of reporting since a
-> > > > long time (Cc'd Dmitry who may remember the context):
-> > > > https://github.com/google/syzkaller/commit/7a67784ca8bdc3b26cce2f0e=
-c9a40d2dd9ec9396
-> > > >
-> > > > Since v6.15-rc1, we do observe it happen at least 10x more often th=
-an
-> > > > before, both during fuzzing and while processing #syz test commands=
-:
-> > > > https://syzkaller.appspot.com/bug?extid=3D881d65229ca4f9ae8c84
-> > >
-> > > IIUC this error means a leaked reference count on a device, and the
-> > > device and everything it references leaked forever + a kernel thread
-> > > looping forever. This does not look like noise.
-> > >
-> > > Eric, should know more. Eric fixed a bunch of these bugs and added a
-> > > ref count tracker to devices to provide better diagnostics. For some
-> > > reason I don't see the reftracker output in the console output, but
-> > > CONFIG_NET_DEV_REFCNT_TRACKER=3Dy is enabled in the config.
-> >
-> > I think that Kuniyuki patch was fixing the original syzbot report.
-> >
-> > After fixing this trivial bug, another bug showed up,
-> > and this second bug triggered "syzbot may want to find a better way to
-> > filter this kind of noise." comment.
->
-> FWIW I've just bisected the recent spike in "unregister_netdevice:
-> waiting for batadv0 to become free" and git bisect pointed to:
->
-> 00b35530811f2aa3d7ceec2dbada80861c7632a8
-> Author: Eric Dumazet <edumazet@google.com>
-> Date:   Thu Feb 6 14:04:22 2025 +0000
->
->     batman-adv: adopt netdev_hold() / netdev_put()
->
->     Add a device tracker to struct batadv_hard_iface to help
->     debugging of network device refcount imbalances.
->
->
-> Eric, could you please have a look?
->
+On Tue, 8 Apr 2025, Mathieu Desnoyers wrote:
 
-My original patch was :
-https://lore.kernel.org/netdev/CANn89i+ySFS5C24guM9E9UsPWfQBL69-OoRDbOGfih9=
-vLGxDJg@mail.gmail.com/T/
+> Currently percpu_counter_tree_precise_sum_unbiased() iterates on each
+> possible cpu, which does not require cpu hotplug integration.
 
-I think it was correct.
+Well that looks like a performance issue if you have a system that can
+expand to 8K cpus but currently only has 16 or so online.
 
-Then Sven added code in it, instead of adding a separate patch.
-
-I guess a fix would be :
-
-diff --git a/net/batman-adv/hard-interface.c b/net/batman-adv/hard-interfac=
-e.c
-index f145f96626531053bbf8f58a31f28f625a9d80f9..7cd4bdcee43935b9e5fb7d16964=
-30909b7af67b4
-100644
---- a/net/batman-adv/hard-interface.c
-+++ b/net/batman-adv/hard-interface.c
-@@ -725,7 +725,6 @@ int batadv_hardif_enable_interface(struct
-batadv_hard_iface *hard_iface,
-
-        kref_get(&hard_iface->refcount);
-
--       dev_hold(mesh_iface);
-        netdev_hold(mesh_iface, &hard_iface->meshif_dev_tracker, GFP_ATOMIC=
-);
-        hard_iface->mesh_iface =3D mesh_iface;
-        bat_priv =3D netdev_priv(hard_iface->mesh_iface);
 
