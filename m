@@ -1,104 +1,208 @@
-Return-Path: <linux-kernel+bounces-594828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45317A81711
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:45:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37226A81715
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 296314E2164
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:45:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8C8A1B677DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861B823C8C1;
-	Tue,  8 Apr 2025 20:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6233021638C;
+	Tue,  8 Apr 2025 20:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJ1yaPf3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dHjqO6Pm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9UGv4goT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFCBB4642D;
-	Tue,  8 Apr 2025 20:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438A32AE86;
+	Tue,  8 Apr 2025 20:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744145117; cv=none; b=mogMh4rBSP1Ow/YkqV8xjbXryQY2B9dv6terUxRvQD9d52F2LHPEEKBdXE0Y78MUKH/3d1BnsgQl+AytRuKohLklGavaLn4WF9uq06fPzOzSrDJ4wamkgIK/GCps7irnkPQ4a5Kyl7VU5ho1b8bv8huTf5TDAS/PJZ+zHytVTFE=
+	t=1744145166; cv=none; b=tMCIdqFagF4Tna0kMuUyTNSoLAuEGInC9iKArVom8zwxE9uQu7LZ2xhTY+yRF2scXy/FJYh8yRXL2yfZ8WMJHq8Q/YXHGN/N0uw+sEebfhuujOa9v04LNOL1YY6/F33VOyInxAvrXXcYqbYKkB+ovR4/r2+Ztl5e7j8Wd6+geKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744145117; c=relaxed/simple;
-	bh=c9QrNns8lWQBZAm0oGh5Jp/aaGonP67faSrZGbYCpDk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JQArssNFgWxAiP6H1DGjS43YliOhR0PzQrInA7//slBiCb4IbK3YSevc4N4NCO/GjYQQ7c6zpcKWuxQK21VoIhn34nxZN8cqv4lJHmzjSUYW/8Tx9e22cH//PbB+zoVjGXjunMYN17nWaTAvGvFqGD5EX3rXqqPSlcslQYVJKQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJ1yaPf3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47972C4CEE5;
-	Tue,  8 Apr 2025 20:45:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744145116;
-	bh=c9QrNns8lWQBZAm0oGh5Jp/aaGonP67faSrZGbYCpDk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HJ1yaPf3DJGWZnqvqT/ZO9B/BtdzdNft4aevebUPKuzrebtkkLq6w2uTFYd/kurVi
-	 CinZx8+cLyqpTOa7lCjZaAZItaCxz357QsS7ch0TroiGaIHj3Q5zrxJJpBsPrkp9ox
-	 icp0o8j326SMp100dTbNMPLUw1IIJSmzRHZo1zBIEhWpTiqoefcjOTi/JcxyiVzZO/
-	 4MAD+z9ixPuo59NmmPr5hE8WsafWQzD2r+wEtPRbCzodquNjZ/VXept05iQ2U72uzz
-	 eM17M9bVsMXqqS1lOHzpI0lFBxGqxMxrjXx0ksrCBf5aOYnValdfg/SHEwxHL7ciQp
-	 ZkLUBojhA3LzA==
-Date: Tue, 8 Apr 2025 20:45:14 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: linux-nfs@vger.kernel.org, Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>, Jeff Layton <jlayton@kernel.org>,
-	Neil Brown <neilb@suse.de>, Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nfs: add missing selections of CONFIG_CRC32
-Message-ID: <20250408204514.GA3142638@google.com>
-References: <20250401220221.22040-1-ebiggers@kernel.org>
- <35874d6a-d5bc-4f5f-a62c-c03a6e877588@oracle.com>
- <20250402162940.GB1235@sol.localdomain>
+	s=arc-20240116; t=1744145166; c=relaxed/simple;
+	bh=BGn19BNZNaod4cVdTZOMUKKliOPbXHKLsOjaavarhzI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=maLryQnWduFCNHrZEAYne6j7Y4utepwoLsLUapYMlAjLBAZr9SKzHTwc2iALd5otBRYrhu9WWxPay1K/ky01uNzaF3JggLe/Qx1AEyxjqRQj7tDVuzmlt3P1X6ujAe+u4AelILKVPocKZbPfqjsGglqnxpwYmP6qYdh+0jp1y9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dHjqO6Pm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9UGv4goT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 08 Apr 2025 20:45:51 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744145160;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jOlUqtV6zzR2sS24S2cBRoEY5VIl1D1KZLAfo9l7wa4=;
+	b=dHjqO6PmXUv3qulFTJL6ZbKHi2jZI5yyS52P7jx5IkE8EOGV0jZxegrGPw9K5JQ7L3hPE9
+	D7GDBVaM6MFmvwPNWD4xoHT0PJ3L/UJPNW3iF/8KctpPH60gHieJYCqm5mHAn05KtSNg1U
+	4f7te9G5WtQjf5anXpf2Y97JSb3tm8ye/k3a3Z6Od7xIi7YAkoQLmYjlM8zOwWUh3FlVyA
+	YRSavJCKduLuV/rwm2IL31tkxN68G1R1bZhHnE3A+9CZI7rq+0nXK2XNfz2WcHpCJk1EqZ
+	fnL45Rv3DYM/ofuDd+YeFNSz0saqnVM6EKGzAl/BRPzm8M0obJgK3I7e5hb/Ew==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744145160;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jOlUqtV6zzR2sS24S2cBRoEY5VIl1D1KZLAfo9l7wa4=;
+	b=9UGv4goTb4B2cnubmIqzRUwbGFEjUkK698vAfO7xdnVcu27i1QoAxoZnhVG/PTT96blopb
+	UW2yu1lmosEuOTDg==
+From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: objtool/urgent] objtool: Remove ANNOTATE_IGNORE_ALTERNATIVE
+ from CLAC/STAC
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To:
+ <fc972ba4995d826fcfb8d02733a14be8d670900b.1744098446.git.jpoimboe@kernel.org>
+References:
+ <fc972ba4995d826fcfb8d02733a14be8d670900b.1744098446.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250402162940.GB1235@sol.localdomain>
+Message-ID: <174414515158.31282.6804487200090840468.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 02, 2025 at 09:29:41AM -0700, Eric Biggers wrote:
-> On Wed, Apr 02, 2025 at 09:51:05AM -0400, Chuck Lever wrote:
-> > On 4/1/25 6:02 PM, Eric Biggers wrote:
-> > > From: Eric Biggers <ebiggers@google.com>
-> > > 
-> > > nfs.ko, nfsd.ko, and lockd.ko all use crc32_le(), which is available
-> > > only when CONFIG_CRC32 is enabled.  But the only NFS kconfig option that
-> > > selected CONFIG_CRC32 was CONFIG_NFS_DEBUG, which is client-specific and
-> > > did not actually guard the use of crc32_le() even on the client.
-> > > 
-> > > The code worked around this bug by only actually calling crc32_le() when
-> > > CONFIG_CRC32 is built-in, instead hard-coding '0' in other cases.  This
-> > > avoided randconfig build errors, and in real kernels the fallback code
-> > > was unlikely to be reached since CONFIG_CRC32 is 'default y'.  But, this
-> > > really needs to just be done properly, especially now that I'm planning
-> > > to update CONFIG_CRC32 to not be 'default y'.
-> > 
-> > It's interesting that no-one has noticed this before. dprintk is not the
-> > only consumer of the FH hash function: NFS/NFSD trace points also use
-> > it.
-> > 
-> > Eric, assuming you would like to carry this patch forward instead of us
-> > taking it through one of the NFS client or server trees:
-> > 
-> > Acked-by: Chuck Lever <chuck.lever@oracle.com>
-> > 
-> > for the hunks related to nfsd and lockd.
-> 
-> Please go ahead and take it through one of the NFS trees.  Thanks!
-> 
+The following commit has been merged into the objtool/urgent branch of tip:
 
-I ended up sending in the removal of 'default y' from CONFIG_CRC32 for 6.15.  So
-I recommend that you send this NFS patch in for 6.15 as well, as it's now
-slightly more likely that people can end up with CONFIG_CRC32 disabled (though
-many other parts of the kernel select it anyway, so it still tends to be
-enabled).
+Commit-ID:     2d12c6fb78753925f494ca9079e2383529e8ae0e
+Gitweb:        https://git.kernel.org/tip/2d12c6fb78753925f494ca9079e2383529e8ae0e
+Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+AuthorDate:    Tue, 08 Apr 2025 01:21:14 -07:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 08 Apr 2025 22:03:51 +02:00
 
-- Eric
+objtool: Remove ANNOTATE_IGNORE_ALTERNATIVE from CLAC/STAC
+
+ANNOTATE_IGNORE_ALTERNATIVE adds additional noise to the code generated
+by CLAC/STAC alternatives, hurting readability for those whose read
+uaccess-related code generation on a regular basis.
+
+Remove the annotation specifically for the "NOP patched with CLAC/STAC"
+case in favor of a manual check.
+
+Leave the other uses of that annotation in place as they're less common
+and more difficult to detect.
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/fc972ba4995d826fcfb8d02733a14be8d670900b.1744098446.git.jpoimboe@kernel.org
+---
+ arch/x86/include/asm/smap.h | 12 ++++++------
+ tools/objtool/check.c       | 30 +++++++++++++++++++++++++++++-
+ 2 files changed, 35 insertions(+), 7 deletions(-)
+
+diff --git a/arch/x86/include/asm/smap.h b/arch/x86/include/asm/smap.h
+index 55a5e65..4f84d42 100644
+--- a/arch/x86/include/asm/smap.h
++++ b/arch/x86/include/asm/smap.h
+@@ -16,23 +16,23 @@
+ #ifdef __ASSEMBLER__
+ 
+ #define ASM_CLAC \
+-	ALTERNATIVE __stringify(ANNOTATE_IGNORE_ALTERNATIVE), "clac", X86_FEATURE_SMAP
++	ALTERNATIVE "", "clac", X86_FEATURE_SMAP
+ 
+ #define ASM_STAC \
+-	ALTERNATIVE __stringify(ANNOTATE_IGNORE_ALTERNATIVE), "stac", X86_FEATURE_SMAP
++	ALTERNATIVE "", "stac", X86_FEATURE_SMAP
+ 
+ #else /* __ASSEMBLER__ */
+ 
+ static __always_inline void clac(void)
+ {
+ 	/* Note: a barrier is implicit in alternative() */
+-	alternative(ANNOTATE_IGNORE_ALTERNATIVE "", "clac", X86_FEATURE_SMAP);
++	alternative("", "clac", X86_FEATURE_SMAP);
+ }
+ 
+ static __always_inline void stac(void)
+ {
+ 	/* Note: a barrier is implicit in alternative() */
+-	alternative(ANNOTATE_IGNORE_ALTERNATIVE "", "stac", X86_FEATURE_SMAP);
++	alternative("", "stac", X86_FEATURE_SMAP);
+ }
+ 
+ static __always_inline unsigned long smap_save(void)
+@@ -59,9 +59,9 @@ static __always_inline void smap_restore(unsigned long flags)
+ 
+ /* These macros can be used in asm() statements */
+ #define ASM_CLAC \
+-	ALTERNATIVE(ANNOTATE_IGNORE_ALTERNATIVE "", "clac", X86_FEATURE_SMAP)
++	ALTERNATIVE("", "clac", X86_FEATURE_SMAP)
+ #define ASM_STAC \
+-	ALTERNATIVE(ANNOTATE_IGNORE_ALTERNATIVE "", "stac", X86_FEATURE_SMAP)
++	ALTERNATIVE("", "stac", X86_FEATURE_SMAP)
+ 
+ #define ASM_CLAC_UNSAFE \
+ 	ALTERNATIVE("", ANNOTATE_IGNORE_ALTERNATIVE "clac", X86_FEATURE_SMAP)
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 69f94bc..b649049 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -3505,6 +3505,34 @@ next_orig:
+ 	return next_insn_same_sec(file, alt_group->orig_group->last_insn);
+ }
+ 
++static bool skip_alt_group(struct instruction *insn)
++{
++	struct instruction *alt_insn = insn->alts ? insn->alts->insn : NULL;
++
++	/* ANNOTATE_IGNORE_ALTERNATIVE */
++	if (insn->alt_group && insn->alt_group->ignore)
++		return true;
++
++	/*
++	 * For NOP patched with CLAC/STAC, only follow the latter to avoid
++	 * impossible code paths combining patched CLAC with unpatched STAC
++	 * or vice versa.
++	 *
++	 * ANNOTATE_IGNORE_ALTERNATIVE could have been used here, but Linus
++	 * requested not to do that to avoid hurting .s file readability
++	 * around CLAC/STAC alternative sites.
++	 */
++
++	if (!alt_insn)
++		return false;
++
++	/* Don't override ASM_{CLAC,STAC}_UNSAFE */
++	if (alt_insn->alt_group && alt_insn->alt_group->ignore)
++		return false;
++
++	return alt_insn->type == INSN_CLAC || alt_insn->type == INSN_STAC;
++}
++
+ /*
+  * Follow the branch starting at the given instruction, and recursively follow
+  * any other branches (jumps).  Meanwhile, track the frame pointer state at
+@@ -3625,7 +3653,7 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
+ 			}
+ 		}
+ 
+-		if (insn->alt_group && insn->alt_group->ignore)
++		if (skip_alt_group(insn))
+ 			return 0;
+ 
+ 		if (handle_insn_ops(insn, next_insn, &state))
 
