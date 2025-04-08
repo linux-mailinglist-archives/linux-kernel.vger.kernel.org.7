@@ -1,242 +1,169 @@
-Return-Path: <linux-kernel+bounces-594568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46CF5A813FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:50:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FFD1A81406
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:52:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C93203A37A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:47:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB8423B49E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B08323E23F;
-	Tue,  8 Apr 2025 17:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56FB23E338;
+	Tue,  8 Apr 2025 17:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AnJrA5fU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZJW8peCx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF362356A7;
-	Tue,  8 Apr 2025 17:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9E023E34F;
+	Tue,  8 Apr 2025 17:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744134455; cv=none; b=OqXtWYI7vYcXrUA0ZF+/l43of2XeBbMIHOZADmLblUScpiVyIaEgmxL5JgwRPTyDbjUED2HTEnUopDqpsIqQhtAb0t0e1uQasI/IqG9zKU1DkKTqSNn1htzwoKGEWljzFWrenr2daZPDHfAFmtWQISIdSGHKNjn7VvM0jAesLZY=
+	t=1744134465; cv=none; b=qg6xy1Qb5OYzeZYQ+dSA6PiZfhdPOEBqX4bZGHFGkFtTLJcIVUUxpBZJWK2tUIiSLwymN1rBilOqVwJSY7n/XljVaRJWw7U2oJhCOl508iF8u8JONeLhQ/FYsiAHfuZdtXhbLMvPRoHjIxUf0ykmW6fJRPVC3tcSiiejc6Cqjbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744134455; c=relaxed/simple;
-	bh=BWm5NjBgp6rpkmB3NqVUxeHZEuJARJjr/NLFM8DMhKQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pG7hWQHS1jPf3IEAjAWpO0n4pfA5qBuOOgHzJD2yejw9L5i6murSLam0UiIMKC2vWH18mFA029mE58aN4GSl1EcO0JkSZ+WRdaJf7Ez+wR4IQxaEGzdwgWpn2xxZ+sGKKpTPMGBSnM83U7v+0HlrLLfVYjKIinXw6sfrlv5yFNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AnJrA5fU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F8DAC4CEE9;
-	Tue,  8 Apr 2025 17:47:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744134454;
-	bh=BWm5NjBgp6rpkmB3NqVUxeHZEuJARJjr/NLFM8DMhKQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AnJrA5fU+bd9JOfAc40z74CvA091mk5uL4RaSSxzTGTXc2ifbnGGCyGp3P2zgui6I
-	 pDUxJhAHqBSZ7PlKK9pLmyMI1LVXC5OyHAM3mI4LwQj9jrt8OcA649iDcbsOlUd7vl
-	 9img1tilDPfdAm7uuMwGMwJkNh00vvf5337OBIEZnS+FYenB5EpuUqRmTZkEFGdfJ2
-	 mmz1n6wdKtQRX7l27di4IhsWLsJQJ6QfeCgK2WGr6iGx08HhVXs+5n6j5G9m2TIHfA
-	 xJ2SrexYTqaImExGqnoLnZfYGEqsQ4WOhuUbNX4IdzIbGfYYwE2h4nIUzyDiBdV7b2
-	 Poqfz9NFaY87Q==
-From: Mario Limonciello <superm1@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)),
-	"H . Peter Anvin" <hpa@zytor.com>,
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list),
-	Yazen Ghannam <yazen.ghannam@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: [PATCH v2 2/2] x86/CPU/AMD: Print the reason for the last reset
-Date: Tue,  8 Apr 2025 12:47:26 -0500
-Message-ID: <20250408174726.3999817-2-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250408174726.3999817-1-superm1@kernel.org>
-References: <20250408174726.3999817-1-superm1@kernel.org>
+	s=arc-20240116; t=1744134465; c=relaxed/simple;
+	bh=zptJOXWD95DsZZXqKCKA4a7kcU5OVsuiSy9vlDH7JOs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WHpgArCzSzgTwd2mnUi4uJk5gAw99VC+ywh7tPP0owjIUsXNliXtL7lvAxDa/qOuuAma6XpNnuP9xvMkuW3H/yXvCI812Mg1A01VLkcFVysAH3qN0S8efP0blXVfrLHDNUe6jhchPXT7EjrDSVk5S8iFGVEPBvZKNYkK/1MDNjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZJW8peCx; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744134464; x=1775670464;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=zptJOXWD95DsZZXqKCKA4a7kcU5OVsuiSy9vlDH7JOs=;
+  b=ZJW8peCxEDz72iYwVvX7VU1wRx3iJPFJA4N+WFD17p05xtFb6mHHkrtY
+   40pKVjGNAVb7FYZxqqfHR//7FFG3YXIDvLVfJG6AQk09Zxnf5oaW9uQDQ
+   3FJG0PCj/N7+1Lhtk2AzD523GZeIcMt674Hc/NxUU8hsQSZWlnDYeiwz6
+   BoCV25zt+/VxZMmzSExVHrNupmgc0Ng5WeugFxIU1uDgkRRHBERlof5Ho
+   lUrqB1TflTdjm5Tv6GKY+vdrTr83wej06fmbQGnd9eySmCrPfJe0JO2vT
+   rKNz2Kz8azTVrHwty+7uKDCurb2wc+aIQd4DLqVpXBVH1iXYgdTcW02qa
+   g==;
+X-CSE-ConnectionGUID: rig7wPmpTJaL8tgNlyIVEw==
+X-CSE-MsgGUID: PBWViyWjTjya+2knapHscw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="48291859"
+X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
+   d="scan'208";a="48291859"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 10:47:43 -0700
+X-CSE-ConnectionGUID: onU/gqSRQ+OL7P3AtSBxvA==
+X-CSE-MsgGUID: pYnWEB7kROCZ9N3gYR11mQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
+   d="scan'208";a="159335040"
+Received: from spandruv-desk1.amr.corp.intel.com ([10.125.111.121])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 10:47:42 -0700
+Message-ID: <6346af9942a0e6730fd6b26f2586b82e6fc04d4c.camel@linux.intel.com>
+Subject: Re: [PATCH v1 10/10] cpufreq: Pass policy pointer to
+ ->update_limits()
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM
+ <linux-pm@vger.kernel.org>,  LKML <linux-kernel@vger.kernel.org>, Viresh
+ Kumar <viresh.kumar@linaro.org>, Mario Limonciello
+ <mario.limonciello@amd.com>, Sudeep Holla <sudeep.holla@arm.com>
+Date: Tue, 08 Apr 2025 10:47:42 -0700
+In-Reply-To: <CAJZ5v0hJCtqbkyMaOSMNoiD5DSz+H6PK_FyUdoVTZTVWEFJQyQ@mail.gmail.com>
+References: <4651448.LvFx2qVVIh@rjwysocki.net>
+	 <8560367.NyiUUSuA9g@rjwysocki.net>
+	 <CAJZ5v0iMYSTnX9mkZb8aEmtbKxWOgsshNJ_AqnB9Mn27y8jzeQ@mail.gmail.com>
+	 <2362a42de1403e99a66551575efd910cc92980bc.camel@linux.intel.com>
+	 <CAJZ5v0i7uUFDcTYuam4Hz2fYxpnT6QQQzULk8CNHvkOUfg=bfQ@mail.gmail.com>
+	 <CAJZ5v0hJCtqbkyMaOSMNoiD5DSz+H6PK_FyUdoVTZTVWEFJQyQ@mail.gmail.com>
+Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
+ YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
+ y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
+ NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
+ GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
+ TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
+ oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
+ AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
+ b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
+ AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
+ oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
+ UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
+ ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
+ wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
+ NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
+ J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
+ oOfCQxricddC
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Yazen Ghannam <yazen.ghannam@amd.com>
+On Tue, 2025-04-08 at 15:37 +0200, Rafael J. Wysocki wrote:
+> On Tue, Apr 8, 2025 at 1:41=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.o=
+rg>
+> wrote:
+> >=20
+> > On Tue, Apr 8, 2025 at 12:28=E2=80=AFAM srinivas pandruvada
+> > <srinivas.pandruvada@linux.intel.com> wrote:
+> > >=20
+> > > On Mon, 2025-04-07 at 20:48 +0200, Rafael J. Wysocki wrote:
+> > > > On Fri, Mar 28, 2025 at 9:49=E2=80=AFPM Rafael J. Wysocki
+> > > > <rjw@rjwysocki.net>
+> > > > wrote:
+> > > > >=20
+> > > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > >=20
+> > > > > Since cpufreq_update_limits() obtains a cpufreq policy
+> > > > > pointer for
+> > > > > the
+> > > > > given CPU and reference counts the corresponding policy
+> > > > > object, it
+> > > > > may
+> > > > > as well pass the policy pointer to the cpufreq driver's -
+> > > > > > update_limits()
+> > > > > callback which allows that callback to avoid invoking
+> > > > > cpufreq_cpu_get()
+> > > > > for the same CPU.
+> > > > >=20
+> > > > > Accordingly, redefine ->update_limits() to take a policy
+> > > > > pointer
+> > > > > instead
+> > > > > of a CPU number and update both drivers implementing it,
+> > > > > intel_pstate
+> > > > > and amd-pstate, as needed.
+> > > > >=20
+> > > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > >=20
+> > > Hi Rafael,
+> > >=20
+> > > > Hi Srinivas,
+> > > >=20
+> > > > If you have any concerns regarding this patch, please let me
+> > > > know
+> > > > (note that it is based on the [05/10]).
+> > > >=20
+> > > Changes looks fine, but wants to test out some update limits from
+> > > interrupt path.
+> > > Checked your branches at linux-pm, not able to locate in any
+> > > branch to
+> > > apply.
+> > > Please point me to a branch.
+> >=20
+> > I'll put it in 'testing' later today.
+>=20
+> Now available from
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
+> testing
+>=20
+Looks good.
 
-The following register contains bits that indicate the cause for the
-previous reset.
+Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-        PMx000000C0 (FCH::PM::S5_RESET_STATUS)
-
-This is useful for debug. The reasons for reset are broken into 6 high
-level categories. Decode it by category and print during boot.
-
-Specifics within a category are split off into debugging documentation.
-
-The register is accessed indirectly through a "PM" port in the FCH. Use
-MMIO access in order to avoid restrictions with legacy port access.
-
-Use a late_initcall() to ensure that MMIO has been set up before trying
-to access the register.
-
-This register was introduced with AMD Family 17h, so avoid access on
-older families. There is no CPUID feature bit for this register.
-
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
-v2:
- * Add string for each reason, but still include value in case multiple
-   values are set.
----
- .../admin-guide/amd/amd-reboot-reason.csv     | 21 ++++++
- Documentation/admin-guide/amd/debugging.rst   | 22 ++++++
- arch/x86/kernel/cpu/amd.c                     | 69 +++++++++++++++++++
- 3 files changed, 112 insertions(+)
- create mode 100644 Documentation/admin-guide/amd/amd-reboot-reason.csv
-
-diff --git a/Documentation/admin-guide/amd/amd-reboot-reason.csv b/Documentation/admin-guide/amd/amd-reboot-reason.csv
-new file mode 100644
-index 0000000000000..c31c7a0464c38
---- /dev/null
-+++ b/Documentation/admin-guide/amd/amd-reboot-reason.csv
-@@ -0,0 +1,21 @@
-+Bit, Type, Reason
-+0, Pin, Thermal trip (BP_THERMTRIP_L)
-+1, Pin, Power button
-+2, Pin, SHUTDOWN# pin
-+4, Remote, Remote ASF power off command
-+9, Internal, Thermal trip (internal)
-+16, Pin, User reset (BP_SYS_RST_L)
-+17, Software, PCI reset (PMIO 0xC4)
-+18, Software, CF9 reset (0x04)
-+19, Software, CF9 reset (0x06)
-+20, Software, CF9 reset (0x0E)
-+21, Sleep, Power state or ACPI state transition
-+22, Pin, Keyboard reset (KB_RST_L)
-+23, Internal, Internal CPU shutdown
-+24, Hardware, Failed boot timer
-+25, Hardware, Watchdog timer
-+26, Remote, Remote ASF reset command
-+27, Internal, Data fabric sync flood event due to uncorrected error
-+29, Internal, MP1 Watchdog timer timeout
-+30, Internal, Parity error
-+31, Internal, SW sync flood event
-\ No newline at end of file
-diff --git a/Documentation/admin-guide/amd/debugging.rst b/Documentation/admin-guide/amd/debugging.rst
-index 5a721ab4fe013..2a966f0ead26a 100644
---- a/Documentation/admin-guide/amd/debugging.rst
-+++ b/Documentation/admin-guide/amd/debugging.rst
-@@ -268,3 +268,25 @@ EPP Policy
- The ``energy_performance_preference`` sysfs file can be used to set a bias
- of efficiency or performance for a CPU.  This has a direct relationship on
- the battery life when more heavily biased towards performance.
-+
-+Random reboot issues
-+====================
-+When a random reboot occurs, the high-level reason for the reboot is stored
-+in a register that will persist onto the next boot.
-+
-+There are 6 classes of reasons for the reboot:
-+ * Software induced
-+ * Power state transition
-+ * Pin induced
-+ * Hardware induced
-+ * Remote reset
-+ * Internal CPU event
-+
-+.. csv-table::
-+   :header-rows: 1
-+   :widths: 1, 1, 1
-+   :file: ./amd-reboot-reason.csv
-+
-+This information is read by the kernel at bootup and is saved into the
-+kernel ring buffer. When a random reboot occurs this message can be helpful
-+to determine the next component to debug such an issue.
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 79569f72b8ee5..af7615ac8f898 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -1231,3 +1231,72 @@ void amd_check_microcode(void)
- 	if (cpu_feature_enabled(X86_FEATURE_ZEN2))
- 		on_each_cpu(zenbleed_check_cpu, NULL, 1);
- }
-+
-+static inline char *get_s5_reset_reason(u32 value)
-+{
-+	if (value & BIT(0))
-+		return "trip of thermal pin BP_THERMTRIP_L";
-+	if (value & BIT(1))
-+		return "power button";
-+	if (value & BIT(2))
-+		return "shutdown pin";
-+	if (value & BIT(4))
-+		return "remote ASF power off command";
-+	if (value & BIT(9))
-+		return "internal CPU thermal trip";
-+	if (value & BIT(16))
-+		return "user reset via BP_SYS_RST_L pin";
-+	if (value & BIT(17))
-+		return "PCI reset";
-+	if (value & BIT(18) ||
-+	    value & BIT(19) ||
-+	    value & BIT(20))
-+		return "CF9 reset";
-+	if (value & BIT(21))
-+		return "power state of acpi state transition";
-+	if (value & BIT(22))
-+		return "keyboard reset pin KB_RST_L";
-+	if (value & BIT(23))
-+		return "internal CPU shutdown";
-+	if (value & BIT(24))
-+		return "failed boot timer";
-+	if (value & BIT(25))
-+		return "watchdog timer";
-+	if (value & BIT(26))
-+		return "remote ASF reset command";
-+	if (value & BIT(27))
-+		return "data fabric sync flood event due to uncorrected error";
-+	if (value & BIT(29))
-+		return "MP1 watchdog timer timeout";
-+	if (value & BIT(30))
-+		return "parity error";
-+	if (value & BIT(31))
-+		return "software sync flood event";
-+	return "unknown reason";
-+}
-+
-+static __init int print_s5_reset_status_mmio(void)
-+{
-+	void __iomem *addr;
-+	u32 value;
-+
-+	if (!cpu_feature_enabled(X86_FEATURE_ZEN))
-+		return 0;
-+
-+	/*
-+	 * FCH::PM::S5_RESET_STATUS
-+	 * PM Base = 0xFED80300
-+	 * S5_RESET_STATUS offset = 0xC0
-+	 */
-+	addr = ioremap(0xFED803C0, sizeof(value));
-+	if (!addr)
-+		return 0;
-+	value = ioread32(addr);
-+	iounmap(addr);
-+
-+	pr_info("System was reset due to %s (0x%08x)\n",
-+		get_s5_reset_reason(value), value);
-+
-+	return 0;
-+}
-+late_initcall(print_s5_reset_status_mmio);
--- 
-2.43.0
-
+Thanks,
+Srinivas
 
