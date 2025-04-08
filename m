@@ -1,110 +1,87 @@
-Return-Path: <linux-kernel+bounces-594333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B85A81037
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:37:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E7DA81042
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:39:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 454C9173D54
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:32:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 892E84E52B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7742D22B8AC;
-	Tue,  8 Apr 2025 15:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD91223709;
+	Tue,  8 Apr 2025 15:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xHjiYEdg"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iSEiTJaR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EC11A8407;
-	Tue,  8 Apr 2025 15:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE17D3FB1B;
+	Tue,  8 Apr 2025 15:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744126269; cv=none; b=B48K3JxE5ZAvA8Z9d6igBTrFdgyYa74v+85XnNSpwzAGens4b2sHW05TlMq8d1IoOLODPSnn58WxexXRQs6Q+gflxtNVsje3D92A7INfqKkuag2GZBKyTw94CLVWb5O1LWCaX41GiRvCAwnOVLj5iKmopfSma1E4ghAl0KYNzXg=
+	t=1744126343; cv=none; b=GC6+8C2ucS65K9Zpu0QfppPeP10MkdO4QBCr/FnbSW9EXeGkru5sRc+LILpu+Isi44RP2h/YY94O8/b1jEoXaWWbFyRI3Ab/azdaPJubkaYVvygHUBfNLLG7RnvZ5fDBiv8dKPTjwAnD1t2zjBeKYmDtbF+BProvzAoMh+/VjuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744126269; c=relaxed/simple;
-	bh=0YFuHjXItMALCF9I61SplNMuKtnWRp5UV2h38diSEak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LuxTuH7WqCJ4CX9Vz+hoAby8IsV+BnXYkJ6J9ftCepnsFeonNCe+Rs2Pv6a8Qe0icOC2wtbR5ZGmJZ4lKoIjwVDBX5bvTClpyldhtEqmodwyy7ggEDWeD0LOzsdSl4zheXAo0H5bZgodrF5/rKTxMoa3VhQP/a9V8RIyK3WsaKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xHjiYEdg; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <08c0e1eb-2de6-45bf-95a4-e817008209ab@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744126252;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8BoOWeNe+pe93MVOTNw72S8eDhTJzWNGVCLyplYdrjU=;
-	b=xHjiYEdgV7tMnhbjUS9rxzHVYtisqRgofwAbFgKBjHeCW/w+sALVnUMiySoFUarrOrSbJp
-	Ecqv/CNdAQM8aUz/+aPqTRou80iDO+z9ZzmUuIVt85PyF9sLMmnGUY26Em+RgqaMhsISwv
-	mClV4f4j7VSPhAIpytBuD78aAgb4MhI=
-Date: Tue, 8 Apr 2025 11:30:43 -0400
+	s=arc-20240116; t=1744126343; c=relaxed/simple;
+	bh=u741l1VQEn0lP1ypM4etmFVddvE3nno24ukni4RpKpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JjISLvHBB8x3OyTTdFaL/o2QKW5YZAnaKIeke5VYF91xqPOBhaCN/FpjnbMXXJjpHocbBuCa701V7Lt5SGLqeArbFrUAA8YMwyCt5lk8YtyEWLaQoU2tRjsHuDoNYoiyUpIY1UJ+kFP1u49V+TFEH8GAptyatoZsJ8cpyMRAm0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iSEiTJaR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7136C4CEE5;
+	Tue,  8 Apr 2025 15:32:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744126342;
+	bh=u741l1VQEn0lP1ypM4etmFVddvE3nno24ukni4RpKpE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iSEiTJaRlriF1D01gegE+wTgUM9zgHAgqr44r3f9wT/oZizQaIbm0yUQQTnNwBBw+
+	 6BVlWv5R62TNZ9Dnr+J+FirqY5QhiS0P6V6FJ3a+nHB93yX2ZbJYrDXoW0xhrZg3fX
+	 j3l9Su9ccA4KsCG7QQuSPZqAydu2amtkAGgd+RQY=
+Date: Tue, 8 Apr 2025 17:30:46 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.13 000/499] 6.13.11-rc1 review
+Message-ID: <2025040840-severity-pointy-e3a7@gregkh>
+References: <20250408104851.256868745@linuxfoundation.org>
+ <71339b92-5292-48b7-8a45-addbac43ee32@sirena.org.uk>
+ <2025040810-unpledged-bunkbed-1e2f@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [net-next PATCH v2 00/14] Add PCS core support
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
- upstream@airoha.com, Christian Marangi <ansuelsmth@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Kory Maincent <kory.maincent@bootlin.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Clark Wang <xiaoning.wang@nxp.com>,
- Claudiu Beznea <claudiu.beznea@microchip.com>,
- Claudiu Manoil <claudiu.manoil@nxp.com>, Conor Dooley <conor+dt@kernel.org>,
- Ioana Ciornei <ioana.ciornei@nxp.com>, Jonathan Corbet <corbet@lwn.net>,
- Joyce Ooi <joyce.ooi@intel.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Madalin Bucur <madalin.bucur@nxp.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Michal Simek <michal.simek@amd.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
- Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Robert Hancock <robert.hancock@calian.com>,
- Saravana Kannan <saravanak@google.com>, UNGLinuxDriver@microchip.com,
- Vladimir Oltean <vladimir.oltean@nxp.com>, Wei Fang <wei.fang@nxp.com>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20250407231746.2316518-1-sean.anderson@linux.dev>
- <20250408075047.69d031a9@kernel.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <20250408075047.69d031a9@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025040810-unpledged-bunkbed-1e2f@gregkh>
 
-On 4/8/25 10:50, Jakub Kicinski wrote:
-> On Mon,  7 Apr 2025 19:17:31 -0400 Sean Anderson wrote:
->> This series depends on [1,2], and they have been included at the
->> beginning so CI will run. However, I expect them to be reviewed/applied
->> outside the net-next tree.
+On Tue, Apr 08, 2025 at 05:18:31PM +0200, Greg Kroah-Hartman wrote:
+> On Tue, Apr 08, 2025 at 04:01:05PM +0100, Mark Brown wrote:
+> > On Tue, Apr 08, 2025 at 12:43:32PM +0200, Greg Kroah-Hartman wrote:
+> > > This is the start of the stable review cycle for the 6.13.11 release.
+> > > There are 499 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > 
+> > This fails to build an arm multi_v7_defconfig for me:
+> > 
+> > arm-linux-gnueabihf-ld:./arch/arm/kernel/vmlinux.lds:31: syntax error
+> > 
+> > and multi_v5_defconfig gives:
+> > 
+> > arm-linux-gnueabi-ld:./arch/arm/kernel/vmlinux.lds:30: syntax error
+> > 
+> > (presumably the same error)
 > 
-> These appear to break the build:
-> 
-> drivers/acpi/property.c:1669:39: error: initialization of ‘int (*)(const struct fwnode_handle *, const char *, const char *, int,  unsigned int,  struct fwnode_reference_args *)’ from incompatible pointer type ‘int (*)(const struct fwnode_handle *, const char *, const char *, unsigned int,  unsigned int,  struct fwnode_reference_args *)’ [-Wincompatible-pointer-types]
->  1669 |                 .get_reference_args = acpi_fwnode_get_reference_args,   \
-> 
-> Could you post as RFC until we can actually merge this? I'm worried 
-> some sleep deprived maintainer may miss the note in the cover letter
-> and just apply it all to net-next..
+> What is the error?  "syntax error" feels odd.  Any more hints?  Any
+> chance to bisect?
 
-I would really like to keep RFC off the titles since some reviewers don't
-pay attention to RFC series.
-
-Would [DO NOT MERGE] in the subject be OK?
-
---Sean
+Nevermind, got the fix now.
 
