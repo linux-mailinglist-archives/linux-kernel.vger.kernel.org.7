@@ -1,136 +1,122 @@
-Return-Path: <linux-kernel+bounces-593427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6779A7F90A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:12:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A04CDA7F8D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:02:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB41B3B909A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:09:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D0881720AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE37D263F29;
-	Tue,  8 Apr 2025 09:09:11 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A4E2222DA;
+	Tue,  8 Apr 2025 08:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="RVPmepSi"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D9620B815
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 09:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36F02641F7
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744103351; cv=none; b=obAyOzNKlKCxoksGxC5KWNofC1c+TlDHr0z4yE2Fix1EXMC0LRlUXD5UYELmz3NVn0aNNo4N84kkfh+BF06l7PRL1ZblqTfkJH80QMtAJELwq/kYcNmuXHEot1/uwZLCwWgVO2mf6UHS1XSc19Mo4ATgD3DQpVEnWO6/ic0zx4o=
+	t=1744102785; cv=none; b=cHSr4YCAAYVi68IRqn0XP3DMTDkftmkXmCydMGbcxeFCts79Py4HCZBCCCcwEB5lbqKKEs9MoIER++m6OjjFeVVBmlESGfVuZSWxapaI7GHKzGA97hj4dINJeCYQ4Ysw2hxujb/5c7FRrSC4IpIsrT667Oeago00gBFVTHXo5BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744103351; c=relaxed/simple;
-	bh=pGUxmxORgkw2eWqQ+fsCI9H46C+s3XZ5yiRNo9nxgHk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UX2NM6NDW13K7p0EYvdf1/zJMwIKK8mwubSLSd4FCraqBdBQgyAvZqTiL4z+7XnTUTxHq7Q0iKbN4Urg/1GEEG1BPkf8GFoc2B0HY1X7tY6DogRUu/xCsvrhhH9Msn9sDJqWqmBdFOPMTmu/IRJCjGmvylVH538X7Lf9y8N3+80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZX0XG56XlzvWt6;
-	Tue,  8 Apr 2025 17:05:02 +0800 (CST)
-Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
-	by mail.maildlp.com (Postfix) with ESMTPS id 385AE180104;
-	Tue,  8 Apr 2025 17:09:05 +0800 (CST)
-Received: from huawei.com (10.175.124.71) by kwepemg100017.china.huawei.com
- (7.202.181.58) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 8 Apr
- 2025 17:09:03 +0800
-From: Wupeng Ma <mawupeng1@huawei.com>
-To: <catalin.marinas@arm.com>, <will@kernel.org>, <ryan.roberts@arm.com>,
-	<anshuman.khandual@arm.com>, <akpm@linux-foundation.org>
-CC: <peterx@redhat.com>, <joey.gouly@arm.com>, <yangyicong@hisilicon.com>,
-	<ioworker0@gmail.com>, <baohua@kernel.org>, <jack@suse.cz>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, Wupeng Ma <mawupeng1@huawei.com>
-Subject: [PATCH] arm64: dax: add devmap check for pmd_trans_huge
-Date: Tue, 8 Apr 2025 16:59:14 +0800
-Message-ID: <20250408085914.1946183-1-mawupeng1@huawei.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1744102785; c=relaxed/simple;
+	bh=lNiYZkdnErtTzxt0Uq6hCnSDgBoG7jrmCa6HXR2axIs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WOEqUJSFTVZI8JjYL/HRtSeoTrllMN/Wvv7LcKgeRT8YQ9PUomiIXdo56j16GsKlFOat/3RcmGJ4rwNa94vAkqThRuufFAkYH189d7kZUwYZdPA0xluK1VP8kaprq4VKlQc7ZPq7roSvR0Zrhi8J5407hwT7ColnDZ+rO1nQCzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=RVPmepSi; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5499d2134e8so6520856e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 01:59:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744102782; x=1744707582; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n1ti+glIs7kbdo7Cmb4p1nzhkGIqNEX/Na3aCrAR2g8=;
+        b=RVPmepSiUFhgs+jpHCVKcKCszAKep92VNp9w3dNfyoKlYwT7vpFa6cevGCjzIQZ6Lx
+         7AUsxuIYBkDOQSoEc/1V2sk9Hajq+7sAgLhy/eTaVjH361D5rO8UzkwaGznblTbpstmz
+         QgAwkc2vlLIFi6IIeeCeA9NpoM1yM5Yze+aw48tMypRWdjnkaiCMfy0PEW5FSbjZ3c8z
+         sl896MBdwdAYR1fh9XCYVKmkzTXmGVJIXXZnOV6FB+3X3Vmtg8sfozfSY9c2p9pUyWhV
+         xDCevtApSyWiBcBetqbpsr4cJZ9EEp7pzy2l1XnWdIND3VgxAsYryv8ZRoHlue7X/b2O
+         V6oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744102782; x=1744707582;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n1ti+glIs7kbdo7Cmb4p1nzhkGIqNEX/Na3aCrAR2g8=;
+        b=SdVgPpjEwGHpQUQcn0ujIP6hwSrRW3H+ZM1A21shnRfbus8tciOeLbGKufFRGfDTUH
+         LeNqyf79sgSUeB/FetmMUXqJSY2Y0wTC4w87Xvjp47K4nhgDWURjmVFP7RYjbZkgkiKP
+         /e3C0a7zSYUWwcLyTANQk8yaK1WKQpLcESO9Q0Zy+zZFDhYB4EqwcreZOiKMUcMZmX+g
+         v7RHqHd2Uyavy264UjPIVQAILytVZ3LZUp6t3ky0E/VZByO76L+HVZmQkTel2iHvHy3x
+         CR1RRwP+ffo9lth3O/EKmLRyCgP7VBnHDXs0DwO8LC5cIoPpG3VUZw8rU/LpBrMGZvgt
+         rxBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUo/N0gsbriSugk6eP7ZWehdxDktXkWWUMYZ2vEBXywHv0p4KoU7lwGSzvxFR5A0UaHbWNMaSme3jZ9AwU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMN3Ej7rzcf0ARmIjPPHpbXIb82k6ipShu3Sh7N1PegHAa6H9Y
+	hAJHudqJJojgXsVGeDmPGHnnK8ru/aP6Pz4f7OSp8Ml+SiOlgw/NJFCSxxqR4yS9Di4JTpZFwvI
+	xDL7nrEZCngiyQKdHiNR4PSfNXDEgJGXLOsEHJA==
+X-Gm-Gg: ASbGncvJUg+PjrWsxT58OalL+MqHyJeZm8tQ/v6zaBlurnOvhNEf+qeFbecE5iVw5B3
+	F6z7MLThvn6pMg5rDs0hpqDDdNDumI0d2UjexTzjx+N7ldrb+iSL+0MORZQOzA+DqvgUZV1d94L
+	VNmDDFosEjT9D8z7MaVo5n4r1A3rudhwFlX65MNremkh20t/IIheneFUEfxQ==
+X-Google-Smtp-Source: AGHT+IFhU+IhVBAJzBIMUxOBAo7QfFVW11UL24yOIyLgi1oINyxWjy4Dxkzmcdvr4r4k1H5XdlGKfbxf2ZKflqozVaw=
+X-Received: by 2002:a05:6512:1328:b0:545:2eca:863 with SMTP id
+ 2adb3069b0e04-54c29836e84mr3493147e87.42.1744102781735; Tue, 08 Apr 2025
+ 01:59:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemg100017.china.huawei.com (7.202.181.58)
+References: <20250326-04-gpio-irq-threecell-v3-0-aab006ab0e00@gentoo.org>
+ <20250326-04-gpio-irq-threecell-v3-2-aab006ab0e00@gentoo.org>
+ <20250407103320-GYA13974@gentoo> <CAMRc=MeFK1gX69CWH2gkYUqkLU-KCOcwHcA+gjN1RXFA++B_eQ@mail.gmail.com>
+ <87r023ujiv.ffs@tglx>
+In-Reply-To: <87r023ujiv.ffs@tglx>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 8 Apr 2025 10:59:30 +0200
+X-Gm-Features: ATxdqUFtpGaiXd9grNQP3Ib6EubxTwZJQ656Dn7NldoLYjiAufIbT8WtF0ED4JY
+Message-ID: <CAMRc=MdP09b-cm2uZeqbbCP20kNjQJ8CbXTXSTxQEihdoXjGJw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] gpiolib: support parsing gpio three-cell
+ interrupts scheme
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Yixun Lan <dlan@gentoo.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Alex Elder <elder@riscstar.com>, Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	spacemit@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-During our test in ext4 dax linux-v5.10 on arm64. A BUG_ON is trigger in
-follow_invalidate_pte as follow since this pmd is seem as pmd_trans_huge.
-However this page is really a dax-pmds rather than a pmd trans huge.
+On Tue, Apr 8, 2025 at 10:47=E2=80=AFAM Thomas Gleixner <tglx@linutronix.de=
+> wrote:
+>
+> On Mon, Apr 07 2025 at 13:26, Bartosz Golaszewski wrote:
+> > On Mon, Apr 7, 2025 at 12:33=E2=80=AFPM Yixun Lan <dlan@gentoo.org> wro=
+te:
+> >> On 06:06 Wed 26 Mar     , Yixun Lan wrote:
+> >>   I'd assume this patch [2/2] will go via pinctrl's tree?
+> >> as patch [1/2] has been accepted by Thomas into tip tree [1]..
+> >>   Additonally need to pull that commit first? since it's a dependency
+> >>
+> >
+> > No, this should go through the GPIO tree but for that I'd need an
+> > immutable tag with patch 1/2.
+>
+> Here you go:
+>
+>    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irqdomain-04=
+-08-25
+>
+> Thanks,
+>
+>         tglx
 
-Call trace is shown as follow:
+Thanks, pulled.
 
-  ------------[ cut here ]------------
-  kernel BUG at mm/memory.c:5185!
-  CPU: 0 PID: 150 Comm: kworker/u8:10 Not tainted 5.10.0-01678-g1e62aad66bbc-dirty #36
-  pc : follow_invalidate_pte+0xdc/0x5e0
-  lr : follow_invalidate_pte+0xc4/0x5e0
-  sp : ffffa00012997110
-  Call trace:
-   follow_invalidate_pte+0xdc/0x5e0
-   dax_entry_mkclean+0x250/0x870
-   dax_writeback_one+0xac/0x380
-   dax_writeback_mapping_range+0x22c/0x704
-   ext4_dax_writepages+0x234/0x6e4
-   do_writepages+0xc8/0x1c0
-   __writeback_single_inode+0xb8/0x560
-   writeback_sb_inodes+0x344/0x7a0
-   wb_writeback+0x1f8/0x6b0
-   wb_do_writeback+0x194/0x3cc
-   wb_workfn+0x14c/0x590
-   process_one_work+0x470/0xa30
-   worker_thread+0xac/0x510
-   kthread+0x1e0/0x220
-   ret_from_fork+0x10/0x18
-  ---[ end trace 0f479050bd4b1818 ]---
-  Kernel panic - not syncing: Oops - BUG: Fatal exception
-  ---[ end Kernel panic - not syncing: Oops - BUG: Fatal exception ]---
-
-Commit 5c7fb56e5e3f ("mm, dax: dax-pmd vs thp-pmd vs hugetlbfs-pmd") and
-commit 36b78402d97a ("powerpc/hash64/devmap: Use H_PAGE_THP_HUGE when
-setting up huge devmap PTE entries") already check pmd_devmap during
-checking pmd_trans_huge. Since pmd_devmap() is used to distinguish dax-pmds,
-add the same check for arm64 to fix this problem.
-
-Add PTE_DEVMAP in pte_modify as commit 4628a64591e6 ("mm: Preserve
-_PAGE_DEVMAP across mprotect() calls") does to avoid the same issue in
-mprotect.
-
-Fixes: 73b20c84d42d ("arm64: mm: implement pte_devmap support")
-Signed-off-by: Wupeng Ma <mawupeng1@huawei.com>
----
- arch/arm64/include/asm/pgtable.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index d3b538be1500b..b9a618127c01b 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -740,7 +740,7 @@ static inline int pmd_trans_huge(pmd_t pmd)
- 	 * as a table, so force the valid bit for the comparison.
- 	 */
- 	return pmd_val(pmd) && pmd_present(pmd) &&
--	       !pmd_table(__pmd(pmd_val(pmd) | PTE_VALID));
-+	       !pmd_table(__pmd(pmd_val(pmd) | PTE_VALID)) && !pmd_devmap(pmd);
- }
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
- 
-@@ -1186,7 +1186,8 @@ static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
- 	 */
- 	const pteval_t mask = PTE_USER | PTE_PXN | PTE_UXN | PTE_RDONLY |
- 			      PTE_PRESENT_INVALID | PTE_VALID | PTE_WRITE |
--			      PTE_GP | PTE_ATTRINDX_MASK | PTE_PO_IDX_MASK;
-+			      PTE_GP | PTE_ATTRINDX_MASK | PTE_PO_IDX_MASK |
-+			      PTE_DEVMAP;
- 
- 	/* preserve the hardware dirty information */
- 	if (pte_hw_dirty(pte))
--- 
-2.43.0
-
+Bartosz
 
