@@ -1,67 +1,93 @@
-Return-Path: <linux-kernel+bounces-593303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 188F4A7F7C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:26:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAFA6A7F797
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF30C175B2C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:26:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85C1C1895FB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D797D254B1A;
-	Tue,  8 Apr 2025 08:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC99C2641C6;
+	Tue,  8 Apr 2025 08:17:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="BY4NRvtF"
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ImvzWnUB"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133672594
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20C2263F3D;
+	Tue,  8 Apr 2025 08:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744100797; cv=none; b=Qpj8zitBeiddS6OdsbIrMwzXgbClM6DytqqBIarQqosqhocROVbaYQ65qfbWjaxXUpCgqEhfsR46RG63wVnFDdkEf9YpIEFn0u9TSHgeyB8CIPq6LwrGytzJutSX0PrIMmzR1Lg5JrRu0s3cRMsYOTYYNL2bL0hn6dox3JWZB4g=
+	t=1744100231; cv=none; b=kfidjKClmjf/soFVgkaaqKDvzHEDT0BYYL0u4KjKGUQcNDZ3NvMFtiIqFwlkIqqOEvfGYNVdfAkXjqynhoZzEzKpEd4W4yK+l1kGoIUpjSFhPk9WFYFe+L9AJ7chOI6ho2ZN7NqZRpSdjq6A+veEU9IiFcPnKsneQ1JEggK0bE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744100797; c=relaxed/simple;
-	bh=sYVb49tTeUBnYvvmqq8FJYBk/cy/MQEUoZ4gX5PSDpI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fK1odao1+BOEGzHzNSrkRMXGgsN+as5gB5IZEmEV2UrUUqul/rS3vY40Fgt7fR/zBE4DWvFB63/GEhf46fzQSHuj4XLNQsPh8u9u3ggM/pwePNztt0M40CDL05fETf6ohWp5gDUfM6oD88x6izXZbe9Y5mXc+DQJZ9zP+WUr9b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=BY4NRvtF; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
-From: Denis Arefev <arefev@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1744100198;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KycvnFWvB7WLb2FMk02JJRuq8Z8TQ1r5p1fwmK7UuQI=;
-	b=BY4NRvtF8TGoqRIlOh7vqXec44FXLXMcGrQLgiSlHUoZiE1Bc9+uNECT0fDAo27IT+iXqD
-	hOzTflwyN46+PtVNtVol6lKGo+7HladIctIV9TD8NXhvUHw4PRBDt9Nvt5wArpvnnpUnEY
-	bdd8fzIFmrOyE69kfnvxNS7XwQ209IY=
-To: alexdeucher@gmail.com
-Cc: Jun.Ma2@amd.com,
-	airlied@gmail.com,
-	alexander.deucher@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	arefev@swemel.ru,
-	christian.koenig@amd.com,
-	dri-devel@lists.freedesktop.org,
-	kenneth.feng@amd.com,
-	kevinyang.wang@amd.com,
-	lijo.lazar@amd.com,
+	s=arc-20240116; t=1744100231; c=relaxed/simple;
+	bh=JgO+hdA1GrGHKIDKAAW3feS3nYjo8Wjp/HZ6RcxjzVc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lomYZ7MnuLB5/42Fvi2L7LmPIVW8EGt0IIM4fIm8LJholE0mXcJzVEfkS5ezIAWNDeWPJykLZz+amxEGjNdiXlqzCQSLSJe9ARZEn0s7HeOI1dYo9igqbOcX8INmXFT1TcfQeRNZymTBPIA6U1jvlI1CfJdfzqpHChpQxvjmSCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ImvzWnUB; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2295d78b45cso67837275ad.0;
+        Tue, 08 Apr 2025 01:17:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744100229; x=1744705029; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9fdElPioRI0btoB9YLHJoXBq7OTonUhGxAaIJ5PdYa8=;
+        b=ImvzWnUBHuI5M1leANHgvRUynZGTMzUmeT55+o3jXbh/KQXBLSv8pkgE2zzfso4kM4
+         qbhjAxi9ZACxKTTS9UPJFHHTzZWQo6agttQDi4IA0r8tVhgNGehTRfzSumnOOCTskIu7
+         2Mg9lrkYYsbMtOsabyjcKDCE/If38ud4xn0xDdw2lzVqi8q7aGdWNexFI9qr0l0gnTcO
+         hrecwGl9BrNYR3pWfoGjNTjdYwSBMNsfsQ3xk4tOFwofsS1eUeJcLSCu6973HVqRr21a
+         8e/DQ9nf6akxLec67B8Nq0YnAl7ZK3t8TMxe+aze1U0GzL+iP0kJ87zqRiRlAt0D9VQc
+         Ki0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744100229; x=1744705029;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9fdElPioRI0btoB9YLHJoXBq7OTonUhGxAaIJ5PdYa8=;
+        b=fBDujllPxnKW2NaWtk14I7TfUujS4oNi9yZ8zraCOr+oK9A3okwXI/SycIxNNZhrKx
+         V9gaycKFxzaLgYlAACIGR+9K6uwh12uyyeULywORR1bjR5udmGNaJUaEwf5K6NyF2AOS
+         tdG7Uqi0BYa4bCklSGizgbdyzIJR1+cGEfYLpLpRhRnIomnV4IKg1WpzFw9XaIZKHeBX
+         zBOyF0FhosfwoyzvEzYRhBhIN5JWVQD7gup0hT+PNB+Y3LhQNLyD2WID2TLFvOhRqT8u
+         vew9NEgMpjY7lePlBNRi2nhbwxozjSrn4wob/NLWjNHscdGGNjp5KhcQTPQBGMkOtkNs
+         cxJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIYa+1O3QddGcG5E5Kagix9nr1SZH2PCBBdolADHBOkpKE2FuzQGKmIIVeqcDwQzvkK5L/sCMqhn9AoAU=@vger.kernel.org, AJvYcCXhl/SHJ1Z+AurtuzoPFM28zLQW2dAr6MUle5ws6YkfOQ7bKbf5hDUKMohBpXlCiQr9w96ePMIihikSFOolNFvY@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL+LtQ3+HbagA5g9lGkGIteHo4sskZcz3VMEHtdSDj0X+FX0z2
+	+I1lD3o42dTeRIs+GM+qDmY96jIeQiPFu6y/1Qv7RWbm5eAdBc5dwHIdQTmsAOw=
+X-Gm-Gg: ASbGncudRTNzs+B5LyL2L23m53UXLhT3x0O3g3bpsv5zJ8bibX35+HJbEy3uEVfsPBG
+	CdfCLR8thOUO5R3mY4AKtTD+QPQoaL1+t7LOM/d7p5kOOsRXcOGBaGD8ypkydDbGV3k0WJdhG/H
+	9EaCGjnSZKHGXG/Kmb4iZoRwilY/iniOwfZ01QNBT0gWJUs2m/5UYrWJbMMguafxWwXvHygSnru
+	0buxQyAO+FcfI5OocB0BfoQ47zKoUQTLZngjeJqhRslwo123mHLHIKh9rgyQFeiVW0WGQBVY1o/
+	9a9yZuaNUVeoTXfdJU4DIL+j4whX0hBkL8SgUrEiE5D3IE5Z0CtMh25nF63PidwcFXTt6g==
+X-Google-Smtp-Source: AGHT+IFe2CIssHzOnft5L6j+qBASQd7ICbxBKBKnPXX2l9y7vhFe+KHnO6lG9nf9EBuFFYKULvvZfQ==
+X-Received: by 2002:a17:903:1b25:b0:220:e1e6:4472 with SMTP id d9443c01a7336-22a8a0545f9mr208034285ad.13.1744100228937;
+        Tue, 08 Apr 2025 01:17:08 -0700 (PDT)
+Received: from fedora.dns.podman ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229785ada20sm94319535ad.46.2025.04.08.01.17.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 01:17:08 -0700 (PDT)
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: netdev@vger.kernel.org
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>,
+	Phil Sutter <phil@nwl.cc>,
+	Florian Westphal <fw@strlen.de>,
+	Petr Mladek <pmladek@suse.com>,
+	Yoann Congal <yoann.congal@smile.fr>,
+	wireguard@lists.zx2c4.com,
+	linux-kselftest@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	mario.limonciello@amd.com,
-	simona@ffwll.ch,
-	srinivasan.shanmugam@amd.com
-Subject: Re: [PATCH] drm/amd/pm/smu11: Prevent division by zero
-Date: Tue,  8 Apr 2025 11:16:38 +0300
-Message-ID: <20250408081638.5295-1-arefev@swemel.ru>
-In-Reply-To: <CADnq5_O+TMVD0B28Q6CgzhAi1aDR5ofjogE18HDXrJOJ1XwbDQ@mail.gmail.com>
-References: <CADnq5_O+TMVD0B28Q6CgzhAi1aDR5ofjogE18HDXrJOJ1XwbDQ@mail.gmail.com>
+	Hangbin Liu <liuhangbin@gmail.com>
+Subject: [PATCHv6 net-next 0/2] wireguard: selftests: use nftables for testing
+Date: Tue,  8 Apr 2025 08:16:50 +0000
+Message-ID: <20250408081652.1330-1-liuhangbin@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,33 +96,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-> ---
->  drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c b/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c
-> index 189c6a32b6bd..54229b991858 100644
-> --- a/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c
-> +++ b/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c
-> @@ -1200,7 +1200,7 @@ int smu_v11_0_set_fan_speed_rpm(struct smu_context *smu,
->         uint32_t crystal_clock_freq = 2500;
->         uint32_t tach_period;
->
-> -       if (speed == 0)
-> +       if (!speed || speed > UINT_MAX/8)
->                 return -EINVAL;
->         /*
->          * To prevent from possible overheat, some ASICs may have requirement
-> --
-> 2.43.0
->
+This patch set convert the wireguard selftest to nftables, as iptables is
+deparated and nftables is the default framework of most releases.
 
-Hi Alex.
+v6: fix typo in patch 1/2. Update the description (Phil Sutter)
+v5: remove the counter in nft rules and link nft statically (Jason A. Donenfeld)
+v4: no update, just re-send
+v3: drop iptables directly (Jason A. Donenfeld)
+    Also convert to using nft for qemu testing (Jason A. Donenfeld)
+v2: use one nft table for testing (Phil Sutter)
 
-The patch 'drm/amd/pm/smu11: Prevent division by zero' was sent 
-separately, not part of the patch series, maybe that's why it wasn't
-accepted. Should I resend it?
+Hangbin Liu (2):
+  wireguard: selftests: convert iptables to nft
+  wireguard: selftests: update to using nft for qemu test
 
-Regards, Denis.
+ tools/testing/selftests/wireguard/netns.sh    | 29 +++++++++------
+ .../testing/selftests/wireguard/qemu/Makefile | 36 ++++++++++++++-----
+ .../selftests/wireguard/qemu/kernel.config    |  7 ++--
+ 3 files changed, 49 insertions(+), 23 deletions(-)
+
+-- 
+2.46.0
 
 
