@@ -1,124 +1,107 @@
-Return-Path: <linux-kernel+bounces-592983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D94FDA7F397
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:27:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 137F2A7F37F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B8581899416
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 04:27:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED5E73AF977
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 04:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3844225F7B6;
-	Tue,  8 Apr 2025 04:26:43 +0000 (UTC)
-Received: from sxb1plsmtpa01-11.prod.sxb1.secureserver.net (sxb1plsmtpa01-11.prod.sxb1.secureserver.net [188.121.53.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3920B204599;
+	Tue,  8 Apr 2025 04:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="OKTDF4+E"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8517124C09B
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 04:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635E4198E91;
+	Tue,  8 Apr 2025 04:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744086402; cv=none; b=DsPPuyCDhz+Pb9i5ke2DTPFilCOfCtv5nqT95sSo/SIrQWZwjw5CugSb/sog/r9BNOaIUIW00GbZZW/r29vnaVNyT62UJPDDvop9t06gMuNtolm3wfDdfwQA3+imvRW7qrKv9CDg0+ko4uo4H5b6Kfg/l4ZFReCUQic30lR9YkQ=
+	t=1744086060; cv=none; b=FJlQv7/u7D7vhLlQ9Ip34QxySG5+zqv+9ddi8IpJ+zWooudFQA3xLAzNwcDwrp2sQBLm1Wsw+yVNQ0wYxf8WA6YSwRFKzRcjCH45L2TDPWYR9l5FdMqOnfy5IpVlf1W4CRsGQ5B/6PayzENEczwWgjwVZgpG1rbEtgNKJwI5xyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744086402; c=relaxed/simple;
-	bh=UzuV/AjhpXBleB5NLOztvE7OS8zrhXG6Lxp8DshM15U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vw3XhxYuJZOP7osMtbTs5D2zjBAfwWaCQoWKsAuY5y5q+CinIoieb7ZJhM4ZwQFwaPUAjZJYrimC80ByQ8BFU+XSMZf2wjKr3QTXifAQZGDl4aULwdzjsF+rugPo4v5DBf1IgEJNd7JsbP36nTuwJnW0fIexULfuq25tIw1/LxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
-Received: from [192.168.178.95] ([82.69.79.175])
-	by :SMTPAUTH: with ESMTPSA
-	id 20QJuoRE2oGJS20QLu2IJY; Mon, 07 Apr 2025 21:18:58 -0700
-X-CMAE-Analysis: v=2.4 cv=A9SWP7WG c=1 sm=1 tr=0 ts=67f4a3b3
- a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
- a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8 a=TieKIuElshfLa7FaqJMA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk
-Message-ID: <129d4f39-6922-44e9-8b1c-6455ee564dda@squashfs.org.uk>
-Date: Tue, 8 Apr 2025 05:18:05 +0100
+	s=arc-20240116; t=1744086060; c=relaxed/simple;
+	bh=9fYREZVOv16eUdYuo9SYeOGtuRe15RCrcThGhosK4zE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pv5V4SYN0+FPYJTFJvSV6WWZtJvez/flh+XsN01g8711GaWdZqjJm4gZHVPqK3vg0vt3eUvYhaQ2K/fRIFy/THGzd9wRPKmcUDb/dA8fecEyBEKf8y7PxtkeBdPte0FeSQYohidG9UpDKun4UDf/pJZ8MOSm398Eve/JYSCYhMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=OKTDF4+E; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=f/DoFNRuiiVAkwV02tS1l/zFMuQjpgmiB/Gter90zGI=; b=OKTDF4+Efe4g+aPEIyC/KLv4Nw
+	Fi+R60MnSn4xlGz8gKguCFkX4SSGRyT/gj/df+JWet8duRcWVA974LmmTGwccMJKZ2gb5DcqEB+/a
+	j4r6Y12EcCVBw7BXh2eWJHLyMPN2EaWXbbvhL4R2f3LE0Q7Rf01PO4V924C8rk5CKqVt2/5HO9tb+
+	KOeBL48wE+dKScZeGtncQ+X2kKh/kePMqu1+FLsdGyVxKLamqTb2vZ6LwV3OKgjVxdU4dFVJr1bjq
+	MSlzH1m1hbS5VTehq5kePO5kVvTA+Gf02DDNk9XTct7Q+iHF7RvLrWbh//63REJdqAlGnwGTEUFuO
+	8gmO9SeQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1u20Ru-00Dlm8-25;
+	Tue, 08 Apr 2025 12:20:35 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 08 Apr 2025 12:20:34 +0800
+Date: Tue, 8 Apr 2025 12:20:34 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Sourabh Jain <sourabhjain@linux.ibm.com>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+	linux-crypto@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Subject: [PATCH] crypto: scomp - Fix null-pointer deref when freeing streams
+Message-ID: <Z_SkEnIWk8E0mLJf@gondor.apana.org.au>
+References: <3c239727-6c46-45c2-80e7-d6853427f72c@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [squashfs?] UBSAN: shift-out-of-bounds in
- squashfs_bio_read
-To: syzbot+65761fc25a137b9c8c6e@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org, squashfs-devel-owner@lists.sourceforge.net,
- squashfs-devel@lists.sourceforge.net, syzkaller-bugs@googlegroups.com,
- phillip.lougher@gmail.com, Luis Chamberlain <mcgrof@kernel.org>
-References: <67f1f6f6.050a0220.0a13.025a.GAE@google.com>
- <2a13ea1c-08df-4807-83d4-241831b7a2ec@squashfs.org.uk>
-Content-Language: en-US
-From: Phillip Lougher <phillip@squashfs.org.uk>
-In-Reply-To: <2a13ea1c-08df-4807-83d4-241831b7a2ec@squashfs.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfGE8bUnGjcLYUEYUFnE1digrUscMj8xkIdWUdEFjNBEikMOPckN6nMJ0AO0Ls+42hZzAfWoRygr2tbJAsWpCWsIHA5iks5fG9L6RBHZSUohcJUnaaArh
- T19VmDmx20WB93dE2LUc2vDBqz4I6+37hBV81ZUir8RX6K3Z2nKEdLfGcXuydbtT3xeqGnSGyWep1yJZQaYBi6E6eKQNtu6+ogTg1BoDOts6UQLlVZctMhWq
- lvIak6Vlk9Cezu4xywEpa+/t7XkCRCnAVYe5weqx9X+wpQ7BDThGFfAmN75jCirogNaZq637suM5DKEI7YtnxmXm0ueJkP88un9m/9cIO3KhTOW4t35scjXS
- 1urR6u+LWhftN3Ewb2nwJzqFdarDAbhuMUCgsrvP+NXJT/4BYP8TeE8p7zh2W5x07DEyO5tWxo9SHHSk6cY8SSQtpAtS49cL9opv2AykPYxyNshuhobu9wpT
- p03vISfFa0HXP6cnrshr0/7W5K4oArbF5N0IEw==
+In-Reply-To: <3c239727-6c46-45c2-80e7-d6853427f72c@linux.ibm.com>
 
-On 07/04/2025 06:30, Phillip Lougher wrote:
+On Mon, Apr 07, 2025 at 11:49:27PM +0530, Sourabh Jain wrote:
+>
+> [   90.892796] NIP [c000000000845eb0] scomp_free_streams+0x6c/0xe8
+> [   90.892803] LR [c000000000845ee0] scomp_free_streams+0x9c/0xe8
 
-> Digging deeper into the reproducer, it turns out the reproducer is
-> forking multiple processes which after mounting the Squashfs filesystem,
-> issues a LOOP_SET_BLOCK_SIZE(r0, 0x4c09, 0x8000) ioctl on loopback
-> device /dev/loop0.Â  Now, if this ioctl occurs at the same time another
-> process is in the process of mounting a Squashfs filesystem on
-> /dev/loop0, the failure occurs.Â Â  The ioctl has to be issued in the
-> early part of squashfs_fill_super() before the superblock has been read.
-> When this happens, the following code in squashfs_fill_super() fails.
-> 
-> ----
-> msblk->devblksize = sb_min_blocksize(sb, SQUASHFS_DEVBLK_SIZE);
-> msblk->devblksize_log2 = ffz(~msblk->devblksize);
-> ----
-> 
-> sb_min_blocksize() returns 0, which means msblk->devblksize is set to 0.
+Looks like I never tested 842 which curiously does not have a
+self-test.  Please try this patch:
 
-CC'ing Luis Chamberlain <mcgrof@kernel.org>
+---8<---
+As the scomp streams are freed when an algorithm is unregistered,
+it is possible that the algorithm has never been used at all (e.g.,
+an algorithm that does not have a self-test).  So test whether the
+streams exist before freeing them.
 
-Doing some more digging, what has changed to cause this failure, is a
-post 6.14 change in the behaviour of the LOOP_SET_BLOCK_SIZE ioctl.
+Reported-by: Sourabh Jain <sourabhjain@linux.ibm.com>
+Fixes: 3d72ad46a23a ("crypto: acomp - Move stream management into scomp layer")
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-Doing a git bisect, prior to commit 47dd67532303803a87f43195e088b3b4bcf0454d
-Author: Luis Chamberlain <mcgrof@kernel.org>
-block/bdev: lift block size restrictions to 64k
-
-Attempts to set the loopback device block size to 0x8000 (32768) failed.
-After the above commit, such attempts succeed.  Having done so, this
-causes the above sb_min_blocksize(sb, SQUASHFS_DEVBLK_SIZE) to fail.
-
-This may be an unanticipated side effect of the change.
-
-Checking the kernel code six filesystems fail to check the return
-result of sb_min_blocksize (isofs, gfs2, exfat, fat, squashfs and xfs),
-and so will be affected by this change.
-
-But notwithstanding the above, the failure to check the return result of
-sb_min_blocksize() in Squashfs is a bug, and I will send a patch that
-fixes this and the syzbot exploit.  Hopefully this will be tomorrow.
-
-Phillip
-
-> 
-> As a result, ffz(~msblk->devblksize) returns 64, and
-> msblk->devblksize_log2 is set to 64.
-> 
-> This subsequently causes the
-> 
-> UBSAN: shift-out-of-bounds in fs/squashfs/block.c:195:36
-> shift exponent 64 is too large for 64-bit type 'u64' (aka 'unsigned long long')
-> 
-> The fix is to check for a 0 return by sb_min_blocksize().
-> 
-> I'll send a patch tomorrow.
-> 
-> Phillip
+diff --git a/crypto/scompress.c b/crypto/scompress.c
+index d435d4b24469..f67ce38d203d 100644
+--- a/crypto/scompress.c
++++ b/crypto/scompress.c
+@@ -111,6 +111,9 @@ static void scomp_free_streams(struct scomp_alg *alg)
+ 	struct crypto_acomp_stream __percpu *stream = alg->stream;
+ 	int i;
+ 
++	if (!stream)
++		return;
++
+ 	for_each_possible_cpu(i) {
+ 		struct crypto_acomp_stream *ps = per_cpu_ptr(stream, i);
+ 
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
