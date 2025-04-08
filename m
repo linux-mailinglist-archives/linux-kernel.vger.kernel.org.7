@@ -1,85 +1,113 @@
-Return-Path: <linux-kernel+bounces-593834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01A7EA803DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:03:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BEA8A803DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76333188FA1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:59:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 264F67AA1A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C882690FB;
-	Tue,  8 Apr 2025 11:58:40 +0000 (UTC)
-Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EFF26A0C4;
+	Tue,  8 Apr 2025 12:01:02 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06BC264FA0
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 11:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37275263F3B
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 12:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744113519; cv=none; b=c4Iq//hg5x2EMUod44Z274AoXOBCFrxD/F2ZB6FLGguhjBzvFlFFdiB/6AVv5JCCDXYj9E3j34INqNhp2okVj1ne+89FR7Z5Zi/FxJwgcLPj6OcoKLwOpi807bR/R50MlmiTLp+IhIV+AUbvXcjV6buGn2GQ7sjSwAgRife/Fv4=
+	t=1744113662; cv=none; b=BOwVqC96q6hkyOrUGVqss7fTIDdN0xBIt95PpyYeUoR609kCjbLw0jGGbjTgNNKrChXezZkSvNj59i5jHbe5ZW8YronqI/vS5zZz/leT5reyQKU1YpxFZ1MD//7FxLvawCguAMFCvF0G5m0LP6swIBRSrmcFrQweENVB5z7uxKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744113519; c=relaxed/simple;
-	bh=f6OoNKVv9TyXDe47B1Z1BsUp/mVa+6MG255CEPyvQb8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SibXNHQiyQKXpR6LTK4+pkkZDH7NLx4EmBCRiozxUMY+4CEje0PqWd0V5UkW1+8Bd/Jf4z6HOzZHi91rwLrmwUR7GhAV/PpNK/xfqMN3sbX17SCYUmP2/9H05t5T29MajW3PkoW4FMD755HbqfHOhVdsmTDZF+fUN1ZDmawEAA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 8FCBB298566;
-	Tue,  8 Apr 2025 13:58:34 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id liuurCCdGSTC; Tue,  8 Apr 2025 13:58:34 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 3C51E29858E;
-	Tue,  8 Apr 2025 13:58:34 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id DJPaWBNLH8jq; Tue,  8 Apr 2025 13:58:34 +0200 (CEST)
-Received: from anvil.corp.sigma-star.at (unknown [82.150.214.1])
-	by lithops.sigma-star.at (Postfix) with ESMTPSA id E8F0C298566;
-	Tue,  8 Apr 2025 13:58:33 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org,
-	linux@weissschuh.net,
-	Richard Weinberger <richard@nod.at>
-Subject: [PATCH] Docs/ABI: Fix sysfs-kernel-address_bits path
-Date: Tue,  8 Apr 2025 13:58:21 +0200
-Message-ID: <20250408115823.1358597-1-richard@nod.at>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1744113662; c=relaxed/simple;
+	bh=WCYcLaPyaKFiwHds0BySkvFmWYNWbayrnTdk6SHycB0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JnHe9QvE53OHbf++4IOj4hO1R3bKhMXBa3mCTia3C3DlKwtInCnb8jIGamu8aCLx+K2qlecxWjha/gCMuwQDVExexzJu/ARq49w7SSWMUZc2+WKiWoa3+Q2m1Xu3AY5vbQtFxohosyQVmbWzX8/XMmj1WcfiyUUVx4lFnfIhjBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1u27d0-0000jo-Eg; Tue, 08 Apr 2025 14:00:30 +0200
+Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1u27d0-003vPz-09;
+	Tue, 08 Apr 2025 14:00:30 +0200
+Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
+	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1u27cz-00GJS1-33;
+	Tue, 08 Apr 2025 14:00:29 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [PATCH 0/3] clk: add support for TI CDCE6214
+Date: Tue, 08 Apr 2025 14:00:21 +0200
+Message-Id: <20250408-clk-cdce6214-v1-0-bd4e7092a91f@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANUP9WcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDEwML3eScbN3klORUMyNDE12DZHMTAxPjlGQjM3MloJaCotS0zAqwcdG
+ xtbUAAE0jal4AAAA=
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, kernel@pengutronix.de, 
+ =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>, 
+ Sascha Hauer <s.hauer@pengutronix.de>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744113629; l=1148;
+ i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
+ bh=WCYcLaPyaKFiwHds0BySkvFmWYNWbayrnTdk6SHycB0=;
+ b=Zje8+eOrxhjpIVlEv8nwHadcM1kKFZpWgwF1ZgMzi44aVx7s92t0kJTdrNW4Ggoz87xV8Gs4H
+ 7HMHsL1bGXPBgEf02f3UHwouEccVPEZOfh8a1yax5zBfVFQMsvJxr4C
+X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
+ pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.hauer@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-It's address_bits, not address_bit.
+The CDCE6214 is a Ultra-Low Power Clock Generator With One PLL, Four
+Differential Outputs, Two Inputs, and Internal EEPROM.
 
-Fixes: 00142bfd5a91 ("kernels/ksysfs.c: export kernel address bits")
-Signed-off-by: Richard Weinberger <richard@nod.at>
+This series adds a common clk framework driver for this chip along with
+the dt-bindings document and a small fix needed for the common clk
+framework.
+
+Sascha
+
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
- Documentation/ABI/testing/sysfs-kernel-address_bits | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sascha Hauer (3):
+      clk: make determine_rate optional for non reparenting clocks
+      clk: add TI CDCE6214 clock driver
+      dt-bindings: clock: add TI CDCE6214 binding
 
-diff --git a/Documentation/ABI/testing/sysfs-kernel-address_bits b/Docume=
-ntation/ABI/testing/sysfs-kernel-address_bits
-index 5d09ff84d4d6..3b72e48086aa 100644
---- a/Documentation/ABI/testing/sysfs-kernel-address_bits
-+++ b/Documentation/ABI/testing/sysfs-kernel-address_bits
-@@ -1,4 +1,4 @@
--What:		/sys/kernel/address_bit
-+What:		/sys/kernel/address_bits
- Date:		May 2023
- KernelVersion:	6.3
- Contact:	Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
---=20
-2.48.1
+ .../devicetree/bindings/clock/ti,cdce6214.yaml     |  157 +++
+ drivers/clk/Kconfig                                |    7 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-cdce6214.c                         | 1105 ++++++++++++++++++++
+ drivers/clk/clk.c                                  |    3 +-
+ include/dt-bindings/clock/ti,cdce6214.h            |   24 +
+ 6 files changed, 1296 insertions(+), 1 deletion(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250408-clk-cdce6214-0c74043dc267
+
+Best regards,
+-- 
+Sascha Hauer <s.hauer@pengutronix.de>
 
 
