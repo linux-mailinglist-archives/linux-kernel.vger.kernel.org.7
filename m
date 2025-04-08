@@ -1,474 +1,485 @@
-Return-Path: <linux-kernel+bounces-594554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52198A813CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:36:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38C1FA813B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F35C173359
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:34:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0684F7B620F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFB12356C2;
-	Tue,  8 Apr 2025 17:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD6322F3BD;
+	Tue,  8 Apr 2025 17:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="pzUQsvSd"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dd8CEOxs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F79F288D2;
-	Tue,  8 Apr 2025 17:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD0D80C02
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 17:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744133647; cv=none; b=hqj5EHaF0w77RxM+dne7vzN/VEyBh7xQr7HEX27Tojk07/n4D2Zthmz4D0TVfp4fyukwJ8LZxwkovK1wnmDOhGZFLhA32Dod3dx6kkOodSTLZ+3wye9ACPscAY/509I7J4pwEMLjVpa4reZ2IXjjfIDLu1gWq1FJFRCyIu1kdN8=
+	t=1744133468; cv=none; b=Qib1FWm5Xs9AVrOdvnH7isF9hqH0uTadJf8PPcpSVlLd+8D1UGRq03Dur/+ChEo/qPNTdrLqww1w7Mq1YlE2JEtYwaDN2iqHNGkN+s79ReFNTMwngqR1XqzuwYP3tFH+ptaeGqX0yUHS2+QYYQ8+LKsXEjyAteR8bMW5BAQ0yyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744133647; c=relaxed/simple;
-	bh=2R554L6EDNyUU8r0Z3AWubbSSDtLSKzNfO83hd9FtYw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OhVyuM1EkWT+V5wAPf5uSNqvNVNzem+FdNpYFwVEXI2NWyWBRp6nkUoapBpZdN5bURwtawyoxJURqz7PmU5IjxSoH4o5VvjrOcDTzGKtXI55z5ng3gxQQL33cjl9kDV3oqpQJ6UuPljE6xlu3qrNXVCTcl9/yNKYC1w039vzOnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=pzUQsvSd; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 538FcJde010582;
-	Tue, 8 Apr 2025 19:33:31 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=BSpgxXLMANXcW8laCmKazh
-	3ekOKF8ilrQOxJBNSQTdM=; b=pzUQsvSdd1H325dJLtBv52epiz3ayfXvbitZoS
-	03SQway4Ao8Hb3N+Jl+vazZMZNF4VG8ebAaaa8edBmMhYrV4PSKqNIzsKXjZ6S7o
-	39VSqR+v6wqnZ4sNbMSULN403M4C/ON5hZrkuyIeGN8EKxbmfYk9WeX5OS6qaR8p
-	M2fBfEtWIM50doYCxIRNWh2RNAvS5oJLs01A03SnoJt66jZmW7bcS2Y7tAs5ntTf
-	ehSxb5JIWiRjkXFQcR7i9C/dqqEbKip4ow8ZZxLRIjj+uOZOFI5qP8VkVIy1Yevq
-	kmC9yxvj3X0xAmRis4Bixv12l/Zyod3G5xMtMOVQ1HhYawCQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45ue344775-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Apr 2025 19:33:31 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 41E1D40047;
-	Tue,  8 Apr 2025 19:32:21 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 16CB196AD38;
-	Tue,  8 Apr 2025 19:31:42 +0200 (CEST)
-Received: from localhost (10.252.11.77) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 8 Apr
- 2025 19:31:41 +0200
-From: Olivier Moysan <olivier.moysan@foss.st.com>
-To: Jonathan Cameron <jic23@kernel.org>,
-        David Lechner
-	<dlechner@baylibre.com>,
-        =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC: Olivier Moysan <olivier.moysan@foss.st.com>,
-        Fabrice Gasnier
-	<fabrice.gasnier@foss.st.com>,
-        <linux-iio@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3] iio: adc: stm32: add oversampling support
-Date: Tue, 8 Apr 2025 19:30:53 +0200
-Message-ID: <20250408173054.1567523-1-olivier.moysan@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1744133468; c=relaxed/simple;
+	bh=D7b7VJE/qK3nUJN8leFt4GMH3HjPtviAUkTKo43KNv4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rgkyBEKQFgPlH0JDmqKSZGhXtiYGoIyckh8M++GQX9DahqNVNSF9QQml+1d15kn2ovAzUj56DfrQEEvS5VYc1F2I9n572Wsvl1JmmmYjtErOrM+38w9SBz0+a0oAFUeYLSc9X3PIbKPVeVcfXe7U6Eqm1mrGQqJJ1nAXX3pa6YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dd8CEOxs; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744133463;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=dzPxLIZBoNlt2Y90PQFKInDcbJuvQW9tSEfr6MFFaVo=;
+	b=dd8CEOxsSYRmpRwyxZDhE8HqDZc+DeiL+m45Rai8OFXOWngUGm+jO91AU55ADPdOTjEIBT
+	cso8HYsUXWD43O55wUyJqUQKkAfSjZvwYzSpzk5oc7owTNk1gqV0hZYoGw/dyJtklhqrDF
+	du6Ly2ps//dwOz4a9eY4liqbjB/bDS0=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-602-TD6gpLfVOYuUdYS8GacWTQ-1; Tue, 08 Apr 2025 13:31:02 -0400
+X-MC-Unique: TD6gpLfVOYuUdYS8GacWTQ-1
+X-Mimecast-MFC-AGG-ID: TD6gpLfVOYuUdYS8GacWTQ_1744133461
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ac2a113c5d8so464808266b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 10:31:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744133461; x=1744738261;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dzPxLIZBoNlt2Y90PQFKInDcbJuvQW9tSEfr6MFFaVo=;
+        b=i8kun1+Bq1QWFaEZBLuKKPKmmUDd9atAAulbbr9FOK22RI47ioQi39mA76TpbG1oK7
+         rqjlN7CcHvBX6XgOC61NN2sDs3GLOXDvWQz2ZEroxkhEY+gQitl3F2Np/4hrgHR7nor6
+         NdpuiJP8F1WrAICm4UKm6iXPtCizSsvfd1J6NkTpP5dWdGPbiL8+yA0zDWeFsjfCwSt5
+         bmsp8lGKEcXHwVTeUAhUovHx6PYgWykaqIz55d5hf6tnu6UbyO80GSkAHJgrAWpaCyU+
+         ZiOXW9em3F50VRn7KXtaRW3UJDLp5RSkzm4EV/1uMLr3csv+xHwCYDzenXYYqmmml7qv
+         rsUw==
+X-Forwarded-Encrypted: i=1; AJvYcCViiMB6PigzpT243vVg/0TG4plAH0/rQYXSzKJODkUobuXE66+QbSKgeOHl8kCjxViwMJYDFvtK4g1D1Bk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb/R6tLWqzRLuHTrOqtMAhBwgG2it4qf+ZvTV+aCwEKACFNx8d
+	Fd5AdZVo1nqVjJGbR3AjxlVt36NWkjhStiUpaj0/UYmK7bvTYN6jk7Rgv5WMdNyWSzrXH1PPUe/
+	8614QQyM0vel7K2JzQY6EYZHZdLT/4J6Gr7U2Wd4ZmxWcJHHzbRcMj8CzOsjX6A==
+X-Gm-Gg: ASbGncuV3uwiWt9JLg+5PP1QOAObD3oow7DvwmDp9vvzBZRGs7iX2J7zN2O6uw+nXfo
+	eG5GZSoKzK8r+Spt0l/5hKZoCP1RYQJ9D34WiwD74ndQJsVegJ0E9XPz8tBr++eaZHoBphXKkzk
+	TH+nMhc6zMMZSz6pSlQWgDO/M8y5CU+tDJ7jJX4W+j2Lnz+fG+ApfcfF+JoDk8G+VexIcu5HRTZ
+	EB4TYhrdEBzlewHu8LfFKsz9l+ac8vgMLiyb5h+tMzCDtAyuQ9XAuj/kaF+y8CJq5/YxB0ienlP
+	nvi0+WJwZFXuhwEIgb6a
+X-Received: by 2002:a17:906:c155:b0:ac3:48e4:f8bc with SMTP id a640c23a62f3a-aca9b6ef9e0mr6562566b.48.1744133461170;
+        Tue, 08 Apr 2025 10:31:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEuuborAwGa6Z0LeZj2bXLnL5CvSBi0lObSi6zOlGHSw3B2yhYf8VKtjtBWf8HUqWLTb74Vsg==
+X-Received: by 2002:a17:906:c155:b0:ac3:48e4:f8bc with SMTP id a640c23a62f3a-aca9b6ef9e0mr6558266b.48.1744133460649;
+        Tue, 08 Apr 2025 10:31:00 -0700 (PDT)
+Received: from [192.168.10.48] ([151.49.197.100])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-ac7c013f29csm943856466b.113.2025.04.08.10.30.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Apr 2025 10:31:00 -0700 (PDT)
+Message-ID: <cf4d9b81-c1ab-40a6-8c8c-36ad36b9be63@redhat.com>
+Date: Tue, 8 Apr 2025 19:30:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-08_07,2025-04-08_04,2024-11-22_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 33/67] KVM: x86: Dedup AVIC vs. PI code for identifying
+ target vCPU
+To: Sean Christopherson <seanjc@google.com>, Joerg Roedel <joro@8bytes.org>,
+ David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>
+Cc: kvm@vger.kernel.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Maxim Levitsky <mlevitsk@redhat.com>,
+ Joao Martins <joao.m.martins@oracle.com>, David Matlack <dmatlack@google.com>
+References: <20250404193923.1413163-1-seanjc@google.com>
+ <20250404193923.1413163-34-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20250404193923.1413163-34-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add oversampling support for STM32H7, STM32MP15 & STM32MP13.
-STM32F4 ADC has no oversampling feature.
+On 4/4/25 21:38, Sean Christopherson wrote:
+> Hoist the logic for identifying the target vCPU for a posted interrupt
+> into common x86.  The code is functionally identical between Intel and
+> AMD.
+> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>   arch/x86/include/asm/kvm_host.h |  3 +-
+>   arch/x86/kvm/svm/avic.c         | 83 ++++++++-------------------------
+>   arch/x86/kvm/svm/svm.h          |  3 +-
+>   arch/x86/kvm/vmx/posted_intr.c  | 56 ++++++----------------
+>   arch/x86/kvm/vmx/posted_intr.h  |  3 +-
+>   arch/x86/kvm/x86.c              | 46 +++++++++++++++---
 
-The current support of the oversampling feature aims at increasing
-the data SNR, without changing the data resolution.
-As the oversampling by itself increases data resolution,
-a right shift is applied to keep initial resolution.
-Only the oversampling ratio corresponding to a power of two are
-supported here, to get a direct link between right shift and
-oversampling ratio. (2exp(n) ratio <=> n right shift)
+Please use irq.c, since (for once) there is a file other than x86.c that 
+can be used.
 
-The oversampling ratio is shared by all channels, whatever channel type.
-(e.g. single ended or differential).
+Bonus points for merging irq_comm.c into irq.c (IIRC irq_comm.c was 
+"common" between ia64 and x86 :)).
 
-Oversampling can be configured using IIO ABI:
-- oversampling_ratio_available
-- oversampling_ratio
+Paolo
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
-
----
-Changes in v2:
-- Remove useless header files
-- Use FIELD_PREP macro
-- Reorder stm32_adc_write_raw() function
-
-Changes in v3:
-- Update commit message
-- Replace direct_mode API
-- Add some comments
----
- drivers/iio/adc/stm32-adc-core.h |  14 +++
- drivers/iio/adc/stm32-adc.c      | 151 +++++++++++++++++++++++++++++++
- 2 files changed, 165 insertions(+)
-
-diff --git a/drivers/iio/adc/stm32-adc-core.h b/drivers/iio/adc/stm32-adc-core.h
-index 73b2c2e91c08..bfd42c5456bf 100644
---- a/drivers/iio/adc/stm32-adc-core.h
-+++ b/drivers/iio/adc/stm32-adc-core.h
-@@ -91,6 +91,7 @@
- #define STM32H7_ADC_IER			0x04
- #define STM32H7_ADC_CR			0x08
- #define STM32H7_ADC_CFGR		0x0C
-+#define STM32H7_ADC_CFGR2		0x10
- #define STM32H7_ADC_SMPR1		0x14
- #define STM32H7_ADC_SMPR2		0x18
- #define STM32H7_ADC_PCSEL		0x1C
-@@ -160,6 +161,13 @@
- #define STM32H7_DMNGT_SHIFT		0
- #define STM32H7_DMNGT_MASK		GENMASK(1, 0)
- 
-+/* STM32H7_ADC_CFGR2 bit fields */
-+#define STM32H7_OVSR_MASK		GENMASK(25, 16) /* Correspond to OSVR field in datasheet */
-+#define STM32H7_OVSR(v)			FIELD_PREP(STM32H7_OVSR_MASK, v)
-+#define STM32H7_OVSS_MASK		GENMASK(8, 5)
-+#define STM32H7_OVSS(v)			FIELD_PREP(STM32H7_OVSS_MASK, v)
-+#define STM32H7_ROVSE			BIT(0)
-+
- enum stm32h7_adc_dmngt {
- 	STM32H7_DMNGT_DR_ONLY,		/* Regular data in DR only */
- 	STM32H7_DMNGT_DMA_ONESHOT,	/* DMA one shot mode */
-@@ -226,6 +234,12 @@ enum stm32h7_adc_dmngt {
- #define STM32MP13_RES_SHIFT		3
- #define STM32MP13_RES_MASK		GENMASK(4, 3)
- 
-+/* STM32MP13_ADC_CFGR2 bit fields */
-+#define STM32MP13_OVSR_MASK		GENMASK(4, 2)
-+#define STM32MP13_OVSR(v)		FIELD_PREP(STM32MP13_OVSR_MASK, v)
-+#define STM32MP13_OVSS_MASK		GENMASK(8, 5)
-+#define STM32MP13_OVSS(v)		FIELD_PREP(STM32MP13_OVSS_MASK, v)
-+
- /* STM32MP13_ADC_DIFSEL - bit fields */
- #define STM32MP13_DIFSEL_MASK		GENMASK(18, 0)
- 
-diff --git a/drivers/iio/adc/stm32-adc.c b/drivers/iio/adc/stm32-adc.c
-index 5dbf5f136768..7ae77c3ee9d9 100644
---- a/drivers/iio/adc/stm32-adc.c
-+++ b/drivers/iio/adc/stm32-adc.c
-@@ -6,6 +6,7 @@
-  * Author: Fabrice Gasnier <fabrice.gasnier@st.com>.
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/debugfs.h>
- #include <linux/delay.h>
-@@ -202,11 +203,13 @@ struct stm32_adc;
-  * @has_boostmode:	boost mode support flag
-  * @has_linearcal:	linear calibration support flag
-  * @has_presel:		channel preselection support flag
-+ * @has_oversampling:	oversampling support flag
-  * @prepare:		optional prepare routine (power-up, enable)
-  * @start_conv:		routine to start conversions
-  * @stop_conv:		routine to stop conversions
-  * @unprepare:		optional unprepare routine (disable, power-down)
-  * @irq_clear:		routine to clear irqs
-+ * @set_ovs:		routine to set oversampling configuration
-  * @smp_cycles:		programmable sampling time (ADC clock cycles)
-  * @ts_int_ch:		pointer to array of internal channels minimum sampling time in ns
-  */
-@@ -219,11 +222,13 @@ struct stm32_adc_cfg {
- 	bool has_boostmode;
- 	bool has_linearcal;
- 	bool has_presel;
-+	bool has_oversampling;
- 	int (*prepare)(struct iio_dev *);
- 	void (*start_conv)(struct iio_dev *, bool dma);
- 	void (*stop_conv)(struct iio_dev *);
- 	void (*unprepare)(struct iio_dev *);
- 	void (*irq_clear)(struct iio_dev *indio_dev, u32 msk);
-+	void (*set_ovs)(struct iio_dev *indio_dev, u32 ovs_idx);
- 	const unsigned int *smp_cycles;
- 	const unsigned int *ts_int_ch;
- };
-@@ -255,6 +260,7 @@ struct stm32_adc_cfg {
-  * @num_diff:		number of differential channels
-  * @int_ch:		internal channel indexes array
-  * @nsmps:		number of channels with optional sample time
-+ * @ovs_idx:		current oversampling ratio index (in oversampling array)
-  */
- struct stm32_adc {
- 	struct stm32_adc_common	*common;
-@@ -282,6 +288,7 @@ struct stm32_adc {
- 	u32			num_diff;
- 	int			int_ch[STM32_ADC_INT_CH_NB];
- 	int			nsmps;
-+	int			ovs_idx;
- };
- 
- struct stm32_adc_diff_channel {
-@@ -293,12 +300,24 @@ struct stm32_adc_diff_channel {
-  * struct stm32_adc_info - stm32 ADC, per instance config data
-  * @max_channels:	Number of channels
-  * @resolutions:	available resolutions
-+ * @oversampling:	available oversampling ratios
-  * @num_res:		number of available resolutions
-+ * @num_ovs:		number of available oversampling ratios
-  */
- struct stm32_adc_info {
- 	int max_channels;
- 	const unsigned int *resolutions;
-+	const unsigned int *oversampling;
- 	const unsigned int num_res;
-+	const unsigned int num_ovs;
-+};
-+
-+static const unsigned int stm32h7_adc_oversampling_avail[] = {
-+	1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024
-+};
-+
-+static const unsigned int stm32mp13_adc_oversampling_avail[] = {
-+	1, 2, 4, 8, 16, 32, 64, 128, 256
- };
- 
- static const unsigned int stm32f4_adc_resolutions[] = {
-@@ -322,14 +341,18 @@ static const unsigned int stm32h7_adc_resolutions[] = {
- static const struct stm32_adc_info stm32h7_adc_info = {
- 	.max_channels = STM32_ADC_CH_MAX,
- 	.resolutions = stm32h7_adc_resolutions,
-+	.oversampling = stm32h7_adc_oversampling_avail,
- 	.num_res = ARRAY_SIZE(stm32h7_adc_resolutions),
-+	.num_ovs = ARRAY_SIZE(stm32h7_adc_oversampling_avail),
- };
- 
- /* stm32mp13 can have up to 19 channels */
- static const struct stm32_adc_info stm32mp13_adc_info = {
- 	.max_channels = 19,
- 	.resolutions = stm32f4_adc_resolutions,
-+	.oversampling = stm32mp13_adc_oversampling_avail,
- 	.num_res = ARRAY_SIZE(stm32f4_adc_resolutions),
-+	.num_ovs = ARRAY_SIZE(stm32mp13_adc_oversampling_avail),
- };
- 
- /*
-@@ -889,6 +912,56 @@ static void stm32mp13_adc_start_conv(struct iio_dev *indio_dev, bool dma)
- 	stm32_adc_set_bits(adc, STM32H7_ADC_CR, STM32H7_ADSTART);
- }
- 
-+static void stm32h7_adc_set_ovs(struct iio_dev *indio_dev, u32 ovs_idx)
-+{
-+	struct stm32_adc *adc = iio_priv(indio_dev);
-+	u32 ovsr_bits, bits, msk;
-+
-+	msk = STM32H7_ROVSE | STM32H7_OVSR_MASK | STM32H7_OVSS_MASK;
-+	stm32_adc_clr_bits(adc, STM32H7_ADC_CFGR2, msk);
-+
-+	if (!ovs_idx)
-+		return;
-+
-+	/*
-+	 * Only the oversampling ratios corresponding to 2*exp(ovs_idx) are exposed in sysfs.
-+	 * Oversampling ratios [2,3,...,1024] are mapped on OVSR register values [1,2,...,1023].
-+	 * OVSR = 2 exp(ovs_idx) - 1
-+	 * These ratio increase the resolution by ovs_idx bits. Apply a right shift to keep initial
-+	 * resolution given by "assigned-resolution-bits" property.
-+	 * OVSS = ovs_idx
-+	 */
-+	ovsr_bits = (1 << ovs_idx) - 1;
-+	bits = STM32H7_ROVSE | STM32H7_OVSS(ovs_idx) | STM32H7_OVSR(ovsr_bits);
-+
-+	stm32_adc_set_bits(adc, STM32H7_ADC_CFGR2, bits & msk);
-+}
-+
-+static void stm32mp13_adc_set_ovs(struct iio_dev *indio_dev, u32 ovs_idx)
-+{
-+	struct stm32_adc *adc = iio_priv(indio_dev);
-+	u32 bits, msk;
-+
-+	msk = STM32H7_ROVSE | STM32MP13_OVSR_MASK | STM32MP13_OVSS_MASK;
-+	stm32_adc_clr_bits(adc, STM32H7_ADC_CFGR2, msk);
-+
-+	if (!ovs_idx)
-+		return;
-+
-+	/*
-+	 * The oversampling ratios [2,4,8,..,256] are mapped on OVSR register values [0,1,...,7].
-+	 * OVSR = ovs_idx - 1
-+	 * These ratio increase the resolution by ovs_idx bits. Apply a right shift to keep initial
-+	 * resolution given by "assigned-resolution-bits" property.
-+	 * OVSS = ovs_idx
-+	 */
-+	bits = STM32H7_ROVSE | STM32MP13_OVSS(ovs_idx);
-+	if (ovs_idx - 1)
-+		bits |= STM32MP13_OVSR(ovs_idx - 1);
-+
-+	stm32_adc_set_bits(adc, STM32H7_ADC_CFGR2, bits & msk);
-+}
-+
- static int stm32h7_adc_exit_pwr_down(struct iio_dev *indio_dev)
- {
- 	struct stm32_adc *adc = iio_priv(indio_dev);
-@@ -1461,6 +1534,68 @@ static int stm32_adc_single_conv(struct iio_dev *indio_dev,
- 	return ret;
- }
- 
-+static int stm32_adc_write_raw(struct iio_dev *indio_dev,
-+			       struct iio_chan_spec const *chan,
-+			       int val, int val2, long mask)
-+{
-+	struct stm32_adc *adc = iio_priv(indio_dev);
-+	struct device *dev = indio_dev->dev.parent;
-+	int nb = adc->cfg->adc_info->num_ovs;
-+	u32 idx;
-+	int ret;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
-+		if (val2)
-+			return -EINVAL;
-+
-+		for (idx = 0; idx < nb; idx++)
-+			if (adc->cfg->adc_info->oversampling[idx] == val)
-+				break;
-+
-+		if (idx >= nb)
-+			return -EINVAL;
-+
-+		if (!iio_device_claim_direct(indio_dev))
-+			return -EBUSY;
-+
-+		ret = pm_runtime_resume_and_get(dev);
-+		if (ret < 0)
-+			goto err;
-+
-+		adc->cfg->set_ovs(indio_dev, idx);
-+
-+		pm_runtime_mark_last_busy(dev);
-+		pm_runtime_put_autosuspend(dev);
-+
-+		adc->ovs_idx = idx;
-+
-+err:
-+		iio_device_release_direct(indio_dev);
-+
-+		return ret;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int stm32_adc_read_avail(struct iio_dev *indio_dev,
-+				struct iio_chan_spec const *chan,
-+				const int **vals, int *type, int *length, long m)
-+{
-+	struct stm32_adc *adc = iio_priv(indio_dev);
-+
-+	switch (m) {
-+	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
-+		*type = IIO_VAL_INT;
-+		*length = adc->cfg->adc_info->num_ovs;
-+		*vals = adc->cfg->adc_info->oversampling;
-+		return IIO_AVAIL_LIST;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
- static int stm32_adc_read_raw(struct iio_dev *indio_dev,
- 			      struct iio_chan_spec const *chan,
- 			      int *val, int *val2, long mask)
-@@ -1502,6 +1637,10 @@ static int stm32_adc_read_raw(struct iio_dev *indio_dev,
- 			*val = 0;
- 		return IIO_VAL_INT;
- 
-+	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
-+		*val = adc->cfg->adc_info->oversampling[adc->ovs_idx];
-+		return IIO_VAL_INT;
-+
- 	default:
- 		return -EINVAL;
- 	}
-@@ -1678,6 +1817,8 @@ static int stm32_adc_debugfs_reg_access(struct iio_dev *indio_dev,
- 
- static const struct iio_info stm32_adc_iio_info = {
- 	.read_raw = stm32_adc_read_raw,
-+	.write_raw = stm32_adc_write_raw,
-+	.read_avail = stm32_adc_read_avail,
- 	.validate_trigger = stm32_adc_validate_trigger,
- 	.hwfifo_set_watermark = stm32_adc_set_watermark,
- 	.update_scan_mode = stm32_adc_update_scan_mode,
-@@ -1971,6 +2112,10 @@ static void stm32_adc_chan_init_one(struct iio_dev *indio_dev,
- 		chan->info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
- 	chan->info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |
- 					 BIT(IIO_CHAN_INFO_OFFSET);
-+	if (adc->cfg->has_oversampling) {
-+		chan->info_mask_shared_by_all |= BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
-+		chan->info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
-+	}
- 	chan->scan_type.sign = 'u';
- 	chan->scan_type.realbits = adc->cfg->adc_info->resolutions[adc->res];
- 	chan->scan_type.storagebits = 16;
-@@ -2587,6 +2732,7 @@ static const struct stm32_adc_cfg stm32h7_adc_cfg = {
- 	.has_boostmode = true,
- 	.has_linearcal = true,
- 	.has_presel = true,
-+	.has_oversampling = true,
- 	.start_conv = stm32h7_adc_start_conv,
- 	.stop_conv = stm32h7_adc_stop_conv,
- 	.prepare = stm32h7_adc_prepare,
-@@ -2594,6 +2740,7 @@ static const struct stm32_adc_cfg stm32h7_adc_cfg = {
- 	.smp_cycles = stm32h7_adc_smp_cycles,
- 	.irq_clear = stm32h7_adc_irq_clear,
- 	.ts_int_ch = stm32_adc_min_ts_h7,
-+	.set_ovs = stm32h7_adc_set_ovs,
- };
- 
- static const unsigned int stm32_adc_min_ts_mp1[] = { 100, 100, 100, 4300, 9800 };
-@@ -2607,6 +2754,7 @@ static const struct stm32_adc_cfg stm32mp1_adc_cfg = {
- 	.has_boostmode = true,
- 	.has_linearcal = true,
- 	.has_presel = true,
-+	.has_oversampling = true,
- 	.start_conv = stm32h7_adc_start_conv,
- 	.stop_conv = stm32h7_adc_stop_conv,
- 	.prepare = stm32h7_adc_prepare,
-@@ -2614,6 +2762,7 @@ static const struct stm32_adc_cfg stm32mp1_adc_cfg = {
- 	.smp_cycles = stm32h7_adc_smp_cycles,
- 	.irq_clear = stm32h7_adc_irq_clear,
- 	.ts_int_ch = stm32_adc_min_ts_mp1,
-+	.set_ovs = stm32h7_adc_set_ovs,
- };
- 
- static const unsigned int stm32_adc_min_ts_mp13[] = { 100, 0, 0, 4300, 9800 };
-@@ -2623,6 +2772,7 @@ static const struct stm32_adc_cfg stm32mp13_adc_cfg = {
- 	.regs = &stm32mp13_adc_regspec,
- 	.adc_info = &stm32mp13_adc_info,
- 	.trigs = stm32h7_adc_trigs,
-+	.has_oversampling = true,
- 	.start_conv = stm32mp13_adc_start_conv,
- 	.stop_conv = stm32h7_adc_stop_conv,
- 	.prepare = stm32h7_adc_prepare,
-@@ -2630,6 +2780,7 @@ static const struct stm32_adc_cfg stm32mp13_adc_cfg = {
- 	.smp_cycles = stm32mp13_adc_smp_cycles,
- 	.irq_clear = stm32h7_adc_irq_clear,
- 	.ts_int_ch = stm32_adc_min_ts_mp13,
-+	.set_ovs = stm32mp13_adc_set_ovs,
- };
- 
- static const struct of_device_id stm32_adc_of_match[] = {
--- 
-2.25.1
+>   6 files changed, 81 insertions(+), 113 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 85f45fc5156d..cb98d8d3c6c2 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1838,7 +1838,8 @@ struct kvm_x86_ops {
+>   
+>   	int (*pi_update_irte)(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
+>   			      unsigned int host_irq, uint32_t guest_irq,
+> -			      struct kvm_kernel_irq_routing_entry *new);
+> +			      struct kvm_kernel_irq_routing_entry *new,
+> +			      struct kvm_vcpu *vcpu, u32 vector);
+>   	void (*pi_start_assignment)(struct kvm *kvm);
+>   	void (*apicv_pre_state_restore)(struct kvm_vcpu *vcpu);
+>   	void (*apicv_post_state_restore)(struct kvm_vcpu *vcpu);
+> diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
+> index ea6eae72b941..666f518340a7 100644
+> --- a/arch/x86/kvm/svm/avic.c
+> +++ b/arch/x86/kvm/svm/avic.c
+> @@ -812,52 +812,13 @@ static int svm_ir_list_add(struct vcpu_svm *svm,
+>   	return 0;
+>   }
+>   
+> -/*
+> - * Note:
+> - * The HW cannot support posting multicast/broadcast
+> - * interrupts to a vCPU. So, we still use legacy interrupt
+> - * remapping for these kind of interrupts.
+> - *
+> - * For lowest-priority interrupts, we only support
+> - * those with single CPU as the destination, e.g. user
+> - * configures the interrupts via /proc/irq or uses
+> - * irqbalance to make the interrupts single-CPU.
+> - */
+> -static int
+> -get_pi_vcpu_info(struct kvm *kvm, struct kvm_kernel_irq_routing_entry *e,
+> -		 struct vcpu_data *vcpu_info, struct kvm_vcpu **vcpu)
+> -{
+> -	struct kvm_lapic_irq irq;
+> -	*vcpu = NULL;
+> -
+> -	kvm_set_msi_irq(kvm, e, &irq);
+> -
+> -	if (!kvm_intr_is_single_vcpu(kvm, &irq, vcpu) ||
+> -	    !kvm_irq_is_postable(&irq)) {
+> -		pr_debug("SVM: %s: use legacy intr remap mode for irq %u\n",
+> -			 __func__, irq.vector);
+> -		return -1;
+> -	}
+> -
+> -	pr_debug("SVM: %s: use GA mode for irq %u\n", __func__,
+> -		 irq.vector);
+> -	vcpu_info->vector = irq.vector;
+> -
+> -	return 0;
+> -}
+> -
+>   int avic_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
+>   			unsigned int host_irq, uint32_t guest_irq,
+> -			struct kvm_kernel_irq_routing_entry *new)
+> +			struct kvm_kernel_irq_routing_entry *new,
+> +			struct kvm_vcpu *vcpu, u32 vector)
+>   {
+> -	bool enable_remapped_mode = true;
+> -	struct vcpu_data vcpu_info;
+> -	struct kvm_vcpu *vcpu = NULL;
+>   	int ret = 0;
+>   
+> -	if (!kvm_arch_has_assigned_device(kvm) || !kvm_arch_has_irq_bypass())
+> -		return 0;
+> -
+>   	/*
+>   	 * If the IRQ was affined to a different vCPU, remove the IRTE metadata
+>   	 * from the *previous* vCPU's list.
+> @@ -865,7 +826,7 @@ int avic_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
+>   	svm_ir_list_del(irqfd);
+>   
+>   	pr_debug("SVM: %s: host_irq=%#x, guest_irq=%#x, set=%#x\n",
+> -		 __func__, host_irq, guest_irq, !!new);
+> +		 __func__, host_irq, guest_irq, !!vcpu);
+>   
+>   	/**
+>   	 * Here, we setup with legacy mode in the following cases:
+> @@ -874,23 +835,23 @@ int avic_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
+>   	 * 3. APIC virtualization is disabled for the vcpu.
+>   	 * 4. IRQ has incompatible delivery mode (SMI, INIT, etc)
+>   	 */
+> -	if (new && new && new->type == KVM_IRQ_ROUTING_MSI &&
+> -	    !get_pi_vcpu_info(kvm, new, &vcpu_info, &vcpu) &&
+> -	    kvm_vcpu_apicv_active(vcpu)) {
+> -		struct amd_iommu_pi_data pi;
+> -
+> -		enable_remapped_mode = false;
+> -
+> -		vcpu_info.pi_desc_addr = avic_get_backing_page_address(to_svm(vcpu));
+> -
+> +	if (vcpu && kvm_vcpu_apicv_active(vcpu)) {
+>   		/*
+>   		 * Try to enable guest_mode in IRTE.  Note, the address
+>   		 * of the vCPU's AVIC backing page is passed to the
+>   		 * IOMMU via vcpu_info->pi_desc_addr.
+>   		 */
+> -		pi.ga_tag = AVIC_GATAG(to_kvm_svm(kvm)->avic_vm_id, vcpu->vcpu_id);
+> -		pi.is_guest_mode = true;
+> -		pi.vcpu_data = &vcpu_info;
+> +		struct vcpu_data vcpu_info = {
+> +			.pi_desc_addr = avic_get_backing_page_address(to_svm(vcpu)),
+> +			.vector = vector,
+> +		};
+> +
+> +		struct amd_iommu_pi_data pi = {
+> +			.ga_tag = AVIC_GATAG(to_kvm_svm(kvm)->avic_vm_id, vcpu->vcpu_id),
+> +			.is_guest_mode = true,
+> +			.vcpu_data = &vcpu_info,
+> +		};
+> +
+>   		ret = irq_set_vcpu_affinity(host_irq, &pi);
+>   
+>   		/**
+> @@ -902,12 +863,11 @@ int avic_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
+>   		 */
+>   		if (!ret)
+>   			ret = svm_ir_list_add(to_svm(vcpu), irqfd, &pi);
+> -	}
+>   
+> -	if (!ret && vcpu) {
+> -		trace_kvm_pi_irte_update(host_irq, vcpu->vcpu_id,
+> -					 guest_irq, vcpu_info.vector,
+> -					 vcpu_info.pi_desc_addr, !!new);
+> +		trace_kvm_pi_irte_update(host_irq, vcpu->vcpu_id, guest_irq,
+> +					 vector, vcpu_info.pi_desc_addr, true);
+> +	} else {
+> +		ret = irq_set_vcpu_affinity(host_irq, NULL);
+>   	}
+>   
+>   	if (ret < 0) {
+> @@ -915,10 +875,7 @@ int avic_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
+>   		goto out;
+>   	}
+>   
+> -	if (enable_remapped_mode)
+> -		ret = irq_set_vcpu_affinity(host_irq, NULL);
+> -	else
+> -		ret = 0;
+> +	ret = 0;
+>   out:
+>   	return ret;
+>   }
+> diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+> index 6ad0aa86f78d..5ce240085ee0 100644
+> --- a/arch/x86/kvm/svm/svm.h
+> +++ b/arch/x86/kvm/svm/svm.h
+> @@ -741,7 +741,8 @@ void avic_apicv_post_state_restore(struct kvm_vcpu *vcpu);
+>   void avic_refresh_apicv_exec_ctrl(struct kvm_vcpu *vcpu);
+>   int avic_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
+>   			unsigned int host_irq, uint32_t guest_irq,
+> -			struct kvm_kernel_irq_routing_entry *new);
+> +			struct kvm_kernel_irq_routing_entry *new,
+> +			struct kvm_vcpu *vcpu, u32 vector);
+>   void avic_vcpu_blocking(struct kvm_vcpu *vcpu);
+>   void avic_vcpu_unblocking(struct kvm_vcpu *vcpu);
+>   void avic_ring_doorbell(struct kvm_vcpu *vcpu);
+> diff --git a/arch/x86/kvm/vmx/posted_intr.c b/arch/x86/kvm/vmx/posted_intr.c
+> index 786912cee3f8..fd5f6a125614 100644
+> --- a/arch/x86/kvm/vmx/posted_intr.c
+> +++ b/arch/x86/kvm/vmx/posted_intr.c
+> @@ -266,46 +266,20 @@ void vmx_pi_start_assignment(struct kvm *kvm)
+>   
+>   int vmx_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
+>   		       unsigned int host_irq, uint32_t guest_irq,
+> -		       struct kvm_kernel_irq_routing_entry *new)
+> +		       struct kvm_kernel_irq_routing_entry *new,
+> +		       struct kvm_vcpu *vcpu, u32 vector)
+>   {
+> -	struct kvm_lapic_irq irq;
+> -	struct kvm_vcpu *vcpu;
+> -	struct vcpu_data vcpu_info;
+> -
+> -	if (!vmx_can_use_vtd_pi(kvm))
+> -		return 0;
+> -
+> -	/*
+> -	 * VT-d PI cannot support posting multicast/broadcast
+> -	 * interrupts to a vCPU, we still use interrupt remapping
+> -	 * for these kind of interrupts.
+> -	 *
+> -	 * For lowest-priority interrupts, we only support
+> -	 * those with single CPU as the destination, e.g. user
+> -	 * configures the interrupts via /proc/irq or uses
+> -	 * irqbalance to make the interrupts single-CPU.
+> -	 *
+> -	 * We will support full lowest-priority interrupt later.
+> -	 *
+> -	 * In addition, we can only inject generic interrupts using
+> -	 * the PI mechanism, refuse to route others through it.
+> -	 */
+> -	if (!new || new->type != KVM_IRQ_ROUTING_MSI)
+> -		goto do_remapping;
+> -
+> -	kvm_set_msi_irq(kvm, new, &irq);
+> -
+> -	if (!kvm_intr_is_single_vcpu(kvm, &irq, &vcpu) ||
+> -	    !kvm_irq_is_postable(&irq))
+> -		goto do_remapping;
+> -
+> -	vcpu_info.pi_desc_addr = __pa(vcpu_to_pi_desc(vcpu));
+> -	vcpu_info.vector = irq.vector;
+> -
+> -	trace_kvm_pi_irte_update(host_irq, vcpu->vcpu_id, guest_irq,
+> -				 vcpu_info.vector, vcpu_info.pi_desc_addr, true);
+> -
+> -	return irq_set_vcpu_affinity(host_irq, &vcpu_info);
+> -do_remapping:
+> -	return irq_set_vcpu_affinity(host_irq, NULL);
+> +	if (vcpu) {
+> +		struct vcpu_data vcpu_info = {
+> +			.pi_desc_addr = __pa(vcpu_to_pi_desc(vcpu)),
+> +			.vector = vector,
+> +		};
+> +
+> +		trace_kvm_pi_irte_update(host_irq, vcpu->vcpu_id, guest_irq,
+> +					 vcpu_info.vector, vcpu_info.pi_desc_addr, true);
+> +
+> +		return irq_set_vcpu_affinity(host_irq, &vcpu_info);
+> +	} else {
+> +		return irq_set_vcpu_affinity(host_irq, NULL);
+> +	}
+>   }
+> diff --git a/arch/x86/kvm/vmx/posted_intr.h b/arch/x86/kvm/vmx/posted_intr.h
+> index a586d6aaf862..ee3e19e976ac 100644
+> --- a/arch/x86/kvm/vmx/posted_intr.h
+> +++ b/arch/x86/kvm/vmx/posted_intr.h
+> @@ -15,7 +15,8 @@ void __init pi_init_cpu(int cpu);
+>   bool pi_has_pending_interrupt(struct kvm_vcpu *vcpu);
+>   int vmx_pi_update_irte(struct kvm_kernel_irqfd *irqfd, struct kvm *kvm,
+>   		       unsigned int host_irq, uint32_t guest_irq,
+> -		       struct kvm_kernel_irq_routing_entry *new);
+> +		       struct kvm_kernel_irq_routing_entry *new,
+> +		       struct kvm_vcpu *vcpu, u32 vector);
+>   void vmx_pi_start_assignment(struct kvm *kvm);
+>   
+>   static inline int pi_find_highest_vector(struct pi_desc *pi_desc)
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index b8b259847d05..0ab818bba743 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -13567,6 +13567,43 @@ bool kvm_arch_has_irq_bypass(void)
+>   }
+>   EXPORT_SYMBOL_GPL(kvm_arch_has_irq_bypass);
+>   
+> +static int kvm_pi_update_irte(struct kvm_kernel_irqfd *irqfd,
+> +			      struct kvm_kernel_irq_routing_entry *old,
+> +			      struct kvm_kernel_irq_routing_entry *new)
+> +{
+> +	struct kvm *kvm = irqfd->kvm;
+> +	struct kvm_vcpu *vcpu = NULL;
+> +	struct kvm_lapic_irq irq;
+> +
+> +	if (!irqchip_in_kernel(kvm) ||
+> +	    !kvm_arch_has_irq_bypass() ||
+> +	    !kvm_arch_has_assigned_device(kvm))
+> +		return 0;
+> +
+> +	if (new && new->type == KVM_IRQ_ROUTING_MSI) {
+> +		kvm_set_msi_irq(kvm, new, &irq);
+> +
+> +		/*
+> +		 * Force remapped mode if hardware doesn't support posting the
+> +		 * virtual interrupt to a vCPU.  Only IRQs are postable (NMIs,
+> +		 * SMIs, etc. are not), and neither AMD nor Intel IOMMUs support
+> +		 * posting multicast/broadcast IRQs.  If the interrupt can't be
+> +		 * posted, the device MSI needs to be routed to the host so that
+> +		 * the guest's desired interrupt can be synthesized by KVM.
+> +		 *
+> +		 * This means that KVM can only post lowest-priority interrupts
+> +		 * if they have a single CPU as the destination, e.g. only if
+> +		 * the guest has affined the interrupt to a single vCPU.
+> +		 */
+> +		if (!kvm_intr_is_single_vcpu(kvm, &irq, &vcpu) ||
+> +		    !kvm_irq_is_postable(&irq))
+> +			vcpu = NULL;
+> +	}
+> +
+> +	return kvm_x86_call(pi_update_irte)(irqfd, irqfd->kvm, irqfd->producer->irq,
+> +					    irqfd->gsi, new, vcpu, irq.vector);
+> +}
+> +
+>   int kvm_arch_irq_bypass_add_producer(struct irq_bypass_consumer *cons,
+>   				      struct irq_bypass_producer *prod)
+>   {
+> @@ -13581,8 +13618,7 @@ int kvm_arch_irq_bypass_add_producer(struct irq_bypass_consumer *cons,
+>   	irqfd->producer = prod;
+>   
+>   	if (irqfd->irq_entry.type == KVM_IRQ_ROUTING_MSI) {
+> -		ret = kvm_x86_call(pi_update_irte)(irqfd, irqfd->kvm, prod->irq,
+> -						   irqfd->gsi, &irqfd->irq_entry);
+> +		ret = kvm_pi_update_irte(irqfd, NULL, &irqfd->irq_entry);
+>   		if (ret)
+>   			kvm_arch_end_assignment(irqfd->kvm);
+>   	}
+> @@ -13610,8 +13646,7 @@ void kvm_arch_irq_bypass_del_producer(struct irq_bypass_consumer *cons,
+>   	spin_lock_irq(&kvm->irqfds.lock);
+>   
+>   	if (irqfd->irq_entry.type == KVM_IRQ_ROUTING_MSI) {
+> -		ret = kvm_x86_call(pi_update_irte)(irqfd, irqfd->kvm, prod->irq,
+> -						   irqfd->gsi, NULL);
+> +		ret = kvm_pi_update_irte(irqfd, &irqfd->irq_entry, NULL);
+>   		if (ret)
+>   			pr_info("irq bypass consumer (token %p) unregistration fails: %d\n",
+>   				irqfd->consumer.token, ret);
+> @@ -13628,8 +13663,7 @@ int kvm_arch_update_irqfd_routing(struct kvm_kernel_irqfd *irqfd,
+>   				  struct kvm_kernel_irq_routing_entry *old,
+>   				  struct kvm_kernel_irq_routing_entry *new)
+>   {
+> -	return kvm_x86_call(pi_update_irte)(irqfd, irqfd->kvm, irqfd->producer->irq,
+> -					    irqfd->gsi, new);
+> +	return kvm_pi_update_irte(irqfd, old, new);
+>   }
+>   
+>   bool kvm_arch_irqfd_route_changed(struct kvm_kernel_irq_routing_entry *old,
 
 
