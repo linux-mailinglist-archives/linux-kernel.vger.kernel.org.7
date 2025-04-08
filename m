@@ -1,100 +1,84 @@
-Return-Path: <linux-kernel+bounces-593693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC46A7FC48
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:38:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E3AA7FC83
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95AB77A29BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:36:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82A831892B2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66E5268FC2;
-	Tue,  8 Apr 2025 10:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U8d68dZ4"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E166267F6A;
-	Tue,  8 Apr 2025 10:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA782686A8;
+	Tue,  8 Apr 2025 10:37:07 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F9B2686A0
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 10:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744108609; cv=none; b=EW0OYqJ9sQESKmayaGzn2WYQe8UGRrbqJgEkew/aGGaCp8OVeB0RbGhRT2jC/0OwdfB8tRJHIVFGyMzBYh1p5HEE6/pm1t2vz1uIr7zslx6999iP4sW/gqjKvv057pvyEUVW4gu15x4tAeIJW9+0WbmpsOINSLvuEOgTdUpZxEM=
+	t=1744108627; cv=none; b=NaW+v2jI2f+0lXcoPVqmOb0LYx8rrvdc3kcxpGvCjNVXDtmRawlvBZhMsLSmP42TaBATzq2759ob3d0Csdeo72diVA9WgktIdwcEz6SLBv0oFFmWEFTKjHREoJhIf6FzLD7JxYyK8IZopB/lytxQAadqu8spBSogB+7pJZAwIDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744108609; c=relaxed/simple;
-	bh=ZuWwkuwqeHf0fYJ4ELuETBzDTnsElQHXyQMu2I/1L4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y/+ZxaUSAk9xlIbefsrveiP1KQZNXvJwl27xSFPSyHJFqO6Ll63OdGPJavCEG/vRWPPx80wj0nQK3U90bauha/+gEL/XNpOhdMhkPytwdqo5tUTJH5jCAW/SbSl63aQzBAeDJjxEjXAhP3K6FuHL0Z2i1M/EcwyWzHmdX83kdr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U8d68dZ4; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac2a81e41e3so972068566b.1;
-        Tue, 08 Apr 2025 03:36:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744108606; x=1744713406; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZuWwkuwqeHf0fYJ4ELuETBzDTnsElQHXyQMu2I/1L4A=;
-        b=U8d68dZ4P6MMD3OpJzcuU91TLyycoCLO/6b0xFSkFcZ6m7N5hTNRTEx8l41Q+eO7Sf
-         tzIBw8SAQWLbeURjAz35eiq/nKM3Vgj2/6c0m73EKdwspIzm/T113JYUA6I8bU1tRHjm
-         tkCknrF+md7ZhLA7GsnFC1z7L+/i7ud5hE48WAO8mbP5rseeyDUtXUk3NT1BBw7W+6qQ
-         5k8YyvUfuN/1r02GTCBSJBD31QJOXQNvLTepe4V7T3gRC/rtsOfplNM5EQRB4icbXzPx
-         m6m2nPkJIwDxa+MN/13iiHq6RctDoh4OYquyOTDVWYQTx9cGj9bGPKH7cQkmIefBv1+j
-         VgTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744108606; x=1744713406;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZuWwkuwqeHf0fYJ4ELuETBzDTnsElQHXyQMu2I/1L4A=;
-        b=gi9mQL5OvPbbQkF8iZk7VhMdfaUsNv7Ky0Qq4PB9dmbECtJMG2ir8ixxy1ocdhyDJl
-         GWlB29TIqxEQWgqdIkoogqQMIzThX7tH2erL+5RXL88bf0Axj9AHBge+1FUK5NjNTr8W
-         1ktaP0q4zYCNge+IgFj7/EmwhIJBwrkVsPHbY87ucvtRZPEq+buL6S0DqjYnJt57bcMn
-         1CeblKMYEvjPSpE1yK4s0ClKRa7rqh0WPELzSVk/r+8/mynoopddeZfZPfGdbV3XH4uI
-         5da3+8MqkVcyKuECDj7iWX7A9kN1Hk3Hy/bJwvxDgHjMN5B5ir9t3xnXxy8fZp/6yvRp
-         XvtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUrMNn+yyNx1QSW+2GQzdaU9/Z3bVfhWLzVMZd39I62eJs+YIFnsPEs6jPJlZ/an/O9xRooVn04WGWAQ==@vger.kernel.org, AJvYcCXS8wAsImfYUxHgqNo/r6cy1I8HHK38vT/snonsOYFIKQHKwKehvpfbEU0OfhFyljqSV99y2IWj1y7KbOg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAJmKK9LwWTcij6YpRd0ajGnwmgA+C3667OTNNs03k0eZRpkdX
-	wbBcKBpYi42GffXTCJJkxoaReqIJji5RBlvKtc0mo18cDRbVsm8MbE7k/1MI
-X-Gm-Gg: ASbGnctlvQ4jm7UANScD9+Wb4BMvix4JmpLanPq7RcnuQkXsw4Y1Lo9E4qpszrzuvNH
-	vZYjfCDdOtPXWvcpOoZ5+rGYvtU0ppNIGuUIkfEaOBnWzVezD7gUD0nasn8vN0GzA9hWzwT9qgS
-	NZWEBLP9oWoHFd7PrutOgaTFf+HbgHk9OASfjL/UW8017EJt7POZv2kylthtKPaolQTyj5ktPha
-	CjvPlcF5begwdNEGShErng1VvfnF6/ag0AztlTpbM1zudLFk5wdvl5o8rXx5Hd8QDrD4bdeJp4Q
-	mII3TVvsL51WDmm+wuzVCxXRgai6jOWiNdCAX6n6Kw==
-X-Google-Smtp-Source: AGHT+IGL16tlNnfVYVbAhIxKoFpPCwkhvAE4A2TUaiFxYi0ePohEgWmQXUX49wV5hpSFloCwrFx3Cg==
-X-Received: by 2002:a17:907:a4d:b0:ac2:7a97:87fb with SMTP id a640c23a62f3a-ac7e727cee9mr1238023166b.33.1744108605456;
-        Tue, 08 Apr 2025 03:36:45 -0700 (PDT)
-Received: from pampelmuse ([2a02:810d:a1:6000:959d:6b59:1561:d2b4])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7c0186aebsm890142466b.158.2025.04.08.03.36.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 03:36:45 -0700 (PDT)
-Date: Tue, 8 Apr 2025 12:36:42 +0200
-From: Gon Solo <gonsolo@gmail.com>
-To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ricardo Ribalda <ribalda@chromium.org>, linux-spdx@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scripts/spdxcheck: Limit the scope of git.Repo
-Message-ID: <Z_T8OiLQzKDGhOJs@pampelmuse>
-References: <20250225-spx-v1-1-e935b27eb80d@chromium.org>
- <12647854.O9o76ZdvQC@radijator>
- <Z_Tgp8L_8goc63K1@pampelmuse>
- <Z_TtXaRnaU1zXbXv@pampelmuse>
+	s=arc-20240116; t=1744108627; c=relaxed/simple;
+	bh=RKIzGkJ9K6o+c6b2EpnYpCH+wdgLRLW0kNgcGBhVPwE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=fL5g+KyRCkg+SDgWh578npNpHtf5+NBlMiUsBoQk/+QjN0exxmzRtoyb5CysUhQjRni8Rfk9Za6l6q6ZAAY1Sa8pS/O5OAkbZY6WqQEOKNov6qP8iQLlq+m1/Dzgx2mR7AmjyaPY/eagS5OQU2I/s/hoyi2ErCczGx+KBLVzg4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id C2BDF92009C; Tue,  8 Apr 2025 12:37:02 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id BB7FF92009B;
+	Tue,  8 Apr 2025 11:37:02 +0100 (BST)
+Date: Tue, 8 Apr 2025 11:37:02 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Oerg866 <oerg866@googlemail.com>
+cc: Borislav Petkov <bp@alien8.de>, Kevin Koster <lkml@ombertech.com>, 
+    Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
+    Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
+    x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86/microcode: Fix crashes on early 486 CPUs due to
+ usage of 'cpuid'.
+In-Reply-To: <CANpbe9Vyss7wEd0rQA7Z=mfi6WTkm5JjCJjTkcsqGCd0mGA2aw@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.2504081115310.29566@angie.orcam.me.uk>
+References: <CANpbe9Wm3z8fy9HbgS8cuhoj0TREYEEkBipDuhgkWFvqX0UoVQ@mail.gmail.com> <20250405130306.ca9822c1f27db119cc973603@ombertech.com> <20250405093127.GAZ_D4b6NdyTS-UW1J@fat_crate.local> <20250406164049.c0666bc18073e3b88c92d1f1@ombertech.com>
+ <20250406174633.2c581923c145687476191753@ombertech.com> <20250406190253.GAZ_LP3RPZInWKcHN7@fat_crate.local> <20250407095848.7933a358c9f450fe03fb8234@ombertech.com> <20250407102927.GAZ_OpBw5hJ2QTFsKz@fat_crate.local> <20250408002150.8955343f4e2f2ac31b4663e8@ombertech.com>
+ <20250407135533.GDZ_PZVZ-2CKmhbt7d@fat_crate.local> <CANpbe9Vyss7wEd0rQA7Z=mfi6WTkm5JjCJjTkcsqGCd0mGA2aw@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_TtXaRnaU1zXbXv@pampelmuse>
+Content-Type: text/plain; charset=US-ASCII
 
-It's a known problem:
-https://github.com/gitpython-developers/GitPython/issues/2003
-https://github.com/python/cpython/issues/118761#issuecomment-2661504264
+On Mon, 7 Apr 2025, Oerg866 wrote:
 
+> One of my projects uses a modern Linux kernel to install Windows 9x (sorry!)
+> onto a legacy (or modern, if that's your thing) systems, including
+> magical things like VESA Local Bus 486 systems, way faster than the
+> official MS installer ever could. There's quirks here and there, especially
+> with regards to libata and obscure IDE/SCSI controllers, but other than
+> that the kernel does its job and it does it extremely well.
+
+ FWIW I run a plain EISA 486 box to verify our defxx driver keeps working 
+with an EISA FDDI network interface, one of the host bus attachments the 
+driver supports.  I also run a dual Pentium MMX box (i430HX chipset), 
+which I recently used for i386 GNU toolchain/C library verification in the 
+course of upstreaming some stuff for my day job (it's the very box I used 
+for APIC fiddling some 25 years ago, which Ingo may remember).
+
+ Both machines are permanently wired for continuous use and remote control 
+in my remote lab and run fairly recent versions of the kernel (as my time 
+permits upgrading).
+
+ I note that the lack of support for SW DMA mode in libata has degraded 
+performance of a PATA drive (the rest is SCSI) in the MMX box compared to 
+old IDE code, forcing the drive to use PIO 1.  Alas, I've found no time so 
+far to look into porting that stuff over and said drive is not essential 
+for that system.
+
+  Maciej
 
