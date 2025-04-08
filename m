@@ -1,173 +1,136 @@
-Return-Path: <linux-kernel+bounces-593241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61033A7F700
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:48:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13DE5A7F716
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 834EE177C2F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:47:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0EE218912E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BBF263C72;
-	Tue,  8 Apr 2025 07:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680B9263C7D;
+	Tue,  8 Apr 2025 07:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="e99RX80v"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b="IlkTbDSc"
+Received: from mail.ptr1337.dev (mail.ptr1337.dev [202.61.224.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03287214813;
-	Tue,  8 Apr 2025 07:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA8225F987;
+	Tue,  8 Apr 2025 07:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.224.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744098423; cv=none; b=VX5yh8tZpuzchEpC5BdTVNkCf2EztL3/jdEfrRloAmck5WQk1OzI9T1ldT09KAyEhv36Xl9BN+JVc3LWW477Xa0wl4JdBcb7GRlISiJ7K3wdA+SoovMWD7Car4his38J3J++2UHlM7yYI1VngcRS0Elz15Rgp0h0j+akGsOmBYg=
+	t=1744098777; cv=none; b=sreayV06sKYMnE2oIK3fkwu+0mxroVN/3QvpaF/opsx2tat3TkzZQ+F/TtbbR03p9EVx16xk7fNW9/VsuuxMq0GpLLNTgym0cFqQB75XiZnDWoKzVdyPl+czJJ8TuKHJ5hT0JRrUvFeuoo96a21GPz4gyNK+B89vJwOPIAesW7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744098423; c=relaxed/simple;
-	bh=OaoRGleOJMBsgBZS3p1bJ8GaQzCT4TbBrlI6cVkNSyQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SXrtbohrzCN1NCUkdxFg2Yaa5wOxLDhYWHIq3EuDTxgW+vFl+/7WULzz0X7KokFVV3RLy0/XqVaW2V8bFIG7TamIK9rpZWe/bImncAcwVOrYlIu5jd9I/If/cQRkjAA72vaptvxgCwWLYUJSgyTf3n9eey0qAZvzivSTUpubPxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=e99RX80v; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 537KcSt5027885;
-	Tue, 8 Apr 2025 07:46:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=zLV7/doQpEkhTR6ei1g5UJ/2k5+C2pZsALUCRt3FL
-	7Y=; b=e99RX80vsUuxq6VnQksfRpK/kj0C/YjqA+m+i66LLvcTy+0EdpsIgiZwk
-	Ph/dhcCX8QRDg+h/xPIyJtd+K2NsczCTXeOfJQC6lsyou4mm+JY6w8TMN7YKe+5/
-	LHjT9H0bFcRI2agws1B6XFrhqzFEUx1i4ERp7Z7jjUvFZ5aGLLL/BahXT3JVDSuz
-	yvDXC7expaYFvQJKcrTB5lA25xtsOMGvfCsts60tzcPg/cm1F2uPnZsqhHuDuoha
-	jEpek891Bq5NuyL1rSgNEYvbo3TF2y8CWhc4jiMUoc44o3gcshDb9BvsZWiswBLw
-	HyQuSPgomd2KpNd+gY2F3+rAavp3w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45vnx0j84a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Apr 2025 07:46:58 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5387jvrI024572;
-	Tue, 8 Apr 2025 07:46:57 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45vnx0j849-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Apr 2025 07:46:57 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5387inrQ014404;
-	Tue, 8 Apr 2025 07:46:57 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45ufunhn75-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Apr 2025 07:46:56 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5387krNP60162310
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 8 Apr 2025 07:46:53 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1233C2004B;
-	Tue,  8 Apr 2025 07:46:53 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AC5B520040;
-	Tue,  8 Apr 2025 07:46:52 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  8 Apr 2025 07:46:52 +0000 (GMT)
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
-        irogers@google.com, ctshao@google.com
-Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
-        hca@linux.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH v2] perf test: Allow tolerance for leader sampling test
-Date: Tue,  8 Apr 2025 09:46:41 +0200
-Message-ID: <20250408074641.1471473-1-tmricht@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1744098777; c=relaxed/simple;
+	bh=ljJS8qQYfo2nm8bvCJlRcDRlmr6hYT/e363s6heZw+A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I0yAI6Pp7QRzmyEbC1pHqdIbp3FNpkAGJb11GKMUb7Br3flbPDE51xR3M8oJuvisadqYvSV+44OAbm2r40LyyuOK1W1GH1cxvaKRAnRZUnXHnvueLrCDJkDy/IssPY2wAHzQtf+xrpOUc8dlYerrvxuILoFdxUlAa3mbX4Y8JGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org; spf=pass smtp.mailfrom=cachyos.org; dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b=IlkTbDSc; arc=none smtp.client-ip=202.61.224.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cachyos.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B996C280AA4;
+	Tue,  8 Apr 2025 09:52:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cachyos.org; s=dkim;
+	t=1744098772;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OqgTZYxXv/xNrmSvb/jrSTI6+V6l0vurYjj+uVFpJnM=;
+	b=IlkTbDScrHTPu/x+i7AOpVtg6teF1LgwjWNKInB07JSsjdz7dcxBamVs07xSB8dlmcwlsC
+	iJIWGhuLRU18Mmd526P0Q6nvaqDHoB6YrfWb/Ncs/W6+SZVnE/6VUMz7lsbaU5Tc82cSZc
+	bvfvSNeU9sp8d9gKeqOyEgr8vIRhp5szn/xiRUQZGeTN4NULgbFoUUjbiYEPTvW/roGJXf
+	0xmBbAK3P3XLGeyUnDQxDG3QuQpPzGHx5j1eGkbkHMmNwelTwDs8APoVKbu4xxt675CipS
+	1HOsBR5UcJ3bqS1aWMo3HVql511PHiin89av3brrxDffAf9GIeYLpXnh43MKnQ==
+Message-ID: <182bfb4f-e856-47d8-bc54-d419109cb4ac@cachyos.org>
+Date: Tue, 8 Apr 2025 15:52:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 3rjcWCOrPulP4NogmG6aFLQWFCe_OuEt
-X-Proofpoint-ORIG-GUID: mIy3X5RvafINGC6lTK0tsehKj-MZMfYk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-08_02,2025-04-07_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=759 lowpriorityscore=0 phishscore=0 priorityscore=1501
- clxscore=1015 malwarescore=0 mlxscore=0 adultscore=0 spamscore=0
- bulkscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2504080052
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 10/17] mm: uninline the main body of vma_start_write()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Christoph Hellwig <hch@infradead.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>,
+ akpm@linux-foundation.org, peterz@infradead.org, willy@infradead.org,
+ liam.howlett@oracle.com, mhocko@suse.com, hannes@cmpxchg.org,
+ mjguzik@gmail.com, oliver.sang@intel.com, mgorman@techsingularity.net,
+ david@redhat.com, peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net,
+ paulmck@kernel.org, brauner@kernel.org, dhowells@redhat.com,
+ hdanton@sina.com, hughd@google.com, lokeshgidra@google.com,
+ minchan@google.com, jannh@google.com, shakeel.butt@linux.dev,
+ souravpanda@google.com, pasha.tatashin@soleen.com, klarasmodin@gmail.com,
+ corbet@lwn.net, linux-doc@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, kernel-team@android.com
+References: <20241226170710.1159679-1-surenb@google.com>
+ <20241226170710.1159679-11-surenb@google.com>
+ <0d36fd53-b817-4bbd-ae38-af094bd301df@suse.cz>
+ <40182b31-95ad-4825-9c0c-0127be1734a6@cachyos.org>
+ <Z_S7yjRXWIXnVXsf@infradead.org>
+ <3f9f8a06-a044-4bce-a4e6-f17090cb3c0f@lucifer.local>
+Content-Language: en-US
+From: Eric Naim <dnaim@cachyos.org>
+In-Reply-To: <3f9f8a06-a044-4bce-a4e6-f17090cb3c0f@lucifer.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-V2: Changed bc invocation to return 0 on success and 1 on error.
+On 4/8/25 14:25, Lorenzo Stoakes wrote:
+> On Mon, Apr 07, 2025 at 11:01:46PM -0700, Christoph Hellwig wrote:
+>> On Tue, Apr 08, 2025 at 12:39:25PM +0800, Eric Naim wrote:
+>>> The out-of-tree NVIDIA modules seem to rely on this symbol, is it possible to use EXPORT_SYMBOL() here instead of EXPORT_SYMBOL_GPL(), below is the modpost error:
+>>
+>> No.  They don't have any business using this.
+> 
+> What on _earth_ are they using this for? Is this just via the VMA flag
+> manipulation functions? If it's something else, it's an unintended use of this.
+> 
+> Anyway, generally speaking - agreed, this is absolutely a no-go Eric. In my view
+> we simply should not be using EXPORT_SYMBOL() for _any_ new symbols whatsoever.
+> 
+> Out-of-tree modules are simply a non-consideration for core mm code, this is a
+> GPL open source project. If I had my way we'd simply revoke _all_
+> EXPORT_SYMBOL()'s, not add new ones.
+> 
+>>
+>> In fact vma_start_write should not be exported at all, just the
+>> vm_flags_{set,clear,mod} helpers.
+> 
+> Yup, I'd rather we just kept vma_start_write() mm-internal, though of course
+> kernel/fork.c (ugh) needs it (we could probably refactor that in some way to
+> avoid), and literally just the PPC arch (again maybe we can find a way round
+> that).
+> 
+> Maybe one for me to look at actually... hmm.
+> 
+> Anyway Eric - I wonder if this is simply the nvidia OOT driver doing a
+> vm_flags_...() call and then having an issue because the lock is uninlined now?
+> 
+> I guess you are jut noticing this is breaking and don't know since - proprietary
+> code.
 
-There is a known issue that the leader sampling is inconsistent, since
-throttle only affect leader, not the slave. The detail is in [1]. To
-maintain test coverage, this patch sets a tolerance rate of 80% to
-accommodate the throttled samples and prevent test failures due to
-throttling.
 
-[1] lore.kernel.org/20250328182752.769662-1-ctshao@google.com
+This seems to be the case, upon looking a bit deeper it looks like the driver code 
+is calling atleast one of vm_flags_set. I couldn't find any direct calls to {,__}vma_start_write
+at first and was bit confused.
 
-Signed-off-by: Chun-Tse Shao <ctshao@google.com>
-Suggested-by: Ian Rogers <irogers@google.com>
-Suggested-by: Thomas Richter <tmricht@linux.ibm.com>
-Tested-by: Thomas Richter <tmricht@linux.ibm.com>
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
----
- tools/perf/tests/shell/record.sh | 26 ++++++++++++++++++++------
- 1 file changed, 20 insertions(+), 6 deletions(-)
+> 
+> Anyway in this case, the OOT driver should just write some GPL wrapper code or
+> something here. Or better yet - make the driver open source :)
 
-diff --git a/tools/perf/tests/shell/record.sh b/tools/perf/tests/shell/record.sh
-index ba8d873d3ca7..b17e8b0680e2 100755
---- a/tools/perf/tests/shell/record.sh
-+++ b/tools/perf/tests/shell/record.sh
-@@ -238,22 +238,36 @@ test_leader_sampling() {
-     err=1
-     return
-   fi
-+  perf script -i "${perfdata}" | grep brstack > $script_output
-+  # Check if the two instruction counts are equal in each record.
-+  # However, the throttling code doesn't consider event grouping. During throttling, only the
-+  # leader is stopped, causing the slave's counts significantly higher. To temporarily solve this,
-+  # let's set the tolerance rate to 80%.
-+  # TODO: Revert the code for tolerance once the throttling mechanism is fixed.
-   index=0
--  perf script -i "${perfdata}" > $script_output
-+  valid_counts=0
-+  invalid_counts=0
-+  tolerance_rate=0.8
-   while IFS= read -r line
-   do
--    # Check if the two instruction counts are equal in each record
-     cycles=$(echo $line | awk '{for(i=1;i<=NF;i++) if($i=="cycles:") print $(i-1)}')
-     if [ $(($index%2)) -ne 0 ] && [ ${cycles}x != ${prev_cycles}x ]
-     then
--      echo "Leader sampling [Failed inconsistent cycles count]"
--      err=1
--      return
-+      invalid_counts=$(($invalid_counts+1))
-+    else
-+      valid_counts=$(($valid_counts+1))
-     fi
-     index=$(($index+1))
-     prev_cycles=$cycles
-   done < $script_output
--  echo "Basic leader sampling test [Success]"
-+  isok=$(echo "scale=2; val=$invalid_counts/($invalid_counts+$valid_counts); if (val < (1-$tolerance_rate)) { 0 } else { 1 };" | bc -q)
-+  if [ $isok -eq 1 ]
-+  then
-+     echo "Leader sampling [Failed inconsistent cycles count]"
-+     err=1
-+  else
-+    echo "Basic leader sampling test [Success]"
-+  fi
- }
- 
- test_topdown_leader_sampling() {
+Yeah, as obvious as it seems it doesn't happen on their open-sourced code :)
+
+Either way, I'm thankful for the replies. NVIDIA *should* have probably noticed
+this already and it would probably fixed in the next driver or two so I'll just
+let sleeping dogs lie.
+
+
 -- 
-2.49.0
-
+Regards,
+Eric
 
