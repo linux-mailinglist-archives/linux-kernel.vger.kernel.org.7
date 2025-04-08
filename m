@@ -1,217 +1,145 @@
-Return-Path: <linux-kernel+bounces-593323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C9CFA7F7F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:33:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E367A7F88D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F7E4178EFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:33:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C75D1757A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BC1262802;
-	Tue,  8 Apr 2025 08:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18435265618;
+	Tue,  8 Apr 2025 08:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UoUngBXS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="qFUykChR"
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6BF2627EA
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF91E264A7B
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744101183; cv=none; b=Unpdv6XWQdgnHGwxix94y8Ok7Mfy6EpH5RrUqOIreDvQOjR4Ui/OYaiwHWlyNkQhda1XnDXY/sSulRAClTQ90NcKYX6sjYewc/eUzVz5OjKI/MNdLaZvGd3D2E/eMlsl0i4iDsLIGv4uxmcoe48BDzTy/FpyfN4KmaMx3nF/c3g=
+	t=1744102143; cv=none; b=VDQuDIJFOh7N/IP59yCgJmRKs66ekxaLDJejPa755azyLa0LNFjPMtO/EP9m38z3PEXf8+x9EHNgKy0Q1j4jaDrwEiByQ31L+JeutNyL+HxoClZTwa3ImOf5rt3V54MbxeX9Lta8NBZAHYGkZcO70nTXoupcNZGjH2rvU6twVk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744101183; c=relaxed/simple;
-	bh=VdJV37VT7UerhL+EBtKVFwL9QcdWX6bD7ahUYHEz5V0=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=KPswLXx5vi2Tcn4j4rStovaYDok+jfB2eDKejIkkTyVRHWo0/LlFZ/rzvNacmwAD+lafrcRyW709MgbUAIA8X20l4EI4jw6P1xkS9s7/kcDRK0XplBBkP3d+4yF3jQegWPgHhMmwYoqrU1r96pOrl0uxEgkRWeuI6xQVCWQUoxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UoUngBXS; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744101179; x=1775637179;
-  h=date:from:to:cc:subject:message-id;
-  bh=VdJV37VT7UerhL+EBtKVFwL9QcdWX6bD7ahUYHEz5V0=;
-  b=UoUngBXS+wnb5a1VFj3hw3HvZmNtiEcGtJEwHWCiG/80Ts/3VnobY324
-   YZ3XzaOAiFtyDAesP3BGk4oM+s10ISwUKwUivmQSo8kvcNDIpAWIukQwQ
-   a10u88MqjNEjMX0K6tzLCcilQqXyQhgSf/3njgNneR/OTdaemqGC14YLj
-   zvVvAPrKfF+xPs8UaNIjL7a7XHnntDT2AeCK/JYAct9v9zCB81/ytUak8
-   Rs97LKopS/2QoNYDTfwzEF+awbfOwFCPL2svK3Lrbm9lCWF9D4larUYwS
-   dWVY8bnE2kqCShuk4ATkjZcfandWXjy71nXgPV/NHY6HARe1ExfSQzXFA
-   A==;
-X-CSE-ConnectionGUID: ilFiXT67TX6leUAIZHw97w==
-X-CSE-MsgGUID: iF8ethxhT7eorj5Hm/ay0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="67993878"
-X-IronPort-AV: E=Sophos;i="6.15,197,1739865600"; 
-   d="scan'208";a="67993878"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 01:32:59 -0700
-X-CSE-ConnectionGUID: MN7Jmv3nS0mqYoLRwTaNtw==
-X-CSE-MsgGUID: y9vhJIn2QmSTBQL1nsobXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,197,1739865600"; 
-   d="scan'208";a="128532691"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 08 Apr 2025 01:32:57 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u24O7-0004Jq-1A;
-	Tue, 08 Apr 2025 08:32:55 +0000
-Date: Tue, 08 Apr 2025 16:32:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/drivers] BUILD SUCCESS
- 7ae844a6650c5c15ccfbf76ed767e7f2cc61ec1d
-Message-ID: <202504081621.qDnheV1D-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1744102143; c=relaxed/simple;
+	bh=zqzlA9n1r9CR6wuCNl1kJxLJLTIDkxwhE6SgiF36x5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U/SHcTUunmw8f22EWZiUqk9neV5zLeC4iu38ZfE2NiUXYSNyl03RoFN12iePjk0T7MxwKIuR32cYAPHWbDTvaxccgL6Fu7aW/J+g0NT6ZmwlvRhNmeam40poXOKmcDVYKnhlVeXZNxe3sa6dd3/fFPcxp26qsNXCzH3do9t6fKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=qFUykChR; arc=none smtp.client-ip=217.72.192.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1744102138; x=1744706938; i=christian@heusel.eu;
+	bh=zqzlA9n1r9CR6wuCNl1kJxLJLTIDkxwhE6SgiF36x5s=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=qFUykChRkfs0xaQ/FVNErfJK+ceDdWGsQp5C4v3s5HS9ofLdlZ7rOZF8sxF8SA6b
+	 m2uEB1lfwzGZGI6F/3OHj8jV9zc015W4drtHLojoiGXmAduHIs/9aQIPhae4anfC+
+	 cY0a52q11bLULt0PtWsTEwkheMNXnf7ho61WWB6qRtR/AdXmSdRhdd4Ew0TA1QkHY
+	 PjQyuk2NhkxLnDx4Cr4psT3azXycttI+ZPQjFYE37aOEUzMynhipAhuAhEv5cunVT
+	 JT+iDc+a/hNIkz8eXFa0J7d3JbhSJWB8OMkF9IpCZrvmo15ZSOLN67NdnYnxavx6q
+	 BJ97jLW1QzYjrfdd2w==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([89.244.90.49]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MXH3Y-1tYr7T10AQ-00Japt; Tue, 08 Apr 2025 10:34:37 +0200
+Date: Tue, 8 Apr 2025 10:34:34 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Richard Weinberger <richard@nod.at>, 
+	linux-mtd <linux-mtd@lists.infradead.org>, Matthew Wilcox <willy@infradead.org>, 
+	Zhihao Cheng <chengzhihao1@huawei.com>, regressions@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: Linux 6.15-rc1 regression, folio/ubifs Oops
+Message-ID: <5bba59ac-005e-4994-aa22-c2565b8cdbbd@heusel.eu>
+References: <20250408082018.GA23886@francesco-nb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="yjhj4l62urfzefuc"
+Content-Disposition: inline
+In-Reply-To: <20250408082018.GA23886@francesco-nb>
+X-Provags-ID: V03:K1:qonpYrkuTDJlp5WFS+b383LvsXrAX+asOUbtT8PWMUg3L4yHDZ2
+ sL3ShWIKXJeOAeXZbimyWpIl/S/tDjssqsmlsYyal5wBD5fnbpzWciFEE53fmLg4vGFx2Wn
+ I2qjSCk2fQUO6oDVpj1e369gA+RKI4Rx6OxQaivcGqibHm22bScGmaSxt6rMs8rktAypru9
+ x2UNhHZFTLBcZKQ/s+gnQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:vY5Q6X3ExnY=;KODHPSAGyWm08t5JAlsL65vsjMy
+ uQ3lPmVGNyTvKm8G0ab53vBDx7abZH2IUzy0IEYzbvLtTn+3+WX3kbOVqO8GdHp1mpSyFOvOD
+ o4Hb6601Zo0ohF5Qs0BYe+IYpcRrKMA5dy4n1Zpi8+IJNtyYJfGF53koNnlrdJ0r+W+QKxa81
+ NG6k0dBmjuJPV0H3i0JQjTBYKtN4DJBxgQEmjvR+2kp9KGUQAVO6MDgd+1zoDT1nn892zsNzk
+ 9nx8T5dtjqwJRoh6IOLzlGWlmIiyyf5JeJG56I+KBONOT7+ePZ41NQmB3fFVcA8wOjaSgXg+D
+ Z4GLKMtmPQckb7wZ6if6hA06WWqpIy0NnuC7jzwEVMUF18oKpBdG6BBpKZz4ioHML0kvT//nR
+ 1Jet03DMx2ZqQGNeOF/CmbrD+tO++QSdAzEU9M2Hvwf93XiS1Jw4Br5bG32hKQqXhlhEHv40U
+ DGeKzCiBtgrrWx0YvARuTIkP5Whm5UwkRzl2dGvnB0fr/G4AXi3FkO+mhQg5AF0HbapLD3G7Y
+ mt335Jv9JtxL9gr56reGAn2zZOSRz1gD6cthwWWUO0ZsUDs8Fwa7UMIjpl+LtWGosK0F92OKe
+ QF33QFo9MQxkJy4RvxnSU2WVIuoTNmJ6ZNLefcgZEaOu+rnqIpey1Rqiyl2R/IR0clSKcCjSL
+ vOZeU4NEj6pzhtysYxrKBP6dlpUOYYCOKF9HIP9LO7fg2X2k8VCkUWduXddlAmdu/tZFoDFIQ
+ jDRgBw1SE3ES+bSTDVuek98Jf5tBen7X4m7MXkMxMvWS8lw27RR0daat3WJMKc7bfcBUs0kdK
+ qq7Uosyz8hh4hXZwfN2EYadY03CzV7q8sMwNZCA26z+7AXlaWCNDbdlb347S9nBSV8dT8n8Vy
+ 600m4rpKAeKaUEzgD9QE1Wwb/Um4cAzkvwwNMKyDSKZhQvxOXZdqeRaSNuDuAI+xXS4i2PhOB
+ P85SIk314J2a5hurbC6Q0diXYVk6dyze3G1SVmNZW3EEtNtgV9r9Db4GKPwpsAt2i4wj8OQ0q
+ FbCLi/ez9NyMPl2lc2NIMAThoE2dN0T+KH5XH7VWlf65kvLSxtOTRBgFiuEZM7MWbaUfheB4D
+ bfoyEJwXb50CqUgKZtJN3g+JjuWxbMriVnHdZ/E2akntGL5xFC8+gQc1O8ZUK2l+z9E11tcV+
+ LATCrs2hihd+MYg5cbbYUeoI92U32OO1cOoIwnHHCdcR2E10T8SKkBkpJkc7X5C49alfCXwYX
+ zQ1W37B3/rQMsJRv2yr4ZgYiTxpF653AcMby5e6V6ETZY3lLkF93eHGQt+1tDUMDMMlOYUfad
+ 1kdWkY6o28J8TD+/fRxPlOpoNxiTGe4fNVYnLk3459lHVKrrs1WGazc8lt4KtfGB0Bi28GMAI
+ EnSs13qxr1onWRw6PhAlnVQTr5SMz2SUA+YNo=
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/drivers
-branch HEAD: 7ae844a6650c5c15ccfbf76ed767e7f2cc61ec1d  genirq/generic-chip: Remove unused lock wrappers
 
-elapsed time: 1456m
+--yjhj4l62urfzefuc
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: Linux 6.15-rc1 regression, folio/ubifs Oops
+MIME-Version: 1.0
 
-configs tested: 125
-configs skipped: 4
+On 25/04/08 10:20AM, Francesco Dolcini wrote:
+> Hello all,
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Hey Francesco,
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-14.2.0
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    gcc-14.2.0
-arc                   randconfig-001-20250407    gcc-12.4.0
-arc                   randconfig-002-20250407    gcc-14.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-21
-arm                              allyesconfig    gcc-14.2.0
-arm                           h3600_defconfig    gcc-14.2.0
-arm                   randconfig-001-20250407    gcc-8.5.0
-arm                   randconfig-002-20250407    clang-21
-arm                   randconfig-003-20250407    gcc-8.5.0
-arm                   randconfig-004-20250407    gcc-8.5.0
-arm                         s3c6400_defconfig    gcc-14.2.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20250407    clang-21
-arm64                 randconfig-002-20250407    gcc-6.5.0
-arm64                 randconfig-003-20250407    gcc-8.5.0
-arm64                 randconfig-004-20250407    clang-15
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20250407    gcc-14.2.0
-csky                  randconfig-002-20250407    gcc-14.2.0
-hexagon                          alldefconfig    clang-21
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-21
-hexagon               randconfig-001-20250407    clang-21
-hexagon               randconfig-002-20250407    clang-15
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250407    gcc-12
-i386        buildonly-randconfig-002-20250407    gcc-12
-i386        buildonly-randconfig-003-20250407    gcc-12
-i386        buildonly-randconfig-004-20250407    clang-20
-i386        buildonly-randconfig-005-20250407    gcc-12
-i386        buildonly-randconfig-006-20250407    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250407    gcc-14.2.0
-loongarch             randconfig-002-20250407    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                       m5249evb_defconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                        vocore2_defconfig    clang-15
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250407    gcc-6.5.0
-nios2                 randconfig-002-20250407    gcc-8.5.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                              defconfig    gcc-14.2.0
-parisc                randconfig-001-20250407    gcc-7.5.0
-parisc                randconfig-002-20250407    gcc-7.5.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-21
-powerpc                  mpc885_ads_defconfig    clang-21
-powerpc               randconfig-001-20250407    clang-21
-powerpc               randconfig-002-20250407    clang-21
-powerpc               randconfig-003-20250407    gcc-6.5.0
-powerpc                     tqm8540_defconfig    gcc-14.2.0
-powerpc64             randconfig-001-20250407    clang-21
-powerpc64             randconfig-002-20250407    clang-17
-powerpc64             randconfig-003-20250407    clang-21
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-16
-riscv                               defconfig    clang-21
-riscv                 randconfig-001-20250407    gcc-8.5.0
-riscv                 randconfig-002-20250407    clang-21
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-15
-s390                             allyesconfig    gcc-14.2.0
-s390                                defconfig    clang-15
-s390                  randconfig-001-20250407    gcc-9.3.0
-s390                  randconfig-002-20250407    clang-15
-s390                       zfcpdump_defconfig    clang-15
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                                  defconfig    gcc-14.2.0
-sh                    randconfig-001-20250407    gcc-12.4.0
-sh                    randconfig-002-20250407    gcc-10.5.0
-sh                   rts7751r2dplus_defconfig    gcc-14.2.0
-sh                           se7721_defconfig    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250407    gcc-13.3.0
-sparc                 randconfig-002-20250407    gcc-10.3.0
-sparc64                             defconfig    gcc-14.2.0
-sparc64               randconfig-001-20250407    gcc-7.5.0
-sparc64               randconfig-002-20250407    gcc-9.3.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-21
-um                               allyesconfig    gcc-12
-um                                  defconfig    clang-21
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20250407    clang-18
-um                    randconfig-002-20250407    clang-21
-um                           x86_64_defconfig    clang-15
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250407    gcc-11
-x86_64      buildonly-randconfig-002-20250407    clang-20
-x86_64      buildonly-randconfig-003-20250407    clang-20
-x86_64      buildonly-randconfig-004-20250407    clang-20
-x86_64      buildonly-randconfig-005-20250407    clang-20
-x86_64      buildonly-randconfig-006-20250407    gcc-12
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250407    gcc-9.3.0
-xtensa                randconfig-002-20250407    gcc-7.5.0
+> I do have the following regression on single core system using UBIFS,
+> dual core seems not affected, any idea?
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+could you try to bisect which change has caused this problem?
+This usually the best way to pinpoint the commit that causes the issue
+and either get a fix or a revert on the way =F0=9F=A4=97
+
+You can find the relevant docs here:
+https://docs.kernel.org/admin-guide/bug-bisect.html
+
+> Francesco
+
+Cheers,
+Chris
+
+--yjhj4l62urfzefuc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmf035oACgkQwEfU8yi1
+JYWgOxAAvhglW0Uz4Z/ODifFww4icGEshUUXIPnNmmCDdBhKgySaOyAOY+UMErNQ
+pN8bHEWr1EDpLX7aIze88pLQalCs48wKfFoVZch7Q87Wde9MZqti5ls75VGCTwvP
++bDtUm64VRsLOShejWodpdDO0M8I37K/8jMA5E3qujXmqaxXtGtZEvnmHZA3hJAQ
+b5k6of/UxRJySe31B8DHQR36FOX9y4Fq3fp37MOZk5ROGC2C3xv2SNF/iWDEiRFB
+4+hcfoqW25n73v819Balrrv9Zr5g45a7eoS4PXuF0Ugy08vKaWGfB+Cl+FODRtqs
+EPMuXmJJgLiNzldX68GZ31L1So7e6ze3z3IJC2PZuaN+EqAxXTtFT+IKuKxvvRHj
+KI0oviYlE3h2sPX3UD+PK/7lKOcMkUo8CkOvvpLuXMbUstkMXz2xm8M7a/JxQdz6
+KUpddMAdDCe1eTS6N2QVVJ3RG6j6AZD54/1+9N4+HibYlH6mnnPeLccJP1Y11b9p
+7WrYzCjn3uIuK+haw7JYaMZjcWAzwTQlbKWBn3j6FDziqtCQ3h0zX5Vs+1PPFv3/
+x1tqNw6atqQhNgtUayk6vft37XDonDtkgTsKhLP2lom3lCepS5TNo6T3wfANCSey
+uOdLYUphC04ChRKsNFMkwiBz1ommmgM5xUUaXwgrBkL/lj6Z9Xo=
+=UHYC
+-----END PGP SIGNATURE-----
+
+--yjhj4l62urfzefuc--
 
