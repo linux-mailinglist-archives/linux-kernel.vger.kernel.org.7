@@ -1,209 +1,194 @@
-Return-Path: <linux-kernel+bounces-593248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E1EAA7F726
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:57:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14D16A7F728
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65ECE3B68DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:56:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E75EA174314
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5B4262802;
-	Tue,  8 Apr 2025 07:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB3725F996;
+	Tue,  8 Apr 2025 07:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="i3pOW+UA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="iTAJqycX";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="i3pOW+UA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="iTAJqycX"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lJB90ZMJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E39325F987
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 07:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481EC21931E
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 07:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744098977; cv=none; b=dYXxFZtD8soktL47r97Q6pr5+HiTncQgHHP+7TanVnDxjU1cav/nXbJB8sDCqTBJwyEyYGpfTITVQe2AIo1dMjFxgMUvRNFO42zNQTs2HyODKvaowOT4g2h4dYRsA6DsCWgjSJ58Yt6ootbg49LMinhbRSj5sGHfdKZAtCw0FaU=
+	t=1744099094; cv=none; b=muDVATs04mUJuGc4tNehMVWNpfhJCb/a5y4JwNi+acptmbwpGrKwVQL1z04jvogGaHh+Tv1V5BwUIJ7Zxu28XTc5cERy32F5yZIgoxTHYfwApklIj1btr3nI2k+5ZhyWqu1nhE8ot0BI/uPkLT9PUgzjY6xZILoy1aqOfFGT3m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744098977; c=relaxed/simple;
-	bh=RMoKcTxk8eYUoYsVduEpTMY19PBdshWyUZnjQDLGKm4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uRHerqoAgGK4peJY/00PZqLfOG/dzxI8pFvDfA9yOudadtHjpni2MdaGWjMsglrXqwVLqjfoujYhr2gOILSlijaB/KRVRZGmXi3So5LRZhMHwOiFs59zJYgOs+VMs3hDsg0ECyz3wVZaVC5T95aQeLoRBG6JqRiPf56bgrCls5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=i3pOW+UA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=iTAJqycX; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=i3pOW+UA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=iTAJqycX; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8C7771F457;
-	Tue,  8 Apr 2025 07:56:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744098967; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0lkhxYJUuqfCDX57IYN493q9tMuE5ous2NwIddIpcEo=;
-	b=i3pOW+UA4q810bZjC9iWLpSOC2HDqeOuXFArmJQqBJpcOG+J0QaCbJPEdr3xoRn4pq3RNe
-	URHmuUULw11NpTQeoON4jPE6aaD69/G9ml4O5uzF/J7II4mk67IvxRpNC34SXo0vuYcKTv
-	402gu9yTZPmQ7OL8jSdnMi2/lHXhOO4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744098967;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0lkhxYJUuqfCDX57IYN493q9tMuE5ous2NwIddIpcEo=;
-	b=iTAJqycXAXiSgKF9FgRDUDJa4CySIQXTGuTFM8wu+VkrA9u2eMYOggEaI8SPd2S+UjjmZj
-	pBaMcjq8hJkxGPBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1744098967; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0lkhxYJUuqfCDX57IYN493q9tMuE5ous2NwIddIpcEo=;
-	b=i3pOW+UA4q810bZjC9iWLpSOC2HDqeOuXFArmJQqBJpcOG+J0QaCbJPEdr3xoRn4pq3RNe
-	URHmuUULw11NpTQeoON4jPE6aaD69/G9ml4O5uzF/J7II4mk67IvxRpNC34SXo0vuYcKTv
-	402gu9yTZPmQ7OL8jSdnMi2/lHXhOO4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1744098967;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0lkhxYJUuqfCDX57IYN493q9tMuE5ous2NwIddIpcEo=;
-	b=iTAJqycXAXiSgKF9FgRDUDJa4CySIQXTGuTFM8wu+VkrA9u2eMYOggEaI8SPd2S+UjjmZj
-	pBaMcjq8hJkxGPBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5CE0313A1E;
-	Tue,  8 Apr 2025 07:56:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZR5SFZfW9Gd9RgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 08 Apr 2025 07:56:07 +0000
-Message-ID: <34f3cdf6-ca11-4eea-aecb-6d7bc5e82a1b@suse.de>
-Date: Tue, 8 Apr 2025 09:56:06 +0200
+	s=arc-20240116; t=1744099094; c=relaxed/simple;
+	bh=NYsavnI/UfdEt+Q1VowIu/E6JxLGxXNS9SLj83N1hoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oHNpWM9ll56c2VWa6g7hotmd0H56u7V+5ep4luPEa/wWLzL8rItRBkCy+QC/F7vPuSz9GOlbwplUw0pUNMaH6T43lz/fppMD802VHvVFHcEvxEFRvZFpGLa4T/uVvKdufrUKM+aN4onKxgQFc3h4ENApMEVXSkpIOwtFmSg5yis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lJB90ZMJ; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744099092; x=1775635092;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NYsavnI/UfdEt+Q1VowIu/E6JxLGxXNS9SLj83N1hoI=;
+  b=lJB90ZMJXKNdipPc/PQd6Cs6cp+Ofwk6JDR8LDSgCyGBIAyfE2IS9091
+   Il1dDtB/Mpv4aRWHxXAZCTZC2C7asW4kGR5n05o1vI6/aJUOLa1qp+eZV
+   YNV8vK7JdUtiwcIVBfHcipRcwIuUG6eNriTXnPyk8RfSh+fA4qmwAx4fx
+   ugH14+BWZgkof9QcxYpwQD1xnxi2M8nG/8v5/skm+YJyNNmkeARaU7Kso
+   ul9u8RXSKWO80+bCo+A4lsbRxCca9QsnHcnilpb77xvnrN7arbY1eTba/
+   AvkJyybM0qBqGaALX0KaHwdOemdLbqYftps+SNfe4o8dMjxNTxOlx2DfK
+   A==;
+X-CSE-ConnectionGUID: D4lZcqI9RlKcg6ui1NUI2w==
+X-CSE-MsgGUID: msvLYuq6TrKSBbf2N0LAPw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45651520"
+X-IronPort-AV: E=Sophos;i="6.15,197,1739865600"; 
+   d="scan'208";a="45651520"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 00:58:12 -0700
+X-CSE-ConnectionGUID: QP2YyV8fSxaPMfEtUnMWQg==
+X-CSE-MsgGUID: RDmS4KDTTXy8jF5EJJavWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,197,1739865600"; 
+   d="scan'208";a="133390649"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 00:58:09 -0700
+Date: Tue, 8 Apr 2025 10:58:06 +0300
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: gregkh@linuxfoundation.org, david.m.ertman@intel.com,
+	ira.weiny@intel.com, lee@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mfd: core: Support auxiliary device
+Message-ID: <Z_TXDg67AtWzNXbg@black.fi.intel.com>
+References: <20250407074614.1665575-1-raag.jadav@intel.com>
+ <Z_OQgqt0Wg17N05j@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] drm/tests: Fix drm_display_mode memory leaks
-To: Maxime Ripard <mripard@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Philipp Stanner <phasta@mailbox.org>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250408-drm-kunit-drm-display-mode-memleak-v1-0-996305a2e75a@kernel.org>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250408-drm-kunit-drm-display-mode-memleak-v1-0-996305a2e75a@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,gmail.com,ffwll.ch];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_OQgqt0Wg17N05j@smile.fi.intel.com>
 
+On Mon, Apr 07, 2025 at 11:44:50AM +0300, Andy Shevchenko wrote:
+> On Mon, Apr 07, 2025 at 01:16:14PM +0530, Raag Jadav wrote:
+> > Extend MFD subsystem to support auxiliary child device. This is useful
+> > for MFD usecases where parent device is on a discoverable bus and doesn't
+> > fit into the platform device criteria. Purpose of this implementation is
+> > to provide discoverable MFDs just enough infrastructure to register
+> > independent child devices with their own memory and interrupt resources
+> > without abusing the platform device.
+> > 
+> > Current support is limited to just PCI type MFDs, but this can be further
+> > extended to support other types like USB in the future.
+> 
+> > PS: I'm leaning towards not doing any of the ioremap or regmap on MFD
+> > side and think that we should enforce child devices to not overlap.
+> 
+> Yes, but we will have the cases in the future, whatever,
+> for the first step it's okay.
 
+I've always found such devices to have a parent specific functionality
+that fall under a specific subsystem instead of needing a generic MFD for
+it. But I'd love to be surprised.
 
-Am 08.04.25 um 09:34 schrieb Maxime Ripard:
-> Hi,
->
-> Here's a series that fixes some memory leaks in our kunit tests that
-> eventually show up in kmemleak.
->
-> Let me know what you think,
-> Maxime
->
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> > If there's a need to handle common register access by parent device,
+> > then I think it warrants its own driver which adds auxiliary devices
+> > along with a custom interface to communicate with them, and MFD on
+> > AUX is not the right solution for it.
+> 
+> ...
+> 
+> > -static const struct device_type mfd_dev_type = {
+> > -	.name	= "mfd_device",
+> > +enum mfd_dev {
+> > +	MFD_AUX_DEV,
+> > +	MFD_PLAT_DEV,
+> > +	MFD_MAX_DEV
+> > +};
+> > +
+> > +static const struct device_type mfd_dev_type[MFD_MAX_DEV] = {
+> > +	[MFD_AUX_DEV]	= { .name = "mfd_auxiliary_device" },
+> > +	[MFD_PLAT_DEV]	= { .name = "mfd_platform_device" },
+> >  };
+> 
+> This is likely an ABI breakage if anything looks in sysfs for mfd_device.
 
-On the series:
+I have no insight on the usecase here. Can you please elaborate?
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+> > +static int mfd_remove_devices_fn(struct device *dev, void *data)
+> > +{
+> > +	if (dev->type == &mfd_dev_type[MFD_AUX_DEV])
+> > +		return mfd_remove_auxiliary_device(dev);
+> 
+> > +	else if (dev->type == &mfd_dev_type[MFD_PLAT_DEV])
+> 
+> Redundant 'else'
+> 
+> > +		return mfd_remove_platform_device(dev, data);
+> > +
+> > +	return 0;
+> > +}
+> 
+> ...
+> 
+> > +#ifndef MFD_AUX_H
+> > +#define MFD_AUX_H
+> > +
+> > +#include <linux/auxiliary_bus.h>
+> > +#include <linux/ioport.h>
+> 
+> > +#include <linux/types.h>
+> 
+> How is this one being used?
 
-> ---
-> Maxime Ripard (7):
->        drm/tests: helpers: Create kunit helper to destroy a drm_display_mode
->        drm/tests: modeset: Fix drm_display_mode memory leak
->        drm/tests: modeset: Fix drm_display_mode memory leak
->        drm/tests: cmdline: Fix drm_display_mode memory leak
->        drm/tests: modes: Fix drm_display_mode memory leak
->        drm/tests: modes: Fix drm_display_mode memory leak
->        drm/tests: probe-helper: Fix drm_display_mode memory leak
->
->   drivers/gpu/drm/tests/drm_client_modeset_test.c |  9 ++++++++-
->   drivers/gpu/drm/tests/drm_cmdline_parser_test.c | 10 +++++++++-
->   drivers/gpu/drm/tests/drm_kunit_helpers.c       | 23 ++++++++++++++++++++++
->   drivers/gpu/drm/tests/drm_modes_test.c          | 26 +++++++++++++++++++++++++
->   drivers/gpu/drm/tests/drm_probe_helper_test.c   |  8 +++++++-
->   include/drm/drm_kunit_helpers.h                 |  3 +++
->   6 files changed, 76 insertions(+), 3 deletions(-)
-> ---
-> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-> change-id: 20250408-drm-kunit-drm-display-mode-memleak-49d05334c16e
->
-> Best regards,
+Ah, since it's not so easy to come across a file without a type, I've grown
+a habit of throwing this in without a thought. Thanks for catching it.
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+> > +#define auxiliary_dev_to_mfd_aux_dev(auxiliary_dev) \
+> > +	container_of(auxiliary_dev, struct mfd_aux_device, auxdev)
+> 
+> Missing container_of.h and better to define after the data type as it can be
+> converted to static inline, if required.
 
+Sure.
+
+> > +/*
+> > + * Common structure between MFD parent and auxiliary child device.
+> > + * To be used by leaf drivers to access child device resources.
+> > + */
+> > +struct mfd_aux_device {
+> > +	struct auxiliary_device auxdev;
+> 
+> > +	struct resource	mem;
+> > +	struct resource	irq;
+> > +	/* Place holder for other types */
+> > +	struct resource	ext;
+> 
+> Why this can't be simply a VLA?
+
+Because it requires resouce identification, and with that we're back to
+platform style get_resource() and friends.
+
+> > +};
+> > +
+> > +#endif
+> 
+> ...
+> 
+> > +/* TODO: Convert the platform device abusers and remove this flag */
+> > +#define MFD_AUX_TYPE	INT_MIN
+> 
+> INT_MIN?! This is a bit unintuitive. BIT(31) sounds better to me.
+> Or even a plain (decimal) number as PLATFORM_DEVID_* done, for example.
+
+I thought a specific number would rather raise more questions, but sure.
+
+Raag
 
