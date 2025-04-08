@@ -1,78 +1,86 @@
-Return-Path: <linux-kernel+bounces-592950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26514A7F335
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:33:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B42CA7F33B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B07C97A6D9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 03:31:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 720E47A3A97
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 03:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18E725FA0A;
-	Tue,  8 Apr 2025 03:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80D625F782;
+	Tue,  8 Apr 2025 03:33:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="WTyExuL2"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L6o9b+Qy"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4928B25F98B;
-	Tue,  8 Apr 2025 03:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2682AEE3;
+	Tue,  8 Apr 2025 03:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744083143; cv=none; b=ka4JCRANfGfLqu6T1a8H6loq34tjr7ewj6AebTycWTnOKGFl2xXj0L2r8TWkCZDM9DcFiiSvV7ewaXaJT38GLK6d1KFPO6gUPZCmoqrwjDGW6ocmAQO4j6FEWESqmPbo2X3bG6WNaV2+YGqiQTrjNY6QEhbrl4+Id/ZBP2+KviY=
+	t=1744083239; cv=none; b=CxApWxyQ1MtU5gkkEE/gTBj76FiuaNhlc5/kHwus6i4CsuBo7KgB/gHk1daAjhFn0novIXmV/NlU05fV61lxB0y/rIzWJgyY2MFR7jJwdOGgTPC++ONGVHnRSoqxjS714zeyfM2q49V4FDHhu6e5EMY4p31w3M6sOtnwQSLT1AQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744083143; c=relaxed/simple;
-	bh=pNJcKQzCiYnJtCW+Hyd8L7/lj4N4d1+BBAZNV5m3Vww=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ayBT+ofruYmd4696XEJQngxpGV/de8V44W6EEi9ClDEB6NYSdnolky9FbgvLaHPx52esbTAUkHNPFIV9b8jQYEj09/cMVKGQPT9yO5wfXGooHUpuArjvd36ttsxV2NpZpHs/XHMMTdtU2xHSgDZO3SX7iRyuFKrBlJBZ7QnFtLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=WTyExuL2; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 1111524c142a11f0aae1fd9735fae912-20250408
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=NRKbm8MkDmyaqkiaP1DwdDeOmQ+erOodCBiH4VJGyeM=;
-	b=WTyExuL2ITQfMt/vXMRwbKapmtOL2J/tVZtyJKVQR4dgYh/XJjEd4iDSHmiRtlviKOMIK+XbSmjLxFxazMsFeNXriJW+E3Vq3LhajFAuQtAeKxvHEA8z8sDLeNeaPia3zmdAGYAMLaCH/L1QujEimKjqkGZ04KPIiYwiqFJ34mI=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:2a408710-98f1-4b03-bef8-c8fa7d234b68,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:0ef645f,CLOUDID:d57a114b-a527-43d8-8af6-bc8b32d9f5e9,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 1111524c142a11f0aae1fd9735fae912-20250408
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
-	(envelope-from <friday.yang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1708660130; Tue, 08 Apr 2025 11:32:15 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Tue, 8 Apr 2025 11:32:14 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Tue, 8 Apr 2025 11:32:13 +0800
-From: Friday Yang <friday.yang@mediatek.com>
-To: Yong Wu <yong.wu@mediatek.com>, Krzysztof Kozlowski <krzk@kernel.org>, Rob
- Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias
- Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>
-CC: Friday Yang <friday.yang@mediatek.com>,
-	<linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v6 3/3] memory: mtk-smi: mt8188: Use devm_pm_runtime_enable
-Date: Tue, 8 Apr 2025 11:31:56 +0800
-Message-ID: <20250408033206.12176-4-friday.yang@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250408033206.12176-1-friday.yang@mediatek.com>
-References: <20250408033206.12176-1-friday.yang@mediatek.com>
+	s=arc-20240116; t=1744083239; c=relaxed/simple;
+	bh=BIWsEMn2fRKec8Ap3iHaJPpW9wj7oHxaUW/9vNAjTbo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tGXa4ALSeBWpI6APTZhrTZc2AaXyYS3IO85LMLN6oyIF2mYNY6Pug/zbtFj9Z7WOJY3TogRyT8aB00U2X6jHtNzYyc0tfKUaO+SSHf8uOsTLGi2c1kfu8gVXFGBMVUJu1VHo49iKSNiKkbW5a+sRN51uds4TsIqHd2TnQC3q1XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L6o9b+Qy; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7c7913bab2cso116638685a.0;
+        Mon, 07 Apr 2025 20:33:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744083236; x=1744688036; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=udL5m0T4dkNFRE3vfDH2Xja10VJVdeF3f1lm63u5woM=;
+        b=L6o9b+QyyV4FA/4CzyPOKYF3pMu5Ffwrshy/Qyr3M0ImEUqzXQQ3tquUSgcWgX1zaI
+         M2Iu+nLbPZJ0Lmm16mMSBGJTarPgAelkWu6ToJBHtFVKvSHYLyrSDuHw+rUOQOYZwoXk
+         FFgy2CNeFyosaMuBJ7etH+RfobayLZmp+fgpsA61Dr8MElVhwzu6p2xR+EN7HE0Fv1v+
+         W8felJT1+A/NL1Kqd8F2GBbdfyewtStV2//UiwIjxafCIsuGv+s4S3dvd8i4Q/G7DMwz
+         cYm3FOwCzcZ3lfmLZ143uC62jVDGoJfDsVzcDioztkbIOtU3XQPRvRUntqdZZQP0GPHB
+         7fSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744083236; x=1744688036;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=udL5m0T4dkNFRE3vfDH2Xja10VJVdeF3f1lm63u5woM=;
+        b=jHh3cS5oX5NFNg1Iwo/6JEjCNAFBx9BDM8WCgfuaV3whVIqe2wvpWKiv0mpLwtJcHS
+         2n7OXS3IAihwbuRIeUmQxDH+2n3atkTVp+2CTbl+NoSyV3N2iDZrjgKmNKKwuSsDgdCt
+         wzzbmTtDk5Hw/LvB99g1vgeuU7YaE9u+5s4lxa5NHgIHosmRnymuwaJViqZ2rPuj8ReH
+         fkhNcltSbKDuAEfi+IVOTboL50xCQjEDtRym/HtXGWobJmFQd+hyOOR9Be6NFDKgW3SN
+         EqbpNdixddVxD/OtWxblHPdxvwsEy3MA7KVqN5CSy5w9Iw7YKpXxWD9w0Sa53FlBmLix
+         NeXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRyG44OuqLoZJjGfhK2YDZB13KMKEL2471o98TxIYyoWOh9w3JY5q8tkmbVYL5BJjEAOzSXDdce4LIYhA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+Lb0+h/ofJHnYH++SLoRyQLPQjMNltx7yUY7USze/ZbXn5I68
+	C3FzfzK/b8ufdVY58Ug+Vj7+eQkS05b7BDGVxTj7VrBfw+NsJRqb8XN/nKItbY8=
+X-Gm-Gg: ASbGncu8k7Dqt9xF0Mv8nTk7/aYEWjQp8QHSJTvuPTSqEeFjaUo/jKkuYyGLOaRrfbP
+	P8fN3SgJy/vHBGN1czYN8hOF22xtKXs2heE88rJWekdhDXdhzH5I9n9kqElsR2Bxnq/pjcYjwjT
+	NMg77WsuxnKzOT7udYxH4J0FhhQ55e2mTa9KMZWQF760ysn1pUs4enhXwqorEW5BMbG+cBU4HzD
+	EJbStR1s3TdwUnE3Ui5JA3V8OJF4yU5Ctb0QIaFbNOQ+xdNV5vPptq2WHvQ4C2Cz5O9fCfRG8n2
+	IO2+MRmIHh3om0zYLuwys0sS2ZHW3v1zBhb2MdVQGcgZ5ZnBw8Jg8UA5IoEhdiR5YLIUMA==
+X-Google-Smtp-Source: AGHT+IFbSNCZz6PDdSSJYNZI+3L9Qa0eWY+HBYRvkaZkya89BklnMzisBU8bwvxrFsSIGC4xpS3rYw==
+X-Received: by 2002:a05:620a:4252:b0:7c5:49c9:e4ae with SMTP id af79cd13be357-7c774d6543emr1863453985a.32.1744083236402;
+        Mon, 07 Apr 2025 20:33:56 -0700 (PDT)
+Received: from theriatric.mshome.net ([73.123.232.110])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c76ea82d48sm692759585a.101.2025.04.07.20.33.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 20:33:56 -0700 (PDT)
+From: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+To: Coly Li <colyli@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcache@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	kernelmentees@lists.linuxfoundation.org,
+	gshahrouzi@gmail.com
+Subject: [PATCH 0/2] bcache: Fix symbol visibility and type assignment
+Date: Mon,  7 Apr 2025 23:33:20 -0400
+Message-ID: <20250408033322.401680-1-gshahrouzi@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,71 +88,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Replace pm_runtime_enable with the devres-enabled version which
-can trigger pm_runtime_disable.
+Patch 1 ensures bcache_is_reboot is properly declared along with the
+other forward declarations.
 
-Signed-off-by: Friday Yang <friday.yang@mediatek.com>
----
- drivers/memory/mtk-smi.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+Patch 2 removes incorrect cpu_to_leXX conversions for assignments.
 
-diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
-index f25d46d2ef33..daef6d350419 100644
---- a/drivers/memory/mtk-smi.c
-+++ b/drivers/memory/mtk-smi.c
-@@ -713,16 +713,17 @@ static int mtk_smi_larb_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_link_remove;
+Gabriel Shahrouzi (2):
+  bcache: Fix undeclared symbol warning for bcache_is_reboot
+  bcache: Fix warnings for incorrect type in assignments
 
--	pm_runtime_enable(dev);
-+	ret = devm_pm_runtime_enable(dev);
-+	if (ret)
-+		goto err_link_remove;
-+
- 	platform_set_drvdata(pdev, larb);
- 	ret = component_add(dev, &mtk_smi_larb_component_ops);
- 	if (ret)
--		goto err_pm_disable;
-+		goto err_link_remove;
+ drivers/md/bcache/bcache.h |  1 +
+ drivers/md/bcache/super.c  | 12 ++++++------
+ drivers/md/bcache/sysfs.c  |  2 --
+ 3 files changed, 7 insertions(+), 8 deletions(-)
 
- 	return 0;
-
--err_pm_disable:
--	pm_runtime_disable(dev);
- err_link_remove:
- 	device_link_remove(dev, larb->smi_common_dev);
- 	return ret;
-@@ -733,7 +734,6 @@ static void mtk_smi_larb_remove(struct platform_device *pdev)
- 	struct mtk_smi_larb *larb = platform_get_drvdata(pdev);
-
- 	device_link_remove(&pdev->dev, larb->smi_common_dev);
--	pm_runtime_disable(&pdev->dev);
- 	component_del(&pdev->dev, &mtk_smi_larb_component_ops);
- }
-
-@@ -954,7 +954,10 @@ static int mtk_smi_common_probe(struct platform_device *pdev)
- 			return ret;
- 	}
-
--	pm_runtime_enable(dev);
-+	ret = devm_pm_runtime_enable(dev);
-+	if (ret)
-+		return ret;
-+
- 	platform_set_drvdata(pdev, common);
- 	return 0;
- }
-@@ -965,7 +968,6 @@ static void mtk_smi_common_remove(struct platform_device *pdev)
-
- 	if (common->plat->type == MTK_SMI_GEN2_SUB_COMM)
- 		device_link_remove(&pdev->dev, common->smi_common_dev);
--	pm_runtime_disable(&pdev->dev);
- }
-
- static int __maybe_unused mtk_smi_common_resume(struct device *dev)
---
-2.46.0
+-- 
+2.43.0
 
 
