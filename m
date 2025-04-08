@@ -1,117 +1,94 @@
-Return-Path: <linux-kernel+bounces-593304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 073E0A7F7CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:27:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3C33A7F839
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D069E1768FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:27:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A24D1441035
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7309A263C8A;
-	Tue,  8 Apr 2025 08:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509992185B8;
+	Tue,  8 Apr 2025 08:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="PqdooEFM"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62BD221DA0
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Rk5vQxf1"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B861326159B;
+	Tue,  8 Apr 2025 08:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744100817; cv=none; b=fYa/GNyuHjBvNlEgVhrKZwnRL19HIeCEKgvzf2vp6QFLzO8ykYZGXdrpt7oRe1bOk+HdXtrB8jLwvCvOiTYBB7tm4nF3f+SkBLSBEPn0yKl5zH2V9ssd4+2IY08FsZcplHhpUll0Uh0UdhrukTQ2GtT+7Dxmn2dDUmiHNC9ngEA=
+	t=1744101796; cv=none; b=NWmIGNjd8K6itpVjl4AvO7sIoGl7fsh78dU6jdOFVwQQZiL+tvgiLKUz9R8nqCoZveG+qdhuFJEoAwnpCBbN/P6UlyVEP3GjPajNtxMYPguqkIerFI9fd08w9YSExVo5h6cstHPkhNSmY1eaJcmUd7TY4SnISP5H8QTh4V/1kRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744100817; c=relaxed/simple;
-	bh=NpWsZpFXRbt3GwsN95RhBIinTbBM5BYmIhq/5yo1nGQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qqh54VRZt+DLs1pKGPRMRzzKFFVrVFjKQzJ5evpLBUTQiFuoRe9LSUzo7MfgSUlPTVKr7Czq+9oPsRXE6AUjCVOHq3slLM4CaPLFYIQ/vOdmtqnnaSvHQQc3BdAFkZCRICg2RQn3gdFkUTrkIQSOZJacnTzKYaJRpUHBCRcnDLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=PqdooEFM; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D22342057F;
-	Tue,  8 Apr 2025 08:26:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1744100811;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+StCwaja+5G7YO+tr/xczq0McFnBpn1PASsxq3/vAG8=;
-	b=PqdooEFMVsW0tqL/MnecMlHNlej4PM8LE72P8hpHtH4ABE3bsxRO/jZ1trbvrjTdVOUNpw
-	XqJiGR6lz9Z73Lw+n535s7QRwLhQY35KOKd9/QdqJQ0sXW0P3N5WJj8BNrySJGV9HyZSvK
-	KCCgJoeNGkLL/TcNvfTqEjJga075EWNPJAR4t8f9LC1L0ytU6pibpjrmqZ8MdWzAOWnEW0
-	MO/tI1YrKU3lvnvIUUC5jSAYTjjATrIW3HSMpUbXU7Il3sRDqmhZns+07nBTX6BVzG1F7L
-	PkAnsgy4Th8MCS17NopV09Y0iKoJc1HrsuYMSKortKUL9jYR3dzqd0IUCekofw==
-Message-ID: <f687f7c4-a93f-4369-b5f3-8db87780644e@yoseli.org>
-Date: Tue, 8 Apr 2025 10:26:50 +0200
+	s=arc-20240116; t=1744101796; c=relaxed/simple;
+	bh=QTCjrxQ/e5rfDTMmD+U3jR19pQGVrX4IP/gtSGx0nDY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TMrECA51/BmAocUw7iAUF7Io9R942h/64cyQJgww9L9clpS9SXc77rwfabFjxOvy6qRXeVIZfpPjfKMz/U+Lps2OtA9sx2na1Yeb7GUWIM1HiXIcp4/UNgwUb+lis1ZrZV0ET6R07QkL4T+4H/SSahlo32y0Ypu2Vhu33B/YvKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Rk5vQxf1; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=QTCjr
+	xQ/e5rfDTMmD+U3jR19pQGVrX4IP/gtSGx0nDY=; b=Rk5vQxf1dDZh6DHjYtXHf
+	iLtwJ0LiRu5o2kqSfDBuShs5nnDJ4wSOcpSY7GIhTwsi17ryX5GoQ0xLK9LzMST5
+	dEHUHp6uAJDidE2vZRaCwdueFZB0fLLDD5tjkbjHevtt8O0PRTB6XbRfd0VbPmLK
+	2trqy3IK3oJTY9YGPEZfYo=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wCHlTrc3fRnuKo+FA--.30056S4;
+	Tue, 08 Apr 2025 16:27:11 +0800 (CST)
+From: lvxiafei <xiafei_xupt@163.com>
+To: ej@inai.de
+Cc: coreteam@netfilter.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	fw@strlen.de,
+	horms@kernel.org,
+	kadlec@netfilter.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvxiafei@sensetime.com,
+	netdev@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	pabeni@redhat.com,
+	pablo@netfilter.org,
+	xiafei_xupt@163.com
+Subject: Re: [PATCH] netfilter: netns nf_conntrack: per-netns net.netfilter.nf_conntrack_max sysctl
+Date: Tue,  8 Apr 2025 16:27:08 +0800
+Message-Id: <20250408082708.56208-1-xiafei_xupt@163.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <66ror6q2-7pq2-os23-rq8r-8426ppr6pnps@vanv.qr>
+References: <66ror6q2-7pq2-os23-rq8r-8426ppr6pnps@vanv.qr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mailmap: add entry for Jean-Michel Hautbois
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org
-References: <20250328-mailmap-v2-v2-1-bdc69d2193ca@yoseli.org>
- <20250328111656.GA11349@pendragon.ideasonboard.com>
-Content-Language: en-US
-From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-In-Reply-To: <20250328111656.GA11349@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddvheelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheplfgvrghnqdfoihgthhgvlhcujfgruhhtsghoihhsuceojhgvrghnmhhitghhvghlrdhhrghuthgsohhisheshihoshgvlhhirdhorhhgqeenucggtffrrghtthgvrhhnpeefieetgeehvdeggffgffetheehhfetkeefhefhgeeuheetueffueeikefgffffteenucfkphepledurdduieehrdduieehrdduleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledurdduieehrdduieehrdduleejpdhhvghloheplgduledvrdduieekrddurdeingdpmhgrihhlfhhrohhmpehjvggrnhhmihgthhgvlhdrhhgruhhtsghoihhsseihohhsvghlihdrohhrghdpnhgspghrtghpthhtohepfedprhgtphhtthhopehlrghurhgvnhhtrdhpihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: jeanmichel.hautbois@yoseli.org
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCHlTrc3fRnuKo+FA--.30056S4
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Gr4DGw1kAr13Jr47uw47XFb_yoWfCrb_ZF
+	ZrXFnFkw1jvrs7Jry5ta1xZa93KFW8Ar1UA3yrtwsIkr1fXw15GFn2grW3ZF4UGr4ruF15
+	u3WSgw4kurWfujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7VUU9NVDUUUUU==
+X-CM-SenderInfo: x0ldwvplb031rw6rljoofrz/1tbiKBMpU2f03Noc4AAAso
 
-Hi Laurent,
+On Mon, 7 Apr 2025 12:56:33
+Jan Engelhardt <ej@inai.de> wrote:
+> By inheriting an implicit limit from the parent namespace somehow.
+> For example, even if you set the kernel.pid_max sysctl in the initial
+> namespace to something like 9999, subordinate namespace have
+> kernel.pid_max=4million again, but nevertheless are unable to use
+> more than 9999 PIDs. Or so documentation the documentation
+> from commit d385c8bceb14665e935419334aa3d3fac2f10456 tells me
+> (I did not try to create so many processes by myself).
+>
+> A similar logic would have to be applied for netfilter sysctls
+> if they are made modifiable in subordinate namespaces.
 
-On 28/03/2025 12:16, Laurent Pinchart wrote:
-> On Fri, Mar 28, 2025 at 12:14:24PM +0100, Jean-Michel Hautbois wrote:
->> As recent contributions where made with the @ideasonboard.com email, any
->> reply would fail. Add the proper address to map this old one.
->>
->> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-> 
-> I can confirm that jeanmichel.hautbois@ideasonboard.com isn't in use
-> anymore.
-> 
-> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-Thanks !
-
-@akpm: Gentle ping to know where this patch is going, and if something 
-might be missing ?
-
-JM
-> 
->> ---
->> v2: Properly specify the mail addresses
->> ---
->>   .mailmap | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/.mailmap b/.mailmap
->> index 05a3889ae2d3dadcd9265af6b02e35f9f6095c13..03a725d0f890f8ac7c06a06a386f591116957eea 100644
->> --- a/.mailmap
->> +++ b/.mailmap
->> @@ -315,6 +315,7 @@ Jayachandran C <c.jayachandran@gmail.com> <jchandra@broadcom.com>
->>   Jayachandran C <c.jayachandran@gmail.com> <jchandra@digeo.com>
->>   Jayachandran C <c.jayachandran@gmail.com> <jnair@caviumnetworks.com>
->>   <jean-philippe@linaro.org> <jean-philippe.brucker@arm.com>
->> +Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> <jeanmichel.hautbois@ideasonboard.com>
->>   Jean Tourrilhes <jt@hpl.hp.com>
->>   Jeevan Shriram <quic_jshriram@quicinc.com> <jshriram@codeaurora.org>
->>   Jeff Garzik <jgarzik@pretzel.yyz.us>
->>
->> ---
->> base-commit: 6de5ac43b603a7cdf6adea1f53fb24b7d064f1a0
->> change-id: 20250328-mailmap-v2-088335d65871
-> 
+The patch is to use nf_conntrack_max to more flexibly limit the
+ct_count in different netns, which may be greater than the parent
+namespace, belonging to the global (ancestral) limit, and there
+is no implicit limit inherited from the parent namespace
 
 
