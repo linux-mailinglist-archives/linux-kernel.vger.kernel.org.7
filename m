@@ -1,267 +1,213 @@
-Return-Path: <linux-kernel+bounces-593856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB6F5A80625
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:24:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B929FA804F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03EF588620F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:11:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D63357A66E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BE1269B1E;
-	Tue,  8 Apr 2025 12:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B1526A0AA;
+	Tue,  8 Apr 2025 12:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l3ZQ1kq3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yr/RvF04"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D7626988E;
-	Tue,  8 Apr 2025 12:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AB326B95A
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 12:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744114186; cv=none; b=Ny9q8m6aZy7Bxwfeleh6ean518myO4zmj8cAZZJ9ChkCVG5zbUeylw9IPOFoMe4A6Us8Ca4sAE62NGLar8BfPCn66ypli3k3I22RXSsbEpDdOwXfpVj4ijBp69l1KyTRDQewSLLf8GoAsCoct6ELZzVth5cbBP+sE53f7V1jM1M=
+	t=1744114227; cv=none; b=uQhZ6SCzo1MYyBa/a0PirBKL0q9lUJwg+rhkGTl/l980z0xqY15NM6vfF5cXAxOHwd87OWqiarSddXJujvzSga2FR9egelQ55UWlcFFBzdnMf7PCmiNaYMuex6DfBSmWJxlgLCIe1DXWNket3fbdqm0rkUV/SRXhSKoAFrEyYPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744114186; c=relaxed/simple;
-	bh=vmw4qXLEXSar//LeQlOCAoG3Ftnj1yKaLNkaXGlmaeI=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=CiRM11wU1AbJNq1h7eXUg6uj1Vj3C1OiFEagJGJhZPTNEPwZIh3b+dDg8TXOK4FfmcH7mo2wZcramV3BSlg/1Z7kyAXG+lRXxbulWJT0i1xlpn/QXbXM35XhCoSUftnuceRyg3H6Yk0ygV7lK6eBqvNIgGOR3G6lU9uQ37RdrXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l3ZQ1kq3; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1744114227; c=relaxed/simple;
+	bh=krbcNElve3LzrK+Yl40631lbQWKkm890pYqgBHWDaqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=laxo/7NNbKhKFLqIoh8mbbgjBxQnWF7C2lm4uss7EKF1Jem9BSjdlyefonuqJho5sMZipOxZfOr0smSCTpLmziZ0p9KNGeINuFgUTFkIpY+6pwLZvEv5cDbADtDc5N0Ao289212zLgsBsJr0T22ya3091sJKqe0RF0HDsy1R5C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yr/RvF04; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744114184; x=1775650184;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=vmw4qXLEXSar//LeQlOCAoG3Ftnj1yKaLNkaXGlmaeI=;
-  b=l3ZQ1kq3aBP4Beaz6lNL4cGeUYnOyb218tivY1Eyltwp89nTnD1Aco0a
-   Zj3hwgaN+f14WwyKzqB5ip3vKNkeVQlDwJW1ub/ZTkr1FqJyiF2i53FXD
-   +TlQDp9ZDNjWN3D799rw8kn0Uz6tnCVU6kK8niYtpmFza+5OllD+Tz6Hs
-   buy4YeaxufWGyAMCCkXLSe4vF8Ar1KzNPklNpm/n0Os8+rZfZMNRs9Lky
-   Er6W8otpLeyyg1aitTX70kmREwylHGuxinsvGOw/s6C68FjRokBjIWx03
-   lwNC97M0EA/euDAL0o6hiq6oYhfhew61rbGGm9dBTzzcZtZHaKUKBkz0m
-   g==;
-X-CSE-ConnectionGUID: MMkH3oNQSd2hvU6p4rQbbw==
-X-CSE-MsgGUID: NIfwIzxhTW+8dMAkuKOopg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="62944306"
+  t=1744114224; x=1775650224;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=krbcNElve3LzrK+Yl40631lbQWKkm890pYqgBHWDaqY=;
+  b=Yr/RvF04rXYSDOCYjTgTtjDkqu+04rut+TBvsMhq0qf37jXwGFYrLkgf
+   qKN7OgIVzACUAqKp9p1f9UIdINfwBdq5hrAUjNza8G7c6Va+dr6iav9GK
+   q5pceCR6ocC6SHeeKaLRE20aaHT0XxObTjg+blpLBrY8mXfTzq5SN6NE7
+   etDslFAcil50Y5bdKiK+7yp1O0VRRy+6a0nqBfF9Jl1JwERmT7fgMwKd2
+   WHTei5pvZ09FYNk65OhxQsp5vqvc90PqMxb9hUi5uV3U1o1nqKDBaIkqI
+   6j9N6p4RooORgr4sP9Ibjs/TM/blFwz/5+P723NZaYyG974nN1dxlr3Ci
+   A==;
+X-CSE-ConnectionGUID: JAtnK70eTvCgB1RbmNV3tA==
+X-CSE-MsgGUID: 18ng6T0hRZyXGsQuzl75Pw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45429346"
 X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
-   d="scan'208";a="62944306"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 05:09:43 -0700
-X-CSE-ConnectionGUID: JeQ9WJ0FSsuAcX3B/mFn4w==
-X-CSE-MsgGUID: +Ch64BGAS0ujjR8aA1Vaww==
+   d="scan'208";a="45429346"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 05:10:23 -0700
+X-CSE-ConnectionGUID: KiZSUac6TXmSXmXIdS/ZzQ==
+X-CSE-MsgGUID: k7y/hZA6R3iGRaiVv5Vk2g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
-   d="scan'208";a="133460324"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.125])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 05:09:38 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 8 Apr 2025 15:09:34 +0300 (EEST)
-To: "Derek J. Clark" <derekjohn.clark@gmail.com>
-cc: Hans de Goede <hdegoede@redhat.com>, Armin Wolf <W_Armin@gmx.de>, 
-    Jonathan Corbet <corbet@lwn.net>, Mario Limonciello <superm1@kernel.org>, 
-    Luke Jones <luke@ljones.dev>, Xino Ni <nijs1@lenovo.com>, 
-    Zhixin Zhang <zhangzx36@lenovo.com>, Mia Shao <shaohz1@lenovo.com>, 
-    Mark Pearson <mpearson-lenovo@squebb.ca>, 
-    "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>, 
-    "Cody T . -H . Chiu" <codyit@gmail.com>, 
-    John Martens <johnfanv2@gmail.com>, platform-driver-x86@vger.kernel.org, 
-    linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH v5 2/6] platform/x86: Add lenovo-wmi-helpers
-In-Reply-To: <20250408012815.1032357-3-derekjohn.clark@gmail.com>
-Message-ID: <1bf0e01a-9619-5cf2-72ff-6bb557654cce@linux.intel.com>
-References: <20250408012815.1032357-1-derekjohn.clark@gmail.com> <20250408012815.1032357-3-derekjohn.clark@gmail.com>
+   d="scan'208";a="128235584"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 08 Apr 2025 05:10:23 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u27mV-00063O-2r;
+	Tue, 08 Apr 2025 12:10:19 +0000
+Date: Tue, 8 Apr 2025 20:10:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: kernel/sched/syscalls.c:979:8: error: unexpected token, expected
+ comma
+Message-ID: <202504082254.7GLSWAbI-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, 7 Apr 2025, Derek J. Clark wrote:
+Hi Ingo,
 
-> Adds lenovo-wmi-helpers, which provides a common wrapper function for
-> wmidev_evaluate_method that does data validation and error handling.
-> 
-> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-> Signed-off-by: Derek J. Clark <derekjohn.clark@gmail.com>
-> ---
-> v5:
->  - Fixes from v4 review.
->  - Combine all previous methods into a single function that takes a
->    buffer for the wmi method arguments.
-> v4:
->  - Changed namespace to LENOVO_WMI_HELPERS from LENOVO_WMI.
->  - Changed filenames to lenovo-wmi-helpers from lenovo-wmi.
->  - Removed structs and functions implemented by other drivers.
-> ---
->  MAINTAINERS                               |  2 +
->  drivers/platform/x86/Kconfig              |  4 ++
->  drivers/platform/x86/Makefile             |  1 +
->  drivers/platform/x86/lenovo-wmi-helpers.c | 74 +++++++++++++++++++++++
->  drivers/platform/x86/lenovo-wmi-helpers.h | 20 ++++++
->  5 files changed, 101 insertions(+)
->  create mode 100644 drivers/platform/x86/lenovo-wmi-helpers.c
->  create mode 100644 drivers/platform/x86/lenovo-wmi-helpers.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 675f4b26426d..3a370a18b806 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13164,6 +13164,8 @@ L:	platform-driver-x86@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/wmi/devices/lenovo-wmi-gamezone.rst
->  F:	Documentation/wmi/devices/lenovo-wmi-other.rst
-> +F:	drivers/platform/x86/lenovo-wmi-helpers.c
-> +F:	drivers/platform/x86/lenovo-wmi-helpers.h
->  
->  LENOVO WMI HOTKEY UTILITIES DRIVER
->  M:	Jackie Dong <xy-jackie@139.com>
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 43407e76476b..bece1ba61417 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -459,6 +459,10 @@ config IBM_RTL
->  	 state = 0 (BIOS SMIs on)
->  	 state = 1 (BIOS SMIs off)
->  
-> +config LENOVO_WMI_HELPERS
-> +	tristate
-> +	depends on ACPI_WMI
-> +
->  config IDEAPAD_LAPTOP
->  	tristate "Lenovo IdeaPad Laptop Extras"
->  	depends on ACPI
-> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-> index 650dfbebb6c8..5a9f4e94f78b 100644
-> --- a/drivers/platform/x86/Makefile
-> +++ b/drivers/platform/x86/Makefile
-> @@ -69,6 +69,7 @@ obj-$(CONFIG_THINKPAD_LMI)	+= think-lmi.o
->  obj-$(CONFIG_YOGABOOK)		+= lenovo-yogabook.o
->  obj-$(CONFIG_YT2_1380)		+= lenovo-yoga-tab2-pro-1380-fastcharger.o
->  obj-$(CONFIG_LENOVO_WMI_CAMERA)	+= lenovo-wmi-camera.o
-> +obj-$(CONFIG_LENOVO_WMI_HELPERS)	+= lenovo-wmi-helpers.o
->  
->  # Intel
->  obj-y				+= intel/
-> diff --git a/drivers/platform/x86/lenovo-wmi-helpers.c b/drivers/platform/x86/lenovo-wmi-helpers.c
-> new file mode 100644
-> index 000000000000..166e87fef156
-> --- /dev/null
-> +++ b/drivers/platform/x86/lenovo-wmi-helpers.c
-> @@ -0,0 +1,74 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Lenovo Legion WMI helpers driver.
-> + *
-> + * The Lenovo Legion WMI interface is broken up into multiple GUID interfaces
-> + * that require cross-references between GUID's for some functionality. The
-> + * "Custom Mode" interface is a legacy interface for managing and displaying
-> + * CPU & GPU power and hwmon settings and readings. The "Other Mode" interface
-> + * is a modern interface that replaces or extends the "Custom Mode" interface
-> + * methods. The "Gamezone" interface adds advanced features such as fan
-> + * profiles and overclocking. The "Lighting" interface adds control of various
-> + * status lights related to different hardware components. Each of these
-> + * drivers uses a common procedure to get data from the WMI interface,
-> + * enumerated here.
-> + *
-> + * Copyright(C) 2025 Derek J. Clark <derekjohn.clark@gmail.com>
-> + */
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/cleanup.h>
-> +#include <linux/errno.h>
-> +#include <linux/export.h>
-> +#include <linux/module.h>
-> +#include <linux/wmi.h>
-> +
-> +#include "lenovo-wmi-helpers.h"
-> +
-> +/**
-> + * lwmi_dev_evaluate_int() - Helper function for calling WMI methods that
-> + * return an integer.
-> + * @wdev: Pointer to the WMI device to be called.
-> + * @instance: Instance of the called method.
-> + * @method_id: WMI Method ID for the method to be called.
-> + * @buf: Buffer of all arguments for the given method_id.
-> + * @size: Length of the buffer.
-> + * @retval: Pointer for the return value to be assigned.
-> + *
-> + * Calls wmidev_valuate_method for Lenovo WMI devices that return an ACPI
-> + * integer. Validates the return value type and assigns the value to the
-> + * retval pointer.
-> + *
-> + * Return: 0 on success, or on error.
+FYI, the error/warning still remains.
 
-The second part either has a typo (on -> an ?) or is grammaritically 
-incomplete (what is returned on error ?). Although I think if it's the 
-first option, it should say e.g. "an error code." not just "an error."
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   0af2f6be1b4281385b618cb86ad946eded089ac8
+commit: 04746ed80bcf3130951ed4d5c1bc5b0bcabdde22 sched/syscalls: Split out kernel/sched/syscalls.c from kernel/sched/core.c
+date:   11 months ago
+config: mips-randconfig-r064-20250408 (https://download.01.org/0day-ci/archive/20250408/202504082254.7GLSWAbI-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 92c93f5286b9ff33f27ff694d2dc33da1c07afdd)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250408/202504082254.7GLSWAbI-lkp@intel.com/reproduce)
 
-> + */
-> +int lwmi_dev_evaluate_int(struct wmi_device *wdev, u8 instance, u32 method_id,
-> +			  unsigned char *buf, size_t size, u32 *retval)
-> +{
-> +	struct acpi_buffer output = { ACPI_ALLOCATE_BUFFER, NULL };
-> +	union acpi_object *ret_obj __free(kfree) = NULL;
-> +	struct acpi_buffer input = { size, buf };
-> +	acpi_status status;
-> +
-> +	status = wmidev_evaluate_method(wdev, instance, method_id, &input,
-> +					&output);
-> +
-> +	if (ACPI_FAILURE(status))
-> +		return -EIO;
-> +
-> +	if (retval) {
-> +		ret_obj = output.pointer;
-> +		if (!ret_obj)
-> +			return -ENODATA;
-> +
-> +		if (ret_obj->type != ACPI_TYPE_INTEGER)
-> +			return -ENXIO;
-> +
-> +		*retval = (u32)ret_obj->integer.value;
-> +	}
-> +	return 0;
-> +};
-> +EXPORT_SYMBOL_NS_GPL(lwmi_dev_evaluate_int, "LENOVO_WMI_HELPERS");
-> +
-> +MODULE_AUTHOR("Derek J. Clark <derekjohn.clark@gmail.com>");
-> +MODULE_DESCRIPTION("Lenovo WMI Helpers Driver");
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/platform/x86/lenovo-wmi-helpers.h b/drivers/platform/x86/lenovo-wmi-helpers.h
-> new file mode 100644
-> index 000000000000..b76633603dcc
-> --- /dev/null
-> +++ b/drivers/platform/x86/lenovo-wmi-helpers.h
-> @@ -0,0 +1,20 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +
-> +/* Copyright(C) 2025 Derek J. Clark <derekjohn.clark@gmail.com> */
-> +
-> +#ifndef _LENOVO_WMI_HELPERS_H_
-> +#define _LENOVO_WMI_HELPERS_H_
-> +
-> +#include <linux/types.h>
-> +
-> +struct wmi_device;
-> +
-> +struct wmi_method_args_32 {
-> +	u32 arg0;
-> +	u32 arg1;
-> +};
-> +
-> +int lwmi_dev_evaluate_int(struct wmi_device *wdev, u8 instance, u32 method_id,
-> +			  unsigned char *buf, size_t size, u32 *retval);
-> +
-> +#endif /* !_LENOVO_WMI_HELPERS_H_ */
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504082254.7GLSWAbI-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from kernel/sched/build_policy.c:24:
+   In file included from include/linux/livepatch.h:13:
+   In file included from include/linux/ftrace.h:13:
+   In file included from include/linux/kallsyms.h:13:
+   In file included from include/linux/mm.h:2253:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from kernel/sched/build_policy.c:55:
+>> kernel/sched/syscalls.c:979:8: error: unexpected token, expected comma
+     979 |         ret = get_user(size, &uattr->size);
+         |               ^
+   arch/mips/include/asm/uaccess.h:97:33: note: expanded from macro 'get_user'
+      97 |         access_ok(__p, sizeof(*__p)) ? __get_user((x), __p) :           \
+         |                                        ^
+   arch/mips/include/asm/uaccess.h:183:23: note: expanded from macro '__get_user'
+     183 |                 __get_data_asm((x), user_lw, __gu_ptr);                 \
+         |                                     ^
+   <inline asm>:3:10: note: instantiated into assembly here
+       3 |         .set    eva
+         |                    ^
+   In file included from kernel/sched/build_policy.c:55:
+   kernel/sched/syscalls.c:979:8: error: instruction requires a CPU feature not currently enabled
+     979 |         ret = get_user(size, &uattr->size);
+         |               ^
+   arch/mips/include/asm/uaccess.h:97:33: note: expanded from macro 'get_user'
+      97 |         access_ok(__p, sizeof(*__p)) ? __get_user((x), __p) :           \
+         |                                        ^
+   arch/mips/include/asm/uaccess.h:183:23: note: expanded from macro '__get_user'
+     183 |                 __get_data_asm((x), user_lw, __gu_ptr);                 \
+         |                                     ^
+   <inline asm>:4:2: note: instantiated into assembly here
+       4 |         lwe $2, 0($16)
+         |         ^
+   In file included from kernel/sched/build_policy.c:55:
+   kernel/sched/syscalls.c:1009:2: error: unexpected token, expected comma
+    1009 |         put_user(sizeof(*attr), &uattr->size);
+         |         ^
+   arch/mips/include/asm/uaccess.h:71:33: note: expanded from macro 'put_user'
+      71 |         access_ok(__p, sizeof(*__p)) ? __put_user((x), __p) : -EFAULT;  \
+         |                                        ^
+   arch/mips/include/asm/uaccess.h:136:18: note: expanded from macro '__put_user'
+     136 |                 __put_data_asm(user_sw, __pu_ptr);                      \
+         |                                ^
+   <inline asm>:3:10: note: instantiated into assembly here
+       3 |         .set    eva
+         |                    ^
+   In file included from kernel/sched/build_policy.c:55:
+   kernel/sched/syscalls.c:1009:2: error: instruction requires a CPU feature not currently enabled
+    1009 |         put_user(sizeof(*attr), &uattr->size);
+         |         ^
+   arch/mips/include/asm/uaccess.h:71:33: note: expanded from macro 'put_user'
+      71 |         access_ok(__p, sizeof(*__p)) ? __put_user((x), __p) : -EFAULT;  \
+         |                                        ^
+   arch/mips/include/asm/uaccess.h:136:18: note: expanded from macro '__put_user'
+     136 |                 __put_data_asm(user_sw, __pu_ptr);                      \
+         |                                ^
+   <inline asm>:4:2: note: instantiated into assembly here
+       4 |         swe $3, 0($16)
+         |         ^
+   1 warning and 4 errors generated.
+
+
+vim +979 kernel/sched/syscalls.c
+
+   967	
+   968	/*
+   969	 * Mimics kernel/events/core.c perf_copy_attr().
+   970	 */
+   971	static int sched_copy_attr(struct sched_attr __user *uattr, struct sched_attr *attr)
+   972	{
+   973		u32 size;
+   974		int ret;
+   975	
+   976		/* Zero the full structure, so that a short copy will be nice: */
+   977		memset(attr, 0, sizeof(*attr));
+   978	
+ > 979		ret = get_user(size, &uattr->size);
+   980		if (ret)
+   981			return ret;
+   982	
+   983		/* ABI compatibility quirk: */
+   984		if (!size)
+   985			size = SCHED_ATTR_SIZE_VER0;
+   986		if (size < SCHED_ATTR_SIZE_VER0 || size > PAGE_SIZE)
+   987			goto err_size;
+   988	
+   989		ret = copy_struct_from_user(attr, sizeof(*attr), uattr, size);
+   990		if (ret) {
+   991			if (ret == -E2BIG)
+   992				goto err_size;
+   993			return ret;
+   994		}
+   995	
+   996		if ((attr->sched_flags & SCHED_FLAG_UTIL_CLAMP) &&
+   997		    size < SCHED_ATTR_SIZE_VER1)
+   998			return -EINVAL;
+   999	
+  1000		/*
+  1001		 * XXX: Do we want to be lenient like existing syscalls; or do we want
+  1002		 * to be strict and return an error on out-of-bounds values?
+  1003		 */
+  1004		attr->sched_nice = clamp(attr->sched_nice, MIN_NICE, MAX_NICE);
+  1005	
+  1006		return 0;
+  1007	
+  1008	err_size:
+  1009		put_user(sizeof(*attr), &uattr->size);
+  1010		return -E2BIG;
+  1011	}
+  1012	
 
 -- 
- i.
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
