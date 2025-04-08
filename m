@@ -1,157 +1,247 @@
-Return-Path: <linux-kernel+bounces-593470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D31A2A7F978
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:30:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91EE1A7F992
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E5427A8EAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:28:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C300189C74B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4DD264A85;
-	Tue,  8 Apr 2025 09:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AjFf/ewd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2D92641E7
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 09:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9D026659D;
+	Tue,  8 Apr 2025 09:29:17 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F50264FB8
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 09:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744104542; cv=none; b=rVgMjn9H9II3WRBPfk5DgXaHIdrQvYiC7ko13Mis/WTYi4bSWK6ziEiYANzmqhkKr8GiiYs4JLfY4PeDQRukL6wnkx1uAcZcdstp86LiI6YCqCRgfzYLId6RLEj7ZhHJKmdE99SEQIIVI2xO9s+QNtlm4y6eubanOD99JA020ug=
+	t=1744104556; cv=none; b=a9DmWg/psWdtZWB/5DZhatWEiousqlq6GVU/2ZbcZMSUW/NHFBXn4gxoxzzYqblpMA4U3JD/DgVgNddhCKxB7WgGiup//sDbRFTlp3VEiImBIVhRi+bJKbBZbpouTFtJhGx+Wthprl596EcQJOj6PYy7+ATMgflhNP/ThTkBAd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744104542; c=relaxed/simple;
-	bh=6GXjoR9+j3K5oqC5DbXewEtoWag0AaWHJyjmg134Js8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZU+K9HWGH1sujrdxpEeAyg/FajzIJJT/U2nhjkCrUy7/2d7LSc6Qlx0Fp7+3vbc2S9d0J3gF47mxzu0ElK29F9zKfBGuPNnGYYDYUOYXbzihkP14LboUMJU4LR0D5grFVy9l3P4EYVCOHk2wUHpGSuKUUELGkABdDXnQGtyp0Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AjFf/ewd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744104539;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5kFJkKUSX4bPqKPH1LRnxjH0+XkR8hOBduchqaJy8g8=;
-	b=AjFf/ewdlHHT0pmbgyMqtX2TkSZVxkm1qzBrWkeTmYiNcYF0gD0pvOp3tbR8L0mDkUbFn4
-	3R4HtoMxPzpNSkRWByoOgVivYK8rbSZNgf7CMPFFTbyywp59JScdM1fFBW6quxCjjg/YWc
-	H2HQqTs3Ctwhc38C4pdqBuYg8QTMNAk=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-223-AEF2E9ETOSSHbhJsyPqaXA-1; Tue, 08 Apr 2025 05:28:58 -0400
-X-MC-Unique: AEF2E9ETOSSHbhJsyPqaXA-1
-X-Mimecast-MFC-AGG-ID: AEF2E9ETOSSHbhJsyPqaXA_1744104537
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43ceeaf1524so30011735e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 02:28:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744104537; x=1744709337;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5kFJkKUSX4bPqKPH1LRnxjH0+XkR8hOBduchqaJy8g8=;
-        b=w1kEYmDpFdzDTfuXlYmDeyewcO5f2jncUeKWLdXRIqNIrpxHCRBA++u0lDr4W8yVEC
-         EhzjZ8eDsIm7F6R2etua1NrtfOtCN4BcVOY+spL/y7P4KctG6wWLM2KmGTFVGTZIVN3f
-         TQfCVsO2B+dPMO5Ju4gH/X2WW4RlvI1LyTR5Xb4au9rgnwQ8Hxt3Rv/wLeTvGkj2yYPb
-         3bk1q9xzYxlhuytXFYCDQNxIimixMGsnOeNXdfY0L+pCULDMS2PyhgG5Ia4RY9EYaQXj
-         4jiNa4DSZFFyW5xlA/PaefJCtM5MSXaJvkSNACDu4P+sZpvd0kt4rsYsXO7wgkPepQFV
-         b2Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCXqTD0Diyzo8GjHxAJ/MuMx8rezC5qSy1TQgf+W1kaffVB5EkOAdkbj/IvQtVCYCPwaJ/KbZq0Kk9O8P88=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKRPCyFxN+a0NtoL+bl+YhHV8EWmO/nfE4Ikkrc5I7BhrRZVKU
-	5f/pDTF+9MhWVBlrWogyLcW6ZrX03jxeYYFn75zcnM4PBDRL2dQ54tABJgrgYfQhP6DaEcXL5F3
-	TRhjO+ZJxUY6Bb9zTZ9n2zDTAGP8rB3uYc3Sf0BfW+usFc7VXyDGUchfS6Fpq0Q==
-X-Gm-Gg: ASbGncsW1uO/NvcUqMPcs3P5XP1OEOni1WUmb7A+19vDCgFjLmbZvhK0YehiTsuWjtz
-	Usy31b5rLKrBvGU3o6KR1Lc1Z6FGGUj7qXNLakkovwO+AEKsCN8CjO6vcmcv/czsyfiTVPzCXHV
-	m1Ef1bPgw5pFpC1E9XB7U+Wr0eM/mjWWc40V86hkRllPHKGgequsfPyXKW/MuaO8iQWoccU/PWt
-	t5IHdeNNGOn2nV9o3zUYWDvka0wDZ//x0WE2NUJL0gUquTr4BNMWWt2JiyaA+fnQKYTKTEGlP0S
-	rK8c+Jq+uDICgimRt4bnqJNwyh71AAJz9herzWqK1tw=
-X-Received: by 2002:a05:600c:4fcf:b0:439:8878:5029 with SMTP id 5b1f17b1804b1-43f0e559b59mr17275595e9.2.1744104537139;
-        Tue, 08 Apr 2025 02:28:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGhpOS2RXvhgff3wksFzuaqSdXSfMzYI4OqpbYjwZCmgj2nkzJ65yFcKEppTsA1r/gQVzTICQ==
-X-Received: by 2002:a05:600c:4fcf:b0:439:8878:5029 with SMTP id 5b1f17b1804b1-43f0e559b59mr17275315e9.2.1744104536739;
-        Tue, 08 Apr 2025 02:28:56 -0700 (PDT)
-Received: from [192.168.88.253] (146-241-84-24.dyn.eolo.it. [146.241.84.24])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec1660eb3sm159792645e9.11.2025.04.08.02.28.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Apr 2025 02:28:56 -0700 (PDT)
-Message-ID: <1b78c63b-7c07-4d25-8785-bfb0e28c71ad@redhat.com>
-Date: Tue, 8 Apr 2025 11:28:54 +0200
+	s=arc-20240116; t=1744104556; c=relaxed/simple;
+	bh=hXwghIbYaI9OMHcN+QAQSNVkjiUy08hKNKzDfZ3Gzqc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AZrdf+/X2IzVex4OK8J+yNvn1L3Qg8LZCGJ5eh6xBeD4sQqKeYpNy1rbFJ+I66pg5dPyibmuK4IUl6d6PdQIs/KhB54KPnKeYsGrKMqRA8541vCwlgEkmac2FiGRrPQLO2/kDNRStdNRmqlIvpm2G+tT8AUmzyGEM5VS6m80Yyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8DxvnNn7PRndBC1AA--.6599S3;
+	Tue, 08 Apr 2025 17:29:11 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMDxPcVm7PRno350AA--.18853S2;
+	Tue, 08 Apr 2025 17:29:10 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] LoongArch: Handle fp, lsx, lasx and lbt assembly symbols
+Date: Tue,  8 Apr 2025 17:29:07 +0800
+Message-ID: <20250408092907.22856-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] virtio-net: disable delayed refill when pausing rx
-To: Jason Wang <jasowang@redhat.com>,
- Bui Quang Minh <minhquangbui99@gmail.com>
-Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- "Michael S . Tsirkin" <mst@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- virtualization@lists.linux.dev
-References: <20250404093903.37416-1-minhquangbui99@gmail.com>
- <1743987836.9938157-1-xuanzhuo@linux.alibaba.com>
- <30419bd6-13b1-4426-9f93-b38b66ef7c3a@gmail.com>
- <CACGkMEs7O7D5sztwJVn45c+1pap20Oi5f=02Sy_qxFjbeHuYiQ@mail.gmail.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <CACGkMEs7O7D5sztwJVn45c+1pap20Oi5f=02Sy_qxFjbeHuYiQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMDxPcVm7PRno350AA--.18853S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW3JF4rtw48CFyxKw4Dur1rGrX_yoWxAw43pr
+	nrArn7Cw48GFnav34DXa4jvFZxXas8GF1S93Wqy34fCr1j9r9rurn3Ga1qvFyUKa48Ar4F
+	9r4avFySyFyUC3cCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v2
+	6r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwI
+	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIxAIcVC0I7
+	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
+	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jOb18UUUUU=
 
-On 4/8/25 9:34 AM, Jason Wang wrote:
-> On Mon, Apr 7, 2025 at 10:27 AM Bui Quang Minh <minhquangbui99@gmail.com> wrote:
->> On 4/7/25 08:03, Xuan Zhuo wrote:
->>> On Fri,  4 Apr 2025 16:39:03 +0700, Bui Quang Minh <minhquangbui99@gmail.com> wrote:
->>>> When pausing rx (e.g. set up xdp, xsk pool, rx resize), we call
->>>> napi_disable() on the receive queue's napi. In delayed refill_work, it
->>>> also calls napi_disable() on the receive queue's napi. This can leads to
->>>> deadlock when napi_disable() is called on an already disabled napi. This
->>>> scenario can be reproducible by binding a XDP socket to virtio-net
->>>> interface without setting up the fill ring. As a result, try_fill_recv
->>>> will fail until the fill ring is set up and refill_work is scheduled.
->>>
->>> So, what is the problem? The refill_work is waiting? As I know, that thread
->>> will sleep some time, so the cpu can do other work.
->>
->> When napi_disable is called on an already disabled napi, it will sleep
->> in napi_disable_locked while still holding the netdev_lock. As a result,
->> later napi_enable gets stuck too as it cannot acquire the netdev_lock.
->> This leads to refill_work and the pause-then-resume tx are stuck altogether.
-> 
-> This needs to be added to the chagelog. And it looks like this is a fix for
-> 
-> commit 413f0271f3966e0c73d4937963f19335af19e628
-> Author: Jakub Kicinski <kuba@kernel.org>
-> Date:   Tue Jan 14 19:53:14 2025 -0800
-> 
->     net: protect NAPI enablement with netdev_lock()
-> 
-> ?
-> 
-> I wonder if it's simpler to just hold the netdev lock in resize or xsk
-> binding instead of this.
+Like the other relevant symbols, export some fp, lsx, lasx and lbt
+assembly symbols and put the function declarations in header files
+rather than source files.
 
-Setting:
+Cc: stable@vger.kernel.org # 6.6+
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+---
+ arch/loongarch/include/asm/fpu.h |  6 ++++++
+ arch/loongarch/include/asm/lbt.h |  4 ++++
+ arch/loongarch/kernel/fpu.S      |  6 ++++++
+ arch/loongarch/kernel/lbt.S      |  4 ++++
+ arch/loongarch/kernel/signal.c   | 21 ---------------------
+ 5 files changed, 20 insertions(+), 21 deletions(-)
 
-	dev->request_ops_lock = true;
-
-in virtnet_probe() before calling register_netdevice() should achieve
-the above. Could you please have a try?
-
-Thanks,
-
-Paolo
+diff --git a/arch/loongarch/include/asm/fpu.h b/arch/loongarch/include/asm/fpu.h
+index 3177674228f8..52efb2f4df1c 100644
+--- a/arch/loongarch/include/asm/fpu.h
++++ b/arch/loongarch/include/asm/fpu.h
+@@ -28,16 +28,22 @@ extern void kernel_fpu_end(void);
+ extern void _init_fpu(unsigned int);
+ extern void _save_fp(struct loongarch_fpu *);
+ extern void _restore_fp(struct loongarch_fpu *);
++extern int _save_fp_context(void __user *fpregs, void __user *fcc, void __user *csr);
++extern int _restore_fp_context(void __user *fpregs, void __user *fcc, void __user *csr);
+ 
+ extern void _save_lsx(struct loongarch_fpu *fpu);
+ extern void _restore_lsx(struct loongarch_fpu *fpu);
+ extern void _init_lsx_upper(void);
+ extern void _restore_lsx_upper(struct loongarch_fpu *fpu);
++extern int _save_lsx_context(void __user *fpregs, void __user *fcc, void __user *fcsr);
++extern int _restore_lsx_context(void __user *fpregs, void __user *fcc, void __user *fcsr);
+ 
+ extern void _save_lasx(struct loongarch_fpu *fpu);
+ extern void _restore_lasx(struct loongarch_fpu *fpu);
+ extern void _init_lasx_upper(void);
+ extern void _restore_lasx_upper(struct loongarch_fpu *fpu);
++extern int _save_lasx_context(void __user *fpregs, void __user *fcc, void __user *fcsr);
++extern int _restore_lasx_context(void __user *fpregs, void __user *fcc, void __user *fcsr);
+ 
+ static inline void enable_lsx(void);
+ static inline void disable_lsx(void);
+diff --git a/arch/loongarch/include/asm/lbt.h b/arch/loongarch/include/asm/lbt.h
+index e671978bf552..24a9ee232fee 100644
+--- a/arch/loongarch/include/asm/lbt.h
++++ b/arch/loongarch/include/asm/lbt.h
+@@ -15,6 +15,10 @@
+ extern void _init_lbt(void);
+ extern void _save_lbt(struct loongarch_lbt *);
+ extern void _restore_lbt(struct loongarch_lbt *);
++extern int _save_lbt_context(void __user *regs, void __user *eflags);
++extern int _restore_lbt_context(void __user *regs, void __user *eflags);
++extern int _save_ftop_context(void __user *ftop);
++extern int _restore_ftop_context(void __user *ftop);
+ 
+ static inline int is_lbt_enabled(void)
+ {
+diff --git a/arch/loongarch/kernel/fpu.S b/arch/loongarch/kernel/fpu.S
+index 6ab640101457..28caf416ae36 100644
+--- a/arch/loongarch/kernel/fpu.S
++++ b/arch/loongarch/kernel/fpu.S
+@@ -458,6 +458,7 @@ SYM_FUNC_START(_save_fp_context)
+ 	li.w		a0, 0				# success
+ 	jr		ra
+ SYM_FUNC_END(_save_fp_context)
++EXPORT_SYMBOL_GPL(_save_fp_context)
+ 
+ /*
+  * a0: fpregs
+@@ -471,6 +472,7 @@ SYM_FUNC_START(_restore_fp_context)
+ 	li.w		a0, 0				# success
+ 	jr		ra
+ SYM_FUNC_END(_restore_fp_context)
++EXPORT_SYMBOL_GPL(_restore_fp_context)
+ 
+ /*
+  * a0: fpregs
+@@ -484,6 +486,7 @@ SYM_FUNC_START(_save_lsx_context)
+ 	li.w	a0, 0					# success
+ 	jr	ra
+ SYM_FUNC_END(_save_lsx_context)
++EXPORT_SYMBOL_GPL(_save_lsx_context)
+ 
+ /*
+  * a0: fpregs
+@@ -497,6 +500,7 @@ SYM_FUNC_START(_restore_lsx_context)
+ 	li.w	a0, 0					# success
+ 	jr	ra
+ SYM_FUNC_END(_restore_lsx_context)
++EXPORT_SYMBOL_GPL(_restore_lsx_context)
+ 
+ /*
+  * a0: fpregs
+@@ -510,6 +514,7 @@ SYM_FUNC_START(_save_lasx_context)
+ 	li.w	a0, 0					# success
+ 	jr	ra
+ SYM_FUNC_END(_save_lasx_context)
++EXPORT_SYMBOL_GPL(_save_lasx_context)
+ 
+ /*
+  * a0: fpregs
+@@ -523,6 +528,7 @@ SYM_FUNC_START(_restore_lasx_context)
+ 	li.w	a0, 0					# success
+ 	jr	ra
+ SYM_FUNC_END(_restore_lasx_context)
++EXPORT_SYMBOL_GPL(_restore_lasx_context)
+ 
+ .L_fpu_fault:
+ 	li.w	a0, -EFAULT				# failure
+diff --git a/arch/loongarch/kernel/lbt.S b/arch/loongarch/kernel/lbt.S
+index 001f061d226a..71678912d24c 100644
+--- a/arch/loongarch/kernel/lbt.S
++++ b/arch/loongarch/kernel/lbt.S
+@@ -90,6 +90,7 @@ SYM_FUNC_START(_save_lbt_context)
+ 	li.w		a0, 0			# success
+ 	jr		ra
+ SYM_FUNC_END(_save_lbt_context)
++EXPORT_SYMBOL_GPL(_save_lbt_context)
+ 
+ /*
+  * a0: scr
+@@ -110,6 +111,7 @@ SYM_FUNC_START(_restore_lbt_context)
+ 	li.w		a0, 0			# success
+ 	jr		ra
+ SYM_FUNC_END(_restore_lbt_context)
++EXPORT_SYMBOL_GPL(_restore_lbt_context)
+ 
+ /*
+  * a0: ftop
+@@ -120,6 +122,7 @@ SYM_FUNC_START(_save_ftop_context)
+ 	li.w		a0, 0			# success
+ 	jr		ra
+ SYM_FUNC_END(_save_ftop_context)
++EXPORT_SYMBOL_GPL(_save_ftop_context)
+ 
+ /*
+  * a0: ftop
+@@ -150,6 +153,7 @@ SYM_FUNC_START(_restore_ftop_context)
+ 	li.w		a0, 0			# success
+ 	jr		ra
+ SYM_FUNC_END(_restore_ftop_context)
++EXPORT_SYMBOL_GPL(_restore_ftop_context)
+ 
+ .L_lbt_fault:
+ 	li.w		a0, -EFAULT		# failure
+diff --git a/arch/loongarch/kernel/signal.c b/arch/loongarch/kernel/signal.c
+index 7a555b600171..4740cb5b2388 100644
+--- a/arch/loongarch/kernel/signal.c
++++ b/arch/loongarch/kernel/signal.c
+@@ -51,27 +51,6 @@
+ #define lock_lbt_owner()	({ preempt_disable(); pagefault_disable(); })
+ #define unlock_lbt_owner()	({ pagefault_enable(); preempt_enable(); })
+ 
+-/* Assembly functions to move context to/from the FPU */
+-extern asmlinkage int
+-_save_fp_context(void __user *fpregs, void __user *fcc, void __user *csr);
+-extern asmlinkage int
+-_restore_fp_context(void __user *fpregs, void __user *fcc, void __user *csr);
+-extern asmlinkage int
+-_save_lsx_context(void __user *fpregs, void __user *fcc, void __user *fcsr);
+-extern asmlinkage int
+-_restore_lsx_context(void __user *fpregs, void __user *fcc, void __user *fcsr);
+-extern asmlinkage int
+-_save_lasx_context(void __user *fpregs, void __user *fcc, void __user *fcsr);
+-extern asmlinkage int
+-_restore_lasx_context(void __user *fpregs, void __user *fcc, void __user *fcsr);
+-
+-#ifdef CONFIG_CPU_HAS_LBT
+-extern asmlinkage int _save_lbt_context(void __user *regs, void __user *eflags);
+-extern asmlinkage int _restore_lbt_context(void __user *regs, void __user *eflags);
+-extern asmlinkage int _save_ftop_context(void __user *ftop);
+-extern asmlinkage int _restore_ftop_context(void __user *ftop);
+-#endif
+-
+ struct rt_sigframe {
+ 	struct siginfo rs_info;
+ 	struct ucontext rs_uctx;
+-- 
+2.42.0
 
 
