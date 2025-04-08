@@ -1,222 +1,179 @@
-Return-Path: <linux-kernel+bounces-593593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44D4A7FB41
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:11:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74188A7FB70
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADEC619E4F24
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:07:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8AAF7A8003
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BB9265CBD;
-	Tue,  8 Apr 2025 10:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4AD26AAB2;
+	Tue,  8 Apr 2025 10:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WsO+cKRL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EoOCA0gj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D39215066
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 10:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC891267B97;
+	Tue,  8 Apr 2025 10:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744106807; cv=none; b=cw9+SOlVMCvXb+AiKu84iqf0ng0CoqH0kM5eDRu2hQHzBlxrVb2DM8VSU7k2l8m9HA1Oayq10zWM2hQAGCm0cADdkNmdbTXcBKdfp3rPiKHmPoRQsmMKjiSAZnexAmbwfH0p4DKIztPMGI1yZ4O6FQ0t4LEcAnswAJ/HxIDMLcU=
+	t=1744106998; cv=none; b=E6JrzAvjKJYVes/eR4mNer+L3uwI/aFXKD5yglx7zR2/GnAm+FqXmVAPKVLsmfHBBh7IOvBUjLwHkMmN1P/3juxZI2IkEWeKkjSdmxxl2ShU6giilt+IszxQITWve4u9nMgsjrFH0kekkWhWrZXFmFyzY0Rla8mOlEtxAxMr+0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744106807; c=relaxed/simple;
-	bh=HIyFphJUM9jy+iUZFnRsHxLdlZSwSRVPaSAJF+efhzk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N5NOtWPLgHAM0ynWC9VaLkzGoGS3T7RZpjffmPpO8/1791onSICBuyagmIaSL3nzr1QYnDu7rtFt9wRgiAo/+adp3PkomnHFbw/HGeioqsPwToH/7qFbnGbTpGBJEto3ewEz21V5Zs+C57DTHldxHoEdwLoPUpa063HX8vmw6w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WsO+cKRL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744106804;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=MW9+6v6k+evGNRMDRy26B9obQdgiWj36fdWvVuxMzGI=;
-	b=WsO+cKRLmSq87+/hXr5xNktctTBuQFZBYCg5XFwAVmpqChMrIiVTINk7vt99yOaux3F8Kz
-	yFvnze0xUybrRE/NY8HuXUQfUeBKmj9YsBXz2FcPeQOlNQ2fw3oCUPgExAfbu8xHHyMDfK
-	wETofN+H+baH8TB0fh/JSPHF9nadKyc=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-386-DPOX-k0rNHGDLbO_tbD06A-1; Tue,
- 08 Apr 2025 06:06:41 -0400
-X-MC-Unique: DPOX-k0rNHGDLbO_tbD06A-1
-X-Mimecast-MFC-AGG-ID: DPOX-k0rNHGDLbO_tbD06A_1744106800
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 23CE7195608F;
-	Tue,  8 Apr 2025 10:06:40 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8442F1956094;
-	Tue,  8 Apr 2025 10:06:39 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: [GIT PULL] KVM fixes for Linux 6.15-rc2
-Date: Tue,  8 Apr 2025 06:06:37 -0400
-Message-ID: <20250408100638.202531-1-pbonzini@redhat.com>
+	s=arc-20240116; t=1744106998; c=relaxed/simple;
+	bh=d/BYHBpOIyDxdhqarTYvBnjLDL46UOVxmUyyk5fM4rs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xyeqwze+rd2fB/T5RPWHRGG5hro2gCcHvISyLuybxKdGty9+XMkJ5mEkeJDcUrRtvqNcjegw+f8vemN/7two6LH4b73F8xtsG51qbNgJvAZ+TDk6bigkJQduza3LRPSAttinJk06ywfLoOJgut0c1xVr4wfmRvM3GsduEa1jzow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EoOCA0gj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A576CC4CEEF;
+	Tue,  8 Apr 2025 10:09:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744106998;
+	bh=d/BYHBpOIyDxdhqarTYvBnjLDL46UOVxmUyyk5fM4rs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EoOCA0gjpP5kNp7IxMvdfhSXk4LE0e0klVMlet9TnM4SOeEop12AZMGueqoT9ROEC
+	 5Q4b9DJrE9QXgKc0BG/zu+wFDm427U8sS+wSJW1cdC/wFDSfRV75A1KUYORhrhl0A3
+	 3M5GJ3rJM/+5kxPIjxFi3/T1kd8fSoLASrkAhw1srQmnbGL4OOe1Ll7GnaJIM6hPb6
+	 LKVVkGxS6gLZCFoH7VKzUTav1JFp4YcbV2hHQelH+o7yKYXVJ4KZJyIa8YwpP82TeK
+	 dnlYeHX5DF0BDSL1nEj+CPlGdXATmwYpo6VVesqUm7UmyheUmo87u/ijGhcHwbbljQ
+	 PoRKhXHBRRGNQ==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab@kernel.org>)
+	id 1u25ts-00000008RVF-3oXj;
+	Tue, 08 Apr 2025 18:09:48 +0800
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-hardening@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v3 00/33] Implement kernel-doc in Python
+Date: Tue,  8 Apr 2025 18:09:03 +0800
+Message-ID: <cover.1744106241.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-Linus,
+Hi Jon,
 
-The following changes since commit 782f9feaa9517caf33186dcdd6b50a8f770ed29b:
+This changeset contains the kernel-doc.py script to replace the verable
+kernel-doc originally written in Perl. It replaces the first version and the
+second series I sent on the top of it.
 
-  Merge branch 'kvm-pre-tdx' into HEAD (2025-03-20 13:13:13 -0400)
+I tried to stay as close as possible of the original Perl implementation
+on the first patch introducing kernel-doc.py, as it helps to double check
+if each function was  properly translated to Python.  This have been 
+helpful debugging troubles that happened during the conversion.
 
-are available in the Git repository at:
+I worked hard to make it bug-compatible with the original one. Still, its
+output has a couple of differences from the original one:
 
-  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+- The tab expansion works better with the Python script. With that, some
+  outputs that contain tabs at kernel-doc markups are now different;
 
-for you to fetch changes up to c478032df0789250afe861bff5306d0dc4a8f9e5:
+- The new script  works better stripping blank lines. So, there are a couple
+  of empty new lines that are now stripped with this version;
 
-  Merge tag 'kvmarm-fixes-6.15-1' of https://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD (2025-04-08 05:49:31 -0400)
+- There is a buggy logic at kernel-doc to strip empty description and
+  return sections. I was not able to replicate the exact behavior. So, I ended
+  adding an extra logic to strip empty sections with a different algorithm.
 
-The diffstat is dominated by moving around some docs that were in the wrong
-section ("Documentation: kvm: organize capabilities in the right section").
+Yet, on my tests, the results are compatible with the venerable script
+output for all .. kernel-doc tags found in Documentation/. I double-checked
+this by adding support to output the kernel-doc commands when V=1, and
+then I ran a diff between kernel-doc.pl and kernel-doc.py for the same
+command lines.
 
-----------------------------------------------------------------
-ARM:
+The only patch that doesn't belong to this series is a patch dropping
+kernel-doc.pl. I opted to keep it for now, as it can help to better
+test the new tools.
 
-* Rework heuristics for resolving the fault IPA (HPFAR_EL2 v. re-walk
-  stage-1 page tables) to align with the architecture. This avoids
-  possibly taking an SEA at EL2 on the page table walk or using an
-  architecturally UNKNOWN fault IPA.
+With such changes, if one wants to build docs with the old script,
+all it is needed is to use KERNELDOC parameter, e.g.:
 
-* Use acquire/release semantics in the KVM FF-A proxy to avoid reading
-  a stale value for the FF-A version.
+	$ make KERNELDOC=scripts/kernel-doc.pl htmldocs
 
-* Fix KVM guest driver to match PV CPUID hypercall ABI.
+---
 
-* Use Inner Shareable Normal Write-Back mappings at stage-1 in KVM
-  selftests, which is the only memory type for which atomic
-  instructions are architecturally guaranteed to work.
+v3:
+- rebased on the top of v6.15-rc1;
+- Removed patches that weren't touching kernel-doc and its Sphinx extension;
+- The "Re" class was renamed to "KernRe"
+- It contains one patch from Sean with an additional hunk for the
+  python version.
 
-s390:
+Mauro Carvalho Chehab (32):
+  scripts/kernel-doc: rename it to scripts/kernel-doc.pl
+  scripts/kernel-doc: add a symlink to the Perl version of kernel-doc
+  scripts/kernel-doc.py: add a Python parser
+  scripts/kernel-doc.py: output warnings the same way as kerneldoc
+  scripts/kernel-doc.py: better handle empty sections
+  scripts/kernel-doc.py: properly handle struct_group macros
+  scripts/kernel-doc.py: move regex methods to a separate file
+  scripts/kernel-doc.py: move KernelDoc class to a separate file
+  scripts/kernel-doc.py: move KernelFiles class to a separate file
+  scripts/kernel-doc.py: move output classes to a separate file
+  scripts/kernel-doc.py: convert message output to an interactor
+  scripts/kernel-doc.py: move file lists to the parser function
+  scripts/kernel-doc.py: implement support for -no-doc-sections
+  scripts/kernel-doc.py: fix line number output
+  scripts/kernel-doc.py: fix handling of doc output check
+  scripts/kernel-doc.py: properly handle out_section for ReST
+  scripts/kernel-doc.py: postpone warnings to the output plugin
+  docs: add a .pylintrc file with sys path for docs scripts
+  docs: sphinx: kerneldoc: verbose kernel-doc command if V=1
+  docs: sphinx: kerneldoc: ignore "\" characters from options
+  docs: sphinx: kerneldoc: use kernel-doc.py script
+  scripts/kernel-doc.py: Set an output format for --none
+  scripts/kernel-doc.py: adjust some coding style issues
+  scripts/lib/kdoc/kdoc_parser.py: fix Python compat with < v3.13
+  scripts/kernel-doc.py: move modulename to man class
+  scripts/kernel-doc.py: properly handle KBUILD_BUILD_TIMESTAMP
+  scripts/lib/kdoc/kdoc_parser.py: remove a python 3.9 dependency
+  scripts/kernel-doc.py: Properly handle Werror and exit codes
+  scripts/kernel-doc: switch to use kernel-doc.py
+  scripts/lib/kdoc/kdoc_files.py: allow filtering output per fname
+  scripts/kernel_doc.py: better handle exported symbols
+  scripts/kernel-doc.py: Rename the kernel doc Re class to KernRe
 
-* Don't use %pK for debug printing and tracepoints.
+Sean Anderson (1):
+  scripts: kernel-doc: fix parsing function-like typedefs (again)
 
-x86:
+ .pylintrc                         |    2 +
+ Documentation/Makefile            |    2 +-
+ Documentation/conf.py             |    2 +-
+ Documentation/sphinx/kerneldoc.py |   46 +
+ scripts/kernel-doc                | 2440 +----------------------------
+ scripts/kernel-doc.pl             | 2439 ++++++++++++++++++++++++++++
+ scripts/kernel-doc.py             |  315 ++++
+ scripts/lib/kdoc/kdoc_files.py    |  282 ++++
+ scripts/lib/kdoc/kdoc_output.py   |  793 ++++++++++
+ scripts/lib/kdoc/kdoc_parser.py   | 1715 ++++++++++++++++++++
+ scripts/lib/kdoc/kdoc_re.py       |  273 ++++
+ 11 files changed, 5868 insertions(+), 2441 deletions(-)
+ create mode 100644 .pylintrc
+ mode change 100755 => 120000 scripts/kernel-doc
+ create mode 100755 scripts/kernel-doc.pl
+ create mode 100755 scripts/kernel-doc.py
+ create mode 100644 scripts/lib/kdoc/kdoc_files.py
+ create mode 100755 scripts/lib/kdoc/kdoc_output.py
+ create mode 100755 scripts/lib/kdoc/kdoc_parser.py
+ create mode 100755 scripts/lib/kdoc/kdoc_re.py
 
-* Use a separate subclass when acquiring KVM's per-CPU posted interrupts
-  wakeup lock in the scheduled out path, i.e. when adding a vCPU on
-  the list of vCPUs to wake, to workaround a false positive deadlock.
-  The schedule out code runs with a scheduler lock that the wakeup
-  handler takes in the opposite order; but it does so with IRQs disabled
-  and cannot run concurrently with a wakeup.
+-- 
+2.49.0
 
-* Explicitly zero-initialize on-stack CPUID unions
-
-* Allow building irqbypass.ko as as module when kvm.ko is a module
-
-* Wrap relatively expensive sanity check with KVM_PROVE_MMU
-
-* Acquire SRCU in KVM_GET_MP_STATE to protect guest memory accesses
-
-selftests:
-
-* Add more scenarios to the MONITOR/MWAIT test.
-
-* Add option to rseq test to override /dev/cpu_dma_latency
-
-* Bring list of exit reasons up to date
-
-* Cleanup Makefile to list once tests that are valid on all architectures
-
-Other:
-
-* Documentation fixes
-
-----------------------------------------------------------------
-Chen Ni (1):
-      smccc: kvm_guest: Remove unneeded semicolon
-
-Oliver Upton (4):
-      smccc: kvm_guest: Align with DISCOVER_IMPL_CPUS ABI
-      KVM: arm64: Only read HPFAR_EL2 when value is architecturally valid
-      arm64: Convert HPFAR_EL2 to sysreg table
-      KVM: arm64: Don't translate FAR if invalid/unsafe
-
-Paolo Bonzini (14):
-      Merge tag 'kvm-s390-next-6.15-1' of https://git.kernel.org/pub/scm/linux/kernel/git/kvms390/linux into HEAD
-      selftests: kvm: revamp MONITOR/MWAIT tests
-      selftests: kvm: bring list of exit reasons up to date
-      selftests: kvm: list once tests that are valid on all architectures
-      Documentation: KVM: KVM_GET_SUPPORTED_CPUID now exposes TSC_DEADLINE
-      Documentation: kvm: give correct name for KVM_CAP_SPAPR_MULTITCE
-      Documentation: kvm: drop "Capability" heading from capabilities
-      Documentation: kvm: fix some definition lists
-      Documentation: kvm: organize capabilities in the right section
-      Documentation: kvm: remove KVM_CAP_MIPS_TE
-      Merge branch 'kvm-6.15-rc2-cleanups' into HEAD
-      Merge branch 'kvm-6.15-rc2-fixes' into HEAD
-      Merge branch 'kvm-pi-fix-lockdep' into HEAD
-      Merge tag 'kvmarm-fixes-6.15-1' of https://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD
-
-Raghavendra Rao Ananta (2):
-      KVM: arm64: selftests: Introduce and use hardware-definition macros
-      KVM: arm64: selftests: Explicitly set the page attrs to Inner-Shareable
-
-Sean Christopherson (6):
-      KVM: x86: Acquire SRCU in KVM_GET_MP_STATE to protect guest memory accesses
-      KVM: selftests: Add option to rseq test to override /dev/cpu_dma_latency
-      KVM: x86/mmu: Wrap sanity check on number of TDP MMU pages with KVM_PROVE_MMU
-      KVM: Allow building irqbypass.ko as as module when kvm.ko is a module
-      KVM: x86: Explicitly zero-initialize on-stack CPUID unions
-      KVM: VMX: Assert that IRQs are disabled when putting vCPU on PI wakeup list
-
-Thomas Weißschuh (2):
-      KVM: s390: Don't use %pK through tracepoints
-      KVM: s390: Don't use %pK through debug printing
-
-Will Deacon (1):
-      KVM: arm64: Use acquire/release to communicate FF-A version negotiation
-
-Yan Zhao (1):
-      KVM: VMX: Use separate subclasses for PI wakeup lock to squash false positive
-
- Documentation/virt/kvm/api.rst                     | 1147 ++++++++++----------
- arch/arm64/include/asm/esr.h                       |   44 +-
- arch/arm64/include/asm/kvm_emulate.h               |    7 +-
- arch/arm64/include/asm/kvm_ras.h                   |    2 +-
- arch/arm64/kvm/hyp/include/hyp/fault.h             |   70 +-
- arch/arm64/kvm/hyp/nvhe/ffa.c                      |    9 +-
- arch/arm64/kvm/hyp/nvhe/mem_protect.c              |    9 +-
- arch/arm64/kvm/mmu.c                               |   31 +-
- arch/arm64/tools/sysreg                            |    7 +
- arch/s390/kvm/intercept.c                          |    2 +-
- arch/s390/kvm/interrupt.c                          |    8 +-
- arch/s390/kvm/kvm-s390.c                           |   10 +-
- arch/s390/kvm/trace-s390.h                         |    4 +-
- arch/x86/include/asm/kvm_host.h                    |    7 +-
- arch/x86/kvm/cpuid.c                               |    8 +-
- arch/x86/kvm/mmu/tdp_mmu.c                         |    8 +-
- arch/x86/kvm/vmx/posted_intr.c                     |   37 +-
- arch/x86/kvm/x86.c                                 |    4 +
- drivers/firmware/smccc/kvm_guest.c                 |    4 +-
- include/linux/kvm_host.h                           |    2 +-
- tools/testing/selftests/kvm/Makefile.kvm           |   45 +-
- .../testing/selftests/kvm/arm64/page_fault_test.c  |    2 +-
- .../selftests/kvm/include/arm64/processor.h        |   67 +-
- tools/testing/selftests/kvm/lib/arm64/processor.c  |   60 +-
- tools/testing/selftests/kvm/lib/kvm_util.c         |    5 +-
- tools/testing/selftests/kvm/rseq_test.c            |   31 +-
- .../testing/selftests/kvm/x86/monitor_mwait_test.c |  108 +-
- virt/kvm/Kconfig                                   |    2 +-
- virt/kvm/eventfd.c                                 |   10 +-
- 29 files changed, 964 insertions(+), 786 deletions(-)
 
 
