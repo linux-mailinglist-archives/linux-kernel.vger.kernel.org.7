@@ -1,136 +1,233 @@
-Return-Path: <linux-kernel+bounces-594545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8EEA8139E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:28:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07AF3A813A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:29:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D11B4A1BDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:28:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F1C77B4758
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C58B23C8CA;
-	Tue,  8 Apr 2025 17:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F6623C8DE;
+	Tue,  8 Apr 2025 17:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Gug+5dJk"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MfkvRfuk"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A011D61A2;
-	Tue,  8 Apr 2025 17:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EEB922E3FD;
+	Tue,  8 Apr 2025 17:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744133269; cv=none; b=ut938Oe27ztIxgCAOgc0v+A+/P3byz7VY4yxU/Hy6m1T8p93Ywoslsv2atA/uy9SaI52d17pKGHrMvp2kRyUTdzBgm3NrqsctrzYzcf3uGh264uNIpE+cfge8qFjTist+WkcwT25q2XRHbTNbwMuqjV7pc5WujQyM+tbLKedPx0=
+	t=1744133336; cv=none; b=CYrj5GAmdgwkoEaNtvZDhkZJ0vM5TkwHChCm+9r17TyHdlY+o89/nGfP6rxBFHBYd4fUWlxkdAPTVuvk4V5X6f7/MSvVZKzo3dULeRFNeewjZiLyxhiaUDtROKI5dy1koR1mE406PJ9ByI5MCNRVadk3ZZKkpY16uuSvDKxJB68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744133269; c=relaxed/simple;
-	bh=iGs2ZZHWszBkgjha1A2dY+//qUbJ939WmeteH4R9VoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cGide0u/aBZ/dtQPqBxkI4et503S5P78DbZYfBr/GbiNy0XdNNhKnDKXbadb+Lun0kUqIQbScDhK8MyjJ+vqMDkUEsIaywjEr072CrYjEoi78j6CCVPjo7laX5UI2byCC1rYNSpsCGsqdzxU01TfQ1Kq/f2z8Evo9W/gCBbRQWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Gug+5dJk; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Y8RWM2V6ZnehV9xCG2Wi7D3YFpwSdHlPKuNFJkQ/bqQ=; b=Gug+5dJkFQ2rbCZ5IXZX4osrkc
-	z4jCLXuY8M+Deo7TGvO4X3azXzNOY81Pym6BE1wRVtlX0j1A55PWe5bI2sC3crPMPxHw1CeStLy2o
-	/V0QKXahJUMiiC0QA75pZ0B71CSfo3v561yu0Dz00hSkJbrLJPo2YlqRoNq7PJUrXxcRgH84YKKRU
-	OmVjnaBReXWpYspNTe4XnqnxjIhTFm+dq6EUTbPorz00lCBHEMhGAjD6JCR7I3D0tHI4klOBUjGmX
-	WZfuxE+cKAVpE7S62ePuI4c2mcHsgReKBCz99EZlrG7OMoPEVQAv2csuoYJ61Ua+C90ZhC8XailZA
-	nZx7znGQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:51470)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1u2Cjb-0007pu-0I;
-	Tue, 08 Apr 2025 18:27:39 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1u2CjV-0001bg-19;
-	Tue, 08 Apr 2025 18:27:33 +0100
-Date: Tue, 8 Apr 2025 18:27:33 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org, upstream@airoha.com,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	Claudiu Beznea <claudiu.beznea@microchip.com>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ioana Ciornei <ioana.ciornei@nxp.com>,
-	Jonathan Corbet <corbet@lwn.net>, Joyce Ooi <joyce.ooi@intel.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Madalin Bucur <madalin.bucur@nxp.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	Robert Hancock <robert.hancock@calian.com>,
-	Saravana Kannan <saravanak@google.com>,
-	UNGLinuxDriver@microchip.com,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Wei Fang <wei.fang@nxp.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [net-next PATCH v2 00/14] Add PCS core support
-Message-ID: <Z_VchfzoKOTvy5TQ@shell.armlinux.org.uk>
-References: <20250407231746.2316518-1-sean.anderson@linux.dev>
- <20250408075047.69d031a9@kernel.org>
- <08c0e1eb-2de6-45bf-95a4-e817008209ab@linux.dev>
+	s=arc-20240116; t=1744133336; c=relaxed/simple;
+	bh=Xxwbh7HQc+lWm479yiFz4cDq4HGpRn/FdgToxEUgxdI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Byx/96CCJqo4soPrBZ3ErKDXtdG7IqmUYzRSSQUHzb74NQ3WaUJP6g9VEeBG/NFA9MAWuhMBKwBiiwB0gu7tq/gHbsR7sQ2AiGE1vKHnbW+uifDHSbizVkAqoaxxngcg0IK2ehAZGZH2CyODtNT21um2m1WP36liCFjZi8HC0So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MfkvRfuk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 538BIEr8019609;
+	Tue, 8 Apr 2025 17:28:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Mo7qjYNXfMP4RzF1Xz/BeTE7fn4l0CPVuE3R6s57wOw=; b=MfkvRfukXUbkFtZW
+	VVfhYDPQ70Jn/cEPbfWGbCooHhS8+bsDINBuLZdrZQ1dv6XfhmoKKszgStvOmNGX
+	Jui2Qu4P/GQ9/iiBZsmD0lYqwHdNav7kF2A4aaOKeE90AxKL5CgDQZEnDhlfKBGx
+	aS9izGEeY24PNVkvjx47OkW3IAo0yGhgbeJWRqDgMjSaogwSpv1uwWashL/UdrIN
+	nDc6+zinbOTy3H4jn45vgfyTs76aDCW2obCBEvSkxnfFPpjoAl4mEWXGQGF5JKCt
+	xR3qGrPgqYB0MFqpAAoo+vHd1RDKoujNMMXCcSQYMyU7IVO1gSzlswoutd6SXN3y
+	n/zc5Q==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twg3gncf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Apr 2025 17:28:30 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 538HSTJQ032667
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 8 Apr 2025 17:28:29 GMT
+Received: from [10.216.60.96] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 8 Apr 2025
+ 10:28:24 -0700
+Message-ID: <cf81fc11-f47b-422c-9c7d-860e6f93d930@quicinc.com>
+Date: Tue, 8 Apr 2025 22:58:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 2/2] scsi: ufs: introduce quirk to extend
+ PA_HIBERN8TIME for UFS devices
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        "Martin K.
+ Petersen" <martin.petersen@oracle.com>,
+        Alim Akhtar
+	<alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche
+	<bvanassche@acm.org>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_nitirawa@quicinc.com>, <quic_bhaskarv@quicinc.com>,
+        <quic_rampraka@quicinc.com>, <quic_cang@quicinc.com>,
+        <quic_nguyenb@quicinc.com>
+References: <20250404174539.28707-1-quic_mapa@quicinc.com>
+ <20250404174539.28707-3-quic_mapa@quicinc.com>
+ <hcguawgzuqgi2cyw3nf7uiilahjsvrm37f6zgfqlnfkck3jatv@xgaca3zgts2u>
+ <d09641c7-c266-4f0a-a0e3-56f63d8c9ce3@quicinc.com>
+ <l6xao2ubcvv3ho56dv6qfr3b62ve3olfbhvywg2is2xdhod27r@2nyjfwinrxzm>
+ <25d8a781-14ea-4b97-b6b4-f9d472c1b692@quicinc.com>
+ <cwwf4z2lrdhyv3nsj7do6ycn4tmdaii3wsr37vehgqpvvkgkwv@iugp4vu5srdm>
+Content-Language: en-US
+From: MANISH PANDEY <quic_mapa@quicinc.com>
+In-Reply-To: <cwwf4z2lrdhyv3nsj7do6ycn4tmdaii3wsr37vehgqpvvkgkwv@iugp4vu5srdm>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <08c0e1eb-2de6-45bf-95a4-e817008209ab@linux.dev>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: gGuq3g2wZ6PAq7ZBgbHRu_klZzlNH-L7
+X-Proofpoint-ORIG-GUID: gGuq3g2wZ6PAq7ZBgbHRu_klZzlNH-L7
+X-Authority-Analysis: v=2.4 cv=I/9lRMgg c=1 sm=1 tr=0 ts=67f55cbe cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=N54-gffFAAAA:8 a=COk6AnOGAAAA:8
+ a=sXzwHUtZ3gcm8ngJyxUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-08_07,2025-04-08_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ phishscore=0 suspectscore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0
+ clxscore=1015 malwarescore=0 adultscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504080120
 
-On Tue, Apr 08, 2025 at 11:30:43AM -0400, Sean Anderson wrote:
-> On 4/8/25 10:50, Jakub Kicinski wrote:
-> > On Mon,  7 Apr 2025 19:17:31 -0400 Sean Anderson wrote:
-> >> This series depends on [1,2], and they have been included at the
-> >> beginning so CI will run. However, I expect them to be reviewed/applied
-> >> outside the net-next tree.
-> > 
-> > These appear to break the build:
-> > 
-> > drivers/acpi/property.c:1669:39: error: initialization of ‘int (*)(const struct fwnode_handle *, const char *, const char *, int,  unsigned int,  struct fwnode_reference_args *)’ from incompatible pointer type ‘int (*)(const struct fwnode_handle *, const char *, const char *, unsigned int,  unsigned int,  struct fwnode_reference_args *)’ [-Wincompatible-pointer-types]
-> >  1669 |                 .get_reference_args = acpi_fwnode_get_reference_args,   \
-> > 
-> > Could you post as RFC until we can actually merge this? I'm worried 
-> > some sleep deprived maintainer may miss the note in the cover letter
-> > and just apply it all to net-next..
+
+
+On 4/8/2025 10:01 PM, Manivannan Sadhasivam wrote:
+> On Tue, Apr 08, 2025 at 01:14:50PM +0530, MANISH PANDEY wrote:
+>>
+>>
+>> On 4/8/2025 12:53 PM, Manivannan Sadhasivam wrote:
+>>> On Tue, Apr 08, 2025 at 11:07:58AM +0530, MANISH PANDEY wrote:
+>>>>
+>>>>
+>>>> On 4/7/2025 12:05 AM, Manivannan Sadhasivam wrote:
+>>>>> On Fri, Apr 04, 2025 at 11:15:39PM +0530, Manish Pandey wrote:
+>>>>>> Some UFS devices need additional time in hibern8 mode before exiting,
+>>>>>> beyond the negotiated handshaking phase between the host and device.
+>>>>>> Introduce a quirk to increase the PA_HIBERN8TIME parameter by 100 µs
+>>>>>> to ensure proper hibernation process.
+>>>>>>
+>>>>>
+>>>>> This commit message didn't mention the UFS device for which this quirk is being
+>>>>> applied.
+>>>>>
+>>>> Since it's a quirk and may be applicable to other vendors also in future, so
+>>>> i thought to keep it general.
+>>>>
+>>>
+>>> You cannot make commit message generic. It should precisely describe the change.
+>>>
+>>>> Will update in next patch set if required.
+>>>>    >> Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
+>>>>>> ---
+>>>>>>     drivers/ufs/core/ufshcd.c | 31 +++++++++++++++++++++++++++++++
+>>>>>>     include/ufs/ufs_quirks.h  |  6 ++++++
+>>>>>>     2 files changed, 37 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+>>>>>> index 464f13da259a..2b8203fe7b8c 100644
+>>>>>> --- a/drivers/ufs/core/ufshcd.c
+>>>>>> +++ b/drivers/ufs/core/ufshcd.c
+>>>>>> @@ -278,6 +278,7 @@ static const struct ufs_dev_quirk ufs_fixups[] = {
+>>>>>>     	  .model = UFS_ANY_MODEL,
+>>>>>>     	  .quirk = UFS_DEVICE_QUIRK_DELAY_BEFORE_LPM |
+>>>>>>     		   UFS_DEVICE_QUIRK_HOST_PA_TACTIVATE |
+>>>>>> +		   UFS_DEVICE_QUIRK_PA_HIBER8TIME |
+>>>>>>     		   UFS_DEVICE_QUIRK_RECOVERY_FROM_DL_NAC_ERRORS },
+>>>>>>     	{ .wmanufacturerid = UFS_VENDOR_SKHYNIX,
+>>>>>>     	  .model = UFS_ANY_MODEL,
+>>>>>> @@ -8384,6 +8385,33 @@ static int ufshcd_quirk_tune_host_pa_tactivate(struct ufs_hba *hba)
+>>>>>>     	return ret;
+>>>>>>     }
+>>>>>> +/**
+>>>>>> + * ufshcd_quirk_override_pa_h8time - Ensures proper adjustment of PA_HIBERN8TIME.
+>>>>>> + * @hba: per-adapter instance
+>>>>>> + *
+>>>>>> + * Some UFS devices require specific adjustments to the PA_HIBERN8TIME parameter
+>>>>>> + * to ensure proper hibernation timing. This function retrieves the current
+>>>>>> + * PA_HIBERN8TIME value and increments it by 100us.
+>>>>>> + */
+>>>>>> +static void ufshcd_quirk_override_pa_h8time(struct ufs_hba *hba)
+>>>>>> +{
+>>>>>> +	u32 pa_h8time = 0;
+>>>>>
+>>>>> Why do you need to initialize it?
+>>>>>
+>>>> Agree.. Not needed, will update.>> +	int ret;
+>>>>>> +
+>>>>>> +	ret = ufshcd_dme_get(hba, UIC_ARG_MIB(PA_HIBERN8TIME),
+>>>>>> +			&pa_h8time);
+>>>>>> +	if (ret) {
+>>>>>> +		dev_err(hba->dev, "Failed to get PA_HIBERN8TIME: %d\n", ret);
+>>>>>> +		return;
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	/* Increment by 1 to increase hibernation time by 100 µs */
+>>>>>
+>>>>>    From where the value of 100us adjustment is coming from?
+>>>>>
+>>>>> - Mani
+>>>>>
+>>>> These values are derived from experiments on Qualcomm SoCs.
+>>>> However this is also matching with ufs-exynos.c
+>>>>
+>>>
+>>> Okay. In that case, you should mention that the 100us value is derived from
+>>> experiments on Qcom and Samsung SoCs. Otherwise, it gives an assumption that
+>>> this value is universal.
+>>>
+>>> - Mani
+>>>
+>>   << Otherwise, it gives an assumption that this value is universal. >>
+>> So with this, should i add this quirk for Qcom only, or should add in
+>> ufshcd.c and make it common for all SoC vendors?
+>>
 > 
-> I would really like to keep RFC off the titles since some reviewers don't
-> pay attention to RFC series.
+> You can add the quirk for both Qcom and Samsung. My comment was about clarifying
+> it in the kernel doc comments.
 > 
-> Would [DO NOT MERGE] in the subject be OK?
+> - Mani
+> 
+Just for conclusion, why i moved this quirk from ufs-qcom to ufshcd.c is 
+as per Bart's suggestion in patchset 
+https://lore.kernel.org/lkml/c0691392-1523-4863-a722-d4f4640e4e28@acm.org/
 
-I'd bet that those who have decided "RFC means the patch series is not
-ready" will take such a notice to also mean the same, and ignore it.
+<< Which of these quirks are required for all host controllers and which 
+of these quirks are only required for Qualcomm host controllers?
 
-I think there needs to be some kind of push-back against these
-maintainers who explicitly state that they ignore RFC series - making
-it basically anti-social behaviour in the kernel community.
+ > Should we consider moving the QUIRK_PA_HIBER8TIME quirk to the ufshcd
+ > driver? Please advise.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+That would be appreciated. >>
+
+Just to brief, QUIRK_PA_HIBER8TIME is required for Samsung UFS devices 
+and may be applicable to all SoC vendors with Samsung ufs device.
+
+If you suggest to move it to ufs-qcom.c, i don't have any concern.
+BTW Samsung UFS driver already has this implemented in their driver,
+So i need not have to add this quirk to Samsung driver (ufs-exynos.c).
+
+Regards
+Manish
+
+
 
