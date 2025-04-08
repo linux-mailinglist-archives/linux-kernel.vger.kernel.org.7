@@ -1,128 +1,157 @@
-Return-Path: <linux-kernel+bounces-593931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EBDBA8095F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:53:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 825CEA80941
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C236D4E4866
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:44:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B17F1BA3EC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC83A27605A;
-	Tue,  8 Apr 2025 12:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F40827815D;
+	Tue,  8 Apr 2025 12:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TCaZdcmO"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0BC206F18;
-	Tue,  8 Apr 2025 12:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c8fbRvfx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CD6263C83;
+	Tue,  8 Apr 2025 12:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744116005; cv=none; b=qcQZm5fAHArOwH7RnQjaLNGWpVoqj2KfAihhpEyMD4QbI/LqTozjSBUXv6buEz9ft9XR2S9pmY8VdZs22eTnSERWa/mUmRmZaYvMuFpHQ8r1ghTP9jjpJgZtjFFaqg58aPR7HTCdjZrDwCioPCExnJw0T1o9Bfk45RYcG6gmueo=
+	t=1744116051; cv=none; b=ee2R5dzyOTdNPbQcXs4NELB3aNWANSiORJVM1iTds6tgtnqgu2Sm+x7VikahgE5zb7oruHreJu60obq73EqVU7nrUsAbqXOmL03DsEq9zM4Svul2WmZ1oDmqOSs8hWzRHhHJgZd08WuYcvlJG6LNgJKG6iSUHB4B8RNSNZb9xCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744116005; c=relaxed/simple;
-	bh=W2T7YCdGADKb75b9b3DlWwavvOCPJ0/TwhvEwmQo7f4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UYRFFVmUQvWXyDWpa1/oBr7Thb8GZcdeYmcIOSsxMWIj8QIXPOqZJijP9Fh7lpL2HQA44JQi9mZNAwRyCJIcJ/a5eSkvy6jg4hkUuydWD35zCOVP62T74mnbnZF6qGFj/GjTEXkR/OWkYWd4jXvvImzEQnahT3nT+KWzrhhYg3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TCaZdcmO; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=W2T7Y
-	CdGADKb75b9b3DlWwavvOCPJ0/TwhvEwmQo7f4=; b=TCaZdcmOEC/SZynHAHLgD
-	lCdsXB0IaOmQ0WUoOtRqdOPzO1I5js4hWQIu+Hbz3mD9GLipxDvvo7XXlTfdzTg3
-	BQsTpn2YVHv021pE9euB414Zfl7soUMKBdIpWkd4xL4L4cjqzZgP4Bx3sh9FcABN
-	7peCjWyNPtsstIBc0a+Ot8=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDnpgLtGPVneK_AEw--.41217S4;
-	Tue, 08 Apr 2025 20:39:10 +0800 (CST)
-From: lvxiafei <xiafei_xupt@163.com>
-To: fw@strlen.de
-Cc: coreteam@netfilter.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	horms@kernel.org,
-	kadlec@netfilter.org,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvxiafei@sensetime.com,
-	netdev@vger.kernel.org,
-	netfilter-devel@vger.kernel.org,
-	pabeni@redhat.com,
-	pablo@netfilter.org,
-	xiafei_xupt@163.com
-Subject: Re: [PATCH V2] netfilter: netns nf_conntrack: per-netns net.netfilter.nf_conntrack_max sysctl
-Date: Tue,  8 Apr 2025 20:39:08 +0800
-Message-Id: <20250408123908.3608-1-xiafei_xupt@163.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20250408095854.GB536@breakpoint.cc>
-References: <20250408095854.GB536@breakpoint.cc>
+	s=arc-20240116; t=1744116051; c=relaxed/simple;
+	bh=dHP0/udm20sXgQKDlru8Fc0+oci1llyIjyVrg4/zGdg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TrWvUI0o7RG9gBoGXMa0WyxkUxUHYvXWtpelOPBClVNvquegnyS3hje4zEKeos12PV1UmQ1H9zPPhbskYv1wXXgj/TxbiKzJm1/xDCy62RViwfoWlBD6AB+5BB0xyC/NBU9lxeZbLfd3nQOt803bErw49he+s+vXPiw2QULbU4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c8fbRvfx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 298D8C4CEE5;
+	Tue,  8 Apr 2025 12:40:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744116050;
+	bh=dHP0/udm20sXgQKDlru8Fc0+oci1llyIjyVrg4/zGdg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=c8fbRvfxjziB7Io+USquH5XEtqf7lDQk3JFK8aOt0z/9KBVBiuLgEZCN0YsT61ug7
+	 uTs04krMG0aSWDXCfrvKo91MUorTseZqJ+ExDUrfhIZCHnylsUn9r0DOUJ0svg4XbY
+	 dM/x/+0rqNSD1cfqOkdCVT+3JFNpmAF/8t5LiPpzRKFuAGD+WXBJg6sOKlZqRbqkhR
+	 RfHTub4Zufn/r1h9lSF/E3SkK1lOuWYwD2NQObsUvhYskaY80/yTCB+9/PmCE1R+j0
+	 gM5Z3akGSOdVfUvAU00JGybeD7Sr9G4OgoC9Rq0eF4pRkujZsl6FAq2wI9VIFoHoTA
+	 M8a3YYRZdAU1g==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Abdiel Janulgue" <abdiel.janulgue@gmail.com>
+Cc: <ojeda@kernel.org>,  "Danilo Krummrich" <dakr@kernel.org>,  "Daniel
+ Almeida" <daniel.almeida@collabora.com>,  "Robin Murphy"
+ <robin.murphy@arm.com>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun
+ Feng" <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
+  =?utf-8?Q?Bj=C3=B6rn?= Roy
+ Baron <bjorn3_gh@protonmail.com>,  "Benno Lossin"
+ <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
+ Gross" <tmgross@umich.edu>,  <rust-for-linux@vger.kernel.org>,  "Marek
+ Szyprowski" <m.szyprowski@samsung.com>,  <iommu@lists.linux.dev>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] rust: dma: add as_slice/write functions for
+ CoherentAllocation
+In-Reply-To: <20250326201230.3193329-4-abdiel.janulgue@gmail.com> (Abdiel
+	Janulgue's message of "Wed, 26 Mar 2025 22:11:44 +0200")
+References: <20250326201230.3193329-1-abdiel.janulgue@gmail.com>
+	<Jv5VZvihK_dgh5j6Ml8T-c7Q8EICtgbgAMI_g_QT51H7--Za9Dbwvz4j1ouuseFxM26sKP0_J3h38ffbQq0Y_A==@protonmail.internalid>
+	<20250326201230.3193329-4-abdiel.janulgue@gmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 08 Apr 2025 14:39:29 +0200
+Message-ID: <87friihloe.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnpgLtGPVneK_AEw--.41217S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Kw47XrWfAFyfGrWxGw43GFg_yoW8uFW8p3
-	yftrZrAryDtan3A34kKw17Ca1Fy393Ar13KF1UCFy8Cay5KrnI9rWxKF17CF97Cw4kCr1a
-	vr4jvr1kJas5AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUhF4_UUUUU=
-X-CM-SenderInfo: x0ldwvplb031rw6rljoofrz/1tbiKBMpU2f05gwTsgACsb
+Content-Type: text/plain
 
+"Abdiel Janulgue" <abdiel.janulgue@gmail.com> writes:
 
-On Tue, 8 Apr 2025 11:58:54 Florian Westphal <fw@strlen.de> wrote:
-> That seems the wrong thing to do.
-> There must be some way to limit the netns conntrack usage.
+> Add unsafe accessors for the region for reading or writing large
+> blocks of data.
 >
-> Whats the actual intent here?
+> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+> ---
+>  rust/kernel/dma.rs | 87 ++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 87 insertions(+)
 >
-> You could apply max = min(init_net->max, net->max)
-> Or, you could relax it as long as netns are owned
-> by initial user ns, I guess.
+> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
+> index 24a6f10370c4..24025ec602ff 100644
+> --- a/rust/kernel/dma.rs
+> +++ b/rust/kernel/dma.rs
+> @@ -218,6 +218,93 @@ pub fn dma_handle(&self) -> bindings::dma_addr_t {
+>          self.dma_handle
+>      }
 >
-> Or perhaps its possible to make a guesstimate of
-> the maximum memory needed by the new limit, then
-> account that to memcg (at sysctl change time), and
-> reject if memcg is exhausted.
->
-> No other ideas at the moment, but I do not like the
-> "no limits" approach.
+> +    /// Returns the data from the region starting from `offset` as a slice.
+> +    /// `offset` and `count` are in units of `T`, not the number of bytes.
+> +    ///
+> +    /// Due to the safety requirements of slice, the caller should consider that the region could
+> +    /// be modified by the device at anytime.
 
-The original nf_conntrack_max is a global variable.
-Modification will affect the connection tracking
-limit in other netns, and the maximum memory
-consumption = number of netns * nf_conntrack_max
+The user does not need to consider this, because the safety requirements
+make sure this is not a problem. The user only needs to consider the
+safety requirements.
 
-This modification can make nf_conntrack_max support
-the netns level to set the size of the connection
-tracking table, and more flexibly limit the connection
-tracking of each netns. For example, the initial user ns
-has a default value (=max_factor*nf_conntrack_htable_size).
-The nf_conntrack_max when netns 1 and netns 2 are created
-is the same as the nf_conntrack_max in the initial user ns.
-You can set it to netns 1 1k and netns 2 2k without
-affecting each other.
+>> For ringbuffer type of r/w access or use-cases where
+> +    /// the pointer to the live data is needed, `start_ptr()` or `start_ptr_mut()` could be
+> +    /// used instead.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// * Callers must ensure that no hardware operations that involve the buffer are currently
+> +    ///   taking place while the returned slice is live.
+> +    /// * Callers must ensure that this call does not race with a write to the same region while
+> +    ///   while the returned slice is live.
+> +    pub unsafe fn as_slice(&self, offset: usize, count: usize) -> Result<&[T]> {
+> +        let end = offset.checked_add(count).ok_or(EOVERFLOW)?;
+> +        if end >= self.count {
+> +            return Err(EINVAL);
+> +        }
+> +        // SAFETY:
+> +        // - The pointer is valid due to type invariant on `CoherentAllocation`,
+> +        // we've just checked that the range and index is within bounds. The immutability of the
+> +        // of data is also guaranteed by the safety requirements of the function.
+> +        // - `offset` can't overflow since it is smaller than `self.count` and we've checked
+> +        // that `self.count` won't overflow early in the constructor.
+> +        Ok(unsafe { core::slice::from_raw_parts(self.cpu_addr.add(offset), count) })
+> +    }
+> +
+> +    /// Performs the same functionality as [`CoherentAllocation::as_slice`], except that a mutable
+> +    /// slice is returned.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// * Callers must ensure that no hardware operations that involve the buffer are currently
+> +    ///   taking place while the returned slice is live.
+> +    /// * Callers must ensure that this call does not race with a read or write to the same region
+> +    ///   while the returned slice is live.
+> +    pub unsafe fn as_slice_mut(&self, offset: usize, count: usize) -> Result<&mut [T]> {
+> +        let end = offset.checked_add(count).ok_or(EOVERFLOW)?;
+> +        if end >= self.count {
+> +            return Err(EINVAL);
+> +        }
+> +        // SAFETY:
+> +        // - The pointer is valid due to type invariant on `CoherentAllocation`,
+> +        // we've just checked that the range and index is within bounds. The immutability of the
+> +        // of data is also guaranteed by the safety requirements of the function.
 
-If you are worried that different netns may exceed the
-initial user limit and memory limit when setting,
-apply max = min(init_net->max, net->max), the value in
-netns is not greater than init_net->max, and the new
-maximum memory consumption <= the original maximum memory
-consumption, which limits memory consumption to a certain
-extent. However, this will bring several problems:
+Formatting nit: could you indent the paragraph under the bullet:
 
-1. Do not allow nf_conntrack_max in other netns to be greater
-than nf_conntrack_max of the initial user. For example, when
-other netns carry north-south traffic, the actual number of
-connection tracking is greater than that of the initial user.
+  - The pointer is valid due to type invariant on `CoherentAllocation`,
+    we've just checked that the range and index is within bounds. The immutability of the
+    of data is also guaranteed by the safety requirements of the function.
 
-2. If nf_conntrack_max of the initial user is increased, the
-maximum memory consumption will inevitably increase by n copies
 
-3. If nf_conntrack_max of the initial user is reduced, will
-the existing connections in other netns be affected?
+
+Best regards,
+Andreas Hindborg
+
 
 
