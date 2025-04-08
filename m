@@ -1,294 +1,187 @@
-Return-Path: <linux-kernel+bounces-593368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81D84A7F867
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:51:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9210A7F84E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7C06442035
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:47:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48F6C44026C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BBF264A6E;
-	Tue,  8 Apr 2025 08:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7611CF8B;
+	Tue,  8 Apr 2025 08:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="dfX1dyvD"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2071.outbound.protection.outlook.com [40.107.20.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j57bW5gQ"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98AE42641F4;
-	Tue,  8 Apr 2025 08:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744102034; cv=fail; b=lDQ62pGRs+DQAlwd0dna9GcOCmsKhaAmfgNy5fLRVs2cSb6BoCs6VJeLBf3ox6avOJUAh+5eiYtOlYygTz6EFmbFWEID9Y86FlNye8dQYy9uDUZ9hephqmEX3zw6Xtxm53BwtLG/Ownnh2wi5PY9Obk6bc89T44mngR2FlAfSuk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744102034; c=relaxed/simple;
-	bh=pt6GJtL1YfYM11B0+jSClgPKbgD4OSWrmAAFfIF/fSM=;
-	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=BVt2neWSLO/LElun59KuL9m14P7TzN5EVAHTNfEOcHih60550G45gsadN5J+3JjU4e+bpcrTqjcU/kB6swjYGSHBAnilK07nevleI3tHQdt8+hkIEigx8St1nN6cpNdwiX2esYgoP3jd0zNH7ofhT6rSRyIFlBmp5tMy1TNQcZ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=dfX1dyvD; arc=fail smtp.client-ip=40.107.20.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K3tsqtDOinSauDyB/AmPxSe7lfmxpafnva0kJoSWPDRO+jdal//d3/MTvMOU2iY+WT4W3VKnZsSQGcGVu99XtgDJxQcJVyC6f4pr9epbahzQLDCa8x7cXNXsTrpaY9DsU7x4NGsbRrL9U81/D8isDWnYA95a/e3x0bC22hN8VIGkAelzg3ucHj/Zv3TeTeUrJtjq1h8fMqzu5eru/nQPFs3IIbJtGSXQ0b6HMkV6Qau9blIPqJfMe0o4L3I7TCFVHHPT+mOr0XPV9ywUT4WO4ScVsUYKi9ouRv0TEfOzTjTlOj5ZXFCuiDXeABD2xcwcW9C3MeOzuhSdU2uyLYWTuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wUMQmljVm73rf83nVbb/yA/+61+dOo84cOTZ+qN2Lf4=;
- b=itfHQqhJR3l+/JGVOulOCWMUsduiXXXInU8TKqqb7DnBQetL4u8Azc0vJs7mgVemhSjBnJ1wJrsrq+//zYaYDLbFS+WeBbHPONb3t+5E/yfMgXiWL9nEHWmQRu+k41L1zZGlNezXTqBkTa3aLFaR0ILDOdsHpdAzPlL70BcEZhdMWaN0KG/xJOKasqGSb5R2gnZ8rdESW3DtKc8piIWHTTyS9j58NnqsD+OCqIW9e57lgxeDtZB6q+qbt741GBvcFAoXzeUxsXe2vWDMprw92j+s0Hm6+1f7lQsTihJRcBAfZx4P4jrqEiqgcT23dDBUYsIOfTNSYh0qOOFvKc7VfA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wUMQmljVm73rf83nVbb/yA/+61+dOo84cOTZ+qN2Lf4=;
- b=dfX1dyvDBTRZ3qs16rDm/lSR12JkrPWNreF6S5Kr+BO097U+hlclJkxuc6vDwnR0d3bcRJS+B8RF+Dm9hc8QnBv2xYYoGz5bz28ruWrvQ8dIR4bTM/zei5LD4HmivOM1aN0EYLHsXHnm9bXFjLy1w3n7ha7WrhUuFpzF0+SNWfHGGh/M4dDsLHYw7s9ryQqWLabyQ4w6xJkxKK3V1ZeS4ZebafNVKyQ1+C3HGS1rylsmQs+tF79fVNFq0QUNTXOcmsufKyEt736bNtq/qHigpDFDkUpR14yzh5IB9qho5VT2M8MsDC/E6Lo1qp9s1OFsiVlb8xxIWP+H1XMh/AkvkA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by DUZPR04MB10063.eurprd04.prod.outlook.com (2603:10a6:10:4af::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.31; Tue, 8 Apr
- 2025 08:47:09 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.8606.033; Tue, 8 Apr 2025
- 08:47:08 +0000
-From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Subject: [PATCH v4 0/7] firmware: scmi/imx: Add i.MX95 LMM/CPU Protocol
-Date: Tue, 08 Apr 2025 16:44:24 +0800
-Message-Id: <20250408-imx-lmm-cpu-v4-0-4c5f4a456e49@nxp.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAOjh9GcC/1XMQQqDMBCF4atI1k2ZTEzUrnqP0kUaJzXQqJhWL
- OLdG4UiLt+D759ZpMFTZJdsZgONPvquTSM/Zcw2pn0S93XaDAEVCATuw8RfIXDbf3guytoYg6o
- gZEn0Azk/bbXbPe3Gx3c3fLf4KNb33xGHzig4cCDzKAgKSTld26k/2y6wtTLiLlHgUWKS0hABq
- EqXVhyl3KUEeZQyyUJXymmnhXV2l8uy/AAazgW0GAEAAA==
-X-Change-ID: 20250120-imx-lmm-cpu-418daaa257e2
-To: Sudeep Holla <sudeep.holla@arm.com>, 
- Cristian Marussi <cristian.marussi@arm.com>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, linux-kernel@vger.kernel.org, 
- arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- imx@lists.linux.dev, devicetree@vger.kernel.org, 
- Peng Fan <peng.fan@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744101964; l=4465;
- i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
- bh=pt6GJtL1YfYM11B0+jSClgPKbgD4OSWrmAAFfIF/fSM=;
- b=7SOBPu9dqRtb2eOkitQjZ1IEu4HSMMHvjjW4XK7eHEDTrOr6XvY2vba3oRygExhjUwwPUKFfY
- 8ndKPJM86EuAi4MqM/uu4IeDSHoaTQdeYMi8ZQYo0FTzx6WwzwD8msF
-X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
- pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
-X-ClientProxiedBy: MA0PR01CA0056.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ac::12) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C28263C7B;
+	Tue,  8 Apr 2025 08:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744101872; cv=none; b=W9wcXGBv+tcrGnI+dcOHcgOezGiNe2DNjNhFiq9G1XiyGS0KARPQFCWcfbDM5a+4pRmVss3mjylwAU2ufHdwtKboVdb63pyco73XxsalEhSa/8Ze8XohUhJYpSTILiG5K/2AiO57IbVmeYFszfS9XTh4LlSukREbuE8Wte0YyLk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744101872; c=relaxed/simple;
+	bh=i2Rl7x4Xq17P5xJJLLS3QmfNszFaBGXQwbEl2XSC/bw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N9Ly3n78tyHSe2N3glGH3gHKhKUo+WnIyDFhgj+NEXjxwgQ6ntPsFRLVDWbiHF2RXdYZhdwrRLhCaJANoz0g0yUOfuXFK+lw+SqHpOblV5Fd9+61jvwPT91ZtiwisP2ZPdyOuqO/e1ygg7phlBFMqucuuEQ68dExB4fHnqS3yCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j57bW5gQ; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30bf7d0c15eso51385251fa.0;
+        Tue, 08 Apr 2025 01:44:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744101869; x=1744706669; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XUQLSJBnGa1PmwIDuHGtKHPGc6cqddLm6J++qb94PQ0=;
+        b=j57bW5gQpxc8YJNQghL612/43IKPzK60v1CoKAbzzwD5P38iszWM7uC9aJFWSk1rXG
+         kRCk2HVenpGKZiRibpv1Ics75K4v2jkKWkZDRc2uACJtcFDQhjx5NJOBqK7FODfkufNA
+         DQFrXYl6zD2V3mCjCjqlW8JHF5ZZqheopn0tQWaQLx6f565Q/fPN4fpaeVLhwLQ5+3/4
+         Bd80Kl3++TvoiPgj9PCmTSZOd/e03i6C/NDrGqtR8GC4OxofrdmwgsEs3JMFn7cqJzSL
+         8mhUywRA4e/O+PgJdaq78PxG8aoZQlJvyZPp8w/mXPVFpB1OGFX7JbvulbJDCyoJy1hu
+         fu2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744101869; x=1744706669;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XUQLSJBnGa1PmwIDuHGtKHPGc6cqddLm6J++qb94PQ0=;
+        b=J28wfttSkzQPcb0EVdNhlks7/jLmkEtZqyHhM8qSXDqzevnsvVZ8PdCNIDIz1yOHQ/
+         WluxL/emHn0/XSxI1rxegyx1uuHNEnyjZqRUeZymt0a3j6dMFa9hKczGxse2iF8Jp0Ov
+         2jOR56mmYHTt9YSnSjiPQr50YuIatlH+DnHBcnYCdHtp3MrGnePlALN+DdHNPKjRB9T9
+         Oy8bE3bDumYpfHvgAgnKY7FbEihnlpqDSsddl5q/IwrlcqiBdBfv366KY6NmJrkOCIKh
+         ZNrtVTejZBZdPop5kAHIV24gFFN9jZsWwj1g63xKDTkoVQy9ViVwrube3vHCLEIlySxU
+         Fzyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRlRLdeA8wemPzpMpfCKFZZ7W5ql2wlHA3Lv9fLd0u/CaH9n8qkX7B5Fx3fhpbRpDpdIVwWZ0JbeNJ/egz@vger.kernel.org, AJvYcCWWaTZgcMAcmjvtJP71edpWUWSrcKxg6WzA/rkXM5Pxep8sRzIuh7nHKp8o7a8Qy91zAXlro9cxGYeZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCIs0OIPI6rRBj6X5i0XPQoe1qBJDVbnZyJ1a2GzWfrrnG9+Sc
+	hj1XTpYDBDJs1r0Ok1jJ3WQr/k9zDTlz2PAtBVeXgLKE17XwR13h
+X-Gm-Gg: ASbGncsdDiA84x+HSb2blSjUaVyP+DMbEmji1omN32W8l2xDLK4kgvw227i3YPeawXo
+	q7X7kBzbxN+DzxTA6oSkd72TfHgk8YdWFEv09Q3DP4TmZkmJWeyMP7/MVhVrYXepFeSXF+FBmqo
+	RkzQ0rp4l+oyVT7hu/15qU2S970VzwbSIPjEpSeIbu0LBGtKfUaBX/thkmjQGQGotmhrv1TW8RW
+	GFmY5LAPkZ/wjv91hyWv2umkvQPCm8YwrA20j7MREG9OkGgh0napBZURkQOpW2WXS6GqC8FMfko
+	Ic8Gk9gu+hYoy42KjXrFTRVxp9ly7JtOZ6Z6tUyzAMNyxAY=
+X-Google-Smtp-Source: AGHT+IFT+REP1j37pi56UHxa9McAYCbOzg+QsEbvDGM/D+SaNPwvcbbyyPf1Sf8RRvYKGD2Nb7z1UA==
+X-Received: by 2002:a05:651c:12c3:b0:30c:2590:124c with SMTP id 38308e7fff4ca-30f0a10b7bbmr44729681fa.11.1744101868731;
+        Tue, 08 Apr 2025 01:44:28 -0700 (PDT)
+Received: from mva-rohm ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30f031bcf76sm18109851fa.75.2025.04.08.01.44.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 01:44:27 -0700 (PDT)
+Date: Tue, 8 Apr 2025 11:44:24 +0300
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 04/14] dt-bindings: mfd: bd96802: Add ROHM BD96806
+Message-ID: <3c245cc3829dc64d977c97eae7ae8e2be6233481.1744090658.git.mazziesaccount@gmail.com>
+References: <cover.1744090658.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DUZPR04MB10063:EE_
-X-MS-Office365-Filtering-Correlation-Id: 902291d3-5b45-4cbb-99de-08dd7679f272
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|7416014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U2xMSGhZRUNRVDlmWXBjTlBteG02cDFJUGVJM1RXUUROVTRPbm43bmNPM243?=
- =?utf-8?B?Y0dMMjlMaG1TNjhyRFlicmFwSVM3d1FXL2phdG5qaVlBMXBZU2FubXRMQ0JJ?=
- =?utf-8?B?MldVT3puVEhZbUhhcmtmMzlEVHpVUWk0OVV0ZWg0UVZubGQvWTBqZzZ4S0hT?=
- =?utf-8?B?eTFFSzI4eWdCY2xPK0ZDUkVNbVpqVGlweHEyRmM3Z0srL1lRNStmMGZWdkNK?=
- =?utf-8?B?VjZLN3J4SVIyMjVCQjRZc3didmJjZG9nejF1SC8zaU53SWsyT2pRTW1tUFA0?=
- =?utf-8?B?dDRiTVJNWVFsNkJXYkRCOXFYLzVyc3hmVUJLeFBjQ1k5Q2dQNTl1OU8ydVVw?=
- =?utf-8?B?WlFzdm85MWwzMk1lR1VBY25WU25udWFSRjdFMTQvSTZNb1pMeHJhYWxXUlUv?=
- =?utf-8?B?SW14WHV3T3BsMzBqUWZrNkxSQngyT2N6bDBLUmgrQmNMTjd5S0pQSGgvZndW?=
- =?utf-8?B?QklNR2MrWFJmZGRMZW5jWi9Mbmx6S1hWOUh2d0pSSVNRSWRTR3RSNU9WeE51?=
- =?utf-8?B?T2w4UW14R3F6YUJxVDFDRE9ibjY3MlFkQkM3RGtjS29SNHpidkNNM0dCOWRp?=
- =?utf-8?B?bkdxUHdsQjRUQm02Y0tJam9BUTYvWk5qYkpNcWtjSnpTMHVLMkRtNTVxd240?=
- =?utf-8?B?Z05GYnVhTHJiTFAyZm5lWjh3ZGpMQUNxdkVkUmxKMjNsYmlEMVRYOUU0Nngr?=
- =?utf-8?B?aUw5dW1XWDFLS0J6YWYrTHVCUTdFeVoxVE9MZzNWbDdGM0ZIYXpUNkFMQzJz?=
- =?utf-8?B?UVdUazlYVVU3OW9oQ1NmNnhvMVNUOFZQT3lid0E4UTdaUElHRmtWV2dadWRK?=
- =?utf-8?B?bnBlNDc5STE0aHBER2lCMm51bjJOdmZ3V0duVS9UK0NDRUpqd0ZDTG1vanV1?=
- =?utf-8?B?R0ticFltRFJvZ2RGWUhVOGNUZUZDY1RZOWZtUkNUNS9PdkdWYWI4L3c3RXRB?=
- =?utf-8?B?QTdCaEtOUmNicEE4ejgvWDVHZ2JmM1FEa3BOUEM1Y0VucTRndWdlQ0pVakJL?=
- =?utf-8?B?TGdhRTdHTFNNSGQ2aThCSndId1czMUJ0WEE5VHo4NGVySG0xK3ZKdlY4OTJZ?=
- =?utf-8?B?MTZGbHhCMDdtcVFyKzVYUDFjYXdqdzFid3hNWWNMRktTVC9xMkJmQ0VpOTU4?=
- =?utf-8?B?Y2hxbUorMlptUjNpSnYzdHFaeHNJWVNNSElwRGkzcVdKTG5lUkhYUlpNdGpx?=
- =?utf-8?B?T2FpaHBaNGUyZ3QrTEtOZFpqM05LUnFneDIyTlFqUEpqRkhEWHhjUXpneGVV?=
- =?utf-8?B?bDc0bFQ2MDdFcm9YTGUveDVPcHNpTHIzaWNac1RSVlg3NGV5bENJdGg1NzMx?=
- =?utf-8?B?azlLY2xWR3hWbFd1S3ZHbTlJYXAwMEkzbUZUdDdtU1U0WEZOQkEyZmNmMGEw?=
- =?utf-8?B?a1JrcmgxL2U4NWYzTFptZ3MyVVVwM2oxaVF4dWNPMDJDa3RhWkE5NS84dmxn?=
- =?utf-8?B?ZS9jSEN3NWM0Y0tHREpsS1VudENGUWZPbTJZbUJoM0o5VWxLTVU3b3d1dlNC?=
- =?utf-8?B?U2J0enpQakRncU1ITG92WURvU2lJaTFadjB1M2lleFpmVnh2M3RHSlluZUVF?=
- =?utf-8?B?WFBjbEszS2dZOEsrcS92cU1tY2hES0VhNEU5cVQ2Mk9IaGhscGVqSmZNMDQ2?=
- =?utf-8?B?eVk1TkdPeVc1d1BYOFNudzF5UkJKZnlaQzFGbERMb0tBYmhmR0ljVkxFaUp0?=
- =?utf-8?B?TkpQb3FWKzhaOFJvb0lVUE9tZngyR0FrWEcrQjRSVWZoNS9OWlZoRDNFODFE?=
- =?utf-8?B?R1c4cVpZNXIrRDBJYkVRNm1aYXBIaDU1WnJSMnh0ZjV3K3I5cDJhd1pmOFlm?=
- =?utf-8?B?RW5tSTg5SnNRcGJmVHNaY2YxdnptVTZqVlV4L2s4YklNQzFQem4rWkdsUGU0?=
- =?utf-8?B?UG5TNDNuaDhXZmtjR0kvR0dubGgxbC9oRCtsMFJhaVhrcjBMbFhicko0NDg1?=
- =?utf-8?Q?KIhU49asqhUywtvgOlZYnst0tNPoUMnZ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b0pQZmplMFVoSExxN1liWmdMblBHaFRVWW9GNzNLUlhsQzNsQitqVlU1K0c5?=
- =?utf-8?B?Nk1LQk45YXAvRm1nY1E4SXVFNGRBeFovSXlNTmoxNjFQd0JZc3lyMWJVNHdB?=
- =?utf-8?B?UEdCaG9hTng4bkxaaldybWVCbm9Ga0JqYWRUcnl1RkNKV1V0ZnZYdC9VeGtj?=
- =?utf-8?B?YmJuSHRVSE4vb2Y1RHhwM1BnYlNhcDFhNzJZRmNLbmFhbHlWMkxMNGlPUk05?=
- =?utf-8?B?K3ZRdlJTVEdZcVdZTzdodXk5YXE2Z2FlM0RuZnBSUEJFbGQ5SjVWVG0rQnd5?=
- =?utf-8?B?QlpQak5GMGd4K2lxTzZsODlrdy9FOTA2TU84V25vdDE4YUJoZm56MkFOZGYr?=
- =?utf-8?B?MUczZklDYTNtZ0NTVEdxQVhKY1pmUXV6Q2ppeE1KMmJ1cDVWeTVIZnNPeGVN?=
- =?utf-8?B?b1RPdUNxbnk4MEFCWVZWdHJMdGZGOTBsYmhZYm9mVDJkbno3cVFkOTZQRDZY?=
- =?utf-8?B?TTE2akNicFFpSU9GWlkwSTRHWFQ2MVE5d0hOTHBsdFhjSWtlR0g4YjVrc28y?=
- =?utf-8?B?REJ2eWNEaGU1eEwvVEU2aklxTUd4MXNmdUlGdTdEWlg2OFhBa0RGOEFZQUpO?=
- =?utf-8?B?RjliRTA2RUljeWZQSEZTWm4ydFB0S2p5QWR3TmVyTXZpZkx4L0RjZWNVRnNV?=
- =?utf-8?B?UStGMjZzV2NQRU9SUEFNU1ZybUVmVXJLcUpIT0M5WW1BY2N3VkUweHVFZ2dk?=
- =?utf-8?B?d1ZsTU0rd09sUUdkT2w1cXV1Z3dGOFg2dElTbHo4SENYUFE1RC9naExyN0xq?=
- =?utf-8?B?NlBWbytCNHpkZXRtZGVYTHFTN0kyYzgvbkNIdExDbkxFSXhFNFlkekhHd1hl?=
- =?utf-8?B?QzYvNVBhM3lXSXRhaENWd21uZ0VqWXZ2V2xtaUJ4eDVQT1NBVXBIRnk4MnR4?=
- =?utf-8?B?RVNKSm9NU0NzMUhYNkVxQXJvKzk2V0UrMWdicGx1Yy9nRldQbnk0RlpGVnVI?=
- =?utf-8?B?SlFTYWh0RmpremNJQzhSMDF5dDMyMHVZZVpiSlhaaFVyYjBWV254RTFxa0xE?=
- =?utf-8?B?aW5xWTZWTWpBcEdsQkV0dStROWhlRkVvbmFVVlZ5K0JVenlPbkYyNzBJSDIw?=
- =?utf-8?B?d2E2ZS96Z1B2MzZsMkNoc0lIdzZwd1pQemVXTXgvVHB1MWFjYXkrMjdCa05G?=
- =?utf-8?B?VkQzU3FMd2d2QWRmclVGYklsSHh0TitWRTl1MXpiZE1ZSGRXYWJlZjFCdDY2?=
- =?utf-8?B?V3pjNnNHVHEvZVBjTGsyNG8vWnRzcEloMkJ2QkVPSGRzVG52eXlBYzE0R1Qz?=
- =?utf-8?B?U2pFK1VYSEUxai9MYXp2M25GMWgvMEozbjRtNFZXMDl5WGVmcjVzQ1lxV2t0?=
- =?utf-8?B?N2N3elN5cWZHL1dVVjdWUlAwOE1YTHFONERWYkpKRGhIVklaZ2U1VzhNai9Q?=
- =?utf-8?B?dGRHak5rSzhhaisxNys5cldrcjhpMi8rdkt0MXREK1IvdDZJS0ZYUm5paG9H?=
- =?utf-8?B?ZWdwUDg0Q1B0cXdSVllYWjBwcFdqNEd1VHRuRldLdDFDVHhxeW84NjJBME1T?=
- =?utf-8?B?NzJJN3VNWlYrUHBxckROMTRJTWNFa2cvekJUQmlwdm50aTdCbzRxTk9ZYmpT?=
- =?utf-8?B?M2JOVTBvYk1mMEowY2pkOUxheFdBWENmSGJoRWJrcVNHL3J0cG8wT21RQUYz?=
- =?utf-8?B?RjVqNjNueXBCZEJ5UUJoamFCWmtxb25TMHBTbitxOWQvRTlQNFZSeFVLZGZW?=
- =?utf-8?B?YWNKc1N3Tzl2aUF0Ykw2WVc3cldEVFBnMm5BbitUSnFBaE8xRHo3eEZiQVg1?=
- =?utf-8?B?QTlwZW5jMlk5d3hydWRUYlMycHpscjZsT3R0NUkwdXlkd3l4MjBXMVBqSWFp?=
- =?utf-8?B?T2VpTytJVEFsNmxaZCtyQ0x3QkZVcC9QT01jOWpuU1gzbEdQQkEwL1FQUVAy?=
- =?utf-8?B?N21zaUtEc2NGUXoyTzJxcElvdG9wb2g2bjNjczk3MitoQTNSR3RoSFp1WVZC?=
- =?utf-8?B?aGhWSk1ZNmgvQlZ0UTUvZnhWL1JiMWtESjAyazJtUW56a1I0dmZJY3ZyQi9O?=
- =?utf-8?B?MEZ4ZHd3ZWJIQTBrNCtWVWVUZFlpaW5KVnMyaFhyUnRjNjkwSmRoTkVHWGto?=
- =?utf-8?B?bXNpV2x0T1MvNmZqY3FhQUFBcnk5NitvdnpvamFlZ2RIRFRKRGRsZ3BwdUtC?=
- =?utf-8?Q?VvaNyTyhqmFPtszGr9YUDUVZW?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 902291d3-5b45-4cbb-99de-08dd7679f272
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2025 08:47:08.9332
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QgjQuyTeF+dzy/Q+8qvt/JmxJHNcY7BZsrTrjs0L9Axxp6vBFTQ3QVLxeCa4c0yrCpQhdHBHXe00w3p09NttCQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DUZPR04MB10063
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rWrmcppmFkKxiPNV"
+Content-Disposition: inline
+In-Reply-To: <cover.1744090658.git.mazziesaccount@gmail.com>
 
-i.MX95 System Manager(SM) implements Logical Machine Management(LMM) and
-CPU protocol to manage Logical Machine(LM) and CPUs(eg, M7).
 
-To manage M7 in a separate LM or in same LM as Linux itself. LMM APIs
-and CPU APIs are needed.
+--rWrmcppmFkKxiPNV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-When M7 is in LM 'lm-m7', and this LM is managable by 'linux-lm',
-linux could use LMM_BOOT, LMM_SHUTDOWN and etc to manage 'lm-m7'.
+The ROHM BD96806 is very similar to the BD96802. The differences visible
+to the drivers is different tune voltage ranges.
 
-If in same LM, use CPU_START, CPU_STOP, CPU_RESET_VECTOR_SET and etc to
-manage M7.
+Add compatible for the ROHM BD96805 PMIC.
 
-Both LMM/CPU APIs will be used by remoteproc driver. The remoteproc
-patchset will be posted out after this patchset gets reviewed or in
-good shape per Maitainer's view.
-
-Build pass with COMPILE_TEST
-Tested with remoteproc on i.MX95
-
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
-Changes in v4:
-- In patch 1 to address Sudeep's comments
-  1. Several typo/format fixes in documentation
-  2. Describe what LM is in LMM part, update number LMs to use bits[4:0]
-  3. Limit max number of LM to 16
-  4. Add info for reason in LMM_RESET_REASON
-  5. Add info in CPU protocol part about the need for having a CPU protocol
-     in the presence of the LMM protocol
-- In patch 3: use info->name instead of out->name, update
-  SCMI_IMX_LMM_NR_LM_MASK to cover bits[4:0]
-- Add R-b from Cristian for patch 1 and patch 3, from Rob for patch 2
-- Link to v3: https://lore.kernel.org/r/20250303-imx-lmm-cpu-v3-0-7695f6f61cfc@nxp.com
-
-Changes in v3:
-Patch 1: Correct LMM_ATTRIBUTE return values
-        Update the return status of LM_BOOT/RESET/SHUTDOWN/WAKE
-        clarify sync/async in the Introduction chapter of LMM
-        Update the Origin entry in LMM_RESET_REASON
-        Clarify CPU run/sleep mode
-        Add note for CPU protocol to indicate AP using PSCI, non-AP use OS.
-        Specify mandatory for each command in LMM/CPU per firmware owner.
-        For BBM/MISC which have optional command, I will update doc in separate patch later
-Patch 2: Add description in binding doc
-Patch 3: Unify scmi_imx_lmm_[boot,power_on], Use le32_get_bits
-Patch 4: Unify scmi_imx_cpu_[start,stop], Use le32_encode_bits
-	 Add pointer check in scmi_imx_cpu_started
-	 correct nr_cpus calculation
-Patch 5: Unify lmm shutdown,boot/power_on, update kconfig to avoid build bot issue
-         Add R-b
-Patch 6: Unity cpu start/stop, update Kconfig to avoid build bot issue.
-         Add R-b
-
-Ran smatch as below, no issue found.
-~/smatch/smatch_scripts/kchecker drivers/firmware/arm_scmi/vendors/imx/
-~/smatch/smatch_scripts/kchecker drivers/firmware/imx/
-
-- Link to v2: https://lore.kernel.org/r/20250212-imx-lmm-cpu-v2-0-3aee005968c1@nxp.com
-
-Changes in v2:
-- Add dt-bindings patch 2
-- Add a maintainer entry with patch 7
-- Update doc to address various questions and make it clear
-- Use strscpy to use scmi server returned string
-- Drop extra blank line
-- Shrink scmi_imx_cpu_attributes_get function args.
-- Typo fixes
-- Add LMM_RESET_VECTOR_SET
-- Link to v1: https://lore.kernel.org/r/20250121-imx-lmm-cpu-v1-0-0eab7e073e4e@nxp.com
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Acked-by: Lee Jones <lee@kernel.org>
 
 ---
-Peng Fan (7):
-      firmware: arm_scmi: imx: Add LMM and CPU documentation
-      dt-bindings: firmware: Add i.MX95 SCMI LMM and CPU protocol
-      firmware: arm_scmi: imx: Add i.MX95 LMM protocol
-      firmware: arm_scmi: imx: Add i.MX95 CPU Protocol
-      firmware: imx: Add i.MX95 SCMI LMM driver
-      firmware: imx: Add i.MX95 SCMI CPU driver
-      MAINTAINERS: add entry for i.MX SCMI extensions
-
- .../bindings/firmware/nxp,imx95-scmi.yaml          |  23 +
- MAINTAINERS                                        |   9 +
- drivers/firmware/arm_scmi/vendors/imx/Kconfig      |  24 +
- drivers/firmware/arm_scmi/vendors/imx/Makefile     |   2 +
- drivers/firmware/arm_scmi/vendors/imx/imx-sm-cpu.c | 276 +++++++
- drivers/firmware/arm_scmi/vendors/imx/imx-sm-lmm.c | 262 +++++++
- drivers/firmware/arm_scmi/vendors/imx/imx95.rst    | 828 +++++++++++++++++++++
- drivers/firmware/imx/Kconfig                       |  22 +
- drivers/firmware/imx/Makefile                      |   2 +
- drivers/firmware/imx/sm-cpu.c                      |  85 +++
- drivers/firmware/imx/sm-lmm.c                      |  91 +++
- include/linux/firmware/imx/sm.h                    |  19 +
- include/linux/scmi_imx_protocol.h                  |  42 ++
- 13 files changed, 1685 insertions(+)
+Revision history:
+ v2 =3D> v3:
+  - Fix missing space in the title line
+  - Changes to node names and 'reg' description dropped as they are now
+    done right in the patch adding the file
+ v1 =3D> :
+  - No changes
 ---
-base-commit: a1bbf852df875d12e8916095a961d890b7b939e0
-change-id: 20250120-imx-lmm-cpu-418daaa257e2
+ .../devicetree/bindings/mfd/rohm,bd96802-pmic.yaml  | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-Best regards,
--- 
-Peng Fan <peng.fan@nxp.com>
+diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd96802-pmic.yaml b=
+/Documentation/devicetree/bindings/mfd/rohm,bd96802-pmic.yaml
+index ccabbebf9a29..6cbea796d12f 100644
+--- a/Documentation/devicetree/bindings/mfd/rohm,bd96802-pmic.yaml
++++ b/Documentation/devicetree/bindings/mfd/rohm,bd96802-pmic.yaml
+@@ -4,19 +4,21 @@
+ $id: http://devicetree.org/schemas/mfd/rohm,bd96802-pmic.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+=20
+-title: ROHM BD96802 Scalable Power Management Integrated Circuit
++title: ROHM BD96802 / BD96806 Scalable Power Management Integrated Circuit
+=20
+ maintainers:
+   - Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+=20
+ description: |
+-  BD96802Qxx-C is an automotive grade configurable Power Management
+-  Integrated Circuit supporting Functional Safety features for application
++  BD96802Qxx-C and BD96806 are automotive grade configurable Power Managem=
+ent
++  Integrated Circuits supporting Functional Safety features for application
+   processors, SoCs and FPGAs
+=20
+ properties:
+   compatible:
+-    const: rohm,bd96802
++    enum:
++      - rohm,bd96802
++      - rohm,bd96806
+=20
+   reg:
+     maxItems: 1
+@@ -27,7 +29,8 @@ properties:
+       for fatal IRQs which will cause the PMIC to shut down power outputs.
+       In many systems this will shut down the SoC contolling the PMIC and
+       connecting/handling the errb can be omitted. However, there are cases
+-      where the SoC is not powered by the PMIC. In that case it may be
++      where the SoC is not powered by the PMIC or has a short time backup
++      energy to handle shutdown of critical hardware. In that case it may =
+be
+       useful to connect the errb and handle errb events.
+     minItems: 1
+     maxItems: 2
+--=20
+2.49.0
 
+
+--rWrmcppmFkKxiPNV
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmf04egACgkQeFA3/03a
+ocXgoAf8CWiZOyKurNrN+fXDN3Phjpqn9lThbo3WhCHPPi5Z8kcm83IHKZ3F3OmY
+cnvK3jIazN1p8/upXlQr6ETOTnbjWJjtazBt+fg9Lxtp4oZz4WEKRyCOvgcewG9j
+lcOsIRWDrdJARFOOETEvxI5xj07jbIxO6hgs35GSn6fTxL63qB0Ck8X6aEMmf0uM
+VH2mkbXkckmXy0q4vBfb7wbJnaIOv6slmLWaB2Ar+uihuedaKmHzNvLSoqVfKCJE
+L1VdGPqBpn8mn8GR22cMUzFJhEvGanE5/GCDmpaTmJGiqrA0yOU7GEpRuH9MR8ww
+Oho6Bt6ESchw9QGsukbDz7AwTs7cMw==
+=SYqO
+-----END PGP SIGNATURE-----
+
+--rWrmcppmFkKxiPNV--
 
