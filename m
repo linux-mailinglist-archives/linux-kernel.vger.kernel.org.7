@@ -1,160 +1,205 @@
-Return-Path: <linux-kernel+bounces-593907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13FC8A807AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6522BA80835
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71FFC1B854B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:34:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00E2D1B88026
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A6526B2C5;
-	Tue,  8 Apr 2025 12:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E4326FA44;
+	Tue,  8 Apr 2025 12:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxsw.ie header.i=@nxsw.ie header.b="IqAcfCR5"
-Received: from mail-24420.protonmail.ch (mail-24420.protonmail.ch [109.224.244.20])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="WTSx/mxD"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717E420330;
-	Tue,  8 Apr 2025 12:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744115499; cv=none; b=JFffcHu7KL0+ZVvVtraPnLgKDLhdpuzSwDWEHfMEAFujJ1G8A9RjxiFidBGkKz22py3ZrlHrewxRtmKqIaRcjuTbLgb8b14QHw1oy/f8R0/mbaJGEsi6q4nkZp5Tw96g5IZZkE3IaauzuOteTrV3nmCoUsWI3HM+U7Ze1orDJes=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744115499; c=relaxed/simple;
-	bh=/xjDYd51GZDKC67cr5oh+RuVcExPIZyMfQrW4k8BCRI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nptvqvCzZgOUcqwKFevYVrfkg8ENEUfqhv0WDb5F1/UsGLKHkoe/y2Yuq5twVf1uDMqYtTHGwQpZ/kPTrYbp5bvN9ENyAE6+u+x5PBer1rU075IMotwy6YZL541PqvnBcMve7YjEkeRvHRsCCvy6wT3pA9d9imPQX/qrl436DRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nxsw.ie; spf=pass smtp.mailfrom=nxsw.ie; dkim=pass (2048-bit key) header.d=nxsw.ie header.i=@nxsw.ie header.b=IqAcfCR5; arc=none smtp.client-ip=109.224.244.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nxsw.ie
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxsw.ie
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxsw.ie;
-	s=protonmail2; t=1744115487; x=1744374687;
-	bh=2IL4cvpWRyKxFkiK66BFJ7FtNSwecxAxQTrHbcdLYQs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=IqAcfCR5qENqrYMuLzgLdJUgLp89KlN23SuRQ8LAPVjaZs5FzvNYDL4v4Pug3FGYX
-	 NA264A+DgqIHKRh9OM7d/l1/Z9h8BU8HnQ5YPUqhOfqMTpc7NBCBFFR0TB7JmhJ6JO
-	 RVxeQLclEzcF4OheqB8wvA14gG6y6Seo+fm/Mb2n/gzFFX/wHQX56Qz950Dijf6CPc
-	 c6+h9hn3VEzXrbt7h2JqR2oHq/ipZO32KMs1lkOg0NA3OhjjrrQO7HHaFLCYSrq8Dh
-	 xePPljBQkKanuNyExLMCxzVgr8sr4uZD+8DGI+zjVXubGbR/tUa7TsqZAtZvmOSNqv
-	 DfmanBMQn+rew==
-Date: Tue, 08 Apr 2025 12:31:23 +0000
-To: Neil Armstrong <neil.armstrong@linaro.org>, Vikash Garodia <quic_vgarodia@quicinc.com>, Dikshita Agarwal <quic_dikshita@quicinc.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-From: Bryan O'Donoghue <bod.linux@nxsw.ie>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] media: platform: qcom/iris: add power_off_controller to vpu_ops
-Message-ID: <c499ff42-5179-43af-a3c6-201fc7afb283@nxsw.ie>
-In-Reply-To: <20250407-topic-sm8x50-iris-v10-v3-2-63569f6d04aa@linaro.org>
-References: <20250407-topic-sm8x50-iris-v10-v3-0-63569f6d04aa@linaro.org> <20250407-topic-sm8x50-iris-v10-v3-2-63569f6d04aa@linaro.org>
-Feedback-ID: 136405006:user:proton
-X-Pm-Message-ID: 93758b0b74a2ea9838f41ad5ab9fafbf93225c99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056E8268FDE;
+	Tue,  8 Apr 2025 12:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744115654; cv=pass; b=edj2N8Z0Z/kSj0hNmBK/PahW8f+/nQ1kQyXn28yIZMh12NP3v/g8DkmZcauPLuIYKkKtHqtBW/5UeWsl4leHgLCEWgLST9k63b+GqZbP72Kr+k/m6sY4H37jlZEgCh+gOMfSd9V/s9ScelSWVOqllSFq4Onlq3PGO0jbppgXktI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744115654; c=relaxed/simple;
+	bh=q1Al9rQVpqoNho62plFMYD1zrmfFSwYxE4HnzVpOK4k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=J7j+U1VRqDurUoFsSulel0aNwEgENIYa2auwkw/zQslctNboIvFCFasrkqfgyBN73C2x4Tee+oo5jZkUoZVJDz/b13nkI0UMtb/gv4TN0Z9HffMn2ZGDV5DAWUxh9ZiYD6E6WcyyF1prPj0oFPDUnwU269eizYro2XLy8Y+x110=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=WTSx/mxD; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744115617; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ZYdZHsQWauVJFkK7qg6+RgBlLgyiABGPxVdHm555/dNCpsiQuHDmtJS0PGlBfLMVG+Z1toIMKsLzcFE0QVKSLOIYxN8MHEPen9GG0Wojzdv9zphwkNLliR9xBIDpZ3CU2EbnsBSYTKHeY08Fvj5O8LuFAT9KHIxnUf2ACNlOrVI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744115617; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=GyJGnAiLJATURszHLyZHKp4AdvagGFsBzE31iQawxg8=; 
+	b=BrCl2g2+yDARhyVbUAkXOeI01yjdLv6BCvyjgfIfqbhsS75bWwWcpQPxaT6aUYZxQUssYUxlKqkmeEDtDSmAuchh45jKNOWJNmZa8KU7+6fv5h7sADigfkthL57ulQtaGUvV/dpEWli/efk9cp5jKeOjaCDrYcMZ+srpQo73pNY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744115617;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=GyJGnAiLJATURszHLyZHKp4AdvagGFsBzE31iQawxg8=;
+	b=WTSx/mxDxaSj28VfD1S4FZM5AAxWO0sKE81fXFn1RNC6YLlZaLLFPXVtbdesZtRP
+	NAveoxtpcFCGgRZTx9y8oqhIIUYFNJqxhVr9YmMpvsZ33voaskcUlGD8voaOPT5NJc3
+	EQwQcevK4jKtqSYd1prTmBkRkntDScUWemxipBfY=
+Received: by mx.zohomail.com with SMTPS id 17441156160471018.3332658311127;
+	Tue, 8 Apr 2025 05:33:36 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: [PATCH 0/7] Add Rockchip RK3576 PWM Support Through MFPWM
+Date: Tue, 08 Apr 2025 14:32:12 +0200
+Message-Id: <20250408-rk3576-pwm-v1-0-a49286c2ca8e@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEwX9WcC/yXMQQrCMBCF4auEWTuS1CaBXkW6SJNRB0lbJ7UKp
+ Xc32OX34P0bFBKmAp3aQGjlwtNYYU4K4iOMd0JO1dDoxupWe5TnxXqH8ydj67wzQ9KJQoB6mIV
+ u/P3Hrv1hode7NpdjhCEUwjjlzEunVnc2FiUa6Pf9BzpTEBeJAAAA
+X-Change-ID: 20250407-rk3576-pwm-46761bd0deaa
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ William Breathitt Gray <wbg@kernel.org>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ Kever Yang <kever.yang@rock-chips.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
+ linux-iio@vger.kernel.org, kernel@collabora.com, 
+ Jonas Karlman <jonas@kwiboo.se>, 
+ Detlev Casanova <detlev.casanova@collabora.com>, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.2
 
-On 07/04/2025 16:24, Neil Armstrong wrote:
-> In order to support the SM8650 iris33 hardware, we need to provide a
-> specific constoller power off sequences via the vpu_ops callbacks.
->=20
-> Add the callback, and use the current helper for currently supported
-> platforms.
->=20
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->   drivers/media/platform/qcom/iris/iris_vpu2.c       | 1 +
->   drivers/media/platform/qcom/iris/iris_vpu3.c       | 1 +
->   drivers/media/platform/qcom/iris/iris_vpu_common.c | 4 ++--
->   drivers/media/platform/qcom/iris/iris_vpu_common.h | 2 ++
->   4 files changed, 6 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu2.c b/drivers/media=
-/platform/qcom/iris/iris_vpu2.c
-> index 8f502aed43ce2fa6a272a2ce14ff1ca54d3e63a2..7cf1bfc352d34b897451061b5=
-c14fbe90276433d 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu2.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu2.c
-> @@ -34,5 +34,6 @@ static u64 iris_vpu2_calc_freq(struct iris_inst *inst, =
-size_t data_size)
->=20
->   const struct vpu_ops iris_vpu2_ops =3D {
->   =09.power_off_hw =3D iris_vpu_power_off_hw,
-> +=09.power_off_controller =3D iris_vpu_power_off_controller,
->   =09.calc_freq =3D iris_vpu2_calc_freq,
->   };
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu3.c b/drivers/media=
-/platform/qcom/iris/iris_vpu3.c
-> index b484638e6105a69319232f667ee7ae95e3853698..13dab61427b8bd0491b69a9bc=
-5f5144d27d17362 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu3.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu3.c
-> @@ -118,5 +118,6 @@ static u64 iris_vpu3_calculate_frequency(struct iris_=
-inst *inst, size_t data_siz
->=20
->   const struct vpu_ops iris_vpu3_ops =3D {
->   =09.power_off_hw =3D iris_vpu3_power_off_hardware,
-> +=09.power_off_controller =3D iris_vpu_power_off_controller,
->   =09.calc_freq =3D iris_vpu3_calculate_frequency,
->   };
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.c b/drivers=
-/media/platform/qcom/iris/iris_vpu_common.c
-> index fe9896d66848cdcd8c67bd45bbf3b6ce4a01ab10..268e45acaa7c0e3fe237123c6=
-2f0133d9dface14 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> @@ -211,7 +211,7 @@ int iris_vpu_prepare_pc(struct iris_core *core)
->   =09return -EAGAIN;
->   }
->=20
-> -static int iris_vpu_power_off_controller(struct iris_core *core)
-> +int iris_vpu_power_off_controller(struct iris_core *core)
->   {
->   =09u32 val =3D 0;
->   =09int ret;
-> @@ -264,7 +264,7 @@ void iris_vpu_power_off(struct iris_core *core)
->   {
->   =09dev_pm_opp_set_rate(core->dev, 0);
->   =09core->iris_platform_data->vpu_ops->power_off_hw(core);
-> -=09iris_vpu_power_off_controller(core);
-> +=09core->iris_platform_data->vpu_ops->power_off_controller(core);
->   =09iris_unset_icc_bw(core);
->=20
->   =09if (!iris_vpu_watchdog(core, core->intr_status))
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.h b/drivers=
-/media/platform/qcom/iris/iris_vpu_common.h
-> index 63fa1fa5a4989e48aebdb6c7619c140000c0b44c..f8965661c602f990d5a705756=
-5f79df4112d097e 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.h
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.h
-> @@ -13,6 +13,7 @@ extern const struct vpu_ops iris_vpu3_ops;
->=20
->   struct vpu_ops {
->   =09void (*power_off_hw)(struct iris_core *core);
-> +=09int (*power_off_controller)(struct iris_core *core);
->   =09u64 (*calc_freq)(struct iris_inst *inst, size_t data_size);
->   };
->=20
-> @@ -22,6 +23,7 @@ void iris_vpu_clear_interrupt(struct iris_core *core);
->   int iris_vpu_watchdog(struct iris_core *core, u32 intr_status);
->   int iris_vpu_prepare_pc(struct iris_core *core);
->   int iris_vpu_power_on(struct iris_core *core);
-> +int iris_vpu_power_off_controller(struct iris_core *core);
->   void iris_vpu_power_off_hw(struct iris_core *core);
->   void iris_vpu_power_off(struct iris_core *core);
->=20
->=20
-> --
-> 2.34.1
->=20
->=20
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+This series introduces support for some of the functions of the new PWM
+silicon found on Rockchip's RK3576 SoC. Due to the wide range of
+functionalities offered by it, including many parts which this series'
+first iteration does not attempt to implement for now, it uses multiple
+drivers hanging on a platform bus on which the parent "mfpwm" driver
+registers them.
+
+Here's some of the features of the hardware:
+- Continuous PWM output (implemented in this series)
+- One-shot/Finite repetition PWM output
+- PWM capture by counting high/low cycles (implemented in this series)
+- Sending IR transmissions in several TV remote protocols
+- Generating an interrupt based on the input being one of 16
+  user-specified values ("Power key capture")
+- Biphasic counter support
+- Using the hardware to measure a clock signal's frequency
+- Using the hardware to count a clock signal's pulses
+- Generating PWM output waveforms through a user-specified lookup table
+
+As you can tell, there's a lot. I've focused on continuous PWM output
+for now as the most important one for things like controlling fans. The
+PWM capture driver is an added bonus, because I needed at least two
+drivers to test things. Anyone doing consumer electronic devices like
+tablets based on the RK3576 may need to do the power key stuff at some
+stage, but I'm still not entirely clear on what that'd look like in a
+schematic. The IR transmission stuff may be a funny weekend project for
+someone at some point; I assume it's there so TV boxes can turn on and
+off TVs without needing the HDMI control stuff.
+
+At first, I considered simply integrating support for this new IP into
+the old pwm-rockchip driver, as the downstream vendor kernel did.
+However, the IP is significantly different from previous iterations.
+Especially if the goal is to support some of the additional
+functionality that the new silicon brings, doing it all in a single pwm
+driver would be untenable. Especially one that already supports other
+hardware with a way different set of registers.
+
+Hence, the mfpwm pattern: each device functionality is its own driver,
+and they all get registered as platform drivers by the parent mfpwm
+driver, which is the one that binds to the DT compatible. Each device
+function driver then has to _acquire and _release the hardware when it
+needs control of it. If some other device function is using the device
+already, -EBUSY is returned, which the device function driver can then
+forward to the user and everyone is happy.
+
+The PWM output driver, pwm-rockchip-v4, uses the new waveform APIs. I
+thought while writing a new driver that I might as well use the new
+APIs.
+
+The PWM capture driver, implemented as a counter driver, is somewhat
+primitive, in that it doesn't make use of things like the biphasic
+counter support or clock measuring, but it serves as a good way to
+showcase and test the mutual exclusion that the mfpwm framework tries to
+achieve. It also goes one step beyond just exposing the raw LPC/HPC
+counts and actually makes them usable in a non-theoretically-racey way
+by turning them into nanosecond period/duty cycle values based on the
+clock's rate. Shoutouts to the counter subsystem's documentation by the
+way, it is some of the best subsystem documentation I've come across so
+far, and was a great help.
+
+Some instances of the PWM silicon allow switching between a fixed
+crystal oscillator as the PWM clock, and the default PLL clock, which is
+just a mux between that very same crystal oscillator and two other fixed
+oscillators on RK3576. The downstream vendor driver does not implement
+this feature, but I did because it seemed funny, so now there's a sysfs
+interface to switch between them and it makes sure you don't
+accidentally ruin any PWM user's day while switching. The potential
+benefit is that this switching is per-PWM-channel, but aside from that
+it doesn't seem super useful and should've probably just been some
+per-channel clock muxes in the hardware's CRU instead.
+
+Along the way, I also finally took the time to give us The One True
+HIWORD_UPDATE macro, which aims to replace all other copies of the
+HIWORD_UPDATE macro, except it's not called HIWORD_UPDATE because all of
+them have slightly different semantics and I don't want to introduce
+even more confusion. It does, however, do some compile-time checking of
+the function-like macro parameters.
+
+This series went through two substantial rewrites, because after I
+realised it needed to be multiple drivers (first rewrite) I then first
+wrote it as a couple of auxiliary bus drivers, until I became unsure
+about whether this should be auxiliary bus drivers at all, so it became
+a bunch of platform bus drivers instead. If anything looks like a weird
+vestigial leftover in the code, then that's probably why, but I made
+sure to get rid of all the ones I could find before submitting this.
+
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+Nicolas Frattaroli (7):
+      dt-bindings: pinctrl: rockchip: increase max amount of device functions
+      dt-bindings: pwm: Add a new binding for rockchip,rk3576-pwm
+      soc: rockchip: add utils header for things shared across drivers
+      soc: rockchip: add mfpwm driver
+      pwm: Add rockchip PWMv4 driver
+      counter: Add rockchip-pwm-capture driver
+      arm64: dts: rockchip: add PWM nodes to RK3576 SoC dtsi
+
+ .../bindings/pinctrl/rockchip,pinctrl.yaml         |   2 +-
+ .../bindings/pwm/rockchip,rk3576-pwm.yaml          |  94 ++++
+ MAINTAINERS                                        |  11 +
+ arch/arm64/boot/dts/rockchip/rk3576.dtsi           | 192 +++++++
+ drivers/counter/Kconfig                            |  13 +
+ drivers/counter/Makefile                           |   1 +
+ drivers/counter/rockchip-pwm-capture.c             | 341 ++++++++++++
+ drivers/pwm/Kconfig                                |  13 +
+ drivers/pwm/Makefile                               |   1 +
+ drivers/pwm/pwm-rockchip-v4.c                      | 336 ++++++++++++
+ drivers/soc/rockchip/Kconfig                       |  13 +
+ drivers/soc/rockchip/Makefile                      |   1 +
+ drivers/soc/rockchip/mfpwm.c                       | 608 +++++++++++++++++++++
+ include/soc/rockchip/mfpwm.h                       | 505 +++++++++++++++++
+ include/soc/rockchip/utils.h                       |  76 +++
+ 15 files changed, 2206 insertions(+), 1 deletion(-)
+---
+base-commit: 64e9fdfc89a76fed38d8ddeed72d42ec71957ed9
+change-id: 20250407-rk3576-pwm-46761bd0deaa
+
+Best regards,
+-- 
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
 
