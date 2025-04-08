@@ -1,142 +1,121 @@
-Return-Path: <linux-kernel+bounces-593444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC36A7F94B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:21:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B33A7F971
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 096453A5B68
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:21:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2566189D6D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0AD264A93;
-	Tue,  8 Apr 2025 09:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D018D265CAA;
+	Tue,  8 Apr 2025 09:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bc1N7/Si"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b="EoZelvhr";
+	dkim=permerror (0-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b="dEjyzfdh"
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1971990CD
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 09:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744104106; cv=none; b=sKx7n6g0HryGzVS6ZKelqC0oSOfvma7mCa9/lVjEV6SF71encdCoM7cpcwpiaSMQpOq7Ic7LtPNOodq3aJpjYFKyP8jcPveZ8gOMUM2QXtm2aeuXUWBtuNd97di8oEnTwxH9TvTmGhuxS8HAEyoIYQAqmuJP+AmHIr/dmEsOhdo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744104106; c=relaxed/simple;
-	bh=rMXmOoLfApqdyZIGTug2i9Lbecgrlq9hnHfN6wSw/hI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vvqabg8ZZyW6rVLgcWcQiPrEay5v142uKNiDM2JxmS45BvtCgMVMkBPmW5UMrG1DjDe1wFxhE9GMkWHaKA8nWoKNEQzXktkr/63Kg23CwcSuuaSnAWP+YWGar7crJPHPNmGsoCulZbBW9TF4iFme902iShr0ciywzovQIpE4AOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bc1N7/Si; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3fa58dc37c5so3198648b6e.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 02:21:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744104104; x=1744708904; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wzntjn/7W/TUVu1yIL6azEufCUdgmp744dp2mHH9/5A=;
-        b=Bc1N7/Si68sdnPvJ7oeFzkD2HNj+FICqYkfSsfBqaWmz1NMPVnrhdWZWoZ2cvV/K86
-         dUVv9cOS7CDe4K2m6KkDvboDdGbR7n8HIrHIkPzl2ytuQOA0+W2xDsY2YaLsQnztYVuK
-         BRURvgJeepKnq63JZ3JA9TeIv1zUF7JGr7yI9og2++qEISZgedXg6mP6yz2S5gw8cja7
-         /kcmFK3zsHKR+L4ym6Qo8mboniboTelq4EGk4M1az0aHpe2AfUJs+S4qzQYghreD35ON
-         UFzbK0JtBQjuv7fPi3sIiSHdbhxr1FSy2GCTkUnMmXR7czrcN4mqvgorKUOyo8eD0P7W
-         7H8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744104104; x=1744708904;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wzntjn/7W/TUVu1yIL6azEufCUdgmp744dp2mHH9/5A=;
-        b=Yee1S062fob2IrzB335a0OhzFn7DOXn8MBjENb30NlJaagigu6MYdV5s0jEq3w5c2L
-         VrkviRdamy8nc98OZ/1e/qTay+FQylysUXfpbGMkBI2KPnxD7fS9yZSbqrPBqGYobQr4
-         t53MFp1f7KkgLxRYk+WuxjdYWvQr6mfEubi+3UUXf7R5adGLgZehlJeYckMy30cD8svv
-         gKgPH8nqt/x6gBthUB7y/M1DozcwWHpOOacigTpsMQUvddqod+VatbIgiod7LOvLPgM5
-         Gn0n9SbX4G/7+G97E8yT9Yej5NMXQwCsBkCg0JIPhqeED2PuUE4z2JaeRDSw4GL1a7DT
-         TiUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmquXJnGfljLaLidBbgAvSMhR/cEFjpuweXUGpoWtFZtBAtBlyVQQryWXPzMyKsbsW4TF8qNdjUJLcT5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqYwS37aDqtzIm5M8cUbjWz8JwXNnD4lpSf+8bICOYEGLinQiN
-	2FmTu8EW6knTnfBQpllry7ZZL5u/lz9qgp85N18bw0ow3tDC7pJemsg7kQ4Y+kVJtxGoelVc2vU
-	OCAVSD5ZKm2/1dXHvi/uRIDwBVaw=
-X-Gm-Gg: ASbGncvxhNoleWYn4iTXkFz4XhZu1T9WJCFhJeYtthKYZ/H6A37y/Sduwxapta5SSFN
-	bAE0tSpvu+NzN9okOL9KFDpZG2DYuvwyfSLvdteT3oXutWD3Mia3nfZtbLxqacXnvVYZEdoxqvP
-	78qrPoruNQMmqvhvYZ98HbV9Ay7Dv3P4Tv4ahGZtZZ9J+ouZHoR51WhasBeg==
-X-Google-Smtp-Source: AGHT+IH97Pkwh1nG4fNaueAH8o5pGsvE76ZIPhgAetjxFJ5CX2nbrQLJns4NEAaTWmlQ6qIe+Pw+8Bxj2G0HpWk9KX8=
-X-Received: by 2002:a05:6808:1185:b0:3f7:d442:1986 with SMTP id
- 5614622812f47-40067d11723mr1748319b6e.1.1744104104404; Tue, 08 Apr 2025
- 02:21:44 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A7B264F8B;
+	Tue,  8 Apr 2025 09:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744104330; cv=pass; b=MDyQZXrWooHRecTc35YSzcFbVWzPG+qQpu6sy4hsSxWS1VvI3rmhiJ4MuQFxr6Afx+r76WGv8nB8W6BcFRiIvm2qC8dF7//1XljW8CpB2hHbSHuZRSmoY9Hug9y0AGq0MzTLEL6YigORJ+8h9Ym7ZYj5E5u3zAmEVDzfM9iKlQk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744104330; c=relaxed/simple;
+	bh=TZMPu/ggC7ANtb5CKg0jTBzsNDxTvYT2K5OsJaPxFME=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=AvD0AqnYSp+oSXYdgwpGIHgTx6V7VohBVcsZauiHPxGl7RQuaShRjnNazTWHkr7w5DcGdR1FXd4r1r/xZgoy4mK7K7oH9s0WCIqa5ShDzUKkQzS1wP9kfXGB9BbG4si3RzVB+S+PuM8LvulwE/DS618JY666yNSJMC/QIrzo6+0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=outer-limits.org; spf=none smtp.mailfrom=outer-limits.org; dkim=pass (2048-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b=EoZelvhr; dkim=permerror (0-bit key) header.d=outer-limits.org header.i=@outer-limits.org header.b=dEjyzfdh; arc=pass smtp.client-ip=85.215.255.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=outer-limits.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=outer-limits.org
+ARC-Seal: i=1; a=rsa-sha256; t=1744104146; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=Q327Fi3D0tCkbsdWreuMf/jF2eCl5b6DlkX0qiHqEFevUUOLc8c5/q0r6QGeSmFH6Y
+    EgnRE/1vLl7zkzdZ9F6FP1iiz3USQ4REGzyKTJKKpYSOBcnPRkYnLioJXaLW170uxgfS
+    LVZseVjs6e7GiMrVBfYuhXpNYkcyJ9bhH/EcEAiIa6O3gP89jt4T5b/dhiX1cK8jAbr8
+    Q/PM4xpX1O02XBjJRJ0Jb6804iiUm3dx3EDh5MxDTN8fTkbVwFbJM7VJHhTB7eFHHOOA
+    GXKJSnG5klzApdZOyw+WQDnCOufodypyc6hYvaJerWUErcO9k25wClDAQx2HdrBvs0DP
+    N38g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1744104146;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=DvPZngYBCIjvSMVeiHDGGoLNy0WyKcb5i/w8KIm4Xjk=;
+    b=UlkrDEvhvTxfhYtn3bRhfcQV4XjbWOkh6CtPDUsA0kXUYKX+SlrNLjBqcKMkQF85LH
+    qGfN35gbN/FU2gDVbPsIEW28pPZ6iR1f29t47WUjsJDbiP1fWwoAhbQSbOiHLEAjWJMG
+    yQHpgeNmai6l/3x3JcNaNIy/hrG6GVD8ZRToiJ/HxcC0yJnJvuDH9beJVXVLTbp+lmbV
+    io5TJZ7psCdHhvaLC2CSiTpLBwYfFEx1vRE7LIOXeY5bTjLxZIfrZAET+qns9WL/xq96
+    BB9sGB1B4G5GUbsesuA2sb4SzwO8tFE0sRXtuV4T/ZgkMJYjqHWaQXENwzdne4FIsDhk
+    lk3A==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo02
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1744104146;
+    s=strato-dkim-0002; d=outer-limits.org;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=DvPZngYBCIjvSMVeiHDGGoLNy0WyKcb5i/w8KIm4Xjk=;
+    b=EoZelvhrCCBw36ltpkm5PUvTm2QkkjFKGZAtLtZtc9uj4RbxIJ8IHc+2yGZxfe6m7h
+    nReTdgWViqEJ/KmJnlm3tjG6SsudSfxCacY4hFH/QsIB9eVaiyUbFaYhkdnxQE0IgwIQ
+    Rf8Kz3VUV3oi0TpuG+eJtCurWrQSKRp70fjVLtBQ39tGLMffb7P1G80D+fOJ1h92WVyQ
+    Ntx5rHw/Q/jFlTZUgb2GQLg9AcctDw9V0qwWg3Nrjec/4mmFIa3w20nE6uwXJTsPxopB
+    JYGlJ1yKMqaJ+x3G/72oBXHjAn9ZVZvGP4BwdIbkU1LR1eyxMlGYfXaiEAMWpE4UARNR
+    fviA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1744104146;
+    s=strato-dkim-0003; d=outer-limits.org;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=DvPZngYBCIjvSMVeiHDGGoLNy0WyKcb5i/w8KIm4Xjk=;
+    b=dEjyzfdhvGxYWVEdKQToYq3AS/mCISdBBQNiIJ1awEjhCTuX1KUKugp0OHuWnh8Xk+
+    j1JPRo+d5F5UhyaGiPAw==
+X-RZG-AUTH: ":JnkIfEGmW/AMJS6HttH4FbRVwc4dHlPLCp4e/IoHo8zEMMHAgwTfqBEHcVJSv9P5mRTGd2ImeA=="
+Received: from ws2104.lan.kalrayinc.com
+    by smtp.strato.de (RZmta 51.3.0 AUTH)
+    with ESMTPSA id J2b1101389MPXDG
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Tue, 8 Apr 2025 11:22:25 +0200 (CEST)
+From: Julian Vetter <julian@outer-limits.org>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Julian Vetter <julian@outer-limits.org>
+Subject: [PATCH] net: mac80211: Replace __get_unaligned_cpu32 in mesh_pathtbl.c
+Date: Tue,  8 Apr 2025 11:22:20 +0200
+Message-Id: <20250408092220.2267754-1-julian@outer-limits.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250408084301.68186-1-zhangchunyan@iscas.ac.cn>
-In-Reply-To: <20250408084301.68186-1-zhangchunyan@iscas.ac.cn>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Tue, 8 Apr 2025 17:21:08 +0800
-X-Gm-Features: ATxdqUF5IRWgtHm9hj-QRVwRgetDyXHPLdYh4eqoUgr4I6hFN9twbtwwm3-H1a0
-Message-ID: <CAAfSe-vx-fvqk1pxp0rCU70Wq6HHH52k9OZaCO8O+-Sw7-yGCg@mail.gmail.com>
-Subject: Re: [PATCH V6 0/2] riscv: mm: Add soft-dirty and uffd-wp support
-To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Andrew Morton <akpm@linux-foundation.org>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Deepak Gupta <debug@rivosinc.com>, Ved Shanbhogue <ved@rivosinc.com>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, 8 Apr 2025 at 16:43, Chunyan Zhang <zhangchunyan@iscas.ac.cn> wrote:
->
-> This patchset adds soft dirty and userfaultfd write protect tracking
-> support for RISC-V.
->
-> This patchset has been tested with kselftest mm suite in which soft-dirty,
-> madv_populate, test_unmerge_uffd_wp, and uffd-unit-tests run and pass,
-> and no regressions are observed in any of the other tests.
->
-> This patchset applies on top of v6.15-rc1.
->
-> V6:
-> - Changes to use bits 59-60 which are supported by extension Svrsw60t59b [1]
->   for soft dirty and userfaultfd write protect tracking.
+The __get_unaligned_cpu32 function is deprecated. So, replace it with
+the more generic get_unaligned and just cast the input parameter.
 
-This should be an RFC patchset, we should be able to enable these two
-features only when the extension Svrsw60t59b is valid, I will add that
-check in the next version of patchset.
+Signed-off-by: Julian Vetter <julian@outer-limits.org>
+---
+ net/mac80211/mesh_pathtbl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Chunyan
+diff --git a/net/mac80211/mesh_pathtbl.c b/net/mac80211/mesh_pathtbl.c
+index 9f9cb5af0a97..0319674be832 100644
+--- a/net/mac80211/mesh_pathtbl.c
++++ b/net/mac80211/mesh_pathtbl.c
+@@ -22,7 +22,7 @@ static void mesh_path_free_rcu(struct mesh_table *tbl, struct mesh_path *mpath);
+ static u32 mesh_table_hash(const void *addr, u32 len, u32 seed)
+ {
+ 	/* Use last four bytes of hw addr as hash index */
+-	return jhash_1word(__get_unaligned_cpu32((u8 *)addr + 2), seed);
++	return jhash_1word(get_unaligned((u32 *)((u8 *)addr + 2)), seed);
+ }
+ 
+ static const struct rhashtable_params mesh_rht_params = {
+-- 
+2.34.1
 
->
-> V5:
-> - Fixed typos and corrected some words in Kconfig and commit message;
-> - Removed pte_wrprotect() from pte_swp_mkuffd_wp(), this is a copy-paste error;
-> - Added Alex's Reviewed-by tag in patch 2.
->
-> V4:
-> - Added bit(4) descriptions into "Format of swap PTE".
->
-> V3:
-> - Fixed the issue reported by kernel test irobot <lkp@intel.com>.
->
-> V1 -> V2:
-> - Add uffd-wp supported;
-> - Make soft-dirty uffd-wp and devmap mutually exclusive which all use the same PTE bit;
-> - Add test results of CRIU in the cover-letter.
->
-> [1] https://github.com/riscv/Svrsw60t59b.git
->
-> Chunyan Zhang (2):
->   riscv: mm: Add soft-dirty page tracking support
->   riscv: mm: Add uffd write-protect support
->
->  arch/riscv/Kconfig                    |   2 +
->  arch/riscv/include/asm/pgtable-bits.h |  29 ++++++
->  arch/riscv/include/asm/pgtable.h      | 136 +++++++++++++++++++++++++-
->  3 files changed, 165 insertions(+), 2 deletions(-)
->
-> --
-> 2.34.1
->
 
