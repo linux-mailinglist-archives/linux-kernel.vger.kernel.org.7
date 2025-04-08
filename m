@@ -1,152 +1,209 @@
-Return-Path: <linux-kernel+bounces-594084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CDF0A80CE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:52:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F38CBA80CE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:53:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 895CC1896683
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:48:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D160D19E210C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7C21A2860;
-	Tue,  8 Apr 2025 13:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A0719F120;
+	Tue,  8 Apr 2025 13:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nDgFkkME"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K/gV5w7t"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41975175D50;
-	Tue,  8 Apr 2025 13:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C037384D13
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 13:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744120083; cv=none; b=VP2Na9A2SiR8//X7h46CmTgNGAEs6tNXJhH2N2+zT002UGyhFGxF7HDNK4zKwnpZU/rutkbzVKBPQoZRfB0uI6diO4Ph8Y2Zn1xAWPyz7K5sEiUXV6Y/QsbP1wlJ8BjStmvSyJwVAmgt6peN5Qcg7ughhLADSQaHD5F703FN8XM=
+	t=1744120130; cv=none; b=ib/YuMTRKF3mMLef1I552ez9B3mzXi4+T5iBEyjruglxd1MiNrPJG7elSWjtkVlYuC34AnlmfMMiumquoiSY4wj9T9dfeJXiK/E0PbWPiXvrjEXpKv3ip56usUZiT1Rze541d2y2cPfR/mf3zwEl7nMYK0nJw/xZyTrHng6W/aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744120083; c=relaxed/simple;
-	bh=C3YRdVfN9/tTERgpzrFW3Dz1VIKYRWNPIZCGRvkTjQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ex5oPqYjd4jPkVEvZzDBay5NBcMPqlD6GCDPhhq0QEmGofCz1vbASLnQskAaXNXENd8UDWReIMp7matdcRkMa/7ZFSvs3b9Q2qbPFQ7Xiq8TUNws6xKExCJiKhK5RLlxA+h3oPPqMiqris+0gIWw67Kjf/8+Y7D8p3UjcO6ZtXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nDgFkkME; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744120079;
-	bh=C3YRdVfN9/tTERgpzrFW3Dz1VIKYRWNPIZCGRvkTjQA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nDgFkkMEertxPzp7FI7rLDLgWd/jyh1Cmrn8XxSMVprkJ5Q0P3XLoQYXi1yTkAp3e
-	 qWrgEUXO/B3yeacx7cSkTcwY1kHbmIRc1cHtIQsClfflQHENP01YmMv+0gzBiHSg9S
-	 shfcJMfrJvpIIA6VtmHpXm6ccx95myyISWvYvezP9pA3a/NJy+MaQSHyhhOS6041tS
-	 uiP96Cq9qFDKO7Qr5X+Qu0Yxl/z0d5PBC09FRW4juTzy2RSJ/66Y0qfjVJnKYFmhsY
-	 X2POczZraBQBg2bxlLWszgjhwWRq9HKDQorpJVXygctsb4MOZxz+wCqv/w4BoHu+sd
-	 orQB1f527BupA==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B4A0917E10F7;
-	Tue,  8 Apr 2025 15:47:58 +0200 (CEST)
-Date: Tue, 8 Apr 2025 15:47:55 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
- <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v4 4/4] drm/panthor: show device-wide list of DRM GEM
- objects over DebugFS
-Message-ID: <20250408154755.0d45b54b@collabora.com>
-In-Reply-To: <s66dyt32ukr37p24zjgbatm6sk5lzw5ujx2n7p2pr2ixrq3jf4@byemjauyp2mv>
-References: <20250402115432.1469703-1-adrian.larumbe@collabora.com>
-	<20250402115432.1469703-5-adrian.larumbe@collabora.com>
-	<20250402145804.5cf07f5e@collabora.com>
-	<s66dyt32ukr37p24zjgbatm6sk5lzw5ujx2n7p2pr2ixrq3jf4@byemjauyp2mv>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1744120130; c=relaxed/simple;
+	bh=DNYx0jN278tFjVNlGD6/FNfTdkJ6AW2W0zgETbwdnck=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q/VjuHzr142Za/G+JGH9Oc/FY47oaYZSLhMH4Wbl2Iy/alGdOAKeUfRzcQqzdqdXYbpnZ0rWAWZt1jj/3NVVm0/hq0uYjq6kaki9HOqGiJaJX9WX+KMQsAicWOxGNfzfIpk3g44oZcDmHYmFM5ezah3dEKbowYfjFb8ipJ6aWFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=fail smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K/gV5w7t; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744120129; x=1775656129;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=DNYx0jN278tFjVNlGD6/FNfTdkJ6AW2W0zgETbwdnck=;
+  b=K/gV5w7t8PWqiYalZkwxjjVx22E6wd80O7kqW2mQ+FC3Sm/3+pOQoX6T
+   D4uXrPtWugX3OoA77n/f2GYJz/VOg7WUhCt/On/d43qKV/aQu4p+Kblgt
+   eKclYR5zYi/6UZi2rdJ/n7HFW0acDGvY++lmtIPqk1HpDhAons9Cl0+NK
+   2/1PZs16PJNpRCKfHvQG21zjJdFF8lUy9C5fuZi3b65sEt+JzFUHDoJuS
+   YBkID4zShPrf0EbJyeFTFCWdSSW6LLIMOmlXt9ghcrpmKzlV9iVTYHAHi
+   PDTGJ5hDZdL3Rbnhztvp8Avvmla+yVTZ8um8e+Um/Ss9yRci1xxwKA2GG
+   Q==;
+X-CSE-ConnectionGUID: Fxclwdh7SNOX5tc2/UkIHw==
+X-CSE-MsgGUID: lGzZPHJLRlConIB9W4GEMA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="56533958"
+X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
+   d="scan'208";a="56533958"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 06:48:49 -0700
+X-CSE-ConnectionGUID: EOhDVs93SEiF2ATugOx2mg==
+X-CSE-MsgGUID: D7nqERuzTqOs/lKdE3C/2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
+   d="scan'208";a="133427979"
+Received: from colinkin-mobl.ger.corp.intel.com ([10.245.86.105])
+  by fmviesa004.fm.intel.com with ESMTP; 08 Apr 2025 06:48:46 -0700
+From: Colin Ian King <colin.king@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Song Liu <song@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH][V2] md/raid6 algorithms: scale test duration for speedier boots
+Date: Tue,  8 Apr 2025 14:48:44 +0100
+Message-ID: <20250408134844.141-1-colin.king@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, 8 Apr 2025 14:38:44 +0100
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+Instead of using jiffies (and waiting for jiffies to wrap before
+benchmarking the algorithms) instead use the higher precision local_time
+for benchmarking. This patch performs 2,500 iterations of the benchmark
+measurements which works out to be accurate enough for benchmarking the
+raid algorithm data rates. Also add division by zero checking in case
+timing measurements are bogus.
 
-> > > diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/=
-panthor/panthor_gem.c
-> > > index 44d027e6d664..2fc87be9b700 100644
-> > > --- a/drivers/gpu/drm/panthor/panthor_gem.c
-> > > +++ b/drivers/gpu/drm/panthor/panthor_gem.c
-> > > @@ -2,6 +2,7 @@
-> > >  /* Copyright 2019 Linaro, Ltd, Rob Herring <robh@kernel.org> */
-> > >  /* Copyright 2023 Collabora ltd. */
-> > >
-> > > +#include <linux/cleanup.h>
-> > >  #include <linux/dma-buf.h>
-> > >  #include <linux/dma-mapping.h>
-> > >  #include <linux/err.h>
-> > > @@ -10,14 +11,65 @@
-> > >  #include <drm/panthor_drm.h>
-> > >
-> > >  #include "panthor_device.h"
-> > > +#include "panthor_fw.h"
-> > >  #include "panthor_gem.h"
-> > >  #include "panthor_mmu.h"
-> > >
-> > > +#ifdef CONFIG_DEBUG_FS
-> > > +static void panthor_gem_debugfs_bo_init(struct panthor_gem_object *b=
-o, u32 type_mask)
-> > > +{
-> > > +	INIT_LIST_HEAD(&bo->debugfs.node); =20
-> >
-> > This should be called when the GEM object is created, otherwise the
-> > list_empty() test done in panthor_gem_debugfs_bo_rm() will only work if
-> > panthor_gem_debugfs_bo_add() is called, and depending on when this
-> > happens, or whether it happens at all, the error path will do a NULL
-> > deref. =20
->=20
-> I'll be moving panthor_gem_debugfs_bo_add() back into panthor_gem_create_=
-object() and
-> inline panthor_gem_debugfs_bo_init() into it.
+Measuring 100 re-boots on Intel(R) Core(TM) Ultra 9 285K with
+improves raid64 benchmarking loop from ~68000 usecs to ~5300 usec.
 
-You mean moving the panthor_gem_debugfs_bo_add() call to
-panthor_gem_create_object(), not inlining its content, right?
+This patch has been in use in Clear Linux for ~2 years w/o issues.
 
-> > > +	} else {
-> > > +		bo->debugfs.creator.tgid =3D 0;
-> > > +		snprintf(bo->debugfs.creator.process_name,
-> > > +			 sizeof(bo->debugfs.creator.process_name),
-> > > +			 "kernel");
-> > > +	}
-> > > +
-> > > +	bo->debugfs.bo_mask =3D type_mask; =20
-> >
-> > Why not do that directly in panthor_gem_debugfs_bo_add()? The only bits
-> > that might be useful to do early is the INIT_LIST_HEAD(), and I think
-> > it can be inlined in panthor_gem_create_object(). =20
->=20
-> I'll be doing in this in the next revision, but because I've no access to=
- the BO
-> type mask from inside Panthor's drm_driver::gem_create_object() binding, =
-then
-> I'll have to assign the mask right after the object has been created.
->=20
-> I think this means there might be a short window after the object's been =
-added to
-> the DebugFS GEMs list in which it could be shown with the kernel mask fie=
-ld still
-> set to 0, but I guess that's not too important either.
+Signed-off-by: Colin Ian King <colin.king@intel.com>
 
-I think it's okay, as long as you don't crash when printing partially
-initialized objects. Another solution would be to have a flag encoding
-when the obj is initialized, so you can skip objects that don't have
-this flag set yet.
+---
+
+V2: Use div64_u64 to fix 64 bit division build failure on m68k. Break
+    overly long pr_info lines. Remove { } braches for one statement
+    for-loops.
+
+---
+ lib/raid6/algos.c | 57 ++++++++++++++++++++---------------------------
+ 1 file changed, 24 insertions(+), 33 deletions(-)
+
+diff --git a/lib/raid6/algos.c b/lib/raid6/algos.c
+index cd2e88ee1f14..f587adeb1b24 100644
+--- a/lib/raid6/algos.c
++++ b/lib/raid6/algos.c
+@@ -18,6 +18,8 @@
+ #else
+ #include <linux/module.h>
+ #include <linux/gfp.h>
++#include <linux/sched/clock.h>
++
+ /* In .bss so it's zeroed */
+ const char raid6_empty_zero_page[PAGE_SIZE] __attribute__((aligned(256)));
+ EXPORT_SYMBOL(raid6_empty_zero_page);
+@@ -155,12 +157,15 @@ static inline const struct raid6_recov_calls *raid6_choose_recov(void)
+ static inline const struct raid6_calls *raid6_choose_gen(
+ 	void *(*const dptrs)[RAID6_TEST_DISKS], const int disks)
+ {
+-	unsigned long perf, bestgenperf, j0, j1;
++	unsigned long perf;
++	const unsigned long max_perf = 2500;
+ 	int start = (disks>>1)-1, stop = disks-3;	/* work on the second half of the disks */
+ 	const struct raid6_calls *const *algo;
+ 	const struct raid6_calls *best;
++	const u64 ns_per_mb = 1000000000 >> 20;
++	u64 n, ns, t, ns_best = ~0ULL;
+ 
+-	for (bestgenperf = 0, best = NULL, algo = raid6_algos; *algo; algo++) {
++	for (best = NULL, algo = raid6_algos; *algo; algo++) {
+ 		if (!best || (*algo)->priority >= best->priority) {
+ 			if ((*algo)->valid && !(*algo)->valid())
+ 				continue;
+@@ -170,26 +175,20 @@ static inline const struct raid6_calls *raid6_choose_gen(
+ 				break;
+ 			}
+ 
+-			perf = 0;
+-
+ 			preempt_disable();
+-			j0 = jiffies;
+-			while ((j1 = jiffies) == j0)
+-				cpu_relax();
+-			while (time_before(jiffies,
+-					    j1 + (1<<RAID6_TIME_JIFFIES_LG2))) {
++			t = local_clock();
++			for (perf = 0; perf < max_perf; perf++)
+ 				(*algo)->gen_syndrome(disks, PAGE_SIZE, *dptrs);
+-				perf++;
+-			}
++			ns = local_clock() - t;
+ 			preempt_enable();
+ 
+-			if (perf > bestgenperf) {
+-				bestgenperf = perf;
++			if (ns < ns_best) {
++				ns_best = ns;
+ 				best = *algo;
+ 			}
+-			pr_info("raid6: %-8s gen() %5ld MB/s\n", (*algo)->name,
+-				(perf * HZ * (disks-2)) >>
+-				(20 - PAGE_SHIFT + RAID6_TIME_JIFFIES_LG2));
++			n = max_perf * PAGE_SIZE * ns_per_mb * (disks - 2);
++			pr_info("raid6: %-8s gen() %5llu MB/s (%llu ns)\n",
++				(*algo)->name, (ns > 0) ? div64_u64(n, ns) : 0, ns);
+ 		}
+ 	}
+ 
+@@ -206,31 +205,23 @@ static inline const struct raid6_calls *raid6_choose_gen(
+ 		goto out;
+ 	}
+ 
+-	pr_info("raid6: using algorithm %s gen() %ld MB/s\n",
+-		best->name,
+-		(bestgenperf * HZ * (disks - 2)) >>
+-		(20 - PAGE_SHIFT + RAID6_TIME_JIFFIES_LG2));
++	n = max_perf * PAGE_SIZE * ns_per_mb * (disks - 2);
++	pr_info("raid6: using algorithm %s gen() %llu MB/s (%llu ns)\n",
++		best->name, (ns_best > 0) ? div64_u64(n, ns_best) : 0, ns_best);
+ 
+ 	if (best->xor_syndrome) {
+-		perf = 0;
+-
+ 		preempt_disable();
+-		j0 = jiffies;
+-		while ((j1 = jiffies) == j0)
+-			cpu_relax();
+-		while (time_before(jiffies,
+-				   j1 + (1 << RAID6_TIME_JIFFIES_LG2))) {
++		t = local_clock();
++		for (perf = 0; perf < max_perf; perf++)
+ 			best->xor_syndrome(disks, start, stop,
+ 					   PAGE_SIZE, *dptrs);
+-			perf++;
+-		}
++		ns = local_clock() - t;
+ 		preempt_enable();
+ 
+-		pr_info("raid6: .... xor() %ld MB/s, rmw enabled\n",
+-			(perf * HZ * (disks - 2)) >>
+-			(20 - PAGE_SHIFT + RAID6_TIME_JIFFIES_LG2 + 1));
++		n = max_perf * PAGE_SIZE * ns_per_mb * (disks - 2);
++		pr_info("raid6: .... xor() %llu MB/s, rmw enabled (%llu ns)\n",
++			(ns > 0) ? div64_u64(n, ns) : 0, ns);
+ 	}
+-
+ out:
+ 	return best;
+ }
+-- 
+2.49.0
+
 
