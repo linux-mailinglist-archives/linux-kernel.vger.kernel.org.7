@@ -1,117 +1,122 @@
-Return-Path: <linux-kernel+bounces-593857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFFF7A8055F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:17:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79356A80581
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB9CE1B64DF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:12:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 843A0168D19
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB5A26B0A9;
-	Tue,  8 Apr 2025 12:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B4B26AA82;
+	Tue,  8 Apr 2025 12:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="Bgm3jS76"
-Received: from mr85p00im-zteg06021501.me.com (mr85p00im-zteg06021501.me.com [17.58.23.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="E7RGiRxy"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9246F26B09F
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 12:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7325A267B15
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 12:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744114198; cv=none; b=iW/UlrtgBa7nfASCytFokK0ENcnVMB+U7kic6iO1DhXtm0gcSfzsfpy+IXA/a+Dd8GyF02i8AlPhxs3ib9jQyvKYniowYTq9Fp6eB66/q+r+bMJdUxwizQCsPXBTdIC/N3RanZjnyjhxnnPgK0sXC4ObX5FRgm/yTiARo1Rrj+k=
+	t=1744114164; cv=none; b=B7uT0Z7ISm0y8w9H/OzH5nFzNGJfyS12B4whLNMJV7iPchEd8dU2z5OfFIbVzUWNGL4LqNIRAvDe5GG+6BQQvA8jxX7kLXvoXn73naxLO7cJZVCK+vgmnrZe6eG7ieeNrsJD9mCZLuYwbeCVWRsWZaXg2jnFI4r2eYE8HAlxECU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744114198; c=relaxed/simple;
-	bh=QEqKjxqbWub8YsuQbU+tPhuhK3lJRWqkR2DgLlJnxvQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Y0WT9yeUkth3g3FFUo7tsJumxSnKrViq3y6SBrFxH1fcn3Z6QfLpGBtrinloinWfoYjXrpl6Esq1EuDW16SF5mUVTWAUMqPAX3mT/bG8tcZD+roOwzJgKiZ/9ksLLc7/XqJfInkH3G7jTyblqzvXHLi+yDJs5DHLH+6Vuj8fT74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=Bgm3jS76; arc=none smtp.client-ip=17.58.23.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=BDiMM4gbvtusq153Cw0jBPOX1iQ4qyGjf3UtgNk2nRQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme;
-	b=Bgm3jS76T0ExwCoHgcW23Pl2H4wM3F0J2gZznH5M7UOovoLE4b0EGT+8OvTX4UrZf
-	 IGZDjtj/EUlFSr6zvMrGnRDP4PNbVwgGRTxZSNyg87knuq5TpUJUIsJ2/47IB/cJrN
-	 NQVxtjmmhIXk+5iEYkHun3pErC3gyYuJVE1uIqAqbPvgY68BZzfZjpq8ix3GZefrcZ
-	 AcT8LmkEB0n1gKUMQse2N541qju9CUY0OGH4zlt6X8cFDy9d41vW4MEFx3eRLpw82w
-	 /Q1t/qZZ1kTSzl+he19tkfkOSnGHjRk4L1Y6x8+Y68Ffix9KSKOqKe+fZb9z9GxJ2x
-	 5yhpjQDkdzCmA==
-Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-	by mr85p00im-zteg06021501.me.com (Postfix) with ESMTPSA id F26582793FE0;
-	Tue,  8 Apr 2025 12:09:05 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Tue, 08 Apr 2025 20:08:51 +0800
-Subject: [PATCH] USB: core: Correct API usb_(enable|disable)_autosuspend()
- prototypes
+	s=arc-20240116; t=1744114164; c=relaxed/simple;
+	bh=tpHAquJG4Dkb66PrhDikfbFF6dS5Oa2U69jSk8hSrEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FANjd8c1qoBYxS0hv2fWGXaC3rvQrOHx/KGD7yBZO6iRczr6rQzdGiwH/qh84Br+JLxsPXwRv0W5azKf2xxrftQiCX+HrD60Bc+CcAe25zdtBLZmvPwfp3cTkrVPK5zOUtfUmUzrJx/+Hwen9/zkcjOvfMM/oXkw+//FEsgK7fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=E7RGiRxy; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4769bbc21b0so48805341cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 05:09:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1744114160; x=1744718960; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EvZTf+A2Tig+IRGHQAjPjWtgFVFDb9fydbEYyz2o1UM=;
+        b=E7RGiRxyovccSIds7l0fV9OmSI8f//tO8n2FOjd2DP3eND/loUU+ckgmZNRyZNte2q
+         kCO1lqZx29XkbLN/XzEO27PqyTSw4cUu3g9uX8THUmcolnntWmTTyXPm+cZsGOTUKJyZ
+         G/DrxR2NWltzEQg5ZvPiTQM0FX1Zfw0TT1KBN6058iHDKUnftpcXn7HUaplg4m9Pspby
+         7QJJaCEJvxcNWV3gC6azGIJ+aqpSrrINXp+nCvhRsXynvWAoa+/9tCLfyMhNiwsY18FS
+         eOAmx4+OS5X19wInISELUYn5mpsHRLn7ZYmM4RdCeqU45U75KYLx995IJAivxYl9Eo9o
+         RXbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744114160; x=1744718960;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EvZTf+A2Tig+IRGHQAjPjWtgFVFDb9fydbEYyz2o1UM=;
+        b=D3vjCDOSg2VqpvAlm1zm/McJV23810jdb/EzrSqMSqJ9Q6Hlnk2yuITbbap+J7aCoT
+         GAbqapdY19F/bnwfIs12vNqnew0PV228Adt7n0cTzof/5TcXfvowkHVCIJinI+cjmGRx
+         b0rkv2JgfPGrZOLE7uluteluP4uPtNo1JWs7414xkO1bF+i/LRG5N64XD8UxsbBiUuaY
+         MTg9u4hpmMj+Y4CW0ho7n1MzTVHCJiBqOFgZB9mG+If2m8joG/sVoVP/tTpMfm/EqP/u
+         A/X/AXU4EBSCLjFpDpjQHa2O5rRlOo1N0n1tTWiGzZ7rVVK7dMVDcP+y3g1QVhSYexnt
+         axUg==
+X-Forwarded-Encrypted: i=1; AJvYcCX8MQgqtB8TsOB4Dd/gx5PSR4RNqEEGKnCC0BiF4n/KJTo6eFfMDh2QZiPkFIlktck/sUBQ3ZAlLf/nhlY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsdxIjGHQD4z2l6H1We8t+hawl3P/1L+qAREP0XTiQiy4fOmTx
+	t/hzo8tnAj1vE3QEGvgUhjPvnN+UQ/A+XPQsoVmLJ0VNMCLYREg2NOxJirWQsw8=
+X-Gm-Gg: ASbGncsUKbq9YwPY6Yuuc6FF3vsQmcdkxp+cFBU5DPt+feHchdwQdTOyOc7FKdBCMgO
+	D1cOaqlNGWTpm+Oqkmr5qRA3qIEsaUPVqPmoktO/Aq6IDgXcOL0iifAunlLVrBBMeyDqwWKXw1F
+	m47i78hN8dyIkyy7zSrHk8Dem/oASdLuGHwbdQE/Em4CsXP2BNsGP+Zqi/edJ+anhlWLlOs47bb
+	PTmg9uod80XQ9bU9HORA4EB6pSUVJ04HNcMG41e6B+EQZX+9j2KCTimhvwrBlPtY2b5zqaTX8XT
+	eAkKDL6FQeoRnPXS+pTUOHBGU732pPnMFwIgVJxWVDUC3hyAfCsPgrQro27TgZrQgvnVl0Oe7qE
+	xZ3VsCGM8FLNbH2adn9M0KJpP6gQBcOVakg==
+X-Google-Smtp-Source: AGHT+IElwz6ZYvtcmCNJZ23hEjFuxJMkyHm7q2gsXSKL95/zDdGVqmGJmKoKERZUukK8jrmOAgtPdw==
+X-Received: by 2002:a05:622a:394:b0:476:77a5:3104 with SMTP id d75a77b69052e-47930f6f3e1mr204130021cf.11.1744114160142;
+        Tue, 08 Apr 2025 05:09:20 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-219-86.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.219.86])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4791b088544sm77395201cf.45.2025.04.08.05.09.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 05:09:19 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1u27lX-00000007fyn-0hJN;
+	Tue, 08 Apr 2025 09:09:19 -0300
+Date: Tue, 8 Apr 2025 09:09:19 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, will@kernel.org,
+	robin.murphy@arm.com, nicolinc@nvidia.com, jsnitsel@redhat.com,
+	praan@google.com, kevin.tian@intel.com, ddutile@redhat.com
+Subject: Re: [PATCH] iommu/arm-smmu-v3: Add missing S2FWB feature detection
+Message-ID: <20250408120919.GB1727154@ziepe.ca>
+References: <20250408033351.1012411-1-aneesh.kumar@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250408-fix_usb_hdr-v1-1-e785c5b49481@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIANIR9WcC/x2MWwqAIBAAryL7neATpKtESOWa+2OhFIF096TPY
- ZhpULEQVhhZg4I3VTpyBzkw2NKSd+QUOoMSygojHI/0+KuuPoXCnRZWWxeNQgm9OAt2/d+m+X0
- /abSx510AAAA=
-X-Change-ID: 20250408-fix_usb_hdr-8305358f42e1
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-usb@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-GUID: FQj8FmXbrb2tqslaEMhyWDlIIDI50Zr_
-X-Proofpoint-ORIG-GUID: FQj8FmXbrb2tqslaEMhyWDlIIDI50Zr_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-08_04,2025-04-08_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015
- malwarescore=0 spamscore=0 suspectscore=0 adultscore=0 bulkscore=0 mlxscore=0
- phishscore=0 mlxlogscore=697 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.22.0-2503100000 definitions=main-2504080086
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250408033351.1012411-1-aneesh.kumar@kernel.org>
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Tue, Apr 08, 2025 at 09:03:51AM +0530, Aneesh Kumar K.V (Arm) wrote:
+> Commit 67e4fe398513 ("iommu/arm-smmu-v3: Use S2FWB for NESTED domains")
+> introduced S2FWB usage but omitted the corresponding feature detection.
+> As a result, vIOMMU allocation fails on FVP in arm_vsmmu_alloc(), due to
+> the following check:
+> 
+> 	if (!arm_smmu_master_canwbs(master) &&
+> 	    !(smmu->features & ARM_SMMU_FEAT_S2FWB))
+> 		return ERR_PTR(-EOPNOTSUPP);
+> 
+> This patch adds the missing detection logic to prevent allocation
+> failure when S2FWB is supported.
+> 
+> Fixes: 67e4fe398513 ("iommu/arm-smmu-v3: Use S2FWB for NESTED domains")
+> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> ---
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-API usb_(enable|disable)_autosuspend() have inconsistent prototypes
-regarding if CONFIG_PM is defined.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Correct prototypes when the macro is undefined by referring to those
-when the macro is defined.
+This should go to rc
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- include/linux/usb.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/usb.h b/include/linux/usb.h
-index b46738701f8dc46085f251379873b6a8a008d99d..1b2545b4363bcf3ef97a53a004ebf456eb9d5d05 100644
---- a/include/linux/usb.h
-+++ b/include/linux/usb.h
-@@ -815,10 +815,10 @@ static inline void usb_mark_last_busy(struct usb_device *udev)
- 
- #else
- 
--static inline int usb_enable_autosuspend(struct usb_device *udev)
--{ return 0; }
--static inline int usb_disable_autosuspend(struct usb_device *udev)
--{ return 0; }
-+static inline void usb_enable_autosuspend(struct usb_device *udev)
-+{ }
-+static inline void usb_disable_autosuspend(struct usb_device *udev)
-+{ }
- 
- static inline int usb_autopm_get_interface(struct usb_interface *intf)
- { return 0; }
-
----
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-change-id: 20250408-fix_usb_hdr-8305358f42e1
-
-Best regards,
--- 
-Zijun Hu <quic_zijuhu@quicinc.com>
-
+Jason
 
