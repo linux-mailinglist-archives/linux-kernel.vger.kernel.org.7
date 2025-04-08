@@ -1,162 +1,141 @@
-Return-Path: <linux-kernel+bounces-593928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F211A809FE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:59:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F085A80918
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 248D08875ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:43:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3126A4C4648
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF37270EB8;
-	Tue,  8 Apr 2025 12:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD7727603F;
+	Tue,  8 Apr 2025 12:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FTEEyV+s"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o9ze+47o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B23270EA7
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 12:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D3926F462;
+	Tue,  8 Apr 2025 12:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744115935; cv=none; b=Evhlm9/GGVBswnp+zZIf2v5n6lvDzo6QiRNv3ZL+nhlOR3VV+o1DwvKYTwiUip/JAY2J83XZY0kgnd1LpHdB1W0sJIvIhA7twBiTE0bRuFw9KPUUE0WRo1ngnp4Y6b7o11884+wNxc6QtVp4opXD6rMP8q+R48QqVGyCMn4/mgY=
+	t=1744115960; cv=none; b=ZpBXSfo/tLKwgVb8UQdvliK5L6D5J3QnwCaIyZIlWJy1FAY7EF3/fpbXjoBG8b/321VYLWuNq0ej+PTQoQ1YZ/Jl7FTbouMQhUROOHCgSc28fdygg6ZvkCJcfwroas8wjE60cWTrcwtdJsiEE1k+w3ewh5DizYHNYkvoRMIvA3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744115935; c=relaxed/simple;
-	bh=NqYCaveDwpAIt1x2KdsDvs5kPnVeLmUlgF894FRLUGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S7KjT4H2FJtJyJS61GRAua+ZwCuNmty9QpDYuTgbLL3TtOuO2TvFMGVTeEqvMP/MtuLaobxjUFzX0r08kCdRjpRQxirgWb8I17U9+9l6Mn0Dsk6MyOwc7hHe0bcNTZK6vEsNjvwF227SOQ2WIrlKIfqrbsxC3G5YsK25ux5bsXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FTEEyV+s; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cf848528aso44108635e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 05:38:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744115932; x=1744720732; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Rn9ss1yxmQwnJyUV95D+HSfB4HdDzPSaOZFKAw2K88k=;
-        b=FTEEyV+sJgb+zrF3j0s/29pI1ze4JYK2poTOY+cwmRoayHJesVFXQ+Uc2GeBZaU8I7
-         apUWW1bcbWSNEFt4WKThg3V2X8Rr2y2zxWtNSbktBWFTQu70SYpaKiO+CcemjrAHbjkD
-         92ZM/NO/kxVr0sxt6/Zj7626TSP+/Dq0K5/kYjFTkg/hlaHmcDI5FPOb4FoM3OIlw+GH
-         25AYSuvgUSE+E0iWmeb7qfaTL2UAPhAQ43SpQmG/+U8PmukwMT83daqTwIZA+jRGbAsP
-         J0q4Nxu3nF5HLY8n1+WNcvMcAWByldHIEOz6WHG1/wSSqVWGX+jkgXiffVq1B0QEsS7z
-         W6mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744115932; x=1744720732;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rn9ss1yxmQwnJyUV95D+HSfB4HdDzPSaOZFKAw2K88k=;
-        b=J8x9p7pR8EIdijABwQuDmhvIN3VROq10RH8fap3+Dt/XC6/YAZcro00xVOu9k6TucX
-         37iyj3zCnyADOuSse3COcg1090sl/PfOsRtyboZzbAp7+Nan1i9HEQ7a1thZcRUKOkTj
-         LtCUWLmFhjCftpemnYtvMQwKwGpz66aztM2mKasIqw835Qnj8E6bPF+9eivV9dqZdm5k
-         PYgIugMr9dwEpOqh9MtIe2Z0vZ/j+WwgBVXfPmU1MZSW+yTYIyaKKnj/qX3DHdR4clwg
-         UCNWZ8UGQajRF3Os6fIj6eBZSLVpGbK46qQJBIspxinFegDvkz0z4DHKvWJMri2nmugD
-         vnqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXedQIRtO/gmPhh4xbX3wGeK4wdHGf4/+enUYPB3AIGUAxym+pLYIMJK4tpa00yTWJOYLV0pMniHTkFG6k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb5ZcFnRoPuKyCRAZEHuym1gRbH46YVCCwLDBuPbkWx8yuACOG
-	+y0UeolSXEe8yoDdCBVq/7WXIrA9AR7LL2tMCuBq3IiCGXj4xc9pf1Cky6CLA8g=
-X-Gm-Gg: ASbGncs0T97028qsThVW1jeA8omvyIhXDmL39TRpx1WnfObxR9I2NnUjIntTCv/Yv9y
-	egCDC/h07NMuI4LeB7x3KEHfUOs8CteddawMogdLMGd/sYsx6rpLM5GJrkKpYdmftYK6yLa8NZR
-	7hmccfZvFECmG5lNfw60xhqm5WaP/vBMA6Xm2NlmSj+6Bni8Ie0ir6CX+Yl+PXS4PwlMEHnwwzX
-	s2ys8u6vWv5H8mfdV029ul12rDAMw/oIVeSxrfy6GRZs8iUtw18/wbN0y8wKtFdPACdmP3ROaPZ
-	AsyiF7ldwbjf/nb85z0GDnM03X1MU6StGUFityYAGqQ85/9zVTh66iW8BAZu
-X-Google-Smtp-Source: AGHT+IH0ezpsw6joFG5u0i+oleM2OUdvMTlCjJ+UKe9pO6svSA6q2+87K6uPXZPon+cGjtbHyWHtMw==
-X-Received: by 2002:a05:600c:548d:b0:43c:fa24:873e with SMTP id 5b1f17b1804b1-43ee0640f37mr125138635e9.13.1744115932204;
-        Tue, 08 Apr 2025 05:38:52 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43ec1630ddesm163278175e9.5.2025.04.08.05.38.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 05:38:51 -0700 (PDT)
-Date: Tue, 8 Apr 2025 15:38:48 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Samuel Abraham <abrahamadekunle50@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, outreachy@lists.linux.dev,
-	gregkh@linuxfoundation.org, julia.lawall@inria.fr,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	david.laight.linux@gmail.com
-Subject: Re: [PATCH v6 1/2] staging: rtl8723bs: Add white spaces around
- binary operators
-Message-ID: <7bcdd745-539a-436a-a0df-bb2cd8dc7340@stanley.mountain>
-References: <cover.1744061673.git.abrahamadekunle50@gmail.com>
- <4ccdbfd3e8d74d99679927f294f71cfb694fcc6c.1744061673.git.abrahamadekunle50@gmail.com>
- <CAHp75Vfp8Je1fUavSwTDAM_5_rDaDfXETa2oM5f0CjL1mxWX_Q@mail.gmail.com>
- <CADYq+fbh=kG2JABmdF8FjjPiyigMpnJ7WhQh+faqRk6FJe4MBQ@mail.gmail.com>
- <Z_TtyXwkOBK1MXGy@smile.fi.intel.com>
- <b89c8837-4aa1-4073-bb09-f71f37b5dcc6@stanley.mountain>
- <CADYq+fZ-LmoyGrAFsEHBwM2WJthpqGYhPLmAJ3Ea0B=NvmC8aw@mail.gmail.com>
+	s=arc-20240116; t=1744115960; c=relaxed/simple;
+	bh=zdCrsvBkwkAlbHAMoR8vjGyP4JtXAOHDR8/3GQ5F2NU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=lX/8CUcAZv9ZUarK8MfiGZBwUjC718AlqGlPneiVbnexbBiwldm1RgZ4sYVQkakq5tRouecvry/7d8KJGecFWvp5UrYzeuiiIgy81ENbu7sgZKE+sYT0tjMZ/09yz1VyuGg6YhBspACppeKgDETni/8KkMc/9B2PoA8tU1d+s/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o9ze+47o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED53C4CEEA;
+	Tue,  8 Apr 2025 12:39:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744115960;
+	bh=zdCrsvBkwkAlbHAMoR8vjGyP4JtXAOHDR8/3GQ5F2NU=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=o9ze+47oXEJjDau0UliiX+wd69R3bkdCG1e4NviVmgYys7L4RgCEcF3SXFhRv1lB1
+	 L17/jBFcA7cJZKvTK8hc06sfpFd+n6AL8zfCvyM7p/Ig+jN7CSjaNDDdI5BMRvTLHf
+	 6urA/yky9MYeVx0SbNlxTrbstytaP++FFIPLuG1t7ygO1pTMosRWB6u4Sjlr9vFgYm
+	 BKK+lA/KPvcigw617O4YIdWwDUNitupXLhE3vRiy/Gz78ZmSpG99MTkElOoBAr4KLo
+	 yaLfPxZ5cLu6Q7W/uSc2HSxa9mrngII2bqp94OiXRjwdKK5CietJ62hvugdqolEgBU
+	 /TlLbWSl698ig==
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfauth.phl.internal (Postfix) with ESMTP id EEF5F1200043;
+	Tue,  8 Apr 2025 08:39:18 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-12.internal (MEProxy); Tue, 08 Apr 2025 08:39:18 -0400
+X-ME-Sender: <xms:9hj1Z7YStGxhPJWouy77Luwn3tWvtZAxmT5YqW7-aiLmEEortt-wZw>
+    <xme:9hj1Z6aXOW0fX4RdemxR-_KqIJgCk9oUU6BnMlqBb_S0UXmb5RWNy1dmMHqUBuoSj
+    bi8YT73h4nVDWtH2FM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdefuddtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertder
+    tdejnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnh
+    gvlhdrohhrgheqnecuggftrfgrthhtvghrnhepudefjeetteelhfegudekhfetffehtefh
+    tdevkeehfefgtdehheeghfektdekvdefnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomheprghrnhguodhmvghsmhhtphgruhhthhhpvghrshhonhgr
+    lhhithihqdduvdekhedujedtvdegqddvkeejtddtvdeigedqrghrnhgupeepkhgvrhhnvg
+    hlrdhorhhgsegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudefpdhmohguvgepshhm
+    thhpohhuthdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpd
+    hrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopehgrhgvghhorhih
+    rdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepshgvsggrshhtih
+    grnhdrhhgvshhsvghlsggrrhhthhesghhmrghilhdrtghomhdprhgtphhtthhopehkrhii
+    kheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsggrrhhtohhsiidrghholhgrshiivg
+    ifshhkiheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghi
+    jheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvg
+    hlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprghnughrvgif
+    sehluhhnnhdrtghh
+X-ME-Proxy: <xmx:9hj1Z98NLfhVvk_WwDWYro-8r2kGMF_kTBz7QrHGLdJnbd5aLv29Iw>
+    <xmx:9hj1ZxquHJbn6HNz8hHt6sNVN62ln_TV4WnBJToT_N5fUAP6hm4YaQ>
+    <xmx:9hj1Z2pB3fZrFsT3Hxe0aczAKDriyFZShNINA2kNSAx32G6RuzKGZw>
+    <xmx:9hj1Z3SymJ-8EfUHR8xHPJcO9tiiZQwDG3xETjIF6Imw05vOCN3MEg>
+    <xmx:9hj1Z-rE5bH55SCa0_P3mna9HYzHJ-fpboXX-IGUR673DMi_bANSM4oJ>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id C426D2220073; Tue,  8 Apr 2025 08:39:18 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-ThreadId: T1587df106ca63dd0
+Date: Tue, 08 Apr 2025 14:38:48 +0200
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "Bartosz Golaszewski" <brgl@bgdev.pl>, "Andrew Lunn" <andrew@lunn.ch>
+Cc: "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+ "Gregory Clement" <gregory.clement@bootlin.com>,
+ "Russell King" <linux@armlinux.org.uk>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Alim Akhtar" <alim.akhtar@samsung.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ linux-samsung-soc@vger.kernel.org,
+ "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>
+Message-Id: <18d59ff1-a357-413c-bde2-961ae0c9b5f2@app.fastmail.com>
+In-Reply-To: 
+ <CAMRc=MfC7GukR5ZidkZJA8LMZaVXyqeygdUBz9v3oDmw8k+OPA@mail.gmail.com>
+References: <20250407-gpiochip-set-rv-arm-v1-0-9e4a914c7fd4@linaro.org>
+ <20250407-gpiochip-set-rv-arm-v1-1-9e4a914c7fd4@linaro.org>
+ <b032eea6-96c9-4511-8085-da9f5655c252@lunn.ch>
+ <CAMRc=MfC7GukR5ZidkZJA8LMZaVXyqeygdUBz9v3oDmw8k+OPA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] ARM: orion/gpio: use new line value setter callbacks
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADYq+fZ-LmoyGrAFsEHBwM2WJthpqGYhPLmAJ3Ea0B=NvmC8aw@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 08, 2025 at 12:51:03PM +0100, Samuel Abraham wrote:
-> On Tue, Apr 8, 2025 at 11:36 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >
-> > On Tue, Apr 08, 2025 at 12:35:05PM +0300, Andy Shevchenko wrote:
-> > > On Tue, Apr 08, 2025 at 10:22:44AM +0100, Samuel Abraham wrote:
-> > > > On Tue, Apr 8, 2025 at 8:20 AM Andy Shevchenko
-> > > > <andy.shevchenko@gmail.com> wrote:
-> > > > > On Tue, Apr 8, 2025 at 12:54 AM Abraham Samuel Adekunle
-> > > > > <abrahamadekunle50@gmail.com> wrote:
-> > >
-> > > ...
-> > >
-> > > > > > -                                               psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (tx_seq+1)&0xfff;
-> > > > > > +                                               psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (tx_seq + 1) & 0xfff;
-> > > > >
-> > > > > > -                                               psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (pattrib->seqnum+1)&0xfff;
-> > > > > > +                                               psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (pattrib->seqnum + 1) & 0xfff;
-> > > > >
-> > > > > You mentioned Linux coding style, which also requires lines not to be
-> > > > > so long. These lines are. That's why a few versions ago I suggested
-> > > > > you to change these to be two lines each. I don't know how many times
-> > > > > to repeat this (it's third one).
-> > > >
-> > > > Okay, sorry
-> > > > I will add a third patch for a line break before the patch for %
-> > > > operations since each patch should handle a single thing.
-> > >
-> > > I am not sure you need a third patch for that. It lies into category of space
-> > > and indentation fix.
-> > >
-> >
-> > Yeah.  Let's not go crazy.  Do the white space change as one patch.  The
-> > rules are there to make reviewing easier.  Splitting it up into three
-> > patches doesn't help anyone.
-> 
-> Okay thank you Dan. I have collapsed the spaces and linebreaks into one patch
-> 
-> >
-> > In staging we say, "Fix one type of checkpatch warning at a time."
-> > That's because it's a simple rule to explain and it stops people from
-> > sending us huge patches that fix every checkpatch warning.  But this
-> > patch is small and everything is related and it's easy to review.
-> >
-> Thank you very much for the clarity. I understand now.
-> 
-> I already asked Andy, but I would also like to seek your opinion on
-> how I should version
-> the next patch. I already made this current one v6. Do I send v7 with
-> changes in the cover letter,
+On Tue, Apr 8, 2025, at 14:12, Bartosz Golaszewski wrote:
+> On Tue, Apr 8, 2025 at 2:03=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wr=
+ote:
+>>
+>> On Mon, Apr 07, 2025 at 09:09:18AM +0200, Bartosz Golaszewski wrote:
+>> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>> >
+>> > struct gpio_chip now has callbacks for setting line values that ret=
+urn
+>> > an integer, allowing to indicate failures. Convert the driver to us=
+ing
+>> > them.
+>> >
+>> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>
+>> What is you intended merge path for these? Have arm-soc take them as a
+>> whole?
+>>
+>> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+>>
+>
+> That would be best, yes. I'm not sure how many of these platforms are
+> actively maintained.
+>
+> Arnd: you were not Cc'ed on this (get_maintainer.pl didn't show your
+> address) but could you take this through the arm-soc tree?
 
-Yes.
+Sure, can you send them once more to soc@lists.linux.dev, either
+as patches or a pull request?
 
-> or changes in the individual patches?
-
-Both?  Put yourself in Greg's shoes and do whatever is easiest for
-Greg.
-
-regards,
-dan carpenter
-
+      Arnd
 
