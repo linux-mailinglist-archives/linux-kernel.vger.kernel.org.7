@@ -1,88 +1,102 @@
-Return-Path: <linux-kernel+bounces-593660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 911EBA7FC02
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:30:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78B5AA7FC0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:32:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 126DC19E2FB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:25:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FC771891641
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961FC269D11;
-	Tue,  8 Apr 2025 10:21:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EF326B956;
+	Tue,  8 Apr 2025 10:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jkEDR1JB"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2FF269D0A
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 10:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A684426A098;
+	Tue,  8 Apr 2025 10:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744107665; cv=none; b=c36WnFbOcHbWcirLq467XK7+SD0O4A+Ehj+m5/pWN5FVsKRNogHIvkiHXkRsYKPd87fKShEJ3yU0j4bHesFA5cVDvY9170hBpbZGUPU4/z/OwNsoLddYhNud5sctwWMQ4H/zyP3cg9y17W/7QkYOCpOEHeFThiAPHRqsTYBGZ3A=
+	t=1744107697; cv=none; b=XmEtC5qr0n16zCck+fl7SyxFe3f+BWKYtpsh/SD6GImKp8kSvHKBgIYXAq/niXQhqw9J5kD42O9qhrESLMvSzVcLbApuHW7Ge1B6RKUOFduzu7va8A8UVmpXjCR5otfJskRMaRRI4OSosna6t0JpDTRm9qbaWOuPR5G+QdIrFAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744107665; c=relaxed/simple;
-	bh=6FkK+YVzsMBW9RkRmI6Rn5ZJmcDNgFYU7g+QxQmgfcI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hzvlszLQzYqAoh636f0RmbssOfK+Gx+uGVhvHZVfJtIcQ1birCEt4EPopl6AcE9Z9Jk4/LyFfGlG41W7xty27C9EoxQeoGcU3DfUt0hGow1BQyiZvmT/U4l76wVnknnH5+k+5kOz9b+5tp/hBDdFgJOHypSPMSj/20Bh3f/C/vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d43541a706so53612535ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 03:21:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744107662; x=1744712462;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q65NMRwklu4Gg3M1RkU6U6i/X1ktlPqElkxLT6HbIrY=;
-        b=oD7/xSc4KAlGJLLOLkDM4iEX1oCNa8Pnu7gRhX36AqlFkmm+TE7bMGQWHnLkOzr5pJ
-         EpTVYzMRVXM9QUHxbfxA7NCr8R08EOlI569tdS6F8J4b1VDHyphaVEEzCJ+cDD72Ss7B
-         shvYsye1Gtq64X45wPQBfC/KICsqPxzonxjOq+QoL2HWObVGK0DlR5w898vjfKcBc1M0
-         Ayxam4EMk5GYahp/Ai6gN30tRbuy9ddKqJvvKTlMyWFdHHo25E/DbfT60E94awBvA4Gs
-         meBvHT+PkmNM55A0q9u8TvyxRNGTAJHxbPcptGQZJLTXAvlhO3s6YODOwWkX7a2fhygd
-         9A1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUlq1/kLKdRbDE91OUgtoyK2sHeQlw05MVy5WfTOhQZC65tfmELCvdJV/CRw2r4KJr5m9qu6B71iFGDMpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4sN1NODfQAKLMtaODX/HYeeIQdI5QmoAwVceMAEv9+rFaRxlX
-	L6XFdz5KipbGjOXRGBe25uGG/H0asSWzM9NlOmx22ChuOGSFcSmHHq23Fgg0cB4uRnViNOqLcSr
-	fThZKDRtPCWT4G+BKuMQ8FoPzAZ7UfW360IUf25X6R6cO1/jmlpT0/f8=
-X-Google-Smtp-Source: AGHT+IHxZcubI+jQ+FURFG9su4Qr2QFqm4SZ2ZNjrGO5WQ1exgC+lcHYdJCgjb6Dxx3lMax8x1QVTcVouQ8CKIGuRdWBkrdugLjH
+	s=arc-20240116; t=1744107697; c=relaxed/simple;
+	bh=nETQKSnCcvm1AKuhmE8CfkD32LpdKCI5lwW/Zi5YJrk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RmaA+HyZi8RgCrhpLfSDr0AGnGcqPnljNtRGJXWXCBhzV6cO5lDmztYgWq+2hebry592CPTMRFT9xW8wBvHuWq6Xk1EGwPsRoFg6tJwcFC5n+YfzobIIgN1FbSd7bky1IoznNJHYq/iHwjq/jPwG9i2M4KclrwbaSUznOYYatRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jkEDR1JB; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 538ALT6e502981
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 8 Apr 2025 05:21:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1744107689;
+	bh=wduqzuUnyN4v6B979S2NkcvhwxgSQYfa7l4KxdYqumQ=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=jkEDR1JBjJ4DR4EYmAYLvk52/VVVopl++GdGfwpP5+26Mvr/PXpar4Ff6NbmJ99oa
+	 ut/KdUUfUC3vvkPM1WxQ89gkjdQPjt5rXf3STJILjDl5l477r3kzqCob4oYxR/OMQ5
+	 r73sb8jjjRUsgwVTMceIDAVL9XaIMfPFVzVKOohY=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 538ALSih117396
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 8 Apr 2025 05:21:29 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 8
+ Apr 2025 05:21:28 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 8 Apr 2025 05:21:28 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 538ALRuv130575;
+	Tue, 8 Apr 2025 05:21:27 -0500
+Date: Tue, 8 Apr 2025 15:51:26 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        <s-vadapalli@ti.com>
+Subject: Re: [PATCH 0/2] J722S: Disable WIZ0 and WIZ1 in SoC file
+Message-ID: <20250408102126.uzmhkkt5ebiaotvq@uda0492258>
+References: <20250408060636.3413856-1-s-vadapalli@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:160d:b0:3d3:dd32:73d5 with SMTP id
- e9e14a558f8ab-3d6e52f63c8mr165088285ab.4.1744107662646; Tue, 08 Apr 2025
- 03:21:02 -0700 (PDT)
-Date: Tue, 08 Apr 2025 03:21:02 -0700
-In-Reply-To: <9cef1559-43a6-4968-9b86-1077a833c7a3@kernel.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67f4f88e.050a0220.396535.055e.GAE@google.com>
-Subject: Re: [syzbot] [f2fs?] kernel BUG in dec_valid_block_count
-From: syzbot <syzbot+8b376a77b2f364097fbe@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250408060636.3413856-1-s-vadapalli@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hello,
+On Tue, Apr 08, 2025 at 11:36:34AM +0530, Siddharth Vadapalli wrote:
+> Hello,
+> 
+> This series disables the "serdes_wiz0" and "serdes_wiz1" device-tree
+> nodes in the J722S SoC file and enables them in the board files where
+> they are required along with "serdes0" and "serdes1". There are two
+> reasons behind this change:
+> 1. To follow the existing convention of disabling nodes in the SoC file
+>    and enabling them in the board file as required.
+> 2. To address situations where a board file hasn't explicitly disabled
+>    "serdes_wiz0" and "serdes_wiz1" (example: am67a-beagley-ai.dts)
+>    as a result of which booting the board displays the following errors:
+>      wiz bus@f0000:phy@f000000: probe with driver wiz failed with error -12
+>      ...
+>      wiz bus@f0000:phy@f010000: probe with driver wiz failed with error -12
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-unregister_netdevice: waiting for DEV to become free
+Since this series fixes the above errors on Beagley-AI, I will include
+the "Fixes" tag in the commit message of the respective patches in this
+series and post the v2 series.
 
-unregister_netdevice: waiting for batadv0 to become free. Usage count = 3
-
-
-Tested on:
-
-commit:         ba0c5f18 f2fs: fix to do sanity check on sbi->total_va..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git bugfix/syzbot
-console output: https://syzkaller.appspot.com/x/log.txt?x=17616d78580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=66996a2350ef05e0
-dashboard link: https://syzkaller.appspot.com/bug?extid=8b376a77b2f364097fbe
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
+Regards,
+Siddharth.
 
