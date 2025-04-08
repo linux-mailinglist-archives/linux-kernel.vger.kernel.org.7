@@ -1,148 +1,100 @@
-Return-Path: <linux-kernel+bounces-594024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45CB0A80C3F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:29:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B6EEA80C57
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BAFB5047CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:21:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58774906DDD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5244C3EA83;
-	Tue,  8 Apr 2025 13:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD6C22A1D4;
+	Tue,  8 Apr 2025 13:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="bcGOSiQv"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xTZ8sCXL"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AAF320F;
-	Tue,  8 Apr 2025 13:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2161E226CE4;
+	Tue,  8 Apr 2025 13:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744118486; cv=none; b=cCQLfLIzIHqaD4uZqibkVL9U6S7BNmnV4X5Cy+CXDWcDRYnZWTNlWevb06VrVPIU0AcKmnum5OiVfSnzIJwbJoY9pYpKCWASIUWuSnzqPVTQkqG3odbpYuGMfSCDnbRryl22RWAjHXQkRZhHce5BO1BOQJRBQL+JdgyUd+dR//4=
+	t=1744117922; cv=none; b=QuOU05t9onNUuUXB291muGytO+LLX5aj1pQUCM6qk1X8M5Q5fFDlq6gcmjzbwY5vBlMSyZiWiNNjge4VfsxAp8/UtpSp6cTFr41evKDY1y8m47YhU9bDIs73JKGi/SOCQTZA69MtEim8NZkMGIXdY4C2xyU5H2dJhusW+6Td6JI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744118486; c=relaxed/simple;
-	bh=dXVtbiqQNGAxyvyND239vsV0CG+r4ci5k74Ehhk+X9Q=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=AzzvEzZBZH0f/sQZk9VimhfDMb6xKYY97E/+bDN9bzebuQxBbrG6oEPzeYOT42F2+8dvfUOUu44zXKZ2frTQDqhl+nlKpo3UZGtXn18krat24dH1oKjJKExOSv2vGdzAyJ0wbmbfVBV8mb7Mu683ikd77o9aI4gWAK49gsoYMcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=bcGOSiQv; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1744117922; c=relaxed/simple;
+	bh=ps4chw34OHJ0V+JbdkNGtAxeh60Col1rVzxxMHsVFjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MObqTNkoMxsALqT+MUaDhkqx11kWWklyo5Mhop0INJOIHtuD18cGdeUDGmnHtRQnNL3gfKNUHH64UFYqgbeLZ0oZOyD+JA25MPRUlS4tD2lykXR1mBNqABtmDrqFvV2idfWBMECpii4USS/u8B437MjAqmpfCG43pxLpDte7t1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xTZ8sCXL; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=UCzoQEukubcn8L70JJd4rpAlW2PfrAAtWJTRZbroIZk=; b=xTZ8sCXL9XcC7sa3PC9OupCBHr
+	7mqfZ+nBbA40wZOEMIKX5HuZ000SIL7hGbyIrw/I3srRcI/hxQC14FsgqJ6+PSd1G2tlubDdCa55F
+	xTuPbVJdlYAjF7RMMpM5F4oyjjq7GcUVu9InSa3ou0zx/nbhk7wBcirRK8WiKMBX6Pn8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1u28jt-008OHY-9d; Tue, 08 Apr 2025 15:11:41 +0200
+Date: Tue, 8 Apr 2025 15:11:41 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Frank Sae <Frank.Sae@motor-comm.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Parthiban.Veerasooran@microchip.com, linux-kernel@vger.kernel.org,
+	"andrew+netdev @ lunn . ch" <andrew+netdev@lunn.ch>, lee@trager.us,
+	horms@kernel.org, linux-doc@vger.kernel.org, corbet@lwn.net,
+	geert+renesas@glider.be, xiaogang.fan@motor-comm.com,
+	fei.zhang@motor-comm.com, hua.sun@motor-comm.com
+Subject: Re: [PATCH net-next v4 07/14] net:phy:motorcomm: Add
+ PHY_INTERFACE_MODE_INTERNAL to support YT6801
+Message-ID: <37354708-0fce-42ca-b7f9-6bb83ad87d10@lunn.ch>
+References: <20250408092835.3952-1-Frank.Sae@motor-comm.com>
+ <20250408092835.3952-8-Frank.Sae@motor-comm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1744117896;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BZ9wOyhr5OZ2W7fMi198N8FcLIDJcoQtgXpXVI7uRjc=;
-	b=bcGOSiQvDs5OztA7ea6FCwv2yZ6wetx4v0TR4WyQcediA0B5FhCBWOnSR/VfG7w6jMcXwJ
-	Si1a8MDmQuii4lQvD2LMOV4o85kAXrq17NYCeJcgX8HdvM2KYDS7SXVjqHWEY8k4wFWTGA
-	VureHTRYmRCe4qVcT3hTfXI5oB8wYdCP7J1IJc/sF3hmv3cVmTrxmTZHBQrsuu/QMIjPtt
-	ovW7yriiDYaemXsYuKHwr/mr79QQ86uLG4S+2nmg76jVujMrbub8WB+pXKzaiE5EJWhZce
-	qT+JEFI8adS50CG9HUEDeb7tz9IpiqPyDO69pERymnTU7DSZuPtrtnbXV1DwMg==
-Date: Tue, 08 Apr 2025 15:11:34 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
- patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- Vegard Nossum <vegard.nossum@oracle.com>, Darren Kenny
- <darren.kenny@oracle.com>
-Subject: Re: [PATCH 6.12 000/423] 6.12.23-rc1 review
-In-Reply-To: <683b5bda-0440-43d0-b922-f088f2482911@oracle.com>
-References: <20250408104845.675475678@linuxfoundation.org>
- <683b5bda-0440-43d0-b922-f088f2482911@oracle.com>
-Message-ID: <e9f371830fc38a5ebe2cf7c1c66b0e44@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250408092835.3952-8-Frank.Sae@motor-comm.com>
 
-Hello Harshit and Greg,
+On Tue, Apr 08, 2025 at 05:28:28PM +0800, Frank Sae wrote:
+> YT6801 NIC Integrated a PHY that is YT8531S, but it used GMII interface.
+> Add a case of PHY_INTERFACE_MODE_INTERNAL to support YT6801.
+> 
+> Signed-off-by: Frank Sae <Frank.Sae@motor-comm.com>
+> ---
+>  drivers/net/phy/motorcomm.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/net/phy/motorcomm.c b/drivers/net/phy/motorcomm.c
+> index 0e91f5d1a..ac3a46939 100644
+> --- a/drivers/net/phy/motorcomm.c
+> +++ b/drivers/net/phy/motorcomm.c
+> @@ -896,6 +896,12 @@ static int ytphy_rgmii_clk_delay_config(struct phy_device *phydev)
+>  		val |= FIELD_PREP(YT8521_RC1R_RX_DELAY_MASK, rx_reg) |
+>  		       FIELD_PREP(YT8521_RC1R_GE_TX_DELAY_MASK, tx_reg);
+>  		break;
+> +	case PHY_INTERFACE_MODE_INTERNAL:
+> +		if (phydev->drv->phy_id != PHY_ID_YT8531S)
+> +			return -EOPNOTSUPP;
+> +
+> +		dev_info_once(&phydev->mdio.dev, "Integrated YT8531S phy of YT6801.\n");
 
-On 2025-04-08 15:05, Harshit Mogalapalli wrote:
-> Hi Greg,
-> 
-> On 08/04/25 16:15, Greg Kroah-Hartman wrote:
->> This is the start of the stable review cycle for the 6.12.23 release.
->> There are 423 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, 
->> please
->> let me know.
->> 
->> Responses should be made by Thu, 10 Apr 2025 10:47:53 +0000.
->> Anything received after that time might be too late.
->> 
-> 
-> We are seeing the same build issue that we have seen in 6.12.22-rc1
-> testing --> then you dropped the culprit patch.
-> 
-> I think we should do the same now as well.
-> 
-> arch/arm64/boot/dts/rockchip/rk3399-base.dtsi:291.23-336.4: ERROR
-> (phandle_references): /pcie@f8000000: Reference to non-existent node
-> or label "vcca_0v9"
->   also defined at 
-> arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi:659.8-669.3
-> arch/arm64/boot/dts/rockchip/rk3399-base.dtsi:291.23-336.4: ERROR
-> (phandle_references): /pcie@f8000000: Reference to non-existent node
-> or label "vcca_0v9"
->   also defined at 
-> arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtsi:659.8-669.3
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> make[3]: *** [scripts/Makefile.dtbs:131:
-> arch/arm64/boot/dts/rockchip/rk3399-rockpro64-v2.dtb] Error 2
-> make[3]: *** Waiting for unfinished jobs....
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> make[3]: *** [scripts/Makefile.dtbs:131:
-> arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dtb] Error 2
-> make[2]: *** [scripts/Makefile.build:478: arch/arm64/boot/dts/rockchip] 
-> Error 2
-> make[2]: *** Waiting for unfinished jobs....
-> make[1]: ***
-> [/builddir/build/BUILD/kernel-6.12.23/linux-6.12.23-master.20250408.el9.rc1/Makefile:1414:
-> dtbs] Error 2
-> make[1]: *** Waiting for unfinished jobs....
-> 
-> 
-> Dragan Simic <dsimic@manjaro.org>
->     arm64: dts: rockchip: Add missing PCIe supplies to RockPro64 board 
-> dtsi
-> 
-> 
-> PATCH 354 in this series.
+Drivers should be silent unless something going wrong. dev_dbg() or
+nothing please.
 
-Sorry, I've been insanely busy in the last couple of weeks, but I've
-luckily got a small window opened up, which I'll use to finally send
-the backported versions of the troublesome patch(es), or to submit
-the bulk regulator naming cleanup patch to the stable kernels.
-
-I still need to think a bit more about the possible approaches, to
-choose one of the available options.
-
->> The whole patch series can be found in one patch at:
->> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/ 
->> patch-6.12.23-rc1.gz
->> or in the git tree and branch at:
->> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git 
->> linux-6.12.y
->> and the diffstat can be found below.
->> 
->> thanks,
->> 
->> greg k-h
+	Andrew
 
