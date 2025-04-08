@@ -1,105 +1,115 @@
-Return-Path: <linux-kernel+bounces-594574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4AA9A813FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:50:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D48DA81418
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E1547B9D51
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:48:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8927A3AF959
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDC223CF07;
-	Tue,  8 Apr 2025 17:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139B723E344;
+	Tue,  8 Apr 2025 17:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ddlG1ooM"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/KVKiFt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93EF22F39F;
-	Tue,  8 Apr 2025 17:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DDC22D4C0;
+	Tue,  8 Apr 2025 17:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744134595; cv=none; b=qJMKnmRikZvAGtwZcGSniZo5Xb+7KNDhibhU6TsRpCspzoON1bDrgDf7PSAurVXW0apiRzPU7HWG2aDrhgnqMPssY1bgDRNoG0xaVYrYDnIaExADE3eRBgCKVfqgA95qZbPZWWCw/EqCi+2Nl3QZJj39UJnbWteNcQrs3nHXH8c=
+	t=1744134689; cv=none; b=Dair+vheJ1ehB29UabdrSVMFaVQxvc5BnUzRrdwHCOv+ugtjI6SMCBkMooZ9NmcFDuV1LUzuuSlD4cJl1a4f+RlmTBXvq5c55cuhjRl+gRqJpfmzyp8eumt/v46bqZFWyWAXv8Y61yNijDiJDRuZtgeAGdDU5rM6lUlaYS5t9uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744134595; c=relaxed/simple;
-	bh=McapW7Tdxv9cDfYGpj7wLy91s53L74xcZuYJsNm6kbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VNRJWhlyDzwI8DPgJgbio7qxxAKNJlQSkeRyDJCnuXLtEAyaD1Bn0ntr7Tb1jFzjeq6liHnDirxikVAT19L5bj2S84+kzW5clMU45tP3s28hRsFQ7Zpq4EgRKFrckedlxY2NWQ+G3zQ6g7e6RcOk3uSUfgHDh0aEDAQGxLDvJ08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ddlG1ooM; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-30185d00446so5047833a91.0;
-        Tue, 08 Apr 2025 10:49:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744134593; x=1744739393; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Dn45RFW+Y+tJBdcvwcvFy2VtsffN9mizJNsrN/ynpig=;
-        b=ddlG1ooM1P/k17nG+FEGTXHu9K/D+weobFPNWcLRLulWEkedtv1oMKHHhXUFR6zvpw
-         eaIfJob49pYECX1TzBynu3U1KVPBXeL4V+qHSzEtQug73B8ovbGEat6VXC+PEQQJ2DFZ
-         lH8P/QZUIsJ554WQVwm1zOp95kiVd+wNXl1xzWSJX3QlhOeoWrHbymsYf3Qq4Tmn4gz2
-         VZtkXK0+XyGQfPOS89kofNK0HFVtES1E9/zwx1NarZrrBtUYt2QhIBgvPpHhGo5Yb5Ti
-         LgKD8qd8IDNEflONnzPKh2TRcvf7Trq155ntxwt4cP8Ggoftt5rKGejGvCMNz6EB7mDg
-         K+ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744134593; x=1744739393;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dn45RFW+Y+tJBdcvwcvFy2VtsffN9mizJNsrN/ynpig=;
-        b=Ms8NsgnAHVD8aEEVNf2LLmxfJUSvkwax7OJtBEgfTrITgkvIPG7RJXafGvtUnwaPdF
-         JAVmnpAW9Fz81FB1YDU7OxW8tU06WbFjn3mac0PVmlRUei/Gp5K0Jo08Nrx4FXkZqNF7
-         pSZBtl9rnkvQedCI0xFoVkPjFusqCSisguBvrbRth+UmsMWKQYjYIHLfZ5WvwIQ/Qyes
-         59We73JhcRKjALEuPVFHKtp/0VHPfNfEDy9NSSj/JqYEet6r6NCEAvNksD3dalPfDUfM
-         a2HFfFfRNkuj3P24wUVhVhvJNBJlPMaRwp8DIrjLwm42lIgS6/tQUipftZSUk53p7tZ/
-         BG4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUmeW8U/ue3Lq33U3ChBclo+tw6dw3iIW98GfNwZEyW1W//IGTBMbXhL0NBqcfkDUNEDmcahNLjT2hKbw==@vger.kernel.org, AJvYcCXjB+p+xECRW3hyoniIAaQfdpPYRL/ukRKhWed+64djFakJQy/fn+l032gObn3zuhf+233VEyTVtQd/fLgF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/fKx9WI/nkCZXiVMpjvmMIvWsS9Oh4hzGlJQsb8/D5vDTt1pl
-	czpL1HnyOys4qjvAxIB+ZQoxdzHgghwzRzpccltj7+UcmF5+Lblj
-X-Gm-Gg: ASbGncs6QPWuQMI2zFhG8WVEfKz3VNZ1nAVohvozxydWFmsVZd4h4W+/oePTfNBuswC
-	JfHsaFK+tDvrugPXeIoUEhFRHFUEeYEQzF9Lq0VDWFqFdfWbwDVbZQh+8N4nUe4f3E6QTXAc5Eq
-	m9gAzY9t+gT1iUc7z27mUUcGqnGRVGFUXrX0YoRDVO/NF25xQQ3NCSlgVXwG6aiB34Mxc23nfYk
-	eid5m16cal8cSg+hPBt2qWhlY+rIrgE96kIy9zk9iJqnReNhm3/2no9Zf2M2rl665k6P8Cv8jKw
-	ZCrPX4tbudMQXih1BbTjXxV6nwQY41oU+xX6FaLzQg3RsR0Ud7mjG9stSg==
-X-Google-Smtp-Source: AGHT+IH6VKEvUBmgLvDk9adusjfBPlOMNGINejw5pCa7n7hppoQJtEtQWZm11F4bJ4tpGCEt+Geh3w==
-X-Received: by 2002:a17:90a:e18b:b0:2ff:6e58:89f5 with SMTP id 98e67ed59e1d1-306d0bf1da5mr5434182a91.6.1744134592669;
-        Tue, 08 Apr 2025 10:49:52 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-305983d7f57sm12612001a91.41.2025.04.08.10.49.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 10:49:52 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Tue, 8 Apr 2025 10:49:50 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/1] hwmon: (gpio-fan) Add regulator support
-Message-ID: <de21cc25-3562-487a-9523-d9a49ca3cf98@roeck-us.net>
-References: <20250408102145.576852-1-alexander.stein@ew.tq-group.com>
+	s=arc-20240116; t=1744134689; c=relaxed/simple;
+	bh=YJcCFBlWegUtNSWytIrTHoO8XOROx/f/2uidCc2O6hg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HqYH6LP1p0pjOnZ6NjVC5TvZyU2YP/hFNSKmV3Qg39NurozM/mcThcusBHBJRtF1jgRRnr6uggFJ5hfAjul9jZKFMk1FqhsqEIQmOnfsbpEUfDhS3UUnOam042nroAJ/rq/e3HJtCNusIXa4yjS9XzqHdit2EYZ3Qbq6o2MnhOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/KVKiFt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46800C4CEE5;
+	Tue,  8 Apr 2025 17:51:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744134689;
+	bh=YJcCFBlWegUtNSWytIrTHoO8XOROx/f/2uidCc2O6hg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=B/KVKiFtzQASAkPFeJUpxNAxfGXTsURausjF6DqDuQlKBRulDHYL2oMLKekwib22i
+	 xrB97gQ0qTDukkUti/Fe3otw9qbP5rEx8U6mCZlX49BBMsvS9mfGatOUpLlldr3vre
+	 fEEHG34JCeB6EB56HYIcQpOC/Q51cIonYI9PizyE9xiW7ffl+RYhffMBvYx4x1k0IC
+	 NdZRAl4eQxV0FonN5WXkamv5Y9zayR6uityBoB27+1KDOcDaAUqTYAUvbSw4K4FRbV
+	 FS23BqHhSuNON0DZT4RhIK5IFV2qRiljUs0jKo8Qkqsjzlj1ty4hkH4MwZxduNhZhb
+	 ONukmH8aYEfjw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Andy Yan <andy.yan@rock-chips.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH] drm/bridge/synopsys: avoid field overflow warning
+Date: Tue,  8 Apr 2025 19:51:06 +0200
+Message-Id: <20250408175116.1770876-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250408102145.576852-1-alexander.stein@ew.tq-group.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 08, 2025 at 12:21:44PM +0200, Alexander Stein wrote:
-> FANs might be supplied by a regulator which needs to be enabled as well.
-> This is implemented using runtime PM. Every time speed_index changes from
-> 0 to non-zero and vise versa RPM is resumed or suspended.
-> Intitial RPM state is determined by initial value of speed_index.
-> 
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-Applied.
+clang-16 and earlier complain about what it thinks might be an out of
+range number:
 
-Thanks,
-Guenter
+drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c:348:8: error: call to __compiletime_assert_579 declared with 'error' attribute: FIELD_PREP: value too large for the field
+                     PHY_SYS_RATIO(tmp));
+                     ^
+drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c:90:27: note: expanded from macro 'PHY_SYS_RATIO'
+ #define PHY_SYS_RATIO(x)                FIELD_PREP(GENMASK(16, 0), x)
+
+I could not figure out if that overflow is actually possible or not,
+but truncating the range to the maximum value avoids the warning and
+probably can't hurt.
+
+Fixes: 0d6d86253fef ("drm/bridge/synopsys: Add MIPI DSI2 host controller bridge")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c
+index 5fd7a459efdd..440b9a71012f 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c
+@@ -342,7 +342,7 @@ static void dw_mipi_dsi2_phy_ratio_cfg(struct dw_mipi_dsi2 *dsi2)
+ 	/*
+ 	 * SYS_RATIO_MAN_CFG = MIPI_DCPHY_HSCLK_Freq / MIPI_DCPHY_HSCLK_Freq
+ 	 */
+-	tmp = DIV_ROUND_CLOSEST_ULL(phy_hsclk << 16, sys_clk);
++	tmp = min(DIV_ROUND_CLOSEST_ULL(phy_hsclk << 16, sys_clk), GENMASK(16, 0));
+ 	regmap_write(dsi2->regmap, DSI2_PHY_SYS_RATIO_MAN_CFG,
+ 		     PHY_SYS_RATIO(tmp));
+ }
+-- 
+2.39.5
+
 
