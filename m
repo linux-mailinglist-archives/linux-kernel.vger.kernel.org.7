@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-594932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE76FA8185D
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 00:20:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7404A81860
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 00:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AADF41BA386A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:21:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12CCC1BA40A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEDF255220;
-	Tue,  8 Apr 2025 22:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B9B24502F;
+	Tue,  8 Apr 2025 22:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="OdvcLp/Q"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="dUhGmMeD"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47AB3241678
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 22:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82177245024
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 22:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744150847; cv=none; b=Hud/Kw5qPOd8DW+k+uVlsesx+VHEEN+HNy7KL+fbq8A6P7qcPF+PuC44P9Ee3/D3AYHac5u9TB4/lHVJZmz8ryCXPtV5KC5npzoGufBjaK8Dtkl/gT2fSlwclLERdEjzeEYtUFp6C+GofAEGKq42MB9rYjFpCXmgL5one7xj4gM=
+	t=1744150850; cv=none; b=LemBHVAtNNSHAeu4jTC3xRIGJ1rfziQbeoKw033NcFWeY3y+hb5VSkMyAQemFcQLaomsDqxhhdo1q0MXKsKMtSIXd8mSwi+5rMjija+2ldh3TEMTPaZlvXjOomp/kERJljJ/dMSDACmsrVoYiBy/A26/ERNND/nHRxpqEgHlaKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744150847; c=relaxed/simple;
-	bh=EacArKuOdvvxd/uZyx+fyTlpctIMfRi4lYwDe618O94=;
+	s=arc-20240116; t=1744150850; c=relaxed/simple;
+	bh=q/m6gZRHsznamriWOYHZIp/SmlWy0pox+sQ+sNqkijI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N7boeJbAUt6fVJl7yVTdkWAUg3KOwVC+bCN0Q+8fTjZ1wTChBqumxKhN82YIwz6aybuyVyHkUqlBHjAk+MHzx/Kmk2Yp+NfyVgYAsRRtBzwk9SjqSQE/j/Yk927bu895w8R49c9d2sbb1l2+AL2nCTfsKbBM2cF0lsXfAeOQMOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=OdvcLp/Q; arc=none smtp.client-ip=209.85.214.178
+	 MIME-Version; b=W7gDmnT1XuoE3Hkw6BgwzDlfnrF1HvMURwHlNnhGysnQNA//Yeuph7vzQEUbUhQ80Stjnj+pVUGIpmA4MhVJ2+CZ5BSVbzOevBUj3i59bvH0TD1SXwmmmU9Nl3h20d9uWRFo+bQxEKyp5q/WA+dejTb+NiJIZ2bY3Og6BPi8RWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=dUhGmMeD; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neverthere.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-223fd89d036so74301295ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 15:20:46 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2254e0b4b79so76131475ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 15:20:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=neverthere.org; s=google; t=1744150845; x=1744755645; darn=vger.kernel.org;
+        d=neverthere.org; s=google; t=1744150847; x=1744755647; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C1xu+hNXXWAOIIXB4B7ulClJQ9ITbKc5uhrOA9YRLQs=;
-        b=OdvcLp/QmrX0+l3SBktZDZP9jEElH6DOwI6rHWeVw6KlY1NwH0WANZchUDjwVyBbFD
-         lTqVq/WdeJH8M8W/PSuNXmNpaF9CJ/Pv3luRBm/QNM1rhvlC+Zbxd59tpRS67E6i9nLD
-         l9Qv8ZflpFpaA0Y1hjJzHSosLFJZf+4daVC42CK1QxWfwf32bvJueWF1XvlVJtgThJxn
-         oQrcCg0k5sc/A8zRjKpFIClCqLoRalS9z1sAcA0CKMx/BA7TR0f0BlPDrYqC4wjAdpbu
-         vMt7hEBkrGfrG5S/mCD6Zq9NciUBR3v5WD4Ms+e+zO4W1hqlR6YfT+X/wr8VV2t08nsS
-         lYhg==
+        bh=B6zT4gLPellA5q5nyTFopWbDsYdsaDENjf5O1U73EvY=;
+        b=dUhGmMeDb+wjnig1GeMU6v4gA+T3ikbdKy2XhLtn1U4svUHbYfH50e3c8caaRFaUlX
+         dfAFlm9bemeNqQqB9dn/eMCq/wS8iwT5P0Efu+WR2hks8xP+o/E6FkOaZJ5Cdx9k4M0Q
+         ERC7GecvQu6cB2K0frxKJjuHe+yV9O550BTVSARlDTk2R0EWF+uv9pY120m+yboH8kEE
+         WJnGX+qIxU28tsByYbXbgX5mPSPdfvH/fEzBV9VOnrAxf7kOyJ310HffyJkEkNRn4h7J
+         0Vow1SGLUn+YJXF3f0fWxkVJGsjp7KLBq/gI6887KGzoQDXobLPWZkc7UeMXNreAwwT+
+         THMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744150845; x=1744755645;
+        d=1e100.net; s=20230601; t=1744150847; x=1744755647;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=C1xu+hNXXWAOIIXB4B7ulClJQ9ITbKc5uhrOA9YRLQs=;
-        b=Sm1BMWtGIEs40l4YMre5Qf606B9c1UK8yQW0JiS9aiL4QXSXa0R8TgNkildjI20YIo
-         s+kCJuBWdZtXfd6PQ9QnswEPHUVc9u0GozNBHMrgUa196PkE4zgpXXytDLeN9H9BicRN
-         l4Ield/rX0kYxQxY524JI/XoNqEHhmcN04x1SyrAIq8DhSFNUQiKR3U+WlxTmRsW3pK4
-         JhXWec9Wy0Ly9ziXis+fGpMD80thA3Ygs61hzph+iE6ryIPU/1Ow9BStXyYenjwOEO14
-         laJ1swJyJSceZjA+30przG4FQexrcrTbnhBDjPT7KiriE6D1Vrnx8EBYptxxxBsmnegv
-         v8dg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlfTK2lJ4XIHrlkyNVBX7fdBkvMlqRBGbdsA03wJWEYqNrn/131JkjJ+ZxxwiOV74J41gdrvwOpe4jf2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDH319UXYc4FSNyjsEx7YJTHvrlghodu5qoPHSdlfFQDFt091l
-	GYPYdIACjsGFrcACOFw3I2FFmMwTtHU+ceknm1IEQxV3HNZaZQRnmTRSCyAfNA3RntVIqC8iviw
-	=
-X-Gm-Gg: ASbGncu2jAtK9kqVw9tdQR3QEZFE0BeEg95QgozQlDRMacGaKzJ7Db7m1WwOzb80X1R
-	SzSspZcYOXBQbLuBSTwNxvjCUWK56N2UAnX+FsVOi6li63ezRVbwqX8lP08gdE8onzIcxzAyFR+
-	qwIOSdStl1T+hvuniluxJ7S1kUNc/mzwaiyBETddvHA+JdkGqqk8zNdr5NjRgrTcyvm8M3g2v2m
-	JR/ICevBWAKd4Sb23PmHZhSxWda8nelnpUy1Im+N4xQ5Hkko+cEOyAlPlTzVJ3HDNFZfHSG1L+Z
-	IPPIuSxqG61PNsV8GiInmV6aV3aTq1S2r1vOdhabjd0NBH6OcNIxWE93NYogYpEjcsT/pe9EkoZ
-	DtvMm6lkTL78VkNlmZr5D
-X-Google-Smtp-Source: AGHT+IEQNsrU61s1qVJmyRn4znZrq0nCeuew6EqFOk5LBT3KNFFgIxK4nBBw6fwCpG76KJqncT7chQ==
-X-Received: by 2002:a17:902:ce04:b0:223:5de7:6c81 with SMTP id d9443c01a7336-22ac3f9a90amr5410335ad.27.1744150845581;
-        Tue, 08 Apr 2025 15:20:45 -0700 (PDT)
+        bh=B6zT4gLPellA5q5nyTFopWbDsYdsaDENjf5O1U73EvY=;
+        b=Wfiods67ogNjEPMYuH4+QnS9TkaK+k7/i+rhrFSOXv5TsPugFtZk5FDPVG7o85omhr
+         b6j0RhVkXZqJHkXE9oG3OqJHTnPHpvJEiQ8lc9gBSJvzN/ptj4KX4zS1abWAeK3/vhYt
+         AoZfHJ/9fG0hXIM2i8ZUjy5hwIprQ/C12w2Tt0GBXFeqeILIoWgKeidJG0Zaww1Oqwad
+         0YTm3JSE3IA87UvQPuIQeK1ZWgKWRF44Ao0XJLOv9GtWjVRtqY9cVoal7K8d+J2LUeuU
+         AtUCCZu6XM8iYMbinaqtFF5NDf0JcDQOFgdG0as8Wvkel3dtxb3ohomDVp8uVOmNwDgo
+         v2FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW90I9vSsf9YunqW9BRFc19p9i/0DkWeVdtbdiUDdngXOTdhb7zZxW8SZ+3goNS6/oG0eetnXE55P6cYD8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJR7A/hiowII+ot5sN40sIPIPQ3CVXsRKHpwQ9kw/NC/UERE7N
+	LhFDQ2NKGAPLzJ//wyd96aIxrzUsJwb5pC8zWOcrrj0DxG0Zb4f5iA+BNf+r+Q==
+X-Gm-Gg: ASbGncvtPyZ2HoJgDMsj0ifDN4TK5PAvlfCTz1TV8IjzH3eYy5cziJD9hvK/pKB/RCa
+	Phn/w4mWFFIp+I1xxiNGBKYBB/WHTc1CimASCo3/O1X1n3rrxl3vkK9ChisT/48VNaSGrSlYpEF
+	7wjmcvXwf7nQz5vbxuo0xzbK2NkaiIXWtj1X1X6OU4yZZAPJR3T+nR8eHFA9fP9EpvVuk2WTVfW
+	/UDo4QQHLXPPqAUb0eWCERXkcbY5/DukEnG1czP1/NUKZ+Ri5RHTOTwaMCwya5LrYonPJEPQ8/t
+	1bneJKG0MxCGkjIJMnp/KZcZaxWVqlrbfHngbaXOBTJ3ERcWTiLMai/2oeHegMdVR+cRvNxWVDK
+	hpREGUayQjpRI4Ed8DSrh
+X-Google-Smtp-Source: AGHT+IHTrnupNNjrWEHGiG08ITTUNsoI/7cUK+piGm3EAUOr2hZ4ZCM9nE1suE7+kBQPj3LuLOkFrg==
+X-Received: by 2002:a17:903:1b25:b0:220:f87d:9d5b with SMTP id d9443c01a7336-22ac29a9883mr15086195ad.24.1744150846782;
+        Tue, 08 Apr 2025 15:20:46 -0700 (PDT)
 Received: from tiamat (c-69-181-214-135.hsd1.ca.comcast.net. [69.181.214.135])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-305983db5f2sm11644140a91.48.2025.04.08.15.20.45
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229785bfe40sm106214205ad.72.2025.04.08.15.20.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 15:20:45 -0700 (PDT)
+        Tue, 08 Apr 2025 15:20:46 -0700 (PDT)
 From: Michael Rubin <matchstick@neverthere.org>
 To: gregkh@linuxfoundation.org,
 	dpenkler@gmail.com,
 	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org
 Cc: Michael Rubin <matchstick@neverthere.org>
-Subject: [PATCH v1 01/14] staging: gpib: Correct CamelCase for EVENT enums
-Date: Tue,  8 Apr 2025 22:20:27 +0000
-Message-ID: <20250408222040.186881-2-matchstick@neverthere.org>
+Subject: [PATCH v1 02/14] staging: gpib: Correct CamelCase for PPConfig
+Date: Tue,  8 Apr 2025 22:20:28 +0000
+Message-ID: <20250408222040.186881-3-matchstick@neverthere.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250408222040.186881-1-matchstick@neverthere.org>
 References: <20250408222040.186881-1-matchstick@neverthere.org>
@@ -97,165 +96,52 @@ Adhere to Linux kernel coding style.
 
 Reported by checkpatch
 
-CHECK: Avoid CamelCase: <EventNone>
-CHECK: Avoid CamelCase: <EventDevTrg>
-CHECK: Avoid CamelCase: <EventDevClr>
-CHECK: Avoid CamelCase: <EventIfc>
+CHECK: Avoid CamelCase: <PPConfig>
 
 Signed-off-by: Michael Rubin <matchstick@neverthere.org>
 ---
- drivers/staging/gpib/common/gpib_os.c       | 6 +++---
- drivers/staging/gpib/eastwood/fluke_gpib.c  | 2 +-
- drivers/staging/gpib/fmh_gpib/fmh_gpib.c    | 2 +-
- drivers/staging/gpib/ines/ines_gpib.c       | 2 +-
- drivers/staging/gpib/nec7210/nec7210.c      | 4 ++--
- drivers/staging/gpib/tms9914/tms9914.c      | 6 +++---
- drivers/staging/gpib/tnt4882/tnt4882_gpib.c | 2 +-
- drivers/staging/gpib/uapi/gpib_user.h       | 8 ++++----
- 8 files changed, 16 insertions(+), 16 deletions(-)
+ drivers/staging/gpib/tms9914/tms9914.c | 4 ++--
+ drivers/staging/gpib/uapi/gpib_user.h  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/gpib/common/gpib_os.c b/drivers/staging/gpib/common/gpib_os.c
-index cb77fe0a4b9a..8d2f2a663958 100644
---- a/drivers/staging/gpib/common/gpib_os.c
-+++ b/drivers/staging/gpib/common/gpib_os.c
-@@ -1888,9 +1888,9 @@ int push_gpib_event(struct gpib_board *board, short event_type)
- 	retval = push_gpib_event_nolock(board, event_type);
- 	spin_unlock_irqrestore(&board->event_queue.lock, flags);
- 
--	if (event_type == EventDevTrg)
-+	if (event_type == EVENT_DEV_TRG)
- 		board->status |= DTAS;
--	if (event_type == EventDevClr)
-+	if (event_type == EVENT_DEV_CLR)
- 		board->status |= DCAS;
- 
- 	return retval;
-@@ -1904,7 +1904,7 @@ static int pop_gpib_event_nolock(struct gpib_board *board, gpib_event_queue_t *q
- 	gpib_event_t *event;
- 
- 	if (num_gpib_events(queue) == 0) {
--		*event_type = EventNone;
-+		*event_type = EVENT_NONE;
- 		return 0;
- 	}
- 
-diff --git a/drivers/staging/gpib/eastwood/fluke_gpib.c b/drivers/staging/gpib/eastwood/fluke_gpib.c
-index a6b1ac169f94..d289c321c153 100644
---- a/drivers/staging/gpib/eastwood/fluke_gpib.c
-+++ b/drivers/staging/gpib/eastwood/fluke_gpib.c
-@@ -802,7 +802,7 @@ irqreturn_t fluke_gpib_internal_interrupt(struct gpib_board *board)
- 	status2 = read_byte(nec_priv, ISR2);
- 
- 	if (status0 & FLUKE_IFCI_BIT) {
--		push_gpib_event(board, EventIFC);
-+		push_gpib_event(board, EVENT_IFC);
- 		retval = IRQ_HANDLED;
- 	}
- 
-diff --git a/drivers/staging/gpib/fmh_gpib/fmh_gpib.c b/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
-index 53f4b3fccc3c..733433d7fc3f 100644
---- a/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
-+++ b/drivers/staging/gpib/fmh_gpib/fmh_gpib.c
-@@ -1136,7 +1136,7 @@ irqreturn_t fmh_gpib_internal_interrupt(struct gpib_board *board)
- 	fifo_status = fifos_read(priv, FIFO_CONTROL_STATUS_REG);
- 
- 	if (status0 & IFC_INTERRUPT_BIT) {
--		push_gpib_event(board, EventIFC);
-+		push_gpib_event(board, EVENT_IFC);
- 		retval = IRQ_HANDLED;
- 	}
- 
-diff --git a/drivers/staging/gpib/ines/ines_gpib.c b/drivers/staging/gpib/ines/ines_gpib.c
-index d93eb05dab90..93897088f6f2 100644
---- a/drivers/staging/gpib/ines/ines_gpib.c
-+++ b/drivers/staging/gpib/ines/ines_gpib.c
-@@ -295,7 +295,7 @@ irqreturn_t ines_interrupt(struct gpib_board *board)
- 	isr3_bits = ines_inb(priv, ISR3);
- 	isr4_bits = ines_inb(priv, ISR4);
- 	if (isr3_bits & IFC_ACTIVE_BIT)	{
--		push_gpib_event(board, EventIFC);
-+		push_gpib_event(board, EVENT_IFC);
- 		wake++;
- 	}
- 	if (isr3_bits & FIFO_ERROR_BIT)
-diff --git a/drivers/staging/gpib/nec7210/nec7210.c b/drivers/staging/gpib/nec7210/nec7210.c
-index 846c0a3fa1dc..9b4870f1b421 100644
---- a/drivers/staging/gpib/nec7210/nec7210.c
-+++ b/drivers/staging/gpib/nec7210/nec7210.c
-@@ -932,13 +932,13 @@ irqreturn_t nec7210_interrupt_have_status(struct gpib_board *board,
- 
- 		// ignore device clear events if we are controller in charge
- 		if ((address_status_bits & HR_CIC) == 0) {
--			push_gpib_event(board, EventDevClr);
-+			push_gpib_event(board, EVENT_DEV_CLR);
- 			set_bit(DEV_CLEAR_BN, &priv->state);
- 		}
- 	}
- 
- 	if (status1 & HR_DET)
--		push_gpib_event(board, EventDevTrg);
-+		push_gpib_event(board, EVENT_DEV_TRG);
- 
- 	// Addressing status has changed
- 	if (status2 & HR_ADSC)
 diff --git a/drivers/staging/gpib/tms9914/tms9914.c b/drivers/staging/gpib/tms9914/tms9914.c
-index 2abda9d7dfcb..f7ad0b47ebb8 100644
+index f7ad0b47ebb8..5f167c518c7b 100644
 --- a/drivers/staging/gpib/tms9914/tms9914.c
 +++ b/drivers/staging/gpib/tms9914/tms9914.c
-@@ -774,18 +774,18 @@ irqreturn_t tms9914_interrupt_have_status(struct gpib_board *board, struct tms99
+@@ -736,7 +736,7 @@ irqreturn_t tms9914_interrupt_have_status(struct gpib_board *board, struct tms99
+ 		unsigned short command_byte = read_byte(priv, CPTR) & gpib_command_mask;
+ 
+ 		switch (command_byte) {
+-		case PPConfig:
++		case PP_CONFIG:
+ 			priv->ppoll_configure_state = 1;
+ 			/* AUX_PTS generates another UNC interrupt on the next command byte
+ 			 * if it is in the secondary address group (such as PPE and PPD).
+@@ -764,7 +764,7 @@ irqreturn_t tms9914_interrupt_have_status(struct gpib_board *board, struct tms99
+ 			break;
+ 		}
+ 
+-		if (in_primary_command_group(command_byte) && command_byte != PPConfig)
++		if (in_primary_command_group(command_byte) && command_byte != PP_CONFIG)
+ 			priv->ppoll_configure_state = 0;
  	}
- 
- 	if (status1 & HR_IFC) {
--		push_gpib_event(board, EventIFC);
-+		push_gpib_event(board, EVENT_IFC);
- 		clear_bit(CIC_NUM, &board->status);
- 	}
- 
- 	if (status1 & HR_GET) {
--		push_gpib_event(board, EventDevTrg);
-+		push_gpib_event(board, EVENT_DEV_TRG);
- 		// clear dac holdoff
- 		write_byte(priv, AUX_VAL, AUXCR);
- 	}
- 
- 	if (status1 & HR_DCAS) {
--		push_gpib_event(board, EventDevClr);
-+		push_gpib_event(board, EVENT_DEV_CLR);
- 		// clear dac holdoff
- 		write_byte(priv, AUX_VAL, AUXCR);
- 		set_bit(DEV_CLEAR_BN, &priv->state);
-diff --git a/drivers/staging/gpib/tnt4882/tnt4882_gpib.c b/drivers/staging/gpib/tnt4882/tnt4882_gpib.c
-index c35b084b6fd0..caf53f8ded2e 100644
---- a/drivers/staging/gpib/tnt4882/tnt4882_gpib.c
-+++ b/drivers/staging/gpib/tnt4882/tnt4882_gpib.c
-@@ -566,7 +566,7 @@ static irqreturn_t tnt4882_internal_interrupt(struct gpib_board *board)
- 	imr3_bits = priv->imr3_bits;
- 
- 	if (isr0_bits & TNT_IFCI_BIT)
--		push_gpib_event(board, EventIFC);
-+		push_gpib_event(board, EVENT_IFC);
- 	//XXX don't need this wakeup, one below should do?
- //		wake_up_interruptible(&board->wait);
  
 diff --git a/drivers/staging/gpib/uapi/gpib_user.h b/drivers/staging/gpib/uapi/gpib_user.h
-index 5ff4588686fd..b0c131196a00 100644
+index b0c131196a00..ff5a257f9a01 100644
 --- a/drivers/staging/gpib/uapi/gpib_user.h
 +++ b/drivers/staging/gpib/uapi/gpib_user.h
-@@ -335,10 +335,10 @@ enum {
- };
- 
- enum gpib_events {
--	EventNone = 0,
--	EventDevTrg = 1,
--	EventDevClr = 2,
--	EventIFC = 3
-+	EVENT_NONE = 0,
-+	EVENT_DEV_TRG = 1,
-+	EVENT_DEV_CLR = 2,
-+	EVENT_IFC = 3
- };
- 
- enum gpib_stb {
+@@ -130,9 +130,9 @@ enum bus_control_line {
+ enum cmd_byte {
+ 	GTL = 0x1,	/* go to local			*/
+ 	SDC = 0x4,	/* selected device clear	*/
+-	PPConfig = 0x5,
++	PP_CONFIG = 0x5,
+ #ifndef PPC
+-	PPC = PPConfig,	/* parallel poll configure	*/
++	PPC = PP_CONFIG, /* parallel poll configure	*/
+ #endif
+ 	GET = 0x8,	/* group execute trigger	*/
+ 	TCT = 0x9,	/* take control			*/
 -- 
 2.43.0
 
