@@ -1,121 +1,109 @@
-Return-Path: <linux-kernel+bounces-594248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FAD9A80F5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:11:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A48A80F58
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AA4C7B7FA3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:02:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E439D7B89F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8239E22AE59;
-	Tue,  8 Apr 2025 15:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1AE226D12;
+	Tue,  8 Apr 2025 15:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1A0ss6H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUfjh3MI"
+Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA581EB9F9;
-	Tue,  8 Apr 2025 15:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EEE1F098D;
+	Tue,  8 Apr 2025 15:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744124580; cv=none; b=Www86w9DdCUe28ttnY1wLK0OrxDwxuFn2Pwb0dzc32z/p11CWhw5OKg4p5nKt/BvhKjqk3MIYi5Cg4u2pVYahln7q+wgWdMbwy60t7nJHIKigDZ1TpB/JtEclgtw8tZgmg9WKDEj9afuIQiN3H2ecV9DS/lYP/tzjnWpPDegvS0=
+	t=1744124645; cv=none; b=LzOct7H2t+PjkxG0ZUZsGZ6Br5sy2YVvgrUUcZpTKTQqEJKVWD/Mhm2Kj8fpG4kRCCuNQdvRso20EMqCYTTKa49e2U/YmObxut+n3Lnmrbef5Z34hKfyJ82cByCy7bqvv74/PTAtseA0bf+oMZIlWmKhxQjuF/cxDp1Pz1bsXUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744124580; c=relaxed/simple;
-	bh=LKvavUYgpGR64gZmKbXgsDUtOXVLw5hcAok6WXy6l2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cGYADMZQwApPkvznHJM7lWOR/mDA9Fpo6oLxf3121NSRJQBB1cLaLBK/eEu/pZzrt02L1FpIbWCwask9S+8CtnPan3csy6540g+ie6wnz93PhUddSW+EWst64xUNSFuzKCjUzlnkQgemu+VzzcWp8fxoFh+KrAbHn/wMW1v266I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F1A0ss6H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16087C4CEE5;
-	Tue,  8 Apr 2025 15:02:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744124579;
-	bh=LKvavUYgpGR64gZmKbXgsDUtOXVLw5hcAok6WXy6l2w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F1A0ss6HLnm9h4iZmE3GGxq7KgMcTItcndCwA9TrvJ15cN8gdHxIAtMQuUDLaqm99
-	 0KZ6n+1XpUrmR3N9EPmN0TR/w26ve6ew02oqFcqz3gfPkFmpt4aGOF8xKDnhNuXLhn
-	 lFA4g4QrP3/0RGYEzYOt4WAbQB5svqsyZ51z6tH/tSP6b8QDM01UCHimmHW7RvDfyy
-	 JPH67kVjPetJUMEiZ+7TTXxRqD0a/O/khNPzP6UWtVz2T6SjAgfTK+QCzYNMKwMn2i
-	 W+4Jvfo01tAc+8CqOD38twNOzVomSZs1vMnjZsRjOerTk4w/Obn6QBi50mY0sUhcyz
-	 +1wy+SIS1t7cw==
-Date: Tue, 8 Apr 2025 17:02:53 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Timothy Hayes <timothy.hayes@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 16/24] arm64: cpucaps: Add GCIE capability
-Message-ID: <Z/U6nVugAnrE2I7e@lpieralisi>
-References: <20250408-gicv5-host-v1-0-1f26db465f8d@kernel.org>
- <20250408-gicv5-host-v1-16-1f26db465f8d@kernel.org>
- <Z_UH0808dGkS3v7-@J2N7QTR9R3.cambridge.arm.com>
+	s=arc-20240116; t=1744124645; c=relaxed/simple;
+	bh=WZGh3rGoMhTBpSqtABT75GEMEZbDnOtq0NcyCJQe5lE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AzbuSyjLYtv1ZXi6DHUFIZgMu9AUye2/y/5ZMMWOd4pTh5fYfNrCE5rYcrRZiT6riRpdtkdUq2uzB2L7/aAzFeOxvsJCZgZYBqemPKY/qHSNyYSJgs28vxkUmHp57l93C5yxjcNCdy7QEMLTwRaCeu9QM8Qcdx6P2brREngf/eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QUfjh3MI; arc=none smtp.client-ip=209.85.210.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-736b98acaadso5632691b3a.1;
+        Tue, 08 Apr 2025 08:04:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744124644; x=1744729444; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=O8fWycJvdwJ/W6pQ9mNqxjashiEaKH5pjJ73XaWiG04=;
+        b=QUfjh3MImv/waj1ytBEuONPyyjcVIYTQcPNkVsBWoNC3PBOacp7iANOeKOUkIsUU9R
+         oBu7RIxEiTL0SETN/dU4fJB5h2lnrvFztWjZpWYTLYpxY0nHNVViuJTnk0CAlW8NL+Eu
+         RS22iOgJBnigRQJOIcUuNf1KYzKQnEXLCjEmG8q4cYL3JgPRFL1tr6aguUfnBG5RBGmL
+         mm1xcjAGKKOJv11XH2a39SjcL+xDUUijoWB17B/rzKr2A/5NwE3cJkO/6v8LdByVP6yC
+         5NF5U1rEImaqe7SNnUqMfwG8s1DU0hxqi9myGCVZQhyBKiPrPKSNGjvwUpAIJZ1TjbQv
+         3Z1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744124644; x=1744729444;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O8fWycJvdwJ/W6pQ9mNqxjashiEaKH5pjJ73XaWiG04=;
+        b=qOo49/Izx02nHBRtOLJWzbFHBSGpMflf3JF+dN0+h2LlMlHpRQco0+3tu/V1+d2rjN
+         pLVEmVGMkB8C2Jt0wT8L/jDoDLh/b8LbGyb7hMFDlQ8iIZu8Z+n07y01r0s97g47bmVC
+         TgaJ/WkET9Mup9AG7s+V951JxeBDJt7LcedUfZAx7RT0mooozZHjZEzEf/KTklYuGkMa
+         e+R+J4WLjCLK3+4xSp2WemhCva/dZyU0wnobP0NnJfg9a+EdHtkMqHPmpg7fFffm25J5
+         p+b7shuhQLAM7FMKyDOKI0H3GzeZPYOWblhJA5D+EvzCAZa0tjlUknXJnehjHUaUeiqZ
+         cHhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8087ZrGCEPBnD87HEPlzDAN3jx4rPmjNlOmorYaDnnRKXIuoaJdEXMBPGbUBTRibxAODDD3i0PZ4=@vger.kernel.org, AJvYcCXt7xhXRteKEVAn5BaUzLc2/hb2gS38bxTV8FjcdoHhkEdO1cBpZ9Q/JyWGgCPecyveMfiXANU4PTKY9dQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6nRevekzVDmk7IjptbzbVQI6U87kldD/xNNqteEnddfQgF2RO
+	udzBTUBxmN6p7ScXbwwBt3tYgx2XCiSL5COyMN20wTu0ero9hHVNuLj0P2vk
+X-Gm-Gg: ASbGncvbAPe+VeOc022Y+6bP+rcNf+5ruOozSq7T5vftGBMZcOTPrQPc3XqF2Fwmmca
+	gRn8X2R6DUvZPhx2WoR6bA1TeHoQMFKp3Kb7D/i7vTfa159mHabFTMqxsyQntTYH31KgG0EzpMp
+	5LEnuvQMEc71earQvyxh89oLBbdJgB7PFl0wKoK5tyXSSXSM3F3ojrFSngZCrXq7KsaQsyzknQT
+	n4vwLE4xG6hrpxelULoAO2b0Gj+4JLG3UwaE3HWqPahdeWuCRRIAuPSV4JVq5E849wl7TDRVXaI
+	ugAbHSQZ5jj8r0S5BIUqnVGg/VC/LJ2wcdO1O0QqCfknEHIqaKBbWShPs0GtrvOjQd2kDCZj6HQ
+	oILnCnQ==
+X-Google-Smtp-Source: AGHT+IFmr2DimbBD7TGGduHkaksfKx7Cu1H6lgcQktUMtC0UA/F2Thx2FeH+vbcjDpvPVC3DCPlH9A==
+X-Received: by 2002:a05:6a00:3cc1:b0:739:4a30:b900 with SMTP id d2e1a72fcca58-73b6aa3db66mr18058531b3a.7.1744124643494;
+        Tue, 08 Apr 2025 08:04:03 -0700 (PDT)
+Received: from henry.localdomain ([111.202.148.133])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739d9ea097asm11068474b3a.90.2025.04.08.08.04.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 08:04:02 -0700 (PDT)
+From: Henry Martin <bsdhenrymartin@gmail.com>
+To: sudeep.holla@arm.com,
+	cristian.marussi@arm.com,
+	rafael@kernel.org,
+	viresh.kumar@linaro.org
+Cc: arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Henry Martin <bsdhenrymartin@gmail.com>
+Subject: [PATCH v2 0/2] cpufreq: scmi/scpi: Fix NULL pointer dereference in get_rate()
+Date: Tue,  8 Apr 2025 23:03:52 +0800
+Message-Id: <20250408150354.104532-1-bsdhenrymartin@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_UH0808dGkS3v7-@J2N7QTR9R3.cambridge.arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 08, 2025 at 12:26:11PM +0100, Mark Rutland wrote:
-> On Tue, Apr 08, 2025 at 12:50:15PM +0200, Lorenzo Pieralisi wrote:
-> > Implement the GCIE capability as a strict boot cpu capability to
-> > detect whether architectural GICv5 support is available in HW.
-> > 
-> > Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Marc Zyngier <maz@kernel.org>
-> 
-> This looks good; I have a minor consistency/bikeshedding concern below.
-> 
-> > ---
-> >  arch/arm64/kernel/cpufeature.c | 7 +++++++
-> >  arch/arm64/tools/cpucaps       | 1 +
-> >  2 files changed, 8 insertions(+)
-> > 
-> > diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> > index 9c4d6d552b25cb3a31d1fb267bd73d3f82513e69..8c60591633f3d435ad9b80a10e484f26af328964 100644
-> > --- a/arch/arm64/kernel/cpufeature.c
-> > +++ b/arch/arm64/kernel/cpufeature.c
-> > @@ -3041,6 +3041,13 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
-> >  		.matches = has_pmuv3,
-> >  	},
-> >  #endif
-> > +	{
-> > +		.desc = "GCIE",
-> > +		.type = ARM64_CPUCAP_STRICT_BOOT_CPU_FEATURE,
-> > +		.capability = ARM64_HAS_GCIE,
-> > +		.matches = has_cpuid_feature,
-> > +		ARM64_CPUID_FIELDS(ID_AA64PFR2_EL1, GCIE, IMP)
-> > +	},
-> 
-> I reckon it's worth making the desc a bit clearer, e.g. "GICv5 CPU
-> interface".
-> 
-> It might be worth cleaning up the existing ARM64_HAS_GIC_CPUIF_SYSREGS
-> feature, e.g. making that have "GICv3 CPU interface" as its desc.
-> 
-> Likewise, could make the names consistent, e.g. have:
-> 
-> 	ARM64_HAS_GICV3_CPUIF
-> 	ARM64_HAS_GICV5_CPUIF
-> 
-> ... ?
+This series fixes potential NULL pointer dereferences in scmi_cpufreq_get_rate()
+and scpi_cpufreq_get_rate() when cpufreq_cpu_get_raw() returns NULL.
 
-This makes sense to me, I will do it in preparation for v2.
+Henry Martin (2):
+  cpufreq: scmi: Fix null-ptr-deref in scmi_cpufreq_get_rate()
+  cpufreq: scpi: Fix null-ptr-deref in scpi_cpufreq_get_rate()
 
-Thanks,
-Lorenzo
+ drivers/cpufreq/scmi-cpufreq.c | 10 ++++++++--
+ drivers/cpufreq/scpi-cpufreq.c | 13 ++++++++++---
+ 2 files changed, 18 insertions(+), 5 deletions(-)
+
+-- 
+2.34.1
+
 
