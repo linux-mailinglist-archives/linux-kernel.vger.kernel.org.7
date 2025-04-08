@@ -1,101 +1,79 @@
-Return-Path: <linux-kernel+bounces-592956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7BB7A7F342
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:36:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C44A7F346
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E3B43B764D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 03:34:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C44C167923
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 03:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A94E25F795;
-	Tue,  8 Apr 2025 03:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8335225F78C;
+	Tue,  8 Apr 2025 03:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MkH0jsbE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a3BIBZL8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6014C4A1E;
-	Tue,  8 Apr 2025 03:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79DA15382E;
+	Tue,  8 Apr 2025 03:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744083252; cv=none; b=aS0FueO6CF/Tq+tLwUD5buDdZAejaZ7YsZpabajLzKmAo0cK341uIz+w5W+l2nYt6Wntj6Rg1ZW2flQb2/2jTVOUsA6ktBsQVUqhdqnWl2erspAgHojlgX02IVLrn+TLvlVsFCEXRJIReV7NMDinWvdvXO+z6PYWDVRR4NqNw+o=
+	t=1744083859; cv=none; b=gbZJqwuwRD31mtG50KXQpX2G5zbSZnDYjJdkHa9sUrLcalzduvaFpSd4eUjwJrJInalX8M+//MQMW9+1f0dDKizOqGnnno5cxyjdf/kboqLgDWYcZb9V8UPzBVXT5QjIofQ95i6VkChtFrhF5GRIXsZ3g3CEiSldoNxuy7yI+EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744083252; c=relaxed/simple;
-	bh=TRxqNba1FVNttWXGyNADBZI4wo3jt4eA8mooq34DEqA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gO210D7UBKvD5MKoTAfSxGvuAKGP7VK+iXN2YuOmINZMa1iD7FKzGxsnlP4B6LGz5OEm3UbWVeHHmHxc5c4JT5StbyJXoeFsfV7zB1t/JrwU+IqxhGs7fKBvY+qnWUG4MUXH9IzvcQKw6u1P4bO+XQPrEfpEscJSVeviX0aBdcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MkH0jsbE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9841C4CEE5;
-	Tue,  8 Apr 2025 03:34:07 +0000 (UTC)
+	s=arc-20240116; t=1744083859; c=relaxed/simple;
+	bh=k9K2LwfOeLKLocOf/FXdrr1aZSMFK1le7bu6M2NrfdU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mk5q9QiDPPxZs5LUMsZTqmMQAopQqBcbKJfDEcKfKTkwGKGBVJadHeureSmxydzDFfHlGVxfCMCuRIqtAE6vMX1RDYLMhGqiKxvBVv1zT2x0fdMi6rkHx0sz1Z8jSu8VpYjsEZhaGf1zEkjFcjpeBLKpNLKaNsrrsK5VQ0YJg5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a3BIBZL8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DCF7C4CEE5;
+	Tue,  8 Apr 2025 03:44:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744083251;
-	bh=TRxqNba1FVNttWXGyNADBZI4wo3jt4eA8mooq34DEqA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=MkH0jsbEibXql9rWea8fM6DvGfJCXnaKvnY2KK7uAlW0WLmZX7A7Rya5MtvtOTxE8
-	 b+2zFVPdiG0/g53IWf7F9Z3uu0p+Yxe+PmFE2df6tNYfe8pW3wTYLxp4hN3f0ojIVw
-	 60YyYjiPIIRgyKNAZgaGgNoPvGSo0qcpLNygQGq71KamztoOPfmR/+hlfEqZDUfTlF
-	 V1be6zCj7QreIaS2ldBZMjAIYJT7QHTXymtMzwFxLdUILxQevzlA/zEixv4cFF6VUL
-	 sG/5vSVODbkTkyx/sPQFIPLOtr4eeFVMQDF44Uy2+sZdrSWTlGpfRibXMgbm+dchrK
-	 ir3PFrZpX1Sxw==
-From: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-To: iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: will@kernel.org,
-	robin.murphy@arm.com,
-	jgg@ziepe.ca,
-	nicolinc@nvidia.com,
-	jsnitsel@redhat.com,
-	praan@google.com,
-	kevin.tian@intel.com,
-	ddutile@redhat.com,
-	"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-Subject: [PATCH] iommu/arm-smmu-v3: Add missing S2FWB feature detection
-Date: Tue,  8 Apr 2025 09:03:51 +0530
-Message-ID: <20250408033351.1012411-1-aneesh.kumar@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=k20201202; t=1744083859;
+	bh=k9K2LwfOeLKLocOf/FXdrr1aZSMFK1le7bu6M2NrfdU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=a3BIBZL8OqwpfE2jZ8tT/eO3jRx9muCIeJDE3wn6tBBSdsoDtr+BxVGyuIKARj3e5
+	 /zEmO4J3foqAW/K2taQd5OaNe66Yks8nwTt+JHE8J31BNdwRHPZIYYt+IaInrxDFgx
+	 zCHURY0KURaeztUjfJUVFOSDnjJXgGRpMwVLPt9TEumu/ibRpnnqQw9m/s9nmEDiem
+	 4jOsF3M0B6AQ+sBAv8WBGMWVIuaqWywApamsEX07p+ug9JMsrdQgUKXRTxbmYL4oZA
+	 xl+64Iz2noYpCJW/nsUV6OJfLf0JJcJL9vbthODU8uAAQhVQlzWWa63QXCwdtc6oXn
+	 lTrZ/R1R09MgQ==
+Message-ID: <2804da1e-b636-4a08-a42b-1eb77b7556e0@kernel.org>
+Date: Tue, 8 Apr 2025 12:43:36 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ata: pata_pxa: Fix potential NULL pointer dereference
+ in pxa_ata_probe()
+To: Henry Martin <bsdhenrymartin@gmail.com>, cassel@kernel.org
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <d16bdd67-5060-4bb1-991b-6c82f3936ace@kernel.org>
+ <20250404061438.67557-1-bsdhenrymartin@gmail.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20250404061438.67557-1-bsdhenrymartin@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Commit 67e4fe398513 ("iommu/arm-smmu-v3: Use S2FWB for NESTED domains")
-introduced S2FWB usage but omitted the corresponding feature detection.
-As a result, vIOMMU allocation fails on FVP in arm_vsmmu_alloc(), due to
-the following check:
+On 4/4/25 3:14 PM, Henry Martin wrote:
+> devm_ioremap() returns NULL on error. Currently, pxa_ata_probe() does
+> not check for this case, which can result in a NULL pointer dereference.
+> 
+> Add NULL check after devm_ioremap() to prevent this issue.
+> 
+> Fixes: 2dc6c6f15da9 ("[ARM] pata_pxa: DMA-capable PATA driver")
+> Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
 
-	if (!arm_smmu_master_canwbs(master) &&
-	    !(smmu->features & ARM_SMMU_FEAT_S2FWB))
-		return ERR_PTR(-EOPNOTSUPP);
+Applied to for-6.15-fixes. Thanks !
 
-This patch adds the missing detection logic to prevent allocation
-failure when S2FWB is supported.
-
-Fixes: 67e4fe398513 ("iommu/arm-smmu-v3: Use S2FWB for NESTED domains")
-Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
----
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index 358072b4e293..c7d297ceabdb 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -4405,6 +4405,8 @@ static int arm_smmu_device_hw_probe(struct arm_smmu_device *smmu)
- 	reg = readl_relaxed(smmu->base + ARM_SMMU_IDR3);
- 	if (FIELD_GET(IDR3_RIL, reg))
- 		smmu->features |= ARM_SMMU_FEAT_RANGE_INV;
-+	if (FIELD_GET(IDR3_FWB, reg))
-+		smmu->features |= ARM_SMMU_FEAT_S2FWB;
- 
- 	/* IDR5 */
- 	reg = readl_relaxed(smmu->base + ARM_SMMU_IDR5);
 -- 
-2.43.0
-
+Damien Le Moal
+Western Digital Research
 
