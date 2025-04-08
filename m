@@ -1,188 +1,185 @@
-Return-Path: <linux-kernel+bounces-593167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF9AA7F627
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:24:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F97FA7F62D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D04CD3BDA55
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:22:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AAB4165D6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8AB263F36;
-	Tue,  8 Apr 2025 07:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B25D2620C4;
+	Tue,  8 Apr 2025 07:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="quGaDhoC"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uJbsUz5X"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADE12638BF
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 07:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7522925FA34
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 07:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744096881; cv=none; b=HUQJ75NLz+DvwUnDi2AY3zeO7/kYuI5zDQRzxYihQKhxtZyY2ueIqe7cKfv6axD8t93fb/WhO6oWFYyJVupf4kYHWa3ppQznvj0ab2xUbHNrbSdoHp8zvdRuNWVK1c1c2fJ5AY2p6YkcKF/DF93y+nWDL3lXLZ5JIzrN/0F6VkA=
+	t=1744097026; cv=none; b=c0donwD69qinQjIGDG8HcDgerKuzhn3bRVmpGTD9K+KmOOCw1vxEYx9LPmsy4GF3RIeX9S+BwRLiszwmxym44fLHdXoepJ2rV6QE3NUyNqkYz6uOsgHT8TEJEa7LcfE5UR9n3fXxDAPRjOBJmli48r9Il9+oWYPnNKgPPJTDbs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744096881; c=relaxed/simple;
-	bh=4s0EUcwB+s1Xq3ZkAByVjtUfgJ3yw9YYZaLLaWHs2rg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gWJUZhC9FwOgD5U+RLGn5h2u1+aRDD00Hr0nkD+qREDBCIAOoOJ3YdvcuKo1JMBzUmOxToGISirbJGbB/7rW9ircK0omuY8EuSMPj0fSvFO9/4/d6gZdkZFX3CCct/OLEGRd5QQdjp51CDvt7iHyku5BH8/C1kkNwCPP0m2Cgbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=quGaDhoC; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cebe06e9eso34152855e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 00:21:19 -0700 (PDT)
+	s=arc-20240116; t=1744097026; c=relaxed/simple;
+	bh=rL5dGpnFjOxWd3LsB+ItQyiyXmnHrcABj2M4ZSlcHDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B8YpntAJrqPWmbnA0MayMg5/CYSFOv+1uXVelas6mUi9dLHJtL3p5oeZvjuINmucCI8MzV97Z0ZsmOyr+zDiZQDrJztHBozfP9Uw5JvHBTegus/HgkAqOeUeTT3oN1CvgtDTiU5KOawHLHVS49/g0Nyu6cnV1T3rS8ue7OWXRDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uJbsUz5X; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-224019ad9edso67134405ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 00:23:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744096877; x=1744701677; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XvshZe5PSemjV/2XZOVRqNiaOz/McPkdhU5QyFybI6E=;
-        b=quGaDhoCHE9RbEo1BVmtUoW/KmBnoNsw4d2HaTG0Qiywvn0htviUTe3C3zuk1GaFsK
-         eHmjhxisq0udmrrIKbRbObXxQ/IbkSFsCWVz+g1LIzMy5FumT7CjKhbthO0CAgtH+zWf
-         19VAqvoiVDwkroocVCqGV3683gAHp1k7lEPD0BXrPzqmOFkBoHWGqGE/1UkWcpw6zeDu
-         doDzaLNoiwIZM1dNZkz2gFTMEXjN9yMfxYxAFmXG3PgQMHNy2MDdBKvf6E5umxoFoz0e
-         T6tmmtbb1sySOwIaZkLFkBZCeJqzdLqh7ClE4PLCnRLQcdwtnnI/3I17BHUerpS3p0Va
-         FoLg==
+        d=linaro.org; s=google; t=1744097024; x=1744701824; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gVo2aw8e68tzNUEBR5LrT7OG8JEIu/cx6FavvcXXg2o=;
+        b=uJbsUz5XeE6hxVIz5jX8ptxHA5XoKb+yTII+mdK+VOU7n1YmxMjAIOqbp7MsJq9tuw
+         fE/pRLuWpTe5MEcbttBT+ABUx2FcGa2bF2tRVsjR4IlRavwF4hNN7WtSg3UGWwV39y93
+         q++HJR7nkTc3dDktm1oeOggH/r/N/BzIeZIz9iaspPnCWJRkmQqCB7VBKwgXe6B2XTM7
+         Nb43SEZ0SdzmDVRkGl0ltxjtUen8jIPMLuu4ZwCgTmxLp9Yw1LQfXutIzg1IRUBLCUax
+         y49lXwVhHFZD5JkuBW0QuMlX8DHReYRIz9ZYZTZ+qz4tAZ4KMeFz+VzNHOWncqej62tQ
+         9gaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744096877; x=1744701677;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XvshZe5PSemjV/2XZOVRqNiaOz/McPkdhU5QyFybI6E=;
-        b=xMnVx0q/KMMolcnfi3o098MxTrl7zJcF6iE9aoCjzKlyDLU2b7PWV9G95HUh9/okpj
-         0ONgbj0i9jpa7hoYKWxnqAvR0iRSBl7z18vLy9EHRYUltR/Ff+sqPJ8TP9Fs/mhPDtNq
-         nj2UpgiJwoCLejQOy0I8VW11+QGWFj5RCQgndxeoflxSgH+Tbv1zM/Ry0T4cLEDt8g6r
-         DcIgN5nIvD2Cvhszm19SRLD9Av6/MevptyTRr9JSB6alEGfc5uO/ui+S8fXjzerEVhb6
-         jRgNkX3sc+qfEMZZIgmpj2KyDLjCtRj3U56DXHmqrBzeuuCmcAyRJt+DQoLKPa/1idgI
-         xzDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWt3FY1aDx0zElB9gx3b6RA2Lqsfr7NWI2PvKMQtldItbNhFjys0W3AMxiRgidyhKlVKtruPyPIEokEvBA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiFYfS8drpmKo/PpIqPD1W/vp85fePqcrm7PhOXe/eYd11REFr
-	4ZyP0Ft7DNly2p8xs8CXIO4GM0tQG5zqBrp/uig6/iLgbdi5VItpuu+/D1Txd+k=
-X-Gm-Gg: ASbGncveRX/3rAeY7LD5rJTxUjOA6AbfOcJtsaCQgxeVCkl4tlmTgr6WbkLEEZB0rRE
-	hRqQfq6ofY7zmW4kLrnzmAJRNCHlIM3Ig0HrV2R2zqhj2NH+DJm11Pjtz/kMQ7h2c0rxSn9pQcK
-	b3R/V2A8DmMPj4dfU+CcvpP3By4ph5/A/pqKL2RGARxwUvSoWS0+mooE4cgRMyh8dge5qPv/i3+
-	G3gvwfFOlmwm9pIYCK7WrkoWKdG9a3MsjUyFydYmPxfMLsjrtu4CupOM7V2t7VZq2F83WD5aYeT
-	DVXZ8aHHjsR0aL3MeTnNU9kQLuQHYm6VO4/Wng==
-X-Google-Smtp-Source: AGHT+IGrW4uYgQjk5NoZkfCg5Q4JZQulnqw+Rx7LKQ7tq7TOQnOVz0pPCRyGYatMVBjG1AXtl+w6yw==
-X-Received: by 2002:a05:600c:1553:b0:43c:f6c6:578c with SMTP id 5b1f17b1804b1-43ecf8d24dbmr138973775e9.15.1744096877570;
-        Tue, 08 Apr 2025 00:21:17 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:2adf:eaae:f6ea:1a73])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec342a1fesm154404135e9.3.2025.04.08.00.21.16
+        d=1e100.net; s=20230601; t=1744097024; x=1744701824;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gVo2aw8e68tzNUEBR5LrT7OG8JEIu/cx6FavvcXXg2o=;
+        b=lrAXh9Y3k73ijQEbxqUk7WjFB82WnXciMlK4PbrJSOqVC5Ji7orT7GlC8v0VCfv32u
+         Op5CG+8oKkiNJiNxdwYmMPB3lAqKmCdgXjB1D7I9rjiEFrGGXeV206TJZ3pEVodgKI1S
+         r2UC8FeDYMuYJRLH1cu7J1W8FkDd4VU2sQQCmCHSdOWabztvx07KwdJDoEQdP/UQdM79
+         OmIzSYpgz/2CuGnOtLIDxVt5kDLpeaYcrg1Q8bQ7EGn+h9tkuSZ5RT/4PBVl4No6pgdj
+         hUyLLYL5hjtx0iJ/tQsr8qnRNi476GMrnuyTuzeNcR0Y3BuxSM93bxhfnPySawDRt0Jl
+         juww==
+X-Forwarded-Encrypted: i=1; AJvYcCV5AJENfpR0vfEoebABsEm9MqovOpUOGs3pDoW3Jb0lDnmkqC5/jscX2VzkYJ74yiPC1Z195Gg5LXlqKHs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUIOh2o9EEToYId+RIc/WfzTYDF8GWxOxRchSySr1v1BIH9aCK
+	uNl+vtiuwFFFKlSkxN5hj+YYgOL5oZmdDU/BQOdZYJ5oLYyEMx+jcsMip8FzYejv5og/tmgOrlk
+	=
+X-Gm-Gg: ASbGnct0OgWc8vlPvFNrgFJDPU9noUft9ljhkko+qAVYJDuHx3fjpl++ezWSz8PLJcw
+	tBJP5TqcMiXbaImbUtexpqREZOn1sZCWHKrZSWHwFXl8yjwp50WVUoUe3WG1g635jISnj/zOh4K
+	zQ0IR6QQqj3lBEsaO23fUQd6XOof3GhNE2yXcus7k6zbGBH3/aXaFgY/4Mkwfa4EX0wqQgVTsUi
+	aArtDRxVx7JrdCRr9P0Fy1PhDTpmpKHy1al7l5BSn4zww448pLMwHRoypsQfFgyVoQqUtYhVz9+
+	Lu8nFejJO3h4XUhX/rYO7ZtUXXuGKNFHLgiPIuqlibkrEoa4PMrMtZ/e
+X-Google-Smtp-Source: AGHT+IFPM9/HimoR1iqD87ojIqSwcwz9XpIsOOx/gkGl8C+bQirMDZCXalGm8Chz/NcPiOQyGMeqew==
+X-Received: by 2002:a17:902:d484:b0:223:6180:1bea with SMTP id d9443c01a7336-22a955734cfmr159838375ad.37.1744097023770;
+        Tue, 08 Apr 2025 00:23:43 -0700 (PDT)
+Received: from thinkpad ([120.60.134.231])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229787776f8sm92798135ad.256.2025.04.08.00.23.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 00:21:17 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 08 Apr 2025 09:21:13 +0200
-Subject: [PATCH 5/5] powerpc: 8xx/gpio: use new line value setter callbacks
+        Tue, 08 Apr 2025 00:23:43 -0700 (PDT)
+Date: Tue, 8 Apr 2025 12:53:37 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: MANISH PANDEY <quic_mapa@quicinc.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, linux-scsi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, quic_nitirawa@quicinc.com, 
+	quic_bhaskarv@quicinc.com, quic_rampraka@quicinc.com, quic_cang@quicinc.com, 
+	quic_nguyenb@quicinc.com
+Subject: Re: [PATCH V2 2/2] scsi: ufs: introduce quirk to extend
+ PA_HIBERN8TIME for UFS devices
+Message-ID: <l6xao2ubcvv3ho56dv6qfr3b62ve3olfbhvywg2is2xdhod27r@2nyjfwinrxzm>
+References: <20250404174539.28707-1-quic_mapa@quicinc.com>
+ <20250404174539.28707-3-quic_mapa@quicinc.com>
+ <hcguawgzuqgi2cyw3nf7uiilahjsvrm37f6zgfqlnfkck3jatv@xgaca3zgts2u>
+ <d09641c7-c266-4f0a-a0e3-56f63d8c9ce3@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250408-gpiochip-set-rv-powerpc-v1-5-73dc1ebc6ef1@linaro.org>
-References: <20250408-gpiochip-set-rv-powerpc-v1-0-73dc1ebc6ef1@linaro.org>
-In-Reply-To: <20250408-gpiochip-set-rv-powerpc-v1-0-73dc1ebc6ef1@linaro.org>
-To: Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Naveen N Rao <naveen@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Anatolij Gustschin <agust@denx.de>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2602;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=j7/vT2sqk3w0eq9R3JA6vJfjNNyoaO3ADhKnGJw1wQk=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn9M5nw+RlBM7GRxu/xO7Dk2MaKAuqw17eaEkTq
- XAGkLPLyfuJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ/TOZwAKCRARpy6gFHHX
- ctefD/9qKiesq1chihFiqBhxfgS5v/Ytom4gLe+8YrTB+nRv7zmH8mj621N8fmJEbmW4PziTnaC
- vseQz//WwbagqW+fKFpYGuCiAkZXD4qUxW1vkLOhI7yt0C56r8TBtz4knXs3tTi/hqp2+ipJWgX
- UVXU9RFrMW0oUnHD2IwDauVEQbv9YoRr3gfIruX2Jfin+8P3yNoHLKEv3t5jQ6ewz8qH8LPwodY
- yCpL0ONxgxBy8fc7de+R6lduiUbdf3fPTwkoWK1QAkR/AUfy+Ni8/XAdJOIw2wdnWgDQRKYF+ER
- cjAWXp/TWSAgCAlZG3yKF1skJJOT6Blym2rjQZ8rrOSppsjkPKZnOeo9Y3x7TBzP7CViN/RA3HG
- bNyL9Ie92Cb4W4sSw51ovD0kquBZmhMSoS0kOhM3ojN36mrccJ80rNzoxdbyXSf7uUqH7/ntBXM
- NPh0rmGrYqwlSh+jhXcsZriiy46/LsMHpY7pQydNt7l8Wo9BGHg9SQAu2J4d4JxMtGb5l5R1UL0
- 8/k2a6xn6UmqcZdk/PR6QWHHxARvz3jgR8F/ypWXfvC9nPns2Bf8mJStATofB5n1rDgOKeLvomB
- dV7fXkj7MYSi07D2C+6gI9xd+WtEvQT9lspoQyQEV0Q7eWLUuAeISFqApvAq7AhAWHdcwsXfXgV
- C2BzXkHLmqZ5Ogg==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d09641c7-c266-4f0a-a0e3-56f63d8c9ce3@quicinc.com>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Apr 08, 2025 at 11:07:58AM +0530, MANISH PANDEY wrote:
+> 
+> 
+> On 4/7/2025 12:05 AM, Manivannan Sadhasivam wrote:
+> > On Fri, Apr 04, 2025 at 11:15:39PM +0530, Manish Pandey wrote:
+> > > Some UFS devices need additional time in hibern8 mode before exiting,
+> > > beyond the negotiated handshaking phase between the host and device.
+> > > Introduce a quirk to increase the PA_HIBERN8TIME parameter by 100 µs
+> > > to ensure proper hibernation process.
+> > > 
+> > 
+> > This commit message didn't mention the UFS device for which this quirk is being
+> > applied.
+> > 
+> Since it's a quirk and may be applicable to other vendors also in future, so
+> i thought to keep it general.
+> 
 
-struct gpio_chip now has callbacks for setting line values that return
-an integer, allowing to indicate failures. Convert the driver to using
-them.
+You cannot make commit message generic. It should precisely describe the change.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- arch/powerpc/platforms/8xx/cpm1.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+> Will update in next patch set if required.
+>  >> Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
+> > > ---
+> > >   drivers/ufs/core/ufshcd.c | 31 +++++++++++++++++++++++++++++++
+> > >   include/ufs/ufs_quirks.h  |  6 ++++++
+> > >   2 files changed, 37 insertions(+)
+> > > 
+> > > diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> > > index 464f13da259a..2b8203fe7b8c 100644
+> > > --- a/drivers/ufs/core/ufshcd.c
+> > > +++ b/drivers/ufs/core/ufshcd.c
+> > > @@ -278,6 +278,7 @@ static const struct ufs_dev_quirk ufs_fixups[] = {
+> > >   	  .model = UFS_ANY_MODEL,
+> > >   	  .quirk = UFS_DEVICE_QUIRK_DELAY_BEFORE_LPM |
+> > >   		   UFS_DEVICE_QUIRK_HOST_PA_TACTIVATE |
+> > > +		   UFS_DEVICE_QUIRK_PA_HIBER8TIME |
+> > >   		   UFS_DEVICE_QUIRK_RECOVERY_FROM_DL_NAC_ERRORS },
+> > >   	{ .wmanufacturerid = UFS_VENDOR_SKHYNIX,
+> > >   	  .model = UFS_ANY_MODEL,
+> > > @@ -8384,6 +8385,33 @@ static int ufshcd_quirk_tune_host_pa_tactivate(struct ufs_hba *hba)
+> > >   	return ret;
+> > >   }
+> > > +/**
+> > > + * ufshcd_quirk_override_pa_h8time - Ensures proper adjustment of PA_HIBERN8TIME.
+> > > + * @hba: per-adapter instance
+> > > + *
+> > > + * Some UFS devices require specific adjustments to the PA_HIBERN8TIME parameter
+> > > + * to ensure proper hibernation timing. This function retrieves the current
+> > > + * PA_HIBERN8TIME value and increments it by 100us.
+> > > + */
+> > > +static void ufshcd_quirk_override_pa_h8time(struct ufs_hba *hba)
+> > > +{
+> > > +	u32 pa_h8time = 0;
+> > 
+> > Why do you need to initialize it?
+> > 
+> Agree.. Not needed, will update.>> +	int ret;
+> > > +
+> > > +	ret = ufshcd_dme_get(hba, UIC_ARG_MIB(PA_HIBERN8TIME),
+> > > +			&pa_h8time);
+> > > +	if (ret) {
+> > > +		dev_err(hba->dev, "Failed to get PA_HIBERN8TIME: %d\n", ret);
+> > > +		return;
+> > > +	}
+> > > +
+> > > +	/* Increment by 1 to increase hibernation time by 100 µs */
+> > 
+> >  From where the value of 100us adjustment is coming from?
+> > 
+> > - Mani
+> > 
+> These values are derived from experiments on Qualcomm SoCs.
+> However this is also matching with ufs-exynos.c
+> 
 
-diff --git a/arch/powerpc/platforms/8xx/cpm1.c b/arch/powerpc/platforms/8xx/cpm1.c
-index 1dc095ad48fc..7462c221115c 100644
---- a/arch/powerpc/platforms/8xx/cpm1.c
-+++ b/arch/powerpc/platforms/8xx/cpm1.c
-@@ -417,7 +417,7 @@ static void __cpm1_gpio16_set(struct cpm1_gpio16_chip *cpm1_gc, u16 pin_mask, in
- 	out_be16(&iop->dat, cpm1_gc->cpdata);
- }
- 
--static void cpm1_gpio16_set(struct gpio_chip *gc, unsigned int gpio, int value)
-+static int cpm1_gpio16_set(struct gpio_chip *gc, unsigned int gpio, int value)
- {
- 	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(gc);
- 	unsigned long flags;
-@@ -428,6 +428,8 @@ static void cpm1_gpio16_set(struct gpio_chip *gc, unsigned int gpio, int value)
- 	__cpm1_gpio16_set(cpm1_gc, pin_mask, value);
- 
- 	spin_unlock_irqrestore(&cpm1_gc->lock, flags);
-+
-+	return 0;
- }
- 
- static int cpm1_gpio16_to_irq(struct gpio_chip *gc, unsigned int gpio)
-@@ -497,7 +499,7 @@ int cpm1_gpiochip_add16(struct device *dev)
- 	gc->direction_input = cpm1_gpio16_dir_in;
- 	gc->direction_output = cpm1_gpio16_dir_out;
- 	gc->get = cpm1_gpio16_get;
--	gc->set = cpm1_gpio16_set;
-+	gc->set_rv = cpm1_gpio16_set;
- 	gc->to_irq = cpm1_gpio16_to_irq;
- 	gc->parent = dev;
- 	gc->owner = THIS_MODULE;
-@@ -554,7 +556,7 @@ static void __cpm1_gpio32_set(struct cpm1_gpio32_chip *cpm1_gc, u32 pin_mask, in
- 	out_be32(&iop->dat, cpm1_gc->cpdata);
- }
- 
--static void cpm1_gpio32_set(struct gpio_chip *gc, unsigned int gpio, int value)
-+static int cpm1_gpio32_set(struct gpio_chip *gc, unsigned int gpio, int value)
- {
- 	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(gc);
- 	unsigned long flags;
-@@ -565,6 +567,8 @@ static void cpm1_gpio32_set(struct gpio_chip *gc, unsigned int gpio, int value)
- 	__cpm1_gpio32_set(cpm1_gc, pin_mask, value);
- 
- 	spin_unlock_irqrestore(&cpm1_gc->lock, flags);
-+
-+	return 0;
- }
- 
- static int cpm1_gpio32_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
-@@ -618,7 +622,7 @@ int cpm1_gpiochip_add32(struct device *dev)
- 	gc->direction_input = cpm1_gpio32_dir_in;
- 	gc->direction_output = cpm1_gpio32_dir_out;
- 	gc->get = cpm1_gpio32_get;
--	gc->set = cpm1_gpio32_set;
-+	gc->set_rv = cpm1_gpio32_set;
- 	gc->parent = dev;
- 	gc->owner = THIS_MODULE;
- 
+Okay. In that case, you should mention that the 100us value is derived from
+experiments on Qcom and Samsung SoCs. Otherwise, it gives an assumption that
+this value is universal.
+
+- Mani
 
 -- 
-2.45.2
-
+மணிவண்ணன் சதாசிவம்
 
