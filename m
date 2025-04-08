@@ -1,258 +1,260 @@
-Return-Path: <linux-kernel+bounces-593842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9297EA804D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:12:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A21DA80493
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEA684241C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:03:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D48331B60076
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17E226B2BB;
-	Tue,  8 Apr 2025 12:00:54 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D6326AA89;
+	Tue,  8 Apr 2025 12:02:00 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F25826A08E
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 12:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5527926A1B3;
+	Tue,  8 Apr 2025 12:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744113654; cv=none; b=uChaBC7yb//EQCxXH/lKxW5GJz8DXd8zzgsU7MNtlq5evYC3bRBXVymtQBonOZ8jfGwIo4DaiofnK4zt8Z7txjLDCjLvdDhcGv1oL25D19mH3le5EtscgyUKtG5V4/U7loSuDmVZ46CBvFh9rRhx5Af0ILQ7Fmso6B9pPlxbj+A=
+	t=1744113720; cv=none; b=hrZlFJ0pkKI4D867d2MoF1D7e/VfY3M2r71j50EZmdQ4YoS+MVUWVLix1o9YHFibCsYkknM5SkEFekHsjYvcgUBwIsHLVaTdwg9xVwhtzAe45ueHcFsZYpAJTbMw07Xh+1SBxzRDcWnwGqN2ycNGrgCkDy9zd6s2TxWSn11Np/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744113654; c=relaxed/simple;
-	bh=uURuyUTyytSYMJNGPupFetyuh35vrylqZdU9Re4s1aQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XM1R0QSyNC1ANt+y2g1CB5cmCuB0hAJ58DrpHENPpbypSdQrlB0YLEikkl42pdWKBw95kkb9Bu57H2xmRv54JmV0AUsTjVrM7g00a80kS8XV+q2++StOvw/qDplfnFqFdkoV+GkGIZ9RPI507pS32HTdjKvGhAQ5ZGtt00f6rSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1u27d0-0000js-Eg; Tue, 08 Apr 2025 14:00:30 +0200
-Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1u27d0-003vQ2-0F;
-	Tue, 08 Apr 2025 14:00:30 +0200
-Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
-	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1u27cz-00GJS1-39;
-	Tue, 08 Apr 2025 14:00:29 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Tue, 08 Apr 2025 14:00:24 +0200
-Subject: [PATCH 3/3] dt-bindings: clock: add TI CDCE6214 binding
+	s=arc-20240116; t=1744113720; c=relaxed/simple;
+	bh=YbhJPLL+iJWQccsEs0l+4Ygj9OD9Ke90lAMxrr+XTZQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dTfuDHbjkmdvsSzA3is9X10ElcobGcOGddtJUUNW5/KtY0IwKOVf5bl8iAEn4DiceNuNFpP4tKlOmMUxZ8H5Zh/cuL6NghcA0dDfOHi+Lr6lqZHxMY7xQI41sroR0UqLTY6kWVDXOR5leaNFIwvHYNeT6YMvK4fS+d2HGfWjc60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4ZX4NR0GT5zHrMs;
+	Tue,  8 Apr 2025 19:58:31 +0800 (CST)
+Received: from kwepemo200002.china.huawei.com (unknown [7.202.195.209])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0B1B41402CD;
+	Tue,  8 Apr 2025 20:01:54 +0800 (CST)
+Received: from [10.174.179.13] (10.174.179.13) by
+ kwepemo200002.china.huawei.com (7.202.195.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 8 Apr 2025 20:01:52 +0800
+Message-ID: <bec4d284-5414-cd32-3fcf-0b8dd6f602ab@huawei.com>
+Date: Tue, 8 Apr 2025 20:01:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250408-clk-cdce6214-v1-3-bd4e7092a91f@pengutronix.de>
-References: <20250408-clk-cdce6214-v1-0-bd4e7092a91f@pengutronix.de>
-In-Reply-To: <20250408-clk-cdce6214-v1-0-bd4e7092a91f@pengutronix.de>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, kernel@pengutronix.de, 
- =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>, 
- Sascha Hauer <s.hauer@pengutronix.de>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744113629; l=4324;
- i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=uURuyUTyytSYMJNGPupFetyuh35vrylqZdU9Re4s1aQ=;
- b=K4OMnI4y9egZSBvm+YcCLbmzWTT7hfJvzhqG1mLa0W7eEaCKAaxpCqFlVKNXBYBE8eNhDrqKv
- lk0/7v5kURTDuqaV52EZ4M808ihhoa1fmRdLabo5NHLL1z3pQI+1jCv
-X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
- pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: s.hauer@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH V4] mm/gup: Clear the LRU flag of a page before adding to
+ LRU batch
+To: David Hildenbrand <david@redhat.com>, <yangge1116@126.com>,
+	<akpm@linux-foundation.org>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<stable@vger.kernel.org>, <21cnbao@gmail.com>,
+	<baolin.wang@linux.alibaba.com>, <aneesh.kumar@linux.ibm.com>,
+	<liuzixing@hygon.cn>, Kefeng Wang <wangkefeng.wang@huawei.com>
+References: <1720075944-27201-1-git-send-email-yangge1116@126.com>
+ <4119c1d0-5010-b2e7-3f1c-edd37f16f1f2@huawei.com>
+ <91ac638d-b2d6-4683-ab29-fb647f58af63@redhat.com>
+ <076babae-9fc6-13f5-36a3-95dde0115f77@huawei.com>
+ <26870d6f-8bb9-44de-9d1f-dcb1b5a93eae@redhat.com>
+ <5d0cb178-6436-d98b-3abf-3bcf8710eb6f@huawei.com>
+ <207a00a2-0895-4086-97ae-d31ead423cf8@redhat.com>
+From: Jinjiang Tu <tujinjiang@huawei.com>
+In-Reply-To: <207a00a2-0895-4086-97ae-d31ead423cf8@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemo200002.china.huawei.com (7.202.195.209)
 
-The CDCE6214 is a Ultra-Low Power Clock Generator With One PLL, Four
-Differential Outputs, Two Inputs, and Internal EEPROM. This patch adds
-the device tree binding for this chip.
 
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
----
- .../devicetree/bindings/clock/ti,cdce6214.yaml     | 157 +++++++++++++++++++++
- 1 file changed, 157 insertions(+)
+在 2025/4/8 18:04, David Hildenbrand 写道:
+> On 08.04.25 10:47, Jinjiang Tu wrote:
+>>
+>> 在 2025/4/1 22:33, David Hildenbrand 写道:
+>>> On 27.03.25 12:16, Jinjiang Tu wrote:
+>>>>
+>>>> 在 2025/3/26 20:46, David Hildenbrand 写道:
+>>>>> On 26.03.25 13:42, Jinjiang Tu wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>
+>>>>> Hi!
+>>>>>
+>>>>>> We notiched a 12.3% performance regression for LibMicro pwrite
+>>>>>> testcase due to
+>>>>>> commit 33dfe9204f29 ("mm/gup: clear the LRU flag of a page before
+>>>>>> adding to LRU batch").
+>>>>>>
+>>>>>> The testcase is executed as follows, and the file is tmpfs file.
+>>>>>>        pwrite -E -C 200 -L -S -W -N "pwrite_t1k" -s 1k -I 500 -f 
+>>>>>> $TFILE
+>>>>>
+>>>>> Do we know how much that reflects real workloads? (IOW, how much
+>>>>> should we care)
+>>>>
+>>>> No, it's hard to say.
+>>>>
+>>>>>
+>>>>>>
+>>>>>> this testcase writes 1KB (only one page) to the tmpfs and repeats
+>>>>>> this step for many times. The Flame
+>>>>>> graph shows the performance regression comes from
+>>>>>> folio_mark_accessed() and workingset_activation().
+>>>>>>
+>>>>>> folio_mark_accessed() is called for the same page for many times.
+>>>>>> Before this patch, each call will
+>>>>>> add the page to cpu_fbatches.activate. When the fbatch is full, the
+>>>>>> fbatch is drained and the page
+>>>>>> is promoted to active list. And then, folio_mark_accessed() does
+>>>>>> nothing in later calls.
+>>>>>>
+>>>>>> But after this patch, the folio clear lru flags after it is added to
+>>>>>> cpu_fbatches.activate. After then,
+>>>>>> folio_mark_accessed will never call folio_activate() again due to 
+>>>>>> the
+>>>>>> page is without lru flag, and
+>>>>>> the fbatch will not be full and the folio will not be marked active,
+>>>>>> later folio_mark_accessed()
+>>>>>> calls will always call workingset_activation(), leading to
+>>>>>> performance regression.
+>>>>>
+>>>>> Would there be a good place to drain the LRU to effectively get that
+>>>>> processed? (we can always try draining if the LRU flag is not set)
+>>>>
+>>>> Maybe we could drain the search the cpu_fbatches.activate of the
+>>>> local cpu in __lru_cache_activate_folio()? Drain other fbatches is
+>>>> meaningless .
+>>>
+>>> So the current behavior is that folio_mark_accessed() will end up
+>>> calling folio_activate()
+>>> once, and then __lru_cache_activate_folio() until the LRU was drained
+>>> (which can
+>>> take a looong time).
+>>>
+>>> The old behavior was that folio_mark_accessed() would keep calling
+>>> folio_activate() until
+>>> the LRU was drained simply because it was full of "all the same pages"
+>>> ?. Only *after*
+>>> the LRU was drained, folio_mark_accessed() would actually not do
+>>> anything (desired behavior).
+>>>
+>>> So the overhead comes primarily from __lru_cache_activate_folio()
+>>> searching through
+>>> the list "more" repeatedly because the LRU does get drained less
+>>> frequently; and
+>>> it would never find it in there in this case.
+>>>
+>>> So ... it used to be suboptimal before, now it's more suboptimal I
+>>> guess?! :)
+>>>
+>>> We'd need a way to better identify "this folio is already queued for
+>>> activation". Searching
+>>> that list as well would be one option, but the hole "search the list"
+>>> is nasty.
+>>>
+>>> Maybe we can simply set the folio as active when staging it for
+>>> activation, after having
+>>> cleared the LRU flag? We already do that during folio_add.
+>>>
+>>> As the LRU flag was cleared, nobody should be messing with that folio
+>>> until the cache was
+>>> drained and the move was successful.
+>>>
+>>>
+>>> Pretty sure this doesn't work, but just to throw out an idea:
+>>>
+>>>  From c26e1c0ceda6c818826e5b89dc7c7c9279138f80 Mon Sep 17 00:00:00 2001
+>>> From: David Hildenbrand <david@redhat.com>
+>>> Date: Tue, 1 Apr 2025 16:31:56 +0200
+>>> Subject: [PATCH] test
+>>>
+>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>>> ---
+>>>   mm/swap.c | 21 ++++++++++++++++-----
+>>>   1 file changed, 16 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/mm/swap.c b/mm/swap.c
+>>> index fc8281ef42415..bbf9aa76db87f 100644
+>>> --- a/mm/swap.c
+>>> +++ b/mm/swap.c
+>>> @@ -175,6 +175,8 @@ static void folio_batch_move_lru(struct
+>>> folio_batch *fbatch, move_fn_t move_fn)
+>>>       folios_put(fbatch);
+>>>   }
+>>>
+>>> +static void lru_activate(struct lruvec *lruvec, struct folio *folio);
+>>> +
+>>>   static void __folio_batch_add_and_move(struct folio_batch __percpu
+>>> *fbatch,
+>>>           struct folio *folio, move_fn_t move_fn,
+>>>           bool on_lru, bool disable_irq)
+>>> @@ -191,6 +193,10 @@ static void __folio_batch_add_and_move(struct
+>>> folio_batch __percpu *fbatch,
+>>>       else
+>>>           local_lock(&cpu_fbatches.lock);
+>>>
+>>> +    /* We'll only perform the actual list move deferred. */
+>>> +    if (move_fn == lru_activate)
+>>> +        folio_set_active(folio);
+>>> +
+>>>       if (!folio_batch_add(this_cpu_ptr(fbatch), folio) ||
+>>> folio_test_large(folio) ||
+>>>           lru_cache_disabled())
+>>>           folio_batch_move_lru(this_cpu_ptr(fbatch), move_fn);
+>>> @@ -299,12 +305,14 @@ static void lru_activate(struct lruvec *lruvec,
+>>> struct folio *folio)
+>>>   {
+>>>       long nr_pages = folio_nr_pages(folio);
+>>>
+>>> -    if (folio_test_active(folio) || folio_test_unevictable(folio))
+>>> -        return;
+>>> -
+>>> +    /*
+>>> +     * We set the folio active after clearing the LRU flag, and set 
+>>> the
+>>> +     * LRU flag only after moving it to the right list.
+>>> +     */
+>>> +    VM_WARN_ON_ONCE(!folio_test_active(folio));
+>>> +    VM_WARN_ON_ONCE(folio_test_unevictable(folio));
+>>>
+>>>       lruvec_del_folio(lruvec, folio);
+>>> -    folio_set_active(folio);
+>>>       lruvec_add_folio(lruvec, folio);
+>>>       trace_mm_lru_activate(folio);
+>>>
+>>> @@ -342,7 +350,10 @@ void folio_activate(struct folio *folio)
+>>>           return;
+>>>
+>>>       lruvec = folio_lruvec_lock_irq(folio);
+>>> -    lru_activate(lruvec, folio);
+>>> +    if (!folio_test_unevictable(folio)) {
+>>> +        folio_set_active(folio);
+>>> +        lru_activate(lruvec, folio);
+>>> +    }
+>>>       unlock_page_lruvec_irq(lruvec);
+>>>       folio_set_lru(folio);
+>>>   }
+>>
+>> I test with the patch, and the performance regression disappears.
+>>
+>> By the way, I find folio_test_unevictable() is called in 
+>> lru_deactivate, lru_lazyfree, etc.
+>> unevictable flag is set when the caller clears lru flag. IIUC, since 
+>> commit 33dfe9204f29 ("mm/gup: clear the LRU flag of a page before
+>> adding to LRU batch"), folios in fbatch can't be set unevictable 
+>> flag, so there is no need to check unevictable flag in 
+>> lru_deactivate, lru_lazyfree, etc?
+>
+> I was asking myself the exact same question when crafting this patch. 
+> Sounds like a cleanup worth investigating! :)
+>
+> Do you have capacity to look into that, and to turn my proposal into a 
+> proper patch? It might take me a bit until I get to it.
 
-diff --git a/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-new file mode 100644
-index 0000000000000..63e6c9d9b1771
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-@@ -0,0 +1,157 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/ti,cdce6214.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI CDCE6214 programmable clock generator with PLL
-+
-+maintainers:
-+  - Sascha Hauer <s.hauer@pengutronix.de>
-+
-+description: |
-+  Ultra-Low Power Clock Generator With One PLL, Four Differential Outputs,
-+  Two Inputs, and Internal EEPROM
-+
-+  - CDCE6214: https://www.ti.com/product/CDCE6214
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,cdce6214
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 2
-+
-+  clock-names:
-+    minItems: 1
-+    items:
-+      - const: priref
-+      - const: secref
-+
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 0
-+
-+  "#clock-cells":
-+    const: 1
-+
-+patternProperties:
-+  "^clk@[0-1]$":
-+    type: object
-+    description: |
-+      optional child node that can be used to specify input pin parameters. The reg
-+      properties match the CDCE6214_CLK_* defines.
-+
-+    additionalProperties: false
-+
-+    properties:
-+      reg:
-+        description:
-+          clock input identifier.
-+        minimum: 0
-+        maximum: 1
-+
-+      ti,ref-xtal:
-+        type: boolean
-+        description: |
-+          If true use input as XTAL input
-+
-+      ti,ref-lvcmos:
-+        type: boolean
-+        description: |
-+          If true use input as LVCMOS input
-+
-+      ti,ref-diff:
-+        type: boolean
-+        description: |
-+          If true use input as differential input
-+
-+  "^clk@[2-9]$":
-+    type: object
-+    description: |
-+      optional child node that can be used to specify output pin parameters.  The reg
-+      properties match the CDCE6214_CLK_* defines.
-+
-+    additionalProperties: false
-+
-+    properties:
-+      reg:
-+        description:
-+          clock output identifier.
-+        minimum: 2
-+        maximum: 9
-+
-+      ti,lphcsl:
-+        type: boolean
-+        description: |
-+          If true enable LP-HCSL output mode for this clock
-+
-+      ti,lvds:
-+        type: boolean
-+        description: |
-+          If true enable LVDS output mode for this clock
-+
-+      ti,cmosp:
-+        type: boolean
-+        description: |
-+          If true enable CMOSP output for this clock
-+
-+      ti,cmosn:
-+        type: boolean
-+        description: |
-+          If true enable CMOSN output for this clock
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - "#clock-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/ti,cdce6214.h>
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        clock-generator@67 {
-+            compatible = "ti,cdce6214";
-+            reg = <0x67>;
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+            #clock-cells = <1>;
-+            clocks = <&clock_ref25m>;
-+            clock-names = "priref";
-+
-+            clk@CDCE6214_CLK_SECREF {
-+                reg = <CDCE6214_CLK_SECREF>;
-+                ti,ref-xtal;
-+            };
-+
-+            clk@CDCE6214_CLK_OUT1 {
-+                reg = <CDCE6214_CLK_OUT1>;
-+                ti,cmosp;
-+                ti,cmosn;
-+            };
-+
-+            clk@CDCE6214_CLK_OUT2 {
-+                reg = <CDCE6214_CLK_OUT2>;
-+                ti,lvds;
-+            };
-+
-+            clk@CDCE6214_CLK_OUT4 {
-+                reg = <CDCE6214_CLK_OUT4>;
-+                ti,cmosp;
-+                ti,cmosn;
-+            };
-+        };
-+    };
-
--- 
-2.39.5
+Sure, I will send a formal patch ASAP.
 
 
