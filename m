@@ -1,149 +1,138 @@
-Return-Path: <linux-kernel+bounces-594531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59541A8135B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:17:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C5FA81361
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A73D8A1767
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:16:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB1671BA7E9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD7E23E331;
-	Tue,  8 Apr 2025 17:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C794E236A7B;
+	Tue,  8 Apr 2025 17:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="kAKER9WG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kxASuWul"
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LTb5C/t3"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425D3234979;
-	Tue,  8 Apr 2025 17:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0942356CC;
+	Tue,  8 Apr 2025 17:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744132593; cv=none; b=MjYBv+ugPVFMWcr257dOl8baMPpdxBZ9M1P0D2a/Podb2X9GoF480u3V0GUoEjc83dK4cYKOvVQXeFflHkA802TJsZjy4f3vIhNQrs2mUngVFfONJNlAFMdQMKdaU9HFYhMW7ucNtVefeaI0txuKCJIgK5Yim3MJow8iEhlcsE8=
+	t=1744132673; cv=none; b=BfoCwag53JnymxAuXSzAUe14DGxiweAK2eCx8nES6X8UjOSeJ5FsbjveOAURyTldJWzGF/7yPafQWiAxLBSJCadDbqXsz7EwyfOMOCCsjb1shoh6cageWAYmkuF+Z1g16JPXQfXRkBVPHTk6Rle4cFdneaLoYjmUU8YBVmG+wYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744132593; c=relaxed/simple;
-	bh=5sVm7Ccq5DFzle8yTbs1g/hLQHzfJVombqZ3QUUwX+Y=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=pCcwJa2akv2wmtCd0ACoCc6CdVNsrBmOzFEhNpSnyLU2MA13DNaNPy/Xz7mDJCuHdJksHRYu8Pcr/MNmcw1BmAoyTPK5vqXFKcVIuG4R0IZ/gOdakYspLA3LgLom1aNC8xE3NuwOXc4YCf/Xm4Bn8L1IzUbSDhyG/C3JZBnB+Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=kAKER9WG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kxASuWul; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 301A611400B6;
-	Tue,  8 Apr 2025 13:16:28 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-12.internal (MEProxy); Tue, 08 Apr 2025 13:16:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1744132588;
-	 x=1744218988; bh=ZusC4j88iZDe7cKmTzZPwEEcBckZyU9z5JAnaD7npYo=; b=
-	kAKER9WG8clrJgdPv5KjhGSlW0MTMk5KT4ZUk7Kw0BFGACZ5jol0penH71/1gQAN
-	5qjpXbVzNbMs9sqso3a55c0mhxatEOgnBlPFswaXbqQVXVuL2b5qa602yQCMJ9Tg
-	C/VVYD9yetDD4NvMjEZRNne8hAFU+Dl7BqDOCFuyobL44dg6iyb60EKsZnC+fm7A
-	u0Ik2rTGasA0fSEjYMnN8h5f0Tbt9X/0Ikpuy4r+fJd3WolKh736R69sUkxgNcQv
-	GvCPiGiFWVaxQXUnxdnQNxTA90CCMynLszA2i7jkuVjgDkgGEtVAEq+b/vqBMwZ0
-	LzXKhjxzgHF6qODoQUzlQA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1744132588; x=
-	1744218988; bh=ZusC4j88iZDe7cKmTzZPwEEcBckZyU9z5JAnaD7npYo=; b=k
-	xASuWulBPJTSShQgUfSKwnoLD8ec+A277BzKDuxEnJzp8ZzNq4MdXk/KoUVv6jvB
-	GMb+Llj/jrPu2WhV16RwgIFBSTChgTX14A3Y/Y7dEVGL6qoCYjUlDpPA0851RWje
-	gw0idm5agye/vmHe/LSXchEkPiyoHcCSsDWA7lyl6hN6U76nBVxIM9HcNaXQqPPR
-	2e3y+Rtwa4q+qm50bpWXvaxipmdCC2wcTQgdy1aLlSpt23iaDnPdo+CI4IdUfHLb
-	ZR5w/enAAEe1T96W8TFXkKb+rzLSz16dQr29S287m9i7ftHNci8O3roNlTk9gL3T
-	TOZPxW5NWjLteT6xc52ww==
-X-ME-Sender: <xms:6Vn1ZzgSipKPFrG6IuVoqX5aC0B3zsJ03TwguC7t67ub6IzI064pWg>
-    <xme:6Vn1ZwAuvhR3fDsZ5YZ1Y1k607MrfdkQysMrhL0JsIj5HLd9Ng1ogrHZkwqRYKAbs
-    llOE7mlyo4sQ9Q2Jgw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdefieeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhepteeutddtheffkedttdduiefgffefkefhgfeu
-    ieetjeehteeludefleffieevffdtnecuffhomhgrihhnpeduiedrnhhonecuvehluhhsth
-    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggs
-    rdguvgdpnhgspghrtghpthhtohepvdeipdhmohguvgepshhmthhpohhuthdprhgtphhtth
-    hopegsphesrghlihgvnhekrdguvgdprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhn
-    rghssegrrhhmrdgtohhmpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrd
-    gtohhmpdhrtghpthhtohepnhhitgholhgrshesfhhjrghslhgvrdgvuhdprhgtphhtthho
-    pegsrhhgvghrshhtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepuhgsihiijhgrkhesgh
-    hmrghilhdrtghomhdprhgtphhtthhopehhvghrsggvrhhtsehgohhnughorhdrrghprghn
-    rgdrohhrghdrrghupdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopegrrhhnugeskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:6Vn1ZzHurRHuHgzee5gnc6zzuDyC99eqxxcG0Rd-a83_k91ZjMjq6g>
-    <xmx:6Vn1ZwTdHSNtQ4IwxNAhwiTCO_unZ12OFl0sjgDX-1QoynU850u4GQ>
-    <xmx:6Vn1Zwx3PDyMl3hQZQb01ThSkhjNY3lKUTI6KycfntiEaYR15s-G7A>
-    <xmx:6Vn1Z24UqqDehkMC3wjyPDDqgGzgMI5XFgUZNLhnHBQDEILM7AC05Q>
-    <xmx:7Fn1Z3TC_xAheqDni-VD8_gghQnO4lzwgRrKNmcct4VKq6wG0MRxZT47>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 0A5352220073; Tue,  8 Apr 2025 13:16:24 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1744132673; c=relaxed/simple;
+	bh=3U0IErLIyOWqVxRKzPpI+ZFFfJDxPaxOtZn64adEp/4=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R/rOY4Uw7X9LMIxqmwlr0ioE3fUMakj9M7CZh1c9Fy6naxj34NQtsSmFlP0VaqW1rJTxmjamSDYqA7jyLnkIVxUDeYBBlocYqmIqsijQ6xGW4UhqNoMmE3VMFgJMhQGHUTiRrsV3uLZXlxNozTP0kLtiWT3O51e1JcgMp/uxznA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LTb5C/t3; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43edecbfb94so38961145e9.1;
+        Tue, 08 Apr 2025 10:17:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744132670; x=1744737470; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=y9FEiJ6GtO3x4AiYlszABTIXDcZSRIh+gOJoUIjbzrc=;
+        b=LTb5C/t3NBpwjGvmRib2NEw8a2h+7rDSPPJajTj88IUf2mnmkHcr4wP3iv2YVBdE2m
+         ILqm7ygxMECWe9Wuch9egLdvrf0TBBSVYrH5UXput43PsE+9CzpjmeLuT4ELAO4MYeOB
+         d+UyBbxms00EGVi/mAi2ZPUkxaUBd7CYX3fAQLoVig/vd9K8jjvxXUycaeQ71TA/wAMs
+         KWisq28b9PwPmEUDpbeMnVTgIpkjKwmbJJqkNHv20IjthTDfx9AVhUbMEl/G5k4V/VhG
+         jHzsSOTCBEPGcTwh9vJHw2nM+W2crMKUt/nY0La3UNLYBjgULjcUHFrY+/+6Zco/WOp7
+         VUXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744132670; x=1744737470;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y9FEiJ6GtO3x4AiYlszABTIXDcZSRIh+gOJoUIjbzrc=;
+        b=jNR4XaLPlqqI5apeT7RkfhwaeUIQHbMr0DXQB3XBkSLth3bQZKhVpqE7HJAv07xagM
+         zx+9Tr7Dd2i3SorPgF4Scc2CJ23qW5ENhSL8kwZWXDKJiclGqsi6PeqF/bhlIniknPmk
+         voTX/mUN3ck8t7q1eOAc6CzW3yWY7dZY3k3gGLDBCaDAKzcLGvYn9zMLOL8tW5uEYajs
+         Y6nZBrG/hPxsnVtnDiORf/5xyG7i5jdqsbCDRk19SKmQIygniFlrxpZr0E9LjT7ubMYQ
+         rzY0eLMhhquPDDEGFNRDoAn0u4y2p5ra9nLgLmd2Fn6az9XR66QEG6pfSVImejQK4r2f
+         Sa6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUb+ZeHGE+A/h/iyLi4LmW5QoOLXjp5gzOEChN9Zlih/tToLNpcqUJGqmB/Qjw7bblX+ezldhr9AwSdNEo=@vger.kernel.org, AJvYcCV8pGfHAjZHZqi/2+sslbz+Qex5hqJdMHY9lhNzJW7rAFvCh7UdEUfxfMC6lingWd4MeZHT08/f@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP9bK5gG9zDdsULW5EOiFcXbtzw4BJTm73q8mSjcJZfYA3XCdp
+	lZtIrHDSy0dr+V4yyAel5ovZZ/mTbqT8Qon8uDrK82jtWzENImKe
+X-Gm-Gg: ASbGncsnQon77GYGuxbzOoHTnCGqGkUxy+q/K2VTrbAXUu3uuR+He+DJ1DkmcW0jXDv
+	jtLIp3XVDl2wGW+CfjMo+L3EsKLZRwsxSgJ4ORZzWWqJqDXPsqtJCupkgYvD9pk2k9y4ZlHuTbo
+	vH3serexCTWz3hYy1GXppm7qWPlZkavF2XgsG0Qb1xuAgAOd6mGAjsdXfFJCJltkUE1jwyRaD7n
+	D1MGZJ6Li/BazZyfaX30qKaajBAjrNPUbuf7s9mDyhPva0+f0zyqB+7w/lvJwi/g/Ci8NZwSH59
+	N0HY77ODfDxy7sFqhSXsf++JEshD4lQbnLpY2P7VQ2XFug==
+X-Google-Smtp-Source: AGHT+IGMxsDZ68vfGvY6rmtQL+9u8l96JpsI36c7dOT+rCUWPpt8G0b9GVy/azT74f17G5UjIxKHow==
+X-Received: by 2002:a05:600c:34c2:b0:43c:fdbe:43be with SMTP id 5b1f17b1804b1-43ed0da05c8mr146186625e9.27.1744132669487;
+        Tue, 08 Apr 2025 10:17:49 -0700 (PDT)
+Received: from Ansuel-XPS. ([109.52.104.145])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c2fe9875dsm15443812f8f.0.2025.04.08.10.17.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 10:17:49 -0700 (PDT)
+Message-ID: <67f55a3d.050a0220.f3f61.8550@mx.google.com>
+X-Google-Original-Message-ID: <Z_VaN2iATWh7sipi@Ansuel-XPS.>
+Date: Tue, 8 Apr 2025 19:17:43 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Qingfang Deng <dqfext@gmail.com>,
+	SkyLake Huang <SkyLake.Huang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Simon Horman <horms@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.or
+Subject: Re: [net-next PATCH 2/2] net: phy: mediatek: add Airoha PHY ID to
+ SoC driver
+References: <20250408155321.613868-1-ansuelsmth@gmail.com>
+ <20250408155321.613868-2-ansuelsmth@gmail.com>
+ <Z_VYz6InC1p4vwku@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T46c1ceb211c7c949
-Date: Tue, 08 Apr 2025 19:16:04 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Mark Rutland" <mark.rutland@arm.com>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- "Ard Biesheuvel" <ardb@kernel.org>, "Borislav Petkov" <bp@alien8.de>,
- "Brian Gerst" <brgerst@gmail.com>,
- "Catalin Marinas" <catalin.marinas@arm.com>,
- "Dave Hansen" <dave.hansen@linux.intel.com>,
- "Herbert Xu" <herbert@gondor.apana.org.au>, "Ingo Molnar" <mingo@redhat.com>,
- "Jonathan Corbet" <corbet@lwn.net>, "Marc Zyngier" <maz@kernel.org>,
- "Masahiro Yamada" <masahiroy@kernel.org>,
- "Nathan Chancellor" <nathan@kernel.org>,
- "Nicolas Schier" <nicolas@fjasle.eu>, "Takashi Iwai" <tiwai@suse.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Uros Bizjak" <ubizjak@gmail.com>,
- "Will Deacon" <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, x86@kernel.org
-Message-Id: <37ac1bd5-580c-4980-98fa-653dfe3eb768@app.fastmail.com>
-In-Reply-To: <Z_Uwxe46_o5nYkMB@J2N7QTR9R3.cambridge.arm.com>
-References: <20250407094116.1339199-1-arnd@kernel.org>
- <Z_Uwxe46_o5nYkMB@J2N7QTR9R3.cambridge.arm.com>
-Subject: Re: [PATCH 0/4] Make gcc-8.1 and binutils-2.30 the minimum version
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_VYz6InC1p4vwku@shell.armlinux.org.uk>
 
-On Tue, Apr 8, 2025, at 16:20, Mark Rutland wrote:
-> On Mon, Apr 07, 2025 at 11:41:12AM +0200, Arnd Bergmann wrote:
->> From: Arnd Bergmann <arnd@arndb.de>
->> 
->> x86 already requires gcc-8.1 since linux-6.15-rc1, which led me to
->> actually go through all  version checks and make this is the minimum
->> for all architectures.
+On Tue, Apr 08, 2025 at 06:11:43PM +0100, Russell King (Oracle) wrote:
+> On Tue, Apr 08, 2025 at 05:53:14PM +0200, Christian Marangi wrote:
+> >  config MEDIATEK_GE_SOC_PHY
+> >  	tristate "MediaTek SoC Ethernet PHYs"
+> > -	depends on (ARM64 && ARCH_MEDIATEK) || COMPILE_TEST
+> > -	depends on NVMEM_MTK_EFUSE || COMPILE_TEST
+> > +	depends on (ARM64 && (ARCH_MEDIATEK || ARCH_AIROHA)) || COMPILE_TEST
+> > +	depends on (ARCH_MEDIATEK && NVMEM_MTK_EFUSE) || ARCH_AIROHA || COMPILE_TEST
+> 
+> So...
+> COMPILE_TEST	ARM64	ARCH_AIROHA	ARCH_MEDIATEK	NVMEM_MTK_EFUSE	result
+> N		N	x		x		x		N
+> N		Y	N		N		x		N
+> N		Y	N		Y		N		N
+> N		Y	N		Y		Y		Y
+> N		Y	Y		x		x		Y
+> Y		x	x		x		x		Y
+> 
+> Hence this simplifies to:
+> 
+> 	depends on ARM64 || COMPILE_TEST
+> 	depends on ARCH_AIROHA || (ARCH_MEDIATEK && NVMEM_MTK_EFUSE) || \
+> 		   COMPILE_TEST
 >
-> I am very much in favour of this, so for the series:
->
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
->
-> Is the aim to get this in for v6.15?
->
-> I believe this will permit a number of further cleanups for arm64, and
-> if it's possible to get this in for v6.15, it'd be a bit easier to start
-> preparing those for v6.16. No big problem if that's not the case.
 
-I wasn't planning to push it for 6.15, as we've discussed this change
-for a long time already, I don't think there is any rush now, though
-I agree it would have helped to have it earlier.
+Right, I will update in v2.
 
-I already found another follow-up, removing support for the sancov
-gcc plugin that is no longer needed, I'm sure there is more.
+Hope Andrew is OK with keeping the review tag.
 
-     Arnd
+-- 
+	Ansuel
 
