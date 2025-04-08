@@ -1,228 +1,242 @@
-Return-Path: <linux-kernel+bounces-593003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C214BA7F3E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:01:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58448A7F39A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7678B1898C38
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:01:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 065791897201
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 04:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774E820897E;
-	Tue,  8 Apr 2025 05:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F7E207A11;
+	Tue,  8 Apr 2025 04:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="dya0aTww"
-Received: from out0-212.mail.aliyun.com (out0-212.mail.aliyun.com [140.205.0.212])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hWdMTvDP"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951112F5E;
-	Tue,  8 Apr 2025 05:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BC935973
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 04:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744088464; cv=none; b=kTOQUa8o2N+ck/tSZc65yS7Yz1UaRaZg6Pom+LM6QhpLv0cmz9s88cwIvWbDTCdb9ON3xdY426Px01J5Hq5BP+azTMzlZokq459JeDuuwyZjdoi2N30FTRGA+tvvKEY4bDiHpVp2/y53WrUrnAN4NZZJiaRvV4foGe+H/sP4Bio=
+	t=1744086629; cv=none; b=uoU7RUmD+nQCQHUiZjjVh7lSVAUJ/XzKjdmzuHQG/Eof6i0JuiYgMEgkRin8SiR8mr0dzVMhJ3Cb/PyjCin/VWDQmIKMe1YJzh2BoYeeuKUoBJw3FoWPf5kKkjRVeTIoeY1jlBK9YBezi5AB9Up7c8yQugVjH08gVztTRnB8GAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744088464; c=relaxed/simple;
-	bh=czZDnMFSnzWfds0qI1KG8y1eD/T8h4GXl9q2qVkHNs0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=okzWq7Va77fFuE9LzD4nUCGkh8FUNTu3YdOGLfU6ZWFmGliI5gVi909Ci6dEHcQPFRWfa2Ol2u+rA/dV7gCxOac3Lxfbx1lsgmdOnvdvQcFO6bOIocvbvXghSqLc4sPBt+BFGTEDIN9xgYyGBh5t1oTg5yoT/zkrp3gOf7T4WGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=dya0aTww; arc=none smtp.client-ip=140.205.0.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1744088458; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=FVk1eTGXVWxw3i4OEda44NwW29chjqvlqWUvewaxbH8=;
-	b=dya0aTww9iVTd3ERtk7n8UVmyyX0eyiNKWz1ZGRyBE7xFylWBEgzUjn0Xy3NWfe2sN7WvRnE9VXQ0JXpkyQ3BMgPDrdz9C4XcRmFbOvtzK4xkkYimkSXt7qEc1/Xji847bm3REdRfG3n8Qoj95r79LlK0zEyLAAi6x+1o3MOU1U=
-Received: from 30.174.97.68(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.cGPMUZX_1744086594 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Tue, 08 Apr 2025 12:30:00 +0800
-Message-ID: <ffa0b6af-523d-4e3e-9952-92f5b04b82b3@antgroup.com>
-Date: Tue, 08 Apr 2025 12:29:53 +0800
+	s=arc-20240116; t=1744086629; c=relaxed/simple;
+	bh=iyXwAoHuhvl6gMeqiYjfxKQ6fYCfi84EobhT7OOmjNU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lxt8usqdWJ/cOQPq5m9xm6ZHzMon3F5Q4D1ugvtdRcSH1Cd883hRFbCXQMGNXv6MJUnJPCvav63gcKZGC7a0MRUv6B+7c6vngKH775s+Egahb+SjZw/92ex0/ExnPdmuFhM3T2yU4CNm80VrWGGBLRRwd4Owgdxga2i5LySjta0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hWdMTvDP; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2c759bf1b2eso2645121fac.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 21:30:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1744086627; x=1744691427; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k4OEy6OZhlILwQSjnmY1MsVbpm/U0GgRRZk6ChIa6gk=;
+        b=hWdMTvDPugpBVtPx8KCTgOfOPxZK2Ss9BCJt9XMckJJwGBEHW3ed32bnE/dT6B556a
+         LdvQUwpSEyY1+Bly9ATUYgxH/DocMVAMkJlESPsesyZ8VfNDjPVYFh9Sw/cKZ2XoWtxm
+         1iM2md0D2xPoMaD6afaYf/8oyZTPBQsq7Q7ng=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744086627; x=1744691427;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k4OEy6OZhlILwQSjnmY1MsVbpm/U0GgRRZk6ChIa6gk=;
+        b=ofgnu1HJO18IoGb0RuZfclxIiivXaN2IeAnogVGfhbLhCQLeyyJzfHcCjrCNszGHPc
+         msGxrJE9IrwHazJYufSEUMLN/QXPYgK3Ol61mobgF5sbQPa6CffMa/HsR5J1Ey/ZMyr1
+         vmP1MwVBtVM8e14ZVwOZr3PiXJVG+kxgJ/kXnf9MBGTPisepTFsYHz+RsH9v12I3djOl
+         m2708iH7+hQkoFPzK6LxwMh2Ap+7xo+LsxQFuiN5U9NPF/GXPZZ3tIzGIX9xwBMmfLe8
+         7MI6xVl4SH5XhILaTD9qN80EBxRja80dcdEsWp+oOWNmlyYLm8N5llW71Cd2fq6W6a2X
+         u9Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhtMSlLH01Gb3E5qvWmP9pXyaPutdPbNJXizS0xeZpVhwOFdfAV79t48exABa//RHFvoIOf8+uxfA99hY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHzkHS5ZqRbnoVM0qvRsnwgDWlQBXSCmhVwaGbwU1qa1ropWNi
+	IyC5vETL6v7EtU4R0dyyFnEmeqvIpnLP1QEKq9ydMykALaWQJ0SyX50georWQ3T5zrPZ45c2bWw
+	VfzuEAlJ4UjZOT+6/IYnCYKX7l/XeBNi+w9eN
+X-Gm-Gg: ASbGncs4zJkdBC+liGSOumKyzTgelFvBxuHC/PXHt9clYjfcroDHjJgSIS17M7UYrsA
+	kXZbI5L11PaRl8I6B1UepLx4XpW8Y7kpu7fgyNV1MwDTY3ZL6uVY+2jQJy5UzAsoTKhfqMUr+3z
+	TLuMLvobSoBXjlFXJIFNFfXwhOUgN77AIM2dK5gVJQB4+D356aRbBv9g==
+X-Google-Smtp-Source: AGHT+IGIaWa+KfgK8+1VG5ShGQowLo7UFNgp7dmEufosO5bvsNVXRW6PMAFRdrmAeiUK8d7+qNV0I3u3wqhsch7YYTc=
+X-Received: by 2002:a05:6871:a4c2:b0:2c2:d2b8:e179 with SMTP id
+ 586e51a60fabf-2cca187da20mr9125832fac.4.1744086627210; Mon, 07 Apr 2025
+ 21:30:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH AUTOSEL 6.14 25/31] um: Switch to the pthread-based helper
- in sigio workaround
-To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Cc: Johannes Berg <johannes.berg@intel.com>, richard@nod.at,
- anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
- linux-um@lists.infradead.org
-References: <20250407181054.3177479-1-sashal@kernel.org>
- <20250407181054.3177479-25-sashal@kernel.org>
-Content-Language: en-US
-From: "Tiwei Bie" <tiwei.btw@antgroup.com>
-In-Reply-To: <20250407181054.3177479-25-sashal@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250328082950.1473406-1-treapking@chromium.org> <20250331-loud-micro-booby-e0fd4a@krzk-bin>
+In-Reply-To: <20250331-loud-micro-booby-e0fd4a@krzk-bin>
+From: Pin-yen Lin <treapking@chromium.org>
+Date: Tue, 8 Apr 2025 12:30:16 +0800
+X-Gm-Features: ATxdqUFiEcJNcUtOjwZOM-aq3gBXz60X9bqBSIobqCxKWQP0Fw3DK0sWRPkE5Yo
+Message-ID: <CAEXTbpf9crpkTGctoWseoG1fz=jvUbiTi6e2adZy0JJu78dTgg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: usb: Add binding for PS5511 hub controller
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Kaehlcke <mka@chromium.org>, linux-kernel@vger.kernel.org, 
+	Stephen Boyd <swboyd@chromium.org>, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/4/8 02:10, Sasha Levin wrote:
-> From: Tiwei Bie <tiwei.btw@antgroup.com>
-> 
-> [ Upstream commit d295beeed2552a987796d627ba7d0985b1e2d72f ]
-> 
-> The write_sigio thread and UML kernel thread share the same errno,
-> which can lead to conflicts when both call syscalls concurrently.
-> Switch to the pthread-based helper to address this issue.
-> 
-> Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
-> Link: https://patch.msgid.link/20250319135523.97050-4-tiwei.btw@antgroup.com
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  arch/um/os-Linux/sigio.c | 44 +++++++++++++++++-----------------------
->  1 file changed, 19 insertions(+), 25 deletions(-)
+Hi Krzysztof,
 
-This patch depends on the helpers introduced by the below patch:
+Thanks for the review.
 
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=4f087eafdcef24b7160b097ddb9704084767b77a
+On Mon, Mar 31, 2025 at 4:09=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On Fri, Mar 28, 2025 at 04:28:45PM +0800, Pin-yen Lin wrote:
+> > +
+> > +title: PS5511 4+1 Port USB 3.2 Gen 1 Hub Controller
+>
+> s/PS5511/Parade PS5511/
 
-So it can't be backported to the stable branch alone. Please drop
-it. It is more of a preparation for the new features to be added
-in the future. If it turns out later that it is also necessary for
-the stable branch, I will submit a separate patchset specifically
-targeting it.
+I'll fix this in the next version.
+>
+> > +
+> > +maintainers:
+> > +  - Pin-yen Lin <treapking@chromium.org>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - usb1da0,5511
+> > +      - usb1da0,55a1
+> > +
+> > +  reg: true
+> > +
+> > +  '#address-cells':
+> > +    const: 1
+> > +
+> > +  '#size-cells':
+> > +    const: 0
+> > +
+> > +  reset-gpios:
+> > +    items:
+> > +      - description: GPIO specifier for GRST# pin.
+> > +
+> > +  vddd11-supply:
+> > +    description:
+> > +      1V1 power supply to the hub
+> > +
+> > +  vdd33-supply:
+> > +    description:
+> > +      3V3 power supply to the hub
+> > +
+> > +  peer-hub:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description:
+> > +      phandle to the peer hub on the controller.
+> > +
+> > +  ports:
+> > +    $ref: /schemas/graph.yaml#/properties/ports
+>
+> I don't understand why do you need OF graph here. Children are already
+> defined in patternProperties as usb-devices.
 
-Regards,
-Tiwei
+I would like to describe the connection between the hub and the USB
+connectors, which is similar to commit c44d9dab31d6a9 ("dt-bindings:
+usb: Add downstream facing ports to realtek binding").
 
-> 
-> diff --git a/arch/um/os-Linux/sigio.c b/arch/um/os-Linux/sigio.c
-> index 9aac8def4d635..61b348a2ea974 100644
-> --- a/arch/um/os-Linux/sigio.c
-> +++ b/arch/um/os-Linux/sigio.c
-> @@ -21,8 +21,7 @@
->   * Protected by sigio_lock(), also used by sigio_cleanup, which is an
->   * exitcall.
->   */
-> -static int write_sigio_pid = -1;
-> -static unsigned long write_sigio_stack;
-> +static struct os_helper_thread *write_sigio_td;
->  
->  /*
->   * These arrays are initialized before the sigio thread is started, and
-> @@ -48,15 +47,15 @@ static struct pollfds current_poll;
->  static struct pollfds next_poll;
->  static struct pollfds all_sigio_fds;
->  
-> -static int write_sigio_thread(void *unused)
-> +static void *write_sigio_thread(void *unused)
->  {
->  	struct pollfds *fds, tmp;
->  	struct pollfd *p;
->  	int i, n, respond_fd;
->  	char c;
->  
-> -	os_set_pdeathsig();
-> -	os_fix_helper_signals();
-> +	os_fix_helper_thread_signals();
-> +
->  	fds = &current_poll;
->  	while (1) {
->  		n = poll(fds->poll, fds->used, -1);
-> @@ -98,7 +97,7 @@ static int write_sigio_thread(void *unused)
->  		}
->  	}
->  
-> -	return 0;
-> +	return NULL;
->  }
->  
->  static int need_poll(struct pollfds *polls, int n)
-> @@ -152,11 +151,10 @@ static void update_thread(void)
->  	return;
->   fail:
->  	/* Critical section start */
-> -	if (write_sigio_pid != -1) {
-> -		os_kill_process(write_sigio_pid, 1);
-> -		free_stack(write_sigio_stack, 0);
-> +	if (write_sigio_td) {
-> +		os_kill_helper_thread(write_sigio_td);
-> +		write_sigio_td = NULL;
->  	}
-> -	write_sigio_pid = -1;
->  	close(sigio_private[0]);
->  	close(sigio_private[1]);
->  	close(write_sigio_fds[0]);
-> @@ -220,7 +218,7 @@ int __ignore_sigio_fd(int fd)
->  	 * sigio_cleanup has already run, then update_thread will hang
->  	 * or fail because the thread is no longer running.
->  	 */
-> -	if (write_sigio_pid == -1)
-> +	if (!write_sigio_td)
->  		return -EIO;
->  
->  	for (i = 0; i < current_poll.used; i++) {
-> @@ -279,14 +277,14 @@ static void write_sigio_workaround(void)
->  	int err;
->  	int l_write_sigio_fds[2];
->  	int l_sigio_private[2];
-> -	int l_write_sigio_pid;
-> +	struct os_helper_thread *l_write_sigio_td;
->  
->  	/* We call this *tons* of times - and most ones we must just fail. */
->  	sigio_lock();
-> -	l_write_sigio_pid = write_sigio_pid;
-> +	l_write_sigio_td = write_sigio_td;
->  	sigio_unlock();
->  
-> -	if (l_write_sigio_pid != -1)
-> +	if (l_write_sigio_td)
->  		return;
->  
->  	err = os_pipe(l_write_sigio_fds, 1, 1);
-> @@ -312,7 +310,7 @@ static void write_sigio_workaround(void)
->  	 * Did we race? Don't try to optimize this, please, it's not so likely
->  	 * to happen, and no more than once at the boot.
->  	 */
-> -	if (write_sigio_pid != -1)
-> +	if (write_sigio_td)
->  		goto out_free;
->  
->  	current_poll = ((struct pollfds) { .poll 	= p,
-> @@ -325,18 +323,15 @@ static void write_sigio_workaround(void)
->  	memcpy(write_sigio_fds, l_write_sigio_fds, sizeof(l_write_sigio_fds));
->  	memcpy(sigio_private, l_sigio_private, sizeof(l_sigio_private));
->  
-> -	write_sigio_pid = run_helper_thread(write_sigio_thread, NULL,
-> -					    CLONE_FILES | CLONE_VM,
-> -					    &write_sigio_stack);
-> -
-> -	if (write_sigio_pid < 0)
-> +	err = os_run_helper_thread(&write_sigio_td, write_sigio_thread, NULL);
-> +	if (err < 0)
->  		goto out_clear;
->  
->  	sigio_unlock();
->  	return;
->  
->  out_clear:
-> -	write_sigio_pid = -1;
-> +	write_sigio_td = NULL;
->  	write_sigio_fds[0] = -1;
->  	write_sigio_fds[1] = -1;
->  	sigio_private[0] = -1;
-> @@ -394,12 +389,11 @@ void maybe_sigio_broken(int fd)
->  
->  static void sigio_cleanup(void)
->  {
-> -	if (write_sigio_pid == -1)
-> +	if (!write_sigio_td)
->  		return;
->  
-> -	os_kill_process(write_sigio_pid, 1);
-> -	free_stack(write_sigio_stack, 0);
-> -	write_sigio_pid = -1;
-> +	os_kill_helper_thread(write_sigio_td);
-> +	write_sigio_td = NULL;
->  }
->  
->  __uml_exitcall(sigio_cleanup);
+I'm aware that Rob expects a usb-hub.yaml binding in [1]. Should I do that =
+now?
 
+[1]: https://lore.kernel.org/all/20240301175653.GA2469610-robh@kernel.org/
+>
+> Where is any upstream DTS using this schema?
+
+The device using this schema is still under development. We plan to
+upstream this schema first and then upstream the DT after the device
+is ready.
+>
+> > +
+> > +    properties:
+> > +      port@1:
+> > +        $ref: /schemas/graph.yaml#/properties/port
+> > +        description:
+> > +          1st downstream facing USB port
+> > +
+> > +      port@2:
+> > +        $ref: /schemas/graph.yaml#/properties/port
+> > +        description:
+> > +          2nd downstream facing USB port
+> > +
+> > +      port@3:
+> > +        $ref: /schemas/graph.yaml#/properties/port
+> > +        description:
+> > +          3rd downstream facing USB port
+> > +
+> > +      port@4:
+> > +        $ref: /schemas/graph.yaml#/properties/port
+> > +        description:
+> > +          4th downstream facing USB port
+> > +
+> > +      port@5:
+> > +        $ref: /schemas/graph.yaml#/properties/port
+> > +        description:
+> > +          5th downstream facing USB port
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - peer-hub
+> > +
+> > +patternProperties:
+>
+> patternProperties follow immediately properties, so move it up.
+
+Will fix this in the next version.
+>
+> > +  '^.*@[1-5]$':
+> > +    description: The hard wired USB devices
+> > +    type: object
+> > +    $ref: /schemas/usb/usb-device.yaml
+> > +    additionalProperties: true
+> > +
+> > +additionalProperties: false
+> > +
+> > +allOf:
+> > +  - $ref: usb-device.yaml#
+> > +  - if:
+> > +      not:
+> > +        properties:
+> > +          compatible:
+> > +            enum:
+> > +              - usb1da0,usb55a1
+> > +    then:
+> > +      properties:
+> > +        port@5: false
+>
+> No such property.
+
+Actually, I meant:
+
+  - if:
+      not:
+        properties:
+          compatible:
+            enum:
+              - usb1da0,usb55a1
+    then:
+      properties:
+        ports:
+          properties:
+            port@5: false
+
+I'll fix this in the next version.
+
+>
+> Best regards,
+> Krzysztof
+>
+
+Best regards,
+Pin-yen
 
