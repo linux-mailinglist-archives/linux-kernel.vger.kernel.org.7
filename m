@@ -1,108 +1,152 @@
-Return-Path: <linux-kernel+bounces-594877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5213A817B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:39:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D533EA817B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8237217B5B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:38:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 434E0422F9D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC02255220;
-	Tue,  8 Apr 2025 21:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFB62550C4;
+	Tue,  8 Apr 2025 21:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="WHuGg6yS"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="UF6r02/x";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="qQu0hJIs"
+Received: from mailrelay4-3.pub.mailoutpod3-cph3.one.com (mailrelay4-3.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03E1254B17;
-	Tue,  8 Apr 2025 21:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C9F17A319
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 21:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744148324; cv=none; b=XUlI233gw6xOC8HRvqgBo49K1wLZG6MQDfgTcEMgrHPAD3Nsgf0XVxWdh6/iZuldl0BFixyrwjrXKFGYK2s8TBCyJfGemmdo1L5yyzI3Fo82hfxbBkAK5ya7f5YFFJMvjj5K9WmPfQsRVrrMk0DKug8Vpc4iKb2juCkTDEU0xYs=
+	t=1744148415; cv=none; b=Jt6cNpkAv8Jwn1oAHDJbCst/mDwPFGqWraHt8Ecaai6DxfFj3m12nV2T1ttn8/QDkYmPSD3gapalluQImX+wpVOr2P+VnZTu5zGgKLtx+82CnKg9n2cTn/ushFJuKN2PK3vre2XttvQgPL89XMp8GeFeuNyvN+S77KAVnTfR0eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744148324; c=relaxed/simple;
-	bh=GhWMPbyYndeNm1NHRZ9Pdb3C62NE+jGntpBEcNTlT7o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KX/vf7odKy0JvwjQv2VVNYSeZ1kqwOE7CFeYKlMuylCvSnRMnICs9BloNFAIcgBFLOT6Qv8BXB4csIlOOCGjGgnuGI7ODAzAvGNzKUstYY7NCjer0x9UH+djPfquLh4J7dKUFs/YK1YSLgH4N3JbvTL9qPRPAe32F6Y2FKe9k00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=WHuGg6yS; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-af5cdf4a2f8so4477464a12.3;
-        Tue, 08 Apr 2025 14:38:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1744148322; x=1744753122; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GhWMPbyYndeNm1NHRZ9Pdb3C62NE+jGntpBEcNTlT7o=;
-        b=WHuGg6ySCFOY5BVFULvsD9gCVc35b6oJpFYJX3egN5q+qFAShOFJyP/YfDV/xBoPQP
-         aGACn00TwbA45RLoptxyDCxg2Ld+P3povImm71EXqZylIz7hSUfRnEirPVC317CRkzdi
-         /YA99V4Uva66znq3qshap8IFME2/RpiKSHG8A0KrofFpuH1Hb4HfmOz4ojmXr+XGUmix
-         FAAFsxqFizSOCKDsnIwxK4DYeS2Vb0qEZsbxmjUX1EsWVQNtzsR7D32QO383Kn1fr8+g
-         vjSceO0pBydt2f2hYiEhTKEHFQaefe8FkGpiO6I5S5IDnvP/08W6wqnHrXh26HOdiMck
-         mj5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744148322; x=1744753122;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GhWMPbyYndeNm1NHRZ9Pdb3C62NE+jGntpBEcNTlT7o=;
-        b=RM6HDipdyG+ukf4A+ECmhYMBGvtK0hAkr6HKrSsbyXooX1vRr6axhXcHlNcK2MubYP
-         7rwZWj4K3EXyrePE4EiHKjYaxH3Cqgo7z6YCwMEfcbk2KTCGtlJhurKmH3/ZnXTQqFVW
-         8fm8zuIaT3+zxLEV4jdljSnJqCYf3R4F7oXzafHYiesfXmixxTlMjupvA9WEq8dYslwM
-         9V6w8aFp+Pk2fkIZzf6fhVIpaNPSy8cQ9roYd6AXU0zH+9xnqRNE9vLfoOoNHuno5h7t
-         CiqF/80gDMgfIdD3PECeS1lc1/uUp4HeclJNMd7ke4w3s/qjJiibBBKZKhIA+o2ovydu
-         +2UA==
-X-Forwarded-Encrypted: i=1; AJvYcCWS156Hj98f4D2uGGVm4JK/hIgoWo6ciUUkxesAGL4T6htx4FMs4mu35nxeKAWwhWEj0Z15XHN8EPnC@vger.kernel.org, AJvYcCWo+bQXDOe7QN4TLOaqQKCep/LT7G8Mumv1Ou6Xeemhm6Pg34OWeEa+kbFL7gO1BMcfIaiuoCBXXeZtgjLE@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMet5iUSGdIX1Ua7/4adt2S1Da77JRIH2ogwQJmel2DLiKVsm2
-	oSTwL1aKnk4/snxJL3lfDe5jvuAyCkZFs3RPQIa4rzUmCX6+j1AEnN5NpaOEZPAc5QXaOyAlQuw
-	8O/4mShWj57kMG96vxuQBEFPHT+w=
-X-Gm-Gg: ASbGncu0aAosGzwLXRkRMqr59+SuvB+r4dZaU2yUT7XB7ywLpFHiCNjEps0v0K51hpi
-	nt4gdfW7Y+F5/fM3EVqNx0k77a9eEiTEJQEs+rbtjOKXo0RXoVVys9JTwqkAlcpsYqiGzBYgtN0
-	nSlVxEEIOkv76ignVWtKt5auwQjiz94iq90cJHUPzb
-X-Google-Smtp-Source: AGHT+IFMZotDtWWAJlBzYOHbY6eZuROd8g46qqXTeR8HSTz+D0BC75aZwtJWVAGQnGX5SFSxfBqUCvgcV0HR+ALG1Sk=
-X-Received: by 2002:a17:902:ec86:b0:223:5e6a:57ab with SMTP id
- d9443c01a7336-22ac2a2993cmr9011395ad.39.1744148322097; Tue, 08 Apr 2025
- 14:38:42 -0700 (PDT)
+	s=arc-20240116; t=1744148415; c=relaxed/simple;
+	bh=h9S8zXZLZi67RlzX/pG2eZFsnZWHN6TY9ojoQXGumG8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q9IG+vWdi+Zdp6QZazkqfSVre2KGShWfUyyoW+hGJSAdhFmycjOFCWC2fhJg7b2RAp6l6HQBXAKCtC2q2Nub3+NN6i+TFiRqduv986eTsHLTDu4hxo1xGuYnlOCohPg62V9osJyo7kY7+z4CW4CxwznvNpNGLpUGCeM+oSdCQJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=UF6r02/x; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=qQu0hJIs; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1744148338; x=1744753138;
+	d=konsulko.se; s=rsa1;
+	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
+	 subject:mime-version:date:message-id:from;
+	bh=DFqccygusJ2q4mLsj0hmSnYNuPPTLeqNCbWp99vTaLk=;
+	b=UF6r02/x+oopiIYU0+noriCI1xgsP2xMeHjUYwxk5lyHYSNooyitx4xlL8pJAOKSTLRiyN+lLG0bF
+	 Qe4UwfbwHhpXyA4r9uG7pxiKVjF5BRgn9Rsp7DTS3dNxmZrkWWHFEaR3Gw62r0vujWl9KmK9jTLR49
+	 wx0hnlLVujFxhNTb5N+W07A0WQFS+VKd/EbKDUUBuiHt3W9/HUucJ90rpXSuAqhCE3YMciqMt2Nxsl
+	 3y0CLweMgQdwnj/BwXp6qTeogwpY8jEO6pHFmvVyoLxNZqv8Mi7Vo9F3/jBvMIEY9/nYU4jBASMeh4
+	 GMZnTUcpDCGDjnNUm8DHknUm2gkN2Tg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1744148338; x=1744753138;
+	d=konsulko.se; s=ed1;
+	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
+	 subject:mime-version:date:message-id:from;
+	bh=DFqccygusJ2q4mLsj0hmSnYNuPPTLeqNCbWp99vTaLk=;
+	b=qQu0hJIs4IgTLlFCRMMl40jlI7tFppi2Fv6+GR/5GU1y+SNUyHeF9P1GLuBRosqGQOvw7gotnKts/
+	 F9hsC6gBg==
+X-HalOne-ID: e02a6414-14c1-11f0-93e8-29b2d794c87d
+Received: from [192.168.10.245] (host-90-233-218-222.mobileonline.telia.com [90.233.218.222])
+	by mailrelay4.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
+	id e02a6414-14c1-11f0-93e8-29b2d794c87d;
+	Tue, 08 Apr 2025 21:38:58 +0000 (UTC)
+Message-ID: <24e77aad-08ca-41c4-8e64-301fcc9370b1@konsulko.se>
+Date: Tue, 8 Apr 2025 23:38:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250408-gpiochip-set-rv-pinctrl-part1-v1-0-c9d521d7c8c7@linaro.org>
- <20250408-gpiochip-set-rv-pinctrl-part1-v1-6-c9d521d7c8c7@linaro.org>
-In-Reply-To: <20250408-gpiochip-set-rv-pinctrl-part1-v1-6-c9d521d7c8c7@linaro.org>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Tue, 8 Apr 2025 23:38:30 +0200
-X-Gm-Features: ATxdqUFqmoWg6ZQUVk7ZN8EWhyXPDuE43IZRW9OybjmWPW4EA1wKzp3juxP0OpY
-Message-ID: <CAFBinCCCH_=Ji4qu_pF_umDhJp3m_osk62gFH5_1bRRvgOx7-g@mail.gmail.com>
-Subject: Re: [PATCH 06/10] pinctrl: amlogic-a4: use new GPIO line value setter callbacks
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Ludovic Desroches <ludovic.desroches@microchip.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Xianwei Zhao <xianwei.zhao@amlogic.com>, 
-	Patrick Rudolph <patrick.rudolph@9elements.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-amlogic@lists.infradead.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: add zblock allocator
+To: Johannes Weiner <hannes@cmpxchg.org>, Igor Belousov <igor.b@beldev.am>
+Cc: Nhat Pham <nphamcs@gmail.com>, linux-mm@kvack.org,
+ akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ Shakeel Butt <shakeel.butt@linux.dev>, Yosry Ahmed <yosryahmed@google.com>
+References: <1743810988579.7.125720@webmail-backend-production-7b88b644bb-5mmj8>
+ <0dbbbe9d17ed489d4a7dbe12026fc6fd@beldev.am>
+ <f8063d3fa7e148fecdda82e40b36e10a@beldev.am>
+ <CAKEwX=NMjfC1bKTVsB+C7eq3y=O0x3v8MW7KxUfhpg6UUr23rw@mail.gmail.com>
+ <f023ba8341f9b44610cc4ac00cf0ee33@beldev.am>
+ <CAKEwX=MXD9EB242WkB50ZBmZgV-CwrAHp=_oE+e=7yHDfrMHtg@mail.gmail.com>
+ <3f013184c80e254585b56c5f16b7e778@beldev.am>
+ <20250408195533.GA99052@cmpxchg.org>
+Content-Language: en-US
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+In-Reply-To: <20250408195533.GA99052@cmpxchg.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Apr 8, 2025 at 9:24=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl> =
-wrote:
->
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> struct gpio_chip now has callbacks for setting line values that return
-> an integer, allowing to indicate failures. Convert the driver to using
-> them.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+
+
+On 4/8/25 21:55, Johannes Weiner wrote:
+> On Tue, Apr 08, 2025 at 01:20:11PM +0400, Igor Belousov wrote:
+>>>>>> Now what's funny is that when I tried to compare how 32 threaded build
+>>>>>> would behave on a 8-core VM I couldn't do it because it OOMs with
+>>>>>> zsmalloc as zswap backend. With zblock it doesn't, though, and the
+>>>>>> results are:
+>>>>>> real    12m14.012s
+>>>>>> user    39m37.777s
+>>>>>> sys     14m6.923s
+>>>>>> Zswap:            440148 kB
+>>>>>> Zswapped:         924452 kB
+>>>>>> zswpin 594812
+>>>>>> zswpout 2802454
+>>>>>> zswpwb 10878
+>>>>
+>>>> It's LZ4 for all the test runs.
+>>>
+>>> Can you try zstd and let me know how it goes :)
+>>
+>> Sure. zstd/8 cores/make -j32:
+>>
+>> zsmalloc:
+>> real	7m36.413s
+>> user	38m0.481s
+>> sys	7m19.108s
+>> Zswap:            211028 kB
+>> Zswapped:         925904 kB
+>> zswpin 397851
+>> zswpout 1625707
+>> zswpwb 5126
+>>
+>> zblock:
+>> real	7m55.009s
+>> user	39m23.147s
+>> sys	7m44.004s
+>> Zswap:            253068 kB
+>> Zswapped:         919956 kB
+>> zswpin 456843
+>> zswpout 2058963
+>> zswpwb 3921
+> 
+> So zstd results in nearly double the compression ratio, which in turn
+> cuts total execution time *almost in half*.
+> 
+> The numbers speak for themselves. Compression efficiency >>> allocator
+> speed, because compression efficiency ultimately drives the continuous
+> *rate* at which allocations need to occur. You're trying to optimize a
+> constant coefficient at the expense of a higher-order one, which is a
+> losing proposition.
+
+Well, not really. This is an isolated use case with
+a. significant computing power under the hood
+b. relatively few cores
+c. relatively short test
+d. 4K pages
+
+If any of these isn't true, zblock dominates.
+!a => zstd is too slow
+!b => parallelization gives more effect
+!c => zsmalloc starts losing due to having to deal with internal 
+fragmentation
+!d => compression efficiency of zblock is better.
+
+Even !d alone makes zblock a better choice for ARM64 based servers.
+
+~Vitaly
 
