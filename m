@@ -1,181 +1,265 @@
-Return-Path: <linux-kernel+bounces-594924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D3BBA8184A
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 00:06:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B156A81851
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 00:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 132441BA36FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:06:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B263F3BF7DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8E625485B;
-	Tue,  8 Apr 2025 22:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84E12550D0;
+	Tue,  8 Apr 2025 22:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BjW4BRwD"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Tq/1zFm5"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441C71DF99C
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 22:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A911522DFA4
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 22:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744149972; cv=none; b=WNej0w9tehgdrW3W5LBx7H2j+WAjLHMAYoGP912nmQmMYqO1ELKx/KrQNMW1CRQq2CRl9HUR+zn0oP3BV48BwX1zbSh2ZbL1aljRFQoJow9TPvgK3FdzM1JXSPug0GNLBHpS1BUXgsSRg62PDB0lGQsIhVujw506b9AUGDIVlXQ=
+	t=1744150419; cv=none; b=pgOjJQjZZC27ZEf977l7VdqSjkpp9bMH5yohuABe3WPLQdszfvTeRMjAh0YN1VEGko01mGrQbOvDL9YKs6y5giW7l7m2hULA6sdOMyJhq9EFv5Qz0XszFgDxeEOLGcFD0skA9fjJNyigbGBf8QavykWGwiKbtsZl2dc3KaRmWy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744149972; c=relaxed/simple;
-	bh=kUS+n+GTXvuQCLB81fJehz4UPVJxutBqIIzDQS1ALc0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DufeQXn4dOjvzD1H97TBOGo4JpgQKkiwZd14HBNvGUSD52aI6vBa4XviApMuBNmbNPqFMgA1wPM6dVBFl5e6vPkkhRKfgtO7t+a41RQ8LqjsPtILR4Q5TCJ92AfzQE5FqJhGbP2EUi8Q+3F/oQlMcg17iT7wJ2H5iBo2p8lweYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BjW4BRwD; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6ecfc7ed0c1so52091476d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 15:06:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744149970; x=1744754770; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4sWLYldlaXwJJPgG72TFrHed0gpDpTfsmgOoFVasc1s=;
-        b=BjW4BRwDPePttlqR+WsHGnI6+jI+zOeJezI0FEOMlhmZWX2wAA09IuymSuaH3JBzEI
-         RXIMobFVpqHm5vfQEVUp/f0C823OdDuwoYkrJJOnOMO6Jp1Y7qGaIrul26yFH/xwA2d1
-         3Ln//qq5oRBqHT7dKsvnNHzWnP/77PUdyZ5y8Huce/P1lsuiHpuuQtYqnJwBEEVH3rqZ
-         /4Dx35gZEN2VB8w2W1gttSKvKTXaaCYibLo2e2IFvtxVFPZZA0q3yh/tEUuH+x5yxKjV
-         jn7Pc1jPRGmNVg9cCmzUDitXuR3ZneCt7T47dC92xjrIuNZG5L5vdQ/k2Y/NVuA9ApSN
-         0Vpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744149970; x=1744754770;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4sWLYldlaXwJJPgG72TFrHed0gpDpTfsmgOoFVasc1s=;
-        b=iEQweyQC9MEahQGkvJem8GKlslJjjfQ1DEGe1D1A7wdauEOSE0qR1Jg6Fid9UcBay7
-         EZEh5jC7fHo8eZUDSBKJXK5lGX32LiAsHwZfKOmstmEInxupK8rdaiw0FmNXNFr5s+1s
-         L3J949J4B+PvEiJKfs6p7Bc45PKjQ9UnorLyH7pAgrrcNzWK+n5hB84Bu0hK8qE+pR7x
-         /rb4gDRVDTnT06Z2HfWNbdRCMDJgFEjKl5atAaBZ/bTub1Yete5N+AqlSkYTo2gBAs+8
-         uGt/rJgJi8PfHRQJfGMQTYUbo6xi6CCa7SPFKNbDMd2RuCsfha06V4yfOEwhA7F/Exh3
-         Y0YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDPb68EO/3bt6dkKbdJAHlvz2m0g5/azfGgsXrEor6SOHGiuaePW7WORE0I56XI6uaJdoykucnZvsHnUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLJpsC1K3Qenu4YPrB1JZEpBO26FStKfOR+rAjO7GfqQxKsaxd
-	qo9a+sxLMXnS0kmjiIGUqmWdo91xSco6rFIIvUqXZKIKAqlRuHOQJrPCDrhCnH29SOU5Csqhx+i
-	xnERQnZID/4Ht8nCLK29/GIPYjQrXNjA5
-X-Gm-Gg: ASbGncvShjri/LK9a0Q2blJ8sFJMxeDi2IGRgq+N0sHyuFygpnWb+ZWF71gJ7uyyp1d
-	E6xsM88oL0w9uMkfUO/5dQR2vl7fuq29kPWgNNdRKnwQkG+QXGshhawFk0aLAYARWq4XkLvis+U
-	9gKxQpeb9kpnwfLtz2GPnntvti+BUa0NWLOChCh7BEB4M2Nj2sE1VpKG0Ncg==
-X-Google-Smtp-Source: AGHT+IEEnL0AwSgWq2bYA63OtnC1+P7QnpEoLRfTsEdORqc+T0IgUfQz79hV8Iy6qv+3uTrGgqrCEJgdruYLf9nMQ/w=
-X-Received: by 2002:a05:6214:1253:b0:6e8:9866:7398 with SMTP id
- 6a1803df08f44-6f0dbbd8d00mr16377836d6.22.1744149970018; Tue, 08 Apr 2025
- 15:06:10 -0700 (PDT)
+	s=arc-20240116; t=1744150419; c=relaxed/simple;
+	bh=jPD8xL4r3I0NkiEqxms4CcN1PxB+AEbH5+jWhk5066U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=L10Jpk3PR+u6rZy7UqmWMy44r6uExynxf5BRAPpl1qixg0LNSzLkYWtspdOyTTDzecXbEFPgLkv/YnnR+J23zCfrI5o8HLVXs4jkbZJ7QLlYjAiODwzZIZx6EDWGrbX5QFL3DaSyevzAmr7glkO6YWj6Cmjpo4QupSyUKVOMlQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Tq/1zFm5; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250408221328epoutp01bcc3b4d59c6f5778fb15d86a391411b7~0d45IDB2K1407114071epoutp01G
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 22:13:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250408221328epoutp01bcc3b4d59c6f5778fb15d86a391411b7~0d45IDB2K1407114071epoutp01G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1744150408;
+	bh=98nLlPYT+VTzspfa339eHkagfVUGyHyGGsVV5kY2nSQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Tq/1zFm5e6HXdip/B1Uqg5Q5mO9QC52Stzg95+Fw8Gs0Xgllmd6ZgUJMFEZjsghNC
+	 uIWWFPKj7aRS6iahiv/ln0fyFJqJCJAWnvvZenA04F/A9ZjfDB8vLby5f9e979UaBA
+	 /tYyjzroN2YZ+C4SJWGUg9Tzy/bbZyiCsaP68mmw=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250408221327epcas2p4d4199845dd58741a72b446173060bd0a~0d44YY62L0708307083epcas2p40;
+	Tue,  8 Apr 2025 22:13:27 +0000 (GMT)
+Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.97]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZXL1z1l5lz3hhT3; Tue,  8 Apr
+	2025 22:13:27 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	0D.FD.37303.78F95F76; Wed,  9 Apr 2025 07:13:27 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250408221326epcas2p24b455e5a9f65dff52807a3a0010eff9a~0d43GJ9xt1382213822epcas2p2M;
+	Tue,  8 Apr 2025 22:13:26 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250408221326epsmtrp15bda4a714b1657db260153597e377797~0d43Fb2SQ1774717747epsmtrp16;
+	Tue,  8 Apr 2025 22:13:26 +0000 (GMT)
+X-AuditID: b6c32a4d-541ff700000091b7-34-67f59f87d99c
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	51.41.19478.68F95F76; Wed,  9 Apr 2025 07:13:26 +0900 (KST)
+Received: from tiffany (unknown [10.229.95.142]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250408221326epsmtip184585f5a670a2dd4bd418068c2ee1230~0d4229ybz1185811858epsmtip1E;
+	Tue,  8 Apr 2025 22:13:26 +0000 (GMT)
+Date: Wed, 9 Apr 2025 07:11:47 +0900
+From: Donghyeok Choe <d7271.choe@samsung.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Youngmin Nam <youngmin.nam@samsung.com>, Marc Zyngier <maz@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Saravana Kannan
+	<saravanak@google.com>, Sudeep Holla <sudeep.holla@arm.com>, Ulf Hansson
+	<ulf.hansson@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-team@android.com, hajun.sung@samsung.com, joonki.min@samsung.com,
+	ne.yoo@samsung.com, Donghyeok Choe <d7271.choe@samsung.com>
+Subject: Re: [GICv3 ITS]S2IDLE framework does not invoke syscore_ops in
+ GICv3 ITS driver
+Message-ID: <20250408221147.GA2187207@tiffany>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1743810988579.7.125720@webmail-backend-production-7b88b644bb-5mmj8>
- <0dbbbe9d17ed489d4a7dbe12026fc6fd@beldev.am> <f8063d3fa7e148fecdda82e40b36e10a@beldev.am>
- <CAKEwX=NMjfC1bKTVsB+C7eq3y=O0x3v8MW7KxUfhpg6UUr23rw@mail.gmail.com>
- <f023ba8341f9b44610cc4ac00cf0ee33@beldev.am> <CAKEwX=MXD9EB242WkB50ZBmZgV-CwrAHp=_oE+e=7yHDfrMHtg@mail.gmail.com>
- <3f013184c80e254585b56c5f16b7e778@beldev.am> <20250408195533.GA99052@cmpxchg.org>
- <24e77aad-08ca-41c4-8e64-301fcc9370b1@konsulko.se>
-In-Reply-To: <24e77aad-08ca-41c4-8e64-301fcc9370b1@konsulko.se>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Tue, 8 Apr 2025 15:05:58 -0700
-X-Gm-Features: ATxdqUGmlsm6fccF-ip74f4yqSSt7Wk7y4OxBKshFRqf4g9Y2PQvAlmsn63UjdM
-Message-ID: <CAKEwX=Pf3qA=u7KBcknnkYnfJ48YmUj8FYN=X5C8OCXrsMW9=w@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: add zblock allocator
-To: Vitaly Wool <vitaly.wool@konsulko.se>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Igor Belousov <igor.b@beldev.am>, linux-mm@kvack.org, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Yosry Ahmed <yosryahmed@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250408-transparent-daft-dog-ec2a74@sudeepholla>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHJsWRmVeSWpSXmKPExsWy7bCmuW77/K/pBrv6OC2u7Z3IbtG0/xKz
+	xdXd75gtdmwXsdj0+BqrxeVdc9gsds45yWqx7HgXq0XXob9sFstP7WCx2LxpKrPF8bXhFh1H
+	vjFbLD7wid2Bz2Pb7m2sHmvmrWH0WLCp1GPTqk42jzvX9rB5vDt3jt1j85J6j74tqxg9Pm+S
+	C+CMyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMAbpc
+	SaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgXqBXnJhbXJqXrpeXWmJlaGBgZApU
+	mJCdMetcD2tBi3LFzx17WRsYl0h3MXJwSAiYSJxabtTFyMUhJLCHUeLan/2MEM4nRomfSyaw
+	wTkzf09l6mLkBOt49mADO0RiJ6PExdd7WSCcp0DO4sXsIFUsAioSpze8ZQSx2QR0JSZ1bmMD
+	sUUE1CWWnN0CFmcWeM4s0fCmEuQOYYEoicftcSBhXgE9iTl/FrFB2IISJ2c+YQGxOQXsJdrn
+	zgVbLCFwhENi64TZbBAXuUgcftcFdZ2wxKvjW9ghbCmJl/1tUA3NjBKTbrxmgnBmMEpcmfwZ
+	qsNYYtazdqiLMiSuntrJAgkZZYkjt1ggwnwSHYf/skOEeSU62oQgOlUkzvc9YITZtWHuW6iJ
+	HhK3T59nhQTKa2aJn21TmSYwys1C8tAsJNtmAY1lFtCUWL9LHyIsL9G8dTYzRFhaYvk/DiQV
+	CxjZVjFKpRYU56anJhsVGOrmpZbDIzw5P3cTIzhha/nuYHy9/q/eIUYmDsZDjBIczEoivG8n
+	fkkX4k1JrKxKLcqPLyrNSS0+xGgKjKuJzFKiyfnAnJFXEm9oYmlgYmZmaG5kamCuJM576OPT
+	dCGB9MSS1OzU1ILUIpg+Jg5OqQamaJXPiz6dnxSwhLkmLlx44eoZFRy3amSWC4pwXPXe5+k+
+	ZUXOW+5/k/IOPrQ43qi4ImZ1W+a1F+84nfJk2D82xh6/e+9NrOJkieMctfsFuy9MM//9XCB3
+	ntuZY1/mXK63urtycsXThV0b3Rf3n1JUk684sm03kz/jbP0tTnz2/4zfmj+4UzHn/LonodH7
+	rsSzfnLvq7bd02j45vk7of8Ore+kVQtvJeWYfnjMHrG6Sl+3I+ANS+1tqcquP4odK++wHTu1
+	5k25+0Nm29kP1a77sW32nXy8XHlx7Bw1vpk7/tS+azq/Kt7g31FbL/nZe3vPmyy3nHVqgkDY
+	I24X53jzv5MtmuytF9w/fEg7TvbnZyWW4oxEQy3mouJEADxurJJhBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBIsWRmVeSWpSXmKPExsWy7bCSnG7b/K/pBhfniFtc2zuR3aJp/yVm
+	i6u73zFb7NguYrHp8TVWi8u75rBZ7JxzktVi2fEuVouuQ3/ZLJaf2sFisXnTVGaL42vDLTqO
+	fGO2WHzgE7sDn8e23dtYPdbMW8PosWBTqcemVZ1sHneu7WHzeHfuHLvH5iX1Hn1bVjF6fN4k
+	F8AZxWWTkpqTWZZapG+XwJUxdeUdxoJlChVvLm5kbGB8JNHFyMkhIWAi8ezBBnYQW0hgO6NE
+	90EHiLiURPuWmUwQtrDE/ZYjrF2MXEA1jxkl2npOgiVYBFQkTm94ywhiswnoSkzq3MYGYosI
+	qEssObsFLM4s8JZZ4umMABBbWCBKYs/baWC9vAJ6EnP+LGKDGDqbWeLn/nvMEAlBiZMzn7BA
+	NKtL/Jl3CSjOAWRLSyz/xwERlpdo3jobrJxTwF6ife5c9gmMgrOQdM9C0j0LoXsWku4FjCyr
+	GEVTC4pz03OTCwz1ihNzi0vz0vWS83M3MYIjTytoB+Oy9X/1DjEycTAeYpTgYFYS4X078Uu6
+	EG9KYmVValF+fFFpTmrxIUZpDhYlcV7lnM4UIYH0xJLU7NTUgtQimCwTB6dUA1PZlYSbdYEh
+	fjmH1HbFW67mXbTELFvUyXDFkytea5f07bw74QrfoV1cLgt/qeSv2Ze63uqB+r7LF5jqBU/c
+	vb64KP7845cH93L43C0Le7Ol9ebDN3UhX69/m8DktTA+zvaDfZbsHH++3MOKnYXPJ/a2zphh
+	MU1NW4BzuoGr2Nkz9+X+mXj9Ub4htqhd+fHnM2+br7JeWfv/icFKzYpQzvzG+Cns/LvO/Pey
+	l/fdbntkuQ/HWR6LtIZF8466hbeeLrtQebDB4s4cvz9+obza827xT75xn2G38ssfuTs8p++1
+	8jG2MUyu1Hif+ddUY9UWQfs8zbJY2eeVTkdb85T6sjMVfqo8vWZ9+G/IO5ZzT7SUWIozEg21
+	mIuKEwFvcbiBKwMAAA==
+X-CMS-MailID: 20250408221326epcas2p24b455e5a9f65dff52807a3a0010eff9a
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----JAxyHCgdtJ96A8.Ok.gYWmZQmsTOHaTnMoXq.aDuWNAvXzgf=_baefa_"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250408221326epcas2p24b455e5a9f65dff52807a3a0010eff9a
+References: <Z+Nv8U/4P3taDpUq@perf> <8634f0mall.wl-maz@kernel.org>
+	<Z+TEa8CVAYnbD/Tu@perf> <20250402-messy-wild-squid-7b4da9@sudeepholla>
+	<Z+3kwsesiXyC0hbO@perf>
+	<20250403-rare-wasp-of-management-9bce59@sudeepholla>
+	<20250404041323.GA685160@tiffany>
+	<20250407-amiable-perfect-hummingbird-06ad83@sudeepholla>
+	<20250407225146.GA2858456@tiffany>
+	<20250408-transparent-daft-dog-ec2a74@sudeepholla>
+	<CGME20250408221326epcas2p24b455e5a9f65dff52807a3a0010eff9a@epcas2p2.samsung.com>
 
-On Tue, Apr 8, 2025 at 2:38=E2=80=AFPM Vitaly Wool <vitaly.wool@konsulko.se=
-> wrote:
->
->
->
-> On 4/8/25 21:55, Johannes Weiner wrote:
-> > On Tue, Apr 08, 2025 at 01:20:11PM +0400, Igor Belousov wrote:
-> >>>>>> Now what's funny is that when I tried to compare how 32 threaded b=
-uild
-> >>>>>> would behave on a 8-core VM I couldn't do it because it OOMs with
-> >>>>>> zsmalloc as zswap backend. With zblock it doesn't, though, and the
-> >>>>>> results are:
-> >>>>>> real    12m14.012s
-> >>>>>> user    39m37.777s
-> >>>>>> sys     14m6.923s
-> >>>>>> Zswap:            440148 kB
-> >>>>>> Zswapped:         924452 kB
-> >>>>>> zswpin 594812
-> >>>>>> zswpout 2802454
-> >>>>>> zswpwb 10878
-> >>>>
-> >>>> It's LZ4 for all the test runs.
-> >>>
-> >>> Can you try zstd and let me know how it goes :)
-> >>
-> >> Sure. zstd/8 cores/make -j32:
-> >>
-> >> zsmalloc:
-> >> real 7m36.413s
-> >> user 38m0.481s
-> >> sys  7m19.108s
-> >> Zswap:            211028 kB
-> >> Zswapped:         925904 kB
-> >> zswpin 397851
-> >> zswpout 1625707
-> >> zswpwb 5126
-> >>
-> >> zblock:
-> >> real 7m55.009s
-> >> user 39m23.147s
-> >> sys  7m44.004s
-> >> Zswap:            253068 kB
-> >> Zswapped:         919956 kB
-> >> zswpin 456843
-> >> zswpout 2058963
-> >> zswpwb 3921
-> >
-> > So zstd results in nearly double the compression ratio, which in turn
-> > cuts total execution time *almost in half*.
-> >
-> > The numbers speak for themselves. Compression efficiency >>> allocator
-> > speed, because compression efficiency ultimately drives the continuous
-> > *rate* at which allocations need to occur. You're trying to optimize a
-> > constant coefficient at the expense of a higher-order one, which is a
-> > losing proposition.
->
-> Well, not really. This is an isolated use case with
-> a. significant computing power under the hood
-> b. relatively few cores
-> c. relatively short test
-> d. 4K pages
->
-> If any of these isn't true, zblock dominates.
-> !a =3D> zstd is too slow
-> !b =3D> parallelization gives more effect
-> !c =3D> zsmalloc starts losing due to having to deal with internal
-> fragmentation
-> !d =3D> compression efficiency of zblock is better.
->
-> Even !d alone makes zblock a better choice for ARM64 based servers.
->
-> ~Vitaly
+------JAxyHCgdtJ96A8.Ok.gYWmZQmsTOHaTnMoXq.aDuWNAvXzgf=_baefa_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 
-Could you expand on each point? And do you have data to show this?
+On Tue, Apr 08, 2025 at 11:46:40AM +0100, Sudeep Holla wrote:
+> On Tue, Apr 08, 2025 at 07:51:46AM +0900, Donghyeok Choe wrote:
+> > On Mon, Apr 07, 2025 at 10:17:43AM +0100, Sudeep Holla wrote:
+> > > On Fri, Apr 04, 2025 at 01:13:23PM +0900, Donghyeok Choe wrote:
+> > > > On Thu, Apr 03, 2025 at 10:18:54AM +0100, Sudeep Holla wrote:
+> > > > > /me more confused.
+> > > > > 
+> > > > > Are you saying you have some cpuidle platform specific logic inside
+> > > > > trace_android_vh_cpuidle_psci_enter(). I would assume it was just to
+> > > > > trace the entry into the state and nothing more.
+> > > > 
+> > > > If you have any further questions, feel free to reach out.
+> > > > 
+> > > 
+> > > I was trying to understand the difference in behaviour between normal
+> > > cpuidle entering the same deepest state that is entered in s2idle state.
+> > > I assume GIC doesn't loose power and no need for GIC ITS save/restore
+> > > in normal cpuidle path ?
+> > >
+> > > If so, what triggers the GIC suspend in s2idle path if syscore_ops is
+> > > not getting called ?
+> > >
+> > > Why would the firmware pull the plug on GIC ?
+> > 
+> > The GIC loses power. It is powered down to the same level as during suspend.
+> > Therefore, it became necessary to perform GIC ITS save/restore through
+> > a method other than the GIC ITS syscore path.
+> > To help with better understanding, I will write a pseudo code.
+> > 
+> > void mimic_syscore_suspend()
+> > {
+> > 	/* Perform the actions required to power off all cores. */
+> > 	...
+> > 	its_save_disable();
+> > }
+> > 
+> > void android_vh_cpuidle_psci_enter_handler(... bool s2idle)
+> > {
+> > 
+> > 	if (!s2idle)
+> > 		return;
+> > 
+> > 	set_cpu_powerdown_mark();
+> > 
+> > 	if (cpu != booting core)
+> > 		return;
+> > 
+> > 	/* only booting core here */
+> > 	mimic_syscore_suspend()
+> > }
+> > 
+> > void mimic_syscore_resume()
+> > {
+> > 	...
+> > 	its_restore_enable();
+> > }
+> > 
+> > void android_vh_cpuidle_psci_exit_handler(... bool s2idle)
+> > {
+> > 	if (!s2idle)
+> > 		return;
+> > 
+> > 	if (cpu == booting core)
+> > 		mimic_syscore_resume();
+> > 
+> > 	set_cpu_poweron_mark();
+> > }
+> > 
+> > All cores will be marked as powered down when the HVC/SMC call for
+> > CPU suspend is invoked. When all cores call the suspend function,
+> > the firmware will recognize the powerdown mark and transition
+> > the system into suspend. At this point, the entire GIC will also
+> > be powered off.
+> > In a cpuidle situation that is not s2idle, the cores do not mark
+> > CPU powerdown, so the GIC ITS save/restore operation is neither
+> > performed nor necessary.
+> > 
+> 
+> OK, I understood. In short, you create problems by hacking up or misusing
+> your trace handlers in ways it shouldn't be, and now you are t/crying to
+> solve those problems.
+> 
+> > > Do you use any suspend/resume logic in drivers/irqchip/irq-gic-pm.c ?
+> > No, there are parts of the GIC that require secure access, so the
+> > GIC save/restore is performed by the firmware.
+> > Since the GIC-ITS is entirely controlled as a non-secure IP,
+> > I think it is more efficient to perform save/restore in the kernel.
+> > 
+> 
+> I can understand that part, but my hacking up things the way you have
+> shown above, though you may think you have achieved some feature very
+> smartly, you have just dug up the hole with issues you are facing now.
+> 
+> The only reason IIUC s2idle info is used is to identify when the RPM
+> is disabled. You are using that info to manage GIC power state.
+> 
+> The CPU deepest idle states entered in the normal and s2idle must be
+> same. If you want to still achieve extra power save with GIC powerdown
+> make it completely transparent to the OS.
 
-For b, we run zswap + zsmalloc on hosts with hundreds of cores, and
-have not found zsmalloc to be a noticeable bottleneck yet, FWIW.
+First of all, thank you.
+You're clearly pointing out the painful truth.
+I’m well aware that this approach isn’t ideal.
 
-For c - in longer runs, how does zblock perform better than zsmalloc?
-In fact, my understanding is that zsmalloc does compaction, which
-should help with internal fragmentation over time. zblock doesn't seem
-to do this, or maybe I missed it?
+Following your advice, I’ll do my best to keep things
+as clear and transparent as possible.
+My goal was to explain the situation we’re facing, and I feel
+like I’ve managed to do that — so I’m glad about that.
 
-For d too. I see that you hard code special configurations for zblock
-blocks in the case of 0x4000 page size, but how does that help with
-compression efficiency?
+Best regards,  
+Donghyeok Choe
+
+------JAxyHCgdtJ96A8.Ok.gYWmZQmsTOHaTnMoXq.aDuWNAvXzgf=_baefa_
+Content-Type: text/plain; charset="utf-8"
+
+
+------JAxyHCgdtJ96A8.Ok.gYWmZQmsTOHaTnMoXq.aDuWNAvXzgf=_baefa_--
 
