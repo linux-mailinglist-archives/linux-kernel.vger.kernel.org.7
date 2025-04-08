@@ -1,83 +1,84 @@
-Return-Path: <linux-kernel+bounces-593063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB2FA7F4A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:10:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE837A7F4AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBBDB3B6610
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:09:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E8D5171324
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099FF2638B8;
-	Tue,  8 Apr 2025 06:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4602641DA;
+	Tue,  8 Apr 2025 06:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kARhbRRa"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vxFh0fsa"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46CA2638AF
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 06:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AB725FA09
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 06:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744092426; cv=none; b=R6B4mFwbSjKw9UIqAh33tLa1eQ4DHYu+jn0OFIaYJG2Nm3mVZdJcv3NSLWZxIyS3+b3XN+LSo+wp5SacUe1lTMtMOr0EFEkZRgX/nsRebV/nGlBKG0YIMHU90kxDWFpcsD6sD5Th2PTRGAmnKAC7yRKiqXL0G9D56D/TlG7+C+s=
+	t=1744092440; cv=none; b=VHv05yfdYhRph66trwF0Xbq62g+a0Q4Iq6C4mKHbbYZtxCg4DvuIzFxvRJYt7+ESDHuZ2uA5pHuiSXiN3Gl8UAZu7aqhX7o/c7RYri3ikf3y6BghpxD5OabJM1R+XydeOF4n0I1Eov8L4TeY+7EA+Nphqt8opO9QZ0lWkFbhvu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744092426; c=relaxed/simple;
-	bh=0HGe9p+Kb3EY1mdIOfIYhz5qJ2LRhzKzm9odfdxCr2o=;
+	s=arc-20240116; t=1744092440; c=relaxed/simple;
+	bh=IZTl+be6ud5vXxSsFfPgI+uEe6tuUzj3sdGtdEkb2OI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lFngmsDvWFTUZZ2fkRj9WvWJuIP6PeqbACG7RCMsJySRut2Wt1Y6yTxjBJgRd4vWsCOMFXM2bYuGPp2QAlIvn0uAnvqjRnwQ4FlNLSG2hFp71L+pgUC9kcpn2kOpCxeOXBn0ETdOYW8kyaMX04Na0ztDTWexg6DmN4TNfNs3t4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kARhbRRa; arc=none smtp.client-ip=209.85.214.171
+	 Content-Type:Content-Disposition:In-Reply-To; b=X9syizziY8PJIa28rH7yonip5c2JjIfJorsV3m4gwbkqTqNovexqgPsIOg+JnBXt8JrwWIOHJWJux5ZGok6RQHNXAClaeeA0GAE6Rz4dcOQ3qBktubafnjfLQsogh1Ki6pVXFSRqHkDuqTI2bUavw3NwNrSlQCxTPcJ3TS2odGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vxFh0fsa; arc=none smtp.client-ip=209.85.215.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-226185948ffso52143075ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 23:07:04 -0700 (PDT)
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-ad5236e6fd6so4675154a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 23:07:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744092424; x=1744697224; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1744092438; x=1744697238; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HInC8FIYBgKJtb+4x4aKQs4vGqqbGkS3dp3Y+WU35lQ=;
-        b=kARhbRRazLKhy7b6tvjOg4W//f/9khbfLdIXHnwBFKfaFA+TPrHSOMvq++XELoIgfT
-         Di0Hd1705rHF+k3ZQm1By0G7mU3AvyE3ujoqBxBf2eCVxSH3q4nOVWLUhxS5WNhEWiP2
-         aJ4C6ozVFzBRJ3XZ3lmIgFrkXHmFbxmTBMutcNGe6mTRX/ati061PZVjBJ5kDK5o2T2U
-         ZoRcV/5xA45sl7zLRdDMIGTMnZ1QIkHmBX2CLcYgB9RIQ37iH8KTTKmE+YNOt4GIQ6yd
-         rmD0v2g0w2E5lJwCPrJp9WeMJb4pEzOJBa2erj2cI4KE6bxoUekYYf9/SKRBFCcGdSak
-         ugAw==
+        bh=NBGLDdhiF5aE7vXhYviGOMDmTQe40kjk+O0POgM2zRo=;
+        b=vxFh0fsaCkNqSDGygTp2fEehPri/aCWhqMTbRjXe5x5wvbt7vx1RxTu7VyJJgHW7Y1
+         wx2Vx38Jhhs1S7/9s4RqYaS2FSfwzTUwZ8c+bGTfwhPoC1cigNFpbU+fPEAB07fiezzn
+         c4CGHHB5H006UrQ32VKwOQma6rrD5hTLGjqaaY8XFgry3K/ZLxja6+g1UcZlTJ7AJqJ4
+         jhA2Ws4C7T6ifcH7Qsrw4/HxHmP401dreikCPBUg/kjKxhZ+BoagDlk3Rpa23aENSjS3
+         b7tDTfK3egqCEpK0z+tpOw3M1g6itiHr4V9qmBZFOP7HbEwdoBXaNIzk/TZkoWkkTzFg
+         8Vkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744092424; x=1744697224;
+        d=1e100.net; s=20230601; t=1744092438; x=1744697238;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HInC8FIYBgKJtb+4x4aKQs4vGqqbGkS3dp3Y+WU35lQ=;
-        b=UgjwkYPz3Jk1ldjXtiF0ZKwGrgDUbhczRIxlfFaCc45n+crTfIceyBMx6uPIJPAYrl
-         IWuZj8mhx/iMqTG7j7pl+DB/uO+2Jd9lMPi4A5rE37T40oEHMQw581G0Us1Cln+kBoIr
-         v6esJEpLR81jmz/00Y02H20DV8ecAIUsJRojH4GkokdAWMRf+DQpIYJXKVsamblsLFdg
-         dXRfpePdLBUjsCe4ffIjAPDh9AhAJEsQdlPGnEYg2ZnVybUpVWRGBDT7Tt0b2RX2pN9r
-         ILeVmWOAPaPJ3SBjoqVtND0G/muZpijrEYnyvGK3uvDRAsjgqp81914om6YDXZ+uPK7T
-         +2Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCW0fyOLwEtFR/qV/FZjuWDMmYPMLaZVc17AbvpoywyTLTGB6vmUD0FuS0kOPPXHzJGbOjgVjklpy9wkpn0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV3WURmPsm2Ps/zHuaEOF4zMA6RBXirPHit8HO59/u6zRcZAXL
-	OeTYrdLhIbmPVdbK0H6Gp7BYeItPMhLHP/oEadLEmbr36xNjvw4lSwXI7iWLRuo=
-X-Gm-Gg: ASbGncuLgwGvIM28D2Qtwv68zELRP+8fWqNreZnvoWSwzTZb7INIb5n5twemhxB8Lq7
-	06yRWZgXpTljKYkuNxKnyn9jQtH/BRzPhmyAgURi3ky79ZmUjIyoqR7WgE6Y8XhTrznWg0UEhiy
-	TlpXak3Coo/p1+rFNarDd5stM4ghQjeDPO5bdY6W2rxZSEKZ4ZlNYvt83cXpDaztauqjRXLXxHD
-	ecZ3Vnj6YWPX3DQhmLqtRwPGvWbsGiHwMxUA1DInxsdgPr9OMu/m5U3X5XFvKoJ+edCDxy2tbxi
-	eOWuR8h/V5qSxy3HbDj7wGYrHIWmuI8sepdxgBQGb8JxTA==
-X-Google-Smtp-Source: AGHT+IG7e2ArizWP4MnnXCzEngPDf9Y1vLQ4VTedx+YDDLVARLF74VDfkQ2yz9thb5Z0JKu5GA+XJA==
-X-Received: by 2002:a17:902:f546:b0:210:fce4:11ec with SMTP id d9443c01a7336-22a95516714mr124727405ad.1.1744092424080;
-        Mon, 07 Apr 2025 23:07:04 -0700 (PDT)
+        bh=NBGLDdhiF5aE7vXhYviGOMDmTQe40kjk+O0POgM2zRo=;
+        b=ljNRRZyV+3pr65jQvBvUE9OpZ/z+eWr5lqO184qdU69PuT+HJKGOHaZfEihNhU79CY
+         cGtieuUvIfl8s56q4g+Ik6fzIkHpYP4cw0HXa+m5ZcQUpfh9rEmzFsOEq5PsqV9/pN++
+         UOJhA5GO2B1lE2aFlL/eGrVJ3RntDmHjaQKuD6YXYF5RQvVtUyNr6zs5sxW4FzTuklKR
+         rVMpQuaZ/kpDRmyLIDxlxZMpwRJ724hYxwXPV7/cOxZCVLQstGZBpjYKSW+mPDYmWHk7
+         Vd8eEhXdDIxPwJhV4G712L77mSpHqFZmITsVyJsLK0h6GroVbf3PAqLO5XXXw+WJY/w6
+         KuXg==
+X-Forwarded-Encrypted: i=1; AJvYcCV19agr03v4Z1d5t4huRo1+LSg1eLHZyqI4r3ty4GSd9SXT5u9dqFWxw3GfQDYC4RGEk4166nJ8WEiZgTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3rKFFIL6bLIZhzyLc0nrue+ee/SpN4iMhAeCXTMenT9XOvOE7
+	/lGwTIZH1eMvJsmY513Q/5yy91HguSzuiws708DGPczEbDBbtNJBCNXdsc/XNhmiOG3K8nst78h
+	8
+X-Gm-Gg: ASbGnct5sgLDkGRDl4/M8NGr7yYFGxFNs9QAOEkSjO1SfZUim6yFmbMbjglyW5OrWfX
+	FYFmQjlV/AC4t5cQiU2sWe6hyYiQlMuFCVNbJEiFLwGjPRmNi+I1v+U75swrcdOwX5DYISmeiLR
+	mLXHbXNYmyiWzBiT/dsdGfokG2IgvdRe9bIVbpM1ulSFp6XNsjOVIXpAxi2kZ9GWFmtE7IUuITI
+	6Y8zpX59b1iiGkxKxlWz4IVw9jHXtdbktIxq9iYFu/3/hD1lBdnD7BSuejWwNtkjq5Mp7fDo+U6
+	YriBOg+XG+Neeh3lJGEahE9M0KKLPUWHW/ldURrF1HU5mw==
+X-Google-Smtp-Source: AGHT+IE8Cg6jbtSztbs1iW4jULwFaA3/Qy5eM7ju9iiy7eB85QPmdcFakGFBd2iR9jdJ7oTsswsgPw==
+X-Received: by 2002:a17:902:f683:b0:220:be86:a421 with SMTP id d9443c01a7336-22a8a0a37b5mr241406085ad.38.1744092437914;
+        Mon, 07 Apr 2025 23:07:17 -0700 (PDT)
 Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2297866e3ecsm92141755ad.198.2025.04.07.23.07.03
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229787727eesm91813665ad.224.2025.04.07.23.07.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 23:07:03 -0700 (PDT)
-Date: Tue, 8 Apr 2025 11:37:01 +0530
+        Mon, 07 Apr 2025 23:07:17 -0700 (PDT)
+Date: Tue, 8 Apr 2025 11:37:15 +0530
 From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Pengyu Luo <mitltlatltl@gmail.com>
 Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: Do not enable by default during compile testing
-Message-ID: <20250408060701.raoidknorhun5nn3@vireshk-i7>
-References: <20250404124006.362723-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] cpufreq: Add SM8650 to cpufreq-dt-platdev blocklist
+Message-ID: <20250408060715.r3tentoom6r4rkzt@vireshk-i7>
+References: <20250404164219.166918-1-mitltlatltl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,16 +87,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250404124006.362723-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250404164219.166918-1-mitltlatltl@gmail.com>
 
-On 04-04-25, 14:40, Krzysztof Kozlowski wrote:
-> Enabling the compile test should not cause automatic enabling of all
-> drivers.
+On 05-04-25, 00:42, Pengyu Luo wrote:
+> SM8650 have already been supported by qcom-cpufreq-hw driver, but
+> never been added to cpufreq-dt-platdev. This makes noise
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> [    0.388525] cpufreq-dt cpufreq-dt: failed register driver: -17
+> [    0.388537] cpufreq-dt cpufreq-dt: probe with driver cpufreq-dt failed with error -17
+> 
+> So adding it to the cpufreq-dt-platdev driver's blocklist to fix it.
+> 
+> Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
 > ---
->  drivers/cpufreq/Kconfig.arm | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
+>  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+> index 2aa00769c..a010da0f6 100644
+> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+> @@ -175,6 +175,7 @@ static const struct of_device_id blocklist[] __initconst = {
+>  	{ .compatible = "qcom,sm8350", },
+>  	{ .compatible = "qcom,sm8450", },
+>  	{ .compatible = "qcom,sm8550", },
+> +	{ .compatible = "qcom,sm8650", },
+>  
+>  	{ .compatible = "st,stih407", },
+>  	{ .compatible = "st,stih410", },
 
 Applied. Thanks.
 
