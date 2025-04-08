@@ -1,156 +1,109 @@
-Return-Path: <linux-kernel+bounces-594475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02593A8127A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:35:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD750A81276
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F1451B6253D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:32:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 296FD19E75AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA10230BE3;
-	Tue,  8 Apr 2025 16:31:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E4C22E40E;
+	Tue,  8 Apr 2025 16:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Np9ga4Lx"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UK6iCA/P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D03E22E3E7;
-	Tue,  8 Apr 2025 16:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DA5205ABF;
+	Tue,  8 Apr 2025 16:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744129914; cv=none; b=WtdaIaAeeivfCLOVAumO/+zxMnKasnOJrG/XDCF8gV4hRXLsG3dBRO3gsdbTaXaxxW/QD6oGeW27YI8kBpy9umZ7WmmeyvoKQYBy8vlwCkUmGH+a6UGIYg3hJU26QBvza8+hxrsh7UO30G5lf5Ni6vA5TblMR0LU1uE0PHU4yRY=
+	t=1744129903; cv=none; b=iwwVn37T3ls/6DyGfX0FfycesdV8D2lqZRnuUW/S2DZai2CwtCMf0WPOgWk7aNHxDUUyo/aDwNLTIgd3pBW/vchCV0/RPbn+pbBJF7QQVGctuNlQ7WOdhKCpFhB+GoyLBbGnu480MtMkn5vdu8aZDat/+8ZmJVE3ZLjHd1Ulv+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744129914; c=relaxed/simple;
-	bh=+ERSTFFT+pj0IqkbN5I2RfqLIPmHFJG5gQVrw2eXwxc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aclseDXHfPZ48sbKVINhcGla4Gq9Nt2MknnH6fGQfTNSZbWy3J/sN9Hiy2hmqZ6FFgA7Irb2LtPku1rLo6HOSvS60t7QiUTN9lw3xptFjcAE2X3iHAgTqcgn1qZ//KW8D5W/l1wsT9M0uDd3opBt7NDzFWOBoOAZh39f4OE/7FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Np9ga4Lx; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 538G0D94029154;
-	Tue, 8 Apr 2025 16:31:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=GJgoec
-	yAtEFkNbhaljeXNLdB75CNdGBhYrBniuFPltE=; b=Np9ga4LxZRMtXQiirqQTTx
-	fF0RFDPSIbcrUht5WUHcfUOYB78uTPLeVUIQOTCh/BsDnTSjgsDKvyy1I+bRUwLF
-	abnw32nwq/85xV4d3xrLxjJ0UlO+qxzl70vSvQfi/KOfNwz3BsXt2E6oYpDf+WVg
-	uZwRxp9zPqjA5ku0btysHRS5DqbSRBbpqjfOlIK1fUSTekpIRsMr1n0L9Z/JhLaL
-	kS+t0lHm+czkZCJAVdU3ANonBJG532ZrGm1nYt0ZA9l2+oDnbaeH+htgJr7N/d+N
-	KzbR/c8LhXtR37t4aJyofcS+j0b36WLAjhgZhFXevfrHagQcdhMUpZKKNUTYPbrA
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45vnx0mqwf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Apr 2025 16:31:25 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 538CxRUr025525;
-	Tue, 8 Apr 2025 16:31:24 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45ugbkuf3u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Apr 2025 16:31:24 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 538GVOp032703192
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 8 Apr 2025 16:31:24 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 009AF58065;
-	Tue,  8 Apr 2025 16:31:24 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C7B4158062;
-	Tue,  8 Apr 2025 16:31:22 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.48.163])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  8 Apr 2025 16:31:22 +0000 (GMT)
-Message-ID: <59ba139f5454f00cd25e3b802780a5cae0e51978.camel@linux.ibm.com>
-Subject: Re: [PATCH v11 9/9] ima: measure kexec load and exec events as
- critical data
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
-        code@tyhicks.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
-        vgoyal@redhat.com, dyoung@redhat.com
-Date: Tue, 08 Apr 2025 12:31:22 -0400
-In-Reply-To: <20250402124725.5601-10-chenste@linux.microsoft.com>
-References: <20250402124725.5601-1-chenste@linux.microsoft.com>
-	 <20250402124725.5601-10-chenste@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1744129903; c=relaxed/simple;
+	bh=egziIIrJF2lqSbR/TCnJppLKkivNvDY0/5IO3lTLgJ8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=gDK8/RWnfzs0LDqFZkVYu/gIwJcXD3Rv0bitqwuPNIC1z+18FW2YTutVfea+FrjsIJrBWe0dpTxfjRGMxxg1d8OJOjNOuuEYaFenBAflRD8lFqCeGStpXhR/TkMizKCQndSPHqdXDXy0eiEp+ybm03s+ccupDWT2YgfV4bgWcHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UK6iCA/P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96BF9C4CEE5;
+	Tue,  8 Apr 2025 16:31:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744129902;
+	bh=egziIIrJF2lqSbR/TCnJppLKkivNvDY0/5IO3lTLgJ8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=UK6iCA/PXeVfE+NUy9zsr035g3uKqIlH/wjKEXTUqc8Eep1ISLAccfNVBE5CiIhH8
+	 yIJlPojG6LNrQ+I582kYfNFY3lnbHKmrx4dz97/QvoXyx/khOTIHfO4B1gMQ/WDlhh
+	 8Knea54AxjcN/zNe7Q45JooCod3k/X4FnkgDi5Ld8NYFFJM1wx34zxBpmEPhzw9JLo
+	 5XVjhEthszBNxn1oo6EhlQKqVf+T1ONg5aKEu2D0Uu+lCIYblM0i4hpsNxmgFKhom+
+	 Wx6ylRd9aCiTbtZoXMIrXIDcIBqIP5Jk/owp3/P465S6unG+NaECaDDqHNyeLPbbt+
+	 5eugeNT1TePQQ==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+In-Reply-To: <20250408-gpiochip-set-rv-regulator-v1-0-a18b6154b31a@linaro.org>
+References: <20250408-gpiochip-set-rv-regulator-v1-0-a18b6154b31a@linaro.org>
+Subject: Re: [PATCH 0/4] regulator: rpi-panel-attiny: use new GPIO line
+ value setter callbacks
+Message-Id: <174412990132.2213335.9669148842146678590.b4-ty@kernel.org>
+Date: Tue, 08 Apr 2025 17:31:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: M9Xvki70YhfvYI4U2on_ZEHiHQP19y1O
-X-Proofpoint-ORIG-GUID: M9Xvki70YhfvYI4U2on_ZEHiHQP19y1O
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-08_07,2025-04-08_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=999 lowpriorityscore=0 phishscore=0 priorityscore=1501
- clxscore=1015 malwarescore=0 mlxscore=0 adultscore=0 spamscore=0
- bulkscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2504080114
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c25d1
 
-On Wed, 2025-04-02 at 05:47 -0700, steven chen wrote:
-> The amount of memory allocated at kexec load, even with the extra memory
-> allocated, might not be large enough for the entire measurement list.  Th=
-e
-> indeterminate interval between kexec 'load' and 'execute' could exacerbat=
-e
-> this problem.
->=20
-> Define two new IMA events, 'kexec_load' and 'kexec_execute', to be=20
-> measured as critical data at kexec 'load' and 'execute' respectively.
-> Report the allocated kexec segment size, IMA binary log size and the
-> runtime measurements count as part of those events.
->=20
-> These events, and the values reported through them, serve as markers in
-> the IMA log to verify the IMA events are captured during kexec soft
-> reboot.  The presence of a 'kexec_load' event in between the last two
-> 'boot_aggregate' events in the IMA log implies this is a kexec soft
-> reboot, and not a cold-boot. And the absence of 'kexec_execute' event
-> after kexec soft reboot implies missing events in that window which
-> results in inconsistency with TPM PCR quotes, necessitating a cold boot
-> for a successful remote attestation.
->=20
-> These critical data events are displayed as hex encoded ascii in the
-> ascii_runtime_measurement_list.  Verifying the critical data hash require=
-s=20
-> calculating the hash of the decoded ascii string. =20
->=20
-> For example, to verify the 'kexec_load' data hash:
->=20
-> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements=
-=20
-> > grep  kexec_load | cut -d' ' -f 6 | xxd -r -p | sha256sum
->=20
->=20
-> To verify the 'kexec_execute' data hash:
->=20
-> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements=
-=20
-> > grep kexec_execute | cut -d' ' -f 6 | xxd -r -p | sha256sum
->=20
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> Signed-off-by: steven chen <chenste@linux.microsoft.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+On Tue, 08 Apr 2025 09:36:27 +0200, Bartosz Golaszewski wrote:
+> struct gpio_chip now has callbacks for setting line values that return
+> an integer, allowing to indicate failures. We're in the process of
+> converting all GPIO drivers to using the new API. This series converts
+> the only GPIO controller under drivers/regulator/ and - while at it -
+> refactors the code a bit.
+> 
+> 
+> [...]
 
-Thanks, Steven.=20
+Applied to
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+
+Thanks!
+
+[1/4] regulator: rpi-panel-attiny: don't double-check GPIO range
+      commit: 06bab1f101337ae9469a7d2c6ac4de5db64e8160
+[2/4] regulator: rpi-panel-attiny: use devres for mutex management
+      commit: 1326e295d6b4ffc9647bd4f073b787b4f79d6b6e
+[3/4] regulator: rpi-panel-attiny: use lock guards for the state mutex
+      commit: 50faedda12e46918a11194a30c2bedf2b983fae2
+[4/4] regulator: rpi-panel-attiny: use new GPIO line value setter callbacks
+      commit: 936df52c29b0d422665c5e84b0cffae61611411b
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
