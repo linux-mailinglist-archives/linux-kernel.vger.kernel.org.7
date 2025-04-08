@@ -1,163 +1,133 @@
-Return-Path: <linux-kernel+bounces-594334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B45A81040
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:38:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A381EA81052
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB6F4171B2C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:33:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 835858C3D38
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB83F230BF4;
-	Tue,  8 Apr 2025 15:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DA122D4C6;
+	Tue,  8 Apr 2025 15:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P4UJEaCt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="XoRvZiXm"
+Received: from mail-il1-f226.google.com (mail-il1-f226.google.com [209.85.166.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236B622A810;
-	Tue,  8 Apr 2025 15:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E7A1A8407
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 15:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744126294; cv=none; b=i+WqTMkoJ52irMF2dyvbCOAnPZid2colk7wwBMU3b6N7BMx9PJ1vfJiua9KtsbdDr32CCOAh2jwpU6JFIqrhDO3W/+S5GZNVljPscSVR8hN/5WrrOetY9/K+EFmqDt9RmuxEAbGB9f8L7wmUcRF+Jo/yqdSDSoIRCJOl71EURZo=
+	t=1744126394; cv=none; b=BEcYojI+qlJ37REGM9AP1BmjObruP4V2oLP6At21ekelJfDa00D62klzIxJeySM471L7x3eGF5TJYGiYN33fRwmgQJBg6dvRWQCE1H5ljfaZQaC51TisFB3RZWp0YTXiHnweHGzd1scS3mwoblV9Tct5BFUF6TPMrS5qY44BBqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744126294; c=relaxed/simple;
-	bh=Uq29KL+ro4IRBo8g5H8MypBCBK0Ooc76QGNcWH4alfw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QKTi6jwoTaToT+X/2FTVJ+BUTaJniWajgjCuAr1/3rpK3nGEaHu9pcjcRMCIiz7Jk2zHFsk5u53JBcWcpHKg3Kl2Xa0JKSM1v+1kC4dn2sqCRuGL9HZ+CIKas51C8EGBZ7SED0Ci9OEj2MUo4JJu72HddPbtNeVUXfgmyQgJOcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P4UJEaCt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A14E9C4CEE5;
-	Tue,  8 Apr 2025 15:31:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744126294;
-	bh=Uq29KL+ro4IRBo8g5H8MypBCBK0Ooc76QGNcWH4alfw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P4UJEaCtF61oGuLRw5Uii2z9vVlYo67NwlmwTqICCwpgHdYrc/oIvkhAI0jjnKiYr
-	 Foi1EZ+/FfOtwDutvDlZ9IsQ6EaTcYYiD+reVoWqi4tU8zzV1GPixJdCq3xMn5ULof
-	 keSD4lGX9dDqatRoGU+M0XVaSjc2nQ2FStY95360gQvs2zoe+wDlgAKASUDQjaYgeZ
-	 kQ3WWSvJQ9LkYm40V+PxAHXYZKpuv+S9USOhEty0CogIdTgr+YTMAnmHfwKeorOjfK
-	 lEPaV0ygH0+6jINKFxGVxFPjOV4RS3OnCQKWa9pJFTARzwygN4IV07Gvc2xj2sINKa
-	 D8jpHP3BSx3cg==
-Date: Tue, 8 Apr 2025 18:31:30 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	s=arc-20240116; t=1744126394; c=relaxed/simple;
+	bh=fZSe9cOE6+lN1PYsZGWt0c0EBhhVZMgfo7/QsrayYj8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References; b=pKzr/UaeaByQYvER/8+DEzfTZGA697hI9dObKBuBgZ4lqFZgNYNbVXbYTjB4pksotzqlmvGKzxSMfBzcgcOepBMwWKB99eW+hB6mckcyiCqt0Q1d2gmA0z5gZjxy7VBbzO1GTBfcqHzFb2ObcuPzmHmfeesg8G1u/HeRrDOHAKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com; spf=pass smtp.mailfrom=arista.com; dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b=XoRvZiXm; arc=none smtp.client-ip=209.85.166.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
+Received: by mail-il1-f226.google.com with SMTP id e9e14a558f8ab-3cf82bd380bso55154585ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 08:33:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744126392; x=1744731192;
+        h=content-transfer-encoding:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZIp5HkuCecJrXO42LNENOtR2HpJcHzON18/VgrUWA2U=;
+        b=Ow+jnFZqm6jmGmCKwtp68fvS8/xhVobonijn7snZxXO/z3Xn+l6rKcI8DtnrV4jGOF
+         dc/dZ3UhJ0QlicU8tizV5IyRwd8CCxOixuVfg0NUZOhbSofn0NOLjDS22QKf/rnh5mhf
+         uYVEd2+CP81Yh/WxhSMT3KAjCBhBl/kqZTazu4s2P4KYtniOC340YkEZ5qExLzr0S4fW
+         +DjXxBuCaiZbiTAG8j+lhH1+6dVE9/5CrPFdTCjWRdnaiZ8B13wvQN/Fg8cNwaNqzJAc
+         pgvTfV3UIjThiiiV7vJFqt3MyskIoeoO5OtC0lV3zVUqmGeQ8Q6/kZ7Bmznz689vxY4v
+         UNKw==
+X-Forwarded-Encrypted: i=1; AJvYcCWlOsjszp1tQybUav3eim+SwZS5t5On+GZB3ke39SsC+pXgpnoCZudMswfwkM9K+7K/avYBoDOUDodkkhY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM4hZEpvX//pg39URwYTNIq8ol5qIPGoDXcOai2ZmiGv0drCCi
+	ZklTtk4W+FNZs0Ts20eoI2Dyr2Tl94E1Ih9ZYBThk9nHbVPq6Qqt2wACrdABUvMCR73HEPFGF/R
+	gcf5K0qkJzhbZnVImvBjFD6kn9IQLCw==
+X-Gm-Gg: ASbGncsQ0VY/RwIL6/dtERO1CYhZKCTE6gAtQ1jCLfrxo0+tc7mlYZLnBB9VkdmeoLc
+	KJMy3LpF3I4xKvgI0mNNCgUOoMrBC1pf56u593D6GAMHPsQxLseQs4qkCWszE78rR2QthYUvF8I
+	pCtgOMIvJ3dYgJyKiHetzu2qiv9GSGzid9YYzEfjiNimXtCxVFVE0rsPBOt6eQQpv/ZmtkhvObW
+	TlyNtrZa1N2YtP2+hOsNi5S20qLvbVpE9f2wUe4pkE+ys2x7ym9QikLWGf+02+zGax13Fiu2jyX
+	FfCORRQQlki+ayUQAH3jNC7eMTk=
+X-Google-Smtp-Source: AGHT+IG0bJHf8yVxArmgqdUB1VjG2+cLxcbev3xbFIUcyxf0dWKFoKc1j1VYHlHpJORlLSCMN8zrwdAyYHgg
+X-Received: by 2002:a05:6e02:2484:b0:3d5:8923:faa5 with SMTP id e9e14a558f8ab-3d6ec536c51mr139672185ab.10.1744126392378;
+        Tue, 08 Apr 2025 08:33:12 -0700 (PDT)
+Received: from smtp.aristanetworks.com ([74.123.28.25])
+        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-3d703c0b600sm1161445ab.53.2025.04.08.08.33.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 08:33:12 -0700 (PDT)
+X-Relaying-Domain: arista.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
+	s=Arista-A; t=1744126391;
+	bh=ZIp5HkuCecJrXO42LNENOtR2HpJcHzON18/VgrUWA2U=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XoRvZiXmLdRa7ky3oaLJGb1Tqv3cqnbOyHOEdxKTMssua1ZAFg5cxhRrQ8iRbaNOG
+	 9/9zQqEjQcKIamZ4YTOx7abJNoRNPtv8sdb+oc46Hlu3PzFvtul41m8DUhDs4OULze
+	 shlA2AgFZY1ZmsK07+atJJ5xX/pM8ATUOH41E58xaKu98tjjjRdq3PSbYb45vIEXLL
+	 cjbf3rmmQO6NrOcc80HFEPL33TM8RDgMz4+DJm3Op4TL8IxNWO9/gCf8rRPwzTSeKi
+	 skiPf5i2kJDf1WDPXZ0LNIt1XeILe/I6Q95BmdJPlWbNUXv4pw4QnIupz97xDoNsC+
+	 Nv5jLsfOCR45Q==
+Received: from mpazdan-home-zvfkk.localdomain (mpazdan-home-zvfkk.sjc.aristanetworks.com [10.244.168.54])
+	by smtp.aristanetworks.com (Postfix) with ESMTP id 81F2A100242;
+	Tue,  8 Apr 2025 15:33:11 +0000 (UTC)
+Received: by mpazdan-home-zvfkk.localdomain (Postfix, from userid 91835)
+	id 79EE640B1B; Tue,  8 Apr 2025 15:33:11 +0000 (UTC)
+X-SMTP-Authentication: Allow-List-permitted
+X-SMTP-Authentication: Allow-List-permitted
+From: Marek Pazdan <mpazdan@arista.com>
+To: andrew@lunn.ch
+Cc: aleksander.lobakin@intel.com,
+	almasrymina@google.com,
+	andrew+netdev@lunn.ch,
+	anthony.l.nguyen@intel.com,
+	daniel.zahka@gmail.com,
+	davem@davemloft.net,
+	ecree.xilinx@gmail.com,
+	edumazet@google.com,
+	gal@nvidia.com,
+	horms@kernel.org,
+	intel-wired-lan@lists.osuosl.org,
+	jianbol@nvidia.com,
+	kory.maincent@bootlin.com,
+	kuba@kernel.org,
 	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	linux-arm-kernel@lists.infradead.org,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	linuxppc-dev@lists.ozlabs.org,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Sumit Garg <sumit.garg@kernel.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-integrity@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>
-Subject: Re: [PATCH v2 2/4] tpm: support devices with synchronous send()
-Message-ID: <Z_VBUozuHvbxdyB3@kernel.org>
-References: <20250408083208.43512-1-sgarzare@redhat.com>
- <20250408083208.43512-3-sgarzare@redhat.com>
+	mpazdan@arista.com,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	przemyslaw.kitszel@intel.com,
+	willemb@google.com
+Subject: Re: [Intel-wired-lan] [PATCH 1/2] ethtool: transceiver reset and presence pin control
+Date: Tue,  8 Apr 2025 15:32:30 +0000
+Message-ID: <20250408153311.30539-1-mpazdan@arista.com>
+In-Reply-To: <8b8dca4d-bdf3-49e4-b081-5f51e26269bb@lunn.ch>
+References: <8b8dca4d-bdf3-49e4-b081-5f51e26269bb@lunn.ch>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250408083208.43512-3-sgarzare@redhat.com>
 
-On Tue, Apr 08, 2025 at 10:32:06AM +0200, Stefano Garzarella wrote:
-> From: Stefano Garzarella <sgarzare@redhat.com>
-> 
-> Some devices do not support interrupts and provide a single synchronous
-> operation to send the command and receive the response on the same buffer.
-> 
-> Currently, these types of drivers must use an internal buffer where they
-> temporarily store the response between .send() and recv() calls.
-> 
-> Introduce a new flag (TPM_CHIP_FLAG_SYNC) to support synchronous send().
-> If that flag is set by the driver, tpm_try_transmit() will use the send()
-> callback to send the command and receive the response on the same buffer
-> synchronously. In that case send() return the number of bytes of the
-> response on success, or -errno on failure.
-> 
-> Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
-> Suggested-by: Jarkko Sakkinen <jarkko@kernel.org>
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> ---
->  include/linux/tpm.h              |  1 +
->  drivers/char/tpm/tpm-interface.c | 18 +++++++++++++++---
->  2 files changed, 16 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> index 2e38edd5838c..0e9746dc9d30 100644
-> --- a/include/linux/tpm.h
-> +++ b/include/linux/tpm.h
-> @@ -350,6 +350,7 @@ enum tpm_chip_flags {
->  	TPM_CHIP_FLAG_SUSPENDED			= BIT(8),
->  	TPM_CHIP_FLAG_HWRNG_DISABLED		= BIT(9),
->  	TPM_CHIP_FLAG_DISABLE			= BIT(10),
-> +	TPM_CHIP_FLAG_SYNC			= BIT(11),
->  };
->  
->  #define to_tpm_chip(d) container_of(d, struct tpm_chip, dev)
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 3b6ddcdb4051..9fbe84b5a131 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -114,8 +114,17 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
->  		return rc;
->  	}
->  
-> -	/* A sanity check. send() should just return zero on success e.g.
-> -	 * not the command length.
-> +	/* Synchronous devices return the response directly during the send()
-> +	 * call in the same buffer.
-> +	 */
+On Mon, 7 Apr 2025 22:39:17 +0200 Andrew Lunn wrote:
+> How do you tell the kernel to stop managing the SFP? If you hit the
+> module with a reset from user space, the kernel is going to get
+> confused. And how are you talking to the module? Are you going to
+> hijack the i2c device via i2-dev? Again, you need to stop the kernel
+> from using the device.
 
-Nit:
+This is something to implement in driver code. For ice driver this reset will
+be executed through AQ command (Admin Queue) which is communication channel
+between driver and firmware. What I probably need to do is to add additional PHY
+state (like USER_MODULE_RESET) and check it when driver wants to execute AQ command.
 
-/*
- * ...
+> Before you go any further, i think you need to zoom out and tell us
+> the big picture....
 
-It's wrong in the existing comment.
-
-> +	if (chip->flags & TPM_CHIP_FLAG_SYNC) {
-> +		len = rc;
-> +		rc = 0;
-> +		goto out_send_sync;
-> +	}
-> +
-> +	/* A sanity check. send() of asynchronous devices should just return
-> +	 * zero on success e.g. not the command length.
->  	 */
->  	if (rc > 0) {
->  		dev_warn(&chip->dev,
-> @@ -151,7 +160,10 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
->  	if (len < 0) {
->  		rc = len;
->  		dev_err(&chip->dev, "tpm_transmit: tpm_recv: error %d\n", rc);
-> -	} else if (len < TPM_HEADER_SIZE || len != be32_to_cpu(header->length))
-> +		return rc;
-> +	}
-> +out_send_sync:
-
-out_sync would be sufficient
-
-> +	if (len < TPM_HEADER_SIZE || len != be32_to_cpu(header->length))
->  		rc = -EFAULT;
->  
->  	return rc ? rc : len;
-> -- 
-> 2.49.0
-> 
-
-BR, Jarkko
+In my use case I need to have ability to reset transceiver module. There are 
+several reasons for that. Most common is to reinit module if case of error state.
+(this according to CMIS spec). Another use case is that in our switch's cli there
+is a command for transceiver reinitialisation which involves transceiver reset.
 
