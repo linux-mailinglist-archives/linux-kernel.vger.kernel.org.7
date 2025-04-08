@@ -1,208 +1,132 @@
-Return-Path: <linux-kernel+bounces-594830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37226A81715
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:46:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F30DFA8171B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8C8A1B677DC
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 639158A3D83
 	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6233021638C;
-	Tue,  8 Apr 2025 20:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB45254857;
+	Tue,  8 Apr 2025 20:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dHjqO6Pm";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9UGv4goT"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="I9cDpkoL"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438A32AE86;
-	Tue,  8 Apr 2025 20:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50B72AE86
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 20:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744145166; cv=none; b=tMCIdqFagF4Tna0kMuUyTNSoLAuEGInC9iKArVom8zwxE9uQu7LZ2xhTY+yRF2scXy/FJYh8yRXL2yfZ8WMJHq8Q/YXHGN/N0uw+sEebfhuujOa9v04LNOL1YY6/F33VOyInxAvrXXcYqbYKkB+ovR4/r2+Ztl5e7j8Wd6+geKQ=
+	t=1744145178; cv=none; b=JmaHm7Texe8V+vdqjrwEPqakqFwixWYchlC3x868BRq2B6mJgqnClRl9AovgxW40t99NSLXaMopuD6Ty7LNbLe4JFGIwwqhHAXpi3y6wKJy8feNDapnmg8MGS2jUKXIEiVep8CDLoVG/lAvFdNZ9FAy3FEIb4O1II4tRyEAyj9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744145166; c=relaxed/simple;
-	bh=BGn19BNZNaod4cVdTZOMUKKliOPbXHKLsOjaavarhzI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=maLryQnWduFCNHrZEAYne6j7Y4utepwoLsLUapYMlAjLBAZr9SKzHTwc2iALd5otBRYrhu9WWxPay1K/ky01uNzaF3JggLe/Qx1AEyxjqRQj7tDVuzmlt3P1X6ujAe+u4AelILKVPocKZbPfqjsGglqnxpwYmP6qYdh+0jp1y9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dHjqO6Pm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9UGv4goT; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 08 Apr 2025 20:45:51 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744145160;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jOlUqtV6zzR2sS24S2cBRoEY5VIl1D1KZLAfo9l7wa4=;
-	b=dHjqO6PmXUv3qulFTJL6ZbKHi2jZI5yyS52P7jx5IkE8EOGV0jZxegrGPw9K5JQ7L3hPE9
-	D7GDBVaM6MFmvwPNWD4xoHT0PJ3L/UJPNW3iF/8KctpPH60gHieJYCqm5mHAn05KtSNg1U
-	4f7te9G5WtQjf5anXpf2Y97JSb3tm8ye/k3a3Z6Od7xIi7YAkoQLmYjlM8zOwWUh3FlVyA
-	YRSavJCKduLuV/rwm2IL31tkxN68G1R1bZhHnE3A+9CZI7rq+0nXK2XNfz2WcHpCJk1EqZ
-	fnL45Rv3DYM/ofuDd+YeFNSz0saqnVM6EKGzAl/BRPzm8M0obJgK3I7e5hb/Ew==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744145160;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jOlUqtV6zzR2sS24S2cBRoEY5VIl1D1KZLAfo9l7wa4=;
-	b=9UGv4goTb4B2cnubmIqzRUwbGFEjUkK698vAfO7xdnVcu27i1QoAxoZnhVG/PTT96blopb
-	UW2yu1lmosEuOTDg==
-From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/urgent] objtool: Remove ANNOTATE_IGNORE_ALTERNATIVE
- from CLAC/STAC
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To:
- <fc972ba4995d826fcfb8d02733a14be8d670900b.1744098446.git.jpoimboe@kernel.org>
-References:
- <fc972ba4995d826fcfb8d02733a14be8d670900b.1744098446.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1744145178; c=relaxed/simple;
+	bh=93eT2rpamlxVc6aFa/l0LJNv4i5WbwKqNk2fS+xc8CA=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=cLlV83o5ANNxfdTgrhuEOK5IzyRCCLN0vIDRr+STehxs77bHLdM3Qstz+2abtyOgUnWsTnnjzaq5A8WHZD/tddqNz4RQu7H5DCoCbCfyxm6EqmTv+FwijUlCtKk9dGQibX75AvvAMomGsYHUcWwil0ouELtcErmIb0U/1/mlLdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=I9cDpkoL; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1744145170; x=1744404370;
+	bh=YYLiZ0LCn/fJYeBcV4Bc2RbLDA4OTOnCGSvl/4wo+9M=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=I9cDpkoLAszJNlLR0vodgu/FnX+lm+1HD0KgITHUevObv1p1/UIDHDe2L7YsEAAtR
+	 XKSmcGkUI5btNWBZn1LdAWzdzsay3ERVFSIXsxWxomonds/9+QdXKuEBXoZ+dNiXcN
+	 EqyNxNz9gGR/lKx1I+EXeSh3sjCTb1mEIDP5G5E7bi77wkhdhxMR83RCeqJJw8jet4
+	 WzBtAkzjcDWjwC88UlWWierMgKyEsal/jMKcVGJzLqkR/ktaxrM8p9rzkWLTLf/mlf
+	 IG5rQL+MxGvRU+6ZuXC4nrQnVpNO+kULIbi1itf/fz9xUKi53m5/VPVQCBATDDWtpw
+	 5rcSfz3X9qrSg==
+Date: Tue, 08 Apr 2025 20:46:05 +0000
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: dmkhn@proton.me
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v1 1/1] x86/early_printk: Use 'mmio32' for consistency
+Message-ID: <Z/WLCdZlg4sebQ6i@kraken>
+Feedback-ID: 123220910:user:proton
+X-Pm-Message-ID: 43a1fb498a3fc80da4fbec0bfdaa7fba09367345
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174414515158.31282.6804487200090840468.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the objtool/urgent branch of tip:
+On Mon, Apr 07, 2025 at 08:22:14PM +0300, Andy Shevchenko wrote:
+> First of all, using 'mmio' prevents proper implementation of 8-bit access=
+ors.
+> Second, it's simply inconsistent with uart8250 set of options. Rename it =
+to
+> 'mmio32'. While at it, remove rather misleading comment in the documentat=
+ion.
+> >From now on mmio32 is self-explanatory and pciserial supports not only 3=
+2-bit
+> MMIO accessors.
+>=20
+> Fixes: 3181424aeac2 ("x86/early_printk: Add support for MMIO-based UARTs"=
+)
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Commit-ID:     2d12c6fb78753925f494ca9079e2383529e8ae0e
-Gitweb:        https://git.kernel.org/tip/2d12c6fb78753925f494ca9079e2383529e8ae0e
-Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Tue, 08 Apr 2025 01:21:14 -07:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 08 Apr 2025 22:03:51 +02:00
+Reviewed-by: Denis Mukhin <dmukhin@ford.com>
 
-objtool: Remove ANNOTATE_IGNORE_ALTERNATIVE from CLAC/STAC
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt | 5 +----
+>  arch/x86/kernel/early_printk.c                  | 6 +++---
+>  2 files changed, 4 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
+ion/admin-guide/kernel-parameters.txt
+> index 76e538c77e31..d9fd26b95b34 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1407,18 +1407,15 @@
+>  =09=09=09earlyprintk=3Dserial[,0x...[,baudrate]]
+>  =09=09=09earlyprintk=3DttySn[,baudrate]
+>  =09=09=09earlyprintk=3Ddbgp[debugController#]
+> +=09=09=09earlyprintk=3Dmmio32,membase[,{nocfg|baudrate}]
+>  =09=09=09earlyprintk=3Dpciserial[,force],bus:device.function[,{nocfg|bau=
+drate}]
+>  =09=09=09earlyprintk=3Dxdbc[xhciController#]
+>  =09=09=09earlyprintk=3Dbios
+> -=09=09=09earlyprintk=3Dmmio,membase[,{nocfg|baudrate}]
+> =20
+>  =09=09=09earlyprintk is useful when the kernel crashes before
+>  =09=09=09the normal console is initialized. It is not enabled by
+>  =09=09=09default because it has some cosmetic problems.
+> =20
+> -=09=09=09Only 32-bit memory addresses are supported for "mmio"
+> -=09=09=09and "pciserial" devices.
+> -
+>  =09=09=09Use "nocfg" to skip UART configuration, assume
+>  =09=09=09BIOS/firmware has configured UART correctly.
+> =20
+> diff --git a/arch/x86/kernel/early_printk.c b/arch/x86/kernel/early_print=
+k.c
+> index b70e6e99fb17..dc053641698c 100644
+> --- a/arch/x86/kernel/early_printk.c
+> +++ b/arch/x86/kernel/early_printk.c
+> @@ -424,10 +424,10 @@ static int __init setup_early_printk(char *buf)
+>  =09keep =3D (strstr(buf, "keep") !=3D NULL);
+> =20
+>  =09while (*buf !=3D '\0') {
+> -=09=09if (!strncmp(buf, "mmio", 4)) {
+> -=09=09=09early_mmio_serial_init(buf + 4);
+> +=09=09if (!strncmp(buf, "mmio32", 6)) {
+> +=09=09=09buf +=3D 6;
+> +=09=09=09early_mmio_serial_init(buf);
+>  =09=09=09early_console_register(&early_serial_console, keep);
+> -=09=09=09buf +=3D 4;
+>  =09=09}
+>  =09=09if (!strncmp(buf, "serial", 6)) {
+>  =09=09=09buf +=3D 6;
+> --=20
+> 2.47.2
+>=20
 
-ANNOTATE_IGNORE_ALTERNATIVE adds additional noise to the code generated
-by CLAC/STAC alternatives, hurting readability for those whose read
-uaccess-related code generation on a regular basis.
-
-Remove the annotation specifically for the "NOP patched with CLAC/STAC"
-case in favor of a manual check.
-
-Leave the other uses of that annotation in place as they're less common
-and more difficult to detect.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/fc972ba4995d826fcfb8d02733a14be8d670900b.1744098446.git.jpoimboe@kernel.org
----
- arch/x86/include/asm/smap.h | 12 ++++++------
- tools/objtool/check.c       | 30 +++++++++++++++++++++++++++++-
- 2 files changed, 35 insertions(+), 7 deletions(-)
-
-diff --git a/arch/x86/include/asm/smap.h b/arch/x86/include/asm/smap.h
-index 55a5e65..4f84d42 100644
---- a/arch/x86/include/asm/smap.h
-+++ b/arch/x86/include/asm/smap.h
-@@ -16,23 +16,23 @@
- #ifdef __ASSEMBLER__
- 
- #define ASM_CLAC \
--	ALTERNATIVE __stringify(ANNOTATE_IGNORE_ALTERNATIVE), "clac", X86_FEATURE_SMAP
-+	ALTERNATIVE "", "clac", X86_FEATURE_SMAP
- 
- #define ASM_STAC \
--	ALTERNATIVE __stringify(ANNOTATE_IGNORE_ALTERNATIVE), "stac", X86_FEATURE_SMAP
-+	ALTERNATIVE "", "stac", X86_FEATURE_SMAP
- 
- #else /* __ASSEMBLER__ */
- 
- static __always_inline void clac(void)
- {
- 	/* Note: a barrier is implicit in alternative() */
--	alternative(ANNOTATE_IGNORE_ALTERNATIVE "", "clac", X86_FEATURE_SMAP);
-+	alternative("", "clac", X86_FEATURE_SMAP);
- }
- 
- static __always_inline void stac(void)
- {
- 	/* Note: a barrier is implicit in alternative() */
--	alternative(ANNOTATE_IGNORE_ALTERNATIVE "", "stac", X86_FEATURE_SMAP);
-+	alternative("", "stac", X86_FEATURE_SMAP);
- }
- 
- static __always_inline unsigned long smap_save(void)
-@@ -59,9 +59,9 @@ static __always_inline void smap_restore(unsigned long flags)
- 
- /* These macros can be used in asm() statements */
- #define ASM_CLAC \
--	ALTERNATIVE(ANNOTATE_IGNORE_ALTERNATIVE "", "clac", X86_FEATURE_SMAP)
-+	ALTERNATIVE("", "clac", X86_FEATURE_SMAP)
- #define ASM_STAC \
--	ALTERNATIVE(ANNOTATE_IGNORE_ALTERNATIVE "", "stac", X86_FEATURE_SMAP)
-+	ALTERNATIVE("", "stac", X86_FEATURE_SMAP)
- 
- #define ASM_CLAC_UNSAFE \
- 	ALTERNATIVE("", ANNOTATE_IGNORE_ALTERNATIVE "clac", X86_FEATURE_SMAP)
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 69f94bc..b649049 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -3505,6 +3505,34 @@ next_orig:
- 	return next_insn_same_sec(file, alt_group->orig_group->last_insn);
- }
- 
-+static bool skip_alt_group(struct instruction *insn)
-+{
-+	struct instruction *alt_insn = insn->alts ? insn->alts->insn : NULL;
-+
-+	/* ANNOTATE_IGNORE_ALTERNATIVE */
-+	if (insn->alt_group && insn->alt_group->ignore)
-+		return true;
-+
-+	/*
-+	 * For NOP patched with CLAC/STAC, only follow the latter to avoid
-+	 * impossible code paths combining patched CLAC with unpatched STAC
-+	 * or vice versa.
-+	 *
-+	 * ANNOTATE_IGNORE_ALTERNATIVE could have been used here, but Linus
-+	 * requested not to do that to avoid hurting .s file readability
-+	 * around CLAC/STAC alternative sites.
-+	 */
-+
-+	if (!alt_insn)
-+		return false;
-+
-+	/* Don't override ASM_{CLAC,STAC}_UNSAFE */
-+	if (alt_insn->alt_group && alt_insn->alt_group->ignore)
-+		return false;
-+
-+	return alt_insn->type == INSN_CLAC || alt_insn->type == INSN_STAC;
-+}
-+
- /*
-  * Follow the branch starting at the given instruction, and recursively follow
-  * any other branches (jumps).  Meanwhile, track the frame pointer state at
-@@ -3625,7 +3653,7 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
- 			}
- 		}
- 
--		if (insn->alt_group && insn->alt_group->ignore)
-+		if (skip_alt_group(insn))
- 			return 0;
- 
- 		if (handle_insn_ops(insn, next_insn, &state))
 
