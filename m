@@ -1,151 +1,136 @@
-Return-Path: <linux-kernel+bounces-593413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 498E7A7F8D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:02:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6779A7F90A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60BA1189E322
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:00:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB41B3B909A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE332263F51;
-	Tue,  8 Apr 2025 09:00:16 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE37D263F29;
+	Tue,  8 Apr 2025 09:09:11 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632762185BE
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 09:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D9620B815
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 09:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744102816; cv=none; b=cQ4iRxp6C0VBPhw9bnrW6lI1RpXLekolPnPhKoT8AWc72zWo8ETbi2sl3jKnEPLOT49+AyAxc2Lr29F0tesHj4ANHx0axhvQjQ/PR2qt0GyZIhupWk1kTvzzNmRQD8IITOTndnI7k/z795oEIqDIH3UJ8YAiX8CHzK7SxDglAd0=
+	t=1744103351; cv=none; b=obAyOzNKlKCxoksGxC5KWNofC1c+TlDHr0z4yE2Fix1EXMC0LRlUXD5UYELmz3NVn0aNNo4N84kkfh+BF06l7PRL1ZblqTfkJH80QMtAJELwq/kYcNmuXHEot1/uwZLCwWgVO2mf6UHS1XSc19Mo4ATgD3DQpVEnWO6/ic0zx4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744102816; c=relaxed/simple;
-	bh=nl1hpaXBm54KjyizKr5foqeIrLkVu4aS5xEBVQ231t8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=A1QG+vdq2rGWN7O8JyKWXKwgdNxVHri21uf0jvEhxindYjWBV46sRpZHU7NTqI3Uu7JQFTXgqy8Y9eYJI0B2d5lZeQyvtSgTXz3qIj/7VkDoWnwrg53W5agjFFHYxW713Rw6eNfA+Qek5MPOiBrf6RFTaWQWfzlhyQ0qVVcoErU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1u24nS-0001k3-Nf; Tue, 08 Apr 2025 10:59:06 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1u24nR-003tta-2c;
-	Tue, 08 Apr 2025 10:59:05 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1u24nR-0003e6-2L;
-	Tue, 08 Apr 2025 10:59:05 +0200
-Message-ID: <710569e305924a0a84e9792bc779d37a24011477.camel@pengutronix.de>
-Subject: Re: [PATCH v8 3/7] memory: Add STM32 Octo Memory Manager driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Patrice Chotard <patrice.chotard@foss.st.com>, Krzysztof Kozlowski
- <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>
-Cc: christophe.kerello@foss.st.com, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org
-Date: Tue, 08 Apr 2025 10:59:05 +0200
-In-Reply-To: <20250407-upstream_ospi_v6-v8-3-7b7716c1c1f6@foss.st.com>
-References: <20250407-upstream_ospi_v6-v8-0-7b7716c1c1f6@foss.st.com>
-	 <20250407-upstream_ospi_v6-v8-3-7b7716c1c1f6@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1744103351; c=relaxed/simple;
+	bh=pGUxmxORgkw2eWqQ+fsCI9H46C+s3XZ5yiRNo9nxgHk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UX2NM6NDW13K7p0EYvdf1/zJMwIKK8mwubSLSd4FCraqBdBQgyAvZqTiL4z+7XnTUTxHq7Q0iKbN4Urg/1GEEG1BPkf8GFoc2B0HY1X7tY6DogRUu/xCsvrhhH9Msn9sDJqWqmBdFOPMTmu/IRJCjGmvylVH538X7Lf9y8N3+80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZX0XG56XlzvWt6;
+	Tue,  8 Apr 2025 17:05:02 +0800 (CST)
+Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
+	by mail.maildlp.com (Postfix) with ESMTPS id 385AE180104;
+	Tue,  8 Apr 2025 17:09:05 +0800 (CST)
+Received: from huawei.com (10.175.124.71) by kwepemg100017.china.huawei.com
+ (7.202.181.58) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 8 Apr
+ 2025 17:09:03 +0800
+From: Wupeng Ma <mawupeng1@huawei.com>
+To: <catalin.marinas@arm.com>, <will@kernel.org>, <ryan.roberts@arm.com>,
+	<anshuman.khandual@arm.com>, <akpm@linux-foundation.org>
+CC: <peterx@redhat.com>, <joey.gouly@arm.com>, <yangyicong@hisilicon.com>,
+	<ioworker0@gmail.com>, <baohua@kernel.org>, <jack@suse.cz>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, Wupeng Ma <mawupeng1@huawei.com>
+Subject: [PATCH] arm64: dax: add devmap check for pmd_trans_huge
+Date: Tue, 8 Apr 2025 16:59:14 +0800
+Message-ID: <20250408085914.1946183-1-mawupeng1@huawei.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemg100017.china.huawei.com (7.202.181.58)
 
-On Mo, 2025-04-07 at 15:27 +0200, Patrice Chotard wrote:
-> Octo Memory Manager driver (OMM) manages:
->   - the muxing between 2 OSPI busses and 2 output ports.
->     There are 4 possible muxing configurations:
->       - direct mode (no multiplexing): OSPI1 output is on port 1 and OSPI=
-2
->         output is on port 2
->       - OSPI1 and OSPI2 are multiplexed over the same output port 1
->       - swapped mode (no multiplexing), OSPI1 output is on port 2,
->         OSPI2 output is on port 1
->       - OSPI1 and OSPI2 are multiplexed over the same output port 2
->   - the split of the memory area shared between the 2 OSPI instances.
->   - chip select selection override.
->   - the time between 2 transactions in multiplexed mode.
->   - check firewall access.
->=20
-> Signed-off-by: Christophe Kerello <christophe.kerello@foss.st.com>
-> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
-> ---
->  drivers/memory/Kconfig     |  17 ++
->  drivers/memory/Makefile    |   1 +
->  drivers/memory/stm32_omm.c | 474 +++++++++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 492 insertions(+)
->=20
-[...]
-> diff --git a/drivers/memory/stm32_omm.c b/drivers/memory/stm32_omm.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..db50aeffb0aa32a9d51a205d8=
-ba30ab2299e1c34
-> --- /dev/null
-> +++ b/drivers/memory/stm32_omm.c
-> @@ -0,0 +1,474 @@
-[...]
-> +static int stm32_omm_disable_child(struct device *dev)
-> +{
-> +	static const char * const resets_name[] =3D {"ospi1", "ospi2"};
-> +	struct stm32_omm *omm =3D dev_get_drvdata(dev);
-> +	struct reset_control *reset;
-> +	int ret;
-> +	u8 i;
-> +
-> +	ret =3D stm32_omm_toggle_child_clock(dev, true);
-> +	if (!ret)
-> +		return ret;
-> +
-> +	for (i =3D 0; i < omm->nb_child; i++) {
-> +		reset =3D reset_control_get_exclusive(dev, resets_name[i]);
-> +		if (IS_ERR(reset)) {
-> +			dev_err(dev, "Can't get %s reset\n", resets_name[i]);
-> +			return PTR_ERR(reset);
-> +		};
-> +
-> +		/* reset OSPI to ensure CR_EN bit is set to 0 */
-> +		reset_control_assert(reset);
-> +		udelay(2);
-> +		reset_control_deassert(reset);
-> +
-> +		reset_control_put(reset);
+During our test in ext4 dax linux-v5.10 on arm64. A BUG_ON is trigger in
+follow_invalidate_pte as follow since this pmd is seem as pmd_trans_huge.
+However this page is really a dax-pmds rather than a pmd trans huge.
 
-With this reset_control_put(), you are effectively stating that you
-don't care about the state of the reset line after this point. To
-guarantee the reset line stays deasserted, the driver should keep the
-reset control around.
+Call trace is shown as follow:
 
-Are you requesting and dropping the reset controls here so the child
-drivers can request them at some point? If so, there is an
-acquire/relase mechanism for this:
+  ------------[ cut here ]------------
+  kernel BUG at mm/memory.c:5185!
+  CPU: 0 PID: 150 Comm: kworker/u8:10 Not tainted 5.10.0-01678-g1e62aad66bbc-dirty #36
+  pc : follow_invalidate_pte+0xdc/0x5e0
+  lr : follow_invalidate_pte+0xc4/0x5e0
+  sp : ffffa00012997110
+  Call trace:
+   follow_invalidate_pte+0xdc/0x5e0
+   dax_entry_mkclean+0x250/0x870
+   dax_writeback_one+0xac/0x380
+   dax_writeback_mapping_range+0x22c/0x704
+   ext4_dax_writepages+0x234/0x6e4
+   do_writepages+0xc8/0x1c0
+   __writeback_single_inode+0xb8/0x560
+   writeback_sb_inodes+0x344/0x7a0
+   wb_writeback+0x1f8/0x6b0
+   wb_do_writeback+0x194/0x3cc
+   wb_workfn+0x14c/0x590
+   process_one_work+0x470/0xa30
+   worker_thread+0xac/0x510
+   kthread+0x1e0/0x220
+   ret_from_fork+0x10/0x18
+  ---[ end trace 0f479050bd4b1818 ]---
+  Kernel panic - not syncing: Oops - BUG: Fatal exception
+  ---[ end Kernel panic - not syncing: Oops - BUG: Fatal exception ]---
 
-https://docs.kernel.org/driver-api/reset.html#c.reset_control_acquire
+Commit 5c7fb56e5e3f ("mm, dax: dax-pmd vs thp-pmd vs hugetlbfs-pmd") and
+commit 36b78402d97a ("powerpc/hash64/devmap: Use H_PAGE_THP_HUGE when
+setting up huge devmap PTE entries") already check pmd_devmap during
+checking pmd_trans_huge. Since pmd_devmap() is used to distinguish dax-pmds,
+add the same check for arm64 to fix this problem.
 
-Either way, reset_control_get/put() belong in probe/remove.
+Add PTE_DEVMAP in pte_modify as commit 4628a64591e6 ("mm: Preserve
+_PAGE_DEVMAP across mprotect() calls") does to avoid the same issue in
+mprotect.
 
-regards
-Philipp
+Fixes: 73b20c84d42d ("arm64: mm: implement pte_devmap support")
+Signed-off-by: Wupeng Ma <mawupeng1@huawei.com>
+---
+ arch/arm64/include/asm/pgtable.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index d3b538be1500b..b9a618127c01b 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -740,7 +740,7 @@ static inline int pmd_trans_huge(pmd_t pmd)
+ 	 * as a table, so force the valid bit for the comparison.
+ 	 */
+ 	return pmd_val(pmd) && pmd_present(pmd) &&
+-	       !pmd_table(__pmd(pmd_val(pmd) | PTE_VALID));
++	       !pmd_table(__pmd(pmd_val(pmd) | PTE_VALID)) && !pmd_devmap(pmd);
+ }
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ 
+@@ -1186,7 +1186,8 @@ static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+ 	 */
+ 	const pteval_t mask = PTE_USER | PTE_PXN | PTE_UXN | PTE_RDONLY |
+ 			      PTE_PRESENT_INVALID | PTE_VALID | PTE_WRITE |
+-			      PTE_GP | PTE_ATTRINDX_MASK | PTE_PO_IDX_MASK;
++			      PTE_GP | PTE_ATTRINDX_MASK | PTE_PO_IDX_MASK |
++			      PTE_DEVMAP;
+ 
+ 	/* preserve the hardware dirty information */
+ 	if (pte_hw_dirty(pte))
+-- 
+2.43.0
+
 
