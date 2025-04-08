@@ -1,165 +1,153 @@
-Return-Path: <linux-kernel+bounces-594411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 535E2A8117B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:08:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2086A81181
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E8CA4281C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:02:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CEDC8844BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67842550C9;
-	Tue,  8 Apr 2025 15:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91772356A1;
+	Tue,  8 Apr 2025 15:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JD/J68r1"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xonx/cjf"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C532F2550A2;
-	Tue,  8 Apr 2025 15:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70ECC22D7AE;
+	Tue,  8 Apr 2025 15:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744127791; cv=none; b=PslAlcuN02jrJUfSPMXeufgDsUhyf7Q6tEan7Sp3X6WXPT3gBCCeY/Yw2IVjoLZllaISaNUZHxjqoL+9/FJa+kROGHyE+9R/gcaT4uhuM1onfeyuzqPB9elIE/pW+vEdaK42iAHtgawqgupiijY/KO/X8Az4Nb94rWqg4gUt9Ao=
+	t=1744127802; cv=none; b=cW4pkVN3boZRfco55QWvAA1gm0KQEXgW6Qa+OAwMNfZHZOTiOSyXZQ/kThCCRWFWnKznYRt8ElY+//BCeli7QCkZaUhSnLGi9Cs9lhXTtT198Zjq4AfkhnF2+uGCQJuCUuiyyMcRGstMaqt4q09xP3PKWyCEoMt00kaj/ocigWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744127791; c=relaxed/simple;
-	bh=ASj8+O8TQvV+NbdRAmAUjLOs6/deNy2my2Dv6Hah/mc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=giJxoDdGlH0NDgzafrkNq+twuHeBF0Gw5UF6QLwzqOiMC12SnyB2rKpv2WGwagxi3l3SWtm4VsJz37E64+4AkrpFSNhSE/7cGy8MhC1CDCypGPYqjEKZ9MCcV8YYTgNgmKHSyyGDl9sZT0cmd/4aECm7mIkUedeCQxVWLoDaO3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JD/J68r1; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 538AjAp9029440;
-	Tue, 8 Apr 2025 15:56:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wKnjSdmTuIcskbKzfb+80vkhIQ85C6xcoaXi5CDgvik=; b=JD/J68r16ew6/zdq
-	fKVEcnJR5y/ujCPWo57f2eZgYinI/fy2Lw1Jac7MmMsAlxivFXM8mF/ARkIq8xaa
-	EciQIGhi6rZ+NyaQn73X2/OPwtIOaFVrjUfVarA6yRzQH3rJ9HhLjcIocw45NQXy
-	g3JH8h+WDA3My9S2JOQKXYS2iAPYvYwtgfCqkWFawZXs3dv6AdehK83ShXZ5Cjip
-	E2cDxSWmEMbeKI1Uc3xb2mEsZ1u2dlw/9fmy8mpuK9c5IyL+P+Om6FTxqvghOncj
-	qeCZOX7OAAuyGpMJqTe7ANbIdPykJTJlmZj6e0p075y4xJ+1pDOR/PSv7aO5Bdug
-	TLyKNQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twcrgat2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Apr 2025 15:56:25 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 538FuOVl018932
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 8 Apr 2025 15:56:24 GMT
-Received: from hu-dikshita-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 8 Apr 2025 08:56:19 -0700
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Date: Tue, 8 Apr 2025 21:24:34 +0530
-Subject: [PATCH 20/20] media: iris: Add codec specific check for VP9
- decoder drain handling
+	s=arc-20240116; t=1744127802; c=relaxed/simple;
+	bh=NuCi+nDF9crUQoMi5wM+LePlLWUwiPgvZOlIzO5vlCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZI2nax/q/cmyVrbOvIjSoFtqedWzivThEYi5+yZPlyoeuWHlZsmUOcpW2mKWrfoNec9cOSyQ17hDDxEPpaT5Xzaqp44g8w1TQRaKEQ4r/OGXJZkuawfS1TzCrPg65tIJXOLtsvGws2AihFOFt6bI/eH8gE/M9ClTf23PlFNnrXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xonx/cjf; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2295d78b45cso76244375ad.0;
+        Tue, 08 Apr 2025 08:56:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744127800; x=1744732600; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=affzJlfeuyLH/afrS0PgLg2pJtDzPDL4GjLq78Ev2zs=;
+        b=Xonx/cjfJj77hfmjxpdNTTxPi6OOYU3xr1OO4ToV5MhpnhhrvsYpNm3ZFZ0LGTQ2c1
+         jfCw71L1ZqgB8YHcrfme71aal2dMGpJyyrzVmUE1r+RoqjemKA4yv3TdVIvqJ3ACBcIJ
+         SQSvL2250anGyhBCT/UXqVGWSbaP8vvKsph2gUVMiJwskxyF3nt2VE5x0MJrR/eM7e81
+         CW3J8h5qCP6F88OLwJb5jhIRYsZPnqy+eYdtUvB8TbGn+d9uLXpOsawT4Hv+IHMaSiNt
+         047i12bRtHOfpg2+zS+uRNgnukptZBEu/3caZX1rBxe5IbSEu7hs1rJVksORE1hJpFjc
+         nkEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744127800; x=1744732600;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=affzJlfeuyLH/afrS0PgLg2pJtDzPDL4GjLq78Ev2zs=;
+        b=ARbkrP77+AtA3+zOCvgkbonRuZ5/SYqBvirbUNhqvHRnFM9i0pjTXeHwEbTGp3mYNv
+         wt92Y+STnaE9i1a83ud0oYAVkepoXGYq3cE8gNK3CYArvYeyBJ52KOmSsGpoKUerS9ee
+         Vy3zeuvrGzVos4ySlF0OUXnkCGJ+bRSO1RWyqFFm+2FWRHrsIDe27zPYGo8ITBk0+3bR
+         k4LDtJ095lrRK1oOriaLnl8iyTWPeBzoddx5FXwvXzEQX2EnZ2ed+39RvTdAax0+Q4kb
+         84bpjPcVNMaCvufL0O5DRgT3A8GKdgdrBT5+O+lyiOhGM3bnrM9C4afOeqLat4UfB9cC
+         EYNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVopc7wfXawUki8BBIu7VvN+X03CllL7Ox93754viRyqQnTbeim+fQtWBS8bI9VnztvE5WSN4tY@vger.kernel.org, AJvYcCWr+tuUkN8oWsSIfW2lK6ZT4R+jnf29EFf153FSzjP4XvuUdy5ISNzWEkA5HPqNcoYF7CaC0H8jevS6uio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWWNICuBr5CAkWjk2TGv5tSotSM9VE92hA/E8nsntBINhXHVd6
+	OZGIdTXLZMB0mg6R2olTbmhIyyn9Ur3lQcxTz0Btn8KDtmEWem8=
+X-Gm-Gg: ASbGncuI8737nwIq4iU1In56HPRpP46Tyl+TNDPBvOAckamWOzeVRZglhVL8xfSRriu
+	3LMwOWv+WIvg90xmSwR1nQOShz7SDS27uWTyFA3+IobBeujwHpxBohCt7MpRntcscMzM00X/Xxy
+	Tq0prACpEB47XbjLCOtSh3bpmyfjQqDs+gQ2kJ62/XKo9rl9swy+jM5/hQe/m75e5RR0MOmeMSX
+	nQfjlk4KjAYpKOmWoyzl0GLmDBrdRpvFMLZaoWAVCKVdJHY//ILAr0FUFtEdgR5I6YIBZd3HUEa
+	VEQrDkvRf3n/eukv36wF/FYukYMinTDqtcFBCbkwIW+g
+X-Google-Smtp-Source: AGHT+IG0zZw727VjBHQVHWXJeTmxJ3mhCgj6F2p95LiwEhiwGMKetvFsZh6wJSLG0xQ8S40XBA0ttw==
+X-Received: by 2002:a17:902:db09:b0:224:255b:c92e with SMTP id d9443c01a7336-22a8a0431ffmr193175125ad.3.1744127799574;
+        Tue, 08 Apr 2025 08:56:39 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2297866e4c2sm101866535ad.199.2025.04.08.08.56.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 08:56:39 -0700 (PDT)
+Date: Tue, 8 Apr 2025 08:56:38 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: syzbot <syzbot+48c14f61594bdfadb086@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org,
+	kuba@kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, pabeni@redhat.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] WARNING in __linkwatch_sync_dev
+Message-ID: <Z_VHNtNQ5hqZx33v@mini-arch>
+References: <67f4d325.050a0220.396535.0558.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250408-iris-dec-hevc-vp9-v1-20-acd258778bd6@quicinc.com>
-References: <20250408-iris-dec-hevc-vp9-v1-0-acd258778bd6@quicinc.com>
-In-Reply-To: <20250408-iris-dec-hevc-vp9-v1-0-acd258778bd6@quicinc.com>
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>,
-        Hans Verkuil
-	<hverkuil@xs4all.nl>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        "Dikshita
- Agarwal" <quic_dikshita@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744127674; l=2082;
- i=quic_dikshita@quicinc.com; s=20240917; h=from:subject:message-id;
- bh=ASj8+O8TQvV+NbdRAmAUjLOs6/deNy2my2Dv6Hah/mc=;
- b=yizM4Pr9sygYieE9LphsQLVsHGNYlKiAEnbDshUktrhk/FY0fCXbaw37ht4P1E3XNbnb//Lej
- 6n49/QHnltbAFrBWPHaVIgMtkhFn3NhIJ9LfVvVVW/95R3cQB3eXs7Z
-X-Developer-Key: i=quic_dikshita@quicinc.com; a=ed25519;
- pk=EEvKY6Ar1OI5SWf44FJ1Ebo1KuQEVbbf5UNPO+UHVhM=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: saponIbKyY0OIMarrYLevIRUdBz-Kf4f
-X-Authority-Analysis: v=2.4 cv=QuVe3Uyd c=1 sm=1 tr=0 ts=67f54729 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=uk1rlkFWm520LKNewhEA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: saponIbKyY0OIMarrYLevIRUdBz-Kf4f
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-08_06,2025-04-08_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- spamscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0 priorityscore=1501
- clxscore=1015 phishscore=0 impostorscore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504080110
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <67f4d325.050a0220.396535.0558.GAE@google.com>
 
-Add a codec specific for the VP9 decoder to ensure that a non-null
-buffer is sent to the firmware during drain. The firmware enforces a
-check for VP9 decoder that the number of buffers queued and dequeued on
-the output plane should match. When a null buffer is sent, the firmware
-does not return a response for it, leading to a count mismatch and an
-assertion failure from the firmware.
+On 04/08, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    7702d0130dc0 Add linux-next specific files for 20250408
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15fe8070580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=91edf513888f57d7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=48c14f61594bdfadb086
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/0603dd3556b9/disk-7702d013.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/d384baaee881/vmlinux-7702d013.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/1ac172735b6c/bzImage-7702d013.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+48c14f61594bdfadb086@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> RTNL: assertion failed at ./include/net/netdev_lock.h (56)
+> WARNING: CPU: 1 PID: 2971 at ./include/net/netdev_lock.h:56 netdev_ops_assert_locked include/net/netdev_lock.h:56 [inline]
+> WARNING: CPU: 1 PID: 2971 at ./include/net/netdev_lock.h:56 __linkwatch_sync_dev+0x30d/0x360 net/core/link_watch.c:279
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 2971 Comm: kworker/u8:8 Not tainted 6.15.0-rc1-next-20250408-syzkaller #0 PREEMPT(full) 
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+> Workqueue: bond0 bond_mii_monitor
+> RIP: 0010:netdev_ops_assert_locked include/net/netdev_lock.h:56 [inline]
+> RIP: 0010:__linkwatch_sync_dev+0x30d/0x360 net/core/link_watch.c:279
+> Code: 7c fe ff ff e8 f4 63 cc f7 c6 05 83 28 53 06 01 90 48 c7 c7 60 5c 51 8d 48 c7 c6 8a 9b 67 8e ba 38 00 00 00 e8 04 6b 8b f7 90 <0f> 0b 90 90 e9 4d fe ff ff 89 d9 80 e1 07 38 c1 0f 8c 19 fd ff ff
+> RSP: 0018:ffffc9000b767710 EFLAGS: 00010246
+> RAX: bb6ea754fa006300 RBX: 0000000000000000 RCX: ffff888030979e00
+> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+> RBP: 0000000000000000 R08: ffffffff81824ed2 R09: 1ffffffff20c01c6
+> R10: dffffc0000000000 R11: fffffbfff20c01c7 R12: 0000000000000000
+> R13: dffffc0000000000 R14: ffff88805d768008 R15: ffff88805d768000
+> FS:  0000000000000000(0000) GS:ffff888125089000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f85e8c4df98 CR3: 000000006a050000 CR4: 00000000003526f0
+> DR0: 0000000000000099 DR1: 0000000000000000 DR2: 000000000000000b
+> DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  ethtool_op_get_link+0x15/0x60 net/ethtool/ioctl.c:63
+>  bond_check_dev_link+0x1fb/0x4b0 drivers/net/bonding/bond_main.c:864
+>  bond_miimon_inspect drivers/net/bonding/bond_main.c:2734 [inline]
+>  bond_mii_monitor+0x49d/0x3170 drivers/net/bonding/bond_main.c:2956
+>  process_one_work kernel/workqueue.c:3238 [inline]
+>  process_scheduled_works+0xac3/0x18e0 kernel/workqueue.c:3319
+>  worker_thread+0x870/0xd50 kernel/workqueue.c:3400
+>  kthread+0x7b7/0x940 kernel/kthread.c:464
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>  </TASK>
 
-Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
----
- drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c  | 2 ++
- drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c | 4 ++++
- 2 files changed, 6 insertions(+)
-
-diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
-index b98f781b4f48..d198094c2920 100644
---- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
-+++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
-@@ -399,6 +399,8 @@ static int iris_hfi_gen1_session_drain(struct iris_inst *inst, u32 plane)
- 	ip_pkt.shdr.hdr.pkt_type = HFI_CMD_SESSION_EMPTY_BUFFER;
- 	ip_pkt.shdr.session_id = inst->session_id;
- 	ip_pkt.flags = HFI_BUFFERFLAG_EOS;
-+	if (inst->codec == V4L2_PIX_FMT_VP9)
-+		ip_pkt.packet_buffer = 0xdeadb000;
- 
- 	return iris_hfi_queue_cmd_write(inst->core, &ip_pkt, ip_pkt.shdr.hdr.size);
- }
-diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c b/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
-index dfca45d85759..017aa9dc0b79 100644
---- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
-+++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
-@@ -348,6 +348,10 @@ static void iris_hfi_gen1_session_etb_done(struct iris_inst *inst, void *packet)
- 	struct iris_buffer *buf = NULL;
- 	bool found = false;
- 
-+	/* EOS buffer sent via drain won't be in v4l2 buffer list */
-+	if (pkt->packet_buffer == 0xdeadb000)
-+		return;
-+
- 	v4l2_m2m_for_each_src_buf_safe(m2m_ctx, m2m_buffer, n) {
- 		buf = to_iris_buffer(&m2m_buffer->vb);
- 		if (buf->index == pkt->input_tag) {
-
--- 
-2.34.1
-
+This needs ops lock/unlock around get_link in bond_check_dev_link, will
+follow up.
 
