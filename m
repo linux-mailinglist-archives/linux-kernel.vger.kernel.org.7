@@ -1,170 +1,223 @@
-Return-Path: <linux-kernel+bounces-593083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC847A7F4F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:26:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F48A7F4F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF5897A6F9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:25:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6480E16C021
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D9325F984;
-	Tue,  8 Apr 2025 06:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E163A25F96C;
+	Tue,  8 Apr 2025 06:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XoOIKjkr"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2041.outbound.protection.outlook.com [40.107.93.41])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CxfGi3XB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59C225F7B8;
-	Tue,  8 Apr 2025 06:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744093573; cv=fail; b=ieFa/8ne3e97FuhMwAQCW/wZj6MQ/RJNkdgQcwdirgjZ1v3ihRaTUcOAFlgtPWDOl/R+FqpAM03E/ukFI8iV2wCdWxBrY/BPyByd5CxpfteTefqOC1LhHhdB+s4CyoAMzdCNeBujOHH3joGL/F0I/gUav7C3T1AOff5O3PvhFBE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744093573; c=relaxed/simple;
-	bh=ZEC52847TfYLHIMPYWEhMlzO9cMh5hnLKtPwKC22IWw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pcr/pnc5NVlk8JhKe6QQg++gWwjqpXFrGa/LgJV5jS89ZOR2sLjNOvBtymE1MweC+LmSroJznQj5e4eX6iLs2hhWqe6MQo4yBmaprH0stdOeeG+UFZwsfOYA8nF9tkWOpXNhAvErBC3xDzKlSxyB6gWcyTY42hPJnjSGhS0v7fA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XoOIKjkr; arc=fail smtp.client-ip=40.107.93.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KFM0TaPs3cJ0TkKd+jtxoXqWb59HbC/Y3jpNaEEj52I6jvNbEl2lpDFoOdQcQxfkO1UEaDDiyPFI+ue4wdJWfSMmkpBf8ZBBDbsx4ai/ySnIcvmCSe+JLsa80yA1A2xCWgkVBABqKJS6BS+N6uA2azRPHckhM0MPKjKh4R57N1igoU3Mg1LGHmNyZutm1TqmaaQBvChSyJjWo+ycQMfbWJx8Of9B9iZqoiFt8PU2Lq+dEyId9MejSimk4b9rBgrwmWq+DQa22JQqD1vYAE+TuRx7C85wDzuYLmM3AV/JDlVu+xQzm2T2LxcyNvxrj8r0Xd3wAhCp/3JLYwmIU63Ffg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D25cd/3keB6CcN9DupqCHcPkIOzucOzVkkI5Eh3O0e0=;
- b=mRfzeuc0cQT45+0TQ3DO8z2h+DmX2jPdp9bOqij1GJBcI+Ao+KmyiaMlj7WQPtfqKMfkk5wCECqFHTocZLZlRCLwPeIcCiLFm8ld9xIWn0d/ohrpWE5SUQBkVBDvwJ2OfaG6NeZJL8RWo2TbtpsCyWHhF0D6iEOi+AmXCd+CLVIcIn2NSyq5gARZT0wJHC1Fpdh/PtQTzAeZ0TVSeIXQamjxZA6D1hHNnNxVmzUXWLLoWggF3RY00pyEtI13INLVOaG7WXd1MWDEsS54ypmNUiM7R3xD9z3PYNiNq/eB2r9fMW3XwPESIXpNNcq2cu05SDWmH2rTKpxWM0KTmVuTLw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D25cd/3keB6CcN9DupqCHcPkIOzucOzVkkI5Eh3O0e0=;
- b=XoOIKjkrlxGKySPBnhDEfb0yRvhkuxzZZoj8nfRuxmpoNeMnPk4NngVVnmIBpMRbnPSw++HbVUAFFGrTNfxH+l2MKzCsX6XmeTOa7IiQDDyHHm9thZqikN1pTwmWswWiwbBjP8m/Q3tKPrnS+/lg5hr0wdzsMa8YO87yo6rBv3w=
-Received: from BY3PR05CA0060.namprd05.prod.outlook.com (2603:10b6:a03:39b::35)
- by SA1PR12MB7102.namprd12.prod.outlook.com (2603:10b6:806:29f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.34; Tue, 8 Apr
- 2025 06:26:08 +0000
-Received: from SJ1PEPF00001CDE.namprd05.prod.outlook.com
- (2603:10b6:a03:39b:cafe::7b) by BY3PR05CA0060.outlook.office365.com
- (2603:10b6:a03:39b::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.11 via Frontend Transport; Tue,
- 8 Apr 2025 06:26:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- SJ1PEPF00001CDE.mail.protection.outlook.com (10.167.242.6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8632.13 via Frontend Transport; Tue, 8 Apr 2025 06:26:07 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 8 Apr
- 2025 01:26:07 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 8 Apr
- 2025 01:26:06 -0500
-Received: from xhdthippesw40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 8 Apr 2025 01:26:05 -0500
-From: Devendra K Verma <devverma@amd.com>
-To: <manivannan.sadhasivam@linaro.org>, <vkoul@kernel.org>
-CC: <dmaengine@vger.kernel.org>, <michal.simek@amd.com>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] dmaengine: dw-edma: Add HDMA NATIVE map check
-Date: Tue, 8 Apr 2025 11:56:04 +0530
-Message-ID: <20250408062604.2809548-1-devverma@amd.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC73204599
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 06:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744093685; cv=none; b=srltz3fFiRh+VC9cNoGYEtwYdBP2fkX7Qga7NH8337zh6m7zia0UFXY53PppjIWbiTzzFO1wrPN19hR841uxbysON0jss8K6BpnrBN8HRQxAHOpeNlLjN8DA3wN6rBvrtYXZqNNpgTqNv2GYtwIcRBXoECHtjNxD3SWFJXFYXaw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744093685; c=relaxed/simple;
+	bh=y8O4HBajyfWwVy+Bq+XgIOZedoREl2poIYNvV6UwCcU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eCl5dYqNwvFAvv+l2QXTEYRnuxqSROL5AGHfFKth1slvRxhIZ76UbcI6HWTz8TWxDzD3fKidSPNv1tbDTqS16Q3o6YQ3LS1DOFNF1foqdYFP4jZRwlSnql+sA8OYjXtzrp2XvEteru4lXSBYN3wE/p9i06t2Ce2d2BfXvXXRkh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CxfGi3XB; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744093682;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OFEAHfNF2upt4iBW1CVn1hW5AhNTxhgDogV7FrnTJvk=;
+	b=CxfGi3XB9dDQ/CEXQCxl+uQzkckQSzi4ipVcEbqAotuIP7C/y275IiNp+wxP/eS/MDux2U
+	yTzy6gx4tagpj9fGQt4EeAcMv/NATOKQk4kS99fahdwiL2MCbpNZW4jWvZoCJoUSNZvCY0
+	S1pLJHzL53l9ZIeS+3oYSBoGVtwRREA=
+Received: from mail-vk1-f200.google.com (mail-vk1-f200.google.com
+ [209.85.221.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-650-9MdbF8clPXO1Q7hlLnm_ow-1; Tue, 08 Apr 2025 02:28:01 -0400
+X-MC-Unique: 9MdbF8clPXO1Q7hlLnm_ow-1
+X-Mimecast-MFC-AGG-ID: 9MdbF8clPXO1Q7hlLnm_ow_1744093680
+Received: by mail-vk1-f200.google.com with SMTP id 71dfb90a1353d-523fb4b14c2so1167509e0c.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 23:28:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744093680; x=1744698480;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OFEAHfNF2upt4iBW1CVn1hW5AhNTxhgDogV7FrnTJvk=;
+        b=hq97knqqqrsrWYyxb+MsaIyAKe74iTPvChjfiuyxoHKIDkB5SdGE6kUeULePS6o9sL
+         CMHWHw8xxaV7jzr9QWIocUh+eUKh1vPklKE/lbMF0+ErQ2PjKttPU20tCM0M7AXlzbWw
+         9wK6JFNcD2JxN1bK1n2X2kgS3k4+lPmW5cI3OFIwpV/NdC+MWtzlUMjOx/wATWFnDmiT
+         YGU2qTFS0roABtwoYPZ2N/RtIrdAobtjt/xiIqT/39U4oMgl+d8MXmRExk6BXPyXWiTO
+         3RDQ02rPMW7m9hfuuIv2EsUDHJ457MpF6fmsrCDs3ynEkQqO7gEehXMt2H6B42n+7Dn2
+         72Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkP9zUwgG91vPb/ROhntX/Q4fHj0ii90RxNBD8BtEkfcfYrgkA8Z+3U3/0ls0mKICoPo4FJjkZCocSZWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOiGrpo5Afwxx1Wbyy6NalPpbUDboQYKgZarF5OApEsWi/3Cd2
+	eAc/r4UUms7BneueZ7m94RVD79S9bVZhit4kBps3W+sF1Y8FCH7LsdR7zfIgmM3TNXN29OLcji7
+	M/edjH0Gg3Z0xkylF7S5qd20RFDmiIvDLtiY+F6fwaIAg1REA4MeA8v04QAffmwGHBd/K7meuj3
+	jieMvXoXhNPS8Ah6vWyAPUX4CjHi/v0V2y+Yx5
+X-Gm-Gg: ASbGncvIwQF/PMMHBGW6oblPcbdwACvD98qp1auyM6VXPRILW6tWeEGciax3ncULYTV
+	Y4JE6fFqXEf9A+BUsl3J9hlBgF6FB2cPIwrrKomSuCUG54sVxeEoSjLeTt2O2A4X2UXIEgQWN
+X-Received: by 2002:a05:6102:2b8d:b0:4c4:e414:b4eb with SMTP id ada2fe7eead31-4c8553ddbd7mr13452803137.12.1744093680461;
+        Mon, 07 Apr 2025 23:28:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFeRUBOqMK5hyNx0Viqtj2BdChVeCwFqQAKfIszSRcQ8GXs6TF7Lz3t65QjInAuYEEWZxiV0+j7wcTUD0tEPS8=
+X-Received: by 2002:a05:6102:2b8d:b0:4c4:e414:b4eb with SMTP id
+ ada2fe7eead31-4c8553ddbd7mr13452795137.12.1744093680116; Mon, 07 Apr 2025
+ 23:28:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CDE:EE_|SA1PR12MB7102:EE_
-X-MS-Office365-Filtering-Correlation-Id: 914faa75-c1d6-4b58-283a-08dd76663f79
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Wt3ch/FVrr2AxcBNticR2JCkwjLBSaGho79Nc94R0VUFrfxf6t5df20Od+hJ?=
- =?us-ascii?Q?0wxuuo3Q9QW9mQtZjZoF9sp2TFUQMtfS4U9y79JAYiOCUGTO5SU1w4LvUkoV?=
- =?us-ascii?Q?0Xfnd3Z0JUCGzzNDBwnYYXSkBv6HdnAcbGSzfLy0zo4Sg2CMb4nZvvn6yre2?=
- =?us-ascii?Q?ymu3TqQl3qchu4sE6B8OF4fyPaavWB/INeHhp8tDxxj+fnA0BkORIcDX7xwC?=
- =?us-ascii?Q?qtxZWXXFLR8BOiG76z9Wi5pTL/FYS40EmjSuc9uDM1VldeBsYGVUDm4lQTvz?=
- =?us-ascii?Q?rAgOQHfPgQKM/DHEayX/2DL011B//6E/Brs87cl+kfS686SwRLmK5M/wpUQd?=
- =?us-ascii?Q?tUrdwaeqwbzNtFXbrSLKxBFsBcv8MqDu5GEW1Ihrrm1p2FZ5pwzy8fUCPU8k?=
- =?us-ascii?Q?vupTSN3OTWZMNDvRJ+6RjnUHUSKiT5gsqCialEsWrurFNHHJlMcS4oCzAf8j?=
- =?us-ascii?Q?xl4tWq96knaoVKAQKwXVe7CmGY9IRxUhjxIwDoZNh9K22EwWFI3FNnqTbY0D?=
- =?us-ascii?Q?PfUmtRWLz38vEGGH2KhN3occYyri4ZX8kVCpwXojqhD8macbj5ajomRjFnZj?=
- =?us-ascii?Q?eT8/M+YhNhxmjoDNhWBZFI6o8OYg+eMv2BsE0UuXcfTR1sI/VN7/CU4lN7ge?=
- =?us-ascii?Q?9fsbllU7j5j3IRKg3H8nU0WX4MjcUrLrjwnBgSLxrtnYpr5tSJQPZJ0VZjzO?=
- =?us-ascii?Q?fmYT2eF8nAIG0Hlfjkj3avSeuiX4ahagVF7ydVHbfNC/ZYe9JEv2cNsh9i8H?=
- =?us-ascii?Q?Vax5CTcCBC+dhztS77AP2EBXdgZDD8Of/b9w1v5dJ4FzVCMz189Cg6AZSo9Q?=
- =?us-ascii?Q?TyVYFKoPv8zVPF9JeebMeXJ0g4htWKW3V12rfHUs/+rm/HOyEykPOjv3QIRO?=
- =?us-ascii?Q?vhsd94JGyY5GVV7SbtJCQRv4aAAft9Drienek5JvJZ2Hoe1B1LfubmBU3FKi?=
- =?us-ascii?Q?1kiBrqtWW/yvVZZ0sQqJhXVjIDyOoTfruGBnxAUoQ+siqRrJ2B7IT8Q8TxYC?=
- =?us-ascii?Q?4IfCMuvyfmqxnKcxosUGoIPo94YYIO6hPwMuIXdgQ777e1vTzvYCAA3JwUMo?=
- =?us-ascii?Q?VzJSl2SbZGp+bR8pb7CBWutxdAyx6u8b7bDbOWjYcyrfMRXpZIs/bOzmkW6p?=
- =?us-ascii?Q?2u3xviwkBKqJUdQGR/RCJW8QMj5K7mLRDYjgj/FPT6NHCT1+eQhlalVTXbrC?=
- =?us-ascii?Q?OL11g2otYmEpEyx7oy3A3WCXU4NPWW4rhhPlKPipW+XewnSEmQZrdJObqaP8?=
- =?us-ascii?Q?QTYGpSFDA7AKfFc6kSRVHSayFYcfPyAGQ50fS2Ei/DGVFx3doXHNoCFVgDXE?=
- =?us-ascii?Q?QmQYHo5/8J+YSaTd77+hoaDUQSWjaC3IwEeWXzKs4VBsDXG2pqjoBex4g7IE?=
- =?us-ascii?Q?lR0/s32Gya4Qe4te7fwsgIVaifq5J60WIBmZ88YHJhmy4grvmEVgZMm/x9oP?=
- =?us-ascii?Q?wgMB7G7EjaVQYdPBeZ2SYq8MNEHBismoChu6znoa/xIcDk1PtSF5y2x+3Dot?=
- =?us-ascii?Q?xUkbgf/xVeCOLyS3yg5OMCzyTOvnlB1tFt8d?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2025 06:26:07.8718
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 914faa75-c1d6-4b58-283a-08dd76663f79
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CDE.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7102
+References: <20250404145241.1125078-1-jon@nutanix.com> <CACGkMEsFc-URhXBCGZ1=CTMZKcWPf57pYy1TcyKLL=N65u+F0Q@mail.gmail.com>
+ <B32E2C5D-25FB-427F-8567-701C152DFDE6@nutanix.com>
+In-Reply-To: <B32E2C5D-25FB-427F-8567-701C152DFDE6@nutanix.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 8 Apr 2025 14:27:48 +0800
+X-Gm-Features: ATxdqUHPgD0AF9QYRz_3XemrYCxKbVxtWo52WcdpgKy0DwPXI7mtOhUMNAmsIo0
+Message-ID: <CACGkMEucg5mduA-xoyrTRK5nOkdHvUAkG9fH6KpO=HxMVPYONA@mail.gmail.com>
+Subject: Re: [PATCH] vhost/net: remove zerocopy support
+To: Jon Kohler <jon@nutanix.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The HDMA IP supports the HDMA_NATIVE map format as part of Vendor-Specific
-Extended Capability. Added the check for HDMA_NATIVE map format.
-The check for map format enables the IP specific function invocation
-during the DMA ops.
+On Tue, Apr 8, 2025 at 9:18=E2=80=AFAM Jon Kohler <jon@nutanix.com> wrote:
+>
+>
+>
+> > On Apr 6, 2025, at 7:14=E2=80=AFPM, Jason Wang <jasowang@redhat.com> wr=
+ote:
+> >
+> > !-------------------------------------------------------------------|
+> >  CAUTION: External Email
+> >
+> > |-------------------------------------------------------------------!
+> >
+> > On Fri, Apr 4, 2025 at 10:24=E2=80=AFPM Jon Kohler <jon@nutanix.com> wr=
+ote:
+> >>
+> >> Commit 098eadce3c62 ("vhost_net: disable zerocopy by default") disable=
+d
+> >> the module parameter for the handle_tx_zerocopy path back in 2019,
+> >> nothing that many downstream distributions (e.g., RHEL7 and later) had
+> >> already done the same.
+> >>
+> >> Both upstream and downstream disablement suggest this path is rarely
+> >> used.
+> >>
+> >> Testing the module parameter shows that while the path allows packet
+> >> forwarding, the zerocopy functionality itself is broken. On outbound
+> >> traffic (guest TX -> external), zerocopy SKBs are orphaned by either
+> >> skb_orphan_frags_rx() (used with the tun driver via tun_net_xmit())
+> >
+> > This is by design to avoid DOS.
+>
+> I understand that, but it makes ZC non-functional in general, as ZC fails
+> and immediately increments the error counters.
 
-Signed-off-by: Devendra K Verma <devverma@amd.com>
----
- drivers/dma/dw-edma/dw-edma-pcie.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+The main issue is HOL, but zerocopy may still work in some setups that
+don't need to care about HOL. One example the macvtap passthrough
+mode.
 
-diff --git a/drivers/dma/dw-edma/dw-edma-pcie.c b/drivers/dma/dw-edma/dw-edma-pcie.c
-index 1c6043751dc9..42b2a554f7a5 100644
---- a/drivers/dma/dw-edma/dw-edma-pcie.c
-+++ b/drivers/dma/dw-edma/dw-edma-pcie.c
-@@ -136,7 +136,8 @@ static void dw_edma_pcie_get_vsec_dma_data(struct pci_dev *pdev,
- 	map = FIELD_GET(DW_PCIE_VSEC_DMA_MAP, val);
- 	if (map != EDMA_MF_EDMA_LEGACY &&
- 	    map != EDMA_MF_EDMA_UNROLL &&
--	    map != EDMA_MF_HDMA_COMPAT)
-+	    map != EDMA_MF_HDMA_COMPAT &&
-+	    map != EDMA_MF_HDMA_NATIVE)
- 		return;
- 
- 	pdata->mf = map;
--- 
-2.43.0
+>
+> >
+> >> or
+> >> skb_orphan_frags() elsewhere in the stack,
+> >
+> > Basically zerocopy is expected to work for guest -> remote case, so
+> > could we still hit skb_orphan_frags() in this case?
+>
+> Yes, you=E2=80=99d hit that in tun_net_xmit().
+
+Only for local VM to local VM communication.
+
+> If you punch a hole in that *and* in the
+> zc error counter (such that failed ZC doesn=E2=80=99t disable ZC in vhost=
+), you get ZC
+> from vhost; however, the network interrupt handler under net_tx_action an=
+d
+> eventually incurs the memcpy under dev_queue_xmit_nit().
+
+Well, yes, we need a copy if there's a packet socket. But if there's
+no network interface taps, we don't need to do the copy here.
+
+>
+> This is no more performant, and in fact is actually worse since the time =
+spent
+> waiting on that memcpy to resolve is longer.
+>
+> >
+> >> as vhost_net does not set
+> >> SKBFL_DONT_ORPHAN.
+
+Maybe we can try to set this as vhost-net can hornor ulimit now.
+
+> >>
+> >> Orphaning enforces a memcpy and triggers the completion callback, whic=
+h
+> >> increments the failed TX counter, effectively disabling zerocopy again=
+.
+> >>
+> >> Even after addressing these issues to prevent SKB orphaning and error
+> >> counter increments, performance remains poor. By default, only 64
+> >> messages can be zerocopied, which is immediately exhausted by workload=
+s
+> >> like iperf, resulting in most messages being memcpy'd anyhow.
+> >>
+> >> Additionally, memcpy'd messages do not benefit from the XDP batching
+> >> optimizations present in the handle_tx_copy path.
+> >>
+> >> Given these limitations and the lack of any tangible benefits, remove
+> >> zerocopy entirely to simplify the code base.
+> >>
+> >> Signed-off-by: Jon Kohler <jon@nutanix.com>
+> >
+> > Any chance we can fix those issues? Actually, we had a plan to make
+> > use of vhost-net and its tx zerocopy (or even implement the rx
+> > zerocopy) in pasta.
+>
+> Happy to take direction and ideas here, but I don=E2=80=99t see a clear w=
+ay to fix these
+> issues, without dealing with the assertions that skb_orphan_frags_rx call=
+s out.
+>
+> Said another way, I=E2=80=99d be interested in hearing if there is a conf=
+ig where ZC in
+> current host-net implementation works, as I was driving myself crazy tryi=
+ng to
+> reverse engineer.
+
+See above.
+
+>
+> Happy to collaborate if there is something we could do here.
+
+Great, we can start here by seeking a way to fix the known issues of
+the vhost-net zerocopy code.
+
+Thanks
+
+>
+> >
+> > Eugenio may explain more here.
+> >
+> > Thanks
+> >
+>
 
 
