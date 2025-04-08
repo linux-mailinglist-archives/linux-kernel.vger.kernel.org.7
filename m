@@ -1,94 +1,151 @@
-Return-Path: <linux-kernel+bounces-593594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 367A1A7FB37
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:11:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4DEA7FADF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6C0D3B1E36
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:07:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA9191893736
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EAA626560E;
-	Tue,  8 Apr 2025 10:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nwl.cc header.i=@nwl.cc header.b="kibcLGqS"
-Received: from orbyte.nwl.cc (orbyte.nwl.cc [151.80.46.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B9F20CCD8;
-	Tue,  8 Apr 2025 10:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=151.80.46.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8542326B099;
+	Tue,  8 Apr 2025 09:53:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1EF267704;
+	Tue,  8 Apr 2025 09:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744106843; cv=none; b=oefPUwfRJ3/sfKpfPtKJXB5CEGK3ItvDhLOLRdGieqWFe7/dRQRSymI83pgtLGMTPkJaDQbTEXgetM0pShDWvYniKmy/i18huRIgqShs8+tQ5TVrmO6+kfl1kzM7hDf/hbZVXLz1Mv82nrVG2CAU9wAWLmcn9A1C95I7ahb3mro=
+	t=1744106016; cv=none; b=ixFWn5tcvylANSeJ+o1Lmwg69e2U0B1WM56zQLK4KaNPdoNP2tkEv5U4kXy6wg50jzo1wR/2gL+cj3caEjQ++aiGJK0FE8eZj4FT3exTyg+IfM52Lyf05wccmu/t+p3mfpUpK7gYxOb34BV4PPG12M0ykWWTpvgRbu+QiNm+t3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744106843; c=relaxed/simple;
-	bh=vE/Zb+oP9y5h+JfKlg7ltUJ3Lry2+3F+J6F5DTz/WDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F3Vd7mC/nxv9OhiNdK0o/SNoqRZ/9XYAATznRzYBx5PzuBSSVFmIGNf8sBZF3AtiR00VA5anD0dMPnCjsFkYSVIcTLGtLb059o9CJe665+Y4P3Em+TMTgTICP4orBP2bnPzRFaMf8C0GT2XexanJ81FQGJQK/hyOxMu1mX1KurY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nwl.cc; spf=pass smtp.mailfrom=nwl.cc; dkim=pass (2048-bit key) header.d=nwl.cc header.i=@nwl.cc header.b=kibcLGqS; arc=none smtp.client-ip=151.80.46.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nwl.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nwl.cc
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nwl.cc;
-	s=mail2022; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=rwcIEfW9pJzdJoVCY6Sgo1trCmLuEW39Q/YDwIuECgI=; b=kibcLGqS4fCDjtX3aCt1TKqQaf
-	3XAbVshHzHEUwJhHCVoqRkeoF5CH4PXIe+SY/sEe0TWH4sItMiMeOOwY8WMtXW4GxT4eNo+rIfYVn
-	NUPniy4Jx8oAFGDDJIf6/pavA5lkrMPLuNPOp24yYWVeat0nC17Ev1L6kOUih12S6eO/uSVTl16P9
-	yjDPmpBW4to8fKaUOqRLhPbPm8uEF4azPTbOevG7+ebKX/SsTqGWIDgo6xMkKOYujrDS5osOivw1i
-	XOmkpI4TU2lNq/o5/m8IRxC/Hoheb6aN9SeiHAtyDMuoD5XGWnhW4xq3GR9awG7ng5lepYPmyV0bZ
-	rt5m/0eg==;
-Received: from n0-1 by orbyte.nwl.cc with local (Exim 4.97.1)
-	(envelope-from <phil@nwl.cc>)
-	id 1u25Pb-000000003jC-3mSr;
-	Tue, 08 Apr 2025 11:38:31 +0200
-Date: Tue, 8 Apr 2025 11:38:31 +0200
-From: Phil Sutter <phil@nwl.cc>
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: netdev@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Jakub Kicinski <kuba@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	s=arc-20240116; t=1744106016; c=relaxed/simple;
+	bh=sJY3k14WBl1j2uqNZ+rNzVrFO/O8YxCuCcrCnNtLeO4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=n7aUcn3xMBdFknPB8/W4pKIEdPMDHkWBLORUYRWqKnHkgZCQLMGBUOqMK1+3FuCGSqoeVgnbZM4RKRAnD9LwhS0uYF+Pd+d+HVcAkiB8ZgCA6tiP0ZVEI4oNifd1RLc69ua7+aAzlmFib4E8O2azu7J41pKW0cTp+HFK40MAOdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CCE4822FC;
+	Tue,  8 Apr 2025 02:53:34 -0700 (PDT)
+Received: from e123572-lin.arm.com (e123572-lin.cambridge.arm.com [10.1.194.54])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D5873F6A8;
+	Tue,  8 Apr 2025 02:53:29 -0700 (PDT)
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+	Kevin Brodsky <kevin.brodsky@arm.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
 	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>,
-	Petr Mladek <pmladek@suse.com>,
-	Yoann Congal <yoann.congal@smile.fr>, wireguard@lists.zx2c4.com,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv6 net-next 1/2] wireguard: selftests: convert iptables to
- nft
-Message-ID: <Z_Tul3J4zLoNAkaF@orbyte.nwl.cc>
-Mail-Followup-To: Phil Sutter <phil@nwl.cc>,
-	Hangbin Liu <liuhangbin@gmail.com>, netdev@vger.kernel.org,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Jakub Kicinski <kuba@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>,
-	Petr Mladek <pmladek@suse.com>,
-	Yoann Congal <yoann.congal@smile.fr>, wireguard@lists.zx2c4.com,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250408081652.1330-1-liuhangbin@gmail.com>
- <20250408081652.1330-2-liuhangbin@gmail.com>
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Qi Zheng <zhengqi.arch@bytedance.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-csky@vger.kernel.org,
+	linux-m68k@lists.linux-m68k.org,
+	linux-openrisc@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	sparclinux@vger.kernel.org,
+	x86@kernel.org
+Subject: [PATCH v2 05/12] powerpc: mm: Call ctor/dtor for kernel PTEs
+Date: Tue,  8 Apr 2025 10:52:15 +0100
+Message-ID: <20250408095222.860601-6-kevin.brodsky@arm.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250408095222.860601-1-kevin.brodsky@arm.com>
+References: <20250408095222.860601-1-kevin.brodsky@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250408081652.1330-2-liuhangbin@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+The generic implementation of pte_{alloc_one,free}_kernel now calls
+the [cd]tor, without initialising the ptlock needlessly as
+pagetable_pte_ctor() skips it for init_mm.
 
-On Tue, Apr 08, 2025 at 08:16:51AM +0000, Hangbin Liu wrote:
-> Convert the selftest to nft as it is the replacement for iptables, which
-> is used by default in most releases.
-> 
-> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+On powerpc, all functions related to PTE allocation are implemented
+by common helpers, which are passed a boolean to differentiate user
+from kernel pgtables. This patch aligns the powerpc implementation
+with the generic one by calling pagetable_pte_[cd]tor()
+unconditionally in those helpers.
 
-What are the changes since v5, please?
+Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+---
+ arch/powerpc/mm/pgtable-frag.c | 30 +++++++++++++-----------------
+ 1 file changed, 13 insertions(+), 17 deletions(-)
 
-Thanks, Phil
+diff --git a/arch/powerpc/mm/pgtable-frag.c b/arch/powerpc/mm/pgtable-frag.c
+index 387e9b1fe12c..77e55eac16e4 100644
+--- a/arch/powerpc/mm/pgtable-frag.c
++++ b/arch/powerpc/mm/pgtable-frag.c
+@@ -56,19 +56,17 @@ static pte_t *__alloc_for_ptecache(struct mm_struct *mm, int kernel)
+ {
+ 	void *ret = NULL;
+ 	struct ptdesc *ptdesc;
++	gfp_t gfp = PGALLOC_GFP;
+ 
+-	if (!kernel) {
+-		ptdesc = pagetable_alloc(PGALLOC_GFP | __GFP_ACCOUNT, 0);
+-		if (!ptdesc)
+-			return NULL;
+-		if (!pagetable_pte_ctor(mm, ptdesc)) {
+-			pagetable_free(ptdesc);
+-			return NULL;
+-		}
+-	} else {
+-		ptdesc = pagetable_alloc(PGALLOC_GFP, 0);
+-		if (!ptdesc)
+-			return NULL;
++	if (!kernel)
++		gfp |= __GFP_ACCOUNT;
++
++	ptdesc = pagetable_alloc(gfp, 0);
++	if (!ptdesc)
++		return NULL;
++	if (!pagetable_pte_ctor(mm, ptdesc)) {
++		pagetable_free(ptdesc);
++		return NULL;
+ 	}
+ 
+ 	atomic_set(&ptdesc->pt_frag_refcount, 1);
+@@ -124,12 +122,10 @@ void pte_fragment_free(unsigned long *table, int kernel)
+ 
+ 	BUG_ON(atomic_read(&ptdesc->pt_frag_refcount) <= 0);
+ 	if (atomic_dec_and_test(&ptdesc->pt_frag_refcount)) {
+-		if (kernel)
+-			pagetable_free(ptdesc);
+-		else if (folio_test_clear_active(ptdesc_folio(ptdesc)))
+-			call_rcu(&ptdesc->pt_rcu_head, pte_free_now);
+-		else
++		if (kernel || !folio_test_clear_active(ptdesc_folio(ptdesc)))
+ 			pte_free_now(&ptdesc->pt_rcu_head);
++		else
++			call_rcu(&ptdesc->pt_rcu_head, pte_free_now);
+ 	}
+ }
+ 
+-- 
+2.47.0
+
 
