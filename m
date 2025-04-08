@@ -1,105 +1,88 @@
-Return-Path: <linux-kernel+bounces-594186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2505AA80E98
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:42:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F9E8A80E40
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:36:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E29A04E610F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:38:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0367F4E0D4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F14229B21;
-	Tue,  8 Apr 2025 14:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F181DF252;
+	Tue,  8 Apr 2025 14:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="e8mYwwdd"
-Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sUw48Dfz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFC0229B0E
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 14:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEBE1A9B34;
+	Tue,  8 Apr 2025 14:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744122920; cv=none; b=MgrO+7mA5LZTK9b5mvNzxNs0W64sS/VKKsp8sZDEyYDWXmHn85s32iYpmBHqQznrDzqoH+VbM+xPp/n4LvYEWO2hEKqqhl3M6kKplyfl2oHrD8IpXCpEXN20bJX1k9bmz/JP6xZtPjsHCawOqGcVTztPdlWjJJgCW79yvV0Af7E=
+	t=1744122720; cv=none; b=QxVPKk/QKVWUilowI5fKvaQOIM2dGaiDT62uZFmjm2eRLxvImPlZNJw4gxv0so7L60KLiRGCzDwd2+ypReUh4/wv0JzCL+L04vvzR60qATvviSIIYvdK9pSHkZJ7A271g7fEAU6nz4oLhhrfyeW2lQnER7Shfxdpve5lV7lkg9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744122920; c=relaxed/simple;
-	bh=d4dw3UtEQPiO8IEP8vvc8HeEFz5IXVTxrsBo9othd40=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Q5QAkmK5QKi0bVfW3Kb6+N20EpTTU+6y1FBWP/e/AE21fy/U8VCQFYYi71KTkM7Bc9cff51jK3g/aFbcohYT9YBAA47JdIAEEiFHNgDFLBh2Eu8NruS9XrX8xqo8G3r4oAGA4tHKlPspErXcsOspkyToWKFyqc8UuFR267aGOgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=e8mYwwdd; arc=none smtp.client-ip=203.205.221.242
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1744122607; bh=c3fU22hrWc+1LebSDLwlA+MOIZeQWbaEf4w0uYoHHCQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=e8mYwwddW5n79rCEK+s/wGZ7QfHvET2YZwwEDPztnHvst6rvCAUHnVUpBsNSrzhuA
-	 pJ7Wr/We0GzW3wUGzv61fZ3/lFimgKIUBo7ALNXaUSzaM55pcV2b6b2SqDW88JrJZk
-	 IwLbBPfS7mjdp2gTj8UqPCkFUMgJrcGBMe7t1jTs=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id 7852CAD5; Tue, 08 Apr 2025 22:30:05 +0800
-X-QQ-mid: xmsmtpt1744122605t642mlii7
-Message-ID: <tencent_7D179E301BED4B391BC12537BA47BB6D3308@qq.com>
-X-QQ-XMAILINFO: NLNuKjcZ2ePXewyGwfvPkHsH6BjzCPr6Y+Wi8Va/E4Uj1tu4WXHulXHFut2YcH
-	 8/qjitRtjGWiN8Vtszw/AEaG8AY0+Bwa4XA34kUWL/MQK5nZMAg6RpbBlsDtuGjXQwWCMShV9h5S
-	 ZOCZAsPatsdE9ptQRA7b4KPeq5wsguw8VlZvuUpkIstXAauqjeZ469HNnA9VYbMvMFCN6gMZK2Gc
-	 citacM9+M4H4zrtD6UTdpwDqt7xUCUhM+8BfeoGpPB8JqGWW66X+pah1aPnyhHPBhZr9xVQEXcPe
-	 HXoR/2zQhyXz61KSMXAi9s7L5HfDSQzk8WMLnPDkT3J52nufbtLHiAOaDuSQvm1JrLc6K+RagptU
-	 k73S5Wqfzkh/qkdc/FsHB/5nXO4RT1ISvdxnxaAPW7ewJRJGzytp0PGcHSlzHT0F5wypPa7lZdcc
-	 VfhofrX1q3u74jravQl6xrnvKU3TRcsSoBgM4XYiYMjOQheQ/hLj16sJbGdHnD6MsXe1DzvDRFab
-	 63pUDbDkF4ZX0KRZ5Ae5iMitxyCjW4/9ZhWoAUDmVJaJDvgktXEH5wnfet8MgRBgaCgCMlR0IXlE
-	 eADmOI0PpztVe/A94V+xicg8asqaEAc6wje8X0ifx8YzHhIoxSb+gVlucfk5WCR1e08W5U0QzbUw
-	 +y/03dSIhU6EfnPEqpzZn2cI74P1Fv3kX1kuLSB34CFglIv00UkgLl8rjbTKVgZrActiIpdhSQCg
-	 yoSpvEenjLWUkoKyeDXvNzDqOru63MfuHsdHcCBRmWPHWDYTm/YM2JmztHHRL1uSzy4ApGDcgLIp
-	 jgYXltmbs2iuUtEDT91MFf5Zrcg1Dcy5jXMkjMkViCrfWR517RyrRL3eekkE43IMkURnqjsvHbvS
-	 qIl7Zyjhelj/0Jv/4X/bY=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+00778a9a557a2a5e1a33@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [wireless?] general protection fault in cfg80211_mlme_deauth
-Date: Tue,  8 Apr 2025 22:30:05 +0800
-X-OQ-MSGID: <20250408143004.1485824-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <67f50e3e.050a0220.396535.0561.GAE@google.com>
-References: <67f50e3e.050a0220.396535.0561.GAE@google.com>
+	s=arc-20240116; t=1744122720; c=relaxed/simple;
+	bh=j4cd2D37hpE76RXAdqlaRaN8aQ0v29wGqTICClpRPv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nk5Kws8syyhmxGa0CmDvBDt1EB+FvkLg79LZgcAnNhBigUhlm1dwqeOeFF5zWsJZveL7Q81pD3Tz5gTORR8XaEqJ6WeO+tVY1DOc3L3NIPZcXeWtu2NigyCHJ5Mc5cXY6OPQXhs0Li1rkyNdWjmEkyskPvMxUyTa1v7MseP0zL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sUw48Dfz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80A0FC4CEE7;
+	Tue,  8 Apr 2025 14:31:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744122718;
+	bh=j4cd2D37hpE76RXAdqlaRaN8aQ0v29wGqTICClpRPv4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sUw48DfzIvfgKXtGQex132eS1LkX3ponero0pb3bDwowIeyDVbz/r+Wadb9gU1puJ
+	 paNXmxhr4yHNfoQiZUmp6BG1q2K87wDzYUc44BBuygL2DLeFds4ZtmkiNBat9ko2hJ
+	 YEaiTBgG5g6CBf4T8j5oad/slkIOVHtJXG61wArBeAsD1Hj2ADggGoUEdPZOnClenv
+	 F9tGE1CEu5MajFasq5JRHcUhi1GFo8m5lMRSn0INLo+uQdnyeXA36aWjTK13IWDvvx
+	 tb/yCoyIFtiOL0+GJ5k6tRTthHCqK6ZE7kL18ltcQnWSwv7ALcaEncnwxHMefLtuIJ
+	 CZdi5xJqsRdYA==
+Date: Tue, 8 Apr 2025 07:31:57 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Phillip Lougher <phillip@squashfs.org.uk>
+Cc: Jan Kara <jack@suse.cz>, Andreas Gruenbacher <agruenba@redhat.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Sungjong Seo <sj1557.seo@samsung.com>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
+Subject: Re: Recent changes mean sb_min_blocksize() can now fail
+Message-ID: <20250408143157.GI6266@frogsfrogsfrogs>
+References: <86290c9b-ba40-4ebd-96c1-d3a258abe9d4@squashfs.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86290c9b-ba40-4ebd-96c1-d3a258abe9d4@squashfs.org.uk>
 
-#syz test
+On Tue, Apr 08, 2025 at 06:33:53AM +0100, Phillip Lougher wrote:
+> Hi,
+> 
+> A recent (post 6.14) change to the kernel means sb_min_blocksize() can now fail,
+> and any filesystem which doesn't check the result may behave unexpectedly as a
+> result.  This change has recently affected Squashfs, and checking the kernel code,
+> a number of other filesystems including isofs, gfs2, exfat, fat and xfs do not
+> check the result.  This is a courtesy email to warn others of this change.
 
-diff --git a/net/wireless/sme.c b/net/wireless/sme.c
-index cf998500a965..916c9e8fea15 100644
---- a/net/wireless/sme.c
-+++ b/net/wireless/sme.c
-@@ -268,6 +268,12 @@ void cfg80211_conn_work(struct work_struct *work)
- 		if (wdev->conn->params.bssid) {
- 			memcpy(bssid_buf, wdev->conn->params.bssid, ETH_ALEN);
- 			bssid = bssid_buf;
-+		} else {
-+			if (wdev->conn->state == CFG80211_CONN_ASSOC_FAILED && wdev->conn->bssid) {
-+				wdev->conn->params.bssid = wdev->conn->bssid;
-+				memcpy(bssid_buf, wdev->conn->bssid, ETH_ALEN);
-+				bssid = bssid_buf;
-+			}
- 		}
- 		treason = NL80211_TIMEOUT_UNSPECIFIED;
- 		if (cfg80211_conn_do_work(wdev, &treason)) {
-@@ -411,6 +417,8 @@ bool cfg80211_sme_rx_assoc_resp(struct wireless_dev *wdev, u16 status)
- 		return true;
- 	}
- 
-+	printk("bssid: %p, pbssid: %p, dis bssid: %p, %s\n",
-+		wdev->conn->bssid, wdev->conn->params.bssid, wdev->disconnect_bssid, __func__);
- 	wdev->conn->state = CFG80211_CONN_ASSOC_FAILED;
- 	schedule_work(&rdev->conn_work);
- 	return false;
+Thanks for the heads up.  xfs always passes in BBSIZE (aka 512) and
+doesn't use the bdev pagecache so I think it's unaffected by failures.
 
+--D
+
+> The following emails give the relevant details.
+> 
+> https://lore.kernel.org/all/2a13ea1c-08df-4807-83d4-241831b7a2ec@squashfs.org.uk/
+> https://lore.kernel.org/all/129d4f39-6922-44e9-8b1c-6455ee564dda@squashfs.org.uk/
+> 
+> Regards
+> 
+> Phillip
+> 
 
