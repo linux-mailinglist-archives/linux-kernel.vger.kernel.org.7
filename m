@@ -1,68 +1,58 @@
-Return-Path: <linux-kernel+bounces-594258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04416A80F67
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:12:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AFC7A80F6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3C013A4CF9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:07:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD4B9420012
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CE4221547;
-	Tue,  8 Apr 2025 15:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1898D22B5B8;
+	Tue,  8 Apr 2025 15:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="lDAitrKq"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IbVMb7AF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A45225412
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 15:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BD5226520;
+	Tue,  8 Apr 2025 15:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744124846; cv=none; b=MUf4HBqdPI5PyetXXGqu/gYzdjeVy3/YfSZs1reEQAsE0uwZMqgKKEaMlUeSLHcrgswnhBVmYfJXad2fMM0jwJWZnAyjTUW9SUPEl6yKh0CKjE7Da60zUkXxm3XyVtxSCBz4EZ3/OyxzQwGFi2VumKd1CdsI0CgqKRd9jLN94bM=
+	t=1744124868; cv=none; b=nEH+Ul6xkDlV/55kKK2WjVzrplEy/9EmjEkZV8QYixFW6YheKHE76qhqzvoRMFjKm25AgFbmMntd4gdZM+qRzUP5D/OHG8U5gSdMlQTE5I1yQYW/vEPa27yGQSnHu6z54fgjSChIYL1Jwur4WcUm73n8L5I+tgZDDTLAw2SjkWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744124846; c=relaxed/simple;
-	bh=rjC6pjbNE/DzxoKqwV8o1xDm6buKNmoptqlJL8Gns0M=;
+	s=arc-20240116; t=1744124868; c=relaxed/simple;
+	bh=g//YqZbYnCgzqQlrcfZDtmZtXvFE9W0xNASxWfyoETU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hIDTmvv7reN/S7lJeglPd03f4yg9hIPyK8/Ss2iQl7TPRuG1LJmhyEXZPiK7+dD3y3i2vd2GzLCWuKuAeIVHd1gk0mpmDFqFWPH/LFUXPq7YyA2azlvfJgsyCf+J8Q5eaq/hUNSmjIy62Gm7JkQs8ixFc4DBO2OZwrlALwI3h+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=lDAitrKq; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=TmpX
-	czd7WfTCPYN06+iLo8DluYU4QJDaknbl1vfUGks=; b=lDAitrKqVAcgnJc9UaDO
-	aIZM29YzL8f37y1MJu46sIIMEr+URV/3gn3CT1/vcmLoDwSZdxmaDj94o4Fu88F9
-	t8F6tPPKXnSf0FeYbuKcNR7OmEniOBh5dZdl9eng1x/cFV6ur42FcruyW/b57+tf
-	oe0jYCK6YtkGQvWrGItvLFOamQSSkg61VjjjO6tkY4XhyS5zcV/m9KHMTsBgfZVc
-	dVrucnH7rvmOTjr1dE4NEEXdC+meE3fUiFnnV92i3meGI3p/DH5QBMNG/yCk6XRi
-	2HIqY/REi0QL6IgWNfiWUkRtOYevEmUHlnPRRpyXcn8DkrtBTwtJPZ2qnHz4xzgi
-	CA==
-Received: (qmail 57483 invoked from network); 8 Apr 2025 17:07:14 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Apr 2025 17:07:14 +0200
-X-UD-Smtp-Session: l3s3148p1@MVU3tUUylIoujnsS
-Date: Tue, 8 Apr 2025 17:07:14 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Avri Altman <Avri.Altman@sandisk.com>,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] mmc: core: Further avoid re-storing power to the
- eMMC before a shutdown
-Message-ID: <Z_U7ogPkzZY9IVBB@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Avri Altman <Avri.Altman@sandisk.com>,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250407152759.25160-1-ulf.hansson@linaro.org>
- <20250407152759.25160-3-ulf.hansson@linaro.org>
- <Z_TZxXORT8H99qv4@shikoro>
- <CAPDyKFoOfNWa6b0jF0-a-imKqdDJQrdJe65OaOj3D0upmS7VXw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=naiSFncUcB7r5iXHjawtyGyYO9JIrAFt7Ksa7+iLXFeXW1/Zq0xyLqZ4SRZ7mbcyUEmf2eptoda5654Evdoy7XNKRkWocUfN7ZiUwgEyjWeZRbNYqYoXwGNXpzwBPkpcReyTQEMPEvkwdPaZoBOnYfRtr+5I6Uuqpj/GzTMLAWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IbVMb7AF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E919FC4CEEA;
+	Tue,  8 Apr 2025 15:07:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744124868;
+	bh=g//YqZbYnCgzqQlrcfZDtmZtXvFE9W0xNASxWfyoETU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IbVMb7AFmGJAYkPnCxwA4vipMYR2YmkWD6fAD9cjgW224aE/8B/b0imNqENFhHVqW
+	 /FvuEiP/X4fbu4dquOq7I9TXKl3UyZni3FT/ifYtgnqYaKPvh6/8kD4H1G13/SZt8X
+	 CO/uW7tCXDnjXhA7nND/ad/FXNY4QqzrMl9opoSAgP3PtpeXGKCmG3kHYopCaei9pt
+	 YIZpe9K6xSZ9YI+JSt0lgl403F9ZzHgi5YVplRkEBMKQzlTRJUPcinHF4LLrMsri0o
+	 cZehT5RCQqxfLRcka30b3oJLpWC+UnGNsHECh12aeaWOlP7Re3qUJtu1jFW2W7c8PZ
+	 6FFXpzl4Oj4Ng==
+Date: Tue, 8 Apr 2025 16:07:42 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.1 000/204] 6.1.134-rc1 review
+Message-ID: <370ac960-a843-4511-9c15-a8a584ddb08d@sirena.org.uk>
+References: <20250408104820.266892317@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,53 +60,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="goCDa9/FPguGvFqo"
+	protocol="application/pgp-signature"; boundary="tkPt/6AyH9xfzHxB"
 Content-Disposition: inline
-In-Reply-To: <CAPDyKFoOfNWa6b0jF0-a-imKqdDJQrdJe65OaOj3D0upmS7VXw@mail.gmail.com>
+In-Reply-To: <20250408104820.266892317@linuxfoundation.org>
+X-Cookie: Meester, do you vant to buy a duck?
 
 
---goCDa9/FPguGvFqo
+--tkPt/6AyH9xfzHxB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
+On Tue, Apr 08, 2025 at 12:48:50PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.134 release.
+> There are 204 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-> The rather long function-names "mmc_can_poweroff_notify" (that will
-> change to mmc_card_can_poweroff_notify with your series) and
-> "mmc_host_can_poweroff_notify" are rather self-explanatory, don't you
-> think?
+Tested-by: Mark Brown <broonie@kernel.org>
 
-Well, you are the boss here, but frankly, I don't think it is obvious
-enough. I had to look twice and very closely to understand the logic.
-Not because of the function name, but for the reason why 'is_suspend' is
-true despite being in _shutdown(). Adrian was wondering about it the
-first time, too. So, I honestly think the comment is
-
-  for a maintainer -> superfluous
-  for a part-time-MMC-core-hacker -> helpful to remember
-  for someone new to the code -> essential
-
-Something like this.
-
-
---goCDa9/FPguGvFqo
+--tkPt/6AyH9xfzHxB
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmf1O6IACgkQFA3kzBSg
-KbYoQA//TgNUSNe9zHzT8rQ00QZjzk3V0AsFDPSoy0/kgkGzzTiJxW8y2AHaCsGb
-8DEFbBWJ/PjP5N7UcwD9d8yAFAEAVeTgYa+CD8RdoG4qFbnms+K/RAuyqwVwmowC
-O0AVGl7pWWe9f6WQuJ67VQQgu71+nOKz6y56dMw9Lx4oBeMPgKn3txkmB0y3+Jiu
-lalumNd3lbIaXKg3Y+L9+SBeliJzjigg+GsKWS2OJzxOPJp+sAq7p8Oyfjm43wuc
-qsTXlfZHUAQroZ7qmo/uQzzP88oqhCBd595T3J1w0MQ05wTAR9t3w+TiidKGAYPu
-Koin1pQehUtj41wc7QFej2IjSKnoZBPX317om6kWqZde9wVwaFrfo+IbYEVhlscG
-kWEfYv/YREThj9xbai0HauTKSTSSFN00a8698QePQs4cgdaQyVN4VmrEr8P6bXUY
-ZzWfrCx7UJwVZyqn0HbHvMkBPBMvo0YzH23sHpXnUU0aomjvEyfrx+17RTgexIdw
-At/Wq8cc0pz4Dl03tKWNnQmO7kUttqljt07zDo0BErzDaZOhJwDOKEVLnpoyq4DM
-yikaj8eOcRF5xiN1ztEXP4Vu+ql77c7PXrYbSmKxHsO8+VDJEQzR+AAYoK6LayvF
-iO6PTO/atqKeXILcVAJ31Kh/umNtLIUedo9So1y1N4SZvCq1kTc=
-=sJD/
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmf1O70ACgkQJNaLcl1U
+h9CnYwf+LxAoX8Jp6byNvI3mCG8yz9vQpIVxzYo558OK7RdsjAiJHcAW32sBwFnI
+GTBTX5nYChf4PWt7jxCWZBUbSHJj1mfF0fec1xQuP012m4fPBTF0C20p1lmaMt9G
+QI0nv+3ihgbAFdXJGmoaO03ZoiUz2lSjjt0bdg8KXOn3E9r00LEm2+QtCUxE+L/9
+Re0m0NWymoJCVkDpPSovDw0hNdG5OGLKhiCqd2tl8ve18AF1qpDRhn9ZNm0awQWr
+rR05dol4dA9jStELW/4HKMZDr4zsQtQFkDx8mRjMY81p0xfWqVebfqSdl28NkAnl
+ehvrpPQbxOfSY/xRDMs/z7ExqYg4vw==
+=imSG
 -----END PGP SIGNATURE-----
 
---goCDa9/FPguGvFqo--
+--tkPt/6AyH9xfzHxB--
 
