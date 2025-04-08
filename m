@@ -1,77 +1,110 @@
-Return-Path: <linux-kernel+bounces-593902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3887EA8074C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:36:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57C7CA80861
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2489A7A4505
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:31:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25A624C7A73
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EFD269CF7;
-	Tue,  8 Apr 2025 12:29:45 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2FD227BA4
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 12:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BBE263F3B;
+	Tue,  8 Apr 2025 12:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jQMXev8Z"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA91126A0CF
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 12:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744115385; cv=none; b=rgL9l1sixTBPQstgGPKcmKH9Q8cYkIlh9Cjj6xQ89lnRAYlLr1BMxP0IxEfGgUZi2OS+utVVqf95tGvPJP/PpmWtI/NfSDp6zSBpqlFBVM3q2osHN+02xk0Vh+i10w1bb6RJp7NGLh/7P1mUIruifenmmpE+ltzka8kRwGaE1Rs=
+	t=1744115440; cv=none; b=ewm6S5cIm3lWOhKao9bH9senQLTbIVaU8hAXPZJ1iltmT1nAlAsTYo74uBQY7L6gWhYuBs8mReM8dGXD1rD4qhGxHk5lSiMrGD1IwWCa3TW2XvpfT7xlgJsOTe0ATAbhQGGcGUh+51sUneQenrb71SoBlhMLskRcqVZemFWwAbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744115385; c=relaxed/simple;
-	bh=fMFpWnIjQCZbGxVynWhw/NR1OLrMkyW6C6CcMGny/QY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=LfxyuWVoi2OnSXKO1lkeMFs9z92LU7l3DzTidEAhuS0o4QjpM4wjnGBUc7CZIQs2Lw92yk/d2yz9hyIjZDbaEhGh1dPg40fzIlIO70ozE6KG3TwwPI4QxVVCeibEdVhNhllIFqxYOU37j6KU/hx+zHb37xg7v46jA16GFoizWjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 9455992009C; Tue,  8 Apr 2025 14:29:40 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 8D0D892009B;
-	Tue,  8 Apr 2025 13:29:40 +0100 (BST)
-Date: Tue, 8 Apr 2025 13:29:40 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Borislav Petkov <bp@alien8.de>
-cc: Kevin Koster <lkml@ombertech.com>, Thomas Gleixner <tglx@linutronix.de>, 
-    Oerg866 <oerg866@googlemail.com>, linux-kernel@vger.kernel.org, 
-    Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-    x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] x86/microcode: Fix crashes on early 486 CPUs due to
- usage of 'cpuid'.
-In-Reply-To: <20250408103137.GAZ_T7CfnHx7cgU7CA@fat_crate.local>
-Message-ID: <alpine.DEB.2.21.2504081137400.29566@angie.orcam.me.uk>
-References: <CANpbe9Wm3z8fy9HbgS8cuhoj0TREYEEkBipDuhgkWFvqX0UoVQ@mail.gmail.com> <20250405130306.ca9822c1f27db119cc973603@ombertech.com> <20250405093127.GAZ_D4b6NdyTS-UW1J@fat_crate.local> <20250406164049.c0666bc18073e3b88c92d1f1@ombertech.com>
- <20250406174633.2c581923c145687476191753@ombertech.com> <20250406190253.GAZ_LP3RPZInWKcHN7@fat_crate.local> <alpine.DEB.2.21.2504081107390.29566@angie.orcam.me.uk> <20250408103137.GAZ_T7CfnHx7cgU7CA@fat_crate.local>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1744115440; c=relaxed/simple;
+	bh=roYuOsRXxDY1Sc1IojrF0f1x5agxjz7QRE19p5hS1zY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eIHbl8TfzExhigpSzL6EdZpP/R4CwCMCsWUh1HH22F4sNtwbR/QXHYPg9pLUdYXfZaxLwbNLB25YkVTy5q/dCrz/g3C83zus3Lf4wl6DoMFQ5tWrThL8hvSq8jr/rD82ScsGDQBiy7YvW4aY9ncN6d8GHqo9DVYlNEScN31K2uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jQMXev8Z; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744115426;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0YzbUZ64DR2mqPefS1VS8O1gHUe6w9Lu0ZF3KUP1TsQ=;
+	b=jQMXev8ZfoTE1c7HXYWuAE6Iy3eZPxLUUtrNoDiX7sVrLbhULEUmpElAFD+KpCrm/tGf2+
+	1V3yKlksRmSL5b0lbKn+jBnjylj4fqWYR4eLT8teoCi3VdLSrcrbPrMhbvTkRmc6g5/zDU
+	lpPhobww3HZ+a4OY1O7zDpx7riYKIP4=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Zhu Jun <zhujun2@cmss.chinamobile.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	Takashi Iwai <tiwai@suse.de>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: asihpi: Combine multiple if statements
+Date: Tue,  8 Apr 2025 14:29:51 +0200
+Message-ID: <20250408122954.805007-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 8 Apr 2025, Borislav Petkov wrote:
+Combine multiple if statements into a single code block to improve
+readability. No functional changes intended.
 
-> >  C'mon, these are good room heaters with nice extra side effects. ;)
-> 
-> Maybe we should intentionally prevent booting Linux on such machines and make
-> this our community's contribution in the fight against global warming!
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ sound/pci/asihpi/asihpi.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
- Hehe...  But seriously, consuming energy is not by itself wrong, energy 
-is plentiful in the universe and gets used all the time whether humankind 
-contributes to it or not.  The issue is using dirty sources.  And that's 
-not exactly individual people's problem, it's not us personally who are to 
-build clean power stations.  Which does happen already, so we're moving in 
-the right direction.  I would be more concerned of the various industrial 
-contributors to global warming whose purpose isn't electricity production.
-
- Plus we still need heating anyway, at least in some places, so why not 
-having one that runs Linux? ;)
-
- FWIW,
-
-  Maciej
+diff --git a/sound/pci/asihpi/asihpi.c b/sound/pci/asihpi/asihpi.c
+index 5a84591b13fc..6c32df43d1ec 100644
+--- a/sound/pci/asihpi/asihpi.c
++++ b/sound/pci/asihpi/asihpi.c
+@@ -982,12 +982,12 @@ static int snd_card_asihpi_playback_open(struct snd_pcm_substream *substream)
+ 	err = hpi_outstream_open(card->hpi->adapter->index,
+ 			      substream->number, &dpcm->h_stream);
+ 	hpi_handle_error(err);
+-	if (err)
++	if (err) {
+ 		kfree(dpcm);
+-	if (err == HPI_ERROR_OBJ_ALREADY_OPEN)
+-		return -EBUSY;
+-	if (err)
++		if (err == HPI_ERROR_OBJ_ALREADY_OPEN)
++			return -EBUSY;
+ 		return -EIO;
++	}
+ 
+ 	/*? also check ASI5000 samplerate source
+ 	    If external, only support external rate.
+@@ -1156,12 +1156,12 @@ static int snd_card_asihpi_capture_open(struct snd_pcm_substream *substream)
+ 	err = hpi_handle_error(
+ 	    hpi_instream_open(card->hpi->adapter->index,
+ 			     substream->number, &dpcm->h_stream));
+-	if (err)
++	if (err) {
+ 		kfree(dpcm);
+-	if (err == HPI_ERROR_OBJ_ALREADY_OPEN)
+-		return -EBUSY;
+-	if (err)
++		if (err == HPI_ERROR_OBJ_ALREADY_OPEN)
++			return -EBUSY;
+ 		return -EIO;
++	}
+ 
+ 	timer_setup(&dpcm->timer, snd_card_asihpi_timer_function, 0);
+ 	dpcm->substream = substream;
 
