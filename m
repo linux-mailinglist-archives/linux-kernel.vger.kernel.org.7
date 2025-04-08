@@ -1,104 +1,124 @@
-Return-Path: <linux-kernel+bounces-594886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAF69A817D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EB3DA817B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 158F0467738
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:45:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECBDE16E48F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4E72561A9;
-	Tue,  8 Apr 2025 21:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4156E2550D0;
+	Tue,  8 Apr 2025 21:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b="OdDSfyar"
-Received: from forward202d.mail.yandex.net (forward202d.mail.yandex.net [178.154.239.219])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NUz+y2ea"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AAA255250
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 21:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D62242930
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 21:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744148698; cv=none; b=ExBrmptiIY6Qm4UNDnLNc1lrxPd3wMROIKYJtPCpbgEdVNHTZtRWJLuJ9Ub0dP4VAqsX1xkpVQAOkjdslfi1gw6XTpzJzBh+TUMFNUKS1XR1F/weGKFVc7iHpI7YJ+HTTQANx4gbe3BPBgdxwDJlzpyeXam/KsYukHHVYowuoLY=
+	t=1744148411; cv=none; b=fxrhPeaT28/nQj03seIgB0Dd4dL3RYO7I3MjzuvDT5r2zTTk0hg+2ZxVYWFH+p24FZLH4EqEkbLomYDqr8DuhlnsX7HGCqmyewUMLHjnVDdXt/tp2m/ThLtT5KfeyO9fcqMiD77AulwwErcxW7O1mV/SNwjRJyrmQ0U/5keS0Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744148698; c=relaxed/simple;
-	bh=JC4AvRsU5dO5lSN/wK1tzyfO3xJ3Lusym5x1J5A6aCk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZggNWKsDsIAG74DbYuIZ5RG+ZyL7PQLk48mLgg7/7H/aW3G9N5+47HDP96JG1++hleO1eVMlZnuXLhbyVVwzFfiZjgMcRlp6MevkInnSTBIdKjvb+gKM/Js1p/b8MqzOg2J4maCg3tUwHoMpcHI+ZU4LdIVGBl3mqLHUUqQL+Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru; spf=pass smtp.mailfrom=rosa.ru; dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b=OdDSfyar; arc=none smtp.client-ip=178.154.239.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosa.ru
-Received: from forward102d.mail.yandex.net (forward102d.mail.yandex.net [IPv6:2a02:6b8:c41:1300:1:45:d181:d102])
-	by forward202d.mail.yandex.net (Yandex) with ESMTPS id B48D563F97
-	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 00:39:21 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-78.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-78.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:c54a:0:640:3e90:0])
-	by forward102d.mail.yandex.net (Yandex) with ESMTPS id 24FFE6098D;
-	Wed,  9 Apr 2025 00:39:14 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-78.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 8dlTpA3Lj4Y0-JWBBQtGG;
-	Wed, 09 Apr 2025 00:39:13 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosa.ru; s=mail;
-	t=1744148353; bh=JZcXqYJrQv6btI2jGdZDGW5h7bHWwXKxZoNoLSUTsnk=;
-	h=Message-Id:Date:Cc:Subject:To:From;
-	b=OdDSfyarzXf6b9xGs1RS9fAjnVN0YHKQSNeUJ7HGsUFO6080+NKjIt5Qt1+EAWsHS
-	 t10a9cQfD2P3M50WLiBn1CL9as/uCNnlw1WsENBaZLPOiE9STo5ljkkCncfaZEIHZB
-	 nODID2ntwoKtZtL6XIp6YF2AA1oow9gQJwpJH9p8=
-Authentication-Results: mail-nwsmtp-smtp-production-main-78.klg.yp-c.yandex.net; dkim=pass header.i=@rosa.ru
-From: Mikhail Arkhipov <m.arhipov@rosa.ru>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Mikhail Arkhipov <m.arhipov@rosa.ru>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] mtd: nand: ecc-mxic: Fix use of uninitialized variable ret
-Date: Wed,  9 Apr 2025 00:39:06 +0300
-Message-Id: <20250408213906.23129-1-m.arhipov@rosa.ru>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1744148411; c=relaxed/simple;
+	bh=SktKjID9PX6Mi7F9PD1XLt4SH9Ai1yb/YoZf11MhWgw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kpQ0SZT8XKqRMC29XZLHVjVonbrZwFvBQxGZfJ559ImAGwszmft3+nHGrncf2iFCRvo/HJXgP+WDcu6PMgk22ThGZFEHxpvz75zjmhi+IfqSfI7L49gB2AZsXZ+Pfc9gB8F42+LZcevO4ResqRmcx6QWBIxyrIFHqjtonaFCYq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NUz+y2ea; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5499bd3084aso5776547e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 14:40:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1744148408; x=1744753208; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gGze2p6ov5nhKjVxLmH8WTXrOTuNddI/56IYEuj8SXE=;
+        b=NUz+y2ea6PoQJpOJHj3Br0Q0aqOoDkMnJ3kJCiCZALMSTz7M7q/qqFpaCTVQDAn+wV
+         LpuLm56wnvG1niApPxCK1jMYLAWY6GKtypQuEYpEonClpENP+knLVvb/wgCyqyGqCKyq
+         GxJVG4yQ/dPw611XQLPWxVI7F89RNOuJta3Rk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744148408; x=1744753208;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gGze2p6ov5nhKjVxLmH8WTXrOTuNddI/56IYEuj8SXE=;
+        b=Vgr/SS+KjQeAafTdegJeFo4LkdBmhLs4S7mrPR+D0C5ms+gSs5LWaoTSyciHRzMflG
+         Ojr8JTqeR4FnsHim37jIQQ32T3GLb+xporpyzv7G+Z+0CK6FyanqPYPZ2Dlv57SolDQ7
+         U3D6EkCsZCsK7aV/94W3adRD+ojyrbZtfDSQFQcWICfBKmcYjkTom7q+qV3aljFcMUPr
+         oOPbC6yfl++MHw7iA0ky33VGV2X7WcHtEewqz5F2I1LkUcOar+aanc6HwSLn75tWuzGN
+         37n1V+uSiXp4Eglvg+lcpExBrM9dFS5dEGXM3hKRrtjgI2ksRDh0U0ghh5tQfATmBmsI
+         Ec4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUax6qcLirkHUbHlnlBN2me7/t2wZ+jM6IL9cRcEjvAANzLW9OxJoldFc2brpo0Drx0E+Eacb480Y6Zbao=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQlqRMkyGTrcVW4dKS2XzRxe94WUzZRdRHY3VSHNIqzX6rGqnf
+	8II4STTlrmQG4h7zHeSEa/3kN2Qa1+yPlD4mV5aEpM5njt5t1uwrp8X6GL3kCrn0ndSbM8exF6c
+	=
+X-Gm-Gg: ASbGnctw2hnKSL17LP5UsILNIH7D2Nigb+nlZBXXigleNobcTEjzm78STjTaw3QJWXM
+	XrrExy5wUocMLTU8hgPPAHryzuaiBKUK1VRes6mIr1IxV7w3nQIouOGRR+Z07Q6citIyQ7XPrpJ
+	Rqgys2V7gw2UnDU/zkj/N0C+jqo8Z19OtU8e/DKWMzwS5h4Jf5Q7sEyzga6cPZNLkGTISJ62uWN
+	4/C4If1c752VMNknscayYJsq/aJPXK06N2YI4Gw4DvMcZy/6jfLrcEi1aWSSgh6Rhmdh6Wa4TQT
+	UpEFBw8EX6ppnWX1uGNM2QMJvjx+uj6IDEFSOhI0nFyhggr+cjdPkUWPwi9VkDs/cEVi9NLmAh4
+	4NjaQX2U=
+X-Google-Smtp-Source: AGHT+IFb1C5khOvzPRxQL6jhQQZC9tdPyee/u1j7xEmpom4dvwiIhlo0sd8gWb5gYkBWqQyefKRI9g==
+X-Received: by 2002:a2e:b893:0:b0:30b:8f84:49c5 with SMTP id 38308e7fff4ca-30f4504097cmr339841fa.28.1744148407825;
+        Tue, 08 Apr 2025 14:40:07 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30f031ce768sm20556341fa.89.2025.04.08.14.40.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Apr 2025 14:40:07 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-549b116321aso6912007e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 14:40:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUK3z/wmfqLnA9CTSmuLmShAf/3FDBayWguzqD3kFBTYZ/bTcjInHF1nVmw7NfIVTUnNdWcqBAqgdwrvt4=@vger.kernel.org
+X-Received: by 2002:a05:6512:ba5:b0:545:1db5:f224 with SMTP id
+ 2adb3069b0e04-54c444b6994mr53176e87.11.1744148406896; Tue, 08 Apr 2025
+ 14:40:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250225-spx-v1-1-e935b27eb80d@chromium.org> <12647854.O9o76ZdvQC@radijator>
+ <Z_Tgp8L_8goc63K1@pampelmuse> <Z_TtXaRnaU1zXbXv@pampelmuse>
+ <Z_T8OiLQzKDGhOJs@pampelmuse> <MW5PR13MB5632E13F8F5B0B2B6DE3D16CFDB52@MW5PR13MB5632.namprd13.prod.outlook.com>
+ <2025040816-pork-lisp-7b66@gregkh>
+In-Reply-To: <2025040816-pork-lisp-7b66@gregkh>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Tue, 8 Apr 2025 23:39:55 +0200
+X-Gmail-Original-Message-ID: <CANiDSCs0timX+XN8xNsMKEXnaj58+FpfL791UyFo7djNOE6dLQ@mail.gmail.com>
+X-Gm-Features: ATxdqUFKlgiTWgAKq3QwhMHai6z7obJaUq6teJeVC8rjjJ6u-OBXDk3g8rw1cDM
+Message-ID: <CANiDSCs0timX+XN8xNsMKEXnaj58+FpfL791UyFo7djNOE6dLQ@mail.gmail.com>
+Subject: Re: spdxcheck: python git module considered harmful (was RE: [PATCH]
+ scripts/spdxcheck: Limit the scope of git.Repo)
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Bird, Tim" <Tim.Bird@sony.com>, Gon Solo <gonsolo@gmail.com>, 
+	=?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
+	Thomas Gleixner <tglx@linutronix.de>, 
+	"linux-spdx@vger.kernel.org" <linux-spdx@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-If ctx->steps is zero, the loop processing ECC steps is skipped,
-and the variable ret remains uninitialized. It is later checked
-and returned, which leads to undefined behavior and may cause
-unpredictable results in user space or kernel crashes.
+Hi Tim
 
-This scenario can be triggered in edge cases such as misconfigured
-geometry, ECC engine misuse, or if ctx->steps is not validated
-after initialization.
+On Tue, 8 Apr 2025 at 20:12, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 
-Initialize ret to zero before the loop to ensure correct and safe
-behavior regardless of the ctx->steps value.
+> > Let me know if anyone objects to me working up a refactoring of spdxcheck.py
+> > eliminating the use of the python 'git' module, and submitting it for review.
+>
+> No objection from me!
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+SGTM. Depending on how much time you need to implement it, we could
+land something with `del` as Gon proposed. I can send a v2 if needed.
 
-Fixes: 48e6633a9fa2 ("mtd: nand: mxic-ecc: Add Macronix external ECC engine support")
-Signed-off-by: Mikhail Arkhipov <m.arhipov@rosa.ru>
----
- drivers/mtd/nand/ecc-mxic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Let me know what you think
 
-diff --git a/drivers/mtd/nand/ecc-mxic.c b/drivers/mtd/nand/ecc-mxic.c
-index 6b487ffe2f2d..e8bbe009c04e 100644
---- a/drivers/mtd/nand/ecc-mxic.c
-+++ b/drivers/mtd/nand/ecc-mxic.c
-@@ -614,7 +614,7 @@ static int mxic_ecc_finish_io_req_external(struct nand_device *nand,
- {
- 	struct mxic_ecc_engine *mxic = nand_to_mxic(nand);
- 	struct mxic_ecc_ctx *ctx = nand_to_ecc_ctx(nand);
--	int nents, step, ret;
-+	int nents, step, ret = 0;
- 
- 	if (req->mode == MTD_OPS_RAW)
- 		return 0;
+
+
 -- 
-2.39.5 (Apple Git-154)
-
+Ricardo Ribalda
 
