@@ -1,109 +1,134 @@
-Return-Path: <linux-kernel+bounces-594204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8639CA80EBC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:47:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77A5DA80EC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0E417A2F7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:44:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E11BF189DF64
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04F8219A90;
-	Tue,  8 Apr 2025 14:44:56 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DC31E521A;
+	Tue,  8 Apr 2025 14:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MN4noQEL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD453217F54
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 14:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F8D209F35;
+	Tue,  8 Apr 2025 14:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744123496; cv=none; b=UcCxUyjAvrFuPHJ7rsbdpacxEHGDj2fa/NfVmO0wEMmave2AGaR2XlmAdBnXx1VRr3+vEEmpUEaMYFXD91lJBZ2e0w9NckvrAZaqxTjqOQCaJiqxBTUyMqk2PcoA/yDpKdO9Yl49d5IG/EEtGoJ3vjFxpa2qNtN/lP+0i529gq4=
+	t=1744123537; cv=none; b=A7NohdlF8bdpR9iQD3inBa16JE0k/xrtaldfY8CSuEp4fsEyQaIaeezuQwFmxesy5ecMJ11AX++1KknC5ekiCX77HZxgIM66ZduRuqdFBp7mbx1davYSiFKUGbcUfZTHkZgJHbi+jKo4mLH7hXDq3RnYLKyZU092abTKPJ4yzz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744123496; c=relaxed/simple;
-	bh=qKfLUJOVmjIhLZ5rBf6uzzEt80+a0moD3VpVZ5BMQNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WBjyab319SwvsR7eYqkkp7h++YDiP5lFEi+fB6aDSFwFxA13hLsPkvtyVkROvLdq2hoMdAfUpCzkPMZrDOjhLn75OCzvvcd8at64ES74KUP75jHhkMhatXDBBVUHjg0kC0PsSSE2aYH9OeHF7NNLZBYSNuHkIPRMG10Owm1cH8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: D44sYblnRa+t9WOKxjchXQ==
-X-CSE-MsgGUID: vHHPhFLjQzaUhGWHNX6ukw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="68035629"
-X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
-   d="scan'208";a="68035629"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 07:44:54 -0700
-X-CSE-ConnectionGUID: GWlHOfUWTo6sn7jOkSFpgw==
-X-CSE-MsgGUID: MZP0rQ4JTeON+y0zx0hDVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
-   d="scan'208";a="129139183"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 07:44:52 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andy@kernel.org>)
-	id 1u2AC1-0000000AQry-2MQZ;
-	Tue, 08 Apr 2025 17:44:49 +0300
-Date: Tue, 8 Apr 2025 17:44:49 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>
-Cc: outreachy@lists.linux.dev, julia.lawall@inria.fr,
-	gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, david.laight.linux@gmail.com,
-	dan.carpenter@linaro.org
-Subject: Re: [PATCH v7 1/2] staging: rtl8723bs: Add spaces and line breaks to
- improve readability
-Message-ID: <Z_U2YXpteKmxXriG@smile.fi.intel.com>
-References: <cover.1744117091.git.abrahamadekunle50@gmail.com>
- <8e582c7166200e618ff56ec10ed16b4a4e73eece.1744117091.git.abrahamadekunle50@gmail.com>
+	s=arc-20240116; t=1744123537; c=relaxed/simple;
+	bh=olBuiJK/AJrMVquWfmLMhUENwZCRAys6goiG98vJrIk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aZGr5EMCusXuLjb2XtxuXP8qmAj31XowkpfzUN0sgJHRrj5LC/nJBwFBnZJKgVmWqWV2QJtQHizkoE05onPe/wZMDxTbwcSXdXMFysQvKIRFICCSCOIcKIrNj3BFmmGDRDbVm66MqQpdHWBb7HXzRdsYSjuJyUMrhGvjSkI5ek0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MN4noQEL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 274BCC4CEEB;
+	Tue,  8 Apr 2025 14:45:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744123537;
+	bh=olBuiJK/AJrMVquWfmLMhUENwZCRAys6goiG98vJrIk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MN4noQELJlVCGbmapAOBZNc9a0AhCwy4boJHS1dY2p0x2b1ax+9ygIJOXZiACVc9W
+	 +uo0h+MIHBKsSgpTPrfZ//6P1iZCbg6UVGPjYEM1GT92MWNuOpaYrjquY4Dy5H9DKo
+	 HDjxsICuOUzv0TGnDUI7UmDBG2Nzl/f51m5yDAE1rM9yFeNt8q2QRRobSF7jWm3lXX
+	 E8UaYmuW6rZyd9/7HDwjrWHpLk8jsRfhlG4pj5kQgpRUvo9Ez9E5qwu/dy9Sy2bEFW
+	 pxZ2wdToQYssYDyxJVIKW7x8QcYxPpMih2a2AznniJf7GuZZhXkbOS1UXiolmsGZcC
+	 Uu77sXK/6B1Jw==
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e66407963fso10949855a12.2;
+        Tue, 08 Apr 2025 07:45:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWd1ls5Qtw1ADG9g3fAys08ALptfylPwI4Sui0cUE4b5TJ3hM0rfB2CWCkFOF1I8nS9FSjGBI20oMAeD+ie@vger.kernel.org, AJvYcCWkxbU19hO9/cprG6H/N6Q99lb4Nm0L3H1Nbgpr6zit8tFgGJVy0ZmvBIYQCGEYnVE2pjqZ6WiXIYD3Xw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhzveICzyES6w7e8C88D5vRErx22i6OuuehzEk0TbGRvhhBWst
+	r0rv4CMLyqiAjw7c2X5fYKSc+k7Joh5rsr104ZZ81wyhYLsuzPt4w6BlBPVcDePPdCwKLUdAkDH
+	0gMVRQv8XWLiy0S1vuG0WcRAyTM0=
+X-Google-Smtp-Source: AGHT+IHIQJTKxSzv99WAVBSrjH88jTQ3hCttlWSr1BdKS16DYWVyqrJ0NrTLPyTSrFEhjS5P6C3KLL9d+s7h7ivUiwA=
+X-Received: by 2002:a17:906:ec9:b0:ac8:196f:7441 with SMTP id
+ a640c23a62f3a-ac8196f76c0mr336351266b.7.1744123535760; Tue, 08 Apr 2025
+ 07:45:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8e582c7166200e618ff56ec10ed16b4a4e73eece.1744117091.git.abrahamadekunle50@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250408122933.121056-1-frank.li@vivo.com>
+In-Reply-To: <20250408122933.121056-1-frank.li@vivo.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Tue, 8 Apr 2025 15:44:57 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H6ysGxpXs8P9iPY-Y1KNKPggGSFHR_tMv-34Q+Qf6PZTQ@mail.gmail.com>
+X-Gm-Features: ATxdqUH41vmqeMmhUtaSpwreauFnjDIoBgYjKMbPB_v5Ynl0O1ppha_HdEk1e1s
+Message-ID: <CAL3q7H6ysGxpXs8P9iPY-Y1KNKPggGSFHR_tMv-34Q+Qf6PZTQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] btrfs: use BTRFS_PATH_AUTO_FREE in insert_balance_item()
+To: Yangtao Li <frank.li@vivo.com>
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 08, 2025 at 01:31:41PM +0000, Abraham Samuel Adekunle wrote:
-> The code contains no spaces around binary operators with long lines
-> which reduces readability thereby not adhering to Linux kernel coding
-> style.
-> 
-> Add white spaces around the binary operators and use line breaks to
-> increase readability and ensure adherence to Linux kernel coding
-> styles.
+On Tue, Apr 8, 2025 at 1:18=E2=80=AFPM Yangtao Li <frank.li@vivo.com> wrote=
+:
+>
+> All cleanup paths lead to btrfs_path_free so we can define path with the
+> automatic free callback.
+>
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> ---
+>  fs/btrfs/volumes.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+>
+> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+> index c8c21c55be53..a962efaec4ea 100644
+> --- a/fs/btrfs/volumes.c
+> +++ b/fs/btrfs/volumes.c
+> @@ -3730,7 +3730,7 @@ static int insert_balance_item(struct btrfs_fs_info=
+ *fs_info,
+>         struct btrfs_trans_handle *trans;
+>         struct btrfs_balance_item *item;
+>         struct btrfs_disk_balance_args disk_bargs;
+> -       struct btrfs_path *path;
+> +       BTRFS_PATH_AUTO_FREE(path);
+>         struct extent_buffer *leaf;
+>         struct btrfs_key key;
+>         int ret, err;
+> @@ -3740,10 +3740,8 @@ static int insert_balance_item(struct btrfs_fs_inf=
+o *fs_info,
+>                 return -ENOMEM;
+>
+>         trans =3D btrfs_start_transaction(root, 0);
+> -       if (IS_ERR(trans)) {
+> -               btrfs_free_path(path);
+> +       if (IS_ERR(trans))
+>                 return PTR_ERR(trans);
+> -       }
+>
+>         key.objectid =3D BTRFS_BALANCE_OBJECTID;
+>         key.type =3D BTRFS_TEMPORARY_ITEM_KEY;
+> @@ -3767,7 +3765,6 @@ static int insert_balance_item(struct btrfs_fs_info=
+ *fs_info,
+>         btrfs_set_balance_sys(leaf, item, &disk_bargs);
+>         btrfs_set_balance_flags(leaf, item, bctl->flags);
+>  out:
+> -       btrfs_free_path(path);
+>         err =3D btrfs_commit_transaction(trans);
 
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
-See one nit-pick below.
+This isn't a good idea at all.
+We're now committing a transaction while holding a write lock on some
+leaf of the tree root - this can result in a deadlock as the
+transaction commit needs to update the tree root (see
+update_cowonly_root()).
 
-...
-
->  					} else if (SN_EQUAL(pattrib->seqnum, tx_seq)) {
-> -						psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (tx_seq+1)&0xfff;
-> +						psta->BA_starting_seqctrl[pattrib->priority & 0x0f] =
-> +							(tx_seq + 1) & 0xfff;
->  
->  						pattrib->ampdu_en = true;/* AGG EN */
->  					} else {
-> -						psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (pattrib->seqnum+1)&0xfff;
-> +						psta->BA_starting_seqctrl[pattrib->priority & 0x0f] =
-> +							(pattrib->seqnum + 1) & 0xfff;
-
-Probably it deserves a blank line here as in the above case.
-But it was in the original like this, so at least it not worse
-than that.
-
->  						pattrib->ampdu_en = true;/* AGG EN */
->  					}
-
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks.
 
 
+>         if (err && !ret)
+>                 ret =3D err;
+> --
+> 2.39.0
+>
+>
 
