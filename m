@@ -1,138 +1,186 @@
-Return-Path: <linux-kernel+bounces-594253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68CA5A80F54
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:10:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A500A80F59
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BACA57B538C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:04:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A43D01883819
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082C122B8C4;
-	Tue,  8 Apr 2025 15:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA149221547;
+	Tue,  8 Apr 2025 15:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kti8LqJJ"
-Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="BjuefYLA"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5B51EB194;
-	Tue,  8 Apr 2025 15:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5BF1862BB;
+	Tue,  8 Apr 2025 15:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744124666; cv=none; b=smOkkuvSwcVpjXsqELiVO5B79R+ZtKSdX2pjK0ZgmwNjZMvjhredsWbojilLxfwnKVCQVwg+/a786ZG0Q6Az5G5WAwiy+a0rWAzUkwUurIX2gwN6qsQdCr1cltXjmmRHVOoUL6zcah9V5gkvyI99/xVWq3X5c4IKjs+qyMcwCZs=
+	t=1744124822; cv=none; b=iCZ5r+W89HHPN/ZoGsyU4LKhdAOAysZL5lWkL67L+DFa1+edf6ywvZ8ms6Ogxd4PghtYaAP2yIMsk/fQfBDBj6/drzJJxYEwiZ6fJK1P9eJEpSgW+S5iSa36MBKEQYp7Jy40J5mXa4nGe6BHN/Hvpmg/atvPUFWMOE0QPg6sQ5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744124666; c=relaxed/simple;
-	bh=0idBfCTzKenTxIiSwgSu/KdenyNnfTy6Efd7dSG2ssA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YO5rqUwwPAfNx/7IwFva8lsOM2WU2r96iZJ5+CEcyRPDaEoZxxR50n9Y623iAEgpSVbRcTM/i0dtXUYbWhivKK6UI3Ti70vCheDsOCVsonN7roT881lGJyJBzJ7UffktSM2fC5iVrjQ31n4xGk8W0tU/+8uK5vIlPtSBuz2gQBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kti8LqJJ; arc=none smtp.client-ip=209.85.210.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-7399838db7fso5134960b3a.0;
-        Tue, 08 Apr 2025 08:04:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744124663; x=1744729463; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hW0uMB23s6rTN+79K6wuOhxoVdGvng8abYobjgd2dY0=;
-        b=Kti8LqJJze+WRxQ1rmG31G9KAtsEOF2oSivBpKHgAsE8cnV16wdW1tw6QTyUkc4npZ
-         UN65CsEkICj6nR+s5l1XhYbx1CEgV9a3SsddDg1bEML6t63R3VcPQac2rehXVVuizGdQ
-         MBkMCpyFp/CJRKN+D0y1i/fS5yigH/NENkupU7+EtgTfVsnLR1J0bkkKowD1rDTPbvJk
-         2utHrp8+iju1Wq/3Nb9hCLq+lVnMD5yIY44NgTHnJ3ejSJUotvN0gAOLfYZ0gamX+wQ/
-         5Z2JyIKUdnJyF27x1V/hAMcaXhlG077nWme9TXYkKLtwYj5Dzhn+xuWDAqs9IyZM/Me1
-         R5Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744124663; x=1744729463;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hW0uMB23s6rTN+79K6wuOhxoVdGvng8abYobjgd2dY0=;
-        b=OwK/vTDCp5x1kFskCkQkZMt2IufC8yssXszTjuhslWFJ7gG1SNtcpJkKraIs3Wgq2g
-         oAUzn1/770WhfpjhRZBg9LcLLYYY0hIEUMCV3DdjGBmyLSVza6LhcVpS9jqr3zWJxtX7
-         TE4qw5cfBu/1fltqqM9hR/xHiQR0wU7zepif5IooR21gMHKgo6X6lN8B04U9gzT2RcTX
-         0/Zqkhg26eOvLgFgHebevpBq95U30jSvxCQAN6bwQdTn8q6ULokzMrRw+mwkib+1Btdv
-         PKgH94FFmivUWZNC+LY8iJPnC4fmaikuk8DvuiBtzh4kpjc2/eHTa0EkYs8OQ+I13nmG
-         cvVg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/88P7nQzSZd7eAmRGIxUoM0JiKv6y8MK4uRKpqSQcK0d+JUNnzEKY+kLtniqLq+en4KvlpiiYQxfu2JA=@vger.kernel.org, AJvYcCW7ZwFfrLCdE9mhSowBw4NFdSp8Vci6GlIhK+PLGxSNRUQG5BjuwusybuM+gPY+sl4P9tunuBsbDZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+UznuYE/FZwCkMnbWpIhwAeBC5RmGsnvAiQbJepYv0Moby2Qp
-	lZohrCSoeHOnYvGO2g/SvRY7gBVP1Z+cjNrNT4EuUxfmI07rlzuF
-X-Gm-Gg: ASbGnctl/X6bN/IIbiTchp2Oo6O753pdvVWAAx5ApNXkDzPQRdFc572Z0Q2FcZciCSJ
-	UGxAhT4RPK5Nlmuma9KfQLo5khQ7ubXu3SLRYJfWIoTQjK+j+mWM+9axFRVZXpl4rTsWRitgwn+
-	tfol3sox6B6CdZAK8O88YjcwKfgo5TSxJuRxPTT5Xl8/e4PSKxK4bWy2Dqmj4AgZP3FeNlXVj+r
-	IrV9ocb0c4A9X190zZZXrKMXqbn1JsEXWMS8Q//fczU0aZeBnsls18ALck1p+1Jioym9QTM7UMi
-	9YYSttmwll19KgPtp85Z9KwIukqNoA6Ou1FkhTzBL0IaGEHu8mOfLJ6RHkLkhaKH+zcFCZ45xFC
-	mwdzWhw==
-X-Google-Smtp-Source: AGHT+IFcrw32IadEZbTZ2yTefdbGLJ4deVn8ImGq3fcHBOxM9j/Ojp5mMqxmgwQ1EbK8z0e1SyOJQw==
-X-Received: by 2002:aa7:875a:0:b0:736:b3cb:5db with SMTP id d2e1a72fcca58-73b9d4019ddmr4916731b3a.11.1744124663010;
-        Tue, 08 Apr 2025 08:04:23 -0700 (PDT)
-Received: from henry.localdomain ([111.202.148.133])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739d9ea097asm11068474b3a.90.2025.04.08.08.04.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 08:04:22 -0700 (PDT)
-From: Henry Martin <bsdhenrymartin@gmail.com>
-To: sudeep.holla@arm.com,
-	cristian.marussi@arm.com,
-	rafael@kernel.org,
-	viresh.kumar@linaro.org
-Cc: arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Henry Martin <bsdhenrymartin@gmail.com>
-Subject: [PATCH v2 2/2] cpufreq: scpi: Fix null-ptr-deref in scpi_cpufreq_get_rate()
-Date: Tue,  8 Apr 2025 23:03:54 +0800
-Message-Id: <20250408150354.104532-3-bsdhenrymartin@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250408150354.104532-1-bsdhenrymartin@gmail.com>
-References: <20250408150354.104532-1-bsdhenrymartin@gmail.com>
+	s=arc-20240116; t=1744124822; c=relaxed/simple;
+	bh=5YJs5WnNevutklqMZZ0KQjOrxXz7m+9xoaoQn+MxWio=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bIeR7d+fns62ZfjVWiBANx0cg3qXcHDTybTa/y5V9vKRqHbQourT6WfXAGfoIObOf83zmUHXGIxhc0pdqVy+A2ze0kUxULpT1T+wrWj/NyPMKPHmQVWFGgNC+5eWWqWCVjPiz4VsfZ2Icc7v/NFnzr2l3iozfd+DbL5ZMxyH5KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=BjuefYLA; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 538AP600020633;
+	Tue, 8 Apr 2025 17:06:46 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	ez4gDIlBBH+Xt/jxlym+6D8PrFcPq4pA7m+d0k6jmiY=; b=BjuefYLAsLMzeKdd
+	Y5l/I7U8eNDKmsvtftIAVwH/NUGcuqzYXugQdSUYX14C+PcgJn2PLnVz+9k0G+Q0
+	JqWnYAs+BcOWl0JCm5s89sb9/jg/Br9YFaSQ3+FGUCd9zoIoXF1b+NNAYuOGIhL2
+	YpP/PumnrfpNcAwqrW9wKo7WxzZycYLgTpoURmMicwZmD6AYnEhkrSNukXytOhLo
+	6KsdMJMIkBvRScSNBbA/Z0x0uUJZOd4AoBjlZFAdrEAKfWiBuRPunMl63PidS68v
+	hVcl684xOiaXg6L07W1w0zZwpl9y+EUAHWXDs91aDdrBEWAKyJuXHM0NrxDdFHME
+	ZC2psA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45uffmk9rg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Apr 2025 17:06:45 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A6BD740046;
+	Tue,  8 Apr 2025 17:05:35 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 862DD9353D9;
+	Tue,  8 Apr 2025 17:04:46 +0200 (CEST)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 8 Apr
+ 2025 17:04:45 +0200
+Message-ID: <b1398416-3391-474b-9944-1d0995639a0e@foss.st.com>
+Date: Tue, 8 Apr 2025 17:04:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 3/7] memory: Add STM32 Octo Memory Manager driver
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>
+CC: <christophe.kerello@foss.st.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250407-upstream_ospi_v6-v8-0-7b7716c1c1f6@foss.st.com>
+ <20250407-upstream_ospi_v6-v8-3-7b7716c1c1f6@foss.st.com>
+ <710569e305924a0a84e9792bc779d37a24011477.camel@pengutronix.de>
+Content-Language: en-US
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <710569e305924a0a84e9792bc779d37a24011477.camel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-08_06,2025-04-08_03,2024-11-22_01
 
-cpufreq_cpu_get_raw() can return NULL when the target CPU is not present
-in the policy->cpus mask. scpi_cpufreq_get_rate() does not check for
-this case, which results in a NULL pointer dereference.
 
-Fixes: 343a8d17fa8d ("cpufreq: scpi: remove arm_big_little dependency")
-Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
----
-V1 -> V2: Use `if (unlikely(!policy))` instead of `if (!policy)`
 
- drivers/cpufreq/scpi-cpufreq.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+On 4/8/25 10:59, Philipp Zabel wrote:
+> On Mo, 2025-04-07 at 15:27 +0200, Patrice Chotard wrote:
+>> Octo Memory Manager driver (OMM) manages:
+>>   - the muxing between 2 OSPI busses and 2 output ports.
+>>     There are 4 possible muxing configurations:
+>>       - direct mode (no multiplexing): OSPI1 output is on port 1 and OSPI2
+>>         output is on port 2
+>>       - OSPI1 and OSPI2 are multiplexed over the same output port 1
+>>       - swapped mode (no multiplexing), OSPI1 output is on port 2,
+>>         OSPI2 output is on port 1
+>>       - OSPI1 and OSPI2 are multiplexed over the same output port 2
+>>   - the split of the memory area shared between the 2 OSPI instances.
+>>   - chip select selection override.
+>>   - the time between 2 transactions in multiplexed mode.
+>>   - check firewall access.
+>>
+>> Signed-off-by: Christophe Kerello <christophe.kerello@foss.st.com>
+>> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+>> ---
+>>  drivers/memory/Kconfig     |  17 ++
+>>  drivers/memory/Makefile    |   1 +
+>>  drivers/memory/stm32_omm.c | 474 +++++++++++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 492 insertions(+)
+>>
+> [...]
+>> diff --git a/drivers/memory/stm32_omm.c b/drivers/memory/stm32_omm.c
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..db50aeffb0aa32a9d51a205d8ba30ab2299e1c34
+>> --- /dev/null
+>> +++ b/drivers/memory/stm32_omm.c
+>> @@ -0,0 +1,474 @@
+> [...]
+>> +static int stm32_omm_disable_child(struct device *dev)
+>> +{
+>> +	static const char * const resets_name[] = {"ospi1", "ospi2"};
+>> +	struct stm32_omm *omm = dev_get_drvdata(dev);
+>> +	struct reset_control *reset;
+>> +	int ret;
+>> +	u8 i;
+>> +
+>> +	ret = stm32_omm_toggle_child_clock(dev, true);
+>> +	if (!ret)
+>> +		return ret;
+>> +
+>> +	for (i = 0; i < omm->nb_child; i++) {
+>> +		reset = reset_control_get_exclusive(dev, resets_name[i]);
+>> +		if (IS_ERR(reset)) {
+>> +			dev_err(dev, "Can't get %s reset\n", resets_name[i]);
+>> +			return PTR_ERR(reset);
+>> +		};
+>> +
+>> +		/* reset OSPI to ensure CR_EN bit is set to 0 */
+>> +		reset_control_assert(reset);
+>> +		udelay(2);
+>> +		reset_control_deassert(reset);
+>> +
+>> +		reset_control_put(reset);
+> 
+> With this reset_control_put(), you are effectively stating that you
+> don't care about the state of the reset line after this point. To
+> guarantee the reset line stays deasserted, the driver should keep the
+> reset control around.
+> 
+> Are you requesting and dropping the reset controls here so the child
+> drivers can request them at some point? If so, there is an
+> acquire/relase mechanism for this:
+> 
+> https://docs.kernel.org/driver-api/reset.html#c.reset_control_acquire
 
-diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
-index 17cda84f00df..dcbb0ae7dd47 100644
---- a/drivers/cpufreq/scpi-cpufreq.c
-+++ b/drivers/cpufreq/scpi-cpufreq.c
-@@ -29,9 +29,16 @@ static struct scpi_ops *scpi_ops;
- 
- static unsigned int scpi_cpufreq_get_rate(unsigned int cpu)
- {
--	struct cpufreq_policy *policy = cpufreq_cpu_get_raw(cpu);
--	struct scpi_data *priv = policy->driver_data;
--	unsigned long rate = clk_get_rate(priv->clk);
-+	struct cpufreq_policy *policy;
-+	struct scpi_data *priv;
-+	unsigned long rate;
-+
-+	policy = cpufreq_cpu_get_raw(cpu);
-+	if (unlikely(!policy))
-+		return 0;
-+
-+	priv = policy->driver_data;
-+	rate = clk_get_rate(priv->clk);
- 
- 	return rate / 1000;
- }
--- 
-2.34.1
+Hi Philipp,
 
+Yes, that's my point, children will request these resets during their
+initialization.
+I will have a look at reset acquire/release.
+
+Thanks
+Patrice
+
+> 
+> Either way, reset_control_get/put() belong in probe/remove.
+> 
+> regards
+> Philipp
 
