@@ -1,105 +1,88 @@
-Return-Path: <linux-kernel+bounces-594811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A281BA816DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:29:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD595A816E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F1E3B1EDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:27:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3917B1B83FA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85EE7253B65;
-	Tue,  8 Apr 2025 20:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D15F254845;
+	Tue,  8 Apr 2025 20:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="E/Hmb5l1"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="t7SyU3X2"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692C6252905;
-	Tue,  8 Apr 2025 20:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3254252904;
+	Tue,  8 Apr 2025 20:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744144072; cv=none; b=t+Dao71Be/03+Xn7TeC55mTVMthy2Qj2JWlalnao0gCWDdU2paSGPzweE45mQtkJoVV2ygzyEIWGA4vGvOwO2DGN5q/g/iroLF926Nll5h2hsu1LuqJjt1trwf+t6qTMdN3TAq0dUcqC9XYqLFzUepklGfN78a2g6yg6kLhGv98=
+	t=1744144192; cv=none; b=gaYhC6qWGA48jKGmqOrbcP48f1sZ80vpKwm8craiG6VCxSPgWNc5mP5cdku5C08Xi2B+KMB26jrXNXa4quzU7CNBYqKhrBCEXdGA3pYwoTFXgjpJQbtqO9jfcZ2NfiGDzB50XqfjEslnOAmy79+t7qQfbSv+Neh1FduQAmCBrFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744144072; c=relaxed/simple;
-	bh=XXuQ5BRCj5Kyg2s4GK9xzXOXlhqWC/lECSiXee+NhpI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C1s/BmYS/yZK1/SBVYVdyQVLLcti1i6rWjA3aRvl8VkvnFfGE+lG+HSOy13H2TrmuFFZOoQ7hKdIDWdDlxodSlA3D3sBXkzMqgXB8jk+tFfyuQSuBnzQwjemjs/UVwDXHUR3PVb8eiUbHHoL9nkdLe42NZEQhJE4YrgD08rxSNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=E/Hmb5l1; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 50BFA102F673A;
-	Tue,  8 Apr 2025 22:27:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1744144067; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=rZKXR7ncJg0xUJxjw7lbGcqPvtZp4DGpWIyWUfXB+mA=;
-	b=E/Hmb5l1bCWS/CaCna91BOLZI2wwgIpoM2HERb1CsiGiWApMEeK5nHqlwirYserTKWcQTi
-	TfDSSoHWEMoFlHEuvIR5x5ObypwdeCIHMHOvg+b7r5gDtRnAOr1oA3dZFYVW5eYBlk+0Ns
-	KM0i3+nsKNsj18WrIhLQazuqwP99LyI7IW7oiAECRGOGw7cX0AQyy15zWjq1WLdHCaVk+N
-	U84heAXv1VpfEQlhbpmcoh7ISu/NE0LKdEZJQL47keECZ4HB4OXXMYsijVVUcfuI1SPwX2
-	VSLTVDq1V4U9ffXl5blSYx0D9p1H5xRyCw6hIMP56G8e0KJyGowYoI6y/CI1DA==
-Date: Tue, 8 Apr 2025 22:27:40 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 000/204] 6.1.134-rc1 review
-Message-ID: <Z/WGvImLW8m8q+9h@duo.ucw.cz>
-References: <20250408104820.266892317@linuxfoundation.org>
+	s=arc-20240116; t=1744144192; c=relaxed/simple;
+	bh=54VEIX8YXb44soM0bHT+D9LXY4nN7F9PzvlAZuUTazo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Eh83zxsmnjfIvEtkiuTFj5IRme1byvdSXyumCyAsinr9w+MWVktRL5mNeX5m0b0oTqPsv/IoOwuiwFJ5RgyzCP1lkj3H838ZhxyGJpMITs3DXO/MskHhlHnDpUqVZKK56mtIZPxn9n40bhJDklDGIOlM/W0mBcSdtp70DccbiMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=t7SyU3X2; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 2122A1F9EA;
+	Tue,  8 Apr 2025 22:29:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1744144188;
+	bh=WSce9rbjfCgPkO0DucOcYT6D40ag2I1PC2CdQxIDyyc=; h=From:To:Subject;
+	b=t7SyU3X2J7mg9BFXd6hZWr6fMCTnxKNQMjaesJPA/Xn3owhuPT+nUy8nOS+Jufc+y
+	 8MXi9S1B42cF89u9noqb9i3v887rIksxX3L+EfhFxaHEqjxBtpAPFiYpMgd8AvHkIM
+	 bPcmCIW/nGlZU7vIkiTs3x6UZcxDGo0xKxk+r2JwZHvVmRk8Bwd7Eudg4I81Z1HcYI
+	 PqLBVOlBMSO7d9TgowgGNUpFNPSCosdNTtuwEBJjuQTcYNASRCftPCe01MsLgzZdW1
+	 9VUDNWDdDaN3dP1XECXaxGEwkQyi0oHdnUF3sPo1QuYZPeUjRGO4gqLzcaCUxcAyM1
+	 uKbKAaslLeW9Q==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] arm64: dts: freescale: imx8m[mp]-verdin: Add EEPROM compatible fallback
+Date: Tue,  8 Apr 2025 22:29:37 +0200
+Message-Id: <20250408202939.6887-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="a3sgVt3/FSOInDj1"
-Content-Disposition: inline
-In-Reply-To: <20250408104820.266892317@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
---a3sgVt3/FSOInDj1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+According to the AT24 EEPROM bindings the compatible string should
+contain first the actual manufacturer, and second the corresponding
+atmel model.
 
-Hi!
+Add the atmel compatible fallback accordingly.
 
-> This is the start of the stable review cycle for the 6.1.134 release.
-> There are 204 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Francesco Dolcini (2):
+  arm64: dts: freescale: imx8mp-verdin: Add EEPROM compatible fallback
+  arm64: dts: freescale: imx8mm-verdin: Add EEPROM compatible fallback
 
-CIP testing did not find any problems here:
+ arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi | 6 +++---
+ arch/arm64/boot/dts/freescale/imx8mp-verdin.dtsi | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.1.y
+-- 
+2.39.5
 
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---a3sgVt3/FSOInDj1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ/WGvAAKCRAw5/Bqldv6
-8te8AKCeW2SSq1J6+XFfbQqliwg7V5c0JQCgnHH9Zj2icBDc4R3qe3Jg/7cILeA=
-=uOXJ
------END PGP SIGNATURE-----
-
---a3sgVt3/FSOInDj1--
 
