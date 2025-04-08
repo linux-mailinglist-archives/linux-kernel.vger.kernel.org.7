@@ -1,409 +1,242 @@
-Return-Path: <linux-kernel+bounces-594847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B85F7A8174A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:57:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7063AA817A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28F051BA4CED
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:57:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC8717B6DF2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF8E2500DE;
-	Tue,  8 Apr 2025 20:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C128F2550C4;
+	Tue,  8 Apr 2025 21:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Sj/4cfnU"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J0XX1wBP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20404253331
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 20:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA9D21ADC4
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 21:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744145859; cv=none; b=E6JY1XoyoyVzLNux+K/CE5vhYn0EoReWWesHQHnHOKZkiKFZool32Qyf46d7Wd2tEDU/tMoOiF36hi7QEK19I50nTxqj+THUsNKB5hi8QAdBX8XBbXl67MpIGZ5DNMASe9/JMnyaKSQeR14l0FOumpV2rEn7p2rKnMPq/7bOpvA=
+	t=1744147871; cv=none; b=BfD4Kj1Qkxtxe0dVoSeDFaxVJTD/sGxUzLFkYdUavnesUJ6bG7CKiDPVhDblAjweO4MmhSoGqVS3vUI4Vh7Xhd7yS+lJ6CSL5NCpdGkUvLhNa73Vj2BUrOZDqEKvII4L0nLeF4dFXUGxjXXXHxtKfs3d9HR2NxbZ+9fEcBvmwrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744145859; c=relaxed/simple;
-	bh=B0U8Vcv6k5qxhGHDsdzLC2/NIe+68/brTmvtgy4STLs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gJWVx/fhsZXxVCWYocGFu4QXrzWPKk29lF13yE8mP2/t8nyb2tq4NUngO758edGyLiDJfVfj6zKY+zLAWTMxPM1cCqnnG77wKBNKPLJ0os4IiTzUa1UuyS/BA+6cLjY+9LVqgFtBa99B5+85274wRzsilwGA+Vbjk9sRF4CN8eE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Sj/4cfnU; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2c1caacc1f7so3637572fac.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 13:57:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744145855; x=1744750655; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qaDwk/rTlVSzsAVLqKNpTmTzHrcmKNMZwL+bLzgU1Zk=;
-        b=Sj/4cfnULqihiPhTRrz3Nv+H/oDTZPtC+lrlNRZ5xKJXe7W/5rB0b7MuO5aih2GSD2
-         8Iczj9QWcdACZPWbDIubjlMgr8SuSSa8w3M2/VXt/TF+pVHe36TKaLlrPkJ1O98yeuLD
-         miYoC9Rps5SF3HZgdnjPl97ZQYazK+Sg2g3Ka+q8govKVNKNwHhadJplz2HbIid62cJ+
-         jabkTQ2BchZoo0899Xa8m45TeffJgilaJPtvHMjwS15VDcXCoFRySpDY/rwlOg+6tWFF
-         Gv0HDArYoO4Uv6e2kiRedEpZzGrNpOy/aBdzdEHC1K0cg69LIhPC+tct39jY8w6ym5Qz
-         dnyw==
+	s=arc-20240116; t=1744147871; c=relaxed/simple;
+	bh=ceuktwmE6Tz6ySyYjExWpcHUrmoXfJEVisxJS0xJM/U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=i2vnPvYYYrcfbdphp1lWXji7YmPAq8fJ2yoO71Itp06bJuOLK3e5yR0e/YK+iqQ+Ohu3pNQ8E/UhtZzwR7GkAGJm0ms3LEsHR/3MRiO2+w8QVMT2Xn9LO+r0az8BYKCpI8gtMmeyCqCvOnsQBPaVtjjzemsFp4u/lJSD8vFLCho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J0XX1wBP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744147867;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=zJ/vYvJFdaljL1EBPrzkdHubi4p6O3iwKoThG4V7wUE=;
+	b=J0XX1wBP9n5aM4EmYi6sXDtSFw2jd+zzm3gBOCf4CjZ0NnRn8JKfrbUFFY6lu4/ndyF3zp
+	2+sEO5l9eFqyyC59Gyv3wfK78lEfjZGsIr47pF/19+GopyWaG94U9ewE/Iy1gAM+gA8LUg
+	wqRa9r5CvJEm+8XuQG9vDmFpxDvJt1Y=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-300-M_aXImNoPMC0KC4igJKe0g-1; Tue, 08 Apr 2025 17:31:06 -0400
+X-MC-Unique: M_aXImNoPMC0KC4igJKe0g-1
+X-Mimecast-MFC-AGG-ID: M_aXImNoPMC0KC4igJKe0g_1744147866
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-47686947566so89174681cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 14:31:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744145855; x=1744750655;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qaDwk/rTlVSzsAVLqKNpTmTzHrcmKNMZwL+bLzgU1Zk=;
-        b=w749lwbGgpOrMUyQcLFEcm8GKqNEVs8PtT3vFU7j2R9mkx08voV4xq90FA6t0OddwZ
-         uGQ/WVILRXo95O39/6CTXVSwfsbPEXRQMm1lp2FwMOdv8yS9Dm+XXktwuOQ3t9p/TBEX
-         g3Egj1P5qZJCuI8FjNrisn0tS0/U2zw7xt+Ei3hhpfwNanfeBlcQroE22c+Oe4RXVy8C
-         X+5nlVDvoCx9d7aztmW5A6i4fAhEO+P1gMIYUM4FkWUNA7JoMivWvN6hOJjLwQAUc7cU
-         u7bYfhADsal5FBn728nllz9CIklcaNTwG0aHPHsT4KbGYxSqEdfq/7PbI/7n1yNvdzlB
-         0gkg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsZBR8frPv8P421bnLhvePZYecwBvILZ8kzfNbQx+KHaEWDgc2o0F8jc5+sa/mlZ3UWllN3+JzRaszTRQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFNeRAdMN/1lYNFEFYidtbtUDhC67G4gSkXyQv6ITi3odZ0i7S
-	VkgDNeTrnhNpp0y0+yfz9M28NIRuOilqdtBa5gAudCy/V7wfwaDlcY+29oPmdgo=
-X-Gm-Gg: ASbGncs+YJQilRoXVsqswRyNHzjlKLzQhOsSTwF03E//wN3nrR99kIMEui65hdw1IoN
-	loXRpZVFzpspSYo/2RAXJZTyU7Ouh+34pzXGBkqdOXKVpBN4p3YzkIqVatPqtkn+y1GVzTYOBBa
-	Kj+Ng0ft5RslhtGNm6XawTPeX4aEY1Yvu7j2+4D8iyjNBguANibFQ1pmbMZUhn930Wyo2F68i5d
-	4gP8Qxv7EH7ddKQsZcPBzm/b69fB9Lo+m+gF5N2Eg2NagqdkV7rcokyLueXdUhoVD/FCBPqWt/t
-	t+F+dscyHjah0YMnubC57IintDXxTxkcxCx/IllJurN44DqNfJGF5FbLM+ZVPgmeYswLNDWepzx
-	iYhbkUg==
-X-Google-Smtp-Source: AGHT+IFjFgG+zdclxE9RrlgDOAhQBgIkljxsFYN0IeA14TkzF0YKGa8T/thY5EwoXPtKqouGqj5skw==
-X-Received: by 2002:a05:6870:9e8e:b0:2c2:2e8e:202b with SMTP id 586e51a60fabf-2d08dd8bb09mr368582fac.10.1744145855062;
-        Tue, 08 Apr 2025 13:57:35 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72e6515c0b7sm582787a34.1.2025.04.08.13.57.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Apr 2025 13:57:34 -0700 (PDT)
-Message-ID: <25291cca-a456-4f6c-8aac-466cd6124683@baylibre.com>
-Date: Tue, 8 Apr 2025 15:57:32 -0500
+        d=1e100.net; s=20230601; t=1744147866; x=1744752666;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zJ/vYvJFdaljL1EBPrzkdHubi4p6O3iwKoThG4V7wUE=;
+        b=cZ2GGyhoSBv5oKMDrNCOTpJ6mbdaoCXGaE4QTGCtaA4oOgbUSyso/rvhMEueJlgpcI
+         jbAYvQvB8IPrrgvhY2SOBezeqU+V2H9s77WCoHXXwjiIuRPURIKmAtxx46FnTEPVOhET
+         Uph3iSAFauvFywe+f+2YgBiP6IFZsTqk2o3Rfalb257RdYugMgl0wj9ftlv6Rp8XvDr2
+         3eLrR6JrYd/awmCObey8mi3PRGjLQcghBr1IkMOYrf1VL3WRTtph6T7DVmomSFHQGLtg
+         njGpr7DscOw43hr4WWpwx/VrWxmbOhdNDH/gLWqssL75SiRGxK9aX97+yGENTrfB59sG
+         J8lw==
+X-Forwarded-Encrypted: i=1; AJvYcCWz/jW9zpdVenBDCiLqha8EKf8SwgUvhE/KAu7rmt4GLjtfYASxbedbsZWJZNNcFSVPfyLEkdpbXsqv0dw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGSgaIB9zagKEazLfEYkpZxMLN2HzfdYCp62Q4awVab0B86Wid
+	TbRBM1aV4GRhobTl6BenJLeNp+n5S/SG0HBleyjvcy5Y6cFYhg1gJ22FO9gIRsZVZkgR9rPE+rx
+	xbLGtn3WYgNcB4Ta0pEHXedJjOOU9adCUoAxgVS/tSVZszvR0ISOpf3zLVRjkMA==
+X-Gm-Gg: ASbGncs9TAPjyVBIQBT+4JB+BSbAPyoSFR1EWc5qEnYIRNwBkMVfVhveiQT5qBGWu9s
+	msiSJEQUhm2oC5uorzqZq/PJL6cO7PE6BgDOWTDSrAc/hTnzNe6+z5+ZbAB/o/p9VPjxhIgh4bP
+	OJy9nIU4W9JD0lQOCDwI0iAyr/ke1QvCQ0aENJ8x/+jBCOaoLXZiVH57T5TYI82zC8naLy+VXRZ
+	6KE1jSi4Sq6/YTeEt5DP+zYK2Qx7AdltiPHCM7xLpwftR3EtEZXhfWudM8JK4zjKXeybqV2QnmU
+	x9DI2VQ99oB+MXVa1t4VnoOs6ou6tBVmkqrmi6fS9V9VAEILAOxM77UaACA=
+X-Received: by 2002:ac8:5710:0:b0:472:1d98:c6df with SMTP id d75a77b69052e-4795f3830c5mr9360671cf.52.1744147866065;
+        Tue, 08 Apr 2025 14:31:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHaqQKFqtCmlZORrUMH7gDif9S184NDQ21l5dk4cYMD2uysBUK7u+SSTsZwMdSwHGbSJYvRkQ==
+X-Received: by 2002:ac8:5710:0:b0:472:1d98:c6df with SMTP id d75a77b69052e-4795f3830c5mr9359851cf.52.1744147865368;
+        Tue, 08 Apr 2025 14:31:05 -0700 (PDT)
+Received: from localhost (pool-100-17-21-114.bstnma.fios.verizon.net. [100.17.21.114])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4791b071b42sm81639081cf.27.2025.04.08.14.31.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 14:31:04 -0700 (PDT)
+From: Eric Chanudet <echanude@redhat.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ian Kent <ikent@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	Eric Chanudet <echanude@redhat.com>,
+	Alexander Larsson <alexl@redhat.com>,
+	Lucas Karpinski <lkarpins@redhat.com>
+Subject: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
+Date: Tue,  8 Apr 2025 16:58:34 -0400
+Message-ID: <20250408210350.749901-12-echanude@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] iio: adc: ti-adc128s052: Add lower resolution devices
- support
-To: Sukrut Bellary <sbellary@baylibre.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Angelo Compagnucci <angelo.compagnucci@gmail.com>
-Cc: Nishanth Menon <nm@ti.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250408132120.836461-1-sbellary@baylibre.com>
- <20250408132120.836461-3-sbellary@baylibre.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250408132120.836461-3-sbellary@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On 4/8/25 8:21 AM, Sukrut Bellary wrote:
-> The adcxx4s communicates with a host processor via an SPI/Microwire Bus
-> interface. The device family responds with 12-bit data, of which the LSB
-> bits are transmitted by the lower resolution devices as 0.
-> The unavailable bits are 0 in LSB.
-> Shift is calculated per resolution and used in scaling and
-> raw data read.
+Defer releasing the detached file-system when calling namespace_unlock()
+during a lazy umount to return faster.
 
-Could improve the line wrapping in the commit message if there is a v4.
+When requesting MNT_DETACH, the caller does not expect the file-system
+to be shut down upon returning from the syscall. Calling
+synchronize_rcu_expedited() has a significant cost on RT kernel that
+defaults to rcupdate.rcu_normal_after_boot=1. Queue the detached struct
+mount in a separate list and put it on a workqueue to run post RCU
+grace-period.
 
-> 
-> Lets reuse the driver to support the family of devices with name
-> ADC<bb><c>S<sss>, where
-> * bb is the resolution in number of bits (8, 10, 12)
-> * c is the number of channels (1, 2, 4, 8)
-> * sss is the maximum conversion speed (021 for 200 kSPS, 051 for 500 kSPS
-> and 101 for 1 MSPS)
-> 
-> Complete datasheets are available at TI's website here:
-> https://www.ti.com/lit/gpn/adc<bb><c>s<sss>.pdf
-> 
-> Tested only with ti-adc102s051 on BegalePlay SBC.
-> https://www.beagleboard.org/boards/beagleplay
-> 
-> Co-developed-by: Nishanth Menon <nm@ti.com>
-> Signed-off-by: Nishanth Menon <nm@ti.com>
-> Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
-> ---
+w/o patch, 6.15-rc1 PREEMPT_RT:
+perf stat -r 10 --null --pre 'mount -t tmpfs tmpfs mnt' -- umount mnt
+    0.02455 +- 0.00107 seconds time elapsed  ( +-  4.36% )
+perf stat -r 10 --null --pre 'mount -t tmpfs tmpfs mnt' -- umount -l mnt
+    0.02555 +- 0.00114 seconds time elapsed  ( +-  4.46% )
 
-I didn't see any serious issues, just some room for more polish...
+w/ patch, 6.15-rc1 PREEMPT_RT:
+perf stat -r 10 --null --pre 'mount -t tmpfs tmpfs mnt' -- umount mnt
+    0.026311 +- 0.000869 seconds time elapsed  ( +-  3.30% )
+perf stat -r 10 --null --pre 'mount -t tmpfs tmpfs mnt' -- umount -l mnt
+    0.003194 +- 0.000160 seconds time elapsed  ( +-  5.01% )
 
-> Changes in v3: 
->         - used be16_to_cpu() for the endian conversion.
->         - used config index enum while setting up the adc128_config[]
-> 
-> - Link to v2: 
->         https://lore.kernel.org/lkml/20231022031203.632153-1-sukrut.bellary@linux.com/
-> 
-> Changes in v2:
->         - Arranged of_device_id and spi_device_id in numeric order.
->         - Used enum to index into adc128_config.
->         - Reorder adc128_config in alphabetical.
->         - Include channel resolution information.
->         - Shift is calculated per resolution and used in scaling and 
->         raw data read.
-> 
-> - Link to v1: https://lore.kernel.org/all/20220701042919.18180-1-nm@ti.com/
-> ---
->  drivers/iio/adc/ti-adc128s052.c | 149 ++++++++++++++++++++++++--------
->  1 file changed, 112 insertions(+), 37 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ti-adc128s052.c b/drivers/iio/adc/ti-adc128s052.c
-> index a456ea78462f..d4b76fd85abd 100644
-> --- a/drivers/iio/adc/ti-adc128s052.c
-> +++ b/drivers/iio/adc/ti-adc128s052.c
-> @@ -7,6 +7,22 @@
->   * https://www.ti.com/lit/ds/symlink/adc128s052.pdf
->   * https://www.ti.com/lit/ds/symlink/adc122s021.pdf
->   * https://www.ti.com/lit/ds/symlink/adc124s021.pdf
-> + *
-> + * The adcxx4s communicates with a host processor via an SPI/Microwire Bus
-> + * interface. This driver supports the whole family of devices with a name
-> + * ADC<bb><c>S<sss>, where
-> + * bb is the resolution in number of bits (8, 10, 12)
-> + * c is the number of channels (1, 2, 4, 8)
-> + * sss is the maximum conversion speed (021 for 200 kSPS, 051 for 500 kSPS
-> + * and 101 for 1 MSPS)
+Signed-off-by: Alexander Larsson <alexl@redhat.com>
+Signed-off-by: Lucas Karpinski <lkarpins@redhat.com>
+Signed-off-by: Eric Chanudet <echanude@redhat.com>
+---
 
-Looks like odd line wrapping. I assume bullet points were meant here?
+Attempt to re-spin this series based on the feedback received in v3 that
+pointed out the need to wait the grace-period in namespace_unlock()
+before calling the deferred mntput().
 
-* ... where:
-* - bb is ...
-* - c is ...
-* - sss is ...
+v4:
+- Use queue_rcu_work() to defer free_mounts() for lazy umounts
+- Drop lazy_unlock global and refactor using a helper
+v3: https://lore.kernel.org/all/20240626201129.272750-2-lkarpins@redhat.com/
+- Removed unneeded code for lazy umount case.
+- Don't block within interrupt context.
+v2: https://lore.kernel.org/all/20240426195429.28547-1-lkarpins@redhat.com/
+- Only defer releasing umount'ed filesystems for lazy umounts
+v1: https://lore.kernel.org/all/20230119205521.497401-1-echanude@redhat.com/
 
-> + *
-> + * Complete datasheets are available at TI's website here:
-> + *   https://www.ti.com/lit/gpn/adc<bb><c>s<sss>.pdf
-> + *
-> + * 8, 10, and 12 bits converters send 12-bit data with
-> + * unavailable bits set to 0 in LSB.
-> + * Shift is calculated per resolution and used in scaling and
-> + * raw data read.
->   */
->  
->  #include <linux/err.h>
-> @@ -53,7 +69,7 @@ static int adc128_adc_conversion(struct adc128 *adc, u8 channel)
->  	if (ret < 0)
->  		return ret;
->  
-> -	return ((adc->buffer[0] << 8 | adc->buffer[1]) & 0xFFF);
-> +	return be16_to_cpu(*((__be16 *)adc->buffer));
->  }
->  
->  static int adc128_read_raw(struct iio_dev *indio_dev,
-> @@ -70,7 +86,8 @@ static int adc128_read_raw(struct iio_dev *indio_dev,
->  		if (ret < 0)
->  			return ret;
->  
-> -		*val = ret;
-> +		*val = (ret >> channel->scan_type.shift) &
-> +			GENMASK(channel->scan_type.realbits - 1, 0);
+ fs/namespace.c | 52 +++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 45 insertions(+), 7 deletions(-)
 
-It's a bit odd to do this here instead of in the helper function since
-the helper function is doing some rearranging of bits already.
-
-Could pass scan_type to the helper function and do it all in one
-place.
-
->  		return IIO_VAL_INT;
->  
->  	case IIO_CHAN_INFO_SCALE:
-> @@ -80,7 +97,7 @@ static int adc128_read_raw(struct iio_dev *indio_dev,
->  			return ret;
->  
->  		*val = ret / 1000;
-> -		*val2 = 12;
-> +		*val2 = channel->scan_type.realbits;
->  		return IIO_VAL_FRACTIONAL_LOG2;
->  
->  	default:
-> @@ -89,24 +106,34 @@ static int adc128_read_raw(struct iio_dev *indio_dev,
->  
->  }
->  
-> -#define ADC128_VOLTAGE_CHANNEL(num)	\
-> -	{ \
-> -		.type = IIO_VOLTAGE, \
-> -		.indexed = 1, \
-> -		.channel = (num), \
-> -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW), \
-> -		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) \
-> +#define _ADC128_VOLTAGE_CHANNEL(num, real_bits, store_bits)		\
-> +	{								\
-> +		.type = IIO_VOLTAGE,					\
-> +		.indexed = 1,						\
-> +		.channel = (num),					\
-> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
-> +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),	\
-> +		.scan_index = (num),					\
-> +		.scan_type = {						\
-> +			.sign = 'u',					\
-> +			.realbits = (real_bits),			\
-> +			.storagebits = (store_bits),			\
-
-It looks like storagebits is always 16, so we could drop that parameter.
-
-> +			.shift = (12 - real_bits),			\
-> +		},							\
->  	}
->  
-> -static const struct iio_chan_spec adc128s052_channels[] = {
-> -	ADC128_VOLTAGE_CHANNEL(0),
-> -	ADC128_VOLTAGE_CHANNEL(1),
-> -	ADC128_VOLTAGE_CHANNEL(2),
-> -	ADC128_VOLTAGE_CHANNEL(3),
-> -	ADC128_VOLTAGE_CHANNEL(4),
-> -	ADC128_VOLTAGE_CHANNEL(5),
-> -	ADC128_VOLTAGE_CHANNEL(6),
-> -	ADC128_VOLTAGE_CHANNEL(7),
-> +#define ADC082_VOLTAGE_CHANNEL(num) _ADC128_VOLTAGE_CHANNEL(num, 8, 16)
-> +#define ADC102_VOLTAGE_CHANNEL(num) _ADC128_VOLTAGE_CHANNEL(num, 10, 16)
-> +#define ADC128_VOLTAGE_CHANNEL(num) _ADC128_VOLTAGE_CHANNEL(num, 12, 16)
-> +
-> +static const struct iio_chan_spec adc082s021_channels[] = {
-> +	ADC082_VOLTAGE_CHANNEL(0),
-> +	ADC082_VOLTAGE_CHANNEL(1),
-> +};
-> +
-> +static const struct iio_chan_spec adc102s021_channels[] = {
-> +	ADC102_VOLTAGE_CHANNEL(0),
-> +	ADC102_VOLTAGE_CHANNEL(1),
->  };
->  
->  static const struct iio_chan_spec adc122s021_channels[] = {
-> @@ -121,10 +148,46 @@ static const struct iio_chan_spec adc124s021_channels[] = {
->  	ADC128_VOLTAGE_CHANNEL(3),
->  };
->  
-> +static const struct iio_chan_spec adc128s052_channels[] = {
-> +	ADC128_VOLTAGE_CHANNEL(0),
-> +	ADC128_VOLTAGE_CHANNEL(1),
-> +	ADC128_VOLTAGE_CHANNEL(2),
-> +	ADC128_VOLTAGE_CHANNEL(3),
-> +	ADC128_VOLTAGE_CHANNEL(4),
-> +	ADC128_VOLTAGE_CHANNEL(5),
-> +	ADC128_VOLTAGE_CHANNEL(6),
-> +	ADC128_VOLTAGE_CHANNEL(7),
-> +};
-> +
-> +enum adc128_configuration_index {
-> +	ADC128_CONFIG_INDEX_082S,
-> +	ADC128_CONFIG_INDEX_102S,
-> +	ADC128_CONFIG_INDEX_122S,
-> +	ADC128_CONFIG_INDEX_124S,
-> +	ADC128_CONFIG_INDEX_128S,
-> +};
-> +
->  static const struct adc128_configuration adc128_config[] = {
-
-I would have rather removed the array here. Adding the enum just
-makes lots more code to read without any technical benefit.
-
-> -	{ adc128s052_channels, ARRAY_SIZE(adc128s052_channels) },
-> -	{ adc122s021_channels, ARRAY_SIZE(adc122s021_channels) },
-> -	{ adc124s021_channels, ARRAY_SIZE(adc124s021_channels) },
-> +	[ADC128_CONFIG_INDEX_082S] = {
-> +		.channels = adc082s021_channels,
-> +		.num_channels = ARRAY_SIZE(adc082s021_channels)
-> +	},
-> +	[ADC128_CONFIG_INDEX_102S] = {
-> +		.channels = adc102s021_channels,
-> +		.num_channels = ARRAY_SIZE(adc102s021_channels)
-> +	},
-> +	[ADC128_CONFIG_INDEX_122S] = {
-> +		.channels = adc122s021_channels,
-> +		.num_channels = ARRAY_SIZE(adc122s021_channels)
-> +	},
-> +	[ADC128_CONFIG_INDEX_124S] = {
-> +		.channels = adc124s021_channels,
-> +		.num_channels = ARRAY_SIZE(adc124s021_channels)
-> +	},
-> +	[ADC128_CONFIG_INDEX_128S] = {
-> +		.channels = adc128s052_channels,
-> +		.num_channels = ARRAY_SIZE(adc128s052_channels)
-> +	},
->  };
-
-I.e. instead:
-
-static const struct adc128_configuration adc08s021_config = {
-	.channels = adc082s021_channels,
-	.num_channels = ARRAY_SIZE(adc082s021_channels),
-};
-
-static const struct adc128_configuration adc10s021_config = {
-	.channels = adc102s021_channels,
-	.num_channels = ARRAY_SIZE(adc102s021_channels)
-};
-
-...
-
->  
->  static const struct iio_info adc128_info = {
-> @@ -177,31 +240,43 @@ static int adc128_probe(struct spi_device *spi)
->  }
->  
->  static const struct of_device_id adc128_of_match[] = {
-> -	{ .compatible = "ti,adc128s052", .data = &adc128_config[0] },
-> -	{ .compatible = "ti,adc122s021", .data = &adc128_config[1] },
-> -	{ .compatible = "ti,adc122s051", .data = &adc128_config[1] },
-> -	{ .compatible = "ti,adc122s101", .data = &adc128_config[1] },
-> -	{ .compatible = "ti,adc124s021", .data = &adc128_config[2] },
-> -	{ .compatible = "ti,adc124s051", .data = &adc128_config[2] },
-> -	{ .compatible = "ti,adc124s101", .data = &adc128_config[2] },
-> +	{ .compatible = "ti,adc082s021", .data = &adc128_config[ADC128_CONFIG_INDEX_082S] },
-> +	{ .compatible = "ti,adc082s051", .data = &adc128_config[ADC128_CONFIG_INDEX_082S] },
-> +	{ .compatible = "ti,adc082s101", .data = &adc128_config[ADC128_CONFIG_INDEX_082S] },
-> +	{ .compatible = "ti,adc102s021", .data = &adc128_config[ADC128_CONFIG_INDEX_102S] },
-> +	{ .compatible = "ti,adc102s051", .data = &adc128_config[ADC128_CONFIG_INDEX_102S] },
-> +	{ .compatible = "ti,adc102s101", .data = &adc128_config[ADC128_CONFIG_INDEX_102S] },
-> +	{ .compatible = "ti,adc122s021", .data = &adc128_config[ADC128_CONFIG_INDEX_122S] },
-> +	{ .compatible = "ti,adc122s051", .data = &adc128_config[ADC128_CONFIG_INDEX_122S] },
-> +	{ .compatible = "ti,adc122s101", .data = &adc128_config[ADC128_CONFIG_INDEX_122S] },
-> +	{ .compatible = "ti,adc124s021", .data = &adc128_config[ADC128_CONFIG_INDEX_124S] },
-> +	{ .compatible = "ti,adc124s051", .data = &adc128_config[ADC128_CONFIG_INDEX_124S] },
-> +	{ .compatible = "ti,adc124s101", .data = &adc128_config[ADC128_CONFIG_INDEX_124S] },
-> +	{ .compatible = "ti,adc128s052", .data = &adc128_config[ADC128_CONFIG_INDEX_128S] },
->  	{ /* sentinel */ },
->  };
->  MODULE_DEVICE_TABLE(of, adc128_of_match);
-
-It would be easier to see what is new and what is changed if we split out the
-"cleanup" to a separate patch.
-
->  
->  static const struct spi_device_id adc128_id[] = {
-> -	{ "adc128s052", (kernel_ulong_t)&adc128_config[0] },
-> -	{ "adc122s021",	(kernel_ulong_t)&adc128_config[1] },
-> -	{ "adc122s051",	(kernel_ulong_t)&adc128_config[1] },
-> -	{ "adc122s101",	(kernel_ulong_t)&adc128_config[1] },
-> -	{ "adc124s021", (kernel_ulong_t)&adc128_config[2] },
-> -	{ "adc124s051", (kernel_ulong_t)&adc128_config[2] },
-> -	{ "adc124s101", (kernel_ulong_t)&adc128_config[2] },
-> +	{ "adc082s021", (kernel_ulong_t)&adc128_config[ADC128_CONFIG_INDEX_082S] },
-> +	{ "adc082s051", (kernel_ulong_t)&adc128_config[ADC128_CONFIG_INDEX_082S] },
-> +	{ "adc082s101", (kernel_ulong_t)&adc128_config[ADC128_CONFIG_INDEX_082S] },
-> +	{ "adc102s021", (kernel_ulong_t)&adc128_config[ADC128_CONFIG_INDEX_102S] },
-> +	{ "adc102s051", (kernel_ulong_t)&adc128_config[ADC128_CONFIG_INDEX_102S] },
-> +	{ "adc102s101", (kernel_ulong_t)&adc128_config[ADC128_CONFIG_INDEX_102S] },
-> +	{ "adc122s021",	(kernel_ulong_t)&adc128_config[ADC128_CONFIG_INDEX_122S] },
-> +	{ "adc122s051",	(kernel_ulong_t)&adc128_config[ADC128_CONFIG_INDEX_122S] },
-> +	{ "adc122s101",	(kernel_ulong_t)&adc128_config[ADC128_CONFIG_INDEX_122S] },
-> +	{ "adc124s021", (kernel_ulong_t)&adc128_config[ADC128_CONFIG_INDEX_124S] },
-> +	{ "adc124s051", (kernel_ulong_t)&adc128_config[ADC128_CONFIG_INDEX_124S] },
-> +	{ "adc124s101", (kernel_ulong_t)&adc128_config[ADC128_CONFIG_INDEX_124S] },
-> +	{ "adc128s052", (kernel_ulong_t)&adc128_config[ADC128_CONFIG_INDEX_128S] },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(spi, adc128_id);
->  
->  static const struct acpi_device_id adc128_acpi_match[] = {
-> -	{ "AANT1280", (kernel_ulong_t)&adc128_config[2] },
-> +	{ "AANT1280", (kernel_ulong_t)&adc128_config[ADC128_CONFIG_INDEX_124S] },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(acpi, adc128_acpi_match);
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 14935a0500a2..e5b0b920dd97 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -45,6 +45,11 @@ static unsigned int m_hash_shift __ro_after_init;
+ static unsigned int mp_hash_mask __ro_after_init;
+ static unsigned int mp_hash_shift __ro_after_init;
+ 
++struct deferred_free_mounts {
++	struct rcu_work rwork;
++	struct hlist_head release_list;
++};
++
+ static __initdata unsigned long mhash_entries;
+ static int __init set_mhash_entries(char *str)
+ {
+@@ -1789,11 +1794,29 @@ static bool need_notify_mnt_list(void)
+ }
+ #endif
+ 
+-static void namespace_unlock(void)
++static void free_mounts(struct hlist_head *mount_list)
+ {
+-	struct hlist_head head;
+ 	struct hlist_node *p;
+ 	struct mount *m;
++
++	hlist_for_each_entry_safe(m, p, mount_list, mnt_umount) {
++		hlist_del(&m->mnt_umount);
++		mntput(&m->mnt);
++	}
++}
++
++static void defer_free_mounts(struct work_struct *work)
++{
++	struct deferred_free_mounts *d = container_of(
++		to_rcu_work(work), struct deferred_free_mounts, rwork);
++
++	free_mounts(&d->release_list);
++	kfree(d);
++}
++
++static void __namespace_unlock(bool lazy)
++{
++	HLIST_HEAD(head);
+ 	LIST_HEAD(list);
+ 
+ 	hlist_move_list(&unmounted, &head);
+@@ -1817,12 +1840,27 @@ static void namespace_unlock(void)
+ 	if (likely(hlist_empty(&head)))
+ 		return;
+ 
+-	synchronize_rcu_expedited();
++	if (lazy) {
++		struct deferred_free_mounts *d =
++			kmalloc(sizeof(*d), GFP_KERNEL);
+ 
+-	hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
+-		hlist_del(&m->mnt_umount);
+-		mntput(&m->mnt);
++		if (unlikely(!d))
++			goto out;
++
++		hlist_move_list(&head, &d->release_list);
++		INIT_RCU_WORK(&d->rwork, defer_free_mounts);
++		queue_rcu_work(system_wq, &d->rwork);
++		return;
+ 	}
++
++out:
++	synchronize_rcu_expedited();
++	free_mounts(&head);
++}
++
++static inline void namespace_unlock(void)
++{
++	__namespace_unlock(false);
+ }
+ 
+ static inline void namespace_lock(void)
+@@ -2056,7 +2094,7 @@ static int do_umount(struct mount *mnt, int flags)
+ 	}
+ out:
+ 	unlock_mount_hash();
+-	namespace_unlock();
++	__namespace_unlock(flags & MNT_DETACH);
+ 	return retval;
+ }
+ 
+-- 
+2.49.0
 
 
