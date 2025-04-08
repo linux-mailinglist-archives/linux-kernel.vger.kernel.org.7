@@ -1,119 +1,114 @@
-Return-Path: <linux-kernel+bounces-593687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD6F8A7FC30
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:36:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F959A7FC44
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC1097A4D7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:34:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5721A17C903
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BD4267722;
-	Tue,  8 Apr 2025 10:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C31A267B78;
+	Tue,  8 Apr 2025 10:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AKT5vBtR"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="drNdrQ66"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08A4266B52;
-	Tue,  8 Apr 2025 10:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147B02676E6;
+	Tue,  8 Apr 2025 10:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744108557; cv=none; b=nNn8YWGzBrEfiSUdR9NyQws92UFD+Hg83pugvGaOcPb/TW/3DrHZhT78nQTidrKEGxdBOlLiUdI2ZpMCv1qp8M82BGXGC474AXYUeDyGrL62hBxFFOl/oATOxQoPUODIh+l/9bnZ6lnYiCyS5XQqHzpqQ+xd4BTWMeNKOYgsHsk=
+	t=1744108585; cv=none; b=TWq3nE9Y4mgp+x69st8t0VL5/c0aZoB+AGGZ0tpNvXOQ6/n5g8z5JKa2eJXfFoDLf0wDV3PdBc4ZQ8UgvhhR8d/CMsSDWQpmuEz6RG6cP0OgwfEV/hBwnW1zXnMbe2DBam+uJSmKxu2RmxQvL3R43GnZit71CuUDsJnj5ltxYZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744108557; c=relaxed/simple;
-	bh=Hs5PawQM2WOdSP5JwOusufifAnZKTVHPO4QSUYxTA/E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QTZHiR2tQvtDd0wjUKwWsHpJriRPZs+If7Uy30JiXmBPU1aNm0ZB32c8GKYcZ/VUJ5TBS1ccmGp2MuSYMktjMdFdBjDHblOgrABzEyGC4LXGCBAMrsZRBRE5e8eRx+7THmdTNTUCbvPS0FvdTpJ6tM/nGyXfK+i6q1SiGEGkNus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AKT5vBtR; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-af8cb6258bcso322943a12.3;
-        Tue, 08 Apr 2025 03:35:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744108555; x=1744713355; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iQlwjJ2p3uIQ1WJnPIDIqEOJSPAOfdW0m47XOoSjXlI=;
-        b=AKT5vBtRKLGFLhDRXbnTJkEJrWMNkSb3BjfnZ9eIlspennyV+O/jBisqJDOJio3/hR
-         Uvx7wsA+Imyzh2QWsOomtPlKi5mdwDy/MJ9v1T1HoRstwSI+N2AS7OPrve29A4G1irlj
-         EO7YLFo8H0aBMs3PO65K3EY8nn96zfyUsxqNki7NxovUueVza0QpTL6WZOHaCBnmkgdT
-         q6n8M5ROW1Aq4DF73lepquDrwAiAq7v2lgXgFYFRsi6Pxu9lpxyTV9B4zLS8PHMGckj7
-         z9EKQTAoyN1qVTEU8XO1WcANXJUePRrc6CuA1AUChUAg+ZrnCn3Doex2WpDwvpBHxBAP
-         XCIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744108555; x=1744713355;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iQlwjJ2p3uIQ1WJnPIDIqEOJSPAOfdW0m47XOoSjXlI=;
-        b=tl+ejDMDt8F7wVEcqupFdk6RSKc3cLv5HcYsRRGWx5NGeOptczqQAkDtQDx3RZ58hr
-         A8syBn/Mj4BNUdI6o0Dsnl9oASjETkrgiK9ZnBqSOr0iHHKI1i80gfBswT+MDyJghFIk
-         EBauLxRPtqIwc6zZfuHZ+4+X+cMC6KF8m3VsvjQrISEYm3a77HCX80nNtItTAr5SbvXb
-         C9OvZsFIXTgFtvv4dlGWWbBSgscFGwAtUbXWcDbw5MdWxXJ5x78NuSeEAwjfZNy+vWgg
-         3E6eMMqbTMx30wn5qy9xr10OIw2dLjnCGqXiuUpagbSx/DNP8Ip5DzU5r+zFevHAPusJ
-         ISrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVElqR8EL0pB3Pl1rrcmHW4GaOwXaOqk3gMr5bEOvX70PFG6lb5m0ppNvQRcuc8hYGtc8ZhPQmlL/ggZyL3GIo=@vger.kernel.org, AJvYcCXRr/2QvH4Jlj451BUaZoshTbUUw4xu3bk0coRuJls23FRJmXjoj12HxnBO3q4dXF9ZJ6u80+mjMoYorPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrmfcWLg+Hwy9B+bVLC4pgy//UA9ypb3zACiO5KidxEc6v3y6Z
-	eXmbR6Soownht4d/h534tUoBN/eWu1QAW+eXey6OGtwE9joSai6ZPTMRd/xSgszjAc+a5nz4jEl
-	eANns5ijqal/9uhW872KFdOLqyIc=
-X-Gm-Gg: ASbGncufEcu9iirFgZj/HzTmemqg0ybVm/Dc0aHqiKb2boN65/6J9k/xLl0eIL5K8GN
-	dwXbuV3Gv/kAYj8LPQnhELpVuSBU2L7sVbyXimANf/0jPmBEqhm3p1RHB/Y48Qt68m6uzEJm6mz
-	OUGgPIYu9lDXHGJN4F0Xn35XtP4WSnnJfN2jcf
-X-Google-Smtp-Source: AGHT+IHG0bNsfNxD/bffZ1WEADVVWD5Z4FZXXeo6nGPGofnX5l5qeHWJst+e/L0ClQBdKnDo45M/UccxZy7Vo6+22pw=
-X-Received: by 2002:a17:90a:d006:b0:306:b6ae:4d7a with SMTP id
- 98e67ed59e1d1-306b6ae4e3bmr4961351a91.3.1744108555055; Tue, 08 Apr 2025
- 03:35:55 -0700 (PDT)
+	s=arc-20240116; t=1744108585; c=relaxed/simple;
+	bh=qPyi2s7HmZ5EXbVFvDklSrFrMIdZqxq/ExK1qhNSZq0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c14ieHM1ozXLKjMe0Tue+/S5Dpsq3B/SedAqeOOiBOkQWxml+/khrI4LR7cTtJ8JxdS0TTRzkGRDaJFGLGv2A/frCw+knF68Gb9BjxM8OXjr7suqVIqgF6HxZI2A9SzyFZp/xMtN85yDI0dRw3mDzwvK4bLGdQdb4VIviFV4foQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=drNdrQ66; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 538AaBmk1150072
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 8 Apr 2025 05:36:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1744108571;
+	bh=y4i93wF9m6/Pka4RzDhnFmGJ1Adb5uJ6IEyLecKy9PE=;
+	h=From:To:CC:Subject:Date;
+	b=drNdrQ66X9B5u24i0vnfT1PBKEeGh67zXRLujTj6JftMtLn/dj7SSIsylETYvGVxx
+	 rcDXnmU2F/5mjtySlmuTyjaZ/3cjw1baVkCyHpo2T8kkU4iE3V16pbztSdkyHq+jlD
+	 geHSZKCxLH4GRZ2/xvOK6Lv+rSaPlU6V/mqOC+4k=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 538AaBkg028449
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 8 Apr 2025 05:36:11 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 8
+ Apr 2025 05:36:11 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 8 Apr 2025 05:36:11 -0500
+Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.113])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 538Aa6T7016171;
+	Tue, 8 Apr 2025 05:36:07 -0500
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <rogerq@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>, <s-vadapalli@ti.com>
+Subject: [PATCH v2 0/2] J722S: Disable WIZ0 and WIZ1 in SoC file
+Date: Tue, 8 Apr 2025 16:06:04 +0530
+Message-ID: <20250408103606.3679505-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250408-box_trait_objs-v1-1-58d8e78b0fb2@nvidia.com> <D916LG7Z9Q31.5RVNMYM38E2D@proton.me>
-In-Reply-To: <D916LG7Z9Q31.5RVNMYM38E2D@proton.me>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 8 Apr 2025 12:35:42 +0200
-X-Gm-Features: ATxdqUHL4PfNxPSYXiMHqmeMcyHw_IssZCc34uipmaO88JKUWSemU7j-HOIFMxc
-Message-ID: <CANiq72k9Lo-M5v338iWWSiwrnU+JwP+aEZeLiR291xc2c+ESOg@mail.gmail.com>
-Subject: Re: [PATCH] rust: alloc: allow coercion from `Box<T>` to `Box<dyn U>`
- if T implements U
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Apr 8, 2025 at 12:22=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
->
-> You forgot to add the `A: Allocator` generic here and in the impl below.
+Hello,
 
-Yeah, for this sort of changes (ideally, all patches, really), please
-test with both the minimum supported version and the latest.
+This series disables the "serdes_wiz0" and "serdes_wiz1" device-tree
+nodes in the J722S SoC file and enables them in the board files where
+they are required along with "serdes0" and "serdes1". There are two
+reasons behind this change:
+1. To follow the existing convention of disabling nodes in the SoC file
+   and enabling them in the board file as required.
+2. To address situations where a board file hasn't explicitly disabled
+   "serdes_wiz0" and "serdes_wiz1" (example: am67a-beagley-ai.dts)
+   as a result of which booting the board displays the following errors:
+     wiz bus@f0000:phy@f000000: probe with driver wiz failed with error -12
+     ...
+     wiz bus@f0000:phy@f010000: probe with driver wiz failed with error -12
 
-For instance, there is another issue, `#[pointee]` is only applicable
-when you have the feature:
+Series is based on linux-next tagged next-20250408.
 
-    error: cannot find attribute `pointee` in this scope
-     --> rust/kernel/alloc/kbox.rs:66:18
-      |
-    66 | pub struct Box<#[pointee] T: ?Sized, A:
-Allocator>(NonNull<T>, PhantomData<A>);
+v1 of this series is at:
+https://lore.kernel.org/r/20250408060636.3413856-1-s-vadapalli@ti.com/
+Changes since v1:
+- Added "Fixes" tag and updated commit message accordingly.
 
-By the way, I would suggest taking the chance to move the sentence in
-the docs below to the "Examples section" and providing one.
+Regards,
+Siddharth.
 
-Thanks!
+Siddharth Vadapalli (2):
+  arm64: dts: ti: k3-j722s-evm: Enable "serdes_wiz0" and "serdes_wiz1"
+  arm64: dts: ti: k3-j722s-main: Disable "serdes_wiz0" and "serdes_wiz1"
 
-Cheers,
-Miguel
+ arch/arm64/boot/dts/ti/k3-j722s-evm.dts   | 8 ++++++++
+ arch/arm64/boot/dts/ti/k3-j722s-main.dtsi | 4 ++++
+ 2 files changed, 12 insertions(+)
+
+-- 
+2.34.1
+
 
