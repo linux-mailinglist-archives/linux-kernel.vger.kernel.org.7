@@ -1,76 +1,80 @@
-Return-Path: <linux-kernel+bounces-592918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47626A7F2E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:00:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A310FA7F2E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A892C178EF2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 02:59:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86D2317D4B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 02:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5212C25F7A9;
-	Tue,  8 Apr 2025 02:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F0925EFB2;
+	Tue,  8 Apr 2025 02:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VeGSOw4f"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GNf3kdCg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89CF25F7AA
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 02:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435D722DFA0;
+	Tue,  8 Apr 2025 02:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744081123; cv=none; b=V5LjJpBRAq9ECduwaJl8VWKGOpirT/xHCszhom+1BSAb2Ni+gCtO6bB+PYtrnPOFpnzUcWuRLqCZmjT9lefrvtdhbgOIUPUW8B1bwe6f2anB+B10uWmSuFu62+/1UkNP/gnYKVdqfML/q5+cuMQDU7HoTHK0xlvKx3UiRZicYLk=
+	t=1744081160; cv=none; b=O39FtWRGo9VHRSaqWNelT6viT/I4e1QC3xZoRxs1LO5dQJJC5852K6t19mprmVsAAOrs7BUT62GrTX8M+yn+4/E1ijF0YS7ZexBKV69UEiLUxBGq84AJPPVzlSgHwJwHgEE6MdaU5wP89BK102RzMF30WT2XI3AqZ7BzUeqFVrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744081123; c=relaxed/simple;
-	bh=7JUffUBNK5M/+Y/oT2ouv6ujQQPH6yKbolK49qymFSs=;
+	s=arc-20240116; t=1744081160; c=relaxed/simple;
+	bh=s5UvaaQU++0RLXjgEI2GKm/wDBAYbl0mU881Km1qpJA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mb6vv9zlEzWgPDzoQGXHSPewzf/sY4U8o+VgVs+YIC0mPpSeIvlxSr6C1d2YFdyfkQ1EcAuf/D/EHGUIjqRR18r/r7v7Zjls4UCWGuPGFeSgC1mw6CBQKHJn4xER7H3rsMiFRhAEYsAFr0rnVxDAy98cu4oSJmkC7O6SY7C1oeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VeGSOw4f; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744081116;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kaJaXSVbP57MvATcjgNBp7/OlnZPTiwF4HxV8S9Zb0k=;
-	b=VeGSOw4fYH+Bie3vm8tKjUxXMMuk7RH8puzMjIopOmjvld3yWYdZEj0QIDLaJvOD/2Thib
-	IeXmv9GibdHYz8HcHX3l9fkDLCiCBJC+I+7AaVdCEEnQsAL6o1ABzJ+euj0zY8qFTqSNLN
-	/8cH/hb0ZasqhHAxyCWQlPWhcIlez/8=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-615-mIpEH9ViNumXuntP7aeqvQ-1; Mon,
- 07 Apr 2025 22:58:32 -0400
-X-MC-Unique: mIpEH9ViNumXuntP7aeqvQ-1
-X-Mimecast-MFC-AGG-ID: mIpEH9ViNumXuntP7aeqvQ_1744081110
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 869991955DC6;
-	Tue,  8 Apr 2025 02:58:29 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.61])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 982FB1801752;
-	Tue,  8 Apr 2025 02:58:26 +0000 (UTC)
-Date: Tue, 8 Apr 2025 10:58:21 +0800
-From: Baoquan He <bhe@redhat.com>
-To: steven chen <chenste@linux.microsoft.com>
-Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com, ebiederm@xmission.com,
-	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-	dyoung@redhat.com
-Subject: Re: [PATCH v11 2/9] ima: define and call ima_alloc_kexec_file_buf()
-Message-ID: <Z/SQzacXBH5lP4pt@MiWiFi-R3L-srv>
-References: <20250402124725.5601-1-chenste@linux.microsoft.com>
- <20250402124725.5601-3-chenste@linux.microsoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AhM7C3kv84u0CXU2afnM052Os3mMd+7CLtv14Mrf8IoN68GnJDbTXreKUWpnQP1OejKbjzF4JfLxsUbnFi+AAmqecrF4CfMfqwbsIJWHrbsECGiHUZ/QwoxeaSG946DYx2FfMMguP/mpWkC+hC1wATQRaY1vh5yTstyWEPgQikw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GNf3kdCg; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744081158; x=1775617158;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=s5UvaaQU++0RLXjgEI2GKm/wDBAYbl0mU881Km1qpJA=;
+  b=GNf3kdCga9/3Zcz8ZK1EJa0gi3YLfZdad1pzNwBceJX2DsYLt26WFtAV
+   HaKsPb642fC6b8UOiFFVU2sb0+LTRryHvUQN2sYZqlnxC+KkWTjM4NHT5
+   dUiwt96Y0WrTkicEjf3OaBF2uFvatPFXO80ciu99aqJOg5rJ03Yi3Ibif
+   NpO/I4BIi1FEGPO2oARmVJocx783Fp2Kf5JAnQFbOAvAOVzR7J5VyytKQ
+   oCaDbn/VXGRAuqGiJm6fFwMbgDxHY1q95itO9QGRTCjIRJuoXMtmwgoQ8
+   iSX9uIhynUy7mqrVCRaIz5tKTxqRUmFARLEYhydZil7MULX+fmp4G3iBE
+   g==;
+X-CSE-ConnectionGUID: VgNGTmrUSRyoQ3ciEI9nzg==
+X-CSE-MsgGUID: vgMqGLj9QKCd4s4CGl7kgA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="56158595"
+X-IronPort-AV: E=Sophos;i="6.15,196,1739865600"; 
+   d="scan'208";a="56158595"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Apr 2025 19:59:17 -0700
+X-CSE-ConnectionGUID: +drIKI8YSFGqj37RFQiu4Q==
+X-CSE-MsgGUID: AgtK3GGeSzKSgWJxFNcOYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,196,1739865600"; 
+   d="scan'208";a="133104686"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 07 Apr 2025 19:59:13 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u1zB9-00043T-0Y;
+	Tue, 08 Apr 2025 02:59:11 +0000
+Date: Tue, 8 Apr 2025 10:58:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 2/7] iio: dac: ad5592r: use lock guards
+Message-ID: <202504081058.aukPDkTg-lkp@intel.com>
+References: <20250407-gpiochip-set-rv-iio-v1-2-8431b003a145@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,120 +83,169 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250402124725.5601-3-chenste@linux.microsoft.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <20250407-gpiochip-set-rv-iio-v1-2-8431b003a145@linaro.org>
 
-On 04/02/25 at 05:47am, steven chen wrote:
-> In the current implementation, the ima_dump_measurement_list() API is 
-> called during the kexec "load" phase, where a buffer is allocated and 
-> the measurement records are copied. Due to this, new events added after
-> kexec load but before kexec execute are not carried over to the new kernel
-> during kexec operation
-> 
-> To allow the buffer allocation and population to be separated into distinct
-> steps, make the function local seq_file "ima_kexec_file" to a file variable.
-> 
-> Carrying the IMA measurement list across kexec requires allocating a
-> buffer and copying the measurement records.  Separate allocating the
-> buffer and copying the measurement records into separate functions in
-> order to allocate the buffer at kexec 'load' and copy the measurements
-> at kexec 'execute'.
-> 
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> Signed-off-by: steven chen <chenste@linux.microsoft.com>
-> ---
->  security/integrity/ima/ima_kexec.c | 46 +++++++++++++++++++++++-------
->  1 file changed, 35 insertions(+), 11 deletions(-)
+Hi Bartosz,
 
-LGTM,
+kernel test robot noticed the following build errors:
 
-Acked-by: Baoquan He <bhe@redhat.com>
+[auto build test ERROR on 0af2f6be1b4281385b618cb86ad946eded089ac8]
 
-> 
-> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-> index 650beb74346c..b12ac3619b8f 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -15,26 +15,46 @@
->  #include "ima.h"
->  
->  #ifdef CONFIG_IMA_KEXEC
-> +static struct seq_file ima_kexec_file;
-> +
-> +static void ima_free_kexec_file_buf(struct seq_file *sf)
-> +{
-> +	vfree(sf->buf);
-> +	sf->buf = NULL;
-> +	sf->size = 0;
-> +	sf->read_pos = 0;
-> +	sf->count = 0;
-> +}
-> +
-> +static int ima_alloc_kexec_file_buf(size_t segment_size)
-> +{
-> +	ima_free_kexec_file_buf(&ima_kexec_file);
-> +
-> +	/* segment size can't change between kexec load and execute */
-> +	ima_kexec_file.buf = vmalloc(segment_size);
-> +	if (!ima_kexec_file.buf)
-> +		return -ENOMEM;
-> +
-> +	ima_kexec_file.size = segment_size;
-> +	ima_kexec_file.read_pos = 0;
-> +	ima_kexec_file.count = sizeof(struct ima_kexec_hdr);	/* reserved space */
-> +
-> +	return 0;
-> +}
-> +
->  static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
->  				     unsigned long segment_size)
->  {
-> -	struct seq_file ima_kexec_file;
->  	struct ima_queue_entry *qe;
->  	struct ima_kexec_hdr khdr;
->  	int ret = 0;
->  
->  	/* segment size can't change between kexec load and execute */
-> -	ima_kexec_file.buf = vmalloc(segment_size);
->  	if (!ima_kexec_file.buf) {
-> -		ret = -ENOMEM;
-> -		goto out;
-> +		pr_err("Kexec file buf not allocated\n");
-> +		return -EINVAL;
->  	}
->  
-> -	ima_kexec_file.file = NULL;
-> -	ima_kexec_file.size = segment_size;
-> -	ima_kexec_file.read_pos = 0;
-> -	ima_kexec_file.count = sizeof(khdr);	/* reserved space */
-> -
->  	memset(&khdr, 0, sizeof(khdr));
->  	khdr.version = 1;
->  	/* This is an append-only list, no need to hold the RCU read lock */
-> @@ -71,8 +91,6 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
->  	*buffer_size = ima_kexec_file.count;
->  	*buffer = ima_kexec_file.buf;
->  out:
-> -	if (ret == -EINVAL)
-> -		vfree(ima_kexec_file.buf);
->  	return ret;
->  }
->  
-> @@ -111,6 +129,12 @@ void ima_add_kexec_buffer(struct kimage *image)
->  		return;
->  	}
->  
-> +	ret = ima_alloc_kexec_file_buf(kexec_segment_size);
-> +	if (ret < 0) {
-> +		pr_err("Not enough memory for the kexec measurement buffer.\n");
-> +		return;
-> +	}
-> +
->  	ima_dump_measurement_list(&kexec_buffer_size, &kexec_buffer,
->  				  kexec_segment_size);
->  	if (!kexec_buffer) {
-> -- 
-> 2.25.1
-> 
+url:    https://github.com/intel-lab-lkp/linux/commits/Bartosz-Golaszewski/iio-dac-ad5592r-destroy-mutexes-in-detach-paths/20250407-152721
+base:   0af2f6be1b4281385b618cb86ad946eded089ac8
+patch link:    https://lore.kernel.org/r/20250407-gpiochip-set-rv-iio-v1-2-8431b003a145%40linaro.org
+patch subject: [PATCH 2/7] iio: dac: ad5592r: use lock guards
+config: arm-randconfig-001-20250408 (https://download.01.org/0day-ci/archive/20250408/202504081058.aukPDkTg-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 92c93f5286b9ff33f27ff694d2dc33da1c07afdd)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250408/202504081058.aukPDkTg-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504081058.aukPDkTg-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/iio/dac/ad5592r-base.c:350:2: error: cannot jump from switch statement to this case label
+     350 |         default:
+         |         ^
+   drivers/iio/dac/ad5592r-base.c:303:3: note: jump bypasses initialization of variable with __attribute__((cleanup))
+     303 |                 guard(mutex)(&st->lock);
+         |                 ^
+   include/linux/cleanup.h:319:15: note: expanded from macro 'guard'
+     319 |         CLASS(_name, __UNIQUE_ID(guard))
+         |                      ^
+   include/linux/compiler.h:166:29: note: expanded from macro '__UNIQUE_ID'
+     166 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+         |                             ^
+   include/linux/compiler_types.h:84:22: note: expanded from macro '__PASTE'
+      84 | #define __PASTE(a,b) ___PASTE(a,b)
+         |                      ^
+   include/linux/compiler_types.h:83:23: note: expanded from macro '___PASTE'
+      83 | #define ___PASTE(a,b) a##b
+         |                       ^
+   <scratch space>:104:1: note: expanded from here
+     104 | __UNIQUE_ID_guard492
+         | ^
+   drivers/iio/dac/ad5592r-base.c:308:2: error: cannot jump from switch statement to this case label
+     308 |         case IIO_CHAN_INFO_SCALE:
+         |         ^
+   drivers/iio/dac/ad5592r-base.c:303:3: note: jump bypasses initialization of variable with __attribute__((cleanup))
+     303 |                 guard(mutex)(&st->lock);
+         |                 ^
+   include/linux/cleanup.h:319:15: note: expanded from macro 'guard'
+     319 |         CLASS(_name, __UNIQUE_ID(guard))
+         |                      ^
+   include/linux/compiler.h:166:29: note: expanded from macro '__UNIQUE_ID'
+     166 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+         |                             ^
+   include/linux/compiler_types.h:84:22: note: expanded from macro '__PASTE'
+      84 | #define __PASTE(a,b) ___PASTE(a,b)
+         |                      ^
+   include/linux/compiler_types.h:83:23: note: expanded from macro '___PASTE'
+      83 | #define ___PASTE(a,b) a##b
+         |                       ^
+   <scratch space>:104:1: note: expanded from here
+     104 | __UNIQUE_ID_guard492
+         | ^
+   drivers/iio/dac/ad5592r-base.c:427:2: error: cannot jump from switch statement to this case label
+     427 |         default:
+         |         ^
+   drivers/iio/dac/ad5592r-base.c:419:3: note: jump bypasses initialization of variable with __attribute__((cleanup))
+     419 |                 guard(mutex)(&st->lock);
+         |                 ^
+   include/linux/cleanup.h:319:15: note: expanded from macro 'guard'
+     319 |         CLASS(_name, __UNIQUE_ID(guard))
+         |                      ^
+   include/linux/compiler.h:166:29: note: expanded from macro '__UNIQUE_ID'
+     166 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+         |                             ^
+   include/linux/compiler_types.h:84:22: note: expanded from macro '__PASTE'
+      84 | #define __PASTE(a,b) ___PASTE(a,b)
+         |                      ^
+   include/linux/compiler_types.h:83:23: note: expanded from macro '___PASTE'
+      83 | #define ___PASTE(a,b) a##b
+         |                       ^
+   <scratch space>:169:1: note: expanded from here
+     169 | __UNIQUE_ID_guard497
+         | ^
+   3 errors generated.
+
+
+vim +350 drivers/iio/dac/ad5592r-base.c
+
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  287  
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  288  static int ad5592r_write_raw(struct iio_dev *iio_dev,
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  289  	struct iio_chan_spec const *chan, int val, int val2, long mask)
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  290  {
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  291  	struct ad5592r_state *st = iio_priv(iio_dev);
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  292  	int ret;
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  293  
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  294  	switch (mask) {
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  295  	case IIO_CHAN_INFO_RAW:
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  296  
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  297  		if (val >= (1 << chan->scan_type.realbits) || val < 0)
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  298  			return -EINVAL;
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  299  
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  300  		if (!chan->output)
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  301  			return -EINVAL;
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  302  
+299c6ede9f0343c Bartosz Golaszewski 2025-04-07  303  		guard(mutex)(&st->lock);
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  304  		ret = st->ops->write_dac(st, chan->channel, val);
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  305  		if (!ret)
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  306  			st->cached_dac[chan->channel] = val;
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  307  		return ret;
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  308  	case IIO_CHAN_INFO_SCALE:
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  309  		if (chan->type == IIO_VOLTAGE) {
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  310  			bool gain;
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  311  
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  312  			if (val == st->scale_avail[0][0] &&
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  313  				val2 == st->scale_avail[0][1])
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  314  				gain = false;
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  315  			else if (val == st->scale_avail[1][0] &&
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  316  				 val2 == st->scale_avail[1][1])
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  317  				gain = true;
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  318  			else
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  319  				return -EINVAL;
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  320  
+299c6ede9f0343c Bartosz Golaszewski 2025-04-07  321  			guard(mutex)(&st->lock);
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  322  
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  323  			ret = st->ops->reg_read(st, AD5592R_REG_CTRL,
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  324  						&st->cached_gp_ctrl);
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  325  			if (ret < 0) {
+33c53cbf8f7bc8d Sergiu Cuciurean    2020-05-20  326  				mutex_unlock(&st->lock);
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  327  				return ret;
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  328  			}
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  329  
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  330  			if (chan->output) {
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  331  				if (gain)
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  332  					st->cached_gp_ctrl |=
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  333  						AD5592R_REG_CTRL_DAC_RANGE;
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  334  				else
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  335  					st->cached_gp_ctrl &=
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  336  						~AD5592R_REG_CTRL_DAC_RANGE;
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  337  			} else {
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  338  				if (gain)
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  339  					st->cached_gp_ctrl |=
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  340  						AD5592R_REG_CTRL_ADC_RANGE;
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  341  				else
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  342  					st->cached_gp_ctrl &=
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  343  						~AD5592R_REG_CTRL_ADC_RANGE;
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  344  			}
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  345  
+299c6ede9f0343c Bartosz Golaszewski 2025-04-07  346  			return st->ops->reg_write(st, AD5592R_REG_CTRL,
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  347  						  st->cached_gp_ctrl);
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  348  		}
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  349  		break;
+56ca9db862bf3d7 Paul Cercueil       2016-04-05 @350  	default:
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  351  		return -EINVAL;
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  352  	}
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  353  
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  354  	return 0;
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  355  }
+56ca9db862bf3d7 Paul Cercueil       2016-04-05  356  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
