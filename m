@@ -1,118 +1,118 @@
-Return-Path: <linux-kernel+bounces-594453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E07A81209
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:21:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9293A81214
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:21:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8419C441548
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:16:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B72524A7747
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028C022D799;
-	Tue,  8 Apr 2025 16:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E04122D791;
+	Tue,  8 Apr 2025 16:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="j1ES0ym5"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04894218584;
-	Tue,  8 Apr 2025 16:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mw1SuTOl"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDD01FBCB5;
+	Tue,  8 Apr 2025 16:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744128979; cv=none; b=iCaT02V3rLXJamBKeUPsyxSaOGfcPQcdH6Q8iBTHjxHMIcRccN1PvugTtzrJCgmiwW+gB+C5SbWwDKk8VC0sLzGzlU0kIjl5ca7/yB9Dg2c3aZoc2xR2iJI4aCcVI7eYDzuyRfdfuZFfpRz3kHFZj9nzHbbLdg/0xh6JQw88v4A=
+	t=1744128995; cv=none; b=cmCPEuWC7h8QIeN2QA/5zlSknWtdXCXx83OgHyGwzFVLV/nkdKtJrXfBDaXY5x9P/AVvfQasTQ6bfraTJtfGOqnbKLmJ+44uoYSTyE3Rf/9IXJbEux1j4NOvLdoqeD0LKpQvCFlcPAqOExBnZvSi2Z0ctJNuBBCQb7U92rqn/cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744128979; c=relaxed/simple;
-	bh=/eZ4b8l/VXJtWh+FH94pc5TZfV6mqG/4nYqWaQCWQ8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mg+ddZfPOcWwRLJLrGnoUHA4MTgNkLKT/lthF7Y/hCXpH775OjKdEMR6s3Y71GQipcJxG4O6cg7vWYBiG0dVsrozRsBoYlHZfdMHF45j+FIwsXu8YQ63Vpgm4nxRCUWtAKhPLdP1WJIx8ZvBllrMgSThWolC7nLPFA4Rg3CV964=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=j1ES0ym5; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 0A6912027DEF;
-	Tue,  8 Apr 2025 09:16:17 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0A6912027DEF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1744128977;
-	bh=QlxEL9VL5GBxv0J9u6K3DMLa5NYfTy2VRFDYnyudgvo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=j1ES0ym5sbrgD3pdb0PoqBafFIEPGdc0EYOnjXVL+OYKUrGI2Q1Y40bDZZ+1kq+y8
-	 kTo/HsxUdggQ5dhmHYSDjbs/eS47iNdNi+LcisiFu2Bnp0CUSqsDg3kJrhJGChUqNv
-	 L7NnLJBQ7avTM3huC+oyN74Y7Q7XMlUJQFpTZvtw=
-Message-ID: <c9bea07c-3a0e-41bb-a8d8-12d9f8776e07@linux.microsoft.com>
-Date: Tue, 8 Apr 2025 09:16:16 -0700
+	s=arc-20240116; t=1744128995; c=relaxed/simple;
+	bh=orKI4QzESD9wMZ9qw0qgUjTGnwjhL4kJhX0jIVv3AW8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p9KDkcftvKywS3hnZDKRmR+3SHCGP+6bi/TqGMlr8xghTK4n09HB4OUKmUCJ3q9t2k8EZNMDcEwD4ZBIav2BI6OQtDEEbmV5q9ngjMmZu9xarT9gordexZTbvbx0/MT/d3mLv8n5EOX3lZTlHb3qkpRz4VuHtCfmho97wm6DuOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mw1SuTOl; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2ff5544af03so1573272a91.1;
+        Tue, 08 Apr 2025 09:16:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744128993; x=1744733793; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=orKI4QzESD9wMZ9qw0qgUjTGnwjhL4kJhX0jIVv3AW8=;
+        b=Mw1SuTOlgejt3eDlJwDL3m/6Il3xdvGlby1JvDq06TPUyr8UnKZRuM6BRcFhGAk3z6
+         Q+DbJXx0uNiJVUa2x4K5hZZ0LvZROkokQZgro+hr44gH90tQPitwtoe6KIQPeiQrTztk
+         3jNrBJDD6uSkbaw/EQVhXGQUy4v5DlurUiyBpUcUKNerPHU6BEw4mko+Gu+G2rscfSj2
+         q3Xy/VdZahk5YHBFjyoWz2JdegwdJRfHYBIqCYGQ0QL5w2glsQ+RUgmHyWz9hQBW5+9F
+         9xAaArUg7KxAr9ZxqsXJw+uN1fr3U3BTK9iABoyK3+pYkvAZS0i9P8HkpND27S20Vbt/
+         65LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744128994; x=1744733794;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=orKI4QzESD9wMZ9qw0qgUjTGnwjhL4kJhX0jIVv3AW8=;
+        b=q85CQwnEXxvezbKxDy626CIs4VxTPlH0QGCN/H+cUQg9nX9TDbGx4kxOfs1rILQjFy
+         oRUTEGv0YrmmITl+cieT/XdC98aFIBQU9S7ig7mxEi92Xy6r2NeWETE5Bm0Rwz5J0IWg
+         DMg224tWnc/PzNqf/a3kZWwESWLPGDTYOfdG9slkTVYeFMyJiqe6q7gUB63GdlGMDFoJ
+         ErR1tOBwFGSeo+oQ7HPsydBzmhBfAnGD0ZRxC8uaBUR0IBw6TaVqO63EKxMtbPw/Wm9J
+         HdrOmE656TGetZAiGPk1gkmVlgh8ZBCqh6nZPi+rSyLun+fzBjg8Sdtdkc2VoHMJnU7A
+         EhJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUdYCn2iPXMVVfgANA2oh2O+2yXhifXR9xscUi+FjxInPhN2/SfQYPUQAZ2uKc82K5FpCJ1Rrzm@vger.kernel.org, AJvYcCW/912Vdy2TMzVSpo8w8MdDxPAhZLLipmNhBhQBf3d/rmY0XkhnoxV0SFJk38U0THDKn3QyBZo7ufK7ZtE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM1mQz942vv/WL3UGfQvmqQWqc9P1986/mtctx9xD826P8XLm7
+	T1mo+jsm2ihW/F5qwh5l/mDeguMB+dcPwlXvLP609+JqZjA6ygPnDJaIIGcF7UrkF+NqfEx0vRJ
+	air1cltsni4mvL55d9py4zev5HBRZuZauWGY=
+X-Gm-Gg: ASbGncsVFhIfWUrFNpifEk9WOxa1W61Y3EskX/MrLqsIKlc+Wy3eJOTnnRbbqS7lIh2
+	s86gG/Z+gD9IHF7xskYcS/t3UtGO2osNDIrWsKe0ie/TUV+jQQX/jKQbzeoSpKPRoKgV5TQ/3t4
+	+UV+rdFTtU9ieeoFR1UWJO+sIIuQ==
+X-Google-Smtp-Source: AGHT+IG7GKgG8uZgOht0grHnJjUWE279jQAy3IeEDlgXFafHgHd+Rpu55uKmDwcd9TusFiye4aB0C1+lD4wymKWfH/A=
+X-Received: by 2002:a17:90b:1648:b0:2ff:7b41:c3cf with SMTP id
+ 98e67ed59e1d1-306a4975f51mr8705504a91.4.1744128993599; Tue, 08 Apr 2025
+ 09:16:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hyperv-next v7 01/11] arm64: kvm, smccc: Introduce and use
- API for getting hypervisor UUID
-To: Marc Zyngier <maz@kernel.org>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
- catalin.marinas@arm.com, conor+dt@kernel.org, dan.carpenter@linaro.org,
- dave.hansen@linux.intel.com, decui@microsoft.com, haiyangz@microsoft.com,
- hpa@zytor.com, joey.gouly@arm.com, krzk+dt@kernel.org, kw@linux.com,
- kys@microsoft.com, lenb@kernel.org, lpieralisi@kernel.org,
- manivannan.sadhasivam@linaro.org, mark.rutland@arm.com, mingo@redhat.com,
- oliver.upton@linux.dev, rafael@kernel.org, robh@kernel.org,
- rafael.j.wysocki@intel.com, ssengar@linux.microsoft.com,
- sudeep.holla@arm.com, suzuki.poulose@arm.com, tglx@linutronix.de,
- wei.liu@kernel.org, will@kernel.org, yuzenghui@huawei.com,
- devicetree@vger.kernel.org, kvmarm@lists.linux.dev,
- linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org,
- apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com,
- sunilmut@microsoft.com
-References: <20250407201336.66913-1-romank@linux.microsoft.com>
- <20250407201336.66913-2-romank@linux.microsoft.com>
- <86semjku7x.wl-maz@kernel.org>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <86semjku7x.wl-maz@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250408104914.247897328@linuxfoundation.org> <c06b17f2-fc80-47a9-b108-8e53be3d4a76@leemhuis.info>
+ <2025040857-disdain-reprocess-0891@gregkh> <5924f2d5-1004-4f7c-ac20-3cc7752e5452@heusel.eu>
+In-Reply-To: <5924f2d5-1004-4f7c-ac20-3cc7752e5452@heusel.eu>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 8 Apr 2025 18:16:19 +0200
+X-Gm-Features: ATxdqUEySsXlfEC3HRl1p0nHWAUIvYJVAkFIwh7FAcER7rJJwEaHGvlhX1UeRgQ
+Message-ID: <CANiq72nYw+XkHfRZDvS0GceTunxZXqiec2GXeLbPXvPK9OiB8w@mail.gmail.com>
+Subject: Re: [PATCH 6.14 000/731] 6.14.2-rc1 review
+To: Christian Heusel <christian@heusel.eu>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thorsten Leemhuis <linux@leemhuis.info>, 
+	stable@vger.kernel.org, patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, 
+	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
+	pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, 
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
+	Miguel Ojeda <ojeda@kernel.org>, Justin Forbes <jforbes@fedoraproject.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Apr 8, 2025 at 4:53=E2=80=AFPM Christian Heusel <christian@heusel.e=
+u> wrote:
+>
+> Thanks for pointing this out, I was also missing the relevant
+> dependencies in my build system for the rust parts in the kernel to
+> actually be built .. IMO it could also hard-error when you specify
+> "CONFIG_HAVE_RUST=3Dy" and the tools are missing =F0=9F=A4=94
 
+I assume you mean `CONFIG_RUST=3Dy`, i.e. to remove
+`CONFIG_RUST_IS_AVAILABLE` and simply request to build with Rust.
 
-On 4/8/2025 12:06 AM, Marc Zyngier wrote:
-> On Mon, 07 Apr 2025 21:13:26 +0100,
-> Roman Kisel <romank@linux.microsoft.com> wrote:
+And, yeah, it would be simpler and it would prevent the issue of
+Kconfig deciding to automatically disable it due to unmet
+dependencies. We were asked to do it this way back then, but perhaps
+the sentiment has changed now.
 
-[...]
+What you can do meanwhile is e.g. explicitly check that `CONFIG_RUST`
+is `y` after the kernel configuration is saved.
 
->>   
->>   #include <linux/args.h>
->>   #include <linux/init.h>
->> +
->> +#ifndef __ASSEMBLER__
->> +#include <linux/uuid.h>
->> +#endif
-> 
-> That's a pretty unusual guard in arm64 land. Looking at the current
-> state of the kernel:
-> 
-> $ git grep -w __ASSEMBLER__ arch/arm64/ | wc -l
-> 2
-> $ git grep -w __ASSEMBLY__ arch/arm64/ | wc -l
-> 122
-> 
-> I'd suggest the later rather than the former.
-
-Thanks for catching this! I'll be sure to change this to use the arm64
-coding conventions in the next version.
-
-> 
-> Thanks,
-> 
-> 	M.
-> 
-
--- 
-Thank you,
-Roman
-
+Cheers,
+Miguel
 
