@@ -1,146 +1,268 @@
-Return-Path: <linux-kernel+bounces-593825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DBFFA80372
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:58:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29585A803CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E8A17A9878
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:52:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A91E24235CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AD22686B9;
-	Tue,  8 Apr 2025 11:53:37 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89FC269AED;
+	Tue,  8 Apr 2025 11:53:38 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E1E2686AD
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 11:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38171268C43
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 11:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744113217; cv=none; b=QzyAEpZ86TrJUYh2qfLjO0T9U9AowPsSsoRsiSZlC1it8m+aAJZUke85VUt3g8aYxpSauU3ynroNtmb1kH7VDzbSdsZOqdndmR/RsDk0GGFXPqPxcGDxtRenkQTmscKc7ZBFqXRvajg2Zfoo4QzdTp4441DMDVXI+55gQOJzUwk=
+	t=1744113218; cv=none; b=YoFr8PeTXwDHChxxgJf/adzomjNCQOcAabMManTJCVV6iPouSptCOOKKcyKnyuWaZr2Z+USZ6f36dFUle+ugxgn5+wx3/YaQeMFuoR+La/CpQWdUTaIzBXXCp5TxTkDZInnZeWP3L/PqDyU1hItnAjfrBIcktfuNGn9iAOIFEMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744113217; c=relaxed/simple;
-	bh=7hOinPgImX8WMe+TJO6lNzRnH5FkFhGMdHRt21qxEv0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DrmMe7yMzg9LVBMdMD/PmhBjA6QJgFLa5HqDd+Z0jWXi8Fo7FzWoWbhH5alXs6CEVSq5o0cxk5NjmORnzML42bDp2r/MIWr40ctdQk2RJREqu39OQrRvnRYwWssiov68TIvyR4jzNe58qzv8lWzcA0Bu4l0y+uVCQhr0/T022zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+	s=arc-20240116; t=1744113218; c=relaxed/simple;
+	bh=orQmC8douUBCMe7A+rGO1OMONi3j02y+HFy6esDvlo4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=G40DLGXqq5bw2f7BE4nnSFaQvpl2t4GVT7txFkzc2TiDDTHGEQZZZ2GsVoUtI5T9xElQDjmUpICMREddG6mEoKOMlrhx7NL1/A/kzHxrk3OOvCTPdtQTnTgBx4v/+WmI1lG4HN1OC1a4Fr02ZPG//VKAI5wKNfdRxK44Y6QklLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3ce843b51c3so127341005ab.0
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d458e61faaso57395515ab.0
         for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 04:53:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744113214; x=1744718014;
+        d=1e100.net; s=20230601; t=1744113215; x=1744718015;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=BRBfxxIWVER2OelCgMB5ckH55iW3hNOq0xALtqRN0Zo=;
-        b=FrcUq1FM6bL4ORPNZl+IHJG319Vi4X57oCbPtWXIrTBp5q/44Z9Y0Dktg0E7JcY8z7
-         Rs8nJyLVPKjFYqMzLcOSMNNY7AnFhKAVxefE8tRqkWj8WxrfU4ktGnRllefuT4m04Nb3
-         Nls7dBW1rfc+eD/buEwugForepBuNcp4CbMUUhIcmC5QatarSU+PuPv3oKLF0wrCP1So
-         q3KGd0Z2Zer1+U4mEPOIzV0djjLkoMlUVFgT9hazdraSrVU1CeBme7MiP6N6sM7lkn6V
-         CBjf7nulMQL3sfFLboG5ZdeK8fJgcC6OYZN+jmZphvat886coK4p7zKKUD5BMqRWlAbH
-         W4cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8DulgcV0HAk8UR2Bue9EQkDjZITuQ4Lx7afUw7M8UqfhNXfMSfUXjPxHZf6SqgHScKOjfb2zyp3NE9dk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF9jb6ASdBCWmP4zvaMTvP6h4FJ7WXhRipsTofyuKarx3bDtz7
-	2ECl2uaFpeaLU2Lt2l/ktJ8lhtnA4RUhBOmk3VfSk7tX97K/Rtj/p3nigHwcq2Q2LeCWcMoDxLQ
-	Oa+v5JSGUSIRqSHb5Va9CYsXJv2eJCx6Gv7GhPnQGkpuLnOxblVru/Y4=
-X-Google-Smtp-Source: AGHT+IHNu/ie94iiJFQUH7oyUr7nfmh1A2JhjCxzQlOMMMjD17BD9ciAjlNwGZt8s0UkMn/MH5eaDT7TDhuy/b/FNYrNGb2hs1vt
+        bh=yyKIF+kDQ+OyPVEZulRdmjSzR121gPzyDZOV6/tx19I=;
+        b=RGbsKheQZwtkB7bDKxUZHrR1mVsBF2kKQcQ0GoOPELr7J3/LlHEA01GZ2rSlAu3S9j
+         vMzA5LTtv5ihEKZ1hssUVs5s6gtuvNBAr/yPPpnoy9NKVNGtzPQPKRaUd57i/DVSgykh
+         mX/vDab34/IsvYPUdBqBB764YMbQkfWMT1/O8VAZKDMCd/wVOvgNRc7z/PpK2oAztNDQ
+         dF7ObWxY5hWenX3+lLNSlYh354TlmE2ehwWzJt3oLka3PwGheRhIPoTBozOebU2NvC8D
+         UJUmATzdnGMEJceJZED4vJbPrbxlH8DVUJ3KP2jTty1oBH/XtNXZHBSA+HRCN88xK2sc
+         oJ9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXejWXooTb2GC7ZDa3LKO9+TH3yypdws9dvOhB9fEiGaR6IjcbxwjjlH1MCSjCY74KIrxEjdZb2x6GseOY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzU3OXl+oHsZ2V8+N9cIh6gx2My1ZUtokkw6B5uK9/dqlBfPqH
+	2Lf5ZsMTi+FuVG3LFCHAMNH92JHp0IvZ1Wzz5lMjNYd3tsx6kihh1KSHlc7H0lApCgmKzd/jISi
+	YmvLJYZ891Z9RstwYLVJ5xrMfm7Df4FyGrAFePPXVsAG+FgsyQTKk9O0=
+X-Google-Smtp-Source: AGHT+IFKdIiz5f4uYk7nxY+6Yf7xd6gTJSr/6moDZGfVo9sX1dqUiG9kzMvaZAbbhrwGBE4BloxtWHhjgYHM3drtF+orMe4yWIvM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:17c9:b0:3d4:6dcf:d8f5 with SMTP id
- e9e14a558f8ab-3d6ec52d0c9mr110552915ab.1.1744113214671; Tue, 08 Apr 2025
- 04:53:34 -0700 (PDT)
-Date: Tue, 08 Apr 2025 04:53:34 -0700
+X-Received: by 2002:a05:6e02:1d8e:b0:3d4:2acc:81fa with SMTP id
+ e9e14a558f8ab-3d70368ba91mr30895135ab.2.1744113215317; Tue, 08 Apr 2025
+ 04:53:35 -0700 (PDT)
+Date: Tue, 08 Apr 2025 04:53:35 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67f50e3e.050a0220.396535.0560.GAE@google.com>
-Subject: [syzbot] [bcachefs?] WARNING in bch2_dev_free
-From: syzbot <syzbot+aec9606169fbc3a12ca6@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <67f50e3f.050a0220.396535.0562.GAE@google.com>
+Subject: [syzbot] [net?] [bpf?] possible deadlock in xsk_diag_dump
+From: syzbot <syzbot+4ebb06d5f6e3597279c0@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bjorn@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, davem@davemloft.net, edumazet@google.com, 
+	horms@kernel.org, jonathan.lemon@gmail.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, maciej.fijalkowski@intel.com, 
+	magnus.karlsson@intel.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    a4cda136f021 Add linux-next specific files for 20250404
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=12c3db4c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8a257c454bb1afb7
-dashboard link: https://syzkaller.appspot.com/bug?extid=aec9606169fbc3a12ca6
+HEAD commit:    61f96e684edd Merge tag 'net-6.15-rc1' of git://git.kernel...
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=11923b4c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f2054704dd53fb80
+dashboard link: https://syzkaller.appspot.com/bug?extid=4ebb06d5f6e3597279c0
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ca0c04580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11c3db4c580000
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/59048bc9c206/disk-a4cda136.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ad2ba7306f20/vmlinux-a4cda136.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b3bef7acbf10/bzImage-a4cda136.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/110624be1513/mount_0.gz
-
-The issue was bisected to:
-
-commit dcffc3b1ae3251d796a25c673f614e3099ca83d3
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Sun Mar 30 03:11:08 2025 +0000
-
-    bcachefs: Split up bch_dev.io_ref
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13948c04580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=10548c04580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17948c04580000
+disk image: https://storage.googleapis.com/syzbot-assets/a3119b4324e8/disk-61f96e68.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ee1ca254d083/vmlinux-61f96e68.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ed04807ee582/bzImage-61f96e68.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+aec9606169fbc3a12ca6@syzkaller.appspotmail.com
-Fixes: dcffc3b1ae32 ("bcachefs: Split up bch_dev.io_ref")
+Reported-by: syzbot+4ebb06d5f6e3597279c0@syzkaller.appspotmail.com
 
-bcachefs (loop0): shutting down
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5844 at fs/bcachefs/super.c:1229 bch2_dev_free+0x228/0x290 fs/bcachefs/super.c:1229
-Modules linked in:
-CPU: 0 UID: 0 PID: 5844 Comm: syz-executor121 Not tainted 6.14.0-next-20250404-syzkaller #0 PREEMPT(full) 
+======================================================
+WARNING: possible circular locking dependency detected
+6.14.0-syzkaller-13305-g61f96e684edd #0 Not tainted
+------------------------------------------------------
+syz.2.908/8961 is trying to acquire lock:
+ffff88805c6b06f0 (&xs->mutex){+.+.}-{4:4}, at: xsk_diag_fill net/xdp/xsk_diag.c:113 [inline]
+ffff88805c6b06f0 (&xs->mutex){+.+.}-{4:4}, at: xsk_diag_dump+0x5be/0x19d0 net/xdp/xsk_diag.c:166
+
+but task is already holding lock:
+ffff88805e529c58 (&net->xdp.lock){+.+.}-{4:4}, at: xsk_diag_dump+0x18e/0x19d0 net/xdp/xsk_diag.c:158
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (&net->xdp.lock){+.+.}-{4:4}:
+       lock_acquire+0x116/0x2f0 kernel/locking/lockdep.c:5866
+       __mutex_lock_common kernel/locking/mutex.c:601 [inline]
+       __mutex_lock+0x1a5/0x10c0 kernel/locking/mutex.c:746
+       xsk_notifier+0x8b/0x230 net/xdp/xsk.c:1644
+       notifier_call_chain+0x1a5/0x3f0 kernel/notifier.c:85
+       call_netdevice_notifiers_extack net/core/dev.c:2221 [inline]
+       call_netdevice_notifiers net/core/dev.c:2235 [inline]
+       unregister_netdevice_many_notify+0x1572/0x2510 net/core/dev.c:11980
+       unregister_netdevice_many net/core/dev.c:12044 [inline]
+       unregister_netdevice_queue+0x383/0x400 net/core/dev.c:11896
+       unregister_netdevice include/linux/netdevice.h:3374 [inline]
+       _cfg80211_unregister_wdev+0x163/0x590 net/wireless/core.c:1256
+       ieee80211_remove_interfaces+0x4f1/0x700 net/mac80211/iface.c:2316
+       ieee80211_unregister_hw+0x5d/0x2c0 net/mac80211/main.c:1681
+       mac80211_hwsim_del_radio+0x2c6/0x4c0 drivers/net/wireless/virtual/mac80211_hwsim.c:5665
+       hwsim_exit_net+0x5c3/0x670 drivers/net/wireless/virtual/mac80211_hwsim.c:6545
+       ops_exit_list net/core/net_namespace.c:172 [inline]
+       cleanup_net+0x814/0xd60 net/core/net_namespace.c:654
+       process_one_work kernel/workqueue.c:3238 [inline]
+       process_scheduled_works+0xac3/0x18e0 kernel/workqueue.c:3319
+       worker_thread+0x870/0xd50 kernel/workqueue.c:3400
+       kthread+0x7b7/0x940 kernel/kthread.c:464
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+-> #2 (&rdev->wiphy.mtx){+.+.}-{4:4}:
+       lock_acquire+0x116/0x2f0 kernel/locking/lockdep.c:5866
+       __mutex_lock_common kernel/locking/mutex.c:601 [inline]
+       __mutex_lock+0x1a5/0x10c0 kernel/locking/mutex.c:746
+       class_wiphy_constructor include/net/cfg80211.h:6092 [inline]
+       cfg80211_netdev_notifier_call+0x1b3/0x1430 net/wireless/core.c:1547
+       notifier_call_chain+0x1a5/0x3f0 kernel/notifier.c:85
+       call_netdevice_notifiers_extack net/core/dev.c:2221 [inline]
+       call_netdevice_notifiers net/core/dev.c:2235 [inline]
+       __dev_close_many+0x15d/0x760 net/core/dev.c:1680
+       dev_close_many+0x250/0x4c0 net/core/dev.c:1734
+       unregister_netdevice_many_notify+0x628/0x2510 net/core/dev.c:11949
+       unregister_netdevice_many net/core/dev.c:12044 [inline]
+       default_device_exit_batch+0x7ff/0x880 net/core/dev.c:12536
+       ops_exit_list net/core/net_namespace.c:177 [inline]
+       cleanup_net+0x8af/0xd60 net/core/net_namespace.c:654
+       process_one_work kernel/workqueue.c:3238 [inline]
+       process_scheduled_works+0xac3/0x18e0 kernel/workqueue.c:3319
+       worker_thread+0x870/0xd50 kernel/workqueue.c:3400
+       kthread+0x7b7/0x940 kernel/kthread.c:464
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+-> #1 (&dev_instance_lock_key#3){+.+.}-{4:4}:
+       lock_acquire+0x116/0x2f0 kernel/locking/lockdep.c:5866
+       __mutex_lock_common kernel/locking/mutex.c:601 [inline]
+       __mutex_lock+0x1a5/0x10c0 kernel/locking/mutex.c:746
+       netdev_lock include/linux/netdevice.h:2751 [inline]
+       netdev_lock_ops include/net/netdev_lock.h:42 [inline]
+       xsk_bind+0x2fd/0xfb0 net/xdp/xsk.c:1188
+       __sys_bind_socket net/socket.c:1810 [inline]
+       __sys_bind+0x1de/0x290 net/socket.c:1841
+       __do_sys_bind net/socket.c:1846 [inline]
+       __se_sys_bind net/socket.c:1844 [inline]
+       __x64_sys_bind+0x7a/0x90 net/socket.c:1844
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&xs->mutex){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3166 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3285 [inline]
+       validate_chain+0xa69/0x24e0 kernel/locking/lockdep.c:3909
+       __lock_acquire+0xad5/0xd80 kernel/locking/lockdep.c:5235
+       lock_acquire+0x116/0x2f0 kernel/locking/lockdep.c:5866
+       __mutex_lock_common kernel/locking/mutex.c:601 [inline]
+       __mutex_lock+0x1a5/0x10c0 kernel/locking/mutex.c:746
+       xsk_diag_fill net/xdp/xsk_diag.c:113 [inline]
+       xsk_diag_dump+0x5be/0x19d0 net/xdp/xsk_diag.c:166
+       netlink_dump+0x678/0xeb0 net/netlink/af_netlink.c:2309
+       __netlink_dump_start+0x5a2/0x790 net/netlink/af_netlink.c:2424
+       netlink_dump_start include/linux/netlink.h:340 [inline]
+       xsk_diag_handler_dump+0x1de/0x270 net/xdp/xsk_diag.c:193
+       sock_diag_rcv_msg+0x3dc/0x5f0 net/core/sock_diag.c:-1
+       netlink_rcv_skb+0x208/0x480 net/netlink/af_netlink.c:2534
+       netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+       netlink_unicast+0x7f8/0x9a0 net/netlink/af_netlink.c:1339
+       netlink_sendmsg+0x8c3/0xcd0 net/netlink/af_netlink.c:1883
+       sock_sendmsg_nosec net/socket.c:712 [inline]
+       __sock_sendmsg+0x221/0x270 net/socket.c:727
+       sock_write_iter+0x2d9/0x3f0 net/socket.c:1131
+       do_iter_readv_writev+0x71f/0x9d0 fs/read_write.c:-1
+       vfs_writev+0x38d/0xbc0 fs/read_write.c:1055
+       do_writev+0x1b8/0x360 fs/read_write.c:1101
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &xs->mutex --> &rdev->wiphy.mtx --> &net->xdp.lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&net->xdp.lock);
+                               lock(&rdev->wiphy.mtx);
+                               lock(&net->xdp.lock);
+  lock(&xs->mutex);
+
+ *** DEADLOCK ***
+
+2 locks held by syz.2.908/8961:
+ #0: ffff88805c6b76c8 (nlk_cb_mutex-SOCK_DIAG){+.+.}-{4:4}, at: __netlink_dump_start+0x119/0x790 net/netlink/af_netlink.c:2388
+ #1: ffff88805e529c58 (&net->xdp.lock){+.+.}-{4:4}, at: xsk_diag_dump+0x18e/0x19d0 net/xdp/xsk_diag.c:158
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 8961 Comm: syz.2.908 Not tainted 6.14.0-syzkaller-13305-g61f96e684edd #0 PREEMPT(full) 
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-RIP: 0010:bch2_dev_free+0x228/0x290 fs/bcachefs/super.c:1229
-Code: ff e8 4c cf 74 00 4c 89 ef e8 44 cf 74 00 48 89 df 48 83 c4 10 5b 41 5c 41 5d 41 5e 41 5f 5d e9 ee 53 96 07 e8 59 e9 32 fd 90 <0f> 0b 90 e9 09 fe ff ff e8 4b e9 32 fd 90 0f 0b 90 e9 15 fe ff ff
-RSP: 0018:ffffc9000406fb88 EFLAGS: 00010293
-RAX: ffffffff849073d7 RBX: ffff888035282000 RCX: ffff888034af9e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff8880352820c0 R08: ffffffff850552f7 R09: 0000000000000000
-R10: ffff888035282208 R11: ffffed1006a5044a R12: ffff888075e003f0
-R13: ffff8880352820b0 R14: ffff888075e00000 R15: ffff888075e007b2
-FS:  000055558bb20380(0000) GS:ffff888124f8f000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000045bdd0 CR3: 00000000122a0000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
  <TASK>
- bch2_fs_free+0x2b0/0x400 fs/bcachefs/super.c:688
- deactivate_locked_super+0xc4/0x130 fs/super.c:473
- cleanup_mnt+0x422/0x4c0 fs/namespace.c:1435
- task_work_run+0x251/0x310 kernel/task_work.c:227
- ptrace_notify+0x2dc/0x390 kernel/signal.c:2520
- ptrace_report_syscall include/linux/ptrace.h:415 [inline]
- ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
- syscall_exit_work+0xc7/0x1d0 kernel/entry/common.c:173
- syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
- syscall_exit_to_user_mode+0x24a/0x340 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/syscall_64.c:100
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x2e1/0x300 kernel/locking/lockdep.c:2079
+ check_noncircular+0x142/0x160 kernel/locking/lockdep.c:2211
+ check_prev_add kernel/locking/lockdep.c:3166 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3285 [inline]
+ validate_chain+0xa69/0x24e0 kernel/locking/lockdep.c:3909
+ __lock_acquire+0xad5/0xd80 kernel/locking/lockdep.c:5235
+ lock_acquire+0x116/0x2f0 kernel/locking/lockdep.c:5866
+ __mutex_lock_common kernel/locking/mutex.c:601 [inline]
+ __mutex_lock+0x1a5/0x10c0 kernel/locking/mutex.c:746
+ xsk_diag_fill net/xdp/xsk_diag.c:113 [inline]
+ xsk_diag_dump+0x5be/0x19d0 net/xdp/xsk_diag.c:166
+ netlink_dump+0x678/0xeb0 net/netlink/af_netlink.c:2309
+ __netlink_dump_start+0x5a2/0x790 net/netlink/af_netlink.c:2424
+ netlink_dump_start include/linux/netlink.h:340 [inline]
+ xsk_diag_handler_dump+0x1de/0x270 net/xdp/xsk_diag.c:193
+ sock_diag_rcv_msg+0x3dc/0x5f0 net/core/sock_diag.c:-1
+ netlink_rcv_skb+0x208/0x480 net/netlink/af_netlink.c:2534
+ netlink_unicast_kernel net/netlink/af_netlink.c:1313 [inline]
+ netlink_unicast+0x7f8/0x9a0 net/netlink/af_netlink.c:1339
+ netlink_sendmsg+0x8c3/0xcd0 net/netlink/af_netlink.c:1883
+ sock_sendmsg_nosec net/socket.c:712 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:727
+ sock_write_iter+0x2d9/0x3f0 net/socket.c:1131
+ do_iter_readv_writev+0x71f/0x9d0 fs/read_write.c:-1
+ vfs_writev+0x38d/0xbc0 fs/read_write.c:1055
+ do_writev+0x1b8/0x360 fs/read_write.c:1101
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f49b0cec447
-Code: 07 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007ffd94723978 EFLAGS: 00000206 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f49b0cec447
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffd94723a30
-RBP: 00007ffd94723a30 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000206 R12: 00007ffd94724aa0
-R13: 000055558bb216c0 R14: 0000000000000001 R15: 431bde82d7b634db
+RIP: 0033:0x7f466eb8d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f466fa3a038 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
+RAX: ffffffffffffffda RBX: 00007f466eda6160 RCX: 00007f466eb8d169
+RDX: 0000000000000001 RSI: 0000200000019440 RDI: 0000000000000007
+RBP: 00007f466ec0e2a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f466eda6160 R15: 00007ffcf86fb978
  </TASK>
 
 
@@ -151,14 +273,9 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
