@@ -1,429 +1,220 @@
-Return-Path: <linux-kernel+bounces-593721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C54EA7FCBA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:48:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6749A80030
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF03516FA48
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:48:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89AD53B2EBB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E58D268FDD;
-	Tue,  8 Apr 2025 10:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783A82686B8;
+	Tue,  8 Apr 2025 11:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N1Ewra9E"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PZIW4Eff"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B85263C8A
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 10:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96E8207E14;
+	Tue,  8 Apr 2025 11:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744109096; cv=none; b=P/KRFZODIo6sCj2158byr6jj0xTtlXtWP/GSGC6TXM0iw1xQhxOESlyNo31/yjEPZLbrTGc/DEqj3JFn4tSbQboyQW0Iz2r2H6Cz0b138KZDimquKWRF/vLw5IWP7PDS4glNfMH6lsKW8KeQGoBrfUT/TPl3/T0n278Ug0L+kng=
+	t=1744111328; cv=none; b=stcleN9boyYPCt+M6wXx3yJuNg1rcaNmwf/wcVm3hvxEXwMwAQ3QttU7raUBin8SGV+B48+v8O9qsB/6jo7JQrxj7P3UbXjPCFwytYmMaIJBQRh3FJCPxfwuvrdiAeX5gbEc9bDBb5OngXNrQqcZC6erEvmb/bg3DKwQ6uea90w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744109096; c=relaxed/simple;
-	bh=LDfDmYfsovohv9Oamt4rA0nliykNFnonhKtamgs9Sio=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Q5tuqEh1Bn/ACqisDquqaD/ZEXqCmjKR5Op/KH9Csqfru1+zuLnOS4Stf/iDl0yks1XjepgCPszW5pfrt4rQ70OUN2IrmXCqXc9GyKgD/DDAzvOSYhbAgV+iRVrjFfQeC6cpcRHGZXvKvGs57VUs3q8t4gR4dZQFvFY7p0Omuxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N1Ewra9E; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744109093;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NPR4B01GHk+3gXBlymQB8mC9iF4bz+2OuAoNO5eOTdU=;
-	b=N1Ewra9ErUdoXmYBOAInZ7PNu99BEDuE4jYt4Jyb5tB2BPhGVNqImk0AGtOp0r/mqD5Gfv
-	m7BmKMIvTCONLKYKDPPFsPYWspazqKdhVE1o7d7D29SfdusYZtD0HxK/PUIx0K2bY9MR71
-	tMzFquyrhbgJwnyKo4oPsejmzrCEWO8=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-433-mwbHG8gPNw6fYxASje9t4w-1; Tue, 08 Apr 2025 06:44:49 -0400
-X-MC-Unique: mwbHG8gPNw6fYxASje9t4w-1
-X-Mimecast-MFC-AGG-ID: mwbHG8gPNw6fYxASje9t4w_1744109089
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43eea5a5d80so16877425e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 03:44:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744109089; x=1744713889;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NPR4B01GHk+3gXBlymQB8mC9iF4bz+2OuAoNO5eOTdU=;
-        b=RIE5Vddn3uH441e3nDJmUDRJi9wwAG7rugjuQD9Rh7NKOM0ZUHc/6yJBTzV8sowsX1
-         6A4Dv5hamUheyybnGEHAe249g9JpblOlt/cf7Gxbl8u2C7Vw35LgugKRH5GWNMFRNvNd
-         gPx+mXyN1lduCjjjOV6vx3JzG+bg5kIeyOASUqWNaFGwn5yts2kS1r6kK5gXKmLvDdX2
-         XXJzJSO6y29U+n0N2c5a8RuE0xXtqH2pq218P/KPZ+l+su4O6QqSkTPV+/anHs1cHNih
-         3WMSFmtgytqmSN1cN9W+10NOT3kgQdMHypTA1OVIxsQ4jMJaFHXU+gVerSpSmlakmX/j
-         N6JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0INJ/mlMI9Yi8MhxnzdP23uzFLu1cG7sBWLBKUvIl8vSgqZN8jnJVxx+PXHvY2XfQS3WXXtKeEHXLrYg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx468CMZplyQGIwuQfT4pt3haB3MwS73FL42PfVd0CGZmM5W4v
-	LK1PXBuIWbVVlOcBYboy8HJ4VKMV8dsPrlKbNwC6M4mJ9MTeJnQodPbQQ/7OmxZQ5I3bv4+pPpB
-	XKhbbTxMyC/7+JPWDMQz/ZTV6Q5+VUVuUGnEskjRJ+XAWTsKEswQKBNJb4CyP7g==
-X-Gm-Gg: ASbGncvyVFENFZAhd94L0/uNm1vsfLJB1MCWXyK9E3TYyXZDxiWQolkjSFvrc1HAcXy
-	uNTDkUcTzClfUyVKfp2Vh+fWFIgczapasVVcH+3r3RM2vhzHdocclePhqYHgxZ3ru7DSJCHzn7Q
-	7tHxwjjJ1XSRw4VhX5fcIALa5k9tW3pXf61UMKA191OxgM6CCgVvKu1q1VM3OLUd7ui8sVQB9D7
-	5RJgG/UyWLxZpUwiUk5gdr46GGFQBBfoAKa20iO65KFYT7ZFTRNAA6Z9WP6GMQ3ocyvc6GJW5V3
-	c5cXBQQPjRKd7TutKLygzGJvZFyQXMyZhfhnG2S5FL+fpmiuaGBaG2+d56e07tRkAPm4SitkWQ=
-	=
-X-Received: by 2002:a05:600c:a14:b0:43d:b3:fb1 with SMTP id 5b1f17b1804b1-43ecfa05fe1mr144170485e9.27.1744109088616;
-        Tue, 08 Apr 2025 03:44:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGc9FfIlYu+Yt1f+9swRriUmdFyQm4ADSt4IqeKBrSQR8D8o6h7L6PvtFH9310msgHZKvhBiw==
-X-Received: by 2002:a05:600c:a14:b0:43d:b3:fb1 with SMTP id 5b1f17b1804b1-43ecfa05fe1mr144170245e9.27.1744109088173;
-        Tue, 08 Apr 2025 03:44:48 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec364cb9asm156401545e9.31.2025.04.08.03.44.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 03:44:47 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Marcus Folkesson
- <marcus.folkesson@gmail.com>, Thomas Zimmermann <tzimmrmann@suse.de>
-Subject: Re: [PATCH v3 2/3] drm/st7571-i2c: add support for Sitronix ST7571
- LCD controller
-In-Reply-To: <20250408-st7571-v3-2-200693efec57@gmail.com>
-References: <20250408-st7571-v3-0-200693efec57@gmail.com>
- <20250408-st7571-v3-2-200693efec57@gmail.com>
-Date: Tue, 08 Apr 2025 12:44:46 +0200
-Message-ID: <87cydn9bkx.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1744111328; c=relaxed/simple;
+	bh=9rixISlH0h3gLJrlq8Oxi2XQJTBimT3/MGOf2hGDi4A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kjGlT8EseW9xutQbs8XMf+bldFSwtaKJpzkP6jVtLP62e/eWL4AtG81azoxhG+D+Pf1i3JY507CAadOQLoozLjQafnL/OeoYu2EWlsyZQuiW+FLEJ6LxZ3bLy4T8iAzz+Oq0iRmPXA4rWX8ZbVPaolqw+cVF3njm2s33CoDaNU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PZIW4Eff; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37AA0C4CEE5;
+	Tue,  8 Apr 2025 11:22:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744111328;
+	bh=9rixISlH0h3gLJrlq8Oxi2XQJTBimT3/MGOf2hGDi4A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PZIW4EffBrz3O1V7dFu+frqWqgAGa7/HVjlDakrI/hRGikIlfJmB8ZP99kr/4yhiS
+	 bWQnNnnKRLbgCVcnfupBaU68SO+tIi4wBE0V7KqHGBjUtom+9Z/i20RMJ4uUcjeBfh
+	 bGAM1dYp9mTbzh6AbQYcs6l/k/V6tgldlSQpy0mI=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>,
+	Maher Sanalla <msanalla@nvidia.com>,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Parav Pandit <parav@nvidia.com>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.14 393/731] RDMA/core: Dont expose hw_counters outside of init net namespace
+Date: Tue,  8 Apr 2025 12:44:50 +0200
+Message-ID: <20250408104923.416610570@linuxfoundation.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250408104914.247897328@linuxfoundation.org>
+References: <20250408104914.247897328@linuxfoundation.org>
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Marcus Folkesson <marcus.folkesson@gmail.com> writes:
+6.14-stable review patch.  If anyone has any objections, please let me know.
 
-Hello Marcus,
+------------------
 
-> Sitronix ST7571 is a 4bit gray scale dot matrix LCD controller.
-> The controller has a SPI, I2C and 8bit parallel interface, this
-> driver is for the I2C interface only.
->
+From: Roman Gushchin <roman.gushchin@linux.dev>
 
-I would structure the driver differently. For example, what was done
-for the Solomon SSD130X display controllers, that also support these
-three interfaces:
+[ Upstream commit a1ecb30f90856b0be4168ad51b8875148e285c1f ]
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dri=
-vers/gpu/drm/solomon
+Commit 467f432a521a ("RDMA/core: Split port and device counter sysfs
+attributes") accidentally almost exposed hw counters to non-init net
+namespaces. It didn't expose them fully, as an attempt to read any of
+those counters leads to a crash like this one:
 
-Basically, it was split in a ssd130x.c module that's agnostic of the
-transport interface and implements all the core logic for the driver.
+[42021.807566] BUG: kernel NULL pointer dereference, address: 0000000000000028
+[42021.814463] #PF: supervisor read access in kernel mode
+[42021.819549] #PF: error_code(0x0000) - not-present page
+[42021.824636] PGD 0 P4D 0
+[42021.827145] Oops: 0000 [#1] SMP PTI
+[42021.830598] CPU: 82 PID: 2843922 Comm: switchto-defaul Kdump: loaded Tainted: G S      W I        XXX
+[42021.841697] Hardware name: XXX
+[42021.849619] RIP: 0010:hw_stat_device_show+0x1e/0x40 [ib_core]
+[42021.855362] Code: 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 49 89 d0 4c 8b 5e 20 48 8b 8f b8 04 00 00 48 81 c7 f0 fa ff ff <48> 8b 41 28 48 29 ce 48 83 c6 d0 48 c1 ee 04 69 d6 ab aa aa aa 48
+[42021.873931] RSP: 0018:ffff97fe90f03da0 EFLAGS: 00010287
+[42021.879108] RAX: ffff9406988a8c60 RBX: ffff940e1072d438 RCX: 0000000000000000
+[42021.886169] RDX: ffff94085f1aa000 RSI: ffff93c6cbbdbcb0 RDI: ffff940c7517aef0
+[42021.893230] RBP: ffff97fe90f03e70 R08: ffff94085f1aa000 R09: 0000000000000000
+[42021.900294] R10: ffff94085f1aa000 R11: ffffffffc0775680 R12: ffffffff87ca2530
+[42021.907355] R13: ffff940651602840 R14: ffff93c6cbbdbcb0 R15: ffff94085f1aa000
+[42021.914418] FS:  00007fda1a3b9700(0000) GS:ffff94453fb80000(0000) knlGS:0000000000000000
+[42021.922423] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[42021.928130] CR2: 0000000000000028 CR3: 00000042dcfb8003 CR4: 00000000003726f0
+[42021.935194] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[42021.942257] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[42021.949324] Call Trace:
+[42021.951756]  <TASK>
+[42021.953842]  [<ffffffff86c58674>] ? show_regs+0x64/0x70
+[42021.959030]  [<ffffffff86c58468>] ? __die+0x78/0xc0
+[42021.963874]  [<ffffffff86c9ef75>] ? page_fault_oops+0x2b5/0x3b0
+[42021.969749]  [<ffffffff87674b92>] ? exc_page_fault+0x1a2/0x3c0
+[42021.975549]  [<ffffffff87801326>] ? asm_exc_page_fault+0x26/0x30
+[42021.981517]  [<ffffffffc0775680>] ? __pfx_show_hw_stats+0x10/0x10 [ib_core]
+[42021.988482]  [<ffffffffc077564e>] ? hw_stat_device_show+0x1e/0x40 [ib_core]
+[42021.995438]  [<ffffffff86ac7f8e>] dev_attr_show+0x1e/0x50
+[42022.000803]  [<ffffffff86a3eeb1>] sysfs_kf_seq_show+0x81/0xe0
+[42022.006508]  [<ffffffff86a11134>] seq_read_iter+0xf4/0x410
+[42022.011954]  [<ffffffff869f4b2e>] vfs_read+0x16e/0x2f0
+[42022.017058]  [<ffffffff869f50ee>] ksys_read+0x6e/0xe0
+[42022.022073]  [<ffffffff8766f1ca>] do_syscall_64+0x6a/0xa0
+[42022.027441]  [<ffffffff8780013b>] entry_SYSCALL_64_after_hwframe+0x78/0xe2
 
-And a set of different modules that have the interface specific bits:
-ssd130x-i2c.c and ssd130x-spi.c.
+The problem can be reproduced using the following steps:
+  ip netns add foo
+  ip netns exec foo bash
+  cat /sys/class/infiniband/mlx4_0/hw_counters/*
 
-That way, adding for example SPI support to your driver would be quite
-trivial and won't require any refactoring. Specially since you already
-are using regmap, which abstracts away the I2C interface bits.
+The panic occurs because of casting the device pointer into an
+ib_device pointer using container_of() in hw_stat_device_show() is
+wrong and leads to a memory corruption.
 
-> Reviewed-by: Thomas Zimmermann <tzimmrmann@suse.de>
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> ---
->  drivers/gpu/drm/tiny/Kconfig      |  11 +
->  drivers/gpu/drm/tiny/Makefile     |   1 +
->  drivers/gpu/drm/tiny/st7571-i2c.c | 721 ++++++++++++++++++++++++++++++++=
-++++++
+However the real problem is that hw counters should never been exposed
+outside of the non-init net namespace.
 
-I personally think that the tiny sub-directory is slowly becoming a
-dumping ground for small drivers. Instead, maybe we should create a
-drivers/gpu/drm/sitronix/ sub-dir and put all Sitronix drivers there?
+Fix this by saving the index of the corresponding attribute group
+(it might be 1 or 2 depending on the presence of driver-specific
+attributes) and zeroing the pointer to hw_counters group for compat
+devices during the initialization.
 
-So far we have drivers in tiny for: ST7735R, ST7586 and ST7571 with
-your driver. And also have a few more Sitronix drivers in the panel
-sub-directory (although those likely should remain there).
+With this fix applied hw_counters are not available in a non-init
+net namespace:
+  find /sys/class/infiniband/mlx4_0/ -name hw_counters
+    /sys/class/infiniband/mlx4_0/ports/1/hw_counters
+    /sys/class/infiniband/mlx4_0/ports/2/hw_counters
+    /sys/class/infiniband/mlx4_0/hw_counters
 
-I have a ST7565S and plan to write a driver for it. And I know someone
-who is working on a ST7920 driver. That would be 5 Sitronix drivers and
-the reason why I think that a dedicated sub-dir would be more organized.
+  ip netns add foo
+  ip netns exec foo bash
+  find /sys/class/infiniband/mlx4_0/ -name hw_counters
 
-Maybe there's even common code among these drivers and could be reused?
+Fixes: 467f432a521a ("RDMA/core: Split port and device counter sysfs attributes")
+Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Leon Romanovsky <leon@kernel.org>
+Cc: Maher Sanalla <msanalla@nvidia.com>
+Cc: linux-rdma@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Link: https://patch.msgid.link/20250227165420.3430301-1-roman.gushchin@linux.dev
+Reviewed-by: Parav Pandit <parav@nvidia.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/infiniband/core/device.c | 9 +++++++++
+ drivers/infiniband/core/sysfs.c  | 1 +
+ include/rdma/ib_verbs.h          | 1 +
+ 3 files changed, 11 insertions(+)
 
-Just a thought though, it's OK to keep your driver as-is and we could do
-refactor / move drivers around as follow-up if agreed that is desirable.
-
->  3 files changed, 733 insertions(+)
->
-> diff --git a/drivers/gpu/drm/tiny/Kconfig b/drivers/gpu/drm/tiny/Kconfig
-> index 94cbdb1337c07f1628a33599a7130369b9d59d98..33a69aea4232c5ca7a04b1fe1=
-8bb424e0fded697 100644
-> --- a/drivers/gpu/drm/tiny/Kconfig
-> +++ b/drivers/gpu/drm/tiny/Kconfig
-> @@ -232,6 +232,17 @@ config TINYDRM_ST7586
->=20=20
->  	  If M is selected the module will be called st7586.
->=20=20
-> +config DRM_ST7571_I2C
-> +	tristate "DRM support for Sitronix ST7571 display panels (I2C)"
-> +	depends on DRM && I2C
-> +	select DRM_GEM_SHMEM_HELPER
-
-DRM_GEM_SHMEM_HELPER depends on MMU and your driver is selecting it,
-so it should also depend on MMU, i.e: depends on DRM && MMU && I2C.
-
-
-
-> +#define drm_to_st7571(_dev) container_of(_dev, struct st7571_device, dev)
-> +
-
-I usually prefer these to be static inline functions instead of a
-macro. That way you get type checking and the end result should be
-basically the same.
-
-> +struct st7571_device {
-> +	struct drm_device dev;
-> +
-> +	struct drm_plane primary_plane;
-> +	struct drm_crtc crtc;
-> +	struct drm_encoder encoder;
-> +	struct drm_connector connector;
-> +
-> +	struct drm_display_mode mode;
-> +
-> +	struct i2c_client *client;
-> +	struct regmap *regmap;
-> +	bool ignore_nak;
-> +
-
-I know you mentioned that the chip sometimes nacks some I2C messages but
-maybe we want to better understand why that is the case before adding a
-flag like this?
-
-In particular, I see in the "6.4 MICROPROCESSOR INTERFACE" section of the
-datasheet the following note:
-
-"By connecting SDA_OUT to SDA_IN externally, the SDA line becomes fully
-I2C interface compatible. Separating acknowledge-output from serial data
-input is advantageous for chip-on-glass (COG) applications. In COG
-applications, the ITO resistance and the pull-up resistor will form a
-voltage  divider, which affects acknowledge-signal level. Larger ITO
-resistance will raise the acknowledged-signal level and system cannot
-recognize this level as a valid logic =E2=80=9C0=E2=80=9D level. By separat=
-ing SDA_IN from
-SDA_OUT, the IC can be used in a mode that ignores the acknowledge-bit.
-For applications which check acknowledge-bit, it is necessary to minimize
-the ITO resistance of the SDA_OUT trace to guarantee a valid low level."
-
-...
-
-> +static int st7571_set_pixel_format(struct st7571_device *st7571,
-> +				   u32 pixel_format)
-> +{
-> +	switch (pixel_format) {
-> +	case DRM_FORMAT_C1:
-> +		return st7571_set_color_mode(st7571, ST7571_COLOR_MODE_BLACKWHITE);
-> +	case DRM_FORMAT_C2:
-> +		return st7571_set_color_mode(st7571, ST7571_COLOR_MODE_GRAY);
-> +	default:
-> +		return -EINVAL;
-> +	}
-
-These should be DRM_FORMAT_R1 and DRM_FORMAT_R2 and not C{1,2}. The former
-is for displays have a single color (i.e: grey) while the latter is when a
-pixel can have different color, whose values are defined by a CLUT table.
-
-...
-
-> +
-> +static const uint32_t st7571_primary_plane_formats[] =3D {
-> +	DRM_FORMAT_C1,
-> +	DRM_FORMAT_C2,
-> +};
-> +
-
-I would add a DRM_FORMAT_XRGB8888 format. This will allow your display to
-be compatible with any user-space. Your st7571_fb_blit_rect() can then do
-a pixel format conversion from XRGB8888 to the native pixel format.
-
-...
-
-> +static void st7571_primary_plane_helper_atomic_update(struct drm_plane *=
-plane,
-> +						   struct drm_atomic_state *state)
-> +{
-> +	struct drm_plane_state *old_plane_state =3D drm_atomic_get_old_plane_st=
-ate(state, plane);
-> +	struct drm_plane_state *plane_state =3D drm_atomic_get_new_plane_state(=
-state, plane);
-> +	struct drm_shadow_plane_state *shadow_plane_state =3D to_drm_shadow_pla=
-ne_state(plane_state);
-> +	struct drm_framebuffer *fb =3D plane_state->fb;
-> +	struct drm_atomic_helper_damage_iter iter;
-> +	struct drm_device *dev =3D plane->dev;
-> +	struct drm_rect damage;
-> +	struct st7571_device *st7571 =3D drm_to_st7571(plane->dev);
-> +	int ret, idx;
-> +
-> +	if (!fb)
-> +		return; /* no framebuffer; plane is disabled */
-> +
-> +	ret =3D drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE);
-> +	if (ret)
-> +		return;
-> +
-> +	if (!drm_dev_enter(dev, &idx))
-
-Should do a drm_gem_fb_end_cpu_access() here before returning.
-
-> +		return;
-> +
-> +	ret =3D st7571_set_pixel_format(st7571, fb->format->format);
-> +	if (ret) {
-> +		dev_err(dev->dev, "Failed to set pixel format: %d\n", ret);
-
-And here I think you need to do both drm_gem_fb_end_cpu_access() and drm_de=
-v_exit().
-
-> +		return;
-> +	}
-> +
-> +	drm_atomic_helper_damage_iter_init(&iter, old_plane_state, plane_state);
-> +	drm_atomic_for_each_plane_damage(&iter, &damage) {
-> +		st7571_fb_blit_rect(fb, &shadow_plane_state->data[0], &damage);
-> +	}
-> +
-> +	drm_dev_exit(idx);
-> +	drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
-> +}
-> +
-> +static const struct drm_plane_helper_funcs st7571_primary_plane_helper_f=
-uncs =3D {
-> +	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
-> +	.atomic_check =3D st7571_primary_plane_helper_atomic_check,
-> +	.atomic_update =3D st7571_primary_plane_helper_atomic_update,
-> +};
-
-Maybe you want an .atomic_disable callback that clears your screen ?
+diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
+index 0ded91f056f39..8feb22089cbbd 100644
+--- a/drivers/infiniband/core/device.c
++++ b/drivers/infiniband/core/device.c
+@@ -528,6 +528,8 @@ static struct class ib_class = {
+ static void rdma_init_coredev(struct ib_core_device *coredev,
+ 			      struct ib_device *dev, struct net *net)
+ {
++	bool is_full_dev = &dev->coredev == coredev;
++
+ 	/* This BUILD_BUG_ON is intended to catch layout change
+ 	 * of union of ib_core_device and device.
+ 	 * dev must be the first element as ib_core and providers
+@@ -539,6 +541,13 @@ static void rdma_init_coredev(struct ib_core_device *coredev,
+ 
+ 	coredev->dev.class = &ib_class;
+ 	coredev->dev.groups = dev->groups;
++
++	/*
++	 * Don't expose hw counters outside of the init namespace.
++	 */
++	if (!is_full_dev && dev->hw_stats_attr_index)
++		coredev->dev.groups[dev->hw_stats_attr_index] = NULL;
++
+ 	device_initialize(&coredev->dev);
+ 	coredev->owner = dev;
+ 	INIT_LIST_HEAD(&coredev->port_list);
+diff --git a/drivers/infiniband/core/sysfs.c b/drivers/infiniband/core/sysfs.c
+index 9f97bef021497..210092b9bf17d 100644
+--- a/drivers/infiniband/core/sysfs.c
++++ b/drivers/infiniband/core/sysfs.c
+@@ -988,6 +988,7 @@ int ib_setup_device_attrs(struct ib_device *ibdev)
+ 	for (i = 0; i != ARRAY_SIZE(ibdev->groups); i++)
+ 		if (!ibdev->groups[i]) {
+ 			ibdev->groups[i] = &data->group;
++			ibdev->hw_stats_attr_index = i;
+ 			return 0;
+ 		}
+ 	WARN(true, "struct ib_device->groups is too small");
+diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
+index 0ad104dae2539..43954bb0475a7 100644
+--- a/include/rdma/ib_verbs.h
++++ b/include/rdma/ib_verbs.h
+@@ -2750,6 +2750,7 @@ struct ib_device {
+ 	 * It is a NULL terminated array.
+ 	 */
+ 	const struct attribute_group	*groups[4];
++	u8				hw_stats_attr_index;
+ 
+ 	u64			     uverbs_cmd_mask;
+ 
+-- 
+2.39.5
 
 
-> +
-> +/*
-> + * CRTC
-> + */
-> +
-> +static const struct drm_crtc_helper_funcs st7571_crtc_helper_funcs =3D {
-> +	.atomic_check =3D drm_crtc_helper_atomic_check,
-
-I think you could have an .mode_valid callback that just checks the fixed m=
-ode.
-
-> +/*
-> + * Encoder
-> + */
-> +
-> +static const struct drm_encoder_funcs st7571_encoder_funcs =3D {
-> +	.destroy =3D drm_encoder_cleanup,
-> +};
-
-I recommend to have an encoder .atomic_{en,dis}able callbacks to init and t=
-urn=20
-off your display respectively. That way, the driver can call st7571_lcd_ini=
-t()
-only when the display is going to be used instead of at probe time.
-
-...
-
-> +static enum drm_mode_status st7571_mode_config_mode_valid(struct drm_dev=
-ice *dev,
-> +						       const struct drm_display_mode *mode)
-> +{
-> +	struct st7571_device *st7571 =3D drm_to_st7571(dev);
-> +
-> +	return drm_crtc_helper_mode_valid_fixed(&st7571->crtc, mode, &st7571->m=
-ode);
-> +}
-
-The fact that you are calling a drm_crtc_helper here is an indication that =
-probably
-this should be done in a struct drm_crtc_helper_funcs .mode_valid callback =
-instead,
-as mentioned above.
-
-> +
-> +static const struct drm_mode_config_funcs st7571_mode_config_funcs =3D {
-> +	.fb_create =3D drm_gem_fb_create_with_dirty,
-> +	.mode_valid =3D st7571_mode_config_mode_valid,
-
-And that way you could just drop this handler.
-
-> +	.atomic_check =3D drm_atomic_helper_check,
-> +	.atomic_commit =3D drm_atomic_helper_commit,
-> +};
-> +
-
-...
-
-> +static int st7571_probe(struct i2c_client *client)
-> +{
-> +	struct st7571_device *st7571;
-> +	struct drm_device *dev;
-> +	int ret;
-> +
-> +	st7571 =3D devm_drm_dev_alloc(&client->dev, &st7571_driver,
-> +				    struct st7571_device, dev);
-> +	if (IS_ERR(st7571))
-> +		return PTR_ERR(st7571);
-> +
-> +	dev =3D &st7571->dev;
-> +	st7571->client =3D client;
-> +	i2c_set_clientdata(client, st7571);
-> +
-> +	ret =3D st7571_parse_dt(st7571);
-> +	if (ret)
-> +		return ret;
-> +
-> +	st7571->mode =3D st7571_mode(st7571);
-> +
-> +	/*
-> +	 * The chip nacks some messages but still works as expected.
-> +	 * If the adapter does not support protocol mangling do
-> +	 * not set the I2C_M_IGNORE_NAK flag at the expense * of possible
-> +	 * cruft in the logs.
-> +	 */
-> +	if (i2c_check_functionality(client->adapter, I2C_FUNC_PROTOCOL_MANGLING=
-))
-> +		st7571->ignore_nak =3D true;
-> +
-> +	st7571->regmap =3D devm_regmap_init(&client->dev, &st7571_regmap_bus,
-> +					   client, &st7571_regmap_config);
-> +	if (IS_ERR(st7571->regmap)) {
-> +		dev_err(&client->dev, "Failed to initialize regmap\n");
-
-If you use dev_err_probe(), you can give some indication to users about
-what failed. It prints messages in the /sys/kernel/debug/devices_deferred
-debugfs entry.
-
-> +
-> +static void st7571_remove(struct i2c_client *client)
-> +{
-> +	struct st7571_device *st7571 =3D i2c_get_clientdata(client);
-> +
-> +	drm_dev_unplug(&st7571->dev);
-
-I think you are missing a drm_atomic_helper_shutdown() here.
-
-And also a struct i2c_driver .shutdown callback to call to
-drm_atomic_helper_shutdown() as well.
-
---=20
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
 
 
