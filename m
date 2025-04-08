@@ -1,129 +1,113 @@
-Return-Path: <linux-kernel+bounces-593949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8D6FA80A68
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:04:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69932A80A02
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:59:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 312164E5013
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:53:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 893957AA92C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A804A26E14E;
-	Tue,  8 Apr 2025 12:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3188A27D77A;
+	Tue,  8 Apr 2025 12:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mAvc2Ul/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSYr/wrJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141BE2236FC
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 12:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7866327CCF4;
+	Tue,  8 Apr 2025 12:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744116501; cv=none; b=SKd+twvRuPDV3Dqt1QO5hpViCPpZCA/qQgLBlpgWllbLK2aLsamPRvWTvXcMBHoocN1B13kiiyCI8q5UqQt0nKqmHy95UmNX1k4EiE98u/8UCE59j1ZJyryK+f9aVg/Xnu42xw5R6XkVPfKLhKTpHq5mMGfefq1JmaGbeVgyXGM=
+	t=1744116540; cv=none; b=AMWjlUrATpa46sgMwvposUImrsUsnWw/TlPL8gXMaEglQ4AqoaAvpnYzlS3kg7eg8Aq5Dgg1Jbxv52UKVlGw3KyScsD4pI2Ac1PkjSiFPX1SC/O6K0HZktPU0EHg/vPhca34mrepOscrRXdP5zgN9q8yCNZGtOKVx1X+BSa62Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744116501; c=relaxed/simple;
-	bh=n7hZWm4hEGMIXkiXJPZh2thJyrSuP0mwBU3cOm7mlxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NWM13tDIGOPxtu9YRkBvLEwg0Rgc3WtZaWQtCOhFcNL5UlH5I6XeSJmgPZl6arCo02IlFDvCAQ8rREVofSHskiejzUM6wWetANBzP0nxlE8qN8APizin0suRgBqeUqAftgTwBKNvVMF66/KVFDfVp0yLDTpnZARwLsyYWRnIwGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mAvc2Ul/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 785F6C4CEE7;
-	Tue,  8 Apr 2025 12:48:20 +0000 (UTC)
+	s=arc-20240116; t=1744116540; c=relaxed/simple;
+	bh=XM+AsilHgrZC+uXc6rG5q/tsLJlK4RumDEB5BXZsV+E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Y84ZdlV7YhVvLfnHkCaAmvMv5sedY/O+x4mFt8H5WJlmZJCX/nZ35w65QGu0lzTP9tQe3j+lt2MeLQF3p3E/NSRf3g4OJ3KysY/YHzOt5LeOXtHkwW0lI1aT+xPPrkVxpmiNXDimwpS/LROMD+McOVqztRQne582yU8gXGXdWP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSYr/wrJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4E56C4CEEB;
+	Tue,  8 Apr 2025 12:48:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744116500;
-	bh=n7hZWm4hEGMIXkiXJPZh2thJyrSuP0mwBU3cOm7mlxU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mAvc2Ul/TCE8NYjLMBHFVG9CNdLD8M05j7P7ZD/x9dMOlYiDZFy/NBAzSANciwbgl
-	 1RfxYb7XuLr6DyFoO7KW6EfKjC5SeGeWDaASw+0Soh9BYSgaIyE5FARzdBeGXGNfHE
-	 p081tgS4tRk4/RMj7lHbEBdGeSfCSFxw/0AMwjX0J71159EEfZQmwPlmJ0b7f6PQjj
-	 asUTpsbPkRdsfMJ9CSr/PbQSKeeGcZ0BzMJuUrkWw4Ha94qBUlfSrZ6Hm8O8u9C7Qw
-	 S1JJEcUmsN2oCakMjdKZoBdzVVqFS65HhPs+/jEHxjkt8mhQKslXZVVHphlZmbgUIi
-	 IZQwMGUNC69Qw==
-Date: Tue, 8 Apr 2025 14:48:18 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Imre Deak <imre.deak@intel.com>
-Cc: Anusha Srivatsa <asrivats@redhat.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Linus Walleij <linus.walleij@linaro.org>, Joel Selvaraj <jo@jsfamily.in>, 
-	Douglas Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/10] panel/auo-a030jtn01: Use refcounted allocation in
- place of devm_kzalloc()
-Message-ID: <20250408-curly-cyan-pig-06adb5@houat>
-References: <20250401-b4-drm-panel-mass-driver-convert-v1-0-cdd7615e1f93@redhat.com>
- <20250401-b4-drm-panel-mass-driver-convert-v1-4-cdd7615e1f93@redhat.com>
- <Z_P0A9lxWD0aAdjp@ideak-desk.fi.intel.com>
+	s=k20201202; t=1744116540;
+	bh=XM+AsilHgrZC+uXc6rG5q/tsLJlK4RumDEB5BXZsV+E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=SSYr/wrJ/Jt1PaZpmQELcaYxVQrlDy3wmtK2YtQGIVu8qL5WzzU9gn6hLK8SqhDkN
+	 Ep8ZuRCsTA2SgwaUT6698NoIELrOMdq8S7HVktYV2ORGXPzADWXaQA0w9anaOTQgB4
+	 rJF2mpoP/gKkuJRSsu/xsAV8AoYv9H2KqrGFROLN54IhHOc5uKwN0FLAB04BtJYf53
+	 Pfed0H6OpHjRLGBVfAny09Xxw0OzKj5u01shPllH1EBnXKsKcQ61U+yhIO9QJ4Pf8o
+	 crZhbRxdLNH5ocHFm+SX39TPINLbfrFccJm1bsL4J0xryb8yaQC1RGjaisRYPB/rhr
+	 y6+lGIbPH/mmg==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Steev Klimaszewski <steev@kali.org>, Johan Hovold <johan@kernel.org>, 
+ "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Peng Fan <peng.fan@nxp.com>
+In-Reply-To: <20250324-wcd-gpiod-v2-0-773f67ce3b56@nxp.com>
+References: <20250324-wcd-gpiod-v2-0-773f67ce3b56@nxp.com>
+Subject: Re: [PATCH v2 0/3] ASoC: codec: wcd93xx: Convert to GPIO
+ descriptors
+Message-Id: <174411653740.2091760.14768802253567122095.b4-ty@kernel.org>
+Date: Tue, 08 Apr 2025 13:48:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qh44r2bhb2petyd4"
-Content-Disposition: inline
-In-Reply-To: <Z_P0A9lxWD0aAdjp@ideak-desk.fi.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c25d1
 
+On Mon, 24 Mar 2025 19:51:26 +0800, Peng Fan (OSS) wrote:
+> Steev,
+>  I would appreciate if you have time to help test again.
+>  Hope V2 could work on your platform.
+> 
+> Linus,
+>  Since v2 is only a minor change to use GPIOD_OUT_LOW to replace
+>  GPIOD_ASIS when devm_gpio_get, so I still keep you R-b. Appreciate
+>  for your quick action.
+> 
+> [...]
 
---qh44r2bhb2petyd4
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 04/10] panel/auo-a030jtn01: Use refcounted allocation in
- place of devm_kzalloc()
-MIME-Version: 1.0
+Applied to
 
-On Mon, Apr 07, 2025 at 06:49:23PM +0300, Imre Deak wrote:
-> Hi,
->=20
-> On Tue, Apr 01, 2025 at 12:03:47PM -0400, Anusha Srivatsa wrote:
-> > Move to using the new API devm_drm_panel_alloc() to allocate the
-> > panel.
-> >=20
-> > Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
-> > ---
-> >  drivers/gpu/drm/panel/panel-auo-a030jtn01.c | 10 ++++------
-> >  1 file changed, 4 insertions(+), 6 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/panel/panel-auo-a030jtn01.c b/drivers/gpu/=
-drm/panel/panel-auo-a030jtn01.c
-> > index 77604d6a4e72c915c40575be0e47810c90b4ed71..83529b1c2bac2e29f41efaf=
-4028950214b056a95 100644
-> > --- a/drivers/gpu/drm/panel/panel-auo-a030jtn01.c
-> > +++ b/drivers/gpu/drm/panel/panel-auo-a030jtn01.c
-> > @@ -200,9 +200,10 @@ static int a030jtn01_probe(struct spi_device *spi)
-> > =20
-> >  	spi->mode |=3D SPI_MODE_3 | SPI_3WIRE;
-> > =20
-> > -	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> > -	if (!priv)
-> > -		return -ENOMEM;
-> > +	panel =3D devm_drm_panel_alloc(dev, struct a030jtn01, panel,
-> > +				     &a030jtn01_funcs, DRM_MODE_CONNECTOR_DPI);
->=20
-> This doesn't compile and (yet) it's pushed already to drm-tip. AFAIU
-> it's supposed to be
-> 	priv =3D devm_drm_panel_alloc(...);
->=20
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-I fixed it (and the other breakages) there:
-https://lore.kernel.org/dri-devel/20250408122008.1676235-1-mripard@kernel.o=
-rg/
+Thanks!
 
-Maxime
+[1/3] ASoC: codec: wcd939x: Convert to GPIO descriptors
+      commit: 4bba5d0e51647e06c83036b6c3f0ec65465adc68
+[2/3] ASoC: codec: wcd938x: Convert to GPIO descriptors
+      commit: c2d359b4acfbe847d3edcc25d3dc4e594daf9010
+[3/3] ASoC: codec: wcd9335: Convert to GPIO descriptors
+      commit: d5099bc1b56417733f4cccf10c61ee74dadd5562
 
---qh44r2bhb2petyd4
-Content-Type: application/pgp-signature; name="signature.asc"
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
------BEGIN PGP SIGNATURE-----
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ/UbEQAKCRDj7w1vZxhR
-xcZqAP966SLTnEp6eyDZo1BA/w8YWa7ZWe1NkYqO9UoGKy4WGgEA1D3m44KtlLp0
-AwfPo85Tk4acs0XXo8McgO6YcaJ1aw0=
-=FUeB
------END PGP SIGNATURE-----
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
---qh44r2bhb2petyd4--
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
