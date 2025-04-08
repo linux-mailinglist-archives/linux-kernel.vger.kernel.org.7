@@ -1,240 +1,123 @@
-Return-Path: <linux-kernel+bounces-593573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 168AAA7FAC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:03:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ACD7A7FAD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2FF917CB7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:01:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 662D4440304
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE19026B95D;
-	Tue,  8 Apr 2025 09:53:50 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E1A267B0F;
+	Tue,  8 Apr 2025 09:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MGVBmeb+"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F54926B953
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 09:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBDE2673A1;
+	Tue,  8 Apr 2025 09:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744106030; cv=none; b=oMpCtB536YlcaLxXCiMz4nRMECQgHbXvEQ71jkuInuTfiXdbeuuTWiihlViWNFovet3mHgaEbDaGKnvGZIslKnhZAnP0Ib9ZZIubx/ki4yUxfsmvGVMCl7F45zWAivOc4iyMr9HSXZYkyLhlrbPC8qwRi6Z6Jdg0Pdu9SfsFT+0=
+	t=1744106057; cv=none; b=klaYVH4/1aO+Bd7e3ENmM+YUmtvUTQ3Stj25mbLfdQhVGc1shOTpPNoKVIjeE1e9UBpZQOw+BMSdF6uRgiQ5635yUP2UEykNKrJ0dwwPT4Gnzk0FR+mnSYzLhPnI+S5/r+3h4IxWPc0e9ok9ze0Y33hIQJS1MS4R2HBZjB1ZJhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744106030; c=relaxed/simple;
-	bh=aseVWcwOiuOOsVnwmB7NyVV1Aaj07Tjl86/72NMeQIM=;
+	s=arc-20240116; t=1744106057; c=relaxed/simple;
+	bh=UBCLFcHxtnIpnZRQr/Y1J/L8GVcFDESfnxgo711iWPg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Cj8YPDPKeyjmyTOiXGdmc54UpdzsO/myD/V05512IqsHWCtomufJISAYhnC3WHNJFir4J0pMIsrsCLUyX4UTN4NBgeJ/7EXtcUseXr29Sw+wN5gX/Jp+4Y/Ev96kXjWv1s90ecvkWfs1iRIkcrzHnAcJsaC5OTASEbIZoRFfHG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4ZX1dC5bp2z27hZb;
-	Tue,  8 Apr 2025 17:54:23 +0800 (CST)
-Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7C8951401F3;
-	Tue,  8 Apr 2025 17:53:43 +0800 (CST)
-Received: from [10.67.120.170] (10.67.120.170) by
- kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 8 Apr 2025 17:53:42 +0800
-Message-ID: <485f47cc-669e-49b2-827e-bf5ab84b28e3@huawei.com>
-Date: Tue, 8 Apr 2025 17:53:42 +0800
+	 In-Reply-To:Content-Type; b=HyRYdVLFacPc0Sc52uJMyY/EZSgIv0Mmg1bvUP6nYcMvjyWvND2tI1i8UnThJHHc3GPbgvbHooB8fJehL2CVJPpI0Ax2flg01uZOefmXlE027R70c3O+IrxVhWOmiY/NlFp47k7+jbp+rDo/I/JO5TwyeHSGE4INg+wEI0UmSJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MGVBmeb+; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5382GSVo008168;
+	Tue, 8 Apr 2025 09:54:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fizUwIrV0cpC9lIVh+PAaW3sb5m6ocUw8SwBxQRgILw=; b=MGVBmeb+EXIfcpj1
+	xynl9HPyHwrSceRfoUWerSm++f6TRZsR4LAEbf6TSTShEpr6iIGpLUVyA9nQbKrp
+	o0lZV2ISCK6klHWEgDh9WN3tswcTI3ko2tdmiDpkgi8MlRBED13BGP1w6LkPgfBP
+	Sjm5eS0lbmgBE1oZQuSSnlC5dy8K3WQL1w9tluqmc4/wIoniFFRJckrNVd4svWAe
+	GytF4i+tKhmaxSxOqJmrjSd4nsZ8QyHIy62LTlOJ137EqdSzXIwrAStfYvOIsK6Z
+	O9umFDAMY1kNBpRxkkQJ1aqoPU/RUYOIndKNB43rva53pEpvWBxYYRWSf8L3yshy
+	OFXoXw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twtaybr2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Apr 2025 09:54:03 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5389s287004531
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 8 Apr 2025 09:54:02 GMT
+Received: from [10.216.15.222] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 8 Apr 2025
+ 02:53:58 -0700
+Message-ID: <7db95e73-18c9-cad2-5a5c-181db8e4aba7@quicinc.com>
+Date: Tue, 8 Apr 2025 15:23:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dma-mapping: benchmark: add support for dma_map_sg
-To: Barry Song <21cnbao@gmail.com>
-CC: <yangyicong@huawei.com>, <hch@lst.de>, <iommu@lists.linux.dev>,
-	<jonathan.cameron@huawei.com>, <prime.zeng@huawei.com>,
-	<fanghao11@huawei.com>, <linux-kernel@vger.kernel.org>
-References: <20250212022718.1995504-1-xiaqinxin@huawei.com>
- <20250212022718.1995504-3-xiaqinxin@huawei.com>
- <CAGsJ_4x7u00HVsa11cw_r6Mb3x0Ls-9tCg2HcUs=KvoVX=Vhvg@mail.gmail.com>
-From: Qinxin Xia <xiaqinxin@huawei.com>
-In-Reply-To: <CAGsJ_4x7u00HVsa11cw_r6Mb3x0Ls-9tCg2HcUs=KvoVX=Vhvg@mail.gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH ath-next v4 5/9] wifi: ath12k: fix firmware assert during
+ reboot with hardware grouping
+Content-Language: en-US
+To: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>,
+        Johannes Berg
+	<johannes@sipsolutions.net>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        "Karthikeyan
+ Periyasamy" <quic_periyasa@quicinc.com>,
+        Kalle Valo <kvalo@kernel.org>, Harshitha Prem <quic_hprem@quicinc.com>
+CC: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+        <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250408-fix_reboot_issues_with_hw_grouping-v4-0-95e7bf048595@oss.qualcomm.com>
+ <20250408-fix_reboot_issues_with_hw_grouping-v4-5-95e7bf048595@oss.qualcomm.com>
+From: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
+In-Reply-To: <20250408-fix_reboot_issues_with_hw_grouping-v4-5-95e7bf048595@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemj200003.china.huawei.com (7.202.194.15)
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: -mCQanm--1LXYyvVIPnt4M51_hSuKzqV
+X-Authority-Analysis: v=2.4 cv=LLlmQIW9 c=1 sm=1 tr=0 ts=67f4f23b cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=_MiNaS0KeY7sYsYnmAYA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: -mCQanm--1LXYyvVIPnt4M51_hSuKzqV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-08_03,2025-04-07_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ clxscore=1015 mlxlogscore=829 malwarescore=0 phishscore=0
+ lowpriorityscore=0 priorityscore=1501 mlxscore=0 spamscore=0 adultscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504080070
 
 
-在 2025/4/7 13:50, Barry Song 写道:
-> On Wed, Feb 12, 2025 at 3:27 PM Qinxin Xia <xiaqinxin@huawei.com> wrote:
->> Support for dma scatter-gather mapping and is intended for testing
->> mapping performance. It achieves by introducing the dma_sg_map_param
->> structure and related functions, which enable the implementation of
->> scatter-gather mapping preparation, mapping, and unmapping operations.
->> Additionally, the dma_map_benchmark_ops array is updated to include
->> operations for scatter-gather mapping. This commit aims to provide
->> a wider range of mapping performance test  to cater to different scenarios.
->>
->> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
->> ---
->>   include/linux/map_benchmark.h |   1 +
->>   kernel/dma/map_benchmark.c    | 102 ++++++++++++++++++++++++++++++++++
->>   2 files changed, 103 insertions(+)
->>
->> diff --git a/include/linux/map_benchmark.h b/include/linux/map_benchmark.h
->> index 054db02a03a7..a9c1a104ba4f 100644
->> --- a/include/linux/map_benchmark.h
->> +++ b/include/linux/map_benchmark.h
->> @@ -17,6 +17,7 @@
->>
->>   enum {
->>          DMA_MAP_SINGLE_MODE,
->> +       DMA_MAP_SG_MODE,
->>          DMA_MAP_MODE_MAX
->>   };
->>
->> diff --git a/kernel/dma/map_benchmark.c b/kernel/dma/map_benchmark.c
->> index d8ec0ce058d8..b5828eeb3db7 100644
->> --- a/kernel/dma/map_benchmark.c
->> +++ b/kernel/dma/map_benchmark.c
->> @@ -17,6 +17,7 @@
->>   #include <linux/module.h>
->>   #include <linux/pci.h>
->>   #include <linux/platform_device.h>
->> +#include <linux/scatterlist.h>
->>   #include <linux/slab.h>
->>   #include <linux/timekeeping.h>
->>
->> @@ -111,8 +112,109 @@ static struct map_benchmark_ops dma_single_map_benchmark_ops = {
->>          .do_unmap = dma_single_map_benchmark_do_unmap,
->>   };
->>
->> +struct dma_sg_map_param {
->> +       struct sg_table sgt;
->> +       struct device *dev;
->> +       void **buf;
->> +       u32 npages;
->> +       u32 dma_dir;
->> +};
->> +
->> +static void *dma_sg_map_benchmark_prepare(struct map_benchmark_data *map)
->> +{
->> +       struct scatterlist *sg;
->> +       int i = 0;
->> +
->> +       struct dma_sg_map_param *mparam __free(kfree) = kzalloc(sizeof(*mparam), GFP_KERNEL);
->> +       if (!mparam)
->> +               return NULL;
->> +
->> +       mparam->npages = map->bparam.granule;
-> Please add comments explaining that "granule" serves as  nents in SG
-> mode, and that each SG entry corresponds to a single page.
-> Otherwise, in single mode, the granule represents what we map and
-> unmap as a whole in a single operation.
-> I mean, make the code below clearly express what you are doing:
->
-> __u32 granule;  /* how many PAGE_SIZE will do map/unmap once a time */
->
-Okay, I'll add comments here in next version, thank you for your advice!
->> +       mparam->dma_dir = map->bparam.dma_dir;
->> +       mparam->dev = map->dev;
->> +       mparam->buf = kmalloc_array(mparam->npages, sizeof(*mparam->buf),
->> +                                   GFP_KERNEL);
->> +       if (!mparam->buf)
->> +               goto err1;
->> +
->> +       if (sg_alloc_table(&mparam->sgt, mparam->npages, GFP_KERNEL))
->> +               goto err2;
->> +
->> +       for_each_sgtable_sg(&mparam->sgt, sg, i) {
->> +               mparam->buf[i] = (void *)__get_free_page(GFP_KERNEL);
->> +               if (!mparam->buf[i])
->> +                       goto err3;
->> +
->> +               if (mparam->dma_dir != DMA_FROM_DEVICE)
->> +                       memset(mparam->buf[i], 0x66, PAGE_SIZE);
->> +
->> +               sg_set_buf(sg, mparam->buf[i], PAGE_SIZE);
->> +       }
->> +
->> +       return_ptr(mparam);
->> +
->> +err3:
->> +       while (i-- > 0)
->> +               free_page((unsigned long)mparam->buf[i]);
->> +
->> +       pr_err("dma_map_sg failed get free page on %s\n", dev_name(mparam->dev));
->> +       sg_free_table(&mparam->sgt);
->> +err2:
->> +       pr_err("dma_map_sg failed alloc sg table on %s\n", dev_name(mparam->dev));
->> +       kfree(mparam->buf);
->> +err1:
->> +       pr_err("dma_map_sg failed alloc mparam buf on %s\n", dev_name(mparam->dev));
->> +       return NULL;
-> I assume allocation failures will already trigger their own warnings, so your
-> pr_err isn't necessary. BTW, please replace err1, err2, err3 with something
-> meaningful.
-Okay, I'll delete these unnecessary prints and make the label changes 
-more meaningful in the next version.
->> +}
->> +
->> +static void dma_sg_map_benchmark_unprepare(void *arg)
->> +{
->> +       struct dma_sg_map_param *mparam = arg;
->> +       int i;
->> +
->> +       for (i = 0; i < mparam->npages; i++)
->> +               free_page((unsigned long)mparam->buf[i]);
->> +
->> +       sg_free_table(&mparam->sgt);
->> +
->> +       kfree(mparam->buf);
->> +       kfree(mparam);
->> +}
->> +
->> +static int dma_sg_map_benchmark_do_map(void *arg)
->> +{
->> +       struct dma_sg_map_param *mparam = arg;
->> +
->> +       int sg_mapped = dma_map_sg(mparam->dev, mparam->sgt.sgl,
->> +                                  mparam->npages, mparam->dma_dir);
->> +       if (!sg_mapped) {
->> +               pr_err("dma_map_sg failed on %s\n", dev_name(mparam->dev));
->> +               return -ENOMEM;
->> +       }
->> +
->> +       return 0;
->> +}
->> +
->> +static int dma_sg_map_benchmark_do_unmap(void *arg)
-> void
-Initially for future expansion considerations, but I think, as you 
-suggested, we could make it 'void' first.
->> +{
->> +       struct dma_sg_map_param *mparam = arg;
->> +
->> +       dma_unmap_sg(mparam->dev, mparam->sgt.sgl, mparam->npages,
->> +                    mparam->dma_dir);
->> +
->> +       return 0;
-> drop it.
-Okay, I'll fix it in the next version.
->> +}
->> +
->> +static struct map_benchmark_ops dma_sg_map_benchmark_ops = {
->> +       .prepare = dma_sg_map_benchmark_prepare,
->> +       .unprepare = dma_sg_map_benchmark_unprepare,
->> +       .do_map = dma_sg_map_benchmark_do_map,
->> +       .do_unmap = dma_sg_map_benchmark_do_unmap,
->> +};
->> +
->>   static struct map_benchmark_ops *dma_map_benchmark_ops[DMA_MAP_MODE_MAX] = {
->>          [DMA_MAP_SINGLE_MODE] = &dma_single_map_benchmark_ops,
->> +       [DMA_MAP_SG_MODE] = &dma_sg_map_benchmark_ops,
->>   };
->>
->>   static int map_benchmark_thread(void *data)
->> --
->> 2.33.0
->>
-> Thanks
-> Barry
+
+On 4/8/2025 11:36 AM, Aditya Kumar Singh wrote:
+> At present, during PCI shutdown, the power down is only executed for a
+> single device. However, when operating in a group, all devices need to be
+> powered down simultaneously. Failure to do so will result in a firmware
+> assertion.
+> 
+> Hence, introduce a new ath12k_pci_hw_group_power_down() and call it during
+> power down. This will ensure that all partner devices are properly powered
+> down.
+> 
+> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.3.1-00173-QCAHKSWPL_SILICONZ-1
+> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.4.1-00199-QCAHKSWPL_SILICONZ-1
+> Tested-on: WCN7850 hw2.0 PCI WLAN.HMT.1.0.c5-00481-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
+> 
+> Signed-off-by: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
+
+Reviewed-by: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
 
