@@ -1,206 +1,197 @@
-Return-Path: <linux-kernel+bounces-593410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB227A7F8F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:05:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E79CA7F8D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 104A03B5B5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:59:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6E68189ABED
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6284C263F29;
-	Tue,  8 Apr 2025 08:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACF5263F29;
+	Tue,  8 Apr 2025 09:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QGM+TbXw"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U8q4+MlU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AABB22222DA
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC75F10E5
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744102781; cv=none; b=YcZuMXO01hNHluT6SOV9cOGJOUHUv353YBO/S/ZBJ6dw7E/kb9CysOA7YajnpafK9+OI/1o4wwfKMBllIJSGFr8ggiDs7zvgg3nmNVNhIEpykhRHNNToWLybqmaX+jndZUMcfKV4bfjmzLtybvul6DlwAaDwZwkb7KRYSKx/Yi0=
+	t=1744102801; cv=none; b=jVoxnCysxp7Q5JQodhpVJ9SaoAPoLLEBTmYVCS17smWGSOgUkdBpgzQ5OEMtxlG30vEaPbIVrS/Mu3FzkhNbgcPRlCc7OzENXXYgoIUV+q1ZHUxKbRn013QlHY4TmL9V0eNt7HiLxfY9stsTVlZD8ziQthNL0XTmjUwlhnAzyKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744102781; c=relaxed/simple;
-	bh=9GDIO++JNka8swO6s9giWNyq+Tl4y4O2HaqtgHOSTTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZPRHgLeB6rcjknFVuGLNVmcyk57jHdHTwq7UUc52haLXo50R+Ns7PFD9+bXITnjMmu8NRDkCS9j+bunbIgSrfWXYm0H9MAAfEpVySajsEFFo1++b2/K6un+j+sQzO2lkDEG48Cfa0ZIlTmhy8Be61M9YlFNbI1wGpgPaKeaqAbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QGM+TbXw; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cfe574976so36370095e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 01:59:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744102778; x=1744707578; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UW5UEBIC2fvLgEE7aqaeWlqxDj1Xfvs+TW5wbP5DlME=;
-        b=QGM+TbXw+bR6uUsQcybe0GvK4OEq+mJDkqO+5Ni9DRRwNJRBxiRarSJm98/r1c+Oyk
-         huoM5j2TEl125nkPXNzqNTcJiFjpl2xdgEJAPlQWFsify52DeinV8xwDdn0ExNTSq6Qf
-         a2Wjt3MgDmIc+EJ0Jed0/oVZWLCLQpOMejd5A21k0cU5GRPIVCqosamuBgxhj380mAKB
-         e6WMmskCiU4u0zZA3s+1O4rYUODKZYuklbwVacTNXqlhXlJ1BPrwnTycbxUtMhzIDyb0
-         bfmipBpo3MecKD3iyk/BprJsw55U9n/FKXo6WtYX5B7EeQtGupvPWzbi6C1xM0YvEeuM
-         GTZQ==
+	s=arc-20240116; t=1744102801; c=relaxed/simple;
+	bh=Ki28MGQMpJR2ZEUS+C1u10ZmJH6ki1TB7uI9o3AZUbs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QwXvjHIrh3xumH62j3RrUhISw/q/oSTHutENiigoN7dtHfnaxYJmnr3sKV4rWX3VhxNAfipUM1c4rS23RHYv0S2sUAKPsJF+mMrCY+c2KITSOUPftVhKVApQLG04PHvPWM+KDepobjwKNYKYF/tCS4NafZR6p1ZFjW6rCx+BuIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U8q4+MlU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744102795;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kzAxoMhwq/N89veZ013n0uVF7FLZ6e8BzRGcpvH3RxE=;
+	b=U8q4+MlUthCnLN3Aps5b21fhvDE5WNC5j3tmxL2DvKKsfrdXQTYnniq0NRZjoUvLpzZJsO
+	MeL/06sQcoOQgTyiByHw+27N+dsSqKznBjeKqfBmtm/IHzFOpOoyUwZB87YHPaX5DIzGt0
+	YSOFk0HzSobdE9voTSxRVPpqok5zIP4=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-668-lD_e3zYgMmSy1kdGyYcjRw-1; Tue, 08 Apr 2025 04:59:54 -0400
+X-MC-Unique: lD_e3zYgMmSy1kdGyYcjRw-1
+X-Mimecast-MFC-AGG-ID: lD_e3zYgMmSy1kdGyYcjRw_1744102793
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43eed325461so14082725e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 01:59:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744102778; x=1744707578;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UW5UEBIC2fvLgEE7aqaeWlqxDj1Xfvs+TW5wbP5DlME=;
-        b=KfloE/Knopas3xQEGKttkBg4RlXjjZG11wr0JlKt7mPOuIPTfi+freRrLw0sl5oYUf
-         pz91RG+Bi9u65Z6hYhKPQtsTv0CPKazcBzL0Y15PXpVKtprgLzWPzPy1B3mVuADSJeJL
-         Etd6dJPvknr8slnDGInLLflvH+CcRNybNfp9StolZcWSbk5BWyLVhkYtW/fE84zMSqTK
-         n8UN6GTEilotPAyDyrPgnoK3kAw0ymDAG3ViV578ENIXpx5SQurf+uH/QJAK2JY2BSZb
-         1qCWslbQf8PB9qmRWvsyz4hN1T9/AlCH6SPAN3mU+D8eysFu4F4VEZuxH3wKWFlGFLfk
-         kNQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdFf2vtplOlewvL69L1poRHe9kSZZZlnbnjQAi8BxtXDMOxOihABOnAyDyslrLS9sT8EliAFeINk3gNFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZgwz9w1zlN71irP8+jk0srxvKV18oPO5Yl7/pepRlU0B3mRSJ
-	T/xVXI2+32edN23g4ATrKJbvwEqkD7UvE7YAjq5HEuzpFqYjbqEyaeV5GQJqIHU=
-X-Gm-Gg: ASbGnct55+zevvL/x5uYGivAub5lJM25vz0eGhaRSnINUl19kPL6xSXR7oDiW5pVlxk
-	Ly8mow34EUbKIiQC41oFRaxvEeXPJjfz/SPk9D80MC1+qubpkYtEjVdmYrY0JOY4QffRX5nV8KI
-	E3TsATmFwTMum6bl0oh8cep/EtGB0am8e0BA5PhPH+EBVFywGUYlH0fVCQrz+atVx1MOkBJaGjr
-	etqXXu4jVXB4aCZgBzwL9P2v0jaBySRbvHZHE631HLyv4bZFVDVXr4D0xDLek2x9Uc8BKQHlGTY
-	bwIQpXh8eu6AtI13p8zN+h3rj44il2d42XLeyMzUZvFGNv5KxT3sQ7I=
-X-Google-Smtp-Source: AGHT+IHEfD0DEw0nhPMBkT/vzIF8/zOBJoBPD+hGdZb0j1wbN2G+PRbTcfFssvpUFnD8uApO8cUzMQ==
-X-Received: by 2002:a05:600c:1e23:b0:43b:c95f:fd9 with SMTP id 5b1f17b1804b1-43ecf81c304mr140398715e9.5.1744102777838;
-        Tue, 08 Apr 2025 01:59:37 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:ef30:5d6b:d01c:7ee:e98f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec169b8a3sm156634925e9.19.2025.04.08.01.59.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 01:59:36 -0700 (PDT)
-Date: Tue, 8 Apr 2025 10:59:31 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Sultan Alsawaf <sultan@kerneltoast.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@redhat.com>,
+        d=1e100.net; s=20230601; t=1744102793; x=1744707593;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kzAxoMhwq/N89veZ013n0uVF7FLZ6e8BzRGcpvH3RxE=;
+        b=u1MNB2VrJ1qzNkk9nqHduIyfBlIrVmRtP74E0nxx55dzRnWK5ZTazEVzeW/urNyK12
+         14QKci3eG8KuXZArDd6Fsnlg0vWs+7V/EH1pU5uG0q+vJrOL0SQTRXUQvN3uZ1u5Cr4N
+         iiGuVboFgZ+bD5uty9kGTEkyyd4EPGP5ebZ8NtBBrNVUFzvtY+0jzqHj2d18oq/sNpIc
+         SjclIWF60ZJpnXJPK1kmJCIU2kVtwspiBj0Bj5hZQdKQcXW5LTn9vd55UoxdcsSjE0Fv
+         lBiQZfozE5thlZtGpBddHtsPrwzz13kQ7G5okKjTEiTGYqZsudLmx+agFLW8+i+lfelA
+         X1Hw==
+X-Gm-Message-State: AOJu0YwIWBBlTTCMr7F3a0FYGjhNuPjqlLQepDMrdetX+/UVIjfSS1AM
+	yQ3mVVf0jUDFkcZSiobIy09tEN8DD42Ay1hwjoFSKaDp7Ggw0vFPhkPiWQqN+G1usPeBh1FkULz
+	vf3Tc0RDoFgmvokOaDRR2iJBQ7MfnxEBSwidaeqve/gzMxCaouPErPJtK/Ms/fV8TnCF8WQrWSU
+	D0zRWlL50q3e6STHWrt2oSgnxkAbQspxgaJCN/wSiZDTSd
+X-Gm-Gg: ASbGncuO1qtHe7IjStyUwocHbDMwsGC5Ffqya3IzRtGwIbM2DhMGyi4rQznGa8cvlng
+	hiA/hfcyoKHnLwDIoA14xtXoTOHs96HycGu40Xoqom7QNBQ52OkGqtRxFnvw5ACfP/C2xR1iQrc
+	SJiQLZUPsWkE/g6fWaeEcV7sTW3eVE5LLlCJRvRVrViHiFxGKgz3m1YTfIYMPQJT37Z+ttpaeAa
+	60YNSyI6aByImRH03DQgZZaiN+/JOg+Xy78TrboIwwYWRkRDFp5CvjEKCJZQJoICA0ejoifFov/
+	gtyKcUBQm5Rv9nKvdEGeCvHT2WgevswuveS2NFjX8C3si80qPEy1q+8L7/8dwT5RupDTMxIgYr4
+	=
+X-Received: by 2002:a05:600c:1e13:b0:43d:abd:ad0e with SMTP id 5b1f17b1804b1-43ecf8e72d6mr154625225e9.18.1744102793281;
+        Tue, 08 Apr 2025 01:59:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFjj/RAjewnBNlRpflZh1xeihRfMokyOF5C4YTVYtEpSXXC3z9/o8ynALd8vnC+YZDVLSZdkg==
+X-Received: by 2002:a05:600c:1e13:b0:43d:abd:ad0e with SMTP id 5b1f17b1804b1-43ecf8e72d6mr154624875e9.18.1744102792863;
+        Tue, 08 Apr 2025 01:59:52 -0700 (PDT)
+Received: from localhost (p200300cbc7074f00a44a5ad6765a0635.dip0.t-ipconnect.de. [2003:cb:c707:4f00:a44a:5ad6:765a:635])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43ec342827fsm156132655e9.6.2025.04.08.01.59.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Apr 2025 01:59:52 -0700 (PDT)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	x86@kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	kernel test robot <lkp@intel.com>,
+	Dan Carpenter <error27@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
-	Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH 1/2] cpufreq: schedutil: Fix superfluous updates caused
- by need_freq_update
-Message-ID: <Z_Tlc6Qs-tYpxWYb@linaro.org>
-References: <20241212015734.41241-1-sultan@kerneltoast.com>
- <20241212015734.41241-2-sultan@kerneltoast.com>
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Rik van Riel <riel@surriel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH v2] x86/mm/pat: (un)track_pfn_copy() fix + doc improvements
+Date: Tue,  8 Apr 2025 10:59:50 +0200
+Message-ID: <20250408085950.976103-1-david@redhat.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241212015734.41241-2-sultan@kerneltoast.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+We got a late smatch warning and some additional review feedback.
 
-On Wed, Dec 11, 2024 at 05:57:32PM -0800, Sultan Alsawaf wrote:
-> From: "Sultan Alsawaf (unemployed)" <sultan@kerneltoast.com>
-> 
-> A redundant frequency update is only truly needed when there is a policy
-> limits change with a driver that specifies CPUFREQ_NEED_UPDATE_LIMITS.
-> 
-> In spite of that, drivers specifying CPUFREQ_NEED_UPDATE_LIMITS receive a
-> frequency update _all the time_, not just for a policy limits change,
-> because need_freq_update is never cleared.
-> 
-> Furthermore, ignore_dl_rate_limit()'s usage of need_freq_update also leads
-> to a redundant frequency update, regardless of whether or not the driver
-> specifies CPUFREQ_NEED_UPDATE_LIMITS, when the next chosen frequency is the
-> same as the current one.
-> 
-> Fix the superfluous updates by only honoring CPUFREQ_NEED_UPDATE_LIMITS
-> when there's a policy limits change, and clearing need_freq_update when a
-> requisite redundant update occurs.
-> 
-> This is neatly achieved by moving up the CPUFREQ_NEED_UPDATE_LIMITS test
-> and instead setting need_freq_update to false in sugov_update_next_freq().
-> 
-> Signed-off-by: Sultan Alsawaf (unemployed) <sultan@kerneltoast.com>
-> ---
->  kernel/sched/cpufreq_schedutil.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index 28c77904ea74..e51d5ce730be 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -83,7 +83,7 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
->  
->  	if (unlikely(sg_policy->limits_changed)) {
->  		sg_policy->limits_changed = false;
-> -		sg_policy->need_freq_update = true;
-> +		sg_policy->need_freq_update = cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS);
->  		return true;
->  	}
->  
-> @@ -96,7 +96,7 @@ static bool sugov_update_next_freq(struct sugov_policy *sg_policy, u64 time,
->  				   unsigned int next_freq)
->  {
->  	if (sg_policy->need_freq_update)
-> -		sg_policy->need_freq_update = cpufreq_driver_test_flags(CPUFREQ_NEED_UPDATE_LIMITS);
-> +		sg_policy->need_freq_update = false;
->  	else if (sg_policy->next_freq == next_freq)
->  		return false;
->  
+	smatch warnings:
+	mm/memory.c:1428 copy_page_range() error: uninitialized symbol 'pfn'.
 
-This patch breaks cpufreq throttling (e.g. for thermal cooling) for
-cpufreq drivers that:
+We actually use the pfn only when it is properly initialized; however,
+we may pass an uninitialized value to a function -- although it will not
+use it that likely still is UB in C.
 
- - Have policy->fast_switch_enabled/fast_switch_possible set, but
- - Do not have CPUFREQ_NEED_UPDATE_LIMITS flag set
+So let's just fix it by always initializing pfn in the caller of
+track_pfn_copy(), and improving the documentation of track_pfn_copy().
 
-There are several examples for this in the tree (search for
-"fast_switch_possible"). Of all those drivers, only intel-pstate and
-amd-pstate (sometimes) set CPUFREQ_NEED_UPDATE_LIMITS.
+While at it, clarify the doc of untrack_pfn_copy(), that internal checks
+make sure if we actually have to untrack anything.
 
-I can reliably reproduce this with scmi-cpufreq on a Qualcomm X1E
-laptop:
+Fixes: dc84bc2aba85 ("x86/mm/pat: Fix VM_PAT handling when fork() fails in copy_page_range()")
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <error27@gmail.com>
+Closes: https://lore.kernel.org/r/202503270941.IFILyNCX-lkp@intel.com/
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
 
- 1. I added some low temperature trip points in the device tree,
-    together with passive cpufreq cooling.
- 2. I run a CPU stress test on all CPUs and monitor the temperatures
-    and CPU frequencies.
+v1 -> v2:
+* Adjust the doc instead of initializing the pfn whenever returning 0
+* Decided to keep Lorenzo's RB :)
+* Retested
 
-When using "performance" governor instead of "schedutil", the CPU
-frequencies are being throttled as expected, as soon as the temperature
-trip points are reached.
+---
+ include/linux/pgtable.h | 9 ++++++---
+ mm/memory.c             | 2 +-
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
-When using "schedutil", the CPU frequencies stay at maximum as long as
-the stress test is running. No throttling happens, so the device heats
-up far beyond the defined temperature trip points. Throttling is applied
-only after stopping the stress test, since this forces schedutil to
-re-evaluate the CPU frequency.
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index e2b705c149454..b50447ef1c921 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -1511,8 +1511,9 @@ static inline void track_pfn_insert(struct vm_area_struct *vma, pgprot_t *prot,
+ 
+ /*
+  * track_pfn_copy is called when a VM_PFNMAP VMA is about to get the page
+- * tables copied during copy_page_range(). On success, stores the pfn to be
+- * passed to untrack_pfn_copy().
++ * tables copied during copy_page_range(). Will store the pfn to be
++ * passed to untrack_pfn_copy() only if there is something to be untracked.
++ * Callers should initialize the pfn to 0.
+  */
+ static inline int track_pfn_copy(struct vm_area_struct *dst_vma,
+ 		struct vm_area_struct *src_vma, unsigned long *pfn)
+@@ -1522,7 +1523,9 @@ static inline int track_pfn_copy(struct vm_area_struct *dst_vma,
+ 
+ /*
+  * untrack_pfn_copy is called when a VM_PFNMAP VMA failed to copy during
+- * copy_page_range(), but after track_pfn_copy() was already called.
++ * copy_page_range(), but after track_pfn_copy() was already called. Can
++ * be called even if track_pfn_copy() did not actually track anything:
++ * handled internally.
+  */
+ static inline void untrack_pfn_copy(struct vm_area_struct *dst_vma,
+ 		unsigned long pfn)
+diff --git a/mm/memory.c b/mm/memory.c
+index 2d8c265fc7d60..1a35165622e1c 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1361,7 +1361,7 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+ 	struct mm_struct *dst_mm = dst_vma->vm_mm;
+ 	struct mm_struct *src_mm = src_vma->vm_mm;
+ 	struct mmu_notifier_range range;
+-	unsigned long next, pfn;
++	unsigned long next, pfn = 0;
+ 	bool is_cow;
+ 	int ret;
+ 
+-- 
+2.48.1
 
-Reverting this commit fixes the problem.
-
-Looking at the code, I think the problem is that:
- - sg_policy->limits_changed does not result in
-   sg->policy->need_freq_update without CPUFREQ_NEED_UPDATE_LIMITS
-   anymore, and
- - Without sg->policy->need_freq_update, get_next_freq() skips calling
-   cpufreq_driver_resolve_freq(), which would normally apply the policy
-   min/max constraints.
-
-Do we need to set CPUFREQ_NEED_UPDATE_LIMITS for all cpufreq drivers
-that set policy->fast_switch_possible? If I'm reading the documentation
-comment correctly, that flag is just supposed to enable notifications if
-the policy min/max changes, but the resolved target frequency is still
-the same. This is not the case here, the target frequency needs to be
-throttled, but schedutil isn't applying the new limits.
-
-Any suggestions how to fix this? I'm happy to test patches with my
-setup.
-
-Thanks,
-Stephan
-
-#regzbot introduced: 8e461a1cb43d69d2fc8a97e61916dce571e6bb31
 
