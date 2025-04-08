@@ -1,147 +1,122 @@
-Return-Path: <linux-kernel+bounces-594546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78919A813A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:28:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F184A813A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A0291BA717B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:28:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D8983BD54C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9859323C8C6;
-	Tue,  8 Apr 2025 17:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A62823C8B7;
+	Tue,  8 Apr 2025 17:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EI1bZQMU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZhfLgLSv"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4493A184524;
-	Tue,  8 Apr 2025 17:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A440184524
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 17:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744133312; cv=none; b=Z0tnblbvhKBkJyOlHWUw7Yl6Olqkt0Vel7N5jndxsEw+B3vgTyEfHGy2Ow2rs6lifHjBSGM1CCv8IiSNiVgUGMSxidvK6f9IShlmQs0gQMs1Cc0bSk0QKy8Jbu33hReC3HnpkJgXUYbE2MkZpv38OJP980x8a0pk3qyFCJsR6UE=
+	t=1744133353; cv=none; b=C3B/KDSld6LtXHZU6H/ZS05YxRA8TIFWqAzgyaQJXQe5udvfRV0wjAeqty8QbTWRBPV9/gVnZWO5P9AfEa9MKJxZyWcbrluN/xm5pwAGjcJ+1H5Wl30hBErLQWk5ftWFhtc7G28QSaOsGaYH81t0qP0eKlYurcoPphm4fJWPiEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744133312; c=relaxed/simple;
-	bh=fz6QTVrKCEbd6TLWNsF7MajYM5VRHbweSs4B8IzrJxs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MvZhtedyvp8Q/rNe0iMcNaleg6Y01felDbihmgroZO+B4B8oiiPMjzKUiySmCqtHuzAdZj87exsnZuC4aBEDEJM+TxggdBsQ1Qz8OXOgXKve284Y9JThcng4+nnPxUQ5WB6+NNeTX0o95LUxSRdw2U/gtvE1bAVdanjuncEKK5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EI1bZQMU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 538Aq5lf019761;
-	Tue, 8 Apr 2025 17:28:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IQqsdiGIp4/zZj6Hngv1EioGyfu18AoQYCuyYN2tTuM=; b=EI1bZQMUUTUFZ4Tp
-	FW0sYyAdKt3MkjM+tRWj/1htAsWcZs8xGoCSIGA852ZPnv1vyBXXYAcoeMertdZH
-	70Sl9Osqt18qdUwhmh5QJoDNXixwRsZ4Fp0vgZPCLhhVAy2DkGZag/uK9sJm+KV0
-	cNQ1Gfp42b0zF5NOO6VXOdhwW/Zu4gjbgubzSRyJDgZYN2dLSuHhvMQwmW957aWx
-	OS5wJ3s31avDn38trZ4X/2D9xHOM/1Jdlb5vLp4JMxO6dHmtFqKhbqetIwIMTaxI
-	HbgCqU1t4BADDuP0PTqMxr8rDk+zZUP/lP5DyFATHC4dXA8rB1CKW1zTinnGn9Pg
-	vT8iZg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twg3gnbn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Apr 2025 17:28:14 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 538HSCjv016943
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 8 Apr 2025 17:28:12 GMT
-Received: from [10.71.109.90] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 8 Apr 2025
- 10:28:11 -0700
-Message-ID: <52905653-d78c-49b3-a329-a5ed797e149b@quicinc.com>
-Date: Tue, 8 Apr 2025 10:28:11 -0700
+	s=arc-20240116; t=1744133353; c=relaxed/simple;
+	bh=lZSH7ze5Ucuu3L2NzUpdtIu3DDLXDde8FZu8kseNke8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=thr+oVNzYRlCwrYu3PAcysXIRCP7vIBbHPjVbGe+uQgP1aa0qJCllF7JhnV7AGaj3dNnjBzMWadfHyYVxKiHgyOK9RXDC8A3NoumlOtrnnwG1Xe76oUBsn6hLZ6mde1fAtdKPWIMSrKI4bRfwXJ3p5edO7NIhlzRb2riYhH9b8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ZhfLgLSv; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0D32440E019F;
+	Tue,  8 Apr 2025 17:29:08 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id AKN7Xbr8ojdh; Tue,  8 Apr 2025 17:29:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1744133344; bh=5DWNQzK93XaTxdYYZik/4sGMel1QU30rQIabdejYDt0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZhfLgLSvZfAkNZewbI6VWwyi/jsytzekQwvy3+3fH3Qu6/tkJNrgt+aoFUArTJrna
+	 06TGbW1qmq6V1HvIepSLL2vSLxqgquWM20bhuY6Nj6Z5Yp7VxWOeNIpAtRb8pwVBdr
+	 tlnPhitm8G6pkyw4WoKkzF1afMv9iPn7k9FYwJeNki2N9b6YVGZCkWCePDmwrHUWjT
+	 6xLxA++089yOCRe/z4jS4GkvKUsmabtmgeibejW0YNElhB7oIMLUPbJ7zBGn3Xkg5y
+	 DW9ApsTZTIc+ZxtL20guSeS0eBDP/WXLCFyw74Gta2oLNM6oi1hJBSI1TPu+2Me73b
+	 ae7ynkSG/ataJ0eWipXilLsq5ViWJiyRFJ9sCK3hDVbIJJXknOhkW8wnhNZICJqu47
+	 /g967A1dA5hRBXPhZfcsapHL4WlMUwk9NKMs0SnzJIJJCmElh/+Q9bvm9c/Qz/A8yo
+	 Po1W1Bf1G7PxYWdB3rvpJRqsxvl4lCEevLuEdXYwSgvNC40Ve3nFWIrQ/Wmw6wiXhR
+	 RVhExO0Y1K0ldTyihuN1HtxT24KnEwwMbGCqaZ6XRZjifvO2IL/p8VKCCk95Xat35x
+	 klcoGd7sqhKti8NoQTbZ1P97TB4461uSHc8BfasUvhYWsnOkk48HJuZM5IKX4kS71M
+	 CeQytyS72v+Zx6232Wa2kmI0=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A813640E016D;
+	Tue,  8 Apr 2025 17:28:55 +0000 (UTC)
+Date: Tue, 8 Apr 2025 19:28:54 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Kevin Koster <lkml@ombertech.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Oerg866 <oerg866@googlemail.com>, linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86/microcode: Fix crashes on early 486 CPUs due to
+ usage of 'cpuid'.
+Message-ID: <20250408172854.GDZ_Vc1r4SuP2Ng_t_@fat_crate.local>
+References: <CANpbe9Wm3z8fy9HbgS8cuhoj0TREYEEkBipDuhgkWFvqX0UoVQ@mail.gmail.com>
+ <20250405130306.ca9822c1f27db119cc973603@ombertech.com>
+ <20250405093127.GAZ_D4b6NdyTS-UW1J@fat_crate.local>
+ <20250406164049.c0666bc18073e3b88c92d1f1@ombertech.com>
+ <20250406174633.2c581923c145687476191753@ombertech.com>
+ <20250406190253.GAZ_LP3RPZInWKcHN7@fat_crate.local>
+ <alpine.DEB.2.21.2504081107390.29566@angie.orcam.me.uk>
+ <20250408103137.GAZ_T7CfnHx7cgU7CA@fat_crate.local>
+ <alpine.DEB.2.21.2504081137400.29566@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 RESEND] drm/msm/dpu: reorder pointer operations after
- sanity checks to avoid NULL deref
-To: Qasim Ijaz <qasdev00@gmail.com>, <robdclark@gmail.com>,
-        <quic_abhinavk@quicinc.com>, <lumag@kernel.org>, <sean@poorly.run>,
-        <marijn.suijten@somainline.org>, <airlied@gmail.com>,
-        <simona@ffwll.ch>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>
-References: <20250408172223.10827-1-qasdev00@gmail.com>
-Content-Language: en-US
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20250408172223.10827-1-qasdev00@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ZMWtFsb8ZB8IyX3xCAGht53oErjV0LqK
-X-Proofpoint-ORIG-GUID: ZMWtFsb8ZB8IyX3xCAGht53oErjV0LqK
-X-Authority-Analysis: v=2.4 cv=I/9lRMgg c=1 sm=1 tr=0 ts=67f55cae cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=pGLkceISAAAA:8 a=COk6AnOGAAAA:8
- a=bi7Pn_t20o9l9RWp8FkA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-08_07,2025-04-08_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- phishscore=0 suspectscore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0
- clxscore=1011 malwarescore=0 adultscore=0 priorityscore=1501
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504080120
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.2504081137400.29566@angie.orcam.me.uk>
 
+On Tue, Apr 08, 2025 at 01:29:40PM +0100, Maciej W. Rozycki wrote:
+>  Hehe...  But seriously, consuming energy is not by itself wrong, energy 
+> is plentiful in the universe and gets used all the time whether humankind 
+> contributes to it or not.  The issue is using dirty sources.  And that's 
+> not exactly individual people's problem, it's not us personally who are to 
+> build clean power stations.  Which does happen already, so we're moving in 
+> the right direction.  I would be more concerned of the various industrial 
+> contributors to global warming whose purpose isn't electricity production.
 
-On 4/8/2025 10:22 AM, Qasim Ijaz wrote:
-> _dpu_encoder_trigger_start dereferences "struct dpu_encoder_phys *phys"
-> before the sanity checks which can lead to a NULL pointer dereference if
-> phys is NULL.
->   
-> Fix this by reordering the dereference after the sanity checks.
->   
-> Fixes: 8144d17a81d9 ("drm/msm/dpu: Skip trigger flush and start for CWB")
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+Oh, ofc. But we have to start somewhere. And 0.000...1% here and 0.000...1%
+there helps. Considering what hw options we have currently, there's absolutely
+0 need and sense to keep such machines alive.
 
+I'm even disassembling my old test boxes because they're simply not worth it.
+They almost never catch an issue and testing on them is simply waste of time
+and, well, energy.
 
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+>  Plus we still need heating anyway, at least in some places, so why not 
+> having one that runs Linux? ;)
 
+You can always get a big fat modern box - it heats even more but you'll
+actually get something done with it.
 
-> ---
-> v2:
-> - Moved Signed-off tag below Fixes tag
-> - Moved dpu_enc declaration to the top and initialisation below sanity checks
->
->   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> index 0eed93a4d056..0bd1f2bfaaff 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> @@ -1667,7 +1667,7 @@ static void _dpu_encoder_trigger_flush(struct drm_encoder *drm_enc,
->    */
->   static void _dpu_encoder_trigger_start(struct dpu_encoder_phys *phys)
->   {
-> -	struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(phys->parent);
-> +	struct dpu_encoder_virt *dpu_enc;
->   
->   	if (!phys) {
->   		DPU_ERROR("invalid argument(s)\n");
-> @@ -1678,6 +1678,8 @@ static void _dpu_encoder_trigger_start(struct dpu_encoder_phys *phys)
->   		DPU_ERROR("invalid pingpong hw\n");
->   		return;
->   	}
-> +
-> +	dpu_enc = to_dpu_encoder_virt(phys->parent);
->   
->   	if (phys->parent->encoder_type == DRM_MODE_ENCODER_VIRTUAL &&
->   	    dpu_enc->cwb_mask) {
+:-P
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
