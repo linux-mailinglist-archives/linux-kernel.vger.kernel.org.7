@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-595046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36858A81957
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 01:28:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D175A81958
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 01:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB1F64C7277
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:26:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 182C6188A2F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBB3256C9B;
-	Tue,  8 Apr 2025 23:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A68525742C;
+	Tue,  8 Apr 2025 23:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="MYohIUMb"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="AlHsQ34e"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EEE2566E4
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 23:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D94C256C7D
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 23:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744154744; cv=none; b=Jfg5D7uBE0W/c58XWXQbimq/IPI48mu7Ceqqg+kLp23ROUaLVbeXWu18eGK78ALgEGcn3hXShGxDtL3OnQHDoH28I6Ybl6Vxq42+O68Ee7Kt1XkktBlo9cN2dxUvSgJ8ohIxFWOXv9X7jiDKLvzDTfzE0z4hvfFujlUvK4NHiCI=
+	t=1744154746; cv=none; b=AUtw2c1OBCUmKo5bFNmAFlYQnip9H9OyEiXEo5uRH1CpCje5XXZlmE2o+LYuSEqeOWxO0VdQFAFjIV/REQ6cLIDKSWn/JymA7G1KhZn9hGesEPC+J3ar2Tpa4+wxKDKPfAlYBrhVla2mBXgxXgvMvZQroJd2IMXrbBVoCDBNRFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744154744; c=relaxed/simple;
-	bh=slT6m15jtOTNs/B2FLm4zfuo8rL09VaXielIzRuqlBA=;
+	s=arc-20240116; t=1744154746; c=relaxed/simple;
+	bh=FDFOGHV/HYl8cOAKTE3rLMEo4J1VwlRpC9YCdCus+Dw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AvbD81eYFn6pB+ij5wLaWvb4cDABIr1AKe2BffTkLFW+tEJmk3M8K275fY7nV/vp2snCDo5RfskL/XKxgSup8GXOsgsaX7IlWwKhzI2fOqnr7iCrc8SS5aVu35dAmFGrTvryTY5vNK9KW/6eEHK8l0RAVAHCrMHPX1fu1VuP21c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=MYohIUMb; arc=none smtp.client-ip=209.85.216.50
+	 MIME-Version; b=HNTXqznbeTbSnvTCc05RMPPXbl5pj+NKPtq8fzmA412vJrGQ9cG/zU3gwqsx8kVPySbpB9G5WtqT7n0jQla+pliUTHbhwWVFfG6zp26PQXCe4w+/E8orpGGIAqmJikD9xuAe3pelUqOXgftucL229PtRkmydkZMyP7+xV9rx4Ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=AlHsQ34e; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neverthere.org
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-306b78ae2d1so3253898a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 16:25:42 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-301d6cbbd5bso5999287a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 16:25:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=neverthere.org; s=google; t=1744154742; x=1744759542; darn=vger.kernel.org;
+        d=neverthere.org; s=google; t=1744154743; x=1744759543; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rvVUYF3W9WGYrgSJIX9w9iCFvoKwdGoVDieJ1Vz/Ohc=;
-        b=MYohIUMb+YAqHW3xWA7nC9CTDxC8Ujwx9o29W001rswHbke0NLce15nuMsCR8snVJR
-         jI+mYRbaPybtypTCvwMW+Ape01WNhcYt9QN5UXlqf0GfYsqE9L/+aFcThPvgGSnsa6Jt
-         lyoYMsuQP8nUe1tYRjOmwhjjX0HnjrnOZOTPBSz92ir1/rIMEhMUSj4tTkzgWuMGOjys
-         3T7pBGaTJkQDqHXx2UdXMEbVsGRwdMM02NbtoO5iqcC8hd/oXqUVoiGEmTWCyiDIQDmO
-         nlzinIekqfZcJDYger/YAYvp9RRLJ90nnOqEomzgbK1uwwFj+8s1idWbsMe7CIyfRVON
-         uyog==
+        bh=C1EdrhX762+aQZGDuYJmIH7iXzqOTw2NeFL65oZJFnw=;
+        b=AlHsQ34eD1aUs0LTAIW77yuzCvYkEIKfzw7jNbbHnIkgoKnKSXEpGamTuTwPinPJ+O
+         h1VBjff3bGGb2av3CxRKHq5Ksxmo3HFz7xWSmkZn0VayektQZxPciTCXteMzlT+1e1EM
+         Ky2OU353WmXXjqmSvOYNQyjuxx+OgczuDkAScSdgBzsDnCTaw6hbao7zDYCufChtZ1Xv
+         CQAMKdQYbsn2gtmOzT49szz3n31mVBZAs+Bk+C5R2AO2LXNfizWJ1AQvx0vHzvr6VilE
+         NZGYeANks4+yUnADgOPPeuMx08kCJ3OjVZSyrIstagdf5YNtFZ1ig6T+IrozBiB/PdIy
+         YsxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744154742; x=1744759542;
+        d=1e100.net; s=20230601; t=1744154743; x=1744759543;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rvVUYF3W9WGYrgSJIX9w9iCFvoKwdGoVDieJ1Vz/Ohc=;
-        b=o/VWl+rUawCu475n42X4zKLqRYk3s+ELTSY3j+z4MtkZV6uWFSn5CLqtPYSJDCRhBU
-         QjhpEa+Bh/aSFeklrHJrs1FyAOZJRn5qXTYUgdZ+WAf5XFVc6HqrNBuSzHOeflET70i4
-         g2u5o2gkPzksx4RyYqLP0eZDCmjHTKlX52Su+4gJ4J7VyUNrVDaTt/639HNOB4H4DLQL
-         vzyZY9ieKOQUA8jdVTSnz/s96lqKvW2ZTlxw22AdDJPjIUsZBxrz8756De0C88A57auq
-         H5CNzW4CuWeRjcFOISzXdBMLP0KrfQDOFy62hapfS/3PAATAtzFcpDAHqSpbBau0IvIO
-         A2Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFmXkjzvNkjlINeCqOMwdtUrA5VBhr22xxaqHmzLfq3MQVnbSysqel1mMhZNxe9R3O42cvp6hLbDkmmzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTbqOofCSjzWSy+chQ5F8Rb8relrchlbwX9Fpln6odBTAxtEx5
-	MLs6/g4mBnrKlZog/pVz3KeHrgh9qbs0dhKvmtSIMdzYyYQPZBOA/QCHeJgwVMz+TG/249tic1Q
-	=
-X-Gm-Gg: ASbGncvy2jkZlgnNrQzoNZ2a7MzmcXlw1rDgIQZNAl4PKECf9NJz2U83KvFABVRD4RN
-	O7kb2BaVlJGEF1eWDsuqtr52o+KLPL2paqQ1A9FN9mjcZl+A64fc/d5jAOMRYGzQb0dAgCaUMMx
-	W0zj7v1hB0TWrDfMaSlrmPQFmiawuoIVv1rwBIyyWmPXw+hJ1dKqYY/S3PopRBum4TNJ+OY5qG8
-	ZQ5QlWSRL6RhfMLCw6ttPTqjScd94J0tpFBfG6z9Ytadx37++FleMY6bxwF3zGXN8hW59GsrRNK
-	o4jeUFe5hnibjqSx1x7+6KUktmHiLGDd1lcVxGoBofWur1Hpm+rqgfm7UqgHptGVD/NXQqlHanV
-	SLs23WeRwQw==
-X-Google-Smtp-Source: AGHT+IFK5EKx7Wi3+ySQBoxihMaRXY/3fkiix5XLIBkPbmbfU+gZbTOS9D4JxSE8/AuYlWHhbuLCgQ==
-X-Received: by 2002:a17:90b:548b:b0:2fe:a742:51b0 with SMTP id 98e67ed59e1d1-306dd5789bbmr322739a91.31.1744154742199;
-        Tue, 08 Apr 2025 16:25:42 -0700 (PDT)
+        bh=C1EdrhX762+aQZGDuYJmIH7iXzqOTw2NeFL65oZJFnw=;
+        b=vuJYDmOZ1SNH1N5Xl2oFk20VIMNnj+iZGOD1JPsbnrIYSLudFYp8EhFFr5jMJxv+Zm
+         hac4VayUVMR7K5HYKVxnWokT+umLuInyZGHhjrVhhOmoTfE0AVzigsFITa3uUMBoSxP5
+         qSi2Yeyvx/wKvmKLmwgRCFXnUQbCioEUMQ6fxCWC2PWWNUN74tDK944tmaNKUqIF89dq
+         Srp0dBZjvWyUJ/U5ly9iMdlL5xsRX5wypV/UrxOLaBosB+XD+BWLhJd2ne7lQW86qpE4
+         AU/pBFV73dg/LYWhmk40bfLDKyHE2TCv62gENbMFq9NowSzYgkjwwDkdA7BxIgTxKt/J
+         EB6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWyayD/MCdDXImXg/NfKig8veD2u8Zr2EfmwWdrwh1Ffe7WMZ256sDsc7S5z6EVLxLfyDJTlAvuSh+VwKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVyA1w2zjLA3DKE18vG13N8kjhNva2+S2tHlKOycOmFAE9izaX
+	CebsE7j422HavJjfA5eWZzV1dihOj7Ywvja3esOHaOaRebbnrjuMGEBvXPfE8w==
+X-Gm-Gg: ASbGncvr2cqjyG+ZdYTjxkVbN5zLMEvk0SKrAkHgdw7PV7sjJhpEBpqGfEY2YtGHvc3
+	WcmNw4gWInCyaahu+hIkrBFLAZnJY7ooL+TEPB+ndMse3g4ergr7Jq0OoAf0S5mIvZLHTorSFPS
+	zW0sA58TevbEgWtSpcK5EKotPE41s12IHLov1lvERng4BAWK3btGRGF4KRzd4olMZxnBQ1lC4Ou
+	TdE6gtXubgKGNFk8CqNi9PILGJEH0vBFc1OD03Oxvf4Qz5ZJViC6RzjabAjZEN5asrMRxqyhDk7
+	dXbHUP5ljAOrBM1aruV8imTUPdqfQkGzvHTOGb92CB8DpjLvoqgxFV+GV4xrMMctzwGT04PGUtA
+	MCZkqE5ILGw==
+X-Google-Smtp-Source: AGHT+IFc204K2TYp6h8aLBiJH4lH8yVL10grX089yjIeuOukrTAmVCMbLIDpYKtPyQEQX7YkPnw65A==
+X-Received: by 2002:a17:90b:5208:b0:2ff:72f8:3708 with SMTP id 98e67ed59e1d1-306dd529a7amr447376a91.17.1744154743432;
+        Tue, 08 Apr 2025 16:25:43 -0700 (PDT)
 Received: from tiamat (c-69-181-214-135.hsd1.ca.comcast.net. [69.181.214.135])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2297866e3b2sm106860275ad.178.2025.04.08.16.25.41
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739d9804fb5sm11139056b3a.73.2025.04.08.16.25.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 16:25:41 -0700 (PDT)
+        Tue, 08 Apr 2025 16:25:43 -0700 (PDT)
 From: Michael Rubin <matchstick@neverthere.org>
 To: gregkh@linuxfoundation.org,
 	dpenkler@gmail.com
 Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Michael Rubin <matchstick@neverthere.org>
-Subject: [PATCH v1 3/7] staging: gpib: Removing gpib_event_t typedef
-Date: Tue,  8 Apr 2025 23:25:31 +0000
-Message-ID: <20250408232535.187528-4-matchstick@neverthere.org>
+Subject: [PATCH v1 4/7] staging: gpib: Removing typedef gpib_status_queue
+Date: Tue,  8 Apr 2025 23:25:32 +0000
+Message-ID: <20250408232535.187528-5-matchstick@neverthere.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250408232535.187528-1-matchstick@neverthere.org>
 References: <20250408232535.187528-1-matchstick@neverthere.org>
@@ -93,7 +92,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Removing gpib_event_t to adhere to Linux code style.
+Removing gpib_status_queue_t to adhere to Linux code style.
 
 Reported by checkpatch.pl
 
@@ -102,67 +101,248 @@ directly accessed should never be a typedef.
 
 Signed-off-by: Michael Rubin <matchstick@neverthere.org>
 ---
- drivers/staging/gpib/common/gpib_os.c     | 8 ++++----
- drivers/staging/gpib/include/gpib_types.h | 4 ++--
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/staging/gpib/common/gpib_os.c     | 34 +++++++++++------------
+ drivers/staging/gpib/common/iblib.c       |  6 ++--
+ drivers/staging/gpib/common/ibsys.h       | 11 +++++---
+ drivers/staging/gpib/include/gpib_proto.h |  2 +-
+ drivers/staging/gpib/include/gpib_types.h |  8 +++---
+ 5 files changed, 32 insertions(+), 29 deletions(-)
 
 diff --git a/drivers/staging/gpib/common/gpib_os.c b/drivers/staging/gpib/common/gpib_os.c
-index 3fb369caf17e..575d9b65f293 100644
+index 575d9b65f293..a2138c7f641c 100644
 --- a/drivers/staging/gpib/common/gpib_os.c
 +++ b/drivers/staging/gpib/common/gpib_os.c
-@@ -1848,7 +1848,7 @@ static int push_gpib_event_nolock(struct gpib_board *board, short event_type)
+@@ -172,7 +172,7 @@ EXPORT_SYMBOL(gpib_free_pseudo_irq);
+ 
+ static const unsigned int serial_timeout = 1000000;
+ 
+-unsigned int num_status_bytes(const gpib_status_queue_t *dev)
++unsigned int num_status_bytes(const struct gpib_status_queue *dev)
  {
- 	struct gpib_event_queue *queue = &board->event_queue;
- 	struct list_head *head = &queue->event_head;
--	gpib_event_t *event;
-+	struct gpib_event *event;
- 	static const unsigned int max_num_events = 1024;
+ 	if (!dev)
+ 		return 0;
+@@ -180,7 +180,7 @@ unsigned int num_status_bytes(const gpib_status_queue_t *dev)
+ }
+ 
+ // push status byte onto back of status byte fifo
+-int push_status_byte(struct gpib_board *board, gpib_status_queue_t *device, u8 poll_byte)
++int push_status_byte(struct gpib_board *board, struct gpib_status_queue *device, u8 poll_byte)
+ {
+ 	struct list_head *head = &device->status_bytes;
+ 	status_byte_t *status;
+@@ -214,7 +214,7 @@ int push_status_byte(struct gpib_board *board, gpib_status_queue_t *device, u8 p
+ }
+ 
+ // pop status byte from front of status byte fifo
+-int pop_status_byte(struct gpib_board *board, gpib_status_queue_t *device, u8 *poll_byte)
++int pop_status_byte(struct gpib_board *board, struct gpib_status_queue *device, u8 *poll_byte)
+ {
+ 	struct list_head *head = &device->status_bytes;
+ 	struct list_head *front = head->next;
+@@ -245,14 +245,14 @@ int pop_status_byte(struct gpib_board *board, gpib_status_queue_t *device, u8 *p
+ 	return 0;
+ }
+ 
+-gpib_status_queue_t *get_gpib_status_queue(struct gpib_board *board, unsigned int pad, int sad)
++struct gpib_status_queue *get_gpib_status_queue(struct gpib_board *board, unsigned int pad, int sad)
+ {
+-	gpib_status_queue_t *device;
++	struct gpib_status_queue *device;
+ 	struct list_head *list_ptr;
+ 	const struct list_head *head = &board->device_list;
+ 
+ 	for (list_ptr = head->next; list_ptr != head; list_ptr = list_ptr->next) {
+-		device = list_entry(list_ptr, gpib_status_queue_t, list);
++		device = list_entry(list_ptr, struct gpib_status_queue, list);
+ 		if (gpib_address_equal(device->pad, device->sad, pad, sad))
+ 			return device;
+ 	}
+@@ -263,7 +263,7 @@ gpib_status_queue_t *get_gpib_status_queue(struct gpib_board *board, unsigned in
+ int get_serial_poll_byte(struct gpib_board *board, unsigned int pad, int sad,
+ 			 unsigned int usec_timeout, uint8_t *poll_byte)
+ {
+-	gpib_status_queue_t *device;
++	struct gpib_status_queue *device;
+ 
+ 	device = get_gpib_status_queue(board, pad, sad);
+ 	if (num_status_bytes(device))
+@@ -429,7 +429,7 @@ int serial_poll_all(struct gpib_board *board, unsigned int usec_timeout)
+ 	int retval = 0;
+ 	struct list_head *cur;
+ 	const struct list_head *head = NULL;
+-	gpib_status_queue_t *device;
++	struct gpib_status_queue *device;
+ 	u8 result;
+ 	unsigned int num_bytes = 0;
+ 
+@@ -442,7 +442,7 @@ int serial_poll_all(struct gpib_board *board, unsigned int usec_timeout)
+ 		return retval;
+ 
+ 	for (cur = head->next; cur != head; cur = cur->next) {
+-		device = list_entry(cur, gpib_status_queue_t, list);
++		device = list_entry(cur, struct gpib_status_queue, list);
+ 		retval = read_serial_poll_byte(board,
+ 					       device->pad, device->sad, usec_timeout, &result);
+ 		if (retval < 0)
+@@ -1092,7 +1092,7 @@ static int write_ioctl(gpib_file_private_t *file_priv, struct gpib_board *board,
+ 
+ static int status_bytes_ioctl(struct gpib_board *board, unsigned long arg)
+ {
+-	gpib_status_queue_t *device;
++	struct gpib_status_queue *device;
+ 	spoll_bytes_ioctl_t cmd;
  	int retval;
  
-@@ -1861,7 +1861,7 @@ static int push_gpib_event_nolock(struct gpib_board *board, short event_type)
- 			return retval;
- 	}
- 
--	event = kmalloc(sizeof(gpib_event_t), GFP_ATOMIC);
-+	event = kmalloc(sizeof(struct gpib_event), GFP_ATOMIC);
- 	if (!event) {
- 		queue->dropped_event = 1;
- 		dev_err(board->gpib_dev, "failed to allocate memory for event\n");
-@@ -1905,7 +1905,7 @@ static int pop_gpib_event_nolock(struct gpib_board *board,
+@@ -1117,13 +1117,13 @@ static int increment_open_device_count(struct gpib_board *board, struct list_hea
+ 				       unsigned int pad, int sad)
  {
- 	struct list_head *head = &queue->event_head;
- 	struct list_head *front = head->next;
--	gpib_event_t *event;
-+	struct gpib_event *event;
+ 	struct list_head *list_ptr;
+-	gpib_status_queue_t *device;
++	struct gpib_status_queue *device;
  
- 	if (num_gpib_events(queue) == 0) {
- 		*event_type = EVENT_NONE;
-@@ -1920,7 +1920,7 @@ static int pop_gpib_event_nolock(struct gpib_board *board,
- 		return -EPIPE;
+ 	/* first see if address has already been opened, then increment
+ 	 * open count
+ 	 */
+ 	for (list_ptr = head->next; list_ptr != head; list_ptr = list_ptr->next) {
+-		device = list_entry(list_ptr, gpib_status_queue_t, list);
++		device = list_entry(list_ptr, struct gpib_status_queue, list);
+ 		if (gpib_address_equal(device->pad, device->sad, pad, sad)) {
+ 			dev_dbg(board->gpib_dev, "incrementing open count for pad %i, sad %i\n",
+ 				device->pad, device->sad);
+@@ -1132,8 +1132,8 @@ static int increment_open_device_count(struct gpib_board *board, struct list_hea
+ 		}
  	}
  
--	event = list_entry(front, gpib_event_t, list);
-+	event = list_entry(front, struct gpib_event, list);
- 	*event_type = event->event_type;
+-	/* otherwise we need to allocate a new gpib_status_queue_t */
+-	device = kmalloc(sizeof(gpib_status_queue_t), GFP_ATOMIC);
++	/* otherwise we need to allocate a new struct gpib_status_queue */
++	device = kmalloc(sizeof(struct gpib_status_queue), GFP_ATOMIC);
+ 	if (!device)
+ 		return -ENOMEM;
+ 	init_gpib_status_queue(device);
+@@ -1151,11 +1151,11 @@ static int increment_open_device_count(struct gpib_board *board, struct list_hea
+ static int subtract_open_device_count(struct gpib_board *board, struct list_head *head,
+ 				      unsigned int pad, int sad, unsigned int count)
+ {
+-	gpib_status_queue_t *device;
++	struct gpib_status_queue *device;
+ 	struct list_head *list_ptr;
  
- 	list_del(front);
+ 	for (list_ptr = head->next; list_ptr != head; list_ptr = list_ptr->next) {
+-		device = list_entry(list_ptr, gpib_status_queue_t, list);
++		device = list_entry(list_ptr, struct gpib_status_queue, list);
+ 		if (gpib_address_equal(device->pad, device->sad, pad, sad)) {
+ 			dev_dbg(board->gpib_dev, "decrementing open count for pad %i, sad %i\n",
+ 				device->pad, device->sad);
+@@ -2147,7 +2147,7 @@ static void init_board_array(struct gpib_board *board_array, unsigned int length
+ 	}
+ }
+ 
+-void init_gpib_status_queue(gpib_status_queue_t *device)
++void init_gpib_status_queue(struct gpib_status_queue *device)
+ {
+ 	INIT_LIST_HEAD(&device->list);
+ 	INIT_LIST_HEAD(&device->status_bytes);
+diff --git a/drivers/staging/gpib/common/iblib.c b/drivers/staging/gpib/common/iblib.c
+index 6cca8a49e839..136be22f7eb2 100644
+--- a/drivers/staging/gpib/common/iblib.c
++++ b/drivers/staging/gpib/common/iblib.c
+@@ -506,7 +506,7 @@ int ibstatus(struct gpib_board *board)
+ 	return general_ibstatus(board, NULL, 0, 0, NULL);
+ }
+ 
+-int general_ibstatus(struct gpib_board *board, const gpib_status_queue_t *device,
++int general_ibstatus(struct gpib_board *board, const struct gpib_status_queue *device,
+ 		     int clear_mask, int set_mask, gpib_descriptor_t *desc)
+ {
+ 	int status = 0;
+@@ -573,7 +573,7 @@ static void init_wait_info(struct wait_info *winfo)
+ 	timer_setup_on_stack(&winfo->timer, wait_timeout, 0);
+ }
+ 
+-static int wait_satisfied(struct wait_info *winfo, gpib_status_queue_t *status_queue,
++static int wait_satisfied(struct wait_info *winfo, struct gpib_status_queue *status_queue,
+ 			  int wait_mask, int *status, gpib_descriptor_t *desc)
+ {
+ 	struct gpib_board *board = winfo->board;
+@@ -626,7 +626,7 @@ int ibwait(struct gpib_board *board, int wait_mask, int clear_mask, int set_mask
+ 	   int *status, unsigned long usec_timeout, gpib_descriptor_t *desc)
+ {
+ 	int retval = 0;
+-	gpib_status_queue_t *status_queue;
++	struct gpib_status_queue *status_queue;
+ 	struct wait_info winfo;
+ 
+ 	if (desc->is_board)
+diff --git a/drivers/staging/gpib/common/ibsys.h b/drivers/staging/gpib/common/ibsys.h
+index 19960af809c2..a9fdf95cfa96 100644
+--- a/drivers/staging/gpib/common/ibsys.h
++++ b/drivers/staging/gpib/common/ibsys.h
+@@ -22,10 +22,13 @@
+ int gpib_allocate_board(struct gpib_board *board);
+ void gpib_deallocate_board(struct gpib_board *board);
+ 
+-unsigned int num_status_bytes(const gpib_status_queue_t *dev);
+-int push_status_byte(struct gpib_board *board, gpib_status_queue_t *device, uint8_t poll_byte);
+-int pop_status_byte(struct gpib_board *board, gpib_status_queue_t *device, uint8_t *poll_byte);
+-gpib_status_queue_t *get_gpib_status_queue(struct gpib_board *board, unsigned int pad, int sad);
++unsigned int num_status_bytes(const struct gpib_status_queue *dev);
++int push_status_byte(struct gpib_board *board, struct gpib_status_queue *device,
++		     uint8_t poll_byte);
++int pop_status_byte(struct gpib_board *board, struct gpib_status_queue *device,
++		    uint8_t *poll_byte);
++struct gpib_status_queue *get_gpib_status_queue(struct gpib_board *board,
++						unsigned int pad, int sad);
+ int get_serial_poll_byte(struct gpib_board *board, unsigned int pad, int sad,
+ 			 unsigned int usec_timeout, uint8_t *poll_byte);
+ int autopoll_all_devices(struct gpib_board *board);
+diff --git a/drivers/staging/gpib/include/gpib_proto.h b/drivers/staging/gpib/include/gpib_proto.h
+index 2c7dfc02f517..80046218c834 100644
+--- a/drivers/staging/gpib/include/gpib_proto.h
++++ b/drivers/staging/gpib/include/gpib_proto.h
+@@ -48,7 +48,7 @@ int ibwait(struct gpib_board *board, int wait_mask, int clear_mask, int set_mask
+ 	   int *status, unsigned long usec_timeout, gpib_descriptor_t *desc);
+ int ibwrt(struct gpib_board *board, uint8_t *buf, size_t cnt, int send_eoi, size_t *bytes_written);
+ int ibstatus(struct gpib_board *board);
+-int general_ibstatus(struct gpib_board *board, const gpib_status_queue_t *device,
++int general_ibstatus(struct gpib_board *board, const struct gpib_status_queue *device,
+ 		     int clear_mask, int set_mask, gpib_descriptor_t *desc);
+ int io_timed_out(struct gpib_board *board);
+ int ibppc(struct gpib_board *board, uint8_t configuration);
 diff --git a/drivers/staging/gpib/include/gpib_types.h b/drivers/staging/gpib/include/gpib_types.h
-index 4be7cfce539f..8ec89290523b 100644
+index 8ec89290523b..f85091b1bdf0 100644
 --- a/drivers/staging/gpib/include/gpib_types.h
 +++ b/drivers/staging/gpib/include/gpib_types.h
-@@ -302,10 +302,10 @@ struct gpib_board {
+@@ -307,10 +307,10 @@ struct gpib_event {
+ 	short event_type;
  };
  
- /* element of event queue */
+-/* Each board has a list of gpib_status_queue_t to keep track of all open devices
++/* Each board has a list of gpib_status_queue to keep track of all open devices
+  * on the bus, so we know what address to poll when we get a service request
+  */
 -typedef struct {
-+struct gpib_event {
++struct gpib_status_queue {
+ 	/* list_head so we can make a linked list of devices */
  	struct list_head list;
- 	short event_type;
--} gpib_event_t;
+ 	unsigned int pad;	/* primary gpib address */
+@@ -322,14 +322,14 @@ typedef struct {
+ 	unsigned int reference_count;
+ 	/* flags loss of status byte error due to limit on size of queue */
+ 	unsigned dropped_byte : 1;
+-} gpib_status_queue_t;
 +};
  
- /* Each board has a list of gpib_status_queue_t to keep track of all open devices
-  * on the bus, so we know what address to poll when we get a service request
+ typedef struct {
+ 	struct list_head list;
+ 	u8 poll_byte;
+ } status_byte_t;
+ 
+-void init_gpib_status_queue(gpib_status_queue_t *device);
++void init_gpib_status_queue(struct gpib_status_queue *device);
+ 
+ /* Used to store device-descriptor-specific information */
+ typedef struct {
 -- 
 2.43.0
 
