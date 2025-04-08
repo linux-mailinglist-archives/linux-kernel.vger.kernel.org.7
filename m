@@ -1,186 +1,221 @@
-Return-Path: <linux-kernel+bounces-594644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D861AA814AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:33:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D177AA814B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 877E21BA6791
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:33:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6D1D1BA64AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CFC2417F2;
-	Tue,  8 Apr 2025 18:32:22 +0000 (UTC)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880FF23ED69;
+	Tue,  8 Apr 2025 18:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="ZWxwmKjv"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2257C23ED72;
-	Tue,  8 Apr 2025 18:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1473A223714
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 18:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744137141; cv=none; b=LjuK8mH2HFcwMpzVqEXCV0gJFHHZftmR+ylfBh8QtKN8GKoBjN6++vaVPlcbSH7g9owBsZ4u/5kVBRuOGDIRGwx7wmim4zefh8MRswiboGrjAz9/dcTGGJlwSDQvGin9GKGChycAja45hUrvcenpKIYYpijSNrFu4su5M0Mgz8k=
+	t=1744137288; cv=none; b=lg2w3AeBKWGbdSZZo2i46TWU4C5mXnpy09TlpQR1RZPxUtAU0kzUNzF0KxxPlP2E5exOxs/CxJh/J/uxoksmT/pLnZWRYL0Pwb+nUKSF38G4n7Q9WeeOz8StSTA0wGGyx27aSo6FqsPmfvPYk43wiI0AEViZDAEjKRYNBCAOjok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744137141; c=relaxed/simple;
-	bh=rQ8hyR9oiHg2KsZ+lDVGyJ4BSv0od8Sa7HW79HCLVwc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UUoANgISQKhYD/6kCLNtUH2YelLDOpOF9eiOqUSrbpSvPgoHyhKWT3MyZ6pTDi5hr6a7gOn77Xyk5rqh6iyCnYnaVnX2+Toq52ldd4ISH53xXNJrDJTMCFoNEwWB5lPhgOjZZAlK6qdRrtGMkwNTaVmeI8AibHxGD4uf5+kj/pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac2a089fbbdso1054019566b.1;
-        Tue, 08 Apr 2025 11:32:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744137138; x=1744741938;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EhY4Z3oAJKd03SrzATbzNjahPXsmuoOiwYMLC9powFE=;
-        b=uWDCWFNkUL2umIk2xs/FUVxJFCrVTKlpBmerCEf2DJ01cLc91JDlgkn+ulfH1MxVII
-         Zo5/35IxM1sbmCCCmbbf3yT27vDJb33HNajal6r0TpZvhxQw+Ivq0wo/ZkQ/OgCbc0KP
-         5Q7kLX+QC1kjdPi/e24meosU+fLIXRLS1RCuUK3ZmFvdvSeiveVlJoDMk29wSCp8Bjb7
-         WKggaKIgbKUFuqSL+WzRvNnSuIF1K7ma3k+usWu6ztdA+WZ6UcJ/4MssHxwmFwftglo7
-         wAFVMtT53a728Sxz5sPcgzeWfWsrEQKpN2p2lj9Osf+SIqCIomjjaU2HuX9TFxw1p/HH
-         1G0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUfuoBFeHsByEHe61irlXs+yKSY2NCVR7kkG7SC9JFWs9uhPMu5huJPGv/aXLTqI9DpGEGyMKfCXnOO3h8=@vger.kernel.org, AJvYcCWNwgzHioHRng/5Omnnkw41wUnRtUPvQEnh/fLSWoF65m/YpRU2mJo3INuT7WVZk9c4MqRyD0Da@vger.kernel.org, AJvYcCX3N8Tidi80/WNtGz7k0fIUzi3DF+MaIJ7d24qrsve5ZpKHoQ24a5s0YBG+hHjN2aSUse4VPbWLao5N20noSXmhgXgA@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHQ6JzTq8+HQ7XhbITjC+is6KCbcvlb4AyzoBxxLd6r8yozklE
-	XBz7t444tAC7aq7281KxBRf4RGl4GCS8l0CYiGf5liwJaSXCupPJp81DnQ==
-X-Gm-Gg: ASbGnctA0Q6QF1R+Bofq2i6qE/4j7OWOfWu+lhQPABIDq7VhZizF9/1C9uj6KrVkHmf
-	swkn2arfs735KELg7X3IJ9g1732lwcaBwhlPKoi0iwZ4QGkoTFrplPfAAgQGq+MZ2JkdrzK5WFq
-	FE4DnV9uKkV38qDdUCGcU5+Ic5BDGVv5l/3A02SdFrp4q2Lt/HUQI6T2AD3MOMEbVl508oI5r4d
-	ZoLY1NvG7D/htxrzwYEWZTEBc/gR/Nie1X5nRb8gUOKaunWhji9YgUJWLNge64B+PZL+lqgItaC
-	p2vtr7X8P/LigyKMknI7aM4ZMz+vFtjaCoSj
-X-Google-Smtp-Source: AGHT+IHrblW6iKvZrDCZZnVsYdIASQfGNg4NSLAsnEK7X08Y/yKOXlfNqlhnRhQefJiJdtPrCRXYeg==
-X-Received: by 2002:a17:907:7f0b:b0:ac7:b8d3:df9c with SMTP id a640c23a62f3a-aca9bfb1039mr10321366b.1.1744137137777;
-        Tue, 08 Apr 2025 11:32:17 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:73::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7c01c2ce0sm964609866b.178.2025.04.08.11.32.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 11:32:17 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Tue, 08 Apr 2025 11:32:02 -0700
-Subject: [PATCH net-next v3 2/2] trace: tcp: Add tracepoint for
- tcp_sendmsg_locked()
+	s=arc-20240116; t=1744137288; c=relaxed/simple;
+	bh=xITh2gFEFUTwWXLn9kVObVg1+6mqJchucQoh/pEO96g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jbLgkn0n6fGHK5+wE1nuyjcXN6ybnJ0r/hM5k/dIzSYfpPnXV3L6JIt8AwdAY+mDB86zbgWppgcEsfHLS4MdRYonV4aEdSDHXHlQiQQvW6E6qpgqOG0GckjZl6vhwBjSrZY5JrlkmZs0Ji9IG6gxC/MpzWA5YElYIbkoNOa/L7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=ZWxwmKjv; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1744137279;
+ bh=jH8n5W9FtQCucqwn7kk9UM2XjlBjxjzZZRg7DH4uLLE=;
+ b=ZWxwmKjvnGdgDJsDs3tpYN1X8JwBMSPzXaANwJJKf6t43rw65BbgwBOoqigN51YuzzkdeoCA8
+ IbegCnOfC2OyljT7xX+jgEvMR3qMQUzSSBT3iN7Zz1m9NZUuO246fqTrmyiyzl+zorXqzGBwCK3
+ N8BI2r6GMwyXpYJJYB+NAZDdWHWEvNengICFG+mx0EoCmLpl9W4HH5qVhylOn4qBcK3yhk6EaGk
+ rtRn6Jow6s3TKA3OJcSnCNv72PB7sOxGF1sHG0fKZN6Nog2pbuWZjnxgs6rCt/LutbrPSj53DZ5
+ trCIvQyThVSzpGeKp0DyRfnuBzxAss6Nxb3Z62OG0pBw==
+X-Forward-Email-ID: 67f56c38b078e0f2662e7659
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 1.0.1
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <c73a32b0-cc58-4d07-a0e5-719e5434adc3@kwiboo.se>
+Date: Tue, 8 Apr 2025 20:34:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 6/6] arm64: dts: rockchip: Add rkvdec2 Video Decoder on
+ rk3588(s)
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Niklas Cassel <cassel@kernel.org>, Alexey Charkov <alchark@gmail.com>,
+ Dragan Simic <dsimic@manjaro.org>, Jianfeng Liu <liujianfeng1994@gmail.com>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Umang Jain <umang.jain@ideasonboard.com>,
+ Naushir Patuck <naush@raspberrypi.com>,
+ Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
+ Dmitry Perchanov <dmitry.perchanov@intel.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-staging@lists.linux.dev, kernel@collabora.com
+References: <20250325213303.826925-1-detlev.casanova@collabora.com>
+ <20250325213303.826925-7-detlev.casanova@collabora.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20250325213303.826925-7-detlev.casanova@collabora.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250408-tcpsendmsg-v3-2-208b87064c28@debian.org>
-References: <20250408-tcpsendmsg-v3-0-208b87064c28@debian.org>
-In-Reply-To: <20250408-tcpsendmsg-v3-0-208b87064c28@debian.org>
-To: David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
- Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>
-Cc: Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, Breno Leitao <leitao@debian.org>, 
- kernel-team@meta.com
-X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2727; i=leitao@debian.org;
- h=from:subject:message-id; bh=rQ8hyR9oiHg2KsZ+lDVGyJ4BSv0od8Sa7HW79HCLVwc=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBn9WutKMiFYZp21UHtkEtORTCNKpJYNNjokz0CC
- /DzeChP98OJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ/VrrQAKCRA1o5Of/Hh3
- bZgND/99YiH/dd+FiIPywZsKOzA3EDGLQCw5AjD8k5DllLCIZcdQVnPV3LKL2paa2RScNtSe977
- 0fN2CbyPteQhQ2UrO6Fu0aLIs2TXSutLumQj9h3sZBLCKmoZ280oeeGczwL/Hl99Jycy4Fxh8fS
- WZtFnVj+lO/Y8ZZrlmVqbA9aQG7wDk1BelsQXgKwoaYZ9t6efYvfzGRmEJUGD8axm0vAQqTI7kz
- zYFjzaR40LsHLDKncuynhgW1TNbvzJc2pKZ8h89dlgfpLBYcdFAeVFF2Vr+Dhvo7nmJW9DYWSqP
- J8T66A3kjny11xZcBHLqU2M1AT1brf9o7vNkVVBCkhgB41aWOqFsORU0EKPiU+Ie3ULIXk+qhd8
- 7tYI+AZ/wYlPJP0zCTmM43qWffjK/q+GRsnJXpVqlXJnMpMrzCI9mqi4BGe3PLKIhOfiTFP+YsQ
- sTacz+/FnhQyc1CjYzpr4/udXCRplhajAHwzac7DEW3DkJ2BV3VkrruntA+tAl+dXkz8h9bJ9pX
- 7MkNT7V7ZQPTa1Z+0IF958H2Xe3ZIaCDrWmCv+mU5aorGWxRJ1FpGZZ9qbERJkUyjOLa0WX9l/+
- yDUFa4BDWhkZiNKMMpvTWoWqVXr9leWNO5qVepIrVo4tK3VjPzAsbpwhF3he0KWXFqxlQdizAXp
- 5GIzx5PscHRZLHg==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-Add a tracepoint to monitor TCP send operations, enabling detailed
-visibility into TCP message transmission.
+Hi Detlev,
 
-Create a new tracepoint within the tcp_sendmsg_locked function,
-capturing traditional fields along with size_goal, which indicates the
-optimal data size for a single TCP segment. Additionally, a reference to
-the struct sock sk is passed, allowing direct access for BPF programs.
-The implementation is largely based on David's patch[1] and suggestions.
+On 2025-03-25 22:22, Detlev Casanova wrote:
+> Add the rkvdec2 Video Decoder to the RK3588s devicetree.
+> 
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 74 +++++++++++++++++++
+>  1 file changed, 74 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
+> index c3abdfb04f8f4..636c287b94e0a 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
+> @@ -1237,6 +1237,70 @@ vepu121_3_mmu: iommu@fdbac800 {
+>  		#iommu-cells = <0>;
+>  	};
+>  
+> +	vdec0: video-decoder@fdc38000 {
 
-Link: https://lore.kernel.org/all/70168c8f-bf52-4279-b4c4-be64527aa1ac@kernel.org/ [1]
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- include/trace/events/tcp.h | 24 ++++++++++++++++++++++++
- kernel/bpf/btf.c           |  1 +
- net/ipv4/tcp.c             |  2 ++
- 3 files changed, 27 insertions(+)
+All other Rockchip decoder/encoder nodes use the video-codec nodename,
+e.g. see the av1d related node below. Is there any special reason why
+this cannot follow that pattern for nodename consistency?
 
-diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
-index 1a40c41ff8c30..75d3d53a3832c 100644
---- a/include/trace/events/tcp.h
-+++ b/include/trace/events/tcp.h
-@@ -259,6 +259,30 @@ TRACE_EVENT(tcp_retransmit_synack,
- 		  __entry->saddr_v6, __entry->daddr_v6)
- );
- 
-+TRACE_EVENT(tcp_sendmsg_locked,
-+	TP_PROTO(const struct sock *sk, const struct msghdr *msg,
-+		 const struct sk_buff *skb, int size_goal),
-+
-+	TP_ARGS(sk, msg, skb, size_goal),
-+
-+	TP_STRUCT__entry(
-+		__field(const void *, skb_addr)
-+		__field(int, skb_len)
-+		__field(int, msg_left)
-+		__field(int, size_goal)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->skb_addr = skb;
-+		__entry->skb_len = skb ? skb->len : 0;
-+		__entry->msg_left = msg_data_left(msg);
-+		__entry->size_goal = size_goal;
-+	),
-+
-+	TP_printk("skb_addr %p skb_len %d msg_left %d size_goal %d",
-+		  __entry->skb_addr, __entry->skb_len, __entry->msg_left,
-+		  __entry->size_goal));
-+
- DECLARE_TRACE(tcp_cwnd_reduction_tp,
- 	TP_PROTO(const struct sock *sk, int newly_acked_sacked,
- 		 int newly_lost, int flag),
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index eacb701bc2be2..475a1317ad275 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -6518,6 +6518,7 @@ static const struct bpf_raw_tp_null_args raw_tp_null_args[] = {
- 	{ "xprt_put_cong", 0x10 },
- 	/* tcp */
- 	{ "tcp_send_reset", 0x11 },
-+	{ "tcp_sendmsg_locked", 0x100 },
- 	/* tegra_apb_dma */
- 	{ "tegra_dma_tx_status", 0x100 },
- 	/* timer_migration */
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index ea8de00f669d0..270ce2c8c2d54 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -1160,6 +1160,8 @@ int tcp_sendmsg_locked(struct sock *sk, struct msghdr *msg, size_t size)
- 		if (skb)
- 			copy = size_goal - skb->len;
- 
-+		trace_tcp_sendmsg_locked(sk, msg, skb, size_goal);
-+
- 		if (copy <= 0 || !tcp_skb_can_collapse_to(skb)) {
- 			bool first_skb;
- 
+This was something I tried to bring up in v3 [1], however only the reg
+range part was addressed in v4.
 
--- 
-2.47.1
+My main concern is that I want to send an updated U-Boot RK3582 support
+series [2][3] that will need to mark one or both of the two rkvdec cores
+as status=fail depending on a value in OTP. This is done in a DT fixup
+and uses the nodename for simplicity.
+
+[1] https://lore.kernel.org/r/311770c3-d3ea-4650-ae11-7c278e043d0a@kwiboo.se/
+[2] https://patchwork.ozlabs.org/patch/2020972/
+[3] https://github.com/Kwiboo/u-boot-rockchip/commit/0d748524aa67ce0debdb87c6e4a0df0f041b1618
+
+> +		compatible = "rockchip,rk3588-vdec";
+> +		reg = <0x0 0xfdc38000 0x0 0x100>,
+> +		      <0x0 0xfdc38100 0x0 0x500>,
+> +		      <0x0 0xfdc38600 0x0 0x100>;
+> +		reg-names = "link", "function", "cache";
+> +		interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>, <&cru CLK_RKVDEC0_CA>,
+> +			 <&cru CLK_RKVDEC0_CORE>, <&cru CLK_RKVDEC0_HEVC_CA>;
+> +		clock-names = "axi", "ahb", "cabac", "core", "hevc_cabac";
+> +		assigned-clocks = <&cru ACLK_RKVDEC0>, <&cru CLK_RKVDEC0_CORE>,
+> +				  <&cru CLK_RKVDEC0_CA>, <&cru CLK_RKVDEC0_HEVC_CA>;
+> +		assigned-clock-rates = <800000000>, <600000000>,
+> +				       <600000000>, <1000000000>;
+> +		iommus = <&vdec0_mmu>;
+> +		power-domains = <&power RK3588_PD_RKVDEC0>;
+> +		resets = <&cru SRST_A_RKVDEC0>, <&cru SRST_H_RKVDEC0>, <&cru SRST_RKVDEC0_CA>,
+> +			 <&cru SRST_RKVDEC0_CORE>, <&cru SRST_RKVDEC0_HEVC_CA>;
+> +		reset-names = "axi", "ahb", "cabac", "core", "hevc_cabac";
+> +		sram = <&vdec0_sram>;
+> +	};
+> +
+> +	vdec0_mmu: iommu@fdc38700 {
+> +		compatible = "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
+> +		reg = <0x0 0xfdc38700 0x0 0x40>, <0x0 0xfdc38740 0x0 0x40>;
+> +		interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>;
+> +		clock-names = "aclk", "iface";
+> +		power-domains = <&power RK3588_PD_RKVDEC0>;
+> +		#iommu-cells = <0>;
+> +	};
+> +
+> +	vdec1: video-decoder@fdc40000 {
+
+Same here :)
+
+Regards,
+Jonas
+
+> +		compatible = "rockchip,rk3588-vdec";
+> +		reg = <0x0 0xfdc40000 0x0 0x100>,
+> +		      <0x0 0xfdc40100 0x0 0x500>,
+> +		      <0x0 0xfdc40600 0x0 0x100>;
+> +		reg-names = "link", "function", "cache";
+> +		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks = <&cru ACLK_RKVDEC1>, <&cru HCLK_RKVDEC1>, <&cru CLK_RKVDEC1_CA>,
+> +			 <&cru CLK_RKVDEC1_CORE>, <&cru CLK_RKVDEC1_HEVC_CA>;
+> +		clock-names = "axi", "ahb", "cabac", "core", "hevc_cabac";
+> +		assigned-clocks = <&cru ACLK_RKVDEC1>, <&cru CLK_RKVDEC1_CORE>,
+> +				  <&cru CLK_RKVDEC1_CA>, <&cru CLK_RKVDEC1_HEVC_CA>;
+> +		assigned-clock-rates = <800000000>, <600000000>,
+> +				       <600000000>, <1000000000>;
+> +		iommus = <&vdec1_mmu>;
+> +		power-domains = <&power RK3588_PD_RKVDEC1>;
+> +		resets = <&cru SRST_A_RKVDEC1>, <&cru SRST_H_RKVDEC1>, <&cru SRST_RKVDEC1_CA>,
+> +			 <&cru SRST_RKVDEC1_CORE>, <&cru SRST_RKVDEC1_HEVC_CA>;
+> +		reset-names = "axi", "ahb", "cabac", "core", "hevc_cabac";
+> +		sram = <&vdec1_sram>;
+> +	};
+> +
+> +	vdec1_mmu: iommu@fdc40700 {
+> +		compatible = "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
+> +		reg = <0x0 0xfdc40700 0x0 0x40>, <0x0 0xfdc40740 0x0 0x40>;
+> +		interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>;
+> +		clock-names = "aclk", "iface";
+> +		power-domains = <&power RK3588_PD_RKVDEC0>;
+> +		#iommu-cells = <0>;
+> +	};
+> +
+>  	av1d: video-codec@fdc70000 {
+>  		compatible = "rockchip,rk3588-av1-vpu";
+>  		reg = <0x0 0xfdc70000 0x0 0x800>;
+> @@ -2883,6 +2947,16 @@ system_sram2: sram@ff001000 {
+>  		ranges = <0x0 0x0 0xff001000 0xef000>;
+>  		#address-cells = <1>;
+>  		#size-cells = <1>;
+> +
+> +		vdec0_sram: codec-sram@0 {
+> +			reg = <0x0 0x78000>;
+> +			pool;
+> +		};
+> +
+> +		vdec1_sram: codec-sram@78000 {
+> +			reg = <0x78000 0x77000>;
+> +			pool;
+> +		};
+>  	};
+>  
+>  	pinctrl: pinctrl {
 
 
