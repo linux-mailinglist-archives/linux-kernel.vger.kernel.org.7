@@ -1,158 +1,149 @@
-Return-Path: <linux-kernel+bounces-593205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D74CEA7F686
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:39:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4084A7F698
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:41:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C44B1896B2F
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8BFE3B6524
 	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69754264A69;
-	Tue,  8 Apr 2025 07:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CF22638B8;
+	Tue,  8 Apr 2025 07:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="DxPvCY+z"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OgBMdpby"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C30826460D
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 07:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AF6263F5B;
+	Tue,  8 Apr 2025 07:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744097798; cv=none; b=Q/STs8yT07INkf73MCJsRybq135qmmBB4cZh6PLLEs7xQ+zrDlXDFxLCHi59E2Mc7fY2Z0t3w7ch9FBpDO8PZzDWcTV55wCTFKl3zMOeSRYWqxqG1Y6nDynxop3qs/DAkZZEWeHWqlvtGoBZr0G8VS8nieEsRaK1b3c9EGpPTRk=
+	t=1744097807; cv=none; b=XADuK2aXP7c+VbGrhkjiXwfYxcycguLF6uU233pIB0CdCb3zTlera2OW1MaQzgzWJbOXE78qEmFpHit8PEzYBkb4SsRJiM2q+iV/YG10W5YN9SSJqSCAZY7DlvVe4mRbsyQCupXjRkplKqMvudsk75kK8xA9ilb6QdkBuzhIsHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744097798; c=relaxed/simple;
-	bh=05zU1Ccr9yOLMj2iUNDMrlJo9Ujt7vNHa1DQZ+YdkO4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nEHtgNaXDIUXQnfpcN68nAvoMpPQLrngFifdPSWEsz0vstnsvidfAzvhn5xS9RolbQOSmf9QIaFG/lhxiicFYvV2gBdHR9lG/TEXt0qqR/9YlMR2bbZHa6MMjnfNUmrcSVcaA2O783zH7N1ExkplwOpC0V0RerHsRd6yBymhNww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=DxPvCY+z; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so32949225e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 00:36:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744097795; x=1744702595; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kM096SgLF/xDM5ehediIIVzZvU9OMbppluTe8DVRK4k=;
-        b=DxPvCY+zw82SJfXyxD4GU16qqay1Rp68SQB3hNSfawfTNfyIPntS3hlb70HXYGpf/K
-         ykQJRNHjdQBeGVXH+ptB/k/wOnmqCR/9bSh9zEDFDI3u3cJ7mmCZ6G9WLOiiE30JFODl
-         8aY1Lxf61BgxGz7/j5gs0r3ALJ0F6HifnXCsVzdJ9OUNya9fxjP9DZvbck4AV5rHJTOn
-         oSCVf288LJWpF/x+vs1OALsvZTj/euVg8iS50abvnVUfHTDNVcIo0s9P08UlMb3MofiC
-         fITX1TRo8UNI5Z0iHM+6PFmxyrdc9YqN4xi97WvUsKZkkqwCsJs3a7azsyLYWrpZfSh9
-         0RPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744097795; x=1744702595;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kM096SgLF/xDM5ehediIIVzZvU9OMbppluTe8DVRK4k=;
-        b=p59fUXOx1dhVlkk32niFNJgD+clm4POWlxlNH+trhapVZVBE2oNAIn3I0IdudExSag
-         N2NT9GfCbYYDunzuui91uWZFHHffPHHOkp6eFlH11aoMkdyMMAMuBPttEHxS+4D7An9b
-         dovOLA8/+Kph9quQJ8CE4QiET6BuC70vEmmPyhqXA+LORWd5gUqEN8hOIY3oWOQPIgtz
-         UPw3Ddkc41pqMztxDGHdkynMASVRl80Dys53tAsgELHQXSCvlnn7CPIN7CDCU58qoAC0
-         NSzdhj1JrW9r9s3Fv7G6nGr4t1ACiHr/1VvuatMV3XJ58yBpgiFFiKnekQgTaSsoiLDQ
-         jXkQ==
-X-Gm-Message-State: AOJu0YzyB1yHyxACZ63jspQ1YteFrVlUgQvBzIMUi7sbgAGwbJ2QFMah
-	n5ZC+6Jtyx+aL7N0kXsUH39HzKrivxQFa2YM/F+QlgRAKTvfHGvlMobGOsNT0xg=
-X-Gm-Gg: ASbGnctu9ldid2ErMe/lx85KkDsdASLAQDbW1P2uZ908JnBTt2yn9Xt9QbPY8rqEB6F
-	t5JbPwX1+dXWLaiHS/JPAdYd6ZzbfWTJo4ED9hA0lgXcIRRaQpZMId9gAD4diBWrP0Q3Uoe5tzb
-	SFVKEWHyCjpiiA9WweIb+y7fCVdINZnl43+Xx6CgJYKLMRvH60BBqAGK1BlzyQELq/bpVfc0AH5
-	Tm9cXlootXfZzlW7Gcas07FIyET7bmlsrnvUWwtJPI7Ky9zk+qcOalFH2Cyrij1loOmjbRsEMIK
-	JB3Nz31ApXIrfyQL3nG+TQa7cDAFHjL8jmAeNQ==
-X-Google-Smtp-Source: AGHT+IGqAZNwvkkT66aidmtMFAuZ998J7V83w2RRytOg8jUYiK+eL0Qx5YxjhhMuBaNCr8BVDL2iRg==
-X-Received: by 2002:a05:600c:6a8e:b0:43d:174:2668 with SMTP id 5b1f17b1804b1-43f0e4169ecmr17353035e9.0.1744097795460;
-        Tue, 08 Apr 2025 00:36:35 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:2adf:eaae:f6ea:1a73])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c3020d980sm14287627f8f.61.2025.04.08.00.36.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 00:36:34 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 08 Apr 2025 09:36:31 +0200
-Subject: [PATCH 4/4] regulator: rpi-panel-attiny: use new GPIO line value
- setter callbacks
+	s=arc-20240116; t=1744097807; c=relaxed/simple;
+	bh=qStEiInZ6QdmTNPscErtkbrO8I7VqKWbI7Vow2/nZlQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hhj2LrOpKB8gY+gu9MtT5Oo57LRjGQ8gTopX77gTfYeU40QOf7+CAmPSLcu/sWhoIxoK1wuSHpHcnsgceIxV9ZPEIHgDXBHqLg4kuaQcLftGMVLVuD1GCedbASxsKDYK9lBnzmzRaZ/kc+jr0dVGsbF0Wb0mMJG/ETBtOj3Itys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OgBMdpby; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CAF22442DC;
+	Tue,  8 Apr 2025 07:36:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744097802;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vqZg4tEnT3kYdltFRHVi26EBjikLyKFcZ9ynT2bbpFA=;
+	b=OgBMdpby5E/xgaA7CMEHegfw3/FY7SMlp19DXobX0C1ETaxvLon+no8FD7xGrYEjZ5swQQ
+	49hh4s+R7bCt69pr+LWDRXSG6NpYxt+970wfH5eRm08tvXphPL3kyoRvkqmMrepAHdyJWg
+	Xf6YRqoXwwwhEBENueCkJ7SzDplsmgHLuO+FLaKfBjHHjqRVza4+sCGybwmpj2cFbo3jWV
+	elVezCkW4v3C3fNFwmbk0Q+m6DCsvQuIHW9zgo5jmryRC0KpJR+OPppCi6wk8XUt+vKKuL
+	im8Tcacxro+BEBEt/AnC2afndKXk2aGQ300/+CBiFiDYlWH83gPb9OEm+21INQ==
+Date: Tue, 8 Apr 2025 09:36:41 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Antoni Pokusinski <apokusinski01@gmail.com>, krzk+dt@kernel.org,
+	conor+dt@kernel.org, robh@kernel.org,
+	alexander.stein@ew.tq-group.com, linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/3] rtc: pcf85063: add support for RV8063
+Message-ID: <20250408073641fa372d2e@mail.local>
+References: <20250407193521.634807-1-apokusinski01@gmail.com>
+ <20250407193521.634807-3-apokusinski01@gmail.com>
+ <b42d082e-0568-4d2c-849c-a0b9ab762afd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250408-gpiochip-set-rv-regulator-v1-4-a18b6154b31a@linaro.org>
-References: <20250408-gpiochip-set-rv-regulator-v1-0-a18b6154b31a@linaro.org>
-In-Reply-To: <20250408-gpiochip-set-rv-regulator-v1-0-a18b6154b31a@linaro.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1508;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=tGoxqy++nkqQRXjGhwwXyr6+v2LydOiiKnIqwmxDNvw=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn9NH9ULUrSeUEZg78nVRcumLJX94S2Ad77IrOO
- t0AeKHmR1OJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ/TR/QAKCRARpy6gFHHX
- cjziD/wNd0mAvA0YYUakqeiIb5oRbeS/vBhhpnkYDPNtzT/+nGw7l1BWGaMFfhRiRas8BwKvLuv
- n99DWRXcxYdY7NGxE7+4mXz4URzMgHztn0FHb9G4Gedhl6tj3jo0bO8FBAXdfvDKsiXEfC5HFU2
- yVhAHKQAEABPwuFnhLIVKREohBTkLskPsoZUrT8Vq014TT1TYpAE5qn2N3q6JdTFS0z5qtVRzTE
- yFftUUlpiH2Dl36GbTtvoJoCWg6QRMxC52KT42nL+7FV2SufUr0ouTZvNBwIwMG15JJN1yYn0Mp
- YQzSBTiRpmzew/SR4xbvp6vxMsKQtMpyRKOEhRQCNqPNGMZygBftmKJCfZYVQapED+keq2eSf7d
- lMWMzDAia+/CYAOeyRH6d0L8yxNzSt/Hj0DBdLPlgQa7h+qMhBHkQapEEZTnVXkQRuTZpACA1ON
- WFhdXL5acJaqjYqMdg7wENAbQrXG7hXdfCOcgXtLPaMc/8R4goa/9ZK2y8Hbgo/5xk9hHM9Nu/W
- 8IPnlOH+52WE/ctkRfIYMqxynqm7pScYKX2YRO3I5urf08n7AfUYPzzdu2oHVkj1ROUxhMfLtE7
- Hbg+JkkNoGVEPtcpnMSUP7TiMrlBk/0V0Tg4kJxSA0Eiu/hVB4J+Hn2g9RSWF7lHpe3OyKgp8fz
- 2vWBI/S9O9bMJWw==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b42d082e-0568-4d2c-849c-a0b9ab762afd@kernel.org>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddvhedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtudenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeevudevhfdvheelgfeileefteduuefghefguefgkeeljeeufeeutedtffeuteeivdenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmegrugdtfeemgehflegtmeeffeejfhemfheffegunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmegrugdtfeemgehflegtmeeffeejfhemfheffegupdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeelpdhrtghpthhtohepkhhriihksehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrphhokhhushhinhhskhhitddusehgmhgrihhlrdgtohhmpdhrtghpthhtohepkhhriihkodgut
+ heskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrghnuggvrhdrshhtvghinhesvgifrdhtqhdqghhrohhuphdrtghomhdprhgtphhtthhopehlihhnuhigqdhrthgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 08/04/2025 08:14:36+0200, Krzysztof Kozlowski wrote:
+> On 07/04/2025 21:35, Antoni Pokusinski wrote:
+> > Microcrystal RV8063 is a real-time clock with SPI interface. Its
+> > functionality is very similar to the RV8263 rtc.
+> > 
+> > Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
+> > ---
+> >  drivers/rtc/Kconfig        | 21 ++++++-----
+> >  drivers/rtc/rtc-pcf85063.c | 74 +++++++++++++++++++++++++++++++++++++-
+> >  2 files changed, 85 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+> > index 838bdc138ffe..1b9be96faa13 100644
+> > --- a/drivers/rtc/Kconfig
+> > +++ b/drivers/rtc/Kconfig
+> > @@ -483,15 +483,6 @@ config RTC_DRV_PCF8523
+> >  	  This driver can also be built as a module. If so, the module
+> >  	  will be called rtc-pcf8523.
+> >  
+> > -config RTC_DRV_PCF85063
+> > -	tristate "NXP PCF85063"
+> > -	select REGMAP_I2C
+> > -	help
+> > -	  If you say yes here you get support for the PCF85063 RTC chip
+> > -
+> > -	  This driver can also be built as a module. If so, the module
+> > -	  will be called rtc-pcf85063.
+> > -
+> >  config RTC_DRV_PCF85363
+> >  	tristate "NXP PCF85363"
+> >  	select REGMAP_I2C
+> > @@ -971,6 +962,18 @@ config RTC_DRV_PCF2127
+> >  	  This driver can also be built as a module. If so, the module
+> >  	  will be called rtc-pcf2127.
+> >  
+> > +config RTC_DRV_PCF85063
+> 
+> Why? This breaks the order.
+> 
 
-struct gpio_chip now has callbacks for setting line values that return
-an integer, allowing to indicate failures. Convert the driver to using
-them.
+I don't think it does but you can't see it from the diff.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/regulator/rpi-panel-attiny-regulator.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/regulator/rpi-panel-attiny-regulator.c b/drivers/regulator/rpi-panel-attiny-regulator.c
-index 43a7c4737cb4..58dbf8bffa5d 100644
---- a/drivers/regulator/rpi-panel-attiny-regulator.c
-+++ b/drivers/regulator/rpi-panel-attiny-regulator.c
-@@ -205,7 +205,7 @@ static int attiny_gpio_get_direction(struct gpio_chip *gc, unsigned int off)
- 	return GPIO_LINE_DIRECTION_OUT;
- }
- 
--static void attiny_gpio_set(struct gpio_chip *gc, unsigned int off, int val)
-+static int attiny_gpio_set(struct gpio_chip *gc, unsigned int off, int val)
- {
- 	struct attiny_lcd *state = gpiochip_get_data(gc);
- 	u8 last_val;
-@@ -232,6 +232,8 @@ static void attiny_gpio_set(struct gpio_chip *gc, unsigned int off, int val)
- 
- 		msleep(100);
- 	}
-+
-+	return 0;
- }
- 
- static int attiny_i2c_read(struct i2c_client *client, u8 reg, unsigned int *buf)
-@@ -349,7 +351,7 @@ static int attiny_i2c_probe(struct i2c_client *i2c)
- 	state->gc.base = -1;
- 	state->gc.ngpio = NUM_GPIO;
- 
--	state->gc.set = attiny_gpio_set;
-+	state->gc.set_rv = attiny_gpio_set;
- 	state->gc.get_direction = attiny_gpio_get_direction;
- 	state->gc.can_sleep = true;
- 
+> > +	tristate "NXP PCF85063"
+> > +	depends on RTC_I2C_AND_SPI
+> > +	select REGMAP_I2C if I2C
+> > +	select REGMAP_SPI if SPI_MASTER
+> > +	help
+> > +	  If you say yes here you get support for the PCF85063 and RV8063
+> > +	  RTC chips.
+> > +
+> > +	  This driver can also be built as a module. If so, the module
+> > +	  will be called rtc-pcf85063.
+> > +
+> 
+> 
+> ...
+> 
+> >  module_exit(pcf85063_exit);
+> > @@ -740,3 +811,4 @@ module_exit(pcf85063_exit);
+> >  MODULE_AUTHOR("Søren Andersen <san@rosetechnology.dk>");
+> >  MODULE_DESCRIPTION("PCF85063 RTC driver");
+> >  MODULE_LICENSE("GPL");
+> > +MODULE_ALIAS("spi:rv8063");
+> 
+> Drop and use proper ID tables.
+> 
+> 
+> Best regards,
+> Krzysztof
 
 -- 
-2.45.2
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
