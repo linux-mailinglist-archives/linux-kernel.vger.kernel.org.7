@@ -1,458 +1,219 @@
-Return-Path: <linux-kernel+bounces-594461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49BB9A81205
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:20:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD91AA8124D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2AB17BB02D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:19:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 707A63B6A54
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D0522D4CD;
-	Tue,  8 Apr 2025 16:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECA222DF8E;
+	Tue,  8 Apr 2025 16:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xrrudmE0"
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uu/PVtL+"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEBF22CBE4
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 16:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C8E1991CB;
+	Tue,  8 Apr 2025 16:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744129226; cv=none; b=q2ac9ZkT8JYss53G4sn6dkBXzimX7dBS8NgQ/FNl5cMGQkkkPbjJW0pqpgEUq5fdLpGbv+0zevqhqrJHOAVHmwjhgW1k3Ezg0ij6lRg8VkTYpGPQGpuu5Fi3kzNjT321W0MJSovVIKFgkt5NtVcFUYTDl5tg32CVrEmqnsNgjqQ=
+	t=1744129399; cv=none; b=Q5XMwjkgYk6X84LWpNDv6nYFvDatAzjgfAdpyDQjoMfe1susZDRJFoCmezVa96oLvyuae4dyCt+S1zck0bOqfjItIRP3vhI3pAmdivTKd3DrMRJY4k2b1P66VmLHZEm1YbolREiQgU5xcoy4THHbXf8pEerMObEnE2dzOqGk8ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744129226; c=relaxed/simple;
-	bh=mbX5iwHkGGvS23LhN/nABDzgdlnt+gfQgAEQpklHqLw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RmbSdmGLJFDpc2L3AlLXNKONMEQb/JXc28PuaV2LAVOolYknvyrkJEYouk42yfM6E/rAf5GJUFzLX8xMvk4VfdlIySFh9jrpkr9m1zLPpA/ZI7KUB6jfIzhYS7z5YTPmDuIgNMLpb4uDV08JtJfrFj7gp5IO2y8dMc9d5X4lX8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xrrudmE0; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-6040465b9e2so2979393eaf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 09:20:22 -0700 (PDT)
+	s=arc-20240116; t=1744129399; c=relaxed/simple;
+	bh=RfS/RPt20xT1FRrwznKp2niS7/MlF89JXFfqnnkdXcQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wj2fRhUMQ90s0KUvk56IDXHmecyr3dBv7b5QmuGz5zSn0Rc4ATM3bD03XiYT66Dk3jmFk1NE9+E0H2zswQ6GN0cpy9vBsb2jUToeulEx2m6U1x3l2qY5V4qpTT3xELk9jnVWPFYfk2xMgY5MDjsXHLOnMBRBCCWNh19moLEhIjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uu/PVtL+; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30ddad694c1so60929781fa.2;
+        Tue, 08 Apr 2025 09:23:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744129221; x=1744734021; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1mEOOr1sWCtshA5MI12i9aWOP7q5n2OO6W/itEz8Mug=;
-        b=xrrudmE0cN8SH/PJz7jK4pJZqsXnVaISIxYuLHXMRVBxFiK4oajUPCb9NJVBGhmTPt
-         OsjCZlWafcpiMNVgqIloVJ4rrIqfL3gUI6FyEPnJ+PJbqFHENfzbxw1cYlh1+2qlsQAP
-         HM/iYPL8Tch4lBJZVAfZh4B9o7+4kQIecBH/BThRfZMixarSoluA9xy6zze/HyuVQA6X
-         9wQ/LMnCA+AIBiN5XfDnjhZ9J0kiXMxTWkgpCvsVTRpGIju2bPr+IALYkf81WkHyjQog
-         K2tjZ8jPmEvjEHoaqX6ZCkOHMJ5kuR04Cn78L4qupNfNJhjCNjMsFABwz0GNSNnAd51c
-         3ixw==
+        d=gmail.com; s=20230601; t=1744129396; x=1744734196; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cO/lkkmO99Xfr4W0KYk8tkPWToFmwEKNPxUMEMkq524=;
+        b=Uu/PVtL+YtgQNHRoT2lXkWKlwUn7oahLJL7QLlwUWBzMtbjHpGpnPG+1OBHmaGVUY2
+         ZhL7xzMGSRG95zW0ktP7TV7B7Y+JQCYlXtjz81Roh7zJblyhGt+jxQtLwn5iRtbO84Mn
+         JO5z0rimPfx/o9P9FJJqOsKy48r230LGpSOKuJ2hdIa2oDGRCQOxPyItA7xSveIhgTCG
+         7OZl8CuzOZ/Or1XfJSEDX6vKRMME6K8UEbAN5vJ7YJm2kCQsGBOL4gO8O0Y4CmSR0wTe
+         8WTIIswuQpUlbL4WB54/bfl4JCQNkEXB0JrGgmWoWBe9JlheUrhz/zP/THWgIUj0j1y9
+         qkzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744129221; x=1744734021;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1mEOOr1sWCtshA5MI12i9aWOP7q5n2OO6W/itEz8Mug=;
-        b=G4QK2RgMe7UbVshtLj7hey6f+XdD7+ElDtuxn3UcshqnOvfwaUGIs2XcaiQ5CVCynJ
-         XrV918v3MFQDbJUI0UM7T8oaxVnaZeavPXv2B86Q+A06SWtAm7xSI4LElxXGnVUJKgMw
-         hUQoS+kUtJT+B3SDOqbK1wcLyMLCOESfP4dnsrDBmJYqU6hcVAOVlrXvK7OU7M2r1yIN
-         ABUEY7V2W4pyaUZjK2dA6+hFWtI6px0A6f+fYh76kWSEqQIoBGgqyD1Vtsoyy0m74wti
-         9ULe2Aw5iDvJsok69cWb8XrPB9BWbbAY0HRbJh5q7yOLU8nKiauc1CajqHbvK2gUsApK
-         FYpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVN1PXfsPYRGZpDaVIv1CaDaRBmufewaSYRGbxOF8Mmg/slD4fwDBUgkmOo2OSx8E8PDBRifmaszKlY/fc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC5QhFIeCo2ESC8D/VRrOR7bVPBkbrV0oK3ipbweTB7Zh7ZcIw
-	/CB+Or4vWFPQRw8Zi4vSEo/dUYvAV1hA3Q1JWuN/g+PKAHuaOzWja85V45w3Pz6rE6Ge2sz1j9W
-	PonA=
-X-Gm-Gg: ASbGnctgHzcYWUL8XI6Ok25jVLpdDLSBi2s5ghFsR6SK8mpbtPDOTTXJlqUSjbdFr41
-	soK0uNMCk88e4xk0CyOV/KGiJysKS1/7HWa3MnbnVEU2uJ2fKy0kBD3jCzEiPd/3zK5uBHJs1ba
-	N63UUekxt1OmNdAkvN4yCAaPbTRBAoqG6XJ2Kk0sKQsZIpHS4KRygRi8BXYwA91anlkfuiKv5sw
-	76w56XT546vKDB/nmCGwb1qo19QGTkP1LzXKH0dW7J0puOi4Je2/8bNAE51ffzaPOBUP8GuLVFI
-	M2+dvSNx2cBTRcX1tSVLvDdPMIIyXzXvYDYwvfRpWSnIqE2dNKOo414yLY985i9aHzmmAT707Xh
-	9NHERIoXFEWQCCstW
-X-Google-Smtp-Source: AGHT+IEtIHNWf7PL8ZRpSL0EGx2wcIgJ6x//JY/kbHPt0Fscfk2vCj0zJavGPocpsXg/DSXd5ewYkQ==
-X-Received: by 2002:a05:6820:811a:b0:604:2ac:840a with SMTP id 006d021491bc7-604166fd0e3mr9060132eaf.6.1744129221451;
-        Tue, 08 Apr 2025 09:20:21 -0700 (PDT)
-Received: from [192.168.0.113] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6044f951c3bsm512743eaf.29.2025.04.08.09.20.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Apr 2025 09:20:20 -0700 (PDT)
-Message-ID: <6779558a-3ebd-4fab-a0fb-95f2936b726c@baylibre.com>
-Date: Tue, 8 Apr 2025 11:20:19 -0500
+        d=1e100.net; s=20230601; t=1744129396; x=1744734196;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cO/lkkmO99Xfr4W0KYk8tkPWToFmwEKNPxUMEMkq524=;
+        b=CzYjo5yUPR4pw71oCFj7W1Bjc51x992RG9HbzQN7f76O/9nyxOLJigOGoD9rlDvwqN
+         eWkbTK+JxvY+wO6oBlJFPrMKB9z1MwuAIid4Hi/nS6hAuUWUrZXq2nlzxPxIs++rH401
+         c2TZ7cFTsGsivMMeyI9lUTAuBUDKrURyICQDyFBCJoQy6/WUWFw+d/gMPCSHMAp96UDO
+         9AC0wC8oklX6g60JbUHROrUOCPY3DDnZlI5LRrjVZvaBZubipxXHsGG0goMOUMEOML5E
+         Lbf1lxS2QPfa+fRkxIQrT1TlvZOO4DDAXr5985jNrY2jirwPlxOuC61DlrgZBoQhkaD0
+         0K5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVx3iaC/okTehDBVwGwRQpSoCKYcMwXu/vTrIOUPQUgeVDgGAQvD7H03NecoVYlKhslI3zl4UVP1UQ=@vger.kernel.org, AJvYcCWD0jF25fDhjo8uHdGPu+B/H4kngp8fYO4HPZbiiXLlTpWSLFO5+4gHaRKOX1UGXTVZVwUwqOVy@vger.kernel.org, AJvYcCWqcwhszvEFus1yAq324HhF6PccxhpPaHXXuZxUWflclGyy5PruUEBnVxWTIDfnkx39asc5QQx4eTs1kt/J@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYoNCcTfsR7/+I/PSuYefj8mj3jfM6HdWosnNGZXyLpCGw8SnY
+	bTz53EDqe5JhBr/uM8u1JeEFkxR+WUkj0BnsD0tTT7O0ITu5yV09BDCjiEJqLBv/bSNdYe4JHTO
+	cf1nshb/hFxAAQguz1aflZWqP7JA=
+X-Gm-Gg: ASbGncsBhU/6y4F6MtkzyDc+z37ja8ijXQDdZMJpTPt+VIH/GAeGyhVACudtkzqi7vb
+	fllZop8zjQ3FkLMmwTQk2QfHAIR5SeMAre8pf3vQrNvGWJo4QTplP1W5HDb/02eQ6jGoG3rNjTH
+	x6arW88C5rQua3SuuT7hYW3i/Cdw==
+X-Google-Smtp-Source: AGHT+IEP7Nh9wOKkc5/HcoAMiiR8n7ueANOAM3TtdGIfWyMJemlif/wFUDHgutRmKYSexGttnFcOIpdcHd1q2LgcJ/o=
+X-Received: by 2002:a2e:a553:0:b0:30d:b328:8394 with SMTP id
+ 38308e7fff4ca-30f0bf1eb07mr47215981fa.13.1744129395756; Tue, 08 Apr 2025
+ 09:23:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] pwm: Add support for pwmchip devices for faster
- and easier userspace access
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- linux-pwm@vger.kernel.org
-Cc: Kent Gibson <warthog618@gmail.com>, linux-kernel@vger.kernel.org
-References: <cover.1744120697.git.ukleinek@kernel.org>
- <f31fea4002d62ba5c1f9f95ca58a182ecc5bc3a6.1744120697.git.ukleinek@kernel.org>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <f31fea4002d62ba5c1f9f95ca58a182ecc5bc3a6.1744120697.git.ukleinek@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250407234223.1059191-1-nphamcs@gmail.com>
+In-Reply-To: <20250407234223.1059191-1-nphamcs@gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Wed, 9 Apr 2025 00:22:58 +0800
+X-Gm-Features: ATxdqUFrOA5poLk2LCvT8r-ZavahScL1G90R_uOdgsK8qiGr9BEUgLKAk8ly3mA
+Message-ID: <CAMgjq7CdARdTEZB3ik4X9cAzNUFa6GRqjT61brygihGUYFBAeQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/14] Virtual Swap Space
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, hannes@cmpxchg.org, 
+	hughd@google.com, yosry.ahmed@linux.dev, mhocko@kernel.org, 
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
+	len.brown@intel.com, chengming.zhou@linux.dev, chrisl@kernel.org, 
+	huang.ying.caritas@gmail.com, ryan.roberts@arm.com, viro@zeniv.linux.org.uk, 
+	baohua@kernel.org, osalvador@suse.de, lorenzo.stoakes@oracle.com, 
+	christophe.leroy@csgroup.eu, pavel@kernel.org, kernel-team@meta.com, 
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/8/25 9:23 AM, Uwe Kleine-König wrote:
-> With this change each pwmchip defining the new-style waveform callbacks
-> can be accessed from userspace via a character device. Compared to the
-> sysfs-API this is faster (on a stm32mp157 applying a new configuration
-> takes approx 25% only) and allows to pass the whole configuration in a
-> single ioctl allowing atomic application.
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
-> ---
+On Tue, Apr 8, 2025 at 7:47=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> wrote:
+>
+> This RFC implements the virtual swap space idea, based on Yosry's
+> proposals at LSFMMBPF 2023 (see [1], [2], [3]), as well as valuable
+> inputs from Johannes Weiner. The same idea (with different
+> implementation details) has been floated by Rik van Riel since at least
+> 2011 (see [8]).
+>
+> The code attached to this RFC is purely a prototype. It is not 100%
+> merge-ready (see section VI for future work). I do, however, want to show
+> people this prototype/RFC, including all the bells and whistles and a
+> couple of actual use cases, so that folks can see what the end results
+> will look like, and give me early feedback :)
+>
+> I. Motivation
+>
+> Currently, when an anon page is swapped out, a slot in a backing swap
+> device is allocated and stored in the page table entries that refer to
+> the original page. This slot is also used as the "key" to find the
+> swapped out content, as well as the index to swap data structures, such
+> as the swap cache, or the swap cgroup mapping. Tying a swap entry to its
+> backing slot in this way is performant and efficient when swap is purely
+> just disk space, and swapoff is rare.
+>
+> However, the advent of many swap optimizations has exposed major
+> drawbacks of this design. The first problem is that we occupy a physical
+> slot in the swap space, even for pages that are NEVER expected to hit
+> the disk: pages compressed and stored in the zswap pool, zero-filled
+> pages, or pages rejected by both of these optimizations when zswap
+> writeback is disabled. This is the arguably central shortcoming of
+> zswap:
+> * In deployments when no disk space can be afforded for swap (such as
+>   mobile and embedded devices), users cannot adopt zswap, and are forced
+>   to use zram. This is confusing for users, and creates extra burdens
+>   for developers, having to develop and maintain similar features for
+>   two separate swap backends (writeback, cgroup charging, THP support,
+>   etc.). For instance, see the discussion in [4].
+> * Resource-wise, it is hugely wasteful in terms of disk usage, and
+>   limits the memory saving potentials of these optimizations by the
+>   static size of the swapfile, especially in high memory systems that
+>   can have up to terabytes worth of memory. It also creates significant
+>   challenges for users who rely on swap utilization as an early OOM
+>   signal.
+>
+> Another motivation for a swap redesign is to simplify swapoff, which
+> is complicated and expensive in the current design. Tight coupling
+> between a swap entry and its backing storage means that it requires a
+> whole page table walk to update all the page table entries that refer to
+> this swap entry, as well as updating all the associated swap data
+> structures (swap cache, etc.).
+>
+>
+> II. High Level Design Overview
+>
+> To fix the aforementioned issues, we need an abstraction that separates
+> a swap entry from its physical backing storage. IOW, we need to
+> =E2=80=9Cvirtualize=E2=80=9D the swap space: swap clients will work with =
+a dynamically
+> allocated virtual swap slot, storing it in page table entries, and
+> using it to index into various swap-related data structures. The
+> backing storage is decoupled from the virtual swap slot, and the newly
+> introduced layer will =E2=80=9Cresolve=E2=80=9D the virtual swap slot to =
+the actual
+> storage. This layer also manages other metadata of the swap entry, such
+> as its lifetime information (swap count), via a dynamically allocated
+> per-swap-entry descriptor:
+>
+> struct swp_desc {
+>         swp_entry_t vswap;
+>         union {
+>                 swp_slot_t slot;
+>                 struct folio *folio;
+>                 struct zswap_entry *zswap_entry;
+>         };
+>         struct rcu_head rcu;
+>
+>         rwlock_t lock;
+>         enum swap_type type;
+>
+>         atomic_t memcgid;
+>
+>         atomic_t in_swapcache;
+>         struct kref refcnt;
+>         atomic_t swap_count;
+> };
 
-...
+Thanks for sharing the code, my initial idea after the discussion at
+LSFMM is that there is a simple way to combine this with the "swap
+table" [1] design of mine to solve the performance issue of this
+series: just store the pointer of this struct in the swap table. It's
+a bruteforce and glue like solution but the contention issue will be
+gone.
 
-> +static int pwm_cdev_request(struct pwm_cdev_data *cdata, unsigned int hwpwm)
-> +{
-> +	struct pwm_chip *chip = cdata->chip;
-> +
-> +	if (hwpwm >= chip->npwm)
-> +		return -EINVAL;
-> +
-> +	if (!cdata->pwm[hwpwm]) {
-> +		struct pwm_device *pwm = &chip->pwms[hwpwm];
-> +		const char *label;
-> +		int ret;
-> +
-> +		label = kasprintf(GFP_KERNEL, "pwm-cdev (pid=%d)", current->pid);
-> +		if (!label)
-> +			return -ENOMEM;
-> +
-> +		ret = pwm_device_request(pwm, label);
-> +		if (ret < 0)
+Of course it's not a good approach, ideally the data structure can be
+simplified to an entry type in the swap table. The swap table series
+handles locking and synchronizations using either cluster lock
+(reusing swap allocator and existing swap logics) or folio lock (kind
+of like page cache). So many parts can be much simplified, I think it
+will be at most ~32 bytes per page with a virtual device (including
+the intermediate pointers).Will require quite some work though.
 
-Should kfree(label) before error return?
+The good side with that approach is we will have a much lower memory
+overhead and even better performance. And the virtual space part will
+be optional, for non virtual setup the memory consumption will be only
+8 bytes per page and also dynamically allocated, as discussed at
+LSFMM.
 
-> +			return ret;
-> +
-> +		cdata->pwm[hwpwm] = pwm;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
+So sorry that I still have a few parts undone, looking forward to
+posting in about one week, eg. After this weekend it goes well. I'll
+also try to check your series first to see how these can be
+collaborated better.
 
-...
+A draft version is available here though, just in case anyone is
+really anxious to see the code, I wouldn't recommend spend much effort
+check it though as it may change rapidly:
+https://github.com/ryncsn/linux/tree/kasong/devel/swap-unification
 
-> +static long pwm_cdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-> +{
-> +	int ret = 0;
-> +	struct pwm_cdev_data *cdata = file->private_data;
-> +	struct pwm_chip *chip = cdata->chip;
-> +
-> +	guard(mutex)(&pwm_lock);
-> +
-> +	if (!chip->operational)
-> +		return -ENODEV;
-> +
-> +	switch (cmd) {
-> +	case PWM_IOCTL_REQUEST:
-> +		{
-> +			unsigned int hwpwm = arg;
-> +
-> +			return pwm_cdev_request(cdata, hwpwm);
-> +		}
-> +		break;
+But the good news is the total LOC should be reduced, or at least
+won't increase much, as it will unify a lot of swap infrastructures.
+So things might be easier to implement after that.
 
-Unreachable code? Should be able to removed all of the breaks without any
-compiler complaining - otherwise it would already be complaining about no
-return at the end of the funtion where the break jumps to.
-
-> +
-> +	case PWM_IOCTL_FREE:
-> +		{
-> +			unsigned int hwpwm = arg;
-> +
-> +			return pwm_cdev_free(cdata, hwpwm);
-> +		}
-> +		break;
-> +
-> +	case PWM_IOCTL_ROUNDWF:
-> +		{
-> +			struct pwmchip_waveform cwf;
-> +			struct pwm_waveform wf;
-> +			struct pwm_device *pwm;
-> +
-> +			ret = copy_from_user(&cwf,
-> +					     (struct pwmchip_waveform __user *)arg,
-> +					     sizeof(cwf));
-> +			if (ret)
-> +				return -EFAULT;
-> +
-> +			if (cwf.__pad != 0)
-> +				return -EINVAL;
-> +
-> +			pwm = pwm_cdev_get_requested_pwm(cdata, cwf.hwpwm);
-> +			if (IS_ERR(pwm))
-> +				return PTR_ERR(pwm);
-> +
-> +			wf = (struct pwm_waveform) {
-> +				.period_length_ns = cwf.period_length_ns,
-> +				.duty_length_ns = cwf.duty_length_ns,
-> +				.duty_offset_ns = cwf.duty_offset_ns,
-> +			};
-> +
-> +			ret = pwm_round_waveform_might_sleep(pwm, &wf);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			cwf = (struct pwmchip_waveform) {
-> +				.hwpwm = cwf.hwpwm,
-> +				.period_length_ns = wf.period_length_ns,
-> +				.duty_length_ns = wf.duty_length_ns,
-> +				.duty_offset_ns = wf.duty_offset_ns,
-> +			};
-> +
-> +			return copy_to_user((struct pwmchip_waveform __user *)arg,
-> +					    &cwf, sizeof(cwf));
-> +		}
-> +		break;
-> +
-> +	case PWM_IOCTL_GETWF:
-> +		{
-> +			struct pwmchip_waveform cwf;
-> +			struct pwm_waveform wf;
-> +			struct pwm_device *pwm;
-> +
-> +			ret = copy_from_user(&cwf,
-> +					     (struct pwmchip_waveform __user *)arg,
-> +					     sizeof(cwf));
-> +			if (ret)
-> +				return -EFAULT;
-> +
-> +			if (cwf.__pad != 0)
-> +				return -EINVAL;
-
-Since this is get-only (argument is purly output), should we not check this
-to allow userspace to be able to pass an unintialized struct without error?
-
-> +
-> +			pwm = pwm_cdev_get_requested_pwm(cdata, cwf.hwpwm);
-> +			if (IS_ERR(pwm))
-> +				return PTR_ERR(pwm);
-> +
-> +			ret = pwm_get_waveform_might_sleep(pwm, &wf);
-> +			if (ret)
-> +				return ret;
-> +
-> +			cwf.period_length_ns = wf.period_length_ns;
-> +			cwf.duty_length_ns = wf.duty_length_ns;
-> +			cwf.duty_offset_ns = wf.duty_offset_ns;
-
-Odd to use different style for setting struct here compared to the other cases.
-(I prefer this one since it is less lines of code to read and less indent.)
-
-> +
-> +			return copy_to_user((struct pwmchip_waveform __user *)arg,
-> +					    &cwf, sizeof(cwf));
-> +		}
-> +		break;
-> +
-> +	case PWM_IOCTL_SETROUNDEDWF:
-> +	case PWM_IOCTL_SETEXACTWF:
-> +		{
-> +			struct pwmchip_waveform cwf;
-> +			struct pwm_waveform wf;
-> +			struct pwm_device *pwm;
-> +
-> +			ret = copy_from_user(&cwf,
-> +					     (struct pwmchip_waveform __user *)arg,
-> +					     sizeof(cwf));
-> +			if (ret)
-> +				return -EFAULT;
-> +
-> +			if (cwf.__pad != 0)
-> +				return -EINVAL;
-> +
-> +			wf = (struct pwm_waveform){
-> +				.period_length_ns = cwf.period_length_ns,
-> +				.duty_length_ns = cwf.duty_length_ns,
-> +				.duty_offset_ns = cwf.duty_offset_ns,
-> +			};
-> +
-> +			if (!pwm_wf_valid(&wf))
-> +				return -EINVAL;
-> +
-> +			pwm = pwm_cdev_get_requested_pwm(cdata, cwf.hwpwm);
-> +			if (IS_ERR(pwm))
-> +				return PTR_ERR(pwm);
-> +
-> +			return pwm_set_waveform_might_sleep(pwm, &wf,
-> +							    cmd == PWM_IOCTL_SETEXACTWF);
-
-For PWM_IOCTL_SETROUNDEDWF case, should we be copying the modifed waveform back
-to userspace so that it can know what rounding what actually applied without having
-to call PWM_IOCTL_GETWF?
-
-> +		}
-> +		break;> +
-> +	default:
-> +		return -ENOTTY;
-> +	}
-> +}
-> +
-> +static const struct file_operations pwm_cdev_fileops = {
-> +	.open = pwm_cdev_open,
-> +	.release = pwm_cdev_release,
-> +	.owner = THIS_MODULE,
-> +	.unlocked_ioctl = pwm_cdev_ioctl,
-> +};
-> +
-> +static dev_t pwm_devt;
-> +
->  /**
->   * __pwmchip_add() - register a new PWM chip
->   * @chip: the PWM chip to add
-> @@ -2115,7 +2376,13 @@ int __pwmchip_add(struct pwm_chip *chip, struct module *owner)
->  	scoped_guard(pwmchip, chip)
->  		chip->operational = true;
->  
-> -	ret = device_add(&chip->dev);
-> +	if (chip->id < 256 && chip->ops->write_waveform)
-> +		chip->dev.devt = MKDEV(MAJOR(pwm_devt), chip->id);
-
-if (chip->id >= 256 && chip->ops->write_waveform)
-dev_warn("too many PWM devices, chardev will not be created for ...") ?
-
-> +
-> +	cdev_init(&chip->cdev, &pwm_cdev_fileops);
-> +	chip->cdev.owner = owner;
-> +
-> +	ret = cdev_device_add(&chip->cdev, &chip->dev);
->  	if (ret)
->  		goto err_device_add;
->  
-> @@ -2166,7 +2433,7 @@ void pwmchip_remove(struct pwm_chip *chip)
->  		idr_remove(&pwm_chips, chip->id);
->  	}
->  
-> -	device_del(&chip->dev);
-> +	cdev_device_del(&chip->cdev, &chip->dev);
->  }
->  EXPORT_SYMBOL_GPL(pwmchip_remove);
->  
-> @@ -2310,9 +2577,16 @@ static int __init pwm_init(void)
->  {
->  	int ret;
->  
-> +	ret = alloc_chrdev_region(&pwm_devt, 0, 256, "pwm");
-> +	if (ret) {
-> +		pr_warn("Failed to initialize chrdev region for PWM usage\n");
-
-Why warn and not err?
-
-> +		return ret;
-> +	}
-> +
->  	ret = class_register(&pwm_class);
->  	if (ret) {
->  		pr_err("Failed to initialize PWM class (%pe)\n", ERR_PTR(ret));
-> +		unregister_chrdev_region(pwm_devt, 256);
->  		return ret;
->  	}
->  
-> diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-> index bf0469b2201d..d8817afe95dc 100644
-> --- a/include/linux/pwm.h
-> +++ b/include/linux/pwm.h
-> @@ -2,6 +2,7 @@
->  #ifndef __LINUX_PWM_H
->  #define __LINUX_PWM_H
->  
-> +#include <linux/cdev.h>
->  #include <linux/device.h>
->  #include <linux/err.h>
->  #include <linux/module.h>
-> @@ -309,6 +310,7 @@ struct pwm_ops {
->  /**
->   * struct pwm_chip - abstract a PWM controller
->   * @dev: device providing the PWMs
-> + * @cdev: &struct cdev for this device
->   * @ops: callbacks for this PWM controller
->   * @owner: module providing this chip
->   * @id: unique number of this PWM chip
-> @@ -323,6 +325,7 @@ struct pwm_ops {
->   */
->  struct pwm_chip {
->  	struct device dev;
-> +	struct cdev cdev;
->  	const struct pwm_ops *ops;
->  	struct module *owner;
->  	unsigned int id;
-> diff --git a/include/uapi/linux/pwm.h b/include/uapi/linux/pwm.h
-> new file mode 100644
-> index 000000000000..3d2c3cefc090
-> --- /dev/null
-> +++ b/include/uapi/linux/pwm.h
-> @@ -0,0 +1,51 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
-> +
-> +#ifndef _UAPI_PWM_H_
-> +#define _UAPI_PWM_H_
-> +
-> +#include <linux/ioctl.h>
-> +#include <linux/types.h>
-> +
-> +/**
-> + * struct pwmchip_waveform - Describe a PWM waveform for a pwm_chip's PWM channel
-> + * @hwpwm: per-chip relative index of the PWM device
-> + * @__pad: padding, must be zero
-> + * @period_length_ns: duration of the repeating period.
-> + *    A value of 0 represents a disabled PWM.
-> + * @duty_length_ns: duration of the active part in each period
-> + * @duty_offset_ns: offset of the rising edge from a period's start
-> + */
-> +struct pwmchip_waveform {
-> +	__u32 hwpwm;
-> +	__u32 __pad;
-> +	__u64 period_length_ns;
-> +	__u64 duty_length_ns;
-> +	__u64 duty_offset_ns;
-> +};
-> +
-> +/* Reserves the passed hwpwm for exclusive control. */
-> +#define PWM_IOCTL_REQUEST	_IO(0x75, 1)
-> +
-> +/* counter part to PWM_IOCTL_REQUEST */
-> +#define PWM_IOCTL_FREE		_IO(0x75, 2)
-> +
-> +/*
-> + * Modifies the passed wf according to hardware constraints. All parameters are
-> + * rounded down to the next possible value, unless there is no such value, then
-
-Technically, isn't 0 a possible value (at least for duty length/offset)?
-
-So maybe more clear to say that if the requested value is non-zero then the
-value will be rounded down unless the result would be zero in which case
-the resulting value will the be smallest possible non-zero value.
-
-> + * values are rounded up.
-> + */
-> +#define PWM_IOCTL_ROUNDWF	_IOWR(0x75, 3, struct pwmchip_waveform)
-> +
-> +/* Get the currently implemented waveform */
-> +#define PWM_IOCTL_GETWF		_IOWR(0x75, 4, struct pwmchip_waveform)
-> +
-> +/* Like PWM_IOCTL_GETWF + PWM_IOCTL_SETROUNDEDWF in one go. */
-
-Is this supposed to say "Like PWM_IOCTL_ROUNDWF + PWM_IOCTL_SETEXACTWF in one go"?
-
-> +#define PWM_IOCTL_SETROUNDEDWF	_IOW(0x75, 5, struct pwmchip_waveform)
-> +
-> +/*
-> + * Program the PWM to emit exactly the passed waveform, subject only to rounding
-> + * down each value less than 1 ns.
-
-Otherwise returns and error? What error codes could we expect?
-
-> + */
-> +#define PWM_IOCTL_SETEXACTWF	_IOW(0x75, 6, struct pwmchip_waveform)
-> +
-> +#endif /* _UAPI_PWM_H_ */
-
+[1] https://lore.kernel.org/linux-mm/CAMgjq7DHFYWhm+Z0C5tR2U2a-N_mtmgB4+idD=
+2S+-1438u-wWw@mail.gmail.com/T/
 
