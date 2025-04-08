@@ -1,153 +1,112 @@
-Return-Path: <linux-kernel+bounces-594610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20850A8145D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:16:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69BAFA81441
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08B854C1046
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:16:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F19AD7AFDA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDA6237163;
-	Tue,  8 Apr 2025 18:15:56 +0000 (UTC)
-Received: from riemann.telenet-ops.be (riemann.telenet-ops.be [195.130.137.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F7823CF0B;
+	Tue,  8 Apr 2025 18:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YojMme6g"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E74222577E
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 18:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB4223C8C7
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 18:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744136156; cv=none; b=ZM4DxuG5TeLBclyXw3pIVLLVEePmBunek9+4maLViUPc04Q3nFxANOOoqiyz1H8EOLnXaiVOtD3PJuzX47fhSP+0lkpZV0eNC7qbwXWWAtyYkvBZtPBdyrSktsLrmpMoLXtH33vWhTBQYlkAQXuI/TDnszDL8IEaeUoJdA+rjQE=
+	t=1744135658; cv=none; b=GabkHA0tR9ePffLIMoyY2dLrheo453NKDIQGPYxsq/j3QAVTjV1AUPMbXuUUkgzezESylQLqRL0MhVh0HEiM/qQpNHwe2T1AdfQ/FCpqsjAS2DRboY+LDquCTK4AtspAZXKThC29fzGO4mkVKc2e0xm1PhVPkELLkI/HXQfOVWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744136156; c=relaxed/simple;
-	bh=zuLTOwLuHsYDzMbkf+aBznMLg7hEW/VvEFThYjA/tNo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G5i0i/dVExycCXTRWCn2zaRmcC/GST8rjJ/ZjjusLMlgX6A9qMgjntM/FPEDR/ElMUCF2oHqTTq09M/EV0Df8TecmTUwgB2qViI/Piwt5EC+uJ2p3dKi0JkW2KF172jvCGZ20GynuhHH/iZcp6ZG3pLAdtG/8Td15NtB07wZ+ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-	by riemann.telenet-ops.be (Postfix) with ESMTPS id 4ZXDYv65lwz4x5Q0
-	for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 20:07:15 +0200 (CEST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:a74f:875e:25d1:823b])
-	by albert.telenet-ops.be with cmsmtp
-	id ai772E0090XRBii06i77zS; Tue, 08 Apr 2025 20:07:08 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1u2DLn-000000009xH-3KiT;
-	Tue, 08 Apr 2025 20:07:07 +0200
-Received: from geert by rox.of.borg with local (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1u2DLn-00000002s7k-2ssL;
-	Tue, 08 Apr 2025 20:07:07 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] genirq/generic-chip: Fix incorrect lock guard conversions
-Date: Tue,  8 Apr 2025 20:07:02 +0200
-Message-ID: <514f94c5891c61ac0a4a7fdad113e75db1eea367.1744135467.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1744135658; c=relaxed/simple;
+	bh=E9Bl23eY8LT4mEzyLs68LFT5XER8x3zAEixPN0nLsvc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VN1ZGcnADtfkU8kZWFZu4QZKDUP07ObPtz/9miWxMSywATwHgz3tHGCS3YwAPSt8V2SetK+cSIZBhAeLslHwXcdjvj1w40VyjYwmxxoE/9zekq3uA/kJlTK2NWhLemsIz9ggfYT6M84VR6gardXCzKMpMJXm4I/pE6Y8XMfnKkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=YojMme6g; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e614da8615so5983021a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 11:07:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1744135654; x=1744740454; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=lBSA8eXQHypf7dmR+BUk1pz+2UL5Kr5yQ1c49+ifFD8=;
+        b=YojMme6g6cyvmwdR7+QmyF94VeO8ydVTaQfenw9DbiRoWFLHI8/PYcd9erXm9j7QN5
+         8Xv2YrT1C4g5WyevHIYkAJkhZ/c5ZpkY90XlfbFRJNj8rpcv+yQ6mLKxE21zIlMjfMes
+         XHVCL1NsAHlioJXZ43cm+lIhfKojV8bW2p9oc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744135654; x=1744740454;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lBSA8eXQHypf7dmR+BUk1pz+2UL5Kr5yQ1c49+ifFD8=;
+        b=ArBFYOQ7GikQjRf6cevcWQyHAj3xYJ0RbhhjOpbbWmKuFGAH9Q+Vl1sndMYl1mSeWg
+         G1RC3QxFJedch2Q0sJmqzefTWvBYLk7glA2N+wTOdPn0TyTtpZr0kKaTCv/omv2sGU0c
+         ApgKiNY5cRhvOMl9iXTvEqkdSbj4kiNuk5Ewb+tC0NgcFqYYIObB7ys/veFqo82bYcqB
+         SiGWkxJPnYTFeK+TKQX0pquTe87OB++ToaBXkACzl69Z7w8kaM13WXLUPjzQxkaNSQTd
+         lqb6P43w47vPXU11C8cs0Hbadrg0E9CxX1jYprKjQQSEqShWb/nY+2fJ7dSJrF5pGQcd
+         vdlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWUrOakfGt0uA6RSAWkPhEOUcApJklmKYV//TRgMs0JvS98SiB5KE8BHBvhBI7sOThGKesDFucTh7F7HM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0DOQh70tMEsbzC/pZg7nFtIaLw5NwStXcnMTC4rNmPisjS25z
+	RHjupmHh74z/Rywbm55jy98EiexxXGBMzV04cIn9Q6JAu1Mso2l/z20NNlmGRj1zvmIbzhT87wN
+	Dxn8=
+X-Gm-Gg: ASbGncs6Z/BnpQGQsRuXuO2BS5XtfcP2oetwrwwOQpXKHHhTWOdtv/PCaN1avdwtNwr
+	yJx3sVO3BzILxqwcUWwtH495w5ACTckZ+/00YIheGZSH+7rAxxcMjLAhXhjb+l95JnK8yMLPteS
+	qBGhE8AvP/xxU6LoT83sIVUOLB+17e3VRay9NihP36C8IupLEf35xvPof7pEda4LkelWcvz4cwU
+	ynpgo1fxU8E38LHLFXX1LweVLPulf72shA9mruVFPeuVozyD7Vzmu0E7gIRmMcnFEMUNQDuSauY
+	dDj1ABZarnUpnNCPbse4htTMKurrW2irGscQTRsaZr0VYJScJlB2gqxa5hpa/xBlqkYzkhzNXxY
+	dHEAouewPFMqpM0sI+2E=
+X-Google-Smtp-Source: AGHT+IFobVCl5dxe9VZjvLsQ81FF0k/DR/WN1NBdOvrzR6uIJIIj+Cw5IJv3TqsX+o0wDA3Kg1Fm4w==
+X-Received: by 2002:a05:6402:234c:b0:5e5:854d:4d17 with SMTP id 4fb4d7f45d1cf-5f1f47050ecmr4263449a12.11.1744135654224;
+        Tue, 08 Apr 2025 11:07:34 -0700 (PDT)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f088084f17sm8593819a12.61.2025.04.08.11.07.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Apr 2025 11:07:33 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac7bd86f637so1060935166b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 11:07:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXzFcdTtiltShJc2uOA3416jEJaEQngEo5YN/uqVq239ZBgpoawPtWGyiq4+/IecImdnxeVpGiO/gM9baw=@vger.kernel.org
+X-Received: by 2002:a17:907:6094:b0:abf:6f25:9881 with SMTP id
+ a640c23a62f3a-ac81a878edbmr425494066b.25.1744135652736; Tue, 08 Apr 2025
+ 11:07:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1744098446.git.jpoimboe@kernel.org> <fc972ba4995d826fcfb8d02733a14be8d670900b.1744098446.git.jpoimboe@kernel.org>
+In-Reply-To: <fc972ba4995d826fcfb8d02733a14be8d670900b.1744098446.git.jpoimboe@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 8 Apr 2025 11:07:16 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wizyNY=-D_7YVZuGdya2gRg_JgWSuNjnYbKaMYK_rOaig@mail.gmail.com>
+X-Gm-Features: ATxdqUEzh7FuccfSDckBJtvhQUy4qE3B61vW2z14oHPyhLqNHUb46KFyHkl24x4
+Message-ID: <CAHk-=wizyNY=-D_7YVZuGdya2gRg_JgWSuNjnYbKaMYK_rOaig@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/5] objtool: Remove ANNOTATE_IGNORE_ALTERNATIVE from CLAC/STAC
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-When booting BeagleBone Black:
+On Tue, 8 Apr 2025 at 01:21, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+>
+>  #define ASM_CLAC \
+> -       ALTERNATIVE __stringify(ANNOTATE_IGNORE_ALTERNATIVE), "clac", X86_FEATURE_SMAP
+> +       ALTERNATIVE "", "clac", X86_FEATURE_SMAP
+>
+>  #define ASM_STAC \
+> -       ALTERNATIVE __stringify(ANNOTATE_IGNORE_ALTERNATIVE), "stac", X86_FEATURE_SMAP
+> +       ALTERNATIVE "", "stac", X86_FEATURE_SMAP
 
-    ------------[ cut here ]------------
-    WARNING: CPU: 0 PID: 0 at kernel/locking/lockdep.c:4398 lockdep_hardirqs_on_prepare+0x23c/0x280
-    DEBUG_LOCKS_WARN_ON(early_boot_irqs_disabled)
-    CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.15.0-rc1-boneblack-00004-g195298c3b116 #209 NONE
-    Hardware name: Generic AM33XX (Flattened Device Tree)
-    Call trace:
-     unwind_backtrace from show_stack+0x10/0x14
-     show_stack from dump_stack_lvl+0x6c/0x90
-     dump_stack_lvl from __warn+0x70/0x1b0
-     __warn from warn_slowpath_fmt+0x1d4/0x1ec
-     warn_slowpath_fmt from lockdep_hardirqs_on_prepare+0x23c/0x280
-     lockdep_hardirqs_on_prepare from trace_hardirqs_on+0x68/0xb4
-     trace_hardirqs_on from _raw_spin_unlock_irq+0x20/0x38
-     _raw_spin_unlock_irq from irq_map_generic_chip+0x144/0x190
-     irq_map_generic_chip from irq_domain_associate_locked+0x68/0x164
-     irq_domain_associate_locked from irq_create_fwspec_mapping+0x34c/0x43c
-     irq_create_fwspec_mapping from irq_create_of_mapping+0x64/0x8c
-     irq_create_of_mapping from irq_of_parse_and_map+0x54/0x7c
-     irq_of_parse_and_map from dmtimer_clkevt_init_common+0x54/0x15c
-     dmtimer_clkevt_init_common from dmtimer_systimer_init+0x41c/0x5b8
-     dmtimer_systimer_init from timer_probe+0x68/0xf0
-     timer_probe from start_kernel+0x4a4/0x6bc
-     start_kernel from 0x0
-    irq event stamp: 0
-    hardirqs last  enabled at (0): [<00000000>] 0x0
-    hardirqs last disabled at (0): [<00000000>] 0x0
-    softirqs last  enabled at (0): [<00000000>] 0x0
-    softirqs last disabled at (0): [<00000000>] 0x0
-    ---[ end trace 0000000000000000 ]---
+Thanks. I didn't actually test the patch, but it obviously fixes my
+concerns, so I'm acking it without any testing what-so-ever.
 
-and:
-
-    ------------[ cut here ]------------
-    WARNING: CPU: 0 PID: 0 at init/main.c:1022 start_kernel+0x4e8/0x6bc
-    Interrupts were enabled early
-    CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Tainted: G        W           6.15.0-rc1-boneblack-00004-g195298c3b116 #209 NONE
-    Tainted: [W]=WARN
-    Hardware name: Generic AM33XX (Flattened Device Tree)
-    Call trace:
-     unwind_backtrace from show_stack+0x10/0x14
-     show_stack from dump_stack_lvl+0x6c/0x90
-     dump_stack_lvl from __warn+0x70/0x1b0
-     __warn from warn_slowpath_fmt+0x1d4/0x1ec
-     warn_slowpath_fmt from start_kernel+0x4e8/0x6bc
-     start_kernel from 0x0
-    irq event stamp: 0
-    hardirqs last  enabled at (0): [<00000000>] 0x0
-    hardirqs last disabled at (0): [<00000000>] 0x0
-    softirqs last  enabled at (0): [<00000000>] 0x0
-    softirqs last disabled at (0): [<00000000>] 0x0
-    ---[ end trace 0000000000000000 ]---
-
-Fix this by correcting two misconversions of
-raw_spin_{,un}lock_irq{save,restore}() to lock guards.
-
-Fixes: 195298c3b11628a6 ("genirq/generic-chip: Convert core code to lock guards")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- kernel/irq/generic-chip.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/irq/generic-chip.c b/kernel/irq/generic-chip.c
-index 8014bfecb948e862..bf59e37d650ad27e 100644
---- a/kernel/irq/generic-chip.c
-+++ b/kernel/irq/generic-chip.c
-@@ -330,7 +330,7 @@ int irq_domain_alloc_generic_chips(struct irq_domain *d,
- 				goto err;
- 		}
- 
--		scoped_guard (raw_spinlock, &gc_lock)
-+		scoped_guard (raw_spinlock_irqsave, &gc_lock)
- 			list_add_tail(&gc->list, &gc_list);
- 		/* Calc pointer to the next generic chip */
- 		tmp += gc_sz;
-@@ -467,7 +467,7 @@ int irq_map_generic_chip(struct irq_domain *d, unsigned int virq,
- 
- 	/* We only init the cache for the first mapping of a generic chip */
- 	if (!gc->installed) {
--		guard(raw_spinlock_irq)(&gc->lock);
-+		guard(raw_spinlock_irqsave)(&gc->lock);
- 		irq_gc_init_mask_cache(gc, dgc->gc_flags);
- 	}
- 
--- 
-2.43.0
-
+              Linus
 
