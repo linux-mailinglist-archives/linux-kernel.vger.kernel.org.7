@@ -1,68 +1,122 @@
-Return-Path: <linux-kernel+bounces-594583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 976A1A8141E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:54:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ECADA812CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6948646854B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:54:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32D12886413
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C4623BCFB;
-	Tue,  8 Apr 2025 17:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D82B22FE07;
+	Tue,  8 Apr 2025 16:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="Okvnehus"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DUjOR1gP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24A922F39F
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 17:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2665757EA;
+	Tue,  8 Apr 2025 16:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744134893; cv=none; b=AiudyMqA9SwPyCe2JuDscR1R9kha1JPQnHhvZA3Vua8kbRWPhIHCLuBaRICkzKVfxkjw0BxjmtmWogPu0RiCPxmJgqDhCGwr2fyvM2dtfhEk6kqXZrfhcia/q0pbEQcs7iGwwctQioB2ZB1XOtKejYYQa5HNC4WgDkCp+z84xtk=
+	t=1744130772; cv=none; b=cKCN4of8erIGz+tMQPnBG/Xi9XYYoJYf9Mom8NKHsD0c9TZWFqLB+gBFMRLo6qUAWigrt/Vu8cQJstr+OtGeNKYVYMHeWKt9scAIKIDKkOWP9IsqhSPBLkCQO5DotBJoFFL6JCjx7rNg+h5wBAk1ykRxMb7M3F9/9y+mWOpQBvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744134893; c=relaxed/simple;
-	bh=DLp7+lfnL8KdjgGKxSFd10D0tbhfX1Xaz/s1ljdW/IM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=SUV+FhWeXoQ6AjIUGZqq9y5GVMSyzop2rDe0WUpo6mDOzhem4vST4DVzFDLlUye6Udw0ibNCSUmBGC5iCRfkvdzFj8qM/bE1Rv5a3nyi3Af2fDu69OyqI0RDEGJoqtFS0FNma2qP0jc6mkQFNJzG+meX1E5wCuRM2CFbCCiWzB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=Okvnehus; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1744130623;
-	bh=DLp7+lfnL8KdjgGKxSFd10D0tbhfX1Xaz/s1ljdW/IM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=OkvnehusfA7tseY+u6Umufo9iKk91JOFLnHLF5s7kStz3ls9AC3lb+8AEvavsJKiD
-	 2Q4TtLPgBg8STW39emmX8fSaGNQgetCFLHJ0mQAHxSPO7rdrYBUaYE8L0Ei4e9cbuB
-	 b016a47sQCy0qpouNfVhpWdBOk0ufRmoAikHhpqY=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id B2C3A406F5; Tue,  8 Apr 2025 09:43:43 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id B1E7B401F1;
-	Tue,  8 Apr 2025 09:43:43 -0700 (PDT)
-Date: Tue, 8 Apr 2025 09:43:43 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Harry Yoo <harry.yoo@oracle.com>
-cc: Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, 
-    Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-    patches@lists.linux.dev, Pekka Enberg <penberg@kernel.org>, 
-    Joonsoo Kim <iamjoonsoo.kim@lge.com>, David Rientjes <rientjes@google.com>, 
-    Roman Gushchin <roman.gushchin@linux.dev>
-Subject: Re: [RFC PATCH 1/2] MAINTAINERS: update SLAB ALLOCATOR maintainers
-In-Reply-To: <Z_Qz55SbnHK9LoW1@harry>
-Message-ID: <7edbb6f4-ba0d-3c56-5aef-066b5f4d90e9@gentwo.org>
-References: <20250407200508.121357-3-vbabka@suse.cz> <Z_Qz55SbnHK9LoW1@harry>
+	s=arc-20240116; t=1744130772; c=relaxed/simple;
+	bh=y4Hqk7RHiAYWnIB3Uz5J2+6PZDT7++zFv2jNYoLEenY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bgFK5HamxVML2sN2wsesj8wJNomkTBpvRZXoR+F706fk76UM+NzfXVejgXVhkQvcFnUahWUmyPqEB5WAJepCpxCpOgL4rckq2uOrhMm2YvrUGVkeOVLYPyH8//xNlAHWbXOCgpftCN1fVipgqqMmq4kbNUAkMTq3kR9GACV+q1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DUjOR1gP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B965C4CEE5;
+	Tue,  8 Apr 2025 16:46:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744130772;
+	bh=y4Hqk7RHiAYWnIB3Uz5J2+6PZDT7++zFv2jNYoLEenY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DUjOR1gPJl0ApZpB/E3373YoIV46OrU6cPFDDiW/l0F6x+bHvm5eQDURxTLou+4c3
+	 3yTBK/zyqVIhQA2YvV3bS2ZsgR6PgOqVjbwf3YK0KMN525zzQVUogeYmafZ0E20/OS
+	 pHy8CEgkFAulpaAgESXJV/jYZL5hLjUnATbmorU6USCxP7EpTyQm8qPndBkUektB1g
+	 Hr5dqoxcWuDTH6hFdlKNUm64U96rUn+IQB9CsLK3dtqsL6tFydy79icXhCh1tEokeQ
+	 uhJHGXizHmp+7/j/xSdceKL19YXdEqEeYN2E45L3qSEMNxZftRbIffewIB1sIIrXSW
+	 LfpV46f0oYjag==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1u2C5R-003YhG-TM;
+	Tue, 08 Apr 2025 17:46:10 +0100
+Date: Tue, 08 Apr 2025 17:46:09 +0100
+Message-ID: <86r022lhym.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Christian Bruel <christian.bruel@foss.st.com>
+Cc: <robh@kernel.org>,
+	<krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>,
+	<mcoquelin.stm32@gmail.com>,
+	<alexandre.torgue@foss.st.com>,
+	<devicetree@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] arm64: dts: st: Use 128kB size for aliased GIC400 register access
+In-Reply-To: <20250407084028.2072504-1-christian.bruel@foss.st.com>
+References: <20250407084028.2072504-1-christian.bruel@foss.st.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: christian.bruel@foss.st.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+On Mon, 07 Apr 2025 09:40:28 +0100,
+Christian Bruel <christian.bruel@foss.st.com> wrote:
+> 
+> Adjust the size of 8kB GIC regions to 128kB so that each 4kB is mapped
+> to 64kB. The offset is then adjusted in the irq-gic driver.
 
-Acked-by: Christoph Lameter (Ampere) <cl@linux.com>
+nit: mapped *16 times* over a 64kB region.
 
+> 
+> see commit 12e14066f4835 ("irqchip/GIC: Add workaround for aliased GIC400")
+> 
+> Fixes: 5d30d03aaf785 ("arm64: dts: st: introduce stm32mp25 SoCs family")
+> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+> ---
+>  arch/arm64/boot/dts/st/stm32mp251.dtsi | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> index 379e290313dc..87110f91e489 100644
+> --- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> +++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> @@ -119,9 +119,9 @@ intc: interrupt-controller@4ac00000 {
+>  		#interrupt-cells = <3>;
+>  		interrupt-controller;
+>  		reg = <0x0 0x4ac10000 0x0 0x1000>,
+> -		      <0x0 0x4ac20000 0x0 0x2000>,
+> -		      <0x0 0x4ac40000 0x0 0x2000>,
+> -		      <0x0 0x4ac60000 0x0 0x2000>;
+> +		      <0x0 0x4ac20000 0x0 0x20000>,
+> +		      <0x0 0x4ac40000 0x0 0x20000>,
+> +		      <0x0 0x4ac60000 0x0 0x20000>;
+>  	};
+>  
+>  	psci {
+
+Suggested-by: Marc Zyngier <maz@kernel.org>
+Acked-by: Marc Zyngier <maz@kernel.org>
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
