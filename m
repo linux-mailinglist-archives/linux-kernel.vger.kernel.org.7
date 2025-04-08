@@ -1,231 +1,184 @@
-Return-Path: <linux-kernel+bounces-594674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D8FA8150B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:52:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C1EA814F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCFFC7B5299
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:51:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3175E19E3B4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA89242914;
-	Tue,  8 Apr 2025 18:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F7F22D4EB;
+	Tue,  8 Apr 2025 18:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVEz1zcD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CoNqvkBP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933A2256D;
-	Tue,  8 Apr 2025 18:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D5E1E8348
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 18:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744138263; cv=none; b=UQI1FY28HMTgPEtsG6jS/6doCi2MaxtEfes0nieO9/XdyGuT8fLmiswM7tYjXt1+lg0kchAtp3sdL1Q+qWANCz0ECq+NTY3qpCsorkC6zQpqGKHFxMeELJwhY9I/pVnJxUkKfA3BRFal4I7IAY1R1vMmZ5NVLhqC3vgWO6cwtGk=
+	t=1744138190; cv=none; b=XqRE8DaivOBfDztQGlKGC+RxdxAouWEWaJAlQ3uypW1Cu2s1AbdXCGrQmIFAf9hNpyNF2WXrw6YgqvR7OO/K0e8Ykmq7GQQfPI+dBCS+xtEwzKEgOidHV/TWmVMKge6pFns/S9AXVam5vH2F0cM1et2WxyG9z/3OaSnJyAIqVAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744138263; c=relaxed/simple;
-	bh=1QQTqlYHUjewASmFh86Dd+jl+m64vZGkDAeB+lVVa3I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JtYoJ4kolZrabbrNAz2GSGkA4xOB42Zl8ztS2+34PMqeoC/1N2fEBF/A2Ed1xAKwS9v670BJ46pSg1dZd7doQE8RaRnHC/9PfBWlP6OAiwmncdUZy0UtxwXy4fJCDu6NRvgacudQejM3Yd1+Raik50wOBJHm+Fx1gaHUI4Draj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tVEz1zcD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6D46C4CEED;
-	Tue,  8 Apr 2025 18:50:57 +0000 (UTC)
+	s=arc-20240116; t=1744138190; c=relaxed/simple;
+	bh=JUCB2bV+iYGyCNwUBsapZGnABiFfj1VKYKVKsbGH/zg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=SfxPqf7IQWL/2KdpdfCP4SL2P49K3HFSiE/n2bf6msR2ce5AlQwHUG94BraHwnyXqHq9jlrVpGAHLvjW7dkwDHhGH8sTRL4vv+AQtbwigh9jU16m698NpMbyPle0+Sv9qLJkIAOLSyLSmCtTO8/VvcQi+vnp/JeRu5yQ4wYMm6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CoNqvkBP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C866AC4CEE5;
+	Tue,  8 Apr 2025 18:49:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744138263;
-	bh=1QQTqlYHUjewASmFh86Dd+jl+m64vZGkDAeB+lVVa3I=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=tVEz1zcDAjlOjs/RHoMZ0E+olCncmQ+1E8mXBntv6H4X0xRZmYt/F9clZr0wzwyU8
-	 V6NKLHxy+aXVTE4qB7UQggTNpKn48LV9kL5caiVcDsysXkNhjjRZvexi3Ucb8z8Hrc
-	 nkSq7Z9X+2g4vxACSWtQjFLrU6CAjFRSBr+8yPFcrFKTs05Rz+F5Lty5n1hg+JykaS
-	 A0geMBmRWBTAdPOrzGihT4ooMdPm2QI3PfPFu1d4kPFYODAoDfU/rRCrgNHrwYG1D7
-	 V5GYx9oXAlam47v/ELwPexLb+U8z/D5EfsC9oHNm97nz8JsrEy9wC+0kiq1TL4s527
-	 5irvTNVINsCNQ==
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 08 Apr 2025 19:49:46 +0100
-Subject: [PATCH RFT v15 6/8] selftests/clone3: Factor more of main loop
- into test_clone3()
+	s=k20201202; t=1744138190;
+	bh=JUCB2bV+iYGyCNwUBsapZGnABiFfj1VKYKVKsbGH/zg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CoNqvkBP3vFgDfJdX5HyBql73FohlJRuDNvRuQMGzKxFAB+caL0nqg429qqNKUjdi
+	 sUIOtwxJQ4Cv4RXAtKYPfoslTCwqJ5gR0e3zEOlPOJdethtVBJwjg9tgm80VHZ4Al/
+	 HZbgg+oWX2Na/wcsAvrLXMigNawQBde8SdI/fptF56V9IGK367akIkh+ReWJ2XOT+U
+	 muCiP0HGwc6xz0I3feNwoVXK/CExOe7Wg8KMeAp4MkNAoGHokYq4hyHnL8Zbwzd9YB
+	 86T5QoYppsM5bvL+pZwsNTKolNQy61fVP96xchN9BFu6aUuneHAuoouaW+SbI5kO5Y
+	 8bCGM26EeJGUw==
+From: SeongJae Park <sj@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R.Howlett" <howlett@gmail.com>,
+	David Hildenbrand <david@redhat.com>,
+	Rik van Riel <riel@surriel.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v2 2/4] mm/madvise: batch tlb flushes for MADV_FREE
+Date: Tue,  8 Apr 2025 11:49:47 -0700
+Message-Id: <20250408184947.62625-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <12a8989c-c4f3-45a5-a66e-06ef7c2ef876@lucifer.local>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250408-clone3-shadow-stack-v15-6-3fa245c6e3be@kernel.org>
-References: <20250408-clone3-shadow-stack-v15-0-3fa245c6e3be@kernel.org>
-In-Reply-To: <20250408-clone3-shadow-stack-v15-0-3fa245c6e3be@kernel.org>
-To: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>, 
- Deepak Gupta <debug@rivosinc.com>, Szabolcs Nagy <Szabolcs.Nagy@arm.com>, 
- "H.J. Lu" <hjl.tools@gmail.com>, Florian Weimer <fweimer@redhat.com>, 
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
- Vincent Guittot <vincent.guittot@linaro.org>, 
- Dietmar Eggemann <dietmar.eggemann@arm.com>, 
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
- Christian Brauner <brauner@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, jannh@google.com, bsegall@google.com, 
- Yury Khrustalev <yury.khrustalev@arm.com>, 
- Wilco Dijkstra <wilco.dijkstra@arm.com>, linux-kselftest@vger.kernel.org, 
- linux-api@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
- Kees Cook <kees@kernel.org>, Kees Cook <kees@kernel.org>, 
- Shuah Khan <skhan@linuxfoundation.org>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3931; i=broonie@kernel.org;
- h=from:subject:message-id; bh=1QQTqlYHUjewASmFh86Dd+jl+m64vZGkDAeB+lVVa3I=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBn9W/r1Mr2S49RxTacwu4TSa0qgbUe8fMzqooomHJp
- /z5UPSGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ/Vv6wAKCRAk1otyXVSH0NevB/
- 91VS1MjIA+aUqIzW3eazJxkOw6xK8bNbjoc8cFPt/LrnEAIEnifcXmIKgVP9498Ztd8q1v09F+s984
- qrELmfjMpIUSoGYam5pjzU/MCL0OCa39rRoU14MMTr3/REsubp16GrWJJcyxZBU9ZuDBNo166/2Sl+
- NtelrcjqmqsLx2VcWZdGuG/yPHgtPlwesCYIcXfiac4R4VMUrEyMt8m4d1EsSg44YP4C0/skG4DR3o
- Dz9g5IcxMc1pno2Ok8Eqodx4b5gPGFRBie6j49BB160qwc8NrE2Z4JWVQT17lV/G9Zz8IAof23XcN1
- bJ6KcGn9W0VXwZOj7S4oxXKGDoBwRe
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Transfer-Encoding: 8bit
 
-In order to make it easier to add more configuration for the tests and
-more support for runtime detection of when tests can be run pass the
-structure describing the tests into test_clone3() rather than picking
-the arguments out of it and have that function do all the per-test work.
+On Tue, 8 Apr 2025 13:58:18 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
 
-No functional change.
+> On Fri, Apr 04, 2025 at 02:06:58PM -0700, SeongJae Park wrote:
+> > MADV_FREE handling for [process_]madvise() flushes tlb for each vma of
+> > each address range.  Update the logic to do tlb flushes in a batched
+> > way.  Initialize an mmu_gather object from do_madvise() and
+> > vector_madvise(), which are the entry level functions for
+> > [process_]madvise(), respectively.  And pass those objects to the
+> > function for per-vma work, via madvise_behavior struct.  Make the
+> > per-vma logic not flushes tlb on their own but just saves the tlb
+> > entries to the received mmu_gather object.  Finally, the entry level
+> > functions flush the tlb entries that gathered for the entire user
+> > request, at once.
+> >
+> > Signed-off-by: SeongJae Park <sj@kernel.org>
+> 
+> Other than some nitty stuff, and a desire for some careful testing of the
+> horrid edge case that err... I introduced :P this looks fine, so:
+> 
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Reviewed-by: Kees Cook <kees@kernel.org>
-Tested-by: Kees Cook <kees@kernel.org>
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/clone3/clone3.c | 77 ++++++++++++++++-----------------
- 1 file changed, 37 insertions(+), 40 deletions(-)
+Thank you for your kind review!  I will make the next revision following your
+suggestions as I answered below.
 
-diff --git a/tools/testing/selftests/clone3/clone3.c b/tools/testing/selftests/clone3/clone3.c
-index e61f07973ce5..e066b201fa64 100644
---- a/tools/testing/selftests/clone3/clone3.c
-+++ b/tools/testing/selftests/clone3/clone3.c
-@@ -30,6 +30,19 @@ enum test_mode {
- 	CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG,
- };
- 
-+typedef bool (*filter_function)(void);
-+typedef size_t (*size_function)(void);
-+
-+struct test {
-+	const char *name;
-+	uint64_t flags;
-+	size_t size;
-+	size_function size_function;
-+	int expected;
-+	enum test_mode test_mode;
-+	filter_function filter;
-+};
-+
- static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
- {
- 	struct __clone_args args = {
-@@ -109,30 +122,40 @@ static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
- 	return 0;
- }
- 
--static bool test_clone3(uint64_t flags, size_t size, int expected,
--			enum test_mode test_mode)
-+static void test_clone3(const struct test *test)
- {
-+	size_t size;
- 	int ret;
- 
-+	if (test->filter && test->filter()) {
-+		ksft_test_result_skip("%s\n", test->name);
-+		return;
-+	}
-+
-+	if (test->size_function)
-+		size = test->size_function();
-+	else
-+		size = test->size;
-+
-+	ksft_print_msg("Running test '%s'\n", test->name);
-+
- 	ksft_print_msg(
- 		"[%d] Trying clone3() with flags %#" PRIx64 " (size %zu)\n",
--		getpid(), flags, size);
--	ret = call_clone3(flags, size, test_mode);
-+		getpid(), test->flags, size);
-+	ret = call_clone3(test->flags, size, test->test_mode);
- 	ksft_print_msg("[%d] clone3() with flags says: %d expected %d\n",
--			getpid(), ret, expected);
--	if (ret != expected) {
-+			getpid(), ret, test->expected);
-+	if (ret != test->expected) {
- 		ksft_print_msg(
- 			"[%d] Result (%d) is different than expected (%d)\n",
--			getpid(), ret, expected);
--		return false;
-+			getpid(), ret, test->expected);
-+		ksft_test_result_fail("%s\n", test->name);
-+		return;
- 	}
- 
--	return true;
-+	ksft_test_result_pass("%s\n", test->name);
- }
- 
--typedef bool (*filter_function)(void);
--typedef size_t (*size_function)(void);
--
- static bool not_root(void)
- {
- 	if (getuid() != 0) {
-@@ -160,16 +183,6 @@ static size_t page_size_plus_8(void)
- 	return getpagesize() + 8;
- }
- 
--struct test {
--	const char *name;
--	uint64_t flags;
--	size_t size;
--	size_function size_function;
--	int expected;
--	enum test_mode test_mode;
--	filter_function filter;
--};
--
- static const struct test tests[] = {
- 	{
- 		.name = "simple clone3()",
-@@ -319,24 +332,8 @@ int main(int argc, char *argv[])
- 	ksft_set_plan(ARRAY_SIZE(tests));
- 	test_clone3_supported();
- 
--	for (i = 0; i < ARRAY_SIZE(tests); i++) {
--		if (tests[i].filter && tests[i].filter()) {
--			ksft_test_result_skip("%s\n", tests[i].name);
--			continue;
--		}
--
--		if (tests[i].size_function)
--			size = tests[i].size_function();
--		else
--			size = tests[i].size;
--
--		ksft_print_msg("Running test '%s'\n", tests[i].name);
--
--		ksft_test_result(test_clone3(tests[i].flags, size,
--					     tests[i].expected,
--					     tests[i].test_mode),
--				 "%s\n", tests[i].name);
--	}
-+	for (i = 0; i < ARRAY_SIZE(tests); i++)
-+		test_clone3(&tests[i]);
- 
- 	ksft_finished();
- }
+> 
+> > ---
+> >  mm/madvise.c | 59 +++++++++++++++++++++++++++++++++++++++++-----------
+> >  1 file changed, 47 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/mm/madvise.c b/mm/madvise.c
+> > index 8bcfdd995d18..564095e381b2 100644
+> > --- a/mm/madvise.c
+> > +++ b/mm/madvise.c
+> > @@ -799,12 +799,13 @@ static const struct mm_walk_ops madvise_free_walk_ops = {
+> >  	.walk_lock		= PGWALK_RDLOCK,
+> >  };
+> >
+> > -static int madvise_free_single_vma(struct vm_area_struct *vma,
+> > -			unsigned long start_addr, unsigned long end_addr)
+> > +static int madvise_free_single_vma(
+> > +		struct madvise_behavior *behavior, struct vm_area_struct *vma,
+> 
+> This is pedantic, but elsewhere you differentiate between int behavior and
+> struct madvise_behavior by referringt to the later as madv_behavior.
+> 
+> The naming kind of sucks in general though.
+> 
+> But for consistency, let's maybe rename this to madv_behavior, and we can
+> maybe do a commit later to do a rename across the board?
 
--- 
-2.39.5
+I completely agree.  I will rename so in the next spin.
 
+> 
+> > +		unsigned long start_addr, unsigned long end_addr)
+> >  {
+> >  	struct mm_struct *mm = vma->vm_mm;
+> >  	struct mmu_notifier_range range;
+> > -	struct mmu_gather tlb;
+> > +	struct mmu_gather *tlb = behavior->tlb;
+> >
+> >  	/* MADV_FREE works for only anon vma at the moment */
+> >  	if (!vma_is_anonymous(vma))
+[...]
+> > @@ -953,7 +951,7 @@ static long madvise_dontneed_free(struct vm_area_struct *vma,
+> >  	if (action == MADV_DONTNEED || action == MADV_DONTNEED_LOCKED)
+> >  		return madvise_dontneed_single_vma(vma, start, end);
+> >  	else if (action == MADV_FREE)
+> > -		return madvise_free_single_vma(vma, start, end);
+> > +		return madvise_free_single_vma(behavior, vma, start, end);
+> >  	else
+> >  		return -EINVAL;
+> 
+> On error paths, do we correctly finish the batched (botched? :P) TLB
+> operation?
+
+Yes, the change calls tlb_finish_mmu() and tlb_gather_mmu() as needed in the
+error paths.  Of course I might forgot calling those in some edge cases.
+Please let me know if you find such mistakes.
+
+> 
+> >  }
+[...]
+> > @@ -1841,14 +1873,17 @@ static ssize_t vector_madvise(struct mm_struct *mm, struct iov_iter *iter,
+> >  			}
+> >
+> >  			/* Drop and reacquire lock to unwind race. */
+> > +			madvise_finish_tlb(&madv_behavior);
+> >  			madvise_unlock(mm, behavior);
+> >  			madvise_lock(mm, behavior);
+> > +			madvise_init_tlb(&madv_behavior, mm);
+> >  			continue;
+> 
+> Have you found a way in which to test this? Perhaps force this case and
+> find a means of asserting the TLB flushing behaves as expected? I think
+> we're ok from the logic, but it's such a tricky one it'd be good to find a
+> means of doing so, albeit in a manual way.
+
+No, unfortunately I haven't found a good way to test this case.
+
+> 
+> >  		}
+> >  		if (ret < 0)
+> >  			break;
+> >  		iov_iter_advance(iter, iter_iov_len(iter));
+> >  	}
+> > +	madvise_finish_tlb(&madv_behavior);
+> >  	madvise_unlock(mm, behavior);
+> >
+> >  	ret = (total_len - iov_iter_count(iter)) ? : ret;
+> > --
+> > 2.39.5
+
+
+Thanks,
+SJ
 
