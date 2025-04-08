@@ -1,219 +1,224 @@
-Return-Path: <linux-kernel+bounces-593140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B81B1A7F5BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:13:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33311A7F5BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B3BB17C55D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:13:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9B10189890A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79DD5261560;
-	Tue,  8 Apr 2025 07:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA62261586;
+	Tue,  8 Apr 2025 07:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="OClhXKoB"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2386E26138B;
-	Tue,  8 Apr 2025 07:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IGNNlSAU"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91FF25FA0F;
+	Tue,  8 Apr 2025 07:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744096391; cv=none; b=Gz17tScl7Ih+jN+P3reuMR/es4S9n3K9SMUApZ8S0hU+PZguP3FcVU72eQzSTMLcEmzXcrzTc4kfvk7+3ms8Kyb9n3btOj0DaWV6X7tb3v/EaCfiW8jcdFSbpqkfBuNKU6AK0AvKhFKCG/XA83+UVsTswrsP/LUXJJPR8Zq/gc8=
+	t=1744096524; cv=none; b=HoZPX5wyRfjD94pSANEHS0Ka8YJNazLtwPgcQAdOjPltv9EGE467jTHIyr9Sop+bHSoGb2MMFxMJH4iJWJkpNDHEGlZ0pQQ0lZ+YtqnlfVLmwMrBNmW61xKz1ZNXNVisrNFlVNWYRHimo91bMQdMcDh/vHL6eFawiKl7zDHYJdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744096391; c=relaxed/simple;
-	bh=boIkEt8dItdsmjNV3paAR24yWpziMldq7x6bxy4tfA4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sZN9unL9KiZ3FQ94Ash148JeS5eK/UcY6+9faxFu9S8dqYR8GyQBj085A0B1rhrZ/pbxTPBTpYd7SgMeh0dlcHtCx9OsM9XwfDgruWEjipLiDuPtLaI2TX3iSctg+iUtDclG4wAYilZQGnIP3Qmn6VrOdlOePQNdfZhq4RhLEwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=OClhXKoB; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=TjmkK
-	cbdBteYcdY1oy1hg8QPf8yjTbl5uA4hIJiAC/4=; b=OClhXKoBVIv13mx9VO4ew
-	bUgmbfurlhtCYplCbHY6gtyUeNYRTugY3eB7aG0BvrFQbk4nJ6ZIvrbmuoxFR+Y/
-	V8GVXR0GCLrccuANfkq/XExz1huncWXPF29tu8d1iBWyxZpgjXkXdhfkr0C7FP2I
-	4Qr1JO63kpsBFfVlyPfS8k=
-Received: from localhost.localdomain (unknown [116.128.244.169])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgCHEuM3zPRnLTyQTw--.34625S2;
-	Tue, 08 Apr 2025 15:11:52 +0800 (CST)
-From: Feng Yang <yangfeng59949@163.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mattbobrowski@google.com,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH bpf-next v2] bpf: Remove duplicate judgments
-Date: Tue,  8 Apr 2025 15:11:51 +0800
-Message-Id: <20250408071151.229329-1-yangfeng59949@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1744096524; c=relaxed/simple;
+	bh=w79wsZ+Z3zvxnUteGzbjczmdUN5Ud24ThtVl5U+j6xU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ehCuDOM2Y/8eBVFryAVLsZ57r25k6zKnDqrOXatCMKrSanZGt58t7auxalhSjdKFBh3Aais1mdLA16nrMFYNhMTXXg71upBy7YTRdPjxf7axAZQmXlmlrNObbx/rAPtS0mj6QEopmLa4fjaSqSvaLAcbEhtSR7K1qXGJ8nLjcWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IGNNlSAU; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-47663aeff1bso47079511cf.0;
+        Tue, 08 Apr 2025 00:15:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744096521; x=1744701321; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/4fUW/nDY6dt7KyQHcmGyhHOCX6yvJ4vqRJp6uTh4Dk=;
+        b=IGNNlSAUO3iS3qHACgTQtihIUKzg5KvJSFGFOm4uyacwIqwjsMpAKdOpLC/487SVDD
+         X8Pfbo8K9NwniUspzgvXAOGRAdkAfxn8cqKWfVghVQY1hyAdLLhYQLGCiQ5qEz6gMNly
+         NgpvwfgnXBWkhHH6kbr1m41HIIxbX0D5rbhYIDXbB7DdcBwGoiNkKyGQ6TbhPJBpucAR
+         s3e5rrPAPNy7hPKEK5E7I9o5Tiy3cLelmklASHg7uTs0wH7jkKqUndmpRLxU1I0atPeT
+         urIcyqAjdN4TecgjKmdjzUVwCttCVztX4aGkkO8Omlk+LX6rwTdXdx94rfNo1kTScuyh
+         1jtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744096521; x=1744701321;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/4fUW/nDY6dt7KyQHcmGyhHOCX6yvJ4vqRJp6uTh4Dk=;
+        b=cj5v6XxnuuQ30c+EevClL09W5i6XasrIiJA5u8hrp95mrGTuAQ5FeNLHvytZG2ZIis
+         ShaNZxTwrVlybNUNyZMfBYOXyL1r3DWiTOPKE7aREZH1b/hffX93uVqJhauXI7BqBa0C
+         dbLzR8ewr5UbaCP1+pEoZt7y46g9yCJKGSjLsTTPOKTzcLwOVF+EJf58zE9AnT/grHVh
+         i+AicZ9ZX7D8j6Y9nb+7gYJRgyDH6u1iaEGOkiGMBplhgk89f64gOABBzUR3/HexHS2n
+         DtFIsVOVU4hBXf7jy+BjNr6mJbAR+XTi6iAYz5k0XXFL+D7NwsrBHfyutaYmq7wcuu7W
+         ZPkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkqN1zmuKSCXz8AdtpXeuRsCsyF5VXEsMtsVB+JsRyoQo3eOA3rhVbIhiiqQzg1k+MOsX4DWZ253yOJto8@vger.kernel.org, AJvYcCWHGVoztIT9IMQPVt8E8PSJZLiXDUENsIkUXHc2H9LyskwiItTm8AHxGaHklT6llWMTujvTW1OtU1Bj/8g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxgqv+vH+/C+sz0VrrqvhX/N83+hLHsBLwxIbvnLJV9fnrl3cdV
+	FFR27zz7AgXjSHv6XhD8Ox9M/+6MT3eNDHPiZvQfJcTbu5Pfv6ex7pwMcbWaWAaXrUtNzEQrNs/
+	DhGPUH3JcpUKvTWU/ksrzpQMoApH9lFVc3z4=
+X-Gm-Gg: ASbGncvInbpnf1vPUtH+AD6zp9xsUMaUvEfQ+cpR9DRqR08u6L5GIQPHWCHlNKjFdw1
+	IbjxeQhK96rrGMMhgfAP+UVTu0PT8bHDzN3XtSal+pR78yg9MqBijb8fP+iMk4pTuVqJDp3tgBm
+	Tc9G+cAaRkHbsfxCuVyI/RZYLemgbY28K3XpwoB1aM5c+UQzZ0/7koT28eVA==
+X-Google-Smtp-Source: AGHT+IE3QPodmDDoq2scPLjifIAKN6EhHjqSM3us4hHgKtwjH+njxwgHT0RLwG1U29V7IyhwIcx7h8RR/7sSNmr2no8=
+X-Received: by 2002:ac8:7d8a:0:b0:476:8c68:dcbc with SMTP id
+ d75a77b69052e-47930f5064cmr129579801cf.9.1744096521423; Tue, 08 Apr 2025
+ 00:15:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCgvCgCHEuM3zPRnLTyQTw--.34625S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Ww4rZF4DKF45XF43Zr1kXwb_yoW7Zw1kpF
-	nxtrZxCrs2vw42qFy7Jr1fZa4Yy3srZ3yUWaykKw18ur4UZr4xtF12kF42gF1rAr98G347
-	u3yvvFZ0kFyI93JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jeksgUUUUU=
-X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbiwhApeGf0xeHvSgAAsR
+References: <20250408033322.401680-1-gshahrouzi@gmail.com> <20250408033322.401680-3-gshahrouzi@gmail.com>
+ <7muoawncdumcsclkcxklw6olqcjko63et26ptbh5lidximffoh@lu34aqtcujtn>
+In-Reply-To: <7muoawncdumcsclkcxklw6olqcjko63et26ptbh5lidximffoh@lu34aqtcujtn>
+From: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+Date: Tue, 8 Apr 2025 03:15:00 -0400
+X-Gm-Features: ATxdqUGyy3-JgqqBSrqvELuHcNhq2Y3RCtUWedAqomuG1z8PZ_996LyWmnSlJh4
+Message-ID: <CAKUZ0zKWDVocdSa60ZZPjq9u24wEW+EaUsXoUrrCF=Z+pacGHQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] bcache: Fix warnings for incorrect type in assignments
+To: Coly Li <colyli@kernel.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, linux-bcache@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
+	kernelmentees@lists.linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Feng Yang <yangfeng@kylinos.cn>
+On Tue, Apr 8, 2025 at 12:58=E2=80=AFAM Coly Li <colyli@kernel.org> wrote:
+>
+> On Mon, Apr 07, 2025 at 11:33:22PM +0800, Gabriel Shahrouzi wrote:
+> > Remove unnecessary cpu_to_le16() and cpu_to_le32() conversions when
+> > assigning values (priorities, timestamps) to native integer type
+> > members. Prevent incorrect byte ordering for big-endian systems.
+> >
+>
+> Hmm, why do you feel the conversions are unncessary? Please explain
+> with details.
+I used Sparse for static analysis on bcache and it gave incorrect type
+in assignment warnings.
 
-Many judgments and bpf_base_func_proto functions are repetitive, remove them.
+For example:
 
-Signed-off-by: Feng Yang <yangfeng@kylinos.cn>
-Acked-by: Song Liu <song@kernel.org>
----
-Changes in v2:
-- Only modify patch description information.
-- Link to v1: https://lore.kernel.org/all/20250320032258.116156-1-yangfeng59949@163.com/
----
- kernel/trace/bpf_trace.c | 72 ----------------------------------------
- 1 file changed, 72 deletions(-)
+u->invalidated =3D cpu_to_le32((u32)ktime_get_real_seconds());
 
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 6b07fa7081d9..c89b25344422 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -1443,56 +1443,14 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	const struct bpf_func_proto *func_proto;
- 
- 	switch (func_id) {
--	case BPF_FUNC_map_lookup_elem:
--		return &bpf_map_lookup_elem_proto;
--	case BPF_FUNC_map_update_elem:
--		return &bpf_map_update_elem_proto;
--	case BPF_FUNC_map_delete_elem:
--		return &bpf_map_delete_elem_proto;
--	case BPF_FUNC_map_push_elem:
--		return &bpf_map_push_elem_proto;
--	case BPF_FUNC_map_pop_elem:
--		return &bpf_map_pop_elem_proto;
--	case BPF_FUNC_map_peek_elem:
--		return &bpf_map_peek_elem_proto;
--	case BPF_FUNC_map_lookup_percpu_elem:
--		return &bpf_map_lookup_percpu_elem_proto;
--	case BPF_FUNC_ktime_get_ns:
--		return &bpf_ktime_get_ns_proto;
--	case BPF_FUNC_ktime_get_boot_ns:
--		return &bpf_ktime_get_boot_ns_proto;
--	case BPF_FUNC_tail_call:
--		return &bpf_tail_call_proto;
--	case BPF_FUNC_get_current_task:
--		return &bpf_get_current_task_proto;
--	case BPF_FUNC_get_current_task_btf:
--		return &bpf_get_current_task_btf_proto;
--	case BPF_FUNC_task_pt_regs:
--		return &bpf_task_pt_regs_proto;
- 	case BPF_FUNC_get_current_uid_gid:
- 		return &bpf_get_current_uid_gid_proto;
- 	case BPF_FUNC_get_current_comm:
- 		return &bpf_get_current_comm_proto;
--	case BPF_FUNC_trace_printk:
--		return bpf_get_trace_printk_proto();
- 	case BPF_FUNC_get_smp_processor_id:
- 		return &bpf_get_smp_processor_id_proto;
--	case BPF_FUNC_get_numa_node_id:
--		return &bpf_get_numa_node_id_proto;
- 	case BPF_FUNC_perf_event_read:
- 		return &bpf_perf_event_read_proto;
--	case BPF_FUNC_get_prandom_u32:
--		return &bpf_get_prandom_u32_proto;
--	case BPF_FUNC_probe_read_user:
--		return &bpf_probe_read_user_proto;
--	case BPF_FUNC_probe_read_kernel:
--		return security_locked_down(LOCKDOWN_BPF_READ_KERNEL) < 0 ?
--		       NULL : &bpf_probe_read_kernel_proto;
--	case BPF_FUNC_probe_read_user_str:
--		return &bpf_probe_read_user_str_proto;
--	case BPF_FUNC_probe_read_kernel_str:
--		return security_locked_down(LOCKDOWN_BPF_READ_KERNEL) < 0 ?
--		       NULL : &bpf_probe_read_kernel_str_proto;
- #ifdef CONFIG_ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
- 	case BPF_FUNC_probe_read:
- 		return security_locked_down(LOCKDOWN_BPF_READ_KERNEL) < 0 ?
-@@ -1502,10 +1460,6 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		       NULL : &bpf_probe_read_compat_str_proto;
- #endif
- #ifdef CONFIG_CGROUPS
--	case BPF_FUNC_cgrp_storage_get:
--		return &bpf_cgrp_storage_get_proto;
--	case BPF_FUNC_cgrp_storage_delete:
--		return &bpf_cgrp_storage_delete_proto;
- 	case BPF_FUNC_current_task_under_cgroup:
- 		return &bpf_current_task_under_cgroup_proto;
- #endif
-@@ -1513,20 +1467,6 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_send_signal_proto;
- 	case BPF_FUNC_send_signal_thread:
- 		return &bpf_send_signal_thread_proto;
--	case BPF_FUNC_perf_event_read_value:
--		return &bpf_perf_event_read_value_proto;
--	case BPF_FUNC_ringbuf_output:
--		return &bpf_ringbuf_output_proto;
--	case BPF_FUNC_ringbuf_reserve:
--		return &bpf_ringbuf_reserve_proto;
--	case BPF_FUNC_ringbuf_submit:
--		return &bpf_ringbuf_submit_proto;
--	case BPF_FUNC_ringbuf_discard:
--		return &bpf_ringbuf_discard_proto;
--	case BPF_FUNC_ringbuf_query:
--		return &bpf_ringbuf_query_proto;
--	case BPF_FUNC_jiffies64:
--		return &bpf_jiffies64_proto;
- 	case BPF_FUNC_get_task_stack:
- 		return prog->sleepable ? &bpf_get_task_stack_sleepable_proto
- 				       : &bpf_get_task_stack_proto;
-@@ -1534,12 +1474,6 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_copy_from_user_proto;
- 	case BPF_FUNC_copy_from_user_task:
- 		return &bpf_copy_from_user_task_proto;
--	case BPF_FUNC_snprintf_btf:
--		return &bpf_snprintf_btf_proto;
--	case BPF_FUNC_per_cpu_ptr:
--		return &bpf_per_cpu_ptr_proto;
--	case BPF_FUNC_this_cpu_ptr:
--		return &bpf_this_cpu_ptr_proto;
- 	case BPF_FUNC_task_storage_get:
- 		if (bpf_prog_check_recur(prog))
- 			return &bpf_task_storage_get_recur_proto;
-@@ -1548,18 +1482,12 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		if (bpf_prog_check_recur(prog))
- 			return &bpf_task_storage_delete_recur_proto;
- 		return &bpf_task_storage_delete_proto;
--	case BPF_FUNC_for_each_map_elem:
--		return &bpf_for_each_map_elem_proto;
--	case BPF_FUNC_snprintf:
--		return &bpf_snprintf_proto;
- 	case BPF_FUNC_get_func_ip:
- 		return &bpf_get_func_ip_proto_tracing;
- 	case BPF_FUNC_get_branch_snapshot:
- 		return &bpf_get_branch_snapshot_proto;
- 	case BPF_FUNC_find_vma:
- 		return &bpf_find_vma_proto;
--	case BPF_FUNC_trace_vprintk:
--		return bpf_get_trace_vprintk_proto();
- 	default:
- 		break;
- 	}
--- 
-2.43.0
+ktime_get_real_seconds() returns back u64 and gets casted down to a
+u32. u is of type struct uuid_entry whose member fields are either u8,
+u32, or u64. A conversion here contradicts the type it should be
+assigned.
 
+From my understanding, this would not produce an unexpected result if
+the value were to be read from or written to some location which seems
+to be the case here. I believe it would only cause issues on
+big-endian systems if the value were to be modified in some way.
+
+Looking at the commit history for when the code for this specific
+example was first introduced (12 years ago), it seems like this was
+the author=E2=80=99s intent. It looks like the intention was to store the
+value as little endian in uint32_t. Doing this, the author saves space
+/ time. If the type was le32 instead, the conversion would have to be
+applied each time it=E2=80=99s used. Alternatively, if another member varia=
+ble
+was defined but for the le32 version, then extra space is used up.
+
+In the unlikely event that these specific files change drastically,
+making sure the types are the same serves as a preventative measure
+to make sure it=E2=80=99s not misused. On the other hand, making the change
+most likely goes against the author=E2=80=99s original intent and could cau=
+se
+something unintended.
+>
+> I don't mean the modification is correct or incorrect, just want to
+> see detailed analysis and help me understand in correct why as you
+> are.
+>
+> BTW, did you have chance to test your patch on big-endian machine?
+I only analyzed the compilation warnings so far. I=E2=80=99ll look into try=
+ing
+to test this on a big-endian machine.
+
+
+>
+> Thanks.
+>
+>
+> > Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
+> > ---
+> >  drivers/md/bcache/super.c | 12 ++++++------
+> >  1 file changed, 6 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> > index e42f1400cea9d..c4c5ca17fb600 100644
+> > --- a/drivers/md/bcache/super.c
+> > +++ b/drivers/md/bcache/super.c
+> > @@ -648,7 +648,7 @@ int bch_prio_write(struct cache *ca, bool wait)
+> >               for (b =3D ca->buckets + i * prios_per_bucket(ca);
+> >                    b < ca->buckets + ca->sb.nbuckets && d < end;
+> >                    b++, d++) {
+> > -                     d->prio =3D cpu_to_le16(b->prio);
+> > +                     d->prio =3D b->prio;
+> >                       d->gen =3D b->gen;
+> >               }
+> >
+> > @@ -721,7 +721,7 @@ static int prio_read(struct cache *ca, uint64_t buc=
+ket)
+> >                       d =3D p->data;
+> >               }
+> >
+> > -             b->prio =3D le16_to_cpu(d->prio);
+> > +             b->prio =3D d->prio;
+> >               b->gen =3D b->last_gc =3D d->gen;
+> >       }
+> >
+> > @@ -832,7 +832,7 @@ static void bcache_device_detach(struct bcache_devi=
+ce *d)
+> >
+> >               SET_UUID_FLASH_ONLY(u, 0);
+> >               memcpy(u->uuid, invalid_uuid, 16);
+> > -             u->invalidated =3D cpu_to_le32((u32)ktime_get_real_second=
+s());
+> > +             u->invalidated =3D (u32)ktime_get_real_seconds();
+> >               bch_uuid_write(d->c);
+> >       }
+> >
+> > @@ -1188,7 +1188,7 @@ void bch_cached_dev_detach(struct cached_dev *dc)
+> >  int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
+> >                         uint8_t *set_uuid)
+> >  {
+> > -     uint32_t rtime =3D cpu_to_le32((u32)ktime_get_real_seconds());
+> > +     uint32_t rtime =3D (u32)ktime_get_real_seconds();
+> >       struct uuid_entry *u;
+> >       struct cached_dev *exist_dc, *t;
+> >       int ret =3D 0;
+> > @@ -1230,7 +1230,7 @@ int bch_cached_dev_attach(struct cached_dev *dc, =
+struct cache_set *c,
+> >           (BDEV_STATE(&dc->sb) =3D=3D BDEV_STATE_STALE ||
+> >            BDEV_STATE(&dc->sb) =3D=3D BDEV_STATE_NONE)) {
+> >               memcpy(u->uuid, invalid_uuid, 16);
+> > -             u->invalidated =3D cpu_to_le32((u32)ktime_get_real_second=
+s());
+> > +             u->invalidated =3D (u32)ktime_get_real_seconds();
+> >               u =3D NULL;
+> >       }
+> >
+> > @@ -1591,7 +1591,7 @@ int bch_flash_dev_create(struct cache_set *c, uin=
+t64_t size)
+> >
+> >       get_random_bytes(u->uuid, 16);
+> >       memset(u->label, 0, 32);
+> > -     u->first_reg =3D u->last_reg =3D cpu_to_le32((u32)ktime_get_real_=
+seconds());
+> > +     u->first_reg =3D u->last_reg =3D (u32)ktime_get_real_seconds();
+> >
+> >       SET_UUID_FLASH_ONLY(u, 1);
+> >       u->sectors =3D size >> 9;
+> > --
+> > 2.43.0
+> >
+>
+> --
+> Coly Li
 
