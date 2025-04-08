@@ -1,98 +1,141 @@
-Return-Path: <linux-kernel+bounces-593631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11990A7FB88
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:20:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1F81A7FB98
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17B913BF3A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:15:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D036818854BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22BF266EEB;
-	Tue,  8 Apr 2025 10:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6EA267AF3;
+	Tue,  8 Apr 2025 10:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QbKB7Hnu"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gMoltob2"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5107269CF2;
-	Tue,  8 Apr 2025 10:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C163F7FBD6;
+	Tue,  8 Apr 2025 10:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744107006; cv=none; b=JIiIB8rufqTcTB2hHkiMoS0vwOtGQsJwEjCvVgDwFyl/pCRWBPBLJ/4XOc/2osFAYdpyIR2IL39BsZjsOmxe8p7Y0e70QpwJui8yIFWaIQ4YArEU6x4d1VDOiJnEpzCXsnpNeQnPwIRBL8Js5JZu1Z8seXItSLHlCb3PLwXhsxw=
+	t=1744107111; cv=none; b=qje83R6Vedwub53pTdPlb/sYxGGPWfN6Sc574qkY02d5bukFAqYWDOqtDGPwMjP4rcNb+820rYIEKC1m6gGsxTPFlnMlBH/MaO/0fGS2/oOM3wfyMw36+kTHdcv6ImIX/j8hl7ubA3KNsEk5oLrJajasQxi9gEMVpmjx7g2aYTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744107006; c=relaxed/simple;
-	bh=zKoPiYcz99Nz4xf/JHPeWfzhs+Akk0ORk8KQJztJIxQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eEkdBxYHHi6DdipbJ8BK9ILqr1iXfhM64269Tnzdqbt9c8fydyoefFXDT6xTb25H5kZGHhBIEKOPpJsgjal1QbYfLIn94RzBe5wRDN4j1vWpgbT+LnuoNzBZNtTX3XCDlBAKXCL/B1fLrFJ7fIDiK7FmB6yGZg9ROkeQkyy0H/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QbKB7Hnu; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744106995;
-	bh=zKoPiYcz99Nz4xf/JHPeWfzhs+Akk0ORk8KQJztJIxQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QbKB7Hnuj7ZBKkSBv3cR7rUneJAWMFXGUNA2RlvgRAAa1CE/eyVhw+cTMS9R2St27
-	 SY+aAKK7+tpi2H2knNvVcHXpaHtcmrs6uAShV4d/FuBat2tnGJN6tWO85BPStSNJ7j
-	 JteOu1GtkRGekbkzFGq5oBg5/E6qzWLhfdos8uTCNTti9FheqrOxphMDfwhhTI4Ceq
-	 DF2CsyyTHpEerv9N7B1HfZr0pjHcRtHhFXY4op4H9xERbyo3Q36zT7BIG04l7UsScx
-	 6qiqVNloHKIJGsn/jxOyaPjHMNGR5YBeX0kQ67wcH75tMHgVfELm/JF9aJdocanaOX
-	 lUjWERyst7HVw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 147C517E0F9E;
-	Tue,  8 Apr 2025 12:09:55 +0200 (CEST)
-Message-ID: <ae6b9a80-c8b6-48dc-9229-da4e8c102551@collabora.com>
-Date: Tue, 8 Apr 2025 12:09:54 +0200
+	s=arc-20240116; t=1744107111; c=relaxed/simple;
+	bh=rEOk4CBly4AlRVttK5V5QQUlaR69H0x+24xY/q+krdg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p+cYqmrJY4l+WtgYNPZ6NNt7AcluE49kzvdjC5kngxdXK2hUkZgQPsMgZSvviOt0efWqYA+oM716D7gQXYPWOBp6J3pHVZFRuGFjLVIQ9i5OMg2Pty4hvjQgpiTGbb8T8ErBhkjnkfNETG70y1HHbe62gtymzjwIoJUQmHioY9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gMoltob2; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so4549849b3a.0;
+        Tue, 08 Apr 2025 03:11:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744107109; x=1744711909; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LTVPSXCmMLq6EC4r2uIbhTrhstuJngMRN9cKMT6ddPE=;
+        b=gMoltob2ydWJ7IxtVcYbmMWbu3bdZ+ZcLQV+irFkbPPJFS3YX9JmFWIBgiEdGPm7vp
+         fwiK7SeEPnrgwk7iizIG9XFAiqFWyB4Av1lqLNTb69CJ7aITXtxE/M9fgLza4VnrmBOL
+         8R1+jw/CRnrXmIHVXCJopk3IPgRhQhuhhzkYyVwz4gBqxGfBfchOk9e8Wj1aaRMpP2Az
+         IFjHOGsOANS+CN8ruM35vEFDI/RGAQQshubjxt8H7AZtgI9gD/GyMlqVXKhi00Ebih1Z
+         Q5ktPUQWU5cqOSnVOyKTYQVTd8JEScPN69bRsosKJJU6yHgn3JBIEGWbyA0lnayyZa/Y
+         SdvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744107109; x=1744711909;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LTVPSXCmMLq6EC4r2uIbhTrhstuJngMRN9cKMT6ddPE=;
+        b=OAnj1BDPbpeY4TGMzm2iAFhoP0MgQPRa19EtEkhQehp/+s7UinfBOLooxXX2GTUxYo
+         XKQACKWaa05zQr1CoC3xPoA+mj3s9eFyB+wvCmikw1/RA7pdYznLcZ4XQ4K0OGb+sIJQ
+         W4k6elmc3ynHvpkiU7M56bTY+Y+AdiocV2Ct6ynIc49d+syl8tGZPD55b3WjytP1jbQb
+         EyfoQorFp1UpCx2EVcywkYWe7b5/6ebv9F1EeOgG83jwFTJ2dZQs0Fw4fWTu/Szwhh05
+         yLIRYb+ZCWMKSNGh1EQ49dJba4t5BoGH/UU5vxjToMNH2b9kcde4ZD26ztzxnClkAHKw
+         W5Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjfSrZYvyC0oXPO4hKqW5xZsP1XNf9n0YPigt5qy0rnME+8hG52pN7TuhA7CKzsz+kWKb8BSG/WqfC0sj6@vger.kernel.org, AJvYcCWg9F9gtKo+VuAawO7glmNhiA7pfPKcpQrM6vBlpGvdxTxJw0tPZFFMdkWk4jBoEl1ax6FHsOQXwjW03MfI@vger.kernel.org, AJvYcCXgNQm+TzemmgJsBPryUSZMbfGIyUx89yR9zFOmdUGu9HpsKg8QEKvncS9K7iYWpDYmDNC78461@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIUw6kkk1GyzSzosfE/+GYYrEtU+I2zdkMKwBlR5bJnVwEhmr/
+	jl5tNnHT3PxiI3FlgKCjiGwpivnc7qymSbYfUOd3z7nhSYAmv+LUe4MJNTqUL3N1z4YeAr21UHT
+	OskJQ5HONilwM2wki+ZJB/EkCrM0=
+X-Gm-Gg: ASbGncsdMt7gZ/L2z7tb8oxy8e2+HTswUsQmNgWN7Pqf0DkHdtjDqgah/KqUPXCX8eA
+	bgJ4ItB8sVOPR0OSaejMugAYyom1aJ3ophpSdTrEnc1c1asqquqTuuMFC1C/Dz5+c91cYXIGl19
+	3APsHGP0Oz58FlOucir3V2QXA5
+X-Google-Smtp-Source: AGHT+IFhEirAccPm6diooe5A56ckmlLwkK2C0zEsLm8HntfBxz5BRD+WrLEptloFT/6kAAaD8cz1blHSA7D0fDgTFCY=
+X-Received: by 2002:a17:90b:2711:b0:2ee:d433:7c50 with SMTP id
+ 98e67ed59e1d1-306af788dbbmr12565246a91.23.1744107108986; Tue, 08 Apr 2025
+ 03:11:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: mediatek: mt8188: Fix IOMMU device for rdma0
-To: Chen-Yu Tsai <wenst@chromium.org>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Chengci . Xu" <chengci.xu@mediatek.com>, Yong Wu <yong.wu@mediatek.com>,
- Robin Murphy <robin.murphy@arm.com>
-References: <20250408092303.3563231-1-wenst@chromium.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250408092303.3563231-1-wenst@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241019191303.24048-1-kovalev@altlinux.org> <Z9xsx-w4YCBuYjx5@eldamar.lan>
+ <d4mpuomgxqi7xppaewlpey6thec7h2fk4sm2iktqsx6bhwu5ph@ctkjksxmkgne>
+ <2025032402-jam-immovable-2d57@gregkh> <7qi6est65ekz4kjktvmsbmywpo5n2kla2m3whbvq4dsckdcyst@e646jwjazvqh>
+ <2025032404-important-average-9346@gregkh> <dzmprnddbx2qaukb7ukr5ngdx6ydwxynaq6ctxakem43yrczqb@y7dg7kzxsorc>
+ <20250407-biegung-furor-e7313ca9d712@brauner> <20250407190814.GB6258@frogsfrogsfrogs>
+In-Reply-To: <20250407190814.GB6258@frogsfrogsfrogs>
+From: Richard Weinberger <richard.weinberger@gmail.com>
+Date: Tue, 8 Apr 2025 12:11:36 +0200
+X-Gm-Features: ATxdqUGUflWhsc7_t9EwiCgdbFbM8FViOml_3iPU3I88ZbHoy2WAA1j9TB8rW0o
+Message-ID: <CAFLxGvxH=4rHWu-44LSuWaGA_OB0FU0Eq4fedVTj3tf2D3NgYQ@mail.gmail.com>
+Subject: Re: [PATCH] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Cengiz Can <cengiz.can@canonical.com>, 
+	Attila Szasz <szasza.contact@gmail.com>, Greg KH <gregkh@linuxfoundation.org>, 
+	Salvatore Bonaccorso <carnil@debian.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lvc-patches@linuxtesting.org, 
+	dutyrok@altlinux.org, syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com, 
+	stable@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 08/04/25 11:23, Chen-Yu Tsai ha scritto:
-> Based on the comments in the MT8188 IOMMU binding header, the rdma0
-> device specifies the wrong IOMMU device for the IOMMU port it is
-> tied to:
-> 
->      This SoC have two MM IOMMU HWs, this is the connected information:
->      iommu-vdo: larb0/2/5/9/10/11A/11C/13/16B/17B/19/21
->      iommu-vpp: larb1/3/4/6/7/11B/12/14/15/16A/17A/23/27
-> 
-> rdma0's endpoint is M4U_PORT_L1_DISP_RDMA0 (on larb1), which should use
-> iommu-vpp, but it is currently tied to iommu-vdo.
-> 
-> Somehow this went undetected until recently in Linux v6.15-rc1 with some
-> IOMMU subsystem framework changes that caused the IOMMU to no longer
-> work. The IOMMU would fail to probe if any devices associated with it
-> could not be successfully attached. Prior to these changes, only the
-> end device would be left without an IOMMU attached.
-> 
-> Fixes: 7075b21d1a8e ("arm64: dts: mediatek: mt8188: Add display nodes for vdosys0")
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+On Mon, Apr 7, 2025 at 9:08=E2=80=AFPM Darrick J. Wong <djwong@kernel.org> =
+wrote:
+> It's also the default policy on Debian 12 and RHEL9 that if you're
+> logged into the GUI, any program can run:
+>
+> $ truncate -s 3g /tmp/a
+> $ mkfs.hfs /tmp/a
+> $ <write evil stuff on /tmp/a>
+> $ udisksctl loop-setup -f /tmp/a
+> $ udisksctl mount -b /dev/loopX
+>
+> and the user never sees a prompt.  GNOME and KDE both display a
+> notification when the mount finishes, but by then it could be too late.
+> Someone should file a CVE against them too.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+At least on SUSE orphaned and other problematic filesystem kernel modules
+are blacklisted. I wonder why other distros didn't follow this approach.
 
+> You can tighten this up by doing this:
+>
+> # cat > /usr/share/polkit-1/rules.d/always-ask-mount.rules << ENDL
+> // don't allow mounting, reformatting, or loopdev creation without asking
+> polkit.addRule(function(action, subject) {
+>         if ((action.id =3D=3D "org.freedesktop.udisks2.loop-setup" ||
+>              action.id =3D=3D "org.freedesktop.udisks2.filesystem-mount" =
+||
+>              action.id =3D=3D "org.freedesktop.udisks2.modify-device") &&
+>             subject.local =3D=3D true) {
+>                 return polkit.Result.AUTH_ADMIN_KEEP;
+>         }
+> });
+> ENDL
 
+Thanks for sharing this!
 
+> so at least you have to authenticate with an admin account.  We do love
+> our footguns, don't we?  At least it doesn't let you do that if you're
+> ssh'd in...
+
+IMHO guestmount and other userspace filesystem implementations should
+be the default
+for such mounts.
+
+//richard
 
