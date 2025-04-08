@@ -1,144 +1,144 @@
-Return-Path: <linux-kernel+bounces-594856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D29A81767
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:08:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07338A8176D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:10:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ABCF3A0571
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:07:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 898C03B9503
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CBA253F25;
-	Tue,  8 Apr 2025 21:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E342550A4;
+	Tue,  8 Apr 2025 21:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="JkBbTa54"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VMblmJKK"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAAFE2459CA
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 21:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F250225486E
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 21:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744146460; cv=none; b=khoOpls7dLe/XIu/Cp3/nTPGHK0n73dt1YMxQpOmql+LrXo8pza02P+zx/nQcRELpyGpdvAYQhqI4kUyvJc5tHmNkRwYk8RYEs36JVs0Z59V3P2Fxu4h7jtOmOQ/PBRJYMKwYTGo8uvjPz47mqEGDHgSF2sd70ZZi+xd0eeiKGQ=
+	t=1744146504; cv=none; b=bjoEdSlQExPkE5Hs7nLysoLsC5tUfowtSqYDK2O2iVi3lDN2D4orQcER6jb4MuWBQxSgbcFog/UEZERLOYH99nuNnqrMObFp6tDBzDGH8hECbr+PNxphow//UuQPpFWFezlgvUnn7WJfTomBKeX15v9CIaj5GWEl4vgawmDAwmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744146460; c=relaxed/simple;
-	bh=USohIxxv1dStzheOcbnIzldsKL2qZ2vTlgyp5m5vOnU=;
+	s=arc-20240116; t=1744146504; c=relaxed/simple;
+	bh=kPUDG6NeUeE/nqmHqfdxUuwigYQHbxGKLoYqWps1Cx0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gzskjWA9mDg1RFn4pz7xWbqHf7udctjl2i2xHS55lBzfAyyPXXFJlBRNjv7AaJ+OOxF4aZ5BTzfEJOWSP5qboZV+Zjn2TGgCOwC8Kl8sW0jqFzJVzyph3RkPYwG/F4aWjpxwNH8F+cCXWsVDsimlGFnWug7vEZUz3YOcVyf4c8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=JkBbTa54; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43d0782d787so41291475e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 14:07:37 -0700 (PDT)
+	 To:Cc:Content-Type; b=jLsPlIAeDgHrBfLdZTUzT4YKzm4FTgSxLrh+rtkTakQenmqNWMuAd8nvKWY8KoUxMqsxvjZEk1i0b0l8BYCT1kLbnNm4UTAbEG+uuMpzWiigTy9rJIX0kQTbnW+D89hy3ptRqz3sBNFtrAV5CNzzh3Kn9hmKBEGYvOsKGWxlYO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VMblmJKK; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4774611d40bso74691cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 14:08:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1744146456; x=1744751256; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1744146502; x=1744751302; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VmKQGNO17JlT5XX3kTPlf+6BMGl0Zp1Spd/vSsRvH2Q=;
-        b=JkBbTa54PPS+p+N+JiSkFH/fOCe7J/Hi5GoTxTBfaDA09HOBI+zTs6DxhkFmxNXHJQ
-         hMRwsdCntvb2wWKGVDdQIAWtKLpF0YzJjtOcaPXSL6GhvbUBpvZa5guw2qPJbMSxFAoN
-         VRwPJvoBeMlkd5Cj/UtXrp5w2DVq4uVsuyYCznkm/NBzXFybh3mafy57qfxAuaA3PerI
-         osQrZPTJqRTsfZYuj9Xfye/0gJF/a71xAGJobAZHwBJNzaUvlTVfer3UACk81RWH8TD4
-         xYB2oZ93vR1J8cmg60lMcMhKe8KNwtfTd1l4/LyXmaiN2qO6uuukI9wHfT8uizxqYCBw
-         NA8Q==
+        bh=cnu3bvgHMxtoAUB0jZkySCT3ifjhzRfTKB6ZlP7NxGo=;
+        b=VMblmJKKSlROL1WQm0StrWJ1zo6owVuE8V6D8IuCGZfEHVU9+R+ctklQY2WfGoK5Ue
+         3k83cHxHMpGd35cfn0BT1nyVdFH7/lrAws8IasjPL9MX6BDTI2wdq6FQ154p3QvzErQY
+         iok2Wx/JswjiY79YTYdDaiorI2CFEv30QVTxYDzLP9vTuiq94fw7BKDvuwLUdCnLL7N/
+         ZYE6bfkuuCGmCKQmH4Haeeuc+LDNzVCbX8nvgARjRJyfhWd82lQkFtzZtBjPRfx6I1og
+         Uub26dxCoLYKt5FfPMqmLj8qce4r54E9x06h6bAsWRNDovIIKVskVppUIr91EU4nZyQo
+         JzTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744146456; x=1744751256;
+        d=1e100.net; s=20230601; t=1744146502; x=1744751302;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VmKQGNO17JlT5XX3kTPlf+6BMGl0Zp1Spd/vSsRvH2Q=;
-        b=IccJB1oC7MPLinSnSRH+dzqAFD7O0gSIsnYsRrRiN9igCYd7eDruehZmqrP9buahsI
-         jpAVR0qtmQywjh7OJK5kGCga5bxRJ+9djzA04XXCWt259vcDgiQT+8uHFexMluEBUdH0
-         N5qd6gotgL7LXkwJKdsBM4USU1dB7+wdafLWJyA0v7uWnBIX2QZzCXjID5Odn+kdoLpW
-         bWHDiX/gr+Kv28o6K67PJjCJqH2312cd7VYgGcnqL/2Nk+ArsXfQ9f7+MelkIm8uXzqW
-         LsEkGOwlHtsmnjHt69eS2c0ZPLSyIWaqwh+VVipiug713NtTu6emM9U2mDPMusHO92xy
-         40gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcvEOtLU0mJ3bOHTnFvQe4eXI5NUgisJYClgp1ljtZ6vrf9N44u/Xylcx6Zs4K3ksq82tUMZZufkFhbOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7mmOMoOifKXrNLpAiWrQm/VmmCCs+Y+LbY0gA7XDnwlZ578fs
-	WiCCIKq+bPhAPuPre7IJFVRdlfnXt4ZoJQYsWag9vBzEpSxwxKbuYklVoe6SE27+vkqUJTIuUDA
-	ulOIcnH5TLMZdU9JnEXNkixzXsl51vzUA0PDOzg==
-X-Gm-Gg: ASbGnctLsHUt17eeNRREVwCWeeZLb3yyNsyDYMsMSoFdSDK5M63v8Auzd+IRqGei+3L
-	m+RVnjm9SY/Z4rjMSZKdCFCS4slAWhTAtOddKXGAXCmgUor0v9cKneGwk8XjRmoa7cNZ3OpaHLa
-	U9IRXbv8wEtsQSPrjC+Yh0KEd8Sgw=
-X-Google-Smtp-Source: AGHT+IFQbVv/s84Y+T1st8tT4/l6Pfqjnc7EF+pvFgIp4N2vKFFcQDYEDpKwqMKa9jDGgHo80JlGjfoxQ6bfGhLYVlc=
-X-Received: by 2002:a05:600c:cc4:b0:43d:82c:2b23 with SMTP id
- 5b1f17b1804b1-43f1ed33369mr4294535e9.23.1744146456118; Tue, 08 Apr 2025
- 14:07:36 -0700 (PDT)
+        bh=cnu3bvgHMxtoAUB0jZkySCT3ifjhzRfTKB6ZlP7NxGo=;
+        b=MPh735ljQS4bEuchj0benskSOn9hS0X0Sew6Wd4dVZmUmDzjsYpuRjCp+5hguhbO1S
+         VPEAQ6bgHzkXQ64Y7s3WLuhJF0WyHgRR1zVtwOWI4D5VaUV9RglAD7r+DD4xKR7HPgwB
+         ROjksgF84g47jjUUMxuk5L8lO0hePFVptbAoVVa4M44P7kwDadt6iQyXU99STxMN6RLe
+         7BJnVET05Xd1iwVaTCVupNXN9wi7UM2RlfHi7MreGEgqdwLxhS39TniLNcReZXx/7Yqt
+         w1s3T+YbDQJTfD3WePi4xBNpMzJgWYBXjyexmrmlZK5Mvpr/fde1+ZxNmNgv0d1Jctu6
+         48+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXKuaWzU9Cpa2FouiNJIf3c8RVrMmMpFLzjr92WRgremhHDH1AkSo2JQsXsTJMqvXZmgROYGbyYP6EV+94=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDHmLlGzVYwM9JtS/XnkZy2e9RMSTOkWo4ZpCf995Q4oHdvyQR
+	R98GZ2O3FGlz+4QEF9kI8vO1+kT3NTc5F1lPQa08hBfU1jugBpK8MdMOcJoGr3G0wVFNcCUmagU
+	jRCVs3QJJNcZ4+hxA8BKHtbE1pZ9Af2658X2u
+X-Gm-Gg: ASbGncvW2plNzddK+t/I3giHDwtD/E4R80SMpN+DPGEFdDhLQBhSudPc3gBPJh/zsiA
+	7f+S0/0JeGU3bd2WPm34/xcZ+VaAVeAPgB6XPRyH5Oe2uJj2hjoX/4ASk98Ad0jx8OGs6A3BKie
+	wP8zkrnQXq4Qnjne7HJO5Kh2M=
+X-Google-Smtp-Source: AGHT+IFmyRrY9b5XrzQ6iow4zsbUyYUHGybURNKUpSZXCrzuiJUT9EOG0sFZeJBexlw4mSW12aq4Fv6vjlduxCNdFSo=
+X-Received: by 2002:a05:622a:14c9:b0:476:f4e9:314e with SMTP id
+ d75a77b69052e-479600a2bd2mr151821cf.25.1744146501531; Tue, 08 Apr 2025
+ 14:08:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250405054848.3773471-1-mliang@purestorage.com>
-In-Reply-To: <20250405054848.3773471-1-mliang@purestorage.com>
-From: Randy Jennings <randyj@purestorage.com>
-Date: Tue, 8 Apr 2025 14:07:24 -0700
-X-Gm-Features: ATxdqUFFtjYbMoveKboHE089vHuNzkw5X7zdoXj_S3_G1loNm5Y_nWMwyRt_KL0
-Message-ID: <CAPpK+O3_3KLxA6QuLSu7QbBwAt9jLBKmihbqQUYfmJwNzNGQ1g@mail.gmail.com>
-Subject: Re: [PATCH] nvme-tcp: wait socket wmem to drain in queue stop
-To: Michael Liang <mliang@purestorage.com>
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
-	Sagi Grimberg <sagi@grimberg.me>, Mohamed Khalfella <mkhalfella@purestorage.com>, 
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250408164000.3215690-1-fvdl@google.com> <20250408140357.9a708f7547e48d2da1d2fc34@linux-foundation.org>
+In-Reply-To: <20250408140357.9a708f7547e48d2da1d2fc34@linux-foundation.org>
+From: Frank van der Linden <fvdl@google.com>
+Date: Tue, 8 Apr 2025 14:08:10 -0700
+X-Gm-Features: ATxdqUFwjyzXo9A2CI9xTBTKMZAAWfOz1vt__1iANqLvh9kPsm1l87QYthjNUPk
+Message-ID: <CAPTztWYY6wGBARyTEt2yXCxstyTUXqcGfyUt4ryBue8gGKXrgw@mail.gmail.com>
+Subject: Re: [PATCH v2] mm/cma: report base address of single range correctly
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: muchun.song@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Geert Uytterhoeven <geert@linux-m68k.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 4, 2025 at 10:49=E2=80=AFPM Michael Liang <mliang@purestorage.c=
-om> wrote:
+On Tue, Apr 8, 2025 at 2:03=E2=80=AFPM Andrew Morton <akpm@linux-foundation=
+.org> wrote:
 >
-> This patch addresses a data corruption issue observed in nvme-tcp during
-> testing.
+> On Tue,  8 Apr 2025 16:40:00 +0000 Frank van der Linden <fvdl@google.com>=
+ wrote:
 >
-> Issue description:
-> In an NVMe native multipath setup, when an I/O timeout occurs, all inflig=
-ht
-> I/Os are canceled almost immediately after the kernel socket is shut down=
-.
-> These canceled I/Os are reported as host path errors, triggering a failov=
-er
-> that succeeds on a different path.
+> > The cma_declare_contiguous_nid code was refactored by
+> > commit c009da4258f9 ("mm, cma: support multiple contiguous
+> > ranges, if requested"), so that it could use an internal
+> > function to attempt a single range area first, and then
+> > try a multi-range one.
+> >
+> > However, that meant that the actual base address used for
+> > the !fixed case (base =3D=3D 0) wasn't available one level up
+> > to be printed in the informational message, and it would
+> > always end up printing a base address of 0 in the boot
+> > message.
+> >
+> > Make the internal function take a phys_addr_t pointer to
+> > the base address, so that the value is available to the
+> > caller.
 >
-> However, at this point, the original I/O may still be outstanding in the
-> host's network transmission path (e.g., the NIC=E2=80=99s TX queue). From=
- the
-> user-space app's perspective, the buffer associated with the I/O is consi=
-dered
-> completed since they're acked on the different path and may be reused for=
- new
-> I/O requests.
+> Changes from v1 are:
 >
-> Because nvme-tcp enables zero-copy by default in the transmission path,
-> this can lead to corrupted data being sent to the original target, ultima=
-tely
-> causing data corruption.
+> --- a/mm/cma.c~mm-cma-report-base-address-of-single-range-correctly-v2
+> +++ a/mm/cma.c
+> @@ -722,14 +722,15 @@ static int __init __cma_declare_contiguo
+>         }
 >
-> We can reproduce this data corruption by injecting delay on one path and
-> triggering i/o timeout.
+>         ret =3D cma_init_reserved_mem(base, size, order_per_bit, name, re=
+s_cma);
+> -       if (ret)
+> +       if (ret) {
+>                 memblock_phys_free(base, size);
+> -       else {
+> -               (*res_cma)->nid =3D nid;
+> -               *basep =3D base;
+> +               return ret;
+>         }
 >
-> To prevent this issue, this change ensures that all inflight transmission=
-s are
-> fully completed from host's perspective before returning from queue stop.
-> This aligns with the behavior of queue stopping in other NVMe fabric tran=
-sports.
+> -       return ret;
+> +       (*res_cma)->nid =3D nid;
+> +       *basep =3D base;
+> +
+> +       return 0;
+>  }
 >
-> Reviewed-by: Mohamed Khalfella <mkhalfella@purestorage.com>
-> Reviewed-by: Randy Jennings <randyj@purestorage.com>
-> Signed-off-by: Michael Liang <mliang@purestorage.com>
+>  static void cma_debug_show_areas(struct cma *cma)
+> _
+>
+> Which appears to be just a little cleanup?
 
-Through additional testing, we have recreated the corruption with this
-patch.  We had a previous iteration of the patch that ran some time
-without the corruption, and we convinced ourselves internally that a
-portion of that version should not be needed.  So, unfortunately, it
-looks like this patch is not sufficient to prevent the data
-corruption.  We do believe the issue is still with the zero-copy and
-too-quick retransmission (our tests showed that data that was only in
-the buffer while userspace controlled the buffer was transmitted on
-the wire), but we are still investigating.
+Correct, it just fixes a style nit that Geert pointed out.
 
-Sincerely,
-Randy Jennings
+- Frank
 
