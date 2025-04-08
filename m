@@ -1,204 +1,121 @@
-Return-Path: <linux-kernel+bounces-594812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62CC1A816DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:29:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7D3BA816F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E9161B83FB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:30:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56D233A833E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D602528E9;
-	Tue,  8 Apr 2025 20:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7966C255233;
+	Tue,  8 Apr 2025 20:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cJrm785J"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2044.outbound.protection.outlook.com [40.107.223.44])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eX+kTm7k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2190A21517D
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 20:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744144188; cv=fail; b=RUEQZjmsGv0efzt+IwaZgw4bcw5zwFf4lKnZRF1j3/bwCSLZScMe4UcKu6hLBap7/EVR+nsmQuEmLekuLw/2Y60twd3NeYtrStYFHWcn0NV5oA1RX6NwDX254W6zBTkY9HpAvs2l8MQb3hELQtBXYI2wGCsm2EZEYhW37KBRB1s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744144188; c=relaxed/simple;
-	bh=/URe1CZUmuJHwzW+rCT0ZZL2VgkaeHeSawG/7Rcunpo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=lBCU+92OczKceUrkGsm3b/aSsmCe3SRF/h7htvfHONLc4Kv153jq9g1Oc93A/heiR/cvkaVZPk0lbf7eJ/XjL0IlxPUBq76N+telqMH1Z5qZshuzNABlzDWYG0nYl7xje2iG4vz3ESafCUF1PwOdt4EtbpDqVQxhS1P8LeZqMig=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cJrm785J; arc=fail smtp.client-ip=40.107.223.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YRCQOy168LBHk6oq9nhdsPx68uHSDlLkcC0sZkZVjPvV0d1y+XA9x6PLhKi3fGDycZ4NSw3K2ksVTzd0V5QJvWE75kcq1hdXj+lZN4IjwWPsc+YAK+W9wp2kmfjWnfpBzgUTgfEviwMEfI5K0Vk0jquiUpAtrY7Q/MfA/7abDzYtrHsHI7pbB5n3jH9F5yNuOIlfw1y3gedoSgkEQ6W4dSN0bElBA74G9OYxrK7K6btTLyLFrkgMaSHa93DZUIP8TjsLEcFDeu4+EkegryWijVyJ4KFOL9BM7ab8V75syqE2axRsL61KWC5hDRQHZJv+ZowkTuoV4+zQAxkR3EeUkw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8m9TCIvKNu+pOT9kx3zcU/DAfbJq6K37v1OUXFK2hWw=;
- b=HwtbT/4XEBy12hcGOXijPIfaPwgjbTqUVI/0/YSkpG85BjUjIF568BrldH4wgT1WYDVVYh5ukJyEgn5TVpWRqv9hoTGQaZdHtf39go621xUFz3ll1bjS2uMZsfDxb5840y0CRFpxlo24r/oDtv6YxMpk00t7g+ETQNcUk3K4ZKevBAVpFY9Ppr8gu/PRU6jGk8zGO2p8pRO6jdbe8VOFFALS+SkFFUvND7p/1qXoMQHIIfPDIcfCd5EiJTJ7W5N3A9YBdTcCsglnlb7E+Kf7m0PaAfV5dQowZYnlf6AlsE14hxvGVFmM8L/KIRjA4NY39TtAR0SH2bhjPgH0G8Fs+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8m9TCIvKNu+pOT9kx3zcU/DAfbJq6K37v1OUXFK2hWw=;
- b=cJrm785JaL93CPEqfJXKkn4h6d+riHX9vrzuKxRNuM3V3gZVfNo14oI9A0Qbaim8tmsSmRy5r7fwzUg8Amm2WUuk+PYsqnSf1Gw3RCl71cj7ETAIdGllZIS4Z8v8YvZB5MrodLWD9wQphWad5jHB49h7Rl4NsUj7WczwLcrxHZg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by LV3PR12MB9141.namprd12.prod.outlook.com (2603:10b6:408:1a7::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.34; Tue, 8 Apr
- 2025 20:29:43 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8606.033; Tue, 8 Apr 2025
- 20:29:42 +0000
-Message-ID: <0b65112c-3de8-44c9-ae40-96bad5daddaf@amd.com>
-Date: Tue, 8 Apr 2025 15:29:40 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Fixed the warning at
- ./drivers/gpu/drm/amd/include/amd_shared.h:369
-To: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>,
- alexander.deucher@amd.com, christian.koenig@amd.com, airlied@gmail.com,
- simona@ffwll.ch, sunil.khatri@amd.com, aurabindo.pillai@amd.com,
- boyuan.zhang@amd.com, sunpeng.li@amd.com, dominik.kaszewski@amd.com
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
-References: <20250405031242.64373-1-kevinpaul468@gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20250405031242.64373-1-kevinpaul468@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1P222CA0018.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:22c::18) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9399724886B;
+	Tue,  8 Apr 2025 20:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744144222; cv=none; b=hT1vy4qfzYFwjMZpCV+hVnefSHquXy+cRIesr1gsRP6x2NGQx1q8pl4EWzpciXtstGPPzwuau4LtkkLNDpABC1+qjHWqSjhW+wtVIaL62Y0TgQFeU806mONrnRsCI/f4AT26pLYI4G83dcQ3EQH6qmSAzQXlrVRJXz7SPBBwUfc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744144222; c=relaxed/simple;
+	bh=pSNYHP17o7Fgq2T92jXtQMIX7yPDgExcuj9fOGXUZ58=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tVNXRlcU/7cn3d44OJ0WoqX9n8hA1ezur7qq/E0976p6M+734B/7oTMqeQkOfXtKWg8FiuYoNNclbaozsRhPw68thn4M5UH3Ec3wo0UTa0Em/UtaOrfMF/NyVam5RVkldKl2U51KsUzLVpM5HOMCDtr5k4ws9CLQdvSFRBhLdkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eX+kTm7k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id ECEE2C4CEE5;
+	Tue,  8 Apr 2025 20:30:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744144222;
+	bh=pSNYHP17o7Fgq2T92jXtQMIX7yPDgExcuj9fOGXUZ58=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=eX+kTm7klUXXhi7gXo7gVqU/F7CkIwCWabnuMSbkSg5iW2R85MPGt1Yqp6+4f4h07
+	 L4mYUBNTtWPo6K7ADiRgoB76izsKPwUzXy7HLyukJSupMBnQjB0l9txUTCg+3pf8qD
+	 QekqpLZ7glnBUiyLNJcHjPeZ13vtQNm8GVGazHlU4y2IT9+hoJop+4GXpvWcHaOZZG
+	 07xqidW0NEIujzGvlhTy5UUhPAPbZ1NLlbvuUf0onhy/xgCPz6Bv1quQWBxJu319cI
+	 AURtyt5pWC6pNp9GCFh3KQYmNqf4mV8GBm0EfKZICcO0wzWUdRv1pnrXEv/dX3/DMZ
+	 rxX9gaADJ+gPQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA14C36010;
+	Tue,  8 Apr 2025 20:30:21 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH v2 0/4] Tegra CEC Updates
+Date: Tue, 08 Apr 2025 15:29:57 -0500
+Message-Id: <20250408-tegra-cec-v2-0-2f004fdf84e8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|LV3PR12MB9141:EE_
-X-MS-Office365-Filtering-Correlation-Id: 80fb5936-d26c-42ab-2b20-08dd76dc17f0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|1800799024|7053199007|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cGxIakw5Rzh2U2xId0xvR0VGSFk4Y01ISzZmR1VBSGRxNlRpbVFuTVFzd29w?=
- =?utf-8?B?ZFJHUmw2UmUwWm5vOHdYOVRZNGlib3loRkNvMHpUVFBGUHdVTzREMGlYUzN2?=
- =?utf-8?B?eXlPQ2QyYU1oSDdYY3dxZHowT0ZvMEhKVEw3bDRPK2hPRTlveWNTSjlhV1dt?=
- =?utf-8?B?dWtSY2wwQld6cVJwNy9vZzRjRUtDTmdlM24vdmNBUEZvaXlpY2ZvbVdvTm1z?=
- =?utf-8?B?MXFFbk1tL3Frbkt2K2ozV3VjK0lQTmozZ2dUVGs2U1E5T2gxK3VvMjlZUk4w?=
- =?utf-8?B?K3pteGsvQ1JCZ1ZTZDhwUThGMEhxcEl3TkUxTjFoVkdCWVozZmV0L0RoakJp?=
- =?utf-8?B?MzY5bjZ6LzRQanNqZlVZamg2ZityQ2hNR05IZDdmWFZZSTJVbTRUdGFaUCtL?=
- =?utf-8?B?S3ZuSkxrOS9GL3BZLzJpbGVZS0lkZWpGZzQ3SVJZd0d3bVR1QTNNY2NHUGlB?=
- =?utf-8?B?anU3dGtjNGhtZ0pheFV2cGpVLzdnMUQxWHRaN01mdVZUcDdGdkNtWTUxd3ps?=
- =?utf-8?B?U2ViN011MGZBbVd3bTZDVU4wak42NW1zanpkRDZKMzl3TE43eXY0eE9tYWd5?=
- =?utf-8?B?NlRBNDhjNEtDWGhlYlBibVgxNmJZRStxejhXdFVaWTVSRkF3ODM3WThvcU5k?=
- =?utf-8?B?VzZCQURxK0FrQ1k0QWpjZ2tjalpZWVkvK3BqZ0ZXdlV0T3JsR1N6Rng4dEhY?=
- =?utf-8?B?dXRpak1mVUxZUjVocEllZGxUSWNGcUhhbkJNYVY5d01US05kSUlab1FGQ0xw?=
- =?utf-8?B?QWcrRllxWXRZWWM5d0gzMjdaVk5hN0xlamROT3dHWVdTYk5UR01tUmxscXJT?=
- =?utf-8?B?QkpsUENiWmd2Y1U2ZVByamV6N2kxUXU3VDZLdEUvNXhWNkJaK0tRRVdCelVV?=
- =?utf-8?B?bTlFdCt4VmtCd1lhajFIOTlKYUM5bjJZVnZnQy8wYTJFUis4SjNtSk93Nmlm?=
- =?utf-8?B?TEN3MG1pWEZQVVpBRTlCMDhkZ1g1QnNJYVA4emplSjU5WVJNSUNkWUY0bjhr?=
- =?utf-8?B?Z2plejhSZ24rckRtRC9DOHdTMEFyWHprNWorWk44QXlTbG13QXZ6SHM3NURq?=
- =?utf-8?B?ZVNKa3Z4ektvS3RudnI5eU12UTRVTHpYTTRiNGcvbTNnMDRRUEdPZENvcFBB?=
- =?utf-8?B?OVM1U3RHWE16Z0lHMEJnZVB5QVA0amtjeVc2T1lnQlg0TVlNMXF6UjB5MVFB?=
- =?utf-8?B?SG12VGtxaWJkei9tZFhCKzY3OFRUQW80ZzQ2elRrSDdlUGFuNkNPSDNWYXBG?=
- =?utf-8?B?N29TaGxWM2dMQmVmOGRjbk1LWWx6NlhBcFEwallRRW1CbE9ROTkwVU5pRFFZ?=
- =?utf-8?B?U2dNNEM5MmdjRzZmcHNjbWVMM09VcXdhSUQwWGdtYXZrOWZkMGJYRUFyenJM?=
- =?utf-8?B?Z1hrdnl0OUZHeFNwaGh2NTNjUE9melEvWFgzZzkxNUN1WmJvaWFlUmlOTnJ0?=
- =?utf-8?B?N1pUS0JBTlpkRU1yZGhQWVFoOURtd25UZDhoMGMzSlpLK0hOUXk4OXRsUDdl?=
- =?utf-8?B?UjQ3OTVqdnAxRG9SYVdyNUR6K3FCcXBOQXRQZVJPYnBwRXRPNVBnZnpzN1hR?=
- =?utf-8?B?VkI3aDJUMnVaMEhUUXNyeTlOWWxoa21DYThhZXlTOWZPRmZiZS9TL3UvRWRR?=
- =?utf-8?B?Yk9Zd3hDeFY1N1F5SVg1bngvUXFMZHpnUDlLMGRZSkpjbDJUREM1a3E4VUxa?=
- =?utf-8?B?MC9hbWozUDVUZmpvRm5IZ3pSdy9WcTFSdWlXS3hIcHI1QWNseXczYzFVK0Z6?=
- =?utf-8?B?Zy9uZEFuSGl6MmdWaGZRUmRTaEVuYTJPRlhEd29SK3RFTXp1OWZvaDA4UUxT?=
- =?utf-8?B?bU94WW5RZFlxSzB3SU9sMStobHBNQTVxOHhDbmxwQ1VJaHUyTUtudkRWTUhV?=
- =?utf-8?B?ZVd0S2ZEOGpBSjlMcnkrbzljWWI1RnRWa3pRZlVUT1lhU3QyMys2VDF1cDVK?=
- =?utf-8?Q?x0YtHM/MQNc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UnR5S1NlQXFvU3BwNFE5WDVjU2NUb010YXF6Y1hwdTdvT3duMFllNkNSM2Jo?=
- =?utf-8?B?RjloNThXWWo1WGR4d2JkbEkxZGhzblRDdlY4RnljeWNjV0FOTDJDdlI3d0FW?=
- =?utf-8?B?Y1l5ck5NL1dTSWdpVEdKdnQzb0IwVFBkYXRacURqaVVkUDlDOVByNWRvRUpX?=
- =?utf-8?B?UWJBYTM2Z2R4K29oSXNHS29Udy9xQzZGQzFUdWlweHVqZ2piZDNMQ3RHSTlM?=
- =?utf-8?B?QmQ2d1lzWjFyOGtGZGxGcURXdzg3eG1RK0hHSmhFbjBvZG5Td2JZbXNQNnds?=
- =?utf-8?B?TldUbXp2eklVdmRLNFUvdkw1V0dOckdBdGtxa09namtNME91elM2UkdlU1FE?=
- =?utf-8?B?MTN1MFdqUzYrQ3dUYTNrZXlUa3NtZVN1U2l5eWN6OXpBNER2SGZLN3ZvY3FP?=
- =?utf-8?B?L1hOVFpPeHdsbEpiTmNJQ3ZSVDVmWnExZTNVSmttTG5UOGx6UkVoenk2bkRV?=
- =?utf-8?B?WndhSUZmODArVEhBSk1PVWM4Vm9Wc3lWYlV1ZTdnemlzSW4vUlkyTXord0hq?=
- =?utf-8?B?djIyY3I0aURGUzI1UG5qc2hNZFljVko1TnZFQlNWQzFJZDEyK3dKWHo1RUVq?=
- =?utf-8?B?Nm9DL3dRd3Urdy8xNlpDbTJmdGE3SXd3M0xmQXVCeFZrVGZHMTUrbjBVV2k3?=
- =?utf-8?B?OGgrNGh1a1U1UHZuUUhqSWtjZzY5THljY3dPWlR5VFp3K1k0Y3RqeHJ2TGwr?=
- =?utf-8?B?MGZCYlNoU1NqYytONVhNQ3dsNTJ5WE5wT2xidGljeWZDU2U0V3psdHRYbkNk?=
- =?utf-8?B?bzRqREtyT0dLSUt1M0x4TFgxc1p2R1VBdlM0d1hmK0lqNE8veTZhaUJQbXls?=
- =?utf-8?B?N2h0Z3lPM0tFM2JuUW5RSFUzbDZwMmN3ZnN2MmlVWTM1WUgvN0ZZZEdrZm5F?=
- =?utf-8?B?bk9kQytzU3E1TExIQ3RldlNBNzhRekJGM251UUFuOU55bnpkTUExMGkwK0ND?=
- =?utf-8?B?YlFndHJxUmRPbDdLWEFXdmZSNUpZZWRzQ1llT3lveDJsRnp1Y2ZoTTFxMlBG?=
- =?utf-8?B?NzVwOTMrZ05XRjRYa1hPVHlRR0hsWXNuQkpnQlp5djVoRU1teTk0d1VCaGVH?=
- =?utf-8?B?bm5xZGlPTWJrNERMV1JSTnZtWm9OZkxjY2ptVkd0N0ZCQkIwdDREODNXdlZk?=
- =?utf-8?B?L2o1NTBXUUlScmtpTlQwWkdCUjJDTWJYc2tQdHJhYTAzbjRoRkRSNGoyNHJ3?=
- =?utf-8?B?Y2dpR0VoVHlnMmpzdTNYR3VXMmtxRVhKZ3lsWnJOL1VzNUlpVVNVWE5VV0VU?=
- =?utf-8?B?czNFWXM5ODBTVGdrL1ZyL2lwTkFENHRablZUZ1VpWDhsaG9LclZxM0owTDZ5?=
- =?utf-8?B?RGxqR1psNFhtWTkyQzBBT2EyaDl2V0svVkRvdURrbzNIa050emtuTHhzTExu?=
- =?utf-8?B?VDR2d3FtazBtT1pPWUhBcm9DOGl2N3RadHZTdnRaVVNaaWF2K0R4aTljSm1W?=
- =?utf-8?B?T3Blcmpkclc0OHkwWSsvUGVtRGlJejQvanRFelB1Z3M4NE8yZmppcXBYcEpl?=
- =?utf-8?B?ejJVcmJKdUIyZ3VlamZRWDc4T0ZZbE83MW92blB5VDhXT0pQQ2YwK1pETXdr?=
- =?utf-8?B?S2ZUbWFqWkJlSS90OFpFTUhzV1ZqNXBWWitxbDhtazVGT3RkSWFKalo2cmpq?=
- =?utf-8?B?TlFhVDhiMUpBZDc0Q1VlS0tvbWk1clJwM2w4cVBpUzROQVF3UFFMcHY5emdn?=
- =?utf-8?B?RllGcTg1S1VIWG9ObElkcHAvTHF4clhBYW15RHpqYmVlZjZqZzhyYzIrbmVC?=
- =?utf-8?B?dEVZMHlQdC80MVhNbHpxdG4ydzhiMWZ5T2xmTzlqS2ovYUlMbnR6M1IrbDVG?=
- =?utf-8?B?MTd5TGxkQ1hyOEVEYng3cW5Gc3ZGY002QTVtWWo2WCtOQ0t4ZytiZzExY1E0?=
- =?utf-8?B?d21JYTJic0hLWndVZ0MzZ0xaWEhFWUZmTWQwUSs5Slo0ZlM1RFNRNVhoQkhL?=
- =?utf-8?B?bnFhT2tFemE2UUc5OVluaytGNHA2MFNFOHZmYVdjbXRwMllLNXY4RXJFVnpu?=
- =?utf-8?B?N2VxWllVdkFDRHNSbVRUV0lGbGV5S25lMHRRNEFsRENsOWZpWGJxUzBQaWxL?=
- =?utf-8?B?cVBpdnFSTjFRZnJZV0pNM2g0R0tWRTVUZnJ0b05VbXhScTl0bWpYa0tVWm1p?=
- =?utf-8?Q?4ZptylNgjolTv3Vh1ZRJSkhuI?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 80fb5936-d26c-42ab-2b20-08dd76dc17f0
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2025 20:29:42.6893
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0XMOt68gdIO977m+0aVKH0BzfzhraUB7nhW/wqrC76ZZrQiE1BkusPkEH/03Gp7x+u6ZVV7QAJoM9nDEKqtcCw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9141
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEWH9WcC/23MQQ7CIBCF4as0s3YMxSLRlfcwXVAY6CS2NNAQT
+ dO7i127/F9evg0yJaYM92aDRIUzx7mGPDVgRzMHQna1QQqpRCc0rhSSQUsWNV2MHsh36uqh/pd
+ Ent+H9exrj5zXmD4HXdrf+k8pLQokqZy7Ka0H5R9hMvw62zhBv+/7FzTJHCGiAAAA
+X-Change-ID: 20250407-tegra-cec-7e3a7bef456f
+To: Hans Verkuil <hverkuil@xs4all.nl>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744144221; l=1593;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=pSNYHP17o7Fgq2T92jXtQMIX7yPDgExcuj9fOGXUZ58=;
+ b=/4oHnJM10rg/wTNM5JAmmK5r0+5IGk+KmssuLjFh/kfOcHrWh4LaIoENtPMl5ameemKTJqILk
+ OqKaVGF4L6kBQ29G4NSP/Yy4pj+691Mm1WKhTo9o5wPCMlhCjyYuvN/
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-On 4/4/2025 10:12 PM, Kevin Paul Reddy Janagari wrote:
-> warning: Incorrect use of kernel-doc format:
-> * @DC_HDCP_LC_ENABLE_SW_FALLBACK If set, upon HDCP Locality Check FW
-> 
-> Signed-off-by: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
-> ---
->   drivers/gpu/drm/amd/include/amd_shared.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/amd/include/amd_shared.h b/drivers/gpu/drm/amd/include/amd_shared.h
-> index 4c95b885d1d0..c8eccee9b023 100644
-> --- a/drivers/gpu/drm/amd/include/amd_shared.h
-> +++ b/drivers/gpu/drm/amd/include/amd_shared.h
-> @@ -366,7 +366,7 @@ enum DC_DEBUG_MASK {
->   	DC_HDCP_LC_FORCE_FW_ENABLE = 0x80000,
->   
->   	/**
-> -	 * @DC_HDCP_LC_ENABLE_SW_FALLBACK If set, upon HDCP Locality Check FW
-> +	 * @DC_HDCP_LC_ENABLE_SW_FALLBACK: If set, upon HDCP Locality Check FW
->   	 * path failure, retry using legacy SW path.
->   	 */
->   	DC_HDCP_LC_ENABLE_SW_FALLBACK = 0x100000,
+This series updates Tegra hdmi cec support to be usable out of the box
+on Tegra210 through Tegra194.
 
-Thanks for the patch!  But FWIW this was already fixed in this patch 
-which is on amd-staging-drm-next now.
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Changes in v2:
+- Dropped patch 2, per request
+- Added change to declare fallback compatibles instead, as per request
+- Update patch 1 to allow fallback compatibles
+- Link to v1: https://lore.kernel.org/r/20250407-tegra-cec-v1-0-e25dd9577b5f@gmail.com
 
-https://lore.kernel.org/amd-gfx/20250319111243.14206-1-dominik.kaszewski@amd.com/
+---
+Aaron Kling (4):
+      media: dt-bindings: Document Tegra186 and Tegra194 cec
+      arm64: tegra: Add fallback cec compatibles
+      arm64: tegra: Add CEC controller on Tegra210
+      arm64: tegra: Wire up cec to devkits
+
+ .../bindings/media/cec/nvidia,tegra114-cec.yaml           | 15 +++++++++++----
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts        |  6 ++++++
+ .../boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts    |  6 ++++++
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi                  |  2 +-
+ arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts        |  6 ++++++
+ arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi       |  6 ++++++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi                  |  2 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts        |  6 ++++++
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts        |  6 ++++++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi                  |  9 +++++++++
+ 10 files changed, 58 insertions(+), 6 deletions(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250407-tegra-cec-7e3a7bef456f
+
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
+
+
 
