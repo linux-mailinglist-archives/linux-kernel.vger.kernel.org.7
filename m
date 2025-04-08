@@ -1,176 +1,133 @@
-Return-Path: <linux-kernel+bounces-594211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 161ABA80ECC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:48:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAFA3A80EEA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C3667ACA40
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:46:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C443883B32
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F38A1DB958;
-	Tue,  8 Apr 2025 14:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84CF221547;
+	Tue,  8 Apr 2025 14:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="odebGuo0"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hi94VhYa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852B91A9B52;
-	Tue,  8 Apr 2025 14:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2CA1E492D;
+	Tue,  8 Apr 2025 14:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744123623; cv=none; b=gAsjXOFPua5oYjPG6NxwidhUSSlhd8hIA/80JdcZ7ckx9JPhIqXJfZWMb2tdpw7AJvgVE2z8dEx4IUw0Aw3vIYvjkF/5QHiKyXj3mGycMZfInfMXcqHghJHaCaO5kslbYpdqGfDXiOYP/n49Ihicq7s7G2H/xfh/uOH9czJO9iA=
+	t=1744123676; cv=none; b=eEnWaTiJaVBxy42iFPwjUcfnOrbB6Lst8ODfJ8XK32ouD/K+rWzXbJPyEL8eW5P8ctmAollYaplsArlJrbxdAZKuraUDVqxgeHPX3MpXM/3RoR1cYwQkNCsY9ud9Ru4du31kTLRF0SzibilwcW5XspE+P3wBAm63FmF8PC8SS2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744123623; c=relaxed/simple;
-	bh=3l/+LdDt9BYOa/k+vw35IDN76tFD/70Aqr4RSI5LQog=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ACJk53Sb5JJtIJT7MpDQu2xMp+xf81NeWnosRAkIb+LVioyMF8spkHrzEJLi1RHsfH9Vz0yzKaLpaJp3iGSGS6EAskz1ir079No7WgTBHSYtv6FKtba1OsnisAepWqissQD5hBkEVD0x/xwNz0p/oth96wM79hfv6815hHxAVeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=odebGuo0; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1744123619;
-	bh=3l/+LdDt9BYOa/k+vw35IDN76tFD/70Aqr4RSI5LQog=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=odebGuo09qjtBQa6bETbDReyUhxnT+390+HBJip7ET6xtXmRjJCVmCvL78bTg2c3p
-	 grjLlycqXcSlIvD7xUk/2AmN+3BUl4Lfuml2Rbl3h76I6eWBRBQ7uivBQJsr3Eig5v
-	 /4rtjC7LH+lQsKEWL2H20RYqlQzQtYdw+Oujp87ZvS3cdeD6NzKjbR5h94sBEL3SH1
-	 vkMl3hry2MOLD292kUF2qIHhSyQTCLMFho19+PWqHIVN1TCVC9uJouCDWJmHh5OwUQ
-	 fsOmGI4DMdsK/NGfjd/cVem5sxzPnMaAc8M+1cSRkZ6gJIoTahBYT9zafygGnYBi2W
-	 S1morMARsrTPQ==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id DBF7417E1072;
-	Tue,  8 Apr 2025 16:46:58 +0200 (CEST)
-Date: Tue, 8 Apr 2025 16:46:52 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
- <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v4 4/4] drm/panthor: show device-wide list of DRM GEM
- objects over DebugFS
-Message-ID: <20250408164652.2cc26723@collabora.com>
-In-Reply-To: <k5pf4wkpaeuahdg5vasxo226jppjxtndkswoi2g72eezecttic@vrdnyjxbqont>
-References: <20250402115432.1469703-1-adrian.larumbe@collabora.com>
-	<20250402115432.1469703-5-adrian.larumbe@collabora.com>
-	<20250402145804.5cf07f5e@collabora.com>
-	<s66dyt32ukr37p24zjgbatm6sk5lzw5ujx2n7p2pr2ixrq3jf4@byemjauyp2mv>
-	<20250408154755.0d45b54b@collabora.com>
-	<k5pf4wkpaeuahdg5vasxo226jppjxtndkswoi2g72eezecttic@vrdnyjxbqont>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1744123676; c=relaxed/simple;
+	bh=usQhtcH6jA5FdQGsV4FOYvB1Efo86g26nJbuRYtXQUI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VzA8m9KOY5ACGvcnwrswYzsq7qoiMVKhP+Rz+rC/WAO3iYTYBFtofC/SxIpd2mbq8X8VWg4VUC9EEU1EhGz9xw792oVlFSYz9jn0yf8Z9yNmJ0nScjAtmEmZYyYPwvCUqB98RvlcLe7pTMV2q2K2qdYwEsZV6C+WcQCCDMIR1TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hi94VhYa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2A4CC4CEEC;
+	Tue,  8 Apr 2025 14:47:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744123675;
+	bh=usQhtcH6jA5FdQGsV4FOYvB1Efo86g26nJbuRYtXQUI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hi94VhYaSB4nc+NnNOCdvIwuggGNziI7EfCyGD54XDel2LGw6SC0j5AsCBx8leLJk
+	 ZyqW5W1vSpYuT4H+x/W1Wr0J7YN+WoKNHgMGoSgynm5p8nZX59aFoLa+SxCOtfsGzn
+	 bTZPH1KCh/HhnsYQV929dCqiNiW3t74JBgSyPWH0wzHDvjYrCJ5z+tsUP4ALdEaB4a
+	 3PMIWhk7OUFNwKWvsX4WoIl7KKYpfuYBLxl4fJiU4auUqthZ2DxQBCbFx39etEjV4A
+	 Zn1rNWz/HeWmm2dWIBNmrwbOAMEC4k24em+zVrI/87WgCPo11f3X8ae/RssxkRr+0q
+	 Br3wNq9VZCTbA==
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9ebdfso117017a12.3;
+        Tue, 08 Apr 2025 07:47:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU3i9R05Jf7UdOwj79XBBX52aUM888EZeYgCs0XnzA8kv8QPjgslO+kNdlmHco3bWK3dVgSBnu9YGlsa+Hy@vger.kernel.org, AJvYcCUEN59s0iNQv30AXEOmXdGIPHoifYv8bzAeY0dOrwk3PbbJY1F2bnI8buHqDl8HPWrEPUfMz1tEXR0v/g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT0H2xapToIls680QUzzqFzjCorJqNyO0Dq5nOiYh/Hd/yx3sT
+	9mTV6Lm3rey/+LDFUxoJ0+HPOOkDHUrvIzhYTMxvwBUjbTBrRt9EraOUtKB8xDTDxecFx13ySKn
+	hZIVhtuXlDsn6hGrVadr/BYhRq08=
+X-Google-Smtp-Source: AGHT+IFKarbmy5vtxCDZ6llpj67T/aMPampQuo8nCcWFOkuuQHMKMENxG4s8H5HL0UtxEjm2ZPz23AhuJCBfwkMJ+Aw=
+X-Received: by 2002:a17:907:6d20:b0:ac3:446f:20cb with SMTP id
+ a640c23a62f3a-ac7d1b280ccmr1578532566b.43.1744123674230; Tue, 08 Apr 2025
+ 07:47:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20250408122933.121056-1-frank.li@vivo.com> <20250408122933.121056-2-frank.li@vivo.com>
+In-Reply-To: <20250408122933.121056-2-frank.li@vivo.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Tue, 8 Apr 2025 15:47:15 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H5NxJkSz9FSarixZjpVvTibO6ugYrGB3AFZJAuoWT_BMQ@mail.gmail.com>
+X-Gm-Features: ATxdqUF92VfmLSVi8DchQVkVvDfweGaKkPYkwybaD2shvY6fzx7LI1WeAMCSwhk
+Message-ID: <CAL3q7H5NxJkSz9FSarixZjpVvTibO6ugYrGB3AFZJAuoWT_BMQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] btrfs: use BTRFS_PATH_AUTO_FREE in del_balance_item()
+To: Yangtao Li <frank.li@vivo.com>
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 8 Apr 2025 15:38:18 +0100
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+On Tue, Apr 8, 2025 at 1:18=E2=80=AFPM Yangtao Li <frank.li@vivo.com> wrote=
+:
+>
+> All cleanup paths lead to btrfs_path_free so we can define path with the
+> automatic free callback.
+>
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> ---
+>  fs/btrfs/volumes.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+>
+> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+> index a962efaec4ea..375d92720e17 100644
+> --- a/fs/btrfs/volumes.c
+> +++ b/fs/btrfs/volumes.c
+> @@ -3775,7 +3775,7 @@ static int del_balance_item(struct btrfs_fs_info *f=
+s_info)
+>  {
+>         struct btrfs_root *root =3D fs_info->tree_root;
+>         struct btrfs_trans_handle *trans;
+> -       struct btrfs_path *path;
+> +       BTRFS_PATH_AUTO_FREE(path);
+>         struct btrfs_key key;
+>         int ret, err;
+>
+> @@ -3784,10 +3784,8 @@ static int del_balance_item(struct btrfs_fs_info *=
+fs_info)
+>                 return -ENOMEM;
+>
+>         trans =3D btrfs_start_transaction_fallback_global_rsv(root, 0);
+> -       if (IS_ERR(trans)) {
+> -               btrfs_free_path(path);
+> +       if (IS_ERR(trans))
+>                 return PTR_ERR(trans);
+> -       }
+>
+>         key.objectid =3D BTRFS_BALANCE_OBJECTID;
+>         key.type =3D BTRFS_TEMPORARY_ITEM_KEY;
+> @@ -3803,7 +3801,6 @@ static int del_balance_item(struct btrfs_fs_info *f=
+s_info)
+>
+>         ret =3D btrfs_del_item(trans, root, path);
+>  out:
+> -       btrfs_free_path(path);
+>         err =3D btrfs_commit_transaction(trans);
 
-> On 08.04.2025 15:47, Boris Brezillon wrote:
-> On Tue, 8 Apr 2025 14:38:44 +0100
-> Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
->=20
-> > > > > diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/=
-drm/panthor/panthor_gem.c
-> > > > > index 44d027e6d664..2fc87be9b700 100644
-> > > > > --- a/drivers/gpu/drm/panthor/panthor_gem.c
-> > > > > +++ b/drivers/gpu/drm/panthor/panthor_gem.c
-> > > > > @@ -2,6 +2,7 @@
-> > > > >  /* Copyright 2019 Linaro, Ltd, Rob Herring <robh@kernel.org> */
-> > > > >  /* Copyright 2023 Collabora ltd. */
-> > > > >
-> > > > > +#include <linux/cleanup.h>
-> > > > >  #include <linux/dma-buf.h>
-> > > > >  #include <linux/dma-mapping.h>
-> > > > >  #include <linux/err.h>
-> > > > > @@ -10,14 +11,65 @@
-> > > > >  #include <drm/panthor_drm.h>
-> > > > >
-> > > > >  #include "panthor_device.h"
-> > > > > +#include "panthor_fw.h"
-> > > > >  #include "panthor_gem.h"
-> > > > >  #include "panthor_mmu.h"
-> > > > >
-> > > > > +#ifdef CONFIG_DEBUG_FS
-> > > > > +static void panthor_gem_debugfs_bo_init(struct panthor_gem_objec=
-t *bo, u32 type_mask)
-> > > > > +{
-> > > > > +	INIT_LIST_HEAD(&bo->debugfs.node); =20
-> > > >
-> > > > This should be called when the GEM object is created, otherwise the
-> > > > list_empty() test done in panthor_gem_debugfs_bo_rm() will only wor=
-k if
-> > > > panthor_gem_debugfs_bo_add() is called, and depending on when this
-> > > > happens, or whether it happens at all, the error path will do a NULL
-> > > > deref. =20
-> > >
-> > > I'll be moving panthor_gem_debugfs_bo_add() back into panthor_gem_cre=
-ate_object() and
-> > > inline panthor_gem_debugfs_bo_init() into it. =20
-> >
-> > You mean moving the panthor_gem_debugfs_bo_add() call to
-> > panthor_gem_create_object(), not inlining its content, right? =20
->=20
-> Yes, inlining panthor_gem_debugfs_bo_init() into panthor_gem_debugfs_bo_a=
-dd() and moving
-> panthor_gem_debugfs_bo_add() into panthor_gem_create_object().
->=20
-> > > > > +	} else {
-> > > > > +		bo->debugfs.creator.tgid =3D 0;
-> > > > > +		snprintf(bo->debugfs.creator.process_name,
-> > > > > +			 sizeof(bo->debugfs.creator.process_name),
-> > > > > +			 "kernel");
-> > > > > +	}
-> > > > > +
-> > > > > +	bo->debugfs.bo_mask =3D type_mask; =20
-> > > >
-> > > > Why not do that directly in panthor_gem_debugfs_bo_add()? The only =
-bits
-> > > > that might be useful to do early is the INIT_LIST_HEAD(), and I thi=
-nk
-> > > > it can be inlined in panthor_gem_create_object(). =20
-> > >
-> > > I'll be doing in this in the next revision, but because I've no acces=
-s to the BO
-> > > type mask from inside Panthor's drm_driver::gem_create_object() bindi=
-ng, then
-> > > I'll have to assign the mask right after the object has been created.
-> > >
-> > > I think this means there might be a short window after the object's b=
-een added to
-> > > the DebugFS GEMs list in which it could be shown with the kernel mask=
- field still
-> > > set to 0, but I guess that's not too important either. =20
-> >
-> > I think it's okay, as long as you don't crash when printing partially
-> > initialized objects. Another solution would be to have a flag encoding
-> > when the obj is initialized, so you can skip objects that don't have
-> > this flag set yet. =20
->=20
-> I think what I'll do is set the mask to a poison value, maybe 0xFF, and o=
-nly when
-> it's overwritten with a legitimate value, display the object in the Debug=
-FS GEMS file.
+Exactly the same comment as for the previous patch -
+https://lore.kernel.org/linux-btrfs/CAL3q7H6ysGxpXs8P9iPY-Y1KNKPggGSFHR_tMv=
+-34Q+Qf6PZTQ@mail.gmail.com/
+This can result in a deadlock.
 
-Well, it's just as simple to leave it to zero at bo_add() time, and
-have an INITIALIZED flag that you set along the other flags in the
-caller of gem_shmem_create(). If you make it a poison value, you'll
-need to make sure it never conflicts with a valid flag combination,
-which might be annoying.
+Thanks.
+
+
+>         if (err && !ret)
+>                 ret =3D err;
+> --
+> 2.39.0
+>
+>
 
