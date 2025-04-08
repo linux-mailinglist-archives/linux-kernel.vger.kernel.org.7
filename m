@@ -1,63 +1,61 @@
-Return-Path: <linux-kernel+bounces-594806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6F9EA816CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:25:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41CD2A816D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:27:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A6D78A031B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:23:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACEA21B856B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA772505D6;
-	Tue,  8 Apr 2025 20:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720DF253F13;
+	Tue,  8 Apr 2025 20:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u00QKcuc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="cTpjVuaW"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C2A1EB3D
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 20:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0262824886B;
+	Tue,  8 Apr 2025 20:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744143818; cv=none; b=OiC1SZptEfO+v5NyuBKAT4o6P+aN0jNxW/0rYYXtnCwY/fyr+vnM4fXM2zecFBnAjQU3cUcNlEM8Vh1VwZkPt8ltEwLDWYUUDP3aGqsPOOLVE8viVxzQBVOJtUXyRnsSPPLdqiYc+KVmByUbA6fVOOZtPrscB/mOdKg2YGGkU/k=
+	t=1744144029; cv=none; b=n5aqFgW62d8lyt108nlgEavM1+PHBMYFtv57W0Vmf7oOwbQRYmhyifdV2Euk8x7sVleNCmN4o+9Qae5yG05MlvE1ulxgVeCiMAwn+fIANHq3rkBrlV0UoN8xs+3CyzCg8wk94pg5LVgx8BxUe2fWZVc1SxoPyo9kTON5HPyVu6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744143818; c=relaxed/simple;
-	bh=t4dpsxhoSJicILQ+ZU+F72OUh+2j3XDJDE9iB0faTV0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=T1nQkQB3tDYI7SyDtpJmasdcV9NPVWVyBS9uPInIXUNVjQPljWblC9fvgpW03v1EpQi7OLDxVmdO0Ff+t8pm2pNeMVnkHlqNLRXZuhvZ+9yRQRvhDsgKBm6BdCJkQeBtDyo4FEX5RfmjrjWizYzChe/OaYi1NRhgXk7LojgT3qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u00QKcuc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48AB7C4CEE5;
-	Tue,  8 Apr 2025 20:23:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744143817;
-	bh=t4dpsxhoSJicILQ+ZU+F72OUh+2j3XDJDE9iB0faTV0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=u00QKcucJGpBXB3S05SDZ5ju4wOe8gmgglIm6qzGf+1mieBEz9ZCNrdb5nchtdWkV
-	 MWk+P+3KB7HDCtvi96OWsm2rLP/MuItrwpysYu5UByPPee3zyOcVPDdnJuBot5qv/s
-	 1ogUpy3rRhcMPpJ7lrQtcU65yGk/HV/JHRCsx4ZiAoxguBoLbGjFWxxJlkDFuaQ08G
-	 SWfsKi3tRsRha7RpudPzb1kJY8E3QcbBAzDf2BWGVGBze8XKINxdyOfrE2N8Wnb/wA
-	 n3Wmk+xkydv4WZOo7vtq0f1bW7+TPZ2VKacjQLvDJW1YU+B3yQRMZh71wi90RUk84A
-	 rZ9SR2c2Trf5g==
-From: SeongJae Park <sj@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R.Howlett" <howlett@gmail.com>,
-	David Hildenbrand <david@redhat.com>,
-	Rik van Riel <riel@surriel.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v2 0/4] mm/madvise: batch tlb flushes for MADV_DONTNEED and MADV_FREE
-Date: Tue,  8 Apr 2025 13:23:35 -0700
-Message-Id: <20250408202335.63434-1-sj@kernel.org>
+	s=arc-20240116; t=1744144029; c=relaxed/simple;
+	bh=PMfPJkfYCA5FLy35kmGiTNL94yNxRroKCmDLM+iqoTo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=skNtDLtM9bnA7JJ7ieIRUvL/9rlJHjbRgXunnuQlOU5V5mmVBy7O2rj9G0NSDrFpu6GRvX0z/goXQxmKp6wEnHyC8G7nG5u/r5UQfvkZjV+SOaobWTHiDStsW8jyGj1CknVxlSFKYb0oBaDK9Xsq5Tdv90pUEZrwX+G3Y4FvPkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=cTpjVuaW; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id CDED01F9EA;
+	Tue,  8 Apr 2025 22:27:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1744144023;
+	bh=V5Rhzl+UaSq7NkWq0KZryRLkoi/5M8dAQSxp5ngWDmI=; h=From:To:Subject;
+	b=cTpjVuaWekEYhcb7/2HVXTC8QJpR2hXnQ3HLHRKFHoYwAhlF2TKWCiPZE+A5xLJNn
+	 Xl0xZxbLpKrgPLKJHEXDXTNkVfq3rFgLnqK2wqNu1vsDnN9B9WcHfHov7P5pGAMhlA
+	 hTfnlxKj17+XG7tD4ybZCx6UhsAhSbyUibGrEgWTCO/2YTXcRzRYUf+Qtx6DbMjQgM
+	 zQ4LipkNXDuoIxTcBXyEnkv3ZkA/XTc3llUx2FthTbghqiV6kUL4usvWn9t2hMUGXi
+	 ZOXu5idauxq/vFSSeYeGYW6zeFMmExnbatSnGO39uQljyFk/o/HRz8aiSkhEl7/yDc
+	 UVB5KfOMXcl9g==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] arm64: dts: ti: k3-am625-verdin: Add EEPROM compatible fallback
+Date: Tue,  8 Apr 2025 22:26:55 +0200
+Message-Id: <20250408202655.6329-1-francesco@dolcini.it>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <f06859c3-c7bf-470e-b0bb-2dd352f3afe9@lucifer.local>
-References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,96 +64,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Tue, 8 Apr 2025 14:44:40 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-> On Fri, Apr 04, 2025 at 02:06:56PM -0700, SeongJae Park wrote:
-> > When process_madvise() is called to do MADV_DONTNEED[_LOCKED] or
-> > MADV_FREE with multiple address ranges, tlb flushes happen for each of
-> > the given address ranges.  Because such tlb flushes are for same
-> 
-> Nit: for _the_ same.
+According to the AT24 EEPROM bindings the compatible string should
+contain first the actual manufacturer, and second the corresponding
+atmel model.
 
-Thank you for kindly finding and suggesting fixes for these mistakes.  I will
-update following your suggestions here and below.
+Add the atmel compatible fallback accordingly.
 
-[...]
-> > Similar optimizations might be applicable to other madvise behaviros
-> 
-> Typo: behaviros -> behavior (or 'behaviors', but since behavior is already plural
-> probably unnecessary).
-> 
-> > such as MADV_COLD and MADV_PAGEOUT.  Those are simply out of the scope
-> > of this patch series, though.
-> 
-> Well well, for now :)
+Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+---
+ arch/arm64/boot/dts/ti/k3-am62-verdin-dahlia.dtsi | 2 +-
+ arch/arm64/boot/dts/ti/k3-am62-verdin-yavia.dtsi  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Yes.  Hopefully we will have another chance to further improve the cases.
+diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin-dahlia.dtsi b/arch/arm64/boot/dts/ti/k3-am62-verdin-dahlia.dtsi
+index fcc4cb2e9389..2b5f5e50b578 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62-verdin-dahlia.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62-verdin-dahlia.dtsi
+@@ -114,7 +114,7 @@ sensor@4f {
+ 
+ 	/* EEPROM */
+ 	eeprom@57 {
+-		compatible = "st,24c02";
++		compatible = "st,24c02", "atmel,24c02";
+ 		reg = <0x57>;
+ 		pagesize = <16>;
+ 	};
+diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin-yavia.dtsi b/arch/arm64/boot/dts/ti/k3-am62-verdin-yavia.dtsi
+index 7372d392ec8a..9a2483cf5d70 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62-verdin-yavia.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62-verdin-yavia.dtsi
+@@ -118,7 +118,7 @@ sensor@4f {
+ 
+ 	/* EEPROM */
+ 	eeprom@57 {
+-		compatible = "st,24c02";
++		compatible = "st,24c02", "atmel,24c02";
+ 		reg = <0x57>;
+ 		pagesize = <16>;
+ 	};
+-- 
+2.39.5
 
-[...]
-> > Test Results
-> > ============
-> >
-> > I measured the latency to apply MADV_DONTNEED advice to 256 MiB memory
-> > using multiple process_madvise() calls.  I apply the advice in 4 KiB
-> > sized regions granularity, but with varying batch size per
-> > process_madvise() call (vlen) from 1 to 1024.  The source code for the
-> > measurement is available at GitHub[1].  To reduce measurement errors, I
-> > did the measurement five times.
-> 
-> Be interesting to see how this behaves with mTHP sizing too! But probably a bit
-> out of scope perhaps.
-
-Obviously we have many more rooms to explore and get fun :)
-
-> 
-> >
-> > The measurement results are as below.  'sz_batch' column shows the batch
-> > size of process_madvise() calls.  'Before' and 'After' columns show the
-> > average of latencies in nanoseconds that measured five times on kernels
-> > that built without and with the tlb flushes batching of this series
-> > (patches 3 and 4), respectively.  For the baseline, mm-new tree of
-> > 2025-04-04[2] has been used.  'B-stdev' and 'A-stdev' columns show
-> > ratios of latency measurements standard deviation to average in percent
-> > for 'Before' and 'After', respectively.  'Latency_reduction' shows the
-> > reduction of the latency that the 'After' has achieved compared to
-> > 'Before', in percent.  Higher 'Latency_reduction' values mean more
-> > efficiency improvements.
-> >
-> >     sz_batch   Before        B-stdev   After         A-stdev   Latency_reduction
-> >     1          110948138.2   5.55      109476402.8   4.28      1.33
-> >     2          75678535.6    1.67      70470722.2    3.55      6.88
-> >     4          59530647.6    4.77      51735606.6    3.44      13.09
-> >     8          50013051.6    4.39      44377029.8    5.20      11.27
-> >     16         48657878.2    9.32      37291600.4    3.39      23.36
-> >     32         43614180.2    6.06      34127428      3.75      21.75
-> >     64         42466694.2    5.70      26737935.2    2.54      37.04
-> >     128        42977970      6.99      25050444.2    4.06      41.71
-> >     256        41549546      1.88      24644375.8    3.77      40.69
-> >     512        42162698.6    6.17      24068224.8    2.87      42.92
-> >     1024       40978574      5.44      23872024.2    3.65      41.75
-> 
-> Very nice! Great work.
-> 
-> >
-> > As expected, tlb flushes batching provides latency reduction that
-> > proportional to the batch size.  The efficiency gain ranges from about
-> > 6.88 percent with batch size 2, to about 40 percent with batch size 128.
-> >
-> > Please note that this is a very simple microbenchmark, so real
-> > efficiency gain on real workload could be very different.
-> 
-> Indeed, accepted, but it makes a great deal of sense to batch these operations,
-> especially when we get to the point of actually increasing the process_madvise()
-> iov size.
-
-Cannot agree more.
-
-Thank you for your kind review with great suggestions for this patchset.  I
-will post the next spin with the suggested changes, soon.
-
-
-Thanks,
-SJ
-
-[...]
 
