@@ -1,152 +1,104 @@
-Return-Path: <linux-kernel+bounces-594879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D533EA817B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:40:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF69A817D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:45:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 434E0422F9D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:40:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 158F0467738
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFB62550C4;
-	Tue,  8 Apr 2025 21:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4E72561A9;
+	Tue,  8 Apr 2025 21:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="UF6r02/x";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="qQu0hJIs"
-Received: from mailrelay4-3.pub.mailoutpod3-cph3.one.com (mailrelay4-3.pub.mailoutpod3-cph3.one.com [46.30.212.3])
+	dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b="OdDSfyar"
+Received: from forward202d.mail.yandex.net (forward202d.mail.yandex.net [178.154.239.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C9F17A319
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 21:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AAA255250
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 21:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744148415; cv=none; b=Jt6cNpkAv8Jwn1oAHDJbCst/mDwPFGqWraHt8Ecaai6DxfFj3m12nV2T1ttn8/QDkYmPSD3gapalluQImX+wpVOr2P+VnZTu5zGgKLtx+82CnKg9n2cTn/ushFJuKN2PK3vre2XttvQgPL89XMp8GeFeuNyvN+S77KAVnTfR0eI=
+	t=1744148698; cv=none; b=ExBrmptiIY6Qm4UNDnLNc1lrxPd3wMROIKYJtPCpbgEdVNHTZtRWJLuJ9Ub0dP4VAqsX1xkpVQAOkjdslfi1gw6XTpzJzBh+TUMFNUKS1XR1F/weGKFVc7iHpI7YJ+HTTQANx4gbe3BPBgdxwDJlzpyeXam/KsYukHHVYowuoLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744148415; c=relaxed/simple;
-	bh=h9S8zXZLZi67RlzX/pG2eZFsnZWHN6TY9ojoQXGumG8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q9IG+vWdi+Zdp6QZazkqfSVre2KGShWfUyyoW+hGJSAdhFmycjOFCWC2fhJg7b2RAp6l6HQBXAKCtC2q2Nub3+NN6i+TFiRqduv986eTsHLTDu4hxo1xGuYnlOCohPg62V9osJyo7kY7+z4CW4CxwznvNpNGLpUGCeM+oSdCQJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=UF6r02/x; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=qQu0hJIs; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1744148338; x=1744753138;
-	d=konsulko.se; s=rsa1;
-	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
-	 subject:mime-version:date:message-id:from;
-	bh=DFqccygusJ2q4mLsj0hmSnYNuPPTLeqNCbWp99vTaLk=;
-	b=UF6r02/x+oopiIYU0+noriCI1xgsP2xMeHjUYwxk5lyHYSNooyitx4xlL8pJAOKSTLRiyN+lLG0bF
-	 Qe4UwfbwHhpXyA4r9uG7pxiKVjF5BRgn9Rsp7DTS3dNxmZrkWWHFEaR3Gw62r0vujWl9KmK9jTLR49
-	 wx0hnlLVujFxhNTb5N+W07A0WQFS+VKd/EbKDUUBuiHt3W9/HUucJ90rpXSuAqhCE3YMciqMt2Nxsl
-	 3y0CLweMgQdwnj/BwXp6qTeogwpY8jEO6pHFmvVyoLxNZqv8Mi7Vo9F3/jBvMIEY9/nYU4jBASMeh4
-	 GMZnTUcpDCGDjnNUm8DHknUm2gkN2Tg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1744148338; x=1744753138;
-	d=konsulko.se; s=ed1;
-	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
-	 subject:mime-version:date:message-id:from;
-	bh=DFqccygusJ2q4mLsj0hmSnYNuPPTLeqNCbWp99vTaLk=;
-	b=qQu0hJIs4IgTLlFCRMMl40jlI7tFppi2Fv6+GR/5GU1y+SNUyHeF9P1GLuBRosqGQOvw7gotnKts/
-	 F9hsC6gBg==
-X-HalOne-ID: e02a6414-14c1-11f0-93e8-29b2d794c87d
-Received: from [192.168.10.245] (host-90-233-218-222.mobileonline.telia.com [90.233.218.222])
-	by mailrelay4.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id e02a6414-14c1-11f0-93e8-29b2d794c87d;
-	Tue, 08 Apr 2025 21:38:58 +0000 (UTC)
-Message-ID: <24e77aad-08ca-41c4-8e64-301fcc9370b1@konsulko.se>
-Date: Tue, 8 Apr 2025 23:38:57 +0200
+	s=arc-20240116; t=1744148698; c=relaxed/simple;
+	bh=JC4AvRsU5dO5lSN/wK1tzyfO3xJ3Lusym5x1J5A6aCk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZggNWKsDsIAG74DbYuIZ5RG+ZyL7PQLk48mLgg7/7H/aW3G9N5+47HDP96JG1++hleO1eVMlZnuXLhbyVVwzFfiZjgMcRlp6MevkInnSTBIdKjvb+gKM/Js1p/b8MqzOg2J4maCg3tUwHoMpcHI+ZU4LdIVGBl3mqLHUUqQL+Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru; spf=pass smtp.mailfrom=rosa.ru; dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b=OdDSfyar; arc=none smtp.client-ip=178.154.239.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosa.ru
+Received: from forward102d.mail.yandex.net (forward102d.mail.yandex.net [IPv6:2a02:6b8:c41:1300:1:45:d181:d102])
+	by forward202d.mail.yandex.net (Yandex) with ESMTPS id B48D563F97
+	for <linux-kernel@vger.kernel.org>; Wed,  9 Apr 2025 00:39:21 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-78.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-78.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:c54a:0:640:3e90:0])
+	by forward102d.mail.yandex.net (Yandex) with ESMTPS id 24FFE6098D;
+	Wed,  9 Apr 2025 00:39:14 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-78.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 8dlTpA3Lj4Y0-JWBBQtGG;
+	Wed, 09 Apr 2025 00:39:13 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosa.ru; s=mail;
+	t=1744148353; bh=JZcXqYJrQv6btI2jGdZDGW5h7bHWwXKxZoNoLSUTsnk=;
+	h=Message-Id:Date:Cc:Subject:To:From;
+	b=OdDSfyarzXf6b9xGs1RS9fAjnVN0YHKQSNeUJ7HGsUFO6080+NKjIt5Qt1+EAWsHS
+	 t10a9cQfD2P3M50WLiBn1CL9as/uCNnlw1WsENBaZLPOiE9STo5ljkkCncfaZEIHZB
+	 nODID2ntwoKtZtL6XIp6YF2AA1oow9gQJwpJH9p8=
+Authentication-Results: mail-nwsmtp-smtp-production-main-78.klg.yp-c.yandex.net; dkim=pass header.i=@rosa.ru
+From: Mikhail Arkhipov <m.arhipov@rosa.ru>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Mikhail Arkhipov <m.arhipov@rosa.ru>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] mtd: nand: ecc-mxic: Fix use of uninitialized variable ret
+Date: Wed,  9 Apr 2025 00:39:06 +0300
+Message-Id: <20250408213906.23129-1-m.arhipov@rosa.ru>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: add zblock allocator
-To: Johannes Weiner <hannes@cmpxchg.org>, Igor Belousov <igor.b@beldev.am>
-Cc: Nhat Pham <nphamcs@gmail.com>, linux-mm@kvack.org,
- akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- Shakeel Butt <shakeel.butt@linux.dev>, Yosry Ahmed <yosryahmed@google.com>
-References: <1743810988579.7.125720@webmail-backend-production-7b88b644bb-5mmj8>
- <0dbbbe9d17ed489d4a7dbe12026fc6fd@beldev.am>
- <f8063d3fa7e148fecdda82e40b36e10a@beldev.am>
- <CAKEwX=NMjfC1bKTVsB+C7eq3y=O0x3v8MW7KxUfhpg6UUr23rw@mail.gmail.com>
- <f023ba8341f9b44610cc4ac00cf0ee33@beldev.am>
- <CAKEwX=MXD9EB242WkB50ZBmZgV-CwrAHp=_oE+e=7yHDfrMHtg@mail.gmail.com>
- <3f013184c80e254585b56c5f16b7e778@beldev.am>
- <20250408195533.GA99052@cmpxchg.org>
-Content-Language: en-US
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-In-Reply-To: <20250408195533.GA99052@cmpxchg.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+If ctx->steps is zero, the loop processing ECC steps is skipped,
+and the variable ret remains uninitialized. It is later checked
+and returned, which leads to undefined behavior and may cause
+unpredictable results in user space or kernel crashes.
 
+This scenario can be triggered in edge cases such as misconfigured
+geometry, ECC engine misuse, or if ctx->steps is not validated
+after initialization.
 
-On 4/8/25 21:55, Johannes Weiner wrote:
-> On Tue, Apr 08, 2025 at 01:20:11PM +0400, Igor Belousov wrote:
->>>>>> Now what's funny is that when I tried to compare how 32 threaded build
->>>>>> would behave on a 8-core VM I couldn't do it because it OOMs with
->>>>>> zsmalloc as zswap backend. With zblock it doesn't, though, and the
->>>>>> results are:
->>>>>> real    12m14.012s
->>>>>> user    39m37.777s
->>>>>> sys     14m6.923s
->>>>>> Zswap:            440148 kB
->>>>>> Zswapped:         924452 kB
->>>>>> zswpin 594812
->>>>>> zswpout 2802454
->>>>>> zswpwb 10878
->>>>
->>>> It's LZ4 for all the test runs.
->>>
->>> Can you try zstd and let me know how it goes :)
->>
->> Sure. zstd/8 cores/make -j32:
->>
->> zsmalloc:
->> real	7m36.413s
->> user	38m0.481s
->> sys	7m19.108s
->> Zswap:            211028 kB
->> Zswapped:         925904 kB
->> zswpin 397851
->> zswpout 1625707
->> zswpwb 5126
->>
->> zblock:
->> real	7m55.009s
->> user	39m23.147s
->> sys	7m44.004s
->> Zswap:            253068 kB
->> Zswapped:         919956 kB
->> zswpin 456843
->> zswpout 2058963
->> zswpwb 3921
-> 
-> So zstd results in nearly double the compression ratio, which in turn
-> cuts total execution time *almost in half*.
-> 
-> The numbers speak for themselves. Compression efficiency >>> allocator
-> speed, because compression efficiency ultimately drives the continuous
-> *rate* at which allocations need to occur. You're trying to optimize a
-> constant coefficient at the expense of a higher-order one, which is a
-> losing proposition.
+Initialize ret to zero before the loop to ensure correct and safe
+behavior regardless of the ctx->steps value.
 
-Well, not really. This is an isolated use case with
-a. significant computing power under the hood
-b. relatively few cores
-c. relatively short test
-d. 4K pages
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-If any of these isn't true, zblock dominates.
-!a => zstd is too slow
-!b => parallelization gives more effect
-!c => zsmalloc starts losing due to having to deal with internal 
-fragmentation
-!d => compression efficiency of zblock is better.
+Fixes: 48e6633a9fa2 ("mtd: nand: mxic-ecc: Add Macronix external ECC engine support")
+Signed-off-by: Mikhail Arkhipov <m.arhipov@rosa.ru>
+---
+ drivers/mtd/nand/ecc-mxic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Even !d alone makes zblock a better choice for ARM64 based servers.
+diff --git a/drivers/mtd/nand/ecc-mxic.c b/drivers/mtd/nand/ecc-mxic.c
+index 6b487ffe2f2d..e8bbe009c04e 100644
+--- a/drivers/mtd/nand/ecc-mxic.c
++++ b/drivers/mtd/nand/ecc-mxic.c
+@@ -614,7 +614,7 @@ static int mxic_ecc_finish_io_req_external(struct nand_device *nand,
+ {
+ 	struct mxic_ecc_engine *mxic = nand_to_mxic(nand);
+ 	struct mxic_ecc_ctx *ctx = nand_to_ecc_ctx(nand);
+-	int nents, step, ret;
++	int nents, step, ret = 0;
+ 
+ 	if (req->mode == MTD_OPS_RAW)
+ 		return 0;
+-- 
+2.39.5 (Apple Git-154)
 
-~Vitaly
 
