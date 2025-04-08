@@ -1,455 +1,269 @@
-Return-Path: <linux-kernel+bounces-593882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A060A80676
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:28:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F551A806CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2EFF1B800BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:22:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34C434A7E2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A848E26B97A;
-	Tue,  8 Apr 2025 12:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1126626E16A;
+	Tue,  8 Apr 2025 12:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OwhIXLrE"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2083.outbound.protection.outlook.com [40.107.95.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l+vod5ze"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB6126A0E9;
-	Tue,  8 Apr 2025 12:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744114783; cv=fail; b=DRJvXP82894hAycE7/8QfzvgrmrXePojzy77Ee+QizfgfExTpG7xeWYAH0v+8pNFaXi5phCwxneTi/W917rCxjZ2nSZBEPRjW6ZM35IyF8VpQCdUInL4yq8IekLvnLI/+MlYDtmBhFpwgU4K0QRFaHNF+03QHIvDk0HdAWRbvHk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744114783; c=relaxed/simple;
-	bh=KNrZNTwCTxsn2CZO3nu6NAnOYXHO1XAX9g0I/E903d0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=aL/ATr3BZobqn+8bbcH7CFrWTuWiLHcAkiJKWTZsk3jx/Q3dhctr/FxDq8kaCCN2Jn62t4u5mQwMrybOn7rGExMt5ysymOOLTvKQSpv6ZnKCeyzDOe8P4fmleLjg1jCyYvjE2FtGHDaERxASLRRRxLa/kFaAnqtxvW269x0E860=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OwhIXLrE; arc=fail smtp.client-ip=40.107.95.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Szof/sW09PQ7GXxqaFpgE3WXo5jnhNubQ3QUO7O3l/9d8MRPknLnjDLHLR1L2H4gb5EFACXO2s3SoKfRzsRMFq0IK5vg9HhPa2W8sgiupQRLsoW6JGry1MmDiZG1iZvQ4l3DvcWMhufqfWCx32sO/kxqQFp8RsHfJWlh887EhWHvU9SVtQO7AxS/His6HqE03q5K3dS2li2V3R8eyDSJBgLDNzOQxsGYsARpOm5ZVJHwEcVpnVAXe0/y8bNvnxQ6wBeExmIfCLVOex7nT+eCcLSdIqMy0Fig2gix2Wbg4K1SU5CYtQMtVztZqG40y8G7OfoqhSuglvM0N9CNQDTNcw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=i8RLi4KuvGUj+e3EEZcBcXQr5Vs+45ffY64j8rWUxxg=;
- b=QO7YmRHJl3b32eldZ74KQR5ZmwzHRCNJnEIfisKgy4DoF3M4nhpwQEqYSYkMyfWX2FlEjWmBx3BMFn+IOUVX2R5oKnJADxy8ulGEBoCd/RZyBxIwhcmK8yrMwd2KKMT0Rurd3gHzags+gTZAjY97hKp+QKX19apZT41P9xBjbFJRJb4j8TK5mOkvUDz10NLbFM8IGQmK/womX3A3wj6wCZk0pDTwHCVtEmkyMZCBiGR2ZTZpa+c5kb6Jni8czkRC6tw2kAS4cZS+3nfreBL+C56LpxoKjw5GsiCPhYa/tUR5dHQ0boK91moyTEFUFygl5GtWrqZPZ6t54uF4KFhpAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=i8RLi4KuvGUj+e3EEZcBcXQr5Vs+45ffY64j8rWUxxg=;
- b=OwhIXLrERvPjxKplzE5oqSTcCAMfWfFOqJNtQihOcTql63p3zkHLt1W/I8AGTV9Ws6k2emcWrZONGbCDnM3itM11utWFoUWC+GE51Qapj6gk87H3JqBbUGP731VIKIT3kqj8XcIwzL/LcaR/of52skm+zo21mUFC2b4fJKLioLo=
-Received: from BL3PR12MB6571.namprd12.prod.outlook.com (2603:10b6:208:38e::18)
- by CY8PR12MB7414.namprd12.prod.outlook.com (2603:10b6:930:5e::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.29; Tue, 8 Apr
- 2025 12:19:37 +0000
-Received: from BL3PR12MB6571.namprd12.prod.outlook.com
- ([fe80::4cf2:5ba9:4228:82a6]) by BL3PR12MB6571.namprd12.prod.outlook.com
- ([fe80::4cf2:5ba9:4228:82a6%3]) with mapi id 15.20.8606.029; Tue, 8 Apr 2025
- 12:19:37 +0000
-From: "Gupta, Suraj" <Suraj.Gupta2@amd.com>
-To: Sean Anderson <sean.anderson@linux.dev>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S .
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Russell King
-	<linux@armlinux.org.uk>
-CC: Heiner Kallweit <hkallweit1@gmail.com>, "upstream@airoha.com"
-	<upstream@airoha.com>, Kory Maincent <kory.maincent@bootlin.com>, Christian
- Marangi <ansuelsmth@gmail.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Simek, Michal" <michal.simek@amd.com>,
-	"Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>, Robert Hancock
-	<robert.hancock@calian.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [net-next PATCH v2 11/14] net: axienet: Convert to use PCS
- subsystem
-Thread-Topic: [net-next PATCH v2 11/14] net: axienet: Convert to use PCS
- subsystem
-Thread-Index: AQHbqBQpOkeBdCgtTkqJNnqbURiuX7OZrO8g
-Date: Tue, 8 Apr 2025 12:19:36 +0000
-Message-ID:
- <BL3PR12MB65713BB652BE4E0E3FAAEF7BC9B52@BL3PR12MB6571.namprd12.prod.outlook.com>
-References: <20250407231746.2316518-1-sean.anderson@linux.dev>
- <20250407232058.2317056-1-sean.anderson@linux.dev>
-In-Reply-To: <20250407232058.2317056-1-sean.anderson@linux.dev>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=fa066623-83f3-4d16-8124-552b78775809;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-04-08T12:05:40Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL3PR12MB6571:EE_|CY8PR12MB7414:EE_
-x-ms-office365-filtering-correlation-id: 0154b607-ffa3-4485-63fd-08dd7697a121
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?fiYgqeQyfsvowlnU6duu755harcw1yml2UdwdwBCHvHFxCWRs4FoByHnmseH?=
- =?us-ascii?Q?6qc2NKhAyOA/Mr7zzeMJwiD8KSiemk5G2AnYxOouVJ8gUhzj5jNH7bpeGtrN?=
- =?us-ascii?Q?4VerVhhVdWUbG6kuMnpjBykws0vB7k24zAE0KjnhaMF4lA0rvMH1GhACn2Rl?=
- =?us-ascii?Q?v2V7PWLDj+XY0pg1dO8IMbeH1n7IZfQbIil1ZuvqjaiVNN35ZKc8QIIMIH3I?=
- =?us-ascii?Q?SAYaigJXjETEPrwc14Tpb0NYQiYhfI78WViFa9+zksjoUQBCMNf+O7kBplxl?=
- =?us-ascii?Q?UJVaDvqqAYYV/CLJm8k0ASoRWpkmxnHkMdro3O4TxMvgG9xCWTIgl0q3ZnZa?=
- =?us-ascii?Q?/WYTTKJjDODIlrn7CqpWPRN7SdHMRKpQN3DiuHXHJ6MQWW4nrGT9lMm7BbxK?=
- =?us-ascii?Q?PJ8nKT/n3aPJoxfsj58j1sGwYfu2f6JLM55Zk/KHr4pCT43HMw7MCZLouHPT?=
- =?us-ascii?Q?LAUsv22TKCchtpY9ySsMDL/nEbQ+O6N/XH5viviE3s+KUABNZMtfvc2ozCZJ?=
- =?us-ascii?Q?LsEXYHhlDC9JyAO1uzxQmBbV7t6IvmthmFOldzm0z2UpGWEabX+oR03p1iC9?=
- =?us-ascii?Q?kIkzo2g9J90BSUzizDru0haT3O04SNijwrzCzxlW327Nsp8neLBKYN2ZRjj4?=
- =?us-ascii?Q?hIWIgvuDRs3JkCH3s0iydHrzlXRCkhcg45F1Cid4eGfMdafYcGUjHeVEVeRE?=
- =?us-ascii?Q?zNVxi8OXkjXIaqOkxe611L4v3Dn+bILWiOGW0NlFruViwCltwozpLGh8ioIT?=
- =?us-ascii?Q?L6mmywWm8LhGc1vv27DC4FFfNbI9csTixMvK7tHQXfF1hY8q13v6uiCVcvcO?=
- =?us-ascii?Q?NYImRXr3NPZ6d/sOXxGCsK3X8CAwF/tnuz8RDiaW/n3k2nTY2t2aWSJAJVId?=
- =?us-ascii?Q?JvQHvbZRYCGoHnqIV4ku6oL70BhZyqZriW9HyBSgsIfVlHsDYd8kgt8ldE+3?=
- =?us-ascii?Q?DZnyyYnC/UxxO/qRLipHLc0l7KBm+7Q+6gcjJdN0wvPUuDTuAwoD7aEHWutu?=
- =?us-ascii?Q?inrfObouPaHb0aqiw4juiA6hgIWb+xwBZw+IXH+3iwun1tc4kZ+ERQTlN4LY?=
- =?us-ascii?Q?aF93U36RkVCvxjXa/38nJ7c5sV0X61nP5f2YGgZhb0MC6mRaT5aP09eh9I+O?=
- =?us-ascii?Q?wPcR2kt6Ewjr/Ty9c8wNSPACXFwgrzyXHPdpgrZGUwliPKJXIlHYQhndsdpK?=
- =?us-ascii?Q?5iVRLdhwvLaZn8EAB3jqnMJXYEdxtV9NYmZtMK49z9ck80pZ4G6C4KatsDxx?=
- =?us-ascii?Q?lrRkm01UlVTEbNj8JF6Ghj6XfLQMDq7dvmEx5SH1mHenCmKrCPitpB4Ij5tP?=
- =?us-ascii?Q?8v8Wj7V+4LCTCROtUSO/OjhSAyhVWKJEvvp3bJHAlSoF/WTuEoOrg+ImD/C7?=
- =?us-ascii?Q?qNdZgwwPnom98nB8PjMcce+4JYm26iWNuISjTavg82D6MOhXfREIQSMuXjGp?=
- =?us-ascii?Q?lJXM1prW5szpA+kur1+voYBoWlRtWp+Q?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB6571.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?3NcWqm/2tkKwcV6Tb6gLTN1v2dtc3z3wVQOork1PQxsrVoQimoFRNVdyjJ1N?=
- =?us-ascii?Q?480KIy5aXXP05O68nujxy2laOxEh5YiX9ErFunVgTFiHPSORJPk4CTtL5dpC?=
- =?us-ascii?Q?cgD/UTCNGjvR+0bhIXTXkbbrdXmC+SaJy+PcH8Rom2QDjbJ+qk7KVjbyt0S5?=
- =?us-ascii?Q?BhoN1F0g/WdHERuiJlQT7oEg2xaVUbONdt0iUztGkjnwtOZHNnbyZq+scZfw?=
- =?us-ascii?Q?XBAFWOdttXZF7a6eLKUg/XiMm5PCxQqxW0EV+6zRx4Hf45gp297ILmYheChv?=
- =?us-ascii?Q?dQvrZ1sj1tCXo+bsEyK3JM15rQKzJrCTq9+yCgvI/z34CrwKoMXIMYrDHQVr?=
- =?us-ascii?Q?4q3ZGM1VpsECUbU4TF1PGrOOTixJ3wOEY71NCBruK+HuZ0gCNquAlydw3EO/?=
- =?us-ascii?Q?qrJgzkQzt1Yz7WzIoEQmRVJT/anrCGNRMDDaJQ9/2t2ymiwgHzu7fI085Ek9?=
- =?us-ascii?Q?h/v7R0hpaMqQAhv/Zc8POc1QsxbIRnTaMIEFnesJSc58dIP7WF8KtOTZGTq3?=
- =?us-ascii?Q?SzS6Mh9KzUShNm+BxlyoWxsTIPKWGVIeg3qBw3DioBtBFv5TaPhhh9RyEjya?=
- =?us-ascii?Q?DihNHpRUIMk07TXH0/Zwi781DAurpCwakEuzLZhJCdSJjk3eyjgGpTSq7L1b?=
- =?us-ascii?Q?k6fkRcyjkxdbUaRmT8uimoblnUPSkkBddC2+UgnTDX7H6RqeH4p6bIf7AMTh?=
- =?us-ascii?Q?8Ivy/DbYb31pH5/TGYJwGk2tSeof0X5d1/rGmr/UgYf9bPzAcozj5rlJ8SmS?=
- =?us-ascii?Q?HRpSjaHPUqr85O20czs0cGKVXcwUj1b5AYwdDX6jqCgtM+hsrfAK8l+YnWS9?=
- =?us-ascii?Q?Dbub2BYcyYLe4dNG2HAKQZKC/7AhlDEsz7fYWHA7Xf8YLS5RDBcuKiZVGA1p?=
- =?us-ascii?Q?4gYF+8iTnEzYkX+A8YCjfLUZjJGksLOLipKUX3LW8hZw2KVES0b97/VJ7kQi?=
- =?us-ascii?Q?Vap3RFKzGQ/83oGD/tlpEfxu8hlAx5DefzRK0H1Kev8gXG6yrMlPATJWJcjI?=
- =?us-ascii?Q?8khis9sfaZnbTcJxUPEfTJmSfwSVy1FGK2p2MEsxJ1QSub+nQdCJjsmLAbjE?=
- =?us-ascii?Q?mYEP68LjY1axBAlKUNIqkMMU+JfdghfUJGRtvcKK/s9mBqwfsWMaLbuFwzC4?=
- =?us-ascii?Q?4/csRrRkg43B8XlaHYOIRSZCajmj4GSgLIRPW+aLhExPNilbuT3cKMyzMg2R?=
- =?us-ascii?Q?eU5yon0h3NJPUoHOemgDiO5z6AhzDR/9iU4CbmdkXHhNXv5fmFBCYL4+eoPp?=
- =?us-ascii?Q?VP8BUxKd7gj0aOtJcbAcFyrq4P0GwyZwsUX7DTmxLpc8gHkGZl9zTDCMg67M?=
- =?us-ascii?Q?xhB30emMymVI5c/skVRJ4ZnWUUcxZVUJkvawBqPEpH2n0oDwy7icO0kDrU39?=
- =?us-ascii?Q?ouHuiyjbgHy+aRWVhdBsttvo2/+XuIyQCZ1StLK3JHsuUnN04XtRUWnf5O3u?=
- =?us-ascii?Q?wLLtwfcmtlOA7IwS3jZue5/pF5zZ4fgwlwBoQwGEqVMAaTwoa19oHeCeV3z9?=
- =?us-ascii?Q?T18hMFyvh3LqEtKt63dm+xqH6XGJ8ZVlsEFYyXxAm+Wn1PrbToSZfF9fHQ5j?=
- =?us-ascii?Q?K+mTp9HJ/8p06ENwptQ=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F90526E166
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 12:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744114795; cv=none; b=GCN8tl7b10KlWbqNhPQk3znzae5+Q6lVUQqlX0RYTWCeMHsfyOSZtb92dllpCo7hNU47s35YRiSeWhLMTN35Ks99InyWlSfMNGt2KC/6xIfevGLGEwjqo9MX7EfoBrVTD1pTC+SfO1lBoUElwqAX4iFOSsRtQjlZy2gA6jaYiBk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744114795; c=relaxed/simple;
+	bh=cqJEYZpTWXR9jKvrePEizNqBxYjyUuof2ktKIwAHaEg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D7JhqS8Kk2k059ofUkbvc6n9rhr2KcjRJUiMq/ywV+yy3weAe18myUfGQ2WuPDfR9Q7MkFvKa8OBEDRG1IVLvU1Z/aZTS5Zr1aQlCEROSIO7z3dPKRI/iLdHYqtJALhrOpsmxawMOXsbA0eMmOiCnTuhFFkVrsOM1Inm8aV20ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l+vod5ze; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2c81fffd523so1758828fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 05:19:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744114791; x=1744719591; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+klmaoxCED4pDcFuxlOcSxnmOj1ckuigEs3QIV/u2+U=;
+        b=l+vod5zeI8r7178aind6l5S/I5Zh3mSHKmxd39+YIgpl2RqcTFqALu7ABsDJ2ZcARg
+         1hLfnSQNPcki7jKtKMfH7NWvnapjh0EGt+xreSSjOLRBrKL8ajP3FyptqnzAKhJYqtsy
+         yjVAqx3oAsEdBFSuZ3Kj43WK6OIL9l9+Hg8NIpZAOxYWiYauDlWiu2McCpivt0ZHnEDj
+         jiQrnKT4EL3KuttTSZQxS+SblBJa/dzrFkmhfrIvEBMYR3eSeKAOdrr3rzXswahA1Lo8
+         4yJQs2KatYurck/Bk5+UjaA+pCIt+uD/drBNEV9HC9rO3th6sBhGeX68+pbUBhxh7FOA
+         ntRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744114791; x=1744719591;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+klmaoxCED4pDcFuxlOcSxnmOj1ckuigEs3QIV/u2+U=;
+        b=fxiwBwikO4+LwEvWu/tzrShCExqQ6Jwglbetoz+UdF6cNOrdCKXD1ePAIchrh2NgVX
+         ECsuaNUFizYWLEELjeXRT96UuSSNyX5Lh8AItoz4Er9PratXD5JgR0OwC6r5p8qgWei6
+         7PCUe8WVgJylYT93JGN0uygdzoKIOoqJNIbwuo7kfuEIegbzeBcET3HdGUsyQMtn9fbc
+         r83tpd4F/mCzvUPdd2PMzBC0YQjFHdF1D+2fk0/E8ybPjR6iWX2p/uGO68g+qJfrI33y
+         4Z4ivi68OOx4ZQ/fch8FBjcw+fQQtiWKhvHESxiDc7XDawGpeRtSB4C4sk7p0GIBgz6X
+         Uc5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXknVBN2WPAuTejcvOY89d1riT0sVYu+G66Cu2tXQQ8sOiMcM2jEoYpx9gKNOyLpKD9dpX8P7lFCPkIhyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+PNFjY6veSFs9Ag0AA7xKQmxZpqBXueZZXUFdBAsgixZ1QQou
+	WgGfyrVfH14XhsMpW18Ce7ETzLfD5qNbBA5++31WrZrc3i5lpwzfg93OaF9EQgEHnxRT/hfIYEo
+	0pHq3xCLlyP62YhtsphyBboa1dSTOx4YeJUt9CA==
+X-Gm-Gg: ASbGnctltpT6tK0SFTVYWRcnJp9UgsWalB2SdIO9dPYJIYSliprKPkpG3jinFgUGIva
+	F/tYcVoOCjvce7QTPbWgw+T2T+zD2h2pUZsN63ZKdoKp+fDteqRB2eKIeZnDchJUdw/xa05VE/v
+	3hKaF1ILuMX/3TMHNd7scz0D1+eOY=
+X-Google-Smtp-Source: AGHT+IFCF+RMHdZBnY2a7hFAdIdejCYyUR6De9S4JNypn9WNmsQX98mK3kXX45iMYBxCtgKmtWC1RqssrKMa0JwHMXI=
+X-Received: by 2002:a05:6870:8886:b0:297:23a8:1e0 with SMTP id
+ 586e51a60fabf-2cd19ba33camr6980481fac.0.1744114791286; Tue, 08 Apr 2025
+ 05:19:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB6571.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0154b607-ffa3-4485-63fd-08dd7697a121
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Apr 2025 12:19:37.1725
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BytMVzc4f6bk3i8MqQBVHf4yTV+lHKtKK3cts4JQuXi9tvx0g7RNaxdR/IqeP5fFCctrhqOzDQAVq84Bbf4fmw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7414
+References: <20250327-qcom-tee-using-tee-ss-without-mem-obj-v3-0-7f457073282d@oss.qualcomm.com>
+ <20250327-qcom-tee-using-tee-ss-without-mem-obj-v3-3-7f457073282d@oss.qualcomm.com>
+In-Reply-To: <20250327-qcom-tee-using-tee-ss-without-mem-obj-v3-3-7f457073282d@oss.qualcomm.com>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Tue, 8 Apr 2025 14:19:39 +0200
+X-Gm-Features: ATxdqUHiR13vrEghgcenypM4xH6AalhCyyu9dL_6PNXYq9LDpZaokLz8xGNRvcA
+Message-ID: <CAHUa44GRBiRr6CsFWxJhyzf1cRSEP66m5K7uFntOv3oYWTHWgQ@mail.gmail.com>
+Subject: Re: [PATCH v3 03/11] tee: add TEE_IOCTL_PARAM_ATTR_TYPE_UBUF
+To: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+Cc: Sumit Garg <sumit.garg@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Apurupa Pattapu <quic_apurupa@quicinc.com>, 
+	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	linux-arm-msm@vger.kernel.org, op-tee@lists.trustedfirmware.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[AMD Official Use Only - AMD Internal Distribution Only]
+Hi Amirreza,
 
-> -----Original Message-----
-> From: Sean Anderson <sean.anderson@linux.dev>
-> Sent: Tuesday, April 8, 2025 4:51 AM
-> To: netdev@vger.kernel.org; Andrew Lunn <andrew+netdev@lunn.ch>; David S =
-.
-> Miller <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>; Jakub
-> Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>; Russell King
-> <linux@armlinux.org.uk>
-> Cc: Heiner Kallweit <hkallweit1@gmail.com>; upstream@airoha.com; Kory
-> Maincent <kory.maincent@bootlin.com>; Christian Marangi
-> <ansuelsmth@gmail.com>; linux-kernel@vger.kernel.org; Simek, Michal
-> <michal.simek@amd.com>; Pandey, Radhey Shyam
-> <radhey.shyam.pandey@amd.com>; Robert Hancock
-> <robert.hancock@calian.com>; linux-arm-kernel@lists.infradead.org; Sean
-> Anderson <sean.anderson@linux.dev>
-> Subject: [net-next PATCH v2 11/14] net: axienet: Convert to use PCS subsy=
-stem
+On Fri, Mar 28, 2025 at 3:48=E2=80=AFAM Amirreza Zarrabi
+<amirreza.zarrabi@oss.qualcomm.com> wrote:
 >
-> Caution: This message originated from an External Source. Use proper caut=
-ion
-> when opening attachments, clicking links, or responding.
+> For drivers that can transfer data to the TEE without using shared
+> memory from client, it is necessary to receive the user address
+> directly, bypassing any processing by the TEE subsystem. Introduce
+> TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_INPUT/OUTPUT/INOUT to represent
+> userspace buffers.
 >
->
-> Convert the AXI Ethernet driver to use the PCS subsystem, including the n=
-ew Xilinx
-> PCA/PMA driver. Unfortunately, we must use a helper to work with bare MDI=
-O
-> nodes without a compatible.
->
-
-AXI ethernet changes looks fine to me, except one minor nit mentioned below=
-. Using DT changesets for backward compatibility is impressive :)
-I'll try reviewing pcs/pma patch also and test it with our setups.
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-
-Reviewed-by: Suraj Gupta <suraj.gupta2@amd.com>
+> Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
 > ---
->
-> (no changes since v1)
->
->  drivers/net/ethernet/xilinx/Kconfig           |   1 +
->  drivers/net/ethernet/xilinx/xilinx_axienet.h  |   4 +-
->  .../net/ethernet/xilinx/xilinx_axienet_main.c | 104 ++++--------------
->  drivers/net/pcs/Kconfig                       |   1 -
->  4 files changed, 22 insertions(+), 88 deletions(-)
->
-> diff --git a/drivers/net/ethernet/xilinx/Kconfig b/drivers/net/ethernet/x=
-ilinx/Kconfig
-> index 7502214cc7d5..2eab64cf1646 100644
-> --- a/drivers/net/ethernet/xilinx/Kconfig
-> +++ b/drivers/net/ethernet/xilinx/Kconfig
-> @@ -27,6 +27,7 @@ config XILINX_AXI_EMAC
->         tristate "Xilinx 10/100/1000 AXI Ethernet support"
->         depends on HAS_IOMEM
->         depends on XILINX_DMA
-> +       select OF_DYNAMIC if PCS_XILINX
->         select PHYLINK
->         select DIMLIB
->         help
-> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet.h
-> b/drivers/net/ethernet/xilinx/xilinx_axienet.h
-> index 5ff742103beb..f46e862245eb 100644
-> --- a/drivers/net/ethernet/xilinx/xilinx_axienet.h
-> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet.h
-> @@ -473,7 +473,6 @@ struct skbuf_dma_descriptor {
->   * @dev:       Pointer to device structure
->   * @phylink:   Pointer to phylink instance
->   * @phylink_config: phylink configuration settings
-> - * @pcs_phy:   Reference to PCS/PMA PHY if used
->   * @pcs:       phylink pcs structure for PCS PHY
->   * @switch_x_sgmii: Whether switchable 1000BaseX/SGMII mode is enabled i=
-n
-> the core
->   * @axi_clk:   AXI4-Lite bus clock
-> @@ -553,8 +552,7 @@ struct axienet_local {
->         struct phylink *phylink;
->         struct phylink_config phylink_config;
->
-> -       struct mdio_device *pcs_phy;
-> -       struct phylink_pcs pcs;
-> +       struct phylink_pcs *pcs;
->
->         bool switch_x_sgmii;
->
-> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> index 054abf283ab3..07487c4b2141 100644
-> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-> @@ -35,6 +35,8 @@
->  #include <linux/platform_device.h>
->  #include <linux/skbuff.h>
->  #include <linux/math64.h>
-> +#include <linux/pcs.h>
-> +#include <linux/pcs-xilinx.h>
->  #include <linux/phy.h>
->  #include <linux/mii.h>
->  #include <linux/ethtool.h>
-> @@ -2519,63 +2521,6 @@ static const struct ethtool_ops axienet_ethtool_op=
-s =3D {
->         .get_rmon_stats =3D axienet_ethtool_get_rmon_stats,  };
->
-> -static struct axienet_local *pcs_to_axienet_local(struct phylink_pcs *pc=
-s) -{
-> -       return container_of(pcs, struct axienet_local, pcs);
-> -}
-> -
-> -static void axienet_pcs_get_state(struct phylink_pcs *pcs,
-> -                                 unsigned int neg_mode,
-> -                                 struct phylink_link_state *state)
-> -{
-> -       struct mdio_device *pcs_phy =3D pcs_to_axienet_local(pcs)->pcs_ph=
-y;
-> -
-> -       phylink_mii_c22_pcs_get_state(pcs_phy, neg_mode, state);
-> -}
-> -
-> -static void axienet_pcs_an_restart(struct phylink_pcs *pcs) -{
-> -       struct mdio_device *pcs_phy =3D pcs_to_axienet_local(pcs)->pcs_ph=
-y;
-> -
-> -       phylink_mii_c22_pcs_an_restart(pcs_phy);
-> -}
-> -
-> -static int axienet_pcs_config(struct phylink_pcs *pcs, unsigned int neg_=
-mode,
-> -                             phy_interface_t interface,
-> -                             const unsigned long *advertising,
-> -                             bool permit_pause_to_mac)
-> -{
-> -       struct mdio_device *pcs_phy =3D pcs_to_axienet_local(pcs)->pcs_ph=
-y;
-> -       struct net_device *ndev =3D pcs_to_axienet_local(pcs)->ndev;
-> -       struct axienet_local *lp =3D netdev_priv(ndev);
-> -       int ret;
-> -
-> -       if (lp->switch_x_sgmii) {
-> -               ret =3D mdiodev_write(pcs_phy, XLNX_MII_STD_SELECT_REG,
-> -                                   interface =3D=3D PHY_INTERFACE_MODE_S=
-GMII ?
-> -                                       XLNX_MII_STD_SELECT_SGMII : 0);
-> -               if (ret < 0) {
-> -                       netdev_warn(ndev,
-> -                                   "Failed to switch PHY interface: %d\n=
-",
-> -                                   ret);
-> -                       return ret;
-> -               }
-> -       }
-> -
-> -       ret =3D phylink_mii_c22_pcs_config(pcs_phy, interface, advertisin=
-g,
-> -                                        neg_mode);
-> -       if (ret < 0)
-> -               netdev_warn(ndev, "Failed to configure PCS: %d\n", ret);
-> -
-> -       return ret;
-> -}
-> -
-> -static const struct phylink_pcs_ops axienet_pcs_ops =3D {
-> -       .pcs_get_state =3D axienet_pcs_get_state,
-> -       .pcs_config =3D axienet_pcs_config,
-> -       .pcs_an_restart =3D axienet_pcs_an_restart,
-> -};
-> -
->  static struct phylink_pcs *axienet_mac_select_pcs(struct phylink_config =
-*config,
->                                                   phy_interface_t interfa=
-ce)  { @@ -2583,8 +2528,8
-> @@ static struct phylink_pcs *axienet_mac_select_pcs(struct phylink_confi=
-g
-> *config,
->         struct axienet_local *lp =3D netdev_priv(ndev);
->
->         if (interface =3D=3D PHY_INTERFACE_MODE_1000BASEX ||
-> -           interface =3D=3D  PHY_INTERFACE_MODE_SGMII)
-> -               return &lp->pcs;
-> +           interface =3D=3D PHY_INTERFACE_MODE_SGMII)
+>  drivers/tee/tee_core.c   | 33 +++++++++++++++++++++++++++++++++
+>  include/linux/tee_drv.h  |  6 ++++++
+>  include/uapi/linux/tee.h | 22 ++++++++++++++++------
+>  3 files changed, 55 insertions(+), 6 deletions(-)
 
-nit: unchanged check.
+Is this patch needed now that the QCOMTEE driver supports shared
+memory? I prefer keeping changes to the ABI to a minimum.
 
-> +               return lp->pcs;
+Cheers,
+Jens
+
 >
->         return NULL;
->  }
-> @@ -3056,28 +3001,23 @@ static int axienet_probe(struct platform_device *=
-pdev)
->
->         if (lp->phy_mode =3D=3D PHY_INTERFACE_MODE_SGMII ||
->             lp->phy_mode =3D=3D PHY_INTERFACE_MODE_1000BASEX) {
-> -               np =3D of_parse_phandle(pdev->dev.of_node, "pcs-handle", =
-0);
-> -               if (!np) {
-> -                       /* Deprecated: Always use "pcs-handle" for pcs_ph=
-y.
-> -                        * Falling back to "phy-handle" here is only for
-> -                        * backward compatibility with old device trees.
-> -                        */
-> -                       np =3D of_parse_phandle(pdev->dev.of_node, "phy-h=
-andle", 0);
-> -               }
-> -               if (!np) {
-> -                       dev_err(&pdev->dev, "pcs-handle (preferred) or ph=
-y-handle required
-> for 1000BaseX/SGMII\n");
-> -                       ret =3D -EINVAL;
-> -                       goto cleanup_mdio;
-> -               }
-> -               lp->pcs_phy =3D of_mdio_find_device(np);
-> -               if (!lp->pcs_phy) {
-> -                       ret =3D -EPROBE_DEFER;
-> -                       of_node_put(np);
-> +               DECLARE_PHY_INTERFACE_MASK(interfaces);
+> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
+> index 22cc7d624b0c..bc862a11d437 100644
+> --- a/drivers/tee/tee_core.c
+> +++ b/drivers/tee/tee_core.c
+> @@ -404,6 +404,17 @@ static int params_from_user(struct tee_context *ctx,=
+ struct tee_param *params,
+>                         params[n].u.value.b =3D ip.b;
+>                         params[n].u.value.c =3D ip.c;
+>                         break;
+> +               case TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_INPUT:
+> +               case TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_OUTPUT:
+> +               case TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_INOUT:
+> +                       params[n].u.ubuf.uaddr =3D u64_to_user_ptr(ip.a);
+> +                       params[n].u.ubuf.size =3D ip.b;
 > +
-> +               phy_interface_zero(interfaces);
-> +               if (lp->switch_x_sgmii ||
-> +                   lp->phy_mode =3D=3D PHY_INTERFACE_MODE_SGMII)
-> +                       __set_bit(PHY_INTERFACE_MODE_SGMII, interfaces);
-> +               if (lp->switch_x_sgmii ||
-> +                   lp->phy_mode =3D=3D PHY_INTERFACE_MODE_1000BASEX)
-> +                       __set_bit(PHY_INTERFACE_MODE_1000BASEX,
-> + interfaces);
+> +                       if (!access_ok(params[n].u.ubuf.uaddr,
+> +                                      params[n].u.ubuf.size))
+> +                               return -EFAULT;
 > +
-> +               lp->pcs =3D axienet_xilinx_pcs_get(&pdev->dev, interfaces=
-);
-> +               if (IS_ERR(lp->pcs)) {
-> +                       ret =3D PTR_ERR(lp->pcs);
-> +                       dev_err_probe(&pdev->dev, ret,
-> +                                     "could not get PCS for
-> + 1000BASE-X/SGMII\n");
->                         goto cleanup_mdio;
->                 }
-> -               of_node_put(np);
-> -               lp->pcs.ops =3D &axienet_pcs_ops;
-> -               lp->pcs.poll =3D true;
->         }
+> +                       break;
+>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT:
+>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT:
+>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT:
+> @@ -472,6 +483,11 @@ static int params_to_user(struct tee_ioctl_param __u=
+ser *uparams,
+>                             put_user(p->u.value.c, &up->c))
+>                                 return -EFAULT;
+>                         break;
+> +               case TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_OUTPUT:
+> +               case TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_INOUT:
+> +                       if (put_user((u64)p->u.ubuf.size, &up->b))
+> +                               return -EFAULT;
+> +                       break;
+>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT:
+>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT:
+>                         if (put_user((u64)p->u.memref.size, &up->b))
+> @@ -672,6 +688,13 @@ static int params_to_supp(struct tee_context *ctx,
+>                         ip.b =3D p->u.value.b;
+>                         ip.c =3D p->u.value.c;
+>                         break;
+> +               case TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_INPUT:
+> +               case TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_OUTPUT:
+> +               case TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_INOUT:
+> +                       ip.a =3D (u64)p->u.ubuf.uaddr;
+> +                       ip.b =3D p->u.ubuf.size;
+> +                       ip.c =3D 0;
+> +                       break;
+>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT:
+>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT:
+>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT:
+> @@ -774,6 +797,16 @@ static int params_from_supp(struct tee_param *params=
+, size_t num_params,
+>                         p->u.value.b =3D ip.b;
+>                         p->u.value.c =3D ip.c;
+>                         break;
+> +               case TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_OUTPUT:
+> +               case TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_INOUT:
+> +                       p->u.ubuf.uaddr =3D u64_to_user_ptr(ip.a);
+> +                       p->u.ubuf.size =3D ip.b;
+> +
+> +                       if (!access_ok(params[n].u.ubuf.uaddr,
+> +                                      params[n].u.ubuf.size))
+> +                               return -EFAULT;
+> +
+> +                       break;
+>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT:
+>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT:
+>                         /*
+> diff --git a/include/linux/tee_drv.h b/include/linux/tee_drv.h
+> index ce23fd42c5d4..d773f91c6bdd 100644
+> --- a/include/linux/tee_drv.h
+> +++ b/include/linux/tee_drv.h
+> @@ -82,6 +82,11 @@ struct tee_param_memref {
+>         struct tee_shm *shm;
+>  };
 >
->         lp->phylink_config.dev =3D &ndev->dev; @@ -3115,8 +3055,6 @@ stat=
-ic int
-> axienet_probe(struct platform_device *pdev)
->         phylink_destroy(lp->phylink);
+> +struct tee_param_ubuf {
+> +       void * __user uaddr;
+> +       size_t size;
+> +};
+> +
+>  struct tee_param_value {
+>         u64 a;
+>         u64 b;
+> @@ -92,6 +97,7 @@ struct tee_param {
+>         u64 attr;
+>         union {
+>                 struct tee_param_memref memref;
+> +               struct tee_param_ubuf ubuf;
+>                 struct tee_param_value value;
+>         } u;
+>  };
+> diff --git a/include/uapi/linux/tee.h b/include/uapi/linux/tee.h
+> index d0430bee8292..3e9b1ec5dfde 100644
+> --- a/include/uapi/linux/tee.h
+> +++ b/include/uapi/linux/tee.h
+> @@ -151,6 +151,13 @@ struct tee_ioctl_buf_data {
+>  #define TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT        6
+>  #define TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT 7       /* input and outp=
+ut */
 >
->  cleanup_mdio:
-> -       if (lp->pcs_phy)
-> -               put_device(&lp->pcs_phy->dev);
->         if (lp->mii_bus)
->                 axienet_mdio_teardown(lp);
->  cleanup_clk:
-> @@ -3139,9 +3077,7 @@ static void axienet_remove(struct platform_device
-> *pdev)
->         if (lp->phylink)
->                 phylink_destroy(lp->phylink);
+> +/*
+> + * These defines userspace buffer parameters.
+> + */
+> +#define TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_INPUT   8
+> +#define TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_OUTPUT  9
+> +#define TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_INOUT   10      /* input and outp=
+ut */
+> +
+>  /*
+>   * Mask for the type part of the attribute, leaves room for more types
+>   */
+> @@ -186,14 +193,17 @@ struct tee_ioctl_buf_data {
+>  /**
+>   * struct tee_ioctl_param - parameter
+>   * @attr: attributes
+> - * @a: if a memref, offset into the shared memory object, else a value p=
+arameter
+> - * @b: if a memref, size of the buffer, else a value parameter
+> + * @a: if a memref, offset into the shared memory object,
+> + *     else if a ubuf, address of the user buffer,
+> + *     else a value parameter
+> + * @b: if a memref or ubuf, size of the buffer, else a value parameter
+>   * @c: if a memref, shared memory identifier, else a value parameter
+>   *
+> - * @attr & TEE_PARAM_ATTR_TYPE_MASK indicates if memref or value is used=
+ in
+> - * the union. TEE_PARAM_ATTR_TYPE_VALUE_* indicates value and
+> - * TEE_PARAM_ATTR_TYPE_MEMREF_* indicates memref. TEE_PARAM_ATTR_TYPE_NO=
+NE
+> - * indicates that none of the members are used.
+> + * @attr & TEE_PARAM_ATTR_TYPE_MASK indicates if memref, ubuf, or value =
+is
+> + * used in the union. TEE_PARAM_ATTR_TYPE_VALUE_* indicates value,
+> + * TEE_PARAM_ATTR_TYPE_MEMREF_* indicates memref, and TEE_PARAM_ATTR_TYP=
+E_UBUF_*
+> + * indicates ubuf. TEE_PARAM_ATTR_TYPE_NONE indicates that none of the m=
+embers
+> + * are used.
+>   *
+>   * Shared memory is allocated with TEE_IOC_SHM_ALLOC which returns an
+>   * identifier representing the shared memory object. A memref can refere=
+nce
 >
-> -       if (lp->pcs_phy)
-> -               put_device(&lp->pcs_phy->dev);
-> -
-> +       pcs_put(&pdev->dev, lp->pcs);
->         axienet_mdio_teardown(lp);
->
->         clk_bulk_disable_unprepare(XAE_NUM_MISC_CLOCKS, lp->misc_clks); d=
-iff
-> --git a/drivers/net/pcs/Kconfig b/drivers/net/pcs/Kconfig index
-> 261d2fd29fc7..90ca0002600b 100644
-> --- a/drivers/net/pcs/Kconfig
-> +++ b/drivers/net/pcs/Kconfig
-> @@ -57,7 +57,6 @@ config PCS_XILINX
->         depends on PCS
->         select MDIO_DEVICE
->         select PHYLINK
-> -       default XILINX_AXI_EMAC
->         tristate "Xilinx PCS driver"
->         help
->           PCS driver for the Xilinx 1G/2.5G Ethernet PCS/PMA or SGMII dev=
-ice.
 > --
-> 2.35.1.1320.gc452695387.dirty
+> 2.34.1
 >
-
 
