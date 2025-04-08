@@ -1,76 +1,80 @@
-Return-Path: <linux-kernel+bounces-594607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD836A81458
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:14:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C0AA8145C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF2434E3396
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:13:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E8A2884CA8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774CD23ED7B;
-	Tue,  8 Apr 2025 18:13:40 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2E823C8C8;
+	Tue,  8 Apr 2025 18:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="V9J/P5yq"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EA523ED5E
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 18:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B0822577E;
+	Tue,  8 Apr 2025 18:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744136020; cv=none; b=lqkzy91N085PEPO06GFV+C+hHSr4AiNOiiRVXGviX3VoYHZT0myGuzcJboMZFLoJyy+x0IOHoI7MukC0chi8x8+r8a1lt8Xb5vhG229JyxwfThUPSox75xAS4epkBHFFwBC8Zmj6Rq5edxJU/PyUhDQhLzD7z+7Z+AeRLcp0Bgo=
+	t=1744136120; cv=none; b=qtBZkpBjy3y9GR75nM8UDjCo0iL+o+6/H5jCfSWunIIjEpgOex6orJSMdQk7RCt/6fxeBViy850RTfUcPMUt4us5IpxjGcoeByDlHAnoV/xB93FERnfmZKvskKguYRzQUN8nSlMGye0TiWg3ZT+pviF0VxnZkBYGTYr1QPb6Llg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744136020; c=relaxed/simple;
-	bh=DWQrOYLBBqRQBm/p0hvDh8MijSajLNnaWRy/not3lMg=;
+	s=arc-20240116; t=1744136120; c=relaxed/simple;
+	bh=QI0LuiJv1QGct6vF6T/kJ4ThegGdqEHlXTWUcLe8Ae8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iJCTFAFbsI4G0935GqYnr2E98UJ0M/MdF/4/Lx4gBwxUNueTJpkVAm/YGsJvsTsoa1l01USCfOWsb41oZtNvDziAdwXBcS0ugIQcqN3yjcEtylpdkYo1KQygHTH0D++ljaJRu42DJq2/FbH8jhbmiHrlAB4iBTy2jUKRtGA823Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1u2DRj-0007ne-QQ; Tue, 08 Apr 2025 20:13:15 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1u2DRj-003ylS-0s;
-	Tue, 08 Apr 2025 20:13:15 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1u2DRj-006eX5-0Q;
-	Tue, 08 Apr 2025 20:13:15 +0200
-Date: Tue, 8 Apr 2025 20:13:15 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	Kyle Swenson <kyle.swenson@est.tech>,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v7 06/13] net: pse-pd: Add helper to report
- hardware enable status of the PI
-Message-ID: <Z_VnOxZ3onybhM1d@pengutronix.de>
-References: <20250408-feature_poe_port_prio-v7-0-9f5fc9e329cd@bootlin.com>
- <20250408-feature_poe_port_prio-v7-6-9f5fc9e329cd@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=es+DclslyDIL3Oee22vjb0bnFIs6GvF0fwtBn+HqOmKpKs9ueLno47U4axKpMYLvvbELn/3bhklQEUKbBgP12YG/6wD3VW6ZhnjKyzWMCOXbzWtR0IPexSzuh6fxRzfCW4OsmpyYvWm/aAKN3DIn8UmsDrbsTlxYpcbEixQIajA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=V9J/P5yq; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2089140E019F;
+	Tue,  8 Apr 2025 18:15:15 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 4ud9fw2qBZaA; Tue,  8 Apr 2025 18:15:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1744136111; bh=c5pCLnMyOcxedFh7XU+XAOcb2LrvDEUAYiCWmCSsZXY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V9J/P5yqIu3ftRiOgoNB4OmjpT3Dem8qsH4AeBk2kfMDGzwDfcZ2/kqCHuMaGJN5l
+	 9SGNUmDTIFxHci9LfkPzsC22122TXjkj1lQuqSjeDk4yw1kmVM/+ZRESASiqpOaF9F
+	 ndMGXh8lBNgvFM9e3vHjAhIORcDbZqSsiMvtUlSQiSYLh9GwzDAdcV7Bytz33piv+R
+	 yWN6l6OwAVUvQLJBxqD5GyHnpoPQjBM6H/B44Tk1qmsTt+zTE9jqldjVdXbBW5j8UO
+	 H4av+eKbYpcbOug8Sv4vFnzzLwhKIO7DYLNDrrg4y4t2igkS9Vq1/fta2hJkz6K48A
+	 HNbcG/0lPOPTHe9vjUlNg3yL5IwiljlkX1XYGhW3qTY6FPin6pAZcEjZo051VEAEcr
+	 pWHgExohHS4ByqfVxtiHesB56584UFtD143m9fGaugTBf5XhfJX0lxfie0E+QLzN6e
+	 Ck6R9AzCsHxLvDP12RjYZWMw0QolS61+m6ws4ncpRQCE5ylsgxjPGOiPsNhhzXXk09
+	 F3qbznhT3gMj8LZw+k2aslmHrA5MsIe+0AbQ5Jr2qZLL1hTk2/EZpOR9LGDfsMnPXu
+	 yEe6w2PgPIOw8MZNEDc4CM5ADvHnYONslmcmTi/PJvKGLYg68qMbxHfKt715w9GE+L
+	 1HqKS/leFwV504aYM5OXKSBY=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7CD5640E015D;
+	Tue,  8 Apr 2025 18:15:00 +0000 (UTC)
+Date: Tue, 8 Apr 2025 20:14:51 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Yazen Ghannam <yazen.ghannam@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v2 2/2] x86/CPU/AMD: Print the reason for the last reset
+Message-ID: <20250408181451.GFZ_Vnm6JXaItfwVpK@fat_crate.local>
+References: <20250408174726.3999817-1-superm1@kernel.org>
+ <20250408174726.3999817-2-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,32 +83,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250408-feature_poe_port_prio-v7-6-9f5fc9e329cd@bootlin.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20250408174726.3999817-2-superm1@kernel.org>
 
-On Tue, Apr 08, 2025 at 04:32:15PM +0200, Kory Maincent wrote:
-> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
-> 
-> Refactor code by introducing a helper function to retrieve the hardware
-> enabled state of the PI, avoiding redundant implementations in the
-> future.
-> 
-> Signed-off-by: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+On Tue, Apr 08, 2025 at 12:47:26PM -0500, Mario Limonciello wrote:
+> diff --git a/Documentation/admin-guide/amd/amd-reboot-reason.csv b/Documentation/admin-guide/amd/amd-reboot-reason.csv
+> new file mode 100644
+> index 0000000000000..c31c7a0464c38
+> --- /dev/null
+> +++ b/Documentation/admin-guide/amd/amd-reboot-reason.csv
+> @@ -0,0 +1,21 @@
+> +Bit, Type, Reason
+> +0, Pin, Thermal trip (BP_THERMTRIP_L)
+> +1, Pin, Power button
+> +2, Pin, SHUTDOWN# pin
+> +4, Remote, Remote ASF power off command
+> +9, Internal, Thermal trip (internal)
+> +16, Pin, User reset (BP_SYS_RST_L)
+> +17, Software, PCI reset (PMIO 0xC4)
+> +18, Software, CF9 reset (0x04)
+> +19, Software, CF9 reset (0x06)
+> +20, Software, CF9 reset (0x0E)
+> +21, Sleep, Power state or ACPI state transition
+> +22, Pin, Keyboard reset (KB_RST_L)
+> +23, Internal, Internal CPU shutdown
+> +24, Hardware, Failed boot timer
+> +25, Hardware, Watchdog timer
+> +26, Remote, Remote ASF reset command
+> +27, Internal, Data fabric sync flood event due to uncorrected error
+> +29, Internal, MP1 Watchdog timer timeout
+> +30, Internal, Parity error
+> +31, Internal, SW sync flood event
+> \ No newline at end of file
 
-Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Do we need that table now?
 
-Thank you!
+If so, why not integrate it into debugging.rst?
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
