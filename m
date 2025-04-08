@@ -1,165 +1,105 @@
-Return-Path: <linux-kernel+bounces-594336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 662FFA81043
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:39:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 173D2A81045
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F6A01B63F4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:33:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A122F17EBBB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE652288C6;
-	Tue,  8 Apr 2025 15:32:52 +0000 (UTC)
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93F51A8407;
+	Tue,  8 Apr 2025 15:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIUnuqwm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9804C8F5A;
-	Tue,  8 Apr 2025 15:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEC222B598;
+	Tue,  8 Apr 2025 15:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744126372; cv=none; b=HUkmgSc/EZ0+ZEVMs4G9IPHZSuZE7Nrr1ddNmQBTvY3JpMGN7h1pYdP5tp5LgudnXwVvf64on8AhKtScz+1vSBlFFPyTMIqHj+HTxmM3lOzwjY7xMsnz989k9T8M8GzSILzF0b1OlRoZfbVRqFXa1ffvwyI42Kr4We6uSfVPfWg=
+	t=1744126407; cv=none; b=lk5Y6jfp85ucV96sK4Er35WVHQuk3aQq8Ft1q6aVIsdEbpk6kwT7j0GiAkIwc9ljaASKCehWl3YGRAzqdhLQfMf6wod9YH+lCeVaCMicfPxNCaAEeMMWdh9zJ6xwPbJk8eIIv7ZNQL3CXyiZk+BWJijLrqkKonHYScst+JB1c/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744126372; c=relaxed/simple;
-	bh=+SSZrN8wkNSkmcTPKV2yxkI5mq1uBPzghaYSVyoz1kM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qbw4IvKVbcTvURVSTqdqDo4XQ2SQoWFXyajBbcQx0sX8p8ck4a5l0QiUiP4sf0QReYiwQPlnjowAXi2zpVffOCNZU4hXrVm9cxfRm86p1Uc2d4UNunPtju6geZJ8n/loD+wR0KEK4XBAFNOxBW7tDSbtRQF0Tlvwvv6i1JnfNkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7c592764e24so609777585a.0;
-        Tue, 08 Apr 2025 08:32:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744126366; x=1744731166;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sWauuTJeBzaymof//eJXjaRWpKnp1jf/EjofEIpiwYM=;
-        b=rJkYVdUM9T9zUTnBCTlEoIDocRsli4DGBTO8bgBomQGIhzPN9dhv/Zi4QDuRrr0M/t
-         YRxpoufH1/hYgoDV6ayVrXUQiO/4OJzhX21WJCXMPgQ6vo6LaFoVD8FK50SOIzTfEFOo
-         2LPGEYgFZIcNy5uqFihHLAItfLYtiwSJGf6Sol+A7PRcJ+LbO9OGdSLTxUJhQGoZ5DhI
-         WX5ySE0HNgazLW3zSJKbwZSBa9+cUbD9LyYXh7/aaEpCr9JzdBA3nFcJRNUfdoAoLAnn
-         0fx4O8RTw/GE4MPIylIXYOfgCKswV6qHUEbZOsYHtPvVpK9rRTLV2MLvJJNYpcGNmXZQ
-         7l6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWHxZxu3YVExsB5pFHH1H8JhMB2mZ9cXMZNXXxpdBSBGHHBKMXPXcfFzIplDrNbZ0+UqTN1YYQQ0jmEyQxo@vger.kernel.org, AJvYcCXvHflDVvgVMkORnxGLI0MS1Uc+k8+/LTJmzmhLzcl+v2fa0gqIj8nF4pliTgwoUCa/JNDK0iQURjo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEdaoeggrP8OqAoKpCASXW+pJfm64WNNYJr1lLTMvseHwoGSuY
-	HXo0ZkZ6pKSAKhaumXcQGCJ4KAwj78ZZGqxkV5Kw5gWPiKETlubK4IfRm2i7
-X-Gm-Gg: ASbGncuw5AYD/VdzgcY78MaF7UlhKTuX49UZbqHmM4K8eLh6X48YYza+DyxQ2l0rmjt
-	Ku6KZsnAXBadZS5fHU/uMg2JREA1/CLiFn70mhNZZkACdAJ3+0jrrddpZ5Q7pUNtYdRVyKEG3eH
-	5nTDcMRNDnybWnWU7SxPRQyTjGA3mhGaBdiV82JLmIrJUZxFrJc3QzG5/5U/WfMDaZCZ1aw14zF
-	kbT+Fr1js4dz3uQR+wdn1sKfbcxVU+yJl0/GFIgwoDLaBE6wytY+v/k8dJiwbLNBsH9oN/TdPv1
-	ADJeZ+ci26dAzgQuwfvgpidQCkTjoLSpX5Ll62zOUOKd9Cqkgdo2SZvBtNIbPyrkco41dGPS04T
-	4qKm8YrsfAH0=
-X-Google-Smtp-Source: AGHT+IEnSFlTWDZfMJvUU/4uP24DOXtgkU62MH/Q/dBTDsUnHEqB2uN53fLWdR7eyScBn51RG/GyvQ==
-X-Received: by 2002:a05:620a:2889:b0:7c5:94ec:5114 with SMTP id af79cd13be357-7c79409bf63mr553112485a.18.1744126366028;
-        Tue, 08 Apr 2025 08:32:46 -0700 (PDT)
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com. [209.85.222.179])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c76eaacff9sm775018985a.116.2025.04.08.08.32.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Apr 2025 08:32:45 -0700 (PDT)
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c54f67db99so644762285a.1;
-        Tue, 08 Apr 2025 08:32:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUL/6as5KGbJiouwF8WqWoagu0I/h8FuGneNwELWOly3XNUc8AglEmPTnBjyOaIzPt88Ek9CEqGUw+WKh2J@vger.kernel.org, AJvYcCVyM4Hr15y91RT2Q0ZSKlNw9FVZOq0iwUl57hrFj6Mdd2rLbR/zksYh8xoYciGybWW+Zd0Br5uMRWM=@vger.kernel.org
-X-Received: by 2002:a05:620a:4150:b0:7b1:7508:9f38 with SMTP id
- af79cd13be357-7c79408f423mr535672885a.16.1744126365206; Tue, 08 Apr 2025
- 08:32:45 -0700 (PDT)
+	s=arc-20240116; t=1744126407; c=relaxed/simple;
+	bh=jTDbRpm/2plpGWyuZcgnOrksZvCKonLIj49TrwkLGMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t9uZxMB7uzqSSqR9AcEgSr+wz/cHmsEloBgW/7aD4Uoi5VCya4+TO0gKhgNIV20E+MlV6SdjTVmowTrrBu3lOUL/O8ZLZnBvOkagzI5sSSKmE1kPLV8hUcQnh1nNpnBWOcl0sZRFaVMFq7QTcnD41BdUr+Wc/FT4XfcVMVnQRu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIUnuqwm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF28EC4CEE9;
+	Tue,  8 Apr 2025 15:33:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744126406;
+	bh=jTDbRpm/2plpGWyuZcgnOrksZvCKonLIj49TrwkLGMg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gIUnuqwmDKh1UdrcyGo5h8XkMiMGPrHjGP2Cmlp/98SG+JZqvfK3OyBJ+YaEE/Dw5
+	 H6pY6EMPjEV6BhiE9oYP/y9FYAJYJMr9WztK+fOVQIp5YV7we+jfWPW1khCxcwglQg
+	 xakHA48v1mIq6Fp8b1O39NyWxaTPUGkG6DN+U4mttyqTh1f/kLJSXedWGRbJ4/sVpX
+	 NVgkHtZMImN2NAh4mD3IfY/HwQwNeu73yMxcVR5K77AWicjVlISZoq3O2gwIAwPC9L
+	 KyUa3uiK/aqdj6hw7DeoXSa6j6ktcUkt8aXr4kggFWZjUtLWWN0oUJLCSktQwPDDgn
+	 qX2hYtprje98g==
+Date: Tue, 8 Apr 2025 08:33:24 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>, "David S .
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
+ linux-kernel@vger.kernel.org, upstream@airoha.com, Christian Marangi
+ <ansuelsmth@gmail.com>, Heiner Kallweit <hkallweit1@gmail.com>, Kory
+ Maincent <kory.maincent@bootlin.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Clark Wang <xiaoning.wang@nxp.com>, Claudiu
+ Beznea <claudiu.beznea@microchip.com>, Claudiu Manoil
+ <claudiu.manoil@nxp.com>, Conor Dooley <conor+dt@kernel.org>, Ioana Ciornei
+ <ioana.ciornei@nxp.com>, Jonathan Corbet <corbet@lwn.net>, Joyce Ooi
+ <joyce.ooi@intel.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Madalin
+ Bucur <madalin.bucur@nxp.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Michal Simek <michal.simek@amd.com>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Radhey Shyam Pandey
+ <radhey.shyam.pandey@amd.com>, Rob Herring <robh+dt@kernel.org>, Rob
+ Herring <robh@kernel.org>, Robert Hancock <robert.hancock@calian.com>,
+ Saravana Kannan <saravanak@google.com>, UNGLinuxDriver@microchip.com,
+ Vladimir Oltean <vladimir.oltean@nxp.com>, Wei Fang <wei.fang@nxp.com>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [net-next PATCH v2 00/14] Add PCS core support
+Message-ID: <20250408083324.3996c141@kernel.org>
+In-Reply-To: <08c0e1eb-2de6-45bf-95a4-e817008209ab@linux.dev>
+References: <20250407231746.2316518-1-sean.anderson@linux.dev>
+	<20250408075047.69d031a9@kernel.org>
+	<08c0e1eb-2de6-45bf-95a4-e817008209ab@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304120014.143628-10-ajones@ventanamicro.com>
- <20250304120014.143628-17-ajones@ventanamicro.com> <CAMuHMdWVMP0MYCLFq+b7H_uz-2omdFiDDUZq0t_gw0L9rrJtkQ@mail.gmail.com>
- <20250408-f3b5934a901bd24c1c800c8d@orel>
-In-Reply-To: <20250408-f3b5934a901bd24c1c800c8d@orel>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 8 Apr 2025 17:32:33 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW8DBfGNVkeY6qLv-eN=mjRKW3qUbXvEn7sLdA61QRfcA@mail.gmail.com>
-X-Gm-Features: ATxdqUEIXkJ1UlfuGjCURKEaeAQ-DRYOLV6RZU-cgg5H0QCozGCmtM1pj04if88
-Message-ID: <CAMuHMdW8DBfGNVkeY6qLv-eN=mjRKW3qUbXvEn7sLdA61QRfcA@mail.gmail.com>
-Subject: Re: [PATCH v3 7/8] riscv: Add parameter for skipping access speed tests
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	charlie@rivosinc.com, cleger@rivosinc.com, alex@ghiti.fr, 
-	Anup Patel <apatel@ventanamicro.com>, corbet@lwn.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+On Tue, 8 Apr 2025 11:30:43 -0400 Sean Anderson wrote:
+> > These appear to break the build:
+> >=20
+> > drivers/acpi/property.c:1669:39: error: initialization of =E2=80=98int =
+(*)(const struct fwnode_handle *, const char *, const char *, int,  unsigne=
+d int,  struct fwnode_reference_args *)=E2=80=99 from incompatible pointer =
+type =E2=80=98int (*)(const struct fwnode_handle *, const char *, const cha=
+r *, unsigned int,  unsigned int,  struct fwnode_reference_args *)=E2=80=99=
+ [-Wincompatible-pointer-types]
+> >  1669 |                 .get_reference_args =3D acpi_fwnode_get_referen=
+ce_args,   \
+> >=20
+> > Could you post as RFC until we can actually merge this? I'm worried=20
+> > some sleep deprived maintainer may miss the note in the cover letter
+> > and just apply it all to net-next.. =20
+>=20
+> I would really like to keep RFC off the titles since some reviewers don't
+> pay attention to RFC series.
+>=20
+> Would [DO NOT MERGE] in the subject be OK?
 
-On Tue, 8 Apr 2025 at 15:03, Andrew Jones <ajones@ventanamicro.com> wrote:
-> On Tue, Apr 08, 2025 at 02:25:12PM +0200, Geert Uytterhoeven wrote:
-> > On Tue, 4 Mar 2025 at 13:02, Andrew Jones <ajones@ventanamicro.com> wrote:
-> > > Allow skipping scalar and vector unaligned access speed tests. This
-> > > is useful for testing alternative code paths and to skip the tests in
-> > > environments where they run too slowly. All CPUs must have the same
-> > > unaligned access speed.
-> > >
-> > > The code movement is because we now need the scalar cpu hotplug
-> > > callback to always run, so we need to bring it and its supporting
-> > > functions out of CONFIG_RISCV_PROBE_UNALIGNED_ACCESS.
-> > >
-> > > Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
-> >
-> > > --- a/arch/riscv/kernel/unaligned_access_speed.c
-> > > +++ b/arch/riscv/kernel/unaligned_access_speed.c
-> >
-> > >  static int __init check_unaligned_access_all_cpus(void)
-> > >  {
-> > >         int cpu;
-> > >
-> > > -       if (!check_unaligned_access_emulated_all_cpus())
-> > > +       if (unaligned_scalar_speed_param == RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN &&
-> > > +           !check_unaligned_access_emulated_all_cpus()) {
-> > >                 check_unaligned_access_speed_all_cpus();
-> > > -
-> > > -       if (!has_vector()) {
-> > > +       } else {
-> > > +               pr_info("scalar unaligned access speed set to '%s' by command line\n",
-> > > +                       speed_str[unaligned_scalar_speed_param]);
-> > >                 for_each_online_cpu(cpu)
-> > > -                       per_cpu(vector_misaligned_access, cpu) = RISCV_HWPROBE_MISALIGNED_VECTOR_UNSUPPORTED;
-> > > -       } else if (!check_vector_unaligned_access_emulated_all_cpus() &&
-> > > -                  IS_ENABLED(CONFIG_RISCV_PROBE_VECTOR_UNALIGNED_ACCESS)) {
-> > > +                       per_cpu(misaligned_access_speed, cpu) = unaligned_scalar_speed_param;
-> > > +       }
-> > > +
-> > > +       if (!has_vector())
-> > > +               unaligned_vector_speed_param = RISCV_HWPROBE_MISALIGNED_VECTOR_UNSUPPORTED;
-> > > +
-> > > +       if (unaligned_vector_speed_param == RISCV_HWPROBE_MISALIGNED_VECTOR_UNKNOWN &&
-> > > +           !check_vector_unaligned_access_emulated_all_cpus() &&
-> > > +           IS_ENABLED(CONFIG_RISCV_PROBE_VECTOR_UNALIGNED_ACCESS)) {
-> > >                 kthread_run(vec_check_unaligned_access_speed_all_cpus,
-> > >                             NULL, "vec_check_unaligned_access_speed_all_cpus");
-> > > +       } else {
-> > > +               pr_info("vector unaligned access speed set to '%s' by command line\n",
-> > > +                       speed_str[unaligned_vector_speed_param]);
-> >
-> > On SiPEED MAiXBiT, unaligned_scalar_speed_param is zero, and it prints:
-> >
-> >     scalar unaligned access speed set to '(null)' by command line
->
-> Thanks, Geert. I think unaligned_scalar_speed_param is likely 1 in this
-> case and we should be printing 'emulated', but I neglected to add that
-> string to speed_str[].
-
-No, the value of unaligned_scalar_speed_param is zero.
-
-> I'll fix this too.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+That works too.
 
