@@ -1,274 +1,327 @@
-Return-Path: <linux-kernel+bounces-594045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 494F1A80C81
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:36:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3193BA80C38
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A95EC90574A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:29:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B05D67B138E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C749313AD38;
-	Tue,  8 Apr 2025 13:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED332B2DA;
+	Tue,  8 Apr 2025 13:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UNfk1Y+P"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iup2kIKT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA1782899;
-	Tue,  8 Apr 2025 13:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744118924; cv=none; b=VD8VBHEvAF7NXvuy6QiMo1An+EXbTvtVDfq+JcpxB7L4fEUnSrnoNHKokTL5VaQxt3j+oG+O23suhN4sNs2PYqVcyfnMVn9SpjWT4ww3wIoAgn5Pg2lQz4tAlgmLmyqwCM+N/QphZ5h9uzMvUk7/6dc0QsBh5Ko8oxiIa/CMH/g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744118924; c=relaxed/simple;
-	bh=mRavdQhL1DtEwVkn4eshOK9bHbUZ9e8U1h5lXfkfZxU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bvVyAKTURvA4FlfHlczySQ+QBqw0+YI5W4NUwB6mB29V5ITj2PMON1sPz0ylkYgg/MXmCFQVkQpNv32rhIN3+bIFgrsXPfvryWuli2ka5MVaGO3vF9k/HDKMa6YXf434uacoFqBmITBJT3gTzBm+k0s6gEHJwSP+PuHuQ4GbuC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UNfk1Y+P; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c08fc20194so1058342785a.2;
-        Tue, 08 Apr 2025 06:28:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744118921; x=1744723721; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dwUccFj/IlodGJeJZB3OFwnoyGFO8e7MmCQycSPGjCw=;
-        b=UNfk1Y+Pb05QZ4QVxMT/Nu+J6KtgGvZMadkAdSWET2/3GoywHt/b/7tKZu2PWwmJhT
-         sA/y1zBjIv6q6XiG4cmP9N1v9BlP1b9DZpJEbD4NIPC3AF+YL0CAPPLc8cWGVYR+AFhE
-         o+ZFZ541PDe8ghM195TcByBAAhhth556o2YRJY0XtXxH9CWaxtQE8kKg978ah9AGHDvy
-         Mg9i5Rq7F5+1TeXzDx5SHjX23uQQZ3mOfY12F5RCtDMRi9TM5R2zA6wiPSk7+pWloDUq
-         VmoNyhnVbrpAvAsnZo2KD/KRgDhQK//BJRImmvWH+SVExLMPhfxmD7EETxwlOx1aCH3k
-         K8Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744118921; x=1744723721;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dwUccFj/IlodGJeJZB3OFwnoyGFO8e7MmCQycSPGjCw=;
-        b=EaesfcOwbkxq+NmxOxoY0RrUD1gHtfLajQmbg5FBwj3OElrK4ucupvnPHNxH66JZVq
-         ShNTCrddPA39MJcLtGBkB4RAIP1Aj/hEkaSlAJBZBuG0kXY5NgYCKYmeTNI0Jbjg+j0C
-         aRb2N9of7muCrDM9NubZ1FliXz3p3SD6UUYr+ZIlnF3J/a5SH/HHA/m0AlA4jfwfNMN8
-         8Ge8SGv9VIWJx1GQBDhjlsy/MTzcPGnEHbs7S4yFrgjQ2EHg1fPqkUuLJf1XKBcph+TT
-         zpe0Nag2d3xNrbwwt4CxS3/bdSl4dz1/K1pWHSwAc+2EKi7AeHchTOQhPGh5tPWNTXhG
-         lO7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUa/aauv8J+h3gaOozdGkVfN1UtotGsP8zn/3lgCjoswYVlx18tzzkYKa6Fg5PDYiz0Z/Iid1qZsQ6yEsU=@vger.kernel.org, AJvYcCXmdTuMSi+ROwXUxm0y6409/RQKcJ59vriBvOqnoh08osIW8yba7ZxcWdwB8LxXPG4qLGm/uRSf+P1ptpg+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy44820wpdsYgWTMRAyrJEtv0IRZQALUFYxLJTlollvJrw2oepB
-	rjzTI7NKW6+rQfhRj3/hqjWB4r5WaHM5nBExBD4JEuFtBDwNK2iOuU1161ZyARAuL3Bnly+MQyk
-	MPNwYACiT1qQT32wjYPOGS86o9l+xmwx7uPw=
-X-Gm-Gg: ASbGncss8fVA3qTn3K23mB8IHPwvZv1RcDxfGdYh1VN9RqTDRgmGO0xGMkqJqOgxxv8
-	pmZUsBJt0CYgJjlTV/sClJJCnbbwfSIPiV4Gkan9xh0amztBoc/fzg8zbRqvYbFMq00sKWUui91
-	UupgRLEbMhamloKDYo9EVPod61e1VNGPUNit7jH7C0tC6MGVKCmgF8Dzq1BA==
-X-Google-Smtp-Source: AGHT+IHr8oAZ9ILp/+vmcbU4Qrch200Fo7fv0NJkBS9PHMuY3WdaclWR5R52F1Tff1FAlcZ+9m1h9VrKFNMNmvVs2b4=
-X-Received: by 2002:a05:620a:4544:b0:7c5:44d0:7dbb with SMTP id
- af79cd13be357-7c774d5d871mr2469271585a.28.1744118921014; Tue, 08 Apr 2025
- 06:28:41 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A047D3D3B8;
+	Tue,  8 Apr 2025 13:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744118913; cv=fail; b=kMZmBvlkkJGJ+2CVP9RbfQEWjyNA+B3kwy7tqWf9OWmE2RG5gHn5gmNrNNPJMmEvOxKpSf99tjpVGy05DM07L3Ok7FKqMJ9n+VDoXvAe6X2spFCAkpANIirxzbA2x/S6vlulIsjEFVepgelTr0FGt4CgM140DuOU+08JdXFrYTc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744118913; c=relaxed/simple;
+	bh=37EDuAKfIfYqPIASHLh8B4ViblVQ7Y1tpJF5lxKiDNs=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=gE0abTqG0Dl+oVjQgZ3GnMCY0Br0ZgFcF+buqDdhMfSYpHo9J0c+dIByNEYXqQcviqURnsl+qjcaBm2zFk3jlLuTo13MDjdRx1LHJQRj6rmCMPaQEP7cVZtp3jcYnm4I9Kopi/TJEAoVJI7IKBFIQOqzfcLT4tUJiR7lg4RkaoI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iup2kIKT; arc=fail smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744118912; x=1775654912;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=37EDuAKfIfYqPIASHLh8B4ViblVQ7Y1tpJF5lxKiDNs=;
+  b=iup2kIKTghbpvVZ9DmTQx92Gcbe6kzUR3zmq7HGHOlc78twg+erIOU4a
+   4DCKcz+z5LRMrj3bm4SIrgg6Iu0+q/EIJJoRDcPZqn8wjEz9YMXcjFkm5
+   C28KoOyXZuPXYQul/ZsIaB3fsZXorqQdWMozhdgc76Mbjk8UAieqbNL/R
+   wIw7b3GfxEpUwsUOB1Eo/KAux1SW+eLGML571IYSHH7v8eTBp6l9WHGq0
+   PpzHby+gE693JDQ8P5GypkoVjKbL1JZHkOL89egMVum23g45KfUyyI5pa
+   N3i4gAXcyO5J5M64Cr/Qg1bv19PpDTqwi3Kqmg7zvimbG8aplZjgSyFIi
+   A==;
+X-CSE-ConnectionGUID: sMfDpdGiTRmZxSxuZltnow==
+X-CSE-MsgGUID: suCmnWXARzOb36zQ8tSfXg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="49395065"
+X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
+   d="scan'208";a="49395065"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 06:28:31 -0700
+X-CSE-ConnectionGUID: sAxBmjwMTAO6QWWlQSXD3Q==
+X-CSE-MsgGUID: Q3nEFH93SySK4TReaykoqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
+   d="scan'208";a="133246654"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 06:28:31 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.14; Tue, 8 Apr 2025 06:28:30 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Tue, 8 Apr 2025 06:28:30 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.40) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Tue, 8 Apr 2025 06:28:29 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yS9aU66VCxFVSpS+2Jme1OKd6gLeKv0k75frYAVZ/jQo2JPAC1RC+p7LRodmIJaVdxlEUlZnCPPl+0Fcswy5XbadtVAh6M2jjcJDeRYkkH4QpSz/mAyyBjPpVA2VOS6Ivi8E0bovlD5r2MVN+/8VNTP0fp0rSjyVvlOMCA83UtdDSQ0qIyzbRPdeoGBw7mhfkYhYFZE8B4QNKQpgUMEvsjLsN3tNE8M/o3JZBZOPSp2iNlnCbhXBYyNw7SjXlk1Q0P6Q3zRA+mg07sZ9ABsgYjEZgWFEy4PM4o7IHU0cNxC05/+p2Xp9H/xThXf8b1ls6s4E7Q37YqcuifH7T+s+bw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EOSCn8gmXQoQXbNBiSgmw4PpRVBG41AfiUvFbRPTSNk=;
+ b=wVzOQ6jNUW8y5IpJonnKDwujE3HKClnwMcgMR010s30kJIX7P9/BhBaq22BTuq0cTmqpZwLtjf6v4cTleCMB8Ov8jqrSYAgOhEd9X9HjVY4WOU3/aYWRjUqzMDn+EwWLDLc69XJrMOINF+D61the0IWcbFGV6DrfJaitJJX1MVHKETQkHwLrIIDlOKslEaWBPYbAy4N3Y34JN73i2AaM/M1ZGTLABlfJd1ks8Ds7Aype6YeZ7TdqMlHWi5arKFHkTyj7iigrjGF6IUAml/ZlP4AoaTuFMzpQvh+cnB84IeshyBe8PnkdVAkgIu6z8g9LnwUvpxC8KAWwq491+GafNg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
+ by LV2PR11MB6047.namprd11.prod.outlook.com (2603:10b6:408:179::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.20; Tue, 8 Apr
+ 2025 13:28:26 +0000
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808%5]) with mapi id 15.20.8632.017; Tue, 8 Apr 2025
+ 13:28:26 +0000
+Message-ID: <454272e0-82cf-4f79-be53-a4838dfbbcd7@intel.com>
+Date: Tue, 8 Apr 2025 15:28:21 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 14/16] idpf: add support for XDP on Rx
+To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+CC: <intel-wired-lan@lists.osuosl.org>, Michal Kubiak
+	<michal.kubiak@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, "Przemek
+ Kitszel" <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Alexei
+ Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+	"Jesper Dangaard Brouer" <hawk@kernel.org>, John Fastabend
+	<john.fastabend@gmail.com>, Simon Horman <horms@kernel.org>,
+	<bpf@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250305162132.1106080-1-aleksander.lobakin@intel.com>
+ <20250305162132.1106080-15-aleksander.lobakin@intel.com>
+ <Z9Bbr9b0WLFQZt4Z@boxer>
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+Content-Language: en-US
+In-Reply-To: <Z9Bbr9b0WLFQZt4Z@boxer>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: WA2P291CA0045.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:1f::19) To DS0PR11MB8718.namprd11.prod.outlook.com
+ (2603:10b6:8:1b9::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250408033322.401680-1-gshahrouzi@gmail.com> <20250408033322.401680-3-gshahrouzi@gmail.com>
- <7muoawncdumcsclkcxklw6olqcjko63et26ptbh5lidximffoh@lu34aqtcujtn>
- <CAKUZ0zKWDVocdSa60ZZPjq9u24wEW+EaUsXoUrrCF=Z+pacGHQ@mail.gmail.com> <zqhlvh3jftam6ka5hu7ardcnaeyzvbvbmttjqubeeutuhcmurp@dsgpwpwvgj6y>
-In-Reply-To: <zqhlvh3jftam6ka5hu7ardcnaeyzvbvbmttjqubeeutuhcmurp@dsgpwpwvgj6y>
-From: Gabriel Shahrouzi <gshahrouzi@gmail.com>
-Date: Tue, 8 Apr 2025 09:27:00 -0400
-X-Gm-Features: ATxdqUG56mAfd5E_qXTksehi_Hqmq4fEX4-kUMk8_Qch3TsiTY4D0y6G2rlkzh0
-Message-ID: <CAKUZ0zKp0r0ydTSFrdkUBzG+rWXDvP5uwVYZ+C8Xwy9wvZU-3w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] bcache: Fix warnings for incorrect type in assignments
-To: Coly Li <colyli@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, linux-bcache@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	kernelmentees@lists.linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|LV2PR11MB6047:EE_
+X-MS-Office365-Filtering-Correlation-Id: 265dfc47-7bfc-47e5-0f4c-08dd76a13e15
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?aDV1eGxrbld2dDh6NkdaQ2ZaeUl4emRaUS9Jd1hMV2dIQjlqMWZQbVd4NzlV?=
+ =?utf-8?B?SHBSMFpVakJ3RXNXaXpOQXRubmVuMysxWUV4OXNsMzBnYmNqZSs4N3REejh5?=
+ =?utf-8?B?WHRHUmZlbjJHRlpRdWRBR3JaRXFMU00yQmV5YmIyenE0OUVCWnZTZTJqd3hG?=
+ =?utf-8?B?cmYvSFVuTXN6cVJ4QjhhNUlJNUd3dnA0Ui94cmJyYXdZK016WXd3UVdCOW5n?=
+ =?utf-8?B?TXpRa1piVkV6dGxIK05tamI0TlY3ME5sa05vUlRnNVZFYThOenRkTzczQWM5?=
+ =?utf-8?B?ZjdrQnJRcFMxVnY4clNWbkc4OHJkM0lUUEhHa3RPREo4bTk4M3FyOWhIMU12?=
+ =?utf-8?B?L0d5WCtyOGQ5a01zWlpTUHdxcGx0V3pwdlJLVXhpR2dvVk4rcGxyWFJrdnJn?=
+ =?utf-8?B?ZGFtZi9zQktvVnROak9Na1AraVNuNUZnVHNBVDdjTDQrdEZsdG1xR2Z5ci9Y?=
+ =?utf-8?B?QXNLV0thc2NqKzNLRThtcHJlZno1REcrRW1XNCtzNHlMbHlieWRIaGFqWmJM?=
+ =?utf-8?B?bklsNlJ6cDVZTkFaV255ZUtFMCtVZmM2Rys2eXZJMnpoajdaN3d0cXVJZDUw?=
+ =?utf-8?B?RDU3WEhQUk1MRFNSU2thcXVKMmVCejJ1aEF4bWlUYUpHVC9TcndiUGhsVEpl?=
+ =?utf-8?B?QUpLQnBtWHpzenhsZVFwRzhRTis3MytXK29LazFGL0pkWndhamdxQk9RNXVH?=
+ =?utf-8?B?WUszQXk4OERjWDhkQU5CT0tYMHNjanJCNW5PaVhFbDJrRmtrTUw5bXlnRkVv?=
+ =?utf-8?B?M0FoU2tLUHBmWXJscnNhWnovK0c5NzZQbXhRdDU2OG1nU0hMaEF5OTZXVzJP?=
+ =?utf-8?B?QU5BS3E0OVdHSzJmMzZGWE9BT0psNWFreE1aQXRGdHpKMndLeDRkVXR2MHdP?=
+ =?utf-8?B?WEJyQUNMT2ZsRTNFV0FYY1Q5REVRMDU1RGsrZStFN2Z1VnBKY1R1bmdyZUNR?=
+ =?utf-8?B?akxTcklzcllmVk1xYXhoSU05VHZVWitXczl5aGNDNWpScjk0d1kzUDZ1SXJZ?=
+ =?utf-8?B?cFhxTDNJMld5MlB3bng2angzeUY1UkV2Nk13UFFhcmZKNTlpNUNPZzQvRTN3?=
+ =?utf-8?B?S1RmNGJIVmJRVUhJeldRd1RsTEdCMFRwQzVUL3R3RmFYcENLYkNhWE9wQ1pN?=
+ =?utf-8?B?eFU2WTg3amlyZVVZQ1g4MUx0MDlYaGNaaTRmWHNkRkU5TGgrc1NMckp4MC9W?=
+ =?utf-8?B?dkRmL2NsRDh6c1RFOXhJeU54UUs5dFY1UUJPcVFwc3g0MkRGc1IzT2h6aXFL?=
+ =?utf-8?B?VUpWK0FRYUlHQldoY1RvVFp0Q29MSnRkNk5xQ1RrMG5QbzNqMkx0c0x3RVlq?=
+ =?utf-8?B?VVNrbkxxTDhmaFovUlAzK0VrL2FCYXp0MnozcVJUMlpnbnVEK2g3SExzRUVn?=
+ =?utf-8?B?VnBmY3AvLzdWMHhDVE0wbzY1VWM1dHRwa3BidWVQSUVqdGN6d0h3REsrZzg5?=
+ =?utf-8?B?WHdhZzJXcThRYjRJSmFqejljRUdyVDh2cENZV085VHlzRTcrVDVWazNTNkpH?=
+ =?utf-8?B?dE1DZmJCd04vRldqT2RYUlFYclZiZzhZMDZaOEYwUnRGYWk4OVcwd0h6Ylgx?=
+ =?utf-8?B?SGNlMVRVaFV3WlVKVStrVlg3ZHFSNmRXWmw3b0VPKytabG5mbVZueUZyMmZT?=
+ =?utf-8?B?TmV6U1pmSzZ2WTNIbWRERHZuVlJQc09zNzhuVjhlRlE3VjZtS2dySWF1OUs3?=
+ =?utf-8?B?S01QcXVNRHV5T3RnUTBrRmJEek5mMWNZYkNwMll6ZUgxaE00U2RjZERrYnZY?=
+ =?utf-8?B?b1lWU0QvYUNHZUcwQy9QZDJYb0N0Y1d4SHdMYmw1aXZGcUlkZjk1Yjd2MGdK?=
+ =?utf-8?B?Sk52OVF1VDZHc2thZlNKbU5hckVJS2w5WGl6QlY4T1dBd0RFcVgvR1dEL3Ru?=
+ =?utf-8?Q?+4VG3mR3H3OqC?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eGc4OGpIQjVUYkNuWHZmYi9jTFcyQkJrR29rSHBIOW5HNGdxSTJ3MXY4R1pz?=
+ =?utf-8?B?eGFPbis5WWNrWTVHR2wzdllqei9jN2NEd09QZ25EdGRzT0dDRkJtNG5LclZv?=
+ =?utf-8?B?S3R5VTMydWYzN3l6elBNclVNckZsRWdKNkxnL25rYW4rNWpUSm02aVpoZUZ5?=
+ =?utf-8?B?cDdiWTFHMlJiczhlZSt4WnBJaG5SUS9qdktnbndRQU9wOXFaOHRpTWVybHVQ?=
+ =?utf-8?B?UEkzbW9keGZxcFRRYlhVck5DbVQ5d3Z6QllYYS9PbVQ2VmtOOXBpM2o4MXJ2?=
+ =?utf-8?B?d0txZWg3VDBxRnB2RHE5UkdnSERwSTAzc1d1Z2puN0QxK3NMdnNNcmRSS1RL?=
+ =?utf-8?B?U2RzYWZpMW5DRmgzV3diQ05wN0xUL1BhNjEzaWN5L2Vmb2xVWFVrbGV1a25Q?=
+ =?utf-8?B?V0QzSDArOEpEQUtQOGNodjVLeVlEK2xRRityZEU4bldrR3VhVmYyUTAyTzdi?=
+ =?utf-8?B?KzhhUGNmM2I4RzRRWTNsZ3oxbTVHRDhnR24rbmtKT3BwbGpuM1Nzdk5mUnp1?=
+ =?utf-8?B?K1JKeHBnenBtL01ubkJ2cGM5WEdrYW02WW83NHNlR2hkcFQvSVh2emRzNFdN?=
+ =?utf-8?B?Q0tSeGVrSEord3V3SitYWVdVdUxqWmhPNVlrNUxLNzJ2RlhiTnBSU2RXWm0y?=
+ =?utf-8?B?NDJ3eDZRUE0wTWJqK0dRRmtNdnVaVkZSR2hTbFVhTCsvWGl2Wnp1US9GS1VZ?=
+ =?utf-8?B?T2R1ODJrRVVjT1FJc2ZINTFwdXR0eEtFVFFVdjBGeU1VRy83b0xtaC9pUmNT?=
+ =?utf-8?B?eTR5WGZwb0VQREttTWZRYzRqTjJmRWhISWdUeko4eEtGTHN0VTAyMUtpSnRP?=
+ =?utf-8?B?eVFYSUVNZGxYRHBZM3hOWW10MTJtMWVNZ0VBNnUyL0s5MEFGTlhxTllONG1r?=
+ =?utf-8?B?dndGMFpFZnFkWXJlcGQyZVE0eFlVa1cwMExkcVlYSnRLbmFUd0QxUVlEVXBj?=
+ =?utf-8?B?S09RRUVrZ2Y4YzFTUUtsblRvYmNwWFFuRWZ3UjY0cmJPbzNCQmpEWUxuY1Jz?=
+ =?utf-8?B?a1RWSlZRWjJvVW0rK2VHWTBwdGw0OVlaQkNUOThKdmUwQVd0Mm0rbU5BVmtq?=
+ =?utf-8?B?aTRtUEErYzFTc3dRcTVHR3lRdStUd3JaR0VmM3p4TVZTbXlwOVhwb1ZaeW5h?=
+ =?utf-8?B?KytlcmtrK2VpMkJrc2hHOWc1RDVuM1Y1cW9tOFhBRjJyakxObVJJdzBWZTlk?=
+ =?utf-8?B?bXJ3RWIxYXI4bkhBQlNDNWVwbk5CTWZxNExUdlJiWS9SWTJVYjJrbGpHZkNN?=
+ =?utf-8?B?RXBCZG5iNUdXMXphMVFwdGVGaHRwY2FPbzgyT2VDLzdKdHBRZnZTVEdxQ0V4?=
+ =?utf-8?B?eGJiVzBMajFQWWFRMnVSeG9nTE53MTFuakhOTjR2MDBEMXd3K25yeWkvMDJK?=
+ =?utf-8?B?NXVsUzFISk85b3BkcjdrUTlFZWZhZUVmOUZqdTcrN21aODdHT1JqRGhUQmlY?=
+ =?utf-8?B?L0p2d3RZSExEMVhETEZDclhCYnVRSVR5aVgxWDEwcjFGZktSRWluL0x3blo4?=
+ =?utf-8?B?citWWGVmeW5FM3JpVEhDK1pOK0R2Uk5kalZmQVBMRVRjNDF2R2NqaXF1dUFy?=
+ =?utf-8?B?eEJCRUIzWEt4VUxEVVlFQ0FoTHRtWktVZ1FVR2F0SkdXQWhVQWd2K05hb25K?=
+ =?utf-8?B?VGZMMDlXSzBrRkVkQ3FIcERWVGxJYWhMOHZZYVY2T0ptTU1XbU1lOWhpNHNt?=
+ =?utf-8?B?NnRlcUFnR1ZzNTUrMnpVanVCc2NobnFqSyt6TjB6L0dqbUpVam5GdWNRTXpL?=
+ =?utf-8?B?SzYyOFB4S29jTzltOUdqOEc0MEhiMkhWbkdvYTZOSjd2OGxUTmdUbjRtbnBm?=
+ =?utf-8?B?akJsUVliWDMxYmZVSDZPN1ZzQnlPUFpjKzVKK0piVndiQmpBU1hZM0VUcDN6?=
+ =?utf-8?B?bDR3ajFBZG5UNXh1cmNDQnVuTEdWSm41dS9zbmF2M2k5d0t6dm01QU1JVnBk?=
+ =?utf-8?B?Y2pONXRpaEIza0xpd2NncmNWQXJweVJrRVdhd1ZTMVlKSUpOcGxPUnBBaXlw?=
+ =?utf-8?B?QUFITnJpR3ZDQitHdXE2MTNRSUplRGdZUzVzbmxpbkhRVmlwSkh2U2kzcjNs?=
+ =?utf-8?B?SU9raTVxcW5oeHBWTXVkSjlQbVhJOTNERXpsWDdXamFXYVBSNjc2TUJsZlls?=
+ =?utf-8?B?aHJhN2hGcmg5dmpsL1ZNSE90U0x5bHp3VVVIK2FMeEl4V0I5S2VJUTRWbFp0?=
+ =?utf-8?B?Q2c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 265dfc47-7bfc-47e5-0f4c-08dd76a13e15
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2025 13:28:26.2838
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: H3ts0Mn9Ejpc7rSbPo74A3yK3uoRZOm8CtW0x48dHzsBx/LYvQoyzIsSbhC1bmMlBU5bggQ/u2Skqg29c+2bQyAFZoerkpGivrRxQ0xFEHo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR11MB6047
+X-OriginatorOrg: intel.com
 
-On Tue, Apr 8, 2025 at 6:39=E2=80=AFAM Coly Li <colyli@kernel.org> wrote:
->
-> On Tue, Apr 08, 2025 at 03:15:00AM +0800, Gabriel Shahrouzi wrote:
-> > On Tue, Apr 8, 2025 at 12:58=E2=80=AFAM Coly Li <colyli@kernel.org> wro=
-te:
-> > >
-> > > On Mon, Apr 07, 2025 at 11:33:22PM +0800, Gabriel Shahrouzi wrote:
-> > > > Remove unnecessary cpu_to_le16() and cpu_to_le32() conversions when
-> > > > assigning values (priorities, timestamps) to native integer type
-> > > > members. Prevent incorrect byte ordering for big-endian systems.
-> > > >
-> > >
-> > > Hmm, why do you feel the conversions are unncessary? Please explain
-> > > with details.
-> > I used Sparse for static analysis on bcache and it gave incorrect type
-> > in assignment warnings.
-> >
-> > For example:
-> >
-> > u->invalidated =3D cpu_to_le32((u32)ktime_get_real_seconds());
-> >
-> > ktime_get_real_seconds() returns back u64 and gets casted down to a
-> > u32. u is of type struct uuid_entry whose member fields are either u8,
-> > u32, or u64. A conversion here contradicts the type it should be
-> > assigned.
-> >
-> > From my understanding, this would not produce an unexpected result if
-> > the value were to be read from or written to some location which seems
-> > to be the case here. I believe it would only cause issues on
-> > big-endian systems if the value were to be modified in some way.
-> >
->
-> Yes you are right, and I agree with you.
->
->
-> > Looking at the commit history for when the code for this specific
-> > example was first introduced (12 years ago), it seems like this was
-> > the author=E2=80=99s intent. It looks like the intention was to store t=
-he
-> > value as little endian in uint32_t. Doing this, the author saves space
-> > / time. If the type was le32 instead, the conversion would have to be
-> > applied each time it=E2=80=99s used. Alternatively, if another member v=
-ariable
-> > was defined but for the le32 version, then extra space is used up.
-> >
->
-> This is kind of convention that on-media values are stored in little
-> endian, for portablity purpose. But bcache is special, current
-> implementation and usage don't require/support portability on different
-> byte order machines. So cpu_to/from_le** routines are almostly
-> unnecessary indeed.
->
-> *BUT* the cast (u32) works as expected on big endian machine as well,
-> same result generated as little indian machine does. The out-of-order
-> issue on big endian machine for the code you mentioned won't happen.
-Got it.
->
-> > In the unlikely event that these specific files change drastically,
-> > making sure the types are the same serves as a preventative measure
-> > to make sure it=E2=80=99s not misused. On the other hand, making the ch=
-ange
-> > most likely goes against the author=E2=80=99s original intent and could=
- cause
-> > something unintended.
-> > >
-> > > I don't mean the modification is correct or incorrect, just want to
-> > > see detailed analysis and help me understand in correct why as you
-> > > are.
-> > >
-> > > BTW, did you have chance to test your patch on big-endian machine?
-> > I only analyzed the compilation warnings so far. I=E2=80=99ll look into=
- trying
-> > to test this on a big-endian machine.
-> >
-> >
->
-> You may have a try and verify my statement.
->
-> And for the change in bch_prio_write(), this is something out of your
-> orignal scope of this patch. The prio width is 16bits, byte order and
-> length truncation issue doesn't apply here.
-Ah I should have been more clear about this when explaining. My main
-concern was with the endian conversion which is what prompted me to
-group them together.
->
-> After all, no mather the cpu_to_le*() or le*_to_cpu() routines are used
-> or not, the code works well. Because bcache cache device dosn't port
-> between big and little endian machines.
-Ah ok this makes sense when considering the use case of bcache.
->
-> I don't want to unify the code to all use cpu_to_le*() routines or
-> remove all these routines, both sides make sense and resonable.
-> IMHO they are just changes for changing. So I intend to keep it as what
-> Kent orignally wrote it.
-Makes sense.
->
-> Thanks.
->
-> > > > Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
-> > > > ---
-> > > >  drivers/md/bcache/super.c | 12 ++++++------
-> > > >  1 file changed, 6 insertions(+), 6 deletions(-)
-> > > >
-> > > > diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> > > > index e42f1400cea9d..c4c5ca17fb600 100644
-> > > > --- a/drivers/md/bcache/super.c
-> > > > +++ b/drivers/md/bcache/super.c
-> > > > @@ -648,7 +648,7 @@ int bch_prio_write(struct cache *ca, bool wait)
-> > > >               for (b =3D ca->buckets + i * prios_per_bucket(ca);
-> > > >                    b < ca->buckets + ca->sb.nbuckets && d < end;
-> > > >                    b++, d++) {
-> > > > -                     d->prio =3D cpu_to_le16(b->prio);
-> > > > +                     d->prio =3D b->prio;
-> > > >                       d->gen =3D b->gen;
-> > > >               }
-> > > >
-> > > > @@ -721,7 +721,7 @@ static int prio_read(struct cache *ca, uint64_t=
- bucket)
-> > > >                       d =3D p->data;
-> > > >               }
-> > > >
-> > > > -             b->prio =3D le16_to_cpu(d->prio);
-> > > > +             b->prio =3D d->prio;
-> > > >               b->gen =3D b->last_gc =3D d->gen;
-> > > >       }
-> > > >
-> > > > @@ -832,7 +832,7 @@ static void bcache_device_detach(struct bcache_=
-device *d)
-> > > >
-> > > >               SET_UUID_FLASH_ONLY(u, 0);
-> > > >               memcpy(u->uuid, invalid_uuid, 16);
-> > > > -             u->invalidated =3D cpu_to_le32((u32)ktime_get_real_se=
-conds());
-> > > > +             u->invalidated =3D (u32)ktime_get_real_seconds();
-> > > >               bch_uuid_write(d->c);
-> > > >       }
-> > > >
-> > > > @@ -1188,7 +1188,7 @@ void bch_cached_dev_detach(struct cached_dev =
-*dc)
-> > > >  int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set =
-*c,
-> > > >                         uint8_t *set_uuid)
-> > > >  {
-> > > > -     uint32_t rtime =3D cpu_to_le32((u32)ktime_get_real_seconds())=
-;
-> > > > +     uint32_t rtime =3D (u32)ktime_get_real_seconds();
-> > > >       struct uuid_entry *u;
-> > > >       struct cached_dev *exist_dc, *t;
-> > > >       int ret =3D 0;
-> > > > @@ -1230,7 +1230,7 @@ int bch_cached_dev_attach(struct cached_dev *=
-dc, struct cache_set *c,
-> > > >           (BDEV_STATE(&dc->sb) =3D=3D BDEV_STATE_STALE ||
-> > > >            BDEV_STATE(&dc->sb) =3D=3D BDEV_STATE_NONE)) {
-> > > >               memcpy(u->uuid, invalid_uuid, 16);
-> > > > -             u->invalidated =3D cpu_to_le32((u32)ktime_get_real_se=
-conds());
-> > > > +             u->invalidated =3D (u32)ktime_get_real_seconds();
-> > > >               u =3D NULL;
-> > > >       }
-> > > >
-> > > > @@ -1591,7 +1591,7 @@ int bch_flash_dev_create(struct cache_set *c,=
- uint64_t size)
-> > > >
-> > > >       get_random_bytes(u->uuid, 16);
-> > > >       memset(u->label, 0, 32);
-> > > > -     u->first_reg =3D u->last_reg =3D cpu_to_le32((u32)ktime_get_r=
-eal_seconds());
-> > > > +     u->first_reg =3D u->last_reg =3D (u32)ktime_get_real_seconds(=
-);
-> > > >
-> > > >       SET_UUID_FLASH_ONLY(u, 1);
-> > > >       u->sectors =3D size >> 9;
-> > > > --
-> > > > 2.43.0
-> > > >
-> > >
-> > > --
-> > > Coly Li
-> >
->
-> --
-> Coly Li
+From: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+Date: Tue, 11 Mar 2025 16:50:07 +0100
+
+> On Wed, Mar 05, 2025 at 05:21:30PM +0100, Alexander Lobakin wrote:
+>> Use libeth XDP infra to support running XDP program on Rx polling.
+>> This includes all of the possible verdicts/actions.
+>> XDP Tx queues are cleaned only in "lazy" mode when there are less than
+>> 1/4 free descriptors left on the ring. libeth helper macros to define
+>> driver-specific XDP functions make sure the compiler could uninline
+>> them when needed.
+
+[...]
+
+>> +/**
+>> + * idpf_clean_xdp_irq - Reclaim a batch of TX resources from completed XDP_TX
+>> + * @_xdpq: XDP Tx queue
+>> + * @budget: maximum number of descriptors to clean
+>> + *
+>> + * Returns number of cleaned descriptors.
+>> + */
+>> +static u32 idpf_clean_xdp_irq(void *_xdpq, u32 budget)
+>> +{
+>> +	struct libeth_xdpsq_napi_stats ss = { };
+>> +	struct idpf_tx_queue *xdpq = _xdpq;
+>> +	u32 tx_ntc = xdpq->next_to_clean;
+>> +	u32 tx_cnt = xdpq->desc_count;
+>> +	struct xdp_frame_bulk bq;
+>> +	struct libeth_cq_pp cp = {
+>> +		.dev	= xdpq->dev,
+>> +		.bq	= &bq,
+>> +		.xss	= &ss,
+>> +		.napi	= true,
+>> +	};
+>> +	u32 done_frames;
+>> +
+>> +	done_frames = idpf_xdpsq_poll(xdpq, budget);
+> 
+> nit: maybe pass {tx_ntc, tx_cnt} to the above?
+
+Not folloween... =\
+
+> 
+>> +	if (unlikely(!done_frames))
+>> +		return 0;
+>> +
+>> +	xdp_frame_bulk_init(&bq);
+>> +
+>> +	for (u32 i = 0; likely(i < done_frames); i++) {
+>> +		libeth_xdp_complete_tx(&xdpq->tx_buf[tx_ntc], &cp);
+>> +
+>> +		if (unlikely(++tx_ntc == tx_cnt))
+>> +			tx_ntc = 0;
+>> +	}
+>> +
+>> +	xdp_flush_frame_bulk(&bq);
+>> +
+>> +	xdpq->next_to_clean = tx_ntc;
+>> +	xdpq->pending -= done_frames;
+>> +	xdpq->xdp_tx -= cp.xdp_tx;
+> 
+> not following this variable. __libeth_xdp_complete_tx() decresases
+> libeth_cq_pp::xdp_tx by libeth_sqe::nr_frags. can you shed more light
+> what's going on here?
+
+libeth_sqe::nr_frags is not the same as skb_shared_info::nr_frags, it
+equals to 1 when there's only 1 fragment.
+Basically, xdp_tx field is the number of pending XDP-non-XSk
+descriptors. When it's zero, we don't traverse Tx descriptors at all
+on XSk completion (thx to splitq).
+
+> 
+>> +
+>> +	return done_frames;
+>> +}
+>> +
+>> +static u32 idpf_xdp_tx_prep(void *_xdpq, struct libeth_xdpsq *sq)
+>> +{
+>> +	struct idpf_tx_queue *xdpq = _xdpq;
+>> +	u32 free;
+>> +
+>> +	libeth_xdpsq_lock(&xdpq->xdp_lock);
+>> +
+>> +	free = xdpq->desc_count - xdpq->pending;
+>> +	if (free <= xdpq->thresh)
+>> +		free += idpf_clean_xdp_irq(xdpq, xdpq->thresh);
+>> +
+>> +	*sq = (struct libeth_xdpsq){
+> 
+> could you have libeth_xdpsq embedded in idpf_tx_queue and avoid that
+> initialization?
+
+Not really. &libeth_xdpsq, same as &libeth_fq et al, has only a few
+fields grouped together, while in driver's queue structure they can (and
+likely will be) be scattered across cachelines.
+This initialization is cheap anyway, &libeth_xdpsq exists only inside
+__always_inline helpers, so it might not even be present in the bytecode.
+
+> 
+>> +		.sqes		= xdpq->tx_buf,
+>> +		.descs		= xdpq->desc_ring,
+>> +		.count		= xdpq->desc_count,
+>> +		.lock		= &xdpq->xdp_lock,
+>> +		.ntu		= &xdpq->next_to_use,
+>> +		.pending	= &xdpq->pending,
+>> +		.xdp_tx		= &xdpq->xdp_tx,
+>> +	};
+>> +
+>> +	return free;
+>> +}
+
+Thanks,
+Olek
 
