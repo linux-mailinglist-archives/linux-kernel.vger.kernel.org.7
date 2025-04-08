@@ -1,140 +1,159 @@
-Return-Path: <linux-kernel+bounces-594395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59C79A810EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:57:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CE2A81138
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3ADA7AAB53
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:56:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1B241BA5646
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:58:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B75323C8C4;
-	Tue,  8 Apr 2025 15:55:32 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382F823AE82;
+	Tue,  8 Apr 2025 15:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9ZYQSdN"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9402A23BD0E;
-	Tue,  8 Apr 2025 15:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D0F23C8B2;
+	Tue,  8 Apr 2025 15:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744127731; cv=none; b=Dvg/wegI4NZ60OnFsasi9nowm9AygfQfSOkOHVin+ekp1Sd42SErR+C8P9ZNpDFlL49PVxh7gdJTZ7fFrMo9zwBpjxpJXMAIXygkHLDx4Kq07iFCUSSPkTuCkVCmXufj5XNDW1+wlOpu+/Dhe1rDbQ9THxoAGTMxaS2J09mdqkc=
+	t=1744127733; cv=none; b=cqmPZqWB8I1OVdFqZuHqJof/UWcL9RJ2GovV6j76G2jPoZh6FFpOM/XOckjGv6s4WmmWfYa3oGEX376uQ3OAVz9zt0TjjCsvon0wYutAEuhag7HcROC9SIyyNeJUJ5VA9bTYM5JMnlo/scqs5Y6Qyj3sy0rK12iLYidigKv/x/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744127731; c=relaxed/simple;
-	bh=J7epX/UdilumfA3U27hHk3T8ih71De8kfSzGxe+PO3k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=my9rGBJh+hddFL95KgkTWLYFniJ7uU4YrJyxyFObptzPsqKycaEf9GmWHsegs+TUk+HhoHZFDlaJn5dcdNg0i4jYfMDhv2I1WzsL1jvbpLovVBF2J6T7DQWvj/gq5vlhrkLez2Zaltrlc/tAbQGR5Jhz/V/xCj261T/qtPVyYrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from [127.0.1.1] (unknown [IPv6:2a01:e0a:3e8:c0d0:9059:1ccf:a15c:f330])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id A2C0C371F23;
-	Tue,  8 Apr 2025 15:55:21 +0000 (UTC)
-Authentication-Results: Plesk;
-        spf=pass (sender IP is 2a01:e0a:3e8:c0d0:9059:1ccf:a15c:f330) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[127.0.1.1]
-Received-SPF: pass (Plesk: connection is authenticated)
-From: Arnaud Lecomte <contact@arnaud-lcm.com>
-Date: Tue, 08 Apr 2025 17:55:08 +0200
-Subject: [PATCH v2] net: ppp: Add bound checking for skb d on
- ppp_sync_txmung
+	s=arc-20240116; t=1744127733; c=relaxed/simple;
+	bh=Grp1Pw0/iwvWKb8SP7ouGiFqbuZhmL2YaxkwVJ6Lsjk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dVbYnml4nNqXCg8rCu4ex4jzSnBhVUIsydQRZHZX0DxkeL+v7Re8wf3cOE763D1Ks00kvfNgEJZ9VmugaESIn1VUijZ4ZcCZbe6xuzgyTiKVjcGmCCwIgEHM2wpt3GJpfCZRLlOs4wcHxB7s8j94tpLVg5dgT9R/RBzUbAzAZ/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C9ZYQSdN; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-ad5236e6fd6so5246229a12.0;
+        Tue, 08 Apr 2025 08:55:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744127731; x=1744732531; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2r8d4CoqNWfbO+vOmunolZhghnfaufTr/d12tmCx3c8=;
+        b=C9ZYQSdNYqqGDo0aSZafrUwgKH9HDhrWCyhJ3VQH+8nmh7j4eQjDSmT0SOL+Lzi61p
+         b00tHSc5nugAmLaxMKo597W/DyMqsuiJcS4bSTk7ATR8yfNljvTo6tQU2prJQaKPeLjU
+         mt3j1dJ9vdAciCJ/Zv4ZJPznrXiOysNH3WQtTgA1sdZz0fpYFknGSohG3FwoR9bqS/Ib
+         Wp7CLyx9Bpx+IKsBbKsnKvM9XjxsYBeR0LC6gW3DWEyKfdNqUpGf2YC7SFGrzwuZAjqe
+         nviGePYRyVMeWkHKWRjeLppZ3o2mSQTOG5M/lIpT54GT5ZUY+MvaiJhBb8CfUO3iyGxl
+         AUmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744127731; x=1744732531;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2r8d4CoqNWfbO+vOmunolZhghnfaufTr/d12tmCx3c8=;
+        b=TymIhgzcribH+vJUbdrkpBJ3RI9fbssZ0MgCwOHOQ0haTpCsq2I5s66YJDAMju2t+g
+         D++SK37w/2e8cdaybeQBtle+mHAth3NUqRkvVUY+i3pKnoJpK0C4w0M8DGKSFKF+hGju
+         eenwA9/V1sT1vGfOKvVjJgcoGDx7A+a+TMU+eVnddgYqfn1kNDgizEXlW9JIHPgfg5Gc
+         3G7D6UqNSfr/0ONn3TKggABowOqIWCgzZmcJNsoeQNf8mbrwWyMJu4mFIn57TLJQpzjd
+         M8XhFUkqfA+zhlkZVK6CoST+eoWCHvoVV+BuQuAxzyJGR74QmQyDz/7Dxns8nsjMtXF3
+         A6Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCX7PXX6cNZtgB/HKzxVff1i5h/WANSUtuI/NCq2WT6vu5DhSuVLOP/cuBAireZpA4nnp8HK+oIFsyNDy/CN3HhzQqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6dN2L3EUICX6sEkC6gt5A8zguCEfR/3LT86PLDOQOD2EJDhd2
+	knQfLgqiG5/WpgYvuEt/bRs0GwyM71MA8D4Dy65j2JXTfKgowABDb/mz2kZCQqpB9eaMt0YxHg0
+	235P+9p1I3WufSsmZQCDDy4oZr1X6bxl5
+X-Gm-Gg: ASbGncsXX5xmNy1tiK0tKISdwv2B9N927jNfg1TXzyuCJkz9zbQsnGpBnEOY0CHvfwo
+	S/0eBSFtAxfbwhigIk8hpRTYWWxeKtJ+DpmrbKG7uSVj00Awm/53rrXsH9BQBHS7LVUAYrYJmsY
+	dsh51lqosRBCpcvgkh96eomWrsCfCV
+X-Google-Smtp-Source: AGHT+IEdAdNI/m0mDZDBYf6Uybrhu+VFgs+XsaRN6/KpawOjlF83g1h1SFl0iYxOHt2R9GHMGaZXsz4fEgl+jAnloHw=
+X-Received: by 2002:a17:90a:c890:b0:2ff:53a4:74f0 with SMTP id
+ 98e67ed59e1d1-306a48acec4mr23379143a91.29.1744127730882; Tue, 08 Apr 2025
+ 08:55:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: 
- <20250408-bound-checking-ppp_txmung-v2-1-94bb6e1b92d0@arnaud-lcm.com>
-X-B4-Tracking: v=1; b=H4sIANtG9WcC/32NwQ6CMBBEf8Xs2TWl0ICe/A9DDG4XaJS2aYFgC
- P9uJfHqbd4k82aFyMFwhMthhcCzicbZBPJ4AOob2zEanRikkEoUQuHDTVYj9UxPYzv03t/HZZh
- SLCpRUqUK1pWCtPeBW7Ps7luduDdxdOG9X83Zt/1Zyz/WOcMMqSUtueX8zPm1CbaZNL5oOJEbo
- N627QP7NiDHxwAAAA==
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: linux-ppp@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, contact@arnaud-lcm.com,
- skhan@linuxfoundation.org,
- syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744127721; l=2087;
- i=contact@arnaud-lcm.com; s=20250405; h=from:subject:message-id;
- bh=J7epX/UdilumfA3U27hHk3T8ih71De8kfSzGxe+PO3k=;
- b=AJA3Cy6DjlQbZQe1vxWvNIhkINO0dAJqsOoeJ/QTKbJJq9in5/ju+7sF5kB1RMMPoZHHAblWp
- xoHCr2csKzvC/tIHr/n9k1Yf+fkuk+p/Q5eSw3Shi8LbEKPZidsXtsd
-X-Developer-Key: i=contact@arnaud-lcm.com; a=ed25519;
- pk=Ct5pwYkf/5qSRyUpocKOdGc2XBlQoMYODwgtlFsDk7o=
-X-PPP-Message-ID: <174412772207.7158.8026498672365097069@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+References: <20250407180745.42848-1-andybnac@gmail.com> <20250407160924.7c28fffd@gandalf.local.home>
+In-Reply-To: <20250407160924.7c28fffd@gandalf.local.home>
+From: Andy Chiu <andybnac@gmail.com>
+Date: Tue, 8 Apr 2025 23:55:19 +0800
+X-Gm-Features: ATxdqUH2NmCkB2Z6aSwDjJk1d3UhdbibANS3Y8DMTs7j6Xq0075pr7HoeVndza4
+Message-ID: <CAFTtA3N=fB9Yr3EiTUpGzF2imtwgnVEextyL3+V1wiTJ_jp+WA@mail.gmail.com>
+Subject: Re: [PATCH] ftrace: properly merge notrace hash
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	mark.rutland@arm.com, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
+	bjorn@rivosinc.com, puranjay12@gmail.com, alexghiti@rivosinc.com, 
+	paul.walmsley@sifive.com, greentime.hu@sifive.com, nick.hu@sifive.com, 
+	nylon.chen@sifive.com, eric.lin@sifive.com, zong.li@sifive.com, 
+	yongxuan.wang@sifive.com, samuel.holland@sifive.com, olivia.chu@sifive.com, 
+	c2232430@gmail.com, vincent.chen@sifive.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ensure we have enough data in linear buffer from skb before accessing
-initial bytes. This prevents potential out-of-bounds accesses
-when processing short packets.
+Steven Rostedt <rostedt@goodmis.org> =E6=96=BC 2025=E5=B9=B44=E6=9C=888=E6=
+=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8A=E5=8D=884:08=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> On Tue,  8 Apr 2025 02:07:44 +0800
+> Andy Chiu <andybnac@gmail.com> wrote:
+>
+> > The global notrace hash should be jointly decided by the intersection o=
+f
+> > each subops's notrace hash, but not the filter hash.
+> >
+> > Fixes: 5fccc7552ccb ("ftrace: Add subops logic to allow one ops to mana=
+ge many")
+> > Signed-off-by: Andy Chiu <andybnac@gmail.com>
+> > ---
+> >  kernel/trace/ftrace.c | 11 +++++------
+> >  1 file changed, 5 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> > index 1a48aedb5255..ee662f380b61 100644
+> > --- a/kernel/trace/ftrace.c
+> > +++ b/kernel/trace/ftrace.c
+> > @@ -3526,18 +3526,17 @@ int ftrace_startup_subops(struct ftrace_ops *op=
+s, struct ftrace_ops *subops, int
+> >           ftrace_hash_empty(subops->func_hash->notrace_hash)) {
+> >               notrace_hash =3D EMPTY_HASH;
+> >       } else {
+> > -             size_bits =3D max(ops->func_hash->filter_hash->size_bits,
+> > -                             subops->func_hash->filter_hash->size_bits=
+);
+> > +             size_bits =3D max(ops->func_hash->notrace_hash->size_bits=
+,
+> > +                             subops->func_hash->notrace_hash->size_bit=
+s);
+> >               notrace_hash =3D alloc_ftrace_hash(size_bits);
+> >               if (!notrace_hash) {
+> > -                     free_ftrace_hash(filter_hash);
+> > +                     free_ftrace_hash(notrace_hash);
+> >                       return -ENOMEM;
+> >               }
+> >
+> > -             ret =3D intersect_hash(&notrace_hash, ops->func_hash->fil=
+ter_hash,
+> > -                                  subops->func_hash->filter_hash);
+> > +             ret =3D intersect_hash(&notrace_hash, ops->func_hash->not=
+race_hash,
+> > +                                  subops->func_hash->notrace_hash);
+>
+> Thanks for catching this.
+>
+>
+> >               if (ret < 0) {
+> > -                     free_ftrace_hash(filter_hash);
+>
+> The filter_hash still needs to be freed, as it could have been allocated =
+in
+> the previous if statement and never used (both the filter_hash and
+> notrace_hash get used at the end of the function via ftrace_update_ops().
+>
+> Care to send a v2?
 
-When ppp_sync_txmung receives an incoming package with an empty
-payload:
-(remote) gef➤  p *(struct pppoe_hdr *) (skb->head + skb->network_header)
-$18 = {
-	type = 0x1,
-	ver = 0x1,
-	code = 0x0,
-	sid = 0x2,
-        length = 0x0,
-	tag = 0xffff8880371cdb96
-}
+Yes, thanks for reminding! Let me send a v2 with filter_hash freed on
+this condition.
 
-from the skb struct (trimmed)
-      tail = 0x16,
-      end = 0x140,
-      head = 0xffff88803346f400 "4",
-      data = 0xffff88803346f416 ":\377",
-      truesize = 0x380,
-      len = 0x0,
-      data_len = 0x0,
-      mac_len = 0xe,
-      hdr_len = 0x0,
-
-it is not safe to access data[2].
-
-Reported-by: syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=29fc8991b0ecb186cf40
-Tested-by: syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
----
-Changes in v2:
-- Fixed the Fixes: tag to refer to initial commit instead of merge commit (1da177e4c3f4)
-- Remove the skb check as it can not be null
-- Link to v1: https://lore.kernel.org/r/20250407-bound-checking-ppp_txmung-v1-1-cfcd2efe39e3@arnaud-lcm.com
----
- drivers/net/ppp/ppp_synctty.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/net/ppp/ppp_synctty.c b/drivers/net/ppp/ppp_synctty.c
-index 644e99fc3623..9c4932198931 100644
---- a/drivers/net/ppp/ppp_synctty.c
-+++ b/drivers/net/ppp/ppp_synctty.c
-@@ -506,6 +506,11 @@ ppp_sync_txmunge(struct syncppp *ap, struct sk_buff *skb)
- 	unsigned char *data;
- 	int islcp;
- 
-+	/* Ensure we can safely access protocol field and LCP code */
-+	if (!pskb_may_pull(skb, 3)) {
-+		kfree_skb(skb);
-+		return NULL;
-+	}
- 	data  = skb->data;
- 	proto = get_unaligned_be16(data);
- 
-
----
-base-commit: 9946eaf552b194bb352c2945b54ff98c8193b3f1
-change-id: 20250405-bound-checking-ppp_txmung-4807c854ed85
-
-Best regards,
--- 
-Arnaud Lecomte <contact@arnaud-lcm.com>
-
+Regards,
+Andy
 
