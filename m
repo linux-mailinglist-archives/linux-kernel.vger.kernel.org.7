@@ -1,298 +1,323 @@
-Return-Path: <linux-kernel+bounces-593278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7433A7F785
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:16:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BF6BA7F77E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB6E1179E23
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:16:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A99E73B7CF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5518F263F42;
-	Tue,  8 Apr 2025 08:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A58263F23;
+	Tue,  8 Apr 2025 08:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="U/PaVQru"
-Received: from SJ2PR03CU002.outbound.protection.outlook.com (mail-westusazon11013045.outbound.protection.outlook.com [52.101.44.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XMcHmseS"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD2A2594;
-	Tue,  8 Apr 2025 08:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.44.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744100174; cv=fail; b=FrcAFXkO89Lgk+7RSd86I9jdu5hChbbME1Yjuk+EQYQuo7c/Ga98Qx2jBiw/8auBzLRlWqmX5KsXhHS8bW0tDPgW+x8rThKlYscthC/XiWCTrLKz5AYChjCLw2cGYC6i8g5YbYHmLjMmjTZCDmJ5g0K64Pk4zlw/6LID4tQAoyA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744100174; c=relaxed/simple;
-	bh=0GUE3wiCmY3gms6UdAsnfhmDeNc/A03tyZ3e9fPCSbw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=em9YuHZEjtZpMS9obdLGYtY18/jxbllglNftwbCSm4M9qIUOGAAhy2PZKM0xXcT7QSDlFxsrzY9G60hiL0BqQBgFMP4oLthrJa0YWD2wERW2ddyM4illflo8pSz73EgRduy2AdFj01F7mX7kabeNOj39+hsJGw5tHvWJB2PumjQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=U/PaVQru; arc=fail smtp.client-ip=52.101.44.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Jz/RsX0RAk55dfunrBlkeLbKkLk0erXy0wxd3mM/PBXQh3CvuymiP9v4oUQAmbo2Ha4lnyLdirpH//xTH+fqFoRdRAzj3PoruYSM+28SfJrtPXrP6ohRRXIGs49nA2f0i5y1ykMWWLvvtACUc6smJql64oo5Kq4eLKr/3dvY9UR9ZvoBF7QlCvbt80cju9Tf4Dj+cH7jnjupZnEahBOLc3c2qqLA1USMV89yZVis1+MKVHqOdUMvwgEk7OQrhp5qLaY/u3nEXAfeV0URqwSg3biQPhvFxwlU0gop/g5MeD8RZv/RytMufK/uPXYtdJF0mkMvjSCJ+X08RSZhXbJowA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=byAT1aBxCoYU8l4jOjhOmS1gPbFxDAbVfnOFvMl3LHk=;
- b=h2QaLMym5oGwOb/ZY3NAH8gjf1sSpfqqe+L12+8EY5WHFzC3Icj/lHE2S36sD8Drc+ougcBGD3pwy1oq8NAB1Gob7iGwK+AdDdAiFEgGHeI6GWiMyWMipx/TuTyWGXfvcVJTQ+n4RMiztcC0HaUZF1uXV8vdglPANZvsxtFzsV5lRKbzajXDeJbLcYYY44I6jRLmo2jpseQpYyL4xSL/qJq3kofhGwq66zykmYgRkH1C1lXKkka+NFsY/eGxr76fvHmDenyIhv+Ox990CGJ0EziSz+MRgBLY77+GzytXWpvbFqXcupWyvXGosxNYr7OJQklO/n6iI331B91u5+foWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=byAT1aBxCoYU8l4jOjhOmS1gPbFxDAbVfnOFvMl3LHk=;
- b=U/PaVQruQtFxTwYzoeioDkM1qSSlUGslp4spwI4s2VqcBB7oDB2x1CHyLINBM05/u/FmzZHf/hH2fFXHspBMlalcN6blXHMz9XMHpfAd5Y8kBOrzma0LdUmMUwphCWJdiR0IrbioZAWnrpLAWgZIYZmFjLw+m4svO3TqqGUytTc223QILCkiHJJLRvbe+FrqYGlWie1hwotJGFBoH6d8d45QxTosOymqXxzgMbBjNLtdXlpv2u+eHTamsm5nXy0TFk9wtFfl74gAUKLsblWs+bUbVtWHONA/igqQg204CqRhVBiKGI+rxQPpU1tIGbqm4JLTiYLMaDpVOK8lSlxqbw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from BN8PR03MB5073.namprd03.prod.outlook.com (2603:10b6:408:dc::21)
- by CO1PR03MB5666.namprd03.prod.outlook.com (2603:10b6:303:9c::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.29; Tue, 8 Apr
- 2025 08:16:10 +0000
-Received: from BN8PR03MB5073.namprd03.prod.outlook.com
- ([fe80::7483:7886:9e3d:f62a]) by BN8PR03MB5073.namprd03.prod.outlook.com
- ([fe80::7483:7886:9e3d:f62a%3]) with mapi id 15.20.8606.033; Tue, 8 Apr 2025
- 08:16:09 +0000
-From: Boon Khai Ng <boon.khai.ng@altera.com>
-To: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Matthew Gerlach <matthew.gerlach@altera.com>,
-	Tien Sung Ang <tien.sung.ang@altera.com>,
-	Mun Yew Tham <mun.yew.tham@altera.com>,
-	G Thomas Rohan <rohan.g.thomas@altera.com>,
-	Boon Khai Ng <boon.khai.ng@altera.com>
-Subject: [PATCH net-next v3 2/2] net: stmmac: dwxgmac2: Add support for HW-accelerated VLAN stripping
-Date: Tue,  8 Apr 2025 16:13:54 +0800
-Message-Id: <20250408081354.25881-3-boon.khai.ng@altera.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250408081354.25881-1-boon.khai.ng@altera.com>
-References: <20250408081354.25881-1-boon.khai.ng@altera.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BYAPR07CA0089.namprd07.prod.outlook.com
- (2603:10b6:a03:12b::30) To BN8PR03MB5073.namprd03.prod.outlook.com
- (2603:10b6:408:dc::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4796321B9C2
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744100051; cv=none; b=IPqoJubfeTNU3eFZqBPI5PsGok0BJx5KJzaDZC/5mi4UHf6OOGIJaVFaQp2h6P10ZUsDyxxJy1cZd9dZCJyzAboe0dpC6rTrnzPZfzqUHDONSIJMM9uKO0drXloAK+maH6drs9NU03v2FcQArJHR5RLFBu7UBEew1FczRVGgXzY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744100051; c=relaxed/simple;
+	bh=oAS13G1ySo3BTj4AeO+QfsgP1JMQOqQN+NetSQkPYSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=okiAFuBb9wg0Syzn2NP2uAr8iT/UB0RuNC+9y28B3FFGpQDAKOqQzOgw1BoUYQRTxyVRnH7feT6xv9f2AyVKqoAWG7BDqoULwFNNzThog5neJK2THycXfu8D67g7AQkIBQnZKuF/FAlfAOGCl6ceMRyQWFcK+enDZZ9l1+gx0Po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XMcHmseS; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cf848528aso42112935e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 01:14:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744100047; x=1744704847; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OSsQQMPTG91ipLO2Lx37iAbnWCmF1lAWx7weRpdCuxs=;
+        b=XMcHmseSr+TYW30PhZMRXYd/PY1/D4lg9g6uBxMi7yOtTUPOXb17svSO0zFsSSKVJa
+         Rl7yMiXIAxx+LkZYVDftUL79rYL1QLFTVEeJvLicqlpQPYe7fV2T48kttNlpEWJyOtYf
+         ce6XWFklX1mu4R2lTmKe3FqG0Mb3nc1Y8+GoUAEAQUApnlh5Gbi59d6MHgumBscRmOYV
+         uasVjlGNiQvyGXHJjb9jv5PKao09v7/W+nPCjU7YVpNa8FGTD/vvxovrW/XF0AzwYNVM
+         tXD5KYImEdfX5NTSDg4BxKiqjslm2CNOzBoXjcjBTMVwqqXc50x+PWBk6A5Sy72atYdW
+         b29Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744100047; x=1744704847;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OSsQQMPTG91ipLO2Lx37iAbnWCmF1lAWx7weRpdCuxs=;
+        b=k21Yqw0Pp98x9I/rc9r9Qgq57vexP74boTqRDdA8Gfkq+mEK2RIXiODMeyyucCLtZY
+         Fmfnydlb/gXzz8sibZpqbZKKRK5mlFxukXvK8x8JKmpg+fDH7O1mjAWkQsZnOIhqmrss
+         gHx6f2C5Mh5uR0ZwobphTS7Q4zk/M4oLxADq8yd6SD3um1QCbAYBAHH3goukx3rttxpY
+         ZQXqSmQ5qUz3tQXviDUTNZ2Jjetie3OeZ6mNE7cEFlcWjLqfjPRE8kmDIjgoLZOjQts6
+         SZa7bW13bc5v4cAmOZ+s1SIU+PYJmEnA/IB+H1JeixKV2pBnBR7KGlTxB+FVHQWE3XeX
+         Immg==
+X-Forwarded-Encrypted: i=1; AJvYcCX5jE5cV8pxRpjscWrMkcHhC6RLmnwRulOXhdZUN/wVY56D2ymcymWsk/dXltjuNpVWwFtwLl4Sb2N1WQI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza/66eIFtzb62khXXRq7zDTLlOox15d7/WjW9E6yZ/rLEUUsLc
+	VSjldZIedkAFoDfYcedH75yhBTpGLyp4cQYl7M+9oi51rU7JUYTTZdHwz8cGnpk=
+X-Gm-Gg: ASbGncsINaw+50ddAxKTFq2CsumoEJUddJ9TZskUIe9uYAsxb0G4GrfoqmbiiTR8lRR
+	z2NXxDeedo5OWidLTPHlto7cnrvIdm/j35WjU9ScRhNcoN2m0lIW0isE5QUzxq7aA6UuJf/m8eo
+	I/THRpPdC0oJy7qVGEhD7rbIOVd9nKgRfFslJkdT87aeTYa60dfU784fWkhZP++ZhiBLZwODnvs
+	mbk/t+YwhUgGP23K9xSL5RRcDzVk7e45eSOZnKkolzbnQKSZfydd9QLntEX78/g1BEuPDBVAN2P
+	pFqjK3SeFa3zFszb8pcQ5mCLmdOWDqimiYsDn0kFcU8bHlL60QF/8QTKR0jPj1I=
+X-Google-Smtp-Source: AGHT+IHMcM/JRxPbct9OPzdKglXYqGvT+2iz/IgWsDMqHapPmd+z3PyGamR9WaSnQe0LD/KLTcKXeQ==
+X-Received: by 2002:a05:6000:2281:b0:39c:cc7:3c97 with SMTP id ffacd0b85a97d-39d6fd3646cmr7346835f8f.50.1744100047362;
+        Tue, 08 Apr 2025 01:14:07 -0700 (PDT)
+Received: from [192.168.68.117] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43ec342a3dfsm155505145e9.4.2025.04.08.01.14.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Apr 2025 01:14:06 -0700 (PDT)
+Message-ID: <07bfc5f3-1bcb-4018-bd63-8317ec6dac48@linaro.org>
+Date: Tue, 8 Apr 2025 09:14:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8PR03MB5073:EE_|CO1PR03MB5666:EE_
-X-MS-Office365-Filtering-Correlation-Id: 35ee993b-cf90-48ef-28d6-08dd76759e57
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?HYgxfCMuiN7GxnfXr7E20vc/LZfvOUwS4+kokQJVITTufC8lQGH721QIIspb?=
- =?us-ascii?Q?tBztVkQ0qaVQwGK8sjNhNt+6CvwOparreLbxrxdcXEidy9VNSYqKGA9gfqb3?=
- =?us-ascii?Q?g+GZHVqfHPSg5SZh5NA6y2rkIJOccL8QaAYSFO9avUI1wZhWZqVzdvUk1jP3?=
- =?us-ascii?Q?Si/k9uxemNh6LgE/sKCFv1cgGiTwdW9WSnAthF/dZYNZ/y4GCmdMYGwjeFpG?=
- =?us-ascii?Q?RLP/cSfZ8oQeif/P1ERAUgG7zzEh8UsoBHxQfEl3OpwzZtvleAYwiUhDgFT9?=
- =?us-ascii?Q?HEtGTl/l8gSIj8PH32uWbwk3fOEK7ZOoG6gATYy7Q/k6PD4zCRQ/1/3NzqFm?=
- =?us-ascii?Q?nBTlCfq2loarhJX0TJ1PYyZKOGdadqketlE7Clr6MZUiRGATQNolCjoT9jCr?=
- =?us-ascii?Q?iQb5fISr0trIYD9QR1+D7RrUOvkXW/UoH9BgfUQvxyRW6pHj1eUTVy2oj1e7?=
- =?us-ascii?Q?ucilA7vvyxqgty8YHlc8FUe8wQniEGTX9Stp7Sht/WInWRs8HbqZ1kt6j64D?=
- =?us-ascii?Q?mmw+zXtAp4O2q/Pzch5NDY1G4lRfg+ypvtqKfbpTgA5IA8Np6a1DP8zjilCn?=
- =?us-ascii?Q?ToVEi73x52DvJh+a7ElreQe1fmf5yDV5xpwUfXb5n6Z1gtGHplKvFxia5RI5?=
- =?us-ascii?Q?2bhx9Hfk0g+GVFKi25uikkR3gC5c0SAMp3Lpum9qybDoX1t+ZV4hqR9peuda?=
- =?us-ascii?Q?R9hBG2JYQ7VEyKEIEF7X0DK5eeXs45l1eiSgPdr2M6KyUWYWMy4orvRTdXMf?=
- =?us-ascii?Q?211M1bXXMuXSPqYytRbsrsPrmg/CgR+4ddomDPaNZZA4+pZJQhhm0jc8piwf?=
- =?us-ascii?Q?Sa13BFdeSSFiQ15/7v+u0mK7bKbMOgf70b2lWbALYxzA2cdEb6cLUAn4A8Qe?=
- =?us-ascii?Q?56zP4TNPz8HLNNrTocrPRgf7jwDXDhRNqXm1YVv2gMBs9Uaw6Ifhx3xDEZZT?=
- =?us-ascii?Q?rARUwItbmjXILiGDBiWsGW86N4xQXuEDbpOCHXPlFKG+62gnTYkixC6QPuqV?=
- =?us-ascii?Q?7WnW5Uk9YJPWyo3739TKS4RmeDBaUokDVbXJCn/bxbpC13KdLiC/Mosw3BBh?=
- =?us-ascii?Q?aXsYLp3IHxr+uFINGc4PKiz+m/BPZBXVMo3/3alcEytP/7x8um7gSE+pPZfj?=
- =?us-ascii?Q?KS7VQTr8H7PvqdOkegnpfhz3iZaHhLE9JgQ/FNIUQbvQtsQvHX7/MViiB89C?=
- =?us-ascii?Q?MlPT4T357d1KXTMbwbrovlP4PYNMdtwZUFol5QDmCsT2YQN+/o3tLHto35du?=
- =?us-ascii?Q?ZAKptLeoEs/stpw1MIiHPR00/TGavupfPHMi7Jyjms3l6TKh4TDQ+MrYSPim?=
- =?us-ascii?Q?Flb05IPmbKafyhA0unO6uGQdWfUEV3xak6oPQFncxaiU4wYoq2eNCr3+RqmK?=
- =?us-ascii?Q?u3A2aWfbmCW7443+iuBOu9Km851v?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR03MB5073.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?yEzN/fbh4NnoH8qilKsSWPgohIkBjaEMNQhS2WvwYkYbQb1Xc707lhrlcGY9?=
- =?us-ascii?Q?7u3UlJSETRg19t/KsCecQxkNLr0g6B99QHRGMU1kngeyTCPRhT5gDQHUS85s?=
- =?us-ascii?Q?5CHeAtufdhFCJWyb5jiVqeJn8oAHBK3+mF31lRwMumcxfHFZiS64nc+Egm8X?=
- =?us-ascii?Q?oRwZN22RlKV1WQVqYTYB1LmwpNN+jpc4p6w4/W13sNe9RvMref3stmFWS+Yc?=
- =?us-ascii?Q?oS5XhWL+ijlw6Ri7icF3vTXXoojiUneRLbPPT062j5tXalpKGw57SMdD3CVT?=
- =?us-ascii?Q?OVs5FwLVpSWRn90uNdQJaUIcrU26BE13ECiaC77JrmjMZ9yp4qC+D1pgNo7j?=
- =?us-ascii?Q?zyTZ3ZAdP+Xs9ptZNpvB7V6grhOpVO0WpejYdRl2mnrv4KvpglHwJwHBTI03?=
- =?us-ascii?Q?AjZP4dP8devt8FY5jzaPNRxAz9wKSyjSUBFV3zpL1QQQwap+6Bb4rmDpY0pk?=
- =?us-ascii?Q?e4GBXwexPcnTfveC12wDiTOm2QA8g9+CPKOYEx117soLXyiMq7K5nYw/4Us7?=
- =?us-ascii?Q?m83IjK7E1Okq6EPlpDGldl7WidcVtUV9K/tqqPdI9Fv7aL5OMibXodwPshEs?=
- =?us-ascii?Q?NU2XjJVLsn7DFrr2fl1yePvZ6AjryRzS7EUeCzXCrSgb1jSVa+8IPIcqUD4S?=
- =?us-ascii?Q?3m0aFgLBXJRGA4n6MbQcFal7/FfIhI4fN33U/fYum2y5d0/lMG/3TelC96mU?=
- =?us-ascii?Q?6n2uYuH3N+qrtUHNhHwy0G3vUva8RgbjYfFqIfiwLNVep+VEKh7JGg81RGbk?=
- =?us-ascii?Q?INlsn2aRNCGUvNhDEmMzqGcBLt4O3zJc4fzR1pxgHSunqMVuBAG29V2/8b4P?=
- =?us-ascii?Q?c24mgjK+v0y6QaXUpXd03dF5HkjSLEHiLK5iDVUtjWLgxIXfhvP3Y5v7ce8o?=
- =?us-ascii?Q?akMADjvA7zmrcn/e8OrsiTb3MTmXgPD7WN/GtEi1DlTFRNUhE0u09YVA8pyF?=
- =?us-ascii?Q?9FpelGxZxQgZMKuhfrzeYTui8h+AHyLoanlt1QM9hjtSpUISNk1nMH8Tv29f?=
- =?us-ascii?Q?vDGm7EcD8DLLolIL3AS0yQgIh82dPzgNtx0aP/qxSguRGDjbO7RBJvcjV6rO?=
- =?us-ascii?Q?u7RawwQtem3NJ1zIsHr+GB1C57Uvkt+b1MO2ukgk2al3MuXhyEEkjhn4F0As?=
- =?us-ascii?Q?MK4vHmWHXWlWjC8ALg5UjBIrB0Lz+MRCjwtyRWi7Z1DIAWXnqSQxcb6RfK+p?=
- =?us-ascii?Q?lX8uno0zFZXh+ZNGtMeABDeX5cexdkxq7++V8435NNy0P9j/mV0dqfdKIys+?=
- =?us-ascii?Q?ag5qgo6R2B6diK0FqYIK+CIqZrI/aDg5JLgAybg+HND2yiur8BoqUDlXoo3A?=
- =?us-ascii?Q?JoEVdZIMJ/JIE+X3EEF7ALWArOuPzDkN21W6/sqyFW1BwaEI1vfX9N5Hg2j+?=
- =?us-ascii?Q?OXjHGwzo/xWWIXqBHINhvHTwlKNluUy627TXVkjMbJ6ZpC7SlVE2y5b2JayS?=
- =?us-ascii?Q?m2Okw2ZcEYuhILuUvvlzVHN+JLHp5YuEVYdC6V2b2HuAc9Kq/p5s6SUyZgEJ?=
- =?us-ascii?Q?83Z4V/310jcMEDwY0iZVrdIfTDd+sS23vTe/hbie58DC7fsdEWhg9KMM8M5K?=
- =?us-ascii?Q?0OtGKNr+23fKyIHs2T1LV6/oLDF6bYFak6G4ulUw?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35ee993b-cf90-48ef-28d6-08dd76759e57
-X-MS-Exchange-CrossTenant-AuthSource: BN8PR03MB5073.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2025 08:16:09.8859
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /hWTmNs+q5trz6GDFqe9Vl+dllUQU/tF8pZaS+r1zCXU/GgOlhuCtVim9CSu8NrUFgqJngndOVHeA9kC/nYJXQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR03MB5666
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] misc: fastrpc: add support for gpdsp remoteproc
+To: Ling Xu <quic_lxu5@quicinc.com>, andersson@kernel.org,
+ konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, amahesh@qti.qualcomm.com, arnd@arndb.de,
+ gregkh@linuxfoundation.org
+Cc: quic_kuiw@quicinc.com, quic_ekangupt@quicinc.com,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20250320091446.3647918-1-quic_lxu5@quicinc.com>
+ <20250320091446.3647918-3-quic_lxu5@quicinc.com>
+ <30bba296-8e6f-41ee-880e-2d5ecc8fe5a4@linaro.org>
+ <e2a8528b-fa18-471f-9cb8-da64bb488f2a@quicinc.com>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <e2a8528b-fa18-471f-9cb8-da64bb488f2a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-This patch adds support for MAC level VLAN tag stripping for the
-dwxgmac2 IP. This feature can be configured through ethtool.
-If the rx-vlan-offload is off, then the VLAN tag will be stripped
-by the driver. If the rx-vlan-offload is on then the VLAN tag
-will be stripped by the MAC.
 
-Signed-off-by: Boon Khai Ng <boon.khai.ng@altera.com>
-Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
----
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h | 12 ++++++++++++
- .../ethernet/stmicro/stmmac/dwxgmac2_core.c    |  2 ++
- .../ethernet/stmicro/stmmac/dwxgmac2_descs.c   | 18 ++++++++++++++++++
- .../net/ethernet/stmicro/stmmac/stmmac_main.c  |  2 +-
- 4 files changed, 33 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-index 5e369a9a2595..0d408ee17f33 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-@@ -464,6 +464,7 @@
- #define XGMAC_RDES3_RSV			BIT(26)
- #define XGMAC_RDES3_L34T		GENMASK(23, 20)
- #define XGMAC_RDES3_L34T_SHIFT		20
-+#define XGMAC_RDES3_ET_LT		GENMASK(19, 16)
- #define XGMAC_L34T_IP4TCP		0x1
- #define XGMAC_L34T_IP4UDP		0x2
- #define XGMAC_L34T_IP6TCP		0x9
-@@ -473,6 +474,17 @@
- #define XGMAC_RDES3_TSD			BIT(6)
- #define XGMAC_RDES3_TSA			BIT(4)
- 
-+/* RDES0 (write back format) */
-+#define XGMAC_RDES0_VLAN_TAG_MASK	GENMASK(15, 0)
-+
-+/* Error Type or L2 Type(ET/LT) Field Number */
-+#define XGMAC_ET_LT_VLAN_STAG		8
-+#define XGMAC_ET_LT_VLAN_CTAG		9
-+#define XGMAC_ET_LT_DVLAN_CTAG_CTAG	10
-+#define XGMAC_ET_LT_DVLAN_STAG_STAG	11
-+#define XGMAC_ET_LT_DVLAN_CTAG_STAG	12
-+#define XGMAC_ET_LT_DVLAN_STAG_CTAG	13
-+
- extern const struct stmmac_ops dwxgmac210_ops;
- extern const struct stmmac_ops dwxlgmac2_ops;
- extern const struct stmmac_dma_ops dwxgmac210_dma_ops;
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
-index d9f41c047e5e..6cadf8de4fdf 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
-@@ -10,6 +10,7 @@
- #include "stmmac.h"
- #include "stmmac_fpe.h"
- #include "stmmac_ptp.h"
-+#include "stmmac_vlan.h"
- #include "dwxlgmac2.h"
- #include "dwxgmac2.h"
- 
-@@ -1551,6 +1552,7 @@ int dwxgmac2_setup(struct stmmac_priv *priv)
- 	mac->mii.reg_mask = GENMASK(15, 0);
- 	mac->mii.clk_csr_shift = 19;
- 	mac->mii.clk_csr_mask = GENMASK(21, 19);
-+	mac->num_vlan = stmmac_get_num_vlan(priv->ioaddr);
- 
- 	return 0;
- }
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c
-index 389aad7b5c1e..55921c88efd0 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_descs.c
-@@ -4,6 +4,7 @@
-  * stmmac XGMAC support.
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/stmmac.h>
- #include "common.h"
- #include "dwxgmac2.h"
-@@ -69,6 +70,21 @@ static int dwxgmac2_get_tx_ls(struct dma_desc *p)
- 	return (le32_to_cpu(p->des3) & XGMAC_RDES3_LD) > 0;
- }
- 
-+static u16 dwxgmac2_wrback_get_rx_vlan_tci(struct dma_desc *p)
-+{
-+	return (le32_to_cpu(p->des0) & XGMAC_RDES0_VLAN_TAG_MASK);
-+}
-+
-+static inline bool dwxgmac2_wrback_get_rx_vlan_valid(struct dma_desc *p)
-+{
-+	u32 et_lt;
-+
-+	et_lt = FIELD_GET(XGMAC_RDES3_ET_LT, le32_to_cpu(p->des3));
-+
-+	return et_lt >= XGMAC_ET_LT_VLAN_STAG &&
-+	       et_lt <= XGMAC_ET_LT_DVLAN_STAG_CTAG;
-+}
-+
- static int dwxgmac2_get_rx_frame_len(struct dma_desc *p, int rx_coe)
- {
- 	return (le32_to_cpu(p->des3) & XGMAC_RDES3_PL);
-@@ -351,6 +367,8 @@ const struct stmmac_desc_ops dwxgmac210_desc_ops = {
- 	.set_tx_owner = dwxgmac2_set_tx_owner,
- 	.set_rx_owner = dwxgmac2_set_rx_owner,
- 	.get_tx_ls = dwxgmac2_get_tx_ls,
-+	.get_rx_vlan_tci = dwxgmac2_wrback_get_rx_vlan_tci,
-+	.get_rx_vlan_valid = dwxgmac2_wrback_get_rx_vlan_valid,
- 	.get_rx_frame_len = dwxgmac2_get_rx_frame_len,
- 	.enable_tx_timestamp = dwxgmac2_enable_tx_timestamp,
- 	.get_tx_timestamp_status = dwxgmac2_get_tx_timestamp_status,
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 279532609707..eb03d6950903 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -7644,7 +7644,7 @@ int stmmac_dvr_probe(struct device *device,
- #ifdef STMMAC_VLAN_TAG_USED
- 	/* Both mac100 and gmac support receive VLAN tag detection */
- 	ndev->features |= NETIF_F_HW_VLAN_CTAG_RX | NETIF_F_HW_VLAN_STAG_RX;
--	if (priv->plat->has_gmac4) {
-+	if (priv->plat->has_gmac4 || priv->plat->has_xgmac) {
- 		ndev->hw_features |= NETIF_F_HW_VLAN_CTAG_RX;
- 		priv->hw->hw_vlan_en = true;
- 	}
--- 
-2.25.1
+On 07/04/2025 10:13, Ling Xu wrote:
+> 在 3/21/2025 1:11 AM, Srinivas Kandagatla 写道:
+>>
+>>
+>> On 20/03/2025 09:14, Ling Xu wrote:
+>>> The fastrpc driver has support for 5 types of remoteprocs. There are
+>>> some products which support GPDSP remoteprocs. Add changes to support
+>>> GPDSP remoteprocs.
+>>>
+>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>>> Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
+>>> ---
+>>>    drivers/misc/fastrpc.c | 10 ++++++++--
+>>>    1 file changed, 8 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+>>> index 7b7a22c91fe4..80aa554b3042 100644
+>>> --- a/drivers/misc/fastrpc.c
+>>> +++ b/drivers/misc/fastrpc.c
+>>> @@ -28,7 +28,9 @@
+>>>    #define SDSP_DOMAIN_ID (2)
+>>>    #define CDSP_DOMAIN_ID (3)
+>>>    #define CDSP1_DOMAIN_ID (4)
+>>> -#define FASTRPC_DEV_MAX        5 /* adsp, mdsp, slpi, cdsp, cdsp1 */
+>>> +#define GDSP0_DOMAIN_ID (5)
+>>> +#define GDSP1_DOMAIN_ID (6)
+>>
+>> We have already made the driver look silly here, Lets not add domain ids for each instance, which is not a scalable.
+>>
+>> Domain ids are strictly for a domain not each instance.
+>>
+>>
+>>> +#define FASTRPC_DEV_MAX        7 /* adsp, mdsp, slpi, cdsp, cdsp1, gdsp0, gdsp1 */
+>>>    #define FASTRPC_MAX_SESSIONS    14
+>>>    #define FASTRPC_MAX_VMIDS    16
+>>>    #define FASTRPC_ALIGN        128
+>>> @@ -107,7 +109,9 @@
+>>>    #define miscdev_to_fdevice(d) container_of(d, struct fastrpc_device, miscdev)
+>>>      static const char *domains[FASTRPC_DEV_MAX] = { "adsp", "mdsp",
+>>> -                        "sdsp", "cdsp", "cdsp1" };
+>>> +                        "sdsp", "cdsp",
+>>> +                        "cdsp1", "gdsp0",
+>>> +                        "gdsp1" };
+>>>    struct fastrpc_phy_page {
+>>>        u64 addr;        /* physical address */
+>>>        u64 size;        /* size of contiguous region */
+>>> @@ -2338,6 +2342,8 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+>>>            break;
+>>>        case CDSP_DOMAIN_ID:
+>>>        case CDSP1_DOMAIN_ID:
+>>> +    case GDSP0_DOMAIN_ID:
+>>> +    case GDSP1_DOMAIN_ID:
+>>>            data->unsigned_support = true;
+>>>            /* Create both device nodes so that we can allow both Signed and Unsigned PD */
+>>>            err = fastrpc_device_register(rdev, data, true, domains[domain_id]);
+>>
+>>
+>> Can you try this patch: only compile tested.
+>>
+>> ---------------------------------->cut<---------------------------------------
+>>  From 3f8607557162e16673b26fa253d11cafdc4444cf Mon Sep 17 00:00:00 2001
+>> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>> Date: Thu, 20 Mar 2025 17:07:05 +0000
+>> Subject: [PATCH] misc: fastrpc: cleanup the domain names
+>>
+>> Currently the domain ids are added for each instance of domain, this is
+>> totally not scalable approch.
+>>
+>> Clean this mess and create domain ids for only domains not its
+>> instances.
+>> This patch also moves the domain ids to uapi header as this is required
+>> for FASTRPC_IOCTL_GET_DSP_INFO ioctl.
+>>
+>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>> ---
+>>   drivers/misc/fastrpc.c      | 45 ++++++++++++++++++++-----------------
+>>   include/uapi/misc/fastrpc.h |  7 ++++++
+>>   2 files changed, 32 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+>> index 7b7a22c91fe4..b3932897a437 100644
+>> --- a/drivers/misc/fastrpc.c
+>> +++ b/drivers/misc/fastrpc.c
+>> @@ -23,12 +23,6 @@
+>>   #include <uapi/misc/fastrpc.h>
+>>   #include <linux/of_reserved_mem.h>
+>>
+>> -#define ADSP_DOMAIN_ID (0)
+>> -#define MDSP_DOMAIN_ID (1)
+>> -#define SDSP_DOMAIN_ID (2)
+>> -#define CDSP_DOMAIN_ID (3)
+>> -#define CDSP1_DOMAIN_ID (4)
+>> -#define FASTRPC_DEV_MAX        5 /* adsp, mdsp, slpi, cdsp, cdsp1 */
+>>   #define FASTRPC_MAX_SESSIONS    14
+>>   #define FASTRPC_MAX_VMIDS    16
+>>   #define FASTRPC_ALIGN        128
+>> @@ -106,8 +100,6 @@
+>>
+>>   #define miscdev_to_fdevice(d) container_of(d, struct fastrpc_device, miscdev)
+>>
+>> -static const char *domains[FASTRPC_DEV_MAX] = { "adsp", "mdsp",
+>> -                        "sdsp", "cdsp", "cdsp1" };
+>>   struct fastrpc_phy_page {
+>>       u64 addr;        /* physical address */
+>>       u64 size;        /* size of contiguous region */
+>> @@ -1769,7 +1761,7 @@ static int fastrpc_get_dsp_info(struct fastrpc_user *fl, char __user *argp)
+>>           return  -EFAULT;
+>>
+>>       cap.capability = 0;
+>> -    if (cap.domain >= FASTRPC_DEV_MAX) {
+>> +    if (cap.domain >= FASTRPC_DOMAIN_MAX) {
+>>           dev_err(&fl->cctx->rpdev->dev, "Error: Invalid domain id:%d, err:%d\n",
+>>               cap.domain, err);
+>>           return -ECHRNG;
+> 
+> I tested this patch and saw one issue.
+> Here FASTRPC_DOMAIN_MAX is set to 4, but in userspace, cdsp1 is 4, gdsp0 is 5 and gdsp1 is 6.
 
+
+Why is the userspace using something that is not uAPI?
+
+Why does it matter if its gdsp0 or gdsp1 for the userspace?
+It should only matter if its gdsp domain or not.
+
+
+
+--srini
+
+
+> For example, if we run a demo on gdsp0, cap.domain copied from userspace will be 5 which could lead to wrong message.
+> 
+> --Ling Xu
+> 
+>> @@ -2255,6 +2247,24 @@ static int fastrpc_device_register(struct device *dev, struct fastrpc_channel_ct
+>>       return err;
+>>   }
+>>
+>> +static int fastrpc_get_domain_id(const char *domain)
+>> +{
+>> +    if (strncmp(domain, "adsp", 4) == 0) {
+>> +        return ADSP_DOMAIN_ID;
+>> +    } else    if (strncmp(domain, "cdsp", 4) == 0) {
+>> +        return CDSP_DOMAIN_ID;
+>> +    } else if (strncmp(domain, "mdsp", 4) ==0) {
+>> +        return MDSP_DOMAIN_ID;
+>> +    } else if (strncmp(domain, "sdsp", 4) ==0) {
+>> +        return SDSP_DOMAIN_ID;
+>> +    } else if (strncmp(domain, "gdsp", 4) ==0) {
+>> +        return GDSP_DOMAIN_ID;
+>> +    }
+>> +
+>> +    return -EINVAL;
+>> +
+>> +}
+>> +
+>>   static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+>>   {
+>>       struct device *rdev = &rpdev->dev;
+>> @@ -2272,15 +2282,10 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+>>           return err;
+>>       }
+>>
+>> -    for (i = 0; i < FASTRPC_DEV_MAX; i++) {
+>> -        if (!strcmp(domains[i], domain)) {
+>> -            domain_id = i;
+>> -            break;
+>> -        }
+>> -    }
+>> +    domain_id = fastrpc_get_domain_id(domain);
+>>
+>>       if (domain_id < 0) {
+>> -        dev_info(rdev, "FastRPC Invalid Domain ID %d\n", domain_id);
+>> +        dev_info(rdev, "FastRPC Domain %s not supported\n", domain);
+>>           return -EINVAL;
+>>       }
+>>
+>> @@ -2332,19 +2337,19 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+>>       case SDSP_DOMAIN_ID:
+>>           /* Unsigned PD offloading is only supported on CDSP and CDSP1 */
+>>           data->unsigned_support = false;
+>> -        err = fastrpc_device_register(rdev, data, secure_dsp, domains[domain_id]);
+>> +        err = fastrpc_device_register(rdev, data, secure_dsp, domain);
+>>           if (err)
+>>               goto fdev_error;
+>>           break;
+>>       case CDSP_DOMAIN_ID:
+>> -    case CDSP1_DOMAIN_ID:
+>> +    case GDSP_DOMAIN_ID:
+>>           data->unsigned_support = true;
+>>           /* Create both device nodes so that we can allow both Signed and Unsigned PD */
+>> -        err = fastrpc_device_register(rdev, data, true, domains[domain_id]);
+>> +        err = fastrpc_device_register(rdev, data, true, domain);
+>>           if (err)
+>>               goto fdev_error;
+>>
+>> -        err = fastrpc_device_register(rdev, data, false, domains[domain_id]);
+>> +        err = fastrpc_device_register(rdev, data, false, domain);
+>>           if (err)
+>>               goto populate_error;
+>>           break;
+>> diff --git a/include/uapi/misc/fastrpc.h b/include/uapi/misc/fastrpc.h
+>> index f33d914d8f46..89516abd258f 100644
+>> --- a/include/uapi/misc/fastrpc.h
+>> +++ b/include/uapi/misc/fastrpc.h
+>> @@ -133,6 +133,13 @@ struct fastrpc_mem_unmap {
+>>       __s32 reserved[5];
+>>   };
+>>
+>> +#define ADSP_DOMAIN_ID (0)
+>> +#define MDSP_DOMAIN_ID (1)
+>> +#define SDSP_DOMAIN_ID (2)
+>> +#define CDSP_DOMAIN_ID (3)
+>> +#define GDSP_DOMAIN_ID (4)
+>> +
+>> +#define FASTRPC_DOMAIN_MAX    4
+>>   struct fastrpc_ioctl_capability {
+>>       __u32 domain;
+>>       __u32 attribute_id;
+> 
 
