@@ -1,136 +1,113 @@
-Return-Path: <linux-kernel+bounces-592994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 955CAA7F3C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:45:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55767A7F3BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:40:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54E58177FE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 04:45:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFEEB1898B36
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 04:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E899E1EE7BE;
-	Tue,  8 Apr 2025 04:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC09625F984;
+	Tue,  8 Apr 2025 04:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b="RB/UMYRl"
-Received: from mail.ptr1337.dev (mail.ptr1337.dev [202.61.224.105])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oYbIMuFV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7884523AD;
-	Tue,  8 Apr 2025 04:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.224.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7FC1F8725;
+	Tue,  8 Apr 2025 04:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744087534; cv=none; b=t5T9zbGbYxOKhdGSjer6ApGupmOefmJLwbNq+uSOngTKl6dpozM6p0ZENC0n42sus7gVxN5UHn28tIB6Z+NzfwJuPRxmN9sLsHO2yOmMN9TJ33I4uRx067m1OWAsSK2nIE315XAec9rnQ6FEGg1+SeMGL5yCT0x66yjFUcPG8rs=
+	t=1744087205; cv=none; b=m2P7lSBmx+BYdj2jFLEfM0xq1y0hiRKb5pMGALRgfVygsvlyzampzgANxbnsTBUIUvYa176XgmUqkFzvYCkqwXIm+dYaB0uwGvRzEYI0gaKEUFry4o2LGOZv+LLFuGbTl7OpNGzemGIMc7TVtB1gBNZNDjdPL1Kr1ivjOv+ypYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744087534; c=relaxed/simple;
-	bh=F2PYI+L2dgk/3pQsr9DP7jaG9Mjpx4ZaXFpuiOfJOrc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t7z0oRVH7iBRqGmU4y0YJXtFOUrRx9Yhydp96xbLgyij8OOdthx/optvwhClQW7YELzJHPnzEzLgf8IcxyxRwJyhr6vuGWtCdL2tHnPfs9Q0sPSzOroOknoeJyIC3OIiTXB1Gl249B4JFy8u33LpDWArITcM8cqmdpNI0fNg5CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org; spf=pass smtp.mailfrom=cachyos.org; dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b=RB/UMYRl; arc=none smtp.client-ip=202.61.224.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cachyos.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E064F281552;
-	Tue,  8 Apr 2025 06:39:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cachyos.org; s=dkim;
-	t=1744087189;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W6lum0tK8iDSD3O1/w0NV8phRZIGe2yefEV3A1OTASE=;
-	b=RB/UMYRl3akr6Y8arx8VoiIh7JJFg6O6efnTlECPY+Udx14ewLdibMHM4h+aPmr6TQgVFg
-	3tYc4etb248jCyDvlQc0dCcAjw7AbJXeXjuUldroGOw8W5iNu9Uy5tEzKBvge3JX4ZukoK
-	vRI0hqTtDyE9prVsl/NwsYvmKc9dDeyu81GiPPKzezA9ustLKrXTGolSkiVHnPHD/0m2zo
-	ovuXnS2VnLE4nF8yO+rGNNR/95LTY3PR9OMIlzxPzIY6SQg6z6JFi3B5p/uCWJOIYE/lAZ
-	c3LgcrefqLIKK39ez7Wg1WNTgzSDeGmUZ0YUMVyfD0vxuq7OX7vBFgojsYsPpg==
-Message-ID: <40182b31-95ad-4825-9c0c-0127be1734a6@cachyos.org>
-Date: Tue, 8 Apr 2025 12:39:25 +0800
+	s=arc-20240116; t=1744087205; c=relaxed/simple;
+	bh=yhMKEV0cCXxqfGp4QpUkRtWTz9lltxPGH8xVqkkKk6U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TVKKiGqgEEvvIDo4MAfeABx9dnfbgROpiKq9cAQSXcd3udpyh6vcvt4rWy0+5bnxV8rWUZaMLliWmdCH6s8WTPFkcHyRROvUO1+1YrSLSlH1/GdC7G2QuA+jXtB+PiyRs4zhw9OFhBz6ChEYNiGE/LE84JEAMH7x5EnUXfAn8xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oYbIMuFV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 79F9DC4CEE5;
+	Tue,  8 Apr 2025 04:40:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744087204;
+	bh=yhMKEV0cCXxqfGp4QpUkRtWTz9lltxPGH8xVqkkKk6U=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=oYbIMuFV7ceLFvB8/96Xvpp0VPtG4kopOOPjJaG4djYfuycI2k0VcryLjlotvxqa4
+	 fFUzJ2xw1NLgoxzhsNqjzGu1jMchabmj0wGPocSwPjp8Mon6qKXQ/P0y5NyNXcVa6b
+	 iu7/F91o79GG9UE9mK9Yclt4+LDcwG9MpHXVyReUoea7pSrnzYlrNR9lYnVSBJaStT
+	 B+lni8n5dieA7cqFe54mn1zBLYIF3s/aQp6TSBLU6Vl77TJ5Q2UiL9AkNN/4ep5jBz
+	 Z1SrzZfjp4J7VJgqI0S2S3IHutwkJkCggWTDWAL7rKiudNt0zmufDSHTDYWrzMmu4Y
+	 1K6f+X3kUjPLA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E52FC36010;
+	Tue,  8 Apr 2025 04:40:04 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH 0/4] Tegra CEC Updates
+Date: Mon, 07 Apr 2025 23:39:47 -0500
+Message-Id: <20250407-tegra-cec-v1-0-e25dd9577b5f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 10/17] mm: uninline the main body of vma_start_write()
-To: Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>,
- akpm@linux-foundation.org
-Cc: peterz@infradead.org, willy@infradead.org, liam.howlett@oracle.com,
- lorenzo.stoakes@oracle.com, mhocko@suse.com, hannes@cmpxchg.org,
- mjguzik@gmail.com, oliver.sang@intel.com, mgorman@techsingularity.net,
- david@redhat.com, peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net,
- paulmck@kernel.org, brauner@kernel.org, dhowells@redhat.com,
- hdanton@sina.com, hughd@google.com, lokeshgidra@google.com,
- minchan@google.com, jannh@google.com, shakeel.butt@linux.dev,
- souravpanda@google.com, pasha.tatashin@soleen.com, klarasmodin@gmail.com,
- corbet@lwn.net, linux-doc@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, kernel-team@android.com
-References: <20241226170710.1159679-1-surenb@google.com>
- <20241226170710.1159679-11-surenb@google.com>
- <0d36fd53-b817-4bbd-ae38-af094bd301df@suse.cz>
-Content-Language: en-US
-From: Eric Naim <dnaim@cachyos.org>
-In-Reply-To: <0d36fd53-b817-4bbd-ae38-af094bd301df@suse.cz>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-B4-Tracking: v=1; b=H4sIAJOo9GcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDEwNz3ZLU9KJE3eTUZF3zVONE86TUNBNTszQloPqCotS0zAqwWdGxtbU
+ A6RE18lsAAAA=
+X-Change-ID: 20250407-tegra-cec-7e3a7bef456f
+To: Hans Verkuil <hverkuil@xs4all.nl>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-media@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744087203; l=1291;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=yhMKEV0cCXxqfGp4QpUkRtWTz9lltxPGH8xVqkkKk6U=;
+ b=JNmTCowIP6MS6wzfw9GGZGXQ0MW2dzlpWAzLQlRfvO1TQja1n8lxqpsC0oIgP+KoF4O49VeWF
+ qkgbthdLa0FAZzcQssXjf9m1RNjsJlbzPposr4TiSM4rSsghTM+4K/J
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-On 1/8/25 01:35, Vlastimil Babka wrote:
-> On 12/26/24 18:07, Suren Baghdasaryan wrote:
->> vma_start_write() is used in many places and will grow in size very soon.
->> It is not used in performance critical paths and uninlining it should
->> limit the future code size growth.
->> No functional changes.
->>
->> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> 
-> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-> 
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -6328,6 +6328,20 @@ struct vm_area_struct *lock_mm_and_find_vma(struct mm_struct *mm,
->>  #endif
->>  
->>  #ifdef CONFIG_PER_VMA_LOCK
->> +void __vma_start_write(struct vm_area_struct *vma, unsigned int mm_lock_seq)
->> +{
->> +	down_write(&vma->vm_lock.lock);
->> +	/*
->> +	 * We should use WRITE_ONCE() here because we can have concurrent reads
->> +	 * from the early lockless pessimistic check in vma_start_read().
->> +	 * We don't really care about the correctness of that early check, but
->> +	 * we should use WRITE_ONCE() for cleanliness and to keep KCSAN happy.
->> +	 */
->> +	WRITE_ONCE(vma->vm_lock_seq, mm_lock_seq);
->> +	up_write(&vma->vm_lock.lock);
->> +}
->> +EXPORT_SYMBOL_GPL(__vma_start_write);
-> 
-> Do any modules need it? If not we shouldn't export.
+This series updates Tegra hdmi cec support to be usable out of the box
+on Tegra210 through Tegra194.
 
-Hi Vlastimil, Suren
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Aaron Kling (4):
+      media: dt-bindings: Document Tegra186 and Tegra194 cec
+      media: tegra-cec: Support Tegra186 and Tegra194
+      arm64: tegra: Add CEC controller on Tegra210
+      arm64: tegra: Wire up cec to devkits
 
-The out-of-tree NVIDIA modules seem to rely on this symbol, is it possible to use EXPORT_SYMBOL() here instead of EXPORT_SYMBOL_GPL(), below is the modpost error:
+ .../devicetree/bindings/media/cec/nvidia,tegra114-cec.yaml       | 2 ++
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts               | 6 ++++++
+ arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts    | 6 ++++++
+ arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts               | 6 ++++++
+ arch/arm64/boot/dts/nvidia/tegra194-p3509-0000.dtsi              | 6 ++++++
+ arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts               | 6 ++++++
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts               | 6 ++++++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi                         | 9 +++++++++
+ drivers/media/cec/platform/tegra/tegra_cec.c                     | 2 ++
+ 9 files changed, 49 insertions(+)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250407-tegra-cec-7e3a7bef456f
 
-	MODPOST Module.symvers
-	WARNING: modpost: missing MODULE_DESCRIPTION() in nvidia.o
-	WARNING: modpost: missing MODULE_DESCRIPTION() in nvidia-uvm.o
-	WARNING: modpost: missing MODULE_DESCRIPTION() in nvidia-modeset.o
-	WARNING: modpost: missing MODULE_DESCRIPTION() in nvidia-drm.o
-	ERROR: modpost: GPL-incompatible module nvidia.ko uses GPL-only symbol '__vma_start_write'
-	ERROR: modpost: GPL-incompatible module nvidia-drm.ko uses GPL-only symbol '__vma_start_write'
-	make[4]: *** [/tmp/makepkg/linux-cachyos-rc-nc/src/linux-6.15-rc1/scripts/Makefile.modpost:147: Module.symvers] Error 1
-	make[3]: *** [/tmp/makepkg/linux-cachyos-rc-nc/src/linux-6.15-rc1/Makefile:1964: modpost] Error 2
-
-If it's possible I can send a patch that changes that.
-
-> 
->>  /*
->>   * Lookup and lock a VMA under RCU protection. Returned VMA is guaranteed to be
->>   * stable and not isolated. If the VMA is not found or is being modified the
-> 
+Best regards,
 -- 
-Regards,
-Eric
+Aaron Kling <webgeek1234@gmail.com>
+
+
 
