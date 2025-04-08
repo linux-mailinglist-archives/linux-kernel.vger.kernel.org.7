@@ -1,136 +1,284 @@
-Return-Path: <linux-kernel+bounces-593779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35B69A80067
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:30:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87587A80028
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E92C166F86
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:21:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E947118840D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87AD92686B3;
-	Tue,  8 Apr 2025 11:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5832D2686AB;
+	Tue,  8 Apr 2025 11:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VxHnh1XS"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F2d71d86"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A8C207E14;
-	Tue,  8 Apr 2025 11:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A749C207E14
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 11:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744111296; cv=none; b=MTZjxf7SmBI1fkJQtP0Q3YLwmfvccRPu+ofZ76WL7+R5UbcNrsg/wPveq6Ven4sj9bbPrVABP4QIKLHXt9TvKtc1bUxbvdt3bRD8DNW0nyKfbEfip4q5ZKgtyW1TidbLlU42dzcn4ESfuwdmvhC04IlPK2C03SAA4wdL6I1bZLw=
+	t=1744111369; cv=none; b=d464NChrovWS5P0T5bbJ/JQ8s4hCIVk54g88TjfExRlwvxjo68JLsX98f/jB/T3IEExEB2ELDJuylkx3OsaQBnWaVRAw0JON5A7kt5sHZ0wJ7hVBH2A9DrhHjNhlvVOywuP4OYwjrFIshMX9ioBsbfcXgb2sQtiaWjo6r0xOKz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744111296; c=relaxed/simple;
-	bh=D3tSjslJEG5gUmYqPQBwZcslLuwSvruWXMArraYU17w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uByR9NP5NeiZepniLJK+Lk7siyzQMRoXc4c8YcF7qKKVdHSxD18kxboSi8fzT9AhlSrJmdNOv4cOlb07wtrdRV2ByNrW0ZFnSB+FOzVv2KOVFBuSKN7kKUDnRvlyj8w2XQbIKK0nNVYfmQUvHLYeqtMW3Ao2ec7xX3rCdOtlzV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VxHnh1XS; arc=none smtp.client-ip=209.85.215.170
+	s=arc-20240116; t=1744111369; c=relaxed/simple;
+	bh=scekJsPgdNGV+VcRQzth9B1JgL6BZGvs5wynfSwMrd0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=eLfrTND5WBpu6aAFaUNZ11jSwzhIdbXgevSAlDtLJ3OJAKwJ35MT9mhv/qQjbwCOW73iG3gyaG2MCUZza2MHhq3L2FdWgwp9JaSiVy9oEB3FL67YzEcpkCITdHYaALBc+1ELX0PvlcrJXbWxMgE8/1lofLzq+UOd6WATTtFa2zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F2d71d86; arc=none smtp.client-ip=209.85.215.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-ad5236e6fd6so4888067a12.0;
-        Tue, 08 Apr 2025 04:21:35 -0700 (PDT)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-af579e46b5dso3501333a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 04:22:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744111295; x=1744716095; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y1WTsXHcQYhNYnT0/xU5DpY+xWRau9JN7FZGJGxicCc=;
-        b=VxHnh1XSzI9YwGM53/j8MvFtZ6gFE4ctmwZatm/1EhKFkgJ5iKIcpWvIw31+DIIRc5
-         Zz/F0PlKWTdj1en4yCqKYzD9LLQrgUVKrgR4fVxxKxxy0pKszIxqlUHyuw1VqZwT+st6
-         21mzN2ILVuIBKWz75izkNvltQ0lE9AFENpSeOPxYt8QGGBbp5Vv6JefDiVlCHQGN5uqy
-         QD035zwP9ElPLq+5I54cBL1ZmM8lNHluoKViTslYBrM2mqgiGHATtzOhO6C+IDE5+pKQ
-         NYtrZJVu0c9+m7ZUo95E+MpP+Y7oagGlwcH8/r17No6wn+erU1jInR0QFhq7MAfvtj2x
-         y4hA==
+        d=gmail.com; s=20230601; t=1744111367; x=1744716167; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3LUESUy2O30c1zhmsWM2+07t2Tj4tuMSWNkW2oLjVdI=;
+        b=F2d71d86tPNz8fcGQ2n9uZ+FWwmUAYeeHWngfT1+L1sN4Ns4HwbvIT0ErwF0NM7H+m
+         Bgqksr5jOeAvBglx8fn++ggX7KRkMDG3b+/KcVic2x1QlarzHGYa3fetKMu+xtPpFSPs
+         ga5dMGAEoRg7BlOyh/DSWdJSyzLD5XxL+LDm9Aj3RacgjqFldt+mk5UhMkshBxeyduSu
+         HGi+72TngKG0FQiBi1gE1eYvSn57jhGWMPESHBbc3s6eS1KuxcH2WTIaTvzDdogovGzS
+         yAMxOBcIVU8L7GLxm7T2Lc/SRMswyzUuYIbGBWpWFg+ISinXUxEOuwKdH0SLPBEx5j0C
+         30Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744111295; x=1744716095;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y1WTsXHcQYhNYnT0/xU5DpY+xWRau9JN7FZGJGxicCc=;
-        b=rmWIGqftYs1vWvePDYsoYNl9m3i3Vyv5CeFTq1UQ7SdXTLYKU4YLjNMJGeKutO5Ni3
-         6x7fY5JmuSaqxPL3XXsc2yf05iaspIo7ayEYj4gULCcVsl5tj1RHQ8hzS7w7fznHugRX
-         kS12GQ8b+Vv5cBz/9kesa2K3V81gB7j842izm5WYFp0PKRcnLhz8DiU96fLM1Fjm0Cya
-         0B9FCXeyGdyesvCzIEo+vnvPHNFQG07dcrts8CAWlHbkkAXQGEUiz7mMTTq+9mT3U3QJ
-         qDkGHa1MIz6jPCE1dpz8zq80JEwZ14mZzgeLC7A7hEp6jS25EO2D4fG2cmRo7aknzvj+
-         Ym4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUiMu9IIWzTZfrO/NM/YKSotZyW3P6+64T442CLOqBjnoCW1D9S/4OelXjK5ghDtwkT+5UlBVUL5Oki@vger.kernel.org, AJvYcCUku2xpFniyRyApCOuu6vvYz06Cclyi9MMeXO2xGRvcTDPojPqO90YQe/h5OkBms/KlrGj+l6Yf9zBkQxbA@vger.kernel.org, AJvYcCXsWhwwsPRHBtrtiAfNTWFkM+pWqCB1szwGFMsURhQj5PxtFRRT4GjFSnTpwNxUspINJp0Wy1MMEoYp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg7cQJ/00N1kFPte2CbNLAu2o/5MiTwdv5TGYSzg17R/qOF577
-	4XjjLQ9S2KT7ZnbJQG10xQjp1GveelkkE/setMzPESegM3rPseo0
-X-Gm-Gg: ASbGncvDbjsABK4az0lDw3ZxrlKogMVdIXNw7MAJ3KdPeMAuZnI0qWVHI3GqtNaPkUU
-	mBhFbI1BN1aVJ55ERG3F4r8qPfHbbrm22A4psK+BCmRASPWxULSFKboYOGh6JWuLQglwSFJdXwT
-	R7+C+M4F2tM+SHpWD0BXNAJ9Dkc5PGVOkoXHIxH5+vuWL6S9X/HpiLx0ud/ITuD4s2hlnBGkheh
-	zsfk3CpyetQtMeF0uFtenh8dppWjhLlaaRxRRorCx75+OyLYvBbeuozZniGDfVGxpVpeH2FP2xO
-	oGQ773SpTbb76gioI+qKzSOM/fCx44e6KkIF56aXvvPIfgc=
-X-Google-Smtp-Source: AGHT+IENHbT7aGSGC2d+Xs3HK0eW2n1NHcpEJC/0ogHOySPZcdktzD7ZPPAXmOKRs/wQ018ClqbpUQ==
-X-Received: by 2002:a17:90b:53c5:b0:2f2:a664:df20 with SMTP id 98e67ed59e1d1-306a47c2e20mr24517484a91.7.1744111294119;
-        Tue, 08 Apr 2025 04:21:34 -0700 (PDT)
-Received: from localhost ([223.80.110.9])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-30588a30974sm10619376a91.25.2025.04.08.04.21.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 04:21:33 -0700 (PDT)
-Date: Tue, 8 Apr 2025 19:21:28 +0800
-From: Zixian Zeng <sycamoremoon376@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Mark Brown <broonie@kernel.org>, 
-	Inochi Amaoto <inochiama@gmail.com>, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, sophgo@lists.linux.dev, 
-	chao.wei@sophgo.com, xiaoguang.xing@sophgo.com, dlan@gentoo.org
-Subject: Re: [PATCH v4 1/2] spi: dt-bindings: snps,dw-apb-ssi: Add compatible
- for SOPHGO SG2042 SoC
-Message-ID: <qe4qhkbou5t24jccfrufvszsrbrwvj765y6jrj3bnhk2jnh5st@2y4hpbmujo3w>
-References: <20250407-sfg-spi-v4-0-30ac949a1e35@gmail.com>
- <20250407-sfg-spi-v4-1-30ac949a1e35@gmail.com>
- <20250407140739.GA2174606-robh@kernel.org>
+        d=1e100.net; s=20230601; t=1744111367; x=1744716167;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3LUESUy2O30c1zhmsWM2+07t2Tj4tuMSWNkW2oLjVdI=;
+        b=EEBcawBlMMJV/WSHKgneW3WsQptmxZ70bbd7E+U+inAyhWDwp7mPRpmUGH82O6CLvi
+         h6HcKn8wknB+TX8ZsB9cwgP/ZoY3L1RGcOLBzb5XpioATNY6W8q4AHLB/vkG0jEm6Gey
+         NU0uD6d5pvvy/vFfc8A/kBH4ddSLoFNggq7aQ1JcxwjnCPCwUfzOSXr0Gk9VBRVBv6R+
+         aGvXlJOdZ/IroExlrKQhwTFiBmcL8dakP5hDM0gdBlfQjipR36HUkR1PyCoWMSxxdrDy
+         aSyLRjiB7MhO1W1geLiY/EnOTBFyrCEpX/rLLLDdYR1H5E4NOZA7ifh1AqNI6IhkHnUr
+         MYQw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/ZwBDwrRmDkmwhw1UnF4PFKW4Q3zaIdWlkgO2UMf7IKef4PG3F/JkWzFOMxjmaiLkS04t4EV81pEVoU4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yycff8HhN6Z3jb/QWaUiOZF8vCE6ge6n+Vu9pdRnQfnUxNEAXO6
+	lKX8wsTqDaQAl6wfAU72jhuvUqwmsk5/gCJNdHIdH3m3MFRae8rPmJ8QdgGJqciDe8ffkvi2nNS
+	MZzhWe0HT+eNs0fQ0qDMb6r6fNBQ=
+X-Gm-Gg: ASbGncuVBozrlIDWWIln8UDtUeT6DEpk9a1KEj1VSy8q9gFapNTyLhvC0wsuxC4ouSH
+	+DKxxS3pLQNVmvCo0SnpoYxZSSwe93UTXFxQgDkhJIj9RkSZg/2MVtI67NbVqV8uh/zUNu1shD0
+	2+C5UzCHApHdvvrExrac7zEZll+A==
+X-Google-Smtp-Source: AGHT+IEVBzWQb/TBG5ZzSO4G1dI+tRUKz5kA1w2nTxL3l1uKDSw5KbzYyKr1IcYi19oMdtZYUuP4d5Pmg2ZuWeJr0zA=
+X-Received: by 2002:a17:90b:2710:b0:2ee:741c:e9f4 with SMTP id
+ 98e67ed59e1d1-306a615018dmr21834042a91.11.1744111366715; Tue, 08 Apr 2025
+ 04:22:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250407140739.GA2174606-robh@kernel.org>
+From: Nathan Royce <nroycea+kernel@gmail.com>
+Date: Tue, 8 Apr 2025 06:22:10 -0500
+X-Gm-Features: ATxdqUE4LG3fyLaMSvlsnqA6sUYEOZzZ0jaR3X2ZJMEQ5fcRTxjZgkXMsNclq7U
+Message-ID: <CALaQ_hrJC07E3vL9PE+JusgLZvxwcBFC89P8HzyT42NjC2pYDg@mail.gmail.com>
+Subject: "BC" Failure When Using "POSIXLY_CORRECT" Environment Variable
+To: John Stultz <jstultz@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 25/04/07 09:07AM, Rob Herring wrote:
-> On Mon, Apr 07, 2025 at 02:35:12PM +0800, Zixian Zeng wrote:
-> > add compatible property to include "sophgo,sg2042-spi" for
-> > the SOPHGO SG2042 SoC SPI Controller.
-> > 
-> > Signed-off-by: Zixian Zeng <sycamoremoon376@gmail.com>
-> > ---
-> >  Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-> > index bccd00a1ddd0ad92b437eed5b525a6ea1963db57..94102d94ed5dffe889a8a11c1c637d466713c208 100644
-> > --- a/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-> > +++ b/Documentation/devicetree/bindings/spi/snps,dw-apb-ssi.yaml
-> > @@ -88,6 +88,10 @@ properties:
-> >                - renesas,r9a06g032-spi # RZ/N1D
-> >                - renesas,r9a06g033-spi # RZ/N1S
-> >            - const: renesas,rzn1-spi   # RZ/N1
-> > +      - description: SOPHGO SG2042 SoC SPI Controller
-> > +        items:
-> > +          - const: sophgo,sg2042-spi
-> > +          - const: snps,dw-apb-ssi
-> 
-> This and all the other cases with snps,dw-apb-ssi fallback should be 
-> combined into 1 entry.
-> 
-Sounds good, did you mean conbining "SOPHGO SG2042" "T-HEAD TH1520" and "Renesas RZ/N1" together? But How about the description?
-> >        - description: T-HEAD TH1520 SoC SPI Controller
-> >          items:
-> >            - const: thead,th1520-spi
-> > 
-> > -- 
-> > 2.49.0
-> > 
-Best regards,
-Zixian
+When the "POSIXLY_CORRECT" variable is `unset`, the build continues.
+bc.1 man:
+*****
+       -s, --standard
+             Process exactly the POSIX bc language.
+      POSIXLY_CORRECT
+             This is the same as the -s option.
+*****
+
+Failure output:
+*****
+<...>
+make -f /<pathTo>/scripts/Makefile.build obj=. prepare
+set -e; mkdir -p include/generated/; trap "rm -f
+include/generated/.tmp_timeconst.h" EXIT; { echo 100 | bc -q
+/<pathTo>/kernel/time/timeconst.bc; } >
+include/generated/.tmp_timeconst.h; if [ ! -r
+include/generated/timeconst.h ] || ! cmp -s
+include/generated/timeconst.h include/generated/.tmp_timeconst.h; then
+: '  UPD     include/generated/timeconst.h'; mv -f
+include/generated/.tmp_timeconst.h include/generated/timeconst.h; fi
+/<pathTo>/kernel/time/timeconst.bc 6: Error: multiple letter name - gcd
+/<pathTo>/kernel/time/timeconst.bc 12: Error: return expression
+requires parenthesis
+/<pathTo>/kernel/time/timeconst.bc 17: Error: multiple letter name - fmul
+/<pathTo>/kernel/time/timeconst.bc 17: Error: return expression
+requires parenthesis
+/<pathTo>/kernel/time/timeconst.bc 23: Error: multiple letter name - fadj
+/<pathTo>/kernel/time/timeconst.bc 24: Error: multiple letter name - gcd
+/<pathTo>/kernel/time/timeconst.bc 26: Error: return expression
+requires parenthesis
+/<pathTo>/kernel/time/timeconst.bc 34: Error: multiple letter name - fmuls
+/<pathTo>/kernel/time/timeconst.bc 36: Error: multiple letter name - fmul
+/<pathTo>/kernel/time/timeconst.bc 38: Error: newline not allowed
+/<pathTo>/kernel/time/timeconst.bc 38: Error: return expression
+requires parenthesis
+/<pathTo>/kernel/time/timeconst.bc 40: Error: return expression
+requires parenthesis
+/<pathTo>/kernel/time/timeconst.bc 43: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 44: Error: multiple letter name - timeconst
+/<pathTo>/kernel/time/timeconst.bc 44: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 45: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 45: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 46: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 48: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 49: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 51: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 52: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 54: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 54: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 55: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 56: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 58: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 59: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 60: Error: else clause in if statement
+/<pathTo>/kernel/time/timeconst.bc 61: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 61: Error: multiple letter name - fmuls
+/<pathTo>/kernel/time/timeconst.bc 63: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 63: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 63: Error: multiple letter name - fmul
+/<pathTo>/kernel/time/timeconst.bc 64: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 64: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 64: Error: multiple letter name - fadj
+/<pathTo>/kernel/time/timeconst.bc 66: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 68: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 68: Error: multiple letter name - fmuls
+/<pathTo>/kernel/time/timeconst.bc 70: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 70: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 70: Error: multiple letter name - fmul
+/<pathTo>/kernel/time/timeconst.bc 71: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 71: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 71: Error: multiple letter name - fadj
+/<pathTo>/kernel/time/timeconst.bc 73: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 76: Error: multiple letter name - cd
+/<pathTo>/kernel/time/timeconst.bc 76: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 76: Error: multiple letter name - gcd
+/<pathTo>/kernel/time/timeconst.bc 77: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 77: Error: multiple letter name - cd
+/<pathTo>/kernel/time/timeconst.bc 78: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 78: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 78: Error: multiple letter name - cd
+/<pathTo>/kernel/time/timeconst.bc 79: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 79: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 79: Error: multiple letter name - cd
+/<pathTo>/kernel/time/timeconst.bc 80: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 80: Error: multiple letter name - cd
+/<pathTo>/kernel/time/timeconst.bc 81: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 83: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 83: Error: multiple letter name - fmuls
+/<pathTo>/kernel/time/timeconst.bc 85: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 85: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 85: Error: multiple letter name - fmul
+/<pathTo>/kernel/time/timeconst.bc 86: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 86: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 86: Error: multiple letter name - fadj
+/<pathTo>/kernel/time/timeconst.bc 88: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 90: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 90: Error: multiple letter name - fmuls
+/<pathTo>/kernel/time/timeconst.bc 92: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 92: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 92: Error: multiple letter name - fmul
+/<pathTo>/kernel/time/timeconst.bc 93: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 93: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 93: Error: multiple letter name - fadj
+/<pathTo>/kernel/time/timeconst.bc 95: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 98: Error: multiple letter name - cd
+/<pathTo>/kernel/time/timeconst.bc 98: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 98: Error: multiple letter name - gcd
+/<pathTo>/kernel/time/timeconst.bc 99: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 99: Error: multiple letter name - cd
+/<pathTo>/kernel/time/timeconst.bc 100: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 100: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 100: Error: multiple letter name - cd
+/<pathTo>/kernel/time/timeconst.bc 101: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 101: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 101: Error: multiple letter name - cd
+/<pathTo>/kernel/time/timeconst.bc 102: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 102: Error: multiple letter name - cd
+/<pathTo>/kernel/time/timeconst.bc 104: Error: multiple letter name - cd
+/<pathTo>/kernel/time/timeconst.bc 104: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 104: Error: multiple letter name - gcd
+/<pathTo>/kernel/time/timeconst.bc 105: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 105: Error: multiple letter name - cd
+/<pathTo>/kernel/time/timeconst.bc 106: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 106: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 106: Error: multiple letter name - cd
+/<pathTo>/kernel/time/timeconst.bc 107: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 107: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 107: Error: multiple letter name - cd
+/<pathTo>/kernel/time/timeconst.bc 108: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 108: Error: multiple letter name - cd
+/<pathTo>/kernel/time/timeconst.bc 109: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 111: Error: print statement
+/<pathTo>/kernel/time/timeconst.bc 116: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 116: Error: read function
+/<pathTo>/kernel/time/timeconst.bc 117: Error: multiple letter name - hz
+/<pathTo>/kernel/time/timeconst.bc 117: Error: multiple letter name - timeconst
+set -e; mkdir -p include/generated/; trap "rm -f
+include/generated/.tmp_bounds.h" EXIT; {        echo "#ifndef
+__LINUX_BOUNDS_H__"; echo "#define __LINUX_BOUNDS_H__"; echo "/*";
+echo " * DO NOT MODIFY."; echo " *"; echo " * This file was generated
+by Kbuild"; echo " */"; echo ""; sed -ne
+'s:^[[:space:]]*\.ascii[[:space:]]*"\(.*\)".*:\1:;
+/^->/{s:->#\(.*\):/* \1 */:; s:^->\([^ ]*\) [\$#]*\([^ ]*\)
+\(.*\):#define \1 \2 /* \3 */:; s:->::; p;}' < kernel/bounds.s; echo
+""; echo "#endif"; } > include/generated/.tmp_bounds.h; if [ ! -r
+include/generated/bounds.h ] || ! cmp -s include/generated/bounds.h
+include/generated/.tmp_bounds.h; then : '  UPD
+include/generated/bounds.h'; mv -f include/generated/.tmp_bounds.h
+include/generated/bounds.h; fi
+# CC      arch/arm/kernel/asm-offsets.s
+  /<pathTo>/toolchain/bin/clang
+-Wp,-MMD,arch/arm/kernel/.asm-offsets.s.d -nostdinc
+-I/<pathTo>/arch/arm/include -I./arch/arm/include/generated
+-I/<pathTo>/include -I./include -I/<pathTo>/arch/arm/include/uapi
+-I./arch/arm/include/generated/uapi -I/<pathTo>/include/uapi
+-I./include/generated/uapi -include
+/<pathTo>/include/linux/compiler-version.h -include
+/<pathTo>/include/linux/kconfig.h -include
+/<pathTo>/include/linux/compiler_types.h -D__KERNEL__
+--target=arm-linux-gnueabi -fintegrated-as
+-Werror=unknown-warning-option -Werror=ignored-optimization-argument
+-Werror=option-ignored -Werror=unused-command-line-argument
+-mlittle-endian -D__LINUX_ARM_ARCH__=6 -ffile-prefix-map=/<pathTo>/=
+-std=gnu11 -fshort-wchar -funsigned-char -fno-common -fno-PIE
+-fno-strict-aliasing -fno-dwarf2-cfi-asm -mtp=cp15 -mabi=aapcs-linux
+-mfpu=vfp -funwind-tables -meabi gnu -Wa,-W -march=armv6k
+-mtune=arm1136j-s -msoft-float -Uarm -fno-delete-null-pointer-checks
+-Os -fstack-protector-strong -ftrivial-auto-var-init=zero -pg
+-fstrict-flex-arrays=3 -fno-strict-overflow -fno-stack-check -Wall
+-Wundef -Werror=implicit-function-declaration -Werror=implicit-int
+-Werror=return-type -Werror=strict-prototypes -Wno-format-security
+-Wno-trigraphs -Wno-frame-address -Wno-address-of-packed-member
+-Wmissing-declarations -Wmissing-prototypes -Wframe-larger-than=1024
+-Wno-gnu -Wno-format-overflow-non-kprintf
+-Wno-format-truncation-non-kprintf -Wvla -Wno-pointer-sign
+-Wcast-function-type -Wimplicit-fallthrough -Werror=date-time
+-Werror=incompatible-pointer-types -Wenum-conversion -Wextra -Wunused
+-Wno-unused-but-set-variable -Wno-unused-const-variable
+-Wno-format-overflow -Wno-override-init -Wno-pointer-to-enum-cast
+-Wno-tautological-constant-out-of-range-compare -Wno-unaligned-access
+-Wno-enum-compare-conditional -Wno-missing-field-initializers
+-Wno-type-limits -Wno-shift-negative-value -Wno-enum-enum-conversion
+-Wno-sign-compare -Wno-unused-parameter -I/<pathTo>/. -I.
+-DKBUILD_MODFILE='"./asm-offsets"' -DKBUILD_BASENAME='"asm_offsets"'
+-DKBUILD_MODNAME='"asm_offsets"' -D__KBUILD_MODNAME=kmod_asm_offsets
+-fverbose-asm -S -o arch/arm/kernel/asm-offsets.s
+/<pathTo>/arch/arm/kernel/asm-offsets.c
+In file included from /<pathTo>/arch/arm/kernel/asm-offsets.c:12:
+In file included from /<pathTo>/include/linux/mm.h:7:
+In file included from /<pathTo>/include/linux/gfp.h:7:
+In file included from /<pathTo>/include/linux/mmzone.h:22:
+In file included from /<pathTo>/include/linux/mm_types.h:16:
+In file included from /<pathTo>/include/linux/uprobes.h:18:
+In file included from /<pathTo>/include/linux/timer.h:6:
+In file included from /<pathTo>/include/linux/ktime.h:25:
+In file included from /<pathTo>/include/linux/jiffies.h:14:
+./include/generated/timeconst.h:1:1: error: expected identifier or '('
+    1 | 100
+      | ^
+<...>
+*****
 
