@@ -1,112 +1,132 @@
-Return-Path: <linux-kernel+bounces-594074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A53A80CAD
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:43:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 127C9A80CD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E4737A5AFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:42:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 637AB8A6CCB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920F7188CDB;
-	Tue,  8 Apr 2025 13:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4811922FB;
+	Tue,  8 Apr 2025 13:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="Iu6XeEYo";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="C++Ed0o9"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d2DStrtG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA53117A2EB
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 13:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2B4184524;
+	Tue,  8 Apr 2025 13:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744119789; cv=none; b=jJ2S1/fo+CHMYmgtaBNS6x9VEWK3FG0n8SXWC6VX3pw6vf6Hn9fBj+UMUI+T267UkNQ4xiUlcsXoSqboWmbfOvRssslh9dXzJnDew2Pm8KdItGGamPwcemtgdERbEiyMcH9rzaFERMsFyh00DPOzTaV6ZvW0P52Ph4NCCqPjpF4=
+	t=1744119806; cv=none; b=B50PoWMnttnlwmL2fBUOxTEhT0ZSO3v72+Z5w6znXXM70eWNjKrnomuETZtaldBZyZynsKF0wN0Y4oESUeGUOPaPalVDDCHVxlHp066kQWkzys0fWxUSYq3flcTL4eUoYDtMtkz86F32XkM/2e2dxywzabkId0RnHOycYnbK3KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744119789; c=relaxed/simple;
-	bh=HgYlIYp91IYrdwdY6Wqx+xPiGtRl8VPT4nWckc3dLfE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B2vss5CrBZt/5Mji1V1fBw7R030KecHrtjkCTL3uNBMqj7ZnqadrFHWkKPbsoq+qowbBiIjAqVtETSP7ZX7H9TF6M15FPAvssuK1WtRkpozFIeb9wUBwaAASDWkq8lZ8VPe8UnpZNr0tYNnB4lGtCf2czU5/ykifHL2Opypw8sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=Iu6XeEYo; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=C++Ed0o9 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1744119786; x=1775655786;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=cBlxxxb9nLj+a13bsh9GOCOaWnykOv7HHBx/rUoFZZ8=;
-  b=Iu6XeEYo6oeNnYEbm8uoGtN3PTfMR5SHZcMS+Xpf0kU3dxyt16XQxCiO
-   iqb2uxJi+i2SXPaT3QLucemoty/UFUOxkTVH1ykm31YYwD4e4ev8OKBSn
-   mPE1N5s5RXldAQoL63XQaze3SxNLImUEwwa222g+k+89BISeUWnOUtJcD
-   oLL4niGnMrSJv3XSw85w6iN1YNcfRHam1rJ7FuUn+HlD3OXWByZR2qqYI
-   YX1ACQPwm4vkjvynmLiQHsE2k56Io+h8YE6883d4+qLyMSDRZ+Tdl/Pxo
-   OKqFGYHqQvGO7D/11xDr60FOS228LPwNu61YtrtMrFhfT0KCpMChvv6AF
-   A==;
-X-CSE-ConnectionGUID: vw8GpyTAReSSaLfk24lcSA==
-X-CSE-MsgGUID: OKwzMlX9SZWU9zJjUXTEnQ==
-X-IronPort-AV: E=Sophos;i="6.15,198,1739833200"; 
-   d="scan'208";a="43404992"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 08 Apr 2025 15:43:02 +0200
-X-CheckPoint: {67F527E6-40-F35B2447-E1635CDE}
-X-MAIL-CPID: 91F38755CB118F1CDA92F1B37A55066D_1
-X-Control-Analysis: str=0001.0A006378.67F527E3.0082,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id ABBD0163407;
-	Tue,  8 Apr 2025 15:42:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1744119778;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=cBlxxxb9nLj+a13bsh9GOCOaWnykOv7HHBx/rUoFZZ8=;
-	b=C++Ed0o9vS4mi++RY6GGfEEWEcZjEa508qm2ev21ncqu4bBt2gixgAmPF9E179ozN4kSki
-	v0hHlGwxLr+Gm5RzjvYjJq+5ZqI89ulFotrqESEMNh7PqoDm88Jfk1qgTkWjG7xlBJX/hV
-	/yvyu0XzKyPB00kZUhgi8TiMihyseHl00ggh9qzhp3vH2/aHlt1YUsuraiasuVPEFrLXNv
-	6YPoFtw5xtxiJJKY8mjDz7UbR/A1rgxGBrKqqlonx0Xi8BYHUfpyPwBYDfX0uuY8Ilogze
-	l7YpDQds/hHjSmpEIw9COmlCNy+6sH4oJIJnoLlaITopU7e8Cokil3cGDcCkIg==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] arm64: defconfig: enable backlight device class
-Date: Tue,  8 Apr 2025 15:42:48 +0200
-Message-ID: <20250408134249.1131127-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1744119806; c=relaxed/simple;
+	bh=2Ddq2Ob5OM25ETLhpoIPhbrffu1fDDQkhe/CqhWKAZE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dzd/ZxTwLkIwrtMrQ/a1WkpOVBbuE22DXP6I8g5BtCO8BpkH5L1+Co1tcT02jUp8GaXx+P+MgAru9pRzIYYTsMT0eOrwm9wkFEummeSnT//Rn1YwRg4dkH7Bf1ET9ArRyGMsUAJnAEsbpJH3fZUstRlkFrR52CzeKT4gzEjLGVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d2DStrtG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29E08C4CEE5;
+	Tue,  8 Apr 2025 13:43:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744119804;
+	bh=2Ddq2Ob5OM25ETLhpoIPhbrffu1fDDQkhe/CqhWKAZE=;
+	h=From:Date:Subject:To:Cc:From;
+	b=d2DStrtG3hSneoiqTq0u5eckz4kfWrSvuNZmYaaZQHhwtOaHMP8u/nRT8WpvjFa+9
+	 NlbBdRXGdPXS258BW4gtASFsISGjOcmpXQn9aDKXrUFBitH0BBqvMgcrWDkbntrOQC
+	 j/yEh7L2hDiF7/ftrT2UmDk5O00x0ypzipSs+15xVhWaIKO6UnwLVlj126NR2FJXuu
+	 0jyT6unZKsQVU3alQz6kNwfDswJ7tdWhUCTSPZzyGc07SsMMaNOCsmUlRczLoxNsRo
+	 DcNgjxh6sv/gE43bQlKz5J7j9LctWJC6ddXkHk6pmpYzcJXzMxvZsZ2DEiCkZ7d/x8
+	 oy7gS7L3GNjUg==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Tue, 08 Apr 2025 09:43:15 -0400
+Subject: [PATCH v2] nfs: add a refcount tracker for struct net as held by
+ the nfs_client
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250408-nfs-testing-v2-1-beead5b9e528@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAPIn9WcC/x3MQQqAIBBA0avIrBNEVKSrRIvK0WZj4UgE4t2Tl
+ m/xfwPGQsgwiwYFH2K68oCeBBznlhNKCsOglbbKKC9zZFmRK+UklY+bi87txgYYxV0w0vvflrX
+ 3D77gJ6ldAAAA
+X-Change-ID: 20250408-nfs-testing-08fa6f66b45d
+To: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1828; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=2Ddq2Ob5OM25ETLhpoIPhbrffu1fDDQkhe/CqhWKAZE=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBn9Sf79M0qcSF8+mtNIU77W3TF5iuonhGzb8Wgv
+ s5c2hnBPMOJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZ/Un+wAKCRAADmhBGVaC
+ FeuqEACGjKzZ5uyiXtWbyWnh37FIYzP84eZGWMzGHpxierEyx4O0eX/yxfDa/nZHhm/Sy5EMtKV
+ b2X2XgWTx7d3nUc8lYPGy/LiUGXwAEFw5jnI/cjvW6+nrukHcEVX+bIL6he3xxXziaGc9R7Fcws
+ IeLL1BzIAwIaPGrIvJDrlyfwUl2CvuzRaXNfY1qetrdfpVHPL8sU0PyWUnAENEwILAn19jkihwc
+ S/WleBFzHwRJO0I8ESYr2FF/uR/PlrdwTG3ndp7O5iuhjH5413m635Ii88C3xOyJP4Xz4ii2U7W
+ AnyWfBS8GtYlZxrsE/0G+lFX8ImGX6I+FWj2Ot+6C2E6bUcMW4Rpj6vcgKUEGbaa6YoHpfaWz/p
+ tFnNLUKU+I3TMt2RiWt13UFMVJqmbiyR9/JkgFSfespqy9j0hJ+BKRy5tE1awwf57O1sky8olCw
+ go2oMIDhC95TG4QVRJlx2vUldIIl+IezTporPh986Y9SZH7ENLv4aJsD5LvHREFPfOz4+QreLF2
+ 9d7YT+fvWDaOpMWGipgVbzEUmNUdoZ9yM7qFxswnHzy/WHPbSczzOJ2EsL8WMixP+SJ6bvgoIWG
+ S5RVXJHlkvoLgLljQSKLRW+rnkaJPpi8bLKgSBYXWxSzNKhORNyrjaB0ZMUWTbx97kfhWO1ijcy
+ 78Uc4A1aYe+EKRw==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-CONFIG_DRM_PANEL_SIMPLE is enabled in this config. But it depends on
-CONFIG_BACKLIGHT_CLASS_DEVICE which is only transitively enabled by
-DRM_NOUVEAU, iff DRM_NOUVEAU_BACKLIGHT is enabled as well.
-As simple-panel depends on backlight, enable this in defconfig as well.
+These are long-held references to the netns, so make sure the refcount
+tracker is aware of them.
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ fs/nfs/client.c           | 4 ++--
+ include/linux/nfs_fs_sb.h | 1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 65ec5a5be407d..b70257878812e 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -963,6 +963,7 @@ CONFIG_DRM_POWERVR=m
- CONFIG_FB=y
- CONFIG_FB_EFI=y
- CONFIG_FB_MODE_HELPERS=y
-+CONFIG_BACKLIGHT_CLASS_DEVICE=m
- CONFIG_BACKLIGHT_PWM=m
- CONFIG_BACKLIGHT_LP855X=m
- CONFIG_LOGO=y
+diff --git a/fs/nfs/client.c b/fs/nfs/client.c
+index 02c916a550205f3ccbe9551686e92700900dc176..9500b46005b0148a5a9a7d464095ca944de06bb5 100644
+--- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@ -180,7 +180,7 @@ struct nfs_client *nfs_alloc_client(const struct nfs_client_initdata *cl_init)
+ 	clp->cl_proto = cl_init->proto;
+ 	clp->cl_nconnect = cl_init->nconnect;
+ 	clp->cl_max_connect = cl_init->max_connect ? cl_init->max_connect : 1;
+-	clp->cl_net = get_net(cl_init->net);
++	clp->cl_net = get_net_track(cl_init->net, &clp->cl_ns_tracker, GFP_KERNEL);
+ 
+ #if IS_ENABLED(CONFIG_NFS_LOCALIO)
+ 	seqlock_init(&clp->cl_boot_lock);
+@@ -250,7 +250,7 @@ void nfs_free_client(struct nfs_client *clp)
+ 	if (!IS_ERR(clp->cl_rpcclient))
+ 		rpc_shutdown_client(clp->cl_rpcclient);
+ 
+-	put_net(clp->cl_net);
++	put_net_track(clp->cl_net, &clp->cl_ns_tracker);
+ 	put_nfs_version(clp->cl_nfs_mod);
+ 	kfree(clp->cl_hostname);
+ 	kfree(clp->cl_acceptor);
+diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
+index 71319637a84e61c848a296910109828c2c245d67..a5dd543494de9a59db1ec6e1efb6e3ffda2246ee 100644
+--- a/include/linux/nfs_fs_sb.h
++++ b/include/linux/nfs_fs_sb.h
+@@ -125,6 +125,7 @@ struct nfs_client {
+ 	 */
+ 	char			cl_ipaddr[48];
+ 	struct net		*cl_net;
++	netns_tracker		cl_ns_tracker;
+ 	struct list_head	pending_cb_stateids;
+ 	struct rcu_head		rcu;
+ 
+
+---
+base-commit: ee1c801410b2649b2a1c71e0fb5fe1b16fd20e86
+change-id: 20250408-nfs-testing-08fa6f66b45d
+
+Best regards,
 -- 
-2.43.0
+Jeff Layton <jlayton@kernel.org>
 
 
