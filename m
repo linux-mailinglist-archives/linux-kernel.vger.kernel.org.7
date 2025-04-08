@@ -1,145 +1,166 @@
-Return-Path: <linux-kernel+bounces-593385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E367A7F88D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:54:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7809A7F7FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C75D1757A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:51:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39F387A21E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18435265618;
-	Tue,  8 Apr 2025 08:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C359B2627EA;
+	Tue,  8 Apr 2025 08:36:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="qFUykChR"
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="hFtMJlQt"
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF91E264A7B
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93A5156CA;
+	Tue,  8 Apr 2025 08:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744102143; cv=none; b=VDQuDIJFOh7N/IP59yCgJmRKs66ekxaLDJejPa755azyLa0LNFjPMtO/EP9m38z3PEXf8+x9EHNgKy0Q1j4jaDrwEiByQ31L+JeutNyL+HxoClZTwa3ImOf5rt3V54MbxeX9Lta8NBZAHYGkZcO70nTXoupcNZGjH2rvU6twVk4=
+	t=1744101369; cv=none; b=rgmS+bkAKLm8QN3RtwMi11TMB2GlGRTlrhkscNRZ4xhc4TVA6HiU3Z80R5ZSZv7AnypEH6dJVxhQkOsMkUPWCxl7oBOMsEMkqZF9VhhtH9WSaEgc1SPEAhNqT9sDzXwwpQlrei03bYo5AD/V0xTlCTNcbF6Z0Il/DKywfjkuJ5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744102143; c=relaxed/simple;
-	bh=zqzlA9n1r9CR6wuCNl1kJxLJLTIDkxwhE6SgiF36x5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U/SHcTUunmw8f22EWZiUqk9neV5zLeC4iu38ZfE2NiUXYSNyl03RoFN12iePjk0T7MxwKIuR32cYAPHWbDTvaxccgL6Fu7aW/J+g0NT6ZmwlvRhNmeam40poXOKmcDVYKnhlVeXZNxe3sa6dd3/fFPcxp26qsNXCzH3do9t6fKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=qFUykChR; arc=none smtp.client-ip=217.72.192.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1744102138; x=1744706938; i=christian@heusel.eu;
-	bh=zqzlA9n1r9CR6wuCNl1kJxLJLTIDkxwhE6SgiF36x5s=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=qFUykChRkfs0xaQ/FVNErfJK+ceDdWGsQp5C4v3s5HS9ofLdlZ7rOZF8sxF8SA6b
-	 m2uEB1lfwzGZGI6F/3OHj8jV9zc015W4drtHLojoiGXmAduHIs/9aQIPhae4anfC+
-	 cY0a52q11bLULt0PtWsTEwkheMNXnf7ho61WWB6qRtR/AdXmSdRhdd4Ew0TA1QkHY
-	 PjQyuk2NhkxLnDx4Cr4psT3azXycttI+ZPQjFYE37aOEUzMynhipAhuAhEv5cunVT
-	 JT+iDc+a/hNIkz8eXFa0J7d3JbhSJWB8OMkF9IpCZrvmo15ZSOLN67NdnYnxavx6q
-	 BJ97jLW1QzYjrfdd2w==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([89.244.90.49]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MXH3Y-1tYr7T10AQ-00Japt; Tue, 08 Apr 2025 10:34:37 +0200
-Date: Tue, 8 Apr 2025 10:34:34 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Richard Weinberger <richard@nod.at>, 
-	linux-mtd <linux-mtd@lists.infradead.org>, Matthew Wilcox <willy@infradead.org>, 
-	Zhihao Cheng <chengzhihao1@huawei.com>, regressions@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: Linux 6.15-rc1 regression, folio/ubifs Oops
-Message-ID: <5bba59ac-005e-4994-aa22-c2565b8cdbbd@heusel.eu>
-References: <20250408082018.GA23886@francesco-nb>
+	s=arc-20240116; t=1744101369; c=relaxed/simple;
+	bh=mzMfxAueJ3ZwWsr2CHBeJPRrTw/FwTzzBC5ucJhL2fY=;
+	h=Message-ID:Date:MIME-Version:Subject:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RTaFF2ZDNGl9eUsDbOvmfff40VnyP7Z2HiEP3ZsTaDnFe8ufwvZ3+QcmOkb307SCxa9SA5JCC5akm4Cjkd5ekdF1IB7f+/U6oet/GP63FQ3Qe2l9/uoHixgYN5V8GZC5x/JwLdMjgKKa2q1dVN0uB7axNm5jlaHp7Wv6YnlXdaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=hFtMJlQt; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1744101320;
+	bh=mzMfxAueJ3ZwWsr2CHBeJPRrTw/FwTzzBC5ucJhL2fY=;
+	h=Message-ID:Date:MIME-Version:Subject:From;
+	b=hFtMJlQtddxNcHQVngIMyaVD7hc4YWJnWWMNDG0r9CDOh+urltFUYGnAWTdfSmeE9
+	 erpJiehVQwk+n5PaLaqnwwnBnPdG4qWm5xp7983uGPyByLshmuqNhKw6y5PO8jvTUH
+	 XlnQc5GGO14WUeniiJXG+uzcar+rc6ZczWu2PNcU=
+X-QQ-mid: bizesmtpip3t1744101310t5651a7
+X-QQ-Originating-IP: RmaqZH5hr4481NUI7HYifJ4cNp0cXuiOQek1MvsFBMU=
+Received: from [IPV6:240e:668:120a::212:156] ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 08 Apr 2025 16:35:08 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 14910186757885448490
+EX-QQ-RecipientCnt: 10
+Message-ID: <8BFABE0C4796C2D3+aa206f17-7b7a-4f2b-b843-7318792a4702@uniontech.com>
+Date: Tue, 8 Apr 2025 16:35:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] kbuild: rpm-pkg: Add elfutils-devel to
+ BuildRequires
+Cc: guanwentao@uniontech.com, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, masahiroy@kernel.org, nathan@kernel.org,
+ nicolas.schier@linux.dev, niecheng1@uniontech.com, petr.pavlu@suse.com,
+ samitolvanen@google.com, zhanjun@uniontech.com
+References: <215802BA292C2DF6+20250408081441.61776-1-wangyuli@uniontech.com>
+ <964B3FC2F607F2F4+20250408081921.63040-2-wangyuli@uniontech.com>
+Content-Language: en-US
+From: WangYuli <wangyuli@uniontech.com>
+Autocrypt: addr=wangyuli@uniontech.com; keydata=
+ xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
+ IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
+ qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
+ 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
+ 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
+ VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
+ DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
+ o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
+In-Reply-To: <964B3FC2F607F2F4+20250408081921.63040-2-wangyuli@uniontech.com>
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="yjhj4l62urfzefuc"
-Content-Disposition: inline
-In-Reply-To: <20250408082018.GA23886@francesco-nb>
-X-Provags-ID: V03:K1:qonpYrkuTDJlp5WFS+b383LvsXrAX+asOUbtT8PWMUg3L4yHDZ2
- sL3ShWIKXJeOAeXZbimyWpIl/S/tDjssqsmlsYyal5wBD5fnbpzWciFEE53fmLg4vGFx2Wn
- I2qjSCk2fQUO6oDVpj1e369gA+RKI4Rx6OxQaivcGqibHm22bScGmaSxt6rMs8rktAypru9
- x2UNhHZFTLBcZKQ/s+gnQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:vY5Q6X3ExnY=;KODHPSAGyWm08t5JAlsL65vsjMy
- uQ3lPmVGNyTvKm8G0ab53vBDx7abZH2IUzy0IEYzbvLtTn+3+WX3kbOVqO8GdHp1mpSyFOvOD
- o4Hb6601Zo0ohF5Qs0BYe+IYpcRrKMA5dy4n1Zpi8+IJNtyYJfGF53koNnlrdJ0r+W+QKxa81
- NG6k0dBmjuJPV0H3i0JQjTBYKtN4DJBxgQEmjvR+2kp9KGUQAVO6MDgd+1zoDT1nn892zsNzk
- 9nx8T5dtjqwJRoh6IOLzlGWlmIiyyf5JeJG56I+KBONOT7+ePZ41NQmB3fFVcA8wOjaSgXg+D
- Z4GLKMtmPQckb7wZ6if6hA06WWqpIy0NnuC7jzwEVMUF18oKpBdG6BBpKZz4ioHML0kvT//nR
- 1Jet03DMx2ZqQGNeOF/CmbrD+tO++QSdAzEU9M2Hvwf93XiS1Jw4Br5bG32hKQqXhlhEHv40U
- DGeKzCiBtgrrWx0YvARuTIkP5Whm5UwkRzl2dGvnB0fr/G4AXi3FkO+mhQg5AF0HbapLD3G7Y
- mt335Jv9JtxL9gr56reGAn2zZOSRz1gD6cthwWWUO0ZsUDs8Fwa7UMIjpl+LtWGosK0F92OKe
- QF33QFo9MQxkJy4RvxnSU2WVIuoTNmJ6ZNLefcgZEaOu+rnqIpey1Rqiyl2R/IR0clSKcCjSL
- vOZeU4NEj6pzhtysYxrKBP6dlpUOYYCOKF9HIP9LO7fg2X2k8VCkUWduXddlAmdu/tZFoDFIQ
- jDRgBw1SE3ES+bSTDVuek98Jf5tBen7X4m7MXkMxMvWS8lw27RR0daat3WJMKc7bfcBUs0kdK
- qq7Uosyz8hh4hXZwfN2EYadY03CzV7q8sMwNZCA26z+7AXlaWCNDbdlb347S9nBSV8dT8n8Vy
- 600m4rpKAeKaUEzgD9QE1Wwb/Um4cAzkvwwNMKyDSKZhQvxOXZdqeRaSNuDuAI+xXS4i2PhOB
- P85SIk314J2a5hurbC6Q0diXYVk6dyze3G1SVmNZW3EEtNtgV9r9Db4GKPwpsAt2i4wj8OQ0q
- FbCLi/ez9NyMPl2lc2NIMAThoE2dN0T+KH5XH7VWlf65kvLSxtOTRBgFiuEZM7MWbaUfheB4D
- bfoyEJwXb50CqUgKZtJN3g+JjuWxbMriVnHdZ/E2akntGL5xFC8+gQc1O8ZUK2l+z9E11tcV+
- LATCrs2hihd+MYg5cbbYUeoI92U32OO1cOoIwnHHCdcR2E10T8SKkBkpJkc7X5C49alfCXwYX
- zQ1W37B3/rQMsJRv2yr4ZgYiTxpF653AcMby5e6V6ETZY3lLkF93eHGQt+1tDUMDMMlOYUfad
- 1kdWkY6o28J8TD+/fRxPlOpoNxiTGe4fNVYnLk3459lHVKrrs1WGazc8lt4KtfGB0Bi28GMAI
- EnSs13qxr1onWRw6PhAlnVQTr5SMz2SUA+YNo=
+ protocol="application/pgp-signature";
+ boundary="------------2wVuXK0f0SL55SpJ26paKBNj"
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NSTiGhYb0MY63XCGtQ3oK413sB0gefN1AOvvv1ye2rWcMwO4Wc3U08V/
+	dAlTJ9GZqYdwgdoEIC8jzybs+o+uj6uLi06e136UvBeabAVW5SVhdc12gJ+fTTU7tPJJzie
+	pWdCV3+aNrpvM2WZ6DKqTtFgqKK7rx89RrPXBvoEDigWlvpkpj2M4m5m8QlAqOxh3DP1mWq
+	Yt6bD9KhDEyLk9DzarnNUwnx9ftpomAStcmOhg1EPCVPLNEc3enDwVWDxjQWTltBsxYWBo7
+	jrlGsy/yHojMiwIes8r5fwiQSdPYNlJQ3MOeXjYZ6fbMTTf8bIAs+Zt5X553ckuPMRFD3BJ
+	4dIyO3eZm9nGDFyy65lizrfQzSIHEQ/V2xQwyid0TBgUP3V2cffh5l+lRj56KwgWtmDsL93
+	ePY/U/C/+vvdN9blk3l8hDjxF2HmW4FJx+d16VB90NAGuBwwmXhZakoLDa4QDuTAR50Nap/
+	TgZnHhKp7ysI9lxmtblSD2RqLQ9DJe4kTkf1vxjvmV7orOpq3Z5WpiHcsnXiksoSqaXofdQ
+	03OaJpByHBNlPxcJwK1ZQ1F1bX+rhEotJ88O/c/kiakYjvBYetNZrt58AEgZvTB4gzKHXKu
+	sKsCgTV2K6ej1F4LPh4i9+Y2jN0d1ZVS1f5078Y721WMLV0JYnkz0WE3HUkYoqsoZA8ECn3
+	dosiKrcv5XYnMvbkKD7Bqrxm1uwDE0oCZU4VE1Q8WAcj0/OO7g6+li6pl9UpGeS96L0FotX
+	nfwYOq9X9wfAYiJdfsJo+doYeyUpYFngfE7ycnrP3C87QAhS4FW+ogVu1f82eDjXkYPJL3e
+	j1jrjeE5j4g/cSdRn0EmQevAsIDa9VFwbVsPAVkgVyqPbvBV7VRYBnrHT7Eh/zpJJIKpQqp
+	xrBk2S2JxKdHOM26XeoBiMNddN67kUE5Wow9nfV/rUdqDzzRPzCUQakCAylUhGces9OTMQJ
+	dMHP4vLKjJ9X2R0ayJHB7+IyR4yHNpmeJVUd2EbCpOtJsexnEKzx5x4ZarPcd0ig7xICtKN
+	X1LK3mmRW3S3DNKR6TThWSVTOeuRsNmfo8Recr6obBqyTeZV6o
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-RECHKSPAM: 0
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------2wVuXK0f0SL55SpJ26paKBNj
+Content-Type: multipart/mixed; boundary="------------tOXAy93uQtA6f5XKoqrdW45E";
+ protected-headers="v1"
+From: WangYuli <wangyuli@uniontech.com>
+Cc: guanwentao@uniontech.com, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, masahiroy@kernel.org, nathan@kernel.org,
+ nicolas.schier@linux.dev, niecheng1@uniontech.com, petr.pavlu@suse.com,
+ samitolvanen@google.com, zhanjun@uniontech.com
+Message-ID: <aa206f17-7b7a-4f2b-b843-7318792a4702@uniontech.com>
+Subject: Re: [PATCH v2 2/2] kbuild: rpm-pkg: Add elfutils-devel to
+ BuildRequires
+References: <215802BA292C2DF6+20250408081441.61776-1-wangyuli@uniontech.com>
+ <964B3FC2F607F2F4+20250408081921.63040-2-wangyuli@uniontech.com>
+In-Reply-To: <964B3FC2F607F2F4+20250408081921.63040-2-wangyuli@uniontech.com>
 
---yjhj4l62urfzefuc
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+--------------tOXAy93uQtA6f5XKoqrdW45E
+Content-Type: multipart/mixed; boundary="------------Lm2SeCT0ensXmBg7P1tPw32s"
+
+--------------Lm2SeCT0ensXmBg7P1tPw32s
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
+
+QXBvbG9naWVzLCB0aGUgY29tbWl0IG1lc3NhZ2UgaGFkIGEgc21hbGwgcHJvYmxlbS4gSSB3
+aWxsIHJlcGx5IHRvIHRoaXMgDQp3aXRoIHRoZSByZXZpc2VkIHYzLi4uDQoNCi0tDQoNCldh
+bmdZdWxpDQoNCg==
+--------------Lm2SeCT0ensXmBg7P1tPw32s
+Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
+Content-Description: OpenPGP public key
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: Linux 6.15-rc1 regression, folio/ubifs Oops
-MIME-Version: 1.0
 
-On 25/04/08 10:20AM, Francesco Dolcini wrote:
-> Hello all,
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-Hey Francesco,
+xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
+P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
+FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
+AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
+bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
+AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
+GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
+7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
+/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
+=3DBlkq
+-----END PGP PUBLIC KEY BLOCK-----
 
-> I do have the following regression on single core system using UBIFS,
-> dual core seems not affected, any idea?
+--------------Lm2SeCT0ensXmBg7P1tPw32s--
 
-could you try to bisect which change has caused this problem?
-This usually the best way to pinpoint the commit that causes the issue
-and either get a fix or a revert on the way =F0=9F=A4=97
+--------------tOXAy93uQtA6f5XKoqrdW45E--
 
-You can find the relevant docs here:
-https://docs.kernel.org/admin-guide/bug-bisect.html
-
-> Francesco
-
-Cheers,
-Chris
-
---yjhj4l62urfzefuc
-Content-Type: application/pgp-signature; name="signature.asc"
+--------------2wVuXK0f0SL55SpJ26paKBNj
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmf035oACgkQwEfU8yi1
-JYWgOxAAvhglW0Uz4Z/ODifFww4icGEshUUXIPnNmmCDdBhKgySaOyAOY+UMErNQ
-pN8bHEWr1EDpLX7aIze88pLQalCs48wKfFoVZch7Q87Wde9MZqti5ls75VGCTwvP
-+bDtUm64VRsLOShejWodpdDO0M8I37K/8jMA5E3qujXmqaxXtGtZEvnmHZA3hJAQ
-b5k6of/UxRJySe31B8DHQR36FOX9y4Fq3fp37MOZk5ROGC2C3xv2SNF/iWDEiRFB
-4+hcfoqW25n73v819Balrrv9Zr5g45a7eoS4PXuF0Ugy08vKaWGfB+Cl+FODRtqs
-EPMuXmJJgLiNzldX68GZ31L1So7e6ze3z3IJC2PZuaN+EqAxXTtFT+IKuKxvvRHj
-KI0oviYlE3h2sPX3UD+PK/7lKOcMkUo8CkOvvpLuXMbUstkMXz2xm8M7a/JxQdz6
-KUpddMAdDCe1eTS6N2QVVJ3RG6j6AZD54/1+9N4+HibYlH6mnnPeLccJP1Y11b9p
-7WrYzCjn3uIuK+haw7JYaMZjcWAzwTQlbKWBn3j6FDziqtCQ3h0zX5Vs+1PPFv3/
-x1tqNw6atqQhNgtUayk6vft37XDonDtkgTsKhLP2lom3lCepS5TNo6T3wfANCSey
-uOdLYUphC04ChRKsNFMkwiBz1ommmgM5xUUaXwgrBkL/lj6Z9Xo=
-=UHYC
+wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZ/TfvAUDAAAAAAAKCRDF2h8wRvQL7opS
+AQC1V6d2v5Hcnvb7l6YxFnsat/OKQtYLieifSNxFBngMwAEAyIqSopo14HVGSxPsczJAVYDfyPjF
+Tfb0rQzTV6qiZwU=
+=+Lmv
 -----END PGP SIGNATURE-----
 
---yjhj4l62urfzefuc--
+--------------2wVuXK0f0SL55SpJ26paKBNj--
 
