@@ -1,153 +1,149 @@
-Return-Path: <linux-kernel+bounces-595006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58F99A818F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 00:47:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6FD6A818D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 00:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 837163AF953
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:43:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 907F24A5A71
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53ACE254B02;
-	Tue,  8 Apr 2025 22:43:38 +0000 (UTC)
-Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BCC2505D2
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 22:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DEDD22AE59;
+	Tue,  8 Apr 2025 22:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b="i+6eRQ1b"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F65A13C8E8
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 22:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744152218; cv=none; b=QD7OY68nfyErO4QX1ABp9dxvnyCuNTOlCCyNdq/UqcArgsIsrviO3j148olfk5THVh562t2245KbaUu1v2v2ArRRrgkwF1/5jo+8ZZULdMudLVT97s7Y18/NnSDD1VutRGh+MHtbJi/qTwBAF25JzKMPc/B4aFtuTZbwTfnuMek=
+	t=1744151824; cv=none; b=CO8b90nU4dVuRnv0CmlJiHHiGIro/wsWVpUt/rv2kkLXM0pBpJqniOOzaGnY+T+6sbuzswYDE1V8IGY8WnVBBAYFCaAS5hgD1AKQey7IHKFuYz14OincVAPxHx5TjAGAyw0+7KP5j55K3rQQQ+xpS+tM+TCC+DqEf14R+8aCvk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744152218; c=relaxed/simple;
-	bh=AmYdHqfVjCD657SNQEqPNHqdMzSO27jBYYDSCQbGIPA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jrSZTlct7k8gct4REB3kWe730Wv3YVrOixedQe+sGXb+JcgTlSs0bqzKTWWNEYJxv8V5QOwNNhttiYdEvOQ70JmPTr303p0F+9wmHK/1gKROJ4kSdUL0Pj6o+aiU/nTvBfzucZa/w63HceYXOWcIrQ1d/ytu6roMQ7Lva5d20yM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-	by vmicros1.altlinux.org (Postfix) with ESMTP id 0DEF672C8CC;
-	Wed,  9 Apr 2025 01:36:12 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-	id 0053E7CCB3A; Wed,  9 Apr 2025 01:36:11 +0300 (IDT)
-Date: Wed, 9 Apr 2025 01:36:11 +0300
-From: "Dmitry V. Levin" <ldv@strace.io>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Arnd Bergmann <arnd@arndb.de>, strace-devel@lists.strace.io,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v7 2/6] syscall.h: add syscall_set_arguments()
-Message-ID: <20250408223611.GA26876@strace.io>
-References: <20250303111910.GA24170@strace.io>
- <20250303112009.GC24170@strace.io>
- <20250408213131.GA2872426@ax162>
+	s=arc-20240116; t=1744151824; c=relaxed/simple;
+	bh=W8mcQh3ZmLOOqUw0pQwZjxi7DB9VMzXrDl2urotDVQM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=deN84SP5LN4xYrx39nZXGwE8ypb05CaFJ5edl0tn6HtW1bN5IrSViQ6aXmzoJRPAG79tB9SEeAMKgqtdP7jJRr5zxFoV6Ao8C7vopQjVPkpfyXH6TeakiAnBXuEXbiWN9Zg8YwXbggZxccd0d4yVnzJvaPN2S67Qk9HCcJybWo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org; spf=pass smtp.mailfrom=neverthere.org; dkim=pass (2048-bit key) header.d=neverthere.org header.i=@neverthere.org header.b=i+6eRQ1b; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=neverthere.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neverthere.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2243803b776so85483215ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 15:37:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=neverthere.org; s=google; t=1744151823; x=1744756623; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=djup849pfpUwDc+nIoOZqJLc+04WNO/1d356og/BnVI=;
+        b=i+6eRQ1byKeWny2NrfYlW1z+qlSNRALw9euVv2WTgTJsjELV55hsC/c+jEyjIT4WDP
+         g/mO51Wsmfy+Vs1tpc93YvJzSk1qtNO2/2cx/y6hZsROfAylORMAI3UiD7FcctnpnNFA
+         5tvn98J3OzufyrcGb1FJUde03pPo3FC/8Nwv9uQnFRUdpHQAQ+AiQvNziihsnNe2QzHc
+         DopKNaRY/bxC7rA0WW92PsC8f723Id4cFrdyYGSBKLQqiItfRDKC7OVcHXlc7Oxlzmo9
+         DzYANW+N4o7Wvxi7vkCRw38JEfTsH1LQTWK4d6s5Bu0m79ZVxHoXMopHhPPaLUnhuP67
+         62EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744151823; x=1744756623;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=djup849pfpUwDc+nIoOZqJLc+04WNO/1d356og/BnVI=;
+        b=Hdj+FLe+kueo5+rZSR7Wm/lLVNJPLzxO+NrPFBcTIblw5hgglTg//i4DBJwaUB+QFo
+         9hEhO8dZ50D+B7SZ1KWhxeFug3TimfA4mIO5PXN5VutHhYzV/1tONl+x8L2yVH+wLYlM
+         UxuRvbXopKP0V686kZ/utx3aW8L1mUx9lGxoTJQN3kb1KXg/++kiDmqxTRqwPwcW5eli
+         y0x5pwQs3HZDdEpVZO4PvXvAmcAMObTub7rf9L8jgPUjVsIJMUggtP86pFveNtJ2mtGh
+         mVrkG2l3QFz7eb+0hHwC/a5iJfwQG2t3uvQ6lIkveHiBaYbBRJtr9DAjvkyloH5/1QQM
+         2ayA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqQrQWDBYCmM4sbVPQucKiwQynH+Wu1RzwzxtKlZPVp6576Sisei/2j+OF9WtQ4o5U7jHSY74D56ZDAto=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzrkh8EWouC4MEsPsKjg0rv6mZDfxW4b44at2rHMHHAvFc+lDre
+	4rUM3JUmXYkI4TVtCZ13CLLxFdGolLehQNjzE0aE/X6HxZJJFX5AV9j8+joRWg==
+X-Gm-Gg: ASbGnctczP/7CYnhnH0jpoI5V+gNKqWT6yh+xJlSHojLR8A4KjXL5kwH+Ho0MY2ik00
+	pSrpZwA1b+zhC+K9zxHJt/+tkY/b28NVfNFIF1hm8XB7c/rpqhGXNx4zW5+x6VJM1rnhXp8Wm6q
+	i8VFt7UixBocOqHjQHqp+Nv7CWmxqbfArsVp0bygH6OCSw9ny6bxqD7N83lua/SLq+Q6JSAPFgI
+	kgSfykmrYXMbd1FGpGZB4b6eNAH08t5aMBV01qfEMA3jF9DxoP9FUAJPy0o1a0knKwQy2iZ+bVK
+	Xm8CWofYrLNBpjL1NOGzy039+Y5TuIFUcyuHcMoyzKMgiX74LnEMdOds8IVdl15PqatvHEXjgNg
+	jGr77HYsytA==
+X-Google-Smtp-Source: AGHT+IFoC+ycacdqJ0GJ8O0Y+m7ZEKHT6NqjdT697VABH348dSO8i5PlEDCHOP7yiQ32COa57ZCdaw==
+X-Received: by 2002:a17:902:fc87:b0:224:c76:5e57 with SMTP id d9443c01a7336-22ac2a1d993mr10783375ad.39.1744151822871;
+        Tue, 08 Apr 2025 15:37:02 -0700 (PDT)
+Received: from tiamat (c-69-181-214-135.hsd1.ca.comcast.net. [69.181.214.135])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd568a6asm41233a91.1.2025.04.08.15.37.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 15:37:02 -0700 (PDT)
+From: Michael Rubin <matchstick@neverthere.org>
+To: gregkh@linuxfoundation.org,
+	dpenkler@gmail.com,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Michael Rubin <matchstick@neverthere.org>
+Subject: [PATCH v1 00/18] staging: gpib: Removing typedef gpib_board_config_t
+Date: Tue,  8 Apr 2025 22:36:40 +0000
+Message-ID: <20250408223659.187109-1-matchstick@neverthere.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250408213131.GA2872426@ax162>
+Content-Transfer-Encoding: 8bit
 
-Hi Nathan,
+Using Linux code style for struct gpib_board_config.
 
-On Tue, Apr 08, 2025 at 02:31:31PM -0700, Nathan Chancellor wrote:
-> Hi Dmitry,
-> 
-> [dropping majority of folks since this seems irrelevant to them]
-> 
-> On Mon, Mar 03, 2025 at 01:20:09PM +0200, Dmitry V. Levin wrote:
-> > This function is going to be needed on all HAVE_ARCH_TRACEHOOK
-> > architectures to implement PTRACE_SET_SYSCALL_INFO API.
-> > 
-> > This partially reverts commit 7962c2eddbfe ("arch: remove unused
-> > function syscall_set_arguments()") by reusing some of old
-> > syscall_set_arguments() implementations.
-> > 
-> > Signed-off-by: Dmitry V. Levin <ldv@strace.io>
-> > Tested-by: Charlie Jenkins <charlie@rivosinc.com>
-> > Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
-> > Acked-by: Helge Deller <deller@gmx.de> # parisc
-> > Reviewed-by: Maciej W. Rozycki <macro@orcam.me.uk> # mips
-> ...
-> > diff --git a/arch/riscv/include/asm/syscall.h b/arch/riscv/include/asm/syscall.h
-> > index 121fff429dce..8d389ba995c8 100644
-> > --- a/arch/riscv/include/asm/syscall.h
-> > +++ b/arch/riscv/include/asm/syscall.h
-> > @@ -66,6 +66,15 @@ static inline void syscall_get_arguments(struct task_struct *task,
-> >  	memcpy(args, &regs->a1, 5 * sizeof(args[0]));
-> >  }
-> >  
-> > +static inline void syscall_set_arguments(struct task_struct *task,
-> > +					 struct pt_regs *regs,
-> > +					 const unsigned long *args)
-> > +{
-> > +	regs->orig_a0 = args[0];
-> > +	args++;
-> > +	memcpy(&regs->a1, args, 5 * sizeof(regs->a1));
-> > +}
-> 
-> This upsets the compiletime fortify checks, as I see a warning after
-> syscall_set_arguments() starts being used in kernel/ptrace.c later in
-> the series.
-> 
->   $ make -skj"$(nproc)" ARCH=riscv CROSS_COMPILE=riscv64-linux- allmodconfig kernel/ptrace.o
->   In file included from include/linux/string.h:392,
->                    from include/linux/bitmap.h:13,
->                    from include/linux/cpumask.h:12,
->                    from arch/riscv/include/asm/processor.h:55,
->                    from include/linux/sched.h:13,
->                    from kernel/ptrace.c:13:
->   In function 'fortify_memcpy_chk',
->       inlined from 'syscall_set_arguments.isra' at arch/riscv/include/asm/syscall.h:82:2:
->   include/linux/fortify-string.h:571:25: error: call to '__write_overflow_field' declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror=attribute-warning]
->     571 |                         __write_overflow_field(p_size_field, size);
->         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->   cc1: all warnings being treated as errors
+Adhering to Linux code style.
 
-I certainly tested the series on riscv64, but somehow I haven't seen this
-compiler diagnostics before.
+Reported by checkpatch.pl
 
-> The compiler knows the size of the destination and the size to be copied
-> so it knows there will be an (intentional) overwrite here.
-> struct_group() would normally work but I think this structure already
-> has a struct_group() around some of the members that would be needed. I
-> build tested eliminating the memcpy() altogether, which would appear to
-> work, but I am not sure if there is a better solution, hence just the
-> report.
-> 
-> Cheers,
-> Nathan
-> 
-> diff --git a/arch/riscv/include/asm/syscall.h b/arch/riscv/include/asm/syscall.h
-> index a5281cdf2b10..70ec19dc8506 100644
-> --- a/arch/riscv/include/asm/syscall.h
-> +++ b/arch/riscv/include/asm/syscall.h
-> @@ -78,8 +78,11 @@ static inline void syscall_set_arguments(struct task_struct *task,
->                                          const unsigned long *args)
->  {
->         regs->orig_a0 = args[0];
-> -       args++;
-> -       memcpy(&regs->a1, args, 5 * sizeof(regs->a1));
-> +       regs->a1 = args[1];
-> +       regs->a2 = args[2];
-> +       regs->a3 = args[3];
-> +       regs->a4 = args[4];
-> +       regs->a5 = args[5];
->  }
+In general, a pointer, or a struct that has elements that can reasonably be
+directly accessed should never be a typedef.
 
-I don't mind eliminating the memcpy() altogether, but
-I'd like to note that syscall_set_arguments() is an exact mirror
-of syscall_get_arguments(), so if the intentional overwrite in
-syscall_set_arguments() is not acceptable, then the intentional
-overread in syscall_get_arguments() shouldn't be acceptable either.
+* Patch 1: Adding "struct gpib_board_config"
 
+* Patch 2 - Patch 17: Replacing gpib_board_config_t with
+            "struct gpib_board_config"
+
+* Patch 18: Removing typedef for gpib_board_config_t.
+
+Michael Rubin (18):
+  staing: gpib: struct typing for gpib_board_config
+  staging: gpib: agilent_82350b: gpib_board_config
+  staging: gpib: agilent_82357a: gpib_board_config
+  staging: gpib: cb7210: struct gpib_board_config
+  staging: gpib: cec: struct gpib_board_config
+  staging: gpib: common: struct gpib_board_config
+  staging: gpib: eastwood: struct gpib_board_config
+  staging: gpib: fmh: struct gpib_board_config
+  staging: gpib: gpio: struct gpib_board_config
+  staging: gpib: hp_82335: struct gpib_board_config
+  staging: gpib: hp_82341: struct gpib_board_config
+  staging: gpib: gpibP: struct gpib_board_config
+  staging: gpib: ines: struct gpib_board_config
+  staging: gpib: lpvo_usb: struct gpib_board_config
+  staging: gpib: ni_usb: struct gpib_board_config
+  staging: gpib: pc2: struct gpib_board_config
+  staging: gpib: tnt4882: struct gpib_board_config
+  staging: gpib: Removing typedef gpib_board_config
+
+ .../gpib/agilent_82350b/agilent_82350b.c      |  8 +++---
+ .../gpib/agilent_82357a/agilent_82357a.c      |  4 +--
+ drivers/staging/gpib/cb7210/cb7210.c          | 12 ++++----
+ drivers/staging/gpib/cec/cec_gpib.c           |  4 +--
+ drivers/staging/gpib/common/gpib_os.c         | 28 +++++++++----------
+ drivers/staging/gpib/eastwood/fluke_gpib.c    | 12 ++++----
+ drivers/staging/gpib/fmh_gpib/fmh_gpib.c      | 27 ++++++++++--------
+ drivers/staging/gpib/gpio/gpib_bitbang.c      |  2 +-
+ drivers/staging/gpib/hp_82335/hp82335.c       |  4 +--
+ drivers/staging/gpib/hp_82341/hp_82341.c      |  7 +++--
+ drivers/staging/gpib/include/gpibP.h          |  4 +--
+ drivers/staging/gpib/include/gpib_types.h     |  8 +++---
+ drivers/staging/gpib/ines/ines_gpib.c         | 23 +++++++--------
+ .../gpib/lpvo_usb_gpib/lpvo_usb_gpib.c        |  2 +-
+ drivers/staging/gpib/ni_usb/ni_usb_gpib.c     |  4 +--
+ drivers/staging/gpib/pc2/pc2_gpib.c           | 12 ++++----
+ drivers/staging/gpib/tnt4882/tnt4882_gpib.c   | 12 ++++----
+ 17 files changed, 91 insertions(+), 82 deletions(-)
 
 -- 
-ldv
+2.43.0
+
 
