@@ -1,140 +1,126 @@
-Return-Path: <linux-kernel+bounces-593200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D54B9A7F67A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:37:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA69BA7F6FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5FEC3BCFDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:37:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17E053BF11B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5D9263F27;
-	Tue,  8 Apr 2025 07:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31C82641E1;
+	Tue,  8 Apr 2025 07:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JnQWSaZx"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="BKLZSlXi"
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA17263F24
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 07:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02C02620CD;
+	Tue,  8 Apr 2025 07:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744097732; cv=none; b=L+vWeKAaJzBSLP8wLEMkYVnTWY21kFkD1v34cbRr5JfT5iv8ndjmTamC6fs8qDOvT4eICLaIbqSTKD7m+lDJO1IjPRXMY7qxpGzy8ln2TvYf5WJyegfDqFZsJLEZPT2/vJ/PBxfRV1h7bBNhaYIgHyZ47F8o0V8hZhOO+uHeeKY=
+	t=1744098069; cv=none; b=OhVvMH7H8qt6I8sGUkc5gAlfPqA55q0t2m13GwJaGFQJkLkYryyL+d3vpUZyQKZUvklecopDwXYC00+ExnCjoSdIzDYZinpFLkxb0903r980y7fvQm5bZz7pyl8KhrYM3r2b0QD6R155uuQcrWftfi6cOSWbn7F04vEkt/B9oog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744097732; c=relaxed/simple;
-	bh=lT5mKdSlq8oPEv2oBvQ90+eQd2L1YXxqPfN8R/eFRE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AE4LVRUKxtcZ3eX1Nv5NLxdpiwlJpndjdyDZDb6H5wP4t+4uiNBakckBE3bQ1tEiAUwDiL9tJQ1wB4CP3zbdR7vsW+/SmbrGr+5Z2kF8fBX7lyrShdn6OPcT9jzHe1qvrImKE1DQ13iKc+lgaIuh0lesu68561PZdTSB0ItrN7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JnQWSaZx; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so23014135e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 00:35:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744097729; x=1744702529; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bzDOAHoHmGJFY2C4m+oCbnEJZ1yOWSsgLDpINkYOwtw=;
-        b=JnQWSaZxGQ8u8bxeKuhWxZtROTpv1UdpcKMxAlked7NqrEL0rYhgWe+0+UsT20yj5E
-         9fyMpx6PhxHne4v/PcNgkVnApKe3Zof0j71+YGACPwufsRkvTRDp/Emqf/nJlWOAFka8
-         AE4r9Yhzbhw54PnJKao38xgS4hmCmFdBzj8IF039TdTfHpIJf8oMdcJZZPYfdhuEtTIS
-         kzunyLWUxK2zNSCTnaSUaWGJC6rTNmxJPlU3GDUTSaclpwcn4j/jGC7GPS1ojp0OWLbd
-         r3pgsEYHch3JhztDjZ5OsCFvgZ7txmUlugPImCiHwiTjS7VkV1Tj3+ZwzM5Ee3VHczXK
-         Abww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744097729; x=1744702529;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bzDOAHoHmGJFY2C4m+oCbnEJZ1yOWSsgLDpINkYOwtw=;
-        b=FkjBb38RlxL3IAwHKNka1FCTMxU73BPkfFu59q0qe7JEfcsSabSTi9t7Dj8U05onJJ
-         k+/6Yb+88Udn9G2LpKG/SUSPGiTXUFGdltjlu4K6nJ2249pKphPK4G8m6/62MlydcPLm
-         th59FPhkt/8sWKfKqp/anj4KM7m78f1NpcistjmS9vMJzR5nm/ji2vRO9SmNrji8f031
-         RZVOU0eoeKhWIhnKjipmGkjWjAaoO1rYzDZKEzVdhbcDxf5aXw4/R3TWwNn7G6VS6UpE
-         STkonDyrxd4nSXGrVnK/QvJv1dihbKBrZnQcQBVje8b/0+ey3BnH/kcRXSa7pnDNoQry
-         HUcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9v6mRK7jyiRw5BNimM4mwgEbb1e5bjepZ4v9b2JvuQqrC4M7NjPG6rvZja9w7ZiyBxEgj24Q0h4woyQM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpzOyO2oalRiscOKGqOwK6tfZfnPgdS9GxjD1bBx5TCvhLVrNV
-	qIHb4f0u7+DlNtcL1dMDq86shREBGoOxxfy8M+HZnmWeJ2Xbcbl4y0I8o5lObCk=
-X-Gm-Gg: ASbGncvH5JvOgzczFjrWTObZrZEqC2nA+aiPzjzNRCXko5zQccHxLvCihcG83g3aDD3
-	XrFy8E/lnxnYjDLr3szgHvLTwhNpHV6pCerKJRviXJW3NeVVq50+l8d+ppgyQouINBCeCAdSYzp
-	rMHgf3I0OLj4dOxphGft8QYPZgqVxqYubTpYxy3fpRzlaPjRjlUeul+0su7S/c7wkx0d8V/iv6X
-	LozUclV6hwANfrAokYkW5fP97ot15pSsJXwo3RC6dHTQW4US5s3EQ+gXaNPCFNEFyDlIt6lwL2n
-	mc+S2VFBSAPJRxIPhhqXKMBOxJa7Oj3Onvr6KWtJWVs=
-X-Google-Smtp-Source: AGHT+IHJ4HfDuWG19jV3pAC/z0UwKWS4vohMre2m90wxX+hddBFsMJUEGHrkQ7C6iLrYU3yh7T2Htg==
-X-Received: by 2002:a05:600c:8719:b0:43c:f85d:1245 with SMTP id 5b1f17b1804b1-43ecf8e7321mr170671655e9.17.1744097728808;
-        Tue, 08 Apr 2025 00:35:28 -0700 (PDT)
-Received: from myrica ([2.221.137.100])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec34be2ffsm151346185e9.22.2025.04.08.00.35.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 00:35:28 -0700 (PDT)
-Date: Tue, 8 Apr 2025 08:35:27 +0100
-From: Jean-Philippe Brucker <jean-philippe@linaro.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, virtualization@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: virtio: pci-iommu: Add ref to
- pci-device.yaml
-Message-ID: <20250408073527.GA2279090@myrica>
-References: <20250407165341.2934499-1-robh@kernel.org>
+	s=arc-20240116; t=1744098069; c=relaxed/simple;
+	bh=VmrdJVDpTY1Y3BF9QzGsEsk2pkeTQKYXt41LsIyEfyM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nU6dQWWxVXG6nBWU1sBK4QBJrSJ73ZEEvkS67otGiJdmOq8qi5sFixBFVxep7WjnqZUV9bvRUoXhbZAxEU5lmRiomXwrJfFpXwoMUvc77bVOEQDDTwwX8kfc2QpFvv6UZpFSqmwfgI+M0Zj0gTWJrjihqL6MtExQcauJcH8JzYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=BKLZSlXi; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1744098047;
+	bh=CwKUleQf27cGcf66047RnWHjOqMcyIi/LBBDO1qSzAM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=BKLZSlXiwOS0ObJ8zdUczG1rUS1ZL2dEPFY1urmf19WwO2hi1pyfZKZz17LsAyV9B
+	 f/u/M4HoLlv9WY6YV8EssNEPQyRxdGH2d2AF+mcduMmLOKtqs3HNv0BLLAFSpzjh/w
+	 8oDqoRKsctdG9NWWKeWP9IoFCTPlXglH4CIVhfN4=
+X-QQ-mid: bizesmtpsz4t1744098041tb64312
+X-QQ-Originating-IP: YLpLnDErj1dtfcCfWuO3BojoYWQCqOM0zq8eEbVCJxE=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 08 Apr 2025 15:40:39 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 8994852775391133971
+EX-QQ-RecipientCnt: 14
+From: Chen Linxuan <chenlinxuan@uniontech.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	Chen Linxuan <chenlinxuan@uniontech.com>,
+	netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 nf-next] docs: tproxy: fix formatting for nft code block
+Date: Tue,  8 Apr 2025 15:35:50 +0800
+Message-ID: <E25F951CDC9F22B2+20250408073550.3319892-2-chenlinxuan@uniontech.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250407165341.2934499-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-1
+X-QQ-XMAILINFO: MMREUZv4wJ7/uOrne6X5SSbeT+Yka9zVShie8oIcWhB2JdLJ5WW4MiZr
+	EcNaNn5OQy4bG0OswoJSKhKIxzRSTx8Ji7+YbJzGszsZ8swRuLITYCvaV75cop7PcdiT53B
+	Tv7gyq+M57NR8SB4wgCAM9Za1FVwoE7GLC2D0d7uJ5/eASbI4KET6cJJwKrNoBONKOPt6ZK
+	zhgULO6RkpBxK639RfIcrXaO5fmMxhpCoTi11CT8ViQimX2togtb6AC4vPfm5lsDzJ2wi54
+	Xk8ruXvnMBGOZzFyMTewDewcl4hSax4NknF/qpnG879YSKMRYWopOklFOisHVy+IDv3kfyc
+	E5FP+wSmH7Mh8Yv3mCk4id7pYXqxnFtE0ICnSUgPJBbPVpSodbLh5+DWNKtdQ6TILvQLkby
+	kVxVC1glPfD0e4hLg1A/1F37cqJZJxtKJR/X3UiC8SQCwJ6ObNth0QFb5MF+04L9GxMp28i
+	YN/+VoGG0SwWME66wZWCXhtYVYvMiTLTjbNhVPwaQa6MDjt2sL8jIKVPS8cJe8pnugeVdwn
+	f3vaUEbY8GHZwM4SE8loBmWQeZQAPGRAQNiannu2ZUsw5bNHtOWjrE0GMbnuLL6bGJ9KBbM
+	4MH1SqsuSL/aR/LlDtSWShsx1UyNy3kEiQu3cK3LXzPKw+iuipmLOgAB5LbkGFXa78aMa08
+	XcZR8u+ljZtIKTsbyeaMZW3RgG73Gf8TqBiOKW1CI02vsvznzkiiZ8K0CJ4CkuXapzUyzqs
+	U/CHkHFGQkyocjPZYxkajOOuOqs5NfWIyg8hSALnrQ+jk+wviR46TfyiGyn3NzOc/be4v2T
+	bpGsWOh6JyvHKz2flezWYgXJb09DfHzt1aBj7F8gdtaNjetsLUsxUKKku3/JO78xazNwsXK
+	o9cJriTCtnByBjDEIf54djXIGwmsKc4l8lC9GevAYyN9l9CAG9UXQzY/og/IBFV7FM+H76L
+	vxK9Dvm1Xl55Uj/pE1lX3+QYIOJcuIiVwZ7+o4MtD7qmun35OMrdZaGam
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-On Mon, Apr 07, 2025 at 11:53:40AM -0500, Rob Herring (Arm) wrote:
-> The virtio pci-iommu is a PCI device, so it should have a reference to
-> the pci-device.yaml schema. The pci-device.yaml schema defines the 'reg'
-> format as a schema, so the text description for 'reg' can be dropped.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+The nft command snippet for redirecting traffic isn't formatted
+in a literal code block like the rest of snippets.
+Fix the formatting inconsistency.
 
-Reviewed-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
+Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+---
+v2:
+  - Update commit message according to suggestion from Bagas
+v1: https://lore.kernel.org/all/CFD0AAF9D7040B1E+20250407031727.1615941-1-chenlinxuan@uniontech.com/
+---
+ Documentation/networking/tproxy.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> ---
->  .../devicetree/bindings/virtio/pci-iommu.yaml          | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/virtio/pci-iommu.yaml b/Documentation/devicetree/bindings/virtio/pci-iommu.yaml
-> index 972a785a42de..8bd6ad72ac7a 100644
-> --- a/Documentation/devicetree/bindings/virtio/pci-iommu.yaml
-> +++ b/Documentation/devicetree/bindings/virtio/pci-iommu.yaml
-> @@ -20,6 +20,9 @@ description: |
->    virtio-iommu node doesn't have an "iommus" property, and is omitted from
->    the iommu-map property of the root complex.
->  
-> +allOf:
-> +  - $ref: /schemas/pci/pci-device.yaml#
-> +
->  properties:
->    # If compatible is present, it should contain the vendor and device ID
->    # according to the PCI Bus Binding specification. Since PCI provides
-> @@ -33,12 +36,7 @@ properties:
->            - const: pci1af4,1057
->  
->    reg:
-> -    description: |
-> -      PCI address of the IOMMU. As defined in the PCI Bus Binding
-> -      reference, the reg property is a five-cell address encoded as (phys.hi
-> -      phys.mid phys.lo size.hi size.lo). phys.hi should contain the device's
-> -      BDF as 0b00000000 bbbbbbbb dddddfff 00000000. The other cells should be
-> -      zero. See Documentation/devicetree/bindings/pci/pci.txt
-> +    maxItems: 1
->  
->    '#iommu-cells':
->      const: 1
-> -- 
-> 2.47.2
-> 
+diff --git a/Documentation/networking/tproxy.rst b/Documentation/networking/tproxy.rst
+index 7f7c1ff6f159..75e4990cc3db 100644
+--- a/Documentation/networking/tproxy.rst
++++ b/Documentation/networking/tproxy.rst
+@@ -69,9 +69,9 @@ add rules like this to the iptables ruleset above::
+     # iptables -t mangle -A PREROUTING -p tcp --dport 80 -j TPROXY \
+       --tproxy-mark 0x1/0x1 --on-port 50080
+ 
+-Or the following rule to nft:
++Or the following rule to nft::
+ 
+-# nft add rule filter divert tcp dport 80 tproxy to :50080 meta mark set 1 accept
++    # nft add rule filter divert tcp dport 80 tproxy to :50080 meta mark set 1 accept
+ 
+ Note that for this to work you'll have to modify the proxy to enable (SOL_IP,
+ IP_TRANSPARENT) for the listening socket.
+-- 
+2.48.1
+
 
