@@ -1,127 +1,121 @@
-Return-Path: <linux-kernel+bounces-593876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62AE8A8064B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:26:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7D03A80646
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:26:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04D3C426873
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:20:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68AA11B82523
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F50E26A1BA;
-	Tue,  8 Apr 2025 12:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010CD26F452;
+	Tue,  8 Apr 2025 12:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="PWhd/3lX"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Z+pTG+24"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52514269CF7;
-	Tue,  8 Apr 2025 12:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDD926AA93;
+	Tue,  8 Apr 2025 12:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744114653; cv=none; b=WP+rWRHCs/iwJ4S7nhfwuSL7g1TJ8ewh5HuUqDj1xGsIoxOanHYo9gK9HHjrkRV0Mo2ihUqhtkC/vxecvZOIEDsCVzuo7itoJwkXHNq/ng/SVqDVmvxU3YxcsurKziXqXoEIzIWFGcy+eVMMPllzyLFJOC8j7uoNgNa22+43ybg=
+	t=1744114669; cv=none; b=vDpJQow4S/YB+Fl8pZdiHUlq110LhTBQnWNUyKz8aT/067EzLLpuN7aQ5/MUkxnyrqhQTZYDsVLQpvi/gZqgs7zIekWKe5ViXVfka88mbLItq3Ngi7+7FjX5xM3QY3GF1AAFx+AH3NfivMRDCIbeM4aGCtLv8EiP9re6ewxr9Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744114653; c=relaxed/simple;
-	bh=7MIQ9HHSB2bH2AFr+0VI1B0l0NJu73hsXo5dH0HrwKI=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lUYN/Zu6xB0mLgZkxqchzN3Pw4fmwxi6f4KhIT+f5VpbUuo36jcnZjvigWIAU9wg2QXPKjuTAU3oUTbyGkI2f+B4FboU/3F7dP3O24TuMZcqH69et/VTbEEZAh+w0SHMGmUfZ2ZVHiwP+J/BKdtVkLHLZFKEay5IeGe38nggH7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=PWhd/3lX; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:To:From:Date:From:Sender:Reply-To:Subject:Date:
-	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=kV+poe5wqojrBL+yWUAaYGMQtjRzHk+4Yf5T5cMCjWE=; b=PWhd/3lXU32H5fKoyfO3jNBLZr
-	PqLirgjLch0awcFc0ZGkz6HGrU/fgiC5+4TAeDV7bJUdpypw4f0100ekTCGWQ4IZNsBa6b1uwfmT1
-	S+AyorDOa9VhA5dessSUieUKMPeNyZW71j/oQqmJ4de7++9njBXAGlkEKxf+9e2Lj5Jc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u27tH-008NtL-Ru; Tue, 08 Apr 2025 14:17:19 +0200
-Date: Tue, 8 Apr 2025 14:17:19 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Joe Damato <jdamato@fastly.com>, Michael Klein <michael@fossekall.de>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND net-next v5 1/4] net: phy: realtek: Group RTL82* macro
- definitions
-Message-ID: <96fcff68-6a96-49fe-b771-629d3bef03ea@lunn.ch>
-References: <20250407182155.14925-1-michael@fossekall.de>
- <20250407182155.14925-2-michael@fossekall.de>
- <Z_SPgqil9HFyU7Y6@LQ3V64L9R2>
+	s=arc-20240116; t=1744114669; c=relaxed/simple;
+	bh=V1YRfWmWFWbhpHBtVJZMWNP1AZyQpK52DXn595wf9HY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rSX7ZfNp2LWOHb2K7U1oO307MY54QM1jFW/SNrddqRvkNXQjB3ZlOG0eAgMa0j6cVhUZkq3/ZAqOVmHwHxewpc/zKliqzgk6bvy5954dloWq1hEx8djegJAFF1hMTq57+UICAuzsMLfviAKaWc5LZS27yGfiw0DiGVyGVaFa/Gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Z+pTG+24; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 538CHNdb673137
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 8 Apr 2025 07:17:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1744114643;
+	bh=40zPUQrlcr8Vw5CjXjou4ckrp+WYfHtg2mzzQ/p+6/0=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=Z+pTG+24QgYuVGeEyiu+Krg6vZD7z7igJ9ynRkHU8gV8Jm+rk/alFJXJ6xgz/x1Ze
+	 a4AtgTKrrLmHMtSXF4MfZwIp5riKITAoI2dWKwHf1d/oOE7WISSopWkXw9bHWnU1/X
+	 FSaUIkDrIXCw+FmbzQOfgnR4PAZo73uoIGk5pqJg=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 538CHN4S008016
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 8 Apr 2025 07:17:23 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 8
+ Apr 2025 07:17:23 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 8 Apr 2025 07:17:23 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 538CHNA4001367;
+	Tue, 8 Apr 2025 07:17:23 -0500
+Date: Tue, 8 Apr 2025 07:17:23 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+CC: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <vaishnav.a@ti.com>,
+        <jai.luthra@linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
+        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>
+Subject: Re: [PATCH 3/5] arm64: dts: ti: k3-j721e-sk: Fix dtbs_check warnings
+ in IMX219 overlay
+Message-ID: <20250408121723.ksjtilh4hxl2wh34@derail>
+References: <20250401114053.229534-1-y-abhilashchandra@ti.com>
+ <20250401114053.229534-4-y-abhilashchandra@ti.com>
+ <20250407134523.d56rjpydflmkw2ze@privatize>
+ <c1762c69-6a76-4f89-ab64-e6d9215e1be2@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <Z_SPgqil9HFyU7Y6@LQ3V64L9R2>
+In-Reply-To: <c1762c69-6a76-4f89-ab64-e6d9215e1be2@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Apr 07, 2025 at 07:52:50PM -0700, Joe Damato wrote:
-> On Mon, Apr 07, 2025 at 08:21:40PM +0200, Michael Klein wrote:
-> > Group macro definitions by chip number in lexicographic order.
+On 14:31-20250408, Yemike Abhilash Chandra wrote:
+> Hi Nishanth,
+> 
+> On 07/04/25 19:15, Nishanth Menon wrote:
+> > $subject - the patch adds description for the supplies for the sensor.
+> > Please fix the description.
 > > 
-> > Signed-off-by: Michael Klein <michael@fossekall.de>
-> > ---
-> >  drivers/net/phy/realtek/realtek_main.c | 30 +++++++++++++-------------
-> >  1 file changed, 15 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/drivers/net/phy/realtek/realtek_main.c b/drivers/net/phy/realtek/realtek_main.c
-> > index 893c82479671..b27c0f995e56 100644
-> > --- a/drivers/net/phy/realtek/realtek_main.c
-> > +++ b/drivers/net/phy/realtek/realtek_main.c
-> > @@ -17,6 +17,15 @@
-> >  
-> >  #include "realtek.h"
-> >  
-> > +#define RTL8201F_ISR				0x1e
-> > +#define RTL8201F_ISR_ANERR			BIT(15)
-> > +#define RTL8201F_ISR_DUPLEX			BIT(13)
-> > +#define RTL8201F_ISR_LINK			BIT(11)
-> > +#define RTL8201F_ISR_MASK			(RTL8201F_ISR_ANERR | \
-> > +						 RTL8201F_ISR_DUPLEX | \
-> > +						 RTL8201F_ISR_LINK)
-> > +#define RTL8201F_IER				0x13
 > 
-> If sorting lexicographically, wouldn't RTL8201F_IER come before
-> RTL8201F_ISR ?
-
-The change log says "chip_number" lexicographic order. RTL8201F is the
-chip number, ISR is the register name.
-
-You would normally sub sort register number, so i would of put
-IER=0x13 before ISR=0x1e, within RTL8201F.
-
+> In this patch, I am addressing all dtbs_check warnings generated from this
+> overlay:
 > 
-> >  #define RTL821x_PHYSR				0x11
-> >  #define RTL821x_PHYSR_DUPLEX			BIT(13)
-> >  #define RTL821x_PHYSR_SPEED			GENMASK(15, 14)
-> > @@ -31,6 +40,10 @@
-> >  #define RTL821x_EXT_PAGE_SELECT			0x1e
-> >  #define RTL821x_PAGE_SELECT			0x1f
-> >  
-> > +#define RTL8211E_CTRL_DELAY			BIT(13)
-> > +#define RTL8211E_TX_DELAY			BIT(12)
-> > +#define RTL8211E_RX_DELAY			BIT(11)
+> 1. Adding the missing regulator node
+> 2. Removing the incorrectly added clock-names property
 > 
-> Maybe I'm reading this wrong but these don't seem sorted
-> lexicographically ?
+> Due to the inclusion of both changes, I opted for a more generic commit
+> title.
+> Please let me know if you want me to split this patch into two separate
+> patches
+> with specific commit titles and commit messages.
 
-This i don't follow, you normally keep register bits next to the
-register. This is particularly important when the register bits don't
-have the register name embedded within it.
+subject line should indicate what we are fixing here. If the commit
+message indicates two different problems that were to be fixed, it is
+better to do that in two different commits. Generic subject line is hard
+to gork to understand if it is critical or not.
 
-    Andrew
+Do not forget ./Documentation/process/stable-kernel-rules.rst and use
+fixes: tag as appropriate to indicate the original problem patch
+which is being fixed.
 
----
-pw-bot: cr
+
+[...]
+
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
