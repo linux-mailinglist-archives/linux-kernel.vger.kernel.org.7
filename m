@@ -1,256 +1,167 @@
-Return-Path: <linux-kernel+bounces-594498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5179A812E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:54:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F46EA812F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3B9E1B8708F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:54:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E67C1B877E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B21231CB1;
-	Tue,  8 Apr 2025 16:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78C2235BF5;
+	Tue,  8 Apr 2025 16:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aQr6zeER"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RHFDSwOE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25B51DF754;
-	Tue,  8 Apr 2025 16:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1851D22D795;
+	Tue,  8 Apr 2025 16:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744131253; cv=none; b=XG0pkoeewm4h5OLtHFhbIuu8HfF8uFPlQ1xgTSUnpyzCqTtHfIsnmHCRYcbtjLYwfwFEu2cHzWY31BoNuCSPpR+KGsVxdNWDRjqppb3KxmJy8ycp5hbxBm0cdCB6XHpkXpWEVqQXGY4FyuWI9884URKDpz6lJnTOa/3qIwIkTbA=
+	t=1744131289; cv=none; b=lJLDuvyGXfDMi/zdZr6EjbygI/P4otvQe+Lle1/07eK10BmuWqDYd6Mq6Ar8oPNE6q8MVOeU5DgFR7AwoEnVehVJLKTRo8TwN9uNj8+ybP5h2qy9/jFyayS0z3QXZ+VXh8WwWBOwLuaB9+HTcjNL0kVqyuZFAK+4jMGHKVkClqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744131253; c=relaxed/simple;
-	bh=k11y85anIUxaVdUyWTskfFr8geLdEXxtcqSuOAf3X5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LXL3TFGQMA8FN//6px2Hnl2QlWA8dF1AvmoAZbnOe0QKfRmExvOhNa56cNOkXsy6+yCd0EmF/YN+ccr/bfCs6cVcyT9xNHubQKYjjrQIJPtvXDveTz+7zj5H6U02VAUKmdv5WuhbO/bsDKo036/V5AChuPWr95YkxIKtBLcdpBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aQr6zeER; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA875C4CEE5;
-	Tue,  8 Apr 2025 16:54:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744131253;
-	bh=k11y85anIUxaVdUyWTskfFr8geLdEXxtcqSuOAf3X5A=;
-	h=Date:From:To:Cc:Subject:From;
-	b=aQr6zeERt0iLP/IziVLHwH7jdSi7gtEWEqb8xdV2CTa2Z5MdeeA154PHGVSXXq/cB
-	 z45rVeii2Ex1hV0LQyPE4wmL3TFtWtpJ69blKEdsgGBXXua/sXJ9Aq7nhNX6whzavE
-	 j1VfzXTXbL88YYiFPSeBRVhkTAWFwE3vNysf4pCL588TrtrlQLQiFvVRr3MJmasnyZ
-	 hYWJoDuAuXfrC+qyOsOlvdZ3FlCurcL+K2ykKdrsihJupDtevHo2F9C2m9l9E9nDOb
-	 DxdXss5Sm4mFRPuyAUhTSEYvVy/kopQ7wULSpxyy1GxXuAqMpIewoy9n8u54KqNYIj
-	 nkLqSmLapGptA==
-Date: Tue, 8 Apr 2025 11:54:11 -0500
-From: Seth Forshee <sforshee@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>
-Cc: x86@kernel.org, linux-perf-users@vger.kernel.org, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: kvm guests crash when running "perf kvm top"
-Message-ID: <Z_VUswFkWiTYI0eD@do-x1carbon>
+	s=arc-20240116; t=1744131289; c=relaxed/simple;
+	bh=C287iv3eHy79w9UxvCRDpeM64RhD3G9TV81JyzlSMXs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WJDa2KVgxLrMDGJQwkuAhcVczmMJlFl62b+vgjx97Lkz5KC5t3JXKkIxIcnq4lHH9qgYzFRbnfXsLKVMFsS264dMDXLnnHYAtrLf+cwMCBQB/p2IQD1cr4CWZ30UbXpSI8iCrI13+V4jE2U1VXdCIi4pAlYW5dfcRgZ/1BscAHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RHFDSwOE; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744131288; x=1775667288;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=C287iv3eHy79w9UxvCRDpeM64RhD3G9TV81JyzlSMXs=;
+  b=RHFDSwOEMP1YhSiPxalKCckvalPPtdwCe64xaG8oEsIP9K1ri2zrdeIT
+   mRPHQiXWMaWp6cC8yqwKTYZM0jUvAA0+knlD7MvPiMsVRlU+PFHuD+RmB
+   SwzAOspQbflTeyazD4a6WpEqm5mBTuI5YxKgOngp8ES3Cfv+QquPEA12+
+   2TnByBg1ojgP6wVh7RGXCBFOiqkUreRZ3rWF71H66k6V7dMz28ZuDvNmI
+   p+dQY6e/LzoMlZll8QSPT1UvGa5PAlnLCHsHPNQm6IERBQjJT8SQM0MUF
+   6NvRdpJERBnBlPo0nVGyv5q0vPwYc6GHUIKKNejOl1Or+Ab4k1S8avFVz
+   Q==;
+X-CSE-ConnectionGUID: /KdWU5nHTKKAGvxN9bKiYA==
+X-CSE-MsgGUID: lhGJn1E8TvC13rb2tT+1wA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45465963"
+X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
+   d="scan'208";a="45465963"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 09:54:46 -0700
+X-CSE-ConnectionGUID: +/qjbYu/SrKkWwBlcraWog==
+X-CSE-MsgGUID: zp1PqoycS1aF3v1GJ550SA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
+   d="scan'208";a="128328574"
+Received: from ssimmeri-mobl2.amr.corp.intel.com (HELO [10.124.220.83]) ([10.124.220.83])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 09:54:44 -0700
+Message-ID: <9247436d-ae01-4eb8-bd5d-370b2fb2eebc@intel.com>
+Date: Tue, 8 Apr 2025 09:54:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/12] x86: pgtable: Always use pte_free_kernel()
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Mark Rutland <mark.rutland@arm.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ "Mike Rapoport (IBM)" <rppt@kernel.org>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Peter Zijlstra <peterz@infradead.org>, Qi Zheng
+ <zhengqi.arch@bytedance.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Will Deacon <will@kernel.org>, Yang Shi <yang@os.amperecomputing.com>,
+ linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-csky@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+ linux-openrisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, x86@kernel.org
+References: <20250408095222.860601-1-kevin.brodsky@arm.com>
+ <20250408095222.860601-3-kevin.brodsky@arm.com>
+ <409d2019-a409-4e97-a16f-6b345b0f5a38@intel.com>
+ <Z_VQxyqkU8DV7QGy@casper.infradead.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <Z_VQxyqkU8DV7QGy@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-A colleague of mine reported kvm guest hangs when running "perf kvm top"
-with a 6.1 kernel. Initially it looked like the problem might be fixed
-in newer kernels, but it turned out to be perf changes which must avoid
-triggering the issue. I was able to reproduce the guest crashes with
-6.15-rc1 in both the host and the guest when using an older version of
-perf. A bisect of perf landed on 7b100989b4f6 "perf evlist: Remove
-__evlist__add_default", but this doesn't look to be fixing any kind of
-issue like this.
+On 4/8/25 09:37, Matthew Wilcox wrote:
+> On Tue, Apr 08, 2025 at 08:22:47AM -0700, Dave Hansen wrote:
+>> Are there any tests for folio_test_pgtable() at free_page() time? If we
+>> had that, it would make it less likely that another free_page() user
+>> could sneak in without calling the destructor.
+> It's hidden, but yes:
+> 
+> static inline bool page_expected_state(struct page *page,
+>                                         unsigned long check_flags)
+> {
+>         if (unlikely(atomic_read(&page->_mapcount) != -1))
+>                 return false;
+> 
+> PageTable uses page_type which aliases with mapcount, so this check
+> covers "PageTable is still set when the last refcount to it is put".
 
-This box has an Ice Lake CPU, and we can reproduce on other Ice Lakes
-but could not reproduce on another box with Broadwell. On Broadwell
-guests would crash with older kernels in the host, but this was fixed by
-971079464001 "KVM: x86/pmu: fix masking logic for
-MSR_CORE_PERF_GLOBAL_CTRL". That does not fix the issues we see on Ice
-Lake.
+Huh, so shouldn't we have ended up in bad_page() for these, other than:
 
-When the guests crash we aren't getting any output on the serial
-console, but I got this from a memory dump:
+        pagetable_dtor(virt_to_ptdesc(pmd));
+        free_page((unsigned long)pmd);
 
-BUG: unable to handle page fault for address: fffffe76ffbaf00000
-BUG: unable to handle page fault for address: fffffe76ffbaf00000
-#PF: supervisor write access in kernel mode
-#PF: error_code(0x0002) - not-present page
-BUG: unable to handle page fault for address: fffffe76ffbaf00000
-#PF: supervisor write access in kernel mode
-#PF: error_code(0x0002) - not-present page
-PGD 2e044067 P4D 3ec42067 PUD 3ec41067 PMD 3ec40067 PTE ffffffffff120
-Oops: Oops: 0002 [#1] SMP NOPTI
-BUG: unable to handle page fault for address: fffffe76ffbaf00000
-#PF: supervisor write access in kernel mode
-#PF: error_code(0x0002) - not-present page
-PGD 2e044067 P4D 3ec42067 PUD 3ec41067 PMD 3ec40067 PTE ffffffffff120
-Oops: Oops: 0002 [#2] SMP NOPTI
-CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.15.0-rc1 #3 VOLUNTARY
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009)/Incus, BIOS unknown 02/0=
-2/2022
-BUG: unable to handle page fault for address: fffffe76ffbaf00000
-#PF: supervisor write access in kernel mode
-#PF: error_code(0x0002) - not-present page
-PGD 2e044067 P4D 3ec42067 PUD 3ec41067 PMD 3ec40067 PTE ffffffffff120
-Oops: Oops: 0002 [#3] SMP NOPTI
-CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.15.0-rc1 #3 VOLUNTARY
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009)/Incus, BIOS unknown 02/0=
-2/2022
-
-We got something different though from an ubuntu VM running their 6.8
-kernel:
-
-BUG: kernel NULL pointer dereference, address: 000000000000002828
-BUG: kernel NULL pointer dereference, address: 000000000000002828
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 10336a067 P4D 0=20
-Oops: 0000 [#1] PREEMPT SMP NOPTI
-BUG: kernel NULL pointer dereference, address: 000000000000002828
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 10336a067 P4D 0=20
-Oops: 0000 [#2] PREEMPT SMP NOPTI
-BUG: kernel NULL pointer dereference, address: 000000000000002828
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 10336a067 P4D 0=20
-Oops: 0000 [#3] PREEMPT SMP NOPTI
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 6.8.0-56-generic #58-Ubuntu
-BUG: kernel NULL pointer dereference, address: 000000000000002828
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 10336a067 P4D 0=20
-Oops: 0000 [#4] PREEMPT SMP NOPTI
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 6.8.0-56-generic #58-Ubuntu
-BUG: kernel NULL pointer dereference, address: 000000000000002828
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 10336a067 P4D 0=20
-Oops: 0000 [#5] PREEMPT SMP NOPTI
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 6.8.0-56-generic #58-Ubuntu
-RIP: 0010:__sprint_symbol.isra.0+0x6/0x120
-Code: ff e8 0e 9d 00 01 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 90 90 90 =
-90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 55 <48> 89 e5 41 57 4=
-9 89 f7 41 56 4c 63 f2 4c 8d 45 b8 48 8d 55 c0 41
-RSP: 0018:ff25e52d000e6ff8 EFLAGS: 00000046
-BUG: #DF stack guard page was hit at 0000000040b441e1 (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-BUG: #DF stack guard page was hit at 000000002fed44fb (stack is 00000000a17=
-88787..000000008e7f4216)
-
-CPU information from one of the boxes where we see this:
-
-processor	: 0
-vendor_id	: GenuineIntel
-cpu family	: 6
-model		: 106
-model name	: Intel(R) Xeon(R) Gold 5318Y CPU @ 2.10GHz
-stepping	: 6
-microcode	: 0xd0003f5
-cpu MHz		: 800.000
-cache size	: 36864 KB
-physical id	: 0
-siblings	: 44
-core id		: 0
-cpu cores	: 22
-apicid		: 0
-initial apicid	: 0
-fpu		: yes
-fpu_exception	: yes
-cpuid level	: 27
-wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat =
-pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rd=
-tscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nons=
-top_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm=
-2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt =
-tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpui=
-d_fault epb cat_l3 intel_ppin ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_sh=
-adow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 e=
-rms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushop=
-t clwb intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 x=
-saves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local split_lock_detect w=
-bnoinvd dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req vnmi=
- avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni av=
-x512_bitalg avx512_vpopcntdq la57 rdpid fsrm md_clear pconfig flush_l1d arc=
-h_capabilities
-vmx flags	: vnmi preemption_timer posted_intr invvpid ept_x_only ept_ad ept=
-_1gb ept_5level flexpriority apicv tsc_offset vtpr mtf vapic ept vpid unres=
-tricted_guest vapic_reg vid ple shadow_vmcs pml ept_violation_ve ept_mode_b=
-ased_exec tsc_scaling
-bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs mmio_stale_data eibr=
-s_pbrsb gds bhi spectre_v2_user
-bogomips	: 4000.00
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 46 bits physical, 57 bits virtual
-power management:
-
-Let me know if I can provide any additional information or testing.
-
-Thanks,
-Seth
+?
 
