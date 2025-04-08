@@ -1,105 +1,238 @@
-Return-Path: <linux-kernel+bounces-592957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E94A7F33F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:34:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D15FCA7F31E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34324179513
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 03:34:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BD571892B65
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 03:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25EC25F975;
-	Tue,  8 Apr 2025 03:34:24 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93452246335;
+	Tue,  8 Apr 2025 03:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gPB1j2yb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BC025F7AA;
-	Tue,  8 Apr 2025 03:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02229322B
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 03:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744083264; cv=none; b=Ap32mKi9gzuW/tMfCgoa7MNJr/ZCmnDkIcE4Q5cSVrdOGnAdNteKsn0a6uTGL0hE4rLqcRbtY3sUxxp3yfyc/8SV9GJu0g9/Nt6A5sSnCCvNpGma1KQRafmIIgCuNje9dP3KDCoUMkgok6GBZVBRu3dVVl3BV4jlhtLR1QbnlWU=
+	t=1744082296; cv=none; b=c9czgC8ypQXU14DbNxE3PjqZPcDPfOE1iRBrlDIMAzfvxOixyM40FnUDvwI9JGEe6TMgsIO47ljMNilNNrwDbVjThPEqJbckc1bT4Mdg4RcJ+iQMwHYTYrBJz+ppJKndOtXiGhVl/Fm/o97BsG0MRsU80ZckwiS0/DgfjX2QyB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744083264; c=relaxed/simple;
-	bh=OPfZ2nM6pi8vS7FSQbfP0uRktjyXcE3cK0Pmr5vN78I=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SysbtVpDJBy2a8NBC0t2FyaKHTBmD4Ee8+vHvGH8f61yGMrNC24OjEhkpQkaEBvhsAt3Fxq8wepQoU137Bs3ocrosFUvP32q9xCgz3pFQ5mak/C6mNOHWSYco9z+Xz2nCsTJAeMvRjNUtgn4oUqHMWetiBxo2A+sRaheQR6IvH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4ZWrlk5NH7z1d16C;
-	Tue,  8 Apr 2025 11:14:26 +0800 (CST)
-Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id CF4171800D1;
-	Tue,  8 Apr 2025 11:15:05 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by kwepemg500010.china.huawei.com
- (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 8 Apr
- 2025 11:15:04 +0800
-From: Wang Zhaolong <wangzhaolong1@huawei.com>
-To: <trondmy@kernel.org>, <anna@kernel.org>, <rdunlap@infradead.org>
-CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<wangzhaolong1@huawei.com>, <yi.zhang@huawei.com>, <yangerkun@huawei.com>
-Subject: [PATCH V2] NFS: Fix shift-out-of-bounds UBSAN warning with negative retrans
-Date: Tue, 8 Apr 2025 11:15:04 +0800
-Message-ID: <20250408031504.2549173-1-wangzhaolong1@huawei.com>
-X-Mailer: git-send-email 2.34.3
+	s=arc-20240116; t=1744082296; c=relaxed/simple;
+	bh=Y4A9gmRyx+sHzRRPq9DIE+RWZg2MLVTOc6sduDq5MR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fylX96clZuDSVfIQr75lwqVkn1u70s3VJh66o/49oBh9CAY8vQvqPVNv46uISOt7ybdmg8H0EVmvdnqQI+k1R8b4+hd9MyRDYtfZJFySwuHGrRgFQdRRCY4uylhTuk98O5SHvyM26KVvKXmj4+wIDQ2P8Tj7OHNHxN8GPN0hsQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gPB1j2yb; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744082293;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/3QHJqw7QjuOJT2v2ybOfd35jlW4gSpJQ6mV3BXsjyM=;
+	b=gPB1j2yb22tdW8ZCB53sCkfHjih3rSc+fnZr+xZ1iq9dUrs20qJEPav8SZS0v7+xY//p4M
+	hdPXwXgu41gHoEd1oGuglMFyrnxy4Cd4Yy+UjOqyJhMfJkYH77I5vs0K1s3/Wcli7fDCOh
+	FDcRNi7b8jM5gkNx9TDboell/V4hsMc=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-65-AWIpHe-hPfqeQRJIIPUO2A-1; Mon,
+ 07 Apr 2025 23:18:10 -0400
+X-MC-Unique: AWIpHe-hPfqeQRJIIPUO2A-1
+X-Mimecast-MFC-AGG-ID: AWIpHe-hPfqeQRJIIPUO2A_1744082288
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 876C61809CA5;
+	Tue,  8 Apr 2025 03:18:07 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.61])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 74396180174E;
+	Tue,  8 Apr 2025 03:18:05 +0000 (UTC)
+Date: Tue, 8 Apr 2025 11:17:55 +0800
+From: Baoquan He <bhe@redhat.com>
+To: steven chen <chenste@linux.microsoft.com>
+Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
+	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+	eric.snowberg@oracle.com, ebiederm@xmission.com,
+	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
+	dyoung@redhat.com
+Subject: Re: [PATCH v11 4/9] ima: kexec: skip IMA segment validation after
+ kexec soft reboot
+Message-ID: <Z/SVY1j1C7P0rZGI@MiWiFi-R3L-srv>
+References: <20250402124725.5601-1-chenste@linux.microsoft.com>
+ <20250402124725.5601-5-chenste@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemg500010.china.huawei.com (7.202.181.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250402124725.5601-5-chenste@linux.microsoft.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-The previous commit c09f11ef3595 ("NFS: fs_context: validate UDP retrans
-to prevent shift out-of-bounds") added a check to prevent shift values
-that are too large, but it fails to account for negative retrans values.
-When data->retrans is negative, the condition `data->retrans >= 64` is
-skipped, allowing negative values to be copied to context->retrans,
-which is unsigned. This results in a large positive number that can
-trigger the original UBSAN issue[1].
+On 04/02/25 at 05:47am, steven chen wrote:
+> The kexec_calculate_store_digests() function calculates and stores the
+> digest of the segment during the kexec_file_load syscall, where the 
+> IMA segment is also allocated.
+> 
+> With this series, the IMA segment will be updated with the measurement 
+> log at the kexec execute stage when a soft reboot is initiated. 
+> Therefore, the digests should be updated for the IMA segment in the 
+> normal case.
+> 
+> The content of memory segments carried over to the new kernel during the
+> kexec systemcall can be changed at kexec 'execute' stage, but the size
+> and the location of the memory segments cannot be changed at kexec
+> 'execute' stage.
+> 
+> However, during the kexec execute stage, if kexec_calculate_store_digests()
+> API is called to update the digest, it does not reuse the same memory
+> segment allocated during the kexec 'load' stage and the new memory segment
+> required cannot be transferred/mapped to the new kernel.
+> 
+> As a result, digest verification will fail in verify_sha256_digest() 
+> after a kexec soft reboot into the new kernel. Therefore, the digest
+> calculation/verification of the IMA segment needs to be skipped.
+> 
+> To address this, skip the calculation and storage of the digest for the
+> IMA segment in kexec_calculate_store_digests() so that it is not added 
+> to the purgatory_sha_regions.
+> 
+> Since verify_sha256_digest() only verifies 'purgatory_sha_regions',
+> no change is needed in verify_sha256_digest() in this context.
+> 
+> With this change, the IMA segment is not included in the digest
+> calculation, storage, and verification.
 
-This issue has actually been present since very early kernels (dating
-back to 2.6.x series), as the code has historically not validated
-retrans values from userspace. When these large or negative values are
-later used as unsigned in bit shift operations, they cause the UBSAN
-warning.
+I would write the patch log like:
 
-This patch modifies the check to explicitly handle both negative values
-and values that are too large, completing the fix that was partially
-implemented by c09f11ef3595.
+======
+Currently, the function kexec_calculate_store_digests() calculates and
+stores the digest of the segment during the kexec_file_load syscall,
+where the  IMA segment is also allocated.
 
-[1] https://bugzilla.kernel.org/show_bug.cgi?id=219988
-Fixes: c09f11ef3595 ("NFS: fs_context: validate UDP retrans to prevent shift out-of-bounds")
-Signed-off-by: Wang Zhaolong <wangzhaolong1@huawei.com>
----
- fs/nfs/fs_context.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Later, the IMA segment will be updated with the measurement log at the
+kexec execute stage when a kexec reboot is initiated. Therefore, the
+digests should be updated for the IMA segment in the  normal case. The
+problem is that the content of memory segments carried over to the new
+kernel during the kexec systemcall can be changed at kexec 'execute'
+stage, but the size and the location of the memory segments cannot be
+changed at kexec 'execute' stage.
 
-diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
-index 13f71ca8c974..0703ac0349cb 100644
---- a/fs/nfs/fs_context.c
-+++ b/fs/nfs/fs_context.c
-@@ -1161,11 +1161,12 @@ static int nfs23_parse_monolithic(struct fs_context *fc,
- 		 * for proto == XPRT_TRANSPORT_UDP, which is what uses
- 		 * to_exponential, implying shift: limit the shift value
- 		 * to BITS_PER_LONG (majortimeo is unsigned long)
- 		 */
- 		if (!(data->flags & NFS_MOUNT_TCP)) /* this will be UDP */
--			if (data->retrans >= 64) /* shift value is too large */
-+			/* Reject invalid retrans values (negative or too large) */
-+			if (data->retrans < 0 || data->retrans >= 64)
- 				goto out_invalid_data;
- 
- 		/*
- 		 * Translate to nfs_fs_context, which nfs_fill_super
- 		 * can deal with.
--- 
-2.34.3
+To address this, skip the calculation and storage of the digest for the
+IMA segment in kexec_calculate_store_digests() so that it is not added 
+to the purgatory_sha_regions.
+
+With this change, the IMA segment is not included in the digest
+calculation, storage, and verification.
+======
+
+> 
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: Baoquan He <bhe@redhat.com> 
+> Cc: Vivek Goyal <vgoyal@redhat.com>
+> Cc: Dave Young <dyoung@redhat.com>
+> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Acked-by: Baoquan He <bhe@redhat.com>
+> ---
+>  include/linux/kexec.h              |  3 +++
+>  kernel/kexec_file.c                | 22 ++++++++++++++++++++++
+>  security/integrity/ima/ima_kexec.c |  3 +++
+>  3 files changed, 28 insertions(+)
+> 
+> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+> index 7d6b12f8b8d0..107e726f2ef3 100644
+> --- a/include/linux/kexec.h
+> +++ b/include/linux/kexec.h
+> @@ -362,6 +362,9 @@ struct kimage {
+>  
+>  	phys_addr_t ima_buffer_addr;
+>  	size_t ima_buffer_size;
+> +
+> +	unsigned long ima_segment_index;
+> +	bool is_ima_segment_index_set;
+>  #endif
+>  
+>  	/* Core ELF header buffer */
+> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> index 3eedb8c226ad..606132253c79 100644
+> --- a/kernel/kexec_file.c
+> +++ b/kernel/kexec_file.c
+> @@ -38,6 +38,21 @@ void set_kexec_sig_enforced(void)
+>  }
+>  #endif
+>  
+> +#ifdef CONFIG_IMA_KEXEC
+> +static bool check_ima_segment_index(struct kimage *image, int i)
+> +{
+> +	if (image->is_ima_segment_index_set && i == image->ima_segment_index)
+> +		return true;
+> +	else
+> +		return false;
+> +}
+> +#else
+> +static bool check_ima_segment_index(struct kimage *image, int i)
+> +{
+> +	return false;
+> +}
+> +#endif
+> +
+>  static int kexec_calculate_store_digests(struct kimage *image);
+>  
+>  /* Maximum size in bytes for kernel/initrd files. */
+> @@ -764,6 +779,13 @@ static int kexec_calculate_store_digests(struct kimage *image)
+>  		if (ksegment->kbuf == pi->purgatory_buf)
+>  			continue;
+>  
+> +		/*
+> +		 * Skip the segment if ima_segment_index is set and matches
+> +		 * the current index
+> +		 */
+> +		if (check_ima_segment_index(image, i))
+> +			continue;
+> +
+>  		ret = crypto_shash_update(desc, ksegment->kbuf,
+>  					  ksegment->bufsz);
+>  		if (ret)
+> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+> index b12ac3619b8f..7e0a19c3483f 100644
+> --- a/security/integrity/ima/ima_kexec.c
+> +++ b/security/integrity/ima/ima_kexec.c
+> @@ -145,6 +145,7 @@ void ima_add_kexec_buffer(struct kimage *image)
+>  	kbuf.buffer = kexec_buffer;
+>  	kbuf.bufsz = kexec_buffer_size;
+>  	kbuf.memsz = kexec_segment_size;
+> +	image->is_ima_segment_index_set = false;
+>  	ret = kexec_add_buffer(&kbuf);
+>  	if (ret) {
+>  		pr_err("Error passing over kexec measurement buffer.\n");
+> @@ -155,6 +156,8 @@ void ima_add_kexec_buffer(struct kimage *image)
+>  	image->ima_buffer_addr = kbuf.mem;
+>  	image->ima_buffer_size = kexec_segment_size;
+>  	image->ima_buffer = kexec_buffer;
+> +	image->ima_segment_index = image->nr_segments - 1;
+> +	image->is_ima_segment_index_set = true;
+>  
+>  	kexec_dprintk("kexec measurement buffer for the loaded kernel at 0x%lx.\n",
+>  		      kbuf.mem);
+> -- 
+> 2.25.1
+> 
 
 
