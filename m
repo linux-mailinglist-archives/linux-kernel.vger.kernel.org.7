@@ -1,269 +1,140 @@
-Return-Path: <linux-kernel+bounces-593298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDE86A7F7B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:22:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97251A7F7C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:26:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93EEA17A46A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:22:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBDDD3AB665
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C11A264A85;
-	Tue,  8 Apr 2025 08:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4F32641C0;
+	Tue,  8 Apr 2025 08:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NSPo58Rc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EyoCFa+Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1724264633
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7879263C74;
+	Tue,  8 Apr 2025 08:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744100488; cv=none; b=t6Wb6Fw3z0LhLMo0+wc2zt+6s+Jg8oJAaPl1EtSRBVLrkVcGIDc3oiqVW0oTxudbn9MgM7GTVyzIWEf+JxYWX7dVs2q1wcROI09etpLjH4ymulHYsdEp3gVjl3u2K0W7pYN4Ymk4egOgCrl2xiUy7BaKs0p6YztHoEhxkAPqpiE=
+	t=1744100515; cv=none; b=IBUkymYzvsqiVHa7s46DvTrRpTIO1mER5fn5ucRAfrMxxtBM1e7/PlaBJaZQWmau90pE6lJTq9V44ZtENgqrX9v9GbmbQ8TpC886B+X2UJnZrAXNW+yjQJOljAMCod9dJiegd7hg67mZ1mcnk2Z7wduBhuChJ9CHgX5IZVpw8ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744100488; c=relaxed/simple;
-	bh=XpWuCEwoPXT8o8UPr6REZoN2em1Xvh02RO7hc3Rm1Xw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZST+JK1cdulUyBUHuOjY6dnwC0+q2eN3pBjH+E4t3aoZ2LXRA49Xfe/m6OEQn2p6eSRZkai5FLM76vVSfrFww5bQOO0v3bbPWiKn7ZA0Rf7FPCQUG+n0/Hqk4mXjhkN3Ri3JicL9rv8Nvhy73T88SqhO9U0GbO2xrHzyXNO/xLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NSPo58Rc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C962C4CEE5;
-	Tue,  8 Apr 2025 08:21:28 +0000 (UTC)
+	s=arc-20240116; t=1744100515; c=relaxed/simple;
+	bh=FRpgq4XuASac1bfTXNxGqnPuGvIwraMV0eZ6/X35UIk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IVJNFS2g6wohjuRXJu8CyIxV/3CnF2d9olowKATVpxogOlBIkfY792mH5C3pY1194TEDms85g535FPBNMCwE1QbUNF94cORgb0VywvU/tYgzxtAHC5Gt1A4iU5NLZDZ6HWaDX8rl5ovQYBdAdnMxpzOkQ/bXfuOZg3LK1Zn/nMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EyoCFa+Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29F01C4CEE5;
+	Tue,  8 Apr 2025 08:21:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744100488;
-	bh=XpWuCEwoPXT8o8UPr6REZoN2em1Xvh02RO7hc3Rm1Xw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NSPo58RcJQz3zoH2B3KAHc+x/g9CKL9pf12o+mZyVmLgW/Jn7Dr4mgfE6Rlo3mGDO
-	 X0k7GgwL18iM+a4dYW7S/WaRBI+8k0mqlo978YP7PCWzWjiIrw+72kYwh+axCeY0Mz
-	 ile+Zq9RV4+blooZLQyzrrIxPiuEr8tXP+Xv1FriwA9fLNNFkwEbBgwIrbBLoj4F/T
-	 5FueZTrn9S70Xqes/nxbkjauARhYWIde8yQAalSBs5GxDiNIXyBmOMTz/rlyrSmJP7
-	 kfcTYLu+IaL8MdTRKPsc+JNG1Nez5OR8WzC28YC0VNBTBbH8xfo+dL68UeiV+Livau
-	 iAcOM9M6UQJqQ==
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH RFC 5/5] objtool: Improve code generation readability
-Date: Tue,  8 Apr 2025 01:21:18 -0700
-Message-ID: <fa33720aa6022c6fab2336e129e08575177a8009.1744098446.git.jpoimboe@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1744098446.git.jpoimboe@kernel.org>
-References: <cover.1744098446.git.jpoimboe@kernel.org>
+	s=k20201202; t=1744100514;
+	bh=FRpgq4XuASac1bfTXNxGqnPuGvIwraMV0eZ6/X35UIk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EyoCFa+ZhP1mKkc8kgnQ71cq5I13effleKh125lgNWwlM6dIZqo5Zfs9old/PT3HN
+	 cZIfHHRQwqxTVqdDG6tY0MPVbd2LavsfrWsaJN6tjZGFFkqI6sz9n9Ekbw/CCXstKu
+	 59j8IFjmJ2VEQM+W6WhcYDhCZFsw72WyqU4v1qcCfpwOdT2mldlNklnJlWsxIPC8ID
+	 sNswtr3dg5ru4Im3FA7RaxSHR2g0Pax2vUSYx/J0QOxivVlTR87ef1SJrf5i9jcKwx
+	 +Ld8OZJrnAq6bPMmj0Ywyf6xQ+QQonasVOb9TRgLkvo8he6wCszr/cbHnl3Yo43wMP
+	 tVFXa6H0WyPwA==
+Message-ID: <094855d6-a99b-4ca5-bc8f-ab6faccfd332@kernel.org>
+Date: Tue, 8 Apr 2025 10:21:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: watchdog: Add NXP Software Watchdog
+ Timer
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, wim@linux-watchdog.org
+Cc: linux@roeck-us.net, linux-watchdog@vger.kernel.org,
+ linux-kernel@vger.kernel.org, S32@nxp.com, ghennadi.procopciuc@nxp.com,
+ thomas.fossati@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org
+References: <20250407160318.936142-1-daniel.lezcano@linaro.org>
+ <20250407160318.936142-2-daniel.lezcano@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20250407160318.936142-2-daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Improve the readability and compactness of the objtool annotations.
-This makes it easier to see them and differentiate from other code.
+On 07/04/2025 18:03, Daniel Lezcano wrote:
+> +
+> +allOf:
+> +  - $ref: watchdog.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: nxp,s32g2-swt
+> +      - items:
+> +          - const: nxp,s32g3-swt
+> +          - const: nxp,s32g2-swt
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: Counter clock
+> +      - description: Module clock
+> +      - description: Register clock
+> +    minItems: 1
 
-Before:
--------
+Why clocks are flexible? The SoC does not change between boards. It
+should be a fixed list - block receives that number of clocks or does
+not... unless you meant that different instances of the block have
+different clocks?
 
- 911:
-	.pushsection .discard.annotate_insn,"M",@progbits,8
-	.long 911b - .
-	.long 1
-	.popsection
-
-After:
-------
-
- # <ANNOTATE_NOENDBR>
- 911:	.pushsection .discard.annotate_insn,"M",@progbits,8; .long 911b - .; .long 1; .popsection
- # </ANNOTATE_NOENDBR>
-
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
- include/linux/objtool.h | 97 ++++++++++++++++++++---------------------
- 1 file changed, 47 insertions(+), 50 deletions(-)
-
-diff --git a/include/linux/objtool.h b/include/linux/objtool.h
-index 366ad004d794..66549603147e 100644
---- a/include/linux/objtool.h
-+++ b/include/linux/objtool.h
-@@ -8,19 +8,31 @@
- 
- #include <asm/asm.h>
- 
-+#define __UNWIND_HINT(label, type, sp_reg, sp_offset, signal)	\
-+	.pushsection .discard.unwind_hints;			\
-+	/* struct unwind_hint */				\
-+	.long label - .;					\
-+	.short sp_offset;					\
-+	.byte sp_reg;						\
-+	.byte type;						\
-+	.byte signal;						\
-+	.balign 4;						\
-+	.popsection
-+
-+#define __ASM_ANNOTATE(label, type)				\
-+	.pushsection .discard.annotate_insn,"M",@progbits,8;	\
-+	.long label - .;					\
-+	.long type;						\
-+	.popsection
-+
- #ifndef __ASSEMBLY__
- 
--#define UNWIND_HINT(type, sp_reg, sp_offset, signal)	\
--	"987: \n\t"						\
--	".pushsection .discard.unwind_hints\n\t"		\
--	/* struct unwind_hint */				\
--	".long 987b - .\n\t"					\
--	".short " __stringify(sp_offset) "\n\t"			\
--	".byte " __stringify(sp_reg) "\n\t"			\
--	".byte " __stringify(type) "\n\t"			\
--	".byte " __stringify(signal) "\n\t"			\
--	".balign 4 \n\t"					\
--	".popsection\n\t"
-+#define UNWIND_HINT(type, sp_reg, sp_offset, signal)		\
-+	"\n# <UNWIND_HINT>\n"					\
-+	"987: "							\
-+	__stringify(__UNWIND_HINT(987b, type, sp_reg,		\
-+				  sp_offset, signal))		\
-+	"\n# </UNWIND_HINT>\n\t"
- 
- /*
-  * This macro marks the given function's stack frame as "non-standard", which
-@@ -45,23 +57,18 @@
- #define STACK_FRAME_NON_STANDARD_FP(func)
- #endif
- 
--#define ASM_REACHABLE							\
--	"998:\n\t"							\
--	".pushsection .discard.reachable\n\t"				\
--	".long 998b\n\t"						\
--	".popsection\n\t"
--
- #define __ASM_BREF(label)	label ## b
- 
--#define __ASM_ANNOTATE(label, type)					\
--	".pushsection .discard.annotate_insn,\"M\",@progbits,8\n\t"	\
--	".long " __stringify(label) " - .\n\t"			\
--	".long " __stringify(type) "\n\t"				\
--	".popsection\n\t"
--
- #define ASM_ANNOTATE(type)						\
--	"911:\n\t"						\
--	__ASM_ANNOTATE(911b, type)
-+	"\n# <ANNOTATE_" __stringify(type) ">\n"			\
-+	"911:\t"							\
-+	__stringify(__ASM_ANNOTATE(911b, __PASTE(ANNOTYPE_, type)))	\
-+	"\n# </ANNOTATE_" __stringify(type) ">\n\t"
-+
-+#define ASM_ANNOTATE_LABEL(label, type)					\
-+	"\n# BEGIN ANNOTATE_" __stringify(type) "\n"			\
-+	__stringify(__ASM_ANNOTATE(label, __PASTE(ANNOTYPE_, type)))	\
-+	"\n# </ANNOTATE_" __stringify(type) "\n\t"
- 
- #else /* __ASSEMBLY__ */
- 
-@@ -88,15 +95,7 @@
-  */
- .macro UNWIND_HINT type:req sp_reg=0 sp_offset=0 signal=0
- .Lhere_\@:
--	.pushsection .discard.unwind_hints
--		/* struct unwind_hint */
--		.long .Lhere_\@ - .
--		.short \sp_offset
--		.byte \sp_reg
--		.byte \type
--		.byte \signal
--		.balign 4
--	.popsection
-+	__UNWIND_HINT(.Lhere_\@, \type, \sp_reg, \sp_offset, \signal)
- .endm
- 
- .macro STACK_FRAME_NON_STANDARD func:req
-@@ -113,10 +112,7 @@
- 
- .macro ANNOTATE type:req
- .Lhere_\@:
--	.pushsection .discard.annotate_insn,"M",@progbits,8
--	.long	.Lhere_\@ - .
--	.long	\type
--	.popsection
-+	__ASM_ANNOTATE(.Lhere_\@, \type)
- .endm
- 
- #endif /* __ASSEMBLY__ */
-@@ -125,11 +121,12 @@
- 
- #ifndef __ASSEMBLY__
- 
--#define UNWIND_HINT(type, sp_reg, sp_offset, signal) "\n\t"
- #define STACK_FRAME_NON_STANDARD(func)
- #define STACK_FRAME_NON_STANDARD_FP(func)
--#define __ASM_ANNOTATE(label, type) ""
--#define ASM_ANNOTATE(type)
-+
-+#define UNWIND_HINT(type, sp_reg, sp_offset, signal)	""
-+#define ASM_ANNOTATE(type)				""
-+#define ASM_ANNOTATE_LABEL(sym, type)			""
- #else
- .macro UNWIND_HINT type:req sp_reg=0 sp_offset=0 signal=0
- .endm
-@@ -146,30 +143,30 @@
-  * Annotate away the various 'relocation to !ENDBR` complaints; knowing that
-  * these relocations will never be used for indirect calls.
-  */
--#define ANNOTATE_NOENDBR		ASM_ANNOTATE(ANNOTYPE_NOENDBR)
--#define ANNOTATE_NOENDBR_SYM(sym)	asm(__ASM_ANNOTATE(sym, ANNOTYPE_NOENDBR))
-+#define ANNOTATE_NOENDBR		ASM_ANNOTATE(NOENDBR)
-+#define ANNOTATE_NOENDBR_SYM(sym)	asm(ASM_ANNOTATE_LABEL(sym, NOENDBR))
- 
- /*
-  * This should be used immediately before an indirect jump/call. It tells
-  * objtool the subsequent indirect jump/call is vouched safe for retpoline
-  * builds.
-  */
--#define ANNOTATE_RETPOLINE_SAFE		ASM_ANNOTATE(ANNOTYPE_RETPOLINE_SAFE)
-+#define ANNOTATE_RETPOLINE_SAFE		ASM_ANNOTATE(RETPOLINE_SAFE)
- /*
-  * See linux/instrumentation.h
-  */
--#define ANNOTATE_INSTR_BEGIN(label)	__ASM_ANNOTATE(label, ANNOTYPE_INSTR_BEGIN)
--#define ANNOTATE_INSTR_END(label)	__ASM_ANNOTATE(label, ANNOTYPE_INSTR_END)
-+#define ANNOTATE_INSTR_BEGIN(label)	ASM_ANNOTATE_LABEL(label, INSTR_BEGIN)
-+#define ANNOTATE_INSTR_END(label)	ASM_ANNOTATE_LABEL(label, INSTR_END)
- /*
-  * objtool annotation to ignore the alternatives and only consider the original
-  * instruction(s).
-  */
--#define ANNOTATE_IGNORE_ALTERNATIVE	ASM_ANNOTATE(ANNOTYPE_IGNORE_ALTS)
-+#define ANNOTATE_IGNORE_ALTERNATIVE	ASM_ANNOTATE(IGNORE_ALTS)
- /*
-  * This macro indicates that the following intra-function call is valid.
-  * Any non-annotated intra-function call will cause objtool to issue a warning.
-  */
--#define ANNOTATE_INTRA_FUNCTION_CALL	ASM_ANNOTATE(ANNOTYPE_INTRA_FUNCTION_CALL)
-+#define ANNOTATE_INTRA_FUNCTION_CALL	ASM_ANNOTATE(INTRA_FUNCTION_CALL)
- /*
-  * Use objtool to validate the entry requirement that all code paths do
-  * VALIDATE_UNRET_END before RET.
-@@ -177,13 +174,13 @@
-  * NOTE: The macro must be used at the beginning of a global symbol, otherwise
-  * it will be ignored.
-  */
--#define ANNOTATE_UNRET_BEGIN		ASM_ANNOTATE(ANNOTYPE_UNRET_BEGIN)
-+#define ANNOTATE_UNRET_BEGIN		ASM_ANNOTATE(UNRET_BEGIN)
- /*
-  * This should be used to refer to an instruction that is considered
-  * terminating, like a noreturn CALL or UD2 when we know they are not -- eg
-  * WARN using UD2.
-  */
--#define ANNOTATE_REACHABLE(label)	__ASM_ANNOTATE(label, ANNOTYPE_REACHABLE)
-+#define ANNOTATE_REACHABLE(label)	ASM_ANNOTATE_LABEL(label, REACHABLE)
- 
- #else
- #define ANNOTATE_NOENDBR		ANNOTATE type=ANNOTYPE_NOENDBR
--- 
-2.49.0
-
+Best regards,
+Krzysztof
 
