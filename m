@@ -1,58 +1,57 @@
-Return-Path: <linux-kernel+bounces-593627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35615A7FB87
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:20:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3BEFA7FB5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1F7B3BEA54
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:15:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02B4F18938A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2565C26AABC;
-	Tue,  8 Apr 2025 10:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1722A2676CB;
+	Tue,  8 Apr 2025 10:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8YedC33"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o5glxogZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9E2267F55;
-	Tue,  8 Apr 2025 10:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F40F266590;
+	Tue,  8 Apr 2025 10:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744106999; cv=none; b=Jg8uV4uyR6oCoOg+NtPZWYZLMekb2ueIEKqeBd1sLHM9pgYF7kknLmhYy6KfW0H7SVhw73lhHvd2XkNXBgz/+fgZptjovWM0PPalrQxf7mwGhLhlGDnCnGQMyohQ6etFh+C/UMk+oyd42S8e3y5z4zvwDvBZQGyyk2FOFR2rCgo=
+	t=1744106996; cv=none; b=n9kVSAWYf4bhooi4w4XqLyUgkEPDDXj/s+f3S/BsyFq26G8LAAANHC34kgigorVW69LNAB/83rrKIO+OqEYLaiVLFYmOIfVWsamdR57GGOi4BliduvT9KIM4m/0eNBVKynO6mA0FHQuG9/SYiWN5caFahIGZefERWSbr247Oc/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744106999; c=relaxed/simple;
-	bh=iHwJIWf+EpApsxQknvppsFpmD/7QpWJ0mtVTdwRXEsw=;
+	s=arc-20240116; t=1744106996; c=relaxed/simple;
+	bh=cI1iCiRg3MPksW4t2Wew3d0GBmSUuTKJXieNw32ATT8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JRSItDdCi6bqV44pkRt6VsWf0ZoIcHA/vcXfDq3q5OF6YTCRu3T2ThATCG2oksluDEMsMvs/hk6JxyQXJa4sdxoAJs0p8emx5a0JBmyup0dcoIpy16iirqZITnF5CeQq8DdSWCKcJMIwuk34RdR0yVdUB+ywRDCpBMjZkrvYkSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8YedC33; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8373DC4CEE5;
-	Tue,  8 Apr 2025 10:09:57 +0000 (UTC)
+	 MIME-Version; b=jpiCwp+hUEB0I3SpNSgustZ/lyv22c+GXOCKAMq4tJyZg0g0nydAeMR0o/VhBGVbLhUrXIWDDsUZbZtflWZG3bqao5ZleKm6Pk0YDJ2or/GdRExym1Qu3TGpNvsByUO1pbQ7MHB6SdCh6DkrglmHq4YIhqiIBReZHoo71j5L3Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o5glxogZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAC9CC4CEF6;
+	Tue,  8 Apr 2025 10:09:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744106997;
-	bh=iHwJIWf+EpApsxQknvppsFpmD/7QpWJ0mtVTdwRXEsw=;
+	s=k20201202; t=1744106995;
+	bh=cI1iCiRg3MPksW4t2Wew3d0GBmSUuTKJXieNw32ATT8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=o8YedC33i8tsSrK0yDhUBlA6CUcSx6KQiR3tVpiqhdxWtXw4Qim5VVCBRFoX/jZb3
-	 mAiY4M3nbxvwkTqLEg2VrLlIV3JnejtUJm+ur/xIoa04lYFnTNyZ1hCXoe25A40Z04
-	 77FyeQVkpkzCy4EUd7sIiu7slY83WQQO3NVRiOWqXZqbN175T74gBWI0oVoZPIlR3M
-	 IJgaCIYUWzZimla1cZsHXZJMATxORKiCIpzG1vtl9ckQIlxSpkbcg260KskzoV5pn9
-	 WTKzQrJ2HS0rMIkJPRDfUjU+finLARH7fCxeE3j2m/SDEK/4VViJITmTROj95l2ecp
-	 0HWYVtjiRD4Aw==
+	b=o5glxogZIRtpzR+o7+qTzO1Zw6Cw9Yp1qHXOMFuYdFJ6Q6NXr4qcQakuCfnyv/odt
+	 OixqZ5GsL0vkWMzYeMVDeXUWNa82bt4gnUiLc2LaKVgqh8tZfCNrGdrkm04i7SKO1E
+	 pScw7Hje5rfDrg8/XSOwGcnYAWrSzVhWzq6mw0g55FIfNsnwB9BFSFo+LIMgxXOjTl
+	 MPo52p9mBoW5DnEDkxThlfeCvTIneuaxA6mAx3nHpA2EeAvgKBsxRtd9aD4IEPD05f
+	 fP75tG2REPtHlcTnMlcgtuBL81Fbbl6IVG5p8Xqxy+wDKC9oGko2xkvlH03jdfIMcu
+	 pzJcW2sxAvz8A==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab@kernel.org>)
-	id 1u25tt-00000008RVy-1HDy;
+	id 1u25tt-00000008RW1-1NGw;
 	Tue, 08 Apr 2025 18:09:49 +0800
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
 	Jonathan Corbet <corbet@lwn.net>
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Sean Anderson <sean.anderson@linux.dev>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 15/33] scripts/kernel-doc.py: fix handling of doc output check
-Date: Tue,  8 Apr 2025 18:09:18 +0800
-Message-ID: <6d8b77af85295452c0191863ea1041f4195aeaaf.1744106242.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v3 16/33] scripts/kernel-doc.py: properly handle out_section for ReST
+Date: Tue,  8 Apr 2025 18:09:19 +0800
+Message-ID: <935d00c6a7c45b25a8be72fad6183fe5a8476cd2.1744106242.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1744106241.git.mchehab+huawei@kernel.org>
 References: <cover.1744106241.git.mchehab+huawei@kernel.org>
@@ -65,129 +64,35 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-The filtering logic was seeking for the DOC name to check for
-symbols, but such data is stored only inside a section. Add it
-to the output_declaration, as it is quicker/easier to check
-the declaration name than to check inside each section.
-
-While here, make sure that the output for both ReST and man
-after filtering will be similar to what kernel-doc Perl
-version does.
+There is a difference at the way DOC sections are output with
+the include mode. Handle such difference properly.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- scripts/lib/kdoc/kdoc_output.py | 29 ++++++++++++-----------------
- scripts/lib/kdoc/kdoc_parser.py |  3 ++-
- 2 files changed, 14 insertions(+), 18 deletions(-)
+ scripts/lib/kdoc/kdoc_output.py | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/scripts/lib/kdoc/kdoc_output.py b/scripts/lib/kdoc/kdoc_output.py
-index 6a7187980bec..7a945dd80c9b 100755
+index 7a945dd80c9b..d0c8cedb0ea5 100755
 --- a/scripts/lib/kdoc/kdoc_output.py
 +++ b/scripts/lib/kdoc/kdoc_output.py
-@@ -122,13 +122,13 @@ class OutputFormat:
-         if self.no_doc_sections:
-             return False
- 
-+        if name in self.nosymbol:
-+            return False
-+
-         if self.out_mode == self.OUTPUT_ALL:
-             return True
- 
-         if self.out_mode == self.OUTPUT_INCLUDE:
--            if name in self.nosymbol:
--                return False
--
-             if name in self.function_table:
-                 return True
- 
-@@ -154,15 +154,6 @@ class OutputFormat:
- 
-         return False
- 
--    def check_function(self, fname, name, args):
--        return True
--
--    def check_enum(self, fname, name, args):
--        return True
--
--    def check_typedef(self, fname, name, args):
--        return True
--
-     def msg(self, fname, name, args):
-         self.data = ""
- 
-@@ -306,7 +297,7 @@ class RestFormat(OutputFormat):
-         for line in output.strip("\n").split("\n"):
-             self.data += self.lineprefix + line + "\n"
- 
--    def out_section(self, args, out_reference=False):
-+    def out_section(self, args, out_docblock=False):
-         """
-         Outputs a block section.
- 
-@@ -325,7 +316,7 @@ class RestFormat(OutputFormat):
+@@ -315,12 +315,12 @@ class RestFormat(OutputFormat):
+             if section in self.nosymbol:
                  continue
  
-             if not self.out_mode == self.OUTPUT_INCLUDE:
--                if out_reference:
-+                if out_docblock:
+-            if not self.out_mode == self.OUTPUT_INCLUDE:
+-                if out_docblock:
++            if out_docblock:
++                if not self.out_mode == self.OUTPUT_INCLUDE:
                      self.data += f".. _{section}:\n\n"
- 
-                 if not self.symbol:
-@@ -339,8 +330,7 @@ class RestFormat(OutputFormat):
-     def out_doc(self, fname, name, args):
-         if not self.check_doc(name):
-             return
 -
--        self.out_section(args, out_reference=True)
-+        self.out_section(args, out_docblock=True)
+-                if not self.symbol:
+                     self.data += f'{self.lineprefix}**{section}**\n\n'
++            else:
++                self.data += f'{self.lineprefix}**{section}**\n\n'
  
-     def out_function(self, fname, name, args):
- 
-@@ -583,8 +573,10 @@ class ManFormat(OutputFormat):
- 
-         for line in contents.strip("\n").split("\n"):
-             line = Re(r"^\s*").sub("", line)
-+            if not line:
-+                continue
- 
--            if line and line[0] == ".":
-+            if line[0] == ".":
-                 self.data += "\\&" + line + "\n"
-             else:
-                 self.data += line + "\n"
-@@ -594,6 +586,9 @@ class ManFormat(OutputFormat):
-         sectionlist = args.get('sectionlist', [])
-         sections = args.get('sections', {})
- 
-+        if not self.check_doc(name):
-+                return
-+
-         self.data += f'.TH "{module}" 9 "{module}" "{self.man_date}" "API Manual" LINUX' + "\n"
- 
-         for section in sectionlist:
-diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-index e8c86448d6b5..74b311c8184c 100755
---- a/scripts/lib/kdoc/kdoc_parser.py
-+++ b/scripts/lib/kdoc/kdoc_parser.py
-@@ -1198,6 +1198,7 @@ class KernelDoc:
-             else:
-                 self.entry.section = doc_block.group(1)
- 
-+            self.entry.identifier = self.entry.section
-             self.state = self.STATE_DOCBLOCK
-             return
- 
-@@ -1628,7 +1629,7 @@ class KernelDoc:
- 
-         if doc_end.search(line):
-             self.dump_section()
--            self.output_declaration("doc", None,
-+            self.output_declaration("doc", self.entry.identifier,
-                                     sectionlist=self.entry.sectionlist,
-                                     sections=self.entry.sections,
-                                     section_start_lines=self.entry.section_start_lines,
+             self.print_lineno(section_start_lines.get(section, 0))
+             self.output_highlight(sections[section])
 -- 
 2.49.0
 
