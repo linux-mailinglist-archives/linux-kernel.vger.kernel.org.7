@@ -1,220 +1,232 @@
-Return-Path: <linux-kernel+bounces-593008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B075A7F3F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:04:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D6D7A7F3FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:06:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84744189A54E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:03:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EE6F16709C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1840725FA12;
-	Tue,  8 Apr 2025 05:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653BD204592;
+	Tue,  8 Apr 2025 05:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wb07OsFa"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BWXz/d2C"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A8B25FA05;
-	Tue,  8 Apr 2025 05:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C9B1B21AA;
+	Tue,  8 Apr 2025 05:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744088563; cv=none; b=FsctwGXRrdkWj5eaaOIowQHwqrjCdFvwjIMhR82sRmV70CmilxF4yA/jn8O7HeyU/IcshLegVr6gS7/yQW729oluY3vmaaYgk7Tpd/ZEdYG/ECcCY8XG/prx3CaZaz0Hst6ZumiGT5zJt1QUuNWRBp7wkPPjhoPDm3nPpvFNnFs=
+	t=1744088633; cv=none; b=cvoo3+PmMFsLT7iRk1KchzjN9aRBtPdjU5MCHRGjdsXnmhW8ITNT2iWm8XBe1xPLSriakPk5p0fi6cuagowsuX2YCfVrOifBEiAMNYmE175lRNqIVyZOfsC74jDgTyDPGRNIWtzg649Gbvm8aREHzC7DqsPz/7mtzX9IZISXzBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744088563; c=relaxed/simple;
-	bh=4l+o4OGRPWFJRjD8V+YVsupkeWNPcXnlPD7DsuUNeXs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MgA0T7konPLDxGGnFTB3XSUNsOCxPET9WssTL2Sj5HbxLsejKR/I6GoUz6lQ29BbICevrWvhF+dVHIsyWoJZCNt3mVCSdU3TQc9SUbG6rb5KSctJbzLQKi4U4cfXgQi+qjU/uTzb23lGmqUHrPXQVe953EHZceING72PtJJpits=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wb07OsFa; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c56a3def84so486116285a.0;
-        Mon, 07 Apr 2025 22:02:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744088561; x=1744693361; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0lMUff57GYX4CzxAbSN/48C3ZVAAUNRCdX4B0uVlZ+E=;
-        b=Wb07OsFau0BYRSJ5uRzaIGV23Q8JNxrg9loBUD6pOzwmYS7AHV4TNk9BcrlYBaH5BO
-         vWhM1RrX8iKJ/eQ/DRmqc3eD1stQR/f0XsEpiteiPh3BtRnoC62zQExVg2Ppkzh7W2Tu
-         1G3nIcSQF0nJZJVxBKnf0vRMo0FGoR3wPlcx04j3cvVz6qMNjeXvibXLyaSXwxoDWB1y
-         ck5q+agfJ6vbwl0NE81FakrRT7z3QqGiwHTHBjg92GfTCOt9yD/65gkdTESCbvfqCiaQ
-         ia/KkVMgtOgklA4CF5Efnb4cFunjTuD4ToQCjGXaKSqhnn7/4UmrhSqd5kWtJHooLBsh
-         nGqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744088561; x=1744693361;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0lMUff57GYX4CzxAbSN/48C3ZVAAUNRCdX4B0uVlZ+E=;
-        b=G94lIQ0TSwpkX/iu4oL7MffmhPii6AY9Z7MA4wsYmM8NXAfN+fCxM1o16pyCM4cdGy
-         c0n4MHU9HM3HTfUr757WZiaF/hCGuz2vu/46GywHa/Am+/fYW+3sGlWj3sAd3CVyTGGO
-         1+RsM8Lgzun6NnxYuce6pje3vd7mbHFXtLGmTR9N/qAog85cv9m4tReRkrtMJCbCR6Xw
-         LeBPpJj1gNfue3+fu6JNM9sFxCG1onVSTmcs0DaIW+qVfRmtaRyg+8/2BncbJ1gQxn2D
-         y5vDiEpkxnO9Pm4UcJjvjPffR/hDwzUH/Wd227jixzwZFrRA+2sO3KIA8tg62kpdLAhu
-         HOfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKpPSvjtSkbdlHf2Kowii18f+1fqxg7ZezD+y+b6Rb+MnJFnrtKGEJ7vWcq8+KSl9WbCisLhWoFtv2@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrOYXZVCDmE0x1J44h26pSM0vUl5bW5BwZawa7Io2khB0TOB5a
-	odzYkN0ogCjTN9/kmA8lPqVY+uyThvJsNxhH/EmX6edbgjHfKlLv
-X-Gm-Gg: ASbGncskX5elaHQCB9TYLdf5/H3XWvkADqJobLdow7WNWYGm82VY67JX0SyS0MwlFrW
-	rbkyvvVvK8i6Vxyg5B0AHxCQ39fXxiwkIV+S1H01Y52fu0T/vZeDB/xUzNz23r7thbSOWMVkgiK
-	6HhTYteADHr6a9DnRhef6TM6gtmdFJbyYB9GAhzEjB/mHY2GILQGSb1hQZEEukysTuIT1HBk5ai
-	gU+17ho7a4zNRTGDXP1OqEbYTrFhRFfVvDiSEnSDaCgovoW5+6fRfetrCqWETiYw2NARh3YLjo1
-	JlTPRSxnNbtWTympLXGR
-X-Google-Smtp-Source: AGHT+IGuSzrFyPWJt2trcansOZ3rfJX9pXHBBq4wLTrDbisJaG5tsy22yySc7YRo3G+CTYp8klrU8g==
-X-Received: by 2002:a05:620a:4607:b0:7c5:f696:f8e5 with SMTP id af79cd13be357-7c77dd8612cmr1566906185a.14.1744088560675;
-        Mon, 07 Apr 2025 22:02:40 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c76ea587c2sm707724085a.81.2025.04.07.22.02.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 22:02:39 -0700 (PDT)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	sophgo@lists.linux.dev,
-	Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: [PATCH v3 4/4] irqchip/sg2042-msi: Add the Sophgo SG2044 MSI interrupt controller
-Date: Tue,  8 Apr 2025 13:01:45 +0800
-Message-ID: <20250408050147.774987-5-inochiama@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250408050147.774987-1-inochiama@gmail.com>
-References: <20250408050147.774987-1-inochiama@gmail.com>
+	s=arc-20240116; t=1744088633; c=relaxed/simple;
+	bh=TTVmNFAwTEPv26VuposLHGgoO5ncWVSJAsoYGSxzryI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=e9tBGX+Qvy96DgYAYtKgBFD0jqBFSVuqxj3VGeqXrRKRVH8YrqPWdYC0mMljG24/rzmISF+a7HPzzeaiymYeXsQ4nao29YCnEC/vmhhk2eVmmFgajLTxEcoxjFCsE4uG/UO5wcudrs5hB77J9HeY6tnWYvo9cwqOVWXRJhIv8SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BWXz/d2C; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5381fnLw025560;
+	Tue, 8 Apr 2025 05:03:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=zJVlrV
+	YmSXlUiKyvWRTsRH727ICp1NDWo/zS354Lji4=; b=BWXz/d2CuPB8v25xRLUFI3
+	Yt75ZQzBrm3gwDY2r6ezYwoCsCMyZ6LPZSviwe6hNe+5540t+2N3SIhE3fiKu7wk
+	h9XaPKl2IweIAqOuUxlxHFcfNurM3eCMYRKuGt4maYiymYUscsH2oIm9lqEnOJmo
+	/q+/7HnXaMP2AxF7/3J3B50PZTQ0tbtJx4MA4izDj/T0ogUnJSWsmU8DwVnMFO6/
+	b2891aaCdSpLM5HIioCUfheHu8dYXF3qFQvMsbC10Vbr4MWqPwupi7rIA3NI7zop
+	ET8FqTQdT/z9kpd4t+wnGkif7RlnwB7FJarJ5VCAgkUSt+L+pdv5+qSNczz+mLMg
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45vg4qbpjx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Apr 2025 05:03:13 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5384CfSq018432;
+	Tue, 8 Apr 2025 05:03:12 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45uh2kgwqq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Apr 2025 05:03:12 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53853CPl47251910
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 8 Apr 2025 05:03:12 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0D7A45805A;
+	Tue,  8 Apr 2025 05:03:12 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BA85D58056;
+	Tue,  8 Apr 2025 05:03:10 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.146.87])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  8 Apr 2025 05:03:10 +0000 (GMT)
+Message-ID: <36e244edd96a51f0749d54811c9567f954680a39.camel@linux.ibm.com>
+Subject: Re: [PATCH v11 2/9] ima: define and call ima_alloc_kexec_file_buf()
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Baoquan He <bhe@redhat.com>
+Cc: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
+        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+        code@tyhicks.com, bauermann@kolabnow.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+        James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
+        dyoung@redhat.com
+Date: Tue, 08 Apr 2025 01:03:10 -0400
+In-Reply-To: <Z/SoekIdreYI3uBZ@MiWiFi-R3L-srv>
+References: <20250402124725.5601-1-chenste@linux.microsoft.com>
+	 <20250402124725.5601-3-chenste@linux.microsoft.com>
+	 <a293ed27094f7fa7a36f1641a9e6b17a49e26fa0.camel@linux.ibm.com>
+	 <Z/SoekIdreYI3uBZ@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: hqBCVgsalKlyQjgCFXw2vb7U18nsoY8J
+X-Proofpoint-GUID: hqBCVgsalKlyQjgCFXw2vb7U18nsoY8J
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-08_01,2025-04-07_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
+ mlxscore=0 priorityscore=1501 phishscore=0 mlxlogscore=999 malwarescore=0
+ clxscore=1015 suspectscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504080034
 
-Add support for Sophgo SG2044 MSI interrupt controller.
+On Tue, 2025-04-08 at 12:39 +0800, Baoquan He wrote:
+> On 04/08/25 at 12:07am, Mimi Zohar wrote:
+> > On Wed, 2025-04-02 at 05:47 -0700, steven chen wrote:
+> > > In the current implementation, the ima_dump_measurement_list() API is=
+=20
+> > > called during the kexec "load" phase, where a buffer is allocated and=
+=20
+> > > the measurement records are copied. Due to this, new events added aft=
+er
+> > > kexec load but before kexec execute are not carried over to the new k=
+ernel
+> > > during kexec operation
+> >=20
+> > Repeating this here is unnecessary.
+> > >=20
+> > > To allow the buffer allocation and population to be separated into di=
+stinct
+> > > steps, make the function local seq_file "ima_kexec_file" to a file va=
+riable.
+> >=20
+> > This change was already made in [PATCH v11 1/9] ima: rename variable th=
+e
+> > set_file "file" to "ima_kexec_file".  Please remove.
+> >=20
+> > >=20
+> > > Carrying the IMA measurement list across kexec requires allocating a
+> > > buffer and copying the measurement records.  Separate allocating the
+> > > buffer and copying the measurement records into separate functions in
+> > > order to allocate the buffer at kexec 'load' and copy the measurement=
+s
+> > > at kexec 'execute'.
+> > >=20
+> > > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> > > Signed-off-by: steven chen <chenste@linux.microsoft.com>
+> > > ---
+> > >  security/integrity/ima/ima_kexec.c | 46 +++++++++++++++++++++++-----=
+--
+> > >  1 file changed, 35 insertions(+), 11 deletions(-)
+> > >=20
+> > > diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/=
+ima/ima_kexec.c
+> > > index 650beb74346c..b12ac3619b8f 100644
+> > > --- a/security/integrity/ima/ima_kexec.c
+> > > +++ b/security/integrity/ima/ima_kexec.c
+> > > @@ -15,26 +15,46 @@
+> > >  #include "ima.h"
+> > > =20
+> > >  #ifdef CONFIG_IMA_KEXEC
+> > > +static struct seq_file ima_kexec_file;
+> > > +
+> > > +static void ima_free_kexec_file_buf(struct seq_file *sf)
+> > > +{
+> > > +	vfree(sf->buf);
+> > > +	sf->buf =3D NULL;
+> > > +	sf->size =3D 0;
+> > > +	sf->read_pos =3D 0;
+> > > +	sf->count =3D 0;
+> > > +}
+> > > +
+> > > +static int ima_alloc_kexec_file_buf(size_t segment_size)
+> > > +{
+> > > +	ima_free_kexec_file_buf(&ima_kexec_file);
+> >=20
+> > After moving the vfree() here at this stage in the patch set, the IMA
+> > measurement list fails to verify when doing two consecutive "kexec -s -=
+l"
+> > with/without a "kexec -s -u" in between.  Only after "ima: kexec: move =
+IMA log
+> > copy from kexec load to execute" the IMA measurement list verifies prop=
+erly with
+> > the vfree() here.
+>=20
+> I also noticed this, patch 7 will remedy this. Put patch 7 just after
+> this patch or squash it into this patch?
+>=20
+> [PATCH v11 7/9] ima: verify if the segment size has changed
 
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
----
- drivers/irqchip/irq-sg2042-msi.c | 61 ++++++++++++++++++++++++++++++--
- 1 file changed, 58 insertions(+), 3 deletions(-)
+I'm glad you noticed this too!  I've been staring at it for a while, not kn=
+owing
+what to do.
 
-diff --git a/drivers/irqchip/irq-sg2042-msi.c b/drivers/irqchip/irq-sg2042-msi.c
-index 30a1d2bfd474..2935ca213306 100644
---- a/drivers/irqchip/irq-sg2042-msi.c
-+++ b/drivers/irqchip/irq-sg2042-msi.c
-@@ -19,8 +19,6 @@
- 
- #include "irq-msi-lib.h"
- 
--#define SG2042_MAX_MSI_VECTOR	32
--
- struct sg204x_msi_chip_info {
- 	const struct irq_chip		*irqchip;
- 	const struct msi_parent_ops	*parent_ops;
-@@ -44,7 +42,7 @@ struct sg204x_msi_chipdata {
- 	u32					irq_first;
- 	u32					num_irqs;
- 
--	DECLARE_BITMAP(msi_map, SG2042_MAX_MSI_VECTOR);
-+	unsigned long				*msi_map;
- 	struct mutex				msi_map_lock;
- 
- 	const struct sg204x_msi_chip_info	*chip_info;
-@@ -96,6 +94,35 @@ static const struct irq_chip sg2042_msi_middle_irq_chip = {
- 	.irq_compose_msi_msg	= sg2042_msi_irq_compose_msi_msg,
- };
- 
-+static void sg2044_msi_irq_ack(struct irq_data *d)
-+{
-+	struct sg204x_msi_chipdata *data = irq_data_get_irq_chip_data(d);
-+
-+	writel(0, (unsigned int *)data->reg_clr + d->hwirq);
-+	irq_chip_ack_parent(d);
-+}
-+
-+static void sg2044_msi_irq_compose_msi_msg(struct irq_data *d, struct msi_msg *msg)
-+{
-+	struct sg204x_msi_chipdata *data = irq_data_get_irq_chip_data(d);
-+	phys_addr_t doorbell = data->doorbell_addr + 4 * (d->hwirq / 32);
-+
-+	msg->address_lo = lower_32_bits(doorbell);
-+	msg->address_hi = upper_32_bits(doorbell);
-+	msg->data = d->hwirq % 32;
-+}
-+
-+static struct irq_chip sg2044_msi_middle_irq_chip = {
-+	.name			= "SG2044 MSI",
-+	.irq_ack		= sg2044_msi_irq_ack,
-+	.irq_mask		= irq_chip_mask_parent,
-+	.irq_unmask		= irq_chip_unmask_parent,
-+#ifdef CONFIG_SMP
-+	.irq_set_affinity	= irq_chip_set_affinity_parent,
-+#endif
-+	.irq_compose_msi_msg	= sg2044_msi_irq_compose_msi_msg,
-+};
-+
- static int sg204x_msi_parent_domain_alloc(struct irq_domain *domain, unsigned int virq, int hwirq)
- {
- 	struct sg204x_msi_chipdata *data = domain->host_data;
-@@ -175,6 +202,22 @@ static const struct msi_parent_ops sg2042_msi_parent_ops = {
- 	.init_dev_msi_info	= msi_lib_init_dev_msi_info,
- };
- 
-+#define SG2044_MSI_FLAGS_REQUIRED (MSI_FLAG_USE_DEF_DOM_OPS |	\
-+				   MSI_FLAG_USE_DEF_CHIP_OPS)
-+
-+#define SG2044_MSI_FLAGS_SUPPORTED (MSI_GENERIC_FLAGS_MASK |	\
-+				    MSI_FLAG_PCI_MSIX)
-+
-+static const struct msi_parent_ops sg2044_msi_parent_ops = {
-+	.required_flags		= SG2044_MSI_FLAGS_REQUIRED,
-+	.supported_flags	= SG2044_MSI_FLAGS_SUPPORTED,
-+	.chip_flags		= MSI_CHIP_FLAG_SET_EOI | MSI_CHIP_FLAG_SET_ACK,
-+	.bus_select_mask	= MATCH_PCI_MSI,
-+	.bus_select_token	= DOMAIN_BUS_NEXUS,
-+	.prefix			= "SG2044-",
-+	.init_dev_msi_info	= msi_lib_init_dev_msi_info,
-+};
-+
- static int sg204x_msi_init_domains(struct sg204x_msi_chipdata *data,
- 				   struct irq_domain *plic_domain, struct device *dev)
- {
-@@ -255,6 +298,12 @@ static int sg2042_msi_probe(struct platform_device *pdev)
- 
- 	mutex_init(&data->msi_map_lock);
- 
-+	data->msi_map = devm_bitmap_zalloc(&pdev->dev, data->num_irqs, GFP_KERNEL);
-+	if (!data->msi_map) {
-+		dev_err(&pdev->dev, "Unable to allocate msi mapping\n");
-+		return -ENOMEM;
-+	}
-+
- 	return sg204x_msi_init_domains(data, plic_domain, dev);
- }
- 
-@@ -263,8 +312,14 @@ static const struct sg204x_msi_chip_info sg2042_chip_info = {
- 	.parent_ops	= &sg2042_msi_parent_ops,
- };
- 
-+static const struct sg204x_msi_chip_info sg2044_chip_info = {
-+	.irqchip	= &sg2044_msi_middle_irq_chip,
-+	.parent_ops	= &sg2044_msi_parent_ops,
-+};
-+
- static const struct of_device_id sg2042_msi_of_match[] = {
- 	{ .compatible	= "sophgo,sg2042-msi", .data	= &sg2042_chip_info },
-+	{ .compatible	= "sophgo,sg2044-msi", .data	= &sg2044_chip_info },
- 	{ }
- };
- 
--- 
-2.49.0
+"ima: verify if the segment size has changed" is new to v11.  It was origin=
+ally
+part of this patch.  My comment on v10 was:
+
+The call to ima_reset_kexec_file() in ima_add_kexec_buffer() resets
+ima_kexec_file.buf() hiding the fact that the above test always fails and f=
+alls
+through.  As a result, 'buf' is always being re-allocated.
+
+and
+
+Instead of adding and then removing the ima_reset_kexec_file() call from
+ima_add_kexec_buffer(), defer adding the segment size test to when it is
+actually possible for the segment size to change. Please make the segment s=
+ize
+test as a separate patch.
+
+ima_reset_kexec_file() will then only be called by ima_free_kexec_file_buf(=
+).
+Inline the ima_reset_kexec_file() code in ima_free_kexec_file_buf().
+
+>=20
+> >=20
+> > > +
+> > > +	/* segment size can't change between kexec load and execute */
+> > > +	ima_kexec_file.buf =3D vmalloc(segment_size);
+> > > +	if (!ima_kexec_file.buf)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	ima_kexec_file.size =3D segment_size;
+> > > +	ima_kexec_file.read_pos =3D 0;
+> > > +	ima_kexec_file.count =3D sizeof(struct ima_kexec_hdr);	/* reserved =
+space */
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> >=20
+>=20
+>=20
 
 
