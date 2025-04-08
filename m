@@ -1,103 +1,102 @@
-Return-Path: <linux-kernel+bounces-593276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A55FBA7F784
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:16:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 188F4A7F7C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF63B7A9C1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:15:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF30C175B2C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BB72641C5;
-	Tue,  8 Apr 2025 08:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D797D254B1A;
+	Tue,  8 Apr 2025 08:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mTbuCqJe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="BY4NRvtF"
+Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9FE263F2C;
-	Tue,  8 Apr 2025 08:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133672594
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744100173; cv=none; b=L7cZZknYNveORG+iJucD6Uqp2wWzUF+j1JUh4ygad3ouykpiKj4NqpJGt9wwNNQfI4HRYiMx4QY/ziq7oLLDeu4YqVTq+6u7QpGTcd0SgtGL+ak7kHG/fKLcZNfWEEMIt4CsH9ogPU85VclZM+bDwgptEKEcIqSR5HLjOVDXd2Q=
+	t=1744100797; cv=none; b=Qpj8zitBeiddS6OdsbIrMwzXgbClM6DytqqBIarQqosqhocROVbaYQ65qfbWjaxXUpCgqEhfsR46RG63wVnFDdkEf9YpIEFn0u9TSHgeyB8CIPq6LwrGytzJutSX0PrIMmzR1Lg5JrRu0s3cRMsYOTYYNL2bL0hn6dox3JWZB4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744100173; c=relaxed/simple;
-	bh=a0cHsypMDGBoj1KQFM5mwYajqEJrx4jAOqxJNpZ+kzU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pnBDIA0zWGDA2LWw462ZZEkp4tXLgKL20UFew2y92LT1UbhThKLv3sgC9I3by2wlCDjGeioMcTrxF1085IeeHoIGg0Huifr1ALZCSbABWPBdIXqRgKQpWXOQ2Q+nOKfW4pUg5kWyyy/NYXK/BDYLZiLJAw4Jpx/N7ZRioStpaKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mTbuCqJe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1ED2C4CEEB;
-	Tue,  8 Apr 2025 08:16:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744100173;
-	bh=a0cHsypMDGBoj1KQFM5mwYajqEJrx4jAOqxJNpZ+kzU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mTbuCqJetua5Pl89eRSq+KlSTASP0RslqlF95iKaZ1238IoDHob5PfyjcI9b1TjzW
-	 oRS9ccNNBVgaFxO6Xn0/xrrYjvwRF67tgr2Q/lVjc52IBDfXbp9/+bS1RZ1DsbfIOr
-	 M3XEap2gKGIDF8vSkJU3YvnVVWMMlKpuA6S7jBu1K6Md7TQJ7y6UKAny/rt8JYyxdx
-	 IFdTX4ONhmFkxnvg+N5Kx+cNhc4Bjv9jVsoXS/WZuoZfo5uzB+bSpRnInEiXNEiMqo
-	 Dq4QZuYjQq/kE4ajtkQ+kbMFU1g5rKcVGLFsuMFtWZLCTz2qJdF2fxoi/fLxxkUgoL
-	 zB+LZD52kI6nQ==
-Date: Tue, 8 Apr 2025 10:16:04 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Eric Biggers <ebiggers@kernel.org>, Arnd Bergmann <arnd@kernel.org>,
-	linux-kbuild@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-	Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>,
-	Brian Gerst <brgerst@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ingo Molnar <mingo@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, Takashi Iwai <tiwai@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uros Bizjak <ubizjak@gmail.com>, Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-raid@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH 0/4] Make gcc-8.1 and binutils-2.30 the minimum version
-Message-ID: <Z_TbRGgRTDvyQyfs@gmail.com>
-References: <20250407094116.1339199-1-arnd@kernel.org>
- <20250407164151.GB2536@sol.localdomain>
- <0d087503-88d5-4d66-aa52-161ca6e0df06@app.fastmail.com>
+	s=arc-20240116; t=1744100797; c=relaxed/simple;
+	bh=sYVb49tTeUBnYvvmqq8FJYBk/cy/MQEUoZ4gX5PSDpI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fK1odao1+BOEGzHzNSrkRMXGgsN+as5gB5IZEmEV2UrUUqul/rS3vY40Fgt7fR/zBE4DWvFB63/GEhf46fzQSHuj4XLNQsPh8u9u3ggM/pwePNztt0M40CDL05fETf6ohWp5gDUfM6oD88x6izXZbe9Y5mXc+DQJZ9zP+WUr9b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=BY4NRvtF; arc=none smtp.client-ip=95.143.211.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+From: Denis Arefev <arefev@swemel.ru>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
+	t=1744100198;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KycvnFWvB7WLb2FMk02JJRuq8Z8TQ1r5p1fwmK7UuQI=;
+	b=BY4NRvtF8TGoqRIlOh7vqXec44FXLXMcGrQLgiSlHUoZiE1Bc9+uNECT0fDAo27IT+iXqD
+	hOzTflwyN46+PtVNtVol6lKGo+7HladIctIV9TD8NXhvUHw4PRBDt9Nvt5wArpvnnpUnEY
+	bdd8fzIFmrOyE69kfnvxNS7XwQ209IY=
+To: alexdeucher@gmail.com
+Cc: Jun.Ma2@amd.com,
+	airlied@gmail.com,
+	alexander.deucher@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	arefev@swemel.ru,
+	christian.koenig@amd.com,
+	dri-devel@lists.freedesktop.org,
+	kenneth.feng@amd.com,
+	kevinyang.wang@amd.com,
+	lijo.lazar@amd.com,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	mario.limonciello@amd.com,
+	simona@ffwll.ch,
+	srinivasan.shanmugam@amd.com
+Subject: Re: [PATCH] drm/amd/pm/smu11: Prevent division by zero
+Date: Tue,  8 Apr 2025 11:16:38 +0300
+Message-ID: <20250408081638.5295-1-arefev@swemel.ru>
+In-Reply-To: <CADnq5_O+TMVD0B28Q6CgzhAi1aDR5ofjogE18HDXrJOJ1XwbDQ@mail.gmail.com>
+References: <CADnq5_O+TMVD0B28Q6CgzhAi1aDR5ofjogE18HDXrJOJ1XwbDQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d087503-88d5-4d66-aa52-161ca6e0df06@app.fastmail.com>
+Content-Transfer-Encoding: 8bit
 
+> ---
+>  drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c b/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c
+> index 189c6a32b6bd..54229b991858 100644
+> --- a/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c
+> +++ b/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c
+> @@ -1200,7 +1200,7 @@ int smu_v11_0_set_fan_speed_rpm(struct smu_context *smu,
+>         uint32_t crystal_clock_freq = 2500;
+>         uint32_t tach_period;
+>
+> -       if (speed == 0)
+> +       if (!speed || speed > UINT_MAX/8)
+>                 return -EINVAL;
+>         /*
+>          * To prevent from possible overheat, some ASICs may have requirement
+> --
+> 2.43.0
+>
 
-* Arnd Bergmann <arnd@arndb.de> wrote:
+Hi Alex.
 
-> On Mon, Apr 7, 2025, at 18:41, Eric Biggers wrote:
-> > On Mon, Apr 07, 2025 at 11:41:12AM +0200, Arnd Bergmann wrote:
-> >
-> > This is intended to supersede the patches from Uros that removed checks for
-> > binutils < 2.25, right?  See:
-> >
-> > * 
-> > https://lore.kernel.org/linux-crypto/20250404074135.520812-1-ubizjak@gmail.com/
-> > * 
-> > https://lore.kernel.org/linux-crypto/20250404074135.520812-2-ubizjak@gmail.com
-> > * 
-> > https://lore.kernel.org/linux-crypto/20250404074135.520812-3-ubizjak@gmail.com/
-> 
-> I missed these, but it does sounds we easy to work out, either
-> by rebasing my patch or dropping Uros' version.
+The patch 'drm/amd/pm/smu11: Prevent division by zero' was sent 
+separately, not part of the patch series, maybe that's why it wasn't
+accepted. Should I resend it?
 
-It's a trivial conflict resolution AFAICS, already done in today's 
--next.
+Regards, Denis.
 
-Thanks,
-
-	Ingo
 
