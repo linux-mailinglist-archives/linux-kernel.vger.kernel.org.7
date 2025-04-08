@@ -1,162 +1,115 @@
-Return-Path: <linux-kernel+bounces-594807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3D30A816D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:27:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ED1CA816D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE4121B83C24
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:27:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76C643A741F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9214425291E;
-	Tue,  8 Apr 2025 20:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4A5244195;
+	Tue,  8 Apr 2025 20:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aGQZHq6/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oYoPaLa0"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B88C24501C
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 20:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF7C2505AF
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 20:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744144026; cv=none; b=UoCZYXNGHtV5yyOV1/fb1N9HgTuMhkbtPw2OufKEfdXKMtWSIlQ4iNyXQ43bzoSN8emw9hYVDahYkHUROKnp/3yNCz5j4MrmJHpw+J0024edxugB1LglTosohfftn//jpY/9un24gjSIFlPjekCDwM48RJkcxPJoPlzkplskQ6g=
+	t=1744144055; cv=none; b=FT9kJ3jPoKIF/4QEFPOnTkNwS2vPWU8jBjopnJd4jDcp5gs4M2JqwJDQ7sCBNZCRrsR8U0hFfHHROkT/ggsqSroKowRJ88YecH8mFvtLjYHYHBbkgufoaVeHS+rXqvuTwBSTFrzcOEHlEYPgRuebK0fKWYkUt2hjXZyUipruqvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744144026; c=relaxed/simple;
-	bh=lmxJkzFzN55CvpHITqysrbpyojnZyXakGvg4sdUShRQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XlzkJSY4UaJua3L8lsn8F+zpz190wqWY7vfN2EadEqM0pDQFhAIqYrx00z/9uRxlnq7837RlnW5ypjUwXAvmsdFCvjO+zjGLFjTBecW5fGVBNt/Bo4ixnuftDNxwVQiw4UzVKfRmNYCrNNeZgTB4U/9zsxoC4pA3M8Y2YCE1EPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aGQZHq6/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 538JYqr7026657
-	for <linux-kernel@vger.kernel.org>; Tue, 8 Apr 2025 20:27:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cqXN69eJjj53VercbPPDUqUwXi+7djq/bqmM04r34T4=; b=aGQZHq6/nEayjBSQ
-	x17b6vBaVffK69+9jySaswTU4QZWqd8ZQrUvDNbMHcTmNAJYKuR8aoXnVCMHLbAr
-	A7SvqTj6dV9eitGJBU3zY1VVO6N9P460NjnTifSBAc57hM/OABHO94pWKvmcIklB
-	SKer5dCA3KW6/KpcbVwrZ+UJh9hfhWr578Bn1W9PmhP7Ag0GdSyv7RhJgIsHJ7j8
-	60dKkVgPxeyDoBLzdWO3L4RDYAKxJBJxsJILtCbzdBuHLpGfuOKsrRINjzwk2W4x
-	xzYNsl6rKwWh8qLSks3ZUmVsAQXlTehBEw+NwKwzC2HiXRBSUKRTC1oMgZFxleGK
-	TeuFjw==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twdgh5h9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 20:27:03 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c57f80d258so1943714785a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 13:27:03 -0700 (PDT)
+	s=arc-20240116; t=1744144055; c=relaxed/simple;
+	bh=++qzM9pZTYWM+BnyPIWIoUaaUk2WFwLNWQkAezs1dho=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=TZpGZNQVuQpULSbSOGRghS7Y7vS7IySf2jkpmy44fhDBv3XG601ck7qzN9T3xO8SONgPz+/XLKMHBUSsenWfLn3lPS98vXoOsr6NmF/WoID0ZVPy4XbuC9h4IcL2mX8Ga6Q6+9VBbC5sZwZhNsYpfXvQw1+px60vM6VpZwH/CmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oYoPaLa0; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2263428c8baso10455ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 13:27:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744144053; x=1744748853; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zl9eXElVYvC/d08LUxLapHLfK6yOmAPuCukaZLlYMGc=;
+        b=oYoPaLa078mVbTFgaV1ZrI5nllq37LeNUA8e6z71UMEXtYRu3Ub7wFTBaJ3Ktr6IiP
+         4wQFnHoTMzvqj1yq/25Z5CAi0wg7A/UIVKzDQqVCfdi3mgJ84hJnJmSNhq0hilSD+JTj
+         H2KlqR8WUCPk2L7dUM7ECk9ZSpj8aa17E3dD/2EQvgYraDwFdVeQd2t2d9z9W1dlW52r
+         4mkuvfIzomBW2RpjJ7r0MJ17ZyG9Btkc9pUBNdtknodFCxyBanV02yoSBGR7nXtHWZ4L
+         681cVr2MkE4BtzBjVgSJmW4xEC+pyY4ncvQCiBejLH+P1HGKL4a4uB+3E9lw23aNG4UD
+         4uBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744144023; x=1744748823;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cqXN69eJjj53VercbPPDUqUwXi+7djq/bqmM04r34T4=;
-        b=tu0dOftdbw7QUcK6W/fpL3969A0rvXZWPwzJ0iHkHcmOJiiofaKTCp+gZ5kNAEKWVM
-         bcN3Qk61ZDzpXkHQBRRS5yVLLS+SGntVh/Mj+a3lTj7/FLrskiEsBnJEOgkuxePrDcDd
-         qtTcsV5YLlL00TfVS9IW0fCHP8caPtsXYOuB4eF7tb6RvF30whJ/9KMO6t3iFW729KAy
-         e6cAWvEG8x3fuewJK3XAfB8Rp2z89DBJykSlrE4HAAi/3Hh2UeSvAr9inK8p49nhccvY
-         4FlgY3EAcyNAHx8Ly64M4Th0P6NE1aeqYs/A3DoHxNJnUlTnIc5Qy2VAsLpN8/r0NRZC
-         BxLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXk0k/mNyX5FljpA6bP6Lbtjn/beaN08Sf8j8F2auU+7HmExWhTdQnV0c5dEQdzMSc7kDKnC9W3iTag8kg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywxu42KQ9GcFINfcnxHSAmG/aYirnq/F4Cjf3TuVFXv0gMTbUlh
-	gRONP7IYwMwOwXAwVUo3xdh+0r8ENax300bfMMsT/ps1kNZBhtsIyLPZnvAf4HcBTgHjUz8Ikbu
-	tUhlUftytGouw+C6S83NNCtr6GVciWMzH9/6Z/DUSGmtxNIC3sMdm/y1FeVX7YqM=
-X-Gm-Gg: ASbGnctyqJfJh8OIlvZLKa3DIAnONYE1G5kf1+d4LmRv3o5yh8VfjelU4qizQxGkddC
-	rF+USyrdL1S270Bk2UO1/CsWTEqxFiCo1uUCjDaIYSiIosRBmoTMmgwz1SAlGQ4vsdBnYNWhQQv
-	B+in9G9PkphfkOSrKFAxgXsVhEV2i0axWLATSL1I/Uu0aSWNoMJU4PVXAAECifbK5SOld8+Cpjg
-	79s9MSGt+4Kjr+D8hXU1ZeCoHeVGkNxBx84MfIFuQmwmyXFaOWofVpObHZvkoOJxabW0DQlCTml
-	rviDdH+iPO7SuzonSPLUAotM5uUlteFmIJl/J5iLmq5dWnZgxU2vmDj1eOsBrSEmvnb5uVI=
-X-Received: by 2002:a05:620a:408c:b0:7c5:6c02:4c25 with SMTP id af79cd13be357-7c79cbeb80emr99554985a.25.1744144023100;
-        Tue, 08 Apr 2025 13:27:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFa91aTShNdMl7VmKxRQdJAndH07tT2U427MXJh74EQlfRPx/O/pMOjC+hvL+QXxIcw4lHwVA==
-X-Received: by 2002:a05:620a:408c:b0:7c5:6c02:4c25 with SMTP id af79cd13be357-7c79cbeb80emr99549385a.25.1744144022716;
-        Tue, 08 Apr 2025 13:27:02 -0700 (PDT)
-Received: from [10.187.209.180] (37-33-188-210.bb.dnainternet.fi. [37.33.188.210])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30f0314b908sm20034721fa.55.2025.04.08.13.27.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Apr 2025 13:27:01 -0700 (PDT)
-Message-ID: <767e11cd-e338-4e00-a8e7-2e15f3da84b4@oss.qualcomm.com>
-Date: Tue, 8 Apr 2025 23:26:59 +0300
+        d=1e100.net; s=20230601; t=1744144053; x=1744748853;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zl9eXElVYvC/d08LUxLapHLfK6yOmAPuCukaZLlYMGc=;
+        b=URJiqg+rtyhV21E6aofPvzNFmkI7tCuqGleN//MqEnNd0EL8XeetgQm8c9srfNLiHK
+         m/r+RuRWl9jBN8wGYBGVCqjeSb9KIf7rweNKS0rkmTj/kG3brgsrrLRHj1FB68wmw/rj
+         4biaKqUSa/VpvbGjC8XEt0QmFkwsJN4FKclSIAZkLrM0KDlJhQvB9el7EKfXH5LPtEax
+         DNAhww4Wwhk0NVuoSXsNLWILI7P9RXkC10n0NkOBIBQptKLz+4awTl7sbBxbCCKoUdMe
+         viHNsTEOQWTD8W1VjeebJQvEsLBouiaWqNAXrQsVPOmJiwx+C1IZ5yXoY2UBxwWaa5L0
+         Ajlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVtHw7Fqs4wHZesU/llQW0xZnQ+2oj3Hp7kGGCARKZQ1/1BLS59j3+qxg3jKn313K+MnS7nIosZH6obQ6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRMZlNUufJxc1feKRT+d7feL5poSOlkND+5LJBUUSIctk/QaKB
+	xwJoICnn6Ty3zxrSg6IaURFCoOdyRe8SpjPOwL7jwUoH7PjPHTWY7opdaoC0IA==
+X-Gm-Gg: ASbGncs+wTTzmkwT8bmDsWHFTaZReGgohORgQgV3zHu/1NbA3NlIpa8GkOrW6kN8pwt
+	jDkNC3TQWkQeWy3nTrVXA+fKrQcN67IjFf/VlUP/RA2ikTYQc1aO5UZni+xuBSL0tmXQs76+sSu
+	wuKzFEFJl5o6V9ROiEp9WqyNLV/+sfjGe0xSe0XCuFaGHSEWLKAq9YWwi9sFhNk5j+pjdqZd/KH
+	tLUKNw/rktYq4k0ShF3FxnAU9joULu0zkPoEBxnQXNri2kPWApBsKf4P5ywbojmwIAW215gNnUm
+	qMO8euDSR8lIZFhQWW2UnGOmBtexeqiyh3fDHqeP8rPoOo+PWy2Assoux7cU3j4CEj7Qyrbm5bx
+	Ugz1G8Rz24Y0x05Faq1FAflYrOVrh4x7TYI6j/W0=
+X-Google-Smtp-Source: AGHT+IGaP1tt5XEyPUt0p5S4YVh9UW+3H3LMheFD+j349byeR79n33slYeHHkSlxeDJqUXSafc4QvA==
+X-Received: by 2002:a17:902:bb81:b0:216:201e:1b63 with SMTP id d9443c01a7336-22ac4626b25mr11015ad.11.1744144052977;
+        Tue, 08 Apr 2025 13:27:32 -0700 (PDT)
+Received: from [2a00:79e0:2eb0:8:85ad:f0c6:8d52:20df] ([2a00:79e0:2eb0:8:85ad:f0c6:8d52:20df])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3057ca1eb89sm11664405a91.5.2025.04.08.13.27.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 13:27:32 -0700 (PDT)
+Date: Tue, 8 Apr 2025 13:27:31 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+To: Harry Yoo <harry.yoo@oracle.com>
+cc: Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, 
+    Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+    patches@lists.linux.dev, Pekka Enberg <penberg@kernel.org>, 
+    Joonsoo Kim <iamjoonsoo.kim@lge.com>, Christoph Lameter <cl@linux.com>, 
+    Roman Gushchin <roman.gushchin@linux.dev>
+Subject: Re: [RFC PATCH 1/2] MAINTAINERS: update SLAB ALLOCATOR maintainers
+In-Reply-To: <Z_Qz55SbnHK9LoW1@harry>
+Message-ID: <839394bc-cd6c-4d34-2f85-8aabf7712459@google.com>
+References: <20250407200508.121357-3-vbabka@suse.cz> <Z_Qz55SbnHK9LoW1@harry>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/10] dt-bindings: display: msm: document DSI
- controller and phy on SA8775P
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Ayushi Makhija <quic_amakhija@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        robdclark@gmail.com, dmitry.baryshkov@linaro.org, sean@poorly.run,
-        marijn.suijten@somainline.org, andersson@kernel.org, robh@kernel.org,
-        robh+dt@kernel.org, krzk+dt@kernel.org, konradybcio@kernel.org,
-        conor+dt@kernel.org, andrzej.hajda@intel.com,
-        neil.armstrong@linaro.org, rfoss@kernel.org,
-        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-        jernej.skrabec@gmail.com, quic_abhinavk@quicinc.com,
-        quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com,
-        quic_jesszhan@quicinc.com
-References: <20250311122445.3597100-1-quic_amakhija@quicinc.com>
- <20250311122445.3597100-4-quic_amakhija@quicinc.com>
- <20250312-calm-steadfast-cricket-fe9dd8@krzk-bin>
- <654d409e-2325-46e7-a064-ed9e64277e69@quicinc.com>
- <a168a473-c363-4041-8e3e-84fa44e92b10@kernel.org>
- <zpmr6cpiixyu2sj7r7oqpqsge6dcqw6xszldf7ugznmcrxqsme@efiwnggcn5qx>
- <a654d62e-502a-4a47-96c4-a44c14860e54@kernel.org>
-Content-Language: en-US
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-In-Reply-To: <a654d62e-502a-4a47-96c4-a44c14860e54@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=PJgP+eqC c=1 sm=1 tr=0 ts=67f58697 cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=gh1egkeLKbPt9jDVRuYeUQ==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=0U3iGMtbaPiC_UXuCSIA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-ORIG-GUID: LmoC_s4vWzQOFnZwGp7LBMnLL8VdLP7y
-X-Proofpoint-GUID: LmoC_s4vWzQOFnZwGp7LBMnLL8VdLP7y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-08_08,2025-04-08_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- lowpriorityscore=0 clxscore=1015 adultscore=0 malwarescore=0 spamscore=0
- impostorscore=0 suspectscore=0 mlxlogscore=802 bulkscore=0 mlxscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504080142
+Content-Type: text/plain; charset=US-ASCII
 
-On 08/04/2025 21:42, Krzysztof Kozlowski wrote:
-> On 08/04/2025 13:44, Dmitry Baryshkov wrote:
->> On Tue, Apr 08, 2025 at 01:03:53PM +0200, Krzysztof Kozlowski wrote:
->>> On 08/04/2025 12:38, Ayushi Makhija wrote:
->>>>>> +    properties:
->>>>>> +      compatible:
->>>>>> +        items:
->>>>>
->>>>> contains
->>>>>
->>>>>> +          - const: qcom,sa8775p-dsi-ctrl
->>>>>> +          - const: qcom,mdss-dsi-ctrl
->>>>>
->>>>> Drop fallback
->>>>>
->>>>   
->>>> Hi Krzysztof,
->>>>
->>>> I couldn't understand the meaning of "Drop fallback", could please elaborate it ?
->>> Look at SM8750 example on the lists. Keep only front compatible.
->>
->> Why?
+On Tue, 8 Apr 2025, Harry Yoo wrote:
+
+> On Mon, Apr 07, 2025 at 10:05:09PM +0200, Vlastimil Babka wrote:
+> > With permission, reduce the number of active maintainers. Create a
+> > CREDITS entry for Joonsoo (Pekka already has one). Thanks both for all
+> > the work!
+> > 
+> > Cc: Pekka Enberg <penberg@kernel.org>
+> > Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> > Cc: Christoph Lameter <cl@linux.com>
+> > Cc: David Rientjes <rientjes@google.com>
+> > Cc: Roman Gushchin <roman.gushchin@linux.dev>
+> > Cc: Harry Yoo <harry.yoo@oracle.com>
+> > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> > ---
 > 
-> To make things simpler and shorter.
+> Thank you, Joonsoo and Pekka, for all your work you have done!
+> 
+> Acked-by: Harry Yoo <harry.yoo@oracle.com>
+> 
 
-I'd prefer consistency. Previous platforms use qcom,mdss-dsi-ctrl.
-
-
--- 
-With best wishes
-Dmitry
+Acked-by: David Rientjes <rientjes@google.com>
 
