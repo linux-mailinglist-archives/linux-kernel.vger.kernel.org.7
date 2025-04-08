@@ -1,181 +1,160 @@
-Return-Path: <linux-kernel+bounces-594634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7FCDA81499
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:27:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2AFA81447
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D8CA7ABE1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:24:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 759F01B86BA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A1423C8DE;
-	Tue,  8 Apr 2025 18:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K6w53RL/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E685823E227;
+	Tue,  8 Apr 2025 18:10:23 +0000 (UTC)
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA23923E33A;
-	Tue,  8 Apr 2025 18:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1249E22F39F
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 18:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744136569; cv=none; b=pOxpsLqI5XrAFMVS23d8QUMh4IRuOJEpENeBb35DtSbL3TlGKEv+MEqeaOngpX8jsRjhNkgHWJrT43DeMe2G4sNrY+CP0QwWQpDGltOk+T4ceXV7HXthIFRbwj9ofcdyRkh4YXiRRwbQ7GL1TeUtsnmt5rEkTBHQfKDmSpHuC9I=
+	t=1744135823; cv=none; b=UyUkfI8WU2AWZiuIIN3+E73DaKCuyw+91GwJsWP++H5SNbmRCG9TmsleglrlaSMWzobiZ2gzpZwzKMykyp+XUld+EbZKzbK+X2o2zTSjGQfWd1DbsvnpeQWvuOHHY+reoHQV9HgH3NtbVisdQ8yVCftVmzmwzfi7a/wOPk0mBFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744136569; c=relaxed/simple;
-	bh=5LpLtUug8+WAmrpDqxb97Aqky7PzaY6BPA6LoGHVYvM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ePZ8vwD14K/G9fumeKqRMaGdYfVASdCSs8zhyJkMXWFeQLk1XCIo2hH7hNLuLm2rwPMqCYC9dNv/wQXazCGfrrV3iJqPZ9oP19zEMOD3Ghsw+Oq9IXDonCNm3OGFJ+Sj8TSvu6hY1AlFK6rB8ADbG6VDvOBPApWpzJko/+WV97o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K6w53RL/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84094C4CEE5;
-	Tue,  8 Apr 2025 18:22:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744136569;
-	bh=5LpLtUug8+WAmrpDqxb97Aqky7PzaY6BPA6LoGHVYvM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=K6w53RL/njlqY0wn/F5lqIGLhGFCBLu13G38E/bwQu+W2R7K7YYSpxZfF8ZieMfdb
-	 PqL/XdU5IBL0yTtCKXUoQciGkVW4JaVBhGzgLqzTblC21T1/yGI6M67GpvUXDfa/ZE
-	 LffQgRKQu1ZJAVWbM2zW90miAXXSrJDSkT+d29qtusrhnceuJBcxORCR8GxZawyOb1
-	 Idx6WVErfpIS4fC6NMwnS/QtUZM/EHhrKLVckQbPnENfgULSFPF6OPjtKhIS8z+xDQ
-	 N3VntJo66pco1NfIDjw3X5O9UabQcpopNLNYLEUE5jtvJhb+7Pkxh25gDbIDwr1HW5
-	 GPy1r5YtLUGig==
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 08 Apr 2025 19:10:05 +0100
-Subject: [PATCH 5.15 v3 10/11] KVM: arm64: Calculate cptr_el2 traps on
- activating traps
+	s=arc-20240116; t=1744135823; c=relaxed/simple;
+	bh=uUwPvmcHkJhjMjUdNgSFgwUWiW1CgHzEHSwQ6u4hBk4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lpl9XiA80C4pKLwvJaI2Z4cktFLvALvHnj8cy6BhJ2q/QqosbQ3eWBnffouCcKh07SwHJLmfeRZnZugdme/D5R5D8pnWF2fTfD+zpPytEBXMY8hkH7kyohUfFrCVMGfNygwwz7xNVNUWgoAsv0AJbCtM3RqhX4ilZr4/rQqgmIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c554d7dc2aso959626785a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 11:10:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744135819; x=1744740619;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z9waQqUciDIKf2OGaUGdjEc76EpaWRZahK7BUBpwDcY=;
+        b=KDcWxgHN5sYHwycavzA2bDRzmponiL/wuekyxqeS7tCv/8RRznPsj3I7T2OmIBHXLv
+         Vs8LcXZyUvyCMsL91erm/ZCDObsYddunFf3OjOsKNcroxr8LJ4J8EV3ySzz11+UYrEqq
+         rUuiaaJejDrB23By/aXMEl8cVnW307uTJCedeKOOALOMygToF5wNxm/P6Tj+5Ak4/5KA
+         9fS7PC1ZpgDklE2rUwVsJUQ6xtJwwzPRdABjB8cKm5MX43UqXDAMeNPAPD6E3pJl0hnZ
+         XG1OJ5NPUs3O4V3mBOcG8Bo1qbfO8fmPHF73ZXPaxNrGn9JqxbXeTzVOhv1BTT59qsM/
+         +KvQ==
+X-Gm-Message-State: AOJu0YxdJ6XptWFNyndtlp6t/ALHWsTvvTcNeyvSPCyQzvlP9kvuiVpz
+	1UW5fqmCfc9HxkXrNuACjWTKUxlUuwOegXcJSjhjBarUl3wlZSRE9QPGPjYW
+X-Gm-Gg: ASbGncsoE3IQFud3Y/pMDXvr77JiE6gbBsVLD5g59YQ0ck3pfDhOjXvTybfc/FSu3dO
+	7V8ea9whjx3ZTCm1mnmjKuYmROev6GnrCeYQgu+JioadkM2ZhcYexK2hxSTxKHYchDMzpNWH2AO
+	J47oJBwcl5s+m/0I6neFz5oH03gvJKDh7WmctKj6DKDk84Vm3QfQPjeSMbNNzWh8B2zU+dUa+aF
+	hUNgtioi976Pxj5JeI1dy89TwBKrpdHBr4tgaTT8z8bu+O8Zn5wttiAlbF7ypVjHf2bU7gg2IAe
+	Hs2Q6cT9sCfTiR5uGxy1knGKNni+fPj2fCkcDb/6+2lo2uu0UUjrjwpSLu9fnbm5a2pxDKgxX3C
+	WQjVNfDX4sHU=
+X-Google-Smtp-Source: AGHT+IEzFhJetuoZQqSBdAQZKKKFf1NfW3uVt1/svR7xDR7AQaSeuZE9460nRPsut0xplfIqO6CcWw==
+X-Received: by 2002:a05:620a:430e:b0:7c5:4cb7:ac97 with SMTP id af79cd13be357-7c79cbca854mr19020185a.1.1744135818907;
+        Tue, 08 Apr 2025 11:10:18 -0700 (PDT)
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com. [209.85.222.172])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c76e96cf01sm788691885a.55.2025.04.08.11.10.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Apr 2025 11:10:18 -0700 (PDT)
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c54b651310so791398785a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 11:10:18 -0700 (PDT)
+X-Received: by 2002:a05:620a:8396:b0:7c5:3e89:c6df with SMTP id
+ af79cd13be357-7c79cbcbba5mr18703985a.12.1744135818636; Tue, 08 Apr 2025
+ 11:10:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250408-stable-sve-5-15-v3-10-ca9a6b850f55@kernel.org>
-References: <20250408-stable-sve-5-15-v3-0-ca9a6b850f55@kernel.org>
-In-Reply-To: <20250408-stable-sve-5-15-v3-0-ca9a6b850f55@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Oleg Nesterov <oleg@redhat.com>, Oliver Upton <oliver.upton@linux.dev>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>, Fuad Tabba <tabba@google.com>, 
- James Clark <james.clark@linaro.org>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3292; i=broonie@kernel.org;
- h=from:subject:message-id; bh=dzuSkTHzORViq39mf97JEZt+XWlNRsFaxOQ4IWqXP1g=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBn9WlT6cQHEa2BVDcqOeuHIhwSftALpooykroaE+iL
- 3g7I1rGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ/VpUwAKCRAk1otyXVSH0GOpB/
- 4i21OpuHSiUOWXc7d6C0MTkEAWUC4+yh60s2WyUhntsumPjgap/cghV7sbRHlsJhzExNgOHavbtFI7
- arjJjClACQlEUkiV9Q5lr1XsVycETnRLrqpg7af2NM8cYUT+G7P/2tQjLbDiwhgp8HL6sneawkzYXY
- Xg8wM7kE+Jmh2UsGOsWFwatuKXZKHbhYKMizMLh3bM1oKCQwCh+ShvL3aVl+pxJ3XMoQE5zdZ0O8Is
- PA140HkoYIDhe3huIdjXtxDNKA3VVo+eTiAsFLOmcZCgPk8MPOOg3u5qCKP2gSPz452LZKMqUVNIdR
- TqED8/Pw1ydAF07vUx2sHNHSqfnKPC
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+References: <20250313142404.896902416@linutronix.de> <20250313142524.073826193@linutronix.de>
+In-Reply-To: <20250313142524.073826193@linutronix.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 8 Apr 2025 20:10:06 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUkEpo4qPZe271H1=nBHRhKkKy5X70s9OSqxACxT3HJxw@mail.gmail.com>
+X-Gm-Features: ATxdqUHEvw7NfKjidAV-WhdwgNBcIDBLbokd5YcUmHD6sPSE5Rml4gkomkj1-Iw
+Message-ID: <CAMuHMdUkEpo4qPZe271H1=nBHRhKkKy5X70s9OSqxACxT3HJxw@mail.gmail.com>
+Subject: Re: [patch 2/7] genirq/generic-chip: Convert core code to lock guards
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+	Gregory Clement <gregory.clement@bootlin.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Talel Shenhar <talel@amazon.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Guo Ren <guoren@kernel.org>, 
+	Herve Codina <herve.codina@bootlin.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Fuad Tabba <tabba@google.com>
+Hi Thomas,
 
-[ Upstream commit 2fd5b4b0e7b440602455b79977bfa64dea101e6c ]
+On Thu, 13 Mar 2025 at 15:37, Thomas Gleixner <tglx@linutronix.de> wrote:
+> Replace the irq_gc_lock/unlock() pairs with guards. There is no point to
+> implement a guard wrapper for them as they just wrap around raw_spin_lock*().
+>
+> Switch the other lock instances in the core code to guards as well.
+>
+> Conversion was done with Coccinelle plus manual fixups.
+>
+> No functional change.
+>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-Similar to VHE, calculate the value of cptr_el2 from scratch on
-activate traps. This removes the need to store cptr_el2 in every
-vcpu structure. Moreover, some traps, such as whether the guest
-owns the fp registers, need to be set on every vcpu run.
+Thanks for your patch, which is now commit 195298c3b11628a6
+("genirq/generic-chip: Convert core code to lock guards") in
+irqchip/irq/drivers.
 
-Reported-by: James Clark <james.clark@linaro.org>
-Fixes: 5294afdbf45a ("KVM: arm64: Exclude FP ownership from kvm_vcpu_arch")
-Signed-off-by: Fuad Tabba <tabba@google.com>
-Link: https://lore.kernel.org/r/20241216105057.579031-13-tabba@google.com
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- arch/arm64/include/asm/kvm_host.h |  1 -
- arch/arm64/kvm/arm.c              |  1 -
- arch/arm64/kvm/hyp/nvhe/switch.c  | 35 ++++++++++++++++++++++++++---------
- 3 files changed, 26 insertions(+), 11 deletions(-)
+> --- a/kernel/irq/generic-chip.c
+> +++ b/kernel/irq/generic-chip.c
+> @@ -340,9 +330,8 @@ int irq_domain_alloc_generic_chips(struc
+>                                 goto err;
+>                 }
+>
+> -               raw_spin_lock_irqsave(&gc_lock, flags);
+> -               list_add_tail(&gc->list, &gc_list);
+> -               raw_spin_unlock_irqrestore(&gc_lock, flags);
+> +               scoped_guard (raw_spinlock, &gc_lock)
+> +                       list_add_tail(&gc->list, &gc_list);
+>                 /* Calc pointer to the next generic chip */
+>                 tmp += gc_sz;
+>         }
+> @@ -459,7 +448,6 @@ int irq_map_generic_chip(struct irq_doma
+>         struct irq_chip_generic *gc;
+>         struct irq_chip_type *ct;
+>         struct irq_chip *chip;
+> -       unsigned long flags;
+>         int idx;
+>
+>         gc = __irq_get_domain_generic_chip(d, hw_irq);
+> @@ -479,9 +467,8 @@ int irq_map_generic_chip(struct irq_doma
+>
+>         /* We only init the cache for the first mapping of a generic chip */
+>         if (!gc->installed) {
+> -               raw_spin_lock_irqsave(&gc->lock, flags);
+> +               guard(raw_spinlock_irq)(&gc->lock);
+>                 irq_gc_init_mask_cache(gc, dgc->gc_flags);
+> -               raw_spin_unlock_irqrestore(&gc->lock, flags);
+>         }
+>
+>         /* Mark the interrupt as installed */
 
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index 3d4e2396a2d7..2e0952134e2e 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -301,7 +301,6 @@ struct kvm_vcpu_arch {
- 	/* Values of trap registers for the guest. */
- 	u64 hcr_el2;
- 	u64 mdcr_el2;
--	u64 cptr_el2;
- 
- 	/* Values of trap registers for the host before guest entry. */
- 	u64 mdcr_el2_host;
-diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index 9ded5443de48..5ca8782edb96 100644
---- a/arch/arm64/kvm/arm.c
-+++ b/arch/arm64/kvm/arm.c
-@@ -1138,7 +1138,6 @@ static int kvm_arch_vcpu_ioctl_vcpu_init(struct kvm_vcpu *vcpu,
- 	}
- 
- 	vcpu_reset_hcr(vcpu);
--	vcpu->arch.cptr_el2 = CPTR_EL2_DEFAULT;
- 
- 	/*
- 	 * Handle the "start in power-off" case.
-diff --git a/arch/arm64/kvm/hyp/nvhe/switch.c b/arch/arm64/kvm/hyp/nvhe/switch.c
-index 4db5409f40c4..c0885197f2a5 100644
---- a/arch/arm64/kvm/hyp/nvhe/switch.c
-+++ b/arch/arm64/kvm/hyp/nvhe/switch.c
-@@ -34,21 +34,38 @@ DEFINE_PER_CPU(struct kvm_host_data, kvm_host_data);
- DEFINE_PER_CPU(struct kvm_cpu_context, kvm_hyp_ctxt);
- DEFINE_PER_CPU(unsigned long, kvm_hyp_vector);
- 
--static void __activate_traps(struct kvm_vcpu *vcpu)
-+static bool guest_owns_fp_regs(struct kvm_vcpu *vcpu)
- {
--	u64 val;
-+	return vcpu->arch.flags & KVM_ARM64_FP_ENABLED;
-+}
- 
--	___activate_traps(vcpu);
--	__activate_traps_common(vcpu);
-+static void __activate_cptr_traps(struct kvm_vcpu *vcpu)
-+{
-+	u64 val = CPTR_EL2_TAM;	/* Same bit irrespective of E2H */
- 
--	val = vcpu->arch.cptr_el2;
--	val |= CPTR_EL2_TTA | CPTR_EL2_TAM;
--	if (!update_fp_enabled(vcpu)) {
--		val |= CPTR_EL2_TFP | CPTR_EL2_TZ;
--		__activate_traps_fpsimd32(vcpu);
-+	/* !hVHE case upstream */
-+	if (1) {
-+		val |= CPTR_EL2_TTA | CPTR_NVHE_EL2_RES1;
-+
-+		if (!vcpu_has_sve(vcpu) || !guest_owns_fp_regs(vcpu))
-+			val |= CPTR_EL2_TZ;
-+
-+		if (!guest_owns_fp_regs(vcpu))
-+			val |= CPTR_EL2_TFP;
- 	}
- 
-+	if (!guest_owns_fp_regs(vcpu))
-+		__activate_traps_fpsimd32(vcpu);
-+
- 	write_sysreg(val, cptr_el2);
-+}
-+
-+static void __activate_traps(struct kvm_vcpu *vcpu)
-+{
-+	___activate_traps(vcpu);
-+	__activate_traps_common(vcpu);
-+	__activate_cptr_traps(vcpu);
-+
- 	write_sysreg(__this_cpu_read(kvm_hyp_vector), vbar_el2);
- 
- 	if (cpus_have_final_cap(ARM64_WORKAROUND_SPECULATIVE_AT)) {
+These two conversions are wrong. I have sent a patch:
+https://lore.kernel.org/514f94c5891c61ac0a4a7fdad113e75db1eea367.1744135467.git.geert+renesas@glider.be
 
--- 
-2.39.5
+Gr{oetje,eeting}s,
 
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
