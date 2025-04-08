@@ -1,51 +1,53 @@
-Return-Path: <linux-kernel+bounces-593814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263C2A80254
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:47:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2038DA8033B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C8EA7A97D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:44:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64AF3169098
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F410D266EEA;
-	Tue,  8 Apr 2025 11:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E6D2690D7;
+	Tue,  8 Apr 2025 11:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="SvXYPPVL"
-Received: from out199-3.us.a.mail.aliyun.com (out199-3.us.a.mail.aliyun.com [47.90.199.3])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="H9e5YdUf"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D601F267F4F
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 11:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851D622257E
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 11:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744112715; cv=none; b=n8TTe7HGUf6a/R3XS5MGc2tj7UqZU6VpuAQ8Fq4uqNfRifMXIP1w+07pP8UUK2I63NVW3FNw3GnxgLeb+Rbi+0Z71b8D4B+Wa/D4ZBKvePgnSnkzh5eWiGiIw3N4/Sguk1XotbnyqyspoEIXk9MkNS9zq+Qhos8kKgjqPnJJmr8=
+	t=1744113024; cv=none; b=dlOVayXqjkraN83qVpdSJru+ygTHQ+htW/y/ghyQDoJpK0vpEMzvrhmlMQ+pumw9MSV/QWJnhrnRxZET5XXSRUf4LIpvZmdSigDmYMoYgS0WXNxD7sDlC0bRc5QNC/LHfo8O1iSF8x2G1ulufcrvU9+cQoHV5ZNLOASQL4ianqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744112715; c=relaxed/simple;
-	bh=OxvsdwO5BJ0SGFz2h/H9piJywcIMuXB4a6lwWl8UWNE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UGgiMYsSr7Wq8aXMCaYIaAj49zB55KejAqqx9Dedm4cyTtzDbDJYZJ7zTe1N9bPjkuigLet+tQ9JuCwvvA7H6ieq5yENEmVY/BYRiXpMdlEylJEkJODOtwbg0HRjq5IJyaRGamDF9G8//VOqZqPaIC/TNq7PwDGAm4gr0h+4nHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=SvXYPPVL; arc=none smtp.client-ip=47.90.199.3
+	s=arc-20240116; t=1744113024; c=relaxed/simple;
+	bh=bpyNpFEeFo0aAeUY2o5pLw1lGiiCEM5eEJti7vLYWRg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pJreRPmmmIjFg7koDKabKbdLWLG9dRDDsOxnYaILt1L1ZPyVGuil16m/aimOQQRSSIHvT/MNnHoUpGIqu/9tlYkZmfU5ZdHsZoVXTGN7cG94wsFzQDWsNtlGxyNfmANF9jAoeO+bPsiWaZ52pAdkYB3tt2Sq33ZlqRCxrBuJLd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=H9e5YdUf; arc=none smtp.client-ip=115.124.30.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1744112695; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=BqZWTIZ7e6ej2vIjCy7sCUZGfP06XjXg1jXPbyRYLgU=;
-	b=SvXYPPVLlUlic+KIlKtwmOX+FaTYMIxj4RCTAB8W0+rG4vVo0BgloPJoq5+owWCqrTCNbFuWDNcxEcP3JcG8Q6CJjF9lg9SVdhQjCfY+gNh3Mi+52OUXXDuvUcrzsvaePUBoiPrRX1w0n0FNgXBzDdXR6aP/PEghrjmxhJPRl8U=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WWFISUC_1744112689 cluster:ay36)
+	t=1744113013; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=2go647+k6sJue3+Dqabd8fg47Qz+7QMamqrKoll0NkY=;
+	b=H9e5YdUf/9N1YMM5cvy+Ml3p9WZtg7T89bOUGwheYG+owrjAsRgcZmhh45Y2pkdzowln37uoE1rkXOWE6oQQeY5TsFRlZ3K2qtdrxSZxAU+JzizOB2CaMCb6R0DS3naWr2cXPrAAMccUI5PaBXf/nsDsPEiODYjMhhZjE42LcYI=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WWFISVn_1744112694 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Tue, 08 Apr 2025 19:44:54 +0800
+          Tue, 08 Apr 2025 19:44:56 +0800
 From: Gao Xiang <hsiangkao@linux.alibaba.com>
 To: linux-erofs@lists.ozlabs.org
 Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH 1/2] erofs: add __packed annotation to union(__le16..)
-Date: Tue,  8 Apr 2025 19:44:47 +0800
-Message-ID: <20250408114448.4040220-1-hsiangkao@linux.alibaba.com>
+	Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH 2/2] erofs: fix encoded extents handling
+Date: Tue,  8 Apr 2025 19:44:48 +0800
+Message-ID: <20250408114448.4040220-2-hsiangkao@linux.alibaba.com>
 X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20250408114448.4040220-1-hsiangkao@linux.alibaba.com>
+References: <20250408114448.4040220-1-hsiangkao@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,51 +56,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-I'm unsure why they aren't 2 bytes in size only in arm-linux-gnueabi.
+ - The MSB 32 bits of `z_fragmentoff` are available only in extent
+records of size >= 8B.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/r/202504051202.DS7QIknJ-lkp@intel.com
-Fixes: 61ba89b57905 ("erofs: add 48-bit block addressing on-disk support")
-Fixes: efb2aef569b3 ("erofs: add encoded extent on-disk definition")
+ - Use round_down() to calculate `lstart` as well as increase `pos`
+   correspondingly for extent records of size == 8B.
+
+Fixes: 1d191b4ca51d ("erofs: implement encoded extent metadata")
 Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 ---
- fs/erofs/erofs_fs.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/erofs/zmap.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
-index 61a5ee11f187..94bf636776b0 100644
---- a/fs/erofs/erofs_fs.h
-+++ b/fs/erofs/erofs_fs.h
-@@ -56,7 +56,7 @@ struct erofs_super_block {
- 	union {
- 		__le16 rootnid_2b;	/* nid of root directory */
- 		__le16 blocks_hi;	/* (48BIT on) blocks count MSB */
--	} rb;
-+	} __packed rb;
- 	__le64 inos;            /* total valid ino # (== f_files - f_favail) */
- 	__le64 epoch;		/* base seconds used for compact inodes */
- 	__le32 fixed_nsec;	/* fixed nanoseconds for compact inodes */
-@@ -148,7 +148,7 @@ union erofs_inode_i_nb {
- 	__le16 nlink;		/* if EROFS_I_NLINK_1_BIT is unset */
- 	__le16 blocks_hi;	/* total blocks count MSB */
- 	__le16 startblk_hi;	/* starting block number MSB */
--};
-+} __packed;
+diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
+index 8de50df05dfe..14ea47f954f5 100644
+--- a/fs/erofs/zmap.c
++++ b/fs/erofs/zmap.c
+@@ -559,7 +559,8 @@ static int z_erofs_map_blocks_ext(struct inode *inode,
+ 			pos += sizeof(__le64);
+ 			lstart = 0;
+ 		} else {
+-			lstart = map->m_la >> vi->z_lclusterbits;
++			lstart = round_down(map->m_la, 1 << vi->z_lclusterbits);
++			pos += (lstart >> vi->z_lclusterbits) * recsz;
+ 			pa = EROFS_NULL_ADDR;
+ 		}
  
- /* 32-byte reduced form of an ondisk inode */
- struct erofs_inode_compact {
-@@ -369,9 +369,9 @@ struct z_erofs_map_header {
- 			 * bit 7   : pack the whole file into packed inode
- 			 */
- 			__u8	h_clusterbits;
--		};
-+		} __packed;
- 		__le16 h_extents_hi;	/* extent count MSB */
--	};
-+	} __packed;
- };
- 
- enum {
+@@ -614,7 +615,7 @@ static int z_erofs_map_blocks_ext(struct inode *inode,
+ 		if (last && (vi->z_advise & Z_EROFS_ADVISE_FRAGMENT_PCLUSTER)) {
+ 			map->m_flags |= EROFS_MAP_MAPPED | EROFS_MAP_FRAGMENT;
+ 			vi->z_fragmentoff = map->m_plen;
+-			if (recsz >= offsetof(struct z_erofs_extent, pstart_lo))
++			if (recsz > offsetof(struct z_erofs_extent, pstart_lo))
+ 				vi->z_fragmentoff |= map->m_pa << 32;
+ 		} else if (map->m_plen) {
+ 			map->m_flags |= EROFS_MAP_MAPPED |
 -- 
 2.43.5
 
