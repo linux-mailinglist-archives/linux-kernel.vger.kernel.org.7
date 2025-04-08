@@ -1,99 +1,116 @@
-Return-Path: <linux-kernel+bounces-594691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7682BA8154F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:05:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69DC2A8154C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FD2E1BA5516
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:03:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B71331B67D8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DF523FC6D;
-	Tue,  8 Apr 2025 19:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AAEC22D4D4;
+	Tue,  8 Apr 2025 19:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jHGbB9wr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tGZFbWKM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327AF21517D;
-	Tue,  8 Apr 2025 19:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F20158553;
+	Tue,  8 Apr 2025 19:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744139019; cv=none; b=QfEY4xvOlqDTcdd08BmZ3WkbOu+fn3N7HBjEhTELj6R4vKTXMAkI5itwUQq4+COTMSxcZw9KtgZli0BzYegy5Acx/JqbSvU9Wp8bAmWkr+1CdwjByyq0ffgT3xAVFIIziKSE4qmHSgTrUQ68GWA1mDKUT3n8AFEx2XwHbmYIu/w=
+	t=1744138988; cv=none; b=Al0gNKGOX3f1wG8TnnfYcDtIXWR3cf+sUyf1RLRKp1Klr6tzaI8oTuXNTdt3dx5DG8r+1135Ek3/Z520BC2DW9JG2etgitI11rSvyyR4WI4p5avuV1za4cPhFvt+cXvJsPKL1JQcA2cxTgKwiHSyYIrerdQP9FlmiYN1Pt0LVSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744139019; c=relaxed/simple;
-	bh=pHSSTO56neWEEEtpVKmutcv8dw9yWs0shUPmz9GS6v4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EyvAQIp4IIwl+RkUfQDCGYcuha1GBaB9J6/01AhwOnvoqjX+ernppMORB/wVNw+BWNa9BkQvcw+NAZIsz5As2dHRyHJoU4twpMJTZNyFDmspxNNbONwWP78lx9B6c11w5PlqqcMFY+U5CWcjocr7KK2rWgJCnVf0yN4IFnq3EWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jHGbB9wr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EE3CC4CEE5;
-	Tue,  8 Apr 2025 19:03:38 +0000 (UTC)
+	s=arc-20240116; t=1744138988; c=relaxed/simple;
+	bh=t4FrvMuDefXty/PRkKfSsxRKuBYF7zijbehdwboarCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O/5TSUC4sw3A6KGPswAt9N0yzICmANx0UhkdnXBw6fiiQ4EzmnOq4cOBXoHW/iaK3kwsyqw9L2LeoYmxlZnMS2WUkEiIGNtYmeQHC9P9KKNDNMMN7JZdFfy90IBuuvQdIX+fHvLH0pZyH4VFGaCNEyFfeHF6y4yOo3KoA2f3ZmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tGZFbWKM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FB62C4CEE5;
+	Tue,  8 Apr 2025 19:03:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744139018;
-	bh=pHSSTO56neWEEEtpVKmutcv8dw9yWs0shUPmz9GS6v4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jHGbB9wrS9Ga5nO6c0XIStwD4hEx9MwNOOY6sWYkQHLfuTLHDwrqeMnev/R8Eytb3
-	 XMBwXMzr/I5AKWpi5uzAkRBTixYzLesS10cKeUpijGLkpq1iN5gnEuzobgwtUXKgd2
-	 x7Hee3peXsAH5HBtzxDAzMNfxZd8SQDa9AF9mZ6JNCKQHC1y17umW6tT2PNuMJwT81
-	 dA2e6VCBSK3iBRYkZtOIlp17ky+mKuO4Hpeg1hOmn4w1Z7QNNbwnLG380iwzNdeGZs
-	 Jxkh2bTYEhWGeKNff2lSODAvwGwfajmmXBoMu7cDK9cnz3z4/g7DypdvsSNKfIyTyO
-	 0PsqvzaYQTRqw==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-wireless@vger.kernel.org,
-	ath11k@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] wifi: ath11k: Use of_property_present() to test property presence
-Date: Tue,  8 Apr 2025 14:02:11 -0500
-Message-ID: <20250408190211.2505737-2-robh@kernel.org>
-X-Mailer: git-send-email 2.47.2
+	s=k20201202; t=1744138987;
+	bh=t4FrvMuDefXty/PRkKfSsxRKuBYF7zijbehdwboarCE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tGZFbWKMmsuRvv1/kF0cm6PL/kZTjwao/mGQG3sdcs2ax5/Wz6GxUt8o2GnBmeR8p
+	 LiktLY3Jjy/5lr7PQ+5MWSx0R5c9liKJ1xsgqIKmfDzK3+kl9i/CmlQi1YYhetwdlE
+	 ZxE8Ln6TLDJmTjOXCcQvR8E0iyABh2uekw5CDpzLjA1CTiXvp5CXzEaHA8zgRefJMO
+	 kRvHTaZ9YtsbVA/B4dMnXhZKI591hzFxrTdvzavbx1CbBCM6VkVGci0hNLop0Z6JV7
+	 IlSIxO3VoQB+DA3c5o9pnjdYHPqWikNEkzbi4YiHpoLkYP4syZxzW/OGYOguwA5zkG
+	 CbEpDWf9jAQiw==
+Date: Tue, 8 Apr 2025 12:03:04 -0700
+From: Kees Cook <kees@kernel.org>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>
+Subject: Re: [PATCH v2] build_bug.h: more user friendly error messages in
+ BUILD_BUG_ON_ZERO()
+Message-ID: <202504081202.7CA5DBE@keescook>
+References: <20250329-build_bug-v2-1-1c831e5ddf89@wanadoo.fr>
+ <202504070945.BAC93C0@keescook>
+ <9dc6f94e-c739-4fdf-8e43-4386d35e02e5@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9dc6f94e-c739-4fdf-8e43-4386d35e02e5@wanadoo.fr>
 
-The use of of_property_read_u32() isn't really correct as
-"memory-region" contains phandles (though those happen to be u32s. As
-it is just testing for property presence, use of_property_present()
-instead.
+On Tue, Apr 08, 2025 at 10:23:53PM +0900, Vincent Mailhol wrote:
+> On 08/04/2025 at 01:46, Kees Cook wrote:
+> > On Sat, Mar 29, 2025 at 01:48:50AM +0900, Vincent Mailhol wrote:
+> >> __BUILD_BUG_ON_ZERO_MSG(), as introduced in [1], makes it possible to
+> >> do a static assertions in expressions. The direct benefit is to
+> >> provide a meaningful error message instead of the cryptic negative
+> >> bitfield size error message currently returned by BUILD_BUG_ON_ZERO():
+> >>
+> >>   ./include/linux/build_bug.h:16:51: error: negative width in bit-field '<anonymous>'
+> >>      16 | #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { int:(-!!(e)); })))
+> >>         |                                                   ^
+> >>
+> >> Get rid of BUILD_BUG_ON_ZERO()'s bitfield size hack. Instead rely on
+> >> __BUILD_BUG_ON_ZERO_MSG() which in turn relies on C11's
+> >> _Static_assert().
+> >>
+> >> Use some macro magic, similarly to static_assert(), to either use an
+> >> optional error message provided by the user or, when omitted, to
+> >> produce a default error message by stringifying the tested
+> >> expression. With this, for example:
+> >>
+> >>   BUILD_BUG_ON_ZERO(1 > 0)
+> >>
+> >> would now throw:
+> >>
+> >>   ./include/linux/compiler.h:197:62: error: static assertion failed: "1 > 0 is true"
+> > 
+> > This is so much easier to read! Thanks for this. :)
+> > 
+> > If no one else snags it, I can take this via the hardening tree for
+> > -next once -rc2 is released.
+> 
+> I discussed about this with Andrew by DM.
+> 
+> Andrew can pick it up but for the next-next release. That is to say,
+> wait for [1] to be merged in v6.16 and then take it to target the v6.17
+> merge windows.
+> 
+> If you can take it in your hardening-next tree and have it merged in
+> v6.16, then this is convenient for me.
+> 
+> Just make sure that you send it to Linus after Yury's bitmap-for-next
+> get merged: https://github.com/norov/linux/commits/bitmap-for-next/
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
-I'm assuming this should still go to linux-wireless list? I had to 
-manually add that, so looks like recent MAINTAINERS changes aren't quite 
-right.
+Could this land via Yury's tree?
 
- drivers/net/wireless/ath/ath11k/pci.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath11k/pci.c b/drivers/net/wireless/ath/ath11k/pci.c
-index 412f4a134e4a..87ef7f321065 100644
---- a/drivers/net/wireless/ath/ath11k/pci.c
-+++ b/drivers/net/wireless/ath/ath11k/pci.c
-@@ -929,7 +929,7 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
- {
- 	struct ath11k_base *ab;
- 	struct ath11k_pci *ab_pci;
--	u32 soc_hw_version_major, soc_hw_version_minor, addr;
-+	u32 soc_hw_version_major, soc_hw_version_minor;
- 	int ret;
- 	u32 sub_version;
- 
-@@ -955,8 +955,7 @@ static int ath11k_pci_probe(struct pci_dev *pdev,
- 	 * from DT. If memory is reserved from DT for FW, ath11k driver need not
- 	 * allocate memory.
- 	 */
--	ret = of_property_read_u32(ab->dev->of_node, "memory-region", &addr);
--	if (!ret)
-+	if (of_property_present(ab->dev->of_node, "memory-region"))
- 		set_bit(ATH11K_FLAG_FIXED_MEM_RGN, &ab->dev_flags);
- 
- 	ret = ath11k_pci_claim(ab_pci, pdev);
 -- 
-2.47.2
-
+Kees Cook
 
