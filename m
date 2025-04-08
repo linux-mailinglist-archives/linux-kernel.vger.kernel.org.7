@@ -1,47 +1,60 @@
-Return-Path: <linux-kernel+bounces-593524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8944DA7FA09
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:43:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A50A7FA3A
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25A18173A2F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:42:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF8C9189A771
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FDD267735;
-	Tue,  8 Apr 2025 09:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3835A265CC5;
+	Tue,  8 Apr 2025 09:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HW/yyuVb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="OTcxFdqd"
+Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98B6265629;
-	Tue,  8 Apr 2025 09:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F67218ABD
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 09:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744105186; cv=none; b=dF5Cjo2B54HdyMGSWQaJXMKfpZAC7omcUjhqlxA/ymqkIOCzVdcp4h9gjSHHVdSulH1URDVnOqqfbNAO56sPQ+yDH6HpbZrqKZ6U90XGX687WhryVtvsr78aA49khzuvTB5LC0JR6LezTebXu+lAAETvl7FtaE9fL+hwitf6x7E=
+	t=1744105265; cv=none; b=ECZFoYVgsONDeU3VowtMs4qyu8tgdmHyzbBLEifBIkGL/WodiTcnE57Kw9AOsqlJMiErRlXctRbTac3Rd6vgAw1knWR0G3qVOq4bcxoCRrLJ6lmBK5JaTyYFUPnqKeVs4qQMbmrGcUtLnHhpcimn4DS+6ZyN+tA8gto0JNIIS8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744105186; c=relaxed/simple;
-	bh=bLDDurUkL1v70P2v2SwPIpdQFVc5IT27gFgTvVDyEGI=;
+	s=arc-20240116; t=1744105265; c=relaxed/simple;
+	bh=kBAcBfslxJGz8Pxf5uz1abWpns5XyvtoS0wjq14nBBc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CoYfsRzLyWAYLLrRWLM2Xk2ktbLd+gwqMw/eOPn+6HHtEdUyiczwGvGGJ7zywxSHnr0+CKN3A2NMvQLjibZ77FdP7w3sFs7WZE8nVhzVeUsvK8oOcQZhEvUCNyLnO828Qh5vurqVAXP7G1YhGT0GjVpp/vXups+7uuTaIVK/RJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HW/yyuVb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A976C4CEE5;
-	Tue,  8 Apr 2025 09:39:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744105185;
-	bh=bLDDurUkL1v70P2v2SwPIpdQFVc5IT27gFgTvVDyEGI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HW/yyuVbcmWB9qjOM8QSxuQI8sTWkhCrZWcKpldl4z04l3A7CoezphVb/VwVhSMf8
-	 1xDSqb6Phy7Lm5ANnsu3uq5ip3HnulmP9vA1ash2YLjFNCrHWG7AUQlwOheqzAHYT+
-	 2oII4lXlDNp5Txym6O5xZc4jPKkfPt+w7pgCJdLvGsbYiqaC4/THnK1MmzHBse+pBn
-	 9r90p5LiToTy6N215iH6p+KGkMfuz+JjGwBb+O7z9RyCObPte/r+P4OD/lYgzXciBY
-	 m71dc84+YPxPeKaTtSL/hxoY0+jfHwfcThEj6iEGCoXNAroZ3nioNLx9Vieq1ahF4+
-	 jPEytPsGBWq3Q==
-Message-ID: <981498bb-70d8-4304-9b53-065576ae8dc7@kernel.org>
-Date: Tue, 8 Apr 2025 11:39:40 +0200
+	 In-Reply-To:Content-Type; b=CjRj7s1HaYrH6JhbN/O9nnfQV0RZ3KhjT/f710s3UHjfzxAg7kr8zmtQ8bXKalPZyY0/6uNT+3izYzGzhWwhsFyuNVxdL1/pNLxcnkUQko5gD4K9xEqYQJveGEKpol8UbD3DIlBZwix//j/yGeammxuredE+CLU1EmwneKDyeHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=OTcxFdqd; arc=none smtp.client-ip=195.121.94.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xs4all.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
+X-KPN-MessageId: 7cae0a4c-145d-11f0-8ec8-005056994fde
+Received: from smtp.kpnmail.nl (unknown [10.31.155.7])
+	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
+	id 7cae0a4c-145d-11f0-8ec8-005056994fde;
+	Tue, 08 Apr 2025 11:40:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=xs4all.nl; s=xs4all01;
+	h=content-type:from:to:subject:mime-version:date:message-id;
+	bh=jjYN1q3Ms1tSUdQDQ/wwfCGr5RGocV911yRQJir+ALo=;
+	b=OTcxFdqdrVrN5CKLasySyCr1E0onpVrt4+3D6iDdkZN7WH5QloXmDgPo2eS+0s8w4bVqwwtTj5bLJ
+	 mR93N7qPJA9u7oq3pdMMDEfEJrO1QbCpuaA6kSYOCQgkyZuChnXUIYV5yj5tXKuegHEouOAf+o9ejq
+	 l3ftXLefZ//iXFncCHdby0VE8Qi4AYVuwQEv1mavirc4F5MYaoZQRusoPdTB6vK6Xm3pi3dJOcIJ8J
+	 LE5+zo6SmRMHJ4M9UFd8hQ20szlrwtuqN2yj5wzcMyyYEdFb4Ene3m5I9R+RSM68UcVP8XzwLLTNXv
+	 949EdBRcfHAZ0l7GpMflv8VrXLlIsjw==
+X-KPN-MID: 33|g+xnS26cNzt8wErNkdEFALrZe2Mu+m0s0xvGObYCBXJEo3puK9g1wlRrHW4pDjT
+ gvhLhNNCuh0fZXVrqsVTereT1iDJ9cWBA+qHazu9TAq0=
+X-KPN-VerifiedSender: Yes
+X-CMASSUN: 33|u76Tcj/Ul03SflLAUVahVOQyELJUfw8e1vzqjd7qYMyIVNJ+32FEb+F2UerQ9BN
+ MCH7HmYiMOHd6pEDt03Wx6Q==
+Received: from [10.47.75.249] (unknown [173.38.220.43])
+	by smtp.xs4all.nl (Halon) with ESMTPSA
+	id 6bb6836a-145d-11f0-af99-005056998788;
+	Tue, 08 Apr 2025 11:39:52 +0200 (CEST)
+Message-ID: <d2a1a4d2-dbce-40e2-9cca-fe2fbf1d6daa@xs4all.nl>
+Date: Tue, 8 Apr 2025 11:39:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,123 +62,176 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: watchdog: Add NXP Software Watchdog
- Timer
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, wim@linux-watchdog.org
-Cc: linux@roeck-us.net, linux-watchdog@vger.kernel.org,
- linux-kernel@vger.kernel.org, S32@nxp.com, ghennadi.procopciuc@nxp.com,
- thomas.fossati@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org
-References: <20250407160318.936142-1-daniel.lezcano@linaro.org>
- <20250407160318.936142-2-daniel.lezcano@linaro.org>
- <094855d6-a99b-4ca5-bc8f-ab6faccfd332@kernel.org>
- <1e3d9e34-133d-451c-9ce6-6c974a781305@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 1/4] media: v4l: dev-decoder: Add source change
+ V4L2_EVENT_SRC_CH_COLORSPACE
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <1e3d9e34-133d-451c-9ce6-6c974a781305@linaro.org>
+To: "Ming Qian(OSS)" <ming.qian@oss.nxp.com>, mchehab@kernel.org
+Cc: nicolas@ndufresne.ca, shawnguo@kernel.org, robh+dt@kernel.org,
+ s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+ linux-imx@nxp.com, xiahong.bao@nxp.com, eagle.zhou@nxp.com,
+ tao.jiang_2@nxp.com, imx@lists.linux.dev, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20250117061938.3923516-1-ming.qian@oss.nxp.com>
+ <3e5f003a-f689-4f5a-ac75-6bf95379637b@xs4all.nl>
+ <50ce67b7-ef06-4e8e-bf4f-f4b0d5e40961@oss.nxp.com>
+ <d5a8988f-1038-4a8b-8478-968ceca37879@xs4all.nl>
+ <c9aef3f6-43cd-48fb-8aba-0abd33c4e263@oss.nxp.com>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <c9aef3f6-43cd-48fb-8aba-0abd33c4e263@oss.nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 08/04/2025 11:03, Daniel Lezcano wrote:
-> On 08/04/2025 10:21, Krzysztof Kozlowski wrote:
->> On 07/04/2025 18:03, Daniel Lezcano wrote:
->>> +
->>> +allOf:
->>> +  - $ref: watchdog.yaml#
->>> +
->>> +properties:
->>> +  compatible:
->>> +    oneOf:
->>> +      - const: nxp,s32g2-swt
->>> +      - items:
->>> +          - const: nxp,s32g3-swt
->>> +          - const: nxp,s32g2-swt
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  clocks:
->>> +    items:
->>> +      - description: Counter clock
->>> +      - description: Module clock
->>> +      - description: Register clock
->>> +    minItems: 1
+On 4/8/25 10:45, Ming Qian(OSS) wrote:
+> Hi Hans,
+> 
+> On 2025/4/8 16:30, Hans Verkuil wrote:
+>> On 08/04/2025 08:34, Ming Qian(OSS) wrote:
+>>> Hi Hans,
+>>>
+>>> On 2025/4/7 17:54, Hans Verkuil wrote:
+>>>> On 17/01/2025 07:19, Ming Qian wrote:
+>>>>> Add a new source change V4L2_EVENT_SRC_CH_COLORSPACE that
+>>>>> indicates colorspace change in the stream.
+>>>>> The change V4L2_EVENT_SRC_CH_RESOLUTION will always affect
+>>>>> the allocation, but V4L2_EVENT_SRC_CH_COLORSPACE won't.
+>>>>>
+>>>>> Signed-off-by: Ming Qian <ming.qian@oss.nxp.com>
+>>>>> ---
+>>>>>    Documentation/userspace-api/media/v4l/vidioc-dqevent.rst | 9 +++++++++
+>>>>>    .../userspace-api/media/videodev2.h.rst.exceptions       | 1 +
+>>>>>    include/uapi/linux/videodev2.h                           | 1 +
+>>>>>    3 files changed, 11 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/userspace-api/media/v4l/vidioc-dqevent.rst b/Documentation/userspace-api/media/v4l/vidioc-dqevent.rst
+>>>>> index 8db103760930..91e6b86c976d 100644
+>>>>> --- a/Documentation/userspace-api/media/v4l/vidioc-dqevent.rst
+>>>>> +++ b/Documentation/userspace-api/media/v4l/vidioc-dqevent.rst
+>>>>> @@ -369,6 +369,15 @@ call.
+>>>>>    	loss of signal and so restarting streaming I/O is required in order for
+>>>>>    	the hardware to synchronize to the video signal.
+>>>>>    
+>>>>> +    * - ``V4L2_EVENT_SRC_CH_COLORSPACE``
+>>>>> +      - 0x0002
+>>>>> +      - This event gets triggered when a colorsapce change is detected at
+>>>>
+>>>> colorsapce -> colorspace
+>>>>
+>>>
+>>> Will fix in v3
+>>>
+>>>>> +	an input. This can come from a video decoder. Applications will query
+>>>>
+>>>> It can also come from a video receiver. E.g. an HDMI source changes colorspace
+>>>> signaling, but not the resolution.
+>>>>
+>>>>> +	the new colorspace information (if any, the signal may also have been
+>>>>> +	lost)
+>>>>
+>>>> Missing . at the end. Also, if the signal is lost, then that is a CH_RESOLUTION
+>>>> change, not CH_COLORSPACE.
+>>>>
+>>> OK, will fix in v3
+>>>>> +
+>>>>> +	For stateful decoders follow the guidelines in :ref:`decoder`.
+>>>>
+>>>> I think this should emphasize that if CH_COLORSPACE is set, but not CH_RESOLUTION,
+>>>> then only the colorspace changed and there is no need to reallocate buffers.
+>>>>
+>>>
+>>> OK, will add in v3
+>>>
+>>>> I also wonder if the description of CH_RESOLUTION should be enhanced to explain
+>>>> that this might also imply a colorspace change. I'm not sure what existing codec
+>>>> drivers do if there is a colorspace change but no resolution change.
+>>>
+>>> I think there is no uniform behavior at the moment, it depends on the
+>>> behavior of the decoder. Maybe most decoders ignore this.
 >>
->> Why clocks are flexible? The SoC does not change between boards. It
->> should be a fixed list - block receives that number of clocks or does
->> not... unless you meant that different instances of the block have
->> different clocks?
+>> Can you try to do a quick analysis of this? Don't spend too much time on this,
+>> but it is helpful to have an idea of how existing codecs handle this.
+>>
+>> Regards,
+>>
+>> 	Hans
+>>
 > 
-> The documentation describe the watchdog module with a clock for the 
-> counter, a clock for the register and the last one for the module.
-> 
-> IIUC, these clocks are enabled when the system is powered-on or exits 
-> suspend.
-> 
-> The driver does not have a control on them.
-> 
-> The only usage of the clock is to retrieve the rate of the counter in 
-> order to compute the maximum timeout. So only one is needed.
-> 
-> However Ghennadi would like to describe the register and the module 
-> clocks in case there is SoC variant where it is possible to have control 
-> on them [1]
+> I checked the vpu used in our platforms,
+> 1. amphion vpu, it will ignore the colorspace change.
+> 2. hantro g1/g2 decoder, it also ignore the colorspace change.
+> 3. chipsnmedia wave6 decoder, the firmware detect the colorspace change
+> for HEVC format, but ignore for AVC format. But its driver just ignore
+> it.
+> 4. chipsnmedia wave511 decoder, same as wave6.
 
-Different SoC means different compatible, so I don't get why this is
-relevant here. Either these clocks inputs are there in the hardware or not.
+I meant stateful codec drivers that are in mainline. Out-of-tree drivers do not
+concern me.
+
+Regards,
+
+	Hans
 
 > 
-> The goal is to give the description the flexibility to describe just one 
-> because the other ones are not needed for this s32g2/3 platform.
+> Regards,
+> Ming
+> 
+>>>
+>>>>
+>>>> I'm a bit concerned about backwards compatibility issues: if a userspace application
+>>>> doesn't understand this new flag and just honors CH_RESOLUTION, then it would
+>>>> never react to just a colorspace change.
+>>>>
+>>>> Nicolas, does gstreamer look at these flags?
+>>>
+>>> I checked the gstreamer code, it does check this flag:
+>>>
+>>> if (event.type == V4L2_EVENT_SOURCE_CHANGE &&
+>>>       (event.u.src_change.changes & V4L2_EVENT_SRC_CH_RESOLUTION)) {
+>>>     GST_DEBUG_OBJECT (v4l2object->dbg_obj,
+>>>         "Can't streamon capture as the resolution have changed.");
+>>>     ret = GST_V4L2_FLOW_RESOLUTION_CHANGE;
+>>> }
+>>>
+>>> Currently the gstreamer can't handle the CH_COLORSPACE flag.
+>>>
+>>> Thanks,
+>>> Ming
+>>>
+>>>>
+>>>> Regards,
+>>>>
+>>>> 	Hans
+>>>>
+>>>>> +
+>>>>>    Return Value
+>>>>>    ============
+>>>>>    
+>>>>> diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exceptions b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+>>>>> index 35d3456cc812..ac47c6d9448b 100644
+>>>>> --- a/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+>>>>> +++ b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+>>>>> @@ -526,6 +526,7 @@ replace define V4L2_EVENT_CTRL_CH_RANGE ctrl-changes-flags
+>>>>>    replace define V4L2_EVENT_CTRL_CH_DIMENSIONS ctrl-changes-flags
+>>>>>    
+>>>>>    replace define V4L2_EVENT_SRC_CH_RESOLUTION src-changes-flags
+>>>>> +replace define V4L2_EVENT_SRC_CH_COLORSPACE src-changes-flags
+>>>>>    
+>>>>>    replace define V4L2_EVENT_MD_FL_HAVE_FRAME_SEQ :c:type:`v4l2_event_motion_det`
+>>>>>    
+>>>>> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+>>>>> index c8cb2796130f..242242c8e57b 100644
+>>>>> --- a/include/uapi/linux/videodev2.h
+>>>>> +++ b/include/uapi/linux/videodev2.h
+>>>>> @@ -2559,6 +2559,7 @@ struct v4l2_event_frame_sync {
+>>>>>    };
+>>>>>    
+>>>>>    #define V4L2_EVENT_SRC_CH_RESOLUTION		(1 << 0)
+>>>>> +#define V4L2_EVENT_SRC_CH_COLORSPACE		(1 << 1)
+>>>>>    
+>>>>>    struct v4l2_event_src_change {
+>>>>>    	__u32 changes;
+>>>>
+>>>
+>>
+> 
 
-But bindings are not meant to be flexible but accurately describe the
-hardware. If hardware always has these clock inputs, then they are
-supposed to be always provided.
-
-
-Best regards,
-Krzysztof
 
