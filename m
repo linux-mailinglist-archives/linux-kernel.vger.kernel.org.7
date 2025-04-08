@@ -1,370 +1,467 @@
-Return-Path: <linux-kernel+bounces-594109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E0BAA80D21
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:00:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AAB36A80D39
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D73D77AE7B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:59:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 261657AFC32
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828A41D516C;
-	Tue,  8 Apr 2025 14:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB731DBB0C;
+	Tue,  8 Apr 2025 14:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="a2R6arA9"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2057.outbound.protection.outlook.com [40.107.92.57])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="OJiTWOCw"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2062.outbound.protection.outlook.com [40.107.94.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C7F1C3C18;
-	Tue,  8 Apr 2025 14:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044481C863C;
+	Tue,  8 Apr 2025 14:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.62
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744120812; cv=fail; b=tTeh0IzP12UzKcpj1So7kniLuQDo1iV2pzzaWjDW/MbgTYQ6ZYxvEp1tTLkasWH4MpfbSUpqhobw+A+WBmlGJl5jocwtasFwsPA50DosYIAzZAZhZJNjszklEvzWCHsPvCHL3/HCZ6j9OC4gcTK/SaiJ3T0OXt7Mf6LyCH8Lkcw=
+	t=1744120956; cv=fail; b=mG9stSP9yBxSwxhbyyCZ7AZkZY7oUlTXAoKC8EUhKslnTPPjGlnkC3h2iw2WTq/KitYmEWg/zixKfh0eTGhYpkim4yhTEHbRj0COG/sRA1g0sx2cTX3xfIP29vBfjkNuF7yksVH62a8+bKgFg4S4mdG2u0RKDbilc2SrbD9Sgdc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744120812; c=relaxed/simple;
-	bh=UqbQCGWq4Y+FGzShkTPA08fLJ6MPkD6YT8MIOQg5sic=;
-	h=Content-Type:Date:Message-Id:To:Cc:Subject:From:References:
-	 In-Reply-To:MIME-Version; b=umdmSNzuuxjvmmR3LIgA6B547gurUYgW6JCm0SVJRYJdvoH7bD7zBveRX7FH1lrrXmGciV/uCS+oV9gFCBIRCc1QP93iB2WrKLCEATCMSFIq2i3VS2lJH4ZgVCWMo4Eus8T0RJ75HDVBBqTl4pyFjjMn0rB9o0e6xYI4SWC4kHU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=a2R6arA9; arc=fail smtp.client-ip=40.107.92.57
+	s=arc-20240116; t=1744120956; c=relaxed/simple;
+	bh=xHhlC068bjEaQ0eCoJR3KSlzC3Uo4PamLm6llla8/bA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tf8JFtL0PO8YfNw0AkgfzHNmjldzmPuHn0Nu22QsvcgiQPXv2UphzouQ1NO0r+V4duI2GGRzktrdQ6BcKxxhsokDNm6USNkGPMCUECN0Q4HdgzTlyNlU42ZUJD16GMsVxJHSF+PAtbsAusMRlaIiuaANUL6WP4rpogejAPT1Eoo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=OJiTWOCw; arc=fail smtp.client-ip=40.107.94.62
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PbcV2MdFIzlt0tsnk4p1DoXZr7ujnR0eQ/IBfxPQkWzZxpjXBbWhwb4PCfB0BmNDNP/3x5+762JT2Ks9frBSethOwVvJwk7ffDUhujBKxHY3fHl+DGaLbPeZ38/ZtUpQPsom4X6LNcOI8IGJ0Z2ZbCJum/m0FW717srYKwHtIuI4/uU9ZEwLYBI4/eH7W73CiJ5/DqnMuo1FNKB2rL51cGrIJCE1D2iUFRHQG02Nj03Fg5s/d0QEYV+I1QGiZHqQG3URljF6IoSJXnG61A9Ll9AyA5a9W7Ox+MeGyV+nmn3SkAZJa6knlypYDxvlnvSG0KnTmX8oN5shQ5CQsv4Buw==
+ b=On6fUiDEcBSNublzST+yoysQoQhatHEDjz8mAFLbggiHdRbXdGW/6/Quq/8VZyP/GIz8m5CPh1cb19o/5KVjMiznRAAU5F9L6lE9cQjOYGaxXyIQIli/WIPV+YJ4EKaXA3txHuWPurn18lb1O92P+QmI+qmOBz75dY+fdOqT56iD3sUba6irf2fqPBHtR3hhhWjWIO76PJnah/2G7q9xnqdO8BpeQ0VpiX74JK9Wsd07J09xIWHApCBmmGe76ZoadT/uqYi/vwaa875ha/15FAvTNITohNj5YWRD44AeyV/cUOYopImPe+OJFk5AoBVdYhd65YA17PO734XYRWqTgA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=74+QGwDpES5cwsG0AUzdHQocdvCj5vSqR2XjnO+WbpE=;
- b=gNZvci93xwP7hLuLUnGr8Z/rcjNqpG08kX9PUW6DwVoZhdaY2Z9vEmbJAe60h/MssbzT0WKfNnEuMmEYVnVULNXQX65+cWZeLPlGk1GJllnzQJ2bdvTzBTilvcfa5xFveWOvquZ1+/6i+ChtzFtryqSUKSPV99unWxPNStHkjG+NtNDOX94/Pw00qC2ItLQV3QNsK6wseBqjbuAXPNzhypc/fsFmM0yUe9FNGdjvO0JuZsALXy69/3a7P5n5iM7cgP5A9KaGb2HI5rCcVTHZY8lH9QCvwf26Jg2p/kKz1bI+irH6GYPcKQeCFGbGpwiKBJjV+8V70rLmzaVgi08wxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
+ bh=arpfpvHe0lPUthAjXpg0Br66FKRAmWT5oVWZZm4Xau4=;
+ b=uZkWg14Sv61foTb3nNBD2RYzv7IOKDKHEEyE325YSlqoIXeJt2X4u2xn17txoHeo+apaZBSWdBizXsJAM0rteIk2x33Tb779iXpTmMfrPrJAdv4Mfbs34Klns0H0Iz1CMDzwdOwpXmgRoqmBcKqGbAzTtjCf8+eGnoo6FZdqRBaJFcXV8Rk0lehxLzEqahwB0nPxHen3Yq2OgqDqCr07HRGE0cer8KcaDiO0SRTf9IDJQinSkmWmXIM+d4vp4cp8icF9ZarBfIf8/+1dGAL9Te3z8PW3tp+3gSzyTdTIrTw/BvGHjcQdtns2xXfw+e5DddW3dn9pU1Z+VJ7HK192gg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=davemloft.net smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=74+QGwDpES5cwsG0AUzdHQocdvCj5vSqR2XjnO+WbpE=;
- b=a2R6arA9ZI+NlWlCz89jwQEN1D1Fy8G/s3k4kUnwd3IZG7LrjEU+NRbbD2TAlXq3BLwx/mOzUTbDlzu7fa3XUYq09EKEXjHt7sGgP8I9eyOyEeDHPmS3MZAOieDOI8KhCvRpydZK+tbJR16xflspP6drdfF7Oe4mK2XI6329v6T5B6TQPm+OwgIC9lCJdD3cBsJqs+vx99JXnm1bSi4GQtlqGo/HP8ua7NAkV9esBnXyu+pRM4rnAmJUtUrgOu6BPMjjUczVr4+5pZtfTX8XcGtW+A1qMBDC2EzMrbRhH5O2ux0b+sWRa2hpPoy92gLW6bDmxx/YqOXggGcUebFfPA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by DS0PR12MB8503.namprd12.prod.outlook.com (2603:10b6:8:15a::10) with
+ bh=arpfpvHe0lPUthAjXpg0Br66FKRAmWT5oVWZZm4Xau4=;
+ b=OJiTWOCwtWPqobUVtZOu93kNE5JqTP9PBYasO/dx9pSIBb5MtBx10oYDCNd4D5D18FYmA5qc/HYhZswseF6cpI9jyRSt8ixLkdfSezoMSW1nUx+Fh4O4WmNc0c3ArADMdawLjO0v0JSzk9NktKcRB4D8sS2Powc/Ath1CxTcAQWKJG5dWbxr2F8ECITvC+if5G2mGdqVg5I7cE+u9/pEIxmn9AoF0QLPOx2ibeLyx4Sdp2qbVDQ6YkoU7jMWYKARD+w+d95YBdFDquW0EHL5CEFdv3ZUqCCG9HU2ezRexwTgeFmKnd8AScojf2GKmxxxjbhAfatjqugq4cCiN7TZeA==
+Received: from BN7PR06CA0057.namprd06.prod.outlook.com (2603:10b6:408:34::34)
+ by SN7PR12MB7418.namprd12.prod.outlook.com (2603:10b6:806:2a5::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.34; Tue, 8 Apr
- 2025 14:00:07 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%6]) with mapi id 15.20.8632.017; Tue, 8 Apr 2025
- 14:00:06 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 08 Apr 2025 23:00:03 +0900
-Message-Id: <D91B844M3AIC.1HUEPDZZX2O9C@nvidia.com>
-To: "Benno Lossin" <benno.lossin@proton.me>, "Danilo Krummrich"
- <dakr@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>
-Cc: "Joel Fernandes" <joelagnelf@nvidia.com>, "John Hubbard"
- <jhubbard@nvidia.com>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] rust: alloc: implement `extend` for `Vec`
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <D90JUX1YE0MR.25XH5EZLUCDBM@proton.me>
-In-Reply-To: <D90JUX1YE0MR.25XH5EZLUCDBM@proton.me>
-X-ClientProxiedBy: TYAPR01CA0040.jpnprd01.prod.outlook.com
- (2603:1096:404:28::28) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.31; Tue, 8 Apr
+ 2025 14:02:24 +0000
+Received: from BN1PEPF00004680.namprd03.prod.outlook.com
+ (2603:10b6:408:34:cafe::a2) by BN7PR06CA0057.outlook.office365.com
+ (2603:10b6:408:34::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8632.19 via Frontend Transport; Tue,
+ 8 Apr 2025 14:02:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN1PEPF00004680.mail.protection.outlook.com (10.167.243.85) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8606.22 via Frontend Transport; Tue, 8 Apr 2025 14:02:23 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 8 Apr 2025
+ 07:02:04 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 8 Apr
+ 2025 07:02:04 -0700
+Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.9)
+ with Microsoft SMTP Server id 15.2.1544.14 via Frontend Transport; Tue, 8 Apr
+ 2025 07:01:59 -0700
+From: Tariq Toukan <tariqt@nvidia.com>
+To: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, "Andrew
+ Lunn" <andrew+netdev@lunn.ch>
+CC: Gal Pressman <gal@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>, "Saeed
+ Mahameed" <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Tariq
+ Toukan <tariqt@nvidia.com>, <netdev@vger.kernel.org>,
+	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Moshe Shemesh
+	<moshe@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, Vlad Dogaru
+	<vdogaru@nvidia.com>, Yevgeny Kliteynik <kliteyn@nvidia.com>
+Subject: [PATCH net-next 01/12] net/mlx5: HWS, Fix matcher action template attach
+Date: Tue, 8 Apr 2025 17:00:45 +0300
+Message-ID: <1744120856-341328-2-git-send-email-tariqt@nvidia.com>
+X-Mailer: git-send-email 2.8.0
+In-Reply-To: <1744120856-341328-1-git-send-email-tariqt@nvidia.com>
+References: <1744120856-341328-1-git-send-email-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DS0PR12MB8503:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d878733-6e19-4f65-2305-08dd76a5aaf3
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004680:EE_|SN7PR12MB7418:EE_
+X-MS-Office365-Filtering-Correlation-Id: a99ec006-527d-4927-3f4d-08dd76a5fcc2
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|10070799003|366016|1800799024|921020;
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eVBtZmtyaENYeGpiVFI0UksyWnlFaHhGTDloeXBrWGNtd29KZ3J1QTBJODI1?=
- =?utf-8?B?Zk5Vc3EydzNmellwMUpiODRnRUhMYWliK2owdzZkaEp5QmY3YzNLWDMzTmx0?=
- =?utf-8?B?NEJHb0tod0FaMmRBM3M2Wk5teFk5aXRVRW1STFZRRnhHdVNGcURCN1M2Vm9y?=
- =?utf-8?B?VEIyZ21GYnVaQmpFQkFKVWJKaEhqcUlyUGVTUFR4M3R1V0RXem4xczFpWDhi?=
- =?utf-8?B?MjRuaHQvczdOUHVXU2pyd1FzRlZlcS9wODJmS3c4K0xDU2c2MDF2OTRuZ1E1?=
- =?utf-8?B?Rm1EMm85YmRZWUVGRGpPN0dLNTZHeTdWUWt4OEdlNC9rblRhL3dGck9DS24w?=
- =?utf-8?B?NHJYbjlxazBkMTl4Yjk2SWt1b2xMVHI1VHc3VHowTXk1TkpCd1Ridm9LUnFq?=
- =?utf-8?B?dFRRNCtMNUJhbWVKWlNnR2ZRM2cwSEVyeXZkZjF6ZElJYmRMU0ZobG8vTCtF?=
- =?utf-8?B?bjZpczlkR2pkd0RHVjNRL256L2JmSFJxKzkzOGdhRThYN0tSMVRsclBZdEhr?=
- =?utf-8?B?U29BTis0UFA0MU9uT0NlU3ExNlhBSkFqeDFNcU1iY0lLRDZ2VU1KWEk1TjQy?=
- =?utf-8?B?OEg5Mno4T09UWHJlQ0REaXVCdnF3djlvcmRvekZ1dHVOK0xZOWEwRVpZZldp?=
- =?utf-8?B?WVMraHNkZkR0K3M3ZFdGcEhQTC9nL005cGx6eTNhMVp0ZWtySi8yb0kvUDFx?=
- =?utf-8?B?ZFJtNm53MDBFTWdSZHB0NFVpUS9kcU9SMXA4eHd0N05wbE40N3NpRUlmY2Jr?=
- =?utf-8?B?K0xQdTNkenExSCs5Y1IzVDFuNU5BTGxvUUlEbnQ3Uld0Z252MVM2SkM0d2Jj?=
- =?utf-8?B?TmpYVDVoUzBwdzRydjl1WW55RHNrTWdxT0gwd2NyRXpqZE1aeGZwUlJJbWhE?=
- =?utf-8?B?YjIyYjEyLzFtTWtON3UzTXZ4dWVLU3VLbTBtYzlyOW5jV3BVdktCaDA2aEZM?=
- =?utf-8?B?cDBobHJjVFpSTnE3bVFEeTlDNHl6LzJZMVNaOGZ2SC9SSHFiSGtGd0s5NWlT?=
- =?utf-8?B?MTNzZ3BzRmp1bHRZWDlaWEdQNjRZQTRrSEd2K2JVcXpwMXRSeGtqY3lCNFcz?=
- =?utf-8?B?bHpNdlRwc1lFSndSL3lMSlorYURpazBBK2RxQk9SMWpLN1czb0FrdEg2dkc2?=
- =?utf-8?B?M0l5ekRrY1JSZHQ4YWFCWUlCcGlSUFFTZXd4ZkRkQnl3SUtzWnpRVlZNSXpx?=
- =?utf-8?B?RThPdVJ5T09FSWlscERvS3BUNlhmUUlLT0E2SEVnVzZkbmx4M3hES0hmam1I?=
- =?utf-8?B?aDJYN3M5ei9kQW1uK1RwN25BR2VXckk2WUsxcURYSzF0c2tKSHMwdnFEMG4z?=
- =?utf-8?B?clpQOTZqUGg2Q0pzYTYwOG8yMkIwMnlGZ2pDYmFlalFXVFovQWZpdXV6dEpr?=
- =?utf-8?B?cjI1ZG9uZm9TNVg4QjAyUHZnVVRpSnh3SzUyWUxTVUxkSCtldTdFU0QyRkhs?=
- =?utf-8?B?OUNwa3JiQWswZVFNdFMzM2xNWklmYXVpT0ozRk1qdTJIZndzT1ZIVGE0ZzQ2?=
- =?utf-8?B?eTRZbnAzelMrYXdNOEM1ZkpsS0REVG1IUDd1cWRINWVpNmRDVkFYV1BLN09l?=
- =?utf-8?B?M2g3cWd4NGkvM3pycEpXak0rQkxmc2g2WTQ0MU1GQ09FWW9IUUR1K0Q4dzFR?=
- =?utf-8?B?dkJ2R1ZNZytTZnR5SDl4S2RuekhwMEhpOHJLZHFRQVUwZFJtdVVkbW4xL1ZO?=
- =?utf-8?B?UVJzdVdyZDY5RXNiV09vVllWUnNsRXdWYnp0MnIyR0tHTW9xcnVCc29jNERE?=
- =?utf-8?B?cVFudE14ZHNhYkZ4UHROZVVTTlJTbmc1SHlna1VZeHFXdUNyeUJ6QjFsajVR?=
- =?utf-8?B?dGNNdDREd1VFVzBjSmQ3UFVlZFNjYVJQUlZNVzhTQ0o3MEsxcVVyYkhzbG5V?=
- =?utf-8?B?VDROYVVjdFV1ZkQ4SWZ4Tm4zd0FIb0F1akxFVFU2R0loRFJSVS9xYUh0RGRN?=
- =?utf-8?B?VVRHNkNLQXEzREVrcTRHa00wSzRRZ3BheGhGcTFMN0hqZis3c09jTnFqZFE5?=
- =?utf-8?B?bTE1TXVYS3FBPT0=?=
+	=?us-ascii?Q?d2f0gzh7NLUNFFykTNn5K6cIW4QMYuzk3/yKl7BsONRNLzezil2vGWz5mcO0?=
+ =?us-ascii?Q?Yo6MuUqT9BIwfbgxvloj3j+yrjYmEoRq/vmUDoyW9FewMLGqi3Q+e611TUqU?=
+ =?us-ascii?Q?Q/+JVZLkgbGY29cWJZvUIcux79sbccCGLnCt4NiY134oT7JVndxufoBqPhXM?=
+ =?us-ascii?Q?HOUBtVJBjsVw5rejIYYotBpcPXaoMW2EbptSwf7BJpvF3s4QUEavRrWx4rYw?=
+ =?us-ascii?Q?9TyRqMk6OnJz/2emks+ifP02cpgW3VAX0Mr9jpgqlISRuDqO80Xkm2JGP4dZ?=
+ =?us-ascii?Q?pPZkH4fIEydycwjz0nfjwjDeuPR3VG3c3Yb3EHNucEKcul8pbzg4hD9okSth?=
+ =?us-ascii?Q?srCzDt1jjAKomCQ4b1EH6qK2QhbmP+sglvAXz7dln2GR28KEv14cTZnGZtUS?=
+ =?us-ascii?Q?X6qjmCynuXOqdx/bbKYr7igombP2KoJ8aciGafJMcBbu1hDVKW6FYAUjVK3E?=
+ =?us-ascii?Q?B7MqeHWNpiTd9vkkSNjtA+pb15P59XKHUGEnn+DixWmNHLxkaNOlsS/uBRKt?=
+ =?us-ascii?Q?sHvsV6535ft92lq+BBlRr31Q2NCDfVxqUWkX5ta3Jf5dtEY4ID1EHLN5MrvA?=
+ =?us-ascii?Q?pCpG9hQYTvhR7JDCTehbGdhKlmMe4wkevgZlqSxJ9Cgvw0MJj83hxWQS4cnt?=
+ =?us-ascii?Q?mer//BrC8zSdekNguRRHa2vXu9o94t6Rvoe/7Kk+pz1rqTF64IHp5YhnGLvr?=
+ =?us-ascii?Q?sis0QOM1BYaQgqHkGwSZ8WlDTM9p7+KwtBhTWCU0h2RJrS0W6UrxnfRAqvo8?=
+ =?us-ascii?Q?IQWjiIJoL7fxaBren8R7OiTo6fqgxtt1gf/hD61k5hW7L096rwAknDjgQ69J?=
+ =?us-ascii?Q?G2paT/hYH9PWpG6Okr6GlJL1JywlVNk4nleVw1ZoYnwleNMtceGV54dwNJ1d?=
+ =?us-ascii?Q?jEfZJAkqcuR00qVO9cd3vOdEsSLItn5tjAtRn2HwtnUwsb6ZXoWHyUMwzCTm?=
+ =?us-ascii?Q?iyB1ahGQ9W1sM+/zJZwm0YSUTLZ8WmF6QxbOMJU3kwDye11JUaNz0Z3AiDh4?=
+ =?us-ascii?Q?EQKnwLJU3EW9yDGRPb/2AeFDQIbW2TwSGUuynqRqwPKzTH9TwJxVD0Ya4+1/?=
+ =?us-ascii?Q?FhMRUZhBzGfW0s5UYNWf8Q91le7ditTk4J1wUBqizChBZ0aMioyjbPkdtFMk?=
+ =?us-ascii?Q?ioEf86ay82/iX79t9+hjogwk8a1Dt2RNO5yX2nnbS2BLURJ0iu+Evf8252lO?=
+ =?us-ascii?Q?RTIyY1bLCpxo8+TSxUgoPdSa5xzcSaaN2+o+Oc+LJHbe1sSj0uTxowcZoy/N?=
+ =?us-ascii?Q?rB3DEFJj8MoFdFihLf4l4Mnk9/BrHYgg58cuq2hx7WbEdSyVkRJkt9nxFBmG?=
+ =?us-ascii?Q?OwlRTEwfjdjr8LzcSjaqGQNJAxTNToUL0WEOdlqkZyKIsqdAQXT4XuqWbT03?=
+ =?us-ascii?Q?AbRsHG7Wq7F56xhOKmLhFkGSk0SdNDFfV/jFotbMCZulLP0YMyBlHm9g888G?=
+ =?us-ascii?Q?wstoePnY3oqVhGsN27WIRw9zIQ32E//zgFo9p/szSxsrCd79RKueqJNVQd23?=
+ =?us-ascii?Q?072+s3Oi6C9phRQ=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(10070799003)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?anhlekdNWlZ5OFl5eUdMbEt3THpvSXByNzN4YUFXSzVkNnprMVdrSzVBUlpN?=
- =?utf-8?B?ako2aVhtV1VKemw0dUlvdmhwRTVRL3lqTmlBTVZQUjMvVUxFeGRqcFFDZ0o3?=
- =?utf-8?B?QkVmeXBSbFZ6R091b1lRQmttZ3BNOXV1T3JBR3Z0cm1jZS8rRTkzWUhKV3J4?=
- =?utf-8?B?R2IySFJsTS9GMlp6YjlKRGJmdHI4ZnAxeHNUWks3UTlkSFJwZUJUUVdtRk1U?=
- =?utf-8?B?N3JZR20rTjVVeldLSGt0YlhpMk5rMEJGTGdpMml3ZjBlSklPYzZjaTEvNWZR?=
- =?utf-8?B?M3ZWVGwwNmVkeE41em95Z294UmJXZXNBVnBjbUo5Q0RmbzRkR3Z6VHpqSERX?=
- =?utf-8?B?c3MrNFA1dy8rWHl6NHNFUEx1K0x3Z3E4d09YSGNJcHVCaVp2Y0pIdVhMV1F1?=
- =?utf-8?B?WGU0TVV5aXVYbnJYd3lhK0Q4cVVRSTlKNUM5bWNRcWcvTzNKQVVZclJXY1Y1?=
- =?utf-8?B?L01rQ2RSVjlWS3pYZkFvVUlSbHdNQ1RZOVBCRzFyVkx3Ymdwb1Z1R3VZK1hM?=
- =?utf-8?B?dS9Nei9WanlKQytmcDd5Wmo2UUl2VnF5Y0dLcVVFM1VxMWlXY0RPaUJCUmZK?=
- =?utf-8?B?WmhYMlFGMFRBT0FvdGRuNGY5WC9HQTM4TkxYSU1kQnU5RFZQWEF4U1BXNWZ6?=
- =?utf-8?B?bzZ3YVdXUythRTJ6cFNkRWYwdnErbnVibi84T1hNbEJiR015SStQbm85dW9T?=
- =?utf-8?B?NWhndEE5TlkxaHkzWlo1V2ZSU3ZlOGQ3dy8zZGJlbVFBRHVMM0NYYkViZlln?=
- =?utf-8?B?Q2c4TXIyVUlnL0NqeGRsRXRJMk9Xam9VbW5ZeUYrY2hHbDRmNU5EZlUvMktv?=
- =?utf-8?B?SEV6OWRPYWRSRWFaNHJIVjl1U0w2NjhWbUpWaGdjZUJuY1c3anUyQWpob05U?=
- =?utf-8?B?aWphUHJDQW5FbjJzeFAvakJ4R2hCRTRSeVNGSUFsQnUwWjlyZFVydmsyQjBs?=
- =?utf-8?B?VW9OaWdLZ243UEEyOTJDSXJVZEtWb2xFYzlMVDNPZ1JNaU9nSm9zYWpTR21J?=
- =?utf-8?B?cUd6RTZGYWRsb0JyL21lTUJQSythUm01ZmUvTWtQUzRuQjVxV2psa05SLzFQ?=
- =?utf-8?B?M2tIZUczQ2Rqc0E4bzM3K3Aya3Y2cDEvc25vRXlwUnBpZFNsRWZUcDdlUWdZ?=
- =?utf-8?B?VDJ0OHh4VFB2Z25DcHB4T3IyOXdBV1JCVkduMlFCN1htYW5rQXdCbklvU1JJ?=
- =?utf-8?B?MEhwUVJuZE5sN3VDYkVkMlpNRTNPNnNRVE1NangveDRzYkM1UzVodlhNNTFN?=
- =?utf-8?B?R2xEOW84OW14d2F5UXRjZkRjcmtGRU1jQUpXS1U4aUQxcFhYOU1HV1pnaFdP?=
- =?utf-8?B?NU9TaVlRTUdsa2ZMQy84d0I2ajRjYnI2TmhlbUZjMFUxMzFRWERrd2t1bTFk?=
- =?utf-8?B?cldjWUhGL2pwZ0RUd01RbmJMK3VQTlc2bzJqSzZBSmp2RnN4L2U0aW1MME1S?=
- =?utf-8?B?aVdTZ2xvMEV0a0JrcXVIYjZsdFRnbVg3bzExQmZPeVlvQ2ZyL1o3SjJCMDA5?=
- =?utf-8?B?bUhLc2pHZEZ5ZmtVcDFaK25MQmdzMmp3elkzQkVoSzk4c3MzVG5sdkcrbWlt?=
- =?utf-8?B?SkVEZFVPZG1xdndITWphUWhuOVY3eFlHOWZ5MHpVTDdOSTlVRG9TQk9ZWDIx?=
- =?utf-8?B?b3dRME83K1ZtY21KSkJVS09pRnd1KzhVOCtWV0VYOTVaOXNXRjZCMEtyODk3?=
- =?utf-8?B?end2ek1uclpUNEZ5QWlLVWJpMHN2RFhpaktkRVhJYVR0OGY0MmdGdmQ5V0ti?=
- =?utf-8?B?SEdNdEJyUHU3azZ3ZHdRR080cGprVk93VUhVRHUzekNTRmdWbytpdTEwazU0?=
- =?utf-8?B?V2E5NUVCa2svNTVtY2UvSkx3WXFxYnBOKzczbjRTcno2TjNkRnh3K1I2ekhJ?=
- =?utf-8?B?SGFXTW1UdDFQZFlNK1c5QlFqK2pBMURMTXo1SWVYLzNOV0ZaVkNjZitxUmNL?=
- =?utf-8?B?cVkvT3ZMdGJNNGdHMmpvaG02YVRZWTRFT3FLNEJvREhRY3h5ajdrbERYUmxW?=
- =?utf-8?B?WEJEcS92Z1Z3VG5sOWxHeEVJbFUvN29ZMU1JcWE2bmpOWjZpYnVkalV1RTVa?=
- =?utf-8?B?ektqemhJK2FLMjg4YmVEZ3EwYityOUUyUnNiRldFV0NQNUszOWo2ODhmdHgz?=
- =?utf-8?B?RkcxMmhjVkdWLzBINldoMzFGWlpTT21VNHZESS9xc0xSUk44Y3p6MEhjbHh6?=
- =?utf-8?Q?h3JllUWqQrHDYs5qrA7Kfko9M1V0tr76+dvxAKhxpOAV?=
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d878733-6e19-4f65-2305-08dd76a5aaf3
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2025 14:00:06.8525
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2025 14:02:23.6873
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Network-Message-Id: a99ec006-527d-4927-3f4d-08dd76a5fcc2
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XK3PWjOkT6ZD4HpChetsuyXDUiPsCaLb00B+4FKbe+8nVneJpK2l1jzOJCTo5FqPe4VrEPUaj21A9ChHT9KUeg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8503
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00004680.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7418
 
-On Tue Apr 8, 2025 at 1:33 AM JST, Benno Lossin wrote:
-> On Sun Apr 6, 2025 at 3:01 PM CEST, Alexandre Courbot wrote:
->> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
->> index ae9d072741cedbb34bed0be0c20cc75472aa53be..b3c4227e232cca3b5c17930a=
-bc63810240b9c4da 100644
->> --- a/rust/kernel/alloc/kvec.rs
->> +++ b/rust/kernel/alloc/kvec.rs
->> @@ -454,30 +454,86 @@ pub fn reserve(&mut self, additional: usize, flags=
-: Flags) -> Result<(), AllocEr
->>      }
->>  }
->> =20
->> +impl<T, A: Allocator> Vec<T, A> {
->> +    /// Extends the vector by the elements of `iter`.
->> +    ///
->> +    /// This uses [`Iterator::size_hint`] to optimize memory reallocati=
-ons, but will work even with
->> +    /// imprecise implementations - albeit in a non-optimal way.
->> +    ///
->> +    /// This method returns an error if a memory reallocation required =
-to accommodate the new items
->> +    /// failed. In this case, callers must assume that some (but not al=
-l) elements of `iter` might
->> +    /// have been added to the vector.
->
-> I would add that items that haven't been added to the vector remain in
-> the iterator. Do note that some iterators drops the items when the
-> iterator is dropped. But if not, one can still access them later:
->
->     let vec1 =3D vec![...];
->     let mut vec2 =3D KVec::new();
->     let mut iter =3D vec1.iter();
->     if let Err(_) =3D vec2.extend(&mut iter) {
->         // can access remaining items:
->         for item in iter {
->             pr_info!("item: {item:?}\n");
->         }
->     }
+From: Vlad Dogaru <vdogaru@nvidia.com>
 
-Indeed, better to mention that, although I guess that if we go with our
-own unsafe exact size trait like Danilo suggested we won't ever need to
-allocate more than once anyway.
+The procedure of attaching an action template to an existing matcher had
+a few issues:
 
->
->> +    ///
->> +    /// # Note on optimal behavior and correctness
->> +    ///
->> +    /// The efficiency of this method depends on how reliable the [`Ite=
-rator::size_hint`]
->> +    /// implementation of the `iter` is.
->> +    ///
->> +    /// It performs optimally with at most a single memory reallocation=
- if the lower bound of
->> +    /// `size_hint` is the exact number of items actually yielded.
->> +    ///
->> +    /// If `size_hint` is more vague, there may be as many memory reall=
-ocations as necessary to
->> +    /// cover the whole iterator from the successive lower bounds retur=
-ned by `size_hint`.
->> +    ///
->> +    /// If `size_hint` signals more items than actually yielded by the =
-iterator, some unused memory
->> +    /// might be reserved.
->> +    ///
->> +    /// Finally, whenever `size_hint` returns `(0, Some(0))`, the metho=
-d assumes that no more items
->> +    /// are yielded by the iterator and returns. This may result in som=
-e items not being added if
->> +    /// there were still some remaining.
->
-> Why do this? Can't we just call `next` and see if that is `None` too?
-> You could use `Peekable` [1] to call `peek` instead, then the logic
-> below shouldn't be too complex.
->
-> [1]: https://doc.rust-lang.org/core/iter/trait.Iterator.html#method.peeka=
-ble
+1. Attaching accidentally overran the `at` array in bwc_matcher, which
+   would result in memory corruption. This bug wasn't triggered, but it
+   is possible to trigger it by attaching action templates beyond the
+   initial buffer size of 8. Fix this by converting to a dynamically
+   sized buffer and reallocating if needed.
 
-What worried me there was that the compiler might not be able to
-optimize the loop away if we always do a last checking `next()` call,
-hence this shortcut to avoid an extra loop for the most obvious cases.
-But again this should be solved by Danilo's suggestion.
+2. Similarly, the `at` array inside the native matcher was never
+   reallocated. Fix this the same as above.
 
->
->> +    ///
->> +    /// In the kernel most iterators are expected to have a precise and=
- correct `size_hint`
->> +    /// implementation, so this should nicely optimize out for these ca=
-ses.
->> +    pub fn extend<I>(&mut self, iter: I, flags: Flags) -> Result<(), Al=
-locError>
->> +    where
->> +        I: IntoIterator<Item =3D T>,
->> +    {
->> +        let mut iter =3D iter.into_iter();
->> +
->> +        loop {
->> +            let low_bound =3D match iter.size_hint() {
->> +                // No more items expected, we can return.
->> +                (0, Some(0)) =3D> break,
->> +                // Possibly more items but not certain, tentatively add=
- one.
->> +                (0, _) =3D> 1,
->> +                // More items pending, reserve space for the lower boun=
-d.
->> +                (low_bound, _) =3D> low_bound,
->> +            };
->> +
->> +            self.reserve(low_bound, flags)?;
->> +
->> +            // Number of items we actually added.
->> +            let added_items =3D self
->> +                .spare_capacity_mut()
->> +                .iter_mut()
->> +                // Take a mutable reference to the iterator so we can r=
-euse it in the next
->> +                // iteration of the loop if needed.
->> +                .zip(&mut iter)
->> +                .fold(0, |count, (dst, src)| {
->> +                    dst.write(src);
->> +
->> +                    count + 1
->> +                });
->> +
->> +            // SAFETY:
->> +            // - `self.len() + added_items <=3D self.capacity()` due to=
- the call to `reserve` above,
->
-> In my mind this precondition holds, since
->
->     self.spare_capacity_mut().len() + self.len() =3D=3D self.capacity()
->
-> and
->
->     added_items <=3D self.spare_capacity_mut().len()
->
-> But I guess we haven't written the first one down anywhere.
->
->> +            // - items `[self.len()..self.len() + added_items - 1]` are=
- initialized.
->> +            unsafe { self.set_len(self.len() + added_items) };
->> +
->> +            // `size_hint` was incorrect and our iterator ended before =
-its advertized lower bound.
->> +            if added_items < low_bound {
->> +                break;
->> +            }
->> +        }
->> +
->> +        Ok(())
->> +    }
->> +}
->> +
->>  impl<T: Clone, A: Allocator> Vec<T, A> {
->>      /// Extend the vector by `n` clones of `value`.
->>      pub fn extend_with(&mut self, n: usize, value: T, flags: Flags) -> =
-Result<(), AllocError> {
->> -        if n =3D=3D 0 {
->> -            return Ok(());
->> -        }
->> -
->> -        self.reserve(n, flags)?;
->> -
->> -        let spare =3D self.spare_capacity_mut();
->> -
->> -        for item in spare.iter_mut().take(n - 1) {
->> -            item.write(value.clone());
->> -        }
->> -
->> -        // We can write the last element directly without cloning needl=
-essly.
->> -        spare[n - 1].write(value);
->> -
->> -        // SAFETY:
->> -        // - `self.len() + n < self.capacity()` due to the call to rese=
-rve above,
->> -        // - the loop and the line above initialized the next `n` eleme=
-nts.
->> -        unsafe { self.set_len(self.len() + n) };
->> -
->> -        Ok(())
->> +        self.extend(core::iter::repeat_n(value, n), flags)
->
-> `repeat_n` is not stable in 1.78.0, so you need to add `iter_repeat_n`
-> to the allowed features.
+3. The bwc layer treated any error in action template attach as a signal
+   that the matcher should be rehashed to account for a larger number of
+   action STEs. In reality, there are other unrelated errors that can
+   arise and they should be propagated upstack. Fix this by adding a
+   `need_rehash` output parameter that's orthogonal to error codes.
 
-Indeed - added the feature, thanks for catching this.
+Fixes: 2111bb970c78 ("net/mlx5: HWS, added backward-compatible API handling")
+Signed-off-by: Vlad Dogaru <vdogaru@nvidia.com>
+Reviewed-by: Yevgeny Kliteynik <kliteyn@nvidia.com>
+Reviewed-by: Mark Bloch <mbloch@nvidia.com>
+Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+---
+ .../mellanox/mlx5/core/steering/hws/bwc.c     | 55 ++++++++++++++++---
+ .../mellanox/mlx5/core/steering/hws/bwc.h     |  9 ++-
+ .../mellanox/mlx5/core/steering/hws/matcher.c | 48 +++++++++++++---
+ .../mellanox/mlx5/core/steering/hws/matcher.h |  4 ++
+ .../mellanox/mlx5/core/steering/hws/mlx5hws.h |  5 +-
+ 5 files changed, 97 insertions(+), 24 deletions(-)
 
-Thanks,
-Alex.
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/bwc.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/bwc.c
+index 19dce1ba512d..32de8bfc7644 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/bwc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/bwc.c
+@@ -90,13 +90,19 @@ int mlx5hws_bwc_matcher_create_simple(struct mlx5hws_bwc_matcher *bwc_matcher,
+ 	bwc_matcher->priority = priority;
+ 	bwc_matcher->size_log = MLX5HWS_BWC_MATCHER_INIT_SIZE_LOG;
+ 
++	bwc_matcher->size_of_at_array = MLX5HWS_BWC_MATCHER_ATTACH_AT_NUM;
++	bwc_matcher->at = kcalloc(bwc_matcher->size_of_at_array,
++				  sizeof(*bwc_matcher->at), GFP_KERNEL);
++	if (!bwc_matcher->at)
++		goto free_bwc_matcher_rules;
++
+ 	/* create dummy action template */
+ 	bwc_matcher->at[0] =
+ 		mlx5hws_action_template_create(action_types ?
+ 					       action_types : init_action_types);
+ 	if (!bwc_matcher->at[0]) {
+ 		mlx5hws_err(table->ctx, "BWC matcher: failed creating action template\n");
+-		goto free_bwc_matcher_rules;
++		goto free_bwc_matcher_at_array;
+ 	}
+ 
+ 	bwc_matcher->num_of_at = 1;
+@@ -126,6 +132,8 @@ int mlx5hws_bwc_matcher_create_simple(struct mlx5hws_bwc_matcher *bwc_matcher,
+ 	mlx5hws_match_template_destroy(bwc_matcher->mt);
+ free_at:
+ 	mlx5hws_action_template_destroy(bwc_matcher->at[0]);
++free_bwc_matcher_at_array:
++	kfree(bwc_matcher->at);
+ free_bwc_matcher_rules:
+ 	kfree(bwc_matcher->rules);
+ err:
+@@ -192,6 +200,7 @@ int mlx5hws_bwc_matcher_destroy_simple(struct mlx5hws_bwc_matcher *bwc_matcher)
+ 
+ 	for (i = 0; i < bwc_matcher->num_of_at; i++)
+ 		mlx5hws_action_template_destroy(bwc_matcher->at[i]);
++	kfree(bwc_matcher->at);
+ 
+ 	mlx5hws_match_template_destroy(bwc_matcher->mt);
+ 	kfree(bwc_matcher->rules);
+@@ -520,6 +529,23 @@ hws_bwc_matcher_extend_at(struct mlx5hws_bwc_matcher *bwc_matcher,
+ 			  struct mlx5hws_rule_action rule_actions[])
+ {
+ 	enum mlx5hws_action_type action_types[MLX5HWS_BWC_MAX_ACTS];
++	void *p;
++
++	if (unlikely(bwc_matcher->num_of_at >= bwc_matcher->size_of_at_array)) {
++		if (bwc_matcher->size_of_at_array >= MLX5HWS_MATCHER_MAX_AT)
++			return -ENOMEM;
++		bwc_matcher->size_of_at_array *= 2;
++		p = krealloc(bwc_matcher->at,
++			     bwc_matcher->size_of_at_array *
++				     sizeof(*bwc_matcher->at),
++			     __GFP_ZERO | GFP_KERNEL);
++		if (!p) {
++			bwc_matcher->size_of_at_array /= 2;
++			return -ENOMEM;
++		}
++
++		bwc_matcher->at = p;
++	}
+ 
+ 	hws_bwc_rule_actions_to_action_types(rule_actions, action_types);
+ 
+@@ -777,6 +803,7 @@ int mlx5hws_bwc_rule_create_simple(struct mlx5hws_bwc_rule *bwc_rule,
+ 	struct mlx5hws_rule_attr rule_attr;
+ 	struct mutex *queue_lock; /* Protect the queue */
+ 	u32 num_of_rules;
++	bool need_rehash;
+ 	int ret = 0;
+ 	int at_idx;
+ 
+@@ -803,10 +830,14 @@ int mlx5hws_bwc_rule_create_simple(struct mlx5hws_bwc_rule *bwc_rule,
+ 		at_idx = bwc_matcher->num_of_at - 1;
+ 
+ 		ret = mlx5hws_matcher_attach_at(bwc_matcher->matcher,
+-						bwc_matcher->at[at_idx]);
++						bwc_matcher->at[at_idx],
++						&need_rehash);
+ 		if (unlikely(ret)) {
+-			/* Action template attach failed, possibly due to
+-			 * requiring more action STEs.
++			hws_bwc_unlock_all_queues(ctx);
++			return ret;
++		}
++		if (unlikely(need_rehash)) {
++			/* The new action template requires more action STEs.
+ 			 * Need to attempt creating new matcher with all
+ 			 * the action templates, including the new one.
+ 			 */
+@@ -942,6 +973,7 @@ hws_bwc_rule_action_update(struct mlx5hws_bwc_rule *bwc_rule,
+ 	struct mlx5hws_context *ctx = bwc_matcher->matcher->tbl->ctx;
+ 	struct mlx5hws_rule_attr rule_attr;
+ 	struct mutex *queue_lock; /* Protect the queue */
++	bool need_rehash;
+ 	int at_idx, ret;
+ 	u16 idx;
+ 
+@@ -973,12 +1005,17 @@ hws_bwc_rule_action_update(struct mlx5hws_bwc_rule *bwc_rule,
+ 			at_idx = bwc_matcher->num_of_at - 1;
+ 
+ 			ret = mlx5hws_matcher_attach_at(bwc_matcher->matcher,
+-							bwc_matcher->at[at_idx]);
++							bwc_matcher->at[at_idx],
++							&need_rehash);
+ 			if (unlikely(ret)) {
+-				/* Action template attach failed, possibly due to
+-				 * requiring more action STEs.
+-				 * Need to attempt creating new matcher with all
+-				 * the action templates, including the new one.
++				hws_bwc_unlock_all_queues(ctx);
++				return ret;
++			}
++			if (unlikely(need_rehash)) {
++				/* The new action template requires more action
++				 * STEs. Need to attempt creating new matcher
++				 * with all the action templates, including the
++				 * new one.
+ 				 */
+ 				ret = hws_bwc_matcher_rehash_at(bwc_matcher);
+ 				if (unlikely(ret)) {
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/bwc.h b/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/bwc.h
+index 47f7ed141553..bb0cf4b922ce 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/bwc.h
++++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/bwc.h
+@@ -10,9 +10,7 @@
+ #define MLX5HWS_BWC_MATCHER_REHASH_BURST_TH 32
+ 
+ /* Max number of AT attach operations for the same matcher.
+- * When the limit is reached, next attempt to attach new AT
+- * will result in creation of a new matcher and moving all
+- * the rules to this matcher.
++ * When the limit is reached, a larger buffer is allocated for the ATs.
+  */
+ #define MLX5HWS_BWC_MATCHER_ATTACH_AT_NUM 8
+ 
+@@ -23,10 +21,11 @@
+ struct mlx5hws_bwc_matcher {
+ 	struct mlx5hws_matcher *matcher;
+ 	struct mlx5hws_match_template *mt;
+-	struct mlx5hws_action_template *at[MLX5HWS_BWC_MATCHER_ATTACH_AT_NUM];
+-	u32 priority;
++	struct mlx5hws_action_template **at;
+ 	u8 num_of_at;
++	u8 size_of_at_array;
+ 	u8 size_log;
++	u32 priority;
+ 	atomic_t num_of_rules;
+ 	struct list_head *rules;
+ };
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/matcher.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/matcher.c
+index b61864b32053..37a4497048a6 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/matcher.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/matcher.c
+@@ -905,18 +905,48 @@ static int hws_matcher_uninit(struct mlx5hws_matcher *matcher)
+ 	return 0;
+ }
+ 
++static int hws_matcher_grow_at_array(struct mlx5hws_matcher *matcher)
++{
++	void *p;
++
++	if (matcher->size_of_at_array >= MLX5HWS_MATCHER_MAX_AT)
++		return -ENOMEM;
++
++	matcher->size_of_at_array *= 2;
++	p = krealloc(matcher->at,
++		     matcher->size_of_at_array * sizeof(*matcher->at),
++		     __GFP_ZERO | GFP_KERNEL);
++	if (!p) {
++		matcher->size_of_at_array /= 2;
++		return -ENOMEM;
++	}
++
++	matcher->at = p;
++
++	return 0;
++}
++
+ int mlx5hws_matcher_attach_at(struct mlx5hws_matcher *matcher,
+-			      struct mlx5hws_action_template *at)
++			      struct mlx5hws_action_template *at,
++			      bool *need_rehash)
+ {
+ 	bool is_jumbo = mlx5hws_matcher_mt_is_jumbo(matcher->mt);
+ 	struct mlx5hws_context *ctx = matcher->tbl->ctx;
+ 	u32 required_stes;
+ 	int ret;
+ 
+-	if (!matcher->attr.max_num_of_at_attach) {
+-		mlx5hws_dbg(ctx, "Num of current at (%d) exceed allowed value\n",
+-			    matcher->num_of_at);
+-		return -EOPNOTSUPP;
++	*need_rehash = false;
++
++	if (unlikely(matcher->num_of_at >= matcher->size_of_at_array)) {
++		ret = hws_matcher_grow_at_array(matcher);
++		if (ret)
++			return ret;
++
++		if (matcher->col_matcher) {
++			ret = hws_matcher_grow_at_array(matcher->col_matcher);
++			if (ret)
++				return ret;
++		}
+ 	}
+ 
+ 	ret = hws_matcher_check_and_process_at(matcher, at);
+@@ -927,12 +957,11 @@ int mlx5hws_matcher_attach_at(struct mlx5hws_matcher *matcher,
+ 	if (matcher->action_ste.max_stes < required_stes) {
+ 		mlx5hws_dbg(ctx, "Required STEs [%d] exceeds initial action template STE [%d]\n",
+ 			    required_stes, matcher->action_ste.max_stes);
+-		return -ENOMEM;
++		*need_rehash = true;
+ 	}
+ 
+ 	matcher->at[matcher->num_of_at] = *at;
+ 	matcher->num_of_at += 1;
+-	matcher->attr.max_num_of_at_attach -= 1;
+ 
+ 	if (matcher->col_matcher)
+ 		matcher->col_matcher->num_of_at = matcher->num_of_at;
+@@ -960,8 +989,9 @@ hws_matcher_set_templates(struct mlx5hws_matcher *matcher,
+ 	if (!matcher->mt)
+ 		return -ENOMEM;
+ 
+-	matcher->at = kvcalloc(num_of_at + matcher->attr.max_num_of_at_attach,
+-			       sizeof(*matcher->at),
++	matcher->size_of_at_array =
++		num_of_at + matcher->attr.max_num_of_at_attach;
++	matcher->at = kvcalloc(matcher->size_of_at_array, sizeof(*matcher->at),
+ 			       GFP_KERNEL);
+ 	if (!matcher->at) {
+ 		mlx5hws_err(ctx, "Failed to allocate action template array\n");
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/matcher.h b/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/matcher.h
+index 020de70270c5..20b32012c418 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/matcher.h
++++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/matcher.h
+@@ -23,6 +23,9 @@
+  */
+ #define MLX5HWS_MATCHER_ACTION_RTC_UPDATE_MULT 1
+ 
++/* Maximum number of action templates that can be attached to a matcher. */
++#define MLX5HWS_MATCHER_MAX_AT 128
++
+ enum mlx5hws_matcher_offset {
+ 	MLX5HWS_MATCHER_OFFSET_TAG_DW1 = 12,
+ 	MLX5HWS_MATCHER_OFFSET_TAG_DW0 = 13,
+@@ -72,6 +75,7 @@ struct mlx5hws_matcher {
+ 	struct mlx5hws_match_template *mt;
+ 	struct mlx5hws_action_template *at;
+ 	u8 num_of_at;
++	u8 size_of_at_array;
+ 	u8 num_of_mt;
+ 	/* enum mlx5hws_matcher_flags */
+ 	u8 flags;
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/mlx5hws.h b/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/mlx5hws.h
+index 5121951f2778..8ed8a715a2eb 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/mlx5hws.h
++++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/mlx5hws.h
+@@ -399,11 +399,14 @@ int mlx5hws_matcher_destroy(struct mlx5hws_matcher *matcher);
+  *
+  * @matcher: Matcher to attach the action template to.
+  * @at: Action template to be attached to the matcher.
++ * @need_rehash: Output parameter that tells callers if the matcher needs to be
++ * rehashed.
+  *
+  * Return: Zero on success, non-zero otherwise.
+  */
+ int mlx5hws_matcher_attach_at(struct mlx5hws_matcher *matcher,
+-			      struct mlx5hws_action_template *at);
++			      struct mlx5hws_action_template *at,
++			      bool *need_rehash);
+ 
+ /**
+  * mlx5hws_matcher_resize_set_target - Link two matchers and enable moving rules.
+-- 
+2.31.1
+
 
