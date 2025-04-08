@@ -1,164 +1,178 @@
-Return-Path: <linux-kernel+bounces-593267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB94A7F75E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:12:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ADEBA7F766
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD12E7A86F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:11:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A3C53AE30E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCD0263F4D;
-	Tue,  8 Apr 2025 08:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1A8263F30;
+	Tue,  8 Apr 2025 08:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="l5HaVzu3"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Zj9/D7J4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BQyl9otL"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A48E263F44
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639AE21B9C2;
+	Tue,  8 Apr 2025 08:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744099906; cv=none; b=qSU1DJ3Onz96E13kJW3hqMO6okCkxtgOpn4AKq0PwW1/T871I2OSijSOGqrF+no7yTXXU2mk9Ed8M0ywtQozbcMtpEibFlsDsqwIOEXedyFUGqpGKqRGjEHJv6CdPzh4aQE16wsLOrDDZ/5zc3cZYrZ1zE8Si9HyCbZ6vzePhg4=
+	t=1744099943; cv=none; b=WUhq2mpm14LOAeuFDU7YN6ec0sCMCLr44Tv/qsjCke7et0Ip35u1UfDl3xwnNNyM0/LM4bXDcYt3WzS5Jvdpv794n7mIJxlaeHRn23tFx8HGSbtf5hetM8UNzk4ARdLCSFNmmLyMNKDl8Q2ihrjIfsRNaivSeDr7K424pUfU8D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744099906; c=relaxed/simple;
-	bh=uT8ybYJ8z2pWmCOonpXiutxvXE0bYgJTMrPDrLyaYJM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NarFYTkUxJ1GtICCKfa2OCAhnYNtKB1I9z/zg/gArcp1dA+6ZRekmqrzC3pJaad3a179yWksdFVhRMrXVphGBxjazcUjcHO9UucAn7mQMwE6ScbFZbLFGWNuEW4toaI+r8mVJlEPVF4oPKXwD4ZF7rJaPPY6YcOw5RjgXe+iPJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=l5HaVzu3; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1744099894; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=9h2K4oXsYeaw5f4qdfa43kBcn/+mZo5xYqKfvGWE2pU=;
-	b=l5HaVzu31dnLGPMSR2DITktYPExJyA/guoigtHnnw92hQN754yEzujVqeLhOsP01MpZrvpIQH2JVOoPxcGLno+0dYDpbNsKOl9KnjVzWGN1cRUeDG7dlOJHFngUBO5mqcTBdfK/29gqH8URyggJNTdgwJ8bbkPhsxCBEPWP/fH0=
-Received: from 30.74.144.107(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WWEMSww_1744099893 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 08 Apr 2025 16:11:34 +0800
-Message-ID: <f0026429-de3e-4e20-8603-39683180a643@linux.alibaba.com>
-Date: Tue, 8 Apr 2025 16:11:33 +0800
+	s=arc-20240116; t=1744099943; c=relaxed/simple;
+	bh=lcqwwAZ1qfxQBD8Vxb/ZinQz9djbJMiM19YvBwJPd5E=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=uOIzX7fyqQQsZQQLLT7Y6l5KsfIEjYdmhL9wS8qA/J2Ac2tsz+KcTx36bWEsBohh1B0yWQ/Ra+gOykJewDNfyMZwH1BmrM34oC4RGlxIFZzA3BTz/qZCYzdnSXTgDDY3HxkgxqN+8hzRgyPxoITZ86VujPeMTcvN/QrhClgRGyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Zj9/D7J4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BQyl9otL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 08 Apr 2025 08:12:14 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744099939;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vszxfyShc0++498NH0BgEFLXzhjs7aclqkUGT0A5z5Y=;
+	b=Zj9/D7J4hfOLhXgFhaMBcIk5CNhHF5lRj7ooaJ/V3ehpqbqz58JHl1jv26WuclTAvXQPIh
+	F/nIppJmI/ZAX98EjPtVKOY1wy/M64PP5/1XbSdD7Hv9FnAw6DoRZysLejvOpIZlIwOwKB
+	rMj8WqSc6EqprJ6GAyOjpGrsT4vShdTfl3Kqa6wm2HcbdISsVfJuaDhwRsijbIh93ZM149
+	w5xCzr+hkL6dm5H8qQ7BcI0qBq0uaUMZwa5WbkWmvn2RY7XZ1EMrm0AvgnKF/eEmwaozJh
+	slvU16550ijpGmLYI+sbOk7WxXbZjPQ8ggE7EnaM+5ebZ8ZimDwrJ4yQOoHCfw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744099939;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vszxfyShc0++498NH0BgEFLXzhjs7aclqkUGT0A5z5Y=;
+	b=BQyl9otLZfoKbNjQKWY/DhAZT/4fodIULb1ZWEimZbu/53vevGoNzRkRWZrq/wqxXtNkFK
+	WkcXvyVlTSmvWVCg==
+From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: objtool/urgent] objtool, xen: Fix INSN_SYSCALL / INSN_SYSRET semantics
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ Juergen Gross <jgross@suse.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To:
+ <19453dfe9a0431b7f016e9dc16d031cad3812a50.1744095216.git.jpoimboe@kernel.org>
+References:
+ <19453dfe9a0431b7f016e9dc16d031cad3812a50.1744095216.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests: mincore: fix tmpfs mincore test failure
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
- hughd@google.com
-Cc: willy@infradead.org, 21cnbao@gmail.com, ryan.roberts@arm.com,
- ziy@nvidia.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <9a00856cc6a8b4e46f4ab8b1af11ce5fc1a31851.1744025467.git.baolin.wang@linux.alibaba.com>
- <61e36a73-2c8c-4897-9ba5-3b2d59f57b5d@redhat.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <61e36a73-2c8c-4897-9ba5-3b2d59f57b5d@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <174409993428.31282.16321486770522273299.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the objtool/urgent branch of tip:
 
+Commit-ID:     2dbbca9be4e5ed68d0972a2bcf4561d9cb85b7b7
+Gitweb:        https://git.kernel.org/tip/2dbbca9be4e5ed68d0972a2bcf4561d9cb85b7b7
+Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+AuthorDate:    Tue, 08 Apr 2025 00:02:16 -07:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 08 Apr 2025 09:14:12 +02:00
 
-On 2025/4/7 23:04, David Hildenbrand wrote:
-> On 07.04.25 13:31, Baolin Wang wrote:
->> When running mincore test cases, I encountered the following failures:
->>
->> "
->> mincore_selftest.c:359:check_tmpfs_mmap:Expected ra_pages (511) == 0 (0)
->> mincore_selftest.c:360:check_tmpfs_mmap:Read-ahead pages found in memory
->> check_tmpfs_mmap: Test terminated by assertion
->>            FAIL  global.check_tmpfs_mmap
->> not ok 5 global.check_tmpfs_mmap
->> FAILED: 4 / 5 tests passed
->> "
->>
->> The reason for the test case failure is that my system automatically 
->> enabled
->> tmpfs large folio allocation by adding the 
->> 'transparent_hugepage_tmpfs=always'
->> cmdline. However, the test case still expects the tmpfs mounted on 
->> /dev/shm to
->> allocate small folios, which leads to assertion failures when 
->> verifying readahead
->> pages.
->>
->> As discussed with David, there's no reason to continue checking the 
->> readahead
->> logic for tmpfs. Drop it to fix this issue.
->>
-> 
-> BTW, should we add a Fixes: ? Could only be tmpfs support that changed 
-> the behavior but didn't fixup the test case.
+objtool, xen: Fix INSN_SYSCALL / INSN_SYSRET semantics
 
-I was hesitant about whether a Fixes tag is needed, because this issue 
-can be traced back to the earliest patch set that added THP support to 
-tmpfs. However, the test issue wasn't exposed because the 'huge=' 
-parameter wasn't included when mounting /dev/shm.
+Objtool uses an arbitrary rule for INSN_SYSCALL and INSN_SYSRET that
+almost works by accident: if it's in a function, control flow continues
+after the instruction, otherwise it terminates.
 
-After the cmdline 'transparent_hugepage_tmpfs' was added for tmpfs, the 
-issue is exposed easily. So I am inclined to add a Fixes tag for the 
-patch added the 'transparent_hugepage_tmpfs' cmdline.
+That behavior should instead be based on the semantics of the underlying
+instruction.  Change INSN_SYSCALL to always preserve control flow and
+INSN_SYSRET to always terminate it.
 
-Fixes: d635ccdb435c ("mm: shmem: add a kernel command line to change the 
-default huge policy for tmpfs")
+The changed semantic for INSN_SYSCALL requires a tweak to the
+!CONFIG_IA32_EMULATION version of xen_entry_SYSCALL_compat().  In Xen,
+SYSCALL is a hypercall which usually returns.  But in this case it's a
+hypercall to IRET which doesn't return.  Add UD2 to tell objtool to
+terminate control flow, and to prevent undefined behavior at runtime.
 
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->> ---
->> Changes from v1:
->>   - Drop the readahead logic check, per David.
->> ---
->>   .../testing/selftests/mincore/mincore_selftest.c | 16 ++--------------
->>   1 file changed, 2 insertions(+), 14 deletions(-)
->>
->> diff --git a/tools/testing/selftests/mincore/mincore_selftest.c 
->> b/tools/testing/selftests/mincore/mincore_selftest.c
->> index e949a43a6145..0fd4b00bd345 100644
->> --- a/tools/testing/selftests/mincore/mincore_selftest.c
->> +++ b/tools/testing/selftests/mincore/mincore_selftest.c
->> @@ -286,8 +286,7 @@ TEST(check_file_mmap)
->>   /*
->>    * Test mincore() behavior on a page backed by a tmpfs file.  This test
->> - * performs the same steps as the previous one. However, we don't expect
->> - * any readahead in this case.
->> + * performs the same steps as the previous one.
->>    */
->>   TEST(check_tmpfs_mmap)
->>   {
->> @@ -298,7 +297,6 @@ TEST(check_tmpfs_mmap)
->>       int page_size;
->>       int fd;
->>       int i;
->> -    int ra_pages = 0;
->>       page_size = sysconf(_SC_PAGESIZE);
->>       vec_size = FILE_SIZE / page_size;
->> @@ -341,8 +339,7 @@ TEST(check_tmpfs_mmap)
->>       }
->>       /*
->> -     * Touch a page in the middle of the mapping. We expect only
->> -     * that page to be fetched into memory.
->> +     * Touch a page in the middle of the mapping.
->>        */
->>       addr[FILE_SIZE / 2] = 1;
->>       retval = mincore(addr, FILE_SIZE, vec);
->> @@ -351,15 +348,6 @@ TEST(check_tmpfs_mmap)
->>           TH_LOG("Page not found in memory after use");
->>       }
->> -    i = FILE_SIZE / 2 / page_size + 1;
->> -    while (i < vec_size && vec[i]) {
->> -        ra_pages++;
->> -        i++;
->> -    }
->> -    ASSERT_EQ(ra_pages, 0) {
->> -        TH_LOG("Read-ahead pages found in memory");
->> -    }
->> -
->>       munmap(addr, FILE_SIZE);
->>       close(fd);
->>       free(vec);
-> 
-> Acked-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Juergen Gross <jgross@suse.com> # for the Xen part
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/19453dfe9a0431b7f016e9dc16d031cad3812a50.1744095216.git.jpoimboe@kernel.org
+---
+ arch/x86/xen/xen-asm.S |  4 +---
+ tools/objtool/check.c  | 21 +++++++++++++--------
+ 2 files changed, 14 insertions(+), 11 deletions(-)
 
-Thanks.
+diff --git a/arch/x86/xen/xen-asm.S b/arch/x86/xen/xen-asm.S
+index 109af12..461bb15 100644
+--- a/arch/x86/xen/xen-asm.S
++++ b/arch/x86/xen/xen-asm.S
+@@ -226,9 +226,7 @@ SYM_CODE_END(xen_early_idt_handler_array)
+ 	push %rax
+ 	mov  $__HYPERVISOR_iret, %eax
+ 	syscall		/* Do the IRET. */
+-#ifdef CONFIG_MITIGATION_SLS
+-	int3
+-#endif
++	ud2		/* The SYSCALL should never return. */
+ .endm
+ 
+ SYM_CODE_START(xen_iret)
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 2dd89b0..69f94bc 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -3685,14 +3685,19 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
+ 			break;
+ 
+ 		case INSN_SYSCALL:
++			if (func && (!next_insn || !next_insn->hint)) {
++				WARN_INSN(insn, "unsupported instruction in callable function");
++				return 1;
++			}
++
++			break;
++
+ 		case INSN_SYSRET:
+-			if (func) {
+-				if (!next_insn || !next_insn->hint) {
+-					WARN_INSN(insn, "unsupported instruction in callable function");
+-					return 1;
+-				}
+-				break;
++			if (func && (!next_insn || !next_insn->hint)) {
++				WARN_INSN(insn, "unsupported instruction in callable function");
++				return 1;
+ 			}
++
+ 			return 0;
+ 
+ 		case INSN_STAC:
+@@ -3888,9 +3893,9 @@ static int validate_unret(struct objtool_file *file, struct instruction *insn)
+ 			return 1;
+ 
+ 		case INSN_SYSCALL:
++			break;
++
+ 		case INSN_SYSRET:
+-			if (insn_func(insn))
+-				break;
+ 			return 0;
+ 
+ 		case INSN_NOP:
 
