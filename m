@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-593203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22ABFA7F684
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:39:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96059A7F68F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 804D1188DC35
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:38:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B02A87A8B13
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A53264615;
-	Tue,  8 Apr 2025 07:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2A1264634;
+	Tue,  8 Apr 2025 07:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="CxmOxaoK"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Nn8LGNts"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06A1263F24
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 07:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5676E2641FC
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 07:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744097796; cv=none; b=t3dp6f76iNfNkVrhiKxyzmkMl+J8hQ0n+Sy9WNWg/laGm+RnOx+QobPHzBNcM1JQbxIgzEUfd3k62EiDyu0YWz9N5YplVRMQoaqFrnVLArFcI5OR4OJ3G1zUYLL6EfPfbFaBj6Z91UazzRJebPQgDaN+25KUDbOqH4MTpEjFlfY=
+	t=1744097798; cv=none; b=TiIO7aEoDvjpRRa2fz+i1N18Qj5zDmoFTM5J3rqO4vbO23CurQ/YkSpnaDanPL3seoaQ+l6GqMUkWI7S++59y5F8X4cRTfAiQzVW7CH+RZLU2X0IE2ljXxY4q/FIOC7MBdP8ioMYkwY4hZ6FEr/JmXELyIoNS2lw+GWp+D6E65U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744097796; c=relaxed/simple;
-	bh=zDVSLesP0T7A2McRjojWEmZkKOxXjOebJPoK+EP0dIk=;
+	s=arc-20240116; t=1744097798; c=relaxed/simple;
+	bh=jYN84no5HfMrvCOtmNwOTquSUUgh/6PVglmv/98TzZM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FaZHwHwSivLzJPKM5a0GrM71y/hsjAORLSXfoHK0KGdr9VRgwdGc5pXMwoHYH+xFXyeiHGmOmVnhNqCB06GjJVb/30phU2EoFBPugvh2Y7iCbCAC1wHSmtvHY8qzf+yscbgNGciI5PivWUJ2kZJ7tFqiifFLRG+Uehikyctl2ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=CxmOxaoK; arc=none smtp.client-ip=209.85.128.52
+	 In-Reply-To:To:Cc; b=MOA5PeOTnluzKKpq1s1Bq5xKIDBDBYp2TjINlaP8a5nTIc/nsB7V2kaCSceo3HBfVh8LCw3KOKF9MXFi+nrVy7QcXVWwsdYVOW9QxNxgPO66GNToYwMsERe2VUno2PqAuex7pvqQuBfm9hOMuae1QCj6XEwkutUEBq30QEcJf6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Nn8LGNts; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so32948915e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 00:36:34 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cf257158fso36323155e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 00:36:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744097793; x=1744702593; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1744097794; x=1744702594; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ieIGmxyhNPbpd78PJf2XL1UkaAJt0mspe5nebAeYm4w=;
-        b=CxmOxaoKBFTGoVSi7HTcN9IFStWh7LTAYfj4vYbIhXI+wthwDY0lUl8P45zRKS6j1E
-         sT3twl/MVfuHzIxyiXri+jcwDeRkmW6L42/oO3a+LzLrFgEG8IzxgwJCYGzx3WZxJLuR
-         xg03sgWNUFZZ98zVGiii+Agb2aajGW0g7B8qdz1kWztO2UHFXY3jvoRZ+aSGrVuYPWGJ
-         /MvBLSF+VDcCfGoGuq4j2C0PnVByHgCFhYaKVG2ihlZluWuZA3sTgbB5ygmji/Vwshw6
-         kDYvNWyTeKPkcTELkCK44InzZpdCnLPCL5aiSAAQ3jv5x5L9sPNtd1iqfu8rVgatgLc4
-         csAw==
+        bh=gHis8ysDm+/ce9937f9eb+O8K3AUE5i9Qwr+5PKEGCI=;
+        b=Nn8LGNtsvypMEqPk8ddjC+3x5t8Ln9kzsj9uChKAAk0L3htMeta8QGCYrem2z0V8ch
+         ZaZXSX64D+z9NTpvhFAH8ZZzoT6vZqAKcz5N4WEI4t7wPC5xSDNjvT6+ASpVLLJOxMcd
+         0ns+4jYZ72aohBaTzWrXVZuzo4jKqUZNvqvvR5xDRHDWMSpKUmt5QlhnKXNg01cBsMBH
+         u+vIuLDrvbo2OcBGZU/DUkp99zlYzdigHH4oN16MiA/6q0WXf7ooOMlFVTtTe8LW/gL+
+         v1lMzYlVatrhonk8Rha2SYPEZXDSjgxcdThefwpNZKZcKAoUfrhcELOCxpSE7ks14gqQ
+         dP/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744097793; x=1744702593;
+        d=1e100.net; s=20230601; t=1744097794; x=1744702594;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ieIGmxyhNPbpd78PJf2XL1UkaAJt0mspe5nebAeYm4w=;
-        b=C27w/VuC/lAoksBaoI17WALCTsaT0SOw0/RH3H/dvADRwHBqUYSppy2ETwhaXElRap
-         I94QhGdYZ3b+tUWw/21H9ZRGB56mTnRnLCkC2lXHTQGZEE8FF3Rgluv5rdPfue1KQqpj
-         7vkPkPZN19uLZXdgjg6T44djWuDk30qR+E3hpxAnWG2mPmE++3Y0jSN56ecUpnIfRtau
-         GEKxB7ONOO6f4PEgQJwX7P8qBb7P4/xFlFBIZIM/pZMQUWuFBBGiRPMsLLuwhBFxop5n
-         9wAEVFsfI65flxc2UzuFx6D98MfwKjCLrbMH2gJuiL3VegmYCEBNPzhMv2NAhtVrV3Lg
-         YyvA==
-X-Gm-Message-State: AOJu0YyZHzuRoXVU+Ousjzb6olAs0shDsghUOrrD4q3CcZFY6kd9Jmc5
-	8hp5uF0bhH4HvKd/kJRn8T7+CVdPLSTpiUj9N+sbwx8ABP7bQFvr9qzhxWnwF3o=
-X-Gm-Gg: ASbGncusZItZZDiNci1Oc3U0V34wHOeoUi3Vo2iS6z54jpUKsuECqNtDCTKEXQ2sNdL
-	w0aWpbPT3fYrcw7PSgboPbtNeO8pdob5Yw+eckQh4L7dn4dUMklCGQ2fwEqOm2OzMOHKubcD8WS
-	7dX7RzJ8msMrRxY5HQ2cdNfvsB2Z+G2oBtNlCFwgf9058PjMjR/lD/78MZoXeuwcL8er10zWeyU
-	gVcRBbFO+7bIOYIQA6lTJR7HWoHaGyhuNjtTLPXBtVl76CTZvE2Hk27IREPgEv+fGdQ/9M0HXaW
-	Jyzze5NW3iUbQOZWci/5rQ+TJEAFOFDqit8u6w==
-X-Google-Smtp-Source: AGHT+IHBeowJuxDcX5UF6gWDD+kUYBEUe0mJaKP7pQljslu07Q2/7r0/c5GOuYrPNr6M1Lh6Efwwug==
-X-Received: by 2002:a05:600c:4f52:b0:43b:c6a7:ac60 with SMTP id 5b1f17b1804b1-43f0e5dda3amr16240405e9.10.1744097792929;
-        Tue, 08 Apr 2025 00:36:32 -0700 (PDT)
+        bh=gHis8ysDm+/ce9937f9eb+O8K3AUE5i9Qwr+5PKEGCI=;
+        b=ElqWpapi6Ig2o6SunCuV6/4S7FeiNTOWGjhyDurS7LwtG7oqIcGb02A7YK/QkcpGeF
+         +sbza5xJkU1IeGcWGW6b20guKFQir3RmlXP0wTCl39zhIxbwVa1Gojrgpt09huPisSB+
+         98V49kwOXXdbSGX9zv4DI6V1FQdSxr2AxxzjNP2vEF+MEmUVVpo4LXjWSVqJggM16d8p
+         7Ly89jRM6+834jpY9bmAu2PWvPec7UoSuhEdgbgefPjYWRWnW/kCy/gMELn2eDWI4Eaz
+         28/rNdrtX1R7OjucduXALrtfFs8g0tXWyjaW8pu/bkyZ2zJiGOuGLfYQhXsSJgiZPJoJ
+         Mc8Q==
+X-Gm-Message-State: AOJu0Yxj8AwGFuLamynfFPgSwnAGUPjyEFEEet/09rhh2w02PlMcvE2C
+	NDhCRLFnxHfra9x0+VyaXOTJqZFhqszCle7iWzm/tVzpOK/ptSj6xvKh1S4Ae7I=
+X-Gm-Gg: ASbGnct7Jxe1k2oBRnSYE+tb0/rN9QXkkBP8B7xGL1jia0Bfi/6x6Uxl7gjsNx1aQ/5
+	MWf21uGascCRNEGalckEzZVGqKcwnwcRVuodPxZ0eI7bNzazZJR0Wt8caJKhVZpeh2k23HCnrP2
+	3DTRW2F2y3dnJIthNXVFLGbEnCHscKfbzLemu0ivO2hdYKCwzes1MfXfdxZjcHE4Mgn0Or7fq3T
+	NXmqnKR8ILzY6vCTE3BwFoVsz9MxakUpJkpi665wqmR5OCa13NQ+vI77Qe0XUPh35ncg7n8NFcD
+	pBtSp832Oa/JIbtkTx6IE5elB9GttX63w6k2SQ==
+X-Google-Smtp-Source: AGHT+IGHagAQNTtn2a+MuMwHyBshBsQtM9UgV2ixBg56P23KxFjIh375u0gTz/ubybm8RglkXY7FFA==
+X-Received: by 2002:a05:600c:1382:b0:43c:f8fc:f69a with SMTP id 5b1f17b1804b1-43ecf8231a8mr152102955e9.4.1744097794503;
+        Tue, 08 Apr 2025 00:36:34 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:2adf:eaae:f6ea:1a73])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c3020d980sm14287627f8f.61.2025.04.08.00.36.31
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c3020d980sm14287627f8f.61.2025.04.08.00.36.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 00:36:32 -0700 (PDT)
+        Tue, 08 Apr 2025 00:36:33 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 08 Apr 2025 09:36:29 +0200
-Subject: [PATCH 2/4] regulator: rpi-panel-attiny: use devres for mutex
- management
+Date: Tue, 08 Apr 2025 09:36:30 +0200
+Subject: [PATCH 3/4] regulator: rpi-panel-attiny: use lock guards for the
+ state mutex
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +82,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250408-gpiochip-set-rv-regulator-v1-2-a18b6154b31a@linaro.org>
+Message-Id: <20250408-gpiochip-set-rv-regulator-v1-3-a18b6154b31a@linaro.org>
 References: <20250408-gpiochip-set-rv-regulator-v1-0-a18b6154b31a@linaro.org>
 In-Reply-To: <20250408-gpiochip-set-rv-regulator-v1-0-a18b6154b31a@linaro.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
@@ -91,143 +91,148 @@ To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3420;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3451;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=yvLD6k1WGtmY4t8wzqLA9DATPQj/XYYaQSOinVOC51g=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn9NH9iCFL/+9CwkxFsk8fCeOL2QEwfNyUME5KE
- SP5vozMZd2JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ/TR/QAKCRARpy6gFHHX
- cuQ0D/4n5UrRuykA0JBWm33mmjOt6Hmtv+7ILDXOQ9I1h2BDUcgCquGpH+tPCEElmgEgtR5ClDT
- xlacF7jxLrPiPU5ZkqGP96Q/f/Mp/VPXLQr0yKmoivXY+C9Vze+fcv52jPZmzIWFIKZBZv4vXyV
- 6TtxIUNBxlN2o/UgPw9uBVlHPtr53+AWG9aeRO8kDysDDMOOB3I0vmR/sq2qlAtbUFiEAMjiXFq
- QLa3q3FD6ZWkDv0gaddU+nR3QIOeTujNQF6dSyAqyRAWPpcAgon46q6ItdTra0y9RQSI06LmNwi
- jOnxDNO+bk8a6VHYUxXnse/0qvetnHBT8jcJ5IPzLLblxzblxjha0oLvvVQ4J+V31XeZ3XOOGce
- /rNm3dHuQPRdDT5C6rwTzcl6IXj3sb4T6Rm1zI+sgAS9hIBVmRcYM6KtxEQuJCA2XA7psOo5z/n
- EFLSrS9LeL8c+EJXQ90Sv079lLvXJhVxp23hf0y/pDTR85nYH+BWjjQgW1KZfBegs5o3CwC8Zyd
- bCq1GSpn2Bt3uqkvP814n4ANuzqxxWeC3VzlMGIzh1dCOEV1Ylk91BpWMbD5PE6HHsVrHlXfyzC
- BJVP0FJlMeJg/bs5HOlJd3MHzekYtM+hPLrP1qUhVa9x5eH6b4wznDzsCkpPlHV2XTuaMtSUD2Z
- 2bQV4wh6y/inKhg==
+ bh=Cm0XoajVTF7WGyfXVhXt5rXgkMBzUPTLlPuMZdlyTXc=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBn9NH9Pmx8NozKyr2Yh4useXvhNRl9MT5x7yLAm
+ 2Z1OrJBtJiJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZ/TR/QAKCRARpy6gFHHX
+ cpdOD/0TJ2PvGhJPRb6muqCjVh6EsoEvWJ62CYpFC7GLKMbP9kosgqZRbg6EY6pbiQaREHAPLc0
+ XF1Pgj4ipR5iKaieNqfJV11RL1vPr9dfZ4hjU/YoCtHeoQl/oG2MWXGVFsIcb8raL3xdQ87iTl8
+ wQBrNOzOlMCpcnakqxkC1pmo366tNDO34hDb5X72FQ8QvevW9YT5J7Hu8L5fq/TwdnPWcuOKw6e
+ Qs50ASLtjcbqOGpwwxJVBfD1j1cE+xhLBBd4svrqThG6TDn5Ks+ixcHLsnxkgQz9oY3jZUgDQQT
+ EvOcHhSKwmSJ5BzuomgfCoGvJaLJ8lhQjU419CPlmSj/csMB5hVguJ0AqJB3DB8ALky5hyUcKAb
+ vFZz2YhuGPWb91KW7RgyXQPumPh5yYsW+Sb5u6h/VOWRgtR1lE0H5WDpLs6s9vWeyV027Ed4MZW
+ XZpN8Kffo2PSye8H+Oc7xzjF6L8XshROKx8DS2TFiD9jfWsdOs/k8RiRzRZtiqDS5PyvmwCisbV
+ 5qX1BSIw+syRhGirNNEm1LXlh45YEnetjuP2SXuqrMqq+L4hRmeixS6GXLJQDFZoqCTQR/0z7Lq
+ DLBZOqybxUROocdeWM8s4oRAKN5i1SqgiByVzDL0v0eiQ71nsBAJ/HLH+SGwODtnXLEZvqUYWhM
+ +8wA0vMGpZEWThg==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Simplify the probe() code and remove the remove() callback by using
-devres to manage the mutex resources.
+Use mutex lock guards from linux/cleanup.h to simplify the driver code.
+
+Note that ret must be initialized in order to avoid a build warning as
+scoped_guard() is implemented as a for loop.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/regulator/rpi-panel-attiny-regulator.c | 39 ++++++++------------------
- 1 file changed, 12 insertions(+), 27 deletions(-)
+ drivers/regulator/rpi-panel-attiny-regulator.c | 35 ++++++++++----------------
+ 1 file changed, 13 insertions(+), 22 deletions(-)
 
 diff --git a/drivers/regulator/rpi-panel-attiny-regulator.c b/drivers/regulator/rpi-panel-attiny-regulator.c
-index f5ce50ced294..5ff348939560 100644
+index 5ff348939560..43a7c4737cb4 100644
 --- a/drivers/regulator/rpi-panel-attiny-regulator.c
 +++ b/drivers/regulator/rpi-panel-attiny-regulator.c
-@@ -12,6 +12,7 @@
- #include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/module.h>
-+#include <linux/mutex.h>
- #include <linux/regmap.h>
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
-@@ -293,7 +294,10 @@ static int attiny_i2c_probe(struct i2c_client *i2c)
- 	if (!state)
- 		return -ENOMEM;
+@@ -6,6 +6,7 @@
+  */
  
--	mutex_init(&state->lock);
-+	ret = devm_mutex_init(&i2c->dev, &state->lock);
-+	if (ret)
-+		return ret;
-+
- 	i2c_set_clientdata(i2c, state);
+ #include <linux/backlight.h>
++#include <linux/cleanup.h>
+ #include <linux/err.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/i2c.h>
+@@ -94,7 +95,7 @@ static int attiny_lcd_power_enable(struct regulator_dev *rdev)
+ {
+ 	struct attiny_lcd *state = rdev_get_drvdata(rdev);
  
- 	regmap = devm_regmap_init_i2c(i2c, &attiny_regmap_config);
-@@ -301,13 +305,13 @@ static int attiny_i2c_probe(struct i2c_client *i2c)
- 		ret = PTR_ERR(regmap);
- 		dev_err(&i2c->dev, "Failed to allocate register map: %d\n",
- 			ret);
--		goto error;
-+		return ret;
- 	}
+-	mutex_lock(&state->lock);
++	guard(mutex)(&state->lock);
  
- 	ret = attiny_i2c_read(i2c, REG_ID, &data);
- 	if (ret < 0) {
- 		dev_err(&i2c->dev, "Failed to read REG_ID reg: %d\n", ret);
--		goto error;
-+		return ret;
- 	}
+ 	/* Ensure bridge, and tp stay in reset */
+ 	attiny_set_port_state(state, REG_PORTC, 0);
+@@ -115,8 +116,6 @@ static int attiny_lcd_power_enable(struct regulator_dev *rdev)
  
- 	switch (data) {
-@@ -316,8 +320,7 @@ static int attiny_i2c_probe(struct i2c_client *i2c)
- 		break;
- 	default:
- 		dev_err(&i2c->dev, "Unknown Atmel firmware revision: 0x%02x\n", data);
--		ret = -ENODEV;
--		goto error;
-+		return -ENODEV;
- 	}
+ 	msleep(80);
  
- 	regmap_write(regmap, REG_POWERON, 0);
-@@ -333,8 +336,7 @@ static int attiny_i2c_probe(struct i2c_client *i2c)
- 	rdev = devm_regulator_register(&i2c->dev, &attiny_regulator, &config);
- 	if (IS_ERR(rdev)) {
- 		dev_err(&i2c->dev, "Failed to register ATTINY regulator\n");
--		ret = PTR_ERR(rdev);
--		goto error;
-+		return PTR_ERR(rdev);
- 	}
- 
- 	props.type = BACKLIGHT_RAW;
-@@ -345,10 +347,8 @@ static int attiny_i2c_probe(struct i2c_client *i2c)
- 	bl = devm_backlight_device_register(&i2c->dev, dev_name(&i2c->dev),
- 					    &i2c->dev, state, &attiny_bl,
- 					    &props);
--	if (IS_ERR(bl)) {
--		ret = PTR_ERR(bl);
--		goto error;
--	}
-+	if (IS_ERR(bl))
-+		return PTR_ERR(bl);
- 
- 	bl->props.brightness = 0xff;
- 
-@@ -363,26 +363,12 @@ static int attiny_i2c_probe(struct i2c_client *i2c)
- 	state->gc.can_sleep = true;
- 
- 	ret = devm_gpiochip_add_data(&i2c->dev, &state->gc, state);
--	if (ret) {
-+	if (ret)
- 		dev_err(&i2c->dev, "Failed to create gpiochip: %d\n", ret);
--		goto error;
--	}
+-	mutex_unlock(&state->lock);
 -
--	return 0;
--
--error:
--	mutex_destroy(&state->lock);
+ 	return 0;
+ }
  
+@@ -124,7 +123,7 @@ static int attiny_lcd_power_disable(struct regulator_dev *rdev)
+ {
+ 	struct attiny_lcd *state = rdev_get_drvdata(rdev);
+ 
+-	mutex_lock(&state->lock);
++	guard(mutex)(&state->lock);
+ 
+ 	regmap_write(rdev->regmap, REG_PWM, 0);
+ 	usleep_range(5000, 10000);
+@@ -136,8 +135,6 @@ static int attiny_lcd_power_disable(struct regulator_dev *rdev)
+ 	attiny_set_port_state(state, REG_PORTC, 0);
+ 	msleep(30);
+ 
+-	mutex_unlock(&state->lock);
+-
+ 	return 0;
+ }
+ 
+@@ -145,19 +142,17 @@ static int attiny_lcd_power_is_enabled(struct regulator_dev *rdev)
+ {
+ 	struct attiny_lcd *state = rdev_get_drvdata(rdev);
+ 	unsigned int data;
+-	int ret, i;
++	int ret = 0, i;
+ 
+-	mutex_lock(&state->lock);
+-
+-	for (i = 0; i < 10; i++) {
+-		ret = regmap_read(rdev->regmap, REG_PORTC, &data);
+-		if (!ret)
+-			break;
+-		usleep_range(10000, 12000);
++	scoped_guard(mutex, &state->lock) {
++		for (i = 0; i < 10; i++) {
++			ret = regmap_read(rdev->regmap, REG_PORTC, &data);
++			if (!ret)
++				break;
++			usleep_range(10000, 12000);
++		}
+ 	}
+ 
+-	mutex_unlock(&state->lock);
+-
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -190,7 +185,7 @@ static int attiny_update_status(struct backlight_device *bl)
+ 	int brightness = backlight_get_brightness(bl);
+ 	int ret, i;
+ 
+-	mutex_lock(&state->lock);
++	guard(mutex)(&state->lock);
+ 
+ 	for (i = 0; i < 10; i++) {
+ 		ret = regmap_write(regmap, REG_PWM, brightness);
+@@ -198,8 +193,6 @@ static int attiny_update_status(struct backlight_device *bl)
+ 			break;
+ 	}
+ 
+-	mutex_unlock(&state->lock);
+-
  	return ret;
  }
  
--static void attiny_i2c_remove(struct i2c_client *client)
--{
--	struct attiny_lcd *state = i2c_get_clientdata(client);
--
--	mutex_destroy(&state->lock);
--}
--
- static const struct of_device_id attiny_dt_ids[] = {
- 	{ .compatible = "raspberrypi,7inch-touchscreen-panel-regulator" },
- 	{},
-@@ -396,7 +382,6 @@ static struct i2c_driver attiny_regulator_driver = {
- 		.of_match_table = attiny_dt_ids,
- 	},
- 	.probe = attiny_i2c_probe,
--	.remove	= attiny_i2c_remove,
- };
+@@ -217,7 +210,7 @@ static void attiny_gpio_set(struct gpio_chip *gc, unsigned int off, int val)
+ 	struct attiny_lcd *state = gpiochip_get_data(gc);
+ 	u8 last_val;
  
- module_i2c_driver(attiny_regulator_driver);
+-	mutex_lock(&state->lock);
++	guard(mutex)(&state->lock);
+ 
+ 	last_val = attiny_get_port_state(state, mappings[off].reg);
+ 	if (val)
+@@ -239,8 +232,6 @@ static void attiny_gpio_set(struct gpio_chip *gc, unsigned int off, int val)
+ 
+ 		msleep(100);
+ 	}
+-
+-	mutex_unlock(&state->lock);
+ }
+ 
+ static int attiny_i2c_read(struct i2c_client *client, u8 reg, unsigned int *buf)
 
 -- 
 2.45.2
