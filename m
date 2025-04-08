@@ -1,140 +1,161 @@
-Return-Path: <linux-kernel+bounces-593696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BED3A7FC7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:43:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D609A7FBBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:26:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AB4F189936E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:38:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0ABE3B3B84
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC3B267700;
-	Tue,  8 Apr 2025 10:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430C9268FE0;
+	Tue,  8 Apr 2025 10:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rJzrZy6R"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U54G7KM3"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926DB269816
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 10:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15047266EEB;
+	Tue,  8 Apr 2025 10:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744108620; cv=none; b=INA+WnDtkzl4soaXF3f2B0y9uwj/tcUczjvGYHWW7ABeskpi4305SLOcEzr3xZBCL6iktDt6oqGmqztnJ+jhbW34ljYNZE6GtBOZCR3AiLehh3GKE0hDRePc7vhnWBflppge87ulC8684laeywPp61RjJNzRkwwugRW2vQSlreQ=
+	t=1744107357; cv=none; b=cn+zijFNFDm6tAErk9OWTMiFXcq0B75fRv1YUXu16nt4JUPvhaB5e0PaO5pWp0gcxKI1bxvXFor/5E3UHjhMYzMUcqOrVivYqyXVd25qi5f+PLSc+g/901Dgb14JfSoZRJy7zReJ0pr3k7yEAPVfTBURbhAb0sj4cQlGZKXtSvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744108620; c=relaxed/simple;
-	bh=z6yPF9uOlyPYwnYcyCbUHbrjMWRaBMiD7QCPSnGxte4=;
+	s=arc-20240116; t=1744107357; c=relaxed/simple;
+	bh=F5jgsqXwGSznc/ks79mQwm/auTZ55zbs/7FmfTPKs4k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BzX9uOXj6K3GNvvsxGJbMj5wrnXxOYlDNi0DrNtKK3Cf2Kx+4fDbeJqx1an4x4KJ67Od+21OzoN9ugjpqHhO+lZo8x6rPNWYrJHiohAbNUnZnV27yjgH0rosUgtfzDcbB20HM77hReu2/MzcpSWkZgeBVwmJxrxH4a/Og3kbBrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rJzrZy6R; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39141ffa9fcso5858172f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 03:36:58 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Otrh0heJ4iCNKp7unYO0y+rNhALhveqEIO+MOQC40mJ6x4WNzi7v7WFouW3+uBxkPtjFN2Qjj9m31IcKGiDb07BlSG8b41AePg7Ct8qtvqlqpCU67P3I01qZZxR1NRyor9HeezRwSSl3EOslc08XgpxGPe58ukCpEnhx721Yhr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U54G7KM3; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c554d7dc2aso887143085a.3;
+        Tue, 08 Apr 2025 03:15:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744108617; x=1744713417; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744107354; x=1744712154; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=sG5zgBeaBnx+L7h2Ew9MdPNsbBnWrTWwGOQbfcDyH0Y=;
-        b=rJzrZy6R5Kpln99jfUPCUNKqQJl+0SKajWWxTuKX/pfD+NcfY3ubT9c0Q4DNtNzdWl
-         7qAQilYZRKwuHJx61bgsvkqQwok0ufeiB2r4mL6Yok2My3UFJk6ktkFp1lvXZEF3L9m7
-         eyWNfm5mBPV2dG8Vi2xTwDy6sZNcdXRlFXkalv7sJrhtRga3sVGRlI4G1rDRG9Ag10rT
-         SRbp3g6LLIagY5SaVsO+TBDsy3JMAIMB3ZUWf9AFA1ma5cP3yfQdhwvHG0a6tIksS6Sd
-         LLE9aZqdOAPCpktWxVQ2CBZ3pcz/te6J5pJNWbRAaiSjuJfRPhCmp4ZOwftN8ZaddVkL
-         5vEg==
+        bh=I9Ppw8vR47G47P1j9HJc/DVvecueKLo2E/NHI0ohsC8=;
+        b=U54G7KM3MKzyVKjpeEKX3xfDzuKHc59R2lm5HVtqhBhemnYsnG88GfzqnjX97OP9Sv
+         DoAnmxVxuKGZexlqz49LNreiFf9ZxXOZ8KsRkO/M82PBcAfZLHcXhweaMqpVwvMXTkn1
+         b6WurudsMh64NxjekVovpEgju2SXcHsNhj05UbpQGmNKlQvyF8ibJueedy38I0Yd5NMC
+         fwBYBuI/ljz4oRuQypDF4956FTiEVUoe4DB8c61Mk6O6Hv89o7Wt64EKXyvlDXSiM5BQ
+         iBJXhR9jjTCuouKxQXPhRpB4i+UWP64DG/weG7BCCQzOKvXWn3mXkjUWz1bnSnfjxtVV
+         RaVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744108617; x=1744713417;
+        d=1e100.net; s=20230601; t=1744107354; x=1744712154;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sG5zgBeaBnx+L7h2Ew9MdPNsbBnWrTWwGOQbfcDyH0Y=;
-        b=eZhjsAV0wXYOipBA9jmHI88VRhF/ODIY+00ptnAk3x7m8xBQTvTi+8REoRWfEOnuL3
-         sWxqCRS9BYEBcMhgdIvtBJdPXPjABcpf/hP7fnlA0wChOQVmJpmYVRdR+J1b9Oq2aEZj
-         vXorCK5LklqsHu68FCrNZBXZBLU7mnHbj5fQ10Wf3ff0WdtAo6pvX6JhUwAt04WUtO9q
-         rad3BjuuT/G3wfLO0xh43jS6ijY92i3CBtK3KQvwYVv6FkOGee0Njlu/NeRm2LSNn7Jy
-         8VIJDB781srOlQcyRrlcVmtoG05UhlzOEtm95QeUfS14TnMN1iWvE6z/sdh2HjvA8JfR
-         pN6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUsQyZyf2f15clsRmKlrL+wk5TyTzR31btzWZX8kDmfP+151S8Q7dYJH19FzWAq12jdNSRduAYZYxV2Vng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVpM6cdQhMUH0nRDcjoKepnrd16kR9H0xH7HCGbMCqTqEsepno
-	t3sTBRZqk7MCpmOfJknsJo4ePi48cPcHABpxXDp3qRDzEjmKMRntQcLoi1utnFM=
-X-Gm-Gg: ASbGnctt9C2cWIqBjiF7jY/v1ibMY0Fv6koAQ+SEVoRF0OYwTAsaxzpqmFXxOLi34um
-	icCxTcJjz2UGZ2N3rlFEw+ENiyuctZQ9Ucqn7DfTryoDtlx9TSCONBpda3D+zrKYNTFI0n3XCQb
-	bZvy6Xf9GSk6hTUs6HrmxogM5b63ivIpv3kzHK/LtaDigDA1hSB9R1QIJWLy2Tb2iyAPtokqlXj
-	kRxpY4fdozhhzMcT8yT89jdE8e2vk8rovpj4GhrLSRNZeRdyiHsTP5iRqpx50KDcE0P0KkdCqEI
-	ffm0ZXREdJTGnaPyKw6edGtWoY0juqVU6K5SlH65k+jfsDf/5gEYaLKZ9YeV
-X-Google-Smtp-Source: AGHT+IGtPTU+zuWSgGfB7w18BXvfTFGqbzfm5r9SrIrzLuQfA8Y5CPDOZv1Q0DcjrDiDvt4vtBbAOw==
-X-Received: by 2002:a05:6000:2509:b0:391:2fe4:de0a with SMTP id ffacd0b85a97d-39d6fc0c1d6mr8986003f8f.2.1744108616902;
-        Tue, 08 Apr 2025 03:36:56 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39c301a727bsm14422827f8f.27.2025.04.08.03.36.56
+        bh=I9Ppw8vR47G47P1j9HJc/DVvecueKLo2E/NHI0ohsC8=;
+        b=Es33uBTtCZuiD3hUacxDw1m52lfHpN5P32biWn2k+RQsLb1qdoEIAEO7DYeiS/YQbW
+         HiA7Aj5c+lcIp22Xdcaq4q0Iwue9sdtSHL53jEbQKMfkPYkfrXITNAXFJsbKOLf/A4p1
+         UFMjHsnH4JowckiRAEB2rWxXruTRolQdCIF11TN9f6PAjuDEU6+yAHTr7R0LKE8rkbGo
+         zVKaTKaam2j3FksyF3V2kG8Id5b22Hl2H/C8pnY7F2CW7s0K6vfrgVokVbvqE3vjSoA0
+         /5oA2Rl4Jy6dhh8Uh0/V7SMWugv8UhSRMzp1UVnnN+QAzq4NIonkPCSrUc3807icBtIp
+         kN+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVW1dSLqWNbUDLBx4esGxF0C8J+XlKHsuBl8oFzXh2DniKiLa+kDGcsOBR3mJpzSGN3rKSUOkwhnAXOnuzn@vger.kernel.org, AJvYcCVs7/5lcVv0CwY5N6t5lxd5UVxPCJQogxAJ81oBB2Hp3CgQ0IeNk3qJfS3069+7YDroAWJHnh8sR4bU@vger.kernel.org, AJvYcCVt3KcoGdQBzZYtajkFWQDzjO8oGBI4GsB6iNvIx/mzM/YUOHSicB7oy8DqiDfuDrTUgyoXf0CTWRfj@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2Av2G7/7nLfpY1E4ojXrOzpJmQIAARFD21+6w0kLHQYl5y8DJ
+	zwWhwnN83rqbCeowYZc+LxmuZ5CUPm6dou5X8HglEXLY3XFveIy/
+X-Gm-Gg: ASbGncutJDXZpla2J0CV6bNElBKhnaMKhvN7ck23io92aqMWbmDXwF+j+6jVHPYKETs
+	bRFRfvgvEAfUsmYLA1cN48KILbrrIX8+rXkRiBNmGvOBufdLhmJYpS0zOTKYoUrsM7kLbk23V2+
+	tHYX/07AGFtctE226oRpSUDVHZsOSRGcILfTEtQEwsM8G/bsfyLjI0OxoH6z/eMh1Fa4Px31RaB
+	whuWpNIVVugseAEJOAiqoFK+70gzQXnINb0K8oYVxXbaBIrPDM5KdoSVAFo7VIUWyZeS01YN6Uy
+	es0bzom03fRRGtv3WSUJZMm0tpIhLXo=
+X-Google-Smtp-Source: AGHT+IH23+fBypf9fr3Elpk3n1gRkPJVqS8WHxAKtFVO5CG6iIAA5fMRsI1J8HrPQnuK8Bsg9SUsHw==
+X-Received: by 2002:a05:620a:318f:b0:7c5:6a66:5c1e with SMTP id af79cd13be357-7c774dfcc5dmr2575493785a.58.1744107353738;
+        Tue, 08 Apr 2025 03:15:53 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c76e96e611sm735194785a.62.2025.04.08.03.15.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 03:36:56 -0700 (PDT)
-Date: Tue, 8 Apr 2025 13:15:08 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Samuel Abraham <abrahamadekunle50@gmail.com>, outreachy@lists.linux.dev,
-	gregkh@linuxfoundation.org, julia.lawall@inria.fr,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	david.laight.linux@gmail.com
-Subject: Re: [PATCH v6 1/2] staging: rtl8723bs: Add white spaces around
- binary operators
-Message-ID: <b89c8837-4aa1-4073-bb09-f71f37b5dcc6@stanley.mountain>
-References: <cover.1744061673.git.abrahamadekunle50@gmail.com>
- <4ccdbfd3e8d74d99679927f294f71cfb694fcc6c.1744061673.git.abrahamadekunle50@gmail.com>
- <CAHp75Vfp8Je1fUavSwTDAM_5_rDaDfXETa2oM5f0CjL1mxWX_Q@mail.gmail.com>
- <CADYq+fbh=kG2JABmdF8FjjPiyigMpnJ7WhQh+faqRk6FJe4MBQ@mail.gmail.com>
- <Z_TtyXwkOBK1MXGy@smile.fi.intel.com>
+        Tue, 08 Apr 2025 03:15:52 -0700 (PDT)
+Date: Tue, 8 Apr 2025 18:15:16 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
+	Inochi Amaoto <inochiama@gmail.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Jingbao Qiu <qiujingbao.dlmu@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	unicorn_wang@outlook.com, dlan@gentoo.org, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 2/2] pwm: sophgo: add pwm support for Sophgo CV1800 SoC
+Message-ID: <laanxdjx2bd5zgxftefyjhfcih4mx54qzscnoavzosqvib463h@pclt37x4zomr>
+References: <20240501083242.773305-1-qiujingbao.dlmu@gmail.com>
+ <20240501083242.773305-3-qiujingbao.dlmu@gmail.com>
+ <k6jbdbhkgwthxwutty6l4q75wds2nilb3chrv7n4ccycnzllw4@yubxfh5ciahr>
+ <D8Z4GLQZGKKS.37TDZ7QBN4V4N@bootlin.com>
+ <j74t2zqvoslo5fgmea4kp434tafgchkncytofj65zbbt7ivcqy@auboc3pkdiz3>
+ <D913G6I023M1.NLMLJDZ1PYSA@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z_TtyXwkOBK1MXGy@smile.fi.intel.com>
+In-Reply-To: <D913G6I023M1.NLMLJDZ1PYSA@bootlin.com>
 
-On Tue, Apr 08, 2025 at 12:35:05PM +0300, Andy Shevchenko wrote:
-> On Tue, Apr 08, 2025 at 10:22:44AM +0100, Samuel Abraham wrote:
-> > On Tue, Apr 8, 2025 at 8:20 AM Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
-> > > On Tue, Apr 8, 2025 at 12:54 AM Abraham Samuel Adekunle
-> > > <abrahamadekunle50@gmail.com> wrote:
+On Tue, Apr 08, 2025 at 09:54:27AM +0200, Thomas Bonnefille wrote:
+> On Mon Apr 7, 2025 at 9:21 AM CEST, Inochi Amaoto wrote:
+> > On Sun, Apr 06, 2025 at 02:16:41AM +0200, Thomas Bonnefille wrote:
+> >> Hello,
+> >> 
+> >> On Sat Jun 1, 2024 at 1:53 PM CEST, Uwe Kleine-K�nig wrote:
+> >> > On Wed, May 01, 2024 at 04:32:42PM +0800, Jingbao Qiu wrote:
+> >> >> [...]
+> >> >> +	if ((state & BIT(pwm->hwpwm)) && enable)
+> >> >> +		regmap_update_bits(priv->map, PWM_CV1800_OE,
+> >> >> +				   PWM_CV1800_OE_MASK(pwm->hwpwm),
+> >> >> +				   PWM_CV1800_REG_ENABLE(pwm->hwpwm));
+> >> >
+> >> > This looks strange. If BIT(hwpwm) is already set, set it again?!
+> >> > Also if you used the caching implemented in regmap, you don't need to
+> >> > make this conditional.
+> >> >
+> >> 
+> >> I was testing the series and noticed indeed an issue in this driver at
+> >> those lines. If PWM_CV1800_OE isn't set by something else than the
+> >> kernel it will never be set and so, there will never be a PWM outputted.
+> >> 
+> >> Using :
+> >>     if (!(state & BIT(pwm->hwpwm)) && enable)
+> >> Solved the issue but as Uwe said you can probably rely on regmap caching
+> >> to avoid this condition.
+> >> 
+> >> >
+> >> > ...
+> >> > 
+> >> 
+> >> Do you plan on sending a new iteration some day ? I may have some time
+> >> to continue the upstreaming process if you need to.
+> >> 
+> >> Thank you for this series !
+> >> Thomas
+> >
+> > I suggest checking existing spi-sg2044-nor driver, which may reduce your
+> > work for upstreaming.
+> >
+> > Regards,
+> > Inochi
 > 
-> ...
+> Hello Inochi,
 > 
-> > > > -                                               psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (tx_seq+1)&0xfff;
-> > > > +                                               psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (tx_seq + 1) & 0xfff;
-> > >
-> > > > -                                               psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (pattrib->seqnum+1)&0xfff;
-> > > > +                                               psta->BA_starting_seqctrl[pattrib->priority & 0x0f] = (pattrib->seqnum + 1) & 0xfff;
-> > >
-> > > You mentioned Linux coding style, which also requires lines not to be
-> > > so long. These lines are. That's why a few versions ago I suggested
-> > > you to change these to be two lines each. I don't know how many times
-> > > to repeat this (it's third one).
-> > 
-> > Okay, sorry
-> > I will add a third patch for a line break before the patch for %
-> > operations since each patch should handle a single thing.
+> Thank you very much, however even after reading it I can't see the link
+> between the SPI NOR controller driver of the SG2044 and the PWM driver
+> for the CV18XX series ?
 > 
-> I am not sure you need a third patch for that. It lies into category of space
-> and indentation fix.
-> 
+> Regards,
+> Thomas
 
-Yeah.  Let's not go crazy.  Do the white space change as one patch.  The
-rules are there to make reviewing easier.  Splitting it up into three
-patches doesn't help anyone.
+I am sorry, I mistake this as the spi-nor one. You may want to check
+the SG2044 pwm driver, which should be similiar. You could find it at 
+https://lore.kernel.org/all/20250407072056.8629-1-looong.bin@gmail.com/
 
-In staging we say, "Fix one type of checkpatch warning at a time."
-That's because it's a simple rule to explain and it stops people from
-sending us huge patches that fix every checkpatch warning.  But this
-patch is small and everything is related and it's easy to review.
+Regards,
+Inochi
 
-regards,
-dan carpenter
 
 
