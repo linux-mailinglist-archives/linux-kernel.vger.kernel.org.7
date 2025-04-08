@@ -1,101 +1,138 @@
-Return-Path: <linux-kernel+bounces-593285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D3BDA7F799
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:19:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2826A7F7A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F86117A4C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:19:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 869B3178975
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6182641D8;
-	Tue,  8 Apr 2025 08:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FFEF2641C5;
+	Tue,  8 Apr 2025 08:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Nmp43COv"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Z+rahwGH"
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3C723E22B;
-	Tue,  8 Apr 2025 08:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC0F2627F7;
+	Tue,  8 Apr 2025 08:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744100296; cv=none; b=Dn+OPi6jhwJyj+ZB6ykxI1IceLD2AWh9nHH+Y+Bsr1xAX/lG2xFrJXoNgfJAFGVjxxnTU/Q0I6MMDKtFmhfx6UAXdOf2Kvj3wFUv9N2nvjlHcS9H23qiDTOeDyXPk3N+77NShKUwYCeczBKPH/vTM2MyHLf8/qmWdegrUwjXBaY=
+	t=1744100466; cv=none; b=ku/3j8Vc0ExZNxQlAFVHt8Hc1uTbiowqfhzu2F08TmIbeky6biWoY3U6qPt7Xqp1PUoGPxTCLXfBudWIbDEX1w0NWNyv7tGfS4fkaKyylLLbD0QuMk+0MXabesIb24XH1YinBT0QRaPa7YqobTx46tNQINQLzglnj+YHnPgVPKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744100296; c=relaxed/simple;
-	bh=K8CFKQsHCYYtwQpKFu2fKlIzmF4HLTi3cnRKYpuiUCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hXXgss0biqjD9U57nZLv7WjC00bYVz66Didsep1K6DWbcT7iz39OJ1OPysbBXW+gdMaWONtM4J4g9EC/DdhxViLYRoJFY8ZSMCAGbgNK/ogT8Y3zOasI0EEQoCR//HNroYmZU8gfymt1e0a1VdAqX5oCGjwxuEW7MsvowE0Zzbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Nmp43COv; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 39F51432F5;
-	Tue,  8 Apr 2025 08:18:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744100285;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CEpYMcjoxDgnZuN/RAxnjWni1gl5dc3YcgOiqQXSrHQ=;
-	b=Nmp43COvGdE9oaClEw+sKxUT1Bc59JW4kmkLILdydyGpTqmzaHtDUkLK+7FxOP0gR6kXDl
-	J99N7lTmsVhRpejHETNNLbpX5E++UZR3JA8PopebzkjFbrpuWboF5B/3lxsCQ5BTJZjRyt
-	GhPSu1oLxD0nCZB+IJPKmcx2paRvq2QV0ovvjyqKqXqBn1JhEr95NFzMWm8Ne4T3F78txN
-	4pV6agxjRRTTrgFupS4T6sZ4QGi5NYkBn39J6BsovwVuUklft97Az9J8f4R4FEWLF3QkQO
-	/DuhxaltiKtWarmjWO5EZ3ujxezdnTWpcdr7GOOWqE+UHJwkIDwwSJqAlC0v+A==
-Date: Tue, 8 Apr 2025 10:18:03 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Linus
- Walleij <linus.walleij@linaro.org>, Peter Ujfalusi
- <peter.ujfalusi@gmail.com>, Oder Chiou <oder_chiou@realtek.com>, Shenghao
- Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>, Baojun Xu
- <baojun.xu@ti.com>, David Rhodes <david.rhodes@cirrus.com>, Richard
- Fitzgerald <rf@opensource.cirrus.com>, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- patches@opensource.cirrus.com, Bartosz Golaszewski
- <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 09/12] ASoC: codecs: peb2466: use new GPIO line value
- setter callbacks
-Message-ID: <20250408101803.365fe902@bootlin.com>
-In-Reply-To: <20250408-gpiochip-set-rv-sound-v1-9-dd54b6ca1ef9@linaro.org>
-References: <20250408-gpiochip-set-rv-sound-v1-0-dd54b6ca1ef9@linaro.org>
-	<20250408-gpiochip-set-rv-sound-v1-9-dd54b6ca1ef9@linaro.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1744100466; c=relaxed/simple;
+	bh=6ki7wwnbd0iJIqYsMQ720ooSclqxW4cwHDC/Qr/GbNQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fXIAvwA7MzER7LZdSXlb2fV+zWbdY+LUjF+z12owM7UcAstS1NKflPheO2aJzBucJebhNjvJsYnjB/yOb38c53KHoQlizwIqTEu0b+qBuabLRY03xXC47t+Y17M2g+L8BGF+jjbqnHWFhNpPHZLNjoYYCKVhVcfBWNK+wiTK+NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Z+rahwGH; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1744100410;
+	bh=b6IWeKG1BkK4Y1s87lilRqJW63rz32/KnqydxcNNCEU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Z+rahwGH37/wSxxhMpj/AppGIm/+Yb/rDooUweTJH4AJQ0vdhAlXH7I0w38sQff1Q
+	 RhIjVOmB29xFTUV2hHcSgItMJ9QoqbF4wjdbA1tStNpfr1ZHaWjFFWctzA3q0w9vSZ
+	 pCPCnITJTXbX2tbhcD/zbns5EuJ71R6lLZek6g+A=
+X-QQ-mid: bizesmtpip2t1744100367t2572ab
+X-QQ-Originating-IP: ZDF2WWtYGPTNUlyWdYctajdkAvgL5Ku/jo8RLgt5jb0=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 08 Apr 2025 16:19:25 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 755028381633869798
+EX-QQ-RecipientCnt: 11
+From: WangYuli <wangyuli@uniontech.com>
+To: wangyuli@uniontech.com
+Cc: guanwentao@uniontech.com,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	masahiroy@kernel.org,
+	nathan@kernel.org,
+	nicolas.schier@linux.dev,
+	niecheng1@uniontech.com,
+	petr.pavlu@suse.com,
+	samitolvanen@google.com,
+	zhanjun@uniontech.com
+Subject: [PATCH v2 1/2] kbuild: deb-pkg: Add libdw-dev:native to Build-Depends-Arch
+Date: Tue,  8 Apr 2025 16:19:20 +0800
+Message-ID: <F4939E0696099A5A+20250408081921.63040-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <215802BA292C2DF6+20250408081441.61776-1-wangyuli@uniontech.com>
+References: <215802BA292C2DF6+20250408081441.61776-1-wangyuli@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddvheekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedukedprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehpvghrvgigsehpvghrvgigrdgtiidprhgtphhtthhopehtihifr
- ghisehsuhhsvgdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopehpvghtvghrrdhujhhfrghluhhsihesghhmrghilhdrtghomhdprhgtphhtthhopehouggvrhgptghhihhouhesrhgvrghlthgvkhdrtghomh
-X-GND-Sasl: herve.codina@bootlin.com
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OQX3ZGb4rLLOj2buYa5d+YtV5988SnwPEIEOxNjbdzJ2yOhzrPrQ9Kwb
+	AZ+bynG9a/M6KUASPiC+p5+EtYv7phtD9s34y5VkcUHeNHH0s3/+VEU6ieSEOJ5CGjeytOl
+	FAVWn9fxy8MkCOjCva220i95I74cD2SDhKk4g9FOYil1FpZ6hNbu8nWPnlvO2GFiNEuvQpE
+	au7U+gnfIxu5M0vLwhSZLKcRJBK+YQ6JROJ5Lcqff+6/5NpCgtnAPxZl1TPgB2CBcFXs9xi
+	Qu3wxHjnKypXgxuU1wtJnpPvIOiIoUP4FAIZhpYi3fnUdgYisETo7BFQy5vdWFkp1Bttod3
+	anOKzpN1x79yx6wX3WMqnRwHe366EmCvkRcPo1ft5jpOvB0ObxFF/X/tbMgtMfufvW8RwA0
+	q7V6g5Qxn5UErmwXmS7Q3yngIF1EESpNwnkE+/weToVITKYsmWZLzu3AjL4rpmeblSjpJ1O
+	NdQQyQPVwNB21m5h9VWmNvSrlvskN2ZL+cHjwDUox3Fs8zDxd2NzWHclOO/XLg46XDCigTJ
+	xCBj2YK4SDKB8SRVnvYVaiXdwMJaL9aQaqQJfoHP8KfOIN/mztPpg28Cf//FXubEBmIA4tR
+	3K72I74QcuOuBJ6rK/nr8mhsD8DgT83XPeVbv/ZHpypDGVslDwqGYGHYZw2L/Js9Lu4Unv9
+	KFl+/W/CtV09+U1MNQFAA2Cv3n1Zize5c5Y3gYZjySWdR3MaMqRYdWyUpfBTmq0EQvS4WZn
+	/nKs+e3L+F33UTs+dsTHqfG/KuAvALCbBeh0Gk5fNCvADAW3lCk/pMAr3Ney1UqxhNJM8Sx
+	iCqpKt9m5CLFWzecHpJB6m+CYYPEAooo/Zg278QuZKWhJ7/CIPptfNtKThlBJjQb2hD7RPG
+	xPWPGMcZg6rKnoSXLoh73gCSHE1+aea9Iok2K8lgNm0aAFmScK36UoGx+zi1wSQMfvnVlMu
+	R/AjDAuHZ/EvNhtIeS8kt7Y7+f+T/RV5hXYxL/ojvMYqZs191FV5EiuPInKMKn0uuDgc=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-On Tue, 08 Apr 2025 09:38:27 +0200
-Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+The dwarf.h header, which is included by
+scripts/gendwarfksyms/gendwarfksyms.h, resides within the libdw-dev
+package.
 
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> struct gpio_chip now has callbacks for setting line values that return
-> an integer, allowing to indicate failures. Convert the driver to using
-> them.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  sound/soc/codecs/peb2466.c | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
-> 
+This portion of the code is compiled under the condition that
+CONFIG_GENDWARFKSYMS is enabled.
 
-Acked-by: Herve Codina <herve.codina@bootlin.com>
+Consequently, add libdw-dev to Build-Depends-Arch to prevent
+unforeseen compilation failures.
 
-Best regards,
-Hervé
+Fix follow possible error:
+  In file included from scripts/gendwarfksyms/symbols.c:6:
+  scripts/gendwarfksyms/gendwarfksyms.h:6:10: fatal error: 'dwarf.h' file not found
+      6 | #include <dwarf.h>
+        |          ^~~~~~~~~
+
+Fixes: f28568841ae0 ("tools: Add gendwarfksyms")
+Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+Changelog:
+ *v1 -> v2:
+    1. Correct the commit log.
+    2. Add Sami Tolvanen's "Reviewed-by" tag.
+---
+ scripts/package/mkdebian | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+index 744ddba01d93..d4b007b38a47 100755
+--- a/scripts/package/mkdebian
++++ b/scripts/package/mkdebian
+@@ -210,7 +210,7 @@ Rules-Requires-Root: no
+ Build-Depends: debhelper-compat (= 12)
+ Build-Depends-Arch: bc, bison, flex,
+  gcc-${host_gnu} <!pkg.${sourcename}.nokernelheaders>,
+- kmod, libelf-dev:native,
++ kmod, libdw-dev:native, libelf-dev:native,
+  libssl-dev:native, libssl-dev <!pkg.${sourcename}.nokernelheaders>,
+  python3:native, rsync
+ Homepage: https://www.kernel.org/
+-- 
+2.49.0
+
 
