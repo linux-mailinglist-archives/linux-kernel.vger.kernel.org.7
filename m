@@ -1,171 +1,135 @@
-Return-Path: <linux-kernel+bounces-594976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC776A818A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 00:34:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1023BA818A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 00:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C84148A578A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:30:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F1A01B66842
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F9A2561DB;
-	Tue,  8 Apr 2025 22:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E9A25334F;
+	Tue,  8 Apr 2025 22:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rZC0+UeM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RMAsP9nQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B24253B65;
-	Tue,  8 Apr 2025 22:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634BB21ADC7;
+	Tue,  8 Apr 2025 22:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744151403; cv=none; b=H4MbDTs27n2pIXfVvAWY9t1hODmLfsh1rNI31sMK//SC0XzeNTUN4bSDMs+UsSiiqJibGpO6sh/5CQ5Yq1m/SrbWNDCdqU0RqXhcY+WbW0pqVSkl59suH4ITZjQz0mTvZVAsPvGthfFD1geXg+d2ObdRAXag847XZwe9sWOtZQw=
+	t=1744151531; cv=none; b=cUAqWwpzn1JLKBIMDaGMmSM4JkrrUDvpnEVMPTZsNU2P0Yj42G45SiD07zACJtLTq08qqEf/PLPF8vG+t5tlpYWqtP9bbSvmYJGTfVypiyW/AlmNKE5nUO1kHUK+Qx08/UdnweDy+bkZiX+xQIn5mFVb1Dotwfv5z9CBszUhOmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744151403; c=relaxed/simple;
-	bh=hlugUo1L7n2ZEpibyxatVdZ+3CCdhHbHYfCeaNjQIac=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Eu3PDFRjE7vAoiegpCiMcpkDcPXsXyACwdwDTMaJCmgkbItNbVig1rS8/8HMtxGtZQIPqPP/GUTzQAsXHO25uLLKIe/kSyn8Kmd1Fgf6jmXp6OWe7+vQmNocANW2nMbTl8SmaAdlxu2aotaZMEF73NUESSAsCRe8118c5zaAniA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rZC0+UeM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32EA5C4CEE7;
-	Tue,  8 Apr 2025 22:30:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744151402;
-	bh=hlugUo1L7n2ZEpibyxatVdZ+3CCdhHbHYfCeaNjQIac=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rZC0+UeM3MNnbhnEgmQz9IXUlsF5rH93vI2Cpza1wNz11+FqzPzUEEm4wfnMVopg3
-	 VmCbeeIdoepRx1n6undnG/UPtz8Thmhte00G6jCzdXhzBaS4bJ7cF1hHVnGm7Z3Cdu
-	 /c56UY73+qQk2OjeTTcssxRUPwu6PN+PborqmM8YQJfHC+4jeOesOaIZysAyAfRoMY
-	 ToaSJogsuESzIXzVsFOfwoFYpMAQ8KwO3/EgxQBcGmoTqKKJm3o0qSUWUYR48Z4Hbl
-	 kmOOLOImQrnfGHpTkZ5hQRkBtH2meA+zhP75uZVfo6SWnsAUBNLD6cE95zVFtGEqYF
-	 7H47bb7RoiY8g==
-Received: by pali.im (Postfix)
-	id 5095D968; Wed,  9 Apr 2025 00:29:59 +0200 (CEST)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>
-Cc: linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] cifs: Fix support for WSL-style symlinks
-Date: Wed,  9 Apr 2025 00:29:49 +0200
-Message-Id: <20250408222949.5041-1-pali@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1744151531; c=relaxed/simple;
+	bh=b0bXRgqQnmm2cNRFGm8SjalL6upzrz3+tOd/LgkS0gI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aWItn/IDsBJdcUvp/1LpyZG/6Wvr/Hxr9fVSeGA0W/NWiMz8fAYGDtvkWI8yJpFGCHpBgu4yznkmnxbxZ0qOi5VqGIBRY1v1Jnb2llQMPzkk3943rzTcewvhcnRwtaVV5ur2DEKGlncB1FdYpgNVqUTASZgcJ9rBSU/vFjyw87A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RMAsP9nQ; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744151529; x=1775687529;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=b0bXRgqQnmm2cNRFGm8SjalL6upzrz3+tOd/LgkS0gI=;
+  b=RMAsP9nQKdu7teYsupDcXoychgNcV5n/jEI6OwVIUljdZzeqHTAn0Z1O
+   /pGtB0N972nF9cinYgU99Wz320oiwV0dwBYr2Og9lbMCn9b2iD8/mmxCI
+   yuR1xmsmfn4iVy0+d/ZIJOdmC84CgPgLoPRThhIalzriDjlpblfqbCe4f
+   TgzkqJOhpFeEN9YQnCIKt5xi6oIAhIFymx898m2RlfhuZXnxMnIjRPsJq
+   PhKk0cA8by5Kwg+CIOwq09LmSlqFoPKTVrvSGlYRD0cd5EXdKtJcG+Hsa
+   xsA7SkBvRGq1cPB7XdLA2bauCP5PSnKi7LEpwHzfkxGjdsFyzpdr3wMN6
+   g==;
+X-CSE-ConnectionGUID: kHUySt70TxGjNo6SRTVW5w==
+X-CSE-MsgGUID: p8ATdJyIQQGv4IhrdptkkQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="68085744"
+X-IronPort-AV: E=Sophos;i="6.15,199,1739865600"; 
+   d="scan'208";a="68085744"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 15:32:09 -0700
+X-CSE-ConnectionGUID: aP+z0NrzTryiGi6q0VfaUw==
+X-CSE-MsgGUID: 6AYdNThmRlmvePPfHRrbKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,199,1739865600"; 
+   d="scan'208";a="128935856"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 08 Apr 2025 15:32:04 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u2HU9-000827-1C;
+	Tue, 08 Apr 2025 22:32:01 +0000
+Date: Wed, 9 Apr 2025 06:31:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andy Chiu <andybnac@gmail.com>, linux-riscv@lists.infradead.org,
+	alexghiti@rivosinc.com, palmer@dabbelt.com
+Cc: oe-kbuild-all@lists.linux.dev, Andy Chiu <andybnac@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, bjorn@rivosinc.com,
+	puranjay12@gmail.com, paul.walmsley@sifive.com,
+	greentime.hu@sifive.com, nick.hu@sifive.com, nylon.chen@sifive.com,
+	eric.lin@sifive.com, vicent.chen@sifive.com, zong.li@sifive.com,
+	yongxuan.wang@sifive.com, samuel.holland@sifive.com,
+	olivia.chu@sifive.com, c2232430@gmail.com
+Subject: Re: [PATCH v4 04/12] kernel: ftrace: export ftrace_sync_ipi
+Message-ID: <202504090657.5fiH4UIS-lkp@intel.com>
+References: <20250407180838.42877-4-andybnac@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250407180838.42877-4-andybnac@gmail.com>
 
-MS-FSCC in section 2.1.2.7 LX SYMLINK REPARSE_DATA_BUFFER now contains
-documentation about WSL symlink reparse point buffers.
+Hi Andy,
 
-https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-fscc/68337353-9153-4ee1-ac6b-419839c3b7ad
+kernel test robot noticed the following build warnings:
 
-Fix the struct reparse_wsl_symlink_data_buffer to reflect buffer fields
-according to the MS-FSCC documentation.
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.15-rc1 next-20250408]
+[cannot apply to trace/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Fix the Linux SMB client to correctly fill the WSL symlink reparse point
-buffer when creaing new WSL-style symlink. There was a mistake during
-filling the data part of the reparse point buffer. It should starts with
-bytes "\x02\x00\x00\x00" (which represents version 2) but this constant was
-written as number 0x02000000 encoded in little endian, which resulted bytes
-"\x00\x00\x00\x02". This change is fixing this mistake.
+url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Chiu/riscv-ftrace-factor-out-code-defined-by-WITH_ARG/20250408-025114
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250407180838.42877-4-andybnac%40gmail.com
+patch subject: [PATCH v4 04/12] kernel: ftrace: export ftrace_sync_ipi
+config: xtensa-randconfig-001-20250409 (https://download.01.org/0day-ci/archive/20250409/202504090657.5fiH4UIS-lkp@intel.com/config)
+compiler: xtensa-linux-gcc (GCC) 11.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250409/202504090657.5fiH4UIS-lkp@intel.com/reproduce)
 
-Fixes: 4e2043be5c14 ("cifs: Add support for creating WSL-style symlinks")
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- fs/smb/client/reparse.c | 25 ++++++++++++++++---------
- fs/smb/common/smb2pdu.h |  6 +++---
- 2 files changed, 19 insertions(+), 12 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504090657.5fiH4UIS-lkp@intel.com/
 
-diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-index 7cefe903edb5..dbd3dd9b678f 100644
---- a/fs/smb/client/reparse.c
-+++ b/fs/smb/client/reparse.c
-@@ -520,12 +520,12 @@ static int wsl_set_reparse_buf(struct reparse_data_buffer **buf,
- 			kfree(symname_utf16);
- 			return -ENOMEM;
- 		}
--		/* Flag 0x02000000 is unknown, but all wsl symlinks have this value */
--		symlink_buf->Flags = cpu_to_le32(0x02000000);
--		/* PathBuffer is in UTF-8 but without trailing null-term byte */
-+		/* Version field must be set to 2 (MS-FSCC 2.1.2.7) */
-+		symlink_buf->Version = cpu_to_le32(2);
-+		/* Target for Version 2 is in UTF-8 but without trailing null-term byte */
- 		symname_utf8_len = utf16s_to_utf8s((wchar_t *)symname_utf16, symname_utf16_len/2,
- 						   UTF16_LITTLE_ENDIAN,
--						   symlink_buf->PathBuffer,
-+						   symlink_buf->Target,
- 						   symname_utf8_maxlen);
- 		*buf = (struct reparse_data_buffer *)symlink_buf;
- 		buf_len = sizeof(struct reparse_wsl_symlink_data_buffer) + symname_utf8_len;
-@@ -995,29 +995,36 @@ static int parse_reparse_wsl_symlink(struct reparse_wsl_symlink_data_buffer *buf
- 				     struct cifs_open_info_data *data)
- {
- 	int len = le16_to_cpu(buf->ReparseDataLength);
-+	int data_offset = offsetof(typeof(*buf), Target) - offsetof(typeof(*buf), Version);
- 	int symname_utf8_len;
- 	__le16 *symname_utf16;
- 	int symname_utf16_len;
- 
--	if (len <= sizeof(buf->Flags)) {
-+	if (len <= data_offset) {
- 		cifs_dbg(VFS, "srv returned malformed wsl symlink buffer\n");
- 		return -EIO;
- 	}
- 
--	/* PathBuffer is in UTF-8 but without trailing null-term byte */
--	symname_utf8_len = len - sizeof(buf->Flags);
-+	/* MS-FSCC 2.1.2.7 defines layout of the Target field only for Version 2. */
-+	if (le32_to_cpu(buf->Version) != 2) {
-+		cifs_dbg(VFS, "srv returned unsupported wsl symlink version %u\n", le32_to_cpu(buf->Version));
-+		return -EIO;
-+	}
-+
-+	/* Target for Version 2 is in UTF-8 but without trailing null-term byte */
-+	symname_utf8_len = len - data_offset;
- 	/*
- 	 * Check that buffer does not contain null byte
- 	 * because Linux cannot process symlink with null byte.
- 	 */
--	if (strnlen(buf->PathBuffer, symname_utf8_len) != symname_utf8_len) {
-+	if (strnlen(buf->Target, symname_utf8_len) != symname_utf8_len) {
- 		cifs_dbg(VFS, "srv returned null byte in wsl symlink target location\n");
- 		return -EIO;
- 	}
- 	symname_utf16 = kzalloc(symname_utf8_len * 2, GFP_KERNEL);
- 	if (!symname_utf16)
- 		return -ENOMEM;
--	symname_utf16_len = utf8s_to_utf16s(buf->PathBuffer, symname_utf8_len,
-+	symname_utf16_len = utf8s_to_utf16s(buf->Target, symname_utf8_len,
- 					    UTF16_LITTLE_ENDIAN,
- 					    (wchar_t *) symname_utf16, symname_utf8_len * 2);
- 	if (symname_utf16_len < 0) {
-diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
-index 764dca80c15c..f79a5165a7cc 100644
---- a/fs/smb/common/smb2pdu.h
-+++ b/fs/smb/common/smb2pdu.h
-@@ -1567,13 +1567,13 @@ struct reparse_nfs_data_buffer {
- 	__u8	DataBuffer[];
- } __packed;
- 
--/* For IO_REPARSE_TAG_LX_SYMLINK */
-+/* For IO_REPARSE_TAG_LX_SYMLINK - see MS-FSCC 2.1.2.7 */
- struct reparse_wsl_symlink_data_buffer {
- 	__le32	ReparseTag;
- 	__le16	ReparseDataLength;
- 	__u16	Reserved;
--	__le32	Flags;
--	__u8	PathBuffer[]; /* Variable Length UTF-8 string without nul-term */
-+	__le32	Version; /* Always 2 */
-+	__u8	Target[]; /* Variable Length UTF-8 string without nul-term */
- } __packed;
- 
- struct validate_negotiate_info_req {
+All warnings (new ones prefixed by >>):
+
+>> kernel/trace/ftrace.c:191:6: warning: no previous prototype for 'ftrace_sync_ipi' [-Wmissing-prototypes]
+     191 | void ftrace_sync_ipi(void *data)
+         |      ^~~~~~~~~~~~~~~
+
+
+vim +/ftrace_sync_ipi +191 kernel/trace/ftrace.c
+
+   190	
+ > 191	void ftrace_sync_ipi(void *data)
+   192	{
+   193		/* Probably not needed, but do it anyway */
+   194		smp_rmb();
+   195	}
+   196	
+
 -- 
-2.20.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
