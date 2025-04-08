@@ -1,147 +1,124 @@
-Return-Path: <linux-kernel+bounces-592977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2286A7F37B
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:18:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D94FDA7F397
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71A7E173759
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 04:18:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B8581899416
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 04:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDAF1FECDF;
-	Tue,  8 Apr 2025 04:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="mGVSFPDQ"
-Received: from esa5.hc1455-7.c3s2.iphmx.com (esa5.hc1455-7.c3s2.iphmx.com [68.232.139.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3844225F7B6;
+	Tue,  8 Apr 2025 04:26:43 +0000 (UTC)
+Received: from sxb1plsmtpa01-11.prod.sxb1.secureserver.net (sxb1plsmtpa01-11.prod.sxb1.secureserver.net [188.121.53.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DCC3D81;
-	Tue,  8 Apr 2025 04:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.139.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8517124C09B
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 04:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744085893; cv=none; b=fqJNsCz1nMN834H4WKIXQAdNZsHX+6qmfIVG503TovSdf1JZlB/+NUvhxgRNhbk6WGa15fYz2ex2VTNsrfYKD1OU7LNXnif6R9Dojogkz3atXmp79bB9V7ChpeSDBApQBd/ISl4JlSShH0ILld1/cgFau+BoGll7oIxrNgbfyZg=
+	t=1744086402; cv=none; b=DsPPuyCDhz+Pb9i5ke2DTPFilCOfCtv5nqT95sSo/SIrQWZwjw5CugSb/sog/r9BNOaIUIW00GbZZW/r29vnaVNyT62UJPDDvop9t06gMuNtolm3wfDdfwQA3+imvRW7qrKv9CDg0+ko4uo4H5b6Kfg/l4ZFReCUQic30lR9YkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744085893; c=relaxed/simple;
-	bh=O/Tn1U4L5YYmQ1KHlDb+KfX9uYMb4KE782y8YRNBRxc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ua/i7NhxJWCu6PfOB8cfMYf4KUAD0Kahl754L/+ki8pPdgfeKo+xhkDt8efzUnabx2MlLcO6+/iZhpY1nDGWuxouXXsO/DcbxAA1vv3Siiq45BDypSd8iEO8UCw6JIOocOTcOALUuDD2tFvLwKckUo8uxQWIHMpMEvVVYbl4rvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=mGVSFPDQ; arc=none smtp.client-ip=68.232.139.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1744085891; x=1775621891;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=O/Tn1U4L5YYmQ1KHlDb+KfX9uYMb4KE782y8YRNBRxc=;
-  b=mGVSFPDQxQ2S6/fOlY/FX9AIOW09Og0aHL0l/L4X9FCcwZuJVYfxoThi
-   0WsmF/tP8mQxAzLq0Zm/ax+hQE+UBqzMlrwrk/j6q1khSzE4bvDug6KCx
-   dH6maWnRrodY7YSRbKy1R5IcWJPUvnmnbP0fzIoZ3rKcRgWpRKQg8eD4j
-   Xh5awaPY7oyZgNuwTwoj1LnJyqQPWkuV6vs2WKqnegSnBRz5ldPUI5yH/
-   1EfBr6S67qTfyD9ylaHiaiVMgzVec730N+vy/yS8Li+A5cAYsvbCwEw3y
-   d8CgUxUkhpgF+hggkhy8dh9nR3IwSJbKVlLHQcRy1fN2QaxkRWeXgEBjU
-   w==;
-X-CSE-ConnectionGUID: xdMbCyNxQ9uH2vgM4dalFg==
-X-CSE-MsgGUID: PTUOwp60THqMQBXcua4wvg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="194925658"
-X-IronPort-AV: E=Sophos;i="6.15,197,1739804400"; 
-   d="scan'208";a="194925658"
-Received: from unknown (HELO oym-r4.gw.nic.fujitsu.com) ([210.162.30.92])
-  by esa5.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 13:16:59 +0900
-Received: from oym-m1.gw.nic.fujitsu.com (oym-nat-oym-m1.gw.nic.fujitsu.com [192.168.87.58])
-	by oym-r4.gw.nic.fujitsu.com (Postfix) with ESMTP id 24823DBB87;
-	Tue,  8 Apr 2025 13:16:56 +0900 (JST)
-Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
-	by oym-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id D8EEED8AE6;
-	Tue,  8 Apr 2025 13:16:55 +0900 (JST)
-Received: from iaas-rpma.. (unknown [10.167.135.44])
-	by edo.cn.fujitsu.com (Postfix) with ESMTP id 2F7731A0078;
-	Tue,  8 Apr 2025 12:16:54 +0800 (CST)
-From: Li Zhijian <lizhijian@fujitsu.com>
-To: herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	linux-crypto@vger.kernel.org
-Cc: mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	Erhard Furtner <erhard_f@mailbox.org>
-Subject: [PATCH] crypto/testmgr: Fix acomp_req leak
-Date: Tue,  8 Apr 2025 12:16:47 +0800
-Message-Id: <20250408041647.88489-1-lizhijian@fujitsu.com>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1744086402; c=relaxed/simple;
+	bh=UzuV/AjhpXBleB5NLOztvE7OS8zrhXG6Lxp8DshM15U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vw3XhxYuJZOP7osMtbTs5D2zjBAfwWaCQoWKsAuY5y5q+CinIoieb7ZJhM4ZwQFwaPUAjZJYrimC80ByQ8BFU+XSMZf2wjKr3QTXifAQZGDl4aULwdzjsF+rugPo4v5DBf1IgEJNd7JsbP36nTuwJnW0fIexULfuq25tIw1/LxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
+Received: from [192.168.178.95] ([82.69.79.175])
+	by :SMTPAUTH: with ESMTPSA
+	id 20QJuoRE2oGJS20QLu2IJY; Mon, 07 Apr 2025 21:18:58 -0700
+X-CMAE-Analysis: v=2.4 cv=A9SWP7WG c=1 sm=1 tr=0 ts=67f4a3b3
+ a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
+ a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8 a=TieKIuElshfLa7FaqJMA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk
+Message-ID: <129d4f39-6922-44e9-8b1c-6455ee564dda@squashfs.org.uk>
+Date: Tue, 8 Apr 2025 05:18:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [squashfs?] UBSAN: shift-out-of-bounds in
+ squashfs_bio_read
+To: syzbot+65761fc25a137b9c8c6e@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org, squashfs-devel-owner@lists.sourceforge.net,
+ squashfs-devel@lists.sourceforge.net, syzkaller-bugs@googlegroups.com,
+ phillip.lougher@gmail.com, Luis Chamberlain <mcgrof@kernel.org>
+References: <67f1f6f6.050a0220.0a13.025a.GAE@google.com>
+ <2a13ea1c-08df-4807-83d4-241831b7a2ec@squashfs.org.uk>
+Content-Language: en-US
+From: Phillip Lougher <phillip@squashfs.org.uk>
+In-Reply-To: <2a13ea1c-08df-4807-83d4-241831b7a2ec@squashfs.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfGE8bUnGjcLYUEYUFnE1digrUscMj8xkIdWUdEFjNBEikMOPckN6nMJ0AO0Ls+42hZzAfWoRygr2tbJAsWpCWsIHA5iks5fG9L6RBHZSUohcJUnaaArh
+ T19VmDmx20WB93dE2LUc2vDBqz4I6+37hBV81ZUir8RX6K3Z2nKEdLfGcXuydbtT3xeqGnSGyWep1yJZQaYBi6E6eKQNtu6+ogTg1BoDOts6UQLlVZctMhWq
+ lvIak6Vlk9Cezu4xywEpa+/t7XkCRCnAVYe5weqx9X+wpQ7BDThGFfAmN75jCirogNaZq637suM5DKEI7YtnxmXm0ueJkP88un9m/9cIO3KhTOW4t35scjXS
+ 1urR6u+LWhftN3Ewb2nwJzqFdarDAbhuMUCgsrvP+NXJT/4BYP8TeE8p7zh2W5x07DEyO5tWxo9SHHSk6cY8SSQtpAtS49cL9opv2AykPYxyNshuhobu9wpT
+ p03vISfFa0HXP6cnrshr0/7W5K4oArbF5N0IEw==
 
-The kmemleak reported that
-...
-unreferenced object 0xffff888108d6c300 (size 256):
-  comm "cryptomgr_test", pid 183, jiffies 4294700957
-  hex dump (first 32 bytes):
-    00 c1 d6 08 81 88 ff ff 00 cb d6 08 81 88 ff ff  ................
-    50 cd a7 81 ff ff ff ff b8 fb 93 02 00 c9 ff ff  P...............
-  backtrace (crc 29cca632):
-    __kmalloc_noprof+0x2fa/0x430
-    test_acomp+0x174/0x960
-    alg_test_comp+0x6f/0x90
-    alg_test.part.26+0x105/0x410
-    cryptomgr_test+0x20/0x40
-    kthread+0x10c/0x250
-    ret_from_fork+0x30/0x40
-    ret_from_fork_asm+0x1a/0x30
-unreferenced object 0xffff888108d6c100 (size 256):
-  comm "cryptomgr_test", pid 183, jiffies 4294700972
-  hex dump (first 32 bytes):
-    00 1d da 08 81 88 ff ff 00 c3 d6 08 81 88 ff ff  ................
-    50 cd a7 81 ff ff ff ff b8 fb 93 02 00 c9 ff ff  P...............
-  backtrace (crc 3047d62b):
-    __kmalloc_noprof+0x2fa/0x430
-    test_acomp+0x174/0x960
-    alg_test_comp+0x6f/0x90
-    alg_test.part.26+0x105/0x410
-    cryptomgr_test+0x20/0x40
-    kthread+0x10c/0x250
-    ret_from_fork+0x30/0x40
-    ret_from_fork_asm+0x1a/0x30
+On 07/04/2025 06:30, Phillip Lougher wrote:
 
-acomp_request will be chained to req[0], however,
-acomp_request_free(), it will not free the whole chain.
+> Digging deeper into the reproducer, it turns out the reproducer is
+> forking multiple processes which after mounting the Squashfs filesystem,
+> issues a LOOP_SET_BLOCK_SIZE(r0, 0x4c09, 0x8000) ioctl on loopback
+> device /dev/loop0.  Now, if this ioctl occurs at the same time another
+> process is in the process of mounting a Squashfs filesystem on
+> /dev/loop0, the failure occurs.   The ioctl has to be issued in the
+> early part of squashfs_fill_super() before the superblock has been read.
+> When this happens, the following code in squashfs_fill_super() fails.
+> 
+> ----
+> msblk->devblksize = sb_min_blocksize(sb, SQUASHFS_DEVBLK_SIZE);
+> msblk->devblksize_log2 = ffz(~msblk->devblksize);
+> ----
+> 
+> sb_min_blocksize() returns 0, which means msblk->devblksize is set to 0.
 
-Fix it by freeing them one by one.
+CC'ing Luis Chamberlain <mcgrof@kernel.org>
 
-Fixes: 99585c2192cb ("crypto: testmgr - Add multibuffer acomp testing")
-Reported-by: Erhard Furtner <erhard_f@mailbox.org>
-Closes: https://lore.kernel.org/linux-crypto/20250408002741.089f1e9a@outsider.home/
-Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
----
- crypto/testmgr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Doing some more digging, what has changed to cause this failure, is a
+post 6.14 change in the behaviour of the LOOP_SET_BLOCK_SIZE ioctl.
 
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index abd609d4c8ef..7f02feee9fb6 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -3498,10 +3498,10 @@ static int test_acomp(struct crypto_acomp *tfm,
- 	ret = 0;
- 
- out:
--	acomp_request_free(reqs[0]);
- 	for (i = 0; i < MAX_MB_MSGS; i++) {
- 		kfree(output[i]);
- 		kfree(decomp_out[i]);
-+		acomp_request_free(reqs[i]);
- 	}
- 	kfree(dst);
- 	kfree(src);
--- 
-2.27.0
+Doing a git bisect, prior to commit 47dd67532303803a87f43195e088b3b4bcf0454d
+Author: Luis Chamberlain <mcgrof@kernel.org>
+block/bdev: lift block size restrictions to 64k
 
+Attempts to set the loopback device block size to 0x8000 (32768) failed.
+After the above commit, such attempts succeed.  Having done so, this
+causes the above sb_min_blocksize(sb, SQUASHFS_DEVBLK_SIZE) to fail.
+
+This may be an unanticipated side effect of the change.
+
+Checking the kernel code six filesystems fail to check the return
+result of sb_min_blocksize (isofs, gfs2, exfat, fat, squashfs and xfs),
+and so will be affected by this change.
+
+But notwithstanding the above, the failure to check the return result of
+sb_min_blocksize() in Squashfs is a bug, and I will send a patch that
+fixes this and the syzbot exploit.  Hopefully this will be tomorrow.
+
+Phillip
+
+> 
+> As a result, ffz(~msblk->devblksize) returns 64, and
+> msblk->devblksize_log2 is set to 64.
+> 
+> This subsequently causes the
+> 
+> UBSAN: shift-out-of-bounds in fs/squashfs/block.c:195:36
+> shift exponent 64 is too large for 64-bit type 'u64' (aka 'unsigned long long')
+> 
+> The fix is to check for a 0 return by sb_min_blocksize().
+> 
+> I'll send a patch tomorrow.
+> 
+> Phillip
 
