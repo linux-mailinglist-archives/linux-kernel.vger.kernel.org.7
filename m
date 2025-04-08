@@ -1,90 +1,105 @@
-Return-Path: <linux-kernel+bounces-594885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C20CA817CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:45:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB383A8178E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 23:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6453C7A993F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:44:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B7D142042E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3A92550C8;
-	Tue,  8 Apr 2025 21:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3167254B1A;
+	Tue,  8 Apr 2025 21:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="X17M4ZrK"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="Lc6glUYr"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B7025525E;
-	Tue,  8 Apr 2025 21:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4DF1C3314
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 21:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744148693; cv=none; b=E/J6KcOlwPu08BaFCZFRd2x61E4S+VtFKZIe7pqNdICU1r/WZvMPlKYFu+j0IL0ViYSJOFvjf1Zh2E+/5TO9RPCEG/a3Y5X/g3pMHugYzIdZi9fRLyfOspEA0hGwGSpg3eSBHnqePg1N1GdVLdsrCA/4/XI9liE+x2eutfns0Xw=
+	t=1744147589; cv=none; b=C4z5Fvy0EPFt9S1wtnP8J1onef38UNHYMlKWdB0XQVAqzBgpq+FbeLYJtODbX3KLVuWPOOifh0CnedP3TdKOYaad7Yq5RNZt3kTSdacK5YNdxqhvw/xAassEHNuRsbCIuEmRpSS8NyYOt7KCWwTzxuMSi9grtcfKcOAW3RnVmsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744148693; c=relaxed/simple;
-	bh=6srHW5qh8Uap0ryDmqBLLWjegtWKolNGZsB6CSsqmJ8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=CjbkAdqucdYMkHpEp0Km7vd3CbuARVsDLyfrR/mqzVkXfIeaGIqbcWhNFa00xReMiFPqvNsKVG3bmMYxUcP0x8TL1BSbbMQKnfx7kOtuRbIwxQPzVGvhWv+6SH2a8/Ti0Bspmpf71SOzeIxvzubsOKKnRUA6jMvKG7Wb+gOTiaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=X17M4ZrK; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1744147319;
-	bh=6srHW5qh8Uap0ryDmqBLLWjegtWKolNGZsB6CSsqmJ8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=X17M4ZrKiLtjDdVFS2xjmp4xpY6Z8s/msCSXy8Lj9Kxlt8jP4ktfpK/RpAOocquCS
-	 nCPPRisNdTTBM8+5DGjNgB/Y2XzFVGP2Sgcc2X4UQvoj8GxhSuUookTPin+SEeOYYi
-	 OJDEdVEXA3bvUDdONzspvDlXhGxNQdmvIwl1zA7k=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 190B5406EB; Tue,  8 Apr 2025 14:21:59 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 16201401F1;
-	Tue,  8 Apr 2025 14:21:59 -0700 (PDT)
-Date: Tue, 8 Apr 2025 14:21:59 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-    Sweet Tea Dorminy <sweettea@google.com>, Mateusz Guzik <mjguzik@gmail.com>, 
-    linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-    Steven Rostedt <rostedt@goodmis.org>, 
-    Masami Hiramatsu <mhiramat@kernel.org>, Dennis Zhou <dennis@kernel.org>, 
-    Tejun Heo <tj@kernel.org>, Martin Liu <liumartin@google.com>, 
-    David Rientjes <rientjes@google.com>, christian.koenig@amd.com, 
-    Shakeel Butt <shakeel.butt@linux.dev>, 
-    Johannes Weiner <hannes@cmpxchg.org>, 
-    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-    "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-    Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-    Christian Brauner <brauner@kernel.org>, 
-    Wei Yang <richard.weiyang@gmail.com>, David Hildenbrand <david@redhat.com>, 
-    Miaohe Lin <linmiaohe@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-    linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
-    Yu Zhao <yuzhao@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-    Matthew Wilcox <willy@infradead.org>
-Subject: Re: [RFC PATCH v2] Introduce Hierarchical Per-CPU Counters
-In-Reply-To: <9f42144b-dca9-41b0-a80b-2e402cb5ab98@paulmck-laptop>
-Message-ID: <8897b4e1-b5ba-807d-7bc4-5a6080a93462@gentwo.org>
-References: <20250408160508.991738-1-mathieu.desnoyers@efficios.com> <f90d7646-99a3-48f5-ba2e-850c73592080@gentwo.org> <f014a9bb-0653-4682-8608-7fe6e2ad5ee6@efficios.com> <c013632c-b4ca-fb3d-9be5-b02ca5a3d859@gentwo.org>
- <9f42144b-dca9-41b0-a80b-2e402cb5ab98@paulmck-laptop>
+	s=arc-20240116; t=1744147589; c=relaxed/simple;
+	bh=P7Lf0dj0hCXeXLmQVHB7DfGd8JKZuBwyDePUBEWe9Wc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=uFA09LJV2UxGqSjLYhDnE1NepaWXU7H5DonOI41/iLptH9Wb/3wkvek4R5s7t2XBX+vdz5/H1Cxe11csn7nUfdR6wadEENr6itgGKJAlF2QqS8voepB/OMHNZQrAH4x1/Sog5ciJRGNENMMbfc6pCu+C5CJjV888PjmUGcVWCXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=Lc6glUYr; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
+	s=key1; t=1744147574;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j8EVmgn2Z4wK0oIRWCTYDXGo1chuiloeDCezR7/IMto=;
+	b=Lc6glUYriu6t8DRbnJjBKzUmx47WCtf0msz0Fz7bdoxmmIVYbPoTN4KBuaa1jE/Xc1OSul
+	+kE1ZXcH6Na28NdBGLO3zaEXkK8P7X5JspchKKo9DPdz8n6Fdpyad+J6p0PJ0uQpvTJAj+
+	O6xP+8Zuh2VioswhiSmeBk4qbuzCRJ3TIKigInxTPKO2g030yS0QVvN6UUpg8VhnGFSugs
+	jkkEtL3K45MKFK3b61d5Wxya7YvDiNuY3R5dcggCzTmikBGjSLgYmtfsghia6ivAjqgHQ0
+	RginvRMRKRJ0orS2X41Jg9RzbtAa+GR6obNYQIadRs7eFAJL3tHR4gkEKewJbg==
+From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
+To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, 
+ Faith Ekstrand <faith.ekstrand@collabora.com>, Janne Grunau <j@jannau.net>, 
+ Sven Peter <sven@svenpeter.dev>, Jonathan Corbet <corbet@lwn.net>, 
+ Sergio Lopez Pascual <slp@sinrega.org>, 
+ Ryan Houdek <sonicadvance1@gmail.com>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ rust-for-linux@vger.kernel.org, asahi@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+ Asahi Lina <lina@asahilina.net>, Simona Vetter <simona.vetter@ffwll.ch>, 
+ Neal Gompa <neal@gompa.dev>
+In-Reply-To: <20250408-agx-uapi-v7-1-ad122d4f7324@rosenzweig.io>
+References: <20250408-agx-uapi-v7-1-ad122d4f7324@rosenzweig.io>
+Subject: Re: [PATCH v7] drm: Add UAPI for the Asahi driver
+Message-Id: <174414756927.683934.14858043560945639869.b4-ty@rosenzweig.io>
+Date: Tue, 08 Apr 2025 17:26:09 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 8 Apr 2025, Paul E. McKenney wrote:
 
-> RCU handles this by iterating from zero to nr_cpu_ids, which is set during
-> early boot.  It also builds its tree-shaped data structures during early
-> boot based on nr_cpu_ids.
+On Tue, 08 Apr 2025 16:54:14 -0400, Alyssa Rosenzweig wrote:
+> This adds the UAPI for the Asahi driver targeting the GPU in the Apple
+> M1 and M2 series systems on chip. The UAPI design is based on other
+> modern Vulkan-capable drivers, including Xe and Panthor. Memory
+> management is based on explicit VM management. Synchronization is
+> exclusively explicit sync.
+> 
+> This UAPI is validated against our open source Mesa stack, which is
+> fully conformant to the OpenGL 4.6, OpenGL ES 3.2, OpenCL 3.0, and
+> Vulkan 1.4 standards. The Vulkan driver supports sparse, exercising the
+> VM_BIND mechanism.
+> 
+> [...]
 
-nr_cpu_ids is better but there are funky things like the default bios of a
-major server vendor indicating 256 or so possible cpus although only 2
-were installed. Thus nr_cpu_id is 256. Presumably some hardware
-configurations can support onlining 256 cpus....
+Applied, thanks!
+
+[1/1] drm: Add UAPI for the Asahi driver
+      commit: 12a2bf6765c2a61eb7f20870452bb915eb28fdcc
+
+Best regards,
+-- 
+Alyssa Rosenzweig <alyssa@rosenzweig.io>
 
 
