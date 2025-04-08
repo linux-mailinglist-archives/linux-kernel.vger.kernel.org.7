@@ -1,94 +1,100 @@
-Return-Path: <linux-kernel+bounces-595009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AC59A818F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 00:47:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A57C7A818FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 00:48:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D96C7AEDEA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:46:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE1D37A80AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199552561DC;
-	Tue,  8 Apr 2025 22:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890482561B6;
+	Tue,  8 Apr 2025 22:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="1eFAvur0"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mxqy+Hqb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D18k3pKr";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hbtCBZ/5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mhaqPr6a"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AB22561A9
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 22:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B902561BA
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 22:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744152435; cv=none; b=GtPBT3/1PhZIgJ61xgCEL+kko4Gg6uHCQst1U7BJBXL8AOBPrieGRzkL2GVXog4ZqkUjmpcuiiT4Gm2Kli/VS3E8oMX3woPMD4fa07GgS/QhOaYwL7WTJjMZaUU1e2CZHjNxJDVxRSyyKGOwDx3300/yCRIaCMwKnfr/NtOKlTE=
+	t=1744152483; cv=none; b=dk3gGE7hY0hLf+0tHlOXduhjz3apI/mwmYcrGHQQtszwLMtdJdlm98enNoZJGGwbnM2XG/B0V7QGLx1gqyDBYMYnkFrePd5S19Cgdio2SMyWIrT4BwHGvFDZMKygXqSf0T+9wPqY43s6Kpb3tvAXRbltcvcoCrU7GxwHcg5Q8e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744152435; c=relaxed/simple;
-	bh=Uy6csq/iZO0iF/avJnW6XXU0ZKj+Jg8iaWCbQWtkHLE=;
+	s=arc-20240116; t=1744152483; c=relaxed/simple;
+	bh=Jbe/98dp+EuqRLWP7cw/1jKGl1zqnZvcRH8lxwRKHVs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gwi8OSSLFZc+cfocaPOeTg/ZpL4eWWZ+TNH4GltcirSdKte2UrH0HGm5QkKjVy+VeBs0qXl/1A3gBAFqKkhRqpLO/Xjk9QfPawu/xF9CRVOH8YlySV/piV3hH4ucHNYUwF85v+57+x2RqYbIna1XJ/sRTQ94vEC7a0fg1J4O9XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=1eFAvur0; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-223fd89d036so74475815ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 15:47:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1744152432; x=1744757232; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o6NRZ+eIBvD2ygB/RFw901KQrONh8kxWwYZ7rUvs968=;
-        b=1eFAvur0uvXIdBCtJvaz6H8SigyTFohvXCKvsXpzWYHkGOZ/mnXG65nf+BeRcCFycZ
-         G4a9py3Qet1t+lh0XcWRCxwfrGwHMcs3x4Sm4gDmSBlP4SAV0/qtAWhoeH59+BWVpD5J
-         QtcSwdOUsByIuOFokVyODL2mqALqPzA6860MQnRmWE9+z29yatYP3uafpO5GFA0Budv6
-         bRV+ERyuhK6aYo6Yn0ojWEAEacmB35XWCE5j3JlXudPCsKtOPU4Jef+Fnttg0f7yO43b
-         fFvofDDv3vIiGQnDyfKl2YCKUwXxWU6JhFN90I6b+l1Pxb8NDpM24D6PvXuAg3G4Pr+7
-         2WeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744152432; x=1744757232;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o6NRZ+eIBvD2ygB/RFw901KQrONh8kxWwYZ7rUvs968=;
-        b=Lm+2VU8uj+wSAsu8JybfDyh4fNpKvDEXSMQYjqikivtpeK2su4M9x5sGQq2cudWdYA
-         qZQjyD3F751XuT2ZoJp1aVg6Ji+Ab1cP7Fo5xPiyapCswkTZF06HCUxHRvt6jnvCEpbm
-         l/SwOkgs3rTABEEqaDxrZcIsaxfFeFTFmI2C9Z08nCloBnOlvgVGSrWWvaROCKtCuGhE
-         MMHu/E27XQDEeRXz/zP23UGCk7okiEaguwsqtse7GhSQH0mDr8O53jjkXPyXoqcfxo+p
-         SUgIYATZhMC+cssd15hOQKd498hDe/WIsRsN2Saf9Ein+ZCKkyVM3VBMSeuPUz33Ywc/
-         P/Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOASIj91vOHjBJD515IRFgeqANCn4Lw8lbjDvBH/BETdD8w/IxSPiBgjpsu6J7thr1w91++Pz+ADTbA1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkXINf2mG/vlSd1FW2theRWNnxV7yYDmQulXEJlkU5wAtyMEgl
-	iCiBeRy4kGBrfk8i7ZovwlU+2Q3Pjq86OwwFYyoRqd+q4UeQ8yz5XaMbt04jzO8=
-X-Gm-Gg: ASbGnctF583Znv95ZG5/qf1WO5w57+MQcz9RqhuKOMwm0zsNrKQaPQC3V5NP0KlYd6m
-	E42El4F0T7A9hPtlujzHsaH/aiKiwtgDkKcsKcL1jSPJ4cC0XaNf6nqlyeHxuoV5J0nKbDjAjUV
-	rnAbniM//+IKDDR7gtVNdf7GuBQJyy41sbY3Me8268FDwHEgx5O7mClFdHtsSq9Zhtn1GyP2m+/
-	SJkgEvifG2eEBfhUHYwzSqOTSSNccKB0CYw55DCVTUFUj12R41C1uzMyuVhMVU3hh0a6HQjcXdM
-	JWdv5u4gz9iD/s9e6k8gri0wNur5h2aakBx0qehGOHq4uCphWuQAB6ptJMPjYm1QPJEqC/Hhvv4
-	NL6lKOjXogDZjNZEhV4b1OJ6jujhH
-X-Google-Smtp-Source: AGHT+IGurDzqMih/v0exHbuE7Zr5SXTWizgQjwosdkoAtELLC7VfyDCiglM0XFRzA9ZoR+zeRWPrvw==
-X-Received: by 2002:a17:902:cecc:b0:223:4341:a994 with SMTP id d9443c01a7336-22ac3f34df7mr4238895ad.9.1744152432520;
-        Tue, 08 Apr 2025 15:47:12 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-60-96.pa.nsw.optusnet.com.au. [49.181.60.96])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2297866e2a0sm106697685ad.180.2025.04.08.15.47.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 15:47:11 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1u2Hin-00000006F62-0WE5;
-	Wed, 09 Apr 2025 08:47:09 +1000
-Date: Wed, 9 Apr 2025 08:47:09 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, hch@lst.de,
-	viro@zeniv.linux.org.uk, jack@suse.cz, cem@kernel.org,
-	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, catherine.hoang@oracle.com
-Subject: Re: [PATCH v6 11/12] xfs: add xfs_compute_atomic_write_unit_max()
-Message-ID: <Z_WnbfRhKR6RQsSA@dread.disaster.area>
-References: <20250408104209.1852036-1-john.g.garry@oracle.com>
- <20250408104209.1852036-12-john.g.garry@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ImivU4Bm3E6fXmCNZX84fhkFrRQFYo1HdMkXZnhSFh6cdrxTqiadPAwsZ2nY6Njfp+tBKOknjFp0a2bRuBTftfjrOER8kHze46yhM876gLZRWmyJFhbt1HUdEt+1LXsg8Dt30iwwpkrV6dA0ocEhgi6xnSW/bKZjNAUE430ZAak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mxqy+Hqb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D18k3pKr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hbtCBZ/5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mhaqPr6a; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id F1CBA2116C;
+	Tue,  8 Apr 2025 22:47:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744152479;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TWphO4ey+lxM+jIkAUI2g/YNSOxgfU+/VZAsAKrSDCM=;
+	b=mxqy+Hqb2U38gETAyGqDdEvzEaFx4QJmQ2fkDNMe27TaLe8KRt4hx4+cmwjjE0/duA6M9n
+	7WZg54UkozDj0isU0x2r6D6wGFfX6npG+Z26sUSdOSl18QkeKZDZaiUnPvArTKW8tmPtRJ
+	qeoWJUapb1b0U82v+H62QYNSzevyQOw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744152479;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TWphO4ey+lxM+jIkAUI2g/YNSOxgfU+/VZAsAKrSDCM=;
+	b=D18k3pKrCzxfc4g2f2u2DxeX2eNRom45DqPQg6nvtUWmUxZ97mACz91N86PiGtdHCTab/Z
+	5l3nA359iHmJL9Ag==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744152478;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TWphO4ey+lxM+jIkAUI2g/YNSOxgfU+/VZAsAKrSDCM=;
+	b=hbtCBZ/5nK+onM9neqFylaMYqYyUQt5qMEiwE53jsqX5jCyIUECVqTSTT4PNi0uaA5hxuT
+	KRFDAsoM9lWlDsjx1qohuqTs/dP+xBYNOI4aRVuiFzBYsVM1hHSz7N1zLsN/CiN7Ji5dsd
+	W1Y3Z0cWaGTn96FBGSje59c1RnAmgrI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744152478;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TWphO4ey+lxM+jIkAUI2g/YNSOxgfU+/VZAsAKrSDCM=;
+	b=mhaqPr6atzrKJnFScTDThdhqOitwq5eyueuvFJnhoxHcwyTzqKgN3WDKOUUcKv2meCciU0
+	MDpH8m/CWRw6qGBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D1AA413691;
+	Tue,  8 Apr 2025 22:47:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MQO3Mp6n9WeNTwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 08 Apr 2025 22:47:58 +0000
+Date: Wed, 9 Apr 2025 00:47:49 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Yangtao Li <frank.li@vivo.com>
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] btrfs: use BTRFS_PATH_AUTO_FREE in
+ insert_balance_item()
+Message-ID: <20250408224749.GD13292@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20250408122933.121056-1-frank.li@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,83 +103,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250408104209.1852036-12-john.g.garry@oracle.com>
+In-Reply-To: <20250408122933.121056-1-frank.li@vivo.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,twin.jikos.cz:mid];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6]
+X-Spam-Score: -4.00
+X-Spam-Flag: NO
 
-On Tue, Apr 08, 2025 at 10:42:08AM +0000, John Garry wrote:
-> Now that CoW-based atomic writes are supported, update the max size of an
-> atomic write for the data device.
+On Tue, Apr 08, 2025 at 06:29:30AM -0600, Yangtao Li wrote:
+> All cleanup paths lead to btrfs_path_free so we can define path with the
+> automatic free callback.
 > 
-> The limit of a CoW-based atomic write will be the limit of the number of
-> logitems which can fit into a single transaction.
-
-I still think this is the wrong way to define the maximum
-size of a COW-based atomic write because it is going to change from
-filesystem to filesystem and that variability in supported maximum
-length will be exposed to userspace...
-
-i.e. Maximum supported atomic write size really should be defined as
-a well documented fixed size (e.g. 16MB). Then the transaction
-reservations sizes needed to perform that conversion can be
-calculated directly from that maximum size and optimised directly
-for the conversion operation that atomic writes need to perform.
-
-.....
-
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index b2dd0c0bf509..42b2b7540507 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -615,6 +615,28 @@ xfs_init_mount_workqueues(
->  	return -ENOMEM;
->  }
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> ---
+>  fs/btrfs/volumes.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+> index c8c21c55be53..a962efaec4ea 100644
+> --- a/fs/btrfs/volumes.c
+> +++ b/fs/btrfs/volumes.c
+> @@ -3730,7 +3730,7 @@ static int insert_balance_item(struct btrfs_fs_info *fs_info,
+>  	struct btrfs_trans_handle *trans;
+>  	struct btrfs_balance_item *item;
+>  	struct btrfs_disk_balance_args disk_bargs;
+> -	struct btrfs_path *path;
+> +	BTRFS_PATH_AUTO_FREE(path);
+>  	struct extent_buffer *leaf;
+>  	struct btrfs_key key;
+>  	int ret, err;
+> @@ -3740,10 +3740,8 @@ static int insert_balance_item(struct btrfs_fs_info *fs_info,
+>  		return -ENOMEM;
 >  
-> +unsigned int
-> +xfs_atomic_write_logitems(
-> +	struct xfs_mount	*mp)
-> +{
-> +	unsigned int		efi = xfs_efi_item_overhead(1);
-> +	unsigned int		rui = xfs_rui_item_overhead(1);
-> +	unsigned int		cui = xfs_cui_item_overhead(1);
-> +	unsigned int		bui = xfs_bui_item_overhead(1);
-> +	unsigned int		logres = M_RES(mp)->tr_write.tr_logres;
-> +
-> +	/*
-> +	 * Maximum overhead to complete an atomic write ioend in software:
-> +	 * remove data fork extent + remove cow fork extent +
-> +	 * map extent into data fork
-> +	 */
-> +	unsigned int		atomic_logitems =
-> +		(bui + cui + rui + efi) + (cui + rui) + (bui + rui);
+>  	trans = btrfs_start_transaction(root, 0);
+> -	if (IS_ERR(trans)) {
+> -		btrfs_free_path(path);
+> +	if (IS_ERR(trans))
+>  		return PTR_ERR(trans);
+> -	}
+>  
+>  	key.objectid = BTRFS_BALANCE_OBJECTID;
+>  	key.type = BTRFS_TEMPORARY_ITEM_KEY;
+> @@ -3767,7 +3765,6 @@ static int insert_balance_item(struct btrfs_fs_info *fs_info,
+>  	btrfs_set_balance_sys(leaf, item, &disk_bargs);
+>  	btrfs_set_balance_flags(leaf, item, bctl->flags);
+>  out:
+> -	btrfs_free_path(path);
 
-This seems wrong. Unmap from the data fork only logs a (bui + cui)
-pair, we don't log a RUI or an EFI until the transaction that
-processes the BUI or CUI actually frees an extent from the the BMBT
-or removes a block from the refcount btree.
+The pattern where btrfs_free_path() is not called at the end and is
+followed by other code is probably not worth converting. It would be
+possible to replace it by
 
-We also need to be able to relog all the intents and everything that
-was modified, so we effectively have at least one
-xfs_allocfree_block_count() reservation needed here as well. Even
-finishing an invalidation BUI can result in BMBT block allocation
-occurring if the operation splits an existing extent record and the
-insert of the new record causes a BMBT block split....
+	btrfs_release_path(path);
+	path = NULL;
 
+that drops the locks and refs from the path but this does not save us
+much compared to the straightforward BTRFS_PATH_AUTO_FREE() conversions.
+Also release will still keep the object allocated although we don't need
+it. As a principle, resources, locks and critical sections should be as
+short as possible.
 
-> +
-> +	/* atomic write limits are always a power-of-2 */
-> +	return rounddown_pow_of_two(logres / (2 * atomic_logitems));
+Unfortunatelly I've probably fished all the trivial and almost-trivial
+conversions, we don't want 100% use of BTRFS_PATH_AUTO_FREE(), only when
+it improves the code.
 
-What is the magic 2 in that division?
-
-> +}
-
-Also this function does not belong in xfs_super.c - that file is for
-interfacing with the VFS layer.  Calculating log reservation
-constants at mount time is done in xfs_trans_resv.c - I suspect most
-of the code in this patch should probably be moved there and run
-from xfs_trans_resv_calc()...
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+You may still find cases worth converting, the typical pattern is
+btrfs_path_alloc() somewhere near top of the function and
+btrfs_free_path() called right before a return.
 
