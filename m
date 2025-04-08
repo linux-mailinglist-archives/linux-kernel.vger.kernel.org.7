@@ -1,98 +1,208 @@
-Return-Path: <linux-kernel+bounces-594046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 823ECA80C85
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:37:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18868A80C76
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAC321B84A33
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:29:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C08B503823
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14AE1B393D;
-	Tue,  8 Apr 2025 13:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3F8184524;
+	Tue,  8 Apr 2025 13:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="WvQYQVXL"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bK+eg/M/"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FC71A8F68;
-	Tue,  8 Apr 2025 13:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3CA142E7C
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 13:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744118924; cv=none; b=Ztj3WgUbXX2jE1WJLwhyoMPU6qeNH2QJrC8Jk85xqTNEaXrRB9MMTtQhf/2MnnkiLaf4zzesw1PcXaXRMySyxjg/5eJ4M3Uthm1wpf4CPWeodyt4QEipFVNPewT57DwWuhFLV+1u+SVY+7SHdYuAfkOX9+Gpc9KuzX7bXydwBpE=
+	t=1744118941; cv=none; b=Y2cfWxYTzMhMeMou84npuGGt/aR+5LCfh+cKJxUsCpxSuxpxOWF1jBgdiArPafMS7z/Pih0VP/RYxKJ6k0CRJEWPknq8Ez49BgemtPDhWNtPunuxQsgBtHdMkwBZFGTsbLuaa1L+gvzOqNsPkbE5ZXHOeIRbKDxGn/x3tQdckFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744118924; c=relaxed/simple;
-	bh=FOEfsdtggZpueu42qCVL9YDUw6hhgAGwnCwWUW7mVy0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MNifqsn362BuzP77i0XCZfOpap26OlOsivY4AYMPK5TTMINOtYCiFmQugHxXrqDKbk0TyEg0CYFlN529edjw8+ffAIkZdPvs4Z67/ccbyCuHQtlwmCnMGup3QOlRMX2+pl36ZiyTlMPGvTslTsb/oi47jx8z7Y/jWYFj82TqgaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=WvQYQVXL; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=yNmt2P/R29qfDB07hCARjvDDMhO5YVvydaAbFo0JqDg=; b=Wv
-	QYQVXLRHxunB2Wazfuj140N86KF8BZBODgTOJjxE95LZDjvstKOVF9lzmS30P1Z1gxWvZfud2U7Cx
-	QyMjyd8YdmT1xnuDHf4d07XXh60+FLrB3hhvHWOMN8pp2vIawMbJjwgioRT86VbFI/fND9zfWTJ5e
-	Lr+F0lWVy8EGDCA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u290C-008OZj-MU; Tue, 08 Apr 2025 15:28:32 +0200
-Date: Tue, 8 Apr 2025 15:28:32 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Fedrau Dimitri (LED)" <Dimitri.Fedrau@liebherr.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Dimitri Fedrau <dima.fedrau@gmail.com>
-Subject: Re: [PATCH net-next v2 3/3] net: phy: dp83822: Add support for
- changing the MAC termination
-Message-ID: <04dc2856-f717-4d27-9e5c-5374bb01a322@lunn.ch>
-References: <20250408-dp83822-mac-impedance-v2-0-fefeba4a9804@liebherr.com>
- <20250408-dp83822-mac-impedance-v2-3-fefeba4a9804@liebherr.com>
- <7dbf8923-ac78-47b8-8b9c-8f511a40dfa3@lunn.ch>
- <DB8P192MB0838E18B78149B3EC1E0F168F3B52@DB8P192MB0838.EURP192.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1744118941; c=relaxed/simple;
+	bh=lp92M4ZMRL0XIN792/96i5Ero8lxj7Titagx5rgLawY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MKKliKWRFuk9KZJpKILdKWEG8NBIEReMyF+smX6V6Gl1VCkvA0iNhs3Uwmh89gHqvCG535UGmsp8DruTOSgRUnFDRhU6p5DMFvy9tNJbU6lKBT8aYQ6VhKBmLqZb2/jsRFFI2nL4b1syiFTBhA5ZLTmChS+/KKzQrJawK6Ym/ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bK+eg/M/; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-2b8e2606a58so2986648fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 06:28:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744118938; x=1744723738; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/8oL4Wx/LFCNYSj8OeE9r8nBxp3KNb2RWFN4L2fcM5k=;
+        b=bK+eg/M//2OefqF4Sm/Io6JS3dLOYlxDk9KkAQn6bcpWAJlV8udYjNdDQ+8MqPEInz
+         ZmbChxujKdleE2gN8nq2geIBkF6JDs5cR4+nnhCX6JldEkKNXXcd6qSSLAUViKLhbci9
+         vjZs5F4LGcXsL3uT4rWleQUc3jqf4VCS+/3qBgtm7fXJqk4S8Li6Hi5mfXmT94NwulOO
+         pxOCcDT/a4pcY6gGc/IQ6jjBSCML+b90+/7sLE3qUSqdPAJbcgTPjc0+pbsBv7P98IQE
+         Zvy3vQkptRIYdNkX0/sGC9FgRbaKYHbp8VmPKixPhWAtx5PgafdAx4umhOYcY1WBmIHM
+         JSVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744118938; x=1744723738;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/8oL4Wx/LFCNYSj8OeE9r8nBxp3KNb2RWFN4L2fcM5k=;
+        b=O6kK18KDGGI29Xf5kgEvRVXVi+UZUhquQ79kkDxCYmgxmjK0dTToA3+p3IeXWOMVLS
+         UCahMyMTUhtmfaq27dXGBptJTv2f7iFKMsaRstAyH2CEw1+AloKl9RpqFicYsKvE2V3i
+         cG4rgIaadz8ktV1ZeyG6LlfBqhphNNibYdJg+n7KVX9rUJ0AtAlDsuD75khougO4sS2G
+         5ZUaQxYgk4Or5tLe6Dk2XT0m5iZJjN9cR18Txsw/7r4Q3C7cXqhp08CzuPG9yNWsCbrS
+         /b1ogn8wjew3fSnOKYdVALlNxO2Wkaa13yFWPjbGQh6lv1CrtBaIa7wKOfxwJj9OYBcM
+         S8iQ==
+X-Gm-Message-State: AOJu0YyamxXyohrpjzWvLlt6GfRARyucwYfOAzZ1oIhXZW0tAVEk+yRk
+	XW72wv3WRNdCU1+WBhI9TEXpKodhr0/h6jDMmUz1uaQYNIn8I6+hc33u40PtOH4NZ0E53kXWqnD
+	jkDo6cw6wbbnPDyC444eM2vaWKVJzOb1wW9HXKQ==
+X-Gm-Gg: ASbGncuJ28wodBsTMtAKPmZZJOomoORGDAvEMIPENbk+D9PTi8xyBTSmDEFRGFIwQYh
+	jiCZ0Gg6aRIphA/VTBlV78Nw13trAHOFkjbsj7R7iBhJtJYVxfYhNWcrBxTMWO6xgmgyg0cjgGE
+	eVqBxhPN+EAbABntdR1uSWi+d8lyE=
+X-Google-Smtp-Source: AGHT+IHAG/ejTbg5vA3Vos54fD/tOWqlevkuF4IcqFNjsV/ID7Wtar2qRZ5cZm99uR1FeZB4/PY/aA5SmWOjkV3d+8Q=
+X-Received: by 2002:a05:6870:8185:b0:2c2:4eb0:41f3 with SMTP id
+ 586e51a60fabf-2cc9e50b24emr9010028fac.3.1744118938200; Tue, 08 Apr 2025
+ 06:28:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DB8P192MB0838E18B78149B3EC1E0F168F3B52@DB8P192MB0838.EURP192.PROD.OUTLOOK.COM>
+References: <20250305130634.1850178-1-jens.wiklander@linaro.org>
+ <20250305130634.1850178-6-jens.wiklander@linaro.org> <Z-JOPgcWlpTlskgd@sumit-X1>
+ <CAHUa44GjpHT5Nqo+Ar5jNYNPV-YJQYpLTCf=7oJ1o0VjP-t0nA@mail.gmail.com>
+ <Z-ucuPzwz4IqVTgb@sumit-X1> <CAHUa44FpsCVrbwj1=nsJVJFVJSF1kzKdWAkAMXRu6EdLrLvh8g@mail.gmail.com>
+ <Z_To9V-JOKZ7ChhE@sumit-X1>
+In-Reply-To: <Z_To9V-JOKZ7ChhE@sumit-X1>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Tue, 8 Apr 2025 15:28:45 +0200
+X-Gm-Features: ATxdqUHzionenqJkD4YMHdkp7sUKPz9WrHUIS_ghqCFpfmFZzX0EbynUuoPZUrs
+Message-ID: <CAHUa44EGWuVPjoxpG-S66he=6dkvkwzxNewaGKVKXUxrO41ztg@mail.gmail.com>
+Subject: Re: [PATCH v6 05/10] tee: implement restricted DMA-heap
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
+	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
+	Simona Vetter <simona.vetter@ffwll.ch>, Daniel Stone <daniel@fooishbar.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 08, 2025 at 01:01:17PM +0000, Fedrau Dimitri (LED) wrote:
-> -----Ursprüngliche Nachricht-----
-> Von: Andrew Lunn <andrew@lunn.ch> 
-> Gesendet: Dienstag, 8. April 2025 14:47
-> An: Fedrau Dimitri (LED) <dimitri.fedrau@liebherr.com>
-> Cc: Heiner Kallweit <hkallweit1@gmail.com>; Russell King <linux@armlinux.org.uk>; David S. Miller <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Florian Fainelli <f.fainelli@gmail.com>; netdev@vger.kernel.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; Dimitri Fedrau <dima.fedrau@gmail.com>
-> Betreff: Re: [PATCH net-next v2 3/3] net: phy: dp83822: Add support for changing the MAC termination
-> 
-> > > +static const u32 mac_termination[] = {
-> > > +	99, 91, 84, 78, 73, 69, 65, 61, 58, 55, 53, 50, 48, 46, 44, 43,
-> > 
-> > Please add this list to the binding.
-> 
-> Add this list to "ti,dp83822.yaml" ?
+On Tue, Apr 8, 2025 at 11:14=E2=80=AFAM Sumit Garg <sumit.garg@kernel.org> =
+wrote:
+>
+> On Tue, Apr 01, 2025 at 10:33:04AM +0200, Jens Wiklander wrote:
+> > On Tue, Apr 1, 2025 at 9:58=E2=80=AFAM Sumit Garg <sumit.garg@kernel.or=
+g> wrote:
+> > >
+> > > On Tue, Mar 25, 2025 at 11:55:46AM +0100, Jens Wiklander wrote:
+> > > > Hi Sumit,
+> > > >
+> > >
+> > > <snip>
+> > >
+> > > >
+> > > > >
+> > > > > > +
+> > > > > > +#include "tee_private.h"
+> > > > > > +
+> > > > > > +struct tee_dma_heap {
+> > > > > > +     struct dma_heap *heap;
+> > > > > > +     enum tee_dma_heap_id id;
+> > > > > > +     struct tee_rstmem_pool *pool;
+> > > > > > +     struct tee_device *teedev;
+> > > > > > +     /* Protects pool and teedev above */
+> > > > > > +     struct mutex mu;
+> > > > > > +};
+> > > > > > +
+> > > > > > +struct tee_heap_buffer {
+> > > > > > +     struct tee_rstmem_pool *pool;
+> > > > > > +     struct tee_device *teedev;
+> > > > > > +     size_t size;
+> > > > > > +     size_t offs;
+> > > > > > +     struct sg_table table;
+> > > > > > +};
+> > > > > > +
+> > > > > > +struct tee_heap_attachment {
+> > > > > > +     struct sg_table table;
+> > > > > > +     struct device *dev;
+> > > > > > +};
+> > > > > > +
+> > > > > > +struct tee_rstmem_static_pool {
+> > > > > > +     struct tee_rstmem_pool pool;
+> > > > > > +     struct gen_pool *gen_pool;
+> > > > > > +     phys_addr_t pa_base;
+> > > > > > +};
+> > > > > > +
+> > > > > > +#if !IS_MODULE(CONFIG_TEE) && IS_ENABLED(CONFIG_DMABUF_HEAPS)
+> > > > >
+> > > > > Can this dependency rather be better managed via Kconfig?
+> > > >
+> > > > This was the easiest yet somewhat flexible solution I could find. I=
+f
+> > > > you have something better, let's use that instead.
+> > > >
+> > >
+> > > --- a/drivers/tee/optee/Kconfig
+> > > +++ b/drivers/tee/optee/Kconfig
+> > > @@ -5,6 +5,7 @@ config OPTEE
+> > >         depends on HAVE_ARM_SMCCC
+> > >         depends on MMU
+> > >         depends on RPMB || !RPMB
+> > > +       select DMABUF_HEAPS
+> > >         help
+> > >           This implements the OP-TEE Trusted Execution Environment (T=
+EE)
+> > >           driver.
+> >
+> > I wanted to avoid that since there are plenty of use cases where
+> > DMABUF_HEAPS aren't needed.
+>
+> Yeah, but how the users will figure out the dependency to enable DMA
+> heaps with TEE subsystem.
 
-Yes please. Ideally we want the DT validation tools to pick up invalid
-values before they reach the kernel.
+I hope, without too much difficulty. They are after all looking for a
+way to allocate memory from a DMA heap.
 
-    Andrew
+> So it's better we provide a generic kernel
+> Kconfig which enables all the default features.
+
+I disagree, it should be possible to configure without DMABUF_HEAPS if desi=
+red.
+
+>
+> > This seems to do the job:
+> > +config TEE_DMABUF_HEAP
+> > + bool
+> > + depends on TEE =3D y && DMABUF_HEAPS
+> >
+> > We can only use DMABUF_HEAPS if the TEE subsystem is compiled into the =
+kernel.
+>
+> Ah, I see. So we aren't exporting the DMA heaps APIs for TEE subsystem
+> to use. We should do that such that there isn't a hard dependency to
+> compile them into the kernel.
+
+I was saving that for a later patch set as a later problem. We may
+save some time by not doing it now.
+
+Cheers,
+Jens
+
+>
+> -Sumit
+>
+> >
+> > Cheers,
+> > Jens
 
