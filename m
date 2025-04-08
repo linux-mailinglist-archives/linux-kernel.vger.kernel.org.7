@@ -1,104 +1,113 @@
-Return-Path: <linux-kernel+bounces-593873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA169A80635
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:25:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE46A80461
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:08:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 440D81B8136E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:19:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D60AB1B6295B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACECB26E148;
-	Tue,  8 Apr 2025 12:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjVjKMtl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEE6269AFB;
+	Tue,  8 Apr 2025 12:00:49 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127A526B951;
-	Tue,  8 Apr 2025 12:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DBD26982D
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 12:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744114598; cv=none; b=N6jWRqGgxLzidQtvs0jbfFPju0qKt12Q9t/zt2+EHi+bF382fh7S58/TVnZELZYBzPinckF5Fio0nGjALQFLeaE9OByQcJVgW0JvikgNRU3GXWdW5x/GaMHp3wtw75tiqpt+OY1ZSCOgDEJ4v49JGaIMXF6+oLikkAXgL7fVgEw=
+	t=1744113648; cv=none; b=D/h3OLx3Pr+Ouk4rjvuYLzZO2yshBFspx23kCvAZ+oqKe/1+wWTT+zi1YrNU3TVdIGsMjWTl8eB4qz1Tc+hlIKSBvXBIh4fd5X+WW7V9nxKPXxE9LsCrfrxjmifVKjcdrWx6f1pJ8293PecgR8T8bkk7ZL3o5AlwENY4OCD5UsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744114598; c=relaxed/simple;
-	bh=AEUJ6Wd7pOjKauMOFiCeSqvh9KCOER+sDjq82RyaCRc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=nf8hyApNPF/6QI86uCHKITa568YmzLWLJdKvXE4Hnuj1EC+dcdb0v807UUpnMQSfY8eNQSsJZPAL+Xghjy3G1ABXdpJaig6UvTQ8LAfPwZ0r/TDUNUEBYa7qzerZcZXKv0r7ZzkHqq1qDYNW9tmxz1Bs42XAOD1LBqTYjR9aAQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RjVjKMtl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86269C4AF09;
-	Tue,  8 Apr 2025 12:16:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744114597;
-	bh=AEUJ6Wd7pOjKauMOFiCeSqvh9KCOER+sDjq82RyaCRc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=RjVjKMtlTA1GNuA6CCo/cd3mR5/s0vuo4ObQz1DRpqarOpULL1XgDG86AV25gdTxi
-	 hjPkW+4Fl9Gfcja9mGGJZVUQH+ndtVDR4dGVYMYcGE2V1Tqg8Pe92913cpXHTj/FiC
-	 d+vYPhJJY3Cx5E8TOu0EDB4s9hL02rLrmgWWzXF8hrAJ/juUNT01XXQ9q/Tszl+pXd
-	 9Lfb3TFUvDPl5fYOsocOLiess0zAcKo5kUVWWMQZyJWTfFTdwI4Ci3PvCbic/jcHnX
-	 H7b9Sc7n6x7727A6G5kNm+zndIbKNXRVxMPgS9A73MeNcZghyHlHRwqKAoRC5qJJlT
-	 MqDVbUFHBFdEA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Lyude Paul" <lyude@redhat.com>
-Cc: <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
-  "Boqun Feng" <boqun.feng@gmail.com>,  "Frederic Weisbecker"
- <frederic@kernel.org>,  "Thomas Gleixner" <tglx@linutronix.de>,
-  "Anna-Maria Behnsen" <anna-maria@linutronix.de>,  "Miguel Ojeda"
- <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Trevor Gross" <tmgross@umich.edu>
-Subject: Re: [PATCH 4/6] rust: hrtimer: Add HrTimerClockBase::time()
-In-Reply-To: <20250402214109.653341-5-lyude@redhat.com> (Lyude Paul's message
-	of "Wed, 02 Apr 2025 17:40:32 -0400")
-References: <20250402214109.653341-1-lyude@redhat.com>
-	<xSUp_ccwbO6iB2teXXkhQM_lCfMGwvI6OLC9-N0yjSyOdcNrRMG2VSszh7eUg9fPKUMD3X7gp6LlVqwdq6G5xA==@protonmail.internalid>
-	<20250402214109.653341-5-lyude@redhat.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 08 Apr 2025 14:00:09 +0200
-Message-ID: <87ecy2j22e.fsf@kernel.org>
+	s=arc-20240116; t=1744113648; c=relaxed/simple;
+	bh=N2EUklR/z9JFHYu0b2d1/TXgABpe7LjJhfgZXh/GMyc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=GARreTal1ucr5cSmyNSmJ8nG5k6BFn6dnJigW26rUwQKBrv9LnutxvZQsrLnoeqpW9zmg3NwNwKcz9LD16lpCnGJ+FjRNavk1FlHuCHNLKqpDBChenWVoEJSMhzSZtPD6/tkYcUGOL37cRxTMlRINJCl5pw8EogeT2j7LyHh0zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1u27d0-0000jq-Eg; Tue, 08 Apr 2025 14:00:30 +0200
+Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1u27d0-003vQ0-0A;
+	Tue, 08 Apr 2025 14:00:30 +0200
+Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
+	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1u27cz-00GJS1-35;
+	Tue, 08 Apr 2025 14:00:29 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Date: Tue, 08 Apr 2025 14:00:22 +0200
+Subject: [PATCH 1/3] clk: make determine_rate optional for non reparenting
+ clocks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250408-clk-cdce6214-v1-1-bd4e7092a91f@pengutronix.de>
+References: <20250408-clk-cdce6214-v1-0-bd4e7092a91f@pengutronix.de>
+In-Reply-To: <20250408-clk-cdce6214-v1-0-bd4e7092a91f@pengutronix.de>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, kernel@pengutronix.de, 
+ =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>, 
+ Sascha Hauer <s.hauer@pengutronix.de>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744113629; l=1101;
+ i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
+ bh=N2EUklR/z9JFHYu0b2d1/TXgABpe7LjJhfgZXh/GMyc=;
+ b=OyyNnA4+AWF+wadTy8EM47z/bGUEFtNJi+4ZkN368kkdNEt8nF3sZvzMqrD6ixkfKkaXCcBao
+ 8d8OpNU19ItDy5Lvmgn5ohnOqvF58GxuMKbuVXgxnMo6h5TeWQ8tuM1
+X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
+ pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.hauer@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-"Lyude Paul" <lyude@redhat.com> writes:
+With 326cc42f9fdc ("clk: Forbid to register a mux without determine_rate")
+it became mandatory to provide a determine_rate hook once a set_parent
+hook is provided. The determine_rate hook is only needed though when the
+clock reparents to set its rate. Clocks which do not reparent during
+set_rate do not need a determine_rate hook, so make the hook optional
+for clocks with the CLK_SET_RATE_NO_REPARENT flag.
 
-> This adds a wrapper for the get_time() callback contained within a
-> hrtimer_clock_base struct. We'll use this in the next commit in order to
-> implement HrTimerCallbackContext::forward_now().
->
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  rust/kernel/time/hrtimer.rs | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
-> index f633550882247..521ff1a8a5aa8 100644
-> --- a/rust/kernel/time/hrtimer.rs
-> +++ b/rust/kernel/time/hrtimer.rs
-> @@ -186,6 +186,16 @@ unsafe fn from_raw<'a>(ptr: *mut bindings::hrtimer_clock_base) -> &'a Self {
->          // - Our data layout is equivalent to said struct via our type invariants.
->          unsafe { &*ptr.cast() }
->      }
-> +
-> +    /// Retrieve the current time from this [`HrTimerClockBase`].
-> +    fn time(&self) -> Ktime {
-> +        // SAFETY: This callback is initialized to a valid NonNull function for as long as this type
-> +        // is exposed to users.
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+---
+ drivers/clk/clk.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Why is that? Is it by C api contract?
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 0565c87656cf5..07ae3652df6c1 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3937,7 +3937,8 @@ static int __clk_core_init(struct clk_core *core)
+ 		goto out;
+ 	}
+ 
+-	if (core->ops->set_parent && !core->ops->determine_rate) {
++	if (!(core->flags & CLK_SET_RATE_NO_REPARENT) &&
++	    core->ops->set_parent && !core->ops->determine_rate) {
+ 		pr_err("%s: %s must implement .set_parent & .determine_rate\n",
+ 			__func__, core->name);
+ 		ret = -EINVAL;
 
-
-Best regards,
-Andreas Hindborg
-
-
+-- 
+2.39.5
 
 
