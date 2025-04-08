@@ -1,145 +1,141 @@
-Return-Path: <linux-kernel+bounces-594220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04D41A80EF4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:55:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DA60A80ECE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1E4846275D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:51:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AAD64614C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DDA20CCD8;
-	Tue,  8 Apr 2025 14:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265B3226D0F;
+	Tue,  8 Apr 2025 14:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=unrealasia-net.20230601.gappssmtp.com header.i=@unrealasia-net.20230601.gappssmtp.com header.b="2fG5I6s3"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TLs5lB9Q"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2131D5ACE
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 14:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BEF1C5D61;
+	Tue,  8 Apr 2025 14:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744123894; cv=none; b=iBherkAu+1+VOlYdEV6k+7oG04dTYTsATso1xYvtcm9xlnZx5B6WW/VoVmJqkA+vJEXGskNQX9nM9fgBEhKtTFb57qmzgMSAZOS4JtP0+Ye9X183NEWI0UQ/aKsT2HJYRq+qLPmeOEKRTP+eZmbkpEVenK0yohdevobu695qSg8=
+	t=1744123543; cv=none; b=COryo1jWpcVmTaM390ngMOR/tWoLC4ug+m8/SDRtcoNg+e67JAUoXjNZa41eNOH8d5nVolrWGOygN6lmOshp85nxcImsKOQNOuUbB4BTJWcfeRYOu5poiIDjtUPq+LLPGvcgWdA7k7T2WZ9xDMeX5ojD0ugSS1mSY3pkAtHMlU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744123894; c=relaxed/simple;
-	bh=QYspwtBhVsFSgwIRvDlo0+t6maQ17Xcqzma1ZXsCdVE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DR9KE4xT1kTdJOK4QO4viMYb5OHvjrNZZNHHeHm5vACjdDdcakLOsMeposJbDABzGRHCGuTe+O9wiJWE0rkIiTjbNZLpPPbLFG65cS9/AYf3UpPrUu12wH1oU7Z3pVneAgO5aUM9ECXAC161fUheB8Q/a1dz9YKMvrgtoyRu0gA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unrealasia.net; spf=pass smtp.mailfrom=unrealasia.net; dkim=pass (2048-bit key) header.d=unrealasia-net.20230601.gappssmtp.com header.i=@unrealasia-net.20230601.gappssmtp.com header.b=2fG5I6s3; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unrealasia.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unrealasia.net
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54acc0cd458so6878665e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 07:51:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=unrealasia-net.20230601.gappssmtp.com; s=20230601; t=1744123891; x=1744728691; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MovUcynSAJffR7RJo4naoiiZN0xmuejMREjzSeCfcHU=;
-        b=2fG5I6s3EPcMLwsFhg8HqffOYdlumC3bicuAJ7myLMNSEw2dbOmPrAUPwP/SWzC2uP
-         Q7Ef0U7/2GzNqZfp8XSVB6WqU3E6xkYcPCdLrtEigFlRJbUOOLcaf+ajPhzNoj0p3rQp
-         sstqkIH9oHDp0T0uEPLtrZCAHc1tHB3GQwVN1/kv+gkqBbfqf5yqrta/0lpdz0RwZdzq
-         Jg4rHi5NptKWfNVDa3CtelgG5N6FptYPzBXvr7olO+OxFEbNEiYMGe2vTqqHmK3KL4F+
-         n7J08IjGDFkOg+hbai0L3FlnibHXPYYSXDHdiTJNVZIbZtVjP4VbeoSRXo6kMJKuWmJZ
-         vITw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744123891; x=1744728691;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MovUcynSAJffR7RJo4naoiiZN0xmuejMREjzSeCfcHU=;
-        b=TG04WqY+VU85Xzyx+Zvvvb2oU1YTtbT9BpXHXE2gf/+kNdRxN7SFrAn/jUhGHMgSjw
-         7CbiW+NrfJ9d8FINSFDQHwVQIBua+szY0LSVtX1fQenTM/w6jKL4Fy3Lpa6QQO3/ONcK
-         2etcpHP6tnwmGbDSgzRdYHz+M7nVY8Wih/+EO6NZYdV4rjrwZVz3Jpo1I+LVIGf+cN1p
-         z+7rYooSYC9vQ7E4LLZbHa/euMOUfuJpHuC2RgEuT6gU+i0HOo0EvoS5TTUbjhRN3GP3
-         plu90IiLZh+4jbsHM3979vQ2y6pJEEDQ2QPM9C95z8pRyZiKHWw7EMytat775KaFoxGo
-         EvGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXAOROAITpb4ViC5lo9LC+MeKr6Mpkcun8++Jb8A3h2e+ikUSG7X3jlEIubUKE133k9e+t3qqgh92XBm2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwczUClcqM+xVTJELbuQCaYz4amqngCkhrWCMw08JH1lgXefNL0
-	EGIssdhqNQqvvWC4TLDA7n0o7QVFFRBR8VYhsG7jOY4LG3AURugS/TsHlejft39wpQzp69mtqpj
-	3LiPfEzQrhpJ0w9o4UIsn0NUoQwNAGnhPz5DSC9VJk2FX8+3X
-X-Gm-Gg: ASbGnctuBNCBUfPTbKKYBEY7NeClL75fxMkRwrn+AMMu9X7nqB1HWDhe+/WHiCuPrdP
-	U2l3tVgLyxg7pRdCrLDM4PxV1zQ8AcmKRkMV5BBgTedDl7U8BCYiojrtF+TLKxyQ+9uM1UOfA3e
-	7ClGhXSX5SnziOqyqLw8E06ajHedHkeSXZhmzoMAoEgwRFNSJQPbhrkPeJJs8=
-X-Google-Smtp-Source: AGHT+IFzWK434nhtb4w+8XqXvvTVLz7cQ33CfkusPzfC4ffnVIgn0gGz66HquvJCMDt0tb15sjoUDK45j0gNOhYrFlo=
-X-Received: by 2002:a05:6402:26d4:b0:5f0:7290:394b with SMTP id
- 4fb4d7f45d1cf-5f0db889fb1mr12787948a12.27.1744123515199; Tue, 08 Apr 2025
- 07:45:15 -0700 (PDT)
+	s=arc-20240116; t=1744123543; c=relaxed/simple;
+	bh=7T4CpB6DGc+gXmXeKE+QAVK5wOG1xBkOti6BP2/W8Ow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DLZgpcM71DsPuNZsDIc5qsB8tdQ0KoOMnQ7FyDzsFY1tRuSol9rHPYKyikFqRoTAJfTLmaQJHAJFMOi7dPWgOcFNCWrnrQC3rZvYQKvw0dR9a/aAyCdTmAkDtZACmyrQPzmX0ibMp3u8iXTf93y0C+1XFB2a9Bd6gzP+Jahh8zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TLs5lB9Q; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=ZU8AgxcMgNb7+V6IhjT3po2+emT09ZzOnp6Z/8jLn6c=; b=TLs5lB9Q6k6NOM0ejAiZKSUmbw
+	Dj+iAfTAAhm+Ug5dOAXdaCUR0ebD73P/pVGjYFtKaTG8ZV+/atjxB8tqHRg7WBYsJwW5Vwwr7EF9c
+	EXg2eTLofm8UMCn7fjXC4Ewz5LuW28/Ib8u6LPJzVd95vL9xcZUe0UdgFLyk1LVTAELk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1u2ACU-008PSe-Gy; Tue, 08 Apr 2025 16:45:18 +0200
+Date: Tue, 8 Apr 2025 16:45:18 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Wolfram Sang <wsa@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 15/16] misc: lan966x_pci: Add dtso nodes in order to
+ support SFPs
+Message-ID: <e370fcd3-bd58-47d1-bc0c-c0abeebbefdc@lunn.ch>
+References: <20250407145546.270683-1-herve.codina@bootlin.com>
+ <20250407145546.270683-16-herve.codina@bootlin.com>
+ <19f1a382-1b6b-42bd-a548-a1a5644c9a1b@lunn.ch>
+ <20250408162603.02d6c3a1@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2703842b.58be.195fa426e5e.Coremail.slark_xiao@163.com>
- <DBU4US.LSH9IZJH4Q933@unrealasia.net> <W6W4US.MQDIW3EU4I8R2@unrealasia.net>
- <f0798724-d5dd-498b-89be-7d7521ac4930@gmail.com> <CACNYkD6skGNsR-AH=6TWeXLqXeyCut=HGJeWUadw198Ha3to1g@mail.gmail.com>
- <CAFEp6-2_+25Z+2nPOQtOzJPgfJM8DAs2h_e6HTQ4fAVLt0+bwQ@mail.gmail.com> <BB06D58C-E27D-42FA-8043-AE767E9B5E91@gmail.com>
-In-Reply-To: <BB06D58C-E27D-42FA-8043-AE767E9B5E91@gmail.com>
-From: Muhammad Nuzaihan <zaihan@unrealasia.net>
-Date: Tue, 8 Apr 2025 22:45:03 +0800
-X-Gm-Features: ATxdqUEXOuMMmnIAa6YJ-BdW2lii4EbPgcz6D2oVlm5dOhxW2qYubUdeN-IGJGI
-Message-ID: <CACNYkD7FNx6KR_aKA9S10=bXx4-Xj9WLnGVGDWTgNERerCc6uw@mail.gmail.com>
-Subject: Re: GNSS support for Qualcomm PCIe modem device
-To: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>, Slark Xiao <slark_xiao@163.com>, 
-	Loic Poulain <loic.poulain@linaro.org>, manivannan.sadhasivam@linaro.org, 
-	netdev@vger.kernel.org, Qiang Yu <quic_qianyu@quicinc.com>, johan@kernel.org, 
-	mhi@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250408162603.02d6c3a1@bootlin.com>
 
-Hi Loic, Sergey,
+On Tue, Apr 08, 2025 at 04:26:03PM +0200, Herve Codina wrote:
+> Hi Andrew,
+> 
+> On Mon, 7 Apr 2025 22:05:31 +0200
+> Andrew Lunn <andrew@lunn.ch> wrote:
+> 
+> > On Mon, Apr 07, 2025 at 04:55:44PM +0200, Herve Codina wrote:
+> > > Add device-tree nodes needed to support SFPs.
+> > > Those nodes are:
+> > >  - the clock controller
+> > >  - the i2c controller
+> > >  - the i2c mux
+> > >  - the SFPs themselves and their related ports in the switch
+> > > 
+> > > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > > ---
+> > >  drivers/misc/lan966x_pci.dtso | 111 ++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 111 insertions(+)
+> > > 
+> > > diff --git a/drivers/misc/lan966x_pci.dtso b/drivers/misc/lan966x_pci.dtso
+> > > index 94a967b384f3..a2015b46cd44 100644
+> > > --- a/drivers/misc/lan966x_pci.dtso
+> > > +++ b/drivers/misc/lan966x_pci.dtso  
+> > 
+> > What exactly does this DTSO file represent?
+> 
+> The dsto represents de board connected to the PCI slot and identified
+> by its PCI vendor/device IDs.
 
-Thank you Sergey for your time for the prototype.
+Then i think the name lan966x_pci.dtso is too generic. It should be
+named after whatever microchip calls the RDK.
 
-Looking forward for the code (and coding help if necessary) and help
-to test it on my machine.
+> We can move the PCI chip in a dtsi included by this dtso but in the
+> end this leads to the exact same representation. Further more, moving
+> out the PCI chip description in its own dtsi out of this dtso can be
+> done in a second step when an other dtso uses the same chip.
 
-Zaihan
+And what would you call this pulled out dtsi file? lan966x_pci.dtsi?
+That is going to be confusing.
 
-On Tue, Apr 8, 2025 at 6:27=E2=80=AFPM Sergey Ryazanov <ryazanov.s.a@gmail.=
-com> wrote:
->
-> On April 8, 2025 12:13:17 PM GMT+03:00, Loic Poulain <loic.poulain@oss.qu=
-alcomm.com> wrote:
-> >Hi Zhaihan, Sergey.
-> >
-> >On Fri, Apr 4, 2025 at 7:42=E2=80=AFAM Muhammad Nuzaihan <zaihan@unreala=
-sia.net> wrote:
-> >>
-> >> Hi Sergey, Slark,
-> >>
-> >> Using wwan subsystem and it works without issues, maybe i might miss
-> >> something, perhaps the flow control but i never have any problems even
-> >> without flow control.
-> >>
-> >> I am using gpsd + cgps and xgps with a small modification to Linux
-> >> kernel's wwan subsystem in the kernel to get NMEA data.
-> >>
-> >> I had posted the patch previously and i can post the patch again if yo=
-u like.
-> >>
-> >> Attached in this email is the screenshot of cgps + gpsd.
-> >>
-> >> Maybe it should be in GPS subsystem but it's working for me even using
-> >> wwan subsystem for months now.
-> >
-> >Yes, I would strongly recommend doing the extra step of making it
-> >registered to the GNSS subsystem so that device is exposed with the
-> >correct class.
-> >From WWAN driver perspective, it will not change anything, as we could
-> >have the WWAN framework handling this properly (bridging to gnss
-> >intead of exposing the port as wwan character device).
-> >Sergey, is it your plan?
->
-> Yep. I made the prototype exactly in this way. So a modem driver should n=
-ot care about the port type. Just call WWAN core and it will do the job for=
- the driver.
->
-> The prototype is done. Needs some polishing, proper description, and prob=
-ably, today night I'm going to publish  the RFC.
-> Hi Loic,
+Naming is hard, but we should assume this PCIe device is going to be
+successful, and a number of OEMs will build cards around it, so there
+needs to be space within the naming scheme for them.
+
+	Andrew
 
