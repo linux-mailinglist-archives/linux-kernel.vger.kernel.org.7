@@ -1,143 +1,119 @@
-Return-Path: <linux-kernel+bounces-593038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2CAA7F451
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:43:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D04A7F44F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D19F175A4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:43:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FDFE189560C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A521A253342;
-	Tue,  8 Apr 2025 05:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B2321577C;
+	Tue,  8 Apr 2025 05:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mOGe76Xr"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i+j0jLul"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880022063FA;
-	Tue,  8 Apr 2025 05:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD5C2063FA;
+	Tue,  8 Apr 2025 05:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744090979; cv=none; b=JnfXwpMUSO10ik5MuwTFCIz7aM4tAYKTOJDxITCD6lm5NAxjSHXXg7FnHWiVA9W0tDqdww16kDcyCOASBjQjnp0R9H+c5Dtu2WdhjkE4tZnPH0DldRNzNFFpCFPoXdPvfO8BKs7c4bNyBY+44RoVAhGmX1dy9tTTUu4zfLeLzbo=
+	t=1744090965; cv=none; b=NK88DjOhB9k4hETS3Jw5afATAFgZcVDAUIqToKnLhcEjksPW13zWwrLh1sjJgWzD9p3KM7yScdajzLSqXldoVePrI1lh9nuOiX7+cRtiAE6EUtLMIrQSXyWzUmPeeRj3hGH5Oqs5g3g20RDWpg07ggWKCiLydutHVp0VECQ7KPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744090979; c=relaxed/simple;
-	bh=sYlu/zxZtd7jHwos4fIUG+rHHrsp1iz1KzM6QEIoWrI=;
+	s=arc-20240116; t=1744090965; c=relaxed/simple;
+	bh=JkXUz/XoGFUT5k9LVmtqJKl/eMUlgznfEvEGWx4dV+4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OxkursEgT6VUYZv2R/1oDWMUU7Jksp1CG1qMutBgx7ARgnhWc2D4qam9FLIjjCYuOVezm+LgbSp22NYir/ywgmz0XpIlRuNymuE7/Sf+lzdHGY4zQ1osTu1++/n1u6ZDBeTQ/9aWN6pmLpfbhF8lFZof+jWLo+bvxyLFTRq7CA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mOGe76Xr; arc=none smtp.client-ip=209.85.222.179
+	 To:Cc:Content-Type; b=Pa6fUPbFiah8U5U5ryx7jTd1SJKrRlQPeb01qGqaY25Fu4l6knQWZhnUyjG6X4YU3isb9iA+T7KqzaooLU2cOb9SjxygspkOPLNC2883oI7suoBNvqBESYGKKvXAbeIRBa+/e3pBmQ90LrADxGGM+WvDWyv/llCtj29Zl/M2+XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i+j0jLul; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c7913bab2cso122992685a.0;
-        Mon, 07 Apr 2025 22:42:56 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so34918935e9.1;
+        Mon, 07 Apr 2025 22:42:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744090975; x=1744695775; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744090962; x=1744695762; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BTuC1yLkVLw0KDJ1sl/fXI1uube15Zl0sXYbNMZgOck=;
-        b=mOGe76Xrj7rK7ENLDwlw5vfHJyOgThuDdAejds4MUOvxdDzGxcaOKllMi5LX3Dzrta
-         u7GxfdMZldzbByb1WYNIS8zk5U4VmX0qEFTNdah/U3w5QnX7bp6+k30S0aKoYZXOqioq
-         A+aEMFE027+FEVcxgphjLjhMIES0dxynbSjP0uGa2ihdcgaCTAYieYOv8rqqpmF+ZYop
-         CvLNF+0niyiUXUld1egsvxRMLR/cvtEvyVGtQiUHby+VDZmu5suLH5LJt9RYov+q083M
-         7GSybx1sMy9xQWFAQ2Q2u4jz8XTAUw3FhLPF4J7574a2uAuQuyWhJvvKJ3VFU1KYsmFg
-         8z0A==
+        bh=hNlU9IW0/3w2Hi0+ap/18NdS+AKkCCQ6NPlM5h3+t2Q=;
+        b=i+j0jLuln+KI0Y2UUxmZzR+dOvwg7lHEWahV2+h43IO4+sDBbFFL4AHdqS/EGcC1Wj
+         Mm2rSoa3tMgPF0av08ol2i/ZSue0K1AFgUXj/oG5WXZ7cPhyyXQBUd56DCEiQZzpJWpL
+         4I4RMKNfr9JhojRkmE5X4ATLn82lyXb49JKGWGG0viZbbpFpjLF/IdJKF2cNOwsk9Wwn
+         oPQNVOU4756eASssEXkECsgaO1rxDHTqRudgnwAZHXN0Ac5o3iL0xab4M6hCMxbmDO6k
+         X5QGUNZ8hq/DLXeGPfc9EZ/yqZS2TF/NBmCd1QaNX72Jji2SmWboEoyfzuv76lASrP7y
+         vMHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744090975; x=1744695775;
+        d=1e100.net; s=20230601; t=1744090962; x=1744695762;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BTuC1yLkVLw0KDJ1sl/fXI1uube15Zl0sXYbNMZgOck=;
-        b=olur+zGa00lHpxjWX2PAAw6VocimtAQIw7WAbE01Tu1WD2QUj/FDEIsu7q2RZQDwFg
-         HplhkECHY1NHg/DYje78F9UHtEAX0oxmoVYrK2PW4f6wFnKfWF3GfA19gKBsgyLdab2K
-         BsNP7+Xj5kK5KxTZ/JnOx3F5SmD5L3QQrDw/11IdInjFDuUcxOkaYnplzQSvaJaEQvtO
-         ewE9W9qOC36uhIfRbs93WO9ZKcHB2ptlZUxLlfCB73fZDNemifYDyHv/o83CgsSns+tS
-         2yD+IszhSmNzN8Xp8wm8J372ceU+q5exsi+E5X4YeV28JFB4E46jvhrBz+omVNwcaLKQ
-         eV9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUJdM28nS3LblcaxY67IrgpAC6ejiuE34UlVPKNZ0FBOtdaGCRzPRUYriHwypAm0tPOwhXiPhU/kFawrD+p@vger.kernel.org, AJvYcCXMraXSlAYuSI90phR/tmw5nma+h1gnsL6UFyykJuqC9j5JjvDO15xg319lTh51pgp1FsWx+tT3sKpiKKA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjPcsFXYhFxI6lKKI6oNkJXR+HvvMU0Qq15lyBPBoDX7p/XUZa
-	NiqHcbc5YsL7VfOMLYRirb4MohvzwVaB9NzoMKKf9ZMuQzjLO6pXAgAfdTQl6oHDR3VtswnFVd9
-	EKegBQp8xhWydz265LCOtb8Ls1DM=
-X-Gm-Gg: ASbGnctaJ0Qk/g6WaftN8A1i5IZn7ZBaHWge+n/91FFznPI/jjnrnh13tbPdCiMuV2z
-	Ll+9wJQzBygcZA0gbB119H8y0byfEskHTzdWpmOYZSDOXDS90cEFy72oIzOGpeDGXjYR720cZxe
-	l8g84IQURS9r90SziZ9QTG+CwkY7lUPir2/yD45SM+2wmX+nv6RM0F003IAg==
-X-Google-Smtp-Source: AGHT+IG3Uf49ROht+s7nR72iOxuW28S1zEz3Tl9TWHw9A08Rv7qvVW4zSIDvBxg+BxfLb4weJfS3eDrTmYQc9Xkm7cw=
-X-Received: by 2002:a05:620a:170d:b0:7c5:dfe5:ea78 with SMTP id
- af79cd13be357-7c774d1c4d7mr2354805385a.8.1744090975309; Mon, 07 Apr 2025
- 22:42:55 -0700 (PDT)
+        bh=hNlU9IW0/3w2Hi0+ap/18NdS+AKkCCQ6NPlM5h3+t2Q=;
+        b=jUljuY8AaKtHfxdPEP+D3YeCVSlXfUfLbHR48zFUa2YBlg6g+35blWFnog/+3YwDPK
+         /EiKb4SahSNWIYL3ixNMq1FbbwtEMryKiDugCmQ6WjsTkJaT9a6E3TrYMKXrP3C8nMXb
+         HKAslsiEbesOM0wzBsE+w8SwMNoEyc05ktBS2VrcvRiHYI1PeegMAY8Sz5OXySoBLhvY
+         L+GGrIEMd9gvpKbHEWk6ZmniR1nvBsaZtlRjsMsgipTa2EscqGeCX2I8TgsZ43NW/K0Z
+         N1ABH5bDWU/A8d04ZyQkraRtyJ1ymW0jw2hpu0NKBukxwsHcd6g4mo66HUSU4XEmHjNv
+         K+uA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0h6RpirJR1I/UwdmLEoUgmJp0P13IBl1M12dzpPs8/11dhZLHC48fuRkMSq5vKfTDGfWQhxcG0QqI@vger.kernel.org, AJvYcCXgoqZwY6yoIDTNhDjXJxZ8IVCMhrBs2vvM/67t3HM/DxJgQWh/OD4Dyz5YgvKxf0RNt+2dcC5W7A6dydRB@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLRwLBAm+e4JvFny4bmLApWDLEcFfWQ/s8QzEfHNLCJYWJIY+n
+	yh2b+7FqK/m0eUryinANQa9+/+G1pHr0qyCM9Zw7VxrTxB3Sr4lCW2//+cm2NWP/Jl4i3aKnOlX
+	oi4er8TnAKFVb6Klmjf6icV+RJmo=
+X-Gm-Gg: ASbGncu+2uuQSIDGBCCLKKno2nHcC/VTYcaIS+kOql8lIJIEf3z8kK6VY6pYXEADi93
+	r1oZnpaTWRm1asCN/T1lulSsUMdrW7ca3sxgEam3Y476iZmbtT7K/B0y2dwcUZ26C6LA/FDMvD2
+	eso6U7aBX7Ow+/mRGN8HJdb2iZ4y4=
+X-Google-Smtp-Source: AGHT+IHmnqwp7fYLD9r0VzUZ9uVobcEtY3ANbSUHe5IqHvpSb08zJTe5lq7GR0A2HHq8TuJDFRWbEUa4D0HngXEzQro=
+X-Received: by 2002:a05:6000:420f:b0:39c:30fb:fd97 with SMTP id
+ ffacd0b85a97d-39d07ad8accmr11712104f8f.1.1744090962383; Mon, 07 Apr 2025
+ 22:42:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250408033322.401680-1-gshahrouzi@gmail.com> <20250408033322.401680-2-gshahrouzi@gmail.com>
- <6s4hsqctezmwk73bgz4u6clielbbndijfk6hpciqfbjc53yzhq@hm4ybp4splhl>
-In-Reply-To: <6s4hsqctezmwk73bgz4u6clielbbndijfk6hpciqfbjc53yzhq@hm4ybp4splhl>
-From: Gabriel Shahrouzi <gshahrouzi@gmail.com>
-Date: Tue, 8 Apr 2025 01:42:00 -0400
-X-Gm-Features: ATxdqUEDaPQxYlUXn9iw3QrX_i6bAlfEvLqG-LtPUN95gSF_j8N5amPFx0RxHu4
-Message-ID: <CAKUZ0zJUgFmoKv1oDguhEYWYxxFaKthCp6wY-ahsR8KWy-nqKg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] bcache: Fix undeclared symbol warning for bcache_is_reboot
-To: Coly Li <colyli@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, linux-bcache@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	kernelmentees@lists.linuxfoundation.org
+References: <20250223153244.149102-1-clamor95@gmail.com> <20250223153244.149102-3-clamor95@gmail.com>
+In-Reply-To: <20250223153244.149102-3-clamor95@gmail.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Tue, 8 Apr 2025 08:42:31 +0300
+X-Gm-Features: ATxdqUFll3jD8BcEvaAkgpR3n64WmaGGcMsqo5zGxP_xFPaWja_GHAYRiR6wr5A
+Message-ID: <CAPVz0n21dv1faVeWaRRtA=06D4Ve65cwP_nYF=f=orv_d67oWw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] drm: bridge: Add support for Solomon SSD2825
+ RGB/DSI bridge
+To: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 8, 2025 at 12:55=E2=80=AFAM Coly Li <colyli@kernel.org> wrote:
+=D0=BD=D0=B4, 23 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 17:33 Svya=
+toslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> On Mon, Apr 07, 2025 at 11:33:21PM +0800, Gabriel Shahrouzi wrote:
-> > Add extern declaration for bcache_is_reboot to bcache.h. Ensure proper
-> > visibility for use across multiple files (super.c, sysfs.c) and follow
-> > the declaration pattern for other forward declarations.
-> >
-> > Signed-off-by: Gabriel Shahrouzi <gshahrouzi@gmail.com>
-> > ---
-> >  drivers/md/bcache/bcache.h | 1 +
-> >  drivers/md/bcache/sysfs.c  | 2 --
-> >  2 files changed, 1 insertion(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-> > index 785b0d9008fac..531933351b8b8 100644
-> > --- a/drivers/md/bcache/bcache.h
-> > +++ b/drivers/md/bcache/bcache.h
-> > @@ -1007,6 +1007,7 @@ extern struct workqueue_struct *bch_journal_wq;
-> >  extern struct workqueue_struct *bch_flush_wq;
-> >  extern struct mutex bch_register_lock;
-> >  extern struct list_head bch_cache_sets;
-> > +extern bool bcache_is_reboot;
-> >
+> SSD2825 is a cost-effective MIPI Bridge Chip solution targeting mainly
+> smartphones. It can convert 24bit RGB interface into 4-lane MIPI-DSI
+> interface to drive display modules of up to 800 x 1366, while supporting
+> AMOLED, a-si LCD or LTPS panel technologies for smartphone applications.
 >
-> NACK. It is uncessary to make more .c files to be aware of
-> bcache_is_reboot. Current code is in better form IMHO.
-Ah I see. It's only used in sysfs.c and super.c compared to the other
-forward declarations. Limiting the scope to only those files makes the
-most sense instead of including it in the header file.
->
->
-> >  extern const struct kobj_type bch_cached_dev_ktype;
-> >  extern const struct kobj_type bch_flash_dev_ktype;
-> > diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-> > index e8f696cb58c05..47ef0167b9d23 100644
-> > --- a/drivers/md/bcache/sysfs.c
-> > +++ b/drivers/md/bcache/sysfs.c
-> > @@ -17,8 +17,6 @@
-> >  #include <linux/sort.h>
-> >  #include <linux/sched/clock.h>
-> >
-> > -extern bool bcache_is_reboot;
-> > -
-> >  /* Default is 0 ("writethrough") */
-> >  static const char * const bch_cache_modes[] =3D {
-> >       "writethrough",
-> > --
-> > 2.43.0
-> >
->
-> --
-> Coly Li
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  drivers/gpu/drm/bridge/Kconfig   |  13 +
+>  drivers/gpu/drm/bridge/Makefile  |   1 +
+>  drivers/gpu/drm/bridge/ssd2825.c | 821 +++++++++++++++++++++++++++++++
+>  3 files changed, 835 insertions(+)
+>  create mode 100644 drivers/gpu/drm/bridge/ssd2825.c
+
+These patches had no activity/feedback from maintainers for a while,
+so, in case they got lost in the depths of email box, this is a
+friendly reminder that they are still relevant and I would like them
+to move on.
+
+Best regards,
+Svyatoslav R.
 
