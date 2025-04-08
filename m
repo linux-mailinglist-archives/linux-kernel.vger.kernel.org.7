@@ -1,336 +1,322 @@
-Return-Path: <linux-kernel+bounces-593356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF992A7F845
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:47:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50A8AA7F84B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F3CD3B8351
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:44:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02C3D3B8F3C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38E0263F2B;
-	Tue,  8 Apr 2025 08:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA522236FA;
+	Tue,  8 Apr 2025 08:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CUVUS/px"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="QfOSMcf2"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2043.outbound.protection.outlook.com [40.107.20.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C58A94A;
-	Tue,  8 Apr 2025 08:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744101900; cv=none; b=CYJ81WCZzQhwg62zaKj7grFxkmbjaetg9n2SUxFH1dln9Kb21Mr/EjlM+O8EnPjy31UR5QevWsj7xXhFzb+5KyvZ5o9nt7K/DsNZNAnD7jn/MuxPta71cTFX+eb7NFIVw3Ta4EkFexhyGWj358WigUlMkPHQCeGC5w6Xl+GaW0s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744101900; c=relaxed/simple;
-	bh=VZe2OngXdsBxSy64qOinDtrkbgVY8smaaFF6+zHeCMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rw0QFhMFLuUPJHbUsp1HBLwArUjcsRvTMXDQaFbjZVPcoH1jlfd6bfhcGLE3btXlLLrtmRSkfI0z9nhRkMtaEUxWmu/kyE+VMa86wX36AV8nET3cSr9Wf3tGx/Muf2Dq7x9yDHpq+xq1ny/GVqpzvKvVa5JKmLS9E7W6YaYH9eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CUVUS/px; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-54b10956398so6102347e87.0;
-        Tue, 08 Apr 2025 01:44:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744101896; x=1744706696; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W4E5dsKLqNXfeqjLjmXvcZnG4XsV2gvaRLcqjfHJkRA=;
-        b=CUVUS/pxzuAWqBETmup24OYUFcmxJVDhsmFRaGEcnffz5Y7bSzQOJ97K2bUw5b1nbB
-         67hCckdUq5Wt3UvZRVZilrxrvpwEaIRWs0X+SZXSAXGQRZSQTacKh8jdXe2oR29ixREk
-         BV9189km5isnhICWxSrJqMUY2z1e7oZ/iXDLll2LsMoTTeQofs+r9JhHWPOF+q436bxx
-         5IW6BfRdCvU7+0W/oLvrdSCliMT/C3kcwgGL+Gwmepmoe9I8q36AqBy74Ba/xDrhAMTY
-         RM4g/ZmdQGr5oDra6BLRYBb87vnSdfXCR4NIybIizgD/QBy46eBQYwrb/Go06bRSK87K
-         Qd3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744101896; x=1744706696;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W4E5dsKLqNXfeqjLjmXvcZnG4XsV2gvaRLcqjfHJkRA=;
-        b=FsOgwLYOoufocbuAm4KPbp66Q4yaXBU5/iIhtSAhZIUHFU6zA37MYwmYN9DtVhscoB
-         gdyhJgouXZvESFZaeft5sykdoq3BOsmuf+FGUZeJfUyUIYJCVU9p0YPRoAqE+pPJ1WAB
-         gEdzw1ERcqJqjv9VLSwAdfJGk9GhsCWVqfEePVmsdfhmYMcXE14yrGYH6xFJn0/YTKep
-         aN75FBFrZVyF8A2GbU6ZIKy5yyHydw+xgC0M/M3GC4qJ8NbsiEl1o2XnSOOamOHyIHZl
-         HW/9edRA4+oeGzgjlaytONvGmSnZs3xCqCf6ffLdWci5RXtwCR93nQLWpCArM6fN28cc
-         9Guw==
-X-Forwarded-Encrypted: i=1; AJvYcCXBwlu7CgUNzGl+oKPUilPc13M0YJYJ81cg1w6fHKRIgzh99aoJmhBt3UW1TrXIW6DHAm9QT1jU3FIrSWa7@vger.kernel.org, AJvYcCXpuHzF+BJ1JdzfPkgJb+PEuuPIi2mxgrRKbJpb6uU4d7Ai1f4pmF3XGw4b6cnQUYl+mzBvoo70CHpa@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXXrBsdK/BDCFw4W19n0m2bYzeZ2BsKvGhlbMLEMzHNsULKnK1
-	v9F8AzEWr6375QLAXlDtX8Y0vnlPrCHRm4qhf04qXX8xaWeISREo
-X-Gm-Gg: ASbGncu+npcp08Mfo0hp4oIbRFAlNe8y9oFXO27pG+hzGhFnm+6fnD8DkCILnNmOEjh
-	UC4cvXW2CRC8rpymJDqXKrQzAQyz9leJEUeyLuG0uE3HwBvECGplpPiwMyvkjlZaPvQHCfGNAAP
-	XShxuV5ZE0FLoxAgpD5cULMJHYHfbSwNvgkdaSrr6HUmcuPj2C/3bYNKYWuo/jeJNpr920L2vTJ
-	5DJygjHFjodPPHKRdp+CUNP7ZCf1w1VrCmwGHiK+CwCC1YHmBRxoAbzwdKQCcDOpSxc+TC7eDVY
-	zKLgDeKTr4T9zUC155a246ZK2nCmCmn1Hh/Wz4opQYK3TWE=
-X-Google-Smtp-Source: AGHT+IF7I9IBJRm9zC8vFnPl0qdxqoNVwxn05woOD9dD5DExk5Rg0J3ij+T6VLyltYRyT7y3BX93Nw==
-X-Received: by 2002:a05:6512:6d6:b0:54a:f66d:5620 with SMTP id 2adb3069b0e04-54c3bb92db9mr751174e87.8.1744101895940;
-        Tue, 08 Apr 2025 01:44:55 -0700 (PDT)
-Received: from mva-rohm ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e635bf7sm1520825e87.137.2025.04.08.01.44.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 01:44:55 -0700 (PDT)
-Date: Tue, 8 Apr 2025 11:44:48 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 05/14] mfd: rohm-bd96801: Add chip info
-Message-ID: <826f9aa28795a2aa70ea41a3688ff9a83ec25a98.1744090658.git.mazziesaccount@gmail.com>
-References: <cover.1744090658.git.mazziesaccount@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CC22641DC;
+	Tue,  8 Apr 2025 08:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744101930; cv=fail; b=FZXY0zlGQSh1HqBt+zHl3dZcCIdd/rYEm4xHcnQptXkH1kF9NTMU4SNSrQumJe727mY0sYQsXBS+um/3Te0TZ7/tW5Vmlux9SPD/zU/hTaiMejfBly6SWAmK+ZGfOJ9pDflE5+OoRMwp2BdGJ+qkPC6WcfhxtfSblpBq9ylTrBI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744101930; c=relaxed/simple;
+	bh=sDTkEQgE3Grazoznxo8RnVPAD1TB6kpvA5n/2nzp2nE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hcNR3+8zEv8zEpmQth8H8zvKkFhUgLuMRWoJHIY/GJ9rdQpGtpAKmbiiuEQUmtznGR0Du6mzv2mJ5I3F6ycdedeSwgFF6eva5OmFmWvsfI4JtSmBaj546a9352RryV6uLDEyokA/QmYPT1L//XdVys9qCpra0rE2CWGfk4yhMUQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=QfOSMcf2; arc=fail smtp.client-ip=40.107.20.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VaTNt4nzVusZx0QzTi0oUNyywHgk1HdsRkIqf4mRSNrg49aZbMzgEcmMqKS9uheqiiExSG+qdh/IPEDVtYNWqR0aLGp9shgY38TXlWACf65gO60eP/CDY37m1YhHHo3afYlxWfgr9ozZh0I5k2d7m9AFzDHCsPDz1IobBYKFBdOrw88aC+oS3ZQGKvc19D9/RBeigD0ToBLZMCWXgJfeQleFrve6VE4RDffFKBRoQ6UbOm0KFUV/Wttzj0CbXWzy1Zkmdj3iT3Hr31nstSQrvQ+bTjS1f+uV81ca3Ri6iVq6p5pVn8SOw2DDuS1UjabGGRxEoDAH0+VQROGimi5kzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2YRcy6b8OOGLlLUvK1lLRBDOEzHNON2YZVN8bVWCD/I=;
+ b=euns/804ZjLukrfn43cPHSOHAXVbec5+RKYaEaArKK/lm/Y1Cm2UM26n7mK6egaZkzgrLNKparFI/gIvFDJiw1W40TSrQ9fjIZmqU8V6iVHeH81BppS25N4Pi89If1hbwjWN5ONiQ6Ca1DywtrMVtsIUmSuvWBSu8Gvn/DcLlDNVZG2TYRmhiB3Q+Pu+O+ovlNYM/rjIjyn3agus+gMQaLrSYhHbnWKZbei14oUGDaqNVofTBABmXYA34ZQW0TBwHLXU2w6X/uD+2tS1weGZqGQMf4hS/1u4Aw0K55JBv5lEJZr5BMTwjzKcMh2I2VMqCiX4+f3E6k2JdMlzo6ZnAw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2YRcy6b8OOGLlLUvK1lLRBDOEzHNON2YZVN8bVWCD/I=;
+ b=QfOSMcf286fkZG/l1B/kGAZm5CLXuQvVC2K4T+MzYKSzM5FV3y05zWmgR/TpFz/HEpG0ds9NnrvckIVPnnR9sxtXTvn4ZDhk+cXR+fI7wR51BiKXONjEy+YA24TK+kKI0gSItizxQ3gS/0aiQRhLs4Bnc/SgHGMuMnyvZiY5P5NJDAQs4OnAcMs85yL4GmOlJ0JGlPIEkk2GI699Bdj2P6tf9n+hGvUmTqyaAgzLKG+oT4c08zmeWj019egu8HtkzzmP3VUfzMNBrUhgyTRwZd/S3xZvniJMUCHAY6qB5fLK4IDadxubt750zpy+dTUEPxcrZUWwBw4EadXQKTezLQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8254.eurprd04.prod.outlook.com (2603:10a6:102:1cd::24)
+ by PAXPR04MB8607.eurprd04.prod.outlook.com (2603:10a6:102:21a::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.35; Tue, 8 Apr
+ 2025 08:45:24 +0000
+Received: from PAXPR04MB8254.eurprd04.prod.outlook.com
+ ([fe80::2755:55ac:5d6f:4f87]) by PAXPR04MB8254.eurprd04.prod.outlook.com
+ ([fe80::2755:55ac:5d6f:4f87%4]) with mapi id 15.20.8606.033; Tue, 8 Apr 2025
+ 08:45:24 +0000
+Message-ID: <c9aef3f6-43cd-48fb-8aba-0abd33c4e263@oss.nxp.com>
+Date: Tue, 8 Apr 2025 16:45:03 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] media: v4l: dev-decoder: Add source change
+ V4L2_EVENT_SRC_CH_COLORSPACE
+To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, mchehab@kernel.org
+Cc: nicolas@ndufresne.ca, shawnguo@kernel.org, robh+dt@kernel.org,
+ s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+ linux-imx@nxp.com, xiahong.bao@nxp.com, eagle.zhou@nxp.com,
+ tao.jiang_2@nxp.com, imx@lists.linux.dev, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20250117061938.3923516-1-ming.qian@oss.nxp.com>
+ <3e5f003a-f689-4f5a-ac75-6bf95379637b@xs4all.nl>
+ <50ce67b7-ef06-4e8e-bf4f-f4b0d5e40961@oss.nxp.com>
+ <d5a8988f-1038-4a8b-8478-968ceca37879@xs4all.nl>
+From: "Ming Qian(OSS)" <ming.qian@oss.nxp.com>
+In-Reply-To: <d5a8988f-1038-4a8b-8478-968ceca37879@xs4all.nl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR02CA0100.apcprd02.prod.outlook.com
+ (2603:1096:4:92::16) To PAXPR04MB8254.eurprd04.prod.outlook.com
+ (2603:10a6:102:1cd::24)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nf8ZO/YTJbro2ttd"
-Content-Disposition: inline
-In-Reply-To: <cover.1744090658.git.mazziesaccount@gmail.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8254:EE_|PAXPR04MB8607:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0af5bf37-dda3-4a5e-e25b-08dd7679b3e2
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dkVWZFBZcllzWnduRGkrZkpsU1VrSTAyY3oxLzJTRXRQNnhTdGZYRjR3MDFk?=
+ =?utf-8?B?cmRpZHdMakNWYlJMSW5mTHJxVDBJY3pmUWxNTWVVR1B4MHVHTGlTWGhaYTQv?=
+ =?utf-8?B?RnJMNjFTMGQ3a0FXZk1YNGJWc09TOTMveHhpUHpWOWI3d1l0UDBXVWRqZjRQ?=
+ =?utf-8?B?NHlMY1dQNFRvSUVwQjIrL1NlNzhWL1EvL3NZMWJsL2VBd3FuUHdNNlU0Njcv?=
+ =?utf-8?B?MVBYUGdZdW1kNFNlYlNXVW92Q2hheFNiQUJESko5cGhaeGMrWkxnZzhCSExL?=
+ =?utf-8?B?Z2VaS1FrU1R3bVV4OVlDZ1dXNkZrQ3M2ejk2dlVWRmpJc1dHVzRiZ3hYako3?=
+ =?utf-8?B?enhVYUFXcGpCcTZEYUFsb2tDVWVmU1VWOStlUFk3RHp6czdZMFpycGhoWlVr?=
+ =?utf-8?B?V0N1Rmh1b0oySGRqY0dzYkczY2ZmdVZIaldTQW05SzNsY1RxZHpLdFUvMW1C?=
+ =?utf-8?B?dHpxQ0Y5K0lzYVU5QTFlandlSkR5YkpXalEvQk5xVVJPc3prVDdBSDVDZ1du?=
+ =?utf-8?B?OGpDTWwyY1U2TWNwelQxdmUxaDdXdGx3SkRLanZvaFFkeHdTb2loZ3NyUzZp?=
+ =?utf-8?B?YU1LcHNEMW1mcWNkMUQ2VS8rNHg3N3FzNFowMXYrS2JydUx6amZxVCt4MnV3?=
+ =?utf-8?B?Zy9Kai82ZTVVM1JYcUkyRmZYbU1ETllHa0R6K0FlVnlYMG9lZ0R1OTExb2JY?=
+ =?utf-8?B?dWhaaEdiTWFoZ0kxZEoyaWYrOExwSlUyc3FiR0F6bjRLbDFnaEY5Z1ZGN0VW?=
+ =?utf-8?B?TVg5T0xRb0Q3MDc4cG1JdVdva1J5dFRjS29VaTNpcWxDNTUyVmk3eml3Ynhi?=
+ =?utf-8?B?SnhFWkVzb3hmNTRNcDJJOGNiTUoxTUFtaWVjUFE1T0tqeVdxdFhjcTJiVk9z?=
+ =?utf-8?B?cGVmYnhuNHo1MTZhN3ZWSkxaSUpnWDdGWmRBbWNiUUNPcXlGVENKY1VxbXJZ?=
+ =?utf-8?B?TWF0OUVoa2FDUXo1a0poaVNBelhwbk9MQm5BRHVZc1V2Y0ErOGtDZVZwVUM3?=
+ =?utf-8?B?aythVUNRVTFJbmczWVFwd3ZhOFFuM2JJRVMrSkJWbFM1M0xLQlkvQkt5MlM1?=
+ =?utf-8?B?R0I5Vnp1cEMvUER0ZDg1Rm1hbzgvNEJVcHVYV2o3MWNLN21PdnFGWFVjZG9z?=
+ =?utf-8?B?YWJaY0ozeitldExnMmFhQ3htWDlLRVhZRW1lTVBUclZTQkxWblJnZno5UmlW?=
+ =?utf-8?B?cW9pTGR4OHpBMXZFTFdpUzdhMllSVW5QUGFob3hqeThMbUhhcFNQWFRhRHlN?=
+ =?utf-8?B?N1IrcWZOckovVk56L2lGK3l0cGRzQ2hPWGM4S0dOTE1ESEZIWlQyVXFGeG9a?=
+ =?utf-8?B?NmtzUW5PZllzYXZWbytqcGY2V0tTODRtc01nWEdLdUoyaldpdGNlOE9MWFIz?=
+ =?utf-8?B?S2xiQzRlSjNvSVdQVlpUQVZldzZXM1ExK1AzMEhjSUw3eVVXeXRaanZ6MTVz?=
+ =?utf-8?B?RUs1V0UySjZSNmtyT0xld0tHblhtZWhYd0gvbHRFeUdWM2FQWXNRd1UwR3Nm?=
+ =?utf-8?B?b0FxYXJkTlQybm5ocW1mdGxEeFFZeXk2RHNYL3l1VUR4WnJZUk53ZTFrclZo?=
+ =?utf-8?B?MSthSHdRRFhNc2pwUFZKNGMrZFhLUUduVnF5UW04bXF3eHZML3VGY1hOakV6?=
+ =?utf-8?B?cG5qT3FHQzhBSUQzVzRtbGFWMUcrT2pQclpoejRnNUNpNFlUdlhBbktvNnhy?=
+ =?utf-8?B?SDJMdTRQSitLSnRXVHlxRWtiT1FnM3BpaldpeXhqNkh0VFB2dVJKUGxuTnRk?=
+ =?utf-8?B?cDJvdTlweDJsL1NFZ0w2SkRNbDBXSkFMWkdhcUdTQXMyWHEyZ2tQMkFma2c5?=
+ =?utf-8?B?ekROeVJmU1N3bXhZcGFwbTZnMEdDSGdvSWYzdUxtbTFMT0pkOGlMVm5OVU5k?=
+ =?utf-8?Q?f5eGsB7S63h33?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8254.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZGxUd0NodTJlQ0ZBSnowMmRpZDlLNWhqZUpXcGFyN0tVRGEvaDRkL3VUUzlL?=
+ =?utf-8?B?WnltL2E2aE1GSUR6MUtWY3FadjdySmpUVm1KWHFWclo4YlZSVk9DWU9Call6?=
+ =?utf-8?B?TzJMd1dmUHI4UEcxcmwxZlZ4QmdNOU9FY0dTT2xPNEQ4S0t2b0Izd0VkSlY2?=
+ =?utf-8?B?V0YySDhsWmNMcnJjSDZRNU8wMzlxTElkUXhFbUtlVHJqUHlvNnhPK1Fqa0wy?=
+ =?utf-8?B?NjQzaVJVS0dmQUJTSzZkUjM5YXJlSzdJUStxT1JUVGgvR05kQzIvV25uQi9U?=
+ =?utf-8?B?QU4ramkwaFZHdFRyN0VHRDlCSnJMbVRESThQTm1MbktGUFc3eU5VMk0vaEh6?=
+ =?utf-8?B?SUNPc25oN3RTY01BZDlMbkg4Y3d4MWtTb0dBU2tseU1sQzhhZ1ZYVG9aNi9Y?=
+ =?utf-8?B?N0Y5VElDQm85U000cERoZm1SMVFGYldRN3JNbGtnUm1XUWdVN1RlWUM3OHRr?=
+ =?utf-8?B?K0RRdEtydVUranQvM0NYeGZuT0c3SngxNGs1OUpDS2dDQjZtcGg2TGV1bzAz?=
+ =?utf-8?B?MW5rMFc2MWt5ekYzOVB0V0pJTU9CTE5GWHVLS0FLeXdyVkdvUS9KWkNsZVJG?=
+ =?utf-8?B?aWlaM3NVQjMyUzdZY1lxTjljTUV5QUlEVC9CNEJ2V2NLWVpqTXhhUExhMGRR?=
+ =?utf-8?B?STV5TFhQeWVvZjZaN21yUmYxVjBPMVFHMUl4Y2VsSEViN3R2KzFhUmkzVmxl?=
+ =?utf-8?B?TEhMczZpWlBQOURubmlKZDdPNHA1NjFXSHMrdXB3RXcrVHZZZHBDbGFpN3dR?=
+ =?utf-8?B?UFRNZkdJeXdGa2xuK1RRa3A4RE5zbkpWUURwaTRoaENsTlBwbC9LSUpLaXNI?=
+ =?utf-8?B?d3d6WGs0OXhra0YwaG9BNllwOEVDYTRxNkdHejNYRFdHb0h4cEozT3hNczFw?=
+ =?utf-8?B?UzJEODR4YU4wQXFYZ1Y3UEZDcWxkV0pzMEd0WE5NQ08yR2Y2WVBucmt6OHM5?=
+ =?utf-8?B?MkJMdHd3bG94eHRnMHdtTHJFRVBqZ29MYS9nOEc3NHdzNW9SQXhsb0hPUHlM?=
+ =?utf-8?B?ZDFKVE9MSHE2NVFOVHk0M29nRUhZYkprZWs3N3VmdkdtOTZqTXNXY0Mwd2dh?=
+ =?utf-8?B?YzZzRnhyOFE3QVJyRVFBVTRxTFpPd0NjSEh4cFBqNllKNkhmdUhiMjk3TlZF?=
+ =?utf-8?B?YjJkM0ZmUmdIeDJwMWRyU1Vud2I1Q29XdGFoTy9OV0pIeVpQcWdNV245d2Qv?=
+ =?utf-8?B?MGh4T3ltY1dHdFRyQ2l4ZVFUWFlZZlpxSEVBeFgrYlFEaTB4OFhWZlBPckxi?=
+ =?utf-8?B?dVZrMGRiYkY2Y2s0T1ZRaTlKNEVUbGI4ZGkzZUY0NWR2SW1JdEs4a2tMckFk?=
+ =?utf-8?B?SXhpd2UrQlIydGU0T2sxUjFaM25HOEowbWxvcjRXM2doTUlrTzBsNyt4WWli?=
+ =?utf-8?B?MkQyM0FRMlR2Z05sY0JKSHgxSkNuMk9WQk1qU2RhcnRiVmp6eUxYWU9vRVRB?=
+ =?utf-8?B?dnAveFh3SC9yMDF5QTBJYTRZL2RQMzZoTExQMGQ4UDZ0cG5hczk2d0FTeU5o?=
+ =?utf-8?B?RzBtOTRNRTN0TTBib0drbCtEc09tQ0ttdzladDZ6WnVaWnpRbjNaT09ldWs2?=
+ =?utf-8?B?TjJKRGdmMG1iSGh5aU9iTWVKaCtRdW90N0dIb1NpOGJNbXN1RFZIYXZpTFFZ?=
+ =?utf-8?B?VU43QlFBdHdGa2FES1g3T0RPZUZ3T1BDWTRmVVBTZ1pZdEJBcU1kL1d5QWNC?=
+ =?utf-8?B?RjJpMTY1aFB1bk11REpKODlXQk93NWJvRkhHWC9KcWxGRmprV2pacmZONlJ5?=
+ =?utf-8?B?YXdjNlkvL1lpaXozY3pGbFNOZjNGRDVSVkFFUUtWWFBZa1FscUZQNFExeEkv?=
+ =?utf-8?B?czlMMEdnVExSVm1Ecmo3bTc4ZlVDNFFRY0xkUXJIeGgyZ2t1ZHRoWmFvdEVX?=
+ =?utf-8?B?bmdMTms1MzYxRHh3TldvMG1ZSktRQzBtdWdmNTZ3ejdjNHJaMHpHc1N3eGF0?=
+ =?utf-8?B?Q0cwTktvcVVTTk1vaEV1azRwbEJKYWNsL21XRGRZZUFxK20reXlqMThFOEtn?=
+ =?utf-8?B?eTdSLy93ZnVleGNUclpDSjRFcFpRKzRWcEFCdmJyeG5JdXp2WXBBSVZBdTZJ?=
+ =?utf-8?B?RE9ORm9JWGxFYTJGb1YvNlhjKzJRV0lCeWY0M2x5TjdUQ0xhRFVPQ01DNE5I?=
+ =?utf-8?Q?7NcQ4HFH3S6BwqjjjFK2PvXb8?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0af5bf37-dda3-4a5e-e25b-08dd7679b3e2
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8254.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2025 08:45:24.3795
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: efzVYVXc6gnWQqkffHDQ4ECD0Jp7rPpuNcfZ/IgYRWrdtvkl64JoJ9S03I3+FDXOiZ3HN5CJJ7EIYLsWBfXDRA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8607
 
+Hi Hans,
 
---nf8ZO/YTJbro2ttd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2025/4/8 16:30, Hans Verkuil wrote:
+> On 08/04/2025 08:34, Ming Qian(OSS) wrote:
+>> Hi Hans,
+>>
+>> On 2025/4/7 17:54, Hans Verkuil wrote:
+>>> On 17/01/2025 07:19, Ming Qian wrote:
+>>>> Add a new source change V4L2_EVENT_SRC_CH_COLORSPACE that
+>>>> indicates colorspace change in the stream.
+>>>> The change V4L2_EVENT_SRC_CH_RESOLUTION will always affect
+>>>> the allocation, but V4L2_EVENT_SRC_CH_COLORSPACE won't.
+>>>>
+>>>> Signed-off-by: Ming Qian <ming.qian@oss.nxp.com>
+>>>> ---
+>>>>    Documentation/userspace-api/media/v4l/vidioc-dqevent.rst | 9 +++++++++
+>>>>    .../userspace-api/media/videodev2.h.rst.exceptions       | 1 +
+>>>>    include/uapi/linux/videodev2.h                           | 1 +
+>>>>    3 files changed, 11 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/userspace-api/media/v4l/vidioc-dqevent.rst b/Documentation/userspace-api/media/v4l/vidioc-dqevent.rst
+>>>> index 8db103760930..91e6b86c976d 100644
+>>>> --- a/Documentation/userspace-api/media/v4l/vidioc-dqevent.rst
+>>>> +++ b/Documentation/userspace-api/media/v4l/vidioc-dqevent.rst
+>>>> @@ -369,6 +369,15 @@ call.
+>>>>    	loss of signal and so restarting streaming I/O is required in order for
+>>>>    	the hardware to synchronize to the video signal.
+>>>>    
+>>>> +    * - ``V4L2_EVENT_SRC_CH_COLORSPACE``
+>>>> +      - 0x0002
+>>>> +      - This event gets triggered when a colorsapce change is detected at
+>>>
+>>> colorsapce -> colorspace
+>>>
+>>
+>> Will fix in v3
+>>
+>>>> +	an input. This can come from a video decoder. Applications will query
+>>>
+>>> It can also come from a video receiver. E.g. an HDMI source changes colorspace
+>>> signaling, but not the resolution.
+>>>
+>>>> +	the new colorspace information (if any, the signal may also have been
+>>>> +	lost)
+>>>
+>>> Missing . at the end. Also, if the signal is lost, then that is a CH_RESOLUTION
+>>> change, not CH_COLORSPACE.
+>>>
+>> OK, will fix in v3
+>>>> +
+>>>> +	For stateful decoders follow the guidelines in :ref:`decoder`.
+>>>
+>>> I think this should emphasize that if CH_COLORSPACE is set, but not CH_RESOLUTION,
+>>> then only the colorspace changed and there is no need to reallocate buffers.
+>>>
+>>
+>> OK, will add in v3
+>>
+>>> I also wonder if the description of CH_RESOLUTION should be enhanced to explain
+>>> that this might also imply a colorspace change. I'm not sure what existing codec
+>>> drivers do if there is a colorspace change but no resolution change.
+>>
+>> I think there is no uniform behavior at the moment, it depends on the
+>> behavior of the decoder. Maybe most decoders ignore this.
+> 
+> Can you try to do a quick analysis of this? Don't spend too much time on this,
+> but it is helpful to have an idea of how existing codecs handle this.
+> 
+> Regards,
+> 
+> 	Hans
+> 
 
-Prepare for adding support for BD96802 which is very similar to BD96801.
-Separate chip specific data into own structure which can be picked based
-on the type of the IC.
+I checked the vpu used in our platforms,
+1. amphion vpu, it will ignore the colorspace change.
+2. hantro g1/g2 decoder, it also ignore the colorspace change.
+3. chipsnmedia wave6 decoder, the firmware detect the colorspace change
+for HEVC format, but ignore for AVC format. But its driver just ignore
+it.
+4. chipsnmedia wave511 decoder, same as wave6.
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Acked-by: Lee Jones <lee@kernel.org>
+Regards,
+Ming
 
----
-Revision history:
- v2 =3D> :
-  - No changes
- v1 =3D> v2:
-  - Use chip_type enum
-  - Rename cd to ddata
----
- drivers/mfd/rohm-bd96801.c | 90 +++++++++++++++++++++++++++-----------
- 1 file changed, 64 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/mfd/rohm-bd96801.c b/drivers/mfd/rohm-bd96801.c
-index 60ec8db790a7..52e25d7ca888 100644
---- a/drivers/mfd/rohm-bd96801.c
-+++ b/drivers/mfd/rohm-bd96801.c
-@@ -40,7 +40,21 @@
- #include <linux/mfd/rohm-bd96801.h>
- #include <linux/mfd/rohm-generic.h>
-=20
--static const struct resource regulator_errb_irqs[] =3D {
-+struct bd968xx {
-+	const struct resource *errb_irqs;
-+	const struct resource *intb_irqs;
-+	int num_errb_irqs;
-+	int num_intb_irqs;
-+	const struct regmap_irq_chip *errb_irq_chip;
-+	const struct regmap_irq_chip *intb_irq_chip;
-+	const struct regmap_config *regmap_config;
-+	struct mfd_cell *cells;
-+	int num_cells;
-+	int unlock_reg;
-+	int unlock_val;
-+};
-+
-+static const struct resource bd96801_reg_errb_irqs[] =3D {
- 	DEFINE_RES_IRQ_NAMED(BD96801_OTP_ERR_STAT, "bd96801-otp-err"),
- 	DEFINE_RES_IRQ_NAMED(BD96801_DBIST_ERR_STAT, "bd96801-dbist-err"),
- 	DEFINE_RES_IRQ_NAMED(BD96801_EEP_ERR_STAT, "bd96801-eep-err"),
-@@ -98,7 +112,7 @@ static const struct resource regulator_errb_irqs[] =3D {
- 	DEFINE_RES_IRQ_NAMED(BD96801_LDO7_SHDN_ERR_STAT, "bd96801-ldo7-shdn-err"),
- };
-=20
--static const struct resource regulator_intb_irqs[] =3D {
-+static const struct resource bd96801_reg_intb_irqs[] =3D {
- 	DEFINE_RES_IRQ_NAMED(BD96801_TW_STAT, "bd96801-core-thermal"),
-=20
- 	DEFINE_RES_IRQ_NAMED(BD96801_BUCK1_OCPH_STAT, "bd96801-buck1-overcurr-h"),
-@@ -345,18 +359,44 @@ static const struct regmap_config bd96801_regmap_conf=
-ig =3D {
- 	.cache_type =3D REGCACHE_MAPLE,
- };
-=20
-+static const struct bd968xx bd96801_data =3D {
-+	.errb_irqs =3D bd96801_reg_errb_irqs,
-+	.intb_irqs =3D bd96801_reg_intb_irqs,
-+	.num_errb_irqs =3D ARRAY_SIZE(bd96801_reg_errb_irqs),
-+	.num_intb_irqs =3D ARRAY_SIZE(bd96801_reg_intb_irqs),
-+	.errb_irq_chip =3D &bd96801_irq_chip_errb,
-+	.intb_irq_chip =3D &bd96801_irq_chip_intb,
-+	.regmap_config =3D &bd96801_regmap_config,
-+	.cells =3D bd96801_cells,
-+	.num_cells =3D ARRAY_SIZE(bd96801_cells),
-+	.unlock_reg =3D BD96801_LOCK_REG,
-+	.unlock_val =3D BD96801_UNLOCK,
-+};
-+
- static int bd96801_i2c_probe(struct i2c_client *i2c)
- {
- 	struct regmap_irq_chip_data *intb_irq_data, *errb_irq_data;
- 	struct irq_domain *intb_domain, *errb_domain;
-+	const struct bd968xx *ddata;
- 	const struct fwnode_handle *fwnode;
- 	struct resource *regulator_res;
- 	struct resource wdg_irq;
- 	struct regmap *regmap;
--	int intb_irq, errb_irq, num_intb, num_errb =3D 0;
-+	int intb_irq, errb_irq, num_errb =3D 0;
- 	int num_regu_irqs, wdg_irq_no;
-+	unsigned int chip_type;
- 	int i, ret;
-=20
-+	chip_type =3D (unsigned int)(uintptr_t)device_get_match_data(&i2c->dev);
-+	switch (chip_type) {
-+	case ROHM_CHIP_TYPE_BD96801:
-+		ddata =3D &bd96801_data;
-+		break;
-+	default:
-+		dev_err(&i2c->dev, "Unknown IC\n");
-+		return -EINVAL;
-+	}
-+
- 	fwnode =3D dev_fwnode(&i2c->dev);
- 	if (!fwnode)
- 		return dev_err_probe(&i2c->dev, -EINVAL, "Failed to find fwnode\n");
-@@ -365,34 +405,32 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
- 	if (intb_irq < 0)
- 		return dev_err_probe(&i2c->dev, intb_irq, "INTB IRQ not configured\n");
-=20
--	num_intb =3D  ARRAY_SIZE(regulator_intb_irqs);
--
- 	/* ERRB may be omitted if processor is powered by the PMIC */
- 	errb_irq =3D fwnode_irq_get_byname(fwnode, "errb");
--	if (errb_irq < 0)
--		errb_irq =3D 0;
-+	if (errb_irq =3D=3D -EPROBE_DEFER)
-+		return errb_irq;
-=20
--	if (errb_irq)
--		num_errb =3D ARRAY_SIZE(regulator_errb_irqs);
-+	if (errb_irq > 0)
-+		num_errb =3D ddata->num_errb_irqs;
-=20
--	num_regu_irqs =3D num_intb + num_errb;
-+	num_regu_irqs =3D ddata->num_intb_irqs + num_errb;
-=20
- 	regulator_res =3D devm_kcalloc(&i2c->dev, num_regu_irqs,
- 				     sizeof(*regulator_res), GFP_KERNEL);
- 	if (!regulator_res)
- 		return -ENOMEM;
-=20
--	regmap =3D devm_regmap_init_i2c(i2c, &bd96801_regmap_config);
-+	regmap =3D devm_regmap_init_i2c(i2c, ddata->regmap_config);
- 	if (IS_ERR(regmap))
- 		return dev_err_probe(&i2c->dev, PTR_ERR(regmap),
- 				    "Regmap initialization failed\n");
-=20
--	ret =3D regmap_write(regmap, BD96801_LOCK_REG, BD96801_UNLOCK);
-+	ret =3D regmap_write(regmap, ddata->unlock_reg, ddata->unlock_val);
- 	if (ret)
- 		return dev_err_probe(&i2c->dev, ret, "Failed to unlock PMIC\n");
-=20
- 	ret =3D devm_regmap_add_irq_chip(&i2c->dev, regmap, intb_irq,
--				       IRQF_ONESHOT, 0, &bd96801_irq_chip_intb,
-+				       IRQF_ONESHOT, 0, ddata->intb_irq_chip,
- 				       &intb_irq_data);
- 	if (ret)
- 		return dev_err_probe(&i2c->dev, ret, "Failed to add INTB IRQ chip\n");
-@@ -404,24 +442,25 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
- 	 * has two domains so we do IRQ mapping here and provide the
- 	 * already mapped IRQ numbers to sub-devices.
- 	 */
--	for (i =3D 0; i < num_intb; i++) {
-+	for (i =3D 0; i < ddata->num_intb_irqs; i++) {
- 		struct resource *res =3D &regulator_res[i];
-=20
--		*res =3D regulator_intb_irqs[i];
-+		*res =3D ddata->intb_irqs[i];
- 		res->start =3D res->end =3D irq_create_mapping(intb_domain,
- 							    res->start);
- 	}
-=20
- 	wdg_irq_no =3D irq_create_mapping(intb_domain, BD96801_WDT_ERR_STAT);
- 	wdg_irq =3D DEFINE_RES_IRQ_NAMED(wdg_irq_no, "bd96801-wdg");
--	bd96801_cells[WDG_CELL].resources =3D &wdg_irq;
--	bd96801_cells[WDG_CELL].num_resources =3D 1;
-+
-+	ddata->cells[WDG_CELL].resources =3D &wdg_irq;
-+	ddata->cells[WDG_CELL].num_resources =3D 1;
-=20
- 	if (!num_errb)
- 		goto skip_errb;
-=20
- 	ret =3D devm_regmap_add_irq_chip(&i2c->dev, regmap, errb_irq, IRQF_ONESHO=
-T,
--				       0, &bd96801_irq_chip_errb, &errb_irq_data);
-+				       0, ddata->errb_irq_chip, &errb_irq_data);
- 	if (ret)
- 		return dev_err_probe(&i2c->dev, ret,
- 				     "Failed to add ERRB IRQ chip\n");
-@@ -429,18 +468,17 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
- 	errb_domain =3D regmap_irq_get_domain(errb_irq_data);
-=20
- 	for (i =3D 0; i < num_errb; i++) {
--		struct resource *res =3D &regulator_res[num_intb + i];
-+		struct resource *res =3D &regulator_res[ddata->num_intb_irqs + i];
-=20
--		*res =3D regulator_errb_irqs[i];
-+		*res =3D ddata->errb_irqs[i];
- 		res->start =3D res->end =3D irq_create_mapping(errb_domain, res->start);
- 	}
-=20
- skip_errb:
--	bd96801_cells[REGULATOR_CELL].resources =3D regulator_res;
--	bd96801_cells[REGULATOR_CELL].num_resources =3D num_regu_irqs;
--
--	ret =3D devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO, bd96801_cell=
-s,
--				   ARRAY_SIZE(bd96801_cells), NULL, 0, NULL);
-+	ddata->cells[REGULATOR_CELL].resources =3D regulator_res;
-+	ddata->cells[REGULATOR_CELL].num_resources =3D num_regu_irqs;
-+	ret =3D devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO, ddata->cells,
-+				   ddata->num_cells, NULL, 0, NULL);
- 	if (ret)
- 		dev_err_probe(&i2c->dev, ret, "Failed to create subdevices\n");
-=20
-@@ -448,7 +486,7 @@ static int bd96801_i2c_probe(struct i2c_client *i2c)
- }
-=20
- static const struct of_device_id bd96801_of_match[] =3D {
--	{ .compatible =3D "rohm,bd96801",	},
-+	{ .compatible =3D "rohm,bd96801", .data =3D (void *)ROHM_CHIP_TYPE_BD9680=
-1 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, bd96801_of_match);
---=20
-2.49.0
-
-
---nf8ZO/YTJbro2ttd
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmf04gAACgkQeFA3/03a
-ocUJmQgAop53pY36p1Crjf/XU52DVZkssQ+/rmTOhQHdd3cJssNVSlQtnwEKIexC
-9UBov7w0++wIiPds5yrAxFsEpD+jVn48KZpUjhCQj1/cBpwxPg2+TmJTFjxi4Q8D
-R06bJnBnA8x6eXJq3mjv2SHLre+QoyWvqGHibeAOM/rUmkHqPNBGaZopXAqLpoab
-A57KKTHGvFQjT4iw4qw+eoPei2tmd+3vw6Y3/JA97DXWNVODADQL5ZNvajiJco9Y
-2EXxHOnFuMVZLOCY3zx0jOUU2bGKf+6KqY8mxNnJhekQiEMqDy0mTHShbZyNu7ya
-Tq1TchOhusYn/AK6AWbIfRHM/BjYYg==
-=c4Gi
------END PGP SIGNATURE-----
-
---nf8ZO/YTJbro2ttd--
+>>
+>>>
+>>> I'm a bit concerned about backwards compatibility issues: if a userspace application
+>>> doesn't understand this new flag and just honors CH_RESOLUTION, then it would
+>>> never react to just a colorspace change.
+>>>
+>>> Nicolas, does gstreamer look at these flags?
+>>
+>> I checked the gstreamer code, it does check this flag:
+>>
+>> if (event.type == V4L2_EVENT_SOURCE_CHANGE &&
+>>       (event.u.src_change.changes & V4L2_EVENT_SRC_CH_RESOLUTION)) {
+>>     GST_DEBUG_OBJECT (v4l2object->dbg_obj,
+>>         "Can't streamon capture as the resolution have changed.");
+>>     ret = GST_V4L2_FLOW_RESOLUTION_CHANGE;
+>> }
+>>
+>> Currently the gstreamer can't handle the CH_COLORSPACE flag.
+>>
+>> Thanks,
+>> Ming
+>>
+>>>
+>>> Regards,
+>>>
+>>> 	Hans
+>>>
+>>>> +
+>>>>    Return Value
+>>>>    ============
+>>>>    
+>>>> diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exceptions b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+>>>> index 35d3456cc812..ac47c6d9448b 100644
+>>>> --- a/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+>>>> +++ b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+>>>> @@ -526,6 +526,7 @@ replace define V4L2_EVENT_CTRL_CH_RANGE ctrl-changes-flags
+>>>>    replace define V4L2_EVENT_CTRL_CH_DIMENSIONS ctrl-changes-flags
+>>>>    
+>>>>    replace define V4L2_EVENT_SRC_CH_RESOLUTION src-changes-flags
+>>>> +replace define V4L2_EVENT_SRC_CH_COLORSPACE src-changes-flags
+>>>>    
+>>>>    replace define V4L2_EVENT_MD_FL_HAVE_FRAME_SEQ :c:type:`v4l2_event_motion_det`
+>>>>    
+>>>> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+>>>> index c8cb2796130f..242242c8e57b 100644
+>>>> --- a/include/uapi/linux/videodev2.h
+>>>> +++ b/include/uapi/linux/videodev2.h
+>>>> @@ -2559,6 +2559,7 @@ struct v4l2_event_frame_sync {
+>>>>    };
+>>>>    
+>>>>    #define V4L2_EVENT_SRC_CH_RESOLUTION		(1 << 0)
+>>>> +#define V4L2_EVENT_SRC_CH_COLORSPACE		(1 << 1)
+>>>>    
+>>>>    struct v4l2_event_src_change {
+>>>>    	__u32 changes;
+>>>
+>>
+> 
 
