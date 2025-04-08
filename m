@@ -1,482 +1,129 @@
-Return-Path: <linux-kernel+bounces-593622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC87FA7FB84
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:19:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DDDCA7FB4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9BA33B3412
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:14:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AECD71888D6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97EBB269CF8;
-	Tue,  8 Apr 2025 10:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72163265CDF;
+	Tue,  8 Apr 2025 10:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVtGygnS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qxo76sqU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B90267B07;
-	Tue,  8 Apr 2025 10:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2461C33FE;
+	Tue,  8 Apr 2025 10:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744106997; cv=none; b=QHRPMo0tiZVWM1VDfRYJ2niDRwF6L1C6NNTMXQk5JU/qd8JWKnWHm5jXrVl0wkI+CTZfotMuJvnUkytfRm56ItIWheZBWT1Bj2uWSkJ+wGIFv5PBryI25NnIRzhoMN9ju1jg6v9kIbwm5TbJUMdX2zDGmApcCI4vfYLDcOWI6aQ=
+	t=1744106983; cv=none; b=rd+LWrBfITEL7EB3xReEWK2y5SbEeDUBdjUu8YXe6JlD9pgAshhQmGuY8MsydgW757iywP2RAjo5SJqEPVWatFR0wz1zKjEh/Ql/j3VnRHfvjr+XziFy9qXNr7BFOQpxjqjhg/1hqmJv6cFmesxrXJrk7T80YB3KB0KfQiBMahY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744106997; c=relaxed/simple;
-	bh=fECQ0wT3cwyILMq52vt+FKrJbJo2Gu0emu+5UkOVdgM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Bgm6n0IR67XbAYdw7QZx7V27Z/5FoMFhRzCR5HtkolAN89nG2D3pCs2idgsyV1E9sXQhdwNRefi1voLwKCDMo5uh+4QvH6JxksO6rqd4z4q4yRDlv6CLfcecEmYF9pEPeH5vLdpwXkW53oXOe2/yWBQK9Em+vO9vw24oe9ma46M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVtGygnS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F90CC4AF0D;
-	Tue,  8 Apr 2025 10:09:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744106997;
-	bh=fECQ0wT3cwyILMq52vt+FKrJbJo2Gu0emu+5UkOVdgM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VVtGygnSL21S0Bb+6WFI3FSyVeXdlkaF4bB6gh8jFc3yLM/+Uv4zPZD/oSgzwXl/L
-	 TSjXMfLCi+MUcIubTqXDSCLySusbS9xFeL+tgzHo883+J/PtVak5yLqpmWVPV8Fgze
-	 +mvbFuupjjadPYwNFtPoR/W381sapvryTeUQfVTQDbOl9b1lu9lH8TQInyGxU3j70J
-	 G4ovXGNaiqyPD2PvNWYARsPbJLS3W8iz+ibCYVdehk3Qvrtl7GG/1Vqqpg+LWFwomt
-	 c82a5k0ESFEvB/4mrypW7h9+SdHrTzHFL8VazOMXxeuxUAwAIOb3GYodMmEFZYiwTK
-	 6tRH5gV1EVoSg==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab@kernel.org>)
-	id 1u25tt-00000008RWk-2nBW;
-	Tue, 08 Apr 2025 18:09:49 +0800
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Sean Anderson <sean.anderson@linux.dev>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 31/33] scripts/kernel_doc.py: better handle exported symbols
-Date: Tue,  8 Apr 2025 18:09:34 +0800
-Message-ID: <6a69ba8d2b7ee6a6427abb53e60d09bd4d3565ee.1744106242.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1744106241.git.mchehab+huawei@kernel.org>
-References: <cover.1744106241.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1744106983; c=relaxed/simple;
+	bh=OPjTTa1NbLeMf1j6vRXKSfNayZckVUxDF+LbfaElLZc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q7d5k5swb8gOeKZomKTwBi0k1831DktxgFVbhMga4kyk1RfpGLGXs4Pgg+4Ns8ysMSxRQCRuGlXeo9FdqRN/Yi2/qhWVvdtQP0btAC4EfS7R9Q2v6c66jRbVlK/ijZ51pmvQjMSrqUdZuCY7oLWa6/wn3Pzb3T+rqYw349Gl9xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qxo76sqU; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744106982; x=1775642982;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OPjTTa1NbLeMf1j6vRXKSfNayZckVUxDF+LbfaElLZc=;
+  b=Qxo76sqUIXwZ0vTstjMHsS3FYkAx9zwabwi4oFXPuSU5YIP2mxqSfgWS
+   /yYTByeCEByTG0AYKXgvuE3jxKuTGPWPQuetMgfzWc4vcghUQdzcnxisZ
+   OHMgCr57V066lkqW10BJB7f5VV+HylNDCNU2C88PgPxDYRtGqb7wLvCcv
+   GZbVSuHuUAlmyzUmOKoAKyF32BwMwcwnCo6o6GFMDInmTofMytSHdqkEG
+   H+LVwh09lczblT817XrpcuMdpqlwVMnLvsLIxGtfKL0aERau/z8FYW0Pb
+   JDUWuETFgyWB/N83otr7JBYqISXzoH0E9U9nvyelPl4VEnIcIzmBWg7Lb
+   Q==;
+X-CSE-ConnectionGUID: t/ezILkaRpSDHWSiKa3yZg==
+X-CSE-MsgGUID: qt/pMY00RgWU97na69a7/g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="48238944"
+X-IronPort-AV: E=Sophos;i="6.15,197,1739865600"; 
+   d="scan'208";a="48238944"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 03:09:41 -0700
+X-CSE-ConnectionGUID: D0xD4TVhQle/OH3yX/WW/Q==
+X-CSE-MsgGUID: dxiRiwhzTheikWw2pYIJdg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,197,1739865600"; 
+   d="scan'208";a="133089441"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 03:09:39 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 8594911FB1F;
+	Tue,  8 Apr 2025 13:09:35 +0300 (EEST)
+Date: Tue, 8 Apr 2025 10:09:35 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Zijun Hu <quic_zijuhu@quicinc.com>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v3 1/1] device property: Add a note to the fwnode.h
+Message-ID: <Z_T13wt6CRyF2EGs@kekkonen.localdomain>
+References: <20250408095229.1298005-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250408095229.1298005-1-andriy.shevchenko@linux.intel.com>
 
-Change the logic which detects internal/external symbols in a way
-that we can re-use it when calling via Sphinx extension.
+On Tue, Apr 08, 2025 at 12:48:55PM +0300, Andy Shevchenko wrote:
+> Add a note to the fwnode.h that the header should not be used
+> directly in the leaf drivers, they all should use the higher
+> level APIs and the respective headers.
+> 
+> The purpose of this note is to give guidance to driver writers
+> to avoid repeating a common mistake.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-While here, remove an unused self.config var and let it clearer
-that self.config variables are read-only. This helps to allow
-handling multiple times in parallel if ever needed.
+Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- scripts/kernel-doc.py           |   2 +-
- scripts/lib/kdoc/kdoc_files.py  | 142 +++++++++++++++++---------------
- scripts/lib/kdoc/kdoc_output.py |   9 +-
- scripts/lib/kdoc/kdoc_parser.py |  52 ++++++++++--
- 4 files changed, 125 insertions(+), 80 deletions(-)
+> ---
+> 
+> v3: reworded the note, added problem statement into commit message (Rafael)
+> v2: added "...into the driver" piece at the end to remove ambiguity
+> 
+>  include/linux/fwnode.h | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/include/linux/fwnode.h b/include/linux/fwnode.h
+> index 87b183595ba1..900ecd8f45a1 100644
+> --- a/include/linux/fwnode.h
+> +++ b/include/linux/fwnode.h
+> @@ -2,6 +2,11 @@
+>  /*
+>   * fwnode.h - Firmware device node object handle type definition.
+>   *
+> + * This header file provides low-level data types and definitions for firmware
+> + * and device property providers. The respective API header files supplied by
+> + * them should contain all of the requisite data types and definitions for end
+> + * users, so including it directly should not be necessary.
+> + *
+>   * Copyright (C) 2015, Intel Corporation
+>   * Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>   */
 
-diff --git a/scripts/kernel-doc.py b/scripts/kernel-doc.py
-index 2f2fad813024..12ae66f40bd7 100755
---- a/scripts/kernel-doc.py
-+++ b/scripts/kernel-doc.py
-@@ -287,7 +287,7 @@ def main():
- 
-     for t in kfiles.msg(enable_lineno=args.enable_lineno, export=args.export,
-                         internal=args.internal, symbol=args.symbol,
--                        nosymbol=args.nosymbol,
-+                        nosymbol=args.nosymbol, export_file=args.export_file,
-                         no_doc_sections=args.no_doc_sections):
-         msg = t[1]
-         if msg:
-diff --git a/scripts/lib/kdoc/kdoc_files.py b/scripts/lib/kdoc/kdoc_files.py
-index 527ab9117268..dd003feefd1b 100644
---- a/scripts/lib/kdoc/kdoc_files.py
-+++ b/scripts/lib/kdoc/kdoc_files.py
-@@ -68,6 +68,9 @@ class GlobSourceFiles:
-         handling directories if any
-         """
- 
-+        if not file_list:
-+            return
-+
-         for fname in file_list:
-             if self.srctree:
-                 f = os.path.join(self.srctree, fname)
-@@ -84,40 +87,70 @@ class GlobSourceFiles:
- 
- class KernelFiles():
-     """
--    Parse lernel-doc tags on multiple kernel source files.
-+    Parse kernel-doc tags on multiple kernel source files.
-+
-+    There are two type of parsers defined here:
-+        - self.parse_file(): parses both kernel-doc markups and
-+          EXPORT_SYMBOL* macros;
-+        - self.process_export_file(): parses only EXPORT_SYMBOL* macros.
-     """
- 
-+    def warning(self, msg):
-+        """Ancillary routine to output a warning and increment error count"""
-+
-+        self.config.log.warning(msg)
-+        self.errors += 1
-+
-+    def error(self, msg):
-+        """Ancillary routine to output an error and increment error count"""
-+
-+        self.config.log.error(msg)
-+        self.errors += 1
-+
-     def parse_file(self, fname):
-         """
-         Parse a single Kernel source.
-         """
- 
-+        # Prevent parsing the same file twice if results are cached
-+        if fname in self.files:
-+            return
-+
-         doc = KernelDoc(self.config, fname)
--        doc.run()
-+        export_table, entries = doc.parse_kdoc()
- 
--        return doc.entries
-+        self.export_table[fname] = export_table
-+
-+        self.files.add(fname)
-+        self.export_files.add(fname)      # parse_kdoc() already check exports
-+
-+        self.results[fname] = entries
- 
-     def process_export_file(self, fname):
-         """
-         Parses EXPORT_SYMBOL* macros from a single Kernel source file.
-         """
--        try:
--            with open(fname, "r", encoding="utf8",
--                      errors="backslashreplace") as fp:
--                for line in fp:
--                    KernelDoc.process_export(self.config.function_table, line)
--
--        except IOError:
--            self.config.log.error("Error: Cannot open fname %s", fname)
--            self.config.errors += 1
-+
-+        # Prevent parsing the same file twice if results are cached
-+        if fname in self.export_files:
-+            return
-+
-+        doc = KernelDoc(self.config, fname)
-+        export_table = doc.parse_export()
-+
-+        if not export_table:
-+            self.error(f"Error: Cannot check EXPORT_SYMBOL* on {fname}")
-+            export_table = set()
-+
-+        self.export_table[fname] = export_table
-+        self.export_files.add(fname)
- 
-     def file_not_found_cb(self, fname):
-         """
-         Callback to warn if a file was not found.
-         """
- 
--        self.config.log.error("Cannot find file %s", fname)
--        self.config.errors += 1
-+        self.error(f"Cannot find file {fname}")
- 
-     def __init__(self, verbose=False, out_style=None,
-                  werror=False, wreturn=False, wshort_desc=False,
-@@ -147,7 +180,9 @@ class KernelFiles():
-             if kdoc_werror:
-                 werror = kdoc_werror
- 
--        # Set global config data used on all files
-+        # Some variables are global to the parser logic as a whole as they are
-+        # used to send control configuration to KernelDoc class. As such,
-+        # those variables are read-only inside the KernelDoc.
-         self.config = argparse.Namespace
- 
-         self.config.verbose = verbose
-@@ -156,27 +191,25 @@ class KernelFiles():
-         self.config.wshort_desc = wshort_desc
-         self.config.wcontents_before_sections = wcontents_before_sections
- 
--        self.config.function_table = set()
--        self.config.source_map = {}
--
-         if not logger:
-             self.config.log = logging.getLogger("kernel-doc")
-         else:
-             self.config.log = logger
- 
--        self.config.kernel_version = os.environ.get("KERNELVERSION",
--                                                    "unknown kernel version'")
-+        self.config.warning = self.warning
-+
-         self.config.src_tree = os.environ.get("SRCTREE", None)
- 
-+        # Initialize variables that are internal to KernelFiles
-+
-         self.out_style = out_style
- 
--        # Initialize internal variables
--
--        self.config.errors = 0
-+        self.errors = 0
-         self.results = {}
- 
-         self.files = set()
-         self.export_files = set()
-+        self.export_table = {}
- 
-     def parse(self, file_list, export_file=None):
-         """
-@@ -185,28 +218,11 @@ class KernelFiles():
- 
-         glob = GlobSourceFiles(srctree=self.config.src_tree)
- 
--        # Prevent parsing the same file twice to speedup parsing and
--        # avoid reporting errors multiple times
--
-         for fname in glob.parse_files(file_list, self.file_not_found_cb):
--            if fname not in self.files:
--                self.results[fname] = self.parse_file(fname)
--                self.files.add(fname)
--
--        # If a list of export files was provided, parse EXPORT_SYMBOL*
--        # from files that weren't fully parsed
--
--        if not export_file:
--            return
--
--        self.export_files |= self.files
--
--        glob = GlobSourceFiles(srctree=self.config.src_tree)
-+            self.parse_file(fname)
- 
-         for fname in glob.parse_files(export_file, self.file_not_found_cb):
--            if fname not in self.export_files:
--                self.process_export_file(fname)
--                self.export_files.add(fname)
-+            self.process_export_file(fname)
- 
-     def out_msg(self, fname, name, arg):
-         """
-@@ -223,32 +239,35 @@ class KernelFiles():
- 
-     def msg(self, enable_lineno=False, export=False, internal=False,
-             symbol=None, nosymbol=None, no_doc_sections=False,
--            filenames=None):
-+            filenames=None, export_file=None):
-         """
-         Interacts over the kernel-doc results and output messages,
-         returning kernel-doc markups on each interaction
-         """
- 
--        function_table = self.config.function_table
--
--        if symbol:
--            for s in symbol:
--                function_table.add(s)
--
--        # Output none mode: only warnings will be shown
--        if not self.out_style:
--            return
--
-         self.out_style.set_config(self.config)
- 
--        self.out_style.set_filter(export, internal, symbol, nosymbol,
--                                  function_table, enable_lineno,
--                                  no_doc_sections)
--
-         if not filenames:
-             filenames = sorted(self.results.keys())
- 
-         for fname in filenames:
-+            function_table = set()
-+
-+            if internal or export:
-+                if not export_file:
-+                    export_file = [fname]
-+
-+                for f in export_file:
-+                    function_table |= self.export_table[f]
-+
-+            if symbol:
-+                for s in symbol:
-+                    function_table.add(s)
-+
-+            self.out_style.set_filter(export, internal, symbol, nosymbol,
-+                                      function_table, enable_lineno,
-+                                      no_doc_sections)
-+
-             msg = ""
-             for name, arg in self.results[fname]:
-                 msg += self.out_msg(fname, name, arg)
-@@ -261,12 +280,3 @@ class KernelFiles():
-                                             fname, ln, dtype)
-             if msg:
-                 yield fname, msg
--
--    @property
--    def errors(self):
--        """
--        Return a count of the number of warnings found, including
--        the ones displayed while interacting over self.msg.
--        """
--
--        return self.config.errors
-diff --git a/scripts/lib/kdoc/kdoc_output.py b/scripts/lib/kdoc/kdoc_output.py
-index e9b4d0093084..c352b7f8d3fd 100755
---- a/scripts/lib/kdoc/kdoc_output.py
-+++ b/scripts/lib/kdoc/kdoc_output.py
-@@ -69,7 +69,7 @@ class OutputFormat:
-         self.enable_lineno = None
-         self.nosymbol = {}
-         self.symbol = None
--        self.function_table = set()
-+        self.function_table = None
-         self.config = None
-         self.no_doc_sections = False
- 
-@@ -94,10 +94,10 @@ class OutputFormat:
- 
-         self.enable_lineno = enable_lineno
-         self.no_doc_sections = no_doc_sections
-+        self.function_table = function_table
- 
-         if symbol:
-             self.out_mode = self.OUTPUT_INCLUDE
--            function_table = symbol
-         elif export:
-             self.out_mode = self.OUTPUT_EXPORTED
-         elif internal:
-@@ -108,8 +108,6 @@ class OutputFormat:
-         if nosymbol:
-             self.nosymbol = set(nosymbol)
- 
--        if function_table:
--            self.function_table = function_table
- 
-     def highlight_block(self, block):
-         """
-@@ -129,8 +127,7 @@ class OutputFormat:
-         warnings = args.get('warnings', [])
- 
-         for log_msg in warnings:
--            self.config.log.warning(log_msg)
--            self.config.errors += 1
-+            self.config.warning(log_msg)
- 
-     def check_doc(self, name, args):
-         """Check if DOC should be output"""
-diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-index 43e6ffbdcc2c..33f00c77dd5f 100755
---- a/scripts/lib/kdoc/kdoc_parser.py
-+++ b/scripts/lib/kdoc/kdoc_parser.py
-@@ -1133,21 +1133,25 @@ class KernelDoc:
-         self.emit_warning(ln, "error: Cannot parse typedef!")
- 
-     @staticmethod
--    def process_export(function_table, line):
-+    def process_export(function_set, line):
-         """
-         process EXPORT_SYMBOL* tags
- 
--        This method is called both internally and externally, so, it
--        doesn't use self.
-+        This method doesn't use any variable from the class, so declare it
-+        with a staticmethod decorator.
-         """
- 
-+        # Note: it accepts only one EXPORT_SYMBOL* per line, as having
-+        # multiple export lines would violate Kernel coding style.
-+
-         if export_symbol.search(line):
-             symbol = export_symbol.group(2)
--            function_table.add(symbol)
-+            function_set.add(symbol)
-+            return
- 
-         if export_symbol_ns.search(line):
-             symbol = export_symbol_ns.group(2)
--            function_table.add(symbol)
-+            function_set.add(symbol)
- 
-     def process_normal(self, ln, line):
-         """
-@@ -1617,17 +1621,39 @@ class KernelDoc:
-         elif doc_content.search(line):
-             self.entry.contents += doc_content.group(1) + "\n"
- 
--    def run(self):
-+    def parse_export(self):
-+        """
-+        Parses EXPORT_SYMBOL* macros from a single Kernel source file.
-+        """
-+
-+        export_table = set()
-+
-+        try:
-+            with open(self.fname, "r", encoding="utf8",
-+                      errors="backslashreplace") as fp:
-+
-+                for line in fp:
-+                    self.process_export(export_table, line)
-+
-+        except IOError:
-+            return None
-+
-+        return export_table
-+
-+    def parse_kdoc(self):
-         """
-         Open and process each line of a C source file.
--        he parsing is controlled via a state machine, and the line is passed
-+        The parsing is controlled via a state machine, and the line is passed
-         to a different process function depending on the state. The process
-         function may update the state as needed.
-+
-+        Besides parsing kernel-doc tags, it also parses export symbols.
-         """
- 
-         cont = False
-         prev = ""
-         prev_ln = None
-+        export_table = set()
- 
-         try:
-             with open(self.fname, "r", encoding="utf8",
-@@ -1659,6 +1685,16 @@ class KernelDoc:
-                                           self.st_inline_name[self.inline_doc_state],
-                                           line)
- 
-+                    # This is an optimization over the original script.
-+                    # There, when export_file was used for the same file,
-+                    # it was read twice. Here, we use the already-existing
-+                    # loop to parse exported symbols as well.
-+                    #
-+                    # TODO: It should be noticed that not all states are
-+                    # needed here. On a future cleanup, process export only
-+                    # at the states that aren't handling comment markups.
-+                    self.process_export(export_table, line)
-+
-                     # Hand this line to the appropriate state handler
-                     if self.state == self.STATE_NORMAL:
-                         self.process_normal(ln, line)
-@@ -1675,3 +1711,5 @@ class KernelDoc:
-                         self.process_docblock(ln, line)
-         except OSError:
-             self.config.log.error(f"Error: Cannot open file {self.fname}")
-+
-+        return export_table, self.entries
 -- 
-2.49.0
+Regards,
 
+Sakari Ailus
 
