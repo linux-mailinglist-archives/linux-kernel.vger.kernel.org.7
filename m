@@ -1,209 +1,224 @@
-Return-Path: <linux-kernel+bounces-593271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7FE9A7F764
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:12:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44A99A7F779
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D7147A8DA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:11:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18C0A7A5190
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F4D2641E0;
-	Tue,  8 Apr 2025 08:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06682263C84;
+	Tue,  8 Apr 2025 08:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bchkyKa1";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4Q2D+QLy"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="Hq6EdUkJ"
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012054.outbound.protection.outlook.com [40.107.200.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC71263C84;
-	Tue,  8 Apr 2025 08:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744099945; cv=none; b=eoZWbU2r6fIxrXbjgieTU5xtSUJmA+8DU6RRMhVD+yleckBIOU13/FYhvFceifaT9jI+FEceH0vU+JAea7FSfTbz+wJxhTwcpD0KkSDQuFh5k3P8xOw1IUN8pKHYnqZ+Qe5KjN9YNrlCE8OGTl+Ydn2VhFqpjEj9LNRyWWW2RQY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744099945; c=relaxed/simple;
-	bh=h8aI2Y8fUwwLxz/2w3b4MvsL/5tJSv+J0mdS6aJ0dyE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=evlAhpdbs/Poxxmm5xMthFymAN4LAP1Q7ivu1XmntSotHW9w6tOzsJN7fTgd3BqNChDZIr6pP1fEVZzEcxweKMAWkSpIuXuGD4URUEDj8iORW0uHeUGNKMQKffktlsr34H2NUaACrZVc7/9nfTrKz+u8StV8LRXoMAM8yCgaUzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bchkyKa1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4Q2D+QLy; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 08 Apr 2025 08:12:20 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744099940;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=68V8Cb5oCNWnawDb5Rws6adwhdRm3py7A4RhAeujZRg=;
-	b=bchkyKa1iHWnFT/dnPRaCebHuB1VL+lfqTg4jpTJOgftxngRd8oC/4XbN5gHcdo6mjbqFC
-	aVZkNA5elGbioUMWrX5/mtFTorq/tT24H7jnXstkJliXYG/ZtR8u2RT86X4bqi7LQFyFIR
-	3p4twrA+DNXDa6cT/L8X5RUmritvKs62LMyURaRo4jDJrj2559lrCtzzrQ/DjFaleSfQsj
-	0ikhi4/PoFR24m/vIUoQd2JKp4y9ticTCMFCZdWB5FqSKh5qXMs8QbWMDhs+EAhvRxK9Z5
-	o6z1UiJ9bwYQQl1jENPwBS9+xNWnEUPkKXJsiWgaGH1i1jxsI/irNULxk8Akaw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744099940;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=68V8Cb5oCNWnawDb5Rws6adwhdRm3py7A4RhAeujZRg=;
-	b=4Q2D+QLyz08TUyFerC21W/cfnySB/tOMvKuBVD9x0BPfZV7sUlhRnUIJAQBBt9kXPxzqpM
-	HyOsG4N0iStevtDQ==
-From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/urgent] objtool: Split INSN_CONTEXT_SWITCH into
- INSN_SYSCALL and INSN_SYSRET
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To:
- <19a76c74d2c051d3bc9a775823cafc65ad267a7a.1744095216.git.jpoimboe@kernel.org>
-References:
- <19a76c74d2c051d3bc9a775823cafc65ad267a7a.1744095216.git.jpoimboe@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAE817F4EC;
+	Tue,  8 Apr 2025 08:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744100150; cv=fail; b=sRhax9JR8qxuyB9dZJBArUfGYOvwAnnT7snR1NhCxas7Kb/5N+LIACeWNQIc5k9iywE6veneHibbNrVHd/g4Nz3rYRWUJa72stFS8qFHvMMT0f+jZPNt23cW/pgPYi8j7y2FSs73RZYw7H2fGnoZnWa3rFIONqcYIa2hoQvHndQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744100150; c=relaxed/simple;
+	bh=x7F3U/tDfL/pJ03Vc59F5udBeeLh4oIjKbsnyLiWXkY=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=jTz/pvRkwZTCLn/GZSKbufxiXFTyVOmQTVLA8dICRzvo0lcDDFoBpgXyUm2K5J1f8L/3XmLcLvpcGvk3GqQ9PjeokUb7tbhCtQAophP4db8LDggHHcvTWooBwpB5kWgcViD4Km43NIWvV+guSBqa3eiLDzKmWQv35WBJQjzRxjM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=Hq6EdUkJ; arc=fail smtp.client-ip=40.107.200.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZgfBKTR2OLdLmldEVVwqtHhrcFy4lhfcOCZWmBk8OT07hNXO8wTRiorFk8ItVaCCkA1oAiK4V8yb+KLRUZjJSUQg6HiR5ecJrXQw+0e3Aj+5iMAqI+CkMSedXbHMCqG09r7Cu70vWubsOlBbvB+hBzMKQ2xGNu6JAeU4z//KrYPzo/5cyjXKXg36ZEWJJwBRxx7rIF4qYlwRJPWp91nJ06xBtxexWWmU2pCm8xOrh24yCmKk167iFbWlUhSi9oru9pA+hC57fl3bPsuB60g78M+nSQ3kpn0KXKQh354il3Sk39gHnkDKEIgB8hbQcj3sHkEXA51hxBXiOdIvhH7/cQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=E92S1WHW4r6OdR+i4/cG2c76Z6KERhbm5lHrsIG6NoU=;
+ b=NAcE1BNt3UztFvXTmai8gRvYF7rTpfCLEKtcsz4oY8kMgvz4wddi4Ttc+DwkvQ/z3GfPaxcXFdeHnx0AoFq+82ikhWqm93JlwVfbCfdXUK0dS5Irdjg1T0X9G1lNTp27VsuZsJojHHW0VzICn6JB0NmgkaTsUXXyWaJmIUO9QO3j4IGEOfhwpKYm9qFmrN16JgPgZzYJQ8xjfaJNCTABc7zelR2TN9uSXNNMPnWmKU6ftdWa4/Nf//TqSVpsOVJU68L+dpzSAK9StmNSaJ8xL8uik+qizyZqdTFp9Rjj4QGKxsYVJ5kK0pwKtWovNPM33hJQaCWrpcFxUX3AScBofQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E92S1WHW4r6OdR+i4/cG2c76Z6KERhbm5lHrsIG6NoU=;
+ b=Hq6EdUkJzFiAHIInATGRoP5uXA82zgzrnJZ4xkJlXVyiGHyU6EMoDTsN//+FwozW+dhoFc3HoNsMOgffkjE4ou9YgOhY63S5sNAktWpI0VkBQrb3tM/alrI+tTSLlqHWld8Lnleb6QIdQbD1hDz9nKmXFU3TF6UMUtBbYjMAify1nuCwi4JXCxU5pcmn8v751mHaeBOLbDmwnYg54Y0rRXktPhPFMQCmgHsLLpC8yQ3fgPE0H5H/6GecnAlb1OPHlX9QfxLKVIHTUrwQ3x36xscA3CnAOG9kytnbaYP+LF7Tr3SSrJVBrsyW8cft8XJpTrhCIoNEAdoiSDjG0dea1w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from BN8PR03MB5073.namprd03.prod.outlook.com (2603:10b6:408:dc::21)
+ by CO1PR03MB5666.namprd03.prod.outlook.com (2603:10b6:303:9c::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.29; Tue, 8 Apr
+ 2025 08:15:42 +0000
+Received: from BN8PR03MB5073.namprd03.prod.outlook.com
+ ([fe80::7483:7886:9e3d:f62a]) by BN8PR03MB5073.namprd03.prod.outlook.com
+ ([fe80::7483:7886:9e3d:f62a%3]) with mapi id 15.20.8606.033; Tue, 8 Apr 2025
+ 08:15:42 +0000
+From: Boon Khai Ng <boon.khai.ng@altera.com>
+To: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Matthew Gerlach <matthew.gerlach@altera.com>,
+	Tien Sung Ang <tien.sung.ang@altera.com>,
+	Mun Yew Tham <mun.yew.tham@altera.com>,
+	G Thomas Rohan <rohan.g.thomas@altera.com>,
+	Boon Khai Ng <boon.khai.ng@altera.com>
+Subject: [PATCH net-next v3 0/2] Refactoring designware VLAN code. 
+Date: Tue,  8 Apr 2025 16:13:52 +0800
+Message-Id: <20250408081354.25881-1-boon.khai.ng@altera.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR07CA0089.namprd07.prod.outlook.com
+ (2603:10b6:a03:12b::30) To BN8PR03MB5073.namprd03.prod.outlook.com
+ (2603:10b6:408:dc::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174409994003.31282.6822281238641305385.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8PR03MB5073:EE_|CO1PR03MB5666:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1d046386-abe8-4889-c3eb-08dd76758de7
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?fvevObgTgs9PEl2IcMo8LJmtEQhsgsjmCzmpcT/WrHSwWSZMcRsxnsrm5q7T?=
+ =?us-ascii?Q?ff1JCC4tnZCR0xCZWjUIbGOOHJ8lcMCcGjOgzk/RKoLHKnf21n3Suytgnq/F?=
+ =?us-ascii?Q?E9TQQNU2gPfu1enn+yC7cz//hkwQS0Guemcl2Z1lwNQVTiM7YNL1NrXoKjBZ?=
+ =?us-ascii?Q?44SzUrfxdv5Vid122wddztF9JeHcbqmUEt/cIyjutqsNsrPk2rNnkB/jhSzp?=
+ =?us-ascii?Q?rFGQ9W9STz3E/vituBhMxe38PHpFBq/Ud518AMWJpsE+UxAeNCG63IcP+yRx?=
+ =?us-ascii?Q?Og2XbbV00QOWuDPuPqUFCDoZy39hFc/opDqj3FGvV6Bu3gXo6PF/wCAlHqqj?=
+ =?us-ascii?Q?0SNyX9DFcxNK7HBq5yu4SeIxjPvWGcTq7i2hktcvF/mgf3WooBEQ6UYdk2Rn?=
+ =?us-ascii?Q?6rgqltYtNhYFHFmsGApS/yyu1Q0T4R0QTblLfB/qF1q2AAGwTsDJiaYXjefj?=
+ =?us-ascii?Q?IM90SD4I0WRQtz5rCjf4iyJkk48sCg/+LcPIZELYm046uRAkg0ezaz9SR1Fv?=
+ =?us-ascii?Q?OjgJxM9bVUcdyM1vkeFEdpDBjWtxV9VbhDXswDZoRlT/Qnd0wK0G1NFQGpKv?=
+ =?us-ascii?Q?VPf4OUjSZNpGECjcNVTdgw9333uGNR4DHRvBJun7asX5KcmTNVLlKBy/vmNs?=
+ =?us-ascii?Q?WFrVirJRr9lIDHR58lpYfjn1jrv8bRb+9OQcCaKm3grqXnKE5F8HedbFecIt?=
+ =?us-ascii?Q?mcOBF3KYUtP2hs7TYokCzUn0hvj3PLBzE9fYvdM8/XvDztqDp7QZhY4goaOr?=
+ =?us-ascii?Q?BWk1UmPp7l3T62MkFSgl7fhR/17Mt+im2a8tWy2kOBN4tUIVueTQkjUdx3at?=
+ =?us-ascii?Q?6Qa54N4JEn9Z5EYoCtiiwImXzJ6+4mZ8Y7cet2bsAj3er4SEle9S9mCiOxtY?=
+ =?us-ascii?Q?JXSt+2OK67IjGHDHrgE7KDRm64dnzsw2hnacAKCRsCi1mCLCM5pK9tNRKBDl?=
+ =?us-ascii?Q?1jCfCWXiXne7GAZhd7s9FnOAHGtZVj1VIEyxCsYIg0uyMHzTyifEM5lQC9YT?=
+ =?us-ascii?Q?CfSMcixgKjkzPgTGovWkA3IIr3LbmAMUjx1KyATwRZwzEool7Wi2WeFKYwVY?=
+ =?us-ascii?Q?Em1gDFMrHpYeRK/fAwLR8cl4eZy7/84V+SJEKxeArOLkXwhj1AX0LKXR+Q6Q?=
+ =?us-ascii?Q?Ou8kiFx1NeBa0IF0y+XW2mTjnxN8ewyQ0Wp4enLXecw9J1wrWBC6f9IPEh+Y?=
+ =?us-ascii?Q?08QPXtMPjRDLaQpISV0t3CbbeFVb+BXVtayAfWbghc4oohjTTL4xTguqa5sm?=
+ =?us-ascii?Q?kVWJsrZzYJ5qi37CJ49KmBwznUpIRC4PmTuzydH151grhlHQqpTl63sWxq8j?=
+ =?us-ascii?Q?8G6fmnr6tnvDjNn/E0Fje0xQdQBv36yfp0H4Eg9xk0kH2g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR03MB5073.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?fQBuoqeO9HS6KJtMeyx3FbFrBskjo7t5pQYM2GUJcrHs0K71E3KxZnWUBJ/k?=
+ =?us-ascii?Q?LsrEQfNic0TYMXx+T6Tz5lMof/kUYPQsD7N5oeLql7O7pba/1hbAXCXqajQm?=
+ =?us-ascii?Q?xCPMLRyB0fxv1UxdzdOY1z++fjJhcMmmV2bE/dw9RMxNPyw0Og35hxax+lye?=
+ =?us-ascii?Q?tRvRwZIlGMR2dWYa4j7epwB7mDOV7lGz/hrndJeUA8fVbVziVHzW5hUsbFf7?=
+ =?us-ascii?Q?lC0IS5LK3Ey0BJhDUDte+9kskeiGy0RhSMMkHREC5ZP1odfUh74LfFq0YtI2?=
+ =?us-ascii?Q?X8FsD9XnQfnqaFlEgB8zHPYLMtnSKjEI4N8WOEiXvxd35OgKYrvUPHopU4sr?=
+ =?us-ascii?Q?oDMjQhlVIVQKyR1P2gmE4OLORRvyt/NXCWOveOgqQ5Q+cgOgXGp+SAF1PSn1?=
+ =?us-ascii?Q?DjkBBW2jvRZncDvJzBRvsBqv0GLsz4GB63h1fLZpZZ9j2FWEAGIuD+fiRsDb?=
+ =?us-ascii?Q?iK6tSq0y7gxfSWCGNDJHjb9UL9asdYQgJIUPrBzMiQKEaESmYI0LXMeRk65q?=
+ =?us-ascii?Q?qm6SQJi0AlNpjeMxL4otv9oTHMG9MAH89wR22E4cmgxH0a6kfiHYnmtoNTrJ?=
+ =?us-ascii?Q?CJ17l6LerIh/yNAA5LkFiqW55cGNLjt2HtBWM7ZA5WkpjRx5jm5aRu6iqpY2?=
+ =?us-ascii?Q?UYh+brPjsXYbTwUrhw1raZqMutJE5c+LcaWka5bjHigJ+NOrb0TD1c8hNl15?=
+ =?us-ascii?Q?Gu2Y08QmBfw7ZAapbqGABru2S7jy9oqZVrc5Xfa7Thq1GFViduB3qF7QRJ3v?=
+ =?us-ascii?Q?k/StI4K0SnKNCwjSX+cqRUKItQRPe7CilUlxmJ2Hd4P4uSb4WBRDkh98gfJE?=
+ =?us-ascii?Q?SS+OJ8PD4C56I9G8LJidgnIKHXDB+7+fbxBem2vxaZPqcOLFTAPngRTsQor2?=
+ =?us-ascii?Q?i718F6JOWNq7n5Xl0+U6xzFxmxZFHvUYUJqY83MsInvOfdtPDHbMFDuvdPum?=
+ =?us-ascii?Q?2pmIRQf4CqMD25LFmkF7pE0HxoWawBLehIkkQUz8DoIbJKDP1gkV5xcp/xUe?=
+ =?us-ascii?Q?6ciLODITtG73XPd4nQ5QuGRfz73zxRT8kPTJIKJqDsTkWeSQz+ZcGxrhGD+H?=
+ =?us-ascii?Q?Y5zFTGNgeXc2do0ozNZGKds4k6dCHQLfEf1m0TGJG2/vkIUwkhl26ecaVVS/?=
+ =?us-ascii?Q?HGkRzAnY2MLkvoDxOzKd32N5firp/XLGmwTzTKEAenzXx9BdnR3B+BkIQktZ?=
+ =?us-ascii?Q?DZ3SVeBRvJXc2mPYETwoWLN6CNRxWfZpDhg64qgHy33uPwd5bxZPkFifWEYw?=
+ =?us-ascii?Q?KO+RGKr12xeRZyx6gyOUq8HFqOMCprSiHbWeZLNrVznV1IJ/S3HSWSckH8/U?=
+ =?us-ascii?Q?yGtpXJ5RR8AyvRcmkk7twe4+y2JZEBedhrov0sgWmmY9RYY9QPC4gTnP3tce?=
+ =?us-ascii?Q?5JeWWzwIJ0bCkvuAWV9F+BI8mbo9rP7vilCjxdZkJ6IM4LJnstqrI1qVJ23t?=
+ =?us-ascii?Q?cdYknAQhyUgZaZCiZryMGwc0SZBWedggsjRAbaCYCzLgCDHGuTwjLl3RZHkl?=
+ =?us-ascii?Q?ceJRHn7nWnuZDNih2CK6mPT4rjixTb2vEzIE8tB84y0mgucYNcAVmelMFYnv?=
+ =?us-ascii?Q?A9v2eR/ZOl+tsz4ZJWWvJ+dGf9wJIXZINpDkk2hqYA1toN6WfK9NUStzghue?=
+ =?us-ascii?Q?tg=3D=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d046386-abe8-4889-c3eb-08dd76758de7
+X-MS-Exchange-CrossTenant-AuthSource: BN8PR03MB5073.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2025 08:15:42.4664
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Zpb17DGc74kzrsG452BMriDy9+vcktx69RT3ftj1nLm+/m2WOALzwlQGjAup1gE5DPXJWMMi3k2VPIc5Xz8w9Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR03MB5666
 
-The following commit has been merged into the objtool/urgent branch of tip:
+Refactoring designware VLAN code and introducing support for
+hardware-accelerated VLAN stripping for dwxgmac2 IP,
+the current patch set consists of two key changes:
 
-Commit-ID:     fe1042b1ef79e4d5df33d5c0f0ce936493714eec
-Gitweb:        https://git.kernel.org/tip/fe1042b1ef79e4d5df33d5c0f0ce936493714eec
-Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Tue, 08 Apr 2025 00:02:14 -07:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 08 Apr 2025 09:14:11 +02:00
+1) Refactoring VLAN Functions:
+The first change involves moving common VLAN-related functions
+of the DesignWare Ethernet MAC into a dedicated file, stmmac_vlan.c.
+This refactoring aims to improve code organization and maintainability
+by centralizing VLAN handling logic.
 
-objtool: Split INSN_CONTEXT_SWITCH into INSN_SYSCALL and INSN_SYSRET
+2) Enabling VLAN for 10G Ethernet MAC IP:
+The second change enables VLAN support specifically
+for the 10G Ethernet MAC IP. This enhancement leverages
+the hardware capabilities of the to perform VLAN stripping,
 
-INSN_CONTEXT_SWITCH is ambiguous.  It can represent both call semantics
-(SYSCALL, SYSENTER) and return semantics (SYSRET, IRET, RETS, RETU).
-Those differ significantly: calls preserve control flow whereas returns
-terminate it.
+Changes from previous submmited patches.
+v2:
+The hardware VLAN enablement switch was detached from the
+device tree source (DTS). Instead, the hardware VLAN enablement
+is now dynamically determined in stmmac_main.c based on the
+currently running IP.
+Link: https://lore.kernel.org/lkml/BL3PR11MB5748AC693D9D61FB56DB7313C1F32
+@BL3PR11MB5748.namprd11.prod.outlook.com/
 
-Objtool uses an arbitrary rule for INSN_CONTEXT_SWITCH that almost works
-by accident: if in a function, keep going; otherwise stop.  It should
-instead be based on the semantics of the underlying instruction.
+v1:
+The initial submission introduced hardware VLAN support for the
+10G Ethernet MAC IP.
+Link: https://lore.kernel.org/netdev/DM8PR11MB5751E5388AEFCFB80BCB483FC13FA
+@DM8PR11MB5751.namprd11.prod.outlook.com/
 
-In preparation for improving that, split INSN_CONTEXT_SWITCH into
-INSN_SYCALL and INSN_SYSRET.
+Boon Khai Ng (2):
+  net: stmmac: Refactor VLAN implementation
+  net: stmmac: dwxgmac2: Add support for HW-accelerated VLAN stripping
 
-No functional change.
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   2 +-
+ drivers/net/ethernet/stmicro/stmmac/common.h  |   1 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4.h  |  40 ---
+ .../net/ethernet/stmicro/stmmac/dwmac4_core.c | 295 +-----------------
+ .../net/ethernet/stmicro/stmmac/dwxgmac2.h    |  25 +-
+ .../ethernet/stmicro/stmmac/dwxgmac2_core.c   |  89 +-----
+ .../ethernet/stmicro/stmmac/dwxgmac2_descs.c  |  18 ++
+ drivers/net/ethernet/stmicro/stmmac/hwif.c    |   8 +
+ drivers/net/ethernet/stmicro/stmmac/hwif.h    |  61 ++--
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c |   2 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_vlan.c | 294 +++++++++++++++++
+ .../net/ethernet/stmicro/stmmac/stmmac_vlan.h |  63 ++++
+ 12 files changed, 434 insertions(+), 464 deletions(-)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/stmmac_vlan.c
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/stmmac_vlan.h
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/19a76c74d2c051d3bc9a775823cafc65ad267a7a.1744095216.git.jpoimboe@kernel.org
----
- tools/objtool/arch/x86/decode.c      | 18 +++++++++++-------
- tools/objtool/check.c                |  6 ++++--
- tools/objtool/include/objtool/arch.h |  3 ++-
- 3 files changed, 17 insertions(+), 10 deletions(-)
+-- 
+2.25.1
 
-diff --git a/tools/objtool/arch/x86/decode.c b/tools/objtool/arch/x86/decode.c
-index 33d861c..3ce7b54 100644
---- a/tools/objtool/arch/x86/decode.c
-+++ b/tools/objtool/arch/x86/decode.c
-@@ -522,7 +522,7 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
- 			case INAT_PFX_REPNE:
- 				if (modrm == 0xca)
- 					/* eretu/erets */
--					insn->type = INSN_CONTEXT_SWITCH;
-+					insn->type = INSN_SYSRET;
- 				break;
- 			default:
- 				if (modrm == 0xca)
-@@ -535,11 +535,15 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
- 
- 			insn->type = INSN_JUMP_CONDITIONAL;
- 
--		} else if (op2 == 0x05 || op2 == 0x07 || op2 == 0x34 ||
--			   op2 == 0x35) {
-+		} else if (op2 == 0x05 || op2 == 0x34) {
- 
--			/* sysenter, sysret */
--			insn->type = INSN_CONTEXT_SWITCH;
-+			/* syscall, sysenter */
-+			insn->type = INSN_SYSCALL;
-+
-+		} else if (op2 == 0x07 || op2 == 0x35) {
-+
-+			/* sysret, sysexit */
-+			insn->type = INSN_SYSRET;
- 
- 		} else if (op2 == 0x0b || op2 == 0xb9) {
- 
-@@ -676,7 +680,7 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
- 
- 	case 0xca: /* retf */
- 	case 0xcb: /* retf */
--		insn->type = INSN_CONTEXT_SWITCH;
-+		insn->type = INSN_SYSRET;
- 		break;
- 
- 	case 0xe0: /* loopne */
-@@ -721,7 +725,7 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
- 		} else if (modrm_reg == 5) {
- 
- 			/* jmpf */
--			insn->type = INSN_CONTEXT_SWITCH;
-+			insn->type = INSN_SYSRET;
- 
- 		} else if (modrm_reg == 6) {
- 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index c81b070..2c703b9 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -3684,7 +3684,8 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
- 
- 			break;
- 
--		case INSN_CONTEXT_SWITCH:
-+		case INSN_SYSCALL:
-+		case INSN_SYSRET:
- 			if (func) {
- 				if (!next_insn || !next_insn->hint) {
- 					WARN_INSN(insn, "unsupported instruction in callable function");
-@@ -3886,7 +3887,8 @@ static int validate_unret(struct objtool_file *file, struct instruction *insn)
- 			WARN_INSN(insn, "RET before UNTRAIN");
- 			return 1;
- 
--		case INSN_CONTEXT_SWITCH:
-+		case INSN_SYSCALL:
-+		case INSN_SYSRET:
- 			if (insn_func(insn))
- 				break;
- 			return 0;
-diff --git a/tools/objtool/include/objtool/arch.h b/tools/objtool/include/objtool/arch.h
-index 089a1ac..01ef6f4 100644
---- a/tools/objtool/include/objtool/arch.h
-+++ b/tools/objtool/include/objtool/arch.h
-@@ -19,7 +19,8 @@ enum insn_type {
- 	INSN_CALL,
- 	INSN_CALL_DYNAMIC,
- 	INSN_RETURN,
--	INSN_CONTEXT_SWITCH,
-+	INSN_SYSCALL,
-+	INSN_SYSRET,
- 	INSN_BUG,
- 	INSN_NOP,
- 	INSN_STAC,
 
