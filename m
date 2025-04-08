@@ -1,104 +1,147 @@
-Return-Path: <linux-kernel+bounces-593392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E41A7F8B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:58:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BE76A7F8A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D127A422EE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:52:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 211DD16976C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF51266EF5;
-	Tue,  8 Apr 2025 08:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C4B26738A;
+	Tue,  8 Apr 2025 08:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pyqc33Xq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G9/sCveF"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SAj8+9Ge"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54177266B7D
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B78264F9A
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 08:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744102222; cv=none; b=p0QY0AU7K4QLzLpD5etsGUG4k3cV2OMkgt2bpWNqJUCOms16/Ic9KW/6DcUuYFy0zaNp0WWecgcPuXRaJ+XowlEvd98heB05w3uIM7LJfLBKKow8oRiymbTGBRTPEu+7PvyAuIoYCxUt1/behyhWD+1Ad0GYm3UY7rkGkbFeTdo=
+	t=1744102235; cv=none; b=JXJC64J+qh+udx74v8kOqFNxwUJkQuOHnGikd7AEbUyXLJZw4qHOErP5Q54XWQ50Ex0hVRNf3k058lYBKLZi1hMpi+NGTG0vpoC+vi/2MgW3cGiNFcScWuiOgsV2KqCLKE0ETRjU6xkDJlpTtVIgLNTOI6aGy8wX3VOjbTTSaig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744102222; c=relaxed/simple;
-	bh=avMgGn/pTtLZSeKCpT9hwW1a88xyLVkaNFl7XK+czUU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Qj6D4orWCw1Bri9LP2L56GMIWkcCkSnyaeq3pJaEEBENwVkzRGZQAUagN11n2EXYtcOgKu0FZDMzamwIcvKpld9VqNHQY2qXnnU0V32wUjepIKaxr9fdDToAXS/r0n911k7dEShFnBacyEpQCpyr7Fvz3eNMbiopwNWh+KTqG3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pyqc33Xq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G9/sCveF; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1744102219;
+	s=arc-20240116; t=1744102235; c=relaxed/simple;
+	bh=kxoU5HcQ+O7M8SUK0YQ8e6eKmlicd6hex/t7nCbWbt4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RZThmFdFurgzMHpgKpwnb1zbkHk2Smmul6rvGMGvDCeKkcQB887Voi98L/um36Vy2mR4UzIDiwY1h9PlYF8sL9tmZb7LQKttpdMu4KArMOUzn8psyvJX5WqllHVgIqQFfWsa9hTdTRuSFCg7neNg1x+jOc9cNGgmCOdDmQDstp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SAj8+9Ge; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744102232;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=bZp+OhNejyHCuQQhwGdTjasqlIyuaV/QUDiCGaSjs6c=;
-	b=pyqc33XqsbED9qj5v/g0msXVsu3bWKlBoEzoMQvtrl1883WlcZ3/z/QlcmSyV/s5Tp9oDX
-	0Ao86Bkyq+bT87rvBew1D8o+4LzTXmTjF92JQbSMuxgNAkPlnI/dXQXMJiGIs/WQULj2s+
-	eeHqTXMkmNk+X4aM2oTO0dL8MZRyCemn8FyNat7X6twgRFfceU1m1lk514L4N3uov7m+6j
-	2MDVt5CU6ZFfndTwKcEQob4IgVGb7L/r3d/cUxVFe+RRwmA8zLf4IUu6qvRpyHL+Yl5YAd
-	XJnguLivkpVv0B0KohEwwlAIX4xfX7JXYOZwqSnfGIPmNvGQVrtU8lsELNbi7w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1744102219;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bZp+OhNejyHCuQQhwGdTjasqlIyuaV/QUDiCGaSjs6c=;
-	b=G9/sCveFzHvpWwQqinX04+1f90tewMq4wFDoN+JZRjLmd/aqaYeCbvWiOt+lGUv7jSt59r
-	5eYr0JaehdydHtCQ==
-To: Petr =?utf-8?Q?Van=C4=9Bk?= <arkamar@atlas.cz>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [tip: x86/urgent] x86/acpi: Don't limit CPUs to 1 for Xen PV
- guests due to disabled ACPI
-In-Reply-To: <20254861939-Z_S_-ybv1at7EdUO-arkamar@atlas.cz>
-References: <20250407132445.6732-2-arkamar@atlas.cz>
- <174403706955.31282.7031075757256146451.tip-bot2@tip-bot2>
- <20254861939-Z_S_-ybv1at7EdUO-arkamar@atlas.cz>
-Date: Tue, 08 Apr 2025 10:50:18 +0200
-Message-ID: <87o6x7ujed.ffs@tglx>
+	bh=zQopZXdiy3xymCGR0rYIHwGprz+N88tu6wezwOaN3Nk=;
+	b=SAj8+9GeeoPQ/W1Rsgp4cWptcU5cqmW5rOsPaoHdIatOhTQHgyl5L73XUBvafE/JvDNoO5
+	4Pcp5z3qwdbLez/E1kSMWOi6wtqPTk3Lo/2nR3iOF0YwtyQd5OgDOmwbFT1ov8FACioTfF
+	5y90dHcWE5gBNK2DYCimMBvI8fMr5os=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-426-8EnUCZMSPYKNxwJ27iXgeg-1; Tue, 08 Apr 2025 04:50:30 -0400
+X-MC-Unique: 8EnUCZMSPYKNxwJ27iXgeg-1
+X-Mimecast-MFC-AGG-ID: 8EnUCZMSPYKNxwJ27iXgeg_1744102229
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ac710ace217so410621166b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 01:50:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744102229; x=1744707029;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zQopZXdiy3xymCGR0rYIHwGprz+N88tu6wezwOaN3Nk=;
+        b=e80qeanpzqqROtzXLqPvGDM341xYpB9vTdD9nViA8kV3PbFU700kAwHCH+MjZyGY+q
+         nmoagqmjxM2hK5JNpTBiWEpwHThy0fBuhWWdNQeLmDM612b4i9euT5o7mZP5EvgFrW2F
+         KVNeyBbuAaKdYpkweSax4HtREqkiD1/CgbdyM27TRebf3sE3tdek1mo9BVCFWEwMfaY9
+         Nw68vmHwGZrl+bAFu78rY2ltQuG3QV5qV2sAoYxaEWTrrCs5Aem86TnYBGDnLHnByeg6
+         nc9VFaMrTlt4pqvQ13gP6ELOtHwvvjJt3NSEXdbMxp4poN2h5S1tzv+uH1R8WyYcuA+g
+         Z/Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4L5I8Y50+mywXFStMrhh8IurQ+4wzFcpDh64O5P++2G52psZvTsfqtnM7g/1NQD+oknFsyJf0bi3IoQw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0PfjLtZiVB62s6+UrYNJYQFMh4FHvBiV3TUcTFJI7sLzMl422
+	JTen4xbjRScDO0svV1nKExgdm914J/3h7qkN2covlTGhp7UyHUrQrCCAZWQdi00OGChHlufvwQB
+	TKeRAiHAZyGFHOrxuI5gchRyzRkiuGbJtpG8IofuuUTsE1cZeB7sWQ1OoY93T1g==
+X-Gm-Gg: ASbGncs43kxAj/v+/UldcX7iYppKgVLJJQKW+1VxhDNkigbZf6sM41utFr4DBKUJ3UD
+	EYNOzFBxJNdS4HX2BYugLl0XX6TEtaDT/8U1Ma8wuVb7gWPyHJQA42YUg4kjzM2IDzl+iut8A4c
+	/SWp20xbsXK85Nu3cw3HbUqPvFio6iPe/TVHbEEoFFmvcfl4RnYIINnti5er2pkcvCSc8Oa6qh/
+	M90+MYHzFFHxx0ByEe3zcozLccSBz5sNfVF3nPBkwP0pXnQqXkQCqpyDrcVhUHkbISPMqEIvwfq
+	QV0xiwtJn3MZQAET8SCSsjqEs5f5ul2HF7mjOrKdHLv6jk1VOJ43sSlggdqfCmWNlM2wt+CqfRF
+	UtOFp407dZpjTSo/v9/AzlIzAwSPs0t2eKP8+UunWsi56Pl2EyA3Ei4SNBTA85FPDWQ==
+X-Received: by 2002:a17:907:1b11:b0:ac2:dfcf:3e09 with SMTP id a640c23a62f3a-ac7d6eb8de1mr1531978866b.43.1744102228792;
+        Tue, 08 Apr 2025 01:50:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFpsTVCILDyaXBZ5lkeFvik1nQEDh5z5n5qIxRWyhWTeQPllYWoHbltidBzTa2yJlwiabVPwA==
+X-Received: by 2002:a17:907:1b11:b0:ac2:dfcf:3e09 with SMTP id a640c23a62f3a-ac7d6eb8de1mr1531976466b.43.1744102228388;
+        Tue, 08 Apr 2025 01:50:28 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7bfe99b30sm882797566b.58.2025.04.08.01.50.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Apr 2025 01:50:27 -0700 (PDT)
+Message-ID: <56826617-5e91-418f-869a-bdd24bca0f0c@redhat.com>
+Date: Tue, 8 Apr 2025 10:50:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] platform/x86: convert GPIO chips to using new value
+ setters
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Santosh Kumar Yadav <santoshkumar.yadav@barco.com>,
+ Peter Korsgaard <peter.korsgaard@barco.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250408-gpiochip-set-rv-platform-x86-v1-0-6f67e76a722c@linaro.org>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20250408-gpiochip-set-rv-platform-x86-v1-0-6f67e76a722c@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Apr 08 2025 at 08:19, Petr Van=C4=9Bk wrote:
-> On Mon, Apr 07, 2025 at 02:44:29PM -0000, tip-bot2 for Petr Van=C4=9Bk wr=
-ote:
->> The following commit has been merged into the x86/urgent branch of tip:
->>=20
->> Commit-ID:     8b37357a78d7fa13d88ea822b35b40137da1c85e
->> Gitweb:        https://git.kernel.org/tip/8b37357a78d7fa13d88ea822b35b40=
-137da1c85e
->> Author:        Petr Van=C4=9Bk <arkamar@atlas.cz>
->> AuthorDate:    Mon, 07 Apr 2025 15:24:27 +02:00
->> Committer:     Thomas Gleixner <tglx@linutronix.de>
->> CommitterDate: Mon, 07 Apr 2025 16:35:21 +02:00
->>=20
->> x86/acpi: Don't limit CPUs to 1 for Xen PV guests due to disabled ACPI
->
-> Thank you for accepting the patch.
->
-> Out of curiosity, why did you remove the Cc: stable@vger.kernel.org
-> trailer? I thought it should be backported as it is a regression.
+Hi Bartosz,
 
-Accidentally. Ooops.
+On 8-Apr-25 9:19 AM, Bartosz Golaszewski wrote:
+> struct gpio_chip now has callbacks for setting line values that return
+> an integer, allowing to indicate failures. We're in the process of
+> converting all GPIO drivers to using the new API. This series converts
+> all the x86 platform GPIO controllers.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-The stable bot should pick it up nevertheless because of the Fixes tag
-once it hit Linus tree. If it does not after a week or so, please send a
-backport request to the stable folks.
+Thanks, the entire series looks good to me:
 
-Thanks,
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-        tglx
+for the series.
+
+Regards,
+
+Hans
+
+
+
+
+> ---
+> Bartosz Golaszewski (3):
+>       platform/x86: barco-p50: use new GPIO line value setter callbacks
+>       platform/x86: int0002: use new GPIO line value setter callbacks
+>       platform/x86: silicom: use new GPIO line value setter callbacks
+> 
+>  drivers/platform/x86/barco-p50-gpio.c      | 10 +++++++---
+>  drivers/platform/x86/intel/int0002_vgpio.c |  7 ++++---
+>  drivers/platform/x86/silicom-platform.c    | 11 ++++++-----
+>  3 files changed, 17 insertions(+), 11 deletions(-)
+> ---
+> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+> change-id: 20250401-gpiochip-set-rv-platform-x86-86788597f4a4
+> 
+> Best regards,
+
 
