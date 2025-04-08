@@ -1,242 +1,97 @@
-Return-Path: <linux-kernel+bounces-592984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-592997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58448A7F39A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:30:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E76A7F3CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 065791897201
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 04:30:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3BB33B4375
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 04:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F7E207A11;
-	Tue,  8 Apr 2025 04:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8FA205E3E;
+	Tue,  8 Apr 2025 04:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hWdMTvDP"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="mylrOe9U"
+Received: from out0-215.mail.aliyun.com (out0-215.mail.aliyun.com [140.205.0.215])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BC935973
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 04:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7996223AD;
+	Tue,  8 Apr 2025 04:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.215
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744086629; cv=none; b=uoU7RUmD+nQCQHUiZjjVh7lSVAUJ/XzKjdmzuHQG/Eof6i0JuiYgMEgkRin8SiR8mr0dzVMhJ3Cb/PyjCin/VWDQmIKMe1YJzh2BoYeeuKUoBJw3FoWPf5kKkjRVeTIoeY1jlBK9YBezi5AB9Up7c8yQugVjH08gVztTRnB8GAQ=
+	t=1744087924; cv=none; b=rPY+ZKtbzzPEsFZWjNc1paiFrTetD15MByLJz3FyD8HrTQD3cvW2gLHx3AfV9YuTJ5E8LmtCsPRSSbUItgdclTngqXXxDYOmmqUoG2GuG7y1t9xRGEohlFIBN85O0Bw4ZL92ADc33IHBa7f7rNCcxIjlov03JJ/l0u2OS4pVTlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744086629; c=relaxed/simple;
-	bh=iyXwAoHuhvl6gMeqiYjfxKQ6fYCfi84EobhT7OOmjNU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lxt8usqdWJ/cOQPq5m9xm6ZHzMon3F5Q4D1ugvtdRcSH1Cd883hRFbCXQMGNXv6MJUnJPCvav63gcKZGC7a0MRUv6B+7c6vngKH775s+Egahb+SjZw/92ex0/ExnPdmuFhM3T2yU4CNm80VrWGGBLRRwd4Owgdxga2i5LySjta0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hWdMTvDP; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2c759bf1b2eso2645121fac.1
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 21:30:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1744086627; x=1744691427; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k4OEy6OZhlILwQSjnmY1MsVbpm/U0GgRRZk6ChIa6gk=;
-        b=hWdMTvDPugpBVtPx8KCTgOfOPxZK2Ss9BCJt9XMckJJwGBEHW3ed32bnE/dT6B556a
-         LdvQUwpSEyY1+Bly9ATUYgxH/DocMVAMkJlESPsesyZ8VfNDjPVYFh9Sw/cKZ2XoWtxm
-         1iM2md0D2xPoMaD6afaYf/8oyZTPBQsq7Q7ng=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744086627; x=1744691427;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k4OEy6OZhlILwQSjnmY1MsVbpm/U0GgRRZk6ChIa6gk=;
-        b=ofgnu1HJO18IoGb0RuZfclxIiivXaN2IeAnogVGfhbLhCQLeyyJzfHcCjrCNszGHPc
-         msGxrJE9IrwHazJYufSEUMLN/QXPYgK3Ol61mobgF5sbQPa6CffMa/HsR5J1Ey/ZMyr1
-         vmP1MwVBtVM8e14ZVwOZr3PiXJVG+kxgJ/kXnf9MBGTPisepTFsYHz+RsH9v12I3djOl
-         m2708iH7+hQkoFPzK6LxwMh2Ap+7xo+LsxQFuiN5U9NPF/GXPZZ3tIzGIX9xwBMmfLe8
-         7MI6xVl4SH5XhILaTD9qN80EBxRja80dcdEsWp+oOWNmlyYLm8N5llW71Cd2fq6W6a2X
-         u9Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhtMSlLH01Gb3E5qvWmP9pXyaPutdPbNJXizS0xeZpVhwOFdfAV79t48exABa//RHFvoIOf8+uxfA99hY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHzkHS5ZqRbnoVM0qvRsnwgDWlQBXSCmhVwaGbwU1qa1ropWNi
-	IyC5vETL6v7EtU4R0dyyFnEmeqvIpnLP1QEKq9ydMykALaWQJ0SyX50georWQ3T5zrPZ45c2bWw
-	VfzuEAlJ4UjZOT+6/IYnCYKX7l/XeBNi+w9eN
-X-Gm-Gg: ASbGncs4zJkdBC+liGSOumKyzTgelFvBxuHC/PXHt9clYjfcroDHjJgSIS17M7UYrsA
-	kXZbI5L11PaRl8I6B1UepLx4XpW8Y7kpu7fgyNV1MwDTY3ZL6uVY+2jQJy5UzAsoTKhfqMUr+3z
-	TLuMLvobSoBXjlFXJIFNFfXwhOUgN77AIM2dK5gVJQB4+D356aRbBv9g==
-X-Google-Smtp-Source: AGHT+IGIaWa+KfgK8+1VG5ShGQowLo7UFNgp7dmEufosO5bvsNVXRW6PMAFRdrmAeiUK8d7+qNV0I3u3wqhsch7YYTc=
-X-Received: by 2002:a05:6871:a4c2:b0:2c2:d2b8:e179 with SMTP id
- 586e51a60fabf-2cca187da20mr9125832fac.4.1744086627210; Mon, 07 Apr 2025
- 21:30:27 -0700 (PDT)
+	s=arc-20240116; t=1744087924; c=relaxed/simple;
+	bh=OwgXVT4MJwOJzqVS32ZbXbe5I0UVIFilWS1LKeJRDhQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sfAyJhfIcJ4zHA1G2VtJdW9JtBndw4/IFKD2cL//WsIjigm2g2uzi5cbo9P3XcSswQKiBWIG5vhh1pQnqnl9NtTieHon66AUgEE/l1jHMRf9KEkxnRcU4Pjc7vLqntYRdK/wvopy29j42P/V99uS9/tzBtTIme85L5rnkTf5bnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=mylrOe9U; arc=none smtp.client-ip=140.205.0.215
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1744087917; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=bwkiWIhCqcHRhh2byO+xlA819heH6mmGnapUcjYd90c=;
+	b=mylrOe9U5aCYivBuUNzS4swS3Oi3MRE//1bm+PDhXcEEJv8IUVknjPZFjKngN3fqo2E54sZ5fc4AxRJhitafm/Z2fwp4F5QlTe0SQzcwd/2Gv54ciSsjYdqMDnkHwfFJE5RzWPJ7TR7r2DXAVx+kyHejr1c/mMgSz/qJG3y18TY=
+Received: from 30.174.97.68(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.cGaosiy_1744086978 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Tue, 08 Apr 2025 12:36:18 +0800
+Message-ID: <ab2a3e64-b8ef-4e27-9d73-3b08b4364528@antgroup.com>
+Date: Tue, 08 Apr 2025 12:36:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250328082950.1473406-1-treapking@chromium.org> <20250331-loud-micro-booby-e0fd4a@krzk-bin>
-In-Reply-To: <20250331-loud-micro-booby-e0fd4a@krzk-bin>
-From: Pin-yen Lin <treapking@chromium.org>
-Date: Tue, 8 Apr 2025 12:30:16 +0800
-X-Gm-Features: ATxdqUFiEcJNcUtOjwZOM-aq3gBXz60X9bqBSIobqCxKWQP0Fw3DK0sWRPkE5Yo
-Message-ID: <CAEXTbpf9crpkTGctoWseoG1fz=jvUbiTi6e2adZy0JJu78dTgg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: usb: Add binding for PS5511 hub controller
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Kaehlcke <mka@chromium.org>, linux-kernel@vger.kernel.org, 
-	Stephen Boyd <swboyd@chromium.org>, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH AUTOSEL 6.14 26/31] um: Rewrite the sigio workaround based
+ on epoll and tgkill
+To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Cc: Johannes Berg <johannes.berg@intel.com>, richard@nod.at,
+ anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+ benjamin.berg@intel.com, linux-um@lists.infradead.org
+References: <20250407181054.3177479-1-sashal@kernel.org>
+ <20250407181054.3177479-26-sashal@kernel.org>
+Content-Language: en-US
+From: "Tiwei Bie" <tiwei.btw@antgroup.com>
+In-Reply-To: <20250407181054.3177479-26-sashal@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
+On 2025/4/8 02:10, Sasha Levin wrote:
+> From: Tiwei Bie <tiwei.btw@antgroup.com>
+> 
+> [ Upstream commit 33c9da5dfb18c2ff5a88d01aca2cf253cd0ac3bc ]
+> 
+> The existing sigio workaround implementation removes FDs from the
+> poll when events are triggered, requiring users to re-add them via
+> add_sigio_fd() after processing. This introduces a potential race
+> condition between FD removal in write_sigio_thread() and next_poll
+> update in __add_sigio_fd(), and is inefficient due to frequent FD
+> removal and re-addition. Rewrite the implementation based on epoll
+> and tgkill for improved efficiency and reliability.
+> 
+> Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
+> Link: https://patch.msgid.link/20250315161910.4082396-2-tiwei.btw@antgroup.com
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  arch/um/drivers/random.c       |   2 +-
+>  arch/um/drivers/rtc_user.c     |   2 +-
+>  arch/um/include/shared/os.h    |   2 +-
+>  arch/um/include/shared/sigio.h |   1 -
+>  arch/um/kernel/sigio.c         |  26 ---
+>  arch/um/os-Linux/sigio.c       | 330 +++++----------------------------
+>  6 files changed, 47 insertions(+), 316 deletions(-)
 
-Thanks for the review.
+Please drop this patch. Thanks! Details can be found here: 
 
-On Mon, Mar 31, 2025 at 4:09=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On Fri, Mar 28, 2025 at 04:28:45PM +0800, Pin-yen Lin wrote:
-> > +
-> > +title: PS5511 4+1 Port USB 3.2 Gen 1 Hub Controller
->
-> s/PS5511/Parade PS5511/
+https://lore.kernel.org/linux-um/ffa0b6af-523d-4e3e-9952-92f5b04b82b3@antgroup.com/
 
-I'll fix this in the next version.
->
-> > +
-> > +maintainers:
-> > +  - Pin-yen Lin <treapking@chromium.org>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - usb1da0,5511
-> > +      - usb1da0,55a1
-> > +
-> > +  reg: true
-> > +
-> > +  '#address-cells':
-> > +    const: 1
-> > +
-> > +  '#size-cells':
-> > +    const: 0
-> > +
-> > +  reset-gpios:
-> > +    items:
-> > +      - description: GPIO specifier for GRST# pin.
-> > +
-> > +  vddd11-supply:
-> > +    description:
-> > +      1V1 power supply to the hub
-> > +
-> > +  vdd33-supply:
-> > +    description:
-> > +      3V3 power supply to the hub
-> > +
-> > +  peer-hub:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description:
-> > +      phandle to the peer hub on the controller.
-> > +
-> > +  ports:
-> > +    $ref: /schemas/graph.yaml#/properties/ports
->
-> I don't understand why do you need OF graph here. Children are already
-> defined in patternProperties as usb-devices.
-
-I would like to describe the connection between the hub and the USB
-connectors, which is similar to commit c44d9dab31d6a9 ("dt-bindings:
-usb: Add downstream facing ports to realtek binding").
-
-I'm aware that Rob expects a usb-hub.yaml binding in [1]. Should I do that =
-now?
-
-[1]: https://lore.kernel.org/all/20240301175653.GA2469610-robh@kernel.org/
->
-> Where is any upstream DTS using this schema?
-
-The device using this schema is still under development. We plan to
-upstream this schema first and then upstream the DT after the device
-is ready.
->
-> > +
-> > +    properties:
-> > +      port@1:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description:
-> > +          1st downstream facing USB port
-> > +
-> > +      port@2:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description:
-> > +          2nd downstream facing USB port
-> > +
-> > +      port@3:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description:
-> > +          3rd downstream facing USB port
-> > +
-> > +      port@4:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description:
-> > +          4th downstream facing USB port
-> > +
-> > +      port@5:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description:
-> > +          5th downstream facing USB port
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - peer-hub
-> > +
-> > +patternProperties:
->
-> patternProperties follow immediately properties, so move it up.
-
-Will fix this in the next version.
->
-> > +  '^.*@[1-5]$':
-> > +    description: The hard wired USB devices
-> > +    type: object
-> > +    $ref: /schemas/usb/usb-device.yaml
-> > +    additionalProperties: true
-> > +
-> > +additionalProperties: false
-> > +
-> > +allOf:
-> > +  - $ref: usb-device.yaml#
-> > +  - if:
-> > +      not:
-> > +        properties:
-> > +          compatible:
-> > +            enum:
-> > +              - usb1da0,usb55a1
-> > +    then:
-> > +      properties:
-> > +        port@5: false
->
-> No such property.
-
-Actually, I meant:
-
-  - if:
-      not:
-        properties:
-          compatible:
-            enum:
-              - usb1da0,usb55a1
-    then:
-      properties:
-        ports:
-          properties:
-            port@5: false
-
-I'll fix this in the next version.
-
->
-> Best regards,
-> Krzysztof
->
-
-Best regards,
-Pin-yen
+Regards,
+Tiwei
 
