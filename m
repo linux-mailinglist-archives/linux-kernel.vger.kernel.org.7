@@ -1,206 +1,175 @@
-Return-Path: <linux-kernel+bounces-594433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E22A8A81190
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:10:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96757A811D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42D887B75BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:08:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CA0E881A87
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043C222DF8E;
-	Tue,  8 Apr 2025 16:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1F523CEF0;
+	Tue,  8 Apr 2025 16:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="EhFBw5+G"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KuN6IiHD"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A04F22A80D
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 16:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E9F237179;
+	Tue,  8 Apr 2025 16:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744128449; cv=none; b=YPJOOubAWM9M0NAN7d27qGVJAWKm/xJebLFFqFHlFHE8x4cP1hUQRA+Sn7Tg2xaeZBLZ7g3U9e2ji8esVOaLgiZCJvvXWJ5maCFEhjNZQ+T4H9tXMjDq2P3x+97L6E18lIzIPoj6BBH6f+kCRjEvNbcJ2E1HiW4sE3KlOv3DZ2Q=
+	t=1744128490; cv=none; b=dZ3pZsfm2aZ56s3/5t9y8SB5e/ysvnG8J+bxDqg6dloROj04EM5PEdiBTdePoZvjIAUb0OiCISwCiNLP8tLqMVpkzSzpBIqUOt9vLzag7SQoa4QwFA8azxI7B+V9RGLANPzlUHKfkASt7kUIgRsvynJ2+dQ9c4pqVqxTkhEEmLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744128449; c=relaxed/simple;
-	bh=8iv2hTGNym6CSVTE5Z32BJQFc3K9Wn8llkpaNKmNqYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RaOgFRlKsoP6+MIQjLnsONqZH3GKBm8nU6U0boT3T4MoyA9KkprVtYtmv5g88jRe+/Z0RpdNBI2bcQP/s/3uSugfSf5uN1MD+JCOVxLuXDa9CNuGAW0r5zxBw61SvwwY+fT/gsnvr6HoaWKxZ0IFCrozSur+AUh64JCP6+/2PmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=EhFBw5+G; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost (unknown [10.10.165.6])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 2A1484076729;
-	Tue,  8 Apr 2025 16:07:19 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 2A1484076729
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1744128439;
-	bh=tmVV9ouHA7nkCSbZA75D06w8/DLaWCXo2XKIz9rcldw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EhFBw5+GZGy4x8ryaNMFrY1c5FUYrPu+hn738QqRKuKvGy2kjRolURUaxlMl3r+z/
-	 DOkNiOY3aS/wueewtjdMbNpWLsKrcPsvEn7lD8ikLOOPgJ+PeZw7kqOY5lbuF3r6SY
-	 Fc8YnZ7GH2rkk4RZ69xYW7EYnwwYMmGVwL1/Pelc=
-Date: Tue, 8 Apr 2025 19:07:19 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>
-Cc: Denis Arefev <arefev@swemel.ru>, 
-	Alex Deucher <alexander.deucher@amd.com>, Simona Vetter <simona@ffwll.ch>, lvc-project@linuxtesting.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, 
-	David Airlie <airlied@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [lvc-project] [PATCH] drm/amdgpu: check a user-provided number
- of BOs in list
-Message-ID: <pmby7iowvxuomsbuxebttosz245j7ngw5enbl72dq675nrgvve@ugkvzeihbtut>
-References: <20250408091755.10074-1-arefev@swemel.ru>
- <e6ccef21-3ca5-4b5a-b18a-3ba45859569c@amd.com>
- <bmdour3gw4tuwqgvvw764p4ot3nnltqm4e7n3edlbtpfazvp5c@cqe5dwgc66uy>
- <f8810b13-01d1-4615-b6e2-2e791c48b466@amd.com>
- <qc72y52kt7vuwox4lhk42zligy5bslttselfoexse42mywtpps@ebqijs2tap2t>
- <edc08eb4-63dd-402c-82df-af6898d499a9@amd.com>
+	s=arc-20240116; t=1744128490; c=relaxed/simple;
+	bh=K4qaMr4FSqiID4L5MDPntRVnW2bY91wSeKBJEYdnXfE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JMRNnV/trR/jmCQ0UU+6n8LevQsSHiNUDdF6En+1//Wku0oDzeL3i0y2fxrtxDQfAWr3edQhvf3h9w+5B5q8rwLBsY8RNEWGO2AhsMCufic8pxUjQaKYB4x4Rl1kCvl1C1CHYShYTWMBtm/mbGoIylSrpQxmHvPifgIMQvsKcEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KuN6IiHD; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 538CSaU4018465;
+	Tue, 8 Apr 2025 16:07:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=Hyqi0uOKVD2qmF0HO2gDnCnMoE/ESURqT+ROeR8re
+	IU=; b=KuN6IiHDb6O+3M2qjviXeFee8lBozmtNdEx1CjI6uW0ohXIYYZAPumrD7
+	wu4/+aq3OfN3pZkcbDZAbc1cRH+ZXwHqhsU50OV00UClUPe+SpUCVLvMa7fb+Ldh
+	HHRCTuguhLRjuy8I2VLdRhEc5TS8LFBQb9aqoRjdCFsdiTTMumDO06NrLoqVTEYG
+	7DN+T/7x07zw2Lsb0x3AJqCUqXr8E3Sew+9sZRO0HjsWC1pOaQOh8ivdAtjKcney
+	icxlVcBlkT4s+DK1PZYOsUH7Bc1Mp2n+z7qFGgMNWLBQ0thbHI8Znnckvyndwcvn
+	DMHXvhSkSXCBhKQF5c74h+lBwBfaw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45w3u313v9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Apr 2025 16:07:36 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 538G39G0000730;
+	Tue, 8 Apr 2025 16:07:36 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45w3u313v7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Apr 2025 16:07:36 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 538C4qov014404;
+	Tue, 8 Apr 2025 16:07:34 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45ufunkd22-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Apr 2025 16:07:34 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 538G7Wah49873200
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 8 Apr 2025 16:07:32 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AD6F220043;
+	Tue,  8 Apr 2025 16:07:32 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 987D020040;
+	Tue,  8 Apr 2025 16:07:32 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue,  8 Apr 2025 16:07:32 +0000 (GMT)
+Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 55669)
+	id 49B74E0628; Tue, 08 Apr 2025 18:07:32 +0200 (CEST)
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Cc: Hugh Dickins <hughd@google.com>, Nicholas Piggin <npiggin@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>, Juergen Gross <jgross@suse.com>,
+        Jeremy Fitzhardinge <jeremy@goop.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, kasan-dev@googlegroups.com,
+        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH v2 0/3] mm: Fix apply_to_pte_range() vs lazy MMU mode
+Date: Tue,  8 Apr 2025 18:07:29 +0200
+Message-ID: <cover.1744128123.git.agordeev@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <edc08eb4-63dd-402c-82df-af6898d499a9@amd.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: zTdW0kqTRTiT22s8uhfmBPaUntY3pzCH
+X-Proofpoint-ORIG-GUID: rmIK76a9Z49Qa5aFKSDqoZ2VuPaoExus
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-08_06,2025-04-08_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 adultscore=0 suspectscore=0 mlxlogscore=635 bulkscore=0
+ clxscore=1015 malwarescore=0 mlxscore=0 priorityscore=1501 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2504080110
 
-On Tue, 08. Apr 14:22, Christian König wrote:
-> Am 08.04.25 um 13:54 schrieb Fedor Pchelkin:
-> > If user can request an arbitrary size value then we should use __GFP_NOWARN
-> > and back on the allocator to return NULL in case it doesn't even try to
-> > satisfy an enormous memory allocation request (in which case it yells in
-> > the log without __GFP_NOWARN being passed). Maybe that would be a more
-> > appropriate thing here?
-> 
-> Using __GFP_NOWARN is most likely an incorrect approach as well, this
-> might disable all warnings. E.g. also OOM if I'm not completely mistaken
-> and we clearly do want those.
+Hi All,
 
-Okay, that sounds reasonable.
+Chages since v1:
+- left fixes only, improvements will be posted separately;
+- Fixes: and -stable tags added to patch descriptions;
 
-> 
-> > Please see:
-> > https://lore.kernel.org/dm-devel/CAHk-=wi8Zer6tnqO-bz+WxFpMv9sPc-LxGRm_3poOtZegjhfrg@mail.gmail.com/
-> 
-> Linus comment is about kvmalloc(), but the code here is using
-> kvmalloc_array() which as far as I know is explicitly made to safely
-> allocate arrays with parameters provided by userspace.
+This series is an attempt to fix the violation of lazy MMU mode context
+requirement as described for arch_enter_lazy_mmu_mode():
 
-[27651.163357] ------------[ cut here ]------------
-[27651.163361] WARNING: CPU: 3 PID: 183060 at mm/util.c:657 __kvmalloc_node_noprof+0xc1/0xd0
-[27651.163411] CPU: 3 UID: 0 PID: 183060 Comm: a.out Not tainted 6.13.9-200.fc41.x86_64 #1
-[27651.163412] Hardware name: ASUS System Product Name/PRIME X670E-PRO WIFI, BIOS 3035 09/05/2024
-[27651.163413] RIP: 0010:__kvmalloc_node_noprof+0xc1/0xd0
-[27651.163424] Call Trace:
-[27651.163426]  <TASK>
-[27651.163429]  ? show_trace_log_lvl+0x1b0/0x2f0
-[27651.163431]  ? show_trace_log_lvl+0x1b0/0x2f0
-[27651.163434]  ? amdgpu_bo_create_list_entry_array+0x3d/0x150 [amdgpu]
-[27651.163579]  ? __kvmalloc_node_noprof+0xc1/0xd0
-[27651.163581]  ? __warn.cold+0x93/0xfa
-[27651.163582]  ? __kvmalloc_node_noprof+0xc1/0xd0
-[27651.163584]  ? report_bug+0xff/0x140
-[27651.163586]  ? handle_bug+0x58/0x90
-[27651.163588]  ? exc_invalid_op+0x17/0x70
-[27651.163589]  ? asm_exc_invalid_op+0x1a/0x20
-[27651.163591]  ? __kmalloc_node_noprof+0x3f9/0x590
-[27651.163592]  ? __kvmalloc_node_noprof+0xc1/0xd0
-[27651.163594]  ? __kvmalloc_node_noprof+0x37/0xd0
-[27651.163595]  amdgpu_bo_create_list_entry_array+0x3d/0x150 [amdgpu]
-[27651.163704]  amdgpu_bo_list_ioctl+0x55/0x350 [amdgpu]
-[27651.163805]  ? __pfx_amdgpu_bo_list_ioctl+0x10/0x10 [amdgpu]
-[27651.163909]  drm_ioctl_kernel+0xad/0x100
-[27651.163911]  drm_ioctl+0x288/0x530
-[27651.163912]  ? __pfx_amdgpu_bo_list_ioctl+0x10/0x10 [amdgpu]
-[27651.164010]  amdgpu_drm_ioctl+0x4b/0x80 [amdgpu]
-[27651.164106]  __x64_sys_ioctl+0x94/0xc0
-[27651.164108]  do_syscall_64+0x82/0x160
-[27651.164110]  ? handle_mm_fault+0x20d/0x330
-[27651.164111]  ? do_user_addr_fault+0x55a/0x7b0
-[27651.164113]  ? exc_page_fault+0x7e/0x180
-[27651.164114]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[27651.164116] RIP: 0033:0x7f271589d4ad
-[27651.164138]  </TASK>
-[27651.164138] ---[ end trace 0000000000000000 ]---
+    This mode can only be entered and left under the protection of
+    the page table locks for all page tables which may be modified.
 
+On s390 if I make arch_enter_lazy_mmu_mode() -> preempt_enable() and
+arch_leave_lazy_mmu_mode() -> preempt_disable() I am getting this:
 
-That's just
+    [  553.332108] preempt_count: 1, expected: 0
+    [  553.332117] no locks held by multipathd/2116.
+    [  553.332128] CPU: 24 PID: 2116 Comm: multipathd Kdump: loaded Tainted:
+    [  553.332139] Hardware name: IBM 3931 A01 701 (LPAR)
+    [  553.332146] Call Trace:
+    [  553.332152]  [<00000000158de23a>] dump_stack_lvl+0xfa/0x150
+    [  553.332167]  [<0000000013e10d12>] __might_resched+0x57a/0x5e8
+    [  553.332178]  [<00000000144eb6c2>] __alloc_pages+0x2ba/0x7c0
+    [  553.332189]  [<00000000144d5cdc>] __get_free_pages+0x2c/0x88
+    [  553.332198]  [<00000000145663f6>] kasan_populate_vmalloc_pte+0x4e/0x110
+    [  553.332207]  [<000000001447625c>] apply_to_pte_range+0x164/0x3c8
+    [  553.332218]  [<000000001448125a>] apply_to_pmd_range+0xda/0x318
+    [  553.332226]  [<000000001448181c>] __apply_to_page_range+0x384/0x768
+    [  553.332233]  [<0000000014481c28>] apply_to_page_range+0x28/0x38
+    [  553.332241]  [<00000000145665da>] kasan_populate_vmalloc+0x82/0x98
+    [  553.332249]  [<00000000144c88d0>] alloc_vmap_area+0x590/0x1c90
+    [  553.332257]  [<00000000144ca108>] __get_vm_area_node.constprop.0+0x138/0x260
+    [  553.332265]  [<00000000144d17fc>] __vmalloc_node_range+0x134/0x360
+    [  553.332274]  [<0000000013d5dbf2>] alloc_thread_stack_node+0x112/0x378
+    [  553.332284]  [<0000000013d62726>] dup_task_struct+0x66/0x430
+    [  553.332293]  [<0000000013d63962>] copy_process+0x432/0x4b80
+    [  553.332302]  [<0000000013d68300>] kernel_clone+0xf0/0x7d0
+    [  553.332311]  [<0000000013d68bd6>] __do_sys_clone+0xae/0xc8
+    [  553.332400]  [<0000000013d68dee>] __s390x_sys_clone+0xd6/0x118
+    [  553.332410]  [<0000000013c9d34c>] do_syscall+0x22c/0x328
+    [  553.332419]  [<00000000158e7366>] __do_syscall+0xce/0xf0
+    [  553.332428]  [<0000000015913260>] system_call+0x70/0x98
 
-    union drm_amdgpu_bo_list bo_list;
-    int fd, ret;
+This exposes a KASAN issue fixed with patch 1 and apply_to_pte_range()
+issue fixed with patch 3, while patch 2 is a prerequisite.
 
-    memset(&bo_list, 0, sizeof(bo_list));
+Commit b9ef323ea168 ("powerpc/64s: Disable preemption in hash lazy mmu
+mode") looks like powerpc-only fix, yet not entirely conforming to the
+above provided requirement (page tables itself are still not protected).
+If I am not mistaken, xen and sparc are alike.
 
-    fd = open(DEVICE_PATH, O_RDWR);
+Thanks!
 
-    bo_list.in.bo_number = 1 << 31;
-    ret = ioctl(fd, DRM_IOCTL_AMDGPU_BO_LIST, &bo_list);
+Alexander Gordeev (3):
+  kasan: Avoid sleepable page allocation from atomic context
+  mm: Cleanup apply_to_pte_range() routine
+  mm: Protect kernel pgtables in apply_to_pte_range()
 
+ mm/kasan/shadow.c |  9 +++------
+ mm/memory.c       | 33 +++++++++++++++++++++------------
+ 2 files changed, 24 insertions(+), 18 deletions(-)
 
-> 
-> So pre-checking those parameters in the caller once more is a bit
-> questionable, especially since we need to spread that around to all
-> callers of kvmalloc_array() which looks backwards considering the
-> purpose of kvmalloc_array().
-
-kvmalloc_array() performs an extra check only for that the `size * n`
-thing doesn't overflow the (generally) 64-bit arithmetic. Otherwise, it's
-actually like an ordinary kvmalloc() with a request of `size * n`.
-
-Performing that extra size_t-overflow check is not the same as checking
-that `size * n` cannot take enormous and possibly unverified values.
-That's what the logic of the checks inside the allocator implies IMO.
-
-> 
-> Maybe we should reduce the warning to info level for kvmalloc_array()
-> since returning NULL when incorrect parameters are given can be
-> perfectly handled by the caller.
-
-That would require running through and inspecting all of its callers in
-the source tree.
-
-And it would then differentiate from the underlying kvmalloc(), I'd say.
-
-The warning was added deliberately.
-
-commit 7661809d493b426e979f39ab512e3adf41fbcc69
-Author: Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed Jul 14 09:45:49 2021 -0700
-
-    mm: don't allow oversized kvmalloc() calls
-    
-    'kvmalloc()' is a convenience function for people who want to do a
-    kmalloc() but fall back on vmalloc() if there aren't enough physically
-    contiguous pages, or if the allocation is larger than what kmalloc()
-    supports.
-    
-    However, let's make sure it doesn't get _too_ easy to do crazy things
-    with it.  In particular, don't allow big allocations that could be due
-    to integer overflow or underflow.  So make sure the allocation size fits
-    in an 'int', to protect against trivial integer conversion issues.
-    
-    Acked-by: Willy Tarreau <w@1wt.eu>
-    Cc: Kees Cook <keescook@chromium.org>
-    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-
-diff --git a/mm/util.c b/mm/util.c
-index db3091116b7c..499b6b5767ed 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -593,6 +593,10 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
-        if (ret || size <= PAGE_SIZE)
-                return ret;
- 
-+       /* Don't even allow crazy sizes */
-+       if (WARN_ON_ONCE(size > INT_MAX))
-+               return NULL;
-+
-        return __vmalloc_node(size, 1, flags, node,
-                        __builtin_return_address(0));
- }
+-- 
+2.45.2
 
 
