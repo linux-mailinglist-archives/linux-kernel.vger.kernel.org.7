@@ -1,107 +1,116 @@
-Return-Path: <linux-kernel+bounces-593799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 456C5A80154
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:39:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5F9A800FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7216882690
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:33:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CBD93B38C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54816268C66;
-	Tue,  8 Apr 2025 11:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="scpJC7kU";
-	dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b="EanyYM60"
-Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CACC26A0C4;
+	Tue,  8 Apr 2025 11:27:50 +0000 (UTC)
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB87F2288CB;
-	Tue,  8 Apr 2025 11:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F8B2686B1
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 11:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744111964; cv=none; b=Sj1mBrI998QNECUjXopMMrODpmaedX5KMRf32hLP+9B+e1y831Eth9ni8Ro6DNuUeLbMldJFOj9CMpEpBeBiqpyGVTOQKTJETBTcae8JG0dQUVQZ54i38xaw6eXY/hk8x3+HcFJutx23cysamqrn9pjnezp2cTXFMwe2tKEBo9k=
+	t=1744111669; cv=none; b=epDozOYJOBs4Cdji1Ss2xcxArpd7B36+n5ckGTXfJHdO20wvnFCGAd3VzVAghhB0OuVJdOL9UxF0HViK2J96oqUMdhHizb+ONlvGQ6eh/4DqAumNUEOJCcMyIhbXDlv0YCvVnKryeGvR4c/lNSV0cQiWPnHWPUa6l0xQuE4OXbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744111964; c=relaxed/simple;
-	bh=Xs8PJBU/iWCgCOVJ5fPwYHizshTqxB2SddH3d9H0hhA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gP3c8OIlEO80AYETU/yp0R02/wblCMv4x8QLgBCuHACzItSTyuvBBxDeXtxtgYrdnFmYG5FcpKnyv0xHlw761AMFYpzX+UuXbSYM/kNeqSF1ABefyvq7/btX8Jmfa2vrzx42mFQSjILPrWUmALge8eJRO1nBtzK4lT9m5rLXEn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; dkim=pass (2048-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=scpJC7kU; dkim=permerror (0-bit key) header.d=parknet.co.jp header.i=@parknet.co.jp header.b=EanyYM60; arc=none smtp.client-ip=210.171.160.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.parknet.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-	by mail.parknet.co.jp (Postfix) with ESMTPSA id 73FA0209655E;
-	Tue,  8 Apr 2025 20:27:29 +0900 (JST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=parknet.co.jp;
-	s=20250114; t=1744111649;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eclY3tA3zystiASLWhhinS2NZVbTVtIRsNQzHJbWjV8=;
-	b=scpJC7kU+WJfI3elD0AmrrqQ8rv47m1hGbnZUq85ivFjNcDWY/U97xKL0wlQmsEe2nWnF6
-	fyJKqaNccL1Pw1r979uRPcjsUcuPOMkVxi+flIpbQzN+9OR9eI2I8b2HNXQwYAeIbsVyR8
-	dCbg1DmfDIHv0wK4GVgOw1Smcwb5YaO1EY9L2VSGuG03Ib/cFVzmg+6E1hNqNY3MmDrJrA
-	oH8EYt3Nc/IarHvcO8tpH4dHazuqkaX/c+cgSixzOEuL7M8fudqoTRCTsoqnOl8qnrCKVB
-	taZx6tI2yi3/pIhFIXoWzIFYetpkf5DN+4Z7gPc9X1EOmtWHRKeNLBonAO+hDA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=parknet.co.jp;
-	s=20250114-ed25519; t=1744111649;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eclY3tA3zystiASLWhhinS2NZVbTVtIRsNQzHJbWjV8=;
-	b=EanyYM601dLl/HVbStSWN7E3LzgFC4FXwl7RqTj6e4QefxQtMl+mdSR4uWjIE2NS7vfJBt
-	QdYS73GWOQIzGVDQ==
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 538BRS7U473091
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 8 Apr 2025 20:27:29 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 538BRSTY1314074
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 8 Apr 2025 20:27:28 +0900
-Received: (from hirofumi@localhost)
-	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 538BRRVC1314073;
-	Tue, 8 Apr 2025 20:27:27 +0900
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To: Phillip Lougher <phillip@squashfs.org.uk>
-Cc: Jan Kara <jack@suse.cz>, Andreas Gruenbacher <agruenba@redhat.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo
- <sj1557.seo@samsung.com>,
-        Carlos Maiolino <cem@kernel.org>,
-        "Darrick J.
- Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
-Subject: Re: Recent changes mean sb_min_blocksize() can now fail
-In-Reply-To: <86290c9b-ba40-4ebd-96c1-d3a258abe9d4@squashfs.org.uk>
-References: <86290c9b-ba40-4ebd-96c1-d3a258abe9d4@squashfs.org.uk>
-Date: Tue, 08 Apr 2025 20:27:27 +0900
-Message-ID: <87zfgqq4f4.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1744111669; c=relaxed/simple;
+	bh=9/SI4TkAJnViIG+zH8NnrAYsWGamcMlzfn1L2zXyGUY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Fd4XO8BW0CbX8xB8od2v96oNr5Bnx5yM5nDc5PUIcnqZH58wrZIMSLu1fOJhjCUW2TpaQp1FSAxuRZ4yQpVdnZPPKQT8SCdfdw5NGP/4sK+TFRbyOuclFyAqUhhx72BYn2HyFdLtA2N3TPvP1XxfbMIPBE7+LRjJsaBLXQEufmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22435603572so51108545ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 04:27:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744111666; x=1744716466;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sWNuU4PXGcFFUxJOOD6+vUejwIulJeOU2+PZK360UKs=;
+        b=OdxcOt2K5v+kCcBAv98UVNfDb8ctAAsMK6qnHxkfDshLrNw5HJxX+ByfjfXdbom//z
+         QFQ3znXpcmh1CGjeOvBVsNkYstak5kZMBFgazOK4+8sxy7IatrX1v7ShfOdrWvxUrgP4
+         KEBO+Go29EVpkzft4KZSK3SuXQZeXKpC7y4QgaEM0EWa7NDLjDrY+e3fSoLQrSvb24sI
+         tlsS965doan++XDd5qwH9k2diCh9/Y5y/z7Hn+2x18KrTlR8KeAcnYdWu/rE+IR6WkmF
+         i5C86QwFcMOzMvr5dkaI6ghz8xSaJV685wvZTJMSM0/wtsdpevC5B/bMHztUPoKUFneQ
+         t9SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6iBnuBjb01tnjYIssxffHQIgczfdR7GrhKBx/u58VL5e4nYc8IDsDdmLUNQFfelsWm5103THUTdIz5YM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnNiHHmqljUwKdImf5YWeZUQcL4B3HMoJ/N3Mfe0GyGq/SJpNP
+	fktr7cpX+m7NS/vNhs3GOPVTv4Lus97F7KehZca9Ne/JzmVjgwP/
+X-Gm-Gg: ASbGncuShDnF6FD0nKKLtbP9yyNWoMXxJq42DCmNsPVGQw+1ZkjJBeBjKk8LbVopYG9
+	0QI6hXvVb8t1Fd/T/RZ66wq+6wDdIfntf+Si4lSl7I2gUu3C85MI/SJEYHacXH4TpT3dvaeQfLc
+	Nlr7/575DntR0BNmp8/4Pm0sLIo+5OddBd+2bFuC7PX/Zy2xCAOc8+l9+fF4kpGeGj7r1s7lLsB
+	9HsWgO1OMlz8FmG3PqQzHgrLxxHsthN6Xd3dTqlLUkq+QI/z4UrCgumLi8+hyF13X59qYq4bu1k
+	YvIrNqIGbp+XffqBbA8FtZxF8j7xgkz6zlO2tkgU0dAu0mbXjsF4lcnhcsXj
+X-Google-Smtp-Source: AGHT+IHq28UvQIqWAknFOlE8tIbb/hwfHmeUHFw2eZnKNEbxo/0KO+z2EsthClTeQucSfsOEE2tUVw==
+X-Received: by 2002:a17:902:f684:b0:224:2a6d:55ae with SMTP id d9443c01a7336-22a8a8e44camr224245775ad.48.1744111665988;
+        Tue, 08 Apr 2025 04:27:45 -0700 (PDT)
+Received: from localhost.localdomain ([116.128.244.169])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-229785c0127sm97708895ad.91.2025.04.08.04.27.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 04:27:45 -0700 (PDT)
+From: jiangfeng@kylinos.cn
+To: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	rodrigo.vivi@intel.com,
+	christian.koenig@amd.com,
+	raag.jadav@intel.com,
+	andrealmeid@igalia.com
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Feng Jiang <jiangfeng@kylinos.cn>
+Subject: [PATCH v2] drm: Fix the length of event_string in drm_dev_wedged_event()
+Date: Tue,  8 Apr 2025 19:27:28 +0800
+Message-Id: <20250408112728.244146-1-jiangfeng@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Phillip Lougher <phillip@squashfs.org.uk> writes:
+From: Feng Jiang <jiangfeng@kylinos.cn>
 
-> A recent (post 6.14) change to the kernel means sb_min_blocksize() can now fail,
-> and any filesystem which doesn't check the result may behave unexpectedly as a
-> result.  This change has recently affected Squashfs, and checking the kernel code,
-> a number of other filesystems including isofs, gfs2, exfat, fat and xfs do not
-> check the result.  This is a courtesy email to warn others of this change.
->
-> The following emails give the relevant details.
->
-> https://lore.kernel.org/all/2a13ea1c-08df-4807-83d4-241831b7a2ec@squashfs.org.uk/
-> https://lore.kernel.org/all/129d4f39-6922-44e9-8b1c-6455ee564dda@squashfs.org.uk/
+When calling scnprintf() to append recovery method to event_string,
+the second argument should be `sizeof(event_string) - len`, otherwise
+there is a potential overflow problem.
 
-Thanks. FATfs should have no issue.
+Fixes: b7cf9f4ac1b8 ("drm: Introduce device wedged event")
+Signed-off-by: Feng Jiang <jiangfeng@kylinos.cn>
+---
+v2:
+- update commit message
+- keep scnprintf() as a single line
+---
+ drivers/gpu/drm/drm_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
+index 17fc5dc708f4..60e5ac179c15 100644
+--- a/drivers/gpu/drm/drm_drv.c
++++ b/drivers/gpu/drm/drm_drv.c
+@@ -549,7 +549,7 @@ int drm_dev_wedged_event(struct drm_device *dev, unsigned long method)
+ 		if (drm_WARN_ONCE(dev, !recovery, "invalid recovery method %u\n", opt))
+ 			break;
+ 
+-		len += scnprintf(event_string + len, sizeof(event_string), "%s,", recovery);
++		len += scnprintf(event_string + len, sizeof(event_string) - len, "%s,", recovery);
+ 	}
+ 
+ 	if (recovery)
 -- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+2.25.1
+
 
