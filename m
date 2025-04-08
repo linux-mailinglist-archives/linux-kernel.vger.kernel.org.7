@@ -1,124 +1,127 @@
-Return-Path: <linux-kernel+bounces-593002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C70BA7F3DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:59:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D8C4A7F3E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52FDF1897C4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 04:59:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DED6016C26D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A082B202C3E;
-	Tue,  8 Apr 2025 04:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BA020C01B;
+	Tue,  8 Apr 2025 05:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZLNeTHQ1"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JRqm5piq"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C04429A2
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 04:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364A02F5E;
+	Tue,  8 Apr 2025 05:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744088359; cv=none; b=ERv31RBWkolS3VhCWUAHXJtpmxXPIwrqK5dXsO1/AG8Myk+M8pH5e03xHsBfz/68fpB8H1PW3FQr7Dk9JJ1RmSaR1QUyRrxBARSYk0jrnU0m5lQ/bX3AHLxepu9iJZy1bqREQ9LSyhAKaNa7a6IXPwbY/bC7lKH+IXGqEddeUcI=
+	t=1744088548; cv=none; b=qz0kbxnPNP/zk8A6HGUVM8nmDwdGjpfD9KULJZ7qUzzmmhnMmRZlpLI6T4jO1ekrU+KGVHv267aVRskVSKSu0dzq3WY3VIX3c2s0buZGms+1yjzU2c9fWBrSXdV8elbgPXrdW8054EDUus6HgoQrcZOKACea67IAwegXBUb7Azg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744088359; c=relaxed/simple;
-	bh=lPyKFL6EYtrBQlINHjnofiBgH1A/3A3RrizKk2o/+FQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rLyeZMA/BVCcqJ8A9Z0Y/12B5MqQVGPT4RTGZeNkdHTMG4a4+pJ8z65ZZu4jky2dmMnFHv4slbGAU1SZGkXVtuTIV+sja1ampKTL4KlK1CQ68eJKlDcSdOXrJc4LRWP4498/tFIYTF/XkEotiNpYy3a3yDBdgUr7ucZb/5k1H0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZLNeTHQ1; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac6e8cf9132so627575166b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 21:59:17 -0700 (PDT)
+	s=arc-20240116; t=1744088548; c=relaxed/simple;
+	bh=KM4iNMvKGENubzBlP4oFLFuPGo1+bejKdkpXcDrBbw0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FvqobeDoc+SOR42Uk7Ql9cSUyALQgcuGW2TfeeOQwuAOBvsuWEI+sog0aj6QeHJK3Bw78wGZZ0pCWGHfUEdMsGeWEmRz9OWR4aQZqlPcaOOn61LryPKzgz48aQqk/NqL/auvv8z7jjG/iFqiMsc0L6t3VrsSl+yNjNE0FmqJ31U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JRqm5piq; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6f0c30a1ca3so24402606d6.1;
+        Mon, 07 Apr 2025 22:02:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744088355; x=1744693155; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lPyKFL6EYtrBQlINHjnofiBgH1A/3A3RrizKk2o/+FQ=;
-        b=ZLNeTHQ1odkW9OsQ0WUgDiwIp2Cz/VgIvSoDMztlBYkYfLrhGzNVOK8gJ5tIf5i9j0
-         6YAq6RIpnCfsfnO0i4VmqvZj0Jaim3EDl1pt/ApyTh8S038OjSttaY8RKKF5Nc5ZiZVo
-         ULfYoyW8PaFAEdCOFOiPOe7aJMthvdrjgicaj1SHFhBue66m5NpYm2we+2scbhmrvw7R
-         875viHjUMmi91yuIq/dvQyRvRXJqEzrSy25s+70rlVbwicDRLegWupFpkW+TDDrmew7G
-         zJgrfKCZt0pwyvyrr/vdz8xecjXKXmKf7pYmVzE5peHa6PbzFJZA4unwF8+wuj2VF6A5
-         sQZQ==
+        d=gmail.com; s=20230601; t=1744088546; x=1744693346; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=R7RoF88PRiXIA+X9QRRmiBMpMzS+lQz5HYzbozNYwWM=;
+        b=JRqm5piqbs/RYUd0EPfQ451KuJieoSpNILGgCDdHaFbkw0tFzak3FBPoEUnxxLC6O8
+         OAcDCakyGQU1mDzKx1QCG2ZkdPYjefCKoNppVEkddLoZqBlydJty6DIwUjcZsnbUp738
+         OLRhuwDg9NQcwL2+ZEiKLITNHRxt+6bZ3V9yIZeGdSHERkdq0VZTo62O3X3ySVZfZyAw
+         5/vOamFDQDXU0cTkKWK0Y/OeLXFrEXuzqal6U8B2l8f1aF3UIpww71L/bOt0KZOi72SL
+         wD1XvOeWvxf41S1BgRCU0BD8w904bcQF/Ogt/ZzeNEP9DfVqPJQsoBQrt1Q0El8fTZ6p
+         0A1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744088355; x=1744693155;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lPyKFL6EYtrBQlINHjnofiBgH1A/3A3RrizKk2o/+FQ=;
-        b=EKtwSDwWfE5CZOwImyObaP5QHD7mB1SriFrxJVyjj6zTPAmNb1RUKnCHZtumZ2Vo2H
-         sjZguAzGsBCH8JqbRzeitOs8n7CAFS5LskSAdol6W92VrnhdJT4pglKYQrbiRppJck/3
-         9MD5KCpVxi+NxOm5UajIVf1nl3F9PNUGlhdFPRJCdaDAQvw8LsK2NaX7//W75Q7Bxr/n
-         1L+hSJ4X6dzn8Osmu/HcBI7KpYdDK8cZI77kXF2kLoVlQKR8DBQeBCYcO1Pr6wb8NkVg
-         swFOOH+4nxt/ItYkHCzmdwB3qQinbQambd70Tid2ArfUrwaQL6asP4zq/3u1usZToT75
-         FyaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTGESmBR55KdGiaW7S4HwPRqMVtrOnRF6un3BFGHSayQXXQlnFT1DSpW32y/Ls2s0Eafh0Aja56cr7ur0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqp7IqbbHJHTjj2rSk+qQJ9WY663s7RBDnWqJpDiChAutt4vB9
-	uL9nM5xEq90A/vYQB5+rAvKl++WOMYfWh0LJXjXcCp4S1wluA0y+MImMUfZG9PeXwC83QD0zRTV
-	Etn2Gn6ZJd6Necu3kgieTSa+qFdWntE8/Lvs4
-X-Gm-Gg: ASbGncs2ZZqYv0MuovWo/G+EZHqbWFc5LHiTcyXfC1o74OzLA6imnJs6zTYSAgUXhaD
-	8b5LC+M14l1u1uv5WJ2XGLjUtlVlqgVyRduxkBp42kXcqYeBEym/LXwibOGTQrnA0+Z/c7KFPHd
-	57VJwhBwxfG5zZB1qORRBcHA==
-X-Google-Smtp-Source: AGHT+IHMBU+wq6W4T0NSttj+q7k5OMgLNQuKpd0k4v5A7VJLj6wPKTL5/A69Xh6L5iIW/4Jk2sxylEsG5cY8WRJ7HAs=
-X-Received: by 2002:a17:907:3f24:b0:ac7:7f14:f31b with SMTP id
- a640c23a62f3a-ac7d1824971mr1478492866b.3.1744088355421; Mon, 07 Apr 2025
- 21:59:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744088546; x=1744693346;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R7RoF88PRiXIA+X9QRRmiBMpMzS+lQz5HYzbozNYwWM=;
+        b=euG0eHZHD+eDF+zudKPlEl23HgD04Ks9qejHys7a+pICVB50Z9e01QxZDZkE2FPRKt
+         8D93SKCbF6+M0ajpMIjY//r0FeKeNWHITE0hSq1YBBgP9KgOzfbU3+FoXCm0DVPF3Pmy
+         SBcvVYlejRctRwYOLiC4eKM1Dzapl6HxO7exxyOhPe5eOeH+DI3Oa3isd049xs30NIPu
+         lO6zk1KCqG5s7YHlO+198iuTVP9OHEm39kaE6lhAllSz1xLXP9rwCwGY7gvtM2vylyqY
+         xpIJd5EQIB9kBGM+at60C39l8PIMkz58RiKJNXht4sA4kz/nxpWZmFbYCI4DGlBzMnp0
+         HZAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPtoHcblWlrqdOPt7fcyDSCfR5fClsVqaRsWAyIl4kUz1/3//1yqIF82BZRM/TYO0ywO8c+4HkfmSm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2S0axKVjP4orRiYb3Wibk5krxYTbU7JtD4kr2tbAoNdmIX7Y5
+	1GEe1RIHz0Gerb5pgF1CLfIlj0VoapQnvgXmHgcQ2Txy3j3cdZXy
+X-Gm-Gg: ASbGnctRb84aSVx2dFt35b7Tqfcqo1OTBltguz7rIV/Sq6KZQyxGvvmrvv19+cp9FZH
+	4SFIzfHeknVwTt7zeskmQKIlfuwBY0bsyTyBC76jDGiW3zUQa0RGYlNzKlctm2vqsPU5Gp/GKu2
+	5FbUmHC0Sv2XLNw4bvqmmdP0BP4CgeK/Gp3HQ2x6043r0lwPZGpGxZIRWqzrbNdzMVAtkom17Pq
+	PxeR8ppfx04IkksC58YbqOxKTUov5+EGsA3iG1MzlDTmbhs8P1QTbyuDinwSo80VRp6tysjcler
+	i2dZsmpVBTlV6zmI61b3
+X-Google-Smtp-Source: AGHT+IFAmQyuLEqKSqUa3zPYlnlVpM+D6CTCY9Gci7d7NscOgG+3f+LABsr60dVnS0EGKdGef2Rzqg==
+X-Received: by 2002:a05:6214:c6d:b0:6e1:f40c:b558 with SMTP id 6a1803df08f44-6f01e7f5050mr180369806d6.44.1744088546031;
+        Mon, 07 Apr 2025 22:02:26 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6ef0f047aa7sm68706526d6.55.2025.04.07.22.02.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 22:02:25 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH v3 0/4] irqchip/sg2042-msi: Add the Sophgo SG2044 MSI interrupt controller
+Date: Tue,  8 Apr 2025 13:01:41 +0800
+Message-ID: <20250408050147.774987-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250402202728.2157627-1-dhavale@google.com> <CAB=BE-TzPKSsHo_nvMuGkB_4JbbP8OZ81ce=76y-28nAeZiniQ@mail.gmail.com>
- <da085862-1c82-4b3e-82ea-b54e2432d96d@linux.alibaba.com>
-In-Reply-To: <da085862-1c82-4b3e-82ea-b54e2432d96d@linux.alibaba.com>
-From: Sandeep Dhavale <dhavale@google.com>
-Date: Mon, 7 Apr 2025 21:59:03 -0700
-X-Gm-Features: ATxdqUH2xMaLI3V97urZLNZW_D7772R4FJJb9-wv2H5MVDeiqjePJE35yusKzi0
-Message-ID: <CAB=BE-T7s7zgExm+A1zqbUFE3SOdB_YzJZgsp4sYBBt2V_EA5Q@mail.gmail.com>
-Subject: Re: [PATCH v2] erofs: lazily initialize per-CPU workers and CPU
- hotplug hooks
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: linux-erofs@lists.ozlabs.org, Gao Xiang <xiang@kernel.org>, 
-	Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>, 
-	Jeffle Xu <jefflexu@linux.alibaba.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Apr 7, 2025 at 8:07=E2=80=AFPM Gao Xiang <hsiangkao@linux.alibaba.c=
-om> wrote:
->
-> Hi Sandeep,
->
-Hi Gao,
-> On 2025/4/8 10:53, Sandeep Dhavale wrote:
-> > Hi,
-> > Gentle ping for review in case this slipped through the list.
->
-> I'm working on internal stuffs (unrelated to erofs,
-> currently I have to handle erofs stuffs totally in my
-> spare time), also does it really need to be resolved now?
->
-I totally understand.
+Like Sophgo SG2042, SG2044 also uses an external interrupt controller
+to handle MSI/MSI-X. It supports more interrupt and has a different
+msi message address mapping.
 
-> It's not like a bugfix, if it's not urgent it will be
-> landed upstream in the next merge window.
->
-Yes, the next merge window is fine. I was just making sure that I
-collect feedback in case you think this needs any more refinements.
+Changed from v2:
+1. patch 1: separate from patch 2 of v2 for better reviewing
+2. patch 2: separate from patch 2 of v2 for better reviewing
+3. patch 3: apply Chen'tag
 
-Thanks,
-Sandeep.
+Changed from v1:
+- https://lore.kernel.org/all/20250303111648.1337543-1-inochiama@gmail.com/
+1. patch 1: apply Conor's tag
+2. patch 1: improve the bindings comments.
+3. patch 2: rebased on tips:irq/drivers patch
+4. patch 2: remove unused macro "SG2042_MAX_MSI_VECTOR"
+5. patch 2: rename generic structure name to match sg204x.
+6. patch 2: rename info field name to avoid misunderstanding.
 
-> Thanks,
-> Gao Xiang
-> >
-> > Thanks,
-> > Sandeep.
->
+Inochi Amaoto (4):
+  dt-bindings: interrupt-controller: Add Sophgo SG2044 MSI controller
+  irqchip/sg2042-msi: rename generic function and structure
+  irqchip/sg2042-msi: introduce configurable chipinfo for sg2042
+  irqchip/sg2042-msi: Add the Sophgo SG2044 MSI interrupt controller
+
+ .../sophgo,sg2042-msi.yaml                    |   4 +-
+ drivers/irqchip/irq-sg2042-msi.c              | 149 ++++++++++++++----
+ 2 files changed, 119 insertions(+), 34 deletions(-)
+
+--
+2.49.0
+
 
