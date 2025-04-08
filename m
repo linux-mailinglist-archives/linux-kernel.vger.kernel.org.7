@@ -1,349 +1,169 @@
-Return-Path: <linux-kernel+bounces-593727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FF29A7FCFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:54:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D16B8A7FE5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48ADE188F323
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:51:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EF1A188AB62
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42950267B15;
-	Tue,  8 Apr 2025 10:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AC126A083;
+	Tue,  8 Apr 2025 11:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j1jFRZ05"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h6B0Jzrj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489C21DDA0C;
-	Tue,  8 Apr 2025 10:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17325269CF0;
+	Tue,  8 Apr 2025 11:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744109451; cv=none; b=J5qlnU5Dwgj4n/8KkmLg2JlGUXG0UAGNvu2BqApzkDLmOZIkatrsQhg1a+4hHuswPcf9kMvjEK9geyJLEf4Rh38FlUZY6MbgDw+PqVHbR2FohoYr49sp+T4MUqidbip7O9yZrcVcc2VB0IUTEYmgqt27aRoT5YSX8d+RBup6VlY=
+	t=1744110244; cv=none; b=LQSURtsHjlpzQv/yaHMqH+ksXxNb2/6bGajNz0zIitHZUG7FwgooYWiLH3n/TI5GFaRYyRQpSoLtRePXUmEnhfkgEVDPBpsmzQzYeY5PwbdBPl3iAZeVqVckX5ibifSuM4pAdiJ0E1/JAfz3MAPOKs2ntMTQA7eiVEUrjEe/4F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744109451; c=relaxed/simple;
-	bh=YZmwB3uawjfmqD7YuQ8spD/xVSTqRV6eCHRgJXafioo=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=aFjCy0n2uKmztjWw8PudTVBThl05DYJpyz1cil2ZK0WGnq7R8pFCEaa86fb2wLacr7y3KGhBjiPjySvcvRD2enKlouFzooO+u5u6r4ZtEMe83IU3TRfpVXMbYvVEv+KatGWL1KmVVHarftkKlDE2ST19U65h9ioUKqfLBuMfBrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j1jFRZ05; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FD8EC4CEE5;
-	Tue,  8 Apr 2025 10:50:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744109450;
-	bh=YZmwB3uawjfmqD7YuQ8spD/xVSTqRV6eCHRgJXafioo=;
-	h=From:Subject:Date:To:Cc:From;
-	b=j1jFRZ05zX07YNL5QHWqD++7/+TBODEfFEyOyf7FBSpW879zLdnNPkqOHKUZpqqBC
-	 dWxNjVH/TfusZKSxejnjambd8llRVIPxNd1cyDaVtUUhWvqX/+m/GMtKQEzP86cYlR
-	 upK51qBcq3SE4UYj3N2ObEikxfNg/eKpDCA50blMVB56YuFFM98/b/S3nVeilzknSJ
-	 yQZuuvxZgpNZjNkOqoSRQSJA8utSZsjSJ9vhN/UhUO4rGMFbowbidZ2MtcUhGMNFEv
-	 K/jk6NHWH8Nmt974Nju8lIgnL8HaiYFcm8FfY3qnDRCZqNA0FOhktZXYOQp99i8Tzs
-	 GqdSXBTGly4pg==
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Subject: [PATCH 00/24] Arm GICv5: Host driver implementation
-Date: Tue, 08 Apr 2025 12:49:59 +0200
-Message-Id: <20250408-gicv5-host-v1-0-1f26db465f8d@kernel.org>
+	s=arc-20240116; t=1744110244; c=relaxed/simple;
+	bh=eF8ykuB3zv9H36H3ho5AqA1fkqlQywk4736N5EJ2uVM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kc7p19yv2Xyqna2zbYqfUxhn+WiDjk/XGN+0iMjFUss3qcdOdOTlazjgPstfwkch+v8jRRQz4+gqHGxZfROMFM1zYbjbhNrpxW2+I6acF07lHVtK1YEA7FLRPivx21vOELov2Me1g6KjNGRiFdEsoD8c1iUNyZuskO/JmavgrZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h6B0Jzrj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35C8CC4CEE5;
+	Tue,  8 Apr 2025 11:04:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744110243;
+	bh=eF8ykuB3zv9H36H3ho5AqA1fkqlQywk4736N5EJ2uVM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=h6B0JzrjLdW1aaQX/sBoTjFHeefoXkJPG4hutp3k721udh3TBJhqYBFzc875BzTWA
+	 P7sGWFJwVqY2W4jJtK9tkh+0FAJxl6i2pTo/4d7M1NdMyYuhCbCMKy0fg3T5b826jd
+	 f63A1xgZ6P1gNJIJ8vEQx/lydT29LEUpNQ4C1Ox4=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Jakub Acs <acsjakub@amazon.de>,
+	Theodore Tso <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mahmoud Adam <mngyadam@amazon.com>,
+	security@kernel.org
+Subject: [PATCH 5.10 221/227] ext4: fix OOB read when checking dotdot dir
+Date: Tue,  8 Apr 2025 12:49:59 +0200
+Message-ID: <20250408104826.925865160@linuxfoundation.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250408104820.353768086@linuxfoundation.org>
+References: <20250408104820.353768086@linuxfoundation.org>
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFj/9GcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDEwML3fTM5DJT3Yz84hJdcxPLNGNDs8S0VAsTJaCGgqLUtMwKsGHRsbW
- 1AAvveAtcAAAA
-X-Change-ID: 20250408-gicv5-host-749f316afe84
-To: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Sascha Bischoff <sascha.bischoff@arm.com>, 
- Timothy Hayes <timothy.hayes@arm.com>, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-Implement the irqchip kernel driver for the Arm GICv5 architecture,
-as described in the GICv5 beta0 specification, available at:
+5.10-stable review patch.  If anyone has any objections, please let me know.
 
-https://developer.arm.com/documentation/aes0070
+------------------
 
-The GICv5 architecture is composed of multiple components:
+From: Acs, Jakub <acsjakub@amazon.de>
 
-- one or more IRS (Interrupt Routing Service)
-- zero or more ITS (Interrupt Translation Service)
-- zero or more IWB (Interrupt Wire Bridge)
+commit d5e206778e96e8667d3bde695ad372c296dc9353 upstream.
 
-The GICv5 host kernel driver is split into units corresponding
-to GICv5 components.
+Mounting a corrupted filesystem with directory which contains '.' dir
+entry with rec_len == block size results in out-of-bounds read (later
+on, when the corrupted directory is removed).
 
-The GICv5 architecture defines the following interrupt types:
+ext4_empty_dir() assumes every ext4 directory contains at least '.'
+and '..' as directory entries in the first data block. It first loads
+the '.' dir entry, performs sanity checks by calling ext4_check_dir_entry()
+and then uses its rec_len member to compute the location of '..' dir
+entry (in ext4_next_entry). It assumes the '..' dir entry fits into the
+same data block.
 
-- PPI (PE-Private Peripheral Interrupt)
-- SPI (Shared Peripheral Interrupt)
-- LPI (Logical Peripheral Interrupt)
+If the rec_len of '.' is precisely one block (4KB), it slips through the
+sanity checks (it is considered the last directory entry in the data
+block) and leaves "struct ext4_dir_entry_2 *de" point exactly past the
+memory slot allocated to the data block. The following call to
+ext4_check_dir_entry() on new value of de then dereferences this pointer
+which results in out-of-bounds mem access.
 
-This series adds sysreg entries required to automatically generate
-GICv5 registers handling code, one patch per-register.
+Fix this by extending __ext4_check_dir_entry() to check for '.' dir
+entries that reach the end of data block. Make sure to ignore the phony
+dir entries for checksum (by checking name_len for non-zero).
 
-The GICv5 driver is split into patches matching *logical* entities to
-(hopefully) simplify the review. Regardless, PPI, IRS/SPI, LPI/IPI and
-SMP booting support (patches [18-21]) should be eventually merged as a
-single patch given that only by merging the four patches together the
-driver code can be considered fully functional.
+Note: This is reported by KASAN as use-after-free in case another
+structure was recently freed from the slot past the bound, but it is
+really an OOB read.
 
-Logical entities:
+This issue was found by syzkaller tool.
 
-- PPI
-- IRS/SPI
-- LPI/IPI
-- ITS
-- IWB
+Call Trace:
+[   38.594108] BUG: KASAN: slab-use-after-free in __ext4_check_dir_entry+0x67e/0x710
+[   38.594649] Read of size 2 at addr ffff88802b41a004 by task syz-executor/5375
+[   38.595158]
+[   38.595288] CPU: 0 UID: 0 PID: 5375 Comm: syz-executor Not tainted 6.14.0-rc7 #1
+[   38.595298] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+[   38.595304] Call Trace:
+[   38.595308]  <TASK>
+[   38.595311]  dump_stack_lvl+0xa7/0xd0
+[   38.595325]  print_address_description.constprop.0+0x2c/0x3f0
+[   38.595339]  ? __ext4_check_dir_entry+0x67e/0x710
+[   38.595349]  print_report+0xaa/0x250
+[   38.595359]  ? __ext4_check_dir_entry+0x67e/0x710
+[   38.595368]  ? kasan_addr_to_slab+0x9/0x90
+[   38.595378]  kasan_report+0xab/0xe0
+[   38.595389]  ? __ext4_check_dir_entry+0x67e/0x710
+[   38.595400]  __ext4_check_dir_entry+0x67e/0x710
+[   38.595410]  ext4_empty_dir+0x465/0x990
+[   38.595421]  ? __pfx_ext4_empty_dir+0x10/0x10
+[   38.595432]  ext4_rmdir.part.0+0x29a/0xd10
+[   38.595441]  ? __dquot_initialize+0x2a7/0xbf0
+[   38.595455]  ? __pfx_ext4_rmdir.part.0+0x10/0x10
+[   38.595464]  ? __pfx___dquot_initialize+0x10/0x10
+[   38.595478]  ? down_write+0xdb/0x140
+[   38.595487]  ? __pfx_down_write+0x10/0x10
+[   38.595497]  ext4_rmdir+0xee/0x140
+[   38.595506]  vfs_rmdir+0x209/0x670
+[   38.595517]  ? lookup_one_qstr_excl+0x3b/0x190
+[   38.595529]  do_rmdir+0x363/0x3c0
+[   38.595537]  ? __pfx_do_rmdir+0x10/0x10
+[   38.595544]  ? strncpy_from_user+0x1ff/0x2e0
+[   38.595561]  __x64_sys_unlinkat+0xf0/0x130
+[   38.595570]  do_syscall_64+0x5b/0x180
+[   38.595583]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-The salient points of the driver are summarized below.
-
-=============
-1. Testing
-=============
-
-Patchset tested with an architecturally compliant FVP model with
-the following setup:
-
-- 1 IRS
-- 1 and 2 ITSes
-- 1 and 2 IWBs
-
-configured with different parameters that vary the IRS(IST) and
-ITS(DT/ITT) table levels and INTID/DEVICEID/EVENTID bits.
-
-A Trusted-Firmware (TF-A) prototype was used for device tree
-bindings and component initializations.
-
-================
-2. Driver design
-================
-
-=====================
-2.1 GICv5 DT bindings
-=====================
-
-The DT bindings attempt to map directly to the GICv5 component
-hierarchy, with a top level node corresponding to the GICv5 "system",
-having IRS child nodes, that have in turn ITS child nodes.
-
-The IWB is defined as a GICv5 "system" child since its relationship
-with the ITS is explicit through the msi-parent property required
-to define the IWB deviceID.
-
-===================
-2.2 GICv5 top level
-===================
-
-The top-level GICv5 irqchip driver implements separate IRQ
-domains - one for each interrupt type, PPI (PE-Private Peripheral
-Interrupt), SPI (Shared Peripheral Interrupt) and LPI (Logical
-Peripheral Interrupt).
-
-The top-level exception handler routes the IRQ to the relevant IRQ
-domain for handling according to the interrupt type detected when the
-IRQ is acknowledged.
-
-All IRQs are set to the same priority value.
-
-The driver assumes that the GICv5 components implement enough
-physical address bits to address the full system RAM, as required
-by the architecture; it does not check whether the physical address
-ranges of memory allocated for IRS/ITS tables are within the GICv5
-physical address range.
-
-Components are probed by relying on the early DT irqchip probing
-scheme. The probing is carried out hierarchically, starting from
-the top level.
-
-The IWB driver is not implemented using the wired-to-MSI interface
-(i.e. with bus_token == DOMAIN_BUS_WIRED_TO_MSI mechanism), for two
-specific reasons:
-
-- An IWB is tightly coupled with a GICv5 ITS and its eventIDs
-  are fixed and cannot be allocated by the GICv5 ITS as it does
-  for other devices. An IWB is plugged directly into the ITS
-  driver for this specific reason.
-- The DOMAIN_BUS_WIRED_TO_MSI interface requires the IWBs to be
-  platform devices - fiddling with platform device creation and
-  DT nodes is doable but a bit hacky.
-
-Having said that, an alternative IWB driver with DOMAIN_BUS_WIRED_TO_MSI
-bus token was implemented and can be shared for subsequent patchsets
-versions depending on feedback, ref: 2.5 GICv5 IWB section below.
-
-=============
-2.3 GICv5 IRS
-=============
-
-The GICv5 IRS driver probes and manages SPI interrupts by detecting their
-presence and by providing the top-level driver the information required
-to set up the SPI interrupt domain.
-
-The GICv5 IRS driver also parses from firmware Interrupt AFFinity ID
-(IAFFID) IDs identifying cores and sets up IRS IRQ routing.
-
-The GICv5 IRS driver allocates memory to handle the IRS tables.
-
-The IRS LPI interrupts state is kept in an Interrupt State Table (IST)
-and it is managed through CPU instructions.
-
-The IRS driver allocates the IST table that, depending on available HW
-features can be either 1- or 2-level.
-
-If the IST is 2-level, memory for the level-2 table entries
-is allocated on demand (ie when LPIs are requested), using an IRS
-mechanism to make level-1 entry valid on demand after the IST
-has already been enabled.
-
-Chunks of memory allocated for IST entries can be smaller or larger than
-PAGE_SIZE and are required to be physically contiguous within an IST level
-(i.e. a linear IST is a single memory block, a 2-level IST is made up of a
-block of memory for the L1 table, whose entries point at different L2 tables
-that are in turn allocated as memory chunks).
-
-LPI INTIDs are allocated in software out of an ID pool, that is managed
-with a maple tree. Maple tree entries are not used (the maple tree is
-used to keep track of free LPI ranges - the value stored is a valid
-pointer to mark the ranges as allocated but it is not consumed by the
-driver). LPI INTIDs are allocated on demand, mostly one by one.
-On LPI allocation the driver tries to merge adjacent maple tree slots to
-prevent wasting slots.
-
-Maple tree usage for this purpose is an RFC at this stage.
-
-IPIs are implemented using LPIs and a hierarchical domain is created
-specifically for IPIs using the LPI domain as a parent.
-
-arm64 IPI management core code is augmented with a new API to handle
-IPIs that are not per-cpu interrupts and force the affinity of the LPI
-backing an IPI to a specific and immutable value.
-
-=============
-2.4 GICv5 ITS
-=============
-
-The ITS driver reuses the existing GICv3/v4 MSI-parent infrastructure
-and on top builds an IRQ domain needed to enable message based IRQs.
-
-ITS tables - DT (device table) and ITT (Interrupt Translation Table) are
-allocated according to the number of required deviceIDs and eventIDs on
-a per device basis. The ITS driver relies on the kmalloc() interface
-because memory pages must be physically contiguous within a table level
-and can be < or > than PAGE_SIZE.
-
-=============
-2.5 GICv5 IWB
-=============
-
-The IWB is a wire to message translator; its driver implements the
-IRQ domain needed to carry out this translation and passes the
-interrupt to its parent ITS domain.
-
-An IWB is connected to an ITS and it has its own deviceID for all
-interrupt wires that it manages; the IWB input wire number is
-exposed to the ITS as an eventID. This eventID is not programmable
-and therefore requires special handling in the ITS driver.
-
-The current driver is tied to the ITS code and basically creates
-a wired domain that allocates eventIDs into the ITS driver directly.
-The ITS device allocation for the IWB is implemented directly in
-the IWB driver at probe time (after all the IWB is a wired interrupt
-controller with fixed events). An IWB IRQ domain is assigned to
-the IWB wired IRQs, with the corresponding ITS domain as its
-parent. Upon IRQ allocation (triggered by firmware parsing
-the devices IRQ entries) the domain hierarchy maps the requested IWB
-wire to an ITS {device/event}ID fixed pair.
-
-An alternative IWB driver, based on the DOMAIN_BUS_WIRED_TO_MSI bus
-token, was already developed and tested but the authors preferred
-to post the current version to get feedback on it even though it
-makes the IWB driver tied to the ITS driver requiring boilerplate
-code that is not really needed (e.g. platform device deviceID parsing).
-
-In particular, the fixed eventID nature of the IWB requires ITS
-{device/event}ID allocation code to be IWB aware. To make this
-work for the DOMAIN_BUS_WIRED_TO_MSI bus token approach,
-the IWB should be made to work as a platform device and
-most importantly, ITS code should add special handling for the
-IWB (probably using an OF compatible string match or a new MSI
-alloc flag). In a way, that's what the current IWB driver does.
-Feedback is welcome on the matter.
-
-===================
-3. Acknowledgements
-===================
-
-The patchset was co-developed with T.Hayes and S.Bischoff from
-Arm - thank you so much for your help.
-
-If you have some time to help us review this series and get it into
-shape, thank you very much.
-
-Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Fixes: ac27a0ec112a0 ("[PATCH] ext4: initial copy of files from ext3")
+Signed-off-by: Jakub Acs <acsjakub@amazon.de>
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+Cc: linux-ext4@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Mahmoud Adam <mngyadam@amazon.com>
+Cc: stable@vger.kernel.org
+Cc: security@kernel.org
+Link: https://patch.msgid.link/b3ae36a6794c4a01944c7d70b403db5b@amazon.de
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-Lorenzo Pieralisi (23):
-      Documentation: devicetree: bindings: Add GICv5 DT bindings
-      arm64/sysreg: Add GCIE field to ID_AA64PFR2_EL1
-      arm64/sysreg: Add ICC_PPI_PRIORITY<n>_EL1
-      arm64/sysreg: Add ICC_ICSR_EL1
-      arm64/sysreg: Add ICC_PPI_HMR<n>_EL1
-      arm64/sysreg: Add ICC_PPI_ENABLER<n>_EL1
-      arm64/sysreg: Add ICC_PPI_{C/S}ACTIVER<n>_EL1
-      arm64/sysreg: Add ICC_PPI_{C/S}PENDR<n>_EL1
-      arm64/sysreg: Add ICC_CR0_EL1
-      arm64/sysreg: Add ICC_PCR_EL1
-      arm64/sysreg: Add ICC_IDR0_EL1
-      arm64/sysreg: Add ICH_HFGRTR_EL2
-      arm64/sysreg: Add ICH_HFGWTR_EL2
-      arm64/sysreg: Add ICH_HFGITR_EL2
-      arm64: Disable GICv5 read/write/instruction traps
-      arm64: cpucaps: Add GCIE capability
-      irqchip/gic-v5: Add GICv5 PPI support
-      irqchip/gic-v5: Add GICv5 IRS/SPI support
-      irqchip/gic-v5: Add GICv5 LPI/IPI support
-      irqchip/gic-v5: Enable GICv5 SMP booting
-      irqchip/gic-v5: Add GICv5 ITS support
-      irqchip/gic-v5: Add GICv5 IWB support
-      arm64: Kconfig: Enable GICv5
+ fs/ext4/dir.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-Marc Zyngier (1):
-      arm64: smp: Support non-SGIs for IPIs
+--- a/fs/ext4/dir.c
++++ b/fs/ext4/dir.c
+@@ -88,6 +88,9 @@ int __ext4_check_dir_entry(const char *f
+ 	else if (unlikely(le32_to_cpu(de->inode) >
+ 			le32_to_cpu(EXT4_SB(dir->i_sb)->s_es->s_inodes_count)))
+ 		error_msg = "inode out of bounds";
++	else if (unlikely(next_offset == size && de->name_len == 1 &&
++			  de->name[0] == '.'))
++		error_msg = "'.' directory cannot be the last in data block";
+ 	else
+ 		return 0;
+ 
 
- .../bindings/interrupt-controller/arm,gic-v5.yaml  |  268 ++++
- MAINTAINERS                                        |   10 +
- arch/arm64/Kconfig                                 |    1 +
- arch/arm64/include/asm/arch_gicv5.h                |   91 ++
- arch/arm64/include/asm/el2_setup.h                 |   45 +
- arch/arm64/include/asm/smp.h                       |   24 +-
- arch/arm64/kernel/cpufeature.c                     |    7 +
- arch/arm64/kernel/smp.c                            |  156 ++-
- arch/arm64/tools/cpucaps                           |    1 +
- arch/arm64/tools/sysreg                            |  495 +++++++-
- drivers/irqchip/Kconfig                            |   16 +
- drivers/irqchip/Makefile                           |    5 +-
- drivers/irqchip/irq-gic-common.h                   |    2 -
- ...3-its-msi-parent.c => irq-gic-its-msi-parent.c} |    3 +-
- drivers/irqchip/irq-gic-its-msi-parent.h           |   13 +
- drivers/irqchip/irq-gic-v3-its.c                   |    3 +-
- drivers/irqchip/irq-gic-v5-irs.c                   |  853 +++++++++++++
- drivers/irqchip/irq-gic-v5-its.c                   | 1326 ++++++++++++++++++++
- drivers/irqchip/irq-gic-v5-iwb.c                   |  377 ++++++
- drivers/irqchip/irq-gic-v5.c                       | 1226 ++++++++++++++++++
- drivers/irqchip/irq-gic-v5.h                       |  372 ++++++
- 21 files changed, 5235 insertions(+), 59 deletions(-)
----
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-change-id: 20250408-gicv5-host-749f316afe84
-
-Best regards,
--- 
-Lorenzo Pieralisi <lpieralisi@kernel.org>
 
 
