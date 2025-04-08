@@ -1,167 +1,113 @@
-Return-Path: <linux-kernel+bounces-594731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689DCA815BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:22:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02D04A815C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 21:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F7D13B8CF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:22:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68D873BB683
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 19:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66A32417DE;
-	Tue,  8 Apr 2025 19:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0CB241CB5;
+	Tue,  8 Apr 2025 19:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="v3nzJNZQ"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="poz33RYU"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F1720E332;
-	Tue,  8 Apr 2025 19:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB2C17C91;
+	Tue,  8 Apr 2025 19:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744140134; cv=none; b=Zeni5Ca0JcqqchaWU2JOGA7mexoNecgufYyNa2lnddCncg22QjZFZHS8kvgFb5X32aRLBEdzV5AZYO9k7U0ThnzD0ekoITrtIhDm8EmPMW4bb+Q69czYHN7PqNTzA5jiIjTr5cRAJO3BhGe0/GXlroXHRyO4sV3K5W2t094JY4c=
+	t=1744140232; cv=none; b=gayLfNzEuOkL/Cl/s7uynY2mHCAUCgkhbCs1XVv6WriOMEr+rLDDwhmNDQwL4PN1GthevJBKpkDYw8fkB8pxmtsJoyOfwBxjGQ+wLnuHni4da+GTzL0sv0ISAvyegQULUyvHSro7ztVAMBO43Pe2vvDtPexfjPh01sgt8nqQbd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744140134; c=relaxed/simple;
-	bh=Sq6qE3bdNlKrIH+jwg54WcNbmrQhN9OHUYTXKi+ZC1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GqI1o59DmqV0ec1BwSAfkkZcJB4LjFd7qWWw85NoM2QNIhhu+YxsEYRU4zUh3cNwmXGiPXjOVNKyrYjvl8D49EJpUvYjiQPC4r6h2Ct0ykS/VeMNDMRxm+9BuSKLjFJKPBgBZDZSapeYG4eS+ZX9onB/y/OSIdZp9PShoEvogxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=v3nzJNZQ; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=nWdwAmsvl+J4jdX1SK8QB+Dmfqlg71MkeOOS1luZS08=; b=v3nzJNZQ07pfSxqfTgz07yzMp+
-	FG0I65PEHs5mB4C0ahp50VogmivCjZldf3RPq8CoFwTzr7q6ZDDzn2yY1GZ6w+m5BPiafKX6QGEe5
-	jiOHwbp5dp7njlnVsXfSRX/AsSZOVII7irdWqZpm7W84mcNnodWQsPXj2WMqKRhLpMbs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u2EWE-008RUU-Dj; Tue, 08 Apr 2025 21:21:58 +0200
-Date: Tue, 8 Apr 2025 21:21:58 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Michael Klein <michael@fossekall.de>
-Cc: Joe Damato <jdamato@fastly.com>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND net-next v5 2/4] net: phy: realtek: Clean up RTL8211E
- ExtPage access
-Message-ID: <4d26d92e-f083-4a5c-88b5-93c45c6a51a5@lunn.ch>
-References: <20250407182155.14925-1-michael@fossekall.de>
- <20250407182155.14925-3-michael@fossekall.de>
- <Z_SQTi-uKk4wqRcL@LQ3V64L9R2>
- <Z_VvOG91oPZZejye@a98shuttle.de>
+	s=arc-20240116; t=1744140232; c=relaxed/simple;
+	bh=njXDunu8UU/gaBoTYCsC/ZawgbQ2Yst9LDw4Ej6ukIc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=GlTTM4ItEoXktfXEFqY6+TBoCb8PVrmmzA0jqfdXl56lBcOYgde8QmwIlpKeCwql00LsFSRs0JsGsrsMqicYPkx2YgVDqEBC2b3PSMkMrOuOdBIo0s6WWHtZV43UQ1t0/fMQhZcoUq0h/Rj/jM5AixVJztVi5UzsFYnQIf8FHF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=poz33RYU; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1744140216; x=1744745016; i=markus.elfring@web.de;
+	bh=ORupiyOALZSaNO8QGxFuqMgWPsdK6vWbY5xqB7+FD4g=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=poz33RYUkIlroB64JgZAmjwnKgWt6wwNTRNFJm/r46hUuPziJrW/pAIB+xY9fxw5
+	 EGrGjdwbC8PGcBpGKkTmQf864VfCa5bWzJPC4tSGz24u7dzHvH7d5r412AcLgM43Q
+	 MuM2aSUY/wozg0wFojwvcCOk7QvnV9b7KbaGpgqfbi727b8FxC9gypZof24FqL0gA
+	 EwAp2vDqUwaSGmF+Fb1uR+1iYWqIf3yG6T2LSluJ3YGyJ0QOcOTwjn2xuzk+SMTiU
+	 g5/RaniUPh+SXeN0//TWDi69ksMxlv+v+1/HlXucjKf+l6qoFmiv1Os9bo/qhWv32
+	 0XhOKPGbHulo+JuWLQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.41]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MQgl2-1tfaow2U3q-00KORa; Tue, 08
+ Apr 2025 21:23:36 +0200
+Message-ID: <0558b7f7-8c69-4664-afc6-bae4fdc6f071@web.de>
+Date: Tue, 8 Apr 2025 21:23:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_VvOG91oPZZejye@a98shuttle.de>
+User-Agent: Mozilla Thunderbird
+To: Henry Martin <bsdhenrymartin@gmail.com>, arm-scmi@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Cristian Marussi <cristian.marussi@arm.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Sudeep Holla
+ <sudeep.holla@arm.com>, Viresh Kumar <viresh.kumar@linaro.org>
+References: <20250408150354.104532-1-bsdhenrymartin@gmail.com>
+Subject: Re: [PATCH v2 0/2] cpufreq: scmi/scpi: Fix NULL pointer dereference
+ in get_rate()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250408150354.104532-1-bsdhenrymartin@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:u6uFVW+ak15/uxBv+EyE+kavakv+ju2yYmazNaogRVKiCXjwIcx
+ EcVxW4Pj6WLQTxQtX2FFlS5b3rD7YK2TjwSuySlbDy+ov3KNlK+SuK4sLTBGj97qjo3pxmV
+ /ZSIBQZxHOODq/I5u/6evY1BS4JJ1tcYBhllVw8j9t/Z4Jc20RL9G2K+Pz3CY7eg0YriQMC
+ tX9xZnoZY1jQ1tG89hYbQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:+CIQkeTljWY=;Pnys6I1QlDPG6ZGflL/7mdQAKbH
+ v3OY17uA/UeJkYP3ncV2ZDzO84Q8w/J1VuTtc5jKnzoFMFeSFpTtHd4Ll18QOR0Xf0dXDSwNY
+ UzCbc5C7/frB9IQ2LIua/tBDMi7ilUjEDuftfoAuul2vPsbPWmhUdfLT4Z96lnBsOdxuvi1qy
+ QxEBKVKxp6EZ7tcHX7IQuk7wFUCwOIFTkeKEx9tIjCn+kiHiOqI8Y5mGB0ztJauExjG3HpL/m
+ AplLRoF1jADfOKFFAgztzXLgjLMPVbcpi5L+c26No5QLfC+xLD5sk8iR0fP3Oy1jsmzQ+Pt5T
+ 7TdS8NCajChL6j8l0fow+d1swEwZrVE/I7TxP+spKlM9+GLdOeQZgpR2F7L9RIgDVESO8Pfgn
+ TEvJEWreon/3sc5D+5dTT3cSWc9jEVn0/OmKGt1MizxbB4ryt4DlYr/wPkcgM1ItS3ElaNxph
+ mhXwjeJdEbHRpKZs3BjrUNPbdbPMeatpvmAvgVZfP+vql97bFB2Kjb3WALotk3yoBQGAlYo0+
+ o5b/l/4h4lLrH89TtH4pxx2xGYssu3jyClSAy43kh43/dph/J0N2Xmgo29rUrggEWFhmFwRIQ
+ eiZW6HmR7yhzOYPi1f0L6+lrdtJEDwNdcBPu5R7ZBNPQorYb+xgPT3pyVcm5xNcjkWKSF+kFJ
+ l26hawZGHLFVNGIAdbYniFrKhvGB4qV4mkRvnQvkSz17wh+7jSZTc3TmwkByPALErfQheLp7P
+ RuBxgEhWpKclzR0cTqfaYaO0Nr7yRBpnDpd/G3UQcgfmxKiosExGZkWAoGlBIE2BQK20kzH4H
+ m5/TX+7B4ktlJgUYRTqsd69YGiRJ15/9ErR19RFUTHsV1vfZlnA7HqeWHnt7RzjBb/bDwGf0M
+ H9W/yEYHSN+LlOAGgluks6XzGa1iKs6d0krfdQkKIQitFmuCLCXID+NbROt20vZfBE2240pxX
+ yHHJ69xcPMbarOfH+egFF6t2ZP1LQ+DSSyVWaqjlcQTdV2Hxj4Fw3G5HBGUdE3Kd4vZr9ZOlh
+ 31weAWMY/XHAyex63z8H4hpCRqNwdo6rkaXxzBd/ImksS7R9XBLwbTPA0lQl+GVOcixDP0srj
+ WG1CBDo7dKsJCFATHG+FS+pPm3FH9y0yhdYWhDrM6aiWwAkl0/afpzKn6xckDCK7nzxXSsGR2
+ 1tXH8eTrnNqM/jxzOlzUry2zXxOBStY3ml+BwVFGlW+IFoI/B98JYx0kSCegc6w9ZHlqAbvPZ
+ APbsHyfFki52ilFk6LyHZOx3BxnG9Izj8EqX4CoSKFnYJ2cJ47CJ2HwGbPEO1teVElj3cm4Ia
+ nkmh7b7x7Z/aQrrFCViL+YF4td7OYARAVOQH2n5TUBEM1ZY2ARV/I4eErldUI1go7csqboh4J
+ X06Go6wmsMrgB5Kk0v6JNtzFUuDI8o7ylETHKozZHEl1FnvkM3N0IE7OGT3EirYWXfGBgzpHm
+ 7DLsdclVnCUXEpGgDK6iDCbabI6MUkBdRdwLg0Kf6FU8JFu0D9/k0XSPAnPjxqgbKQ6/b7A==
 
-On Tue, Apr 08, 2025 at 08:47:20PM +0200, Michael Klein wrote:
-> On Mon, Apr 07, 2025 at 07:56:14PM -0700, Joe Damato wrote:
-> > > - Factor out RTL8211E extension page access code to
-> > >   rtl8211e_modify_ext_page() and clean up rtl8211e_config_init()
-> > > 
-> > > Signed-off-by: Michael Klein <michael@fossekall.de>
-> > > ---
-> > >  drivers/net/phy/realtek/realtek_main.c | 38 +++++++++++++++-----------
-> > >  1 file changed, 22 insertions(+), 16 deletions(-)
-> > > 
-> > > diff --git a/drivers/net/phy/realtek/realtek_main.c b/drivers/net/phy/realtek/realtek_main.c
-> > > index b27c0f995e56..e60c18551a4e 100644
-> > > --- a/drivers/net/phy/realtek/realtek_main.c
-> > > +++ b/drivers/net/phy/realtek/realtek_main.c
-> > > @@ -37,9 +37,11 @@
-> > > 
-> > >  #define RTL821x_INSR				0x13
-> > > 
-> > > -#define RTL821x_EXT_PAGE_SELECT			0x1e
-> > >  #define RTL821x_PAGE_SELECT			0x1f
-> > > 
-> > > +#define RTL8211E_EXT_PAGE_SELECT		0x1e
-> > > +#define RTL8211E_SET_EXT_PAGE			0x07
-> > > +
-> > >  #define RTL8211E_CTRL_DELAY			BIT(13)
-> > >  #define RTL8211E_TX_DELAY			BIT(12)
-> > >  #define RTL8211E_RX_DELAY			BIT(11)
-> > > @@ -135,6 +137,21 @@ static int rtl821x_write_page(struct phy_device *phydev, int page)
-> > >  	return __phy_write(phydev, RTL821x_PAGE_SELECT, page);
-> > >  }
-> > > 
-> > > +static int rtl8211e_modify_ext_page(struct phy_device *phydev, u16 ext_page,
-> > > +				    u32 regnum, u16 mask, u16 set)
-> > > +{
-> > > +	int oldpage, ret = 0;
-> > > +
-> > > +	oldpage = phy_select_page(phydev, RTL8211E_SET_EXT_PAGE);
-> > > +	if (oldpage >= 0) {
-> > > +		ret = __phy_write(phydev, RTL8211E_EXT_PAGE_SELECT, ext_page);
-> > > +		if (ret == 0)
-> > > +			ret = __phy_modify(phydev, regnum, mask, set);
-> > > +	}
-> > > +
-> > > +	return phy_restore_page(phydev, oldpage, ret);
-> > > +}
-> > > +
-> > >  static int rtl821x_probe(struct phy_device *phydev)
-> > >  {
-> > >  	struct device *dev = &phydev->mdio.dev;
-> > > @@ -607,7 +624,9 @@ static int rtl8211f_led_hw_control_set(struct phy_device *phydev, u8 index,
-> > > 
-> > >  static int rtl8211e_config_init(struct phy_device *phydev)
-> > >  {
-> > > -	int ret = 0, oldpage;
-> > > +	const u16 delay_mask = RTL8211E_CTRL_DELAY |
-> > > +			       RTL8211E_TX_DELAY |
-> > > +			       RTL8211E_RX_DELAY;
-> > >  	u16 val;
-> > > 
-> > >  	/* enable TX/RX delay for rgmii-* modes, and disable them for rgmii. */
-> > > @@ -637,20 +656,7 @@ static int rtl8211e_config_init(struct phy_device *phydev)
-> > >  	 * 12 = RX Delay, 11 = TX Delay
-> > >  	 * 10:0 = Test && debug settings reserved by realtek
-> > >  	 */
-> > > -	oldpage = phy_select_page(phydev, 0x7);
-> > > -	if (oldpage < 0)
-> > > -		goto err_restore_page;
-> > > -
-> > > -	ret = __phy_write(phydev, RTL821x_EXT_PAGE_SELECT, 0xa4);
-> > > -	if (ret)
-> > > -		goto err_restore_page;
-> > > -
-> > > -	ret = __phy_modify(phydev, 0x1c, RTL8211E_CTRL_DELAY
-> > > -			   | RTL8211E_TX_DELAY | RTL8211E_RX_DELAY,
-> > > -			   val);
-> > > -
-> > > -err_restore_page:
-> > > -	return phy_restore_page(phydev, oldpage, ret);
-> > > +	return rtl8211e_modify_ext_page(phydev, 0xa4, 0x1c, delay_mask, val);
-> > >  }
-> > 
-> > Seems good to add RTL8211E_SET_EXT_PAGE to remove a constant from
-> > the code. Any reason to avoid adding constants for 0xa4 and 0x1c ?
-> 
-> My copy of the datasheet does not document this register, so I did not
-> feel qualified to come up with a meaningful name.
+> This series fixes potential NULL pointer dereferences in scmi_cpufreq_ge=
+t_rate()
+> and scpi_cpufreq_get_rate() when cpufreq_cpu_get_raw() returns NULL.
+>
+> Henry Martin (2):
+>   cpufreq: scmi: Fix null-ptr-deref in scmi_cpufreq_get_rate()
+>   cpufreq: scpi: Fix null-ptr-deref in scpi_cpufreq_get_rate()
 
-Is the page documented?
+Can any other summary phrase variants become more desirable accordingly?
 
-As for the register, it appears to contain RGMII delay configuration,
-so why not call it RTL8211E_RGMII_DELAY ?
-
-Sometimes you just have to make names up. If somebody has a datasheet
-which lists it and wants to rename it, they can.
-
-   Andrew
-
+Regards,
+Markus
 
