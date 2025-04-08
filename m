@@ -1,168 +1,235 @@
-Return-Path: <linux-kernel+bounces-593384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E234CA7F889
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:54:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50D98A7F88F
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:55:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D9A1189FAB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:51:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC97317DEA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919CC26560B;
-	Tue,  8 Apr 2025 08:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEDA206F31;
+	Tue,  8 Apr 2025 08:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QN7J50AC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F34BNLh/"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641E0264A7B;
-	Tue,  8 Apr 2025 08:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFF1221DA0;
+	Tue,  8 Apr 2025 08:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744102132; cv=none; b=iT+Q1EQRrEjxpX249XavL4/WZvlXJzUtobRLDrR1DxZpWMqVaB2A4x4mfcZf0liDUm+N4nH5V/UwK+oVxVp/laqFJZst6GnnK/WomX/Ib+o5YrsEQAxOlwsMJJQa4BBSC1Bdp9N1Wd5lHZk/gJeAadIthv5nkTtgbnYAbqxQoDk=
+	t=1744102168; cv=none; b=aIBOAeME/LmFzGYCbBEYIeLDWc/x9tF9O18+hgdYSFxywiIMD6W50CmcFW9VJv6AzQDUnnI5ARVTbSsrE7WmufZ6bCyFO24Gk7d9rCqoWWEAymeshjIoVExtKLhRhN0qI7Gs0BtindvZC0/XRy8g+auqDVBfyVdaEthlDPj6FGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744102132; c=relaxed/simple;
-	bh=QboZBxd8+rNwo0pKW/iVwcS0B2zApiAX3/k+2rn+l7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QCBtTx0a+N7L16vADmW4SVnF2xyix2F9/dVjscIHthf7EqinKhHt9R7CyuQ2+v8gUpUFliS+BszrJYFgSTlXP+gZ2PqlZgIEv106OEjc1vvKKhRZZCbjkYDQKLhcVPU2z7IWKUUadgDPdI0UEKusDwayDnD2PyYYB8CMTYuzN/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QN7J50AC; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744102131; x=1775638131;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QboZBxd8+rNwo0pKW/iVwcS0B2zApiAX3/k+2rn+l7c=;
-  b=QN7J50ACvfRtAoDJ+wYGUy8vunDUXF3qn1duhhX0YZ5QHFBHN36brHGR
-   NsZ8+o32I1AdzdWcAMKzGGyx6p9hzb0dZ8I9ZJLCSpjg4inSQVMUC/+BL
-   drxeh2agXtYSfgwEhE1A4kiFIweooxu6FcnzB2CXzYvvD6jdMN0yVEWvQ
-   Ixz+nkJ9g33QQ80Ei1K8orfInkighKF1LCzdjIRWrgcfr/r6FMXPmw3PN
-   wgLXw2ajz2QIYH6RJ3S1xbryMjugqr9pfQ1afWpaLYA/00iPgFHnjvmLy
-   nWv73V0sfP5DWToOlnd1e/2NZnAVf6iM3C6knVnUO5CTGtGP/ldEIjEr/
-   g==;
-X-CSE-ConnectionGUID: N8ZfO0WrRpiSKTYxPWta9Q==
-X-CSE-MsgGUID: cUBN99xeQDyCH7Q+NKZQaw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45615003"
-X-IronPort-AV: E=Sophos;i="6.15,197,1739865600"; 
-   d="scan'208";a="45615003"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 01:48:50 -0700
-X-CSE-ConnectionGUID: wbeNfKdTQDqGdRShoemECQ==
-X-CSE-MsgGUID: jo0/bwYOSfq1dgAe7ol4Lg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,197,1739865600"; 
-   d="scan'208";a="128728389"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 01:48:48 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 16A5811FB1F;
-	Tue,  8 Apr 2025 11:48:45 +0300 (EEST)
-Date: Tue, 8 Apr 2025 08:48:45 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Paul Elder <paul.elder@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: i2c: thp7312: use fwnode_for_each_child_node()
-Message-ID: <Z_Ti7aQK2_OlrUee@kekkonen.localdomain>
-References: <Z90qM33DvkTMGg_x@mva-rohm>
- <20250321104100.GC25483@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1744102168; c=relaxed/simple;
+	bh=/oi0h+YxGjSj0Amrgd3zkGZvok/zMIeGT22vwxuw0xs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CKJrrF7MkhLjPKOk7qPhtOpZXwrCsJHNHF2/2XzR1HSWWvDb97pcfQ9otocmm9cwejE8nMk0MqTmHJ69W9zQ44CCBVbBCE1SDmvSZroS79i1bLvizfBrwWdANEcaUe/LwqZkwoYRsRvJZN9b15g1ilT0eYIw2LglCf4z+i2gi+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F34BNLh/; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54298ec925bso1675178e87.3;
+        Tue, 08 Apr 2025 01:49:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744102165; x=1744706965; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vLz6PIQLrX7WAvTgN7mKlzbJuOZCZNXq5vbLEn5vmhw=;
+        b=F34BNLh/V77HHZ0mSwg4yanme41aqOwp4+33aLzTWhVhGe6HR3qW+9BjBIfc4ezwPc
+         ug6DjamhNrxaVeSN7DdKVxF4REOJQOiwwECTBn2aUX+wSjFOkbAtFYLzND+1x8Dnqe0B
+         O8Z/HySipzQH0zJBGwA3pcLtOWPsuge9KnOPejZ+zs+VPrdCYaESQ/OsrWf7eKQd+oHr
+         +lLSbHCmbO+fKUGtW3QoQAPp+NA9Ww6OsZ+wA85BvvHjq3Fx0sD67FRVlnty9aBlqeXl
+         fBe6rSUADQl6z+MXtSZO3Zy4I4wBVpN0sxK6B/3ETSSUwmwfWOVZSF8I/vdNEuoUJpMz
+         lK8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744102165; x=1744706965;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vLz6PIQLrX7WAvTgN7mKlzbJuOZCZNXq5vbLEn5vmhw=;
+        b=avZLWhZuAij+EF2kK5E2wECVpcAPtZi6HhgxdQyj1b+h2YO68zNRmWmAyFiOWE/4GF
+         o2lkQCZYzCrzvYtN/2mjvwC8mPgT3sMQnvvmq9FdPG6cDuqsVZQ0+inv0UvhOOqnW+Os
+         Ie3wdfsnalll7Xngya0k+rOIHtXlZz/fQVb/6r7VSjxEleB25EfY0hgZOGlo/DN9E5Yu
+         cxDCqWWe0N/72YkeNXo5cn5ymKHE2rZ5PhraWeTelw2v+oiCgN4+XNiMBtsxZdabp+Nq
+         ntq/0iCpBtP6rWDZbxVWnX62YR58lr25eqMQBWSSt+DM5qf4H7M2WXuJLQTmYsL8AKb8
+         fj9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUc3kQ59cqL1L0JCCGz6pGiWKHNPpJ9hBLfPw8bflgISgu+G3G8lG2FpZK3H4c9LjT14tf/XCixc/PRthY=@vger.kernel.org, AJvYcCVdcoZMfGS7hk4Ju6+N+8HOI6xPMw9oKtfaCjLgsd27ghSXumDkg2SGwoXnqCslJz7dzCYA6AO7lxLqnmyy@vger.kernel.org, AJvYcCWWxwE8acrkZHBM0hr0THrY/coNIyL7kgsIKIpMGR6pv029N93z8Zc1dtlxrstbePkgbXNkG1AKKInv@vger.kernel.org, AJvYcCXM3KDvigMP6aILJla6J31eUfHreOr4IoFPGVrOHgneeMwUUrPmcqRHgd+uxneU1UY3eAO5XmYN0gQP50GU28Xh@vger.kernel.org
+X-Gm-Message-State: AOJu0YywO7pR5vAXju5hoEiEJ4CHMQPwW3Oy+rrvxMMoo1KM32IZtaC8
+	8rOpjcpX2HEECWFN+d/kdi4tf/NbQ+SK9BridPAZbKbqJPq1Dq6FMTvJOjhA6oNozM2xJTJZ86i
+	otxUalq7FOE9rXI8KSA8+S6YzkWQ=
+X-Gm-Gg: ASbGncvGTio1eHTIwAjoVG82AX/rC60n82Al2U8NWeGVz1BDltGcAI1Yw7/WM7At4xb
+	DAXYvwC+kGFeYNqgRa8hPlWxO4KEy20hb/o3yv63Aw92wda9WBWBfppLbyqrJ+Xg8UcWFlP7T6I
+	qjdyC482vtEREwZ8/7qWB7ts9fLw==
+X-Google-Smtp-Source: AGHT+IE+JJyjApRSjTK6zCCcuyEkxu6Qm3vnoWNWSqKZ/kXpSOIJZWdovVbmT7GRh38X03m8OMgFhs3vFURkhxl2cy4=
+X-Received: by 2002:a05:6512:b98:b0:549:b0f3:4391 with SMTP id
+ 2adb3069b0e04-54c233470ddmr3538766e87.38.1744102164993; Tue, 08 Apr 2025
+ 01:49:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250321104100.GC25483@pendragon.ideasonboard.com>
+References: <20250406-tegra-pstore-v1-1-bf5b57f12293@gmail.com>
+ <6920a557-9181-4c9c-98f4-a9be4e796a13@kernel.org> <CALHNRZ--to8B3zhg6zV90siL0x78BAjhS04DgfLwmnXEiOMe3g@mail.gmail.com>
+ <83d17d6e-41c2-4729-94e6-5ccf480c766d@kernel.org> <CALHNRZ8+vnXrx7xw=qjpB34MX32hW_m7k+=CdePJpErBPPzv-g@mail.gmail.com>
+ <53c943dc-5ea6-456b-a289-08212fc01d5d@kernel.org>
+In-Reply-To: <53c943dc-5ea6-456b-a289-08212fc01d5d@kernel.org>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Tue, 8 Apr 2025 03:49:12 -0500
+X-Gm-Features: ATxdqUETOFGFn2EHri9F9_4eIfOQKPNEzsi7Q-YJUiQd95xxiBDN67yuVyhCAbs
+Message-ID: <CALHNRZ8+X61YzQ_gYRkuAZrz2XFiZK36GDgk=801+384y2KnOQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: tegra: Enable ramoops on Tegra210 and newer
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Laurent, Matti,
+On Tue, Apr 8, 2025 at 3:17=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On 08/04/2025 09:35, Aaron Kling wrote:
+> > On Tue, Apr 8, 2025 at 1:08=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel=
+.org> wrote:
+> >>
+> >> On 07/04/2025 18:00, Aaron Kling wrote:
+> >>> On Mon, Apr 7, 2025 at 7:59=E2=80=AFAM Krzysztof Kozlowski <krzk@kern=
+el.org> wrote:
+> >>>>
+> >>>> On 06/04/2025 23:12, Aaron Kling via B4 Relay wrote:
+> >>>>> From: Aaron Kling <webgeek1234@gmail.com>
+> >>>>>
+> >>>>> This allows using pstore on all such platforms. There are some
+> >>>>> differences per arch:
+> >>>>>
+> >>>>> * Tegra132: Flounder does not appear to enumerate pstore and I do n=
+ot
+> >>>>>   have access to norrin, thus Tegra132 is left out of this commit.
+> >>>>> * Tegra210: Does not support ramoops carveouts in the bootloader, i=
+nstead
+> >>>>>   relying on a dowstream driver to allocate the carveout, hence thi=
+s
+> >>>>>   hardcodes a location matching what the downstream driver picks.
+> >>>>> * Tegra186 and Tegra194 on cboot: Bootloader fills in the address a=
+nd
+> >>>>>   size in a node specifically named /reserved-memory/ramoops_carveo=
+ut,
+> >>>>>   thus these cannot be renamed.
+> >>>>> * Tegra194 and Tegra234 on edk2: Bootloader looks up the node based=
+ on
+> >>>>>   compatible, however the dt still does not know the address, so ke=
+eping
+> >>>>>   the node name consistent on Tegra186 and newer.
+> >>>>>
+> >>>>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> >>>>> ---
+> >>>>>  arch/arm64/boot/dts/nvidia/tegra186.dtsi | 16 ++++++++++++++++
+> >>>>>  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 16 ++++++++++++++++
+> >>>>>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 13 +++++++++++++
+> >>>>>  arch/arm64/boot/dts/nvidia/tegra234.dtsi | 16 ++++++++++++++++
+> >>>>>  4 files changed, 61 insertions(+)
+> >>>>>
+> >>>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/=
+boot/dts/nvidia/tegra186.dtsi
+> >>>>> index 2b3bb5d0af17bd521f87db0484fcbe943dd1a797..2e2b27deb957dfd754e=
+42dd03f5a1da5079971dc 100644
+> >>>>> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> >>>>> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> >>>>> @@ -2051,6 +2051,22 @@ pmu-denver {
+> >>>>>               interrupt-affinity =3D <&denver_0 &denver_1>;
+> >>>>>       };
+> >>>>>
+> >>>>> +     reserved-memory {
+> >>>>> +             #address-cells =3D <2>;
+> >>>>> +             #size-cells =3D <2>;
+> >>>>> +             ranges;
+> >>>>> +
+> >>>>> +             ramoops_carveout {
+> >>>>
+> >>>> Please follow DTS coding style for name, so this is probably only ra=
+moops.
+> >>>
+> >>> As per the commit message regarding tegra186: bootloader fills in the
+> >>> address and size in a node specifically named
+> >>> /reserved-memory/ramoops_carveout, thus these cannot be renamed.
+> >>
+> >> That's not a reason to introduce issues. Bootloader is supposed to
+> >> follow same conventions or use aliases or labels (depending on the nod=
+e).
+> >>
+> >> If bootloader adds junk, does it mean we have to accept that junk?
+> >>
+> >>>
+> >>>>
+> >>>> It does not look like you tested the DTS against bindings. Please ru=
+n
+> >>>> `make dtbs_check W=3D1` (see
+> >>>> Documentation/devicetree/bindings/writing-schema.rst or
+> >>>> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetre=
+e-sources-with-the-devicetree-schema/
+> >>>> for instructions).
+> >>>> Maybe you need to update your dtschema and yamllint. Don't rely on
+> >>>> distro packages for dtschema and be sure you are using the latest
+> >>>> released dtschema.
+> >>>
+> >>> The bot is reporting that the reg field is missing from the added
+> >>> ramoops nodes on t186, t194, and t234. However, as also mentioned in
+> >>> the commit message, this is intentional because it is expected for th=
+e
+> >>> bootloader to fill that in. It is not known at dt compile time. Is
+> >>> there a way to mark this as intentional, so dtschema doesn't flag it?
+> >>
+> >> Fix your bootloader or chain load some normal one, like U-Boot.
+> > How would chainloading a second bootloader 'fix' previous stage
+> > bootloaders trampling on an out-of-sync hardcoded reserved-memory
+> > address? It's possible for carveout addresses and sizes to change. Not
+> > from boot to boot on the same version of the Nvidia bootloader, but
+> > potentially from one version to another. Depending on if the
+> > bootloader was configured with different carveout sizes.
+> >
+> > There is precedence for this. When blind cleanup was done on arm
+> > device trees, a chromebook broke because the memory node has to be
+> > named exactly '/memory' [0]. How is this any different from that case?
+>
+> That was an existing node, so ABI.
+>
+> > These nodes are an ABI to an existing bootloader. Carveouts on these
+>
+> You add new ABI, which I object to.
+>
+> > archs are set up in bl1 or bl2, which are not source available. I
+> > could potentially hardcode things for myself in bl33, which is source
+> > available, but the earlier stages could still overwrite any chosen
+> > block depending on how carveouts are configured. But even then, that
+> > will not change the behaviour of the vast majority of units that use a
+> > fully prebuilt boot stack direct from Nvidia. My intent here is for
+> > pstore to work on such units without users needing to use a custom
+> > bootloader.
+> I understand your goal. What I still do not understand, why bootloader
+> even bothers with ramoops carveout. It shouldn't and you should just
+> ignore whatever bootloader provides, no?
 
-On Fri, Mar 21, 2025 at 12:41:00PM +0200, Laurent Pinchart wrote:
-> Hi Matti,
-> 
-> Thank you for the patch.
-> 
-> On Fri, Mar 21, 2025 at 10:58:27AM +0200, Matti Vaittinen wrote:
-> > When fwnode_for_each_available_child_node() is used on the device-tree
-> > backed systems, it renders to same operation as the
-> > fwnode_for_each_child_node(), because the fwnode_for_each_child_node()
-> > does only iterate through those device-tree nodes which are available.
-> 
-> This makes me wonder why the OF backend implements
-> fwnode_for_each_child_node() as fwnode_for_each_available_child_node().
-> Is that on purpose, or is it a bug ?
+Mmm, I actually don't have the answer to this. Ramoops carveout
+handling was added to t186 and t194 in cboot for L4T r32.7.3, fairly
+late in the life cycle. But it has always been in edk2 for t194 and
+t234 afaik. I could hazard some guesses, but don't have any
+documentation on why the decision was made. Maybe Thierry or Jonathan
+could chime in on why this was done.
 
-I discussed this with Rafael and he didn't recall why the original
-implementation was like that. The general direction later on has been not
-to present unavailable nodes over the fwnode interface.
-
-So I'd say:
-
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-
-We should also change the documentation of the fwnode API accordingly.
-
-> 
-> > The thp7312 uses the fwnode_for_each_available_child_node() to look up
-> > and handle nodes with specific names. This means the code is used only
-> > on the device-tree backed systems because the node names have little
-> > meaning on ACPI or swnode backed systems.
-> > 
-> > Use the fwnode_for_each_child_node() instead of the
-> > fwnode_for_each_available_child_node() In order to make it clearly
-> > visible that the 'availability' of the nodes does not need to be
-> > explicitly considered here. This will also make it clearly visible that
-> > the code in this driver is suitable candidate to be converted to use the
-> > new fwnode_for_each_named_child_node()[2] when it gets merged.
-> > 
-> > [1]: https://lore.kernel.org/all/Z9rhfJUlCbi7kA2m@kekkonen.localdomain/
-> > [2]: https://lore.kernel.org/all/9c3880f74476436f39d796b5c10c540ae50b722c.1742225817.git.mazziesaccount@gmail.com/
-> > 
-> > Suggested-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> > 
-> > ---
-> > Revision history:
-> > v1 => v2:
-> >  - rephrase the commit message to not claim the 'availability' has no
-> >    well defined meaning on the DT backed systems. Instead, explain that
-> >    the fwnode_for_each_available_child_node() only iterates through the
-> >    available nodes on the DT backed systems and is thus functionally
-> >    equivalent to the fwnode_for_each_child_node().
-> > 
-> > NOTE: The change is compile tested only! Proper testing and reviewing is
-> > highly appreciated (as always).
-> > ---
-> >  drivers/media/i2c/thp7312.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/media/i2c/thp7312.c b/drivers/media/i2c/thp7312.c
-> > index 8852c56431fe..4b66f64f8d65 100644
-> > --- a/drivers/media/i2c/thp7312.c
-> > +++ b/drivers/media/i2c/thp7312.c
-> > @@ -2067,7 +2067,7 @@ static int thp7312_parse_dt(struct thp7312_device *thp7312)
-> >  		return -EINVAL;
-> >  	}
-> >  
-> > -	fwnode_for_each_available_child_node(sensors, node) {
-> > +	fwnode_for_each_child_node(sensors, node) {
-> >  		if (fwnode_name_eq(node, "sensor")) {
-> >  			if (!thp7312_sensor_parse_dt(thp7312, node))
-> >  				num_sensors++;
-> > 
-> > base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
-> 
-
--- 
-Regards,
-
-Sakari Ailus
+>
+> It's not the same case as memory, where bootloader needs to fill out the
+> actual size, or some other boot-specific properties.
+>
+> Best regards,
+> Krzysztof
+Sincerely,
+Aaron
 
