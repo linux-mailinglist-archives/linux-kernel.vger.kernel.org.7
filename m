@@ -1,53 +1,45 @@
-Return-Path: <linux-kernel+bounces-593160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB20A7F5FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 09:21:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A5BA7F558
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:56:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8495D189C5EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:21:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E22E3B6744
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85ADF2620E4;
-	Tue,  8 Apr 2025 07:20:38 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E623726158B;
-	Tue,  8 Apr 2025 07:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C4625FA1D;
+	Tue,  8 Apr 2025 06:54:53 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AA925FA14;
+	Tue,  8 Apr 2025 06:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744096838; cv=none; b=pr4U1pln6V8f5ZnM+8AnVDA7A832OYJaX5hdUCKzFfi2csSrhJlfii47BYqo7g9ltM1+r1jMgS1f3fOWUZC+m/xQ71G24ytIOLLUP0A1JpIhr7pYgyu/uQpFagfqLO6k7CRTNoit1AooW/mScwlK1As7f1ZtuCd0TXKk9FSlMNY=
+	t=1744095293; cv=none; b=lkrvFAj+i4+ukm7iqTfy7YTFVPsiPFPELrQDDBgzCAQ/jCZm6E6q+OdvMN2Czxsoql1+6H0QGEApm5SXOTH14ntM81w/t20DtDyggfzKQgDlKsSkw4cZ9rX2hEV7A7f2wOmG8Mxfj7Irq7yN9Gmx7kbYp5ZC3iuxtlLzRhvgdQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744096838; c=relaxed/simple;
-	bh=leAZBUvTDieNUCTCUQ6Z093axNVZ+MVhp4DKPjyWQPA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Q43beue9AVbejRT1Xp7biP/ZfZsIpDEVWoTOrkB6MIGhTraCCk64yyo5fQisocNpjPjyJbv3OzUjzd5pfjeB519RWpeXKMEN5v0fG9aWzPkZMhVrNMNC2jPHEiCpJxwNAEG9lfnfRl0J2x/HpGL0bQePQEcNZQOBespijRndrEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4ZWw9N4Zhgz9vkq;
-	Tue,  8 Apr 2025 07:48:24 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id N6upf-zRu5gv; Tue,  8 Apr 2025 07:48:24 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4ZWw9N26zXz9vkm;
-	Tue,  8 Apr 2025 07:48:24 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 320D88B768;
-	Tue,  8 Apr 2025 07:48:24 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id NWUepSYaoFfZ; Tue,  8 Apr 2025 07:48:24 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id DC9078B767;
-	Tue,  8 Apr 2025 07:48:21 +0200 (CEST)
-Message-ID: <ff31c2ff-55be-452e-b94a-6a84c4583258@csgroup.eu>
-Date: Tue, 8 Apr 2025 07:48:22 +0200
+	s=arc-20240116; t=1744095293; c=relaxed/simple;
+	bh=IcEyZClMGD4C/NJt3DeJJ3OwwaNadWRTAclqaNX1ruQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YPRvoM+N/1UeJrl2gdiuElyrlEfSMs6VDTtD9L5zrcOvUDKPOdaNwCwL+FI2IW+9YEd9YXehthdzQIH55WHU6yXYTF0Rjk8tasfNJQumeqn29uhBLqvBZv8eTh50cUZ50A/B0DJWAgAka4Cq7PWluCAkdozAImc2ZTlYVDTsKOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 53864Z7Y046352;
+	Tue, 8 Apr 2025 15:04:35 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 53864YBH046349
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 8 Apr 2025 15:04:35 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <77b1b228-3799-43e3-ab30-5aec1d633816@I-love.SAKURA.ne.jp>
+Date: Tue, 8 Apr 2025 15:04:34 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,79 +47,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/13] arch, mm: set max_mapnr when allocating memory
- map for FLATMEM
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Mike Rapoport <rppt@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Borislav Petkov <bp@alien8.de>, Brian Cain <bcain@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, Dinh Nguyen <dinguyen@kernel.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Guo Ren
- <guoren@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
- Helge Deller <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
- Johannes Berg <johannes@sipsolutions.net>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Madhavan Srinivasan <maddy@linux.ibm.com>, Mark Brown <broonie@kernel.org>,
- Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Simek <monstr@monstr.eu>,
- Palmer Dabbelt <palmer@dabbelt.com>, Peter Zijlstra <peterz@infradead.org>,
- Richard Weinberger <richard@nod.at>, Russell King <linux@armlinux.org.uk>,
- Stafford Horne <shorne@gmail.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Thomas Gleixner <tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>,
- Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
- linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
- loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
- linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
- linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-um@lists.infradead.org, linux-arch@vger.kernel.org,
- linux-mm@kvack.org, x86@kernel.org
-References: <20250313135003.836600-1-rppt@kernel.org>
- <20250313135003.836600-10-rppt@kernel.org>
- <4b9627f2-65ff-4baf-931f-4e23b5732e6b@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <4b9627f2-65ff-4baf-931f-4e23b5732e6b@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [RFC 1/2] gfs2: replace sd_aspace with sd_inode
+To: Andreas Gruenbacher <agruenba@redhat.com>, cgroups@vger.kernel.org
+Cc: Jan Kara <jack@suse.cz>, Rafael Aquini <aquini@redhat.com>,
+        gfs2@lists.linux.dev, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250407182104.716631-1-agruenba@redhat.com>
+ <20250407182104.716631-2-agruenba@redhat.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20250407182104.716631-2-agruenba@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav401.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-Hi Mike,
+On 2025/04/08 3:21, Andreas Gruenbacher wrote:
+> @@ -1156,6 +1146,18 @@ static int gfs2_fill_super(struct super_block *sb, struct fs_context *fc)
+>  	sb->s_flags |= SB_NOSEC;
+>  	sb->s_magic = GFS2_MAGIC;
+>  	sb->s_op = &gfs2_super_ops;
+> +
+> +	/* Set up an address space for metadata writes */
+> +	sdp->sd_inode = new_inode(sb);
+> +	if (!sdp->sd_inode)
+> +		goto fail_free;
+> +	sdp->sd_inode->i_ino = GFS2_BAD_INO;
+> +	sdp->sd_inode->i_size = OFFSET_MAX;
+> +
+> +	mapping = gfs2_aspace(sdp);
+> +	mapping->a_ops = &gfs2_rgrp_aops;
+> +	mapping_set_gfp_mask(mapping, GFP_NOFS);
+> +
+>  	sb->s_d_op = &gfs2_dops;
+>  	sb->s_export_op = &gfs2_export_ops;
+>  	sb->s_qcop = &gfs2_quotactl_ops;
 
-Le 14/03/2025 à 10:25, Christophe Leroy a écrit :
-> 
-> 
-> Le 13/03/2025 à 14:49, Mike Rapoport a écrit :
->> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
->>
->> max_mapnr is essentially the size of the memory map for systems that use
->> FLATMEM. There is no reason to calculate it in each and every 
->> architecture
->> when it's anyway calculated in alloc_node_mem_map().
->>
->> Drop setting of max_mapnr from architecture code and set it once in
->> alloc_node_mem_map().
-> 
-> As far as I can see alloc_node_mem_map() is called quite late.
-> 
-> I fear that it will regress commit daa9ada2093e ("powerpc/mm: Fix boot 
-> crash with FLATMEM")
-> 
-> Can you check ?
+This will be an inode leak when hitting e.g.
 
-I see this patch is now merged into mainline (v6.15-rc1). Have you been 
-able to check and/or analyse whether it doesn't regress the fix in 
-commit daa9ada2093e ("powerpc/mm: Fix boot crash with FLATMEM") ?
+	error = init_names(sdp, silent);
+	if (error)
+		goto fail_free;
 
-Thanks
-Christophe
+path, for what free_sbd() in
+
+fail_free:
+	free_sbd(sdp);
+	sb->s_fs_info = NULL;
+	return error;
+
+path does is nothing but free_percpu() and kfree().
 
 
