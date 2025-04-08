@@ -1,162 +1,162 @@
-Return-Path: <linux-kernel+bounces-594102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B665A80D20
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:00:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB829A80D15
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DF0F1B85B11
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:55:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C27F1890587
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717271DE2BA;
-	Tue,  8 Apr 2025 13:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB8D1B422A;
+	Tue,  8 Apr 2025 13:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bUskq5th"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F5wrfDwL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2328F1D63FC
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 13:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E083BBF2;
+	Tue,  8 Apr 2025 13:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744120479; cv=none; b=diZmuyqMtJlHN5PLEDyL1jzt9dgF9xNCzJ25j/Y0dAIqWUbgj4piKcjQpIX8EvlQ4XVcoar79OfFJwHY1JoRRMqCRN/tRCmgcUvC4gN4APmieFPaCISASxtEg2sP8BPfQW80igqno1ujMpaOmseLldOfzbFIOp7RTp7rJiwX/0k=
+	t=1744120458; cv=none; b=mnAiJupuwkCJUPNcRdF7AAZOtZp9J8wFCJidtN1B3Sr3cGAeq/W7Bzjxla3XCtFrBwF1h8oeRd2QG6JLn9mJPJh0mY660lDvb7NK5WiPmJPUExmIFjdsVZt1h/ME9PknayI/xTiCPp/KQJ8BRbIKfLTJUk6GUgy17dmBj8N9U2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744120479; c=relaxed/simple;
-	bh=b5g0dme1oNZcQ0RJfVPOMuX2htls8JlEODcOXHFaMbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U+l5M1632lslW+bWbdzFmROWC3KfEw2austcbgrfv4Kt4hKOwUC/BeCj6HlAgURHBUVvFWDYn8D723YveRC03jyvNGf9E6ppbAWjo1xfJzPi52tEWns343OxqdiNCoErdd5B7A/QFzZVBVe60ARFkrvQ+RYZb2R5EHI2x56CU2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bUskq5th; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1744120458; c=relaxed/simple;
+	bh=zZeJW8y/pLhorqi153IgAmOKNsiPwpGGNfmHZJnuqHU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=be20ymdgPvKKAsawxnSwrHSDntU8+t6BYjwDMjqaVrNUa3ngihKwt8ro61OZFcioc6en/aO2UwlK/XoOf5nN0zrGkYnK8ZL2iDAUtzM7cfJVKQY6VW1G3t6X+ypcTyUZ4A7TSiU3nwMM+bWxurVpzqyYMH9Zdnx+SlwE22NNdSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F5wrfDwL; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744120478; x=1775656478;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=b5g0dme1oNZcQ0RJfVPOMuX2htls8JlEODcOXHFaMbI=;
-  b=bUskq5thtCUgSBDf3n35sb2ft+qfoCG9RE6M3k4bP0CxdEnpkwFIwmpi
-   3N2iDnNTIkhC6G1Epjqkdl7HRFoHww9EJxjVDTw6yNjUSN/vbg6nB38wA
-   /JG+lXtOevVdZPImj/jwOmyAhbdG5RpULzdiRGIojVa4Wsy9i394PrP2m
-   71Nh0xruS3MEBkgHYMv5Xp9syZOnlLp4Ze5RK/Plst0J2gJ+vWdO1Tmmr
-   Tn/no/1qW9i6Uk5X3X3bLVBScZQk/bwS5YdPfBgJptZvHPSH0ZoD09dLr
-   py9OgtLNRIALwoI0+w1S4aGz8sYzAeyCPHv5l8oqFppUOWAL57HenGJwZ
-   A==;
-X-CSE-ConnectionGUID: knm0x2j/QxuL7arP87WKVg==
-X-CSE-MsgGUID: X6MB29IyRDiNQZPFAnW+yw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="45688460"
+  t=1744120457; x=1775656457;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=zZeJW8y/pLhorqi153IgAmOKNsiPwpGGNfmHZJnuqHU=;
+  b=F5wrfDwL/FP6p8FReu15CNpU89NNqTnJHKbMr/KiOTTRv0XOxiWLvieU
+   YT2rBIMVQD3h1TGDWnsDv30wRRkAeO+CAL9Bjs0kRrfVtpi+jz2sr+kFF
+   WqJlMf5simpZ24DmbXSOJBJAri9iAI2+Oj8B3az2csfGxmiaYzdjffSrn
+   sKwZimJBo5E8WG1of99cDaSsFoAj3blem3FeuBWSbc/CFd1s8WY1XBcHZ
+   I1zyoUTlVeBDF5lbjOvzr3z+19J/XDHLtlhlSSMH174J3DpimCTkBE+rX
+   wgHqjzu5Ix+NrWeqGDU1qryUEKYOjr+6HWPRRoHSW8yPxLGte/k8DX0eE
+   w==;
+X-CSE-ConnectionGUID: B4Dpk+M/QFKRxqjTlVO40Q==
+X-CSE-MsgGUID: 04X6p3qeTY+8RjTjGytDtw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="49211571"
 X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
-   d="scan'208";a="45688460"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 06:54:37 -0700
-X-CSE-ConnectionGUID: uuqPY7g5Rma7730Eh7Fpyw==
-X-CSE-MsgGUID: ATp0HWOFScmYj+8BfkrIYA==
+   d="scan'208";a="49211571"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 06:54:16 -0700
+X-CSE-ConnectionGUID: CwSlN7erRwqc3SSIQGeiLQ==
+X-CSE-MsgGUID: Qv/+a7BzRAOFQlEWn3aklg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
-   d="scan'208";a="128797055"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 06:54:36 -0700
-Date: Tue, 8 Apr 2025 16:54:32 +0300
-From: Raag Jadav <raag.jadav@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: gregkh@linuxfoundation.org, david.m.ertman@intel.com,
-	ira.weiny@intel.com, lee@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mfd: core: Support auxiliary device
-Message-ID: <Z_UqmHJsnQaZcL01@black.fi.intel.com>
-References: <20250407074614.1665575-1-raag.jadav@intel.com>
- <Z_OQgqt0Wg17N05j@smile.fi.intel.com>
- <Z_TXDg67AtWzNXbg@black.fi.intel.com>
- <Z_Tig8ElS5e_UN6I@smile.fi.intel.com>
+   d="scan'208";a="128150606"
+Received: from unknown (HELO [10.237.72.199]) ([10.237.72.199])
+  by fmviesa006.fm.intel.com with ESMTP; 08 Apr 2025 06:54:14 -0700
+Message-ID: <357368ff-0c49-4f22-a03d-fd9560c22dae@linux.intel.com>
+Date: Tue, 8 Apr 2025 16:55:24 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_Tig8ElS5e_UN6I@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC RFT] usb: hcd: Add a usb_device argument to
+ hc_driver.endpoint_reset()
+To: =?UTF-8?Q?Micha=C5=82_Pecio?= <michal.pecio@gmail.com>,
+ Alan Stern <stern@rowland.harvard.edu>,
+ Mathias Nyman <mathias.nyman@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Paul Menzel <pmenzel@molgen.mpg.de>, linux-usb@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <c279bd85-3069-4841-b1be-20507ac9f2d7@molgen.mpg.de>
+ <b356f743-44b5-4f48-a289-fae0afe106ff@linux.intel.com>
+ <84b400f8-2943-44e0-8803-f3aac3b670af@molgen.mpg.de>
+ <20250406002311.2a76fc64@foxbook>
+ <ade0d77a-651a-4b03-bf21-00369fdc22f8@rowland.harvard.edu>
+ <20250406095008.0dbfd586@foxbook> <20250406175032.12b7d284@foxbook>
+ <14197657-0a0f-45a8-ac36-dd37b16a1565@rowland.harvard.edu>
+ <20250407074905.2d236fb9@foxbook>
+ <3efb52b8-0974-4125-a344-00f459fbe4e4@rowland.harvard.edu>
+ <20250408121817.6ae8defd@foxbook>
+Content-Language: en-US
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+In-Reply-To: <20250408121817.6ae8defd@foxbook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 08, 2025 at 11:46:59AM +0300, Andy Shevchenko wrote:
-> On Tue, Apr 08, 2025 at 10:58:06AM +0300, Raag Jadav wrote:
-> > On Mon, Apr 07, 2025 at 11:44:50AM +0300, Andy Shevchenko wrote:
-> > > On Mon, Apr 07, 2025 at 01:16:14PM +0530, Raag Jadav wrote:
+On 8.4.2025 13.18, Michał Pecio wrote:
+> xHCI needs usb_device in this callback so it employed some hacks that
+> proved unreliable in the long term and made the code a little tricky.
 > 
-> ...
+> Make USB core supply it directly and simplify xhci_endpoint_reset().
+> Use xhci_check_args() to prevent resetting emulated endpoints of root
+> hubs and to deduplicate argument validation and improve debuggability.
 > 
-> > > > PS: I'm leaning towards not doing any of the ioremap or regmap on MFD
-> > > > side and think that we should enforce child devices to not overlap.
-> > > 
-> > > Yes, but we will have the cases in the future, whatever,
-> > > for the first step it's okay.
-> > 
-> > I've always found such devices to have a parent specific functionality
-> > that fall under a specific subsystem instead of needing a generic MFD for
-> > it. But I'd love to be surprised.
+> Update ehci_endpoint_reset(), which is the only other such callback,
+> to accept (and ignore) the new argument.
 > 
-> We have very "nice" MFD user, which blows up all issues with shared resources
-> and so on, look at drivers/mfd/sm501.c. The most problematic part there is
-> request_region().
+> This fixes the root cause of a 6.15-rc1 regression reported by Paul,
+> which I was able to reproduce locally. It also solves the general
+> problem of xhci_endpoint_reset() becoming a no-op after device reset
+> or changing configuration or altsetting. Although nobody complained
+> because halted endpoints are reset automatically by xhci_hcd, it was
+> a bug - sometimes class drivers want to reset not halted endpoints.
+> 
+> Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> Closes: https://lore.kernel.org/linux-usb/c279bd85-3069-4841-b1be-20507ac9f2d7@molgen.mpg.de/
+> Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+> ---
+> 
+> Is such change acceptable to interested parties?
 
-Indeed. But considering the regions are for configuration and low speed
-I/O, I'm wondering if IORESOURCE_MUXED could be of any use here?
+Looks like an improvement, and will help clear the EP_STALLED flag
+eventually in device reset case.
 
-> > > > If there's a need to handle common register access by parent device,
-> > > > then I think it warrants its own driver which adds auxiliary devices
-> > > > along with a custom interface to communicate with them, and MFD on
-> > > > AUX is not the right solution for it.
-> 
-> ...
-> 
-> > > > -static const struct device_type mfd_dev_type = {
-> > > > -	.name	= "mfd_device",
-> > > > +enum mfd_dev {
-> > > > +	MFD_AUX_DEV,
-> > > > +	MFD_PLAT_DEV,
-> > > > +	MFD_MAX_DEV
-> > > > +};
-> > > > +
-> > > > +static const struct device_type mfd_dev_type[MFD_MAX_DEV] = {
-> > > > +	[MFD_AUX_DEV]	= { .name = "mfd_auxiliary_device" },
-> > > > +	[MFD_PLAT_DEV]	= { .name = "mfd_platform_device" },
-> > > >  };
-> > > 
-> > > This is likely an ABI breakage if anything looks in sysfs for mfd_device.
-> > 
-> > I have no insight on the usecase here. Can you please elaborate?
-> 
-> drivers/base/core.c
-> 
->         if (dev->type && dev->type->name)
-> 		add_uevent_var(env, "DEVTYPE=%s", dev->type->name);
-> 
-> You broke ABI, it's no go.
+There are some issues still unsolved due to how xhci endpoints end up being handled
+in usb core usb_reset_and_verify_device().
 
-Sure, let me see what can be done here. Thanks for pointing it out.
+usb_reset_and_verify_device()
+   hub_port_init()
+     hcd->driver->reset_device(hcd, udev);          /*1 xhci frees ep rings, loses td_list heads */
+   usb_hcd_alloc_bandwidth(new_config, NULL, NULL)  /*2 xhci drop+add ep, allocated new ep rings */
+   usb_control_msg(udev, usb_sndctrlpipe(...,USB_REQ_SET_CONFIGURATION,...)
+   for (interfaces) {
+     if (AlternateSetting == 0) {
+       usb_disable_interface()  /*3 flush urbs, ->xhci_urb_dequeue() */
+       usb_enable_interface()   /*4 clear EP_STALLED flag */
+     } else {
+       usb_set_interface()
+     }
 
-> > > > +/*
-> > > > + * Common structure between MFD parent and auxiliary child device.
-> > > > + * To be used by leaf drivers to access child device resources.
-> > > > + */
-> > > > +struct mfd_aux_device {
-> > > > +	struct auxiliary_device auxdev;
-> > > 
-> > > > +	struct resource	mem;
-> > > > +	struct resource	irq;
-> > > > +	/* Place holder for other types */
-> > > > +	struct resource	ext;
-> > > 
-> > > Why this can't be simply a VLA?
-> > 
-> > Because it requires resouce identification, and with that we're back to
-> > platform style get_resource() and friends.
-> 
-> Yes, and it can be done by calling resource_type() over each and checked
-> respectively. So, why do you need them to open code?
+1. driver->reset_device will free all xhci endpoint rings, and lose td_list head, but
+    keep cancelled_td_list and ep->ep_state flags. xHC issues reset device command
+    setting all internal ep states in xci to "disabled".
 
-You mean something like we originally had in v1? I thought the idea was
-to not deal with that level of complexity?
+2. usb hcd_alloc_bandwith will drop+add xhci endpoints for this configuration,
+    allocate new endpoint rings, and inits new td_list head.
+    Old cancelled_td_list and ep_state flags are still set, not matching ring.
 
-Raag
+3. usb_disable_interface() will flush all pending URBs calling xhci_urb_dequeue().
+    xhci_urb_dequeue() makes decision based on stale ep_state flags.
+    May start to cancel/giveback urbs in old cancelled_td_list for tds that existed
+    on old freed ring. will also set host_ep->hcpriv to null
+
+4. usb_enable_interface() calls xhci_endpoint_reset() that finally clears
+    the EP_STALLED flag (udev now found thanks to this patch)
+
+Disabling endpoints, like calling usb_disable_interface() in step 3 should be
+done before calling  usb_hcd_alloc_bandwith().
+This was fixed in other places such as usb_set_interface() and usb_reset_config()
+
+We might need to clean up ep_state flags and give back cancelled URBs in
+xhci_discover_or_reset_device() after the reset device xhci command completion.
+
+Thanks
+Mathias
 
