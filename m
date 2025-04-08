@@ -1,453 +1,401 @@
-Return-Path: <linux-kernel+bounces-593803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91DF2A801F5
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C128A801F4
 	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 13:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CEA044726A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:36:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C62FD3B8773
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 11:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC732686B9;
-	Tue,  8 Apr 2025 11:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74171266EFB;
+	Tue,  8 Apr 2025 11:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="V4KGGcxF"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MAjlIYxQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F32819AD5C;
-	Tue,  8 Apr 2025 11:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4C0263C78
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 11:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744112170; cv=none; b=DloaSfTuFRo8MkTvdFfIM2xRtqJWZG1E+Cf8DuncWn08crrbMGfPxIWY9zhQAor3El7r2NQjUCNsgjFIqNY4pdEeG/A6O7x0kJvD+HGSdiqoWr0a7Ed+cX30vHOGeaWppHMmoaR/8nDMaq8OczLMvZY1QNSAxAzr/TUeni9zXE8=
+	t=1744112225; cv=none; b=sI8lwvhq15HkCT5nJxiA7hSMisgTF6MH80G3W9bJ6aOmMRVqkbdn/IAbabnu61z9oDCWY84tKg64HrWseDGV2VUnH8bzlQN3fMvL08MnSSq9X2C/UNz4jKIoMdVhODLnpuxeUFvlo2rKv+JgzVhjUKuCO5SZReHaOQuyMrSL0aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744112170; c=relaxed/simple;
-	bh=+ngRNwQMn3axrjzat7ASO5h9MlRM0/xdfwhaKHpJWUY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Pzz135Jdf+BMisSAziGf2WBCSI/th7VnHSgEDfqedzThhkOHu5uUwRQJOd/TPqPenbTmSbUeW3NQFKIrUKQu3RhQpNcd/mJRHfXapseB89SJErKrxbmiXN+wPmiVi7VBE5x+q50VImSTiHHvwqK939jeTeyrQD76MzEL2JF5T8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=V4KGGcxF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 538AjAQF029440;
-	Tue, 8 Apr 2025 11:35:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	xVjYy0AFck/5OYj8jfDXaAADSmurcdQMlbFlGcMYBhY=; b=V4KGGcxFQaBxMuUX
-	QcXfI2RDg1wj2bsNZEeQdxqbuWDyoBBRpF6s9N1i+uIF+/Zq9W2FniQFRJ0aeNxC
-	s+kqFJpfFXy2sJ1wyloOR/JnQM2EPlyHruYgSnJA3NBvz4vgfF6xsRjhExkA2jPB
-	UXbkIqqjAxjXj1FXMff06BvyLcP7AGHZUv3nxfJDajpc1LC7ucGYwtbFlA032PCe
-	yJ7ttgatui0P42Kg70H/LiS4pVVK0lR1+Rc6wqSmtx0RZHknqY+vwEr81LSKYlr3
-	I9Cv6SbuUFOJpSSsXF1xjd8b18UuhNN+FAno2RlYf2nKAWv/115WW8qBdAojczs4
-	Dmm0VA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twcrfm99-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Apr 2025 11:35:52 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 538BZpY2016210
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 8 Apr 2025 11:35:51 GMT
-Received: from [10.239.133.114] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 8 Apr 2025
- 04:35:45 -0700
-Message-ID: <b8a4a950-1f66-4698-ba86-8c5939978fa3@quicinc.com>
-Date: Tue, 8 Apr 2025 19:35:42 +0800
+	s=arc-20240116; t=1744112225; c=relaxed/simple;
+	bh=9s3L86w3tciUYe4psZappCfNDi/qGVH4vUq7so5fIYw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rz+4JiDZRGoh1Sm6wM9YWH6u5UrUAQNElOSHnm92R+zYANjx9LR9omOz2KKQ4TyvvLKbtCsxbeGJxaCuf8gOpV04thCXMQ1Sc+zEG+IVnizCV27+03b8Thb5HsGe4L5kIEJzXhg9r4LhZ2xQ33f+YXZSMbJwqsBAqnOGaQDYRao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MAjlIYxQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744112222;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cn8oAI1Xv630WkLxowzeUqJr8VFrC4TI+Nd+Uqm5SUI=;
+	b=MAjlIYxQaV1UgOkFzQkCaH61c+RZ8NBQNtakBRrKPXQ9tveDjzkiKA+k19dD2FUs3akgkh
+	G3A7seNjjOqHEg8pMaS+rAxAWMw1Mt/hCPDK9yqZRYn97r4B+C9Ldp9kS/FM9Sa8mNFlJz
+	hDuAN2fdDMCZ4Z6VkMvqGP8H1upuR30=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-401-qr-nLgxzPZObhOrxFoJCgQ-1; Tue, 08 Apr 2025 07:37:00 -0400
+X-MC-Unique: qr-nLgxzPZObhOrxFoJCgQ-1
+X-Mimecast-MFC-AGG-ID: qr-nLgxzPZObhOrxFoJCgQ_1744112219
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43d5ca7c86aso36295855e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 04:37:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744112219; x=1744717019;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cn8oAI1Xv630WkLxowzeUqJr8VFrC4TI+Nd+Uqm5SUI=;
+        b=qofBGz9pFSlRDYcae3IOwCzH3qeGhPVe6d3TS/2sQ6RWHLoC5DjhQ9nxJrhhrVirCN
+         fxczE9YEpuyP2sFQup2+AQ0m884DlsXDJZjKxcxArlsLuWsARhg2+9hEOXr83cGEzUxl
+         LiM9PCzWF73mbOsfzhiZiwjJnaN6k+KjaXK8lFZ9RvfgfOFUsRgAsWACGSQ7rw751Db6
+         dkoeDt7s5A3PALnoJJxzWgOWYgir1f68xTm7BFFaC0MshpJUJqjzpv0mLvDg65mRPPtO
+         s+EJ1wK+8keWT73BMPML8AN9qBWcO0YcG8sQdGlXx5PZDfN9fqIYQzF4mlTGySQO308P
+         YM+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUtathTmlzZ3sG3QPFtiZpz2VlBRIulbhfljVXCtS18sTDdgY2grYKGemDl4am84xI4VgU9TbXxpE75s3Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN+xzlyh9VlZY7bdXdRmo2c2Y2jTMj8Zq/jrAwj+P+6aVgiuJw
+	NwwNd70ea2uUJDNra/XLE6vFe8qbXIAe8OZhyaXPFT2avaa22Jxlsw8gSIbC22HJrPN8za4RBjx
+	IEWFoRqYNCQhiB75j4F7OGgId6L4NOgusud+//deY8WaY/EnOqMhHYaoI/oUcl6OgMOjNXA==
+X-Gm-Gg: ASbGnctHxm5B9HsNkADSEQ67GxltPBSlbxBwrNpYncbEjdiO7copq1wbpQtMr8EwyB/
+	eTTKnXuIx6ExcHNf525cNke3VRDrtZayEUgvxCvqsKMLZRu1T9jGcToT73Fx+zJNGJQu1+DEIZV
+	3zREM1W7Zvnv/4mKgRSjlp4iwxPMesf5qp1Jgl1qGrmc1HU/ydTIAMKBB8MT80qGs+OgZQYYIP0
+	SNPQtwgZobs2WKnGNU9cu32vzh+ryzkNQjQs8x1OOiyunpAKY3ganQbIte86ppQ3UfQohCjMvnK
+	yKDtvM1MQw==
+X-Received: by 2002:a05:600c:5494:b0:43c:fbba:41ba with SMTP id 5b1f17b1804b1-43ecfa04a99mr114813535e9.28.1744112219036;
+        Tue, 08 Apr 2025 04:36:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFkdd9XDHZH69wpZWmKlgMrLox4ZlFp0C8zW/kcglEMyDCZY1oLA2xMCYRrwZ1w1FPWZTxnjA==
+X-Received: by 2002:a05:600c:5494:b0:43c:fbba:41ba with SMTP id 5b1f17b1804b1-43ecfa04a99mr114813315e9.28.1744112218570;
+        Tue, 08 Apr 2025 04:36:58 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1517:1000:ea83:8e5f:3302:3575])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c301a7225sm14608667f8f.26.2025.04.08.04.36.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 04:36:57 -0700 (PDT)
+Date: Tue, 8 Apr 2025 07:36:55 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/19] virtio_ring: introduce virtqueue ops
+Message-ID: <20250408073317-mutt-send-email-mst@kernel.org>
+References: <20250324054333.1954-1-jasowang@redhat.com>
+ <20250324060127.2358-1-jasowang@redhat.com>
+ <20250407041729-mutt-send-email-mst@kernel.org>
+ <CACGkMEv-=V0a7jpR9e-i=Oe+PE9pN_cH3yDBmyOYhwPcJXOHPQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] coresight: add coresight Trace NOC driver
-To: Mike Leach <mike.leach@linaro.org>
-CC: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        James Clark
-	<james.clark@linaro.org>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <kernel@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@oss.qualcomm.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20250226-trace-noc-driver-v2-0-8afc6584afc5@quicinc.com>
- <20250226-trace-noc-driver-v2-2-8afc6584afc5@quicinc.com>
- <CAJ9a7Vhkp2xBZmjGO9iqCVkJJAt2+Dh+QkRH-BaCMUZ=6G+t4g@mail.gmail.com>
-Content-Language: en-US
-From: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-In-Reply-To: <CAJ9a7Vhkp2xBZmjGO9iqCVkJJAt2+Dh+QkRH-BaCMUZ=6G+t4g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: uXVBf0_DWcLDzD7f_36LWkjcd3zmrtA8
-X-Authority-Analysis: v=2.4 cv=QuVe3Uyd c=1 sm=1 tr=0 ts=67f50a18 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=cxkefC2O0rBfbOjTquQA:9 a=QEXdDO2ut3YA:10
- a=RVmHIydaz68A:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: uXVBf0_DWcLDzD7f_36LWkjcd3zmrtA8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-08_04,2025-04-08_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- spamscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0 priorityscore=1501
- clxscore=1015 phishscore=0 impostorscore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504080082
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACGkMEv-=V0a7jpR9e-i=Oe+PE9pN_cH3yDBmyOYhwPcJXOHPQ@mail.gmail.com>
+
+On Tue, Apr 08, 2025 at 03:02:35PM +0800, Jason Wang wrote:
+> On Mon, Apr 7, 2025 at 4:20 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> >
+> > On Mon, Mar 24, 2025 at 02:01:21PM +0800, Jason Wang wrote:
+> > > This patch introduces virtqueue ops which is a set of the callbacks
+> > > that will be called for different queue layout or features. This would
+> > > help to avoid branches for split/packed and will ease the future
+> > > implementation like in order.
+> > >
+> > > Signed-off-by: Jason Wang <jasowang@redhat.com>
+> >
+> >
+> >
+> >
+> > > ---
+> > >  drivers/virtio/virtio_ring.c | 96 +++++++++++++++++++++++++-----------
+> > >  1 file changed, 67 insertions(+), 29 deletions(-)
+> > >
+> > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > > index a2884eae14d9..ce1dc90ee89d 100644
+> > > --- a/drivers/virtio/virtio_ring.c
+> > > +++ b/drivers/virtio/virtio_ring.c
+> > > @@ -159,9 +159,30 @@ struct vring_virtqueue_packed {
+> > >       size_t event_size_in_bytes;
+> > >  };
+> > >
+> > > +struct vring_virtqueue;
+> > > +
+> > > +struct virtqueue_ops {
+> > > +     int (*add)(struct vring_virtqueue *_vq, struct scatterlist *sgs[],
+> > > +                unsigned int total_sg, unsigned int out_sgs,
+> > > +                unsigned int in_sgs, void *data,
+> > > +                void *ctx, bool premapped, gfp_t gfp);
+> > > +     void *(*get)(struct vring_virtqueue *vq, unsigned int *len, void **ctx);
+> > > +     bool (*kick_prepare)(struct vring_virtqueue *vq);
+> > > +     void (*disable_cb)(struct vring_virtqueue *vq);
+> > > +     bool (*enable_cb_delayed)(struct vring_virtqueue *vq);
+> > > +     unsigned int (*enable_cb_prepare)(struct vring_virtqueue *vq);
+> > > +     bool (*poll)(const struct vring_virtqueue *vq, u16 last_used_idx);
+> > > +     void *(*detach_unused_buf)(struct vring_virtqueue *vq);
+> > > +     bool (*more_used)(const struct vring_virtqueue *vq);
+> > > +     int (*resize)(struct vring_virtqueue *vq, u32 num);
+> > > +     void (*reset)(struct vring_virtqueue *vq);
+> > > +};
+> >
+> > I like it that it's organized but
+> > I worry about the overhead of indirect calls here.
+> 
+> We can switch to use INDIRECT_CALL_X() here
+
+If you think it's cleaner.. but INDIRECT_CALL is all chained
+while a switch can do a binary search.
 
 
+> (but I'm not sure we
+> should worry about it too much as ndo_ops or qdiscs doesn't use that).
 
-On 4/7/2025 11:47 PM, Mike Leach wrote:
-> Hi,
-> 
-> On Wed, 26 Feb 2025 at 11:06, Yuanfang Zhang <quic_yuanfang@quicinc.com> wrote:
->>
->> Add driver to support Coresight device Trace NOC(Network On Chip).
->> Trace NOC is an integration hierarchy which is a replacement of
->> Dragonlink configuration. It brings together debug components like
->> TPDA, funnel and interconnect Trace Noc.
->>
->> It sits in the different subsystem of SOC and aggregates the trace
->> and transports to QDSS trace bus.
->>
->> Signed-off-by: Yuanfang Zhang <quic_yuanfang@quicinc.com>
->> ---
->>  drivers/hwtracing/coresight/Kconfig          |  13 ++
->>  drivers/hwtracing/coresight/Makefile         |   1 +
->>  drivers/hwtracing/coresight/coresight-tnoc.c | 190 +++++++++++++++++++++++++++
->>  drivers/hwtracing/coresight/coresight-tnoc.h |  53 ++++++++
->>  4 files changed, 257 insertions(+)
->>
->> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
->> index 06f0a7594169c5f03ca5f893b7debd294587de78..6cfd160f09d383ab5f5aa276fa57496a52c8f961 100644
->> --- a/drivers/hwtracing/coresight/Kconfig
->> +++ b/drivers/hwtracing/coresight/Kconfig
->> @@ -247,4 +247,17 @@ config CORESIGHT_DUMMY
->>
->>           To compile this driver as a module, choose M here: the module will be
->>           called coresight-dummy.
->> +
->> +config CORESIGHT_TNOC
->> +       tristate "Coresight Trace Noc driver"
->> +       help
->> +         This driver provides support for Trace NoC component.
->> +         Trace NoC is a interconnect that is used to collect trace from
->> +         various subsystems and transport it QDSS trace sink.It sits in
->> +         the different tiles of SOC and aggregates the trace local to the
->> +         tile and transports it another tile or to QDSS trace sink eventually.
->> +
->> +         To compile this driver as a module, choose M here: the module will be
->> +         called coresight-tnoc.
->> +
->>  endif
->> diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
->> index 4ba478211b318ea5305f9f98dda40a041759f09f..60b729979f19c8f8848c77c290605132dba1a991 100644
->> --- a/drivers/hwtracing/coresight/Makefile
->> +++ b/drivers/hwtracing/coresight/Makefile
->> @@ -34,6 +34,7 @@ obj-$(CONFIG_CORESIGHT_SINK_TPIU) += coresight-tpiu.o
->>  obj-$(CONFIG_CORESIGHT_SINK_ETBV10) += coresight-etb10.o
->>  obj-$(CONFIG_CORESIGHT_LINKS_AND_SINKS) += coresight-funnel.o \
->>                                            coresight-replicator.o
->> +obj-$(CONFIG_CORESIGHT_TNOC) += coresight-tnoc.o
->>  obj-$(CONFIG_CORESIGHT_SOURCE_ETM3X) += coresight-etm3x.o
->>  coresight-etm3x-y := coresight-etm3x-core.o coresight-etm-cp14.o \
->>                      coresight-etm3x-sysfs.o
->> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.c b/drivers/hwtracing/coresight/coresight-tnoc.c
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..fad8e61f05ef25989aba1be342c547f835e8953a
->> --- /dev/null
->> +++ b/drivers/hwtracing/coresight/coresight-tnoc.c
->> @@ -0,0 +1,190 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/device.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/amba/bus.h>
->> +#include <linux/io.h>
->> +#include <linux/coresight.h>
->> +#include <linux/of.h>
->> +
->> +#include "coresight-priv.h"
->> +#include "coresight-tnoc.h"
->> +#include "coresight-trace-id.h"
->> +
->> +static void trace_noc_enable_hw(struct trace_noc_drvdata *drvdata)
->> +{
->> +       u32 val;
->> +
->> +       /* Set ATID */
->> +       writel_relaxed(drvdata->atid, drvdata->base + TRACE_NOC_XLD);
->> +
->> +       /* Config sync CR */
->> +       writel_relaxed(0xffff, drvdata->base + TRACE_NOC_SYNCR);
->> +
->> +       /* Set frequency value */
->> +       writel_relaxed(drvdata->freq_req_val, drvdata->base + TRACE_NOC_FREQVAL);
->> +
->> +       /* Set Ctrl register */
->> +       val = readl_relaxed(drvdata->base + TRACE_NOC_CTRL);
->> +
->> +       if (drvdata->flag_type == FLAG_TS)
->> +               val = val | TRACE_NOC_CTRL_FLAGTYPE;
->> +       else
->> +               val = val & ~TRACE_NOC_CTRL_FLAGTYPE;
->> +
->> +       if (drvdata->freq_type == FREQ_TS)
->> +               val = val | TRACE_NOC_CTRL_FREQTYPE;
->> +       else
->> +               val = val & ~TRACE_NOC_CTRL_FREQTYPE;
->> +
->> +       val = val | TRACE_NOC_CTRL_PORTEN;
->> +       writel_relaxed(val, drvdata->base + TRACE_NOC_CTRL);
->> +
->> +       dev_dbg(drvdata->dev, "Trace NOC is enabled\n");
->> +}
->> +
->> +static int trace_noc_enable(struct coresight_device *csdev, struct coresight_connection *inport,
->> +                           struct coresight_connection *outport)
->> +{
->> +       struct trace_noc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
->> +
->> +       spin_lock(&drvdata->spinlock);
->> +       if (csdev->refcnt == 0)
->> +               trace_noc_enable_hw(drvdata);
->> +
->> +       csdev->refcnt++;
->> +       spin_unlock(&drvdata->spinlock);
->> +
->> +       return 0;
->> +}
->> +
->> +static void trace_noc_disable_hw(struct trace_noc_drvdata *drvdata)
->> +{
->> +       writel_relaxed(0x0, drvdata->base + TRACE_NOC_CTRL);
->> +       dev_dbg(drvdata->dev, "Trace NOC is disabled\n");
->> +}
->> +
->> +static void trace_noc_disable(struct coresight_device *csdev, struct coresight_connection *inport,
->> +                             struct coresight_connection *outport)
->> +{
->> +       struct trace_noc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
->> +
->> +       spin_lock(&drvdata->spinlock);
->> +       if (--csdev->refcnt == 0)
->> +               trace_noc_disable_hw(drvdata);
->> +
->> +       spin_unlock(&drvdata->spinlock);
->> +       dev_info(drvdata->dev, "Trace NOC is disabled\n");
->> +}
->> +
->> +static const struct coresight_ops_link trace_noc_link_ops = {
->> +       .enable         = trace_noc_enable,
->> +       .disable        = trace_noc_disable,
->> +};
->> +
->> +static const struct coresight_ops trace_noc_cs_ops = {
->> +       .link_ops       = &trace_noc_link_ops,
->> +};
->> +
->> +static int trace_noc_init_default_data(struct trace_noc_drvdata *drvdata)
->> +{
->> +       int atid;
->> +
->> +       atid = coresight_trace_id_get_system_id();
->> +       if (atid < 0)
->> +               return atid;
->> +
->> +       drvdata->atid = atid;
->> +
->> +       drvdata->freq_type = FREQ_TS;
->> +       drvdata->flag_type = FLAG;
->> +       drvdata->freq_req_val = 0;
->> +
->> +       return 0;
->> +}
->> +
->> +static int trace_noc_probe(struct amba_device *adev, const struct amba_id *id)
->> +{
->> +       struct device *dev = &adev->dev;
->> +       struct coresight_platform_data *pdata;
->> +       struct trace_noc_drvdata *drvdata;
->> +       struct coresight_desc desc = { 0 };
->> +       int ret;
->> +
->> +       desc.name = coresight_alloc_device_name(&trace_noc_devs, dev);
->> +       if (!desc.name)
->> +               return -ENOMEM;
->> +       pdata = coresight_get_platform_data(dev);
->> +       if (IS_ERR(pdata))
->> +               return PTR_ERR(pdata);
->> +       adev->dev.platform_data = pdata;
->> +
->> +       drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
->> +       if (!drvdata)
->> +               return -ENOMEM;
->> +
->> +       drvdata->dev = &adev->dev;
->> +       dev_set_drvdata(dev, drvdata);
->> +
->> +       drvdata->base = devm_ioremap_resource(dev, &adev->res);
->> +       if (!drvdata->base)
->> +               return -ENOMEM;
->> +
->> +       spin_lock_init(&drvdata->spinlock);
->> +
->> +       ret = trace_noc_init_default_data(drvdata);
->> +       if (ret)
->> +               return ret;
->> +
->> +       desc.ops = &trace_noc_cs_ops;
->> +       desc.type = CORESIGHT_DEV_TYPE_LINK;
->> +       desc.subtype.link_subtype = CORESIGHT_DEV_SUBTYPE_LINK_MERG;
->> +       desc.pdata = adev->dev.platform_data;
->> +       desc.dev = &adev->dev;
->> +       desc.access = CSDEV_ACCESS_IOMEM(drvdata->base);
->> +       drvdata->csdev = coresight_register(&desc);
->> +       if (IS_ERR(drvdata->csdev))
->> +               return PTR_ERR(drvdata->csdev);
->> +
->> +       pm_runtime_put(&adev->dev);
->> +
->> +       return 0;
->> +}
->> +
->> +static void trace_noc_remove(struct amba_device *adev)
->> +{
->> +       struct trace_noc_drvdata *drvdata = dev_get_drvdata(&adev->dev);
->> +
->> +       coresight_trace_id_put_system_id(drvdata->atid);
->> +       coresight_unregister(drvdata->csdev);
->> +}
->> +
->> +static struct amba_id trace_noc_ids[] = {
->> +       {
->> +               .id     = 0x000f0c00,
->> +               .mask   = 0x000fff00,
->> +       },
->> +       {},
->> +};
->> +MODULE_DEVICE_TABLE(amba, trace_noc_ids);
->> +
->> +static struct amba_driver trace_noc_driver = {
->> +       .drv = {
->> +               .name   = "coresight-trace-noc",
->> +               .owner  = THIS_MODULE,
->> +               .suppress_bind_attrs = true,
->> +       },
->> +       .probe          = trace_noc_probe,
->> +       .remove         = trace_noc_remove,
->> +       .id_table       = trace_noc_ids,
->> +};
->> +
->> +module_amba_driver(trace_noc_driver);
->> +
->> +MODULE_LICENSE("GPL");
->> +MODULE_DESCRIPTION("Trace NOC driver");
->> diff --git a/drivers/hwtracing/coresight/coresight-tnoc.h b/drivers/hwtracing/coresight/coresight-tnoc.h
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..b6bd1ef659897d8e0994c5e8514e8cbdd16eebd8
->> --- /dev/null
->> +++ b/drivers/hwtracing/coresight/coresight-tnoc.h
->> @@ -0,0 +1,53 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/*
->> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +
->> +#define TRACE_NOC_CTRL 0x008
->> +#define TRACE_NOC_XLD  0x010
->> +#define TRACE_NOC_FREQVAL      0x018
->> +#define TRACE_NOC_SYNCR        0x020
->> +
->> +/* Enable generation of output ATB traffic.*/
-> 
-> 
-> 
->> +#define TRACE_NOC_CTRL_PORTEN  BIT(0)
->> +/* Writing 1 to issue a FREQ or FREQ_TS packet*/
->> +#define TRACE_NOC_CTRL_FREQTSREQ       BIT(5)
->> +/* Sets the type of issued ATB FLAG packets. 0: 'FLAG' packets; 1: 'FLAG_TS' packets.*/
->> +#define TRACE_NOC_CTRL_FLAGTYPE                BIT(7)
->> +/* sets the type of issued ATB FREQ packets. 0: 'FREQ' packets; 1: 'FREQ_TS' packets.*/
->> +#define TRACE_NOC_CTRL_FREQTYPE                BIT(8)
->> +DEFINE_CORESIGHT_DEVLIST(trace_noc_devs, "traceNoc");
-> 
-> Coresight links do not generate their own packets - please explain
-> what these are.
-> 
-> As far as I am aware, frequency and flag packets are not part of the
-> ATB specification.
-> 
-> If the output bus for this device is not in fact an ATB bus, then it
-> should not be referred to as such.
-> 
-> Thanks and regards
-> 
->  Mike
-> 
-Hi Mike
 
-Frequency and flag packets are STPV2 packet formats, they are generated by FREQ,
-FLAG & Sysnc Request Packet interface which is a component of Trace NOC.
- 
-TNOC is not just a link, it is an integrator that includes TPDA interface,
-FREQ, FLAG & Sysnc Request Packet interface, etc. The data generated by these
-interfaces will be packaged in STPV2 format and then output through ATB bus.
+And that's why we ended up with xdp, no? the stack's too heavy ...
 
-thanks,
-Yuanfang.
->> +
->> +/**
->> + * struct trace_noc_drvdata - specifics associated to a trace noc component
->> + * @base:      memory mapped base address for this component.
->> + * @dev:       device node for trace_noc_drvdata.
->> + * @csdev:     component vitals needed by the framework.
->> + * @spinlock:  only one at a time pls.
->> + * @atid:      id for the trace packet.
->> + * @freqtype:  0: 'FREQ' packets; 1: 'FREQ_TS' packets.
->> + * @flagtype:  0: 'FLAG' packets; 1: 'FLAG_TS' packets.
->> + * @freq_req_val:       set frequency values carried by 'FREQ' and 'FREQ_TS' packets.
->> + */
->> +struct trace_noc_drvdata {
->> +       void __iomem            *base;
->> +       struct device           *dev;
->> +       struct coresight_device *csdev;
->> +       spinlock_t              spinlock; /* lock for the drvdata. */
->> +       u32                     atid;
->> +       u32                     freq_type;
->> +       u32                     flag_type;
->> +       u32                     freq_req_val;
->> +};
->> +
->> +/* freq type */
->> +enum freq_type {
->> +       FREQ,
->> +       FREQ_TS,
->> +};
->> +
->> +/* flag type */
->> +enum flag_type {
->> +       FLAG,
->> +       FLAG_TS,
->> +};
->>
->> --
->> 2.34.1
->>
+> > How about a switch statement instead?
+> >
+> > struct vring_virtqueue {
+> >         enum vring_virtqueue_ops ops;
+> >
+> > }
+> >
+> >
+> > @@ -2248,10 +2303,8 @@ static inline int virtqueue_add(struct virtqueue *_vq,
+> >  {
+> >       struct vring_virtqueue *vq = to_vvq(_vq);
+> >
+> >         switch (vq->ops) {
+> >          VQ_PACKED:
+> >          VQ_SPLIT:
+> >          VQ_IN_ORDER:
+> >         }
+> >
+> >
+> > }
+> >
+> >
+> > What do you think?
 > 
+> Actually, the matrix will be 2*2:
 > 
+> PACKED, SPLIT, PACKED_IN_ORDER, SPLIT_IN_ORDER
+
+Confused. Same amount of enums as ops structures in your approach, no?
+
+
+> And will be doubled if a new layout is implemented.
+> 
+> If we open them such a switch will spread in a lot of places in the code.
+> 
+> Thanks
+> 
+> >
+> >
+> >
+> > > +
+> > >  struct vring_virtqueue {
+> > >       struct virtqueue vq;
+> > >
+> > > +     struct virtqueue_ops *ops;
+> > > +
+> > >       /* Is this a packed ring? */
+> > >       bool packed_ring;
+> > >
+> > > @@ -1116,6 +1137,8 @@ static int vring_alloc_queue_split(struct vring_virtqueue_split *vring_split,
+> > >       return 0;
+> > >  }
+> > >
+> > > +struct virtqueue_ops split_ops;
+> > > +
+> > >  static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
+> > >                                              struct vring_virtqueue_split *vring_split,
+> > >                                              struct virtio_device *vdev,
+> > > @@ -1134,6 +1157,7 @@ static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
+> > >               return NULL;
+> > >
+> > >       vq->packed_ring = false;
+> > > +     vq->ops = &split_ops;
+> > >       vq->vq.callback = callback;
+> > >       vq->vq.vdev = vdev;
+> > >       vq->vq.name = name;
+> > > @@ -2076,6 +2100,8 @@ static void virtqueue_reset_packed(struct vring_virtqueue *vq)
+> > >       virtqueue_vring_init_packed(&vq->packed, !!vq->vq.callback);
+> > >  }
+> > >
+> > > +struct virtqueue_ops packed_ops;
+> > > +
+> > >  static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
+> > >                                              struct vring_virtqueue_packed *vring_packed,
+> > >                                              struct virtio_device *vdev,
+> > > @@ -2107,6 +2133,7 @@ static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
+> > >       vq->broken = false;
+> > >  #endif
+> > >       vq->packed_ring = true;
+> > > +     vq->ops = &packed_ops;
+> > >       vq->dma_dev = dma_dev;
+> > >       vq->use_dma_api = vring_use_dma_api(vdev);
+> > >
+> > > @@ -2194,6 +2221,34 @@ static int virtqueue_resize_packed(struct vring_virtqueue *vq, u32 num)
+> > >       return -ENOMEM;
+> > >  }
+> > >
+> > > +struct virtqueue_ops split_ops = {
+> > > +     .add = virtqueue_add_split,
+> > > +     .get = virtqueue_get_buf_ctx_split,
+> > > +     .kick_prepare = virtqueue_kick_prepare_split,
+> > > +     .disable_cb = virtqueue_disable_cb_split,
+> > > +     .enable_cb_delayed = virtqueue_enable_cb_delayed_split,
+> > > +     .enable_cb_prepare = virtqueue_enable_cb_prepare_split,
+> > > +     .poll = virtqueue_poll_split,
+> > > +     .detach_unused_buf = virtqueue_detach_unused_buf_split,
+> > > +     .more_used = more_used_split,
+> > > +     .resize = virtqueue_resize_split,
+> > > +     .reset = virtqueue_reset_split,
+> > > +};
+> > > +
+> > > +struct virtqueue_ops packed_ops = {
+> > > +     .add = virtqueue_add_packed,
+> > > +     .get = virtqueue_get_buf_ctx_packed,
+> > > +     .kick_prepare = virtqueue_kick_prepare_packed,
+> > > +     .disable_cb = virtqueue_disable_cb_packed,
+> > > +     .enable_cb_delayed = virtqueue_enable_cb_delayed_packed,
+> > > +     .enable_cb_prepare = virtqueue_enable_cb_prepare_packed,
+> > > +     .poll = virtqueue_poll_packed,
+> > > +     .detach_unused_buf = virtqueue_detach_unused_buf_packed,
+> > > +     .more_used = more_used_packed,
+> > > +     .resize = virtqueue_resize_packed,
+> > > +     .reset = virtqueue_reset_packed,
+> > > +};
+> > > +
+> > >  static int virtqueue_disable_and_recycle(struct virtqueue *_vq,
+> > >                                        void (*recycle)(struct virtqueue *vq, void *buf))
+> > >  {
+> > > @@ -2248,10 +2303,8 @@ static inline int virtqueue_add(struct virtqueue *_vq,
+> > >  {
+> > >       struct vring_virtqueue *vq = to_vvq(_vq);
+> > >
+> > > -     return vq->packed_ring ? virtqueue_add_packed(vq, sgs, total_sg,
+> > > -                                     out_sgs, in_sgs, data, ctx, premapped, gfp) :
+> > > -                              virtqueue_add_split(vq, sgs, total_sg,
+> > > -                                     out_sgs, in_sgs, data, ctx, premapped, gfp);
+> > > +     return vq->ops->add(vq, sgs, total_sg,
+> > > +                         out_sgs, in_sgs, data, ctx, premapped, gfp);
+> > >  }
+> > >
+> > >  /**
+> > > @@ -2437,8 +2490,7 @@ bool virtqueue_kick_prepare(struct virtqueue *_vq)
+> > >  {
+> > >       struct vring_virtqueue *vq = to_vvq(_vq);
+> > >
+> > > -     return vq->packed_ring ? virtqueue_kick_prepare_packed(vq) :
+> > > -                              virtqueue_kick_prepare_split(vq);
+> > > +     return vq->ops->kick_prepare(vq);
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(virtqueue_kick_prepare);
+> > >
+> > > @@ -2508,8 +2560,7 @@ void *virtqueue_get_buf_ctx(struct virtqueue *_vq, unsigned int *len,
+> > >  {
+> > >       struct vring_virtqueue *vq = to_vvq(_vq);
+> > >
+> > > -     return vq->packed_ring ? virtqueue_get_buf_ctx_packed(vq, len, ctx) :
+> > > -                              virtqueue_get_buf_ctx_split(vq, len, ctx);
+> > > +     return vq->ops->get(vq, len, ctx);
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(virtqueue_get_buf_ctx);
+> > >
+> > > @@ -2531,10 +2582,7 @@ void virtqueue_disable_cb(struct virtqueue *_vq)
+> > >  {
+> > >       struct vring_virtqueue *vq = to_vvq(_vq);
+> > >
+> > > -     if (vq->packed_ring)
+> > > -             virtqueue_disable_cb_packed(vq);
+> > > -     else
+> > > -             virtqueue_disable_cb_split(vq);
+> > > +     return vq->ops->disable_cb(vq);
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(virtqueue_disable_cb);
+> > >
+> > > @@ -2557,8 +2605,7 @@ unsigned int virtqueue_enable_cb_prepare(struct virtqueue *_vq)
+> > >       if (vq->event_triggered)
+> > >               vq->event_triggered = false;
+> > >
+> > > -     return vq->packed_ring ? virtqueue_enable_cb_prepare_packed(vq) :
+> > > -                              virtqueue_enable_cb_prepare_split(vq);
+> > > +     return vq->ops->enable_cb_prepare(vq);
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(virtqueue_enable_cb_prepare);
+> > >
+> > > @@ -2579,8 +2626,7 @@ bool virtqueue_poll(struct virtqueue *_vq, unsigned int last_used_idx)
+> > >               return false;
+> > >
+> > >       virtio_mb(vq->weak_barriers);
+> > > -     return vq->packed_ring ? virtqueue_poll_packed(vq, last_used_idx) :
+> > > -                              virtqueue_poll_split(vq, last_used_idx);
+> > > +     return vq->ops->poll(vq, last_used_idx);
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(virtqueue_poll);
+> > >
+> > > @@ -2623,8 +2669,7 @@ bool virtqueue_enable_cb_delayed(struct virtqueue *_vq)
+> > >       if (vq->event_triggered)
+> > >               vq->event_triggered = false;
+> > >
+> > > -     return vq->packed_ring ? virtqueue_enable_cb_delayed_packed(vq) :
+> > > -                              virtqueue_enable_cb_delayed_split(vq);
+> > > +     return vq->ops->enable_cb_delayed(vq);
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(virtqueue_enable_cb_delayed);
+> > >
+> > > @@ -2640,14 +2685,13 @@ void *virtqueue_detach_unused_buf(struct virtqueue *_vq)
+> > >  {
+> > >       struct vring_virtqueue *vq = to_vvq(_vq);
+> > >
+> > > -     return vq->packed_ring ? virtqueue_detach_unused_buf_packed(vq) :
+> > > -                              virtqueue_detach_unused_buf_split(vq);
+> > > +     return vq->ops->detach_unused_buf(vq);
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(virtqueue_detach_unused_buf);
+> > >
+> > >  static inline bool more_used(const struct vring_virtqueue *vq)
+> > >  {
+> > > -     return vq->packed_ring ? more_used_packed(vq) : more_used_split(vq);
+> > > +     return vq->ops->more_used(vq);
+> > >  }
+> > >
+> > >  /**
+> > > @@ -2785,10 +2829,7 @@ int virtqueue_resize(struct virtqueue *_vq, u32 num,
+> > >       if (recycle_done)
+> > >               recycle_done(_vq);
+> > >
+> > > -     if (vq->packed_ring)
+> > > -             err = virtqueue_resize_packed(vq, num);
+> > > -     else
+> > > -             err = virtqueue_resize_split(vq, num);
+> > > +     err = vq->ops->resize(vq, num);
+> > >
+> > >       return virtqueue_enable_after_reset(_vq);
+> > >  }
+> > > @@ -2822,10 +2863,7 @@ int virtqueue_reset(struct virtqueue *_vq,
+> > >       if (recycle_done)
+> > >               recycle_done(_vq);
+> > >
+> > > -     if (vq->packed_ring)
+> > > -             virtqueue_reset_packed(vq);
+> > > -     else
+> > > -             virtqueue_reset_split(vq);
+> > > +     vq->ops->reset(vq);
+> > >
+> > >       return virtqueue_enable_after_reset(_vq);
+> > >  }
+> > > --
+> > > 2.42.0
+> >
 
 
