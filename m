@@ -1,97 +1,49 @@
-Return-Path: <linux-kernel+bounces-594981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-595006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3470A818C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 00:35:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58F99A818F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 00:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65EA74A5662
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:35:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 837163AF953
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B79255222;
-	Tue,  8 Apr 2025 22:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PedIoj3d"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66A319580B;
-	Tue,  8 Apr 2025 22:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53ACE254B02;
+	Tue,  8 Apr 2025 22:43:38 +0000 (UTC)
+Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BCC2505D2
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 22:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744151714; cv=none; b=ddVJnkY8zzis4YaNKs/fWzoJwzappxFaChn/V71ZujoKgh8ZnW/2wtBJ7eYkiTnMipNfXOiGrCdvdwWapGsouOsRNyyxS1oWfadLCc+sDbN52VxETKC15ByyP8omKf6WIa3p2ZOBiDUjSIyz4kKprBRw+v645JfiNOanV1T82Ps=
+	t=1744152218; cv=none; b=QD7OY68nfyErO4QX1ABp9dxvnyCuNTOlCCyNdq/UqcArgsIsrviO3j148olfk5THVh562t2245KbaUu1v2v2ArRRrgkwF1/5jo+8ZZULdMudLVT97s7Y18/NnSDD1VutRGh+MHtbJi/qTwBAF25JzKMPc/B4aFtuTZbwTfnuMek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744151714; c=relaxed/simple;
-	bh=p3pVpx/VwMqHuZmzIgDl1OhltWkd9hOvOIWcHNtVOo4=;
+	s=arc-20240116; t=1744152218; c=relaxed/simple;
+	bh=AmYdHqfVjCD657SNQEqPNHqdMzSO27jBYYDSCQbGIPA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qJNR9gXzrqZurKLmTVffcTlkkK3znGkFYIN29Fhjf39TnRmmniWJNyvA6iuzKaA0Pr+uCfWM66HZEaggWbZ+bhizbxG3zmP8xvJk8ubFFN4Ar5l27kz3TPe2oBpY5KGRswub186erEhcmkH2aq4Y8a8/2tMSOfkiGsyHusz0Z4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PedIoj3d; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54afb5fcebaso6801415e87.3;
-        Tue, 08 Apr 2025 15:35:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744151711; x=1744756511; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mlD2KqrfnMmFYhmlW5RFHJBshe8wyA1SZAy/tY6ywgY=;
-        b=PedIoj3dwUryovcOPRLPfrdBlgxhS9dCmB6Zok8Fe2ujqK7GfCMgvOscz1cABS+0E4
-         ZzBwy19XkNF62TWfxKXo5mTVYWa+pl5M+UxsiqZDho9yoLOqclnkIaHchUEe4gq42YUS
-         mxI0wgtK+72XdkxArrahO8zy7m79vW36+WlYbQsGHwuPOmAULXAK48I6duyf7JpM2cKk
-         lhXxb2dy0aR5abfxODMIGLJUpgDOCG0kLIIv49C60VBiCkBCWkcqz+aO/8KGfCRUww6h
-         dcw0WpX7ja8m7Sd4pi58nhrj0hVjwvkY/npUQjeCNhG6cupLbt01S/IEctWi0Q/yxguH
-         g1Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744151711; x=1744756511;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mlD2KqrfnMmFYhmlW5RFHJBshe8wyA1SZAy/tY6ywgY=;
-        b=MTg7LHailPT7RDyX9DczwhA1MoScvUE6sdgmVONZDCfxd6NMzvtYRKiCg55D35ZLA8
-         eyF7uBot1HvLHbwgAGFT7RoAKE4GzjfETZ5bCdZtya1COwI3j7RGKt4MyISuoHjBA2tb
-         2zAmMT5Ny7XYVZCfSGZhS6oG5IygbkmAt2mGG2lIlvys1nh76OQ/tuYRE36dk21uHQWz
-         Di1NF+Vh8NLcTTHwXTY6d0zdkdyTBI6bdNeIz8a0XsnlR/lH4TBPxXgY0QHtN6druHo6
-         4sW6OWts2CkaujR9SXLVwL358GfDUopDDnwLbQqMpu5LkiUENWnITWOsY8SOXN4yxbvs
-         pq7g==
-X-Forwarded-Encrypted: i=1; AJvYcCU3Lc8yfEpeHYyR1/e6gcR0aluZGEPQ+EDSUl2xAQAGybVPjopQKZAczAZUU+KgIDuZEA8tSaYA@vger.kernel.org, AJvYcCVhdDDcl05WqW77CsU5yeDL2hW3DI6YZ3cjAIdp/wlqcsytIuqRxy9VZOFbAy6t28csmdoYwRbCeGvYyNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMG6GCTL95omye/OHIrthVeMYamXPn7pQGt4yS0Ew/kgPV7CNd
-	U2jzSCwtxQRPhvrWVq9pAeaKhZrdavTIEhJHuPUhbyuYC1CtuQu4
-X-Gm-Gg: ASbGncuDfGAPkJwdQOut6BjXdIuNtsRiyKiSJXW511WfpaeMJVt949jR6qMlyUcD07K
-	zSEGEDgSdNbw2aA/6LviiaVzgFGZNkvpQoEPp8Vc4xj8RJDu+r3NX3n8vV96T6peDR/drOpgI3l
-	HlRZVkZW1Igc5NUAHMgyqSIwcevGr6i8aLcZn6qrtiDgcn9x8BF8cXc9HgkcSjPQHcL7A9Sa8Zr
-	7BmokbXDXzqnSCXoVqk0IW9qrAWEx67Ifxou2xP+8ThUONbNePSsT1btIEMZm7tn9kdwjP9i+Oe
-	gXcf41os7uy1nrEU0vc9nq5N2yTYMsAOFDORhczw/GABR/MBQ4WvIpA/r3A=
-X-Google-Smtp-Source: AGHT+IFezkMToIsvrqEXJ3FIwrq2zr1M8hDZTVQjVxKua0cX47u4u44qQalqMF6pZmfqsQ9paKwjcA==
-X-Received: by 2002:a05:6512:1318:b0:545:2c2c:5802 with SMTP id 2adb3069b0e04-54c437c9468mr149090e87.48.1744151710605;
-        Tue, 08 Apr 2025 15:35:10 -0700 (PDT)
-Received: from home.paul.comp (paulfertser.info. [2001:470:26:54b:226:9eff:fe70:80c2])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e5ab48bsm1673159e87.33.2025.04.08.15.35.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 15:35:10 -0700 (PDT)
-Received: from home.paul.comp (home.paul.comp [IPv6:0:0:0:0:0:0:0:1])
-	by home.paul.comp (8.15.2/8.15.2/Debian-22+deb11u3) with ESMTP id 538MZ6Zq026177;
-	Wed, 9 Apr 2025 01:35:07 +0300
-Received: (from paul@localhost)
-	by home.paul.comp (8.15.2/8.15.2/Submit) id 538MZ5ZY026176;
-	Wed, 9 Apr 2025 01:35:05 +0300
-Date: Wed, 9 Apr 2025 01:35:04 +0300
-From: Paul Fertser <fercerpav@gmail.com>
-To: Hari Kalavakunta <kalavakunta.hari.prasad@gmail.com>
-Cc: Sam Mendoza-Jonas <sam@mendozajonas.com>, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        npeacock@meta.com, akozlov@meta.com
-Subject: Re: [PATCH net-next 0/2] GCPS Spec Compliance Patch Set
-Message-ID: <Z/WkmPcCJ0e2go97@home.paul.comp>
-References: <cover.1744048182.git.kalavakunta.hari.prasad@gmail.com>
- <ee5feee4-e74a-4dc6-ad8e-42cf9c81cb3c@mendozajonas.com>
- <b1abcf84-e187-468f-a05e-e634e825210c@gmail.com>
- <Z/VqQVGI6oP5oEzB@home.paul.comp>
- <1d570fb8-1da0-4aa6-99f5-052adf559091@gmail.com>
- <Z/V2pCKe8N6Uxa0O@home.paul.comp>
- <b1d373d7-77e5-4341-a685-07a617935db5@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jrSZTlct7k8gct4REB3kWe730Wv3YVrOixedQe+sGXb+JcgTlSs0bqzKTWWNEYJxv8V5QOwNNhttiYdEvOQ70JmPTr303p0F+9wmHK/1gKROJ4kSdUL0Pj6o+aiU/nTvBfzucZa/w63HceYXOWcIrQ1d/ytu6roMQ7Lva5d20yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+	by vmicros1.altlinux.org (Postfix) with ESMTP id 0DEF672C8CC;
+	Wed,  9 Apr 2025 01:36:12 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+	id 0053E7CCB3A; Wed,  9 Apr 2025 01:36:11 +0300 (IDT)
+Date: Wed, 9 Apr 2025 01:36:11 +0300
+From: "Dmitry V. Levin" <ldv@strace.io>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Arnd Bergmann <arnd@arndb.de>, strace-devel@lists.strace.io,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v7 2/6] syscall.h: add syscall_set_arguments()
+Message-ID: <20250408223611.GA26876@strace.io>
+References: <20250303111910.GA24170@strace.io>
+ <20250303112009.GC24170@strace.io>
+ <20250408213131.GA2872426@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,28 +52,102 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b1d373d7-77e5-4341-a685-07a617935db5@gmail.com>
+In-Reply-To: <20250408213131.GA2872426@ax162>
 
-On Tue, Apr 08, 2025 at 03:02:14PM -0700, Hari Kalavakunta wrote:
-> On 4/8/2025 12:19 PM, Paul Fertser wrote:
+Hi Nathan,
+
+On Tue, Apr 08, 2025 at 02:31:31PM -0700, Nathan Chancellor wrote:
+> Hi Dmitry,
 > 
-> > In other words, you're testing your code only with simulated data so
-> > there's no way to guarantee it's going to work on any real life
-> > hardware (as we know hardware doesn't always exactly match the specs)?
-> > That's unsettling. Please do mention it in the commit log, it's an
-> > essential point. Better yet, consider going a bit off-centre after the
-> > regular verification and do a control run on real hardware.
+> [dropping majority of folks since this seems irrelevant to them]
+> 
+> On Mon, Mar 03, 2025 at 01:20:09PM +0200, Dmitry V. Levin wrote:
+> > This function is going to be needed on all HAVE_ARCH_TRACEHOOK
+> > architectures to implement PTRACE_SET_SYSCALL_INFO API.
 > > 
-> > After all, that's what the code is for so if it all possible it's
-> > better to know if it does the actual job before merging (to avoid
-> > noise from follow-up patches like yours which fix something that never
-> > worked because it was never tested).
+> > This partially reverts commit 7962c2eddbfe ("arch: remove unused
+> > function syscall_set_arguments()") by reusing some of old
+> > syscall_set_arguments() implementations.
+> > 
+> > Signed-off-by: Dmitry V. Levin <ldv@strace.io>
+> > Tested-by: Charlie Jenkins <charlie@rivosinc.com>
+> > Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+> > Acked-by: Helge Deller <deller@gmx.de> # parisc
+> > Reviewed-by: Maciej W. Rozycki <macro@orcam.me.uk> # mips
+> ...
+> > diff --git a/arch/riscv/include/asm/syscall.h b/arch/riscv/include/asm/syscall.h
+> > index 121fff429dce..8d389ba995c8 100644
+> > --- a/arch/riscv/include/asm/syscall.h
+> > +++ b/arch/riscv/include/asm/syscall.h
+> > @@ -66,6 +66,15 @@ static inline void syscall_get_arguments(struct task_struct *task,
+> >  	memcpy(args, &regs->a1, 5 * sizeof(args[0]));
+> >  }
+> >  
+> > +static inline void syscall_set_arguments(struct task_struct *task,
+> > +					 struct pt_regs *regs,
+> > +					 const unsigned long *args)
+> > +{
+> > +	regs->orig_a0 = args[0];
+> > +	args++;
+> > +	memcpy(&regs->a1, args, 5 * sizeof(regs->a1));
+> > +}
 > 
-> I would like to request a week's time to integrate a real hardware
-> interface, which will enable me to test and demonstrate end-to-end results.
-> This will also allow me to identify and address any additional issues that
-> may arise during the testing process. Thank you for the feedback.
+> This upsets the compiletime fortify checks, as I see a warning after
+> syscall_set_arguments() starts being used in kernel/ptrace.c later in
+> the series.
+> 
+>   $ make -skj"$(nproc)" ARCH=riscv CROSS_COMPILE=riscv64-linux- allmodconfig kernel/ptrace.o
+>   In file included from include/linux/string.h:392,
+>                    from include/linux/bitmap.h:13,
+>                    from include/linux/cpumask.h:12,
+>                    from arch/riscv/include/asm/processor.h:55,
+>                    from include/linux/sched.h:13,
+>                    from kernel/ptrace.c:13:
+>   In function 'fortify_memcpy_chk',
+>       inlined from 'syscall_set_arguments.isra' at arch/riscv/include/asm/syscall.h:82:2:
+>   include/linux/fortify-string.h:571:25: error: call to '__write_overflow_field' declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Werror=attribute-warning]
+>     571 |                         __write_overflow_field(p_size_field, size);
+>         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   cc1: all warnings being treated as errors
 
-Thank you for doing the right thing! Looking forward to your updated
-patch (please do not forget to consider __be64 for the fields).
+I certainly tested the series on riscv64, but somehow I haven't seen this
+compiler diagnostics before.
+
+> The compiler knows the size of the destination and the size to be copied
+> so it knows there will be an (intentional) overwrite here.
+> struct_group() would normally work but I think this structure already
+> has a struct_group() around some of the members that would be needed. I
+> build tested eliminating the memcpy() altogether, which would appear to
+> work, but I am not sure if there is a better solution, hence just the
+> report.
+> 
+> Cheers,
+> Nathan
+> 
+> diff --git a/arch/riscv/include/asm/syscall.h b/arch/riscv/include/asm/syscall.h
+> index a5281cdf2b10..70ec19dc8506 100644
+> --- a/arch/riscv/include/asm/syscall.h
+> +++ b/arch/riscv/include/asm/syscall.h
+> @@ -78,8 +78,11 @@ static inline void syscall_set_arguments(struct task_struct *task,
+>                                          const unsigned long *args)
+>  {
+>         regs->orig_a0 = args[0];
+> -       args++;
+> -       memcpy(&regs->a1, args, 5 * sizeof(regs->a1));
+> +       regs->a1 = args[1];
+> +       regs->a2 = args[2];
+> +       regs->a3 = args[3];
+> +       regs->a4 = args[4];
+> +       regs->a5 = args[5];
+>  }
+
+I don't mind eliminating the memcpy() altogether, but
+I'd like to note that syscall_set_arguments() is an exact mirror
+of syscall_get_arguments(), so if the intentional overwrite in
+syscall_set_arguments() is not acceptable, then the intentional
+overread in syscall_get_arguments() shouldn't be acceptable either.
+
+
+-- 
+ldv
 
