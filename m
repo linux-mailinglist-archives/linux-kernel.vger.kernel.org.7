@@ -1,127 +1,190 @@
-Return-Path: <linux-kernel+bounces-593057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D372A7F49F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:08:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73DC8A7F4B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 08:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C098188E9C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:08:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE2EA7A16FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 06:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2439261398;
-	Tue,  8 Apr 2025 06:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D6725F96C;
+	Tue,  8 Apr 2025 06:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VrANH8gc"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DsNBpDpH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B82261368;
-	Tue,  8 Apr 2025 06:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972CB263F46
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 06:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744092415; cv=none; b=s7RAX4ogFWkKtMtq/LUBWBJxvv7stBOkaLnsjcga4noMKljKRtYLxwDG2PdkaP/PBLnhNa6EIWCFuL79evHFW71Z94yHNIX4l9slnXf/5a/Hs3jQJ+00YJTvBSpSwlzhxh5zdpUsAI4PKkv1fSVdCL/KLrmms3DJX9HR+HUseew=
+	t=1744092432; cv=none; b=CBWfbfrmaIlOZlREgS9EvWw2KhkfhutJV6moCG250LBI1eKXdeeJjR0D0UCOdvc+e3EnqC7nUJTz2F6A9ibdIU4Sj6uDuHpvVau+LLO9lrBFgigTuZ/f+3Dtzc30g4zRVKpK/YiBR6MBlFECxRKkhw/r8dqpEqgPqRhHWY5jQiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744092415; c=relaxed/simple;
-	bh=lbyr4jAcBGFK8mXvlPAmwgrKXYVaOjbCX2i/IuY5L1U=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iJ6tAS5Ox/athuSMiUioLfgO4jxreqO18pMBo4Bk4JwtVpWD0LI8VmtirEewjozKnk8U8+IrdULNHt7NUx2Gx5kdwnvAocM2W7w6lLALmpLh2o7FeeudMl/1uUCSoY3tcQD9iJ6sbFdYkYLcCXe6NMqH+SAmsaxk1pxPuoC/jTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VrANH8gc; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 53866l1C1125966
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 8 Apr 2025 01:06:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744092407;
-	bh=fyZscUILXrq7HToqkjP2DEJv/CIstI5SN7efBYH3aaw=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=VrANH8gccndwQImRnI7znA/SNWESJbWJHGbAap4lkzAIexP1YUjxG9HMPDmZizUbU
-	 W5xlO0XdBLtKh0xw3C1RUuv8/Li9qJ8jUoUG+kmaNRgLF8KbMThUN7Y5+dNOQmoaSt
-	 XlkHV4iK2RjXSDSiwepcbMHRtVElNtQEQ1+YtbVs=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 53866lVY112422
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 8 Apr 2025 01:06:47 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 8
- Apr 2025 01:06:47 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 8 Apr 2025 01:06:47 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.113])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 53866bvq080076;
-	Tue, 8 Apr 2025 01:06:44 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH 2/2] arm64: dts: ti: k3-j722s-main: Disable "serdes_wiz0" and "serdes_wiz1"
-Date: Tue, 8 Apr 2025 11:36:36 +0530
-Message-ID: <20250408060636.3413856-3-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250408060636.3413856-1-s-vadapalli@ti.com>
-References: <20250408060636.3413856-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1744092432; c=relaxed/simple;
+	bh=SD7Xq6PJnyE6Dco8m8zhabJvgDfWZfqJu+X+VlTeIp0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=LIwUMG8dsDRcUHWh2OhMjiLWzuvLwUIbKyU57rD8yRE801ISQ8nIMnN0KvjDqwYueJX/3eh9zqUlYNT6qnUXv5qVtq1sz9m0t8ZG4gYQWKpZSx7Ovczzj8tf/YHJ+xcKyvfOjhxtMecvcP3MIuTP3YBv9PI0QWu3kixmrIu7n0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DsNBpDpH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5382GP1W019664
+	for <linux-kernel@vger.kernel.org>; Tue, 8 Apr 2025 06:07:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	LIxkWENj/q2hTkMwvmODIhHwoW25U8wZdObE/3hO0NI=; b=DsNBpDpHYogO5ivX
+	rtKEac5xXk9Q4qsqnusChpqD30EvEDslUg+/Xfb1Xo8TtB1MQZ8xXeOg0XhQVA8u
+	3rGPK+DB6tocg48AhuBwdc5O19gUWiNJU0D5c029Umlpp4+5GkJn7vfHWzSB1Ayj
+	feHeWaBw3fH3St2SEjlcOR4tIZZf0SJo2YFML33HkV75yaR1oFqguNnOF2dXz2so
+	JC116sOqU6fw+yVUmWHIuKk3VR+bOPl02RyvjIQllSVFpvE6YktMDF6ipfy1B6Uf
+	jJm+NyUH2+7w0TZANZ2vMI6s/UazFLapkjFnYv/gea5YH+E9fIwzzL7XCtw0q+s4
+	E7a0RA==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twg3emvd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 06:07:08 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-af5310c1ac1so3327766a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 23:07:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744092427; x=1744697227;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LIxkWENj/q2hTkMwvmODIhHwoW25U8wZdObE/3hO0NI=;
+        b=Mp8eLs63mG7Js8Dd5d4otSPiaDaLUOnz+nOBx0wmo1d7zJSXJ9OTwbZEkd+77WCewg
+         3P30JNTWdAI+hmDLKEPeqRWBpxK9fQxcYi+HB9EO2RBxQS1DS34nTqJBBwADXbQugEZ2
+         Yg4P85XEgtvmprsjsn4cfYnOQI8YAlTW3D/Ey/N5yGxP8QlOPkIcZpYO3kHEf/OCGLG5
+         ItH66LO8dAyjdgx6LDUMsnT45TrSiJlBZeXqs+eB3qOJdJ7oaW6bFXyrNCkYtBVRKZVJ
+         IPXrkwr/L48+S2jPvvCs6uZSkEsl44JC9Jha4cRPaj3SLv+BUf0AKu7puWCOrrqH69Vn
+         weiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGpXySHst2T66+zzIpw2OUUHpdCmsiP7MKdgkcD9geME+yRY3WEhizjQSFazBKjtfp6azcJ5Y7CyoHp1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZzztJ9mWzWwuoJgYyLCGELht/vlS1eHiTX4wrpLuAnlJFyyhK
+	j3Uly8X8x9U04ool5+P08Plo7S3ydY+iQvzKh2vqdobvEN+vY+2SAMQohroK0euMbZfuFeAzQG5
+	qanq/BAfDY+RkRtmk9Li3aUp/LShcSjxrFFER5Agrxpg3JV4UyBTnmvLkybwMPag=
+X-Gm-Gg: ASbGncuLaurKUK0XGSDsOGgk5ZbuH/eLc4Si3tlQnJEP0Pmp9gEWptEI4eeJF9ObrBS
+	8kxJieNt0KJhScZ+E+1/NsqR4fin++sk9NHOdtV/8pk7ShEtNBLax1hEwa7zZEF/rZRVis/53kw
+	jWIwmjl3p/4Y76P+LTGcb4pf1wnyYvrZfqo/j5PfvK3FQX+Nnbx74v1+igd4Af3GY9IBH4I8vHS
+	yG7Ykqtd2LThAo+5s5gUuYRLpgHurrYhs5b7x/zz2aCJZ6drUM9iGGQseyHUu/zBWCXzCmgiMSV
+	65MRPB7nDrp+X9rowdwrQL7riiTlU8Q3/jI1QlV2BFgrjLlS0roK/Y2BS9EACX8PlkXDtEfEX0B
+	j+tWWQ8BVkbc69ePe6VPrGePdQRqvHAkz2+FCN2XX
+X-Received: by 2002:a05:6a20:e615:b0:1f5:6e71:e45 with SMTP id adf61e73a8af0-2010472df50mr23137227637.27.1744092426947;
+        Mon, 07 Apr 2025 23:07:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFUfZpNpImfeyNF3xfOncodEa1J6cUs6peESY7TuolTeZvZk3fkw9PWN6do2t15rjWkh0MPUA==
+X-Received: by 2002:a05:6a20:e615:b0:1f5:6e71:e45 with SMTP id adf61e73a8af0-2010472df50mr23137196637.27.1744092426609;
+        Mon, 07 Apr 2025 23:07:06 -0700 (PDT)
+Received: from hu-adisi-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af9bc35079fsm6863981a12.41.2025.04.07.23.07.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 23:07:06 -0700 (PDT)
+From: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
+Date: Tue, 08 Apr 2025 11:36:36 +0530
+Subject: [PATCH ath-next v4 8/9] wifi: ath12k: handle ath12k_core_reset()
+ with hardware grouping
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250408-fix_reboot_issues_with_hw_grouping-v4-8-95e7bf048595@oss.qualcomm.com>
+References: <20250408-fix_reboot_issues_with_hw_grouping-v4-0-95e7bf048595@oss.qualcomm.com>
+In-Reply-To: <20250408-fix_reboot_issues_with_hw_grouping-v4-0-95e7bf048595@oss.qualcomm.com>
+To: Johannes Berg <johannes@sipsolutions.net>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Karthikeyan Periyasamy <quic_periyasa@quicinc.com>,
+        Kalle Valo <kvalo@kernel.org>, Harshitha Prem <quic_hprem@quicinc.com>
+Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-GUID: 8Iqz7m84U0H2SfIcai_nZs_pXOoTzyBy
+X-Proofpoint-ORIG-GUID: 8Iqz7m84U0H2SfIcai_nZs_pXOoTzyBy
+X-Authority-Analysis: v=2.4 cv=I/9lRMgg c=1 sm=1 tr=0 ts=67f4bd0c cx=c_pps a=rz3CxIlbcmazkYymdCej/Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=WsyaGQEz6myPfAgSfy8A:9 a=QEXdDO2ut3YA:10
+ a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-08_02,2025-04-07_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ phishscore=0 suspectscore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0
+ clxscore=1015 malwarescore=0 adultscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504080042
 
-Since "serdes0" and "serdes1" which are the sub-nodes of "serdes_wiz0"
-and "serdes_wiz1" respectively, have been disabled in the SoC file already,
-and, given that these sub-nodes will only be enabled in a board file if the
-board utilizes any of the SERDES instances and the peripherals bound to
-them, we may end up in a situation where the board file doesn't explicitly
-disable "serdes_wiz0" and "serdes_wiz1". As a consequence of this, the
-following errors show up when booting Linux:
+Currently, in ath12k_core_reset(), the device is powered up immediately
+after a power down. However, with hardware grouping, when one device
+asserts, all partner devices also asserts. If there is a delay in
+processing these asserts, by the time this device powers up, other devices
+might still be asserting, leading to an overall recovery failure.
 
-  wiz bus@f0000:phy@f000000: probe with driver wiz failed with error -12
-  ...
-  wiz bus@f0000:phy@f010000: probe with driver wiz failed with error -12
+To prevent this issue, ensure all asserts for a group are processed before
+initiating the power-up sequence.
 
-To not only fix the above, but also, in order to follow the convention of
-disabling device-tree nodes in the SoC file and enabling them in the board
-files for those boards which require them, disable "serdes_wiz0" and
-"serdes_wiz1" device-tree nodes.
+Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.3.1-00173-QCAHKSWPL_SILICONZ-1
+Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.4.1-00199-QCAHKSWPL_SILICONZ-1
+Tested-on: WCN7850 hw2.0 PCI WLAN.HMT.1.0.c5-00481-QCAHMTSWPL_V1.0_V2.0_SILICONZ-3
 
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+Signed-off-by: Aditya Kumar Singh <aditya.kumar.singh@oss.qualcomm.com>
 ---
- arch/arm64/boot/dts/ti/k3-j722s-main.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/wireless/ath/ath12k/core.c | 29 ++++++++++++++++++++++++++---
+ 1 file changed, 26 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
-index 6850f50530f1..beda9e40e931 100644
---- a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
-@@ -32,6 +32,8 @@ serdes_wiz0: phy@f000000 {
- 		assigned-clocks = <&k3_clks 279 1>;
- 		assigned-clock-parents = <&k3_clks 279 5>;
+diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/ath12k/core.c
+index a1c9b8771e9c4c84548da2cb4054b0403aa8c759..55db189d82346438272c94f25b62dd0db8716efb 100644
+--- a/drivers/net/wireless/ath/ath12k/core.c
++++ b/drivers/net/wireless/ath/ath12k/core.c
+@@ -1582,7 +1582,8 @@ static void ath12k_core_restart(struct work_struct *work)
+ static void ath12k_core_reset(struct work_struct *work)
+ {
+ 	struct ath12k_base *ab = container_of(work, struct ath12k_base, reset_work);
+-	int reset_count, fail_cont_count;
++	struct ath12k_hw_group *ag = ab->ag;
++	int reset_count, fail_cont_count, i;
+ 	long time_left;
  
-+		status = "disabled";
-+
- 		serdes0: serdes@f000000 {
- 			compatible = "ti,j721e-serdes-10g";
- 			reg = <0x0f000000 0x00010000>;
-@@ -70,6 +72,8 @@ serdes_wiz1: phy@f010000 {
- 		assigned-clocks = <&k3_clks 280 1>;
- 		assigned-clock-parents = <&k3_clks 280 5>;
+ 	if (!(test_bit(ATH12K_FLAG_QMI_FW_READY_COMPLETE, &ab->dev_flags))) {
+@@ -1641,9 +1642,31 @@ static void ath12k_core_reset(struct work_struct *work)
+ 	ath12k_hif_ce_irq_disable(ab);
  
-+		status = "disabled";
+ 	ath12k_hif_power_down(ab, false);
+-	ath12k_hif_power_up(ab);
+ 
+-	ath12k_dbg(ab, ATH12K_DBG_BOOT, "reset started\n");
++	/* prepare for power up */
++	ab->qmi.num_radios = U8_MAX;
 +
- 		serdes1: serdes@f010000 {
- 			compatible = "ti,j721e-serdes-10g";
- 			reg = <0x0f010000 0x00010000>;
++	mutex_lock(&ag->mutex);
++	ath12k_core_to_group_ref_put(ab);
++
++	if (ag->num_started > 0) {
++		ath12k_dbg(ab, ATH12K_DBG_BOOT,
++			   "waiting for %d partner device(s) to reset\n",
++			   ag->num_started);
++		mutex_unlock(&ag->mutex);
++		return;
++	}
++
++	for (i = 0; i < ag->num_devices; i++) {
++		ab = ag->ab[i];
++		if (!ab)
++			continue;
++
++		ath12k_hif_power_up(ab);
++		ath12k_dbg(ab, ATH12K_DBG_BOOT, "reset started\n");
++	}
++
++	mutex_unlock(&ag->mutex);
+ }
+ 
+ int ath12k_core_pre_init(struct ath12k_base *ab)
+
 -- 
 2.34.1
 
