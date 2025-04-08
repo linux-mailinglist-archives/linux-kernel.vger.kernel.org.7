@@ -1,150 +1,217 @@
-Return-Path: <linux-kernel+bounces-594214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C40A80EE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:53:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF23FA80EDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DC211B61D40
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:48:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD8B17B047D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C527E1E9B16;
-	Tue,  8 Apr 2025 14:48:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750851EB9F9;
+	Tue,  8 Apr 2025 14:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="oO1x1MwF"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2AEF1E492D
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 14:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD72221DB0;
+	Tue,  8 Apr 2025 14:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744123685; cv=none; b=XnRkUCIhkZ17eTNqYeow+LXAU18+I7lHZ82wS/KsS4gzuis123Gt0H3ut8qXWNhqeScydjaktNDlr5FbB1uTiwrizTgW7UfGo+nP9dPS+mYLrZ5rtraFEy3I6zGNu/Qpn5HAAE3xm7yZYzvw+SDdgav+TLpzl90TlOJI444elvA=
+	t=1744123899; cv=none; b=qEuxBHwPUWlK3FZJsObiAgAThCbLS6e3oeOZTnJihpC1uIsdOAwqJY/aaShvHazvMYD1197G1kDVIWPUlrtS8b/ZDFOyhVMoN/1sHUAk3+SXvmMwF+oniPIyA416VVVNEugXF7cIenW4stkMhreFb25aAI8iB9HdYYZUb+DV3t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744123685; c=relaxed/simple;
-	bh=V7+8a/C1J8Qp77LV3ic2+/6x11RnzAbS9JrRzqi5SdQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fgB0Zr4EdwU01ollM4THsB02QHmJ+JqmhbAbw3yMPx1r9q91I0nFHRWfyJweyxkxUrzmyNC76V9YGuvGzuS4ZCxvA1JnTsAlkyrI1PsZL/FGGIRLq71dsp7qp7SDUYhJeFgZezbfUo44coMBxRh3o78h+jNVcbtKib5qbt5bKZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-85db4460f5dso1103912839f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 07:48:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744123683; x=1744728483;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iWbbH62VrCQ4vVbyGghFOwf4gqdUfPtMVI90dLrk/Is=;
-        b=RiUayIf5gC62wqZT+LBmzVc7ha5961eh6vI2Z/x5MY36PjD5uTtJEppby9v+t4oGsG
-         IFEyZ29Skm9faBDjtwuTNfVKZGn6cnPbGp0Z3AYI7BE+DU37anyzqfnSlMZ1ZZXbxhIO
-         M5JywFRzRxGh2KnCbh/Dv2ixPUKqFdhH2hCctDNylofDcQSmXYns3p7NLceQ4eE915QP
-         YFQke1SqhVG905nbX0F1waZAifcje94USOvrmTysF/HU9wXs3w9IfNbSiqw3Wm69Cp0m
-         qjDWpI+/6reIQEjdOcjFjSAAOb79yHeqt1dnGkPDbKR+1PN9TtGM6wt5HrUpnVdzNwNY
-         ydjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhb2ydKwr0CJmusGiQP4TQ0kKhxmkM4ANneAqMJ813bkc2f7v7YMvRWBKz+AyMIfBbPl2Qf4WUnx10De8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmAZmsr6Bhu+7psSqSBzI61ZUDrc+Q4BBt7ekzpEr86CjLuUr+
-	PtEuST25EZh9iwxeREDWgcvrUvU6urwmvUfq66TEnyStdPoTG4uwKMJDXIDJ5IuQq/tBlW7Zmz1
-	+gBBtqpCqGlnOFqG2Aivgn+QfRiPkwny38xLb6HGs+9o+fNY8aMkMgWM=
-X-Google-Smtp-Source: AGHT+IG6J/yEAf5OhgyDyHT3WuPRDAh7WJx58cdjk2cgG1prytbrA81YWGNvtGVCu66PZtbmsZ+pkTgLOkzeyugMLiUh8i87zpzl
+	s=arc-20240116; t=1744123899; c=relaxed/simple;
+	bh=qHKVhMeNu+6uyMJqrkcJu9sxTEx1ISyc3gVts+BKlVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CQPJARpVaUes1d8N8lSk+3NhAfFCB8ELhGl3wozFaj4t9S4uYLuoyszZbBvT6+Ye//FMeZi3glVmoEWSHSbGAWBE9JqcsDASdJ+f3SOQfAyuXkRCwgq6XPK8FEJn2KY+oxapgkV76VqXtf6jh+a3/QM+HmpcGslC8NBwezX2K2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=oO1x1MwF; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 538AxRGf008721;
+	Tue, 8 Apr 2025 16:51:13 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	3RQmySbuo/UCyRNQmzbHNRcOJc6ylALW0myadTLuAJI=; b=oO1x1MwF4IqH7lel
+	i7TxuO7cgSSQ2R1sZZWjEkr09m7XArQeSZ3GF5TRsACoc0jhtT9lnauTQRF0qSrR
+	zxvQ8MUe+KMXhpetm4bw+9cJ4hjautcsdL6MWFc8L1M5etZUhZW9hOgV40hA9/xC
+	7HewaMMiBZpYYE5CQ9BTbg+O5+/CnTc0UJLfg9nBeoZ/0PwUoXzFAWktktQPQsk1
+	5nA/ovi6Rkd9Ualzuk0+s7EzZqeSxJt+J3QOaXxd+9iCs6YnsX+6VBFklsP5R/9F
+	nXUtFZ9J4lHj1mQq3BUxFgmHk28f7sOIH2nnaY1ib7CywwEy91aCU3POrtXM0DSy
+	3fm8cw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45tw2gwmpt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Apr 2025 16:51:12 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A351040045;
+	Tue,  8 Apr 2025 16:50:02 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 196509245C5;
+	Tue,  8 Apr 2025 16:48:52 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 8 Apr
+ 2025 16:48:51 +0200
+Received: from [10.252.0.136] (10.252.0.136) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 8 Apr
+ 2025 16:48:50 +0200
+Message-ID: <d66bd978-820a-4700-92c2-ba52d7db4efb@foss.st.com>
+Date: Tue, 8 Apr 2025 16:48:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2284:b0:3cf:c9ad:46a1 with SMTP id
- e9e14a558f8ab-3d6e3f16e62mr166922005ab.13.1744123682808; Tue, 08 Apr 2025
- 07:48:02 -0700 (PDT)
-Date: Tue, 08 Apr 2025 07:48:02 -0700
-In-Reply-To: <tencent_7D179E301BED4B391BC12537BA47BB6D3308@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67f53722.050a0220.107db6.05ab.GAE@google.com>
-Subject: Re: [syzbot] [wireless?] general protection fault in cfg80211_mlme_deauth
-From: syzbot <syzbot+00778a9a557a2a5e1a33@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/8] clocksource: stm32-lptimer: add support for
+ stm32mp25
+To: <lee@kernel.org>, <alexandre.torgue@foss.st.com>,
+        <daniel.lezcano@linaro.org>, <tglx@linutronix.de>
+CC: <krzk+dt@kernel.org>, <jic23@kernel.org>, <conor+dt@kernel.org>,
+        <ukleinek@kernel.org>, <robh@kernel.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <devicetree@vger.kernel.org>, <wbg@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        <olivier.moysan@foss.st.com>
+References: <20250314171451.3497789-1-fabrice.gasnier@foss.st.com>
+ <20250314171451.3497789-5-fabrice.gasnier@foss.st.com>
+Content-Language: en-US
+From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+In-Reply-To: <20250314171451.3497789-5-fabrice.gasnier@foss.st.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-08_06,2025-04-08_03,2024-11-22_01
 
-Hello,
+On 3/14/25 18:14, Fabrice Gasnier wrote:
+> On stm32mp25, DIER (former IER) must only be modified when the lptimer
+> is enabled. On earlier SoCs, it must be only be modified when it is
+> disabled. There's also a new DIEROK flag, to ensure register access
+> has completed.
+> Add a new "set_evt" routine to be used on stm32mp25, called depending
+> on the version register, read by the MFD core (LPTIM_VERR).
+> 
+> Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+> ---
+> Changes in V4:
+> - Daniel suggests to encapsulate IER write into a separate function
+>   that manages the enabling/disabling of the LP timer. In addition,
+>   DIEROK and ARROK flags checks have been added. So adopt a new routine
+>   to set the event into ARR register and enable the interrupt.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-general protection fault in cfg80211_mlme_deauth
+Hi all, Daniel,
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 790 Comm: kworker/0:2 Not tainted 6.15.0-rc1-syzkaller-g0af2f6be1b42-dirty #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: events cfg80211_conn_work
-RIP: 0010:ether_addr_equal include/linux/etherdevice.h:355 [inline]
-RIP: 0010:cfg80211_mlme_deauth+0x35a/0x940 net/wireless/mlme.c:514
-Code: 8d 9c 24 b0 00 00 00 48 89 d8 48 c1 e8 03 42 0f b6 04 28 84 c0 4c 8b 7c 24 28 0f 85 25 03 00 00 44 8b 23 4c 89 f8 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 2b 03 00 00 45 8b 37 48 8b 44 24 20 48
-RSP: 0018:ffffc90001acf160 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8880437a4e40 RCX: ffff888000784880
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc90001acf248 R08: ffffffff8b8395d8 R09: 0000000000000003
-R10: 0000000000000009 R11: ffff888000784880 R12: 0000000000000000
-R13: dffffc0000000000 R14: 0000000000000003 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff88808c596000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000001080 CR3: 0000000011f84000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- cfg80211_conn_do_work+0x369/0xed0 net/wireless/sme.c:229
- cfg80211_conn_work+0x35e/0x5b0 net/wireless/sme.c:279
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xac3/0x18e0 kernel/workqueue.c:3319
- worker_thread+0x870/0xd50 kernel/workqueue.c:3400
- kthread+0x7b7/0x940 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ether_addr_equal include/linux/etherdevice.h:355 [inline]
-RIP: 0010:cfg80211_mlme_deauth+0x35a/0x940 net/wireless/mlme.c:514
-Code: 8d 9c 24 b0 00 00 00 48 89 d8 48 c1 e8 03 42 0f b6 04 28 84 c0 4c 8b 7c 24 28 0f 85 25 03 00 00 44 8b 23 4c 89 f8 48 c1 e8 03 <42> 0f b6 04 28 84 c0 0f 85 2b 03 00 00 45 8b 37 48 8b 44 24 20 48
-RSP: 0018:ffffc90001acf160 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8880437a4e40 RCX: ffff888000784880
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc90001acf248 R08: ffffffff8b8395d8 R09: 0000000000000003
-R10: 0000000000000009 R11: ffff888000784880 R12: 0000000000000000
-R13: dffffc0000000000 R14: 0000000000000003 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff88808c596000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000001080 CR3: 00000000124d8000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	8d 9c 24 b0 00 00 00 	lea    0xb0(%rsp),%ebx
-   7:	48 89 d8             	mov    %rbx,%rax
-   a:	48 c1 e8 03          	shr    $0x3,%rax
-   e:	42 0f b6 04 28       	movzbl (%rax,%r13,1),%eax
-  13:	84 c0                	test   %al,%al
-  15:	4c 8b 7c 24 28       	mov    0x28(%rsp),%r15
-  1a:	0f 85 25 03 00 00    	jne    0x345
-  20:	44 8b 23             	mov    (%rbx),%r12d
-  23:	4c 89 f8             	mov    %r15,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 0f b6 04 28       	movzbl (%rax,%r13,1),%eax <-- trapping instruction
-  2f:	84 c0                	test   %al,%al
-  31:	0f 85 2b 03 00 00    	jne    0x362
-  37:	45 8b 37             	mov    (%r15),%r14d
-  3a:	48 8b 44 24 20       	mov    0x20(%rsp),%rax
-  3f:	48                   	rex.W
+Does anybody else have additional remarks on this driver ?
 
+I think Lee is waiting for review, before merging the MFD part (at least).
 
-Tested on:
+Best Regards,
+Thanks,
+Fabrice
 
-commit:         0af2f6be Linux 6.15-rc1
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10c8b74c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=66996a2350ef05e0
-dashboard link: https://syzkaller.appspot.com/bug?extid=00778a9a557a2a5e1a33
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15217b4c580000
-
+> Changes in V2:
+> - rely on fallback compatible as no specific .data is associated to the
+>   driver. Use version data from MFD core.
+> - Added interrupt enable register access update in (missed in V1)
+> ---
+>  drivers/clocksource/timer-stm32-lp.c | 51 +++++++++++++++++++++++++---
+>  1 file changed, 47 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clocksource/timer-stm32-lp.c b/drivers/clocksource/timer-stm32-lp.c
+> index 928da2f6de69..e58932300fb4 100644
+> --- a/drivers/clocksource/timer-stm32-lp.c
+> +++ b/drivers/clocksource/timer-stm32-lp.c
+> @@ -27,6 +27,7 @@ struct stm32_lp_private {
+>  	u32 psc;
+>  	struct device *dev;
+>  	struct clk *clk;
+> +	u32 version;
+>  };
+>  
+>  static struct stm32_lp_private*
+> @@ -47,12 +48,37 @@ static int stm32_clkevent_lp_shutdown(struct clock_event_device *clkevt)
+>  	return 0;
+>  }
+>  
+> -static int stm32_clkevent_lp_set_timer(unsigned long evt,
+> -				       struct clock_event_device *clkevt,
+> -				       int is_periodic)
+> +static int stm32mp25_clkevent_lp_set_evt(struct stm32_lp_private *priv, unsigned long evt)
+>  {
+> -	struct stm32_lp_private *priv = to_priv(clkevt);
+> +	int ret;
+> +	u32 val;
+> +
+> +	/* Enable LPTIMER to be able to write into IER and ARR registers */
+> +	regmap_write(priv->reg, STM32_LPTIM_CR, STM32_LPTIM_ENABLE);
+> +	/* set next event counter */
+> +	regmap_write(priv->reg, STM32_LPTIM_ARR, evt);
+> +	/* enable ARR interrupt */
+> +	regmap_write(priv->reg, STM32_LPTIM_IER, STM32_LPTIM_ARRMIE);
+> +
+> +	/* Poll DIEROK and ARROK to ensure register access has completed */
+> +	ret = regmap_read_poll_timeout_atomic(priv->reg, STM32_LPTIM_ISR, val,
+> +					      (val & STM32_LPTIM_DIEROK_ARROK) ==
+> +					      STM32_LPTIM_DIEROK_ARROK,
+> +					      10, 500);
+> +	if (ret) {
+> +		dev_err(priv->dev, "access to LPTIM timed out\n");
+> +		/* Disable LPTIMER */
+> +		regmap_write(priv->reg, STM32_LPTIM_CR, 0);
+> +		return ret;
+> +	}
+> +	/* Clear DIEROK and ARROK flags */
+> +	regmap_write(priv->reg, STM32_LPTIM_ICR, STM32_LPTIM_DIEROKCF_ARROKCF);
+> +
+> +	return 0;
+> +}
+>  
+> +static void stm32_clkevent_lp_set_evt(struct stm32_lp_private *priv, unsigned long evt)
+> +{
+>  	/* disable LPTIMER to be able to write into IER register*/
+>  	regmap_write(priv->reg, STM32_LPTIM_CR, 0);
+>  	/* enable ARR interrupt */
+> @@ -61,6 +87,22 @@ static int stm32_clkevent_lp_set_timer(unsigned long evt,
+>  	regmap_write(priv->reg, STM32_LPTIM_CR, STM32_LPTIM_ENABLE);
+>  	/* set next event counter */
+>  	regmap_write(priv->reg, STM32_LPTIM_ARR, evt);
+> +}
+> +
+> +static int stm32_clkevent_lp_set_timer(unsigned long evt,
+> +				       struct clock_event_device *clkevt,
+> +				       int is_periodic)
+> +{
+> +	struct stm32_lp_private *priv = to_priv(clkevt);
+> +	int ret;
+> +
+> +	if (priv->version == STM32_LPTIM_VERR_23) {
+> +		ret = stm32mp25_clkevent_lp_set_evt(priv, evt);
+> +		if (ret)
+> +			return ret;
+> +	} else {
+> +		stm32_clkevent_lp_set_evt(priv, evt);
+> +	}
+>  
+>  	/* start counter */
+>  	if (is_periodic)
+> @@ -176,6 +218,7 @@ static int stm32_clkevent_lp_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  
+>  	priv->reg = ddata->regmap;
+> +	priv->version = ddata->version;
+>  	priv->clk = ddata->clk;
+>  	ret = clk_prepare_enable(priv->clk);
+>  	if (ret)
 
