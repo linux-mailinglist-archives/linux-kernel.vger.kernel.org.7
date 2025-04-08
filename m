@@ -1,105 +1,97 @@
-Return-Path: <linux-kernel+bounces-594448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C588A811F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:19:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEAECA811F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E2CC8C263D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:13:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6434C4A1ACE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6430222CBFC;
-	Tue,  8 Apr 2025 16:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2B622C35E;
+	Tue,  8 Apr 2025 16:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xQHDKD9Z"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1bwh1C7T";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UwrMdjxl"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315B721859D;
-	Tue,  8 Apr 2025 16:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167ED22DFB2
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 16:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744128799; cv=none; b=NvXO8s+GLnKEGcqKwfzyqCQAZKqbBvTchdBapUPh17hV6RrKPg/2LZSgk9gbC3xJVEzPwFn+/zAF35Aqi2pG/hLGwBT5bUziTs22vIu7mDHFjqIc0DFN3pAq4lkweFlXqkcxJAsC2pZi8R1R27WKaLi9X1o9eu2vKQygYmRnzmI=
+	t=1744128820; cv=none; b=fgnoOMDiXRIkQAF0WMjJKbdnpGB8A5/0drGdTNI5B9VwSIed071OdDYTS4Yz+uju/crGHs5NA4b1YaA6Zaro/AyFUNcAOQU8TzoH8K3NWcoHrlwEAIAj1j0Zh1qNR7vsfPcdqzWDhfnzb/5J9PDuDZlAOppOWoVIHQDTh1dzdvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744128799; c=relaxed/simple;
-	bh=Qc1TY5TBgRWiRlw2g3PMWP+HHylhaLXQ7+7HE1eiRc8=;
+	s=arc-20240116; t=1744128820; c=relaxed/simple;
+	bh=0mCCXm0C9x1oPD5Ax3/llLVQSyvjry3U/xqp/JoYlFw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eijevH6/NRruoWAaaZbmLZHt9qSsPTBb6me8OFJENyr7ir8QNPHW3o43FJY+EKp/+8jbr/LizyqbBokueNn4H5JS0I2JXy5A2+FmhDq2mBYIy3T/BRefHjiBnPr+I4HLkEYvx+QppzGQIIxZslG2+125QHwVP75CvUV5Kjxl9DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xQHDKD9Z; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=iHamA6MmAQln3g+ph5RzN9L5CgRNW7XpNoZqh01YomM=; b=xQHDKD9ZXptDaSK+dQASAxx790
-	Ybh87tS1nZ3FusAZGh77bUylZwpxjm6ICZWRNMCCbeK3BDFf+XrZwIaTUeNHNl2mncQZsxLkl7Acq
-	FR96apk9s3xS4f0APOr0XRJuOag3yS2jFyDzyK/zpm+y9Y37zDhSdhTY1OCd/dS4J8es=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u2BZW-008QBU-Ty; Tue, 08 Apr 2025 18:13:10 +0200
-Date: Tue, 8 Apr 2025 18:13:10 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Martyn Welch <martyn.welch@collabora.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, kernel <kernel@collabora.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	imx <imx@lists.linux.dev>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2] arm64: dts: imx8mp: Add device tree for Nitrogen8M
- Plus ENC Carrier Board
-Message-ID: <22e7df8e-51a2-4549-ad80-0e7fd256de0a@lunn.ch>
-References: <20250327123907.542132-1-martyn.welch@collabora.com>
- <cf525617-b895-4d58-8455-a5c7fa9bbeab@lunn.ch>
- <196162332ff.b61ad5b5564260.8672918780815538746@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VGmcDtb92KdxmxO2HUyhxAwieReyDQ56WxTYD0sAePbmk3ruN8kyXao9jA2cPCxDnFWbd03SJaGmQmwYq7yVz3al+Xb64XwueahpY6DhB3FqDkHnPbtZU/WPjgM06UgAhNFkdZ/L+kMuMz6Db/YXQi/qSEH9Sne2njPRwBAJZ18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1bwh1C7T; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UwrMdjxl; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 8 Apr 2025 18:13:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1744128816;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0mCCXm0C9x1oPD5Ax3/llLVQSyvjry3U/xqp/JoYlFw=;
+	b=1bwh1C7Tru+vHvPWRbPESE9S/80UR3OYGugOBXQc7ZT/Vt8t+WmeIDOX2nBBqoAjMw3xwV
+	Xxb7oiBqsEr6aljxMZ63b7j5z2ict0zPWSegeCbwWxQV0+ibTJXpmTku+xGjO7miFgfJzE
+	h9y+NbXLKQK0EY29FObBkmHWfG4m+g1U6q2ZyJKXH8GelMmYf8OI4RSeETIbU/C3Dfp0wV
+	Ztdso4eg2QQerF2cl5JR/lFe+iUTPOY1uB4lRcssq4MAXQ2B/4HrzZkjB35UQNOYyuwbq0
+	pxKzsqqJgjEzG+h0NOC6dJ+CAKjj34b9crFzE33k1ntQd7VpTF59MfOV8w8I7Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1744128816;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0mCCXm0C9x1oPD5Ax3/llLVQSyvjry3U/xqp/JoYlFw=;
+	b=UwrMdjxlY5e20i7ws2Go7wK8LCzeN6KNKEZbnUw0s7sV8z2o5xC/QuqmhzmZA0BU9bkPW5
+	rB3t/rUruhNW9HBg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>
+Cc: linux-kernel@vger.kernel.org, Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH v11 00/19] futex: Add support task local hash maps,
+ FUTEX2_NUMA and FUTEX2_MPOL
+Message-ID: <20250408161335.rAuKGKP_@linutronix.de>
+References: <20250407155742.968816-1-bigeasy@linutronix.de>
+ <df442511-8a3d-496b-bd7f-a1c7b0973a3c@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <196162332ff.b61ad5b5564260.8672918780815538746@collabora.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <df442511-8a3d-496b-bd7f-a1c7b0973a3c@igalia.com>
 
-On Tue, Apr 08, 2025 at 05:02:07PM +0100, Martyn Welch wrote:
->  ---- On Thu, 27 Mar 2025 14:25:38 +0000  Andrew Lunn <andrew@lunn.ch> wrote --- 
->  > > +++ b/arch/arm64/boot/dts/freescale/imx8mp-nitrogen-som.dtsi
->  > > @@ -0,0 +1,415 @@
->  > > +&eqos {
->  > > +    pinctrl-names = "default";
->  > > +    pinctrl-0 = <&pinctrl_eqos>;
->  > > +    phy-handle = <&ethphy0>;
->  > > +    phy-mode = "rgmii-id";
->  > > +    status = "okay";
->  > > +
->  > > +    mdio {
->  > > +        compatible = "snps,dwmac-mdio";
->  > > +        #address-cells = <1>;
->  > > +        #size-cells = <0>;
->  > > +
->  > > +        ethphy0: ethernet-phy@4 {
->  > 
->  > Just conformation, the PHY is on the SOM? Are the magnetics and RJ45
->  > socket on the SOM, or the carrier?
->  > 
-> 
-> The PHY is on the SOM, the magnetics and RJ45 socket are on the carrier.
+On 2025-04-08 10:51:29 [-0300], Andr=C3=A9 Almeida wrote:
+> Hi Sebastian,
+Hi,
 
-Thanks. So phy-mode is in the right place.
+> Thanks for your patchset. I think the perf support is great, but usually
+> those new uAPI options should come with some selftests too.
 
-> 
->  > > +            compatible = "ethernet-phy-ieee802.3-c22";
->  > > +            reg = <4>;
+You mean "tools/testing/selftests/futex/functional" ?
+I could add something once it is merged. The API changed in this
+submission vs the previous one where the "immutable" argument was added.
+And I am waiting for some feedback on that.
 
-and the reg value is fixed.
+The MPOL & NUMA bits could use also some documentation. Slowly once we
+get there=E2=80=A6
 
-    Andrew
+Sebastian
 
