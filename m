@@ -1,157 +1,126 @@
-Return-Path: <linux-kernel+bounces-593936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 825CEA80941
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:52:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2309A80954
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B17F1BA3EC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:46:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A525B1BA5EF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F40827815D;
-	Tue,  8 Apr 2025 12:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557EC26AA9C;
+	Tue,  8 Apr 2025 12:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c8fbRvfx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mro5MDSX"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CD6263C83;
-	Tue,  8 Apr 2025 12:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8614278176
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 12:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744116051; cv=none; b=ee2R5dzyOTdNPbQcXs4NELB3aNWANSiORJVM1iTds6tgtnqgu2Sm+x7VikahgE5zb7oruHreJu60obq73EqVU7nrUsAbqXOmL03DsEq9zM4Svul2WmZ1oDmqOSs8hWzRHhHJgZd08WuYcvlJG6LNgJKG6iSUHB4B8RNSNZb9xCQ=
+	t=1744116067; cv=none; b=g2IKpK2kP181qc7f5YAb1s7kuG9tB0ReLJm++ULvNu6a47aeWwo0A8XBQOSQluhr6NhZawRbZ6CcFoUIjba2QuxL5iiGnejl+E3PQCGSSWBtW8vaEHO5S4IY6TJ+j/+wlgewNF6IJ4M9x5kOXOGmwFu0cPjD8YcJ2L1KtaEmW+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744116051; c=relaxed/simple;
-	bh=dHP0/udm20sXgQKDlru8Fc0+oci1llyIjyVrg4/zGdg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TrWvUI0o7RG9gBoGXMa0WyxkUxUHYvXWtpelOPBClVNvquegnyS3hje4zEKeos12PV1UmQ1H9zPPhbskYv1wXXgj/TxbiKzJm1/xDCy62RViwfoWlBD6AB+5BB0xyC/NBU9lxeZbLfd3nQOt803bErw49he+s+vXPiw2QULbU4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c8fbRvfx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 298D8C4CEE5;
-	Tue,  8 Apr 2025 12:40:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744116050;
-	bh=dHP0/udm20sXgQKDlru8Fc0+oci1llyIjyVrg4/zGdg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=c8fbRvfxjziB7Io+USquH5XEtqf7lDQk3JFK8aOt0z/9KBVBiuLgEZCN0YsT61ug7
-	 uTs04krMG0aSWDXCfrvKo91MUorTseZqJ+ExDUrfhIZCHnylsUn9r0DOUJ0svg4XbY
-	 dM/x/+0rqNSD1cfqOkdCVT+3JFNpmAF/8t5LiPpzRKFuAGD+WXBJg6sOKlZqRbqkhR
-	 RfHTub4Zufn/r1h9lSF/E3SkK1lOuWYwD2NQObsUvhYskaY80/yTCB+9/PmCE1R+j0
-	 gM5Z3akGSOdVfUvAU00JGybeD7Sr9G4OgoC9Rq0eF4pRkujZsl6FAq2wI9VIFoHoTA
-	 M8a3YYRZdAU1g==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Abdiel Janulgue" <abdiel.janulgue@gmail.com>
-Cc: <ojeda@kernel.org>,  "Danilo Krummrich" <dakr@kernel.org>,  "Daniel
- Almeida" <daniel.almeida@collabora.com>,  "Robin Murphy"
- <robin.murphy@arm.com>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun
- Feng" <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
-  =?utf-8?Q?Bj=C3=B6rn?= Roy
- Baron <bjorn3_gh@protonmail.com>,  "Benno Lossin"
- <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
- Gross" <tmgross@umich.edu>,  <rust-for-linux@vger.kernel.org>,  "Marek
- Szyprowski" <m.szyprowski@samsung.com>,  <iommu@lists.linux.dev>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] rust: dma: add as_slice/write functions for
- CoherentAllocation
-In-Reply-To: <20250326201230.3193329-4-abdiel.janulgue@gmail.com> (Abdiel
-	Janulgue's message of "Wed, 26 Mar 2025 22:11:44 +0200")
-References: <20250326201230.3193329-1-abdiel.janulgue@gmail.com>
-	<Jv5VZvihK_dgh5j6Ml8T-c7Q8EICtgbgAMI_g_QT51H7--Za9Dbwvz4j1ouuseFxM26sKP0_J3h38ffbQq0Y_A==@protonmail.internalid>
-	<20250326201230.3193329-4-abdiel.janulgue@gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 08 Apr 2025 14:39:29 +0200
-Message-ID: <87friihloe.fsf@kernel.org>
+	s=arc-20240116; t=1744116067; c=relaxed/simple;
+	bh=qLDMITlHkmBC9vQ1ZL9QNBFWIiCZvfOaQm2ASCOB0mU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=gZhsFWAerv4wosQnzJy6383fPE/69ublotjsN4/zjrv+BE+1LYWCfSkX1x1pOxvjgqqYLzXp07xwGcOrMi76KvS0s9FVuqYgLga1qQd0LXqoLtHVRpVYArC8bJ9A6O/pt5WkWBfdKFe3UnsSPdGXcDNzDlR2KSaYDcu/6OEHPGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mro5MDSX; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6fead015247so49658077b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 05:41:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744116065; x=1744720865; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h31NWp5NG78cqvJiAi8jWfDqzeGt0I+RYA/Hp3KCiI4=;
+        b=mro5MDSXuxl+rI7To12fGqD9IiM/keuTFYIaWFjgLvnG2Jg6pDdRh8WcqsXF/O8vqa
+         JUkA2qC8vtbYpxA/VvXfvrdk5N1+SH6Q/wyXxmehvCNl/esLDj66lBRIRPWg99NlpLBN
+         OMfzZ/zdyJvGau5iJUtOoNN8sI3MC6lfqpWLTDYMQAnntEPeOUW9BJWNQHPBBjbLuepl
+         /QXr33wM8dRPceI2uG1NZssBGSF0swj7W8Msy4hME5mrvm2MRNH1Y+vIEBt3FdgemTWM
+         5rd+LzFBpfwwTNLciFGl7aR6H8tt9ZsvbYXqrrD/IcmzXDrhpjDJqmgEosxrQaPSUANf
+         0qxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744116065; x=1744720865;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h31NWp5NG78cqvJiAi8jWfDqzeGt0I+RYA/Hp3KCiI4=;
+        b=AOaY8fvBUTPsyvLOImFIN/YfCXtSBVeVNmXB4o3fSaUAiiPy4V7dVzMjbr5XS71ahW
+         Gyd3OnK99KxS/wU0BHxk5gLqJKOhTrQiglJtn/9S/MNyqwFBCU24AGqdegv0AoSAV6CZ
+         +8F/gYZxcOXn/xDTNKLEOJ5N2ZcPZat4KfcDveNqMxBKSFi6hlLrunr62D9FIi8wckRl
+         tA6Vs01zDQ6hENsCIWGOWZRRlPAMvrH0Lr/1ueVtqC20rUDXupGk3b37+29N+J7cpPY/
+         0YlX1j/eAA08YVX7nfw2Jha3Kq9sooht/TQH0oWY1hitdSasgW8cPbOHveLfSkvKgif5
+         0mWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEYd3e6gHsxnEoiVj7wFhD4pMD2Vsg3xEMPEUPLdv9N2KVGHVb4iMjsqg3pbhB6p6RQ4YlrArAS1bJauM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5dHLuNtzjQ+8vER0fpskD0XXptroi5A2FArIPCFY9c6Y4iyU+
+	e4grB/dtCi76k+NZkj8zS1Ee8BjlQXxYuK9Wr14Fekrb1nZIK7ozzBV3T20lsmIw5CLfRCrLQE8
+	2RhJR1CsvEV7JTUBHFgrZRYlimHH2ImYXy2TiFQ==
+X-Gm-Gg: ASbGncuO9BvxHhEii7epkRUoh1NFR6/nQmn2OA5Sh9Y/z0Ujw5XEGApIj8mgKQAtsHc
+	JCCMv5pxuFKBsx/AuYcnl0JnfpYZS/9RaJhaNMnbDGU++JvtBGk8OpkxcYHtKBgmZLDKFMRIhrx
+	JFZeW0yajTMGYHnoAqS9SbAuxbJpw=
+X-Google-Smtp-Source: AGHT+IFi2YP0XvF5bDF9Jq40DyUHv5Ek50fAkz+eQJ5TMfPtzso0IeWqwOf8skCDPmoe9EJ6s/zbwELjZkMpg6aQGmQ=
+X-Received: by 2002:a05:690c:b12:b0:703:b8f4:5b07 with SMTP id
+ 00721157ae682-703e15fc48fmr281518977b3.26.1744116064907; Tue, 08 Apr 2025
+ 05:41:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250407152759.25160-1-ulf.hansson@linaro.org>
+ <20250407152759.25160-3-ulf.hansson@linaro.org> <Z_TZxXORT8H99qv4@shikoro>
+In-Reply-To: <Z_TZxXORT8H99qv4@shikoro>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 8 Apr 2025 14:40:29 +0200
+X-Gm-Features: ATxdqUFxgJAtDDVpsnTI2jHXWceVL4cabvWXC0qH_HhX-upbo0zNv7dP0b9TEt0
+Message-ID: <CAPDyKFoOfNWa6b0jF0-a-imKqdDJQrdJe65OaOj3D0upmS7VXw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] mmc: core: Further avoid re-storing power to the
+ eMMC before a shutdown
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Avri Altman <Avri.Altman@sandisk.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-"Abdiel Janulgue" <abdiel.janulgue@gmail.com> writes:
-
-> Add unsafe accessors for the region for reading or writing large
-> blocks of data.
+On Tue, 8 Apr 2025 at 10:09, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 >
-> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> ---
->  rust/kernel/dma.rs | 87 ++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 87 insertions(+)
 >
-> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
-> index 24a6f10370c4..24025ec602ff 100644
-> --- a/rust/kernel/dma.rs
-> +++ b/rust/kernel/dma.rs
-> @@ -218,6 +218,93 @@ pub fn dma_handle(&self) -> bindings::dma_addr_t {
->          self.dma_handle
->      }
+> > @@ -2187,11 +2198,12 @@ static int mmc_shutdown(struct mmc_host *host)
+> >       int err = 0;
+> >
+> >       /*
+> > -      * In a specific case for poweroff notify, we need to resume the card
+> > -      * before we can shutdown it properly.
+> > +      * If the card remains suspended at this point and it was done by using
+> > +      * the sleep-cmd (CMD5), we may need to re-initialize it first, to allow
+> > +      * us to send the preferred poweroff-notification cmd at shutdown.
+> >        */
+> >       if (mmc_can_poweroff_notify(host->card) &&
+> > -             !(host->caps2 & MMC_CAP2_FULL_PWR_CYCLE))
+> > +         !mmc_host_can_poweroff_notify(host, true))
 >
-> +    /// Returns the data from the region starting from `offset` as a slice.
-> +    /// `offset` and `count` are in units of `T`, not the number of bytes.
-> +    ///
-> +    /// Due to the safety requirements of slice, the caller should consider that the region could
-> +    /// be modified by the device at anytime.
+> Ooookay, I think I got this logic now. I think it makes sense to make it
+> more explicit in the comment, though:
+>
+> "This is then the case when the card is able to handle poweroff
+> notifications in general but the host could not initiate those for
+> suspend."
+>
+> Something like this?
 
-The user does not need to consider this, because the safety requirements
-make sure this is not a problem. The user only needs to consider the
-safety requirements.
+Well, in my opinion I think this would become a bit too much comments
+in the code.
 
->> For ringbuffer type of r/w access or use-cases where
-> +    /// the pointer to the live data is needed, `start_ptr()` or `start_ptr_mut()` could be
-> +    /// used instead.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// * Callers must ensure that no hardware operations that involve the buffer are currently
-> +    ///   taking place while the returned slice is live.
-> +    /// * Callers must ensure that this call does not race with a write to the same region while
-> +    ///   while the returned slice is live.
-> +    pub unsafe fn as_slice(&self, offset: usize, count: usize) -> Result<&[T]> {
-> +        let end = offset.checked_add(count).ok_or(EOVERFLOW)?;
-> +        if end >= self.count {
-> +            return Err(EINVAL);
-> +        }
-> +        // SAFETY:
-> +        // - The pointer is valid due to type invariant on `CoherentAllocation`,
-> +        // we've just checked that the range and index is within bounds. The immutability of the
-> +        // of data is also guaranteed by the safety requirements of the function.
-> +        // - `offset` can't overflow since it is smaller than `self.count` and we've checked
-> +        // that `self.count` won't overflow early in the constructor.
-> +        Ok(unsafe { core::slice::from_raw_parts(self.cpu_addr.add(offset), count) })
-> +    }
-> +
-> +    /// Performs the same functionality as [`CoherentAllocation::as_slice`], except that a mutable
-> +    /// slice is returned.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// * Callers must ensure that no hardware operations that involve the buffer are currently
-> +    ///   taking place while the returned slice is live.
-> +    /// * Callers must ensure that this call does not race with a read or write to the same region
-> +    ///   while the returned slice is live.
-> +    pub unsafe fn as_slice_mut(&self, offset: usize, count: usize) -> Result<&mut [T]> {
-> +        let end = offset.checked_add(count).ok_or(EOVERFLOW)?;
-> +        if end >= self.count {
-> +            return Err(EINVAL);
-> +        }
-> +        // SAFETY:
-> +        // - The pointer is valid due to type invariant on `CoherentAllocation`,
-> +        // we've just checked that the range and index is within bounds. The immutability of the
-> +        // of data is also guaranteed by the safety requirements of the function.
+The rather long function-names "mmc_can_poweroff_notify" (that will
+change to mmc_card_can_poweroff_notify with your series) and
+"mmc_host_can_poweroff_notify" are rather self-explanatory, don't you
+think?
 
-Formatting nit: could you indent the paragraph under the bullet:
-
-  - The pointer is valid due to type invariant on `CoherentAllocation`,
-    we've just checked that the range and index is within bounds. The immutability of the
-    of data is also guaranteed by the safety requirements of the function.
-
-
-
-Best regards,
-Andreas Hindborg
-
-
+Kind regards
+Uffe
 
