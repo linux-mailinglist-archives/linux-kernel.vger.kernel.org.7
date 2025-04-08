@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-594798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD753A816B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:19:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E240A816BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E21D74C7426
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:19:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C585C3AF4D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 20:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E50F24886B;
-	Tue,  8 Apr 2025 20:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3002250BE7;
+	Tue,  8 Apr 2025 20:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EG2zVh2i"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hL7PH3Xc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9670157A72;
-	Tue,  8 Apr 2025 20:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD9D157A72;
+	Tue,  8 Apr 2025 20:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744143547; cv=none; b=nRDAhTuKA9DpC0Nl62O3+LRfg1qcnBZz/nF/oftb8wY53D0aTd9+89GDl0/xSqY32njcVwl0bOVkzGymKqSVPJFhzYGAvYGZEShxvkFgAN7dCsEA5wgf9w6ax1p0V6Ez/Bif7XopIbFHxMe9+vuEqHx/170nux2Fw2N8bfjycUg=
+	t=1744143605; cv=none; b=aHzIlYFVRrmlquzvoAk/TBmZ1vkYWqnCkzlTBIQNiWiSXufzaU+Wktm7rHL5/G3VHIuKAYUskUVA4hP7htKichL/vAzX3UdPkkPXLyuPc4NtFXha3KidjB1oxu/Z0l2t+6Ly+yGEO0IgIFvNfQVtmUe0rIdXbCdI5stUB/9evU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744143547; c=relaxed/simple;
-	bh=wKH39dCKyTi3SknpBUHRbciVLX/AZ84HXR8FWQkWQOY=;
+	s=arc-20240116; t=1744143605; c=relaxed/simple;
+	bh=qUiB+hj1ouJgP1jVz003/Ifvs5LLe0bmr4Fmw1IXnaw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YznY/iVjvWuELd5+xWolpfp9iqagOQl0IzCzvMR9ICKNAlAOOgrvVXEvyiVGeKvYShjPObZ9ApY4AF5nFJ/FV7k1sQ2+I+WO31WYiptGrXzz/AE6K2DOR5LQtN4OD7bTcLEhu35lzTgafuEkLaP0oCL23r9uZdTGKXswEMwN9A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EG2zVh2i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 220D2C4CEE5;
-	Tue,  8 Apr 2025 20:19:04 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZcvG/hpY6W2gFa1IcPzb8OVkK1zcQJFyZr6qn5ugKjoevFp/CDzs6rD7EGtFh+DZhEPIhA+pjQ2g6Lo7DB6guFXDOx0N5J0qfqAA3OmeBHmNlZn9zGf/dvfjeqH9YU0BeQ7HDlsSN/ujVdMWKpELPPkIFPz6Qy3Kw16JA//JDF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hL7PH3Xc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3942C4CEE5;
+	Tue,  8 Apr 2025 20:20:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744143547;
-	bh=wKH39dCKyTi3SknpBUHRbciVLX/AZ84HXR8FWQkWQOY=;
+	s=k20201202; t=1744143604;
+	bh=qUiB+hj1ouJgP1jVz003/Ifvs5LLe0bmr4Fmw1IXnaw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EG2zVh2iSIcIoH0MzhnB693PCEvanZ07/xdjlybD3TJ15NllvTl5xinGVQS2MiBO5
-	 fqDm2TApalnKt1N/VnYidQcvpBu1U/gk8Y8C74FT5lEKO8+9IbJSL4xx9KGGkRk4AH
-	 cdbS1y/ICvnvLI3DZ3uiWj6NipyZgam4liIvyRFC0h56CPn+qC31IpjNtgYlD+CvT1
-	 r1QXuYde+MJF261PMRhdCcaACExolK7ceHk5PHPCyUALcu1zOEdfXJZc9cQZPJ0s46
-	 CazJirN8ETdN9BlQmD+y9fiC3DPjyaEjITVu7SsxllZgCKWay2GZJZO/2SxppgeJui
-	 ST+RIDnkEPqgg==
-Date: Tue, 8 Apr 2025 21:19:02 +0100
+	b=hL7PH3XcJG41k8R1pqNrws2V5cmBLF2n/UNcGjRq2qu0bPUd3Pp9xwlPrjN4vgP/m
+	 DW5Ty697yzFG2pOJR4wf9acGS92jhKWwTV+o7YGcKSnGwreJYlctA5UD+pRvfX1eY3
+	 zqncCplWdpLtzOtTwM++7yil8q/SGVEvMJd91cXYmPF51IzvecwuZNp1mik22kdKJ6
+	 EEd+wLGgIfv5AvDnGW+Zm3kHduHGEEVJdLeduldcz65QSwiLmRneXgTlcR8s3V1jkv
+	 oAUAiXXereoGe04gR0fGtYRakmNftY4nZbfqKBiIP0Pkg9EOBB7LSuBj76Rps3r6Ph
+	 cEzRDf9M7mocQ==
+Date: Tue, 8 Apr 2025 21:19:59 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Matti Vaittinen <mazziesaccount@gmail.com>
 Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
@@ -49,10 +49,11 @@ Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 09/14] regulator: bd96801: Support ROHM BD96802
-Message-ID: <189ec906-53fa-41af-a317-fe2f635f1e1b@sirena.org.uk>
+Subject: Re: [PATCH v3 07/14] regulator: bd96801: Drop IC name from the IRQ
+ resources
+Message-ID: <d69800fe-56f6-4b89-bb8e-56921e059af1@sirena.org.uk>
 References: <cover.1744090658.git.mazziesaccount@gmail.com>
- <2fb2d0d4997c32d18bfa32cea4564352c00eebc8.1744090658.git.mazziesaccount@gmail.com>
+ <73ec2425655ab19c9f0cf990419641ad36561590.1744090658.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,39 +61,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UuISoavhl7Dof7A9"
+	protocol="application/pgp-signature"; boundary="QstMvh6f04LH0Wzz"
 Content-Disposition: inline
-In-Reply-To: <2fb2d0d4997c32d18bfa32cea4564352c00eebc8.1744090658.git.mazziesaccount@gmail.com>
+In-Reply-To: <73ec2425655ab19c9f0cf990419641ad36561590.1744090658.git.mazziesaccount@gmail.com>
 X-Cookie: Meester, do you vant to buy a duck?
 
 
---UuISoavhl7Dof7A9
+--QstMvh6f04LH0Wzz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Apr 08, 2025 at 11:46:16AM +0300, Matti Vaittinen wrote:
-> The ROHM BD96802 PMIC is primarily intended to be used as a companion
-> PMIC extending the capabilities of the BD96802 but it can be used on
-> it's own as well. When used as a companion PMIC, the start-up and
-> shut-down sequences are usually intitiated by the master PMIC using IF
-> pins.
+On Tue, Apr 08, 2025 at 11:45:34AM +0300, Matti Vaittinen wrote:
+> The resources generated in the BD96801 MFD driver are only visible to
+> the sub-drivers whose resource fields they are added. This makes
+> abbreviating the resource name with the IC name pointless. It just adds
+> confusion in those sub-drivers which do not really care the exact model
+> that generates the IRQ but just want to know the purpose IRQ was
+> generated for. Thus, as a preparatory fix to simplify adding support for
+> ROHM BD96802 PMIC the IC name "bd96801-" prefix was dropped from the IRQ
+> resource names. Adapt the regulator driver to this change.
 
 Reviewed-by: Mark Brown <broonie@kernel.org>
 
---UuISoavhl7Dof7A9
+--QstMvh6f04LH0Wzz
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmf1hLUACgkQJNaLcl1U
-h9B0ogf+KEcqFFZe5UKYVIZs/p7vVKLeBJmgnKluHFLvylx0CoNZtw/OsmjV8eUo
-Gtv66Xypv9udQ5a9fmJEgSELhL3MdpCLvUun3ZcnWRN/AME0vpNttp70dlKpT4NB
-PsjZDI0VxJEDpuzRY+OpT1IpnazHI92V8Jc8RoY9XJ6ZApyEwX1nKeC3m050LvAM
-e259AQ0zKJjzSs6lZSQtm9MskQNnx6K9b8t0hUd16raWMISKpVVZPsdv/gzm7kiI
-hA4wVP3rUxflHo6UMO1EqBYrg5L3/qKTKewmag8asOLOGtf+ckmNH4oOInKAV8eL
-mqFb1YGLPF+f4GqYa/LFSdsmmB9VAQ==
-=fcQy
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmf1hO8ACgkQJNaLcl1U
+h9DOSgf/T5fb1eAd4c/H8vV2askRmt1gcUcHBWqjJjm7yYA/5HA0kV1BLAVe1Iqn
+Kv8KAYJER5fLytzdd9BmXLp8LvUyTvWUjaeZC9AQsMW+iZvimyasLiDfycNpc28Y
+hctPYaqvxjnurWRayi4CdgWOvhXaQL6ed6Ta9S3cuNCGokLTnai8lh8rcZh/A8Hb
+OeXGwjEu8cufYayKIQFIosAZcEEUHkshia+rs2g3wHiyLm1IpN2mEdSPbmGvsFey
+gD8LfY5VQxZqsesNs8T5pCsBvVTZIAYSe03xlFRgqgRLowFrsbeVz9/6lvFuv61i
+mOeW8tttWPrvCF/JMO+sdNvSKzux1w==
+=tTSY
 -----END PGP SIGNATURE-----
 
---UuISoavhl7Dof7A9--
+--QstMvh6f04LH0Wzz--
 
