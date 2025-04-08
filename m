@@ -1,132 +1,149 @@
-Return-Path: <linux-kernel+bounces-593883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36963A8061A
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:24:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41848A80724
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5B7B7A2CB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:21:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A66C4C389E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C656826E15B;
-	Tue,  8 Apr 2025 12:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C6F26A1B6;
+	Tue,  8 Apr 2025 12:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cah5uqqG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC92D26E148
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 12:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Tc41mAAb"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3316826A0A2;
+	Tue,  8 Apr 2025 12:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744114789; cv=none; b=FiUsCIcpHv7YK6OFVoQ/KMRNMfnuSrWSe1tVPtvbO4EKu5DGDXgUrU5TETSHT+JlPrUjzjaW70+VB4zzwcFLpmOKvw2LWi+p1SA2x86wtkZk53JeQqesZM/3hR1da+sm8pg6AZFyOZ72wFbmx03PJM1Pn/yzsPfnioUCO27SiS0=
+	t=1744114823; cv=none; b=Y0n6q4fZFcwiImhMGFNmwaRN83M8CozN4DygCh1yNSZNkWIaKEoXYBrN4RNnKxljIyZFjfPOnjpc9XuD7r1sfG9Z0pSEZ4g/323zME+APb6W6IMg2oHATqesLt/7bZRrZWo9NOSNswADtNmWviZtigM2tUGaxHCCMDntea0wYwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744114789; c=relaxed/simple;
-	bh=mYi6TNfCAYQIFjLQeQklUG5RWG2hPyCT2z+XbGTLTxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ad7K+kF4L7VSI8JbXo5uo7em9Ydwy+OLDZI2RbU5wZETextNgbdh3Qoqy9pZcPR5Zce5P27nDUhEt591s5gK2IWq3ghWFBXiRbW2wQSpdfmYiW/g06hesOo3B2UiXKyQCfamhyy++O+nTzqAKTUtgmsl63+gZiTRRvadguvX/L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cah5uqqG; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744114788; x=1775650788;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mYi6TNfCAYQIFjLQeQklUG5RWG2hPyCT2z+XbGTLTxw=;
-  b=cah5uqqG75x9pw23VX5KT4VqKgdkRSeVvcLZx2FrI9rV65CehvvdvXcp
-   X4DTMplx3tBstSSddb3O7SXHjSDQukwaTRLrEmjV3QWA9MBhfTm0oLFQh
-   ln4WVmSOJovNZeYdNnN2noq7F6djIewb6DcrzZCU8sE2WtKTVmoyHVMRi
-   2hQj/9QghIbzXg545zoyrPf+zvIg+hmmAbzP2p6CCbYP1UJfUQ4I0HNTh
-   uz31KaL0nxCXbGSEZs5M2CGlzPDsDQb74RPNQ69mNod72Sox4qXnLhFGz
-   kJOjSgJAvP4/6Vj0Q1UypGgiKs6CJyfE6HDYHAMeFMAOFyZS3DyyuZbJo
-   A==;
-X-CSE-ConnectionGUID: qn34Jr9rTJWA5SH2B9YKfw==
-X-CSE-MsgGUID: ee2dmDKqR/O9bvJ2/Paq+Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="62945434"
-X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
-   d="scan'208";a="62945434"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 05:19:47 -0700
-X-CSE-ConnectionGUID: TFCQi75JSbuclTRh8tn3yQ==
-X-CSE-MsgGUID: D2GU++D2T9KYgmeNmmP5dQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
-   d="scan'208";a="128774927"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 05:19:44 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1u27vZ-0000000AOfV-0eao;
-	Tue, 08 Apr 2025 15:19:41 +0300
-Date: Tue, 8 Apr 2025 15:19:40 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v2 1/1] x86/reboot: KVM: Guard
- nmi_shootdown_cpus_on_restart() with ifdeffery
-Message-ID: <Z_UUXOe61BwVkGob@smile.fi.intel.com>
-References: <20241008191555.2336659-1-andriy.shevchenko@linux.intel.com>
- <ZwbazZpTSAn9aAC7@google.com>
- <ZwcT149jx-iOmEfl@surfacebook.localdomain>
- <ZykbvVZ32FKCRT_q@smile.fi.intel.com>
+	s=arc-20240116; t=1744114823; c=relaxed/simple;
+	bh=xkgWSbBzdqqLXJy/39XzllAyrbjhTZ9l7lh68zk2T00=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IjALT6BIdRkq5kIaompW1akgJJx78anwxrnD0srJvslZv31/AYe5e4V7/apKsCRcqZUUbxIc3olfgjXr8S6zO2N7KsCxgevfIGvhx4OBUZcOxtDikAn1nJf30oP6ggsvDyAx940RKyitcGAp9ZEB3jXcRLQvDVBBVN8P+PFl97c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Tc41mAAb; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=M/mRRxi/pJ+TRogyDsxVwnB/JJd9QGzb3vycIpfmcbo=;
+	b=Tc41mAAbRkRgHeL6snbQwChEiCMd7YP8aXStUYoaUzlZVJTThOAj2ljJvDDjn5
+	lhpMuRB+B8f684beHh328eIfo9sqDZObLr/P87vRPP2Q0cHkNlLVdhbO7O3WY9o9
+	YrIxKj8bWu+QRW+h3BfjkmNjEQV/ykRXyGIBmtSwYlr9A=
+Received: from [192.168.142.52] (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD3n81dFPVnaTsKFA--.34605S2;
+	Tue, 08 Apr 2025 20:19:44 +0800 (CST)
+Message-ID: <ef311715-3e61-4bf5-bdae-58fd87a3d5e7@163.com>
+Date: Tue, 8 Apr 2025 20:19:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZykbvVZ32FKCRT_q@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v7 2/5] PCI: Refactor capability search functions to eliminate
+ code duplication
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: lpieralisi@kernel.org, bhelgaas@google.com, kw@linux.com,
+ manivannan.sadhasivam@linaro.org, robh@kernel.org, jingoohan1@gmail.com,
+ thomas.richard@bootlin.com, linux-pci@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20250402042020.48681-1-18255117159@163.com>
+ <20250402042020.48681-3-18255117159@163.com>
+ <8b693bfc-73e0-2956-2ba3-1bfd639660b6@linux.intel.com>
+ <c6706073-86b0-445a-b39f-993ac9b054fa@163.com>
+ <bf6f0acb-9c48-05de-6d6d-efb0236e2d30@linux.intel.com>
+ <f77f60a0-72d2-4a9c-864e-bd8c4ea8a514@163.com>
+ <ef0237d9-f5da-44d7-ab45-2be037cf0f25@163.com>
+ <3689b121-1ff2-f0f6-59f4-293cda8ea6a8@linux.intel.com>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <3689b121-1ff2-f0f6-59f4-293cda8ea6a8@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3n81dFPVnaTsKFA--.34605S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXr4UKrWxCrWkKrWDAw4DCFg_yoW5uFW5pF
+	WfAa1akr1kGr43C3ZxXw40qFyYqws7Ar4UWry3Gw1FqF1DCF9xtry8t3WrAF9rGrW2y3W2
+	qrWaqa4UGF15CaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07ULzV8UUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhUpo2f1EJlU0wABs4
 
-On Mon, Nov 04, 2024 at 09:08:45PM +0200, Andy Shevchenko wrote:
-> On Thu, Oct 10, 2024 at 02:37:59AM +0300, Andy Shevchenko wrote:
-> > Wed, Oct 09, 2024 at 12:34:37PM -0700, Sean Christopherson kirjoitti:
-> > > On Tue, Oct 08, 2024, Andy Shevchenko wrote:
-> > > > The nmi_shootdown_cpus_on_restart() in some cases may be not used.
-> > > > This, in particular, prevents kernel builds with clang, `make W=1`
-> > > > and CONFIG_WERROR=y:
-> > > > 
-> > > > arch/x86/kernel/reboot.c:957:20: error: unused function 'nmi_shootdown_cpus_on_restart' [-Werror,-Wunused-function]
-> > > >   957 | static inline void nmi_shootdown_cpus_on_restart(void)
-> > > >       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > 
-> > > > Fix this by guarging the definitions with the respective KVM ifdeffery.
-> > > > 
-> > > > See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-> > > > inline functions for W=1 build").
-> > 
-> > > Heh, I tried fixing this too, and have patches to clean things up, but I ended up
-> > > not posting them because I decided the W=1 warning was less ugly than the resulting
-> > > code in nmi_shootdown_cpus().
-> > 
-> > CONFIG_WERROR=y is the default (at least in the current defconfigs for x86).
-> > My goal is to match what ARM builds survive (to some extend?), i.e. W=1, so
-> > may one apply either version I provided or yours?
-> > 
-> > > If we're willing to take on a bit of weirdness in nmi_shootdown_cpus(), then much
-> > > of the #ifdeffery can go away.  Patches attached (lightly tested).
+
+
+On 2025/4/8 01:03, Ilpo Järvinen wrote:
+>> Hi Ilpo,
+>>
+>> The [v9 3/6]patch I plan to submit is as follows, please review it.
+>>
+>>  From 6da415d130e76b57ecf401f14bf0b66f20407839 Mon Sep 17 00:00:00 2001
+>> From: Hans Zhang<18255117159@163.com>
+>> Date: Fri, 4 Apr 2025 00:20:29 +0800
+>> Subject: [v9 3/6] PCI: Refactor capability search into common macros
+>>
+>> - Capability search is done both in PCI core and some controller drivers.
+>> - PCI core's cap search func requires PCI device and bus structs exist.
+>> - Controller drivers cannot use PCI core's cap search func as they
+>>    need to find capabilities before they instantiated the PCI device & bus
+>>    structs.
+>>
+>> - Move capability search into a macro so it can be reused where normal
+>>    PCI config space accessors cannot yet be used due to lack of the
+>>    instantiated PCI dev.
+>> - Instead, give the config space reading function as an argument to the
+>>    new macro.
+>> - Convert PCI core to use the new macro.
+> None of these bullets are true lists so please write them as normal
+> English paragraphs. Also please extend some of shortened words lke "cap"
+> --> "Capability", "PCI dev" -> PCI Device (for terms, the capitalization
+> of the first letter, you should follow what the PCI specs use).
 > 
-> So, what's the status either with the proposed change or with what Sean shared?
-> Can we somehow move forward to fix the issue?
 
-Any news here? Build error is still reproducible.
+Dear Ilpo,
 
--- 
-With Best Regards,
-Andy Shevchenko
+Thank you very much for your reply. Is it OK to modify it like this?
 
+The PCI Capability search functionality is duplicated across the PCI 
+core and several controller drivers.  The core's current implementation
+requires fully initialized PCI device and bus structures, which prevents
+controller drivers from using it during early initialization phases 
+before these structures are available.
+
+Move the Capability search logic into a header-based macro that accepts 
+a config space accessor function as an argument.  This enables 
+controller drivers to perform Capability discovery using their early 
+access mechanisms prior to full device initialization while maintaining 
+the original search behavior.
+
+Convert the existing PCI core Capability search implementation to use 
+this new macro, eliminating code duplication. The refactoring preserves 
+the original functionality without behavioral changes, while allowing 
+both the core and drivers to share common Capability discovery logic.
+
+Best regards,
+Hans
+
+>> The macros now implement, parameterized by the config access method. The
+>> PCI core functions are converted to utilize these macros with the standard
+>> pci_bus_read_config accessors. Controller drivers can later use the same
+>> macros with their early access mechanisms while maintaining the existing
+>> protection against infinite loops through preserved TTL checks.
+>>
+>> The ttl parameter was originally an additional safeguard to prevent
+>> infinite loops in corrupted config space.  However, the
+>> PCI_FIND_NEXT_CAP_TTL macro already enforces a TTL limit internally.
+>> Removing redundant ttl handling simplifies the interface while maintaining
+>> the safety guarantee. This aligns with the macro's design intent of
+>> encapsulating TTL management.
+>>
+>> Signed-off-by: Hans Zhang<18255117159@163.com>
+>> ---
+>>   drivers/pci/pci.c | 70 +++++---------------------------------
+>>   drivers/pci/pci.h | 86 +++++++++++++++++++++++++++++++++++++++++++++++
+>>   2 files changed, 95 insertions(+), 61 deletions(-)
 
 
