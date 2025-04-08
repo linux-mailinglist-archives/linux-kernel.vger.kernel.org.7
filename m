@@ -1,294 +1,130 @@
-Return-Path: <linux-kernel+bounces-594156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C54AFA80E05
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:31:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD65A80FA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 17:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4469942580D
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:26:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E66A17870E
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 15:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32FF1E2858;
-	Tue,  8 Apr 2025 14:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF8E224252;
+	Tue,  8 Apr 2025 15:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PWFWgk9B"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="LrDSWY1f"
+Received: from mail-il1-f225.google.com (mail-il1-f225.google.com [209.85.166.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765A317A312
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 14:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5835C39ACF
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 15:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744122373; cv=none; b=bAc3TnhzqUSdXfx5PXiWfhzGai5MNu3kS5LXLrW5jpo2VXb74kuItX5jz0MLUfc0ANJns0MK+lUZ9Mo2clnj5BS8RM5iaL5TA9PQGbNnrpxiyczXJEexMRe4TPmQa9LXZXug7n7AUfERbyTsO6FdE2Gk/pXltV6AXC7XqjLkIPQ=
+	t=1744125283; cv=none; b=NC/9MzmEthE+iRLUTaSCZbQ5MtkVYIUt48Y4/qU0WmLKiEC0FoEcLrbqoF+L9XMdH2sBeuExNAXkVSMLIUs3IAKTUfYA0iV2smQc5p/p8eSb9AF3yR0ifIpBvwreA7xMHxhr7vOcc7Z64GvjvzP3/UOvgIRQ7yjnJsra79rUMfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744122373; c=relaxed/simple;
-	bh=rwIhn26my22eL18uwMvjAcyOTv2CYeIJkDgA6t0oQVU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BWl+FrX840A//JE4YRApIIVPRItOL7XckhAsB2LqwwPTJX4M2dVBctuBCzgSRjiRz7dg8kBgEv16xpMI7WbSarRmW+1d6nlQkb7fsCDZQTUO1BI75kJ35ozn/MOjgWewaD1BNjgnQJbwtzxj+Y6DogY0NQWSXO4lu6gDXRLs/ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PWFWgk9B; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744122371; x=1775658371;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=rwIhn26my22eL18uwMvjAcyOTv2CYeIJkDgA6t0oQVU=;
-  b=PWFWgk9Baci9aWf2v7rHsIIYJmm2GvXeqHRB53K5oQEWMILtxMQ7SumT
-   p6DH8+o3kv79c8f69AVnepucq/8MpaBkHN+Eh4xJ3nkza5k02FhAdYM6N
-   ZsLZiy67rFGeRemH8cjK1eWiTzc0xopDNiQ9lQi3/bFlXfZ9kwU9/vq4V
-   JZQPUpccXG5F9uQo5dlvdsz8FwVEAp5FU1VsB4ITtLnQ4N/zR4AFSKaLJ
-   Vn7kmJR+zZYmz2i0FK+d3c432vJkbQgN2DTgGkmGmhJh8/W06WDRerX/w
-   3UvAwqsBAsR2j/AAZpCYmwQ1olFvN2EnQAiffr04JfJ7ieNUL5+bu7zoV
-   w==;
-X-CSE-ConnectionGUID: ynf5mdBqTbOXqpCTmOwuAw==
-X-CSE-MsgGUID: KYUC0olHRBCLFMLSNt7uAA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11397"; a="49403610"
-X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
-   d="scan'208";a="49403610"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2025 07:26:08 -0700
-X-CSE-ConnectionGUID: k91bMzCBQyuiKV/M2KwLtg==
-X-CSE-MsgGUID: L8MCvl8kTouqSF0S4HsbxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,198,1739865600"; 
-   d="scan'208";a="151480194"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa002.fm.intel.com with ESMTP; 08 Apr 2025 07:26:06 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 7E6054A3; Tue, 08 Apr 2025 17:26:05 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	s=arc-20240116; t=1744125283; c=relaxed/simple;
+	bh=SPSH2WSE+XljXvfZIgoqUM5llE/o4vKzaxbeTFlVrks=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References; b=GSJ/NHmxxWRH4Wf7gD2ZDUiL5bmfmZFXCz9jiCRzwrK2P2lKNxeKYpeLJBY8MppddxHDZIUtOMiid6d42nrwOkAHE5lvgex8MjL3Eqct1W3N+xUvLDLCAFtdoyvxq8X004YPeLu/CyXqN2ealBSRWpgFxTTtYMWcibIa9t+6UJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com; spf=pass smtp.mailfrom=arista.com; dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b=LrDSWY1f; arc=none smtp.client-ip=209.85.166.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
+Received: by mail-il1-f225.google.com with SMTP id e9e14a558f8ab-3d57143ee39so45014275ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 08:14:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744125280; x=1744730080;
+        h=content-transfer-encoding:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R/O97uOoVzQU5zZ/kGe0w5BAxKzZ3HHF/MfBYDQo+ew=;
+        b=HQFLeBknIhmRs+XomvA9T5Wil8QCSMrDyrAkF5d05x3FFyWpp0rdQx4T30sIari1kO
+         Qu70AZ5VrFi4Yq6khgWE/SsivxAx+IXRHOsm+L35ARmHMGlT4TJOABHc/xDp3cZB1fp/
+         KfTJGCy5b3tRNzcTXxBUPD031F4R/e8IcDA4yC/xKQwjPuwrWE9D0naJUqdCM5OHQY95
+         E9ARGImRHUSgBz+aV/yeI66Av2bjeWDQQh0+k80nmol8A/I2RJpRDDdVDzoi3qnafPUX
+         pfFoci4I014dfL34CpFh9zFPHGgmyJzpH5YpshlzSpxLZVJoTuTn7TO+y0tHVGweL9I0
+         nCtA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHFJXqmqztrbb36Oxis9fvGyyn8JhnPiFu6NjDbdCNSF77Wd7V0CQ5dxqkNIHnFRtiW3Gnr6cTDtqs+SY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/GsNZyt3zRampXFhBTPEmmy34Nplp3K3Iv5iQHXv0vqT1fAt7
+	reGh77pga8oubaoMfS9HLtevwPYnTZ27yclPM8XLU5tY4e7e9n0wOeGA6dIygoq6vi0WhCGrJR3
+	+cYGJrI4rexG3+AV0F9VEaRrDSdhP+Q==
+X-Gm-Gg: ASbGncu7pxj1WBBsJxOm4gg5uu5dszWWL501H7LDzfeYjoYZNx8U/cNeOL/pFGa4xjD
+	RF8sKDULM2U0pZN68czE0W/8Sd8msiFVrSLfiyIedIzUhUD2Bc+Tr8HatYx+2tGouKm9QuxJYWy
+	roTsgHu6ITRQCnna1tvfnkgsVisLSqZsoiyUxbHaWX5QNnidpofybUM+wXghSJeawyqORCjNqTN
+	KWP4eatF+xsf/KvxoXL27HJYz+xLg6lJjqJ3GD3sLE18DrJyfmXEyvPXIgVRg0VHHKIpaUmA2JF
+	NXhFRuyK3xHE9rkoUOifTsqN3/Q=
+X-Google-Smtp-Source: AGHT+IHRBTG6+uqcyAAc/HKIV+mc/d+bQv8wck3AXmAPQOGb3TE7JsAnfu9/DW9a3DfSEJWosmHZ7CG1JJKH
+X-Received: by 2002:a05:6e02:348f:b0:3d5:df21:8481 with SMTP id e9e14a558f8ab-3d6e3e66be1mr184350015ab.0.1744125280423;
+        Tue, 08 Apr 2025 08:14:40 -0700 (PDT)
+Received: from smtp.aristanetworks.com ([74.123.28.25])
+        by smtp-relay.gmail.com with ESMTPS id 8926c6da1cb9f-4f4f43bb938sm120574173.3.2025.04.08.08.14.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 08:14:40 -0700 (PDT)
+X-Relaying-Domain: arista.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
+	s=Arista-A; t=1744125279;
+	bh=R/O97uOoVzQU5zZ/kGe0w5BAxKzZ3HHF/MfBYDQo+ew=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=LrDSWY1faZQQFl9QwD7/kcPM83WYFdTHMX5npzlW1T1CrRpVsZKaNI6dYqh9dIkuc
+	 si5P4JoOCqnH5/O+d4FV6NbxTUaZ7GVJijv9lzdewWh5qRutHupZZAT4mCbRY4gTUm
+	 EHsaNZ4A9FA1DG4VVOhFkiDXlqJkBvh/9TY61WNOhhuwZ1ueWHNZSJxmCBokFEBr5c
+	 W+jRD7fHdR/GT1UqTvM7UAtO/dvZZs+rNI/1H46tQjDV+f470+xFjoEqZjbXhSdMGQ
+	 UO88GEFnoKEATLyKVKrsnR/JVwEtsaj/OGnjOVYkvIDAnkF8zLOsxPzgv90IKl8qd0
+	 cIXrdxGhPM3pg==
+Received: from mpazdan-home-zvfkk.localdomain (abran-ibgpevpn-us285.sjc.aristanetworks.com [10.244.168.54])
+	by smtp.aristanetworks.com (Postfix) with ESMTP id 9F23B10023B;
+	Tue,  8 Apr 2025 15:14:39 +0000 (UTC)
+Received: by mpazdan-home-zvfkk.localdomain (Postfix, from userid 91835)
+	id 9864340B19; Tue,  8 Apr 2025 15:14:39 +0000 (UTC)
+X-SMTP-Authentication: Allow-List-permitted
+X-SMTP-Authentication: Allow-List-permitted
+From: Marek Pazdan <mpazdan@arista.com>
+To: andrew@lunn.ch
+Cc: aleksander.lobakin@intel.com,
+	almasrymina@google.com,
+	andrew+netdev@lunn.ch,
+	anthony.l.nguyen@intel.com,
+	daniel.zahka@gmail.com,
+	davem@davemloft.net,
+	ecree.xilinx@gmail.com,
+	edumazet@google.com,
+	gal@nvidia.com,
+	horms@kernel.org,
+	intel-wired-lan@lists.osuosl.org,
+	jianbol@nvidia.com,
+	kory.maincent@bootlin.com,
+	kuba@kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH v2 2/2] fbtft: Replace 'depends on FB_TFT' by 'if FB_TFT ... endif'
-Date: Tue,  8 Apr 2025 17:22:26 +0300
-Message-ID: <20250408142554.1366319-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250408142554.1366319-1-andriy.shevchenko@linux.intel.com>
-References: <20250408142554.1366319-1-andriy.shevchenko@linux.intel.com>
+	mpazdan@arista.com,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	przemyslaw.kitszel@intel.com,
+	willemb@google.com
+Subject: Re: [Intel-wired-lan] [PATCH 2/2] ice: add qsfp transceiver reset and presence pin control
+Date: Tue,  8 Apr 2025 14:22:43 +0000
+Message-ID: <20250408151439.29489-1-mpazdan@arista.com>
+In-Reply-To: <6ad4b88c-4d08-4a77-baac-fdc0e2564d5b@lunn.ch>
+References: <6ad4b88c-4d08-4a77-baac-fdc0e2564d5b@lunn.ch>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Replace 'depends on FB_TFT' by 'if FB_TFT ... endif'
-for the sake of deduplication.
+On Mon, 7 Apr 2025 22:30:54 +0200 Andrew Lunn wrote:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
----
- drivers/staging/fbtft/Kconfig | 35 ++++-------------------------------
- 1 file changed, 4 insertions(+), 31 deletions(-)
+> As the name get/set-phy-tunable suggests, these are for PHY
+> properties, like downshift, fast link down, energy detected power
+> down.
+> 
+> What PHY are you using here?
 
-diff --git a/drivers/staging/fbtft/Kconfig b/drivers/staging/fbtft/Kconfig
-index dcf6a70455cc..c2655768209a 100644
---- a/drivers/staging/fbtft/Kconfig
-+++ b/drivers/staging/fbtft/Kconfig
-@@ -8,160 +8,136 @@ menuconfig FB_TFT
- 	select FB_BACKLIGHT
- 	select FB_SYSMEM_HELPERS_DEFERRED
- 
-+if FB_TFT
-+
- config FB_TFT_AGM1264K_FL
- 	tristate "FB driver for the AGM1264K-FL LCD display"
--	depends on FB_TFT
- 	help
- 	  Framebuffer support for the AGM1264K-FL LCD display (two Samsung KS0108 compatible chips)
- 
- config FB_TFT_BD663474
- 	tristate "FB driver for the BD663474 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for BD663474
- 
- config FB_TFT_HX8340BN
- 	tristate "FB driver for the HX8340BN LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for HX8340BN
- 
- config FB_TFT_HX8347D
- 	tristate "FB driver for the HX8347D LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for HX8347D
- 
- config FB_TFT_HX8353D
- 	tristate "FB driver for the HX8353D LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for HX8353D
- 
- config FB_TFT_HX8357D
- 	tristate "FB driver for the HX8357D LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for HX8357D
- 
- config FB_TFT_ILI9163
- 	tristate "FB driver for the ILI9163 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for ILI9163
- 
- config FB_TFT_ILI9320
- 	tristate "FB driver for the ILI9320 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for ILI9320
- 
- config FB_TFT_ILI9325
- 	tristate "FB driver for the ILI9325 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for ILI9325
- 
- config FB_TFT_ILI9340
- 	tristate "FB driver for the ILI9340 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for ILI9340
- 
- config FB_TFT_ILI9341
- 	tristate "FB driver for the ILI9341 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for ILI9341
- 
- config FB_TFT_ILI9481
- 	tristate "FB driver for the ILI9481 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for ILI9481
- 
- config FB_TFT_ILI9486
- 	tristate "FB driver for the ILI9486 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for ILI9486
- 
- config FB_TFT_PCD8544
- 	tristate "FB driver for the PCD8544 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for PCD8544
- 
- config FB_TFT_RA8875
- 	tristate "FB driver for the RA8875 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for RA8875
- 
- config FB_TFT_S6D02A1
- 	tristate "FB driver for the S6D02A1 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for S6D02A1
- 
- config FB_TFT_S6D1121
- 	tristate "FB driver for the S6D1211 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for S6D1121
- 
- config FB_TFT_SEPS525
- 	tristate "FB driver for the SEPS525 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for SEPS525
- 	  Say Y if you have such a display that utilizes this controller.
- 
- config FB_TFT_SH1106
- 	tristate "FB driver for the SH1106 OLED Controller"
--	depends on FB_TFT
- 	help
- 	  Framebuffer support for SH1106
- 
- config FB_TFT_SSD1289
- 	tristate "FB driver for the SSD1289 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Framebuffer support for SSD1289
- 
- config FB_TFT_SSD1305
- 	tristate "FB driver for the SSD1305 OLED Controller"
--	depends on FB_TFT
- 	help
- 	  Framebuffer support for SSD1305
- 
- config FB_TFT_SSD1306
- 	tristate "FB driver for the SSD1306 OLED Controller"
--	depends on FB_TFT
- 	help
- 	  Framebuffer support for SSD1306
- 
- config FB_TFT_SSD1331
- 	tristate "FB driver for the SSD1331 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Framebuffer support for SSD1331
- 
- config FB_TFT_SSD1351
- 	tristate "FB driver for the SSD1351 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Framebuffer support for SSD1351
- 
- config FB_TFT_ST7735R
- 	tristate "FB driver for the ST7735R LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for ST7735R
- 
- config FB_TFT_ST7789V
- 	tristate "FB driver for the ST7789V LCD Controller"
--	depends on FB_TFT
- 	help
- 	  This enables generic framebuffer support for the Sitronix ST7789V
- 	  display controller. The controller is intended for small color
-@@ -171,30 +147,27 @@ config FB_TFT_ST7789V
- 
- config FB_TFT_TINYLCD
- 	tristate "FB driver for tinylcd.com display"
--	depends on FB_TFT
- 	help
- 	  Custom Framebuffer support for tinylcd.com display
- 
- config FB_TFT_TLS8204
- 	tristate "FB driver for the TLS8204 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for TLS8204
- 
- config FB_TFT_UC1611
- 	tristate "FB driver for the UC1611 LCD controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for UC1611
- 
- config FB_TFT_UC1701
- 	tristate "FB driver for the UC1701 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for UC1701
- 
- config FB_TFT_UPD161704
- 	tristate "FB driver for the uPD161704 LCD Controller"
--	depends on FB_TFT
- 	help
- 	  Generic Framebuffer support for uPD161704
-+
-+endif
--- 
-2.47.2
-
+Thanks for review.
+It's PHY E810-C in this case. According to spreadsheet: E810_Datasheet_Rev2.4.pdf
+(Chapter 17.3.3 E810 SDP[0:7] (GPIO) Connection), it's SDP0 and SDP2 GPIOs 
+are being connected to QSFP Reset and Presence pins correspondingly.
+I assume you may suggest this use case is not directly PHY related. In first approach
+I tried to use reset operation which has following flag in enum ethtool_reset_flags:
+ETH_RESET_PHY           = 1 << 6,       /* Transceiver/PHY */
+but this doesn't allow for reset asserting and later deasserting so I took 'get/set-phy-tunable'.
 
