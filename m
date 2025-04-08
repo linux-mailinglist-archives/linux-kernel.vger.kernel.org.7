@@ -1,136 +1,129 @@
-Return-Path: <linux-kernel+bounces-594948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45106A8186B
-	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 00:24:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5221A81887
+	for <lists+linux-kernel@lfdr.de>; Wed,  9 Apr 2025 00:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C47397B1B41
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:22:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAD0D19E6C4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 22:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A043255E2A;
-	Tue,  8 Apr 2025 22:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE0B2580EA;
+	Tue,  8 Apr 2025 22:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TcoBLalr"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="TjzHiFy1"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4AD8255255
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 22:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744150992; cv=none; b=RCev1FCA4m5sVGIt3GYGi+C3JibFgYCazq2w39cLxk8T0xjvu253RZL8FAntm0U2Z73EH1mZ5ya/k/JVKBh1Xon+ULwU7+ivHisGOefy3yDrahpoo49K4KHs36Jys2adPFZkXCtzdRY5yzdMswQpkbOoWtdl/MEvJxQ9LWSwcz0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744150992; c=relaxed/simple;
-	bh=wvvzta72QEmE5Gx/4J/NhwpLTLMel558Hz++rS/+MT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P3TTq1/zIrz6BAEPQAhlR59sHQ0iHq3UId0rVopGtsPUp5IVCiVweTzRdEn0v7GxYNfjFdE6JR8sMeJ5ebyxQYTiVCSBHLWt6UqNeJUKhaNuXGT1D3lHuRSWdccX4aAfGlLiqZu4X2fautd7Zd6sIRgdwfAx3qTwwkA11BDkOqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TcoBLalr; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 8 Apr 2025 22:22:47 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744150978;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vzxu9RqZfgCag2kaUjY8CYVmo1wIXtQPZ42lCWTw8iY=;
-	b=TcoBLalr58CwOZhSnic9nJcluUplJlVYgdbXYy86g3MFATiR2nLoyxOIfXJzq6VYNDHRNN
-	Nh7H7/+JYKH03Mw4gmcNyLOTeYpIIUGATAk4J2BXOGw1+NzorwG7tkExOmInn5G61Sc99w
-	QBt34DnligOA4US0OCv1a5JNq63JjSM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Waiman Long <longman@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Tejun Heo <tj@kernel.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] selftests: memcg: Increase error tolerance of
- child memory.current check in test_memcg_protection()
-Message-ID: <Z_Wht7kyWyk62IBU@google.com>
-References: <20250406024010.1177927-1-longman@redhat.com>
- <20250406024010.1177927-3-longman@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1518B2561D3;
+	Tue,  8 Apr 2025 22:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744151121; cv=pass; b=p1hi4NgKLDV/OrmkkZ3QtezeKyB9alukFNTghaqiQpnDS5zC7fgPj8lvh97NJxmOe0aQHLg8/QfUC8nKcBAkhqAIpMkUIqQYquKE1vHo28QBRPMfPgACEsAzkOE4UYIQC3r3y1ffTsuayiT3czVkiuFBOkpL+XZO8vm+kuwAmh0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744151121; c=relaxed/simple;
+	bh=fPUXfPrlZVfotF0mXj6UzQVp8fh7ZUkf1EzFg0e6SMc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l7wfzzoZ95irue+Vg7O+PLDowjDX54800hxevCVU6B9q5zdhrkdQlYybip9Xkz5OXQXlXx7zun/Wj2acwi0I6lK44TRURee8EApNThvsmaiX0UZg501oVcIeLHW2Hub7CR4CqJEh2cHB2pbXSbnDi5Q67iKFJsUcRbwA9fmvjF8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=TjzHiFy1; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744151081; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=hw50jNZobz49LxtYadbqaOWjdrqUt5jDp6gEJ2zYqzzBTpwk1xwpza6p2DFj78Ux0X5o9g/lw9YrGaoZiXZtEUUp1TyG9YbsTclQwQgLmCeHrxLjxy3daZ8taIhpOpTq1gaooOxnUv+k130Mz8SC37roMKrFmGRXhKWMAXESiFo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744151081; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=GJj2+HH15+BohAlwSH5EisMA0Tu8jvT9Yx4DuyqrWe0=; 
+	b=bjaaSPibUq+BV77+odD2wp0tY4qhTfJ4oP/AcZx/K5L2WmMyxCZK3KWgO/4C/GTZ/Ut6WtfXDZWuvHp2AvM2T8fpx+oMhZmrCfQehDEr7qIRngRFsuH4csZ4UYXTmSNAz6DURqEzO+ymXSsn24pfwYyr4FZzW79zRd7Q4CJJGJI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744151081;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=GJj2+HH15+BohAlwSH5EisMA0Tu8jvT9Yx4DuyqrWe0=;
+	b=TjzHiFy1tRg8/MjD1Kce4ZdsWeUxMGBwlz3q3yuL6KBjF7N46w8bhgSJmoQJiwjP
+	D0lb4eGGNTK1VnH17wQtdhjKiUjm+FkAceLSUGQSREQqLsmbWjPtHdO6AF9x3b3lC8U
+	QhKu233f4b6gZQVgeEQcYn0QUVV8UsLDpSYqfyYQ=
+Received: by mx.zohomail.com with SMTPS id 1744151079511376.76312363545844;
+	Tue, 8 Apr 2025 15:24:39 -0700 (PDT)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: kernel@collabora.com,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org
+Subject: [PATCH v5 0/4] Panthor BO tagging and GEMS debug display
+Date: Tue,  8 Apr 2025 23:24:20 +0100
+Message-ID: <20250408222427.1214330-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250406024010.1177927-3-longman@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Apr 05, 2025 at 10:40:10PM -0400, Waiman Long wrote:
-> The test_memcg_protection() function is used for the test_memcg_min and
-> test_memcg_low sub-tests. This function generates a set of parent/child
-> cgroups like:
-> 
->   parent:  memory.min/low = 50M
->   child 0: memory.min/low = 75M,  memory.current = 50M
->   child 1: memory.min/low = 25M,  memory.current = 50M
->   child 2: memory.min/low = 0,    memory.current = 50M
-> 
-> After applying memory pressure, the function expects the following
-> actual memory usages.
-> 
->   parent:  memory.current ~= 50M
->   child 0: memory.current ~= 29M
->   child 1: memory.current ~= 21M
->   child 2: memory.current ~= 0
-> 
-> In reality, the actual memory usages can differ quite a bit from the
-> expected values. It uses an error tolerance of 10% with the values_close()
-> helper.
-> 
-> Both the test_memcg_min and test_memcg_low sub-tests can fail
-> sporadically because the actual memory usage exceeds the 10% error
-> tolerance. Below are a sample of the usage data of the tests runs
-> that fail.
-> 
->   Child   Actual usage    Expected usage    %err
->   -----   ------------    --------------    ----
->     1       16990208         22020096      -12.9%
->     1       17252352         22020096      -12.1%
->     0       37699584         30408704      +10.7%
->     1       14368768         22020096      -21.0%
->     1       16871424         22020096      -13.2%
-> 
-> The current 10% error tolerenace might be right at the time
-> test_memcontrol.c was first introduced in v4.18 kernel, but memory
-> reclaim have certainly evolved quite a bit since then which may result
-> in a bit more run-to-run variation than previously expected.
-> 
-> Increase the error tolerance to 15% for child 0 and 20% for child 1 to
-> minimize the chance of this type of failure. The tolerance is bigger
-> for child 1 because an upswing in child 0 corresponds to a smaller
-> %err than a similar downswing in child 1 due to the way %err is used
-> in values_close().
-> 
-> Before this patch, a 100 test runs of test_memcontrol produced the
-> following results:
-> 
->      17 not ok 1 test_memcg_min
->      22 not ok 2 test_memcg_low
-> 
-> After applying this patch, there were no test failure for test_memcg_min
-> and test_memcg_low in 100 test runs.
+This patch series is aimed at providing UM with detailed memory profiling
+information in debug builds. It is achieved through a device-wide list of
+DRM GEM objects, and also implementing the ability to label BO's from UM
+through a new IOCTL.
 
-Ideally we want to calculate these values dynamically based on the machine
-size (number of cpus and total memory size).
+The new debugfs file shows a list of driver DRM GEM objects in tabular mode.
+To visualise it, cat sudo cat /sys/kernel/debug/dri/*.gpu/gems.
+To test this functionality from UM, please refer to this Mesa patch series:
+https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/34224
 
-We can calculate the memcg error margin and scale memcg sizes if necessarily.
-It's the only way to make it pass both on a 2-CPU's vm and 512-CPU's physical
-server.
+Discussion of previous revision of this patch series can be found at:
+https://lore.kernel.org/dri-devel/20250402115432.1469703-1-adrian.larumbe@collabora.com/
 
-Not a blocker for this patch, just an idea for the future.
+Changelog:
+v5:
+ - Kept case and naming of kernel BO's consistent
+ - Increased the driver minor after new ioctl
+ - Now adds BO to debugfs GEMs list at GEM object creation time
+ - No longer try to hide BO creator's name when it's a workqueue or modprobe
+ - Reworked the procedure for printing GEM state and kernel BO flags
+ - Turned kernel BO flags and GEM state flags into bit enums
+ - Wait until BO state is marked as initialied for debugfs display
 
-Thanks!
+v4:
+ - Labelled all kernel BO's, not just heap chunks.
+ - Refactored DebugGFs GEMs list handling functions
+ - Added debugfs GEMS node mask to tell different kinds of BO's
+
+Adrián Larumbe (4):
+  drm/panthor: Introduce BO labeling
+  drm/panthor: Add driver IOCTL for setting BO labels
+  drm/panthor: Label all kernel BO's
+  drm/panthor: show device-wide list of DRM GEM objects over DebugFS
+
+ drivers/gpu/drm/panthor/panthor_device.c |   5 +
+ drivers/gpu/drm/panthor/panthor_device.h |  11 ++
+ drivers/gpu/drm/panthor/panthor_drv.c    |  68 +++++++-
+ drivers/gpu/drm/panthor/panthor_fw.c     |   8 +-
+ drivers/gpu/drm/panthor/panthor_gem.c    | 210 ++++++++++++++++++++++-
+ drivers/gpu/drm/panthor/panthor_gem.h    |  86 +++++++++-
+ drivers/gpu/drm/panthor/panthor_heap.c   |   6 +-
+ drivers/gpu/drm/panthor/panthor_sched.c  |   9 +-
+ include/uapi/drm/panthor_drm.h           |  19 ++
+ 9 files changed, 411 insertions(+), 11 deletions(-)
+
+--
+2.48.1
 
