@@ -1,97 +1,117 @@
-Return-Path: <linux-kernel+bounces-594441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09A27A811E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:17:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D8E5A811E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCD733BEDF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:11:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12E9416BC50
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353C222CBD0;
-	Tue,  8 Apr 2025 16:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C519322F38B;
+	Tue,  8 Apr 2025 16:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ryesXsKK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="G/blntR4"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EEC470810;
-	Tue,  8 Apr 2025 16:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2B522E3E7;
+	Tue,  8 Apr 2025 16:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744128580; cv=none; b=gTTFJzBLZe7uxui601UtcGdCu83WKgwxsNJgl42id+GT8aL6LWicBSj2ndcz6Y3LhX5NEuPE1eAuEN9hwb9tBD0qozWdWiYilKBMSLn+zzVTZpx0quFrcG9bgvwCOEGrbbzdy2CgUyZk3w+6OJ4S7I1SAMxHvvF5utU7ZeD3nKw=
+	t=1744128642; cv=none; b=iba7uJNLmRXcfu0KiKlu23DQwx7gOltcIa8pGUrQAW/bX7GMgSatXcf9FOvMHdOBqgpwVF8d6HP9RHlRSWiEt/zT4Kix+T7sH54VIhv8gPhFCycFPnTGirb1l1XYHEkRA3YBl3ORE8YUhOO+JJVoDA32Mr+G5SIPAH4bGiq2UAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744128580; c=relaxed/simple;
-	bh=3WRYZ3ZZhmqV9utNFcmHEl9F2oSBkHO11gXq7GCdU/Q=;
+	s=arc-20240116; t=1744128642; c=relaxed/simple;
+	bh=iG365VUsJjmbYrd2MsyzHwtfg63n3vUP/FuqZWSN6sE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qf5ndXjM1XwVCcpmh78zGuIPunQEInuyuldNey6qqMt1ujeB+3a3us0xu8Njdi9qI4mGOUiZPDKvBvfXcH4soSGaKa34V+KOpVlvQQQBuuZ8nXu5fdkhzF1myetwFKG/6xlwaPV+j9an2SwbHdKH3/ji61CeyCYWul+Y/iohcJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ryesXsKK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16387C4CEE5;
-	Tue,  8 Apr 2025 16:09:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744128580;
-	bh=3WRYZ3ZZhmqV9utNFcmHEl9F2oSBkHO11gXq7GCdU/Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ryesXsKKfay2Qq7nNoLcyLhXadAsq5+NP7clKzMGvoPrscCIq6X0uozXMytaE5LyE
-	 PKOnMv2nsjybjrEvNzvrVbiQrGi35HKK+H9MvtMMu06GH9wPjGIUs+qucg9OiBFS+C
-	 8sY3WmgQPs9Mz+4DFjTzdtVfj2R+dTicBEyQ51pg+N0GqZnj23Oi8HEEJGz4i0BAvM
-	 71dhdFYW9E412fbDQ6zzv0VyDnZrk9n/+t+oJqYPO0USsweYfXK8MKoIgUJ7aX0Lnm
-	 +ihh5WpLIKhZCilzpJTIbFiBJMGAN4LDQX56lWOYWKZpsg3IOKbrvVAmCZr1OpdHjV
-	 RQRzb1XUJKCdA==
-Date: Tue, 8 Apr 2025 17:09:35 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 04/14] dt-bindings: mfd: bd96802: Add ROHM BD96806
-Message-ID: <20250408-darling-recant-170b05eb0daa@spud>
-References: <cover.1744090658.git.mazziesaccount@gmail.com>
- <3c245cc3829dc64d977c97eae7ae8e2be6233481.1744090658.git.mazziesaccount@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hBbfIftiBfRoRIgGwhQ0NP6pF2RetbCRMyY9YuTM2gGY7TnZvMlUU6gcdo4finobmGfr4hpxfKbqsA+vZkgREs6hlW25n0jRgRqEY+d15zuXI26cw6Pj0TuJbVl/4fcjv9wcjxhLzOXAHxM1DV8dQBrjvTkwT20DZs1bnhw21A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=G/blntR4; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=gc2itI022s8dW+s9KqI+5JfR2+E5wndR5hXO0nPhlBM=; b=G/blntR4GT2mMoncHyE/hjY+Zv
+	NOvxnRYgBX4JWkjvDzSnUG4CjYhiibzDikvqlTcidubSSNr1HIX+rxOx8rP3T0PwT1AblSKGrxzSs
+	F2UxzrYwE3fIDJyKUhGYo3ZLoVGB77oBGTJiA6MNxS6Ccqr4WLKlreEsv9X0KDnL3yXk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1u2BWx-008Q8q-Ow; Tue, 08 Apr 2025 18:10:31 +0200
+Date: Tue, 8 Apr 2025 18:10:31 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Marek Pazdan <mpazdan@arista.com>
+Cc: aleksander.lobakin@intel.com, almasrymina@google.com,
+	andrew+netdev@lunn.ch, anthony.l.nguyen@intel.com,
+	daniel.zahka@gmail.com, davem@davemloft.net, ecree.xilinx@gmail.com,
+	edumazet@google.com, gal@nvidia.com, horms@kernel.org,
+	intel-wired-lan@lists.osuosl.org, jianbol@nvidia.com,
+	kory.maincent@bootlin.com, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	pabeni@redhat.com, przemyslaw.kitszel@intel.com, willemb@google.com
+Subject: Re: [Intel-wired-lan] [PATCH 1/2] ethtool: transceiver reset and
+ presence pin control
+Message-ID: <6f127b5b-77c6-4bd4-8124-8eea6a12ca61@lunn.ch>
+References: <8b8dca4d-bdf3-49e4-b081-5f51e26269bb@lunn.ch>
+ <20250408153311.30539-1-mpazdan@arista.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="WCeI76TcsjAYNSZ7"
-Content-Disposition: inline
-In-Reply-To: <3c245cc3829dc64d977c97eae7ae8e2be6233481.1744090658.git.mazziesaccount@gmail.com>
-
-
---WCeI76TcsjAYNSZ7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250408153311.30539-1-mpazdan@arista.com>
 
-On Tue, Apr 08, 2025 at 11:44:24AM +0300, Matti Vaittinen wrote:
-> The ROHM BD96806 is very similar to the BD96802. The differences visible
-> to the drivers is different tune voltage ranges.
->=20
-> Add compatible for the ROHM BD96805 PMIC.
->=20
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> Acked-by: Lee Jones <lee@kernel.org>
+On Tue, Apr 08, 2025 at 03:32:30PM +0000, Marek Pazdan wrote:
+> On Mon, 7 Apr 2025 22:39:17 +0200 Andrew Lunn wrote:
+> > How do you tell the kernel to stop managing the SFP? If you hit the
+> > module with a reset from user space, the kernel is going to get
+> > confused. And how are you talking to the module? Are you going to
+> > hijack the i2c device via i2-dev? Again, you need to stop the kernel
+> > from using the device.
+> 
+> This is something to implement in driver code. For ice driver this reset will
+> be executed through AQ command (Admin Queue) which is communication channel
+> between driver and firmware. What I probably need to do is to add additional PHY
+> state (like USER_MODULE_RESET) and check it when driver wants to execute AQ command.
+> 
+> > Before you go any further, i think you need to zoom out and tell us
+> > the big picture....
+> 
+> In my use case I need to have ability to reset transceiver module. There are 
+> several reasons for that. Most common is to reinit module if case of error state.
+> (this according to CMIS spec). Another use case is that in our switch's cli there
+> is a command for transceiver reinitialisation which involves transceiver reset.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Now zoom out, ignore your hardware, look at the Linux abstraction for
+an SFP, across all NICs and switches.
 
---WCeI76TcsjAYNSZ7
-Content-Type: application/pgp-signature; name="signature.asc"
+There are ethtool calls to retrieve the modules eeprom contents. There
+is an ethtool call to program the modules firmware. There is an
+ethtool call to get/set the power mode. Modules can also export their
+sensors via HWMON, the temperature, receive power, etc.
 
------BEGIN PGP SIGNATURE-----
+How does your wish to reset the module fit into the general Linux
+model of an SFP? Should it be allowed in the middle of a firmware
+upgrade? Should the power mode be lost due to a reset? Can you still
+read from the EEPROM etc while it is in reset? What should HWMON
+report? Should it be a foot gun?
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ/VKPwAKCRB4tDGHoIJi
-0nwWAQDTYE8W8nYFmKBXFqtzcTCOcj50u6jBfNvxHoyTdcmfQgEAytDwpK/ZT4tD
-dE4280zJ3J9PNfFHAQ3xlliNijJe6wk=
-=jOVY
------END PGP SIGNATURE-----
+It does however seem to me, what you want should somehow be an ethtool
+operation. And it probably needs to be plumbed through
+net/ethtool/module.c, and you need to look at how it interacts with
+all the other code in that file. And you maybe need to force the
+netdev to do a down/up so that it gets the new state of the module, or
+you only allow it on an netdev which is admin down?
 
---WCeI76TcsjAYNSZ7--
+Your patch needs to explain the big picture, how it fits into the
+Linux abstraction of an SFP, and how other vendors should implement
+the same operation, if they wish to implement it.
+
+    Andrew
 
