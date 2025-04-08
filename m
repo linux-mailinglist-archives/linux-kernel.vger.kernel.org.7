@@ -1,146 +1,114 @@
-Return-Path: <linux-kernel+bounces-594415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-594418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6924EA811A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:11:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3869A811A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 18:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CED84E1761
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:04:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D26FC3BE15C
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 16:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BDA23815A;
-	Tue,  8 Apr 2025 15:58:46 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46C322CBEF;
+	Tue,  8 Apr 2025 16:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C/BpiHVg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9E21E1C1F;
-	Tue,  8 Apr 2025 15:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F8E70810;
+	Tue,  8 Apr 2025 16:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744127925; cv=none; b=htjORQf6VJfAgkoTIYE6U+fdDZ+E2GeLTHDGkULLgFPhEnRI7MWsmCZ8xBdYuuMTSIoS3P20a5CINSW/+sv9X4HTNdudr67tLDVWov1mqNmuEXUDwJqLoKPvaxwzghdnMzwtCpff704bAdBeEoUrRqS336OPwasHhTgH5E2IccU=
+	t=1744128058; cv=none; b=RcLXWUOCMkqc4BFWhBhyMxT3HVJ+MlehDBghvTlxuGXIZQL+CEt0YX+EDLyUN7A47NaA0+kwJWGHsmv76xAXyW0QuH7IkZmlUff5A9asGHn5EydlChFGqBMX6RdbDqpq0yCUuxRMjWX+ohDQgNeRrIVMep0ePfkXmOUmEe09huk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744127925; c=relaxed/simple;
-	bh=AHvLh3VHhH+8s0BqalzzLWIJRhM0DmQZyfPUYf0ycCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hVNstmxSrRMkXQthLuXagu9ik3f5sxKPbhSoKEHO0t2yYuISfHl9GKwrDHImH8vVKDhGTI+UdH1vwLXVIV+vR4gEPYI1Rn3wVohdbAqVs8t73KKsNymPUqFxCUrBbnH+NMGp+63r7h67anNd7J1F40xEl+iciKq+ymUM6oDm4tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from [IPV6:2a01:e0a:3e8:c0d0:9059:1ccf:a15c:f330] (unknown [IPv6:2a01:e0a:3e8:c0d0:9059:1ccf:a15c:f330])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 36E84487F4;
-	Tue,  8 Apr 2025 15:58:40 +0000 (UTC)
-Authentication-Results: Plesk;
-        spf=pass (sender IP is 2a01:e0a:3e8:c0d0:9059:1ccf:a15c:f330) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[IPV6:2a01:e0a:3e8:c0d0:9059:1ccf:a15c:f330]
-Received-SPF: pass (Plesk: connection is authenticated)
-Message-ID: <ba2f508e-20b1-4b5a-b512-a85efcf9ad50@arnaud-lcm.com>
-Date: Tue, 8 Apr 2025 17:58:39 +0200
+	s=arc-20240116; t=1744128058; c=relaxed/simple;
+	bh=jkgXxLUBMkqg/rZGyHJkSw9cQHDr9laf5rIMLucqkEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sMiMDskzQ9zJXT4as1tb9aLC/wNu69S2miiTOf013BL51rtOy8xrcWi13oeGTMeNxnU4wKU4Jww0iAvqESfox4mZ8aNe0rBPOaGW2JBXgKoZqxcqthkcV5X4YDNMnGuscg5mjw4uBBnxoAFzACrV1t/mIr3OLbGOrtChHrZDNVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C/BpiHVg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0D1BC4CEEA;
+	Tue,  8 Apr 2025 16:00:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744128057;
+	bh=jkgXxLUBMkqg/rZGyHJkSw9cQHDr9laf5rIMLucqkEU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C/BpiHVgqr+1FVaTVdNW2WEpEQNzaMs9aE72D5uLOSg7HAtUTQBgRwiiIKuHyQokc
+	 qMvuYmvBnf/P5DR3ct1FLP4n8eBrWTwSBFgCE1IQA/8sZJXkrOqyE3U4xwK2weOt6V
+	 wQg8Js6xzPXtliJVLpojNbr0IBtGBM12jOz+SR9u3fpdMBjHcmXeX2GEu/KBbvuh5L
+	 jFsPbh/wob5dT84IqF2EDZhx0+te5XRk4sMoA4L0ozbXqvdNR771P7/n++6ikXTQsR
+	 s4G0bI0imZOK0/GTTW4ho0Wve833P9IAtkn92OnhRn/XXNwcC9BxKpBvSyQTL8dVfL
+	 cVDqt5ewDdQkg==
+Date: Tue, 8 Apr 2025 17:00:53 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: Stefan Binding <sbinding@opensource.cirrus.com>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com
+Subject: Re: [PATCH v1 2/5] ASoC: cs35l56: Add struct to index firmware
+ registers
+Message-ID: <f9fcff2f-34b6-4291-82d1-3b40c0f7e8e6@sirena.org.uk>
+References: <20250407151842.143393-1-sbinding@opensource.cirrus.com>
+ <20250407151842.143393-3-sbinding@opensource.cirrus.com>
+ <c1043fc8-40e3-4ff9-bade-bedfe7a19a18@sirena.org.uk>
+ <e3447ca4-ea19-4c84-802e-dc3832ea2dd6@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: ppp: Add bound checking for skb d on ppp_sync_txmung
-To: Simon Horman <horms@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-ppp@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
- syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
-References: 
- <20250407-bound-checking-ppp_txmung-v1-1-cfcd2efe39e3@arnaud-lcm.com>
- <20250408153352.GY395307@horms.kernel.org>
-Content-Language: en-US
-From: Arnaud Lecomte <contact@arnaud-lcm.com>
-In-Reply-To: <20250408153352.GY395307@horms.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <174412792069.11363.17962374028464217077@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7Rg+Va24dUM562IR"
+Content-Disposition: inline
+In-Reply-To: <e3447ca4-ea19-4c84-802e-dc3832ea2dd6@opensource.cirrus.com>
+X-Cookie: Meester, do you vant to buy a duck?
 
-Thanks for the review.
 
-You're right, using a merge commit in the `Fixes:` tag was not relevant.
-I'll send a v2 shortly with the fix as well as the removal of the skb 
-check as it is already done before.
+--7Rg+Va24dUM562IR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 08/04/2025 17:33, Simon Horman wrote:
-> On Mon, Apr 07, 2025 at 05:26:21PM +0200, Arnaud Lecomte wrote:
->> Ensure we have enough data in linear buffer from skb before accessing
->> initial bytes. This prevents potential out-of-bounds accesses
->> when processing short packets.
->>
->> When ppp_sync_txmung receives an incoming package with an empty
->> payload:
->> (remote) gef➤  p *(struct pppoe_hdr *) (skb->head + skb->network_header)
->> $18 = {
->> 	type = 0x1,
->> 	ver = 0x1,
->> 	code = 0x0,
->> 	sid = 0x2,
->>          length = 0x0,
->> 	tag = 0xffff8880371cdb96
->> }
->>
->> from the skb struct (trimmed)
->>        tail = 0x16,
->>        end = 0x140,
->>        head = 0xffff88803346f400 "4",
->>        data = 0xffff88803346f416 ":\377",
->>        truesize = 0x380,
->>        len = 0x0,
->>        data_len = 0x0,
->>        mac_len = 0xe,
->>        hdr_len = 0x0,
->>
->> it is not safe to access data[2].
->>
->> Reported-by: syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=29fc8991b0ecb186cf40
->> Tested-by: syzbot+29fc8991b0ecb186cf40@syzkaller.appspotmail.com
->> Fixes: 9946eaf552b1 ("Merge tag 'hardening-v6.14-rc2' of git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux")
-> It doesn't seem right to use a Merge commit in a fixes tag.
->
-> Looking over the code, the access to data[2] seems to have existed since
-> the beginning of git history, in which case I think we can use this:
->
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
->
->> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
->> ---
->>   drivers/net/ppp/ppp_synctty.c | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/drivers/net/ppp/ppp_synctty.c b/drivers/net/ppp/ppp_synctty.c
->> index 644e99fc3623..520d895acc60 100644
->> --- a/drivers/net/ppp/ppp_synctty.c
->> +++ b/drivers/net/ppp/ppp_synctty.c
->> @@ -506,6 +506,11 @@ ppp_sync_txmunge(struct syncppp *ap, struct sk_buff *skb)
->>   	unsigned char *data;
->>   	int islcp;
->>   
->> +	/* Ensure we can safely access protocol field and LCP code */
->> +	if (!skb || !pskb_may_pull(skb, 3)) {
-> I doubt that skb can be NULL.
->
->> +		kfree_skb(skb);
->> +		return NULL;
->> +	}
->>   	data  = skb->data;
->>   	proto = get_unaligned_be16(data);
->>   
->>
->> ---
->> base-commit: 9946eaf552b194bb352c2945b54ff98c8193b3f1
->> change-id: 20250405-bound-checking-ppp_txmung-4807c854ed85
->>
->> Best regards,
->> -- 
->> Arnaud Lecomte <contact@arnaud-lcm.com>
->>
->>
+On Tue, Apr 08, 2025 at 01:58:23PM +0100, Richard Fitzgerald wrote:
+> On 07/04/2025 8:16 pm, Mark Brown wrote:
+
+> > This is fine but note that this is the use case that the regmap_field_
+> > APIs were created for, that also helps deal with things if anyone is
+> > clever and resizes fields or shifts within registers.  It's purely a
+> > question of taste if you want to use that.
+
+> The regmap_field stuff looks like a lot of unnecessary complexity and
+> overhead just for 6 registers with alternate addresses.
+
+Yeah, like I say it's a taste thing.
+
+> (In fact, the regmap_field stuff looks like an over-complex way of
+> solving a non-problem. The original commit is talking about replacing
+> masks and shifts "all over the code" to make the code neater. But
+> really, all those extra structs and pointers and allocated memory just
+> to replace a logical & or | ? Every struct regmap_field has a pointer
+> to the struct regmap !!?! So if I've got 100 fields there are 100 copies
+> of the struct regmap pointer that my driver already has.)
+
+It was for cases where the shifts and widths may also change, there's a
+bit more than applying a mask.  Like you say it's got some overhead
+hence the taste thing.
+
+--7Rg+Va24dUM562IR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmf1SDUACgkQJNaLcl1U
+h9AB/gf/aPB3fd1AiqxM3ZHtujjzPfIgfItndnRRROC3CtwDwHJUNHCBOvWMD75p
+reP5Kd5KDHn9ZsK4C0E45crR2eQONCwVaXIE218wpLbSq5LvkGFB7kU39K2X62bV
+kzq3CMSNLAe8qK7U9ycfXDG7krMytQAo1YTL86/sIlpmqZiCux52ue+O7mLErZTM
+g5nN2CDT4/Fzkj5G0lkbUs2Qets7Y4nxuosXpQiLeM80MrR6qzmZQh5fodsrP1tS
+zWqv2+cdp3eEW0vjGxKa316vmqwUnioeeQOqNHZh9M+9xkgwvUL2zBtc1IHzYKb3
+mv+LB/TzQ2ju2QR0iAOiOlf9wCWL/Q==
+=Kuss
+-----END PGP SIGNATURE-----
+
+--7Rg+Va24dUM562IR--
 
