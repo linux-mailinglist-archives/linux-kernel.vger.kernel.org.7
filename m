@@ -1,126 +1,135 @@
-Return-Path: <linux-kernel+bounces-593046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 054DFA7F476
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:56:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183ECA7F472
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 07:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5406188E88F
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:56:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93FE7177F9D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 05:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C566C25F79E;
-	Tue,  8 Apr 2025 05:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37D925F798;
+	Tue,  8 Apr 2025 05:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ib+/mnpR"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hn7nsySc"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C858C213E67;
-	Tue,  8 Apr 2025 05:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85070213E67
+	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 05:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744091778; cv=none; b=GyYu1ND9d9BHTgxKWsa/mzMTzkdt3wRIX3w6gUNCcaO+yVZdxzMCUUPzdaXbLajfFjkkYwmsGBFry1wOIKrH8AM91x+kYWMPguV+i0A3ZOZXV+JkFRvJHtDoIl+1NnkIb4j1J2Zyk0SDSq/XDNjS7v1hDwoiOK97QOsOCz/voxo=
+	t=1744091711; cv=none; b=pEwPIqIeJM05yR1XMCGZtMGjCBe5pnH3UQXA2c3ZRT5/3CR7HBVWtAkOqxVI/fUnxuCQ3yW824TXDoJqywquCMjcmfmUf49n4h+iB+hG2qPAgsMlBZecVX6SbIxj42laKiqYO53qdm2xk+P7tMNYjGWpHyCJJDysi82Q3IDZaus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744091778; c=relaxed/simple;
-	bh=S42apcJopw6lMBL60g2IkAzYpNOxgwv2Cpr4/ENCP9k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gzU8eQTg/aJ3j1QVCHCPh4knkpNMTuWehTILl7lw4Q7Su4MR/TmJ+3g2rtcpqCfSUgXG3gYSapGCi/MBOU1ei8ZePuFX2voU5RfZNCXqLa4SbOwv/XU/O+SIExJ0ZVOJxDH3Qg/aJGeyyFkMxzowDmHM24PSGPa9t4sitSquLO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ib+/mnpR; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2254e0b4b79so63220695ad.2;
-        Mon, 07 Apr 2025 22:56:16 -0700 (PDT)
+	s=arc-20240116; t=1744091711; c=relaxed/simple;
+	bh=EufmTM1zhzstYC870JF6VYLrqWC1C32Ol14xs1Bdbk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qzWzbGQo4PvH20LJa5ll6udaypOVd4eQkucGCkgvgzeNpG9tyaSTktY/2xb5FEcC+Vt1HCSyQMuvhOntBWxMHujVwa80yy0GGZ1FRa5ED52sgU6BGza2/aadW8TY8VjGie75W3U3AybSeOYOJSKnCgzIUg1NrVvxrYOOCimNGVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hn7nsySc; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-736ee709c11so4257660b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Apr 2025 22:55:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744091776; x=1744696576; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rqpz8NuFEKxlJYYhCortmvxtTD3Iriop0nreRrYWvRM=;
-        b=Ib+/mnpRx5NdwNFFY0L44LEkZtGMTnKaFnOAnGfh44l8dnNiUouwGORoSGO0z2AWaD
-         4XfA2hV2mquoD7HcSVyNdU/PuNsoKczMqgRGR5wTZcYOKlok5gT2YORC17mr65iXa9Xk
-         qDka4CQ/q//m7JuznE93XZx+iycjDuMPLFrhknebvQS76nq2UNnvdVisyemZOhsl3Wl+
-         gV20/ulkXwTW+mhj4Wb4K1WJgiQvJZGeLa04bKkC8YPz8Cu2QrlCCCIZTR7l7IOKN5QV
-         xCcP7vDzlPxIeDF6gGuhnVII3fc9wLQu4+QjnGW0F/nmwju4z3FeCUR4ENjezUgbBuiU
-         DCNA==
+        d=linaro.org; s=google; t=1744091708; x=1744696508; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5NB0nHoebXQJILemQcp89vOlxV4NeZBSLk4VRg3eTpU=;
+        b=Hn7nsyScn9UBTXghNDxMP3oaTlyb3ApH0kJG3zL+Wm4+uJfJBboOPfrG1uIcasuWXP
+         9J5+0hHiRqfPEcpVUdh9/8LV0Hipu4JHMUal4lJANhQAkl28lIb0LAxHum8nWqxlVLQ6
+         Tg/w4l5iIY92RI8NvZY4wFQyUje1jOEZqLwEh/PVXdJeq5zjn5GCHMsEWv3TxBwLIt7/
+         JUiUKF0EOvf3Gz5K2zqzIhVCxn3Qz3k0pI+8W6DZp0FJ49Z1lVbHRRwdyPJovqKoLNM0
+         o6z3EWwFOZMP4xJpUjnwN0s9ysnUUGfWaw8ga8HxwJfXTbJQdKDSqkyGbpvjo0Vh47QE
+         01TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744091776; x=1744696576;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Rqpz8NuFEKxlJYYhCortmvxtTD3Iriop0nreRrYWvRM=;
-        b=Wi65T3NJYFOtRK8phmbzgq1vSSrHrbyMVfmAOHTdc5Y5ZZk+W6c1HFlGyk86KJsGkr
-         gy/7fBYaxJPV2zVDbFTzSR0gcaSqlXmzostQ+hFz1jwpq2/azYA/wfSeWigdJjLUDT9u
-         sHywh1YhhNrrio7fff36FSV8ntYbt9a7ez13Ik4Cy6sGieYapN8LCKkN7vLe+wD/Nm8J
-         LclzfxYya03Dclshts9BFTmmPwcbktrHQORz0yyM5zFhwRIMp9BqmSgGrkhom4dXltnW
-         NyoIlvALr5QjRRsYDJZ+XpP77J0i4MO65ShrFlXAwIKmaG0cjUMZAK7olzA0UqY5SqQD
-         ppzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5ZxjuTLT6OFnIykf/pRNlLYyNfenHvr7k5xAMxqbDj/FKRlDXNqydgTxilLpLL6ynziIoP0a4ppmLziY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXsgOD8A9R2gZIHzhf/9AUBGNOOPiRlw7bzO36nrmrWHCfEDXZ
-	gsItnasBU1GHcOAmazRfrNXvPAEKaK13izwaNah0iKFPkNw4Kv7l
-X-Gm-Gg: ASbGnct3/vy650amlfxqWivLTS/V6wz1Q6QGPKBcUueDZ28CSya2JTPX4/jjjk2xU//
-	LhT3DBi49CVbsNCOQwi23gFPE/hZ7AwzNGIC6GOHRH/OLwHmv7w8+I/gQVqFwKEkqjPoLZD4gr9
-	GQ+1Qzd6EtGXFUOhgO4hGUaUECrVqwcH3oGE3FYmPyod5gp7H1QJRz/YThL1vSeClhABDpCuQwm
-	ghbsveklL9ZdL7ojjZryDYRP2uZ4/kbhdMzy1OrHHmuACcdydMASJNLXuAy2kLGYKi+CT+SUodx
-	4DSr68RYVnDIsyW2ubbOhtw1rx9NeqEOz2zGsW3Z7lENi3FmY0W6o1rBRknNuY4i/l48YOl8lDj
-	qaSOAG19xsXUIUjTi
-X-Google-Smtp-Source: AGHT+IE05u9t9NFEBw+rXVTuN3JQshXllOgy7pnk00Je9nTx82e8AXGF/YtAVc4GIGc7M22Lq5mp8A==
-X-Received: by 2002:a17:903:1b0c:b0:223:5a6e:b16 with SMTP id d9443c01a7336-22a8a84ae50mr231161415ad.5.1744091775946;
-        Mon, 07 Apr 2025 22:56:15 -0700 (PDT)
-Received: from hcdev-d520mt2.. (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2297877656bsm91127335ad.246.2025.04.07.22.56.14
+        d=1e100.net; s=20230601; t=1744091708; x=1744696508;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5NB0nHoebXQJILemQcp89vOlxV4NeZBSLk4VRg3eTpU=;
+        b=jJM3AJCd67GLhuR4jpRqtz6RKgxeHdSdEIb42djvdNdBf3bn/se3UcrPbGkMhirn3z
+         LKZO1NQpvsMEvc5Hj3chcV2KLoITQ7byuuZ4g45hhCeC1fEqzDLa/640I1zgYV8JWsH3
+         40qxJDsjXJsaQrOYb1LJK33N7Tmcr9AEmnJPD9CdZDkYqhEyNAL8gabcv6Fql2KkbLkl
+         CMDZ9qG0iHeJwV87uJUlyMxS5fzj7oHsJ85kG4SWPt5MkToYVhAPUcBdZp0wCwNhkwn/
+         pxiB+rZxUGbadrmw00uQ2/MxSlUTES6XDH0TKhBNwLXLxpDAEPA1QLtwaIrHRvcoFbic
+         1A9A==
+X-Forwarded-Encrypted: i=1; AJvYcCU/U0IPhOKVs6bCeSGpUG0Zs97zocT4fYvHaTiX3qIQwIW67FUv+eN7i09BGoF812Xo+PbZ6wEQEhdpOMc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrfHm0oj0R6Nq3ttZ6QGLACqAnIG/uFw1hXvfA7lrjenGZ88Iw
+	aWuNZTZjgfRGBUSIqvIdNUtz4hHNf5OottxO4M9PQjJHJbAebY+8G4cPFG60xjVE9oVb116zamn
+	3
+X-Gm-Gg: ASbGnctq0tF6ULulWqYYLlJ8J16jRSaN1KhLesRLvKmN7BraiDOQZ5GOv6fm52mWCM3
+	thX1w1Cx/LDvh+UVZySv6pV8enGD7fqsPHV8fRzdakSqjFHx7OH0x55jDpen3TJ52pOGzZ5+NGr
+	n882rg5YVKsO9crYvVnOR3Aod4JNTB9YfnqKrTLkLummNNQ+IuiiHHK1DEdTBJQA+/7Z97xGiDM
+	kdAtqjNx6nE4BYdvBnSZpAfQDaRAcWZkL5gDZIU3TwBe/ro+G8IH1Cx5VW51CvbejjUwiv1ug3t
+	n3eub7gfzlJkyZg0UH4DC2VCHd2x5feFw+VSdZ+P8hyEvQ==
+X-Google-Smtp-Source: AGHT+IH8/8MnEU5W15/zDVbhBHdpldSTqXJSklAXnGqc4WwlEqny15brb73QCGi2KHBhsKrotrm3cw==
+X-Received: by 2002:a05:6a21:6f01:b0:1f5:7353:c303 with SMTP id adf61e73a8af0-20107efef49mr21361016637.11.1744091707768;
+        Mon, 07 Apr 2025 22:55:07 -0700 (PDT)
+Received: from localhost ([122.172.83.32])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739d9ea0985sm9951195b3a.104.2025.04.07.22.55.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 22:56:15 -0700 (PDT)
-From: Michael Chang <zhang971090220@gmail.com>
-To: kwliu@nuvoton.com,
-	kflin@nuvoton.com,
-	mchehab@kernel.org,
-	zhang971090220@gmail.com
-Cc: linux-media@vger.kernel.org,
-	openbmc@lists.ozlabs.org,
+        Mon, 07 Apr 2025 22:55:07 -0700 (PDT)
+Date: Tue, 8 Apr 2025 11:25:05 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Henry Martin <bsdhenrymartin@gmail.com>, cristian.marussi@arm.com,
+	rafael@kernel.org, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RESEND] media: nuvoton: npcm-video: Prevent returning unsupported resolutions
-Date: Tue,  8 Apr 2025 13:54:54 +0800
-Message-Id: <20250408055454.3421083-1-zhang971090220@gmail.com>
-X-Mailer: git-send-email 2.34.1
+Subject: Re: [PATCH v1] cpufreq: scmi: Fix null-ptr-deref in
+ scmi_cpufreq_get_rate()
+Message-ID: <20250408055505.oked4a3drsym46wz@vireshk-i7>
+References: <20250405055447.73925-1-bsdhenrymartin@gmail.com>
+ <20250407-wondrous-turtle-of-foundation-e92250@sudeepholla>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250407-wondrous-turtle-of-foundation-e92250@sudeepholla>
 
-To restrict the returned resolution due to Nuvoton SoC hardware
-limitations.
+On 07-04-25, 12:30, Sudeep Holla wrote:
+> On Sat, Apr 05, 2025 at 01:54:47PM +0800, Henry Martin wrote:
+> > cpufreq_cpu_get_raw() can return NULL when the target CPU is not present
+> > in the policy->cpus mask. scmi_cpufreq_get_rate() does not check for
+> > this case, which results in a NULL pointer dereference.
+> > 
+> > Add NULL check after cpufreq_cpu_get_raw() to prevent this issue.
+> > 
+> > Fixes: 99d6bdf33877 ("cpufreq: add support for CPU DVFS based on SCMI message protocol")
+> > Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
+> > ---
+> >  drivers/cpufreq/scmi-cpufreq.c | 10 ++++++++--
+> >  1 file changed, 8 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
+> > index c310aeebc8f3..c735f39245bf 100644
+> > --- a/drivers/cpufreq/scmi-cpufreq.c
+> > +++ b/drivers/cpufreq/scmi-cpufreq.c
+> > @@ -37,11 +37,17 @@ static struct cpufreq_driver scmi_cpufreq_driver;
+> >  
+> >  static unsigned int scmi_cpufreq_get_rate(unsigned int cpu)
+> >  {
+> > -	struct cpufreq_policy *policy = cpufreq_cpu_get_raw(cpu);
+> > -	struct scmi_data *priv = policy->driver_data;
+> > +	struct cpufreq_policy *policy;
+> > +	struct scmi_data *priv;
+> >  	unsigned long rate;
+> >  	int ret;
+> >  
+> > +	policy = cpufreq_cpu_get_raw(cpu);
+> > +	if (!policy)
+> 
+> How about `if (unlikely(!policy))` instead ?
 
-Signed-off-by: Michael Chang <zhang971090220@gmail.com>
----
- drivers/media/platform/nuvoton/npcm-video.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Henry, this change applies to all the patches you have sent. Also please send
+them as a single series, as they are related changes.
 
-diff --git a/drivers/media/platform/nuvoton/npcm-video.c b/drivers/media/platform/nuvoton/npcm-video.c
-index 234fdec04f74..8d6d51a674a3 100644
---- a/drivers/media/platform/nuvoton/npcm-video.c
-+++ b/drivers/media/platform/nuvoton/npcm-video.c
-@@ -578,7 +578,7 @@ static unsigned int npcm_video_hres(struct npcm_video *video)
- 	regmap_read(gfxi, HVCNTL, &hvcntl);
- 	apb_hor_res = (((hvcnth & HVCNTH_MASK) << 8) + (hvcntl & HVCNTL_MASK) + 1);
- 
--	return apb_hor_res;
-+	return (apb_hor_res > MAX_WIDTH) ? MAX_WIDTH : apb_hor_res;
- }
- 
- static unsigned int npcm_video_vres(struct npcm_video *video)
-@@ -591,7 +591,7 @@ static unsigned int npcm_video_vres(struct npcm_video *video)
- 
- 	apb_ver_res = (((vvcnth & VVCNTH_MASK) << 8) + (vvcntl & VVCNTL_MASK));
- 
--	return apb_ver_res;
-+	return (apb_ver_res > MAX_HEIGHT) ? MAX_HEIGHT : apb_ver_res;
- }
- 
- static int npcm_video_capres(struct npcm_video *video, unsigned int hor_res,
 -- 
-2.34.1
-
+viresh
 
