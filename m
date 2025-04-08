@@ -1,160 +1,162 @@
-Return-Path: <linux-kernel+bounces-593706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 507A8A7FCA5
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:46:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A8DA7FCE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4F051889AC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:42:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C0331893772
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 10:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227CC267B1D;
-	Tue,  8 Apr 2025 10:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C712268694;
+	Tue,  8 Apr 2025 10:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lSgif8ro"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O1L5VWX0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5742266EFA;
-	Tue,  8 Apr 2025 10:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB43268689;
+	Tue,  8 Apr 2025 10:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744108938; cv=none; b=iugQwUPjBchb+t0i6PmmX4VvSAQuZajxJ2WlaR0PRnCtDgRQjCqMRxfvYBSOK3LujfJPCTfryGqfqJqU5ElXqjTDNPDr7fUc1NvbyBJJQAPGWoCqAjrxOJdjluTHDOG10zx9aKSKo+4iiavTDN5FTEko2D8bieTgDDEQVIypg5o=
+	t=1744109014; cv=none; b=kQb0qsdnWiykPKf6u4It88ALSbQpVwlHQmT+4RMaCqHPg31t22rVYtpeC1p5jLMCgTe92gADC1zg2jV985DZALmF8QHvWawiKXdfKaj7hzAwCt45vLylx8eeZpVxBKjqazThObVhKkBYCZciIz+DnNKzVMYajJkX8Of/O1neUG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744108938; c=relaxed/simple;
-	bh=KF6FPa5ukU03kNzrVnuzq3Y1dL14x0ThIwInftlnjlw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YHPJ7P01l0cABAKShTxV100gD2lfNpX/karbT8NrGpXOV/RrJHq3JUiHoMq/FTvwTis6mS8APE0HpHPtRjHbRrzRt9bc6FMmWl9Y69jMEhXQhsgqlrfOVJHxdjMfRnK+rxfAPl+CGWRFDd58o49nX06iVNN+eze9PPbPvP7EOVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lSgif8ro; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30bf1d48843so47156721fa.2;
-        Tue, 08 Apr 2025 03:42:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744108934; x=1744713734; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+CyhRhd2dM84GfelfuAF9y0FVmQr9y2b3jxxIDrknhc=;
-        b=lSgif8ro4dSmJPl6F2RepaTAfTQ1rb3jC9VwlTYNO4wE9AeUxAEJVGiCA9InOOPP/M
-         OOXO+rnt32yWeRK8WGmjEhG5fJF1brlfhDq6UxCQE1U7Ft3nU3go5lTwxx/yqytyXQM+
-         crenm8e9wmi4d5fNmEH5qXIaeg7ow4zp5YhYiiKySkIHjZMMmSjjDOgDFB1zcI3fRrta
-         9jTJH/GueDLQCc4NodIv9qKMDWJ+CUytGIM8ioFaUcmyoWC9Y0RoZteOy00Fl3nnvfTJ
-         +8ZIs89LReaGjYBn6UyVTEE0p7paD3aFFZ1jDcrk1YL8BPT6DmQpdYM7IfJMOhXQWNWz
-         ekYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744108934; x=1744713734;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+CyhRhd2dM84GfelfuAF9y0FVmQr9y2b3jxxIDrknhc=;
-        b=ZA/QDQRH+CHygUPsxV9wWrq89jd98+9o4B1G/vUH9fb/2C6mGmnGbSBIAoz/p25V5j
-         Gxic+0jyK9R2WLvtCnpbDhUxpAvUkNbrhguqw3clbuXE/w3Dql8UdGYBDpfl/vcgUdpc
-         W4wTw3kqqyD/HFMhIBLjObZdVlvqM9QiaR1by2leKU+tZOJvPZykXL+HjkNjGs3zLHfA
-         wq1YjF6suqgjdcCHDdhW3HcMdN3iCIXtkUfh1JVbVOpYzYpGsH8h4QJissAs/FJuzxfC
-         9wJclxRlDCeOdReFQZMTuHRt2b8F1K31ZT1R2vlT7+nmmEZ+r2JVu/SedYH1QL5Z6rtA
-         9bCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxHmfjTj9eOkykl1LOZBLZLIryKX3t/F8U+iizdxX+g4iGJwY4XnGUO5tvJgtE3AYw0FVCSx+UKXIc8gY=@vger.kernel.org, AJvYcCWzdu6Vpdf7kmv/GXIoWG5boEXIKYBVTmQEwa36lwVFk16mkfb7FT49kTnxUsdOdeTo6gyTz6akVCaAfr4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSSQ/DufGZuNA6Y4Y1EwCII0cWAwfIElJm7HxWMyd3O0lyZLw5
-	xhdGJIv93E6KVDCWuSMx0xqXzJCYMqgr56tGMG9JF/+FI6Q46lOD
-X-Gm-Gg: ASbGncslfWsh6WY0ubzz3LAh+Uxjmgak3Cfj2bJ8GeLYWTuJDMJmhirHkxNYiz7SJCA
-	a79gTYRbHhf2L5OkFH5qrX3c/EXxVTvzR5bYMQhtJMxVG8f1ChhvuB65RwWRwajnbx4IZtDfvjF
-	+lI4xV1TZO94LuCRUmx04v7/RQ8tFtiedu5WRj7hYAqZHyXho2A5OCS26vhFGn0Pi7qljpTC/d7
-	Nzd1QHZLQmK7JxTYhhtSr66LeeE9bI7cxPySx6oHEWcluWPArpJTv/rU25yigouPRVKO7MFPphW
-	Y3jSHTwXfw6xIQOo2DKzCgXqToiqWhPVqYWippk6YAQNhoAt6GWVTT0PAQ==
-X-Google-Smtp-Source: AGHT+IGb39lKVdBVUtZAlz6Az0P+SuKCnWMid+raIpiA+LlOh9DSRMzwwyahUsewbQ0j+0jav3yChQ==
-X-Received: by 2002:a05:651c:30d6:b0:308:f0c9:c4cf with SMTP id 38308e7fff4ca-30f0c085ee6mr60112641fa.33.1744108933411;
-        Tue, 08 Apr 2025 03:42:13 -0700 (PDT)
-Received: from [172.16.183.207] ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30f031246a1sm19099301fa.1.2025.04.08.03.42.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Apr 2025 03:42:12 -0700 (PDT)
-Message-ID: <6f6a0ade-09fd-49eb-a8ae-ac8849b8ce92@gmail.com>
-Date: Tue, 8 Apr 2025 13:42:12 +0300
+	s=arc-20240116; t=1744109014; c=relaxed/simple;
+	bh=ER7pJyP8cyU1upRaLZaLV1tqsLro3GCekAJ4FKS68K0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JhchCyzCGOO79sX3bpTzHSJWeOuNWdrC6lvcqS3t0A6T6OZm0oAog0hnB23msCi+Hi5CpXFh/TNwFsd1XmZw/9vKHQGuKc1j859k3eacOS4XfMAt5m35X9WRu17Sp5P8srZRQGNaQuHqUe8LyUhZn5CCGQ4ayAaAEDLjlM1Y6kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O1L5VWX0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5382GLEa027665;
+	Tue, 8 Apr 2025 10:43:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=yDo0BBejvNuxYpbG3DGDEoFAOTLUWqtb4CF
+	5lZ6osm0=; b=O1L5VWX0xC15YA4bukYH9MvRA+zu3Utzyt0e8nny/kT+Fs7YNSr
+	0AefZg2U9Hurw1say09xbl61reldONFJvjcUrRlEDi+CpP0nFd2ovNZNIn5pJu2J
+	j0dfDFB/UfK/v5kXh31zuOWz5QPEvTOMF+spZ+zk6yjs/CwDcBqxIPptm/wS8J1h
+	HqL2JVVQtUdPPWR6lqEaFPr3jDKNl5qFbfNOfqxdQpCKD73abJGShihRRW1O452m
+	5qy9vAGCrvNV1pqgk6dg5S6NDRsD+unexD9YyghLpPR1YwtadU/Vip34/C+C3r2L
+	V8PUJxJDOyHD4q+loYTT+EaOqFI+XgUI3pA==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twcyyfu9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Apr 2025 10:43:28 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 538AhPul002674;
+	Tue, 8 Apr 2025 10:43:25 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 45ue7fqhp1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Apr 2025 10:43:24 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 538AhOlE002663;
+	Tue, 8 Apr 2025 10:43:24 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-schowdhu-hyd.qualcomm.com [10.213.97.56])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 538AhO2X002661
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 08 Apr 2025 10:43:24 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 2365959)
+	id D469C589; Tue,  8 Apr 2025 16:13:23 +0530 (+0530)
+From: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Subject: [PATCH v5] remoteproc: Add device awake calls in rproc boot and shutdown path
+Date: Tue,  8 Apr 2025 16:13:17 +0530
+Message-Id: <20250408104317.926833-1-quic_schowdhu@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: i2c: thp7312: use fwnode_for_each_child_node()
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Paul Elder <paul.elder@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <Z90qM33DvkTMGg_x@mva-rohm>
- <20250321104100.GC25483@pendragon.ideasonboard.com>
- <Z_Ti7aQK2_OlrUee@kekkonen.localdomain>
- <20250408101252.GB31475@pendragon.ideasonboard.com>
- <3d8546b9-92bd-40da-a61a-4534ba7779db@gmail.com>
- <Z_T8N8aHR-2OzHAO@kekkonen.localdomain>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <Z_T8N8aHR-2OzHAO@kekkonen.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 4iLr_MsrZkLDe6vUdxaXndwAVg8jJS6I
+X-Authority-Analysis: v=2.4 cv=Q4vS452a c=1 sm=1 tr=0 ts=67f4fdd0 cx=c_pps a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=XxzzxGOHeBMF7Ba7Dy4A:9 a=mNSaMJALY7kiOGNU:21
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 4iLr_MsrZkLDe6vUdxaXndwAVg8jJS6I
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-08_03,2025-04-08_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 phishscore=0
+ bulkscore=0 adultscore=0 malwarescore=0 mlxscore=0 suspectscore=0
+ mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504080076
 
-On 08/04/2025 13:36, Sakari Ailus wrote:
-> Hei Laurent, Matti,
-> 
-> On Tue, Apr 08, 2025 at 01:26:42PM +0300, Matti Vaittinen wrote:
->> On 08/04/2025 13:12, Laurent Pinchart wrote:
->>> Hi Sakari,
->>>
->>> On Tue, Apr 08, 2025 at 08:48:45AM +0000, Sakari Ailus wrote:
->>>> On Fri, Mar 21, 2025 at 12:41:00PM +0200, Laurent Pinchart wrote:
->>>>> On Fri, Mar 21, 2025 at 10:58:27AM +0200, Matti Vaittinen wrote:
->>>>>> When fwnode_for_each_available_child_node() is used on the device-tree
->>>>>> backed systems, it renders to same operation as the
->>>>>> fwnode_for_each_child_node(), because the fwnode_for_each_child_node()
->>>>>> does only iterate through those device-tree nodes which are available.
->>>>>
->>>>> This makes me wonder why the OF backend implements
->>>>> fwnode_for_each_child_node() as fwnode_for_each_available_child_node().
->>>>> Is that on purpose, or is it a bug ?
->>>>
->>>> I discussed this with Rafael and he didn't recall why the original
->>>> implementation was like that. The general direction later on has been not
->>>> to present unavailable nodes over the fwnode interface.
->>>>
->>>> So I'd say:
->>>>
->>>> Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
->>>>
->>>> We should also change the documentation of the fwnode API accordingly.
->>>
->>> Does that also mean that the fwnode_for_each_available_child_node()
->>> function will be dropped ? It's used by few drivers (5 in addition to
->>> the thp7312 driver, plus 3 call sites in drivers/base/core.c), so a
->>> patch series to drop it should be easy.
->>>
->>
->> I assume the fwnode_for_each_available_child_node() still makes sense for
->> ACPI backed users, no?
-> 
-> Not really (see my earlier explanation in
-> <Z9mQPJwnKAkPHriT@kekkonen.localdomain>).
+Add device awake calls in case of rproc boot and rproc shutdown path.
+Currently, device awake call is only present in the recovery path
+of remoteproc. If an user stops and starts rproc by using the sysfs
+interface, then on pm suspension the firmware fails to load as the
+request_firmware call under adsp_load relies on usermodehelper 
+process which gets freezed on pm suspension. Add device awake calls 
+to fix this.
 
-I capture that the _named_ available nodes don't have value as ACPI 
-names aren't really what is expected by the _named_ callers. What I 
-didn't pick is that the fwnode_for_each_available_child_node() - which 
-should iterate all available child nodes ignoring the name - wouldn't be 
-useful.
+Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicinc.com>
+Reviewed-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+---
+Changes in v5
 
-> I think all the *available* stuff
-> should be removed from include/linux/property.h, apart from
-> fwnode_device_is_availble(), which should be turned to work on struct
-> device to signal its availability for device nodes only.
+*Added more details to commit description
 
-I am not saying I have any understanding of the uses of the 
-'unavailable' nodes. As such I am not arguing over what you say here :)
+Changes in v4
 
-Yours,
-	-- Matti
+*Remove stability from mailing list
+*Remove the extra tab in v3
+*Change the commit description
+
+ drivers/remoteproc/remoteproc_core.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index c2cf0d277729..5d6c4e694b4c 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1917,6 +1917,7 @@ int rproc_boot(struct rproc *rproc)
+ 		return -EINVAL;
+ 	}
+ 
++	pm_stay_awake(rproc->dev.parent);
+ 	dev = &rproc->dev;
+ 
+ 	ret = mutex_lock_interruptible(&rproc->lock);
+@@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
+ 		atomic_dec(&rproc->power);
+ unlock_mutex:
+ 	mutex_unlock(&rproc->lock);
++	pm_relax(rproc->dev.parent);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(rproc_boot);
+@@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
+ 	struct device *dev = &rproc->dev;
+ 	int ret = 0;
+ 
++	pm_stay_awake(rproc->dev.parent);
+ 	ret = mutex_lock_interruptible(&rproc->lock);
+ 	if (ret) {
+ 		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+@@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
+ 	rproc->table_ptr = NULL;
+ out:
+ 	mutex_unlock(&rproc->lock);
++	pm_relax(rproc->dev.parent);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(rproc_shutdown);
+-- 
+2.34.1
 
 
