@@ -1,198 +1,113 @@
-Return-Path: <linux-kernel+bounces-593877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-593875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6012A8067E
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:28:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7EF8A80633
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 14:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31D6E4A6AB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:20:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 560B1189B48D
+	for <lists+linux-kernel@lfdr.de>; Tue,  8 Apr 2025 12:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790D4224239;
-	Tue,  8 Apr 2025 12:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DmAkTUsQ"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55921269D15;
+	Tue,  8 Apr 2025 12:17:24 +0000 (UTC)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17CB26AA9C
-	for <linux-kernel@vger.kernel.org>; Tue,  8 Apr 2025 12:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396A5263F4D;
+	Tue,  8 Apr 2025 12:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744114667; cv=none; b=PqUGS8uu/y9jsFHdGONuTiwIKspUCCFfdEGnZo/DwcBgjB61a8nWvbZrrF/PCcKV5539ryvAW7bCDom6HuykhQ19oIq0rnpxxl6GypOrc635/WC1EZFUCh7L08NeF3Iq2efLKFEotKymh/tQ5mIfzS+dckO2gQBNgJPfEuaJNyw=
+	t=1744114643; cv=none; b=ia0fxTyylg/7nLIFHl4fHR3HsS1FToHFP1RIguM3ZPRO98aj4SD9r87FtyfjrnJ/nF9W/mRRizUSd6y9vppgcYa8O1c840GRHCmwgOVYwZjG1ZNMCySxd4wdZSKUyDEaO5NOd/cC4H20Qq9Q0Y24xxLA6k3ctkCkxJzom/7q4z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744114667; c=relaxed/simple;
-	bh=zrTv3Igv/b40jizFm6EQbXgK0TIclob8WTp61FIgQrU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SQhjYgz08s/6NJTaq9ziL0piaBWGRblhPtTDWyipLKCJEKiebqX1/ZHsRkYyaDc9kYbqgTOKSNvmLX7j0iP5Y2Nz8rDvWGMkYF9SgjI18JjHfvuNFVHJOP+MJxzdzPP0m8GCY43uPKUFoL9dOaIz0mahFzJNZaBQt7UzA7OqFtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DmAkTUsQ; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-7023843e467so52177437b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Apr 2025 05:17:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744114663; x=1744719463; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XgQfANebtdqnI5c6U+NPo92x9wLAySpUrYEpuKhqRpM=;
-        b=DmAkTUsQJnJNTUy70pA1EP+YbwSCQFwvpsh5BzKyy2I5xXJOwKPp/MjuyD7Iyvr6wr
-         5lUThj3lRMnhqedjtfRP8J7zDGx0uSK+/VQeMcv8WYxuNchnWCouB6Y9hd1MaJ5j+t5v
-         r+ghHoPGlhagvFh9cQfVJgJHdXNAO4YVRyK61MBQ2x557tIEYYN094pzYGp77sdkROxK
-         EXd1sAvNMiWdvAPUqeqnz+Bhct3FNTbp0bsbtJ7Px8MW+yHMOyEFGSVmdWphUHs58gBq
-         Xhkt+pVwRR9zBHyq0aSEVbDq88LFxyGJDcXxm4MUpMPkXY+cAj1P4wuUVIO5AMpLVVAn
-         4X+Q==
+	s=arc-20240116; t=1744114643; c=relaxed/simple;
+	bh=U6p8SdK5Of739muSFYwDwMYUjP02LQgT2LP4ul25gsM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CUIQ8t15H4bokz9MGwDefp2YjrshwS1DgbGzSFmN8dqmqtuoSMOOd9To5A/6NyF5an8LRPsPg0fbslsCdEFP46vuwT071/Q7rKsYXoU/BP1ymaBENrXKmfsqU3/D7xVdcXy+uymwCEX639vb2GuCLWRenny3cdccugwiaRWY5kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e8be1c6ff8so10178635a12.1;
+        Tue, 08 Apr 2025 05:17:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744114663; x=1744719463;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XgQfANebtdqnI5c6U+NPo92x9wLAySpUrYEpuKhqRpM=;
-        b=C2svIQfh8skrDujMewn7M2ZdMXX7UXBduGlThWAJFpIWyUTY+UCxgsXhXNAHmr5dZW
-         o3QO0QK/eB2XYerT/vsMWFnVpd4HtYL8jU5MWtdXQM3LUYokmaOvzlDxAmUyZJFEzlC7
-         7thZVfjvCnOS7SYYhASMuBv/1r5tKR7uAeopWgK3HIBHKyb6ijBGDyc2llDDXMbtuhvg
-         68xDjiEvyazVNy2Tr2pcuIAR3SzoqWwAjUM9lPLVfyCQhnEY08vcsv8/q6NwJVq3VOLj
-         +/NZQPzxm2Wd6b9bbk7plhS/g1CsUjUfhdjeAqmTHDG+oUArj57+d7izqp+3OkBksEia
-         1jdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUX4CkFofHmxJ7a7O7IIAPNSjGAlqwyz/zLXXXhclfn9G/Koh2ZHDgyt5VO1WJ848Y30PdVlzWnc2I84yU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeQIt02xZeAEd9iBXxtDLznLKNHMYQZzMFRmsbwpHJFsdLe3st
-	8w17tac2Dywa2BfCb4XRz3A5UaLy8Hg54GAN6RkIMxc5524QwP2K01MEQePaHdhsxAVBOXIWFjH
-	hdXDjL1QbIfCLT2mzS22SMkhACvhzYrJrEce/8w==
-X-Gm-Gg: ASbGncsf5y5FEAJaeBbor2tsXQCB7GPRHH0v+Cf1XEOCBxrOU+P0xejqWByB/dSxyNm
-	8KMMOdkURS4Te+Hd4FmRNyX+uIKRx8YTf1Nf9weFR0y/182fHw0fQtteBOCoiV2LaHObfprxtBW
-	S/l75pB7srOJdHjb8hPC9FpC6hdRg=
-X-Google-Smtp-Source: AGHT+IE9ys53OzSUdrwDVzPrCpJ3j0rVw9UiRXdXpPHOiJneCGTZtJTMxzg8Xq2rdR9GYtx0ZTNP05CFJHjGpzcayc8=
-X-Received: by 2002:a05:690c:67c4:b0:6ff:28b2:50e1 with SMTP id
- 00721157ae682-703e14ffd3dmr297170407b3.2.1744114663553; Tue, 08 Apr 2025
- 05:17:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744114640; x=1744719440;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VNsydl7md1y4Nb0tCrKFrlIHVPhyzWyrPJ9rFWgBSaE=;
+        b=e4RHmaWGBdZId53y+mEfR3ubkZ25SXI5ZkOxfRBPTgsQA/bXpC4ouMCBJftHZ451tg
+         fCMfy3Td0FievRSKZV3PYXphJ5OHxWZyJ9GgTlpipJKXPCsY8ZTYgVq5guflQbnq3G02
+         orFG067hwTNpXp8dtEIw+ILedm21SUzFyMyCEhFly1DZjXlRW4ZfPw4SA3KDg/aEWHQi
+         2jIe5JROlX+Ou+rv1M3pebGnHrcSKPO+CjPF0UBMAAHwnzZ+5T1VHQH1eyBRqUQWRSwE
+         nPu2paJY/BTbTVVECVoFqh+LrGuQaVziUG4lByWeQsZhs2dRSO7TCNbjXv74EBqEF5wX
+         Rx8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUqv26s8u/zgF+nIONXNFY1ga3j78Klpnkm2NFjEvpDi8qqiegQrU76FaD8qL16stWr7WLTuAnBDe5z/vs=@vger.kernel.org, AJvYcCVgdaPCNv/z6UnIoEiDqKjrHRaXdoj40Eja6vRuVHot5mt+FoV/ryHEGdnQkUvYK97w2cFhQhWh@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi9tAwTvhlhGfMovml99Ka1i5J+RVIfOorB9R7muixZt6nMWq3
+	3I/70XYn8OdcjX1qSTvgu+tLh2X9tK5FpTQzT1pwMsGY9c8mbAUU
+X-Gm-Gg: ASbGncteiJNQoEmnGfcw34zaKbWZlgJafn8av/3LoOSk+yYOYs7fioPJv6WV+7b+ibR
+	tMbReOMUaTo9bJijDhZkGYuzf+00pRskGvtXC8OJ4ADu+L5gERhLQQLht70GPkNzWbDrr8l3NHq
+	MIIIU/jW1RuvRXLu6+QpJlK/XifWX+WkNJSmCACUBL7VmML8QkZW/rqWr25nWyX6pOcOrIhFZZq
+	nu0BPB/W14yj78nZtCUgRsOJu26WV8qH6K0jUCE5ZO1XAijP5V1pUX6TSwsrZej4L04Z4hpb7Pg
+	rDIyEruqnAY/g89QEM2WBqtkPGUdugMUVAxd
+X-Google-Smtp-Source: AGHT+IF2XGoy9tYFECepepWqPifMJJJeJD1I4oP3E7mGhMUrh8bLpbtZafML/bqsSoyCkRsrJnRzSA==
+X-Received: by 2002:a05:6402:13d3:b0:5e6:e68c:9d66 with SMTP id 4fb4d7f45d1cf-5f0b5db9cd7mr14121997a12.8.1744114640012;
+        Tue, 08 Apr 2025 05:17:20 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:71::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f087f0a0f3sm8454077a12.43.2025.04.08.05.17.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 05:17:19 -0700 (PDT)
+Date: Tue, 8 Apr 2025 05:17:16 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org, christophe.jaillet@wanadoo.fr,
+	kernel-team@meta.com, stable@vger.kernel.org,
+	Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH v2] sched_ext: Use kvzalloc for large exit_dump allocation
+Message-ID: <Z/UTzPoI7+LElhEE@gmail.com>
+References: <20250408-scx-v2-1-1979fc040903@debian.org>
+ <Z_UI2AHtkIGS4bZR@gpd3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250403-dt-cpu-schema-v1-0-076be7171a85@kernel.org>
- <20250403-dt-cpu-schema-v1-18-076be7171a85@kernel.org> <CAPDyKFrFRrPVJ_t0JrAE1VTbS02hwr=L-EHtqb7CQiWzB1MnQg@mail.gmail.com>
- <CAL_JsqKygxhcQ=PZW84sfiW7BVXKF839vfNyxS9GwAXuqmN=8g@mail.gmail.com>
- <CAPDyKFoHQdHED0hHUR7VKin0XG6SVnYXuvPjB=Xe+1o2hpiPJA@mail.gmail.com> <CAL_Jsq+Oa7MvVO7Y-RG+qrY2e86B_q0XGq1LWoy5Mq+G72ZHzQ@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+Oa7MvVO7Y-RG+qrY2e86B_q0XGq1LWoy5Mq+G72ZHzQ@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 8 Apr 2025 14:17:07 +0200
-X-Gm-Features: ATxdqUE7frfhfuxoKUlf3DinAq4W783EiniruawsYcgTKF9-ms73Ag05S_dZWTY
-Message-ID: <CAPDyKFoKdj-Y4-dCwYRG7TLdS1HcSH=i9EN-b9Cpyo50kMmC5Q@mail.gmail.com>
-Subject: Re: [PATCH 18/19] dt-bindings: arm/cpus: Add power-domains constraints
-To: Rob Herring <robh@kernel.org>
-Cc: Stephan Gerhold <stephan.gerhold@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Viresh Kumar <vireshk@kernel.org>, 
-	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, zhouyanjie@wanyeetech.com, 
-	Conor Dooley <conor@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
-	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Heiko Stuebner <heiko@sntech.de>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-mips@vger.kernel.org, 
-	imx@lists.linux.dev, linux-rockchip@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_UI2AHtkIGS4bZR@gpd3>
 
-+ Stephan Gerhold
+Hello Andrea,
 
-On Mon, 7 Apr 2025 at 18:50, Rob Herring <robh@kernel.org> wrote:
->
-> On Mon, Apr 7, 2025 at 11:23=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.o=
-rg> wrote:
-> >
-> > On Fri, 4 Apr 2025 at 15:09, Rob Herring <robh@kernel.org> wrote:
-> > >
-> > > On Fri, Apr 4, 2025 at 5:37=E2=80=AFAM Ulf Hansson <ulf.hansson@linar=
-o.org> wrote:
-> > > >
-> > > > On Fri, 4 Apr 2025 at 05:06, Rob Herring (Arm) <robh@kernel.org> wr=
-ote:
-> > > > >
-> > > > > The "power-domains" and "power-domains-names" properties are miss=
-ing any
-> > > > > constraints. Add the constraints and drop the generic description=
-s.
-> > > > >
-> > > > > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> > > > > ---
-> > > > >  Documentation/devicetree/bindings/arm/cpus.yaml | 8 ++------
-> > > > >  1 file changed, 2 insertions(+), 6 deletions(-)
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Do=
-cumentation/devicetree/bindings/arm/cpus.yaml
-> > > > > index 6f74ebfd38df..5bd5822db8af 100644
-> > > > > --- a/Documentation/devicetree/bindings/arm/cpus.yaml
-> > > > > +++ b/Documentation/devicetree/bindings/arm/cpus.yaml
-> > > > > @@ -313,19 +313,15 @@ properties:
-> > > > >      maxItems: 1
-> > > > >
-> > > > >    power-domains:
-> > > > > -    description:
-> > > > > -      List of phandles and PM domain specifiers, as defined by b=
-indings of the
-> > > > > -      PM domain provider (see also ../power_domain.txt).
-> > > > > +    maxItems: 1
-> > > >
-> > > > There are more than one in some cases. The most is probably three, =
-I think.
-> > >
-> > > Unless I missed it, testing says otherwise. What would the names be i=
-f
-> > > more than 1 entry?
-> >
-> > "psci", "perf", "cpr", etc
-> >
-> > The "psci" is always for CPU power management, the other is for CPU
-> > performance scaling (which may be more than one power-domain in some
-> > cases).
-> >
-> > I would suggest changing this to "maxItems: 3". That should be
-> > sufficient I think.
->
-> Again, my testing says 1 is enough. So where is a .dts file with 3 or 2?
+On Tue, Apr 08, 2025 at 01:30:32PM +0200, Andrea Righi wrote:
+> Hi Breno,
+> 
+> I already acked even the buggy version, so this one looks good. :)
+> 
+> On Tue, Apr 08, 2025 at 04:09:02AM -0700, Breno Leitao wrote:
+> > Replace kzalloc with kvzalloc for the exit_dump buffer allocation, which
+> > can require large contiguous memory (up to order=9) depending on the
+> 
+> BTW, from where this order=9 is coming from? exit_dump_len is 32K by
+> default, but a BPF scheduler can arbitrarily set it to any value via
+> ops->exit_dump_len, so it could be even bigger than an order 9 allocation.
 
-Right! I assume those with 3 or 2 just haven't made it upstream yet,
-but sure they are cases. If you prefer to update the binding later,
-that's fine by me, but I just wanted to avoid unnecessary churns for
-you.
+You are absolutely correct, this allocation could be of any size.
 
-For example, msm8916 seems to be one case that already uses "psci",
-but requires an additional two power-domains for performance-scaling.
-At least according to earlier discussions [1] with Stephan Gerhold.
+I've got this problem because I was monitoring the Meta fleet, and saw
+a bunch of allocation failures and decided to investigate. In this case
+specifically, the users were using order=9 (512 pages), but, again, this
+could be even bigger.
 
-Moreover, it's perfectly fine to also describe CPU's idle-states by
-using the power-domains/domain-idle-states DT bindings, according to
-the bindings for PSCI [2] (no matter of PSCI OSI/PC mode). In other
-words, for all those that only have a "perf" or "cpr" power-domain
-today (or whatever name is used for the performance-scaling domain),
-those could easily add a "psci" power-domain too, depending on how
-they choose to describe things in DT.
-
-Kind regards
-Uffe
-
-[1]
-https://lore.kernel.org/all/ZRcC2IRRv6dtKY65@gerhold.net/
-[2]
-Documentation/devicetree/bindings/arm/psci.yaml
+Thanks for the review,
+--breno
 
